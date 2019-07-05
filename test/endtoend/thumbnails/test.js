@@ -16,35 +16,36 @@ const notImages = [
 ]
 
 describe('ThumbnailGenerator', () => {
-  beforeEach(() => {
-    browser.url(testURL)
+  beforeEach(async () => {
+    await browser.url(testURL)
   })
 
-  it('should generate thumbnails for images', function () {
+  it('should generate thumbnails for images', async function () {
     // Does not work on IE right now
     if (capabilities.browserName === 'internet explorer') {
       this.skip()
       return
     }
 
-    $('#uppyThumbnails .uppy-FileInput-input').waitForExist()
+    const input = await $('#uppyThumbnails .uppy-FileInput-input')
+    await input.waitForExist()
 
-    browser.execute(/* must be valid ES5 for IE */ function () {
+    await browser.execute(/* must be valid ES5 for IE */ function () {
       window.thumbnailsReady = new Promise(function (resolve) {
         window.uppyThumbnails.on('thumbnail:all-generated', resolve)
       })
     })
 
     if (supportsChooseFile()) {
-      for (const img of images) {
-        browser.chooseFile('#uppyThumbnails .uppy-FileInput-input', img)
+      for (const file of images) {
+        await input.setValue(file)
       }
       for (const { file } of notImages) {
-        browser.chooseFile('#uppyThumbnails .uppy-FileInput-input', file)
+        await input.setValue(file)
       }
     } else {
       for (const img of images) {
-        browser.execute(
+        await browser.execute(
           selectFakeFile,
           'uppyThumbnails',
           path.basename(img), // name
@@ -53,7 +54,7 @@ describe('ThumbnailGenerator', () => {
         )
       }
       for (const { type, file } of notImages) {
-        browser.execute(
+        await browser.execute(
           selectFakeFile,
           'uppyThumbnails',
           path.basename(file), // name
@@ -63,15 +64,15 @@ describe('ThumbnailGenerator', () => {
       }
     }
 
-    browser.executeAsync(/* must be valid ES5 for IE */ function (done) {
+    await browser.executeAsync(/* must be valid ES5 for IE */ function (done) {
       window.thumbnailsReady.then(done)
     })
 
     // const names = $$('p.file-name')
-    const previews = $$('img.file-preview')
+    const previews = await $$('img.file-preview')
 
     // Names should all be listed before previews--indicates that previews were generated asynchronously.
-    /* Nevermind this, chooseFile() doesn't accept multiple files so they are added one by one and the thumbnails
+    /* Nevermind this, setValue() doesn't accept multiple files so they are added one by one and the thumbnails
      * have finished generating by the time we add the next.
     const nys = names.map((el) => el.getLocation('y'))
     const pys = previews.map((el) => el.getLocation('y'))
@@ -84,8 +85,21 @@ describe('ThumbnailGenerator', () => {
 
     expect(previews).to.have.lengthOf(3) // ex. the invalid image
     for (const p of previews) {
-      expect(p.getAttribute('src')).to.match(/^blob:/)
-      expect(p.getElementSize('width')).to.equal(200)
+      expect(await p.getAttribute('src')).to.match(/^blob:/)
+      // Doesn't appear to work in Chrome 67 on Android 6.0
+      if (capabilities.platformName !== 'Android') {
+        expect(await getWidth(p)).to.equal(200)
+      }
     }
   })
 })
+
+async function getWidth (ref) {
+  try {
+    return await ref.getSize('width')
+  } catch (err) {
+    return browser.execute(function (el) {
+      return el.getBoundingClientRect().width
+    }, ref)
+  }
+}
