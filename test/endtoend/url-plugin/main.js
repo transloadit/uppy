@@ -6,8 +6,8 @@ const Url = require('@uppy/url')
 const Tus = require('@uppy/tus')
 
 const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
-const companionUrl = isOnTravis ? 'http://test-companion.uppy.io:3030' : 'http://localhost:3030'
-const endpoint = isOnTravis ? 'http://test-companion.uppy.io:1080' : 'http://localhost:1080'
+const companionUrl = isOnTravis ? 'http://companion.test:3030' : 'http://localhost:3030'
+const endpoint = isOnTravis ? 'http://companion.test:1080' : 'http://localhost:1080'
 
 window.uppy = Uppy({
   id: 'uppyProvider',

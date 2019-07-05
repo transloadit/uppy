@@ -5,7 +5,7 @@ const Dashboard = require('@uppy/dashboard')
 const Tus = require('@uppy/tus')
 
 const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
-const endpoint = isOnTravis ? 'http://test-companion.uppy.io:1080' : 'http://localhost:1080'
+const endpoint = isOnTravis ? 'http://companion.test:1080' : 'http://localhost:1080'
 
 const uppyDashboard = Uppy({
   id: 'uppyDashboard',

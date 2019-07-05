@@ -14,7 +14,7 @@ import {
 
 // @ts-ignore
 const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
-const TUS_ENDPOINT = `http://${isOnTravis ? 'test-companion.uppy.io' : 'localhost'}:1080/files/`
+const TUS_ENDPOINT = `http://${isOnTravis ? 'companion.test' : 'localhost'}:1080/files/`
 
 const uppy = Core({
   debug: true,
