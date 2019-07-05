@@ -74,12 +74,14 @@ ENDTOEND=1 lerna publish from-git --yes \
 # (Don't use the npm cache, don't generate a package-lock, don't save dependencies to any package.json)
 pushd "${__root}/test/endtoend"
   PKG_VERSIONS="$(echo uppy $PACKAGES | sed -e 's/\S\+\b/&@latest/g')"
+  echo '{}' > package.json # temp pkg.json to make sure npm installs deps in this folder
   npm install \
     --prefer-online \
     --registry "$VERDACCIO_REGISTRY" \
     --no-package-lock \
     --no-save \
     $PKG_VERSIONS
+  rm package.json
 popd
 
 bash "${__dir}/endtoend-build-tests"
