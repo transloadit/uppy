@@ -1547,4 +1547,103 @@ describe('src/Core', () => {
       expect(core.opts.restrictions.minNumberOfFiles).toBe(null)
     })
   })
+
+  describe('log', () => {
+    it('should log via provided logger function', () => {
+      const myTestLogger = {
+        debug: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn()
+      }
+
+      const core = new Core({
+        logger: myTestLogger
+      })
+
+      core.log('test test')
+      core.log('test test', 'error')
+      core.log('test test', 'error')
+      core.log('test test', 'warning')
+
+      // logger.debug should have been called 1 time above,
+      // but we call log in Core’s constructor to output VERSION, hence +1 here
+      expect(core.opts.logger.debug.mock.calls.length).toBe(2)
+      expect(core.opts.logger.error.mock.calls.length).toBe(2)
+      expect(core.opts.logger.warn.mock.calls.length).toBe(1)
+    })
+
+    it('should log via provided logger function, even if debug: true', () => {
+      const myTestLogger = {
+        debug: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn()
+      }
+
+      const core = new Core({
+        logger: myTestLogger,
+        debug: true
+      })
+
+      core.log('test test')
+      core.log('test test', 'error')
+      core.log('test test', 'error')
+      core.log('test test', 'warning')
+
+      // logger.debug should have been called 1 time above,
+      // but we call log in Core’s constructor to output VERSION, hence +1 here
+      expect(core.opts.logger.debug.mock.calls.length).toBe(2)
+      expect(core.opts.logger.error.mock.calls.length).toBe(2)
+      // logger.warn should have been called 1 time above,
+      // but we warn in Core when using both logger and debug: true, hence +1 here
+      expect(core.opts.logger.warn.mock.calls.length).toBe(2)
+    })
+
+    it('should log to console when logger: Uppy.debugLogger or debug: true is set', () => {
+      console.debug = jest.fn()
+      console.error = jest.fn()
+
+      const core = new Core({
+        logger: Core.debugLogger
+      })
+
+      core.log('test test')
+      core.log('beep boop')
+      core.log('beep beep', 'error')
+
+      // console.debug debug should have been called 2 times above,
+      // ibut we call log n Core’ constructor to output VERSION, hence +1 here
+      expect(console.debug.mock.calls.length).toBe(3)
+      expect(console.error.mock.calls.length).toBe(1)
+
+      console.debug.mockClear()
+      console.error.mockClear()
+
+      const core2 = new Core({
+        debug: true
+      })
+
+      core2.log('test test')
+      core2.log('beep boop')
+      core2.log('beep beep', 'error')
+
+      // console.debug debug should have been called 2 times here,
+      // but we call log in Core constructor to output VERSION, hence +1 here
+      expect(console.debug.mock.calls.length).toBe(3)
+      expect(console.error.mock.calls.length).toBe(1)
+    })
+
+    it('should not log to console when logger is not set', () => {
+      console.debug = jest.fn()
+      console.error = jest.fn()
+
+      const core = new Core()
+
+      core.log('test test')
+      core.log('beep boop')
+      core.log('beep beep', 'error')
+
+      expect(console.debug.mock.calls.length).toBe(0)
+      expect(console.error.mock.calls.length).toBe(0)
+    })
+  })
 })
