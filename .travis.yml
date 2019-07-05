@@ -14,7 +14,7 @@ matrix:
     # Build the website when things are merged to master
     - node_js: 10
       env: WEBSITE=true
-      if: branch = master
+      if: branch = master AND type = push
     # Run e2e tests on branch builds, not PRs
     - node_js: 10
       env: ACCEPTANCE=true
