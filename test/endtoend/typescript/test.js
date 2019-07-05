@@ -1,18 +1,21 @@
 /* global browser, expect  */
 describe('Project compiled with Uppy\'s TypeScript typings', () => {
-  it('Should have correct imports (thus not crash)', () => {
-    browser.url('http://localhost:4567/typescript')
+  it('Should have correct imports (thus not crash)', async () => {
+    await browser.url('http://localhost:4567/typescript')
 
-    browser.waitForExist('.uppy-Root')
-    browser.click('#pick-files')
+    const root = await browser.$('.uppy-Root')
+    const trigger = await browser.$('#pick-files')
+    await root.waitForExist()
+    await trigger.click()
 
-    const typeofUppy = browser.execute(function () {
+    const typeofUppy = await browser.execute(function () {
       return typeof window.uppy
     })
     // It was initialized correctly
-    expect(typeofUppy.value).to.equal('object')
+    expect(typeofUppy).to.equal('object')
 
     // The dashboard is shown
-    expect(browser.isVisible(`.uppy-Dashboard`)).to.equal(true)
+    const dashboard = await browser.$('.uppy-Dashboard')
+    expect(await dashboard.isDisplayed()).to.equal(true)
   })
 })

@@ -35,7 +35,7 @@
     "aliasify": "^2.1.0",
     "babelify": "^10.0.0",
     "browserify": "^16.2.2",
-    "chalk": "^2.4.1",
+    "chalk": "2.4.2",
     "glob": "^7.1.2",
     "locale-code": "^2.0.2",
     "mdast-util-inject": "1.1.0",

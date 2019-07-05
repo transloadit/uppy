@@ -7,6 +7,7 @@ module: "@uppy/xhr-upload"
 permalink: docs/xhr-upload/
 alias: docs/xhrupload/
 category: 'Destinations'
+tagline: classic multipart form uploads or binary uploads using XMLHTTPRequest
 ---
 
 The `@uppy/xhr-upload` plugin handles classic HTML multipart form uploads, as well as uploads using the HTTP `PUT` method.

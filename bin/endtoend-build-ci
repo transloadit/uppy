@@ -3,13 +3,24 @@
 set -o pipefail
 set -o errexit
 set -o nounset
-set -o xtrace
 
 # Set magic variables for current file & dir
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
+
+if [ -z "${CI:-}" ]; then
+  echo "!! Running CI-style end-to-end tests but CI environment variable is not set"
+  echo "It is generally ill-advised to run the full end-to-end suite on your local machine."
+  echo "You are probably looking for this instead:"
+  echo "  npm run test:endtoend:local"
+  echo ""
+  echo "Hit Ctrl+C to stop or Enter if you REALLY DO want to run the full thing."
+  read
+fi
+
+set -o xtrace
 
 VERDACCIO_REGISTRY=http://localhost:4002
 CURRENT_COMMIT="$(git rev-parse HEAD)"

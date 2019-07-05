@@ -5,6 +5,7 @@ title: "Webcam"
 module: "@uppy/webcam"
 permalink: docs/webcam/
 category: 'Sources'
+tagline: upload selfies or audio / video recordings
 ---
 
 The `@uppy/webcam` plugin lets you take photos and record videos with a built-in camera on desktop and mobile devices.

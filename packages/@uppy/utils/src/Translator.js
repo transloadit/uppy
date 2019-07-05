@@ -50,8 +50,8 @@ module.exports = class Translator {
    * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
    *
    * @param {string} phrase that needs interpolation, with placeholders
-   * @param {object} options with values that will be used to replace placeholders
-   * @return {string} interpolated
+   * @param {Object} options with values that will be used to replace placeholders
+   * @returns {string} interpolated
    */
   interpolate (phrase, options) {
     const { split, replace } = String.prototype
@@ -99,8 +99,8 @@ module.exports = class Translator {
    * Public translate method
    *
    * @param {string} key
-   * @param {object} options with values that will be used later to replace placeholders in string
-   * @return {string} translated (and interpolated)
+   * @param {Object} options with values that will be used later to replace placeholders in string
+   * @returns {string} translated (and interpolated)
    */
   translate (key, options) {
     return this.translateArray(key, options).join('')
@@ -108,9 +108,10 @@ module.exports = class Translator {
 
   /**
    * Get a translation and return the translated and interpolated parts as an array.
+   *
    * @param {string} key
-   * @param {object} options with values that will be used to replace placeholders
-   * @return {Array} The translated and interpolated parts, in order.
+   * @param {Object} options with values that will be used to replace placeholders
+   * @returns {Array} The translated and interpolated parts, in order.
    */
   translateArray (key, options) {
     if (options && typeof options.smart_count !== 'undefined') {

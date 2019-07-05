@@ -6,6 +6,7 @@ menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/dropbox"
 permalink: docs/dropbox/
 category: 'Sources'
+tagline: import files from Dropbox
 ---
 
 The `@uppy/dropbox` plugin lets users import files from their Dropbox account.
