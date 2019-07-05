@@ -1,0 +1,59 @@
+// On both mobile and .md+ screens
+.uppy-DashboardItem-action {
+  @include blue-border-focus;
+  cursor: pointer;
+  color: $gray-500;
+  &:hover {
+    opacity: 1;
+    color: $gray-900;
+  }
+}
+.uppy-DashboardItem-action--remove {
+  color: $gray-900;
+  opacity: 0.95;
+}
+
+// Only for mobile screens
+.uppy-Dashboard:not(.uppy-size--md) {
+  // Vertically center Edit&Remove buttons on mobile
+  .uppy-DashboardItem-actionWrapper {
+    display: flex;
+    align-items: center;
+  }
+  // Same inline design for Edit, Remove, and CopyLink buttons
+  .uppy-DashboardItem-action {
+    width: 22px;
+    height: 22px;
+    padding: 3px;
+    margin-left: 3px;
+    &:focus{
+      border-radius: 3px;
+    }
+  }
+}
+// Only for screens bigger than .md
+.uppy-size--md {
+  // Edit and CopyLink buttons are inline
+  .uppy-DashboardItem-action--copyLink,
+  .uppy-DashboardItem-action--edit {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    &:focus {
+      border-radius: 3px;
+    }
+  }
+  // Remove button is in the top right corner
+  .uppy-DashboardItem-action--remove {
+    z-index: $zIndex-3;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    &:focus {
+      border-radius: 50%;
+    }
+  }
+}

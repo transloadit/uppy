@@ -71,7 +71,7 @@ module.exports = function s3 (config) {
     // @ts-ignore The `uppy` property is added by middleware before reaching here.
     const client = req.uppy.s3Client
     const key = config.getKey(req, req.body.filename)
-    const { type } = req.body
+    const { type, metadata } = req.body
     if (typeof key !== 'string') {
       return res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
     }
@@ -84,6 +84,7 @@ module.exports = function s3 (config) {
       Key: key,
       ACL: config.acl,
       ContentType: type,
+      Metadata: metadata,
       Expires: ms('5 minutes') / 1000
     }, (err, data) => {
       if (err) {

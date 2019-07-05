@@ -2,7 +2,7 @@ require('es6-promise/auto')
 require('whatwg-fetch')
 
 const Uppy = require('@uppy/core')
-const DragDrop = require('@uppy/drag-drop')
+const FileInput = require('@uppy/file-input')
 const XHRUpload = require('@uppy/xhr-upload')
 
 function startXHRLimitTest (endpoint) {
@@ -11,7 +11,7 @@ function startXHRLimitTest (endpoint) {
     debug: true,
     autoProceed: false
   })
-    .use(DragDrop, { target: '#uppyXhrLimit' })
+    .use(FileInput, { target: '#uppyXhrLimit', pretty: false })
     .use(XHRUpload, { endpoint, limit: 2 })
 
   uppy.uploadsStarted = 0

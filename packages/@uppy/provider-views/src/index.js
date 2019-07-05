@@ -41,7 +41,7 @@ module.exports = class ProviderView {
   static VERSION = require('../package.json').version
 
   /**
-   * @param {object} instance of the plugin
+   * @param {Object} instance of the plugin
    */
   constructor (plugin, opts) {
     this.plugin = plugin
@@ -113,8 +113,9 @@ module.exports = class ProviderView {
 
   /**
    * Based on folder ID, fetch a new folder and update it to state
-   * @param  {String} id Folder id
-   * @return {Promise}   Folders/files in folder
+   *
+   * @param  {string} id Folder id
+   * @returns {Promise}   Folders/files in folder
    */
   getFolder (id, name) {
     return this._loaderWrapper(
@@ -142,8 +143,9 @@ module.exports = class ProviderView {
 
   /**
    * Fetches new folder
+   *
    * @param  {Object} Folder
-   * @param  {String} title Folder title
+   * @param  {string} title Folder title
    */
   getNextFolder (folder) {
     this.getFolder(folder.requestPath, folder.name)
@@ -180,7 +182,9 @@ module.exports = class ProviderView {
     try {
       this.plugin.uppy.addFile(tagFile)
     } catch (err) {
-      // Nothing, restriction errors handled in Core
+      if (!err.isRestriction) {
+        this.plugin.uppy.log(err)
+      }
     }
   }
 
@@ -323,7 +327,9 @@ module.exports = class ProviderView {
 
   isChecked (file) {
     const { currentSelection } = this.plugin.getPluginState()
-    return currentSelection.some((item) => item === file)
+    // comparing id instead of the file object, because the reference to the object
+    // changes when we switch folders, and the file list is updated
+    return currentSelection.some((item) => item.id === file.id)
   }
 
   /**
@@ -403,7 +409,7 @@ module.exports = class ProviderView {
     const { currentSelection } = this.plugin.getPluginState()
     if (this.isChecked(file)) {
       this.plugin.setPluginState({
-        currentSelection: currentSelection.filter((item) => item !== file)
+        currentSelection: currentSelection.filter((item) => item.id !== file.id)
       })
     } else {
       this.plugin.setPluginState({
