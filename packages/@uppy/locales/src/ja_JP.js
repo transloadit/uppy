@@ -129,7 +129,12 @@ ja_JP.strings = {
     '0': '最低でも %{smart_count} ファイル選択してください',
     '1': '最低でも %{smart_count} ファイル選択してください',
     '2': '最低でも %{smart_count} ファイル選択してください'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'フォルダからすべてのファイルを選択 %{name}',
+  unselectAllFilesFromFolderNamed: 'フォルダからすべてのファイルを選択解除 %{name}',
+  selectFileNamed: 'ファイルを選ぶ %{name}',
+  unselectFileNamed: 'ファイルの選択を解除 %{name}',
+  openFolderNamed: '開いたフォルダ %{name}'
 }
 
 ja_JP.pluralize = function (n) {

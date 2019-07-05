@@ -10,7 +10,7 @@ module.exports = (props) => {
       onclick={props.toggleCheckbox}
 
       role="option"
-      aria-label={`${props.isChecked ? 'Unselect' : 'Select'} ${props.title} file`}
+      aria-label={props.isChecked ? props.i18n('unselectFileNamed', { name: props.title }) : props.i18n('selectFileNamed', { name: props.title })}
       aria-selected={props.isChecked}
       aria-disabled={props.isDisabled}
       data-uppy-super-focusable

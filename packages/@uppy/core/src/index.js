@@ -28,10 +28,10 @@ class Uppy {
   static VERSION = require('../package.json').version
 
   /**
-  * Instantiate Uppy
+   * Instantiate Uppy
    *
-  * @param {Object} opts — Uppy options
-  */
+   * @param {Object} opts — Uppy options
+   */
   constructor (opts) {
     this.defaultLocale = {
       strings: {
@@ -59,6 +59,11 @@ class Uppy {
           1: 'Select %{smart_count} files',
           2: 'Select %{smart_count} files'
         },
+        selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
+        unselectAllFilesFromFolderNamed: 'Unselect all files from folder %{name}',
+        selectFileNamed: 'Select file %{name}',
+        unselectFileNamed: 'Unselect file %{name}',
+        openFolderNamed: 'Open folder %{name}',
         cancel: 'Cancel',
         logOut: 'Log out',
         filter: 'Filter',

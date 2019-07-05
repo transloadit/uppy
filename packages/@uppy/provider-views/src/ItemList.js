@@ -6,11 +6,11 @@ const getSharedProps = (fileOrFolder, props) => ({
   title: fileOrFolder.name,
   getItemIcon: () => fileOrFolder.icon,
   isChecked: props.isChecked(fileOrFolder),
-
   toggleCheckbox: (e) => props.toggleCheckbox(e, fileOrFolder),
   columns: props.columns,
   showTitles: props.showTitles,
-  viewType: props.viewType
+  viewType: props.viewType,
+  i18n: props.i18n
 })
 
 module.exports = (props) => {
@@ -23,7 +23,6 @@ module.exports = (props) => {
       <ul class="uppy-ProviderBrowser-list"
         onscroll={props.handleScroll}
         role="listbox"
-        aria-label={`List of files from ${props.title}`}
         // making <ul> not focusable for firefox
         tabindex="-1">
         {props.folders.map(folder =>

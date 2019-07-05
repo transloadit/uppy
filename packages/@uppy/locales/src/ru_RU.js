@@ -132,7 +132,12 @@ ru_RU.strings = {
     '0': 'Вы должны выбрать хотя бы %{smart_count} файл',
     '1': 'Вы должны выбрать хотя бы %{smart_count} файла',
     '2': 'Вы должны выбрать хотя бы %{smart_count} файлов'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Выбрать все файлы из папки %{name}',
+  unselectAllFilesFromFolderNamed: 'Отменить выбор всех файлов из папки %{name}',
+  selectFileNamed: 'Выбрать файл %{name}',
+  unselectFileNamed: 'Отменить выбор файла %{name}',
+  openFolderNamed: 'Открыть папку %{name}'
 }
 
 ru_RU.pluralize = function (n) {

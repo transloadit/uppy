@@ -1,5 +1,21 @@
 const { h } = require('preact')
 
+const getAriaLabelOfCheckbox = (props) => {
+  if (props.type === 'folder') {
+    if (props.isChecked) {
+      return props.i18n('unselectAllFilesFromFolderNamed', { name: props.title })
+    } else {
+      return props.i18n('selectAllFilesFromFolderNamed', { name: props.title })
+    }
+  } else {
+    if (props.isChecked) {
+      return props.i18n('unselectFileNamed', { name: props.title })
+    } else {
+      return props.i18n('selectFileNamed', { name: props.title })
+    }
+  }
+}
+
 // if folder:
 //   + checkbox (selects all files from folder)
 //   + folder name (opens folder)
@@ -12,15 +28,10 @@ module.exports = (props) => {
       type="button"
       class={`uppy-u-reset uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`}
       onClick={props.toggleCheckbox}
-
       // for the <label/>
       id={props.id}
       role="option"
-      aria-label={
-        props.type === 'folder'
-          ? `${props.isChecked ? 'Unselect' : 'Select'} all files from ${props.title} folder`
-          : `${props.isChecked ? 'Unselect' : 'Select'} ${props.title} file`
-      }
+      aria-label={getAriaLabelOfCheckbox(props)}
       aria-selected={props.isChecked}
       aria-disabled={props.isDisabled}
       data-uppy-super-focusable
@@ -38,7 +49,7 @@ module.exports = (props) => {
           type="button"
           class="uppy-u-reset uppy-ProviderBrowserItem-inner"
           onclick={props.handleFolderClick}
-          aria-label={`Open ${props.title} folder`}
+          aria-label={props.i18n('openFolderNamed', { name: props.title })}
         >
           {props.itemIconEl}
           {props.showTitles && props.title}

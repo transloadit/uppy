@@ -8,10 +8,11 @@
  * as opposed to `||||` delimeter
  *
  * Usage example: `translator.translate('files_chosen', {smart_count: 3})`
- *
- * @param {object|Array<object>} locale Locale or list of locales.
  */
 module.exports = class Translator {
+  /**
+   * @param {Object|Array<Object>} locales - locale or list of locales.
+   */
   constructor (locales) {
     this.locale = {
       strings: {},
