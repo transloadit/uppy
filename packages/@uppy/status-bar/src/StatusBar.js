@@ -232,24 +232,36 @@ const ProgressBarProcessing = (props) => {
   </div>
 }
 
+const renderDot = () =>
+  ' \u00B7 '
+
 const ProgressDetails = (props) => {
+  const ifShowFilesUploadedOfTotal = props.numUploads > 1
+
   return <div class="uppy-StatusBar-statusSecondary">
     {
-      props.numUploads > 1 &&
+      ifShowFilesUploadedOfTotal &&
       props.i18n('filesUploadedOfTotal', {
         complete: props.complete,
         smart_count: props.numUploads
-      }) + ' \u00B7 '
+      })
     }
-    <span class="uppy-StatusBar--onlyForDesktop">
+    <span class="uppy-StatusBar-additionalInfo">
+      {/* When should we render this dot?
+        1. .-additionalInfo is shown (happens only on desktops)
+        2. AND 'filesUploadedOfTotal' was shown
+      */}
+      {ifShowFilesUploadedOfTotal && renderDot()}
+
       {
         props.i18n('dataUploadedOfTotal', {
           complete: prettyBytes(props.totalUploadedSize),
           total: prettyBytes(props.totalSize)
-        }) + ' \u00B7 '
+        })
       }
-    </span>
-    <span class="uppy-StatusBar--onlyForDesktop">
+
+      {renderDot()}
+
       {
         props.i18n('xTimeLeft', {
           time: prettyETA(props.totalETA)

@@ -112,8 +112,8 @@
   padding-right: 0.3em;
 }
 
-// Don't display elements with class .--onlyForDesktop if we're not at least on .md
-.uppy-Root:not(.uppy-size--md) .uppy-StatusBar--onlyForDesktop {
+// Don't display elements with class .-additionalInfo if we're not at least on .md
+.uppy-Root:not(.uppy-size--md) .uppy-StatusBar-additionalInfo {
   display: none;
 }
 
