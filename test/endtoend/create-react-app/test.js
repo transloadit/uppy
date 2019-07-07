@@ -37,19 +37,20 @@ describe('React: Dashboard', () => {
     const el = await $('#inline-dashboard .uppy-Dashboard-inner')
     await el.waitForExist()
 
-    const toggle = await $('#inline-dashboard-toggle')
+    async function toggle () {
+      const button = await $('#inline-dashboard-toggle')
+      await button.click()
+      await browser.pause(250)
+    }
+
     // close
-    await toggle.click()
-    await browser.pause(250)
+    await toggle()
     // open
-    await toggle.click()
-    await browser.pause(250)
+    await toggle()
     // close
-    await toggle.click()
-    await browser.pause(250)
+    await toggle()
     // open
-    await toggle.click()
-    await browser.pause(250)
+    await toggle()
 
     // open GDrive panel
     const gdriveButton = await $('.uppy-DashboardTab:nth-child(2) button')
