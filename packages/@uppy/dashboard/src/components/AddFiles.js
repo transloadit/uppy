@@ -66,7 +66,7 @@ class AddFiles extends Component {
   renderDropPasteBrowseTagline () {
     const browse =
       <button type="button"
-        class="uppy-Dashboard-browse"
+        class="uppy-u-reset uppy-Dashboard-browse"
         onclick={this.triggerFileInputClick}>
         {this.props.i18n('browse')}
       </button>
