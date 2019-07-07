@@ -135,7 +135,7 @@ nl_NL.strings = {
   unselectAllFilesFromFolderNamed: 'Deselecteer alle bestanden uit de map %{name}',
   selectFileNamed: 'Selecteer bestand %{name}',
   unselectFileNamed: 'Deselecteer bestand %{name}',
-  openFolderNamed: 'Open folder %{name}'
+  openFolderNamed: 'Open map %{name}'
 }
 
 nl_NL.pluralize = function (n) {
