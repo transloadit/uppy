@@ -1,6 +1,7 @@
 const ja_JP = {}
 
 ja_JP.strings = {
+  addMore: 'さらに追加',
   addMoreFiles: 'ファイルを追加',
   addingMoreFiles: 'ファイルを追加しています',
   allowAccessDescription: 'カメラやビデオの機能を使用するには、カメラへのアクセスを許可してください。',

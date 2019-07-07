@@ -1,6 +1,7 @@
 const tr_TR = {}
 
 tr_TR.strings = {
+  addMore: 'Daha ekle',
   addMoreFiles: 'Daha fazla dosya ekle',
   addingMoreFiles: 'Daha fazla dosya ekleniyor',
   allowAccessDescription: 'Kameranızla fotoğraf çekmek veya video kaydetmek için lütfen erişim izni verin.',
