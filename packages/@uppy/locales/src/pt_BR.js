@@ -129,7 +129,12 @@ pt_BR.strings = {
     '0': 'Você precisa selecionar pelo menos %{smart_count} arquivo',
     '1': 'Você precisa selecionar pelo menos %{smart_count} arquivos',
     '2': 'Você precisa selecionar pelo menos %{smart_count} arquivos'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Selecione todos os arquivos da pasta %{name}',
+  unselectAllFilesFromFolderNamed: 'Desmarque todos os arquivos da pasta %{name}',
+  selectFileNamed: 'Selecione o arquivo %{name}',
+  unselectFileNamed: 'Deselecionar arquivo %{name}',
+  openFolderNamed: 'Pasta aberta %{name}'
 }
 
 pt_BR.pluralize = function (n) {

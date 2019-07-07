@@ -8,8 +8,8 @@ const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
-const getTimeStamp = require('@uppy/utils/lib/getTimeStamp')
 const supportsUploadProgress = require('./supportsUploadProgress')
+const { nullLogger, debugLogger } = require('./loggers')
 const Plugin = require('./Plugin') // Exported from here.
 
 class RestrictionError extends Error {
@@ -28,10 +28,10 @@ class Uppy {
   static VERSION = require('../package.json').version
 
   /**
-  * Instantiate Uppy
+   * Instantiate Uppy
    *
-  * @param {Object} opts — Uppy options
-  */
+   * @param {Object} opts — Uppy options
+   */
   constructor (opts) {
     this.defaultLocale = {
       strings: {
@@ -59,6 +59,11 @@ class Uppy {
           1: 'Select %{smart_count} files',
           2: 'Select %{smart_count} files'
         },
+        selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
+        unselectAllFilesFromFolderNamed: 'Unselect all files from folder %{name}',
+        selectFileNamed: 'Select file %{name}',
+        unselectFileNamed: 'Unselect file %{name}',
+        openFolderNamed: 'Open folder %{name}',
         cancel: 'Cancel',
         logOut: 'Log out',
         filter: 'Filter',
@@ -84,12 +89,21 @@ class Uppy {
       meta: {},
       onBeforeFileAdded: (currentFile, files) => currentFile,
       onBeforeUpload: (files) => files,
-      store: DefaultStore()
+      store: DefaultStore(),
+      logger: nullLogger
     }
 
     // Merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
     this.opts.restrictions = Object.assign({}, defaultOptions.restrictions, this.opts.restrictions)
+
+    // Support debug: true for backwards-compatability, unless logger is set in opts
+    // opts instead of this.opts to avoid comparing objects — we set logger: nullLogger in defaultOptions
+    if (opts && opts.logger && opts.debug) {
+      this.log('You are using a custom `logger`, but also set `debug: true`, which uses built-in logger to output logs to console. Ignoring `debug: true` and using your custom `logger`.', 'warning')
+    } else if (opts && opts.debug) {
+      this.opts.logger = debugLogger
+    }
 
     this.log(`Using Core v${this.constructor.VERSION}`)
 
@@ -165,10 +179,8 @@ class Uppy {
       this.updateAll(nextState)
     })
 
-    // for debugging and testing
-    // this.updateNum = 0
+    // Exposing uppy object on window for debugging and testing
     if (this.opts.debug && typeof window !== 'undefined') {
-      window['uppyLog'] = ''
       window[this.opts.id] = this
     }
 
@@ -315,7 +327,7 @@ class Uppy {
   setFileMeta (fileID, data) {
     const updatedFiles = Object.assign({}, this.getState().files)
     if (!updatedFiles[fileID]) {
-      this.log('Was trying to set metadata for a file that’s not with us anymore: ', fileID)
+      this.log('Was trying to set metadata for a file that has been removed: ', fileID)
       return
     }
     const newMeta = Object.assign({}, updatedFiles[fileID].meta, data)
@@ -669,7 +681,7 @@ class Uppy {
         percentage: canHavePercentage
           // TODO(goto-bus-stop) flooring this should probably be the choice of the UI?
           // we get more accurate calculations if we don't round this at all.
-          ? Math.floor(data.bytesUploaded / data.bytesTotal * 100)
+          ? Math.round(data.bytesUploaded / data.bytesTotal * 100)
           : 0
       })
     })
@@ -696,7 +708,7 @@ class Uppy {
     const unsizedFiles = inProgress.filter((file) => file.progress.bytesTotal == null)
 
     if (sizedFiles.length === 0) {
-      const progressMax = inProgress.length
+      const progressMax = inProgress.length * 100
       const currentProgress = unsizedFiles.reduce((acc, file) => {
         return acc + file.progress.percentage
       }, 0)
@@ -716,7 +728,7 @@ class Uppy {
       uploadedSize += file.progress.bytesUploaded
     })
     unsizedFiles.forEach((file) => {
-      uploadedSize += averageSize * (file.progress.percentage || 0)
+      uploadedSize += averageSize * (file.progress.percentage || 0) / 100
     })
 
     let totalProgress = totalSize === 0
@@ -1043,29 +1055,19 @@ class Uppy {
   }
 
   /**
-   * Logs stuff to console, only if `debug` is set to true. Silent in production.
+   * Passes messages to a function, provided in `opt.logger`.
+   * If `opt.logger: Uppy.debugLogger` or `opt.debug: true`, logs to the browser console.
    *
    * @param {string|Object} message to log
    * @param {string} [type] optional `error` or `warning`
    */
   log (message, type) {
-    if (!this.opts.debug) {
-      return
+    const { logger } = this.opts
+    switch (type) {
+      case 'error': logger.error(message); break
+      case 'warning': logger.warn(message); break
+      default: logger.debug(message); break
     }
-
-    const prefix = `[Uppy] [${getTimeStamp()}]`
-
-    if (type === 'error') {
-      console.error(prefix, message)
-      return
-    }
-
-    if (type === 'warning') {
-      console.warn(prefix, message)
-      return
-    }
-
-    console.log(prefix, message)
   }
 
   /**
@@ -1318,3 +1320,4 @@ module.exports = function (opts) {
 // Expose class constructor.
 module.exports.Uppy = Uppy
 module.exports.Plugin = Plugin
+module.exports.debugLogger = debugLogger

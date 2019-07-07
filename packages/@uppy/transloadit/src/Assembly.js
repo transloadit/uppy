@@ -88,12 +88,11 @@ class TransloaditAssembly extends Emitter {
 
     socket.on('assembly_upload_finished', (file) => {
       this.emit('upload', file)
-      this._fetchStatus({ diff: false })
+      this.status.uploads.push(file)
     })
 
     socket.on('assembly_uploading_finished', () => {
       this.emit('executing')
-      this._fetchStatus({ diff: false })
     })
 
     socket.on('assembly_upload_meta_data_extracted', () => {
@@ -103,11 +102,15 @@ class TransloaditAssembly extends Emitter {
 
     socket.on('assembly_result_finished', (stepName, result) => {
       this.emit('result', stepName, result)
-      this._fetchStatus({ diff: false })
+      if (!this.status.results[stepName]) {
+        this.status.results[stepName] = []
+      }
+      this.status.results[stepName].push(result)
     })
 
     socket.on('assembly_error', (err) => {
       this._onError(err)
+      // Refetch for updated status code
       this._fetchStatus({ diff: false })
     })
 

@@ -130,7 +130,12 @@ zh_TW.strings = {
     '0': '您至少要選擇%{smart_count}個文件',
     '1': '您至少要選擇%{smart_count}個文件',
     '2': '您至少要選擇%{smart_count}個文件'
-  }
+  },
+  selectAllFilesFromFolderNamed: '从文件夹中选择所有文件 %{name}',
+  unselectAllFilesFromFolderNamed: '取消选择文件夹中的所有文件 %{name}',
+  selectFileNamed: '选择文件 %{name}',
+  unselectFileNamed: '取消选择文件 %{name}',
+  openFolderNamed: '打开文件夹 %{name}'
 }
 
 zh_TW.pluralize = function (n) {
