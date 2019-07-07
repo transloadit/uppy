@@ -109,12 +109,13 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  max-width: 170px;
+  overflow-x: hidden;
   padding-right: 0.3em;
-}
 
-// Don't display elements with class .-additionalInfo if we're not at least on .md
-.uppy-Root:not(.uppy-size--md) .uppy-StatusBar-additionalInfo {
-  display: none;
+  .uppy-size--md & {
+    max-width: 400px;
+  }
 }
 
 .uppy-StatusBar-statusPrimary {
@@ -127,7 +128,10 @@
   line-height: 1.2;
   display: inline-block;
   color: $gray-600;
+  text-overflow: ellipsis;
   white-space: nowrap;
+  overflow-x: hidden;
+  // max-width: 170px;
 }
 
   .uppy-StatusBar-statusSecondaryHint {
@@ -174,21 +178,37 @@
 }
 
 .uppy-StatusBar-actionCircleBtn {
-  @include blue-border-focus;
   line-height: 1;
   cursor: pointer;
-  margin: 3px;
+  padding: 3px;
   opacity: 0.9;
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+  // width: 20px;
+  // height: 20px;
+  // border-radius: 50%;
+  // color: rgba($black, 0.6);
+  // background-color: rgba($gray-500, 0.3);
+  // text-align: center;
 
   &:hover {
     opacity: 1;
   }
-  &:focus {
-    border-radius: 50%;
-  }
 }
 
+  // .uppy-StatusBar-actionCircleBtn:not(:last-child) {
+  //   margin-right: 2px;
+  // }
+
+  // .uppy-size--md .uppy-StatusBar-actionCircleBtn {
+  //   padding: 1px 4px;
+  // }
+
   .uppy-StatusBar-actionCircleBtn svg {
+    // width: 12px;
+    // height: 12px;
+    // fill: currentColor;
     vertical-align: bottom;
   }
 
@@ -209,7 +229,6 @@
   // }
 
   .uppy-StatusBar-actionBtn--retry {
-    @include blue-border-focus();
     height: 16px;
     border-radius: 8px;
     margin-right: 6px;
@@ -252,15 +271,6 @@
     background-color: transparent;
     // border: 1px solid $white;
     color: $blue;
-  }
-
-  .uppy-StatusBar-actionBtn--uploadNewlyAdded {
-    // for focus
-    @include blue-border-focus;
-    padding-right: 3px;
-    padding-left: 3px;
-    padding-bottom: 1px;
-    border-radius: 3px;
   }
 
 .uppy-StatusBar-details {

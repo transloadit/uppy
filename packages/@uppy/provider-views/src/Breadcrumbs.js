@@ -1,13 +1,16 @@
 const { h } = require('preact')
 
-const Breadcrumb = (props) => [
-  <button
-    type="button"
-    class="uppy-u-reset"
-    onclick={props.getFolder}>{props.title}
-  </button>,
-  !props.isLast ? ' / ' : ''
-]
+const Breadcrumb = (props) => {
+  return (
+    <span>
+      <button
+        type="button"
+        class="uppy-u-reset"
+        onclick={props.getFolder}>{props.title}</button>
+      {!props.isLast ? ' / ' : ''}
+    </span>
+  )
+}
 
 module.exports = (props) => {
   return (

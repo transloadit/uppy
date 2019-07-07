@@ -11,13 +11,13 @@
   transition: all .35 ease;
 }
   .uppy-DashboardItem-progressIndicator {
-    @include clear-focus;
     display: inline-block;
     width: 38px;
     height: 38px;
     opacity: 0.9;
     cursor: pointer;
     &:focus{
+      outline: none;
       svg.UppyIcon-progressCircle .bg,
       svg.retry{
         fill: lighten($blue, 20%);

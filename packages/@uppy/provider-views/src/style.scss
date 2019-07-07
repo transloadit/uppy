@@ -60,32 +60,31 @@
     margin-bottom: 0;
   }
 }
-  .uppy-Provider-breadcrumbsIcon {
-    display: inline-block;
-    color: $gray-700;
-    vertical-align: middle;
-    margin-right: 4px;
-    line-height: 1;
-  }
-    .uppy-Provider-breadcrumbsIcon svg {
-      width: 13px;
-      height: 13px;
-      fill: $gray-700;
-    }
 
-  .uppy-Provider-breadcrumbs button {
-    @include highlight-focus;
-    display: inline-block;
-    line-height: inherit;
-    // for focus
-    padding: 4px;
-    border-radius: 3px;
-    &:hover {
-      text-decoration: underline;
-      cursor: pointer;
-    }
+.uppy-Provider-breadcrumbsIcon {
+  display: inline-block;
+  color: $gray-700;
+  vertical-align: bottom;
+  margin-right: 8px;
+  line-height: 1;
+}
+
+  .uppy-Provider-breadcrumbsIcon svg {
+    width: 13px;
+    height: 13px;
+    fill: $gray-700;
   }
-// ...uppy-Provider-breadcrumbs|
+
+.uppy-Provider-breadcrumbs button {
+  display: inline-block;
+  line-height: inherit;
+  // font-size: 14px;
+}
+
+.uppy-Provider-breadcrumbs button:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
 
 .uppy-ProviderBrowser {
   display: flex;
@@ -117,7 +116,7 @@
 }
 
 .uppy-ProviderBrowser-headerBar {
-  padding: 7px 15px;
+  padding: 12px 15px;
   background-color: $gray-50;
   z-index: $zIndex-2;
   color: $gray-600;
@@ -127,6 +126,9 @@
   .uppy-size--md & {
     display: flex;
     align-items: center;
+    // height: 40px;
+    // line-height: 40px;
+    padding: 12px 15px;
   }
 }
 
@@ -208,13 +210,9 @@
 }
 
 .uppy-ProviderBrowser-userLogout {
-  @include highlight-focus;
   cursor: pointer;
   line-height: inherit;
   color: $blue;
-  // for focus
-  padding: 4px;
-  border-radius: 3px;
 
   &:hover {
     text-decoration: underline;
