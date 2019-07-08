@@ -1,7 +1,7 @@
 ---
 title: "Common Plugin Options"
 type: docs
-permalink: docs/plugins/
+permalink: docs/plugin-options/
 order: 4
 category: 'Docs'
 ---
