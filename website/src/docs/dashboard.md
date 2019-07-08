@@ -189,7 +189,7 @@ Optionally, specify a string of text that explains something about the upload fo
 
 An array of UI field objects that will be shown when a user clicks the “edit” button on that file. Configuring this enables the "edit" button on file cards. Each object requires:
 
-- `id`, the name of the meta field.
+- `id`, the name of the meta field. Note: this will also be used in CSS/HTML as part of the `id` attribute, so it’s better to [avoid using characters like periods, semicolons, etc](https://stackoverflow.com/a/79022).
 - `name`, the label shown in the interface.
 - `placeholder`, the text shown when no value is set in the field.
 
