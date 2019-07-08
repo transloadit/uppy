@@ -1,12 +1,14 @@
 language: node_js
 
-.hosts: &HOSTS
-  - companion.test
+# Addons configuration that can be referenced by each matrix entry,
+# this way we can easily enable Sauce Connect for end-to-end tests only.
 .apt: &APT
   sources:
   - ubuntu-toolchain-r-test
   packages:
   - g++-4.8
+.hosts: &HOSTS
+  - companion.test
 .sauce_connect: &SAUCE
   username:
     secure: nAMJ/d1fm9urTYsQ+1uqj6Jjf71J8rzwYBSZbTDAeUEZzAdvGc0a9H3PYWM4pnUDPo5s1c9MMetXi2XNdUbXgMKHbEnePZ2mJamqFtXMmpG8pgFmMqj+btMd7Yybt070tRsn4Vy0uBSi2H/en7F3j+grABJV+SAXqWkSB7CU1fZaN/u0DpoGBNj1ZNwkYCIhpLueYJTPRWBOodMAarXuFv5+7KFOKuZM3tF/JjsMNSSaDgTkz13BZnbX6vNPxGJJNJcyJGSaXrVW8hh1Zmvnk/XdiLy+vt7Wz1wz3A9ebiFDuydo5AAkxrLFsCJ5nGEqLg3bkr6NaTRpbM84ZT3i1FQMTdKP6OHHqwAeBscB6BkyhZhzvsFtl2YRBNK9mA3OtOYvBmTkFkNqvrPQlfu7cFtyG5+AUfSCiTTgS/vWIwoqSVAXaOEqN8Fp54ecUdkzCTttl3gXteZzNLRYvyQcFpoJb6E+dS8qAW0OFOteiwKVuPCh3nGUzBP13bRo1i9UAX7ZCTlpjinkxE8ryzbToo6ZcVQMBAkKhaw/x8GzOtfm5rgYMeQzGEoBJNfr7qqfs7JMxAIEMYjrTL9PXVOp/R8F3FdsqbV70jSyfsxMSMkwSWFRmVslG8+Djy8P3LnckGy1FEbMHnH8GZHZg+hbBzN8Be1/1fV0oRRAr939WRc=
@@ -47,8 +49,8 @@ matrix:
       env: ENDTOEND=true
       if: type = push
       addons:
-        hosts: *HOSTS
         apt: *APT
+        hosts: *HOSTS
         sauce_connect: *SAUCE
 before_install:
 - nvm install-latest-npm
@@ -58,11 +60,14 @@ install:
 script:
 - 'if [ -n "${LINT-}" ]; then npm run lint; fi'
 - 'if [ -n "${LINT-}" ]; then npm run test:type; fi'
+# only install website deps when we're going to deploy;
+# note this should be removed when the lerna-link-convert switch happens
 - 'if [ -n "${WEBSITE-}" ]; then npm run web:install; fi'
 - 'if [ -n "${UNIT-}" ]; then npm run test:unit; fi'
 - 'if [ -n "${COMPANION-}" ]; then npm run test:companion; fi'
 - 'if [ -n "${ENDTOEND-}" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm run test:endtoend; fi'
 - 'if [ -n "${BUILD-}" ]; then npm run build; fi'
+# Publish release commits to CDN after a `BUILD=true` run, because we have all the files now
 - |
   if [ -n "${BUILD-}" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ] &&\
      [[ "${TRAVIS_COMMIT_MESSAGE}" =~ ^Release* ]]; then
@@ -76,6 +81,7 @@ cache:
   - "~/.npm"
   - "~/.transloadit"
 services:
+# Only required for companion builds, but it's fast so who cares!
 - docker
 env:
   global:
