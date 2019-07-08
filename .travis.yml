@@ -7,7 +7,7 @@ language: node_js
   - ubuntu-toolchain-r-test
   packages:
   - g++-4.8
-.sauce: &SAUCE
+.sauce_connect: &SAUCE
   username:
     secure: nAMJ/d1fm9urTYsQ+1uqj6Jjf71J8rzwYBSZbTDAeUEZzAdvGc0a9H3PYWM4pnUDPo5s1c9MMetXi2XNdUbXgMKHbEnePZ2mJamqFtXMmpG8pgFmMqj+btMd7Yybt070tRsn4Vy0uBSi2H/en7F3j+grABJV+SAXqWkSB7CU1fZaN/u0DpoGBNj1ZNwkYCIhpLueYJTPRWBOodMAarXuFv5+7KFOKuZM3tF/JjsMNSSaDgTkz13BZnbX6vNPxGJJNJcyJGSaXrVW8hh1Zmvnk/XdiLy+vt7Wz1wz3A9ebiFDuydo5AAkxrLFsCJ5nGEqLg3bkr6NaTRpbM84ZT3i1FQMTdKP6OHHqwAeBscB6BkyhZhzvsFtl2YRBNK9mA3OtOYvBmTkFkNqvrPQlfu7cFtyG5+AUfSCiTTgS/vWIwoqSVAXaOEqN8Fp54ecUdkzCTttl3gXteZzNLRYvyQcFpoJb6E+dS8qAW0OFOteiwKVuPCh3nGUzBP13bRo1i9UAX7ZCTlpjinkxE8ryzbToo6ZcVQMBAkKhaw/x8GzOtfm5rgYMeQzGEoBJNfr7qqfs7JMxAIEMYjrTL9PXVOp/R8F3FdsqbV70jSyfsxMSMkwSWFRmVslG8+Djy8P3LnckGy1FEbMHnH8GZHZg+hbBzN8Be1/1fV0oRRAr939WRc=
   access_key:
@@ -49,7 +49,7 @@ matrix:
       addons:
         hosts: *HOSTS
         apt: *APT
-        sauce: *SAUCE
+        sauce_connect: *SAUCE
 before_install:
 - nvm install-latest-npm
 install:
