@@ -57,9 +57,11 @@ class FileCard extends Component {
     const metaFields = this.props.metaFields || []
 
     return metaFields.map((field, i) => {
+      const id = `uppy-DashboardFileCard-input-${field.id}`
       return <fieldset class="uppy-DashboardFileCard-fieldset">
-        <label class="uppy-DashboardFileCard-label">{field.name}</label>
+        <label class="uppy-DashboardFileCard-label" for={id}>{field.name}</label>
         <input class="uppy-u-reset uppy-c-textInput uppy-DashboardFileCard-input"
+          id={id}
           type="text"
           value={this.state.formState[field.id]}
           placeholder={field.placeholder}
