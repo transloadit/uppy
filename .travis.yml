@@ -117,10 +117,10 @@ deploy:
   script: bin/travis-deploy
   on:
     branch: master
-    condition: env(WEBSITE) = true
+    condition: -n ${WEBSITE-}
 - provider: script
   skip_cleanup: true
   script: packages/@uppy/companion/infra/kube/gcloud-deploy.sh
   on:
     branch: master
-    condition: env(COMPANION) = true
+    condition: -n ${COMPANION-}
