@@ -60,9 +60,6 @@ install:
 script:
 - 'if [ -n "${LINT-}" ]; then npm run lint; fi'
 - 'if [ -n "${LINT-}" ]; then npm run test:type; fi'
-# only install website deps when we're going to deploy;
-# note this should be removed when the lerna-link-convert switch happens
-- 'if [ -n "${WEBSITE-}" ]; then npm run web:install; fi'
 - 'if [ -n "${UNIT-}" ]; then npm run test:unit; fi'
 - 'if [ -n "${COMPANION-}" ]; then npm run test:companion; fi'
 - 'if [ -n "${ENDTOEND-}" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm run test:endtoend; fi'
@@ -120,10 +117,10 @@ deploy:
   script: bin/travis-deploy
   on:
     branch: master
-    condition: $WEBSITE = true
+    condition: env(WEBSITE) = true
 - provider: script
   skip_cleanup: true
   script: packages/@uppy/companion/infra/kube/gcloud-deploy.sh
   on:
     branch: master
-    condition: $COMPANION = true
+    condition: env(COMPANION) = true

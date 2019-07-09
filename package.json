@@ -145,7 +145,7 @@
     "web:deploy": "npm-run-all web:clean web:inject-disc web:build && ./bin/web-deploy",
     "web:generate": "cd website && touch db.json && ./node_modules/.bin/hexo generate",
     "web:inject-bundles-misc": "cd website && node inject.js",
-    "web:inject-disc": "node ./bin/disc.js",
+    "web:inject-disc": "npm run build:lib && node ./bin/disc.js",
     "web:inject-frontpagecodesample": "npm run web:generate && cp -f website/public/frontpage-code-sample.html website/themes/uppy/layout/partials/frontpage-code-sample.html && touch website/themes/uppy/layout/index.ejs",
     "web:install": "cd website && npm install",
     "web:start": "npm-run-all build:lib --parallel watch:css web:watch-examples web:bundle-watch-inject web:watch",
