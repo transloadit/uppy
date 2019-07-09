@@ -61,7 +61,7 @@ fi_FI.strings = {
   logOut: 'Kirjaudu ulos',
   myDevice: 'Minun laite',
   noFilesFound: 'Sinulla ei ole tiedostoja tai kansioita täällä',
-  noInternetConnection: 'Ei Internet-yhteyttäNo Internet connection',
+  noInternetConnection: 'Ei Internet-yhteyttä',
   openFolderNamed: 'Avaa kansio %{name}',
   pause: 'Pysäytä',
   pauseUpload: 'Pysäytä lähetys',
