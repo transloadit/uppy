@@ -57,10 +57,10 @@ class FileCard extends Component {
     const metaFields = this.props.metaFields || []
 
     return metaFields.map((field, i) => {
-      const id = `uppy-DashboardFileCard-input-${field.id}`
-      return <fieldset class="uppy-DashboardFileCard-fieldset">
-        <label class="uppy-DashboardFileCard-label" for={id}>{field.name}</label>
-        <input class="uppy-u-reset uppy-c-textInput uppy-DashboardFileCard-input"
+      const id = `uppy-Dashboard-FileCard-input-${field.id}`
+      return <fieldset class="uppy-Dashboard-FileCard-fieldset">
+        <label class="uppy-Dashboard-FileCard-label" for={id}>{field.name}</label>
+        <input class="uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input"
           id={id}
           type="text"
           value={this.state.formState[field.id]}
@@ -78,7 +78,7 @@ class FileCard extends Component {
     const file = this.props.files[this.props.fileCardFor]
 
     return (
-      <div class="uppy-DashboardFileCard"
+      <div class="uppy-Dashboard-FileCard"
         data-uppy-panelType="FileCard"
         onDragOver={ignoreEvent}
         onDragLeave={ignoreEvent}
@@ -94,20 +94,20 @@ class FileCard extends Component {
             onclick={this.handleSave}>{this.props.i18n('done')}</button>
         </div>
 
-        <div class="uppy-DashboardFileCard-inner">
-          <div class="uppy-DashboardFileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
+        <div class="uppy-Dashboard-FileCard-inner">
+          <div class="uppy-Dashboard-FileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
             <FilePreview file={file} />
           </div>
 
-          <div class="uppy-DashboardFileCard-info">
+          <div class="uppy-Dashboard-FileCard-info">
             {this.renderMetaFields(file)}
           </div>
 
-          <div class="uppy-DashboardFileCard-actions">
-            <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-DashboardFileCard-actionsBtn"
+          <div class="uppy-Dashboard-FileCard-actions">
+            <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
               type="button"
               onclick={this.handleSave}>{this.props.i18n('saveChanges')}</button>
-            <button class="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-DashboardFileCard-actionsBtn"
+            <button class="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn"
               type="button"
               onclick={this.handleCancel}>{this.props.i18n('cancel')}</button>
           </div>
