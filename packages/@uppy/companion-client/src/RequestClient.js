@@ -28,7 +28,7 @@ module.exports = class RequestClient {
     return {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      'Uppy-Versions': '@uppy/companion-client=1.0.3'
+      'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`
     }
   }
 
