@@ -688,6 +688,26 @@ describe('src/Core', () => {
         /Cannot add new files: already uploading\./
       )
     })
+
+    it('does not dedupe different files', async () => {
+      const core = new Core()
+      const data = new File([sampleImage], { type: 'image/jpeg' })
+
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data
+      })
+      core.addFile({
+        source: 'jest',
+        name: 'foo푸.jpg',
+        type: 'image/jpeg',
+        data
+      })
+
+      expect(core.getFiles()).toHaveLength(2)
+    })
   })
 
   describe('uploading a file', () => {
