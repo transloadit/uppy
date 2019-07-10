@@ -721,22 +721,6 @@ a.uppy-Dashboard-poweredBy {
   filter: drop-shadow(rgba($black, 0.1) 0px 1px 1px);
 }
 
-.uppy-Dashboard-actions {
-  height: 55px;
-  border-top: 1px solid $gray-200;
-  display: flex;
-  align-items: center;
-  padding: 0 15px;
-  background-color: $gray-50;
-  .uppy-size--md & {
-    height: 65px;
-  }
-}
-
-.uppy-Dashboard-actionsBtn {
-  margin-right: 10px;
-}
-
 .uppy-Dashboard-upload {
   position: relative;
   width: 50px;

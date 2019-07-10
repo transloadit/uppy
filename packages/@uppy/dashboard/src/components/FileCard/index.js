@@ -1,7 +1,7 @@
-const getFileTypeIcon = require('../utils/getFileTypeIcon')
-const FilePreview = require('./FilePreview')
-const ignoreEvent = require('../utils/ignoreEvent.js')
 const { h, Component } = require('preact')
+const getFileTypeIcon = require('../../utils/getFileTypeIcon')
+const ignoreEvent = require('../../utils/ignoreEvent.js')
+const FilePreview = require('../FilePreview')
 
 class FileCard extends Component {
   constructor (props) {
@@ -103,11 +103,11 @@ class FileCard extends Component {
             {this.renderMetaFields(file)}
           </div>
 
-          <div class="uppy-Dashboard-actions">
-            <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-actionsBtn"
+          <div class="uppy-DashboardFileCard-actions">
+            <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-DashboardFileCard-actionsBtn"
               type="button"
               onclick={this.handleSave}>{this.props.i18n('saveChanges')}</button>
-            <button class="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-actionsBtn"
+            <button class="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-DashboardFileCard-actionsBtn"
               type="button"
               onclick={this.handleCancel}>{this.props.i18n('cancel')}</button>
           </div>

@@ -15,7 +15,7 @@
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
   }
-  .uppy-Dashboard-actions {
+  .uppy-DashboardFileCard-actions {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
   }
@@ -48,7 +48,7 @@
       align-items: center;
       justify-content: center;
     }
-      .uppy-DashboardFileCard-preview > img.uppy-DashboardItem-previewImg {
+      .uppy-DashboardFileCard-preview img.uppy-DashboardItem-previewImg {
         max-width: 90%;
         max-height: 90%;
         object-fit: cover;
@@ -96,8 +96,25 @@
       // ...uppy-DashboardFileCard-fieldset|
     // ...uppy-DashboardFileCard-info|
 
-    .uppy-DashboardFileCard-inner > .uppy-Dashboard-actions {
+    .uppy-DashboardFileCard-actions {
+      height: 55px;
       flex-shrink: 0;
+      flex-grow: 0;
+
+      border-top: 1px solid $gray-200;
+      padding: 0 15px;
+      background-color: $gray-50;
+
+      display: flex;
+      align-items: center;
+      .uppy-size--md & {
+        height: 65px;
+      }
     }
-  // ....uppy-DashboardFileCard-inner|
+      .uppy-DashboardFileCard-actionsBtn {
+        margin-right: 10px;
+      }
+    // ...uppy-DashboardFileCard-actions|
+
+  // ...uppy-DashboardFileCard-inner|
 // ...uppy-DashboardFileCard|
