@@ -41,6 +41,7 @@
     "express": "4.17.1",
     "express-interceptor": "1.2.0",
     "express-prom-bundle": "3.3.0",
+    "express-request-id": "1.4.1",
     "express-session": "1.15.6",
     "grant-express": "4.1.2",
     "helmet": "3.8.2",

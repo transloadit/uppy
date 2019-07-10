@@ -17,11 +17,11 @@ function get (req, res, next) {
     }
 
     if (!size) {
-      logger.error('unable to determine file size', 'controller.get.provider.size')
+      logger.error('unable to determine file size', 'controller.get.provider.size', req.id)
       return res.status(400).json({ error: 'unable to determine file size' })
     }
 
-    logger.debug('Instantiating uploader.')
+    logger.debug('Instantiating uploader.', null, req.id)
     const uploader = new Uploader({
       uppyOptions: req.uppy.options,
       endpoint: body.endpoint,
@@ -47,10 +47,10 @@ function get (req, res, next) {
 
     // wait till the client has connected to the socket, before starting
     // the download, so that the client can receive all download/upload progress.
-    logger.debug('Waiting for socket connection before beginning remote download.')
+    logger.debug('Waiting for socket connection before beginning remote download.', null, req.id)
     // waiting for socketReady.
     uploader.onSocketReady(() => {
-      logger.debug('Socket connection received. Starting remote download.')
+      logger.debug('Socket connection received. Starting remote download.', null, req.id)
       provider.download({ id, token, query: req.query }, uploader.handleChunk.bind(uploader))
     })
     const response = uploader.getResponse()
