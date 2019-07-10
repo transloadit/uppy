@@ -15,7 +15,7 @@
     "jsx-quotes": ["error", "prefer-double"],
     "compat/compat": ["error"],
 
-    "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }],
+    // "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }],
 
     "jsdoc/check-alignment": ["warn"],
     "jsdoc/check-examples": ["warn"],
