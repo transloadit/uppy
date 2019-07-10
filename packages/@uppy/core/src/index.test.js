@@ -483,7 +483,7 @@ describe('src/Core', () => {
         expect(postprocessor1.mock.calls.length).toEqual(1)
         // const lastModifiedTime = new Date()
         // const fileId = 'foojpg' + lastModifiedTime.getTime()
-        const fileId = 'uppy-foojpg-image'
+        const fileId = 'uppy-foo/jpg-1e-image'
 
         expect(postprocessor1.mock.calls[0][0].length).toEqual(1)
         expect(postprocessor1.mock.calls[0][0][0].substring(0, 17)).toEqual(
@@ -691,7 +691,8 @@ describe('src/Core', () => {
 
     it('does not dedupe different files', async () => {
       const core = new Core()
-      const data = new File([sampleImage], { type: 'image/jpeg' })
+      const data = new Blob([sampleImage], { type: 'image/jpeg' })
+      data.lastModified = 1562770350937
 
       core.addFile({
         source: 'jest',
@@ -707,6 +708,8 @@ describe('src/Core', () => {
       })
 
       expect(core.getFiles()).toHaveLength(2)
+      expect(core.getFile('uppy-foo/jpg-1e-image/jpeg-17175-1562770350937')).toBeDefined()
+      expect(core.getFile('uppy-foo//jpg-1l3o-1e-image/jpeg-17175-1562770350937')).toBeDefined()
     })
   })
 
@@ -756,10 +759,10 @@ describe('src/Core', () => {
       const core = new Core()
       core.store.state.currentUploads = {
         upload1: {
-          fileIDs: ['uppy-file1jpg-image/jpeg', 'uppy-file2jpg-image/jpeg', 'uppy-file3jpg-image/jpeg']
+          fileIDs: ['uppy-file1/jpg-1e-image/jpeg', 'uppy-file2/jpg-1e-image/jpeg', 'uppy-file3/jpg-1e-image/jpeg']
         },
         upload2: {
-          fileIDs: ['uppy-file4jpg-image/jpeg', 'uppy-file5jpg-image/jpeg', 'uppy-file6jpg-image/jpeg']
+          fileIDs: ['uppy-file4/jpg-1e-image/jpeg', 'uppy-file5/jpg-1e-image/jpeg', 'uppy-file6/jpg-1e-image/jpeg']
         }
       }
       core.addUploader((fileIDs) => Promise.resolve())
