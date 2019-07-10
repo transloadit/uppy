@@ -7,12 +7,6 @@ class FileCard extends Component {
   constructor (props) {
     super(props)
 
-    this.tempStoreMeta = this.tempStoreMeta.bind(this)
-    this.saveOnEnter = this.saveOnEnter.bind(this)
-    this.renderMetaFields = this.renderMetaFields.bind(this)
-    this.handleSave = this.handleSave.bind(this)
-    this.handleCancel = this.handleCancel.bind(this)
-
     const file = this.props.files[this.props.fileCardFor]
     const metaFields = this.props.metaFields || []
 
@@ -26,7 +20,7 @@ class FileCard extends Component {
     }
   }
 
-  saveOnEnter (ev) {
+  saveOnEnter = (ev) => {
     if (ev.keyCode === 13) {
       const file = this.props.files[this.props.fileCardFor]
       ev.stopPropagation()
@@ -35,7 +29,7 @@ class FileCard extends Component {
     }
   }
 
-  tempStoreMeta (ev, name) {
+  tempStoreMeta = (ev, name) => {
     this.setState({
       formState: {
         ...this.state.formState,
@@ -44,16 +38,16 @@ class FileCard extends Component {
     })
   }
 
-  handleSave (ev) {
+  handleSave = (ev) => {
     const fileID = this.props.fileCardFor
     this.props.saveFileCard(this.state.formState, fileID)
   }
 
-  handleCancel (ev) {
+  handleCancel = (ev) => {
     this.props.toggleFileCard()
   }
 
-  renderMetaFields (file) {
+  renderMetaFields = (file) => {
     const metaFields = this.props.metaFields || []
 
     return metaFields.map((field, i) => {
