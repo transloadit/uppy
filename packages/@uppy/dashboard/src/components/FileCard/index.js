@@ -22,9 +22,9 @@ class FileCard extends Component {
 
   saveOnEnter = (ev) => {
     if (ev.keyCode === 13) {
-      const file = this.props.files[this.props.fileCardFor]
       ev.stopPropagation()
       ev.preventDefault()
+      const file = this.props.files[this.props.fileCardFor]
       this.props.saveFileCard(this.state.formState, file.id)
     }
   }
@@ -38,19 +38,19 @@ class FileCard extends Component {
     })
   }
 
-  handleSave = (ev) => {
+  handleSave = () => {
     const fileID = this.props.fileCardFor
     this.props.saveFileCard(this.state.formState, fileID)
   }
 
-  handleCancel = (ev) => {
+  handleCancel = () => {
     this.props.toggleFileCard()
   }
 
-  renderMetaFields = (file) => {
+  renderMetaFields = () => {
     const metaFields = this.props.metaFields || []
 
-    return metaFields.map((field, i) => {
+    return metaFields.map((field) => {
       const id = `uppy-Dashboard-FileCard-input-${field.id}`
       return <fieldset class="uppy-Dashboard-FileCard-fieldset">
         <label class="uppy-Dashboard-FileCard-label" for={id}>{field.name}</label>
@@ -94,7 +94,7 @@ class FileCard extends Component {
           </div>
 
           <div class="uppy-Dashboard-FileCard-info">
-            {this.renderMetaFields(file)}
+            {this.renderMetaFields()}
           </div>
 
           <div class="uppy-Dashboard-FileCard-actions">
