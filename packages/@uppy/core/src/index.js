@@ -1311,7 +1311,7 @@ class Uppy {
         return this._runUpload(uploadID)
       })
       .catch((err) => {
-        if (!err.isRestriction) {
+        if (err.isRestriction) {
           this.emit('restriction-failed', null, err)
         }
         onError(err)
