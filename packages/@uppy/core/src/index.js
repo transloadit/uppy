@@ -107,6 +107,12 @@ class Uppy {
 
     this.log(`Using Core v${this.constructor.VERSION}`)
 
+    if (this.opts.restrictions.allowedFileTypes &&
+        this.opts.restrictions.allowedFileTypes !== null &&
+        !Array.isArray(this.opts.restrictions.allowedFileTypes)) {
+      throw new Error(`'restrictions.allowedFileTypes' must be an array`)
+    }
+
     // i18n
     this.translator = new Translator([ this.defaultLocale, this.opts.locale ])
     this.locale = this.translator.locale
