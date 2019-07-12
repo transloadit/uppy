@@ -70,7 +70,13 @@ class Uppy {
         resetFilter: 'Reset filter',
         loading: 'Loading...',
         authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
-        authenticateWith: 'Connect to %{pluginName}'
+        authenticateWith: 'Connect to %{pluginName}',
+        emptyFolderAdded: 'No files were added from empty folder',
+        folderAdded: {
+          0: 'Added %{smart_count} file from %{folder}',
+          1: 'Added %{smart_count} files from %{folder}',
+          2: 'Added %{smart_count} files from %{folder}'
+        }
       }
     }
 

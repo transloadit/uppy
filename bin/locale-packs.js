@@ -23,10 +23,8 @@ if (mode === 'build') {
 
 function getSources (pluginName) {
   const dependencies = {
-    // because e.g. 'companionAuthError' is used in provider-views but set in Core's defaultLocale
-    'core': ['provider-views'],
-    // because e.g. 'emptyFolderAdded' is used in provider-views but set in Dashboard's defaultLocale
-    'dashboard': ['provider-views']
+    // because 'provider-views' doesn't have its own locale, it uses Core's defaultLocale
+    'core': ['provider-views']
   }
 
   const globPath = path.join(__dirname, '..', 'packages', '@uppy', pluginName, 'lib', '**', '*.js')

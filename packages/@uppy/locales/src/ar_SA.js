@@ -1,6 +1,7 @@
 const ar_SA = {}
 
 ar_SA.strings = {
+  addMore: 'أضف المزيد',
   addMoreFiles: 'اضف المزيد من الملفات',
   addingMoreFiles: ' اضافة المزيد من الملفات',
   allowAccessDescription: 'ارجو السماح للموقع بالتقاط الصور والفديوهات.',

@@ -358,14 +358,14 @@ module.exports = class ProviderView {
       state = this.plugin.getPluginState()
       state.selectedFolders[folderId] = { loading: false, files: files }
       this.plugin.setPluginState({ selectedFolders: folders })
-      const dashboard = this.plugin.uppy.getPlugin('Dashboard')
+
       let message
       if (files.length) {
-        message = dashboard.i18n('folderAdded', {
+        message = this.plugin.uppy.i18n('folderAdded', {
           smart_count: files.length, folder: folder.name
         })
       } else {
-        message = dashboard.i18n('emptyFolderAdded')
+        message = this.plugin.uppy.i18n('emptyFolderAdded')
       }
       this.plugin.uppy.info(message)
     }).catch((e) => {

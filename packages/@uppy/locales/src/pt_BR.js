@@ -1,6 +1,7 @@
 const pt_BR = {}
 
 pt_BR.strings = {
+  addMore: 'Adicione mais',
   addMoreFiles: 'Adicionar mais arquivos',
   addingMoreFiles: 'Adicionando mais arquivos',
   allowAccessDescription: 'Para poder tirar fotos e gravar vídeos com sua câmera, por favor permita o acesso a câmera para esse site.',

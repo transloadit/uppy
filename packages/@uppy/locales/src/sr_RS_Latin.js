@@ -1,6 +1,7 @@
 const sr_RS_Latin = {}
 
 sr_RS_Latin.strings = {
+  addMore: 'Dodaj još',
   addMoreFiles: 'Dodaj još datoteka',
   addingMoreFiles: 'Dodavanje datoteka',
   allowAccessDescription: 'Molimo Vas, dozvolite pristup Vašoj kameri, kako biste mogli da je koristite za snimanje fotografija i video zapisa.',

@@ -3,6 +3,7 @@ const hu_HU = {}
 hu_HU.contributors = ['nagyv']
 
 hu_HU.strings = {
+  addMore: 'Adj hozzá többet',
   addMoreFiles: 'További fájlok hozzáadása',
   addingMoreFiles: 'További fájlok hozzáadása',
   allowAccessDescription: 'A képek vagy videó felvételéhez, kérjük engedélyezze a kamera használatát ezen az oldalon.',
