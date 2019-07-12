@@ -62,6 +62,11 @@ module.exports = class Plugin {
     })
   }
 
+  setOptions (newOpts) {
+    this.opts = Object.assign({}, this.opts, newOpts)
+    this.setPluginState() // so that UI re-renders with new options
+  }
+
   update (state) {
     if (typeof this.el === 'undefined') {
       return
