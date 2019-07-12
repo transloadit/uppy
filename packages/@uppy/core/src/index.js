@@ -248,6 +248,11 @@ class Uppy {
     })
   }
 
+  setOptions (newOpts) {
+    this.opts = Object.assign({}, this.opts, newOpts)
+    this.setState() // so that UI re-renders with new options
+  }
+
   resetProgress () {
     const defaultProgress = {
       percentage: 0,
