@@ -32,7 +32,7 @@ docker push transloadit/companion:latest;
 echo "Create directory..."
 mkdir ${HOME}/.kube
 echo "Writing KUBECONFIG to file..."
-echo $KUBECONFIGVAR | base64 --decode -i > ${HOME}/.kube/config
+echo $KUBECONFIGVAR | python -m base64 -d > ${HOME}/.kube/config
 echo "KUBECONFIG file written"
 
 sleep 10s # This cost me some precious debugging time.
