@@ -35,6 +35,8 @@ echo "Writing KUBECONFIG to file..."
 echo $KUBECONFIGVAR | python -m base64 -d > ${HOME}/.kube/config
 echo "KUBECONFIG file written"
 echo $RANDOM64FILE | python -m base64 -d
+echo "NORMA FILE NOW"
+echo $RANDOM_FILE
 
 sleep 10s # This cost me some precious debugging time.
 kubectl apply -f "${__kube}/companion/companion-kube.yaml"
