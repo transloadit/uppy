@@ -22,7 +22,9 @@ spec:
   selector:
     matchLabels:
       app: companion
-  replicas: 1
+  replicas: 2
+  updateStrategy:
+    type: RollingUpdate
   serviceName: "companion"
   template:
     metadata:
