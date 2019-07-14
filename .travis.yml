@@ -18,45 +18,45 @@ language: node_js
 
 matrix:
   include:
-    - node_js: 'stable'
-      env: UNIT=true
-      addons:
-        apt: *APT
-    - node_js: 10
-      env: UNIT=true
-      addons:
-        apt: *APT
-    - node_js: 10
-      env: LINT=true
-      addons:
-        apt: *APT
-    - node_js: 10
-      env: BUILD=true
-      addons:
-        apt: *APT
+    # - node_js: 'stable'
+    #   env: UNIT=true
+    #   addons:
+    #     apt: *APT
+    # - node_js: 10
+    #   env: UNIT=true
+    #   addons:
+    #     apt: *APT
+    # - node_js: 10
+    #   env: LINT=true
+    #   addons:
+    #     apt: *APT
+    # - node_js: 10
+    #   env: BUILD=true
+    #   addons:
+    #     apt: *APT
     - node_js: 10
       env: COMPANION=true
       addons:
         apt: *APT
     # Build the website when things are merged to master
-    - node_js: 10
-      env: WEBSITE=true
-      if: branch = master AND type = push
-      addons:
-        apt: *APT
-    # Run e2e tests on branch builds, not PRs
-    - node_js: 10
-      env: ENDTOEND=true
-      if: type = push
-      addons:
-        apt: *APT
-        hosts: *HOSTS
-        sauce_connect: *SAUCE
-before_install:
-- nvm install-latest-npm
-install:
-- npm install
-- npm run bootstrap -- --no-ci
+    # - node_js: 10
+    #   env: WEBSITE=true
+    #   if: branch = master AND type = push
+    #   addons:
+    #     apt: *APT
+    # # Run e2e tests on branch builds, not PRs
+    # - node_js: 10
+    #   env: ENDTOEND=true
+    #   if: type = push
+    #   addons:
+    #     apt: *APT
+    #     hosts: *HOSTS
+    #     sauce_connect: *SAUCE
+# before_install:
+# - nvm install-latest-npm
+# install:
+# - npm install
+# - npm run bootstrap -- --no-ci
 script:
 # - 'if [ -n "${LINT-}" ]; then npm run lint; fi'
 # - 'if [ -n "${LINT-}" ]; then npm run test:type; fi'
@@ -77,7 +77,7 @@ cache:
   apt: true
   directories:
   - "~/.npm"
-  - "~/.transloadit"
+  # - "~/.transloadit"
 services:
 # Only required for companion builds, but it's fast so who cares!
 - docker
