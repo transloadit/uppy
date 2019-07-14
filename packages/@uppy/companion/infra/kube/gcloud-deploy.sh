@@ -17,16 +17,16 @@ mv ./kubectl ${HOME}/.local/bin/
 
 
 # Store the new image in docker hub
-docker build -t transloadit/companion:latest -t transloadit/companion:$TRAVIS_COMMIT -f packages/@uppy/companion/Dockerfile packages/@uppy/companion;
-docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+# docker build -t transloadit/companion:latest -t transloadit/companion:$TRAVIS_COMMIT -f packages/@uppy/companion/Dockerfile packages/@uppy/companion;
+# docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
 
-if [[ -z "${TRAVIS_TAG}" ]]; then
-  docker push transloadit/companion:$TRAVIS_COMMIT;
-else
-  docker push transloadit/companion:$TRAVIS_TAG;
-fi
+# if [[ -z "${TRAVIS_TAG}" ]]; then
+#   docker push transloadit/companion:$TRAVIS_COMMIT;
+# else
+#   docker push transloadit/companion:$TRAVIS_TAG;
+# fi
 
-docker push transloadit/companion:latest;
+# docker push transloadit/companion:latest;
 
 
 echo "Create directory..."
@@ -39,15 +39,15 @@ echo "NORMA FILE NOW"
 echo $RANDOM_FILE > ${HOME}/random
 cat ${HOME}/random
 
-sleep 10s # This cost me some precious debugging time.
-kubectl apply -f "${__kube}/companion/companion-kube.yaml"
-kubectl apply -f "${__kube}/companion/companion-redis.yaml"
-kubectl set image statefulset companion --namespace=companion companion=docker.io/transloadit/companion:$TRAVIS_COMMIT
-sleep 10s
+# sleep 10s # This cost me some precious debugging time.
+# kubectl apply -f "${__kube}/companion/companion-kube.yaml"
+# kubectl apply -f "${__kube}/companion/companion-redis.yaml"
+# kubectl set image statefulset companion --namespace=companion companion=docker.io/transloadit/companion:$TRAVIS_COMMIT
+# sleep 10s
 
-kubectl get pods --namespace=companion
-kubectl get service --namespace=companion
-kubectl get deployment --namespace=companion
+# kubectl get pods --namespace=companion
+# kubectl get service --namespace=companion
+# kubectl get deployment --namespace=companion
 
 function cleanup {
     printf "Cleaning up...\n"
