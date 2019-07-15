@@ -274,6 +274,7 @@ module.exports = class XHRUpload extends Plugin {
       xhr.addEventListener('load', (ev) => {
         this.uppy.log(`[XHRUpload] ${id} finished`)
         timer.done()
+        queuedRequest.done()
 
         if (opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
           const body = opts.getResponseData(xhr.responseText, xhr)
@@ -291,7 +292,6 @@ module.exports = class XHRUpload extends Plugin {
             this.uppy.log(`Download ${file.name} from ${uploadURL}`)
           }
 
-          queuedRequest.done()
           return resolve(file)
         } else {
           const body = opts.getResponseData(xhr.responseText, xhr)
@@ -310,6 +310,7 @@ module.exports = class XHRUpload extends Plugin {
       xhr.addEventListener('error', (ev) => {
         this.uppy.log(`[XHRUpload] ${id} errored`)
         timer.done()
+        queuedRequest.done()
 
         const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
         this.uppy.emit('upload-error', file, error)
