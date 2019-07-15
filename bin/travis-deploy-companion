@@ -5,4 +5,4 @@ set -o nounset
 
 if [ -z "${COMPANION-}" ]; then exit 0; fi
 
-sh packages/@uppy/companion/infra/kube/gcloud-deploy.sh
+./packages/@uppy/companion/infra/kube/gcloud-deploy.sh
