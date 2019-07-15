@@ -1,5 +1,6 @@
 // Adapted from https://github.com/Flet/prettier-bytes/
 // Changing 1000 bytes to 1024, so we can keep uppercase KB vs kB
+// ISC License (c) Dan Flettre https://github.com/Flet/prettier-bytes/blob/master/LICENSE
 
 module.exports = prettierBytes
 
