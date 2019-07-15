@@ -654,13 +654,6 @@ module.exports = class Dashboard extends Plugin {
     this.superFocusOnEachUpdate()
   }
 
-  startUpload = (ev) => {
-    this.uppy.upload().catch((err) => {
-      // Log error.
-      this.uppy.log(err.stack || err.message || err)
-    })
-  }
-
   cancelUpload = (fileID) => {
     this.uppy.removeFile(fileID)
   }
@@ -797,7 +790,6 @@ module.exports = class Dashboard extends Plugin {
       metaFields: pluginState.metaFields,
       resumableUploads: capabilities.resumableUploads || false,
       individualCancellation: capabilities.individualCancellation,
-      startUpload: this.startUpload,
       pauseUpload: this.uppy.pauseResume,
       retryUpload: this.uppy.retryUpload,
       cancelUpload: this.cancelUpload,
