@@ -1,28 +1,10 @@
 const { Plugin } = require('@uppy/core')
 const { Socket, Provider, RequestClient } = require('@uppy/companion-client')
+const EventTracker = require('@uppy/utils/lib/EventTracker')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const limitPromises = require('@uppy/utils/lib/limitPromises')
 const Uploader = require('./MultipartUploader')
-
-/**
- * Create a wrapper around an event emitter with a `remove` method to remove
- * all events that were added using the wrapped emitter.
- */
-function createEventTracker (emitter) {
-  const events = []
-  return {
-    on (event, fn) {
-      events.push([ event, fn ])
-      return emitter.on(event, fn)
-    },
-    remove () {
-      events.forEach(([ event, fn ]) => {
-        emitter.off(event, fn)
-      })
-    }
-  }
-}
 
 function assertServerError (res) {
   if (res && res.error) {
@@ -216,7 +198,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       }, file.s3Multipart))
 
       this.uploaders[file.id] = upload
-      this.uploaderEvents[file.id] = createEventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       this.onFileRemove(file.id, (removed) => {
         this.resetUploaderReferences(file.id, { abort: true })
@@ -290,7 +272,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       const host = getSocketHost(file.remote.companionUrl)
       const socket = new Socket({ target: `${host}/api/${token}` })
       this.uploaderSockets[socket] = socket
-      this.uploaderEvents[file.id] = createEventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       this.onFileRemove(file.id, (removed) => {
         this.resetUploaderReferences(file.id, { abort: true })

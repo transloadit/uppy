@@ -4,6 +4,7 @@ const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')
+const EventTracker = require('@uppy/utils/lib/EventTracker')
 const limitPromises = require('@uppy/utils/lib/limitPromises')
 
 // Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
@@ -22,25 +23,6 @@ const tusDefaultOptions = {
   uploadSize: null,
   overridePatchMethod: false,
   retryDelays: null
-}
-
-/**
- * Create a wrapper around an event emitter with a `remove` method to remove
- * all events that were added using the wrapped emitter.
- */
-function createEventTracker (emitter) {
-  const events = []
-  return {
-    on (event, fn) {
-      events.push([ event, fn ])
-      return emitter.on(event, fn)
-    },
-    remove () {
-      events.forEach(([ event, fn ]) => {
-        emitter.off(event, fn)
-      })
-    }
-  }
 }
 
 /**
@@ -196,7 +178,7 @@ module.exports = class Tus extends Plugin {
 
       const upload = new tus.Upload(file.data, optsTus)
       this.uploaders[file.id] = upload
-      this.uploaderEvents[file.id] = createEventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       this.onFileRemove(file.id, (targetFileID) => {
         this.resetUploaderReferences(file.id)
@@ -283,7 +265,7 @@ module.exports = class Tus extends Plugin {
       const host = getSocketHost(file.remote.companionUrl)
       const socket = new Socket({ target: `${host}/api/${token}` })
       this.uploaderSockets[file.id] = socket
-      this.uploaderEvents[file.id] = createEventTracker(this.uppy)
+      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       this.onFileRemove(file.id, () => {
         socket.send('pause', {})
