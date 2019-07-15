@@ -59,10 +59,10 @@ declare module Uppy {
   }
 
   interface Restrictions {
-    maxFileSize: number | null;
-    maxNumberOfFiles: number | null;
-    minNumberOfFiles: number | null;
-    allowedFileTypes: string[] | null;
+    maxFileSize?: number | null;
+    maxNumberOfFiles?: number | null;
+    minNumberOfFiles?: number | null;
+    allowedFileTypes?: string[] | null;
   }
 
   interface UppyOptions {
