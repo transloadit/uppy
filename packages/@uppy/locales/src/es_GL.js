@@ -1,6 +1,7 @@
 const es_GL = {}
 
 es_GL.strings = {
+  addMore: 'añadir más',
   addMoreFiles: 'Agregar máis arquivos',
   addingMoreFiles: 'Agregando máis arquivos',
   allowAccessDescription: 'Para tomar fotos ou grabar video coa túa cámara, por favor permite a este sitio o acceso á cámara.',

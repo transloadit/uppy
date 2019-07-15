@@ -78,7 +78,7 @@ module.exports.getProviderMiddleware = (providers) => {
     if (providers[providerName] && validOptions(req.uppy.options)) {
       req.uppy.provider = new providers[providerName]({ providerName, config })
     } else {
-      logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid')
+      logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid', req.id)
     }
     next()
   }

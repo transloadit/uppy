@@ -69,7 +69,8 @@ module.exports = class Webcam extends Plugin {
         'picture'
       ],
       mirror: true,
-      facingMode: 'user'
+      facingMode: 'user',
+      preferredVideoMimeType: null
     }
 
     // merge default options with the ones set by user
@@ -144,11 +145,16 @@ module.exports = class Webcam extends Plugin {
   }
 
   startRecording () {
-    // TODO We can check here if any of the mime types listed in the
-    // mimeToExtensions map in Utils.js are supported, and prefer to use one of
-    // those.
-    // Right now we let the browser pick a type that it deems appropriate.
-    this.recorder = new MediaRecorder(this.stream)
+    let options = {}
+    const preferredVideoMimeType = this.opts.preferredVideoMimeType
+
+    // Attempt to use the passed preferredVideoMimeType (if any) during recording.
+    // If the browser doesn't support it, we'll fall back to the browser default instead
+    if (preferredVideoMimeType && MediaRecorder.isTypeSupported(preferredVideoMimeType) && getFileTypeExtension(preferredVideoMimeType)) {
+      options.mimeType = preferredVideoMimeType
+    }
+
+    this.recorder = new MediaRecorder(this.stream, options)
     this.recordingChunks = []
     this.recorder.addEventListener('dataavailable', (event) => {
       this.recordingChunks.push(event.data)

@@ -28,6 +28,9 @@ This example demonstrates how to unlock Transloadit’s features within Uppy.
     <a href="https://transloadit.com/accounts/credentials" rel="noreferrer noopener" target="_blank">this page</a> and paste it below.
   </li>
   <li>
+    Optionally, copy the secret key and paste it below. This will enable Signature Authentication. Make sure nobody's watching!
+  </li>
+  <li>
     Happy encoding &amp; fetching from Instagram :)
   </li>
 </ol>
@@ -42,6 +45,16 @@ This example demonstrates how to unlock Transloadit’s features within Uppy.
          placeholder="Your Transloadit API Key">
 </p>
 
+<p>
+  <label for="transloadit-secret-key"
+         style="display: block; font-size: 13px; text-transform: uppercase; font-weight: bold;">
+    Transloadit secret Key:</label>
+  <input type="text"
+         style="font-size: 15px; width: 300px; max-width: 100%; border: 0; border-bottom: 1px solid black; padding: 6px 8px; margin-bottom: 20px;"
+         id="transloadit-secret-key"
+         placeholder="Your Transloadit secret Key (optional)">
+</p>
+
 <link rel="stylesheet" href="app.css">
 <% include app.html %>
 
@@ -54,22 +67,23 @@ This example demonstrates how to unlock Transloadit’s features within Uppy.
 <script src="app.js"></script>
 <script>
   var apiKeyEl = document.getElementById('transloadit-api-key')
+  var secretKeyEl = document.getElementById('transloadit-secret-key')
   var storedApiKey = localStorage.getItem('uppyTransloaditApiKey')
 
   if (storedApiKey) {
     apiKeyEl.value = storedApiKey
     window.TRANSLOADIT_API_KEY = storedApiKey
-    initUppy()
+    initUppy({ secret: secretKeyEl.value })
   }
 
   function handleInputChange (ev) {
-    var enteredApiKey = ev.target.value
-    window.TRANSLOADIT_API_KEY = enteredApiKey
-    localStorage.setItem('uppyTransloaditApiKey', enteredApiKey)
-    initUppy()
+    window.TRANSLOADIT_API_KEY = apiKeyEl.value
+    localStorage.setItem('uppyTransloaditApiKey', apiKeyEl.value)
+    initUppy({ secret: secretKeyEl.value })
   }
 
   apiKeyEl.addEventListener('input', handleInputChange)
+  secretKeyEl.addEventListener('input', handleInputChange)
 </script>
 
 <hr />

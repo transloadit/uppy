@@ -67,7 +67,6 @@ module.exports = class Dashboard extends Plugin {
         dropPaste: 'Drop files here, paste or %{browse}',
         dropHint: 'Drop your files here',
         browse: 'browse',
-        emptyFolderAdded: 'No files were added from empty folder',
         uploadComplete: 'Upload complete',
         uploadPaused: 'Upload paused',
         resumeUpload: 'Resume upload',
@@ -88,11 +87,6 @@ module.exports = class Dashboard extends Plugin {
           0: 'Processing %{smart_count} file',
           1: 'Processing %{smart_count} files',
           2: 'Processing %{smart_count} files'
-        },
-        folderAdded: {
-          0: 'Added %{smart_count} file from %{folder}',
-          1: 'Added %{smart_count} files from %{folder}',
-          2: 'Added %{smart_count} files from %{folder}'
         },
         poweredBy: 'Powered by'
       }

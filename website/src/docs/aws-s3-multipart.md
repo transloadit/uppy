@@ -83,7 +83,7 @@ A function that generates a signed URL to upload a single part. Receives the `fi
 
 Return a Promise for an object with keys:
 
- - `url` - The presigned URL to upload a part. This can be generated using the S3 SDK like so:
+ - `url` - The presigned URL to upload a part. This can be generated on the server using the S3 SDK like so:
 
    ```js
    sdkInstance.getSignedUrl('uploadPart', {
@@ -133,7 +133,7 @@ While the Uppy AWS S3 plugin uses `POST` requests while uploading files to an S3
 <CORSRule>
   <!-- Change from POST to PUT if you followed the docs for the AWS S3 plugin ... -->
   <AllowedMethod>PUT</AllowedMethod>
-  
+
   <!-- ... keep the existing MaxAgeSeconds and AllowedHeader lines and your other stuff ... -->
 
   <!-- ... and don't forget to add this tag. -->

@@ -358,14 +358,14 @@ module.exports = class ProviderView {
       state = this.plugin.getPluginState()
       state.selectedFolders[folderId] = { loading: false, files: files }
       this.plugin.setPluginState({ selectedFolders: folders })
-      const dashboard = this.plugin.uppy.getPlugin('Dashboard')
+
       let message
       if (files.length) {
-        message = dashboard.i18n('folderAdded', {
+        message = this.plugin.uppy.i18n('folderAdded', {
           smart_count: files.length, folder: folder.name
         })
       } else {
-        message = dashboard.i18n('emptyFolderAdded')
+        message = this.plugin.uppy.i18n('emptyFolderAdded')
       }
       this.plugin.uppy.info(message)
     }).catch((e) => {
@@ -428,8 +428,7 @@ module.exports = class ProviderView {
 
   handleAuth () {
     const authState = btoa(JSON.stringify({ origin: getOrigin() }))
-    // @todo remove this hardcoded version
-    const clientVersion = encodeURIComponent('@uppy/companion-client=1.0.2')
+    const clientVersion = encodeURIComponent(`@uppy/provider-views=${ProviderView.VERSION}`)
     const link = `${this.provider.authUrl()}?state=${authState}&uppyVersions=${clientVersion}`
 
     const authWindow = window.open(link, '_blank')

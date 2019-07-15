@@ -94,6 +94,8 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] docs: Completely drop soft IE10 (and IE11?) support
 - [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems though)
 - [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
+- [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now
+- [ ] form: make the `multipleResults` option `true` by default
 
 ## 1.4
 
@@ -107,7 +109,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## 1.3
 
-- [ ] ! core: _calculateTotalProgress results in incorrectly high (1038%) progress with files that don’t have size (like from Instagram) (@goto-bus-stop)
+- [x] ! core: _calculateTotalProgress results in incorrectly high (1038%) progress with files that don’t have size (like from Instagram) (#1610 / @goto-bus-stop)
 - [ ] @uppy/transloadit: finish Transloadit-Client header on https://github.com/transloadit/uppy/tree/feature/transloadit-client
 - [ ] a11y: Fix remaining issues (https://github.com/transloadit/uppy/issues/created_by/nqst)
 - [ ] chore: fix up all code using the prettier branch. work is done, just needs an execute and review/okay by the team
@@ -119,11 +121,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
-- [ ] docs: Add a note to our browser support page that, while we have a saucelabs test for IE10, we're not actively supporting or fixing issues anymore (https://github.com/transloadit/uppy/issues/1420)
+- [x] docs: Add a note to our browser support page that, while we have a saucelabs test for IE10, we're not actively supporting or fixing issues anymore (https://github.com/transloadit/uppy/issues/1420)
 - [ ] goldenretriever: make it work with aws multipart (@goto-bus-stop) https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888
 - [ ] localepacks: Add Arabic, see if right-to-left causes issues, and fix them :)
 - [ ] meta: Clean up CHANGELOG's Backlog. Requires an Uppy call
-- [ ] meta: Turn Tim's feedback (https://app.asana.com/0/1113072057568884/1115520484178604) into actionable todos. Requires an Uppy call with Tim present
+- [x] dashboard: ⚠️ Moved all provider-views translations from Dashboard to Core, this eliminates a dependency of provider-views upon Dashboard (#1712/ @lakesare)
+- [x] meta: Turn Tim's feedback (https://app.asana.com/0/1113072057568884/1115520484178604) into actionable todos. Requires an Uppy call with Tim present
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] website: Adopt bcp-47 to handle and parse locales (@kvz, https://github.com/meikidd/iso-639-1/issues/19, https://tools.ietf.org/html/bcp47, https://github.com/wooorm/bcp-47)
 - [x] @uppy/core: make `meta.name` not required in addFile() (@goto-bus-stop / #1629)

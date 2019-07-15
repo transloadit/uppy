@@ -704,7 +704,14 @@ module.exports = class Transloadit extends Plugin {
     } else {
       this.uppy.use(Tus, {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
-        // will upload to the same Assembly.
+        // will upload to an outdated Assembly, and we won't get socket events for it.
+        //
+        // To resume a Transloadit upload, we need to reconnect to the websocket, and the state that's
+        // required to do that is not saved by tus-js-client's fingerprinting. We need the tus URL,
+        // the Assembly URL, and the WebSocket URL, at least. We also need to know _all_ the files that
+        // were added to the Assembly, so we can properly complete it. All that state is handled by
+        // Golden Retriever. So, Golden Retriever is required to do resumability with the Transloadit plugin,
+        // and we disable Tus's default resume implementation to prevent bad behaviours.
         resume: false,
         // Disable Companion's retry optimisation; we need to change the endpoint on retry
         // so it can't just reuse the same tus.Upload instance server-side.

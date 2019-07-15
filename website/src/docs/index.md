@@ -145,7 +145,9 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
   <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
 </a>
 
-We currently aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firefox and Opera.
+We currently aim to support IE11+ and recent versions of Safari, Edge, Chrome, Firefox and Opera.
+
+We still run end to end tests with IE10, but we are not actively supporting it or fixing visual / minor issues.
 
 ### Polyfills
 

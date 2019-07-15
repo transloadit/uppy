@@ -51,7 +51,6 @@ exports.config = {
     ...base.config.services,
     'sauce'
   ],
-  sauceConnect: true,
   user: process.env.SAUCE_USERNAME,
   key: process.env.SAUCE_ACCESS_KEY
 }

@@ -232,14 +232,42 @@ const ProgressBarProcessing = (props) => {
   </div>
 }
 
+const renderDot = () =>
+  ' \u00B7 '
+
 const ProgressDetails = (props) => {
+  const ifShowFilesUploadedOfTotal = props.numUploads > 1
+
   return <div class="uppy-StatusBar-statusSecondary">
-    { props.numUploads > 1 && props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.numUploads }) + ' \u00B7 ' }
-    { props.i18n('dataUploadedOfTotal', {
-      complete: prettyBytes(props.totalUploadedSize),
-      total: prettyBytes(props.totalSize)
-    }) + ' \u00B7 ' }
-    { props.i18n('xTimeLeft', { time: prettyETA(props.totalETA) }) }
+    {
+      ifShowFilesUploadedOfTotal &&
+      props.i18n('filesUploadedOfTotal', {
+        complete: props.complete,
+        smart_count: props.numUploads
+      })
+    }
+    <span class="uppy-StatusBar-additionalInfo">
+      {/* When should we render this dot?
+        1. .-additionalInfo is shown (happens only on desktops)
+        2. AND 'filesUploadedOfTotal' was shown
+      */}
+      {ifShowFilesUploadedOfTotal && renderDot()}
+
+      {
+        props.i18n('dataUploadedOfTotal', {
+          complete: prettyBytes(props.totalUploadedSize),
+          total: prettyBytes(props.totalSize)
+        })
+      }
+
+      {renderDot()}
+
+      {
+        props.i18n('xTimeLeft', {
+          time: prettyETA(props.totalETA)
+        })
+      }
+    </span>
   </div>
 }
 
@@ -253,7 +281,8 @@ const UploadNewlyAddedFiles = (props) => {
   const uploadBtnClassNames = classNames(
     'uppy-u-reset',
     'uppy-c-btn',
-    'uppy-StatusBar-actionBtn'
+    'uppy-StatusBar-actionBtn',
+    'uppy-StatusBar-actionBtn--uploadNewlyAdded'
   )
 
   return <div class="uppy-StatusBar-statusSecondary">
