@@ -1,6 +1,7 @@
 const es_GL = {}
 
 es_GL.strings = {
+  addMore: 'añadir más',
   addMoreFiles: 'Agregar máis arquivos',
   addingMoreFiles: 'Agregando máis arquivos',
   allowAccessDescription: 'Para tomar fotos ou grabar video coa túa cámara, por favor permite a este sitio o acceso á cámara.',
@@ -129,7 +130,12 @@ es_GL.strings = {
     '0': 'Tes que seleccionar polo menos %{smart_count} arquivo',
     '1': 'Tes que seleccionar polo menos %{smart_count} arquivos',
     '2': 'Tes que seleccionar polo menos %{smart_count} arquivos'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Seleccionar todos los archivos de la carpeta %{name}',
+  unselectAllFilesFromFolderNamed: 'Deselecciona todos los archivos de la carpeta %{name}',
+  selectFileNamed: 'Seleccione archivo %{name}',
+  unselectFileNamed: 'Deseleccionar archivo %{name}',
+  openFolderNamed: 'Carpeta abierta %{name}'
 }
 
 es_GL.pluralize = function (n) {

@@ -23,3 +23,32 @@
   border: 0;
   color: inherit;
 }
+
+@mixin highlight-focus() {
+  @include clear-focus();
+
+  &:hover {
+    color: darken($blue, 10%);
+  }
+
+  &:focus {
+    background-color: $highlight;
+  }
+}
+
+@mixin blue-border-focus() {
+  @include clear-focus();
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba($blue, 0.5);
+  }
+}
+
+@mixin clear-focus() {
+  &:focus {
+    outline: none;
+  }
+  &::-moz-focus-inner {
+    border: 0;
+  }
+}

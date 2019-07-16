@@ -1,17 +1,72 @@
 language: node_js
-node_js:
-- "10.15.3"
+
+# Addons configuration that can be referenced by each matrix entry,
+# this way we can easily enable Sauce Connect for end-to-end tests only.
+.apt: &APT
+  sources:
+  - ubuntu-toolchain-r-test
+  packages:
+  - g++-4.8
+.hosts: &HOSTS
+  - companion.test
+.sauce_connect: &SAUCE
+  username:
+    secure: nAMJ/d1fm9urTYsQ+1uqj6Jjf71J8rzwYBSZbTDAeUEZzAdvGc0a9H3PYWM4pnUDPo5s1c9MMetXi2XNdUbXgMKHbEnePZ2mJamqFtXMmpG8pgFmMqj+btMd7Yybt070tRsn4Vy0uBSi2H/en7F3j+grABJV+SAXqWkSB7CU1fZaN/u0DpoGBNj1ZNwkYCIhpLueYJTPRWBOodMAarXuFv5+7KFOKuZM3tF/JjsMNSSaDgTkz13BZnbX6vNPxGJJNJcyJGSaXrVW8hh1Zmvnk/XdiLy+vt7Wz1wz3A9ebiFDuydo5AAkxrLFsCJ5nGEqLg3bkr6NaTRpbM84ZT3i1FQMTdKP6OHHqwAeBscB6BkyhZhzvsFtl2YRBNK9mA3OtOYvBmTkFkNqvrPQlfu7cFtyG5+AUfSCiTTgS/vWIwoqSVAXaOEqN8Fp54ecUdkzCTttl3gXteZzNLRYvyQcFpoJb6E+dS8qAW0OFOteiwKVuPCh3nGUzBP13bRo1i9UAX7ZCTlpjinkxE8ryzbToo6ZcVQMBAkKhaw/x8GzOtfm5rgYMeQzGEoBJNfr7qqfs7JMxAIEMYjrTL9PXVOp/R8F3FdsqbV70jSyfsxMSMkwSWFRmVslG8+Djy8P3LnckGy1FEbMHnH8GZHZg+hbBzN8Be1/1fV0oRRAr939WRc=
+  access_key:
+    secure: OY3oWwiJghfty9wSPVvlhirvFGxPHDdIRuVkzAv6j7C/hj2BWYAP/UHrwdQ9XiYisHi/B5mGeyRVlrAf0MNGrG84rTDUbTWZbmktfuxl7A+Y6c0czk+s4SdhOiANG5b3tFl5wKq8h7uhrWH5/jWoKQ2Fz1VDCqxTvvZQbo41jSBhi7TBia626hxEePzdaiuw6HhGFZtfaoVs/FX30ylz8WDNrBjwCynjxsT52BaQrVvgEhuyzlOpI69YkZBPOq4fc3KiZ2YR43gLTx8K+sYCE9yJxdg1xT/UAawEhmedU83nyBZVo4rr7+03AixIxtI28MUCfBMlcsGwBxcKEKY/IWcp9UkPCq6+zALQoncV478tP21eYvlmxSFhYCrv+WEQlN+BcNjr4OJlmmFDbCVaF7r9qLeQPImU0+9iJU3OjrW7lpfLxORpGDEr2Nx6awKkIJCxNyK9weefeNo6Fz3V1kkyZ/7yWFeniJnRUCbahrB2XgzxIE+W307s1Qs4fm6JK7hVLTtG4fBzjChmAyGIzu744ws9WqmjvkC9D7OfnuXqanv/VcBFqPiudInerv7NL8FketUC+fxe/7XJfcxdaDGBjk8Kq7zXDohGRGymUXEoMDNJsKkMMlaKzdf7tgqdhsRJoH9NCVqrDXuG5al0UtrDP5RS7qfoxUunJmNFhlg=
+  no_ssl_bump_domains: companion.test
+
+matrix:
+  include:
+    - node_js: 'stable'
+      env: UNIT=true
+      addons:
+        apt: *APT
+    - node_js: 10
+      env: UNIT=true
+      addons:
+        apt: *APT
+    - node_js: 10
+      env: LINT=true
+      addons:
+        apt: *APT
+    - node_js: 10
+      env: BUILD=true
+      addons:
+        apt: *APT
+    - node_js: 10
+      env: COMPANION=true
+      addons:
+        apt: *APT
+    # Build the website when things are merged to master
+    - node_js: 10
+      env: WEBSITE=true
+      if: branch = master AND type = push
+      addons:
+        apt: *APT
+    # Run e2e tests on branch builds, not PRs
+    - node_js: 10
+      env: ENDTOEND=true
+      if: type = push
+      addons:
+        apt: *APT
+        hosts: *HOSTS
+        sauce_connect: *SAUCE
 before_install:
 - nvm install-latest-npm
 install:
 - npm install
 - npm run bootstrap -- --no-ci
 script:
-- npm run build
-- npm run test
-- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm run test:endtoend; fi
+- 'if [ -n "${LINT-}" ]; then npm run lint; fi'
+- 'if [ -n "${LINT-}" ]; then npm run test:type; fi'
+- 'if [ -n "${UNIT-}" ]; then npm run test:unit; fi'
+- 'if [ -n "${COMPANION-}" ]; then npm run test:companion; fi'
+- 'if [ -n "${ENDTOEND-}" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm run test:endtoend; fi'
+- 'if [ -n "${BUILD-}" ]; then npm run build; fi'
+# Publish release commits to CDN after a `BUILD=true` run, because we have all the files now
 - |
-  if [ "${TRAVIS_PULL_REQUEST}" = "false" ] &&\
+  if [ -n "${BUILD-}" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ] &&\
      [[ "${TRAVIS_COMMIT_MESSAGE}" =~ ^Release* ]]; then
     npm run uploadcdn uppy
     npm run uploadcdn @uppy/robodog
@@ -23,21 +78,8 @@ cache:
   - "~/.npm"
   - "~/.transloadit"
 services:
+# Only required for companion builds, but it's fast so who cares!
 - docker
-addons:
-  hosts:
-    - companion.test
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - g++-4.8
-  sauce_connect:
-    username:
-      secure: nAMJ/d1fm9urTYsQ+1uqj6Jjf71J8rzwYBSZbTDAeUEZzAdvGc0a9H3PYWM4pnUDPo5s1c9MMetXi2XNdUbXgMKHbEnePZ2mJamqFtXMmpG8pgFmMqj+btMd7Yybt070tRsn4Vy0uBSi2H/en7F3j+grABJV+SAXqWkSB7CU1fZaN/u0DpoGBNj1ZNwkYCIhpLueYJTPRWBOodMAarXuFv5+7KFOKuZM3tF/JjsMNSSaDgTkz13BZnbX6vNPxGJJNJcyJGSaXrVW8hh1Zmvnk/XdiLy+vt7Wz1wz3A9ebiFDuydo5AAkxrLFsCJ5nGEqLg3bkr6NaTRpbM84ZT3i1FQMTdKP6OHHqwAeBscB6BkyhZhzvsFtl2YRBNK9mA3OtOYvBmTkFkNqvrPQlfu7cFtyG5+AUfSCiTTgS/vWIwoqSVAXaOEqN8Fp54ecUdkzCTttl3gXteZzNLRYvyQcFpoJb6E+dS8qAW0OFOteiwKVuPCh3nGUzBP13bRo1i9UAX7ZCTlpjinkxE8ryzbToo6ZcVQMBAkKhaw/x8GzOtfm5rgYMeQzGEoBJNfr7qqfs7JMxAIEMYjrTL9PXVOp/R8F3FdsqbV70jSyfsxMSMkwSWFRmVslG8+Djy8P3LnckGy1FEbMHnH8GZHZg+hbBzN8Be1/1fV0oRRAr939WRc=
-    access_key:
-      secure: OY3oWwiJghfty9wSPVvlhirvFGxPHDdIRuVkzAv6j7C/hj2BWYAP/UHrwdQ9XiYisHi/B5mGeyRVlrAf0MNGrG84rTDUbTWZbmktfuxl7A+Y6c0czk+s4SdhOiANG5b3tFl5wKq8h7uhrWH5/jWoKQ2Fz1VDCqxTvvZQbo41jSBhi7TBia626hxEePzdaiuw6HhGFZtfaoVs/FX30ylz8WDNrBjwCynjxsT52BaQrVvgEhuyzlOpI69YkZBPOq4fc3KiZ2YR43gLTx8K+sYCE9yJxdg1xT/UAawEhmedU83nyBZVo4rr7+03AixIxtI28MUCfBMlcsGwBxcKEKY/IWcp9UkPCq6+zALQoncV478tP21eYvlmxSFhYCrv+WEQlN+BcNjr4OJlmmFDbCVaF7r9qLeQPImU0+9iJU3OjrW7lpfLxORpGDEr2Nx6awKkIJCxNyK9weefeNo6Fz3V1kkyZ/7yWFeniJnRUCbahrB2XgzxIE+W307s1Qs4fm6JK7hVLTtG4fBzjChmAyGIzu744ws9WqmjvkC9D7OfnuXqanv/VcBFqPiudInerv7NL8FketUC+fxe/7XJfcxdaDGBjk8Kq7zXDohGRGymUXEoMDNJsKkMMlaKzdf7tgqdhsRJoH9NCVqrDXuG5al0UtrDP5RS7qfoxUunJmNFhlg=
-    no_ssl_bump_domains: companion.test
 env:
   global:
   - CXX=g++-4.8
@@ -67,6 +109,8 @@ env:
 notifications:
   slack:
     secure: L3iQQE8sZ0ik1Z26gPoNMiIam9EOEwYhraHCY60Jk/wmfH6SW/727yKXpgcb/yayx37rUZplvoO7H8e05ISxTJKSepEeqbBUIBQs48S8hr+FHk0VPtpP4HGxqaITRLm+mI1coPRvfISxzrB8d240oup6muhC9Ws4/LXi6v8miyIOs2zoYmGxd56TrUeON3UYlKt6dMava0V4bugARzrafN/tfyI9ccqbHzQLBspQvBI61DzZ5I2vnWpkjfWgIHz9Fl4VzXHqMXwjuTUEu8ibA12b3dHZiJEAoqeb9Oj9QcLPbstPLhlNTZZaOrfiFtwLctI2rFh37slDpAfk5idv3ycxcoG5rbCxgyg5i6dpQqrqHxnyglgHg2/nZ+YA5okeS7nJJNtU/4S6AFRWOUUWMVVY0VBEV+8w+uurl0PDy80RUY3uyK64qAgQ8U0M81/Ys1oyWyn78TqHcbby7V2Ws5I9Yakrq8D+mdfsWYCio8F6LXHSwJ0mt2FanJtdDvpPk9sAwsXZN0n8xhELt5TiRp3bzVIQ0IPUgF54dTG9/zWRvC1P4TFaFU/2fg73ZEUC5aWJoFMnLSZjbZvp5gwpCVd0MjSBk80nF9dHYcavIgJ0wMGI3BMb8Nn6+T11Gw/ycr7OGU4NMkj7i8vSFgKF74piWZyiNW8orkMN6XZgM+o=
+# Travis docs: Note that pull request builds skip deployment step altogether.
+# https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
 deploy:
 - provider: script
   skip_cleanup: true
@@ -75,6 +119,6 @@ deploy:
     branch: master
 - provider: script
   skip_cleanup: true
-  script: packages/@uppy/companion/infra/kube/gcloud-deploy.sh
+  script: bin/travis-deploy-companion
   on:
     branch: master

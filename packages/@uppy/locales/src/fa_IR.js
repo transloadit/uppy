@@ -8,6 +8,7 @@ fa_IR.strings = {
   authenticateWith: 'در حال اتصال به %{pluginName}',
   authenticateWithTitle: 'احراز هویت %{pluginName} برای انتخاب فایل ضروریست!',
   back: 'بازگشت',
+  addMore: 'اضافه کردن بیشتر',
   browse: 'از رایانه',
   cancel: 'انصراف',
   cancelUpload: 'لغو بارگذاری',
@@ -129,7 +130,12 @@ fa_IR.strings = {
     '0': 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید',
     '1': 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید',
     '2': 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'همه فایل ها را از پوشه انتخاب کنید %{name}',
+  unselectAllFilesFromFolderNamed: 'همه فایل ها را از پوشه حذف کنید %{name}',
+  selectFileNamed: 'فایل را انتخاب کنید %{name}',
+  unselectFileNamed: 'لغو انتخاب پرونده %{name}',
+  openFolderNamed: 'پوشه باز کنید %{name}'
 }
 
 fa_IR.pluralize = function (n) {

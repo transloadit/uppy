@@ -3,6 +3,7 @@ const hu_HU = {}
 hu_HU.contributors = ['nagyv']
 
 hu_HU.strings = {
+  addMore: 'Adj hozzá többet',
   addMoreFiles: 'További fájlok hozzáadása',
   addingMoreFiles: 'További fájlok hozzáadása',
   allowAccessDescription: 'A képek vagy videó felvételéhez, kérjük engedélyezze a kamera használatát ezen az oldalon.',
@@ -131,7 +132,12 @@ hu_HU.strings = {
     '0': 'Legalább %{smart_count} fájlt ki kell választania',
     '1': 'Legalább %{smart_count} fájlt ki kell választania',
     '2': 'Legalább %{smart_count} fájlt ki kell választania'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Válassza ki az összes fájlt a mappából %{name}',
+  unselectAllFilesFromFolderNamed: 'Az összes fájl törlése a mappából %{name}',
+  selectFileNamed: 'Válaszd ki a fájlt %{name}',
+  unselectFileNamed: 'A fájl törlése %{name}',
+  openFolderNamed: 'Nyitott mappa %{name}'
 }
 
 hu_HU.pluralize = function (n) {

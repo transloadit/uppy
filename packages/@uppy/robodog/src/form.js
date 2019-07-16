@@ -42,12 +42,17 @@ function form (target, opts) {
     submitOnSuccess = !!opts.submitOnSuccess
   }
 
-  uppy.use(Form, {
+  const formOptions = {
     target,
     triggerUploadOnSubmit: true,
-    submitOnSuccess: submitOnSuccess,
+    submitOnSuccess,
     addResultToForm: false // using custom implementation instead
-  })
+  }
+  if (opts.hasOwnProperty('triggerUploadOnSubmit')) {
+    formOptions.triggerUploadOnSubmit = opts.triggerUploadOnSubmit
+  }
+
+  uppy.use(Form, formOptions)
 
   const useDashboard = opts.dashboard || opts.modal
 
@@ -65,6 +70,7 @@ function form (target, opts) {
       button.type = 'button'
       const old = findDOMElement(trigger, findDOMElement(target))
       old.parentNode.replaceChild(button, old)
+      dashboardOpts.inline = false
       dashboardOpts.trigger = button
     } else {
       dashboardOpts.inline = true

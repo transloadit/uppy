@@ -8,6 +8,7 @@ nl_NL.strings = {
   authenticateWith: 'Verbinden met %{pluginName}',
   authenticateWithTitle: 'Verbindt met %{pluginName} om bestanden te selecteren',
   back: 'Terug',
+  addMore: 'Meer toevoegen',
   browse: 'blader',
   cancel: 'Annuleer',
   cancelUpload: 'Annuleer upload',
@@ -129,7 +130,12 @@ nl_NL.strings = {
     '0': 'Je moet minstens %{smart_count} bestand selecteren',
     '1': 'Je moet minstens %{smart_count} bestanden selecteren',
     '2': 'Je moet minstens %{smart_count} bestanden selecteren'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Selecteer alle bestanden uit de map %{name}',
+  unselectAllFilesFromFolderNamed: 'Deselecteer alle bestanden uit de map %{name}',
+  selectFileNamed: 'Selecteer bestand %{name}',
+  unselectFileNamed: 'Deselecteer bestand %{name}',
+  openFolderNamed: 'Open map %{name}'
 }
 
 nl_NL.pluralize = function (n) {

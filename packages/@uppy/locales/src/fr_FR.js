@@ -8,6 +8,7 @@ fr_FR.strings = {
   authenticateWith: 'Se connecter à %{pluginName}',
   authenticateWithTitle: 'Veuillez vous authentifier avec %{pluginName} pour sélectionner les fichiers',
   back: 'Retour',
+  addMore: 'Ajouter d\'autres',
   browse: 'naviguer',
   cancel: 'Annuler',
   cancelUpload: 'Annuler téléchargement',
@@ -129,7 +130,12 @@ fr_FR.strings = {
     '0': 'Vous devez sélectionner au moins %{smart_count} fichier',
     '1': 'Vous devez sélectionner au moins %{smart_count} fichiers',
     '2': 'Vous devez sélectionner au moins %{smart_count} fichiers'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Sélectionner tous les fichiers du dossier %{name}',
+  unselectAllFilesFromFolderNamed: 'Désélectionner tous les fichiers du dossier%{name}',
+  selectFileNamed: 'Choisir le dossier %{name}',
+  unselectFileNamed: 'Désélectionner le fichier %{name}',
+  openFolderNamed: 'Dossier ouvert %{name}'
 }
 
 fr_FR.pluralize = function (n) {

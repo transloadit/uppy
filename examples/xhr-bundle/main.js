@@ -3,7 +3,8 @@ const Dashboard = require('@uppy/dashboard')
 const XHRUpload = require('@uppy/xhr-upload')
 
 const uppy = Uppy({
-  debug: true
+  debug: true,
+  meta: { something: 'xyz' }
 })
 
 uppy.use(Dashboard, {
@@ -16,5 +17,6 @@ uppy.use(Dashboard, {
 uppy.use(XHRUpload, {
   bundle: true,
   endpoint: 'http://localhost:9967/upload',
+  metaFields: ['something'],
   fieldName: 'files'
 })

@@ -57,7 +57,7 @@ class Uploader {
     //     .on('error', (err) => logger.error(`${this.shortToken} ${err}`, 'uploader.duplex.error'))
     // }
     this.writeStream = fs.createWriteStream(this.path, { mode: 0o666 }) // no executable files
-      .on('error', (err) => logger.error(`${this.shortToken} ${err}`, 'uploader.write.error'))
+      .on('error', (err) => logger.error(`${err}`, 'uploader.write.error', this.shortToken))
     /** @type {number} */
     this.emittedProgress = 0
     this.storage = options.storage
@@ -78,6 +78,17 @@ class Uploader {
         }
       })
     }
+  }
+
+  /**
+   * returns a substring of the token. Used as traceId for logging
+   * we avoid using the entire token because this is meant to be a short term
+   * access token between uppy client and companion websocket
+   * @param {string} token the token to Shorten
+   * @returns {string}
+   */
+  static shortenToken (token) {
+    return token.substring(0, 8)
   }
 
   /**
@@ -128,10 +139,12 @@ class Uploader {
   }
 
   /**
-   * returns a substring of the token
+   * returns a substring of the token. Used as traceId for logging
+   * we avoid using the entire token because this is meant to be a short term
+   * access token between uppy client and companion websocket
    */
   get shortToken () {
-    return this.token.substring(0, 8)
+    return Uploader.shortenToken(this.token)
   }
 
   /**
@@ -140,7 +153,7 @@ class Uploader {
    */
   onSocketReady (callback) {
     emitter().once(`connection:${this.token}`, () => callback())
-    logger.debug(`${this.shortToken} waiting for connection`, 'uploader.socket.wait')
+    logger.debug(`waiting for connection`, 'uploader.socket.wait', this.shortToken)
   }
 
   cleanUp () {
@@ -178,7 +191,7 @@ class Uploader {
     }
 
     this.writeStream.write(chunk, () => {
-      logger.debug(`${this.shortToken} ${this.bytesWritten} bytes`, 'uploader.download.progress')
+      logger.debug(`${this.bytesWritten} bytes`, 'uploader.download.progress', this.shortToken)
       if (protocol === PROTOCOLS.multipart || protocol === PROTOCOLS.tus) {
         return this.emitIllusiveProgress()
       }
@@ -245,7 +258,7 @@ class Uploader {
    * @see emitProgress
    * @param {number=} bytesUploaded the bytes actually Uploaded so far
    */
-  emitIllusiveProgress (bytesUploaded) {
+  emitIllusiveProgress (bytesUploaded = 0) {
     if (this._paused) {
       return
     }
@@ -254,14 +267,14 @@ class Uploader {
     if (!this.streamsEnded) {
       bytesTotal = Math.max(bytesTotal, this.bytesWritten)
     }
-    bytesUploaded = bytesUploaded || 0
     // for a 10MB file, 10MB of download will account for 5MB upload progress
     // and 10MB of actual upload will account for the other 5MB upload progress.
     const illusiveBytesUploaded = (this.bytesWritten / 2) + (bytesUploaded / 2)
 
     logger.debug(
-      `${this.shortToken} ${bytesUploaded} ${illusiveBytesUploaded} ${bytesTotal}`,
-      'uploader.illusive.progress'
+      `${bytesUploaded} ${illusiveBytesUploaded} ${bytesTotal}`,
+      'uploader.illusive.progress',
+      this.shortToken
     )
     this.emitProgress(illusiveBytesUploaded, bytesTotal)
   }
@@ -279,8 +292,9 @@ class Uploader {
     const percentage = (bytesUploaded / bytesTotal * 100)
     const formatPercentage = percentage.toFixed(2)
     logger.debug(
-      `${this.shortToken} ${bytesUploaded} ${bytesTotal} ${formatPercentage}%`,
-      'uploader.upload.progress'
+      `${bytesUploaded} ${bytesTotal} ${formatPercentage}%`,
+      'uploader.upload.progress',
+      this.shortToken
     )
 
     const dataToEmit = {

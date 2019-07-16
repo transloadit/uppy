@@ -23,6 +23,7 @@ module.exports = class Form extends Plugin {
       resultName: 'uppyResult',
       getMetaFromForm: true,
       addResultToForm: true,
+      multipleResults: false,
       submitOnSuccess: false,
       triggerUploadOnSubmit: false
     }
@@ -86,26 +87,47 @@ module.exports = class Form extends Plugin {
 
     let resultInput = this.form.querySelector(`[name="${this.opts.resultName}"]`)
     if (resultInput) {
-      resultInput.value = JSON.stringify(result)
+      if (this.opts.multipleResults) {
+        // Append new result to the previous result array
+        const updatedResult = JSON.parse(resultInput.value)
+        updatedResult.push(result)
+        resultInput.value = JSON.stringify(updatedResult)
+      } else {
+        // Replace existing result with the newer result on `complete` event.
+        // This behavior is not ideal, since you most likely want to always keep
+        // all results in the input. This is kept for backwards compatability until 2.0.
+        resultInput.value = JSON.stringify(result)
+      }
       return
     }
 
     resultInput = document.createElement('input')
     resultInput.name = this.opts.resultName
     resultInput.type = 'hidden'
-    resultInput.value = JSON.stringify(result)
+
+    if (this.opts.multipleResults) {
+      // Wrap result in an array so we can have multiple results
+      resultInput.value = JSON.stringify([result])
+    } else {
+      // Result is an object, kept for backwards compatability until 2.0
+      resultInput.value = JSON.stringify(result)
+    }
+
     this.form.appendChild(resultInput)
   }
 
   getMetaFromForm () {
     const formMeta = getFormData(this.form)
+    // We want to exclude meta the the Form plugin itself has added
+    // See https://github.com/transloadit/uppy/issues/1637
+    delete formMeta[this.opts.resultName]
     this.uppy.setMeta(formMeta)
   }
 
   install () {
     this.form = findDOMElement(this.opts.target)
     if (!this.form || !this.form.nodeName === 'FORM') {
-      console.error('Form plugin requires a <form> target element passed in options to operate, none was found', 'error')
+      this.uppy.log('Form plugin requires a <form> target element passed in options to operate, none was found', 'error')
       return
     }
 

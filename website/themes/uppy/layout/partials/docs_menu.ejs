@@ -12,9 +12,9 @@
       { category: 'Community Projects', path: 'docs/community-projects/', link: true },
       { category: 'React', path: 'docs/react/', link: true },
       { category: 'Contributing', path: 'docs/contributing/', link: true },
-      ]
-    } else if (page.type === 'examples') {
-      categories = [
+    ]
+  } else if (page.type === 'examples') {
+    categories = [
       { category: 'Examples', path: 'examples/', link: true, hidden: true },
       { category: 'File Processing', path: 'examples/markdown-snippets/', link: true },
     ]
@@ -26,7 +26,7 @@
 
   var catPages = {}
   site.pages.find({ type }).each((p) => {
-    if (only_modules === true) {
+    if (locals.only_modules) {
       if (!p.module) {
         return;
       }
@@ -46,11 +46,12 @@
 %>
 <% for (var i in categories) { %>
     <% var sorted = (catPages[categories[i].category] || []).sort((a, b) => {return a.order - b.order}) %>
+    <% var categoryID = locals.add_category_ids ? categories[i].category.replace(' ', '-') : null %>
     <% if (!categories[i].hidden && sorted.length) { %>
-        <% if (categories[i].link && add_taglines === false) { %>
-        <h3 key="<%-'category-' + i + '-' + categories[i].category %>" data-scroll="no"><a href="/<%- categories[i].path %>"><%- categories[i].category %></a></h3>
+        <% if (categories[i].link && !locals.add_taglines) { %>
+        <h3 id="<%- categoryID %>" key="<%-'category-' + i + '-' + categories[i].category %>" data-scroll="no"><a href="/<%- categories[i].path %>"><%- categories[i].category %></a></h3>
         <% } else { %>
-        <h3 key="<%-'category-' + i + '-' + categories[i].category %>" data-scroll="no"><%- categories[i].category %></h3>
+        <h3 id="<%- categoryID %>" key="<%-'category-' + i + '-' + categories[i].category %>" data-scroll="no"><%- categories[i].category %></h3>
         <% } %>
     <% } %>
     <ul>
@@ -58,8 +59,8 @@
         <% var path = (p.path || '').replace(/index\.html$/, ''); %>
         <% var firstInCategory = categories.find((c) => c.path === path) %>
         <li key="<%-'p-' + j + '-' + p.path %>">
-          <%- p.menu_prefix %><a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %>"><%- add_taglines === true ? p.title : p.menu || p.title %></a>
-          <% if (add_taglines === true && p.tagline) { %>
+          <%- p.menu_prefix %><a href="/<%- path %>" class="sidebar-link<%- page.title === p.title ? ' current' : '' %>"><%- locals.add_taglines ? p.title : p.menu || p.title %></a>
+          <% if (locals.add_taglines && p.tagline) { %>
             <%- ' — ' + p.tagline %>
           <%}%>
         </li>

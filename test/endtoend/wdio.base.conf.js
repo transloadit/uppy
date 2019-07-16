@@ -1,5 +1,6 @@
 const glob = require('glob').sync
 const path = require('path')
+const { CompanionService, StaticServerService, TusService } = require('./utils')
 
 const suites = {}
 glob('test/endtoend/*/test.js').forEach((file) => {
@@ -22,8 +23,6 @@ exports.config = {
 
   // Patterns to exclude.
   exclude: [
-    'test/endtoend/url-plugin/*',
-    'test/endtoend/transloadit/*'
   ],
 
   // Suites allows you to do `wdio config.js --suite $name` to run a subset of tests.
@@ -86,18 +85,22 @@ exports.config = {
   // Services take over a specific job you don't want to take care of. They enhance
   // your test setup with almost no effort. Unlike plugins, they don't add new
   // commands. Instead, they hook themselves up into the test process.
-  services: ['static-server'],
-
-  staticServerFolders: [
-    { mount: '/i18n-drag-drop', path: './test/endtoend/i18n-drag-drop/dist' },
-    { mount: '/tus-drag-drop', path: './test/endtoend/tus-drag-drop/dist' },
-    { mount: '/xhr-limit', path: './test/endtoend/xhr-limit/dist' },
-    { mount: '/providers', path: './test/endtoend/providers/dist' },
-    { mount: '/thumbnails', path: './test/endtoend/thumbnails/dist' },
-    { mount: '/transloadit', path: './test/endtoend/transloadit/dist' },
-    { mount: '/typescript', path: './test/endtoend/typescript/dist' },
-    { mount: '/url-plugin', path: './test/endtoend/url-plugin/dist' },
-    { mount: '/create-react-app', path: './test/endtoend/create-react-app/build' }
+  services: [
+    [CompanionService],
+    [StaticServerService, {
+      folders: [
+        { mount: '/i18n-drag-drop', path: './test/endtoend/i18n-drag-drop/dist' },
+        { mount: '/tus-drag-drop', path: './test/endtoend/tus-drag-drop/dist' },
+        { mount: '/xhr-limit', path: './test/endtoend/xhr-limit/dist' },
+        { mount: '/providers', path: './test/endtoend/providers/dist' },
+        { mount: '/thumbnails', path: './test/endtoend/thumbnails/dist' },
+        { mount: '/transloadit', path: './test/endtoend/transloadit/dist' },
+        { mount: '/typescript', path: './test/endtoend/typescript/dist' },
+        { mount: '/url-plugin', path: './test/endtoend/url-plugin/dist' },
+        { mount: '/create-react-app', path: './test/endtoend/create-react-app/build' }
+      ]
+    }],
+    [TusService]
   ],
 
   // Framework you want to run your specs with.
@@ -119,8 +122,9 @@ exports.config = {
   /**
    * Gets executed before test execution begins. At this point you can access to all global
    * variables like `browser`. It is the perfect place to define custom commands.
+   *
    * @param {Array.<Object>} capabilities list of capabilities details
-   * @param {Array.<String>} specs List of spec file paths that are to be run
+   * @param {Array<string>} specs List of spec file paths that are to be run
    */
   before: function (capabilities, specs) {
     var chai = require('chai')

@@ -91,11 +91,23 @@ window.Robodog.form('form#my-form', {
 
 The progress bar will be inserted _into_ that element (thus _not_ replace it).
 
-<!--
-## Dashboard
+## Separating Uploads from Form Submission
 
-**TODO have an option to replace the inputs with a Dashboard modal button?**
--->
+By default, `Robodog.form` starts uploads when the user submits the form. There can be a use case for _not_ doing this, and instead uploading files in response to some user action, _before_ the form is submitted. For example, when using a Dashboard modal, the user can upload their files first and then return to the form to submit it. When they submit the form, it should not start uploading again.
+
+The `triggerUploadOnSubmit: false` option is available for this purpose. We recommend using it together with the `modal: true` and `closeAfterFinish: true` options:
+
+```js
+// Replace file input in #my-form with a button that opens the modal;
+// after the user clicks the "Upload" button inside the modal and all
+// files have been successfully uploaded, the modal closes and the user
+// can submit the form.
+window.Robodog.form('form#my-form', {
+  modal: true,
+  closeAfterFinish: true,
+  triggerUploadOnSubmit: false
+})
+```
 
 ## Migrating From the jQuery SDK
 

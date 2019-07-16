@@ -94,10 +94,13 @@ If you'd rather not store the Uppy state under the `state.uppy` key at all, use 
 const uppy = Uppy({
   store: ReduxStore({
     store: store,
+    id: 'avatarUpload',
     selector: state => state.pages.profile.uppy.avatarUpload
   })
 })
 ```
+
+Note that when specifying a custom selector, you **must** also specify a custom store ID. The store `id` tells the reducer in which property it should put Uppy's state. The selector must then take the state from that property. In the example, we set the ID to `avatarUpload` and take the state from the `[reducer mount path].avatarUpload`.
 
 If your app uses [`reselect`](https://npmjs.com/package/reselect), its selectors work very well with this!
 

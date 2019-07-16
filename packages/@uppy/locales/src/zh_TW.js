@@ -8,6 +8,7 @@ zh_TW.strings = {
   authenticateWith: '連接到%{pluginName}',
   authenticateWithTitle: '請使用%{pluginName}進行身份驗證以選擇文件',
   back: '返回',
+  addMore: '添加更多',
   browse: '瀏覽',
   cancel: '取消',
   cancelUpload: '取消上傳',
@@ -129,7 +130,12 @@ zh_TW.strings = {
     '0': '您至少要選擇%{smart_count}個文件',
     '1': '您至少要選擇%{smart_count}個文件',
     '2': '您至少要選擇%{smart_count}個文件'
-  }
+  },
+  selectAllFilesFromFolderNamed: '从文件夹中选择所有文件 %{name}',
+  unselectAllFilesFromFolderNamed: '取消选择文件夹中的所有文件 %{name}',
+  selectFileNamed: '选择文件 %{name}',
+  unselectFileNamed: '取消选择文件 %{name}',
+  openFolderNamed: '打开文件夹 %{name}'
 }
 
 zh_TW.pluralize = function (n) {

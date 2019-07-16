@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const prettyBytes = require('prettier-bytes')
+const prettyBytes = require('@uppy/utils/lib/prettyBytes')
 const Core = require('./index')
 const Plugin = require('./Plugin')
 const AcquirerPlugin1 = require('../../../../test/mocks/acquirerPlugin1')
@@ -987,7 +987,7 @@ describe('src/Core', () => {
         bytesTotal: 17175
       })
       expect(core.getFile(fileId).progress).toEqual({
-        percentage: 71,
+        percentage: 72,
         bytesUploaded: 12345,
         bytesTotal: 17175,
         uploadComplete: false,
@@ -1055,8 +1055,10 @@ describe('src/Core', () => {
       expect(core.getFiles()[0].progress).toMatchObject({
         bytesUploaded: 1234,
         bytesTotal: 3456,
-        percentage: 35
+        percentage: 36
       })
+
+      expect(core.getState().totalProgress).toBe(36)
 
       finishUpload()
       // wait for success event
@@ -1070,6 +1072,47 @@ describe('src/Core', () => {
       })
 
       await uploadPromise
+
+      core.close()
+    })
+
+    it('should estimate progress for unsized files', () => {
+      const core = new Core()
+
+      core.once('file-added', (file) => {
+        core.emit('upload-started', file)
+        core.emit('upload-progress', file, {
+          bytesTotal: 3456,
+          bytesUploaded: 1234
+        })
+      })
+      core.addFile({
+        source: 'instagram',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: {}
+      })
+
+      core.once('file-added', (file) => {
+        core.emit('upload-started', file)
+        core.emit('upload-progress', file, {
+          bytesTotal: null,
+          bytesUploaded: null
+        })
+      })
+      core.addFile({
+        source: 'instagram',
+        name: 'bar.jpg',
+        type: 'image/jpeg',
+        data: {}
+      })
+
+      core._calculateTotalProgress()
+
+      // foo.jpg at 35%, bar.jpg at 0%
+      expect(core.getState().totalProgress).toBe(18)
+
+      core.close()
     })
 
     it('should calculate the total progress of all file uploads', () => {
@@ -1215,6 +1258,19 @@ describe('src/Core', () => {
       } catch (err) {
         expect(err).toMatchObject(new Error('You can only upload: image/gif, image/png'))
         expect(core.getState().info.message).toEqual('You can only upload: image/gif, image/png')
+      }
+    })
+
+    it('should throw if allowedFileTypes is not an array', () => {
+      try {
+        const core = Core({
+          restrictions: {
+            allowedFileTypes: 'image/gif'
+          }
+        })
+        core.log('hi')
+      } catch (err) {
+        expect(err).toMatchObject(new Error(`'restrictions.allowedFileTypes' must be an array`))
       }
     })
 
@@ -1502,6 +1558,105 @@ describe('src/Core', () => {
 
       expect(core.opts.restrictions.maxNumberOfFiles).toBe(3)
       expect(core.opts.restrictions.minNumberOfFiles).toBe(null)
+    })
+  })
+
+  describe('log', () => {
+    it('should log via provided logger function', () => {
+      const myTestLogger = {
+        debug: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn()
+      }
+
+      const core = new Core({
+        logger: myTestLogger
+      })
+
+      core.log('test test')
+      core.log('test test', 'error')
+      core.log('test test', 'error')
+      core.log('test test', 'warning')
+
+      // logger.debug should have been called 1 time above,
+      // but we call log in Core’s constructor to output VERSION, hence +1 here
+      expect(core.opts.logger.debug.mock.calls.length).toBe(2)
+      expect(core.opts.logger.error.mock.calls.length).toBe(2)
+      expect(core.opts.logger.warn.mock.calls.length).toBe(1)
+    })
+
+    it('should log via provided logger function, even if debug: true', () => {
+      const myTestLogger = {
+        debug: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn()
+      }
+
+      const core = new Core({
+        logger: myTestLogger,
+        debug: true
+      })
+
+      core.log('test test')
+      core.log('test test', 'error')
+      core.log('test test', 'error')
+      core.log('test test', 'warning')
+
+      // logger.debug should have been called 1 time above,
+      // but we call log in Core’s constructor to output VERSION, hence +1 here
+      expect(core.opts.logger.debug.mock.calls.length).toBe(2)
+      expect(core.opts.logger.error.mock.calls.length).toBe(2)
+      // logger.warn should have been called 1 time above,
+      // but we warn in Core when using both logger and debug: true, hence +1 here
+      expect(core.opts.logger.warn.mock.calls.length).toBe(2)
+    })
+
+    it('should log to console when logger: Uppy.debugLogger or debug: true is set', () => {
+      console.debug = jest.fn()
+      console.error = jest.fn()
+
+      const core = new Core({
+        logger: Core.debugLogger
+      })
+
+      core.log('test test')
+      core.log('beep boop')
+      core.log('beep beep', 'error')
+
+      // console.debug debug should have been called 2 times above,
+      // ibut we call log n Core’ constructor to output VERSION, hence +1 here
+      expect(console.debug.mock.calls.length).toBe(3)
+      expect(console.error.mock.calls.length).toBe(1)
+
+      console.debug.mockClear()
+      console.error.mockClear()
+
+      const core2 = new Core({
+        debug: true
+      })
+
+      core2.log('test test')
+      core2.log('beep boop')
+      core2.log('beep beep', 'error')
+
+      // console.debug debug should have been called 2 times here,
+      // but we call log in Core constructor to output VERSION, hence +1 here
+      expect(console.debug.mock.calls.length).toBe(3)
+      expect(console.error.mock.calls.length).toBe(1)
+    })
+
+    it('should not log to console when logger is not set', () => {
+      console.debug = jest.fn()
+      console.error = jest.fn()
+
+      const core = new Core()
+
+      core.log('test test')
+      core.log('beep boop')
+      core.log('beep beep', 'error')
+
+      expect(console.debug.mock.calls.length).toBe(0)
+      expect(console.error.mock.calls.length).toBe(0)
     })
   })
 })

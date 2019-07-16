@@ -28,7 +28,7 @@ module.exports = class RequestClient {
     return {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      'Uppy-Versions': '@uppy/companion-client=1.0.3'
+      'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`
     }
   }
 
@@ -77,7 +77,13 @@ module.exports = class RequestClient {
     }
 
     if (res.status < 200 || res.status > 300) {
-      throw new Error(`Failed request to ${res.url}. ${res.statusText}`)
+      let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`
+      return res.json()
+        .then((errData) => {
+          errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg
+          errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg
+          throw new Error(errMsg)
+        }).catch(() => { throw new Error(errMsg) })
     }
     return res.json()
   }

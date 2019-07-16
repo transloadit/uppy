@@ -36,7 +36,7 @@ function addDashboardPlugin (uppy, opts, overrideOpts) {
   })
 
   const inline = overrideOpts.inline == null ? dashboardOpts.inline : overrideOpts.inline
-  if (inline === false) {
+  if (!inline) {
     modalDashboardOptionNames.forEach((key) => {
       if (opts.hasOwnProperty(key)) {
         dashboardOpts[key] = opts[key]
