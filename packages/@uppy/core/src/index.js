@@ -46,7 +46,7 @@ class Uppy {
         connectedToInternet: 'Connected to the Internet',
         // Strings for remote providers
         noFilesFound: 'You have no files or folders here',
-        selectXFiles: {
+        selectX: {
           0: 'Select %{smart_count}',
           1: 'Select %{smart_count}',
           2: 'Select %{smart_count}'

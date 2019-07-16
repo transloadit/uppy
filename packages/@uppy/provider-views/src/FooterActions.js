@@ -3,7 +3,7 @@ const { h } = require('preact')
 module.exports = (props) => {
   return <div class="uppy-ProviderBrowser-footer">
     <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary" onclick={props.done}>
-      {props.i18n('selectXFiles', {
+      {props.i18n('selectX', {
         smart_count: props.selected
       })}
     </button>
