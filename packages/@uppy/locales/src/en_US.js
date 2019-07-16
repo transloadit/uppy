@@ -78,10 +78,10 @@ en_US.strings = {
   retry: 'Retry',
   retryUpload: 'Retry upload',
   saveChanges: 'Save changes',
-  selectXFiles: {
-    '0': 'Select %{smart_count} file',
-    '1': 'Select %{smart_count} files',
-    '2': 'Select %{smart_count} files'
+  selectX: {
+    '0': 'Select %{smart_count}',
+    '1': 'Select %{smart_count}',
+    '2': 'Select %{smart_count}'
   },
   smile: 'Smile!',
   startRecording: 'Begin video recording',

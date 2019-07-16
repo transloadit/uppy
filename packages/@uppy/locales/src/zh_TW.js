@@ -78,10 +78,10 @@ zh_TW.strings = {
   retry: '重試',
   retryUpload: '重試上傳',
   saveChanges: '保存變更',
-  selectXFiles: {
-    '0': '已選擇%{smart_count}個文件',
-    '1': '已選擇%{smart_count}個文件',
-    '2': '已選擇%{smart_count}個文件'
+  selectX: {
+    '0': '选择%{smart_count}',
+    '1': '选择%{smart_count}',
+    '2': '选择%{smart_count}'
   },
   smile: '笑！',
   startRecording: '開始影片錄制',

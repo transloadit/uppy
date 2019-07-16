@@ -80,10 +80,10 @@ ru_RU.strings = {
   retry: 'Повторить попытку',
   retryUpload: 'Повторить попытку загрузки',
   saveChanges: 'Сохранить изменения',
-  selectXFiles: {
-    '0': 'Выбрать %{smart_count} файл',
-    '1': 'Выбрать %{smart_count} файла',
-    '2': 'Выбрать %{smart_count} файлов'
+  selectX: {
+    '0': 'Выбрать %{smart_count}',
+    '1': 'Выбрать %{smart_count}',
+    '2': 'Выбрать %{smart_count}'
   },
   smile: 'Улыбнитесь!',
   startRecording: 'Начать запись видео',

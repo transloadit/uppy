@@ -78,10 +78,10 @@ fa_IR.strings = {
   retry: 'تلاش دوباره',
   retryUpload: 'تلاش دوباره بارگذاری',
   saveChanges: 'ذخیره‌ی تغییرات',
-  selectXFiles: {
-    '0': 'انتخاب %{smart_count} فایل',
-    '1': 'انتخاب %{smart_count} فایل',
-    '2': 'انتخاب %{smart_count} فایل'
+  selectX: {
+    '0': 'را انتخاب کنید %{smart_count}',
+    '1': 'را انتخاب کنید %{smart_count}',
+    '2': 'را انتخاب کنید %{smart_count}'
   },
   smile: 'Smile!',
   startRecording: 'آغاز تصویربرداری',

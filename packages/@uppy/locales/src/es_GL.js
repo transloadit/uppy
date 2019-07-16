@@ -78,10 +78,10 @@ es_GL.strings = {
   retry: 'Intentar novamente',
   retryUpload: 'Intentar subida novamente',
   saveChanges: 'Gardar cambios',
-  selectXFiles: {
-    '0': 'Seleccionar %{smart_count} arquivo',
-    '1': 'Seleccionar %{smart_count} arquivos',
-    '2': 'Seleccionar %{smart_count} arquivos'
+  selectX: {
+    '0': 'Seleccionar %{smart_count}',
+    '1': 'Seleccionar %{smart_count}',
+    '2': 'Seleccionar %{smart_count}'
   },
   smile: 'Sorrí!',
   startRecording: 'Comezar a grabación de vídeo',
