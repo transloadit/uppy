@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const prettyBytes = require('prettier-bytes')
+const prettyBytes = require('@uppy/utils/lib/prettyBytes')
 const Core = require('./index')
 const Plugin = require('./Plugin')
 const AcquirerPlugin1 = require('../../../../test/mocks/acquirerPlugin1')
