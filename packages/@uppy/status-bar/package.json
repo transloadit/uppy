@@ -29,8 +29,7 @@
     "@uppy/utils": "1.1.0",
     "classnames": "^2.2.6",
     "lodash.throttle": "^4.1.1",
-    "preact": "8.2.9",
-    "prettier-bytes": "^1.0.4"
+    "preact": "8.2.9"
   },
   "devDependencies": {
     "@uppy/core": "1.1.0"

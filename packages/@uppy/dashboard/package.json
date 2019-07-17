@@ -35,7 +35,6 @@
     "memoize-one": "^5.0.4",
     "preact": "8.2.9",
     "preact-css-transition-group": "^1.3.0",
-    "prettier-bytes": "^1.0.4",
     "resize-observer-polyfill": "^1.5.0"
   },
   "devDependencies": {
