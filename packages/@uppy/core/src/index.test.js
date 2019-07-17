@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const prettyBytes = require('prettier-bytes')
+const prettyBytes = require('@uppy/utils/lib/prettyBytes')
 const Core = require('./index')
 const Plugin = require('./Plugin')
 const AcquirerPlugin1 = require('../../../../test/mocks/acquirerPlugin1')
@@ -1258,6 +1258,19 @@ describe('src/Core', () => {
       } catch (err) {
         expect(err).toMatchObject(new Error('You can only upload: image/gif, image/png'))
         expect(core.getState().info.message).toEqual('You can only upload: image/gif, image/png')
+      }
+    })
+
+    it('should throw if allowedFileTypes is not an array', () => {
+      try {
+        const core = Core({
+          restrictions: {
+            allowedFileTypes: 'image/gif'
+          }
+        })
+        core.log('hi')
+      } catch (err) {
+        expect(err).toMatchObject(new Error(`'restrictions.allowedFileTypes' must be an array`))
       }
     })
 

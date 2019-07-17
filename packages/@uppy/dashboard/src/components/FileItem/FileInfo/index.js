@@ -1,5 +1,5 @@
 const { h } = require('preact')
-const prettyBytes = require('prettier-bytes')
+const prettyBytes = require('@uppy/utils/lib/prettyBytes')
 const truncateString = require('../../../utils/truncateString')
 
 const renderAcquirerIcon = (acquirer, props) =>

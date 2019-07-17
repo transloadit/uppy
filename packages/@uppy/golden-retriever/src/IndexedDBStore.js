@@ -1,4 +1,4 @@
-const prettyBytes = require('prettier-bytes')
+const prettyBytes = require('@uppy/utils/lib/prettyBytes')
 const indexedDB = typeof window !== 'undefined' &&
   (window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB)
 

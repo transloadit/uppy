@@ -2,7 +2,7 @@ const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
 const throttle = require('lodash.throttle')
-const prettyBytes = require('prettier-bytes')
+const prettyBytes = require('@uppy/utils/lib/prettyBytes')
 const match = require('mime-match')
 const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
@@ -112,6 +112,12 @@ class Uppy {
     }
 
     this.log(`Using Core v${this.constructor.VERSION}`)
+
+    if (this.opts.restrictions.allowedFileTypes &&
+        this.opts.restrictions.allowedFileTypes !== null &&
+        !Array.isArray(this.opts.restrictions.allowedFileTypes)) {
+      throw new Error(`'restrictions.allowedFileTypes' must be an array`)
+    }
 
     // i18n
     this.translator = new Translator([ this.defaultLocale, this.opts.locale ])
@@ -361,10 +367,10 @@ class Uppy {
   }
 
   /**
-  * Check if minNumberOfFiles restriction is reached before uploading.
-  *
-  * @private
-  */
+   * Check if minNumberOfFiles restriction is reached before uploading.
+   *
+   * @private
+   */
   _checkMinNumberOfFiles (files) {
     const { minNumberOfFiles } = this.opts.restrictions
     if (Object.keys(files).length < minNumberOfFiles) {
@@ -373,12 +379,12 @@ class Uppy {
   }
 
   /**
-  * Check if file passes a set of restrictions set in options: maxFileSize,
-  * maxNumberOfFiles and allowedFileTypes.
-  *
-  * @param {Object} file object to check
-  * @private
-  */
+   * Check if file passes a set of restrictions set in options: maxFileSize,
+   * maxNumberOfFiles and allowedFileTypes.
+   *
+   * @param {Object} file object to check
+   * @private
+   */
   _checkRestrictions (file) {
     const { maxFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
 
@@ -390,8 +396,6 @@ class Uppy {
 
     if (allowedFileTypes) {
       const isCorrectFileType = allowedFileTypes.some((type) => {
-        // if (!file.type) return false
-
         // is this is a mime-type
         if (type.indexOf('/') > -1) {
           if (!file.type) return false
@@ -420,12 +424,12 @@ class Uppy {
   }
 
   /**
-  * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
-  * try to guess file type in a clever way, check file against restrictions,
-  * and start an upload if `autoProceed === true`.
-  *
-  * @param {Object} file object to add
-  */
+   * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
+   * try to guess file type in a clever way, check file against restrictions,
+   * and start an upload if `autoProceed === true`.
+   *
+   * @param {Object} file object to add
+   */
   addFile (file) {
     const { files, allowNewUpload } = this.getState()
 
@@ -440,6 +444,9 @@ class Uppy {
       onError(new Error('Cannot add new files: already uploading.'))
     }
 
+    const fileType = getFileType(file)
+    file.type = fileType
+
     const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(file, files)
 
     if (onBeforeFileAddedResult === false) {
@@ -448,14 +455,9 @@ class Uppy {
     }
 
     if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
-      // warning after the change in 0.24
-      if (onBeforeFileAddedResult.then) {
-        throw new TypeError('onBeforeFileAdded() returned a Promise, but this is no longer supported. It must be synchronous.')
-      }
       file = onBeforeFileAddedResult
     }
 
-    const fileType = getFileType(file)
     let fileName
     if (file.name) {
       fileName = file.name
@@ -516,7 +518,9 @@ class Uppy {
       this.scheduledAutoProceed = setTimeout(() => {
         this.scheduledAutoProceed = null
         this.upload().catch((err) => {
-          console.error(err.stack || err.message || err)
+          if (!err.isRestriction) {
+            this.uppy.log(err.stack || err.message || err)
+          }
         })
       }, 4)
     }
@@ -1270,6 +1274,14 @@ class Uppy {
    * @returns {Promise}
    */
   upload () {
+    const onError = (err) => {
+      const message = typeof err === 'object' ? err.message : err
+      const details = (typeof err === 'object' && err.details) ? err.details : ''
+      this.log(`${message} ${details}`)
+      this.info({ message: message, details: details }, 'error', 5000)
+      throw (typeof err === 'object' ? err : new Error(err))
+    }
+
     if (!this.plugins.uploader) {
       this.log('No uploader type plugins are used', 'warning')
     }
@@ -1282,11 +1294,6 @@ class Uppy {
     }
 
     if (onBeforeUploadResult && typeof onBeforeUploadResult === 'object') {
-      // warning after the change in 0.24
-      if (onBeforeUploadResult.then) {
-        throw new TypeError('onBeforeUpload() returned a Promise, but this is no longer supported. It must be synchronous.')
-      }
-
       files = onBeforeUploadResult
     }
 
@@ -1310,11 +1317,10 @@ class Uppy {
         return this._runUpload(uploadID)
       })
       .catch((err) => {
-        const message = typeof err === 'object' ? err.message : err
-        const details = typeof err === 'object' ? err.details : null
-        this.log(`${message} ${details}`)
-        this.info({ message: message, details: details }, 'error', 4000)
-        return Promise.reject(typeof err === 'object' ? err : new Error(err))
+        if (err.isRestriction) {
+          this.emit('restriction-failed', null, err)
+        }
+        onError(err)
       })
   }
 }

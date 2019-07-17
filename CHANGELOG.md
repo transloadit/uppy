@@ -96,6 +96,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
 - [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now
 - [ ] form: make the `multipleResults` option `true` by default
+- [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
 
 ## 1.4
 
