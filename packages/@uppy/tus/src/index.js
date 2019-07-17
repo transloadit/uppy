@@ -184,14 +184,16 @@ module.exports = class Tus extends Plugin {
         if (!file.isPaused) {
           upload.start()
         }
-        return () => {
-          // Aborts the upload and cleans up event tracker and other separately-kept state.
-          this.resetUploaderReferences(file.id)
-        }
+        // Don't do anything here, the caller will take care of cancelling the upload itself
+        // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
+        // called when this request is still in the queue, and has not been started yet, too. At
+        // that point this cancellation function is not going to be called.
+        return () => {}
       })
 
       this.onFileRemove(file.id, (targetFileID) => {
         queuedRequest.abort()
+        this.resetUploaderReferences(file.id)
         resolve(`upload ${targetFileID} was removed`)
       })
 
@@ -209,6 +211,7 @@ module.exports = class Tus extends Plugin {
 
       this.onCancelAll(file.id, () => {
         queuedRequest.abort()
+        this.resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was canceled`)
       })
 
