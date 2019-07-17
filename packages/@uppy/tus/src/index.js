@@ -180,7 +180,7 @@ module.exports = class Tus extends Plugin {
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      const queuedRequest = this.requests.add(() => {
+      const queuedRequest = this.requests.run(() => {
         if (!file.isPaused) {
           upload.start()
         }
@@ -221,6 +221,9 @@ module.exports = class Tus extends Plugin {
         }
         upload.start()
       })
+    }).catch((err) => {
+      this.emit('upload-error', file, err)
+      throw err
     })
   }
 
