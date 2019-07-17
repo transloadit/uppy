@@ -10,10 +10,7 @@ After you have successfully forked the repo, clone and install the project:
 git clone git@github.com:YOUR_USERNAME/uppy.git
 cd uppy
 npm install
-npm run bootstrap
 ```
-
-We use lerna to manage the many plugin packages Uppy has. You should always do `npm run bootstrap` after an `npm install` to make sure lerna has installed the dependencies of each package and that the `package-lock.json` in the repository root is up to date.
 
 Our website’s examples section is also our playground, please read the [Local Previews](#Local-previews) section to get up and running.
 
@@ -125,10 +122,8 @@ Even though bundled in this repo, the website is regarded as a separate project.
 ### Local previews
 
 1. `npm install`
-2. `npm run bootstrap`
-3. `cd website && npm install && cd ..`
-4. `npm start`
-5. Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
+2. `npm start`
+3. Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
 
 Then, to work on, for instance, the XHRUpload example, you would edit the following files:
 

@@ -8,7 +8,6 @@ To run this example, make sure you've correctly installed the root repository:
 
 ```bash
 npm install
-npm run bootstrap
 ```
 
 This example uses the AWS PHP SDK.
@@ -22,13 +21,7 @@ composer update
 Configure AWS S3 credentials using [environment variables](https://docs.aws.amazon.com/aws-sdk-php/v3/guide/guide/credentials.html#environment-credentials) or a [credentials file in `~/.aws/credentials`](https://docs.aws.amazon.com/aws-sdk-php/v3/guide/guide/credentials.html#credential-profiles).
 Configure a bucket name and region in the `s3-sign.php` file.
 
-Then install npm dependencies using
-
-```bash
-npm install
-```
-
-and start the demo server using
+Then start the demo server using:
 
 ```bash
 npm start

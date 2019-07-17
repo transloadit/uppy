@@ -8,13 +8,11 @@ To run this example, make sure you've correctly installed the root repository:
 
 ```bash
 npm install
-npm run bootstrap
 npm run build
 ```
 
 Then move into this directory (`examples/php-xhr`), and:
 
 ```bash
-npm install
 npm start
 ```
