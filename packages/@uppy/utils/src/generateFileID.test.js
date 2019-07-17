@@ -12,7 +12,18 @@ describe('generateFileID', () => {
     }
 
     expect(generateFileID(fileObj)).toEqual(
-      'uppy-foo0fijpg-image/jpeg-2271173-1498510508000'
+      'uppy-foo0fi////jpg-20-53-14-1e-image/jpeg-2271173-1498510508000'
+    )
+
+    expect(generateFileID({
+      name: 'джумла-джpумлатест.jpg',
+      type: 'image/jpeg',
+      data: {
+        lastModified: 1498510508000,
+        size: 2271173
+      }
+    })).toEqual(
+      'uppy-/////////p/////////jpg-11k-11m-123-11s-11r-11g-1d-11k-11m-123-11s-11r-11g-122-11l-121-122-1e-image/jpeg-2271173-1498510508000'
     )
   })
 })
