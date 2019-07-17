@@ -12,6 +12,8 @@ module.exports = {
   'jpg': 'image/jpeg',
   'png': 'image/png',
   'gif': 'image/gif',
+  'heic': 'image/heic',
+  'heif': 'image/heif',
   'yaml': 'text/yaml',
   'yml': 'text/yaml',
   'csv': 'text/csv',
