@@ -5,7 +5,7 @@ const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
-const limitPromises = require('@uppy/utils/lib/limitPromises')
+const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 
 // Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
 // excepted we removed 'fingerprint' key to avoid adding more dependencies
@@ -51,11 +51,7 @@ module.exports = class Tus extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // Simultaneous upload limiting is shared across all uploads with this plugin.
-    if (typeof this.opts.limit === 'number' && this.opts.limit !== 0) {
-      this.limitUploads = limitPromises(this.opts.limit)
-    } else {
-      this.limitUploads = (fn) => fn
-    }
+    this.requests = new RateLimitedQueue(this.opts.limit)
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
@@ -111,6 +107,8 @@ module.exports = class Tus extends Plugin {
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {
+      this.uppy.emit('upload-started', file)
+
       const optsTus = Object.assign(
         {},
         tusDefaultOptions,
@@ -125,6 +123,7 @@ module.exports = class Tus extends Plugin {
         err.message = `Failed because: ${err.message}`
 
         this.resetUploaderReferences(file.id)
+        queuedRequest.done()
         reject(err)
       }
 
@@ -149,6 +148,7 @@ module.exports = class Tus extends Plugin {
         }
 
         this.resetUploaderReferences(file.id)
+        queuedRequest.done()
         resolve(upload)
       }
 
@@ -180,8 +180,18 @@ module.exports = class Tus extends Plugin {
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
+      const queuedRequest = this.requests.add(() => {
+        if (!file.isPaused) {
+          upload.start()
+        }
+        return () => {
+          // Aborts the upload and cleans up event tracker and other separately-kept state.
+          this.resetUploaderReferences(file.id)
+        }
+      })
+
       this.onFileRemove(file.id, (targetFileID) => {
-        this.resetUploaderReferences(file.id)
+        queuedRequest.abort()
         resolve(`upload ${targetFileID} was removed`)
       })
 
@@ -198,7 +208,7 @@ module.exports = class Tus extends Plugin {
       })
 
       this.onCancelAll(file.id, () => {
-        this.resetUploaderReferences(file.id)
+        queuedRequest.abort()
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -208,10 +218,6 @@ module.exports = class Tus extends Plugin {
         }
         upload.start()
       })
-
-      if (!file.isPaused) {
-        upload.start()
-      }
     })
   }
 
@@ -226,6 +232,8 @@ module.exports = class Tus extends Plugin {
     )
 
     return new Promise((resolve, reject) => {
+      this.uppy.emit('upload-started', file)
+
       this.uppy.log(file.remote.url)
       if (file.serverToken) {
         return this.connectToServerSocket(file)
@@ -233,23 +241,19 @@ module.exports = class Tus extends Plugin {
           .catch(reject)
       }
 
-      this.uppy.emit('upload-started', file)
       const Client = file.remote.providerOptions.provider ? Provider : RequestClient
       const client = new Client(this.uppy, file.remote.providerOptions)
-      client.post(
-        file.remote.url,
-        Object.assign({}, file.remote.body, {
-          endpoint: opts.endpoint,
-          uploadUrl: opts.uploadUrl,
-          protocol: 'tus',
-          size: file.data.size,
-          metadata: file.meta
-        })
-      ).then((res) => {
+
+      client.post(file.remote.url, {
+        ...file.remote.body,
+        endpoint: opts.endpoint,
+        uploadUrl: opts.uploadUrl,
+        protocol: 'tus',
+        size: file.data.size,
+        metadata: file.meta
+      }).then((res) => {
         this.uppy.setFileState(file.id, { serverToken: res.token })
         file = this.uppy.getFile(file.id)
-        return file
-      }).then((file) => {
         return this.connectToServerSocket(file)
       }).then(() => {
         resolve()
@@ -403,26 +407,17 @@ module.exports = class Tus extends Plugin {
   }
 
   uploadFiles (files) {
-    const actions = files.map((file, i) => {
+    const promises = files.map((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = files.length
 
       if (file.error) {
         return () => Promise.reject(new Error(file.error))
       } else if (file.isRemote) {
-        // We emit upload-started here, so that it's also emitted for files
-        // that have to wait due to the `limit` option.
-        this.uppy.emit('upload-started', file)
-        return this.uploadRemote.bind(this, file, current, total)
+        return this.uploadRemote(file, current, total)
       } else {
-        this.uppy.emit('upload-started', file)
-        return this.upload.bind(this, file, current, total)
+        return this.upload(file, current, total)
       }
-    })
-
-    const promises = actions.map((action) => {
-      const limitedAction = this.limitUploads(action)
-      return limitedAction()
     })
 
     return settle(promises)
