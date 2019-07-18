@@ -80,10 +80,10 @@ de_DE.strings = {
   retry: 'Erneut versuchen',
   retryUpload: 'Upload erneut versuchen',
   saveChanges: 'Änderungen speichern',
-  selectXFiles: {
-    '0': '%{smart_count} Datei auswählen',
-    '1': '%{smart_count} Dateien auswählen',
-    '2': '%{smart_count} Dateien auswählen'
+  selectX: {
+    '0': 'Wählen Sie %{smart_count}',
+    '1': 'Wählen Sie %{smart_count}',
+    '2': 'Wählen Sie %{smart_count}'
   },
   smile: 'Bitte lächeln!',
   startRecording: 'Videoaufnahme starten',

@@ -79,10 +79,10 @@ sr_RS_Latin.strings = {
   retry: 'Pokušaj ponovo',
   retryUpload: 'Pokušaj ponovo da otpremiš',
   saveChanges: 'Sačuvaj izmene',
-  selectXFiles: {
+  selectX: {
     '0': 'Izaberi datoteku',
-    '1': 'Izaberi %{smart_count} datoteke',
-    '2': 'Izaberi %{smart_count} datoteka'
+    '1': 'Izaberi %{smart_count}',
+    '2': 'Izaberi %{smart_count}'
   },
   smile: 'Osmeh!',
   startRecording: 'Započni snimanje video zapisa',

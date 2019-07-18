@@ -54,10 +54,10 @@ class Uppy {
         connectedToInternet: 'Connected to the Internet',
         // Strings for remote providers
         noFilesFound: 'You have no files or folders here',
-        selectXFiles: {
-          0: 'Select %{smart_count} file',
-          1: 'Select %{smart_count} files',
-          2: 'Select %{smart_count} files'
+        selectX: {
+          0: 'Select %{smart_count}',
+          1: 'Select %{smart_count}',
+          2: 'Select %{smart_count}'
         },
         selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
         unselectAllFilesFromFolderNamed: 'Unselect all files from folder %{name}',
