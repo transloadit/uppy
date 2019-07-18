@@ -249,7 +249,7 @@ class Uppy {
   }
 
   setOptions (newOpts) {
-    this.opts = Object.assign({}, this.opts, newOpts)
+    this.opts = { ...this.opts, ...newOpts }
     this.setState() // so that UI re-renders with new options
   }
 
