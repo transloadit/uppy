@@ -122,8 +122,8 @@ Even though bundled in this repo, the website is regarded as a separate project.
 ### Local previews
 
 1. `npm install`
-2. `npm start`
-3. Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
+1. `npm start`
+1. Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
 
 Then, to work on, for instance, the XHRUpload example, you would edit the following files:
 
