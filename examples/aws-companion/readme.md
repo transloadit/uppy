@@ -9,6 +9,7 @@ To run this example, make sure you've correctly installed the root repository:
 
 ```bash
 npm install
+npm run build
 ```
 
 Then, set up the `COMPANION_AWS_KEY`, `COMPANION_AWS_SECRET`, `COMPANION_AWS_REGION`, and `COMPANION_AWS_BUCKET` environment variables for @uppy/companion.
