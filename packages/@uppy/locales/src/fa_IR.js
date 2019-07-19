@@ -43,16 +43,16 @@ fa_IR.strings = {
   failedToUpload: 'شکست در بارگذاری %{file}',
   fileSource: 'منبع فایل: %{name}',
   filesUploadedOfTotal: {
-    '0': '%{complete} از %{smart_count} فایل بارگذاری شد.',
-    '1': '%{complete} از %{smart_count} فایل بارگذاری شد.',
-    '2': '%{complete} از %{smart_count} فایل بارگذاری شد.'
+    0: '%{complete} از %{smart_count} فایل بارگذاری شد.',
+    1: '%{complete} از %{smart_count} فایل بارگذاری شد.',
+    2: '%{complete} از %{smart_count} فایل بارگذاری شد.'
   },
   filter: 'پالایش',
   finishEditingFile: 'اتمام ویرایش فایل',
   folderAdded: {
-    '0': '%{smart_count} فایل از %{folder} افزوده شد.',
-    '1': '%{smart_count} فایل از %{folder} افزوده شد.',
-    '2': '%{smart_count} فایل از %{folder} افزوده شد.'
+    0: '%{smart_count} فایل از %{folder} افزوده شد.',
+    1: '%{smart_count} فایل از %{folder} افزوده شد.',
+    2: '%{smart_count} فایل از %{folder} افزوده شد.'
   },
   import: 'واردکردن',
   importFrom: 'واردکردن از %{name}',
@@ -68,9 +68,9 @@ fa_IR.strings = {
   poweredBy: 'قدرت گرفته از',
   preparingUpload: 'درحال آماده سازی برای بارگذاری',
   processingXFiles: {
-    '0': 'درحال پردازش %{smart_count} فایل',
-    '1': 'درحال پردازش %{smart_count} فایل',
-    '2': 'درحال پردازش %{smart_count} فایل'
+    0: 'درحال پردازش %{smart_count} فایل',
+    1: 'درحال پردازش %{smart_count} فایل',
+    2: 'درحال پردازش %{smart_count} فایل'
   },
   removeFile: 'حذف فایل',
   resetFilter: 'بازنشانی فیلتر',
@@ -80,9 +80,9 @@ fa_IR.strings = {
   retryUpload: 'تلاش دوباره بارگذاری',
   saveChanges: 'ذخیره‌ی تغییرات',
   selectX: {
-    '0': 'را انتخاب کنید %{smart_count}',
-    '1': 'را انتخاب کنید %{smart_count}',
-    '2': 'را انتخاب کنید %{smart_count}'
+    0: 'را انتخاب کنید %{smart_count}',
+    1: 'را انتخاب کنید %{smart_count}',
+    2: 'را انتخاب کنید %{smart_count}'
   },
   smile: 'Smile!',
   startRecording: 'آغاز تصویربرداری',
@@ -94,42 +94,42 @@ fa_IR.strings = {
   uploadFailed: 'بارگذاری شکست خورد',
   uploadPaused: 'بارگذاری متوقف شد',
   uploadXFiles: {
-    '0': 'بارگذاری %{smart_count} فایل',
-    '1': 'بارگذاری %{smart_count} فایل',
-    '2': 'بارگذاری %{smart_count} فایل'
+    0: 'بارگذاری %{smart_count} فایل',
+    1: 'بارگذاری %{smart_count} فایل',
+    2: 'بارگذاری %{smart_count} فایل'
   },
   uploadXNewFiles: {
-    '0': 'بارگذاری +%{smart_count} فایل',
-    '1': 'بارگذاری +%{smart_count} فایل',
-    '2': 'بارگذاری +%{smart_count} فایل'
+    0: 'بارگذاری +%{smart_count} فایل',
+    1: 'بارگذاری +%{smart_count} فایل',
+    2: 'بارگذاری +%{smart_count} فایل'
   },
   uploading: 'بارگذاری',
   uploadingXFiles: {
-    '0': 'بارگذاری %{smart_count} فایل',
-    '1': 'بارگذاری %{smart_count} فایل',
-    '2': 'بارگذاری %{smart_count} fiفایلles'
+    0: 'بارگذاری %{smart_count} فایل',
+    1: 'بارگذاری %{smart_count} فایل',
+    2: 'بارگذاری %{smart_count} fiفایلles'
   },
   xFilesSelected: {
-    '0': '%{smart_count} فایل انتخاب شده',
-    '1': '%{smart_count} فایل انتخاب شده',
-    '2': '%{smart_count} فایل انتخاب شده'
+    0: '%{smart_count} فایل انتخاب شده',
+    1: '%{smart_count} فایل انتخاب شده',
+    2: '%{smart_count} فایل انتخاب شده'
   },
   xMoreFilesAdded: {
-    '0': '%{smart_count} فایل دیگر افزوده شد',
-    '1': '%{smart_count} فایل دیگر افزوده شد',
-    '2': '%{smart_count} فایل دیگر افزوده شد'
+    0: '%{smart_count} فایل دیگر افزوده شد',
+    1: '%{smart_count} فایل دیگر افزوده شد',
+    2: '%{smart_count} فایل دیگر افزوده شد'
   },
   xTimeLeft: '%{time} left',
   youCanOnlyUploadFileTypes: 'فایل‌های قابل قبول: %{types}',
   youCanOnlyUploadX: {
-    '0': 'فقط می‌توانید %{smart_count} فایل انتخاب کنید',
-    '1': 'فقط می‌توانید %{smart_count} فایل انتخاب کنید',
-    '2': 'فقط می‌توانید %{smart_count} فایل انتخاب کنید'
+    0: 'فقط می‌توانید %{smart_count} فایل انتخاب کنید',
+    1: 'فقط می‌توانید %{smart_count} فایل انتخاب کنید',
+    2: 'فقط می‌توانید %{smart_count} فایل انتخاب کنید'
   },
   youHaveToAtLeastSelectX: {
-    '0': 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید',
-    '1': 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید',
-    '2': 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید'
+    0: 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید',
+    1: 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید',
+    2: 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید'
   },
   selectAllFilesFromFolderNamed: 'همه فایل ها را از پوشه انتخاب کنید %{name}',
   unselectAllFilesFromFolderNamed: 'همه فایل ها را از پوشه حذف کنید %{name}',

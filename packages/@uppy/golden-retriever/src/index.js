@@ -4,12 +4,12 @@ const IndexedDBStore = require('./IndexedDBStore')
 const MetaDataStore = require('./MetaDataStore')
 
 /**
-* The GoldenRetriever plugin — restores selected files and resumes uploads
-* after a closed tab or a browser crash!
-*
-* Uses localStorage, IndexedDB and ServiceWorker to do its magic, read more:
-* https://uppy.io/blog/2017/07/golden-retriever/
-*/
+ * The GoldenRetriever plugin — restores selected files and resumes uploads
+ * after a closed tab or a browser crash!
+ *
+ * Uses localStorage, IndexedDB and ServiceWorker to do its magic, read more:
+ * https://uppy.io/blog/2017/07/golden-retriever/
+ */
 module.exports = class GoldenRetriever extends Plugin {
   static VERSION = require('../package.json').version
 

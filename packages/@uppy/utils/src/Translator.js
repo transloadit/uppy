@@ -11,7 +11,7 @@
  */
 module.exports = class Translator {
   /**
-   * @param {Object|Array<Object>} locales - locale or list of locales.
+   * @param {object|Array<object>} locales - locale or list of locales.
    */
   constructor (locales) {
     this.locale = {
@@ -51,7 +51,7 @@ module.exports = class Translator {
    * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
    *
    * @param {string} phrase that needs interpolation, with placeholders
-   * @param {Object} options with values that will be used to replace placeholders
+   * @param {object} options with values that will be used to replace placeholders
    * @returns {string} interpolated
    */
   interpolate (phrase, options) {
@@ -60,7 +60,7 @@ module.exports = class Translator {
     const dollarBillsYall = '$$$$'
     let interpolated = [phrase]
 
-    for (let arg in options) {
+    for (const arg in options) {
       if (arg !== '_' && options.hasOwnProperty(arg)) {
         // Ensure replacement value is escaped to prevent special $-prefixed
         // regex replace tokens. the "$$$$" is needed because each "$" needs to
@@ -100,7 +100,7 @@ module.exports = class Translator {
    * Public translate method
    *
    * @param {string} key
-   * @param {Object} options with values that will be used later to replace placeholders in string
+   * @param {object} options with values that will be used later to replace placeholders in string
    * @returns {string} translated (and interpolated)
    */
   translate (key, options) {
@@ -111,7 +111,7 @@ module.exports = class Translator {
    * Get a translation and return the translated and interpolated parts as an array.
    *
    * @param {string} key
-   * @param {Object} options with values that will be used to replace placeholders
+   * @param {object} options with values that will be used to replace placeholders
    * @returns {Array} The translated and interpolated parts, in order.
    */
   translateArray (key, options) {

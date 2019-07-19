@@ -43,16 +43,16 @@ fi_FI.strings = {
   failedToUpload: 'Ei voitu lähettää tiedostoa %{file}',
   fileSource: 'Tiedoston lähde: %{name}',
   filesUploadedOfTotal: {
-    '0': '%{complete} / %{smart_count} tiedostosta lähetetty',
-    '1': '%{complete} / %{smart_count} tiedostoa lähetetty',
-    '2': '%{complete} / %{smart_count} tiedostoa lähetetty'
+    0: '%{complete} / %{smart_count} tiedostosta lähetetty',
+    1: '%{complete} / %{smart_count} tiedostoa lähetetty',
+    2: '%{complete} / %{smart_count} tiedostoa lähetetty'
   },
   filter: 'Suodata',
   finishEditingFile: 'Lopeta tiedoston muokkaus',
   folderAdded: {
-    '0': 'Lisätty %{smart_count} tiedosto kansiosta %{folder}',
-    '1': 'Lisätty %{smart_count} tiedostoa kansiosta %{folder}',
-    '2': 'Lisätty %{smart_count} tiedostoa kansiosta %{folder}'
+    0: 'Lisätty %{smart_count} tiedosto kansiosta %{folder}',
+    1: 'Lisätty %{smart_count} tiedostoa kansiosta %{folder}',
+    2: 'Lisätty %{smart_count} tiedostoa kansiosta %{folder}'
   },
   import: 'Tuo',
   importFrom: 'Tuo kohteesta %{name}',
@@ -69,9 +69,9 @@ fi_FI.strings = {
   poweredBy: 'Powered by',
   preparingUpload: 'Valmistellaan lähetystä...',
   processingXFiles: {
-    '0': 'Käsitellään %{smart_count} tiedostoa',
-    '1': 'Käsitellään %{smart_count} tiedostoa',
-    '2': 'Käsitellään %{smart_count} tiedostoa'
+    0: 'Käsitellään %{smart_count} tiedostoa',
+    1: 'Käsitellään %{smart_count} tiedostoa',
+    2: 'Käsitellään %{smart_count} tiedostoa'
   },
   removeFile: 'Poista tiedosto',
   resetFilter: 'Resetoi suodatin',
@@ -83,9 +83,9 @@ fi_FI.strings = {
   selectAllFilesFromFolderNamed: 'Valitse kaikki tiedostot kansiosta %{name}',
   selectFileNamed: 'Valitse tiedosto %{name}',
   selectX: {
-    '0': 'Valitse %{smart_count}',
-    '1': 'Valitse %{smart_count}',
-    '2': 'Valitse %{smart_count}'
+    0: 'Valitse %{smart_count}',
+    1: 'Valitse %{smart_count}',
+    2: 'Valitse %{smart_count}'
   },
   smile: 'Hymyile!',
   startRecording: 'Aloita videon tallennus',
@@ -99,42 +99,42 @@ fi_FI.strings = {
   uploadFailed: 'Lähetys epäonnistui',
   uploadPaused: 'Lähetys pysäytetty',
   uploadXFiles: {
-    '0': 'Lähetä %{smart_count} tiedosto',
-    '1': 'Lähetä %{smart_count} tiedostoa',
-    '2': 'Lähetä %{smart_count} tiedostoa'
+    0: 'Lähetä %{smart_count} tiedosto',
+    1: 'Lähetä %{smart_count} tiedostoa',
+    2: 'Lähetä %{smart_count} tiedostoa'
   },
   uploadXNewFiles: {
-    '0': 'Lähetä +%{smart_count} tiedosto',
-    '1': 'Lähetä +%{smart_count} tiedostoa',
-    '2': 'Lähetä +%{smart_count} tiedostoa'
+    0: 'Lähetä +%{smart_count} tiedosto',
+    1: 'Lähetä +%{smart_count} tiedostoa',
+    2: 'Lähetä +%{smart_count} tiedostoa'
   },
   uploading: 'Uploading',
   uploadingXFiles: {
-    '0': 'Lähetetään %{smart_count} tiedosto',
-    '1': 'Lähetetään %{smart_count} tiedostoa',
-    '2': 'Lähetetään %{smart_count} tiedostoa'
+    0: 'Lähetetään %{smart_count} tiedosto',
+    1: 'Lähetetään %{smart_count} tiedostoa',
+    2: 'Lähetetään %{smart_count} tiedostoa'
   },
   xFilesSelected: {
-    '0': '%{smart_count} tiedosto valittu',
-    '1': '%{smart_count} tiedostoa valittu',
-    '2': '%{smart_count} tiedostoa valittu'
+    0: '%{smart_count} tiedosto valittu',
+    1: '%{smart_count} tiedostoa valittu',
+    2: '%{smart_count} tiedostoa valittu'
   },
   xMoreFilesAdded: {
-    '0': '%{smart_count} tiedosto added',
-    '1': '%{smart_count} tiedostoa added',
-    '2': '%{smart_count} tiedostoa added'
+    0: '%{smart_count} tiedosto added',
+    1: '%{smart_count} tiedostoa added',
+    2: '%{smart_count} tiedostoa added'
   },
   xTimeLeft: '%{time} jäljellä',
   youCanOnlyUploadFileTypes: 'Voit lähettää vain: %{types}',
   youCanOnlyUploadX: {
-    '0': 'Voit lähettää vain %{smart_count} tiedosto',
-    '1': 'Voit lähettää vain %{smart_count} tiedostoa',
-    '2': 'Voit lähettää vain %{smart_count} tiedostoa'
+    0: 'Voit lähettää vain %{smart_count} tiedosto',
+    1: 'Voit lähettää vain %{smart_count} tiedostoa',
+    2: 'Voit lähettää vain %{smart_count} tiedostoa'
   },
   youHaveToAtLeastSelectX: {
-    '0': 'Sinun pitää valita vähintään %{smart_count} tiedosto',
-    '1': 'Sinun pitää valita vähintään %{smart_count} tiedostoa',
-    '2': 'Sinun pitää valita vähintään %{smart_count} tiedostoa'
+    0: 'Sinun pitää valita vähintään %{smart_count} tiedosto',
+    1: 'Sinun pitää valita vähintään %{smart_count} tiedostoa',
+    2: 'Sinun pitää valita vähintään %{smart_count} tiedostoa'
   }
 }
 

@@ -43,16 +43,16 @@ es_GL.strings = {
   failedToUpload: 'Error ao subir %{file}',
   fileSource: 'Fonte de arquivo: %{name}',
   filesUploadedOfTotal: {
-    '0': '%{complete} de %{smart_count} arquivo subido',
-    '1': '%{complete} de %{smart_count} arquivos subidos',
-    '2': '%{complete} de %{smart_count} arquivos subidos'
+    0: '%{complete} de %{smart_count} arquivo subido',
+    1: '%{complete} de %{smart_count} arquivos subidos',
+    2: '%{complete} de %{smart_count} arquivos subidos'
   },
   filter: 'Filtrar',
   finishEditingFile: 'Rematar edición de arquivo',
   folderAdded: {
-    '0': 'Agregado %{smart_count} arquivo dende %{folder}',
-    '1': 'Agregados %{smart_count} arquivos dende %{folder}',
-    '2': 'Agregados %{smart_count} arquivos dende %{folder}'
+    0: 'Agregado %{smart_count} arquivo dende %{folder}',
+    1: 'Agregados %{smart_count} arquivos dende %{folder}',
+    2: 'Agregados %{smart_count} arquivos dende %{folder}'
   },
   import: 'Importar',
   importFrom: 'Importar dende %{name}',
@@ -68,9 +68,9 @@ es_GL.strings = {
   poweredBy: 'Soportado por',
   preparingUpload: 'Preparando subida...',
   processingXFiles: {
-    '0': 'Procesando %{smart_count} arquivo',
-    '1': 'Procesando %{smart_count} arquivos',
-    '2': 'Procesando %{smart_count} arquivos'
+    0: 'Procesando %{smart_count} arquivo',
+    1: 'Procesando %{smart_count} arquivos',
+    2: 'Procesando %{smart_count} arquivos'
   },
   removeFile: 'Eliminar arquivo',
   resetFilter: 'Limpar filtro',
@@ -80,9 +80,9 @@ es_GL.strings = {
   retryUpload: 'Intentar subida novamente',
   saveChanges: 'Gardar cambios',
   selectX: {
-    '0': 'Seleccionar %{smart_count}',
-    '1': 'Seleccionar %{smart_count}',
-    '2': 'Seleccionar %{smart_count}'
+    0: 'Seleccionar %{smart_count}',
+    1: 'Seleccionar %{smart_count}',
+    2: 'Seleccionar %{smart_count}'
   },
   smile: 'Sorrí!',
   startRecording: 'Comezar a grabación de vídeo',
@@ -94,42 +94,42 @@ es_GL.strings = {
   uploadFailed: 'A subida fallou',
   uploadPaused: 'Subida pausada',
   uploadXFiles: {
-    '0': 'Subir %{smart_count} arquivo',
-    '1': 'Subir %{smart_count} arquivos',
-    '2': 'Subir %{smart_count} arquivos'
+    0: 'Subir %{smart_count} arquivo',
+    1: 'Subir %{smart_count} arquivos',
+    2: 'Subir %{smart_count} arquivos'
   },
   uploadXNewFiles: {
-    '0': 'Subir +%{smart_count} arquivo',
-    '1': 'Subir +%{smart_count} arquivos',
-    '2': 'Subir +%{smart_count} arquivos'
+    0: 'Subir +%{smart_count} arquivo',
+    1: 'Subir +%{smart_count} arquivos',
+    2: 'Subir +%{smart_count} arquivos'
   },
   uploading: 'Subiendo',
   uploadingXFiles: {
-    '0': 'Subindo %{smart_count} arquivo',
-    '1': 'Subindo %{smart_count} arquivos',
-    '2': 'Subindo %{smart_count} arquivos'
+    0: 'Subindo %{smart_count} arquivo',
+    1: 'Subindo %{smart_count} arquivos',
+    2: 'Subindo %{smart_count} arquivos'
   },
   xFilesSelected: {
-    '0': '%{smart_count} arquivo seleccionado',
-    '1': '%{smart_count} arquivos seleccionados',
-    '2': '%{smart_count} arquivos seleccionados'
+    0: '%{smart_count} arquivo seleccionado',
+    1: '%{smart_count} arquivos seleccionados',
+    2: '%{smart_count} arquivos seleccionados'
   },
   xMoreFilesAdded: {
-    '0': '%{smart_count} arquivo máis agregado',
-    '1': '%{smart_count} arquivos máis agregados',
-    '2': '%{smart_count} arquivos máis agregados'
+    0: '%{smart_count} arquivo máis agregado',
+    1: '%{smart_count} arquivos máis agregados',
+    2: '%{smart_count} arquivos máis agregados'
   },
   xTimeLeft: '%{time} restantes',
   youCanOnlyUploadFileTypes: 'Soamente podes subir: %{types}',
   youCanOnlyUploadX: {
-    '0': 'Soamente podes subir %{smart_count} arquivo',
-    '1': 'Soamente podes subir %{smart_count} arquivos',
-    '2': 'Soamente podes subir %{smart_count} arquivos'
+    0: 'Soamente podes subir %{smart_count} arquivo',
+    1: 'Soamente podes subir %{smart_count} arquivos',
+    2: 'Soamente podes subir %{smart_count} arquivos'
   },
   youHaveToAtLeastSelectX: {
-    '0': 'Tes que seleccionar polo menos %{smart_count} arquivo',
-    '1': 'Tes que seleccionar polo menos %{smart_count} arquivos',
-    '2': 'Tes que seleccionar polo menos %{smart_count} arquivos'
+    0: 'Tes que seleccionar polo menos %{smart_count} arquivo',
+    1: 'Tes que seleccionar polo menos %{smart_count} arquivos',
+    2: 'Tes que seleccionar polo menos %{smart_count} arquivos'
   },
   selectAllFilesFromFolderNamed: 'Seleccionar todos los archivos de la carpeta %{name}',
   unselectAllFilesFromFolderNamed: 'Deselecciona todos los archivos de la carpeta %{name}',

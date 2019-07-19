@@ -43,16 +43,16 @@ ar_SA.strings = {
   failedToUpload: 'فشل الرفع %{file}',
   fileSource: 'مصدر الملف: %{name}',
   filesUploadedOfTotal: {
-    '0': '%{complete} من %{smart_count} تم رفع ملف',
-    '1': '%{complete} من %{smart_count} تم رفع ملفات',
-    '2': '%{complete} من %{smart_count} تم رفع ملفات'
+    0: '%{complete} من %{smart_count} تم رفع ملف',
+    1: '%{complete} من %{smart_count} تم رفع ملفات',
+    2: '%{complete} من %{smart_count} تم رفع ملفات'
   },
   filter: 'تصفيه',
   finishEditingFile: 'انهاء تعديل الملف',
   folderAdded: {
-    '0': 'تم اضافة %{smart_count} ملف من %{folder}',
-    '1': 'تم اضافة %{smart_count} ملفات من %{folder}',
-    '2': 'تم اضافة %{smart_count} ملفات من %{folder}'
+    0: 'تم اضافة %{smart_count} ملف من %{folder}',
+    1: 'تم اضافة %{smart_count} ملفات من %{folder}',
+    2: 'تم اضافة %{smart_count} ملفات من %{folder}'
   },
   import: 'استيراد',
   importFrom: 'استيراد من %{name}',
@@ -68,9 +68,9 @@ ar_SA.strings = {
   poweredBy: 'مشغل ب',
   preparingUpload: 'تجهيز الرفع...',
   processingXFiles: {
-    '0': 'جاري معالجة %{smart_count} ملف',
-    '1': 'جاري معالجة %{smart_count} ملفات',
-    '2': 'جاري معالجة %{smart_count} ملفات'
+    0: 'جاري معالجة %{smart_count} ملف',
+    1: 'جاري معالجة %{smart_count} ملفات',
+    2: 'جاري معالجة %{smart_count} ملفات'
   },
   removeFile: 'امسح الملف',
   resetFilter: 'اعادة ضبط التصفيه',
@@ -80,9 +80,9 @@ ar_SA.strings = {
   retryUpload: 'اعادة الرفع',
   saveChanges: 'حفظ التغييرات',
   selectX: {
-    '0': '%{smart_count} اختر',
-    '1': '%{smart_count} اختر',
-    '2': '%{smart_count} اختر'
+    0: '%{smart_count} اختر',
+    1: '%{smart_count} اختر',
+    2: '%{smart_count} اختر'
   },
   smile: 'ابتسم!',
   startRecording: 'بدء تسجيل الفيديو',
@@ -94,42 +94,42 @@ ar_SA.strings = {
   uploadFailed: 'الرفع فشل',
   uploadPaused: 'الرفع موقف',
   uploadXFiles: {
-    '0': 'رفع %{smart_count} ملف',
-    '1': 'رفع %{smart_count} ملفات',
-    '2': 'رفع %{smart_count} ملفات'
+    0: 'رفع %{smart_count} ملف',
+    1: 'رفع %{smart_count} ملفات',
+    2: 'رفع %{smart_count} ملفات'
   },
   uploadXNewFiles: {
-    '0': 'رفع +%{smart_count} ملف',
-    '1': 'رفع +%{smart_count} ملفات',
-    '2': 'رفع +%{smart_count} ملفات'
+    0: 'رفع +%{smart_count} ملف',
+    1: 'رفع +%{smart_count} ملفات',
+    2: 'رفع +%{smart_count} ملفات'
   },
   uploading: 'يتم الرفع',
   uploadingXFiles: {
-    '0': 'يتم رفع %{smart_count} ملف',
-    '1': 'يتم رفع %{smart_count} ملفات',
-    '2': 'يتم رفع %{smart_count} ملفات'
+    0: 'يتم رفع %{smart_count} ملف',
+    1: 'يتم رفع %{smart_count} ملفات',
+    2: 'يتم رفع %{smart_count} ملفات'
   },
   xFilesSelected: {
-    '0': '%{smart_count} ملف محددة',
-    '1': '%{smart_count} ملفات محددة',
-    '2': '%{smart_count} ملفات محددة'
+    0: '%{smart_count} ملف محددة',
+    1: '%{smart_count} ملفات محددة',
+    2: '%{smart_count} ملفات محددة'
   },
   xMoreFilesAdded: {
-    '0': '%{smart_count} ملف اضافي جديد',
-    '1': '%{smart_count} ملفات اضافيه جديده',
-    '2': '%{smart_count} ملفات اضافيه جديده'
+    0: '%{smart_count} ملف اضافي جديد',
+    1: '%{smart_count} ملفات اضافيه جديده',
+    2: '%{smart_count} ملفات اضافيه جديده'
   },
   xTimeLeft: '%{time} متبقي',
   youCanOnlyUploadFileTypes: 'تستطيع فقط رفع : %{types}',
   youCanOnlyUploadX: {
-    '0': 'تستطيع فقط رفع %{smart_count} الملف',
-    '1': 'تستطيع فقط رفع %{smart_count} ملفات',
-    '2': 'تستطيع فقط رفع %{smart_count} ملفات'
+    0: 'تستطيع فقط رفع %{smart_count} الملف',
+    1: 'تستطيع فقط رفع %{smart_count} ملفات',
+    2: 'تستطيع فقط رفع %{smart_count} ملفات'
   },
   youHaveToAtLeastSelectX: {
-    '0': 'يجب ان تختار على الاقل  %{smart_count} ملف',
-    '1': 'يجب ان تختار على الاقل  %{smart_count} ملفات',
-    '2': 'يجب ان تختار على الاقل  %{smart_count} ملفات'
+    0: 'يجب ان تختار على الاقل  %{smart_count} ملف',
+    1: 'يجب ان تختار على الاقل  %{smart_count} ملفات',
+    2: 'يجب ان تختار على الاقل  %{smart_count} ملفات'
   },
   selectAllFilesFromFolderNamed: 'حدد جميع الملفات من المجلد %{name}',
   unselectAllFilesFromFolderNamed: 'قم بإلغاء تحديد جميع الملفات من المجلد %{name}',

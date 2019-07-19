@@ -43,16 +43,16 @@ zh_TW.strings = {
   failedToUpload: '上傳%{file}失敗',
   fileSource: '文件來源：%{name}',
   filesUploadedOfTotal: {
-    '0': '%{smart_count}個文件上傳%{complete}',
-    '1': '%{smart_count}個文件上傳%{complete}',
-    '2': '%{smart_count}個文件上傳%{complete}'
+    0: '%{smart_count}個文件上傳%{complete}',
+    1: '%{smart_count}個文件上傳%{complete}',
+    2: '%{smart_count}個文件上傳%{complete}'
   },
   filter: '篩選器',
   finishEditingFile: '完成文件編輯',
   folderAdded: {
-    '0': '從%{folder}添加了%{smart_count}個文件',
-    '1': '從%{folder}添加了%{smart_count}個文件',
-    '2': '從%{folder}添加了%{smart_count}個文件'
+    0: '從%{folder}添加了%{smart_count}個文件',
+    1: '從%{folder}添加了%{smart_count}個文件',
+    2: '從%{folder}添加了%{smart_count}個文件'
   },
   import: '導入',
   importFrom: '從%{name}導入',
@@ -68,9 +68,9 @@ zh_TW.strings = {
   poweredBy: '強力驅動於',
   preparingUpload: '準備上傳中...',
   processingXFiles: {
-    '0': '%{smart_count}個文件處理中',
-    '1': '%{smart_count}個文件處理中',
-    '2': '%{smart_count}個文件處理中'
+    0: '%{smart_count}個文件處理中',
+    1: '%{smart_count}個文件處理中',
+    2: '%{smart_count}個文件處理中'
   },
   removeFile: '移除文件',
   resetFilter: '重置篩選器',
@@ -80,9 +80,9 @@ zh_TW.strings = {
   retryUpload: '重試上傳',
   saveChanges: '保存變更',
   selectX: {
-    '0': '选择%{smart_count}',
-    '1': '选择%{smart_count}',
-    '2': '选择%{smart_count}'
+    0: '选择%{smart_count}',
+    1: '选择%{smart_count}',
+    2: '选择%{smart_count}'
   },
   smile: '笑！',
   startRecording: '開始影片錄制',
@@ -94,42 +94,42 @@ zh_TW.strings = {
   uploadFailed: '上傳失敗',
   uploadPaused: '上傳暫停',
   uploadXFiles: {
-    '0': '上傳%{smart_count}個文件',
-    '1': '上傳%{smart_count}個文件',
-    '2': '上傳%{smart_count}個文件'
+    0: '上傳%{smart_count}個文件',
+    1: '上傳%{smart_count}個文件',
+    2: '上傳%{smart_count}個文件'
   },
   uploadXNewFiles: {
-    '0': '新上傳了%{smart_count}個文件',
-    '1': '新上傳了%{smart_count}個文件',
-    '2': '新上傳了%{smart_count}個文件'
+    0: '新上傳了%{smart_count}個文件',
+    1: '新上傳了%{smart_count}個文件',
+    2: '新上傳了%{smart_count}個文件'
   },
   uploading: '正在上傳',
   uploadingXFiles: {
-    '0': '正在上傳%{smart_count}個文件',
-    '1': '正在上傳%{smart_count}個文件',
-    '2': '正在上傳%{smart_count}個文件'
+    0: '正在上傳%{smart_count}個文件',
+    1: '正在上傳%{smart_count}個文件',
+    2: '正在上傳%{smart_count}個文件'
   },
   xFilesSelected: {
-    '0': '%{smart_count}個文件被選中',
-    '1': '%{smart_count}個文件被選中',
-    '2': '%{smart_count}個文件被選中'
+    0: '%{smart_count}個文件被選中',
+    1: '%{smart_count}個文件被選中',
+    2: '%{smart_count}個文件被選中'
   },
   xMoreFilesAdded: {
-    '0': '又有%{smart_count}個文件被添加',
-    '1': '又有%{smart_count}個文件被添加',
-    '2': '又有%{smart_count}個文件被添加'
+    0: '又有%{smart_count}個文件被添加',
+    1: '又有%{smart_count}個文件被添加',
+    2: '又有%{smart_count}個文件被添加'
   },
   xTimeLeft: '還剩下%{time}',
   youCanOnlyUploadFileTypes: '您只能上傳這些文件類型：%{types}',
   youCanOnlyUploadX: {
-    '0': '您只能上傳%{smart_count}個文件',
-    '1': '您只能上傳%{smart_count}個文件',
-    '2': '您只能上傳%{smart_count}個文件'
+    0: '您只能上傳%{smart_count}個文件',
+    1: '您只能上傳%{smart_count}個文件',
+    2: '您只能上傳%{smart_count}個文件'
   },
   youHaveToAtLeastSelectX: {
-    '0': '您至少要選擇%{smart_count}個文件',
-    '1': '您至少要選擇%{smart_count}個文件',
-    '2': '您至少要選擇%{smart_count}個文件'
+    0: '您至少要選擇%{smart_count}個文件',
+    1: '您至少要選擇%{smart_count}個文件',
+    2: '您至少要選擇%{smart_count}個文件'
   },
   selectAllFilesFromFolderNamed: '从文件夹中选择所有文件 %{name}',
   unselectAllFilesFromFolderNamed: '取消选择文件夹中的所有文件 %{name}',

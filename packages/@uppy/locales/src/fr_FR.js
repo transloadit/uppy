@@ -43,16 +43,16 @@ fr_FR.strings = {
   failedToUpload: 'Le téléchargement du %{file} a échoué',
   fileSource: 'Fichier source: %{name}',
   filesUploadedOfTotal: {
-    '0': '%{complete} sur %{smart_count} fichier téléchargé',
-    '1': '%{complete} sur %{smart_count} fichiers téléchargés',
-    '2': '%{complete} sur %{smart_count} fichiers téléchargés'
+    0: '%{complete} sur %{smart_count} fichier téléchargé',
+    1: '%{complete} sur %{smart_count} fichiers téléchargés',
+    2: '%{complete} sur %{smart_count} fichiers téléchargés'
   },
   filter: 'Filtrer',
   finishEditingFile: 'Terminer l\'édition du fichier',
   folderAdded: {
-    '0': '%{smart_count} ajouté fichier de %{folder}',
-    '1': '%{smart_count} ajouté fichiers de %{folder}',
-    '2': '%{smart_count} ajouté fichiers de %{folder}'
+    0: '%{smart_count} ajouté fichier de %{folder}',
+    1: '%{smart_count} ajouté fichiers de %{folder}',
+    2: '%{smart_count} ajouté fichiers de %{folder}'
   },
   import: 'Importer',
   importFrom: 'Importer du %{name}',
@@ -68,9 +68,9 @@ fr_FR.strings = {
   poweredBy: 'Soutenu par',
   preparingUpload: 'Préparation du téléchargement...',
   processingXFiles: {
-    '0': 'Traitement de %{smart_count} fichier',
-    '1': 'Traitement de %{smart_count} fichiers',
-    '2': 'Traitement de %{smart_count} fichiers'
+    0: 'Traitement de %{smart_count} fichier',
+    1: 'Traitement de %{smart_count} fichiers',
+    2: 'Traitement de %{smart_count} fichiers'
   },
   removeFile: 'Effacer le fichier',
   resetFilter: 'Réinitialiser filtre',
@@ -80,9 +80,9 @@ fr_FR.strings = {
   retryUpload: 'Réessayez le téléchargement',
   saveChanges: 'Sauvegarder les modifications',
   selectX: {
-    '0': 'Sélectionner %{smart_count}',
-    '1': 'Sélectionner %{smart_count}',
-    '2': 'Sélectionner %{smart_count}'
+    0: 'Sélectionner %{smart_count}',
+    1: 'Sélectionner %{smart_count}',
+    2: 'Sélectionner %{smart_count}'
   },
   smile: 'Souris!',
   startRecording: 'Commencer l\'enregistrement vidéo',
@@ -94,42 +94,42 @@ fr_FR.strings = {
   uploadFailed: 'Téléchargement a échoué',
   uploadPaused: 'Téléchargement mis en pause',
   uploadXFiles: {
-    '0': 'Télécharger %{smart_count} fichier',
-    '1': 'Télécharger %{smart_count} fichiers',
-    '2': 'Télécharger %{smart_count} fichiers'
+    0: 'Télécharger %{smart_count} fichier',
+    1: 'Télécharger %{smart_count} fichiers',
+    2: 'Télécharger %{smart_count} fichiers'
   },
   uploadXNewFiles: {
-    '0': 'Télécharger +%{smart_count} fichier',
-    '1': 'Télécharger +%{smart_count} fichiers',
-    '2': 'Télécharger +%{smart_count} fichiers'
+    0: 'Télécharger +%{smart_count} fichier',
+    1: 'Télécharger +%{smart_count} fichiers',
+    2: 'Télécharger +%{smart_count} fichiers'
   },
   uploading: 'Téléchargement en cours',
   uploadingXFiles: {
-    '0': 'Uploading %{smart_count} file',
-    '1': 'Uploading %{smart_count} files',
-    '2': 'Uploading %{smart_count} files'
+    0: 'Uploading %{smart_count} file',
+    1: 'Uploading %{smart_count} files',
+    2: 'Uploading %{smart_count} files'
   },
   xFilesSelected: {
-    '0': '%{smart_count} fichier sélectionné',
-    '1': '%{smart_count} fichiers sélectionnés',
-    '2': '%{smart_count} fichiers sélectionnés'
+    0: '%{smart_count} fichier sélectionné',
+    1: '%{smart_count} fichiers sélectionnés',
+    2: '%{smart_count} fichiers sélectionnés'
   },
   xMoreFilesAdded: {
-    '0': '%{smart_count} autre fichier ajouté',
-    '1': '%{smart_count} autres fichiers ajoutés',
-    '2': '%{smart_count} autres fichiers ajoutés'
+    0: '%{smart_count} autre fichier ajouté',
+    1: '%{smart_count} autres fichiers ajoutés',
+    2: '%{smart_count} autres fichiers ajoutés'
   },
   xTimeLeft: '%{time} restantes',
   youCanOnlyUploadFileTypes: 'Vous pouvez seulement télécharger: %{types}',
   youCanOnlyUploadX: {
-    '0': 'Vous pouvez seulement télécharger %{smart_count} fichier',
-    '1': 'Vous pouvez seulement télécharger %{smart_count} fichiers',
-    '2': 'Vous pouvez seulement télécharger %{smart_count} fichiers'
+    0: 'Vous pouvez seulement télécharger %{smart_count} fichier',
+    1: 'Vous pouvez seulement télécharger %{smart_count} fichiers',
+    2: 'Vous pouvez seulement télécharger %{smart_count} fichiers'
   },
   youHaveToAtLeastSelectX: {
-    '0': 'Vous devez sélectionner au moins %{smart_count} fichier',
-    '1': 'Vous devez sélectionner au moins %{smart_count} fichiers',
-    '2': 'Vous devez sélectionner au moins %{smart_count} fichiers'
+    0: 'Vous devez sélectionner au moins %{smart_count} fichier',
+    1: 'Vous devez sélectionner au moins %{smart_count} fichiers',
+    2: 'Vous devez sélectionner au moins %{smart_count} fichiers'
   },
   selectAllFilesFromFolderNamed: 'Sélectionner tous les fichiers du dossier %{name}',
   unselectAllFilesFromFolderNamed: 'Désélectionner tous les fichiers du dossier%{name}',

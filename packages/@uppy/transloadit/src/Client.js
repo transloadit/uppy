@@ -11,7 +11,7 @@ module.exports = class Client {
   /**
    * Create a new assembly.
    *
-   * @param {Object} options
+   * @param {object} options
    */
   createAssembly ({
     templateId,
@@ -52,7 +52,7 @@ module.exports = class Client {
   /**
    * Reserve resources for a file in an Assembly. Then addFile can be used later.
    *
-   * @param {Object} assembly
+   * @param {object} assembly
    * @param {UppyFile} file
    */
   reserveFile (assembly, file) {
@@ -66,7 +66,7 @@ module.exports = class Client {
   /**
    * Import a remote file to an Assembly.
    *
-   * @param {Object} assembly
+   * @param {object} assembly
    * @param {UppyFile} file
    */
   addFile (assembly, file) {
@@ -88,7 +88,7 @@ module.exports = class Client {
   /**
    * Cancel a running Assembly.
    *
-   * @param {Object} assembly
+   * @param {object} assembly
    */
   cancelAssembly (assembly) {
     const url = assembly.assembly_ssl_url

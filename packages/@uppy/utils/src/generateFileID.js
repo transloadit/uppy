@@ -2,7 +2,7 @@
  * Takes a file object and turns it into fileID, by converting file.name to lowercase,
  * removing extra characters and adding type, size and lastModified
  *
- * @param {Object} file
+ * @param {object} file
  * @returns {string} the fileID
  *
  */

@@ -43,16 +43,16 @@ it_IT.strings = {
   failedToUpload: 'Upload del file %{file} non riuscito',
   fileSource: 'Sorgente file: %{name}',
   filesUploadedOfTotal: {
-    '0': '%{complete} di %{smart_count} file caricato',
-    '1': '%{complete} di %{smart_count} file caricati',
-    '2': '%{complete} di %{smart_count} file caricati'
+    0: '%{complete} di %{smart_count} file caricato',
+    1: '%{complete} di %{smart_count} file caricati',
+    2: '%{complete} di %{smart_count} file caricati'
   },
   filter: 'Filter',
   finishEditingFile: 'Finish editing file',
   folderAdded: {
-    '0': 'Aggiunto %{smart_count} file da %{folder}',
-    '1': 'Aggiunti %{smart_count} file da %{folder}',
-    '2': 'Aggiunti %{smart_count} file da %{folder}'
+    0: 'Aggiunto %{smart_count} file da %{folder}',
+    1: 'Aggiunti %{smart_count} file da %{folder}',
+    2: 'Aggiunti %{smart_count} file da %{folder}'
   },
   import: 'Importa',
   importFrom: 'Importa da %{name}',
@@ -68,9 +68,9 @@ it_IT.strings = {
   poweredBy: 'Powered by',
   preparingUpload: 'Upload in preparazione...',
   processingXFiles: {
-    '0': 'Sto processando %{smart_count} file',
-    '1': 'Sto processando %{smart_count} file',
-    '2': 'Sto processando %{smart_count} file'
+    0: 'Sto processando %{smart_count} file',
+    1: 'Sto processando %{smart_count} file',
+    2: 'Sto processando %{smart_count} file'
   },
   removeFile: 'Rimuovi il file',
   resetFilter: 'Ripristina filtro',
@@ -80,9 +80,9 @@ it_IT.strings = {
   retryUpload: 'Riprova l\'upload',
   saveChanges: 'Salva le modifiche',
   selectX: {
-    '0': 'Seleziona %{smart_count}',
-    '1': 'Seleziona %{smart_count}',
-    '2': 'Seleziona %{smart_count}'
+    0: 'Seleziona %{smart_count}',
+    1: 'Seleziona %{smart_count}',
+    2: 'Seleziona %{smart_count}'
   },
   smile: 'Sorridi!',
   startRecording: 'Inizia la registrazione del video',
@@ -94,42 +94,42 @@ it_IT.strings = {
   uploadFailed: 'Upload non riuscito',
   uploadPaused: 'Upload in pausa',
   uploadXFiles: {
-    '0': 'Upload di %{smart_count} file',
-    '1': 'Upload di %{smart_count} file',
-    '2': 'Upload di %{smart_count} file'
+    0: 'Upload di %{smart_count} file',
+    1: 'Upload di %{smart_count} file',
+    2: 'Upload di %{smart_count} file'
   },
   uploadXNewFiles: {
-    '0': 'Upload +%{smart_count} file',
-    '1': 'Upload +%{smart_count} file',
-    '2': 'Upload +%{smart_count} file'
+    0: 'Upload +%{smart_count} file',
+    1: 'Upload +%{smart_count} file',
+    2: 'Upload +%{smart_count} file'
   },
   uploading: 'In caricamento',
   uploadingXFiles: {
-    '0': 'Caricando %{smart_count} file',
-    '1': 'Caricando %{smart_count} file',
-    '2': 'Caricando %{smart_count} file'
+    0: 'Caricando %{smart_count} file',
+    1: 'Caricando %{smart_count} file',
+    2: 'Caricando %{smart_count} file'
   },
   xFilesSelected: {
-    '0': '%{smart_count} file selezionato',
-    '1': '%{smart_count} file selezionati',
-    '2': '%{smart_count} file selezionati'
+    0: '%{smart_count} file selezionato',
+    1: '%{smart_count} file selezionati',
+    2: '%{smart_count} file selezionati'
   },
   xMoreFilesAdded: {
-    '0': '%{smart_count} alto file aggiunto',
-    '1': '%{smart_count} altri file aggiunti',
-    '2': '%{smart_count} ltri file aggiunti'
+    0: '%{smart_count} alto file aggiunto',
+    1: '%{smart_count} altri file aggiunti',
+    2: '%{smart_count} ltri file aggiunti'
   },
   xTimeLeft: '%{time} rimasto',
   youCanOnlyUploadFileTypes: 'Puoi caricare solamente: %{types}',
   youCanOnlyUploadX: {
-    '0': 'Puoi caricare %{smart_count} solo file',
-    '1': 'Puoi caricare solo %{smart_count} file',
-    '2': 'Puoi caricare solo %{smart_count} file'
+    0: 'Puoi caricare %{smart_count} solo file',
+    1: 'Puoi caricare solo %{smart_count} file',
+    2: 'Puoi caricare solo %{smart_count} file'
   },
   youHaveToAtLeastSelectX: {
-    '0': 'Devi selezionare almeno %{smart_count} file',
-    '1': 'Devi selezionare almeno %{smart_count} file',
-    '2': 'Devi selezionare almeno %{smart_count} file'
+    0: 'Devi selezionare almeno %{smart_count} file',
+    1: 'Devi selezionare almeno %{smart_count} file',
+    2: 'Devi selezionare almeno %{smart_count} file'
   },
   selectAllFilesFromFolderNamed: 'Seleziona tutti i file dalla cartella %{name}',
   unselectAllFilesFromFolderNamed: 'Deseleziona tutti i file dalla cartella %{name}',

@@ -32,11 +32,11 @@ function createEventTracker (emitter) {
   const events = []
   return {
     on (event, fn) {
-      events.push([ event, fn ])
+      events.push([event, fn])
       return emitter.on(event, fn)
     },
     remove () {
-      events.forEach(([ event, fn ]) => {
+      events.forEach(([event, fn]) => {
         emitter.off(event, fn)
       })
     }
@@ -119,7 +119,7 @@ module.exports = class Tus extends Plugin {
   /**
    * Create a new Tus upload
    *
-   * @param {Object} file for use with upload
+   * @param {object} file for use with upload
    * @param {integer} current file in a queue
    * @param {integer} total number of files in a queue
    * @returns {Promise}

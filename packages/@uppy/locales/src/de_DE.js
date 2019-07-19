@@ -44,16 +44,16 @@ de_DE.strings = {
   failedToUpload: 'Fehler beim Upload von Datei %{file}',
   fileSource: 'Dateiquelle: %{name}',
   filesUploadedOfTotal: {
-    '0': '%{complete} von %{smart_count} Datei hochgeladen',
-    '1': '%{complete} von %{smart_count} Dateien hochgeladen',
-    '2': '%{complete} von %{smart_count} Dateien hochgeladen'
+    0: '%{complete} von %{smart_count} Datei hochgeladen',
+    1: '%{complete} von %{smart_count} Dateien hochgeladen',
+    2: '%{complete} von %{smart_count} Dateien hochgeladen'
   },
   filter: 'Filter',
   finishEditingFile: 'Dateibearbeitung beenden',
   folderAdded: {
-    '0': '%{smart_count} Datei von %{folder} hinzugefügt',
-    '1': '%{smart_count} Dateien von %{folder} hinzugefügt',
-    '2': '%{smart_count} Dateien von %{folder} hinzugefügt'
+    0: '%{smart_count} Datei von %{folder} hinzugefügt',
+    1: '%{smart_count} Dateien von %{folder} hinzugefügt',
+    2: '%{smart_count} Dateien von %{folder} hinzugefügt'
   },
   import: 'Import',
   importFrom: 'Importieren von %{name}',
@@ -69,9 +69,9 @@ de_DE.strings = {
   poweredBy: 'Angetrieben von',
   preparingUpload: 'Upload vorbereiten...',
   processingXFiles: {
-    '0': '%{smart_count} Datei verarbeiten',
-    '1': '%{smart_count} Dateien verarbeiten',
-    '2': '%{smart_count} Dateien verarbeiten'
+    0: '%{smart_count} Datei verarbeiten',
+    1: '%{smart_count} Dateien verarbeiten',
+    2: '%{smart_count} Dateien verarbeiten'
   },
   removeFile: 'Datei entfernen',
   resetFilter: 'Filter zurücksetzen',
@@ -81,9 +81,9 @@ de_DE.strings = {
   retryUpload: 'Upload erneut versuchen',
   saveChanges: 'Änderungen speichern',
   selectX: {
-    '0': 'Wählen Sie %{smart_count}',
-    '1': 'Wählen Sie %{smart_count}',
-    '2': 'Wählen Sie %{smart_count}'
+    0: 'Wählen Sie %{smart_count}',
+    1: 'Wählen Sie %{smart_count}',
+    2: 'Wählen Sie %{smart_count}'
   },
   smile: 'Bitte lächeln!',
   startRecording: 'Videoaufnahme starten',
@@ -95,42 +95,42 @@ de_DE.strings = {
   uploadFailed: 'Upload fehlgeschlagen',
   uploadPaused: 'Upload pausiert',
   uploadXFiles: {
-    '0': '%{smart_count} Datei hochladen',
-    '1': '%{smart_count} Dateien hochladen',
-    '2': '%{smart_count} Dateien hochladen'
+    0: '%{smart_count} Datei hochladen',
+    1: '%{smart_count} Dateien hochladen',
+    2: '%{smart_count} Dateien hochladen'
   },
   uploadXNewFiles: {
-    '0': '+%{smart_count} Datei hochladen',
-    '1': '+%{smart_count} Dateien hochladen',
-    '2': '+%{smart_count} Dateien hochladen'
+    0: '+%{smart_count} Datei hochladen',
+    1: '+%{smart_count} Dateien hochladen',
+    2: '+%{smart_count} Dateien hochladen'
   },
   uploading: 'Uploading',
   uploadingXFiles: {
-    '0': '%{smart_count} Datei wird hochgeladen',
-    '1': '%{smart_count} Dateien werden hochgeladen',
-    '2': '%{smart_count} Dateien werden hochgeladen'
+    0: '%{smart_count} Datei wird hochgeladen',
+    1: '%{smart_count} Dateien werden hochgeladen',
+    2: '%{smart_count} Dateien werden hochgeladen'
   },
   xFilesSelected: {
-    '0': '%{smart_count} Datei ausgewählt',
-    '1': '%{smart_count} Dateien ausgewählt',
-    '2': '%{smart_count} Dateien ausgewählt'
+    0: '%{smart_count} Datei ausgewählt',
+    1: '%{smart_count} Dateien ausgewählt',
+    2: '%{smart_count} Dateien ausgewählt'
   },
   xMoreFilesAdded: {
-    '0': '%{smart_count} weitere Datei hinzugefügt',
-    '1': '%{smart_count} weitere Dateien hinzugefügt',
-    '2': '%{smart_count} weitere Dateien hinzugefügt'
+    0: '%{smart_count} weitere Datei hinzugefügt',
+    1: '%{smart_count} weitere Dateien hinzugefügt',
+    2: '%{smart_count} weitere Dateien hinzugefügt'
   },
   xTimeLeft: '%{time} verbleibend',
   youCanOnlyUploadFileTypes: 'Sie können nur folgende Dateitypen hochladen: %{types}',
   youCanOnlyUploadX: {
-    '0': 'Sie können nur %{smart_count} Datei hochladen',
-    '1': 'Sie können nur %{smart_count} Dateien hochladen',
-    '2': 'Sie können nur %{smart_count} Dateien hochladen'
+    0: 'Sie können nur %{smart_count} Datei hochladen',
+    1: 'Sie können nur %{smart_count} Dateien hochladen',
+    2: 'Sie können nur %{smart_count} Dateien hochladen'
   },
   youHaveToAtLeastSelectX: {
-    '0': 'Sie müssen mindestens %{smart_count} Datei auswählen',
-    '1': 'Sie müssen mindestens %{smart_count} Dateien auswählen',
-    '2': 'Sie müssen mindestens %{smart_count} Dateien auswählen'
+    0: 'Sie müssen mindestens %{smart_count} Datei auswählen',
+    1: 'Sie müssen mindestens %{smart_count} Dateien auswählen',
+    2: 'Sie müssen mindestens %{smart_count} Dateien auswählen'
   },
   selectAllFilesFromFolderNamed: 'Wählen Sie alle Dateien aus dem Ordner %{name}',
   unselectAllFilesFromFolderNamed: 'Heben Sie die Auswahl aller Dateien aus dem Ordner auf %{name}',

@@ -43,16 +43,16 @@ ja_JP.strings = {
   failedToUpload: '%{file}のアップロードに失敗しました',
   fileSource: '元ファイル：%{name}',
   filesUploadedOfTotal: {
-    '0': '%{smart_count} 個のファイルのアップロードが%{complete}',
-    '1': '%{smart_count} 個のファイルのアップロードが%{complete}',
-    '2': '%{cmart_count} 個のファイルのアップロードが%{complete}'
+    0: '%{smart_count} 個のファイルのアップロードが%{complete}',
+    1: '%{smart_count} 個のファイルのアップロードが%{complete}',
+    2: '%{cmart_count} 個のファイルのアップロードが%{complete}'
   },
   filter: 'フィルタ',
   finishEditingFile: 'ファイルの編集を終了',
   folderAdded: {
-    '0': '%{folder} から% {smart_count} 個のファイルを追加しました',
-    '1': '%{folder} から% {smart_count} 個のファイルを追加しました',
-    '2': '%{folder} から% {smart_count} 個のファイルを追加しました'
+    0: '%{folder} から% {smart_count} 個のファイルを追加しました',
+    1: '%{folder} から% {smart_count} 個のファイルを追加しました',
+    2: '%{folder} から% {smart_count} 個のファイルを追加しました'
   },
   import: 'インポート',
   importFrom: '%{name}からインポート',
@@ -68,9 +68,9 @@ ja_JP.strings = {
   poweredBy: 'Powered by',
   preparingUpload: 'アップロードを準備中...',
   processingXFiles: {
-    '0': '%{smart_count} ファイル処理中',
-    '1': '%{smart_count} ファイル処理中',
-    '2': '%{smart_count} ファイル処理中'
+    0: '%{smart_count} ファイル処理中',
+    1: '%{smart_count} ファイル処理中',
+    2: '%{smart_count} ファイル処理中'
   },
   removeFile: 'ファイルを消す',
   resetFilter: 'フィルタをリセット',
@@ -80,9 +80,9 @@ ja_JP.strings = {
   retryUpload: 'アップロードをリトライ',
   saveChanges: '変更を保存',
   selectX: {
-    '0': '%{smart_count} を選択',
-    '1': '%{smart_count} を選択',
-    '2': '%{smart_count} を選択'
+    0: '%{smart_count} を選択',
+    1: '%{smart_count} を選択',
+    2: '%{smart_count} を選択'
   },
   smile: 'スマイル〜！',
   startRecording: '録画開始',
@@ -94,42 +94,42 @@ ja_JP.strings = {
   uploadFailed: 'アップロード失敗',
   uploadPaused: 'アップロード一時停止',
   uploadXFiles: {
-    '0': '%{smart_count} ファイルをアップロード',
-    '1': '%{smart_count} ファイルをアップロード',
-    '2': '%{smart_count} ファイルをアップロード'
+    0: '%{smart_count} ファイルをアップロード',
+    1: '%{smart_count} ファイルをアップロード',
+    2: '%{smart_count} ファイルをアップロード'
   },
   uploadXNewFiles: {
-    '0': '+%{smart_count} ファイルをアップロード',
-    '1': '+%{smart_count} ファイルをアップロード',
-    '2': '+%{smart_count} ファイルをアップロード'
+    0: '+%{smart_count} ファイルをアップロード',
+    1: '+%{smart_count} ファイルをアップロード',
+    2: '+%{smart_count} ファイルをアップロード'
   },
   uploading: 'アップロード中',
   uploadingXFiles: {
-    '0': '%{smart_count} ファイルアップロード中',
-    '1': '%{smart_count} ファイルアップロード中',
-    '2': '%{smart_count} ファイルアップロード中'
+    0: '%{smart_count} ファイルアップロード中',
+    1: '%{smart_count} ファイルアップロード中',
+    2: '%{smart_count} ファイルアップロード中'
   },
   xFilesSelected: {
-    '0': '%{smart_count} ファイルを選択',
-    '1': '%{smart_count} ファイルを選択',
-    '2': '%{smart_count} ファイルを選択'
+    0: '%{smart_count} ファイルを選択',
+    1: '%{smart_count} ファイルを選択',
+    2: '%{smart_count} ファイルを選択'
   },
   xMoreFilesAdded: {
-    '0': '%{smart_count} ファイルを追加',
-    '1': '%{smart_count} ファイルを追加',
-    '2': '%{smart_count} ファイルを追加'
+    0: '%{smart_count} ファイルを追加',
+    1: '%{smart_count} ファイルを追加',
+    2: '%{smart_count} ファイルを追加'
   },
   xTimeLeft: '残り %{time}',
   youCanOnlyUploadFileTypes: '許可されているファイル形式は次の物です: %{types}',
   youCanOnlyUploadX: {
-    '0': '%{smart_count} ファイル数のみアップロード可能です',
-    '1': '%{smart_count} ファイル数のみアップロード可能です',
-    '2': '%{smart_count} ファイル数のみアップロード可能です'
+    0: '%{smart_count} ファイル数のみアップロード可能です',
+    1: '%{smart_count} ファイル数のみアップロード可能です',
+    2: '%{smart_count} ファイル数のみアップロード可能です'
   },
   youHaveToAtLeastSelectX: {
-    '0': '最低でも %{smart_count} ファイル選択してください',
-    '1': '最低でも %{smart_count} ファイル選択してください',
-    '2': '最低でも %{smart_count} ファイル選択してください'
+    0: '最低でも %{smart_count} ファイル選択してください',
+    1: '最低でも %{smart_count} ファイル選択してください',
+    2: '最低でも %{smart_count} ファイル選択してください'
   },
   selectAllFilesFromFolderNamed: 'フォルダからすべてのファイルを選択 %{name}',
   unselectAllFilesFromFolderNamed: 'フォルダからすべてのファイルを選択解除 %{name}',
