@@ -64,6 +64,10 @@
     "validator": "^9.0.0",
     "ws": "1.1.5"
   },
+  "devDependencies": {
+    "@types/node": "^12.6.8",
+    "typescript": "^3.4.5"
+  },
   "files": [
     "bin/",
     "lib/"

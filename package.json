@@ -83,7 +83,7 @@
     "@types/lodash.merge": "^4.6.3",
     "@types/morgan": "^1.7.35",
     "@types/ms": "^0.7.30",
-    "@types/node": "^8.5.1",
+    "@types/node": "^12.6.8",
     "@types/react": "^16.8.10",
     "@types/request": "^2.0.9",
     "@types/tus-js-client": "^1.4.1",
