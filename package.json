@@ -131,7 +131,7 @@
     "globby": "^9.2.0",
     "gzip-size": "^5.0.0",
     "isomorphic-fetch": "2.2.1",
-    "jest": "^24.7.1",
+    "jest": "24.7.1",
     "json3": "^3.3.2",
     "last-commit-message": "^1.0.0",
     "lerna": "^3.14.1",
