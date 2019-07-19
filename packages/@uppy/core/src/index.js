@@ -524,6 +524,8 @@ class Uppy {
         })
       }, 4)
     }
+
+    return fileID;
   }
 
   removeFile (fileID) {
