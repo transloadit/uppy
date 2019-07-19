@@ -1,6 +1,5 @@
 {
   "name": "uppy.io",
-  "version": "0.0.1",
   "private": true,
   "hexo": {
     "version": "3.8.0"
@@ -31,9 +30,7 @@
     "marked": "^0.6.2",
     "mkdirp": "0.5.1",
     "postcss-inline-svg": "^3.1.1",
-    "prismjs": "^1.15.0"
-  },
-  "devDependencies": {
+    "prismjs": "^1.15.0",
     "@babel/core": "^7.4.4",
     "aliasify": "^2.1.0",
     "babelify": "^10.0.0",

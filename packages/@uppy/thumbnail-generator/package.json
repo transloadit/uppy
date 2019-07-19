@@ -22,12 +22,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "1.2.0",
+    "@uppy/utils": "file:../utils",
     "exif-js": "2.3.0"
-  },
-  "devDependencies": {
-    "@uppy/core": "1.2.0",
-    "namespace-emitter": "^2.0.1"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"

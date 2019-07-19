@@ -1,5 +1,10 @@
 {
-  "name": "uppy-dev-example",
+  "name": "@uppy-example/dev",
+  "aliasify": {
+    "aliases": {
+      "@uppy": "../../packages/@uppy"
+    }
+  },
   "dependencies": {
     "@babel/core": "^7.4.4",
     "aliasify": "^2.1.0",
@@ -11,10 +16,5 @@
   "private": true,
   "scripts": {
     "watch:sandbox": "watchify -vd -t [ babelify --cwd ../../ ] -g aliasify index.js -o output/index.js"
-  },
-  "aliasify": {
-    "aliases": {
-      "@uppy": "../../packages/@uppy"
-    }
   }
 }

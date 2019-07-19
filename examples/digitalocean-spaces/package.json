@@ -1,9 +1,5 @@
 {
-  "private": true,
-  "name": "uppy-digitalocean-spaces-example",
-  "scripts": {
-    "start": "node ./server.js"
-  },
+  "name": "@uppy-example/digitalocean-spaces",
   "dependencies": {
     "@babel/core": "^7.2.2",
     "aliasify": "^2.1.0",
@@ -12,5 +8,9 @@
     "budo": "^11.6.1",
     "cors": "^2.8.5",
     "router": "^1.3.3"
+  },
+  "private": true,
+  "scripts": {
+    "start": "node ./server.js"
   }
 }
