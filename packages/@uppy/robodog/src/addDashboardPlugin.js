@@ -1,4 +1,5 @@
 const Dashboard = require('@uppy/dashboard')
+const has = require('@uppy/utils/lib/hasProperty')
 
 const dashboardOptionNames = [
   'metaFields',
@@ -30,7 +31,7 @@ const modalDashboardOptionNames = [
 function addDashboardPlugin (uppy, opts, overrideOpts) {
   const dashboardOpts = {}
   dashboardOptionNames.forEach((key) => {
-    if (opts.hasOwnProperty(key)) {
+    if (has(opts, key)) {
       dashboardOpts[key] = opts[key]
     }
   })
@@ -38,7 +39,7 @@ function addDashboardPlugin (uppy, opts, overrideOpts) {
   const inline = overrideOpts.inline == null ? dashboardOpts.inline : overrideOpts.inline
   if (!inline) {
     modalDashboardOptionNames.forEach((key) => {
-      if (opts.hasOwnProperty(key)) {
+      if (has(opts, key)) {
         dashboardOpts[key] = opts[key]
       }
     })

@@ -1,5 +1,6 @@
 const io = requireSocketIo
 const Emitter = require('component-emitter')
+const has = require('@uppy/utils/lib/hasProperty')
 const parseUrl = require('./parseUrl')
 
 // Lazy load socket.io to avoid a console error
@@ -209,9 +210,7 @@ class TransloaditAssembly extends Emitter {
 
     // Find new uploaded files.
     Object.keys(next.uploads)
-      .filter((upload) => (
-        !prev.uploads.hasOwnProperty(upload)
-      ))
+      .filter((upload) => !has(prev.uploads, upload))
       .map((upload) => next.uploads[upload])
       .forEach((upload) => {
         this.emit('upload', upload)

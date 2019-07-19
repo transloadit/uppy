@@ -1,3 +1,5 @@
+const has = require('./hasProperty')
+
 /**
  * Translates strings with interpolation & pluralization support.
  * Extensible with custom dictionaries and pluralization functions.
@@ -61,7 +63,7 @@ module.exports = class Translator {
     let interpolated = [phrase]
 
     for (const arg in options) {
-      if (arg !== '_' && options.hasOwnProperty(arg)) {
+      if (arg !== '_' && has(options, arg)) {
         // Ensure replacement value is escaped to prevent special $-prefixed
         // regex replace tokens. the "$$$$" is needed because each "$" needs to
         // be escaped with "$" itself, and we need two in the resulting output.
