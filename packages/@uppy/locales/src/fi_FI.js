@@ -82,10 +82,10 @@ fi_FI.strings = {
   saveChanges: 'Tallenna muutokset',
   selectAllFilesFromFolderNamed: 'Valitse kaikki tiedostot kansiosta %{name}',
   selectFileNamed: 'Valitse tiedosto %{name}',
-  selectXFiles: {
-    '0': 'Valitse %{smart_count} tiedosto',
-    '1': 'Valitse %{smart_count} tiedostoa',
-    '2': 'Valitse %{smart_count} tiedostoa'
+  selectX: {
+    '0': 'Valitse %{smart_count}',
+    '1': 'Valitse %{smart_count}',
+    '2': 'Valitse %{smart_count}'
   },
   smile: 'Hymyile!',
   startRecording: 'Aloita videon tallennus',

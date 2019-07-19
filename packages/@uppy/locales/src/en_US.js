@@ -82,10 +82,10 @@ en_US.strings = {
   saveChanges: 'Save changes',
   selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
   selectFileNamed: 'Select file %{name}',
-  selectXFiles: {
-    '0': 'Select %{smart_count} file',
-    '1': 'Select %{smart_count} files',
-    '2': 'Select %{smart_count} files'
+  selectX: {
+    '0': 'Select %{smart_count}',
+    '1': 'Select %{smart_count}',
+    '2': 'Select %{smart_count}'
   },
   smile: 'Smile!',
   startRecording: 'Begin video recording',
