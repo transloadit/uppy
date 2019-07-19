@@ -598,14 +598,12 @@ describe('src/Core', () => {
       const core = new Core()
       core.on('file-added', fileAddedEventMock)
 
-      core.addFile({
+      const fileId = core.addFile({
         source: 'jest',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: fileData
       })
-
-      const fileId = Object.keys(core.getState().files)[0]
       const newFile = {
         extension: 'jpg',
         id: fileId,

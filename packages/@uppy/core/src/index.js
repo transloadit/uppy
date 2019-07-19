@@ -429,6 +429,7 @@ class Uppy {
    * and start an upload if `autoProceed === true`.
    *
    * @param {Object} file object to add
+   * @returns {string} id for the added file
    */
   addFile (file) {
     const { files, allowNewUpload } = this.getState()
@@ -524,6 +525,8 @@ class Uppy {
         })
       }, 4)
     }
+
+    return fileID
   }
 
   removeFile (fileID) {
