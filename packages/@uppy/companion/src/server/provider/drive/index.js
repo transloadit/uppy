@@ -60,8 +60,8 @@ class Drive {
         .where(where)
         .auth(options.token)
         .request((err, resp) => {
-          if (err) {
-            reject(err)
+          if (err || resp.statusCode !== 200) {
+            reject(this._error(err, resp))
             return
           }
           resolve(resp)
@@ -71,13 +71,6 @@ class Drive {
     Promise.all([teamDrivesPromise, filesPromise])
       .then(
         ([teamDrives, filesResponse]) => {
-          if (filesResponse.statusCode !== 200) {
-            const err = this._error(null, filesResponse)
-            logger.error(err, 'provider.drive.list.error')
-            done(err)
-            return
-          }
-
           const returnData = this.adaptData(
             filesResponse.body,
             teamDrives && teamDrives.body,
