@@ -35,7 +35,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       completeMultipartUpload: this.completeMultipartUpload.bind(this)
     }
 
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
     this.upload = this.upload.bind(this)
 
@@ -129,7 +129,71 @@ module.exports = class AwsS3Multipart extends Plugin {
 
   uploadFile (file) {
     return new Promise((resolve, reject) => {
-      const upload = new Uploader(file.data, Object.assign({
+      const onStart = (data) => {
+        const cFile = this.uppy.getFile(file.id)
+        this.uppy.setFileState(file.id, {
+          s3Multipart: {
+            ...cFile.s3Multipart,
+            key: data.key,
+            uploadId: data.uploadId,
+            parts: []
+          }
+        })
+      }
+
+      const onProgress = (bytesUploaded, bytesTotal) => {
+        this.uppy.emit('upload-progress', file, {
+          uploader: this,
+          bytesUploaded: bytesUploaded,
+          bytesTotal: bytesTotal
+        })
+      }
+
+      const onError = (err) => {
+        this.uppy.log(err)
+        this.uppy.emit('upload-error', file, err)
+        err.message = `Failed because: ${err.message}`
+
+        this.resetUploaderReferences(file.id)
+        reject(err)
+      }
+
+      const onSuccess = (result) => {
+        const uploadResp = {
+          uploadURL: result.location
+        }
+
+        this.resetUploaderReferences(file.id)
+
+        this.uppy.emit('upload-success', file, uploadResp)
+
+        if (result.location) {
+          this.uppy.log('Download ' + upload.file.name + ' from ' + result.location)
+        }
+
+        resolve(upload)
+      }
+
+      const onPartComplete = (part) => {
+        // Store completed parts in state.
+        const cFile = this.uppy.getFile(file.id)
+        if (!cFile) {
+          return
+        }
+        this.uppy.setFileState(file.id, {
+          s3Multipart: {
+            ...cFile.s3Multipart,
+            parts: [
+              ...cFile.s3Multipart.parts,
+              part
+            ]
+          }
+        })
+
+        this.uppy.emit('s3-multipart:part-uploaded', cFile, part)
+      }
+
+      const upload = new Uploader(file.data, {
         // .bind to pass the file object to each handler.
         createMultipartUpload: this.limitRequests(this.opts.createMultipartUpload.bind(this, file)),
         listParts: this.limitRequests(this.opts.listParts.bind(this, file)),
@@ -137,65 +201,15 @@ module.exports = class AwsS3Multipart extends Plugin {
         completeMultipartUpload: this.limitRequests(this.opts.completeMultipartUpload.bind(this, file)),
         abortMultipartUpload: this.limitRequests(this.opts.abortMultipartUpload.bind(this, file)),
 
+        onStart,
+        onProgress,
+        onError,
+        onSuccess,
+        onPartComplete,
+
         limit: this.opts.limit || 5,
-        onStart: (data) => {
-          const cFile = this.uppy.getFile(file.id)
-          this.uppy.setFileState(file.id, {
-            s3Multipart: Object.assign({}, cFile.s3Multipart, {
-              key: data.key,
-              uploadId: data.uploadId,
-              parts: []
-            })
-          })
-        },
-        onProgress: (bytesUploaded, bytesTotal) => {
-          this.uppy.emit('upload-progress', file, {
-            uploader: this,
-            bytesUploaded: bytesUploaded,
-            bytesTotal: bytesTotal
-          })
-        },
-        onError: (err) => {
-          this.uppy.log(err)
-          this.uppy.emit('upload-error', file, err)
-          err.message = `Failed because: ${err.message}`
-
-          this.resetUploaderReferences(file.id)
-          reject(err)
-        },
-        onSuccess: (result) => {
-          const uploadResp = {
-            uploadURL: result.location
-          }
-
-          this.resetUploaderReferences(file.id)
-
-          this.uppy.emit('upload-success', file, uploadResp)
-
-          if (result.location) {
-            this.uppy.log('Download ' + upload.file.name + ' from ' + result.location)
-          }
-
-          resolve(upload)
-        },
-        onPartComplete: (part) => {
-          // Store completed parts in state.
-          const cFile = this.uppy.getFile(file.id)
-          if (!cFile) {
-            return
-          }
-          this.uppy.setFileState(file.id, {
-            s3Multipart: Object.assign({}, cFile.s3Multipart, {
-              parts: [
-                ...cFile.s3Multipart.parts,
-                part
-              ]
-            })
-          })
-
-          this.uppy.emit('s3-multipart:part-uploaded', cFile, part)
-        }
-      }, file.s3Multipart))
+        ...file.s3Multipart
+      })
 
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
@@ -247,11 +261,12 @@ module.exports = class AwsS3Multipart extends Plugin {
       const client = new Client(this.uppy, file.remote.providerOptions)
       client.post(
         file.remote.url,
-        Object.assign({}, file.remote.body, {
+        {
+          ...file.remote.body,
           protocol: 's3-multipart',
           size: file.data.size,
           metadata: file.meta
-        })
+        }
       ).then((res) => {
         this.uppy.setFileState(file.id, { serverToken: res.token })
         file = this.uppy.getFile(file.id)
@@ -400,10 +415,12 @@ module.exports = class AwsS3Multipart extends Plugin {
   }
 
   uninstall () {
+    const { capabilities } = this.uppy.getState()
     this.uppy.setState({
-      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
+      capabilities: {
+        ...capabilities,
         resumableUploads: false
-      })
+      }
     })
     this.uppy.removeUploader(this.upload)
   }
