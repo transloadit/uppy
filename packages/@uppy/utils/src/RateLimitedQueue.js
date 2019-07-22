@@ -80,4 +80,32 @@ module.exports = class RateLimitedQueue {
     }
     return this._queue(fn)
   }
+
+  wrapPromiseFunction (fn, { signal } = {}) {
+    return (...args) => new Promise((resolve, reject) => {
+      if (signal && signal.aborted) {
+        return reject(new Error('Cancelled'))
+      }
+
+      const queuedRequest = this.add(() => {
+        let cancelError
+        fn(...args).then((result) => {
+          if (cancelError) {
+            reject(cancelError)
+          } else {
+            resolve(result)
+          }
+          if (signal) {
+            signal.removeEventListener('abort', queuedRequest.abort)
+          }
+        }, reject)
+
+        return () => {
+          cancelError = new Error('Cancelled')
+        }
+      })
+
+      if (signal) signal.addEventListener('abort', queuedRequest.abort)
+    })
+  }
 }
