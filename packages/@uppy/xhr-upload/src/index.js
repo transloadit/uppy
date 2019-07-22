@@ -111,7 +111,12 @@ module.exports = class XHRUpload extends Plugin {
     this.handleUpload = this.handleUpload.bind(this)
 
     // Simultaneous upload limiting is shared across all uploads with this plugin.
-    this.requests = new RateLimitedQueue(this.opts.limit)
+    // __queue is for internal Uppy use only!
+    if (this.opts.__queue instanceof RateLimitedQueue) {
+      this.requests = this.opts.__queue
+    } else {
+      this.requests = new RateLimitedQueue(this.opts.limit)
+    }
 
     if (this.opts.bundle && !this.opts.formData) {
       throw new Error('`opts.formData` must be true when `opts.bundle` is enabled.')
