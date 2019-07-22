@@ -82,7 +82,7 @@ fi_FI.strings = {
   saveChanges: 'Tallenna muutokset',
   selectAllFilesFromFolderNamed: 'Valitse kaikki tiedostot kansiosta %{name}',
   selectFileNamed: 'Valitse tiedosto %{name}',
-  selectXFiles: {
+  selectX: {
     '0': 'Valitse %{smart_count} tiedosto',
     '1': 'Valitse %{smart_count} tiedostoa',
     '2': 'Valitse %{smart_count} tiedostoa'
