@@ -79,10 +79,10 @@ pt_BR.strings = {
   retry: 'Tentar novamente',
   retryUpload: 'Tentar enviar novamente',
   saveChanges: 'Salvar alterações',
-  selectXFiles: {
-    '0': 'Selecionar %{smart_count} arquivo',
-    '1': 'Selecionar %{smart_count} arquivo',
-    '2': 'Selecionar %{smart_count} arquivos'
+  selectX: {
+    '0': 'Selecionar %{smart_count}',
+    '1': 'Selecionar %{smart_count}',
+    '2': 'Selecionar %{smart_count}'
   },
   smile: 'Sorria!',
   startRecording: 'Começar gravação de vídeo',

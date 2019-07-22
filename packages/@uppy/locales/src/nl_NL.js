@@ -79,10 +79,10 @@ nl_NL.strings = {
   retry: 'Opnieuw',
   retryUpload: 'Upload opnieuw',
   saveChanges: 'Wijzigingen opslaan',
-  selectXFiles: {
-    '0': 'Selecteer %{smart_count} bestand',
-    '1': 'Selecteer %{smart_count} bestanden',
-    '2': 'Selecteer %{smart_count} bestanden'
+  selectX: {
+    '0': 'Selecteer %{smart_count}',
+    '1': 'Selecteer %{smart_count}',
+    '2': 'Selecteer %{smart_count}'
   },
   smile: 'Lach!',
   startRecording: 'Start video-opname',

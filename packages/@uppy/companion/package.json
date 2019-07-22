@@ -1,6 +1,6 @@
 {
   "name": "@uppy/companion",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "OAuth helper and remote fetcher for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
   "main": "lib/uppy.js",
   "types": "types/index.d.ts",
@@ -26,7 +26,7 @@
     "realtime"
   ],
   "bin": {
-    "companion": "./lib/standalone/start-server.js"
+    "companion": "./bin/companion"
   },
   "dependencies": {
     "@purest/providers": "1.0.0",
@@ -65,27 +65,11 @@
     "ws": "1.1.5"
   },
   "devDependencies": {
-    "@types/aws-serverless-express": "^3.0.1",
-    "@types/compression": "0.0.36",
-    "@types/connect-redis": "0.0.7",
-    "@types/cookie-parser": "^1.4.1",
-    "@types/cors": "^2.8.3",
-    "@types/express-session": "^1.15.6",
-    "@types/helmet": "0.0.37",
-    "@types/jsonwebtoken": "^7.2.5",
-    "@types/lodash.merge": "^4.6.3",
-    "@types/morgan": "^1.7.35",
-    "@types/ms": "^0.7.30",
-    "@types/node": "^8.5.1",
-    "@types/request": "^2.0.9",
-    "@types/tus-js-client": "^1.4.1",
-    "@types/uuid": "^3.4.3",
-    "@types/ws": "^3.2.1",
-    "nodemon": "^1.17.5",
-    "supertest": "3.0.0",
+    "@types/node": "^12.6.8",
     "typescript": "^3.4.5"
   },
   "files": [
+    "bin/",
     "lib/"
   ],
   "jest": {

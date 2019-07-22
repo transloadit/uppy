@@ -91,11 +91,23 @@ window.Robodog.form('form#my-form', {
 
 The progress bar will be inserted _into_ that element (thus _not_ replace it).
 
-<!--
-## Dashboard
+## Separating Uploads from Form Submission
 
-**TODO have an option to replace the inputs with a Dashboard modal button?**
--->
+By default, `Robodog.form` starts uploads when the user submits the form. There can be a use case for _not_ doing this, and instead uploading files in response to some user action, _before_ the form is submitted. For example, when using a Dashboard modal, the user can upload their files first and then return to the form to submit it. When they submit the form, it should not start uploading again.
+
+The `triggerUploadOnSubmit: false` option is available for this purpose. We recommend using it together with the `modal: true` and `closeAfterFinish: true` options:
+
+```js
+// Replace file input in #my-form with a button that opens the modal;
+// after the user clicks the "Upload" button inside the modal and all
+// files have been successfully uploaded, the modal closes and the user
+// can submit the form.
+window.Robodog.form('form#my-form', {
+  modal: true,
+  closeAfterFinish: true,
+  triggerUploadOnSubmit: false
+})
+```
 
 ## Migrating From the jQuery SDK
 
@@ -116,7 +128,7 @@ $(selector).transloadit({
 ```
 ```html
 <!-- The new Robodog way! -->
-<script src="//transloadit.edgly.net/releases/uppy/robodog/v1.1.1/robodog.min.js"></script>
+<script src="//transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.js"></script>
 
 <script>
 window.Robodog.form(selector, {
@@ -128,7 +140,7 @@ window.Robodog.form(selector, {
 Make sure to also include the Uppy css file in your `<head>` tag in case you want to use the `modal: true` option:
 ```html
 <head>
-  <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.1.1/robodog.min.css">
+  <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.css">
 </head>
 ```
 
@@ -140,7 +152,7 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
 <html>
   <head>
     <title>Testing Robodog</title>
-    <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.1.1/robodog.min.css">
+    <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.css">
   </head>
   <body>
     <form id="upload-form" action="/uploads" enctype="multipart/form-data" method="POST">
@@ -150,7 +162,7 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
       <button type="submit">Upload</button>
     </form>
 
-    <script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.1.1/robodog.min.js"></script>
+    <script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.js"></script>
     <script type="text/javascript">
     window.Robodog.form('#upload-form', {
       waitForEncoding: true,

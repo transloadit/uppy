@@ -1,7 +1,7 @@
 {
   "name": "@uppy/core",
   "description": "Core module for the extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -20,13 +20,12 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/store-default": "1.1.0",
-    "@uppy/utils": "1.1.0",
+    "@uppy/store-default": "file:../store-default",
+    "@uppy/utils": "file:../utils",
     "cuid": "^2.1.1",
     "lodash.throttle": "^4.1.1",
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.1",
-    "preact": "8.2.9",
-    "prettier-bytes": "^1.0.4"
+    "preact": "8.2.9"
   }
 }

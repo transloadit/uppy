@@ -79,10 +79,10 @@ fr_FR.strings = {
   retry: 'Réessayer',
   retryUpload: 'Réessayez le téléchargement',
   saveChanges: 'Sauvegarder les modifications',
-  selectXFiles: {
-    '0': 'Sélectionner %{smart_count} fichier',
-    '1': 'Sélectionner %{smart_count} fichiers',
-    '2': 'Sélectionner %{smart_count} fichiers'
+  selectX: {
+    '0': 'Sélectionner %{smart_count}',
+    '1': 'Sélectionner %{smart_count}',
+    '2': 'Sélectionner %{smart_count}'
   },
   smile: 'Souris!',
   startRecording: 'Commencer l\'enregistrement vidéo',

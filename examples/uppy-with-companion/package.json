@@ -1,22 +1,19 @@
 {
-  "private": true,
-  "name": "uppy-with-companion-example",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "node ./server/index.js",
-    "client": "light-server -p 3000 -s client",
-    "start": "npm run server & npm run client"
-  },
-  "author": "",
-  "license": "ISC",
+  "name": "@uppy-example/uppy-with-companion",
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "light-server": "^2.4.0",
     "upload-server": "^1.1.6"
+  },
+  "license": "ISC",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "client": "light-server -p 3000 -s client",
+    "server": "node ./server/index.js",
+    "start": "npm run server & npm run client",
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
