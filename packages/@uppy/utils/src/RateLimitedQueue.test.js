@@ -6,8 +6,7 @@ describe('RateLimitedQueue', () => {
   let pending = 0
   function fn () {
     pending++
-    return new Promise((resolve) => setTimeout(resolve, 10))
-      .then(() => pending--)
+    return delay(15).then(() => pending--)
   }
 
   it('should run at most N promises at the same time', async () => {
