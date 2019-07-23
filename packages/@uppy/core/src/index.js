@@ -1068,8 +1068,8 @@ class Uppy {
   }
 
   /**
-   * Passes messages to a function, provided in `opt.logger`.
-   * If `opt.logger: Uppy.debugLogger` or `opt.debug: true`, logs to the browser console.
+   * Passes messages to a function, provided in `opts.logger`.
+   * If `opts.logger: Uppy.debugLogger` or `opts.debug: true`, logs to the browser console.
    *
    * @param {string|Object} message to log
    * @param {string} [type] optional `error` or `warning`

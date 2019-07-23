@@ -377,10 +377,10 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
-  // _Why make insides of Dashboard invisible until first ResizeObserver event is emitted?
-  //  ResizeOberserver doesn't emit the first resize event fast enough, users can see the jump from one .uppy-size-- to another (e.g. in Safari)
-  // _Why not apply visibility property to .uppy-Dashboard-inner?
-  //  Because ideally, acc to specs, ResizeObserver should see invisible elements as of width 0. So even though applying invisibility to .uppy-Dashboard-inner works now, it may not work in the future.
+  // ___Why make insides of Dashboard invisible until first ResizeObserver event is emitted?
+  //    ResizeOberserver doesn't emit the first resize event fast enough, users can see the jump from one .uppy-size-- to another (e.g. in Safari)
+  // ___Why not apply visibility property to .uppy-Dashboard-inner?
+  //    Because ideally, acc to specs, ResizeObserver should see invisible elements as of width 0. So even though applying invisibility to .uppy-Dashboard-inner works now, it may not work in the future.
   startListeningToResize () {
     // Watch for Dashboard container (`.uppy-Dashboard-inner`) resize
     // and update containerWidth/containerHeight in plugin state accordingly.
