@@ -230,26 +230,24 @@ module.exports = class Tus extends Plugin {
   uploadRemote (file, current, total) {
     this.resetUploaderReferences(file.id)
 
-    const opts = Object.assign(
-      {},
-      this.opts,
+    const opts = { ...this.opts }
+    if (file.tus) {
       // Install file-specific upload overrides.
-      file.tus || {}
-    )
+      Object.assign(opts, file.tus)
+    }
+
+    this.uppy.emit('upload-started', file)
+    this.uppy.log(file.remote.url)
+
+    if (file.serverToken) {
+      return this.connectToServerSocket(file)
+    }
 
     return new Promise((resolve, reject) => {
-      this.uppy.emit('upload-started', file)
-
-      this.uppy.log(file.remote.url)
-      if (file.serverToken) {
-        return this.connectToServerSocket(file)
-          .then(() => resolve())
-          .catch(reject)
-      }
-
       const Client = file.remote.providerOptions.provider ? Provider : RequestClient
       const client = new Client(this.uppy, file.remote.providerOptions)
 
+      // !! cancellation is NOT supported at this stage yet
       client.post(file.remote.url, {
         ...file.remote.body,
         endpoint: opts.endpoint,
@@ -273,12 +271,14 @@ module.exports = class Tus extends Plugin {
     return new Promise((resolve, reject) => {
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({ target: `${host}/api/${token}` })
+      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       this.onFileRemove(file.id, () => {
         socket.send('pause', {})
+        queuedRequest.abort()
+        this.resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was removed`)
       })
 
@@ -288,7 +288,12 @@ module.exports = class Tus extends Plugin {
 
       this.onPauseAll(file.id, () => socket.send('pause', {}))
 
-      this.onCancelAll(file.id, () => socket.send('pause', {}))
+      this.onCancelAll(file.id, () => {
+        socket.send('pause', {})
+        queuedRequest.abort()
+        this.resetUploaderReferences(file.id)
+        resolve(`upload ${file.id} was canceled`)
+      })
 
       this.onResumeAll(file.id, () => {
         if (file.error) {
@@ -328,6 +333,7 @@ module.exports = class Tus extends Plugin {
         }
 
         this.uppy.emit('upload-error', file, error)
+        queuedRequest.done()
         reject(error)
       })
 
@@ -338,7 +344,13 @@ module.exports = class Tus extends Plugin {
 
         this.uppy.emit('upload-success', file, uploadResp)
         this.resetUploaderReferences(file.id)
+        queuedRequest.done()
         resolve()
+      })
+
+      const queuedRequest = this.requests.run(() => {
+        socket.open()
+        return () => socket.close()
       })
     })
   }
