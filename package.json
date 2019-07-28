@@ -57,6 +57,7 @@
     "@uppy/url": "file:packages/@uppy/url",
     "@uppy/utils": "file:packages/@uppy/utils",
     "@uppy/webcam": "file:packages/@uppy/webcam",
+    "@uppy/screen-capture": "file:packages/@uppy/screen-capture",
     "@uppy/xhr-upload": "file:packages/@uppy/xhr-upload",
     "uppy": "file:packages/uppy",
     "uppy.io": "file:website"

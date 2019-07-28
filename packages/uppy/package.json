@@ -54,6 +54,7 @@
     "@uppy/tus": "file:../@uppy/tus",
     "@uppy/url": "file:../@uppy/url",
     "@uppy/webcam": "file:../@uppy/webcam",
+    "@uppy/screen-capture": "file:../@uppy/screen-capture",
     "@uppy/xhr-upload": "file:../@uppy/xhr-upload"
   }
 }

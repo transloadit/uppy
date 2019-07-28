@@ -82,13 +82,17 @@ en_US.strings = {
   saveChanges: 'Save changes',
   selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
   selectFileNamed: 'Select file %{name}',
+  selectSourceDescription: 'In order to capture your screen, please allow access for this site.',
+  selectSourceTitle: 'Please allow access to your screen',
   selectX: {
     '0': 'Select %{smart_count}',
     '1': 'Select %{smart_count}',
     '2': 'Select %{smart_count}'
   },
   smile: 'Smile!',
+  startCapturing: 'Begin screen capturing',
   startRecording: 'Begin video recording',
+  stopCapturing: 'Stop screen capturing',
   stopRecording: 'Stop video recording',
   takePicture: 'Take a picture',
   timedOut: 'Upload stalled for %{seconds} seconds, aborting.',

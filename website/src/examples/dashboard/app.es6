@@ -7,6 +7,7 @@ const Dropbox = require('@uppy/dropbox')
 const Instagram = require('@uppy/instagram')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
+const ScreenCapture = require('@uppy/screen-capture')
 const Tus = require('@uppy/tus')
 
 const COMPANION = require('../env')
@@ -69,6 +70,10 @@ function uppyInit () {
 
   if (opts.Webcam) {
     uppy.use(Webcam, { target: Dashboard })
+  }
+
+  if (opts.ScreenCapture) {
+    uppy.use(ScreenCapture, { target: Dashboard })
   }
 
   uppy.use(Tus, { endpoint: 'https://master.tus.io/files/', resume: true })

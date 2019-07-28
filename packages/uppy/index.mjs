@@ -24,6 +24,7 @@ export { default as GoogleDrive } from '@uppy/google-drive'
 export { default as Instagram } from '@uppy/instagram'
 export { default as Url } from '@uppy/url'
 export { default as Webcam } from '@uppy/webcam'
+export { default as ScreenCapture } from '@uppy/screen-capture'
 
 // Uploaders
 export { default as AwsS3 } from '@uppy/aws-s3'

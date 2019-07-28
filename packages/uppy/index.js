@@ -26,6 +26,7 @@ exports.GoogleDrive = require('@uppy/google-drive')
 exports.Instagram = require('@uppy/instagram')
 exports.Url = require('@uppy/url')
 exports.Webcam = require('@uppy/webcam')
+exports.ScreenCapture = require('@uppy/screen-capture')
 
 // Uploaders
 exports.AwsS3 = require('@uppy/aws-s3')
