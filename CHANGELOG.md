@@ -153,7 +153,7 @@ This release fixes id generation for non-latin characters, significantly improve
 - @uppy/aws-s3: prevent unnecessary delete multiparts request for completed files (#1650 / @twarlop)
 - @uppy/companion-client: send correct versions to companion (#1694 / @ifedapoolarewaju)
 - @uppy/companion-client: send correct versions to companion (#1694 /@ifedapoolarewaju)
-- @uppy/companion, @uppy/companion-client: send uppy-versions header to companion (#1612 / @ifedapoolarewaju)
+- @uppy/companion, @uppy/companion-client: ⚠️send uppy-versions header to companion: please see [how to avoid errors if you are using companion but NOT as standalone](https://github.com/transloadit/uppy/pull/1612#issuecomment-515117137) (#1612 / @ifedapoolarewaju)
 - @uppy/companion: add colors to logs (#1648 / @ifedapoolarewaju)
 - @uppy/companion: Change cloud in gcloud-deploy (#1729 / @kiloreux)
 - @uppy/companion: change oauth access token transport method (#1668 / @ifedapoolarewaju)
