@@ -30,8 +30,10 @@ module.exports = class Provider extends RequestClient {
 
   onReceiveResponse (response) {
     response = super.onReceiveResponse(response)
-    const authenticated = response.status !== 401
-    this.uppy.getPlugin(this.pluginId).setPluginState({ authenticated })
+    const plugin = this.uppy.getPlugin(this.pluginId)
+    const oldAuthenticated = plugin.getPluginState().authenticated
+    const authenticated = oldAuthenticated ? response.status !== 401 : response.status < 400
+    plugin.setPluginState({ authenticated })
     return response
   }
 

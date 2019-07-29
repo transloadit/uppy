@@ -76,6 +76,13 @@ const options = {
 app.use(companion.app(options))
 
 ```
+
+please be sure to allow the following HTTP methods in your server like so:
+
+```javascript
+res.header("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PATCH, PUT");
+```
+
 See [Options](#Options) for valid configuration options.
 
 To use WebSockets for realtime upload progress, you can call the `socket` method, like so:
