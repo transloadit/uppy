@@ -14,7 +14,7 @@ class RecorderScreen extends Component {
   }
 
   render () {
-    const { recording, stream, recordedVideo } = this.props
+    const { recording, stream: videoStream, recordedVideo } = this.props
 
     let videoProps = {
       playsinline: true
@@ -24,7 +24,7 @@ class RecorderScreen extends Component {
     if (recording || (!recordedVideo && !recording)) {
       videoProps.muted = true
       videoProps.autoplay = true
-      videoProps.srcObject = stream
+      videoProps.srcObject = videoStream
     }
 
     // show preview
