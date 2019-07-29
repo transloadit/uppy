@@ -262,15 +262,12 @@ module.exports = class AwsS3Multipart extends Plugin {
   uploadRemote (file) {
     this.resetUploaderReferences(file.id)
 
+    this.uppy.emit('upload-started', file)
+    if (file.serverToken) {
+      return this.connectToServerSocket(file)
+    }
+
     return new Promise((resolve, reject) => {
-      if (file.serverToken) {
-        return this.connectToServerSocket(file)
-          .then(() => resolve())
-          .catch(reject)
-      }
-
-      this.uppy.emit('upload-started', file)
-
       const Client = file.remote.providerOptions.provider ? Provider : RequestClient
       const client = new Client(this.uppy, file.remote.providerOptions)
       client.post(
@@ -299,11 +296,13 @@ module.exports = class AwsS3Multipart extends Plugin {
     return new Promise((resolve, reject) => {
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({ target: `${host}/api/${token}` })
+      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
       this.uploaderSockets[socket] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       this.onFileRemove(file.id, (removed) => {
+        socket.send('pause', {})
+        queuedRequest.abort()
         this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${file.id} was removed`)
       })
@@ -313,6 +312,13 @@ module.exports = class AwsS3Multipart extends Plugin {
       })
 
       this.onPauseAll(file.id, () => socket.send('pause', {}))
+
+      this.onCancelAll(file.id, () => {
+        socket.send('pause', {})
+        queuedRequest.abort()
+        this.resetUploaderReferences(file.id)
+        resolve(`upload ${file.id} was canceled`)
+      })
 
       this.onResumeAll(file.id, () => {
         if (file.error) {
@@ -331,14 +337,12 @@ module.exports = class AwsS3Multipart extends Plugin {
         socket.send('resume', {})
       })
 
-      if (file.isPaused) {
-        socket.send('pause', {})
-      }
-
       socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
       socket.on('error', (errData) => {
         this.uppy.emit('upload-error', file, new Error(errData.error))
+        this.resetUploaderReferences(file.id)
+        queuedRequest.done()
         reject(new Error(errData.error))
       })
 
@@ -348,7 +352,18 @@ module.exports = class AwsS3Multipart extends Plugin {
         }
 
         this.uppy.emit('upload-success', file, uploadResp)
+        this.resetUploaderReferences(file.id)
+        queuedRequest.done()
         resolve()
+      })
+
+      const queuedRequest = this.requests.run(() => {
+        socket.open()
+        if (file.isPaused) {
+          socket.send('pause', {})
+        }
+
+        return () => socket.close()
       })
     })
   }

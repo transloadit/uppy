@@ -424,10 +424,6 @@ module.exports = class XHRUpload extends Plugin {
           socket.send('resume', {})
         })
 
-        if (file.isPaused) {
-          socket.send('pause', {})
-        }
-
         socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
         socket.on('success', (data) => {
@@ -457,6 +453,10 @@ module.exports = class XHRUpload extends Plugin {
 
         const queuedRequest = this.requests.run(() => {
           socket.open()
+          if (file.isPaused) {
+            socket.send('pause', {})
+          }
+
           return () => socket.close()
         })
       })
