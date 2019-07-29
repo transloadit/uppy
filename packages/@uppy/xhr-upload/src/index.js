@@ -383,7 +383,50 @@ module.exports = class XHRUpload extends Plugin {
       }).then((res) => {
         const token = res.token
         const host = getSocketHost(file.remote.companionUrl)
-        const socket = new Socket({ target: `${host}/api/${token}` })
+        const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
+
+        this.onFileRemove(file.id, () => {
+          socket.send('pause', {})
+          queuedRequest.abort()
+          resolve(`upload ${file.id} was removed`)
+        })
+
+        this.onPause(file.id, (isPaused) => {
+          if (isPaused) {
+            socket.send('pause', {})
+          } else {
+            socket.send('resume', {})
+          }
+        })
+
+        this.onPauseAll(file.id, () => socket.send('pause', {}))
+
+        this.onCancelAll(file.id, () => {
+          socket.send('pause', {})
+          queuedRequest.abort()
+          resolve(`upload ${file.id} was canceled`)
+        })
+
+        this.onResumeAll(file.id, () => {
+          if (file.error) {
+            socket.send('pause', {})
+          }
+          socket.send('resume', {})
+        })
+
+        this.onRetry(file.id, () => {
+          socket.send('pause', {})
+          socket.send('resume', {})
+        })
+
+        this.onRetryAll(file.id, () => {
+          socket.send('pause', {})
+          socket.send('resume', {})
+        })
+
+        if (file.isPaused) {
+          socket.send('pause', {})
+        }
 
         socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
@@ -398,7 +441,7 @@ module.exports = class XHRUpload extends Plugin {
           }
 
           this.uppy.emit('upload-success', file, uploadResp)
-          socket.close()
+          queuedRequest.done()
           return resolve()
         })
 
@@ -408,7 +451,13 @@ module.exports = class XHRUpload extends Plugin {
             ? opts.getResponseError(resp.responseText, resp)
             : Object.assign(new Error(errData.error.message), { cause: errData.error })
           this.uppy.emit('upload-error', file, error)
+          queuedRequest.done()
           reject(error)
+        })
+
+        const queuedRequest = this.requests.run(() => {
+          socket.open()
+          return () => socket.close()
         })
       })
     })
