@@ -1,0 +1,55 @@
+/* Drag & Drop CSS to style the demo itself */
+
+.for-ProgressBar {
+  position: relative;
+}
+
+.uploaded-files{
+  background: rgba(240, 238, 238, 0.35);
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  h5 {
+    margin: 0;
+    font-size: 15px;
+    color: rgb(114, 114, 114);
+    font-weight: 500;
+  }
+  ol {
+    color: rgb(55, 55, 55);
+    margin: 0;
+    padding-left: 18px;
+    li {
+      font-size: 15px;
+      padding-top: 10px;
+      word-break: break-all;
+      a {
+        color: rgb(34, 117, 215);
+        &:hover {
+          color: rgb(34, 117, 215);
+          border-bottom: 1px solid rgb(34, 117, 215);
+        }
+      }
+    }
+  }
+}
+
+section.example-two {
+  margin-top: 55px;
+}
+
+section.example-two button.upload-button {
+  display: block;
+  margin: auto;
+  padding: 5px 15px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid gray;
+  background: none;
+  cursor: pointer;
+  margin-top: 15px;
+  &:hover{
+    background: gray;
+  }
+}
