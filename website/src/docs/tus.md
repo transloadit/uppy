@@ -51,6 +51,10 @@ Note that this option is about resuming when you start an upload again with the 
 
 In most cases you should leave this option as is, relax, and enjoy resumable uploads.
 
+### `removeFingerprintOnSuccess: false`
+
+If the `resume` option is enabled, it will store some data in localStorage for each upload. With `removeFingerprintOnSuccess`, this data is removed once an upload has completed. The effect is that if the same file is uploaded again, it will create an entirely new upload.
+
 ### `endpoint: ''`
 
 Destination URL for your uploads. This should be where your tus.io server is running.
