@@ -13,7 +13,7 @@ global.Prism = Prism
 require('prismjs/components/')()
 delete global.Prism
 
-const unhighlightedCodeRx = /<pre><code class="(.*)?">([\s\S]*?)<\/code><\/pre>/igm
+const unhighlightedCodeRx = /<pre><code class="([^"]*)?">([\s\S]*?)<\/code><\/pre>/igm
 
 function highlight (lang, code) {
   const startTag = `<figure class="highlight ${lang}"><table><tr><td class="code"><pre>`
