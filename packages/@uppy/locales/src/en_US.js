@@ -59,6 +59,8 @@ en_US.strings = {
   link: 'Link',
   loading: 'Loading...',
   logOut: 'Log out',
+  micDisabled: 'Microphone access denied by user',
+  micIsOn: 'Microphone is on',
   myDevice: 'My Device',
   noFilesFound: 'You have no files or folders here',
   noInternetConnection: 'No Internet connection',
@@ -73,6 +75,7 @@ en_US.strings = {
     '1': 'Processing %{smart_count} files',
     '2': 'Processing %{smart_count} files'
   },
+  recording: 'Recording',
   removeFile: 'Remove file',
   resetFilter: 'Reset filter',
   resume: 'Resume',

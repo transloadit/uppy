@@ -87,11 +87,11 @@
 }
 
 .uppy-Capture-button.submit{
-  background-color: $green;
+  background-color: $blue;
 }
 
 .uppy-Capture-button.submit:hover{
-  background-color: darken($green, 5%);
+  background-color: darken($blue, 5%);
 }
 
 .uppy-Capture-button.submit:disabled{
@@ -146,9 +146,14 @@
 
 .uppy-Capture-icon--stream{
   position: absolute;
-  left: 0;
-  bottom: 0;
-  margin: 0.5rem;
+  right: 0;
+  top: 0;
+  margin: 1rem;
+  z-index:1;
+}
+
+video{
+  outline: 0;
 }
 
 .uppy-Capture-icon--stream svg{
@@ -164,3 +169,23 @@
   50%{fill: $gray-500;}
   100%{fill: $blue;}
   }
+
+.uppy-Capture-button--video{
+  border: 1px solid $gray-800;
+  background: $white;
+}
+
+.uppy-Capture-button--video:hover {
+  background-color: darken($white, 10%);
+}
+
+.uppy-Capture-button--start-rec svg{
+  fill: $red;
+}
+
+.uppy-Capture-button--stop-rec svg{
+  fill: $black;
+}
+
+
+

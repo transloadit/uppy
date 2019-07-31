@@ -142,7 +142,10 @@ fi_FI.strings = {
   selectSourceDescription: 'Salli ruudun jako, jotta tallennus on mahdollista.',
   submitRecordedFile: 'Hyväksy tallenne',
   streamActive: 'Jako aktiivinen',
-  streamPassive: 'Jako passiivinen'
+  streamPassive: 'Jako passiivinen',
+  micDisabled: 'Käyttäjä on estänyt mikrofonin',
+  micIsOn: 'Mikrofoni on päällä',
+  recording: 'Tallennetaan'
 }
 
 fi_FI.pluralize = function (n) {

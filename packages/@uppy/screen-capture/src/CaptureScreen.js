@@ -42,13 +42,13 @@ class RecorderScreen extends Component {
     return (
       <div class="uppy uppy-Capture-container">
         <div class="uppy-Capture-videoContainer">
+          <StreamStatus {...this.props} />
           // eslint-disable-next-line no-return-assign
           <video ref={videoElement => (this.videoElement = videoElement)} class="uppy-Capture-video" {...videoProps} />
           <StopWatch {...this.props} />
         </div>
 
         <div class="uppy-Capture-buttonContainer">
-          <StreamStatus {...this.props} />
           <RecordButton {...this.props} />
           <SubmitButton {...this.props} />
         </div>

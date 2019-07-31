@@ -19,14 +19,27 @@ class Stopwatch extends Component {
       opacity: 0.7
     }
 
-    this.timeStyle = {
-      color: 'white',
-      fontWeight: 'bold',
+    this.infoContainerStyle = {
       marginLeft: 'auto',
       marginRight: 'auto',
       marginTop: 'auto',
       marginBottom: 'auto',
       zIndex: 1,
+      color: 'white'
+    }
+
+    this.infotextStyle = {
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      marginBottom: '1rem',
+      fontSize: '1.5rem'
+    }
+
+    this.timeStyle = {
+      display: 'block',
+      fontWeight: 'bold',
+      marginLeft: 'auto',
+      marginRight: 'auto',
       fontSize: '3rem',
       fontFamily: 'Courier New'
     }
@@ -57,7 +70,7 @@ class Stopwatch extends Component {
   fmtMSS (s) { return (s - (s %= 60)) / 60 + (s > 9 ? ':' : ':0') + s }
 
   render () {
-    const { recording } = { ...this.props }
+    const { recording, i18n } = { ...this.props }
 
     // second to minutes and seconds
     const minAndSec = this.fmtMSS(this.state.elapsedTime)
@@ -74,9 +87,15 @@ class Stopwatch extends Component {
       return (
         <div style={this.wrapperStyle}>
           <div style={this.overlayStyle} />
-          <div style={this.timeStyle}>
-            {minAndSec}
+          <div style={this.infoContainerStyle}>
+            <div style={this.infotextStyle}>
+              {i18n('recording')}
+            </div>
+            <div style={this.timeStyle}>
+              {minAndSec}
+            </div>
           </div>
+
         </div>
       )
     } else {

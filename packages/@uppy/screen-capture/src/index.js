@@ -5,14 +5,13 @@ const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
 const ScreenRecIcon = require('./ScreenRecIcon')
 const CaptureScreen = require('./CaptureScreen')
 
-// Setup getUserMedia, with polyfill for older browsers
 // Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 function checkDisplayMediaSupport () {
   // check if screen capturing is supported
   // eslint-disable-next-line compat/compat
   if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
     // eslint-disable-next-line compat/compat
-    return navigator.mediaDevices.getDisplayMedia
+    return navigator.mediaDevices
   } else {
     console.log('Screencapturing is not supported')
     return null
@@ -27,7 +26,7 @@ module.exports = class ScreenCapture extends Plugin {
 
   constructor (uppy, opts) {
     super(uppy, opts)
-    this.displayMediaObject = checkDisplayMediaSupport()
+    this.mediaDevices = checkDisplayMediaSupport()
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'ScreenCapture'
     this.title = this.opts.title || 'Capture'
@@ -42,13 +41,17 @@ module.exports = class ScreenCapture extends Plugin {
         selectSourceDescription: 'In order to capture your screen, please allow access for this site.',
         submitRecordedFile: 'Submit captured video',
         streamActive: 'Stream active',
-        streamPassive: 'Stream passive'
+        streamPassive: 'Stream passive',
+        micDisabled: 'Microphone access denied by user',
+        micIsOn: 'Microphone is on',
+        recording: 'Recording'
       }
     }
 
     // set default options
     // https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints
-    const defaultOptions = {
+    let defaultOptions = {
+      // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints#Properties_of_shared_screen_tracks
       displayMediaConstraints: {
         video: {
           width: 1280,
@@ -61,8 +64,19 @@ module.exports = class ScreenCapture extends Plugin {
         cursor: 'motion',
         displaySurface: 'monitor'
       },
+      // https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints/audio
+      userMediaConstraints: {
+        audio: true
+      },
       preferredVideoMimeType: 'video/webm'
     }
+
+    // const supported = this.mediaDevices.getSupportedConstraints()
+
+    // set audio constraints if supported
+    /*  if (supported['sampleRate']) {
+      defaultOptions.userMediaConstrainsts.sampleRate = 123
+    } */
 
     // merge default options with the ones set by user
     this.opts = { ...defaultOptions, ...opts }
@@ -95,12 +109,12 @@ module.exports = class ScreenCapture extends Plugin {
   // install plugin. https://uppy.io/docs/writing-plugins/#install
   install () {
     // return if browser doesn't support getDisplayMedia
-    if (!this.displayMediaObject) {
+    if (!this.mediaDevices) {
       return null
     }
 
     this.setPluginState({
-      streamActive: false
+      streamActive: false, audioStreamActive: false
     })
 
     const target = this.opts.target
@@ -119,11 +133,13 @@ module.exports = class ScreenCapture extends Plugin {
   }
 
   start () {
-    if (!this.displayMediaObject) {
+    if (!this.mediaDevices) {
       return Promise.reject(new Error('Screen recorder access not supported'))
     }
 
     this.captureActive = true
+
+    this.selectAudioStreamSource()
 
     this.selectVideoStreamSource()
       .then(res => {
@@ -147,7 +163,7 @@ module.exports = class ScreenCapture extends Plugin {
 
     // ask user to select source to record and get mediastream from that
     // eslint-disable-next-line compat/compat
-    return navigator.mediaDevices.getDisplayMedia(this.opts.displayMediaConstraints)
+    return this.mediaDevices.getDisplayMedia(this.opts.displayMediaConstraints)
       .then((videoStream) => {
         this.videoStream = videoStream
 
@@ -160,8 +176,6 @@ module.exports = class ScreenCapture extends Plugin {
           streamActive: true
         })
 
-        if (this.debug) console.log('stream selected')
-
         return videoStream
       })
       .catch((err) => {
@@ -171,11 +185,36 @@ module.exports = class ScreenCapture extends Plugin {
 
         this.userDenied = true
 
-        // console.log('user denied stream access')
-
         setTimeout(() => {
           this.userDenied = false
         }, 1000)
+
+        return false
+      })
+  }
+
+  selectAudioStreamSource () {
+    // if active stream available, return it
+    if (this.audioStream) {
+      return new Promise(resolve => resolve(this.audioStream))
+    }
+
+    // ask user to select source to record and get mediastream from that
+    // eslint-disable-next-line compat/compat
+    return this.mediaDevices.getUserMedia(this.opts.userMediaConstraints)
+      .then((audioStream) => {
+        this.audioStream = audioStream
+
+        this.setPluginState({
+          audioStreamActive: true
+        })
+
+        return audioStream
+      })
+      .catch((err) => {
+        if (err.name === 'NotAllowedError') {
+          this.uppy.info(this.i18n('micDisabled'), 'error', 5000)
+        }
 
         return false
       })
@@ -188,15 +227,27 @@ module.exports = class ScreenCapture extends Plugin {
     const preferredVideoMimeType = this.opts.preferredVideoMimeType
 
     this.selectVideoStreamSource()
-      .then((stream) => {
+      .then((videoStream) => {
         // Attempt to use the passed preferredVideoMimeType (if any) during recording.
         // If the browser doesn't support it, we'll fall back to the browser default instead
         if (preferredVideoMimeType && MediaRecorder.isTypeSupported(preferredVideoMimeType) && getFileTypeExtension(preferredVideoMimeType)) {
           options.mimeType = preferredVideoMimeType
         }
 
+        // prepare tracks
+        let tracks = [videoStream.getVideoTracks()[0]]
+
+        // merge audio if exits
+        if (this.audioStream) {
+          tracks.push(this.audioStream.getAudioTracks()[0])
+        }
+
+        // create new stream from video and audio
+        // eslint-disable-next-line compat/compat
+        this.outputStream = new MediaStream(tracks)
+
         // initialize mediarecorder
-        this.recorder = new MediaRecorder(stream, options)
+        this.recorder = new MediaRecorder(this.outputStream, options)
 
         // push data to buffer when data available
         this.recorder.addEventListener('dataavailable', (event) => {
@@ -235,9 +286,10 @@ module.exports = class ScreenCapture extends Plugin {
     }
 
     this.videoStream = null
+    this.audioStream = null
 
     this.setPluginState({
-      streamActive: false
+      streamActive: false, audioStreamActive: false
     })
   }
 
@@ -296,15 +348,37 @@ module.exports = class ScreenCapture extends Plugin {
   }
 
   stop () {
-    // flush the stream
+    // flush video stream
     if (this.videoStream) {
-      this.videoStream.getAudioTracks().forEach((track) => {
-        track.stop()
-      })
       this.videoStream.getVideoTracks().forEach((track) => {
         track.stop()
       })
+      this.videoStream.getAudioTracks().forEach((track) => {
+        track.stop()
+      })
       this.videoStream = null
+    }
+
+    // flush audio stream
+    if (this.audioStream) {
+      this.audioStream.getAudioTracks().forEach((track) => {
+        track.stop()
+      })
+      this.audioStream.getVideoTracks().forEach((track) => {
+        track.stop()
+      })
+      this.audioStream = null
+    }
+
+    // flush output stream
+    if (this.outputStream) {
+      this.outputStream.getAudioTracks().forEach((track) => {
+        track.stop()
+      })
+      this.outputStream.getVideoTracks().forEach((track) => {
+        track.stop()
+      })
+      this.outputStream = null
     }
 
     // remove preview video
@@ -338,7 +412,7 @@ module.exports = class ScreenCapture extends Plugin {
   render (state) {
     // get screen recorder state
     const recorderState = this.getPluginState()
-    console.log(recorderState)
+    // console.log(recorderState)
 
     if (!recorderState.streamActive && !this.captureActive && !this.userDenied) {
       this.start()
