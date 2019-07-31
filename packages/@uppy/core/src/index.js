@@ -660,13 +660,9 @@ class Uppy {
   }
 
   retryUpload (fileID) {
-    const updatedFiles = Object.assign({}, this.getState().files)
-    const updatedFile = Object.assign({}, updatedFiles[fileID],
-      { error: null, isPaused: false }
-    )
-    updatedFiles[fileID] = updatedFile
-    this.setState({
-      files: updatedFiles
+    this.setFileState(fileID, {
+      error: null,
+      isPaused: false
     })
 
     this.emit('upload-retry', fileID)
