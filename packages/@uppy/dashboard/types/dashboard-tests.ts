@@ -15,9 +15,13 @@ import Dashboard = require('../')
 
 {
   const uppy = Uppy()
-  uppy.use(Dashboard, {
+  uppy.use(Dashboard, <Partial<Dashboard.DashboardOptions>>{
     width: '100%',
-    height: 700
+    height: 700,
+    metaFields: [
+      { id: 'caption', name: 'Caption' },
+      { id: 'license', name: 'License', placeholder: 'Creative Commons, Apache 2.0, ...' },
+    ]
   })
 }
 
