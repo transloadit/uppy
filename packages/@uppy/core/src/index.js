@@ -556,6 +556,13 @@ class Uppy {
       files: updatedFiles
     })
 
+    // If nothing is uploading anymore, and if nothing has uploaded yet - allow new uploads!
+    if (Object.keys(updatedFiles).length === 0) {
+      this.setState({
+        allowNewUpload: true
+      })
+    }
+
     removeUploads.forEach((uploadID) => {
       this._removeUpload(uploadID)
     })
@@ -653,7 +660,6 @@ class Uppy {
     })
 
     this.setState({
-      allowNewUpload: true,
       totalProgress: 0,
       error: null
     })
