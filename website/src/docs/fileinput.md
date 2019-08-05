@@ -9,7 +9,7 @@ category: 'Sources'
 tagline: even more plain and simple, just a button
 ---
 
-`@uppy/file-input` is the most barebones UI for selecting files — it shows a single button that, when clicked, opens up the browser's file selector.
+`@uppy/file-input` is the most barebones UI for selecting files — it shows a single button that, when clicked, opens up the browser’s file selector.
 
 ```js
 const FileInput = require('@uppy/file-input')
@@ -22,6 +22,40 @@ uppy.use(FileInput, {
 <a class="TryButton" href="/examples/xhrupload/">Try it live</a>
 
 The `@uppy/xhr-upload` example uses `@uppy/file-input` with the [`pretty`](#pretty-true) option enabled.
+
+## Custom file input
+
+If you don’t like the look/feel of the button rendered by `@uppy/file-input`, feel free to forgo the plugin and use your own custom button on a page, like so:
+
+```html
+<input type="file" id="my-file-input">
+```
+
+Then add this JS to attach it to Uppy:
+
+```js
+const uppy = Uppy(...)
+const fileInput = document.querySelector('#my-file-input')
+
+fileInput.addEventListener('change', (event) => {
+  const files = Array.from(event.target.files)
+
+  files.forEach((file) => {
+    try {
+      uppy.addFile({
+        source: 'file input',
+        name: file.name,
+        type: file.type,
+        data: file
+      })
+    } catch (err) {
+      if (!err.isRestriction) {
+        console.log(err)
+      }
+    }
+  })
+})
+```
 
 ## Installation
 
