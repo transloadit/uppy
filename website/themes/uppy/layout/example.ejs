@@ -51,8 +51,11 @@
       };
     }
 
+    // IE 10 doesn’t support console.debug
+    var consoleDebug = console.debug || console.log
+
     console.log = customLog(console.log.bind(console), document.getElementById("console-log"));
-    console.debug = customLog(console.log.bind(console), document.getElementById("console-log"));
+    console.debug = customLog(consoleDebug.bind(console), document.getElementById("console-log"));
     console.warn = customLog(console.warn.bind(console), document.getElementById("console-log"));
     console.error = customLog(console.error.bind(console), document.getElementById("console-log"));
   </script>
