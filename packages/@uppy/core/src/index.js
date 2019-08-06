@@ -472,6 +472,13 @@ class Uppy {
 
     const fileID = generateFileID(file)
 
+    if (files[fileID]) {
+      this.info(`Not adding duplicate file '${fileName}', it already exists`, 'error', 5000)
+      this.log(`Not adding duplicate file '${fileName}', it already exists`)
+      this.log(fileID)
+      return
+    }
+
     const meta = file.meta || {}
     meta.name = fileName
     meta.type = fileType
