@@ -23,3 +23,13 @@ window.uppy = Uppy({
   .use(Instagram, { target: Dashboard, companionUrl })
   .use(Dropbox, { target: Dashboard, companionUrl })
   .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+
+if (window.location.search === '?socketerr=true') {
+  const emitError = (file, data) => {
+    // trigger fake socket error
+    data.uploader.uploaderSockets[file.id].emit(
+      'error', { error: { message: 'nobody likes me, thats ok' } })
+    window.uppy.off('upload-progress', emitError)
+  }
+  window.uppy.on('upload-progress', emitError)
+}
