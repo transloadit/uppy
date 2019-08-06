@@ -1,0 +1,40 @@
+.uploaded-files{
+  background: rgba(240, 238, 238, 0.35);
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  h5 {
+    margin: 0;
+    font-size: 15px;
+    color: rgb(114, 114, 114);
+    font-weight: 500;
+  }
+  ol {
+    color: rgb(55, 55, 55);
+    margin: 0;
+    padding-left: 18px;
+    li {
+      font-size: 15px;
+      padding-top: 10px;
+      word-break: break-all;
+      a {
+        color: rgb(34, 117, 215);
+        &:hover {
+          color: rgb(34, 117, 215);
+          border-bottom: 1px solid rgb(34, 117, 215);
+        }
+      }
+    }
+  }
+}
+
+// Prettier progress bar
+.uppy-ProgressBar-inner {
+  box-shadow: none !important;
+}
+
+// Prettier focus for the 'Choose files' button
+.uppy-FileInput-btn:focus{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(34, 117, 215, 0.5);
+}
