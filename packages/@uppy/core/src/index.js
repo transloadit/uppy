@@ -1273,11 +1273,11 @@ class Uppy {
    * @returns {Promise}
    */
   upload () {
-    const onError = (err) => {
+    const onError = (err, type = 'info') => {
       const message = typeof err === 'object' ? err.message : err
       const details = (typeof err === 'object' && err.details) ? err.details : ''
-      this.log(`${message} ${details}`)
-      this.info({ message: message, details: details }, 'error', 5000)
+      this.log(`${message} ${details}`, type)
+      this.info({ message: message, details: details }, type, 5000)
       throw (typeof err === 'object' ? err : new Error(err))
     }
 
@@ -1286,6 +1286,7 @@ class Uppy {
     }
 
     let files = this.getState().files
+
     const onBeforeUploadResult = this.opts.onBeforeUpload(files)
 
     if (onBeforeUploadResult === false) {
@@ -1318,8 +1319,9 @@ class Uppy {
       .catch((err) => {
         if (err.isRestriction) {
           this.emit('restriction-failed', null, err)
+          return onError(err)
         }
-        onError(err)
+        onError(err, 'error')
       })
   }
 }
