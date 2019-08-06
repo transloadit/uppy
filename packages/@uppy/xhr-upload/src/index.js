@@ -537,6 +537,12 @@ module.exports = class XHRUpload extends Plugin {
     const files = fileIDs.map((fileID) => this.uppy.getFile(fileID))
 
     if (this.opts.bundle) {
+      // if bundle: true, we don’t support remote uploads
+      const isSomeFileRemote = files.some(file => file.isRemote)
+      if (isSomeFileRemote) {
+        throw new Error('Can’t bundle remote files when bundle: true is set')
+      }
+
       return this.uploadBundle(files)
     }
 
