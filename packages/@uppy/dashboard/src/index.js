@@ -344,6 +344,12 @@ module.exports = class Dashboard extends Plugin {
   }
 
   toggleFileCard (fileId) {
+    if (fileId) {
+      this.uppy.emit('dashboard:file-edit-start')
+    } else {
+      this.uppy.emit('dashboard:file-edit-complete')
+    }
+
     this.setPluginState({
       fileCardFor: fileId || null,
       activeOverlayType: fileId ? 'FileCard' : null

@@ -367,3 +367,11 @@ uppy.on('dashboard:modal-open', () => {
 ### `dashboard:modal-closed`
 
 Fired when the Dashboard modal is closed.
+
+### `dashboard:file-edit-start`
+
+Fired when the user clicks “edit” icon next to a file in the Dashboard. The FileCard panel is then open with file metadata available for editing.
+
+### `dashboard:file-edit-complete`
+
+Fired when then user finished editing the file metadata.
