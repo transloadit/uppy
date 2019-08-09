@@ -5,6 +5,7 @@ const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')
 const limitPromises = require('@uppy/utils/lib/limitPromises')
+const getFingerprint = require('./getFingerprint')
 
 // Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
 // excepted we removed 'fingerprint' key to avoid adding more dependencies
@@ -136,6 +137,12 @@ module.exports = class Tus extends Plugin {
         // Install file-specific upload overrides.
         file.tus || {}
       )
+
+      // We override tus fingerprint to uppy’s `file.id`, since the `file.id`
+      // now also includes `relativePath` for files added from folders.
+      // This means you can add 2 identical files, if one is in folder a,
+      // the other in folder b.
+      optsTus.fingerprint = getFingerprint(file)
 
       optsTus.onError = (err) => {
         this.uppy.log(err)
