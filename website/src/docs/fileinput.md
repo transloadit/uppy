@@ -23,40 +23,6 @@ uppy.use(FileInput, {
 
 The `@uppy/xhr-upload` example uses `@uppy/file-input` with the [`pretty`](#pretty-true) option enabled.
 
-## Custom file input
-
-If you don’t like the look/feel of the button rendered by `@uppy/file-input`, feel free to forgo the plugin and use your own custom button on a page, like so:
-
-```html
-<input type="file" id="my-file-input">
-```
-
-Then add this JS to attach it to Uppy:
-
-```js
-const uppy = Uppy(...)
-const fileInput = document.querySelector('#my-file-input')
-
-fileInput.addEventListener('change', (event) => {
-  const files = Array.from(event.target.files)
-
-  files.forEach((file) => {
-    try {
-      uppy.addFile({
-        source: 'file input',
-        name: file.name,
-        type: file.type,
-        data: file
-      })
-    } catch (err) {
-      if (!err.isRestriction) {
-        console.log(err)
-      }
-    }
-  })
-})
-```
-
 ## Installation
 
 This plugin is published as the `@uppy/file-input` package.
@@ -124,4 +90,42 @@ When `pretty` is set, specify a custom label for the button.
 strings: {
   chooseFiles: 'Choose files'
 }
+```
+
+## Custom file input
+
+If you don’t like the look/feel of the button rendered by `@uppy/file-input`, feel free to forgo the plugin and use your own custom button on a page, like so:
+
+```html
+<input type="file" id="my-file-input">
+```
+
+Then add this JS to attach it to Uppy:
+
+```js
+const uppy = Uppy(...)
+const fileInput = document.querySelector('#my-file-input')
+
+fileInput.addEventListener('change', (event) => {
+  const files = Array.from(event.target.files)
+
+  files.forEach((file) => {
+    try {
+      uppy.addFile({
+        source: 'file input',
+        name: file.name,
+        type: file.type,
+        data: file
+      })
+    } catch (err) {
+      if (err.isRestriction) {
+        // handle restrictions
+        console.log('Restriction error:', err)
+      } else {
+        // handle other errors
+        console.error(err)
+      }
+    }
+  })
+})
 ```
