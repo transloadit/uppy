@@ -391,27 +391,10 @@ module.exports = class XHRUpload extends Plugin {
           resolve(`upload ${file.id} was removed`)
         })
 
-        this.onPause(file.id, (isPaused) => {
-          if (isPaused) {
-            socket.send('pause', {})
-          } else {
-            socket.send('resume', {})
-          }
-        })
-
-        this.onPauseAll(file.id, () => socket.send('pause', {}))
-
         this.onCancelAll(file.id, () => {
           socket.send('pause', {})
           queuedRequest.abort()
           resolve(`upload ${file.id} was canceled`)
-        })
-
-        this.onResumeAll(file.id, () => {
-          if (file.error) {
-            socket.send('pause', {})
-          }
-          socket.send('resume', {})
         })
 
         this.onRetry(file.id, () => {
