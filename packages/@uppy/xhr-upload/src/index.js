@@ -5,6 +5,7 @@ const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')
+const EventTracker = require('@uppy/utils/lib/EventTracker')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 
 function buildResponseError (xhr, error) {
@@ -121,6 +122,8 @@ module.exports = class XHRUpload extends Plugin {
     if (this.opts.bundle && !this.opts.formData) {
       throw new Error('`opts.formData` must be true when `opts.bundle` is enabled.')
     }
+
+    this.uploaderEvents = Object.create(null)
   }
 
   getOptions (file) {
@@ -254,6 +257,7 @@ module.exports = class XHRUpload extends Plugin {
       })
 
       const xhr = new XMLHttpRequest()
+      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       const id = cuid()
 
@@ -280,6 +284,10 @@ module.exports = class XHRUpload extends Plugin {
         this.uppy.log(`[XHRUpload] ${id} finished`)
         timer.done()
         queuedRequest.done()
+        if (this.uploaderEvents[file.id]) {
+          this.uploaderEvents[file.id].remove()
+          this.uploaderEvents[file.id] = null
+        }
 
         if (opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
           const body = opts.getResponseData(xhr.responseText, xhr)
@@ -316,6 +324,10 @@ module.exports = class XHRUpload extends Plugin {
         this.uppy.log(`[XHRUpload] ${id} errored`)
         timer.done()
         queuedRequest.done()
+        if (this.uploaderEvents[file.id]) {
+          this.uploaderEvents[file.id].remove()
+          this.uploaderEvents[file.id] = null
+        }
 
         const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
         this.uppy.emit('upload-error', file, error)
@@ -342,14 +354,12 @@ module.exports = class XHRUpload extends Plugin {
         }
       })
 
-      this.uppy.on('file-removed', (removedFile) => {
-        if (removedFile.id === file.id) {
-          queuedRequest.abort()
-          reject(new Error('File removed'))
-        }
+      this.onFileRemove(file.id, () => {
+        queuedRequest.abort()
+        reject(new Error('File removed'))
       })
 
-      this.uppy.on('cancel-all', () => {
+      this.onCancelAll(file.id, () => {
         queuedRequest.abort()
         reject(new Error('Upload cancelled'))
       })
@@ -384,6 +394,7 @@ module.exports = class XHRUpload extends Plugin {
         const token = res.token
         const host = getSocketHost(file.remote.companionUrl)
         const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
+        this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
         this.onFileRemove(file.id, () => {
           socket.send('pause', {})
@@ -421,6 +432,10 @@ module.exports = class XHRUpload extends Plugin {
 
           this.uppy.emit('upload-success', file, uploadResp)
           queuedRequest.done()
+          if (this.uploaderEvents[file.id]) {
+            this.uploaderEvents[file.id].remove()
+            this.uploaderEvents[file.id] = null
+          }
           return resolve()
         })
 
@@ -431,6 +446,10 @@ module.exports = class XHRUpload extends Plugin {
             : Object.assign(new Error(errData.error.message), { cause: errData.error })
           this.uppy.emit('upload-error', file, error)
           queuedRequest.done()
+          if (this.uploaderEvents[file.id]) {
+            this.uploaderEvents[file.id].remove()
+            this.uploaderEvents[file.id] = null
+          }
           reject(error)
         })
 
@@ -559,6 +578,34 @@ module.exports = class XHRUpload extends Plugin {
     })
 
     return settle(promises)
+  }
+
+  onFileRemove (fileID, cb) {
+    this.uploaderEvents[fileID].on('file-removed', (file) => {
+      if (fileID === file.id) cb(file.id)
+    })
+  }
+
+  onRetry (fileID, cb) {
+    this.uploaderEvents[fileID].on('upload-retry', (targetFileID) => {
+      if (fileID === targetFileID) {
+        cb()
+      }
+    })
+  }
+
+  onRetryAll (fileID, cb) {
+    this.uploaderEvents[fileID].on('retry-all', (filesToRetry) => {
+      if (!this.uppy.getFile(fileID)) return
+      cb()
+    })
+  }
+
+  onCancelAll (fileID, cb) {
+    this.uploaderEvents[fileID].on('cancel-all', () => {
+      if (!this.uppy.getFile(fileID)) return
+      cb()
+    })
   }
 
   handleUpload (fileIDs) {
