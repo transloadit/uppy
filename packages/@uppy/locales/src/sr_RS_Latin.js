@@ -34,7 +34,7 @@ sr_RS_Latin.strings = {
   edit: 'Izmeni',
   editFile: 'Izmeni datoteku',
   editing: 'Menjanje %{file}',
-  emptyFolderAdded: 'Ni jedna datoteka nije dodata iz praznog direktorijuma',
+  emptyFolderAdded: 'Ni jedna datoteka nije dodata iz praznog foldera',
   encoding: 'Šifrovanje...',
   enterCorrectUrl: 'Pogrešan URL: unesite tačnu putanju do datoteke',
   enterUrlToImport: 'Unesite URL (putanju) do datoteke',
@@ -132,7 +132,7 @@ sr_RS_Latin.strings = {
     2: 'Izaberite datoteke. Najmanje: %{smart_count}'
   },
   selectAllFilesFromFolderNamed: 'Izaberite sve datoteke iz foldera %{name}',
-  unselectAllFilesFromFolderNamed: 'Isključite sve datoteke iz fascikle %{name}',
+  unselectAllFilesFromFolderNamed: 'Isključite sve datoteke iz foldera %{name}',
   selectFileNamed: 'Izaberite fajl %{name}',
   unselectFileNamed: 'Isključite fajl %{name}',
   openFolderNamed: 'Otvori folder %{name}'

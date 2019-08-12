@@ -202,7 +202,7 @@ function injectLocaleList () {
 
     const languageName = LocaleCode.getLanguageName(localeNameWithDash)
     const countryName = LocaleCode.getCountryName(localeNameWithDash)
-    const npmPath = `<code><a href="https://www.npmjs.com/package/@uppy/locales">@uppy/locales</a>/lib/${localeName}</code>`
+    const npmPath = `<code class="raw"><a href="https://www.npmjs.com/package/@uppy/locales">@uppy/locales</a>/lib/${localeName}</code>`
     const cdnPath = `[\`${localeName}.min.js\`](https://transloadit.edgly.net/releases/uppy/locales/v${localePackageVersion}/${localeName}.min.js)`
     const githubSource = `[\`${localeName}.js\`](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/locales/src/${localeName}.js)`
     const mdTableRow = `| ${languageName}<br/> <small>${countryName}</small>${variant ? `<br /><small>(${variant})</small>` : ''} | ${npmPath} | ${cdnPath} | ✏️ ${githubSource} |`

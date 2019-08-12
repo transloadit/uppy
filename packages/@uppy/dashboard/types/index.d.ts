@@ -1,5 +1,11 @@
 import Uppy = require('@uppy/core');
 
+interface MetaField {
+  id: string;
+  name: string;
+  placeholder?: string;
+}
+
 declare module Dashboard {
   interface DashboardOptions extends Uppy.PluginOptions {
     onRequestCloseModal: () => void;
@@ -14,7 +20,7 @@ declare module Dashboard {
     note: string;
     showLinkToFileUploadResult: boolean;
     proudlyDisplayPoweredByUppy: boolean;
-    metaFields: string[];
+    metaFields: MetaField[];
     plugins: string[];
     disableStatusBar: boolean;
     showProgressDetails: boolean;

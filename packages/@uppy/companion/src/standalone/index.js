@@ -1,6 +1,6 @@
 const express = require('express')
 const qs = require('querystring')
-const uppy = require('../uppy')
+const uppy = require('../companion')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')

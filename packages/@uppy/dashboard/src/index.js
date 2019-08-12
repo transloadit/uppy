@@ -377,34 +377,40 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
-  // _Why make insides of Dashboard invisible until first ResizeObserver event is emitted?
-  //  ResizeOberserver doesn't emit the first resize event fast enough, users can see the jump from one .uppy-size-- to another (e.g. in Safari)
-  // _Why not apply visibility property to .uppy-Dashboard-inner?
-  //  Because ideally, acc to specs, ResizeObserver should see invisible elements as of width 0. So even though applying invisibility to .uppy-Dashboard-inner works now, it may not work in the future.
+  // ___Why make insides of Dashboard invisible until first ResizeObserver event is emitted?
+  //    ResizeOberserver doesn't emit the first resize event fast enough, users can see the jump from one .uppy-size-- to another (e.g. in Safari)
+  // ___Why not apply visibility property to .uppy-Dashboard-inner?
+  //    Because ideally, acc to specs, ResizeObserver should see invisible elements as of width 0. So even though applying invisibility to .uppy-Dashboard-inner works now, it may not work in the future.
   startListeningToResize () {
     // Watch for Dashboard container (`.uppy-Dashboard-inner`) resize
     // and update containerWidth/containerHeight in plugin state accordingly.
     // Emits first event on initialization.
     this.resizeObserver = new ResizeObserver((entries, observer) => {
-      for (const entry of entries) {
-        const { width, height } = entry.contentRect
+      const uppyDashboardInnerEl = entries[0]
 
-        this.uppy.log(`[Dashboard] resized: ${width} / ${height}`)
+      const { width, height } = uppyDashboardInnerEl.contentRect
 
-        this.setPluginState({
-          containerWidth: width,
-          containerHeight: height,
-          areInsidesReadyToBeVisible: true
-        })
-      }
+      this.uppy.log(`[Dashboard] resized: ${width} / ${height}`, 'debug')
+
+      this.setPluginState({
+        containerWidth: width,
+        containerHeight: height,
+        areInsidesReadyToBeVisible: true
+      })
     })
     this.resizeObserver.observe(this.el.querySelector('.uppy-Dashboard-inner'))
 
     // If ResizeObserver fails to emit an event telling us what size to use - default to the mobile view
     this.makeDashboardInsidesVisibleAnywayTimeout = setTimeout(() => {
       const pluginState = this.getPluginState()
-      if (!pluginState.areInsidesReadyToBeVisible) {
-        this.uppy.log("[Dashboard] resize event didn't fire on time: defaulted to mobile layout")
+      const isModalAndClosed = !this.opts.inline && pluginState.isHidden
+      if (
+        // if ResizeObserver hasn't yet fired,
+        !pluginState.areInsidesReadyToBeVisible &&
+        // and it's not due to the modal being closed
+        !isModalAndClosed
+      ) {
+        this.uppy.log("[Dashboard] resize event didn't fire on time: defaulted to mobile layout", 'debug')
 
         this.setPluginState({
           areInsidesReadyToBeVisible: true
