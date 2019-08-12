@@ -35,6 +35,40 @@ function setTypeInBlob (file) {
   return dataWithUpdatedType
 }
 
+// Helper to abort upload requests if there has not been any progress for `timeout` ms.
+// Create an instance using `timer = new ProgressTimeout(10000, onTimeout)`
+// Call `timer.progress()` to signal that there has been progress of any kind.
+// Call `timer.done()` when the upload has completed.
+class ProgressTimeout {
+  constructor (timeout, timeoutHandler) {
+    this._timeout = timeout
+    this._onTimedOut = timeoutHandler
+    this._isDone = false
+    this._aliveTimer = null
+    this._onTimedOut = this._onTimedOut.bind(this)
+  }
+
+  progress () {
+    // Some browsers fire another progress event when the upload is
+    // cancelled, so we have to ignore progress after the timer was
+    // told to stop.
+    if (this._isDone) return
+
+    if (this._timeout > 0) {
+      if (this._aliveTimer) clearTimeout(this._aliveTimer)
+      this._aliveTimer = setTimeout(this._onTimedOut, this._timeout)
+    }
+  }
+
+  done () {
+    if (this._aliveTimer) {
+      clearTimeout(this._aliveTimer)
+      this._aliveTimer = null
+    }
+    this._isDone = true
+  }
+}
+
 module.exports = class XHRUpload extends Plugin {
   static VERSION = require('../package.json').version
 
@@ -145,49 +179,6 @@ module.exports = class XHRUpload extends Plugin {
     return opts
   }
 
-  // Helper to abort upload requests if there has not been any progress for `timeout` ms.
-  // Create an instance using `timer = createProgressTimeout(10000, onTimeout)`
-  // Call `timer.progress()` to signal that there has been progress of any kind.
-  // Call `timer.done()` when the upload has completed.
-  createProgressTimeout (timeout, timeoutHandler) {
-    const uppy = this.uppy
-    const self = this
-    let isDone = false
-
-    function onTimedOut () {
-      uppy.log(`[XHRUpload] timed out`)
-      const error = new Error(self.i18n('timedOut', { seconds: Math.ceil(timeout / 1000) }))
-      timeoutHandler(error)
-    }
-
-    let aliveTimer = null
-    function progress () {
-      // Some browsers fire another progress event when the upload is
-      // cancelled, so we have to ignore progress after the timer was
-      // told to stop.
-      if (isDone) return
-
-      if (timeout > 0) {
-        if (aliveTimer) clearTimeout(aliveTimer)
-        aliveTimer = setTimeout(onTimedOut, timeout)
-      }
-    }
-
-    function done () {
-      uppy.log(`[XHRUpload] timer done`)
-      if (aliveTimer) {
-        clearTimeout(aliveTimer)
-        aliveTimer = null
-      }
-      isDone = true
-    }
-
-    return {
-      progress,
-      done
-    }
-  }
-
   addMetadata (formData, meta, opts) {
     const metaFields = Array.isArray(opts.metaFields)
       ? opts.metaFields
@@ -250,8 +241,9 @@ module.exports = class XHRUpload extends Plugin {
         ? this.createFormDataUpload(file, opts)
         : this.createBareUpload(file, opts)
 
-      const timer = this.createProgressTimeout(opts.timeout, (error) => {
+      const timer = new ProgressTimeout(opts.timeout, () => {
         xhr.abort()
+        const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
         this.uppy.emit('upload-error', file, error)
         reject(error)
       })
@@ -478,8 +470,9 @@ module.exports = class XHRUpload extends Plugin {
 
       const xhr = new XMLHttpRequest()
 
-      const timer = this.createProgressTimeout(this.opts.timeout, (error) => {
+      const timer = new ProgressTimeout(this.opts.timeout, () => {
         xhr.abort()
+        const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(this.opts.timeout / 1000) }))
         emitError(error)
         reject(error)
       })
