@@ -660,13 +660,9 @@ class Uppy {
   }
 
   retryUpload (fileID) {
-    const updatedFiles = Object.assign({}, this.getState().files)
-    const updatedFile = Object.assign({}, updatedFiles[fileID],
-      { error: null, isPaused: false }
-    )
-    updatedFiles[fileID] = updatedFile
-    this.setState({
-      files: updatedFiles
+    this.setFileState(fileID, {
+      error: null,
+      isPaused: false
     })
 
     this.emit('upload-retry', fileID)
@@ -1068,8 +1064,8 @@ class Uppy {
   }
 
   /**
-   * Passes messages to a function, provided in `opt.logger`.
-   * If `opt.logger: Uppy.debugLogger` or `opt.debug: true`, logs to the browser console.
+   * Passes messages to a function, provided in `opts.logger`.
+   * If `opts.logger: Uppy.debugLogger` or `opts.debug: true`, logs to the browser console.
    *
    * @param {string|Object} message to log
    * @param {string} [type] optional `error` or `warning`

@@ -104,6 +104,8 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
 - [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
 
+# next
+
 ## 1.4
 
 - [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
@@ -152,8 +154,7 @@ This release fixes id generation for non-latin characters, significantly improve
 - @uppy/aws-s3: Allow overriding of getResponseData() (#1647 / @eman8519)
 - @uppy/aws-s3: prevent unnecessary delete multiparts request for completed files (#1650 / @twarlop)
 - @uppy/companion-client: send correct versions to companion (#1694 / @ifedapoolarewaju)
-- @uppy/companion-client: send correct versions to companion (#1694 /@ifedapoolarewaju)
-- @uppy/companion, @uppy/companion-client: ⚠️send uppy-versions header to companion: please see [how to avoid errors if you are using companion but NOT as standalone](https://github.com/transloadit/uppy/pull/1612#issuecomment-515117137) (#1612 / @ifedapoolarewaju)
+- @uppy/companion, @uppy/companion-client: ⚠️send uppy-versions header to companion: please see [how to avoid errors if you are using Companion but NOT as standalone](https://github.com/transloadit/uppy/pull/1612#issuecomment-515117137) (#1612 / @ifedapoolarewaju)
 - @uppy/companion: add colors to logs (#1648 / @ifedapoolarewaju)
 - @uppy/companion: Change cloud in gcloud-deploy (#1729 / @kiloreux)
 - @uppy/companion: change oauth access token transport method (#1668 / @ifedapoolarewaju)
@@ -170,14 +171,14 @@ This release fixes id generation for non-latin characters, significantly improve
 - @uppy/core: adjust ID generation to keep non-latin characters: now, non-latin characters are encoded as their charcode in base 32, so files that only differ by name in a non-latin language will generate different IDs. (#1722 / @goto-bus-stop)
 - @uppy/core: Check for existing upload (#1367 / @superandrew213)
 - @uppy/core: check option types early, like making sure `allowedFileTypes` is an array, in cases where JS would not be able to auto-fix via typecasting (otherwise it's BC-breaking)
-- @uppy/core: Enable partial assignment of restrictions passed as options (#1654 / @janklimo) 
+- @uppy/core: Enable partial assignment of restrictions passed as options (#1654 / @janklimo)
 - @uppy/core: Log versions of Uppy plugins for debugging (#1640 / @arturi)
 - @uppy/core: make `meta.name` not required in addFile() (#1629 / @goto-bus-stop)
 - @uppy/core: Restrictions improvements — set file.type to the one detected by Uppy, before calling onBeforeFileAdded callback, emit restriction-failed for minNumberOfFiles, too (so in uppy.upload (#1726 / @arturi)
-- @uppy/dashboard: ⚠️ More design improvements: Add more button, improved focus styles, Replaced "Copy link" & "Edit" links with icons (#1574 / @nqst, @lakesare, @arturi) 
+- @uppy/dashboard: ⚠️ More design improvements: Add more button, improved focus styles, Replaced "Copy link" & "Edit" links with icons (#1574 / @nqst, @lakesare, @arturi)
 - @uppy/dashboard: ⚠️ Moved all provider-views translation strings from Dashboard to Core, this eliminates a dependency of provider-views upon Dashboard (#1712/ @lakesare)
 - @uppy/dashboard: add modal open and close events (#1664 / @arturi)
-- @uppy/dashboard: Change select button to just say `Select 11` instead of 11 files, or folder (https://github.com/transloadit/uppy/issues/1422)
+- @uppy/dashboard: Change select button to just say `Select 11` instead of `Select 11 files`, because there can be folders (https://github.com/transloadit/uppy/issues/1422)
 - @uppy/dashboard: connected labels to inputs in FileCard.js (#1715 / @lakesare)
 - @uppy/dashboard: Dashboard performance improvements (#1671 / @goto-bus-stop)
 - @uppy/dashboard: Fix header bar css in ie11 (#1700 / @lakesare)
@@ -194,7 +195,6 @@ This release fixes id generation for non-latin characters, significantly improve
 - @uppy/robodog: allow customizing `triggerUploadOnSubmit` (#1691 / @goto-bus-stop)
 - @uppy/robodog: fix `form({ modal: true })` not enabling modal options (#1690 / @goto-bus-stop)
 - @uppy/robodog: use chooseFiles string like @uppy/file-input (#1669 / @goto-bus-stop)
-- @uppy/robodog: use chooseFiles string like @uppy/file-input (#1669 / @goto-bus-stop)
 - @uppy/status-bar: Show `total file size / total uploaded of all started` vs `total / total upload of those not complete` (#1685 / @arturi)
 - @uppy/thumbnail-generator: rotate according to EXIF metadata (#1532 / @Botz)
 - @uppy/transloadit: expand on resume: false reasons (afd30a43b8106d0ca79c6f95de0673b69f3edcb5 / @goto-bus-stop)
@@ -210,9 +210,8 @@ This release fixes id generation for non-latin characters, significantly improve
 - \*: use `opts.id` as the plugin ID for all plugins, fixes #1674 (https://github.com/transloadit/uppy/commit/e6c52f7681dad5a73c85bac2c7986293eda76a85 / @goto-bus-stop)
 - build: ci — use a fancy matrix (#1709 / @goto-bus-stop)
 - build: deps: get rid of eslint-config-standard-preact (#1678 / @goto-bus-stop)
-- build: Update webdriverio to v5 (#1675 / @goto-bus-stop) 
+- build: Update webdriverio to v5 (#1675 / @goto-bus-stop)
 - dashboard/providers: many-many-many accessibility improvements, introduced superfocus (#1507 / @lakesare, @arturi)
-- docs: Add a note to our browser support page that, while we have a saucelabs test for IE10, we're not actively supporting or fixing issues anymore (https://github.com/transloadit/uppy/issues/1420)
 - docs: add custom plugin example (#1623 / @arturi)
 - docs: document redux store wart (9948a841b7a3dac17dc0c24fb347baf5f2b2ab72 / @goto-bus-stop)
 - docs: Fix docs navigation (#1717 / @larowlan)
