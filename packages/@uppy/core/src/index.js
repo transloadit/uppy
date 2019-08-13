@@ -553,7 +553,12 @@ class Uppy {
 
     this.setState({
       currentUploads: updatedUploads,
-      files: updatedFiles
+      files: updatedFiles,
+      ...(
+        // If this is the last file we just removed - allow new uploads!
+        Object.keys(updatedFiles).length === 0 &&
+        { allowNewUpload: true }
+      )
     })
 
     removeUploads.forEach((uploadID) => {
@@ -653,7 +658,6 @@ class Uppy {
     })
 
     this.setState({
-      allowNewUpload: true,
       totalProgress: 0,
       error: null
     })
