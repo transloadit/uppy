@@ -2,6 +2,7 @@ const Uppy = require('@uppy/core')
 const Form = require('@uppy/form')
 const StatusBar = require('@uppy/status-bar')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
+const has = require('@uppy/utils/lib/hasProperty')
 const AttachFileInputs = require('./AttachFileInputs')
 const TransloaditFormResult = require('./TransloaditFormResult')
 const addDashboardPlugin = require('./addDashboardPlugin')
@@ -38,7 +39,7 @@ function form (target, opts) {
   })
 
   let submitOnSuccess = true
-  if (opts.hasOwnProperty('submitOnSuccess')) {
+  if (has(opts, 'submitOnSuccess')) {
     submitOnSuccess = !!opts.submitOnSuccess
   }
 
@@ -48,7 +49,7 @@ function form (target, opts) {
     submitOnSuccess,
     addResultToForm: false // using custom implementation instead
   }
-  if (opts.hasOwnProperty('triggerUploadOnSubmit')) {
+  if (has(opts, 'triggerUploadOnSubmit')) {
     formOptions.triggerUploadOnSubmit = opts.triggerUploadOnSubmit
   }
 

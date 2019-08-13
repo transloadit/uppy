@@ -13,11 +13,11 @@ function createEventTracker (emitter) {
   const events = []
   return {
     on (event, fn) {
-      events.push([ event, fn ])
+      events.push([event, fn])
       return emitter.on(event, fn)
     },
     remove () {
-      events.forEach(([ event, fn ]) => {
+      events.forEach(([event, fn]) => {
         emitter.off(event, fn)
       })
     }
@@ -96,7 +96,7 @@ module.exports = class AwsS3Multipart extends Plugin {
   createMultipartUpload (file) {
     this.assertHost()
 
-    let metadata = {}
+    const metadata = {}
 
     Object.keys(file.meta).map(key => {
       if (file.meta[key] != null) {
