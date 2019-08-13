@@ -104,7 +104,7 @@ module.exports = class XHRUpload extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // i18n
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
@@ -540,7 +540,7 @@ module.exports = class XHRUpload extends Plugin {
       // if bundle: true, we don’t support remote uploads
       const isSomeFileRemote = files.some(file => file.isRemote)
       if (isSomeFileRemote) {
-        throw new Error('Can’t bundle remote files when bundle: true is set')
+        throw new Error('Can’t upload remote files when bundle: true option is set')
       }
 
       return this.uploadBundle(files)
