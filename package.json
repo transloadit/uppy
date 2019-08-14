@@ -166,7 +166,7 @@
     "tsify": "^4.0.1",
     "tus-node-server": "^0.3.2",
     "typescript": "^3.4.5",
-    "verdaccio": "^4.0.0",
+    "verdaccio": "^4.2.1",
     "watchify": "^3.11.1",
     "webdriverio": "^5.0.0",
     "whatwg-fetch": "3.0.0"
