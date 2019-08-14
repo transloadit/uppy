@@ -62,6 +62,7 @@ metadata:
     kubernetes.io/ingress.class: "nginx"
     certmanager.k8s.io/cluster-issuer: "letsencrypt-prod"
     certmanager.k8s.io/acme-http01-edit-in-place: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   tls:
     - secretName: server-tls
