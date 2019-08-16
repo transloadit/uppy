@@ -1316,6 +1316,7 @@ class Uppy {
           this.emit('restriction-failed', null, err)
           this.log(`${message} ${details}`, 'info')
           this.info({ message: message, details: details }, 'info', 5000)
+          return Promise.reject(typeof err === 'object' ? err : new Error(err))
         } else {
           this.log(`${message} ${details}`, 'error')
           this.info({ message: message, details: details }, 'error', 5000)
