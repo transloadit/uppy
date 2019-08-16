@@ -1277,19 +1277,12 @@ class Uppy {
    * @returns {Promise}
    */
   upload () {
-    const onError = (err) => {
-      const message = typeof err === 'object' ? err.message : err
-      const details = (typeof err === 'object' && err.details) ? err.details : ''
-      this.log(`${message} ${details}`)
-      this.info({ message: message, details: details }, 'error', 5000)
-      throw (typeof err === 'object' ? err : new Error(err))
-    }
-
     if (!this.plugins.uploader) {
       this.log('No uploader type plugins are used', 'warning')
     }
 
     let files = this.getState().files
+
     const onBeforeUploadResult = this.opts.onBeforeUpload(files)
 
     if (onBeforeUploadResult === false) {
@@ -1320,10 +1313,19 @@ class Uppy {
         return this._runUpload(uploadID)
       })
       .catch((err) => {
+        const message = typeof err === 'object' ? err.message : err
+        const details = (typeof err === 'object' && err.details) ? err.details : ''
+
         if (err.isRestriction) {
           this.emit('restriction-failed', null, err)
+          this.log(`${message} ${details}`, 'info')
+          this.info({ message: message, details: details }, 'info', 5000)
+        } else {
+          this.log(`${message} ${details}`, 'error')
+          this.info({ message: message, details: details }, 'error', 5000)
         }
-        onError(err)
+
+        throw (typeof err === 'object' ? err : new Error(err))
       })
   }
 }
