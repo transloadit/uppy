@@ -647,6 +647,49 @@ describe('src/Core', () => {
       }
     })
 
+    it('should not allow a dupicate file, a file with the same id', () => {
+      const core = new Core()
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      expect(() => {
+        core.addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' }),
+          meta: {
+            notARelativePath: 'folder/a'
+          }
+        }).toThrow(
+          'Cannot add the duplicate file \'foo.jpg\', it already exists'
+        )
+      })
+    })
+
+    it('should allow a duplicate file if its relativePath is different, thus the id is different', () => {
+      const core = new Core()
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' }),
+        meta: {
+          relativePath: 'folder/a'
+        }
+      })
+      expect(core.getFiles().length).toEqual(2)
+    })
+
     it('should not allow a file if onBeforeFileAdded returned false', () => {
       const core = new Core({
         onBeforeFileAdded: (file, files) => {
@@ -655,13 +698,17 @@ describe('src/Core', () => {
           }
         }
       })
-      core.addFile({
-        source: 'jest',
-        name: 'foo.jpg',
-        type: 'image/jpeg',
-        data: new File([sampleImage], { type: 'image/jpeg' })
+      expect(() => {
+        core.addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        }).toThrow(
+          'Cannot add the file because onBeforeFileAdded returned false.'
+        )
+        expect(core.getFiles().length).toEqual(0)
       })
-      expect(core.getFiles().length).toEqual(0)
     })
 
     it('allows no new files after upload when allowMultipleUploads: false', async () => {
