@@ -442,7 +442,7 @@ class Uppy {
     }
 
     if (allowNewUpload === false) {
-      onError(new Error('Cannot add new files: already uploading.'))
+      onError('Cannot add new files: already uploading.')
     }
 
     const fileType = getFileType(file)
@@ -451,8 +451,7 @@ class Uppy {
     const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(file, files)
 
     if (onBeforeFileAddedResult === false) {
-      this.log('Not adding file because onBeforeFileAdded returned false')
-      return
+      onError('Cannot add the file because onBeforeFileAdded returned false.')
     }
 
     if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
@@ -473,9 +472,7 @@ class Uppy {
     const fileID = generateFileID(file)
 
     if (files[fileID]) {
-      this.info(`Not adding duplicate file '${fileName}', it already exists`, 'error', 5000)
-      this.log(`Not adding duplicate file '${fileName}', it already exists: ${fileID}`)
-      return
+      onError(`Cannot add the duplicate file '${fileName}', it already exists.`)
     }
 
     const meta = file.meta || {}
