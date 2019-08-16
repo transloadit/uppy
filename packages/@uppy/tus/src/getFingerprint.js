@@ -24,12 +24,7 @@ function isReactNative () {
 // fingerprint handling take charge.
 module.exports = function getFingerprint (uppyFileObj) {
   return function (file, options, callback) {
-    console.log(file, options, callback)
-    if (isCordova()) {
-      return tus.Upload.defaultOptions.fingerprint(file, options, callback)
-    }
-
-    if (isReactNative()) {
+    if (isCordova() || isReactNative()) {
       return tus.Upload.defaultOptions.fingerprint(file, options, callback)
     }
 

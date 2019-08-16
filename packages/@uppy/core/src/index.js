@@ -120,7 +120,7 @@ class Uppy {
     }
 
     // i18n
-    this.translator = new Translator([ this.defaultLocale, this.opts.locale ])
+    this.translator = new Translator([this.defaultLocale, this.opts.locale])
     this.locale = this.translator.locale
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
@@ -474,8 +474,7 @@ class Uppy {
 
     if (files[fileID]) {
       this.info(`Not adding duplicate file '${fileName}', it already exists`, 'error', 5000)
-      this.log(`Not adding duplicate file '${fileName}', it already exists`)
-      this.log(fileID)
+      this.log(`Not adding duplicate file '${fileName}', it already exists: ${fileID}`)
       return
     }
 
@@ -674,7 +673,7 @@ class Uppy {
 
     this.emit('upload-retry', fileID)
 
-    const uploadID = this._createUpload([ fileID ])
+    const uploadID = this._createUpload([fileID])
     return this._runUpload(uploadID)
   }
 
@@ -923,7 +922,7 @@ class Uppy {
    */
   use (Plugin, opts) {
     if (typeof Plugin !== 'function') {
-      let msg = `Expected a plugin class, but got ${Plugin === null ? 'null' : typeof Plugin}.` +
+      const msg = `Expected a plugin class, but got ${Plugin === null ? 'null' : typeof Plugin}.` +
         ' Please verify that the plugin was imported and spelled correctly.'
       throw new TypeError(msg)
     }
@@ -941,9 +940,9 @@ class Uppy {
       throw new Error('Your plugin must have a type')
     }
 
-    let existsPluginAlready = this.getPlugin(pluginId)
+    const existsPluginAlready = this.getPlugin(pluginId)
     if (existsPluginAlready) {
-      let msg = `Already found a plugin named '${existsPluginAlready.id}'. ` +
+      const msg = `Already found a plugin named '${existsPluginAlready.id}'. ` +
         `Tried to use: '${pluginId}'.\n` +
         `Uppy plugins must have unique 'id' options. See https://uppy.io/docs/plugins/#id.`
       throw new Error(msg)
