@@ -520,7 +520,7 @@ class Uppy {
         this.scheduledAutoProceed = null
         this.upload().catch((err) => {
           if (!err.isRestriction) {
-            this.uppy.log(err.stack || err.message || err)
+            this.log(err.stack || err.message || err)
           }
         })
       }, 4)
