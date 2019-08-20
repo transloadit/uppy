@@ -10,11 +10,11 @@ const Tus = require('@uppy/tus/src')
 const Form = require('@uppy/form/src')
 
 const TUS_ENDPOINT = 'https://master.tus.io/files/'
-// const XHR_ENDPOINT = 'https://api2.transloadit.com'
+// const XHR_ENDPOINT = 'https://upload-endpoint.uppy.io/upload'
 
 module.exports = () => {
   const uppyDashboard = Uppy({
-    debug: true,
+    logger: Uppy.debugLogger,
     meta: {
       username: 'John',
       license: 'Creative Commons'
@@ -38,7 +38,7 @@ module.exports = () => {
     .use(Url, { target: Dashboard, companionUrl: 'http://localhost:3020' })
     .use(Webcam, { target: Dashboard })
     .use(Tus, { endpoint: TUS_ENDPOINT })
-    // .use(XHRUpload, { endpoint: XHR_ENDPOINT })
+    // .use(XHRUpload, { endpoint: XHR_ENDPOINT, bundle: true })
     .use(Form, { target: '#upload-form' })
     // .use(GoldenRetriever, {serviceWorker: true})
 
