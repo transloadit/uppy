@@ -15,7 +15,7 @@ uppy.use(ProgressBar, {
   hideAfterFinish: false
 })
 uppy.use(XHRUpload, {
-  endpoint: '//api2.transloadit.com',
+  endpoint: 'https://upload-endpoint.uppy.io/upload',
   formData: true,
   fieldName: 'files[]'
 })
