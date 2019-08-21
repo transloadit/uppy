@@ -172,8 +172,13 @@ module.exports = class Dashboard extends Plugin {
     this.removeDragOverClassTimeout = null
   }
 
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
   i18nInit () {
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
     this.setPluginState() // so that UI re-renders and we see the updated locale
@@ -197,8 +202,8 @@ module.exports = class Dashboard extends Plugin {
     if (callerPluginType !== 'acquirer' &&
         callerPluginType !== 'progressindicator' &&
         callerPluginType !== 'presenter') {
-      let msg = 'Dashboard: Modal can only be used by plugins of types: acquirer, progressindicator, presenter'
-      this.uppy.log(msg)
+      const msg = 'Dashboard: Modal can only be used by plugins of types: acquirer, progressindicator, presenter'
+      this.uppy.log(msg, 'error')
       return
     }
 
