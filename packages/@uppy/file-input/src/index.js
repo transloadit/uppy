@@ -29,7 +29,7 @@ module.exports = class FileInput extends Plugin {
     }
 
     // Merge default options with the ones set by user
-    this.opts = { ...defaultOptions, opts }
+    this.opts = { ...defaultOptions, ...opts }
 
     this.i18nInit()
 
