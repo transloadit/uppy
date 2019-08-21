@@ -257,7 +257,7 @@ class Uppy {
       ...newOpts,
       restrictions: {
         ...this.opts.restrictions,
-        ...newOpts.restrictions
+        ...(newOpts && newOpts.restrictions)
       }
     }
 
