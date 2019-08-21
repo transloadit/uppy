@@ -1,6 +1,7 @@
 const tr_TR = {}
 
 tr_TR.strings = {
+  addMore: 'Daha ekle',
   addMoreFiles: 'Daha fazla dosya ekle',
   addingMoreFiles: 'Daha fazla dosya ekleniyor',
   allowAccessDescription: 'Kameranızla fotoğraf çekmek veya video kaydetmek için lütfen erişim izni verin.',
@@ -78,10 +79,10 @@ tr_TR.strings = {
   retry: 'Tekrar',
   retryUpload: 'Tekrar yükle',
   saveChanges: 'Değişiklikleri kaydet',
-  selectXFiles: {
-    '0': '%{smart_count} dosya seç',
-    '1': '%{smart_count} dosya seç',
-    '2': '%{smart_count} dosya seç'
+  selectX: {
+    '0': '%{smart_count} seç',
+    '1': '%{smart_count} seç',
+    '2': '%{smart_count} seç'
   },
   smile: 'Gülümse!',
   startRecording: 'Video kaydına başla',

@@ -1,6 +1,7 @@
 const sr_RS_Latin = {}
 
 sr_RS_Latin.strings = {
+  addMore: 'Dodaj još',
   addMoreFiles: 'Dodaj još datoteka',
   addingMoreFiles: 'Dodavanje datoteka',
   allowAccessDescription: 'Molimo Vas, dozvolite pristup Vašoj kameri, kako biste mogli da je koristite za snimanje fotografija i video zapisa.',
@@ -33,7 +34,7 @@ sr_RS_Latin.strings = {
   edit: 'Izmeni',
   editFile: 'Izmeni datoteku',
   editing: 'Menjanje %{file}',
-  emptyFolderAdded: 'Ni jedna datoteka nije dodata iz praznog direktorijuma',
+  emptyFolderAdded: 'Ni jedna datoteka nije dodata iz praznog foldera',
   encoding: 'Šifrovanje...',
   enterCorrectUrl: 'Pogrešan URL: unesite tačnu putanju do datoteke',
   enterUrlToImport: 'Unesite URL (putanju) do datoteke',
@@ -78,10 +79,10 @@ sr_RS_Latin.strings = {
   retry: 'Pokušaj ponovo',
   retryUpload: 'Pokušaj ponovo da otpremiš',
   saveChanges: 'Sačuvaj izmene',
-  selectXFiles: {
+  selectX: {
     '0': 'Izaberi datoteku',
-    '1': 'Izaberi %{smart_count} datoteke',
-    '2': 'Izaberi %{smart_count} datoteka'
+    '1': 'Izaberi %{smart_count}',
+    '2': 'Izaberi %{smart_count}'
   },
   smile: 'Osmeh!',
   startRecording: 'Započni snimanje video zapisa',
@@ -131,7 +132,7 @@ sr_RS_Latin.strings = {
     '2': 'Izaberite datoteke. Najmanje: %{smart_count}'
   },
   selectAllFilesFromFolderNamed: 'Izaberite sve datoteke iz foldera %{name}',
-  unselectAllFilesFromFolderNamed: 'Isključite sve datoteke iz fascikle %{name}',
+  unselectAllFilesFromFolderNamed: 'Isključite sve datoteke iz foldera %{name}',
   selectFileNamed: 'Izaberite fajl %{name}',
   unselectFileNamed: 'Isključite fajl %{name}',
   openFolderNamed: 'Otvori folder %{name}'

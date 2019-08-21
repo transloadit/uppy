@@ -1,7 +1,7 @@
 const throttle = require('lodash.throttle')
 const classNames = require('classnames')
 const statusBarStates = require('./StatusBarStates')
-const prettyBytes = require('prettier-bytes')
+const prettyBytes = require('@uppy/utils/lib/prettyBytes')
 const prettyETA = require('@uppy/utils/lib/prettyETA')
 const { h } = require('preact')
 

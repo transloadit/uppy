@@ -1,10 +1,5 @@
 {
-  "private": true,
-  "name": "uppy-react-example",
-  "scripts": {
-    "css": "cp ../../packages/uppy/dist/uppy.min.css .",
-    "start": "npm run css && budo main.js:bundle.js -- -r react:react -r react-dom:react-dom -t babelify -g aliasify"
-  },
+  "name": "@uppy-example/react-example",
   "aliasify": {
     "aliases": {
       "@uppy": "../../packages/@uppy"
@@ -18,5 +13,10 @@
     "budo": "^11.6.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
+  },
+  "private": true,
+  "scripts": {
+    "css": "cp ../../packages/uppy/dist/uppy.min.css .",
+    "start": "npm run css && budo main.js:bundle.js -- -r react:react -r react-dom:react-dom -t babelify -g aliasify"
   }
 }

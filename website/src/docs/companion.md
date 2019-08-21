@@ -9,8 +9,6 @@ category: 'Docs'
 tagline: Server-side proxy that enables remote sources like Instagram, Google Drive, S3
 ---
 
-> Companion was previously known as Uppy Server. It was renamed in v0.14.0.
-
 Drag and drop, webcam, basic file manipulation (adding metadata, for example) and uploading via tus-resumable uploads or XHR/Multipart are all possible using just the Uppy client module.
 
 However, if you add [Companion](https://github.com/transloadit/uppy/tree/master/packages/@uppy/companion) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your users’ data plans), and then uploaded to the final destination. Files are removed from Companion after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
@@ -76,6 +74,13 @@ const options = {
 app.use(companion.app(options))
 
 ```
+
+please be sure to allow the following HTTP methods in your server like so:
+
+```javascript
+res.header("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PATCH, PUT");
+```
+
 See [Options](#Options) for valid configuration options.
 
 To use WebSockets for realtime upload progress, you can call the `socket` method, like so:

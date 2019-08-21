@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const prettyBytes = require('prettier-bytes')
+const prettyBytes = require('@uppy/utils/lib/prettyBytes')
 const Core = require('./index')
 const Plugin = require('./Plugin')
 const AcquirerPlugin1 = require('../../../../test/mocks/acquirerPlugin1')
@@ -483,7 +483,7 @@ describe('src/Core', () => {
         expect(postprocessor1.mock.calls.length).toEqual(1)
         // const lastModifiedTime = new Date()
         // const fileId = 'foojpg' + lastModifiedTime.getTime()
-        const fileId = 'uppy-foojpg-image'
+        const fileId = 'uppy-foo/jpg-1e-image'
 
         expect(postprocessor1.mock.calls[0][0].length).toEqual(1)
         expect(postprocessor1.mock.calls[0][0][0].substring(0, 17)).toEqual(
@@ -598,14 +598,12 @@ describe('src/Core', () => {
       const core = new Core()
       core.on('file-added', fileAddedEventMock)
 
-      core.addFile({
+      const fileId = core.addFile({
         source: 'jest',
         name: 'foo.jpg',
         type: 'image/jpeg',
         data: fileData
       })
-
-      const fileId = Object.keys(core.getState().files)[0]
       const newFile = {
         extension: 'jpg',
         id: fileId,
@@ -666,27 +664,99 @@ describe('src/Core', () => {
       expect(core.getFiles().length).toEqual(0)
     })
 
-    it('allows no new files after upload when allowMultipleUploads: false', async () => {
-      const core = new Core({ allowMultipleUploads: false })
+    describe('with allowMultipleUploads: false', () => {
+      it('allows no new files after upload', async () => {
+        const core = new Core({ allowMultipleUploads: false })
+        core.addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+
+        await core.upload()
+
+        expect(() => {
+          core.addFile({
+            source: 'jest',
+            name: '123.foo',
+            type: 'image/jpeg',
+            data: new File([sampleImage], { type: 'image/jpeg' })
+          })
+        }).toThrow(
+          /Cannot add new files: already uploading\./
+        )
+      })
+
+      it('does not allow new files after the removeFile() if some file is still present', async () => {
+        const core = new Core({ allowMultipleUploads: false })
+
+        // adding 2 files
+        const fileId1 = core.addFile({
+          source: 'jest',
+          name: '1.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+        core.addFile({
+          source: 'jest',
+          name: '2.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+
+        // removing 1 file
+        core.removeFile(fileId1)
+
+        await expect(core.upload()).resolves.toBeDefined()
+      })
+
+      it('allows new files after the last removeFile()', async () => {
+        const core = new Core({ allowMultipleUploads: false })
+
+        // adding 2 files
+        const fileId1 = core.addFile({
+          source: 'jest',
+          name: '1.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+        const fileId2 = core.addFile({
+          source: 'jest',
+          name: '2.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+
+        // removing 2 files
+        core.removeFile(fileId1)
+        core.removeFile(fileId2)
+
+        await expect(core.upload()).resolves.toBeDefined()
+      })
+    })
+
+    it('does not dedupe different files', async () => {
+      const core = new Core()
+      const data = new Blob([sampleImage], { type: 'image/jpeg' })
+      data.lastModified = 1562770350937
+
       core.addFile({
         source: 'jest',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: new File([sampleImage], { type: 'image/jpeg' })
+        data
+      })
+      core.addFile({
+        source: 'jest',
+        name: 'foo푸.jpg',
+        type: 'image/jpeg',
+        data
       })
 
-      await core.upload()
-
-      expect(() => {
-        core.addFile({
-          source: 'jest',
-          name: '123.foo',
-          type: 'image/jpeg',
-          data: new File([sampleImage], { type: 'image/jpeg' })
-        })
-      }).toThrow(
-        /Cannot add new files: already uploading\./
-      )
+      expect(core.getFiles()).toHaveLength(2)
+      expect(core.getFile('uppy-foo/jpg-1e-image/jpeg-17175-1562770350937')).toBeDefined()
+      expect(core.getFile('uppy-foo//jpg-1l3o-1e-image/jpeg-17175-1562770350937')).toBeDefined()
     })
   })
 
@@ -736,10 +806,10 @@ describe('src/Core', () => {
       const core = new Core()
       core.store.state.currentUploads = {
         upload1: {
-          fileIDs: ['uppy-file1jpg-image/jpeg', 'uppy-file2jpg-image/jpeg', 'uppy-file3jpg-image/jpeg']
+          fileIDs: ['uppy-file1/jpg-1e-image/jpeg', 'uppy-file2/jpg-1e-image/jpeg', 'uppy-file3/jpg-1e-image/jpeg']
         },
         upload2: {
-          fileIDs: ['uppy-file4jpg-image/jpeg', 'uppy-file5jpg-image/jpeg', 'uppy-file6jpg-image/jpeg']
+          fileIDs: ['uppy-file4/jpg-1e-image/jpeg', 'uppy-file5/jpg-1e-image/jpeg', 'uppy-file6/jpg-1e-image/jpeg']
         }
       }
       core.addUploader((fileIDs) => Promise.resolve())
@@ -1258,6 +1328,19 @@ describe('src/Core', () => {
       } catch (err) {
         expect(err).toMatchObject(new Error('You can only upload: image/gif, image/png'))
         expect(core.getState().info.message).toEqual('You can only upload: image/gif, image/png')
+      }
+    })
+
+    it('should throw if allowedFileTypes is not an array', () => {
+      try {
+        const core = Core({
+          restrictions: {
+            allowedFileTypes: 'image/gif'
+          }
+        })
+        core.log('hi')
+      } catch (err) {
+        expect(err).toMatchObject(new Error(`'restrictions.allowedFileTypes' must be an array`))
       }
     })
 

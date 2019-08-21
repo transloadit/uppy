@@ -1,6 +1,7 @@
 const ar_SA = {}
 
 ar_SA.strings = {
+  addMore: 'أضف المزيد',
   addMoreFiles: 'اضف المزيد من الملفات',
   addingMoreFiles: ' اضافة المزيد من الملفات',
   allowAccessDescription: 'ارجو السماح للموقع بالتقاط الصور والفديوهات.',
@@ -78,10 +79,10 @@ ar_SA.strings = {
   retry: 'اعادة المحاولة',
   retryUpload: 'اعادة الرفع',
   saveChanges: 'حفظ التغييرات',
-  selectXFiles: {
-    '0': 'اختار %{smart_count} ملف',
-    '1': 'اختار %{smart_count} ملفات',
-    '2': 'اختار %{smart_count} ملفات'
+  selectX: {
+    '0': '%{smart_count} اختر',
+    '1': '%{smart_count} اختر',
+    '2': '%{smart_count} اختر'
   },
   smile: 'ابتسم!',
   startRecording: 'بدء تسجيل الفيديو',

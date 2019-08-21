@@ -2,7 +2,7 @@ const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
 const throttle = require('lodash.throttle')
-const prettyBytes = require('prettier-bytes')
+const prettyBytes = require('@uppy/utils/lib/prettyBytes')
 const match = require('mime-match')
 const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
@@ -30,7 +30,7 @@ class Uppy {
   /**
    * Instantiate Uppy
    *
-   * @param {Object} opts — Uppy options
+   * @param {object} opts — Uppy options
    */
   constructor (opts) {
     this.defaultLocale = {
@@ -54,10 +54,10 @@ class Uppy {
         connectedToInternet: 'Connected to the Internet',
         // Strings for remote providers
         noFilesFound: 'You have no files or folders here',
-        selectXFiles: {
-          0: 'Select %{smart_count} file',
-          1: 'Select %{smart_count} files',
-          2: 'Select %{smart_count} files'
+        selectX: {
+          0: 'Select %{smart_count}',
+          1: 'Select %{smart_count}',
+          2: 'Select %{smart_count}'
         },
         selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
         unselectAllFilesFromFolderNamed: 'Unselect all files from folder %{name}',
@@ -70,7 +70,13 @@ class Uppy {
         resetFilter: 'Reset filter',
         loading: 'Loading...',
         authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
-        authenticateWith: 'Connect to %{pluginName}'
+        authenticateWith: 'Connect to %{pluginName}',
+        emptyFolderAdded: 'No files were added from empty folder',
+        folderAdded: {
+          0: 'Added %{smart_count} file from %{folder}',
+          1: 'Added %{smart_count} files from %{folder}',
+          2: 'Added %{smart_count} files from %{folder}'
+        }
       }
     }
 
@@ -106,6 +112,12 @@ class Uppy {
     }
 
     this.log(`Using Core v${this.constructor.VERSION}`)
+
+    if (this.opts.restrictions.allowedFileTypes &&
+      this.opts.restrictions.allowedFileTypes !== null &&
+      !Array.isArray(this.opts.restrictions.allowedFileTypes)) {
+      throw new Error(`'restrictions.allowedFileTypes' must be an array`)
+    }
 
     this.i18nInit()
 
@@ -207,7 +219,7 @@ class Uppy {
   /**
    * Updates state with a patch
    *
-   * @param {Object} patch {foo: 'bar'}
+   * @param {object} patch {foo: 'bar'}
    */
   setState (patch) {
     this.store.setState(patch)
@@ -216,22 +228,22 @@ class Uppy {
   /**
    * Returns current state.
    *
-   * @returns {Object}
+   * @returns {object}
    */
   getState () {
     return this.store.getState()
   }
 
   /**
-  * Back compat for when uppy.state is used instead of uppy.getState().
-  */
+   * Back compat for when uppy.state is used instead of uppy.getState().
+   */
   get state () {
     return this.getState()
   }
 
   /**
-  * Shorthand to set state for a specific file.
-  */
+   * Shorthand to set state for a specific file.
+   */
   setFileState (fileID, state) {
     if (!this.getState().files[fileID]) {
       throw new Error(`Can’t set state for ${fileID} (the file could have been removed)`)
@@ -375,10 +387,10 @@ class Uppy {
   }
 
   /**
-  * Check if minNumberOfFiles restriction is reached before uploading.
-  *
-  * @private
-  */
+   * Check if minNumberOfFiles restriction is reached before uploading.
+   *
+   * @private
+   */
   _checkMinNumberOfFiles (files) {
     const { minNumberOfFiles } = this.opts.restrictions
     if (Object.keys(files).length < minNumberOfFiles) {
@@ -387,12 +399,12 @@ class Uppy {
   }
 
   /**
-  * Check if file passes a set of restrictions set in options: maxFileSize,
-  * maxNumberOfFiles and allowedFileTypes.
-  *
-  * @param {Object} file object to check
-  * @private
-  */
+   * Check if file passes a set of restrictions set in options: maxFileSize,
+   * maxNumberOfFiles and allowedFileTypes.
+   *
+   * @param {object} file object to check
+   * @private
+   */
   _checkRestrictions (file) {
     const { maxFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
 
@@ -404,8 +416,6 @@ class Uppy {
 
     if (allowedFileTypes) {
       const isCorrectFileType = allowedFileTypes.some((type) => {
-        // if (!file.type) return false
-
         // is this is a mime-type
         if (type.indexOf('/') > -1) {
           if (!file.type) return false
@@ -434,12 +444,13 @@ class Uppy {
   }
 
   /**
-  * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
-  * try to guess file type in a clever way, check file against restrictions,
-  * and start an upload if `autoProceed === true`.
-  *
-  * @param {Object} file object to add
-  */
+   * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
+   * try to guess file type in a clever way, check file against restrictions,
+   * and start an upload if `autoProceed === true`.
+   *
+   * @param {object} file object to add
+   * @returns {string} id for the added file
+   */
   addFile (file) {
     const { files, allowNewUpload } = this.getState()
 
@@ -454,6 +465,9 @@ class Uppy {
       onError(new Error('Cannot add new files: already uploading.'))
     }
 
+    const fileType = getFileType(file)
+    file.type = fileType
+
     const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(file, files)
 
     if (onBeforeFileAddedResult === false) {
@@ -462,14 +476,9 @@ class Uppy {
     }
 
     if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
-      // warning after the change in 0.24
-      if (onBeforeFileAddedResult.then) {
-        throw new TypeError('onBeforeFileAdded() returned a Promise, but this is no longer supported. It must be synchronous.')
-      }
       file = onBeforeFileAddedResult
     }
 
-    const fileType = getFileType(file)
     let fileName
     if (file.name) {
       fileName = file.name
@@ -530,10 +539,14 @@ class Uppy {
       this.scheduledAutoProceed = setTimeout(() => {
         this.scheduledAutoProceed = null
         this.upload().catch((err) => {
-          console.error(err.stack || err.message || err)
+          if (!err.isRestriction) {
+            this.log(err.stack || err.message || err)
+          }
         })
       }, 4)
     }
+
+    return fileID
   }
 
   removeFile (fileID) {
@@ -560,7 +573,12 @@ class Uppy {
 
     this.setState({
       currentUploads: updatedUploads,
-      files: updatedFiles
+      files: updatedFiles,
+      ...(
+        // If this is the last file we just removed - allow new uploads!
+        Object.keys(updatedFiles).length === 0 &&
+        { allowNewUpload: true }
+      )
     })
 
     removeUploads.forEach((uploadID) => {
@@ -660,20 +678,15 @@ class Uppy {
     })
 
     this.setState({
-      allowNewUpload: true,
       totalProgress: 0,
       error: null
     })
   }
 
   retryUpload (fileID) {
-    const updatedFiles = Object.assign({}, this.getState().files)
-    const updatedFile = Object.assign({}, updatedFiles[fileID],
-      { error: null, isPaused: false }
-    )
-    updatedFiles[fileID] = updatedFile
-    this.setState({
-      files: updatedFiles
+    this.setFileState(fileID, {
+      error: null,
+      isPaused: false
     })
 
     this.emit('upload-retry', fileID)
@@ -921,9 +934,9 @@ class Uppy {
   /**
    * Registers a plugin with Core.
    *
-   * @param {Object} Plugin object
-   * @param {Object} [opts] object with options to be passed to Plugin
-   * @returns {Object} self for chaining
+   * @param {object} Plugin object
+   * @param {object} [opts] object with options to be passed to Plugin
+   * @returns {object} self for chaining
    */
   use (Plugin, opts) {
     if (typeof Plugin !== 'function') {
@@ -967,7 +980,7 @@ class Uppy {
    * Find one Plugin by name.
    *
    * @param {string} id plugin id
-   * @returns {Object|boolean}
+   * @returns {object|boolean}
    */
   getPlugin (id) {
     let foundPlugin = null
@@ -994,7 +1007,7 @@ class Uppy {
   /**
    * Uninstall and remove a plugin.
    *
-   * @param {Object} instance The plugin instance to remove.
+   * @param {object} instance The plugin instance to remove.
    */
   removePlugin (instance) {
     this.log(`Removing plugin ${instance.id}`)
@@ -1032,13 +1045,13 @@ class Uppy {
   }
 
   /**
-  * Set info message in `state.info`, so that UI plugins like `Informer`
-  * can display the message.
-  *
-  * @param {string | object} message Message to be displayed by the informer
-  * @param {string} [type]
-  * @param {number} [duration]
-  */
+   * Set info message in `state.info`, so that UI plugins like `Informer`
+   * can display the message.
+   *
+   * @param {string | object} message Message to be displayed by the informer
+   * @param {string} [type]
+   * @param {number} [duration]
+   */
 
   info (message, type = 'info', duration = 3000) {
     const isComplexMessage = typeof message === 'object'
@@ -1075,10 +1088,10 @@ class Uppy {
   }
 
   /**
-   * Passes messages to a function, provided in `opt.logger`.
-   * If `opt.logger: Uppy.debugLogger` or `opt.debug: true`, logs to the browser console.
+   * Passes messages to a function, provided in `opts.logger`.
+   * If `opts.logger: Uppy.debugLogger` or `opts.debug: true`, logs to the browser console.
    *
-   * @param {string|Object} message to log
+   * @param {string|object} message to log
    * @param {string} [type] optional `error` or `warning`
    */
   log (message, type) {
@@ -1157,7 +1170,7 @@ class Uppy {
    * Add data to an upload's result object.
    *
    * @param {string} uploadID The ID of the upload.
-   * @param {Object} data Data properties to add to the result object.
+   * @param {object} data Data properties to add to the result object.
    */
   addResultData (uploadID, data) {
     if (!this._getUpload(uploadID)) {
@@ -1289,6 +1302,7 @@ class Uppy {
     }
 
     let files = this.getState().files
+
     const onBeforeUploadResult = this.opts.onBeforeUpload(files)
 
     if (onBeforeUploadResult === false) {
@@ -1296,11 +1310,6 @@ class Uppy {
     }
 
     if (onBeforeUploadResult && typeof onBeforeUploadResult === 'object') {
-      // warning after the change in 0.24
-      if (onBeforeUploadResult.then) {
-        throw new TypeError('onBeforeUpload() returned a Promise, but this is no longer supported. It must be synchronous.')
-      }
-
       files = onBeforeUploadResult
     }
 
@@ -1325,10 +1334,18 @@ class Uppy {
       })
       .catch((err) => {
         const message = typeof err === 'object' ? err.message : err
-        const details = typeof err === 'object' ? err.details : null
-        this.log(`${message} ${details}`)
-        this.info({ message: message, details: details }, 'error', 4000)
-        return Promise.reject(typeof err === 'object' ? err : new Error(err))
+        const details = (typeof err === 'object' && err.details) ? err.details : ''
+
+        if (err.isRestriction) {
+          this.emit('restriction-failed', null, err)
+          this.log(`${message} ${details}`, 'info')
+          this.info({ message: message, details: details }, 'info', 5000)
+        } else {
+          this.log(`${message} ${details}`, 'error')
+          this.info({ message: message, details: details }, 'error', 5000)
+        }
+
+        throw (typeof err === 'object' ? err : new Error(err))
       })
   }
 }

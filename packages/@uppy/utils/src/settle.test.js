@@ -9,7 +9,7 @@ describe('settle', () => {
       ])
     ).resolves.toMatchObject({
       successful: [],
-      failed: [ new Error('oops'), new Error('this went wrong') ]
+      failed: [new Error('oops'), new Error('this went wrong')]
     })
   })
 

@@ -52,7 +52,7 @@ const toArray = require('@uppy/utils/lib/toArray')
 /**
  * Finds all links dropped/pasted from one browser window to another.
  *
- * @param {Object} dataTransfer - DataTransfer instance, e.g. e.clipboardData, or e.dataTransfer
+ * @param {object} dataTransfer - DataTransfer instance, e.g. e.clipboardData, or e.dataTransfer
  * @param {string} isDropOrPaste - either 'drop' or 'paste'
  * @param {Function} callback - (urlString) => {}
  */

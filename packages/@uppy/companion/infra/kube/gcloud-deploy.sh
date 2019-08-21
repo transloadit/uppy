@@ -32,18 +32,18 @@ docker push transloadit/companion:latest;
 echo "Create directory..."
 mkdir ${HOME}/.kube
 echo "Writing KUBECONFIG to file..."
-echo $KUBECONFIGVAR | base64 --decode -i > ${HOME}/.kube/config
+echo $KUBECONFIGVAR | python -m base64 -d > ${HOME}/.kube/config
 echo "KUBECONFIG file written"
 
 sleep 10s # This cost me some precious debugging time.
 kubectl apply -f "${__kube}/companion/companion-kube.yaml"
 kubectl apply -f "${__kube}/companion/companion-redis.yaml"
-kubectl set image statefulset companion --namespace=uppy companion=docker.io/transloadit/companion:$TRAVIS_COMMIT
+kubectl set image statefulset companion --namespace=companion companion=docker.io/transloadit/companion:$TRAVIS_COMMIT
 sleep 10s
 
-kubectl get pods --namespace=uppy
-kubectl get service --namespace=uppy
-kubectl get deployment --namespace=uppy
+kubectl get pods --namespace=companion
+kubectl get service --namespace=companion
+kubectl get deployment --namespace=companion
 
 function cleanup {
     printf "Cleaning up...\n"

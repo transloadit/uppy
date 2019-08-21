@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -22,11 +22,11 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/informer": "1.1.0",
-    "@uppy/provider-views": "1.1.0",
-    "@uppy/status-bar": "1.1.0",
-    "@uppy/thumbnail-generator": "1.1.0",
-    "@uppy/utils": "1.1.0",
+    "@uppy/informer": "file:../informer",
+    "@uppy/provider-views": "file:../provider-views",
+    "@uppy/status-bar": "file:../status-bar",
+    "@uppy/thumbnail-generator": "file:../thumbnail-generator",
+    "@uppy/utils": "file:../utils",
     "classnames": "^2.2.6",
     "cuid": "^2.1.1",
     "is-shallow-equal": "^1.0.1",
@@ -35,12 +35,7 @@
     "memoize-one": "^5.0.4",
     "preact": "8.2.9",
     "preact-css-transition-group": "^1.3.0",
-    "prettier-bytes": "^1.0.4",
     "resize-observer-polyfill": "^1.5.0"
-  },
-  "devDependencies": {
-    "@uppy/core": "1.1.0",
-    "@uppy/google-drive": "1.1.0"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"

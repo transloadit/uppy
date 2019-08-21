@@ -60,7 +60,7 @@ module.exports = class Transloadit extends Plugin {
     }
 
     // i18n
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
@@ -96,8 +96,8 @@ module.exports = class Transloadit extends Plugin {
    *
    * See: https://github.com/tus/tusd/wiki/Uploading-to-Transloadit-using-tus#uploading-using-tus
    *
-   * @param {Object} file
-   * @param {Object} status
+   * @param {object} file
+   * @param {object} status
    */
   _attachAssemblyMetadata (file, status) {
     // Add the metadata parameters Transloadit needs.
@@ -293,7 +293,7 @@ module.exports = class Transloadit extends Plugin {
    *
    * @param {string} assemblyId
    * @param {string} stepName
-   * @param {Object} result
+   * @param {object} result
    */
   _onResult (assemblyId, stepName, result) {
     const state = this.getPluginState()
@@ -318,7 +318,7 @@ module.exports = class Transloadit extends Plugin {
    * When an Assembly has finished processing, get the final state
    * and emit it.
    *
-   * @param {Object} status
+   * @param {object} status
    */
   _onAssemblyFinished (status) {
     const url = status.assembly_ssl_url
@@ -704,7 +704,14 @@ module.exports = class Transloadit extends Plugin {
     } else {
       this.uppy.use(Tus, {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
-        // will upload to the same Assembly.
+        // will upload to an outdated Assembly, and we won't get socket events for it.
+        //
+        // To resume a Transloadit upload, we need to reconnect to the websocket, and the state that's
+        // required to do that is not saved by tus-js-client's fingerprinting. We need the tus URL,
+        // the Assembly URL, and the WebSocket URL, at least. We also need to know _all_ the files that
+        // were added to the Assembly, so we can properly complete it. All that state is handled by
+        // Golden Retriever. So, Golden Retriever is required to do resumability with the Transloadit plugin,
+        // and we disable Tus's default resume implementation to prevent bad behaviours.
         resume: false,
         // Disable Companion's retry optimisation; we need to change the endpoint on retry
         // so it can't just reuse the same tus.Upload instance server-side.

@@ -23,10 +23,8 @@ if (mode === 'build') {
 
 function getSources (pluginName) {
   const dependencies = {
-    // because e.g. 'companionAuthError' is used in provider-views but set in Core's defaultLocale
-    'core': ['provider-views'],
-    // because e.g. 'emptyFolderAdded' is used in provider-views but set in Dashboard's defaultLocale
-    'dashboard': ['provider-views']
+    // because 'provider-views' doesn't have its own locale, it uses Core's defaultLocale
+    core: ['provider-views']
   }
 
   const globPath = path.join(__dirname, '..', 'packages', '@uppy', pluginName, 'lib', '**', '*.js')
@@ -52,7 +50,7 @@ function buildPluginsList () {
   const files = glob.sync(packagesGlobPath)
 
   console.log(`--> Checked plugins could be instantiated and have defaultLocale in them:\n`)
-  for (let file of files) {
+  for (const file of files) {
     const dirName = path.dirname(file)
     const pluginName = path.basename(dirName)
     if (pluginName === 'locales' || pluginName === 'react-native') {
@@ -125,7 +123,7 @@ function buildPluginsList () {
 function addLocaleToPack (plugin, pluginName) {
   const localeStrings = plugin.defaultLocale.strings
 
-  for (let key in localeStrings) {
+  for (const key in localeStrings) {
     const valueInPlugin = JSON.stringify(localeStrings[key])
     const valueInPack = JSON.stringify(localePack[key])
 
@@ -140,9 +138,9 @@ function addLocaleToPack (plugin, pluginName) {
 }
 
 function checkForUnused (fileContents, pluginName, localePack) {
-  let buff = fileContents.join('\n')
-  for (let key in localePack) {
-    let regPat = new RegExp(`(i18n|i18nArray)\\([^\\)]*['\`"]${key}['\`"]`, 'g')
+  const buff = fileContents.join('\n')
+  for (const key in localePack) {
+    const regPat = new RegExp(`(i18n|i18nArray)\\([^\\)]*['\`"]${key}['\`"]`, 'g')
     if (!buff.match(regPat)) {
       console.error(`⚠ defaultLocale key: ${chalk.magenta(key)} not used in plugin: ${chalk.cyan(pluginName)}`)
     }
@@ -159,13 +157,13 @@ function sortObjectAlphabetically (obj, sortFunc) {
 function build () {
   const { plugins, sources } = buildPluginsList()
 
-  for (let pluginName in plugins) {
+  for (const pluginName in plugins) {
     addLocaleToPack(plugins[pluginName], pluginName)
   }
 
   localePack = sortObjectAlphabetically(localePack)
 
-  for (let pluginName in sources) {
+  for (const pluginName in sources) {
     checkForUnused(sources[pluginName], pluginName, sortObjectAlphabetically(plugins[pluginName].defaultLocale.strings))
   }
 
@@ -206,10 +204,10 @@ function test () {
   // Compare all follower Locales (RU, DE, etc) with our leader en_US
   const warnings = []
   const fatals = []
-  for (let followerName in followerLocales) {
-    let followerLocale = followerLocales[followerName]
-    let missing = leadingLocale.filter((key) => !followerLocale.includes(key))
-    let excess = followerLocale.filter((key) => !leadingLocale.includes(key))
+  for (const followerName in followerLocales) {
+    const followerLocale = followerLocales[followerName]
+    const missing = leadingLocale.filter((key) => !followerLocale.includes(key))
+    const excess = followerLocale.filter((key) => !leadingLocale.includes(key))
 
     missing.forEach((key) => {
       // Items missing are a non-fatal warning because we don't want CI to bum out over all languages

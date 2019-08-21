@@ -96,51 +96,133 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
 - [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now
 - [ ] form: make the `multipleResults` option `true` by default
+- [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
+
+## 1.5
+
+- [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
+- [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
+- [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
+
+# next
 
 ## 1.4
 
-- [ ] core: check option types early, like making sure `allowedFileTypes` is an array, in cases where JS would not be able to auto-fix via typecasting (otherwise it's BC-breaking)
 - [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
 - [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510)
-- [ ] dashboard: Change select button to just say `Select 11` instead of 11 files, or folder (https://github.com/transloadit/uppy/issues/1422)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
 - [ ] statusbar: Add a confirmation of the cancel action (https://github.com/transloadit/uppy/issues/1418)
 - [ ] test: Switch one existing e2e test to use Parcel (create-react-app already using webpack)
-
-## 1.3
-
-- [x] ! core: _calculateTotalProgress results in incorrectly high (1038%) progress with files that don’t have size (like from Instagram) (#1610 / @goto-bus-stop)
-- [ ] @uppy/transloadit: finish Transloadit-Client header on https://github.com/transloadit/uppy/tree/feature/transloadit-client
-- [ ] a11y: Fix remaining issues (https://github.com/transloadit/uppy/issues/created_by/nqst)
+- [ ] meta: Clean up CHANGELOG's Backlog. Requires an Uppy call
+- [ ] goldenretriever: make it work with aws multipart (@goto-bus-stop) https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888
+- [ ] localepacks: Add Arabic, see if right-to-left causes issues, and fix them :)
 - [ ] chore: fix up all code using the prettier branch. work is done, just needs an execute and review/okay by the team
 - [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog
 - [ ] chore: remove dead code/commented blocks
-- [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
-- [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
 - [ ] core: avoid overwriting duplicate files by a) throwing a warning instead and b) adding the relative-path of files to a new tus fingerprint function (we might use file.id as a fingerprint instead) (#754, #1606)
-- [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
+- [ ] @uppy/transloadit: finish Transloadit-Client header on https://github.com/transloadit/uppy/tree/feature/transloadit-client
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
-- [x] docs: Add a note to our browser support page that, while we have a saucelabs test for IE10, we're not actively supporting or fixing issues anymore (https://github.com/transloadit/uppy/issues/1420)
-- [ ] goldenretriever: make it work with aws multipart (@goto-bus-stop) https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888
-- [ ] localepacks: Add Arabic, see if right-to-left causes issues, and fix them :)
-- [ ] meta: Clean up CHANGELOG's Backlog. Requires an Uppy call
-- [x] meta: Turn Tim's feedback (https://app.asana.com/0/1113072057568884/1115520484178604) into actionable todos. Requires an Uppy call with Tim present
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] website: Adopt bcp-47 to handle and parse locales (@kvz, https://github.com/meikidd/iso-639-1/issues/19, https://tools.ietf.org/html/bcp47, https://github.com/wooorm/bcp-47)
-- [x] @uppy/core: make `meta.name` not required in addFile() (@goto-bus-stop / #1629)
-- [x] \*: use `opts.id` as the plugin ID for all plugins, fixes #1674 (@goto-bus-stop / https://github.com/transloadit/uppy/commit/e6c52f7681dad5a73c85bac2c7986293eda76a85)
-- [x] @uppy/companion: add colors to logs (@ifedapoolarewaju / #1648)
-- [x] @uppy/robodog: use chooseFiles string like @uppy/file-input (@goto-bus-stop / #1669)
-- [x] @uppy/aws-s3: prevent unnecessary delete multiparts request for completed files (@twarlop / #1650)
-- [x] @uppy/core: Log versions of Uppy plugins for debugging (@arturi / #1640)
-- [x] @uppy/thumbnail-generator: rotate according to EXIF metadata (@Botz, #1532)
-- [x] @uppy/companion: prevent logging uppyAuthToken (@ifedapoolarewaju / #1663)
-- [x] @uppy/locales: add Turkish (@ayhankesicioglu / #1667)
-- [x] @uppy/locales: add Arabic, Saudi Arabia (@HussainAlkhalifah / #1673)
-- [x] @uppy/companion: return nextPagePath for drive/dropbox (@stephentuso / #1652)
-- [x] docs: add custom plugin example (@arturi / #1623)
-- [x] dashboard/providers: many accessibility improvements (@lakesare / #1507)
+
+## 1.3
+
+Released: 2019-07-19
+
+This release fixes id generation for non-latin characters, significantly improves accessibility in Dashboard and all around, logs versions of every plugin, changes how debug logs work, and more.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.2.0 | @uppy/progress-bar | 1.2.0 |
+| @uppy/aws-s3 | 1.2.0 | @uppy/provider-views | 1.2.0 |
+| @uppy/companion-client | 1.2.0 | @uppy/react | 1.2.0 |
+| @uppy/companion | 1.3.0 | @uppy/redux-dev-tools | 1.2.0 |
+| @uppy/core | 1.2.0 | @uppy/robodog | 1.2.0 |
+| @uppy/dashboard | 1.2.0 | @uppy/status-bar | 1.2.0 |
+| @uppy/drag-drop | 1.2.0 | @uppy/thumbnail-generator | 1.2.0 |
+| @uppy/dropbox | 1.2.0 | @uppy/transloadit | 1.2.0 |
+| @uppy/file-input | 1.2.0 | @uppy/tus | 1.3.0 |
+| @uppy/form | 1.2.0 | @uppy/url | 1.2.0 |
+| @uppy/golden-retriever | 1.2.0 | @uppy/utils | 1.2.0 |
+| @uppy/google-drive | 1.2.0 | @uppy/webcam | 1.2.0 |
+| @uppy/informer | 1.2.0 | @uppy/xhr-upload | 1.2.0 |
+| @uppy/instagram | 1.2.0 | uppy | 1.3.0 |
+| @uppy/locales | 1.5.0 | - | - |
+
+- @uppy/aws-s3-multipart: Add metadata support for S3 MultiPart (#1698 / @davekiss)
+- @uppy/aws-s3: Allow overriding of getResponseData() (#1647 / @eman8519)
+- @uppy/aws-s3: prevent unnecessary delete multiparts request for completed files (#1650 / @twarlop)
+- @uppy/companion-client: send correct versions to companion (#1694 / @ifedapoolarewaju)
+- @uppy/companion, @uppy/companion-client: ⚠️send uppy-versions header to companion: please see [how to avoid errors if you are using Companion but NOT as standalone](https://github.com/transloadit/uppy/pull/1612#issuecomment-515117137) (#1612 / @ifedapoolarewaju)
+- @uppy/companion: add colors to logs (#1648 / @ifedapoolarewaju)
+- @uppy/companion: Change cloud in gcloud-deploy (#1729 / @kiloreux)
+- @uppy/companion: change oauth access token transport method (#1668 / @ifedapoolarewaju)
+- @uppy/companion: display truer error during oauth failure (#1702 /  @ifedapoolarewaju)
+- @uppy/companion: don’t log uppyAuthToken (#1663 / @ifedapoolarewaju)
+- @uppy/companion: don’t send error stack to client (#1649 / @ifedapoolarewaju)
+- @uppy/companion: prevent logging uppyAuthToken (#1663 / @ifedapoolarewaju)
+- @uppy/companion: properly load instagram username (#1651 / @ifedapoolarewaju)
+- @uppy/companion: remove deprecated dropbox field (#1692 / @ifedapoolarewaju)
+- @uppy/companion: return nextPagePath for drive/dropbox (#1652 / @stephentuso)
+- @uppy/core: _calculateTotalProgress results in incorrectly high (1038%) progress with files that don’t have size (like from Instagram) (#1610 / @goto-bus-stop)
+- @uppy/core: ⚠️ Add an option to supply logger with debug, warn and error methods: ⚠️ this switches to `console.debug` from `console.log` by default, you might need to change settings in your dev tools to see Uppy logs! (#1661 / @arturi, @goto-bus-stop, @kvz)
+- @uppy/core: Added heic file type, refactor getFileType (#1734 / @arturi)
+- @uppy/core: adjust ID generation to keep non-latin characters: now, non-latin characters are encoded as their charcode in base 32, so files that only differ by name in a non-latin language will generate different IDs. (#1722 / @goto-bus-stop)
+- @uppy/core: Check for existing upload (#1367 / @superandrew213)
+- @uppy/core: check option types early, like making sure `allowedFileTypes` is an array, in cases where JS would not be able to auto-fix via typecasting (otherwise it's BC-breaking)
+- @uppy/core: Enable partial assignment of restrictions passed as options (#1654 / @janklimo)
+- @uppy/core: Log versions of Uppy plugins for debugging (#1640 / @arturi)
+- @uppy/core: make `meta.name` not required in addFile() (#1629 / @goto-bus-stop)
+- @uppy/core: Restrictions improvements — set file.type to the one detected by Uppy, before calling onBeforeFileAdded callback, emit restriction-failed for minNumberOfFiles, too (so in uppy.upload (#1726 / @arturi)
+- @uppy/dashboard: ⚠️ More design improvements: Add more button, improved focus styles, Replaced "Copy link" & "Edit" links with icons (#1574 / @nqst, @lakesare, @arturi)
+- @uppy/dashboard: ⚠️ Moved all provider-views translation strings from Dashboard to Core, this eliminates a dependency of provider-views upon Dashboard (#1712/ @lakesare)
+- @uppy/dashboard: add modal open and close events (#1664 / @arturi)
+- @uppy/dashboard: Change select button to just say `Select 11` instead of `Select 11 files`, because there can be folders (https://github.com/transloadit/uppy/issues/1422)
+- @uppy/dashboard: connected labels to inputs in FileCard.js (#1715 / @lakesare)
+- @uppy/dashboard: Dashboard performance improvements (#1671 / @goto-bus-stop)
+- @uppy/dashboard: Fix header bar css in ie11 (#1700 / @lakesare)
+- @uppy/dashboard: Ie11 filecard preview fix (#1718 / @lakesare)
+- @uppy/dashboard: Refactor FileCard component to fix loosing metadata state on re-renders (#1656 / @arturi)
+- @uppy/drag-drop: make DragDrop entirely clickable (#1633 / @lakesare) 
+- @uppy/form: exclude own metadata, append result instead of overwriting (#1686 / @arturi)
+- @uppy/locales: add Arabic, Saudi Arabia (#1673 / @HussainAlkhalifah)
+- @uppy/locales: add Turkish (#1667 / @ayhankesicioglu)
+- @uppy/locales: added Finnish (#1719 / @jukakoski)
+- @uppy/provider-views: Add translations for aria labels in provider views (#1696 / @lakesare)
+- @uppy/provider-views: Persist selected checkboxes when moving between folders (#1672 / @arturi)
+- @uppy/provider-views: Select 5 files --> Select 5, because there are also folders (#1697 / @arturi)
+- @uppy/robodog: allow customizing `triggerUploadOnSubmit` (#1691 / @goto-bus-stop)
+- @uppy/robodog: fix `form({ modal: true })` not enabling modal options (#1690 / @goto-bus-stop)
+- @uppy/robodog: use chooseFiles string like @uppy/file-input (#1669 / @goto-bus-stop)
+- @uppy/status-bar: Show `total file size / total uploaded of all started` vs `total / total upload of those not complete` (#1685 / @arturi)
+- @uppy/thumbnail-generator: rotate according to EXIF metadata (#1532 / @Botz)
+- @uppy/transloadit: expand on resume: false reasons (afd30a43b8106d0ca79c6f95de0673b69f3edcb5 / @goto-bus-stop)
+- @uppy/transloadit: reduce excessive polling (#1689 / @goto-bus-stop)
+- @uppy/utils: ⚠️ prettyBytes 1000 --> 1024: we’ve decided to move prettier-bytes to @uppy/utils/lib/prettyBytes and divide by 1024 instead of 1000 to justify KB vs kB (#1732 / @arturi)
+- @uppy/webcam: Allow definition of MediaRecorder mimeType (#1708 / @davekiss)
+- @uppy/webcam: Change webcam file name so that it fits on one line in Dashboard (#1660 / @arturi)
+- @uppy/xhr-upload: send global metadata when `bundle: true` (#1677 / @goto-bus-stop)
+- @uppy/xhr-upload: Set type and name from file.meta, re-create blob (#1616 / @arturi)
+- \*: Accessibility follow-up PR: make all svgs not focusable in IE11 (#1662 / @lakesare)
+- \*: Added focus styles for all elements (#1701 / @lakesare)
+- \*: Log error in uppy.addFile try/catch (#1680 / @arturi)
+- \*: use `opts.id` as the plugin ID for all plugins, fixes #1674 (https://github.com/transloadit/uppy/commit/e6c52f7681dad5a73c85bac2c7986293eda76a85 / @goto-bus-stop)
+- build: ci — use a fancy matrix (#1709 / @goto-bus-stop)
+- build: deps: get rid of eslint-config-standard-preact (#1678 / @goto-bus-stop)
+- build: Update webdriverio to v5 (#1675 / @goto-bus-stop)
+- dashboard/providers: many-many-many accessibility improvements, introduced superfocus (#1507 / @lakesare, @arturi)
+- docs: add custom plugin example (#1623 / @arturi)
+- docs: document redux store wart (9948a841b7a3dac17dc0c24fb347baf5f2b2ab72 / @goto-bus-stop)
+- docs: Fix docs navigation (#1717 / @larowlan)
+- docs: Missing build step from readme, npm start will fail without this (#1735 / magumbo)
+- website: add Community projects (#1620 / @kvz)
+- website: Add signature authentication to Transloadit example on the website (#1705 / @goto-bus-stop)
+- website: Add support for arguments in website’s console.log hack (@arturi / #1641)
+- website: IE10: note we are stll running tests with it, but not actively supporting it (7c9b55ce2e3b7021ad60bffe94e3587231c2de6a / @arturi)
+- website: Improve website transloadit example (#1659 / @arturi)
+- website: make passing options to partials/docs_menu optional (6ac7f4825b9fd714b5564b7cedb21fb199f5a1e7 / @arturi)
+@uppy/dashboard - made Add More always stick to the right (#1733 / @lakesare)
 
 ## 1.2.0
 

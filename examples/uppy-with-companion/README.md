@@ -8,12 +8,10 @@ To run this example, make sure you've correctly installed the root repository:
 
 ```bash
 npm install
-npm run bootstrap
 ```
 
 Then, navigate to this directory and run:
 
 ```bash
-npm install
 npm start
 ```

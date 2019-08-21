@@ -3,6 +3,7 @@ const hu_HU = {}
 hu_HU.contributors = ['nagyv']
 
 hu_HU.strings = {
+  addMore: 'Adj hozzá többet',
   addMoreFiles: 'További fájlok hozzáadása',
   addingMoreFiles: 'További fájlok hozzáadása',
   allowAccessDescription: 'A képek vagy videó felvételéhez, kérjük engedélyezze a kamera használatát ezen az oldalon.',
@@ -80,10 +81,10 @@ hu_HU.strings = {
   retry: 'Újra',
   retryUpload: 'Próbálja újra a feltöltést',
   saveChanges: 'Változtatások mentése',
-  selectXFiles: {
-    '0': '%{smart_count} fájl kiválasztva',
-    '1': '%{smart_count} fájl kiválasztva',
-    '2': '%{smart_count} fájl kiválasztva'
+  selectX: {
+    '0': 'Válassza az %{smart_count} lehetőséget',
+    '1': 'Válassza az %{smart_count} lehetőséget',
+    '2': 'Válassza az %{smart_count} lehetőséget'
   },
   smile: 'Csíííz!',
   startRecording: 'Videófeltével indul',

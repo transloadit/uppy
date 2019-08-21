@@ -1,6 +1,7 @@
 const es_GL = {}
 
 es_GL.strings = {
+  addMore: 'añadir más',
   addMoreFiles: 'Agregar máis arquivos',
   addingMoreFiles: 'Agregando máis arquivos',
   allowAccessDescription: 'Para tomar fotos ou grabar video coa túa cámara, por favor permite a este sitio o acceso á cámara.',
@@ -78,10 +79,10 @@ es_GL.strings = {
   retry: 'Intentar novamente',
   retryUpload: 'Intentar subida novamente',
   saveChanges: 'Gardar cambios',
-  selectXFiles: {
-    '0': 'Seleccionar %{smart_count} arquivo',
-    '1': 'Seleccionar %{smart_count} arquivos',
-    '2': 'Seleccionar %{smart_count} arquivos'
+  selectX: {
+    '0': 'Seleccionar %{smart_count}',
+    '1': 'Seleccionar %{smart_count}',
+    '2': 'Seleccionar %{smart_count}'
   },
   smile: 'Sorrí!',
   startRecording: 'Comezar a grabación de vídeo',

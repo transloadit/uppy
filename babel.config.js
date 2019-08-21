@@ -1,5 +1,5 @@
 module.exports = (api) => {
-  let targets = {}
+  const targets = {}
   if (api.env('test')) {
     targets.node = 'current'
   }
