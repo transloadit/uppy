@@ -27,7 +27,8 @@ uppy.use(Transloadit, {
   importFromUploadURLs: false,
   alwaysRunAssembly: false,
   signature: null,
-  fields: {}
+  fields: {},
+  limit: 0
 })
 ```
 
@@ -256,6 +257,10 @@ uppy.use(Transloadit, {
   }
 })
 ```
+
+### `limit: 0`
+
+Limit the amount of uploads going on at the same time. Setting this to `0` means there is no limit on concurrent uploads. This option is passed through to the [`@uppy/tus`](/docs/tus) plugin that Transloadit plugin uses internally.
 
 ### `locale: {}`
 
