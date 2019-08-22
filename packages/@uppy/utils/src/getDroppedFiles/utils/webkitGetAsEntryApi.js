@@ -24,74 +24,60 @@ function getRelativePath (fileEntry) {
  * @param {Array} oldEntries
  * @param {Function} callback - called with ([ all files and directories in that directoryReader ])
  */
-function readEntries (directoryReader, oldEntries, callback) {
+function getFilesAndDirectoriesFromDirectory (directoryReader, oldEntries, callback) {
   directoryReader.readEntries(
     (entries) => {
       const newEntries = [...oldEntries, ...entries]
-      // According to the FileSystem API spec, readEntries() must be called until it calls the callback with an empty array.
+      // According to the FileSystem API spec, getFilesAndDirectoriesFromDirectory() must be called until it calls the callback with an empty array.
       if (entries.length) {
         setTimeout(() => {
-          readEntries(directoryReader, newEntries, callback)
+          getFilesAndDirectoriesFromDirectory(directoryReader, newEntries, callback)
         }, 0)
       // Done iterating this particular directory
       } else {
         callback(newEntries)
       }
     },
-    // Make sure we resolve on error anyway
+    // Make sure we resolve on error anyway, it's fine if only one directory couldn't be parsed!
     () =>
       callback(oldEntries)
   )
 }
 
 /**
- * @param {Function} resolve - function that will be called when :files array is appended with a file
- * @param {Array<File>} files - array of files to enhance
- * @param {FileSystemFileEntry} fileEntry
- */
-function addEntryToFiles (resolve, files, fileEntry) {
-  // Creates a new File object which can be used to read the file.
-  fileEntry.file(
-    (file) => {
-      file.relativePath = getRelativePath(fileEntry)
-      files.push(file)
-      resolve()
-    },
-    // Make sure we resolve on error anyway
-    () =>
-      resolve()
-  )
-}
-
-/**
- * @param {Function} resolve - function that will be called when :directoryEntry is done being recursively parsed
- * @param {Array<File>} files - array of files to enhance
- * @param {FileSystemDirectoryEntry} directoryEntry
- */
-function recursivelyAddFilesFromDirectory (resolve, files, directoryEntry) {
-  const directoryReader = directoryEntry.createReader()
-  readEntries(directoryReader, [], (entries) => {
-    const promises =
-      entries.map((entry) =>
-        createPromiseToAddFileOrParseDirectory(files, entry)
-      )
-    Promise.all(promises)
-      .then(() =>
-        resolve()
-      )
-  })
-}
-
-/**
+ * Returns a resolved promise, when :files array is enhanced
+ *
  * @param {Array<File>} files - array of files to enhance
  * @param {(FileSystemFileEntry|FileSystemDirectoryEntry)} entry
  */
 function createPromiseToAddFileOrParseDirectory (files, entry) {
   return new Promise((resolve) => {
+    // this is a base call
     if (entry.isFile) {
-      addEntryToFiles(resolve, files, entry)
+      // Creates a new File object which can be used to read the file.
+      entry.file(
+        (file) => {
+          file.relativePath = getRelativePath(entry)
+          files.push(file)
+          resolve()
+        },
+        // Make sure we resolve on error anyway, it's fine if only one file couldn't be read!
+        () =>
+          resolve()
+      )
+    // this is a recursive call
     } else if (entry.isDirectory) {
-      recursivelyAddFilesFromDirectory(resolve, files, entry)
+      const directoryReader = entry.createReader()
+      getFilesAndDirectoriesFromDirectory(directoryReader, [], (entries) => {
+        const promises =
+          entries.map((entry) =>
+            createPromiseToAddFileOrParseDirectory(files, entry)
+          )
+        Promise.all(promises)
+          .then(() =>
+            resolve()
+          )
+      })
     }
   })
 }
@@ -99,8 +85,12 @@ function createPromiseToAddFileOrParseDirectory (files, entry) {
 module.exports = function webkitGetAsEntryApi (dataTransfer) {
   const files = []
 
+  // Each of the root promises resolve when:
+  // - ROOT file is parsed (and is added to the files array), or
+  // - ROOT folder gets entirely parsed (populating files array)
   const rootPromises = []
 
+  // For each dropped item, - make sure it's a file/directory, and start deepening in!
   toArray(dataTransfer.items)
     .forEach((item) => {
       const entry = item.webkitGetAsEntry()
