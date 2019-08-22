@@ -116,7 +116,7 @@ class Uppy {
     if (this.opts.restrictions.allowedFileTypes &&
         this.opts.restrictions.allowedFileTypes !== null &&
         !Array.isArray(this.opts.restrictions.allowedFileTypes)) {
-      throw new Error(`'restrictions.allowedFileTypes' must be an array`)
+      throw new TypeError(`'restrictions.allowedFileTypes' must be an array`)
     }
 
     // i18n
