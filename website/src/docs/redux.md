@@ -30,9 +30,9 @@ const uppy = Uppy({
 })
 ```
 
-Keep in mind that Uppy state is not serializable (because we have to keep track of files), so, if you persist your redux state, - you should exclude Uppy state from persistence.
+Keep in mind that Uppy state is not serializable (because we have to keep track of files with data blobs). So, if you persist your Redux state, you should exclude Uppy state from persistence.
 
-If you'd like to persist your Uppy state - look into [@uppy/golden-retriever](https://uppy.io/docs/golden-retriever/), it's a plugin created specifically for saving and restoring Uppy state (including selected files and upload progress).
+If you’d like to persist your Uppy state — please look into [@uppy/golden-retriever](https://uppy.io/docs/golden-retriever/). It’s a plugin created specifically for saving and restoring Uppy state, including selected files and upload progress.
 
 ## Redux Dev Tools
 
