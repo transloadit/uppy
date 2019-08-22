@@ -452,7 +452,7 @@ module.exports = class Tus extends Plugin {
       return Promise.resolve()
     }
 
-    if (fileIDs.length > 10 && this.opts.limit === 0) {
+    if (this.opts.limit === 0) {
       this.uppy.log(
         '[Tus] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/tus/#limit-0',
         'warning'
