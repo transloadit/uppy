@@ -98,8 +98,11 @@ module.exports = class DragDrop extends Plugin {
     this.setPluginState({ isDraggingOver: false })
 
     // 3. Add all dropped files
-    this.uppy.log('[DragDrop] File were dropped')
-    getDroppedFiles(event.dataTransfer)
+    this.uppy.log('[DragDrop] Files were dropped')
+    const logDropError = (error) => {
+      this.uppy.log(error.message, 'error')
+    }
+    getDroppedFiles(event.dataTransfer, { logDropError })
       .then((files) => {
         files.forEach(this.addFile)
       })

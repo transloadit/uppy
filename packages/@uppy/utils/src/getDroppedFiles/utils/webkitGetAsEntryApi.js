@@ -21,17 +21,18 @@ function getRelativePath (fileEntry) {
  * Recursive function, calls the original callback() when the directory is entirely parsed.
  *
  * @param {FileSystemDirectoryReader} directoryReader
+ * @param {Function} logDropError
  * @param {Array} oldEntries
  * @param {Function} callback - called with ([ all files and directories in that directoryReader ])
  */
-function getFilesAndDirectoriesFromDirectory (directoryReader, oldEntries, callback) {
+function getFilesAndDirectoriesFromDirectory (directoryReader, logDropError, oldEntries, callback) {
   directoryReader.readEntries(
     (entries) => {
       const newEntries = [...oldEntries, ...entries]
       // According to the FileSystem API spec, getFilesAndDirectoriesFromDirectory() must be called until it calls the callback with an empty array.
       if (entries.length) {
         setTimeout(() => {
-          getFilesAndDirectoriesFromDirectory(directoryReader, newEntries, callback)
+          getFilesAndDirectoriesFromDirectory(directoryReader, logDropError, newEntries, callback)
         }, 0)
       // Done iterating this particular directory
       } else {
@@ -39,8 +40,10 @@ function getFilesAndDirectoriesFromDirectory (directoryReader, oldEntries, callb
       }
     },
     // Make sure we resolve on error anyway, it's fine if only one directory couldn't be parsed!
-    () =>
+    (error) => {
+      logDropError(error)
       callback(oldEntries)
+    }
   )
 }
 
@@ -49,10 +52,11 @@ function getFilesAndDirectoriesFromDirectory (directoryReader, oldEntries, callb
  *
  * @param {Array<File>} files - array of files to enhance
  * @param {(FileSystemFileEntry|FileSystemDirectoryEntry)} entry
+ * @param {Function} logDropError
  */
-function createPromiseToAddFileOrParseDirectory (files, entry) {
+function createPromiseToAddFileOrParseDirectory (files, entry, logDropError) {
   return new Promise((resolve) => {
-    // this is a base call
+    // This is a base call
     if (entry.isFile) {
       // Creates a new File object which can be used to read the file.
       entry.file(
@@ -62,27 +66,26 @@ function createPromiseToAddFileOrParseDirectory (files, entry) {
           resolve()
         },
         // Make sure we resolve on error anyway, it's fine if only one file couldn't be read!
-        () =>
+        (error) => {
+          logDropError(error)
           resolve()
+        }
       )
-    // this is a recursive call
+    // This is a recursive call
     } else if (entry.isDirectory) {
       const directoryReader = entry.createReader()
-      getFilesAndDirectoriesFromDirectory(directoryReader, [], (entries) => {
+      getFilesAndDirectoriesFromDirectory(directoryReader, logDropError, [], (entries) => {
         const promises =
           entries.map((entry) =>
-            createPromiseToAddFileOrParseDirectory(files, entry)
+            createPromiseToAddFileOrParseDirectory(files, entry, logDropError)
           )
-        Promise.all(promises)
-          .then(() =>
-            resolve()
-          )
+        Promise.all(promises).then(resolve)
       })
     }
   })
 }
 
-module.exports = function webkitGetAsEntryApi (dataTransfer) {
+module.exports = function webkitGetAsEntryApi (dataTransfer, logDropError) {
   const files = []
 
   // Each of the root promises resolve when:
@@ -96,7 +99,7 @@ module.exports = function webkitGetAsEntryApi (dataTransfer) {
       const entry = item.webkitGetAsEntry()
       // :entry can be null when we drop the url e.g.
       if (entry) {
-        rootPromises.push(createPromiseToAddFileOrParseDirectory(files, entry))
+        rootPromises.push(createPromiseToAddFileOrParseDirectory(files, entry, logDropError))
       }
     })
 

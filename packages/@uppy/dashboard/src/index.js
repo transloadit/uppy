@@ -546,7 +546,17 @@ module.exports = class Dashboard extends Plugin {
     })
 
     // 4. Add all dropped files
-    getDroppedFiles(event.dataTransfer)
+    let executedDropErrorOnce = false
+    const logDropError = (error) => {
+      this.uppy.log(error.message, 'error')
+
+      // In practice all drop errors are most likely the same, so let's just show one to avoid overwhelming the user
+      if (!executedDropErrorOnce) {
+        this.uppy.info(error.message, 'error')
+        executedDropErrorOnce = true
+      }
+    }
+    getDroppedFiles(event.dataTransfer, { logDropError })
       .then((files) => {
         if (files.length > 0) {
           this.uppy.log('[Dashboard] Files were dropped')
