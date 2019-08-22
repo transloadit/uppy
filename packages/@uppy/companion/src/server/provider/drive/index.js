@@ -45,7 +45,7 @@ class Drive {
       })
     }
 
-    let where = {
+    const where = {
       fields: DRIVE_FILES_FIELDS,
       pageToken: query.cursor,
       q: `'${directory}' in parents and trashed=false`,

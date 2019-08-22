@@ -22,8 +22,7 @@ class RedisEmitter extends NRP {
    * @param {function} handler the handler of the event
    */
   once (eventName, handler) {
-    let removeListener
-    removeListener = this.on(eventName, (message) => {
+    const removeListener = this.on(eventName, (message) => {
       handler(message)
       removeListener()
     })

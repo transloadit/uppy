@@ -711,27 +711,76 @@ describe('src/Core', () => {
       })
     })
 
-    it('allows no new files after upload when allowMultipleUploads: false', async () => {
-      const core = new Core({ allowMultipleUploads: false })
-      core.addFile({
-        source: 'jest',
-        name: 'foo.jpg',
-        type: 'image/jpeg',
-        data: new File([sampleImage], { type: 'image/jpeg' })
-      })
-
-      await core.upload()
-
-      expect(() => {
+    describe('with allowMultipleUploads: false', () => {
+      it('allows no new files after upload', async () => {
+        const core = new Core({ allowMultipleUploads: false })
         core.addFile({
           source: 'jest',
-          name: '123.foo',
+          name: 'foo.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' })
         })
-      }).toThrow(
-        /Cannot add new files: already uploading\./
-      )
+
+        await core.upload()
+
+        expect(() => {
+          core.addFile({
+            source: 'jest',
+            name: '123.foo',
+            type: 'image/jpeg',
+            data: new File([sampleImage], { type: 'image/jpeg' })
+          })
+        }).toThrow(
+          /Cannot add new files: already uploading\./
+        )
+      })
+
+      it('does not allow new files after the removeFile() if some file is still present', async () => {
+        const core = new Core({ allowMultipleUploads: false })
+
+        // adding 2 files
+        const fileId1 = core.addFile({
+          source: 'jest',
+          name: '1.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+        core.addFile({
+          source: 'jest',
+          name: '2.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+
+        // removing 1 file
+        core.removeFile(fileId1)
+
+        await expect(core.upload()).resolves.toBeDefined()
+      })
+
+      it('allows new files after the last removeFile()', async () => {
+        const core = new Core({ allowMultipleUploads: false })
+
+        // adding 2 files
+        const fileId1 = core.addFile({
+          source: 'jest',
+          name: '1.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+        const fileId2 = core.addFile({
+          source: 'jest',
+          name: '2.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+
+        // removing 2 files
+        core.removeFile(fileId1)
+        core.removeFile(fileId2)
+
+        await expect(core.upload()).resolves.toBeDefined()
+      })
     })
 
     it('does not dedupe different files', async () => {

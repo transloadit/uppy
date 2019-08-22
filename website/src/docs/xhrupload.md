@@ -90,7 +90,9 @@ headers: {
 
 Send all files in a single multipart request. When `bundle` is set to `true`, `formData` must also be set to `true`.
 
-> Note: When `bundle` is set to `true`, file metadata is **not** sent to the endpoint. This is because it is not obvious how metadata should be sent when there are multiple files in a single request. If you need this, please open an issue and we will try to figure it out together.
+⚠️ Only use `bundle: true` with local uploads (drag-drop, browse, webcam), Uppy won’t be able to bundle remote files (from Google Drive or Instagram), and will throw an error in this case.
+
+> Note: When `bundle` is set to `true`, [global uppy metadata](https://uppy.io/docs/uppy/#meta), the one set via `meta` options property, is sent to the endpoint. Individual per-file metadata is ignored.
 
 All files will be appended to the provided `fieldName` field in the request. To upload files on different fields, use [`uppy.setFileState()`](/docs/uppy#uppy-setFileState-fileID-state) to set the `xhrUpload.fieldName` property on the file:
 

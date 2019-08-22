@@ -139,31 +139,31 @@ async function injectGhStars () {
   const Octokit = require('@octokit/rest')
   const octokit = new Octokit(opts)
 
-  let { headers, data } = await octokit.repos.get({
+  const { headers, data } = await octokit.repos.get({
     owner: 'transloadit',
     repo: 'uppy'
   })
 
   console.log(`${headers['x-ratelimit-remaining']} requests remaining until we hit GitHub ratelimiter`)
 
-  let dstpath = path.join(webRoot, 'themes', 'uppy', 'layout', 'partials', 'generated_stargazers.ejs')
+  const dstpath = path.join(webRoot, 'themes', 'uppy', 'layout', 'partials', 'generated_stargazers.ejs')
   fs.writeFileSync(dstpath, data.stargazers_count, 'utf-8')
 
   console.log(`${data.stargazers_count} stargazers written to '${dstpath}'`)
 }
 
 async function injectMarkdown () {
-  let sources = {
+  const sources = {
     '.github/ISSUE_TEMPLATE/integration_help.md': `src/_template/integration_help.md`,
     '.github/CONTRIBUTING.md': `src/_template/contributing.md`
   }
 
-  for (let src in sources) {
-    let dst = sources[src]
+  for (const src in sources) {
+    const dst = sources[src]
     // strip yaml frontmatter:
-    let srcpath = path.join(uppyRoot, `/../../${src}`)
-    let dstpath = path.join(webRoot, dst)
-    let parts = fs.readFileSync(srcpath, 'utf-8').split(/---\s*\n/)
+    const srcpath = path.join(uppyRoot, `/../../${src}`)
+    const dstpath = path.join(webRoot, dst)
+    const parts = fs.readFileSync(srcpath, 'utf-8').split(/---\s*\n/)
     if (parts.length >= 3) {
       parts.shift()
       parts.shift()
@@ -185,7 +185,7 @@ function injectLocaleList () {
   const mdRows = []
 
   const localePackagePath = path.join(localesRoot, 'src', '*.js')
-  let localePackageVersion = require(path.join(localesRoot, 'package.json')).version
+  const localePackageVersion = require(path.join(localesRoot, 'package.json')).version
 
   glob.sync(localePackagePath).forEach((localePath) => {
     const localeName = path.basename(localePath, '.js')
@@ -194,8 +194,8 @@ function injectLocaleList () {
     const parts = localeNameWithDash.split('-')
     let variant = ''
     if (parts.length > 2) {
-      let lang = parts.shift()
-      let country = parts.shift()
+      const lang = parts.shift()
+      const country = parts.shift()
       variant = parts.join(', ')
       localeNameWithDash = `${lang}-${country}`
     }
@@ -211,7 +211,7 @@ function injectLocaleList () {
 
   const resultingMdTable = mdTable.concat(mdRows.sort()).join('\n').replace('%count%', mdRows.length)
 
-  let dstpath = path.join(webRoot, 'src', '_template', 'list_of_locale_packs.md')
+  const dstpath = path.join(webRoot, 'src', '_template', 'list_of_locale_packs.md')
   fs.writeFileSync(dstpath, resultingMdTable, 'utf-8')
   console.info(chalk.green(`✓ injected: `), chalk.grey(dstpath))
 }

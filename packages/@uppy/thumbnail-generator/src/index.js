@@ -320,6 +320,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
     this.uppy.on('file-removed', this.onFileRemoved)
     this.uppy.on('restored', this.onRestored)
   }
+
   uninstall () {
     this.uppy.off('file-added', this.onFileAdded)
     this.uppy.off('file-removed', this.onFileRemoved)

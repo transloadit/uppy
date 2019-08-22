@@ -27,7 +27,7 @@ describe('DefaultStore', () => {
     let calls = 0
     function listener (prevState, nextState, patch) {
       calls++
-      expect([ prevState, nextState, patch ]).toEqual(expected)
+      expect([prevState, nextState, patch]).toEqual(expected)
     }
 
     const store = DefaultStore()
