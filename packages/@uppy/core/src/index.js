@@ -423,6 +423,27 @@ class Uppy {
     }
   }
 
+  _showOrLogErrorAndThrow (err, showInformer = true) {
+    const message = typeof err === 'object' ? err.message : err
+    const details = (typeof err === 'object' && err.details) ? err.details : ''
+
+    // Restriction errors should be logged, but not as errors,
+    // as they are expected and shown in the UI.
+    if (err.isRestriction) {
+      this.log(`${message} ${details}`)
+    } else {
+      this.log(`${message} ${details}`, 'error')
+    }
+
+    // Sometimes informer has to be shown manually by the developer,
+    // for example, in `onBeforeFileAdded`.
+    if (showInformer) {
+      this.info({ message: message, details: details }, 'error', 5000)
+    }
+
+    throw (typeof err === 'object' ? err : new Error(err))
+  }
+
   /**
    * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
    * try to guess file type in a clever way, check file against restrictions,
@@ -434,15 +455,8 @@ class Uppy {
   addFile (file) {
     const { files, allowNewUpload } = this.getState()
 
-    const onError = (msg) => {
-      const err = typeof msg === 'object' ? msg : new Error(msg)
-      this.log(err.message)
-      this.info(err.message, 'error', 5000)
-      throw err
-    }
-
     if (allowNewUpload === false) {
-      onError('Cannot add new files: already uploading.')
+      this._showOrLogErrorAndThrow(new RestrictionError('Cannot add new files: already uploading.'))
     }
 
     const fileType = getFileType(file)
@@ -451,7 +465,8 @@ class Uppy {
     const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(file, files)
 
     if (onBeforeFileAddedResult === false) {
-      onError('Cannot add the file because onBeforeFileAdded returned false.')
+      // Don’t show UI info for this error, as it should be done by the developer
+      this._showOrLogErrorAndThrow(new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.'), false)
     }
 
     if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
@@ -472,7 +487,7 @@ class Uppy {
     const fileID = generateFileID(file)
 
     if (files[fileID]) {
-      onError(`Cannot add the duplicate file '${fileName}', it already exists.`)
+      this._showOrLogErrorAndThrow(new RestrictionError(`Cannot add the duplicate file '${fileName}', it already exists.`))
     }
 
     const meta = file.meta || {}
@@ -506,7 +521,7 @@ class Uppy {
       this._checkRestrictions(newFile)
     } catch (err) {
       this.emit('restriction-failed', newFile, err)
-      onError(err)
+      this._showOrLogErrorAndThrow(err)
     }
 
     this.setState({
@@ -1276,14 +1291,6 @@ class Uppy {
    * @returns {Promise}
    */
   upload () {
-    const onError = (err) => {
-      const message = typeof err === 'object' ? err.message : err
-      const details = (typeof err === 'object' && err.details) ? err.details : ''
-      this.log(`${message} ${details}`)
-      this.info({ message: message, details: details }, 'error', 5000)
-      throw (typeof err === 'object' ? err : new Error(err))
-    }
-
     if (!this.plugins.uploader) {
       this.log('No uploader type plugins are used', 'warning')
     }
@@ -1322,7 +1329,7 @@ class Uppy {
         if (err.isRestriction) {
           this.emit('restriction-failed', null, err)
         }
-        onError(err)
+        this._showOrLogErrorAndThrow(err)
       })
   }
 }
