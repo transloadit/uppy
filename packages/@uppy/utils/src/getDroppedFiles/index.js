@@ -1,4 +1,4 @@
-const webkitGetAsEntryApi = require('./utils/webkitGetAsEntryApi')
+const webkitGetAsEntryApi = require('./utils/webkitGetAsEntryApi/index')
 const fallbackApi = require('./utils/fallbackApi')
 
 /**
