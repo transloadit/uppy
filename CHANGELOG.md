@@ -94,9 +94,11 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] docs: Completely drop soft IE10 (and IE11?) support
 - [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems though)
 - [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
+- [ ] xhr: set the `limit` option to a sensible default, like 10
 - [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now
 - [ ] form: make the `multipleResults` option `true` by default
 - [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
+- [ ] tus: set the `limit` option to a sensible default, like 10
 
 ## 1.5
 

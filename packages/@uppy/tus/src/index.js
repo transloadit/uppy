@@ -27,7 +27,6 @@ const tusDefaultOptions = {
 
 /**
  * Tus resumable file uploader
- *
  */
 module.exports = class Tus extends Plugin {
   static VERSION = require('../package.json').version
@@ -97,7 +96,7 @@ module.exports = class Tus extends Plugin {
   /**
    * Create a new Tus upload
    *
-   * @param {Object} file for use with upload
+   * @param {object} file for use with upload
    * @param {integer} current file in a queue
    * @param {integer} total number of files in a queue
    * @returns {Promise}
@@ -443,11 +442,18 @@ module.exports = class Tus extends Plugin {
 
   handleUpload (fileIDs) {
     if (fileIDs.length === 0) {
-      this.uppy.log('Tus: no files to upload!')
+      this.uppy.log('[Tus] No files to upload')
       return Promise.resolve()
     }
 
-    this.uppy.log('Tus is uploading...')
+    if (this.opts.limit === 0) {
+      this.uppy.log(
+        '[Tus] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/tus/#limit-0',
+        'warning'
+      )
+    }
+
+    this.uppy.log('[Tus] Uploading...')
     const filesToUpload = fileIDs.map((fileID) => this.uppy.getFile(fileID))
 
     return this.uploadFiles(filesToUpload)

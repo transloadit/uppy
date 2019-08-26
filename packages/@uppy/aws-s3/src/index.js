@@ -51,7 +51,7 @@ module.exports = class AwsS3 extends Plugin {
     this.opts = { ...defaultOptions, ...opts }
 
     // i18n
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
@@ -176,7 +176,7 @@ module.exports = class AwsS3 extends Plugin {
     this.uppy.addPreProcessor(this.prepareUpload)
 
     let warnedSuccessActionStatus = false
-    let xhrUploadOpts = {
+    const xhrUploadOpts = {
       fieldName: 'file',
       responseUrlFieldName: 'location',
       timeout: this.opts.timeout,

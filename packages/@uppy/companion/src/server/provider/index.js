@@ -22,6 +22,7 @@ class Provider {
   constructor (options) {
     return this
   }
+
   /**
    *
    * @param {object} options

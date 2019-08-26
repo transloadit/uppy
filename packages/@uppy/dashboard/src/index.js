@@ -126,7 +126,7 @@ module.exports = class Dashboard extends Plugin {
     this.opts = { ...defaultOptions, ...opts }
 
     // i18n
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
@@ -187,7 +187,7 @@ module.exports = class Dashboard extends Plugin {
     if (callerPluginType !== 'acquirer' &&
         callerPluginType !== 'progressindicator' &&
         callerPluginType !== 'presenter') {
-      let msg = 'Dashboard: Modal can only be used by plugins of types: acquirer, progressindicator, presenter'
+      const msg = 'Dashboard: Modal can only be used by plugins of types: acquirer, progressindicator, presenter'
       this.uppy.log(msg)
       return
     }
@@ -344,6 +344,12 @@ module.exports = class Dashboard extends Plugin {
   }
 
   toggleFileCard (fileId) {
+    if (fileId) {
+      this.uppy.emit('dashboard:file-edit-start')
+    } else {
+      this.uppy.emit('dashboard:file-edit-complete')
+    }
+
     this.setPluginState({
       fileCardFor: fileId || null,
       activeOverlayType: fileId ? 'FileCard' : null

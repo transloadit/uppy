@@ -51,7 +51,8 @@ module.exports = class Transloadit extends Plugin {
       signature: null,
       params: null,
       fields: {},
-      getAssemblyOptions: defaultGetAssemblyOptions
+      getAssemblyOptions: defaultGetAssemblyOptions,
+      limit: 0
     }
 
     this.opts = {
@@ -60,7 +61,7 @@ module.exports = class Transloadit extends Plugin {
     }
 
     // i18n
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
@@ -96,8 +97,8 @@ module.exports = class Transloadit extends Plugin {
    *
    * See: https://github.com/tus/tusd/wiki/Uploading-to-Transloadit-using-tus#uploading-using-tus
    *
-   * @param {Object} file
-   * @param {Object} status
+   * @param {object} file
+   * @param {object} status
    */
   _attachAssemblyMetadata (file, status) {
     // Add the metadata parameters Transloadit needs.
@@ -293,7 +294,7 @@ module.exports = class Transloadit extends Plugin {
    *
    * @param {string} assemblyId
    * @param {string} stepName
-   * @param {Object} result
+   * @param {object} result
    */
   _onResult (assemblyId, stepName, result) {
     const state = this.getPluginState()
@@ -318,7 +319,7 @@ module.exports = class Transloadit extends Plugin {
    * When an Assembly has finished processing, get the final state
    * and emit it.
    *
-   * @param {Object} status
+   * @param {object} status
    */
   _onAssemblyFinished (status) {
     const url = status.assembly_ssl_url
@@ -717,7 +718,9 @@ module.exports = class Transloadit extends Plugin {
         // so it can't just reuse the same tus.Upload instance server-side.
         useFastRemoteRetry: false,
         // Only send Assembly metadata to the tus endpoint.
-        metaFields: ['assembly_url', 'filename', 'fieldname']
+        metaFields: ['assembly_url', 'filename', 'fieldname'],
+        // Pass the limit option to @uppy/tus
+        limit: this.opts.limit
       })
     }
 

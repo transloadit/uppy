@@ -53,7 +53,8 @@
       "packages/@uppy/locales/template.js"
     ],
     "rules": {
-      "camelcase": "off"
+      "camelcase": "off",
+      "quote-props": "off"
     }
   }]
 }

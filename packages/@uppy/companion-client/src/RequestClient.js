@@ -26,7 +26,7 @@ module.exports = class RequestClient {
 
   get defaultHeaders () {
     return {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
       'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`
     }

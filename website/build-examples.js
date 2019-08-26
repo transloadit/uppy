@@ -146,7 +146,7 @@ glob(srcPattern, (err, files) => {
  * Logs to console and shows desktop notification on error.
  * Calls `this.emit(end)` to stop bundling.
  *
- * @param  {Object} err Error object
+ * @param  {object} err Error object
  */
 function onError (err) {
   console.error(chalk.red('✗ error:'), chalk.red(err.message))
