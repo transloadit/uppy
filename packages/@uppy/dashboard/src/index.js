@@ -101,6 +101,7 @@ module.exports = class Dashboard extends Plugin {
       width: 750,
       height: 550,
       thumbnailWidth: 280,
+      waitForThumbnailsBeforeUpload: false,
       defaultPickerIcon,
       showLinkToFileUploadResult: true,
       showProgressDetails: false,
@@ -900,7 +901,8 @@ module.exports = class Dashboard extends Plugin {
     if (!this.opts.disableThumbnailGenerator) {
       this.uppy.use(ThumbnailGenerator, {
         id: `${this.id}:ThumbnailGenerator`,
-        thumbnailWidth: this.opts.thumbnailWidth
+        thumbnailWidth: this.opts.thumbnailWidth,
+        waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload
       })
     }
 
