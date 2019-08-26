@@ -3,7 +3,7 @@ const el_GR = {}
 el_GR.strings = {
   addMore: 'Προσθέστε περισσότερα',
   addMoreFiles: 'Προσθέστε περισσότερα αρχεία',
-  addingMoreFiles: 'Γίνεται προσθήκη των αρχείων',
+  addingMoreFiles: 'Προσθήκη αρχείων',
   allowAccessDescription: 'Για να βγάλετε φωτογραφίες ή βίντεο με την κάμερά σας, παρακαλούμε επιτρέψτε την πρόσβαση στην κάμερά σας για αυτόν τον ιστότοπο.',
   allowAccessTitle: 'Παρακαλούμε επιτρέψτε την πρόσβαση στην κάμερά σας',
   authenticateWith: 'Σύνδεση με %{pluginName}',
@@ -67,11 +67,11 @@ el_GR.strings = {
   pauseUpload: 'Παύση μεταφόρτωσης',
   paused: 'Έγινε παύση',
   poweredBy: 'Με τη δύναμη τού',
-  preparingUpload: 'Προεταιμασία μεταφόρτωσης...',
+  preparingUpload: 'Προετοιμασία μεταφόρτωσης...',
   processingXFiles: {
-    '0': 'Γίνεται επεξεργασία %{smart_count} αρχείων',
-    '1': 'Γίνεται επεξεργασία %{smart_count} αρχείου',
-    '2': 'Γίνεται επεξεργασία %{smart_count} αρχείων'
+    '0': 'Προετοιμασία %{smart_count} αρχείων',
+    '1': 'Προετοιμασία %{smart_count} αρχείου',
+    '2': 'Προετοιμασία %{smart_count} αρχείων'
   },
   removeFile: 'Αφαίρεση αρχείου',
   resetFilter: 'Επαναφορά φίλτρου',
@@ -95,9 +95,9 @@ el_GR.strings = {
   unselectAllFilesFromFolderNamed: 'Αποεπιλογή όλων των αρχείων από τον φάκελο %{name}',
   unselectFileNamed: 'Αποεπιλογή αρχείου %{name}',
   upload: 'Μεταφόρτωση',
-  uploadComplete: 'Η μεταφόρτωση ολοκληρώθηκε',
-  uploadFailed: 'Η μεταφόρτωση απέτυχε',
-  uploadPaused: 'Η μεταφόρτωση βρίσκεται σε παύση',
+  uploadComplete: 'Μεταφόρτωση ολοκληρώθηκε',
+  uploadFailed: 'Μεταφόρτωση απέτυχε',
+  uploadPaused: 'Μεταφόρτωση σε παύση',
   uploadXFiles: {
     '0': 'Μεταφόρτωση %{smart_count} αρχείων',
     '1': 'Μεταφόρτωση %{smart_count} αρχείου',
@@ -124,7 +124,7 @@ el_GR.strings = {
     '1': '%{smart_count} ακόμα αρχείο προστέθηκε',
     '2': '%{smart_count} ακόμα αρχεία προστέθηκαν'
   },
-  xTimeLeft: '%{time} απομένει',
+  xTimeLeft: '%{time} απομένουν',
   youCanOnlyUploadFileTypes: 'Μπορείτε να ανεβάσετε μόνο: %{types}',
   youCanOnlyUploadX: {
     '0': 'Μπορείτε να ανεβάσετε μόνο %{smart_count} αρχεία',
@@ -136,7 +136,7 @@ el_GR.strings = {
     '1': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχείο',
     '2': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχεία'
   }
-}
+};
 
 el_GR.pluralize = function (n) {
   if (n === 1) {
