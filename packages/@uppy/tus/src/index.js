@@ -393,11 +393,12 @@ module.exports = class Tus extends Plugin {
           this.uppy.setFileState(file.id, {
             serverToken: null
           })
+        } else {
+          socket.close()
         }
 
         this.uppy.emit('upload-error', file, error)
         queuedRequest.done()
-        socket.close()
         reject(error)
       })
 

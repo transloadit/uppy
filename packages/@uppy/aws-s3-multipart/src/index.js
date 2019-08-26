@@ -217,7 +217,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      const queuedRequest = this.requests.run(() => {
+      let queuedRequest = this.requests.run(() => {
         if (!file.isPaused) {
           upload.start()
         }
@@ -242,18 +242,33 @@ module.exports = class AwsS3Multipart extends Plugin {
 
       this.onFilePause(file.id, (isPaused) => {
         if (isPaused) {
+          // Remove this file from the queue so another file can start in its place.
+          queuedRequest.abort()
           upload.pause()
         } else {
-          upload.start()
+          // Resuming an upload should be queued, else you could pause and then resume a queued upload to make it skip the queue.
+          queuedRequest.abort()
+          queuedRequest = this.requests.run(() => {
+            upload.start()
+            return () => {}
+          })
         }
       })
 
       this.onPauseAll(file.id, () => {
+        queuedRequest.abort()
         upload.pause()
       })
 
       this.onResumeAll(file.id, () => {
-        upload.start()
+        queuedRequest.abort()
+        if (file.error) {
+          upload.abort()
+        }
+        queuedRequest = this.requests.run(() => {
+          upload.start()
+          return () => {}
+        })
       })
 
       if (!file.isRestored) {
@@ -304,40 +319,65 @@ module.exports = class AwsS3Multipart extends Plugin {
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       this.onFileRemove(file.id, (removed) => {
-        socket.send('pause', {})
         queuedRequest.abort()
+        socket.send('pause', {})
         this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${file.id} was removed`)
       })
 
       this.onFilePause(file.id, (isPaused) => {
-        socket.send(isPaused ? 'pause' : 'resume', {})
+        if (isPaused) {
+          // Remove this file from the queue so another file can start in its place.
+          queuedRequest.abort()
+          socket.send('pause', {})
+        } else {
+          // Resuming an upload should be queued, else you could pause and then resume a queued upload to make it skip the queue.
+          queuedRequest.abort()
+          queuedRequest = this.requests.run(() => {
+            socket.send('resume', {})
+            return () => {}
+          })
+        }
       })
 
-      this.onPauseAll(file.id, () => socket.send('pause', {}))
+      this.onPauseAll(file.id, () => {
+        queuedRequest.abort()
+        socket.send('pause', {})
+      })
 
       this.onCancelAll(file.id, () => {
-        socket.send('pause', {})
         queuedRequest.abort()
+        socket.send('pause', {})
         this.resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was canceled`)
       })
 
       this.onResumeAll(file.id, () => {
+        queuedRequest.abort()
         if (file.error) {
           socket.send('pause', {})
         }
-        socket.send('resume', {})
+        queuedRequest = this.requests.run(() => {
+          socket.send('resume', {})
+        })
       })
 
       this.onRetry(file.id, () => {
-        socket.send('pause', {})
-        socket.send('resume', {})
+        // Only do the retry if the upload is actually in progress;
+        // else we could try to send these messages when the upload is still queued.
+        // We may need a better check for this since the socket may also be closed
+        // for other reasons, like network failures.
+        if (socket.isOpen) {
+          socket.send('pause', {})
+          socket.send('resume', {})
+        }
       })
 
       this.onRetryAll(file.id, () => {
-        socket.send('pause', {})
-        socket.send('resume', {})
+        if (socket.isOpen) {
+          socket.send('pause', {})
+          socket.send('resume', {})
+        }
       })
 
       socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
@@ -360,13 +400,13 @@ module.exports = class AwsS3Multipart extends Plugin {
         resolve()
       })
 
-      const queuedRequest = this.requests.run(() => {
+      let queuedRequest = this.requests.run(() => {
         socket.open()
         if (file.isPaused) {
           socket.send('pause', {})
         }
 
-        return () => socket.close()
+        return () => {}
       })
     })
   }
