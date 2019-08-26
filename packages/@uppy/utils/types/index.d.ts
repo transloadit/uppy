@@ -13,6 +13,43 @@ declare module '@uppy/utils/lib/Translator' {
   }
 }
 
+declare module '@uppy/utils/lib/EventTracker' {
+  export type EventHandler = (...args: any[]) => void;
+  export interface Emitter {
+    on: (event: string, handler: EventHandler) => void;
+    off: (event: string, handler: EventHandler) => void;
+  }
+
+  export default class EventTracker {
+    constructor(emitter: Emitter);
+    on(event: string, handler: EventHandler): void;
+    remove(): void;
+  }
+}
+
+declare module '@uppy/utils/lib/ProgressTimeout' {
+  export default class ProgressTimeout {
+    constructor(timeout: number, timeoutHandler: () => void);
+    progress(): void;
+    done(): void;
+  }
+}
+
+declare module '@uppy/utils/lib/RateLimitedQueue' {
+  export type AbortFunction = () => void;
+  export type PromiseFunction = (...args: any[]) => Promise<any>;
+  export type QueueEntry = {
+    abort: () => void,
+    done: () => void,
+  };
+
+  export default class RateLimitedQueue {
+    constructor(limit: number);
+    run(fn: () => AbortFunction): QueueEntry;
+    wrapPromiseFunction(fn: () => PromiseFunction): PromiseFunction;
+  }
+}
+
 declare module '@uppy/utils/lib/canvasToBlob' {
   export default function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number): Promise<Blob>;
 }
@@ -103,15 +140,6 @@ declare module '@uppy/utils/lib/isPreviewSupported' {
 
 declare module '@uppy/utils/lib/isTouchDevice' {
   export default function isTouchDevice(): boolean;
-}
-
-declare module '@uppy/utils/lib/limitPromises' {
-  // TODO guess this could be generic but it's probably fine this way
-  // because it's mostly for internal use
-  type LimitedFunction<T> = (...args: any[]) => Promise<T>;
-  type LimitedFunctionFactory<T> = (fn: (...args: any[]) => Promise<T>) => LimitedFunction<T>;
-
-  export default function limitPromises<T>(limit: number): LimitedFunctionFactory<T>;
 }
 
 declare module '@uppy/utils/lib/prettyETA' {
