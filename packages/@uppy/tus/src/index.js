@@ -119,7 +119,7 @@ module.exports = class Tus extends Plugin {
    *  - When an upload is started or resumed, it needs to go through the `this.requests` queue. The `queuedRequest` variable must be updated so the other uses of it are valid.
    *  - Before replacing the `queuedRequest` variable, the previous `queuedRequest` must be aborted, else it will keep taking up a spot in the queue.
    *
-   * @param {object} file for use with upload
+   * @param {Object} file for use with upload
    * @param {integer} current file in a queue
    * @param {integer} total number of files in a queue
    * @returns {Promise}

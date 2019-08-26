@@ -15,11 +15,10 @@
     "jsx-quotes": ["error", "prefer-double"],
     "compat/compat": ["error"],
 
-    // "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }],
-
     "jsdoc/check-alignment": ["warn"],
     "jsdoc/check-examples": ["warn"],
-    "jsdoc/check-indentation": ["warn"],
+    // To allow indentation within comments, now eslint prohibits it altogether.
+    "jsdoc/check-indentation": ["off"],
     "jsdoc/check-param-names": ["warn"],
     "jsdoc/check-syntax": ["warn"],
     "jsdoc/check-tag-names": ["warn"],
