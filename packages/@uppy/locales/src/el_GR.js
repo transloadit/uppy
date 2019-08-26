@@ -108,7 +108,7 @@ el_GR.strings = {
     '1': 'Μεταφόρτωση +%{smart_count} αρχείου',
     '2': 'Μεταφόρτωση +%{smart_count} αρχείων'
   },
-  uploading: 'Uploading',
+  uploading: 'Γίνεται μεταφόρτωση',
   uploadingXFiles: {
     '0': 'Μεταφορτώνονται %{smart_count} αρχεία',
     '1': 'Μεταφορτώνεται %{smart_count} αρχείο',
