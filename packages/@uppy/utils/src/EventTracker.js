@@ -9,12 +9,12 @@ module.exports = class EventTracker {
   }
 
   on (event, fn) {
-    this._events.push([ event, fn ])
+    this._events.push([event, fn])
     return this._emitter.on(event, fn)
   }
 
   remove () {
-    this._events.forEach(([ event, fn ]) => {
+    this._events.forEach(([event, fn]) => {
       this._emitter.off(event, fn)
     })
   }
