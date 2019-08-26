@@ -13,6 +13,8 @@ module.exports = class RateLimitedQueue {
   _call (fn) {
     this.activeRequests += 1
 
+    let done = false
+
     let cancelActive
     try {
       cancelActive = fn()
@@ -23,13 +25,16 @@ module.exports = class RateLimitedQueue {
 
     return {
       abort: () => {
+        if (done) return
+        done = true
         this.activeRequests -= 1
         cancelActive()
         this._next()
       },
 
       done: () => {
-        console.log('Queue: complete')
+        if (done) return
+        done = true
         this.activeRequests -= 1
         this._next()
       }

@@ -179,7 +179,7 @@ module.exports = class Tus extends Plugin {
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      const queuedRequest = this.requests.run(() => {
+      let queuedRequest = this.requests.run(() => {
         if (!file.isPaused) {
           upload.start()
         }
@@ -198,13 +198,21 @@ module.exports = class Tus extends Plugin {
 
       this.onPause(file.id, (isPaused) => {
         if (isPaused) {
+          // Remove this file from the queue so another file can start in its place.
+          queuedRequest.abort()
           upload.abort()
         } else {
-          upload.start()
+          // Resuming an upload should be queued, else you could pause and then resume a queued upload to make it skip the queue.
+          queuedRequest.abort()
+          queuedRequest = this.requests.run(() => {
+            upload.start()
+            return () => {}
+          })
         }
       })
 
       this.onPauseAll(file.id, () => {
+        queuedRequest.abort()
         upload.abort()
       })
 
@@ -215,10 +223,14 @@ module.exports = class Tus extends Plugin {
       })
 
       this.onResumeAll(file.id, () => {
+        queuedRequest.abort()
         if (file.error) {
           upload.abort()
         }
-        upload.start()
+        queuedRequest = this.requests.run(() => {
+          upload.start()
+          return () => {}
+        })
       })
     }).catch((err) => {
       this.emit('upload-error', file, err)
