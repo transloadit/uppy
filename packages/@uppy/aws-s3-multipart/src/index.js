@@ -49,6 +49,9 @@ module.exports = class AwsS3Multipart extends Plugin {
   /**
    * Clean up all references for a file's upload: the MultipartUploader instance,
    * any events related to the file, and the Companion WebSocket connection.
+   *
+   * Set `opts.abort` to tell S3 that the multipart upload is cancelled and must be removed.
+   * This should be done when the user cancels the upload, not when the upload is completed or errored.
    */
   resetUploaderReferences (fileID, opts = {}) {
     if (this.uploaders[fileID]) {
@@ -233,7 +236,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
       this.onCancelAll(file.id, () => {
         queuedRequest.abort()
-        this.resetUploaderReferences(file.id)
+        this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${file.id} was canceled`)
       })
 
