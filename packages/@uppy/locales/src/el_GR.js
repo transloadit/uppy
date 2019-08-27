@@ -136,7 +136,7 @@ el_GR.strings = {
     '1': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχείο',
     '2': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχεία'
   }
-};
+}
 
 el_GR.pluralize = function (n) {
   if (n === 1) {
