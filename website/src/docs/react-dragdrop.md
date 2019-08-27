@@ -8,7 +8,7 @@ order: 2
 category: 'React'
 ---
 
-The `<DragDrop />` component wraps the [`@uppy/drag-drop`][/docs/drag-drop/] plugin.
+The `<DragDrop />` component wraps the [`@uppy/drag-drop`](/docs/drag-drop/) plugin.
 
 ## Installation
 
