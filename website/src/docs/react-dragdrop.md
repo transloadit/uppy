@@ -64,7 +64,7 @@ class MyComponent extends React.Component {
 
 ## Props
 
-The `<DragDrop />` component supports all [DragDrop][] options as props.
+The `<DragDrop />` component supports all [DragDrop]() options as props.
 
 ```js
 <DragDrop
