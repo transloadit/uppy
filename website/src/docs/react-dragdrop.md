@@ -8,7 +8,7 @@ order: 2
 category: 'React'
 ---
 
-The `<DragDrop />` component wraps the [`@uppy/drag-drop`][] plugin.
+The `<DragDrop />` component wraps the [`@uppy/drag-drop`][/docs/drag-drop/] plugin.
 
 ## Installation
 
@@ -64,7 +64,7 @@ class MyComponent extends React.Component {
 
 ## Props
 
-The `<DragDrop />` component supports all [DragDrop][] options as props.
+The `<DragDrop />` component supports all [DragDrop](/docs/drag-drop/) options as props.
 
 ```js
 <DragDrop
@@ -73,5 +73,3 @@ The `<DragDrop />` component supports all [DragDrop][] options as props.
   note="Images up to 200×200px"
 />
 ```
-
-[`@uppy/drag-drop`]: /docs/drag-drop/
