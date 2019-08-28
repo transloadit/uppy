@@ -25,7 +25,8 @@
       text-transform: uppercase;
     }
     .uppy-DashboardItem-sourceIcon {
-      display: inline-block;
+      // display: inline-block;
+      display: none;
       vertical-align: bottom;
       color: $gray-400;
       &:not(:first-child) {

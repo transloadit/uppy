@@ -49,7 +49,7 @@ const renderFileSize = (props) => (
 
 module.exports = function FileInfo (props) {
   return (
-    <div class="uppy-DashboardItem-fileInfo">
+    <div class="uppy-DashboardItem-fileInfo" data-uppy-file-source={props.file.source}>
       {renderFileName(props)}
       <div class="uppy-DashboardItem-status">
         {renderFileSize(props)}
