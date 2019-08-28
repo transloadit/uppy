@@ -332,7 +332,13 @@ module.exports = class ThumbnailGenerator extends Plugin {
     })
 
     return new Promise((resolve, reject) => {
-      this.uppy.on('thumbnail:all-generated', resolve)
+      if (this.queueProcessing) {
+        this.uppy.on('thumbnail:all-generated', () => {
+          resolve()
+        })
+      } else {
+        resolve()
+      }
     })
   }
 
