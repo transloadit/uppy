@@ -344,6 +344,8 @@ If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically whe
 This function will return the generated id for the file that was added.
 
 > Sometimes you might need to add a remote file to Uppy. This can be achieved by [fetching the file, then creating a Blob object, or using the Url plugin with Companion](https://github.com/transloadit/uppy/issues/1006#issuecomment-413495493).
+>
+> Sometimes you might need to mark some files as “already uploaded”, so that the user sees them, but they won’t actually be upoaded by Uppy. This can be achieved by [looping through files and setting `uploadComplete: true, uploadStarted: false` on them](https://github.com/transloadit/uppy/issues/1112#issuecomment-432339569)
 
 ### `uppy.removeFile(fileID)`
 
