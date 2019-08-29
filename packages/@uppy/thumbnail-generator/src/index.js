@@ -114,7 +114,11 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
   getOrientation (file) {
     return new Promise((resolve) => {
+      const uppy = this.uppy
       Exif.getData(file.data, function callback () {
+        uppy.setFileMeta(file.id, {
+          exifdata: Exif.getAllTags(this)
+        })
         const orientation = Exif.getTag(this, 'Orientation') || 1
         resolve(ORIENTATIONS[orientation])
       })
@@ -333,7 +337,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     return new Promise((resolve, reject) => {
       if (this.queueProcessing) {
-        this.uppy.on('thumbnail:all-generated', () => {
+        this.uppy.once('thumbnail:all-generated', () => {
           resolve()
         })
       } else {
