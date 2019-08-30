@@ -423,7 +423,7 @@ class Uppy {
     }
   }
 
-  _showOrLogErrorAndThrow (err, showInformer = true) {
+  _showOrLogErrorAndThrow (err, { showInformer = true, file = null } = {}) {
     const message = typeof err === 'object' ? err.message : err
     const details = (typeof err === 'object' && err.details) ? err.details : ''
 
@@ -431,6 +431,7 @@ class Uppy {
     // as they are expected and shown in the UI.
     if (err.isRestriction) {
       this.log(`${message} ${details}`)
+      this.emit('restriction-failed', file, err)
     } else {
       this.log(`${message} ${details}`, 'error')
     }
@@ -456,7 +457,7 @@ class Uppy {
     const { files, allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      this._showOrLogErrorAndThrow(new RestrictionError('Cannot add new files: already uploading.'))
+      this._showOrLogErrorAndThrow(new RestrictionError('Cannot add new files: already uploading.'), { file })
     }
 
     const fileType = getFileType(file)
@@ -466,7 +467,7 @@ class Uppy {
 
     if (onBeforeFileAddedResult === false) {
       // Don’t show UI info for this error, as it should be done by the developer
-      this._showOrLogErrorAndThrow(new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.'), false)
+      this._showOrLogErrorAndThrow(new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.'), { showInformer: false, file })
     }
 
     if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
@@ -487,7 +488,7 @@ class Uppy {
     const fileID = generateFileID(file)
 
     if (files[fileID]) {
-      this._showOrLogErrorAndThrow(new RestrictionError(`Cannot add the duplicate file '${fileName}', it already exists.`))
+      this._showOrLogErrorAndThrow(new RestrictionError(`Cannot add the duplicate file '${fileName}', it already exists.`), { file })
     }
 
     const meta = file.meta || {}
@@ -520,8 +521,7 @@ class Uppy {
     try {
       this._checkRestrictions(newFile)
     } catch (err) {
-      this.emit('restriction-failed', newFile, err)
-      this._showOrLogErrorAndThrow(err)
+      this._showOrLogErrorAndThrow(err, { file: newFile })
     }
 
     this.setState({
@@ -1331,9 +1331,6 @@ class Uppy {
         return this._runUpload(uploadID)
       })
       .catch((err) => {
-        if (err.isRestriction) {
-          this.emit('restriction-failed', null, err)
-        }
         this._showOrLogErrorAndThrow(err)
       })
   }
