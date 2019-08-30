@@ -86,6 +86,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] webcam: Webcam modes #198
 - [ ] website: automatically generated page with all locale strings used in plugins
 - [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
+- [ ] Add an option to force metafield data when uploading a file #1703
 - [ ] xhr: allow sending custom headers per file (as proposed in #785)
 - [-] dashboard: if you specified a delete endpoint, the “remove/cancel upload” button remains after the upload and it not only removes, but also sends a request to that endpoint #1216, #832 <-- not doing this anymore because https://github.com/transloadit/uppy/pull/589#issuecomment-366754294
 

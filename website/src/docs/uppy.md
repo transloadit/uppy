@@ -137,6 +137,8 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 
 `allowedFileTypes` gets passed to the system file dialog via [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types)’s accept attribute, so only files matching these types will be selectable.
 
+> If you’d like to force a certain meta field data to be entered before the upload, you can [do so using `onBeforeUpload`](https://github.com/transloadit/uppy/issues/1703#issuecomment-507202561).
+
 ### `meta: {}`
 
 Metadata object, used for passing things like public keys, usernames, tags and so on:
