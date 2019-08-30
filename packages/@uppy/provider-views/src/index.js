@@ -503,7 +503,7 @@ module.exports = class ProviderView {
             files.push(item)
           }
         })
-        let moreFiles = res.nextPagePath || null
+        const moreFiles = res.nextPagePath || null
         if (moreFiles) {
           return this.listAllFiles(moreFiles, files)
             .then((files) => resolve(files))
