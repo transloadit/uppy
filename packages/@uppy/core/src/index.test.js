@@ -664,10 +664,11 @@ describe('src/Core', () => {
           meta: {
             notARelativePath: 'folder/a'
           }
-        }).toThrow(
-          'Cannot add the duplicate file \'foo.jpg\', it already exists'
-        )
-      })
+        })
+      }).toThrow(
+        'Cannot add the duplicate file \'foo.jpg\', it already exists'
+      )
+      expect(core.getFiles().length).toEqual(1)
     })
 
     it('should allow a duplicate file if its relativePath is different, thus the id is different', () => {
@@ -704,11 +705,11 @@ describe('src/Core', () => {
           name: 'foo.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' })
-        }).toThrow(
-          'Cannot add the file because onBeforeFileAdded returned false.'
-        )
-        expect(core.getFiles().length).toEqual(0)
-      })
+        })
+      }).toThrow(
+        'Cannot add the file because onBeforeFileAdded returned false.'
+      )
+      expect(core.getFiles().length).toEqual(0)
     })
 
     describe('with allowMultipleUploads: false', () => {
