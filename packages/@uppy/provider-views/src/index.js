@@ -496,7 +496,7 @@ module.exports = class ProviderView {
 
   listAllFiles (path, files = null) {
     files = files || []
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.provider.list(path).then((res) => {
         res.items.forEach((item) => {
           if (!item.isFolder) {
@@ -505,11 +505,13 @@ module.exports = class ProviderView {
         })
         let moreFiles = res.nextPagePath || null
         if (moreFiles) {
-          return this.listAllFiles(moreFiles, files).then((files) => resolve(files))
+          return this.listAllFiles(moreFiles, files)
+            .then((files) => resolve(files))
+            .catch(e => reject(e))
         } else {
           return resolve(files)
         }
-      })
+      }).catch(e => reject(e))
     })
   }
 
