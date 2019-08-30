@@ -548,7 +548,7 @@ module.exports = class Dashboard extends Plugin {
     // 4. Add all dropped files
     let executedDropErrorOnce = false
     const logDropError = (error) => {
-      this.uppy.log(error.message, 'error')
+      this.uppy.log(error, 'error')
 
       // In practice all drop errors are most likely the same, so let's just show one to avoid overwhelming the user
       if (!executedDropErrorOnce) {
