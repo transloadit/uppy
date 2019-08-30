@@ -339,7 +339,7 @@ uppy.addFile({
 
 `addFile` gives an error if the file cannot be added, either because `onBeforeFileAdded(file)` gave an error, or because `uppy.opts.restrictions` checks failed.
 
-If you try to add a file that already exists, `addFile` will throw an error. Unless that duplicate file was dropped/selected from a folder — duplicate files from different folders are allowed, when selected with that folder. This is because we add `file.meta.relativePath` to the `file.id`.
+If you try to add a file that already exists, `addFile` will throw an error. Unless that duplicate file was dropped with a folder — duplicate files from different folders are allowed, when selected with that folder. This is because we add `file.meta.relativePath` to the `file.id`.
 
 If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically when files are added.
 
