@@ -102,17 +102,14 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
 - [ ] tus: set the `limit` option to a sensible default, like 10
 
+# next
+
 ## 1.5
 
 - [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
 - [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
 - [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
 - [ ] core: possibly change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
-
-# next
-
-## 1.4
-
 - [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
 - [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
@@ -131,6 +128,72 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] website: Adopt bcp-47 to handle and parse locales (@kvz, https://github.com/meikidd/iso-639-1/issues/19, https://tools.ietf.org/html/bcp47, https://github.com/wooorm/bcp-47)
 
+## 1.4
+
+Released: 2019-08-30
+
+In this release we’ve focused on issue busting on GitHub, brining the count down almost twice. Uppy also learned how to bark in Swedish, Greek, Indonesian, Serbian, and improved on its Finnish and French. Transloadit plugin gained a `limit` option. Docs and the website have been improved.
+
+⚠️ With recent Lerna improvements, you no longer need to do `npm run bootstrap` when developing Uppy — `npm install` does all the work now!
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.3.0 | @uppy/provider-views | 1.3.0 |
+| @uppy/aws-s3 | 1.3.0 | @uppy/react | 1.3.0 |
+| @uppy/companion-client | 1.3.0 | @uppy/redux-dev-tools | 1.3.0 |
+| @uppy/companion | 1.4.0 | @uppy/robodog | 1.3.0 |
+| @uppy/core | 1.4.0 | @uppy/status-bar | 1.3.0 |
+| @uppy/dashboard | 1.3.0 | @uppy/store-default | 1.2.0 |
+| @uppy/drag-drop | 1.3.0 | @uppy/store-redux | 1.2.0 |
+| @uppy/dropbox | 1.3.0 | @uppy/thumbnail-generator | 1.3.0 |
+| @uppy/file-input | 1.3.0 | @uppy/transloadit | 1.3.0 |
+| @uppy/form | 1.3.0 | @uppy/tus | 1.4.0 |
+| @uppy/golden-retriever | 1.3.0 | @uppy/url | 1.3.0 |
+| @uppy/google-drive | 1.3.0 | @uppy/utils | 1.3.0 |
+| @uppy/informer | 1.3.0 | @uppy/webcam | 1.3.0 |
+| @uppy/instagram | 1.3.0 | @uppy/xhr-upload | 1.3.0 |
+| @uppy/locales | 1.6.0 | uppy | 1.4.0 |
+| @uppy/progress-bar | 1.3.0 | - | - |
+
+- @uppy/companion: bump lodash.merge to 4.6.2 to fix audit warning (#1796 / @rettgerst)
+- @uppy/companion: Fix s3 uploads for URL plugins (#1784 / @@ifedapoolarewaju)
+- @uppy/companion: set allowed http methods internally (#1754 / @ifedapoolarewaju)
+- @uppy/companion: whenever an error is returned from companion: the auth screen will be displayed if the user was never authenticated, if the user is authenticated, the last screen on display before the error will be displayed (#1743 / @ifedapoolarewaju)
+- @uppy/core: fix "Cannot read property 'log' of undefined" (#1785 / @theJoeBiz)
+- @uppy/core: Made sure we can upload new files if we cancel last file (allowMultipleUploads: false) (#1764 / @lakesare)
+- @uppy/core: use setFileState inside retryUpload (#1759 / @goto-bus-stop)
+- @uppy/dashboard, @uppy/drag-drop: getDroppedFiles.js: handle exceptions better (#1797 / @lakesare)
+- @uppy/dashboard: ⚠️ Add `data` attribute with file source, hide the file source icon (where the file was selected from) in the Dashboard with CSS. If you really want this back, please look in the PR and set your custom CSS to `.uppy-DashboardItem-sourceIcon { display: inline-block; }` (#1809 / @arturi)
+- @uppy/dashboard: add dashboard:file-edit-start and dashboard:file-edit-complete events (#1776 / @arturi)
+- @uppy/dashboard: Fix log duplication and excessive ResizeObserver log (#1747 / @lakesare)
+- @uppy/dashboard: fix wrong typescript definition for metaFields property (#1763 / @mrbatista)
+- @uppy/form: try/catch parsing, set updatedResult to an empty array when not an array (#1800 / @arturi)
+- @uppy/locales: Add id_ID (indonesia) locale (#1778 / @achmiral)
+- @uppy/locales: Add translations in Swedish (#1771 / @arggh)
+- @uppy/locales: Adding support for Greek language (#1802 / @Tashows)
+- @uppy/locales: correct some fr_FR localization strings (#1807 / @czj)
+- @uppy/locales: Create sr_RS_Cyrillic.js (#1748 / @nndevstudio)
+- @uppy/locales: Finnish semantics improved and fixed some typos (#1744 / @@jukakoski)
+- @uppy/locales: Update sr_RS_Latin.js (#1749 / @nndevstudio)
+- @uppy/transloadit: add limit option, warn about using limit when it’s set to 0. In Uppy 2.0 we’ll set the limit to something sensible (like 10 files) by default. (#1789 / @arturi)
+- @uppy/xhr-upload: Throw an error when trying to upload a remote file with `bundle: true` (#1769 / @arturi)
+- build: ci: tweak job run order (#1740 / @goto-bus-stop)
+- build: Fix statefulset update: statefulsets image only should be updated. (#1821 / @kiloreux)
+- build: Lerna link convert. This installs dependencies of all packages, the website, and all examples into the root node_modules folder. After an npm install, no further lerna bootstrap is required. (#1730 / @goto-bus-stop)
+- build: Update eslint to v6 (#1777 / @goto-bus-stop)
+- core: Made addFile return the file id (#1739 / @eliOcs)
+- docs: add “force metafield” to docs and changelog (ab053e7ab266d3a4838069ed23675bb9211e4d1a / @arturi)
+- docs: explicitly document supported tus-js-client options (#1755 / @goto-bus-stop)
+- docs: Link to Transloadit plugin from Robodog Form page (#1810 / @janko)
+- docs: redux - mentioned that we can't persist Uppy state (#1793 / @lakesare)
+- docs: talk about marking some files as “already uploaded” (c345cbd58992f7bea9525629c28d38420c6b36a3 / @arturi)
+- docs: Talk about using a custom file input, instead of the file-input plugin (#1765 / @arturi)
+- tests: e2e: reintroduce e2e test for providers locally (#1706 / @ifedapoolarewaju)
+- website: /examples/dragdrop - added more obvious 'file was uploaded' indicator (#1750 / @lakesare)
+- website: /examples/xhrupload - more obvious UI, added a list of uploaded files (#1768 / @lakesare)
+- website: add new version of hexo-filter-github-emojis (#1783 / @lakesare)
+- website: fix docs/locales code escaping and css overflow (5a0055c15d04d97e8a0feb784daa7abe8da1d72d / @arturi)
+ 
 ## 1.3
 
 Released: 2019-07-19
