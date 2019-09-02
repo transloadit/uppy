@@ -154,6 +154,7 @@
     "npm-packlist": "^1.4.1",
     "npm-run-all": "^4.1.5",
     "onchange": "^4.1.0",
+    "pacote": "^9.5.8",
     "postcss": "^7.0.16",
     "postcss-safe-important": "^1.1.0",
     "pre-commit": "^1.2.2",
@@ -175,8 +176,8 @@
     "verdaccio": "^4.2.1",
     "watchify": "^3.11.1",
     "webdriverio": "^5.0.0",
-    "whatwg-fetch": "3.0.0",
-    "webpack": "4.39.1"
+    "webpack": "4.39.1",
+    "whatwg-fetch": "3.0.0"
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
