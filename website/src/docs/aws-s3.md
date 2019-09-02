@@ -196,6 +196,8 @@ Even with these CORS rules in place, you browser might still encounter HTTP stat
 
 It will list general *Public access settings for this bucket*, which can override the rules imposed by your CORS settings. Click on *edit* to manage these settings. Under *Manage public access control lists (ACLs) for this bucket*, make sure that *Block new public ACLs and uploading public objects (Recommended)* is unchecked, and *Save* these settings.
 
+If you are using an IAM policy to allow access to the S3 bucket (which we recommend), the policy must have at least the s3:PutObject and s3:PutObjectAcl permissions scoped to the bucket in question.
+
 In-depth documentation about CORS rules is available on the [AWS documentation site](https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html).
 
 ## POST uploads
