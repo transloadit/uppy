@@ -132,7 +132,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 Released: 2019-08-30
 
-In this release we’ve focused on issue busting on GitHub, brining the count down almost twice. Uppy also learned how to bark in Swedish, Greek, Indonesian, Serbian, and improved on its Finnish and French. Transloadit plugin gained a `limit` option. Docs and the website have been improved.
+In this release we’ve focused on issue busting on GitHub, nearly halving them. Uppy also learned how to bark in Swedish, Greek, Indonesian, Serbian (Latin), and improved on its Finnish and French. The Transloadit plugin gained a `limit` option. The Docs and the website have been improved.
 
 ⚠️ With recent Lerna improvements, you no longer need to do `npm run bootstrap` when developing Uppy — `npm install` does all the work now!
 
