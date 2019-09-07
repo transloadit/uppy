@@ -62,7 +62,7 @@
     "tus-js-client": "^1.8.0-0",
     "uuid": "2.0.2",
     "validator": "^9.0.0",
-    "ws": "1.1.5"
+    "ws": "3.3.1"
   },
   "devDependencies": {
     "@types/node": "^12.6.8",
