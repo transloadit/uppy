@@ -133,6 +133,20 @@ class Drive {
     })
   }
 
+  logout ({ token }, done) {
+    return this.client
+      .get('https://accounts.google.com/o/oauth2/revoke')
+      .qs({ token })
+      .request((err, resp) => {
+        if (err || resp.statusCode !== 200) {
+          logger.error(err, 'provider.drive.logout.error')
+          done(this._error(err, resp))
+          return
+        }
+        done(null, { revoked: true })
+      })
+  }
+
   adaptData (res, teamDrivesResp, uppy, directory, query) {
     const adaptItem = (item) => ({
       isFolder: adapter.isFolder(item),

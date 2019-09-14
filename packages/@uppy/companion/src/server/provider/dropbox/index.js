@@ -160,6 +160,21 @@ class DropBox {
       })
   }
 
+  logout ({ token }, done) {
+    return this.client
+      .post('auth/token/revoke')
+      .options({ version: '2' })
+      .auth(token)
+      .request((err, resp) => {
+        if (err || resp.statusCode !== 200) {
+          logger.error(err, 'provider.dropbox.size.error')
+          done(this._error(err, resp))
+          return
+        }
+        done(null, { revoked: true })
+      })
+  }
+
   adaptData (res, uppy) {
     const data = { username: adapter.getUsername(res), items: [] }
     const items = adapter.getItemSubList(res)

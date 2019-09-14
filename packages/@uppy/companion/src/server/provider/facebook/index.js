@@ -112,6 +112,20 @@ class Facebook {
       })
   }
 
+  logout ({ token }, done) {
+    return this.client
+      .delete('me/permissions')
+      .auth(token)
+      .request((err, resp) => {
+        if (err || resp.statusCode !== 200) {
+          logger.error(err, 'provider.facebook.logout.error')
+          done(this._error(err, resp))
+          return
+        }
+        done(null, { revoked: true })
+      })
+  }
+
   adaptData (res, username, directory, currentQuery) {
     const data = { username: username, items: [] }
     const items = adapter.getItemSubList(res)

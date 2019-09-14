@@ -108,6 +108,11 @@ class Instagram {
       })
   }
 
+  logout (_, done) {
+    // access revoke is not supported by Instagram's API
+    done(null, { revoked: false, manual_revoke_url: 'https://www.instagram.com/accounts/manage_access/' })
+  }
+
   adaptData (res, username) {
     const data = { username: username, items: [] }
     const items = adapter.getItemSubList(res)

@@ -58,9 +58,9 @@ module.exports = class Provider extends RequestClient {
     return this.get(`${this.id}/list/${directory || ''}`)
   }
 
-  logout (redirect = location.href) {
+  logout () {
     return new Promise((resolve, reject) => {
-      this.get(`${this.id}/logout?redirect=${redirect}`)
+      this.get(`${this.id}/logout`)
         .then((res) => {
           this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
             .then(() => resolve(res))
