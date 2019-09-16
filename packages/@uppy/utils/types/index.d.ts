@@ -159,7 +159,7 @@ declare module '@uppy/utils/lib/toArray' {
 }
 
 declare module '@uppy/utils/lib/getDroppedFiles' {
-  export default function getDroppedFiles(dataTransfer: DataTransfer): Promise<File[]>;
+  export default function getDroppedFiles(dataTransfer: DataTransfer, options?: object): Promise<File[]>;
 }
 
 declare module '@uppy/utils' {

@@ -35,7 +35,7 @@ Finally, we _really_ submit the form—without files, but with those Assembly st
 
 ## Transloadit
 
-All the options to the [Transloadit][transloadit] plugin are supported.
+All the options to the [Transloadit][transloadit plugin] plugin are supported.
 
 ## Locale
 
@@ -128,7 +128,7 @@ $(selector).transloadit({
 ```
 ```html
 <!-- The new Robodog way! -->
-<script src="//transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.js"></script>
+<script src="//transloadit.edgly.net/releases/uppy/robodog/v1.3.0/robodog.min.js"></script>
 
 <script>
 window.Robodog.form(selector, {
@@ -140,7 +140,7 @@ window.Robodog.form(selector, {
 Make sure to also include the Uppy css file in your `<head>` tag in case you want to use the `modal: true` option:
 ```html
 <head>
-  <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.css">
+  <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.3.0/robodog.min.css">
 </head>
 ```
 
@@ -152,7 +152,7 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
 <html>
   <head>
     <title>Testing Robodog</title>
-    <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.css">
+    <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.3.0/robodog.min.css">
   </head>
   <body>
     <form id="upload-form" action="/uploads" enctype="multipart/form-data" method="POST">
@@ -162,7 +162,7 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
       <button type="submit">Upload</button>
     </form>
 
-    <script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.js"></script>
+    <script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.3.0/robodog.min.js"></script>
     <script type="text/javascript">
     window.Robodog.form('#upload-form', {
       waitForEncoding: true,
@@ -260,3 +260,4 @@ There are no `on*()` _options_ anymore, but `.on('...')` methods are provided in
 | `onReconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
 
 [transloadit]: https://transloadit.com
+[transloadit plugin]: https://uppy.io/docs/transloadit/
