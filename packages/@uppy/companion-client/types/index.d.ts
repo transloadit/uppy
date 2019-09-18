@@ -35,6 +35,7 @@ export class Socket {
   isOpen: boolean;
 
   constructor (opts: SocketOptions);
+  open (): void;
   close (): void;
   send (action: string, payload: any): void;
   on (action: string, handler: (param: any) => void): void;
