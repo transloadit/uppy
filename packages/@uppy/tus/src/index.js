@@ -357,6 +357,7 @@ module.exports = class Tus extends Plugin {
         }
         queuedRequest = this.requests.run(() => {
           socket.send('resume', {})
+          return () => {}
         })
       })
 
