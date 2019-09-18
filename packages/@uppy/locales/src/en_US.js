@@ -54,6 +54,7 @@ en_US.strings = {
     '1': 'Added %{smart_count} files from %{folder}',
     '2': 'Added %{smart_count} files from %{folder}'
   },
+  generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',
   importFrom: 'Import from %{name}',
   link: 'Link',

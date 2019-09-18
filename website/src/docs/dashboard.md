@@ -134,6 +134,12 @@ Width of the Dashboard in pixels. Used when `inline: true`.
 
 Height of the Dashboard in pixels. Used when `inline: true`.
 
+### `waitForThumbnailsBeforeUpload: false`
+
+Whether to wait for all thumbnails from `@uppy/thumbnail-generator` to be ready before starting the upload. If set to `true`, Thumbnail Generator will envoke Uppy’s internal processing stage, displaying “Generating thumbnails...” message, and wait for `thumbnail:all-generated` event, before proceeding to the uploading stage.
+
+This is useful because Thumbnail Generator also adds EXIF data to images, and if we wait until it’s done processing, this data will be avilable on the server after the upload.
+
 ### `showLinkToFileUploadResult: true`
 
 By default, when a file upload has completed, the file icon in the Dashboard turns into a link to the uploaded file. If your app does not publicly store uploaded files or if it's otherwise unwanted, pass `showLinkToFileUploadResult: false`.
