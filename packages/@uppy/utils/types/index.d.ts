@@ -1,38 +1,47 @@
 declare module '@uppy/utils/lib/Translator' {
-  export interface TranslatorOptions {
-    locale: {
-      strings: {
-        [key: string]: string | { [plural: number]: string };
+  namespace Translator {
+    export interface TranslatorOptions {
+      locale: {
+        strings: {
+          [key: string]: string | { [plural: number]: string };
+        };
+        pluralize: (n: number) => number;
       };
-      pluralize: (n: number) => number;
-    };
+    }
   }
 
-  export default class Translator {
-    constructor(opts: TranslatorOptions);
+  class Translator {
+    constructor(opts: Translator.TranslatorOptions);
   }
+
+  export = Translator
 }
 
 declare module '@uppy/utils/lib/EventTracker' {
-  export type EventHandler = (...args: any[]) => void;
-  export interface Emitter {
-    on: (event: string, handler: EventHandler) => void;
-    off: (event: string, handler: EventHandler) => void;
+  namespace EventTracker {
+    export type EventHandler = (...args: any[]) => void;
+    export interface Emitter {
+      on: (event: string, handler: EventHandler) => void;
+      off: (event: string, handler: EventHandler) => void;
+    }
   }
 
-  export default class EventTracker {
-    constructor(emitter: Emitter);
-    on(event: string, handler: EventHandler): void;
+  class EventTracker {
+    constructor(emitter: EventTracker.Emitter);
+    on(event: string, handler: EventTracker.EventHandler): void;
     remove(): void;
   }
+
+  export = EventTracker
 }
 
 declare module '@uppy/utils/lib/ProgressTimeout' {
-  export default class ProgressTimeout {
+  class ProgressTimeout {
     constructor(timeout: number, timeoutHandler: () => void);
     progress(): void;
     done(): void;
   }
+  export = ProgressTimeout
 }
 
 declare module '@uppy/utils/lib/RateLimitedQueue' {
@@ -55,15 +64,18 @@ declare module '@uppy/utils/lib/RateLimitedQueue' {
 }
 
 declare module '@uppy/utils/lib/canvasToBlob' {
-  export default function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number): Promise<Blob>;
+  function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number): Promise<Blob>;
+  export = canvasToBlob
 }
 
 declare module '@uppy/utils/lib/dataURItoBlob' {
-  export default function dataURItoBlob(dataURI: string, opts: { mimeType?: string, name?: string }): Blob;
+  function dataURItoBlob(dataURI: string, opts: { mimeType?: string, name?: string }): Blob;
+  export = dataURItoBlob
 }
 
 declare module '@uppy/utils/lib/dataURItoFile' {
-  export default function dataURItoFile(dataURI: string, opts: { mimeType?: string, name?: string }): File;
+  function dataURItoFile(dataURI: string, opts: { mimeType?: string, name?: string }): File;
+  export = dataURItoFile
 }
 
 declare module '@uppy/utils/lib/emitSocketProgress' {
@@ -75,33 +87,40 @@ declare module '@uppy/utils/lib/emitSocketProgress' {
     bytesTotal: number;
   }
 
-  export default function emitSocketProgress(uploader: object, progressData: ProgressData, file: UppyUtils.UppyFile): void;
+  function emitSocketProgress(uploader: object, progressData: ProgressData, file: UppyUtils.UppyFile): void;
+  export = emitSocketProgress
 }
 
 declare module '@uppy/utils/lib/findAllDOMElements' {
-  export default function findAllDOMElements(element: string | HTMLElement): HTMLElement[];
+  function findAllDOMElements(element: string | HTMLElement): HTMLElement[];
+  export = findAllDOMElements
 }
 
 declare module '@uppy/utils/lib/findDOMElement' {
-  export default function findDOMElement(element: string | HTMLElement): HTMLElement | null;
+  function findDOMElement(element: string | HTMLElement): HTMLElement | null;
+  export = findDOMElement
 }
 
 declare module '@uppy/utils/lib/generateFileID' {
   import UppyUtils = require('@uppy/utils');
 
-  export default function generateFileID(file: UppyUtils.UppyFile): string;
+  function generateFileID(file: UppyUtils.UppyFile): string;
+  export = generateFileID
 }
 
 declare module '@uppy/utils/lib/getBytesRemaining' {
-  export default function getBytesRemaining(progress: { bytesTotal: number, bytesUploaded: number }): number;
+  function getBytesRemaining(progress: { bytesTotal: number, bytesUploaded: number }): number;
+  export = getBytesRemaining
 }
 
 declare module '@uppy/utils/lib/getETA' {
-  export default function getETA(progress: object): number;
+  function getETA(progress: object): number;
+  export = getETA
 }
 
 declare module '@uppy/utils/lib/getFileNameAndExtension' {
-  export default function getFileNameAndExtension(filename: string): { name: string, extension: string };
+  function getFileNameAndExtension(filename: string): { name: string, extension: string };
+  export = getFileNameAndExtension
 }
 
 declare module '@uppy/utils/lib/getFileType' {
