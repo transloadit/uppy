@@ -277,7 +277,7 @@ module.exports = class Tus extends Plugin {
         })
       })
     }).catch((err) => {
-      this.emit('upload-error', file, err)
+      this.uppy.emit('upload-error', file, err)
       throw err
     })
   }
