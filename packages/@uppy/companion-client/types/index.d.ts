@@ -28,6 +28,7 @@ export class Provider extends RequestClient {
 
 export interface SocketOptions {
   target: string;
+  autoOpen?: boolean;
 }
 
 export class Socket {
