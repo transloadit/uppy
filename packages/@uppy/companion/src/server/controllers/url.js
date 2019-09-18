@@ -4,7 +4,6 @@ const Uploader = require('../Uploader')
 const validator = require('validator')
 const utils = require('../helpers/utils')
 const logger = require('../logger')
-const redis = require('../redis')
 
 module.exports = () => {
   return router()
@@ -47,20 +46,8 @@ const get = (req, res) => {
   utils.getURLMeta(req.body.url)
     .then(({ size }) => {
       // @ts-ignore
-      const { filePath } = req.uppy.options
       logger.debug('Instantiating uploader.', null, req.id)
-      const uploader = new Uploader({
-        uppyOptions: req.uppy.options,
-        endpoint: req.body.endpoint,
-        uploadUrl: req.body.uploadUrl,
-        protocol: req.body.protocol,
-        metadata: req.body.metadata,
-        size: size,
-        fieldname: req.body.fieldname,
-        pathPrefix: `${filePath}`,
-        storage: redis.client(),
-        headers: req.body.headers
-      })
+      const uploader = new Uploader(Uploader.reqToOptions(req, size))
 
       if (uploader.hasError()) {
         const response = uploader.getResponse()

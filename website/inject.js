@@ -69,6 +69,8 @@ async function getMinifiedSize (pkg, name) {
   const b = browserify(pkg)
   if (name !== '@uppy/core' && name !== 'uppy') {
     b.exclude('@uppy/core')
+    // Already unconditionally included through @uppy/core
+    b.exclude('preact')
   }
   if (excludes[name]) {
     b.exclude(excludes[name])
