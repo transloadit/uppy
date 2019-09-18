@@ -7,8 +7,16 @@ const settle = require('@uppy/utils/lib/settle')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 
-// Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
-// excepted we removed 'fingerprint' key to avoid adding more dependencies
+/** @typedef {import('..').TusOptions} TusOptions */
+/** @typedef {import('@uppy/core').UppyFile} UppyFile */
+/** @typedef {import('@uppy/core').FailedUppyFile<{}>} FailedUppyFile */
+
+/**
+ * Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
+ * excepted we removed 'fingerprint' key to avoid adding more dependencies
+ *
+ * @type {TusOptions}
+ */
 const tusDefaultOptions = {
   endpoint: '',
   resume: true,
@@ -47,9 +55,13 @@ module.exports = class Tus extends Plugin {
     }
 
     // merge default options with the ones set by user
+    /** @type {import("..").TusOptions} */
     this.opts = Object.assign({}, defaultOptions, opts)
 
-    // Simultaneous upload limiting is shared across all uploads with this plugin.
+    /**
+     * Simultaneous upload limiting is shared across all uploads with this plugin.
+     * @type {RateLimitedQueue}
+     */
     this.requests = new RateLimitedQueue(this.opts.limit)
 
     this.uploaders = Object.create(null)
@@ -77,6 +89,8 @@ module.exports = class Tus extends Plugin {
   /**
    * Clean up all references for a file's upload: the tus.Upload instance,
    * any events related to the file, and the Companion WebSocket connection.
+   *
+   * @param {string} fileID
    */
   resetUploaderReferences (fileID) {
     if (this.uploaders[fileID]) {
@@ -119,10 +133,10 @@ module.exports = class Tus extends Plugin {
    *  - When an upload is started or resumed, it needs to go through the `this.requests` queue. The `queuedRequest` variable must be updated so the other uses of it are valid.
    *  - Before replacing the `queuedRequest` variable, the previous `queuedRequest` must be aborted, else it will keep taking up a spot in the queue.
    *
-   * @param {object} file for use with upload
+   * @param {UppyFile} file for use with upload
    * @param {integer} current file in a queue
    * @param {integer} total number of files in a queue
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   upload (file, current, total) {
     this.resetUploaderReferences(file.id)
@@ -263,6 +277,11 @@ module.exports = class Tus extends Plugin {
     })
   }
 
+  /**
+   * @param {UppyFile} file
+   * @param {number} current
+   * @param {number} total
+   */
   uploadRemote (file, current, total) {
     this.resetUploaderReferences(file.id)
 
@@ -307,6 +326,8 @@ module.exports = class Tus extends Plugin {
    * See the comment on the upload() method.
    *
    * Additionally, when an upload is removed, completed, or cancelled, we need to close the WebSocket connection. This is handled by the resetUploaderReferences() function, so the same guidelines apply as in upload().
+   *
+   * @param {UppyFile} file
    */
   connectToServerSocket (file) {
     return new Promise((resolve, reject) => {
@@ -434,6 +455,9 @@ module.exports = class Tus extends Plugin {
   /**
    * Store the uploadUrl on the file options, so that when Golden Retriever
    * restores state, we will continue uploading to the correct URL.
+   *
+   * @param {UppyFile} file
+   * @param {string} uploadURL
    */
   onReceiveUploadUrl (file, uploadURL) {
     const currentFile = this.uppy.getFile(file.id)
@@ -449,12 +473,20 @@ module.exports = class Tus extends Plugin {
     }
   }
 
+  /**
+   * @param {string} fileID
+   * @param {function(string): void} cb
+   */
   onFileRemove (fileID, cb) {
     this.uploaderEvents[fileID].on('file-removed', (file) => {
       if (fileID === file.id) cb(file.id)
     })
   }
 
+  /**
+   * @param {string} fileID
+   * @param {function(boolean): void} cb
+   */
   onPause (fileID, cb) {
     this.uploaderEvents[fileID].on('upload-pause', (targetFileID, isPaused) => {
       if (fileID === targetFileID) {
@@ -464,6 +496,10 @@ module.exports = class Tus extends Plugin {
     })
   }
 
+  /**
+   * @param {string} fileID
+   * @param {function(): void} cb
+   */
   onRetry (fileID, cb) {
     this.uploaderEvents[fileID].on('upload-retry', (targetFileID) => {
       if (fileID === targetFileID) {
@@ -472,6 +508,10 @@ module.exports = class Tus extends Plugin {
     })
   }
 
+  /**
+   * @param {string} fileID
+   * @param {function(): void} cb
+   */
   onRetryAll (fileID, cb) {
     this.uploaderEvents[fileID].on('retry-all', (filesToRetry) => {
       if (!this.uppy.getFile(fileID)) return
@@ -479,6 +519,10 @@ module.exports = class Tus extends Plugin {
     })
   }
 
+  /**
+   * @param {string} fileID
+   * @param {function(): void} cb
+   */
   onPauseAll (fileID, cb) {
     this.uploaderEvents[fileID].on('pause-all', () => {
       if (!this.uppy.getFile(fileID)) return
@@ -486,6 +530,10 @@ module.exports = class Tus extends Plugin {
     })
   }
 
+  /**
+   * @param {string} fileID
+   * @param {function(): void} cb
+   */
   onCancelAll (fileID, cb) {
     this.uploaderEvents[fileID].on('cancel-all', () => {
       if (!this.uppy.getFile(fileID)) return
@@ -493,6 +541,10 @@ module.exports = class Tus extends Plugin {
     })
   }
 
+  /**
+   * @param {string} fileID
+   * @param {function(): void} cb
+   */
   onResumeAll (fileID, cb) {
     this.uploaderEvents[fileID].on('resume-all', () => {
       if (!this.uppy.getFile(fileID)) return
@@ -500,12 +552,15 @@ module.exports = class Tus extends Plugin {
     })
   }
 
+  /**
+   * @param {(UppyFile | FailedUppyFile)[]} files
+   */
   uploadFiles (files) {
     const promises = files.map((file, i) => {
-      const current = parseInt(i, 10) + 1
+      const current = i + 1
       const total = files.length
 
-      if (file.error) {
+      if ('error' in file && file.error) {
         return Promise.reject(new Error(file.error))
       } else if (file.isRemote) {
         return this.uploadRemote(file, current, total)
@@ -517,6 +572,9 @@ module.exports = class Tus extends Plugin {
     return settle(promises)
   }
 
+  /**
+   * @param {string[]} fileIDs
+   */
   handleUpload (fileIDs) {
     if (fileIDs.length === 0) {
       this.uppy.log('[Tus] No files to upload')
