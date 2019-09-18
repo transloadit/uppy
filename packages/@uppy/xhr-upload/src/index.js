@@ -26,8 +26,8 @@ function buildResponseError (xhr, error) {
  * because we might have detected a more accurate file type in Uppy
  * https://stackoverflow.com/a/50875615
  *
- * @param {Object} file File object with `data`, `size` and `meta` properties
- * @returns {Object} blob updated with the new `type` set from `file.meta.type`
+ * @param {object} file File object with `data`, `size` and `meta` properties
+ * @returns {object} blob updated with the new `type` set from `file.meta.type`
  */
 function setTypeInBlob (file) {
   const dataWithUpdatedType = file.data.slice(0, file.data.size, file.meta.type)
@@ -67,7 +67,7 @@ module.exports = class XHRUpload extends Plugin {
        * @property {string} responseText
        * @property {number} status
        * @property {string} statusText
-       * @property {Object.<string, string>} headers
+       * @property {object.<string, string>} headers
        *
        * @param {string} responseText the response body string
        * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
@@ -104,7 +104,7 @@ module.exports = class XHRUpload extends Plugin {
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // i18n
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
@@ -533,10 +533,23 @@ module.exports = class XHRUpload extends Plugin {
       return Promise.resolve()
     }
 
+    if (this.opts.limit === 0) {
+      this.uppy.log(
+        '[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0',
+        'warning'
+      )
+    }
+
     this.uppy.log('[XHRUpload] Uploading...')
     const files = fileIDs.map((fileID) => this.uppy.getFile(fileID))
 
     if (this.opts.bundle) {
+      // if bundle: true, we don’t support remote uploads
+      const isSomeFileRemote = files.some(file => file.isRemote)
+      if (isSomeFileRemote) {
+        throw new Error('Can’t upload remote files when bundle: true option is set')
+      }
+
       return this.uploadBundle(files)
     }
 

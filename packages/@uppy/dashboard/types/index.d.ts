@@ -1,26 +1,94 @@
 import Uppy = require('@uppy/core');
 
+interface MetaField {
+  id: string;
+  name: string;
+  placeholder?: string;
+}
+
 declare module Dashboard {
+  interface DashboardLocale {
+    strings: {
+      closeModal: string,
+      importFrom: string,
+      addingMoreFiles: string,
+      addMoreFiles: string,
+      dashboardWindowTitle: string,
+      dashboardTitle: string,
+      copyLinkToClipboardSuccess: string,
+      copyLinkToClipboardFallback: string,
+      copyLink: string,
+      link: string,
+      fileSource: string,
+      done: string,
+      back: string,
+      addMore: string,
+      removeFile: string,
+      editFile: string,
+      editing: string,
+      edit: string,
+      finishEditingFile: string,
+      saveChanges: string,
+      cancel: string,
+      myDevice: string,
+      dropPasteImport: string,
+      dropPaste: string,
+      dropHint: string,
+      browse: string,
+      uploadComplete: string,
+      uploadPaused: string,
+      resumeUpload: string,
+      pauseUpload: string,
+      retryUpload: string,
+      cancelUpload: string,
+      xFilesSelected: {
+        0: string,
+        1: string,
+        2: string
+      },
+      uploadingXFiles: {
+        0: string,
+        1: string,
+        2: string
+      },
+      processingXFiles: {
+        0: string,
+        1: string,
+        2: string
+      },
+      poweredBy: string
+    }
+  }
+
   interface DashboardOptions extends Uppy.PluginOptions {
-    onRequestCloseModal: () => void;
-    disablePageScrollWhenModalOpen: boolean;
+    animateOpenClose: boolean;
+    browserBackButtonClose: boolean
+    closeAfterFinish: boolean;
     closeModalOnClickOutside: boolean;
-    trigger: string | HTMLElement;
-    inline: boolean;
-    defaultTabIcon: string;
-    hideUploadButton: boolean;
-    width: string | number;
-    height: string | number;
-    note: string;
-    showLinkToFileUploadResult: boolean;
-    proudlyDisplayPoweredByUppy: boolean;
-    metaFields: string[];
-    plugins: string[];
-    disableStatusBar: boolean;
-    showProgressDetails: boolean;
-    hideProgressAfterFinish: boolean;
     disableInformer: boolean;
+    disablePageScrollWhenModalOpen: boolean;
+    disableStatusBar: boolean;
     disableThumbnailGenerator: boolean;
+    height: string | number;
+    hideCancelButton: boolean;
+    hidePauseResumeButton: boolean;
+    hideProgressAfterFinish: boolean;
+    hideRetryButton: boolean;
+    hideUploadButton: boolean;
+    inline: boolean;
+    locale: DashboardLocale;
+    metaFields: MetaField[];
+    note: string | null;
+    onRequestCloseModal: () => void;
+    plugins: string[];
+    proudlyDisplayPoweredByUppy: boolean;
+    showLinkToFileUploadResult: boolean;
+    showProgressDetails: boolean;
+    showSelectedFiles: boolean;
+    target: string;
+    thumbnailWidth: number;
+    trigger: string;
+    width: string | number;
   }
 }
 

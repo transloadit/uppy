@@ -30,7 +30,7 @@ class Uppy {
   /**
    * Instantiate Uppy
    *
-   * @param {Object} opts — Uppy options
+   * @param {object} opts — Uppy options
    */
   constructor (opts) {
     this.defaultLocale = {
@@ -120,7 +120,7 @@ class Uppy {
     }
 
     // i18n
-    this.translator = new Translator([ this.defaultLocale, this.opts.locale ])
+    this.translator = new Translator([this.defaultLocale, this.opts.locale])
     this.locale = this.translator.locale
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
@@ -223,7 +223,7 @@ class Uppy {
   /**
    * Updates state with a patch
    *
-   * @param {Object} patch {foo: 'bar'}
+   * @param {object} patch {foo: 'bar'}
    */
   setState (patch) {
     this.store.setState(patch)
@@ -232,22 +232,22 @@ class Uppy {
   /**
    * Returns current state.
    *
-   * @returns {Object}
+   * @returns {object}
    */
   getState () {
     return this.store.getState()
   }
 
   /**
-  * Back compat for when uppy.state is used instead of uppy.getState().
-  */
+   * Back compat for when uppy.state is used instead of uppy.getState().
+   */
   get state () {
     return this.getState()
   }
 
   /**
-  * Shorthand to set state for a specific file.
-  */
+   * Shorthand to set state for a specific file.
+   */
   setFileState (fileID, state) {
     if (!this.getState().files[fileID]) {
       throw new Error(`Can’t set state for ${fileID} (the file could have been removed)`)
@@ -382,7 +382,7 @@ class Uppy {
    * Check if file passes a set of restrictions set in options: maxFileSize,
    * maxNumberOfFiles and allowedFileTypes.
    *
-   * @param {Object} file object to check
+   * @param {object} file object to check
    * @private
    */
   _checkRestrictions (file) {
@@ -428,7 +428,7 @@ class Uppy {
    * try to guess file type in a clever way, check file against restrictions,
    * and start an upload if `autoProceed === true`.
    *
-   * @param {Object} file object to add
+   * @param {object} file object to add
    * @returns {string} id for the added file
    */
   addFile (file) {
@@ -520,7 +520,7 @@ class Uppy {
         this.scheduledAutoProceed = null
         this.upload().catch((err) => {
           if (!err.isRestriction) {
-            this.uppy.log(err.stack || err.message || err)
+            this.log(err.stack || err.message || err)
           }
         })
       }, 4)
@@ -553,7 +553,12 @@ class Uppy {
 
     this.setState({
       currentUploads: updatedUploads,
-      files: updatedFiles
+      files: updatedFiles,
+      ...(
+        // If this is the last file we just removed - allow new uploads!
+        Object.keys(updatedFiles).length === 0 &&
+        { allowNewUpload: true }
+      )
     })
 
     removeUploads.forEach((uploadID) => {
@@ -653,25 +658,20 @@ class Uppy {
     })
 
     this.setState({
-      allowNewUpload: true,
       totalProgress: 0,
       error: null
     })
   }
 
   retryUpload (fileID) {
-    const updatedFiles = Object.assign({}, this.getState().files)
-    const updatedFile = Object.assign({}, updatedFiles[fileID],
-      { error: null, isPaused: false }
-    )
-    updatedFiles[fileID] = updatedFile
-    this.setState({
-      files: updatedFiles
+    this.setFileState(fileID, {
+      error: null,
+      isPaused: false
     })
 
     this.emit('upload-retry', fileID)
 
-    const uploadID = this._createUpload([ fileID ])
+    const uploadID = this._createUpload([fileID])
     return this._runUpload(uploadID)
   }
 
@@ -914,13 +914,13 @@ class Uppy {
   /**
    * Registers a plugin with Core.
    *
-   * @param {Object} Plugin object
-   * @param {Object} [opts] object with options to be passed to Plugin
-   * @returns {Object} self for chaining
+   * @param {object} Plugin object
+   * @param {object} [opts] object with options to be passed to Plugin
+   * @returns {object} self for chaining
    */
   use (Plugin, opts) {
     if (typeof Plugin !== 'function') {
-      let msg = `Expected a plugin class, but got ${Plugin === null ? 'null' : typeof Plugin}.` +
+      const msg = `Expected a plugin class, but got ${Plugin === null ? 'null' : typeof Plugin}.` +
         ' Please verify that the plugin was imported and spelled correctly.'
       throw new TypeError(msg)
     }
@@ -938,9 +938,9 @@ class Uppy {
       throw new Error('Your plugin must have a type')
     }
 
-    let existsPluginAlready = this.getPlugin(pluginId)
+    const existsPluginAlready = this.getPlugin(pluginId)
     if (existsPluginAlready) {
-      let msg = `Already found a plugin named '${existsPluginAlready.id}'. ` +
+      const msg = `Already found a plugin named '${existsPluginAlready.id}'. ` +
         `Tried to use: '${pluginId}'.\n` +
         `Uppy plugins must have unique 'id' options. See https://uppy.io/docs/plugins/#id.`
       throw new Error(msg)
@@ -960,7 +960,7 @@ class Uppy {
    * Find one Plugin by name.
    *
    * @param {string} id plugin id
-   * @returns {Object|boolean}
+   * @returns {object|boolean}
    */
   getPlugin (id) {
     let foundPlugin = null
@@ -987,7 +987,7 @@ class Uppy {
   /**
    * Uninstall and remove a plugin.
    *
-   * @param {Object} instance The plugin instance to remove.
+   * @param {object} instance The plugin instance to remove.
    */
   removePlugin (instance) {
     this.log(`Removing plugin ${instance.id}`)
@@ -1025,13 +1025,13 @@ class Uppy {
   }
 
   /**
-  * Set info message in `state.info`, so that UI plugins like `Informer`
-  * can display the message.
-  *
-  * @param {string | object} message Message to be displayed by the informer
-  * @param {string} [type]
-  * @param {number} [duration]
-  */
+   * Set info message in `state.info`, so that UI plugins like `Informer`
+   * can display the message.
+   *
+   * @param {string | object} message Message to be displayed by the informer
+   * @param {string} [type]
+   * @param {number} [duration]
+   */
 
   info (message, type = 'info', duration = 3000) {
     const isComplexMessage = typeof message === 'object'
@@ -1068,10 +1068,10 @@ class Uppy {
   }
 
   /**
-   * Passes messages to a function, provided in `opt.logger`.
-   * If `opt.logger: Uppy.debugLogger` or `opt.debug: true`, logs to the browser console.
+   * Passes messages to a function, provided in `opts.logger`.
+   * If `opts.logger: Uppy.debugLogger` or `opts.debug: true`, logs to the browser console.
    *
-   * @param {string|Object} message to log
+   * @param {string|object} message to log
    * @param {string} [type] optional `error` or `warning`
    */
   log (message, type) {
@@ -1150,7 +1150,7 @@ class Uppy {
    * Add data to an upload's result object.
    *
    * @param {string} uploadID The ID of the upload.
-   * @param {Object} data Data properties to add to the result object.
+   * @param {object} data Data properties to add to the result object.
    */
   addResultData (uploadID, data) {
     if (!this._getUpload(uploadID)) {
@@ -1277,19 +1277,12 @@ class Uppy {
    * @returns {Promise}
    */
   upload () {
-    const onError = (err) => {
-      const message = typeof err === 'object' ? err.message : err
-      const details = (typeof err === 'object' && err.details) ? err.details : ''
-      this.log(`${message} ${details}`)
-      this.info({ message: message, details: details }, 'error', 5000)
-      throw (typeof err === 'object' ? err : new Error(err))
-    }
-
     if (!this.plugins.uploader) {
       this.log('No uploader type plugins are used', 'warning')
     }
 
     let files = this.getState().files
+
     const onBeforeUploadResult = this.opts.onBeforeUpload(files)
 
     if (onBeforeUploadResult === false) {
@@ -1320,10 +1313,19 @@ class Uppy {
         return this._runUpload(uploadID)
       })
       .catch((err) => {
+        const message = typeof err === 'object' ? err.message : err
+        const details = (typeof err === 'object' && err.details) ? err.details : ''
+
         if (err.isRestriction) {
           this.emit('restriction-failed', null, err)
+          this.log(`${message} ${details}`, 'info')
+          this.info({ message: message, details: details }, 'info', 5000)
+        } else {
+          this.log(`${message} ${details}`, 'error')
+          this.info({ message: message, details: details }, 'error', 5000)
         }
-        onError(err)
+
+        throw (typeof err === 'object' ? err : new Error(err))
       })
   }
 }

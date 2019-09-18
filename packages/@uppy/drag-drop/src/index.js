@@ -42,7 +42,7 @@ module.exports = class DragDrop extends Plugin {
     this.removeDragOverClassTimeout = null
 
     // i18n
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
@@ -98,8 +98,11 @@ module.exports = class DragDrop extends Plugin {
     this.setPluginState({ isDraggingOver: false })
 
     // 3. Add all dropped files
-    this.uppy.log('[DragDrop] File were dropped')
-    getDroppedFiles(event.dataTransfer)
+    this.uppy.log('[DragDrop] Files were dropped')
+    const logDropError = (error) => {
+      this.uppy.log(error, 'error')
+    }
+    getDroppedFiles(event.dataTransfer, { logDropError })
       .then((files) => {
         files.forEach(this.addFile)
       })

@@ -88,8 +88,19 @@ module.exports = class Form extends Plugin {
     let resultInput = this.form.querySelector(`[name="${this.opts.resultName}"]`)
     if (resultInput) {
       if (this.opts.multipleResults) {
-        // Append new result to the previous result array
-        const updatedResult = JSON.parse(resultInput.value)
+        // Append new result to the previous result array.
+        // If the previous result is empty, or not an array,
+        // set it to an empty array.
+        let updatedResult
+        try {
+          updatedResult = JSON.parse(resultInput.value)
+        } catch (err) {
+          // Nothing, since we check for array below anyway
+        }
+
+        if (!Array.isArray(updatedResult)) {
+          updatedResult = []
+        }
         updatedResult.push(result)
         resultInput.value = JSON.stringify(updatedResult)
       } else {

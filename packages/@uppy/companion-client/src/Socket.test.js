@@ -14,15 +14,19 @@ describe('Socket', () => {
       constructor (target) {
         webSocketConstructorSpy(target)
       }
+
       close (args) {
         webSocketCloseSpy(args)
       }
+
       send (json) {
         webSocketSendSpy(json)
       }
+
       triggerOpen () {
         this.onopen()
       }
+
       triggerClose () {
         this.onclose()
       }

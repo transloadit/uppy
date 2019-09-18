@@ -21,7 +21,7 @@ function initUppyTransloadit (transloaditKey) {
       params: {
         auth: { key: transloaditKey },
         steps: {
-          'crop_thumbed': {
+          crop_thumbed: {
             use: [':original'],
             robot: '/image/resize',
             height: 100,

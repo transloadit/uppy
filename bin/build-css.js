@@ -44,7 +44,7 @@ async function compileCSS () {
       }
     })
 
-    const postcssResult = await postcss([ autoprefixer ])
+    const postcssResult = await postcss([autoprefixer])
       .process(scssResult.css, { from: file })
     postcssResult.warnings().forEach(function (warn) {
       console.warn(warn.toString())

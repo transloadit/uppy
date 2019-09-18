@@ -13,7 +13,7 @@ global.Prism = Prism
 require('prismjs/components/')()
 delete global.Prism
 
-const unhighlightedCodeRx = /<pre><code class="(.*)?">([\s\S]*?)<\/code><\/pre>/igm
+const unhighlightedCodeRx = /<pre><code class="([^"]*)?">([\s\S]*?)<\/code><\/pre>/igm
 
 function highlight (lang, code) {
   const startTag = `<figure class="highlight ${lang}"><table><tr><td class="code"><pre>`
@@ -44,14 +44,15 @@ function code (args, content) {
   return highlight(lang, content)
 }
 
-function includeCode (args) {
+async function includeCode (args) {
   let lang = ''
   if (args[0].startsWith('lang:')) {
     lang = args.shift().replace(/^lang:/, '')
   }
 
   const file = path.join(hexo.source_dir, hexo.config.code_dir, args.join(' '))
-  return readFile(file, 'utf8').then((code) => highlight(lang, code.trim()))
+  const content = await readFile(file, 'utf8')
+  return highlight(lang, content.trim())
 }
 
 // Highlight as many things as we possibly can
