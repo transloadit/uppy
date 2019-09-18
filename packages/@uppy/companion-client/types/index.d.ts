@@ -32,6 +32,8 @@ export interface SocketOptions {
 }
 
 export class Socket {
+  isOpen: boolean;
+
   constructor (opts: SocketOptions);
   close (): void;
   send (action: string, payload: any): void;

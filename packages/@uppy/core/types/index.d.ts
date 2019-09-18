@@ -105,6 +105,10 @@ declare module Uppy {
     on(event: 'complete', callback: (result: UploadResult) => void): Uppy;
     on(event: string, callback: (...args: any[]) => void): Uppy;
     off(event: string, callback: any): Uppy;
+    /**
+     * For use by plugins only!
+     */
+    emit(event: string, ...args: any[]): void;
     updateAll(state: object): void;
     setState(patch: object): void;
     getState<TMeta extends IndexedObject<any> = {}>(): State<TMeta>;

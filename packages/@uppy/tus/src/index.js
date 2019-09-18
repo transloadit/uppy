@@ -8,6 +8,7 @@ const EventTracker = require('@uppy/utils/lib/EventTracker')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 
 /** @typedef {import('..').TusOptions} TusOptions */
+/** @typedef {import('@uppy/core').Uppy} Uppy */
 /** @typedef {import('@uppy/core').UppyFile} UppyFile */
 /** @typedef {import('@uppy/core').FailedUppyFile<{}>} FailedUppyFile */
 
@@ -39,6 +40,10 @@ const tusDefaultOptions = {
 module.exports = class Tus extends Plugin {
   static VERSION = require('../package.json').version
 
+  /**
+   * @param {Uppy} uppy
+   * @param {TusOptions} opts
+   */
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
@@ -134,8 +139,8 @@ module.exports = class Tus extends Plugin {
    *  - Before replacing the `queuedRequest` variable, the previous `queuedRequest` must be aborted, else it will keep taking up a spot in the queue.
    *
    * @param {UppyFile} file for use with upload
-   * @param {integer} current file in a queue
-   * @param {integer} total number of files in a queue
+   * @param {number} current file in a queue
+   * @param {number} total number of files in a queue
    * @returns {Promise<void>}
    */
   upload (file, current, total) {
@@ -278,9 +283,10 @@ module.exports = class Tus extends Plugin {
   }
 
   /**
-   * @param {UppyFile} file
-   * @param {number} current
-   * @param {number} total
+   * @param {UppyFile} file for use with upload
+   * @param {number} current file in a queue
+   * @param {number} total number of files in a queue
+   * @return {Promise<void>}
    */
   uploadRemote (file, current, total) {
     this.resetUploaderReferences(file.id)

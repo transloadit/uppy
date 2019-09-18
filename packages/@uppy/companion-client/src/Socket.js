@@ -3,7 +3,7 @@ const ee = require('namespace-emitter')
 module.exports = class UppySocket {
   constructor (opts) {
     this.opts = opts
-    this.queued = []
+    this._queued = []
     this.isOpen = false
     this.emitter = ee()
 
@@ -26,10 +26,10 @@ module.exports = class UppySocket {
     this.socket.onopen = (e) => {
       this.isOpen = true
 
-      while (this.queued.length > 0 && this.isOpen) {
-        const first = this.queued[0]
+      while (this._queued.length > 0 && this.isOpen) {
+        const first = this._queued[0]
         this.send(first.action, first.payload)
-        this.queued = this.queued.slice(1)
+        this._queued = this._queued.slice(1)
       }
     }
 
@@ -50,7 +50,7 @@ module.exports = class UppySocket {
     // attach uuid
 
     if (!this.isOpen) {
-      this.queued.push({ action, payload })
+      this._queued.push({ action, payload })
       return
     }
 
