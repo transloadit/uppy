@@ -36,18 +36,22 @@ declare module '@uppy/utils/lib/ProgressTimeout' {
 }
 
 declare module '@uppy/utils/lib/RateLimitedQueue' {
-  export type AbortFunction = () => void;
-  export type PromiseFunction = (...args: any[]) => Promise<any>;
-  export type QueueEntry = {
-    abort: () => void,
-    done: () => void,
-  };
-
-  export default class RateLimitedQueue {
-    constructor(limit: number);
-    run(fn: () => AbortFunction): QueueEntry;
-    wrapPromiseFunction(fn: () => PromiseFunction): PromiseFunction;
+  namespace RateLimitedQueue {
+    export type AbortFunction = () => void;
+    export type PromiseFunction = (...args: any[]) => Promise<any>;
+    export type QueueEntry = {
+      abort: () => void,
+      done: () => void,
+    };
   }
+
+  class RateLimitedQueue {
+    constructor(limit: number);
+    run(fn: () => RateLimitedQueue.AbortFunction): RateLimitedQueue.QueueEntry;
+    wrapPromiseFunction(fn: () => RateLimitedQueue.PromiseFunction): RateLimitedQueue.PromiseFunction;
+  }
+
+  export = RateLimitedQueue
 }
 
 declare module '@uppy/utils/lib/canvasToBlob' {
@@ -103,63 +107,78 @@ declare module '@uppy/utils/lib/getFileNameAndExtension' {
 declare module '@uppy/utils/lib/getFileType' {
   import UppyUtils = require('@uppy/utils');
 
-  export default function getFileType(file: UppyUtils.UppyFile): string | null;
+  function getFileType(file: UppyUtils.UppyFile): string | null;
+  export = getFileType
 }
 
 declare module '@uppy/utils/lib/getFileTypeExtension' {
-  export default function getFileTypeExtension(mime: string): string;
+  function getFileTypeExtension(mime: string): string;
+  export = getFileTypeExtension
 }
 
 declare module '@uppy/utils/lib/getSocketHost' {
-  export default function getSocketHost(url: string): string;
+  function getSocketHost(url: string): string;
+  export = getSocketHost
 }
 
 declare module '@uppy/utils/lib/getSpeed' {
-  export default function getSpeed(progress: { bytesTotal: number, bytesUploaded: number }): number;
+  function getSpeed(progress: { bytesTotal: number, bytesUploaded: number }): number;
+  export = getSpeed
 }
 
 declare module '@uppy/utils/lib/getTimeStamp' {
-  export default function getTimeStamp(): string;
+  function getTimeStamp(): string;
+  export = getTimeStamp
 }
 
 declare module '@uppy/utils/lib/isDOMElement' {
-  export default function isDOMElement(element: any): boolean;
+  function isDOMElement(element: any): boolean;
+  export = isDOMElement
 }
 
 declare module '@uppy/utils/lib/isObjectURL' {
-  export default function isObjectURL(url: string): boolean;
+  function isObjectURL(url: string): boolean;
+  export = isObjectURL
 }
 
 declare module '@uppy/utils/lib/isDragDropSupported' {
-  export default function isDragDropSupported(): boolean;
+  function isDragDropSupported(): boolean;
+  export = isDragDropSupported
 }
 
 declare module '@uppy/utils/lib/isPreviewSupported' {
-  export default function isPreviewSupported(mime: string): boolean;
+  function isPreviewSupported(mime: string): boolean;
+  export = isPreviewSupported
 }
 
 declare module '@uppy/utils/lib/isTouchDevice' {
-  export default function isTouchDevice(): boolean;
+  function isTouchDevice(): boolean;
+  export = isTouchDevice
 }
 
 declare module '@uppy/utils/lib/prettyETA' {
-  export default function prettyETA(seconds: number): string;
+  function prettyETA(seconds: number): string;
+  export = prettyETA
 }
 
 declare module '@uppy/utils/lib/secondsToTime' {
-  export default function secondsToTime(seconds: number): string;
+  function secondsToTime(seconds: number): string;
+  export = secondsToTime
 }
 
 declare module '@uppy/utils/lib/settle' {
-  export default function settle<T>(promises: Promise<T>[]): Promise<{ successful: T[], failed: any[] }>;
+  function settle<T>(promises: Promise<T>[]): Promise<{ successful: T[], failed: any[] }>;
+  export = settle
 }
 
 declare module '@uppy/utils/lib/toArray' {
-  export default function toArray(list: any): any[];
+  function toArray(list: any): any[];
+  export = toArray
 }
 
 declare module '@uppy/utils/lib/getDroppedFiles' {
-  export default function getDroppedFiles(dataTransfer: DataTransfer, options?: object): Promise<File[]>;
+  function getDroppedFiles(dataTransfer: DataTransfer, options?: object): Promise<File[]>;
+  export = getDroppedFiles
 }
 
 declare module '@uppy/utils' {
