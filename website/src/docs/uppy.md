@@ -343,9 +343,11 @@ uppy.addFile({
 
 `addFile` gives an error if the file cannot be added, either because `onBeforeFileAdded(file)` gave an error, or because `uppy.opts.restrictions` checks failed.
 
+If you try to add a file that already exists, `addFile` will throw an error. Unless that duplicate file was dropped with a folder — duplicate files from different folders are allowed, when selected with that folder. This is because we add `file.meta.relativePath` to the `file.id`.
+
 If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically when files are added.
 
-This function will return the generated id for the file that was added.
+`addFile` will return the generated id for the file that was added.
 
 > Sometimes you might need to add a remote file to Uppy. This can be achieved by [fetching the file, then creating a Blob object, or using the Url plugin with Companion](https://github.com/transloadit/uppy/issues/1006#issuecomment-413495493).
 >

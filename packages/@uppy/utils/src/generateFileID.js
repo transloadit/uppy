@@ -12,6 +12,7 @@ module.exports = function generateFileID (file) {
     'uppy',
     file.name ? encodeFilename(file.name.toLowerCase()) : '',
     file.type,
+    file.meta && file.meta.relativePath ? encodeFilename(file.meta.relativePath.toLowerCase()) : '',
     file.data.size,
     file.data.lastModified
   ].filter(val => val).join('-')
