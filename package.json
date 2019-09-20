@@ -48,6 +48,7 @@
     "@uppy/informer": "file:packages/@uppy/informer",
     "@uppy/instagram": "file:packages/@uppy/instagram",
     "@uppy/locales": "file:packages/@uppy/locales",
+    "@uppy/onedrive": "file:packages/@uppy/onedrive",
     "@uppy/progress-bar": "file:packages/@uppy/progress-bar",
     "@uppy/provider-views": "file:packages/@uppy/provider-views",
     "@uppy/react": "file:packages/@uppy/react",
