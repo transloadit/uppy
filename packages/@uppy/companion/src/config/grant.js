@@ -17,6 +17,11 @@ module.exports = () => {
     instagram: {
       transport: 'session',
       callback: '/instagram/callback'
+    },
+    facebook: {
+      transport: 'session',
+      scope: ['email', 'user_photos'],
+      callback: '/facebook/callback'
     }
   }
 }

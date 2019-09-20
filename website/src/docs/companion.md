@@ -22,6 +22,7 @@ As of now, Companion is integrated to work with:
 - Google Drive
 - Dropbox
 - Instagram
+- Facebook
 - Remote URLs
 - Amazon S3
 
@@ -176,6 +177,12 @@ export COMPANION_INSTAGRAM_SECRET="YOUR INSTAGRAM SECRET"
 # specifying a secret file will override a directly set secret
 export COMPANION_INSTAGRAM_SECRET_FILE="PATH/TO/INSTAGRAM/SECRET/FILE"
 
+# to enable Facebook
+export COMPANION_FACEBOOK_KEY="YOUR FACEBOOK KEY"
+export COMPANION_FACEBOOK_SECRET="YOUR FACEBOOK SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_FACEBOOK_SECRET_FILE="PATH/TO/FACEBOOK/SECRET/FILE"
+
 # to enable S3
 export COMPANION_AWS_KEY="YOUR AWS KEY"
 export COMPANION_AWS_SECRET="YOUR AWS SECRET"
@@ -213,6 +220,10 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
       secret: "***"
     },
     instagram: {
+      key: "***",
+      secret: "***"
+    },
+    facebook: {
       key: "***",
       secret: "***"
     },

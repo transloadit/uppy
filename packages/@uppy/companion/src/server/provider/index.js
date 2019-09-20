@@ -6,6 +6,7 @@ const config = require('@purest/providers')
 const dropbox = require('./dropbox')
 const drive = require('./drive')
 const instagram = require('./instagram')
+const facebook = require('./facebook')
 const { getURLBuilder } = require('../helpers/utils')
 const logger = require('../logger')
 
@@ -91,7 +92,7 @@ module.exports.getProviderMiddleware = (providers) => {
  * @return {Object.<string, typeof Provider>}
  */
 module.exports.getDefaultProviders = () => {
-  return { dropbox, drive, instagram }
+  return { dropbox, drive, instagram, facebook }
 }
 
 /**
