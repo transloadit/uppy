@@ -35,6 +35,7 @@
     "@uppy/dashboard": "file:packages/@uppy/dashboard",
     "@uppy/drag-drop": "file:packages/@uppy/drag-drop",
     "@uppy/dropbox": "file:packages/@uppy/dropbox",
+    "@uppy/facebook": "file:packages/@uppy/facebook",
     "@uppy/file-input": "file:packages/@uppy/file-input",
     "@uppy/form": "file:packages/@uppy/form",
     "@uppy/golden-retriever": "file:packages/@uppy/golden-retriever",
