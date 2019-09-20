@@ -22,6 +22,11 @@ module.exports = () => {
       transport: 'session',
       scope: ['email', 'user_photos'],
       callback: '/facebook/callback'
+    },
+    microsoft: {
+      transport: 'session',
+      scope: ['files.read.all', 'offline_access', 'User.Read'],
+      callback: '/onedrive/callback'
     }
   }
 }
