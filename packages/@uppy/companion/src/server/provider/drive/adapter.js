@@ -13,7 +13,7 @@ exports.getUsername = (data) => {
 }
 
 exports.isFolder = (item) => {
-  return item.mimeType === 'application/vnd.google-apps.folder' || item.kind === 'drive#teamDrive'
+  return item.mimeType === 'application/vnd.google-apps.folder' || exports.isSharedDrive(item)
 }
 
 exports.getItemSize = (item) => {
@@ -67,8 +67,8 @@ exports.getItemThumbnailUrl = (item) => {
   return `/drive/thumbnail/${exports.getItemRequestPath(item)}`
 }
 
-exports.isTeamDrive = (item) => {
-  return item.kind === 'drive#teamDrive'
+exports.isSharedDrive = (item) => {
+  return item.kind === 'drive#drive'
 }
 
 exports.getNextPagePath = (data, currentQuery, currentPath) => {
