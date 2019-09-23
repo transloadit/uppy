@@ -21,7 +21,7 @@ exports.getItemSize = (item) => {
 }
 
 exports.getItemIcon = (item) => {
-  if (item.kind === 'drive#teamDrive') {
+  if (exports.isSharedDrive(item)) {
     const size = '=w16-h16-n'
     const sizeParamRegex = /=[-whncsp0-9]*$/
     return item.backgroundImageLink.match(sizeParamRegex)

@@ -70,10 +70,10 @@ class Drive {
 
     Promise.all([sharedDrivesPromise, filesPromise])
       .then(
-        ([teamDrives, filesResponse]) => {
+        ([sharedDrives, filesResponse]) => {
           const returnData = this.adaptData(
             filesResponse.body,
-            teamDrives && teamDrives.body,
+            sharedDrives && sharedDrives.body,
             options.uppy,
             directory,
             query
