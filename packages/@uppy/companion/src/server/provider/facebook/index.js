@@ -5,31 +5,43 @@ const logger = require('../../logger')
 const adapter = require('./adapter')
 const AuthError = require('../error')
 
-class Instagram {
+class Facebook {
   constructor (options) {
-    this.authProvider = options.provider = Instagram.authProvider
+    this.authProvider = options.provider = Facebook.authProvider
     this.client = purest(options)
   }
 
   static get authProvider () {
-    return 'instagram'
+    return 'facebook'
   }
 
-  list ({ directory = 'recent', token, query = {} }, done) {
-    const cursor = query.cursor || query.max_id
-    const qs = cursor ? { max_id: cursor } : {}
+  list ({ directory, token, query = {} }, done) {
+    const qs = {
+      fields: 'name,cover_photo,created_time,type'
+    }
+
+    if (query.cursor) {
+      qs.after = query.cursor
+    }
+
+    let path = 'me/albums'
+    if (directory) {
+      path = `${directory}/photos`
+      qs.fields = 'icon,images,name,width,height,created_time'
+    }
+
     this.client
-      .get(`users/self/media/${directory}`)
+      .get(path)
       .qs(qs)
       .auth(token)
       .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {
           err = this._error(err, resp)
-          logger.error(err, 'provider.instagram.list.error')
+          logger.error(err, 'provider.facebook.list.error')
           return done(err)
         } else {
           this._getUsername(token, (err, username) => {
-            err ? done(err) : done(null, this.adaptData(body, username))
+            err ? done(err) : done(null, this.adaptData(body, username, directory, query))
           })
         }
       })
@@ -37,78 +49,70 @@ class Instagram {
 
   _getUsername (token, done) {
     this.client
-      .get('users/self')
+      .get('me')
+      .qs({ fields: 'email' })
       .auth(token)
       .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {
           err = this._error(err, resp)
-          logger.error(err, 'provider.instagram.user.error')
+          logger.error(err, 'provider.facebook.user.error')
           return done(err)
         } else {
-          done(null, body.data.username)
+          done(null, body.email)
         }
       })
   }
 
-  _getMediaUrl (body, carouselId) {
-    let mediaObj
-    let type
-
-    if (body.data.type === 'carousel') {
-      carouselId = carouselId ? parseInt(carouselId) : 0
-      mediaObj = body.data.carousel_media[carouselId]
-      type = mediaObj.type
-    } else {
-      mediaObj = body.data
-      type = body.data.type
-    }
-
-    return mediaObj[`${type}s`].standard_resolution.url
+  _getMediaUrl (body) {
+    const sortedImages = adapter.sortImages(body.images)
+    return sortedImages[sortedImages.length - 1].source
   }
 
-  download ({ id, token, query = {} }, onData) {
+  download ({ id, token }, onData) {
     return this.client
-      .get(`media/${id}`)
+      .get(id)
+      .qs({ fields: 'images' })
       .auth(token)
       .request((err, resp, body) => {
-        if (err) return logger.error(err, 'provider.instagram.download.error')
-        request(this._getMediaUrl(body, query.carousel_id))
+        if (err) return logger.error(err, 'provider.facebook.download.error')
+        request(this._getMediaUrl(body))
           .on('data', onData)
           .on('end', () => onData(null))
           .on('error', (err) => {
-            logger.error(err, 'provider.instagram.download.url.error')
+            logger.error(err, 'provider.facebook.download.url.error')
           })
       })
   }
 
   thumbnail (_, done) {
-    // not implementing this because a public thumbnail from instagram will be used instead
+    // not implementing this because a public thumbnail from facebook will be used instead
     const err = new Error('call to thumbnail is not implemented')
-    logger.error(err, 'provider.instagram.thumbnail.error')
+    logger.error(err, 'provider.facebook.thumbnail.error')
     return done(err)
   }
 
-  size ({ id, token, query = {} }, done) {
+  size ({ id, token }, done) {
     return this.client
-      .get(`media/${id}`)
+      .get(id)
+      .qs({ fields: 'images' })
       .auth(token)
       .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {
           err = this._error(err, resp)
-          logger.error(err, 'provider.instagram.size.error')
+          logger.error(err, 'provider.facebook.size.error')
           return done(err)
         }
 
-        utils.getURLMeta(this._getMediaUrl(body, query.carousel_id))
+        utils.getURLMeta(this._getMediaUrl(body))
           .then(({ size }) => done(null, size))
           .catch((err) => {
-            logger.error(err, 'provider.instagram.size.error')
+            logger.error(err, 'provider.facebook.size.error')
             done()
           })
       })
   }
 
-  adaptData (res, username) {
+  adaptData (res, username, directory, currentQuery) {
     const data = { username: username, items: [] }
     const items = adapter.getItemSubList(res)
     items.forEach((item) => {
@@ -124,21 +128,23 @@ class Instagram {
       })
     })
 
-    data.nextPagePath = adapter.getNextPagePath(res)
+    data.nextPagePath = adapter.getNextPagePath(res, currentQuery, directory)
     return data
   }
 
   _error (err, resp) {
     if (resp) {
-      if (resp.statusCode === 400 && resp.body && resp.body.meta.error_type === 'OAuthAccessTokenException') {
+      if (resp.body && resp.body.error.code === 190) {
+        // Invalid OAuth 2.0 Access Token
         return new AuthError()
       }
 
-      return new Error(`request to ${this.authProvider} returned ${resp.statusCode}`)
+      const msg = resp.body && resp.body.error ? resp.body.error.message : ''
+      return new Error(`request to ${this.authProvider} returned status: ${resp.statusCode}, message: ${msg}`)
     }
 
     return err
   }
 }
 
-module.exports = Instagram
+module.exports = Facebook

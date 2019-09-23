@@ -94,7 +94,7 @@ class DropBox {
     this.client
       .post('files/list_folder')
       .options({ version: '2' })
-      .where(query)
+      .qs(query)
       .auth(token)
       .json({
         path: `${directory || ''}`

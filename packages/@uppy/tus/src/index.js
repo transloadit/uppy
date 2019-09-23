@@ -6,6 +6,7 @@ const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
+const getFingerprint = require('./getFingerprint')
 
 /** @typedef {import('..').TusOptions} TusOptions */
 /** @typedef {import('@uppy/core').Uppy} Uppy */
@@ -157,6 +158,12 @@ module.exports = class Tus extends Plugin {
         // Install file-specific upload overrides.
         file.tus || {}
       )
+
+      // We override tus fingerprint to uppy’s `file.id`, since the `file.id`
+      // now also includes `relativePath` for files added from folders.
+      // This means you can add 2 identical files, if one is in folder a,
+      // the other in folder b.
+      optsTus.fingerprint = getFingerprint(file)
 
       optsTus.onError = (err) => {
         this.uppy.log(err)

@@ -33,7 +33,7 @@ class Drive {
         this.client
           .query()
           .get('teamdrives')
-          .where({ fields: TEAM_DRIVE_FIELDS })
+          .qs({ fields: TEAM_DRIVE_FIELDS })
           .auth(options.token)
           .request((err, resp) => {
             if (err) {
@@ -57,7 +57,7 @@ class Drive {
       this.client
         .query()
         .get('files')
-        .where(where)
+        .qs(where)
         .auth(options.token)
         .request((err, resp) => {
           if (err || resp.statusCode !== 200) {
@@ -91,7 +91,7 @@ class Drive {
     return this.client
       .query()
       .get(`files/${id}`)
-      .where({ fields: DRIVE_FILE_FIELDS, supportsTeamDrives: true })
+      .qs({ fields: DRIVE_FILE_FIELDS, supportsTeamDrives: true })
       .auth(token)
       .request(done)
   }
@@ -100,7 +100,7 @@ class Drive {
     return this.client
       .query()
       .get(`files/${id}`)
-      .where({ alt: 'media', supportsTeamDrives: true })
+      .qs({ alt: 'media', supportsTeamDrives: true })
       .auth(token)
       .request()
       .on('data', onData)
