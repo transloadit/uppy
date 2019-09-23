@@ -84,6 +84,7 @@ The `fields` field is an object with form fields to send along with the upload r
 For presigned PUT uploads, this should be left empty.
 
 The `headers` field is an object with request headers to send along with the upload request.
+When using a presigned PUT upload, it's a good idea to provide `headers['content-type']`. That will ensure that the request uses the same content-type that was used to generate the signature. Without it, the browser may decide on a different content-type instead, causing S3 to reject the upload.
 
 ### `timeout: 30 * 1000`
 

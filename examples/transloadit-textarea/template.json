@@ -60,7 +60,7 @@
         "audio_thumbnails"
       ],
       "robot": "/image/resize",
-      "imagemagick_stack": "v1.0.0",
+      "imagemagick_stack": "v2.0.7",
       "width": 400,
       "height": 300,
       "resize_strategy": "fit",
