@@ -6,7 +6,7 @@ const adapter = require('./adapter')
 const AuthError = require('../error')
 const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
-const SHARED_DRIVE_FIELDS = 'drives(kind,id,name,backgroundImageLink)'
+const SHARED_DRIVE_FIELDS = 'drives(kind,id,name,backgroundImageLink,hidden)'
 
 class Drive {
   constructor (options) {
