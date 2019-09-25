@@ -49,6 +49,7 @@ class Uppy {
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
         companionError: 'Connection with Companion failed',
         companionAuthError: 'Authorization required',
+        companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
         failedToUpload: 'Failed to upload %{file}',
         noInternetConnection: 'No Internet connection',
         connectedToInternet: 'Connected to the Internet',

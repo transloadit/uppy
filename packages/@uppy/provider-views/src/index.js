@@ -200,9 +200,17 @@ module.exports = class ProviderView {
    * Removes session token on client side.
    */
   logout () {
-    this.provider.logout(location.href)
+    this.provider.logout()
       .then((res) => {
         if (res.ok) {
+          if (!res.revoked) {
+            const message = this.plugin.uppy.i18n('companionUnauthorizeHint', {
+              provider: this.plugin.title,
+              url: res.manual_revoke_url
+            })
+            this.plugin.uppy.info(message, 'info', 7000)
+          }
+
           const newState = {
             authenticated: false,
             files: [],

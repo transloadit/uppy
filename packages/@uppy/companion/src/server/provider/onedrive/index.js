@@ -91,6 +91,11 @@ class OneDrive {
       })
   }
 
+  logout (_, done) {
+    // access revoke is not supported by Microsoft/OneDrive's API
+    done(null, { revoked: false, manual_revoke_url: 'https://account.live.com/consent/Manage' })
+  }
+
   adaptData (res, username) {
     const data = { username, items: [] }
     const items = adapter.getItemSubList(res)
