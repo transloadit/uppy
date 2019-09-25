@@ -649,18 +649,19 @@ describe('src/Core', () => {
 
     it('should not allow a dupicate file, a file with the same id', () => {
       const core = new Core()
+      const sameFileBlob = new File([sampleImage], { type: 'image/jpeg' })
       core.addFile({
         source: 'jest',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: new File([sampleImage], { type: 'image/jpeg' })
+        data: sameFileBlob
       })
       expect(() => {
         core.addFile({
           source: 'jest',
           name: 'foo.jpg',
           type: 'image/jpeg',
-          data: new File([sampleImage], { type: 'image/jpeg' }),
+          data: sameFileBlob,
           meta: {
             notARelativePath: 'folder/a'
           }

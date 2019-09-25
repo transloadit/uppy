@@ -12,7 +12,7 @@ __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
 # Tests using a simple build setup.
-tests="tus-drag-drop tus-dashboard i18n-drag-drop xhr-limit providers thumbnails transloadit url-plugin"
+tests="chaos-monkey i18n-drag-drop providers thumbnails transloadit tus-drag-drop url-plugin xhr-limit"
 
 for t in $tests; do
   mkdir -p "${__root}/test/endtoend/$t/dist"
