@@ -208,7 +208,7 @@ module.exports = class ProviderView {
               provider: this.plugin.title,
               url: res.manual_revoke_url
             })
-            this.plugin.uppy.info(message)
+            this.plugin.uppy.info(message, 'info', 7000)
           }
 
           const newState = {
