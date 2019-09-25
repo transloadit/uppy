@@ -2,18 +2,34 @@ const ee = require('namespace-emitter')
 
 module.exports = class UppySocket {
   constructor (opts) {
-    this.queued = []
+    this.opts = opts
+    this._queued = []
     this.isOpen = false
-    this.socket = new WebSocket(opts.target)
     this.emitter = ee()
+
+    this._handleMessage = this._handleMessage.bind(this)
+
+    this.close = this.close.bind(this)
+    this.emit = this.emit.bind(this)
+    this.on = this.on.bind(this)
+    this.once = this.once.bind(this)
+    this.send = this.send.bind(this)
+
+    if (!opts || opts.autoOpen !== false) {
+      this.open()
+    }
+  }
+
+  open () {
+    this.socket = new WebSocket(this.opts.target)
 
     this.socket.onopen = (e) => {
       this.isOpen = true
 
-      while (this.queued.length > 0 && this.isOpen) {
-        const first = this.queued[0]
+      while (this._queued.length > 0 && this.isOpen) {
+        const first = this._queued[0]
         this.send(first.action, first.payload)
-        this.queued = this.queued.slice(1)
+        this._queued = this._queued.slice(1)
       }
     }
 
@@ -21,26 +37,20 @@ module.exports = class UppySocket {
       this.isOpen = false
     }
 
-    this._handleMessage = this._handleMessage.bind(this)
-
     this.socket.onmessage = this._handleMessage
-
-    this.close = this.close.bind(this)
-    this.emit = this.emit.bind(this)
-    this.on = this.on.bind(this)
-    this.once = this.once.bind(this)
-    this.send = this.send.bind(this)
   }
 
   close () {
-    return this.socket.close()
+    if (this.socket) {
+      this.socket.close()
+    }
   }
 
   send (action, payload) {
     // attach uuid
 
     if (!this.isOpen) {
-      this.queued.push({ action, payload })
+      this._queued.push({ action, payload })
       return
     }
 

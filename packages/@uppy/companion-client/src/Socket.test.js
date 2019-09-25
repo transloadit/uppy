@@ -66,7 +66,7 @@ describe('Socket', () => {
     const uppySocket = new UppySocket({ target: 'foo' })
 
     uppySocket.send('bar', 'boo')
-    expect(uppySocket.queued).toEqual([{ action: 'bar', payload: 'boo' }])
+    expect(uppySocket._queued).toEqual([{ action: 'bar', payload: 'boo' }])
     expect(webSocketSendSpy.mock.calls.length).toEqual(0)
   })
 
@@ -76,7 +76,7 @@ describe('Socket', () => {
 
     uppySocket.send('bar', 'boo')
     uppySocket.send('moo', 'baa')
-    expect(uppySocket.queued).toEqual([
+    expect(uppySocket._queued).toEqual([
       { action: 'bar', payload: 'boo' },
       { action: 'moo', payload: 'baa' }
     ])
@@ -84,7 +84,7 @@ describe('Socket', () => {
 
     webSocketInstance.triggerOpen()
 
-    expect(uppySocket.queued).toEqual([])
+    expect(uppySocket._queued).toEqual([])
     expect(webSocketSendSpy.mock.calls.length).toEqual(2)
     expect(webSocketSendSpy.mock.calls[0]).toEqual([
       JSON.stringify({ action: 'bar', payload: 'boo' })
@@ -99,11 +99,11 @@ describe('Socket', () => {
     const webSocketInstance = uppySocket.socket
     webSocketInstance.triggerOpen()
     uppySocket.send('bar', 'boo')
-    expect(uppySocket.queued).toEqual([])
+    expect(uppySocket._queued).toEqual([])
 
     webSocketInstance.triggerClose()
     uppySocket.send('bar', 'boo')
-    expect(uppySocket.queued).toEqual([{ action: 'bar', payload: 'boo' }])
+    expect(uppySocket._queued).toEqual([{ action: 'bar', payload: 'boo' }])
   })
 
   it('should close the websocket when it is force closed', () => {
