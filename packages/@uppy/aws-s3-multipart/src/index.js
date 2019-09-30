@@ -194,15 +194,11 @@ module.exports = class AwsS3Multipart extends Plugin {
 
       const upload = new Uploader(file.data, {
         // .bind to pass the file object to each handler.
-        createMultipartUpload: this.requests.wrapPromiseFunction(
-          this.opts.createMultipartUpload.bind(this, file)),
-        listParts: this.requests.wrapPromiseFunction(
-          this.opts.listParts.bind(this, file)),
+        createMultipartUpload: this.opts.createMultipartUpload.bind(this, file),
+        listParts: this.opts.listParts.bind(this, file),
         prepareUploadPart: this.opts.prepareUploadPart.bind(this, file),
-        completeMultipartUpload: this.requests.wrapPromiseFunction(
-          this.opts.completeMultipartUpload.bind(this, file)),
-        abortMultipartUpload: this.requests.wrapPromiseFunction(
-          this.opts.abortMultipartUpload.bind(this, file)),
+        completeMultipartUpload: this.opts.completeMultipartUpload.bind(this, file),
+        abortMultipartUpload: this.opts.abortMultipartUpload.bind(this, file),
 
         onStart,
         onProgress,
