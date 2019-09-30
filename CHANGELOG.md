@@ -101,6 +101,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] form: make the `multipleResults` option `true` by default
 - [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
 - [ ] tus: set the `limit` option to a sensible default, like 10
+- [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
 
 # next
 
@@ -108,7 +109,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 - [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
 - [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
-- [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
 - [ ] core: possibly change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
 - [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
 - [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510)
@@ -118,15 +118,23 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] meta: Clean up CHANGELOG's Backlog. Requires an Uppy call
 - [ ] goldenretriever: make it work with aws multipart (@goto-bus-stop) https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888
 - [ ] localepacks: Add Arabic, see if right-to-left causes issues, and fix them :)
-- [ ] chore: fix up all code using the prettier branch. work is done, just needs an execute and review/okay by the team
 - [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog
 - [ ] chore: remove dead code/commented blocks
-- [ ] core: avoid overwriting duplicate files by a) throwing a warning instead and b) adding the relative-path of files to a new tus fingerprint function (we might use file.id as a fingerprint instead) (#754, #1606)
 - [ ] @uppy/transloadit: finish Transloadit-Client header on https://github.com/transloadit/uppy/tree/feature/transloadit-client
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] website: Adopt bcp-47 to handle and parse locales (@kvz, https://github.com/meikidd/iso-639-1/issues/19, https://tools.ietf.org/html/bcp47, https://github.com/wooorm/bcp-47)
+- [x] core: avoid overwriting duplicate files by a) throwing a warning instead and b) adding the relative-path of files to a new tus fingerprint function (we might use file.id as a fingerprint instead) (#754, #1606) (@arturi, #1767)
+- [x] companion: revoke companion's provider access on "logout" (@ifedapoolarewaju, #1843)
+- [x] facebook: add facebook remote provider (@ifedapoolarewaju, #1794)
+- [x] onedrive: add OneDrive remote provider (@ifedapoolarewaju, #1831)
+- [x] transloadit: pin socket.io version to ES5 compatible one (@goto-bus-stop, https://github.com/transloadit/uppy/commit/5839b655f093edaa778d49b719f7dda063ef79cb)
+- [x] locales: add Czech (@tvaliasek, #1842)
+- [x] locales: add Danish (@Pzoco, #1837)
+- [x] xhr-upload,tus,aws-s3: use more cancellation-friendly strategy for `limit: N` uploads (@goto-bus-stop, #1736)
+- [x] thumbnail-generator: add waitForThumbnailsBeforeUpload option, false by default (@arturi, #1803)
+- [x] dashboard: add missing fields to DashboardOptions typescript typings (@MatthiasKunnen, #1830)
 
 ## 1.4
 
@@ -193,7 +201,7 @@ In this release we’ve focused on issue busting on GitHub, nearly halving them.
 - website: /examples/xhrupload - more obvious UI, added a list of uploaded files (#1768 / @lakesare)
 - website: add new version of hexo-filter-github-emojis (#1783 / @lakesare)
 - website: fix docs/locales code escaping and css overflow (5a0055c15d04d97e8a0feb784daa7abe8da1d72d / @arturi)
- 
+
 ## 1.3
 
 Released: 2019-07-19
@@ -252,7 +260,7 @@ This release fixes id generation for non-latin characters, significantly improve
 - @uppy/dashboard: Fix header bar css in ie11 (#1700 / @lakesare)
 - @uppy/dashboard: Ie11 filecard preview fix (#1718 / @lakesare)
 - @uppy/dashboard: Refactor FileCard component to fix loosing metadata state on re-renders (#1656 / @arturi)
-- @uppy/drag-drop: make DragDrop entirely clickable (#1633 / @lakesare) 
+- @uppy/drag-drop: make DragDrop entirely clickable (#1633 / @lakesare)
 - @uppy/form: exclude own metadata, append result instead of overwriting (#1686 / @arturi)
 - @uppy/locales: add Arabic, Saudi Arabia (#1673 / @HussainAlkhalifah)
 - @uppy/locales: add Turkish (#1667 / @ayhankesicioglu)
