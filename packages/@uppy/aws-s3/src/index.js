@@ -1,9 +1,14 @@
-const resolveUrl = require('resolve-url')
+// If global `URL` constructor is available, use it
+const URL_ = typeof URL === 'function' ? URL : require('url-parse')
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const { RequestClient } = require('@uppy/companion-client')
 const XHRUpload = require('@uppy/xhr-upload')
+
+function resolveUrl (origin, link) {
+  return new URL_(link, origin).toString()
+}
 
 function isXml (xhr) {
   const contentType = xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type')
