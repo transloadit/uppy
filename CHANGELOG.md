@@ -7,10 +7,6 @@ Please add your entries in this format:
 
  - `- [ ] (<plugin name>|website|core|meta|build|test): <Present tense verb> <subject> \(<list of associated owners/gh-issues>\)`.
 
-Following [SemVer spec item 4](http://semver.org/#spec-item-4),
-we're `<1.0.0` and allowing ourselves to make breaking changes in minor
-and patch levels.
-
 In the current stage we aim to release a new version on the
 last Friday of every new month.
 
