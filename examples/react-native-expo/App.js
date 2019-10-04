@@ -136,15 +136,17 @@ export default class App extends React.Component {
         </View>
         <SelectFiles showFilePicker={this.showFilePicker} />
 
-        {this.state.info
-          ? <Text style={{
-            marginBottom: 10,
-            marginTop: 10,
-            color: '#b8006b'
-          }}
-          >{this.state.info.message}
+        {this.state.info ? (
+          <Text
+            style={{
+              marginBottom: 10,
+              marginTop: 10,
+              color: '#b8006b'
+            }}
+          >
+            {this.state.info.message}
           </Text>
-          : null}
+        ) : null}
 
         <ProgressBar progress={this.state.totalProgress} />
 

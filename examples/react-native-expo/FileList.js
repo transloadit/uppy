@@ -16,12 +16,14 @@ import SvgUri from 'react-native-svg-uri'
 // }
 
 function FileIcon () {
-  return <View style={styles.itemIconContainer}>
-    <Image
-      style={styles.itemIcon}
-      source={require('./assets/file-icon.png')}
-    />
-  </View>
+  return (
+    <View style={styles.itemIconContainer}>
+      <Image
+        style={styles.itemIcon}
+        source={require('./assets/file-icon.png')}
+      />
+    </View>
+  )
 }
 
 function UppyDashboardFileIcon (props) {
@@ -31,10 +33,11 @@ function UppyDashboardFileIcon (props) {
   }
   const color = getFileTypeIcon(props.type).color
   return (
-    <View style={{
-      ...styles.itemIconContainer,
-      backgroundColor: color
-    }}
+    <View
+      style={{
+        ...styles.itemIconContainer,
+        backgroundColor: color
+      }}
     >
       <SvgUri
         width={50}
@@ -61,12 +64,14 @@ export default function FileList (props) {
         renderItem={({ item }) => {
           return (
             <View style={styles.item}>
-              {item.type === 'image'
-                ? <Image
+              {item.type === 'image' ? (
+                <Image
                   style={styles.itemImage}
                   source={{ uri: item.data.uri }}
                 />
-                : <UppyDashboardFileIcon type={item.type} />}
+              ) : (
+                <UppyDashboardFileIcon type={item.type} />
+              )}
               <Text style={styles.itemName}>{truncateString(item.name, 20)}</Text>
               <Text style={styles.itemType}>{item.type}</Text>
             </View>
