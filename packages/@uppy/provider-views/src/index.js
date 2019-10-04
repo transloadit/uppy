@@ -41,7 +41,8 @@ module.exports = class ProviderView {
   static VERSION = require('../package.json').version
 
   /**
-   * @param {object} instance of the plugin
+   * @param {object} plugin instance of the plugin
+   * @param {object} opts
    */
   constructor (plugin, opts) {
     this.plugin = plugin
