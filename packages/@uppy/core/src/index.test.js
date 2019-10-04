@@ -667,7 +667,7 @@ describe('src/Core', () => {
           }
         })
       }).toThrow(
-        'Cannot add the duplicate file \'foo.jpg\', it already exists'
+        "Cannot add the duplicate file 'foo.jpg', it already exists"
       )
       expect(core.getFiles().length).toEqual(1)
     })
@@ -1389,7 +1389,7 @@ describe('src/Core', () => {
         })
         core.log('hi')
       } catch (err) {
-        expect(err).toMatchObject(new Error('\'restrictions.allowedFileTypes\' must be an array'))
+        expect(err).toMatchObject(new Error('`restrictions.allowedFileTypes` must be an array'))
       }
     })
 

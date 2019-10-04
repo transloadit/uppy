@@ -18,7 +18,7 @@ if (mode === 'build') {
 } else if (mode === 'test') {
   test()
 } else {
-  throw new Error('First argument must be either \'build\' or \'test\'')
+  throw new Error("First argument must be either 'build' or 'test'")
 }
 
 function getSources (pluginName) {
