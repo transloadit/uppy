@@ -54,7 +54,7 @@ module.exports = class Url extends Plugin {
 
     this.client = new RequestClient(uppy, {
       companionUrl: this.opts.companionUrl,
-      serverHeaders: this.opts.serverHeaders
+      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders
     })
   }
 

@@ -89,7 +89,7 @@ This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
 This is useful when you have your [Uppy Companion][companion] running on multiple hosts. Otherwise, the default value should do just fine.
 
-### `serverHeaders: {}`
+### `companionHeaders: {}`
 
 Custom headers to send to [Uppy Companion][companion].
 

@@ -60,7 +60,7 @@ uppy.use(AwsS3, {
 })
 ```
 
-### `serverHeaders: {}`
+### `companionHeaders: {}`
 
 > Note: This only applies when using [Companion][companion docs] to sign S3 uploads.
 
