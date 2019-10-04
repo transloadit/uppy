@@ -14,6 +14,7 @@
   "rules": {
     "jsx-quotes": ["error", "prefer-double"],
     "compat/compat": ["error"],
+    "react/jsx-handler-names": ["warn"], // maybe we want to do this in the future?
 
     "jsdoc/check-alignment": ["warn"],
     "jsdoc/check-examples": ["warn"],
