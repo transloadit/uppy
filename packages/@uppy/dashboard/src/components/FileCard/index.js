@@ -52,21 +52,23 @@ class FileCard extends Component {
 
     return metaFields.map((field) => {
       const id = `uppy-Dashboard-FileCard-input-${field.id}`
-      return <fieldset class="uppy-Dashboard-FileCard-fieldset">
-        <label class="uppy-Dashboard-FileCard-label" for={id}>{field.name}</label>
-        <input
-          class="uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input"
-          id={id}
-          type="text"
-          value={this.state.formState[field.id]}
-          placeholder={field.placeholder}
-          onkeyup={this.saveOnEnter}
-          onkeydown={this.saveOnEnter}
-          onkeypress={this.saveOnEnter}
-          oninput={ev => this.tempStoreMeta(ev, field.id)}
-          data-uppy-super-focusable
-        />
-      </fieldset>
+      return (
+        <fieldset key={field.id} class="uppy-Dashboard-FileCard-fieldset">
+          <label class="uppy-Dashboard-FileCard-label" for={id}>{field.name}</label>
+          <input
+            class="uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input"
+            id={id}
+            type="text"
+            value={this.state.formState[field.id]}
+            placeholder={field.placeholder}
+            onkeyup={this.saveOnEnter}
+            onkeydown={this.saveOnEnter}
+            onkeypress={this.saveOnEnter}
+            oninput={ev => this.tempStoreMeta(ev, field.id)}
+            data-uppy-super-focusable
+          />
+        </fieldset>
+      )
     })
   }
 
@@ -91,7 +93,8 @@ class FileCard extends Component {
           <button
             class="uppy-DashboardContent-back" type="button" title={this.props.i18n('finishEditingFile')}
             onclick={this.handleSave}
-          >{this.props.i18n('done')}
+          >
+            {this.props.i18n('done')}
           </button>
         </div>
 
@@ -109,13 +112,15 @@ class FileCard extends Component {
               class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
               type="button"
               onclick={this.handleSave}
-            >{this.props.i18n('saveChanges')}
+            >
+              {this.props.i18n('saveChanges')}
             </button>
             <button
               class="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn"
               type="button"
               onclick={this.handleCancel}
-            >{this.props.i18n('cancel')}
+            >
+              {this.props.i18n('cancel')}
             </button>
           </div>
         </div>

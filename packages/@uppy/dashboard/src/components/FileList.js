@@ -43,6 +43,7 @@ module.exports = (props) => {
     >
       {Object.keys(props.files).map((fileID) => (
         <FileItem
+          key={fileID}
           {...fileProps}
           file={props.files[fileID]}
         />
