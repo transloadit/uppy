@@ -345,26 +345,27 @@ module.exports = class Webcam extends Plugin {
     const webcamState = this.getPluginState()
 
     if (!webcamState.cameraReady) {
-      return <PermissionsScreen
-        icon={CameraIcon}
-        i18n={this.i18n}
-      />
+      return (
+        <PermissionsScreen icon={CameraIcon} i18n={this.i18n} />
+      )
     }
 
-    return <CameraScreen
-      {...webcamState}
-      onSnapshot={this.takeSnapshot}
-      onStartRecording={this.startRecording}
-      onStopRecording={this.stopRecording}
-      onFocus={this.focus}
-      onStop={this.stop}
-      i18n={this.i18n}
-      modes={this.opts.modes}
-      supportsRecording={supportsMediaRecorder()}
-      recording={webcamState.isRecording}
-      mirror={this.opts.mirror}
-      src={this.stream}
-    />
+    return (
+      <CameraScreen
+        {...webcamState}
+        onSnapshot={this.takeSnapshot}
+        onStartRecording={this.startRecording}
+        onStopRecording={this.stopRecording}
+        onFocus={this.focus}
+        onStop={this.stop}
+        i18n={this.i18n}
+        modes={this.opts.modes}
+        supportsRecording={supportsMediaRecorder()}
+        recording={webcamState.isRecording}
+        mirror={this.opts.mirror}
+        src={this.stream}
+      />
+    )
   }
 
   install () {
