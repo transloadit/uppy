@@ -42,9 +42,9 @@ morgan.token('url', (req, res) => {
     return `${req.path}?${qs.stringify(query)}`
   }
 
-  if (req.query && req.query['access_token']) {
+  if (req.query && req.query.access_token) {
     return mask('access_token')
-  } else if (req.query && req.query['uppyAuthToken']) {
+  } else if (req.query && req.query.uppyAuthToken) {
     return mask('uppyAuthToken')
   }
 

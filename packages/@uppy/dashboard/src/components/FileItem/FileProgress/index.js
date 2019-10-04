@@ -74,8 +74,7 @@ module.exports = function FileProgress (props) {
             : <PauseResumeCancelIcon
               progress={props.file.progress.percentage}
               hidePauseResumeCancelButtons={props.hidePauseResumeCancelButtons}
-            />
-          }
+            />}
         </button>
       </div>
     )

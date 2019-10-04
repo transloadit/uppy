@@ -17,7 +17,7 @@ const unhighlightedCodeRx = /<pre><code class="([^"]*)?">([\s\S]*?)<\/code><\/pr
 
 function highlight (lang, code) {
   const startTag = `<figure class="highlight ${lang}"><table><tr><td class="code"><pre>`
-  const endTag = `</pre></td></tr></table></figure>`
+  const endTag = '</pre></td></tr></table></figure>'
   let parsedCode = ''
   if (Prism.languages[lang]) {
     parsedCode = Prism.highlight(code, Prism.languages[lang])

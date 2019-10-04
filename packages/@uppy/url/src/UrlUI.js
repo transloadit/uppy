@@ -30,11 +30,13 @@ class UrlUI extends Component {
         placeholder={this.props.i18n('enterUrlToImport')}
         onkeyup={this.handleKeyPress}
         ref={(input) => { this.input = input }}
-        data-uppy-super-focusable />
+        data-uppy-super-focusable
+      />
       <button
         class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Url-importButton"
         type="button"
-        onclick={this.handleClick}>
+        onclick={this.handleClick}
+      >
         {this.props.i18n('import')}
       </button>
     </div>

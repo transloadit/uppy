@@ -52,7 +52,8 @@ function togglePauseResume (props) {
 module.exports = (props) => {
   props = props || {}
 
-  const { newFiles,
+  const {
+    newFiles,
     allowNewUpload,
     isUploadInProgress,
     isAllPaused,
@@ -61,7 +62,8 @@ module.exports = (props) => {
     hideUploadButton,
     hidePauseResumeButton,
     hideCancelButton,
-    hideRetryButton } = props
+    hideRetryButton
+  } = props
 
   const uploadState = props.uploadState
 
@@ -120,18 +122,20 @@ module.exports = (props) => {
 
   return (
     <div class={statusBarClassNames} aria-hidden={isHidden}>
-      <div class={progressClassNames}
+      <div
+        class={progressClassNames}
         style={{ width: width + '%' }}
         role="progressbar"
         aria-valuemin="0"
         aria-valuemax="100"
-        aria-valuenow={progressValue} />
+        aria-valuenow={progressValue}
+      />
       {progressBarContent}
       <div class="uppy-StatusBar-actions">
-        { showUploadBtn ? <UploadBtn {...props} uploadState={uploadState} /> : null }
-        { showRetryBtn ? <RetryBtn {...props} /> : null }
-        { showPauseResumeBtn ? <PauseResumeButton {...props} /> : null }
-        { showCancelBtn ? <CancelBtn {...props} /> : null }
+        {showUploadBtn ? <UploadBtn {...props} uploadState={uploadState} /> : null}
+        {showRetryBtn ? <RetryBtn {...props} /> : null}
+        {showPauseResumeBtn ? <PauseResumeButton {...props} /> : null}
+        {showCancelBtn ? <CancelBtn {...props} /> : null}
       </div>
     </div>
   )
@@ -146,23 +150,26 @@ const UploadBtn = (props) => {
     { 'uppy-c-btn-primary': props.uploadState === statusBarStates.STATE_WAITING }
   )
 
-  return <button type="button"
+  return <button
+    type="button"
     class={uploadBtnClassNames}
     aria-label={props.i18n('uploadXFiles', { smart_count: props.newFiles })}
     onclick={props.startUpload}
-    data-uppy-super-focusable>
+    data-uppy-super-focusable
+  >
     {props.newFiles && props.isUploadStarted
       ? props.i18n('uploadXNewFiles', { smart_count: props.newFiles })
-      : props.i18n('uploadXFiles', { smart_count: props.newFiles })
-    }
+      : props.i18n('uploadXFiles', { smart_count: props.newFiles })}
   </button>
 }
 
 const RetryBtn = (props) => {
   return (
-    <button type="button"
+    <button
+      type="button"
       class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry" aria-label={props.i18n('retryUpload')} onclick={props.retryAll}
-      data-uppy-super-focusable>
+      data-uppy-super-focusable
+    >
       <svg aria-hidden="true" focusable="false" class="UppyIcon" width="8" height="10" viewBox="0 0 8 10">
         <path d="M4 2.408a2.75 2.75 0 1 0 2.75 2.75.626.626 0 0 1 1.25.018v.023a4 4 0 1 1-4-4.041V.25a.25.25 0 0 1 .389-.208l2.299 1.533a.25.25 0 0 1 0 .416l-2.3 1.533A.25.25 0 0 1 4 3.316v-.908z" />
       </svg>
@@ -178,7 +185,8 @@ const CancelBtn = (props) => {
     title={props.i18n('cancel')}
     aria-label={props.i18n('cancel')}
     onclick={props.cancelAll}
-    data-uppy-super-focusable>
+    data-uppy-super-focusable
+  >
     <svg aria-hidden="true" focusable="false" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16">
       <g fill="none" fill-rule="evenodd">
         <circle fill="#888" cx="8" cy="8" r="8" />
@@ -198,7 +206,8 @@ const PauseResumeButton = (props) => {
     class="uppy-u-reset uppy-StatusBar-actionCircleBtn"
     type="button"
     onclick={() => togglePauseResume(props)}
-    data-uppy-super-focusable>
+    data-uppy-super-focusable
+  >
     {isAllPaused
       ? <svg aria-hidden="true" focusable="false" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16">
         <g fill="none" fill-rule="evenodd">
@@ -211,8 +220,7 @@ const PauseResumeButton = (props) => {
           <circle fill="#888" cx="8" cy="8" r="8" />
           <path d="M5 4.5h2v7H5v-7zm4 0h2v7H9v-7z" fill="#FFF" />
         </g>
-      </svg>
-    }
+      </svg>}
   </button>
 }
 
@@ -273,7 +281,7 @@ const ProgressDetails = (props) => {
 
 const UnknownProgressDetails = (props) => {
   return <div class="uppy-StatusBar-statusSecondary">
-    { props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.numUploads }) }
+    {props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.numUploads })}
   </div>
 }
 
@@ -287,12 +295,14 @@ const UploadNewlyAddedFiles = (props) => {
 
   return <div class="uppy-StatusBar-statusSecondary">
     <div class="uppy-StatusBar-statusSecondaryHint">
-      { props.i18n('xMoreFilesAdded', { smart_count: props.newFiles }) }
+      {props.i18n('xMoreFilesAdded', { smart_count: props.newFiles })}
     </div>
-    <button type="button"
+    <button
+      type="button"
       class={uploadBtnClassNames}
       aria-label={props.i18n('uploadXFiles', { smart_count: props.newFiles })}
-      onclick={props.startUpload}>
+      onclick={props.startUpload}
+    >
       {props.i18n('upload')}
     </button>
   </div>
@@ -310,16 +320,15 @@ const ProgressBarUploading = (props) => {
 
   return (
     <div class="uppy-StatusBar-content" aria-label={title} title={title}>
-      { !props.isAllPaused ? <LoadingSpinner /> : null }
+      {!props.isAllPaused ? <LoadingSpinner /> : null}
       <div class="uppy-StatusBar-status">
         <div class="uppy-StatusBar-statusPrimary">
           {props.supportsUploadProgress ? `${title}: ${props.totalProgress}%` : title}
         </div>
-        { !props.isAllPaused && !showUploadNewlyAddedFiles && props.showProgressDetails
+        {!props.isAllPaused && !showUploadNewlyAddedFiles && props.showProgressDetails
           ? (props.supportsUploadProgress ? <ThrottledProgressDetails {...props} /> : <UnknownProgressDetails {...props} />)
-          : null
-        }
-        { showUploadNewlyAddedFiles ? <UploadNewlyAddedFiles {...props} /> : null }
+          : null}
+        {showUploadNewlyAddedFiles ? <UploadNewlyAddedFiles {...props} /> : null}
       </div>
     </div>
   )
@@ -354,11 +363,14 @@ const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
       {/* {!hideRetryButton &&
         <span class="uppy-StatusBar-contentPadding">{i18n('pleasePressRetry')}</span>
       } */}
-      <span class="uppy-StatusBar-details"
+      <span
+        class="uppy-StatusBar-details"
         aria-label={error}
         data-microtip-position="top-right"
         data-microtip-size="medium"
-        role="tooltip">?</span>
+        role="tooltip"
+      >?
+      </span>
     </div>
   )
 }

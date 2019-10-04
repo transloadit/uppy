@@ -164,7 +164,8 @@ module.exports = class Url extends Plugin {
   render (state) {
     return <UrlUI
       i18n={this.i18n}
-      addFile={this.addFile} />
+      addFile={this.addFile}
+    />
   }
 
   install () {

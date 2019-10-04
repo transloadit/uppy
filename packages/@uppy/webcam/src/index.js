@@ -347,7 +347,8 @@ module.exports = class Webcam extends Plugin {
     if (!webcamState.cameraReady) {
       return <PermissionsScreen
         icon={CameraIcon}
-        i18n={this.i18n} />
+        i18n={this.i18n}
+      />
     }
 
     return <CameraScreen
@@ -362,7 +363,8 @@ module.exports = class Webcam extends Plugin {
       supportsRecording={supportsMediaRecorder()}
       recording={webcamState.isRecording}
       mirror={this.opts.mirror}
-      src={this.stream} />
+      src={this.stream}
+    />
   }
 
   install () {

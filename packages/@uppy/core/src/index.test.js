@@ -1389,7 +1389,7 @@ describe('src/Core', () => {
         })
         core.log('hi')
       } catch (err) {
-        expect(err).toMatchObject(new Error(`'restrictions.allowedFileTypes' must be an array`))
+        expect(err).toMatchObject(new Error('\'restrictions.allowedFileTypes\' must be an array'))
       }
     })
 

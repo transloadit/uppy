@@ -34,7 +34,8 @@ function UppyDashboardFileIcon (props) {
     <View style={{
       ...styles.itemIconContainer,
       backgroundColor: color
-    }}>
+    }}
+    >
       <SvgUri
         width={50}
         height={50}
@@ -63,9 +64,9 @@ export default function FileList (props) {
               {item.type === 'image'
                 ? <Image
                   style={styles.itemImage}
-                  source={{ uri: item.data.uri }} />
-                : <UppyDashboardFileIcon type={item.type} />
-              }
+                  source={{ uri: item.data.uri }}
+                />
+                : <UppyDashboardFileIcon type={item.type} />}
               <Text style={styles.itemName}>{truncateString(item.name, 20)}</Text>
               <Text style={styles.itemType}>{item.type}</Text>
             </View>

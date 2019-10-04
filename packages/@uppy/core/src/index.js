@@ -117,7 +117,7 @@ class Uppy {
     if (this.opts.restrictions.allowedFileTypes &&
         this.opts.restrictions.allowedFileTypes !== null &&
         !Array.isArray(this.opts.restrictions.allowedFileTypes)) {
-      throw new TypeError(`'restrictions.allowedFileTypes' must be an array`)
+      throw new TypeError('\'restrictions.allowedFileTypes\' must be an array')
     }
 
     // i18n
@@ -961,7 +961,7 @@ class Uppy {
     if (existsPluginAlready) {
       const msg = `Already found a plugin named '${existsPluginAlready.id}'. ` +
         `Tried to use: '${pluginId}'.\n` +
-        `Uppy plugins must have unique 'id' options. See https://uppy.io/docs/plugins/#id.`
+        'Uppy plugins must have unique \'id\' options. See https://uppy.io/docs/plugins/#id.'
       throw new Error(msg)
     }
 

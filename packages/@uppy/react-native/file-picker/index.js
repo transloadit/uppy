@@ -4,7 +4,8 @@ import {
   Modal,
   Text,
   ScrollView,
-  TouchableOpacity } from 'react-native'
+  TouchableOpacity
+} from 'react-native'
 import takePicture from './takePicture'
 import selectImage from './selectImage'
 import selectDocument from './selectDocument'
@@ -104,20 +105,23 @@ export default class UppyReactNativeFilePicker extends React.Component {
   renderSourceList () {
     return (
       <ScrollView
-        contentContainerStyle={styles.providerList}>
+        contentContainerStyle={styles.providerList}
+      >
         {this.state.providers.map((item, index) => {
           return (
             <TouchableOpacity
               style={styles.providerButton}
               key={index}
-              onPress={ev => this.chooseProvider(item.id)}>
+              onPress={ev => this.chooseProvider(item.id)}
+            >
               <Text style={styles.providerButtonText}>{item.title}</Text>
             </TouchableOpacity>
           )
         })}
         <TouchableOpacity
           style={styles.cancelButton}
-          onPress={ev => this.props.onRequestClose()}>
+          onPress={ev => this.props.onRequestClose()}
+        >
           <Text style={styles.cancelButtonText}>Cancel</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -131,7 +135,8 @@ export default class UppyReactNativeFilePicker extends React.Component {
         transparent={false}
         visible={this.props.show}
         supportedOrientations={['portrait', 'portrait-upside-down', 'landscape', 'landscape-left', 'landscape-right']}
-        onRequestClose={this.props.onRequestClose}>
+        onRequestClose={this.props.onRequestClose}
+      >
         {this.state.openProvider
           ? <Provider
             providerID={this.state.openProvider}
@@ -142,9 +147,9 @@ export default class UppyReactNativeFilePicker extends React.Component {
               })
               this.props.onRequestClose()
             }}
-            {...this.props} />
-          : this.renderSourceList()
-        }
+            {...this.props}
+          />
+          : this.renderSourceList()}
       </Modal>
     )
   }

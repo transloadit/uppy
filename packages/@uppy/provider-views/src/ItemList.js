@@ -20,11 +20,13 @@ module.exports = (props) => {
 
   return (
     <div class="uppy-ProviderBrowser-body">
-      <ul class="uppy-ProviderBrowser-list"
+      <ul
+        class="uppy-ProviderBrowser-list"
         onscroll={props.handleScroll}
         role="listbox"
         // making <ul> not focusable for firefox
-        tabindex="-1">
+        tabindex="-1"
+      >
         {props.folders.map(folder =>
           Item({
             ...getSharedProps(folder, props),

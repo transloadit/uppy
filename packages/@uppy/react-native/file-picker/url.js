@@ -5,7 +5,8 @@ import {
   TouchableOpacity,
   Text,
   TextInput,
-  View } from 'react-native'
+  View
+} from 'react-native'
 import Url from '@uppy/url'
 
 export default class UppyRNUrl extends React.Component {
@@ -58,12 +59,14 @@ export default class UppyRNUrl extends React.Component {
         />
         <TouchableOpacity
           style={styles.buttonImport}
-          onPress={this.onPressImport}>
+          onPress={this.onPressImport}
+        >
           <Text style={styles.buttonImportText}>Import</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonCancel}
-          onPress={ev => this.props.onDone()}>
+          onPress={ev => this.props.onDone()}
+        >
           <Text style={styles.buttonCancelText}>Cancel</Text>
         </TouchableOpacity>
       </View>

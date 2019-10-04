@@ -4,7 +4,8 @@ import {
   View,
   FlatList,
   Image,
-  WebView } from 'react-native'
+  WebView
+} from 'react-native'
 import Instagram from '@uppy/instagram'
 
 function getQueryParamValueFromUrl (name, url) {

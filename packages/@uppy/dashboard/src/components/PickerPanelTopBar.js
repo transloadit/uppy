@@ -78,7 +78,7 @@ function PanelTopBar (props) {
 
   return (
     <div class="uppy-DashboardContent-bar">
-      { // always on the left
+      {// always on the left
         !props.isAllComplete
           ? <button
             class="uppy-DashboardContent-back"
@@ -94,7 +94,7 @@ function PanelTopBar (props) {
         <UploadStatus {...props} />
       </div>
 
-      { // always on the right
+      {// always on the right
         allowNewUpload
           ? <button
             class="uppy-DashboardContent-addMore"

@@ -173,7 +173,7 @@ class Uploader {
    */
   onSocketReady (callback) {
     emitter().once(`connection:${this.token}`, () => callback())
-    logger.debug(`waiting for connection`, 'uploader.socket.wait', this.shortToken)
+    logger.debug('waiting for connection', 'uploader.socket.wait', this.shortToken)
   }
 
   cleanUp () {
