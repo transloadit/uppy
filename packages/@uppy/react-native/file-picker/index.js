@@ -137,8 +137,8 @@ export default class UppyReactNativeFilePicker extends React.Component {
         supportedOrientations={['portrait', 'portrait-upside-down', 'landscape', 'landscape-left', 'landscape-right']}
         onRequestClose={this.props.onRequestClose}
       >
-        {this.state.openProvider
-          ? <Provider
+        {this.state.openProvider ? (
+          <Provider
             providerID={this.state.openProvider}
             uppy={this.uppy}
             onDone={() => {
@@ -149,7 +149,9 @@ export default class UppyReactNativeFilePicker extends React.Component {
             }}
             {...this.props}
           />
-          : this.renderSourceList()}
+        ) : (
+          this.renderSourceList()
+        )}
       </Modal>
     )
   }

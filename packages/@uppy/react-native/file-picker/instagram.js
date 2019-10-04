@@ -79,18 +79,20 @@ export default class UppyRNInstagram extends React.Component {
 
   renderInstagram () {
     console.log(this.state.authUrl)
-    return <WebView
-      source={{ uri: this.state.authUrl }}
-      style={{ marginTop: 20 }}
-      onNavigationStateChange={(ev) => {
-        const url = ev.url
-        const token = getQueryParamValueFromUrl('uppyAuthToken', url)
-        console.log(token)
-        this.plugin.provider.setAuthToken(token)
-        console.log(this.plugin.provider.list('recent'))
-        // return this.renderGrid(this.state.instagram.items)
-      }}
-    />
+    return (
+      <WebView
+        source={{ uri: this.state.authUrl }}
+        style={{ marginTop: 20 }}
+        onNavigationStateChange={(ev) => {
+          const url = ev.url
+          const token = getQueryParamValueFromUrl('uppyAuthToken', url)
+          console.log(token)
+          this.plugin.provider.setAuthToken(token)
+          console.log(this.plugin.provider.list('recent'))
+          // return this.renderGrid(this.state.instagram.items)
+        }}
+      />
+    )
   }
 
   render () {
