@@ -9,7 +9,7 @@ fa_IR.strings = {
   authenticateWithTitle: 'احراز هویت %{pluginName} برای انتخاب فایل ضروریست!',
   back: 'بازگشت',
   addMore: 'اضافه کردن بیشتر',
-  browse: 'از رایانه',
+  browse: 'انتخاب کنید',
   cancel: 'انصراف',
   cancelUpload: 'لغو بارگذاری',
   chooseFiles: 'انتخاب فایل',
