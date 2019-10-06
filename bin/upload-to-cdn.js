@@ -31,9 +31,7 @@ const { promisify } = require('util')
 const readFile = promisify(require('fs').readFile)
 const finished = promisify(require('stream').finished)
 
-function delay (ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
+const delay = ms => new Promise(r => setTimeout(r, ms));
 
 const AWS_REGION = 'us-east-1'
 const AWS_BUCKET = 'crates.edgly.net'
