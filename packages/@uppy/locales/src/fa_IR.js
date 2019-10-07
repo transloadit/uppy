@@ -30,7 +30,7 @@ fa_IR.strings = {
   dropHereOr: 'فایل را بکشید و اینجا رها کنید یا  %{browse}',
   dropHint: 'فایل‌ها را بکشید و اینجا رها کنید',
   dropPaste: 'فایلها اینجا رها کنید، بچسبانید یا  %{browse}',
-  dropPasteImport: 'فایلها را اینجا رها کنید، بچسبانید یا %{browse} انتخاب کنید',
+  dropPasteImport: 'فایلها را اینجا رها کنید، بچسبانید یا %{browse}',
   edit: 'ویرایش',
   editFile: 'ویرایش فایل',
   editing: 'در حال ویرایش %{file}',
