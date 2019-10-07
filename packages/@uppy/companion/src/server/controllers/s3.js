@@ -28,7 +28,7 @@ module.exports = function s3 (config) {
     // @ts-ignore The `uppy` property is added by middleware before reaching here.
     const client = req.uppy.s3Client
     const metadata = req.query.metadata || {}
-    const key = config.getKey(req, req.query.filename)
+    const key = config.getKey(req, req.query.filename, metadata)
     if (typeof key !== 'string') {
       return res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
     }
@@ -79,7 +79,7 @@ module.exports = function s3 (config) {
   function createMultipartUpload (req, res, next) {
     // @ts-ignore The `uppy` property is added by middleware before reaching here.
     const client = req.uppy.s3Client
-    const key = config.getKey(req, req.body.filename)
+    const key = config.getKey(req, req.body.filename, req.body.metadata || {})
     const { type, metadata } = req.body
     if (typeof key !== 'string') {
       return res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
