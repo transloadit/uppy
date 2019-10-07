@@ -16,6 +16,8 @@ module.exports = function s3 (config) {
    *  - filename - The name of the file, given to the `config.getKey`
    *    option to determine the object key name in the S3 bucket.
    *  - type - The MIME type of the file.
+   *  - metadata - Key/value pairs configuring S3 metadata. Both must be ASCII-safe.
+   *    Query parameters are formatted like `metadata[name]=value`.
    *
    * Response JSON:
    *  - method - The HTTP method to use to upload.
@@ -25,6 +27,7 @@ module.exports = function s3 (config) {
   function getUploadParameters (req, res, next) {
     // @ts-ignore The `uppy` property is added by middleware before reaching here.
     const client = req.uppy.s3Client
+    const metadata = req.query.metadata || {}
     const key = config.getKey(req, req.query.filename)
     if (typeof key !== 'string') {
       return res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
@@ -36,6 +39,10 @@ module.exports = function s3 (config) {
       success_action_status: '201',
       'content-type': req.query.type
     }
+
+    Object.keys(metadata).forEach((key) => {
+      fields[`x-amz-meta-${key}`] = metadata[key]
+    })
 
     client.createPresignedPost({
       Bucket: config.bucket,
@@ -62,6 +69,8 @@ module.exports = function s3 (config) {
    *  - filename - The name of the file, given to the `config.getKey`
    *    option to determine the object key name in the S3 bucket.
    *  - type - The MIME type of the file.
+   *  - metadata - An object with the key/value pairs to set as metadata.
+   *    Keys and values must be ASCII-safe for S3.
    *
    * Response JSON:
    *  - key - The object key in the S3 bucket.
