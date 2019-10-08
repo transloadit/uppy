@@ -1,5 +1,5 @@
 ---
-title: "List of Plugins"
+title: 'List of Plugins'
 type: docs
 subtype: plugin-list
 body_class: page-plugin-list
@@ -9,4 +9,4 @@ order: 3
 category: 'Docs'
 ---
 
-Everyhing in Uppy is a Plugin. This let's us offer a wealth of features, while also allowing for small bundle sizes, if you only need a few.
+Everything in Uppy is a Plugin. This let's us offer a wealth of features, while also allowing for small bundle sizes, if you only need a few.
