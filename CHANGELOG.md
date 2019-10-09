@@ -102,7 +102,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 # next
 
-## 1.5
+## 1.6
 
 - [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
 - [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
@@ -122,16 +122,27 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] website: Adopt bcp-47 to handle and parse locales (@kvz, https://github.com/meikidd/iso-639-1/issues/19, https://tools.ietf.org/html/bcp47, https://github.com/wooorm/bcp-47)
-- [x] core: avoid overwriting duplicate files by a) throwing a warning instead and b) adding the relative-path of files to a new tus fingerprint function (we might use file.id as a fingerprint instead) (#754, #1606) (@arturi, #1767)
-- [x] companion: revoke companion's provider access on "logout" (@ifedapoolarewaju, #1843)
-- [x] facebook: add facebook remote provider (@ifedapoolarewaju, #1794)
-- [x] onedrive: add OneDrive remote provider (@ifedapoolarewaju, #1831)
-- [x] transloadit: pin socket.io version to ES5 compatible one (@goto-bus-stop, https://github.com/transloadit/uppy/commit/5839b655f093edaa778d49b719f7dda063ef79cb)
-- [x] locales: add Czech (@tvaliasek, #1842)
-- [x] locales: add Danish (@Pzoco, #1837)
-- [x] xhr-upload,tus,aws-s3: use more cancellation-friendly strategy for `limit: N` uploads (@goto-bus-stop, #1736)
-- [x] thumbnail-generator: add waitForThumbnailsBeforeUpload option, false by default (@arturi, #1803)
-- [x] dashboard: add missing fields to DashboardOptions typescript typings (@MatthiasKunnen, #1830)
+
+## 1.5
+
+- @uppy/companion: revoke companion's provider access on "logout" (@ifedapoolarewaju, #1843)
+- @uppy/companion-client: rename serverHeaders to companionHeaders (@goto-bus-stop, #1861)
+- @uppy/core: avoid overwriting duplicate files by a) throwing a warning instead and b) adding the relative-path of files to a new tus fingerprint function (we might use file.id as a fingerprint instead) (#754, #1606) (@arturi, #1767)
+- @uppy/dashboard: add missing fields to DashboardOptions typescript typings (@MatthiasKunnen, #1830)
+- @uppy/facebook: add facebook remote provider (@ifedapoolarewaju, #1794)
+- @uppy/locales: add Czech (@tvaliasek, #1842)
+- @uppy/locales: add Danish (@Pzoco, #1837)
+- @uppy/onedrive: add OneDrive remote provider (@ifedapoolarewaju, #1831)
+- @uppy/thumbnail-generator: add waitForThumbnailsBeforeUpload option, false by default (@arturi, #1803)
+- @uppy/transloadit: pin socket.io version to ES5 compatible one (@goto-bus-stop, https://github.com/transloadit/uppy/commit/5839b655f093edaa778d49b719f7dda063ef79cb)
+- @uppy/xhr-upload,tus,aws-s3: use more cancellation-friendly strategy for `limit: N` uploads (@goto-bus-stop, #1736)
+- @uppy/aws-s3-multipart: fix queueing behaviors, especially interaction with cancellation (@goto-bus-stop, #1855)
+- @uppy/locales: fix typo in Persian locale (@uxitten, #1865)
+- @uppy/locales: improve Swedish translation (@marcusforberg, #1859)
+- @uppy/aws-s3: replace browser-only resolve-url by isomorphic url-parse (@goto-bus-stop, #1854)
+- docs: remove pre 1.0 notice from changelog (@markypython, #1858)
+- docs: fix typo (@leftdevel, #1852)
+- test: add end-to-end test with retries (@ifedapoolarewaju, #1766)
 
 ## 1.4
 
