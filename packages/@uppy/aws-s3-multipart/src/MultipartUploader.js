@@ -58,7 +58,7 @@ class MultipartUploader {
         typeof result.uploadId === 'string' &&
         typeof result.key === 'string'
       if (!valid) {
-        throw new TypeError(`AwsS3/Multipart: Got incorrect result from 'createMultipartUpload()', expected an object '{ uploadId, key }'.`)
+        throw new TypeError('AwsS3/Multipart: Got incorrect result from `createMultipartUpload()`, expected an object `{ uploadId, key }`.')
       }
       return result
     }).then((result) => {
@@ -145,7 +145,7 @@ class MultipartUploader {
       const valid = typeof result === 'object' && result &&
         typeof result.url === 'string'
       if (!valid) {
-        throw new TypeError(`AwsS3/Multipart: Got incorrect result from 'prepareUploadPart()', expected an object '{ url }'.`)
+        throw new TypeError('AwsS3/Multipart: Got incorrect result from `prepareUploadPart()`, expected an object `{ url }`.')
       }
       return result
     }).then(({ url }) => {

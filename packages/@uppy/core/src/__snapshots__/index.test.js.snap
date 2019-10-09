@@ -8,7 +8,7 @@ exports[`src/Core plugins should not be able to add an invalid plugin 1`] = `"Ex
 
 exports[`src/Core plugins should prevent the same plugin from being added more than once 1`] = `
 "Already found a plugin named 'TestSelector1'. Tried to use: 'TestSelector1'.
-Uppy plugins must have unique 'id' options. See https://uppy.io/docs/plugins/#id."
+Uppy plugins must have unique \`id\` options. See https://uppy.io/docs/plugins/#id."
 `;
 
 exports[`src/Core uploading a file should only upload files that are not already assigned to another upload id 1`] = `

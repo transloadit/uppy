@@ -139,7 +139,8 @@ module.exports = class DragDrop extends Plugin {
         name={this.opts.inputName}
         multiple={restrictions.maxNumberOfFiles !== 1}
         accept={restrictions.allowedFileTypes}
-        onchange={this.handleInputChange} />
+        onchange={this.handleInputChange}
+      />
     )
   }
 
@@ -189,7 +190,8 @@ module.exports = class DragDrop extends Plugin {
         onClick={() => this.fileInputRef.click()}
         onDragOver={this.handleDragOver}
         onDragLeave={this.handleDragLeave}
-        onDrop={this.handleDrop} >
+        onDrop={this.handleDrop}
+      >
         {this.renderHiddenFileInput()}
         <div class="uppy-DragDrop-inner">
           {this.renderArrowSvg()}

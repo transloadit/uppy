@@ -78,36 +78,36 @@ function PanelTopBar (props) {
 
   return (
     <div class="uppy-DashboardContent-bar">
-      { // always on the left
-        !props.isAllComplete
-          ? <button
-            class="uppy-DashboardContent-back"
-            type="button"
-            onclick={props.cancelAll}
-          >
-            {props.i18n('cancel')}
-          </button>
-          : <div />
-      }
+      {!props.isAllComplete ? (
+        <button
+          class="uppy-DashboardContent-back"
+          type="button"
+          onclick={props.cancelAll}
+        >
+          {props.i18n('cancel')}
+        </button>
+      ) : (
+        <div />
+      )}
 
       <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
         <UploadStatus {...props} />
       </div>
 
-      { // always on the right
-        allowNewUpload
-          ? <button
-            class="uppy-DashboardContent-addMore"
-            type="button"
-            aria-label={props.i18n('addMoreFiles')}
-            title={props.i18n('addMoreFiles')}
-            onclick={() => props.toggleAddFilesPanel(true)}
-          >
-            {iconPlus()}
-            <span class="uppy-DashboardContent-addMoreCaption">{props.i18n('addMore')}</span>
-          </button>
-          : <div />
-      }
+      {allowNewUpload ? (
+        <button
+          class="uppy-DashboardContent-addMore"
+          type="button"
+          aria-label={props.i18n('addMoreFiles')}
+          title={props.i18n('addMoreFiles')}
+          onclick={() => props.toggleAddFilesPanel(true)}
+        >
+          {iconPlus()}
+          <span class="uppy-DashboardContent-addMoreCaption">{props.i18n('addMore')}</span>
+        </button>
+      ) : (
+        <div />
+      )}
     </div>
   )
 }

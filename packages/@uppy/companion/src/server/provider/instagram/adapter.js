@@ -30,9 +30,9 @@ exports.getItemSubList = (item) => {
 }
 
 exports.getItemName = (item) => {
-  if (item && item['created_time']) {
+  if (item && item.created_time) {
     const ext = item.type === 'video' ? 'mp4' : 'jpeg'
-    const date = new Date(item['created_time'] * 1000)
+    const date = new Date(item.created_time * 1000)
     const name = date.toLocaleDateString([], {
       year: 'numeric',
       month: 'short',

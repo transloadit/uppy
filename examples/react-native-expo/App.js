@@ -119,12 +119,15 @@ export default class App extends React.Component {
         paddingLeft: 50,
         paddingRight: 50,
         flex: 1
-      }}>
+      }}
+      >
         <Text style={{
           fontSize: 25,
           marginBottom: 20,
           textAlign: 'center'
-        }}>Uppy in React Native</Text>
+        }}
+        >Uppy in React Native
+        </Text>
         <View style={{ alignItems: 'center' }}>
           <Image
             style={{ width: 80, height: 78, marginBottom: 50 }}
@@ -133,13 +136,17 @@ export default class App extends React.Component {
         </View>
         <SelectFiles showFilePicker={this.showFilePicker} />
 
-        {this.state.info
-          ? <Text style={{
-            marginBottom: 10,
-            marginTop: 10,
-            color: '#b8006b' }}>{this.state.info.message}</Text>
-          : null
-        }
+        {this.state.info ? (
+          <Text
+            style={{
+              marginBottom: 10,
+              marginTop: 10,
+              color: '#b8006b'
+            }}
+          >
+            {this.state.info.message}
+          </Text>
+        ) : null}
 
         <ProgressBar progress={this.state.totalProgress} />
 
@@ -147,13 +154,15 @@ export default class App extends React.Component {
           isPaused={this.state.isPaused}
           onPress={this.togglePauseResume}
           uploadStarted={this.state.uploadStarted}
-          uploadComplete={this.state.uploadComplete} />
+          uploadComplete={this.state.uploadComplete}
+        />
 
         <UppyFilePicker
           uppy={this.uppy}
           show={this.state.isFilePickerVisible}
           onRequestClose={this.hideFilePicker}
-          companionUrl="http://localhost:3020" />
+          companionUrl="http://localhost:3020"
+        />
 
         <FileList uppy={this.uppy} />
 

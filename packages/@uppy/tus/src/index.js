@@ -66,6 +66,7 @@ module.exports = class Tus extends Plugin {
 
     /**
      * Simultaneous upload limiting is shared across all uploads with this plugin.
+     *
      * @type {RateLimitedQueue}
      */
     this.requests = new RateLimitedQueue(this.opts.limit)
@@ -293,7 +294,7 @@ module.exports = class Tus extends Plugin {
    * @param {UppyFile} file for use with upload
    * @param {number} current file in a queue
    * @param {number} total number of files in a queue
-   * @return {Promise<void>}
+   * @returns {Promise<void>}
    */
   uploadRemote (file, current, total) {
     this.resetUploaderReferences(file.id)
