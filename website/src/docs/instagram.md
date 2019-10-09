@@ -74,7 +74,7 @@ DOM element, CSS selector, or plugin to mount the Instagram provider into. This 
 
 URL to a [Companion](/docs/companion) instance.
 
-### `serverHeaders: {}`
+### `companionHeaders: {}`
 
 Custom headers that should be sent along to [Companion](/docs/companion) on every request.
 

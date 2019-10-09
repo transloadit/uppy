@@ -73,7 +73,7 @@ DOM element, CSS selector, or plugin to mount the Dropbox provider into. This sh
 
 URL to a [Companion](/docs/companion) instance.
 
-### `serverHeaders: {}`
+### `companionHeaders: {}`
 
 Custom headers that should be sent along to [Companion](/docs/companion) on every request.
 

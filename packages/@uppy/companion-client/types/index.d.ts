@@ -1,5 +1,9 @@
 export interface RequestClientOptions {
   companionUrl: string;
+  companionHeaders?: object;
+  /**
+   * Deprecated, use `companionHeaders` instead.
+   */
   serverHeaders?: object;
 }
 
