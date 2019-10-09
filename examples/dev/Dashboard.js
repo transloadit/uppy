@@ -46,6 +46,8 @@ module.exports = () => {
     .use(Form, { target: '#upload-form' })
     // .use(GoldenRetriever, {serviceWorker: true})
 
+  window.uppy = uppyDashboard
+
   uppyDashboard.on('complete', (result) => {
     if (result.failed.length === 0) {
       console.log('Upload successful 😀')
