@@ -125,6 +125,29 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## 1.5
 
+Released: 2019-10-09
+
+This release features new remote providers for Facebook and OneDrive, new languages, and a more robust approach to simultaneous upload limiting and cancellation.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.3.1 | @uppy/onedrive | 0.1.0 |
+| @uppy/aws-s3 | 1.3.1 | @uppy/progress-bar | 1.3.1 |
+| @uppy/companion-client | 1.4.0 | @uppy/provider-views | 1.4.0 |
+| @uppy/companion | 1.5.0 | @uppy/react-native | 0.1.3 |
+| @uppy/core | 1.5.0 | @uppy/react | 1.3.1 |
+| @uppy/dashboard | 1.4.0 | @uppy/redux-dev-tools | 1.3.1 |
+| @uppy/drag-drop | 1.3.1 | @uppy/robodog | 1.3.1 |
+| @uppy/dropbox | 1.3.1 | @uppy/status-bar | 1.3.1 |
+| @uppy/facebook | 0.1.0 | @uppy/thumbnail-generator | 1.4.0 |
+| @uppy/file-input | 1.3.1 | @uppy/transloadit | 1.3.1 |
+| @uppy/form | 1.3.1 | @uppy/tus | 1.4.1 |
+| @uppy/golden-retriever | 1.3.1 | @uppy/url | 1.3.1 |
+| @uppy/google-drive | 1.3.1 | @uppy/utils | 2.0.0 |
+| @uppy/informer | 1.3.1 | @uppy/webcam | 1.3.1 |
+| @uppy/instagram | 1.3.1 | @uppy/xhr-upload | 1.3.1 |
+| @uppy/locales | 1.7.0 | uppy | 1.5.0 |
+
 - @uppy/companion: revoke companion's provider access on "logout" (@ifedapoolarewaju, #1843)
 - @uppy/companion-client: rename serverHeaders to companionHeaders (@goto-bus-stop, #1861)
 - @uppy/core: avoid overwriting duplicate files by a) throwing a warning instead and b) adding the relative-path of files to a new tus fingerprint function (we might use file.id as a fingerprint instead) (#754, #1606) (@arturi, #1767)
