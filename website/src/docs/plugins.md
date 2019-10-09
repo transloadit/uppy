@@ -9,4 +9,4 @@ order: 3
 category: 'Docs'
 ---
 
-Everything in Uppy is a Plugin. This let's us offer a wealth of features, while also allowing for small bundle sizes, if you only need a few.
+Everything in Uppy is a Plugin. This lets us offer a wealth of features, but avoid bloating your JS bundle sizes if you don't need all of them.
