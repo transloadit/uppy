@@ -3,7 +3,7 @@ type: docs
 title: "Writing Plugins"
 permalink: docs/writing-plugins/
 order: 8
-category: 'Contributing'
+category: "Contributing"
 ---
 
 There are already a few useful Uppy plugins out there, but there might come a time when you will want to build your own. Plugins can hook into the upload process or render a custom UI, typically to:
@@ -218,7 +218,7 @@ This allows them to be overridden by Locale Packs, or directly when users pass `
 // i18n
 this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
 this.i18n = this.translator.translate.bind(this.translator)
-this.i18nArray = this.translator.translateArray.bind(this.translator) 
+this.i18nArray = this.translator.translateArray.bind(this.translator)
 // ^-- Only if you're using i18nArray, which allows you to pass in JSX Components as well.
 ```
 

@@ -5,7 +5,7 @@ module: "@uppy/react"
 permalink: docs/react/drag-drop/
 alias: docs/react/dragdrop/
 order: 2
-category: 'React'
+category: "React"
 ---
 
 The `<DragDrop />` component wraps the [`@uppy/drag-drop`](/docs/drag-drop/) plugin.

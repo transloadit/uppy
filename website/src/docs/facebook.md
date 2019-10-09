@@ -5,8 +5,8 @@ title: "Facebook"
 menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/facebook"
 permalink: docs/facebook/
-category: 'Sources'
-tagline: import files from Facebook
+category: "Sources"
+tagline: "import files from Facebook"
 ---
 
 The `@uppy/facebook` plugin lets users import files from their Facebook account.

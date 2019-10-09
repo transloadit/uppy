@@ -4,8 +4,8 @@ order: 1
 title: "Uppy"
 module: "@uppy/core"
 permalink: docs/uppy/
-category: 'Docs'
-tagline: The core module that orchestrates everything
+category: "Docs"
+tagline: "The core module that orchestrates everything"
 ---
 
 This is the core module that orchestrates everything in Uppy, managing state and events and providing methods.

@@ -3,8 +3,8 @@ type: docs
 order: 6
 title: "Locale Packs"
 permalink: docs/locales/
-category: 'Docs'
-body_class: 'page-docs-locales'
+category: "Docs"
+body_class: "page-docs-locales"
 ---
 
 Uppy speaks multiple languages, English being the default. You can use a locale pack to translate Uppy into your language of choice.

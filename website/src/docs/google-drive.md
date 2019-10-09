@@ -5,8 +5,8 @@ title: "Google Drive"
 menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/google-drive"
 permalink: docs/google-drive/
-category: 'Sources'
-tagline: import files from Google Drive
+category: "Sources"
+tagline: "import files from Google Drive"
 ---
 
 The `@uppy/google-drive` plugin lets users import files from their Google Drive account.

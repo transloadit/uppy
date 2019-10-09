@@ -4,7 +4,7 @@ title: "Robodog: File Picker API"
 menu: "Robodog File Picker"
 permalink: docs/robodog/picker/
 order: 1
-category: 'File Processing'
+category: "File Processing"
 ---
 
 Show a modal UI that allows users to pick files from their device and from the web. It uploads files to Transloadit for processing.

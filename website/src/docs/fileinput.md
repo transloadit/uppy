@@ -5,8 +5,8 @@ title: "File Input"
 module: "@uppy/file-input"
 permalink: docs/file-input/
 alias: docs/fileinput/
-category: 'Sources'
-tagline: even more plain and simple, just a button
+category: "Sources"
+tagline: "even more plain and simple, just a button"
 ---
 
 `@uppy/file-input` is the most barebones UI for selecting files — it shows a single button that, when clicked, opens up the browser’s file selector.

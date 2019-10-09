@@ -5,8 +5,8 @@ title: "OneDrive"
 menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/onedrive"
 permalink: docs/onedrive/
-category: 'Sources'
-tagline: import files from OneDrive
+category: "Sources"
+tagline: "import files from OneDrive"
 ---
 
 The `@uppy/onedrive` plugin lets users import files from their OneDrive account.

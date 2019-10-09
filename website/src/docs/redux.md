@@ -4,8 +4,8 @@ type: docs
 module: "@uppy/store-redux"
 permalink: docs/redux/
 order: 9
-category: 'Miscellaneous'
-tagline: Uppy can use your app’s Redux store for its files and UI state
+category: "Miscellaneous"
+tagline: "Uppy can use your app’s Redux store for its files and UI state"
 ---
 
 Uppy supports the popular [Redux](https://redux.js.org/) state management library in two ways:
