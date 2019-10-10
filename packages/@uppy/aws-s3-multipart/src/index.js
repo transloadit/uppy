@@ -26,6 +26,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     this.client = new RequestClient(uppy, opts)
 
     const defaultOptions = {
+      autoRetry: false,
       timeout: 30 * 1000,
       limit: 0,
       createMultipartUpload: this.createMultipartUpload.bind(this),
@@ -481,6 +482,10 @@ module.exports = class AwsS3Multipart extends Plugin {
       }
     })
     this.uppy.addUploader(this.upload)
+
+    if (this.opts.autoRetry) {
+      this.uppy.on('back-online', this.uppy.retryAll)
+    }
   }
 
   uninstall () {
