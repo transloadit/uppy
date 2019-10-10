@@ -42,6 +42,10 @@ The `@uppy/aws-s3-multipart` plugin has the following configurable options:
 
 The maximum amount of chunks to upload simultaneously. Set to `0` to disable limiting.
 
+### autoRetry: false
+
+Configures whether or not to auto-retry the upload when the user’s internet connection is back online after an outage.
+
 ### companionUrl: null
 
 The Companion URL to use for proxying calls to the S3 Multipart API.
