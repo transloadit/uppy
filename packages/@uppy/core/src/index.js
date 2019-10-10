@@ -824,6 +824,11 @@ class Uppy {
     this.on('upload-progress', this._calculateProgress)
 
     this.on('upload-success', (file, uploadResp) => {
+      if (!this.getFile(file.id)) {
+        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+        return
+      }
+      
       const currentProgress = this.getFile(file.id).progress
       this.setFileState(file.id, {
         progress: Object.assign({}, currentProgress, {
