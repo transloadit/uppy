@@ -30,6 +30,7 @@ const defaultOptions = {
       acl: 'public-read',
       endpoint: 'https://{service}.{region}.amazonaws.com',
       conditions: [],
+      useAccelerateEndpoint: false,
       getKey: (req, filename) => filename
     }
   },
@@ -223,8 +224,9 @@ const getOptionsMiddleware = (options) => {
       region: config.region,
       endpoint: config.endpoint,
       credentials,
-      signatureVersion: 'v4'
-    })
+      signatureVersion: "v4",
+      useAccelerateEndpoint: config.useAccelerateEndpoint
+    });
   }
 
   /**
