@@ -1,4 +1,5 @@
-'use-strict'
+'use strict'
+
 /**
  * Manages communications with Companion
  */
