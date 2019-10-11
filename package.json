@@ -104,8 +104,8 @@
     "@wdio/sauce-service": "^5.0.0",
     "aliasify": "^2.1.0",
     "autoprefixer": "^9.5.1",
-    "babel-eslint": "10.0.2",
-    "babel-jest": "^24.8.0",
+    "babel-eslint": "^10.0.3",
+    "babel-jest": "^24.9.0",
     "babel-plugin-inline-package-json": "^2.0.0",
     "babelify": "^10.0.0",
     "brake": "^1.0.1",
@@ -142,7 +142,7 @@
     "gzip-size": "^5.0.0",
     "http-proxy": "^1.18.0",
     "isomorphic-fetch": "2.2.1",
-    "jest": "24.8.0",
+    "jest": "^24.9.0",
     "json3": "^3.3.2",
     "last-commit-message": "^1.0.0",
     "lerna": "^3.14.1",
@@ -181,7 +181,7 @@
     "verdaccio": "^4.2.1",
     "watchify": "^3.11.1",
     "webdriverio": "^5.0.0",
-    "webpack": "4.39.1",
+    "webpack": "^4.41.1",
     "whatwg-fetch": "3.0.0"
   },
   "scripts": {

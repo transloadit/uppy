@@ -15,7 +15,6 @@
     "jsx-quotes": ["error", "prefer-double"],
     "compat/compat": ["error"],
     "react/jsx-handler-names": ["warn"], // maybe we want to do this in the future?
-    "no-unused-vars": ["off"], // Buggy: wrongly flags `i` in `for (const i in iterator)`—reenable ASAP
 
     "jsdoc/check-alignment": ["warn"],
     "jsdoc/check-examples": ["warn"],
