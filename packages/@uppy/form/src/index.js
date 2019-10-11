@@ -137,7 +137,7 @@ module.exports = class Form extends Plugin {
 
   install () {
     this.form = findDOMElement(this.opts.target)
-    if (!this.form || !this.form.nodeName === 'FORM') {
+    if (!this.form || this.form.nodeName !== 'FORM') {
       this.uppy.log('Form plugin requires a <form> target element passed in options to operate, none was found', 'error')
       return
     }
