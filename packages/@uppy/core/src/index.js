@@ -783,12 +783,12 @@ class Uppy {
    */
   _addListeners () {
     this.on('error', (error) => {
-      this.setState({ error: error.message })
+      this.setState({ error: error.message || 'Unknown error' })
     })
 
     this.on('upload-error', (file, error, response) => {
       this.setFileState(file.id, {
-        error: error.message,
+        error: error.message || 'Unknown error',
         response
       })
 
