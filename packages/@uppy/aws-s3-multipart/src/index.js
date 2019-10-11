@@ -311,7 +311,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
       const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
-      this.uploaderSockets[socket] = socket
+      this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       this.onFileRemove(file.id, (removed) => {
