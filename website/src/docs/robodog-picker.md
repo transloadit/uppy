@@ -116,3 +116,4 @@ Specific options for the [Webcam](/docs/webcam) provider.
 [companion]: /docs/companion
 [transloadit]: /docs/transloadit#options
 [assembly-status]: https://transloadit.com/docs/api/#assembly-status-response
+[promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise

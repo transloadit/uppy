@@ -25,6 +25,7 @@ Then, with a bundler such as [webpack][webpack] or [Browserify][browserify], do:
 
 ```js
 const robodog = require('@uppy/robodog')
+require('@uppy/robodog/dist/robodog.css')
 ```
 
 If you are not using a bundler, you can also import Robodog using an HTML script tag.
