@@ -190,6 +190,8 @@ export COMPANION_AWS_SECRET="YOUR AWS SECRET"
 export COMPANION_AWS_SECRET_FILE="PATH/TO/AWS/SECRET/FILE"
 export COMPANION_AWS_BUCKET="YOUR AWS S3 BUCKET"
 export COMPANION_AWS_REGION="AWS REGION"
+# to enable S3 Transfer Acceleration (default: false)
+export COMPANION_AWS_USE_ACCELERATE_ENDPOINT="false"
 
 # corresponds to the server.oauthDomain option
 export COMPANION_OAUTH_DOMAIN="sub.domain.com"
@@ -232,7 +234,8 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
       key: "***",
       secret: "***",
       bucket: "bucket-name",
-      region: "us-east-1"
+      region: "us-east-1",
+      useAccelerateEndpoint: false // default: false
     }
   },
   server: {
