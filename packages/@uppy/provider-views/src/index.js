@@ -594,7 +594,6 @@ module.exports = class ProviderView {
     }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
-    console.log(targetViewOptions)
     const browserProps = Object.assign({}, this.plugin.getPluginState(), {
       username: this.username,
       getNextFolder: this.getNextFolder,
