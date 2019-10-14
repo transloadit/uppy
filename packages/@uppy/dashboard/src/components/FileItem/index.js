@@ -27,7 +27,7 @@ module.exports = pure(function FileItem (props) {
     { 'is-processing': isProcessing },
     { 'is-complete': isUploaded },
     { 'is-paused': isPaused },
-    { 'is-error': error },
+    { 'is-error': !!error },
     { 'is-resumable': props.resumableUploads },
     { 'is-noIndividualCancellation': !props.individualCancellation }
   )
@@ -40,9 +40,10 @@ module.exports = pure(function FileItem (props) {
           showLinkToFileUploadResult={props.showLinkToFileUploadResult}
         />
         <FileProgress
+          {...props}
+          file={file}
           error={error}
           isUploaded={isUploaded}
-          {...props}
         />
       </div>
 
