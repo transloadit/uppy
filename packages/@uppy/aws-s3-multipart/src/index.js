@@ -153,6 +153,7 @@ module.exports = class AwsS3Multipart extends Plugin {
         this.uppy.emit('upload-error', file, err)
         err.message = `Failed because: ${err.message}`
 
+        queuedRequest.done()
         this.resetUploaderReferences(file.id)
         reject(err)
       }
@@ -162,6 +163,7 @@ module.exports = class AwsS3Multipart extends Plugin {
           uploadURL: result.location
         }
 
+        queuedRequest.done()
         this.resetUploaderReferences(file.id)
 
         this.uppy.emit('upload-success', file, uploadResp)
