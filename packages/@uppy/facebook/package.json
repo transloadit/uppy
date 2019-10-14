@@ -1,6 +1,6 @@
 {
   "name": "@uppy/facebook",
-  "description": "Import files from Facbook, into Uppy.",
+  "description": "Import files from Facebook, into Uppy.",
   "version": "0.1.0",
   "license": "MIT",
   "main": "lib/index.js",

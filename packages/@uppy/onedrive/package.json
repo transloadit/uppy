@@ -1,6 +1,6 @@
 {
   "name": "@uppy/onedrive",
-  "description": "Import files from Facbook, into Uppy.",
+  "description": "Import files from OneDrive, into Uppy.",
   "version": "0.1.0",
   "license": "MIT",
   "main": "lib/index.js",
