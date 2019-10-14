@@ -30,7 +30,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: normalize file names when uploading from iOS? $678
 - [ ] core: optimize problematic filenames #72
 - [ ] dashboard: “Custom Provider” plugin for  Dashboard — shows already uploaded files or files from a custom service; accepts an array of files to show in options, no companion required #362
-- [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] dashboard: add option to disable uploading from local disk #657
 - [ ] dashboard: Allow custom form fields in dashboard meta editing via jsx rendering (#617, #809, #454, @arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
@@ -53,7 +52,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] plugins: audio/memo recording similar to Webcam #143
 - [ ] plugins: Plugins - Keybase.io Remote provider plugin! #943
 - [ ] plugins: screenshot+screencast support similar to Webcam #148
-- [ ] plugins: Transformations, cropping, filters for images, see #53
 - [ ] plugins: WordPress plugin https://www.producthunt.com/posts/uppy-io#comment-559327 (“And Gravity forms”)
 - [ ] provider: Add Facebook, OneDrive, Box
 - [ ] provider: add sorting, filtering, previews #254
@@ -94,11 +92,14 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
 - [ ] xhr: set the `limit` option to a sensible default, like 10
 - [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now
+- [ ] core: add 1st class Vue.js support
+- [ ] core: add 1st class AngularJS support
 - [ ] form: make the `multipleResults` option `true` by default
 - [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
 - [ ] tus: set the `limit` option to a sensible default, like 10
 - [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
 - [ ] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861
+- [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53
 
 # next
 
