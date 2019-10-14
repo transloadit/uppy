@@ -124,11 +124,24 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] website: Adopt bcp-47 to handle and parse locales (@kvz, https://github.com/meikidd/iso-639-1/issues/19, https://tools.ietf.org/html/bcp47, https://github.com/wooorm/bcp-47)
 
-## 1.5.1
+## 1.5.2
 
 Released: 2019-10-14
 
 This release contains a new Thai locale, and some critical fixes for the 1.5 release, especially the S3 plugins.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3 | 1.3.2 | @uppy/locales | 1.8.0 |
+| @uppy/aws-s3-multipart | 1.3.3 | @uppy/onedrive | 0.1.1 |
+| @uppy/companion-client | 1.4.1 | @uppy/react | 1.3.2 |
+| @uppy/core | 1.5.1 | @uppy/robodog | 1.3.3 |
+| @uppy/dashboard | 1.4.1 | @uppy/transloadit | 1.3.2 |
+| @uppy/dropbox | 1.3.2 | @uppy/tus | 1.4.2 |
+| @uppy/facebook | 0.1.1 | @uppy/url | 1.3.2 |
+| @uppy/form | 1.3.2 | @uppy/xhr-upload | 1.3.2 |
+| @uppy/google-drive | 1.3.2 | uppy | 1.5.2 |
+| @uppy/instagram | 1.3.2 | - | - |
 
 - @uppy/aws-s3-multipart: advance queue after local file upload completes (@goto-bus-stop, #1887)
 - @uppy/core: provide default error message (@goto-bus-stop, #1880)
