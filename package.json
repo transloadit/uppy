@@ -145,7 +145,7 @@
     "jest": "^24.9.0",
     "json3": "^3.3.2",
     "last-commit-message": "^1.0.0",
-    "lerna": "^3.14.1",
+    "lerna": "^3.17.0",
     "lint-staged": "^9.4.1",
     "mime-types": "2.1.24",
     "minify-stream": "^1.2.0",
