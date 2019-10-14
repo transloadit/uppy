@@ -72,6 +72,12 @@ module.exports = class Facebook extends Plugin {
   }
 
   render (state) {
-    return this.view.render(state)
+    const viewOptions = {}
+    if (this.getPluginState().files.length && !this.getPluginState().folders.length) {
+      viewOptions.viewType = 'grid'
+      viewOptions.showFilter = false
+      viewOptions.showTitles = false
+    }
+    return this.view.render(state, viewOptions)
   }
 }
