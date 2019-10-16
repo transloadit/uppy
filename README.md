@@ -91,7 +91,7 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 
 - [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods, and events.
 - [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their options
-- [Companion](https://uppy.io/docs/companion/) — setting up and running an Companion instance, which adds support for Instagram, Dropbox, Google Drive and remote urls
+- [Companion](https://uppy.io/docs/companion/) — setting up and running a Companion instance, which adds support for Instagram, Dropbox, Google Drive and remote urls
 - [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps
 - [Architecture & Writing a Plugin](https://uppy.io/docs/writing-plugins/) — how to write a plugin for Uppy
 
@@ -154,9 +154,9 @@ We still run end to end tests with IE10, but we are not actively supporting it o
 
 ### Polyfills
 
-Uppy heavily uses Promises. If your target environment [does not support Promises](https://caniuse.com/#feat=promises), use a polyfill like `es6-promise` before initialising Uppy.
+Uppy heavily uses Promises. If your target environment [does not support Promises](https://caniuse.com/#feat=promises), use a polyfill like `es6-promise` before initializing Uppy.
 
-When using remote providers like Google Drive or Dropbox, the Fetch API is used. If your target environment does not support the [Fetch API](https://caniuse.com/#feat=fetch), use a polyfill like `whatwg-fetch` before initialising Uppy. The Fetch API polyfill must be loaded _after_ the Promises polyfill, because Fetch uses Promises.
+When using remote providers like Google Drive or Dropbox, the Fetch API is used. If your target environment does not support the [Fetch API](https://caniuse.com/#feat=fetch), use a polyfill like `whatwg-fetch` before initializing Uppy. The Fetch API polyfill must be loaded _after_ the Promises polyfill, because Fetch uses Promises.
 
 With a module bundler, you can use the required polyfills like so:
 
