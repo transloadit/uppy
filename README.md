@@ -114,7 +114,7 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 - ⓒ [`Google Drive`](https://uppy.io/docs/google-drive/)
 - ⓒ [`Dropbox`](https://uppy.io/docs/dropbox/)
 - ⓒ [`Instagram`](https://uppy.io/docs/instagram/)
-- ⓒ [`Import From URL`](https://uppy.io/docs/url/) — support picking files from remote providers or direct URLs from anywhere on the web
+- ⓒ [`Import From URL`](https://uppy.io/docs/url/) — pick files from remote providers or direct URLs from anywhere on the web
 
 The ⓒ mark means that [`@uppy/companion`](https://uppy.io/docs/companion), a server-side component, is needed for a plugin to work.
 
