@@ -65,7 +65,7 @@ $ npm install @uppy/core @uppy/dashboard @uppy/tus
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-Add CSS [uppy.min.css](https://transloadit.edgly.net/releases/uppy/v1.5.2/uppy.min.css), either to `<head>` of your HTML page or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
+Add CSS [uppy.min.css](https://transloadit.edgly.net/releases/uppy/v1.5.2/uppy.min.css), either to your HTML page's `<head>` or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
 
 Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
@@ -114,28 +114,28 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 - ⓒ [`Google Drive`](https://uppy.io/docs/google-drive/)
 - ⓒ [`Dropbox`](https://uppy.io/docs/dropbox/)
 - ⓒ [`Instagram`](https://uppy.io/docs/instagram/)
-- ⓒ [`Import From URL`](https://uppy.io/docs/url/) — pick files from remote providers or direct URLs from anywhere on the web
+- ⓒ [`Import From URL`](https://uppy.io/docs/url/) — supports picking files from remote providers or direct URLs from anywhere on the web
 
 The ⓒ mark means that [`@uppy/companion`](https://uppy.io/docs/companion), a server-side component, is needed for a plugin to work.
 
 ### Destinations
 
-- [`Tus`](https://uppy.io/docs/tus/) — resumable uploads via the open [tus](http://tus.io) standard.
-- [`XHR Upload`](https://uppy.io/docs/xhr-upload/) — regular uploads for any backend out there (like Apache, Nginx).
-- [`AWS S3`](https://uppy.io/docs/aws-s3/) — uploader for AWS S3.
-- [`AWS S3 Multipart`](https://uppy.io/docs/aws-s3-multipart/) — upload to AWS S3.
+- [`Tus`](https://uppy.io/docs/tus/) — resumable uploads via the open [tus](http://tus.io) standard
+- [`XHR Upload`](https://uppy.io/docs/xhr-upload/) — regular uploads for any backend out there (like Apache, Nginx)
+- [`AWS S3`](https://uppy.io/docs/aws-s3/) — uploader for AWS S3
+- [`AWS S3 Multipart`](https://uppy.io/docs/aws-s3-multipart/) — upload to AWS S3
 
 ### File Processing
 
-- [`Robodog`](https://uppy.io/docs/robodog/) — user friendly abstraction to do file processing with Transloadit .
+- [`Robodog`](https://uppy.io/docs/robodog/) — user friendly abstraction to do file processing with Transloadit
 - [`Transloadit`](https://uppy.io/docs/transloadit/) — support for [Transloadit](http://transloadit.com)’s robust file uploading and encoding backend
 
 ### Miscellaneous
 
-- [`Golden Retriever`](https://uppy.io/docs/golden-retriever/) — restores files after a browser crash, like it’s nothing.
-- [`Thumbnail Generator`](https://uppy.io/docs/thumbnail-generator/) — generates image previews (included by default with `Dashboard`).
-- [`Form`](https://uppy.io/docs/form/) — collects metadata from `<form>` right before an Uppy upload, then optionally appends results back to the form.
-- [`Redux`](https://uppy.io/docs/redux/) — for your emerging [time traveling](https://github.com/gaearon/redux-devtools) needs.
+- [`Golden Retriever`](https://uppy.io/docs/golden-retriever/) — restores files after a browser crash, like it’s nothing
+- [`Thumbnail Generator`](https://uppy.io/docs/thumbnail-generator/) — generates image previews (included by default with `Dashboard`)
+- [`Form`](https://uppy.io/docs/form/) — collects metadata from `<form>` right before an Uppy upload, then optionally appends results back to the form
+- [`Redux`](https://uppy.io/docs/redux/) — for your emerging [time traveling](https://github.com/gaearon/redux-devtools) needs
 
 ## React
 
@@ -169,7 +169,7 @@ require('whatwg-fetch')
 const Uppy = require('@uppy/core')
 ```
 
-If you're using Uppy from CDN, `es6-promise` and  `whatwg-fetch` are already included in the bundle, no need to include anything additionally:
+If you're using Uppy from CDN, `es6-promise` and  `whatwg-fetch` are already included in the bundle, so no need to include anything additionally:
 
 ```html
 <script src="https://transloadit.edgly.net/releases/uppy/v1.5.2/uppy.min.js"></script>
@@ -187,11 +187,11 @@ Having no JavaScript beats having a lot of it, so that’s a fair question! Runn
 - Accurate upload progress reporting is an issue on many platforms.
 - Some file validation — size, type, number of files — can be done on the client with Uppy.
 - Uppy integrates webcam support, in case your users want to upload a picture/video/audio that does not exist yet :)
-- A larger drag & drop surface can be pleasant to work with. Some people also like that you can control the styling, language, etc.
+- A larger drag and drop surface can be pleasant to work with. Some people also like that you can control the styling, language, etc.
 - Uppy is aware of encoding backends. Often after an upload, the server needs to rotate, detect faces, optimize for iPad, or what have you. Uppy can track progress of this and report back to the user in different ways.
 - Sometimes you might want your uploads to happen while you continue to interact on the same single page.
 
-Not all apps need all of these features. A `<input type="file">` is fine in many situations. But these were a few things that our customers hit / asked about enough to spark us to develop Uppy.
+Not all apps need all of these features. An `<input type="file">` is fine in many situations. But these were a few things that our customers hit / asked about enough to spark us to develop Uppy.
 
 ### Why is all this goodness free?
 
@@ -222,7 +222,7 @@ And you’ll need [`@uppy/companion`](https://uppy.io/docs/companion) if you’d
 
 ## Used by
 
-Uppy is used by: [Photobox](http://photobox.com), [Issuu](https://issuu.com/), [Law Insider](https://lawinsider.com), [Cool Tabs](https://cool-tabs.com), [Soundoff](https://soundoff.io), [Scrumi](https://www.scrumi.io/), [Crive](https://crive.co/) and others.
+Uppy is used by: [Photobox](http://photobox.com), [Issuu](https://issuu.com/), [Law Insider](https://lawinsider.com), [Cool Tabs](https://cool-tabs.com), [Soundoff](https://soundoff.io), [Scrumi](https://www.scrumi.io/) [Crive](https://crive.co/) and others.
 
 Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issues/769)!
 
