@@ -222,7 +222,7 @@ And you’ll need [`@uppy/companion`](https://uppy.io/docs/companion) if you’d
 
 ## Used by
 
-Uppy is used by: [Photobox](http://photobox.com), [Issuu](https://issuu.com/), [Law Insider](https://lawinsider.com), [Cool Tabs](https://cool-tabs.com), [Soundoff](https://soundoff.io), [Scrumi](https://www.scrumi.io/) [Crive](https://crive.co/) and others.
+Uppy is used by: [Photobox](http://photobox.com), [Issuu](https://issuu.com/), [Law Insider](https://lawinsider.com), [Cool Tabs](https://cool-tabs.com), [Soundoff](https://soundoff.io), [Scrumi](https://www.scrumi.io/), [Crive](https://crive.co/) and others.
 
 Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issues/769)!
 
