@@ -99,8 +99,7 @@ class Uppy {
     }
 
     // Merge default options with the ones set by user
-    this.opts = {}
-    this.setOptions(defaultOptions)
+    this.opts = defaultOptions
     this.setOptions(opts)
 
     // Support debug: true for backwards-compatability, unless logger is set in opts
