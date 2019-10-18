@@ -73,13 +73,9 @@ module.exports = class Webcam extends Plugin {
       preferredVideoMimeType: null
     }
 
-    // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
-    // i18n
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     this.install = this.install.bind(this)
     this.setPluginState = this.setPluginState.bind(this)
@@ -100,6 +96,18 @@ module.exports = class Webcam extends Plugin {
     if (this.opts.countdown) {
       this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
     }
+  }
+
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   isSupported () {
