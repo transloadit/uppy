@@ -1,9 +1,14 @@
-const resolveUrl = require('resolve-url')
+// If global `URL` constructor is available, use it
+const URL_ = typeof URL === 'function' ? URL : require('url-parse')
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
-const limitPromises = require('@uppy/utils/lib/limitPromises')
+const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const { RequestClient } = require('@uppy/companion-client')
 const XHRUpload = require('@uppy/xhr-upload')
+
+function resolveUrl (origin, link) {
+  return new URL_(link, origin).toString()
+}
 
 function isXml (xhr) {
   const contentType = xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type')
@@ -59,11 +64,7 @@ module.exports = class AwsS3 extends Plugin {
 
     this.prepareUpload = this.prepareUpload.bind(this)
 
-    if (typeof this.opts.limit === 'number' && this.opts.limit !== 0) {
-      this.limitRequests = limitPromises(this.opts.limit)
-    } else {
-      this.limitRequests = (fn) => fn
-    }
+    this.requests = new RateLimitedQueue(this.opts.limit)
   }
 
   getUploadParameters (file) {
@@ -102,25 +103,29 @@ module.exports = class AwsS3 extends Plugin {
       })
     })
 
-    const getUploadParameters = this.limitRequests(this.opts.getUploadParameters)
+    // Wrapping rate-limited opts.getUploadParameters in a Promise takes some boilerplate!
+    const getUploadParameters = this.requests.wrapPromiseFunction((file) => {
+      return this.opts.getUploadParameters(file)
+    })
 
     return Promise.all(
       fileIDs.map((id) => {
         const file = this.uppy.getFile(id)
-        const paramsPromise = Promise.resolve()
-          .then(() => getUploadParameters(file))
-        return paramsPromise.then((params) => {
-          return this.validateParameters(file, params)
-        }).then((params) => {
-          this.uppy.emit('preprocess-progress', file, {
-            mode: 'determinate',
-            message: this.i18n('preparingUpload'),
-            value: 1
+        return getUploadParameters(file)
+          .then((params) => {
+            return this.validateParameters(file, params)
           })
-          return params
-        }).catch((error) => {
-          this.uppy.emit('upload-error', file, error)
-        })
+          .then((params) => {
+            this.uppy.emit('preprocess-progress', file, {
+              mode: 'determinate',
+              message: this.i18n('preparingUpload'),
+              value: 1
+            })
+            return params
+          })
+          .catch((error) => {
+            this.uppy.emit('upload-error', file, error)
+          })
       })
     ).then((responses) => {
       const updatedFiles = {}
@@ -147,16 +152,21 @@ module.exports = class AwsS3 extends Plugin {
           xhrOpts.headers = headers
         }
 
-        const updatedFile = Object.assign({}, file, {
-          meta: Object.assign({}, file.meta, fields),
+        const updatedFile = {
+          ...file,
+          meta: { ...file.meta, ...fields },
           xhrUpload: xhrOpts
-        })
+        }
 
         updatedFiles[id] = updatedFile
       })
 
+      const { files } = this.uppy.getState()
       this.uppy.setState({
-        files: Object.assign({}, this.uppy.getState().files, updatedFiles)
+        files: {
+          ...files,
+          ...updatedFiles
+        }
       })
 
       fileIDs.forEach((id) => {
@@ -175,7 +185,7 @@ module.exports = class AwsS3 extends Plugin {
       fieldName: 'file',
       responseUrlFieldName: 'location',
       timeout: this.opts.timeout,
-      limit: this.opts.limit,
+      __queue: this.requests,
       responseType: 'text',
       // Get the response data from a successful XMLHttpRequest instance.
       // `content` is the S3 response as a string.

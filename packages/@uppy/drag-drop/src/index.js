@@ -107,8 +107,11 @@ module.exports = class DragDrop extends Plugin {
     this.setPluginState({ isDraggingOver: false })
 
     // 3. Add all dropped files
-    this.uppy.log('[DragDrop] File were dropped')
-    getDroppedFiles(event.dataTransfer)
+    this.uppy.log('[DragDrop] Files were dropped')
+    const logDropError = (error) => {
+      this.uppy.log(error, 'error')
+    }
+    getDroppedFiles(event.dataTransfer, { logDropError })
       .then((files) => {
         files.forEach(this.addFile)
       })
@@ -145,7 +148,8 @@ module.exports = class DragDrop extends Plugin {
         name={this.opts.inputName}
         multiple={restrictions.maxNumberOfFiles !== 1}
         accept={restrictions.allowedFileTypes}
-        onchange={this.handleInputChange} />
+        onchange={this.handleInputChange}
+      />
     )
   }
 
@@ -195,7 +199,8 @@ module.exports = class DragDrop extends Plugin {
         onClick={() => this.fileInputRef.click()}
         onDragOver={this.handleDragOver}
         onDragLeave={this.handleDragLeave}
-        onDrop={this.handleDrop} >
+        onDrop={this.handleDrop}
+      >
         {this.renderHiddenFileInput()}
         <div class="uppy-DragDrop-inner">
           {this.renderArrowSvg()}

@@ -4,8 +4,8 @@ order: 1
 title: "Uppy"
 module: "@uppy/core"
 permalink: docs/uppy/
-category: 'Docs'
-tagline: The core module that orchestrates everything
+category: "Docs"
+tagline: "The core module that orchestrates everything"
 ---
 
 This is the core module that orchestrates everything in Uppy, managing state and events and providing methods.
@@ -136,6 +136,10 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 `maxNumberOfFiles` also affects the number of files a user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1`, they will only be able to select a single file. When `null` or another number is provided, they will be able to select multiple files.
 
 `allowedFileTypes` gets passed to the system file dialog via [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types)’s accept attribute, so only files matching these types will be selectable.
+
+> If you’d like to force a certain meta field data to be entered before the upload, you can [do so using `onBeforeUpload`](https://github.com/transloadit/uppy/issues/1703#issuecomment-507202561).
+
+> If you need to restrict `allowedFileTypes` to a file extension with double dots, like `.nii.gz`, you can do so by [setting `allowedFileTypes` to just the last part of the extension, `allowedFileTypes: ['.gz']`, and then using `onBeforeFileAdded` to filter for `.nii.gz`](https://github.com/transloadit/uppy/issues/1822#issuecomment-526801208).
 
 ### `meta: {}`
 
@@ -339,11 +343,15 @@ uppy.addFile({
 
 `addFile` gives an error if the file cannot be added, either because `onBeforeFileAdded(file)` gave an error, or because `uppy.opts.restrictions` checks failed.
 
+If you try to add a file that already exists, `addFile` will throw an error. Unless that duplicate file was dropped with a folder — duplicate files from different folders are allowed, when selected with that folder. This is because we add `file.meta.relativePath` to the `file.id`.
+
 If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically when files are added.
 
-This function will return the generated id for the file that was added.
+`addFile` will return the generated id for the file that was added.
 
 > Sometimes you might need to add a remote file to Uppy. This can be achieved by [fetching the file, then creating a Blob object, or using the Url plugin with Companion](https://github.com/transloadit/uppy/issues/1006#issuecomment-413495493).
+>
+> Sometimes you might need to mark some files as “already uploaded”, so that the user sees them, but they won’t actually be uploaded by Uppy. This can be achieved by [looping through files and setting `uploadComplete: true, uploadStarted: false` on them](https://github.com/transloadit/uppy/issues/1112#issuecomment-432339569)
 
 ### `uppy.removeFile(fileID)`
 

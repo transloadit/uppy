@@ -49,6 +49,7 @@ class Uppy {
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
         companionError: 'Connection with Companion failed',
         companionAuthError: 'Authorization required',
+        companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
         failedToUpload: 'Failed to upload %{file}',
         noInternetConnection: 'No Internet connection',
         connectedToInternet: 'Connected to the Internet',
@@ -113,9 +114,9 @@ class Uppy {
     this.log(`Using Core v${this.constructor.VERSION}`)
 
     if (this.opts.restrictions.allowedFileTypes &&
-      this.opts.restrictions.allowedFileTypes !== null &&
-      !Array.isArray(this.opts.restrictions.allowedFileTypes)) {
-      throw new Error(`'restrictions.allowedFileTypes' must be an array`)
+        this.opts.restrictions.allowedFileTypes !== null &&
+        !Array.isArray(this.opts.restrictions.allowedFileTypes)) {
+      throw new TypeError('`restrictions.allowedFileTypes` must be an array')
     }
 
     this.i18nInit()
@@ -442,6 +443,28 @@ class Uppy {
     }
   }
 
+  _showOrLogErrorAndThrow (err, { showInformer = true, file = null } = {}) {
+    const message = typeof err === 'object' ? err.message : err
+    const details = (typeof err === 'object' && err.details) ? err.details : ''
+
+    // Restriction errors should be logged, but not as errors,
+    // as they are expected and shown in the UI.
+    if (err.isRestriction) {
+      this.log(`${message} ${details}`)
+      this.emit('restriction-failed', file, err)
+    } else {
+      this.log(`${message} ${details}`, 'error')
+    }
+
+    // Sometimes informer has to be shown manually by the developer,
+    // for example, in `onBeforeFileAdded`.
+    if (showInformer) {
+      this.info({ message: message, details: details }, 'error', 5000)
+    }
+
+    throw (typeof err === 'object' ? err : new Error(err))
+  }
+
   /**
    * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
    * try to guess file type in a clever way, check file against restrictions,
@@ -453,15 +476,8 @@ class Uppy {
   addFile (file) {
     const { files, allowNewUpload } = this.getState()
 
-    const onError = (msg) => {
-      const err = typeof msg === 'object' ? msg : new Error(msg)
-      this.log(err.message)
-      this.info(err.message, 'error', 5000)
-      throw err
-    }
-
     if (allowNewUpload === false) {
-      onError(new Error('Cannot add new files: already uploading.'))
+      this._showOrLogErrorAndThrow(new RestrictionError('Cannot add new files: already uploading.'), { file })
     }
 
     const fileType = getFileType(file)
@@ -470,8 +486,8 @@ class Uppy {
     const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(file, files)
 
     if (onBeforeFileAddedResult === false) {
-      this.log('Not adding file because onBeforeFileAdded returned false')
-      return
+      // Don’t show UI info for this error, as it should be done by the developer
+      this._showOrLogErrorAndThrow(new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.'), { showInformer: false, file })
     }
 
     if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
@@ -490,6 +506,10 @@ class Uppy {
     const isRemote = file.isRemote || false
 
     const fileID = generateFileID(file)
+
+    if (files[fileID]) {
+      this._showOrLogErrorAndThrow(new RestrictionError(`Cannot add the duplicate file '${fileName}', it already exists.`), { file })
+    }
 
     const meta = file.meta || {}
     meta.name = fileName
@@ -521,8 +541,7 @@ class Uppy {
     try {
       this._checkRestrictions(newFile)
     } catch (err) {
-      this.emit('restriction-failed', newFile, err)
-      onError(err)
+      this._showOrLogErrorAndThrow(err, { file: newFile })
     }
 
     this.setState({
@@ -783,12 +802,12 @@ class Uppy {
    */
   _addListeners () {
     this.on('error', (error) => {
-      this.setState({ error: error.message })
+      this.setState({ error: error.message || 'Unknown error' })
     })
 
     this.on('upload-error', (file, error, response) => {
       this.setFileState(file.id, {
-        error: error.message,
+        error: error.message || 'Unknown error',
         response
       })
 
@@ -961,7 +980,7 @@ class Uppy {
     if (existsPluginAlready) {
       const msg = `Already found a plugin named '${existsPluginAlready.id}'. ` +
         `Tried to use: '${pluginId}'.\n` +
-        `Uppy plugins must have unique 'id' options. See https://uppy.io/docs/plugins/#id.`
+        'Uppy plugins must have unique `id` options. See https://uppy.io/docs/plugins/#id.'
       throw new Error(msg)
     }
 
@@ -1332,19 +1351,7 @@ class Uppy {
         return this._runUpload(uploadID)
       })
       .catch((err) => {
-        const message = typeof err === 'object' ? err.message : err
-        const details = (typeof err === 'object' && err.details) ? err.details : ''
-
-        if (err.isRestriction) {
-          this.emit('restriction-failed', null, err)
-          this.log(`${message} ${details}`, 'info')
-          this.info({ message: message, details: details }, 'info', 5000)
-        } else {
-          this.log(`${message} ${details}`, 'error')
-          this.info({ message: message, details: details }, 'error', 5000)
-        }
-
-        throw (typeof err === 'object' ? err : new Error(err))
+        this._showOrLogErrorAndThrow(err)
       })
   }
 }

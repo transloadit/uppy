@@ -94,7 +94,7 @@ class DropBox {
     this.client
       .post('files/list_folder')
       .options({ version: '2' })
-      .where(query)
+      .qs(query)
       .auth(token)
       .json({
         path: `${directory || ''}`
@@ -157,6 +157,21 @@ class DropBox {
           return done(err)
         }
         done(null, parseInt(body.size))
+      })
+  }
+
+  logout ({ token }, done) {
+    return this.client
+      .post('auth/token/revoke')
+      .options({ version: '2' })
+      .auth(token)
+      .request((err, resp) => {
+        if (err || resp.statusCode !== 200) {
+          logger.error(err, 'provider.dropbox.size.error')
+          done(this._error(err, resp))
+          return
+        }
+        done(null, { revoked: true })
       })
   }
 

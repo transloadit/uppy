@@ -5,7 +5,7 @@ module: "@uppy/react"
 permalink: docs/react/status-bar/
 alias: docs/react/statusbar/
 order: 1
-category: 'React'
+category: "React"
 ---
 
 The `<StatusBar />` component wraps the [`@uppy/status-bar`][] plugin.

@@ -69,6 +69,8 @@ async function getMinifiedSize (pkg, name) {
   const b = browserify(pkg)
   if (name !== '@uppy/core' && name !== 'uppy') {
     b.exclude('@uppy/core')
+    // Already unconditionally included through @uppy/core
+    b.exclude('preact')
   }
   if (excludes[name]) {
     b.exclude(excludes[name])
@@ -154,8 +156,8 @@ async function injectGhStars () {
 
 async function injectMarkdown () {
   const sources = {
-    '.github/ISSUE_TEMPLATE/integration_help.md': `src/_template/integration_help.md`,
-    '.github/CONTRIBUTING.md': `src/_template/contributing.md`
+    '.github/ISSUE_TEMPLATE/integration_help.md': 'src/_template/integration_help.md',
+    '.github/CONTRIBUTING.md': 'src/_template/contributing.md'
   }
 
   for (const src in sources) {
@@ -171,9 +173,9 @@ async function injectMarkdown () {
     let content = `<!-- WARNING! This file was injected. Please edit in "${src}" instead and run "${path.basename(__filename)}" -->\n\n`
     content += parts.join('---\n')
     fs.writeFileSync(dstpath, content, 'utf-8')
-    console.info(chalk.green(`✓ injected: `), chalk.grey(srcpath))
+    console.info(chalk.green('✓ injected: '), chalk.grey(srcpath))
   }
-  touch(path.join(webRoot, `/src/support.md`))
+  touch(path.join(webRoot, '/src/support.md'))
 }
 
 function injectLocaleList () {
@@ -213,7 +215,7 @@ function injectLocaleList () {
 
   const dstpath = path.join(webRoot, 'src', '_template', 'list_of_locale_packs.md')
   fs.writeFileSync(dstpath, resultingMdTable, 'utf-8')
-  console.info(chalk.green(`✓ injected: `), chalk.grey(dstpath))
+  console.info(chalk.green('✓ injected: '), chalk.grey(dstpath))
 }
 
 async function readConfig () {

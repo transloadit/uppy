@@ -99,21 +99,24 @@ module.exports = class FileInput extends Plugin {
 
     return (
       <div class="uppy-Root uppy-FileInput-container">
-        <input class="uppy-FileInput-input"
+        <input
+          class="uppy-FileInput-input"
           style={this.opts.pretty && hiddenInputStyle}
           type="file"
           name={this.opts.inputName}
           onchange={this.handleInputChange}
           multiple={restrictions.maxNumberOfFiles !== 1}
           accept={accept}
-          ref={(input) => { this.input = input }} />
+          ref={(input) => { this.input = input }}
+        />
         {this.opts.pretty &&
-          <button class="uppy-FileInput-btn"
+          <button
+            class="uppy-FileInput-btn"
             type="button"
-            onclick={this.handleClick}>
+            onclick={this.handleClick}
+          >
             {this.i18n('chooseFiles')}
-          </button>
-        }
+          </button>}
       </div>
     )
   }

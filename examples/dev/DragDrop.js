@@ -15,6 +15,8 @@ module.exports = () => {
     .use(ProgressBar, { target: '#uppyDragDrop-progress', hideAfterFinish: false })
     .use(Tus, { endpoint: 'https://master.tus.io/files/' })
 
+  window.uppy = uppyDragDrop
+
   uppyDragDrop.on('complete', (result) => {
     if (result.failed.length === 0) {
       console.log('Upload successful 😀')

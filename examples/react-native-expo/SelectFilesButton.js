@@ -5,7 +5,8 @@ export default function SelectFiles (props) {
   return (
     <TouchableHighlight
       onPress={props.showFilePicker}
-      style={styles.button}>
+      style={styles.button}
+    >
       <Text style={styles.text}>Select files</Text>
     </TouchableHighlight>
   )

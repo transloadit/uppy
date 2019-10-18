@@ -4,7 +4,7 @@ type: docs
 module: "@uppy/react"
 permalink: docs/react/
 order: 0
-category: 'React'
+category: "React"
 ---
 
 Uppy provides [React][] components for the included UI plugins.

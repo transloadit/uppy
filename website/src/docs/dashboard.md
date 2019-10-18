@@ -4,8 +4,8 @@ order: 0
 title: "Dashboard"
 module: "@uppy/dashboard"
 permalink: docs/dashboard/
-category: 'UI Elements'
-tagline: full-featured sleek UI with file previews, metadata editing, upload/pause/resume/cancel buttons and more. Includes <code>StatusBar</code> and <code>Informer</code> plugins by default
+category: "UI Elements"
+tagline: "full-featured sleek UI with file previews, metadata editing, upload/pause/resume/cancel buttons and more. Includes <code>StatusBar</code> and <code>Informer</code> plugins by default"
 ---
 
 `@uppy/dashboard` is a universal UI plugin for Uppy, offering several useful features:
@@ -133,6 +133,12 @@ Width of the Dashboard in pixels. Used when `inline: true`.
 ### `height: 550`
 
 Height of the Dashboard in pixels. Used when `inline: true`.
+
+### `waitForThumbnailsBeforeUpload: false`
+
+Whether to wait for all thumbnails from `@uppy/thumbnail-generator` to be ready before starting the upload. If set to `true`, Thumbnail Generator will envoke Uppy’s internal processing stage, displaying “Generating thumbnails...” message, and wait for `thumbnail:all-generated` event, before proceeding to the uploading stage.
+
+This is useful because Thumbnail Generator also adds EXIF data to images, and if we wait until it’s done processing, this data will be avilable on the server after the upload.
 
 ### `showLinkToFileUploadResult: true`
 

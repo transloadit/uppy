@@ -3,7 +3,7 @@ type: docs
 order: 5
 title: "Custom Stores"
 permalink: docs/stores/
-category: 'Docs'
+category: "Docs"
 ---
 
 > This section concerns storing the internal application state, if you work with React/Redux, for example. If none of this rings a bell, you can safely skip this section.

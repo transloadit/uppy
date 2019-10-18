@@ -4,8 +4,8 @@ order: 2
 title: "AWS S3"
 module: "@uppy/aws-s3"
 permalink: docs/aws-s3/
-category: 'Destinations'
-tagline: uploader for AWS S3
+category: "Destinations"
+tagline: "uploader for AWS S3"
 ---
 
 The `@uppy/aws-s3` plugin can be used to upload files directly to an S3 bucket.
@@ -60,7 +60,7 @@ uppy.use(AwsS3, {
 })
 ```
 
-### `serverHeaders: {}`
+### `companionHeaders: {}`
 
 > Note: This only applies when using [Companion][companion docs] to sign S3 uploads.
 
@@ -84,6 +84,7 @@ The `fields` field is an object with form fields to send along with the upload r
 For presigned PUT uploads, this should be left empty.
 
 The `headers` field is an object with request headers to send along with the upload request.
+When using a presigned PUT upload, it's a good idea to provide `headers['content-type']`. That will ensure that the request uses the same content-type that was used to generate the signature. Without it, the browser may decide on a different content-type instead, causing S3 to reject the upload.
 
 ### `timeout: 30 * 1000`
 

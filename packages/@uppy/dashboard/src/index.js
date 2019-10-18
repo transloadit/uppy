@@ -101,6 +101,7 @@ module.exports = class Dashboard extends Plugin {
       width: 750,
       height: 550,
       thumbnailWidth: 280,
+      waitForThumbnailsBeforeUpload: false,
       defaultPickerIcon,
       showLinkToFileUploadResult: true,
       showProgressDetails: false,
@@ -555,7 +556,17 @@ module.exports = class Dashboard extends Plugin {
     })
 
     // 4. Add all dropped files
-    getDroppedFiles(event.dataTransfer)
+    let executedDropErrorOnce = false
+    const logDropError = (error) => {
+      this.uppy.log(error, 'error')
+
+      // In practice all drop errors are most likely the same, so let's just show one to avoid overwhelming the user
+      if (!executedDropErrorOnce) {
+        this.uppy.info(error.message, 'error')
+        executedDropErrorOnce = true
+      }
+    }
+    getDroppedFiles(event.dataTransfer, { logDropError })
       .then((files) => {
         if (files.length > 0) {
           this.uppy.log('[Dashboard] Files were dropped')
@@ -909,7 +920,8 @@ module.exports = class Dashboard extends Plugin {
     if (!this.opts.disableThumbnailGenerator) {
       this.uppy.use(ThumbnailGenerator, {
         id: `${this.id}:ThumbnailGenerator`,
-        thumbnailWidth: this.opts.thumbnailWidth
+        thumbnailWidth: this.opts.thumbnailWidth,
+        waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload
       })
     }
 

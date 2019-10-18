@@ -16,6 +16,7 @@ en_US.strings = {
   closeModal: 'Close Modal',
   companionAuthError: 'Authorization required',
   companionError: 'Connection with Companion failed',
+  companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
   complete: 'Complete',
   connectedToInternet: 'Connected to the Internet',
   copyLink: 'Copy link',
@@ -54,6 +55,7 @@ en_US.strings = {
     '1': 'Added %{smart_count} files from %{folder}',
     '2': 'Added %{smart_count} files from %{folder}'
   },
+  generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',
   importFrom: 'Import from %{name}',
   link: 'Link',

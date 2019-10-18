@@ -6,7 +6,8 @@ const adapter = require('./adapter')
 const AuthError = require('../error')
 const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
-const TEAM_DRIVE_FIELDS = 'teamDrives(kind,id,name,backgroundImageLink)'
+// using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
+const SHARED_DRIVE_FIELDS = '*'
 
 class Drive {
   constructor (options) {
@@ -25,19 +26,19 @@ class Drive {
     const directory = options.directory || 'root'
     const query = options.query || {}
 
-    let teamDrivesPromise = Promise.resolve(undefined)
+    let sharedDrivesPromise = Promise.resolve(undefined)
 
-    const shouldListTeamDrives = directory === 'root' && !query.cursor
-    if (shouldListTeamDrives) {
-      teamDrivesPromise = new Promise((resolve) => {
+    const shouldListSharedDrives = directory === 'root' && !query.cursor
+    if (shouldListSharedDrives) {
+      sharedDrivesPromise = new Promise((resolve) => {
         this.client
           .query()
-          .get('teamdrives')
-          .where({ fields: TEAM_DRIVE_FIELDS })
+          .get('drives')
+          .qs({ fields: SHARED_DRIVE_FIELDS })
           .auth(options.token)
           .request((err, resp) => {
             if (err) {
-              logger.error(err, 'provider.drive.teamDrive.error')
+              logger.error(err, 'provider.drive.sharedDrive.error')
               return
             }
             resolve(resp)
@@ -57,7 +58,7 @@ class Drive {
       this.client
         .query()
         .get('files')
-        .where(where)
+        .qs(where)
         .auth(options.token)
         .request((err, resp) => {
           if (err || resp.statusCode !== 200) {
@@ -68,12 +69,12 @@ class Drive {
         })
     })
 
-    Promise.all([teamDrivesPromise, filesPromise])
+    Promise.all([sharedDrivesPromise, filesPromise])
       .then(
-        ([teamDrives, filesResponse]) => {
+        ([sharedDrives, filesResponse]) => {
           const returnData = this.adaptData(
             filesResponse.body,
-            teamDrives && teamDrives.body,
+            sharedDrives && sharedDrives.body,
             options.uppy,
             directory,
             query
@@ -91,7 +92,7 @@ class Drive {
     return this.client
       .query()
       .get(`files/${id}`)
-      .where({ fields: DRIVE_FILE_FIELDS, supportsTeamDrives: true })
+      .qs({ fields: DRIVE_FILE_FIELDS, supportsAllDrives: true })
       .auth(token)
       .request(done)
   }
@@ -100,7 +101,7 @@ class Drive {
     return this.client
       .query()
       .get(`files/${id}`)
-      .where({ alt: 'media', supportsTeamDrives: true })
+      .qs({ alt: 'media', supportsAllDrives: true })
       .auth(token)
       .request()
       .on('data', onData)
@@ -133,7 +134,21 @@ class Drive {
     })
   }
 
-  adaptData (res, teamDrivesResp, uppy, directory, query) {
+  logout ({ token }, done) {
+    return this.client
+      .get('https://accounts.google.com/o/oauth2/revoke')
+      .qs({ token })
+      .request((err, resp) => {
+        if (err || resp.statusCode !== 200) {
+          logger.error(err, 'provider.drive.logout.error')
+          done(this._error(err, resp))
+          return
+        }
+        done(null, { revoked: true })
+      })
+  }
+
+  adaptData (res, sharedDrivesResp, uppy, directory, query) {
     const adaptItem = (item) => ({
       isFolder: adapter.isFolder(item),
       icon: adapter.getItemIcon(item),
@@ -145,14 +160,17 @@ class Drive {
       modifiedDate: adapter.getItemModifiedDate(item),
       size: adapter.getItemSize(item),
       custom: {
-        isTeamDrive: adapter.isTeamDrive(item)
+        // @todo isTeamDrive is left for backward compatibility. We should remove it in the next
+        // major release.
+        isTeamDrive: adapter.isSharedDrive(item),
+        isSharedDrive: adapter.isSharedDrive(item)
       }
     })
 
     const items = adapter.getItemSubList(res)
-    const teamDrives = teamDrivesResp ? teamDrivesResp.teamDrives || [] : []
+    const sharedDrives = sharedDrivesResp ? sharedDrivesResp.drives || [] : []
 
-    const adaptedItems = teamDrives.concat(items).map(adaptItem)
+    const adaptedItems = sharedDrives.concat(items).map(adaptItem)
 
     return {
       username: adapter.getUsername(res),

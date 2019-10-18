@@ -5,8 +5,8 @@ title: "Robodog"
 menu: "Robodog Introduction"
 module: "@uppy/robodog"
 permalink: docs/robodog/
-category: 'File Processing'
-tagline: user friendly abstraction to do file processing with Transloadit
+category: "File Processing"
+tagline: "user friendly abstraction to do file processing with Transloadit"
 ---
 
 [Transloadit][transloadit] is a service that helps you handle file uploads, resize, crop and watermark your images, make GIFs, transcode your videos, extract thumbnails, generate audio waveforms, and so much more. In short, [Transloadit][transloadit] is the Swiss Army Knife for your files.
@@ -25,13 +25,14 @@ Then, with a bundler such as [webpack][webpack] or [Browserify][browserify], do:
 
 ```js
 const robodog = require('@uppy/robodog')
+require('@uppy/robodog/dist/robodog.css')
 ```
 
 If you are not using a bundler, you can also import Robodog using an HTML script tag.
 
 ```html
-<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.css">
-<script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.js"></script>
+<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.3.3/robodog.min.css">
+<script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.3.3/robodog.min.js"></script>
 <!-- you can now use: window.Robodog.pick() -->
 ```
 

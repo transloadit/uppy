@@ -36,7 +36,6 @@ echo $KUBECONFIGVAR | python -m base64 -d > ${HOME}/.kube/config
 echo "KUBECONFIG file written"
 
 sleep 10s # This cost me some precious debugging time.
-kubectl apply -f "${__kube}/companion/companion-kube.yaml"
 kubectl apply -f "${__kube}/companion/companion-redis.yaml"
 kubectl set image statefulset companion --namespace=companion companion=docker.io/transloadit/companion:$TRAVIS_COMMIT
 sleep 10s

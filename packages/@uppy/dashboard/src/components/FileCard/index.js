@@ -52,19 +52,23 @@ class FileCard extends Component {
 
     return metaFields.map((field) => {
       const id = `uppy-Dashboard-FileCard-input-${field.id}`
-      return <fieldset class="uppy-Dashboard-FileCard-fieldset">
-        <label class="uppy-Dashboard-FileCard-label" for={id}>{field.name}</label>
-        <input class="uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input"
-          id={id}
-          type="text"
-          value={this.state.formState[field.id]}
-          placeholder={field.placeholder}
-          onkeyup={this.saveOnEnter}
-          onkeydown={this.saveOnEnter}
-          onkeypress={this.saveOnEnter}
-          oninput={ev => this.tempStoreMeta(ev, field.id)}
-          data-uppy-super-focusable />
-      </fieldset>
+      return (
+        <fieldset key={field.id} class="uppy-Dashboard-FileCard-fieldset">
+          <label class="uppy-Dashboard-FileCard-label" for={id}>{field.name}</label>
+          <input
+            class="uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input"
+            id={id}
+            type="text"
+            value={this.state.formState[field.id]}
+            placeholder={field.placeholder}
+            onkeyup={this.saveOnEnter}
+            onkeydown={this.saveOnEnter}
+            onkeypress={this.saveOnEnter}
+            oninput={ev => this.tempStoreMeta(ev, field.id)}
+            data-uppy-super-focusable
+          />
+        </fieldset>
+      )
     })
   }
 
@@ -72,20 +76,26 @@ class FileCard extends Component {
     const file = this.props.files[this.props.fileCardFor]
 
     return (
-      <div class="uppy-Dashboard-FileCard"
+      <div
+        class="uppy-Dashboard-FileCard"
         data-uppy-panelType="FileCard"
         onDragOver={ignoreEvent}
         onDragLeave={ignoreEvent}
         onDrop={ignoreEvent}
-        onPaste={ignoreEvent}>
+        onPaste={ignoreEvent}
+      >
         <div class="uppy-DashboardContent-bar">
           <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
             {this.props.i18nArray('editing', {
               file: <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>
             })}
           </div>
-          <button class="uppy-DashboardContent-back" type="button" title={this.props.i18n('finishEditingFile')}
-            onclick={this.handleSave}>{this.props.i18n('done')}</button>
+          <button
+            class="uppy-DashboardContent-back" type="button" title={this.props.i18n('finishEditingFile')}
+            onclick={this.handleSave}
+          >
+            {this.props.i18n('done')}
+          </button>
         </div>
 
         <div class="uppy-Dashboard-FileCard-inner">
@@ -98,12 +108,20 @@ class FileCard extends Component {
           </div>
 
           <div class="uppy-Dashboard-FileCard-actions">
-            <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
+            <button
+              class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
               type="button"
-              onclick={this.handleSave}>{this.props.i18n('saveChanges')}</button>
-            <button class="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn"
+              onclick={this.handleSave}
+            >
+              {this.props.i18n('saveChanges')}
+            </button>
+            <button
+              class="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn"
               type="button"
-              onclick={this.handleCancel}>{this.props.i18n('cancel')}</button>
+              onclick={this.handleCancel}
+            >
+              {this.props.i18n('cancel')}
+            </button>
           </div>
         </div>
       </div>

@@ -10,6 +10,7 @@ const { jsonStringify, hasMatch } = require('./helpers/utils')
 const logger = require('./logger')
 const validator = require('validator')
 const headerSanitize = require('./header-blacklist')
+const redis = require('./redis')
 
 const PROTOCOLS = Object.freeze({
   multipart: 'multipart',
@@ -91,6 +92,25 @@ class Uploader {
     return token.substring(0, 8)
   }
 
+  static reqToOptions (req, size) {
+    return {
+      uppyOptions: req.uppy.options,
+      endpoint: req.body.endpoint,
+      uploadUrl: req.body.uploadUrl,
+      protocol: req.body.protocol,
+      metadata: req.body.metadata,
+      size: size,
+      fieldname: req.body.fieldname,
+      pathPrefix: `${req.uppy.options.filePath}`,
+      storage: redis.client(),
+      s3: req.uppy.s3Client ? {
+        client: req.uppy.s3Client,
+        options: req.uppy.options.providerOptions.s3
+      } : null,
+      headers: req.body.headers
+    }
+  }
+
   /**
    * the number of bytes written into the streams
    */
@@ -153,7 +173,7 @@ class Uploader {
    */
   onSocketReady (callback) {
     emitter().once(`connection:${this.token}`, () => callback())
-    logger.debug(`waiting for connection`, 'uploader.socket.wait', this.shortToken)
+    logger.debug('waiting for connection', 'uploader.socket.wait', this.shortToken)
   }
 
   cleanUp () {

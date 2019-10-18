@@ -9,9 +9,12 @@ export default function PauseResumeButton (props) {
   return (
     <TouchableHighlight
       onPress={props.onPress}
-      style={styles.button}>
+      style={styles.button}
+    >
       <Text
-        style={styles.text}>{props.isPaused ? 'Resume' : 'Pause'}</Text>
+        style={styles.text}
+      >{props.isPaused ? 'Resume' : 'Pause'}
+      </Text>
     </TouchableHighlight>
   )
 }

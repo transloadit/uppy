@@ -87,7 +87,7 @@ describe('test authentication', () => {
       .get('/drive/callback')
       .expect(302)
       .expect((res) => {
-        expect(res.header['location']).toContain('http://localhost:3020/drive/send-token?uppyAuthToken=')
+        expect(res.header.location).toContain('http://localhost:3020/drive/send-token?uppyAuthToken=')
       })
   })
 

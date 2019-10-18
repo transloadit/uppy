@@ -69,13 +69,14 @@ module.exports = function FileProgress (props) {
           title={progressIndicatorTitle(props)}
           onclick={() => onPauseResumeCancelRetry(props)}
         >
-          {props.error
-            ? props.hideRetryButton ? null : iconRetry()
-            : <PauseResumeCancelIcon
+          {props.error ? (
+            props.hideRetryButton ? null : iconRetry()
+          ) : (
+            <PauseResumeCancelIcon
               progress={props.file.progress.percentage}
               hidePauseResumeCancelButtons={props.hidePauseResumeCancelButtons}
             />
-          }
+          )}
         </button>
       </div>
     )

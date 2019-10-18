@@ -41,6 +41,14 @@ const getConfigFromEnv = () => {
         key: process.env.COMPANION_INSTAGRAM_KEY,
         secret: getSecret('COMPANION_INSTAGRAM_SECRET')
       },
+      facebook: {
+        key: process.env.COMPANION_FACEBOOK_KEY,
+        secret: getSecret('COMPANION_FACEBOOK_SECRET')
+      },
+      microsoft: {
+        key: process.env.COMPANION_ONEDRIVE_KEY,
+        secret: getSecret('COMPANION_ONEDRIVE_SECRET')
+      },
       s3: {
         key: process.env.COMPANION_AWS_KEY,
         secret: getSecret('COMPANION_AWS_SECRET'),

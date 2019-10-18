@@ -32,7 +32,7 @@ const Browser = (props) => {
           </button>
         </div>
       </div>
-      { props.showFilter && <Filter {...props} /> }
+      {props.showFilter && <Filter {...props} />}
       <ItemList
         columns={[{
           name: 'Name',
