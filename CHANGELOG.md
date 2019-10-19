@@ -190,7 +190,7 @@ This release features new remote providers for Facebook and OneDrive, new langua
 - @uppy/locales: fix typo in Persian locale (@uxitten, #1865)
 - @uppy/locales: improve Swedish translation (@marcusforberg, #1859)
 - @uppy/aws-s3: replace browser-only resolve-url by isomorphic url-parse (@goto-bus-stop, #1854)
-- docs: remove pre 1.0 notice from changelog (@markypython, #1858)
+- docs: remove pre 1.0 notice from changelog (@mskelton, #1858)
 - docs: fix typo (@leftdevel, #1852)
 - test: add end-to-end test with retries (@ifedapoolarewaju, #1766)
 
