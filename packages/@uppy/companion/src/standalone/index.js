@@ -101,6 +101,8 @@ app.use((req, res, next) => {
     // @ts-ignore
     if (req.headers.origin && whitelist.indexOf(req.headers.origin) > -1) {
       res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
+      // only allow credentials when origin is whitelisted
+      res.setHeader('Access-Control-Allow-Credentials', 'true')
     }
   } else {
     res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
@@ -114,7 +116,6 @@ app.use((req, res, next) => {
     'Access-Control-Allow-Headers',
     'Authorization, Origin, Content-Type, Accept'
   )
-  res.setHeader('Access-Control-Allow-Credentials', 'true')
   next()
 })
 

@@ -22,7 +22,6 @@ app.use((req, res, next) => {
     'Access-Control-Allow-Headers',
     'Authorization, Origin, Content-Type, Accept'
   )
-  res.setHeader('Access-Control-Allow-Credentials', 'true')
   next()
 })
 
