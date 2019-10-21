@@ -7,7 +7,7 @@
 
 Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly with any application. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
 
-- **Fetch** files from local disk, remote urls, Google Drive, Dropbox, Instagram, or snap and record selfies with a camera
+- **Fetch** files from local disk, remote URLs, Google Drive, Dropbox, Instagram or snap and record selfies with a camera
 - **Preview** and edit metadata with a nice interface
 - **Upload** to the final destination, optionally process/encode
 
@@ -33,7 +33,9 @@ const Tus = require('@uppy/tus')
 
 const uppy = Uppy({ autoProceed: false })
   .use(Dashboard, { trigger: '#select-files' })
-  .use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
+  .use(GoogleDrive, { target: Dashboard, companion
+  
+  : 'https://companion.uppy.io' })
   .use(Instagram, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: 'https://master.tus.io/files/' })
@@ -89,9 +91,9 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 
 ## Documentation
 
-- [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods, and events.
+- [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods and events
 - [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their options
-- [Companion](https://uppy.io/docs/companion/) — setting up and running a Companion instance, which adds support for Instagram, Dropbox, Google Drive and remote urls
+- [Companion](https://uppy.io/docs/companion/) — setting up and running a Companion instance, which adds support for Instagram, Dropbox, Google Drive and remote URLs
 - [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps
 - [Architecture & Writing a Plugin](https://uppy.io/docs/writing-plugins/) — how to write a plugin for Uppy
 
@@ -148,7 +150,7 @@ The ⓒ mark means that [`@uppy/companion`](https://uppy.io/docs/companion), a s
   <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
 </a>
 
-We aim to support IE11+ and recent versions of Safari, Edge, Chrome, Firefox and Opera.
+We aim to support IE11 and recent versions of Safari, Edge, Chrome, Firefox and Opera.
 
 We still run end-to-end tests with IE10, but we are not actively supporting it or fixing visual / minor issues.
 
@@ -169,7 +171,7 @@ require('whatwg-fetch')
 const Uppy = require('@uppy/core')
 ```
 
-If you're using Uppy from CDN, `es6-promise` and  `whatwg-fetch` are already included in the bundle, so no need to include anything additionally:
+If you're using Uppy from CDN, `es6-promise` and `whatwg-fetch` are already included in the bundle, so no need to include anything additionally:
 
 ```html
 <script src="https://transloadit.edgly.net/releases/uppy/v1.5.2/uppy.min.js"></script>
@@ -183,7 +185,7 @@ Having no JavaScript beats having a lot of it, so that’s a fair question! Runn
 
 - We received complaints about broken uploads and found that resumable uploads are important, especially for big files and to be inclusive towards people on poorer connections (we also launched [tus.io](https://tus.io) to attack that problem). Uppy uploads can survive network outages and browser crashes or accidental navigate-aways.
 - Uppy supports editing meta information before uploading (and e.g. cropping is planned).
-- There’s the situation where people are using their mobile devices and want to upload on the go, but they have their picture on Instagram, files in Dropbox, or just a plain file url from anywhere on the open web. Uppy allows to pick files from those and push it to the destination without downloading it to your mobile device first.
+- There’s the situation where people are using their mobile devices and want to upload on the go, but they have their picture on Instagram, files in Dropbox or just a plain file URL from anywhere on the open web. Uppy allows to pick files from those and push it to the destination without downloading it to your mobile device first.
 - Accurate upload progress reporting is an issue on many platforms.
 - Some file validation — size, type, number of files — can be done on the client with Uppy.
 - Uppy integrates webcam support, in case your users want to upload a picture/video/audio that does not exist yet :)
@@ -195,9 +197,9 @@ Not all apps need all of these features. An `<input type="file">` is fine in man
 
 ### Why is all this goodness free?
 
-Transloadit’s team is small and we have a shared ambition to make a living from open source. By giving away projects like [tus.io](https://tus.io) and [Uppy](https://uppy.io), we’re hoping to advance the state of the art, make life a tiny little bit better for everyone, and in doing so have rewarding jobs and get some eyes on our commercial service: [a content ingestion & processing platform](https://transloadit.com).
+Transloadit’s team is small and we have a shared ambition to make a living from open source. By giving away projects like [tus.io](https://tus.io) and [Uppy](https://uppy.io), we’re hoping to advance the state of the art, make life a tiny little bit better for everyone and in doing so have rewarding jobs and get some eyes on our commercial service: [a content ingestion & processing platform](https://transloadit.com).
 
-Our thinking is that if just a fraction of our open source userbase can see the appeal of hosted versions straight from the source, that could already be enough to sustain our work. So far this is working out! We’re able to dedicate 80% of our time to open source and haven’t gone bankrupt just yet :D
+Our thinking is that if just a fraction of our open source userbase can see the appeal of hosted versions straight from the source, that could already be enough to sustain our work. So far this is working out! We’re able to dedicate 80% of our time to open source and haven’t gone bankrupt yet. :D
 
 ### Does Uppy support React?
 
@@ -207,13 +209,13 @@ Yep, we have Uppy React components, please see [Uppy React docs](https://uppy.io
 
 Yes, there is an S3 plugin, please check out the [docs](https://uppy.io/docs/aws-s3/) for more.
 
-### Do I need to install special service/server for Uppy? Can I use it with Rails/Node/Go/PHP?
+### Do I need to install a special service/server for Uppy? Can I use it with Rails/Node/Go/PHP?
 
 Yes, whatever you want on the backend will work with `@uppy/xhr-upload` plugin, since it just does a `POST` or `PUT` request. Here’s a [PHP backend example](https://uppy.io/docs/xhr-upload/#Uploading-to-a-PHP-Server).
 
 If you want resumability with the Tus plugin, use [one of the tus server implementations](https://tus.io/implementations.html) 👌🏼
 
-And you’ll need [`@uppy/companion`](https://uppy.io/docs/companion) if you’d like your users to be able to pick files from Instagram, Google Drive, Dropbox or via direct urls (with more services coming).
+And you’ll need [`@uppy/companion`](https://uppy.io/docs/companion) if you’d like your users to be able to pick files from Instagram, Google Drive, Dropbox or via direct URLs (with more services coming).
 
 ## Contributions are welcome
 
