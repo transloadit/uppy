@@ -54,7 +54,9 @@ const getConfigFromEnv = () => {
         secret: getSecret('COMPANION_AWS_SECRET'),
         bucket: process.env.COMPANION_AWS_BUCKET,
         endpoint: process.env.COMPANION_AWS_ENDPOINT,
-        region: process.env.COMPANION_AWS_REGION
+        region: process.env.COMPANION_AWS_REGION,
+        useAccelerateEndpoint:
+          process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true'
       }
     },
     server: {
