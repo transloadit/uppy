@@ -55,4 +55,18 @@ describe('Dashboard', () => {
 
     core.close()
   })
+
+  it('should change options on the fly', () => {
+    const core = new Core()
+    core.use(DashboardPlugin, {
+      inline: true,
+      target: 'body'
+    })
+
+    core.getPlugin('Dashboard').setOptions({
+      width: 300
+    })
+
+    expect(core.getPlugin('Dashboard').opts.width).toEqual(300)
+  })
 })
