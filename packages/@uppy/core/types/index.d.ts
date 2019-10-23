@@ -101,8 +101,8 @@ declare module Uppy {
   type LogLevel = 'info' | 'warning' | 'error';
   class Uppy {
     constructor(opts?: Partial<UppyOptions>);
-    on(event: 'upload-success', callback: (file: UppyFile, body: any, uploadURL: string) => void): Uppy;
-    on(event: 'complete', callback: (result: UploadResult) => void): Uppy;
+    on<TMeta extends IndexedObject<any> = {}>(event: 'upload-success', callback: (file: UppyFile<TMeta>, body: any, uploadURL: string) => void): Uppy;
+    on<TMeta extends IndexedObject<any> = {}>(event: 'complete', callback: (result: UploadResult<TMeta>) => void): Uppy;
     on(event: string, callback: (...args: any[]) => void): Uppy;
     off(event: string, callback: any): Uppy;
     /**
