@@ -99,9 +99,16 @@ class Uppy {
       logger: nullLogger
     }
 
-    // Merge default options with the ones set by user
-    this.opts = defaultOptions
-    this.setOptions(opts)
+    // Merge default options with the ones set by user,
+    // making sure to merge restrictions too
+    this.opts = {
+      ...defaultOptions,
+      ...opts,
+      restrictions: {
+        ...defaultOptions.restrictions,
+        ...(opts && opts.restrictions)
+      }
+    }
 
     // Support debug: true for backwards-compatability, unless logger is set in opts
     // opts instead of this.opts to avoid comparing objects — we set logger: nullLogger in defaultOptions
@@ -273,11 +280,12 @@ class Uppy {
       }
     }
 
-    this.i18nInit()
-
-    if (this.store) {
-      this.setState() // so that UI re-renders with new options
+    if (newOpts.meta) {
+      this.setMeta(newOpts.meta)
     }
+
+    this.i18nInit()
+    this.setState() // so that UI re-renders with new options
   }
 
   resetProgress () {

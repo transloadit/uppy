@@ -1058,6 +1058,28 @@ describe('src/Core', () => {
       expect(core.i18n('logOut')).toEqual('Log out')
     })
 
+    it('should change meta on the fly', () => {
+      const core = new Core({
+        meta: {
+          foo: 'bar'
+        }
+      })
+      expect(core.state.meta).toMatchObject({
+        foo: 'bar'
+      })
+
+      core.setOptions({
+        meta: {
+          beep: 'boop'
+        }
+      })
+
+      expect(core.state.meta).toMatchObject({
+        foo: 'bar',
+        beep: 'boop'
+      })
+    })
+
     it('should change restrictions on the fly', () => {
       const core = new Core({
         restrictions: {
