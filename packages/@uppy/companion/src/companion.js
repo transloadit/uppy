@@ -165,7 +165,7 @@ module.exports.socket = (server) => {
     ws.on('message', (jsonData) => {
       const data = JSON.parse(jsonData.toString())
       // whitelist triggered actions
-      if (data.action === 'pause' || data.action === 'resume') {
+      if (['pause', 'resume', 'cancel'].includes(data.action)) {
         emitter().emit(`${data.action}:${token}`)
       }
     })
