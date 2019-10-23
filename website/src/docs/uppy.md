@@ -516,6 +516,35 @@ Update metadata for a specific file.
 uppy.setFileMeta('myfileID', { resize: 1500 })
 ```
 
+### `uppy.setOptions(opts)`
+
+Change Uppy options on the fly. For example, to conditionally change `allowedFileTypes` or `locale`:
+
+```js
+const uppy = Uppy()
+uppy.setOptions({
+  restrictions: { maxNumberOfFiles: 3 },
+  autoProceed: true
+})
+
+uppy.setOptions({
+  locale: {
+    strings: {
+      'cancel': 'Отмена'
+    }
+  }
+})
+```
+
+You can also change options for plugin on the fly, like this:
+
+```js
+// Change width of the Dashboard drag-and-drop aread on the fly
+uppy.getPlugin('Dashboard').setOptions({
+  width: 300
+})
+```
+
 ### `uppy.reset()`
 
 Stop all uploads in progress and clear file selection, set progress to 0. Basically, return things to the way they were before any user input.
