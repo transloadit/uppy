@@ -1,6 +1,7 @@
 .uppy-ProviderBrowserItem-fakeCheckbox {
   position: relative;
   cursor: pointer;
+  flex-shrink: 0;
 
   // Checkmark icon
   &::after {
