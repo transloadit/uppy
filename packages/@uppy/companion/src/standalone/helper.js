@@ -69,6 +69,9 @@ const getConfigFromEnv = () => {
     },
     filePath: process.env.COMPANION_DATADIR,
     redisUrl: process.env.COMPANION_REDIS_URL,
+    // adding redisOptions to keep all companion options easily visible
+    //  redisOptions refers to https://www.npmjs.com/package/redis#options-object-properties
+    redisOptions: {},
     sendSelfEndpoint: process.env.COMPANION_SELF_ENDPOINT,
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
     secret: getSecret('COMPANION_SECRET') || generateSecret(),

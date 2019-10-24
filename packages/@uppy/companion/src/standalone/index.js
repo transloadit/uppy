@@ -4,6 +4,8 @@ const uppy = require('../companion')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
+const redis = require('../server/redis')
+const merge = require('lodash.merge')
 // @ts-ignore
 const promBundle = require('express-prom-bundle')
 const session = require('express-session')
@@ -64,18 +66,19 @@ app.use(helmet.noSniff())
 app.use(helmet.ieNoOpen())
 app.disable('x-powered-by')
 
-const uppyOptions = helper.getUppyOptions()
+const companionOptions = helper.getUppyOptions()
 const sessionOptions = {
-  secret: uppyOptions.secret,
+  secret: companionOptions.secret,
   resave: true,
   saveUninitialized: true
 }
 
-if (process.env.COMPANION_REDIS_URL) {
+if (companionOptions.redisUrl) {
   const RedisStore = require('connect-redis')(session)
-  sessionOptions.store = new RedisStore({
-    url: process.env.COMPANION_REDIS_URL
-  })
+  const redisClient = redis.client(
+    merge({ url: companionOptions.redisUrl }, companionOptions.redisOptions)
+  )
+  sessionOptions.store = new RedisStore({ client: redisClient })
 }
 
 if (process.env.COMPANION_COOKIE_DOMAIN) {
@@ -121,15 +124,15 @@ app.use((req, res, next) => {
 // Routes
 app.get('/', (req, res) => {
   res.setHeader('Content-Type', 'text/plain')
-  res.send(helper.buildHelpfulStartupMessage(uppyOptions))
+  res.send(helper.buildHelpfulStartupMessage(companionOptions))
 })
 
 // initialize uppy
-helper.validateConfig(uppyOptions)
+helper.validateConfig(companionOptions)
 if (process.env.COMPANION_PATH) {
-  app.use(process.env.COMPANION_PATH, uppy.app(uppyOptions))
+  app.use(process.env.COMPANION_PATH, uppy.app(companionOptions))
 } else {
-  app.use(uppy.app(uppyOptions))
+  app.use(uppy.app(companionOptions))
 }
 
 app.use((req, res, next) => {
@@ -150,4 +153,4 @@ if (app.get('env') === 'production') {
   })
 }
 
-module.exports = { app, uppyOptions }
+module.exports = { app, companionOptions }
