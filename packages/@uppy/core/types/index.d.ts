@@ -5,7 +5,7 @@ declare module Uppy {
   type OmitKey<T, Key> = Pick<T, Exclude<keyof T, Key>>;
 
   // These are defined in @uppy/utils instead of core so it can be used there without creating import cycles
-  export type UppyFile<TMeta extends IndexedObject<any> = {}> = UppyUtils.UppyFile<TMeta>;
+  export type UppyFile<TMeta extends IndexedObject<any> = {}, TBody extends IndexedObject<any> = {}> = UppyUtils.UppyFile<TMeta, TBody>;
   export type Store = UppyUtils.Store;
   export type InternalMetadata = UppyUtils.InternalMetadata;
 
@@ -14,17 +14,17 @@ declare module Uppy {
     [key: number]: T;
   }
 
-  interface UploadedUppyFile<TMeta> extends UppyFile<TMeta> {
+  interface UploadedUppyFile<TMeta, TBody> extends UppyFile<TMeta, TBody> {
     uploadURL: string;
   }
 
-  interface FailedUppyFile<TMeta> extends UppyFile<TMeta> {
+  interface FailedUppyFile<TMeta, TBody> extends UppyFile<TMeta, TBody> {
     error: string;
   }
 
   // Replace the `meta` property type with one that allows omitting internal metadata; addFile() will add that
-  type UppyFileWithoutMeta<TMeta> = OmitKey<UppyFile<TMeta>, 'meta'>;
-  interface AddFileOptions<TMeta = IndexedObject<any>> extends Partial<UppyFileWithoutMeta<TMeta>> {
+  type UppyFileWithoutMeta<TMeta, TBody> = OmitKey<UppyFile<TMeta, TBody>, 'meta'>;
+  interface AddFileOptions<TMeta = IndexedObject<any>, TBody = IndexedObject<any>> extends Partial<UppyFileWithoutMeta<TMeta, TBody>> {
     // `.data` is the only required property here.
     data: Blob | File;
     meta?: Partial<InternalMetadata> & TMeta;
@@ -79,16 +79,16 @@ declare module Uppy {
     store: Store;
   }
 
-  interface UploadResult<TMeta extends IndexedObject<any> = {}> {
-    successful: UploadedUppyFile<TMeta>[];
-    failed: FailedUppyFile<TMeta>[];
+  interface UploadResult<TMeta extends IndexedObject<any> = {}, TBody extends IndexedObject<any> = {}> {
+    successful: UploadedUppyFile<TMeta, TBody>[];
+    failed: FailedUppyFile<TMeta, TBody>[];
   }
 
-  interface State<TMeta extends IndexedObject<any> = {}> extends IndexedObject<any> {
+  interface State<TMeta extends IndexedObject<any> = {}, TBody extends IndexedObject<any> = {}> extends IndexedObject<any> {
     capabilities?: {resumableUploads?: boolean};
     currentUploads: {};
     error?: string;
-    files: {[key: string]: UploadedUppyFile<TMeta> | FailedUppyFile<TMeta>};
+    files: {[key: string]: UploadedUppyFile<TMeta, TBody> | FailedUppyFile<TMeta, TBody>};
     info?: {
       isHidden: boolean;
       type: string;
@@ -123,8 +123,8 @@ declare module Uppy {
     removeUploader(fn: any): void;
     setMeta<TMeta extends IndexedObject<any> = {}>(data: TMeta): void;
     setFileMeta<TMeta extends IndexedObject<any> = {}>(fileID: string, data: TMeta): void;
-    getFile<TMeta extends IndexedObject<any> = {}>(fileID: string): UppyFile<TMeta>;
-    getFiles<TMeta extends IndexedObject<any> = {}>(): Array<UppyFile<TMeta>>;
+    getFile<TMeta extends IndexedObject<any> = {}, TBody extends IndexedObject<any> = {}>(fileID: string): UppyFile<TMeta, TBody>;
+    getFiles<TMeta extends IndexedObject<any> = {}, TBody extends IndexedObject<any> = {}>(): Array<UppyFile<TMeta, TBody>>;
     addFile<TMeta extends IndexedObject<any> = {}>(file: AddFileOptions<TMeta>): void;
     removeFile(fileID: string): void;
     pauseResume(fileID: string): boolean;

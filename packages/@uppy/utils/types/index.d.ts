@@ -206,7 +206,7 @@ declare module '@uppy/utils' {
     [key: number]: T;
   }
   export type InternalMetadata = { name: string, type?: string };
-  export interface UppyFile<TMeta = IndexedObject<any>> {
+  export interface UppyFile<TMeta = IndexedObject<any>, TBody = IndexedObject<any>> {
     data: Blob | File;
     extension: string;
     id: string;
@@ -230,6 +230,11 @@ declare module '@uppy/utils' {
     size: number;
     source?: string;
     type?: string;
+    response?: {
+      body: TBody;
+      status: number;
+      uploadURL: string | undefined;
+    };
   }
   export interface Store {
     getState(): object;
