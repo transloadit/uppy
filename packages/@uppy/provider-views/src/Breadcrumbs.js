@@ -2,16 +2,17 @@ const { h } = require('preact')
 
 // TODO use Fragment when upgrading to preact X
 /* eslint-disable react/jsx-key */
-const Breadcrumb = (props) => [
-  <button
-    type="button"
-    class="uppy-u-reset"
-    onclick={props.getFolder}
-  >
-    {props.title}
-  </button>,
-  !props.isLast ? ' / ' : ''
-]
+const Breadcrumb = (props) => {
+  return (
+    <span>
+      <button
+        type="button"
+        class="uppy-u-reset"
+        onclick={props.getFolder}>{props.title}</button>
+      {!props.isLast ? ' / ' : ''}
+    </span>
+  )
+}
 /* eslint-enable react/jsx-key */
 
 module.exports = (props) => {
