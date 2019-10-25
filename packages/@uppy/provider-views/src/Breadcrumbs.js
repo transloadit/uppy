@@ -8,7 +8,10 @@ const Breadcrumb = (props) => {
       <button
         type="button"
         class="uppy-u-reset"
-        onclick={props.getFolder}>{props.title}</button>
+        onclick={props.getFolder}
+      >
+        {props.title}
+      </button>
       {!props.isLast ? ' / ' : ''}
     </span>
   )
