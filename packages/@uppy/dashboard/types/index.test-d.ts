@@ -1,3 +1,4 @@
+import { expectType, expectError } from 'tsd'
 import Uppy = require('@uppy/core')
 import Dashboard = require('../')
 
@@ -9,13 +10,13 @@ import Dashboard = require('../')
 
   const plugin = uppy.getPlugin('Dashboard') as Dashboard
   plugin.openModal()
-  plugin.isModalOpen() // $ExpectType boolean
+  expectType<boolean>(plugin.isModalOpen())
   plugin.closeModal()
 }
 
 {
   const uppy = Uppy()
-  uppy.use(Dashboard, <Partial<Dashboard.DashboardOptions>>{
+  uppy.use(Dashboard, {
     width: '100%',
     height: 700,
     metaFields: [
@@ -27,6 +28,5 @@ import Dashboard = require('../')
 
 {
   const uppy = Uppy()
-  // $ExpectError
-  uppy.use(Dashboard, { height: {} })
+  expectError(uppy.use(Dashboard, { height: {} }))
 }

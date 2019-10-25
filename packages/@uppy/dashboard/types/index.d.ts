@@ -61,39 +61,38 @@ declare module Dashboard {
   }
 
   interface DashboardOptions extends Uppy.PluginOptions {
-    animateOpenClose: boolean;
-    browserBackButtonClose: boolean
-    closeAfterFinish: boolean;
-    closeModalOnClickOutside: boolean;
-    disableInformer: boolean;
-    disablePageScrollWhenModalOpen: boolean;
-    disableStatusBar: boolean;
-    disableThumbnailGenerator: boolean;
-    height: string | number;
-    hideCancelButton: boolean;
-    hidePauseResumeButton: boolean;
-    hideProgressAfterFinish: boolean;
-    hideRetryButton: boolean;
-    hideUploadButton: boolean;
-    inline: boolean;
-    locale: DashboardLocale;
-    metaFields: MetaField[];
-    note: string | null;
-    onRequestCloseModal: () => void;
-    plugins: string[];
-    proudlyDisplayPoweredByUppy: boolean;
-    showLinkToFileUploadResult: boolean;
-    showProgressDetails: boolean;
-    showSelectedFiles: boolean;
-    target: string;
-    thumbnailWidth: number;
-    trigger: string;
-    width: string | number;
+    animateOpenClose?: boolean;
+    browserBackButtonClose?: boolean
+    closeAfterFinish?: boolean;
+    closeModalOnClickOutside?: boolean;
+    disableInformer?: boolean;
+    disablePageScrollWhenModalOpen?: boolean;
+    disableStatusBar?: boolean;
+    disableThumbnailGenerator?: boolean;
+    height?: string | number;
+    hideCancelButton?: boolean;
+    hidePauseResumeButton?: boolean;
+    hideProgressAfterFinish?: boolean;
+    hideRetryButton?: boolean;
+    hideUploadButton?: boolean;
+    inline?: boolean;
+    locale?: DashboardLocale;
+    metaFields?: MetaField[];
+    note?: string | null;
+    onRequestCloseModal?: () => void;
+    plugins?: string[];
+    proudlyDisplayPoweredByUppy?: boolean;
+    showLinkToFileUploadResult?: boolean;
+    showProgressDetails?: boolean;
+    showSelectedFiles?: boolean;
+    target?: string | HTMLElement | Uppy.Plugin;
+    thumbnailWidth?: number;
+    trigger?: string;
+    width?: string | number;
   }
 }
 
-declare class Dashboard extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<Dashboard.DashboardOptions>);
+declare class Dashboard extends Uppy.Plugin<Dashboard.DashboardOptions> {
   addTarget(plugin: Uppy.Plugin): HTMLElement;
   hideAllPanels(): void;
   openModal(): void;
@@ -105,9 +104,3 @@ declare class Dashboard extends Uppy.Plugin {
 }
 
 export = Dashboard;
-
-declare module '@uppy/core' {
-  export interface Uppy {
-    use(pluginClass: typeof Dashboard, opts: Partial<Dashboard.DashboardOptions>): Uppy.Uppy;
-  }
-}

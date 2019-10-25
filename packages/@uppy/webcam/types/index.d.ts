@@ -8,18 +8,10 @@ declare module Webcam {
     countdown?: number | boolean;
     mirror?: boolean;
     facingMode?: string;
-    modes: WebcamMode[];
+    modes?: WebcamMode[];
   }
 }
 
-declare class Webcam extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<Webcam.WebcamOptions>);
-}
+declare class Webcam extends Uppy.Plugin<Webcam.WebcamOptions> {}
 
 export = Webcam;
-
-declare module '@uppy/core' {
-  export interface Uppy {
-    use(pluginClass: typeof Webcam, opts: Partial<Webcam.WebcamOptions>): Uppy.Uppy;
-  }
-}

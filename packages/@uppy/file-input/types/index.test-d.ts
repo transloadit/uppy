@@ -1,0 +1,2 @@
+import FileInput = require('../');
+

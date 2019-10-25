@@ -1,3 +1,4 @@
+import { expectType } from 'tsd'
 import Uppy = require('../')
 import DefaultStore = require('@uppy/store-default')
 
@@ -8,8 +9,8 @@ import DefaultStore = require('@uppy/store-default')
   })
 
   uppy.upload().then((result) => {
-    result.successful[0] // $ExpectType UppyFile
-    result.failed[0] // $ExpectType UppyFile
+    expectType<Uppy.UploadedUppyFile<{}, {}>>(result.successful[0])
+    expectType<Uppy.FailedUppyFile<{}, {}>>(result.failed[0])
   })
 }
 
@@ -27,9 +28,9 @@ import DefaultStore = require('@uppy/store-default')
   }
 
   if (f && f.response && f.response.status === 200) {
-    f.response.body // $ExpectType any
+    expectType(f.response.body)
   }
-  // f.response!.status === '200' // $ExpectError
+  expectType<number>(f.response!.status)
 }
 
 {
@@ -39,7 +40,7 @@ import DefaultStore = require('@uppy/store-default')
   }
   const uppy = Uppy()
   const f = uppy.getFile<Meta, ResponseBody>('virtual')!
-  f.response!.body // $ExpectType ResponseBody
+  expectType<ResponseBody>(f.response!.body)
 }
 
 {

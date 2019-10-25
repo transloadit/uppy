@@ -7,14 +7,6 @@ declare module Url {
   }
 }
 
-declare class Url extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<Url.UrlOptions>);
-}
+declare class Url extends Uppy.Plugin<Url.UrlOptions> {}
 
 export = Url;
-
-declare module '@uppy/core' {
-  export interface Uppy {
-    use(pluginClass: typeof Url, opts: Partial<Url.UrlOptions>): Uppy.Uppy;
-  }
-}
