@@ -33,9 +33,7 @@ const Tus = require('@uppy/tus')
 
 const uppy = Uppy({ autoProceed: false })
   .use(Dashboard, { trigger: '#select-files' })
-  .use(GoogleDrive, { target: Dashboard, companion
-  
-  : 'https://companion.uppy.io' })
+  .use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
   .use(Instagram, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: 'https://master.tus.io/files/' })
@@ -116,7 +114,9 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 - ⓒ [`Google Drive`](https://uppy.io/docs/google-drive/)
 - ⓒ [`Dropbox`](https://uppy.io/docs/dropbox/)
 - ⓒ [`Instagram`](https://uppy.io/docs/instagram/)
-- ⓒ [`Import From URL`](https://uppy.io/docs/url/) — supports picking files from remote providers or direct URLs from anywhere on the web
+- ⓒ [`Facebook`](https://uppy.io/docs/facebook/)
+- ⓒ [`OneDrive`](https://uppy.io/docs/onedrive/)
+- ⓒ [`Import From URL`](https://uppy.io/docs/url/) — support picking files from remote providers or direct URLs from anywhere on the web
 
 The ⓒ mark means that [`@uppy/companion`](https://uppy.io/docs/companion), a server-side component, is needed for a plugin to work.
 
