@@ -828,7 +828,7 @@ class Uppy {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
-      
+
       const currentProgress = this.getFile(file.id).progress
       this.setFileState(file.id, {
         progress: Object.assign({}, currentProgress, {
