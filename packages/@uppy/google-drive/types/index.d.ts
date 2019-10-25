@@ -4,18 +4,10 @@ import CompanionClient = require('@uppy/companion-client');
 declare module GoogleDrive {
   interface GoogleDriveOptions extends Uppy.PluginOptions, CompanionClient.ProviderOptions {
     companionUrl: string;
-    companionAllowedHosts: string | RegExp | Array<string | RegExp>;
+    companionAllowedHosts?: string | RegExp | Array<string | RegExp>;
   }
 }
 
-declare class GoogleDrive extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<GoogleDrive.GoogleDriveOptions>);
-}
+declare class GoogleDrive extends Uppy.Plugin<GoogleDrive.GoogleDriveOptions> {}
 
 export = GoogleDrive;
-
-declare module '@uppy/core' {
-  export interface Uppy {
-    use(pluginClass: typeof GoogleDrive, opts: Partial<GoogleDrive.GoogleDriveOptions>): Uppy.Uppy;
-  }
-}
