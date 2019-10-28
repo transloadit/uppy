@@ -107,11 +107,15 @@ module.exports = class Transloadit extends Plugin {
     const drive = this.uppy.getPlugin('GoogleDrive')
 
     if (this.opts.importFromUploadURLs) {
-      list.push(
-        `uppy-xhr-upload:${xhrUpload.constructor.VERSION}`,
-        `uppy-aws-s3:${awsS3.constructor.VERSION}`,
-        `uppy-aws-s3-multipart:${awsS3Multipart.constructor.VERSION}`
-      )
+      if (xhrUpload) {
+        list.push(`uppy-xhr-upload:${xhrUpload.constructor.VERSION}`)
+      }
+      if (awsS3) {
+        list.push(`uppy-aws-s3:${awsS3.constructor.VERSION}`)
+      }
+      if (awsS3Multipart) {
+        list.push(`uppy-aws-s3-multipart:${awsS3Multipart.constructor.VERSION}`)
+      }
     }
 
     if (instagram) {
