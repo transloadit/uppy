@@ -99,7 +99,7 @@ module.exports = class Transloadit extends Plugin {
       `uppy-tus:${Tus.VERSION}`
     ]
 
-    function addPluginVersion (pluginName, versionName) {
+    const addPluginVersion = (pluginName, versionName) => {
       const plugin = this.uppy.getPlugin(pluginName)
       if (plugin) {
         list.push(`${versionName}:${plugin.constructor.VERSION}`)
