@@ -11,7 +11,7 @@ declare module XHRUpload {
     timeout?: number
     responseUrlFieldName?: string
     endpoint: string
-    method?: 'GET' | 'POST' | 'PUT' | 'HEAD'
+    method?: 'GET' | 'POST' | 'PUT' | 'HEAD' | 'get' | 'post' | 'put' | 'head'
   }
 }
 
