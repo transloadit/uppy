@@ -99,34 +99,25 @@ module.exports = class Transloadit extends Plugin {
       `uppy-tus:${Tus.VERSION}`
     ]
 
-    const xhrUpload = this.uppy.getPlugin('XHRUpload')
-    const awsS3 = this.uppy.getPlugin('AwsS3')
-    const awsS3Multipart = this.uppy.getPlugin('AwsS3Multipart')
-    const instagram = this.uppy.getPlugin('Instagram')
-    const dropbox = this.uppy.getPlugin('Dropbox')
-    const drive = this.uppy.getPlugin('GoogleDrive')
+    function addPluginVersion (pluginName, versionName) {
+      const plugin = this.uppy.getPlugin(pluginName)
+      if (plugin) {
+        list.push(`${versionName}:${plugin.constructor.VERSION}`)
+      }
+    }
 
     if (this.opts.importFromUploadURLs) {
-      if (xhrUpload) {
-        list.push(`uppy-xhr-upload:${xhrUpload.constructor.VERSION}`)
-      }
-      if (awsS3) {
-        list.push(`uppy-aws-s3:${awsS3.constructor.VERSION}`)
-      }
-      if (awsS3Multipart) {
-        list.push(`uppy-aws-s3-multipart:${awsS3Multipart.constructor.VERSION}`)
-      }
+      addPluginVersion('XHRUpload', 'uppy-xhr-upload')
+      addPluginVersion('AwsS3', 'uppy-aws-s3')
+      addPluginVersion('AwsS3Multipart', 'uppy-aws-s3-multipart')
     }
 
-    if (instagram) {
-      list.push(`uppy-instagram:${instagram.constructor.VERSION}`)
-    }
-    if (dropbox) {
-      list.push(`uppy-dropbox:${dropbox.constructor.VERSION}`)
-    }
-    if (drive) {
-      list.push(`uppy-drive:${drive.constructor.VERSION}`)
-    }
+    addPluginVersion('Dropbox', 'uppy-dropbox')
+    addPluginVersion('Facebook', 'uppy-facebook')
+    addPluginVersion('GoogleDrive', 'uppy-google-drive')
+    addPluginVersion('Instagram', 'uppy-instagram')
+    addPluginVersion('OneDrive', 'uppy-onedrive')
+    addPluginVersion('Url', 'uppy-url')
 
     return list.join(',')
   }
