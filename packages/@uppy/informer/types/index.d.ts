@@ -7,6 +7,7 @@ declare module Informer {
   }
 
   interface InformerOptions extends Uppy.PluginOptions {
+    replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
     typeColors?: { [type: string]: Color }
   }

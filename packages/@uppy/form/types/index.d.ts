@@ -2,6 +2,7 @@ import Uppy = require('@uppy/core')
 
 declare module Form {
   interface FormOptions extends Uppy.PluginOptions {
+    replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
     getMetaFromForm?: boolean
     addResultToForm?: boolean

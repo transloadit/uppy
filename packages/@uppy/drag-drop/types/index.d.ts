@@ -2,6 +2,7 @@ import Uppy = require('@uppy/core')
 
 declare module DragDrop {
   interface DragDropOptions extends Uppy.PluginOptions {
+    replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
     inputName?: string
     allowMultipleFiles?: boolean

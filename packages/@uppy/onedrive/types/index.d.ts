@@ -5,6 +5,7 @@ declare module OneDrive {
   interface OneDriveOptions
     extends Uppy.PluginOptions,
       CompanionClient.RequestClientOptions {
+    replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
     companionUrl: string
     companionAllowedHosts?: string | RegExp | Array<string | RegExp>
