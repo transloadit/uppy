@@ -8,6 +8,7 @@ declare module Webcam {
     | 'picture'
 
   export interface WebcamOptions extends Uppy.PluginOptions {
+    target?: Uppy.PluginTarget
     onBeforeSnapshot?: () => Promise<void>
     countdown?: number | boolean
     mirror?: boolean

@@ -85,7 +85,7 @@ declare module Dashboard {
     showLinkToFileUploadResult?: boolean
     showProgressDetails?: boolean
     showSelectedFiles?: boolean
-    target?: string | HTMLElement | Uppy.Plugin
+    target?: Uppy.PluginTarget
     thumbnailWidth?: number
     trigger?: string
     width?: string | number

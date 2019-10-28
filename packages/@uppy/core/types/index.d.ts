@@ -46,6 +46,8 @@ declare module Uppy {
     [prop: string]: any
   }
 
+  type PluginTarget = string | Element | typeof Plugin
+
   class Plugin<TOptions extends PluginOptions = DefaultPluginOptions> {
     id: string
     uppy: Uppy
@@ -54,7 +56,7 @@ declare module Uppy {
     getPluginState(): object
     setPluginState(update: any): object
     update(state?: object): void
-    mount(target: any, plugin: any): void
+    mount(target: PluginTarget, plugin: typeof Plugin): void
     render(state: object): void
     addTarget(plugin: any): void
     unmount(): void

@@ -2,6 +2,7 @@ import Uppy = require('@uppy/core')
 
 declare module ProgressBar {
   interface ProgressBarOptions extends Uppy.PluginOptions {
+    target?: Uppy.PluginTarget
     hideAfterFinish?: boolean
     fixed?: boolean
   }

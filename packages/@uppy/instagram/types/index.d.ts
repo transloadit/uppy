@@ -4,7 +4,8 @@ import CompanionClient = require('@uppy/companion-client')
 declare module Instagram {
   interface InstagramOptions
     extends Uppy.PluginOptions,
-      CompanionClient.ProviderOptions {
+      CompanionClient.RequestClientOptions {
+    target?: Uppy.PluginTarget
     companionUrl: string
     companionAllowedHosts?: string | RegExp | Array<string | RegExp>
   }

@@ -2,6 +2,7 @@ import Uppy = require('@uppy/core')
 
 declare module FileInput {
   interface FileInputOptions extends Uppy.PluginOptions {
+    target?: Uppy.PluginTarget
     pretty?: boolean
     inputName?: string
   }
