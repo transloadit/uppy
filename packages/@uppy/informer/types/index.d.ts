@@ -1,9 +1,9 @@
-import Uppy = require('@uppy/core');
+import Uppy = require('@uppy/core')
 
 declare module Informer {
   interface Color {
-    bg: string | number;
-    text: string | number;
+    bg: string | number
+    text: string | number
   }
 
   interface InformerOptions extends Uppy.PluginOptions {
@@ -13,4 +13,4 @@ declare module Informer {
 
 declare class Informer extends Uppy.Plugin<Informer.InformerOptions> {}
 
-export = Informer;
+export = Informer

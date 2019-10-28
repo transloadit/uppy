@@ -1,13 +1,13 @@
-import Uppy = require('@uppy/core');
+import Uppy = require('@uppy/core')
 
 declare module StatusBar {
   export interface StatusBarOptions extends Uppy.PluginOptions {
-    showProgressDetails?: boolean;
-    hideUploadButton?: boolean;
-    hideAfterFinish?: boolean;
+    showProgressDetails?: boolean
+    hideUploadButton?: boolean
+    hideAfterFinish?: boolean
   }
 }
 
 declare class StatusBar extends Uppy.Plugin<StatusBar.StatusBarOptions> {}
 
-export = StatusBar;
+export = StatusBar

@@ -1,11 +1,13 @@
-import Uppy = require('@uppy/core');
+import Uppy = require('@uppy/core')
 
 declare module ThumbnailGenerator {
   interface ThumbnailGeneratorOptions extends Uppy.PluginOptions {
-    thumbnailWidth?: number;
+    thumbnailWidth?: number
   }
 }
 
-declare class ThumbnailGenerator extends Uppy.Plugin<ThumbnailGenerator.ThumbnailGeneratorOptions> {}
+declare class ThumbnailGenerator extends Uppy.Plugin<
+  ThumbnailGenerator.ThumbnailGeneratorOptions
+> {}
 
-export = ThumbnailGenerator;
+export = ThumbnailGenerator

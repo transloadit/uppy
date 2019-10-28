@@ -3,19 +3,19 @@ import Uppy = require('@uppy/core')
 import AwsS3Multipart = require('../')
 
 {
-  const uppy = Uppy();
+  const uppy = Uppy()
   uppy.use(AwsS3Multipart, {
-    createMultipartUpload(file) {
+    createMultipartUpload (file) {
       expectType<Uppy.UppyFile>(file)
       return { uploadId: '', key: '' }
     },
-    listParts(file, opts) {
+    listParts (file, opts) {
       expectType<Uppy.UppyFile>(file)
       expectType<string>(opts.uploadId)
       expectType<string>(opts.key)
       return []
     },
-    prepareUploadPart(file, part) {
+    prepareUploadPart (file, part) {
       expectType<Uppy.UppyFile>(file)
       expectType<string>(part.uploadId)
       expectType<string>(part.key)
@@ -23,17 +23,17 @@ import AwsS3Multipart = require('../')
       expectType<number>(part.number)
       return { url: '' }
     },
-    abortMultipartUpload(file, opts) {
+    abortMultipartUpload (file, opts) {
       expectType<Uppy.UppyFile>(file)
       expectType<string>(opts.uploadId)
       expectType<string>(opts.key)
     },
-    completeMultipartUpload(file, opts) {
+    completeMultipartUpload (file, opts) {
       expectType<Uppy.UppyFile>(file)
       expectType<string>(opts.uploadId)
       expectType<string>(opts.key)
       expectType<AwsS3Multipart.AwsS3Part>(opts.parts[0])
       return {}
-    },
-  });
+    }
+  })
 }

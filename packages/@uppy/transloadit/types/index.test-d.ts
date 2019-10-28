@@ -9,7 +9,7 @@ const validParams = {
 {
   const uppy = Uppy()
   uppy.use(Transloadit, {
-    getAssemblyOptions(file) {
+    getAssemblyOptions (file) {
       expectType<Uppy.UppyFile>(file)
       return { params: validParams }
     },
@@ -26,8 +26,12 @@ const validParams = {
 {
   const uppy = Uppy()
   // must be bools
-  expectError(uppy.use(Transloadit, { waitForEncoding: null, params: validParams }))
-  expectError(uppy.use(Transloadit, { waitForMetadata: null, params: validParams }))
+  expectError(
+    uppy.use(Transloadit, { waitForEncoding: null, params: validParams })
+  )
+  expectError(
+    uppy.use(Transloadit, { waitForMetadata: null, params: validParams })
+  )
 }
 
 {
@@ -35,17 +39,21 @@ const validParams = {
   // params.auth.key must be string
   expectError(uppy.use(Transloadit, { params: {} }))
   expectError(uppy.use(Transloadit, { params: { auth: {} } }))
-  expectError(uppy.use(Transloadit, {
-    params: {
-      auth: { key: null }
-    }
-  }))
-  expectError(uppy.use(Transloadit, {
-    params: {
-      auth: { key: 'abc' },
-      steps: 'test'
-    }
-  }))
+  expectError(
+    uppy.use(Transloadit, {
+      params: {
+        auth: { key: null }
+      }
+    })
+  )
+  expectError(
+    uppy.use(Transloadit, {
+      params: {
+        auth: { key: 'abc' },
+        steps: 'test'
+      }
+    })
+  )
   uppy.use(Transloadit, {
     params: {
       auth: { key: 'abc' },

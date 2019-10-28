@@ -1,157 +1,207 @@
-import UppyUtils = require('@uppy/utils');
+import UppyUtils = require('@uppy/utils')
 
 declare module Uppy {
   // Utility types
-  type OmitKey<T, Key> = Pick<T, Exclude<keyof T, Key>>;
+  type OmitKey<T, Key> = Pick<T, Exclude<keyof T, Key>>
 
   // These are defined in @uppy/utils instead of core so it can be used there without creating import cycles
-  export type UppyFile<TMeta extends IndexedObject<any> = {}, TBody extends IndexedObject<any> = {}> = UppyUtils.UppyFile<TMeta, TBody>;
-  export type Store = UppyUtils.Store;
-  export type InternalMetadata = UppyUtils.InternalMetadata;
+  export type UppyFile<
+    TMeta extends IndexedObject<any> = {},
+    TBody extends IndexedObject<any> = {}
+  > = UppyUtils.UppyFile<TMeta, TBody>
+  export type Store = UppyUtils.Store
+  export type InternalMetadata = UppyUtils.InternalMetadata
 
   interface IndexedObject<T> {
-    [key: string]: T;
-    [key: number]: T;
+    [key: string]: T
+    [key: number]: T
   }
 
   interface UploadedUppyFile<TMeta, TBody> extends UppyFile<TMeta, TBody> {
-    uploadURL: string;
+    uploadURL: string
   }
 
   interface FailedUppyFile<TMeta, TBody> extends UppyFile<TMeta, TBody> {
-    error: string;
+    error: string
   }
 
   // Replace the `meta` property type with one that allows omitting internal metadata; addFile() will add that
-  type UppyFileWithoutMeta<TMeta, TBody> = OmitKey<UppyFile<TMeta, TBody>, 'meta'>;
-  interface AddFileOptions<TMeta = IndexedObject<any>, TBody = IndexedObject<any>> extends Partial<UppyFileWithoutMeta<TMeta, TBody>> {
+  type UppyFileWithoutMeta<TMeta, TBody> = OmitKey<
+    UppyFile<TMeta, TBody>,
+    'meta'
+  >
+  interface AddFileOptions<
+    TMeta = IndexedObject<any>,
+    TBody = IndexedObject<any>
+  > extends Partial<UppyFileWithoutMeta<TMeta, TBody>> {
     // `.data` is the only required property here.
-    data: Blob | File;
-    meta?: Partial<InternalMetadata> & TMeta;
+    data: Blob | File
+    meta?: Partial<InternalMetadata> & TMeta
   }
 
   interface PluginOptions {
-    id?: string;
+    id?: string
   }
   interface DefaultPluginOptions extends PluginOptions {
-    [prop: string]: any;
+    [prop: string]: any
   }
 
   class Plugin<TOptions extends PluginOptions = DefaultPluginOptions> {
-    id: string;
-    uppy: Uppy;
-    type: string;
-    constructor(uppy: Uppy, opts?: TOptions);
-    getPluginState(): object;
-    setPluginState(update: any): object;
-    update(state?: object): void;
-    mount(target: any, plugin: any): void;
-    render(state: object): void;
-    addTarget(plugin: any): void;
-    unmount(): void;
-    install(): void;
-    uninstall(): void;
+    id: string
+    uppy: Uppy
+    type: string
+    constructor(uppy: Uppy, opts?: TOptions)
+    getPluginState(): object
+    setPluginState(update: any): object
+    update(state?: object): void
+    mount(target: any, plugin: any): void
+    render(state: object): void
+    addTarget(plugin: any): void
+    unmount(): void
+    install(): void
+    uninstall(): void
   }
 
   interface LocaleStrings {
-    [key: string]: string | LocaleStrings;
+    [key: string]: string | LocaleStrings
   }
   interface Locale {
-    strings: LocaleStrings;
-    pluralize?: (n: number) => number;
+    strings: LocaleStrings
+    pluralize?: (n: number) => number
   }
 
   interface Restrictions {
-    maxFileSize?: number | null;
-    maxNumberOfFiles?: number | null;
-    minNumberOfFiles?: number | null;
-    allowedFileTypes?: string[] | null;
+    maxFileSize?: number | null
+    maxNumberOfFiles?: number | null
+    minNumberOfFiles?: number | null
+    allowedFileTypes?: string[] | null
   }
 
   interface UppyOptions<TMeta extends IndexedObject<any> = {}> {
-    id?: string;
-    autoProceed?: boolean;
-    allowMultipleUploads?: boolean;
-    debug?: boolean;
-    restrictions?: Restrictions;
-    meta?: TMeta;
-    onBeforeFileAdded?: (currentFile: UppyFile<TMeta>, files: {[key: string]: UppyFile<TMeta>}) => UppyFile<TMeta> | boolean | undefined;
-    onBeforeUpload?: (files: {[key: string]: UppyFile<TMeta>}) => {[key: string]: UppyFile<TMeta>} | boolean;
-    locale?: Locale;
-    store?: Store;
+    id?: string
+    autoProceed?: boolean
+    allowMultipleUploads?: boolean
+    debug?: boolean
+    restrictions?: Restrictions
+    meta?: TMeta
+    onBeforeFileAdded?: (
+      currentFile: UppyFile<TMeta>,
+      files: { [key: string]: UppyFile<TMeta> }
+    ) => UppyFile<TMeta> | boolean | undefined
+    onBeforeUpload?: (files: {
+      [key: string]: UppyFile<TMeta>
+    }) => { [key: string]: UppyFile<TMeta> } | boolean
+    locale?: Locale
+    store?: Store
   }
 
-  interface UploadResult<TMeta extends IndexedObject<any> = {}, TBody extends IndexedObject<any> = {}> {
-    successful: UploadedUppyFile<TMeta, TBody>[];
-    failed: FailedUppyFile<TMeta, TBody>[];
+  interface UploadResult<
+    TMeta extends IndexedObject<any> = {},
+    TBody extends IndexedObject<any> = {}
+  > {
+    successful: UploadedUppyFile<TMeta, TBody>[]
+    failed: FailedUppyFile<TMeta, TBody>[]
   }
 
-  interface State<TMeta extends IndexedObject<any> = {}, TBody extends IndexedObject<any> = {}> extends IndexedObject<any> {
-    capabilities?: {resumableUploads?: boolean};
-    currentUploads: {};
-    error?: string;
-    files: {[key: string]: UploadedUppyFile<TMeta, TBody> | FailedUppyFile<TMeta, TBody>};
+  interface State<
+    TMeta extends IndexedObject<any> = {},
+    TBody extends IndexedObject<any> = {}
+  > extends IndexedObject<any> {
+    capabilities?: { resumableUploads?: boolean }
+    currentUploads: {}
+    error?: string
+    files: {
+      [key: string]:
+        | UploadedUppyFile<TMeta, TBody>
+        | FailedUppyFile<TMeta, TBody>
+    }
     info?: {
-      isHidden: boolean;
-      type: string;
-      message: string;
-      details: string;
-    };
-    plugins?: IndexedObject<any>;
-    totalProgress: number;
+      isHidden: boolean
+      type: string
+      message: string
+      details: string
+    }
+    plugins?: IndexedObject<any>
+    totalProgress: number
   }
-  type LogLevel = 'info' | 'warning' | 'error';
+  type LogLevel = 'info' | 'warning' | 'error'
   class Uppy {
-    constructor(opts?: UppyOptions);
-    on<TMeta extends IndexedObject<any> = {}>(event: 'upload-success', callback: (file: UppyFile<TMeta>, body: any, uploadURL: string) => void): Uppy;
-    on<TMeta extends IndexedObject<any> = {}>(event: 'complete', callback: (result: UploadResult<TMeta>) => void): Uppy;
-    on(event: string, callback: (...args: any[]) => void): Uppy;
-    off(event: string, callback: any): Uppy;
+    constructor(opts?: UppyOptions)
+    on<TMeta extends IndexedObject<any> = {}>(
+      event: 'upload-success',
+      callback: (file: UppyFile<TMeta>, body: any, uploadURL: string) => void
+    ): Uppy
+    on<TMeta extends IndexedObject<any> = {}>(
+      event: 'complete',
+      callback: (result: UploadResult<TMeta>) => void
+    ): Uppy
+    on(event: string, callback: (...args: any[]) => void): Uppy
+    off(event: string, callback: any): Uppy
     /**
      * For use by plugins only!
      */
-    emit(event: string, ...args: any[]): void;
-    updateAll(state: object): void;
-    setState(patch: object): void;
-    getState<TMeta extends IndexedObject<any> = {}>(): State<TMeta>;
-    readonly state: State;
-    setFileState(fileID: string, state: object): void;
-    resetProgress(): void;
-    addPreProcessor(fn: any): void;
-    removePreProcessor(fn: any): void;
-    addPostProcessor(fn: any): void;
-    removePostProcessor(fn: any): void;
-    addUploader(fn: any): void;
-    removeUploader(fn: any): void;
-    setMeta<TMeta extends IndexedObject<any> = {}>(data: TMeta): void;
-    setFileMeta<TMeta extends IndexedObject<any> = {}>(fileID: string, data: TMeta): void;
-    getFile<TMeta extends IndexedObject<any> = {}, TBody extends IndexedObject<any> = {}>(fileID: string): UppyFile<TMeta, TBody>;
-    getFiles<TMeta extends IndexedObject<any> = {}, TBody extends IndexedObject<any> = {}>(): Array<UppyFile<TMeta, TBody>>;
-    addFile<TMeta extends IndexedObject<any> = {}>(file: AddFileOptions<TMeta>): void;
-    removeFile(fileID: string): void;
-    pauseResume(fileID: string): boolean;
-    pauseAll(): void;
-    resumeAll(): void;
-    retryAll(): void;
-    cancelAll(): void;
-    retryUpload(fileID: string): any;
-    reset(): void;
-    getID(): string;
-    use<TOptions, TInstance extends Plugin<TOptions>>(pluginClass: new(uppy: this, opts: TOptions) => TInstance, opts: TOptions): this;
-    getPlugin(name: string): Plugin;
-    iteratePlugins(callback: (plugin: Plugin) => void): void;
-    removePlugin(instance: Plugin): void;
-    close(): void;
-    info(message: string | {message: string; details: string}, type?: LogLevel, duration?: number): void;
-    hideInfo(): void;
-    log(msg: string, type?: LogLevel): void;
-    run(): this;
-    restore<TMeta extends IndexedObject<any> = {}>(uploadID: string): Promise<UploadResult>;
-    addResultData(uploadID: string, data: object): void;
-    upload<TMeta extends IndexedObject<any> = {}>(): Promise<UploadResult>;
+    emit(event: string, ...args: any[]): void
+    updateAll(state: object): void
+    setState(patch: object): void
+    getState<TMeta extends IndexedObject<any> = {}>(): State<TMeta>
+    readonly state: State
+    setFileState(fileID: string, state: object): void
+    resetProgress(): void
+    addPreProcessor(fn: any): void
+    removePreProcessor(fn: any): void
+    addPostProcessor(fn: any): void
+    removePostProcessor(fn: any): void
+    addUploader(fn: any): void
+    removeUploader(fn: any): void
+    setMeta<TMeta extends IndexedObject<any> = {}>(data: TMeta): void
+    setFileMeta<TMeta extends IndexedObject<any> = {}>(
+      fileID: string,
+      data: TMeta
+    ): void
+    getFile<
+      TMeta extends IndexedObject<any> = {},
+      TBody extends IndexedObject<any> = {}
+    >(fileID: string): UppyFile<TMeta, TBody>
+    getFiles<
+      TMeta extends IndexedObject<any> = {},
+      TBody extends IndexedObject<any> = {}
+    >(): Array<UppyFile<TMeta, TBody>>
+    addFile<TMeta extends IndexedObject<any> = {}>(
+      file: AddFileOptions<TMeta>
+    ): void
+    removeFile(fileID: string): void
+    pauseResume(fileID: string): boolean
+    pauseAll(): void
+    resumeAll(): void
+    retryAll(): void
+    cancelAll(): void
+    retryUpload(fileID: string): any
+    reset(): void
+    getID(): string
+    use<TOptions, TInstance extends Plugin<TOptions>>(
+      pluginClass: new (uppy: this, opts: TOptions) => TInstance,
+      opts: TOptions
+    ): this
+    getPlugin(name: string): Plugin
+    iteratePlugins(callback: (plugin: Plugin) => void): void
+    removePlugin(instance: Plugin): void
+    close(): void
+    info(
+      message: string | { message: string; details: string },
+      type?: LogLevel,
+      duration?: number
+    ): void
+    hideInfo(): void
+    log(msg: string, type?: LogLevel): void
+    run(): this
+    restore<TMeta extends IndexedObject<any> = {}>(
+      uploadID: string
+    ): Promise<UploadResult>
+    addResultData(uploadID: string, data: object): void
+    upload<TMeta extends IndexedObject<any> = {}>(): Promise<UploadResult>
   }
 }
 
-declare function Uppy(opts?: Uppy.UppyOptions): Uppy.Uppy;
+declare function Uppy(opts?: Uppy.UppyOptions): Uppy.Uppy
 
-export = Uppy;
+export = Uppy

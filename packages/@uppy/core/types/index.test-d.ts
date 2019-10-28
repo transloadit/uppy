@@ -5,10 +5,12 @@ import DefaultStore = require('@uppy/store-default')
 {
   const uppy = Uppy()
   uppy.addFile({
-    data: new Blob([new ArrayBuffer(1024)], { type: 'application/octet-stream' })
+    data: new Blob([new ArrayBuffer(1024)], {
+      type: 'application/octet-stream'
+    })
   })
 
-  uppy.upload().then((result) => {
+  uppy.upload().then(result => {
     expectType<Uppy.UploadedUppyFile<{}, {}>>(result.successful[0])
     expectType<Uppy.FailedUppyFile<{}, {}>>(result.failed[0])
   })
@@ -34,7 +36,7 @@ import DefaultStore = require('@uppy/store-default')
 }
 
 {
-  type Meta = {};
+  type Meta = {}
   type ResponseBody = {
     averageColor: string
   }

@@ -21,7 +21,11 @@ import Dashboard = require('../')
     height: 700,
     metaFields: [
       { id: 'caption', name: 'Caption' },
-      { id: 'license', name: 'License', placeholder: 'Creative Commons, Apache 2.0, ...' },
+      {
+        id: 'license',
+        name: 'License',
+        placeholder: 'Creative Commons, Apache 2.0, ...'
+      }
     ]
   })
 }

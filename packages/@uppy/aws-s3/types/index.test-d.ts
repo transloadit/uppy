@@ -5,7 +5,7 @@ import AwsS3 = require('../')
 {
   const uppy = Uppy()
   uppy.use(AwsS3, {
-    getUploadParameters(file) {
+    getUploadParameters (file) {
       expectType<Uppy.UppyFile>(file)
       return { url: '' }
     }
