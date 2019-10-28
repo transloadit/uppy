@@ -85,10 +85,41 @@ module.exports = class Transloadit extends Plugin {
 
     this.client = new Client({
       service: this.opts.service,
+      client: this._getClientVersion(),
       errorReporting: this.opts.errorReporting
     })
     // Contains Assembly instances for in-progress Assemblies.
     this.activeAssemblies = {}
+  }
+
+  _getClientVersion () {
+    const list = [
+      `uppy-core:${this.uppy.constructor.VERSION}`,
+      `uppy-transloadit:${this.constructor.VERSION}`,
+      `uppy-tus:${Tus.VERSION}`
+    ]
+
+    const addPluginVersion = (pluginName, versionName) => {
+      const plugin = this.uppy.getPlugin(pluginName)
+      if (plugin) {
+        list.push(`${versionName}:${plugin.constructor.VERSION}`)
+      }
+    }
+
+    if (this.opts.importFromUploadURLs) {
+      addPluginVersion('XHRUpload', 'uppy-xhr-upload')
+      addPluginVersion('AwsS3', 'uppy-aws-s3')
+      addPluginVersion('AwsS3Multipart', 'uppy-aws-s3-multipart')
+    }
+
+    addPluginVersion('Dropbox', 'uppy-dropbox')
+    addPluginVersion('Facebook', 'uppy-facebook')
+    addPluginVersion('GoogleDrive', 'uppy-google-drive')
+    addPluginVersion('Instagram', 'uppy-instagram')
+    addPluginVersion('OneDrive', 'uppy-onedrive')
+    addPluginVersion('Url', 'uppy-url')
+
+    return list.join(',')
   }
 
   /**
