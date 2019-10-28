@@ -1,12 +1,15 @@
 const express = require('express')
 const qs = require('querystring')
-const uppy = require('../uppy')
+const uppy = require('../companion')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
+const redis = require('../server/redis')
+const merge = require('lodash.merge')
 // @ts-ignore
 const promBundle = require('express-prom-bundle')
 const session = require('express-session')
+const addRequestId = require('express-request-id')()
 const helper = require('./helper')
 // @ts-ignore
 const { version } = require('../../package.json')
@@ -21,6 +24,7 @@ const promInterval = collectDefaultMetrics({ register: promClient.register, time
 
 // Add version as a prometheus gauge
 const versionGauge = new promClient.Gauge({ name: 'companion_version', help: 'npm version as an integer' })
+// @ts-ignore
 const numberVersion = version.replace(/\D/g, '') * 1
 versionGauge.set(numberVersion)
 
@@ -28,16 +32,24 @@ if (app.get('env') !== 'test') {
   clearInterval(promInterval)
 }
 
+app.use(addRequestId)
 // log server requests.
 app.use(morgan('combined'))
 morgan.token('url', (req, res) => {
-  // don't log access_tokens in urls
-  if (req.query && req.query.access_token) {
+  const mask = (key) => {
+    // don't log access_tokens in urls
     const query = Object.assign({}, req.query)
     // replace logged access token with xxxx character
-    query.access_token = 'x'.repeat(req.query.access_token.length)
+    query[key] = 'x'.repeat(req.query[key].length)
     return `${req.path}?${qs.stringify(query)}`
   }
+
+  if (req.query && req.query.access_token) {
+    return mask('access_token')
+  } else if (req.query && req.query.uppyAuthToken) {
+    return mask('uppyAuthToken')
+  }
+
   return req.originalUrl || req.url
 })
 
@@ -54,18 +66,19 @@ app.use(helmet.noSniff())
 app.use(helmet.ieNoOpen())
 app.disable('x-powered-by')
 
-const uppyOptions = helper.getUppyOptions()
+const companionOptions = helper.getUppyOptions()
 const sessionOptions = {
-  secret: uppyOptions.secret,
+  secret: companionOptions.secret,
   resave: true,
   saveUninitialized: true
 }
 
-if (process.env.COMPANION_REDIS_URL) {
+if (companionOptions.redisUrl) {
   const RedisStore = require('connect-redis')(session)
-  sessionOptions.store = new RedisStore({
-    url: process.env.COMPANION_REDIS_URL
-  })
+  const redisClient = redis.client(
+    merge({ url: companionOptions.redisUrl }, companionOptions.redisOptions)
+  )
+  sessionOptions.store = new RedisStore({ client: redisClient })
 }
 
 if (process.env.COMPANION_COOKIE_DOMAIN) {
@@ -91,6 +104,8 @@ app.use((req, res, next) => {
     // @ts-ignore
     if (req.headers.origin && whitelist.indexOf(req.headers.origin) > -1) {
       res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
+      // only allow credentials when origin is whitelisted
+      res.setHeader('Access-Control-Allow-Credentials', 'true')
     }
   } else {
     res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
@@ -104,22 +119,21 @@ app.use((req, res, next) => {
     'Access-Control-Allow-Headers',
     'Authorization, Origin, Content-Type, Accept'
   )
-  res.setHeader('Access-Control-Allow-Credentials', 'true')
   next()
 })
 
 // Routes
 app.get('/', (req, res) => {
   res.setHeader('Content-Type', 'text/plain')
-  res.send(helper.buildHelpfulStartupMessage(uppyOptions))
+  res.send(helper.buildHelpfulStartupMessage(companionOptions))
 })
 
 // initialize uppy
-helper.validateConfig(uppyOptions)
+helper.validateConfig(companionOptions)
 if (process.env.COMPANION_PATH) {
-  app.use(process.env.COMPANION_PATH, uppy.app(uppyOptions))
+  app.use(process.env.COMPANION_PATH, uppy.app(companionOptions))
 } else {
-  app.use(uppy.app(uppyOptions))
+  app.use(uppy.app(companionOptions))
 }
 
 app.use((req, res, next) => {
@@ -129,15 +143,15 @@ app.use((req, res, next) => {
 if (app.get('env') === 'production') {
   // @ts-ignore
   app.use((err, req, res, next) => {
-    console.error('\x1b[31m', err, '\x1b[0m')
-    res.status(err.status || 500).json({ message: 'Something went wrong' })
+    console.error('\x1b[31m', req.id, err, '\x1b[0m')
+    res.status(err.status || 500).json({ message: 'Something went wrong', requestId: req.id })
   })
 } else {
   // @ts-ignore
   app.use((err, req, res, next) => {
-    console.error('\x1b[31m', err, '\x1b[0m')
-    res.status(err.status || 500).json({ message: err.message, error: err })
+    console.error('\x1b[31m', req.id, err, '\x1b[0m')
+    res.status(err.status || 500).json({ message: err.message, error: err, requestId: req.id })
   })
 }
 
-module.exports = { app, uppyOptions }
+module.exports = { app, companionOptions }

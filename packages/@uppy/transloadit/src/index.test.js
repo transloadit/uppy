@@ -51,7 +51,7 @@ describe('Transloadit', () => {
       const fileID = Object.keys(uppy.getState().files)[0]
 
       expect(err.message).toBe('Failure!')
-      expect(uppy.getFile(fileID).progress.uploadStarted).toBe(false)
+      expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
     })
   })
 
@@ -79,7 +79,7 @@ describe('Transloadit', () => {
       const fileID = Object.keys(uppy.getState().files)[0]
 
       expect(err.message).toBe('Transloadit: Could not create Assembly: VIDEO_ENCODE_VALIDATION')
-      expect(uppy.getFile(fileID).progress.uploadStarted).toBe(false)
+      expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
     })
   })
 })

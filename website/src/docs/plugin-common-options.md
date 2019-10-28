@@ -1,9 +1,9 @@
 ---
 title: "Common Plugin Options"
 type: docs
-permalink: docs/plugins/
+permalink: docs/plugin-options/
 order: 4
-category: 'Docs'
+category: "Docs"
 ---
 
 Each plugin can have any number of options (please see specific plugins for details), but these are shared between some:

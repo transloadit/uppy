@@ -6,7 +6,8 @@ menu: "XHR"
 module: "@uppy/xhr-upload"
 permalink: docs/xhr-upload/
 alias: docs/xhrupload/
-category: 'Destinations'
+category: "Destinations"
+tagline: "classic multipart form uploads or binary uploads using XMLHTTPRequest"
 ---
 
 The `@uppy/xhr-upload` plugin handles classic HTML multipart form uploads, as well as uploads using the HTTP `PUT` method.
@@ -67,8 +68,10 @@ When `formData` is set to true, this is used as the form field name for the file
 ### `metaFields: null`
 
 Pass an array of field names to limit the metadata fields that will be sent to the endpoint as form fields.
-For example, `metaFields: ['name']` will only send the `name` field.
-Setting this to `null` (the default) will send *all* metadata fields.
+
+* Set this to `['name']` to only send the `name` field.
+* Set this to `null` (the default) to send *all* metadata fields.
+* Set this to an empty array `[]` to not send any fields.
 
 If the `formData` option is set to false, `metaFields` has no effect.
 
@@ -87,7 +90,9 @@ headers: {
 
 Send all files in a single multipart request. When `bundle` is set to `true`, `formData` must also be set to `true`.
 
-> Note: When `bundle` is set to `true`, file metadata is **not** sent to the endpoint. This is because it is not obvious how metadata should be sent when there are multiple files in a single request. If you need this, please open an issue and we will try to figure it out together.
+⚠️ Only use `bundle: true` with local uploads (drag-drop, browse, webcam), Uppy won’t be able to bundle remote files (from Google Drive or Instagram), and will throw an error in this case.
+
+> Note: When `bundle` is set to `true`, [global uppy metadata](https://uppy.io/docs/uppy/#meta), the one set via `meta` options property, is sent to the endpoint. Individual per-file metadata is ignored.
 
 All files will be appended to the provided `fieldName` field in the request. To upload files on different fields, use [`uppy.setFileState()`](/docs/uppy#uppy-setFileState-fileID-state) to set the `xhrUpload.fieldName` property on the file:
 

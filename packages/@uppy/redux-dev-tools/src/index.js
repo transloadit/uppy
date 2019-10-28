@@ -12,7 +12,7 @@ module.exports = class ReduxDevTools extends Plugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'debugger'
-    this.id = 'ReduxDevTools'
+    this.id = this.opts.id || 'ReduxDevTools'
     this.title = 'Redux DevTools'
 
     // set default options
@@ -40,11 +40,12 @@ module.exports = class ReduxDevTools extends Plugin {
           case 'RESET':
             this.uppy.reset()
             return
-          case 'IMPORT_STATE':
+          case 'IMPORT_STATE': {
             const computedStates = message.payload.nextLiftedState.computedStates
             this.uppy.store.state = Object.assign({}, this.uppy.getState(), computedStates[computedStates.length - 1].state)
             this.uppy.updateAll(this.uppy.getState())
             return
+          }
           case 'JUMP_TO_STATE':
           case 'JUMP_TO_ACTION':
             this.uppy.store.state = Object.assign({}, this.uppy.getState(), JSON.parse(message.state))

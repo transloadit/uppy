@@ -8,10 +8,7 @@ After you have successfully forked the repo, clone and install the project:
 git clone git@github.com:YOUR_USERNAME/uppy.git
 cd uppy
 npm install
-npm run bootstrap
 ```
-
-We use lerna to manage the many plugin packages Uppy has. You should always do `npm run bootstrap` after an `npm install` to make sure lerna has installed the dependencies of each package and that the `package-lock.json` in the repository root is up to date.
 
 Our website’s examples section is also our playground, please read the [Local Previews](#Local-previews) section to get up and running.
 
@@ -122,28 +119,16 @@ Even though bundled in this repo, the website is regarded as a separate project.
 
 ### Local previews
 
-It is recommended to exclude `./website/public/` from your editor if you want efficient searches.
-
-To install the required node modules, type:
-
-```bash
-npm install && cd website && npm install && cd ..
-```
-
-For local previews on http://localhost:4000, type:
-
-```bash
-npm run web:start # that gets you just the website. if you need companion, etc. you can use `npm start` instead
-```
-
-This will watch the website, as well as Uppy, as the examples, and rebuild everything and refresh your browser as files change.
+1. `npm install`
+1. `npm start`
+1. Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
 
 Then, to work on, for instance, the XHRUpload example, you would edit the following files:
 
 ```bash
-${EDITOR} src/core/Core.js \
-  src/plugins/XHRUpload.js \
-  src/plugins/Plugin.js \
+${EDITOR} packages/@uppy/core/src/index.js \
+  packages/@uppy/core/src/Plugin.js \
+  packages/@uppy/xhr-upload/src/index.js \
   website/src/examples/xhrupload/app.es6
 ```
 

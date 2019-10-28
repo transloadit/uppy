@@ -69,6 +69,8 @@ async function getMinifiedSize (pkg, name) {
   const b = browserify(pkg)
   if (name !== '@uppy/core' && name !== 'uppy') {
     b.exclude('@uppy/core')
+    // Already unconditionally included through @uppy/core
+    b.exclude('preact')
   }
   if (excludes[name]) {
     b.exclude(excludes[name])
@@ -139,31 +141,31 @@ async function injectGhStars () {
   const Octokit = require('@octokit/rest')
   const octokit = new Octokit(opts)
 
-  let { headers, data } = await octokit.repos.get({
+  const { headers, data } = await octokit.repos.get({
     owner: 'transloadit',
     repo: 'uppy'
   })
 
   console.log(`${headers['x-ratelimit-remaining']} requests remaining until we hit GitHub ratelimiter`)
 
-  let dstpath = path.join(webRoot, 'themes', 'uppy', 'layout', 'partials', 'generated_stargazers.ejs')
+  const dstpath = path.join(webRoot, 'themes', 'uppy', 'layout', 'partials', 'generated_stargazers.ejs')
   fs.writeFileSync(dstpath, data.stargazers_count, 'utf-8')
 
   console.log(`${data.stargazers_count} stargazers written to '${dstpath}'`)
 }
 
 async function injectMarkdown () {
-  let sources = {
-    '.github/ISSUE_TEMPLATE/integration_help.md': `src/_template/integration_help.md`,
-    '.github/CONTRIBUTING.md': `src/_template/contributing.md`
+  const sources = {
+    '.github/ISSUE_TEMPLATE/integration_help.md': 'src/_template/integration_help.md',
+    '.github/CONTRIBUTING.md': 'src/_template/contributing.md'
   }
 
-  for (let src in sources) {
-    let dst = sources[src]
+  for (const src in sources) {
+    const dst = sources[src]
     // strip yaml frontmatter:
-    let srcpath = path.join(uppyRoot, `/../../${src}`)
-    let dstpath = path.join(webRoot, dst)
-    let parts = fs.readFileSync(srcpath, 'utf-8').split(/---\s*\n/)
+    const srcpath = path.join(uppyRoot, `/../../${src}`)
+    const dstpath = path.join(webRoot, dst)
+    const parts = fs.readFileSync(srcpath, 'utf-8').split(/---\s*\n/)
     if (parts.length >= 3) {
       parts.shift()
       parts.shift()
@@ -171,41 +173,49 @@ async function injectMarkdown () {
     let content = `<!-- WARNING! This file was injected. Please edit in "${src}" instead and run "${path.basename(__filename)}" -->\n\n`
     content += parts.join('---\n')
     fs.writeFileSync(dstpath, content, 'utf-8')
-    console.info(chalk.green(`✓ injected: `), chalk.grey(srcpath))
+    console.info(chalk.green('✓ injected: '), chalk.grey(srcpath))
   }
-  touch(path.join(webRoot, `/src/support.md`))
+  touch(path.join(webRoot, '/src/support.md'))
 }
 
 function injectLocaleList () {
   const mdTable = [
     `<!-- WARNING! This file was automatically injected. Please run "${path.basename(__filename)}" to re-generate -->\n\n`,
-    '| Language        | NPM                | CDN                 | Source on GitHub |',
+    '| %count% Locales | NPM                | CDN                 | Source on GitHub |',
     '| --------------- | ------------------ | ------------------- | ---------------- |'
   ]
   const mdRows = []
 
   const localePackagePath = path.join(localesRoot, 'src', '*.js')
-  let localePackageVersion = require(path.join(localesRoot, 'package.json')).version
-  // @TODO: remove next line when upload-to-cdn is updated
-  localePackageVersion = '1.0.0'
+  const localePackageVersion = require(path.join(localesRoot, 'package.json')).version
 
   glob.sync(localePackagePath).forEach((localePath) => {
     const localeName = path.basename(localePath, '.js')
-    const localeNameWithDash = localeName.replace('_', '-')
+    let localeNameWithDash = localeName.replace(/_/g, '-')
+
+    const parts = localeNameWithDash.split('-')
+    let variant = ''
+    if (parts.length > 2) {
+      const lang = parts.shift()
+      const country = parts.shift()
+      variant = parts.join(', ')
+      localeNameWithDash = `${lang}-${country}`
+    }
+
     const languageName = LocaleCode.getLanguageName(localeNameWithDash)
     const countryName = LocaleCode.getCountryName(localeNameWithDash)
-    const npmPath = `<code><a href="https://www.npmjs.com/package/@uppy/locales">@uppy/locales</a>/lib/${localeName}</code>`
-    const cdnPath = `[\`${localeName}.min.js\`](https://transloadit.edgly.net/releases/uppy/v${localePackageVersion}/locales/${localeName}.min.js)`
+    const npmPath = `<code class="raw"><a href="https://www.npmjs.com/package/@uppy/locales">@uppy/locales</a>/lib/${localeName}</code>`
+    const cdnPath = `[\`${localeName}.min.js\`](https://transloadit.edgly.net/releases/uppy/locales/v${localePackageVersion}/${localeName}.min.js)`
     const githubSource = `[\`${localeName}.js\`](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/locales/src/${localeName}.js)`
-    const mdTableRow = `| ${languageName}<br/> <small>(${countryName})</small> | ${npmPath} | ${cdnPath} | ✏️ ${githubSource} |`
+    const mdTableRow = `| ${languageName}<br/> <small>${countryName}</small>${variant ? `<br /><small>(${variant})</small>` : ''} | ${npmPath} | ${cdnPath} | ✏️ ${githubSource} |`
     mdRows.push(mdTableRow)
   })
 
-  const resultingMdTable = mdTable.concat(mdRows.sort()).join('\n')
+  const resultingMdTable = mdTable.concat(mdRows.sort()).join('\n').replace('%count%', mdRows.length)
 
-  let dstpath = path.join(webRoot, 'src', '_template', 'list_of_locale_packs.md')
+  const dstpath = path.join(webRoot, 'src', '_template', 'list_of_locale_packs.md')
   fs.writeFileSync(dstpath, resultingMdTable, 'utf-8')
-  console.info(chalk.green(`✓ injected: `), chalk.grey(dstpath))
+  console.info(chalk.green('✓ injected: '), chalk.grey(dstpath))
 }
 
 async function readConfig () {

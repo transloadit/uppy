@@ -69,14 +69,15 @@ module.exports = class Webcam extends Plugin {
         'picture'
       ],
       mirror: true,
-      facingMode: 'user'
+      facingMode: 'user',
+      preferredVideoMimeType: null
     }
 
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
 
     // i18n
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
 
@@ -144,11 +145,16 @@ module.exports = class Webcam extends Plugin {
   }
 
   startRecording () {
-    // TODO We can check here if any of the mime types listed in the
-    // mimeToExtensions map in Utils.js are supported, and prefer to use one of
-    // those.
-    // Right now we let the browser pick a type that it deems appropriate.
-    this.recorder = new MediaRecorder(this.stream)
+    const options = {}
+    const preferredVideoMimeType = this.opts.preferredVideoMimeType
+
+    // Attempt to use the passed preferredVideoMimeType (if any) during recording.
+    // If the browser doesn't support it, we'll fall back to the browser default instead
+    if (preferredVideoMimeType && MediaRecorder.isTypeSupported(preferredVideoMimeType) && getFileTypeExtension(preferredVideoMimeType)) {
+      options.mimeType = preferredVideoMimeType
+    }
+
+    this.recorder = new MediaRecorder(this.stream, options)
     this.recordingChunks = []
     this.recorder.addEventListener('dataavailable', (event) => {
       this.recordingChunks.push(event.data)
@@ -177,7 +183,10 @@ module.exports = class Webcam extends Plugin {
       try {
         this.uppy.addFile(file)
       } catch (err) {
-        // Nothing, restriction errors handled in Core
+        // Logging the error, exept restrictions, which is handled in Core
+        if (!err.isRestriction) {
+          this.uppy.log(err)
+        }
       }
     }).then(() => {
       this.recordingChunks = null
@@ -214,7 +223,7 @@ module.exports = class Webcam extends Plugin {
     return new Promise((resolve, reject) => {
       let count = this.opts.countdown
 
-      let countDown = setInterval(() => {
+      const countDown = setInterval(() => {
         if (!this.webcamActive) {
           clearInterval(countDown)
           this.captureInProgress = false
@@ -253,7 +262,10 @@ module.exports = class Webcam extends Plugin {
       try {
         this.uppy.addFile(tagFile)
       } catch (err) {
-        // Nothing, restriction errors handled in Core
+        // Logging the error, exept restrictions, which is handled in Core
+        if (!err.isRestriction) {
+          this.uppy.log(err)
+        }
       }
     }, (error) => {
       this.captureInProgress = false
@@ -267,7 +279,7 @@ module.exports = class Webcam extends Plugin {
       return Promise.reject(new Error('No video element found, likely due to the Webcam tab being closed.'))
     }
 
-    const name = `webcam-${Date.now()}.jpg`
+    const name = `cam-${Date.now()}.jpg`
     const mimeType = 'image/jpeg'
 
     const width = video.videoWidth
@@ -333,24 +345,27 @@ module.exports = class Webcam extends Plugin {
     const webcamState = this.getPluginState()
 
     if (!webcamState.cameraReady) {
-      return <PermissionsScreen
-        icon={CameraIcon}
-        i18n={this.i18n} />
+      return (
+        <PermissionsScreen icon={CameraIcon} i18n={this.i18n} />
+      )
     }
 
-    return <CameraScreen
-      {...webcamState}
-      onSnapshot={this.takeSnapshot}
-      onStartRecording={this.startRecording}
-      onStopRecording={this.stopRecording}
-      onFocus={this.focus}
-      onStop={this.stop}
-      i18n={this.i18n}
-      modes={this.opts.modes}
-      supportsRecording={supportsMediaRecorder()}
-      recording={webcamState.isRecording}
-      mirror={this.opts.mirror}
-      src={this.stream} />
+    return (
+      <CameraScreen
+        {...webcamState}
+        onSnapshot={this.takeSnapshot}
+        onStartRecording={this.startRecording}
+        onStopRecording={this.stopRecording}
+        onFocus={this.focus}
+        onStop={this.stop}
+        i18n={this.i18n}
+        modes={this.opts.modes}
+        supportsRecording={supportsMediaRecorder()}
+        recording={webcamState.isRecording}
+        mirror={this.opts.mirror}
+        src={this.stream}
+      />
+    )
   }
 
   install () {

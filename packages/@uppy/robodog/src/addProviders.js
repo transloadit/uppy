@@ -1,4 +1,5 @@
 const Transloadit = require('@uppy/transloadit')
+const has = require('@uppy/utils/lib/hasProperty')
 
 const remoteProviders = {
   dropbox: require('@uppy/dropbox'),
@@ -14,6 +15,7 @@ const localProviders = {
 const remoteProviderOptionNames = [
   'companionUrl',
   'companionAllowedHosts',
+  'companionHeaders',
   'serverHeaders',
   'target'
 ]
@@ -32,7 +34,7 @@ function addRemoteProvider (uppy, name, opts) {
   }
 
   remoteProviderOptionNames.forEach((name) => {
-    if (opts.hasOwnProperty(name)) providerOptions[name] = opts[name]
+    if (has(opts, name)) providerOptions[name] = opts[name]
   })
   // Apply overrides for a specific provider plugin.
   if (typeof opts[name] === 'object') {
@@ -47,7 +49,7 @@ function addLocalProvider (uppy, name, opts) {
   const providerOptions = {}
 
   localProviderOptionNames.forEach((name) => {
-    if (opts.hasOwnProperty(name)) providerOptions[name] = opts[name]
+    if (has(opts, name)) providerOptions[name] = opts[name]
   })
   // Apply overrides for a specific provider plugin.
   if (typeof opts[name] === 'object') {
@@ -59,9 +61,9 @@ function addLocalProvider (uppy, name, opts) {
 
 function addProviders (uppy, names, opts = {}) {
   names.forEach((name) => {
-    if (remoteProviders.hasOwnProperty(name)) {
+    if (has(remoteProviders, name)) {
       addRemoteProvider(uppy, name, opts)
-    } else if (localProviders.hasOwnProperty(name)) {
+    } else if (has(localProviders, name)) {
       addLocalProvider(uppy, name, opts)
     } else {
       const validNames = [

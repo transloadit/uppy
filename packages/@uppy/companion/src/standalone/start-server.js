@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const uppy = require('../uppy')
+const uppy = require('../companion')
 // @ts-ignore
 const { version } = require('../../package.json')
 const { app } = require('.')

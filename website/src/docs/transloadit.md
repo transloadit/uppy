@@ -4,7 +4,8 @@ order: 10
 title: "Transloadit"
 module: "@uppy/transloadit"
 permalink: docs/transloadit/
-category: 'File Processing'
+category: "File Processing"
+tagline: "manipulate and transcode uploaded files using the <a href='https://transloadit.com'>transloadit.com</a> service"
 ---
 
 The `@uppy/transloadit` plugin can be used to upload files to [Transloadit](https://transloadit.com/) for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, [and much more](https://transloadit.com/services/).
@@ -26,7 +27,8 @@ uppy.use(Transloadit, {
   importFromUploadURLs: false,
   alwaysRunAssembly: false,
   signature: null,
-  fields: {}
+  fields: {},
+  limit: 0
 })
 ```
 
@@ -255,6 +257,10 @@ uppy.use(Transloadit, {
   }
 })
 ```
+
+### `limit: 0`
+
+Limit the amount of uploads going on at the same time. Setting this to `0` means there is no limit on concurrent uploads. This option is passed through to the [`@uppy/tus`](/docs/tus) plugin that Transloadit plugin uses internally.
 
 ### `locale: {}`
 

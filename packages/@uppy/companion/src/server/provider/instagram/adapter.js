@@ -1,10 +1,3 @@
-exports.getUsername = (data) => {
-  // @todo implement a better way to get usernames
-  if (data.data && data.data.length) {
-    return data.data[0].user.username
-  }
-}
-
 exports.isFolder = (item) => {
   return false
 }
@@ -37,9 +30,9 @@ exports.getItemSubList = (item) => {
 }
 
 exports.getItemName = (item) => {
-  if (item && item['created_time']) {
+  if (item && item.created_time) {
     const ext = item.type === 'video' ? 'mp4' : 'jpeg'
-    let date = new Date(item['created_time'] * 1000)
+    const date = new Date(item.created_time * 1000)
     const name = date.toLocaleDateString([], {
       year: 'numeric',
       month: 'short',
@@ -74,8 +67,9 @@ exports.getItemThumbnailUrl = (item) => {
   return item.images ? item.images.thumbnail.url : null
 }
 
-exports.getNextPagePath = (items) => {
+exports.getNextPagePath = (data) => {
+  const items = exports.getItemSubList(data)
   if (items.length) {
-    return `recent?max_id=${exports.getItemId(items[items.length - 1])}`
+    return `recent?cursor=${exports.getItemId(items[items.length - 1])}`
   }
 }

@@ -1,3 +1,6 @@
+const mime = require('mime-types')
+const querystring = require('querystring')
+
 exports.getUsername = (data) => {
   return data.user_email
 }
@@ -23,8 +26,7 @@ exports.getItemName = (item) => {
 }
 
 exports.getMimeType = (item) => {
-  // mime types aren't supported.
-  return null
+  return mime.lookup(exports.getItemName(item)) || null
 }
 
 exports.getItemId = (item) => {
@@ -41,4 +43,12 @@ exports.getItemModifiedDate = (item) => {
 
 exports.getItemThumbnailUrl = (item) => {
   return `/dropbox/thumbnail/${exports.getItemRequestPath(item)}`
+}
+
+exports.getNextPagePath = (data) => {
+  if (!data.has_more) {
+    return null
+  }
+  const query = { cursor: data.cursor }
+  return `?${querystring.stringify(query)}`
 }

@@ -4,7 +4,8 @@ order: 3
 title: "Webcam"
 module: "@uppy/webcam"
 permalink: docs/webcam/
-category: 'Sources'
+category: "Sources"
+tagline: "upload selfies or audio / video recordings"
 ---
 
 The `@uppy/webcam` plugin lets you take photos and record videos with a built-in camera on desktop and mobile devices.
@@ -112,6 +113,9 @@ Devices sometimes have multiple cameras, front and back, for example. There is a
 - `left`: The video source is facing toward the user but to their left, such as a camera aimed toward the user but over their left shoulder.
 - `right`: The video source is facing toward the user but to their right, such as a camera aimed toward the user but over their right shoulder.
 
+### `preferredVideoMimeType: null`
+
+Set the preferred mime type for video recordings, for example `'video/webm'`. If the browser supports the given mime type, the video will be recorded in this format. If the browser does not support it, it will use the browser default.
 
 ### `locale: {}`
 

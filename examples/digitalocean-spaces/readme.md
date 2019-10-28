@@ -2,13 +2,13 @@
 
 This example uses Uppy to upload files to a DigitolOcean Space. DigitalOcean Spaces has an identical API to S3, so we can use the [AwsS3](https://uppy.io/docs/aws-s3) plugin. We use @uppy/companion with a [custom `endpoint` configuration](./server.js#L32-L33) that points to DigitalOcean.
 
-To try this example, first run:
+To run this example, make sure you've correctly installed the root repository:
 
 ```bash
 npm install
 ```
 
-Then configure some environment variables and run it:
+Then navigate to this directory, configure some environment variables, and run:
 
 ```bash
 COMPANION_AWS_REGION=ams3 \

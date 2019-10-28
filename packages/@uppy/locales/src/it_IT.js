@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const it_IT = {}
 
 it_IT.strings = {
@@ -10,6 +8,7 @@ it_IT.strings = {
   authenticateWith: 'Connetti a %{pluginName}',
   authenticateWithTitle: 'Autenticati con %{pluginName} per selezionare i file',
   back: 'Indietro',
+  addMore: 'Aggiungi più',
   browse: 'sfoglia',
   cancel: 'Annulla',
   cancelUpload: 'Annulla upload',
@@ -80,10 +79,10 @@ it_IT.strings = {
   retry: 'Riprova',
   retryUpload: 'Riprova l\'upload',
   saveChanges: 'Salva le modifiche',
-  selectXFiles: {
-    '0': 'Seleziona %{smart_count} file',
-    '1': 'Seleziona %{smart_count} file',
-    '2': 'Seleziona %{smart_count} file'
+  selectX: {
+    '0': 'Seleziona %{smart_count}',
+    '1': 'Seleziona %{smart_count}',
+    '2': 'Seleziona %{smart_count}'
   },
   smile: 'Sorridi!',
   startRecording: 'Inizia la registrazione del video',
@@ -131,7 +130,12 @@ it_IT.strings = {
     '0': 'Devi selezionare almeno %{smart_count} file',
     '1': 'Devi selezionare almeno %{smart_count} file',
     '2': 'Devi selezionare almeno %{smart_count} file'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Seleziona tutti i file dalla cartella %{name}',
+  unselectAllFilesFromFolderNamed: 'Deseleziona tutti i file dalla cartella %{name}',
+  selectFileNamed: 'Seleziona il file %{name}',
+  unselectFileNamed: 'Deseleziona il file %{name}',
+  openFolderNamed: 'Cartella aperta %{name}'
 }
 
 it_IT.pluralize = function (n) {

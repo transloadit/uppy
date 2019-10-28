@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const fr_FR = {}
 
 fr_FR.strings = {
@@ -10,6 +8,7 @@ fr_FR.strings = {
   authenticateWith: 'Se connecter à %{pluginName}',
   authenticateWithTitle: 'Veuillez vous authentifier avec %{pluginName} pour sélectionner les fichiers',
   back: 'Retour',
+  addMore: 'Ajouter d\'autres',
   browse: 'naviguer',
   cancel: 'Annuler',
   cancelUpload: 'Annuler téléchargement',
@@ -17,7 +16,7 @@ fr_FR.strings = {
   closeModal: 'Fermer fenêtre',
   companionAuthError: 'Autorisation requise',
   companionError: 'Connexion avec Companion a échoué',
-  complete: 'Complete',
+  complete: 'Terminé',
   connectedToInternet: 'Connecté à Internet',
   copyLink: 'Copier lien',
   copyLinkToClipboardFallback: 'Copier le lien en dessous',
@@ -25,7 +24,7 @@ fr_FR.strings = {
   creatingAssembly: 'Préparation du téléchargement...',
   creatingAssemblyFailed: 'Transloadit: Impossible de créer une Assembly',
   dashboardTitle: 'Téléchargeur de fichier',
-  dashboardWindowTitle: 'Fenêtre de Téléchargeur de fichier (Appuyez sur echap pour fermer)',
+  dashboardWindowTitle: 'Fenêtre de téléchargeur de fichier (Appuyez sur echap pour fermer)',
   dataUploadedOfTotal: '%{complete} sur %{total}',
   done: 'Terminé',
   dropHereOr: 'Déposez les fichiers ici ou %{browse}',
@@ -40,8 +39,8 @@ fr_FR.strings = {
   enterCorrectUrl: 'Lien incorrecte: Assurez-vous que vous entrez un lien direct vers le fichier',
   enterUrlToImport: 'Entrez un lien ou importer un fichier',
   exceedsSize: 'Ce fichier dépasse la taille maximale autorisée de',
-  failedToFetch: 'Companion a échoué de récupérer ce lien, assurez-vous que c\'est correct',
-  failedToUpload: 'Le téléchargement du %{file} a échoué',
+  failedToFetch: 'Companion a échoué à récupérer ce lien, assurez-vous que c\'est correct',
+  failedToUpload: 'Le téléchargement de %{file} a échoué',
   fileSource: 'Fichier source: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} sur %{smart_count} fichier téléchargé',
@@ -62,7 +61,7 @@ fr_FR.strings = {
   logOut: 'Déconnexion',
   myDevice: 'Mon appareil',
   noFilesFound: 'Vous n\'avez aucun fichier ou dossier ici',
-  noInternetConnection: 'Pas de connexion Internet',
+  noInternetConnection: 'Pas de connexion à Internet',
   pause: 'Pause',
   pauseUpload: 'Mettre en pause le téléchargement',
   paused: 'En pause',
@@ -80,10 +79,10 @@ fr_FR.strings = {
   retry: 'Réessayer',
   retryUpload: 'Réessayez le téléchargement',
   saveChanges: 'Sauvegarder les modifications',
-  selectXFiles: {
-    '0': 'Sélectionner %{smart_count} fichier',
-    '1': 'Sélectionner %{smart_count} fichiers',
-    '2': 'Sélectionner %{smart_count} fichiers'
+  selectX: {
+    '0': 'Sélectionner %{smart_count}',
+    '1': 'Sélectionner %{smart_count}',
+    '2': 'Sélectionner %{smart_count}'
   },
   smile: 'Souris!',
   startRecording: 'Commencer l\'enregistrement vidéo',
@@ -131,7 +130,12 @@ fr_FR.strings = {
     '0': 'Vous devez sélectionner au moins %{smart_count} fichier',
     '1': 'Vous devez sélectionner au moins %{smart_count} fichiers',
     '2': 'Vous devez sélectionner au moins %{smart_count} fichiers'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Sélectionner tous les fichiers du dossier %{name}',
+  unselectAllFilesFromFolderNamed: 'Désélectionner tous les fichiers du dossier%{name}',
+  selectFileNamed: 'Choisir le dossier %{name}',
+  unselectFileNamed: 'Désélectionner le fichier %{name}',
+  openFolderNamed: 'Dossier ouvert %{name}'
 }
 
 fr_FR.pluralize = function (n) {

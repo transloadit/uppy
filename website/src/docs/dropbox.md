@@ -5,7 +5,8 @@ title: "Dropbox"
 menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/dropbox"
 permalink: docs/dropbox/
-category: 'Sources'
+category: "Sources"
+tagline: "import files from Dropbox"
 ---
 
 The `@uppy/dropbox` plugin lets users import files from their Dropbox account.
@@ -72,7 +73,7 @@ DOM element, CSS selector, or plugin to mount the Dropbox provider into. This sh
 
 URL to a [Companion](/docs/companion) instance.
 
-### `serverHeaders: {}`
+### `companionHeaders: {}`
 
 Custom headers that should be sent along to [Companion](/docs/companion) on every request.
 

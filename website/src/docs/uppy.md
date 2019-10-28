@@ -4,7 +4,8 @@ order: 1
 title: "Uppy"
 module: "@uppy/core"
 permalink: docs/uppy/
-category: 'Docs'
+category: "Docs"
+tagline: "The core module that orchestrates everything"
 ---
 
 This is the core module that orchestrates everything in Uppy, managing state and events and providing methods.
@@ -49,7 +50,8 @@ const uppy = Uppy({
   onBeforeFileAdded: (currentFile, files) => currentFile,
   onBeforeUpload: (files) => {},
   locale: {},
-  store: new DefaultStore()
+  store: new DefaultStore(),
+  logger: nullLogger
 })
 ```
 
@@ -79,6 +81,47 @@ With this option set to `true`, users can upload some files, and then add _more_
 
 With this option set to `false`, users can upload some files, and you can listen for the ['complete'](/docs/uppy/#complete) event to continue to the next step in your app's upload flow. A typical use case for this is uploading a new profile picture. If you are integrating with an existing HTML form, this option gives the closest behaviour to a bare `<input type="file">`.
 
+### `logger`
+
+An object of methods that are called with debug information from [`uppy.log`](/docs/uppy/#uppy-log).
+
+Set `logger: Uppy.debugLogger` to get debug info output to the browser console:
+
+```js
+const Uppy = require('@uppy/core')
+const uppy = Uppy({
+  logger: Uppy.debugLogger
+})
+```
+
+You can also provide your own logger object: it should expose `debug`, `warn` and `error` methods, as shown in the examples below.
+
+By default `logger` is set to `nullLogger`, which does nothing:
+
+```js
+const nullLogger = {
+  debug: (...args) => {},
+  warn: (...args) => {},
+  error: (...args) => {}
+}
+```
+
+`logger: Uppy.debugLogger` looks like this:
+
+```js
+const debugLogger = {
+  debug: (...args) => {
+    // IE 10 doesn’t support console.debug
+    const debug = console.debug || console.log
+    debug.call(console, `[Uppy] [${getTimeStamp()}]`, ...args)
+  },
+  warn: (...args) => console.warn(`[Uppy] [${getTimeStamp()}]`, ...args),
+  error: (...args) => console.error(`[Uppy] [${getTimeStamp()}]`, ...args)
+}
+```
+
+By providing your own `logger`, you can send the debug information to a server, choose to log errors only, etc.
+
 ### `restrictions: {}`
 
 Optionally, provide rules and conditions to limit the type and/or number of files that can be selected.
@@ -93,6 +136,10 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 `maxNumberOfFiles` also affects the number of files a user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1`, they will only be able to select a single file. When `null` or another number is provided, they will be able to select multiple files.
 
 `allowedFileTypes` gets passed to the system file dialog via [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types)’s accept attribute, so only files matching these types will be selectable.
+
+> If you’d like to force a certain meta field data to be entered before the upload, you can [do so using `onBeforeUpload`](https://github.com/transloadit/uppy/issues/1703#issuecomment-507202561).
+
+> If you need to restrict `allowedFileTypes` to a file extension with double dots, like `.nii.gz`, you can do so by [setting `allowedFileTypes` to just the last part of the extension, `allowedFileTypes: ['.gz']`, and then using `onBeforeFileAdded` to filter for `.nii.gz`](https://github.com/transloadit/uppy/issues/1822#issuecomment-526801208).
 
 ### `meta: {}`
 
@@ -119,6 +166,8 @@ Metadata can also be added from a `<form>` element on your page, through the [Fo
 A function run before a file is added to Uppy. It gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy.
 
 Use this function to run any number of custom checks on the selected file, or manipulate it, for instance, by optimizing a file name.
+
+> ⚠️ Note that this method is intended for quick synchronous checks/modifications only. If you need to do an async API call, or heavy work on a file (like compression or encryption), you should utilize a [custom plugin](/docs/writing-plugins/#Example-of-a-custom-plugin) instead.
 
 Return true/nothing or a modified file object to proceed with adding the file:
 
@@ -155,7 +204,7 @@ onBeforeFileAdded: (currentFile, files) => {
 }
 ```
 
-**Note:** it is up to you to show a notification to the user about a file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging purposes.
+**Note:** it is up to you to show a notification to the user about a file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging purposes via [uppy.log()](#uppy-log).
 
 
 <a id="onBeforeUpload"></a>
@@ -164,6 +213,8 @@ onBeforeFileAdded: (currentFile, files) => {
 A function run before an upload begins. Gets passed `files` object with all the files that are already in Uppy.
 
 Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
+
+> ⚠️ Note that this method is intended for quick synchronous checks/modifications only. If you need to do an async API call, or heavy work on a file (like compression or encryption), you should utilize a [custom plugin](/docs/writing-plugins/#Example-of-a-custom-plugin) instead.
 
 Return true or modified `files` object to proceed:
 
@@ -191,7 +242,7 @@ onBeforeUpload: (files) => {
 }
 ```
 
-**Note:** it is up to you to show a notification to the user about a file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging purposes.
+**Note:** it is up to you to show a notification to the user about a file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging purposes via [uppy.log()](#uppy-log).
 
 ### `locale: {}`
 
@@ -292,9 +343,15 @@ uppy.addFile({
 
 `addFile` gives an error if the file cannot be added, either because `onBeforeFileAdded(file)` gave an error, or because `uppy.opts.restrictions` checks failed.
 
+If you try to add a file that already exists, `addFile` will throw an error. Unless that duplicate file was dropped with a folder — duplicate files from different folders are allowed, when selected with that folder. This is because we add `file.meta.relativePath` to the `file.id`.
+
 If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically when files are added.
 
+`addFile` will return the generated id for the file that was added.
+
 > Sometimes you might need to add a remote file to Uppy. This can be achieved by [fetching the file, then creating a Blob object, or using the Url plugin with Companion](https://github.com/transloadit/uppy/issues/1006#issuecomment-413495493).
+>
+> Sometimes you might need to mark some files as “already uploaded”, so that the user sees them, but they won’t actually be uploaded by Uppy. This can be achieved by [looping through files and setting `uploadComplete: true, uploadStarted: false` on them](https://github.com/transloadit/uppy/issues/1112#issuecomment-432339569)
 
 ### `uppy.removeFile(fileID)`
 
@@ -474,7 +531,9 @@ Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()
 - **message** *{string}*
 - **type** *{string=}* `error` or `warning`
 
-Logs stuff to console, only if `uppy.opts.debug` is set to true. Silent in production.
+Logs stuff to [`logger`](/docs/uppy/#logger) methods.
+
+See [`logger`](/docs/uppy/#logger) docs for details.
 
 ```js
 uppy.log('[Dashboard] adding files...')

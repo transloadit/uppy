@@ -79,14 +79,25 @@ class DropBox {
   }
 
   stats ({ directory, query, token }, done) {
+    if (query.cursor) {
+      this.client
+        .post('files/list_folder/continue')
+        .options({ version: '2' })
+        .auth(token)
+        .json({
+          cursor: query.cursor
+        })
+        .request(done)
+      return
+    }
+
     this.client
       .post('files/list_folder')
       .options({ version: '2' })
-      .where(query)
+      .qs(query)
       .auth(token)
       .json({
-        path: `${directory || ''}`,
-        include_media_info: true
+        path: `${directory || ''}`
       })
       .request(done)
   }
@@ -115,7 +126,7 @@ class DropBox {
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` })
+          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}`, size: 'w256h256' })
         }
       })
       .auth(token)
@@ -138,10 +149,7 @@ class DropBox {
       .post('files/get_metadata')
       .options({ version: '2' })
       .auth(token)
-      .json({
-        path: id,
-        include_media_info: true
-      })
+      .json({ path: id })
       .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {
           err = this._error(err, resp)
@@ -149,6 +157,21 @@ class DropBox {
           return done(err)
         }
         done(null, parseInt(body.size))
+      })
+  }
+
+  logout ({ token }, done) {
+    return this.client
+      .post('auth/token/revoke')
+      .options({ version: '2' })
+      .auth(token)
+      .request((err, resp) => {
+        if (err || resp.statusCode !== 200) {
+          logger.error(err, 'provider.dropbox.size.error')
+          done(this._error(err, resp))
+          return
+        }
+        done(null, { revoked: true })
       })
   }
 
@@ -169,7 +192,7 @@ class DropBox {
       })
     })
 
-    data.nextPagePath = null
+    data.nextPagePath = adapter.getNextPagePath(res)
 
     return data
   }

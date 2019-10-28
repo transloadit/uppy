@@ -7,7 +7,19 @@
   justify-content: center;
   border-radius: 7px;
   background-color: $white;
-  // cursor: pointer;
+  cursor: pointer;
+  font-family: $font-family-base;
+  max-width: 100%;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($blue, 0.4);
+  }
+
+  // firefox fix: removes thin dotted outline
+  &::-moz-focus-inner {
+    border: 0;
+  }
 }
 
 .uppy-DragDrop-inner {
@@ -15,6 +27,16 @@
   text-align: center;
   padding: 80px 20px;
   line-height: 1.4;
+}
+
+// http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/
+.uppy-DragDrop-input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
 }
 
 .uppy-DragDrop-arrow {
@@ -25,22 +47,17 @@
 }
 
   .uppy-DragDrop--is-dragdrop-supported {
-    border: 2px dashed;
-    border-color: lighten($gray-500, 10%);
+    border: 2px dashed lighten($gray-500, 10%);
   }
 
-  // .uppy-DragDrop-container.is-dragdrop-supported .uppy-DragDrop-dragText {
-  //   display: inline;
-  // }
+.uppy-DragDrop--isDraggingOver {
+  border: 2px dashed $blue;
+  background: $gray-200;
 
-  .uppy-DragDrop-container.drag {
-    border-color: $gray-500;
-    background-color: darken($white, 10%);
-  }
-
-  .uppy-DragDrop-container.drag .uppy-DragDrop-arrow {
+  .uppy-DragDrop-arrow {
     fill: $gray-500;
   }
+}
 
 .uppy-DragDrop-label {
   display: block;
@@ -54,6 +71,6 @@
   color: lighten($gray-500, 10%);
 }
 
-.uppy-DragDrop-dragText {
+.uppy-DragDrop-browse {
   color: $blue;
 }

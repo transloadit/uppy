@@ -14,6 +14,8 @@ module.exports = class RequestClient {
     this.uppy = uppy
     this.opts = opts
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
+    this.allowedHeaders = ['accept', 'content-type', 'uppy-auth-token']
+    this.preflightDone = false
   }
 
   get hostname () {
@@ -24,13 +26,18 @@ module.exports = class RequestClient {
 
   get defaultHeaders () {
     return {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`
     }
   }
 
   headers () {
-    return Promise.resolve(Object.assign({}, this.defaultHeaders, this.opts.serverHeaders || {}))
+    const userHeaders = this.opts.companionHeaders || this.opts.serverHeaders || {}
+    return Promise.resolve({
+      ...this.defaultHeaders,
+      ...userHeaders
+    })
   }
 
   _getPostResponseFunc (skip) {
@@ -72,14 +79,60 @@ module.exports = class RequestClient {
     }
 
     if (res.status < 200 || res.status > 300) {
-      throw new Error(`Failed request to ${res.url}. ${res.statusText}`)
+      let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`
+      return res.json()
+        .then((errData) => {
+          errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg
+          errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg
+          throw new Error(errMsg)
+        }).catch(() => { throw new Error(errMsg) })
     }
     return res.json()
   }
 
+  preflight (path) {
+    return new Promise((resolve, reject) => {
+      if (this.preflightDone) {
+        return resolve(this.allowedHeaders.slice())
+      }
+
+      fetch(this._getUrl(path), {
+        method: 'OPTIONS'
+      })
+        .then((response) => {
+          if (response.headers.has('access-control-allow-headers')) {
+            this.allowedHeaders = response.headers.get('access-control-allow-headers')
+              .split(',').map((headerName) => headerName.trim().toLowerCase())
+          }
+          this.preflightDone = true
+          resolve(this.allowedHeaders.slice())
+        })
+        .catch((err) => {
+          this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning')
+          this.preflightDone = true
+          resolve(this.allowedHeaders.slice())
+        })
+    })
+  }
+
+  preflightAndHeaders (path) {
+    return Promise.all([this.preflight(path), this.headers()])
+      .then(([allowedHeaders, headers]) => {
+        // filter to keep only allowed Headers
+        Object.keys(headers).forEach((header) => {
+          if (allowedHeaders.indexOf(header.toLowerCase()) === -1) {
+            this.uppy.log(`[CompanionClient] excluding unallowed header ${header}`)
+            delete headers[header]
+          }
+        })
+
+        return headers
+      })
+  }
+
   get (path, skipPostResponse) {
     return new Promise((resolve, reject) => {
-      this.headers().then((headers) => {
+      this.preflightAndHeaders(path).then((headers) => {
         fetch(this._getUrl(path), {
           method: 'get',
           headers: headers,
@@ -91,13 +144,13 @@ module.exports = class RequestClient {
             err = err.isAuthError ? err : new Error(`Could not get ${this._getUrl(path)}. ${err}`)
             reject(err)
           })
-      })
+      }).catch(reject)
     })
   }
 
   post (path, data, skipPostResponse) {
     return new Promise((resolve, reject) => {
-      this.headers().then((headers) => {
+      this.preflightAndHeaders(path).then((headers) => {
         fetch(this._getUrl(path), {
           method: 'post',
           headers: headers,
@@ -110,13 +163,13 @@ module.exports = class RequestClient {
             err = err.isAuthError ? err : new Error(`Could not post ${this._getUrl(path)}. ${err}`)
             reject(err)
           })
-      })
+      }).catch(reject)
     })
   }
 
   delete (path, data, skipPostResponse) {
     return new Promise((resolve, reject) => {
-      this.headers().then((headers) => {
+      this.preflightAndHeaders(path).then((headers) => {
         fetch(`${this.hostname}/${path}`, {
           method: 'delete',
           headers: headers,
@@ -129,7 +182,7 @@ module.exports = class RequestClient {
             err = err.isAuthError ? err : new Error(`Could not delete ${this._getUrl(path)}. ${err}`)
             reject(err)
           })
-      })
+      }).catch(reject)
     })
   }
 }

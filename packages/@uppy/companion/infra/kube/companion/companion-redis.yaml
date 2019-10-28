@@ -2,11 +2,10 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: uppy-redis
-  namespace: uppy
+  namespace: companion
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: "standard"
   resources:
     requests:
       storage: 20Gi
@@ -18,7 +17,7 @@ metadata:
     app: uppy-redis
     release: uppy
   name: uppy-redis
-  namespace: uppy
+  namespace: companion
 spec:
   replicas: 1
   selector:
@@ -34,13 +33,6 @@ spec:
       labels:
         app: uppy-redis
     spec:
-      # affinity:
-      #   nodeAffinity:
-      #     requiredDuringSchedulingIgnoredDuringExecution:
-      #       nodeSelectorTerms:
-      #       - matchExpressions:
-      #         - key: cloud.google.com/gke-preemptible
-      #           operator: DoesNotExist
       containers:
       - env:
         - name: REDIS_PASSWORD
@@ -101,7 +93,7 @@ metadata:
   labels:
     app: uppy-redis
   name: uppy-redis
-  namespace: uppy
+  namespace: companion
 spec:
   ports:
   - name: redis
@@ -112,4 +104,3 @@ spec:
     app: uppy-redis
   sessionAffinity: None
   type: ClusterIP
-

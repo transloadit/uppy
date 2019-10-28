@@ -1,7 +1,10 @@
+const Exif = require('exif-js')
 const { Plugin } = require('@uppy/core')
+const Translator = require('@uppy/utils/lib/Translator')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
+const ORIENTATIONS = require('./image-orientations')
 
 /**
  * The Thumbnail Generator plugin
@@ -12,16 +15,23 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
   constructor (uppy, opts) {
     super(uppy, opts)
-    this.type = 'thumbnail'
+    this.type = 'modifier'
     this.id = this.opts.id || 'ThumbnailGenerator'
     this.title = 'Thumbnail Generator'
     this.queue = []
     this.queueProcessing = false
     this.defaultThumbnailDimension = 200
 
+    this.defaultLocale = {
+      strings: {
+        generatingThumbnails: 'Generating thumbnails...'
+      }
+    }
+
     const defaultOptions = {
       thumbnailWidth: null,
-      thumbnailHeight: null
+      thumbnailHeight: null,
+      waitForThumbnailsBeforeUpload: false
     }
 
     this.opts = {
@@ -29,9 +39,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
       ...opts
     }
 
-    this.onFileAdded = this.onFileAdded.bind(this)
-    this.onFileRemoved = this.onFileRemoved.bind(this)
-    this.onRestored = this.onRestored.bind(this)
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
   }
 
   /**
@@ -39,7 +48,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
    *
    * @param {{data: Blob}} file
    * @param {number} width
-   * @return {Promise}
+   * @returns {Promise}
    */
   createThumbnail (file, targetWidth, targetHeight) {
     const originalUrl = URL.createObjectURL(file.data)
@@ -57,11 +66,14 @@ module.exports = class ThumbnailGenerator extends Plugin {
       })
     })
 
-    return onload
-      .then(image => {
-        const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight)
-        const canvas = this.resizeImage(image, dimensions.width, dimensions.height)
-        return this.canvasToBlob(canvas, 'image/png')
+    return Promise.all([onload, this.getOrientation(file)])
+      .then(values => {
+        const image = values[0]
+        const orientation = values[1]
+        const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.rotation)
+        const rotatedImage = this.rotateImage(image, orientation)
+        const resizedImage = this.resizeImage(rotatedImage, dimensions.width, dimensions.height)
+        return this.canvasToBlob(resizedImage, 'image/png')
       })
       .then(blob => {
         return URL.createObjectURL(blob)
@@ -74,8 +86,11 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * account. If neither width nor height are given, the default dimension
    * is used.
    */
-  getProportionalDimensions (img, width, height) {
-    const aspect = img.width / img.height
+  getProportionalDimensions (img, width, height, rotation) {
+    var aspect = img.width / img.height
+    if (rotation === 90 || rotation === 270) {
+      aspect = img.height / img.width
+    }
 
     if (width != null) {
       return {
@@ -95,6 +110,21 @@ module.exports = class ThumbnailGenerator extends Plugin {
       width: this.defaultThumbnailDimension,
       height: Math.round(this.defaultThumbnailDimension / aspect)
     }
+  }
+
+  getOrientation (file) {
+    return new Promise((resolve) => {
+      const uppy = this.uppy
+      Exif.getData(file.data, function exifGetDataCallback () {
+        const exifdata = Exif.getAllTags(this)
+        // delete the thumbnail from exif metadata, because it contains a blob
+        // and we don’t blobs in meta — it might lead to unexpected issues on the server
+        delete exifdata.thumbnail
+        uppy.setFileMeta(file.id, { exifdata })
+        const orientation = Exif.getTag(this, 'Orientation') || 1
+        resolve(ORIENTATIONS[orientation])
+      })
+    })
   }
 
   /**
@@ -165,11 +195,33 @@ module.exports = class ThumbnailGenerator extends Plugin {
     return image
   }
 
+  rotateImage (image, translate) {
+    var w = image.width
+    var h = image.height
+
+    if (translate.rotation === 90 || translate.rotation === 270) {
+      w = image.height
+      h = image.width
+    }
+
+    var canvas = document.createElement('canvas')
+    canvas.width = w
+    canvas.height = h
+
+    var context = canvas.getContext('2d')
+    context.translate(w / 2, h / 2)
+    context.rotate(translate.rotation * Math.PI / 180)
+    context.scale(translate.xScale, translate.yScale)
+    context.drawImage(image, -image.width / 2, -image.height / 2, image.width, image.height)
+
+    return canvas
+  }
+
   /**
    * Save a <canvas> element's content to a Blob object.
    *
    * @param {HTMLCanvasElement} canvas
-   * @return {Promise}
+   * @returns {Promise}
    */
   canvasToBlob (canvas, type, quality) {
     try {
@@ -245,13 +297,13 @@ module.exports = class ThumbnailGenerator extends Plugin {
     return Promise.resolve()
   }
 
-  onFileAdded (file) {
+  onFileAdded = (file) => {
     if (!file.preview) {
       this.addToQueue(file)
     }
   }
 
-  onFileRemoved (file) {
+  onFileRemoved = (file) => {
     const index = this.queue.indexOf(file)
     if (index !== -1) {
       this.queue.splice(index, 1)
@@ -263,7 +315,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
     }
   }
 
-  onRestored () {
+  onRestored = () => {
     const { files } = this.uppy.getState()
     const fileIDs = Object.keys(files)
     fileIDs.forEach((fileID) => {
@@ -276,14 +328,43 @@ module.exports = class ThumbnailGenerator extends Plugin {
     })
   }
 
+  waitUntilAllProcessed = (fileIDs) => {
+    fileIDs.forEach((fileID) => {
+      const file = this.uppy.getFile(fileID)
+      this.uppy.emit('preprocess-progress', file, {
+        mode: 'indeterminate',
+        message: this.i18n('generatingThumbnails')
+      })
+    })
+
+    return new Promise((resolve, reject) => {
+      if (this.queueProcessing) {
+        this.uppy.once('thumbnail:all-generated', () => {
+          resolve()
+        })
+      } else {
+        resolve()
+      }
+    })
+  }
+
   install () {
     this.uppy.on('file-added', this.onFileAdded)
     this.uppy.on('file-removed', this.onFileRemoved)
     this.uppy.on('restored', this.onRestored)
+
+    if (this.opts.waitForThumbnailsBeforeUpload) {
+      this.uppy.addPreProcessor(this.waitUntilAllProcessed)
+    }
   }
+
   uninstall () {
     this.uppy.off('file-added', this.onFileAdded)
     this.uppy.off('file-removed', this.onFileRemoved)
     this.uppy.off('restored', this.onRestored)
+
+    if (this.opts.waitForThumbnailsBeforeUpload) {
+      this.uppy.removePreProcessor(this.waitUntilAllProcessed)
+    }
   }
 }

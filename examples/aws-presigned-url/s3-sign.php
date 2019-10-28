@@ -36,4 +36,9 @@ echo json_encode([
   'method' => $request->getMethod(),
   'url' => (string) $request->getUri(),
   'fields' => [],
+  // Also set the content-type header on the request, to make sure that it is the same as the one we used to generate the signature.
+  // Else, the browser picks a content-type as it sees fit.
+  'headers' => [
+    'content-type' => $contentType,
+  ],
 ]);

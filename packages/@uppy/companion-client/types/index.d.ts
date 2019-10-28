@@ -1,5 +1,9 @@
 export interface RequestClientOptions {
   companionUrl: string;
+  companionHeaders?: object;
+  /**
+   * Deprecated, use `companionHeaders` instead.
+   */
   serverHeaders?: object;
 }
 
@@ -28,10 +32,14 @@ export class Provider extends RequestClient {
 
 export interface SocketOptions {
   target: string;
+  autoOpen?: boolean;
 }
 
 export class Socket {
+  isOpen: boolean;
+
   constructor (opts: SocketOptions);
+  open (): void;
   close (): void;
   send (action: string, payload: any): void;
   on (action: string, handler: (param: any) => void): void;

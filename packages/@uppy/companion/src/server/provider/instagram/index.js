@@ -16,9 +16,10 @@ class Instagram {
   }
 
   list ({ directory = 'recent', token, query = {} }, done) {
-    const qs = query.max_id ? { max_id: query.max_id } : {}
+    const cursor = query.cursor || query.max_id
+    const qs = cursor ? { max_id: cursor } : {}
     this.client
-      .select(`users/self/media/${directory}`)
+      .get(`users/self/media/${directory}`)
       .qs(qs)
       .auth(token)
       .request((err, resp, body) => {
@@ -27,7 +28,24 @@ class Instagram {
           logger.error(err, 'provider.instagram.list.error')
           return done(err)
         } else {
-          done(null, this.adaptData(body))
+          this._getUsername(token, (err, username) => {
+            err ? done(err) : done(null, this.adaptData(body, username))
+          })
+        }
+      })
+  }
+
+  _getUsername (token, done) {
+    this.client
+      .get('users/self')
+      .auth(token)
+      .request((err, resp, body) => {
+        if (err || resp.statusCode !== 200) {
+          err = this._error(err, resp)
+          logger.error(err, 'provider.instagram.user.error')
+          return done(err)
+        } else {
+          done(null, body.data.username)
         }
       })
   }
@@ -63,30 +81,11 @@ class Instagram {
       })
   }
 
-  thumbnail ({ id, token }, done) {
-    return this.client
-      .get(`media/${id}`)
-      .auth(token)
-      .request((err, resp, body) => {
-        if (err) {
-          err = this._error(err, resp)
-          logger.error(err, 'provider.instagram.thumbnail.error')
-          return done(err)
-        }
-
-        request(body.data.images.thumbnail.url)
-          .on('response', (resp) => {
-            if (resp.statusCode !== 200) {
-              err = this._error(null, resp)
-              logger.error(err, 'provider.instagram.thumbnail.error')
-              return done(err)
-            }
-            done(null, resp)
-          })
-          .on('error', (err) => {
-            logger.error(err, 'provider.instagram.thumbnail.error')
-          })
-      })
+  thumbnail (_, done) {
+    // not implementing this because a public thumbnail from instagram will be used instead
+    const err = new Error('call to thumbnail is not implemented')
+    logger.error(err, 'provider.instagram.thumbnail.error')
+    return done(err)
   }
 
   size ({ id, token, query = {} }, done) {
@@ -109,8 +108,13 @@ class Instagram {
       })
   }
 
-  adaptData (res) {
-    const data = { username: adapter.getUsername(res), items: [] }
+  logout (_, done) {
+    // access revoke is not supported by Instagram's API
+    done(null, { revoked: false, manual_revoke_url: 'https://www.instagram.com/accounts/manage_access/' })
+  }
+
+  adaptData (res, username) {
+    const data = { username: username, items: [] }
     const items = adapter.getItemSubList(res)
     items.forEach((item) => {
       data.items.push({
@@ -125,7 +129,7 @@ class Instagram {
       })
     })
 
-    data.nextPagePath = adapter.getNextPagePath(items)
+    data.nextPagePath = adapter.getNextPagePath(res)
     return data
   }
 

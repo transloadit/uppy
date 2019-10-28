@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const zh_TW = {}
 
 zh_TW.strings = {
@@ -10,6 +8,7 @@ zh_TW.strings = {
   authenticateWith: '連接到%{pluginName}',
   authenticateWithTitle: '請使用%{pluginName}進行身份驗證以選擇文件',
   back: '返回',
+  addMore: '添加更多',
   browse: '瀏覽',
   cancel: '取消',
   cancelUpload: '取消上傳',
@@ -80,10 +79,10 @@ zh_TW.strings = {
   retry: '重試',
   retryUpload: '重試上傳',
   saveChanges: '保存變更',
-  selectXFiles: {
-    '0': '已選擇%{smart_count}個文件',
-    '1': '已選擇%{smart_count}個文件',
-    '2': '已選擇%{smart_count}個文件'
+  selectX: {
+    '0': '选择%{smart_count}',
+    '1': '选择%{smart_count}',
+    '2': '选择%{smart_count}'
   },
   smile: '笑！',
   startRecording: '開始影片錄制',
@@ -131,7 +130,12 @@ zh_TW.strings = {
     '0': '您至少要選擇%{smart_count}個文件',
     '1': '您至少要選擇%{smart_count}個文件',
     '2': '您至少要選擇%{smart_count}個文件'
-  }
+  },
+  selectAllFilesFromFolderNamed: '从文件夹中选择所有文件 %{name}',
+  unselectAllFilesFromFolderNamed: '取消选择文件夹中的所有文件 %{name}',
+  selectFileNamed: '选择文件 %{name}',
+  unselectFileNamed: '取消选择文件 %{name}',
+  openFolderNamed: '打开文件夹 %{name}'
 }
 
 zh_TW.pluralize = function (n) {

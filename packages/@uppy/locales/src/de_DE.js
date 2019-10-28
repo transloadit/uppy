@@ -1,6 +1,4 @@
-/* eslint camelcase: 0 */
-
-var de_DE = {}
+const de_DE = {}
 
 de_DE.strings = {
   addMoreFiles: 'Dateien hinzufügen',
@@ -10,6 +8,7 @@ de_DE.strings = {
   authenticateWith: 'Mit %{pluginName} verbinden',
   authenticateWithTitle: 'Bitte authentifizieren Sie sich mit %{pluginName}, um Dateien auszuwählen',
   back: 'Zurück',
+  addMore: 'Dateien hinzufügen',
   browse: 'Suche',
   cancel: 'Abbrechen',
   cancelUpload: 'Upload abbrechen',
@@ -81,10 +80,10 @@ de_DE.strings = {
   retry: 'Erneut versuchen',
   retryUpload: 'Upload erneut versuchen',
   saveChanges: 'Änderungen speichern',
-  selectXFiles: {
-    '0': '%{smart_count} Datei auswählen',
-    '1': '%{smart_count} Dateien auswählen',
-    '2': '%{smart_count} Dateien auswählen'
+  selectX: {
+    '0': 'Wählen Sie %{smart_count}',
+    '1': 'Wählen Sie %{smart_count}',
+    '2': 'Wählen Sie %{smart_count}'
   },
   smile: 'Bitte lächeln!',
   startRecording: 'Videoaufnahme starten',
@@ -132,7 +131,12 @@ de_DE.strings = {
     '0': 'Sie müssen mindestens %{smart_count} Datei auswählen',
     '1': 'Sie müssen mindestens %{smart_count} Dateien auswählen',
     '2': 'Sie müssen mindestens %{smart_count} Dateien auswählen'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Wählen Sie alle Dateien aus dem Ordner %{name}',
+  unselectAllFilesFromFolderNamed: 'Heben Sie die Auswahl aller Dateien aus dem Ordner auf %{name}',
+  selectFileNamed: 'Datei aussuchen %{name}',
+  unselectFileNamed: 'Datei abwählen %{name}',
+  openFolderNamed: 'Ordner öffnen %{name}'
 }
 
 de_DE.pluralize = function (n) {

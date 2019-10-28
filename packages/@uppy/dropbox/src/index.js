@@ -12,14 +12,14 @@ module.exports = class Dropbox extends Plugin {
     Provider.initPlugin(this, opts)
     this.title = this.opts.title || 'Dropbox'
     this.icon = () => (
-      <svg aria-hidden="true" width="128" height="128" viewBox="0 0 128 128">
+      <svg aria-hidden="true" focusable="false" width="128" height="128" viewBox="0 0 128 128">
         <path d="M31.997 11L64 31.825 31.997 52.651 0 31.825 31.997 11zM96 11l32 20.825-32 20.826-32-20.826L96 11zM0 73.476l31.997-20.825L64 73.476 31.997 94.302 0 73.476zm96-20.825l32 20.825-32 20.826-32-20.826 32-20.825zm-64.508 48.254l32.003-20.826 31.997 20.826-31.997 20.825-32.003-20.825z" fill="#0260FF" fill-rule="nonzero" />
       </svg>
     )
 
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
-      serverHeaders: this.opts.serverHeaders,
+      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
       storage: this.opts.storage,
       provider: 'dropbox',
       pluginId: this.id

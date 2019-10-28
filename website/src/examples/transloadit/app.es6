@@ -5,8 +5,15 @@ const Dashboard = require('@uppy/dashboard')
 const Webcam = require('@uppy/webcam')
 const Transloadit = require('@uppy/transloadit')
 const Instagram = require('@uppy/instagram')
+const { createHmac } = require('crypto')
 
-function initUppy () {
+function sha1 (key, text) {
+  return createHmac('sha1', key)
+    .update(text)
+    .digest('hex')
+}
+
+function initUppy (opts = {}) {
   if (window.uppy) {
     window.uppy.close()
   }
@@ -19,38 +26,64 @@ function initUppy () {
       maxNumberOfFiles: 2,
       minNumberOfFiles: 1,
       allowedFileTypes: ['image/*']
+    },
+    locale: {
+      strings: {
+        youCanOnlyUploadFileTypes: 'You can only upload images'
+      }
     }
   })
 
+  function getExpiration (future) {
+    return new Date(Date.now() + future)
+      .toISOString()
+      .replace('T', ' ')
+      .replace(/\.\d+Z$/, '+00:00')
+  }
+
+  function getAssemblyOptions () {
+    const hasSecret = opts.secret != null
+    let params = {
+      auth: {
+        key: window.TRANSLOADIT_API_KEY,
+        expires: hasSecret ? getExpiration(5 * 60 * 1000) : undefined
+      },
+      // It's more secure to use a template_id and enable
+      // Signature Authentication
+      steps: {
+        resize: {
+          robot: '/image/resize',
+          width: 250,
+          height: 250,
+          resize_strategy: 'fit',
+          text: [
+            {
+              text: `© ${(new Date).getFullYear()} Transloadit.com`,
+              size: 12,
+              font: 'Ubuntu',
+              color: '#eeeeee',
+              valign: 'bottom',
+              align: 'right',
+              x_offset: 16,
+              y_offset: -10
+            }
+          ]
+        }
+      }
+    }
+
+    let signature
+    if (opts.secret) {
+      params = JSON.stringify(params)
+      signature = sha1(opts.secret, params)
+    }
+
+    return { params, signature }
+  }
+
   uppy
     .use(Transloadit, {
-      params: {
-        auth: {
-          key: window.TRANSLOADIT_API_KEY
-        },
-        // It's more secure to use a template_id and enable
-        // Signature Authentication
-        steps: {
-          resize: {
-            robot: '/image/resize',
-            width: 250,
-            height: 250,
-            resize_strategy: 'fit',
-            text: [
-              {
-                text: '© 2018 Transloadit.com',
-                size: 12,
-                font: 'Ubuntu',
-                color: '#eeeeee',
-                valign: 'bottom',
-                align: 'right',
-                x_offset: 16,
-                y_offset: -10
-              }
-            ]
-          }
-        }
-      },
+      getAssemblyOptions,
       waitForEncoding: true
     })
     .use(Dashboard, {
@@ -64,7 +97,7 @@ function initUppy () {
       companionUrl: 'https://api2.transloadit.com/companion',
       companionAllowedHosts: Transloadit.COMPANION_PATTERN
     })
-    .use(Webcam, { target: Dashboard })
+    .use(Webcam, { target: Dashboard, modes: ['picture'] })
 
   uppy
     .on('transloadit:result', (stepName, result) => {
@@ -74,7 +107,7 @@ function initUppy () {
         <div>
           <h3>Name: ${file.name}</h3>
           <img src="${result.ssl_url}" /> <br />
-          <a href="${result.ssl_url}">View</a>
+          <a href="${result.ssl_url}" target="_blank">View</a>
         </div>
       `
       document

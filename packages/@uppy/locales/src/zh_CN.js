@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const zh_CN = {}
 
 zh_CN.strings = {
@@ -10,6 +8,7 @@ zh_CN.strings = {
   authenticateWith: '连接到%{pluginName}',
   authenticateWithTitle: '请使用%{pluginName}进行身份验证以选择文件',
   back: '返回',
+  addMore: '添加更多',
   browse: '浏览',
   cancel: '取消',
   cancelUpload: '取消上传',
@@ -80,10 +79,10 @@ zh_CN.strings = {
   retry: '重试',
   retryUpload: '重试上传',
   saveChanges: '保存变更',
-  selectXFiles: {
-    '0': '已选择%{smart_count}个文件',
-    '1': '已选择%{smart_count}个文件',
-    '2': '已选择%{smart_count}个文件'
+  selectX: {
+    '0': '选择%{smart_count}',
+    '1': '选择%{smart_count}',
+    '2': '选择%{smart_count}'
   },
   smile: '笑！',
   startRecording: '开始视频录制',
@@ -131,7 +130,12 @@ zh_CN.strings = {
     '0': '您至少要选择%{smart_count}个文件',
     '1': '您至少要选择%{smart_count}个文件',
     '2': '您至少要选择%{smart_count}个文件'
-  }
+  },
+  selectAllFilesFromFolderNamed: '从文件夹中选择所有文件 %{name}',
+  unselectAllFilesFromFolderNamed: '取消选择文件夹中的所有文件 %{name}',
+  selectFileNamed: '选择文件 %{name}',
+  unselectFileNamed: '取消选择文件 %{name}',
+  openFolderNamed: '打开文件夹 %{name}'
 }
 
 zh_CN.pluralize = function (n) {

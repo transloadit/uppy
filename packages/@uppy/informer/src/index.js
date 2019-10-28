@@ -30,17 +30,23 @@ module.exports = class Informer extends Plugin {
     const { isHidden, message, details } = state.info
 
     return (
-      <div class="uppy uppy-Informer"
-        aria-hidden={isHidden}>
+      <div
+        class="uppy uppy-Informer"
+        aria-hidden={isHidden}
+      >
         <p role="alert">
           {message}
           {' '}
-          {details && <span
-            aria-label={details}
-            data-microtip-position="top-left"
-            data-microtip-size="medium"
-            role="tooltip">?</span>
-          }
+          {details && (
+            <span
+              aria-label={details}
+              data-microtip-position="top-left"
+              data-microtip-size="medium"
+              role="tooltip"
+            >
+              ?
+            </span>
+          )}
         </p>
       </div>
     )

@@ -10,6 +10,7 @@ const { jsonStringify, hasMatch } = require('./helpers/utils')
 const logger = require('./logger')
 const validator = require('validator')
 const headerSanitize = require('./header-blacklist')
+const redis = require('./redis')
 
 const PROTOCOLS = Object.freeze({
   multipart: 'multipart',
@@ -50,6 +51,7 @@ class Uploader {
     this.options.metadata = this.options.metadata || {}
     this.uploadFileName = this.options.metadata.name || path.basename(this.path)
     this.streamsEnded = false
+    this.uploadStopped = false
     this.duplexStream = null
     // @TODO disabling parallel uploads and downloads for now
     // if (this.options.protocol === PROTOCOLS.tus) {
@@ -57,7 +59,7 @@ class Uploader {
     //     .on('error', (err) => logger.error(`${this.shortToken} ${err}`, 'uploader.duplex.error'))
     // }
     this.writeStream = fs.createWriteStream(this.path, { mode: 0o666 }) // no executable files
-      .on('error', (err) => logger.error(`${this.shortToken} ${err}`, 'uploader.write.error'))
+      .on('error', (err) => logger.error(`${err}`, 'uploader.write.error', this.shortToken))
     /** @type {number} */
     this.emittedProgress = 0
     this.storage = options.storage
@@ -77,6 +79,45 @@ class Uploader {
           this.tus.start()
         }
       })
+
+      emitter().on(`cancel:${this.token}`, () => {
+        this._paused = true
+        if (this.tus) {
+          const shouldTerminate = !!this.tus.url
+          this.tus.abort(shouldTerminate)
+        }
+        this.cleanUp()
+      })
+    }
+  }
+
+  /**
+   * returns a substring of the token. Used as traceId for logging
+   * we avoid using the entire token because this is meant to be a short term
+   * access token between uppy client and companion websocket
+   * @param {string} token the token to Shorten
+   * @returns {string}
+   */
+  static shortenToken (token) {
+    return token.substring(0, 8)
+  }
+
+  static reqToOptions (req, size) {
+    return {
+      uppyOptions: req.uppy.options,
+      endpoint: req.body.endpoint,
+      uploadUrl: req.body.uploadUrl,
+      protocol: req.body.protocol,
+      metadata: req.body.metadata,
+      size: size,
+      fieldname: req.body.fieldname,
+      pathPrefix: `${req.uppy.options.filePath}`,
+      storage: redis.client(),
+      s3: req.uppy.s3Client ? {
+        client: req.uppy.s3Client,
+        options: req.uppy.options.providerOptions.s3
+      } : null,
+      headers: req.body.headers
     }
   }
 
@@ -128,10 +169,12 @@ class Uploader {
   }
 
   /**
-   * returns a substring of the token
+   * returns a substring of the token. Used as traceId for logging
+   * we avoid using the entire token because this is meant to be a short term
+   * access token between uppy client and companion websocket
    */
   get shortToken () {
-    return this.token.substring(0, 8)
+    return Uploader.shortenToken(this.token)
   }
 
   /**
@@ -140,7 +183,7 @@ class Uploader {
    */
   onSocketReady (callback) {
     emitter().once(`connection:${this.token}`, () => callback())
-    logger.debug(`${this.shortToken} waiting for connection`, 'uploader.socket.wait')
+    logger.debug('waiting for connection', 'uploader.socket.wait', this.shortToken)
   }
 
   cleanUp () {
@@ -151,6 +194,8 @@ class Uploader {
     })
     emitter().removeAllListeners(`pause:${this.token}`)
     emitter().removeAllListeners(`resume:${this.token}`)
+    emitter().removeAllListeners(`cancel:${this.token}`)
+    this.uploadStopped = true
   }
 
   /**
@@ -158,6 +203,10 @@ class Uploader {
    * @param {Buffer | Buffer[]} chunk
    */
   handleChunk (chunk) {
+    if (this.uploadStopped) {
+      return
+    }
+
     // @todo a default protocol should not be set. We should ensure that the user specifies her protocol.
     const protocol = this.options.protocol || PROTOCOLS.multipart
 
@@ -178,7 +227,7 @@ class Uploader {
     }
 
     this.writeStream.write(chunk, () => {
-      logger.debug(`${this.shortToken} ${this.bytesWritten} bytes`, 'uploader.download.progress')
+      logger.debug(`${this.bytesWritten} bytes`, 'uploader.download.progress', this.shortToken)
       if (protocol === PROTOCOLS.multipart || protocol === PROTOCOLS.tus) {
         return this.emitIllusiveProgress()
       }
@@ -245,7 +294,7 @@ class Uploader {
    * @see emitProgress
    * @param {number=} bytesUploaded the bytes actually Uploaded so far
    */
-  emitIllusiveProgress (bytesUploaded) {
+  emitIllusiveProgress (bytesUploaded = 0) {
     if (this._paused) {
       return
     }
@@ -254,14 +303,14 @@ class Uploader {
     if (!this.streamsEnded) {
       bytesTotal = Math.max(bytesTotal, this.bytesWritten)
     }
-    bytesUploaded = bytesUploaded || 0
     // for a 10MB file, 10MB of download will account for 5MB upload progress
     // and 10MB of actual upload will account for the other 5MB upload progress.
     const illusiveBytesUploaded = (this.bytesWritten / 2) + (bytesUploaded / 2)
 
     logger.debug(
-      `${this.shortToken} ${bytesUploaded} ${illusiveBytesUploaded} ${bytesTotal}`,
-      'uploader.illusive.progress'
+      `${bytesUploaded} ${illusiveBytesUploaded} ${bytesTotal}`,
+      'uploader.illusive.progress',
+      this.shortToken
     )
     this.emitProgress(illusiveBytesUploaded, bytesTotal)
   }
@@ -279,8 +328,9 @@ class Uploader {
     const percentage = (bytesUploaded / bytesTotal * 100)
     const formatPercentage = percentage.toFixed(2)
     logger.debug(
-      `${this.shortToken} ${bytesUploaded} ${bytesTotal} ${formatPercentage}%`,
-      'uploader.upload.progress'
+      `${bytesUploaded} ${bytesTotal} ${formatPercentage}%`,
+      'uploader.upload.progress',
+      this.shortToken
     )
 
     const dataToEmit = {
@@ -317,10 +367,12 @@ class Uploader {
    * @param {object=} extraData
    */
   emitError (err, extraData = {}) {
+    const serializedErr = serializeError(err)
+    // delete stack to avoid sending server info to client
+    delete serializedErr.stack
     const dataToEmit = {
       action: 'error',
-      // TODO: consider removing the stack property
-      payload: Object.assign(extraData, { error: serializeError(err) })
+      payload: Object.assign(extraData, { error: serializedErr })
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)
@@ -480,7 +532,8 @@ class Uploader {
       if (error) {
         this.emitError(error)
       } else {
-        this.emitSuccess(null, {
+        const url = data && data.Location ? data.Location : null
+        this.emitSuccess(url, {
           response: {
             responseText: JSON.stringify(data),
             headers: {

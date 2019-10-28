@@ -2,7 +2,7 @@ const fs = require('fs')
 
 class MockPurest {
   constructor (opts) {
-    const methodsToMock = ['query', 'select', 'where', 'auth', 'get', 'put', 'post', 'options', 'json']
+    const methodsToMock = ['query', 'select', 'where', 'qs', 'auth', 'get', 'put', 'post', 'options', 'json']
     methodsToMock.forEach((item) => {
       this[item] = () => this
     })

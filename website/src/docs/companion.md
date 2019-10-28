@@ -5,10 +5,9 @@ title: "Companion"
 module: "@uppy/companion"
 permalink: docs/companion/
 alias: docs/server/
-category: 'Docs'
+category: "Docs"
+tagline: "Server-side proxy that enables remote sources like Instagram, Google Drive, S3"
 ---
-
-> Companion was previously known as Uppy Server. It was renamed in v0.14.0.
 
 Drag and drop, webcam, basic file manipulation (adding metadata, for example) and uploading via tus-resumable uploads or XHR/Multipart are all possible using just the Uppy client module.
 
@@ -23,6 +22,7 @@ As of now, Companion is integrated to work with:
 - Google Drive
 - Dropbox
 - Instagram
+- Facebook
 - Remote URLs
 - Amazon S3
 
@@ -75,6 +75,13 @@ const options = {
 app.use(companion.app(options))
 
 ```
+
+please be sure to allow the following HTTP methods in your server like so:
+
+```javascript
+res.header("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PATCH, PUT");
+```
+
 See [Options](#Options) for valid configuration options.
 
 To use WebSockets for realtime upload progress, you can call the `socket` method, like so:
@@ -123,6 +130,8 @@ To run Companion as a standalone server, you are required to set your Uppy [Opti
 
 # any long set of random characters for the server session
 export COMPANION_SECRET="shh!Issa Secret!"
+# specifying a secret file will override a directly set secret
+export COMPANION_SECRET_FILE="PATH/TO/COMPANION/SECRET/FILE"
 # corresponds to the server.host option
 export COMPANION_DOMAIN="YOUR SERVER DOMAIN"
 # corresponds to the filePath option
@@ -153,20 +162,36 @@ export COMPANION_REDIS_URL="REDIS URL"
 # to enable Dropbox
 export COMPANION_DROPBOX_KEY="YOUR DROPBOX KEY"
 export COMPANION_DROPBOX_SECRET="YOUR DROPBOX SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_DROPBOX_SECRET_FILE="PATH/TO/DROPBOX/SECRET/FILE"
 
 # to enable Google Drive
 export COMPANION_GOOGLE_KEY="YOUR GOOGLE KEY"
 export COMPANION_GOOGLE_SECRET="YOUR GOOGLE SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_GOOGLE_SECRET_FILE="PATH/TO/GOOGLE/SECRET/FILE"
 
 # to enable Instagram
 export COMPANION_INSTAGRAM_KEY="YOUR INSTAGRAM KEY"
 export COMPANION_INSTAGRAM_SECRET="YOUR INSTAGRAM SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_INSTAGRAM_SECRET_FILE="PATH/TO/INSTAGRAM/SECRET/FILE"
+
+# to enable Facebook
+export COMPANION_FACEBOOK_KEY="YOUR FACEBOOK KEY"
+export COMPANION_FACEBOOK_SECRET="YOUR FACEBOOK SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_FACEBOOK_SECRET_FILE="PATH/TO/FACEBOOK/SECRET/FILE"
 
 # to enable S3
 export COMPANION_AWS_KEY="YOUR AWS KEY"
 export COMPANION_AWS_SECRET="YOUR AWS SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_AWS_SECRET_FILE="PATH/TO/AWS/SECRET/FILE"
 export COMPANION_AWS_BUCKET="YOUR AWS S3 BUCKET"
 export COMPANION_AWS_REGION="AWS REGION"
+# to enable S3 Transfer Acceleration (default: false)
+export COMPANION_AWS_USE_ACCELERATE_ENDPOINT="false"
 
 # corresponds to the server.oauthDomain option
 export COMPANION_OAUTH_DOMAIN="sub.domain.com"
@@ -200,12 +225,17 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
       key: "***",
       secret: "***"
     },
+    facebook: {
+      key: "***",
+      secret: "***"
+    },
     s3: {
       getKey: (req, filename) => filename,
       key: "***",
       secret: "***",
       bucket: "bucket-name",
-      region: "us-east-1"
+      region: "us-east-1",
+      useAccelerateEndpoint: false // default: false
     }
   },
   server: {
@@ -281,7 +311,7 @@ let options = {
                 access_url: "https://mywebsite.com/token",
                 oauth: 2,
                 key: "***",
-                secret: "**",
+                secret: "***",
                 scope: ["read", "write"]
             },
             module: require('/path/to/provider/module')

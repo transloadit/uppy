@@ -4,7 +4,7 @@ const isDOMElement = require('./isDOMElement')
  * Find a DOM element.
  *
  * @param {Node|string} element
- * @return {Node|null}
+ * @returns {Node|null}
  */
 module.exports = function findDOMElement (element, context = document) {
   if (typeof element === 'string') {

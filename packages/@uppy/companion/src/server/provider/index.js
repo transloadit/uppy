@@ -6,6 +6,8 @@ const config = require('@purest/providers')
 const dropbox = require('./dropbox')
 const drive = require('./drive')
 const instagram = require('./instagram')
+const facebook = require('./facebook')
+const onedrive = require('./onedrive')
 const { getURLBuilder } = require('../helpers/utils')
 const logger = require('../logger')
 
@@ -22,6 +24,7 @@ class Provider {
   constructor (options) {
     return this
   }
+
   /**
    *
    * @param {object} options
@@ -78,7 +81,7 @@ module.exports.getProviderMiddleware = (providers) => {
     if (providers[providerName] && validOptions(req.uppy.options)) {
       req.uppy.provider = new providers[providerName]({ providerName, config })
     } else {
-      logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid')
+      logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid', req.id)
     }
     next()
   }
@@ -90,7 +93,7 @@ module.exports.getProviderMiddleware = (providers) => {
  * @return {Object.<string, typeof Provider>}
  */
 module.exports.getDefaultProviders = () => {
-  return { dropbox, drive, instagram }
+  return { dropbox, drive, instagram, facebook, onedrive }
 }
 
 /**
@@ -149,7 +152,7 @@ module.exports.addProviderOptions = (options, grantConfig) => {
       } else if (server.path) {
         grantConfig[authProvider].callback = `${server.path}${grantConfig[authProvider].callback}`
       }
-    } else if (authProvider !== 's3') { // TODO: there should be a cleaner way to do this.
+    } else if (authProvider !== 's3') {
       logger.warn(`skipping one found unsupported provider "${authProvider}".`, 'provider.options.skip')
     }
   })

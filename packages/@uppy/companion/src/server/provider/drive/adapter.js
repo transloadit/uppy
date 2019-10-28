@@ -1,3 +1,5 @@
+const querystring = require('querystring')
+
 exports.getUsername = (data) => {
   for (const item of data.files) {
     if (item.ownedByMe) {
@@ -11,7 +13,7 @@ exports.getUsername = (data) => {
 }
 
 exports.isFolder = (item) => {
-  return item.mimeType === 'application/vnd.google-apps.folder' || item.kind === 'drive#teamDrive'
+  return item.mimeType === 'application/vnd.google-apps.folder' || exports.isSharedDrive(item)
 }
 
 exports.getItemSize = (item) => {
@@ -19,8 +21,12 @@ exports.getItemSize = (item) => {
 }
 
 exports.getItemIcon = (item) => {
-  if (item.kind === 'drive#teamDrive') {
-    return item.backgroundImageLink + '=w16-h16-n'
+  if (exports.isSharedDrive(item)) {
+    const size = '=w16-h16-n'
+    const sizeParamRegex = /=[-whncsp0-9]*$/
+    return item.backgroundImageLink.match(sizeParamRegex)
+      ? item.backgroundImageLink.replace(sizeParamRegex, size)
+      : `${item.backgroundImageLink}${size}`
   }
 
   if (item.thumbnailLink) {
@@ -50,12 +56,6 @@ exports.getItemId = (item) => {
 }
 
 exports.getItemRequestPath = (item) => {
-  // If it's from a Team Drive, add the Team Drive ID as a query param.
-  // The server needs the Team Drive ID to list files in a Team Drive folder.
-  if (item.teamDriveId) {
-    return item.id + `?teamDriveId=${item.teamDriveId}`
-  }
-
   return item.id
 }
 
@@ -67,6 +67,17 @@ exports.getItemThumbnailUrl = (item) => {
   return `/drive/thumbnail/${exports.getItemRequestPath(item)}`
 }
 
-exports.isTeamDrive = (item) => {
-  return item.kind === 'drive#teamDrive'
+exports.isSharedDrive = (item) => {
+  return item.kind === 'drive#drive'
+}
+
+exports.getNextPagePath = (data, currentQuery, currentPath) => {
+  if (!data.nextPageToken) {
+    return null
+  }
+  const query = {
+    ...currentQuery,
+    cursor: data.nextPageToken
+  }
+  return `${currentPath}?${querystring.stringify(query)}`
 }

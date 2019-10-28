@@ -6,9 +6,14 @@ This example uses Uppy with XHRUpload plugin in `bundle` mode. Bundle mode uploa
 
 ## Run it
 
-Move into this directory, then:
+To run this example, make sure you've correctly installed the root repository:
 
 ```bash
 npm install
+```
+
+Move into this directory, then:
+
+```bash
 npm start
 ```

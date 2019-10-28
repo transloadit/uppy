@@ -76,14 +76,14 @@ describe('Translator', () => {
     }
 
     it('should prioritize language pack strings from Core over default', () => {
-      const translator = new Translator([ defaultStrings, launguagePackLoadedInCore ])
+      const translator = new Translator([defaultStrings, launguagePackLoadedInCore])
       expect(
         translator.translate('youHaveChosen', { fileName: 'img.jpg' })
       ).toEqual('You have chosen: img.jpg')
     })
 
     it('should prioritize user-supplied strings over language pack from Core', () => {
-      const translator = new Translator([ defaultStrings, launguagePackLoadedInCore, userSuppliedStrings ])
+      const translator = new Translator([defaultStrings, launguagePackLoadedInCore, userSuppliedStrings])
       expect(
         translator.translate('youHaveChosen', { fileName: 'img.jpg' })
       ).toEqual('Beep boop: img.jpg')

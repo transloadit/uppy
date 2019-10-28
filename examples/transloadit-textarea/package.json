@@ -1,18 +1,18 @@
 {
+  "name": "@uppy-example/transloadit-textarea",
   "aliasify": {
     "aliases": {
       "@uppy": "../../packages/@uppy"
     }
   },
   "dependencies": {
-    "drag-drop": "^4.2.0",
-    "marked": "^0.6.0"
-  },
-  "devDependencies": {
     "aliasify": "^2.1.0",
     "browserify": "^16.2.3",
-    "ecstatic": "^3.0.0"
+    "drag-drop": "^4.2.0",
+    "ecstatic": "^3.0.0",
+    "marked": "^0.6.0"
   },
+  "private": true,
   "scripts": {
     "start": "browserify -g aliasify main.js > bundle.js && ecstatic"
   }

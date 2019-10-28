@@ -28,26 +28,35 @@ const getConfigFromEnv = () => {
   const validHosts = domains ? domains.split(',') : []
 
   return {
-    // TODO: Rename providerOptions to providers.
     providerOptions: {
       google: {
         key: process.env.COMPANION_GOOGLE_KEY,
-        secret: process.env.COMPANION_GOOGLE_SECRET
+        secret: getSecret('COMPANION_GOOGLE_SECRET')
       },
       dropbox: {
         key: process.env.COMPANION_DROPBOX_KEY,
-        secret: process.env.COMPANION_DROPBOX_SECRET
+        secret: getSecret('COMPANION_DROPBOX_SECRET')
       },
       instagram: {
         key: process.env.COMPANION_INSTAGRAM_KEY,
-        secret: process.env.COMPANION_INSTAGRAM_SECRET
+        secret: getSecret('COMPANION_INSTAGRAM_SECRET')
+      },
+      facebook: {
+        key: process.env.COMPANION_FACEBOOK_KEY,
+        secret: getSecret('COMPANION_FACEBOOK_SECRET')
+      },
+      microsoft: {
+        key: process.env.COMPANION_ONEDRIVE_KEY,
+        secret: getSecret('COMPANION_ONEDRIVE_SECRET')
       },
       s3: {
         key: process.env.COMPANION_AWS_KEY,
-        secret: process.env.COMPANION_AWS_SECRET,
+        secret: getSecret('COMPANION_AWS_SECRET'),
         bucket: process.env.COMPANION_AWS_BUCKET,
         endpoint: process.env.COMPANION_AWS_ENDPOINT,
-        region: process.env.COMPANION_AWS_REGION
+        region: process.env.COMPANION_AWS_REGION,
+        useAccelerateEndpoint:
+          process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true'
       }
     },
     server: {
@@ -60,15 +69,32 @@ const getConfigFromEnv = () => {
     },
     filePath: process.env.COMPANION_DATADIR,
     redisUrl: process.env.COMPANION_REDIS_URL,
+    // adding redisOptions to keep all companion options easily visible
+    //  redisOptions refers to https://www.npmjs.com/package/redis#options-object-properties
+    redisOptions: {},
     sendSelfEndpoint: process.env.COMPANION_SELF_ENDPOINT,
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
-    secret: process.env.COMPANION_SECRET || generateSecret(),
+    secret: getSecret('COMPANION_SECRET') || generateSecret(),
     debug: process.env.NODE_ENV !== 'production',
     // TODO: this is a temporary hack to support distributed systems.
     // it is not documented, because it should be changed soon.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
     multipleInstances: true
   }
+}
+
+/**
+ * Tries to read the secret from a file if the according environment variable is set.
+ * Otherwise it falls back to the standard secret environment variable.
+ *
+ * @param {string} baseEnvVar
+ *
+ * @returns {string}
+ */
+const getSecret = (baseEnvVar) => {
+  return `${baseEnvVar}_FILE` in process.env
+    ? fs.readFileSync(process.env[`${baseEnvVar}_FILE`]).toString()
+    : process.env[baseEnvVar]
 }
 
 /**
@@ -91,7 +117,6 @@ const getConfigFromFile = () => {
   if (!path) return {}
 
   const rawdata = fs.readFileSync(getConfigPath())
-  // TODO validate the json object fields to match the uppy config schema
   // @ts-ignore
   return JSON.parse(rawdata)
 }

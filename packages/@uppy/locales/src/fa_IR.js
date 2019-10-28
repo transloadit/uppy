@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const fa_IR = {}
 
 fa_IR.strings = {
@@ -10,7 +8,8 @@ fa_IR.strings = {
   authenticateWith: 'در حال اتصال به %{pluginName}',
   authenticateWithTitle: 'احراز هویت %{pluginName} برای انتخاب فایل ضروریست!',
   back: 'بازگشت',
-  browse: 'از رایانه',
+  addMore: 'اضافه کردن بیشتر',
+  browse: 'انتخاب کنید',
   cancel: 'انصراف',
   cancelUpload: 'لغو بارگذاری',
   chooseFiles: 'انتخاب فایل',
@@ -31,7 +30,7 @@ fa_IR.strings = {
   dropHereOr: 'فایل را بکشید و اینجا رها کنید یا  %{browse}',
   dropHint: 'فایل‌ها را بکشید و اینجا رها کنید',
   dropPaste: 'فایلها اینجا رها کنید، بچسبانید یا  %{browse}',
-  dropPasteImport: 'فایلها را اینجا رها کنید، بچسبانید یا %{browse} انتخاب کنید',
+  dropPasteImport: 'فایلها را اینجا رها کنید، بچسبانید یا %{browse}',
   edit: 'ویرایش',
   editFile: 'ویرایش فایل',
   editing: 'در حال ویرایش %{file}',
@@ -80,10 +79,10 @@ fa_IR.strings = {
   retry: 'تلاش دوباره',
   retryUpload: 'تلاش دوباره بارگذاری',
   saveChanges: 'ذخیره‌ی تغییرات',
-  selectXFiles: {
-    '0': 'انتخاب %{smart_count} فایل',
-    '1': 'انتخاب %{smart_count} فایل',
-    '2': 'انتخاب %{smart_count} فایل'
+  selectX: {
+    '0': 'را انتخاب کنید %{smart_count}',
+    '1': 'را انتخاب کنید %{smart_count}',
+    '2': 'را انتخاب کنید %{smart_count}'
   },
   smile: 'Smile!',
   startRecording: 'آغاز تصویربرداری',
@@ -131,7 +130,12 @@ fa_IR.strings = {
     '0': 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید',
     '1': 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید',
     '2': 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'همه فایل ها را از پوشه انتخاب کنید %{name}',
+  unselectAllFilesFromFolderNamed: 'همه فایل ها را از پوشه حذف کنید %{name}',
+  selectFileNamed: 'فایل را انتخاب کنید %{name}',
+  unselectFileNamed: 'لغو انتخاب پرونده %{name}',
+  openFolderNamed: 'پوشه باز کنید %{name}'
 }
 
 fa_IR.pluralize = function (n) {

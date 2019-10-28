@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -o pipefail
+set -o errexit
+set -o nounset
+
+if [ -z "${COMPANION-}" ]; then exit 0; fi
+
+./packages/@uppy/companion/infra/kube/gcloud-deploy.sh

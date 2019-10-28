@@ -4,7 +4,8 @@ order: 0
 title: "Dashboard"
 module: "@uppy/dashboard"
 permalink: docs/dashboard/
-category: 'UI Elements'
+category: "UI Elements"
+tagline: "full-featured sleek UI with file previews, metadata editing, upload/pause/resume/cancel buttons and more. Includes <code>StatusBar</code> and <code>Informer</code> plugins by default"
 ---
 
 `@uppy/dashboard` is a universal UI plugin for Uppy, offering several useful features:
@@ -133,6 +134,12 @@ Width of the Dashboard in pixels. Used when `inline: true`.
 
 Height of the Dashboard in pixels. Used when `inline: true`.
 
+### `waitForThumbnailsBeforeUpload: false`
+
+Whether to wait for all thumbnails from `@uppy/thumbnail-generator` to be ready before starting the upload. If set to `true`, Thumbnail Generator will envoke Uppy’s internal processing stage, displaying “Generating thumbnails...” message, and wait for `thumbnail:all-generated` event, before proceeding to the uploading stage.
+
+This is useful because Thumbnail Generator also adds EXIF data to images, and if we wait until it’s done processing, this data will be avilable on the server after the upload.
+
 ### `showLinkToFileUploadResult: true`
 
 By default, when a file upload has completed, the file icon in the Dashboard turns into a link to the uploaded file. If your app does not publicly store uploaded files or if it's otherwise unwanted, pass `showLinkToFileUploadResult: false`.
@@ -186,9 +193,9 @@ Optionally, specify a string of text that explains something about the upload fo
 
 ### `metaFields: []`
 
-An array of UI field objects that will be shown when a user clicks the “edit” button on that file. Configuring this enables the "edit" button on file cards. Each object requires:
+An array of UI field objects that will be shown when a user clicks the “edit” button on that file. Configuring this enables the “edit” button on file cards. Each object requires:
 
-- `id`, the name of the meta field.
+- `id`, the name of the meta field. Note: this will also be used in CSS/HTML as part of the `id` attribute, so it’s better to [avoid using characters like periods, semicolons, etc](https://stackoverflow.com/a/79022).
 - `name`, the label shown in the interface.
 - `placeholder`, the text shown when no value is set in the field.
 
@@ -259,7 +266,7 @@ strings: {
   closeModal: 'Close Modal',
   // Used as the screen reader label for the plus (+) button that shows the “Add more files” screen
   addMoreFiles: 'Add more files',
-  // Used as the header for import panels, e.g., "Import from Google Drive".
+  // Used as the header for import panels, e.g., “Import from Google Drive”.
   importFrom: 'Import from %{name}',
   // When `inline: false`, used as the screen reader label for the dashboard modal.
   dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
@@ -272,7 +279,7 @@ strings: {
   copyLinkToClipboardFallback: 'Copy the URL below',
   // Used as the hover title and screen reader label for buttons that copy a file link.
   copyLink: 'Copy link',
-  // Used as the hover title and screen reader label for file source icons, e.g., "File source: Dropbox".
+  // Used as the hover title and screen reader label for file source icons, e.g., “File source: Dropbox”.
   fileSource: 'File source: %{name}',
   // Used as the label for buttons that accept and close panels (remote providers or metadata editor)
   done: 'Done',
@@ -280,7 +287,7 @@ strings: {
   removeFile: 'Remove file',
   // Used as the screen reader label for buttons that open the metadata editor panel for a file.
   editFile: 'Edit file',
-  // Shown in the panel header for the metadata editor. Rendered as "Editing image.png".
+  // Shown in the panel header for the metadata editor. Rendered as “Editing image.png”.
   editing: 'Editing %{file}',
   // Text for a button shown on the file preview, used to edit file metadata
   edit: 'Edit',
@@ -350,3 +357,27 @@ if ( dashboard.isModalOpen() ) {
   dashboard.closeModal()
 }
 ```
+
+## Events
+
+### `dashboard:modal-open`
+
+Fired when the Dashboard modal is open.
+
+```js
+uppy.on('dashboard:modal-open', () => {
+  console.log('Modal is open')
+})
+```
+
+### `dashboard:modal-closed`
+
+Fired when the Dashboard modal is closed.
+
+### `dashboard:file-edit-start`
+
+Fired when the user clicks “edit” icon next to a file in the Dashboard. The FileCard panel is then open with file metadata available for editing.
+
+### `dashboard:file-edit-complete`
+
+Fired when the user finished editing the file metadata.

@@ -4,7 +4,8 @@ order: 2
 title: "AWS S3"
 module: "@uppy/aws-s3"
 permalink: docs/aws-s3/
-category: 'Destinations'
+category: "Destinations"
+tagline: "uploader for AWS S3"
 ---
 
 The `@uppy/aws-s3` plugin can be used to upload files directly to an S3 bucket.
@@ -59,7 +60,7 @@ uppy.use(AwsS3, {
 })
 ```
 
-### `serverHeaders: {}`
+### `companionHeaders: {}`
 
 > Note: This only applies when using [Companion][companion docs] to sign S3 uploads.
 
@@ -83,6 +84,7 @@ The `fields` field is an object with form fields to send along with the upload r
 For presigned PUT uploads, this should be left empty.
 
 The `headers` field is an object with request headers to send along with the upload request.
+When using a presigned PUT upload, it's a good idea to provide `headers['content-type']`. That will ensure that the request uses the same content-type that was used to generate the signature. Without it, the browser may decide on a different content-type instead, causing S3 to reject the upload.
 
 ### `timeout: 30 * 1000`
 
@@ -95,6 +97,14 @@ The default is 30 seconds.
 
 Limit the amount of uploads going on at the same time. This is passed through to [XHRUpload](/docs/xhrupload#limit-0); see its documentation page for details.
 Set to `0` to disable limiting.
+
+### `getResponseData(responseText, response)`
+
+> This is an advanced option intended for use with _almost_ S3-compatible storage solutions.
+
+Customize response handling once an upload is completed. This passes the function through to @uppy/xhr-upload, see its [documentation](https://uppy.io/docs/xhr-upload/#getResponseData-responseText-response) for API details.
+
+This option is useful when uploading to an S3-like service that doesn't reply with an XML document, but with something else such as JSON.
 
 ### `locale: {}`
 

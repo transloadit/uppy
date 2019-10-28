@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const es_ES = {}
 
 es_ES.strings = {
@@ -10,6 +8,7 @@ es_ES.strings = {
   authenticateWith: 'Conectar a %{pluginName}',
   authenticateWithTitle: 'Por favor autentícate con %{pluginName} para seleccionar archivos',
   back: 'Atrás',
+  addMore: 'Agregar más',
   browse: 'navegar',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar subida',
@@ -80,10 +79,10 @@ es_ES.strings = {
   retry: 'Intentar nuevamente',
   retryUpload: 'Intentar subida nuevamente',
   saveChanges: 'Guardar cambios',
-  selectXFiles: {
-    '0': 'Seleccionar %{smart_count} archivo',
-    '1': 'Seleccionar %{smart_count} archivos',
-    '2': 'Seleccionar %{smart_count} archivos'
+  selectX: {
+    '0': 'Seleccionar %{smart_count}',
+    '1': 'Seleccionar %{smart_count}',
+    '2': 'Seleccionar %{smart_count}'
   },
   smile: 'Sonríe!',
   startRecording: 'Comenzar la grabación de video',
@@ -131,7 +130,12 @@ es_ES.strings = {
     '0': 'Tienes que seleccionar al menos %{smart_count} archivo',
     '1': 'Tienes que seleccionar al menos %{smart_count} archivos',
     '2': 'Tienes que seleccionar al menos %{smart_count} archivos'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Seleccionar todos los archivos de la carpeta %{name}',
+  unselectAllFilesFromFolderNamed: 'Deselecciona todos los archivos de la carpeta %{name}',
+  selectFileNamed: 'Seleccione archivo %{name}',
+  unselectFileNamed: 'Deseleccionar archivo %{name}',
+  openFolderNamed: 'Carpeta abierta %{name}'
 }
 
 es_ES.pluralize = function (n) {
