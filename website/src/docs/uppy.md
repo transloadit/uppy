@@ -676,7 +676,7 @@ Fired each time a single upload has errored.
 ```
 
 ``` javascript
-uppy.on('upload-error', (file, error, response) => {
+uppy.on('upload-error', (file, error) => {
   console.log('error with file:', file.id)
   console.log('error message:', error)
 })
