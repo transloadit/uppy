@@ -188,11 +188,20 @@ declare module Uppy {
     retryUpload(fileID: string): any
     reset(): void
     getID(): string
+    /**
+     * Add a plugin to this Uppy instance.
+     */
     use<TOptions, TInstance extends Plugin<TOptions>>(
       pluginClass: new (uppy: this, opts: TOptions) => TInstance,
       opts?: TOptions
     ): this
-    // Enable a fallback `.use()` overload if StrictTypes is not enabled.
+    /**
+     * Fallback `.use()` overload with unchecked plugin options.
+     *
+     * This does not validate that the options you pass in are correct.
+     * We recommend disabling this overload by using the `Uppy<Uppy.StrictTypes>` type, instead of the plain `Uppy` type, to enforce strict typechecking.
+     * This overload will be removed in Uppy 2.0.
+     */
     use(pluginClass: TUseStrictTypes extends StrictTypes ? never : new (uppy: this, opts: any) => Plugin<any>, opts?: object): this
     getPlugin(name: string): Plugin
     iteratePlugins(callback: (plugin: Plugin) => void): void
@@ -205,6 +214,9 @@ declare module Uppy {
     ): void
     hideInfo(): void
     log(msg: string, type?: LogLevel): void
+    /**
+     * Obsolete: do not use. This method does nothing and will be removed in a future release.
+     */
     run(): this
     restore<TMeta extends IndexedObject<any> = {}>(
       uploadID: string
