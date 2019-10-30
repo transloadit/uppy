@@ -285,6 +285,13 @@ class Uppy {
     }
 
     this.i18nInit()
+
+    if (newOpts.locale) {
+      this.iteratePlugins((plugin) => {
+        plugin.setOptions()
+      })
+    }
+
     this.setState() // so that UI re-renders with new options
   }
 
