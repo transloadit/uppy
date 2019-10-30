@@ -726,3 +726,13 @@ uppy.on('restriction-failed', (file, error) => {
   // do some customized logic like showing system notice to users
 })
 ```
+
+### `reset-progress`
+
+Fired when `uppy.resetProgress()` is called, `totalProgress` and each file objects progress is reset to zero.
+
+```javascript
+uppy.on('reset-progress', () => {
+  // progress was reset
+})
+```

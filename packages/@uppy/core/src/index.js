@@ -281,7 +281,6 @@ class Uppy {
       totalProgress: 0
     })
 
-    // TODO Document on the website
     this.emit('reset-progress')
   }
 
