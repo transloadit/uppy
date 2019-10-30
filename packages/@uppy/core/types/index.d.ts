@@ -126,19 +126,27 @@ declare module Uppy {
     plugins?: IndexedObject<any>
     totalProgress: number
   }
+
   type LogLevel = 'info' | 'warning' | 'error'
-  class Uppy {
+
+  /** Enable the old, untyped `uppy.use()` signature. */
+  type LooseTypes = 'loose'
+  /** Disable the old, untyped `uppy.use()` signature. */
+  type StrictTypes = 'strict'
+  type TypeChecking = LooseTypes | StrictTypes
+
+  class Uppy<TUseStrictTypes extends TypeChecking = TypeChecking> {
     constructor(opts?: UppyOptions)
     on<TMeta extends IndexedObject<any> = {}>(
       event: 'upload-success',
       callback: (file: UppyFile<TMeta>, body: any, uploadURL: string) => void
-    ): Uppy
+    ): this
     on<TMeta extends IndexedObject<any> = {}>(
       event: 'complete',
       callback: (result: UploadResult<TMeta>) => void
-    ): Uppy
-    on(event: string, callback: (...args: any[]) => void): Uppy
-    off(event: string, callback: any): Uppy
+    ): this
+    on(event: string, callback: (...args: any[]) => void): this
+    off(event: string, callback: any): this
     /**
      * For use by plugins only!
      */
@@ -182,8 +190,10 @@ declare module Uppy {
     getID(): string
     use<TOptions, TInstance extends Plugin<TOptions>>(
       pluginClass: new (uppy: this, opts: TOptions) => TInstance,
-      opts: TOptions
+      opts?: TOptions
     ): this
+    // Enable a fallback `.use()` overload if StrictTypes is not enabled.
+    use(pluginClass: TUseStrictTypes extends StrictTypes ? never : new (uppy: this, opts: any) => Plugin<any>, opts?: object): this
     getPlugin(name: string): Plugin
     iteratePlugins(callback: (plugin: Plugin) => void): void
     removePlugin(instance: Plugin): void
@@ -204,6 +214,19 @@ declare module Uppy {
   }
 }
 
-declare function Uppy(opts?: Uppy.UppyOptions): Uppy.Uppy
+/**
+ * Create an uppy instance.
+ *
+ * By default, Uppy's `.use(Plugin, options)` method uses loose type checking.
+ * In Uppy 2.0, the `.use()` method will get a stricter type signature. You can enable strict type checking of plugin classes and their options today by using:
+ * ```ts
+ * const uppy = Uppy<Uppy.StrictTypes>()
+ * ```
+ * Make sure to also declare any variables and class properties with the `StrictTypes` parameter:
+ * ```ts
+ * private uppy: Uppy<Uppy.StrictTypes>;
+ * ```
+ */
+declare function Uppy<TUseStrictTypes extends Uppy.TypeChecking = Uppy.TypeChecking>(opts?: Uppy.UppyOptions): Uppy.Uppy<TUseStrictTypes>
 
 export = Uppy

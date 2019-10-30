@@ -1,4 +1,4 @@
-import { expectType } from 'tsd'
+import { expectError, expectType } from 'tsd'
 import Uppy = require('../')
 import DefaultStore = require('@uppy/store-default')
 
@@ -52,4 +52,21 @@ import DefaultStore = require('@uppy/store-default')
     data: new Blob(['null'], { type: 'application/json' }),
     meta: { path: 'path/to/file' }
   })
+}
+
+{
+  interface SomeOptions extends Uppy.PluginOptions {
+    types: 'are checked'
+  }
+  class SomePlugin extends Uppy.Plugin<SomeOptions> {}
+  const untypedUppy = Uppy()
+  untypedUppy.use(SomePlugin, { types: 'are unchecked' })
+  const typedUppy = Uppy<Uppy.StrictTypes>()
+  expectError(typedUppy.use(SomePlugin, { types: 'are unchecked' }))
+  typedUppy.use(SomePlugin, { types: 'are checked' })
+
+  // strictly-typed instance can be cast to a loosely-typed instance
+  const widenUppy: Uppy.Uppy = Uppy<Uppy.StrictTypes>()
+  // and disables the type checking
+  widenUppy.use(SomePlugin, { random: 'nonsense' })
 }
