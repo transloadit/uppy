@@ -248,17 +248,17 @@ module.exports = class XHRUpload extends Plugin {
           this.uploaderEvents[file.id] = null
         }
 
+        const body = opts.getResponseData(xhr.responseText, xhr)
+        const uploadURL = body[opts.responseUrlFieldName]
+
+        const response = {
+          status: ev.target.status,
+          body,
+          uploadURL
+        }
+
         if (opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
-          const body = opts.getResponseData(xhr.responseText, xhr)
-          const uploadURL = body[opts.responseUrlFieldName]
-
-          const uploadResp = {
-            status: ev.target.status,
-            body,
-            uploadURL
-          }
-
-          this.uppy.emit('upload-success', file, uploadResp)
+          this.uppy.emit('upload-success', file, response)
 
           if (uploadURL) {
             this.uppy.log(`Download ${file.name} from ${uploadURL}`)
@@ -266,13 +266,7 @@ module.exports = class XHRUpload extends Plugin {
 
           return resolve(file)
         } else {
-          const body = opts.getResponseData(xhr.responseText, xhr)
           const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
-
-          const response = {
-            status: ev.target.status,
-            body
-          }
 
           this.uppy.emit('upload-error', file, error, response)
           return reject(error)
