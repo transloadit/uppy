@@ -50,3 +50,22 @@ import DefaultStore = require('@uppy/store-default')
     meta: { path: 'path/to/file' }
   })
 }
+
+{
+  const uppy = Uppy()
+  uppy.on('file-added', () => {})
+  uppy.on('file-removed', () => {})
+  uppy.on('upload', () => {})
+  uppy.on('upload-progress', () => {})
+  uppy.on('upload-success', () => {})
+  uppy.on('complete', () => {})
+  uppy.on('error', () => {})
+  uppy.on('upload-error', () => {})
+  uppy.on('upload-retry', () => {})
+  uppy.on('info-visible', () => {})
+  uppy.on('info-hidden', () => {})
+  uppy.on('cancel-all', () => {})
+  uppy.on('restriction-failed', () => {})
+  uppy.on('reset-progress', () => {})
+  uppy.on('reset-progress', () => {})
+}
