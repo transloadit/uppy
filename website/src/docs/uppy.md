@@ -666,7 +666,7 @@ Fired when Uppy fails to upload/encode the entire upload. That error is then set
 
 Fired each time a single upload has errored.
 
-`response` object (depending on the uploader plugin used, it might contain less info, the example is for `@uppy/xhr-upload`):
+`response` object is an optional parameter and may be undefined depending on the uploader plugin used, it might contain less info, the example is for `@uppy/xhr-upload`:
 
 ```js
 {
