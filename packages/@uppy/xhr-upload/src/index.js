@@ -281,9 +281,17 @@ module.exports = class XHRUpload extends Plugin {
           this.uploaderEvents[file.id].remove()
           this.uploaderEvents[file.id] = null
         }
+        const body = opts.getResponseData(xhr.responseText, xhr)
+        const uploadURL = body[opts.responseUrlFieldName]
+
+        const response = {
+          status: ev.target.status,
+          body,
+          uploadURL
+        }
 
         const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
-        this.uppy.emit('upload-error', file, error)
+        this.uppy.emit('upload-error', file, error, response)
         return reject(error)
       })
 
