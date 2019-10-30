@@ -3,7 +3,7 @@ import Uppy = require('@uppy/core')
 import AwsS3Multipart = require('../')
 
 {
-  const uppy = Uppy()
+  const uppy = Uppy<Uppy.StrictTypes>()
   uppy.use(AwsS3Multipart, {
     createMultipartUpload (file) {
       expectType<Uppy.UppyFile>(file)

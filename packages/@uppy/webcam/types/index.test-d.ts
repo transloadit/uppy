@@ -2,7 +2,7 @@ import Uppy = require('@uppy/core')
 import Webcam = require('../')
 
 {
-  Uppy().use(Webcam, {
+  Uppy<Uppy.StrictTypes>().use(Webcam, {
     modes: ['video-only']
   })
 }

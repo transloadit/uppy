@@ -7,7 +7,7 @@ const validParams = {
 }
 
 {
-  const uppy = Uppy()
+  const uppy = Uppy<Uppy.StrictTypes>()
   uppy.use(Transloadit, {
     getAssemblyOptions (file) {
       expectType<Uppy.UppyFile>(file)
@@ -24,7 +24,7 @@ const validParams = {
 }
 
 {
-  const uppy = Uppy()
+  const uppy = Uppy<Uppy.StrictTypes>()
   // must be bools
   expectError(
     uppy.use(Transloadit, { waitForEncoding: null, params: validParams })
@@ -35,7 +35,7 @@ const validParams = {
 }
 
 {
-  const uppy = Uppy()
+  const uppy = Uppy<Uppy.StrictTypes>()
   // params.auth.key must be string
   expectError(uppy.use(Transloadit, { params: {} }))
   expectError(uppy.use(Transloadit, { params: { auth: {} } }))

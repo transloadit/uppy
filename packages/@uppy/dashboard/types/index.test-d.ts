@@ -3,7 +3,7 @@ import Uppy = require('@uppy/core')
 import Dashboard = require('../')
 
 {
-  const uppy = Uppy()
+  const uppy = Uppy<Uppy.StrictTypes>()
   uppy.use(Dashboard, {
     target: 'body'
   })
@@ -15,7 +15,7 @@ import Dashboard = require('../')
 }
 
 {
-  const uppy = Uppy()
+  const uppy = Uppy<Uppy.StrictTypes>()
   uppy.use(Dashboard, {
     width: '100%',
     height: 700,
@@ -31,6 +31,6 @@ import Dashboard = require('../')
 }
 
 {
-  const uppy = Uppy()
+  const uppy = Uppy<Uppy.StrictTypes>()
   expectError(uppy.use(Dashboard, { height: {} }))
 }
