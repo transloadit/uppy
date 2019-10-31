@@ -9,7 +9,7 @@ const atob = require('atob')
  * @param {object} res
  */
 module.exports = function connect (req, res) {
-  const secret = req.uppy.options.secret
+  const secret = req.companion.options.secret
   let state = oAuthState.generateState(secret)
   if (req.query.state) {
     // todo change this query from state to "origin"
@@ -17,13 +17,13 @@ module.exports = function connect (req, res) {
     state = oAuthState.addToState(state, origin, secret)
   }
 
-  if (req.uppy.options.server.oauthDomain) {
-    state = oAuthState.addToState(state, { uppyInstance: req.uppy.buildURL('', true) }, secret)
+  if (req.companion.options.server.oauthDomain) {
+    state = oAuthState.addToState(state, { companionInstance: req.companion.buildURL('', true) }, secret)
   }
 
-  if (req.uppy.clientVersion) {
-    state = oAuthState.addToState(state, { clientVersion: req.uppy.clientVersion }, secret)
+  if (req.companion.clientVersion) {
+    state = oAuthState.addToState(state, { clientVersion: req.companion.clientVersion }, secret)
   }
 
-  res.redirect(req.uppy.buildURL(`/connect/${req.uppy.provider.authProvider}?state=${state}`, true))
+  res.redirect(req.companion.buildURL(`/connect/${req.companion.provider.authProvider}?state=${state}`, true))
 }

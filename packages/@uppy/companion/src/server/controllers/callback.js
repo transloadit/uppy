@@ -13,12 +13,12 @@ const logger = require('../logger')
 module.exports = function callback (req, res, next) {
   const providerName = req.params.providerName
 
-  if (!req.uppy.providerTokens) {
-    req.uppy.providerTokens = {}
+  if (!req.companion.providerTokens) {
+    req.companion.providerTokens = {}
   }
 
-  req.uppy.providerTokens[providerName] = req.session.grant.response.access_token
+  req.companion.providerTokens[providerName] = req.session.grant.response.access_token
   logger.debug(`Generating auth token for provider ${providerName}.`, null, req.id)
-  const uppyAuthToken = tokenService.generateToken(req.uppy.providerTokens, req.uppy.options.secret)
-  return res.redirect(req.uppy.buildURL(`/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`, true))
+  const uppyAuthToken = tokenService.generateToken(req.companion.providerTokens, req.companion.options.secret)
+  return res.redirect(req.companion.buildURL(`/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`, true))
 }

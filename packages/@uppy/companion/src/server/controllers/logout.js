@@ -13,15 +13,15 @@ function logout (req, res, next) {
     }
   }
   const providerName = req.params.providerName
-  const token = req.uppy.providerTokens ? req.uppy.providerTokens[providerName] : null
+  const token = req.companion.providerTokens ? req.companion.providerTokens[providerName] : null
   if (token) {
-    req.uppy.provider.logout({ token }, (err, data) => {
+    req.companion.provider.logout({ token }, (err, data) => {
       if (err) {
         return next(err)
       }
 
-      delete req.uppy.providerTokens[providerName]
-      tokenService.removeFromCookies(res, req.uppy.options, req.uppy.provider.authProviderName)
+      delete req.companion.providerTokens[providerName]
+      tokenService.removeFromCookies(res, req.companion.options, req.companion.provider.authProviderName)
       cleanSession()
       res.json(Object.assign({ ok: true }, data))
     })

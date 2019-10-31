@@ -2,16 +2,16 @@
 
 const providerManager = require('../../src/server/provider')
 let grantConfig
-let uppyOptions
+let companionOptions
 
 describe('Test Provider options', () => {
   beforeEach(() => {
     grantConfig = require('../../src/config/grant')()
-    uppyOptions = require('../../src/standalone/helper').getUppyOptions()
+    companionOptions = require('../../src/standalone/helper').getCompanionOptions()
   })
 
   test('adds provider options', () => {
-    providerManager.addProviderOptions(uppyOptions, grantConfig)
+    providerManager.addProviderOptions(companionOptions, grantConfig)
     expect(grantConfig.dropbox.key).toBe('dropbox_key')
     expect(grantConfig.dropbox.secret).toBe('dropbox_secret')
 
@@ -27,9 +27,9 @@ describe('Test Provider options', () => {
     process.env.COMPANION_GOOGLE_SECRET_FILE = process.env.PWD + '/test/resources/google_secret_file'
     process.env.COMPANION_INSTAGRAM_SECRET_FILE = process.env.PWD + '/test/resources/instagram_secret_file'
 
-    uppyOptions = require('../../src/standalone/helper').getUppyOptions()
+    companionOptions = require('../../src/standalone/helper').getCompanionOptions()
 
-    providerManager.addProviderOptions(uppyOptions, grantConfig)
+    providerManager.addProviderOptions(companionOptions, grantConfig)
 
     expect(grantConfig.dropbox.secret).toBe('xobpord')
     expect(grantConfig.google.secret).toBe('elgoog')
@@ -37,10 +37,10 @@ describe('Test Provider options', () => {
   })
 
   test('does not add provider options if protocol and host are not set', () => {
-    delete uppyOptions.server.host
-    delete uppyOptions.server.protocol
+    delete companionOptions.server.host
+    delete companionOptions.server.protocol
 
-    providerManager.addProviderOptions(uppyOptions, grantConfig)
+    providerManager.addProviderOptions(companionOptions, grantConfig)
     expect(grantConfig.dropbox.key).toBeUndefined()
     expect(grantConfig.dropbox.secret).toBeUndefined()
 
@@ -52,8 +52,8 @@ describe('Test Provider options', () => {
   })
 
   test('sets a master redirect uri, if oauthDomain is set', () => {
-    uppyOptions.server.oauthDomain = 'domain.com'
-    providerManager.addProviderOptions(uppyOptions, grantConfig)
+    companionOptions.server.oauthDomain = 'domain.com'
+    providerManager.addProviderOptions(companionOptions, grantConfig)
 
     expect(grantConfig.dropbox.redirect_uri).toBe('http://domain.com/dropbox/redirect')
     expect(grantConfig.google.redirect_uri).toBe('http://domain.com/drive/redirect')

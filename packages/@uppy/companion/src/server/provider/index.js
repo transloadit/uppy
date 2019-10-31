@@ -78,8 +78,8 @@ module.exports.getProviderMiddleware = (providers) => {
    * @param {string} providerName
    */
   const middleware = (req, res, next, providerName) => {
-    if (providers[providerName] && validOptions(req.uppy.options)) {
-      req.uppy.provider = new providers[providerName]({ providerName, config })
+    if (providers[providerName] && validOptions(req.companion.options)) {
+      req.companion.provider = new providers[providerName]({ providerName, config })
     } else {
       logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid', req.id)
     }
@@ -137,7 +137,7 @@ module.exports.addProviderOptions = (options, grantConfig) => {
       grantConfig[authProvider].key = providerOptions[authProvider].key
       grantConfig[authProvider].secret = providerOptions[authProvider].secret
 
-      // override grant.js redirect uri with uppy's custom redirect url
+      // override grant.js redirect uri with companion's custom redirect url
       if (oauthDomain) {
         const providerName = authToProviderName(authProvider)
         const redirectPath = `/${providerName}/redirect`

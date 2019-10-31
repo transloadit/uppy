@@ -1,6 +1,6 @@
 const express = require('express')
 const qs = require('querystring')
-const uppy = require('../companion')
+const companion = require('../companion')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
@@ -66,7 +66,7 @@ app.use(helmet.noSniff())
 app.use(helmet.ieNoOpen())
 app.disable('x-powered-by')
 
-const companionOptions = helper.getUppyOptions()
+const companionOptions = helper.getCompanionOptions()
 const sessionOptions = {
   secret: companionOptions.secret,
   resave: true,
@@ -128,12 +128,12 @@ app.get('/', (req, res) => {
   res.send(helper.buildHelpfulStartupMessage(companionOptions))
 })
 
-// initialize uppy
+// initialize companion
 helper.validateConfig(companionOptions)
 if (process.env.COMPANION_PATH) {
-  app.use(process.env.COMPANION_PATH, uppy.app(companionOptions))
+  app.use(process.env.COMPANION_PATH, companion.app(companionOptions))
 } else {
-  app.use(uppy.app(companionOptions))
+  app.use(companion.app(companionOptions))
 }
 
 app.use((req, res, next) => {
