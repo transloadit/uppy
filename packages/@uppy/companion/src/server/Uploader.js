@@ -15,6 +15,7 @@ const redis = require('./redis')
 const PROTOCOLS = Object.freeze({
   multipart: 'multipart',
   s3Multipart: 's3-multipart',
+  b2Multipart: 'b2-multipart',
   tus: 'tus'
 })
 
@@ -121,6 +122,10 @@ class Uploader {
       s3: req.companion.s3Client ? {
         client: req.companion.s3Client,
         options: req.companion.options.providerOptions.s3
+      } : null,
+      b2: req.uppy.b2Client ? {
+        client: req.uppy.b2Client,
+        options: req.uppy.options.providerOptions.b2
       } : null,
       headers: req.body.headers
     }

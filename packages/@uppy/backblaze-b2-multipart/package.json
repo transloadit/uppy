@@ -1,0 +1,33 @@
+{
+  "name": "@uppy/backblaze-b2-multipart",
+  "description": "Upload to Backblaze B2 with Uppy and B2's Multipart upload strategy",
+  "version": "1.3.3",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "backblaze b2",
+    "backblaze",
+    "b2",
+    "uppy",
+    "uppy-plugin",
+    "multipart"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "@uppy/companion-client": "file:../companion-client",
+    "@uppy/utils": "file:../utils",
+    "js-sha1": "^0.6.0"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^1.0.0"
+  }
+}

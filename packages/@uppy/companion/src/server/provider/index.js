@@ -117,7 +117,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
       } else if (server.path) {
         grantConfig[authProvider].callback = `${server.path}${grantConfig[authProvider].callback}`
       }
-    } else if (authProvider !== 's3') {
+    } else if (authProvider !== 's3' && authProvider !== 'b2') {
       logger.warn(`skipping one found unsupported provider "${authProvider}".`, 'provider.options.skip')
     }
   })

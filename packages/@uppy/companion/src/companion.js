@@ -5,6 +5,8 @@ const grantConfig = require('./config/grant')()
 const providerManager = require('./server/provider')
 const controllers = require('./server/controllers')
 const s3 = require('./server/controllers/s3')
+const b2 = require('./server/controllers/b2')
+const B2Client = require('./server/b2')
 const url = require('./server/controllers/url')
 const SocketServer = require('ws').Server
 const emitter = require('./server/emitter')
@@ -98,6 +100,7 @@ module.exports.app = (options = {}) => {
   // add uppy options to the request object so it can be accessed by subsequent handlers.
   app.use('*', getOptionsMiddleware(options))
   app.use('/s3', s3(options.providerOptions.s3))
+  app.use('/b2', b2(options.providerOptions.b2))
   app.use('/url', url())
 
   app.get('/:providerName/callback', middlewares.hasSessionAndProvider, controllers.callback)
@@ -229,6 +232,19 @@ const getOptionsMiddleware = (options) => {
     })
   }
 
+  let b2Client = null
+  if (options.providerOptions.b2) {
+    const config = options.providerOptions.b2
+    const { applicationKeyId, applicationKey } = config
+    const credentials = {
+      applicationKeyId,
+      applicationKey
+    }
+    b2Client = new B2Client({
+      credentials
+    })
+  }
+
   /**
    *
    * @param {object} req
@@ -240,6 +256,7 @@ const getOptionsMiddleware = (options) => {
     req.companion = {
       options,
       s3Client,
+      b2Client,
       authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
       clientVersion: req.header('uppy-versions') || versionFromQuery || '1.0.0',
       buildURL: getURLBuilder(options)
