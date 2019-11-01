@@ -28,7 +28,8 @@ const options = {
       key: process.env.COMPANION_AWS_KEY || process.env.UPPYSERVER_AWS_KEY,
       secret: process.env.COMPANION_AWS_SECRET || process.env.UPPYSERVER_AWS_SECRET,
       bucket: process.env.COMPANION_AWS_BUCKET || process.env.UPPYSERVER_AWS_BUCKET,
-      region: process.env.COMPANION_AWS_REGION || process.env.UPPYSERVER_AWS_REGION
+      region: process.env.COMPANION_AWS_REGION || process.env.UPPYSERVER_AWS_REGION,
+      endpoint: process.env.COMPANION_AWS_ENDPOINT
     }
   },
   server: { host: 'localhost:3020' },
