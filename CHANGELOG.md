@@ -130,6 +130,24 @@ Released: 2019-11-04
 
 This release adds Icelandic translations and a long-awaited `setOptions` API to change configuration (including language) at runtime.
 
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.3.4 | @uppy/onedrive | 0.1.2 |
+| @uppy/aws-s3 | 1.3.3 | @uppy/progress-bar | 1.3.2 |
+| @uppy/companion | 1.6.0 | @uppy/provider-views | 1.5.0 |
+| @uppy/core | 1.6.0 | @uppy/react | 1.4.0 |
+| @uppy/dashboard | 1.5.0 | @uppy/robodog | 1.4.0 |
+| @uppy/drag-drop | 1.4.0 | @uppy/status-bar | 1.4.0 |
+| @uppy/dropbox | 1.3.3 | @uppy/thumbnail-generator | 1.5.0 |
+| @uppy/facebook | 0.2.0 | @uppy/transloadit | 1.4.0 |
+| @uppy/file-input | 1.4.0 | @uppy/tus | 1.5.0 |
+| @uppy/form | 1.3.3 | @uppy/url | 1.4.0 |
+| @uppy/golden-retriever | 1.3.2 | @uppy/utils | 2.1.0 |
+| @uppy/google-drive | 1.3.3 | @uppy/webcam | 1.4.0 |
+| @uppy/informer | 1.3.2 | @uppy/xhr-upload | 1.4.0 |
+| @uppy/instagram | 1.3.3 | uppy | 1.6.0 |
+| @uppy/locales | 1.9.0 | - | - |
+
 - @uppy/companion: Add S3 useAccelerateEndpoint option (@steverob, #1884)
 - @uppy/companion: only set `Access-Control-Allow-Credentials` header when origin is whitelisted (@ifedapoolarewaju, #1901)
 - @uppy/companion: set a more visible thumbnail size for dropbox (@ifedapoolarewaju, #1917)
