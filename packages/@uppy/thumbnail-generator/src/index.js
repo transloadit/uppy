@@ -34,13 +34,20 @@ module.exports = class ThumbnailGenerator extends Plugin {
       waitForThumbnailsBeforeUpload: false
     }
 
-    this.opts = {
-      ...defaultOptions,
-      ...opts
-    }
+    this.opts = { ...defaultOptions, ...opts }
 
+    this.i18nInit()
+  }
+
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
     this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
     this.i18n = this.translator.translate.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   /**

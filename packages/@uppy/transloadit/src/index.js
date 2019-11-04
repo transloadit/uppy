@@ -55,15 +55,9 @@ module.exports = class Transloadit extends Plugin {
       limit: 0
     }
 
-    this.opts = {
-      ...defaultOptions,
-      ...opts
-    }
+    this.opts = { ...defaultOptions, ...opts }
 
-    // i18n
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     this._prepareUpload = this._prepareUpload.bind(this)
     this._afterUpload = this._afterUpload.bind(this)
@@ -90,6 +84,18 @@ module.exports = class Transloadit extends Plugin {
     })
     // Contains Assembly instances for in-progress Assemblies.
     this.activeAssemblies = {}
+  }
+
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   _getClientVersion () {

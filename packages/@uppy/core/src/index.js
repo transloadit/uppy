@@ -81,7 +81,6 @@ class Uppy {
       }
     }
 
-    // set default options
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
@@ -100,9 +99,16 @@ class Uppy {
       logger: nullLogger
     }
 
-    // Merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
-    this.opts.restrictions = Object.assign({}, defaultOptions.restrictions, this.opts.restrictions)
+    // Merge default options with the ones set by user,
+    // making sure to merge restrictions too
+    this.opts = {
+      ...defaultOptions,
+      ...opts,
+      restrictions: {
+        ...defaultOptions.restrictions,
+        ...(opts && opts.restrictions)
+      }
+    }
 
     // Support debug: true for backwards-compatability, unless logger is set in opts
     // opts instead of this.opts to avoid comparing objects — we set logger: nullLogger in defaultOptions
@@ -120,11 +126,7 @@ class Uppy {
       throw new TypeError('`restrictions.allowedFileTypes` must be an array')
     }
 
-    // i18n
-    this.translator = new Translator([this.defaultLocale, this.opts.locale])
-    this.locale = this.translator.locale
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     // Container for different types of plugins
     this.plugins = {}
@@ -259,6 +261,38 @@ class Uppy {
         [fileID]: Object.assign({}, this.getState().files[fileID], state)
       })
     })
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.opts.locale])
+    this.locale = this.translator.locale
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
+  }
+
+  setOptions (newOpts) {
+    this.opts = {
+      ...this.opts,
+      ...newOpts,
+      restrictions: {
+        ...this.opts.restrictions,
+        ...(newOpts && newOpts.restrictions)
+      }
+    }
+
+    if (newOpts.meta) {
+      this.setMeta(newOpts.meta)
+    }
+
+    this.i18nInit()
+
+    if (newOpts.locale) {
+      this.iteratePlugins((plugin) => {
+        plugin.setOptions()
+      })
+    }
+
+    this.setState() // so that UI re-renders with new options
   }
 
   resetProgress () {

@@ -185,6 +185,7 @@ function injectLocaleList () {
     '| --------------- | ------------------ | ------------------- | ---------------- |'
   ]
   const mdRows = []
+  const localeList = {}
 
   const localePackagePath = path.join(localesRoot, 'src', '*.js')
   const localePackageVersion = require(path.join(localesRoot, 'package.json')).version
@@ -209,13 +210,18 @@ function injectLocaleList () {
     const githubSource = `[\`${localeName}.js\`](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/locales/src/${localeName}.js)`
     const mdTableRow = `| ${languageName}<br/> <small>${countryName}</small>${variant ? `<br /><small>(${variant})</small>` : ''} | ${npmPath} | ${cdnPath} | ✏️ ${githubSource} |`
     mdRows.push(mdTableRow)
+
+    localeList[localeName] = `${languageName} (${countryName}${variant ? ` ${variant}` : ''})`
   })
 
   const resultingMdTable = mdTable.concat(mdRows.sort()).join('\n').replace('%count%', mdRows.length)
 
   const dstpath = path.join(webRoot, 'src', '_template', 'list_of_locale_packs.md')
+  const localeListDstPath = path.join(webRoot, 'src', 'examples', 'locale_list.json')
   fs.writeFileSync(dstpath, resultingMdTable, 'utf-8')
   console.info(chalk.green('✓ injected: '), chalk.grey(dstpath))
+  fs.writeFileSync(localeListDstPath, JSON.stringify(localeList), 'utf-8')
+  console.info(chalk.green('✓ injected: '), chalk.grey(localeListDstPath))
 }
 
 async function readConfig () {

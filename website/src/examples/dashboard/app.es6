@@ -8,8 +8,15 @@ const Instagram = require('@uppy/instagram')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
 const Tus = require('@uppy/tus')
+const localeList = require('../locale_list.json')
 
 const COMPANION = require('../env')
+
+if (typeof window !== 'undefined' && typeof window.Uppy === 'undefined') {
+  window.Uppy = {
+    locales: {}
+  }
+}
 
 function uppyInit () {
   if (window.uppy) {
@@ -17,59 +24,10 @@ function uppyInit () {
   }
 
   const opts = window.uppyOptions
-  const dashboardEl = document.querySelector('.UppyDashboard')
-  if (dashboardEl) {
-    const dashboardElParent = dashboardEl.parentNode
-    dashboardElParent.removeChild(dashboardEl)
-  }
-
-  const restrictions = {
-    maxFileSize: 1000000,
-    maxNumberOfFiles: 3,
-    minNumberOfFiles: 2,
-    allowedFileTypes: ['image/*', 'video/*']
-  }
 
   const uppy = Uppy({
-    debug: true,
-    autoProceed: opts.autoProceed,
-    restrictions: opts.restrictions ? restrictions : ''
+    logger: Uppy.debugLogger
   })
-
-  uppy.use(Dashboard, {
-    trigger: '.UppyModalOpenerBtn',
-    inline: opts.DashboardInline,
-    target: opts.DashboardInline ? '.DashboardContainer' : 'body',
-    replaceTargetContent: opts.DashboardInline,
-    note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : '',
-    height: 470,
-    showProgressDetails: true,
-    metaFields: [
-      { id: 'name', name: 'Name', placeholder: 'file name' },
-      { id: 'caption', name: 'Caption', placeholder: 'add description' }
-    ],
-    browserBackButtonClose: opts.browserBackButtonClose
-  })
-
-  if (opts.GoogleDrive) {
-    uppy.use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION })
-  }
-
-  if (opts.Dropbox) {
-    uppy.use(Dropbox, { target: Dashboard, companionUrl: COMPANION })
-  }
-
-  if (opts.Instagram) {
-    uppy.use(Instagram, { target: Dashboard, companionUrl: COMPANION })
-  }
-
-  if (opts.Url) {
-    uppy.use(Url, { target: Dashboard, companionUrl: COMPANION })
-  }
-
-  if (opts.Webcam) {
-    uppy.use(Webcam, { target: Dashboard })
-  }
 
   uppy.use(Tus, { endpoint: 'https://master.tus.io/files/', resume: true })
 
@@ -79,7 +37,132 @@ function uppyInit () {
     console.log('failed files:')
     console.log(result.failed)
   })
+
+  uppy.use(Dashboard, {
+    trigger: '.UppyModalOpenerBtn',
+    target: opts.DashboardInline ? '.DashboardContainer' : 'body',
+    inline: opts.DashboardInline,
+    replaceTargetContent: opts.DashboardInline,
+    height: 470,
+    showProgressDetails: true,
+    metaFields: [
+      { id: 'name', name: 'Name', placeholder: 'file name' },
+      { id: 'caption', name: 'Caption', placeholder: 'add description' }
+    ]
+  })
+
+  window.uppy = uppy
 }
 
-uppyInit()
+function uppySetOptions () {
+  const opts = window.uppyOptions
+
+  const restrictions = {
+    maxFileSize: 1000000,
+    maxNumberOfFiles: 3,
+    minNumberOfFiles: 2,
+    allowedFileTypes: ['image/*', 'video/*']
+  }
+
+  window.uppy.setOptions({
+    autoProceed: opts.autoProceed,
+    restrictions: opts.restrictions ? restrictions : ''
+  })
+
+  window.uppy.getPlugin('Dashboard').setOptions({
+    note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : '',
+    browserBackButtonClose: opts.browserBackButtonClose
+  })
+
+  const GoogleDriveInstance = window.uppy.getPlugin('GoogleDrive')
+  if (opts.GoogleDrive && !GoogleDriveInstance) {
+    window.uppy.use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION })
+  }
+  if (!opts.GoogleDrive && GoogleDriveInstance) {
+    window.uppy.removePlugin(GoogleDriveInstance)
+  }
+
+  const DropboxInstance = window.uppy.getPlugin('Dropbox')
+  if (opts.Dropbox && !DropboxInstance) {
+    window.uppy.use(Dropbox, { target: Dashboard, companionUrl: COMPANION })
+  }
+  if (!opts.Dropbox && DropboxInstance) {
+    window.uppy.removePlugin(DropboxInstance)
+  }
+
+  const InstagramInstance = window.uppy.getPlugin('Instagram')
+  if (opts.Instagram && !InstagramInstance) {
+    window.uppy.use(Instagram, { target: Dashboard, companionUrl: COMPANION })
+  }
+  if (!opts.Instagram && InstagramInstance) {
+    window.uppy.removePlugin(InstagramInstance)
+  }
+
+  const UrlInstance = window.uppy.getPlugin('Url')
+  if (opts.Url && !UrlInstance) {
+    window.uppy.use(Url, { target: Dashboard, companionUrl: COMPANION })
+  }
+  if (!opts.Url && UrlInstance) {
+    window.uppy.removePlugin(UrlInstance)
+  }
+
+  const WebcamInstance = window.uppy.getPlugin('Webcam')
+  if (opts.Webcam && !WebcamInstance) {
+    window.uppy.use(Webcam, { target: Dashboard, companionUrl: COMPANION })
+  }
+  if (!opts.Webcam && WebcamInstance) {
+    window.uppy.removePlugin(WebcamInstance)
+  }
+}
+
+function whenLocaleAvailable (localeName, callback) {
+  var interval = 100 // ms
+  var loop = setInterval(function () {
+    if (window.Uppy && window.Uppy.locales && window.Uppy.locales[localeName]) {
+      clearInterval(loop)
+      callback(window.Uppy.locales[localeName])
+    }
+  }, interval)
+}
+
+function loadLocaleFromCDN (localeName) {
+  var head = document.getElementsByTagName('head')[0]
+  var js = document.createElement('script')
+  js.type = 'text/javascript'
+  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.8.0/${localeName}.min.js`
+
+  head.appendChild(js)
+}
+
+function setLocale (localeName) {
+  if (typeof window.Uppy.locales[localeName] === 'undefined') {
+    loadLocaleFromCDN(localeName)
+  }
+  whenLocaleAvailable(localeName, (localeObj) => {
+    window.uppy.setOptions({
+      locale: localeObj
+    })
+  })
+}
+
+function populateLocaleSelect () {
+  const localeSelect = document.getElementById('localeList')
+
+  Object.keys(localeList).forEach(localeName => {
+    if (localeName === 'en_US') return
+    localeSelect.innerHTML += `<option value="${localeName}">${localeList[localeName]} — (${localeName})</option>`
+  })
+
+  localeSelect.addEventListener('change', (event) => {
+    const localeName = event.target.value
+    setLocale(localeName)
+  })
+}
+
+window.uppySetOptions = uppySetOptions
 window.uppyInit = uppyInit
+window.uppySetLocale = setLocale
+
+populateLocaleSelect()
+uppyInit()
+uppySetOptions()
