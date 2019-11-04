@@ -57,6 +57,8 @@
     right: 7px;
     bottom: 7px;
     text-align: center;
+    width: calc(100% - 14px);
+    height: calc(100% - 14px);
     &:focus {
       outline: none;
       box-shadow: 0 0 0 3px rgba($blue, 0.9);

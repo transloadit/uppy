@@ -99,9 +99,16 @@ module.exports = class Tus extends Plugin {
    *
    * @param {string} fileID
    */
-  resetUploaderReferences (fileID) {
+  resetUploaderReferences (fileID, opts = {}) {
     if (this.uploaders[fileID]) {
-      this.uploaders[fileID].abort()
+      const uploader = this.uploaders[fileID]
+      uploader.abort()
+      if (opts.abort) {
+        // to avoid 423 error from tus server, we wait
+        // to be sure the previous request has been aborted before terminating the upload
+        // @todo remove the timeout when this "wait" is handled in tus-js-client internally
+        setTimeout(() => uploader.abort(true), 1000)
+      }
       this.uploaders[fileID] = null
     }
     if (this.uploaderEvents[fileID]) {
@@ -244,7 +251,7 @@ module.exports = class Tus extends Plugin {
 
       this.onFileRemove(file.id, (targetFileID) => {
         queuedRequest.abort()
-        this.resetUploaderReferences(file.id)
+        this.resetUploaderReferences(file.id, { abort: !!upload.url })
         resolve(`upload ${targetFileID} was removed`)
       })
 
@@ -270,7 +277,7 @@ module.exports = class Tus extends Plugin {
 
       this.onCancelAll(file.id, () => {
         queuedRequest.abort()
-        this.resetUploaderReferences(file.id)
+        this.resetUploaderReferences(file.id, { abort: !!upload.url })
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -353,7 +360,10 @@ module.exports = class Tus extends Plugin {
 
       this.onFileRemove(file.id, () => {
         queuedRequest.abort()
+        // still send pause event in case we are dealing with older version of companion
+        // @todo don't send pause event in the next major release.
         socket.send('pause', {})
+        socket.send('cancel', {})
         this.resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was removed`)
       })
@@ -380,7 +390,10 @@ module.exports = class Tus extends Plugin {
 
       this.onCancelAll(file.id, () => {
         queuedRequest.abort()
+        // still send pause event in case we are dealing with older version of companion
+        // @todo don't send pause event in the next major release.
         socket.send('pause', {})
+        socket.send('cancel', {})
         this.resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was canceled`)
       })

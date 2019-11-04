@@ -357,6 +357,8 @@
   }
 }
 
+// Locale page table overrides
+
 .page-docs-locales table {
   overflow: visible;
 }
@@ -364,6 +366,19 @@
   overflow: scroll;
 }
 .page-docs-locales table td {
+  white-space: nowrap;
+  font-size: 90%;
+}
+
+// Support page table overrides
+
+.page-support table {
+  overflow: visible;
+}
+.page-support .highlight table {
+  overflow: scroll;
+}
+.page-support table tr:first-child td {
   white-space: nowrap;
   font-size: 90%;
 }

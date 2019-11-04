@@ -51,6 +51,7 @@ class Uploader {
     this.options.metadata = this.options.metadata || {}
     this.uploadFileName = this.options.metadata.name || path.basename(this.path)
     this.streamsEnded = false
+    this.uploadStopped = false
     this.duplexStream = null
     // @TODO disabling parallel uploads and downloads for now
     // if (this.options.protocol === PROTOCOLS.tus) {
@@ -77,6 +78,15 @@ class Uploader {
         if (this.tus) {
           this.tus.start()
         }
+      })
+
+      emitter().on(`cancel:${this.token}`, () => {
+        this._paused = true
+        if (this.tus) {
+          const shouldTerminate = !!this.tus.url
+          this.tus.abort(shouldTerminate)
+        }
+        this.cleanUp()
       })
     }
   }
@@ -184,6 +194,8 @@ class Uploader {
     })
     emitter().removeAllListeners(`pause:${this.token}`)
     emitter().removeAllListeners(`resume:${this.token}`)
+    emitter().removeAllListeners(`cancel:${this.token}`)
+    this.uploadStopped = true
   }
 
   /**
@@ -191,6 +203,10 @@ class Uploader {
    * @param {Buffer | Buffer[]} chunk
    */
   handleChunk (chunk) {
+    if (this.uploadStopped) {
+      return
+    }
+
     // @todo a default protocol should not be set. We should ensure that the user specifies her protocol.
     const protocol = this.options.protocol || PROTOCOLS.multipart
 

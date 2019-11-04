@@ -99,7 +99,14 @@ module.exports = class RateLimitedQueue {
     return (...args) => new Promise((resolve, reject) => {
       const queuedRequest = this.run(() => {
         let cancelError
-        fn(...args).then((result) => {
+        let promise
+        try {
+          promise = Promise.resolve(fn(...args))
+        } catch (err) {
+          promise = Promise.reject(err)
+        }
+
+        promise.then((result) => {
           if (cancelError) {
             reject(cancelError)
           } else {

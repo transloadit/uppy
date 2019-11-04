@@ -126,7 +126,7 @@ class DropBox {
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` })
+          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}`, size: 'w256h256' })
         }
       })
       .auth(token)
