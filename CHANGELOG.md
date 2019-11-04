@@ -103,7 +103,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 # next
 
-## 1.6
+## 1.7
 
 - [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
 - [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
@@ -123,6 +123,33 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] website: Adopt bcp-47 to handle and parse locales (@kvz, https://github.com/meikidd/iso-639-1/issues/19, https://tools.ietf.org/html/bcp47, https://github.com/wooorm/bcp-47)
+
+## 1.6.0
+
+Released: 2019-11-04
+
+This release adds Icelandic translations and a long-awaited `setOptions` API to change configuration (including language) at runtime.
+
+- @uppy/companion: Add S3 useAccelerateEndpoint option (@steverob, #1884)
+- @uppy/companion: only set `Access-Control-Allow-Credentials` header when origin is whitelisted (@ifedapoolarewaju, #1901)
+- @uppy/companion: set a more visible thumbnail size for dropbox (@ifedapoolarewaju, #1917)
+- @uppy/companion: upgrade connect-redis (@ifedapoolarewaju, #1911)
+- @uppy/core: Allow passing meta type to upload-success and complete events (@MatthiasKunnen, #1879)
+- @uppy/core: add UppyFile.response typing (@superhawk610, #1882)
+- @uppy/core: add `setOptions` API (@arturi, #1728)
+- @uppy/core: skip upload-success event for a file that has been removed (@julianocomg, #1875)
+- @uppy/facebook: use grid view with big image previews for album folders (@ifedapoolarewaju, #1886)
+- @uppy/locales: Added Icelandic :iceland: (@olitomas, #1916)
+- @uppy/provider-views: Fix sizes for smaller images in grid layout (@arturi, #1897)
+- @uppy/provider-views: provider views breadcrumbs is failed to render (@huydod, #1914)
+- @uppy/transloadit: send Transloadit-Client header with HTTP API requests (@goto-bus-stop, #1919)
+- @uppy/tus: terminate tus upload when cancelling instead of just pausing and letting it expire (@ifedapoolarewaju, #1909)
+- @uppy/utils: accept sync functions in `wrapPromiseFunction()` (@goto-bus-stop, #1910)
+- docs: README.md wording and formatting changes (@sercraig, #1900)
+- docs: clarify that 'upload-success' and 'upload-error' `response` parameter is specific to some uploaders (@bambii7, #1921)
+- docs: add OneDrive to Companion documentation (@ifedapoolarewaju, #1925)
+- examples: support `COMPANION_AWS_ENDPOINT` in aws-companion example so it can be used with other S3-compatible services (@goto-bus-stop, [1ab63aa](https://github.com/transloadit/uppy/commit/1ab63aa395859815871c4e1e62dda6e9ca66595f))
+- website: improve support page design (@arturi, #1913)
 
 ## 1.5.2
 
