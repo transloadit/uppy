@@ -192,6 +192,7 @@ function injectLocaleList () {
 
   glob.sync(localePackagePath).forEach((localePath) => {
     const localeName = path.basename(localePath, '.js')
+    if (localeName === 'es_GL') return
     let localeNameWithDash = localeName.replace(/_/g, '-')
 
     const parts = localeNameWithDash.split('-')

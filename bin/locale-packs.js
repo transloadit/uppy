@@ -191,6 +191,8 @@ function test () {
   const localePackagePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'src', '*.js')
   glob.sync(localePackagePath).forEach((localePath) => {
     const localeName = path.basename(localePath, '.js')
+    if (localeName === 'es_GL') return
+
     // Builds array with items like: 'uploadingXFiles.2'
     followerValues[localeName] = flat(require(localePath).strings)
     followerLocales[localeName] = Object.keys(followerValues[localeName])
