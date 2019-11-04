@@ -1,6 +1,6 @@
-const es_GL = {}
+const gl_ES = {}
 
-es_GL.strings = {
+gl_ES.strings = {
   addMore: 'añadir más',
   addMoreFiles: 'Agregar máis arquivos',
   addingMoreFiles: 'Agregando máis arquivos',
@@ -138,7 +138,7 @@ es_GL.strings = {
   openFolderNamed: 'Carpeta abierta %{name}'
 }
 
-es_GL.pluralize = function (n) {
+gl_ES.pluralize = function (n) {
   if (n === 1) {
     return 0
   }
@@ -146,7 +146,7 @@ es_GL.pluralize = function (n) {
 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.es_GL = es_GL
+  window.Uppy.locales.gl_ES = gl_ES
 }
 
-module.exports = es_GL
+module.exports = gl_ES
