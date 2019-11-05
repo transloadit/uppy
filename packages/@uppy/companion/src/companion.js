@@ -237,13 +237,16 @@ const getOptionsMiddleware = (options) => {
    */
   const middleware = (req, res, next) => {
     const versionFromQuery = req.query.uppyVersions ? decodeURIComponent(req.query.uppyVersions) : null
-    req.uppy = {
+    req.companion = {
       options,
       s3Client,
       authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
       clientVersion: req.header('uppy-versions') || versionFromQuery || '1.0.0',
       buildURL: getURLBuilder(options)
     }
+
+    // @todo remove req.uppy in next major release
+    req.uppy = req.companion
     next()
   }
 

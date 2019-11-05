@@ -7,7 +7,7 @@ exports.hasSessionAndProvider = (req, res, next) => {
     return res.sendStatus(400)
   }
 
-  if (!req.uppy.provider) {
+  if (!req.companion.provider) {
     logger.debug('No provider/provider-handler found. Exiting dispatcher.', null, req.id)
     return res.sendStatus(400)
   }
@@ -17,27 +17,27 @@ exports.hasSessionAndProvider = (req, res, next) => {
 
 exports.verifyToken = (req, res, next) => {
   const providerName = req.params.providerName
-  const { err, payload } = tokenService.verifyToken(req.uppy.authToken, req.uppy.options.secret)
+  const { err, payload } = tokenService.verifyToken(req.companion.authToken, req.companion.options.secret)
   if (err || !payload[providerName]) {
     return res.sendStatus(401)
   }
-  req.uppy.providerTokens = payload
+  req.companion.providerTokens = payload
   next()
 }
 
 // does not fail if token is invalid
 exports.gentleVerifyToken = (req, res, next) => {
   const providerName = req.params.providerName
-  if (req.uppy.authToken) {
-    const { err, payload } = tokenService.verifyToken(req.uppy.authToken, req.uppy.options.secret)
+  if (req.companion.authToken) {
+    const { err, payload } = tokenService.verifyToken(req.companion.authToken, req.companion.options.secret)
     if (!err && payload[providerName]) {
-      req.uppy.providerTokens = payload
+      req.companion.providerTokens = payload
     }
   }
   next()
 }
 
 exports.cookieAuthToken = (req, res, next) => {
-  req.uppy.authToken = req.cookies[`uppyAuthToken--${req.uppy.provider.authProvider}`]
+  req.companion.authToken = req.cookies[`uppyAuthToken--${req.companion.provider.authProvider}`]
   return next()
 }

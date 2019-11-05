@@ -28,8 +28,8 @@ provider:
     # DROPBOX_SECRET: <YOUR_DROPBOX_SECRET>
 
 functions:
-  uppy:
-    handler: index.uppy
+  companion:
+    handler: index.companion
 
     events:
       - http: ANY /

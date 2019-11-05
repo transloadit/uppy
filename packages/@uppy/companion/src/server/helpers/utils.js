@@ -72,11 +72,11 @@ exports.getURLMeta = (url) => {
 /**
  * Returns a url builder
  *
- * @param {object} options uppy options
+ * @param {object} options companion options
  */
 module.exports.getURLBuilder = (options) => {
   /**
-   * Builds uppy targeted url
+   * Builds companion targeted url
    *
    * @param {string} path the tail path of the url
    * @param {boolean} isExternal if the url is for the external world
