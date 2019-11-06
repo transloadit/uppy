@@ -18,5 +18,19 @@ describe('AwsS3', () => {
 
       expect(awsS3.opts.getUploadParameters).toThrow()
     })
+
+    it('Does not throw an error with campanionUrl configured', () => {
+      const core = new Core()
+      core.use(AwsS3, { companionUrl: 'https://uppy-companion.myapp.com/' })
+      const awsS3 = core.getPlugin('AwsS3')
+      const file = {
+        meta: {
+          name: 'foo.jpg',
+          type: 'image/jpg'
+        }
+      }
+
+      expect(() => awsS3.opts.getUploadParameters(file)).not.toThrow()
+    })
   })
 })
