@@ -1,32 +1,31 @@
 import Uppy = require('@uppy/core');
 
-declare module AwsS3Multipart {
-  interface AwsS3Part {
+declare module BackblazeB2Multipart {
+  interface BackblazeB2Part {
     PartNumber?: number;
     Size?: number;
-    ETag?: string;
   }
 
-  interface AwsS3MultipartOptions extends Uppy.PluginOptions {
+  interface BackblazeB2MultipartOptions extends Uppy.PluginOptions {
     companionUrl: string;
-    createMultipartUpload(file: Uppy.UppyFile): Promise<{ uploadId: string, key: string }>;
-    listParts(file: Uppy.UppyFile, opts: { uploadId: string, key: string }): Promise<AwsS3Part[]>;
-    prepareUploadPart(file: Uppy.UppyFile, partData: { uploadId: string, key: string, body: Blob, number: number }): Promise<{ url: string }>;
-    abortMultipartUpload(file: Uppy.UppyFile, opts: { uploadId: string, key: string }): Promise<void>;
-    completeMultipartUpload(file: Uppy.UppyFile, opts: { uploadId: string, key: string, parts: AwsS3Part[] }): Promise<{ location?: string }>;
+    createMultipartUpload(file: Uppy.UppyFile): Promise<{ fileId: string }>;
+    listParts(file: Uppy.UppyFile, opts: { fileId: string }): Promise<BackblazeB2Part[]>;
+    getEndpoint(file : Uppy.UppyFile, opts: { fileId: string }): Promise<{ uploadUrl: string, authorizationToken: string}>
+    abortMultipartUpload(file: Uppy.UppyFile, opts: { fileId: string }): Promise<void>;
+    completeMultipartUpload(file: Uppy.UppyFile, opts: { fileId: string, parts: BackblazeB2Part[] }): Promise<{ fileId?: string }>;
     timeout: number;
     limit: number;
   }
 }
 
-declare class AwsS3Multipart extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<AwsS3Multipart.AwsS3MultipartOptions>);
+declare class BackblazeB2Multipart extends Uppy.Plugin {
+  constructor(uppy: Uppy.Uppy, opts: Partial<BackblazeB2Multipart.BackblazeB2MultipartOptions>);
 }
 
-export = AwsS3Multipart;
+export = BackblazeB2Multipart;
 
 declare module '@uppy/core' {
   export interface Uppy {
-    use(pluginClass: typeof AwsS3Multipart, opts: Partial<AwsS3Multipart.AwsS3MultipartOptions>): Uppy.Uppy;
+    use(pluginClass: typeof BackblazeB2Multipart, opts: Partial<BackblazeB2Multipart.BackblazeB2MultipartOptions>): Uppy.Uppy;
   }
 }

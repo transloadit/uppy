@@ -106,8 +106,6 @@ module.exports = class BackblazeB2Multipart extends Plugin {
   listParts (file, { fileId }) {
     this.assertHost()
 
-    // TODO -- generator/iterable thing for >1000 part uploads?
-    console.log('listing parts', file, fileId)
     return this.client.get(`b2/multipart/${fileId}`)
       .then(assertServerError)
   }

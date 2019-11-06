@@ -53,8 +53,7 @@ module.exports = function b2 (config) {
           contentType: type
         }))
       .then(largeFileResponse => ({
-        fileId: largeFileResponse.fileId,
-        bucketId: largeFileResponse.bucketId
+        fileId: largeFileResponse.fileId
       }))
       .then((data) => {
         res.json(data)
