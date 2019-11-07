@@ -5,6 +5,7 @@ const Dashboard = require('@uppy/dashboard')
 const GoogleDrive = require('@uppy/google-drive')
 const Dropbox = require('@uppy/dropbox')
 const Instagram = require('@uppy/instagram')
+const Facebook = require('@uppy/facebook')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
 const Tus = require('@uppy/tus')
@@ -104,6 +105,14 @@ function uppySetOptions () {
   }
   if (!opts.Url && UrlInstance) {
     window.uppy.removePlugin(UrlInstance)
+  }
+
+  const FacebookInstance = window.uppy.getPlugin('Facebook')
+  if (opts.Facebook && !FacebookInstance) {
+    uppy.use(Facebook, { target: Dashboard, companionUrl: COMPANION })
+  }
+  if (!opts.Facebook && FacebookInstance) {
+    window.uppy.removePlugin(FacebookInstance)
   }
 
   const WebcamInstance = window.uppy.getPlugin('Webcam')

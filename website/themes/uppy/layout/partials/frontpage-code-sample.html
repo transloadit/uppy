@@ -1,22 +1,22 @@
 <figure class="highlight bash"><table><tbody><tr><td class="code"><pre>$ <span class="token function">npm</span> <span class="token function">install</span> @uppy/core @uppy/dashboard @uppy/instagram @uppy/tus </pre></td></tr></tbody></table></figure>
 
-<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="token keyword">import</span> Uppy <span class="token keyword">from</span> <span class="token string">&apos;@uppy/core&apos;</span>
-<span class="token keyword">import</span> Dashboard <span class="token keyword">from</span> <span class="token string">&apos;@uppy/dashboard&apos;</span>
-<span class="token keyword">import</span> Instagram <span class="token keyword">from</span> <span class="token string">&apos;@uppy/instagram&apos;</span>
-<span class="token keyword">import</span> Tus <span class="token keyword">from</span> <span class="token string">&apos;@uppy/tus&apos;</span>
+<figure class="highlight js"><table><tbody><tr><td class="code"><pre><span class="token keyword">import</span> Uppy <span class="token keyword">from</span> <span class="token string">'@uppy/core'</span>
+<span class="token keyword">import</span> Dashboard <span class="token keyword">from</span> <span class="token string">'@uppy/dashboard'</span>
+<span class="token keyword">import</span> Instagram <span class="token keyword">from</span> <span class="token string">'@uppy/instagram'</span>
+<span class="token keyword">import</span> Tus <span class="token keyword">from</span> <span class="token string">'@uppy/tus'</span>
 
 <span class="token function">Uppy</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
   <span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>Dashboard<span class="token punctuation">,</span> <span class="token punctuation">{</span>
-    trigger<span class="token punctuation">:</span> <span class="token string">&apos;#select-files&apos;</span><span class="token punctuation">,</span>
+    trigger<span class="token punctuation">:</span> <span class="token string">'#select-files'</span><span class="token punctuation">,</span>
     showProgressDetails<span class="token punctuation">:</span> <span class="token boolean">true</span>
   <span class="token punctuation">}</span><span class="token punctuation">)</span>
   <span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>Instagram<span class="token punctuation">,</span> <span class="token punctuation">{</span>
     target<span class="token punctuation">:</span> Dashboard<span class="token punctuation">,</span>
-    companionUrl<span class="token punctuation">:</span> <span class="token string">&apos;https://companion.uppy.io&apos;</span>
+    companionUrl<span class="token punctuation">:</span> <span class="token string">'https://companion.uppy.io'</span>
   <span class="token punctuation">}</span><span class="token punctuation">)</span>
-  <span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>Tus<span class="token punctuation">,</span> <span class="token punctuation">{</span> endpoint<span class="token punctuation">:</span> <span class="token string">&apos;https://master.tus.io/files/&apos;</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
-  <span class="token punctuation">.</span><span class="token function">on</span><span class="token punctuation">(</span><span class="token string">&apos;complete&apos;</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token parameter">result</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
-    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">&apos;Upload result:&apos;</span><span class="token punctuation">,</span> result<span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>Tus<span class="token punctuation">,</span> <span class="token punctuation">{</span> endpoint<span class="token punctuation">:</span> <span class="token string">'https://master.tus.io/files/'</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">on</span><span class="token punctuation">(</span><span class="token string">'complete'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token parameter">result</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Upload result:'</span><span class="token punctuation">,</span> result<span class="token punctuation">)</span>
   <span class="token punctuation">}</span><span class="token punctuation">)</span></pre></td></tr></tbody></table></figure>
 <script>
         document.querySelectorAll('.github-emoji')
