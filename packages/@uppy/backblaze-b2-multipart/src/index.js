@@ -158,7 +158,6 @@ module.exports = class BackblazeB2Multipart extends Plugin {
       }
 
       const onSuccess = (result) => {
-        console.log('RESULT', result)
         const uploadResp = {
           fileId: result.fileId || this.fileId
         }
