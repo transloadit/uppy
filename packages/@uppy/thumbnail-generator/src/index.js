@@ -344,12 +344,21 @@ module.exports = class ThumbnailGenerator extends Plugin {
       })
     })
 
+    const emitPreprocessCompleteForAll = () => {
+      fileIDs.forEach((fileID) => {
+        const file = this.uppy.getFile(fileID)
+        this.uppy.emit('preprocess-complete', file)
+      })
+    }
+
     return new Promise((resolve, reject) => {
       if (this.queueProcessing) {
         this.uppy.once('thumbnail:all-generated', () => {
+          emitPreprocessCompleteForAll()
           resolve()
         })
       } else {
+        emitPreprocessCompleteForAll()
         resolve()
       }
     })
