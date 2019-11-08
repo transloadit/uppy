@@ -4,7 +4,7 @@ type: docs
 module: "@uppy/react"
 permalink: docs/react/drag-drop/
 alias: docs/react/dragdrop/
-order: 2
+order: 3
 category: "React"
 ---
 

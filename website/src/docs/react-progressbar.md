@@ -4,7 +4,7 @@ type: docs
 module: "@uppy/react"
 permalink: docs/react/progress-bar/
 alias: docs/react/progressbar/
-order: 3
+order: 4
 category: "React"
 ---
 

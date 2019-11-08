@@ -3,7 +3,7 @@ title: "React Native"
 type: docs
 module: "@uppy/react-native"
 permalink: docs/react/native/
-order: 7
+order: 8
 category: "React"
 ---
 

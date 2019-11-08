@@ -3,7 +3,7 @@ title: "&lt;Dashboard />"
 type: docs
 module: "@uppy/react"
 permalink: docs/react/dashboard/
-order: 4
+order: 5
 category: "React"
 ---
 
