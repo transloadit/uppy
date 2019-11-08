@@ -53,7 +53,7 @@ And if any of these methods are not flexible enough, you can always replace them
 Show a modal UI that allows users to pick files from their device and from the web. It uploads files to Transloadit for processing.
 
 ```js
-const resultPromise = robodog.pick({
+const resultPromise = Robodog.pick({
   target: 'body',
   params: {
     auth: { key: '' },
@@ -75,14 +75,14 @@ resultPromise.then((bundle) => {
 Add resumable uploads and Transloadit's processing to your existing HTML upload forms. Selected files will be uploaded to Transloadit, and the Assembly information will be submitted to your form endpoint.
 
 ```html
-<form id="myForm" method="POST" action="/upload">
+<form id="upload-form" method="POST" action="/upload">
   <input type="file" multiple>
-  <!-- Will be inserted by `robodog.form()`: -->
+  <!-- Will be inserted by `Robodog.form()`: -->
   <!-- <input type="hidden" name="transloadit" value="{...json...}"> -->
   <button type="submit">Upload</button>
 </form>
 <script>
-robodog.form('form#myForm', {
+Robodog.form('form#upload-form', {
   params: {
     auth: { key: '' },
     template_id: ''
@@ -98,7 +98,7 @@ robodog.form('form#myForm', {
 Upload files straight to Transloadit from your own custom UI. Give us an array of files, and we'll give you an array of results!
 
 ```js
-const resultPromise = robodog.upload(files, {
+const resultPromise = Robodog.upload(files, {
   params: {
     auth: { key: '' },
     template_id: ''

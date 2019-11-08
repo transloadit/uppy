@@ -10,13 +10,13 @@ category: "File Processing"
 Add resumable uploads and Transloadit's processing to your existing HTML upload forms. Selected files will be uploaded to Transloadit, and the Assembly information will be submitted to your form endpoint.
 
 ```html
-<form id="myForm" method="POST" action="/upload">
+<form id="upload-form" method="POST" action="/upload">
   <input type="file" multiple>
   ...
 </form>
 
 <script>
-window.Robodog.form('form#myForm', {
+window.Robodog.form('form#upload-form', {
   params: {
     auth: { key: '' },
     template_id: ''
@@ -78,12 +78,12 @@ Uploads using HTML forms have no builtin progress reporting. With Robodog, you c
 Point it to an element or a CSS selector:
 
 ```html
-<form id="my-form" ...>
+<form id="upload-form" ...>
   <div class="progress"></div>
 </form>
 <script>
-window.Robodog.form('form#my-form', {
-  statusBar: '#my-form .progress'
+window.Robodog.form('form#upload-form', {
+  statusBar: '#upload-form .progress'
   // ...
 })
 </script>
@@ -98,11 +98,11 @@ By default, `Robodog.form` starts uploads when the user submits the form. There 
 The `triggerUploadOnSubmit: false` option is available for this purpose. We recommend using it together with the `modal: true` and `closeAfterFinish: true` options:
 
 ```js
-// Replace file input in #my-form with a button that opens the modal;
+// Replace file input in #upload-form with a button that opens the modal;
 // after the user clicks the "Upload" button inside the modal and all
 // files have been successfully uploaded, the modal closes and the user
 // can submit the form.
-window.Robodog.form('form#my-form', {
+window.Robodog.form('form#upload-form', {
   modal: true,
   closeAfterFinish: true,
   triggerUploadOnSubmit: false
