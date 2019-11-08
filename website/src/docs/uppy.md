@@ -755,3 +755,13 @@ uppy.on('restriction-failed', (file, error) => {
   // do some customized logic like showing system notice to users
 })
 ```
+
+### `reset-progress`
+
+Fired when `uppy.resetProgress()` is called, each file has its upload progress reset to zero.
+
+```javascript
+uppy.on('reset-progress', () => {
+  // progress was reset
+})
+```
