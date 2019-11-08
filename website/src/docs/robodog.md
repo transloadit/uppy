@@ -75,14 +75,14 @@ resultPromise.then((bundle) => {
 Add resumable uploads and Transloadit's processing to your existing HTML upload forms. Selected files will be uploaded to Transloadit, and the Assembly information will be submitted to your form endpoint.
 
 ```html
-<form id="myForm" method="POST" action="/upload">
+<form id="upload-form" method="POST" action="/upload">
   <input type="file" multiple>
   <!-- Will be inserted by `robodog.form()`: -->
   <!-- <input type="hidden" name="transloadit" value="{...json...}"> -->
   <button type="submit">Upload</button>
 </form>
 <script>
-robodog.form('form#myForm', {
+robodog.form('form#upload-form', {
   params: {
     auth: { key: '' },
     template_id: ''
