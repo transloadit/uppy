@@ -58,6 +58,13 @@ function uppyInit () {
 function uppySetOptions () {
   const opts = window.uppyOptions
 
+  const defaultNullRestrictions = {
+    maxFileSize: null,
+    maxNumberOfFiles: null,
+    minNumberOfFiles: null,
+    allowedFileTypes: null
+  }
+
   const restrictions = {
     maxFileSize: 1000000,
     maxNumberOfFiles: 3,
@@ -67,7 +74,7 @@ function uppySetOptions () {
 
   window.uppy.setOptions({
     autoProceed: opts.autoProceed,
-    restrictions: opts.restrictions ? restrictions : ''
+    restrictions: opts.restrictions ? restrictions : defaultNullRestrictions
   })
 
   window.uppy.getPlugin('Dashboard').setOptions({
