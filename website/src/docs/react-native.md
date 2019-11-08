@@ -35,51 +35,6 @@ render () {
 }
 ```
 
-## Initializing Uppy
-
-Your Uppy instance must be initialized before passing it to an `uppy={}` prop, and should be cleaned up using `uppy.close()` when you are done with it. A simple approach is to initialize it in your React component's `constructor()` and destroy it in `componentWillUnmount()`.
-
-> ⚠ Uppy instances are stateful, so the same instance must be used across different renders.
-> Do **NOT** initialize Uppy in a `render()` method!
-> Do **NOT** initialize Uppy in a function component!
-
-```js
-class MyComponent extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      isFilePickerVisible: false
-    }
-    this.uppy = Uppy()
-      .use(Transloadit, {})
-  }
-
-  componentWillUnmount () {
-    this.uppy.close()
-  }
-
-  showFilePicker () {
-    this.setState({
-      isFilePickerVisible: true
-    })
-  }
-
-  hideFilePicker () {
-    this.setState({
-      isFilePickerVisible: false
-    })
-  }
-
-  render () {
-    return <UppyFilePicker
-      show={this.state.isFilePickerVisible}
-      uppy={this.uppy}
-      onRequestClose={this.hideFilePicker}
-      companionUrl="https://companion.uppy.io" />
-  }
-}
-```
-
 ## Props
 
 The `<UppyFilePicker>` component supports the following props:
