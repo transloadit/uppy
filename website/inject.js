@@ -192,6 +192,9 @@ function injectLocaleList () {
 
   glob.sync(localePackagePath).forEach((localePath) => {
     const localeName = path.basename(localePath, '.js')
+    // we renamed the es_GL → gl_ES locale, and kept the old name
+    // for backwards-compat, see https://github.com/transloadit/uppy/pull/1929
+    if (localeName === 'es_GL') return
     let localeNameWithDash = localeName.replace(/_/g, '-')
 
     const parts = localeNameWithDash.split('-')
