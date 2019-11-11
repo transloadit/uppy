@@ -53,19 +53,19 @@ import DefaultStore = require('@uppy/store-default')
 
 {
   const uppy = Uppy()
-  uppy.on('file-added', () => {})
-  uppy.on('file-removed', () => {})
+  // can emit events with internal event types
+  uppy.emit('upload')
+  uppy.emit('complete', () => {})
+  uppy.emit('error', () => {})
+
+  // can emit events with custom event types
+  uppy.emit('dashboard:modal-closed', () => {})
+
+  // can register listners for internal events
   uppy.on('upload', () => {})
-  uppy.on('upload-progress', () => {})
-  uppy.on('upload-success', () => {})
   uppy.on('complete', () => {})
   uppy.on('error', () => {})
-  uppy.on('upload-error', () => {})
-  uppy.on('upload-retry', () => {})
-  uppy.on('info-visible', () => {})
-  uppy.on('info-hidden', () => {})
-  uppy.on('cancel-all', () => {})
-  uppy.on('restriction-failed', () => {})
-  uppy.on('reset-progress', () => {})
-  uppy.on('reset-progress', () => {})
+
+  // can register listners on custom events
+  uppy.on('dashboard:modal-closed', () => {})
 }
