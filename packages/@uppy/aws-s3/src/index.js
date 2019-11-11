@@ -55,12 +55,6 @@ module.exports = class AwsS3 extends Plugin {
 
     this.opts = { ...defaultOptions, ...opts }
 
-    if (!this.opts.includes('companionUrl')) {
-      console.warn(
-        'This plugin expects `companionUrl` option to be configured.',
-        'See the documentation for more help https://uppy.io/docs/aws-s3/')
-    }
-
     this.i18nInit()
 
     this.client = new RequestClient(uppy, opts)
