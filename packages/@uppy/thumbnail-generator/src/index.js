@@ -1,10 +1,10 @@
-const Exif = require('exif-js')
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 const ORIENTATIONS = require('./image-orientations')
+const Exif = require('./exif')
 
 /**
  * The Thumbnail Generator plugin
@@ -54,7 +54,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * Create a thumbnail for the given Uppy file object.
    *
    * @param {{data: Blob}} file
-   * @param {number} width
+   * @param {number} targetWidth
+   * @param {number} targetHeight
    * @returns {Promise}
    */
   createThumbnail (file, targetWidth, targetHeight) {
