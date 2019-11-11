@@ -19,6 +19,9 @@ exports.verifyToken = (req, res, next) => {
   const providerName = req.params.providerName
   const { err, payload } = tokenService.verifyToken(req.companion.authToken, req.companion.options.secret)
   if (err || !payload[providerName]) {
+    if (err) {
+      logger.error(err, 'token.verify.error', req.id)
+    }
     return res.sendStatus(401)
   }
   req.companion.providerTokens = payload
