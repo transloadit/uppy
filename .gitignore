@@ -33,5 +33,7 @@ website/themes/uppy/layout/partials/generated_stargazers.ejs
 !output/.keep
 examples/dev/file.txt
 issues.txt
-# companion deployment file
+
+# companion deployment files
 transloadit-cluster-kubeconfig.yaml
+companion-env.yml
