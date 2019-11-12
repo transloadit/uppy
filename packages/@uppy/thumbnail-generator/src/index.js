@@ -124,11 +124,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
     return new Promise((resolve) => {
       const uppy = this.uppy
       Exif.getData(file.data, function exifGetDataCallback () {
-        const exifdata = Exif.getAllTags(this)
-        // delete the thumbnail from exif metadata, because it contains a blob
-        // and we don’t blobs in meta — it might lead to unexpected issues on the server
-        delete exifdata.thumbnail
-        uppy.setFileMeta(file.id, { exifdata })
+        uppy.setFileMeta(file.id, { exifdata: Exif.getAllTags(this) })
         const orientation = Exif.getTag(this, 'Orientation') || 1
         resolve(ORIENTATIONS[orientation])
       })
