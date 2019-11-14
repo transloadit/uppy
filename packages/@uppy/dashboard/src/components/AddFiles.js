@@ -6,7 +6,7 @@ class AddFiles extends Component {
     super(props)
 
     this.triggerFileInputClick = this.triggerFileInputClick.bind(this)
-    this.handleFileInputChange = this.handleFileInputChange.bind(this)
+    this.onHandleFileInputChange = this.onHandleFileInputChange.bind(this)
 
     this.renderPoweredByUppy = this.renderPoweredByUppy.bind(this)
     this.renderHiddenFileInput = this.renderHiddenFileInput.bind(this)
@@ -19,7 +19,7 @@ class AddFiles extends Component {
     this.fileInput.click()
   }
 
-  handleFileInputChange (event) {
+  onHandleFileInputChange (event) {
     this.props.handleInputChange(event)
 
     // We clear the input after a file is selected, because otherwise
@@ -59,7 +59,7 @@ class AddFiles extends Component {
         type="file"
         name="files[]"
         multiple={this.props.maxNumberOfFiles !== 1}
-        onchange={this.handleFileInputChange}
+        onchange={this.onHandleFileInputChange}
         accept={this.props.allowedFileTypes}
         ref={(ref) => { this.fileInput = ref }}
       />
@@ -78,9 +78,11 @@ class AddFiles extends Component {
 
     return (
       <div class="uppy-Dashboard-dropFilesTitle">
-        {this.props.acquirers.length === 0
-          ? this.props.i18nArray('dropPaste', { browse })
-          : this.props.i18nArray('dropPasteImport', { browse })}
+        <span>
+          {this.props.acquirers.length === 0
+            ? this.props.i18nArray('dropPaste', { browse })
+            : this.props.i18nArray('dropPasteImport', { browse })}
+        </span>
       </div>
     )
   }
@@ -138,10 +140,10 @@ class AddFiles extends Component {
                 )}
               </div>
           }
-        </div>
-        <div class="uppy-DashboardAddFiles-info">
-          {this.props.note && <div class="uppy-Dashboard-note">{this.props.note}</div>}
-          {this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy(this.props)}
+          <div class="uppy-DashboardAddFiles-info">
+            {this.props.note && <div class="uppy-Dashboard-note">{this.props.note}</div>}
+            {this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy(this.props)}
+          </div>
         </div>
       </div>
     )
