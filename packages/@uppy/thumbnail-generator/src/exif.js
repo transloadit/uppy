@@ -1,3 +1,7 @@
+// Adapted from https://github.com/exif-js/exif-js
+// Removed XMP and IPTC metadata parsing and EXIF thumbnail generation
+// MIT License (c) Jacob Seidelin https://github.com/exif-js/exif-js/blob/master/LICENSE.md
+
 const ExifTags = {
   // version tags
   0x9000: 'ExifVersion', // EXIF version
