@@ -183,15 +183,15 @@ If you're using Uppy from CDN, `es6-promise` and `whatwg-fetch` are already incl
 
 Having no JavaScript beats having a lot of it, so that’s a fair question! Running an uploading & encoding business for ten years though we found that in cases, the file input leaves some to be desired:
 
-- We received complaints about broken uploads and found that resumable uploads are important, especially for big files and to be inclusive towards people on poorer connections (we also launched [tus.io](https://tus.io) to attack that problem). Uppy uploads can survive network outages and browser crashes or accidental navigate-aways.
-- Uppy supports editing meta information before uploading (and e.g. cropping is planned).
-- There’s the situation where people are using their mobile devices and want to upload on the go, but they have their picture on Instagram, files in Dropbox or just a plain file URL from anywhere on the open web. Uppy allows to pick files from those and push it to the destination without downloading it to your mobile device first.
-- Accurate upload progress reporting is an issue on many platforms.
-- Some file validation — size, type, number of files — can be done on the client with Uppy.
+- We received complaints about broken uploads and found that resumable uploads are important, especially for big files and to be inclusive towards people on poorer connections (we also launched [tus.io](https://tus.io) to attack that problem). Uppy uploads can survive network outages and browser crashes or accidental navigate-aways
+- Uppy supports editing meta information before uploading (and e.g. cropping is planned)
+- There’s the situation where people are using their mobile devices and want to upload on the go, but they have their picture on Instagram, files in Dropbox or just a plain file URL from anywhere on the open web. Uppy allows to pick files from those and push it to the destination without downloading it to your mobile device first
+- Accurate upload progress reporting is an issue on many platforms
+- Some file validation — size, type, number of files — can be done on the client with Uppy
 - Uppy integrates webcam support, in case your users want to upload a picture/video/audio that does not exist yet :)
-- A larger drag and drop surface can be pleasant to work with. Some people also like that you can control the styling, language, etc.
-- Uppy is aware of encoding backends. Often after an upload, the server needs to rotate, detect faces, optimize for iPad, or what have you. Uppy can track progress of this and report back to the user in different ways.
-- Sometimes you might want your uploads to happen while you continue to interact on the same single page.
+- A larger drag and drop surface can be pleasant to work with. Some people also like that you can control the styling, language, etc
+- Uppy is aware of encoding backends. Often after an upload, the server needs to rotate, detect faces, optimize for iPad, or what have you. Uppy can track progress of this and report back to the user in different ways
+- Sometimes you might want your uploads to happen while you continue to interact on the same single page
 
 Not all apps need all of these features. An `<input type="file">` is fine in many situations. But these were a few things that our customers hit / asked about enough to spark us to develop Uppy.
 
