@@ -25,5 +25,6 @@ module.exports = function callback (req, res, next) {
   }
 
   logger.debug(`Did not receive access token for provider ${providerName}`, null, req.id)
+  logger.debug(req.session.grant.response, 'callback.oauth.resp', req.id)
   return res.sendStatus(400)
 }
