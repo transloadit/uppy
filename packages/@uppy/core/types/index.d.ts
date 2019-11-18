@@ -100,6 +100,8 @@ declare module Uppy {
   }
   type LogLevel = 'info' | 'warning' | 'error';
 
+  // This hack accepts _any_ string for `Event`, but also tricks VSCode and friends into providing autocompletions
+  // for the names listed. https://github.com/microsoft/TypeScript/issues/29729#issuecomment-505826972
   type LiteralUnion<T extends U, U = string> = T | (U & { });
   type Event = LiteralUnion<'file-added' | 'file-removed' | 'upload' | 'upload-progress' | 'upload-success' | 'complete' | 'error' | 'upload-error' |
                'upload-retry' | 'info-visible' | 'info-hidden' | 'cancel-all' | 'restriction-failed' | 'reset-progress'>;
