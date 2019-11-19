@@ -6,7 +6,7 @@ class AddFiles extends Component {
     super(props)
 
     this.triggerFileInputClick = this.triggerFileInputClick.bind(this)
-    this.onHandleFileInputChange = this.onHandleFileInputChange.bind(this)
+    this.onFileInputChange = this.onFileInputChange.bind(this)
 
     this.renderPoweredByUppy = this.renderPoweredByUppy.bind(this)
     this.renderHiddenFileInput = this.renderHiddenFileInput.bind(this)
@@ -19,7 +19,7 @@ class AddFiles extends Component {
     this.fileInput.click()
   }
 
-  onHandleFileInputChange (event) {
+  onFileInputChange (event) {
     this.props.handleInputChange(event)
 
     // We clear the input after a file is selected, because otherwise
@@ -59,7 +59,7 @@ class AddFiles extends Component {
         type="file"
         name="files[]"
         multiple={this.props.maxNumberOfFiles !== 1}
-        onchange={this.onHandleFileInputChange}
+        onchange={this.onFileInputChange}
         accept={this.props.allowedFileTypes}
         ref={(ref) => { this.fileInput = ref }}
       />
