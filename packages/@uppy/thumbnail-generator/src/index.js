@@ -31,7 +31,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
     const defaultOptions = {
       thumbnailWidth: null,
       thumbnailHeight: null,
-      waitForThumbnailsBeforeUpload: false
+      waitForThumbnailsBeforeUpload: false,
+      lazy: false
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -365,9 +366,13 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   install () {
-    this.uppy.on('file-added', this.onFileAdded)
     this.uppy.on('file-removed', this.onFileRemoved)
-    this.uppy.on('restored', this.onRestored)
+    if (this.opts.lazy) {
+      this.uppy.on('thumbnail:request', this.onFileAdded)
+    } else {
+      this.uppy.on('file-added', this.onFileAdded)
+      this.uppy.on('restored', this.onRestored)
+    }
 
     if (this.opts.waitForThumbnailsBeforeUpload) {
       this.uppy.addPreProcessor(this.waitUntilAllProcessed)
@@ -375,9 +380,13 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   uninstall () {
-    this.uppy.off('file-added', this.onFileAdded)
     this.uppy.off('file-removed', this.onFileRemoved)
-    this.uppy.off('restored', this.onRestored)
+    if (this.opts.lazy) {
+      this.uppy.off('thumbnail:request', this.onFileAdded)
+    } else {
+      this.uppy.off('file-added', this.onFileAdded)
+      this.uppy.off('restored', this.onRestored)
+    }
 
     if (this.opts.waitForThumbnailsBeforeUpload) {
       this.uppy.removePreProcessor(this.waitUntilAllProcessed)
