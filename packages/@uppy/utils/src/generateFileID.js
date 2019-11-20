@@ -7,7 +7,6 @@
  *
  */
 module.exports = function generateFileID (file) {
-  // filter is needed to not join empty values with `-`
   let id = 'uppy'
   if (typeof file.name === 'string') {
     id += '-' + encodeFilename(file.name.toLowerCase())

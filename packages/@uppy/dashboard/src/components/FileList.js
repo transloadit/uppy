@@ -51,14 +51,16 @@ module.exports = (props) => {
     pauseUpload: props.pauseUpload,
     cancelUpload: props.cancelUpload,
     toggleFileCard: props.toggleFileCard,
-    removeFile: props.removeFile
+    removeFile: props.removeFile,
+    handleRequestThumbnail: props.handleRequestThumbnail
   }
 
   const rows = chunks(Object.keys(props.files), props.itemsPerRow)
 
-  function renderRow (row, index) {
+  function renderRow (row) {
     return (
-      <div role="presentation">
+      // Use the first file ID as the key—this should not change across rerenders
+      <div role="presentation" key={row[0]}>
         {row.map((fileID) => (
           <FileItem
             key={fileID}
