@@ -24,23 +24,38 @@ function TransitionWrapper (props) {
   )
 }
 
+const XL_SIZE = 900
+const LG_SIZE = 700
+const MD_SIZE = 576
+
 module.exports = function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
 
-  const dashboardClassName = classNames(
-    { 'uppy-Root': props.isTargetDOMEl },
-    'uppy-Dashboard',
-    { 'Uppy--isTouchDevice': isTouchDevice() },
-    { 'uppy-Dashboard--animateOpenClose': props.animateOpenClose },
-    { 'uppy-Dashboard--isClosing': props.isClosing },
-    { 'uppy-Dashboard--isDraggingOver': props.isDraggingOver },
-    { 'uppy-Dashboard--modal': !props.inline },
-    { 'uppy-size--md': props.containerWidth > 576 },
-    { 'uppy-size--lg': props.containerWidth > 700 },
-    { 'uppy-size--xl': props.containerWidth > 900 },
-    { 'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel },
-    { 'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible }
-  )
+  const dashboardClassName = classNames({
+    'uppy-Root': props.isTargetDOMEl,
+    'uppy-Dashboard': true,
+    'Uppy--isTouchDevice': isTouchDevice(),
+    'uppy-Dashboard--animateOpenClose': props.animateOpenClose,
+    'uppy-Dashboard--isClosing': props.isClosing,
+    'uppy-Dashboard--isDraggingOver': props.isDraggingOver,
+    'uppy-Dashboard--modal': !props.inline,
+    'uppy-size--md': props.containerWidth > MD_SIZE,
+    'uppy-size--lg': props.containerWidth > LG_SIZE,
+    'uppy-size--xl': props.containerWidth > XL_SIZE,
+    'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel,
+    'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible
+  })
+
+  let itemsPerRow = 1 // mobile
+  if (props.containerWidth > XL_SIZE) {
+    itemsPerRow = 5
+  } else if (props.containerWidth > LG_SIZE) {
+    itemsPerRow = 4
+  } else if (props.containerWidth > MD_SIZE) {
+    itemsPerRow = 3
+  }
+
+  const showFileList = props.showSelectedFiles && !noFiles
 
   return (
     <div
@@ -82,10 +97,13 @@ module.exports = function Dashboard (props) {
             {props.i18n('dropHint')}
           </div>
 
-          {(!noFiles && props.showSelectedFiles) && <PanelTopBar {...props} />}
+          {showFileList && <PanelTopBar {...props} />}
 
-          {props.showSelectedFiles ? (
-            noFiles ? <AddFiles {...props} /> : <FileList {...props} />
+          {showFileList ? (
+            <FileList
+              {...props}
+              itemsPerRow={itemsPerRow}
+            />
           ) : (
             <AddFiles {...props} />
           )}

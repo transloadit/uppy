@@ -1,6 +1,22 @@
 const FileItem = require('./FileItem/index.js')
+const VirtualList = require('preact-virtual-list')
 const classNames = require('classnames')
 const { h } = require('preact')
+
+function chunks (list, size) {
+  const chunked = []
+  let currentChunk = []
+  list.forEach((item, i) => {
+    if (currentChunk.length < size) {
+      currentChunk.push(item)
+    } else {
+      chunked.push(currentChunk)
+      currentChunk = [item]
+    }
+  })
+  if (currentChunk.length) chunked.push(currentChunk)
+  return chunked
+}
 
 module.exports = (props) => {
   const noFiles = props.totalFileCount === 0
@@ -8,6 +24,9 @@ module.exports = (props) => {
     'uppy-Dashboard-files',
     { 'uppy-Dashboard-files--noFiles': noFiles }
   )
+
+  // 190px height + 2 * 5px margin
+  const rowHeight = 200
 
   const fileProps = {
     // FIXME This is confusing, it's actually the Dashboard's plugin ID
@@ -35,19 +54,29 @@ module.exports = (props) => {
     removeFile: props.removeFile
   }
 
+  const rows = chunks(Object.keys(props.files), props.itemsPerRow)
+
+  function renderRow (row, index) {
+    return (
+      <div role="presentation">
+        {row.map((fileID) => (
+          <FileItem
+            key={fileID}
+            {...fileProps}
+            file={props.files[fileID]}
+          />
+        ))}
+      </div>
+    )
+  }
+
   return (
-    <ul
+    <VirtualList
       class={dashboardFilesClass}
-      // making <ul> not focusable for firefox
-      tabindex="-1"
-    >
-      {Object.keys(props.files).map((fileID) => (
-        <FileItem
-          key={fileID}
-          {...fileProps}
-          file={props.files[fileID]}
-        />
-      ))}
-    </ul>
+      role="list"
+      data={rows}
+      renderRow={renderRow}
+      rowHeight={rowHeight}
+    />
   )
 }

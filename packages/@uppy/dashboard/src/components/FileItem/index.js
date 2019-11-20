@@ -33,7 +33,7 @@ module.exports = pure(function FileItem (props) {
   )
 
   return (
-    <li class={dashboardItemClass} id={`uppy_${file.id}`}>
+    <div role="listitem" class={dashboardItemClass} id={`uppy_${file.id}`}>
       <div class="uppy-DashboardItem-preview">
         <FilePreviewAndLink
           file={file}
@@ -71,6 +71,6 @@ module.exports = pure(function FileItem (props) {
           info={props.info}
         />
       </div>
-    </li>
+    </div>
   )
 })
