@@ -1,10 +1,10 @@
-const Exif = require('exif-js')
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 const ORIENTATIONS = require('./image-orientations')
+const Exif = require('./exif')
 
 /**
  * The Thumbnail Generator plugin
@@ -54,7 +54,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * Create a thumbnail for the given Uppy file object.
    *
    * @param {{data: Blob}} file
-   * @param {number} width
+   * @param {number} targetWidth
+   * @param {number} targetHeight
    * @returns {Promise}
    */
   createThumbnail (file, targetWidth, targetHeight) {
@@ -123,11 +124,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
     return new Promise((resolve) => {
       const uppy = this.uppy
       Exif.getData(file.data, function exifGetDataCallback () {
-        const exifdata = Exif.getAllTags(this)
-        // delete the thumbnail from exif metadata, because it contains a blob
-        // and we don’t blobs in meta — it might lead to unexpected issues on the server
-        delete exifdata.thumbnail
-        uppy.setFileMeta(file.id, { exifdata })
+        uppy.setFileMeta(file.id, { exifdata: Exif.getAllTags(this) })
         const orientation = Exif.getTag(this, 'Orientation') || 1
         resolve(ORIENTATIONS[orientation])
       })
