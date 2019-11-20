@@ -24,8 +24,8 @@ const options = {
     },
     b2: {
       getPath: (req, filename) => `${Math.random().toString(32).slice(2)}/${filename}`,
-      applicationKey: process.env.COMPANION_B2_KEY || process.env.UPPYSERVER_B2_KEY,
-      applicationKeyId: process.env.COMPANION_B2_KEY_ID || process.env.UPPYSERVER_B2_KEY_ID,
+      key: process.env.COMPANION_B2_KEY || process.env.UPPYSERVER_B2_KEY,
+      keyId: process.env.COMPANION_B2_KEY_ID || process.env.UPPYSERVER_B2_KEY_ID,
       bucket: process.env.COMPANION_B2_BUCKET || process.env.UPPYSERVER_B2_BUCKET
     }
   },

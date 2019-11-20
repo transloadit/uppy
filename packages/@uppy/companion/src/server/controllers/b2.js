@@ -7,16 +7,17 @@ module.exports = function b2 (config) {
   }
 
   const getCachedBucketID = (() => {
-    const cache = Object.create({})
+    const cache = Object.create(null)
     return (client, bucketName) => {
       const match = cache[bucketName]
       if (match && match.expiration < Date.now()) {
         return match.result
       } else {
-        return (cache[bucketName] = {
+        cache[bucketName] = {
           result: client.getBucketId({ bucketName }),
           expiration: Date.now() + (config.cacheBucketIdDurationMS || ms('30m'))
-        }).result
+        }
+        return cache[bucketName].result
       }
     }
   })()
@@ -77,20 +78,21 @@ module.exports = function b2 (config) {
    *  - authorizationToken - Auth token for uploading to the
    *    aforementioned uploadUrl.
    */
-  function getEndpoint (req, res, next) {
+  function getMultipartEndpoint (req, res, next) {
     const client = req.uppy.b2Client
     const { fileId } = req.params
-
-    if (typeof fileId !== 'string') {
-      return res.status(400).json({ error: 'b2: fileId type must be a string' })
-    }
 
     client.getUploadPartURL({ fileId })
       .then(data => res.json(data))
       .catch(err => next(err))
   }
 
-  function getEndpointSmall (req, res, next) {
+  /**
+   * Obtain a B2 upload URL associated with the configured
+   * bucket. Note that this is not to be used with large
+   * (multipart) uploads.
+   */
+  function getEndpoint (req, res, next) {
     const client = req.uppy.b2Client
 
     return getCachedBucketID(client, config.bucket)
@@ -107,10 +109,6 @@ module.exports = function b2 (config) {
     const client = req.uppy.b2Client
     const { fileId } = req.params
 
-    if (typeof fileId !== 'string') {
-      return res.status(400).json({ error: 'b2: fileId type must be a string' })
-    }
-
     const fetchParts = (prevParts = [], nextPartNumber) => {
       const params = {
         fileId,
@@ -123,7 +121,7 @@ module.exports = function b2 (config) {
         .then(response => {
           const parts = [
             ...prevParts,
-            ...(response.parts.map(part => ({
+            ...((response.parts || []).map(part => ({
               PartNumber: part.partNumber,
               Size: part.contentLength
             }))
@@ -160,10 +158,6 @@ module.exports = function b2 (config) {
     const { partSha1Array } = req.body
     const { fileId } = req.params
 
-    if (typeof fileId !== 'string') {
-      return res.status(400).json({ error: 'b2: fileId type must be a string' })
-    }
-
     if (typeof partSha1Array === 'undefined' || typeof partSha1Array.length !== 'number') {
       return res.status(400).json({ error: 'b2: partSha1Array array not found' })
     }
@@ -177,19 +171,15 @@ module.exports = function b2 (config) {
     const client = req.uppy.b2Client
     const { fileId } = req.params
 
-    if (typeof fileId !== 'string') {
-      return res.status(400).json({ error: 'b2: fileId type must be a string' })
-    }
-
     client.cancelLargeFile({ fileId })
       .then(data => res.json(data))
       .catch(err => next(err))
   }
 
   return router()
-    .post('/upload', getEndpointSmall)
+    .get('/endpoint', getEndpoint)
     .post('/multipart', createMultipartUpload)
-    .post('/multipart/:fileId', getEndpoint)
+    .get('/multipart/:fileId/endpoint', getMultipartEndpoint)
     .get('/multipart/:fileId', getUploadedParts)
     .post('/multipart/:fileId/complete', completeMultipartUpload)
     .delete('/multipart/:fileId', abortMultipartUpload)

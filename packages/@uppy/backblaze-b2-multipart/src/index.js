@@ -81,7 +81,7 @@ module.exports = class BackblazeB2Multipart extends Plugin {
 
     const metadata = {}
 
-    Object.keys(file.meta).map(key => {
+    Object.keys(file.meta).forEach(key => {
       if (file.meta[key] != null) {
         metadata[key] = file.meta[key].toString()
       }
@@ -98,8 +98,8 @@ module.exports = class BackblazeB2Multipart extends Plugin {
     this.assertHost()
 
     return (fileId
-      ? this.client.post(`b2/multipart/${fileId}`)
-      : this.client.post('b2/upload')
+      ? this.client.get(`b2/multipart/${fileId}/endpoint`)
+      : this.client.get('b2/endpoint')
     ).then(assertServerError)
   }
 

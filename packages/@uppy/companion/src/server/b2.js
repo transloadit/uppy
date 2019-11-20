@@ -5,8 +5,8 @@ const B2_API_URL = `https://api.backblazeb2.com/b2api/v${B2_API_VERSION}/`
 
 module.exports = class B2Client {
   constructor (options) {
-    this.applicationKeyId = options.credentials.applicationKeyId
-    this.applicationKey = options.credentials.applicationKey
+    this.keyId = options.credentials.keyId
+    this.key = options.credentials.key
 
     this.retries = 3 // TODO
 
@@ -25,7 +25,10 @@ module.exports = class B2Client {
    * Request new authorization token from Backblaze.
    */
   authorize () {
-    return this._authorizing || (this._authorizing = new Promise((resolve, reject) => {
+    if (this._authorizing) {
+      return this._authorizing
+    }
+    this._authorizing = new Promise((resolve, reject) => {
       const finish = (body) => {
         this._authorizing = null
       }
@@ -33,8 +36,8 @@ module.exports = class B2Client {
       request.get(B2_API_URL + 'b2_authorize_account', {
         json: true,
         auth: {
-          user: this.applicationKeyId,
-          pass: this.applicationKey,
+          user: this.keyId,
+          pass: this.key,
           sendImmediately: false
         }
       }, (err, res, body) => {
@@ -46,7 +49,8 @@ module.exports = class B2Client {
         }
         finish()
       })
-    }))
+    })
+    return this._authorizing
   }
 
   /**
