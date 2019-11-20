@@ -1,5 +1,5 @@
 const FileItem = require('./FileItem/index.js')
-const VirtualList = require('preact-virtual-list')
+const VirtualList = require('./VirtualList')
 const classNames = require('classnames')
 const { h } = require('preact')
 
