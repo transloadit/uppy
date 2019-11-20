@@ -479,21 +479,22 @@ class Uppy {
     throw (typeof err === 'object' ? err : new Error(err))
   }
 
-  /**
-   * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
-   * try to guess file type in a clever way, check file against restrictions,
-   * and start an upload if `autoProceed === true`.
-   *
-   * @param {object} file object to add
-   * @returns {string} id for the added file
-   */
-  addFile (file) {
-    const { files, allowNewUpload } = this.getState()
+  _assertNewUploadAllowed (file) {
+    const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
       this._showOrLogErrorAndThrow(new RestrictionError('Cannot add new files: already uploading.'), { file })
     }
+  }
 
+  /**
+   * Create a file state object based on user-provided `addFile()` options.
+   *
+   * Note this is extremely side-effectful and should only be done when a file state object will be added to state immediately afterward!
+   *
+   * The `files` value is passed in because it may be updated by the caller without updating the store.
+   */
+  _checkAndCreateFileStateObject (files, file) {
     const fileType = getFileType(file)
     file.type = fileType
 
@@ -536,7 +537,10 @@ class Uppy {
       id: fileID,
       name: fileName,
       extension: fileExtension || '',
-      meta: Object.assign({}, this.getState().meta, meta),
+      meta: {
+        ...this.getState().meta,
+        ...meta
+      },
       type: fileType,
       data: file.data,
       progress: {
@@ -558,15 +562,11 @@ class Uppy {
       this._showOrLogErrorAndThrow(err, { file: newFile })
     }
 
-    this.setState({
-      files: Object.assign({}, files, {
-        [fileID]: newFile
-      })
-    })
+    return newFile
+  }
 
-    this.emit('file-added', newFile)
-    this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
-
+  // Schedule an upload if `autoProceed` is enabled.
+  _startIfAutoProceed () {
     if (this.opts.autoProceed && !this.scheduledAutoProceed) {
       this.scheduledAutoProceed = setTimeout(() => {
         this.scheduledAutoProceed = null
@@ -577,8 +577,77 @@ class Uppy {
         })
       }, 4)
     }
+  }
 
-    return fileID
+  /**
+   * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
+   * try to guess file type in a clever way, check file against restrictions,
+   * and start an upload if `autoProceed === true`.
+   *
+   * @param {object} file object to add
+   * @returns {string} id for the added file
+   */
+  addFile (file) {
+    this._assertNewUploadAllowed(file)
+
+    const { files } = this.getState()
+    const newFile = this._checkAndCreateFileStateObject(files, file)
+
+    this.setState({
+      files: {
+        ...files,
+        [newFile.id]: newFile
+      }
+    })
+
+    this.emit('file-added', newFile)
+    this.log(`Added file: ${newFile.name}, ${newFile.id}, mime type: ${newFile.type}`)
+
+    this._startIfAutoProceed()
+
+    return newFile.id
+  }
+
+  /**
+   * Add multiple files to `state.files`. See the `addFile()` documentation.
+   *
+   * This cuts some corners for performance, so should typically only be used in cases where there may be a lot of files.
+   *
+   * If an error occurs while adding a file, it is logged and the user is notified. This is good for UI plugins, but not for programmatic use. Programmatic users should usually still use `addFile()` on individual files.
+   */
+  addFiles (fileDescriptors) {
+    this._assertNewUploadAllowed()
+
+    // create a copy of the files object only once
+    const files = { ...this.getState().files }
+    const newFiles = []
+    const errors = []
+    for (let i = 0; i < fileDescriptors.length; i++) {
+      try {
+        const newFile = this._checkAndCreateFileStateObject(files, fileDescriptors[i])
+        newFiles.push(newFile)
+        files[newFile.id] = newFile
+      } catch (err) {
+        if (!err.isRestriction) {
+          errors.push(err)
+        }
+      }
+    }
+
+    this.setState({ files })
+
+    newFiles.forEach((newFile) => {
+      this.emit('file-added', newFile)
+    })
+    this.log(`Added batch of ${newFiles.length} files`)
+
+    this._startIfAutoProceed()
+
+    if (errors.length > 0) {
+      const err = new Error('Multiple errors occured while adding files')
+      err.errors = errors
+      throw err
+    }
   }
 
   removeFile (fileID) {
