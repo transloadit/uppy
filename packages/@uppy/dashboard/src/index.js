@@ -220,11 +220,21 @@ module.exports = class Dashboard extends Plugin {
   }
 
   hideAllPanels () {
-    this.setPluginState({
+    const update = {
       activePickerPanel: false,
       showAddFilesPanel: false,
       activeOverlayType: null
-    })
+    }
+
+    const current = this.getPluginState()
+    if (current.activePickerPanel === update.activePickerPanel &&
+        current.showAddFilesPanel === update.showAddFilesPanel &&
+        current.activeOverlayType === update.activeOverlayType) {
+      // avoid doing a state update if nothing changed
+      return
+    }
+
+    this.setPluginState(update)
   }
 
   showPanel (id) {
