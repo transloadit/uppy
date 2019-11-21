@@ -1,5 +1,6 @@
 const express = require('express')
 const qs = require('querystring')
+const URL = require('url').URL
 const companion = require('../companion')
 const helmet = require('helmet')
 const morgan = require('morgan')
@@ -36,21 +37,32 @@ app.use(addRequestId)
 // log server requests.
 app.use(morgan('combined'))
 morgan.token('url', (req, res) => {
-  const mask = (key) => {
-    // don't log access_tokens in urls
-    const query = Object.assign({}, req.query)
-    // replace logged access token with xxxx character
-    query[key] = 'x'.repeat(req.query[key].length)
-    return `${req.path}?${qs.stringify(query)}`
-  }
+  const query = Object.assign({}, req.query)
+  let hasQuery = false;
+  ['access_token', 'uppyAuthToken'].forEach((key) => {
+    if (req.query && req.query[key]) {
+      // replace logged access token with xxxx character
+      query[key] = 'x'.repeat(req.query[key].length)
+      hasQuery = true
+    }
+  })
 
-  if (req.query && req.query.access_token) {
-    return mask('access_token')
-  } else if (req.query && req.query.uppyAuthToken) {
-    return mask('uppyAuthToken')
-  }
+  return hasQuery ? `${req.path}?${qs.stringify(query)}` : req.originalUrl || req.url
+})
 
-  return req.originalUrl || req.url
+morgan.token('referrer', (req, res) => {
+  const ref = req.headers.referer || req.headers.referrer
+  if (typeof ref === 'string') {
+    const parsed = new URL(ref);
+    ['uppyAuthToken', 'access_token'].forEach(key => {
+      if (parsed.searchParams.has(key)) {
+        const token = parsed.searchParams.get(key)
+        parsed.searchParams.set(key, 'x'.repeat(token.length))
+      }
+    })
+
+    return parsed.href
+  }
 })
 
 // make app metrics available at '/metrics'.
