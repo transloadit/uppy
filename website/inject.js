@@ -67,6 +67,10 @@ inject().catch((err) => {
 
 async function getMinifiedSize (pkg, name) {
   const b = browserify(pkg)
+
+  const packageJSON = fs.readFileSync(path.join(pkg, 'package.json'))
+  const version = JSON.parse(packageJSON).version
+
   if (name !== '@uppy/core' && name !== 'uppy') {
     b.exclude('@uppy/core')
     // Already unconditionally included through @uppy/core
@@ -82,7 +86,8 @@ async function getMinifiedSize (pkg, name) {
 
   return {
     minified: bundle.length,
-    gzipped
+    gzipped,
+    version
   }
 }
 
