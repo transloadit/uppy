@@ -75,9 +75,8 @@ exports.getNextPagePath = (data, currentQuery, currentPath) => {
   if (!data.nextPageToken) {
     return null
   }
-  const query = {
-    ...currentQuery,
+  const query = Object.assign({}, currentQuery, {
     cursor: data.nextPageToken
-  }
+  })
   return `${currentPath}?${querystring.stringify(query)}`
 }
