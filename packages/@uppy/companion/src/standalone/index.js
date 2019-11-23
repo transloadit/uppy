@@ -1,6 +1,6 @@
 const express = require('express')
 const qs = require('querystring')
-const URL = require('url').URL
+const urlParser = require('url')
 const companion = require('../companion')
 const helmet = require('helmet')
 const morgan = require('morgan')
@@ -53,15 +53,20 @@ morgan.token('url', (req, res) => {
 morgan.token('referrer', (req, res) => {
   const ref = req.headers.referer || req.headers.referrer
   if (typeof ref === 'string') {
-    const parsed = new URL(ref);
+    // @todo drop the use of url.parse
+    // when support for node 6 is dropped
+    // eslint-disable-next-line
+    const parsed = urlParser.URL ? new urlParser.URL(ref) : urlParser.parse(ref)
+    const query = qs.parse(parsed.search.replace('?', ''));
     ['uppyAuthToken', 'access_token'].forEach(key => {
-      if (parsed.searchParams.has(key)) {
-        const token = parsed.searchParams.get(key)
-        parsed.searchParams.set(key, 'x'.repeat(token.length))
+      if (query[key]) {
+        query[key] = 'x'.repeat(query[key].length)
       }
     })
 
-    return parsed.href
+    const hasQuery = parsed.search
+    const newURL = `${parsed.href.split('?')[0]}?${qs.stringify(query)}`
+    return hasQuery ? newURL : parsed.href
   }
 })
 
