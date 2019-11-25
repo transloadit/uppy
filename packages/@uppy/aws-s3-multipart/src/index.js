@@ -200,6 +200,7 @@ module.exports = class AwsS3Multipart extends Plugin {
         prepareUploadPart: this.opts.prepareUploadPart.bind(this, file),
         completeMultipartUpload: this.opts.completeMultipartUpload.bind(this, file),
         abortMultipartUpload: this.opts.abortMultipartUpload.bind(this, file),
+        getChunkSize: this.opts.getChunkSize ? this.opts.getChunkSize.bind(this) : null,
 
         onStart,
         onProgress,
