@@ -10,9 +10,21 @@ function resolveUrl (origin, link) {
   return new URL_(link, origin).toString()
 }
 
-function isXml (xhr) {
-  const contentType = xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type')
-  return typeof contentType === 'string' && contentType.toLowerCase() === 'application/xml'
+function isXml (content, xhr) {
+  const contentType = (xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type'))
+    // Get rid of mime parameters like charset=utf-8
+    .replace(/;.*$/, '')
+  if (typeof contentType === 'string') {
+    if (contentType.toLowerCase() === 'application/xml') {
+      return true
+    }
+    // GCS uses text/html for some reason
+    // https://github.com/transloadit/uppy/issues/896
+    if (contentType.toLowerCase() === 'text/html' && /^<\?xml /.test(content)) {
+      return true
+    }
+  }
+  return false
 }
 
 function getXmlValue (source, key) {
@@ -201,7 +213,7 @@ module.exports = class AwsS3 extends Plugin {
 
         // If no response, we've hopefully done a PUT request to the file
         // in the bucket on its full URL.
-        if (!isXml(xhr)) {
+        if (!isXml(content, xhr)) {
           if (opts.method.toUpperCase() === 'POST') {
             if (!warnedSuccessActionStatus) {
               log('[AwsS3] No response data found, make sure to set the success_action_status AWS SDK option to 201. See https://uppy.io/docs/aws-s3/#POST-Uploads', 'warning')
@@ -237,7 +249,7 @@ module.exports = class AwsS3 extends Plugin {
       // `xhr` is the XMLHttpRequest instance.
       getResponseError (content, xhr) {
         // If no response, we don't have a specific error message, use the default.
-        if (!isXml(xhr)) {
+        if (!isXml(content, xhr)) {
           return
         }
         const error = getXmlValue(content, 'Message')
