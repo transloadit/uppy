@@ -26,6 +26,8 @@ There are broadly two ways of uploading to S3 in a browser. A server can generat
 
 There is also a separate plugin for S3 Multipart uploads. Multipart in this sense refers to Amazon's proprietary chunked, resumable upload mechanism for large files. See the [`@uppy/aws-s3-multipart`](/docs/aws-s3-multipart) documentation.
 
+> Currently, there is an [issue](https://github.com/transloadit/uppy/issues/1915#issuecomment-546895952) with the this plugin when uploading many files. It requires a refactor in core parts of Uppy to address, which is planned for Q1 2020. In the mean time, if you expect users to upload more than a few dozen files at a time, consider using the [`@uppy/aws-s3-multipart`](/docs/aws-s3-multipart) plugin instead, which does not have this issue.
+
 ## Installation
 
 This plugin is published as the `@uppy/aws-s3` package.
