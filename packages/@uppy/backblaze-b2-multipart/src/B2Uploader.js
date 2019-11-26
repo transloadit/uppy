@@ -1,9 +1,9 @@
 const sha1 = require('js-sha1')
-const MB = 1024 * 1024
+const MAX_PARTS_PER_UPLOAD = 10000
 
 const defaultOptions = {
   limit: 1,
-  minChunkSizeMB: 5,
+  recommendedChunkSizeDivisor: 10, // default is 100MB (100MB / 10 = 10MB)
   onStart () {},
   onProgress () {},
   onPartComplete () {},
@@ -42,7 +42,7 @@ class B2Uploader {
     this.chunkState = null
     this.uploading = []
 
-    this.isMultiPart = this._initChunks()
+    this.isMultiPart = this._initChunks(options.config)
 
     this.createdPromise.catch(() => {}) // silence uncaught rejection warning
   }
@@ -51,9 +51,11 @@ class B2Uploader {
    * Take the file and slice it up into chunks, returns true if more than 1 chunks
    * were created (indicating a multi-part upload).
    */
-  _initChunks () {
+  _initChunks ({ absoluteMinimumPartSize, recommendedPartSize }) {
     const chunks = []
-    const chunkSize = Math.max(Math.ceil(this.file.size / 10000), this.options.minChunkSizeMB * MB)
+    const modifiedRecommendedPartSize = Math.ceil(recommendedPartSize / this.options.recommendedChunkSizeDivisor)
+    const targetChunkSize = Math.max(absoluteMinimumPartSize, modifiedRecommendedPartSize)
+    const chunkSize = Math.max(Math.ceil(this.file.size / MAX_PARTS_PER_UPLOAD), targetChunkSize)
 
     for (let i = 0; i < this.file.size; i += chunkSize) {
       const end = Math.min(this.file.size, i + chunkSize)

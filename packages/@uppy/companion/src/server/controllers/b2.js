@@ -6,7 +6,7 @@ module.exports = function b2 (config) {
     throw new TypeError('b2: the `getPath` option must be a function')
   }
 
-  const getCachedBucketID = (() => {
+  const getCachedBucketInfo = (() => {
     const cache = Object.create(null)
     return (client, bucketName) => {
       const match = cache[bucketName]
@@ -14,7 +14,7 @@ module.exports = function b2 (config) {
         return match.result
       } else {
         cache[bucketName] = {
-          result: client.getBucketId({ bucketName }),
+          result: client.getBucket({ bucketName }),
           expiration: Date.now() + (config.cacheBucketIdDurationMS || ms('30m'))
         }
         return cache[bucketName].result
@@ -46,15 +46,15 @@ module.exports = function b2 (config) {
       return res.status(400).json({ error: 'b2: content type must be a string' })
     }
 
-    return getCachedBucketID(client, config.bucket)
-      .then(bucketId =>
+    return getCachedBucketInfo(client, config.bucket)
+      .then(({ bucketId }) =>
         client.startLargeFile({
           bucketId,
           fileName,
           contentType: type
         }))
       .then(largeFileResponse => ({
-        fileId: largeFileResponse.fileId
+        fileId: largeFileResponse.data.fileId
       }))
       .then((data) => {
         res.json(data)
@@ -82,8 +82,8 @@ module.exports = function b2 (config) {
     const client = req.uppy.b2Client
     const { fileId } = req.params
 
-    client.getUploadPartURL({ fileId })
-      .then(data => res.json(data))
+    client.getUploadPartUrl({ fileId })
+      .then(response => res.json(response.data))
       .catch(err => next(err))
   }
 
@@ -95,13 +95,14 @@ module.exports = function b2 (config) {
   function getEndpoint (req, res, next) {
     const client = req.uppy.b2Client
 
-    return getCachedBucketID(client, config.bucket)
-      .then(bucketId =>
-        client.getUploadURL({
+    return getCachedBucketInfo(client, config.bucket)
+      .then(({ bucketId }) =>
+        client.getUploadUrl({
           bucketId
-        }).then(data =>
-          res.json(data)
-        ).catch(err => next(err))
+        }).then(response => {
+          const { authorizationToken, uploadUrl } = response.data
+          res.json({ authorizationToken, uploadUrl })
+        }).catch(err => next(err))
       )
   }
 
@@ -118,18 +119,18 @@ module.exports = function b2 (config) {
         params.nextPartNumber = nextPartNumber
       }
       return client.listParts(params)
-        .then(response => {
+        .then(({ data }) => {
           const parts = [
             ...prevParts,
-            ...((response.parts || []).map(part => ({
+            ...((data.parts || []).map(part => ({
               PartNumber: part.partNumber,
               Size: part.contentLength
             }))
             )
           ]
 
-          if (response.nextPartNumber) {
-            return fetchParts(parts, response.nextPartNumber)
+          if (data.nextPartNumber) {
+            return fetchParts(parts, data.nextPartNumber)
           } else {
             return Promise.resolve(parts)
           }
@@ -163,7 +164,7 @@ module.exports = function b2 (config) {
     }
 
     client.finishLargeFile({ fileId, partSha1Array })
-      .then(data => res.json(data))
+      .then(({ data }) => res.json(data))
       .catch(err => next(err))
   }
 
@@ -172,11 +173,26 @@ module.exports = function b2 (config) {
     const { fileId } = req.params
 
     client.cancelLargeFile({ fileId })
-      .then(data => res.json(data))
+      .then(({ data }) => res.json({
+        fileId: data.fileId,
+        fileName: data.fileName
+      }))
+      .catch(err => next(err))
+  }
+
+  function getUploadConfig (req, res, next) {
+    const client = req.uppy.b2Client
+
+    client.preauth()
+      .then(data => {
+        const { recommendedPartSize, absoluteMinimumPartSize } = data
+        res.json({ recommendedPartSize, absoluteMinimumPartSize })
+      })
       .catch(err => next(err))
   }
 
   return router()
+    .get('/config', getUploadConfig)
     .get('/endpoint', getEndpoint)
     .post('/multipart', createMultipartUpload)
     .get('/multipart/:fileId/endpoint', getMultipartEndpoint)

@@ -1,174 +1,92 @@
-const request = require('request')
-
-const B2_API_VERSION = 2
-const B2_API_URL = `https://api.backblazeb2.com/b2api/v${B2_API_VERSION}/`
+const B2 = require('backblaze-b2')
 
 module.exports = class B2Client {
   constructor (options) {
-    this.keyId = options.credentials.keyId
-    this.key = options.credentials.key
-
-    this.retries = 3 // TODO
-
-    // This will be populated after a successful authorization
-    this.auth = {}
-  }
-
-  getURL (method) {
-    if (!this.auth.apiUrl) {
-      throw new Error('getURL() called before successful authorize()')
-    }
-    return this.auth.apiUrl + `/b2api/v${B2_API_VERSION}/${method}`
-  }
-
-  /**
-   * Request new authorization token from Backblaze.
-   */
-  authorize () {
-    if (this._authorizing) {
-      return this._authorizing
-    }
-    this._authorizing = new Promise((resolve, reject) => {
-      const finish = (body) => {
-        this._authorizing = null
-      }
-
-      request.get(B2_API_URL + 'b2_authorize_account', {
-        json: true,
-        auth: {
-          user: this.keyId,
-          pass: this.key,
-          sendImmediately: false
-        }
-      }, (err, res, body) => {
-        if (err) {
-          reject(err)
-        } else {
-          this.auth = body
-          resolve(body)
-        }
-        finish()
-      })
+    this.b2 = new B2({
+      applicationKeyId: options.credentials.keyId,
+      applicationKey: options.credentials.key
     })
-    return this._authorizing
+
+    // This will be populated after each successful authorization.
+    this.lastAuthResponse = {}
   }
 
-  /**
-   * Gets an instance of `request` with 'Authorization' headers
-   * set to a (hopefully) valid authorization token.
-   */
-  _getPreauthorizedRequest () {
-    return this._authorizedRequest || (this._authorizedRequest =
-      this.authorize()
-        .then((authData) => {
-          // Bind authorization token to new `request`
-          return request.defaults({
-            headers: {
-              Authorization: authData.authorizationToken
-            }
-          })
-        })
-    )
-  }
-
-  apiRequest (action, params, retries = 5) {
-    return this._getPreauthorizedRequest()
-      .then((request) => new Promise((resolve, reject) => {
-        const url = this.getURL(action)
-
-        // If `params` is a function, call it and use the result
-        if (typeof params === 'function') {
-          params = params(this.auth, this)
-        }
-
-        const requestParams = {
-          json: true,
-          method: 'POST',
-          ...params
-        }
-
-        request(url, requestParams, (err, res, body) => {
-          if (err) {
-            // TODO -- check for token expirations and retry failures
-            console.log('WE GOT AN ERROR', err)
-            reject(err)
-          } else {
-            if (body && body.status && body.status !== 200) {
-              console.log('encountered error', body)
-            }
-            resolve(body)
+  preauth (failedToken) {
+    if (this._auth) {
+      if (failedToken) {
+        return this._auth.then(auth => {
+          // ONLY if the current promise resolves to the
+          // token which we know to be invalid, delete
+          // the _auth promise and recreate it be re-calling
+          // preauth()
+          if (auth.authorizationToken === failedToken) {
+            delete this._auth
           }
+          return this.preauth()
         })
-      }))
+      }
+    } else {
+      this._auth = this.b2.authorize()
+        .then(auth => {
+          this.lastAuthResponseData = auth.data
+          return auth.data
+        }).catch(err => {
+          console.log('Error attempting to authorize with B2:' + err)
+          delete this._auth
+          return this.preauth()
+        })
+    }
+    return this._auth
+  }
+
+  request (actualRequest, invalidToken) {
+    return this.preauth(invalidToken)
+      .then(auth => actualRequest()
+        .catch(err => {
+          if (err.response && err.response.status === 401) {
+            // Retry and pass the invalid token forward.
+            return this.request(actualRequest, auth.authorizationToken)
+          }
+          throw err
+        })
+      )
   }
 
   // { bucketId, fileName, contentType (optional) }
   startLargeFile (params) {
-    return this.apiRequest('b2_start_large_file', {
-      body: {
-        contentType: 'b2/x-auto',
-        ...params
-      }
-    })
+    return this.request(() => this.b2.startLargeFile(params))
   }
 
   // { bucketId, fileId, partSha1Array }
   finishLargeFile (params) {
-    return this.apiRequest('b2_finish_large_file', {
-      body: params
-    })
+    return this.request(() => this.b2.finishLargeFile(params))
   }
 
-  // { bucketId }
-  getBucketId (params) {
-    return this.apiRequest('b2_list_buckets', ({ accountId }) => ({
-      body: {
-        accountId,
-        bucketName: params.bucketName
-      }
-    })).then(response => {
-      if (response.buckets && response.buckets.length) {
-        return response.buckets[0].bucketId
-      }
-      throw new Error('failed to get bucketId')
-    })
+  // { bucketName, bucketId }
+  getBucket (params) {
+    return this.request(() => this.b2.getBucket(params))
+      .then(res => {
+        const buckets = res.data.buckets
+        if (buckets && buckets.length) {
+          return buckets[0]
+        }
+        throw new Error('Unable to find bucket (' + JSON.stringify(params) + ')')
+      })
   }
 
-  // { bucketName (optional), bucketTypes (optional)
-  listBuckets (params) {
-    return this.apiRequest('b2_list_buckets', ({ accountId }) => ({
-      body: {
-        accountId,
-        ...params
-      }
-    }))
-  }
-
-  // { fileId, startPartNumber (optional), maxPartCount (optional) }
   listParts (params) {
-    return this.apiRequest('b2_list_parts', {
-      body: params
-    })
+    return this.request(() => this.b2.listParts(params))
   }
 
-  // { fileId }
-  getUploadPartURL (params) {
-    return this.apiRequest('b2_get_upload_part_url', {
-      body: params
-    })
+  getUploadPartUrl (params) {
+    return this.request(() => this.b2.getUploadPartUrl(params))
   }
 
-  // { bucketId }
-  getUploadURL (params) {
-    return this.apiRequest('b2_get_upload_url', {
-      body: params
-    })
+  getUploadUrl (params) {
+    return this.request(() => this.b2.getUploadUrl(params))
   }
 
-  // { fileId }
   cancelLargeFile (params) {
-    return this.apiRequest('b2_cancel_large_file', {
-      body: params
-    })
+    return this.request(() => this.b2.cancelLargeFile(params))
   }
 }

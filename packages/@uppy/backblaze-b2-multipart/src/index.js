@@ -76,6 +76,20 @@ module.exports = class BackblazeB2Multipart extends Plugin {
     }
   }
 
+  // Get recommended chunk size, etc. from Companion
+  getConfig () {
+    if (this._config) {
+      return this._config
+    } else {
+      this._config = this.client.get('b2/config')
+        .catch(err => {
+          delete this._config
+          return assertServerError(err)
+        })
+    }
+    return this._config
+  }
+
   createMultipartUpload (file) {
     this.assertHost()
 
@@ -125,154 +139,157 @@ module.exports = class BackblazeB2Multipart extends Plugin {
   }
 
   uploadFile (file) {
-    return new Promise((resolve, reject) => {
-      const onStart = (data) => {
-        const cFile = this.uppy.getFile(file.id)
+    this.getConfig().then(config => {
+      return new Promise((resolve, reject) => {
+        const onStart = (data) => {
+          const cFile = this.uppy.getFile(file.id)
 
-        this.uppy.setFileState(file.id, {
-          b2Multipart: {
-            ...cFile.b2Multipart,
-            fileId: data.fileId,
-            isMultiPart: data.isMultiPart || false,
-            parts: []
+          this.uppy.setFileState(file.id, {
+            b2Multipart: {
+              ...cFile.b2Multipart,
+              fileId: data.fileId,
+              isMultiPart: data.isMultiPart || false,
+              parts: []
+            }
+          })
+        }
+
+        const onProgress = (bytesUploaded, bytesTotal) => {
+          this.uppy.emit('upload-progress', file, {
+            uploader: this,
+            bytesUploaded: bytesUploaded,
+            bytesTotal: bytesTotal
+          })
+        }
+
+        const onError = (err) => {
+          this.uppy.log(err)
+          this.uppy.emit('upload-error', file, err)
+          err.message = `Failed because: ${err.message}`
+
+          queuedRequest.done()
+          this.resetUploaderReferences(file.id)
+          reject(err)
+        }
+
+        const onSuccess = (result) => {
+          const uploadResp = {
+            fileId: result.fileId || this.fileId
+          }
+
+          queuedRequest.done()
+          this.resetUploaderReferences(file.id)
+
+          this.uppy.emit('upload-success', file, uploadResp)
+
+          if (result.location) {
+            this.uppy.log('Download ' + upload.file.name + ' from ' + result.location)
+          }
+
+          resolve(upload)
+        }
+
+        const onPartComplete = (part) => {
+          // Store completed parts in state.
+          const cFile = this.uppy.getFile(file.id)
+          if (!cFile) {
+            return
+          }
+          this.uppy.setFileState(file.id, {
+            b2Multipart: {
+              ...cFile.b2Multipart,
+              parts: [
+                ...cFile.b2Multipart.parts,
+                part
+              ]
+            }
+          })
+
+          this.uppy.emit('b2-multipart:part-uploaded', cFile, part)
+        }
+
+        const upload = new Uploader(file.data, {
+          // .bind to pass the file object to each handler.
+          createMultipartUpload: this.opts.createMultipartUpload.bind(this, file),
+          listParts: this.opts.listParts.bind(this, file),
+          // prepareUploadPart: this.opts.prepareUploadPart.bind(this, file),
+          completeMultipartUpload: this.opts.completeMultipartUpload.bind(this, file),
+          abortMultipartUpload: this.opts.abortMultipartUpload.bind(this, file),
+          getEndpoint: this.opts.getEndpoint.bind(this, file),
+
+          onStart,
+          onProgress,
+          onError,
+          onSuccess,
+          onPartComplete,
+
+          config,
+          sharedEndpointPool: this.sharedEndpointPool,
+          limit: this.opts.limit || 5,
+          ...file.b2Multipart
+        })
+
+        this.uploaders[file.id] = upload
+        this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+
+        let queuedRequest = this.requests.run(() => {
+          if (!file.isPaused) {
+            upload.start()
+          }
+          // Don't do anything here, the caller will take care of cancelling the upload itself
+          // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
+          // called when this request is still in the queue, and has not been started yet, too. At
+          // that point this cancellation function is not going to be called.
+          return () => {}
+        })
+
+        this.onFileRemove(file.id, (removed) => {
+          queuedRequest.abort()
+          this.resetUploaderReferences(file.id, { abort: true })
+          resolve(`upload ${removed.id} was removed`)
+        })
+
+        this.onCancelAll(file.id, () => {
+          queuedRequest.abort()
+          this.resetUploaderReferences(file.id, { abort: true })
+          resolve(`upload ${file.id} was canceled`)
+        })
+
+        this.onFilePause(file.id, (isPaused) => {
+          if (isPaused) {
+            // Remove this file from the queue so another file can start in its place.
+            queuedRequest.abort()
+            upload.pause()
+          } else {
+            // Resuming an upload should be queued, else you could pause and then resume a queued upload to make it skip the queue.
+            queuedRequest.abort()
+            queuedRequest = this.requests.run(() => {
+              upload.start()
+              return () => {}
+            })
           }
         })
-      }
 
-      const onProgress = (bytesUploaded, bytesTotal) => {
-        this.uppy.emit('upload-progress', file, {
-          uploader: this,
-          bytesUploaded: bytesUploaded,
-          bytesTotal: bytesTotal
-        })
-      }
-
-      const onError = (err) => {
-        this.uppy.log(err)
-        this.uppy.emit('upload-error', file, err)
-        err.message = `Failed because: ${err.message}`
-
-        queuedRequest.done()
-        this.resetUploaderReferences(file.id)
-        reject(err)
-      }
-
-      const onSuccess = (result) => {
-        const uploadResp = {
-          fileId: result.fileId || this.fileId
-        }
-
-        queuedRequest.done()
-        this.resetUploaderReferences(file.id)
-
-        this.uppy.emit('upload-success', file, uploadResp)
-
-        if (result.location) {
-          this.uppy.log('Download ' + upload.file.name + ' from ' + result.location)
-        }
-
-        resolve(upload)
-      }
-
-      const onPartComplete = (part) => {
-        // Store completed parts in state.
-        const cFile = this.uppy.getFile(file.id)
-        if (!cFile) {
-          return
-        }
-        this.uppy.setFileState(file.id, {
-          b2Multipart: {
-            ...cFile.b2Multipart,
-            parts: [
-              ...cFile.b2Multipart.parts,
-              part
-            ]
-          }
-        })
-
-        this.uppy.emit('b2-multipart:part-uploaded', cFile, part)
-      }
-
-      const upload = new Uploader(file.data, {
-        // .bind to pass the file object to each handler.
-        createMultipartUpload: this.opts.createMultipartUpload.bind(this, file),
-        listParts: this.opts.listParts.bind(this, file),
-        // prepareUploadPart: this.opts.prepareUploadPart.bind(this, file),
-        completeMultipartUpload: this.opts.completeMultipartUpload.bind(this, file),
-        abortMultipartUpload: this.opts.abortMultipartUpload.bind(this, file),
-        getEndpoint: this.opts.getEndpoint.bind(this, file),
-
-        onStart,
-        onProgress,
-        onError,
-        onSuccess,
-        onPartComplete,
-
-        sharedEndpointPool: this.sharedEndpointPool,
-        limit: this.opts.limit || 5,
-        ...file.b2Multipart
-      })
-
-      this.uploaders[file.id] = upload
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
-
-      let queuedRequest = this.requests.run(() => {
-        if (!file.isPaused) {
-          upload.start()
-        }
-        // Don't do anything here, the caller will take care of cancelling the upload itself
-        // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
-        // called when this request is still in the queue, and has not been started yet, too. At
-        // that point this cancellation function is not going to be called.
-        return () => {}
-      })
-
-      this.onFileRemove(file.id, (removed) => {
-        queuedRequest.abort()
-        this.resetUploaderReferences(file.id, { abort: true })
-        resolve(`upload ${removed.id} was removed`)
-      })
-
-      this.onCancelAll(file.id, () => {
-        queuedRequest.abort()
-        this.resetUploaderReferences(file.id, { abort: true })
-        resolve(`upload ${file.id} was canceled`)
-      })
-
-      this.onFilePause(file.id, (isPaused) => {
-        if (isPaused) {
-          // Remove this file from the queue so another file can start in its place.
+        this.onPauseAll(file.id, () => {
           queuedRequest.abort()
           upload.pause()
-        } else {
-          // Resuming an upload should be queued, else you could pause and then resume a queued upload to make it skip the queue.
+        })
+
+        this.onResumeAll(file.id, () => {
           queuedRequest.abort()
+          if (file.error) {
+            upload.abort()
+          }
           queuedRequest = this.requests.run(() => {
             upload.start()
             return () => {}
           })
-        }
-      })
-
-      this.onPauseAll(file.id, () => {
-        queuedRequest.abort()
-        upload.pause()
-      })
-
-      this.onResumeAll(file.id, () => {
-        queuedRequest.abort()
-        if (file.error) {
-          upload.abort()
-        }
-        queuedRequest = this.requests.run(() => {
-          upload.start()
-          return () => {}
         })
-      })
 
-      if (!file.isRestored) {
-        this.uppy.emit('upload-started', file, upload)
-      }
+        if (!file.isRestored) {
+          this.uppy.emit('upload-started', file, upload)
+        }
+      })
     })
   }
 

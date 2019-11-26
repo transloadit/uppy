@@ -148,7 +148,7 @@ class Uploader {
     // s3 uploads don't require upload destination
     // validation, because the destination is determined
     // by the server's s3 config
-    if (options.protocol === PROTOCOLS.s3Multipart) {
+    if (options.protocol === PROTOCOLS.s3Multipart || options.protocol === PROTOCOLS.b2Multipart) {
       return true
     }
 
@@ -244,6 +244,10 @@ class Uploader {
 
       if (protocol === PROTOCOLS.s3Multipart && !this.s3Upload) {
         return this.uploadS3Multipart()
+      }
+
+      if (protocol === PROTOCOLS.b2Multipart && !this.b2Upload) {
+        return this.uploadB2()
       }
       // @TODO disabling parallel uploads and downloads for now
       // if (!this.options.endpoint) return
@@ -555,6 +559,11 @@ class Uploader {
       }
       this.cleanUp()
     })
+  }
+
+  uploadB2 () {
+    this.b2Upload = null
+    throw new Error('not implemented')
   }
 }
 
