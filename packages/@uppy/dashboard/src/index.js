@@ -835,6 +835,7 @@ module.exports = class Dashboard extends Plugin {
       height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
+      hideCancelButton: this.opts.hideCancelButton,
       containerWidth: pluginState.containerWidth,
       containerHeight: pluginState.containerHeight,
       areInsidesReadyToBeVisible: pluginState.areInsidesReadyToBeVisible,
