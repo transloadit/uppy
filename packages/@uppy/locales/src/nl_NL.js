@@ -72,6 +72,7 @@ nl_NL.strings = {
     '1': 'Bezig met %{smart_count} bestanden te verwerken',
     '2': 'Bezig met %{smart_count} bestanden te verwerken'
   },
+  recordingLength: 'Opnameduur %{recording_length}',
   removeFile: 'Bestand verwijderen',
   resetFilter: 'Filter resetten',
   resume: 'Hervatten',
