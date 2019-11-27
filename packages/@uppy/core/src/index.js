@@ -701,52 +701,19 @@ class Uppy {
 
     this._calculateTotalProgress()
 
-    Object.keys(removedFiles).forEach((fileID) => {
-      this.emit('file-removed', fileID)
+    const removedFileIDs = Object.keys(removedFiles)
+    removedFileIDs.forEach((fileID) => {
+      this.emit('file-removed', removedFiles[fileID])
     })
-    this.log(`Removed ${Object.keys(removedFiles).length} files`)
+    if (removedFileIDs.length > 5) {
+      this.log(`Removed ${removedFileIDs.length} files`)
+    } else {
+      this.log(`Removed files: ${removedFileIDs.join(', ')}`)
+    }
   }
 
   removeFile (fileID) {
-    const { files, currentUploads } = this.getState()
-    const updatedFiles = { ...files }
-    const removedFile = updatedFiles[fileID]
-    delete updatedFiles[fileID]
-
-    // Remove this file from its `currentUpload`.
-    const updatedUploads = { ...currentUploads }
-    const removeUploads = []
-    Object.keys(updatedUploads).forEach((uploadID) => {
-      const newFileIDs = currentUploads[uploadID].fileIDs.filter((uploadFileID) => uploadFileID !== fileID)
-      // Remove the upload if no files are associated with it anymore.
-      if (newFileIDs.length === 0) {
-        removeUploads.push(uploadID)
-        return
-      }
-
-      updatedUploads[uploadID] = {
-        ...currentUploads[uploadID],
-        fileIDs: newFileIDs
-      }
-    })
-
-    this.setState({
-      currentUploads: updatedUploads,
-      files: updatedFiles,
-      ...(
-        // If this is the last file we just removed - allow new uploads!
-        Object.keys(updatedFiles).length === 0 &&
-        { allowNewUpload: true }
-      )
-    })
-
-    removeUploads.forEach((uploadID) => {
-      this._removeUpload(uploadID)
-    })
-
-    this._calculateTotalProgress()
-    this.emit('file-removed', removedFile)
-    this.log(`File removed: ${removedFile.id}`)
+    this.removeFiles([fileID])
   }
 
   pauseResume (fileID) {
