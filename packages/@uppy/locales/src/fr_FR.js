@@ -72,6 +72,7 @@ fr_FR.strings = {
     '1': 'Traitement de %{smart_count} fichiers',
     '2': 'Traitement de %{smart_count} fichiers'
   },
+  recordingLength: 'Durée d\'enregistrement %{recording_length}',
   removeFile: 'Effacer le fichier',
   resetFilter: 'Réinitialiser filtre',
   resume: 'Continuer',

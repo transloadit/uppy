@@ -141,6 +141,9 @@ strings: {
   // Used as the label for the button that stops a video recording.
   // This is not visibly rendered but is picked up by screen readers.
   stopRecording: 'Stop video recording',
+  // Used as the label for the recording length counter. See the showRecordingLength option.
+  // This is not visibly rendered but is picked up by screen readers.
+  recordingLength: 'Recording length %{recording_length}',
   // Title on the “allow access” screen
   allowAccessTitle: 'Please allow access to your camera',
   // Description on the “allow access” screen

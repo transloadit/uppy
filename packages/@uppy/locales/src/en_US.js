@@ -75,6 +75,7 @@ en_US.strings = {
     '1': 'Processing %{smart_count} files',
     '2': 'Processing %{smart_count} files'
   },
+  recordingLength: 'Recording length %{recording_length}',
   removeFile: 'Remove file',
   resetFilter: 'Reset filter',
   resume: 'Resume',

@@ -54,7 +54,8 @@ module.exports = class Webcam extends Plugin {
         startRecording: 'Begin video recording',
         stopRecording: 'Stop video recording',
         allowAccessTitle: 'Please allow access to your camera',
-        allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.'
+        allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
+        recordingLength: 'Recording length %{recording_length}'
       }
     }
 
