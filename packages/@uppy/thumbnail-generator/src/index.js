@@ -306,7 +306,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   onFileAdded = (file) => {
-    if (!file.preview) {
+    if (!file.preview && isPreviewSupported(file.type) && !file.isRemote) {
       this.addToQueue(file)
     }
   }
