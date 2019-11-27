@@ -50,3 +50,22 @@ import DefaultStore = require('@uppy/store-default')
     meta: { path: 'path/to/file' }
   })
 }
+
+{
+  const uppy = Uppy()
+  // can emit events with internal event types
+  uppy.emit('upload')
+  uppy.emit('complete', () => {})
+  uppy.emit('error', () => {})
+
+  // can emit events with custom event types
+  uppy.emit('dashboard:modal-closed', () => {})
+
+  // can register listners for internal events
+  uppy.on('upload', () => {})
+  uppy.on('complete', () => {})
+  uppy.on('error', () => {})
+
+  // can register listners on custom events
+  uppy.on('dashboard:modal-closed', () => {})
+}
