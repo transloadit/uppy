@@ -825,7 +825,10 @@ class Uppy {
         response
       })
 
-      this.setState({ error: error.message })
+      this.setState({
+        error: error.message,
+        allowNewUpload: true
+      })
 
       let message = this.i18n('failedToUpload', { file: file.name })
       if (typeof error === 'object' && error.message) {
