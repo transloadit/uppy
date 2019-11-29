@@ -54,7 +54,8 @@ module.exports = class Webcam extends Plugin {
         startRecording: 'Begin video recording',
         stopRecording: 'Stop video recording',
         allowAccessTitle: 'Please allow access to your camera',
-        allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.'
+        allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
+        recordingLength: 'Recording length %{recording_length}'
       }
     }
 
@@ -70,7 +71,8 @@ module.exports = class Webcam extends Plugin {
       ],
       mirror: true,
       facingMode: 'user',
-      preferredVideoMimeType: null
+      preferredVideoMimeType: null,
+      showRecordingLength: false
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -169,6 +171,14 @@ module.exports = class Webcam extends Plugin {
     })
     this.recorder.start()
 
+    if (this.opts.showRecordingLength) {
+      // Start the recordingLengthTimer if we are showing the recording length.
+      this.recordingLengthTimer = setInterval(() => {
+        const currentRecordingLength = this.getPluginState().recordingLengthSeconds
+        this.setPluginState({ recordingLengthSeconds: currentRecordingLength + 1 })
+      }, 1000)
+    }
+
     this.setPluginState({
       isRecording: true
     })
@@ -180,6 +190,12 @@ module.exports = class Webcam extends Plugin {
         resolve()
       })
       this.recorder.stop()
+
+      if (this.opts.showRecordingLength) {
+        // Stop the recordingLengthTimer if we are showing the recording length.
+        clearInterval(this.recordingLengthTimer)
+        this.setPluginState({ recordingLengthSeconds: 0 })
+      }
     })
 
     return stopped.then(() => {
@@ -368,6 +384,7 @@ module.exports = class Webcam extends Plugin {
         onStop={this.stop}
         i18n={this.i18n}
         modes={this.opts.modes}
+        showRecordingLength={this.opts.showRecordingLength}
         supportsRecording={supportsMediaRecorder()}
         recording={webcamState.isRecording}
         mirror={this.opts.mirror}
@@ -378,7 +395,8 @@ module.exports = class Webcam extends Plugin {
 
   install () {
     this.setPluginState({
-      cameraReady: false
+      cameraReady: false,
+      recordingLengthSeconds: 0
     })
 
     const target = this.opts.target

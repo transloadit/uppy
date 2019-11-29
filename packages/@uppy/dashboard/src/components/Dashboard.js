@@ -24,9 +24,10 @@ function TransitionWrapper (props) {
   )
 }
 
-const XL_SIZE = 900
-const LG_SIZE = 700
-const MD_SIZE = 576
+const WIDTH_XL = 900
+const WIDTH_LG = 700
+const WIDTH_MD = 576
+const HEIGHT_MD = 576
 
 module.exports = function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
@@ -42,16 +43,17 @@ module.exports = function Dashboard (props) {
     'uppy-size--md': props.containerWidth > MD_SIZE,
     'uppy-size--lg': props.containerWidth > LG_SIZE,
     'uppy-size--xl': props.containerWidth > XL_SIZE,
+    'uppy-size--height-md': props.containerHeight > 400,
     'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel,
     'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible
   })
 
   let itemsPerRow = 1 // mobile
-  if (props.containerWidth > XL_SIZE) {
+  if (props.containerWidth > WIDTH_XL) {
     itemsPerRow = 5
-  } else if (props.containerWidth > LG_SIZE) {
+  } else if (props.containerWidth > WIDTH_LG) {
     itemsPerRow = 4
-  } else if (props.containerWidth > MD_SIZE) {
+  } else if (props.containerWidth > WIDTH_MD) {
     itemsPerRow = 3
   }
 

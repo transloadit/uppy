@@ -73,6 +73,7 @@ de_DE.strings = {
     '1': '%{smart_count} Dateien verarbeiten',
     '2': '%{smart_count} Dateien verarbeiten'
   },
+  recordingLength: 'Aufnahmedauer %{recording_length}',
   removeFile: 'Datei entfernen',
   resetFilter: 'Filter zurücksetzen',
   resume: 'Fortsetzen',

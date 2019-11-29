@@ -65,6 +65,7 @@ uppy.use(Webcam, {
   ],
   mirror: true,
   facingMode: 'user',
+  showRecordingLength: false,
   locale: {}
 })
 ```
@@ -113,6 +114,10 @@ Devices sometimes have multiple cameras, front and back, for example. There is a
 - `left`: The video source is facing toward the user but to their left, such as a camera aimed toward the user but over their left shoulder.
 - `right`: The video source is facing toward the user but to their right, such as a camera aimed toward the user but over their right shoulder.
 
+### `showRecordingLength: false`
+
+Configures whether or not to show the length of the recording while the recording is in progress. The default is `false`.
+
 ### `preferredVideoMimeType: null`
 
 Set the preferred mime type for video recordings, for example `'video/webm'`. If the browser supports the given mime type, the video will be recorded in this format. If the browser does not support it, it will use the browser default.
@@ -136,6 +141,9 @@ strings: {
   // Used as the label for the button that stops a video recording.
   // This is not visibly rendered but is picked up by screen readers.
   stopRecording: 'Stop video recording',
+  // Used as the label for the recording length counter. See the showRecordingLength option.
+  // This is not visibly rendered but is picked up by screen readers.
+  recordingLength: 'Recording length %{recording_length}',
   // Title on the “allow access” screen
   allowAccessTitle: 'Please allow access to your camera',
   // Description on the “allow access” screen
