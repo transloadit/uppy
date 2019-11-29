@@ -22,7 +22,7 @@ We receive the following **data** from you:
 3. Data entered on our website
 4. The browser session (identified through a cookie)
 5. Information used to analyze usage of our platform (through cookies from Google Analytics. More on cookies is explained below)
-6. Files you can optionally upload in example demos. Those files are stored temporarily for 24–72 hours, on tus.io or transloadit.com servers, and then deleted. See also Transloadit’s Privacy Policy: https://transloadit.com/legal/privacy/.
+6. Files you can optionally upload in example demos. Those files are stored temporarily for 24–72 hours, on uppy.io, tus.io or transloadit.com servers, and then deleted. See also Transloadit’s Privacy Policy: https://transloadit.com/legal/privacy/.
 
 All data that passes through demos is only used for demo purposes, and never sold or otherwise given away.
 
@@ -36,7 +36,7 @@ We use the following third-party services which also store data about you:
 | :-------------------- | :---------------------- | :--------------------------------------- | :-----------: | :---------: | :--------: | :-------: |
 | Transloadit           | end user (data subject) | browser identifiers                      |               |             | instantly  |           |
 | Transloadit           | end user (data subject) | test files                      |               |             | in 24h  |           |
-| Tus.io           | end user (data subject) | test files                      |               |             | in 72h  |           |
+| Tus.io               | end user (data subject) | test files                      |               |             | in 72h  |           |
 | Google Analytics      | customer (business)     | browser identifiers                      |               | ✅                      |           |
 
 - **anonymized**: Any data that can be used to identify the 'data subject' is scrubbed
