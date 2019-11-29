@@ -40,10 +40,10 @@ module.exports = function Dashboard (props) {
     'uppy-Dashboard--isClosing': props.isClosing,
     'uppy-Dashboard--isDraggingOver': props.isDraggingOver,
     'uppy-Dashboard--modal': !props.inline,
-    'uppy-size--md': props.containerWidth > MD_SIZE,
-    'uppy-size--lg': props.containerWidth > LG_SIZE,
-    'uppy-size--xl': props.containerWidth > XL_SIZE,
-    'uppy-size--height-md': props.containerHeight > 400,
+    'uppy-size--md': props.containerWidth > WIDTH_MD,
+    'uppy-size--lg': props.containerWidth > WIDTH_LG,
+    'uppy-size--xl': props.containerWidth > WIDTH_XL,
+    'uppy-size--height-md': props.containerHeight > HEIGHT_MD,
     'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel,
     'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible
   })
