@@ -1,26 +1,10 @@
 const router = require('express').Router
-const ms = require('ms')
+// const ms = require('ms')
 
 module.exports = function b2 (config) {
   if (typeof config.getPath !== 'function') {
     throw new TypeError('b2: the `getPath` option must be a function')
   }
-
-  const getCachedBucketInfo = (() => {
-    const cache = Object.create(null)
-    return (client, bucketName) => {
-      const match = cache[bucketName]
-      if (match && match.expiration < Date.now()) {
-        return match.result
-      } else {
-        cache[bucketName] = {
-          result: client.getBucket({ bucketName }),
-          expiration: Date.now() + (config.cacheBucketIdDurationMS || ms('30m'))
-        }
-        return cache[bucketName].result
-      }
-    }
-  })()
 
   /**
    * Initiate a B2 large file upload.
@@ -46,7 +30,7 @@ module.exports = function b2 (config) {
       return res.status(400).json({ error: 'b2: content type must be a string' })
     }
 
-    return getCachedBucketInfo(client, config.bucket)
+    return client.getCachedBucket({ bucketName: config.bucket })
       .then(({ bucketId }) =>
         client.startLargeFile({
           bucketId,
@@ -95,7 +79,7 @@ module.exports = function b2 (config) {
   function getEndpoint (req, res, next) {
     const client = req.uppy.b2Client
 
-    return getCachedBucketInfo(client, config.bucket)
+    return client.getCachedBucket({ bucketName: config.bucket })
       .then(({ bucketId }) =>
         client.getUploadUrl({
           bucketId

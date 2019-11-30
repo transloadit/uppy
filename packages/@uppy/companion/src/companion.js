@@ -238,14 +238,7 @@ const getOptionsMiddleware = (options) => {
   let b2Client = null
   if (options.providerOptions.b2) {
     const config = options.providerOptions.b2
-    const { keyId, key } = config
-    const credentials = {
-      keyId,
-      key
-    }
-    b2Client = new B2Client({
-      credentials
-    })
+    b2Client = new B2Client(config)
   }
 
   /**

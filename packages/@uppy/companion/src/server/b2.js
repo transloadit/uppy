@@ -1,14 +1,84 @@
 const B2 = require('backblaze-b2')
+const ms = require('ms')
+const B2Stream = require('./b2stream')
+
+function createBucketCache (client, cacheDuration = ms('30m')) {
+  const cache = Object.create(null)
+  return (bucketName) => {
+    const match = cache[bucketName]
+    if (match && match.expiration < Date.now()) {
+      return match.result
+    } else {
+      cache[bucketName] = {
+        result: client.getBucket({ bucketName }),
+        expiration: Date.now() + cacheDuration
+      }
+      return cache[bucketName].result
+    }
+  }
+}
+
+function createEndpointPool (client, bucketName) {
+  const pools = {
+    default: []
+  }
+
+  const acquire = (fileId = undefined) => {
+    if (fileId) { // specific fileId indicates large file / multipart
+      const pool = (pools[fileId] = pools[fileId] || [])
+      if (pool.length) {
+        return Promise.resolve(pool.shift())
+      } else {
+        return client.getUploadPartUrl({ fileId })
+          .then(({ data }) => data)
+      }
+    } else {
+      const pool = pools.default
+      if (pool.length) {
+        return Promise.resolve(pool.shift())
+      } else {
+        return client.getCachedBucket(bucketName)
+          .then(({ bucketId }) => client.getUploadUrl({ bucketId }))
+          .then(({ data }) => data)
+      }
+    }
+  }
+
+  const release = (endpoint) => {
+    // fileId indicates large file / multipart
+    const { fileId } = endpoint
+    if (fileId) {
+      const pool = (pools[fileId] = pools[fileId] || [])
+      pool.push(endpoint)
+    } else {
+      pools.default.push(endpoint)
+    }
+  }
+
+  const finish = (fileId) => {
+    delete pools[fileId]
+  }
+
+  return {
+    acquire,
+    release,
+    finish
+  }
+}
 
 module.exports = class B2Client {
   constructor (options) {
     this.b2 = new B2({
-      applicationKeyId: options.credentials.keyId,
-      applicationKey: options.credentials.key
+      applicationKeyId: options.keyId,
+      applicationKey: options.key,
+      axios: options.axios || {},
+      retry: options.retry
     })
 
+    this._bucketCache = createBucketCache(this)
+
     // This will be populated after each successful authorization.
-    this.lastAuthResponse = {}
+    this.lastAuthResponseData = {}
   }
 
   preauth (failedToken) {
@@ -74,6 +144,10 @@ module.exports = class B2Client {
       })
   }
 
+  getCachedBucket (params) {
+    return this._bucketCache(params)
+  }
+
   listParts (params) {
     return this.request(() => this.b2.listParts(params))
   }
@@ -88,5 +162,22 @@ module.exports = class B2Client {
 
   cancelLargeFile (params) {
     return this.request(() => this.b2.cancelLargeFile(params))
+  }
+
+  uploadFile (params) {
+    return this.request(() => this.b2.uploadFile(params))
+  }
+
+  uploadPart (params) {
+    return this.request(() => this.b2.uploadPart(params))
+  }
+
+  // The following methods are used by Companion server <-> server transfers
+  upload (options) {
+    return new B2Stream(this, options)
+  }
+
+  createEndpointPool (bucketName) {
+    return createEndpointPool(this, bucketName)
   }
 }

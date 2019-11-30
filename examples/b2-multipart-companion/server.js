@@ -18,6 +18,10 @@ app.use(require('express-session')({
 
 const options = {
   providerOptions: {
+    dropbox: {
+      key: process.env.COMPANION_DROPBOX_KEY || process.env.UPPYSERVER_DROPBOX_KEY,
+      secret: process.env.COMPANION_DROPBOX_SECRET || process.env.UPPYSERVER_DROPBOX_SECRET
+    },
     google: {
       key: process.env.COMPANION_GOOGLE_KEY || process.env.UPPYSERVER_GOOGLE_KEY,
       secret: process.env.COMPANION_GOOGLE_SECRET || process.env.UPPYSERVER_GOOGLE_SECRET
@@ -26,11 +30,12 @@ const options = {
       getPath: (req, filename) => `${Math.random().toString(32).slice(2)}/${filename}`,
       key: process.env.COMPANION_B2_KEY || process.env.UPPYSERVER_B2_KEY,
       keyId: process.env.COMPANION_B2_KEY_ID || process.env.UPPYSERVER_B2_KEY_ID,
-      bucket: process.env.COMPANION_B2_BUCKET || process.env.UPPYSERVER_B2_BUCKET
+      bucket: process.env.COMPANION_B2_BUCKET || process.env.UPPYSERVER_B2_BUCKET,
+      axios: {} // pass custom axios options to backblaze-b2 client
     }
   },
   server: { host: 'localhost:3020' },
-  limit: 2,
+  limit: 8,
   filePath: DATA_DIR,
   secret: 'blah blah',
   debug: true

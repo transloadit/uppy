@@ -32,7 +32,6 @@ module.exports = class BackblazeB2Multipart extends Plugin {
       createMultipartUpload: this.createMultipartUpload.bind(this),
       getEndpoint: this.getEndpoint.bind(this),
       listParts: this.listParts.bind(this),
-      // prepareUploadPart: this.prepareUploadPart.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this)
     }
@@ -173,6 +172,7 @@ module.exports = class BackblazeB2Multipart extends Plugin {
 
         const onSuccess = (result) => {
           const uploadResp = {
+            ...result,
             fileId: result.fileId || this.fileId
           }
 
@@ -211,7 +211,6 @@ module.exports = class BackblazeB2Multipart extends Plugin {
           // .bind to pass the file object to each handler.
           createMultipartUpload: this.opts.createMultipartUpload.bind(this, file),
           listParts: this.opts.listParts.bind(this, file),
-          // prepareUploadPart: this.opts.prepareUploadPart.bind(this, file),
           completeMultipartUpload: this.opts.completeMultipartUpload.bind(this, file),
           abortMultipartUpload: this.opts.abortMultipartUpload.bind(this, file),
           getEndpoint: this.opts.getEndpoint.bind(this, file),
