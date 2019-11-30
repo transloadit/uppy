@@ -14,13 +14,14 @@ function isXml (content, xhr) {
   const contentType = (xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type'))
     // Get rid of mime parameters like charset=utf-8
     .replace(/;.*$/, '')
+    .toLowerCase()
   if (typeof contentType === 'string') {
-    if (contentType.toLowerCase() === 'application/xml') {
+    if (contentType === 'application/xml' || contentType === 'text/xml') {
       return true
     }
     // GCS uses text/html for some reason
     // https://github.com/transloadit/uppy/issues/896
-    if (contentType.toLowerCase() === 'text/html' && /^<\?xml /.test(content)) {
+    if (contentType === 'text/html' && /^<\?xml /.test(content)) {
       return true
     }
   }
