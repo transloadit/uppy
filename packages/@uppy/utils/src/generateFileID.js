@@ -4,7 +4,6 @@
  *
  * @param {object} file
  * @returns {string} the fileID
- *
  */
 module.exports = function generateFileID (file) {
   let id = 'uppy'
