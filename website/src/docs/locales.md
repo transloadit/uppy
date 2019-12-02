@@ -3,8 +3,8 @@ type: docs
 order: 6
 title: "Locale Packs"
 permalink: docs/locales/
-category: 'Docs'
-body_class: 'page-docs-locales'
+category: "Docs"
+body_class: "page-docs-locales"
 ---
 
 Uppy speaks multiple languages, English being the default. You can use a locale pack to translate Uppy into your language of choice.
@@ -33,8 +33,8 @@ const uppy = Uppy({
 Add a `<script>` tag with Uppy bundle and the locale pack you’d like to use. You can copy/paste the link from the CDN column in the [locales table](#List-of-locale-packs). The locale will attach itself to the `Uppy.locales` object.
 
 ```html
-<script src="https://transloadit.edgly.net/releases/uppy/v1.4.0/uppy.min.js"></script>
-<script src="https://transloadit.edgly.net/releases/uppy/locales/v1.6.0/de_DE.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v1.6.0/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/locales/v1.9.0/de_DE.min.js"></script>
 
 <script>
 var uppy = Uppy.Core({

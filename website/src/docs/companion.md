@@ -5,8 +5,8 @@ title: "Companion"
 module: "@uppy/companion"
 permalink: docs/companion/
 alias: docs/server/
-category: 'Docs'
-tagline: Server-side proxy that enables remote sources like Instagram, Google Drive, S3
+category: "Docs"
+tagline: "Server-side proxy that enables remote sources like Instagram, Google Drive, S3"
 ---
 
 Drag and drop, webcam, basic file manipulation (adding metadata, for example) and uploading via tus-resumable uploads or XHR/Multipart are all possible using just the Uppy client module.
@@ -23,6 +23,7 @@ As of now, Companion is integrated to work with:
 - Dropbox
 - Instagram
 - Facebook
+- OneDrive
 - Remote URLs
 - Amazon S3
 
@@ -183,6 +184,12 @@ export COMPANION_FACEBOOK_SECRET="YOUR FACEBOOK SECRET"
 # specifying a secret file will override a directly set secret
 export COMPANION_FACEBOOK_SECRET_FILE="PATH/TO/FACEBOOK/SECRET/FILE"
 
+# to enable Onedrive
+export COMPANION_ONEDRIVE_KEY="YOUR ONEDRIVE KEY"
+export COMPANION_ONEDRIVE_SECRET="YOUR ONEDRIVE SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_ONEDRIVE_SECRET_FILE="PATH/TO/ONEDRIVE/SECRET/FILE"
+
 # to enable S3
 export COMPANION_AWS_KEY="YOUR AWS KEY"
 export COMPANION_AWS_SECRET="YOUR AWS SECRET"
@@ -190,6 +197,8 @@ export COMPANION_AWS_SECRET="YOUR AWS SECRET"
 export COMPANION_AWS_SECRET_FILE="PATH/TO/AWS/SECRET/FILE"
 export COMPANION_AWS_BUCKET="YOUR AWS S3 BUCKET"
 export COMPANION_AWS_REGION="AWS REGION"
+# to enable S3 Transfer Acceleration (default: false)
+export COMPANION_AWS_USE_ACCELERATE_ENDPOINT="false"
 
 # corresponds to the server.oauthDomain option
 export COMPANION_OAUTH_DOMAIN="sub.domain.com"
@@ -227,12 +236,17 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
       key: "***",
       secret: "***"
     },
+    microsoft: {
+      key: "***",
+      secret: "***"
+    },
     s3: {
       getKey: (req, filename) => filename,
       key: "***",
       secret: "***",
       bucket: "bucket-name",
-      region: "us-east-1"
+      region: "us-east-1",
+      useAccelerateEndpoint: false // default: false
     }
   },
   server: {
@@ -251,25 +265,28 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 2. **redisUrl(optional)** - URL to running Redis server. If this is set, the state of uploads would be stored temporarily. This helps for resumed uploads after a browser crash from the client. The stored upload would be sent back to the client on reconnection.
 
-3. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-Providers).
+3. **redisOptions(optional)** - An object of [options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties). This option can be used in place of `redisUrl`.
 
-4. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set:
+4. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-Providers).
+
+5. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set:
 
   - protocol - `http | https`
   - host(required) - your server host (e.g localhost:3020, mydomain.com)
-  - path - the server path to where the Uppy app is sitting (e.g if Companion is at `mydomain.com/uppy`, then the path would be `/uppy`).
+  - path - the server path to where the Uppy app is sitting (e.g if Companion is at `mydomain.com/companion`, then the path would be `/companion`).
   - oauthDomain - if you have multiple instances of Companion with different (and perhaps dynamic) subdomains, you can set a master domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect to the slave subdomain with the required credentials on completion.
   - validHosts - if you are setting a master `oauthDomain`, you need to set a list of valid hosts, so the master oauth handler can validate the host of the Uppy instance requesting the authentication. This is basically a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
+  - implicitPath - if the URL path to your Companion server is set in your NGINX server (or any other Http server) instead of your express app, then you need to set this path as `implicitPath`. So if your Companion URL is `mydomain.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`.
 
-5. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
+6. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
 
-6. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-Custom-Providers) for more information.
+7. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-Custom-Providers) for more information.
 
-7. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Companion will only accept uploads to these URLs (useful when you want to make sure a Companion instance is only allowed to upload to your servers, for example).
+8. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Companion will only accept uploads to these URLs (useful when you want to make sure a Companion instance is only allowed to upload to your servers, for example).
 
-8. **secret(required)** - A secret string which Companion uses to generate authorization tokens.
+9. **secret(required)** - A secret string which Companion uses to generate authorization tokens.
 
-9. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
+10. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
 
 ### S3 options
 

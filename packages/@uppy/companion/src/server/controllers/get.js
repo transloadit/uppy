@@ -4,8 +4,8 @@ const logger = require('../logger')
 function get (req, res, next) {
   const providerName = req.params.providerName
   const id = req.params.id
-  const token = req.uppy.providerTokens[providerName]
-  const provider = req.uppy.provider
+  const token = req.companion.providerTokens[providerName]
+  const provider = req.companion.provider
 
   // get the file size before proceeding
   provider.size({ id, token }, (err, size) => {

@@ -159,7 +159,7 @@ class TusService {
     const proxy = httpProxy.createProxyServer()
     this.slowServer = http.createServer((req, res) => {
       proxy.web(req, res, {
-        target: `http://localhost:1080`,
+        target: 'http://localhost:1080',
         // 200 kbps max upload, checking the rate limit every 20ms
         buffer: req.pipe(brake({
           period: 20,

@@ -30,7 +30,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: normalize file names when uploading from iOS? $678
 - [ ] core: optimize problematic filenames #72
 - [ ] dashboard: “Custom Provider” plugin for  Dashboard — shows already uploaded files or files from a custom service; accepts an array of files to show in options, no companion required #362
-- [ ] dashboard: add image cropping, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151
 - [ ] dashboard: add option to disable uploading from local disk #657
 - [ ] dashboard: Allow custom form fields in dashboard meta editing via jsx rendering (#617, #809, #454, @arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
@@ -53,7 +52,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] plugins: audio/memo recording similar to Webcam #143
 - [ ] plugins: Plugins - Keybase.io Remote provider plugin! #943
 - [ ] plugins: screenshot+screencast support similar to Webcam #148
-- [ ] plugins: Transformations, cropping, filters for images, see #53
 - [ ] plugins: WordPress plugin https://www.producthunt.com/posts/uppy-io#comment-559327 (“And Gravity forms”)
 - [ ] provider: Add Facebook, OneDrive, Box
 - [ ] provider: add sorting, filtering, previews #254
@@ -94,14 +92,18 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
 - [ ] xhr: set the `limit` option to a sensible default, like 10
 - [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now
+- [ ] core: add 1st class Vue.js support
+- [ ] core: add 1st class AngularJS support
 - [ ] form: make the `multipleResults` option `true` by default
 - [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
 - [ ] tus: set the `limit` option to a sensible default, like 10
 - [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
+- [ ] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861
+- [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53
 
 # next
 
-## 1.5
+## 1.7
 
 - [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
 - [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
@@ -121,16 +123,121 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] website: Adopt bcp-47 to handle and parse locales (@kvz, https://github.com/meikidd/iso-639-1/issues/19, https://tools.ietf.org/html/bcp47, https://github.com/wooorm/bcp-47)
-- [x] core: avoid overwriting duplicate files by a) throwing a warning instead and b) adding the relative-path of files to a new tus fingerprint function (we might use file.id as a fingerprint instead) (#754, #1606) (@arturi, #1767)
-- [x] companion: revoke companion's provider access on "logout" (@ifedapoolarewaju, #1843)
-- [x] facebook: add facebook remote provider (@ifedapoolarewaju, #1794)
-- [x] onedrive: add OneDrive remote provider (@ifedapoolarewaju, #1831)
-- [x] transloadit: pin socket.io version to ES5 compatible one (@goto-bus-stop, https://github.com/transloadit/uppy/commit/5839b655f093edaa778d49b719f7dda063ef79cb)
-- [x] locales: add Czech (@tvaliasek, #1842)
-- [x] locales: add Danish (@Pzoco, #1837)
-- [x] xhr-upload,tus,aws-s3: use more cancellation-friendly strategy for `limit: N` uploads (@goto-bus-stop, #1736)
-- [x] thumbnail-generator: add waitForThumbnailsBeforeUpload option, false by default (@arturi, #1803)
-- [x] dashboard: add missing fields to DashboardOptions typescript typings (@MatthiasKunnen, #1830)
+
+## 1.6.0
+
+Released: 2019-11-04
+
+This release adds Icelandic translations and a long-awaited `setOptions` API to change configuration (including language) at runtime.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.3.4 | @uppy/onedrive | 0.1.2 |
+| @uppy/aws-s3 | 1.3.3 | @uppy/progress-bar | 1.3.2 |
+| @uppy/companion | 1.6.0 | @uppy/provider-views | 1.5.0 |
+| @uppy/core | 1.6.0 | @uppy/react | 1.4.0 |
+| @uppy/dashboard | 1.5.0 | @uppy/robodog | 1.4.0 |
+| @uppy/drag-drop | 1.4.0 | @uppy/status-bar | 1.4.0 |
+| @uppy/dropbox | 1.3.3 | @uppy/thumbnail-generator | 1.5.0 |
+| @uppy/facebook | 0.2.0 | @uppy/transloadit | 1.4.0 |
+| @uppy/file-input | 1.4.0 | @uppy/tus | 1.5.0 |
+| @uppy/form | 1.3.3 | @uppy/url | 1.4.0 |
+| @uppy/golden-retriever | 1.3.2 | @uppy/utils | 2.1.0 |
+| @uppy/google-drive | 1.3.3 | @uppy/webcam | 1.4.0 |
+| @uppy/informer | 1.3.2 | @uppy/xhr-upload | 1.4.0 |
+| @uppy/instagram | 1.3.3 | uppy | 1.6.0 |
+| @uppy/locales | 1.9.0 | - | - |
+
+- @uppy/companion: Add S3 useAccelerateEndpoint option (@steverob, #1884)
+- @uppy/companion: only set `Access-Control-Allow-Credentials` header when origin is whitelisted (@ifedapoolarewaju, #1901)
+- @uppy/companion: set a more visible thumbnail size for dropbox (@ifedapoolarewaju, #1917)
+- @uppy/companion: upgrade connect-redis (@ifedapoolarewaju, #1911)
+- @uppy/core: Allow passing meta type to upload-success and complete events (@MatthiasKunnen, #1879)
+- @uppy/core: add UppyFile.response typing (@superhawk610, #1882)
+- @uppy/core: add `setOptions` API (@arturi, #1728)
+- @uppy/core: skip upload-success event for a file that has been removed (@julianocomg, #1875)
+- @uppy/facebook: use grid view with big image previews for album folders (@ifedapoolarewaju, #1886)
+- @uppy/locales: Added Icelandic :iceland: (@olitomas, #1916)
+- @uppy/provider-views: Fix sizes for smaller images in grid layout (@arturi, #1897)
+- @uppy/provider-views: provider views breadcrumbs is failed to render (@huydod, #1914)
+- @uppy/transloadit: send Transloadit-Client header with HTTP API requests (@goto-bus-stop, #1919)
+- @uppy/tus: terminate tus upload when cancelling instead of just pausing and letting it expire (@ifedapoolarewaju, #1909)
+- @uppy/utils: accept sync functions in `wrapPromiseFunction()` (@goto-bus-stop, #1910)
+- docs: README.md wording and formatting changes (@sercraig, #1900)
+- docs: clarify that 'upload-success' and 'upload-error' `response` parameter is specific to some uploaders (@bambii7, #1921)
+- docs: add OneDrive to Companion documentation (@ifedapoolarewaju, #1925)
+- examples: support `COMPANION_AWS_ENDPOINT` in aws-companion example so it can be used with other S3-compatible services (@goto-bus-stop, [1ab63aa](https://github.com/transloadit/uppy/commit/1ab63aa395859815871c4e1e62dda6e9ca66595f))
+- website: improve support page design (@arturi, #1913)
+
+## 1.5.2
+
+Released: 2019-10-14
+
+This release contains a new Thai locale, and some critical fixes for the 1.5 release, especially the S3 plugins.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3 | 1.3.2 | @uppy/locales | 1.8.0 |
+| @uppy/aws-s3-multipart | 1.3.3 | @uppy/onedrive | 0.1.1 |
+| @uppy/companion-client | 1.4.1 | @uppy/react | 1.3.2 |
+| @uppy/core | 1.5.1 | @uppy/robodog | 1.3.3 |
+| @uppy/dashboard | 1.4.1 | @uppy/transloadit | 1.3.2 |
+| @uppy/dropbox | 1.3.2 | @uppy/tus | 1.4.2 |
+| @uppy/facebook | 0.1.1 | @uppy/url | 1.3.2 |
+| @uppy/form | 1.3.2 | @uppy/xhr-upload | 1.3.2 |
+| @uppy/google-drive | 1.3.2 | uppy | 1.5.2 |
+| @uppy/instagram | 1.3.2 | - | - |
+
+- @uppy/aws-s3-multipart: advance queue after local file upload completes (@goto-bus-stop, #1887)
+- @uppy/core: provide default error message (@goto-bus-stop, #1880)
+- @uppy/dashboard: fix retry icons on individual files (@goto-bus-stop, #1888)
+- @uppy/locales: add Thai (@dogrocker, #1873)
+- build: update lerna, eslint, and jest (@goto-bus-stop)
+- docs: add css require to robodog docs (@arturi, fea453b7a99359ef409f57face62c8eeffc16fda)
+
+## 1.5.0
+
+Released: 2019-10-09
+
+This release features new remote providers for Facebook and OneDrive, new languages, and a more robust approach to simultaneous upload limiting and cancellation.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.3.1 | @uppy/onedrive | 0.1.0 |
+| @uppy/aws-s3 | 1.3.1 | @uppy/progress-bar | 1.3.1 |
+| @uppy/companion-client | 1.4.0 | @uppy/provider-views | 1.4.0 |
+| @uppy/companion | 1.5.0 | @uppy/react-native | 0.1.3 |
+| @uppy/core | 1.5.0 | @uppy/react | 1.3.1 |
+| @uppy/dashboard | 1.4.0 | @uppy/redux-dev-tools | 1.3.1 |
+| @uppy/drag-drop | 1.3.1 | @uppy/robodog | 1.3.1 |
+| @uppy/dropbox | 1.3.1 | @uppy/status-bar | 1.3.1 |
+| @uppy/facebook | 0.1.0 | @uppy/thumbnail-generator | 1.4.0 |
+| @uppy/file-input | 1.3.1 | @uppy/transloadit | 1.3.1 |
+| @uppy/form | 1.3.1 | @uppy/tus | 1.4.1 |
+| @uppy/golden-retriever | 1.3.1 | @uppy/url | 1.3.1 |
+| @uppy/google-drive | 1.3.1 | @uppy/utils | 2.0.0 |
+| @uppy/informer | 1.3.1 | @uppy/webcam | 1.3.1 |
+| @uppy/instagram | 1.3.1 | @uppy/xhr-upload | 1.3.1 |
+| @uppy/locales | 1.7.0 | uppy | 1.5.0 |
+
+- @uppy/companion: revoke companion's provider access on "logout" (@ifedapoolarewaju, #1843)
+- @uppy/companion-client: rename serverHeaders to companionHeaders (@goto-bus-stop, #1861)
+- @uppy/core: avoid overwriting duplicate files by a) throwing a warning instead and b) adding the relative-path of files to a new tus fingerprint function (we might use file.id as a fingerprint instead) (#754, #1606) (@arturi, #1767)
+- @uppy/dashboard: add missing fields to DashboardOptions typescript typings (@MatthiasKunnen, #1830)
+- @uppy/facebook: add facebook remote provider (@ifedapoolarewaju, #1794)
+- @uppy/locales: add Czech (@tvaliasek, #1842)
+- @uppy/locales: add Danish (@Pzoco, #1837)
+- @uppy/onedrive: add OneDrive remote provider (@ifedapoolarewaju, #1831)
+- @uppy/thumbnail-generator: add waitForThumbnailsBeforeUpload option, false by default (@arturi, #1803)
+- @uppy/transloadit: pin socket.io version to ES5 compatible one (@goto-bus-stop, https://github.com/transloadit/uppy/commit/5839b655f093edaa778d49b719f7dda063ef79cb)
+- @uppy/xhr-upload,tus,aws-s3: use more cancellation-friendly strategy for `limit: N` uploads (@goto-bus-stop, #1736)
+- @uppy/aws-s3-multipart: fix queueing behaviors, especially interaction with cancellation (@goto-bus-stop, #1855)
+- @uppy/locales: fix typo in Persian locale (@uxitten, #1865)
+- @uppy/locales: improve Swedish translation (@marcusforberg, #1859)
+- @uppy/aws-s3: replace browser-only resolve-url by isomorphic url-parse (@goto-bus-stop, #1854)
+- docs: remove pre 1.0 notice from changelog (@mskelton, #1858)
+- docs: fix typo (@leftdevel, #1852)
+- test: add end-to-end test with retries (@ifedapoolarewaju, #1766)
 
 ## 1.4
 

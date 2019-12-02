@@ -11,13 +11,13 @@ module.exports = function FilePreviewAndLink (props) {
       {
         props.showLinkToFileUploadResult &&
         props.file.uploadURL &&
-        <a
-          class="uppy-DashboardItem-previewLink"
-          href={props.file.uploadURL}
-          rel="noreferrer noopener"
-          target="_blank"
-          aria-label={props.file.meta.name}
-        />
+          <a
+            class="uppy-DashboardItem-previewLink"
+            href={props.file.uploadURL}
+            rel="noreferrer noopener"
+            target="_blank"
+            aria-label={props.file.meta.name}
+          />
       }
       <FilePreview file={props.file} />
     </div>

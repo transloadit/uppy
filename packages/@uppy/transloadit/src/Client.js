@@ -6,6 +6,10 @@ module.exports = class Client {
     this.opts = opts
 
     this._reportError = this._reportError.bind(this)
+
+    this._headers = {
+      'Transloadit-Client': this.opts.client
+    }
   }
 
   /**
@@ -36,6 +40,7 @@ module.exports = class Client {
     const url = `${this.opts.service}/assemblies`
     return fetch(url, {
       method: 'post',
+      headers: this._headers,
       body: data
     }).then((response) => response.json()).then((assembly) => {
       if (assembly.error) {
@@ -58,7 +63,7 @@ module.exports = class Client {
   reserveFile (assembly, file) {
     const size = encodeURIComponent(file.size)
     const url = `${assembly.assembly_ssl_url}/reserve_file?size=${size}`
-    return fetch(url, { method: 'post' })
+    return fetch(url, { method: 'post', headers: this._headers })
       .then((response) => response.json())
       .catch((err) => this._reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
@@ -80,7 +85,7 @@ module.exports = class Client {
 
     const qs = `size=${size}&filename=${filename}&fieldname=${fieldname}&s3Url=${uploadUrl}`
     const url = `${assembly.assembly_ssl_url}/add_file?${qs}`
-    return fetch(url, { method: 'post' })
+    return fetch(url, { method: 'post', headers: this._headers })
       .then((response) => response.json())
       .catch((err) => this._reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
@@ -92,7 +97,7 @@ module.exports = class Client {
    */
   cancelAssembly (assembly) {
     const url = assembly.assembly_ssl_url
-    return fetch(url, { method: 'delete' })
+    return fetch(url, { method: 'delete', headers: this._headers })
       .then((response) => response.json())
       .catch((err) => this._reportError(err, { url, type: 'API_ERROR' }))
   }
@@ -103,7 +108,7 @@ module.exports = class Client {
    * @param {string} url The status endpoint of the assembly.
    */
   getAssemblyStatus (url) {
-    return fetch(url)
+    return fetch(url, { headers: this._headers })
       .then((response) => response.json())
       .catch((err) => this._reportError(err, { url, type: 'STATUS_ERROR' }))
   }
@@ -120,6 +125,7 @@ module.exports = class Client {
         instance,
         assembly_id: assembly,
         agent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+        client: this.opts.client,
         error: message
       })
     }).then((response) => response.json())

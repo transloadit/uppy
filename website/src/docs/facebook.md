@@ -5,8 +5,8 @@ title: "Facebook"
 menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/facebook"
 permalink: docs/facebook/
-category: 'Sources'
-tagline: import files from Facebook
+category: "Sources"
+tagline: "import files from Facebook"
 ---
 
 The `@uppy/facebook` plugin lets users import files from their Facebook account.
@@ -33,12 +33,6 @@ Install from NPM:
 
 ```shell
 npm install @uppy/facebook
-```
-
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
-
-```js
-const Facebook = Uppy.Facebook
 ```
 
 ## CSS
@@ -74,7 +68,7 @@ DOM element, CSS selector, or plugin to mount the Facebook provider into. This s
 
 URL to a [Companion](/docs/companion) instance.
 
-### `serverHeaders: {}`
+### `companionHeaders: {}`
 
 Custom headers that should be sent along to [Companion](/docs/companion) on every request.
 

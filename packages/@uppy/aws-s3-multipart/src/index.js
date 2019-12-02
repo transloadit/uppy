@@ -153,6 +153,7 @@ module.exports = class AwsS3Multipart extends Plugin {
         this.uppy.emit('upload-error', file, err)
         err.message = `Failed because: ${err.message}`
 
+        queuedRequest.done()
         this.resetUploaderReferences(file.id)
         reject(err)
       }
@@ -162,6 +163,7 @@ module.exports = class AwsS3Multipart extends Plugin {
           uploadURL: result.location
         }
 
+        queuedRequest.done()
         this.resetUploaderReferences(file.id)
 
         this.uppy.emit('upload-success', file, uploadResp)
@@ -194,15 +196,11 @@ module.exports = class AwsS3Multipart extends Plugin {
 
       const upload = new Uploader(file.data, {
         // .bind to pass the file object to each handler.
-        createMultipartUpload: this.requests.wrapPromiseFunction(
-          this.opts.createMultipartUpload.bind(this, file)),
-        listParts: this.requests.wrapPromiseFunction(
-          this.opts.listParts.bind(this, file)),
+        createMultipartUpload: this.opts.createMultipartUpload.bind(this, file),
+        listParts: this.opts.listParts.bind(this, file),
         prepareUploadPart: this.opts.prepareUploadPart.bind(this, file),
-        completeMultipartUpload: this.requests.wrapPromiseFunction(
-          this.opts.completeMultipartUpload.bind(this, file)),
-        abortMultipartUpload: this.requests.wrapPromiseFunction(
-          this.opts.abortMultipartUpload.bind(this, file)),
+        completeMultipartUpload: this.opts.completeMultipartUpload.bind(this, file),
+        abortMultipartUpload: this.opts.abortMultipartUpload.bind(this, file),
 
         onStart,
         onProgress,
@@ -315,7 +313,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
       const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
-      this.uploaderSockets[socket] = socket
+      this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       this.onFileRemove(file.id, (removed) => {

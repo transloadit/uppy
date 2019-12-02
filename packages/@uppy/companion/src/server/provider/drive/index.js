@@ -75,7 +75,7 @@ class Drive {
           const returnData = this.adaptData(
             filesResponse.body,
             sharedDrives && sharedDrives.body,
-            options.uppy,
+            options.companion,
             directory,
             query
           )
@@ -148,14 +148,14 @@ class Drive {
       })
   }
 
-  adaptData (res, sharedDrivesResp, uppy, directory, query) {
+  adaptData (res, sharedDrivesResp, companion, directory, query) {
     const adaptItem = (item) => ({
       isFolder: adapter.isFolder(item),
       icon: adapter.getItemIcon(item),
       name: adapter.getItemName(item),
       mimeType: adapter.getMimeType(item),
       id: adapter.getItemId(item),
-      thumbnail: uppy.buildURL(adapter.getItemThumbnailUrl(item), true),
+      thumbnail: companion.buildURL(adapter.getItemThumbnailUrl(item), true),
       requestPath: adapter.getItemRequestPath(item),
       modifiedDate: adapter.getItemModifiedDate(item),
       size: adapter.getItemSize(item),

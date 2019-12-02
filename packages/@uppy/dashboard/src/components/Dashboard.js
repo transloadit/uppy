@@ -17,7 +17,8 @@ function TransitionWrapper (props) {
     <PreactCSSTransitionGroup
       transitionName="uppy-transition-slideDownUp"
       transitionEnterTimeout={250}
-      transitionLeaveTimeout={250}>
+      transitionLeaveTimeout={250}
+    >
       {props.children}
     </PreactCSSTransitionGroup>
   )
@@ -37,12 +38,14 @@ module.exports = function Dashboard (props) {
     { 'uppy-size--md': props.containerWidth > 576 },
     { 'uppy-size--lg': props.containerWidth > 700 },
     { 'uppy-size--xl': props.containerWidth > 900 },
+    { 'uppy-size--height-md': props.containerHeight > 400 },
     { 'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel },
     { 'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible }
   )
 
   return (
-    <div class={dashboardClassName}
+    <div
+      class={dashboardClassName}
       aria-hidden={props.inline ? 'false' : props.isHidden}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
       onpaste={props.handlePaste}
@@ -53,20 +56,24 @@ module.exports = function Dashboard (props) {
     >
       <div class="uppy-Dashboard-overlay" tabindex={-1} onclick={props.handleClickOutside} />
 
-      <div class="uppy-Dashboard-inner"
+      <div
+        class="uppy-Dashboard-inner"
         aria-modal={!props.inline && 'true'}
         role={!props.inline && 'dialog'}
         style={{
           width: props.inline && props.width ? props.width : '',
           height: props.inline && props.height ? props.height : ''
-        }}>
+        }}
+      >
 
         {!props.inline ? (
-          <button class="uppy-u-reset uppy-Dashboard-close"
+          <button
+            class="uppy-u-reset uppy-Dashboard-close"
             type="button"
             aria-label={props.i18n('closeModal')}
             title={props.i18n('closeModal')}
-            onclick={props.closeModal}>
+            onclick={props.closeModal}
+          >
             <span aria-hidden="true">&times;</span>
           </button>
         ) : null}
@@ -76,24 +83,24 @@ module.exports = function Dashboard (props) {
             {props.i18n('dropHint')}
           </div>
 
-          { (!noFiles && props.showSelectedFiles) && <PanelTopBar {...props} /> }
+          {(!noFiles && props.showSelectedFiles) && <PanelTopBar {...props} />}
 
-          { props.showSelectedFiles ? (
+          {props.showSelectedFiles ? (
             noFiles ? <AddFiles {...props} /> : <FileList {...props} />
           ) : (
             <AddFiles {...props} />
           )}
 
           <TransitionWrapper>
-            { props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} /> : null }
+            {props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} /> : null}
           </TransitionWrapper>
 
           <TransitionWrapper>
-            { props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null }
+            {props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null}
           </TransitionWrapper>
 
           <TransitionWrapper>
-            { props.activePickerPanel ? <PickerPanelContent key="PickerPanelContent" {...props} /> : null }
+            {props.activePickerPanel ? <PickerPanelContent key="PickerPanelContent" {...props} /> : null}
           </TransitionWrapper>
 
           <div class="uppy-Dashboard-progressindicators">

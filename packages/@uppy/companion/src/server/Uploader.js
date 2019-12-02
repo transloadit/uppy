@@ -33,7 +33,7 @@ class Uploader {
    * @property {string} pathPrefix
    * @property {any=} s3
    * @property {any} metadata
-   * @property {any} uppyOptions
+   * @property {any} companionOptions
    * @property {any=} storage
    * @property {any=} headers
    *
@@ -51,6 +51,7 @@ class Uploader {
     this.options.metadata = this.options.metadata || {}
     this.uploadFileName = this.options.metadata.name || path.basename(this.path)
     this.streamsEnded = false
+    this.uploadStopped = false
     this.duplexStream = null
     // @TODO disabling parallel uploads and downloads for now
     // if (this.options.protocol === PROTOCOLS.tus) {
@@ -78,6 +79,15 @@ class Uploader {
           this.tus.start()
         }
       })
+
+      emitter().on(`cancel:${this.token}`, () => {
+        this._paused = true
+        if (this.tus) {
+          const shouldTerminate = !!this.tus.url
+          this.tus.abort(shouldTerminate)
+        }
+        this.cleanUp()
+      })
     }
   }
 
@@ -94,18 +104,18 @@ class Uploader {
 
   static reqToOptions (req, size) {
     return {
-      uppyOptions: req.uppy.options,
+      companionOptions: req.companion.options,
       endpoint: req.body.endpoint,
       uploadUrl: req.body.uploadUrl,
       protocol: req.body.protocol,
       metadata: req.body.metadata,
       size: size,
       fieldname: req.body.fieldname,
-      pathPrefix: `${req.uppy.options.filePath}`,
+      pathPrefix: `${req.companion.options.filePath}`,
       storage: redis.client(),
-      s3: req.uppy.s3Client ? {
-        client: req.uppy.s3Client,
-        options: req.uppy.options.providerOptions.s3
+      s3: req.companion.s3Client ? {
+        client: req.companion.s3Client,
+        options: req.companion.options.providerOptions.s3
       } : null,
       headers: req.body.headers
     }
@@ -137,14 +147,14 @@ class Uploader {
       return false
     }
 
-    const validatorOpts = { require_protocol: true, require_tld: !options.uppyOptions.debug }
+    const validatorOpts = { require_protocol: true, require_tld: !options.companionOptions.debug }
     return [options.endpoint, options.uploadUrl].every((url) => {
       if (url && !validator.isURL(url, validatorOpts)) {
         this._errRespMessage = 'Invalid destination url'
         return false
       }
 
-      const allowedUrls = options.uppyOptions.uploadUrls
+      const allowedUrls = options.companionOptions.uploadUrls
       if (allowedUrls && url && !hasMatch(url, allowedUrls)) {
         this._errRespMessage = 'upload destination does not match any allowed destinations'
         return false
@@ -173,7 +183,7 @@ class Uploader {
    */
   onSocketReady (callback) {
     emitter().once(`connection:${this.token}`, () => callback())
-    logger.debug(`waiting for connection`, 'uploader.socket.wait', this.shortToken)
+    logger.debug('waiting for connection', 'uploader.socket.wait', this.shortToken)
   }
 
   cleanUp () {
@@ -184,6 +194,8 @@ class Uploader {
     })
     emitter().removeAllListeners(`pause:${this.token}`)
     emitter().removeAllListeners(`resume:${this.token}`)
+    emitter().removeAllListeners(`cancel:${this.token}`)
+    this.uploadStopped = true
   }
 
   /**
@@ -191,6 +203,10 @@ class Uploader {
    * @param {Buffer | Buffer[]} chunk
    */
   handleChunk (chunk) {
+    if (this.uploadStopped) {
+      return
+    }
+
     // @todo a default protocol should not be set. We should ensure that the user specifies her protocol.
     const protocol = this.options.protocol || PROTOCOLS.multipart
 

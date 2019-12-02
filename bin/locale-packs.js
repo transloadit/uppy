@@ -18,7 +18,7 @@ if (mode === 'build') {
 } else if (mode === 'test') {
   test()
 } else {
-  throw new Error(`First argument must be either 'build' or 'test'`)
+  throw new Error("First argument must be either 'build' or 'test'")
 }
 
 function getSources (pluginName) {
@@ -49,7 +49,7 @@ function buildPluginsList () {
   const packagesGlobPath = path.join(__dirname, '..', 'packages', '@uppy', '*', 'package.json')
   const files = glob.sync(packagesGlobPath)
 
-  console.log(`--> Checked plugins could be instantiated and have defaultLocale in them:\n`)
+  console.log('--> Checked plugins could be instantiated and have defaultLocale in them:\n')
   for (const file of files) {
     const dirName = path.dirname(file)
     const pluginName = path.basename(dirName)
@@ -115,7 +115,7 @@ function buildPluginsList () {
     }
   }
 
-  console.log(``)
+  console.log('')
 
   return { plugins, sources }
 }
@@ -191,6 +191,10 @@ function test () {
   const localePackagePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'src', '*.js')
   glob.sync(localePackagePath).forEach((localePath) => {
     const localeName = path.basename(localePath, '.js')
+    // we renamed the es_GL → gl_ES locale, and kept the old name
+    // for backwards-compat, see https://github.com/transloadit/uppy/pull/1929
+    if (localeName === 'es_GL') return
+
     // Builds array with items like: 'uploadingXFiles.2'
     followerValues[localeName] = flat(require(localePath).strings)
     followerLocales[localeName] = Object.keys(followerValues[localeName])
@@ -221,19 +225,19 @@ function test () {
   }
 
   if (warnings.length) {
-    console.error(`--> Locale warnings: `)
+    console.error('--> Locale warnings: ')
     console.error(warnings.join('\n'))
-    console.error(``)
+    console.error('')
   }
   if (fatals.length) {
-    console.error(`--> Locale fatal warnings: `)
+    console.error('--> Locale fatal warnings: ')
     console.error(fatals.join('\n'))
-    console.error(``)
+    console.error('')
     process.exit(1)
   }
 
   if (!warnings.length && !fatals.length) {
     console.log(`--> All locale strings have matching keys ${chalk.green(': )')}`)
-    console.log(``)
+    console.log('')
   }
 }

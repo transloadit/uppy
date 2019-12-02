@@ -20,7 +20,7 @@ module.exports = class OneDrive extends Plugin {
 
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
-      serverHeaders: this.opts.serverHeaders,
+      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
       storage: this.opts.storage,
       provider: 'onedrive',
       pluginId: this.id

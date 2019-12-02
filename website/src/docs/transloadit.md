@@ -4,8 +4,8 @@ order: 10
 title: "Transloadit"
 module: "@uppy/transloadit"
 permalink: docs/transloadit/
-category: 'File Processing'
-tagline: manipulate and transcode uploaded files using the <a href="https://transloadit.com">transloadit.com</a> service
+category: "File Processing"
+tagline: "manipulate and transcode uploaded files using the <a href='https://transloadit.com'>transloadit.com</a> service"
 ---
 
 The `@uppy/transloadit` plugin can be used to upload files to [Transloadit](https://transloadit.com/) for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, [and much more](https://transloadit.com/services/).
@@ -190,7 +190,7 @@ uppy.use(Transloadit, {
 You can also pass an array of field names to send global or file metadata along to the Assembly. Global metadata is set using the [`meta` option](/docs/uppy/#meta) in the Uppy constructor, or using the [`setMeta` method](/docs/uppy/#uppy-setMeta-data). File metadata is set using the [`setFileMeta`](/docs/uppy/#uppy-setFileMeta-fileID-data) method. The [Form](/docs/form) plugin also sets global metadata based on the values of `<input />`s in the form, providing a handy way to use values from HTML form fields:
 
 ```js
-uppy.use(Form, { target: 'form#my-form', getMetaFromForm: true })
+uppy.use(Form, { target: 'form#upload-form', getMetaFromForm: true })
 uppy.use(Transloadit, {
   fields: ['field_name', 'other_field_name'],
   params: { ... }

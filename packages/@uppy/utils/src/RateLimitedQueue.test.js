@@ -44,4 +44,16 @@ describe('RateLimitedQueue', () => {
       expect(pending).toBe(0)
     })
   })
+
+  it('should accept non-promise function in wrapPromiseFunction()', () => {
+    const queue = new RateLimitedQueue(1)
+    function syncFn () { return 1 }
+    const fn2 = queue.wrapPromiseFunction(syncFn)
+
+    return Promise.all([
+      fn2(), fn2(), fn2(), fn2(),
+      fn2(), fn2(), fn2(), fn2(),
+      fn2(), fn2()
+    ])
+  })
 })

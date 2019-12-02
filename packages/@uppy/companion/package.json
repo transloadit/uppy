@@ -1,6 +1,6 @@
 {
   "name": "@uppy/companion",
-  "version": "1.4.0",
+  "version": "1.6.0",
   "description": "OAuth helper and remote fetcher for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
   "main": "lib/companion.js",
   "types": "types/index.d.ts",
@@ -36,7 +36,7 @@
     "body-parser": "1.18.2",
     "chalk": "2.4.2",
     "common-tags": "1.8.0",
-    "connect-redis": "3.4.0",
+    "connect-redis": "4.0.3",
     "cookie-parser": "1.4.3",
     "express": "4.17.1",
     "express-interceptor": "1.2.0",
@@ -59,7 +59,7 @@
     "request": "2.88.0",
     "semver": "6.1.1",
     "serialize-error": "^2.1.0",
-    "tus-js-client": "^1.8.0-0",
+    "tus-js-client": "1.8.0-2",
     "uuid": "2.0.2",
     "validator": "^9.0.0",
     "ws": "3.3.1"

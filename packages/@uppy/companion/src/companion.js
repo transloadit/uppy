@@ -30,6 +30,7 @@ const defaultOptions = {
       acl: 'public-read',
       endpoint: 'https://{service}.{region}.amazonaws.com',
       conditions: [],
+      useAccelerateEndpoint: false,
       getKey: (req, filename) => filename
     }
   },
@@ -165,7 +166,7 @@ module.exports.socket = (server) => {
     ws.on('message', (jsonData) => {
       const data = JSON.parse(jsonData.toString())
       // whitelist triggered actions
-      if (data.action === 'pause' || data.action === 'resume') {
+      if (['pause', 'resume', 'cancel'].includes(data.action)) {
         emitter().emit(`${data.action}:${token}`)
       }
     })
@@ -223,7 +224,8 @@ const getOptionsMiddleware = (options) => {
       region: config.region,
       endpoint: config.endpoint,
       credentials,
-      signatureVersion: 'v4'
+      signatureVersion: 'v4',
+      useAccelerateEndpoint: config.useAccelerateEndpoint
     })
   }
 
@@ -235,13 +237,16 @@ const getOptionsMiddleware = (options) => {
    */
   const middleware = (req, res, next) => {
     const versionFromQuery = req.query.uppyVersions ? decodeURIComponent(req.query.uppyVersions) : null
-    req.uppy = {
+    req.companion = {
       options,
       s3Client,
       authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
       clientVersion: req.header('uppy-versions') || versionFromQuery || '1.0.0',
       buildURL: getURLBuilder(options)
     }
+
+    // @todo remove req.uppy in next major release
+    req.uppy = req.companion
     next()
   }
 

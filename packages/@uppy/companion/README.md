@@ -28,7 +28,7 @@ companion may either be used as pluggable express app, which you plug to your al
 var express = require('express')
 var bodyParser = require('body-parser')
 var session = require('express-session')
-var uppy = require('@uppy/companion')
+var companion = require('@uppy/companion')
 
 var app = express()
 app.use(bodyParser.json())
@@ -49,17 +49,17 @@ const options = {
   filePath: '/path/to/folder/'
 }
 
-app.use(uppy.app(options))
+app.use(companion.app(options))
 
 ```
 
-To enable uppy socket for realtime feed to the client while upload is going on, you call the `socket` method like so.
+To enable companion socket for realtime feed to the client while upload is going on, you call the `socket` method like so.
 
 ```javascript
 ...
 var server = app.listen(PORT)
 
-uppy.socket(server, options)
+companion.socket(server, options)
 
 ```
 

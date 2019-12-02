@@ -667,7 +667,7 @@ describe('src/Core', () => {
           }
         })
       }).toThrow(
-        'Cannot add the duplicate file \'foo.jpg\', it already exists'
+        "Cannot add the duplicate file 'foo.jpg', it already exists"
       )
       expect(core.getFiles().length).toEqual(1)
     })
@@ -1025,6 +1025,98 @@ describe('src/Core', () => {
 
       expect(core.getFiles()).toHaveLength(2)
       expect(core.getFiles().map((file) => file.name).sort()).toEqual(['empty.dat', 'foo.jpg'])
+    })
+  })
+
+  describe('setOptions', () => {
+    it('should change options on the fly', () => {
+      const core = new Core()
+      core.setOptions({
+        id: 'lolUppy',
+        autoProceed: true,
+        allowMultipleUploads: true
+      })
+
+      expect(core.opts.id).toEqual('lolUppy')
+      expect(core.opts.autoProceed).toEqual(true)
+      expect(core.opts.allowMultipleUploads).toEqual(true)
+    })
+
+    it('should change locale on the fly', () => {
+      const core = new Core()
+      expect(core.i18n('cancel')).toEqual('Cancel')
+
+      core.setOptions({
+        locale: {
+          strings: {
+            cancel: 'Отмена'
+          }
+        }
+      })
+
+      expect(core.i18n('cancel')).toEqual('Отмена')
+      expect(core.i18n('logOut')).toEqual('Log out')
+    })
+
+    it('should change meta on the fly', () => {
+      const core = new Core({
+        meta: {
+          foo: 'bar'
+        }
+      })
+      expect(core.state.meta).toMatchObject({
+        foo: 'bar'
+      })
+
+      core.setOptions({
+        meta: {
+          beep: 'boop'
+        }
+      })
+
+      expect(core.state.meta).toMatchObject({
+        foo: 'bar',
+        beep: 'boop'
+      })
+    })
+
+    it('should change restrictions on the fly', () => {
+      const core = new Core({
+        restrictions: {
+          allowedFileTypes: ['image/jpeg'],
+          maxNumberOfFiles: 2
+        }
+      })
+
+      try {
+        core.addFile({
+          source: 'jest',
+          name: 'foo1.png',
+          type: 'image/png',
+          data: new File([sampleImage], { type: 'image/png' })
+        })
+      } catch (err) {
+        expect(err).toMatchObject(new Error('You can only upload: image/jpeg'))
+      }
+
+      core.setOptions({
+        restrictions: {
+          allowedFileTypes: ['image/png']
+        }
+      })
+
+      expect(core.opts.restrictions.allowedFileTypes).toMatchObject(['image/png'])
+
+      expect(() => {
+        core.addFile({
+          source: 'jest',
+          name: 'foo1.png',
+          type: 'image/png',
+          data: new File([sampleImage], { type: 'image/png' })
+        })
+      }).not.toThrow()
+
+      expect(core.getFiles().length).toEqual(1)
     })
   })
 
@@ -1389,7 +1481,7 @@ describe('src/Core', () => {
         })
         core.log('hi')
       } catch (err) {
-        expect(err).toMatchObject(new Error(`'restrictions.allowedFileTypes' must be an array`))
+        expect(err).toMatchObject(new Error('`restrictions.allowedFileTypes` must be an array'))
       }
     })
 

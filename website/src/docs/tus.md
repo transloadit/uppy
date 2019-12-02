@@ -4,8 +4,8 @@ order: 0
 title: "Tus"
 module: "@uppy/tus"
 permalink: docs/tus/
-category: 'Destinations'
-tagline: uploads using the <a href="https://tus.io">tus</a> resumable upload protocol
+category: "Destinations"
+tagline: "uploads using the <a href='https://tus.io'>tus</a> resumable upload protocol"
 ---
 
 The `@uppy/tus` plugin brings resumable file uploading by [tus.io](http://tus.io) to Uppy by wrapping the [tus-js-client][].

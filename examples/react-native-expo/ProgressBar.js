@@ -11,18 +11,21 @@ export default function ProgressBar (props) {
     <View style={{
       marginTop: 15,
       marginBottom: 15
-    }}>
+    }}
+    >
       <View
         style={{
           height: 5,
           overflow: 'hidden',
           backgroundColor: '#dee1e3'
-        }}>
+        }}
+      >
         <View style={{
           height: 5,
           backgroundColor: progress === 100 ? colorGreen : colorBlue,
           width: progress + '%'
-        }} />
+        }}
+        />
       </View>
       <Text>{progress ? progress + '%' : null}</Text>
     </View>

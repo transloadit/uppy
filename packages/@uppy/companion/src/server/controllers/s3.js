@@ -25,8 +25,8 @@ module.exports = function s3 (config) {
    *  - fields - Form fields to send along.
    */
   function getUploadParameters (req, res, next) {
-    // @ts-ignore The `uppy` property is added by middleware before reaching here.
-    const client = req.uppy.s3Client
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
     const metadata = req.query.metadata || {}
     const key = config.getKey(req, req.query.filename, metadata)
     if (typeof key !== 'string') {
@@ -77,8 +77,8 @@ module.exports = function s3 (config) {
    *  - uploadId - The ID of this multipart upload, to be used in later requests.
    */
   function createMultipartUpload (req, res, next) {
-    // @ts-ignore The `uppy` property is added by middleware before reaching here.
-    const client = req.uppy.s3Client
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
     const key = config.getKey(req, req.body.filename, req.body.metadata || {})
     const { type, metadata } = req.body
     if (typeof key !== 'string') {
@@ -121,8 +121,8 @@ module.exports = function s3 (config) {
    *     - Size - size of this part.
    */
   function getUploadedParts (req, res, next) {
-    // @ts-ignore The `uppy` property is added by middleware before reaching here.
-    const client = req.uppy.s3Client
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key } = req.query
 
@@ -173,8 +173,8 @@ module.exports = function s3 (config) {
    *  - url - The URL to upload to, including signed query parameters.
    */
   function signPartUpload (req, res, next) {
-    // @ts-ignore The `uppy` property is added by middleware before reaching here.
-    const client = req.uppy.s3Client
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
     const { uploadId, partNumber } = req.params
     const { key } = req.query
 
@@ -212,8 +212,8 @@ module.exports = function s3 (config) {
    *   Empty.
    */
   function abortMultipartUpload (req, res, next) {
-    // @ts-ignore The `uppy` property is added by middleware before reaching here.
-    const client = req.uppy.s3Client
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key } = req.query
 
@@ -247,8 +247,8 @@ module.exports = function s3 (config) {
    *  - location - The full URL to the object in the S3 bucket.
    */
   function completeMultipartUpload (req, res, next) {
-    // @ts-ignore The `uppy` property is added by middleware before reaching here.
-    const client = req.uppy.s3Client
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key } = req.query
     const { parts } = req.body

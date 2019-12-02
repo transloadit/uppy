@@ -81,7 +81,6 @@ class Uppy {
       }
     }
 
-    // set default options
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
@@ -100,9 +99,16 @@ class Uppy {
       logger: nullLogger
     }
 
-    // Merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
-    this.opts.restrictions = Object.assign({}, defaultOptions.restrictions, this.opts.restrictions)
+    // Merge default options with the ones set by user,
+    // making sure to merge restrictions too
+    this.opts = {
+      ...defaultOptions,
+      ...opts,
+      restrictions: {
+        ...defaultOptions.restrictions,
+        ...(opts && opts.restrictions)
+      }
+    }
 
     // Support debug: true for backwards-compatability, unless logger is set in opts
     // opts instead of this.opts to avoid comparing objects — we set logger: nullLogger in defaultOptions
@@ -117,14 +123,10 @@ class Uppy {
     if (this.opts.restrictions.allowedFileTypes &&
         this.opts.restrictions.allowedFileTypes !== null &&
         !Array.isArray(this.opts.restrictions.allowedFileTypes)) {
-      throw new TypeError(`'restrictions.allowedFileTypes' must be an array`)
+      throw new TypeError('`restrictions.allowedFileTypes` must be an array')
     }
 
-    // i18n
-    this.translator = new Translator([this.defaultLocale, this.opts.locale])
-    this.locale = this.translator.locale
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     // Container for different types of plugins
     this.plugins = {}
@@ -261,6 +263,38 @@ class Uppy {
     })
   }
 
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.opts.locale])
+    this.locale = this.translator.locale
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
+  }
+
+  setOptions (newOpts) {
+    this.opts = {
+      ...this.opts,
+      ...newOpts,
+      restrictions: {
+        ...this.opts.restrictions,
+        ...(newOpts && newOpts.restrictions)
+      }
+    }
+
+    if (newOpts.meta) {
+      this.setMeta(newOpts.meta)
+    }
+
+    this.i18nInit()
+
+    if (newOpts.locale) {
+      this.iteratePlugins((plugin) => {
+        plugin.setOptions()
+      })
+    }
+
+    this.setState() // so that UI re-renders with new options
+  }
+
   resetProgress () {
     const defaultProgress = {
       percentage: 0,
@@ -281,7 +315,6 @@ class Uppy {
       totalProgress: 0
     })
 
-    // TODO Document on the website
     this.emit('reset-progress')
   }
 
@@ -783,12 +816,12 @@ class Uppy {
    */
   _addListeners () {
     this.on('error', (error) => {
-      this.setState({ error: error.message })
+      this.setState({ error: error.message || 'Unknown error' })
     })
 
     this.on('upload-error', (file, error, response) => {
       this.setFileState(file.id, {
-        error: error.message,
+        error: error.message || 'Unknown error',
         response
       })
 
@@ -824,6 +857,11 @@ class Uppy {
     this.on('upload-progress', this._calculateProgress)
 
     this.on('upload-success', (file, uploadResp) => {
+      if (!this.getFile(file.id)) {
+        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+        return
+      }
+
       const currentProgress = this.getFile(file.id).progress
       this.setFileState(file.id, {
         progress: Object.assign({}, currentProgress, {
@@ -961,7 +999,7 @@ class Uppy {
     if (existsPluginAlready) {
       const msg = `Already found a plugin named '${existsPluginAlready.id}'. ` +
         `Tried to use: '${pluginId}'.\n` +
-        `Uppy plugins must have unique 'id' options. See https://uppy.io/docs/plugins/#id.`
+        'Uppy plugins must have unique `id` options. See https://uppy.io/docs/plugins/#id.'
       throw new Error(msg)
     }
 

@@ -1,10 +1,10 @@
-const Exif = require('exif-js')
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 const ORIENTATIONS = require('./image-orientations')
+const Exif = require('./exif')
 
 /**
  * The Thumbnail Generator plugin
@@ -34,20 +34,28 @@ module.exports = class ThumbnailGenerator extends Plugin {
       waitForThumbnailsBeforeUpload: false
     }
 
-    this.opts = {
-      ...defaultOptions,
-      ...opts
-    }
+    this.opts = { ...defaultOptions, ...opts }
 
+    this.i18nInit()
+  }
+
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
     this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
     this.i18n = this.translator.translate.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   /**
    * Create a thumbnail for the given Uppy file object.
    *
    * @param {{data: Blob}} file
-   * @param {number} width
+   * @param {number} targetWidth
+   * @param {number} targetHeight
    * @returns {Promise}
    */
   createThumbnail (file, targetWidth, targetHeight) {
@@ -116,11 +124,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
     return new Promise((resolve) => {
       const uppy = this.uppy
       Exif.getData(file.data, function exifGetDataCallback () {
-        const exifdata = Exif.getAllTags(this)
-        // delete the thumbnail from exif metadata, because it contains a blob
-        // and we don’t blobs in meta — it might lead to unexpected issues on the server
-        delete exifdata.thumbnail
-        uppy.setFileMeta(file.id, { exifdata })
+        uppy.setFileMeta(file.id, { exifdata: Exif.getAllTags(this) })
         const orientation = Exif.getTag(this, 'Orientation') || 1
         resolve(ORIENTATIONS[orientation])
       })
@@ -337,12 +341,21 @@ module.exports = class ThumbnailGenerator extends Plugin {
       })
     })
 
+    const emitPreprocessCompleteForAll = () => {
+      fileIDs.forEach((fileID) => {
+        const file = this.uppy.getFile(fileID)
+        this.uppy.emit('preprocess-complete', file)
+      })
+    }
+
     return new Promise((resolve, reject) => {
       if (this.queueProcessing) {
         this.uppy.once('thumbnail:all-generated', () => {
+          emitPreprocessCompleteForAll()
           resolve()
         })
       } else {
+        emitPreprocessCompleteForAll()
         resolve()
       }
     })

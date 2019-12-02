@@ -29,16 +29,25 @@ module.exports = class RateLimitedQueue {
         done = true
         this.activeRequests -= 1
         cancelActive()
-        this._next()
+        this._queueNext()
       },
 
       done: () => {
         if (done) return
         done = true
         this.activeRequests -= 1
-        this._next()
+        this._queueNext()
       }
     }
+  }
+
+  _queueNext () {
+    // Do it soon but not immediately, this allows clearing out the entire queue synchronously
+    // one by one without continuously _advancing_ it (and starting new tasks before immediately
+    // aborting them)
+    Promise.resolve().then(() => {
+      this._next()
+    })
   }
 
   _next () {
@@ -90,7 +99,14 @@ module.exports = class RateLimitedQueue {
     return (...args) => new Promise((resolve, reject) => {
       const queuedRequest = this.run(() => {
         let cancelError
-        fn(...args).then((result) => {
+        let promise
+        try {
+          promise = Promise.resolve(fn(...args))
+        } catch (err) {
+          promise = Promise.reject(err)
+        }
+
+        promise.then((result) => {
           if (cancelError) {
             reject(cancelError)
           } else {

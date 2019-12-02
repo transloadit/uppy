@@ -72,6 +72,7 @@ es_ES.strings = {
     '1': 'Procesando %{smart_count} archivos',
     '2': 'Procesando %{smart_count} archivos'
   },
+  recordingLength: 'Duración de grabación %{recording_length}',
   removeFile: 'Eliminar archivo',
   resetFilter: 'Limpiar filtro',
   resume: 'Reanudar',

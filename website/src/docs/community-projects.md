@@ -4,7 +4,7 @@ order: 6
 title: "Community Projects"
 menu: "Community Projects"
 permalink: docs/community-projects/
-category: 'Docs'
+category: "Docs"
 ---
 
 Uppy has a large community of enthusiasts building plugins, integrations with js frameworks, etc! Here's a non-exhaustive list as we just started indexing these.

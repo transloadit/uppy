@@ -35,16 +35,13 @@ module.exports = class DragDrop extends Plugin {
     }
 
     // Merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOpts, opts)
+    this.opts = { ...defaultOpts, ...opts }
 
     // Check for browser dragDrop support
     this.isDragDropSupported = isDragDropSupported()
     this.removeDragOverClassTimeout = null
 
-    // i18n
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     // Bind `this` to class methods
     this.handleInputChange = this.handleInputChange.bind(this)
@@ -53,6 +50,18 @@ module.exports = class DragDrop extends Plugin {
     this.handleDrop = this.handleDrop.bind(this)
     this.addFile = this.addFile.bind(this)
     this.render = this.render.bind(this)
+  }
+
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   addFile (file) {
@@ -139,7 +148,8 @@ module.exports = class DragDrop extends Plugin {
         name={this.opts.inputName}
         multiple={restrictions.maxNumberOfFiles !== 1}
         accept={restrictions.allowedFileTypes}
-        onchange={this.handleInputChange} />
+        onchange={this.handleInputChange}
+      />
     )
   }
 
@@ -189,7 +199,8 @@ module.exports = class DragDrop extends Plugin {
         onClick={() => this.fileInputRef.click()}
         onDragOver={this.handleDragOver}
         onDragLeave={this.handleDragLeave}
-        onDrop={this.handleDrop} >
+        onDrop={this.handleDrop}
+      >
         {this.renderHiddenFileInput()}
         <div class="uppy-DragDrop-inner">
           {this.renderArrowSvg()}

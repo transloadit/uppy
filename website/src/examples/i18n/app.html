@@ -1,13 +1,19 @@
-<!-- Basic Uppy styles. You can use Transloadit's CDN, Edgly:
-https://transloadit.edgly.net/releases/uppy/v1.4.0/uppy.min.css -->
-<link rel="stylesheet" href="/uppy/uppy.min.css">
+<!-- Load Uppy CSS bundle. It is advisable to install Uppy 
+  from npm/yarn instead, and pick and choose the plugins/styles you need.
+  But for experimenting, you can use Transloadit’s CDN, Edgly: -->
+<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v1.6.0/uppy.min.css">
 
 <div class="UppyDragDrop"></div>
+<div class="for-ProgressBar"></div>
 
-<!-- Load Uppy pre-built bundled version. You can use Transloadit's CDN, Edgly:
-https://transloadit.edgly.net/releases/uppy/v1.4.0/uppy.min.js -->
-<script src="/uppy/uppy.min.js"></script>
-<script src="/uppy/locales/ru_RU.min.js"></script>
+<div class="uploaded-files">
+  <h5>Uploaded files:</h5>
+  <ol></ol>
+</div>
+
+<!-- Load Uppy JS bundle. -->
+<script src="https://transloadit.edgly.net/releases/uppy/v1.6.0/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/locales/v1.9.0/ru_RU.min.js"></script>
 <script>
   var uppy = Uppy.Core({ 
     debug: true, 
@@ -24,8 +30,18 @@ https://transloadit.edgly.net/releases/uppy/v1.4.0/uppy.min.js -->
       }
     }
   });
-  uppy.use(Uppy.ProgressBar, { target: 'body', fixed: true, hideAfterFinish: false });
+  uppy.use(Uppy.ProgressBar, { 
+    target: '.for-ProgressBar',
+     hideAfterFinish: false 
+  });
   uppy.use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' });
+  uppy.on('upload-success', function (file, response) {
+    var url = response.uploadURL
+    var fileName = file.name
+  
+    document.querySelector('.uploaded-files ol').innerHTML +=
+      '<li><a href="' + url + '" target="_blank">' + fileName + '</a></li>'
+  });
 
   console.log('--> Uppy pre-built version with Tus, DragDrop & Russian language pack has loaded');
 </script>
