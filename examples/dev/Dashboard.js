@@ -8,11 +8,26 @@ const GoogleDrive = require('@uppy/google-drive/src')
 const Url = require('@uppy/url/src')
 const Webcam = require('@uppy/webcam/src')
 const Tus = require('@uppy/tus/src')
-// const XHRUpload = require('@uppy/xhr-upload/src')
+const AwsS3 = require('@uppy/tus/src')
+const XHRUpload = require('@uppy/xhr-upload/src')
 const Form = require('@uppy/form/src')
+const GoldenRetriever = require('@uppy/golden-retriever/src')
 
+// DEV CONFIG: pick an uploader
+
+const UPLOADER = 'tus'
+// const UPLOADER = 's3'
+// const UPLOADER = 'xhr'
+
+// DEV CONFIG: Endpoint URLs
+
+const COMPANION_URL = 'http://localhost:3020'
 const TUS_ENDPOINT = 'https://master.tus.io/files/'
-// const XHR_ENDPOINT = 'https://upload-endpoint.uppy.io/upload'
+const XHR_ENDPOINT = 'https://upload-endpoint.uppy.io/upload'
+
+// DEV CONFIG: enable or disable Golden Retriever
+
+const RESTORE = false
 
 module.exports = () => {
   const uppyDashboard = Uppy({
@@ -34,17 +49,30 @@ module.exports = () => {
       proudlyDisplayPoweredByUppy: true,
       note: '2 files, images and video only'
     })
-    .use(GoogleDrive, { target: Dashboard, companionUrl: 'http://localhost:3020' })
-    .use(Instagram, { target: Dashboard, companionUrl: 'http://localhost:3020' })
-    .use(Dropbox, { target: Dashboard, companionUrl: 'http://localhost:3020' })
-    .use(Facebook, { target: Dashboard, companionUrl: 'http://localhost:3020' })
-    .use(OneDrive, { target: Dashboard, companionUrl: 'http://localhost:3020' })
-    .use(Url, { target: Dashboard, companionUrl: 'http://localhost:3020' })
+    .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL })
+    .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL })
+    .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL })
+    .use(Facebook, { target: Dashboard, companionUrl: COMPANION_URL })
+    .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL })
+    .use(Url, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Webcam, { target: Dashboard })
-    .use(Tus, { endpoint: TUS_ENDPOINT })
-    // .use(XHRUpload, { endpoint: XHR_ENDPOINT, bundle: true })
     .use(Form, { target: '#upload-form' })
-    // .use(GoldenRetriever, {serviceWorker: true})
+
+  switch (UPLOADER) {
+    case 'tus':
+      uppyDashboard.use(Tus, { endpoint: TUS_ENDPOINT })
+      break
+    case 's3':
+      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL })
+      break
+    case 'xhr':
+      uppyDashboard.use(XHRUpload, { endpoint: XHR_ENDPOINT, bundle: true })
+      break
+  }
+
+  if (RESTORE) {
+    uppyDashboard.use(GoldenRetriever, { serviceWorker: true })
+  }
 
   window.uppy = uppyDashboard
 
