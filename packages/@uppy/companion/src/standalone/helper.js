@@ -39,7 +39,8 @@ const getConfigFromEnv = () => {
       },
       instagram: {
         key: process.env.COMPANION_INSTAGRAM_KEY,
-        secret: getSecret('COMPANION_INSTAGRAM_SECRET')
+        secret: getSecret('COMPANION_INSTAGRAM_SECRET'),
+        useGraphAPI: !!process.env.COMPANION_INSTAGRAM_USE_GRAPH_API
       },
       facebook: {
         key: process.env.COMPANION_FACEBOOK_KEY,

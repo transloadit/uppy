@@ -1,11 +1,14 @@
+const Provider = require('../Provider')
+
 const request = require('request')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const AuthError = require('../error')
 
-class OneDrive {
+class OneDrive extends Provider {
   constructor (options) {
+    super(options)
     this.authProvider = options.provider = OneDrive.authProvider
     this.client = purest(options)
   }

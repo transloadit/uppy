@@ -43,7 +43,7 @@
     "express-prom-bundle": "3.3.0",
     "express-request-id": "1.4.1",
     "express-session": "1.15.6",
-    "grant-express": "4.1.2",
+    "grant": "github:ifedapoolarewaju/grant#ba442905a89c5f2041b6a9101d4be8ae15c20458",
     "helmet": "3.8.2",
     "isobject": "3.0.1",
     "jsonwebtoken": "8.3.0",
