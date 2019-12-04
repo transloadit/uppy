@@ -644,7 +644,7 @@ class Uppy {
     this._startIfAutoProceed()
 
     if (errors.length > 0) {
-      const err = new Error('Multiple errors occured while adding files')
+      const err = new Error('Multiple errors occurred while adding files')
       err.errors = errors
       throw err
     }
