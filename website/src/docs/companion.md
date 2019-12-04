@@ -177,6 +177,8 @@ export COMPANION_INSTAGRAM_KEY="YOUR INSTAGRAM KEY"
 export COMPANION_INSTAGRAM_SECRET="YOUR INSTAGRAM SECRET"
 # specifying a secret file will override a directly set secret
 export COMPANION_INSTAGRAM_SECRET_FILE="PATH/TO/INSTAGRAM/SECRET/FILE"
+# set this value only if you are using the new Instagram Graph API https://developers.facebook.com/docs/instagram-basic-display-api
+export COMPANION_INSTAGRAM_USE_GRAPH_API="true"
 
 # to enable Facebook
 export COMPANION_FACEBOOK_KEY="YOUR FACEBOOK KEY"
@@ -230,7 +232,9 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
     },
     instagram: {
       key: "***",
-      secret: "***"
+      secret: "***",
+      // set this to true only if you are using the new Instagram Graph API https://developers.facebook.com/docs/instagram-basic-display-api
+      useGraphAPI: false // default: false
     },
     facebook: {
       key: "***",
