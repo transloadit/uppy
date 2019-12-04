@@ -1,32 +1,12 @@
 const FileItem = require('./FileItem/index.js')
-const VirtualList = require('./VirtualList')
 const classNames = require('classnames')
 const { h } = require('preact')
 
-function chunks (list, size) {
-  const chunked = []
-  let currentChunk = []
-  list.forEach((item, i) => {
-    if (currentChunk.length < size) {
-      currentChunk.push(item)
-    } else {
-      chunked.push(currentChunk)
-      currentChunk = [item]
-    }
-  })
-  if (currentChunk.length) chunked.push(currentChunk)
-  return chunked
-}
-
 module.exports = (props) => {
-  const noFiles = props.totalFileCount === 0
-  const dashboardFilesClass = classNames(
-    'uppy-Dashboard-files',
-    { 'uppy-Dashboard-files--noFiles': noFiles }
-  )
-
-  // 190px height + 2 * 5px margin
-  const rowHeight = 200
+  const dashboardFilesClass = classNames({
+    'uppy-Dashboard-files': true,
+    'uppy-Dashboard-files--noFiles': props.totalFileCount === 0
+  })
 
   const fileProps = {
     // FIXME This is confusing, it's actually the Dashboard's plugin ID
@@ -55,30 +35,19 @@ module.exports = (props) => {
     handleRequestThumbnail: props.handleRequestThumbnail
   }
 
-  const rows = chunks(Object.keys(props.files), props.itemsPerRow)
-
-  function renderRow (row) {
+  function renderItem (fileID) {
     return (
-      // Use the first file ID as the key—this should not change across rerenders
-      <div role="presentation" key={row[0]}>
-        {row.map((fileID) => (
-          <FileItem
-            key={fileID}
-            {...fileProps}
-            file={props.files[fileID]}
-          />
-        ))}
-      </div>
+      <FileItem
+        key={fileID}
+        {...fileProps}
+        file={props.files[fileID]}
+      />
     )
   }
 
   return (
-    <VirtualList
-      class={dashboardFilesClass}
-      role="list"
-      data={rows}
-      renderRow={renderRow}
-      rowHeight={rowHeight}
-    />
+    <ul class={dashboardFilesClass}>
+      {Object.keys(props.files).map(renderItem)}
+    </ul>
   )
 }

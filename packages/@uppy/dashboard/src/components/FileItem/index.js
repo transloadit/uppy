@@ -38,7 +38,7 @@ module.exports = class FileItem extends Component {
     })
 
     return (
-      <div role="listitem" class={dashboardItemClass} id={`uppy_${file.id}`}>
+      <li class={dashboardItemClass} id={`uppy_${file.id}`}>
         <div class="uppy-DashboardItem-preview">
           <FilePreviewAndLink
             file={file}
@@ -76,7 +76,7 @@ module.exports = class FileItem extends Component {
             info={this.props.info}
           />
         </div>
-      </div>
+      </li>
     )
   }
 }
