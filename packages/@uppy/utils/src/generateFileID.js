@@ -6,6 +6,9 @@
  * @returns {string} the fileID
  */
 module.exports = function generateFileID (file) {
+  // It's tempting to do `[items].filter(Boolean).join('-')` here, but that
+  // is slower! simple string concatenation is fast
+
   let id = 'uppy'
   if (typeof file.name === 'string') {
     id += '-' + encodeFilename(file.name.toLowerCase())
