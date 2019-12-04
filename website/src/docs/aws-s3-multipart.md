@@ -44,7 +44,15 @@ The maximum amount of chunks to upload simultaneously. Set to `0` to disable lim
 
 ### companionUrl: null
 
-The Companion URL to use for proxying calls to the S3 Multipart API.
+URL of the [Companion](/docs/companion) instance to use for proxying calls to the S3 Multipart API.
+
+This will be used by the default implementations of the upload-related functions below. If you provide your own implementations, a `companionUrl` is unnecessary.
+
+### companionHeaders: {}
+
+Custom headers that should be sent along to [Companion](/docs/companion) on every request.
+
+This will be used by the default implementations of the upload-related functions below. If you provide your own implementations, these headers are not sent automatically.
 
 ### createMultipartUpload(file)
 
