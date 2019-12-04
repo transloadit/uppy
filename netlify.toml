@@ -5,6 +5,6 @@ ID = "uppy"
 # (no main build settings, we use Github Pages)
 
 [context.deploy-preview]
-command = "npm run build && npm run web:inject-disc && npm run web:build"
+command = "npx npm-run-all build:lib build:locale-pack build:bundle build:css && npm run web:inject-disc && npm run web:build"
 environment = { NODE_VERSION = "10" }
 publish = "website/public"
