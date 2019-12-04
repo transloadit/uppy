@@ -11,6 +11,13 @@ module.exports = class FileItem extends Component {
     return !shallowEqual(this.props, nextProps)
   }
 
+  componentDidMount () {
+    const file = this.props.file
+    if (!file.preview && this.props.handleRequestThumbnail) {
+      this.props.handleRequestThumbnail(file)
+    }
+  }
+
   render () {
     const file = this.props.file
 

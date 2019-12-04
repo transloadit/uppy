@@ -570,6 +570,12 @@ module.exports = class Dashboard extends Plugin {
       })
   }
 
+  handleRequestThumbnail = (file) => {
+    if (!this.opts.waitForThumbnailsBeforeUpload) {
+      this.uppy.emit('thumbnail:request', file)
+    }
+  }
+
   handleKeyDownInInline = (event) => {
     // Trap focus on tab key press.
     if (event.keyCode === TAB_KEY) trapFocus.forInline(event, this.getPluginState().activeOverlayType, this.el)
@@ -845,6 +851,7 @@ module.exports = class Dashboard extends Plugin {
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
       showSelectedFiles: this.opts.showSelectedFiles,
+      handleRequestThumbnail: this.handleRequestThumbnail,
       // drag props
       isDraggingOver: pluginState.isDraggingOver,
       handleDragOver: this.handleDragOver,
@@ -924,7 +931,9 @@ module.exports = class Dashboard extends Plugin {
       this.uppy.use(ThumbnailGenerator, {
         id: `${this.id}:ThumbnailGenerator`,
         thumbnailWidth: this.opts.thumbnailWidth,
-        waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload
+        waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload,
+        // If we don't block on thumbnails, we can lazily generate them
+        lazy: !this.opts.waitForThumbnailsBeforeUpload
       })
     }
 
