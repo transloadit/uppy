@@ -160,7 +160,10 @@ if (process.env.COMPANION_PATH) {
 // please do not set a value for COMPANION_ONEDRIVE_DOMAIN_VALIDATION
 if (process.env.COMPANION_ONEDRIVE_DOMAIN_VALIDATION === 'true' && process.env.COMPANION_ONEDRIVE_KEY) {
   app.get('/.well-known/microsoft-identity-association.json', (req, res) => {
-    res.json(
+    // use writeHead to prevent 'charset' from being appended
+    // https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-configure-publisher-domain#to-select-a-verified-domain
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify(
       {
         associatedApplications: [
           {
@@ -168,6 +171,7 @@ if (process.env.COMPANION_ONEDRIVE_DOMAIN_VALIDATION === 'true' && process.env.C
           }
         ]
       })
+    )
   })
 }
 
