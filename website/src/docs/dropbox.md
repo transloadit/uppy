@@ -39,12 +39,46 @@ In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` gl
 const Dropbox = Uppy.Dropbox
 ```
 
+## Setting Up
+
+To use the Dropbox provider, you need to configure the Dropbox keys that Companion should use. With the standalone Companion server, specify environment variables:
+```shell
+export COMPANION_DROPBOX_KEY="Dropbox API key"
+export COMPANION_DROPBOX_SECRET="Dropbox API secret"
+```
+
+When using the Companion Node.js API, configure these options:
+```js
+companion.app({
+  providerOptions: {
+    dropbox: {
+      key: 'Dropbox API key',
+      secret: 'Dropbox API secret'
+    }
+  }
+})
+```
+
+You can create a Dropbox App at https://www.dropbox.com/developers/apps/create.
+
+1. Under "Choose an API", select the "Dropbox API".
+1. Under "Choose the type of access", typically you'll want to select "Full Dropbox".
+1. Name the application and press the "Create app" button.
+
+You'll be redirected to the app page. This page lists the app key and app secret, which you should use to configure Companion as shown above.
+
+The app page has a "Redirect URIs" field. Here, add:
+```
+https://$YOUR_COMPANION_HOST_NAME/connect/dropbox/callback
+```
+
+You can only use the integration with your own account initially—make sure to apply for production status on the app page before you publish your app, or they will not be able to sign in!
+
 ## CSS
 
 Dashboard plugin is recommended as a container to all Provider plugins, including Dropbox. If you are using Dashboard, it [comes with all the nessesary styles](/docs/dashboard/#CSS) for Dropbox as well.
 
 ⚠️ If you are feeling adventurous, and want to use Dropbox plugin separately, without Dashboard, make sure to include `@uppy/provider-views/dist/style.css` (or `style.min.css`) CSS file. This is experimental, not officialy supported and not recommended.
-
 
 ## Options
 

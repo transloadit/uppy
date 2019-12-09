@@ -20,7 +20,7 @@ Companion handles the server-to-server communication between your server and fil
 As of now, Companion is integrated to work with:
 
 - Google Drive
-- Dropbox
+- Dropbox - [Set up instructions](/docs/dropbox/#Setting-Up)
 - Instagram
 - Facebook
 - OneDrive
