@@ -416,14 +416,15 @@ class Uppy {
    * Check if file passes a set of restrictions set in options: maxFileSize,
    * maxNumberOfFiles and allowedFileTypes.
    *
+   * @param {object} files Object of IDs → files already added
    * @param {object} file object to check
    * @private
    */
-  _checkRestrictions (file) {
+  _checkRestrictions (files, file) {
     const { maxFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
 
     if (maxNumberOfFiles) {
-      if (Object.keys(this.getState().files).length + 1 > maxNumberOfFiles) {
+      if (Object.keys(files).length + 1 > maxNumberOfFiles) {
         throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
       }
     }
@@ -557,7 +558,7 @@ class Uppy {
     }
 
     try {
-      this._checkRestrictions(newFile)
+      this._checkRestrictions(files, newFile)
     } catch (err) {
       this._showOrLogErrorAndThrow(err, { file: newFile })
     }
