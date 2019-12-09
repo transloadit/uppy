@@ -59,12 +59,6 @@ matrix:
       addons:
         apt: *APT
 
-jobs:
-  allow_failures:
-    # Remove when Jest and/or Node.js are fixed
-    - node_js: 'stable'
-      env: UNIT=true
-
 before_install:
 - nvm install-latest-npm
 install:

@@ -1,0 +1,48 @@
+<h2 id="package-list">List of Uppy Packages</h2>
+<p>Below is the list of Uppy packages, and their minified and gzipped sizes.</p>
+<small>
+   ⚠️ Note that this includes the dependencies for each package, some of which are shared when you install multiple plugins. For example, the <code>@uppy/dropbox</code> and <code>@uppy/instagram</code> package are both over 11kB including dependencies, but only sum up to about 15kB when they are used together.
+</small>
+<table class="Stats-bundleSizes">
+  <thead>
+    <tr>
+      <th class="Stats-bundleSizeHeader">Package</th>
+      <th class="Stats-bundleSizeHeader">Version</th>
+      <th class="Stats-bundleSizeHeader">Minified</th>
+      <th class="Stats-bundleSizeHeader">Gzip</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for (const [name, sizes] of Object.entries(theme.uppy_bundle_kb_sizes)) { %>
+      <% const { minified, gzipped, prettyMinified, prettyGzipped, version } = sizes %>
+      <tr>
+        <td><a class="Stats-package" target="_blank" href="https://npmjs.com/package/<%= name %>"><%= name %></a></td>
+        <td><%= version %></td>
+        <td><%= prettyMinified %></td>
+        <td class="
+          <% if (gzipped > 30 * 1000) { %>Stats-large<% } %>
+          <% if (gzipped < 10 * 1000) { %>Stats-small<% } %>
+        ">
+          <%= prettyGzipped %>
+        </td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+
+<iframe scrolling="no" seamless="seamless" class="Disc" src="/disc.html"></iframe>
+<p>
+  This graph is built with
+  <a href="https://twitter.com/hughskennedy">Hugh Kennedy</a>’s excellent
+  <a href="http://hughsk.io/disc/">disc</a>.
+</p>
+
+<h2 id="browser-support">Browser Support</h2>
+
+<p>
+  <a href="https://saucelabs.com/u/transloadit-uppy">
+    <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
+  </a>
+</p>
+<p>We currently aim to support IE11+ and recent versions of Safari, Edge, Chrome, Firefox and Opera.</p>
+<p>We still run end to end tests with IE10, but we are not actively supporting it or fixing visual / minor issues.</p>

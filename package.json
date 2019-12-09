@@ -230,15 +230,15 @@
     "web:build-examples": "cd website && node build-examples.js",
     "web:build": "npm-run-all web:inject-bundles-misc web:generate web:build-examples web:inject-frontpagecodesample",
     "web:bundle-watch-inject": "onchange 'packages/uppy/dist/**/*.css' 'packages/uppy/dist/**/*.js' --initial --verbose -- npm run web:inject-bundles-misc",
-    "web:clean": "cd website && touch db.json && ../node_modules/.bin/hexo clean",
+    "web:clean": "cd website && touch db.json && ./node_modules/.bin/hexo clean",
     "web:deploy": "npm-run-all build web:clean web:inject-disc web:build && ./bin/web-deploy",
-    "web:generate": "cd website && touch db.json && ../node_modules/.bin/hexo generate",
+    "web:generate": "cd website && touch db.json && ./node_modules/.bin/hexo generate",
     "web:inject-bundles-misc": "cd website && node inject.js",
     "web:inject-disc": "npm run build:lib && node ./bin/disc.js",
     "web:inject-frontpagecodesample": "npm run web:generate && cp -f website/public/frontpage-code-sample.html website/themes/uppy/layout/partials/frontpage-code-sample.html && touch website/themes/uppy/layout/index.ejs",
     "web:start": "npm-run-all build:lib --parallel watch:css web:watch-examples web:bundle-watch-inject web:watch",
     "web:watch-examples": "cd website && node build-examples.js watch",
-    "web:watch": "cd website && touch db.json && ../node_modules/.bin/hexo server"
+    "web:watch": "cd website && touch db.json && ./node_modules/.bin/hexo server"
   },
   "jest": {
     "automock": false,
