@@ -61,9 +61,9 @@ companion.app({
 
 You can create a Dropbox App at https://www.dropbox.com/developers/apps/create.
 
-1. Under "Choose an API", select the "Dropbox API".
-1. Under "Choose the type of access", typically you'll want to select "Full Dropbox".
-1. Name the application and press the "Create app" button.
+Things to note:
+- Choose the "Dropbox API", not the business variant.
+- Typically you'll want "Full Dropbox" access, unless you are very certain that you need the other one.
 
 You'll be redirected to the app page. This page lists the app key and app secret, which you should use to configure Companion as shown above.
 
