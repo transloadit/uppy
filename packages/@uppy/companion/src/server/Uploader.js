@@ -84,6 +84,9 @@ class Uploader {
         this._paused = true
         if (this.tus) {
           const shouldTerminate = !!this.tus.url
+          // @todo remove the ts-ignore when the tus-js-client type definitions
+          // have been updated with this change https://github.com/DefinitelyTyped/DefinitelyTyped/pull/40629
+          // @ts-ignore
           this.tus.abort(shouldTerminate)
         }
         this.cleanUp()
