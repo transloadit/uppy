@@ -39,6 +39,43 @@ In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` gl
 const GoogleDrive = Uppy.GoogleDrive
 ```
 
+## Setting  Up
+
+To use the Google Drive provider, you need to configure the Google Drive keys that Companion should use. With the standalone Companion server, specify environment variables:
+```shell
+export COMPANION_GOOGLE_KEY="Google Drive OAuth client ID"
+export COMPANION_GOOGLE_SECRET="Google Drive OAuth client secret"
+```
+
+When using the Companion Node.js API, configure these options:
+```js
+companion.app({
+  providerOptions: {
+    drive: {
+      key: 'Google Drive OAuth client ID',
+      secret: 'Google Drive OAuth client secret'
+    }
+  }
+})
+```
+
+To sign up for API keys, go to the [Google Developer Console](https://console.developers.google.com/).
+
+Create a project for your app if you don't have one yet. On the project's dashboard:
+1. Click "Enable APIs and services"
+2. Search for and select "Google Drive API"
+3. Click "Enable"
+4. Go to "Credentials" and click "Create consent screen" to configure user authentication
+5. Once done, click "Create credentials" and select "OAuth client ID".
+6. Select the application type "Web application".
+7. Add an authorized redirect URI:
+   ```
+   https://$YOUR_COMPANION_HOST_NAME/connect/drive/callback
+   ```
+8. Press "Create"
+
+Now, you should get a popup with your OAuth client ID and client secret. Use them to configure Companion as shown above.
+
 ## CSS
 
 Dashboard plugin is recommended as a container to all Provider plugins, including Google Drive. If you are using Dashboard, it [comes with all the nessesary styles](/docs/dashboard/#CSS) for Dropbox as well.
