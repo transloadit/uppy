@@ -1,6 +1,10 @@
 const querystring = require('querystring')
 
 exports.isFolder = (item) => {
+  if (item.remoteItem) {
+    return !!item.remoteItem.folder
+  }
+
   return !!item.folder
 }
 
@@ -25,15 +29,22 @@ exports.getMimeType = (item) => {
 }
 
 exports.getItemId = (item) => {
+  if (item.remoteItem) {
+    return item.remoteItem.id
+  }
   return item.id
 }
 
 exports.getItemRequestPath = (item) => {
-  return exports.getItemId(item)
+  let query = `?driveId=${item.parentReference.driveId}`
+  if (item.remoteItem) {
+    query = `?driveId=${item.remoteItem.parentReference.driveId}`
+  }
+  return exports.getItemId(item) + query
 }
 
 exports.getItemModifiedDate = (item) => {
-  return item.fileSystemInfo.lastModifiedDateTime
+  return item.lastModifiedDateTime
 }
 
 exports.getItemThumbnailUrl = (item) => {
