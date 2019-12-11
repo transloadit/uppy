@@ -522,6 +522,10 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
 
+    // 1. Add a small (+) icon on drop
+    // (and prevent browsers from interpreting this as files being _moved_ into the browser, https://github.com/transloadit/uppy/issues/1978)
+    event.dataTransfer.dropEffect = 'copy'
+
     clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
   }
@@ -541,8 +545,6 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
     clearTimeout(this.removeDragOverClassTimeout)
-    // 1. Add a small (+) icon on drop
-    event.dataTransfer.dropEffect = 'copy'
 
     // 2. Remove dragover class
     this.setPluginState({ isDraggingOver: false })
