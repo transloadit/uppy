@@ -47,7 +47,9 @@ module.exports.getProviderMiddleware = (providers) => {
 module.exports.getDefaultProviders = (companionOptions) => {
   const { providerOptions } = companionOptions || { providerOptions: null }
   const providers = { dropbox, drive, facebook, onedrive }
-  if (providerOptions && providerOptions.instagram && providerOptions.instagram.useGraphAPI) {
+  // Instagram's Graph API key is just numbers, while the old API key is hex
+  const usesGraphAPI = () => /^\d+$/.test(providerOptions.instagram.key)
+  if (providerOptions && providerOptions.instagram && usesGraphAPI()) {
     providers.instagram = instagramGraph
   } else {
     providers.instagram = instagram

@@ -24,17 +24,15 @@ describe('Test Provider options', () => {
   })
 
   test('adds extra provider config', () => {
-    process.env.COMPANION_INSTAGRAM_USE_GRAPH_API = 'truthy value'
+    process.env.COMPANION_INSTAGRAM_KEY = '123456'
     providerManager.addProviderOptions(getCompanionOptions(), grantConfig)
     expect(grantConfig.instagram).toEqual({
       transport: 'session',
       callback: '/instagram/callback',
-      key: 'instagram_key',
+      key: '123456',
       secret: 'instagram_secret',
       protocol: 'https',
-      credentials_fields: { key: 'app_id', secret: 'app_secret' },
-      scope: ['user_profile', 'user_media'],
-      scope_delimiter: ','
+      scope: ['user_profile', 'user_media']
     })
 
     expect(grantConfig.dropbox).toEqual({
@@ -55,8 +53,6 @@ describe('Test Provider options', () => {
       ],
       callback: '/drive/callback'
     })
-
-    process.env.COMPANION_INSTAGRAM_USE_GRAPH_API = ''
   })
 
   test('adds provider options for secret files', () => {

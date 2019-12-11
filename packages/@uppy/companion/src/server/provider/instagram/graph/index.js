@@ -17,9 +17,7 @@ class Instagram extends Provider {
   static getExtraConfig () {
     return {
       protocol: 'https',
-      credentials_fields: { key: 'app_id', secret: 'app_secret' },
-      scope: ['user_profile', 'user_media'],
-      scope_delimiter: ','
+      scope: ['user_profile', 'user_media']
     }
   }
 
