@@ -103,7 +103,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 # next
 
-## 1.7
+## 1.8
 
 - [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
 - [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
@@ -123,6 +123,42 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] website: Adopt bcp-47 to handle and parse locales (@kvz, https://github.com/meikidd/iso-639-1/issues/19, https://tools.ietf.org/html/bcp47, https://github.com/wooorm/bcp-47)
+
+## 1.7.0
+
+Released: 2019-12-11
+
+This release adds Hebrew translations and smoothes out some rough edges in Companion. The Webcam plugin now supports showing the duration of recordings while in progress.
+
+- @uppy/aws-s3: add some tests (@bambii7, #1934)
+- @uppy/companion: add onedrive domain validation for the demo deployment (@ifedapoolarewaju, #1959)
+- @uppy/companion: change demo deployment type to stable API (@kiloreux, #1938)
+- @uppy/companion: log error if exists during token verification (@ifedapoolarewaju, #1937)
+- @uppy/companion: mask auth tokens from logged referrer URLs (@ifedapoolarewaju, #1951)
+- @uppy/companion: only generate `uppyToken` if `access_token` was received from provider (@ifedapoolarewaju, #1946)
+- @uppy/companion: pass metadata to Companion `getKey()` option for S3 uploads (@goto-bus-stop, #1866)
+- @uppy/companion: rename uppy occurrences to companion (@ifedapoolarewaju, #1926)
+- @uppy/companion: run CI tests on Node 6 to ensure compatibility (@ifedapoolarewaju, #1953)
+- @uppy/companion: upgrade `helmet` (@goto-bus-stop, [6b006ac](https://github.com/transloadit/uppy/commit/6b006ac42c20062c37bdcaf6a77e07b304da7957))
+- @uppy/companion: use original file name in S3 Multipart uploads (@goto-bus-stop, #1965)
+- @uppy/core: make `uppy.on()` work better with IntelliSense (@bambii7, #1923)
+- @uppy/dashboard: hide top bar cancel button when `hideCancelButton: true` (@goto-bus-stop, #1955)
+- @uppy/dashboard: move dropEffect assignment to dragover (@goto-bus-stop, #1982)
+- @uppy/drag-drop: move dropEffect assignment to dragover (@goto-bus-stop, #1982)
+- @uppy/locales: add Hebrew (@YehudaKremer, #1932)
+- @uppy/locales: rename `es_GL` → `gl_ES` (@goto-bus-stop, #1929)
+- @uppy/thumbnail-generator: add webp to the list of supported types (@arturi, #1961)
+- @uppy/thumbnail-generator: vendor exif-js source in Uppy (@mskelton, #1940)
+- @uppy/webcam: add `showRecordingLength: true` option (@dominiceden, #1947)
+- docs: FB and OneDrive are not yet in the CDN bundle (@goto-bus-stop, [61b54b9](https://github.com/transloadit/uppy/commit/61b54b914dd437d2e60362c4ece1429943b32555))
+- docs: add `companionHeaders` to s3-multipart docs (@goto-bus-stop, [a6e44a9](https://github.com/transloadit/uppy/commit/a6e44a953114e385466dcce884d37e433f030549))
+- docs: add reset-progress event to docs (@bambii7, #1922)
+- docs: make Robodog naming more consistent (@goto-bus-stop, #1935)
+- docs: make react sample code more standalone (@uxitten, #1864)
+- examples: remove `UPPYSERVER_` references (@goto-bus-stop, [e74690e](https://github.com/transloadit/uppy/commit/e74690e20cc0a1afd9156ce03b1ca6a5358cc7d9))
+- website: add facebook to dashboard example (@ifedapoolarewaju, #1930)
+- website: add plugin versions (@arturi, #1952)
+- website: enable onedrive on the website example (@ifedapoolarewaju, #1975)
 
 ## 1.6.0
 
