@@ -7,7 +7,7 @@ declare module Tus {
     endpoint: string;
     headers: object;
     chunkSize: number;
-    withCredentials: booleans;
+    withCredentials: boolean;
     overridePatchMethod: boolean;
     retryDelays: number[];
     metaFields: string[] | null;
