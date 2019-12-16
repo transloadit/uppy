@@ -97,3 +97,12 @@ strings: {
 }
 ```
 
+## Methods
+
+### `addFile`
+
+You can add a file to the Url plugin directly via the API, like this:
+
+```js
+uppy.getPlugin('Url').addFile('https://example.com/myfile.pdf').then(uppy.upload)
+```

@@ -516,6 +516,35 @@ Update metadata for a specific file.
 uppy.setFileMeta('myfileID', { resize: 1500 })
 ```
 
+### `uppy.setOptions(opts)`
+
+Change Uppy options on the fly. For example, to conditionally change `allowedFileTypes` or `locale`:
+
+```js
+const uppy = Uppy()
+uppy.setOptions({
+  restrictions: { maxNumberOfFiles: 3 },
+  autoProceed: true
+})
+
+uppy.setOptions({
+  locale: {
+    strings: {
+      'cancel': 'Отмена'
+    }
+  }
+})
+```
+
+You can also change options for plugin on the fly, like this:
+
+```js
+// Change width of the Dashboard drag-and-drop aread on the fly
+uppy.getPlugin('Dashboard').setOptions({
+  width: 300
+})
+```
+
 ### `uppy.reset()`
 
 Stop all uploads in progress and clear file selection, set progress to 0. Basically, return things to the way they were before any user input.
@@ -666,7 +695,7 @@ Fired when Uppy fails to upload/encode the entire upload. That error is then set
 
 Fired each time a single upload has errored.
 
-`response` object (depending on the uploader plugin used, it might contain less info, the example is for `@uppy/xhr-upload`):
+`response` object is an optional parameter and may be undefined depending on the uploader plugin used, it might contain less info, the example is for `@uppy/xhr-upload`:
 
 ```js
 {
@@ -724,5 +753,15 @@ Fired when a file violates certain restrictions when added. This event is just p
 ```javascript
 uppy.on('restriction-failed', (file, error) => {
   // do some customized logic like showing system notice to users
+})
+```
+
+### `reset-progress`
+
+Fired when `uppy.resetProgress()` is called, each file has its upload progress reset to zero.
+
+```javascript
+uppy.on('reset-progress', () => {
+  // progress was reset
 })
 ```

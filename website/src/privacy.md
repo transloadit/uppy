@@ -22,7 +22,7 @@ We receive the following **data** from you:
 3. Data entered on our website
 4. The browser session (identified through a cookie)
 5. Information used to analyze usage of our platform (through cookies from Google Analytics. More on cookies is explained below)
-6. Files you can optionally upload in example demos. Those files are stored temporarily for 24 hours, on tus.io or transloadit.com servers, and then deleted. See also Transloadit’s Privacy Policy: https://transloadit.com/legal/privacy/.
+6. Files you can optionally upload in example demos. Those files are stored temporarily for 24–72 hours, on uppy.io, tus.io or transloadit.com servers, and then deleted. See also Transloadit’s Privacy Policy: https://transloadit.com/legal/privacy/.
 
 All data that passes through demos is only used for demo purposes, and never sold or otherwise given away.
 
@@ -36,7 +36,7 @@ We use the following third-party services which also store data about you:
 | :-------------------- | :---------------------- | :--------------------------------------- | :-----------: | :---------: | :--------: | :-------: |
 | Transloadit           | end user (data subject) | browser identifiers                      |               |             | instantly  |           |
 | Transloadit           | end user (data subject) | test files                      |               |             | in 24h  |           |
-| Tus.io           | end user (data subject) | test files                      |               |             | in 24h  |           |
+| Tus.io               | end user (data subject) | test files                      |               |             | in 72h  |           |
 | Google Analytics      | customer (business)     | browser identifiers                      |               | ✅                      |           |
 
 - **anonymized**: Any data that can be used to identify the 'data subject' is scrubbed
@@ -90,7 +90,7 @@ Google will use this information to analyze your usage of our platform and to cr
 
 You can avoid any cookies being saved by changing the settings in your browser accordingly. Please be aware that if you choose to do so, you might not be able to make full use of our website and all of its features. You can also prevent the analysis of your browsing behavior on our platform through Google Analytics by installing the following browser plugin: http://tools.google.com/dlpage/gaoptout.
 
-Google, Inc. (“Google”)	head quarters are located at "1600 Amphitheatre Parkway Mountain View, California 94043, USA".
+Google, Inc. (“Google”) head quarters are located at "1600 Amphitheatre Parkway Mountain View, California 94043, USA".
 Their privacy policy is located here: https://policies.google.com/privacy.
 
 ## How to disable cookies
@@ -103,4 +103,4 @@ If you require a countersigned copy of our DPA, please  <a href="mailto:hello@tr
 
 ## Last Updated
 
-This privacy policy was last updated on Jan 23, 2018.
+This privacy policy was last updated on Nov 29, 2019.

@@ -55,4 +55,40 @@ describe('Dashboard', () => {
 
     core.close()
   })
+
+  it('should change options on the fly', () => {
+    const core = new Core()
+    core.use(DashboardPlugin, {
+      inline: true,
+      target: 'body'
+    })
+
+    core.getPlugin('Dashboard').setOptions({
+      width: 300
+    })
+
+    expect(
+      core.getPlugin('Dashboard').opts.width
+    ).toEqual(300)
+  })
+
+  it('should use updated locale from Core, when it’s set via Core’s setOptions()', () => {
+    const core = new Core()
+    core.use(DashboardPlugin, {
+      inline: true,
+      target: 'body'
+    })
+
+    core.setOptions({
+      locale: {
+        strings: {
+          myDevice: 'Май дивайс'
+        }
+      }
+    })
+
+    expect(
+      core.getPlugin('Dashboard').i18n('myDevice')
+    ).toEqual('Май дивайс')
+  })
 })

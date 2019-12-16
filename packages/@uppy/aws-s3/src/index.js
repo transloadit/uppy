@@ -5,14 +5,28 @@ const Translator = require('@uppy/utils/lib/Translator')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const { RequestClient } = require('@uppy/companion-client')
 const XHRUpload = require('@uppy/xhr-upload')
+const qsStringify = require('qs-stringify')
 
 function resolveUrl (origin, link) {
   return new URL_(link, origin).toString()
 }
 
-function isXml (xhr) {
-  const contentType = xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type')
-  return typeof contentType === 'string' && contentType.toLowerCase() === 'application/xml'
+function isXml (content, xhr) {
+  const contentType = (xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type'))
+    // Get rid of mime parameters like charset=utf-8
+    .replace(/;.*$/, '')
+    .toLowerCase()
+  if (typeof contentType === 'string') {
+    if (contentType === 'application/xml' || contentType === 'text/xml') {
+      return true
+    }
+    // GCS uses text/html for some reason
+    // https://github.com/transloadit/uppy/issues/896
+    if (contentType === 'text/html' && /^<\?xml /.test(content)) {
+      return true
+    }
+  }
+  return false
 }
 
 function getXmlValue (source, key) {
@@ -50,21 +64,28 @@ module.exports = class AwsS3 extends Plugin {
     const defaultOptions = {
       timeout: 30 * 1000,
       limit: 0,
+      metaFields: [], // have to opt in
       getUploadParameters: this.getUploadParameters.bind(this)
     }
 
     this.opts = { ...defaultOptions, ...opts }
 
-    // i18n
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     this.client = new RequestClient(uppy, opts)
-
     this.prepareUpload = this.prepareUpload.bind(this)
-
     this.requests = new RateLimitedQueue(this.opts.limit)
+  }
+
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   getUploadParameters (file) {
@@ -74,7 +95,15 @@ module.exports = class AwsS3 extends Plugin {
 
     const filename = encodeURIComponent(file.meta.name)
     const type = encodeURIComponent(file.meta.type)
-    return this.client.get(`s3/params?filename=${filename}&type=${type}`)
+    const metadata = {}
+    this.opts.metaFields.forEach((key) => {
+      if (file.meta[key] != null) {
+        metadata[key] = file.meta[key].toString()
+      }
+    })
+
+    const query = qsStringify({ filename, type, metadata })
+    return this.client.get(`s3/params?${query}`)
       .then(assertServerError)
   }
 
@@ -195,7 +224,7 @@ module.exports = class AwsS3 extends Plugin {
 
         // If no response, we've hopefully done a PUT request to the file
         // in the bucket on its full URL.
-        if (!isXml(xhr)) {
+        if (!isXml(content, xhr)) {
           if (opts.method.toUpperCase() === 'POST') {
             if (!warnedSuccessActionStatus) {
               log('[AwsS3] No response data found, make sure to set the success_action_status AWS SDK option to 201. See https://uppy.io/docs/aws-s3/#POST-Uploads', 'warning')
@@ -231,7 +260,7 @@ module.exports = class AwsS3 extends Plugin {
       // `xhr` is the XMLHttpRequest instance.
       getResponseError (content, xhr) {
         // If no response, we don't have a specific error message, use the default.
-        if (!isXml(xhr)) {
+        if (!isXml(content, xhr)) {
           return
         }
         const error = getXmlValue(content, 'Message')

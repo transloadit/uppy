@@ -126,10 +126,7 @@ module.exports = class Dashboard extends Plugin {
     // merge default options with the ones set by user
     this.opts = { ...defaultOptions, ...opts }
 
-    // i18n
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     this.openModal = this.openModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
@@ -170,6 +167,18 @@ module.exports = class Dashboard extends Plugin {
     this.removeDragOverClassTimeout = null
   }
 
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
+  }
+
   removeTarget (plugin) {
     const pluginState = this.getPluginState()
     // filter out the one we want to remove
@@ -189,7 +198,7 @@ module.exports = class Dashboard extends Plugin {
         callerPluginType !== 'progressindicator' &&
         callerPluginType !== 'presenter') {
       const msg = 'Dashboard: Modal can only be used by plugins of types: acquirer, progressindicator, presenter'
-      this.uppy.log(msg)
+      this.uppy.log(msg, 'error')
       return
     }
 
@@ -513,6 +522,10 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
 
+    // 1. Add a small (+) icon on drop
+    // (and prevent browsers from interpreting this as files being _moved_ into the browser, https://github.com/transloadit/uppy/issues/1978)
+    event.dataTransfer.dropEffect = 'copy'
+
     clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
   }
@@ -532,8 +545,6 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
     clearTimeout(this.removeDragOverClassTimeout)
-    // 1. Add a small (+) icon on drop
-    event.dataTransfer.dropEffect = 'copy'
 
     // 2. Remove dragover class
     this.setPluginState({ isDraggingOver: false })
@@ -826,7 +837,9 @@ module.exports = class Dashboard extends Plugin {
       height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
+      hideCancelButton: this.opts.hideCancelButton,
       containerWidth: pluginState.containerWidth,
+      containerHeight: pluginState.containerHeight,
       areInsidesReadyToBeVisible: pluginState.areInsidesReadyToBeVisible,
       isTargetDOMEl: this.isTargetDOMEl,
       parentElement: this.el,

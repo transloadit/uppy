@@ -55,7 +55,7 @@ class DropBox {
         done(err)
       } else {
         stats.body.user_email = userInfo.body.email
-        done(null, this.adaptData(stats.body, options.uppy))
+        done(null, this.adaptData(stats.body, options.companion))
       }
     }
 
@@ -126,7 +126,7 @@ class DropBox {
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` })
+          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}`, size: 'w256h256' })
         }
       })
       .auth(token)
@@ -175,7 +175,7 @@ class DropBox {
       })
   }
 
-  adaptData (res, uppy) {
+  adaptData (res, companion) {
     const data = { username: adapter.getUsername(res), items: [] }
     const items = adapter.getItemSubList(res)
     items.forEach((item) => {
@@ -185,7 +185,7 @@ class DropBox {
         name: adapter.getItemName(item),
         mimeType: adapter.getMimeType(item),
         id: adapter.getItemId(item),
-        thumbnail: uppy.buildURL(adapter.getItemThumbnailUrl(item), true),
+        thumbnail: companion.buildURL(adapter.getItemThumbnailUrl(item), true),
         requestPath: adapter.getItemRequestPath(item),
         modifiedDate: adapter.getItemModifiedDate(item),
         size: adapter.getItemSize(item)

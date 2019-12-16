@@ -7,9 +7,15 @@ const delay = duration => new Promise(resolve => setTimeout(resolve, duration))
 function MockCore () {
   const core = emitter()
   const files = {}
+  core.state = {
+    files,
+    plugins: {}
+  }
   core.mockFile = (id, f) => { files[id] = f }
   core.getFile = (id) => files[id]
   core.log = () => null
+  core.getState = () => core.state
+  core.setState = () => null
   return core
 }
 
@@ -276,8 +282,15 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
             }
           }
         },
-        setFileState: jest.fn()
+        setFileState: jest.fn(),
+        plugins: {}
       }
+      core.state = {
+        plugins: {}
+      }
+      core.setState = () => null
+      core.getState = () => core.state
+
       const plugin = new ThumbnailGeneratorPlugin(core)
       plugin.setPreviewURL('file1', 'moo')
       expect(core.setFileState).toHaveBeenCalledTimes(1)
@@ -467,7 +480,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       }
       const core = Object.assign(new MockCore(), {
         getState () {
-          return { files }
+          return { files, plugins: {} }
         },
         getFile (id) {
           return files[id]
@@ -491,7 +504,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       }
       const core = Object.assign(new MockCore(), {
         getState () {
-          return { files }
+          return { files, plugins: {} }
         },
         getFile (id) {
           return files[id]

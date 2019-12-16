@@ -78,7 +78,7 @@ function PanelTopBar (props) {
 
   return (
     <div class="uppy-DashboardContent-bar">
-      {!props.isAllComplete ? (
+      {!props.isAllComplete && !props.hideCancelButton ? (
         <button
           class="uppy-DashboardContent-back"
           type="button"

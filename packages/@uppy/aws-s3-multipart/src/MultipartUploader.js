@@ -160,8 +160,8 @@ class MultipartUploader {
         throw new TypeError('AwsS3/Multipart: Got incorrect result from `prepareUploadPart()`, expected an object `{ url }`.')
       }
       return result
-    }).then(({ url }) => {
-      this._uploadPartBytes(index, url)
+    }).then(({ url, headers }) => {
+      this._uploadPartBytes(index, url, headers)
     }, (err) => {
       this._onError(err)
     })
@@ -189,10 +189,15 @@ class MultipartUploader {
     this._uploadParts()
   }
 
-  _uploadPartBytes (index, url) {
+  _uploadPartBytes (index, url, headers) {
     const body = this.chunks[index]
     const xhr = new XMLHttpRequest()
     xhr.open('PUT', url, true)
+    if (headers) {
+      Object.keys(headers).map((key) => {
+        xhr.setRequestHeader(key, headers[key])
+      })
+    }
     xhr.responseType = 'text'
 
     this.uploading.push(xhr)

@@ -21,7 +21,7 @@ declare module AwsS3Multipart {
     prepareUploadPart?: (
       file: Uppy.UppyFile,
       partData: { uploadId: string; key: string; body: Blob; number: number }
-    ) => MaybePromise<{ url: string }>
+    ) => MaybePromise<{ url: string, headers?: { [k: string]: string } }>
     abortMultipartUpload?: (
       file: Uppy.UppyFile,
       opts: { uploadId: string; key: string }

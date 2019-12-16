@@ -13,7 +13,7 @@ const { version } = require('../../package.json')
  *
  * @returns {object}
  */
-exports.getUppyOptions = () => {
+exports.getCompanionOptions = () => {
   return merge({}, getConfigFromEnv(), getConfigFromFile())
 }
 
@@ -167,7 +167,7 @@ exports.validateConfig = (config) => {
   }
 
   // validate that specified filePath is writeable/readable.
-  // TODO: consider moving this into the uppy module itself.
+  // TODO: consider moving this into the companion module itself.
   try {
     // @ts-ignore
     fs.accessSync(`${config.filePath}`, fs.R_OK | fs.W_OK)
@@ -186,10 +186,10 @@ exports.hasProtocol = (url) => {
   return url.startsWith('http://') || url.startsWith('https://')
 }
 
-exports.buildHelpfulStartupMessage = (uppyOptions) => {
-  const buildURL = utils.getURLBuilder(uppyOptions)
+exports.buildHelpfulStartupMessage = (companionOptions) => {
+  const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
-  Object.keys(uppyOptions.providerOptions).forEach((providerName) => {
+  Object.keys(companionOptions.providerOptions).forEach((providerName) => {
     // s3 does not need redirect_uris
     if (providerName === 's3') {
       return

@@ -1,8 +1,8 @@
-function list ({ query, params, uppy }, res, next) {
+function list ({ query, params, companion }, res, next) {
   const providerName = params.providerName
-  const token = uppy.providerTokens[providerName]
+  const token = companion.providerTokens[providerName]
 
-  uppy.provider.list({ uppy, token, directory: params.id, query }, (err, data) => {
+  companion.provider.list({ companion, token, directory: params.id, query }, (err, data) => {
     if (err) {
       return err.isAuthError ? res.sendStatus(401) : next(err)
     }

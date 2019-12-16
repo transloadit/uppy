@@ -117,11 +117,11 @@
 .uppy-Dashboard-inner {
   position: relative;
   background-color: $gray-50;
-  max-width: 100%; /* no !important */
-  max-height: 100%; /* no !important */
+  max-width: 100%;
+  max-height: 100%;
   // min-width: 290px;
   // min-height: 450px is required for everything to fit on mobile
-  min-height: 450px;
+  // min-height: 350px;
   outline: none;
   border: 1px solid $gray-200;
   border-radius: 5px;
@@ -131,8 +131,8 @@
   }
 
   @media #{$screen-medium} {
-    width: 750px; /* no !important */
-    height: 550px; /* no !important */
+    width: 750px;
+    height: 550px;
   }
 
   .uppy-Dashboard--modal & {
@@ -197,6 +197,7 @@
   align-items: center;
   flex-direction: column;
   height: 100%;
+  max-height: 100%;
   position: relative;
   text-align: center;
   flex: 1;
@@ -221,9 +222,11 @@
   flex-direction: column;
   justify-content: center;
   width: 100%;
+  height: 100%;
 
   .uppy-size--md & {
     align-items: center;
+    height: auto;
   }
 }
 
@@ -245,6 +248,17 @@
 .uppy-DashboardAddFiles-info {
   padding-top: 15px;
   padding-bottom: 15px;
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: 0%;
+  
+  // hide on short note and “powered by” on short screens
+  // such as CodePen, or inline dashboard with height < 400px
+  display: none;
+
+  .uppy-size--height-md & {
+    display: block;
+  }
 
   .uppy-size--md & {
     position: absolute;
@@ -269,8 +283,10 @@
 .uppy-DashboardTabs-list {
   display: flex;
   flex-direction: column;
-  max-height: 300px;
-  overflow-x: auto;
+  flex-grow: 2;
+  flex-shrink: 1;
+  flex-basis: 0%;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   margin-top: 10px;
   padding: 2px 0;
@@ -280,7 +296,7 @@
     flex-wrap: wrap;
     justify-content: center;
     max-width: 600px;
-    overflow-x: initial;
+    overflow-y: initial;
     margin-top: 15px;
     padding-top: 0;
   }
@@ -644,6 +660,11 @@
   color: $gray-700;
   margin: auto;
   padding: 0 15px;
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0%;
 
   .uppy-size--md & {
     // wider, to accomodate for different translations

@@ -135,6 +135,12 @@ declare module Uppy {
   type StrictTypes = 'strict'
   type TypeChecking = LooseTypes | StrictTypes
 
+  // This hack accepts _any_ string for `Event`, but also tricks VSCode and friends into providing autocompletions
+  // for the names listed. https://github.com/microsoft/TypeScript/issues/29729#issuecomment-505826972
+  type LiteralUnion<T extends U, U = string> = T | (U & { });
+  type Event = LiteralUnion<'file-added' | 'file-removed' | 'upload' | 'upload-progress' | 'upload-success' | 'complete' | 'error' | 'upload-error' |
+               'upload-retry' | 'info-visible' | 'info-hidden' | 'cancel-all' | 'restriction-failed' | 'reset-progress'>;
+
   class Uppy<TUseStrictTypes extends TypeChecking = TypeChecking> {
     constructor(opts?: UppyOptions)
     on<TMeta extends IndexedObject<any> = {}>(
@@ -145,12 +151,12 @@ declare module Uppy {
       event: 'complete',
       callback: (result: UploadResult<TMeta>) => void
     ): this
-    on(event: string, callback: (...args: any[]) => void): this
-    off(event: string, callback: any): this
+    on(event: Event, callback: (...args: any[]) => void): this
+    off(event: Event, callback: any): this
     /**
      * For use by plugins only!
      */
-    emit(event: string, ...args: any[]): void
+    emit(event: Event, ...args: any[]): void
     updateAll(state: object): void
     setState(patch: object): void
     getState<TMeta extends IndexedObject<any> = {}>(): State<TMeta>

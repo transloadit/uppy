@@ -91,18 +91,16 @@ Releases are managed by [Lerna](https://github.com/lerna/lerna). We do some clea
 npm run release
 ```
 
-If you have two factor authentication enabled on your npm account, you will need to temporarily disable it when doing an uppy release. Lerna doesn't support 2FA, and while there are workarounds, they don't reliably work for us. (In particular, using the `npm_config_otp` environment variable will fail because the token expires by the time the release script starts publishing anything.)
-
-```bash
-npm profile disable-2fa
-npm run release
-npm profile enable-2fa auth-only
-```
+If you have two-factor authentication enabled on your account, Lerna will ask for a one-time password. There is an issue with the CLI where the OTP prompt may be obscured by a publishing progress bar. If Lerna appears to hang just as it starts publishing, chances are it's waiting for the password. Try typing in your OTP and hitting enter.
 
 Other things to keep in mind during release:
 
-* When doing a minor release below 1.0, or a major release >= 1.0, of the `@uppy/core` package, the peerDependency of the plugin packages needs to be updated first. Eg when updating from 0.25.5 to 0.26.0, the peerDependency of each should be `"@uppy/core": "^0.26.0"` before doing `npm run release`.
-* When publishing a new package, publish it manually first with `npm publish --access public`, since by default `@`-prefixed packages are private on NPM, and Lerna will fail.
+* When doing a major release >= 1.0, of the `@uppy/core` package, the `peerDependency` of the plugin packages needs to be updated first. Eg when updating from 1.y.z to 2.0.0, the peerDependency of each should be `"@uppy/core": "^2.0.0"` before doing `npm run release`.
+* When adding a new package, add the following key to its package.json:
+  ```json
+  "publishConfig": { "access": "public" }
+  ```
+  Else, npm will try and fail to publish a _private_ package, because the `@uppy` scope on npm does not support that.
 
 After a release, the demos on transloadit.com should also be updated. After updating, check that some things work locally:
 

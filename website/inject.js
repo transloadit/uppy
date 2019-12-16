@@ -67,6 +67,10 @@ inject().catch((err) => {
 
 async function getMinifiedSize (pkg, name) {
   const b = browserify(pkg)
+
+  const packageJSON = fs.readFileSync(path.join(pkg, 'package.json'))
+  const version = JSON.parse(packageJSON).version
+
   if (name !== '@uppy/core' && name !== 'uppy') {
     b.exclude('@uppy/core')
     // Already unconditionally included through @uppy/core
@@ -82,7 +86,8 @@ async function getMinifiedSize (pkg, name) {
 
   return {
     minified: bundle.length,
-    gzipped
+    gzipped,
+    version
   }
 }
 
@@ -185,12 +190,16 @@ function injectLocaleList () {
     '| --------------- | ------------------ | ------------------- | ---------------- |'
   ]
   const mdRows = []
+  const localeList = {}
 
   const localePackagePath = path.join(localesRoot, 'src', '*.js')
   const localePackageVersion = require(path.join(localesRoot, 'package.json')).version
 
   glob.sync(localePackagePath).forEach((localePath) => {
     const localeName = path.basename(localePath, '.js')
+    // we renamed the es_GL → gl_ES locale, and kept the old name
+    // for backwards-compat, see https://github.com/transloadit/uppy/pull/1929
+    if (localeName === 'es_GL') return
     let localeNameWithDash = localeName.replace(/_/g, '-')
 
     const parts = localeNameWithDash.split('-')
@@ -209,13 +218,18 @@ function injectLocaleList () {
     const githubSource = `[\`${localeName}.js\`](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/locales/src/${localeName}.js)`
     const mdTableRow = `| ${languageName}<br/> <small>${countryName}</small>${variant ? `<br /><small>(${variant})</small>` : ''} | ${npmPath} | ${cdnPath} | ✏️ ${githubSource} |`
     mdRows.push(mdTableRow)
+
+    localeList[localeName] = `${languageName} (${countryName}${variant ? ` ${variant}` : ''})`
   })
 
   const resultingMdTable = mdTable.concat(mdRows.sort()).join('\n').replace('%count%', mdRows.length)
 
   const dstpath = path.join(webRoot, 'src', '_template', 'list_of_locale_packs.md')
+  const localeListDstPath = path.join(webRoot, 'src', 'examples', 'locale_list.json')
   fs.writeFileSync(dstpath, resultingMdTable, 'utf-8')
   console.info(chalk.green('✓ injected: '), chalk.grey(dstpath))
+  fs.writeFileSync(localeListDstPath, JSON.stringify(localeList), 'utf-8')
+  console.info(chalk.green('✓ injected: '), chalk.grey(localeListDstPath))
 }
 
 async function readConfig () {

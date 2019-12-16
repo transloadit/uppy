@@ -7,7 +7,7 @@ const session = require('express-session')
 const compression = require('compression')
 const awsServerlessExpress = require('aws-serverless-express')
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
-const uppy = require('@uppy/companion')
+const companion = require('@uppy/companion')
 
 const app = express()
 
@@ -53,7 +53,7 @@ const options = {
   secret: process.env.UPPY_SECRET
 }
 
-app.use(uppy.app(options))
+app.use(companion.app(options))
 
 app.get('/', (req, res) => {
   res.setHeader('Content-Type', 'text/plain')
@@ -62,5 +62,5 @@ app.get('/', (req, res) => {
 
 const server = awsServerlessExpress.createServer(app)
 
-exports.uppy = (event, context) =>
+exports.companion = (event, context) =>
   awsServerlessExpress.proxy(server, event, context)

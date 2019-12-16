@@ -13,7 +13,7 @@ Add the [Dashboard UI][dashboard] to your page, all wired up and ready to go! Th
 <div id="dashboard"></div>
 
 <script>
-robodog.dashboard('#dashboard', {
+Robodog.dashboard('#dashboard', {
   params: {
     auth: { key: '' },
     template_id: ''
@@ -25,13 +25,13 @@ robodog.dashboard('#dashboard', {
 This API can still be used as a modal, too, by specifying `inline: false`:
 
 ```js
-robodog.dashboard(selector, { inline: false })
+Robodog.dashboard(selector, { inline: false })
 ```
 
-The `robodog.dashboard()` function returns an Uppy instance, which you can use to listen for any Uppy events.
+The `Robodog.dashboard()` function returns an Uppy instance, which you can use to listen for any Uppy events.
 
 ```js
-const uppy = robodog.dashboard(selector, { ...options })
+const uppy = Robodog.dashboard(selector, { ...options })
   .on('transloadit:result', (result) => {
     console.log(result)
   })
