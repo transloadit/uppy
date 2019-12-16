@@ -3,11 +3,17 @@ import Uppy = require('@uppy/core');
 declare module Tus {
   export interface TusOptions extends Uppy.PluginOptions {
     limit: number;
-    endpoint: string;
-    uploadUrl: string;
-    useFastRemoteRetry: boolean;
     resume: boolean;
+    removeFingerprintOnSuccess: boolean;
+    endpoint: string;
+    headers: object;
+    chunkSize: number;
+    withCredentials: booleans;
+    overridePatchMethod: boolean;
+    retryDelays: number[];
+    metaFields: string[] | null;
     autoRetry: boolean;
+    limit: number;
   }
 }
 
