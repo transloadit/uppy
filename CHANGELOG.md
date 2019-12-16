@@ -126,9 +126,27 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## 1.7.0
 
-Released: 2019-12-11
+Released: 2019-12-16
 
 This release adds Hebrew translations and smoothes out some rough edges in Companion. The Webcam plugin now supports showing the duration of recordings while in progress.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.3.5 | @uppy/onedrive | 0.1.3 |
+| @uppy/aws-s3 | 1.4.0 | @uppy/progress-bar | 1.3.3 |
+| @uppy/companion | 1.7.0 | @uppy/provider-views | 1.5.1 |
+| @uppy/core | 1.7.0 | @uppy/react | 1.4.1 |
+| @uppy/dashboard | 1.5.1 | @uppy/robodog | 1.4.1 |
+| @uppy/drag-drop | 1.4.1 | @uppy/status-bar | 1.4.1 |
+| @uppy/dropbox | 1.3.4 | @uppy/thumbnail-generator | 1.5.1 |
+| @uppy/facebook | 0.2.1 | @uppy/transloadit | 1.4.1 |
+| @uppy/file-input | 1.4.1 | @uppy/tus | 1.5.1 |
+| @uppy/form | 1.3.4 | @uppy/url | 1.4.1 |
+| @uppy/golden-retriever | 1.3.3 | @uppy/utils | 2.1.1 |
+| @uppy/google-drive | 1.3.4 | @uppy/webcam | 1.5.0 |
+| @uppy/informer | 1.3.3 | @uppy/xhr-upload | 1.4.1 |
+| @uppy/instagram | 1.3.4 | uppy | 1.7.0 |
+| @uppy/locales | 1.10.0 | - | - |
 
 - @uppy/aws-s3: add some tests (@bambii7, #1934)
 - @uppy/companion: add onedrive domain validation for the demo deployment (@ifedapoolarewaju, #1959)
