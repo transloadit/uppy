@@ -103,6 +103,7 @@ Return a Promise for an object with keys:
      Expires: 5 * 60,
    }, (err, url) => { /* there's the url! */ })
    ```
+ - `headers` - **(Optional)** Custom headers that should be sent to the S3 presigned URL.
 
 ### abortMultipartUpload(file, { uploadId, key })
 
