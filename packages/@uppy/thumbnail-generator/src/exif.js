@@ -456,7 +456,7 @@ function readTagValue (file, entryOffset, tiffStart, dirStart, bigEnd) {
       if (numValues === 1) {
         numerator = file.getUint32(valueOffset, !bigEnd)
         denominator = file.getUint32(valueOffset + 4, !bigEnd)
-        val = +(numerator / denominator)
+        val = new Number(numerator / denominator)
         val.numerator = numerator
         val.denominator = denominator
         return val
@@ -465,7 +465,7 @@ function readTagValue (file, entryOffset, tiffStart, dirStart, bigEnd) {
         for (n = 0; n < numValues; n++) {
           numerator = file.getUint32(valueOffset + 8 * n, !bigEnd)
           denominator = file.getUint32(valueOffset + 4 + 8 * n, !bigEnd)
-          vals[n] = +(numerator / denominator)
+          vals[n] = new Number(numerator / denominator)
           vals[n].numerator = numerator
           vals[n].denominator = denominator
         }
