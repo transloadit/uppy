@@ -68,8 +68,15 @@ The `<DragDrop />` component supports all [DragDrop](/docs/drag-drop/) options a
 
 ```js
 <DragDrop
-  width="100%"
-  height="100%"
-  note="Images up to 200×200px"
+  uppy={this.uppy}
+  locale={{
+    strings: {
+      // Text to show on the droppable area.
+      // `%{browse}` is replaced with a link that opens the system file selection dialog.
+      dropHereOr: "Drop here or %{browse}",
+      // Used as the label for the link that opens the system file selection dialog.
+      browse: "browse",
+    },
+  }}
 />
 ```
