@@ -198,7 +198,7 @@ module.exports = class Transloadit extends Plugin {
   }
 
   _createAssembly (fileIDs, uploadID, options) {
-    this.uppy.log('[Transloadit] create Assembly')
+    this.uppy.log('[Transloadit] Create Assembly')
 
     return this.client.createAssembly({
       params: options.params,
@@ -246,7 +246,6 @@ module.exports = class Transloadit extends Plugin {
       return assembly
     }).catch((err) => {
       err.message = `${this.i18n('creatingAssemblyFailed')}: ${err.message}`
-
       // Reject the promise.
       throw err
     })
