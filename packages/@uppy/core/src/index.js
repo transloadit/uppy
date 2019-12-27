@@ -460,14 +460,13 @@ class Uppy {
   _showOrLogErrorAndThrow (err, { showInformer = true, file = null } = {}) {
     const message = typeof err === 'object' ? err.message : err
     const details = (typeof err === 'object' && err.details) ? err.details : ''
-
     // Restriction errors should be logged, but not as errors,
     // as they are expected and shown in the UI.
     if (err.isRestriction) {
       this.log(`${message} ${details}`)
       this.emit('restriction-failed', file, err)
     } else {
-      this.log(`${message} ${details}`, 'error')
+      this.log(`${message}; ${details}`, 'error')
     }
 
     // Sometimes informer has to be shown manually by the developer,
@@ -697,7 +696,9 @@ class Uppy {
 
     this.emit('retry-all', filesToRetry)
 
-    const uploadID = this._createUpload(filesToRetry)
+    const uploadID = this._createUpload(filesToRetry, {
+      forceAllowNewUpload: true // create new upload even if allowNewUpload: false
+    })
     return this._runUpload(uploadID)
   }
 
@@ -723,7 +724,9 @@ class Uppy {
 
     this.emit('upload-retry', fileID)
 
-    const uploadID = this._createUpload([fileID])
+    const uploadID = this._createUpload([fileID], {
+      forceAllowNewUpload: true // create new upload even if allowNewUpload: false
+    })
     return this._runUpload(uploadID)
   }
 
@@ -825,16 +828,17 @@ class Uppy {
         response
       })
 
-      this.setState({
-        error: error.message,
-        allowNewUpload: true
-      })
+      this.setState({ error: error.message })
 
-      let message = this.i18n('failedToUpload', { file: file.name })
       if (typeof error === 'object' && error.message) {
-        message = { message: message, details: error.message }
+        const newError = new Error(error.message)
+        newError.details = `${error.message}: ${error.details}`
+        newError.message = this.i18n('failedToUpload', { file: file.name })
+        this._showOrLogErrorAndThrow(newError)
+      } else {
+        this._showOrLogErrorAndThrow(error)
       }
-      this.info(message, 'error', 5000)
+      // this.info(message, 'error', 5000)
     })
 
     this.on('upload', () => {
@@ -1171,9 +1175,13 @@ class Uppy {
    * @param {Array<string>} fileIDs File IDs to include in this upload.
    * @returns {string} ID of this upload.
    */
-  _createUpload (fileIDs) {
+  _createUpload (fileIDs, opts = {}) {
+    const {
+      forceAllowNewUpload = false // uppy.retryAll sets this to true — when retrying we want to ignore `allowNewUpload: false`
+    } = opts
+
     const { allowNewUpload, currentUploads } = this.getState()
-    if (!allowNewUpload) {
+    if (!allowNewUpload && !forceAllowNewUpload) {
       throw new Error('Cannot create a new upload: already uploading.')
     }
 
