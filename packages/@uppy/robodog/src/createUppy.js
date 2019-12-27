@@ -32,7 +32,8 @@ const uppyOptionNames = [
   'restrictions',
   'meta',
   'onBeforeFileAdded',
-  'onBeforeUpload'
+  'onBeforeUpload',
+  'debug'
 ]
 function createUppy (opts, overrides = {}) {
   const uppyOptions = {}
