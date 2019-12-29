@@ -26,7 +26,7 @@ en_US.strings = {
   creatingAssemblyFailed: 'Transloadit: Không thể tạo nhóm',
   dashboardTitle: 'Trình đăng tải tập tin',
   dashboardWindowTitle: 'Cửa sổ tải lên (Ấn ESC để đóng)',
-  dataUploadedOfTotal: '%{complete} trên %{total}',
+  dataUploadedOfTotal: '%{complete} trong số %{total}',
   done: 'Xong',
   dropHereOr: 'Thả tập tin hoặc %{browse}',
   dropHint: 'Thả tập tin vào đây',
@@ -44,9 +44,9 @@ en_US.strings = {
   failedToUpload: 'Tải lên %{file} thất bại',
   fileSource: 'Nguồn tập tin: %{name}',
   filesUploadedOfTotal: {
-    '0': '%{complete} trên %{smart_count} tập tin đã được tải lên',
-    '1': '%{complete} trên %{smart_count} tập tin đã được tải lên',
-    '2': '%{complete} trên %{smart_count} tập tin đã được tải lên'
+    '0': '%{complete} trong số %{smart_count} tập tin đã được tải lên',
+    '1': '%{complete} trong số %{smart_count} tập tin đã được tải lên',
+    '2': '%{complete} trong số %{smart_count} tập tin đã được tải lên'
   },
   filter: 'Bộ lọc',
   finishEditingFile: 'Hoàn tất chỉnh sửa tập tin',
