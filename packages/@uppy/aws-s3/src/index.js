@@ -12,10 +12,16 @@ function resolveUrl (origin, link) {
 }
 
 function isXml (content, xhr) {
-  const contentType = (xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type'))
-    // Get rid of mime parameters like charset=utf-8
-    .replace(/;.*$/, '')
-    .toLowerCase()
+  const rawContentType = (xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type'));
+
+  if (rawContentType === null) {
+    return false;
+  }
+
+  // Get rid of mime parameters like charset=utf-8
+  const contentType = rawContentType.replace(/;.*$/, '')
+      .toLowerCase()
+      .toLowerCase();
   if (typeof contentType === 'string') {
     if (contentType === 'application/xml' || contentType === 'text/xml') {
       return true
