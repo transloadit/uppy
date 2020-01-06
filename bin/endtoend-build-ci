@@ -69,12 +69,10 @@ git checkout -- package-lock.json
 ENDTOEND=1 lerna version prerelease --yes \
   --exact \
   --force-publish \
-  --npm-client=npm \
   --no-push
 ENDTOEND=1 lerna publish from-git --yes \
   --registry="$VERDACCIO_REGISTRY" \
-  --no-verify-access \
-  --npm-client=npm
+  --no-verify-access
 
 # install all packages to the endtoend folder
 # (Don't use the npm cache, don't generate a package-lock, don't save dependencies to any package.json)
