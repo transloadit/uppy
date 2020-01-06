@@ -120,7 +120,7 @@ en_US.strings = {
   xFilesSelected: {
     '0': 'Đã chọn %{smart_count} tập tin',
     '1': 'Đã chọn %{smart_count} tập tin',
-    '2': 'Đã chọn %{smart_count} tập tin',
+    '2': 'Đã chọn %{smart_count} tập tin'
   },
   xMoreFilesAdded: {
     '0': 'Đã thêm %{smart_count} tập tin',
