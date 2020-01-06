@@ -6,6 +6,7 @@ const GoogleDrive = require('@uppy/google-drive')
 const Dropbox = require('@uppy/dropbox')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
+const OneDrive = require('@uppy/onedrive')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
 const Tus = require('@uppy/tus')
@@ -122,6 +123,14 @@ function uppySetOptions () {
     window.uppy.removePlugin(FacebookInstance)
   }
 
+  const OneDriveInstance = window.uppy.getPlugin('OneDrive')
+  if (opts.OneDrive && !OneDriveInstance) {
+    uppy.use(OneDrive, { target: Dashboard, companionUrl: COMPANION })
+  }
+  if (!opts.OneDrive && OneDriveInstance) {
+    window.uppy.removePlugin(OneDriveInstance)
+  }
+
   const WebcamInstance = window.uppy.getPlugin('Webcam')
   if (opts.Webcam && !WebcamInstance) {
     window.uppy.use(Webcam, { target: Dashboard, companionUrl: COMPANION })
@@ -145,7 +154,7 @@ function loadLocaleFromCDN (localeName) {
   var head = document.getElementsByTagName('head')[0]
   var js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.9.0/${localeName}.min.js`
+  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.10.0/${localeName}.min.js`
 
   head.appendChild(js)
 }

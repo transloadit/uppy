@@ -5,16 +5,21 @@ const Translator = require('@uppy/utils/lib/Translator')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const { RequestClient } = require('@uppy/companion-client')
 const XHRUpload = require('@uppy/xhr-upload')
+const qsStringify = require('qs-stringify')
 
 function resolveUrl (origin, link) {
   return new URL_(link, origin).toString()
 }
 
 function isXml (content, xhr) {
-  const contentType = (xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type'))
-    // Get rid of mime parameters like charset=utf-8
-    .replace(/;.*$/, '')
-    .toLowerCase()
+  const rawContentType = (xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type'))
+
+  if (rawContentType === null) {
+    return false
+  }
+
+  // Get rid of mime parameters like charset=utf-8
+  const contentType = rawContentType.replace(/;.*$/, '').toLowerCase()
   if (typeof contentType === 'string') {
     if (contentType === 'application/xml' || contentType === 'text/xml') {
       return true
@@ -63,6 +68,7 @@ module.exports = class AwsS3 extends Plugin {
     const defaultOptions = {
       timeout: 30 * 1000,
       limit: 0,
+      metaFields: [], // have to opt in
       getUploadParameters: this.getUploadParameters.bind(this)
     }
 
@@ -93,7 +99,15 @@ module.exports = class AwsS3 extends Plugin {
 
     const filename = encodeURIComponent(file.meta.name)
     const type = encodeURIComponent(file.meta.type)
-    return this.client.get(`s3/params?filename=${filename}&type=${type}`)
+    const metadata = {}
+    this.opts.metaFields.forEach((key) => {
+      if (file.meta[key] != null) {
+        metadata[key] = file.meta[key].toString()
+      }
+    })
+
+    const query = qsStringify({ filename, type, metadata })
+    return this.client.get(`s3/params?${query}`)
       .then(assertServerError)
   }
 
