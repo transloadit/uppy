@@ -35,6 +35,10 @@ class Uppy {
   constructor (opts) {
     this.defaultLocale = {
       strings: {
+        addBulkFilesFailed: {
+          0: 'Failed to add %{smart_count} file due to an internal error',
+          1: 'Failed to add %{smart_count} files due to internal errors'
+        },
         youCanOnlyUploadX: {
           0: 'You can only upload %{smart_count} file',
           1: 'You can only upload %{smart_count} files',
@@ -645,7 +649,17 @@ class Uppy {
     this._startIfAutoProceed()
 
     if (errors.length > 0) {
-      const err = new Error('Multiple errors occurred while adding files')
+      let message = 'Multiple errors occurred while adding files:\n'
+      errors.forEach((subError) => {
+        message += `\n * ${subError.message}`
+      })
+
+      this.info({
+        message: this.i18n('addBulkFilesFailed', { smart_count: errors.length }),
+        details: message
+      }, 'error', 5000)
+
+      const err = new Error(message)
       err.errors = errors
       throw err
     }
