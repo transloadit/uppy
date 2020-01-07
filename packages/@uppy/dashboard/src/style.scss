@@ -222,26 +222,11 @@
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  height: 100%;
+  max-height: 100%;
 
   .uppy-size--md & {
     align-items: center;
     height: auto;
-  }
-}
-
-.uppy-DashboardTabs-title {
-  font-size: 14px;
-  line-height: 30px;
-  font-weight: 400;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-  color: $gray-700;
-
-  .uppy-size--md & {
-    font-size: 16px;
-    line-height: 40px;
   }
 }
 
@@ -276,7 +261,22 @@
   color: rgba($blue, 0.9);
 
   &:hover, &:focus {
-    border-bottom: 2px solid $blue;
+    border-bottom: 1px solid $blue;
+  }
+}
+
+// Shown only on mobile / small screens
+.uppy-Dashboard-browseBtnMobile {
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: 15px;
+  margin-right: 15px;
+  margin-top: 8px;
+  margin-bottom: 5px;
+
+  .uppy-size--md & {
+    margin-top: 15px;
+    margin-bottom: 15px;
   }
 }
 
@@ -288,14 +288,14 @@
   flex-basis: 0%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  margin-top: 10px;
+  margin-top: 2px;
   padding: 2px 0;
 
   .uppy-size--md & {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    max-width: 600px;
+    max-width: 700px;
     overflow-y: initial;
     margin-top: 15px;
     padding-top: 0;
@@ -304,20 +304,21 @@
 
 .uppy-DashboardTab {
   width: 100%;
-  display: inline-block;
   text-align: center;
   border-bottom: 1px solid $gray-200;
   padding: 0px 2px;
 
   .uppy-size--md & {
+    display: inline-block;
     width: initial;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     border-bottom: none;
     padding: 0;
   }
 }
 
 .uppy-DashboardTab-btn {
+  @include clear-focus;
   width: 100%;
   height: 100%;
   cursor: pointer;
@@ -353,15 +354,6 @@
   .uppy-DashboardTab-btn:active,
   .uppy-DashboardTab-btn:focus {
     background-color: $highlight;
-    outline: none;
-  }
-
-  .uppy-DashboardTab-btn svg {
-    margin-right: 10px;
-
-    .uppy-size--md & {
-      margin-right: 0;
-    }
   }
 
   .uppy-DashboardTab-btn svg {
@@ -371,6 +363,11 @@
     vertical-align: text-top;
     overflow: hidden;
     transition: transform ease-in-out .15s;
+    margin-right: 10px;
+
+    .uppy-size--md & {
+      margin-right: 0;
+    }
   }
 
 .uppy-DashboardTab-name {
@@ -387,13 +384,13 @@
 
 // On SVG sizing: https://sarasoueidan.com/blog/svg-style-inheritance-and-FOUSVG/
 .uppy-DashboardTab svg {
-  width: 18px;
-  height: 18px;
+  width: 23px;
+  height: 23px;
   vertical-align: middle;
 
   .uppy-size--md & {
-    width: 27px;
-    height: 27px;
+    width: 30px;
+    height: 30px;
   }
 }
 
@@ -609,11 +606,11 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   flex: 1;
-}
 
-  .uppy-size--md .uppy-Dashboard-files {
+  .uppy-size--md & {
     padding-top: 10px;
   }
+}
 
 .uppy-Dashboard-dropFilesHereHint {
   display: flex;
@@ -651,25 +648,93 @@
   }
 }
 
-.uppy-Dashboard-dropFilesTitle {
-  max-width: 300px;
-  text-align: center;
-  font-size: 16px;
-  line-height: 1.35;
-  font-weight: 400;
-  color: $gray-700;
-  margin: auto;
+.uppy-Dashboard-dropFilesIcon {
+  display: none;
+  margin-bottom: 15px;
+
+  .uppy-size--md.uppy-size--height-md & {
+    display: block;
+  }
+}
+
+.uppy-Dashboard-dropFilesTitleGroup {
   padding: 0 15px;
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: 0%;
+  max-width: 300px;
+  // display: flex;
 
   .uppy-size--md & {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0%;
     // wider, to accomodate for different translations
     max-width: 470px;
     font-size: 27px;
+    text-align: center;
+    margin: auto;
+  }
+}
+
+.uppy-Dashboard-dropFilesTitle {
+  // display: none;
+  font-size: 18px;
+  line-height: 1.15;
+  font-weight: 500;
+  color: $black;
+  margin-top: 15px;
+  margin-bottom: 5px;
+
+  .uppy-size--md & {
+    display: block;
+    font-size: 25px;
+    margin-top: 5px;
+  }
+}
+
+.uppy-Dashboard-dropFilesSubtitle {
+  display: none;
+  font-size: 16px;
+  line-height: 1.35;
+  font-weight: 300;
+  color: $gray-700;
+
+  .uppy-size--md & {
+    display: block;
+  }
+}
+
+.uppy-Dashboard-dropFilesMobileTitle {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: $gray-600;
+  text-align: left;
+  padding: 0 15px;
+  margin-top: 10px;
+
+  .uppy-size--md & {
+    display: none;
+  }
+}
+
+.uppy-Dashboard-dropFilesSingleInlineProvider {
+  @include clear-focus;
+  font-size: 16px;
+  cursor: pointer;
+  color: rgba($blue, 0.9);
+
+  svg {
+    display: inline-block;
+    vertical-align: text-bottom;
+    width: 18px;
+    height: 18px;
+    margin-left: 4px;
+  }
+
+  span:hover, &:focus span {
+    border-bottom: 1px solid $blue;
   }
 }
 

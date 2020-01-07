@@ -25,23 +25,29 @@ function TransitionWrapper (props) {
 }
 
 module.exports = function Dashboard (props) {
-  const noFiles = props.totalFileCount === 0
+  const WIDTH_XL = 900
+  const WIDTH_LG = 700
+  const WIDTH_MD = 576
+  const HEIGHT_MD = 400
 
-  const dashboardClassName = classNames(
-    { 'uppy-Root': props.isTargetDOMEl },
-    'uppy-Dashboard',
-    { 'Uppy--isTouchDevice': isTouchDevice() },
-    { 'uppy-Dashboard--animateOpenClose': props.animateOpenClose },
-    { 'uppy-Dashboard--isClosing': props.isClosing },
-    { 'uppy-Dashboard--isDraggingOver': props.isDraggingOver },
-    { 'uppy-Dashboard--modal': !props.inline },
-    { 'uppy-size--md': props.containerWidth > 576 },
-    { 'uppy-size--lg': props.containerWidth > 700 },
-    { 'uppy-size--xl': props.containerWidth > 900 },
-    { 'uppy-size--height-md': props.containerHeight > 400 },
-    { 'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel },
-    { 'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible }
-  )
+  const noFiles = props.totalFileCount === 0
+  const isSizeMD = props.containerWidth > WIDTH_MD
+
+  const dashboardClassName = classNames({
+    'uppy-Root': props.isTargetDOMEl,
+    'uppy-Dashboard': true,
+    'Uppy--isTouchDevice': isTouchDevice(),
+    'uppy-Dashboard--animateOpenClose': props.animateOpenClose,
+    'uppy-Dashboard--isClosing': props.isClosing,
+    'uppy-Dashboard--isDraggingOver': props.isDraggingOver,
+    'uppy-Dashboard--modal': !props.inline,
+    'uppy-size--md': props.containerWidth > WIDTH_MD,
+    'uppy-size--lg': props.containerWidth > WIDTH_LG,
+    'uppy-size--xl': props.containerWidth > WIDTH_XL,
+    'uppy-size--height-md': props.containerHeight > HEIGHT_MD,
+    'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel,
+    'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible
+  })
 
   return (
     <div
@@ -86,13 +92,13 @@ module.exports = function Dashboard (props) {
           {(!noFiles && props.showSelectedFiles) && <PanelTopBar {...props} />}
 
           {props.showSelectedFiles ? (
-            noFiles ? <AddFiles {...props} /> : <FileList {...props} />
+            noFiles ? <AddFiles {...props} isSizeMD={isSizeMD} /> : <FileList {...props} />
           ) : (
-            <AddFiles {...props} />
+            <AddFiles {...props} isSizeMD={isSizeMD} />
           )}
 
           <TransitionWrapper>
-            {props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} /> : null}
+            {props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} isSizeMD={isSizeMD} /> : null}
           </TransitionWrapper>
 
           <TransitionWrapper>
