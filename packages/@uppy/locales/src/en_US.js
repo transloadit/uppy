@@ -1,13 +1,13 @@
 const en_US = {}
 
 en_US.strings = {
+  addBulkFilesFailed: {
+    '0': 'Failed to add %{smart_count} file due to an internal error',
+    '1': 'Failed to add %{smart_count} files due to internal errors'
+  },
   addMore: 'Add more',
   addMoreFiles: 'Add more files',
   addingMoreFiles: 'Adding more files',
-  addBulkFilesFailed: {
-    0: 'Failed to add %{smart_count} file due to an internal error',
-    1: 'Failed to add %{smart_count} files due to internal errors'
-  },
   allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
   allowAccessTitle: 'Please allow access to your camera',
   authenticateWith: 'Connect to %{pluginName}',
