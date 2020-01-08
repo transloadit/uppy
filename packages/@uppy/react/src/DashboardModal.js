@@ -20,6 +20,11 @@ class DashboardModal extends React.Component {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
     }
+    if (prevProps.open && !this.props.open) {
+      this.plugin.closeModal()
+    } else if (!prevProps.open && this.props.open) {
+      this.plugin.openModal()
+    }
   }
 
   componentWillUnmount () {
@@ -53,14 +58,6 @@ class DashboardModal extends React.Component {
     const uppy = props.uppy
 
     uppy.removePlugin(this.plugin)
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (this.props.open && !nextProps.open) {
-      this.plugin.closeModal()
-    } else if (!this.props.open && nextProps.open) {
-      this.plugin.openModal()
-    }
   }
 
   render () {
