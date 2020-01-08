@@ -1,39 +1,17 @@
-import { Uppy, Locale } from './CommonTypes';
+import { ToUppyProps } from './CommonTypes'
+import Dashboard = require('@uppy/dashboard')
 
-interface MetaField {
-  id: string;
-  name: string;
-  placeholder?: string;
-}
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
-export interface DashboardProps {
-  uppy: Uppy;
-  inline?: boolean;
-  plugins?: Array<string>;
-  trigger?: string;
-  width?: number;
-  height?: number;
-  showLinkToFileUploadResult?: boolean;
-  showProgressDetails?: boolean;
-  hideUploadButton?: boolean;
-  hideRetryButton?: boolean;
-  hidePauseResumeButton?: boolean;
-  hideCancelButton?: boolean;
-  hideProgressAfterFinish?: boolean;
-  showSelectedFiles?: boolean;
-  note?: string;
-  metaFields?: Array<MetaField>;
-  proudlyDisplayPoweredByUppy?: boolean;
-  disableStatusBar?: boolean;
-  disableInformer?: boolean;
-  disableThumbnailGenerator?: boolean;
-  thumbnailWidth?: number;
-  locale?: Locale;
-}
+export type DashboardProps = Omit<
+  ToUppyProps<Dashboard.DashboardOptions>,
+  // Remove the modal-only props
+  'inline' | 'browserBackButtonClose' | 'onRequestCloseModal'
+>
 
 /**
  * React Component that renders a Dashboard for an Uppy instance. This component
- * renders the Dashboard inline; so you can put it anywhere you want.
+ * renders the Dashboard inline so you can put it anywhere you want.
  */
-declare const Dashboard: React.ComponentType<DashboardProps>;
-export default Dashboard;
+declare const DashboardComponent: React.ComponentType<DashboardProps>
+export default DashboardComponent
