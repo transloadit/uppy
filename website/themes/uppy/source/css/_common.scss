@@ -221,33 +221,35 @@ hr {
   font-weight: 700;
 
   @media #{$screen-medium} {
-    margin-right: 35px;
+    margin-right: 15px;
   }
 
   &-link {
     color: $color-primary;
   }
 
-  &-version {
-    display: inline-block;
-    padding: 0px 8px 1px;
-    background-color: $color-primary;
-    position: relative;
-    border-radius: 6px;
-    color: #fff;
-    font-size: 24px;
+  // Was used for 1.0, we can re-use for 2.0 or major announcements
+  // 
+  // &-version {
+  //   display: inline-block;
+  //   padding: 0px 8px 1px;
+  //   background-color: $color-primary;
+  //   position: relative;
+  //   border-radius: 6px;
+  //   color: #fff;
+  //   font-size: 24px;
 
-    &:hover {
-      background-color: darken($color-primary, 7%);
-    }
-  }
+  //   &:hover {
+  //     background-color: darken($color-primary, 7%);
+  //   }
+  // }
 
-  &-emoji {
-    font-size: 16px;
-    position: absolute;
-    bottom: 3px;
-    right: -1em;
-  }
+  // &-emoji {
+  //   font-size: 16px;
+  //   position: absolute;
+  //   bottom: 3px;
+  //   right: -1em;
+  // }
 }
 
 /**
