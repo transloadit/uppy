@@ -1,6 +1,6 @@
-const en_US = {}
+const vi_VN = {}
 
-en_US.strings = {
+vi_VN.strings = {
   addMore: 'Thêm',
   addMoreFiles: 'Thêm tập tin',
   addingMoreFiles: 'Đang thêm các tập tin',
@@ -141,7 +141,7 @@ en_US.strings = {
   }
 }
 
-en_US.pluralize = function (n) {
+vi_VN.pluralize = function (n) {
   if (n === 1) {
     return 0
   }
@@ -149,7 +149,7 @@ en_US.pluralize = function (n) {
 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.en_US = en_US
+  window.Uppy.locales.vi_VN = vi_VN
 }
 
-module.exports = en_US
+module.exports = vi_VN
