@@ -17,9 +17,7 @@
   .uppy-size--md & {
     // For the Remove button
     position: relative;
-
-    display: block;
-    float: left;
+    display: inline-block;
     margin: 5px $rl-margin;
     width: calc(33.333% - #{$rl-margin} - #{$rl-margin});
     height: 215px;
