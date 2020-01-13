@@ -1,13 +1,16 @@
-import { ToUppyProps } from './CommonTypes'
+import { Omit, ToUppyProps } from './CommonTypes'
 import Dashboard = require('@uppy/dashboard')
 
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
-
-export type DashboardProps = Omit<
+// This type is mapped into `DashboardProps` below so IntelliSense doesn't display this big mess of nested types
+type DashboardPropsInner = Omit<
   ToUppyProps<Dashboard.DashboardOptions>,
   // Remove the modal-only props
-  'inline' | 'browserBackButtonClose' | 'onRequestCloseModal'
+  'animateOpenClose' | 'browserBackButtonClose' | 'inline' | 'onRequestCloseModal' | 'trigger'
 >
+
+export type DashboardProps = {
+   [K in keyof DashboardPropsInner]: DashboardPropsInner[K]
+}
 
 /**
  * React Component that renders a Dashboard for an Uppy instance. This component
