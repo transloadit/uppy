@@ -138,9 +138,9 @@ declare module '@uppy/utils/lib/getETA' {
 }
 
 declare module '@uppy/utils/lib/getFileNameAndExtension' {
-  function getFileNameAndExtension (
+  function getFileNameAndExtension(
     filename: string
-  ): { name: string; extension: string }
+  ): { name: string, extension: string | undefined };
   export = getFileNameAndExtension
 }
 

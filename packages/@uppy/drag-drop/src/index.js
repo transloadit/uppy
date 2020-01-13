@@ -44,11 +44,11 @@ module.exports = class DragDrop extends Plugin {
     this.i18nInit()
 
     // Bind `this` to class methods
-    this.handleInputChange = this.handleInputChange.bind(this)
+    this.onInputChange = this.onInputChange.bind(this)
     this.handleDragOver = this.handleDragOver.bind(this)
     this.handleDragLeave = this.handleDragLeave.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
-    this.addFile = this.addFile.bind(this)
+    this.addFiles = this.addFiles.bind(this)
     this.render = this.render.bind(this)
   }
 
@@ -64,28 +64,30 @@ module.exports = class DragDrop extends Plugin {
     this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
-  addFile (file) {
-    try {
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: file,
-        meta: {
-          relativePath: file.relativePath || null
-        }
-      })
-    } catch (err) {
-      if (!err.isRestriction) {
-        this.uppy.log(err)
+  addFiles (files) {
+    const descriptors = files.map((file) => ({
+      source: this.id,
+      name: file.name,
+      type: file.type,
+      data: file,
+      meta: {
+        // path of the file relative to the ancestor directory the user selected.
+        // e.g. 'docs/Old Prague/airbnb.pdf'
+        relativePath: file.relativePath || null
       }
+    }))
+
+    try {
+      this.uppy.addFiles(descriptors)
+    } catch (err) {
+      this.uppy.log(err)
     }
   }
 
-  handleInputChange (event) {
+  onInputChange (event) {
     this.uppy.log('[DragDrop] Files selected through input')
     const files = toArray(event.target.files)
-    files.forEach(this.addFile)
+    this.addFiles(files)
 
     // We clear the input after a file is selected, because otherwise
     // change event is not fired in Chrome and Safari when a file
@@ -110,9 +112,7 @@ module.exports = class DragDrop extends Plugin {
       this.uppy.log(error, 'error')
     }
     getDroppedFiles(event.dataTransfer, { logDropError })
-      .then((files) => {
-        files.forEach(this.addFile)
-      })
+      .then((files) => this.addFiles(files))
   }
 
   handleDragOver (event) {
@@ -150,7 +150,7 @@ module.exports = class DragDrop extends Plugin {
         name={this.opts.inputName}
         multiple={restrictions.maxNumberOfFiles !== 1}
         accept={restrictions.allowedFileTypes}
-        onchange={this.handleInputChange}
+        onchange={this.onInputChange}
       />
     )
   }
