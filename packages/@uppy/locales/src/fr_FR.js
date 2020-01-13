@@ -142,7 +142,7 @@ fr_FR.strings = {
     '0': 'Vous devez sélectionner au moins %{smart_count} fichier',
     '1': 'Vous devez sélectionner au moins %{smart_count} fichiers',
     '2': 'Vous devez sélectionner au moins %{smart_count} fichiers'
-  },
+  }
 }
 
 fr_FR.pluralize = function (n) {
