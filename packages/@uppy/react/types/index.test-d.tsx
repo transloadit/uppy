@@ -1,4 +1,4 @@
-import React from 'react'
+import React = require('react')
 import Uppy = require('@uppy/core')
 import { expectError } from 'tsd'
 import * as components from '../'
