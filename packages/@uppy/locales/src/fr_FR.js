@@ -11,7 +11,7 @@ fr_FR.strings = {
   allowAccessDescription: 'Pour prendre des photos ou enregistrer une vidéo avec votre caméra, veuillez autoriser l\'accès à votre caméra pour ce site.',
   allowAccessTitle: 'Veuillez autoriser l\'accès à votre caméra',
   authenticateWith: 'Se connecter à %{pluginName}',
-  authenticateWithTitle: 'Veuillez vous connecter à %{pluginName} pour sélectionner les fichiers',
+  authenticateWithTitle: 'Veuillez vous authentifier avec %{pluginName} pour sélectionner les fichiers',
   back: 'Retour',
   browse: 'naviguer',
   cancel: 'Annuler',
