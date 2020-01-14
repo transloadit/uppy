@@ -46,7 +46,10 @@ module.exports = class Client {
       if (assembly.error) {
         const error = new Error(assembly)
         error.message = assembly.error
-        error.details = `${assembly.message} Assembly ID: ${assembly.assembly_id}`
+        error.details = assembly.message
+        if (assembly.assembly_id) {
+          error.details += ' ' + `assembly_id: ${assembly.assembly_id}`
+        }
         throw error
       }
 

@@ -457,16 +457,32 @@ class Uppy {
     }
   }
 
-  _showOrLogErrorAndThrow (err, { showInformer = true, file = null } = {}) {
+  /**
+   * Logs an error, sets Informer message, then throws the error.
+   * Emits a 'restriction-failed' event if it’s a restriction error
+   *
+   * @param {object | string} err — Error object or plain string message
+   * @param {object} [options]
+   * @param {boolean} [options.showInformer=true] — Sometimes developer might want to show Informer manually
+   * @param {object} [options.file=null] — File object used to emit the restriction error
+   * @param {boolean} [options.throwErr=true] — Errors shouldn’t be thrown, for example, in `upload-error` event
+   * @private
+   */
+  _showOrLogErrorAndThrow (err, { showInformer = true, file = null, throwErr = true } = {}) {
     const message = typeof err === 'object' ? err.message : err
     const details = (typeof err === 'object' && err.details) ? err.details : ''
+
     // Restriction errors should be logged, but not as errors,
     // as they are expected and shown in the UI.
+    let logMessageWithDetails = message
+    if (details) {
+      logMessageWithDetails += ' ' + details
+    }
     if (err.isRestriction) {
-      this.log(`${message} ${details}`)
+      this.log(logMessageWithDetails)
       this.emit('restriction-failed', file, err)
     } else {
-      this.log(`${message}; ${details}`, 'error')
+      this.log(logMessageWithDetails)
     }
 
     // Sometimes informer has to be shown manually by the developer,
@@ -475,7 +491,9 @@ class Uppy {
       this.info({ message: message, details: details }, 'error', 5000)
     }
 
-    throw (typeof err === 'object' ? err : new Error(err))
+    if (throwErr) {
+      throw (typeof err === 'object' ? err : new Error(err))
+    }
   }
 
   /**
@@ -832,11 +850,18 @@ class Uppy {
 
       if (typeof error === 'object' && error.message) {
         const newError = new Error(error.message)
-        newError.details = `${error.message}: ${error.details}`
+        newError.details = error.message
+        if (error.details) {
+          newError.details += ' ' + error.details
+        }
         newError.message = this.i18n('failedToUpload', { file: file.name })
-        this._showOrLogErrorAndThrow(newError)
+        this._showOrLogErrorAndThrow(newError, {
+          throwErr: false
+        })
       } else {
-        this._showOrLogErrorAndThrow(error)
+        this._showOrLogErrorAndThrow(error, {
+          throwErr: false
+        })
       }
       // this.info(message, 'error', 5000)
     })
