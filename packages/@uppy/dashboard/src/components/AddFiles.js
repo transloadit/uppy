@@ -1,4 +1,6 @@
+const { localIcon } = require('./icons')
 const { h, Component } = require('preact')
+const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 
 class AddFiles extends Component {
   constructor (props) {
@@ -72,65 +74,91 @@ class AddFiles extends Component {
     )
   }
 
-  renderDropPasteBrowseTagline () {
-    const browse =
-      <button
-        type="button"
-        class="uppy-u-reset uppy-Dashboard-browse"
-        onclick={this.triggerFileInputClick}
-        data-uppy-super-focusable
-      >
-        {this.props.i18n('browse')}
-      </button>
-
-    const renderSingleInlineProvider = (acquirer) => {
-      return (
+  renderMyDeviceAcquirer () {
+    return (
+      <div class="uppy-DashboardTab" role="presentation">
         <button
           type="button"
-          class="uppy-u-reset uppy-Dashboard-dropFilesSingleInlineProvider"
+          class="uppy-DashboardTab-btn"
+          role="tab"
           tabindex={0}
-          aria-controls={`uppy-DashboardContent-panel--${acquirer.id}`}
-          aria-selected={this.props.activePickerPanel.id === acquirer.id}
           data-uppy-super-focusable
-          onclick={() => this.props.showPanel(acquirer.id)}
+          onclick={this.triggerFileInputClick}
         >
-          <span>{acquirer.name}</span>
-          {acquirer.icon()}
+          {localIcon()}
+          <div class="uppy-DashboardTab-name">{this.props.i18n('myDevice')}</div>
         </button>
-      )
-    }
-
-    const renderDropFilesSubtitle = () => {
-      switch (this.props.acquirers.length) {
-        case 0:
-          return this.props.i18nArray('dropPaste', { browse })
-        case 1:
-          return this.props.i18nArray('dropPasteImportSingleProvider', {
-            browse: browse,
-            provider: renderSingleInlineProvider(this.props.acquirers[0])
-          })
-        default:
-          return this.props.i18nArray('dropPasteImport', { browse })
-      }
-    }
-
-    return (
-      <div class="uppy-Dashboard-dropFilesTitleGroup">
-        <div class="uppy-Dashboard-dropFilesTitle">
-          {this.props.isSizeMD ? this.props.i18n('dropFilesHere') : this.props.i18n('dropFilesHerePasteOr')}
-        </div>
-        <div class="uppy-Dashboard-dropFilesSubtitle">
-          {renderDropFilesSubtitle()}
-        </div>
       </div>
     )
   }
 
-  renderBrowseButtonMobile () {
+  renderDropPasteBrowseTagline () {
+    // const browse =
+    //   <button
+    //     type="button"
+    //     class="uppy-u-reset uppy-Dashboard-browse"
+    //     onclick={this.triggerFileInputClick}
+    //     data-uppy-super-focusable
+    //   >
+    //     {this.props.i18n('browse')}
+    //   </button>
+
+    // const renderSingleInlineProvider = (acquirer) => {
+    //   const onclick = acquirer.id === 'local'
+    //     ? this.triggerFileInputClick
+    //     : () => this.props.showPanel(acquirer.id)
+
+    //   return (
+    //     <button
+    //       type="button"
+    //       class="uppy-u-reset uppy-Dashboard-dropFilesSingleInlineProvider"
+    //       tabindex={0}
+    //       aria-controls={`uppy-DashboardContent-panel--${acquirer.id}`}
+    //       aria-selected={this.props.activePickerPanel.id === acquirer.id}
+    //       data-uppy-super-focusable
+    //       onclick={onclick}
+    //     >
+    //       <span>{acquirer.name}</span>
+    //       {acquirer.icon()}
+    //     </button>
+    //   )
+    // }
+
+    const renderDropFilesSubtitle = () => {
+      switch (this.props.acquirers.length) {
+        case 0:
+          return this.props.i18nArray('dropPasteOrBrowse', { browse: this.renderBrowseButton() })
+        // case 1:
+          // return this.props.i18nArray('dropPasteImportSingleProvider', {
+          //   browse: browse,
+          //   provider: renderSingleInlineProvider(this.props.acquirers[0])
+          // })
+        default:
+          return this.props.i18nArray('dropFilesHere')
+      }
+    }
+
+    console.log(isDragDropSupported())
+
+    return (
+      <div class="uppy-Dashboard-dropFilesTitleGroup">
+        <div class="uppy-Dashboard-dropFilesTitle">
+          {/* {this.props.isSizeMD ? this.props.i18n('dropFilesHere') : this.props.i18n('dropFilesHerePasteOr')} */}
+          {/* {this.props.i18n('dropFilesHere')} */}
+          {renderDropFilesSubtitle()}
+        </div>
+        {/* <div class="uppy-Dashboard-dropFilesSubtitle">
+          {renderDropFilesSubtitle()}
+        </div> */}
+      </div>
+    )
+  }
+
+  renderBrowseButton () {
     return (
       <button
         type="button"
-        class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-browseBtnMobile"
+        class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-browseBtn"
         onclick={this.triggerFileInputClick}
         data-uppy-super-focusable
       >
@@ -167,6 +195,7 @@ class AddFiles extends Component {
 
     return (
       <div class="uppy-DashboardTabs-list" role="tablist">
+        {this.renderMyDeviceAcquirer()}
         {acquirersWithoutLastTwo.map((acquirer) => this.renderAcquirer(acquirer))}
         <nobr>
           {lastTwoAcquirers.map((acquirer) => this.renderAcquirer(acquirer))}
@@ -178,21 +207,16 @@ class AddFiles extends Component {
   render () {
     return (
       <div class="uppy-DashboardAddFiles">
-        {this.renderCloudIcon()}
+        {/* {this.renderCloudIcon()} */}
         {this.renderHiddenFileInput()}
         <div class="uppy-DashboardTabs">
           {this.renderDropPasteBrowseTagline()}
-          {!this.props.isSizeMD && this.renderBrowseButtonMobile()}
           {/* {this.props.acquirers.length > 0 && (
             <div class="uppy-Dashboard-dropFilesMobileTitle">
               {this.props.i18n('orImportFrom')}
             </div>
           )} */}
-          {
-            this.props.isSizeMD
-              ? this.props.acquirers.length > 1 && this.renderAcquirers(this.props.acquirers)
-              : this.renderAcquirers(this.props.acquirers)
-          }
+          {this.props.acquirers.length > 0 && this.renderAcquirers(this.props.acquirers)}
           <div class="uppy-DashboardAddFiles-info">
             {this.props.note && <div class="uppy-Dashboard-note">{this.props.note}</div>}
             {this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy(this.props)}

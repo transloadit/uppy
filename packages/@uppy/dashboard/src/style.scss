@@ -196,7 +196,6 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: 100%;
   max-height: 100%;
   position: relative;
   text-align: center;
@@ -247,7 +246,7 @@
 
   .uppy-size--md & {
     position: absolute;
-    bottom: 30px;
+    bottom: 25px;
     left: 0;
     right: 0;
     padding-top: 30px;
@@ -255,28 +254,31 @@
   }
 }
 
-.uppy-Dashboard-browse {
-  @include clear-focus;
-  cursor: pointer;
-  color: rgba($blue, 0.9);
+// .uppy-Dashboard-browse {
+//   @include clear-focus;
+//   cursor: pointer;
+//   color: rgba($blue, 0.9);
 
-  &:hover, &:focus {
-    border-bottom: 1px solid $blue;
-  }
-}
+//   &:hover, &:focus {
+//     border-bottom: 1px solid $blue;
+//   }
+// }
 
-// Shown only on mobile / small screens
-.uppy-Dashboard-browseBtnMobile {
-  font-size: 13px;
+.uppy-Dashboard-browseBtn {
+  display: block;
+  font-size: 14px;
   font-weight: 500;
-  margin-left: 15px;
-  margin-right: 15px;
   margin-top: 8px;
   margin-bottom: 5px;
+  width: 100%;
 
   .uppy-size--md & {
+    font-size: 15px;
+    width: auto;
+    margin: auto;
     margin-top: 15px;
     margin-bottom: 15px;
+    padding: 13px 44px;
   }
 }
 
@@ -295,7 +297,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    max-width: 700px;
+    max-width: 600px;
     overflow-y: initial;
     margin-top: 15px;
     padding-top: 0;
@@ -659,7 +661,8 @@
 
 .uppy-Dashboard-dropFilesTitleGroup {
   padding: 0 15px;
-  max-width: 300px;
+  max-width: 270px;
+  margin: auto;
   // display: flex;
 
   .uppy-size--md & {
@@ -670,7 +673,7 @@
     flex-shrink: 1;
     flex-basis: 0%;
     // wider, to accomodate for different translations
-    max-width: 470px;
+    max-width: 450px;
     font-size: 27px;
     text-align: center;
     margin: auto;
@@ -679,9 +682,9 @@
 
 .uppy-Dashboard-dropFilesTitle {
   // display: none;
-  font-size: 18px;
-  line-height: 1.15;
-  font-weight: 500;
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 400;
   color: $black;
   margin-top: 15px;
   margin-bottom: 5px;
@@ -721,15 +724,15 @@
 
 .uppy-Dashboard-dropFilesSingleInlineProvider {
   @include clear-focus;
-  font-size: 16px;
+  // font-size: 16px;
   cursor: pointer;
   color: rgba($blue, 0.9);
 
   svg {
     display: inline-block;
-    vertical-align: text-bottom;
-    width: 18px;
-    height: 18px;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
     margin-left: 4px;
   }
 
@@ -748,7 +751,7 @@
   padding: 0 15px;
 
   .uppy-size--md & {
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.35;
     max-width: 600px;
   }
