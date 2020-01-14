@@ -66,6 +66,7 @@
     "@uppy/utils": "file:packages/@uppy/utils",
     "@uppy/webcam": "file:packages/@uppy/webcam",
     "@uppy/xhr-upload": "file:packages/@uppy/xhr-upload",
+    "js-sha1": "^0.6.0",
     "uppy": "file:packages/uppy",
     "uppy.io": "file:website"
   },

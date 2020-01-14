@@ -80,7 +80,7 @@ class B2Uploader {
       if (this.isMultiPart) {
         return this.options.createMultipartUpload()
       } else {
-        return { isMultiPart: true } // single-part upload doesn't require cancellation
+        return { isMultiPart: false } // single-part upload doesn't require cancellation
       }
     })
 

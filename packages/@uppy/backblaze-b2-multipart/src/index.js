@@ -148,7 +148,6 @@ module.exports = class BackblazeB2Multipart extends Plugin {
             b2Multipart: {
               ...cFile.b2Multipart,
               fileId: data.fileId,
-              isMultiPart: data.isMultiPart || false,
               parts: []
             }
           })
