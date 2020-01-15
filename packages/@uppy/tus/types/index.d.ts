@@ -1,15 +1,19 @@
 import Uppy = require('@uppy/core')
+import { UploadOptions } from 'tus-js-client'
 
 declare module Tus {
-  export interface TusOptions extends Uppy.PluginOptions {
-    resume?: boolean
-    removeFingerprintOnSuccess?: boolean
-    endpoint?: string
-    headers?: object
-    chunkSize?: number
-    withCredentials?: boolean
-    overridePatchMethod?: boolean
-    retryDelays?: number[]
+  type TusUploadOptions = Pick<UploadOptions, Exclude<keyof UploadOptions,
+    | 'fingerprint'
+    | 'metadata'
+    | 'onProgress'
+    | 'onChunkComplete'
+    | 'onSuccess'
+    | 'onError'
+    | 'uploadUrl'
+    | 'uploadSize'
+  >>
+
+  export interface TusOptions extends Uppy.PluginOptions, TusUploadOptions {
     metaFields?: string[] | null
     autoRetry?: boolean
     limit?: number

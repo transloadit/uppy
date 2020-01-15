@@ -22,6 +22,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@types/tus-js-client": "^1.8.0",
     "@uppy/companion-client": "file:../companion-client",
     "@uppy/utils": "file:../utils",
     "tus-js-client": "^1.8.0"
