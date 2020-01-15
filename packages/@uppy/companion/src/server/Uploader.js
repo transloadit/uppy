@@ -518,7 +518,7 @@ class Uploader {
 
     const upload = client.upload({
       Bucket: options.bucket,
-      Key: options.getKey(null, filename),
+      Key: options.getKey(null, filename, this.options.metadata),
       ACL: options.acl,
       ContentType: this.options.metadata.type,
       Body: stream
