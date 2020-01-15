@@ -1,11 +1,16 @@
 import Uppy = require('@uppy/core')
 
 declare module FileInput {
-  interface FileInputOptions extends Uppy.PluginOptions {
+  export type FileInputLocale = Uppy.Locale<
+    | 'chooseFiles'
+  >
+
+  export interface FileInputOptions extends Uppy.PluginOptions {
     replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
     pretty?: boolean
     inputName?: string
+    locale?: FileInputLocale
   }
 }
 

@@ -1,4 +1,5 @@
 import Uppy = require('@uppy/core')
+import StatusBar = require('@uppy/status-bar')
 
 interface MetaField {
   id: string
@@ -7,58 +8,44 @@ interface MetaField {
 }
 
 declare module Dashboard {
-  interface DashboardLocale {
-    strings: {
-      closeModal: string
-      importFrom: string
-      addingMoreFiles: string
-      addMoreFiles: string
-      dashboardWindowTitle: string
-      dashboardTitle: string
-      copyLinkToClipboardSuccess: string
-      copyLinkToClipboardFallback: string
-      copyLink: string
-      link: string
-      fileSource: string
-      done: string
-      back: string
-      addMore: string
-      removeFile: string
-      editFile: string
-      editing: string
-      edit: string
-      finishEditingFile: string
-      saveChanges: string
-      cancel: string
-      myDevice: string
-      dropPasteImport: string
-      dropPaste: string
-      dropHint: string
-      browse: string
-      uploadComplete: string
-      uploadPaused: string
-      resumeUpload: string
-      pauseUpload: string
-      retryUpload: string
-      cancelUpload: string
-      xFilesSelected: {
-        0: string
-        1: string
-        2: string
-      }
-      uploadingXFiles: {
-        0: string
-        1: string
-        2: string
-      }
-      processingXFiles: {
-        0: string
-        1: string
-        2: string
-      }
-      poweredBy: string
-    }
-  }
+  type DashboardLocale = Uppy.Locale<
+    | 'closeModal'
+    | 'importFrom'
+    | 'addingMoreFiles'
+    | 'addMoreFiles'
+    | 'dashboardWindowTitle'
+    | 'dashboardTitle'
+    | 'copyLinkToClipboardSuccess'
+    | 'copyLinkToClipboardFallback'
+    | 'copyLink'
+    | 'link'
+    | 'fileSource'
+    | 'done'
+    | 'back'
+    | 'addMore'
+    | 'removeFile'
+    | 'editFile'
+    | 'editing'
+    | 'edit'
+    | 'finishEditingFile'
+    | 'saveChanges'
+    | 'cancel'
+    | 'myDevice'
+    | 'dropPasteImport'
+    | 'dropPaste'
+    | 'dropHint'
+    | 'browse'
+    | 'uploadComplete'
+    | 'uploadPaused'
+    | 'resumeUpload'
+    | 'pauseUpload'
+    | 'retryUpload'
+    | 'cancelUpload'
+    | 'xFilesSelected'
+    | 'uploadingXFiles'
+    | 'processingXFiles'
+    | 'poweredBy'
+  >
 
   interface DashboardOptions extends Uppy.PluginOptions {
     animateOpenClose?: boolean
@@ -76,7 +63,7 @@ declare module Dashboard {
     hideRetryButton?: boolean
     hideUploadButton?: boolean
     inline?: boolean
-    locale?: DashboardLocale
+    locale?: DashboardLocale & StatusBar.StatusBarLocale
     metaFields?: MetaField[]
     note?: string | null
     onRequestCloseModal?: () => void

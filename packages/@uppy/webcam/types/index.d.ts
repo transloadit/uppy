@@ -7,6 +7,16 @@ declare module Webcam {
     | 'audio-only'
     | 'picture'
 
+  export type WebcamLocale = Uppy.Locale<
+    | 'smile'
+    | 'takePicture'
+    | 'startRecording'
+    | 'stopRecording'
+    | 'allowAccessTitle'
+    | 'allowAccessDescription'
+    | 'recordingLength'
+  >
+
   export interface WebcamOptions extends Uppy.PluginOptions {
     replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
@@ -15,6 +25,7 @@ declare module Webcam {
     mirror?: boolean
     facingMode?: string
     modes?: WebcamMode[]
+    locale?: WebcamLocale
   }
 }
 

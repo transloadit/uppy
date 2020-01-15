@@ -1,6 +1,12 @@
 import Uppy = require('@uppy/core')
 
 declare module Transloadit {
+  type TransloaditLocale = Uppy.Locale<
+    | 'creatingAssembly'
+    | 'creatingAssemblyFailed'
+    | 'encoding'
+  >
+
   interface AssemblyParameters {
     auth: { key: string }
     template_id?: string
@@ -21,6 +27,7 @@ declare module Transloadit {
     waitForMetadata?: boolean
     importFromUploadURLs?: boolean
     alwaysRunAssembly?: boolean
+    locale?: TransloaditLocale
   }
 
   // Either have a getAssemblyOptions() that returns an AssemblyOptions, *or* have them embedded in the options

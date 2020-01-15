@@ -64,11 +64,11 @@ declare module Uppy {
     uninstall(): void
   }
 
-  interface LocaleStrings {
-    [key: string]: string | LocaleStrings
+  type LocaleStrings<TNames extends string> = {
+    [Key in keyof TNames]: string | { [n: number]: string }
   }
-  interface Locale {
-    strings: LocaleStrings
+  interface Locale<TNames extends string = string> {
+    strings: LocaleStrings<TNames>
     pluralize?: (n: number) => number
   }
 

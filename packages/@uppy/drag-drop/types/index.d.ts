@@ -1,6 +1,11 @@
 import Uppy = require('@uppy/core')
 
 declare module DragDrop {
+  type DragDropLocale = Uppy.Locale<
+    | 'dropHereOr'
+    | 'browse'
+  >
+
   interface DragDropOptions extends Uppy.PluginOptions {
     replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
@@ -9,6 +14,7 @@ declare module DragDrop {
     width?: string
     height?: string
     note?: string
+    locale?: DragDropLocale
   }
 }
 
