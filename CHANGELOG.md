@@ -100,14 +100,14 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
 - [ ] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861
 - [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53
+- [ ] core: change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
 
 # next
 
-## 1.8
+## 1.9
 
 - [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
 - [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
-- [ ] core: possibly change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
 - [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
 - [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
@@ -123,6 +123,27 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] website: Adopt bcp-47 to handle and parse locales (@kvz, https://github.com/meikidd/iso-639-1/issues/19, https://tools.ietf.org/html/bcp47, https://github.com/wooorm/bcp-47)
+
+## 1.8.0
+
+Released: 2019-01-15
+
+- @uppy/aws-s3-multipart: add optional headers for signed url (@ardeois, #1985)
+- @uppy/aws-s3: fix crash when S3 response does not have a Content-Type header (@roenschg, #2012)
+- @uppy/companion: also pass metadata to `getKey` for multipart S3 uploads (@goto-bus-stop, #2022)
+- @uppy/companion: dependency updates (@goto-bus-stop, #1983)
+- @uppy/companion: rename internal S3 upload functions for clarity (@goto-bus-stop, [fec7d7d](https://github.com/transloadit/uppy/commit/fec7d7db3a742b347d6c64ee92fa96be73b3a8b1))
+- @uppy/core: improve performance of adding and removing files (@goto-bus-stop, #1949)
+- @uppy/locales: add Korean (@jdssem, #1986)
+- @uppy/locales: add Vietnamese (@thanhthot, #2010)
+- @uppy/locales: update French translations (@olemoign, #2023)
+- @uppy/provider-views: improve instagram video thumbnail display (@arturi, [1d7a584](https://github.com/transloadit/uppy/commit/1d7a58481d9974e0d98cc1a710c5d8ac6ac038e0))
+- @uppy/react: use `componentDidUpdate` instead of `componentWillReceiveProps` (@cryptic022, #1999)
+- @uppy/thumbnail-generator: fix strict mode compatibility (@rlebosse, #1995)
+- @uppy/tus: update TusOptions typings (@darthf1, #1989)
+- @uppy/xhr-upload: do not emit limit warning if an existing rate limit queue was passed (@goto-bus-stop, [3c1a2af](https://github.com/transloadit/uppy/commit/3c1a2afb09576f75e91a19604aa64235710d9238))
+- @uppy/xhr-upload: free item from rate limit queue when upload times out (@rtaieb, #2018)
+- examples: add `npm run example $examplename` script (@goto-bus-stop, [7b2283d](https://github.com/transloadit/uppy/commit/7b2283d8ef25a18dcfa5c618caa50222b8c7e243))
 
 ## 1.7.0
 
