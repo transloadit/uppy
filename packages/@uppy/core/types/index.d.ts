@@ -65,7 +65,7 @@ declare module Uppy {
   }
 
   type LocaleStrings<TNames extends string> = {
-    [Key in keyof TNames]: string | { [n: number]: string }
+    [K in TNames]?: string | { [n: number]: string }
   }
   interface Locale<TNames extends string = string> {
     strings: LocaleStrings<TNames>
