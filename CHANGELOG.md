@@ -128,6 +128,26 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 Released: 2019-01-15
 
+This release adds Korean and Vietnamese localizations, fixes bugs, and significantly improves the performance of adding and removing lots of files. More performance improvements are on the way in the next few releases, too! Thanks to all contributors listed below.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.4.0 | @uppy/onedrive | 0.1.4 |
+| @uppy/aws-s3 | 1.4.1 | @uppy/progress-bar | 1.3.4 |
+| @uppy/companion | 1.8.0 | @uppy/provider-views | 1.5.2 |
+| @uppy/core | 1.7.1 | @uppy/react | 1.4.2 |
+| @uppy/dashboard | 1.5.2 | @uppy/robodog | 1.4.2 |
+| @uppy/drag-drop | 1.4.2 | @uppy/status-bar | 1.4.2 |
+| @uppy/dropbox | 1.3.5 | @uppy/thumbnail-generator | 1.5.2 |
+| @uppy/facebook | 0.2.2 | @uppy/transloadit | 1.4.2 |
+| @uppy/file-input | 1.4.2 | @uppy/tus | 1.5.2 |
+| @uppy/form | 1.3.5 | @uppy/url | 1.4.2 |
+| @uppy/golden-retriever | 1.3.4 | @uppy/utils | 2.1.2 |
+| @uppy/google-drive | 1.3.5 | @uppy/webcam | 1.5.1 |
+| @uppy/informer | 1.3.4 | @uppy/xhr-upload | 1.4.2 |
+| @uppy/instagram | 1.3.5 | uppy | 1.8.0 |
+| @uppy/locales | 1.11.0 | - | - |
+
 - @uppy/aws-s3-multipart: add optional headers for signed url (@ardeois, #1985)
 - @uppy/aws-s3: fix crash when S3 response does not have a Content-Type header (@roenschg, #2012)
 - @uppy/companion: also pass metadata to `getKey` for multipart S3 uploads (@goto-bus-stop, #2022)
