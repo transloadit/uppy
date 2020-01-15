@@ -32,5 +32,33 @@ import Dashboard = require('../')
 
 {
   const uppy = Uppy<Uppy.StrictTypes>()
+  uppy.use(Dashboard, {
+    locale: {
+      strings: {
+        // Dashboard string
+        addMoreFiles: 'yaddayadda',
+        // StatusBar string
+        uploading: '^^^^'
+      }
+    }
+  })
+  expectError(uppy.use(Dashboard, {
+    locale: {
+      strings: {
+        somethingThatDoesNotExist: 'wrong'
+      }
+    }
+  }))
+  const wrongType = 1234
+  expectError(uppy.use(Dashboard, {
+    locale: {
+      strings: {
+        addMoreFiles: wrongType
+      }
+    }
+  }))
+}
+{
+  const uppy = Uppy<Uppy.StrictTypes>()
   expectError(uppy.use(Dashboard, { height: {} }))
 }
