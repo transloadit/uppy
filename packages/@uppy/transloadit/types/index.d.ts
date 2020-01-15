@@ -18,11 +18,13 @@ declare module Transloadit {
 
   interface TransloaditOptionsBase extends Uppy.PluginOptions {
     service?: string
+    errorReporting?: boolean
     waitForEncoding?: boolean
     waitForMetadata?: boolean
     importFromUploadURLs?: boolean
     alwaysRunAssembly?: boolean
     locale?: TransloaditLocale
+    limit?: number
   }
 
   // Either have a getAssemblyOptions() that returns an AssemblyOptions, *or* have them embedded in the options
