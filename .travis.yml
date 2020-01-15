@@ -65,7 +65,8 @@ install:
 - npm ci
 script:
 - 'if [ -n "${LINT-}" ]; then npm run lint; fi'
-- 'if [ -n "${LINT-}" ]; then npm run test:type; fi'
+# Need to do a bunch of work to generate the locale typings 🙃
+- 'if [ -n "${LINT-}" ]; then npm run build:lib && npm run build:companion && npm run build:locale-pack && npm run test:type; fi'
 - 'if [ -n "${UNIT-}" ]; then npm run test:unit; fi'
 - 'if [ -n "${COMPANION_NODE6-}" ]; then nvm install 6.0.0 && nvm use 6.0.0; fi'
 - 'if [ -n "${COMPANION-}" ] || [ -n "${COMPANION_NODE6-}" ]; then npm run test:companion; fi'
