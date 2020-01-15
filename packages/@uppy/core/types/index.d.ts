@@ -54,11 +54,11 @@ declare module Uppy {
     type: string
     constructor(uppy: Uppy, opts?: TOptions)
     getPluginState(): object
-    setPluginState(update: any): object
+    setPluginState(update: IndexedObject<any>): object
     update(state?: object): void
     mount(target: PluginTarget, plugin: typeof Plugin): void
     render(state: object): void
-    addTarget(plugin: any): void
+    addTarget<TPlugin extends Plugin>(plugin: TPlugin): void
     unmount(): void
     install(): void
     uninstall(): void
@@ -141,6 +141,8 @@ declare module Uppy {
   type Event = LiteralUnion<'file-added' | 'file-removed' | 'upload' | 'upload-progress' | 'upload-success' | 'complete' | 'error' | 'upload-error' |
                'upload-retry' | 'info-visible' | 'info-hidden' | 'cancel-all' | 'restriction-failed' | 'reset-progress'>;
 
+  type UploadHandler = (fileIDs: string[]) => Promise<void>
+
   class Uppy<TUseStrictTypes extends TypeChecking = TypeChecking> {
     constructor(opts?: UppyOptions)
     on<TMeta extends IndexedObject<any> = {}>(
@@ -152,7 +154,7 @@ declare module Uppy {
       callback: (result: UploadResult<TMeta>) => void
     ): this
     on(event: Event, callback: (...args: any[]) => void): this
-    off(event: Event, callback: any): this
+    off(event: Event, callback: (...args: any[]) => void): this
     /**
      * For use by plugins only!
      */
@@ -163,12 +165,12 @@ declare module Uppy {
     readonly state: State
     setFileState(fileID: string, state: object): void
     resetProgress(): void
-    addPreProcessor(fn: any): void
-    removePreProcessor(fn: any): void
-    addPostProcessor(fn: any): void
-    removePostProcessor(fn: any): void
-    addUploader(fn: any): void
-    removeUploader(fn: any): void
+    addPreProcessor(fn: UploadHandler): void
+    removePreProcessor(fn: UploadHandler): void
+    addPostProcessor(fn: UploadHandler): void
+    removePostProcessor(fn: UploadHandler): void
+    addUploader(fn: UploadHandler): void
+    removeUploader(fn: UploadHandler): void
     setMeta<TMeta extends IndexedObject<any> = {}>(data: TMeta): void
     setFileMeta<TMeta extends IndexedObject<any> = {}>(
       fileID: string,
@@ -189,9 +191,9 @@ declare module Uppy {
     pauseResume(fileID: string): boolean
     pauseAll(): void
     resumeAll(): void
-    retryAll(): void
+    retryAll<TMeta extends IndexedObject<any> = {}>(): Promise<UploadResult<TMeta>>
     cancelAll(): void
-    retryUpload(fileID: string): any
+    retryUpload<TMeta extends IndexedObject<any> = {}>(fileID: string): Promise<UploadResult<TMeta>>
     reset(): void
     getID(): string
     /**
@@ -226,9 +228,9 @@ declare module Uppy {
     run(): this
     restore<TMeta extends IndexedObject<any> = {}>(
       uploadID: string
-    ): Promise<UploadResult>
+    ): Promise<UploadResult<TMeta>>
     addResultData(uploadID: string, data: object): void
-    upload<TMeta extends IndexedObject<any> = {}>(): Promise<UploadResult>
+    upload<TMeta extends IndexedObject<any> = {}>(): Promise<UploadResult<TMeta>>
   }
 }
 
