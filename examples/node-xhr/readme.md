@@ -8,10 +8,9 @@ To run this example, make sure you've correctly installed the root repository:
 
 ```bash
 npm install
-npm run build
 ```
 
-Then move into this directory (`examples/php-xhr`), and:
+Then move into this directory (`examples/node-xhr`), and:
 
 ```bash
 npm start
