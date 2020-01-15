@@ -1,13 +1,7 @@
 import Uppy = require('@uppy/core')
+import UrlLocale = require('./generatedLocale')
 
 declare module Url {
-  type UrlLocale = Uppy.Locale<
-    | 'enterCorrectUrl'
-    | 'enterUrlToImport'
-    | 'failedToFetch'
-    | 'import'
-  >
-
   export interface UrlOptions extends Uppy.PluginOptions {
     replaceTargetContent?: boolean
     target?: Uppy.PluginTarget

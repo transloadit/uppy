@@ -1,12 +1,7 @@
 import Uppy = require('@uppy/core')
+import TransloaditLocale = require('./generatedLocale')
 
 declare module Transloadit {
-  type TransloaditLocale = Uppy.Locale<
-    | 'creatingAssembly'
-    | 'creatingAssemblyFailed'
-    | 'encoding'
-  >
-
   interface AssemblyParameters {
     auth: { key: string }
     template_id?: string

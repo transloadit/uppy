@@ -1,23 +1,8 @@
 import Uppy = require('@uppy/core')
+import GeneratedLocale = require('./generatedLocale')
 
 declare module StatusBar {
-  export type StatusBarLocale = Uppy.Locale<
-    | 'uploading'
-    | 'upload'
-    | 'complete'
-    | 'uploadFailed'
-    | 'paused'
-    | 'retry'
-    | 'cancel'
-    | 'pause'
-    | 'resume'
-    | 'filesUploadedOfTotal'
-    | 'dataUploadedOfTotal'
-    | 'xTimeLeft'
-    | 'uploadXFiles'
-    | 'uploadXNewFiles'
-    | 'xMoreFilesAdded'
-  >
+  export type StatusBarLocale = GeneratedLocale
 
   export interface StatusBarOptions extends Uppy.PluginOptions {
     replaceTargetContent?: boolean

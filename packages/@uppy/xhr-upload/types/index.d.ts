@@ -1,10 +1,7 @@
 import Uppy = require('@uppy/core')
+import XHRUploadLocale = require('./generatedLocale')
 
 declare module XHRUpload {
-  export type XHRUploadLocale = Uppy.Locale<
-    | 'timedOut'
-  >
-
   export interface XHRUploadOptions extends Uppy.PluginOptions {
     limit?: number
     bundle?: boolean

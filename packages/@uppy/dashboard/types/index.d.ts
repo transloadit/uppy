@@ -1,5 +1,6 @@
 import Uppy = require('@uppy/core')
 import StatusBar = require('@uppy/status-bar')
+import DashboardLocale = require('./generatedLocale')
 
 interface MetaField {
   id: string
@@ -8,45 +9,6 @@ interface MetaField {
 }
 
 declare module Dashboard {
-  type DashboardLocale = Uppy.Locale<
-    | 'closeModal'
-    | 'importFrom'
-    | 'addingMoreFiles'
-    | 'addMoreFiles'
-    | 'dashboardWindowTitle'
-    | 'dashboardTitle'
-    | 'copyLinkToClipboardSuccess'
-    | 'copyLinkToClipboardFallback'
-    | 'copyLink'
-    | 'link'
-    | 'fileSource'
-    | 'done'
-    | 'back'
-    | 'addMore'
-    | 'removeFile'
-    | 'editFile'
-    | 'editing'
-    | 'edit'
-    | 'finishEditingFile'
-    | 'saveChanges'
-    | 'cancel'
-    | 'myDevice'
-    | 'dropPasteImport'
-    | 'dropPaste'
-    | 'dropHint'
-    | 'browse'
-    | 'uploadComplete'
-    | 'uploadPaused'
-    | 'resumeUpload'
-    | 'pauseUpload'
-    | 'retryUpload'
-    | 'cancelUpload'
-    | 'xFilesSelected'
-    | 'uploadingXFiles'
-    | 'processingXFiles'
-    | 'poweredBy'
-  >
-
   interface DashboardOptions extends Uppy.PluginOptions {
     animateOpenClose?: boolean
     browserBackButtonClose?: boolean

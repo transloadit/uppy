@@ -1,4 +1,5 @@
 import Uppy = require('@uppy/core')
+import WebcamLocale = require('./generatedLocale')
 
 declare module Webcam {
   export type WebcamMode =
@@ -6,16 +7,6 @@ declare module Webcam {
     | 'video-only'
     | 'audio-only'
     | 'picture'
-
-  export type WebcamLocale = Uppy.Locale<
-    | 'smile'
-    | 'takePicture'
-    | 'startRecording'
-    | 'stopRecording'
-    | 'allowAccessTitle'
-    | 'allowAccessDescription'
-    | 'recordingLength'
-  >
 
   export interface WebcamOptions extends Uppy.PluginOptions {
     replaceTargetContent?: boolean
