@@ -1,4 +1,4 @@
-const { iconFile, iconText, iconAudio, iconVideo, iconPDF } = require('../components/icons')
+const { iconFile, iconText, iconImage, iconAudio, iconVideo, iconPDF, iconArchive } = require('../components/icons')
 
 module.exports = function getIconByMime (fileType) {
   const defaultChoice = {
@@ -15,6 +15,13 @@ module.exports = function getIconByMime (fileType) {
     return {
       color: '#5a5e69',
       icon: iconText()
+    }
+  }
+
+  if (fileTypeGeneral === 'image') {
+    return {
+      color: '#686de0',
+      icon: iconImage()
     }
   }
 
@@ -36,6 +43,19 @@ module.exports = function getIconByMime (fileType) {
     return {
       color: '#e25149',
       icon: iconPDF()
+    }
+  }
+
+  if (fileTypeGeneral === 'application' && (
+    fileTypeSpecific === 'zip' ||
+    fileTypeSpecific === 'x-7z-compressed' ||
+    fileTypeSpecific === 'x-rar-compressed' ||
+    fileTypeSpecific === 'x-gtar' ||
+    fileTypeSpecific === 'x-apple-diskimage')
+  ) {
+    return {
+      color: '#00C469',
+      icon: iconArchive()
     }
   }
 
