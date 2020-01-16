@@ -35,7 +35,7 @@ if (page.series) {
       window.PAGE_TYPE = "<%- page.type %>"
     </script>
     <%- css('css/main').replace('.css', '.css?version=2') %>
-    <!-- ^-- poor man's solution to css cache busting. bump the version when there's something new we really want users to see -->
+    <!-- ^ poor man's solution to css cache busting. bump the version when there's something new we really want users to see -->
   </head>
   <body class="<%= isIndex ? 'page-index' : 'page-inner' %> <%= page.body_class %>">
     <div class="page">
