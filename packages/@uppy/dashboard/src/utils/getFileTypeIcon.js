@@ -11,6 +11,7 @@ module.exports = function getIconByMime (fileType) {
   const fileTypeGeneral = fileType.split('/')[0]
   const fileTypeSpecific = fileType.split('/')[1]
 
+  // Text
   if (fileTypeGeneral === 'text') {
     return {
       color: '#5a5e69',
@@ -18,6 +19,7 @@ module.exports = function getIconByMime (fileType) {
     }
   }
 
+  // Image
   if (fileTypeGeneral === 'image') {
     return {
       color: '#686de0',
@@ -25,6 +27,7 @@ module.exports = function getIconByMime (fileType) {
     }
   }
 
+  // Audio
   if (fileTypeGeneral === 'audio') {
     return {
       color: '#068dbb',
@@ -32,6 +35,7 @@ module.exports = function getIconByMime (fileType) {
     }
   }
 
+  // Video
   if (fileTypeGeneral === 'video') {
     return {
       color: '#19af67',
@@ -39,6 +43,7 @@ module.exports = function getIconByMime (fileType) {
     }
   }
 
+  // PDF
   if (fileTypeGeneral === 'application' && fileTypeSpecific === 'pdf') {
     return {
       color: '#e25149',
@@ -46,23 +51,12 @@ module.exports = function getIconByMime (fileType) {
     }
   }
 
-  if (fileTypeGeneral === 'application' && (
-    fileTypeSpecific === 'zip' ||
-    fileTypeSpecific === 'x-7z-compressed' ||
-    fileTypeSpecific === 'x-rar-compressed' ||
-    fileTypeSpecific === 'x-gtar' ||
-    fileTypeSpecific === 'x-apple-diskimage')
-  ) {
+  // Archive
+  const archiveTypes = ['zip', 'x-7z-compressed', 'x-rar-compressed', 'x-gtar', 'x-apple-diskimage', 'x-diskcopy']
+  if (fileTypeGeneral === 'application' && archiveTypes.indexOf(fileTypeSpecific) !== -1) {
     return {
       color: '#00C469',
       icon: iconArchive()
-    }
-  }
-
-  if (fileTypeGeneral === 'image') {
-    return {
-      color: '#f2f2f2',
-      icon: ''
     }
   }
 
