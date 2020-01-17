@@ -51,7 +51,7 @@ const uppy = Uppy({
   onBeforeUpload: (files) => {},
   locale: {},
   store: new DefaultStore(),
-  logger: nullLogger
+  logger: justErrorsLogger
 })
 ```
 
@@ -96,7 +96,7 @@ const uppy = Uppy({
 
 You can also provide your own logger object: it should expose `debug`, `warn` and `error` methods, as shown in the examples below.
 
-By default `logger` is set to `nullLogger`, which does nothing:
+Here’s an example of `logger` that does nothing:
 
 ```js
 const nullLogger = {

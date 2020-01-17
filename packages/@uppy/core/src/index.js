@@ -9,7 +9,7 @@ const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
 const supportsUploadProgress = require('./supportsUploadProgress')
-const { nullLogger, debugLogger } = require('./loggers')
+const { justErrorsLogger, debugLogger } = require('./loggers')
 const Plugin = require('./Plugin') // Exported from here.
 
 class RestrictionError extends Error {
@@ -100,7 +100,7 @@ class Uppy {
       onBeforeFileAdded: (currentFile, files) => currentFile,
       onBeforeUpload: (files) => files,
       store: DefaultStore(),
-      logger: nullLogger
+      logger: justErrorsLogger
     }
 
     // Merge default options with the ones set by user,
@@ -115,7 +115,7 @@ class Uppy {
     }
 
     // Support debug: true for backwards-compatability, unless logger is set in opts
-    // opts instead of this.opts to avoid comparing objects — we set logger: nullLogger in defaultOptions
+    // opts instead of this.opts to avoid comparing objects — we set logger: justErrorsLogger in defaultOptions
     if (opts && opts.logger && opts.debug) {
       this.log('You are using a custom `logger`, but also set `debug: true`, which uses built-in logger to output logs to console. Ignoring `debug: true` and using your custom `logger`.', 'warning')
     } else if (opts && opts.debug) {
