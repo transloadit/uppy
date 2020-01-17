@@ -1459,6 +1459,11 @@ class Uppy {
 
     if (onBeforeUploadResult && typeof onBeforeUploadResult === 'object') {
       files = onBeforeUploadResult
+      // Updating files in state, because uploader plugins receive file IDs,
+      // and then fetch the actual file object from state
+      this.setState({
+        files: files
+      })
     }
 
     return Promise.resolve()
