@@ -6,7 +6,7 @@ const GoogleDrive = require('@uppy/google-drive')
 const Dropbox = require('@uppy/dropbox')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
-const OneDrive = require('@uppy/onedrive')
+// const OneDrive = require('@uppy/onedrive')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
 const Tus = require('@uppy/tus')
@@ -117,19 +117,19 @@ function uppySetOptions () {
 
   const FacebookInstance = window.uppy.getPlugin('Facebook')
   if (opts.Facebook && !FacebookInstance) {
-    uppy.use(Facebook, { target: Dashboard, companionUrl: COMPANION })
+    window.uppy.use(Facebook, { target: Dashboard, companionUrl: COMPANION })
   }
   if (!opts.Facebook && FacebookInstance) {
     window.uppy.removePlugin(FacebookInstance)
   }
 
-  const OneDriveInstance = window.uppy.getPlugin('OneDrive')
-  if (opts.OneDrive && !OneDriveInstance) {
-    uppy.use(OneDrive, { target: Dashboard, companionUrl: COMPANION })
-  }
-  if (!opts.OneDrive && OneDriveInstance) {
-    window.uppy.removePlugin(OneDriveInstance)
-  }
+  // const OneDriveInstance = window.uppy.getPlugin('OneDrive')
+  // if (opts.OneDrive && !OneDriveInstance) {
+  //   window.uppy.use(OneDrive, { target: Dashboard, companionUrl: COMPANION })
+  // }
+  // if (!opts.OneDrive && OneDriveInstance) {
+  //   window.uppy.removePlugin(OneDriveInstance)
+  // }
 
   const WebcamInstance = window.uppy.getPlugin('Webcam')
   if (opts.Webcam && !WebcamInstance) {
