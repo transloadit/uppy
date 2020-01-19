@@ -17,7 +17,9 @@ const versionCmp = require('../helpers/version')
 module.exports = function sendToken (req, res, next) {
   const uppyAuthToken = req.companion.authToken
   // add the token to cookies for thumbnail/image requests
-  tokenService.addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider)
+  if (req.companion.provider.authProvider !== 'microsoft') {
+    tokenService.addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider)
+  }
 
   const state = (req.session.grant || {}).state
   if (state) {
