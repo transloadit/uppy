@@ -181,11 +181,10 @@ onBeforeFileAdded: (currentFile, files) => {
 // or
 
 onBeforeFileAdded: (currentFile, files) => {
-  const modifiedFile = Object.assign(
-    {},
-    currentFile,
-    { name: currentFile + Date.now()
-  })
+  const modifiedFile = {
+    ...currentFile,
+    name: currentFile.name + '__' + Date.now()
+  }
   return modifiedFile
 }
 ```
@@ -220,9 +219,13 @@ Return true or modified `files` object to proceed:
 
 ```js
 onBeforeUpload: (files) => {
-  const updatedFiles = Object.assign({}, files)
-  Object.keys(updatedFiles).forEach(fileId => {
-    updatedFiles[fileId].name = 'myCustomPrefix_' + updatedFiles[fileId].name
+  // We’ll be careful to return a new object, not mutating the original `files`
+  const updatedFiles = {}
+  Object.keys(files).forEach(fileID => {
+    updatedFiles[fileID] = {
+      ...files[fileID],
+      name: 'myCustomPrefix' + '__' + files[fileID].name
+    }
   })
   return updatedFiles
 }
