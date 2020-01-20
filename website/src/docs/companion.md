@@ -290,10 +290,15 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 ### S3 options
 
-The S3 uploader has some options in addition to the ones necessary for authentication.
+You can supply any [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property) in the `providerOptions.s3` object, _except for_ the below:
 
-#### `s3.getKey(req, filename, metadata)`
-a
+- `accessKeyId`. Instead, use the `key` option. This is to make configuration names consistent between different Companion features.
+- `secretAccessKey`. Instead, use the `secret` option. This is to make configuration names consistent between different Companion features.
+
+Additionally, some Companion-specific options can be configured:
+
+#### `providerOptions.s3.getKey(req, filename, metadata)`
+
 Get the key name for a file. The key is the file path to which the file will be uploaded in your bucket. This option should be a function receiving three arguments:
 - `req`, the HTTP request, for _regular_ S3 uploads using the `@uppy/aws-s3` plugin. This parameter is _not_ available for multipart uploads using the `@uppy/aws-s3-multipart` plugin;
 - `filename`, the original name of the uploaded file;
@@ -304,9 +309,11 @@ This function should return a string `key`. The `req` parameter can be used to u
 ```js
 app.use(authenticationMiddleware)
 app.use(uppy.app({
-  s3: {
-    getKey: (req, filename, metadata) => `${req.user.id}/${filename}`,
-    /* auth options */
+  providerOptions: {
+    s3: {
+      getKey: (req, filename, metadata) => `${req.user.id}/${filename}`,
+      /* auth options */
+    }
   }
 }))
 ```
