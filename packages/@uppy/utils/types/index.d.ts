@@ -52,12 +52,21 @@ declare module '@uppy/utils/lib/RateLimitedQueue' {
       abort: () => void,
       done: () => void,
     };
+    export type QueueOptions = {
+      priority?: number
+    };
   }
 
   class RateLimitedQueue {
     constructor(limit: number);
-    run(fn: () => RateLimitedQueue.AbortFunction): RateLimitedQueue.QueueEntry;
-    wrapPromiseFunction(fn: () => RateLimitedQueue.PromiseFunction): RateLimitedQueue.PromiseFunction;
+    run(
+      fn: () => RateLimitedQueue.AbortFunction,
+      queueOptions?: RateLimitedQueue.QueueOptions
+    ): RateLimitedQueue.QueueEntry;
+    wrapPromiseFunction(
+      fn: () => RateLimitedQueue.PromiseFunction,
+      queueOptions?: RateLimitedQueue.QueueOptions
+    ): RateLimitedQueue.PromiseFunction;
   }
 
   export = RateLimitedQueue

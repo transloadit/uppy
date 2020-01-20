@@ -1,3 +1,13 @@
+/**
+ * Array.prototype.findIndex ponyfill for old browsers.
+ */
+function findIndex (array, predicate) {
+  for (let i = 0; i < array.length; i++) {
+    if (predicate(array[i])) return i
+  }
+  return -1
+}
+
 module.exports = class RateLimitedQueue {
   constructor (limit) {
     if (typeof limit !== 'number' || limit === 0) {
@@ -67,9 +77,10 @@ module.exports = class RateLimitedQueue {
     next.done = handler.done
   }
 
-  _queue (fn) {
+  _queue (fn, options = {}) {
     const handler = {
       fn,
+      priority: options.priority || 0,
       abort: () => {
         this._dequeue(handler)
       },
@@ -77,7 +88,15 @@ module.exports = class RateLimitedQueue {
         throw new Error('Cannot mark a queued request as done: this indicates a bug')
       }
     }
-    this.queuedHandlers.push(handler)
+    const index = findIndex(this.queuedHandlers, (other) => {
+      return handler.priority > other.priority
+    })
+    console.log('insert handler with prio', handler.priority, 'at', index)
+    if (index === -1) {
+      this.queuedHandlers.push(handler)
+    } else {
+      this.queuedHandlers.splice(index, 0, handler)
+    }
     return handler
   }
 
@@ -88,14 +107,14 @@ module.exports = class RateLimitedQueue {
     }
   }
 
-  run (fn) {
+  run (fn, queueOptions) {
     if (this.activeRequests < this.limit) {
       return this._call(fn)
     }
-    return this._queue(fn)
+    return this._queue(fn, queueOptions)
   }
 
-  wrapPromiseFunction (fn) {
+  wrapPromiseFunction (fn, queueOptions) {
     return (...args) => new Promise((resolve, reject) => {
       const queuedRequest = this.run(() => {
         let cancelError
@@ -125,7 +144,7 @@ module.exports = class RateLimitedQueue {
         return () => {
           cancelError = new Error('Cancelled')
         }
-      })
+      }, queueOptions)
     })
   }
 }
