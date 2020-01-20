@@ -29,6 +29,11 @@ module.exports = class Informer extends Plugin {
   render (state) {
     const { isHidden, message, details } = state.info
 
+    function displayErrorAlert () {
+      const errorMessage = `${message} \n\n ${details}`
+      alert(errorMessage)
+    }
+
     return (
       <div
         class="uppy uppy-Informer"
@@ -43,6 +48,7 @@ module.exports = class Informer extends Plugin {
               data-microtip-position="top-left"
               data-microtip-size="medium"
               role="tooltip"
+              onclick={displayErrorAlert}
             >
               ?
             </span>
