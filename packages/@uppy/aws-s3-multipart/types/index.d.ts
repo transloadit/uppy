@@ -11,7 +11,7 @@ declare module AwsS3Multipart {
     companionUrl: string;
     createMultipartUpload(file: Uppy.UppyFile): Promise<{ uploadId: string, key: string }>;
     listParts(file: Uppy.UppyFile, opts: { uploadId: string, key: string }): Promise<AwsS3Part[]>;
-    prepareUploadPart(file: Uppy.UppyFile, partData: { uploadId: string, key: string, body: Blob, number: number }): Promise<{ url: string }>;
+    prepareUploadPart(file: Uppy.UppyFile, partData: { uploadId: string, key: string, body: Blob, number: number }): Promise<{ url: string, headers?: {[k: string]: string}}>;
     abortMultipartUpload(file: Uppy.UppyFile, opts: { uploadId: string, key: string }): Promise<void>;
     completeMultipartUpload(file: Uppy.UppyFile, opts: { uploadId: string, key: string, parts: AwsS3Part[] }): Promise<{ location?: string }>;
     timeout: number;

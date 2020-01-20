@@ -217,6 +217,7 @@ module.exports = class XHRUpload extends Plugin {
 
       const timer = new ProgressTimeout(opts.timeout, () => {
         xhr.abort()
+        queuedRequest.done()
         const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
         this.uppy.emit('upload-error', file, error)
         reject(error)
@@ -581,7 +582,8 @@ module.exports = class XHRUpload extends Plugin {
       return Promise.resolve()
     }
 
-    if (this.opts.limit === 0) {
+    // no limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin (basically just AwsS3) using the top secret `__queue` option
+    if (this.opts.limit === 0 && !this.opts.__queue) {
       this.uppy.log(
         '[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0',
         'warning'

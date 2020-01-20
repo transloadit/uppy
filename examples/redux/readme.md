@@ -8,14 +8,13 @@ This example supports the [Redux Devtools extension](https://github.com/zalmoxis
 
 ## Run it
 
-To run this example, make sure you've correctly installed the root repository:
-
+To run this example, make sure you've correctly installed the **repository root**:
 ```bash
 npm install
 ```
+That will also install the dependencies for this example.
 
-Move into this directory, then:
-
+Then, again in the **repository root**, start this example by doing:
 ```bash
-npm start
+npm run example redux
 ```

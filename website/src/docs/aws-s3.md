@@ -68,6 +68,13 @@ uppy.use(AwsS3, {
 
 Custom headers that should be sent along to [Companion][companion docs] on every request.
 
+### `metaFields: []`
+
+Pass an array of field names to specify the metadata fields that should be stored in S3 as Object Metadata. This takes values from each file's `file.meta` property.
+
+- Set this to `['name']` to only send the name field.
+- Set this to an empty array `[]` (the default) to not send any fields.
+
 ### `getUploadParameters(file)`
 
 > Note: When using [Companion][companion docs] to sign S3 uploads, do not define this option.

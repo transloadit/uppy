@@ -122,6 +122,15 @@ function createIv () {
   return crypto.randomBytes(16)
 }
 
+function urlEncode (unencoded) {
+  return unencoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, ',')
+}
+
+function urlDecode (encoded) {
+  encoded = encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/,/g, '=')
+  return encoded
+}
+
 /**
  * Encrypt a buffer or string with AES256 and a random iv.
  *
@@ -133,8 +142,8 @@ module.exports.encrypt = (input, secret) => {
   const iv = createIv()
   const cipher = crypto.createCipheriv('aes256', createSecret(secret), iv)
   let encrypted = iv.toString('hex')
-  encrypted += cipher.update(input, 'utf8', 'hex')
-  encrypted += cipher.final('hex')
+  encrypted += urlEncode(cipher.update(input, 'utf8', 'base64'))
+  encrypted += urlEncode(cipher.final('base64'))
   return encrypted
 }
 
@@ -153,7 +162,7 @@ module.exports.decrypt = (encrypted, secret) => {
 
   const iv = Buffer.from(encrypted.slice(0, 32), 'hex')
   const decipher = crypto.createDecipheriv('aes256', createSecret(secret), iv)
-  let decrypted = decipher.update(encrypted.slice(32), 'hex', 'utf8')
+  let decrypted = decipher.update(urlDecode(encrypted.slice(32)), 'base64', 'utf8')
   decrypted += decipher.final('utf8')
   return decrypted
 }

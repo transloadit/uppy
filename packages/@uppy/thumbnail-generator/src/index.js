@@ -302,7 +302,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   onFileAdded = (file) => {
-    if (!file.preview) {
+    if (!file.preview && isPreviewSupported(file.type) && !file.isRemote) {
       this.addToQueue(file)
     }
   }
@@ -362,8 +362,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   install () {
-    this.uppy.on('file-added', this.onFileAdded)
     this.uppy.on('file-removed', this.onFileRemoved)
+    this.uppy.on('file-added', this.onFileAdded)
     this.uppy.on('restored', this.onRestored)
 
     if (this.opts.waitForThumbnailsBeforeUpload) {
@@ -372,8 +372,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   uninstall () {
-    this.uppy.off('file-added', this.onFileAdded)
     this.uppy.off('file-removed', this.onFileRemoved)
+    this.uppy.off('file-added', this.onFileAdded)
     this.uppy.off('restored', this.onRestored)
 
     if (this.opts.waitForThumbnailsBeforeUpload) {

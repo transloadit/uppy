@@ -241,7 +241,7 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
       secret: "***"
     },
     s3: {
-      getKey: (req, filename) => filename,
+      getKey: (req, filename, metadata) => filename,
       key: "***",
       secret: "***",
       bucket: "bucket-name",
@@ -292,21 +292,31 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 The S3 uploader has some options in addition to the ones necessary for authentication.
 
-#### `s3.getKey(req, filename)`
+#### `s3.getKey(req, filename, metadata)`
+a
+Get the key name for a file. The key is the file path to which the file will be uploaded in your bucket. This option should be a function receiving three arguments:
+- `req`, the HTTP request, for _regular_ S3 uploads using the `@uppy/aws-s3` plugin. This parameter is _not_ available for multipart uploads using the `@uppy/aws-s3-multipart` plugin;
+- `filename`, the original name of the uploaded file;
+- `metadata`, user-provided metadata for the file. See the [`@uppy/aws-s3`](https://uppy.io/docs/aws-s3/#metaFields) docs. Currently, the `@uppy/aws-s3-multipart` plugin unconditionally sends all metadata fields, so all of them are available here.
 
-Get the key name for a file. The key is the file path to which the file will be uploaded in your bucket. This option should be a function receiving two arguments: `req`, the HTTP request, and the original `filename` of the uploaded file. It should return a string `key`. The `req` parameter can be used to upload to a user-specific folder in your bucket, for example:
+This function should return a string `key`. The `req` parameter can be used to upload to a user-specific folder in your bucket, for example:
 
 ```js
 app.use(authenticationMiddleware)
 app.use(uppy.app({
   s3: {
-    getKey: (req, filename) => `${req.user.id}/${filename}`,
+    getKey: (req, filename, metadata) => `${req.user.id}/${filename}`,
     /* auth options */
   }
 }))
 ```
 
-The default value simply returns `filename`, so all files will be uploaded to the root of the bucket as their original file name.
+The default implementation returns the `filename`, so all files will be uploaded to the root of the bucket as their original file name.
+```js
+({
+  getKey: (req, filename, metadata) => filename
+})
+```
 
 ### Running in Kubernetes
 

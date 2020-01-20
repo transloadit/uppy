@@ -8,7 +8,7 @@ function get (req, res, next) {
   const provider = req.companion.provider
 
   // get the file size before proceeding
-  provider.size({ id, token }, (err, size) => {
+  provider.size({ id, token, query: req.query }, (err, size) => {
     if (err) {
       return err.isAuthError ? res.sendStatus(401) : next(err)
     }
