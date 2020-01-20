@@ -1,3 +1,13 @@
+/**
+ * Async storage interface, similar to `localStorage`. This can be used to
+ * implement custom storages for authentication tokens.
+ */
+export interface TokenStorage {
+  setItem: (key: string, value: string) => Promise<void>
+  getItem: (key: string) => Promise<string>
+  removeItem: (key: string) => Promise<void>
+}
+
 export interface RequestClientOptions {
   companionUrl: string
   companionHeaders?: object
@@ -14,7 +24,19 @@ export class RequestClient {
   delete (path: string, data: object): Promise<any>
 }
 
-export interface ProviderOptions extends RequestClientOptions {
+/**
+ * Options for Providers that can be passed in by Uppy users through
+ * Plugin constructors.
+ */
+export interface PublicProviderOptions extends RequestClientOptions {
+  companionAllowedHosts?: string | RegExp | Array<string | RegExp>
+  storage?: TokenStorage
+}
+
+/**
+ * Options for Providers, including internal options that Plugins can set.
+ */
+export interface ProviderOptions extends PublicProviderOptions {
   provider: string
   authProvider?: string
   name?: string

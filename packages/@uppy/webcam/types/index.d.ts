@@ -17,6 +17,7 @@ declare module Webcam {
     facingMode?: string
     modes?: WebcamMode[]
     locale?: WebcamLocale
+    title?: string
   }
 }
 

@@ -4,11 +4,10 @@ import CompanionClient = require('@uppy/companion-client')
 declare module Facebook {
   interface FacebookOptions
     extends Uppy.PluginOptions,
-      CompanionClient.RequestClientOptions {
+      CompanionClient.PublicProviderOptions {
     replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
-    companionUrl: string
-    companionAllowedHosts?: string | RegExp | Array<string | RegExp>
+    title?: string
   }
 }
 
