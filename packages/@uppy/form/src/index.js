@@ -29,7 +29,7 @@ module.exports = class Form extends Plugin {
     }
 
     // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
     this.handleFormSubmit = this.handleFormSubmit.bind(this)
     this.handleUploadStart = this.handleUploadStart.bind(this)
