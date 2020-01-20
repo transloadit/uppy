@@ -101,6 +101,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861
 - [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53
 - [ ] core: change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
+- [ ] core: maybe we remove `file.name` and only keep `file.meta.name`; we can change the file.name here actually because it's just a plain object. we can't change the file.data.name where data is a File instance from an input or something. For XHRUpload, where we put the File instance in a FormData object and it uses the unchangeable .name property.
 - [ ] redux-store: make action signatures flux-standard-action compatible #1642
 - [ ] locales: Remove the old es_GL name alias for gl_ES. Keep gl_ES only.
 
