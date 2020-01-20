@@ -96,7 +96,7 @@ const uppy = Uppy({
 
 You can also provide your own logger object: it should expose `debug`, `warn` and `error` methods, as shown in the examples below.
 
-Here’s an example of `logger` that does nothing:
+Here’s an example of a `logger` that does nothing:
 
 ```js
 const nullLogger = {
