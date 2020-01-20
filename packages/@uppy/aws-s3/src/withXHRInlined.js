@@ -1,3 +1,28 @@
+/**
+ * This plugin is currently a Big Mess™! The core reason for that is how this plugin
+ * interacts with Uppy's current pipeline design. The pipeline can handle files in steps,
+ * including preprocessing, uploading, and postprocessing steps. This plugin initially
+ * was designed to do its work in a preprocessing step, and let XHRUpload deal with the
+ * actual file upload as an uploading step. However, Uppy runs steps on all files at once,
+ * sequentially: first, all files go through a preprocessing step, then, once they are all
+ * done, they go through the uploading step.
+ *
+ * For S3, this causes severely broken behaviour when users upload many files. The
+ * preprocessing step will request S3 upload URLs that are valid for a short time only,
+ * but it has to do this for _all_ files, which can take a long time if there are hundreds
+ * or even thousands of files. By the time the uploader step starts, the first URLs may
+ * already have expired. If not, the uploading might take such a long time that later URLs
+ * will expire before some files can be uploaded.
+ *
+ * The long-term solution to this problem is to change the upload pipeline so that files
+ * can be sent to the next step individually. That requires a breakig change, so it is
+ * planned for Uppy v2.
+ *
+ * In the mean time, this plugin is stuck with a hackier approach: the necessary parts
+ * of the XHRUpload implementation were copied into this plugin, and this plugin calls
+ * into it immediately once it receives an upload URL.
+ */
+
 // If global `URL` constructor is available, use it
 const URL_ = typeof URL === 'function' ? URL : require('url-parse')
 const { Plugin } = require('@uppy/core')
@@ -5,6 +30,7 @@ const Translator = require('@uppy/utils/lib/Translator')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const { RequestClient } = require('@uppy/companion-client')
 const qsStringify = require('qs-stringify')
+
 // For inlined chunks of XHRUpload:
 const cuid = require('cuid')
 const { Provider, Socket } = require('@uppy/companion-client')
