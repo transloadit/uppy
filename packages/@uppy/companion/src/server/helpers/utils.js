@@ -123,11 +123,11 @@ function createIv () {
 }
 
 function urlEncode (unencoded) {
-  return unencoded.replace(/\+/g, '-').replace(/\//g, '_')
+  return unencoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, ',')
 }
 
 function urlDecode (encoded) {
-  encoded = encoded.replace(/-/g, '+').replace(/_/g, '/')
+  encoded = encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/,/g, '=')
   return encoded
 }
 
