@@ -1,46 +1,47 @@
-const Provider = require('../Provider')
+const Provider = require('../../Provider')
 
 const request = require('request')
 const purest = require('purest')({ request })
-const utils = require('../../helpers/utils')
-const logger = require('../../logger')
+const utils = require('../../../helpers/utils')
+const logger = require('../../../logger')
 const adapter = require('./adapter')
-const AuthError = require('../error')
+const AuthError = require('../../error')
 
-class Facebook extends Provider {
+class Instagram extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = options.provider = Facebook.authProvider
+    this.authProvider = options.provider = Instagram.authProvider
     this.client = purest(options)
   }
 
+  static getExtraConfig () {
+    return {
+      protocol: 'https',
+      scope: ['user_profile', 'user_media']
+    }
+  }
+
   static get authProvider () {
-    return 'facebook'
+    return 'instagram'
   }
 
   list ({ directory, token, query = {} }, done) {
     const qs = {
-      fields: 'name,cover_photo,created_time,type'
+      fields: 'id,media_type,thumbnail_url,media_url,timestamp,children{media_type,media_url,thumbnail_url,timestamp}'
     }
 
     if (query.cursor) {
       qs.after = query.cursor
     }
 
-    let path = 'me/albums'
-    if (directory) {
-      path = `${directory}/photos`
-      qs.fields = 'icon,images,name,width,height,created_time'
-    }
-
     this.client
-      .get(path)
+      .get('https://graph.instagram.com/me/media')
       .qs(qs)
       .auth(token)
       .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {
           err = this._error(err, resp)
-          logger.error(err, 'provider.facebook.list.error')
+          logger.error(err, 'provider.instagram.list.error')
           return done(err)
         } else {
           this._getUsername(token, (err, username) => {
@@ -52,91 +53,77 @@ class Facebook extends Provider {
 
   _getUsername (token, done) {
     this.client
-      .get('me')
-      .qs({ fields: 'email' })
+      .get('https://graph.instagram.com/me')
+      .qs({ fields: 'username' })
       .auth(token)
       .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {
           err = this._error(err, resp)
-          logger.error(err, 'provider.facebook.user.error')
+          logger.error(err, 'provider.instagram.user.error')
           return done(err)
         } else {
-          done(null, body.email)
+          done(null, body.username)
         }
       })
   }
 
-  _getMediaUrl (body) {
-    const sortedImages = adapter.sortImages(body.images)
-    return sortedImages[sortedImages.length - 1].source
-  }
-
   download ({ id, token }, onData) {
     return this.client
-      .get(id)
-      .qs({ fields: 'images' })
+      .get(`https://graph.instagram.com/${id}`)
+      .qs({ fields: 'media_url' })
       .auth(token)
       .request((err, resp, body) => {
-        if (err) return logger.error(err, 'provider.facebook.download.error')
-        request(this._getMediaUrl(body))
+        if (err) return logger.error(err, 'provider.instagram.download.error')
+        request(body.media_url)
           .on('data', onData)
           .on('end', () => onData(null))
           .on('error', (err) => {
-            logger.error(err, 'provider.facebook.download.url.error')
+            logger.error(err, 'provider.instagram.download.url.error')
           })
       })
   }
 
   thumbnail (_, done) {
-    // not implementing this because a public thumbnail from facebook will be used instead
+    // not implementing this because a public thumbnail from instagram will be used instead
     const err = new Error('call to thumbnail is not implemented')
-    logger.error(err, 'provider.facebook.thumbnail.error')
+    logger.error(err, 'provider.instagram.thumbnail.error')
     return done(err)
   }
 
   size ({ id, token }, done) {
     return this.client
-      .get(id)
-      .qs({ fields: 'images' })
+      .get(`https://graph.instagram.com/${id}`)
+      .qs({ fields: 'media_url' })
       .auth(token)
       .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {
           err = this._error(err, resp)
-          logger.error(err, 'provider.facebook.size.error')
+          logger.error(err, 'provider.instagram.size.error')
           return done(err)
         }
 
-        utils.getURLMeta(this._getMediaUrl(body))
+        utils.getURLMeta(body.media_url)
           .then(({ size }) => done(null, size))
           .catch((err) => {
-            logger.error(err, 'provider.facebook.size.error')
+            logger.error(err, 'provider.instagram.size.error')
             done()
           })
       })
   }
 
-  logout ({ token }, done) {
-    return this.client
-      .delete('me/permissions')
-      .auth(token)
-      .request((err, resp) => {
-        if (err || resp.statusCode !== 200) {
-          logger.error(err, 'provider.facebook.logout.error')
-          done(this._error(err, resp))
-          return
-        }
-        done(null, { revoked: true })
-      })
+  logout (_, done) {
+    // access revoke is not supported by Instagram's API
+    done(null, { revoked: false, manual_revoke_url: 'https://www.instagram.com/accounts/manage_access/' })
   }
 
   adaptData (res, username, directory, currentQuery) {
     const data = { username: username, items: [] }
     const items = adapter.getItemSubList(res)
-    items.forEach((item) => {
+    items.forEach((item, i) => {
       data.items.push({
         isFolder: adapter.isFolder(item),
         icon: adapter.getItemIcon(item),
-        name: adapter.getItemName(item),
+        name: adapter.getItemName(item, i),
         mimeType: adapter.getMimeType(item),
         id: adapter.getItemId(item),
         thumbnail: adapter.getItemThumbnailUrl(item),
@@ -164,4 +151,4 @@ class Facebook extends Provider {
   }
 }
 
-module.exports = Facebook
+module.exports = Instagram
