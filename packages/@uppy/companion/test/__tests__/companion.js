@@ -98,7 +98,7 @@ describe('test authentication', () => {
       .expect(200)
       .expect((res) => {
         const authToken = res.header['set-cookie'][0].split(';')[0].split('uppyAuthToken--google=')[1]
-        expect(decodeURIComponent(authToken)).toEqual(token)
+        expect(authToken).toEqual(token)
         const body = `
     <!DOCTYPE html>
     <html>
