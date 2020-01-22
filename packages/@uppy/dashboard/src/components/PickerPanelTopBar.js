@@ -90,7 +90,7 @@ function PanelTopBar (props) {
         <div />
       )}
 
-      <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
+      <div class="uppy-DashboardContent-title" role="heading" aria-level="1">
         <UploadStatus {...props} />
       </div>
 

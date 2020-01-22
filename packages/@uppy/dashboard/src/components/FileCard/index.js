@@ -85,7 +85,7 @@ class FileCard extends Component {
         onPaste={ignoreEvent}
       >
         <div class="uppy-DashboardContent-bar">
-          <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
+          <div class="uppy-DashboardContent-title" role="heading" aria-level="1">
             {this.props.i18nArray('editing', {
               file: <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>
             })}
