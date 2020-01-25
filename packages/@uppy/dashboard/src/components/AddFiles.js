@@ -143,13 +143,12 @@ class AddFiles extends Component {
     return (
       <div class="uppy-Dashboard-dropFilesTitleGroup">
         <div class="uppy-Dashboard-dropFilesTitle">
-          {/* {this.props.isSizeMD ? this.props.i18n('dropFilesHere') : this.props.i18n('dropFilesHerePasteOr')} */}
-          {/* {this.props.i18n('dropFilesHere')} */}
           {renderDropFilesSubtitle()}
         </div>
-        {/* <div class="uppy-Dashboard-dropFilesSubtitle">
-          {renderDropFilesSubtitle()}
-        </div> */}
+        <div class="uppy-Dashboard-dropFilesSubtitle">
+          {/* {this.props.i18n('dropFilesHere')} */}
+          {/* {renderDropFilesSubtitle()} */}
+        </div>
       </div>
     )
   }
@@ -162,7 +161,7 @@ class AddFiles extends Component {
         onclick={this.triggerFileInputClick}
         data-uppy-super-focusable
       >
-        {this.props.i18n('browseFiles')}
+        Browse My Device
       </button>
     )
   }
