@@ -133,37 +133,6 @@ module.exports = class Dashboard extends Plugin {
 
     this.i18nInit()
 
-    this.openModal = this.openModal.bind(this)
-    this.closeModal = this.closeModal.bind(this)
-    this.requestCloseModal = this.requestCloseModal.bind(this)
-    this.isModalOpen = this.isModalOpen.bind(this)
-
-    this.addTarget = this.addTarget.bind(this)
-    this.removeTarget = this.removeTarget.bind(this)
-    this.hideAllPanels = this.hideAllPanels.bind(this)
-    this.showPanel = this.showPanel.bind(this)
-    this.toggleFileCard = this.toggleFileCard.bind(this)
-    this.toggleAddFilesPanel = this.toggleAddFilesPanel.bind(this)
-
-    this.initEvents = this.initEvents.bind(this)
-    this.handlePopState = this.handlePopState.bind(this)
-    this.handleKeyDownInModal = this.handleKeyDownInModal.bind(this)
-    this.handleKeyDownInInline = this.handleKeyDownInInline.bind(this)
-    this.handleComplete = this.handleComplete.bind(this)
-    this.handleClickOutside = this.handleClickOutside.bind(this)
-    this.handlePaste = this.handlePaste.bind(this)
-    this.handlePasteOnBody = this.handlePasteOnBody.bind(this)
-    this.handleInputChange = this.handleInputChange.bind(this)
-    this.handleDragOver = this.handleDragOver.bind(this)
-    this.handleDragLeave = this.handleDragLeave.bind(this)
-    this.handleDrop = this.handleDrop.bind(this)
-
-    this.superFocusOnEachUpdate = this.superFocusOnEachUpdate.bind(this)
-    this.recordIfFocusedOnUppyRecently = this.recordIfFocusedOnUppyRecently.bind(this)
-
-    this.render = this.render.bind(this)
-    this.install = this.install.bind(this)
-
     this.superFocus = createSuperFocus()
     this.ifFocusedOnUppyRecently = false
 
@@ -172,19 +141,19 @@ module.exports = class Dashboard extends Plugin {
     this.removeDragOverClassTimeout = null
   }
 
-  setOptions (newOpts) {
+  setOptions = (newOpts) => {
     super.setOptions(newOpts)
     this.i18nInit()
   }
 
-  i18nInit () {
+  i18nInit = () => {
     this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
     this.i18n = this.translator.translate.bind(this.translator)
     this.i18nArray = this.translator.translateArray.bind(this.translator)
     this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
-  removeTarget (plugin) {
+  removeTarget = (plugin) => {
     const pluginState = this.getPluginState()
     // filter out the one we want to remove
     const newTargets = pluginState.targets.filter(target => target.id !== plugin.id)
@@ -194,7 +163,7 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  addTarget (plugin) {
+  addTarget = (plugin) => {
     const callerPluginId = plugin.id || plugin.constructor.name
     const callerPluginName = plugin.title || callerPluginId
     const callerPluginType = plugin.type
@@ -224,7 +193,7 @@ module.exports = class Dashboard extends Plugin {
     return this.el
   }
 
-  hideAllPanels () {
+  hideAllPanels = () => {
     this.setPluginState({
       activePickerPanel: false,
       showAddFilesPanel: false,
@@ -232,7 +201,7 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  showPanel (id) {
+  showPanel = (id) => {
     const { targets } = this.getPluginState()
 
     const activePickerPanel = targets.filter((target) => {
@@ -245,7 +214,7 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  openModal () {
+  openModal = () => {
     const { promise, resolve } = createPromise()
     // save scroll position
     this.savedScrollPosition = window.pageYOffset
@@ -284,7 +253,7 @@ module.exports = class Dashboard extends Plugin {
     return promise
   }
 
-  closeModal (opts = {}) {
+  closeModal = (opts = {}) => {
     const {
       manualClose = true // Whether the modal is being closed by the user (`true`) or by other means (e.g. browser back button)
     } = opts
@@ -347,45 +316,34 @@ module.exports = class Dashboard extends Plugin {
     return promise
   }
 
-  isModalOpen () {
+  isModalOpen = () => {
     return !this.getPluginState().isHidden || false
   }
 
-  requestCloseModal () {
+  requestCloseModal = () => {
     if (this.opts.onRequestCloseModal) {
       return this.opts.onRequestCloseModal()
     }
     return this.closeModal()
   }
 
-  listenToDarkModeQuery () {
-    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-
-    const isDarkModeOnFromTheStart = darkModeMediaQuery.matches
-    this.uppy.log(`[Dashboard] Dark mode is ${isDarkModeOnFromTheStart ? 'on' : 'off'}`)
-
+  setDarkModeCapability = (isDarkModeOn) => {
     const { capabilities } = this.uppy.getState()
     this.uppy.setState({
       capabilities: {
         ...capabilities,
-        darkMode: isDarkModeOnFromTheStart
+        darkMode: isDarkModeOn
       }
-    })
-
-    darkModeMediaQuery.addListener((event) => {
-      const isDarkModeOnNow = event.matches
-      this.uppy.log(`[Dashboard] Dark mode is ${isDarkModeOnNow ? 'on' : 'off'}`)
-      const { capabilities } = this.uppy.getState()
-      this.uppy.setState({
-        capabilities: {
-          ...capabilities,
-          darkMode: isDarkModeOnNow
-        }
-      })
     })
   }
 
-  toggleFileCard (fileId) {
+  handleSystemDarkModeChange = (event) => {
+    const isDarkModeOnNow = event.matches
+    this.uppy.log(`[Dashboard] Dark mode is ${isDarkModeOnNow ? 'on' : 'off'}`)
+    this.setDarkModeCapability(isDarkModeOnNow)
+  }
+
+  toggleFileCard = (fileId) => {
     if (fileId) {
       this.uppy.emit('dashboard:file-edit-start')
     } else {
@@ -398,14 +356,14 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  toggleAddFilesPanel (show) {
+  toggleAddFilesPanel = (show) => {
     this.setPluginState({
       showAddFilesPanel: show,
       activeOverlayType: show ? 'AddFiles' : null
     })
   }
 
-  addFile (file) {
+  addFile = (file) => {
     try {
       this.uppy.addFile({
         source: this.id,
@@ -429,7 +387,7 @@ module.exports = class Dashboard extends Plugin {
   //    ResizeOberserver doesn't emit the first resize event fast enough, users can see the jump from one .uppy-size-- to another (e.g. in Safari)
   // ___Why not apply visibility property to .uppy-Dashboard-inner?
   //    Because ideally, acc to specs, ResizeObserver should see invisible elements as of width 0. So even though applying invisibility to .uppy-Dashboard-inner works now, it may not work in the future.
-  startListeningToResize () {
+  startListeningToResize = () => {
     // Watch for Dashboard container (`.uppy-Dashboard-inner`) resize
     // and update containerWidth/containerHeight in plugin state accordingly.
     // Emits first event on initialization.
@@ -467,14 +425,14 @@ module.exports = class Dashboard extends Plugin {
     }, 1000)
   }
 
-  stopListeningToResize () {
+  stopListeningToResize = () => {
     this.resizeObserver.disconnect()
 
     clearTimeout(this.makeDashboardInsidesVisibleAnywayTimeout)
   }
 
   // Records whether we have been interacting with uppy right now, which is then used to determine whether state updates should trigger a refocusing.
-  recordIfFocusedOnUppyRecently (event) {
+  recordIfFocusedOnUppyRecently = (event) => {
     if (this.el.contains(event.target)) {
       this.ifFocusedOnUppyRecently = true
     } else {
@@ -486,7 +444,7 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
-  updateBrowserHistory () {
+  updateBrowserHistory = () => {
     // Ensure history state does not already contain our modal name to avoid double-pushing
     if (!history.state || !history.state[this.modalName]) {
       // Push to history so that the page is not lost on browser back button press
@@ -500,7 +458,7 @@ module.exports = class Dashboard extends Plugin {
     window.addEventListener('popstate', this.handlePopState, false)
   }
 
-  handlePopState (event) {
+  handlePopState = (event) => {
     // Close the modal if the history state no longer contains our modal name
     if (this.isModalOpen() && (!event.state || !event.state[this.modalName])) {
       this.closeModal({ manualClose: false })
@@ -514,18 +472,18 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
-  handleKeyDownInModal (event) {
+  handleKeyDownInModal = (event) => {
     // close modal on esc key press
     if (event.keyCode === ESC_KEY) this.requestCloseModal(event)
     // trap focus on tab key press
     if (event.keyCode === TAB_KEY) trapFocus.forModal(event, this.getPluginState().activeOverlayType, this.el)
   }
 
-  handleClickOutside () {
+  handleClickOutside = () => {
     if (this.opts.closeModalOnClickOutside) this.requestCloseModal()
   }
 
-  handlePaste (event) {
+  handlePaste = (event) => {
     // 1. Let any acquirer plugin (Url/Webcam/etc.) handle pastes to the root
     this.uppy.iteratePlugins((plugin) => {
       if (plugin.type === 'acquirer') {
@@ -542,7 +500,7 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  handleInputChange (event) {
+  handleInputChange = (event) => {
     event.preventDefault()
     const files = toArray(event.target.files)
     files.forEach((file) =>
@@ -550,7 +508,7 @@ module.exports = class Dashboard extends Plugin {
     )
   }
 
-  handleDragOver (event) {
+  handleDragOver = (event) => {
     event.preventDefault()
     event.stopPropagation()
 
@@ -562,7 +520,7 @@ module.exports = class Dashboard extends Plugin {
     this.setPluginState({ isDraggingOver: true })
   }
 
-  handleDragLeave (event) {
+  handleDragLeave = (event) => {
     event.preventDefault()
     event.stopPropagation()
 
@@ -573,7 +531,7 @@ module.exports = class Dashboard extends Plugin {
     }, 50)
   }
 
-  handleDrop (event, dropCategory) {
+  handleDrop = (event, dropCategory) => {
     event.preventDefault()
     event.stopPropagation()
     clearTimeout(this.removeDragOverClassTimeout)
@@ -612,7 +570,7 @@ module.exports = class Dashboard extends Plugin {
       })
   }
 
-  handleKeyDownInInline (event) {
+  handleKeyDownInInline = (event) => {
     // Trap focus on tab key press.
     if (event.keyCode === TAB_KEY) trapFocus.forInline(event, this.getPluginState().activeOverlayType, this.el)
   }
@@ -623,21 +581,21 @@ module.exports = class Dashboard extends Plugin {
   // ___Why do we still need onPaste={props.handlePaste} for the DashboardUi?
   //    Because if we click on the 'Drop files here' caption e.g., `document.activeElement` will be 'body'. Which means our standard determination of whether we're pasting into our Uppy instance won't work.
   //    => Therefore, we need a traditional onPaste={props.handlePaste} handler too.
-  handlePasteOnBody (event) {
+  handlePasteOnBody = (event) => {
     const isFocusInOverlay = this.el.contains(document.activeElement)
     if (isFocusInOverlay) {
       this.handlePaste(event)
     }
   }
 
-  handleComplete ({ failed, uploadID }) {
+  handleComplete = ({ failed, uploadID }) => {
     if (this.opts.closeAfterFinish && failed.length === 0) {
       // All uploads are done
       this.requestCloseModal()
     }
   }
 
-  initEvents () {
+  initEvents = () => {
     // Modal open button
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
@@ -666,7 +624,7 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
-  removeEvents () {
+  removeEvents = () => {
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
       showModalTrigger.forEach(trigger => trigger.removeEventListener('click', this.openModal))
@@ -689,7 +647,7 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
-  superFocusOnEachUpdate () {
+  superFocusOnEachUpdate = () => {
     const isFocusInUppy = this.el.contains(document.activeElement)
     // When focus is lost on the page (== focus is on body for most browsers, or focus is null for IE11)
     const isFocusNowhere = document.activeElement === document.querySelector('body') || document.activeElement === null
@@ -717,7 +675,7 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
-  afterUpdate () {
+  afterUpdate = () => {
     this.superFocusOnEachUpdate()
   }
 
@@ -760,7 +718,7 @@ module.exports = class Dashboard extends Plugin {
       .map(this._attachRenderFunctionToTarget)
   })
 
-  render (state) {
+  render = (state) => {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
 
@@ -895,7 +853,7 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  discoverProviderPlugins () {
+  discoverProviderPlugins = () => {
     this.uppy.iteratePlugins((plugin) => {
       if (plugin && !plugin.target && plugin.opts && plugin.opts.target === this.constructor) {
         this.addTarget(plugin)
@@ -903,7 +861,7 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  install () {
+  install = () => {
     // Set default state for Dashboard
     this.setPluginState({
       isHidden: true,
@@ -970,15 +928,22 @@ module.exports = class Dashboard extends Plugin {
       })
     }
 
+    // Dark Mode / theme
+    this.darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+    const isDarkModeOnFromTheStart = this.darkModeMediaQuery.matches
+    this.uppy.log(`[Dashboard] Dark mode is ${isDarkModeOnFromTheStart ? 'on' : 'off'}`)
+    this.setDarkModeCapability(isDarkModeOnFromTheStart)
+
     if (this.opts.theme === 'auto') {
-      this.listenToDarkModeQuery()
+      this.darkModeMediaQuery.addListener(this.handleSystemDarkModeChange)
     }
 
     this.discoverProviderPlugins()
     this.initEvents()
   }
 
-  uninstall () {
+  uninstall = () => {
     if (!this.opts.disableInformer) {
       const informer = this.uppy.getPlugin(`${this.id}:Informer`)
       // Checking if this plugin exists, in case it was removed by uppy-core
@@ -1001,6 +966,10 @@ module.exports = class Dashboard extends Plugin {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) plugin.unmount()
     })
+
+    if (this.opts.theme === 'auto') {
+      this.darkModeMediaQuery.removeListener(this.handleSystemDarkModeChange)
+    }
 
     this.unmount()
     this.removeEvents()

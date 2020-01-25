@@ -58,7 +58,11 @@ module.exports = function Dashboard (props) {
       onDragLeave={props.handleDragLeave}
       onDrop={props.handleDrop}
     >
-      <div class="uppy-Dashboard-overlay" tabindex={-1} onclick={props.handleClickOutside} />
+      <div
+        class="uppy-Dashboard-overlay"
+        tabindex={-1}
+        onclick={props.handleClickOutside}
+      />
 
       <div
         class="uppy-Dashboard-inner"
