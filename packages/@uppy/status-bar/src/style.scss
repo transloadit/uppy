@@ -13,6 +13,10 @@
   background-color: $white;
   z-index: $zIndex-2;
   transition: height .2s;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+  }
 }
 
   .uppy-size--md .uppy-StatusBar {
@@ -29,6 +33,10 @@
     width: 100%;
     height: 2px;
     background-color: $gray-200;
+
+    [data-uppy-theme="dark"] & {
+      background-color: $gray-600;
+    }
   }
 
 .uppy-StatusBar[aria-hidden=true] {
@@ -56,6 +64,11 @@
   background-color: $white;
   height: 65px;
   border-top: 1px solid $gray-200;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+    border-top: 1px solid $gray-600;
+  }
 }
 
 .uppy-StatusBar-progress {
@@ -119,6 +132,10 @@
 
 .uppy-StatusBar-statusPrimary {
   font-weight: 500;
+
+  [data-uppy-theme="dark"] & {
+    color: $white;
+  }
 }
 
 .uppy-StatusBar-statusSecondary {
@@ -128,6 +145,10 @@
   display: inline-block;
   color: $gray-600;
   white-space: nowrap;
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-300;
+  }
 }
 
   .uppy-StatusBar-statusSecondaryHint {
@@ -171,6 +192,10 @@
   position: static;
   padding: 0 15px;
   background-color: $gray-50;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+  }
 }
 
 .uppy-StatusBar-actionCircleBtn {

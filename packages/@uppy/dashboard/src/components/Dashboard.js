@@ -5,7 +5,6 @@ const PickerPanelContent = require('./PickerPanelContent')
 const PanelTopBar = require('./PickerPanelTopBar')
 const FileCard = require('./FileCard')
 const classNames = require('classnames')
-const isTouchDevice = require('@uppy/utils/lib/isTouchDevice')
 const { h } = require('preact')
 const PreactCSSTransitionGroup = require('preact-css-transition-group')
 
@@ -36,7 +35,6 @@ module.exports = function Dashboard (props) {
   const dashboardClassName = classNames({
     'uppy-Root': props.isTargetDOMEl,
     'uppy-Dashboard': true,
-    'Uppy--isTouchDevice': isTouchDevice(),
     'uppy-Dashboard--animateOpenClose': props.animateOpenClose,
     'uppy-Dashboard--isClosing': props.isClosing,
     'uppy-Dashboard--isDraggingOver': props.isDraggingOver,
@@ -52,10 +50,10 @@ module.exports = function Dashboard (props) {
   return (
     <div
       class={dashboardClassName}
+      data-uppy-theme={props.theme}
       aria-hidden={props.inline ? 'false' : props.isHidden}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
       onpaste={props.handlePaste}
-
       onDragOver={props.handleDragOver}
       onDragLeave={props.handleDragLeave}
       onDrop={props.handleDrop}

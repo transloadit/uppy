@@ -124,7 +124,8 @@ module.exports = class Dashboard extends Plugin {
       proudlyDisplayPoweredByUppy: true,
       onRequestCloseModal: () => this.closeModal(),
       showSelectedFiles: true,
-      browserBackButtonClose: false
+      browserBackButtonClose: false,
+      theme: 'light'
     }
 
     // merge default options with the ones set by user
@@ -357,6 +358,33 @@ module.exports = class Dashboard extends Plugin {
     return this.closeModal()
   }
 
+  listenToDarkModeQuery () {
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+    const isDarkModeOnFromTheStart = darkModeMediaQuery.matches
+    this.uppy.log(`[Dashboard] Dark mode is ${isDarkModeOnFromTheStart ? 'on' : 'off'}`)
+
+    const { capabilities } = this.uppy.getState()
+    this.uppy.setState({
+      capabilities: {
+        ...capabilities,
+        darkMode: isDarkModeOnFromTheStart
+      }
+    })
+
+    darkModeMediaQuery.addListener((event) => {
+      const isDarkModeOnNow = event.matches
+      this.uppy.log(`[Dashboard] Dark mode is ${isDarkModeOnNow ? 'on' : 'off'}`)
+      const { capabilities } = this.uppy.getState()
+      this.uppy.setState({
+        capabilities: {
+          ...capabilities,
+          darkMode: isDarkModeOnNow
+        }
+      })
+    })
+  }
+
   toggleFileCard (fileId) {
     if (fileId) {
       this.uppy.emit('dashboard:file-edit-start')
@@ -572,6 +600,7 @@ module.exports = class Dashboard extends Plugin {
         executedDropErrorOnce = true
       }
     }
+
     getDroppedFiles(event.dataTransfer, { logDropError })
       .then((files) => {
         if (files.length > 0) {
@@ -785,6 +814,13 @@ module.exports = class Dashboard extends Plugin {
     const acquirers = this._getAcquirers(pluginState.targets)
     const progressindicators = this._getProgressIndicators(pluginState.targets)
 
+    let theme
+    if (this.opts.theme === 'auto') {
+      theme = capabilities.darkMode ? 'dark' : 'light'
+    } else {
+      theme = this.opts.theme
+    }
+
     return DashboardUI({
       state,
       isHidden: pluginState.isHidden,
@@ -804,6 +840,7 @@ module.exports = class Dashboard extends Plugin {
       totalProgress: state.totalProgress,
       allowNewUpload,
       acquirers,
+      theme,
       activePickerPanel: pluginState.activePickerPanel,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
@@ -933,8 +970,11 @@ module.exports = class Dashboard extends Plugin {
       })
     }
 
-    this.discoverProviderPlugins()
+    if (this.opts.theme === 'auto') {
+      this.listenToDarkModeQuery()
+    }
 
+    this.discoverProviderPlugins()
     this.initEvents()
   }
 

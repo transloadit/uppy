@@ -11,10 +11,12 @@
   background-color: $white;
   // For Safari, otherwise there is no border-radius in FileCard.
   border-radius: 5px;
+
   .uppy-DashboardContent-bar {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
   }
+
   .uppy-Dashboard-FileCard-actions {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
@@ -47,7 +49,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
+
+      [data-uppy-theme="dark"] & {
+        background-color: $gray-800;
+        // border-bottom: 1px solid $gray-200;
+      }
     }
+
       .uppy-Dashboard-FileCard-preview img.uppy-DashboardItem-previewImg {
         max-width: 90%;
         max-height: 90%;
@@ -68,7 +76,12 @@
       padding: 30px 20px 20px 20px;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+
+      [data-uppy-theme="dark"] & {
+        background-color: $black;
+      }
     }
+
       .uppy-Dashboard-FileCard-fieldset {
         font-size: 0;
         border: 0;
@@ -86,6 +99,10 @@
 
           .uppy-size--md & {
             font-size: 14px;
+          }
+
+          [data-uppy-theme="dark"] & {
+            color: $white;
           }
         }
         .uppy-Dashboard-FileCard-input {
@@ -107,10 +124,16 @@
 
       display: flex;
       align-items: center;
+
       .uppy-size--md & {
         height: 65px;
       }
+
+      [data-uppy-theme="dark"] & {
+        background-color: $gray-900;
+      }
     }
+
       .uppy-Dashboard-FileCard-actionsBtn {
         margin-right: 10px;
       }
