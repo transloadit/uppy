@@ -33,10 +33,10 @@
 
   &:focus {
     background-color: $highlight;
+  }
 
-    [data-uppy-theme="dark"] & {
-      background-color: $gray-200;
-    }
+  [data-uppy-theme="dark"] &:focus {
+    background-color: $gray-800;
   }
 }
 

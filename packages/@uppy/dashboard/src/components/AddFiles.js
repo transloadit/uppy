@@ -93,15 +93,16 @@ class AddFiles extends Component {
   }
 
   renderDropPasteBrowseTagline () {
-    // const browse =
-    //   <button
-    //     type="button"
-    //     class="uppy-u-reset uppy-Dashboard-browse"
-    //     onclick={this.triggerFileInputClick}
-    //     data-uppy-super-focusable
-    //   >
-    //     {this.props.i18n('browse')}
-    //   </button>
+    const numberOfAcquirers = this.props.acquirers.length
+    const browse =
+      <button
+        type="button"
+        class="uppy-u-reset uppy-Dashboard-browse"
+        onclick={this.triggerFileInputClick}
+        data-uppy-super-focusable={numberOfAcquirers === 0}
+      >
+        {this.props.i18n('browse')}
+      </button>
 
     // const renderSingleInlineProvider = (acquirer) => {
     //   const onclick = acquirer.id === 'local'
@@ -125,16 +126,16 @@ class AddFiles extends Component {
     // }
 
     const renderDropFilesSubtitle = () => {
-      switch (this.props.acquirers.length) {
+      switch (numberOfAcquirers) {
         case 0:
-          return this.props.i18nArray('dropPasteOrBrowse', { browse: this.renderBrowseButton() })
+          return this.props.i18nArray('dropBrowse', { browse })
         // case 1:
           // return this.props.i18nArray('dropPasteImportSingleProvider', {
           //   browse: browse,
           //   provider: renderSingleInlineProvider(this.props.acquirers[0])
           // })
         default:
-          return this.props.i18nArray('dropFilesHere')
+          return this.props.i18nArray('dropBrowseOrImport', { browse })
       }
     }
 

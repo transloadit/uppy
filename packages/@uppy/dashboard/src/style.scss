@@ -258,15 +258,15 @@
   }
 }
 
-// .uppy-Dashboard-browse {
-//   @include clear-focus;
-//   cursor: pointer;
-//   color: rgba($blue, 0.9);
+.uppy-Dashboard-browse {
+  @include clear-focus;
+  cursor: pointer;
+  color: rgba($blue, 0.9);
 
-//   &:hover, &:focus {
-//     border-bottom: 1px solid $blue;
-//   }
-// }
+  &:hover, &:focus {
+    border-bottom: 1px solid $blue;
+  }
+}
 
 .uppy-Dashboard-browseBtn {
   display: block;
@@ -450,7 +450,7 @@
 
   [data-uppy-theme="dark"] & {
     background-color: $gray-900;
-    border-bottom: 1px solid $gray-200;
+    border-bottom: 1px solid $gray-800;
   }
 }
 
