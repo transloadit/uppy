@@ -644,7 +644,14 @@ class Uppy {
     newFiles.forEach((newFile) => {
       this.emit('file-added', newFile)
     })
-    this.log(`Added batch of ${newFiles.length} files`)
+
+    if (newFiles.length > 5) {
+      this.log(`Added batch of ${newFiles.length} files`)
+    } else {
+      Object.keys(newFiles).forEach(fileID => {
+        this.log(`Added file: ${newFiles[fileID].name}\n id: ${newFiles[fileID].id}\n type: ${newFiles[fileID].type}`)
+      })
+    }
 
     this._startIfAutoProceed()
 
@@ -710,16 +717,17 @@ class Uppy {
     // If all files were removed - allow new uploads!
     if (Object.keys(updatedFiles).length === 0) {
       stateUpdate.allowNewUpload = true
+      stateUpdate.error = null
     }
 
     this.setState(stateUpdate)
-
     this._calculateTotalProgress()
 
     const removedFileIDs = Object.keys(removedFiles)
     removedFileIDs.forEach((fileID) => {
       this.emit('file-removed', removedFiles[fileID])
     })
+
     if (removedFileIDs.length > 5) {
       this.log(`Removed ${removedFileIDs.length} files`)
     } else {
@@ -762,8 +770,8 @@ class Uppy {
       })
       updatedFiles[file] = updatedFile
     })
-    this.setState({ files: updatedFiles })
 
+    this.setState({ files: updatedFiles })
     this.emit('pause-all')
   }
 
