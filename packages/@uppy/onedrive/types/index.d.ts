@@ -8,6 +8,7 @@ declare module OneDrive {
     replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
     title?: string
+    storage?: CompanionClient.TokenStorage
   }
 }
 

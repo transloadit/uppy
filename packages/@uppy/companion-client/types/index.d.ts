@@ -30,7 +30,6 @@ export class RequestClient {
  */
 export interface PublicProviderOptions extends RequestClientOptions {
   companionAllowedHosts?: string | RegExp | Array<string | RegExp>
-  storage?: TokenStorage
 }
 
 /**

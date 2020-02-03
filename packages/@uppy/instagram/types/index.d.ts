@@ -8,6 +8,7 @@ declare module Instagram {
     replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
     title?: string
+    storage?: CompanionClient.TokenStorage
   }
 }
 
