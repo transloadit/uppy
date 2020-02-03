@@ -1,3 +1,5 @@
+const Provider = require('../Provider')
+
 const request = require('request')
 // @ts-ignore
 const purest = require('purest')({ request })
@@ -9,8 +11,9 @@ const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FI
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
 
-class Drive {
+class Drive extends Provider {
   constructor (options) {
+    super(options)
     this.authProvider = options.provider = Drive.authProvider
     options.alias = 'drive'
     options.version = 'v3'

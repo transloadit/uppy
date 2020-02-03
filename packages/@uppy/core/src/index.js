@@ -9,7 +9,7 @@ const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
 const supportsUploadProgress = require('./supportsUploadProgress')
-const { nullLogger, debugLogger } = require('./loggers')
+const { justErrorsLogger, debugLogger } = require('./loggers')
 const Plugin = require('./Plugin') // Exported from here.
 
 class RestrictionError extends Error {
@@ -100,7 +100,7 @@ class Uppy {
       onBeforeFileAdded: (currentFile, files) => currentFile,
       onBeforeUpload: (files) => files,
       store: DefaultStore(),
-      logger: nullLogger
+      logger: justErrorsLogger
     }
 
     // Merge default options with the ones set by user,
@@ -115,7 +115,7 @@ class Uppy {
     }
 
     // Support debug: true for backwards-compatability, unless logger is set in opts
-    // opts instead of this.opts to avoid comparing objects — we set logger: nullLogger in defaultOptions
+    // opts instead of this.opts to avoid comparing objects — we set logger: justErrorsLogger in defaultOptions
     if (opts && opts.logger && opts.debug) {
       this.log('You are using a custom `logger`, but also set `debug: true`, which uses built-in logger to output logs to console. Ignoring `debug: true` and using your custom `logger`.', 'warning')
     } else if (opts && opts.debug) {
@@ -644,7 +644,14 @@ class Uppy {
     newFiles.forEach((newFile) => {
       this.emit('file-added', newFile)
     })
-    this.log(`Added batch of ${newFiles.length} files`)
+
+    if (newFiles.length > 5) {
+      this.log(`Added batch of ${newFiles.length} files`)
+    } else {
+      Object.keys(newFiles).forEach(fileID => {
+        this.log(`Added file: ${newFiles[fileID].name}\n id: ${newFiles[fileID].id}\n type: ${newFiles[fileID].type}`)
+      })
+    }
 
     this._startIfAutoProceed()
 
@@ -710,16 +717,17 @@ class Uppy {
     // If all files were removed - allow new uploads!
     if (Object.keys(updatedFiles).length === 0) {
       stateUpdate.allowNewUpload = true
+      stateUpdate.error = null
     }
 
     this.setState(stateUpdate)
-
     this._calculateTotalProgress()
 
     const removedFileIDs = Object.keys(removedFiles)
     removedFileIDs.forEach((fileID) => {
       this.emit('file-removed', removedFiles[fileID])
     })
+
     if (removedFileIDs.length > 5) {
       this.log(`Removed ${removedFileIDs.length} files`)
     } else {
@@ -762,8 +770,8 @@ class Uppy {
       })
       updatedFiles[file] = updatedFile
     })
-    this.setState({ files: updatedFiles })
 
+    this.setState({ files: updatedFiles })
     this.emit('pause-all')
   }
 
@@ -1459,6 +1467,11 @@ class Uppy {
 
     if (onBeforeUploadResult && typeof onBeforeUploadResult === 'object') {
       files = onBeforeUploadResult
+      // Updating files in state, because uploader plugins receive file IDs,
+      // and then fetch the actual file object from state
+      this.setState({
+        files: files
+      })
     }
 
     return Promise.resolve()

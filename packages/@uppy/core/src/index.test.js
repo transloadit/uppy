@@ -1856,7 +1856,7 @@ describe('src/Core', () => {
       expect(console.error.mock.calls.length).toBe(1)
     })
 
-    it('should not log to console when logger is not set', () => {
+    it('should only log errors to console when logger is not set', () => {
       console.debug = jest.fn()
       console.error = jest.fn()
 
@@ -1867,7 +1867,7 @@ describe('src/Core', () => {
       core.log('beep beep', 'error')
 
       expect(console.debug.mock.calls.length).toBe(0)
-      expect(console.error.mock.calls.length).toBe(0)
+      expect(console.error.mock.calls.length).toBe(1)
     })
   })
 })

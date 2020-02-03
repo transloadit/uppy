@@ -117,7 +117,7 @@ function uppySetOptions () {
 
   const FacebookInstance = window.uppy.getPlugin('Facebook')
   if (opts.Facebook && !FacebookInstance) {
-    uppy.use(Facebook, { target: Dashboard, companionUrl: COMPANION })
+    window.uppy.use(Facebook, { target: Dashboard, companionUrl: COMPANION })
   }
   if (!opts.Facebook && FacebookInstance) {
     window.uppy.removePlugin(FacebookInstance)
@@ -125,7 +125,7 @@ function uppySetOptions () {
 
   const OneDriveInstance = window.uppy.getPlugin('OneDrive')
   if (opts.OneDrive && !OneDriveInstance) {
-    uppy.use(OneDrive, { target: Dashboard, companionUrl: COMPANION })
+    window.uppy.use(OneDrive, { target: Dashboard, companionUrl: COMPANION })
   }
   if (!opts.OneDrive && OneDriveInstance) {
     window.uppy.removePlugin(OneDriveInstance)
@@ -154,7 +154,7 @@ function loadLocaleFromCDN (localeName) {
   var head = document.getElementsByTagName('head')[0]
   var js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.10.0/${localeName}.min.js`
+  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.11.0/${localeName}.min.js`
 
   head.appendChild(js)
 }
