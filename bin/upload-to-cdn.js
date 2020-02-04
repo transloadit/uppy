@@ -30,7 +30,7 @@ const mime = require('mime-types')
 const { promisify } = require('util')
 const readFile = promisify(require('fs').readFile)
 const finished = promisify(require('stream').finished)
-var AdmZip = require('adm-zip')
+const AdmZip = require('adm-zip')
 
 function delay (ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
