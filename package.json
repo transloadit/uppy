@@ -65,6 +65,7 @@
     "@uppy/utils": "file:packages/@uppy/utils",
     "@uppy/webcam": "file:packages/@uppy/webcam",
     "@uppy/xhr-upload": "file:packages/@uppy/xhr-upload",
+    "adm-zip": "0.4.13",
     "uppy": "file:packages/uppy",
     "uppy.io": "file:website"
   },
