@@ -161,13 +161,15 @@ async function main (packageName, version) {
     ? await getRemoteDistFiles(packageName, version)
     : await getLocalDistFiles(packagePath)
 
-  // Create downloadable zip archive
-  const zip = new AdmZip()
-  for (const [filename, buffer] of files.entries()) {
-    zip.addFile(filename, buffer, 'entry comment goes here')
-  }
+  if (packageName === 'uppy') {
+    // Create downloadable zip archive
+    const zip = new AdmZip()
+    for (const [filename, buffer] of files.entries()) {
+      zip.addFile(filename, buffer, 'entry comment goes here')
+    }
 
-  files.set(`uppy-v${version}.zip`, zip.toBuffer())
+    files.set(`uppy-v${version}.zip`, zip.toBuffer())
+  }
 
   for (const [filename, buffer] of files.entries()) {
     const key = path.posix.join(AWS_DIRECTORY, outputPath, filename)
