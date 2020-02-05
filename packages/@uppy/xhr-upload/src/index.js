@@ -356,6 +356,7 @@ module.exports = class XHRUpload extends Plugin {
         size: file.data.size,
         fieldname: opts.fieldName,
         metadata: fields,
+        httpMethod: this.opts.method,
         headers: opts.headers
       }).then((res) => {
         const token = res.token

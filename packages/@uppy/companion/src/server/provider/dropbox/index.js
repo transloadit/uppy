@@ -1,3 +1,5 @@
+const Provider = require('../Provider')
+
 const request = require('request')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
@@ -17,8 +19,9 @@ function httpHeaderSafeJson (v) {
   )
 }
 
-class DropBox {
+class DropBox extends Provider {
   constructor (options) {
+    super(options)
     this.authProvider = options.provider = DropBox.authProvider
     this.client = purest(options)
   }

@@ -16,15 +16,12 @@ Ideas that will be planned and find their way into a release at one point.
 PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
 - [ ] build: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
-- [ ] companion: pass metadata to S3 `getKey` option, see https://github.com/transloadit/uppy/issues/689
 - [ ] companion: Transfer files between providers (from instagram to Google drive for example).
 - [ ] companion: what happens if access token expires amid an upload/download process.
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
 - [ ] core: Add total max size to restrictions #514
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
 - [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
-- [ ] core: Fire event when a restriction fails #1251
-- [ ] core: good way to change plugin options at runtime—maybe `this.state.options`?
 - [ ] core: have a `resetProgress` method for resetting a single file, and call it before starting an upload. see comment in #393
 - [ ] core: Make sure Uppy works well in VR
 - [ ] core: normalize file names when uploading from iOS? $678
@@ -37,7 +34,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: allow selecting folders (add separate hidden input button for folders) #447 #1027
 - [ ] dashboard: Consider uploading image thumbnails too #1212
 - [ ] dashboard: display data like image resolution on file cards #783
-- [ ] dashboard: fix incorrectly rotated image thumbnails #472
 - [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
 - [ ] dashboard: possibility to edit/delete more than one file at once #118, #97
 - [ ] dashboard: possibility to work on already uploaded / in progress files #112, #113
@@ -53,13 +49,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] plugins: Plugins - Keybase.io Remote provider plugin! #943
 - [ ] plugins: screenshot+screencast support similar to Webcam #148
 - [ ] plugins: WordPress plugin https://www.producthunt.com/posts/uppy-io#comment-559327 (“And Gravity forms”)
-- [ ] provider: Add Facebook, OneDrive, Box
+- [ ] provider: Add <strike>Facebook, OneDrive</strike>, Box
 - [ ] provider: add sorting, filtering, previews #254
 - [ ] provider: allow consuming developers to pass in their own ProviderViews to Provider Plugins https://github.com/transloadit/uppy/issues/1143
 - [ ] provider: change ProviderViews signature to receive Provider instance in second param. (https://github.com/transloadit/uppy/pull/743#discussion_r180106070)
 - [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112
 - [ ] react: Component wrappers to manage the Uppy instance, many people initialize it in render() which does not work correctly so this could make it easier for them https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951
-- [ ] core: implement a `uppy.getPlugin(x).setOptions()` method so that you can e.g. dynamically show `hideUploadButton`. we can then use this in the react component so that it rerenders appropriately. Can we also use this for changing Locales? #1193
 - [ ] rn: Uppy React Native works with Expo, now let's make it work without
 - [ ] rn: Uppy React Native works with Url Plugin, now let's make it work with Instagram
 - [ ] security: consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
