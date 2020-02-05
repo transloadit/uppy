@@ -165,7 +165,7 @@ async function main (packageName, version) {
     // Create downloadable zip archive
     const zip = new AdmZip()
     for (const [filename, buffer] of files.entries()) {
-      zip.addFile(filename, buffer, 'entry comment goes here')
+      zip.addFile(filename, buffer)
     }
 
     files.set(`uppy-v${version}.zip`, zip.toBuffer())
