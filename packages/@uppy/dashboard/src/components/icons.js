@@ -52,6 +52,28 @@ function localIcon () {
   )
 }
 
+function desktopIcon () {
+  return (
+    <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" fill-rule="evenodd">
+        <rect width="32" height="32" rx="16" fill="#5B5B5B" />
+        <path d="M24.944 19.923c-.008 1.215-.932 1.758-2.49 1.695-1.557-.063-11.96-.02-13.446-.08-1.485-.06-2.045-1.005-2.006-2.203.122-3.795.086-7.583.135-8.37.085-1.354.654-1.979 1.829-1.93.947.037 13.044-.085 14.257-.01 1.383.085 1.824 1.015 1.773 2.272-.028.696-.03 5.015-.052 8.626zM8.426 10.272l-.097 9.09 15.44.075.071-9.117-15.414-.048zm9.542 12.042c0 .833 1.394 1.107 1.394 1.107l-.1.579-6.513-.078-.044-.564s1.315-.219 1.315-1.07l3.948.026z" fill="#FFF" fill-rule="nonzero" />
+      </g>
+    </svg>
+  )
+}
+
+function mobileIcon () {
+  return (
+    <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" fill-rule="evenodd">
+        <rect width="32" height="32" rx="16" fill="#5B5B5B" />
+        <path d="M10.013 24.06c-.045 1.283.976 1.909 2.804 1.935 1.829.026 4.915-.062 6.658-.037 1.744.025 2.453-.864 2.487-2.13.109-4.01-.05-13.803-.056-14.635-.009-1.434-.635-2.126-2.014-2.146-1.112-.016-6.239-.053-7.664-.046-1.626.008-2.204.962-2.227 2.291-.013.735.147 10.9.012 14.767zm3.394-15.158c-.023.509.156 1.244.81 1.244s3.015.035 3.346.035c.78 0 1.007-.766 1.007-1.222.937.007 1.43.057 1.43.057L19.712 24.1l-7.64-.018L12 8.912s.24-.018 1.407-.01z" fill="#FFF" fill-rule="nonzero" />
+      </g>
+    </svg>
+  )
+}
+
 function iconRetry () {
   return (
     <svg aria-hidden="true" focusable="false" class="UppyIcon retry" width="28" height="31" viewBox="0 0 16 19">
@@ -154,6 +176,8 @@ module.exports = {
   iconPause,
   iconRetry,
   localIcon,
+  desktopIcon,
+  mobileIcon,
   checkIcon,
   iconAudio,
   iconVideo,

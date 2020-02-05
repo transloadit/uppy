@@ -1,25 +1,13 @@
-const { localIcon } = require('./icons')
+const { desktopIcon, mobileIcon } = require('./icons')
 const { h, Component } = require('preact')
 const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 
 class AddFiles extends Component {
-  constructor (props) {
-    super(props)
-
-    this.triggerFileInputClick = this.triggerFileInputClick.bind(this)
-    this.onFileInputChange = this.onFileInputChange.bind(this)
-
-    this.renderPoweredByUppy = this.renderPoweredByUppy.bind(this)
-    this.renderHiddenFileInput = this.renderHiddenFileInput.bind(this)
-    this.renderDropPasteBrowseTagline = this.renderDropPasteBrowseTagline.bind(this)
-    this.renderAcquirer = this.renderAcquirer.bind(this)
-  }
-
-  triggerFileInputClick () {
+  triggerFileInputClick = () => {
     this.fileInput.click()
   }
 
-  onFileInputChange (event) {
+  onFileInputChange = (event) => {
     this.props.handleInputChange(event)
 
     // We clear the input after a file is selected, because otherwise
@@ -31,7 +19,7 @@ class AddFiles extends Component {
     event.target.value = null
   }
 
-  renderPoweredByUppy () {
+  renderPoweredByUppy = () => {
     return (
       <a
         tabindex="-1"
@@ -49,7 +37,7 @@ class AddFiles extends Component {
     )
   }
 
-  renderCloudIcon () {
+  renderCloudIcon = () => {
     return (
       <svg class="uppy-Dashboard-dropFilesIcon" aria-hidden="true" width="64" height="45" viewBox="0 0 64 45" xmlns="http://www.w3.org/2000/svg">
         <path d="M38 44.932V31h8L33 15 20 31h8v13.932H13.538C6.075 44.932 0 38.774 0 31.202c0-6.1 4.06-11.512 9.873-13.162l.005-.017c.345-5.8 5.248-10.534 10.922-10.534.502 0 1.164.017 1.868.16C25.9 2.85 31.225 0 36.923 0c9.5 0 17.23 7.838 17.23 17.473l-.011.565.012.002C60.039 19.685 64 24.975 64 31.203c0 7.57-6.075 13.729-13.538 13.729H38z" fill="#E2E2E2" fill-rule="nonzero" />
@@ -57,7 +45,7 @@ class AddFiles extends Component {
     )
   }
 
-  renderHiddenFileInput () {
+  renderHiddenFileInput = () => {
     return (
       <input
         class="uppy-Dashboard-input"
@@ -74,7 +62,7 @@ class AddFiles extends Component {
     )
   }
 
-  renderMyDeviceAcquirer () {
+  renderMyDeviceAcquirer = () => {
     return (
       <div class="uppy-DashboardTab" role="presentation">
         <button
@@ -85,14 +73,14 @@ class AddFiles extends Component {
           data-uppy-super-focusable
           onclick={this.triggerFileInputClick}
         >
-          {localIcon()}
+          {this.props.isMobileDevice ? mobileIcon() : desktopIcon()}
           <div class="uppy-DashboardTab-name">{this.props.i18n('myDevice')}</div>
         </button>
       </div>
     )
   }
 
-  renderDropPasteBrowseTagline () {
+  renderDropPasteBrowseTagline = () => {
     const numberOfAcquirers = this.props.acquirers.length
     const browse =
       <button
@@ -146,15 +134,15 @@ class AddFiles extends Component {
         <div class="uppy-Dashboard-dropFilesTitle">
           {renderDropFilesSubtitle()}
         </div>
-        <div class="uppy-Dashboard-dropFilesSubtitle">
-          {/* {this.props.i18n('dropFilesHere')} */}
-          {/* {renderDropFilesSubtitle()} */}
-        </div>
+        {/* <div class="uppy-Dashboard-dropFilesSubtitle">
+          {this.props.i18n('dropFilesHere')}
+          {renderDropFilesSubtitle()}
+        </div> */}
       </div>
     )
   }
 
-  renderBrowseButton () {
+  renderBrowseButton = () => {
     return (
       <button
         type="button"
@@ -167,7 +155,7 @@ class AddFiles extends Component {
     )
   }
 
-  renderAcquirer (acquirer) {
+  renderAcquirer = (acquirer) => {
     return (
       <div class="uppy-DashboardTab" role="presentation">
         <button
@@ -187,7 +175,7 @@ class AddFiles extends Component {
     )
   }
 
-  renderAcquirers (acquirers) {
+  renderAcquirers = (acquirers) => {
     // Group last two buttons in <nobr>, so we don’t end up with
     // just one button on a new line
     const acquirersWithoutLastTwo = [...acquirers]
@@ -197,7 +185,7 @@ class AddFiles extends Component {
       <div class="uppy-DashboardTabs-list" role="tablist">
         {this.renderMyDeviceAcquirer()}
         {acquirersWithoutLastTwo.map((acquirer) => this.renderAcquirer(acquirer))}
-        <nobr>
+        <nobr role="presentation">
           {lastTwoAcquirers.map((acquirer) => this.renderAcquirer(acquirer))}
         </nobr>
       </div>
