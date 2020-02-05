@@ -18,6 +18,7 @@ const logger = require('./server/logger')
 const { STORAGE_PREFIX } = require('./server/Uploader')
 const middlewares = require('./server/middlewares')
 const { shortenToken } = require('./server/Uploader')
+const { ProviderApiError, ProviderAuthError } = require('./server/provider/error')
 
 const defaultOptions = {
   server: {
@@ -35,6 +36,9 @@ const defaultOptions = {
   },
   debug: true
 }
+
+// make the errors available publicly for custom providers
+module.exports.errors = { ProviderApiError, ProviderAuthError }
 
 /**
  * Entry point into initializing the Companion app.

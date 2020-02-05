@@ -5,12 +5,15 @@ const request = require('request')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
-const AuthError = require('../error')
+const { ProviderApiError, ProviderAuthError } = require('../error')
 const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
 
+/**
+ * Adapter for API https://developers.google.com/drive/api/v3/
+ */
 class Drive extends Provider {
   constructor (options) {
     super(options)
@@ -184,8 +187,9 @@ class Drive extends Provider {
 
   _error (err, resp) {
     if (resp) {
-      const errMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
-      return resp.statusCode === 401 ? new AuthError() : new Error(errMsg)
+      const fallbackMessage = `request to ${this.authProvider} returned ${resp.statusCode}`
+      const errMsg = resp.body.error ? resp.body.error.message : fallbackMessage
+      return resp.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
     }
     return err
   }
