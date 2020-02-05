@@ -824,6 +824,7 @@ module.exports = class Dashboard extends Plugin {
       metaFields: pluginState.metaFields,
       resumableUploads: capabilities.resumableUploads || false,
       individualCancellation: capabilities.individualCancellation,
+      isMobileDevice: capabilities.isMobileDevice,
       pauseUpload: this.uppy.pauseResume,
       retryUpload: this.uppy.retryUpload,
       cancelUpload: this.cancelUpload,

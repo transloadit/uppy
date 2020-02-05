@@ -3,6 +3,7 @@ const ee = require('namespace-emitter')
 const cuid = require('cuid')
 const throttle = require('lodash.throttle')
 const prettyBytes = require('@uppy/utils/lib/prettyBytes')
+const isMobileDevice = require('@uppy/utils/lib/isMobileDevice')
 const match = require('mime-match')
 const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
@@ -199,6 +200,18 @@ class Uppy {
     }
 
     this._addListeners()
+    this._setCapabilities()
+  }
+
+  _setCapabilities = () => {
+    const capabilities = {
+      isMobileDevice: isMobileDevice()
+    }
+
+    this.setState({
+      ...this.getState().capabilities,
+      capabilities
+    })
   }
 
   on (event, callback) {
