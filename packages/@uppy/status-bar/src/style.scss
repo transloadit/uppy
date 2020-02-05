@@ -114,6 +114,10 @@
   .uppy-size--md & {
     padding-left: 15px;
   }
+
+  [data-uppy-theme="dark"] & {
+    color: $white;
+  }
 }
 
 .uppy-StatusBar-status {

@@ -188,6 +188,7 @@
   &:focus{
     color: lighten($blue, 25%);
   }
+
   @media #{$screen-medium} {
     font-size: 35px;
     top: -10px;
@@ -266,6 +267,15 @@
   &:hover, &:focus {
     border-bottom: 1px solid $blue;
   }
+
+  [data-uppy-theme="dark"] & {
+    color: rgba($highlight--dark, 0.9);
+  }
+
+  [data-uppy-theme="dark"] &:hover,
+  [data-uppy-theme="dark"] &:focus {
+    border-bottom: 1px solid $highlight--dark;
+  }
 }
 
 .uppy-Dashboard-browseBtn {
@@ -312,14 +322,16 @@
   width: 100%;
   text-align: center;
   border-bottom: 1px solid $gray-200;
-  padding: 0px 2px;
+
+  [data-uppy-theme="dark"] & {
+    border-bottom: 1px solid $gray-800;
+  }
 
   .uppy-size--md & {
     display: inline-block;
     width: initial;
     margin-bottom: 10px;
     border-bottom: none;
-    padding: 0;
   }
 }
 

@@ -103,9 +103,6 @@
 .uppy-Webcam-permissons p {
   max-width: 450px;
   line-height: 1.3;
-}
-
-.uppy-Webcam-permissons p {
   text-align: center;
   line-height: 1.45;
   color: $gray-500;
@@ -136,4 +133,8 @@
   max-width: 500px;
   text-align: center;
   color: $gray-800;
+
+  [data-uppy-theme="dark"] & {
+    color: $white;
+  }
 }
