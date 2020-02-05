@@ -438,7 +438,7 @@ class Uppy {
         // is this is a mime-type
         if (type.indexOf('/') > -1) {
           if (!file.type) return false
-          return match(file.type, type)
+          return match(file.type.replace(/;.*?$/, ''), type)
         }
 
         // otherwise this is likely an extension
