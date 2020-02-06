@@ -78,7 +78,6 @@ class Drive extends Provider {
           const returnData = this.adaptData(
             filesResponse.body,
             sharedDrives && sharedDrives.body,
-            options.companion,
             directory,
             query
           )
@@ -114,16 +113,11 @@ class Drive extends Provider {
       })
   }
 
-  thumbnail ({ id, token }, done) {
-    return this.stats({ id, token }, (err, resp, body) => {
-      if (err || resp.statusCode !== 200) {
-        err = this._error(err, resp)
-        logger.error(err, 'provider.drive.thumbnail.error')
-        return done(err)
-      }
-
-      done(null, body.thumbnailLink ? request(body.thumbnailLink) : null)
-    })
+  thumbnail (_, done) {
+    // not implementing this because a public thumbnail from onedrive will be used instead
+    const err = new Error('call to thumbnail is not implemented')
+    logger.error(err, 'provider.drive.thumbnail.error')
+    return done(err)
   }
 
   size ({ id, token }, done) {
@@ -151,14 +145,14 @@ class Drive extends Provider {
       })
   }
 
-  adaptData (res, sharedDrivesResp, companion, directory, query) {
+  adaptData (res, sharedDrivesResp, directory, query) {
     const adaptItem = (item) => ({
       isFolder: adapter.isFolder(item),
       icon: adapter.getItemIcon(item),
       name: adapter.getItemName(item),
       mimeType: adapter.getMimeType(item),
       id: adapter.getItemId(item),
-      thumbnail: companion.buildURL(adapter.getItemThumbnailUrl(item), true),
+      thumbnail: adapter.getItemThumbnailUrl(item),
       requestPath: adapter.getItemRequestPath(item),
       modifiedDate: adapter.getItemModifiedDate(item),
       size: adapter.getItemSize(item),
