@@ -114,7 +114,7 @@ class Drive extends Provider {
   }
 
   thumbnail (_, done) {
-    // not implementing this because a public thumbnail from onedrive will be used instead
+    // not implementing this because a public thumbnail from googledrive will be used instead
     const err = new Error('call to thumbnail is not implemented')
     logger.error(err, 'provider.drive.thumbnail.error')
     return done(err)
