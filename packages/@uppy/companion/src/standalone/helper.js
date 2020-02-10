@@ -195,10 +195,6 @@ exports.buildHelpfulStartupMessage = (companionOptions) => {
       return
     }
 
-    if (providerName === 'google') {
-      providerName = 'drive'
-    }
-
     callbackURLs.push(buildURL(`/connect/${providerName}/callback`, true))
   })
 

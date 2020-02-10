@@ -1,3 +1,5 @@
+const Provider = require('../Provider')
+
 const request = require('request')
 const purest = require('purest')({ request })
 const utils = require('../../helpers/utils')
@@ -5,8 +7,9 @@ const logger = require('../../logger')
 const adapter = require('./adapter')
 const AuthError = require('../error')
 
-class Instagram {
+class Instagram extends Provider {
   constructor (options) {
+    super(options)
     this.authProvider = options.provider = Instagram.authProvider
     this.client = purest(options)
   }
