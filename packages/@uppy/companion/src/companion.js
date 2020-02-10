@@ -213,29 +213,27 @@ const getOptionsMiddleware = (options) => {
     const S3 = require('aws-sdk/clients/s3')
     const AWS = require('aws-sdk')
     const s3ProviderOptions = options.providerOptions.s3
-    const s3Options = Object.assign({
-      signatureVersion: 'v4'
-    }, s3ProviderOptions)
-    // delete options intended for Companion, not S3:
-    delete s3Options.key
-    delete s3Options.secret
-    delete s3Options.conditions
-    delete s3Options.getKey
 
     if (s3ProviderOptions.accessKeyId || s3ProviderOptions.secretAccessKey) {
       throw new Error('Found `providerOptions.s3.accessKeyId` or `providerOptions.s3.secretAccessKey` configuration, but Companion requires `key` and `secret` option names instead. Please use the `key` property instead of `accessKeyId` and the `secret` property instead of `secretAccessKey`.')
     }
 
+    const s3ClientOptions = Object.assign({
+      signatureVersion: 'v4',
+      // backwards compat
+      useAccelerateEndpoint: s3ProviderOptions.useAccelerateEndpoint
+    }, s3ProviderOptions.awsClientOptions)
+
     // Use credentials to allow assumed roles to pass STS sessions in.
     // If the user doesn't specify key and secret, the default credentials (process-env)
     // will be used by S3 in calls below.
-    if (s3ProviderOptions.key && s3ProviderOptions.secret && !s3Options.credentials) {
-      s3Options.credentials = new AWS.Credentials(
+    if (s3ProviderOptions.key && s3ProviderOptions.secret && !s3ClientOptions.credentials) {
+      s3ClientOptions.credentials = new AWS.Credentials(
         s3ProviderOptions.key,
         s3ProviderOptions.secret,
         s3ProviderOptions.sessionToken)
     }
-    s3Client = new S3(s3Options)
+    s3Client = new S3(s3ClientOptions)
   }
 
   /**

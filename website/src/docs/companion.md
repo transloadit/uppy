@@ -290,12 +290,34 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 ### S3 options
 
-You can supply any [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property) in the `providerOptions.s3` object, _except for_ the below:
+Companion comes with signature endpoints for AWS S3. These can be used by the Uppy client to sign requests to upload files directly to S3, without exposing secret S3 keys in the browser. Companion also supports uploading files from providers like Dropbox and Instagram directly into S3.
 
-- `accessKeyId`. Instead, use the `key` option. This is to make configuration names consistent between different Companion features.
-- `secretAccessKey`. Instead, use the `secret` option. This is to make configuration names consistent between different Companion features.
+The S3 features can be configured using the `providerOptions.s3` property.
 
-Additionally, some Companion-specific options can be configured:
+#### `providerOptions.s3.key`
+
+The S3 access key ID. The standalone Companion server populates this with the value of the `COMPANION_AWS_KEY` environment variable by default.
+
+#### `providerOptions.s3.secret`
+
+The S3 secret access key. The standalone Companion server populates this with the value of the `COMPANION_AWS_SECRET` environment variable by default.
+
+#### `providerOptions.s3.bucket`
+
+The name of the bucket to store uploaded files in. The standalone Companion server populates this with the value of the `COMPANION_AWS_BUCKET` environment variable by default.
+
+#### `providerOptions.s3.region`
+
+The datacenter region where the target bucket is located. The standalone Companion server populates this with the value of the `COMPANION_AWS_REGION` environment variable by default.
+
+#### `providerOptions.s3.awsClientOptions`
+
+You can supply any [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property) in the `providerOptions.s3.awsClientOptions` object, _except for_ the below:
+
+- `accessKeyId`. Instead, use the `providerOptions.s3.key` property. This is to make configuration names consistent between different Companion features.
+- `secretAccessKey`. Instead, use the `providerOptions.s3.secret` property. This is to make configuration names consistent between different Companion features.
+
+Be aware that some options may cause wrong behaviour if they conflict with Companion's assumptions. If you find that a particular option does not work as expected, please [open an issue on the Uppy repository](https://github.com/transloadit/uppy/issues/new) so we can document it here.
 
 #### `providerOptions.s3.getKey(req, filename, metadata)`
 
