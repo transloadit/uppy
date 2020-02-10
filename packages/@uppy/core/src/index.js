@@ -51,6 +51,8 @@ class Uppy {
         },
         exceedsSize: 'This file exceeds maximum allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
+        noNewAlreadyUploading: 'Cannot add new files: already uploading',
+        noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
         companionError: 'Connection with Companion failed',
         companionAuthError: 'Authorization required',
         companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
@@ -488,7 +490,7 @@ class Uppy {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      this._showOrLogErrorAndThrow(new RestrictionError('Cannot add new files: already uploading.'), { file })
+      this._showOrLogErrorAndThrow(new RestrictionError(this.i18n('noNewAlreadyUploading')), { file })
     }
   }
 
@@ -528,7 +530,7 @@ class Uppy {
     const fileID = generateFileID(file)
 
     if (files[fileID]) {
-      this._showOrLogErrorAndThrow(new RestrictionError(`Cannot add the duplicate file '${fileName}', it already exists.`), { file })
+      this._showOrLogErrorAndThrow(new RestrictionError(this.i18n('noDuplicates', { fileName })), { file })
     }
 
     const meta = file.meta || {}
