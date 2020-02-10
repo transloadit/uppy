@@ -1,11 +1,39 @@
+/**
+ * This plugin is currently a A Big Hack™! The core reason for that is how this plugin
+ * interacts with Uppy's current pipeline design. The pipeline can handle files in steps,
+ * including preprocessing, uploading, and postprocessing steps. This plugin initially
+ * was designed to do its work in a preprocessing step, and let XHRUpload deal with the
+ * actual file upload as an uploading step. However, Uppy runs steps on all files at once,
+ * sequentially: first, all files go through a preprocessing step, then, once they are all
+ * done, they go through the uploading step.
+ *
+ * For S3, this causes severely broken behaviour when users upload many files. The
+ * preprocessing step will request S3 upload URLs that are valid for a short time only,
+ * but it has to do this for _all_ files, which can take a long time if there are hundreds
+ * or even thousands of files. By the time the uploader step starts, the first URLs may
+ * already have expired. If not, the uploading might take such a long time that later URLs
+ * will expire before some files can be uploaded.
+ *
+ * The long-term solution to this problem is to change the upload pipeline so that files
+ * can be sent to the next step individually. That requires a breakig change, so it is
+ * planned for Uppy v2.
+ *
+ * In the mean time, this plugin is stuck with a hackier approach: the necessary parts
+ * of the XHRUpload implementation were copied into this plugin, as the MiniXHRUpload
+ * class, and this plugin calls into it immediately once it receives an upload URL.
+ * This isn't as nicely modular as we'd like and requires us to maintain two copies of
+ * the XHRUpload code, but at least it's not horrifically broken :)
+ */
+
 // If global `URL` constructor is available, use it
 const URL_ = typeof URL === 'function' ? URL : require('url-parse')
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
+const settle = require('@uppy/utils/lib/settle')
 const { RequestClient } = require('@uppy/companion-client')
-const XHRUpload = require('@uppy/xhr-upload')
 const qsStringify = require('qs-stringify')
+const MiniXHRUpload = require('./MiniXHRUpload')
 
 function resolveUrl (origin, link) {
   return new URL_(link, origin).toString()
@@ -50,6 +78,9 @@ function assertServerError (res) {
   return res
 }
 
+// warning deduplication flag: see `getResponseData()` XHRUpload option definition
+let warnedSuccessActionStatus = false
+
 module.exports = class AwsS3 extends Plugin {
   static VERSION = require('../package.json').version
 
@@ -77,7 +108,7 @@ module.exports = class AwsS3 extends Plugin {
     this.i18nInit()
 
     this.client = new RequestClient(uppy, opts)
-    this.prepareUpload = this.prepareUpload.bind(this)
+    this.handleUpload = this.handleUpload.bind(this)
     this.requests = new RateLimitedQueue(this.opts.limit)
   }
 
@@ -97,8 +128,8 @@ module.exports = class AwsS3 extends Plugin {
       throw new Error('Expected a `companionUrl` option containing a Companion address.')
     }
 
-    const filename = file.meta.name
-    const type = file.meta.type
+    const filename = encodeURIComponent(file.meta.name)
+    const type = encodeURIComponent(file.meta.type)
     const metadata = {}
     this.opts.metaFields.forEach((key) => {
       if (file.meta[key] != null) {
@@ -126,7 +157,7 @@ module.exports = class AwsS3 extends Plugin {
     return params
   }
 
-  prepareUpload (fileIDs) {
+  handleUpload (fileIDs) {
     fileIDs.forEach((id) => {
       const file = this.uppy.getFile(id)
       this.uppy.emit('preprocess-progress', file, {
@@ -141,149 +172,126 @@ module.exports = class AwsS3 extends Plugin {
       return this.opts.getUploadParameters(file)
     })
 
-    return Promise.all(
-      fileIDs.map((id) => {
-        const file = this.uppy.getFile(id)
-        return getUploadParameters(file)
-          .then((params) => {
-            return this.validateParameters(file, params)
+    const numberOfFiles = fileIDs.length
+
+    return settle(fileIDs.map((id, index) => {
+      const file = this.uppy.getFile(id)
+      return getUploadParameters(file)
+        .then((params) => {
+          return this.validateParameters(file, params)
+        })
+        .then((params) => {
+          this.uppy.emit('preprocess-progress', file, {
+            mode: 'determinate',
+            message: this.i18n('preparingUpload'),
+            value: 1
           })
-          .then((params) => {
-            this.uppy.emit('preprocess-progress', file, {
-              mode: 'determinate',
-              message: this.i18n('preparingUpload'),
-              value: 1
-            })
-            return params
+
+          const {
+            method = 'post',
+            url,
+            fields,
+            headers
+          } = params
+          const xhrOpts = {
+            method,
+            formData: method.toLowerCase() === 'post',
+            endpoint: url,
+            metaFields: fields ? Object.keys(fields) : []
+          }
+
+          if (headers) {
+            xhrOpts.headers = headers
+          }
+
+          this.uppy.setFileState(file.id, {
+            meta: { ...file.meta, ...fields },
+            xhrUpload: xhrOpts
           })
-          .catch((error) => {
-            this.uppy.emit('upload-error', file, error)
-          })
-      })
-    ).then((responses) => {
-      const updatedFiles = {}
-      fileIDs.forEach((id, index) => {
-        const file = this.uppy.getFile(id)
-        if (!file || file.error) {
-          return
-        }
 
-        const {
-          method = 'post',
-          url,
-          fields,
-          headers
-        } = responses[index]
-        const xhrOpts = {
-          method,
-          formData: method.toLowerCase() === 'post',
-          endpoint: url,
-          metaFields: fields ? Object.keys(fields) : []
-        }
+          this.uppy.emit('preprocess-complete', this.uppy.getFile(file.id))
 
-        if (headers) {
-          xhrOpts.headers = headers
-        }
-
-        const updatedFile = {
-          ...file,
-          meta: { ...file.meta, ...fields },
-          xhrUpload: xhrOpts
-        }
-
-        updatedFiles[id] = updatedFile
-      })
-
-      const { files } = this.uppy.getState()
-      this.uppy.setState({
-        files: {
-          ...files,
-          ...updatedFiles
-        }
-      })
-
-      fileIDs.forEach((id) => {
-        const file = this.uppy.getFile(id)
-        this.uppy.emit('preprocess-complete', file)
-      })
-    })
+          return this._uploader.uploadFile(file.id, index, numberOfFiles)
+        })
+        .catch((error) => {
+          this.uppy.emit('upload-error', file, error)
+        })
+    }))
   }
 
   install () {
-    const { log } = this.uppy
-    this.uppy.addPreProcessor(this.prepareUpload)
+    const uppy = this.uppy
+    this.uppy.addUploader(this.handleUpload)
 
-    let warnedSuccessActionStatus = false
-    const xhrUploadOpts = {
-      fieldName: 'file',
-      responseUrlFieldName: 'location',
-      timeout: this.opts.timeout,
-      __queue: this.requests,
-      responseType: 'text',
-      // Get the response data from a successful XMLHttpRequest instance.
-      // `content` is the S3 response as a string.
-      // `xhr` is the XMLHttpRequest instance.
-      getResponseData (content, xhr) {
-        const opts = this
+    // Get the response data from a successful XMLHttpRequest instance.
+    // `content` is the S3 response as a string.
+    // `xhr` is the XMLHttpRequest instance.
+    function defaultGetResponseData (content, xhr) {
+      const opts = this
 
-        // If no response, we've hopefully done a PUT request to the file
-        // in the bucket on its full URL.
-        if (!isXml(content, xhr)) {
-          if (opts.method.toUpperCase() === 'POST') {
-            if (!warnedSuccessActionStatus) {
-              log('[AwsS3] No response data found, make sure to set the success_action_status AWS SDK option to 201. See https://uppy.io/docs/aws-s3/#POST-Uploads', 'warning')
-              warnedSuccessActionStatus = true
-            }
-            // The responseURL won't contain the object key. Give up.
-            return { location: null }
+      // If no response, we've hopefully done a PUT request to the file
+      // in the bucket on its full URL.
+      if (!isXml(content, xhr)) {
+        if (opts.method.toUpperCase() === 'POST') {
+          if (!warnedSuccessActionStatus) {
+            uppy.log('[AwsS3] No response data found, make sure to set the success_action_status AWS SDK option to 201. See https://uppy.io/docs/aws-s3/#POST-Uploads', 'warning')
+            warnedSuccessActionStatus = true
           }
-
-          // responseURL is not available in older browsers.
-          if (!xhr.responseURL) {
-            return { location: null }
-          }
-
-          // Trim the query string because it's going to be a bunch of presign
-          // parameters for a PUT request—doing a GET request with those will
-          // always result in an error
-          return { location: xhr.responseURL.replace(/\?.*$/, '') }
+          // The responseURL won't contain the object key. Give up.
+          return { location: null }
         }
 
-        return {
-          // Some S3 alternatives do not reply with an absolute URL.
-          // Eg DigitalOcean Spaces uses /$bucketName/xyz
-          location: resolveUrl(xhr.responseURL, getXmlValue(content, 'Location')),
-          bucket: getXmlValue(content, 'Bucket'),
-          key: getXmlValue(content, 'Key'),
-          etag: getXmlValue(content, 'ETag')
+        // responseURL is not available in older browsers.
+        if (!xhr.responseURL) {
+          return { location: null }
         }
-      },
 
-      // Get the error data from a failed XMLHttpRequest instance.
-      // `content` is the S3 response as a string.
-      // `xhr` is the XMLHttpRequest instance.
-      getResponseError (content, xhr) {
-        // If no response, we don't have a specific error message, use the default.
-        if (!isXml(content, xhr)) {
-          return
-        }
-        const error = getXmlValue(content, 'Message')
-        return new Error(error)
+        // Trim the query string because it's going to be a bunch of presign
+        // parameters for a PUT request—doing a GET request with those will
+        // always result in an error
+        return { location: xhr.responseURL.replace(/\?.*$/, '') }
+      }
+
+      return {
+        // Some S3 alternatives do not reply with an absolute URL.
+        // Eg DigitalOcean Spaces uses /$bucketName/xyz
+        location: resolveUrl(xhr.responseURL, getXmlValue(content, 'Location')),
+        bucket: getXmlValue(content, 'Bucket'),
+        key: getXmlValue(content, 'Key'),
+        etag: getXmlValue(content, 'ETag')
       }
     }
 
-    // Replace getResponseData() with overwritten version.
-    if (this.opts.getResponseData) {
-      xhrUploadOpts.getResponseData = this.opts.getResponseData
+    // Get the error data from a failed XMLHttpRequest instance.
+    // `content` is the S3 response as a string.
+    // `xhr` is the XMLHttpRequest instance.
+    function defaultGetResponseError (content, xhr) {
+      // If no response, we don't have a specific error message, use the default.
+      if (!isXml(content, xhr)) {
+        return
+      }
+      const error = getXmlValue(content, 'Message')
+      return new Error(error)
     }
 
-    this.uppy.use(XHRUpload, xhrUploadOpts)
+    const xhrOptions = {
+      fieldName: 'file',
+      responseUrlFieldName: 'location',
+      timeout: this.opts.timeout,
+      // Share the rate limiting queue with XHRUpload.
+      __queue: this.requests,
+      responseType: 'text',
+      getResponseData: this.opts.getResponseData || defaultGetResponseData,
+      getResponseError: defaultGetResponseError
+    }
+
+    // Revert to `this.uppy.use(XHRUpload)` once the big comment block at the top of
+    // this file is solved
+    this._uploader = new MiniXHRUpload(this.uppy, xhrOptions)
+    this._uploader.i18n = this.i18n
   }
 
   uninstall () {
-    const uploader = this.uppy.getPlugin('XHRUpload')
-    this.uppy.removePlugin(uploader)
-
-    this.uppy.removePreProcessor(this.prepareUpload)
+    this.uppy.removePreProcessor(this.handleUpload)
   }
 }
