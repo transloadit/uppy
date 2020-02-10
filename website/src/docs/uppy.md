@@ -30,6 +30,39 @@ In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` gl
 const Core = Uppy.Core
 ```
 
+## TypeScript
+
+When using TypeScript, Uppy has weak type checking by default. That means that the options to plugins are not type-checked. For example, this is allowed:
+```ts
+import Uppy = require('@uppy/core')
+import Tus = require('@uppy/tus')
+const uppy = Uppy()
+uppy.use(Tus, {
+  invalidOption: null,
+  endpoint: ['a', 'wrong', 'type']
+})
+```
+
+As of Uppy 1.10, Uppy supports a strict typechecking mode. This mode typechecks the options passed in to plugins. This will be the only mode in Uppy 2.0, but is currently optional to preserve backwards compatibility. The strict mode can be enabled by passing a special generic type parameter to the Uppy constructor:
+
+```ts
+import Uppy = require('@uppy/core')
+import Tus = require('@uppy/tus')
+const uppy = Uppy<Uppy.StrictTypes>()
+uppy.use(Tus, {
+  invalidOption: null // this will now make the compilation fail!
+})
+```
+
+If you are storing Uppy instances in your code, for example in a property on a React or Angular component class, make sure to add the `StrictTypes` flag there as well:
+```ts
+class MyComponent extends React.Component {
+  private uppy: Uppy<Uppy.StrictTypes>
+}
+```
+
+In Uppy 2.0, this generic parameter will be removed, and your plugin options will always be type-checked.
+
 ## Options
 
 The Uppy core module has the following configurable options:
