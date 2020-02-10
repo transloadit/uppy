@@ -52,7 +52,7 @@ class Uppy {
         exceedsSize: 'This file exceeds maximum allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
         noNewAlreadyUploading: 'Cannot add new files: already uploading',
-        noDuplicates: 'Cannot add the duplicate file %{fileName}, it already exists',
+        noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
         companionError: 'Connection with Companion failed',
         companionAuthError: 'Authorization required',
         companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
