@@ -108,6 +108,7 @@ module.exports = (props) => {
     uploadState !== statusBarStates.STATE_WAITING &&
     uploadState !== statusBarStates.STATE_PREPROCESSING &&
     uploadState !== statusBarStates.STATE_POSTPROCESSING &&
+    uploadState !== statusBarStates.STATE_ERROR &&
     uploadState !== statusBarStates.STATE_COMPLETE
   const showRetryBtn = error && !hideRetryButton
 
@@ -368,6 +369,11 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
 }
 
 const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
+  function displayErrorAlert () {
+    const errorMessage = `${i18n('uploadFailed')} \n\n ${error}`
+    alert(errorMessage)
+  }
+
   return (
     <div class="uppy-StatusBar-content" role="alert" title={i18n('uploadFailed')}>
       <div class="uppy-StatusBar-status">
@@ -387,6 +393,7 @@ const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
         data-microtip-position="top-right"
         data-microtip-size="medium"
         role="tooltip"
+        onclick={displayErrorAlert}
       >
         ?
       </span>

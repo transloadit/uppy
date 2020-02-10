@@ -103,6 +103,7 @@
     "@wdio/local-runner": "^5.16.15",
     "@wdio/mocha-framework": "^5.16.15",
     "@wdio/sauce-service": "^5.16.10",
+    "adm-zip": "0.4.13",
     "aliasify": "^2.1.0",
     "autoprefixer": "^9.7.3",
     "babel-eslint": "^10.0.3",
