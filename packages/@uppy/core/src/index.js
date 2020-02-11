@@ -482,7 +482,7 @@ class Uppy {
       this.log(logMessageWithDetails)
       this.emit('restriction-failed', file, err)
     } else {
-      this.log(logMessageWithDetails)
+      this.log(logMessageWithDetails, 'error')
     }
 
     // Sometimes informer has to be shown manually by the developer,
@@ -837,12 +837,12 @@ class Uppy {
    */
   _addListeners () {
     this.on('error', (error) => {
-      this.setState({ error: error.message || 'Unknown error' })
+      this.setState({ error: error.message + ' ' + error.details || 'Unknown error' })
     })
 
     this.on('upload-error', (file, error, response) => {
       this.setFileState(file.id, {
-        error: error.message || 'Unknown error',
+        error: error.message + ' ' + error.details || 'Unknown error',
         response
       })
 
@@ -863,7 +863,6 @@ class Uppy {
           throwErr: false
         })
       }
-      // this.info(message, 'error', 5000)
     })
 
     this.on('upload', () => {

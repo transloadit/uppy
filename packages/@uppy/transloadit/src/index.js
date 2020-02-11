@@ -698,9 +698,7 @@ module.exports = class Transloadit extends Plugin {
     })
   }
 
-  _onError (err, uploadID) {
-    this.uppy.log(`[Transloadit] _onError in upload ${uploadID}`)
-    this.uppy.log(err)
+  _onError (err = null, uploadID) {
     const state = this.getPluginState()
     const assemblyIDs = state.uploadsAssemblies[uploadID]
 

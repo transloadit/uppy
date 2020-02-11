@@ -44,11 +44,11 @@ module.exports = class Client {
       body: data
     }).then((response) => response.json()).then((assembly) => {
       if (assembly.error) {
-        const error = new Error(assembly)
-        error.message = assembly.error
+        const error = new Error(assembly.error)
         error.details = assembly.message
+        error.assembly = assembly
         if (assembly.assembly_id) {
-          error.details += ' ' + `assembly_id: ${assembly.assembly_id}`
+          error.details += ' ' + `Assembly ID: ${assembly.assembly_id}`
         }
         throw error
       }
