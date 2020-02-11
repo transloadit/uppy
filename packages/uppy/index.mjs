@@ -22,6 +22,7 @@ export { default as StatusBar } from '@uppy/status-bar'
 export { default as Dropbox } from '@uppy/dropbox'
 export { default as GoogleDrive } from '@uppy/google-drive'
 export { default as Instagram } from '@uppy/instagram'
+export { default as OneDrive } from '@uppy/onedrive'
 export { default as Url } from '@uppy/url'
 export { default as Webcam } from '@uppy/webcam'
 
