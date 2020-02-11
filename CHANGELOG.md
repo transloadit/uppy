@@ -134,6 +134,24 @@ Released: 2019-02-11
 
 This release adds support for the new Instagram API, image and archive icons to the Dashboard, fixes upload retries and moves OneDrive out of beta.
 
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.5.0 | @uppy/onedrive | 1.0.0 |
+| @uppy/aws-s3 | 1.5.0 | @uppy/progress-bar | 1.3.5 |
+| @uppy/companion | 1.9.0 | @uppy/provider-views | 1.5.3 |
+| @uppy/core | 1.8.0 | @uppy/react | 1.4.3 |
+| @uppy/dashboard | 1.6.0 | @uppy/robodog | 1.5.0 |
+| @uppy/drag-drop | 1.4.3 | @uppy/status-bar | 1.5.0 |
+| @uppy/dropbox | 1.3.6 | @uppy/thumbnail-generator | 1.5.3 |
+| @uppy/facebook | 0.2.3 | @uppy/transloadit | 1.5.0 |
+| @uppy/file-input | 1.4.3 | @uppy/tus | 1.5.3 |
+| @uppy/form | 1.3.6 | @uppy/url | 1.4.3 |
+| @uppy/golden-retriever | 1.3.5 | @uppy/utils | 2.2.0 |
+| @uppy/google-drive | 1.4.0 | @uppy/webcam | 1.5.2 |
+| @uppy/informer | 1.4.0 | @uppy/xhr-upload | 1.5.0 |
+| @uppy/instagram | 1.3.6 | uppy | 1.9.0 |
+| @uppy/locales | 1.11.1 | - | - |
+
 - @uppy/companion: support new Instagram Graph API (#1966 / @ifedapoolarewaju)
 - @uppy/companion: add option to set http method for remote multipart uploads (#2047 / @ifedapoolarewaju)
 - @uppy/core: core: setState(modifiedFiles) in onBeforeUpload (#2028 / @arturi)
