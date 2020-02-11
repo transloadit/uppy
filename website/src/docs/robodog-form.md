@@ -207,6 +207,10 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
     })
     .on('error', (error) => {
       console.log('>> Assembly got an error:', error);
+      if (error.assembly) {
+        console.log(`>> Assembly ID ${error.assembly.assembly_id} failed!`);
+        console.log(error.assembly);
+      }
     });
     </script>
   </body>
