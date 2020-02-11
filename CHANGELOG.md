@@ -72,6 +72,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] form: make the `multipleResults` option `true` by default
 - [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
 - [ ] tus: set the `limit` option to a sensible default, like 10
+- [ ] core: force the `new` keyword when instantiating Uppy — now we support both `mew Uppy()` and `Uppy()` which is harder to maintain and might lead to confusion
 - [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
 - [ ] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861
 - [ ] core: change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
