@@ -1,6 +1,10 @@
 const en_US = {}
 
 en_US.strings = {
+  addBulkFilesFailed: {
+    '0': 'Failed to add %{smart_count} file due to an internal error',
+    '1': 'Failed to add %{smart_count} files due to internal errors'
+  },
   addMore: 'Add more',
   addMoreFiles: 'Add more files',
   addingMoreFiles: 'Adding more files',
@@ -62,8 +66,10 @@ en_US.strings = {
   loading: 'Loading...',
   logOut: 'Log out',
   myDevice: 'My Device',
+  noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
   noFilesFound: 'You have no files or folders here',
   noInternetConnection: 'No Internet connection',
+  noNewAlreadyUploading: 'Cannot add new files: already uploading',
   openFolderNamed: 'Open folder %{name}',
   pause: 'Pause',
   pauseUpload: 'Pause upload',

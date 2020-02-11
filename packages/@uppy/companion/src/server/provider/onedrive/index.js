@@ -1,11 +1,14 @@
+const Provider = require('../Provider')
+
 const request = require('request')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const AuthError = require('../error')
 
-class OneDrive {
+class OneDrive extends Provider {
   constructor (options) {
+    super(options)
     this.authProvider = options.provider = OneDrive.authProvider
     this.client = purest(options)
   }
@@ -30,13 +33,14 @@ class OneDrive {
    */
   list ({ directory, query, token }, done) {
     const path = directory ? `items/${directory}` : 'root'
+    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/drive'
     const qs = { $expand: 'thumbnails' }
     if (query.cursor) {
       qs.$skiptoken = query.cursor
     }
 
     this.client
-      .get(`/drive/${path}/children`)
+      .get(`${rootPath}/${path}/children`)
       .qs(qs)
       .auth(token)
       .request((err, resp, body) => {
@@ -57,9 +61,10 @@ class OneDrive {
       })
   }
 
-  download ({ id, token }, onData) {
+  download ({ id, token, query }, onData) {
+    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/drive'
     return this.client
-      .get(`/drive/items/${id}/content`)
+      .get(`${rootPath}/items/${id}/content`)
       .auth(token)
       .request()
       .on('data', onData)
@@ -76,9 +81,10 @@ class OneDrive {
     return done(err)
   }
 
-  size ({ id, token }, done) {
+  size ({ id, query, token }, done) {
+    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/drive'
     return this.client
-      .get(`/drive/items/${id}`)
+      .get(`${rootPath}/items/${id}`)
       .auth(token)
       .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {

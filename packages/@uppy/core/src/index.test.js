@@ -631,20 +631,27 @@ describe('src/Core', () => {
     it('should not allow a file that does not meet the restrictions', () => {
       const core = new Core({
         restrictions: {
-          allowedFileTypes: ['image/gif']
+          allowedFileTypes: ['image/gif', 'video/webm']
         }
       })
-      try {
+
+      expect(() => {
         core.addFile({
           source: 'jest',
           name: 'foo.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' })
         })
-        throw new Error('File was allowed through')
-      } catch (err) {
-        expect(err.message).toEqual('You can only upload: image/gif')
-      }
+      }).toThrow('You can only upload: image/gif, video/webm')
+
+      expect(() => {
+        core.addFile({
+          source: 'jest',
+          name: 'foo.webm',
+          type: 'video/webm; codecs="vp8, opus"',
+          data: new File([sampleImage], { type: 'video/webm; codecs="vp8, opus"' })
+        })
+      }).not.toThrow()
     })
 
     it('should not allow a dupicate file, a file with the same id', () => {
@@ -733,7 +740,7 @@ describe('src/Core', () => {
             data: new File([sampleImage], { type: 'image/jpeg' })
           })
         }).toThrow(
-          /Cannot add new files: already uploading\./
+          /Cannot add new files: already uploading/
         )
       })
 
@@ -1856,7 +1863,7 @@ describe('src/Core', () => {
       expect(console.error.mock.calls.length).toBe(1)
     })
 
-    it('should not log to console when logger is not set', () => {
+    it('should only log errors to console when logger is not set', () => {
       console.debug = jest.fn()
       console.error = jest.fn()
 
@@ -1867,7 +1874,7 @@ describe('src/Core', () => {
       core.log('beep beep', 'error')
 
       expect(console.debug.mock.calls.length).toBe(0)
-      expect(console.error.mock.calls.length).toBe(0)
+      expect(console.error.mock.calls.length).toBe(1)
     })
   })
 })
