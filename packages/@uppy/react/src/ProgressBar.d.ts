@@ -1,13 +1,10 @@
-import { Uppy } from './CommonTypes';
+import { ToUppyProps } from './CommonTypes'
+import ProgressBar = require('@uppy/progress-bar')
 
-export interface ProgressBarProps {
-  uppy: Uppy;
-  fixed?: boolean;
-  hideAfterFinish?: boolean;
-}
+export type ProgressBarProps = ToUppyProps<ProgressBar.ProgressBarOptions>
 
 /**
  * React component that renders a progress bar at the top of the page.
  */
-declare const ProgressBar: React.ComponentType<ProgressBarProps>;
-export default ProgressBar;
+declare const ProgressBarComponent: React.ComponentType<ProgressBarProps>
+export default ProgressBarComponent

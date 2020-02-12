@@ -154,11 +154,35 @@ function sortObjectAlphabetically (obj, sortFunc) {
   }, {})
 }
 
+function createTypeScriptLocale (plugin, pluginName) {
+  const allowedStringTypes = Object.keys(plugin.defaultLocale.strings)
+    .map(key => `  | '${key}'`)
+    .join('\n')
+
+  const pluginClassName = pluginName === 'core' ? 'Core' : plugin.id
+  const localePath = path.join(__dirname, '..', 'packages', '@uppy', pluginName, 'types', 'generatedLocale.d.ts')
+
+  const localeTypes =
+    'import Uppy = require(\'@uppy/core\')\n' +
+    '\n' +
+    `type ${pluginClassName}Locale = Uppy.Locale` + '<\n' +
+    allowedStringTypes + '\n' +
+    '>\n' +
+    '\n' +
+    `export = ${pluginClassName}Locale\n`
+
+  fs.writeFileSync(localePath, localeTypes)
+}
+
 function build () {
   const { plugins, sources } = buildPluginsList()
 
   for (const pluginName in plugins) {
     addLocaleToPack(plugins[pluginName], pluginName)
+  }
+
+  for (const pluginName in plugins) {
+    createTypeScriptLocale(plugins[pluginName], pluginName)
   }
 
   localePack = sortObjectAlphabetically(localePack)
