@@ -112,7 +112,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 Released: 2019-02-12
 
-Previous release was broken due to incorrect Lerna/npm publish. Please update all packages to the next patch version, see #1.9.1.
+Previous `1.9.0` release has been deprecated due to an incorrect Lerna/npm published release. Please update all packages to the next patch version (or @latest), see the table below.
 
 | Package | Version | Package | Version |
 |-|-|-|-|
@@ -138,7 +138,7 @@ Previous release was broken due to incorrect Lerna/npm publish. Please update al
 
 Released: 2019-02-11
 
-⚠️ `1.9.0 has been deprecated due to incorrect Lerna/npm publish. Please update all packages to the next patch version, see table below.
+⚠️ `1.9.0` and all related packages have been deprecated due to an incorrect Lerna/npm published release. Please update all packages to the next patch version, see #1.9.1.
 
 This release adds support for the new Instagram API, image and archive icons to the Dashboard, fixes upload retries and moves OneDrive out of beta.
 
