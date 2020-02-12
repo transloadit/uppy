@@ -14,10 +14,7 @@ In the current stage we aim to release a new version at least every month.
 Ideas that will be planned and find their way into a release at one point.
 PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
-- [ ] statusbar: Add a confirmation of the cancel action (https://github.com/transloadit/uppy/issues/1418) as well as ask the user if they really want to navigate away while an upload is in progress via `onbeforeunload` (@arturi)
-- [ ] test: Switch one existing e2e test to use Parcel (create-react-app already using webpack) (@arturi)
-- [ ] goldenretriever: make it work with aws multipart https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888  (@goto-bus-stop) 
-- [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
+- [ ] core: Add an option to force metafield data when uploading a file. Mark files with restriction errors in the UI. Having an icon showing close to the file to inform if it passed any rule would provide an awesome user experience. The user would be able to edit the file name or any meta tags necessary to pass validation via uppy dashboard, and anytime the user updates the file info, the validation runs again and the icon is updated. #1703
 - [ ] core: Make sure Uppy works well in VR
 - [ ] core: normalize file names when uploading from iOS? Can we do it with meta data? date? `image-${index}`? #678
 - [ ] dashboard: add option to disable uploading from local disk #657
@@ -25,39 +22,27 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: display data like image resolution on file cards. should be done by thumbnail generator maybe #783
 - [ ] dashboard: possibility to edit/delete more than one file at once. example: add copyrigh info to 1000 files #118, #97
 - [ ] dashboard: possibility to work on already uploaded / in progress files. We'll just provide the `fileId` to the `file-edit-complete` event so that folks can more easily roll out custom code for this themselves #112, #113, #2063
-
 - [ ] dashboard: Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
-- [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
-- [ ] dragdrop: change border color when files doesn’t pass restrictions on drag https://github.com/transloadit/uppy/issues/607
-- [ ] dragdrop: drag and drop + statusbar or progressbar ? (@arturi)
-- [ ] plugins: Keybase.io Remote provider plugin! #943
-- [ ] plugins: WordPress plugin https://www.producthunt.com/posts/uppy-io#comment-559327 (“And Gravity forms”)
-- [ ] provider: add sorting, filtering, previews #254
-- [ ] provider: allow consuming developers to pass in their own ProviderViews to Provider Plugins https://github.com/transloadit/uppy/issues/1143
-- [ ] provider: change ProviderViews signature to receive Provider instance in second param. (https://github.com/transloadit/uppy/pull/743#discussion_r180106070)
-- [ ] react: Component wrappers to manage the Uppy instance, many people initialize it in render() which does not work correctly so this could make it easier for them https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951
+- [ ] goldenretriever: make it work with aws multipart https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888  (@goto-bus-stop) 
+- [ ] plugins: WordPress Front-end Gravity Forms Uppy plugin so one form field could be an Uppy-powered file input
+- [ ] provider: add sorting (by date) #254
+- [ ] qa: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
+- [ ] react: Add a React Hook to manage an Uppy instance https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951 (@goto-bus-stop)
 - [ ] rn: Uppy React Native works with Expo, now let's make it work without
 - [ ] rn: Uppy React Native works with Url Plugin, now let's make it work with Instagram
-- [ ] security: consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe; possibility for folder restriction for provider plugins
-- [ ] statusbar: add option to always show
-- [ ] test: Add a prepublish test that checks if `npm pack` is not massive
-- [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
+- [ ] security: consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe
+- [ ] statusbar: Add a confirmation of the cancel action (https://github.com/transloadit/uppy/issues/1418) as well as ask the user if they really want to navigate away while an upload is in progress via `onbeforeunload` (@arturi)
+- [ ] test: Add a prepublish test that checks if `npm pack` is not massive (@goto-bus-stop)
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
-- [ ] transloadit: consider adding option to append result link from transloadit to the link thing in the Dashboard file block #1177
-- [ ] transloadit: maybe add option to disable Companion endpoint overrides
-- [ ] transloadit: option for StatusBar’s upload button to act as a "Start assembly" button? Useful if an assembly uses only import robots, such as /s3/import to start a batch transcoding job.
-- [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused (@arturi, @ifedapoolarewaju)
-- [ ] webcam: Pick format based on `restrictions.allowedFileTypes`, eg. use PNG for snapshot instead of JPG if `allowedFileTypes: ['.png']` is set
-- [ ] webcam: Specify the resolution of the webcam images. We should add a way to specify any custom constraints to the Webcam plugin #876
-- [ ] webcam: Stop recording when file size is exceeded, should be possible given how the MediaRecorder API works
-- [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
-- [ ] Add an option to force metafield data when uploading a file #1703
-- [ ] dashboard: Mark files with restriction errors in the UI. Having an icon showing close to the file to inform if it passed any rule would provide an awesome user experience. The user would be able to edit the file name or any meta tags necessary to pass validation via uppy dashboard, and anytime the user updates the file info, the validation runs again and the icon is updated.
+- [ ] test: add lighthouse for automated performance testing?
+- [ ] test: Switch one existing e2e test to use Parcel (create-react-app already using webpack) (@arturi)
+- [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused. Perhaps the button can be disabled and say `Pausing..` until Companion has actually stopped transmitting updates (@arturi, @ifedapoolarewaju)
+- [ ] website: add an example of a mini UI that features drop & progress (may involve a `mini: true` options for dashboard, may involve drop+progress) (@arturi)
 - [ ] xhr: allow sending custom headers per file (as proposed in #785)
-- [-] dashboard: if you specified a delete endpoint, the “remove/cancel upload” button remains after the upload and it not only removes, but also sends a request to that endpoint #1216, #832 <-- not doing this anymore because https://github.com/transloadit/uppy/pull/589#issuecomment-366754294
 
 ## 2.0
 
+- [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog
 - [ ] docs: Completely drop soft IE10 (and IE11?) support
 - [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems though)
@@ -76,6 +61,11 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] locales: Remove the old es_GL name alias for gl_ES. Keep gl_ES only.
 - [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
 
+## 1.14
+
+- [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
+- [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
+
 ## 1.13
 
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
@@ -90,6 +80,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## 1.12
 
+- [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default's store #320
 - [ ] provider: add Box (@ife)
 - [ ] plugins: audio/memo recording similar to Webcam #143 #198 (@arturi)
 - [ ] test: add typescript with JSDoc for @uppy/core https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files (@arturi)
@@ -109,6 +100,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## 1.10
 
+- [ ] webcam: Pick format based on `restrictions.allowedFileTypes`, eg. use PNG for snapshot instead of JPG if `allowedFileTypes: ['.png']` is set, you can probably ask for the correct filetype. In addition, we should stop recording video once the max allowed file size is exceeded. should be possible given how the MediaRecorder API works
 - [ ] plugins: screenshot+screencast support similar to Webcam #148 (@arturi)
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] core, transloadit: Allow new uploads when retrying; improve error handling (#1960 / @arturi)
