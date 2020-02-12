@@ -1,6 +1,8 @@
+os: linux
+dist: bionic
 language: node_js
 
-# Addons configuration that can be referenced by each matrix entry,
+# Addons configuration that can be referenced by each `jobs` matrix entry,
 # this way we can easily enable Sauce Connect for end-to-end tests only.
 .apt: &APT
   sources:
@@ -16,7 +18,7 @@ language: node_js
     secure: OY3oWwiJghfty9wSPVvlhirvFGxPHDdIRuVkzAv6j7C/hj2BWYAP/UHrwdQ9XiYisHi/B5mGeyRVlrAf0MNGrG84rTDUbTWZbmktfuxl7A+Y6c0czk+s4SdhOiANG5b3tFl5wKq8h7uhrWH5/jWoKQ2Fz1VDCqxTvvZQbo41jSBhi7TBia626hxEePzdaiuw6HhGFZtfaoVs/FX30ylz8WDNrBjwCynjxsT52BaQrVvgEhuyzlOpI69YkZBPOq4fc3KiZ2YR43gLTx8K+sYCE9yJxdg1xT/UAawEhmedU83nyBZVo4rr7+03AixIxtI28MUCfBMlcsGwBxcKEKY/IWcp9UkPCq6+zALQoncV478tP21eYvlmxSFhYCrv+WEQlN+BcNjr4OJlmmFDbCVaF7r9qLeQPImU0+9iJU3OjrW7lpfLxORpGDEr2Nx6awKkIJCxNyK9weefeNo6Fz3V1kkyZ/7yWFeniJnRUCbahrB2XgzxIE+W307s1Qs4fm6JK7hVLTtG4fBzjChmAyGIzu744ws9WqmjvkC9D7OfnuXqanv/VcBFqPiudInerv7NL8FketUC+fxe/7XJfcxdaDGBjk8Kq7zXDohGRGymUXEoMDNJsKkMMlaKzdf7tgqdhsRJoH9NCVqrDXuG5al0UtrDP5RS7qfoxUunJmNFhlg=
   no_ssl_bump_domains: companion.test
 
-matrix:
+jobs:
   include:
     # Run e2e tests on branch builds, not PRs
     # Start this first because it takes a while, so it doesn't only start running after
@@ -120,12 +122,12 @@ notifications:
 # https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
 deploy:
 - provider: script
-  skip_cleanup: true
+  cleanup: false
   script: bin/travis-deploy
   on:
     branch: master
 - provider: script
-  skip_cleanup: true
+  cleanup: false
   script: bin/travis-deploy-companion
   on:
     branch: master

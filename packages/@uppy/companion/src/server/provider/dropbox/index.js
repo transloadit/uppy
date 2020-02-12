@@ -4,7 +4,7 @@ const request = require('request')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
-const AuthError = require('../error')
+const { ProviderApiError, ProviderAuthError } = require('../error')
 
 // From https://www.dropbox.com/developers/reference/json-encoding:
 //
@@ -19,6 +19,9 @@ function httpHeaderSafeJson (v) {
   )
 }
 
+/**
+ * Adapter for API https://www.dropbox.com/developers/documentation/http/documentation
+ */
 class DropBox extends Provider {
   constructor (options) {
     super(options)
@@ -204,8 +207,9 @@ class DropBox extends Provider {
 
   _error (err, resp) {
     if (resp) {
-      const errMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
-      return resp.statusCode === 401 ? new AuthError() : new Error(errMsg)
+      const fallbackMessage = `request to ${this.authProvider} returned ${resp.statusCode}`
+      const errMsg = resp.body.error_summary ? resp.body.error_summary : fallbackMessage
+      return resp.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
     }
 
     return err
