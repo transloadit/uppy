@@ -17,6 +17,8 @@ module.exports = {
   yaml: 'text/yaml',
   yml: 'text/yaml',
   csv: 'text/csv',
+  tsv: 'text/tab-separated-values',
+  tab: 'text/tab-separated-values',
   avi: 'video/x-msvideo',
   mks: 'video/x-matroska',
   mkv: 'video/x-matroska',

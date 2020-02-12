@@ -4,8 +4,11 @@ const request = require('request')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
-const AuthError = require('../error')
+const { ProviderApiError, ProviderAuthError } = require('../error')
 
+/**
+ * Adapter for API https://docs.microsoft.com/en-us/onedrive/developer/rest-api/
+ */
 class OneDrive extends Provider {
   constructor (options) {
     super(options)
@@ -126,8 +129,9 @@ class OneDrive extends Provider {
 
   _error (err, resp) {
     if (resp) {
-      const errMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
-      return resp.statusCode === 401 ? new AuthError() : new Error(errMsg)
+      const fallbackMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
+      const errMsg = resp.body.error ? resp.body.error.message : fallbackMsg
+      return resp.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
     }
 
     return err

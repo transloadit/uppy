@@ -1,4 +1,5 @@
 const tokenService = require('../helpers/jwt')
+const { errorToResponse } = require('../provider/error')
 
 /**
  *
@@ -17,6 +18,10 @@ function logout (req, res, next) {
   if (token) {
     req.companion.provider.logout({ token }, (err, data) => {
       if (err) {
+        const errResp = errorToResponse(err)
+        if (errResp) {
+          return res.status(errResp.code).json({ message: errResp.message })
+        }
         return next(err)
       }
 
