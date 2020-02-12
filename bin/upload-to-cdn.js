@@ -30,6 +30,7 @@ const mime = require('mime-types')
 const { promisify } = require('util')
 const readFile = promisify(require('fs').readFile)
 const finished = promisify(require('stream').finished)
+const AdmZip = require('adm-zip')
 
 function delay (ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -159,6 +160,16 @@ async function main (packageName, version) {
   const files = remote
     ? await getRemoteDistFiles(packageName, version)
     : await getLocalDistFiles(packagePath)
+
+  if (packageName === 'uppy') {
+    // Create downloadable zip archive
+    const zip = new AdmZip()
+    for (const [filename, buffer] of files.entries()) {
+      zip.addFile(filename, buffer)
+    }
+
+    files.set(`uppy-v${version}.zip`, zip.toBuffer())
+  }
 
   for (const [filename, buffer] of files.entries()) {
     const key = path.posix.join(AWS_DIRECTORY, outputPath, filename)

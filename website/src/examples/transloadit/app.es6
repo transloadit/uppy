@@ -5,7 +5,9 @@ const Dashboard = require('@uppy/dashboard')
 const Webcam = require('@uppy/webcam')
 const Transloadit = require('@uppy/transloadit')
 const Instagram = require('@uppy/instagram')
+const Facebook = require('@uppy/facebook')
 const { createHmac } = require('crypto')
+const COMPANION = require('../env')
 
 function sha1 (key, text) {
   return createHmac('sha1', key)
@@ -97,7 +99,13 @@ function initUppy (opts = {}) {
       companionUrl: 'https://api2.transloadit.com/companion',
       companionAllowedHosts: Transloadit.COMPANION_PATTERN
     })
-    .use(Webcam, { target: Dashboard, modes: ['picture'] })
+    if (document.location.hash === '#enable-facebook') {
+      uppy.use(Facebook, {
+        target: Dashboard,
+        companionUrl: COMPANION
+      })
+    }
+    uppy.use(Webcam, { target: Dashboard, modes: ['picture'] })
 
   uppy
     .on('transloadit:result', (stepName, result) => {

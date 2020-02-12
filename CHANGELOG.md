@@ -7,21 +7,18 @@ Please add your entries in this format:
 
  - `- [ ] (<plugin name>|website|core|meta|build|test): <Present tense verb> <subject> \(<list of associated owners/gh-issues>\)`.
 
-In the current stage we aim to release a new version on the
-last Friday of every new month.
+In the current stage we aim to release a new version at least every month.
 
 ## Backlog
 
 Ideas that will be planned and find their way into a release at one point.
 PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
-- [ ] build: utilize https://github.com/jonathantneal/postcss-preset-env, maybe https://github.com/jonathantneal/postcss-normalize (@arturi)
 - [ ] companion: Transfer files between providers (from instagram to Google drive for example).
 - [ ] companion: what happens if access token expires amid an upload/download process.
 - [ ] core: accessibility research: https://chrome.google.com/webstore/detail/accessibility-developer-t/fpkknkljclfencbdbgkenhalefipecmb, http://khan.github.io/tota11y/
 - [ ] core: Add total max size to restrictions #514
 - [ ] core: consider adding presets, see https://github.com/cssinjs/jss-preset-default/blob/master/src/index.js (@arturi)
-- [ ] core: css-in-js, while keeping non-random classnames (ideally prefixed) and useful preprocessor features. also see simple https://github.com/codemirror/CodeMirror/blob/master/lib/codemirror.css (@arturi, @goto-bus-stop)
 - [ ] core: have a `resetProgress` method for resetting a single file, and call it before starting an upload. see comment in #393
 - [ ] core: Make sure Uppy works well in VR
 - [ ] core: normalize file names when uploading from iOS? $678
@@ -31,29 +28,19 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: Allow custom form fields in dashboard meta editing via jsx rendering (#617, #809, #454, @arturi)
 - [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] dashboard: Don't hide notifications if they're hovered (https://github.com/transloadit/uppy/issues/1439)
-- [ ] dashboard: allow selecting folders (add separate hidden input button for folders) #447 #1027
 - [ ] dashboard: Consider uploading image thumbnails too #1212
 - [ ] dashboard: display data like image resolution on file cards #783
-- [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
 - [ ] dashboard: possibility to edit/delete more than one file at once #118, #97
 - [ ] dashboard: possibility to work on already uploaded / in progress files #112, #113
 - [ ] dashboard: Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
-- [ ] dependencies: es6-promise --> lie https://github.com/calvinmetcalf/lie ?
-- [ ] dragdrop: Add `directories-dropped` event #849
 - [ ] dragdrop: allow customizing arrow icon https://github.com/transloadit/uppy/pull/374#issuecomment-334116208 (@arturi)
 - [ ] dragdrop: change border color when files doesn’t pass restrictions on drag https://github.com/transloadit/uppy/issues/607
 - [ ] dragdrop: drag and drop + statusbar or progressbar ? (@arturi)
-- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] google: show thumbnails when connecting with Google Drive #1162 (@ifedapoolarewaju)
-- [ ] plugins: audio/memo recording similar to Webcam #143
-- [ ] plugins: Plugins - Keybase.io Remote provider plugin! #943
-- [ ] plugins: screenshot+screencast support similar to Webcam #148
+- [ ] plugins: Keybase.io Remote provider plugin! #943
 - [ ] plugins: WordPress plugin https://www.producthunt.com/posts/uppy-io#comment-559327 (“And Gravity forms”)
-- [ ] provider: Add <strike>Facebook, OneDrive</strike>, Box
 - [ ] provider: add sorting, filtering, previews #254
 - [ ] provider: allow consuming developers to pass in their own ProviderViews to Provider Plugins https://github.com/transloadit/uppy/issues/1143
 - [ ] provider: change ProviderViews signature to receive Provider instance in second param. (https://github.com/transloadit/uppy/pull/743#discussion_r180106070)
-- [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112
 - [ ] react: Component wrappers to manage the Uppy instance, many people initialize it in render() which does not work correctly so this could make it easier for them https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951
 - [ ] rn: Uppy React Native works with Expo, now let's make it work without
 - [ ] rn: Uppy React Native works with Url Plugin, now let's make it work with Instagram
@@ -62,8 +49,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] test: Add a prepublish test that checks if `npm pack` is not massive
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident #320
 - [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
-- [ ] test: add typescript with JSDoc (@arturi) https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files
-- [ ] test: Human should test with real screen reader to identify accessibility problems
 - [ ] transloadit: consider adding option to append result link from transloadit to the link thing in the Dashboard file block #1177
 - [ ] transloadit: maybe add option to disable Companion endpoint overrides
 - [ ] transloadit: option for StatusBar’s upload button to act as a "Start assembly" button? Useful if an assembly uses only import robots, such as /s3/import to start a batch transcoding job.
@@ -71,9 +56,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] webcam: Pick format based on `restrictions.allowedFileTypes`, eg. use PNG for snapshot instead of JPG if `allowedFileTypes: ['.png']` is set
 - [ ] webcam: Specify the resolution of the webcam images. We should add a way to specify any custom constraints to the Webcam plugin #876
 - [ ] webcam: Stop recording when file size is exceeded, should be possible given how the MediaRecorder API works
-- [ ] webcam: UI or separate plugins for choosing between webcam audio-video/video-only/audio-only modes #198
-- [ ] webcam: Webcam modes #198
-- [ ] website: automatically generated page with all locale strings used in plugins
 - [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] Add an option to force metafield data when uploading a file #1703
 - [ ] dashboard: Mark files with restriction errors in the UI. Having an icon showing close to the file to inform if it passed any rule would provide an awesome user experience. The user would be able to edit the file name or any meta tags necessary to pass validation via uppy dashboard, and anytime the user updates the file info, the validation runs again and the icon is updated.
@@ -87,22 +69,50 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
 - [ ] xhr: set the `limit` option to a sensible default, like 10
 - [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now
-- [ ] core: add 1st class Vue.js support
-- [ ] core: add 1st class AngularJS support
 - [ ] form: make the `multipleResults` option `true` by default
 - [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
 - [ ] tus: set the `limit` option to a sensible default, like 10
+- [ ] core: force the `new` keyword when instantiating Uppy — now we support both `mew Uppy()` and `Uppy()` which is harder to maintain and might lead to confusion
 - [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
 - [ ] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861
-- [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53
 - [ ] core: change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
 - [ ] core: maybe we remove `file.name` and only keep `file.meta.name`; we can change the file.name here actually because it's just a plain object. we can't change the file.data.name where data is a File instance from an input or something. For XHRUpload, where we put the File instance in a FormData object and it uses the unchangeable .name property.
 - [ ] redux-store: make action signatures flux-standard-action compatible #1642
 - [ ] locales: Remove the old es_GL name alias for gl_ES. Keep gl_ES only.
+- [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
+
+## 1.13
+
+- [ ] provider: Image search (via Google or Bing or DuckDuckGo) (@arturi)
+- [ ] core: add AngularJS wrapper component (@arturi)
+- [ ] dashboard: allow selecting folders (add separate hidden input button for folders) #447 #1027 (@arturi)
+- [ ] dashboard: Customizable meta editor for the Dashboard. Some people want maps, some to disable autocomplete, some validation. (See https://github.com/transloadit/uppy/issues/2007#issuecomment-573592859, https://github.com/transloadit/uppy/issues/809#issuecomment-417282743)
+- [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112
+
+## 1.12
+
+- [ ] provider: add Box (@ife)
+- [ ] plugins: audio/memo recording similar to Webcam #143 #198 (@arturi)
+- [ ] test: add typescript with JSDoc for @uppy/core https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files (@arturi)
+- [ ] core: add Vue.js wrapper component (@arturi)
+- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi) (@arturi)
+- [ ] dashboard: fix Dashboard issues with Angular — it’s incredibly slow presumably because of ResizeObserver. (See #1613) (@arturi)
+- [ ] dashboard: add VirtualList, so it can render 5000 files without lag (@goto-bus-stop, @lakesare)
+
+## 1.11
+
+- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
+- [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53 (@arturi)
+- [ ] google-drive: Google Drive - Google Docs https://github.com/transloadit/uppy/issues/1554#issuecomment-554904049 (@ife)
 
 # next
 
-## 1.9
+## 1.10
+
+- [ ] plugins: screenshot+screencast support similar to Webcam #148 (@arturi)
+- [ ] core: add maxTotalFileSize restriction (@arturi)
+- [ ] core, transloadit: Allow new uploads when retrying; improve error handling (#1960 / @arturi)
+- [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827
 
 - [ ] companion: restore deferredLength — parallel upload/download, 423 and 500 issues (@ife)
 - [ ] companion: reports an error at first sign in. we did a hotfix in https://github.com/transloadit/uppy/pull/1478#issuecomment-485937942 but need a proper fix for that (@ife). Also: what about changing the location of that tooltip? So legit errors also don't block buttons?
@@ -111,16 +121,55 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
 - [ ] statusbar: Add a confirmation of the cancel action (https://github.com/transloadit/uppy/issues/1418)
 - [ ] test: Switch one existing e2e test to use Parcel (create-react-app already using webpack)
-- [ ] meta: Clean up CHANGELOG's Backlog. Requires an Uppy call
 - [ ] goldenretriever: make it work with aws multipart (@goto-bus-stop) https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888
-- [ ] localepacks: Add Arabic, see if right-to-left causes issues, and fix them :)
 - [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog
-- [ ] chore: remove dead code/commented blocks
-- [ ] @uppy/transloadit: finish Transloadit-Client header on https://github.com/transloadit/uppy/tree/feature/transloadit-client
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard: optional alert `onbeforeunload` while upload is in progress, safeguarding from accidentaly navigating away from a page with an ongoing upload
 - [ ] QA: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
 - [ ] website: Adopt bcp-47 to handle and parse locales (@kvz, https://github.com/meikidd/iso-639-1/issues/19, https://tools.ietf.org/html/bcp47, https://github.com/wooorm/bcp-47)
+
+## 1.9.0
+
+Released: 2019-02-11
+
+This release adds support for the new Instagram API, image and archive icons to the Dashboard, fixes upload retries and moves OneDrive out of beta.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.5.0 | @uppy/onedrive | 1.0.0 |
+| @uppy/aws-s3 | 1.5.0 | @uppy/progress-bar | 1.3.5 |
+| @uppy/companion | 1.9.0 | @uppy/provider-views | 1.5.3 |
+| @uppy/core | 1.8.0 | @uppy/react | 1.4.3 |
+| @uppy/dashboard | 1.6.0 | @uppy/robodog | 1.5.0 |
+| @uppy/drag-drop | 1.4.3 | @uppy/status-bar | 1.5.0 |
+| @uppy/dropbox | 1.3.6 | @uppy/thumbnail-generator | 1.5.3 |
+| @uppy/facebook | 0.2.3 | @uppy/transloadit | 1.5.0 |
+| @uppy/file-input | 1.4.3 | @uppy/tus | 1.5.3 |
+| @uppy/form | 1.3.6 | @uppy/url | 1.4.3 |
+| @uppy/golden-retriever | 1.3.5 | @uppy/utils | 2.2.0 |
+| @uppy/google-drive | 1.4.0 | @uppy/webcam | 1.5.2 |
+| @uppy/informer | 1.4.0 | @uppy/xhr-upload | 1.5.0 |
+| @uppy/instagram | 1.3.6 | uppy | 1.9.0 |
+| @uppy/locales | 1.11.1 | - | - |
+
+- @uppy/companion: support new Instagram Graph API (#1966 / @ifedapoolarewaju)
+- @uppy/companion: add option to set http method for remote multipart uploads (#2047 / @ifedapoolarewaju)
+- @uppy/core: core: setState(modifiedFiles) in onBeforeUpload (#2028 / @arturi)
+- @uppy/core: always log errors (#2029 / @arturi)
+- @uppy/core: clear state.error after the last file is removed (#2041 / @arturi)
+- @uppy/core: fix mime type checking bug (#2004 / @shahimclt)
+- @uppy/core: add noNewAlreadyUploading and noDuplicates locale strings (#2057 / @arturi)
+- @uppy/core, @uppy/transloadit: allow new uploads when retrying; improve error handling (#1960 / @arturi)
+- @uppy/core: add .tsv and .tab: text/tab-separated-values (#2056 / @arturi)
+- @uppy/google-drive: remove conditional to replace `google` with `drive` (#2044 / @ifedapoolarewaju)
+- @uppy/dashboard: add image and archive icons (#2027 / @arturi)
+- @uppy/dashboard: change aria-level attribute to correct syntax (#2032 / @efbautista)
+- @uppy/onedrive: make encryption shorter + enable onedrive on website (#2034 / @ifedapoolarewaju)
+- @uppy/aws-s3: remove encodeURIComponent to avoid encoding characters twice (#2033 / @yoann-hellopret)
+- @uppy/informer, @uppy/status-bar: display a browser alert when an error question mark button is clicked (#2031 / @arturi)
+- build: upload downloadable zip archive of releases to CDN (#2052 / @kvz)
+- providers: remove redundant use of options (#2046 / @ifedapoolarewaju)
+- website: switch from Discourse to Disqus for comments ([c4af95d98cdd5c3727ee5c14dfd07af227c59b9e](https://github.com/transloadit/uppy/commit/c4af95d98cdd5c3727ee5c14dfd07af227c59b9e) / @kvz)
 
 ## 1.8.0
 
@@ -1615,81 +1664,81 @@ Note: this version was released as a `@next` npm tag to unblock some users.
 Released: 2017-08-15.
 Theme: Dogumentation and The Golden retriever.
 
-- [x] goldenretriever: use Service Woker first, then IndexedDB, add file limits for IndexedDB, figure out what restores from where, add throttling for localStorage state sync (@goto-bus-stop @arturi)
-- [x] dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
-- [x] dashboard: place close btn inside the Dashboard, don’t close on click outside, place source icon near the file size (@arturi)
-- [x] core: informer becomes a core API, `uppy.info('Smile! 📸', 'warning', 5000)` so its more concise with `uppy.log('my msg')` and supports different UI implementations (@arturi, #271)
-- [x] docs: first stage — on using plugins, all options, list of plugins, i18n, uppy-server (@arturi, @goto-bus-stop, @ifedapoolarewaju)
-- [x] provider: file size sorting (@ifedapoolarewaju)
-- [x] provider: show loading screen when checking auth too (@arturi)
-- [x] uploaders: add direct-to-s3 upload plugin (@goto-bus-stop)
-- [x] core: ability to re-upload all files, even `uploadComplete` ones, reset progress (@arturi)
-- [x] goldenretriever: recover selected or in progress files after a browser crash or closed tab: alpha-version, add LocalStorage, Service Worker and IndexedDB (@arturi @goto-bus-stop @nqst #268)
-- [x] xhrupload: add XHRUpload a more flexible successor to Multipart, so that S3 plugin can depend on it (@goto-bus-stop #242)
-- [x] core: add getFile method (@goto-bus-stop, #263)
-- [x] provider: use informer to display errors (@ifedapoolarewaju)
-- [x] provider: flatten instagram carousels #234 (@ifedapoolarewaju)
-- [x] server: add uppy-server url as `i-am` header (@ifedapoolarewaju)
-- [x] server: disable socket channel from restarting an already completed file download (@ifedapoolarewaju)
-- [x] server: make uppy client whitelisting optional. You may use wildcard instead (@ifedapoolarewaju)
-- [x] server: master oauth redirect uri for multiple uppy-server instances
-- [x] server: options support for redis session storage on standalone server (@ifedapoolarewaju)
-- [x] server: start uppy-server as binary `uppy-server` (@ifedapoolarewaju)
-- [x] server: store downloaded files based on uuids (@ifedapoolarewaju)
-- [x] server: store upload state on redis (@ifedapoolarewaju)
-- [x] server: use uppy informer for server errors (@ifedapoolarewaju, #272)
-- [x] server: whitelist multiple uppy clients (@ifedapoolarewaju)
-- [x] transloadit: emit an event when an assembly is created (@goto-bus-stop / #244)
-- [x] transloadit: function option for file-dependent `params` (@goto-bus-stop / #250)
-- [x] tus: Save upload URL early on (@goto-bus-stop #261)
-- [x] tus: return immediately if no files are selected (@goto-bus-stop #245)
-- [x] uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju @kiloreux)
-- [x] webcam: add 1, 2, 3, smile! to webcam, onBeforeSnapshothook (@arturi, #187, #248)
-- [x] website: live example on the homepage, “try me” button, improve /examples (@arturi)
+- goldenretriever: use Service Woker first, then IndexedDB, add file limits for IndexedDB, figure out what restores from where, add throttling for localStorage state sync (@goto-bus-stop @arturi)
+- dashboard: flag to hide the upload button, for cases when you want to manually stat the upload (@arturi)
+- dashboard: place close btn inside the Dashboard, don’t close on click outside, place source icon near the file size (@arturi)
+- core: informer becomes a core API, `uppy.info('Smile! 📸', 'warning', 5000)` so its more concise with `uppy.log('my msg')` and supports different UI implementations (@arturi, #271)
+- docs: first stage — on using plugins, all options, list of plugins, i18n, uppy-server (@arturi, @goto-bus-stop, @ifedapoolarewaju)
+- provider: file size sorting (@ifedapoolarewaju)
+- provider: show loading screen when checking auth too (@arturi)
+- uploaders: add direct-to-s3 upload plugin (@goto-bus-stop)
+- core: ability to re-upload all files, even `uploadComplete` ones, reset progress (@arturi)
+- goldenretriever: recover selected or in progress files after a browser crash or closed tab: alpha-version, add LocalStorage, Service Worker and IndexedDB (@arturi @goto-bus-stop @nqst #268)
+- xhrupload: add XHRUpload a more flexible successor to Multipart, so that S3 plugin can depend on it (@goto-bus-stop #242)
+- core: add getFile method (@goto-bus-stop, #263)
+- provider: use informer to display errors (@ifedapoolarewaju)
+- provider: flatten instagram carousels #234 (@ifedapoolarewaju)
+- server: add uppy-server url as `i-am` header (@ifedapoolarewaju)
+- server: disable socket channel from restarting an already completed file download (@ifedapoolarewaju)
+- server: make uppy client whitelisting optional. You may use wildcard instead (@ifedapoolarewaju)
+- server: master oauth redirect uri for multiple uppy-server instances
+- server: options support for redis session storage on standalone server (@ifedapoolarewaju)
+- server: start uppy-server as binary `uppy-server` (@ifedapoolarewaju)
+- server: store downloaded files based on uuids (@ifedapoolarewaju)
+- server: store upload state on redis (@ifedapoolarewaju)
+- server: use uppy informer for server errors (@ifedapoolarewaju, #272)
+- server: whitelist multiple uppy clients (@ifedapoolarewaju)
+- transloadit: emit an event when an assembly is created (@goto-bus-stop / #244)
+- transloadit: function option for file-dependent `params` (@goto-bus-stop / #250)
+- tus: Save upload URL early on (@goto-bus-stop #261)
+- tus: return immediately if no files are selected (@goto-bus-stop #245)
+- uppy-server: add uppy-server metrics to Librato (@ifedapoolarewaju @kiloreux)
+- webcam: add 1, 2, 3, smile! to webcam, onBeforeSnapshothook (@arturi, #187, #248)
+- website: live example on the homepage, “try me” button, improve /examples (@arturi)
 
 ## 0.17.0
 
 Released: 2017-07-02
 
-- [x] core: restrictions — by file type, size, number of files (@arturi)
-- [x] provider: improve UI: improve overall look, breadcrumbs, more responsive (@arturi)
-- [x] core: css-in-js demos, try template-css (@arturi @goto-bus-stop #239)
-- [x] core: add `uppy.reset()` as discussed in #179 (@arturi)
-- [x] core: add nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@goto-bus-stop, @arturi)
-- [x] core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957 (@arturi)
-- [x] dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi, @nqst / #215)
-- [x] fileinput: allow retriving fields/options from form (@arturi #153)
-- [x] server: configurable server port (@ifedapoolarewaju)
-- [x] server: support for custom providers (@ifedapoolarewaju)
-- [x] statusbar: also show major errors, add “error” state (@goto-bus-stop)
-- [x] statusbar: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
-- [x] statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
-- [x] statusbar: work towards extracting StatusBar to a separate plugin, bundle that with Dashboard? (@goto-bus-stop, @arturi)
-- [x] tus/uppy-server: Support metadata in remote tus uploads (@ifedapoolarewaju, @goto-bus-stop / #210)
-- [x] uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 1, WIP (@goto-bus-stop)
-- [x] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
-- [x] uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
-- [x] uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju / #205)
-- [x] uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
-- [x] uppy: fix google drive uploads on mobile (double click issue) (@arturi)
+- core: restrictions — by file type, size, number of files (@arturi)
+- provider: improve UI: improve overall look, breadcrumbs, more responsive (@arturi)
+- core: css-in-js demos, try template-css (@arturi @goto-bus-stop #239)
+- core: add `uppy.reset()` as discussed in #179 (@arturi)
+- core: add nanoraf https://github.com/yoshuawuyts/choo/pull/135/files?diff=unified (@goto-bus-stop, @arturi)
+- core: file type detection: archives, markdown (possible modules: file-type, identify-filetype) example: http://requirebin.com/?gist=f9bea9602030f1320a227cf7f140c45f, http://stackoverflow.com/a/29672957 (@arturi)
+- dashboard: make file icons prettier: https://uppy.io/images/blog/0.16/service-logos.png (@arturi, @nqst / #215)
+- fileinput: allow retriving fields/options from form (@arturi #153)
+- server: configurable server port (@ifedapoolarewaju)
+- server: support for custom providers (@ifedapoolarewaju)
+- statusbar: also show major errors, add “error” state (@goto-bus-stop)
+- statusbar: pre/postprocessing status updates in the StatusBar (@goto-bus-stop, #202)
+- statusbar: show status “Upload started...” when the remote upload has begun, but no progress events received yet (@arturi)
+- statusbar: work towards extracting StatusBar to a separate plugin, bundle that with Dashboard? (@goto-bus-stop, @arturi)
+- tus/uppy-server: Support metadata in remote tus uploads (@ifedapoolarewaju, @goto-bus-stop / #210)
+- uploaders: add direct-to-s3 upload plugin and test it with the flow to then upload to transloadit, stage 1, WIP (@goto-bus-stop)
+- uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
+- uppy/uppy-server: Make a barely working Instagram Plugin (@ifedapoolarewaju / #21)
+- uppy/uppy-server: allow google drive/dropbox non-tus (i.e multipart) remote uploads (@arturi, @ifedapoolarewaju / #205)
+- uppy/uppy-server: some file types cannot be downloaded/uploaded on google drive (e.g google docs). How to handle that? (@ifedapoolarewaju)
+- uppy: fix google drive uploads on mobile (double click issue) (@arturi)
 
 ## 0.16.2
 
 Released: 2017-05-31.
 
-- [x] core: update prettier-bytes to fix the IE support issue https://github.com/Flet/prettier-bytes/issues/3 (@arturi)
-- [x] core: use URL.createObjectURL instead of resizing thumbnails (@arturi, @goto-bus-stop / #199)
-- [x] dashboard: Fix ETA when multiple files are being uploaded (@goto-bus-stop, #197)
-- [x] transloadit: Fix receiving assembly results that are not related to an input file (@arturi, @goto-bus-stop / #201)
-- [x] transloadit: Use the `tus_upload_url` to reliably link assembly results with their input files (@goto-bus-stop / #207)
-- [x] transloadit: move user-facing strings into locale option (@goto-bus-stop / https://github.com/transloadit/uppy/commit/87a22e7ee37b6fa3754fa34868516a6700306b60)
-- [x] webcam: Mute audio in realtime playback (@goto-bus-stop / #196)
+- core: update prettier-bytes to fix the IE support issue https://github.com/Flet/prettier-bytes/issues/3 (@arturi)
+- core: use URL.createObjectURL instead of resizing thumbnails (@arturi, @goto-bus-stop / #199)
+- dashboard: Fix ETA when multiple files are being uploaded (@goto-bus-stop, #197)
+- transloadit: Fix receiving assembly results that are not related to an input file (@arturi, @goto-bus-stop / #201)
+- transloadit: Use the `tus_upload_url` to reliably link assembly results with their input files (@goto-bus-stop / #207)
+- transloadit: move user-facing strings into locale option (@goto-bus-stop / https://github.com/transloadit/uppy/commit/87a22e7ee37b6fa3754fa34868516a6700306b60)
+- webcam: Mute audio in realtime playback (@goto-bus-stop / #196)
 
 ## 0.16.1
 
 Released: 2017-05-13
 
-- [x] temporarily downgrade yo-yoify, until shama/yo-yoify#45 is resolved (@arturi / https://github.com/transloadit/uppy/commit/6292b96)
+- temporarily downgrade yo-yoify, until shama/yo-yoify#45 is resolved (@arturi / https://github.com/transloadit/uppy/commit/6292b96)
 
 ## 0.16.0
 
@@ -1697,29 +1746,29 @@ Released: 2017-05-12.
 Theme: Transloadit integration, getting things in order.
 Favorite Uppy Server version: 0.5.0.
 
-- [x] uploaders: make sure uploads retry/resume if started when offline or disconnected, retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi, @ifedapoolarewaju)
-- [x] transloadit: add basic (beta) version of Transloadit plugin (@goto-bus-stop, @kvz, @tim-kos / #28)
-- [x] transloadit: emit an upload event w/ tl data when a file upload is complete (#191 @goto-bus-stop)
-- [x] webcam: implement reading audio+video from Webcam (@goto-bus-stop / #175)
-- [x] webcam: Make the webcam video fill the available space as much as possible (@goto-bus-stop / #190)
-- [x] tus: Merge tus-js-client options with uppy-tus. Hence, enable custom headers support (@goto-bus-stop)
-- [x] multipart/tus: Remove Promise.all() calls with unused results (@goto-bus-stop / #121)
-- [x] dashboard: fix Dashboard modal close button position (@goto-bus-stop / #171)
-- [x] core: pass through errors (@goto-bus-stop / #185)
-- [x] core: accept a DOM element in `target:` option (@goto-bus-stop / #169)
-- [x] core: Remove the last few potentially buggy uses of `document.querySelector` (@goto-bus-stop)
-- [x] dashboard: Fix dashboard width when multiple instances exist (@goto-bus-stop / #184)
-- [x] dashboard: add service logo / name to the selected file in file list (@arturi)
-- [x] server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
-- [x] server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
-- [x] server: research parallelizing downloading/uploading remote files: start uploading chunks right away, while still storing the file on disk (@ifedapoolarewaju)
-- [x] server: delete file from local disk after upload is successful (@ifedapoolarewaju)
-- [x] website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi / #150)
-- [x] website: different meta description for pages and post (@arturi)
-- [x] server: well documented README (@ifedapoolarewaju)
-- [x] react: [WIP] High-level React Components (@goto-bus-stop / #170)
-- [x] core: add `uppy.close()` for tearing down an Uppy instance (@goto-bus-stop / #182)
-- [x] core: replace `babel-preset-es2015-loose` by standard es2015 preset with `loose` option (@goto-bus-stop / #174)
+- uploaders: make sure uploads retry/resume if started when offline or disconnected, retry when back online / failed https://github.com/transloadit/uppy/pull/135 (@arturi, @ifedapoolarewaju)
+- transloadit: add basic (beta) version of Transloadit plugin (@goto-bus-stop, @kvz, @tim-kos / #28)
+- transloadit: emit an upload event w/ tl data when a file upload is complete (#191 @goto-bus-stop)
+- webcam: implement reading audio+video from Webcam (@goto-bus-stop / #175)
+- webcam: Make the webcam video fill the available space as much as possible (@goto-bus-stop / #190)
+- tus: Merge tus-js-client options with uppy-tus. Hence, enable custom headers support (@goto-bus-stop)
+- multipart/tus: Remove Promise.all() calls with unused results (@goto-bus-stop / #121)
+- dashboard: fix Dashboard modal close button position (@goto-bus-stop / #171)
+- core: pass through errors (@goto-bus-stop / #185)
+- core: accept a DOM element in `target:` option (@goto-bus-stop / #169)
+- core: Remove the last few potentially buggy uses of `document.querySelector` (@goto-bus-stop)
+- dashboard: Fix dashboard width when multiple instances exist (@goto-bus-stop / #184)
+- dashboard: add service logo / name to the selected file in file list (@arturi)
+- server: begin adding automated tests, maybe try https://facebook.github.io/jest (@ifedapoolarewaju)
+- server: add image preview / thumbnail for remote files, if its in the API of services ? (@ifedapoolarewaju)
+- server: research parallelizing downloading/uploading remote files: start uploading chunks right away, while still storing the file on disk (@ifedapoolarewaju)
+- server: delete file from local disk after upload is successful (@ifedapoolarewaju)
+- website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi / #150)
+- website: different meta description for pages and post (@arturi)
+- server: well documented README (@ifedapoolarewaju)
+- react: [WIP] High-level React Components (@goto-bus-stop / #170)
+- core: add `uppy.close()` for tearing down an Uppy instance (@goto-bus-stop / #182)
+- core: replace `babel-preset-es2015-loose` by standard es2015 preset with `loose` option (@goto-bus-stop / #174)
 
 ## 0.15.0
 
@@ -1727,29 +1776,29 @@ Released: 2017-03-02.
 Theme: Speeding and cleaning.
 Favorite Uppy Server version: 0.4.0.
 
-- [x] build: update dependencies and eslint-plugin-standard, nodemon --> onchange, because simpler and better options (@arturi)
-- [x] build: fix `Function.caller` issue in `lib` which gets published to NPM package, add babel-plugin-yo-yoify (@arturi #158 #163)
-- [x] provider: show error view for things like not being able to connect to uppy server should this be happening when uppy-server is unavailable http://i.imgur.com/cYJakc9.png (@arturi, @ifedapoolarewaju)
-- [x] provider: loading indicator while the GoogleDrive / Dropbox files are loading (@arturi, @ifedapoolarewaju)
-- [x] provider: logout link/button? (@arturi, @ifedapoolarewaju)
-- [x] provider: fix breadcrumbs (@ifedapoolarewaju)
-- [x] server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
-- [x] server: throttle progress updates sent through websockets, sometimes it can get overwhelming when uploads are fast (@ifedapoolarewaju)
-- [x] server: pass file size from Google Drive / Dropbox ? (@ifedapoolarewaju)
-- [x] server: return uploaded file urls (from Google Drive / Dropbox) ? (@ifedapoolarewaju)
-- [x] server: research having less permissions, smaller auth expiration time for security (@ifedapoolarewaju)
-- [x] dashboard: basic React component (@arturi)
-- [x] core: experiment with `nanoraf` and `requestAnimationFrame` (@arturi)
-- [x] core: add throttling of progress updates (@arturi)
-- [x] dashobard: fix Missing `file.progress.bytesTotal` property  (@arturi #152)
-- [x] dashboard: switch to prettier-bytes for more user-friendly progress updates (@arturi)
-- [x] dashboard: fix `updateDashboardElWidth()` not firing in time, causing container width to be 0 (@arturi)
-- [x] multipart: treat all 2xx responses as successful, return xhr object in `core:upload-success` (@arturi #156 #154)
-- [x] dashboard: throttle StatusBar numbers, so they update only once a second (@arturi, @acconut)
-- [x] dashboard: add titles to pause/resume/cancel in StatusBar (@arturi)
-- [x] dashboard: precise `circleLength` and `stroke-dasharray/stroke-dashoffset` calculation for progress circles on FileItem (@arturi)
-- [x] dashboard: don’t show per-file detailed progress by default — too much noise (@arturi)
-- [x] website: blog post and images cleanup (@arturi)
+- build: update dependencies and eslint-plugin-standard, nodemon --> onchange, because simpler and better options (@arturi)
+- build: fix `Function.caller` issue in `lib` which gets published to NPM package, add babel-plugin-yo-yoify (@arturi #158 #163)
+- provider: show error view for things like not being able to connect to uppy server should this be happening when uppy-server is unavailable http://i.imgur.com/cYJakc9.png (@arturi, @ifedapoolarewaju)
+- provider: loading indicator while the GoogleDrive / Dropbox files are loading (@arturi, @ifedapoolarewaju)
+- provider: logout link/button? (@arturi, @ifedapoolarewaju)
+- provider: fix breadcrumbs (@ifedapoolarewaju)
+- server: refactor local/remote uploads in tus, allow for pause/resume with remote upload (@arturi, @ifedapoolarewaju)
+- server: throttle progress updates sent through websockets, sometimes it can get overwhelming when uploads are fast (@ifedapoolarewaju)
+- server: pass file size from Google Drive / Dropbox ? (@ifedapoolarewaju)
+- server: return uploaded file urls (from Google Drive / Dropbox) ? (@ifedapoolarewaju)
+- server: research having less permissions, smaller auth expiration time for security (@ifedapoolarewaju)
+- dashboard: basic React component (@arturi)
+- core: experiment with `nanoraf` and `requestAnimationFrame` (@arturi)
+- core: add throttling of progress updates (@arturi)
+- dashobard: fix Missing `file.progress.bytesTotal` property  (@arturi #152)
+- dashboard: switch to prettier-bytes for more user-friendly progress updates (@arturi)
+- dashboard: fix `updateDashboardElWidth()` not firing in time, causing container width to be 0 (@arturi)
+- multipart: treat all 2xx responses as successful, return xhr object in `core:upload-success` (@arturi #156 #154)
+- dashboard: throttle StatusBar numbers, so they update only once a second (@arturi, @acconut)
+- dashboard: add titles to pause/resume/cancel in StatusBar (@arturi)
+- dashboard: precise `circleLength` and `stroke-dasharray/stroke-dashoffset` calculation for progress circles on FileItem (@arturi)
+- dashboard: don’t show per-file detailed progress by default — too much noise (@arturi)
+- website: blog post and images cleanup (@arturi)
 
 ## 0.14.0
 
@@ -1757,24 +1806,24 @@ Released: January 27, 2017.
 Theme: The new 13: Responsive Dashboard, Standalone & Pluggable Server, Dropbox.
 Uppy Server version: 0.3.0.
 
-- [x] dashboard: use `isWide` prop/class instead of media queries, so that compact/mobile version can be used in bigger screens too (@arturi)
-- [x] dashboard: basic “list” view in addition to current “grid” view (@arturi)
-- [x] dashboard: more icons for file types (@arturi)
-- [x] dashboard: add totalSize and totalUploadedSize to StatusBar (@arturi)
-- [x] dashboard: figure out where to place Informer, accounting for StatusBar — over the StatusBar for now (@arturi)
-- [x] dashboard: add `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/. Added hidden for now, for semantics/accessibility (@arturi)
-- [x] dragdrop: show number of selected files, remove upload btn (@arturi)
-- [x] build: exclude locales from build (@arturi)
-- [x] core: i18n for each plugin in options — local instead of global (@arturi)
-- [x] core: add default pluralization (can be overrinden in plugin options) to Translator (@arturi)
-- [x] core: use yo-yoify to solve [Function.caller / strict mode issue](https://github.com/shama/bel#note) and make our app faster/smaller by transforming template strings into pure and fast document calls (@arturi)
-- [x] server: a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
-- [x] server: standalone uppy-server (@ifedapoolarewaju)
-- [x] server: Integrate dropbox plugin (@ifedapoolarewaju)
-- [x] server: smooth authentication: after auth you are back in your app where you left, no page reloads (@ifedapoolarewaju)
-- [x] tus: fix upload progress from uppy-server (@arturi, @ifedapoolarewaju)
-- [x] core: basic React component — DnD (@arturi)
-- [x] core: fix support for both ES6 module import and CommonJS requires with `add-module-exports` babel plugin (@arturi)
+- dashboard: use `isWide` prop/class instead of media queries, so that compact/mobile version can be used in bigger screens too (@arturi)
+- dashboard: basic “list” view in addition to current “grid” view (@arturi)
+- dashboard: more icons for file types (@arturi)
+- dashboard: add totalSize and totalUploadedSize to StatusBar (@arturi)
+- dashboard: figure out where to place Informer, accounting for StatusBar — over the StatusBar for now (@arturi)
+- dashboard: add `<progress>` element for progressbar, like here https://overcast.fm/+BtuxMygVg/. Added hidden for now, for semantics/accessibility (@arturi)
+- dragdrop: show number of selected files, remove upload btn (@arturi)
+- build: exclude locales from build (@arturi)
+- core: i18n for each plugin in options — local instead of global (@arturi)
+- core: add default pluralization (can be overrinden in plugin options) to Translator (@arturi)
+- core: use yo-yoify to solve [Function.caller / strict mode issue](https://github.com/shama/bel#note) and make our app faster/smaller by transforming template strings into pure and fast document calls (@arturi)
+- server: a pluggable uppy-server (express / koa for now) (@ifedapoolarewaju)
+- server: standalone uppy-server (@ifedapoolarewaju)
+- server: Integrate dropbox plugin (@ifedapoolarewaju)
+- server: smooth authentication: after auth you are back in your app where you left, no page reloads (@ifedapoolarewaju)
+- tus: fix upload progress from uppy-server (@arturi, @ifedapoolarewaju)
+- core: basic React component — DnD (@arturi)
+- core: fix support for both ES6 module import and CommonJS requires with `add-module-exports` babel plugin (@arturi)
 
 ## 0.13.0
 
@@ -1787,72 +1836,72 @@ Released: November 25, 2016.
 Theme: Responsive. Cancel. Feedback. ES6 Server.
 Uppy Server version: 0.2.0.
 
-- [x] meta: write 0.12 release blog post (@arturi)
-- [x] core: figure out import/require for core and plugins — just don’t use spread for plugins (@arturi)
-- [x] meta: create a demo video, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
-- [x] meta: update Readme, update screenshot (@arturi)
-- [x] server: add pre-commit and lint-staged (@arturi)
-- [x] server: re-do build setup: building at `deploy` and `prepublish` when typing `npm run release:patch` 0.0.1 -> 0.0.2 (@ifedapoolarewaju)
-- [x] server: re-do build setup: es6 `src` -> es5 `lib` (use plugin packs from Uppy)
-- [x] server: re-do build setup: `eslint --fix ./src` via http://standardjs.com (@ifedapoolarewaju)
-- [x] server: re-do build setup: `babel-node` or `babel-require` could do realtime transpiling for development (how does that hook in with e.g. `nodemon`?) (@ifedapoolarewaju)
-- [x] server: refacor: remove/reduce file redundancy (@ifedapoolarewaju)
-- [x] server: error handling: 404 and 401 error handler (@ifedapoolarewaju)
-- [x] server: bug fix: failing google drive (@ifedapoolarewaju)
-- [x] webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (@arturi)
-- [x] core: allow usage without `new`, start renaming `Core()` to `Uppy()` in examples (@arturi)
-- [x] core: api — consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab, come up with follow up questions (@arturi)
-- [x] dashboard: local mode — no acquire plugins / external services, just DnD — ActionBrowseTagline (@arturi)
-- [x] dashboard: only show pause/resume when tus is used (@arturi)
-- [x] dashboard: cancel uploads button for multipart (@arturi)
-- [x] dashboard: responsive design — stage 1 (@arturi)
-- [x] meta: write 0.11 release blog post (@arturi)
+- meta: write 0.12 release blog post (@arturi)
+- core: figure out import/require for core and plugins — just don’t use spread for plugins (@arturi)
+- meta: create a demo video, showcasing Uppy Dashboard for the main page, like https://zeit.co/blog/next (@arturi)
+- meta: update Readme, update screenshot (@arturi)
+- server: add pre-commit and lint-staged (@arturi)
+- server: re-do build setup: building at `deploy` and `prepublish` when typing `npm run release:patch` 0.0.1 -> 0.0.2 (@ifedapoolarewaju)
+- server: re-do build setup: es6 `src` -> es5 `lib` (use plugin packs from Uppy)
+- server: re-do build setup: `eslint --fix ./src` via http://standardjs.com (@ifedapoolarewaju)
+- server: re-do build setup: `babel-node` or `babel-require` could do realtime transpiling for development (how does that hook in with e.g. `nodemon`?) (@ifedapoolarewaju)
+- server: refacor: remove/reduce file redundancy (@ifedapoolarewaju)
+- server: error handling: 404 and 401 error handler (@ifedapoolarewaju)
+- server: bug fix: failing google drive (@ifedapoolarewaju)
+- webcam: stop using the webcam (green light off) after the picture is taken / tab is hidden (@arturi)
+- core: allow usage without `new`, start renaming `Core()` to `Uppy()` in examples (@arturi)
+- core: api — consider Yosh’s feedback and proposals https://gist.github.com/yoshuawuyts/b5e5b3e7aacbee85a3e61b8a626709ab, come up with follow up questions (@arturi)
+- dashboard: local mode — no acquire plugins / external services, just DnD — ActionBrowseTagline (@arturi)
+- dashboard: only show pause/resume when tus is used (@arturi)
+- dashboard: cancel uploads button for multipart (@arturi)
+- dashboard: responsive design — stage 1 (@arturi)
+- meta: write 0.11 release blog post (@arturi)
 
 ## 0.11.0
 
 Released: November 1, 2016. Releasemaster: Artur.
 Theme: StatusBar and API docs.
 
-- [x] core: log method should have an option to throw error in addition to just logging (@arturi)
-- [x] experimental: PersistentState plugin that saves state to localStorage — useful for development (@arturi)
-- [x] dashboard: implement new StatusBar with progress and pause/resume buttons https://github.com/transloadit/uppy/issues/96#issuecomment-249401532 (@arturi)
-- [x] dashboard: attempt to throttle StatusBar, so it doesn’t re-render too often (@arturi)
-- [x] dashboard: refactor — only load one acquire panel at a time (activeAcquirer or empty), change focus behavior, utilize onload/onunload
-- [x] experimental: create a Dashboard UI for Redux refactor (@hedgerh)
-- [x] dashboard: make trigger optional — not needed when rendering inline (@arturi)
-- [x] fileinput: pretty input element #93 (@arturi)
-- [x] meta: document current Uppy architecture and question about the future (@arturi, @hedgerh)
-- [x] test: see about adding tests for autoProceed: true (@arturi)
-- [x] website: and ability to toggle options in Dashboard example: inline/modal, autoProceed, which plugins are enabled #89 (@arturi)
-- [x] website: finish https upgrade for uppy.io, uppy-server and tus, set up pingdom notifications (@arturi, @kvz, @hedgerh)
-- [x] website: update guide, API docs and main page example to match current actual API (@arturi)
-- [x] uppy-server: Make uppy server have dynamic controllers (@hedgerh)
+- core: log method should have an option to throw error in addition to just logging (@arturi)
+- experimental: PersistentState plugin that saves state to localStorage — useful for development (@arturi)
+- dashboard: implement new StatusBar with progress and pause/resume buttons https://github.com/transloadit/uppy/issues/96#issuecomment-249401532 (@arturi)
+- dashboard: attempt to throttle StatusBar, so it doesn’t re-render too often (@arturi)
+- dashboard: refactor — only load one acquire panel at a time (activeAcquirer or empty), change focus behavior, utilize onload/onunload
+- experimental: create a Dashboard UI for Redux refactor (@hedgerh)
+- dashboard: make trigger optional — not needed when rendering inline (@arturi)
+- fileinput: pretty input element #93 (@arturi)
+- meta: document current Uppy architecture and question about the future (@arturi, @hedgerh)
+- test: see about adding tests for autoProceed: true (@arturi)
+- website: and ability to toggle options in Dashboard example: inline/modal, autoProceed, which plugins are enabled #89 (@arturi)
+- website: finish https upgrade for uppy.io, uppy-server and tus, set up pingdom notifications (@arturi, @kvz, @hedgerh)
+- website: update guide, API docs and main page example to match current actual API (@arturi)
+- uppy-server: Make uppy server have dynamic controllers (@hedgerh)
 
 ## 0.10.0
 
 Released: Septermber 23, 2016. Releasemaster: Artur.
 Theme: Getting together.
 
-- [x] core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` (or `parseFile`), open modal... (@arturi, @hedgerh)
-- [x] core: how would Uppy work without the UI, if one wants to Uppy to just add files and upload, while rendering preview and UI by themselves #116 — discussion Part 1 (@arturi, @hedgerh)
-- [x] core: refactor towards react compatibility as discussed in https://github.com/transloadit/uppy/issues/110 (@hedgerh)
-- [x] core: CSS modules? allow bundling of CSS in JS for simple use in NPM? See #120#issuecomment-242455042, try https://github.com/rtsao/csjs — verdict: not yet, try again later (@arturi, @hedgerh)
-- [x] core: try Web Workers and FileReaderSync for image resizing again — still slow, probably message payload between webworker and regular thread is huge (@arturi)
-- [x] core: i18n strings should extend default en_US dictionary — if a certain string in not available in German, English should be displayed (@arturi)
-- [x] dashboard: refactor to smaller components, pass props down (@arturi)
-- [x] dashboard: option to render Dashboard inline instead of a modal dialog (@arturi)
-- [x] dashboard: global circular progress bar, try out different designs for total upload speed and ETA (@arturi)
-- [x] dashboard: show total upload speed and ETA, for all files (@arturi)
-- [x] dashboard: copy link to uploaded file button, cross-browser (@arturi) (http://i.imgur.com/b1Io34n.png) (@arturi)
-- [x] dashobard: refreshed design and grand refactor (@arturi)
-- [x] dashboard: improve file paste the best we can http://stackoverflow.com/a/22940020 (@arturi)
-- [x] provider: abstract google drive into provider plugin for reuse (@hedgerh)
-- [x] google drive: improve UI (@hedgerh)
-- [x] tus: add `resumable` capability flag (@arturi)
-- [x] tus: start fixing pause/resume issues and race conditions (@arturi)
-- [x] test: working Uppy example on Require Bin — latest version straight from NPM http://requirebin.com/?gist=54e076cccc929cc567cb0aba38815105 (@arturi @acconut)
-- [x] meta: update readme docs, add unpkg CDN links (https://transloadit.edgly.net/releases/uppy/v0.22.0/dist/uppy.min.css) (@arturi)
-- [x] meta: write 0.10 release blog post (@arturi)
+- core: expose some events/APIs/callbacks to the user: `onFileUploaded`, `onFileSelected`, `onAllUploaded`, `addFile` (or `parseFile`), open modal... (@arturi, @hedgerh)
+- core: how would Uppy work without the UI, if one wants to Uppy to just add files and upload, while rendering preview and UI by themselves #116 — discussion Part 1 (@arturi, @hedgerh)
+- core: refactor towards react compatibility as discussed in https://github.com/transloadit/uppy/issues/110 (@hedgerh)
+- core: CSS modules? allow bundling of CSS in JS for simple use in NPM? See #120#issuecomment-242455042, try https://github.com/rtsao/csjs — verdict: not yet, try again later (@arturi, @hedgerh)
+- core: try Web Workers and FileReaderSync for image resizing again — still slow, probably message payload between webworker and regular thread is huge (@arturi)
+- core: i18n strings should extend default en_US dictionary — if a certain string in not available in German, English should be displayed (@arturi)
+- dashboard: refactor to smaller components, pass props down (@arturi)
+- dashboard: option to render Dashboard inline instead of a modal dialog (@arturi)
+- dashboard: global circular progress bar, try out different designs for total upload speed and ETA (@arturi)
+- dashboard: show total upload speed and ETA, for all files (@arturi)
+- dashboard: copy link to uploaded file button, cross-browser (@arturi) (http://i.imgur.com/b1Io34n.png) (@arturi)
+- dashobard: refreshed design and grand refactor (@arturi)
+- dashboard: improve file paste the best we can http://stackoverflow.com/a/22940020 (@arturi)
+- provider: abstract google drive into provider plugin for reuse (@hedgerh)
+- google drive: improve UI (@hedgerh)
+- tus: add `resumable` capability flag (@arturi)
+- tus: start fixing pause/resume issues and race conditions (@arturi)
+- test: working Uppy example on Require Bin — latest version straight from NPM http://requirebin.com/?gist=54e076cccc929cc567cb0aba38815105 (@arturi @acconut)
+- meta: update readme docs, add unpkg CDN links (https://transloadit.edgly.net/releases/uppy/v0.22.0/dist/uppy.min.css) (@arturi)
+- meta: write 0.10 release blog post (@arturi)
 
 ## 0.9.0
 
@@ -1860,225 +1909,225 @@ Released: August 26, 2016. Releasemaster: Harry.
 
 Theme: Making Progress, Then Pause & Resume.
 
-- [x] dashboard: informer interface: message when all uploads are "done" (@arturi)
-- [x] meta: write 0.9 release blog post (@hedgerh)
-- [x] webcam: a barely working webcam record & upload (@hedgerh)
-- [x] metadata: Uppy + tus empty metadata value issue in Safari https://github.com/tus/tus-js-client/issues/41 --> tus issue — nailed down, passed to @acconut (@arturi, @acconut)
-- [x] core: experiment with switching to `virtual-dom` in a separate branch; experiment with rollup again (@arturi)
-- [x] core: figure out race conditions (animations not completing because file div gets re-added to the dom each time) with `yo-yo`/`morphdom` https://github.com/shama/bel/issues/26#issuecomment-238004130 (@arturi)
-- [x] core: switch to https://github.com/sethvincent/namespace-emitter — smaller, allows for `on('*')` (@arturi)
-- [x] dashboard: add aria-labels and titles everywhere to improve accessibility #114 (@arturi)
-- [x] dashboard: file name + extension should fit on two lines, truncate in the middle (maybe https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/measureText) (@arturi)
-- [x] dashboard: implement a circular progress indicator on top of the fileItem with play/pause (@arturi)
-- [x] dashboard: refactor to smaller components, as discussed in #110 (@arturi)
-- [x] dashboard: show upload remaining time and speed, option to disable (@arturi)
-- [x] google drive: refactor to smaller components, as discussed in #110 (@hedgerh)
-- [x] meta: reach out to choo author (@arturi)
-- [x] meta: write 0.8 release blog post (@arturi)
-- [x] metadata: add labels to fields in fileCard (@arturi)
-- [x] metadata: the aftermath — better UI (@arturi)
-- [x] test: Get IE6 on Win XP to run Uppy and see it fall back to regular form upload #108 (@arturi)
-- [x] test: refactor tests, add DragDrop back (@arturi)
-- [x] tus: update uppy to tus-js-client@1.2.1, test on requirebin (@arturi)
-- [x] tus: add ability to pause/resume all uploads at once (@arturi)
-- [x] tus: add ability to pause/resume upload (@arturi)
+- dashboard: informer interface: message when all uploads are "done" (@arturi)
+- meta: write 0.9 release blog post (@hedgerh)
+- webcam: a barely working webcam record & upload (@hedgerh)
+- metadata: Uppy + tus empty metadata value issue in Safari https://github.com/tus/tus-js-client/issues/41 --> tus issue — nailed down, passed to @acconut (@arturi, @acconut)
+- core: experiment with switching to `virtual-dom` in a separate branch; experiment with rollup again (@arturi)
+- core: figure out race conditions (animations not completing because file div gets re-added to the dom each time) with `yo-yo`/`morphdom` https://github.com/shama/bel/issues/26#issuecomment-238004130 (@arturi)
+- core: switch to https://github.com/sethvincent/namespace-emitter — smaller, allows for `on('*')` (@arturi)
+- dashboard: add aria-labels and titles everywhere to improve accessibility #114 (@arturi)
+- dashboard: file name + extension should fit on two lines, truncate in the middle (maybe https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/measureText) (@arturi)
+- dashboard: implement a circular progress indicator on top of the fileItem with play/pause (@arturi)
+- dashboard: refactor to smaller components, as discussed in #110 (@arturi)
+- dashboard: show upload remaining time and speed, option to disable (@arturi)
+- google drive: refactor to smaller components, as discussed in #110 (@hedgerh)
+- meta: reach out to choo author (@arturi)
+- meta: write 0.8 release blog post (@arturi)
+- metadata: add labels to fields in fileCard (@arturi)
+- metadata: the aftermath — better UI (@arturi)
+- test: Get IE6 on Win XP to run Uppy and see it fall back to regular form upload #108 (@arturi)
+- test: refactor tests, add DragDrop back (@arturi)
+- tus: update uppy to tus-js-client@1.2.1, test on requirebin (@arturi)
+- tus: add ability to pause/resume all uploads at once (@arturi)
+- tus: add ability to pause/resume upload (@arturi)
 
 ## 0.8.0
 
 Released: July 29, 2016. Releasemaster: Artur.
 Theme: The Webcam Edition.
 
-- [x] core: fix bug: no meta information from uppy-server files (@hedgerh)
-- [x] core: fix bug: uppy-server file is treated as local and directly uploaded (@hedgerh)
-- [x] uppy-server: hammering out websockets/oauth (@hedgerh, @acconut)
-- [x] debugger: introduce MagicLog as a way to debug state changes in Uppy (@arturi)
-- [x] modifier: A MetaData plugin to supply meta data (like width, tag, filename, user_id) (@arturi)
-- [x] modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too (@arturi)
-- [x] modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
-- [x] webcam: initial version: webcam light goes on (@hedgerh)
-- [x] progress: better icons, styles (@arturi)
-- [x] core: better mime/type detection (via mime + extension) (@arturi)
-- [x] core: add deep-freeze to getState so that we are sure we are not mutating state accidentally (@arturi)
-- [x] meta: release “Uppy Begins” post (@arturi @kvz)
-- [x] meta: better readme on GitHub and NPM (@arturi)
-- [x] test: add pre-commit & lint-staged (@arturi)
-- [x] test: add next-update https://www.npmjs.com/package/next-update to check if packages we use can be safely updated (@arturi)
-- [x] website: blog polish — add post authors and their gravatars (@arturi)
-- [x] dashboard: UI revamp, more prototypes, background image, make dashboard nicer (@arturi)
-- [x] dashboard: try a workflow where import from external service slides over and takes up the whole dashboard screen (@arturi)
-- [x] modal: merge modal and dashboard (@arturi)
+- core: fix bug: no meta information from uppy-server files (@hedgerh)
+- core: fix bug: uppy-server file is treated as local and directly uploaded (@hedgerh)
+- uppy-server: hammering out websockets/oauth (@hedgerh, @acconut)
+- debugger: introduce MagicLog as a way to debug state changes in Uppy (@arturi)
+- modifier: A MetaData plugin to supply meta data (like width, tag, filename, user_id) (@arturi)
+- modifier: pass custom metadata with non-tus-upload. Maybe mimic meta behavior of tus here, too (@arturi)
+- modifier: pass custom metadata with tus-upload with tus-js-client (@arturi)
+- webcam: initial version: webcam light goes on (@hedgerh)
+- progress: better icons, styles (@arturi)
+- core: better mime/type detection (via mime + extension) (@arturi)
+- core: add deep-freeze to getState so that we are sure we are not mutating state accidentally (@arturi)
+- meta: release “Uppy Begins” post (@arturi @kvz)
+- meta: better readme on GitHub and NPM (@arturi)
+- test: add pre-commit & lint-staged (@arturi)
+- test: add next-update https://www.npmjs.com/package/next-update to check if packages we use can be safely updated (@arturi)
+- website: blog polish — add post authors and their gravatars (@arturi)
+- dashboard: UI revamp, more prototypes, background image, make dashboard nicer (@arturi)
+- dashboard: try a workflow where import from external service slides over and takes up the whole dashboard screen (@arturi)
+- modal: merge modal and dashboard (@arturi)
 
 ## 0.7.0
 
 Released: July 11, 2016.
 Theme: Remote Uploads, UI Redesign.
 
-- [x] core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy; Put entire(?) state into oauth redirect urls / LocalStorage with an identifier ? (@hedgerh)
-- [x] core: Rethink UI: Part I (interface research for better file selection / progress representation) (@arturi)
-- [x] core: let user cancel uploads in progress (@arturi)
-- [x] core: resize image file previews (to 100x100px) for performance (@arturi)
-- [x] server: add tus-js-client when it's node-ready (@hedgerh)
-- [x] server: make uppy-server talk to uppy-client in the browser, use websockets. (@hedgerh)
-- [x] dashboard: new “workspace” plugin, main area that allows for drag & drop and shows progress/actions on files, inspired by ProgressDrawer
-- [x] website: add new logos and blog (@arturi)
-- [x] drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
-- [x] server: Make Google Drive files to actually upload to the endpoint (@hedgerh)
-- [x] build: browsersync does 3 refreshes, can that be one? should be doable via cooldown/debounce? -> get rid of require shortcuts (@arturi)
-- [x] build: regular + min + gzipped versions of the bundle (@arturi)
-- [x] build: set up a simple and quick dev workflow — watch:example (@arturi)
+- core: Investigate if there is a way to manage an oauth dialog and not navigate away from Uppy; Put entire(?) state into oauth redirect urls / LocalStorage with an identifier ? (@hedgerh)
+- core: Rethink UI: Part I (interface research for better file selection / progress representation) (@arturi)
+- core: let user cancel uploads in progress (@arturi)
+- core: resize image file previews (to 100x100px) for performance (@arturi)
+- server: add tus-js-client when it's node-ready (@hedgerh)
+- server: make uppy-server talk to uppy-client in the browser, use websockets. (@hedgerh)
+- dashboard: new “workspace” plugin, main area that allows for drag & drop and shows progress/actions on files, inspired by ProgressDrawer
+- website: add new logos and blog (@arturi)
+- drive: Return `cb` after writing all files https://github.com/transloadit/uppy-server/commit/4f1795bc55869fd098a5c81a80edac504fa7324a#commitcomment-17385433 (@hedgerh)
+- server: Make Google Drive files to actually upload to the endpoint (@hedgerh)
+- build: browsersync does 3 refreshes, can that be one? should be doable via cooldown/debounce? -> get rid of require shortcuts (@arturi)
+- build: regular + min + gzipped versions of the bundle (@arturi)
+- build: set up a simple and quick dev workflow — watch:example (@arturi)
 
 ## 0.6.4
 
 Released: June 03, 2016.
 Theme: The aim low release.
 
-- [x] build: minification of the bundle (@arturi)
-- [x] build: revisit sourcemaps for production. can we have them without a mandatory extra request?
-- [x] build: supply Uppy es5 and es6 entry points in npm package (@arturi)
-- [x] build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@arturi)
-- [x] drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png (@hedgerh)
-- [x] modal: accessibility. focus on the first input field / button in tab panel (@arturi)
-- [x] progressdrawer: figure out crazy rerendering of previews by yoyo/bel: https://github.com/shama/bel/issues/26, https://github.com/shama/bel/issues/27 (@arturi)
-- [x] core: substantial refactor of mount & rendering (@arturi)
-- [x] core: better state change logs for better debugging (@arturi)
-- [x] progressdrawer: improve styles, add preview icons for all (@arturi)
-- [x] server: Start implementing the `SERVER-PLAN.md`, remote files should be added to `state.files` and marked as `remote` (@hedgerh)
-- [x] test: Add pass/fail Saucelabs flag to acceptance tests (@arturi)
-- [x] website: Polish Saucelabs stats (social badge + stats layout) (@arturi)
-- [x] meta: Create Uppy logos (@markstory)
-- [x] website: fix examples and cleanup (@arturi)
-- [x] website: Add Saucelabs badges to uppy.io (@kvz)
-- [x] website: fix disappearing icons issue, `postcss-inline-svg` (@arturi)
+- build: minification of the bundle (@arturi)
+- build: revisit sourcemaps for production. can we have them without a mandatory extra request?
+- build: supply Uppy es5 and es6 entry points in npm package (@arturi)
+- build: switch to https://www.npmjs.com/package/npm-run-all instead of parallelshell (@arturi)
+- drive: Make sure uppy-server does not explode on special file types: https://dl.dropboxusercontent.com/s/d4dbxitjt8clo50/2016-05-06%20at%2022.41.png (@hedgerh)
+- modal: accessibility. focus on the first input field / button in tab panel (@arturi)
+- progressdrawer: figure out crazy rerendering of previews by yoyo/bel: https://github.com/shama/bel/issues/26, https://github.com/shama/bel/issues/27 (@arturi)
+- core: substantial refactor of mount & rendering (@arturi)
+- core: better state change logs for better debugging (@arturi)
+- progressdrawer: improve styles, add preview icons for all (@arturi)
+- server: Start implementing the `SERVER-PLAN.md`, remote files should be added to `state.files` and marked as `remote` (@hedgerh)
+- test: Add pass/fail Saucelabs flag to acceptance tests (@arturi)
+- website: Polish Saucelabs stats (social badge + stats layout) (@arturi)
+- meta: Create Uppy logos (@markstory)
+- website: fix examples and cleanup (@arturi)
+- website: Add Saucelabs badges to uppy.io (@kvz)
+- website: fix disappearing icons issue, `postcss-inline-svg` (@arturi)
 
 ## 0.0.5
 
 Released: May 07, 2016.
 Theme: Acceptance tests and Google Drive Polish.
 
-- [x] test: Wire saucelabs and travis togeteher, make saucelabs fail fatal to travis builds
-- [x] test: Add `addFile`-hack so we can have acceptance tests on Safari as well as Edge (@arturi)
-- [x] drive: possible UI polish (@hedgerh)
-- [x] drive: write files to filesystem correctly (@hedgerh)
-- [x] test: Fix 15s timeout image.jpg (@arturi)
-- [x] test: Sign up for Browserstack.com Live account so we can check ourselves what gives and verify saucelabs isn't to blame (@arturi) <-- Turns out, Saucelabs already does that for us
-- [x] test: Get tests to pass Latest version of Internet Explorer (Windows 10), Safari (OSX), Firefox (Linux), Opera (Windows 10) (@arturi) <-- IE 10, Chrome, Firefox on Windows and Linux, but not Safari and Microsoft Edge — Selenium issues
-- [x] test: Get saucelabs to show what gives (errors, screenshots, anything) (@arturi)
-- [x] build: sourcemaps for local development (@arturi) <-- Not adding it in production to save the extra request. For local dev, this was added already via Browserify
-- [x] core: Add polyfill for `fetch` (@hedgerh)
-- [x] core: Apply plugins when DOM elements aren't static (#25)
-- [x] core: figure out the shelf thing https://transloadit.slack.com/archives/uppy/p1460054834000504 https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png (@arturi, @hedgerh)
-- [x] core: reduce the monstrous 157.74Kb prebuilt bundle footprint https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png <-- we see no way to optimize at this stage
-- [x] drive: add breadcrumb navigation (@hedgerh)
-- [x] drive: convert google docs to office format (@hedgerh)
-- [x] modal: Avoid duplicating event listeners <-- deprecated by yoyo
-- [x] progressbar: make it great again (@arturi)
-- [x] progressdrawer: figure out why the whole list is replaced with every update (dom diff problems) (@arturi)
-- [x] test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox <-- need to add command to Travis (@arturi)
-- [x] test: Move failing multipart test back from `v0.0.5` dir, make it pass (@arturi)
-- [x] tus: Add support tus 1.0 uploading capabilities (#3) <-- works!
-- [x] website: Make cycling through taglines pretty (in terms of code and a nice animation or sth) (@arturi)
-- [x] website: Move the activity feed from http://uppy.io/stats to the Uppy homepage (@arturi)
-- [x] website: Polish http://uppy.io/stats and undo its CSS crimes (@arturi)
+- test: Wire saucelabs and travis togeteher, make saucelabs fail fatal to travis builds
+- test: Add `addFile`-hack so we can have acceptance tests on Safari as well as Edge (@arturi)
+- drive: possible UI polish (@hedgerh)
+- drive: write files to filesystem correctly (@hedgerh)
+- test: Fix 15s timeout image.jpg (@arturi)
+- test: Sign up for Browserstack.com Live account so we can check ourselves what gives and verify saucelabs isn't to blame (@arturi) <-- Turns out, Saucelabs already does that for us
+- test: Get tests to pass Latest version of Internet Explorer (Windows 10), Safari (OSX), Firefox (Linux), Opera (Windows 10) (@arturi) <-- IE 10, Chrome, Firefox on Windows and Linux, but not Safari and Microsoft Edge — Selenium issues
+- test: Get saucelabs to show what gives (errors, screenshots, anything) (@arturi)
+- build: sourcemaps for local development (@arturi) <-- Not adding it in production to save the extra request. For local dev, this was added already via Browserify
+- core: Add polyfill for `fetch` (@hedgerh)
+- core: Apply plugins when DOM elements aren't static (#25)
+- core: figure out the shelf thing https://transloadit.slack.com/archives/uppy/p1460054834000504 https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png (@arturi, @hedgerh)
+- core: reduce the monstrous 157.74Kb prebuilt bundle footprint https://dl.dropboxusercontent.com/s/ypx6a0a82s65o0z/2016-04-08%20at%2010.38.png <-- we see no way to optimize at this stage
+- drive: add breadcrumb navigation (@hedgerh)
+- drive: convert google docs to office format (@hedgerh)
+- modal: Avoid duplicating event listeners <-- deprecated by yoyo
+- progressbar: make it great again (@arturi)
+- progressdrawer: figure out why the whole list is replaced with every update (dom diff problems) (@arturi)
+- test: Let Travis use the Remote WebDriver instead of the Firefox WebDriver (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-Sauce-Labs), so Saucelabs can run our acceptance tests against a bunch of real browsers. Local acceptance tests keep using Firefox <-- need to add command to Travis (@arturi)
+- test: Move failing multipart test back from `v0.0.5` dir, make it pass (@arturi)
+- tus: Add support tus 1.0 uploading capabilities (#3) <-- works!
+- website: Make cycling through taglines pretty (in terms of code and a nice animation or sth) (@arturi)
+- website: Move the activity feed from http://uppy.io/stats to the Uppy homepage (@arturi)
+- website: Polish http://uppy.io/stats and undo its CSS crimes (@arturi)
 
 ## 0.0.4
 
 Released: April 13, 2016.
 
-- [x] server: Upgrade to 0.0.4 (@kvz)
-- [x] drive: Add Google Drive plugin unit test (@hedgerh)
-- [x] drive: Add a barely working Google Drive example (without Modal, via e.g. `target: "div#on-my-page"`) (@hedgerh)
-- [x] drive: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (also see https://github.com/hughsk/envify) (@kvz)
-- [x] test: Setup one modal/dragdrop acceptance test (@arturi)
-- [x] drive: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (also see https://github.com/hughsk/envify) (@kvz)
-- [x] website: Add a http://uppy.io/stats page that inlines disc.html as well as displays the different bundle sizes, and an activity feed (@kvz)
-- [x] dragdrop: refactor & improve (@arturi)
-- [x] website: fix i18n & DragDrop examples (@arturi)
-- [x] website: Provide simple roadmap in examples (#68, @kvz)
-- [x] website: Upgrade Hexo (@kvz)
-- [x] test: Make failing acceptance tests fatal (@kvz)
-- [x] allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
-- [x] build: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
-- [x] build: fix browsersync & browserify double reloading issue (@arturi)
-- [x] build: sourcemaps for examples (@arturi)
-- [x] complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
-- [x] core: allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
-- [x] core: come up with a draft standard file format for internal file handling (@arturi)
-- [x] core: Pluralize collections (locales, just l like plugins) (@kvz)
-- [x] core: re-think running architecture: allow for `acquiring` while `uploading` (@arturi)
-- [x] core: Rename `progress` to `progressindicator` (@kvz)
-- [x] core: Rename `selecter` to `acquirer` (@kvz)
-- [x] core: Rename `view` to `orchestrator` (@kvz)
-- [x] core: start on component & event-based state management with `yo-yo` (@arturi)
-- [x] core: Upgrade from babel5 -> babel6 (@kvz)
-- [x] dragdrop: Fix 405 Not Allowed, (error) handling when you press Upload with no files (#60, @arturi, thx @hpvd)
-- [x] modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage (@arturi)
-- [x] modal: covert to component & event-based state management (@arturi)
-- [x] modal: Make sure modal renders under one dom node — should everything else too? (@arturi, @hedgerh)
-- [x] modal: refactor and improve (@arturi)
-- [x] progressdrawer: show link to the uploaded file (@arturi)
-- [x] progressdrawer: show file type names/icons for non-image files (@arturi)
-- [x] progressdrawer: show uploaded files, display uploaded/selected count, disable btn when nothing selected (@arturi)
-- [x] progressdrawer: implement basic version, show upload progress for individual files (@arturi)
-- [x] progressdrawer: show previews for images (@arturi)
-- [x] server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
-- [x] test: Add a passing dummy i18n acceptance test, move failing multipart test to `v0.5.0` dir (@kvz)
-- [x] test: Add acceptance tests to Travis so they are run on every change (@kvz)
-- [x] test: Get Firefox acceptance tests up and running both local and on Travis CI. Currently both failing on `StaleElementReferenceError: Element not found in the cache - perhaps the page has changed since it was looked up` https://travis-ci.org/transloadit/uppy/builds/121175389#L478
-- [x] test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
-- [x] test: Install chromedriver ()
-- [x] test: Switch to using Firefox for acceptable tests as Travis CI supports that (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI) (@kvz)
-- [x] test: Write one actual test (e.g. Multipart) (#2, #23, @hedgerh)
-- [x] tus: Resolve promise when all uploads are done or failed, not earlier (currently you get to see '1 file uploaded' and can close the modal while the upload is in progress) (@arturi)
-- [x] website: Filter taglines (@kvz)
-- [x] website: utilize browserify index exposers to rid ourselves of `../../../..` in examples (@kvz)
+- server: Upgrade to 0.0.4 (@kvz)
+- drive: Add Google Drive plugin unit test (@hedgerh)
+- drive: Add a barely working Google Drive example (without Modal, via e.g. `target: "div#on-my-page"`) (@hedgerh)
+- drive: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (also see https://github.com/hughsk/envify) (@kvz)
+- test: Setup one modal/dragdrop acceptance test (@arturi)
+- drive: Make sure http://server.uppy.io is targeted on uppy.io; and localhost is targeted elsewhere (also see https://github.com/hughsk/envify) (@kvz)
+- website: Add a http://uppy.io/stats page that inlines disc.html as well as displays the different bundle sizes, and an activity feed (@kvz)
+- dragdrop: refactor & improve (@arturi)
+- website: fix i18n & DragDrop examples (@arturi)
+- website: Provide simple roadmap in examples (#68, @kvz)
+- website: Upgrade Hexo (@kvz)
+- test: Make failing acceptance tests fatal (@kvz)
+- allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
+- build: clean up package.json. We've accumulated duplication and weirdness by hacking just for our current problem without keeping a wider view of what was already there (@arturi)
+- build: fix browsersync & browserify double reloading issue (@arturi)
+- build: sourcemaps for examples (@arturi)
+- complete: `Complete` Plugin of type/stage: `presenter`. "You have successfully uploaded `3 files`". Button: Close modal. (@arturi)
+- core: allow for continuous `acquiring`, even after all plugins have “run” (@arturi, @hedgerh)
+- core: come up with a draft standard file format for internal file handling (@arturi)
+- core: Pluralize collections (locales, just l like plugins) (@kvz)
+- core: re-think running architecture: allow for `acquiring` while `uploading` (@arturi)
+- core: Rename `progress` to `progressindicator` (@kvz)
+- core: Rename `selecter` to `acquirer` (@kvz)
+- core: Rename `view` to `orchestrator` (@kvz)
+- core: start on component & event-based state management with `yo-yo` (@arturi)
+- core: Upgrade from babel5 -> babel6 (@kvz)
+- dragdrop: Fix 405 Not Allowed, (error) handling when you press Upload with no files (#60, @arturi, thx @hpvd)
+- modal: `UppyModal [type=submit] { display: none }`, use Modal's own Proceed button to progress to next stage (@arturi)
+- modal: covert to component & event-based state management (@arturi)
+- modal: Make sure modal renders under one dom node — should everything else too? (@arturi, @hedgerh)
+- modal: refactor and improve (@arturi)
+- progressdrawer: show link to the uploaded file (@arturi)
+- progressdrawer: show file type names/icons for non-image files (@arturi)
+- progressdrawer: show uploaded files, display uploaded/selected count, disable btn when nothing selected (@arturi)
+- progressdrawer: implement basic version, show upload progress for individual files (@arturi)
+- progressdrawer: show previews for images (@arturi)
+- server: Add a deploy target for uppy-server so we can use it in demos (#39, @kvz)
+- test: Add a passing dummy i18n acceptance test, move failing multipart test to `v0.5.0` dir (@kvz)
+- test: Add acceptance tests to Travis so they are run on every change (@kvz)
+- test: Get Firefox acceptance tests up and running both local and on Travis CI. Currently both failing on `StaleElementReferenceError: Element not found in the cache - perhaps the page has changed since it was looked up` https://travis-ci.org/transloadit/uppy/builds/121175389#L478
+- test: Get saucelabs account https://saucelabs.com/beta/signup/OSS/None (@hedgerh)
+- test: Install chromedriver ()
+- test: Switch to using Firefox for acceptable tests as Travis CI supports that (https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI) (@kvz)
+- test: Write one actual test (e.g. Multipart) (#2, #23, @hedgerh)
+- tus: Resolve promise when all uploads are done or failed, not earlier (currently you get to see '1 file uploaded' and can close the modal while the upload is in progress) (@arturi)
+- website: Filter taglines (@kvz)
+- website: utilize browserify index exposers to rid ourselves of `../../../..` in examples (@kvz)
 
 ## 0.0.3
 
 Released: March 01, 2016.
 
-- [x] core: push out v0.0.3 (@kvz)
-- [x] build: release-(major|minor|patch): git tag && npm publish (@kvz)
-- [x] core: Allow users to set DOM elements or other plugins as targets (@arturi)
-- [x] core: Create a progressbar/spinner/etc plugin (#18, @arturi)
-- [x] core: Decide on how we ship default styles: separate css file, inline (@kvz, @hedgerh, @arturi, @tim-kos)
-- [x] core: Decide on single-noun terminology (npm, umd, dist, package, cdn, module -> bundler -> bundle), and call it that through-out (@kvz)
-- [x] core: throw an error when one Plugin is `.use`d twice. We don't support that now, and will result in very confusing behavior (@kvz)
-- [x] dragdrop: Convert `DragDrop` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@arturi)
-- [x] drive: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)
-- [x] modal: Add barely working Modal plugin that can be used as a target (#53, #50, @arturi)
-- [x] modal: Improve Modal API (@arturi, @kvz)
-- [x] modal: Make `ProgressBar` work with the new Modal (@kvz, @arturi)
-- [x] modal: Make Modal prettier and accessible using Artur's research (@arturi)
-- [x] modal: Make the Modal look like Harry's sketchup (@arturi)
-- [x] modal: Rename FakeModal to Modal, deprecating our old one (@kvz)
-- [x] modal: use classes instead of IDs and buttons instead of links (@arturi)
-- [x] server: `package.json` (@hedgerh)
-- [x] test: Fix and enable commented out `use plugins` & other core unit test (@arturi)
+- core: push out v0.0.3 (@kvz)
+- build: release-(major|minor|patch): git tag && npm publish (@kvz)
+- core: Allow users to set DOM elements or other plugins as targets (@arturi)
+- core: Create a progressbar/spinner/etc plugin (#18, @arturi)
+- core: Decide on how we ship default styles: separate css file, inline (@kvz, @hedgerh, @arturi, @tim-kos)
+- core: Decide on single-noun terminology (npm, umd, dist, package, cdn, module -> bundler -> bundle), and call it that through-out (@kvz)
+- core: throw an error when one Plugin is `.use`d twice. We don't support that now, and will result in very confusing behavior (@kvz)
+- dragdrop: Convert `DragDrop` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@arturi)
+- drive: Convert `GoogleDrive` to adhere to `Dummy`'s format, so it's compatible with the new Modal (@hedgerh)
+- modal: Add barely working Modal plugin that can be used as a target (#53, #50, @arturi)
+- modal: Improve Modal API (@arturi, @kvz)
+- modal: Make `ProgressBar` work with the new Modal (@kvz, @arturi)
+- modal: Make Modal prettier and accessible using Artur's research (@arturi)
+- modal: Make the Modal look like Harry's sketchup (@arturi)
+- modal: Rename FakeModal to Modal, deprecating our old one (@kvz)
+- modal: use classes instead of IDs and buttons instead of links (@arturi)
+- server: `package.json` (@hedgerh)
+- test: Fix and enable commented out `use plugins` & other core unit test (@arturi)
 
 ## 0.0.2
 
 Released: February 11, 2016.
 
-- [x] build: Use parallelshell and tweak browserify to work with templates (@arturi)
-- [x] core: Add basic i18n support via `core.translate()` and locale loading (#47, @arturi)
-- [x] core: implement a non-blocking `install` method (for Progressbar, for example)  (@arturi, @kvz)
-- [x] core: Implement ejs or es6 templating (@arturi, @hedgerh)
-- [x] core: Improve on `_i18n` support, add tests (#47, @arturi)
-- [x] core: Integrate eslint in our build procedure and make Travis fail on errors found in our examples, Core and Plugins, such as `> 100` char lines (@kvz)
-- [x] docs: Fix build-documentation.js crashes, add more docs to Utils and Translator (@arturi, @kvz)
-- [x] dragdrop: Use templates, autoProceed setting, show progress (#50, #18, @arturi)
-- [x] meta: Implement playground to test things in, templates in this case
-- [x] server: Create a (barely) working uppy-server (#39, @hedgerh)
-- [x] website: Fix Uppy deploys (postcss-svg problem) (@arturi, @kvz)
+- build: Use parallelshell and tweak browserify to work with templates (@arturi)
+- core: Add basic i18n support via `core.translate()` and locale loading (#47, @arturi)
+- core: implement a non-blocking `install` method (for Progressbar, for example)  (@arturi, @kvz)
+- core: Implement ejs or es6 templating (@arturi, @hedgerh)
+- core: Improve on `_i18n` support, add tests (#47, @arturi)
+- core: Integrate eslint in our build procedure and make Travis fail on errors found in our examples, Core and Plugins, such as `> 100` char lines (@kvz)
+- docs: Fix build-documentation.js crashes, add more docs to Utils and Translator (@arturi, @kvz)
+- dragdrop: Use templates, autoProceed setting, show progress (#50, #18, @arturi)
+- meta: Implement playground to test things in, templates in this case
+- server: Create a (barely) working uppy-server (#39, @hedgerh)
+- website: Fix Uppy deploys (postcss-svg problem) (@arturi, @kvz)
 
 ## 0.0.1
 
 Released: December 20, 2015.
 
-- [x] core: Individual progress (#24)
-- [x] core: Setup basic Plugin system (#1, #4, #20)
-- [x] core: Setup build System (#30, #13, @hedgerh)
-- [x] dragdrop: Add basic DragDrop plugin example (#7)
-- [x] dropbox: Add basic Dropbox plugin example (#31)
-- [x] website: Add CSS Framework (#14)
-- [x] website: Create Hexo site that also contains our playground (#5, #34, #12 #22, #44, #35, #15, #37, #40, #43)
+- core: Individual progress (#24)
+- core: Setup basic Plugin system (#1, #4, #20)
+- core: Setup build System (#30, #13, @hedgerh)
+- dragdrop: Add basic DragDrop plugin example (#7)
+- dropbox: Add basic Dropbox plugin example (#31)
+- website: Add CSS Framework (#14)
+- website: Create Hexo site that also contains our playground (#5, #34, #12 #22, #44, #35, #15, #37, #40, #43)
