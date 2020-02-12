@@ -109,15 +109,42 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## 1.10
 
-
 - [ ] plugins: screenshot+screencast support similar to Webcam #148 (@arturi)
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] core, transloadit: Allow new uploads when retrying; improve error handling (#1960 / @arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827
 
+## 1.9.1
+
+Released: 2019-02-12
+
+Previous release was broken due to incorrect Lerna/npm publish. Please update all packages to the next patch version, see #1.9.1.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.5.1 | @uppy/onedrive | 1.0.1 |
+| @uppy/aws-s3 | 1.5.1 | @uppy/progress-bar | 1.3.6 |
+| @uppy/companion | 1.9.1 | @uppy/provider-views | 1.5.4 |
+| @uppy/core | 1.8.1 | @uppy/react | 1.4.4 |
+| @uppy/dashboard | 1.6.1 | @uppy/robodog | 1.5.1 |
+| @uppy/drag-drop | 1.4.4 | @uppy/status-bar | 1.5.1 |
+| @uppy/dropbox | 1.3.7 | @uppy/thumbnail-generator | 1.5.4 |
+| @uppy/facebook | 0.2.4 | @uppy/transloadit | 1.5.1 |
+| @uppy/file-input | 1.4.4 | @uppy/tus | 1.5.4 |
+| @uppy/form | 1.3.7 | @uppy/url | 1.4.4 |
+| @uppy/golden-retriever | 1.3.6 | @uppy/utils | 2.2.1 |
+| @uppy/google-drive | 1.4.1 | @uppy/webcam | 1.5.3 |
+| @uppy/informer | 1.4.1 | @uppy/xhr-upload | 1.5.1 |
+| @uppy/instagram | 1.3.7 | uppy | 1.9.1 |
+| @uppy/locales | 1.11.2 | - | - |
+
+- @uppy/companion: return more accurate error status codes (#2053 /@ifedapoolarewaju)
+
 ## 1.9.0
 
 Released: 2019-02-11
+
+⚠️ `1.9.0 has been deprecated due to incorrect Lerna/npm publish. Please update all packages to the next patch version, see table below.
 
 This release adds support for the new Instagram API, image and archive icons to the Dashboard, fixes upload retries and moves OneDrive out of beta.
 
