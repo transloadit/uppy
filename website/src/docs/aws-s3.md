@@ -335,7 +335,7 @@ uppy.use(AwsS3, {
         fields: data.fields,
         // Provide content type header required by S3
         headers: {
-           "Content-Type": file.type
+          'Content-Type': file.type
         }
       }
     })
