@@ -42,24 +42,24 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## 2.0
 
-- [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog
-- [ ] docs: Completely drop soft IE10 (and IE11?) support
+- [ ] core: change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
+- [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
+- [ ] core: force the `new` keyword when instantiating Uppy — now we support both `mew Uppy()` and `Uppy()` which is harder to maintain and might lead to confusion
+- [ ] core: maybe we remove `file.name` and only keep `file.meta.name`; we can change the file.name here actually because it's just a plain object. we can't change the file.data.name where data is a File instance from an input or something. For XHRUpload, where we put the File instance in a FormData object and it uses the unchangeable .name property.
+- [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
+- [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now
+- [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
 - [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems though)
+- [ ] docs: Completely drop soft IE10 (and IE11?) support
+- [ ] form: make the `multipleResults` option `true` by default
+- [ ] locales: Remove the old es_GL name alias for gl_ES. Keep gl_ES only.
+- [ ] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861
+- [ ] redux-store: make action signatures flux-standard-action compatible #1642
+- [ ] tus: set the `limit` option to a sensible default, like 10
+- [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
 - [ ] xhr: set the `limit` option to a sensible default, like 10
-- [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now
-- [ ] form: make the `multipleResults` option `true` by default
-- [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
-- [ ] tus: set the `limit` option to a sensible default, like 10
-- [ ] core: force the `new` keyword when instantiating Uppy — now we support both `mew Uppy()` and `Uppy()` which is harder to maintain and might lead to confusion
-- [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
-- [ ] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861
-- [ ] core: change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
-- [ ] core: maybe we remove `file.name` and only keep `file.meta.name`; we can change the file.name here actually because it's just a plain object. we can't change the file.data.name where data is a File instance from an input or something. For XHRUpload, where we put the File instance in a FormData object and it uses the unchangeable .name property.
-- [ ] redux-store: make action signatures flux-standard-action compatible #1642
-- [ ] locales: Remove the old es_GL name alias for gl_ES. Keep gl_ES only.
-- [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
 
 ## 1.14
 
@@ -73,7 +73,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510)
 - [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
 - [ ] provider: Image search (via Google or Bing or DuckDuckGo) (@arturi)
-- [ ] core: add AngularJS wrapper component (@arturi)
+- [ ] core: add AngularJS wrapper component for the Dashboard (@arturi)
 - [ ] dashboard: allow selecting folders (add separate hidden input button for folders) #447 #1027 (@arturi)
 - [ ] dashboard: Customizable meta editor for the Dashboard. Some people want maps, some to disable autocomplete, some validation. Perhaps via jsx rendering. (See https://github.com/transloadit/uppy/issues/2007#issuecomment-573592859, https://github.com/transloadit/uppy/issues/809#issuecomment-417282743) (#617, #809, #454, @arturi)
 - [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112 #362
@@ -84,27 +84,29 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] provider: add Box (@ife)
 - [ ] plugins: audio/memo recording similar to Webcam #143 #198 (@arturi)
 - [ ] test: add typescript with JSDoc for @uppy/core https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files (@arturi)
-- [ ] core: add Vue.js wrapper component (@arturi)
+- [ ] core: add Vue.js wrapper component for the Dashboard (@arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi) (@arturi)
 - [ ] dashboard: fix Dashboard issues with Angular — it’s incredibly slow presumably because of ResizeObserver. (See #1613) (@arturi)
 - [ ] dashboard: add VirtualList, so it can render 5000 files without lag (@goto-bus-stop, @lakesare)
+- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
 
 ## 1.11
 
-- [ ] companion: what happens if access token expires during/between an download & upload
-- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
 - [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53 (@arturi)
 - [ ] google-drive: Google Drive - Google Docs https://github.com/transloadit/uppy/issues/1554#issuecomment-554904049 (@ife)
+- [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 
 # next
 
 ## 1.10
 
-- [ ] webcam: Pick format based on `restrictions.allowedFileTypes`, eg. use PNG for snapshot instead of JPG if `allowedFileTypes: ['.png']` is set, you can probably ask for the correct filetype. In addition, we should stop recording video once the max allowed file size is exceeded. should be possible given how the MediaRecorder API works
-- [ ] plugins: screenshot+screencast support similar to Webcam #148 (@arturi)
-- [ ] core: add maxTotalFileSize restriction #514 (@arturi)
-- [ ] core, transloadit: Allow new uploads when retrying; improve error handling (#1960 / @arturi)
-- [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827
+- [ ] dashboard: Dark Mode & Redesign by Alex & Artur (@arturi)
+- [ ] webcam: Pick format based on `restrictions.allowedFileTypes`, eg. use PNG for snapshot instead of JPG if `allowedFileTypes: ['.png']` is set, you can probably ask for the correct filetype. In addition, we should stop recording video once the max allowed file size is exceeded. should be possible given how the MediaRecorder API works (@goto-bus-stop)
+- [ ] plugins: review & merge screenshot+screencast support similar to Webcam #148 (@arturi)
+- [ ] core: report information about the device --^ (@arturi)
+- [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
+- [ ] providers: Get Facebook integration on its feet (@ife)
+- [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 
 ## 1.9.1
 
