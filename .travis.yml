@@ -123,12 +123,12 @@ notifications:
 # https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
 deploy:
 - provider: script
-  cleanup: false
+  skip_cleanup: true
   script: bin/travis-deploy
   on:
     branch: master
 - provider: script
-  cleanup: false
+  skip_cleanup: true
   script: bin/travis-deploy-companion
   on:
     branch: master
