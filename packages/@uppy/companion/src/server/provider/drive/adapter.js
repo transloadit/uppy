@@ -64,7 +64,7 @@ exports.getItemModifiedDate = (item) => {
 }
 
 exports.getItemThumbnailUrl = (item) => {
-  return `/drive/thumbnail/${exports.getItemRequestPath(item)}`
+  return item.thumbnailLink
 }
 
 exports.isSharedDrive = (item) => {

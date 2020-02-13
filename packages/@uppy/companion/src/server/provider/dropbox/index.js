@@ -27,6 +27,8 @@ class DropBox extends Provider {
     super(options)
     this.authProvider = options.provider = DropBox.authProvider
     this.client = purest(options)
+    // needed for the thumbnails fetched via companion
+    this.needsCookieAuth = true
   }
 
   static get authProvider () {
