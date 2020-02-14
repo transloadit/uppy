@@ -41,6 +41,7 @@
     "@uppy/form": "file:../@uppy/form",
     "@uppy/golden-retriever": "file:../@uppy/golden-retriever",
     "@uppy/google-drive": "file:../@uppy/google-drive",
+    "@uppy/onedrive": "file:../@uppy/onedrive",
     "@uppy/informer": "file:../@uppy/informer",
     "@uppy/instagram": "file:../@uppy/instagram",
     "@uppy/progress-bar": "file:../@uppy/progress-bar",
