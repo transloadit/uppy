@@ -108,6 +108,37 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] providers: Get Facebook integration on its feet (@ife)
 - [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 
+## 1.9.2
+
+Released: 2019-02-14
+
+This release adds `@uppy/onedrive` to `uppy`’s `package.json`, fixing the bug reported at https://github.com/transloadit/uppy/commit/f291688fb813c55ff905abb334eff61c1c5a9dd0#commitcomment-37278041, and introduces more robust type checking in #1918.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.5.2 | @uppy/progress-bar | 1.3.7 |
+| @uppy/aws-s3 | 1.5.2 | @uppy/provider-views | 1.5.5 |
+| @uppy/companion-client | 1.4.2 | @uppy/react | 1.4.5 |
+| @uppy/companion | 1.9.2 | @uppy/redux-dev-tools | 1.3.2 |
+| @uppy/core | 1.8.2 | @uppy/robodog | 1.5.2 |
+| @uppy/dashboard | 1.6.2 | @uppy/status-bar | 1.5.2 |
+| @uppy/drag-drop | 1.4.5 | @uppy/store-default | 1.2.1 |
+| @uppy/dropbox | 1.3.8 | @uppy/store-redux | 1.2.1 |
+| @uppy/facebook | 0.2.5 | @uppy/thumbnail-generator | 1.5.5 |
+| @uppy/file-input | 1.4.5 | @uppy/transloadit | 1.5.2 |
+| @uppy/form | 1.3.8 | @uppy/tus | 1.5.5 |
+| @uppy/golden-retriever | 1.3.7 | @uppy/url | 1.4.5 |
+| @uppy/google-drive | 1.4.2 | @uppy/utils | 2.2.2 |
+| @uppy/informer | 1.4.2 | @uppy/webcam | 1.5.4 |
+| @uppy/instagram | 1.3.8 | @uppy/xhr-upload | 1.5.2 |
+| @uppy/locales | 1.11.3 | uppy | 1.9.2 |
+| @uppy/onedrive | 1.0.2 | - | - |
+
+- build: Actually check types. Use tsd so our typings test files can actually assert that types are correct (#1918 / @goto-bus-stop )
+- @uppy/companion: Only set cookies for providers that need it (#2055 / @ifedapoolarewaju)
+- docs: Add Content-Type header to presigned url example (#2061 / @scherroman)
+- uppy: Add onedrive to uppy package.json ([349247607513bc6b33bf2a90ab0b82f8f2e81d78](https://github.com/transloadit/uppy/commit/349247607513bc6b33bf2a90ab0b82f8f2e81d78 / @arturi))
+
 ## 1.9.1
 
 Released: 2019-02-12
