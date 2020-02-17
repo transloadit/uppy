@@ -100,13 +100,5 @@
     })
   })
 
-  // temp hack to only show facebook when the url is:
-  // https://uppy.io/examples/dashboard/#enable-facebook
-  const facebookCheckbox = document.getElementById('facebook-checkbox')
-  facebookCheckbox.style.display = 'none'
-  if (document.location.hash === '#enable-facebook') {
-    facebookCheckbox.style.display = 'inline-block'
-  }
-
   toggleModalBtn()
 </script>
