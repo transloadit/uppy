@@ -44,6 +44,7 @@ en_US.strings = {
   enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
   enterUrlToImport: 'Enter URL to import a file',
   exceedsSize: 'This file exceeds maximum allowed size of',
+  exceedsSize2: '%{backwardsCompat} %{size}',
   failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
   failedToUpload: 'Failed to upload %{file}',
   fileSource: 'File source: %{name}',
@@ -75,6 +76,7 @@ en_US.strings = {
   pauseUpload: 'Pause upload',
   paused: 'Paused',
   poweredBy: 'Powered by',
+  poweredBy2: '%{backwardsCompat} %{uppy}',
   preparingUpload: 'Preparing upload...',
   processingXFiles: {
     '0': 'Processing %{smart_count} file',

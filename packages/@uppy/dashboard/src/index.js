@@ -88,6 +88,12 @@ module.exports = class Dashboard extends Plugin {
           1: 'Processing %{smart_count} files',
           2: 'Processing %{smart_count} files'
         },
+        // The default `poweredBy2` string only combines the `poweredBy` string (%{backwardsCompat}) with the size.
+        // Locales can override `poweredBy2` to specify a different word order. This is for backwards compat with
+        // Uppy 1.9.x and below which did a naive concatenation of `poweredBy2 + size` instead of using a locale-specific
+        // substitution.
+        // TODO: In 2.0 `poweredBy2` should be removed in and `poweredBy` updated to use substitution.
+        poweredBy2: '%{backwardsCompat} %{uppy}',
         poweredBy: 'Powered by'
       }
     }

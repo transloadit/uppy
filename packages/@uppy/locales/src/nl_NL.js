@@ -38,6 +38,7 @@ nl_NL.strings = {
   encoding: 'Coderen...',
   enterCorrectUrl: 'Ongeldige URL: Zorg dat je een directe link naar een bestand invoert',
   enterUrlToImport: 'Voeg URL toe om een bestand te importeren',
+  exceedsSize2: 'Dit bestand overschrijdt de maximaal toegelaten bestandsgrootte van %{size}',
   exceedsSize: 'Dit bestand overschrijdt de maximaal toegelaten bestandsgrootte van',
   failedToFetch: 'Companion kan deze URL niet laden, controleer of de URL correct is',
   failedToUpload: 'Kon %{file} niet uploaden',
@@ -65,6 +66,7 @@ nl_NL.strings = {
   pause: 'Pauze',
   pauseUpload: 'Pauzeer upload',
   paused: 'Gepauzeerd',
+  poweredBy2: 'Mogelijk gemaakt door %{uppy}',
   poweredBy: 'Mogelijk gemaakt door',
   preparingUpload: 'Upload voorbereiden...',
   processingXFiles: {

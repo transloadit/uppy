@@ -32,6 +32,21 @@ class AddFiles extends Component {
   }
 
   renderPoweredByUppy () {
+    const uppyBranding = (
+      <span>
+        <svg aria-hidden="true" focusable="false" class="UppyIcon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11">
+          <path d="M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z" fill-rule="evenodd" />
+        </svg>
+        <span class="uppy-Dashboard-poweredByUppy">Uppy</span>
+      </span>
+    )
+
+    // Support both the old word-order-insensitive string `poweredBy` and the new word-order-sensitive string `poweredBy2`
+    const linkText = this.props.i18nArray('poweredBy2', {
+      backwardsCompat: this.props.i18n('poweredBy'),
+      uppy: uppyBranding
+    })
+
     return (
       <a
         tabindex="-1"
@@ -40,11 +55,7 @@ class AddFiles extends Component {
         target="_blank"
         class="uppy-Dashboard-poweredBy"
       >
-        {this.props.i18n('poweredBy') + ' '}
-        <svg aria-hidden="true" focusable="false" class="UppyIcon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11">
-          <path d="M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z" fill-rule="evenodd" />
-        </svg>
-        <span class="uppy-Dashboard-poweredByUppy">Uppy</span>
+        {linkText}
       </a>
     )
   }
