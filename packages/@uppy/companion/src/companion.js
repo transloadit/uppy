@@ -228,6 +228,10 @@ const getOptionsMiddleware = (options) => {
       useAccelerateEndpoint: s3ProviderOptions.useAccelerateEndpoint
     }, s3ProviderOptions.awsClientOptions)
 
+    if (s3ClientOptions.accessKeyId || s3ClientOptions.secretAccessKey) {
+      throw new Error('Found unsupported `providerOptions.s3.awsClientOptions.accessKeyId` or `providerOptions.s3.awsClientOptions.secretAccessKey` configuration. Please use the `providerOptions.s3.key` and `providerOptions.s3.secret` options instead.')
+    }
+
     // Use credentials to allow assumed roles to pass STS sessions in.
     // If the user doesn't specify key and secret, the default credentials (process-env)
     // will be used by S3 in calls below.
