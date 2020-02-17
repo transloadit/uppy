@@ -346,7 +346,7 @@ strings: {
 
   // The "powered by Uppy" link at the bottom of the Dashboard.
   // **NOTE**: This string is called `poweredBy2` for backwards compatibility reasons.
-  // TODO (INSERT PR URL HERE)
+  // See https://github.com/transloadit/uppy/pull/2077
   poweredBy2: 'Powered by %{uppy}',
 
   // @uppy/status-bar strings:

@@ -296,7 +296,7 @@ locale: {
       1: 'You have to select at least %{smart_count} files'
     },
     // **NOTE**: This string is called `exceedsSize2` for backwards compatibility reasons.
-    // TODO (INSERT PR URL HERE)
+    // See https://github.com/transloadit/uppy/pull/2077
     exceedsSize2: 'This file exceeds maximum allowed size of %{size}',
     youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
     companionError: 'Connection with Companion failed'
