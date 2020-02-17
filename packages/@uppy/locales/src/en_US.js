@@ -50,15 +50,13 @@ en_US.strings = {
   fileSource: 'File source: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} of %{smart_count} file uploaded',
-    '1': '%{complete} of %{smart_count} files uploaded',
-    '2': '%{complete} of %{smart_count} files uploaded'
+    '1': '%{complete} of %{smart_count} files uploaded'
   },
   filter: 'Filter',
   finishEditingFile: 'Finish editing file',
   folderAdded: {
     '0': 'Added %{smart_count} file from %{folder}',
-    '1': 'Added %{smart_count} files from %{folder}',
-    '2': 'Added %{smart_count} files from %{folder}'
+    '1': 'Added %{smart_count} files from %{folder}'
   },
   generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',
@@ -94,8 +92,7 @@ en_US.strings = {
   selectFileNamed: 'Select file %{name}',
   selectX: {
     '0': 'Select %{smart_count}',
-    '1': 'Select %{smart_count}',
-    '2': 'Select %{smart_count}'
+    '1': 'Select %{smart_count}'
   },
   smile: 'Smile!',
   startRecording: 'Begin video recording',
@@ -110,13 +107,11 @@ en_US.strings = {
   uploadPaused: 'Upload paused',
   uploadXFiles: {
     '0': 'Upload %{smart_count} file',
-    '1': 'Upload %{smart_count} files',
-    '2': 'Upload %{smart_count} files'
+    '1': 'Upload %{smart_count} files'
   },
   uploadXNewFiles: {
     '0': 'Upload +%{smart_count} file',
-    '1': 'Upload +%{smart_count} files',
-    '2': 'Upload +%{smart_count} files'
+    '1': 'Upload +%{smart_count} files'
   },
   uploading: 'Uploading',
   uploadingXFiles: {
@@ -129,20 +124,17 @@ en_US.strings = {
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} more file added',
-    '1': '%{smart_count} more files added',
-    '2': '%{smart_count} more files added'
+    '1': '%{smart_count} more files added'
   },
   xTimeLeft: '%{time} left',
   youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
   youCanOnlyUploadX: {
     '0': 'You can only upload %{smart_count} file',
-    '1': 'You can only upload %{smart_count} files',
-    '2': 'You can only upload %{smart_count} files'
+    '1': 'You can only upload %{smart_count} files'
   },
   youHaveToAtLeastSelectX: {
     '0': 'You have to select at least %{smart_count} file',
-    '1': 'You have to select at least %{smart_count} files',
-    '2': 'You have to select at least %{smart_count} files'
+    '1': 'You have to select at least %{smart_count} files'
   }
 }
 

@@ -41,13 +41,11 @@ class Uppy {
         },
         youCanOnlyUploadX: {
           0: 'You can only upload %{smart_count} file',
-          1: 'You can only upload %{smart_count} files',
-          2: 'You can only upload %{smart_count} files'
+          1: 'You can only upload %{smart_count} files'
         },
         youHaveToAtLeastSelectX: {
           0: 'You have to select at least %{smart_count} file',
-          1: 'You have to select at least %{smart_count} files',
-          2: 'You have to select at least %{smart_count} files'
+          1: 'You have to select at least %{smart_count} files'
         },
         // The default `exceedsSize2` string only combines the `exceedsSize` string (%{backwardsCompat}) with the size.
         // Locales can override `exceedsSize2` to specify a different word order. This is for backwards compat with
@@ -69,8 +67,7 @@ class Uppy {
         noFilesFound: 'You have no files or folders here',
         selectX: {
           0: 'Select %{smart_count}',
-          1: 'Select %{smart_count}',
-          2: 'Select %{smart_count}'
+          1: 'Select %{smart_count}'
         },
         selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
         unselectAllFilesFromFolderNamed: 'Unselect all files from folder %{name}',
@@ -87,8 +84,7 @@ class Uppy {
         emptyFolderAdded: 'No files were added from empty folder',
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',
-          1: 'Added %{smart_count} files from %{folder}',
-          2: 'Added %{smart_count} files from %{folder}'
+          1: 'Added %{smart_count} files from %{folder}'
         }
       }
     }
