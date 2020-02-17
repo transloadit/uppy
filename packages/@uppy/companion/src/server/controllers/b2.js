@@ -30,7 +30,7 @@ module.exports = function b2 (config) {
       return res.status(400).json({ error: 'b2: content type must be a string' })
     }
 
-    return client.getCachedBucket({ bucketName: config.bucket })
+    return client.getCachedBucket(config.bucket)
       .then(({ bucketId }) =>
         client.startLargeFile({
           bucketId,
@@ -79,7 +79,7 @@ module.exports = function b2 (config) {
   function getEndpoint (req, res, next) {
     const client = req.uppy.b2Client
 
-    return client.getCachedBucket({ bucketName: config.bucket })
+    return client.getCachedBucket(config.bucket)
       .then(({ bucketId }) =>
         client.getUploadUrl({
           bucketId

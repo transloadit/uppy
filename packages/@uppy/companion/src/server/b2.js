@@ -144,8 +144,8 @@ module.exports = class B2Client {
       })
   }
 
-  getCachedBucket (params) {
-    return this._bucketCache(params)
+  getCachedBucket (bucketName) {
+    return this._bucketCache(bucketName)
   }
 
   listParts (params) {
