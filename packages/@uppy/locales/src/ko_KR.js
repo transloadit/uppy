@@ -42,18 +42,10 @@ ko_KR.strings = {
   failedToFetch: 'URL 가져오기 실패. 주소를 확인해 주세요.',
   failedToUpload: '%{file} 업로드 실패',
   fileSource: '파일 소스: %{name}',
-  filesUploadedOfTotal: {
-    '0': '%{complete} / %{smart_count} 완료됨',
-    '1': '%{complete} / %{smart_count} 완료됨',
-    '2': '%{complete} / %{smart_count} 완료됨'
-  },
+  filesUploadedOfTotal: '%{complete} / %{smart_count} 완료됨',
   filter: '필터',
   finishEditingFile: '파일 수정을 완료하세요.',
-  folderAdded: {
-    '0': '%{folder}에서 파일 %{smart_count}개 추가',
-    '1': '%{folder}에서 파일 %{smart_count}개 추가',
-    '2': '%{folder}에서 파일 %{smart_count}개 추가'
-  },
+  folderAdded: '%{folder}에서 파일 %{smart_count}개 추가',
   generatingThumbnails: '썸네일 생성 중...',
   import: '가져오기',
   importFrom: '%{name}에서 가져오기',
@@ -69,11 +61,7 @@ ko_KR.strings = {
   paused: '일시정지 됨',
   poweredBy: 'Powered by',
   preparingUpload: '업로드 준비 중...',
-  processingXFiles: {
-    '0': '%{smart_count}개의 파일 처리 중',
-    '1': '%{smart_count}개의 파일 처리 중',
-    '2': '%{smart_count}개의 파일 처리 중'
-  },
+  processingXFiles: '%{smart_count}개의 파일 처리 중',
   removeFile: '파일 제거',
   resetFilter: '필터 초기화',
   resume: '재개',
@@ -83,11 +71,7 @@ ko_KR.strings = {
   saveChanges: '변경사항 저장',
   selectAllFilesFromFolderNamed: '%{name} 폴더의 모든 파일 선택',
   selectFileNamed: '%{name} 파일 선택',
-  selectX: {
-    '0': '%{smart_count}개 선택',
-    '1': '%{smart_count}개 선택',
-    '2': '%{smart_count}개 선택'
-  },
+  selectX: '%{smart_count}개 선택',
   smile: 'Smile!',
   startRecording: '비디오 녹화 시작',
   stopRecording: '비디오 녹화 정지',
@@ -99,52 +83,20 @@ ko_KR.strings = {
   uploadComplete: '업로드 완료',
   uploadFailed: '업로드 실패',
   uploadPaused: '업로드 정지됨',
-  uploadXFiles: {
-    '0': '%{smart_count}개의 파일 업로드',
-    '1': '%{smart_count}개의 파일 업로드',
-    '2': '%{smart_count}개의 파일 업로드'
-  },
-  uploadXNewFiles: {
-    '0': '+%{smart_count}개의 파일 업로드',
-    '1': '+%{smart_count}개의 파일 업로드',
-    '2': '+%{smart_count}개의 파일 업로드'
-  },
+  uploadXFiles: '%{smart_count}개의 파일 업로드',
+  uploadXNewFiles: '+%{smart_count}개의 파일 업로드',
   uploading: '업로드 중',
-  uploadingXFiles: {
-    '0': '%{smart_count}개의 파일 업로드 중',
-    '1': '%{smart_count}개의 파일 업로드 중',
-    '2': '%{smart_count}개의 파일 업로드 중'
-  },
-  xFilesSelected: {
-    '0': '%{smart_count}개의 파일 선택됨',
-    '1': '%{smart_count}개의 파일 선택됨',
-    '2': '%{smart_count}개의 파일 선택됨'
-  },
-  xMoreFilesAdded: {
-    '0': '%{smart_count}개의 파일이 더 추가 됨',
-    '1': '%{smart_count}개의 파일이 더 추가 됨',
-    '2': '%{smart_count}개의 파일이 더 추가 됨'
-  },
+  uploadingXFiles: '%{smart_count}개의 파일 업로드 중',
+  xFilesSelected: '%{smart_count}개의 파일 선택됨',
+  xMoreFilesAdded: '%{smart_count}개의 파일이 더 추가 됨',
   xTimeLeft: '%{time} 남음',
   youCanOnlyUploadFileTypes: '업로드 가능 형식: %{types}',
-  youCanOnlyUploadX: {
-    '0': '%{smart_count}개의 파일만 업로드할 수 있습니다',
-    '1': '%{smart_count}개의 파일만 업로드할 수 있습니다',
-    '2': '%{smart_count}개의 파일만 업로드할 수 있습니다'
-  },
-  youHaveToAtLeastSelectX: {
-    '0': '최소 %{smart_count}개의 파일을 선택해야 합니다',
-    '1': '최소 %{smart_count}개의 파일을 선택해야 합니다',
-    '2': '최소 %{smart_count}개의 파일을 선택해야 합니다'
-  }
+  youCanOnlyUploadX: '%{smart_count}개의 파일만 업로드할 수 있습니다',
+  youHaveToAtLeastSelectX: '최소 %{smart_count}개의 파일을 선택해야 합니다'
 }
 
 ko_KR.pluralize = function (n) {
-  if (n === 1) {
-    return 0
-  }
-
-  return 1
+  return 0
 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
