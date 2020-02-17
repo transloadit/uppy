@@ -222,8 +222,8 @@ const getOptionsMiddleware = (options) => {
       throw new Error('Found `providerOptions.s3.accessKeyId` or `providerOptions.s3.secretAccessKey` configuration, but Companion requires `key` and `secret` option names instead. Please use the `key` property instead of `accessKeyId` and the `secret` property instead of `secretAccessKey`.')
     }
 
-    if (s3ProviderOptions.awsClientOptions.accessKeyId ||
-        s3ProviderOptions.awsClientOptions.secretAccessKey) {
+    const rawClientOptions = s3ProviderOptions.awsClientOptions
+    if (rawClientOptions && (rawClientOptions.accessKeyId || rawClientOptions.secretAccessKey)) {
       throw new Error('Found unsupported `providerOptions.s3.awsClientOptions.accessKeyId` or `providerOptions.s3.awsClientOptions.secretAccessKey` configuration. Please use the `providerOptions.s3.key` and `providerOptions.s3.secret` options instead.')
     }
 
@@ -231,7 +231,7 @@ const getOptionsMiddleware = (options) => {
       signatureVersion: 'v4',
       // backwards compat
       useAccelerateEndpoint: s3ProviderOptions.useAccelerateEndpoint
-    }, s3ProviderOptions.awsClientOptions)
+    }, rawClientOptions)
 
     // Use credentials to allow assumed roles to pass STS sessions in.
     // If the user doesn't specify key and secret, the default credentials (process-env)
