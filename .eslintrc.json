@@ -33,7 +33,8 @@
     "polyfills": [
       "Promise",
       "fetch",
-      "Object.assign"
+      "Object.assign",
+      "document.querySelector"
     ]
   },
   "overrides": [{

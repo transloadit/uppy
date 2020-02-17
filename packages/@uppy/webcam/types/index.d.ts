@@ -1,25 +1,26 @@
-import Uppy = require('@uppy/core');
+import Uppy = require('@uppy/core')
+import WebcamLocale = require('./generatedLocale')
 
 declare module Webcam {
-  export type WebcamMode = 'video-audio' | 'video-only' | 'audio-only' | 'picture';
+  export type WebcamMode =
+    | 'video-audio'
+    | 'video-only'
+    | 'audio-only'
+    | 'picture'
 
   export interface WebcamOptions extends Uppy.PluginOptions {
-    onBeforeSnapshot?: () => Promise<void>;
-    countdown?: number | boolean;
-    mirror?: boolean;
-    facingMode?: string;
-    modes: WebcamMode[];
+    replaceTargetContent?: boolean
+    target?: Uppy.PluginTarget
+    onBeforeSnapshot?: () => Promise<void>
+    countdown?: number | boolean
+    mirror?: boolean
+    facingMode?: string
+    modes?: WebcamMode[]
+    locale?: WebcamLocale
+    title?: string
   }
 }
 
-declare class Webcam extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<Webcam.WebcamOptions>);
-}
+declare class Webcam extends Uppy.Plugin<Webcam.WebcamOptions> {}
 
-export = Webcam;
-
-declare module '@uppy/core' {
-  export interface Uppy {
-    use(pluginClass: typeof Webcam, opts: Partial<Webcam.WebcamOptions>): Uppy.Uppy;
-  }
-}
+export = Webcam

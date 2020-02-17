@@ -7,6 +7,7 @@ class Provider {
    * @param {object} options
    */
   constructor (options) {
+    this.needsCookieAuth = false
     return this
   }
 

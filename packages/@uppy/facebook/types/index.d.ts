@@ -1,21 +1,17 @@
-import Uppy = require('@uppy/core');
-import CompanionClient = require('@uppy/companion-client');
+import Uppy = require('@uppy/core')
+import CompanionClient = require('@uppy/companion-client')
 
 declare module Facebook {
-  interface FacebookOptions extends Uppy.PluginOptions, CompanionClient.ProviderOptions {
-    companionUrl: string;
-    companionAllowedHosts: string | RegExp | Array<string | RegExp>;
+  interface FacebookOptions
+    extends Uppy.PluginOptions,
+      CompanionClient.PublicProviderOptions {
+    replaceTargetContent?: boolean
+    target?: Uppy.PluginTarget
+    title?: string
+    storage?: CompanionClient.TokenStorage
   }
 }
 
-declare class Facebook extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<Facebook.FacebookOptions>);
-}
+declare class Facebook extends Uppy.Plugin<Facebook.FacebookOptions> {}
 
-export = Facebook;
-
-declare module '@uppy/core' {
-  export interface Uppy {
-    use(pluginClass: typeof Facebook, opts: Partial<Facebook.FacebookOptions>): Uppy.Uppy;
-  }
-}
+export = Facebook
