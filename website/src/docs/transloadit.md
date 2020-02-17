@@ -130,7 +130,6 @@ uppy.use(Transloadit, {
 })
 ```
 
-
 ### `waitForEncoding`
 
 Configures whether or not to wait for all Assemblies to complete before completing the upload.
@@ -287,7 +286,8 @@ If an error occurs when an Assembly has already started, you can find the Assemb
 ```js
 uppy.on('error', (error) => {
   if (error.assembly) {
-    console.log(`${error.assembly.assembly_id} failed!`)
+    console.log(`Assembly ID ${error.assembly.assembly_id} failed!`)
+    console.log(error.assembly)
   }
 })
 ```

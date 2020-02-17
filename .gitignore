@@ -16,6 +16,7 @@ examples/dev/bundle.js
 test/endtoend/create-react-app/build/
 test/endtoend/create-react-app/coverage/
 uppy-*.tgz
+generatedLocale.d.ts
 
 website/db.json
 website/*.log
