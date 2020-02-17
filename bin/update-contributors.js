@@ -9,7 +9,7 @@ async function updateContributorsListInReadme () {
     '--owner', 'transloadit',
     '--repo', 'uppy',
     '--cols', '6',
-    '--authToken', process.env.GITHUB_TOKEN ? `--authToken ${process.env.GITHUB_TOKEN}` : ''
+    '--authToken', process.env.GITHUB_TOKEN ? process.env.GITHUB_TOKEN : ''
   ]
   const { stdout } = await execa('githubcontrib', args) // eslint-disable-line
   const readmeWithUpdatedContributors = readme.replace(
