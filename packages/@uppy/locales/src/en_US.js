@@ -80,8 +80,7 @@ en_US.strings = {
   preparingUpload: 'Preparing upload...',
   processingXFiles: {
     '0': 'Processing %{smart_count} file',
-    '1': 'Processing %{smart_count} files',
-    '2': 'Processing %{smart_count} files'
+    '1': 'Processing %{smart_count} files'
   },
   recordingLength: 'Recording length %{recording_length}',
   removeFile: 'Remove file',
@@ -122,13 +121,11 @@ en_US.strings = {
   uploading: 'Uploading',
   uploadingXFiles: {
     '0': 'Uploading %{smart_count} file',
-    '1': 'Uploading %{smart_count} files',
-    '2': 'Uploading %{smart_count} files'
+    '1': 'Uploading %{smart_count} files'
   },
   xFilesSelected: {
     '0': '%{smart_count} file selected',
-    '1': '%{smart_count} files selected',
-    '2': '%{smart_count} files selected'
+    '1': '%{smart_count} files selected'
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} more file added',

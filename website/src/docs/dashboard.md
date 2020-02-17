@@ -266,6 +266,8 @@ strings: {
   closeModal: 'Close Modal',
   // Used as the screen reader label for the plus (+) button that shows the “Add more files” screen
   addMoreFiles: 'Add more files',
+  // TODO
+  addingMoreFiles: 'Adding more files',
   // Used as the header for import panels, e.g., “Import from Google Drive”.
   importFrom: 'Import from %{name}',
   // When `inline: false`, used as the screen reader label for the dashboard modal.
@@ -283,6 +285,8 @@ strings: {
   fileSource: 'File source: %{name}',
   // Used as the label for buttons that accept and close panels (remote providers or metadata editor)
   done: 'Done',
+  // TODO
+  back: 'Back',
   // Used as the screen reader label for buttons that remove a file.
   removeFile: 'Remove file',
   // Used as the screen reader label for buttons that open the metadata editor panel for a file.
@@ -294,6 +298,8 @@ strings: {
   // Used as the screen reader label for the button that saves metadata edits and returns to the
   // file list view.
   finishEditingFile: 'Finish editing file',
+  // TODO
+  saveChanges: 'Save changes',
   // Used as the label for the tab button that opens the system file selection dialog.
   myDevice: 'My Device',
   // Shown in the main dashboard area when no files have been selected, and one or more
@@ -304,23 +310,44 @@ strings: {
   // plugins are in use. %{browse} is replaced with a link that opens the system
   // file selection dialog.
   dropPaste: 'Drop files here, paste or %{browse}',
+  // TODO
+  dropHint: 'Drop your files here',
   // This string is clickable and opens the system file selection dialog.
   browse: 'browse',
   // Used as the hover text and screen reader label for file progress indicators when
   // they have been fully uploaded.
   uploadComplete: 'Upload complete',
+  // TODO
+  uploadPaused: 'Upload paused',
   // Used as the hover text and screen reader label for the buttons to resume paused uploads.
   resumeUpload: 'Resume upload',
   // Used as the hover text and screen reader label for the buttons to pause uploads.
   pauseUpload: 'Pause upload',
   // Used as the hover text and screen reader label for the buttons to retry failed uploads.
   retryUpload: 'Retry upload',
+  // Used as the hover text and screen reader label for the buttons to cancel uploads.
+  cancelUpload: 'Cancel upload',
 
   // Used in a title, how many files are currently selected
   xFilesSelected: {
     0: '%{smart_count} file selected',
     1: '%{smart_count} files selected'
   },
+  // TODO
+  uploadingXFiles: {
+    0: 'Uploading %{smart_count} file',
+    1: 'Uploading %{smart_count} files'
+  },
+  // TODO
+  processingXFiles: {
+    0: 'Processing %{smart_count} file',
+    1: 'Processing %{smart_count} files'
+  },
+
+  // The "powered by Uppy" link at the bottom of the Dashboard.
+  // **NOTE**: This string is called `poweredBy2` for backwards compatibility reasons.
+  // TODO (INSERT PR URL HERE)
+  poweredBy2: 'Powered by %{uppy}',
 
   // @uppy/status-bar strings:
   uploading: 'Uploading',
