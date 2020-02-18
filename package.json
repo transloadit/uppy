@@ -134,6 +134,7 @@
     "eslint-plugin-react": "7.18.3",
     "eslint-plugin-standard": "4.0.1",
     "events.once": "2.0.2",
+    "execa": "4.0.0",
     "exorcist": "1.0.1",
     "express": "4.17.1",
     "fakefile": "0.0.9",
