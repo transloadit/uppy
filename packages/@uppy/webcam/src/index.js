@@ -2,6 +2,7 @@ const { h } = require('preact')
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
+const mimeTypes = require('@uppy/utils/lib/mimeTypes')
 const canvasToBlob = require('@uppy/utils/lib/canvasToBlob')
 const supportsMediaRecorder = require('./supportsMediaRecorder')
 const CameraIcon = require('./CameraIcon')
@@ -9,14 +10,36 @@ const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')
 
 /**
- * Is this file type a video?
+ * Normalize a MIME type or file extension into a MIME type.
  *
- * @param {string} fileType - MIME type or file extension.
+ * @param {string} fileType - MIME type or a file extension prefixed with `.`.
+ * @returns {string|undefined} The MIME type or `undefined` if the fileType is an extension and is not known.
+ */
+function toMimeType (fileType) {
+  if (fileType[0] === '.') {
+    return mimeTypes[fileType.slice(1)]
+  }
+  return fileType
+}
+
+/**
+ * Is this MIME type a video?
+ *
+ * @param {string} mimeType - MIME type.
  * @returns {boolean}
  */
-function isVideoFileType (fileType) {
-  return /^video\//.test(fileType) ||
-    /^\.(mkv|mp4|ogv|webm)/.test(fileType)
+function isVideoMimeType (mimeType) {
+  return /^video\/[^*]+$/.test(mimeType)
+}
+
+/**
+ * Is this MIME type an image?
+ *
+ * @param {string} mimeType - MIME type.
+ * @returns {boolean}
+ */
+function isImageMimeType (mimeType) {
+  return /^image\/[^*]+$/.test(mimeType)
 }
 
 /**
@@ -85,6 +108,7 @@ module.exports = class Webcam extends Plugin {
       ],
       mirror: true,
       facingMode: 'user',
+      preferredImageMimeType: null,
       preferredVideoMimeType: null,
       showRecordingLength: false
     }
@@ -183,7 +207,7 @@ module.exports = class Webcam extends Plugin {
       if (this.opts.preferredVideoMimeType) {
         preferredVideoMimeTypes = [this.opts.preferredVideoMimeType]
       } else if (restrictions.allowedFileTypes) {
-        preferredVideoMimeTypes = restrictions.allowedFileTypes.filter(isVideoFileType)
+        preferredVideoMimeTypes = restrictions.allowedFileTypes.map(toMimeType).filter(isVideoMimeType)
       }
 
       const acceptableMimeTypes = preferredVideoMimeTypes.filter((candidateType) =>
@@ -288,7 +312,7 @@ module.exports = class Webcam extends Plugin {
     this.stream = null
   }
 
-  getVideoElement () {
+  _getVideoElement () {
     return this.el.querySelector('.uppy-Webcam-video')
   }
 
@@ -324,18 +348,13 @@ module.exports = class Webcam extends Plugin {
       this.uppy.info(message, 'error', 5000)
       return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
     }).then(() => {
-      return this.getImage()
+      return this._getImage()
     }).then((tagFile) => {
       this.captureInProgress = false
-      // Close the Dashboard panel if plugin is installed
-      // into Dashboard (could be other parent UI plugin)
-      // if (this.parent && this.parent.hideAllPanels) {
-      //   this.parent.hideAllPanels()
-      // }
       try {
         this.uppy.addFile(tagFile)
       } catch (err) {
-        // Logging the error, exept restrictions, which is handled in Core
+        // Logging the error, except restrictions, which is handled in Core
         if (!err.isRestriction) {
           this.uppy.log(err)
         }
@@ -346,32 +365,32 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  getImage () {
-    const video = this.getVideoElement()
+  _getImage () {
+    const video = this._getVideoElement()
     if (!video) {
       return Promise.reject(new Error('No video element found, likely due to the Webcam tab being closed.'))
     }
 
-    const name = `cam-${Date.now()}.jpg`
-    const mimeType = 'image/jpeg'
-
     const width = video.videoWidth
     const height = video.videoHeight
-
-    // const scaleH = this.opts.mirror ? -1 : 1 // Set horizontal scale to -1 if flip horizontal
-    // const scaleV = 1
-    // const posX = this.opts.mirror ? width * -1 : 0 // Set x position to -100% if flip horizontal
-    // const posY = 0
 
     const canvas = document.createElement('canvas')
     canvas.width = width
     canvas.height = height
     const ctx = canvas.getContext('2d')
     ctx.drawImage(video, 0, 0)
-    // ctx.save() // Save the current state
-    // ctx.scale(scaleH, scaleV) // Set scale to flip the image
-    // ctx.drawImage(video, posX, posY, width, height) // draw the image
-    // ctx.restore() // Restore the last saved state
+
+    const { restrictions } = this.uppy.opts
+    let preferredImageMimeTypes = []
+    if (this.opts.preferredImageMimeType) {
+      preferredImageMimeTypes = [this.opts.preferredImageMimeType]
+    } else if (restrictions.allowedFileTypes) {
+      preferredImageMimeTypes = restrictions.allowedFileTypes.map(toMimeType).filter(isImageMimeType)
+    }
+
+    const mimeType = preferredImageMimeTypes[0] || 'image/jpeg'
+    const ext = getFileTypeExtension(mimeType) || 'jpg'
+    const name = `cam-${Date.now()}.${ext}`
 
     return canvasToBlob(canvas, mimeType).then((blob) => {
       return {
