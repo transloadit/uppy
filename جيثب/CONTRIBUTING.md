@@ -4,7 +4,7 @@ Fork the repository into your own account first. See the [GitHub Help](https://h
 
 After you have successfully forked the repo, clone and install the project:
 
-```bash
+```bash hhcjjggij oihbvfgj hhhvb 
 git clone git@github.com:YOUR_USERNAME/uppy.git
 cd uppy
 npm install
