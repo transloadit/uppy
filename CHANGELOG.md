@@ -23,7 +23,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: possibility to edit/delete more than one file at once. example: add copyrigh info to 1000 files #118, #97
 - [ ] dashboard: possibility to work on already uploaded / in progress files. We'll just provide the `fileId` to the `file-edit-complete` event so that folks can more easily roll out custom code for this themselves #112, #113, #2063
 - [ ] dashboard: Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
-- [ ] goldenretriever: make it work with aws multipart https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888  (@goto-bus-stop) 
+- [ ] goldenretriever: make it work with aws multipart https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888 (@goto-bus-stop)
 - [ ] plugins: WordPress Front-end Gravity Forms Uppy plugin so one form field could be an Uppy-powered file input
 - [ ] provider: add sorting (by date) #254
 - [ ] qa: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
@@ -110,7 +110,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## 1.9.2
 
-Released: 2019-02-14
+Released: 2020-02-14
 
 This release adds `@uppy/onedrive` to `uppy`’s `package.json`, fixing the bug reported at https://github.com/transloadit/uppy/commit/f291688fb813c55ff905abb334eff61c1c5a9dd0#commitcomment-37278041, and introduces more robust type checking in #1918.
 
@@ -141,7 +141,7 @@ This release adds `@uppy/onedrive` to `uppy`’s `package.json`, fixing the bug 
 
 ## 1.9.1
 
-Released: 2019-02-12
+Released: 2020-02-12
 
 Previous `1.9.0` release has been deprecated due to an incorrect Lerna/npm published release. Please update all packages to the next patch version (or @latest), see the table below.
 
@@ -167,7 +167,7 @@ Previous `1.9.0` release has been deprecated due to an incorrect Lerna/npm publi
 
 ## 1.9.0
 
-Released: 2019-02-11
+Released: 2020-02-11
 
 ⚠️ `1.9.0` and all related packages have been deprecated due to an incorrect Lerna/npm published release. Please update all packages to the next patch version, see #1.9.1.
 
@@ -212,7 +212,7 @@ This release adds support for the new Instagram API, image and archive icons to 
 
 ## 1.8.0
 
-Released: 2019-01-15
+Released: 2020-01-15
 
 This release adds Korean and Vietnamese localizations, fixes bugs, and significantly improves the performance of adding and removing lots of files. More performance improvements are on the way in the next few releases, too! Thanks to all contributors listed below.
 
