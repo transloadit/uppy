@@ -89,7 +89,7 @@ const validateURL = (url, debug) => {
   }
 
   const parsed = utils.parseURL(url)
-  if (!validator.isFQDN(parsed.hostname, { require_tld: !debug })) {
+  if (!debug && !validator.isFQDN(parsed.hostname, { require_tld: !debug })) {
     return false
   }
 
