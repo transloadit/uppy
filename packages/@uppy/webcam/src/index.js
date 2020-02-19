@@ -68,6 +68,7 @@ module.exports = class Webcam extends Plugin {
         stopRecording: 'Stop video recording',
         allowAccessTitle: 'Please allow access to your camera',
         allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
+        recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
         recordingLength: 'Recording length %{recording_length}'
       }
     }
@@ -185,11 +186,11 @@ module.exports = class Webcam extends Plugin {
         preferredVideoMimeTypes = restrictions.allowedFileTypes.filter(isVideoFileType)
       }
 
-      for (const candidateType of preferredVideoMimeTypes) {
-        if (MediaRecorder.isTypeSupported(candidateType) && getFileTypeExtension(candidateType)) {
-          options.mimeType = candidateType
-          break
-        }
+      const acceptableMimeTypes = preferredVideoMimeTypes.filter((candidateType) =>
+        MediaRecorder.isTypeSupported(candidateType) &&
+          getFileTypeExtension(candidateType))
+      if (acceptableMimeTypes.length > 0) {
+        options.mimeType = acceptableMimeTypes[0]
       }
     }
 
@@ -199,10 +200,31 @@ module.exports = class Webcam extends Plugin {
   _startRecording () {
     this.recorder = new MediaRecorder(this.stream, this._getMediaRecorderOptions())
     this.recordingChunks = []
+    let stoppingBecauseOfMaxSize = false
     this.recorder.addEventListener('dataavailable', (event) => {
       this.recordingChunks.push(event.data)
+
+      const { restrictions } = this.uppy.opts
+      if (this.recordingChunks.length > 1 &&
+          restrictions.maxFileSize != null &&
+          !stoppingBecauseOfMaxSize) {
+        const totalSize = this.recordingChunks.reduce((acc, chunk) => acc + chunk.size, 0)
+        // Exclude the initial chunk from the average size calculation because it is likely to be a very small outlier
+        const averageChunkSize = (totalSize - this.recordingChunks[0].size) / (this.recordingChunks.length - 1)
+        const expectedEndChunkSize = averageChunkSize * 3
+        const maxSize = Math.max(0, restrictions.maxFileSize - expectedEndChunkSize)
+
+        if (totalSize > maxSize) {
+          stoppingBecauseOfMaxSize = true
+          this.uppy.info(this.i18n('recordingStoppedMaxSize'), 'warning', 4000)
+          this._stopRecording()
+        }
+      }
     })
-    this.recorder.start()
+
+    // use a "time slice" of 500ms: ondataavailable will be called each 500ms
+    // smaller time slices mean we can more accurately check the max file size restriction
+    this.recorder.start(500)
 
     if (this.opts.showRecordingLength) {
       // Start the recordingLengthTimer if we are showing the recording length.
@@ -248,12 +270,6 @@ module.exports = class Webcam extends Plugin {
     }).then(() => {
       this.recordingChunks = null
       this.recorder = null
-
-      // Close the Dashboard panel if plugin is installed
-      // into Dashboard (could be other parent UI plugin)
-      // if (this.parent && this.parent.hideAllPanels) {
-      //   this.parent.hideAllPanels()
-      // }
     }, (error) => {
       this.recordingChunks = null
       this.recorder = null
