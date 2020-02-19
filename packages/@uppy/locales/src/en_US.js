@@ -82,6 +82,7 @@ en_US.strings = {
     '2': 'Processing %{smart_count} files'
   },
   recordingLength: 'Recording length %{recording_length}',
+  recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
   removeFile: 'Remove file',
   resetFilter: 'Reset filter',
   resume: 'Resume',
