@@ -19,8 +19,7 @@ module.exports = () => {
  */
 const meta = (req, res) => {
   logger.debug('URL file import handler running', null, req.id)
-
-  if (!validator.isURL(req.body.url, { require_protocol: true, require_tld: !req.companion.options.debug })) {
+  if (!validateURL(req.body.url, req.companion.options.debug)) {
     logger.debug('Invalid request body detected. Exiting url meta handler.', null, req.id)
     return res.status(400).json({ error: 'Invalid request body' })
   }
@@ -42,6 +41,10 @@ const meta = (req, res) => {
  */
 const get = (req, res) => {
   logger.debug('URL file import handler running', null, req.id)
+  if (!validateURL(req.body.url, req.companion.options.debug)) {
+    logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
+    return res.status(400).json({ error: 'Invalid request body' })
+  }
 
   utils.getURLMeta(req.body.url)
     .then(({ size }) => {
@@ -65,8 +68,32 @@ const get = (req, res) => {
       res.status(response.status).json(response.body)
     }).catch((err) => {
       logger.error(err, 'controller.url.get.error', req.id)
+      // @todo this should send back error (not err)
       res.json({ err })
     })
+}
+
+/**
+ * Validates that the download URL is secure
+ * @param {string} url the url to validate
+ * @param {boolean} debug whether the server is running in debug mode
+ */
+const validateURL = (url, debug) => {
+  const validURLOpts = {
+    protocols: ['http', 'https'],
+    require_protocol: true,
+    require_tld: !debug
+  }
+  if (!validator.isURL(url, validURLOpts)) {
+    return false
+  }
+
+  const parsed = utils.parseURL(url)
+  if (!validator.isFQDN(parsed.hostname, { require_tld: !debug })) {
+    return false
+  }
+
+  return true
 }
 
 /**
@@ -81,7 +108,7 @@ const downloadURL = (url, onDataChunk, traceId) => {
   const opts = {
     uri: url,
     method: 'GET',
-    followAllRedirects: true
+    followAllRedirects: false
   }
 
   request(opts)

@@ -1,4 +1,5 @@
 const request = require('request')
+const urlParser = require('url')
 const crypto = require('crypto')
 
 /**
@@ -39,6 +40,17 @@ exports.jsonStringify = (data) => {
  */
 exports.sanitizeHtml = (text) => {
   return text ? text.replace(/<\/?[^>]+(>|$)/g, '') : text
+}
+
+/**
+ * Node 6(and beyond) compatible url parser
+ * @todo drop the use of url.parse when support for node 6 is dropped
+ *
+ * @param {string} url URL to be parsed
+ */
+exports.parseURL = (url) => {
+  // eslint-disable-next-line
+  return urlParser.URL ? new urlParser.URL(url) : urlParser.parse(url)
 }
 
 /**
