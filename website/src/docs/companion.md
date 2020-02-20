@@ -248,7 +248,8 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
       secret: "***",
       bucket: "bucket-name",
       region: "us-east-1",
-      useAccelerateEndpoint: false // default: false
+      useAccelerateEndpoint: false, // default: false,
+      expires: 3600 // default: 300 (5 minutes)
     }
   },
   server: {
