@@ -1,6 +1,7 @@
 const request = require('request')
 const urlParser = require('url')
 const crypto = require('crypto')
+const { getProtectedHttpAgent } = require('./request')
 
 /**
  *
@@ -57,14 +58,16 @@ exports.parseURL = (url) => {
  * Gets the size and content type of a url's content
  *
  * @param {string} url
+ * @param {boolean=} blockLocalIPs
  * @return {Promise}
  */
-exports.getURLMeta = (url) => {
+exports.getURLMeta = (url, blockLocalIPs = false) => {
   return new Promise((resolve, reject) => {
     const opts = {
       uri: url,
       method: 'HEAD',
-      followAllRedirects: true
+      followAllRedirects: false,
+      agentClass: getProtectedHttpAgent(exports.parseURL(url).protocol, blockLocalIPs)
     }
 
     request(opts, (err, response, body) => {
