@@ -199,6 +199,8 @@ export COMPANION_AWS_BUCKET="YOUR AWS S3 BUCKET"
 export COMPANION_AWS_REGION="AWS REGION"
 # to enable S3 Transfer Acceleration (default: false)
 export COMPANION_AWS_USE_ACCELERATE_ENDPOINT="false"
+# to set X-Amz-Expires query param in presigned urls (in seconds, default: 300)
+export COMPANION_AWS_EXPIRES="300"
 
 # corresponds to the server.oauthDomain option
 export COMPANION_OAUTH_DOMAIN="sub.domain.com"
