@@ -107,6 +107,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 - [ ] providers: Get Facebook integration on its feet (@ife)
 - [ ] companion: what happens if access token expires during/between an download & upload (@ife)
+- [ ] s3: immediately start uploading files once the signed URL is generated (#2060, @goto-bus-stop)
 
 ## 1.9.2
 
