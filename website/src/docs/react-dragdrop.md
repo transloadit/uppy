@@ -70,8 +70,8 @@ The `<DragDrop />` component supports all [DragDrop](/docs/drag-drop/) options a
 // assuming `this.uppy` contains an Uppy instance:
 
 <DragDrop
-  width={200}
-  height={200}
+  width="100%"
+  height="100%"
   note="Images up to 200×200px"
   uppy={this.uppy}
   locale={{
