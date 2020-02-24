@@ -49,6 +49,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: maybe we remove `file.name` and only keep `file.meta.name`; we can change the file.name here actually because it's just a plain object. we can't change the file.data.name where data is a File instance from an input or something. For XHRUpload, where we put the File instance in a FormData object and it uses the unchangeable .name property.
 - [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
 - [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now
+- [ ] *: upgrade to Preact X
 - [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
 - [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems though)
 - [ ] docs: Completely drop soft IE10 (and IE11?) support
