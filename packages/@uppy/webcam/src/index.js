@@ -470,7 +470,9 @@ module.exports = class Webcam extends Plugin {
   }
 
   getVideoSources () {
+    this.videoSources = []
     this.mediaDevices.enumerateDevices().then(res => {
+      this.videoSources = []
       res.forEach((device) => {
         if (device.kind === 'videoinput') {
           this.videoSources.push(device)
@@ -531,6 +533,25 @@ module.exports = class Webcam extends Plugin {
     }
 
     this.getVideoSources()
+
+    this.mediaDevices.ondevicechange = (event) => {
+      this.getVideoSources()
+
+      if (this.stream) {
+        let restartStream = true
+
+        this.videoSources.forEach((videoSource) => {
+          if (this.currentDeviceId === videoSource.deviceId) {
+            restartStream = false
+          }
+        })
+
+        if (restartStream) {
+          this._stop()
+          this._start()
+        }
+      }
+    }
   }
 
   uninstall () {
