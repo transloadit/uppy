@@ -76,6 +76,8 @@ module.exports = class Webcam extends Plugin {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
+    this.videoSources = []
+    this.currentDeviceId = null
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Webcam'
     this.title = this.opts.title || 'Camera'
@@ -115,6 +117,7 @@ module.exports = class Webcam extends Plugin {
         'picture'
       ],
       mirror: true,
+      showVideoSourceDropdown: false,
       facingMode: 'user',
       preferredImageMimeType: null,
       preferredVideoMimeType: null,
@@ -138,6 +141,7 @@ module.exports = class Webcam extends Plugin {
     this._stopRecording = this._stopRecording.bind(this)
     this._oneTwoThreeSmile = this._oneTwoThreeSmile.bind(this)
     this._focus = this._focus.bind(this)
+    this._changeVideoSource = this._changeVideoSource.bind(this)
 
     this.webcamActive = false
 
@@ -176,14 +180,16 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  getConstraints () {
+  getConstraints (deviceId) {
     const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1 ||
       this.opts.modes.indexOf('audio-only') !== -1
     const acceptsVideo = this.opts.modes.indexOf('video-audio') !== -1 ||
       this.opts.modes.indexOf('video-only') !== -1 ||
       this.opts.modes.indexOf('picture') !== -1
 
-    const videoConstraints = this.opts.videoConstraints ?? {
+    const videoConstraints = deviceId ? {
+      deviceId: deviceId
+    } : this.opts.videoConstraints ?? {
       facingMode: this.opts.facingMode
     }
 
@@ -193,13 +199,13 @@ module.exports = class Webcam extends Plugin {
     }
   }
 
-  _start () {
+  _start (deviceId = null) {
     if (!this.supportsUserMedia) {
       return Promise.reject(new Error('Webcam access not supported'))
     }
 
     this.webcamActive = true
-    const constraints = this.getConstraints()
+    const constraints = this.getConstraints(deviceId)
 
     this.hasCameraCheck().then(hasCamera => {
       this.setPluginState({
@@ -210,6 +216,17 @@ module.exports = class Webcam extends Plugin {
       return this.mediaDevices.getUserMedia(constraints)
         .then((stream) => {
           this.stream = stream
+
+          if (!deviceId) {
+            this.currentDeviceId = stream.getVideoTracks()[0].getSettings().deviceId
+          } else {
+            stream.getVideoTracks().forEach((videoTrack) => {
+              if (videoTrack.getSettings().deviceId === deviceId) {
+                this.currentDeviceId = videoTrack.deviceId
+              }
+            })
+          }
+
           this.setPluginState({
             cameraReady: true
           })
@@ -465,6 +482,21 @@ module.exports = class Webcam extends Plugin {
     }, 1000)
   }
 
+  _changeVideoSource (deviceId) {
+    this._stop()
+    this._start(deviceId)
+  }
+
+  getVideoSources () {
+    this.mediaDevices.enumerateDevices().then(res => {
+      res.forEach((device) => {
+        if (device.kind === 'videoinput') {
+          this.videoSources.push(device)
+        }
+      })
+    })
+  }
+
   render () {
     if (!this.webcamActive) {
       this._start()
@@ -485,6 +517,7 @@ module.exports = class Webcam extends Plugin {
     return (
       <CameraScreen
         {...webcamState}
+        onChangeVideoSource={this._changeVideoSource}
         onSnapshot={this._takeSnapshot}
         onStartRecording={this._startRecording}
         onStopRecording={this._stopRecording}
@@ -493,10 +526,13 @@ module.exports = class Webcam extends Plugin {
         i18n={this.i18n}
         modes={this.opts.modes}
         showRecordingLength={this.opts.showRecordingLength}
+        showVideoSourceDropdown={this.opts.showVideoSourceDropdown}
         supportsRecording={supportsMediaRecorder()}
         recording={webcamState.isRecording}
         mirror={this.opts.mirror}
         src={this.stream}
+        currentDeviceId={this.currentDeviceId}
+        videoSources={this.videoSources}
       />
     )
   }
@@ -511,6 +547,8 @@ module.exports = class Webcam extends Plugin {
     if (target) {
       this.mount(target, this)
     }
+
+    this.getVideoSources()
   }
 
   uninstall () {
