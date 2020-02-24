@@ -15,6 +15,7 @@ declare module Webcam {
     countdown?: number | boolean
     mirror?: boolean
     facingMode?: string
+    showVideoSourceDropdown?: boolean
     modes?: WebcamMode[]
     locale?: WebcamLocale
     title?: string

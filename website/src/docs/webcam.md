@@ -116,6 +116,10 @@ Devices sometimes have multiple cameras, front and back, for example. There is a
 - `left`: The video source is facing toward the user but to their left, such as a camera aimed toward the user but over their left shoulder.
 - `right`: The video source is facing toward the user but to their right, such as a camera aimed toward the user but over their right shoulder.
 
+### `showVideoSourceDropdown: false`
+
+Configures whether or not to show a dropdown which enables to choose the video device to use. This option will have priority over `facingMode` if enabled. The default is `false`.
+
 ### `showRecordingLength: false`
 
 Configures whether or not to show the length of the recording while the recording is in progress. The default is `false`.
