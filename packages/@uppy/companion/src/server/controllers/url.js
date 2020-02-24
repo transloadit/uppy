@@ -91,11 +91,6 @@ const validateURL = (url, debug) => {
     return false
   }
 
-  const parsed = utils.parseURL(url)
-  if (!debug && !validator.isFQDN(parsed.hostname, { require_tld: !debug })) {
-    return false
-  }
-
   return true
 }
 
@@ -112,7 +107,7 @@ const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
   const opts = {
     uri: url,
     method: 'GET',
-    followAllRedirects: false,
+    followAllRedirects: true,
     agentClass: getProtectedHttpAgent(utils.parseURL(url).protocol, blockLocalIPs)
   }
 

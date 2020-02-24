@@ -1,6 +1,13 @@
 const http = require('http')
 const https = require('https')
 const dns = require('dns')
+const ipAddress = require('ip-address')
+
+function isIPAddress (address) {
+  const addressAsV6 = new ipAddress.Address6(address)
+  const addressAsV4 = new ipAddress.Address4(address)
+  return addressAsV6.isValid() || addressAsV4.isValid()
+}
 
 /**
  * Determine if a IP address provided is a private one.
@@ -88,7 +95,7 @@ function dnsLookup (hostname, options, callback) {
     const toValidate = Array.isArray(addresses) ? addresses : [{ address: addresses }]
     for (const record of toValidate) {
       if (isPrivateIP(record.address)) {
-        callback(new Error('forbidden ip address'), addresses, maybeFamily)
+        callback(new Error('Forbidden IP address'), addresses, maybeFamily)
         return
       }
     }
@@ -100,6 +107,10 @@ function dnsLookup (hostname, options, callback) {
 class HttpAgent extends http.Agent {
   createConnection (options, callback) {
     options.lookup = dnsLookup
+    if (isIPAddress(options.host) && isPrivateIP(options.host)) {
+      callback(new Error('Forbidden IP address'))
+      return
+    }
     // @ts-ignore
     return super.createConnection(options, callback)
   }
@@ -108,6 +119,10 @@ class HttpAgent extends http.Agent {
 class HttpsAgent extends https.Agent {
   createConnection (options, callback) {
     options.lookup = dnsLookup
+    if (isIPAddress(options.host) && isPrivateIP(options.host)) {
+      callback(new Error('Forbidden IP address'))
+      return
+    }
     // @ts-ignore
     return super.createConnection(options, callback)
   }

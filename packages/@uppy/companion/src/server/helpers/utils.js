@@ -66,7 +66,7 @@ exports.getURLMeta = (url, blockLocalIPs = false) => {
     const opts = {
       uri: url,
       method: 'HEAD',
-      followAllRedirects: false,
+      followAllRedirects: true,
       agentClass: getProtectedHttpAgent(exports.parseURL(url).protocol, blockLocalIPs)
     }
 
