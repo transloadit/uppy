@@ -1,16 +1,22 @@
+const Provider = require('../Provider')
+
 const request = require('request')
 // @ts-ignore
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
-const AuthError = require('../error')
+const { ProviderApiError, ProviderAuthError } = require('../error')
 const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
 
-class Drive {
+/**
+ * Adapter for API https://developers.google.com/drive/api/v3/
+ */
+class Drive extends Provider {
   constructor (options) {
+    super(options)
     this.authProvider = options.provider = Drive.authProvider
     options.alias = 'drive'
     options.version = 'v3'
@@ -75,7 +81,6 @@ class Drive {
           const returnData = this.adaptData(
             filesResponse.body,
             sharedDrives && sharedDrives.body,
-            options.companion,
             directory,
             query
           )
@@ -111,16 +116,11 @@ class Drive {
       })
   }
 
-  thumbnail ({ id, token }, done) {
-    return this.stats({ id, token }, (err, resp, body) => {
-      if (err || resp.statusCode !== 200) {
-        err = this._error(err, resp)
-        logger.error(err, 'provider.drive.thumbnail.error')
-        return done(err)
-      }
-
-      done(null, body.thumbnailLink ? request(body.thumbnailLink) : null)
-    })
+  thumbnail (_, done) {
+    // not implementing this because a public thumbnail from googledrive will be used instead
+    const err = new Error('call to thumbnail is not implemented')
+    logger.error(err, 'provider.drive.thumbnail.error')
+    return done(err)
   }
 
   size ({ id, token }, done) {
@@ -148,14 +148,14 @@ class Drive {
       })
   }
 
-  adaptData (res, sharedDrivesResp, companion, directory, query) {
+  adaptData (res, sharedDrivesResp, directory, query) {
     const adaptItem = (item) => ({
       isFolder: adapter.isFolder(item),
       icon: adapter.getItemIcon(item),
       name: adapter.getItemName(item),
       mimeType: adapter.getMimeType(item),
       id: adapter.getItemId(item),
-      thumbnail: companion.buildURL(adapter.getItemThumbnailUrl(item), true),
+      thumbnail: adapter.getItemThumbnailUrl(item),
       requestPath: adapter.getItemRequestPath(item),
       modifiedDate: adapter.getItemModifiedDate(item),
       size: adapter.getItemSize(item),
@@ -181,8 +181,9 @@ class Drive {
 
   _error (err, resp) {
     if (resp) {
-      const errMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
-      return resp.statusCode === 401 ? new AuthError() : new Error(errMsg)
+      const fallbackMessage = `request to ${this.authProvider} returned ${resp.statusCode}`
+      const errMsg = resp.body.error ? resp.body.error.message : fallbackMessage
+      return resp.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
     }
     return err
   }

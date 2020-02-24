@@ -94,10 +94,10 @@ describe('test authentication', () => {
   test('the token gets sent via cookie and html', () => {
     // see mock ../../src/server/helpers/oauth-state above for state values
     return request(authServer)
-      .get(`/drive/send-token?uppyAuthToken=${token}&state=state-with-newer-version`)
+      .get(`/dropbox/send-token?uppyAuthToken=${token}&state=state-with-newer-version`)
       .expect(200)
       .expect((res) => {
-        const authToken = res.header['set-cookie'][0].split(';')[0].split('uppyAuthToken--google=')[1]
+        const authToken = res.header['set-cookie'][0].split(';')[0].split('uppyAuthToken--dropbox=')[1]
         expect(authToken).toEqual(token)
         const body = `
     <!DOCTYPE html>

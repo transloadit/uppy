@@ -156,12 +156,16 @@ module.exports = class Webcam extends Plugin {
 
   startRecording () {
     const options = {}
-    const preferredVideoMimeType = this.opts.preferredVideoMimeType
 
-    // Attempt to use the passed preferredVideoMimeType (if any) during recording.
-    // If the browser doesn't support it, we'll fall back to the browser default instead
-    if (preferredVideoMimeType && MediaRecorder.isTypeSupported(preferredVideoMimeType) && getFileTypeExtension(preferredVideoMimeType)) {
-      options.mimeType = preferredVideoMimeType
+    // Safari don't have support for isTypeSupported api.
+    if (MediaRecorder.isTypeSupported) {
+      const preferredVideoMimeType = this.opts.preferredVideoMimeType
+
+      // Attempt to use the passed preferredVideoMimeType (if any) during recording.
+      // If the browser doesn't support it, we'll fall back to the browser default instead
+      if (preferredVideoMimeType && MediaRecorder.isTypeSupported(preferredVideoMimeType) && getFileTypeExtension(preferredVideoMimeType)) {
+        options.mimeType = preferredVideoMimeType
+      }
     }
 
     this.recorder = new MediaRecorder(this.stream, options)

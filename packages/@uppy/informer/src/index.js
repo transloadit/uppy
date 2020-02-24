@@ -19,15 +19,25 @@ module.exports = class Informer extends Plugin {
 
     // set default options
     const defaultOptions = {}
-
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
-
-    this.render = this.render.bind(this)
   }
 
-  render (state) {
+  render = (state) => {
     const { isHidden, message, details } = state.info
+
+    function displayErrorAlert () {
+      const errorMessage = `${message} \n\n ${details}`
+      alert(errorMessage)
+    }
+
+    const handleMouseOver = () => {
+      clearTimeout(this.uppy.infoTimeoutID)
+    }
+
+    const handleMouseLeave = () => {
+      this.uppy.infoTimeoutID = setTimeout(this.uppy.hideInfo, 2000)
+    }
 
     return (
       <div
@@ -43,6 +53,9 @@ module.exports = class Informer extends Plugin {
               data-microtip-position="top-left"
               data-microtip-size="medium"
               role="tooltip"
+              onclick={displayErrorAlert}
+              onMouseOver={handleMouseOver}
+              onMouseLeave={handleMouseLeave}
             >
               ?
             </span>

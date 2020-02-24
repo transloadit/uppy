@@ -106,10 +106,8 @@ module.exports = class StatusBar extends Plugin {
   }
 
   startUpload = () => {
-    return this.uppy.upload().catch((err) => {
-      if (!err.isRestriction) {
-        this.uppy.log(err.stack || err.message || err)
-      }
+    return this.uppy.upload().catch(() => {
+      // Error logged in Core
     })
   }
 
@@ -199,8 +197,7 @@ module.exports = class StatusBar extends Plugin {
       completeFiles.length === Object.keys(files).length &&
       processingFiles.length === 0
 
-    const isAllErrored = isUploadStarted &&
-      erroredFiles.length === uploadStartedFiles.length
+    const isAllErrored = error && erroredFiles.length === filesArray.length
 
     const isAllPaused = inProgressFiles.length !== 0 &&
       pausedFiles.length === inProgressFiles.length

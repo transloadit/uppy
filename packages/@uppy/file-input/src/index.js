@@ -50,25 +50,25 @@ module.exports = class FileInput extends Plugin {
     this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
+  addFiles (files) {
+    const descriptors = files.map((file) => ({
+      source: this.id,
+      name: file.name,
+      type: file.type,
+      data: file
+    }))
+
+    try {
+      this.uppy.addFiles(descriptors)
+    } catch (err) {
+      this.uppy.log(err)
+    }
+  }
+
   handleInputChange (event) {
     this.uppy.log('[FileInput] Something selected through input...')
-
     const files = toArray(event.target.files)
-
-    files.forEach((file) => {
-      try {
-        this.uppy.addFile({
-          source: this.id,
-          name: file.name,
-          type: file.type,
-          data: file
-        })
-      } catch (err) {
-        if (!err.isRestriction) {
-          this.uppy.log(err)
-        }
-      }
-    })
+    this.addFiles(files)
 
     // We clear the input after a file is selected, because otherwise
     // change event is not fired in Chrome and Safari when a file

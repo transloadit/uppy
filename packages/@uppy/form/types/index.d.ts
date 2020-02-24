@@ -1,23 +1,18 @@
-import Uppy = require('@uppy/core');
+import Uppy = require('@uppy/core')
 
 declare module Form {
   interface FormOptions extends Uppy.PluginOptions {
-    getMetaFromForm: boolean;
-    addResultToForm: boolean;
-    submitOnSuccess: boolean;
-    triggerUploadOnSubmit: boolean;
-    resultName: string;
+    replaceTargetContent?: boolean
+    target?: Uppy.PluginTarget
+    resultName?: string
+    getMetaFromForm?: boolean
+    addResultToForm?: boolean
+    multipleResults?: boolean
+    submitOnSuccess?: boolean
+    triggerUploadOnSubmit?: boolean
   }
 }
 
-declare class Form extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<Form.FormOptions>);
-}
+declare class Form extends Uppy.Plugin<Form.FormOptions> {}
 
-export = Form;
-
-declare module '@uppy/core' {
-  export interface Uppy {
-    use(pluginClass: typeof Form, opts: Partial<Form.FormOptions>): Uppy.Uppy;
-  }
-}
+export = Form

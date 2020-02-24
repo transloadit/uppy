@@ -4,14 +4,13 @@ This is a simple, lean example that combines the usage of @uppy/companion and up
 
 ## Test it
 
-To run this example, make sure you've correctly installed the root repository:
-
+To run this example, make sure you've correctly installed the **repository root**:
 ```bash
 npm install
 ```
+That will also install the dependencies for this example.
 
-Then, navigate to this directory and run:
-
+Then, again in the **repository root**, start this example by doing:
 ```bash
-npm start
+npm run example uppy-with-companion
 ```

@@ -220,11 +220,21 @@ module.exports = class Dashboard extends Plugin {
   }
 
   hideAllPanels () {
-    this.setPluginState({
+    const update = {
       activePickerPanel: false,
       showAddFilesPanel: false,
       activeOverlayType: null
-    })
+    }
+
+    const current = this.getPluginState()
+    if (current.activePickerPanel === update.activePickerPanel &&
+        current.showAddFilesPanel === update.showAddFilesPanel &&
+        current.activeOverlayType === update.activeOverlayType) {
+      // avoid doing a state update if nothing changed
+      return
+    }
+
+    this.setPluginState(update)
   }
 
   showPanel (id) {
@@ -373,23 +383,23 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  addFile (file) {
-    try {
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: file,
-        meta: {
-          // path of the file relative to the ancestor directory the user selected.
-          // e.g. 'docs/Old Prague/airbnb.pdf'
-          relativePath: file.relativePath || null
-        }
-      })
-    } catch (err) {
-      if (!err.isRestriction) {
-        this.uppy.log(err)
+  addFiles (files) {
+    const descriptors = files.map((file) => ({
+      source: this.id,
+      name: file.name,
+      type: file.type,
+      data: file,
+      meta: {
+        // path of the file relative to the ancestor directory the user selected.
+        // e.g. 'docs/Old Prague/airbnb.pdf'
+        relativePath: file.relativePath || null
       }
+    }))
+
+    try {
+      this.uppy.addFiles(descriptors)
+    } catch (err) {
+      this.uppy.log(err)
     }
   }
 
@@ -504,18 +514,13 @@ module.exports = class Dashboard extends Plugin {
 
     // 2. Add all dropped files
     const files = toArray(event.clipboardData.files)
-    files.forEach((file) => {
-      this.uppy.log('[Dashboard] File pasted')
-      this.addFile(file)
-    })
+    this.addFiles(files)
   }
 
   handleInputChange (event) {
     event.preventDefault()
     const files = toArray(event.target.files)
-    files.forEach((file) =>
-      this.addFile(file)
-    )
+    this.addFiles(files)
   }
 
   handleDragOver (event) {
@@ -572,9 +577,7 @@ module.exports = class Dashboard extends Plugin {
       .then((files) => {
         if (files.length > 0) {
           this.uppy.log('[Dashboard] Files were dropped')
-          files.forEach((file) =>
-            this.addFile(file)
-          )
+          this.addFiles(files)
         }
       })
   }
@@ -817,7 +820,6 @@ module.exports = class Dashboard extends Plugin {
       log: this.uppy.log,
       i18n: this.i18n,
       i18nArray: this.i18nArray,
-      addFile: this.uppy.addFile,
       removeFile: this.uppy.removeFile,
       info: this.uppy.info,
       note: this.opts.note,

@@ -36,6 +36,7 @@ class Uploader {
    * @property {any} companionOptions
    * @property {any=} storage
    * @property {any=} headers
+   * @property {string=} httpMethod
    *
    * @param {UploaderOptions} options
    */
@@ -112,6 +113,7 @@ class Uploader {
       uploadUrl: req.body.uploadUrl,
       protocol: req.body.protocol,
       metadata: req.body.metadata,
+      httpMethod: req.body.httpMethod,
       size: size,
       fieldname: req.body.fieldname,
       pathPrefix: `${req.companion.options.filePath}`,
@@ -236,7 +238,7 @@ class Uploader {
       }
 
       if (protocol === PROTOCOLS.s3Multipart && !this.s3Upload) {
-        return this.uploadS3()
+        return this.uploadS3Multipart()
       }
       // @TODO disabling parallel uploads and downloads for now
       // if (!this.options.endpoint) return
@@ -455,8 +457,9 @@ class Uploader {
         }
       }
     )
+    const httpMethod = (this.options.httpMethod || '').toLowerCase() === 'put' ? 'put' : 'post'
     const headers = headerSanitize(this.options.headers)
-    request.post({ url: this.options.endpoint, headers, formData, encoding: null }, (error, response, body) => {
+    request[httpMethod]({ url: this.options.endpoint, headers, formData, encoding: null }, (error, response, body) => {
       if (error) {
         logger.error(error, 'upload.multipart.error')
         this.emitError(error)
@@ -492,7 +495,7 @@ class Uploader {
   /**
    * Upload the file to S3 while it is still being downloaded.
    */
-  uploadS3 () {
+  uploadS3Multipart () {
     const file = createTailReadStream(this.path, {
       tail: true
     })
@@ -501,13 +504,13 @@ class Uploader {
       file.close()
     })
 
-    return this._uploadS3(file)
+    return this._uploadS3MultipartStream(file)
   }
 
   /**
    * Upload a stream to S3.
    */
-  _uploadS3 (stream) {
+  _uploadS3MultipartStream (stream) {
     if (!this.options.s3) {
       this.emitError(new Error('The S3 client is not configured on this companion instance.'))
       return
@@ -518,7 +521,7 @@ class Uploader {
 
     const upload = client.upload({
       Bucket: options.bucket,
-      Key: options.getKey(null, filename),
+      Key: options.getKey(null, filename, this.options.metadata),
       ACL: options.acl,
       ContentType: this.options.metadata.type,
       Body: stream

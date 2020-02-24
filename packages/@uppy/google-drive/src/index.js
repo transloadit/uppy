@@ -25,7 +25,6 @@ module.exports = class GoogleDrive extends Plugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
-      storage: this.opts.storage,
       provider: 'drive',
       authProvider: 'google',
       pluginId: this.id

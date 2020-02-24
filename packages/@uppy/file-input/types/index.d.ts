@@ -1,20 +1,16 @@
-import Uppy = require('@uppy/core');
+import Uppy = require('@uppy/core')
+import FileInputLocale = require('./generatedLocale')
 
 declare module FileInput {
-  interface FileInputOptions extends Uppy.PluginOptions {
-    pretty: boolean;
-    inputName: string;
+  export interface FileInputOptions extends Uppy.PluginOptions {
+    replaceTargetContent?: boolean
+    target?: Uppy.PluginTarget
+    pretty?: boolean
+    inputName?: string
+    locale?: FileInputLocale
   }
 }
 
-declare class FileInput extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<FileInput.FileInputOptions>);
-}
+declare class FileInput extends Uppy.Plugin<FileInput.FileInputOptions> {}
 
-export = FileInput;
-
-declare module '@uppy/core' {
-  export interface Uppy {
-    use(pluginClass: typeof FileInput, opts: Partial<FileInput.FileInputOptions>): Uppy.Uppy;
-  }
-}
+export = FileInput

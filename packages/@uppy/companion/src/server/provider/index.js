@@ -6,62 +6,13 @@ const config = require('@purest/providers')
 const dropbox = require('./dropbox')
 const drive = require('./drive')
 const instagram = require('./instagram')
+const instagramGraph = require('./instagram/graph')
 const facebook = require('./facebook')
 const onedrive = require('./onedrive')
 const { getURLBuilder } = require('../helpers/utils')
 const logger = require('../logger')
-
-/**
- * Provider interface defines the specifications of any provider implementation
- *
- * @interface
- */
-class Provider {
-  /**
-   *
-   * @param {object} options
-   */
-  constructor (options) {
-    return this
-  }
-
-  /**
-   *
-   * @param {object} options
-   * @param {function} cb
-   */
-  list (options, cb) {}
-
-  /**
-   *
-   * @param {object} options
-   * @param {function} cb
-   */
-  download (options, cb) {}
-
-  /**
-   *
-   * @param {object} options
-   * @param {function} cb
-   */
-  thumbnail (options, cb) {}
-
-  /**
-   *
-   * @param {object} options
-   * @param {function} cb
-   */
-  size (options, cb) {}
-
-  /**
-   * @returns {string}
-   */
-  static get authProvider () {
-    return ''
-  }
-}
-
-module.exports.ProviderInterface = Provider
+// eslint-disable-next-line
+const Provider = require('./Provider')
 
 /**
  * adds the desired provider module to the request object,
@@ -90,10 +41,22 @@ module.exports.getProviderMiddleware = (providers) => {
 }
 
 /**
+ * @param {{server: object, providerOptions: object}} companionOptions
  * @return {Object.<string, typeof Provider>}
  */
-module.exports.getDefaultProviders = () => {
-  return { dropbox, drive, instagram, facebook, onedrive }
+module.exports.getDefaultProviders = (companionOptions) => {
+  const { providerOptions } = companionOptions || { providerOptions: null }
+  // @todo: 2.0 we should rename drive to googledrive or google-drive or google
+  const providers = { dropbox, drive, facebook, onedrive }
+  // Instagram's Graph API key is just numbers, while the old API key is hex
+  const usesGraphAPI = () => /^\d+$/.test(providerOptions.instagram.key)
+  if (providerOptions && providerOptions.instagram && usesGraphAPI()) {
+    providers.instagram = instagramGraph
+  } else {
+    providers.instagram = instagram
+  }
+
+  return providers
 }
 
 /**
@@ -113,17 +76,17 @@ module.exports.addCustomProviders = (customProviders, providers, grantConfig) =>
 
 /**
  *
- * @param {{server: object, providerOptions: object}} options
+ * @param {{server: object, providerOptions: object}} companionOptions
  * @param {object} grantConfig
  */
-module.exports.addProviderOptions = (options, grantConfig) => {
-  const { server, providerOptions } = options
+module.exports.addProviderOptions = (companionOptions, grantConfig) => {
+  const { server, providerOptions } = companionOptions
   if (!validOptions({ server })) {
     logger.warn('invalid provider options detected. Providers will not be loaded', 'provider.options.invalid')
     return
   }
 
-  grantConfig.server = {
+  grantConfig.defaults = {
     host: server.host,
     protocol: server.protocol,
     path: server.path
@@ -136,13 +99,15 @@ module.exports.addProviderOptions = (options, grantConfig) => {
       // explicitly add providerOptions so users don't override other providerOptions.
       grantConfig[authProvider].key = providerOptions[authProvider].key
       grantConfig[authProvider].secret = providerOptions[authProvider].secret
+      const { provider, name } = authNameToProvider(authProvider, companionOptions)
+      Object.assign(grantConfig[authProvider], provider.getExtraConfig())
 
       // override grant.js redirect uri with companion's custom redirect url
       if (oauthDomain) {
-        const providerName = authToProviderName(authProvider)
+        const providerName = name
         const redirectPath = `/${providerName}/redirect`
         const isExternal = !!server.implicitPath
-        const fullRedirectPath = getURLBuilder(options)(redirectPath, isExternal, true)
+        const fullRedirectPath = getURLBuilder(companionOptions)(redirectPath, isExternal, true)
         grantConfig[authProvider].redirect_uri = `${server.protocol}://${oauthDomain}${fullRedirectPath}`
       }
 
@@ -161,14 +126,16 @@ module.exports.addProviderOptions = (options, grantConfig) => {
 /**
  *
  * @param {string} authProvider
+ * @param {{server: object, providerOptions: object}} options
+ * @return {{name: string, provider: typeof Provider}}
  */
-const authToProviderName = (authProvider) => {
-  const providers = exports.getDefaultProviders()
+const authNameToProvider = (authProvider, options) => {
+  const providers = exports.getDefaultProviders(options)
   const providerNames = Object.keys(providers)
   for (const name of providerNames) {
     const provider = providers[name]
     if (provider.authProvider === authProvider) {
-      return name
+      return { name, provider }
     }
   }
 }

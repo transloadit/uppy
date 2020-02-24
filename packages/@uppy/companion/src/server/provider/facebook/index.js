@@ -1,12 +1,18 @@
+const Provider = require('../Provider')
+
 const request = require('request')
 const purest = require('purest')({ request })
 const utils = require('../../helpers/utils')
 const logger = require('../../logger')
 const adapter = require('./adapter')
-const AuthError = require('../error')
+const { ProviderApiError, ProviderAuthError } = require('../error')
 
-class Facebook {
+/**
+ * Adapter for API https://developers.facebook.com/docs/graph-api/using-graph-api/
+ */
+class Facebook extends Provider {
   constructor (options) {
+    super(options)
     this.authProvider = options.provider = Facebook.authProvider
     this.client = purest(options)
   }
@@ -150,11 +156,12 @@ class Facebook {
     if (resp) {
       if (resp.body && resp.body.error.code === 190) {
         // Invalid OAuth 2.0 Access Token
-        return new AuthError()
+        return new ProviderAuthError()
       }
 
-      const msg = resp.body && resp.body.error ? resp.body.error.message : ''
-      return new Error(`request to ${this.authProvider} returned status: ${resp.statusCode}, message: ${msg}`)
+      const fallbackMessage = `request to ${this.authProvider} returned ${resp.statusCode}`
+      const msg = resp.body && resp.body.error ? resp.body.error.message : fallbackMessage
+      return new ProviderApiError(msg, resp.statusCode)
     }
 
     return err

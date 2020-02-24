@@ -12,10 +12,14 @@ function resolveUrl (origin, link) {
 }
 
 function isXml (content, xhr) {
-  const contentType = (xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type'))
-    // Get rid of mime parameters like charset=utf-8
-    .replace(/;.*$/, '')
-    .toLowerCase()
+  const rawContentType = (xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type'))
+
+  if (rawContentType === null) {
+    return false
+  }
+
+  // Get rid of mime parameters like charset=utf-8
+  const contentType = rawContentType.replace(/;.*$/, '').toLowerCase()
   if (typeof contentType === 'string') {
     if (contentType === 'application/xml' || contentType === 'text/xml') {
       return true
@@ -93,8 +97,8 @@ module.exports = class AwsS3 extends Plugin {
       throw new Error('Expected a `companionUrl` option containing a Companion address.')
     }
 
-    const filename = encodeURIComponent(file.meta.name)
-    const type = encodeURIComponent(file.meta.type)
+    const filename = file.meta.name
+    const type = file.meta.type
     const metadata = {}
     this.opts.metaFields.forEach((key) => {
       if (file.meta[key] != null) {
