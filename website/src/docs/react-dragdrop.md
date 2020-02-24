@@ -67,7 +67,12 @@ class MyComponent extends React.Component {
 The `<DragDrop />` component supports all [DragDrop](/docs/drag-drop/) options as props.
 
 ```js
+// assuming `this.uppy` contains an Uppy instance:
+
 <DragDrop
+  width={200}
+  height={200}
+  note="Images up to 200×200px"
   uppy={this.uppy}
   locale={{
     strings: {
