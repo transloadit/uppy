@@ -144,7 +144,7 @@ zh_TW.strings = {
     '0': '您至少要選擇%{smart_count}個檔案',
     '1': '您至少要選擇%{smart_count}個檔案',
     '2': '您至少要選擇%{smart_count}個檔案'
-}
+  }
 }
 
 zh_TW.pluralize = function (n) {
