@@ -14,6 +14,7 @@ describe('test protected request Agent', () => {
     request(options, (err) => {
       if (err) {
         expect(err.message).not.toEqual(FORBIDDEN_IP_ADDRESS)
+        expect(err.message.startsWith(FORBIDDEN_IP_ADDRESS)).toEqual(false)
         done()
       } else {
         done()
@@ -71,7 +72,7 @@ describe('test protected request Agent', () => {
     }
 
     request(options, (err) => {
-      expect(err).toBeInstanceOf(Error)
+      expect(err).toBeTruthy(Error)
       expect(err.message.startsWith(FORBIDDEN_IP_ADDRESS)).toEqual(true)
       done()
     })
