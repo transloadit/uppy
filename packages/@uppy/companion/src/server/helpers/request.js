@@ -2,6 +2,7 @@ const http = require('http')
 const https = require('https')
 const dns = require('dns')
 const ipAddress = require('ip-address')
+const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 
 function isIPAddress (address) {
   const addressAsV6 = new ipAddress.Address6(address)
@@ -72,6 +73,8 @@ function isPrivateIP (ipAddress) {
   return isPrivate
 }
 
+module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
+
 /**
  * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
  * @param {string} protocol http or https protocol needed for the request
@@ -95,7 +98,7 @@ function dnsLookup (hostname, options, callback) {
     const toValidate = Array.isArray(addresses) ? addresses : [{ address: addresses }]
     for (const record of toValidate) {
       if (isPrivateIP(record.address)) {
-        callback(new Error('Forbidden IP address'), addresses, maybeFamily)
+        callback(new Error(FORBIDDEN_IP_ADDRESS), addresses, maybeFamily)
         return
       }
     }
@@ -108,7 +111,7 @@ class HttpAgent extends http.Agent {
   createConnection (options, callback) {
     options.lookup = dnsLookup
     if (isIPAddress(options.host) && isPrivateIP(options.host)) {
-      callback(new Error('Forbidden IP address'))
+      callback(new Error(FORBIDDEN_IP_ADDRESS))
       return
     }
     // @ts-ignore
@@ -120,7 +123,7 @@ class HttpsAgent extends https.Agent {
   createConnection (options, callback) {
     options.lookup = dnsLookup
     if (isIPAddress(options.host) && isPrivateIP(options.host)) {
-      callback(new Error('Forbidden IP address'))
+      callback(new Error(FORBIDDEN_IP_ADDRESS))
       return
     }
     // @ts-ignore
