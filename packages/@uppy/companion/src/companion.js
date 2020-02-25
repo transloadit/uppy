@@ -19,6 +19,7 @@ const { STORAGE_PREFIX } = require('./server/Uploader')
 const middlewares = require('./server/middlewares')
 const { shortenToken } = require('./server/Uploader')
 const { ProviderApiError, ProviderAuthError } = require('./server/provider/error')
+const ms = require('ms')
 
 const defaultOptions = {
   server: {
@@ -31,7 +32,8 @@ const defaultOptions = {
       endpoint: 'https://{service}.{region}.amazonaws.com',
       conditions: [],
       useAccelerateEndpoint: false,
-      getKey: (req, filename) => filename
+      getKey: (req, filename) => filename,
+      expires: ms('5 minutes') / 1000
     }
   },
   debug: true

@@ -65,8 +65,8 @@
     "ws": "6.2.1"
   },
   "devDependencies": {
-    "@types/node": "^12.6.8",
-    "typescript": "^3.4.5"
+    "@types/node": "12.12.27",
+    "typescript": "3.7.5"
   },
   "files": [
     "bin/",
