@@ -95,7 +95,7 @@ pt_BR.strings = {
   uploadPaused: 'Envio de arquivos pausado',
   uploadXFiles: {
     '0': 'Enviar %{smart_count} arquivo',
-    '1': 'Enviar %{smart_count} arquivo',
+    '1': 'Enviar %{smart_count} arquivos',
     '2': 'Enviar %{smart_count} arquivos'
   },
   uploadXNewFiles: {
