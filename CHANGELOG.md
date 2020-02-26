@@ -113,7 +113,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 Released: 2020-02-26
 
-This release patches a Server Side Request Forgery (SSRF) vulnerability on `@uppy/companion`
+⚠️ This release patches a Server Side Request Forgery (SSRF) Security vulnerability on `@uppy/companion`
 
 | Package | Version | Package | Version |
 |-|-|-|-|
@@ -122,7 +122,7 @@ This release patches a Server Side Request Forgery (SSRF) vulnerability on `@upp
 | @uppy/locales | 1.11.4 | uppy | 1.9.3 |
 | @uppy/react | 1.4.6 | - | - |
 
-- @uppy/companion: patch SSRF vulnerability (#2083 / @ifedapoolarewaju)
+- @uppy/companion: ⚠️ patch SSRF Security vulnerability (#2083 / @ifedapoolarewaju)
 - @uppy/webcam: Check the availability isTypeSupported api before calling (#2072 / @naveed-ahmad)
 - @uppy/locales: Locale DE_de added new keys. (#2084 / @SpazzMarticus)
 - @uppy/locales: Update zh_TW.js (#2075 / @cellvinchung)
