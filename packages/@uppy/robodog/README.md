@@ -18,8 +18,8 @@ We recommend installing from npm and then using a module bundler such as [Webpac
 Alternatively, you can also use this package in a pre-built bundle from Transloadit's CDN: Edgly.
 
 ```html
-<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v1.9.2/robodog.min.css">
-<script src="https://transloadit.edgly.net/releases/uppy/v1.9.2/robodog.min.js"></script>
+<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v1.9.3/robodog.min.css">
+<script src="https://transloadit.edgly.net/releases/uppy/v1.9.3/robodog.min.js"></script>
 ```
 
 Then, a global `Robodog` variable will be available. For usage instructions, please see the [main Robodog documentation](https://uppy.io/docs/robodog).
