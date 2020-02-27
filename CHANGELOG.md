@@ -109,6 +109,19 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] providers: Get Facebook integration on its feet (@ife)
 - [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 
+## 1.9.4
+
+Released: 2020-02-27
+
+Previous `1.9.3` release has been deprecated due to broken URL Provider (see [#2094](https://github.com/transloadit/uppy/pull/2094)).
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 1.9.4 | @uppy/locales | 1.11.5 |
+
+- @uppy/companion: return the right httpAgent when protocol value contains ":" (#2094 / @ifedapoolarewaju)
+- @uppy/locales: fix pluralization in pt_BR (#2093 / @fgallinari)
+
 ## 1.9.3
 
 Released: 2020-02-26
