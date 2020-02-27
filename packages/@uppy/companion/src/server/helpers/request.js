@@ -77,15 +77,15 @@ module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
 
 /**
  * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
- * @param {string} protocol http or https protocol needed for the request
+ * @param {string} protocol http or http: or https: or https protocol needed for the request
  * @param {boolean} blockPrivateIPs if set to false, this protection will be disabled
  */
 module.exports.getProtectedHttpAgent = (protocol, blockPrivateIPs) => {
   if (blockPrivateIPs) {
-    return protocol === 'https' ? HttpsAgent : HttpAgent
+    return protocol.startsWith('https') ? HttpsAgent : HttpAgent
   }
 
-  return protocol === 'https' ? https.Agent : http.Agent
+  return protocol.startsWith('https') ? https.Agent : http.Agent
 }
 
 function dnsLookup (hostname, options, callback) {
