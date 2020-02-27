@@ -2,6 +2,34 @@
 
 const { getProtectedHttpAgent, FORBIDDEN_IP_ADDRESS } = require('../../src/server/helpers/request')
 const request = require('request')
+const http = require('http')
+const https = require('https')
+
+describe('test getProtectedHttpAgent', () => {
+  test('setting "https:" as protocol', (done) => {
+    const Agent = getProtectedHttpAgent('https:')
+    expect(Agent).toEqual(https.Agent)
+    done()
+  })
+
+  test('setting "https" as protocol', (done) => {
+    const Agent = getProtectedHttpAgent('https')
+    expect(Agent).toEqual(https.Agent)
+    done()
+  })
+
+  test('setting "http:" as protocol', (done) => {
+    const Agent = getProtectedHttpAgent('http:')
+    expect(Agent).toEqual(http.Agent)
+    done()
+  })
+
+  test('setting "http" as protocol', (done) => {
+    const Agent = getProtectedHttpAgent('http')
+    expect(Agent).toEqual(http.Agent)
+    done()
+  })
+})
 
 describe('test protected request Agent', () => {
   test('allows URLs without IP addresses', (done) => {
