@@ -34,7 +34,7 @@ Add a `<script>` tag with Uppy bundle and the locale pack you’d like to use. Y
 
 ```html
 <script src="https://transloadit.edgly.net/releases/uppy/v1.9.3/uppy.min.js"></script>
-<script src="https://transloadit.edgly.net/releases/uppy/locales/v1.11.4/de_DE.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/locales/v1.11.5/de_DE.min.js"></script>
 
 <script>
 var uppy = Uppy.Core({
