@@ -61,15 +61,9 @@ module.exports = class Dashboard extends Plugin {
         saveChanges: 'Save changes',
         cancel: 'Cancel',
         myDevice: 'My Device',
-        dropBrowse: 'Drop files here or %{browse}',
-        dropBrowseOrImport: 'Drop files here, %{browse} or import from:',
-        dropPasteImport: 'You can also %{browse}, paste or import your files:',
-        dropPasteImportSingleProvider: 'Drag and drop you files, %{browse}, paste or import from %{provider}',
-        dropPaste: 'You can also %{browse} or just paste your files',
-        dropFilesHere: 'Drop files here, paste or import from:',
-        dropFilesHerePasteOr: 'Drop files here, paste or',
+        dropPaste: 'Drop files here, paste or %{browse}',
+        dropPasteImport: 'Drop files here, paste or import from',
         dropHint: 'Drop your files here',
-        orImportFrom: 'Or import from:',
         browse: 'browse',
         browseFiles: 'Browse files',
         uploadComplete: 'Upload complete',
@@ -651,7 +645,7 @@ module.exports = class Dashboard extends Plugin {
   superFocusOnEachUpdate = () => {
     const isFocusInUppy = this.el.contains(document.activeElement)
     // When focus is lost on the page (== focus is on body for most browsers, or focus is null for IE11)
-    const isFocusNowhere = document.activeElement === document.querySelector('body') || document.activeElement === null
+    const isFocusNowhere = document.activeElement === document.body || document.activeElement === null
     const isInformerHidden = this.uppy.getState().info.isHidden
     const isModal = !this.opts.inline
 
