@@ -118,7 +118,7 @@
       flex-shrink: 0;
       flex-grow: 0;
 
-      border-top: 1px solid $gray-800;
+      border-top: 1px solid $gray-200;
       padding: 0 15px;
       background-color: $gray-50;
 
@@ -130,6 +130,7 @@
       }
 
       [data-uppy-theme="dark"] & {
+        border-top: 1px solid $gray-800;
         background-color: $gray-900;
       }
     }

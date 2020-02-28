@@ -1,4 +1,4 @@
-const { desktopIcon, mobileIcon } = require('./icons')
+const { iconMyDevice } = require('./icons')
 const { h, Component } = require('preact')
 const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 
@@ -73,7 +73,7 @@ class AddFiles extends Component {
           data-uppy-super-focusable
           onclick={this.triggerFileInputClick}
         >
-          {this.props.isMobileDevice ? mobileIcon() : desktopIcon()}
+          {iconMyDevice()}
           <div class="uppy-DashboardTab-name">{this.props.i18n('myDevice')}</div>
         </button>
       </div>
@@ -92,38 +92,12 @@ class AddFiles extends Component {
         {this.props.i18n('browse')}
       </button>
 
-    // const renderSingleInlineProvider = (acquirer) => {
-    //   const onclick = acquirer.id === 'local'
-    //     ? this.triggerFileInputClick
-    //     : () => this.props.showPanel(acquirer.id)
-
-    //   return (
-    //     <button
-    //       type="button"
-    //       class="uppy-u-reset uppy-Dashboard-dropFilesSingleInlineProvider"
-    //       tabindex={0}
-    //       aria-controls={`uppy-DashboardContent-panel--${acquirer.id}`}
-    //       aria-selected={this.props.activePickerPanel.id === acquirer.id}
-    //       data-uppy-super-focusable
-    //       onclick={onclick}
-    //     >
-    //       <span>{acquirer.name}</span>
-    //       {acquirer.icon()}
-    //     </button>
-    //   )
-    // }
-
     const renderDropFilesSubtitle = () => {
       switch (numberOfAcquirers) {
         case 0:
-          return this.props.i18nArray('dropBrowse', { browse })
-        // case 1:
-          // return this.props.i18nArray('dropPasteImportSingleProvider', {
-          //   browse: browse,
-          //   provider: renderSingleInlineProvider(this.props.acquirers[0])
-          // })
+          return this.props.i18nArray('dropPaste', { browse })
         default:
-          return this.props.i18nArray('dropBrowseOrImport', { browse })
+          return this.props.i18nArray('dropPasteImport')
       }
     }
 
