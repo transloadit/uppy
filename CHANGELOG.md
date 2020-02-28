@@ -110,6 +110,18 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] providers: Get Facebook integration on its feet (@ife)
 - [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 
+## 1.9.5
+
+Released 2020-02-28
+
+This release rolls out a fix for companion an issue introduced after [this PR](https://github.com/transloadit/uppy/pull/1668). See [#2096](https://github.com/transloadit/uppy/pull/2096) for more details.
+
+| Package | Version |
+|-|-|
+| @uppy/companion | 1.9.5 |
+
+- @uppy/companion: read state from session in oauth-redirect controller (#2096 / @ifedapoolarewaju)
+
 ## 1.9.4
 
 Released: 2020-02-27
