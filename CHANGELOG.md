@@ -61,6 +61,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
 - [ ] xhr: set the `limit` option to a sensible default, like 10
+- [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
 
 ## 1.14
 
@@ -109,6 +110,52 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] providers: Get Facebook integration on its feet (@ife)
 - [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 - [ ] s3: immediately start uploading files once the signed URL is generated (#2060, @goto-bus-stop)
+
+## 1.9.5
+
+Released 2020-02-28
+
+This release rolls out a fix for companion an issue introduced after [this PR](https://github.com/transloadit/uppy/pull/1668). See [#2096](https://github.com/transloadit/uppy/pull/2096) for more details.
+
+| Package | Version |
+|-|-|
+| @uppy/companion | 1.9.5 |
+
+- @uppy/companion: read state from session in oauth-redirect controller (#2096 / @ifedapoolarewaju)
+
+## 1.9.4
+
+Released: 2020-02-27
+
+Previous `1.9.3` release has been deprecated due to broken URL Provider (see [#2094](https://github.com/transloadit/uppy/pull/2094)).
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 1.9.4 | @uppy/locales | 1.11.5 |
+
+- @uppy/companion: return the right httpAgent when protocol value contains ":" (#2094 / @ifedapoolarewaju)
+- @uppy/locales: fix pluralization in pt_BR (#2093 / @fgallinari)
+
+## 1.9.3
+
+Released: 2020-02-26
+
+⚠️ This release patches a Server Side Request Forgery (SSRF) Security vulnerability on `@uppy/companion`
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 1.9.3 | @uppy/robodog | 1.5.3 |
+| @uppy/drag-drop | 1.4.6 | @uppy/webcam | 1.5.5 |
+| @uppy/locales | 1.11.4 | uppy | 1.9.3 |
+| @uppy/react | 1.4.6 | - | - |
+
+- @uppy/companion: ⚠️ patch SSRF Security vulnerability (#2083 / @ifedapoolarewaju)
+- @uppy/webcam: Check the availability isTypeSupported api before calling (#2072 / @naveed-ahmad)
+- @uppy/locales: Locale DE_de added new keys. (#2084 / @SpazzMarticus)
+- @uppy/locales: Update zh_TW.js (#2075 / @cellvinchung)
+- @uppy/drag-drop: add a type test and document shared props (#2003 / @andychongyz)
+- @uppy/companion: make s3 signed url expiry configurable in companion (#2085 / @adamelmore)
+- build: contributors:save fix — the node.js version (#2078 / @arturi)
 
 ## 1.9.2
 
