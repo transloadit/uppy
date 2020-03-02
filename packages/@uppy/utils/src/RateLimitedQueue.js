@@ -8,6 +8,10 @@ function findIndex (array, predicate) {
   return -1
 }
 
+function createCancelError () {
+  return new Error('Cancelled')
+}
+
 module.exports = class RateLimitedQueue {
   constructor (limit) {
     if (typeof limit !== 'number' || limit === 0) {
@@ -115,36 +119,45 @@ module.exports = class RateLimitedQueue {
   }
 
   wrapPromiseFunction (fn, queueOptions) {
-    return (...args) => new Promise((resolve, reject) => {
-      const queuedRequest = this.run(() => {
-        let cancelError
-        let promise
-        try {
-          promise = Promise.resolve(fn(...args))
-        } catch (err) {
-          promise = Promise.reject(err)
-        }
-
-        promise.then((result) => {
-          if (cancelError) {
-            reject(cancelError)
-          } else {
-            queuedRequest.done()
-            resolve(result)
+    return (...args) => {
+      let queuedRequest
+      const outerPromise = new Promise((resolve, reject) => {
+        queuedRequest = this.run(() => {
+          let cancelError
+          let innerPromise
+          try {
+            innerPromise = Promise.resolve(fn(...args))
+          } catch (err) {
+            innerPromise = Promise.reject(err)
           }
-        }, (err) => {
-          if (cancelError) {
-            reject(cancelError)
-          } else {
-            queuedRequest.done()
-            reject(err)
-          }
-        })
 
-        return () => {
-          cancelError = new Error('Cancelled')
-        }
-      }, queueOptions)
-    })
+          innerPromise.then((result) => {
+            if (cancelError) {
+              reject(cancelError)
+            } else {
+              queuedRequest.done()
+              resolve(result)
+            }
+          }, (err) => {
+            if (cancelError) {
+              reject(cancelError)
+            } else {
+              queuedRequest.done()
+              reject(err)
+            }
+          })
+
+          return () => {
+            cancelError = createCancelError()
+          }
+        }, queueOptions)
+      })
+
+      outerPromise.abort = () => {
+        queuedRequest.abort()
+      }
+
+      return outerPromise
+    }
   }
 }

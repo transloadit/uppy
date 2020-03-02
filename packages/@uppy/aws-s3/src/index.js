@@ -31,6 +31,7 @@ const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const settle = require('@uppy/utils/lib/settle')
+const hasProperty = require('@uppy/utils/lib/hasProperty')
 const { RequestClient } = require('@uppy/companion-client')
 const qsStringify = require('qs-stringify')
 const MiniXHRUpload = require('./MiniXHRUpload')
@@ -153,11 +154,24 @@ module.exports = class AwsS3 extends Plugin {
       console.error(err)
       throw err
     }
-
-    return params
   }
 
   handleUpload (fileIDs) {
+    /**
+     * keep track of `getUploadParameters()` responses
+     * so we can cancel the calls individually using just a file ID
+     * @type {Object.<string, Promise>}
+     */
+    const paramsPromises = Object.create(null)
+
+    function onremove (file) {
+      const { id } = file
+      if (hasProperty(paramsPromises, id)) {
+        paramsPromises[id].abort()
+      }
+    }
+    this.uppy.on('file-removed', onremove)
+
     fileIDs.forEach((id) => {
       const file = this.uppy.getFile(id)
       this.uppy.emit('preprocess-progress', file, {
@@ -176,47 +190,51 @@ module.exports = class AwsS3 extends Plugin {
 
     return settle(fileIDs.map((id, index) => {
       const file = this.uppy.getFile(id)
-      return getUploadParameters(file)
-        .then((params) => {
-          return this.validateParameters(file, params)
+      paramsPromises[id] = getUploadParameters(file)
+      return paramsPromises[id].then((params) => {
+        delete paramsPromises[id]
+        this.validateParameters(file, params)
+
+        this.uppy.emit('preprocess-progress', file, {
+          mode: 'determinate',
+          message: this.i18n('preparingUpload'),
+          value: 1
         })
-        .then((params) => {
-          this.uppy.emit('preprocess-progress', file, {
-            mode: 'determinate',
-            message: this.i18n('preparingUpload'),
-            value: 1
-          })
 
-          const {
-            method = 'post',
-            url,
-            fields,
-            headers
-          } = params
-          const xhrOpts = {
-            method,
-            formData: method.toLowerCase() === 'post',
-            endpoint: url,
-            metaFields: fields ? Object.keys(fields) : []
-          }
+        const {
+          method = 'post',
+          url,
+          fields,
+          headers
+        } = params
+        const xhrOpts = {
+          method,
+          formData: method.toLowerCase() === 'post',
+          endpoint: url,
+          metaFields: fields ? Object.keys(fields) : []
+        }
 
-          if (headers) {
-            xhrOpts.headers = headers
-          }
+        if (headers) {
+          xhrOpts.headers = headers
+        }
 
-          this.uppy.setFileState(file.id, {
-            meta: { ...file.meta, ...fields },
-            xhrUpload: xhrOpts
-          })
-
-          this.uppy.emit('preprocess-complete', this.uppy.getFile(file.id))
-
-          return this._uploader.uploadFile(file.id, index, numberOfFiles)
+        this.uppy.setFileState(file.id, {
+          meta: { ...file.meta, ...fields },
+          xhrUpload: xhrOpts
         })
-        .catch((error) => {
-          this.uppy.emit('upload-error', file, error)
-        })
-    }))
+
+        this.uppy.emit('preprocess-complete', this.uppy.getFile(file.id))
+
+        return this._uploader.uploadFile(file.id, index, numberOfFiles)
+      }).catch((error) => {
+        delete paramsPromises[id]
+        this.uppy.emit('upload-error', file, error)
+      })
+    })).then((settled) => {
+      // cleanup.
+      this.uppy.off('file-removed', onremove)
+      return settled
+    })
   }
 
   install () {
