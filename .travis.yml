@@ -48,15 +48,18 @@ jobs:
         - npm run test:type
     - name: 'Build'
       node_js: 10
+      if: NOT (branch = name-builds AND type = push AND commit_message =~ /^Release/)
       script:
         - npm run build
-        # Publish release commits to CDN after a `BUILD=true` run, because we have all the files now
-        - |
-          if [ "${TRAVIS_PULL_REQUEST}" = "false" ] && [[ "${TRAVIS_COMMIT_MESSAGE}" =~ ^Release* ]]; then
-            npm run uploadcdn uppy
-            npm run uploadcdn @uppy/robodog
-            npm run uploadcdn @uppy/locales
-          fi
+    - name: 'Build and update CDN releases'
+      node_js: 10
+      if: branch = name-builds AND type = push AND commit_message =~ /^Release/
+      script:
+        - echo 'took the CDN release path'
+        # - npm run build
+        # - npm run uploadcdn uppy
+        # - npm run uploadcdn @uppy/robodog
+        # - npm run uploadcdn @uppy/locales
     - name: 'Run Companion tests'
       node_js: 10
       services:
