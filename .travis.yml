@@ -69,7 +69,7 @@ jobs:
         skip_cleanup: true
         script: bin/travis-deploy-companion
         on:
-          branch: master
+          branch: name-builds
     - name: 'Run Companion tests (Node.js 6)'
       node_js: 'stable'
       services:
@@ -82,14 +82,12 @@ jobs:
     # https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
     - name: 'Build website'
       node_js: 10
-      if: branch = master AND type = push
+      if: branch = name-builds AND type = push
       script: 'true' # no-op, `deploy` step will do the work
       deploy:
       - provider: script
         skip_cleanup: true
         script: bin/travis-deploy
-        on:
-          branch: master
 
 before_install:
 - nvm install-latest-npm
