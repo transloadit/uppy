@@ -23,73 +23,72 @@ jobs:
     # Run e2e tests on branch builds, not PRs
     # Start this first because it takes a while, so it doesn't only start running after
     # other jobs have run
-    - node_js: 10
-      env: ENDTOEND=true
+    - name: 'Run end-to-end browser tests'
+      node_js: 10
       if: type = push
       addons:
         apt: *APT
         hosts: *HOSTS
         sauce_connect: *SAUCE
-    - node_js: 'stable'
-      env: UNIT=true
-      addons:
-        apt: *APT
-    - node_js: 10
-      env: UNIT=true
-      addons:
-        apt: *APT
-    - node_js: 10
-      env: LINT=true
-      addons:
-        apt: *APT
-    - node_js: 10
-      env: BUILD=true
-      addons:
-        apt: *APT
-    - node_js: 10
-      env: COMPANION=true
-      addons:
-        apt: *APT
-    - node_js: 'stable'
-      env: COMPANION_NODE6=true
-      addons:
-        apt: *APT
+      script: npm run test:endtoend
+    - name: 'Run unit tests'
+      node_js: 'stable'
+      script: npm run test:unit
+    - name: 'Run unit tests on Node.js 10'
+      node_js: 10
+      script: npm run test:unit
+    - name: 'Run Linting and type tests'
+      node_js: 10
+      script:
+        - npm run lint
+        # Need to do a bunch of work to generate the locale typings 🙃
+        - npm run build:lib
+        - npm run build:companion
+        - npm run build:locale-pack
+        - npm run test:type
+    - name: 'Build'
+      node_js: 10
+      script:
+        - npm run build
+        # Publish release commits to CDN after a `BUILD=true` run, because we have all the files now
+        - |
+          if [ "${TRAVIS_PULL_REQUEST}" = "false" ] && [[ "${TRAVIS_COMMIT_MESSAGE}" =~ ^Release* ]]; then
+            npm run uploadcdn uppy
+            npm run uploadcdn @uppy/robodog
+            npm run uploadcdn @uppy/locales
+          fi
+    - name: 'Run Companion tests'
+      node_js: 10
+      services:
+        - docker
+      script: npm run test:companion
+    - name: 'Run Companion tests (Node.js 6)'
+      node_js: 'stable'
+      services:
+        - docker
+      script:
+        - nvm install 6.0.0
+        - nvm use 6.0.0
+        - npm run test:companion
     # Build the website when things are merged to master
-    - node_js: 10
-      env: WEBSITE=true
+    - name: 'Build website'
+      node_js: 10
       if: branch = master AND type = push
-      addons:
-        apt: *APT
+      # Tell bin/travis-deploy to deploy the website
+      env: WEBSITE=true
+      script: 'true' # no-op, `deploy` step will do the work
 
 before_install:
 - nvm install-latest-npm
 install:
 - npm ci
-script:
-- 'if [ -n "${LINT-}" ]; then npm run lint; fi'
-# Need to do a bunch of work to generate the locale typings 🙃
-- 'if [ -n "${LINT-}" ]; then npm run build:lib && npm run build:companion && npm run build:locale-pack && npm run test:type; fi'
-- 'if [ -n "${UNIT-}" ]; then npm run test:unit; fi'
-- 'if [ -n "${COMPANION_NODE6-}" ]; then nvm install 6.0.0 && nvm use 6.0.0; fi'
-- 'if [ -n "${COMPANION-}" ] || [ -n "${COMPANION_NODE6-}" ]; then npm run test:companion; fi'
-- 'if [ -n "${ENDTOEND-}" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm run test:endtoend; fi'
-- 'if [ -n "${BUILD-}" ]; then npm run build; fi'
-# Publish release commits to CDN after a `BUILD=true` run, because we have all the files now
-- |
-  if [ -n "${BUILD-}" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ] &&\
-     [[ "${TRAVIS_COMMIT_MESSAGE}" =~ ^Release* ]]; then
-    npm run uploadcdn uppy
-    npm run uploadcdn @uppy/robodog
-    npm run uploadcdn @uppy/locales
-  fi
+addons:
+  apt: *APT
 cache:
   apt: true
   directories:
   - "~/.npm"
   - "~/.transloadit"
-services:
-# Only required for companion builds, but it's fast so who cares!
-- docker
 env:
   global:
   - CXX=g++-4.8
