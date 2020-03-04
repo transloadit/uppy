@@ -3,7 +3,4 @@ set -o pipefail
 set -o errexit
 set -o nounset
 
-echo 'hello from bin/travis-deploy-companion!'
-exit 0
-
 ./packages/@uppy/companion/infra/kube/gcloud-deploy.sh
