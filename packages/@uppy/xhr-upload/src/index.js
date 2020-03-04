@@ -8,6 +8,8 @@ const settle = require('@uppy/utils/lib/settle')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
 const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
+const NetworkError = require('@uppy/utils/lib/NetworkError')
+const isNetworkError = require('@uppy/utils/lib/isNetworkError')
 
 function buildResponseError (xhr, error) {
   // No error message
@@ -17,6 +19,10 @@ function buildResponseError (xhr, error) {
   // Got something else
   if (!(error instanceof Error)) {
     error = Object.assign(new Error('Upload error'), { data: error })
+  }
+
+  if (isNetworkError(xhr)) {
+    error = new NetworkError(error)
   }
 
   error.request = xhr
@@ -90,7 +96,13 @@ module.exports = class XHRUpload extends Plugin {
        * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
        */
       getResponseError (responseText, response) {
-        return new Error('Upload error')
+        let error = new Error('Upload error')
+
+        if (isNetworkError(response)) {
+          error = new NetworkError(error)
+        }
+
+        return error
       },
       /**
        * @param {number} status the response status code
