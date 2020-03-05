@@ -383,6 +383,12 @@
   font-size: 90%;
 }
 
+// Privacy policy table overrides
+
+.page-privacy table td {
+  padding: 8px 0;
+}
+
 // Plugin list
 
 body.page-plugin-list .Content ul {
