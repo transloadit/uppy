@@ -201,6 +201,8 @@ export COMPANION_AWS_REGION="AWS REGION"
 export COMPANION_AWS_USE_ACCELERATE_ENDPOINT="false"
 # to set X-Amz-Expires query param in presigned urls (in seconds, default: 300)
 export COMPANION_AWS_EXPIRES="300"
+# to set a canned ACL for uploaded objects: https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
+export COMPANION_AWS_ACL="public-read"
 
 # corresponds to the server.oauthDomain option
 export COMPANION_OAUTH_DOMAIN="sub.domain.com"
