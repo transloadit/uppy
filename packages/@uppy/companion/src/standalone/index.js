@@ -180,7 +180,7 @@ if (app.get('env') === 'production') {
   app.use((err, req, res, next) => {
     // if the error is as a result of bad request from client, no need
     //  to flood production logs with this.
-    if (!err.status || err.status !== 400) {
+    if (err.status !== 400) {
       console.error('\x1b[31m', req.id, err, '\x1b[0m')
     }
     res.status(err.status || 500).json({ message: 'Something went wrong', requestId: req.id })
