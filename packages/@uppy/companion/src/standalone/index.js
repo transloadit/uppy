@@ -178,7 +178,11 @@ app.use((req, res, next) => {
 if (app.get('env') === 'production') {
   // @ts-ignore
   app.use((err, req, res, next) => {
-    console.error('\x1b[31m', req.id, err, '\x1b[0m')
+    // if the error is as a result of bad request from client, no need
+    //  to flood production logs with this.
+    if (!err.status || err.status !== 400) {
+      console.error('\x1b[31m', req.id, err, '\x1b[0m')
+    }
     res.status(err.status || 500).json({ message: 'Something went wrong', requestId: req.id })
   })
 } else {
