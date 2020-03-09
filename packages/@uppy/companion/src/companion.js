@@ -231,6 +231,8 @@ const getOptionsMiddleware = (options) => {
 
     const s3ClientOptions = Object.assign({
       signatureVersion: 'v4',
+      endpoint: s3ProviderOptions.endpoint,
+      region: s3ProviderOptions.region,
       // backwards compat
       useAccelerateEndpoint: s3ProviderOptions.useAccelerateEndpoint
     }, rawClientOptions)
