@@ -159,9 +159,9 @@ class AddFiles extends Component {
       <div class="uppy-DashboardTabs-list" role="tablist">
         {this.renderMyDeviceAcquirer()}
         {acquirersWithoutLastTwo.map((acquirer) => this.renderAcquirer(acquirer))}
-        <nobr role="presentation">
+        <span role="presentation" style="white-space: nowrap;">
           {lastTwoAcquirers.map((acquirer) => this.renderAcquirer(acquirer))}
-        </nobr>
+        </span>
       </div>
     )
   }
