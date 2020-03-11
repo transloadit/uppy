@@ -105,6 +105,10 @@
   text-align: center;
   margin: 80px 0;
 
+  @media #{$screen-medium} {
+    margin-top: 120px;
+  }
+
   &-container {
     max-width: 900px;
     padding: 0 20px;
