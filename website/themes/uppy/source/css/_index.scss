@@ -125,7 +125,7 @@
   }
 
   &-logos {
-    margin: 10px 0 0;
+    margin: 12px 0 0;
     font-size: 0;
   }
 
@@ -136,7 +136,7 @@
     vertical-align: middle;
 
     @media #{$screen-medium} {
-      margin: 0 30px 10px;
+      margin: 0 30px 5px;
     }
   }
 
