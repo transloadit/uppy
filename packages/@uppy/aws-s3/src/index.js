@@ -174,11 +174,7 @@ module.exports = class AwsS3 extends Plugin {
 
     fileIDs.forEach((id) => {
       const file = this.uppy.getFile(id)
-      this.uppy.emit('preprocess-progress', file, {
-        mode: 'determinate',
-        message: this.i18n('preparingUpload'),
-        value: 0
-      })
+      this.uppy.emit('upload-started', file)
     })
 
     // Wrapping rate-limited opts.getUploadParameters in a Promise takes some boilerplate!
@@ -194,12 +190,6 @@ module.exports = class AwsS3 extends Plugin {
       return paramsPromises[id].then((params) => {
         delete paramsPromises[id]
         this.validateParameters(file, params)
-
-        this.uppy.emit('preprocess-progress', file, {
-          mode: 'determinate',
-          message: this.i18n('preparingUpload'),
-          value: 1
-        })
 
         const {
           method = 'post',
@@ -222,8 +212,6 @@ module.exports = class AwsS3 extends Plugin {
           meta: { ...file.meta, ...fields },
           xhrUpload: xhrOpts
         })
-
-        this.uppy.emit('preprocess-complete', this.uppy.getFile(file.id))
 
         return this._uploader.uploadFile(file.id, index, numberOfFiles)
       }).catch((error) => {

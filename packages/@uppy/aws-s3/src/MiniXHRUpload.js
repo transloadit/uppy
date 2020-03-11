@@ -134,7 +134,8 @@ module.exports = class MiniXHRUpload {
 
     this.uppy.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
-      this.uppy.emit('upload-started', file)
+      // This is done in index.js in the S3 plugin.
+      // this.uppy.emit('upload-started', file)
 
       const data = opts.formData
         ? this._createFormDataUpload(file, opts)
