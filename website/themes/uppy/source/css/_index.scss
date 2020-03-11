@@ -148,6 +148,11 @@
   }
 }
 
+.IndexLogos-item path {
+  fill: #b7b9bb;
+  transition: fill 0.3s ease;
+}
+
 .IndexLogos-item--coursera:hover {
   .coursera {
     fill: #4a89dc;
