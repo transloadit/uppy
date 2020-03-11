@@ -92,10 +92,10 @@ module.exports = class RateLimitedQueue {
         throw new Error('Cannot mark a queued request as done: this indicates a bug')
       }
     }
+
     const index = findIndex(this.queuedHandlers, (other) => {
       return handler.priority > other.priority
     })
-    console.log('insert handler with prio', handler.priority, 'at', index)
     if (index === -1) {
       this.queuedHandlers.push(handler)
     } else {
