@@ -144,6 +144,35 @@
   }
 }
 
+.IndexLogos-item--coursera:hover {
+  .coursera {
+    fill: #4a89dc;
+  }
+}
+
+.IndexLogos-item--photobox:hover {
+  .photobox {
+    fill: #007377;
+  }
+}
+
+.IndexLogos-item--issuu:hover {
+  .issuu-glyph {
+    fill: #f26f61;
+  }
+
+  .issuu-text {
+    fill: #353535;
+  }
+}
+
+.IndexLogos-item--zulip:hover {
+  .zulip {
+    fill: #50a395;
+  }
+}
+
+
 .IndexDemo {
   margin: 60px auto;
   max-width: 900px;
