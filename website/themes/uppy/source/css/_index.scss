@@ -99,6 +99,51 @@
   }
 }
 
+.IndexLogos {
+  font-size: 12px;
+  color: $color-gray;
+  text-align: center;
+  margin: 80px 0;
+
+  &-container {
+    max-width: 900px;
+    padding: 0 20px;
+    margin: 0 auto;
+  }
+
+  &-title {
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 10px;
+    font-size: inherit;
+    color: inherit;
+  }
+
+  &-logos {
+    margin: 10px 0 0;
+    font-size: 0;
+  }
+
+  &-item {
+    font-size: 14px;
+    display: inline-block;
+    margin: 0 20px 5px;
+    vertical-align: middle;
+
+    @media #{$screen-medium} {
+      margin: 0 30px 10px;
+    }
+  }
+
+  &-join {
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
+  }
+}
+
 .IndexDemo {
   margin: 60px auto;
   max-width: 900px;
