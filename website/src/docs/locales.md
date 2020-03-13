@@ -46,7 +46,7 @@ var uppy = Uppy.Core({
 
 ## Overriding locale strings for a specific plugin
 
-Many plugins come with their own locale strings, and the packs we provide consist of most of those strings. You can, however, override a locale string for a specific plugin, regardless of whether you are using locale pack or not. See the plugin documentation for the list of locale strings it uses (for example, [here’s Dashboard](http://localhost:4000/docs/dashboard/#locale)).
+Many plugins come with their own locale strings, and the packs we provide consist of most of those strings. You can, however, override a locale string for a specific plugin, regardless of whether you are using locale pack or not. See the plugin documentation for the list of locale strings it uses (for example, [here’s how to use it with the Dashboard UI](https://uppy.io/docs/dashboard/#locale)).
 
 ```js
 const Uppy = require('@uppy/core')
