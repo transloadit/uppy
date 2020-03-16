@@ -18,6 +18,8 @@ function TestComponent() {
 // inline option should be removed from proptypes because it is always overridden
 // by the component
 expectError(<components.Dashboard inline />)
+expectError(<components.DashboardModal inline />)
+expectError(<components.DashboardModal replaceTargetContent />)
 
 {
   const el = (
@@ -37,4 +39,20 @@ expectError(<components.Dashboard inline />)
       }}
     />
   )
+}
+
+{
+  const el = (
+    <components.DashboardModal
+      uppy={uppy}
+      open
+      animateOpenClose
+      onRequestClose={() => {
+        alert('no')
+      }}
+    />
+  )
+
+  // use onRequestClose instead.
+  expectError(<components.DashboardModal onRequestCloseModal />)
 }
