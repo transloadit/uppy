@@ -4,7 +4,7 @@ const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 const ORIENTATIONS = require('./image-orientations')
-const Exif = require('./exif')
+const exifr = require('exifr/dist/mini.legacy.umd.js')
 
 /**
  * The Thumbnail Generator plugin
@@ -74,10 +74,9 @@ module.exports = class ThumbnailGenerator extends Plugin {
       })
     })
 
-    return Promise.all([onload, this.getOrientation(file)])
-      .then(values => {
-        const image = values[0]
-        const orientation = values[1]
+    return Promise.all([onload, exifr.orientation(file.data)])
+      .then(([image, rawOrientation]) => {
+        const orientation = ORIENTATIONS[rawOrientation || 1]
         const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.rotation)
         const rotatedImage = this.rotateImage(image, orientation)
         const resizedImage = this.resizeImage(rotatedImage, dimensions.width, dimensions.height)
@@ -118,17 +117,6 @@ module.exports = class ThumbnailGenerator extends Plugin {
       width: this.defaultThumbnailDimension,
       height: Math.round(this.defaultThumbnailDimension / aspect)
     }
-  }
-
-  getOrientation (file) {
-    return new Promise((resolve) => {
-      const uppy = this.uppy
-      Exif.getData(file.data, function exifGetDataCallback () {
-        uppy.setFileMeta(file.id, { exifdata: Exif.getAllTags(this) })
-        const orientation = Exif.getTag(this, 'Orientation') || 1
-        resolve(ORIENTATIONS[orientation])
-      })
-    })
   }
 
   /**
