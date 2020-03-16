@@ -89,3 +89,14 @@ import DefaultStore = require('@uppy/store-default')
   // can register listners on custom events
   uppy.on('dashboard:modal-closed', () => {})
 }
+
+{
+  const uppy = Uppy()
+  uppy.setOptions({
+    restrictions: {
+      allowedFileTypes: ['.png']
+    }
+  })
+  expectError(uppy.setOptions({ restrictions: false }))
+  expectError(uppy.setOptions({ unknownKey: false }))
+}
