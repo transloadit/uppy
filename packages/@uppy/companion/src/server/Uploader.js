@@ -225,10 +225,18 @@ class Uploader {
             }
             break
           case PROTOCOLS.s3Multipart:
-            this.uploadS3Multipart()
+            if (!this.s3Upload) {
+              this.uploadS3Multipart()
+            } else {
+              logger.warn('handleChunk() called multiple times', 'uploader.s3.duplicate', this.shortToken)
+            }
             break
           case PROTOCOLS.tus:
-            this.uploadTus()
+            if (!this.tus) {
+              this.uploadTus()
+            } else {
+              logger.warn('handleChunk() called multiple times', 'uploader.tus.duplicate', this.shortToken)
+            }
             break
         }
       })
