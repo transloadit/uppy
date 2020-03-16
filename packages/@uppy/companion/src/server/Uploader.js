@@ -204,10 +204,18 @@ class Uploader {
 
   /**
    *
-   * @param {Buffer | Buffer[]} chunk
+   * @param {Error} err
+   * @param {string | Buffer | Buffer[]} chunk
    */
-  handleChunk (chunk) {
+  handleChunk (err, chunk) {
     if (this.uploadStopped) {
+      return
+    }
+
+    if (err) {
+      logger.error(err, 'uploader.download.error', this.shortToken)
+      this.emitError(err)
+      this.cleanUp()
       return
     }
 
