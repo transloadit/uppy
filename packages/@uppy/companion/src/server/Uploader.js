@@ -2,7 +2,6 @@ const fs = require('fs')
 const path = require('path')
 const tus = require('tus-js-client')
 const uuid = require('uuid')
-const createTailReadStream = require('@uppy/fs-tail-stream')
 const emitter = require('./emitter')
 const request = require('request')
 const serializeError = require('serialize-error')
@@ -219,12 +218,26 @@ class Uploader {
     if (chunk === null) {
       this.writeStream.on('finish', () => {
         this.streamsEnded = true
-        if (this.options.endpoint && protocol === PROTOCOLS.multipart) {
-          this.uploadMultipart()
-        }
-
-        if (protocol === PROTOCOLS.tus && !this.tus) {
-          return this.uploadTus()
+        switch (protocol) {
+          case PROTOCOLS.multipart:
+            if (this.options.endpoint) {
+              this.uploadMultipart()
+            }
+            break
+          case PROTOCOLS.s3Multipart:
+            if (!this.s3Upload) {
+              this.uploadS3Multipart()
+            } else {
+              logger.warn('handleChunk() called multiple times', 'uploader.s3.duplicate', this.shortToken)
+            }
+            break
+          case PROTOCOLS.tus:
+            if (!this.tus) {
+              this.uploadTus()
+            } else {
+              logger.warn('handleChunk() called multiple times', 'uploader.tus.duplicate', this.shortToken)
+            }
+            break
         }
       })
 
@@ -233,19 +246,7 @@ class Uploader {
 
     this.writeStream.write(chunk, () => {
       logger.debug(`${this.bytesWritten} bytes`, 'uploader.download.progress', this.shortToken)
-      if (protocol === PROTOCOLS.multipart || protocol === PROTOCOLS.tus) {
-        return this.emitIllusiveProgress()
-      }
-
-      if (protocol === PROTOCOLS.s3Multipart && !this.s3Upload) {
-        return this.uploadS3Multipart()
-      }
-      // @TODO disabling parallel uploads and downloads for now
-      // if (!this.options.endpoint) return
-
-      // if (protocol === PROTOCOLS.tus && !this.tus) {
-      //   return this.uploadTus()
-      // }
+      return this.emitIllusiveProgress()
     })
   }
 
@@ -493,16 +494,10 @@ class Uploader {
   }
 
   /**
-   * Upload the file to S3 while it is still being downloaded.
+   * Upload the file to S3 using a Multipart upload.
    */
   uploadS3Multipart () {
-    const file = createTailReadStream(this.path, {
-      tail: true
-    })
-
-    this.writeStream.on('finish', () => {
-      file.close()
-    })
+    const file = fs.createReadStream(this.path)
 
     return this._uploadS3MultipartStream(file)
   }

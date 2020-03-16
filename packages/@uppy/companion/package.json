@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "@purest/providers": "1.0.1",
-    "@uppy/fs-tail-stream": "1.2.0",
     "atob": "2.1.2",
     "aws-sdk": "2.587.0",
     "body-parser": "1.19.0",
