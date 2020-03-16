@@ -100,3 +100,15 @@ import DefaultStore = require('@uppy/store-default')
   expectError(uppy.setOptions({ restrictions: false }))
   expectError(uppy.setOptions({ unknownKey: false }))
 }
+
+{
+  interface TestOptions extends Uppy.PluginOptions {
+    testOption: string
+  }
+  class TestPlugin extends Uppy.Plugin<TestOptions> {}
+
+  const strict = Uppy<Uppy.StrictTypes>().use(TestPlugin, { testOption: 'hello' })
+  ;(strict.getPlugin('TestPlugin') as TestPlugin).setOptions({ testOption: 'world' })
+  expectError((strict.getPlugin('TestPlugin') as TestPlugin).setOptions({ testOption: 0 }))
+  expectError((strict.getPlugin('TestPlugin') as TestPlugin).setOptions({ unknownKey: false }))
+}
