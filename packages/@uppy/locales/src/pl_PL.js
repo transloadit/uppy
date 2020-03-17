@@ -18,7 +18,7 @@ pl_PL.strings = {
   cancelUpload: 'Anuluj wysyłkę',
   chooseFiles: 'Wybierz pliki',
   closeModal: 'Zamknij okno',
-  companionAuthError: 'Wymagna autoryzacja',
+  companionAuthError: 'Wymagana autoryzacja',
   companionError: 'Połączenie z serwisem nie powiodło się',
   companionUnauthorizeHint: 'Aby wylogować się z konta %{provider}, przejdź pod adres %{url}',
   complete: 'Ukończono',
