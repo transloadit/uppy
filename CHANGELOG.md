@@ -92,23 +92,54 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: add VirtualList, so it can render 5000 files without lag (@goto-bus-stop, @lakesare)
 - [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
 
+# next
+
 ## 1.11
 
 - [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53 (@arturi)
 - [ ] google-drive: Google Drive - Google Docs https://github.com/transloadit/uppy/issues/1554#issuecomment-554904049 (@ife)
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
-
-# next
-
-## 1.10
-
 - [ ] dashboard: Dark Mode & Redesign by Alex & Artur (@arturi)
+- [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 - [ ] webcam: Pick format based on `restrictions.allowedFileTypes`, eg. use PNG for snapshot instead of JPG if `allowedFileTypes: ['.png']` is set, you can probably ask for the correct filetype. In addition, we should stop recording video once the max allowed file size is exceeded. should be possible given how the MediaRecorder API works (@goto-bus-stop)
 - [ ] plugins: review & merge screenshot+screencast support similar to Webcam #148 (@arturi)
 - [ ] core: report information about the device --^ (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
-- [ ] providers: Get Facebook integration on its feet (@ife)
-- [ ] companion: what happens if access token expires during/between an download & upload (@ife)
+
+## 1.10.1
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 1.10.0 | uppy | 1.10.1 |
+| @uppy/facebook | 1.0.0
+
+This release moves `@uppy/facebook` out of beta to a `1.0.0` and adds `Uppy.Facebook` to the Uppy CDN bundle:
+
+```
+https://transloadit.edgly.net/releases/uppy/v1.10.1/uppy.min.js
+https://transloadit.edgly.net/releases/uppy/v1.10.1/uppy.min.css
+```
+
+- uppy: add @uppy/facebook to `uppy` NPM and CDN bundles
+- @uppy/facebook: Get Facebook integration on its feet (@ifedapoolarewaju)
+- website: Add featured customers logos (#2120 / @nqst)
+
+You can optionally download `1.10.1` release bundle: https://transloadit.edgly.net/releases/uppy/v1.10.1/uppy-v1.10.1.zip
+
+## 1.10.0
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 1.10.0 | uppy | 1.10.0 |
+
+This release offers a bunch of Companion improvements and bug fixes.
+
+- @uppy/companion: pass `endpoint` and `region` to AWS SDK constructor (#2113 / @goto-bus-stop)
+- @uppy/companion: Allow S3 ACL to be specified in Companion Standalone (#2111 / @jasonbosco)
+- @uppy/companion: return 401 early if token is not set (#2118 / @ifedapoolarewaju)
+- @uppy/companion: allow providing any S3 option, closes #1388 (#2030 / @goto-bus-stop)
+- @uppy/companion:: don’t log redundant errors in production (#2112 / @ifedapoolarewaju)
+- docs: Add S3 ACL option to companion docs (#2109 / @jasonbosco)
 
 ## 1.9.5
 
