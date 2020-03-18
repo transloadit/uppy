@@ -362,7 +362,7 @@ module.exports = class Transloadit extends Plugin {
   _onAssemblyFinished (status) {
     const url = status.assembly_ssl_url
     this.client.getAssemblyStatus(url).then((finalStatus) => {
-      const assemblyId = finalStatus.assemblyId;
+      const assemblyId = finalStatus.assemblyId
       const state = this.getPluginState()
       this.setPluginState({
         assemblies: {
