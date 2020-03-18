@@ -615,7 +615,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     if (!this.opts.inline && !showModalTrigger) {
-      this.uppy.log('Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options unless you are planning to call openModal() method yourself', 'error')
+      this.uppy.log('Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options, unless you are planning to call `dashboard.openModal()` method yourself', 'warning')
     }
 
     this.startListeningToResize()
