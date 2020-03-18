@@ -84,6 +84,8 @@ module.exports = class Transloadit extends Plugin {
     })
     // Contains Assembly instances for in-progress Assemblies.
     this.activeAssemblies = {}
+    // Contains assemblyIds of assemblies that have been completed
+    this.finishedAssemblyIds = []
   }
 
   setOptions (newOpts) {
@@ -360,13 +362,15 @@ module.exports = class Transloadit extends Plugin {
   _onAssemblyFinished (status) {
     const url = status.assembly_ssl_url
     this.client.getAssemblyStatus(url).then((finalStatus) => {
+      const assemblyId = finalStatus.assemblyId;
       const state = this.getPluginState()
       this.setPluginState({
         assemblies: {
           ...state.assemblies,
-          [finalStatus.assembly_id]: finalStatus
+          [assemblyId]: finalStatus
         }
       })
+      this.finishedAssemblyIds = [...this.finishedAssemblyIds, assemblyId]
       this.uppy.emit('transloadit:complete', finalStatus)
     })
   }
@@ -661,6 +665,14 @@ module.exports = class Transloadit extends Plugin {
       this.uppy.emit('postprocess-progress', file, {
         mode: 'indeterminate',
         message: this.i18n('encoding')
+      })
+    })
+
+    // complete postprocessing of any assemblies that finished before the postprocessing step initiated
+    this.finishedAssemblyIds.forEach(assemblyId => {
+      const files = this.getAssemblyFiles(assemblyId)
+      files.forEach((file) => {
+        this.uppy.emit('postprocess-complete', file)
       })
     })
 
