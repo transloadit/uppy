@@ -5,7 +5,7 @@ module.exports = ({ currentDeviceId, videoSources, onChangeVideoSource }) => {
     <p className="uppy-Webcam-videoSource">Video source:
       <select
         className="uppy-Webcam-videoSource-select"
-        onchange={() => { onChangeVideoSource(document.getElementsByClassName('uppy-Webcam-videoSource-select')[0].value) }}
+        onchange={(event) => { onChangeVideoSource(event.target.value) }}
       >
         {videoSources.map((videoSource) =>
           <option

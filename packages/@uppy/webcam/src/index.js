@@ -172,7 +172,7 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  getConstraints (deviceId) {
+  getConstraints (deviceId = null) {
     const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1 ||
       this.opts.modes.indexOf('audio-only') !== -1
     const acceptsVideo = this.opts.modes.indexOf('video-audio') !== -1 ||
@@ -187,13 +187,14 @@ module.exports = class Webcam extends Plugin {
     }
   }
 
-  _start (deviceId = null) {
+  _start (options = null) {
     if (!this.supportsUserMedia) {
       return Promise.reject(new Error('Webcam access not supported'))
     }
 
     this.webcamActive = true
-    const constraints = this.getConstraints(deviceId)
+
+    const constraints = this.getConstraints(options && options.deviceId ? options.deviceId : null)
 
     this.hasCameraCheck().then(hasCamera => {
       this.setPluginState({
@@ -205,12 +206,12 @@ module.exports = class Webcam extends Plugin {
         .then((stream) => {
           this.stream = stream
 
-          if (!deviceId) {
+          if (!options || !options.deviceId) {
             this.currentDeviceId = stream.getVideoTracks()[0].getSettings().deviceId
           } else {
             stream.getVideoTracks().forEach((videoTrack) => {
-              if (videoTrack.getSettings().deviceId === deviceId) {
-                this.currentDeviceId = videoTrack.deviceId
+              if (videoTrack.getSettings().deviceId === options.deviceId) {
+                this.currentDeviceId = videoTrack.getSettings().deviceId
               }
             })
           }
@@ -466,18 +467,13 @@ module.exports = class Webcam extends Plugin {
 
   _changeVideoSource (deviceId) {
     this._stop()
-    this._start(deviceId)
+    this._start({ deviceId: deviceId })
   }
 
   getVideoSources () {
-    this.videoSources = []
     this.mediaDevices.enumerateDevices().then(res => {
-      this.videoSources = []
-      res.forEach((device) => {
-        if (device.kind === 'videoinput') {
-          this.videoSources.push(device)
-        }
-      })
+      this.videoSources = res.filter((device) => device.kind === 'videoinput')
+      this.setPluginState()
     })
   }
 
@@ -532,23 +528,25 @@ module.exports = class Webcam extends Plugin {
       this.mount(target, this)
     }
 
-    this.getVideoSources()
-
-    this.mediaDevices.ondevicechange = (event) => {
+    if (this.mediaDevices) {
       this.getVideoSources()
 
-      if (this.stream) {
-        let restartStream = true
+      this.mediaDevices.ondevicechange = (event) => {
+        this.getVideoSources()
 
-        this.videoSources.forEach((videoSource) => {
-          if (this.currentDeviceId === videoSource.deviceId) {
-            restartStream = false
+        if (this.stream) {
+          let restartStream = true
+
+          this.videoSources.forEach((videoSource) => {
+            if (this.currentDeviceId === videoSource.deviceId) {
+              restartStream = false
+            }
+          })
+
+          if (restartStream) {
+            this._stop()
+            this._start()
           }
-        })
-
-        if (restartStream) {
-          this._stop()
-          this._start()
         }
       }
     }
