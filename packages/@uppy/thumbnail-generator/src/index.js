@@ -74,7 +74,9 @@ module.exports = class ThumbnailGenerator extends Plugin {
       })
     })
 
-    return Promise.all([onload, exifr.orientation(file.data)])
+    const orientationPromise = exifr.orientation(file.data).catch(_err => 1)
+
+    return Promise.all([onload, orientationPromise])
       .then(([image, rawOrientation]) => {
         const orientation = ORIENTATIONS[rawOrientation || 1]
         const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.rotation)
