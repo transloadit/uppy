@@ -109,10 +109,11 @@ class Drive extends Provider {
       .qs({ alt: 'media', supportsAllDrives: true })
       .auth(token)
       .request()
-      .on('data', onData)
-      .on('end', () => onData(null))
+      .on('data', (chunk) => onData(null, chunk))
+      .on('end', () => onData(null, null))
       .on('error', (err) => {
         logger.error(err, 'provider.drive.download.error')
+        onData(err)
       })
   }
 

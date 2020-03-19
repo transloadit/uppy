@@ -23,7 +23,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: possibility to edit/delete more than one file at once. example: add copyrigh info to 1000 files #118, #97
 - [ ] dashboard: possibility to work on already uploaded / in progress files. We'll just provide the `fileId` to the `file-edit-complete` event so that folks can more easily roll out custom code for this themselves #112, #113, #2063
 - [ ] dashboard: Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
-- [ ] goldenretriever: make it work with aws multipart https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888  (@goto-bus-stop)
+- [ ] goldenretriever: make it work with aws multipart https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888 (@goto-bus-stop)
 - [ ] plugins: WordPress Front-end Gravity Forms Uppy plugin so one form field could be an Uppy-powered file input
 - [ ] provider: add sorting (by date) #254
 - [ ] qa: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
@@ -50,6 +50,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
 - [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now
 - [ ] core/dashboard: replace `poweredBy` and `exceedsSize` locale keys by word order aware versions, see PR #2077
+- [ ] *: upgrade to Preact X
 - [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
 - [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems though)
 - [ ] docs: Completely drop soft IE10 (and IE11?) support
@@ -61,6 +62,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
 - [ ] xhr: set the `limit` option to a sensible default, like 10
+- [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
 
 ## 1.14
 
@@ -91,27 +93,104 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: add VirtualList, so it can render 5000 files without lag (@goto-bus-stop, @lakesare)
 - [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
 
+# next
+
 ## 1.11
 
 - [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53 (@arturi)
 - [ ] google-drive: Google Drive - Google Docs https://github.com/transloadit/uppy/issues/1554#issuecomment-554904049 (@ife)
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
-
-# next
-
-## 1.10
-
 - [ ] dashboard: Dark Mode & Redesign by Alex & Artur (@arturi)
+- [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 - [ ] webcam: Pick format based on `restrictions.allowedFileTypes`, eg. use PNG for snapshot instead of JPG if `allowedFileTypes: ['.png']` is set, you can probably ask for the correct filetype. In addition, we should stop recording video once the max allowed file size is exceeded. should be possible given how the MediaRecorder API works (@goto-bus-stop)
 - [ ] plugins: review & merge screenshot+screencast support similar to Webcam #148 (@arturi)
 - [ ] core: report information about the device --^ (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
-- [ ] providers: Get Facebook integration on its feet (@ife)
-- [ ] companion: what happens if access token expires during/between an download & upload (@ife)
+
+## 1.10.1
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 1.10.0 | uppy | 1.10.1 |
+| @uppy/facebook | 1.0.0
+
+This release moves `@uppy/facebook` out of beta to a `1.0.0` and adds `Uppy.Facebook` to the Uppy CDN bundle:
+
+```
+https://transloadit.edgly.net/releases/uppy/v1.10.1/uppy.min.js
+https://transloadit.edgly.net/releases/uppy/v1.10.1/uppy.min.css
+```
+
+- uppy: add @uppy/facebook to `uppy` NPM and CDN bundles
+- @uppy/facebook: Get Facebook integration on its feet (@ifedapoolarewaju)
+- website: Add featured customers logos (#2120 / @nqst)
+
+You can optionally download `1.10.1` release bundle: https://transloadit.edgly.net/releases/uppy/v1.10.1/uppy-v1.10.1.zip
+
+## 1.10.0
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 1.10.0 | uppy | 1.10.0 |
+
+This release offers a bunch of Companion improvements and bug fixes.
+
+- @uppy/companion: pass `endpoint` and `region` to AWS SDK constructor (#2113 / @goto-bus-stop)
+- @uppy/companion: Allow S3 ACL to be specified in Companion Standalone (#2111 / @jasonbosco)
+- @uppy/companion: return 401 early if token is not set (#2118 / @ifedapoolarewaju)
+- @uppy/companion: allow providing any S3 option, closes #1388 (#2030 / @goto-bus-stop)
+- @uppy/companion:: don’t log redundant errors in production (#2112 / @ifedapoolarewaju)
+- docs: Add S3 ACL option to companion docs (#2109 / @jasonbosco)
+
+## 1.9.5
+
+Released 2020-02-28
+
+This release rolls out a fix for companion an issue introduced after [this PR](https://github.com/transloadit/uppy/pull/1668). See [#2096](https://github.com/transloadit/uppy/pull/2096) for more details.
+
+| Package | Version |
+|-|-|
+| @uppy/companion | 1.9.5 |
+
+- @uppy/companion: read state from session in oauth-redirect controller (#2096 / @ifedapoolarewaju)
+
+## 1.9.4
+
+Released: 2020-02-27
+
+Previous `1.9.3` release has been deprecated due to broken URL Provider (see [#2094](https://github.com/transloadit/uppy/pull/2094)).
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 1.9.4 | @uppy/locales | 1.11.5 |
+
+- @uppy/companion: return the right httpAgent when protocol value contains ":" (#2094 / @ifedapoolarewaju)
+- @uppy/locales: fix pluralization in pt_BR (#2093 / @fgallinari)
+
+## 1.9.3
+
+Released: 2020-02-26
+
+⚠️ This release patches a Server Side Request Forgery (SSRF) Security vulnerability on `@uppy/companion`
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 1.9.3 | @uppy/robodog | 1.5.3 |
+| @uppy/drag-drop | 1.4.6 | @uppy/webcam | 1.5.5 |
+| @uppy/locales | 1.11.4 | uppy | 1.9.3 |
+| @uppy/react | 1.4.6 | - | - |
+
+- @uppy/companion: ⚠️ patch SSRF Security vulnerability (#2083 / @ifedapoolarewaju)
+- @uppy/webcam: Check the availability isTypeSupported api before calling (#2072 / @naveed-ahmad)
+- @uppy/locales: Locale DE_de added new keys. (#2084 / @SpazzMarticus)
+- @uppy/locales: Update zh_TW.js (#2075 / @cellvinchung)
+- @uppy/drag-drop: add a type test and document shared props (#2003 / @andychongyz)
+- @uppy/companion: make s3 signed url expiry configurable in companion (#2085 / @adamelmore)
+- build: contributors:save fix — the node.js version (#2078 / @arturi)
 
 ## 1.9.2
 
-Released: 2019-02-14
+Released: 2020-02-14
 
 This release adds `@uppy/onedrive` to `uppy`’s `package.json`, fixing the bug reported at https://github.com/transloadit/uppy/commit/f291688fb813c55ff905abb334eff61c1c5a9dd0#commitcomment-37278041, and introduces more robust type checking in #1918.
 
@@ -142,7 +221,7 @@ This release adds `@uppy/onedrive` to `uppy`’s `package.json`, fixing the bug 
 
 ## 1.9.1
 
-Released: 2019-02-12
+Released: 2020-02-12
 
 Previous `1.9.0` release has been deprecated due to an incorrect Lerna/npm published release. Please update all packages to the next patch version (or @latest), see the table below.
 
@@ -168,7 +247,7 @@ Previous `1.9.0` release has been deprecated due to an incorrect Lerna/npm publi
 
 ## 1.9.0
 
-Released: 2019-02-11
+Released: 2020-02-11
 
 ⚠️ `1.9.0` and all related packages have been deprecated due to an incorrect Lerna/npm published release. Please update all packages to the next patch version, see #1.9.1.
 
@@ -213,7 +292,7 @@ This release adds support for the new Instagram API, image and archive icons to 
 
 ## 1.8.0
 
-Released: 2019-01-15
+Released: 2020-01-15
 
 This release adds Korean and Vietnamese localizations, fixes bugs, and significantly improves the performance of adding and removing lots of files. More performance improvements are on the way in the next few releases, too! Thanks to all contributors listed below.
 

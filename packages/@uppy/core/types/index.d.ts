@@ -53,6 +53,7 @@ declare module Uppy {
     uppy: Uppy
     type: string
     constructor(uppy: Uppy, opts?: TOptions)
+    setOptions(update: Partial<TOptions>): void
     getPluginState(): object
     setPluginState(update: IndexedObject<any>): object
     update(state?: object): void
@@ -156,10 +157,11 @@ declare module Uppy {
     on(event: Event, callback: (...args: any[]) => void): this
     off(event: Event, callback: (...args: any[]) => void): this
     /**
-     * For use by plugins only!
+     * For use by plugins only.
      */
     emit(event: Event, ...args: any[]): void
     updateAll(state: object): void
+    setOptions(update: Partial<UppyOptions>): void
     setState(patch: object): void
     getState<TMeta extends IndexedObject<any> = {}>(): State<TMeta>
     readonly state: State

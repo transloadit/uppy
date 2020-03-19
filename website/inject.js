@@ -143,7 +143,7 @@ async function injectGhStars () {
     opts.auth = process.env.GITHUB_TOKEN
   }
 
-  const Octokit = require('@octokit/rest')
+  const { Octokit } = require('@octokit/rest')
   const octokit = new Octokit(opts)
 
   const { headers, data } = await octokit.repos.get({

@@ -3,7 +3,7 @@ const marked = require('marked')
 const dragdrop = require('drag-drop')
 // Add Robodog JS. It is advisable to install Robodog from npm/yarn.
 // But for experimenting, you can use also Transloadit’s CDN, Edgly:
-// <script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.5.2/robodog.min.js"></script>
+// <script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.5.3/robodog.min.js"></script>
 const robodog = require('@uppy/robodog')
 
 const TRANSLOADIT_EXAMPLE_KEY = '35c1aed03f5011e982b6afe82599b6a0'

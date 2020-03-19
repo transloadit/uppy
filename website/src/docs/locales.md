@@ -33,8 +33,8 @@ const uppy = Uppy({
 Add a `<script>` tag with Uppy bundle and the locale pack you’d like to use. You can copy/paste the link from the CDN column in the [locales table](#List-of-locale-packs). The locale will attach itself to the `Uppy.locales` object.
 
 ```html
-<script src="https://transloadit.edgly.net/releases/uppy/v1.9.2/uppy.min.js"></script>
-<script src="https://transloadit.edgly.net/releases/uppy/locales/v1.11.3/de_DE.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v1.10.1/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/locales/v1.11.5/de_DE.min.js"></script>
 
 <script>
 var uppy = Uppy.Core({
@@ -46,7 +46,7 @@ var uppy = Uppy.Core({
 
 ## Overriding locale strings for a specific plugin
 
-Many plugins come with their own locale strings, and the packs we provide consist of most of those strings. You can, however, override a locale string for a specific plugin, regardless of whether you are using locale pack or not. See the plugin documentation for the list of locale strings it uses (for example, [here’s Dashboard](http://localhost:4000/docs/dashboard/#locale)).
+Many plugins come with their own locale strings, and the packs we provide consist of most of those strings. You can, however, override a locale string for a specific plugin, regardless of whether you are using locale pack or not. See the plugin documentation for the list of locale strings it uses (for example, [here’s how to use it with the Dashboard UI](https://uppy.io/docs/dashboard/#locale)).
 
 ```js
 const Uppy = require('@uppy/core')

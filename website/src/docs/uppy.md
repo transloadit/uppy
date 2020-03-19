@@ -556,7 +556,7 @@ uppy.setFileMeta('myfileID', { resize: 1500 })
 
 ### `uppy.setOptions(opts)`
 
-Change Uppy options on the fly. For example, to conditionally change `allowedFileTypes` or `locale`:
+Change Uppy options on the fly. For example, to conditionally change `restrictions.allowedFileTypes` or `locale`:
 
 ```js
 const uppy = Uppy()

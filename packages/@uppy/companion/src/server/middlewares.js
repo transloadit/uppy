@@ -16,8 +16,13 @@ exports.hasSessionAndProvider = (req, res, next) => {
 }
 
 exports.verifyToken = (req, res, next) => {
+  const token = req.companion.authToken
+  if (token == null) {
+    logger.info('cannot auth token', 'token.verify.unset', req.id)
+    return res.sendStatus(401)
+  }
   const providerName = req.params.providerName
-  const { err, payload } = tokenService.verifyToken(req.companion.authToken, req.companion.options.secret)
+  const { err, payload } = tokenService.verifyToken(token, req.companion.options.secret)
   if (err || !payload[providerName]) {
     if (err) {
       logger.error(err, 'token.verify.error', req.id)
