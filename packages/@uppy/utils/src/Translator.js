@@ -117,11 +117,18 @@ module.exports = class Translator {
    * @returns {Array} The translated and interpolated parts, in order.
    */
   translateArray (key, options) {
-    if (options && typeof options.smart_count !== 'undefined') {
-      var plural = this.locale.pluralize(options.smart_count)
-      return this.interpolate(this.locale.strings[key][plural], options)
+    const string = this.locale.strings[key]
+    const hasPluralForms = typeof string === 'object'
+
+    if (hasPluralForms) {
+      if (options && typeof options.smart_count !== 'undefined') {
+        const plural = this.locale.pluralize(options.smart_count)
+        return this.interpolate(string[plural], options)
+      } else {
+        throw new Error('Attempted to use a string with plural forms, but no value was given for %{smart_count}')
+      }
     }
 
-    return this.interpolate(this.locale.strings[key], options)
+    return this.interpolate(string, options)
   }
 }
