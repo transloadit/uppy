@@ -27,7 +27,7 @@ function TransitionWrapper (props) {
 const WIDTH_XL = 900
 const WIDTH_LG = 700
 const WIDTH_MD = 576
-const HEIGHT_MD = 576
+const HEIGHT_MD = 400
 
 module.exports = function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
