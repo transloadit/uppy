@@ -48,8 +48,8 @@ function createEndpointPool (client, bucketName) {
     // fileId indicates large file / multipart
     const { fileId } = endpoint
     if (fileId) {
-      const pool = (pools[fileId] = pools[fileId] || [])
-      pool.push(endpoint)
+      pools[fileId] = pools[fileId] || []
+      pools[fileId].push(endpoint)
     } else {
       pools.default.push(endpoint)
     }
@@ -69,8 +69,8 @@ function createEndpointPool (client, bucketName) {
 module.exports = class B2Client {
   constructor (options) {
     this.b2 = new B2({
-      applicationKeyId: options.keyId,
-      applicationKey: options.key,
+      applicationKeyId: options.key,
+      applicationKey: options.secret,
       axios: options.axios || {},
       retry: options.retry
     })

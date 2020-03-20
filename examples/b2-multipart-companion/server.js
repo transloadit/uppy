@@ -29,7 +29,7 @@ const options = {
     b2: {
       getPath: (req, filename) => `${Math.random().toString(32).slice(2)}/${filename}`,
       key: process.env.COMPANION_B2_KEY || process.env.UPPYSERVER_B2_KEY,
-      keyId: process.env.COMPANION_B2_KEY_ID || process.env.UPPYSERVER_B2_KEY_ID,
+      secret: process.env.COMPANION_B2_SECRET || process.env.UPPYSERVER_B2_SECRET,
       bucket: process.env.COMPANION_B2_BUCKET || process.env.UPPYSERVER_B2_BUCKET,
       axios: {} // pass custom axios options to backblaze-b2 client
     }

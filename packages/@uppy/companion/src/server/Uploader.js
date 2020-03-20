@@ -238,7 +238,6 @@ class Uploader {
     }
 
     this.writeStream.write(chunk, () => {
-      // logger.debug(`${this.bytesWritten} bytes`, 'uploader.download.progress', this.shortToken)
       if (protocol === PROTOCOLS.multipart || protocol === PROTOCOLS.tus) {
         return this.emitIllusiveProgress()
       }

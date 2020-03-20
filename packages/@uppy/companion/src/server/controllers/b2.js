@@ -1,5 +1,4 @@
 const router = require('express').Router
-// const ms = require('ms')
 
 module.exports = function b2 (config) {
   if (typeof config.getPath !== 'function') {

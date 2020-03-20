@@ -2,6 +2,7 @@ const Writable = require('stream').Writable
 const crypto = require('crypto')
 const fdSlicer = require('fd-slicer')
 const fs = require('fs')
+const logger = require('./logger')
 
 const MAX_UPLOAD_PARTS = 10000
 
@@ -23,20 +24,26 @@ function callWithRetry (fn, args = [], retriesLeft = 5) {
     })
 }
 
-module.exports = class B2Stream {
-  // bucketName
-  // path
-  // fileName
-  // fileSize
-  // stream
-  // client
-  // endpointPool
+class B2Stream {
+  /**
+   * Streams a file to B2
+   *
+   * @typedef {object} B2StreamOptions
+   * @property {string} bucketName
+   * @property {string} path
+   * @property {string} fileName
+   * @property {string} fileSize
+   * @property {any} stream
+   * @property {any} client
+   * @property {any} endpointPool
+   *
+   * @param {any} client
+   * @param {B2StreamOptions} options
+   */
   constructor (client, options) {
     this.options = options
     this.client = client
-    this.onUploadProgress = ({ total, loaded }) => {
-      console.log('progress', loaded / total)
-    }
+    this.onUploadProgress = ({ total, loaded }) => { /*  */ }
   }
 
   getOptimalPartSize (fileSize) {
@@ -60,18 +67,18 @@ module.exports = class B2Stream {
       this.getBucketId(this.options.bucketName)
     ]).then(([partSize, bucketId]) => {
       const fileSize = this.options.fileSize
-      const onUploadProgress = this.createProgressReporter(fileSize)
+      const progressReporter = this.createProgressReporter(fileSize)
       const isMultipart = (partSize < fileSize)
       if (isMultipart) {
-        return this._sendMultipart(partSize, bucketId, onUploadProgress)
+        return this._sendMultipart(partSize, bucketId, progressReporter)
       } else {
-        return this._sendSingle(partSize, bucketId, onUploadProgress)
+        return this._sendSingle(partSize, bucketId, progressReporter)
       }
     })
+      .then((result) => cb(null, result))
       .catch((err) => {
         cb(err)
       })
-      .then((result) => cb(null, result))
   }
 
   createProgressReporter (total) {
@@ -111,7 +118,7 @@ module.exports = class B2Stream {
 
       return new Promise((resolve, reject) => {
         try {
-          const writer = B2StreamWriter(writerOptions)
+          const writer = getB2StreamWriter(writerOptions)
           stream.pipe(writer)
           writer.on('finish', () => {
             resolve({ chunks, fileId, data })
@@ -153,7 +160,7 @@ module.exports = class B2Stream {
 
       return new Promise((resolve, reject) => {
         try {
-          const writer = B2StreamWriter(writerOptions)
+          const writer = getB2StreamWriter(writerOptions)
           stream.pipe(writer)
           writer.on('finish', () => {
             resolve({ chunks, fileId })
@@ -224,11 +231,11 @@ function closeFileDescriptorAsync (fd) {
   })
 }
 
-function B2StreamWriter (options) {
+function getB2StreamWriter (options) {
   const { fileName, fileSize, partSize, path, endpointPool, fileId, client, progressReporter } = options
   const { connections = 3 } = options
   const isMultipart = !!fileId // fileId is present when first obtained via startLargeFile()
-  const fdSlicer = createSlicerFromPath(path)
+  const slicerFromPath = createSlicerFromPath(path)
   const workers = []
   const queue = []
 
@@ -260,10 +267,11 @@ function B2StreamWriter (options) {
     partAccum = 0
 
     // Create a stream slice of this part's range and run it through hasher.
-    const partHashResult = () =>
-      fdSlicer.then(({ slicer }) => {
+    const partHashResult = () => {
+      return slicerFromPath.then(({ slicer }) => {
         return createStreamHashSHA1(slicer, start, end)
       })
+    }
 
     // Attempt transmitting the stream data for this part to the
     // appropriate B2 endpoint.
@@ -294,15 +302,18 @@ function B2StreamWriter (options) {
           }
           // only release endpoint back to the pool if it was last used
           // successfully.
-          transmit.then(() => endpointPool.release(endpoint))
-          transmit.catch(() => { partStream.destroy() })
+          transmit.then(() => { endpointPool.release(endpoint) })
+          transmit.catch((error) => {
+            logger.error(error, 'uploader.b2.error')
+            partStream.destroy()
+          })
           return transmit
         })
     }
 
     const transmit = Promise.all([
       partHashResult(),
-      fdSlicer
+      slicerFromPath
     ]).then(([hash, { slicer }]) =>
       callWithRetry(attemptPartTransmission, [hash, slicer])
         .then(({ data }) => {
@@ -364,11 +375,14 @@ function B2StreamWriter (options) {
       }
       // Wait on all workers to finish
       Promise.all(workers)
-        .then(() => fdSlicer.then(({ fd }) => fd))
+        .then(() => slicerFromPath.then(({ fd }) => fd))
         .then((fd) => closeFileDescriptorAsync(fd))
         .then((fd) => {
           cb()
         })
+        .catch((err) => cb(err))
     }
   })
 }
+
+module.exports = B2Stream

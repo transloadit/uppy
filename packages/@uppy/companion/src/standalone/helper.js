@@ -59,8 +59,8 @@ const getConfigFromEnv = () => {
           process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true'
       },
       b2: {
-        keyId: process.env.COMPANION_B2_KEY_ID,
-        key: getSecret('COMPANION_B2_KEY'),
+        key: process.env.COMPANION_B2_KEY,
+        secret: getSecret('COMPANION_B2_SECRET'),
         bucket: process.env.COMPANION_B2_BUCKET
       }
     },
