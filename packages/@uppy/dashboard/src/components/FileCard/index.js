@@ -50,7 +50,6 @@ class FileCard extends Component {
   }
 
   renderInputField = (type, id, field) => {
-    console.log(this.state.formState, field.id)
     if (type === 'checkbox') {
       return (
         <input
@@ -94,7 +93,6 @@ class FileCard extends Component {
 
   renderMetaFields = () => {
     const metaFields = this.props.metaFields || []
-    console.log(metaFields)
     return metaFields.map((field) => {
       const id = `uppy-Dashboard-FileCard-input-${field.id}`
       return (
