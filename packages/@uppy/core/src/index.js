@@ -677,7 +677,9 @@ class Uppy {
       })
     }
 
-    this._startIfAutoProceed()
+    if (newFiles.length > 0) {
+      this._startIfAutoProceed()
+    }
 
     if (errors.length > 0) {
       let message = 'Multiple errors occurred while adding files:\n'
