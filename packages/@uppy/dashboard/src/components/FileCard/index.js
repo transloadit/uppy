@@ -29,11 +29,13 @@ class FileCard extends Component {
     }
   }
 
-  tempStoreMeta = (ev, name) => {
+  tempStoreMeta = (ev, name, type) => {
+    var value = ev.target.value
+    if (type === 'checkbox') value = ev.target.checked ? 'on' : 'off'
     this.setState({
       formState: {
         ...this.state.formState,
-        [name]: ev.target.value
+        [name]: value
       }
     })
   }
@@ -47,26 +49,58 @@ class FileCard extends Component {
     this.props.toggleFileCard()
   }
 
+  renderInputField = (type, id, field) => {
+    console.log(this.state.formState, field.id)
+    if (type === 'checkbox') {
+      return (
+        <input
+          class=""
+          id={id}
+          type="checkbox"
+          onChange={ev => this.tempStoreMeta(ev, field.id, type)}
+          defaultChecked={this.state.formState[field.id] === 'on'}
+          data-uppy-super-focusable
+        />
+      )
+    } else if (type === 'select') {
+      return (
+        <select
+          id={id}
+          onChange={ev => this.tempStoreMeta(ev, field.id, type)}
+          class="uppy-Dashboard-FileCard-input uppy-c-textInput"
+          value={this.state.formState[field.id]}
+        >
+          {field.options.map((opt) => {
+            return (<option key={opt.value} value={opt.value}>{opt.text}</option>)
+          })}
+        </select>
+      )
+    } else {
+      return (
+        <input
+          class="uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input"
+          id={id}
+          type={field.type || 'text'}
+          value={this.state.formState[field.id]}
+          placeholder={field.placeholder}
+          onkeyup={this.saveOnEnter}
+          onkeydown={this.saveOnEnter}
+          onkeypress={this.saveOnEnter}
+          oninput={ev => this.tempStoreMeta(ev, field.id, type)}
+          data-uppy-super-focusable
+        />)
+    }
+  }
+
   renderMetaFields = () => {
     const metaFields = this.props.metaFields || []
-
+    console.log(metaFields)
     return metaFields.map((field) => {
       const id = `uppy-Dashboard-FileCard-input-${field.id}`
       return (
         <fieldset key={field.id} class="uppy-Dashboard-FileCard-fieldset">
           <label class="uppy-Dashboard-FileCard-label" for={id}>{field.name}</label>
-          <input
-            class="uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input"
-            id={id}
-            type="text"
-            value={this.state.formState[field.id]}
-            placeholder={field.placeholder}
-            onkeyup={this.saveOnEnter}
-            onkeydown={this.saveOnEnter}
-            onkeypress={this.saveOnEnter}
-            oninput={ev => this.tempStoreMeta(ev, field.id)}
-            data-uppy-super-focusable
-          />
+          {this.renderInputField(field.type || 'text', id, field)}
         </fieldset>
       )
     })
