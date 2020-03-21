@@ -119,9 +119,6 @@
   background-color: $gray-50;
   max-width: 100%;
   max-height: 100%;
-  // min-width: 290px;
-  // min-height: 450px is required for everything to fit on mobile
-  // min-height: 350px;
   outline: none;
   border: 1px solid $gray-200;
   border-radius: 5px;
@@ -201,19 +198,20 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  max-height: 100%;
+  height: 100%;
   position: relative;
   text-align: center;
-  flex: 1;
 
-  .uppy-size--md & {
+  [data-uppy-drag-drop-supported="true"] & {
     margin: 7px;
+    height: calc(100% - 14px); // to accomodate for the 7px margin
     border-radius: 3px;
-    border: 1px dashed $gray-250; // Show dashed border on large screens only
+    border: 1px dashed $gray-250;
   }
 
   .uppy-Dashboard-AddFilesPanel & {
     border: none;
+    height: calc(100% - 14px - 40px); // to accomodate for the 7px margin and 40px topbar height
   }
 
   .uppy-Dashboard--modal & {
@@ -224,12 +222,16 @@
 .uppy-DashboardTabs {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  // justify-content: center;
   width: 100%;
-  max-height: 100%;
+  height: 100%;
 
   .uppy-size--md & {
     align-items: center;
+    height: auto;
+  }
+
+  [data-uppy-num-acquirers="0"] & {
     height: auto;
   }
 }
@@ -237,9 +239,10 @@
 .uppy-DashboardAddFiles-info {
   padding-top: 15px;
   padding-bottom: 15px;
-  flex-grow: 0;
-  flex-shrink: 1;
-  flex-basis: 0%;
+  // flex: 1;
+  // flex-grow: 0;
+  // flex-shrink: 1;
+  // flex-basis: 0%;
   
   // hide on short note and “powered by” on short screens
   // such as CodePen, or inline dashboard with height < 400px
@@ -297,15 +300,17 @@
 }
 
 .uppy-DashboardTabs-list {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 2;
-  flex-shrink: 1;
-  flex-basis: 0%;
+  // display: flex;
+  // flex-direction: column;
+  // flex-grow: 2;
+  // flex-shrink: 1;
+  // flex-basis: 0%;
+  flex: 2;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   margin-top: 2px;
   padding: 2px 0;
+  // max-height: 350px;
 
   .uppy-size--md & {
     flex-direction: row;
@@ -411,7 +416,7 @@
 
   .uppy-size--md & {
     font-size: 11px;
-    line-height: 14px;
+    line-height: 15px;
     margin-top: 8px;
     margin-bottom: 0;
   }
@@ -684,9 +689,12 @@
 
 .uppy-Dashboard-dropFilesTitleGroup {
   padding: 0 15px;
-  max-width: 270px;
-  margin: auto;
   // display: flex;
+  // flex-grow: 0;
+  // flex-shrink: 0;
+  // max-width: 270px;
+  // margin: auto;
+  flex: 0;
 
   .uppy-size--md & {
     display: flex;
@@ -704,34 +712,36 @@
 }
 
 .uppy-Dashboard-dropFilesTitle {
-  // display: none;
   font-size: 17px;
   line-height: 1.35;
-  font-weight: 400;
+  font-weight: 500;
   color: $black;
   margin-top: 15px;
   margin-bottom: 5px;
+  text-align: left;
 
   .uppy-size--md & {
     display: block;
     font-size: 25px;
     margin-top: 5px;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  [data-uppy-num-acquirers="0"] & {
+    text-align: center;
   }
 
   [data-uppy-theme="dark"] & {
     color: $gray-200;
   }
-}
 
-.uppy-Dashboard-dropFilesSubtitle {
-  display: none;
-  font-size: 16px;
-  line-height: 1.35;
-  font-weight: 300;
-  color: $gray-700;
+  button {
+    font-weight: 500;
+  }
 
-  .uppy-size--md & {
-    display: block;
+  .uppy-size--md & button {
+    font-weight: 400;
   }
 }
 

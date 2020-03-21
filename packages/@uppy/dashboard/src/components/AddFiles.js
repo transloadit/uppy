@@ -1,6 +1,5 @@
 const { iconMyDevice } = require('./icons')
 const { h, Component } = require('preact')
-const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 
 class AddFiles extends Component {
   triggerFileInputClick = () => {
@@ -97,21 +96,15 @@ class AddFiles extends Component {
         case 0:
           return this.props.i18nArray('dropPaste', { browse })
         default:
-          return this.props.i18nArray('dropPasteImport')
+          return this.props.i18nArray('dropPasteImport', { browse })
       }
     }
-
-    console.log(isDragDropSupported())
 
     return (
       <div class="uppy-Dashboard-dropFilesTitleGroup">
         <div class="uppy-Dashboard-dropFilesTitle">
           {renderDropFilesSubtitle()}
         </div>
-        {/* <div class="uppy-Dashboard-dropFilesSubtitle">
-          {this.props.i18n('dropFilesHere')}
-          {renderDropFilesSubtitle()}
-        </div> */}
       </div>
     )
   }
@@ -150,7 +143,7 @@ class AddFiles extends Component {
   }
 
   renderAcquirers = (acquirers) => {
-    // Group last two buttons in <nobr>, so we don’t end up with
+    // Group last two buttons, so we don’t end up with
     // just one button on a new line
     const acquirersWithoutLastTwo = [...acquirers]
     const lastTwoAcquirers = acquirersWithoutLastTwo.splice(acquirers.length - 2, acquirers.length)
@@ -169,15 +162,9 @@ class AddFiles extends Component {
   render () {
     return (
       <div class="uppy-DashboardAddFiles">
-        {/* {this.renderCloudIcon()} */}
         {this.renderHiddenFileInput()}
         <div class="uppy-DashboardTabs">
           {this.renderDropPasteBrowseTagline()}
-          {/* {this.props.acquirers.length > 0 && (
-            <div class="uppy-Dashboard-dropFilesMobileTitle">
-              {this.props.i18n('orImportFrom')}
-            </div>
-          )} */}
           {this.props.acquirers.length > 0 && this.renderAcquirers(this.props.acquirers)}
           <div class="uppy-DashboardAddFiles-info">
             {this.props.note && <div class="uppy-Dashboard-note">{this.props.note}</div>}

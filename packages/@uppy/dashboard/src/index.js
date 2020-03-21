@@ -62,7 +62,7 @@ module.exports = class Dashboard extends Plugin {
         cancel: 'Cancel',
         myDevice: 'My Device',
         dropPaste: 'Drop files here, paste or %{browse}',
-        dropPasteImport: 'Drop files here, paste or import from',
+        dropPasteImport: 'Drop files here, paste, %{browse} or import from:',
         dropHint: 'Drop your files here',
         browse: 'browse',
         browseFiles: 'Browse files',

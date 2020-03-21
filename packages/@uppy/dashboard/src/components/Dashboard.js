@@ -5,6 +5,7 @@ const PickerPanelContent = require('./PickerPanelContent')
 const PanelTopBar = require('./PickerPanelTopBar')
 const FileCard = require('./FileCard')
 const classNames = require('classnames')
+const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 const { h } = require('preact')
 const PreactCSSTransitionGroup = require('preact-css-transition-group')
 
@@ -51,6 +52,8 @@ module.exports = function Dashboard (props) {
     <div
       class={dashboardClassName}
       data-uppy-theme={props.theme}
+      data-uppy-num-acquirers={props.acquirers.length}
+      data-uppy-drag-drop-supported={isDragDropSupported()}
       aria-hidden={props.inline ? 'false' : props.isHidden}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
       onpaste={props.handlePaste}
