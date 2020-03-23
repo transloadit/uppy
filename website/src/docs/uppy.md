@@ -373,7 +373,8 @@ uppy.addFile({
   type: 'image/jpeg', // file type
   data: blob, // file blob
   meta: {
-      relativePath: string, // optional, determines the unique relative path to build the file uppy id
+    // optional, store the directory path of a file so Uppy can tell identical files in different directories apart
+    relativePath: webkitFileSystemEntry.relativePath,
   },
   source: 'Local', // optional, determines the source of the file, for example, Instagram
   isRemote: false // optional, set to true if actual file is not in the browser, but on some remote server, for example, when using companion in combination with Instagram
