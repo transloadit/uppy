@@ -97,6 +97,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## 1.11
 
+- [x] @uppy/companion: Fix serverless example (@kvz)
 - [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53 (@arturi)
 - [x] google-drive: Google Drive - Google Docs https://github.com/transloadit/uppy/issues/1554#issuecomment-554904049 (@ife)
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
