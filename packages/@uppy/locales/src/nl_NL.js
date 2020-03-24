@@ -72,6 +72,7 @@ nl_NL.strings = {
     '1': 'Bezig met %{smart_count} bestanden te verwerken'
   },
   recordingLength: 'Opnameduur %{recording_length}',
+  recordingStoppedMaxSize: 'Opname gestopt omdat de bestandsgrootte de limiet bijna overschrijdt',
   removeFile: 'Bestand verwijderen',
   resetFilter: 'Filter resetten',
   resume: 'Hervatten',

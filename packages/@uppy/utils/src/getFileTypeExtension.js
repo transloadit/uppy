@@ -3,13 +3,21 @@
 // We could use a library but they tend to contain dozens of KBs of mappings,
 // most of which will go unused, so not sure if that's worth it.
 const mimeToExtensions = {
-  'video/ogg': 'ogv',
+  'audio/mp3': 'mp3',
   'audio/ogg': 'ogg',
-  'video/webm': 'webm',
   'audio/webm': 'webm',
-  'video/x-matroska': 'mkv',
+  'image/gif': 'gif',
+  'image/heic': 'heic',
+  'image/heif': 'heif',
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/svg+xml': 'svg',
   'video/mp4': 'mp4',
-  'audio/mp3': 'mp3'
+  'video/ogg': 'ogv',
+  'video/quicktime': 'mov',
+  'video/webm': 'webm',
+  'video/x-matroska': 'mkv',
+  'video/x-msvideo': 'avi'
 }
 
 module.exports = function getFileTypeExtension (mimeType) {
