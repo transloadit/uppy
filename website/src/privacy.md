@@ -3,6 +3,7 @@ title: "Privacy Policy"
 type: page
 layout: page
 permalink: /privacy-policy/
+body_class: "page-privacy"
 ---
 
 Uppy is an open source file uploader, developed by the team at [Transloadit Ltd.](https://transloadit.com) and [open source contributors on GitHub](https://github.com/transloadit/uppy/graphs/contributors).
@@ -33,11 +34,11 @@ Since we do not store data on data subjects, migration or deletion tools are not
 We use the following third-party services which also store data about you:
 
 | supplier              | subject                 | data                                     | encryption    | anonymized  | discarded  |
-| :-------------------- | :---------------------- | :--------------------------------------- | :-----------: | :---------: | :--------: | :-------: |
-| Transloadit           | end user (data subject) | browser identifiers                      |               |             | instantly  |           |
-| Transloadit           | end user (data subject) | test files                      |               |             | in 24h  |           |
-| Tus.io               | end user (data subject) | test files                      |               |             | in 72h  |           |
-| Google Analytics      | customer (business)     | browser identifiers                      |               | ✅                      |           |
+| :---------------------| :---------------------- | :--------------------------------------- | :-----------: | :---------: | :--------: |
+| Transloadit           | end user (data subject) | browser identifiers                      |               |             | instantly  |
+| Transloadit           | end user (data subject) | test files                               |               |             | in 24h     |
+| Tus.io                | end user (data subject) | test files                               |               |             | in 72h     |
+| Google Analytics      | customer (business)     | browser identifiers                      |               | ✅          |            |
 
 - **anonymized**: Any data that can be used to identify the 'data subject' is scrubbed
 - **discarded**: Data is destroyed

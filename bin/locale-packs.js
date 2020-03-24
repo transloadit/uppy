@@ -2,7 +2,6 @@ const glob = require('glob')
 const Uppy = require('../packages/@uppy/core')
 const chalk = require('chalk')
 const path = require('path')
-const flat = require('flat')
 const stringifyObject = require('stringify-object')
 const fs = require('fs')
 const uppy = Uppy()
@@ -219,8 +218,9 @@ function test () {
     // for backwards-compat, see https://github.com/transloadit/uppy/pull/1929
     if (localeName === 'es_GL') return
 
-    // Builds array with items like: 'uploadingXFiles.2'
-    followerValues[localeName] = flat(require(localePath).strings)
+    // Builds array with items like: 'uploadingXFiles'
+    // We do not check nested items because different languages may have different amounts of plural forms.
+    followerValues[localeName] = Object.keys(require(localePath).strings)
     followerLocales[localeName] = Object.keys(followerValues[localeName])
   })
 

@@ -81,7 +81,7 @@ If both width and height are given, only width is taken into account.
 
 Whether to wait for all thumbnails to be ready before starting the upload. If set to `true`, Thumbnail Generator will envoke Uppy’s internal processing stage and wait for `thumbnail:all-generated` event, before proceeding to the uploading stage.
 
-This is useful because Thumbnail Generator also adds EXIF data to images, and if we wait until it’s done processing, this data will be avilable on the server after the upload.
+This is useful because Thumbnail Generator also adds EXIF data to images, and if we wait until it’s done processing, this data will be available on the server after the upload.
 
 ## Event
 

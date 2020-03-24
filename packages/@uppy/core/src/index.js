@@ -41,20 +41,23 @@ class Uppy {
         },
         youCanOnlyUploadX: {
           0: 'You can only upload %{smart_count} file',
-          1: 'You can only upload %{smart_count} files',
-          2: 'You can only upload %{smart_count} files'
+          1: 'You can only upload %{smart_count} files'
         },
         youHaveToAtLeastSelectX: {
           0: 'You have to select at least %{smart_count} file',
-          1: 'You have to select at least %{smart_count} files',
-          2: 'You have to select at least %{smart_count} files'
+          1: 'You have to select at least %{smart_count} files'
         },
+        // The default `exceedsSize2` string only combines the `exceedsSize` string (%{backwardsCompat}) with the size.
+        // Locales can override `exceedsSize2` to specify a different word order. This is for backwards compat with
+        // Uppy 1.9.x and below which did a naive concatenation of `exceedsSize2 + size` instead of using a locale-specific
+        // substitution.
+        // TODO: In 2.0 `exceedsSize2` should be removed in and `exceedsSize` updated to use substitution.
+        exceedsSize2: '%{backwardsCompat} %{size}',
         exceedsSize: 'This file exceeds maximum allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
         noNewAlreadyUploading: 'Cannot add new files: already uploading',
         noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
         companionError: 'Connection with Companion failed',
-        companionAuthError: 'Authorization required',
         companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
         failedToUpload: 'Failed to upload %{file}',
         noInternetConnection: 'No Internet connection',
@@ -63,8 +66,7 @@ class Uppy {
         noFilesFound: 'You have no files or folders here',
         selectX: {
           0: 'Select %{smart_count}',
-          1: 'Select %{smart_count}',
-          2: 'Select %{smart_count}'
+          1: 'Select %{smart_count}'
         },
         selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
         unselectAllFilesFromFolderNamed: 'Unselect all files from folder %{name}',
@@ -81,8 +83,7 @@ class Uppy {
         emptyFolderAdded: 'No files were added from empty folder',
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',
-          1: 'Added %{smart_count} files from %{folder}',
-          2: 'Added %{smart_count} files from %{folder}'
+          1: 'Added %{smart_count} files from %{folder}'
         }
       }
     }
@@ -206,7 +207,21 @@ class Uppy {
     }
 
     this._addListeners()
+
+    // Re-enable if we’ll need some capabilities on boot, like isMobileDevice
+    // this._setCapabilities()
   }
+
+  // _setCapabilities = () => {
+  //   const capabilities = {
+  //     isMobileDevice: isMobileDevice()
+  //   }
+
+  //   this.setState({
+  //     ...this.getState().capabilities,
+  //     capabilities
+  //   })
+  // }
 
   on (event, callback) {
     this.emitter.on(event, callback)
@@ -459,7 +474,10 @@ class Uppy {
     // We can't check maxFileSize if the size is unknown.
     if (maxFileSize && file.data.size != null) {
       if (file.data.size > maxFileSize) {
-        throw new RestrictionError(`${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`)
+        throw new RestrictionError(this.i18n('exceedsSize2', {
+          backwardsCompat: this.i18n('exceedsSize'),
+          size: prettyBytes(maxFileSize)
+        }))
       }
     }
   }
@@ -672,7 +690,9 @@ class Uppy {
       })
     }
 
-    this._startIfAutoProceed()
+    if (newFiles.length > 0) {
+      this._startIfAutoProceed()
+    }
 
     if (errors.length > 0) {
       let message = 'Multiple errors occurred while adding files:\n'

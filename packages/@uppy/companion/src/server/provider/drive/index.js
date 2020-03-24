@@ -102,18 +102,58 @@ class Drive extends Provider {
       .request(done)
   }
 
-  download ({ id, token }, onData) {
+  _exportGsuiteFile ({ id, token }) {
+    logger.info(`calling google file export for ${id}`, 'provider.drive.export')
     return this.client
       .query()
-      .get(`files/${id}`)
-      .qs({ alt: 'media', supportsAllDrives: true })
+      .get(`files/${id}/export`)
+      .qs({ supportsAllDrives: true, mimeType: 'application/pdf' })
       .auth(token)
       .request()
-      .on('data', onData)
-      .on('end', () => onData(null))
-      .on('error', (err) => {
-        logger.error(err, 'provider.drive.download.error')
-      })
+  }
+
+  _getGsuiteFileMeta ({ id, token }, onDone) {
+    logger.info(`calling Gsuite file meta for ${id}`, 'provider.drive.export.meta')
+    return this.client
+      .query()
+      .head(`files/${id}/export`)
+      .qs({ supportsAllDrives: true, mimeType: 'application/pdf' })
+      .auth(token)
+      .request(onDone)
+  }
+
+  _isGsuiteFile (mimeType) {
+    return mimeType.startsWith('application/vnd.google')
+  }
+
+  download ({ id, token }, onData) {
+    this.stats({ id, token }, (err, resp, body) => {
+      if (err) {
+        logger.error(err, 'provider.drive.download.stats.error')
+        onData(err)
+        return
+      }
+
+      let requestStream
+      if (this._isGsuiteFile(body.mimeType)) {
+        requestStream = this._exportGsuiteFile({ id, token })
+      } else {
+        requestStream = this.client
+          .query()
+          .get(`files/${id}`)
+          .qs({ alt: 'media', supportsAllDrives: true })
+          .auth(token)
+          .request()
+      }
+
+      requestStream
+        .on('data', (chunk) => onData(null, chunk))
+        .on('end', () => onData(null, null))
+        .on('error', (err) => {
+          logger.error(err, 'provider.drive.download.error')
+          onData(err)
+        })
+    })
   }
 
   thumbnail (_, done) {
@@ -130,7 +170,30 @@ class Drive extends Provider {
         logger.error(err, 'provider.drive.size.error')
         return done(err)
       }
-      done(null, parseInt(body.size))
+
+      if (this._isGsuiteFile(body.mimeType)) {
+        // Google Docs file sizes can be determined
+        // while Google sheets file sizes can't be determined
+        const googleDocMimeType = 'application/vnd.google-apps.document'
+        if (body.mimeType !== googleDocMimeType) {
+          const maxExportFileSize = 10 * 1024 * 1024 // 10 MB
+          done(null, maxExportFileSize)
+          return
+        }
+
+        this._getGsuiteFileMeta({ id, token }, (err, resp) => {
+          if (err || resp.statusCode !== 200) {
+            err = this._error(err, resp)
+            logger.error(err, 'provider.drive.docs.size.error')
+            return done(err)
+          }
+
+          const size = resp.headers['content-length']
+          done(null, size ? parseInt(size) : null)
+        })
+      } else {
+        done(null, parseInt(body.size))
+      }
     })
   }
 
@@ -182,7 +245,7 @@ class Drive extends Provider {
   _error (err, resp) {
     if (resp) {
       const fallbackMessage = `request to ${this.authProvider} returned ${resp.statusCode}`
-      const errMsg = resp.body.error ? resp.body.error.message : fallbackMessage
+      const errMsg = (resp.body && resp.body.error) ? resp.body.error.message : fallbackMessage
       return resp.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
     }
     return err

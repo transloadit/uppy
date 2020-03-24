@@ -1,11 +1,11 @@
 const express = require('express')
 const qs = require('querystring')
-const urlParser = require('url')
 const companion = require('../companion')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const redis = require('../server/redis')
+const { parseURL } = require('../server/helpers/utils')
 const merge = require('lodash.merge')
 // @ts-ignore
 const promBundle = require('express-prom-bundle')
@@ -53,10 +53,7 @@ morgan.token('url', (req, res) => {
 morgan.token('referrer', (req, res) => {
   const ref = req.headers.referer || req.headers.referrer
   if (typeof ref === 'string') {
-    // @todo drop the use of url.parse
-    // when support for node 6 is dropped
-    // eslint-disable-next-line
-    const parsed = urlParser.URL ? new urlParser.URL(ref) : urlParser.parse(ref)
+    const parsed = parseURL(ref)
     const query = qs.parse(parsed.search.replace('?', ''));
     ['uppyAuthToken', 'access_token'].forEach(key => {
       if (query[key]) {
@@ -181,7 +178,13 @@ app.use((req, res, next) => {
 if (app.get('env') === 'production') {
   // @ts-ignore
   app.use((err, req, res, next) => {
-    console.error('\x1b[31m', req.id, err, '\x1b[0m')
+    // if the error is a URIError from the requested URL we only log the error message
+    // to avoid uneccessary error alerts
+    if (err.status === 400 && err instanceof URIError) {
+      console.error('\x1b[31m', req.id, err.message, '\x1b[0m')
+    } else {
+      console.error('\x1b[31m', req.id, err, '\x1b[0m')
+    }
     res.status(err.status || 500).json({ message: 'Something went wrong', requestId: req.id })
   })
 } else {

@@ -1,7 +1,7 @@
 {
   "name": "@uppy/drag-drop",
   "description": "Droppable zone UI for Uppy. Drag and drop files into it to upload.",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",

@@ -7,8 +7,8 @@ declare module DragDrop {
     target?: Uppy.PluginTarget
     inputName?: string
     allowMultipleFiles?: boolean
-    width?: string
-    height?: string
+    width?: string | number
+    height?: string | number
     note?: string
     locale?: DragDropLocale
   }

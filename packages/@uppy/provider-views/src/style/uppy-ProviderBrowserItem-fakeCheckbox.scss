@@ -12,4 +12,8 @@
     border-bottom: 2px solid $white;
     transform: rotate(-45deg);
   }
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-700;
+  }
 }

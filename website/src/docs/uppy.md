@@ -295,7 +295,9 @@ locale: {
       0: 'You have to select at least %{smart_count} file',
       1: 'You have to select at least %{smart_count} files'
     },
-    exceedsSize: 'This file exceeds maximum allowed size of',
+    // **NOTE**: This string is called `exceedsSize2` for backwards compatibility reasons.
+    // See https://github.com/transloadit/uppy/pull/2077
+    exceedsSize2: 'This file exceeds maximum allowed size of %{size}',
     youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
     companionError: 'Connection with Companion failed'
   }
@@ -372,6 +374,10 @@ uppy.addFile({
   name: 'my-file.jpg', // file name
   type: 'image/jpeg', // file type
   data: blob, // file blob
+  meta: {
+    // optional, store the directory path of a file so Uppy can tell identical files in different directories apart
+    relativePath: webkitFileSystemEntry.relativePath,
+  },
   source: 'Local', // optional, determines the source of the file, for example, Instagram
   isRemote: false // optional, set to true if actual file is not in the browser, but on some remote server, for example, when using companion in combination with Instagram
 })
@@ -554,7 +560,7 @@ uppy.setFileMeta('myfileID', { resize: 1500 })
 
 ### `uppy.setOptions(opts)`
 
-Change Uppy options on the fly. For example, to conditionally change `allowedFileTypes` or `locale`:
+Change Uppy options on the fly. For example, to conditionally change `restrictions.allowedFileTypes` or `locale`:
 
 ```js
 const uppy = Uppy()
