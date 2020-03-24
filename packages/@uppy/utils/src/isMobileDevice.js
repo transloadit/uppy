@@ -5,7 +5,10 @@
  * @returns {boolean}
  */
 module.exports = function isMobileDevice () {
-  if (window && window.navigator && window.navigator.userAgent.match(/Mobi/)) {
+  if (typeof window !== 'undefined' &&
+      window.navigator &&
+      window.navigator.userAgent &&
+      window.navigator.userAgent.match(/Mobi/)) {
     return true
   }
   return false
