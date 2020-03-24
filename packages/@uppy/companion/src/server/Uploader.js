@@ -2,7 +2,6 @@ const fs = require('fs')
 const path = require('path')
 const tus = require('tus-js-client')
 const uuid = require('uuid')
-const createTailReadStream = require('@uppy/fs-tail-stream')
 const emitter = require('./emitter')
 const request = require('request')
 const serializeError = require('serialize-error')
@@ -36,6 +35,7 @@ class Uploader {
    * @property {any} companionOptions
    * @property {any=} storage
    * @property {any=} headers
+   * @property {string=} httpMethod
    *
    * @param {UploaderOptions} options
    */
@@ -112,6 +112,7 @@ class Uploader {
       uploadUrl: req.body.uploadUrl,
       protocol: req.body.protocol,
       metadata: req.body.metadata,
+      httpMethod: req.body.httpMethod,
       size: size,
       fieldname: req.body.fieldname,
       pathPrefix: `${req.companion.options.filePath}`,
@@ -203,10 +204,18 @@ class Uploader {
 
   /**
    *
-   * @param {Buffer | Buffer[]} chunk
+   * @param {Error} err
+   * @param {string | Buffer | Buffer[]} chunk
    */
-  handleChunk (chunk) {
+  handleChunk (err, chunk) {
     if (this.uploadStopped) {
+      return
+    }
+
+    if (err) {
+      logger.error(err, 'uploader.download.error', this.shortToken)
+      this.emitError(err)
+      this.cleanUp()
       return
     }
 
@@ -217,12 +226,26 @@ class Uploader {
     if (chunk === null) {
       this.writeStream.on('finish', () => {
         this.streamsEnded = true
-        if (this.options.endpoint && protocol === PROTOCOLS.multipart) {
-          this.uploadMultipart()
-        }
-
-        if (protocol === PROTOCOLS.tus && !this.tus) {
-          return this.uploadTus()
+        switch (protocol) {
+          case PROTOCOLS.multipart:
+            if (this.options.endpoint) {
+              this.uploadMultipart()
+            }
+            break
+          case PROTOCOLS.s3Multipart:
+            if (!this.s3Upload) {
+              this.uploadS3Multipart()
+            } else {
+              logger.warn('handleChunk() called multiple times', 'uploader.s3.duplicate', this.shortToken)
+            }
+            break
+          case PROTOCOLS.tus:
+            if (!this.tus) {
+              this.uploadTus()
+            } else {
+              logger.warn('handleChunk() called multiple times', 'uploader.tus.duplicate', this.shortToken)
+            }
+            break
         }
       })
 
@@ -231,19 +254,7 @@ class Uploader {
 
     this.writeStream.write(chunk, () => {
       logger.debug(`${this.bytesWritten} bytes`, 'uploader.download.progress', this.shortToken)
-      if (protocol === PROTOCOLS.multipart || protocol === PROTOCOLS.tus) {
-        return this.emitIllusiveProgress()
-      }
-
-      if (protocol === PROTOCOLS.s3Multipart && !this.s3Upload) {
-        return this.uploadS3()
-      }
-      // @TODO disabling parallel uploads and downloads for now
-      // if (!this.options.endpoint) return
-
-      // if (protocol === PROTOCOLS.tus && !this.tus) {
-      //   return this.uploadTus()
-      // }
+      return this.emitIllusiveProgress()
     })
   }
 
@@ -455,8 +466,9 @@ class Uploader {
         }
       }
     )
+    const httpMethod = (this.options.httpMethod || '').toLowerCase() === 'put' ? 'put' : 'post'
     const headers = headerSanitize(this.options.headers)
-    request.post({ url: this.options.endpoint, headers, formData, encoding: null }, (error, response, body) => {
+    request[httpMethod]({ url: this.options.endpoint, headers, formData, encoding: null }, (error, response, body) => {
       if (error) {
         logger.error(error, 'upload.multipart.error')
         this.emitError(error)
@@ -490,24 +502,18 @@ class Uploader {
   }
 
   /**
-   * Upload the file to S3 while it is still being downloaded.
+   * Upload the file to S3 using a Multipart upload.
    */
-  uploadS3 () {
-    const file = createTailReadStream(this.path, {
-      tail: true
-    })
+  uploadS3Multipart () {
+    const file = fs.createReadStream(this.path)
 
-    this.writeStream.on('finish', () => {
-      file.close()
-    })
-
-    return this._uploadS3(file)
+    return this._uploadS3MultipartStream(file)
   }
 
   /**
    * Upload a stream to S3.
    */
-  _uploadS3 (stream) {
+  _uploadS3MultipartStream (stream) {
     if (!this.options.s3) {
       this.emitError(new Error('The S3 client is not configured on this companion instance.'))
       return
@@ -518,7 +524,7 @@ class Uploader {
 
     const upload = client.upload({
       Bucket: options.bucket,
-      Key: options.getKey(null, filename),
+      Key: options.getKey(null, filename, this.options.metadata),
       ACL: options.acl,
       ContentType: this.options.metadata.type,
       Body: stream

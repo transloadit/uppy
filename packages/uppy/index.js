@@ -24,6 +24,8 @@ exports.StatusBar = require('@uppy/status-bar')
 exports.Dropbox = require('@uppy/dropbox')
 exports.GoogleDrive = require('@uppy/google-drive')
 exports.Instagram = require('@uppy/instagram')
+exports.OneDrive = require('@uppy/onedrive')
+exports.Facebook = require('@uppy/facebook')
 exports.Url = require('@uppy/url')
 exports.Webcam = require('@uppy/webcam')
 

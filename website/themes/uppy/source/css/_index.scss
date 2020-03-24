@@ -99,6 +99,89 @@
   }
 }
 
+.IndexLogos {
+  font-size: 12px;
+  color: $color-gray;
+  text-align: center;
+  margin: 80px 0;
+
+  @media #{$screen-medium} {
+    margin-top: 120px;
+  }
+
+  &-container {
+    max-width: 900px;
+    padding: 0 20px;
+    margin: 0 auto;
+  }
+
+  &-title {
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 10px;
+    font-size: inherit;
+    color: inherit;
+  }
+
+  &-logos {
+    margin: 12px 0 0;
+    font-size: 0;
+  }
+
+  &-item {
+    font-size: 14px;
+    display: inline-block;
+    margin: 0 20px 5px;
+    vertical-align: middle;
+
+    @media #{$screen-medium} {
+      margin: 0 30px 5px;
+    }
+  }
+
+  &-join {
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
+  }
+}
+
+.IndexLogos-item path {
+  fill: #b7b9bb;
+  transition: fill 0.3s ease;
+}
+
+.IndexLogos-item--coursera:hover {
+  .coursera {
+    fill: #4a89dc;
+  }
+}
+
+.IndexLogos-item--photobox:hover {
+  .photobox {
+    fill: #007377;
+  }
+}
+
+.IndexLogos-item--issuu:hover {
+  .issuu-glyph {
+    fill: #f26f61;
+  }
+
+  .issuu-text {
+    fill: #353535;
+  }
+}
+
+.IndexLogos-item--zulip:hover {
+  .zulip {
+    fill: #50a395;
+  }
+}
+
+
 .IndexDemo {
   margin: 60px auto;
   max-width: 900px;

@@ -16,10 +16,13 @@ const versionCmp = require('../helpers/version')
  */
 module.exports = function sendToken (req, res, next) {
   const uppyAuthToken = req.companion.authToken
-  // add the token to cookies for thumbnail/image requests
-  tokenService.addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider)
+  // some providers need the token in cookies for thumbnail/image requests
+  if (req.companion.provider.needsCookieAuth) {
+    tokenService.addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider)
+  }
 
-  const state = (req.session.grant || {}).state
+  const dynamic = (req.session.grant || {}).dynamic || {}
+  const state = dynamic.state
   if (state) {
     const origin = oAuthState.getFromState(state, 'origin', req.companion.options.secret)
     const clientVersion = oAuthState.getFromState(

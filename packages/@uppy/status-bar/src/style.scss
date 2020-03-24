@@ -136,6 +136,7 @@
 
 .uppy-StatusBar-statusPrimary {
   font-weight: 500;
+  line-height: 1;
 
   [data-uppy-theme="dark"] & {
     color: $white;

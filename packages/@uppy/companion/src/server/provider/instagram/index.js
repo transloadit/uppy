@@ -1,12 +1,18 @@
+const Provider = require('../Provider')
+
 const request = require('request')
 const purest = require('purest')({ request })
 const utils = require('../../helpers/utils')
 const logger = require('../../logger')
 const adapter = require('./adapter')
-const AuthError = require('../error')
+const { ProviderApiError, ProviderAuthError } = require('../error')
 
-class Instagram {
+/**
+ * Adapter for API https://www.instagram.com/developer/endpoints/
+ */
+class Instagram extends Provider {
   constructor (options) {
+    super(options)
     this.authProvider = options.provider = Instagram.authProvider
     this.client = purest(options)
   }
@@ -73,10 +79,11 @@ class Instagram {
       .request((err, resp, body) => {
         if (err) return logger.error(err, 'provider.instagram.download.error')
         request(this._getMediaUrl(body, query.carousel_id))
-          .on('data', onData)
-          .on('end', () => onData(null))
+          .on('data', (chunk) => onData(null, chunk))
+          .on('end', () => onData(null, null))
           .on('error', (err) => {
             logger.error(err, 'provider.instagram.download.url.error')
+            onData(err)
           })
       })
   }
@@ -136,10 +143,11 @@ class Instagram {
   _error (err, resp) {
     if (resp) {
       if (resp.statusCode === 400 && resp.body && resp.body.meta.error_type === 'OAuthAccessTokenException') {
-        return new AuthError()
+        return new ProviderAuthError()
       }
 
-      return new Error(`request to ${this.authProvider} returned ${resp.statusCode}`)
+      const msg = `request to ${this.authProvider} returned ${resp.statusCode}`
+      return new ProviderApiError(msg, resp.statusCode)
     }
 
     return err

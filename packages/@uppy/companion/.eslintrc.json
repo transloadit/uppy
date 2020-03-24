@@ -4,5 +4,8 @@
     "browser": false,
     "node": true
   },
-  "root": true
+  "root": true,
+  "rules": {
+    "eqeqeq": ["error", "smart"]
+  }
 }

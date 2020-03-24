@@ -3,11 +3,10 @@ const classNames = require('classnames')
 const { h } = require('preact')
 
 module.exports = (props) => {
-  const noFiles = props.totalFileCount === 0
-  const dashboardFilesClass = classNames(
-    'uppy-Dashboard-files',
-    { 'uppy-Dashboard-files--noFiles': noFiles }
-  )
+  const dashboardFilesClass = classNames({
+    'uppy-Dashboard-files': true,
+    'uppy-Dashboard-files--noFiles': props.totalFileCount === 0
+  })
 
   const fileProps = {
     // FIXME This is confusing, it's actually the Dashboard's plugin ID
@@ -32,22 +31,23 @@ module.exports = (props) => {
     pauseUpload: props.pauseUpload,
     cancelUpload: props.cancelUpload,
     toggleFileCard: props.toggleFileCard,
-    removeFile: props.removeFile
+    removeFile: props.removeFile,
+    handleRequestThumbnail: props.handleRequestThumbnail
+  }
+
+  function renderItem (fileID) {
+    return (
+      <FileItem
+        key={fileID}
+        {...fileProps}
+        file={props.files[fileID]}
+      />
+    )
   }
 
   return (
-    <ul
-      class={dashboardFilesClass}
-      // making <ul> not focusable for firefox
-      tabindex="-1"
-    >
-      {Object.keys(props.files).map((fileID) => (
-        <FileItem
-          key={fileID}
-          {...fileProps}
-          file={props.files[fileID]}
-        />
-      ))}
+    <ul class={dashboardFilesClass}>
+      {Object.keys(props.files).map(renderItem)}
     </ul>
   )
 }

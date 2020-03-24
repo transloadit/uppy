@@ -2,7 +2,6 @@ const glob = require('glob')
 const Uppy = require('../packages/@uppy/core')
 const chalk = require('chalk')
 const path = require('path')
-const flat = require('flat')
 const stringifyObject = require('stringify-object')
 const fs = require('fs')
 const uppy = Uppy()
@@ -154,11 +153,35 @@ function sortObjectAlphabetically (obj, sortFunc) {
   }, {})
 }
 
+function createTypeScriptLocale (plugin, pluginName) {
+  const allowedStringTypes = Object.keys(plugin.defaultLocale.strings)
+    .map(key => `  | '${key}'`)
+    .join('\n')
+
+  const pluginClassName = pluginName === 'core' ? 'Core' : plugin.id
+  const localePath = path.join(__dirname, '..', 'packages', '@uppy', pluginName, 'types', 'generatedLocale.d.ts')
+
+  const localeTypes =
+    'import Uppy = require(\'@uppy/core\')\n' +
+    '\n' +
+    `type ${pluginClassName}Locale = Uppy.Locale` + '<\n' +
+    allowedStringTypes + '\n' +
+    '>\n' +
+    '\n' +
+    `export = ${pluginClassName}Locale\n`
+
+  fs.writeFileSync(localePath, localeTypes)
+}
+
 function build () {
   const { plugins, sources } = buildPluginsList()
 
   for (const pluginName in plugins) {
     addLocaleToPack(plugins[pluginName], pluginName)
+  }
+
+  for (const pluginName in plugins) {
+    createTypeScriptLocale(plugins[pluginName], pluginName)
   }
 
   localePack = sortObjectAlphabetically(localePack)
@@ -195,8 +218,9 @@ function test () {
     // for backwards-compat, see https://github.com/transloadit/uppy/pull/1929
     if (localeName === 'es_GL') return
 
-    // Builds array with items like: 'uploadingXFiles.2'
-    followerValues[localeName] = flat(require(localePath).strings)
+    // Builds array with items like: 'uploadingXFiles'
+    // We do not check nested items because different languages may have different amounts of plural forms.
+    followerValues[localeName] = Object.keys(require(localePath).strings)
     followerLocales[localeName] = Object.keys(followerValues[localeName])
   })
 

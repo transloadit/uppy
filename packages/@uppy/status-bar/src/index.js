@@ -31,25 +31,21 @@ module.exports = class StatusBar extends Plugin {
         resume: 'Resume',
         filesUploadedOfTotal: {
           0: '%{complete} of %{smart_count} file uploaded',
-          1: '%{complete} of %{smart_count} files uploaded',
-          2: '%{complete} of %{smart_count} files uploaded'
+          1: '%{complete} of %{smart_count} files uploaded'
         },
         dataUploadedOfTotal: '%{complete} of %{total}',
         xTimeLeft: '%{time} left',
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
-          1: 'Upload %{smart_count} files',
-          2: 'Upload %{smart_count} files'
+          1: 'Upload %{smart_count} files'
         },
         uploadXNewFiles: {
           0: 'Upload +%{smart_count} file',
-          1: 'Upload +%{smart_count} files',
-          2: 'Upload +%{smart_count} files'
+          1: 'Upload +%{smart_count} files'
         },
         xMoreFilesAdded: {
           0: '%{smart_count} more file added',
-          1: '%{smart_count} more files added',
-          2: '%{smart_count} more files added'
+          1: '%{smart_count} more files added'
         }
       }
     }
@@ -106,10 +102,8 @@ module.exports = class StatusBar extends Plugin {
   }
 
   startUpload = () => {
-    return this.uppy.upload().catch((err) => {
-      if (!err.isRestriction) {
-        this.uppy.log(err.stack || err.message || err)
-      }
+    return this.uppy.upload().catch(() => {
+      // Error logged in Core
     })
   }
 
@@ -199,8 +193,7 @@ module.exports = class StatusBar extends Plugin {
       completeFiles.length === Object.keys(files).length &&
       processingFiles.length === 0
 
-    const isAllErrored = isUploadStarted &&
-      erroredFiles.length === uploadStartedFiles.length
+    const isAllErrored = error && erroredFiles.length === filesArray.length
 
     const isAllPaused = inProgressFiles.length !== 0 &&
       pausedFiles.length === inProgressFiles.length

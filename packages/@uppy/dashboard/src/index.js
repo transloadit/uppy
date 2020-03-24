@@ -73,19 +73,22 @@ module.exports = class Dashboard extends Plugin {
         cancelUpload: 'Cancel upload',
         xFilesSelected: {
           0: '%{smart_count} file selected',
-          1: '%{smart_count} files selected',
-          2: '%{smart_count} files selected'
+          1: '%{smart_count} files selected'
         },
         uploadingXFiles: {
           0: 'Uploading %{smart_count} file',
-          1: 'Uploading %{smart_count} files',
-          2: 'Uploading %{smart_count} files'
+          1: 'Uploading %{smart_count} files'
         },
         processingXFiles: {
           0: 'Processing %{smart_count} file',
-          1: 'Processing %{smart_count} files',
-          2: 'Processing %{smart_count} files'
+          1: 'Processing %{smart_count} files'
         },
+        // The default `poweredBy2` string only combines the `poweredBy` string (%{backwardsCompat}) with the size.
+        // Locales can override `poweredBy2` to specify a different word order. This is for backwards compat with
+        // Uppy 1.9.x and below which did a naive concatenation of `poweredBy2 + size` instead of using a locale-specific
+        // substitution.
+        // TODO: In 2.0 `poweredBy2` should be removed in and `poweredBy` updated to use substitution.
+        poweredBy2: '%{backwardsCompat} %{uppy}',
         poweredBy: 'Powered by'
       }
     }
@@ -188,11 +191,21 @@ module.exports = class Dashboard extends Plugin {
   }
 
   hideAllPanels = () => {
-    this.setPluginState({
+    const update = {
       activePickerPanel: false,
       showAddFilesPanel: false,
       activeOverlayType: null
-    })
+    }
+
+    const current = this.getPluginState()
+    if (current.activePickerPanel === update.activePickerPanel &&
+        current.showAddFilesPanel === update.showAddFilesPanel &&
+        current.activeOverlayType === update.activeOverlayType) {
+      // avoid doing a state update if nothing changed
+      return
+    }
+
+    this.setPluginState(update)
   }
 
   showPanel = (id) => {
@@ -357,23 +370,23 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
-  addFile = (file) => {
-    try {
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: file,
-        meta: {
-          // path of the file relative to the ancestor directory the user selected.
-          // e.g. 'docs/Old Prague/airbnb.pdf'
-          relativePath: file.relativePath || null
-        }
-      })
-    } catch (err) {
-      if (!err.isRestriction) {
-        this.uppy.log(err)
+  addFiles = (files) => {
+    const descriptors = files.map((file) => ({
+      source: this.id,
+      name: file.name,
+      type: file.type,
+      data: file,
+      meta: {
+        // path of the file relative to the ancestor directory the user selected.
+        // e.g. 'docs/Old Prague/airbnb.pdf'
+        relativePath: file.relativePath || null
       }
+    }))
+
+    try {
+      this.uppy.addFiles(descriptors)
+    } catch (err) {
+      this.uppy.log(err)
     }
   }
 
@@ -488,18 +501,13 @@ module.exports = class Dashboard extends Plugin {
 
     // 2. Add all dropped files
     const files = toArray(event.clipboardData.files)
-    files.forEach((file) => {
-      this.uppy.log('[Dashboard] File pasted')
-      this.addFile(file)
-    })
+    this.addFiles(files)
   }
 
   handleInputChange = (event) => {
     event.preventDefault()
     const files = toArray(event.target.files)
-    files.forEach((file) =>
-      this.addFile(file)
-    )
+    this.addFiles(files)
   }
 
   handleDragOver = (event) => {
@@ -557,9 +565,7 @@ module.exports = class Dashboard extends Plugin {
       .then((files) => {
         if (files.length > 0) {
           this.uppy.log('[Dashboard] Files were dropped')
-          files.forEach((file) =>
-            this.addFile(file)
-          )
+          this.addFiles(files)
         }
       })
   }
@@ -591,13 +597,13 @@ module.exports = class Dashboard extends Plugin {
 
   initEvents = () => {
     // Modal open button
-    const showModalTrigger = findAllDOMElements(this.opts.trigger)
-    if (!this.opts.inline && showModalTrigger) {
-      showModalTrigger.forEach(trigger => trigger.addEventListener('click', this.openModal))
-    }
-
-    if (!this.opts.inline && !showModalTrigger) {
-      this.uppy.log('Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options unless you are planning to call openModal() method yourself', 'error')
+    if (this.opts.trigger && !this.opts.inline) {
+      const showModalTrigger = findAllDOMElements(this.opts.trigger)
+      if (showModalTrigger) {
+        showModalTrigger.forEach(trigger => trigger.addEventListener('click', this.openModal))
+      } else {
+        this.uppy.log('Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options, unless you are planning to call `dashboard.openModal()` method yourself', 'warning')
+      }
     }
 
     this.startListeningToResize()
@@ -810,7 +816,6 @@ module.exports = class Dashboard extends Plugin {
       log: this.uppy.log,
       i18n: this.i18n,
       i18nArray: this.i18nArray,
-      addFile: this.uppy.addFile,
       removeFile: this.uppy.removeFile,
       info: this.uppy.info,
       note: this.opts.note,

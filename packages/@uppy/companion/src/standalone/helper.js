@@ -56,7 +56,9 @@ const getConfigFromEnv = () => {
         endpoint: process.env.COMPANION_AWS_ENDPOINT,
         region: process.env.COMPANION_AWS_REGION,
         useAccelerateEndpoint:
-          process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true'
+          process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
+        expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '300', 10),
+        acl: process.env.COMPANION_AWS_ACL || 'public-read'
       }
     },
     server: {
@@ -193,10 +195,6 @@ exports.buildHelpfulStartupMessage = (companionOptions) => {
     // s3 does not need redirect_uris
     if (providerName === 's3') {
       return
-    }
-
-    if (providerName === 'google') {
-      providerName = 'drive'
     }
 
     callbackURLs.push(buildURL(`/connect/${providerName}/callback`, true))

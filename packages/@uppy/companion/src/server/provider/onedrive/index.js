@@ -1,11 +1,17 @@
+const Provider = require('../Provider')
+
 const request = require('request')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
-const AuthError = require('../error')
+const { ProviderApiError, ProviderAuthError } = require('../error')
 
-class OneDrive {
+/**
+ * Adapter for API https://docs.microsoft.com/en-us/onedrive/developer/rest-api/
+ */
+class OneDrive extends Provider {
   constructor (options) {
+    super(options)
     this.authProvider = options.provider = OneDrive.authProvider
     this.client = purest(options)
   }
@@ -64,10 +70,11 @@ class OneDrive {
       .get(`${rootPath}/items/${id}/content`)
       .auth(token)
       .request()
-      .on('data', onData)
-      .on('end', () => onData(null))
+      .on('data', (chunk) => onData(null, chunk))
+      .on('end', () => onData(null, null))
       .on('error', (err) => {
         logger.error(err, 'provider.onedrive.download.error')
+        onData(err)
       })
   }
 
@@ -123,8 +130,9 @@ class OneDrive {
 
   _error (err, resp) {
     if (resp) {
-      const errMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
-      return resp.statusCode === 401 ? new AuthError() : new Error(errMsg)
+      const fallbackMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
+      const errMsg = resp.body.error ? resp.body.error.message : fallbackMsg
+      return resp.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
     }
 
     return err

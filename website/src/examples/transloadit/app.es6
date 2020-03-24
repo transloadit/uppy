@@ -5,7 +5,9 @@ const Dashboard = require('@uppy/dashboard')
 const Webcam = require('@uppy/webcam')
 const Transloadit = require('@uppy/transloadit')
 const Instagram = require('@uppy/instagram')
+const Facebook = require('@uppy/facebook')
 const { createHmac } = require('crypto')
+const COMPANION = require('../env')
 
 function sha1 (key, text) {
   return createHmac('sha1', key)
@@ -81,6 +83,18 @@ function initUppy (opts = {}) {
     return { params, signature }
   }
 
+  let instagramOptions = {
+    target: Dashboard,
+    companionUrl: 'https://api2.transloadit.com/companion',
+    companionAllowedHosts: Transloadit.COMPANION_PATTERN
+  }
+  if (document.location.hash === '#enable-new-instagram') {
+    instagramOptions = {
+      target: Dashboard,
+      companionUrl: 'https://intense-meadow-61813.herokuapp.com/'
+    }
+  }
+
   uppy
     .use(Transloadit, {
       getAssemblyOptions,
@@ -92,10 +106,10 @@ function initUppy (opts = {}) {
       target: '#uppy-dashboard-container',
       note: 'Images only, 1–2 files, up to 1 MB'
     })
-    .use(Instagram, {
+    .use(Instagram, instagramOptions)
+    .use(Facebook, {
       target: Dashboard,
-      companionUrl: 'https://api2.transloadit.com/companion',
-      companionAllowedHosts: Transloadit.COMPANION_PATTERN
+      companionUrl: COMPANION
     })
     .use(Webcam, { target: Dashboard, modes: ['picture'] })
 

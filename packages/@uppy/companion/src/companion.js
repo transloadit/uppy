@@ -1,6 +1,6 @@
 const express = require('express')
 // @ts-ignore
-const Grant = require('grant-express')
+const Grant = require('grant').express()
 const grantConfig = require('./config/grant')()
 const providerManager = require('./server/provider')
 const controllers = require('./server/controllers')
@@ -18,8 +18,9 @@ const logger = require('./server/logger')
 const { STORAGE_PREFIX } = require('./server/Uploader')
 const middlewares = require('./server/middlewares')
 const { shortenToken } = require('./server/Uploader')
+const { ProviderApiError, ProviderAuthError } = require('./server/provider/error')
+const ms = require('ms')
 
-const providers = providerManager.getDefaultProviders()
 const defaultOptions = {
   server: {
     protocol: 'http',
@@ -31,11 +32,15 @@ const defaultOptions = {
       endpoint: 'https://{service}.{region}.amazonaws.com',
       conditions: [],
       useAccelerateEndpoint: false,
-      getKey: (req, filename) => filename
+      getKey: (req, filename) => filename,
+      expires: ms('5 minutes') / 1000
     }
   },
   debug: true
 }
+
+// make the errors available publicly for custom providers
+module.exports.errors = { ProviderApiError, ProviderAuthError }
 
 /**
  * Entry point into initializing the Companion app.
@@ -44,6 +49,7 @@ const defaultOptions = {
  */
 module.exports.app = (options = {}) => {
   options = merge({}, defaultOptions, options)
+  const providers = providerManager.getDefaultProviders(options)
   providerManager.addProviderOptions(options, grantConfig)
 
   const customProviders = options.customProviders
@@ -61,7 +67,7 @@ module.exports.app = (options = {}) => {
   app.use(cookieParser()) // server tokens are added to cookies
 
   app.use(interceptGrantErrorResponse)
-  app.use(new Grant(grantConfig))
+  app.use(Grant(grantConfig))
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE')
     res.header(
@@ -212,25 +218,38 @@ const getOptionsMiddleware = (options) => {
   if (options.providerOptions.s3) {
     const S3 = require('aws-sdk/clients/s3')
     const AWS = require('aws-sdk')
-    const config = options.providerOptions.s3
+    const s3ProviderOptions = options.providerOptions.s3
+
+    if (s3ProviderOptions.accessKeyId || s3ProviderOptions.secretAccessKey) {
+      throw new Error('Found `providerOptions.s3.accessKeyId` or `providerOptions.s3.secretAccessKey` configuration, but Companion requires `key` and `secret` option names instead. Please use the `key` property instead of `accessKeyId` and the `secret` property instead of `secretAccessKey`.')
+    }
+
+    const rawClientOptions = s3ProviderOptions.awsClientOptions
+    if (rawClientOptions && (rawClientOptions.accessKeyId || rawClientOptions.secretAccessKey)) {
+      throw new Error('Found unsupported `providerOptions.s3.awsClientOptions.accessKeyId` or `providerOptions.s3.awsClientOptions.secretAccessKey` configuration. Please use the `providerOptions.s3.key` and `providerOptions.s3.secret` options instead.')
+    }
+
+    const s3ClientOptions = Object.assign({
+      signatureVersion: 'v4',
+      endpoint: s3ProviderOptions.endpoint,
+      region: s3ProviderOptions.region,
+      // backwards compat
+      useAccelerateEndpoint: s3ProviderOptions.useAccelerateEndpoint
+    }, rawClientOptions)
+
     // Use credentials to allow assumed roles to pass STS sessions in.
     // If the user doesn't specify key and secret, the default credentials (process-env)
     // will be used by S3 in calls below.
-    let credentials
-    if (config.key && config.secret) {
-      credentials = new AWS.Credentials(config.key, config.secret, config.sessionToken)
+    if (s3ProviderOptions.key && s3ProviderOptions.secret && !s3ClientOptions.credentials) {
+      s3ClientOptions.credentials = new AWS.Credentials(
+        s3ProviderOptions.key,
+        s3ProviderOptions.secret,
+        s3ProviderOptions.sessionToken)
     }
-    s3Client = new S3({
-      region: config.region,
-      endpoint: config.endpoint,
-      credentials,
-      signatureVersion: 'v4',
-      useAccelerateEndpoint: config.useAccelerateEndpoint
-    })
+    s3Client = new S3(s3ClientOptions)
   }
 
   /**
-   *
    * @param {object} req
    * @param {object} res
    * @param {function} next
@@ -245,6 +264,7 @@ const getOptionsMiddleware = (options) => {
       buildURL: getURLBuilder(options)
     }
 
+    logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
     // @todo remove req.uppy in next major release
     req.uppy = req.companion
     next()

@@ -24,12 +24,12 @@ function TransitionWrapper (props) {
   )
 }
 
-module.exports = function Dashboard (props) {
-  const WIDTH_XL = 900
-  const WIDTH_LG = 700
-  const WIDTH_MD = 576
-  const HEIGHT_MD = 400
+const WIDTH_XL = 900
+const WIDTH_LG = 700
+const WIDTH_MD = 576
+const HEIGHT_MD = 400
 
+module.exports = function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
   const isSizeMD = props.containerWidth > WIDTH_MD
 
@@ -47,6 +47,8 @@ module.exports = function Dashboard (props) {
     'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel,
     'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible
   })
+
+  const showFileList = props.showSelectedFiles && !noFiles
 
   return (
     <div
@@ -94,10 +96,10 @@ module.exports = function Dashboard (props) {
             {props.i18n('dropHint')}
           </div>
 
-          {(!noFiles && props.showSelectedFiles) && <PanelTopBar {...props} />}
+          {showFileList && <PanelTopBar {...props} />}
 
-          {props.showSelectedFiles ? (
-            noFiles ? <AddFiles {...props} isSizeMD={isSizeMD} /> : <FileList {...props} />
+          {showFileList ? (
+            <FileList {...props} />
           ) : (
             <AddFiles {...props} isSizeMD={isSizeMD} />
           )}
