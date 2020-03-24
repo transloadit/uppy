@@ -30,10 +30,13 @@ module.exports = class ProgressBar extends Plugin {
 
   render (state) {
     const progress = state.totalProgress || 0
-    const isHidden = progress === 100 && this.opts.hideAfterFinish
+    // before starting and after finish should be hidden
+    const isHidden = (progress === 0 || progress === 100) && this.opts.hideAfterFinish
+    // hide the class if the bar is hidden
+    const barClass = 'uppy uppy-ProgressBar' + (isHidden ? ' uppy-hidden' : '')
     return (
       <div
-        class="uppy uppy-ProgressBar"
+        class={{ barClass }}
         style={{ position: this.opts.fixed ? 'fixed' : 'initial' }}
         aria-hidden={isHidden}
       >
