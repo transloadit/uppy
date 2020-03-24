@@ -91,19 +91,17 @@ class AddFiles extends Component {
         {this.props.i18n('browse')}
       </button>
 
-    const renderDropFilesSubtitle = () => {
-      switch (numberOfAcquirers) {
-        case 0:
-          return this.props.i18nArray('dropPaste', { browse })
-        default:
-          return this.props.i18nArray('dropPasteImport', { browse })
+    const renderDropFilesSubtitle = (numberOfAcquirers) => {
+      if (numberOfAcquirers > 0) {
+        return this.props.i18nArray('dropPasteImport', { browse })
       }
+      return this.props.i18nArray('dropPaste', { browse })
     }
 
     return (
       <div class="uppy-Dashboard-dropFilesTitleGroup">
         <div class="uppy-Dashboard-dropFilesTitle">
-          {renderDropFilesSubtitle()}
+          {renderDropFilesSubtitle(numberOfAcquirers)}
         </div>
       </div>
     )
