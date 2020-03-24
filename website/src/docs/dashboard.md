@@ -197,7 +197,11 @@ An array of UI field objects that will be shown when a user clicks the â€œeditâ€
 
 - `id`, the name of the meta field. Note: this will also be used in CSS/HTML as part of the `id` attribute, so itâ€™s better to [avoid using characters like periods, semicolons, etc](https://stackoverflow.com/a/79022).
 - `name`, the label shown in the interface.
-- `placeholder`, the text shown when no value is set in the field.
+- `placeholder`, the text shown when no value is set in the field. (Not needed when a custom render function is provided)
+
+Optionally, you can specify `render: ({value, onChange}, h) => void`, a function for rendering a custom form element.
+It gets passed `({value, onChange}, h)` where `value` is the current value of the meta field, `onChange: (newVal) => void` is a function saving the new value and `h` is the `createElement` function from [preact](https://preactjs.com/guide/v10/api-reference#h--createelement).
+`h` can be useful when using uppy from plain JavaScript, where you cannot write JSX.
 
 ```js
 .use(Dashboard, {
@@ -205,7 +209,10 @@ An array of UI field objects that will be shown when a user clicks the â€œeditâ€
   metaFields: [
     { id: 'name', name: 'Name', placeholder: 'file name' },
     { id: 'license', name: 'License', placeholder: 'specify license' },
-    { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
+    { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' },
+    { id: 'public', name: 'Public', render: function({value, onChange}, h) {
+      return h('input', { type: 'checkbox', onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'on' })
+    } }
   ]
 })
 ```

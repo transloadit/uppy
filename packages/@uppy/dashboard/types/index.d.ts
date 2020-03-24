@@ -6,6 +6,7 @@ interface MetaField {
   id: string
   name: string
   placeholder?: string
+  render?(field: {value: string, onChange(newVal: string): void}, h: any): void
 }
 
 declare module Dashboard {
