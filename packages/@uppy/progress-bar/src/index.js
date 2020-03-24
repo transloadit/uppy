@@ -32,7 +32,7 @@ module.exports = class ProgressBar extends Plugin {
     const progress = state.totalProgress || 0
     // before starting and after finish should be hidden
     const isHidden = (progress === 0 || progress === 100) && this.opts.hideAfterFinish
-    // hide the class if the bar is hidden
+    // `uppy-hidden` class gets added when the bar is set as hidden
     const barClass = 'uppy uppy-ProgressBar' + (isHidden ? ' uppy-hidden' : '')
     return (
       <div
