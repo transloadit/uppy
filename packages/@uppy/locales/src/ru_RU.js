@@ -32,7 +32,7 @@ ru_RU.strings = {
   dropHereOr: 'Перетащите файлы или %{browse}',
   dropHint: 'Перетащите файлы сюда',
   dropPaste: 'Перетащите файлы, вставьте или %{browse}',
-  dropPasteImport: 'Перетащите файлы, вставьте, %{browse} или импортируйте',
+  dropPasteImport: 'Перетащите файлы, вставьте, %{browse} или импортируйте из:',
   edit: 'Редактировать',
   editFile: 'Редактировать файл',
   editing: 'Редактируется %{file}',

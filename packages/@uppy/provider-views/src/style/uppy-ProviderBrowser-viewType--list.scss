@@ -5,11 +5,19 @@
 .uppy-ProviderBrowser-viewType--list {
   background-color: $white;
 
+  [data-uppy-theme="dark"] & {
+    background-color: $black;
+  }
+
   li.uppy-ProviderBrowserItem {
     display: flex;
     align-items: center;
     padding: 7px 15px;
     margin: 0;
+
+    [data-uppy-theme="dark"] & {
+      color: $white;
+    }
   }
 
   // Checkbox

@@ -58,7 +58,6 @@ class Uppy {
         noNewAlreadyUploading: 'Cannot add new files: already uploading',
         noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
         companionError: 'Connection with Companion failed',
-        companionAuthError: 'Authorization required',
         companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
         failedToUpload: 'Failed to upload %{file}',
         noInternetConnection: 'No Internet connection',
@@ -208,7 +207,21 @@ class Uppy {
     }
 
     this._addListeners()
+
+    // Re-enable if we’ll need some capabilities on boot, like isMobileDevice
+    // this._setCapabilities()
   }
+
+  // _setCapabilities = () => {
+  //   const capabilities = {
+  //     isMobileDevice: isMobileDevice()
+  //   }
+
+  //   this.setState({
+  //     ...this.getState().capabilities,
+  //     capabilities
+  //   })
+  // }
 
   on (event, callback) {
     this.emitter.on(event, callback)

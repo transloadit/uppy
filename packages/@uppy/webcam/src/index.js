@@ -45,7 +45,14 @@ module.exports = class Webcam extends Plugin {
     this.id = this.opts.id || 'Webcam'
     this.title = this.opts.title || 'Camera'
     this.type = 'acquirer'
-    this.icon = CameraIcon
+    this.icon = () => (
+      <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" fill-rule="evenodd">
+          <rect fill="#03BFEF" width="32" height="32" rx="16" />
+          <path d="M22 11c1.133 0 2 .867 2 2v7.333c0 1.134-.867 2-2 2H10c-1.133 0-2-.866-2-2V13c0-1.133.867-2 2-2h2.333l1.134-1.733C13.6 9.133 13.8 9 14 9h4c.2 0 .4.133.533.267L19.667 11H22zm-6 1.533a3.764 3.764 0 0 0-3.8 3.8c0 2.129 1.672 3.801 3.8 3.801s3.8-1.672 3.8-3.8c0-2.13-1.672-3.801-3.8-3.801zm0 6.261c-1.395 0-2.46-1.066-2.46-2.46 0-1.395 1.065-2.461 2.46-2.461s2.46 1.066 2.46 2.46c0 1.395-1.065 2.461-2.46 2.461z" fill="#FFF" fill-rule="nonzero" />
+        </g>
+      </svg>
+    )
 
     this.defaultLocale = {
       strings: {
