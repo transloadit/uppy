@@ -925,9 +925,11 @@ module.exports = class Dashboard extends Plugin {
     }
 
     // Dark Mode / theme
-    this.darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    this.darkModeMediaQuery = (typeof window !== 'undefined' && window.matchMedia)
+      ? window.matchMedia('(prefers-color-scheme: dark)')
+      : null
 
-    const isDarkModeOnFromTheStart = this.darkModeMediaQuery.matches
+    const isDarkModeOnFromTheStart = this.darkModeMediaQuery ? this.darkModeMediaQuery.matches : false
     this.uppy.log(`[Dashboard] Dark mode is ${isDarkModeOnFromTheStart ? 'on' : 'off'}`)
     this.setDarkModeCapability(isDarkModeOnFromTheStart)
 
