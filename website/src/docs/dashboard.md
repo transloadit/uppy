@@ -11,11 +11,11 @@ tagline: "full-featured sleek UI with file previews, metadata editing, upload/pa
 `@uppy/dashboard` is a universal UI plugin for Uppy, offering several useful features:
 
 - Drag and drop, paste, select from local disk / my device
-- UI for the Webcam plugin and remote sources, such as Google Drive, Dropbox, Instagram (all optional, added via plugins)
-- File previews and info
+- UI for the Webcam plugin and remote sources, such as Google Drive, Dropbox, Instagram, Facebook and OneDrive (all optional, added via plugins)
+- Image previews
 - Metadata editor
-- Progress: total and for individual files
-- Ability to pause/resume or cancel (depending on uploader plugin) individual or all files
+- Upload progress
+- Ability to pause or cancel (depending on the uploader plugin) uploads
 
 ```js
 const Dashboard = require('@uppy/dashboard')
@@ -92,7 +92,8 @@ uppy.use(Dashboard, {
   onRequestCloseModal: () => this.closeModal(),
   showSelectedFiles: true,
   locale: defaultLocale,
-  browserBackButtonClose: false
+  browserBackButtonClose: false,
+  theme: 'light'
 })
 ```
 
@@ -359,6 +360,17 @@ strings: {
 ### `replaceTargetContent: false`
 
 Remove all children of the `target` element before mounting the Dashboard. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, there might be cases when you would want to clear the container element before placing Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not available). Set `replaceTargetContent: true` to clear the `target` before appending.
+
+### `theme: 'light'`
+
+Uppy Dashboard supports “Dark Mode”. You can try it live on [the Dashboard example page](http://localhost:4000/examples/dashboard/).
+
+There are three options:
+- `light` — the default
+- `dark`
+- `auto` — will respect the user’s system settings and switch automatically
+
+![Uppy dark mode screenshot](/images/uppy-dashboard-dark-mar-2020.png)
 
 ## Methods
 

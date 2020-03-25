@@ -80,7 +80,7 @@ function uppySetOptions () {
 
   window.uppy.getPlugin('Dashboard').setOptions({
     note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : '',
-    browserBackButtonClose: opts.browserBackButtonClose
+    theme: opts.darkMode ? 'dark' : 'light'
   })
 
   const GoogleDriveInstance = window.uppy.getPlugin('GoogleDrive')
