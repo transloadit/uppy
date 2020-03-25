@@ -93,6 +93,8 @@ module.exports = class XHRUpload extends Plugin {
         return new Error('Upload error')
       },
       /**
+       * Check if the response from the upload endpoint indicates that the upload was successful.
+       *
        * @param {number} status the response status code
        * @param {string} responseText the response body string
        * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)

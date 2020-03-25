@@ -63,7 +63,7 @@ When set to `false`, only the file contents are sent.
 
 ### `fieldName: 'files[]'`
 
-When `formData` is set to true, this is used as the form field name for the file to be uploaded.
+When [`formData`](#formData-true) is set to true, this is used as the form field name for the file to be uploaded.
 
 ### `metaFields: null`
 
@@ -73,7 +73,7 @@ Pass an array of field names to limit the metadata fields that will be sent to t
 * Set this to `null` (the default) to send *all* metadata fields.
 * Set this to an empty array `[]` to not send any fields.
 
-If the `formData` option is set to false, `metaFields` has no effect.
+If the [`formData`](#formData-true) option is set to false, `metaFields` has no effect.
 
 ### `headers: {}`
 
@@ -88,11 +88,11 @@ headers: {
 
 ### `bundle: false`
 
-Send all files in a single multipart request. When `bundle` is set to `true`, `formData` must also be set to `true`.
+Send all files in a single multipart request. When `bundle` is set to `true`, [`formData`](#formData-true) must also be set to `true`.
 
 ⚠️ Only use `bundle: true` with local uploads (drag-drop, browse, webcam), Uppy won’t be able to bundle remote files (from Google Drive or Instagram), and will throw an error in this case.
 
-> Note: When `bundle` is set to `true`, [global uppy metadata](https://uppy.io/docs/uppy/#meta), the one set via `meta` options property, is sent to the endpoint. Individual per-file metadata is ignored.
+> Note: When `bundle` is set to `true`, only [global uppy metadata](https://uppy.io/docs/uppy/#meta), the one set via `meta` options property, is sent to the endpoint. Individual per-file metadata is ignored.
 
 All files will be appended to the provided `fieldName` field in the request. To upload files on different fields, use [`uppy.setFileState()`](/docs/uppy#uppy-setFileState-fileID-state) to set the `xhrUpload.fieldName` property on the file:
 
@@ -105,9 +105,29 @@ uppy.setFileState(otherFileID, {
 })
 ```
 
+### `validateStatus(statusCode, responseText, response)`
+
+> This option is only used for **local** uploads at this time. Uploads from remote providers like Google Drive or Instagram do not support this and will always use the default.
+
+Check if the response from the upload endpoint indicates that the upload was successful. By default, responses with a 2xx HTTP status code are considered successful.
+
+#### Return value
+
+Return `true` if the response indicates success. Then, [`getResponseData()`](#getResponseData-responseText-response) will be called and the upload will be marked as successful.
+
+Return `false` if the response indicates failure. Then, both [`getResponseData()`](#getResponseData-responseText-response) and [`getResponseError()`](#getResponseError-responseText-response) will be called and the upload will be marked as unsuccessful.
+
+#### Parameters
+
+The `statusCode` is the numeric HTTP status code returned by the endpoint.
+
+The `responseText` is the XHR endpoint response as a string.
+
+`response` is the [XMLHttpRequest][] object.
+
 ### `getResponseData(responseText, response)`
 
-When an upload has completed, Uppy will extract response data from the upload endpoint. This response data will be available on the file's `.response` property, and be emitted in the `upload-success` event:
+When an upload has completed, Uppy will extract response data from the upload endpoint. This response data will be available on the file's `.response` property, and be emitted in the [`upload-success`][uppy.upload-success] event:
 
 ```js
 uppy.getFile(fileID).response
@@ -131,7 +151,7 @@ By default, Uppy assumes the endpoint will return JSON. So, if `POST /upload` re
 }
 ```
 
-That object will be the value of `response.body`. Not all endpoints respond with JSON. Providing a `getResponseData` function overrides this behavior. The `response` parameter is the `XMLHttpRequest` instance used to upload the file.
+That object will be the value of `response.body`. Not all endpoints respond with JSON. Providing a `getResponseData` function overrides this behavior. The `response` parameter is the [`XMLHttpRequest`][XMLHttpRequest] instance used to upload the file.
 
 For example, an endpoint that responds with an XML document:
 
@@ -143,9 +163,13 @@ getResponseData (responseText, response) {
 }
 ```
 
-The `responseText` is the XHR endpoint response as a string. For uploads from the user's device, `response` is the [XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) object.
+#### Parameters
 
-When uploading files from remote providers such as Dropbox or Instagram, Companion sends upload response data to the client. This is made available in the `getResponseData()` function as well. The `response` object from Companion contains some properties named after their [XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) counterparts:
+The `responseText` is the XHR endpoint response as a string.
+
+For uploads from the user's device, `response` is the [XMLHttpRequest][] object.
+
+When uploading files from remote providers such as Dropbox or Instagram, Companion sends upload response data to the client. This is made available in the `getResponseData()` function as well. The `response` object from Companion contains some properties named after their [XMLHttpRequest][] counterparts:
 
  - `response.responseText` - the XHR endpoint response as a string;
  - `response.status` - the HTTP status code;
@@ -156,19 +180,19 @@ When uploading files from remote providers such as Dropbox or Instagram, Compani
 
 If the upload endpoint responds with a non-2xx status code, the upload is assumed to have failed. The endpoint might have responded with some information about the error, though.
 
-Pass in a `getResponseError` function to extract error data from the `XMLHttpRequest` instance used for the upload.
+Pass in a `getResponseError` function to extract error data from the [`XMLHttpRequest`][XMLHttpRequest] instance used for the upload.
 
 For example, if the endpoint responds with a JSON object containing a `{ message }` property, this would show that message to the user:
 
 ```js
-getResponseError (responseText, xhr) {
+getResponseError (responseText, response) {
   return new Error(JSON.parse(responseText).message)
 }
 ```
 
 ### `responseUrlFieldName: 'url'`
 
-The field name containing a publically accessible location of the uploaded file in the response data returned by `getResponseData(xhr.responseText, xhr)`.
+The field name containing a publically accessible location of the uploaded file in the response data returned by [`getResponseData()`](#getResponseData-responseText-response).
 
 ### `timeout: 30 * 1000`
 
@@ -205,7 +229,7 @@ strings: {
 
 ## POST Parameters / Form Fields
 
-When using XHRUpload with `formData: true`, file metadata is sent along with each upload request. You can set metadata for a file using [`uppy.setFileMeta(fileID, data)`](/docs/uppy#uppy-setFileMeta-fileID-data), or for all files simultaneously using [`uppy.setMeta(data)`](/docs/uppy#uppy-setMeta-data).
+When using XHRUpload with [`formData: true`](#formData-true), file metadata is sent along with each upload request. You can set metadata for a file using [`uppy.setFileMeta(fileID, data)`](/docs/uppy#uppy-setFileMeta-fileID-data), or for all files simultaneously using [`uppy.setMeta(data)`](/docs/uppy#uppy-setMeta-data).
 
 It may be useful to set metadata depending on some file properties, such as the size. You can use the [`file-added`](/docs/uppy/#file-added) event and  the [`uppy.setFileMeta(fileID, data)`](/docs/uppy#uppy-setFileMeta-fileID-data) method to do this:
 
@@ -265,7 +289,9 @@ move_uploaded_file($file_path, './img/' . basename($file_name)); // save the fil
 ```
 
 [FormData]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
+[XMLHttpRequest]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
 [XHR.timeout]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/timeout
 [XHR.responseType]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType
+[uppy.upload-success]: /docs/uppy/#upload-success
 [PHP.file-upload]: https://secure.php.net/manual/en/features.file-upload.php
 [PHP.multiple]: https://secure.php.net/manual/en/features.file-upload.multiple.php
