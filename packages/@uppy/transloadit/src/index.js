@@ -84,8 +84,10 @@ module.exports = class Transloadit extends Plugin {
     })
     // Contains Assembly instances for in-progress Assemblies.
     this.activeAssemblies = {}
-    // Contains assemblyIds of assemblies that have been completed
-    this.finishedAssemblyIds = []
+    // Contains a mapping of uploadID to AssemblyWatcher
+    this.assemblyWatchers = {}
+    // Contains a list of files who have completed postprocessing
+    this.completedFiles = []
   }
 
   setOptions (newOpts) {
@@ -210,20 +212,21 @@ module.exports = class Transloadit extends Plugin {
     }).then((newAssembly) => {
       const assembly = new Assembly(newAssembly)
       const status = assembly.status
+      const assemblyID = status.assembly_id
 
       const { assemblies, uploadsAssemblies } = this.getPluginState()
       this.setPluginState({
         // Store the Assembly status.
         assemblies: {
           ...assemblies,
-          [status.assembly_id]: status
+          [assemblyID]: status
         },
         // Store the list of Assemblies related to this upload.
         uploadsAssemblies: {
           ...uploadsAssemblies,
           [uploadID]: [
             ...uploadsAssemblies[uploadID],
-            status.assembly_id
+            assemblyID
           ]
         }
       })
@@ -242,15 +245,49 @@ module.exports = class Transloadit extends Plugin {
 
       this.uppy.emit('transloadit:assembly-created', status, fileIDs)
 
-      this._connectAssembly(assembly)
-
-      this.uppy.log(`[Transloadit] Created Assembly ${status.assembly_id}`)
+      this.uppy.log(`[Transloadit] Created Assembly ${assemblyID}`)
       return assembly
     }).catch((err) => {
       err.message = `${this.i18n('creatingAssemblyFailed')}: ${err.message}`
       // Reject the promise.
       throw err
     })
+  }
+
+  _createAssemblyWatcher (assemblyID, fileIDs, uploadID) {
+  // AssemblyWatcher tracks completion states of all Assemblies in this upload.
+    const watcher = new AssemblyWatcher(this.uppy, assemblyID)
+
+    watcher.on('assembly-upload', (id) => {
+      const files = this.getAssemblyFiles(id)
+      files.forEach((file) => {
+        this.uppy.emit('postprocess-progress', file, {
+          mode: 'indeterminate',
+          message: this.i18n('encoding')
+        })
+      })
+    })
+
+    watcher.on('assembly-complete', (id) => {
+      const files = this.getAssemblyFiles(id)
+      this.completedFiles = [...this.completedFiles, ...files]
+      files.forEach((file) => {
+        this.uppy.emit('postprocess-complete', file)
+      })
+    })
+
+    watcher.on('assembly-error', (id, error) => {
+    // Clear postprocessing state for all our files.
+      const files = this.getAssemblyFiles(id)
+      files.forEach((file) => {
+      // TODO Maybe make a postprocess-error event here?
+        this.uppy.emit('upload-error', file, error)
+
+        this.uppy.emit('postprocess-complete', file)
+      })
+    })
+
+    this.assemblyWatchers[uploadID] = watcher
   }
 
   _shouldWaitAfterUpload () {
@@ -370,7 +407,6 @@ module.exports = class Transloadit extends Plugin {
           [assemblyId]: finalStatus
         }
       })
-      this.finishedAssemblyIds = [...this.finishedAssemblyIds, assemblyId]
       this.uppy.emit('transloadit:complete', finalStatus)
     })
   }
@@ -573,7 +609,9 @@ module.exports = class Transloadit extends Plugin {
     })
 
     const createAssembly = ({ fileIDs, options }) => {
+      let createdAssembly
       return this._createAssembly(fileIDs, uploadID, options).then((assembly) => {
+        createdAssembly = assembly
         if (this.opts.importFromUploadURLs) {
           return this._reserveFiles(assembly, fileIDs)
         }
@@ -582,6 +620,7 @@ module.exports = class Transloadit extends Plugin {
           const file = this.uppy.getFile(fileID)
           this.uppy.emit('preprocess-complete', file)
         })
+        return createdAssembly
       }).catch((err) => {
         fileIDs.forEach((fileID) => {
           const file = this.uppy.getFile(fileID)
@@ -608,7 +647,11 @@ module.exports = class Transloadit extends Plugin {
     return assemblyOptions.build().then(
       (assemblies) => Promise.all(
         assemblies.map(createAssembly)
-      ),
+      ).then((createdAssemblies) => {
+        const assemblyIDs = createdAssemblies.map(assembly => assembly.status.assembly_id)
+        this._createAssemblyWatcher(assemblyIDs, fileIDs, uploadID)
+        createdAssemblies.map(assembly => this._connectAssembly(assembly))
+      }),
       // If something went wrong before any Assemblies could be created,
       // clear all processing state.
       (err) => {
@@ -623,8 +666,9 @@ module.exports = class Transloadit extends Plugin {
   }
 
   _afterUpload (fileIDs, uploadID) {
+    const files = fileIDs.map(fileID => this.uppy.getFile(fileID))
     // Only use files without errors
-    fileIDs = fileIDs.filter((file) => !file.error)
+    fileIDs = files.filter((file) => !file.error).map(file => file.id)
 
     const state = this.getPluginState()
 
@@ -657,43 +701,12 @@ module.exports = class Transloadit extends Plugin {
       return Promise.resolve()
     }
 
-    // AssemblyWatcher tracks completion states of all Assemblies in this upload.
-    const watcher = new AssemblyWatcher(this.uppy, assemblyIDs)
-
-    fileIDs.forEach((fileID) => {
-      const file = this.uppy.getFile(fileID)
-      this.uppy.emit('postprocess-progress', file, {
-        mode: 'indeterminate',
-        message: this.i18n('encoding')
-      })
+    const incompleteFiles = files.filter(file => !this.completedFiles.includes(file))
+    incompleteFiles.forEach((file) => {
+      this.uppy.emit('postprocess-complete', file)
     })
 
-    // complete postprocessing of any assemblies that finished before the postprocessing step initiated
-    this.finishedAssemblyIds.forEach(assemblyId => {
-      const files = this.getAssemblyFiles(assemblyId)
-      files.forEach((file) => {
-        this.uppy.emit('postprocess-complete', file)
-      })
-    })
-
-    watcher.on('assembly-complete', (id) => {
-      const files = this.getAssemblyFiles(id)
-      files.forEach((file) => {
-        this.uppy.emit('postprocess-complete', file)
-      })
-    })
-
-    watcher.on('assembly-error', (id, error) => {
-      // Clear postprocessing state for all our files.
-      const files = this.getAssemblyFiles(id)
-      files.forEach((file) => {
-        // TODO Maybe make a postprocess-error event here?
-        this.uppy.emit('upload-error', file, error)
-
-        this.uppy.emit('postprocess-complete', file)
-      })
-    })
-
+    const watcher = this.assemblyWatchers[uploadID]
     return watcher.promise.then(() => {
       const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
 
