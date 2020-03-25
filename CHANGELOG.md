@@ -133,6 +133,7 @@ This Release offers Dahsboard redesign (Dark mode), and Companion's support for 
 - @uppy/locales: Polish language pack. (#2138 / @alfatv)
 - @uppy/companion: add support to download gsuite (google docs, google spreadsheet) files (#2145 / @ifedapoolarewaju)
 - @uppy/locales: Croatian translations added (#2150 / @dkisic)
+- @uppy/core: Only _startIfAutoProceed if some files were actually added (#2146 / @arturi)
 
 ## 1.10.1
 
