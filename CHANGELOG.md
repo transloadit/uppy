@@ -81,6 +81,8 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: Customizable meta editor for the Dashboard. Some people want maps, some to disable autocomplete, some validation. Perhaps via jsx rendering. (See https://github.com/transloadit/uppy/issues/2007#issuecomment-573592859, https://github.com/transloadit/uppy/issues/809#issuecomment-417282743) (#617, #809, #454, @arturi)
 - [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112 #362
 
+# next
+
 ## 1.12
 
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default's store #320
@@ -92,21 +94,45 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: fix Dashboard issues with Angular — it’s incredibly slow presumably because of ResizeObserver. (See #1613) (@arturi)
 - [ ] dashboard: add VirtualList, so it can render 5000 files without lag (@goto-bus-stop, @lakesare)
 - [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
-
-# next
-
-## 1.11
-
-- [x] @uppy/companion: Fix serverless example (@kvz)
 - [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53 (@arturi)
-- [x] google-drive: Google Drive - Google Docs https://github.com/transloadit/uppy/issues/1554#issuecomment-554904049 (@ife)
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
-- [x] dashboard: Dark Mode & Redesign by Alex & Artur (@arturi)
-- [x] webcam: Pick format based on `restrictions.allowedFileTypes`, eg. use PNG for snapshot instead of JPG if `allowedFileTypes: ['.png']` is set, you can probably ask for the correct filetype. In addition, we should stop recording video once the max allowed file size is exceeded. should be possible given how the MediaRecorder API works (@goto-bus-stop)
 - [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 - [ ] plugins: review & merge screenshot+screencast support similar to Webcam #148 (@arturi)
 - [ ] core: report information about the device --^ (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
+
+## 1.11.0
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.5.3 | @uppy/onedrive | 1.1.0 |
+| @uppy/aws-s3 | 1.5.3 | @uppy/progress-bar | 1.3.8 |
+| @uppy/companion | 1.11.0 | @uppy/provider-views | 1.6.0 |
+| @uppy/core | 1.9.0 | @uppy/react | 1.5.0 |
+| @uppy/dashboard | 1.7.0 | @uppy/robodog | 1.5.4 |
+| @uppy/drag-drop | 1.4.7 | @uppy/status-bar | 1.6.0 |
+| @uppy/dropbox | 1.4.0 | @uppy/thumbnail-generator | 1.5.6 |
+| @uppy/facebook | 1.1.0 | @uppy/transloadit | 1.5.3 |
+| @uppy/file-input | 1.4.6 | @uppy/tus | 1.5.6 |
+| @uppy/form | 1.3.9 | @uppy/url | 1.5.0 |
+| @uppy/golden-retriever | 1.3.8 | @uppy/utils | 2.3.0 |
+| @uppy/google-drive | 1.5.0 | @uppy/webcam | 1.6.0 |
+| @uppy/informer | 1.5.0 | @uppy/xhr-upload | 1.5.3 |
+| @uppy/instagram | 1.4.0 | uppy | 1.11.0 |
+| @uppy/locales | 1.12.0 | - | - |
+
+This Release offers Dahsboard redesign (Dark mode), and Companion's support for Google Docs
+
+- @uppy/webcam: Try to respect restrictions (#2090 / @goto-bus-stop)
+- @uppy/dashboard: 2020 redesign 🍿 (#2015 / @arturi)
+- @uppy/companion: drop parallel down/upload for S3 multipart (#2114 / @goto-bus-stop)
+- @uppy/core: add typings for `setOptions()`. (#2135 / @goto_but-stop)
+- @uppy/react: fix typescript proptypes for DashboardModal, fixes #2124 (#2136 / @goto-bus-stop)
+- @uppy/companion: emit error to client if download fails (#2139 / @ifedapoolarewaju)
+- @uppy/dashboard: Log warning instead of an error when trigger is not found (#2144 / @arturi)
+- @uppy/locales: Polish language pack. (#2138 / @alfatv)
+- @uppy/companion: add support to download gsuite (google docs, google spreadsheet) files (#2145 / @ifedapoolarewaju)
+- @uppy/locales: Croatian translations added (#2150 / @dkisic)
 
 ## 1.10.1
 
