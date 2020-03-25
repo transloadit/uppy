@@ -220,7 +220,7 @@ function test () {
 
     // Builds array with items like: 'uploadingXFiles'
     // We do not check nested items because different languages may have different amounts of plural forms.
-    followerValues[localeName] = Object.keys(require(localePath).strings)
+    followerValues[localeName] = require(localePath).strings
     followerLocales[localeName] = Object.keys(followerValues[localeName])
   })
 
@@ -240,6 +240,11 @@ function test () {
     missing.forEach((key) => {
       // Items missing are a non-fatal warning because we don't want CI to bum out over all languages
       // as soon as we add some English
+      let value = leadingValues[key]
+      if (typeof value === 'object') {
+        // For values with plural forms, just take the first one right now
+        value = value[Object.keys(value)[0]]
+      }
       warnings.push(`${chalk.cyan(followerName)} locale has missing string: '${chalk.red(key)}' that is present in ${chalk.cyan(leadingLocaleName)} with value: ${chalk.yellow(leadingValues[key])}`)
     })
     excess.forEach((key) => {
