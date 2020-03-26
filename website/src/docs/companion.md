@@ -98,8 +98,7 @@ This takes your `server` instance and your Uppy [Options](#Options) as parameter
 
 ### Running as a standalone server
 
-> Please ensure that the required environment variables are set before running/using Companion as a standalone server. See [Configure Standalone](#Configure-Standalone) for the variables required.
-
+> Please ensure that the required environment variables are set before running/using Companion as a standalone server. See [Configure Standalone](#Configuring-a-standalone-server) for the variables required.
 Set environment variables first:
 
 ```bash
