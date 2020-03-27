@@ -49,16 +49,24 @@ class FileCard extends Component {
 
   renderMetaFields = () => {
     const metaFields = this.props.metaFields || []
+    const fieldCSSClasses = {
+      text: 'uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input'
+    }
+
     return metaFields.map((field) => {
       const id = `uppy-Dashboard-FileCard-input-${field.id}`
       return (
         <fieldset key={field.id} class="uppy-Dashboard-FileCard-fieldset">
           <label class="uppy-Dashboard-FileCard-label" for={id}>{field.name}</label>
           {field.render !== undefined
-            ? field.render({ value: this.state.formState[field.id], onChange: (newVal) => this.updateMeta(newVal, field.id) }, h)
+            ? field.render({
+              value: this.state.formState[field.id],
+              onChange: (newVal) => this.updateMeta(newVal, field.id),
+              fieldCSSClasses: fieldCSSClasses
+            }, h)
             : (
               <input
-                class="uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input"
+                class={inputCSSClasses.text}
                 id={id}
                 type={field.type || 'text'}
                 value={this.state.formState[field.id]}
