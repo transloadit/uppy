@@ -7,6 +7,7 @@ This example uses a Python Flask server and `@uppy/xhr-upload` to upload files t
 To run this example, make sure you've correctly installed the **repository root**:
 ```bash
 npm install
+npm run build
 ```
 That will also install the npm dependencies for this example.
 

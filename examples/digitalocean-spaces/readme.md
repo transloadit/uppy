@@ -7,6 +7,7 @@ This example uses Uppy to upload files to a DigitolOcean Space. DigitalOcean Spa
 To run this example, make sure you've correctly installed the **repository root**:
 ```bash
 npm install
+npm run build
 ```
 That will also install the dependencies for this example.
 
