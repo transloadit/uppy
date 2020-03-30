@@ -152,7 +152,6 @@ describe('validate upload data', () => {
           mymetadata: 'matadata value'
         },
         fieldname: 'uploadField'
-
       })
       .expect(200)
   })
