@@ -1,11 +1,13 @@
 import Uppy = require('@uppy/core')
 import StatusBar = require('@uppy/status-bar')
 import DashboardLocale = require('./generatedLocale')
+import Preact = require('preact')
 
 interface MetaField {
   id: string
   name: string
   placeholder?: string
+  render?(field: {value: string, onChange(newVal: string): void}, h: typeof Preact.h): Preact.VNode
 }
 
 declare module Dashboard {
