@@ -258,16 +258,6 @@ module.exports = class Transloadit extends Plugin {
   // AssemblyWatcher tracks completion states of all Assemblies in this upload.
     const watcher = new AssemblyWatcher(this.uppy, assemblyID)
 
-    watcher.on('assembly-upload', (id) => {
-      const files = this.getAssemblyFiles(id)
-      files.forEach((file) => {
-        this.uppy.emit('postprocess-progress', file, {
-          mode: 'indeterminate',
-          message: this.i18n('encoding')
-        })
-      })
-    })
-
     watcher.on('assembly-complete', (id) => {
       const files = this.getAssemblyFiles(id)
       this.completedFiles = [...this.completedFiles, ...files]
@@ -703,7 +693,7 @@ module.exports = class Transloadit extends Plugin {
 
     const incompleteFiles = files.filter(file => !this.completedFiles.includes(file))
     incompleteFiles.forEach((file) => {
-      this.uppy.emit('postprocess-complete', file)
+      this.uppy.emit('postprocess-progress', file)
     })
 
     const watcher = this.assemblyWatchers[uploadID]
