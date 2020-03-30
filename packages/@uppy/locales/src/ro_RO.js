@@ -2,14 +2,14 @@ const ro_RO = {}
 
 ro_RO.strings = {
   addBulkFilesFailed: {
-    '0': 'Nu s-a reușit adăugarea pentru %{smart_count} fișier datorită unei erori interne',
-    '1': 'Nu s-a reușit adăugarea a %{smart_count} fișiere datorită unei erori interne'
+    '0': 'Nu s-a adăugat %{smart_count} fișier datorită unei erori interne',
+    '1': 'Nu s-au adăugat %{smart_count} fișiere datorită unei erori interne'
   },
   addMore: 'Adaugă mai multe',
   addMoreFiles: 'Adaugă mai multe fișiere',
   addingMoreFiles: 'Se adaugă mai multe fișiere',
-  allowAccessDescription: 'Pentru a face poze sau înregistra video trebuie să permiți site-ului accesul la cameră.',
-  allowAccessTitle: 'Vă rugăm acordați accesul la cameră',
+  allowAccessDescription: 'Pentru a face poze sau înregistra video trebuie să permiți accesul la cameră.',
+  allowAccessTitle: 'Vă rugăm permiteți accesul la cameră',
   authenticateWith: 'Conectați-vă cu %{pluginName}',
   authenticateWithTitle: 'Vă rugăm conectați-vă cu %{pluginName} pentru a selecta fișiere',
   back: 'Înapoi',
@@ -19,7 +19,7 @@ ro_RO.strings = {
   chooseFiles: 'Selectează fișiere',
   closeModal: 'Închide fereastra',
   companionError: 'Conexiunea către Companion nu a reuși',
-  companionUnauthorizeHint: 'Pentru a autoriza contul din %{provider}, navigați către %{url}',
+  companionUnauthorizeHint: 'Pentru a autoriza contul %{provider}, navigați către %{url}',
   complete: 'Complet',
   connectedToInternet: 'Conectat la Internet',
   copyLink: 'Copiază link',
@@ -37,13 +37,13 @@ ro_RO.strings = {
   dropPasteImport: 'Trage fișierele aici, copy/paste, %{browse} sau importă din:',
   editFile: 'Editează fișier',
   editing: 'Se editează %{file}',
-  emptyFolderAdded: 'Nu s-au adăugat fișiere dintr-un directol gol',
+  emptyFolderAdded: 'Nu s-au adăugat fișiere, directorul este gol',
   encoding: 'Encodare...',
-  enterCorrectUrl: 'URL incorect: Introdu un link direct către fișier',
-  enterUrlToImport: 'Introdu URL pentru a importa fișierul',
+  enterCorrectUrl: 'URL incorect: Introduceți un link direct către fișier',
+  enterUrlToImport: 'Introduceți URL pentru a importa fișierul',
   exceedsSize: 'Fișierul depășește dimensiunea maximă permisă de',
   exceedsSize2: '%{backwardsCompat} %{size}',
-  failedToFetch: 'Companionul nu a putut procesa URL-ul, asigură-te că e corect introdus',
+  failedToFetch: 'Companion-ul nu a putut procesa URL-ul, asigură-te că e corect introdus',
   failedToUpload: '%{file} nu a putut fi încărcat',
   fileSource: 'Sursă fișier: %{name}',
   filesUploadedOfTotal: {
@@ -62,7 +62,7 @@ ro_RO.strings = {
   loading: 'Încărcare...',
   logOut: 'Delogare',
   myDevice: 'Dispozitivul meu',
-  noDuplicates: 'Nu se poate adăuga fișierul duplicat \'%{fileName}\', acesta există deja',
+  noDuplicates: 'Nu se poate adăuga fișierul \'%{fileName}\', acesta există deja',
   noFilesFound: 'Nu sunt fișiere sau directoare aici',
   noInternetConnection: 'Fără conexiune la internet',
   noNewAlreadyUploading: 'Nu se pot adăuga fișiere noi: încărcare în curs',
@@ -84,7 +84,7 @@ ro_RO.strings = {
   resume: 'Reia',
   resumeUpload: 'Reia încărcarea',
   retry: 'Reîncercare',
-  retryUpload: 'Reîncearcă încărcare',
+  retryUpload: 'Reîncearcă încărcarea',
   saveChanges: 'Salvează modificări',
   selectAllFilesFromFolderNamed: 'Selectează toate fișierele din %{name}',
   selectFileNamed: 'Selectează fișier %{name}',
@@ -93,8 +93,8 @@ ro_RO.strings = {
     '1': 'Selectează %{smart_count}'
   },
   smile: 'Zâmbește!',
-  startRecording: 'Start înregistrare video',
-  stopRecording: 'Stop înregistrare video',
+  startRecording: 'Pornește înregistrarea video',
+  stopRecording: 'Oprește înregistrarea video',
   takePicture: 'Fă o poză',
   timedOut: 'Încărcarea blocată pentru %{seconds} secunde, se anulează.',
   unselectAllFilesFromFolderNamed: 'Deselectează toate fișierele în directorul %{name}',
@@ -124,7 +124,7 @@ ro_RO.strings = {
     '0': '%{smart_count} fișier adăugat',
     '1': '%{smart_count} fișiere adăugate'
   },
-  xTimeLeft: '%{time} rămas',
+  xTimeLeft: '%{time} rămas(e)',
   youCanOnlyUploadFileTypes: 'Poți încărca doar: %{types}',
   youCanOnlyUploadX: {
     '0': 'Poți încărca doar %{smart_count} fișier',
