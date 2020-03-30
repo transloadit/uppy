@@ -576,6 +576,15 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
+  /**
+   * We cancel thumbnail requests when a file item component unmounts to avoid clogging up the queue when the user scrolls past many elements.
+   */
+  handleCancelThumbnail = (file) => {
+    if (!this.opts.waitForThumbnailsBeforeUpload) {
+      this.uppy.emit('thumbnail:cancel', file)
+    }
+  }
+
   handleKeyDownInInline = (event) => {
     // Trap focus on tab key press.
     if (event.keyCode === TAB_KEY) trapFocus.forInline(event, this.getPluginState().activeOverlayType, this.el)
@@ -852,6 +861,7 @@ module.exports = class Dashboard extends Plugin {
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
       showSelectedFiles: this.opts.showSelectedFiles,
       handleRequestThumbnail: this.handleRequestThumbnail,
+      handleCancelThumbnail: this.handleCancelThumbnail,
       // drag props
       isDraggingOver: pluginState.isDraggingOver,
       handleDragOver: this.handleDragOver,
