@@ -7,6 +7,7 @@ This example uses Node server and `@uppy/xhr-upload` to upload files to the loca
 To run this example, make sure you've correctly installed the **repository root**:
 ```bash
 npm install
+npm run build
 ```
 That will also install the dependencies for this example.
 

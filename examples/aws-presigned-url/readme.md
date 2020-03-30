@@ -7,6 +7,7 @@ This example uses a server-side PHP endpoint to sign uploads to S3.
 To run this example, make sure you've correctly installed the **repository root**:
 ```bash
 npm install
+npm run build
 ```
 That will also install the npm dependencies for this example.
 
