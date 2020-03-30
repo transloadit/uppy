@@ -58,7 +58,8 @@ const getConfigFromEnv = () => {
         useAccelerateEndpoint:
           process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
         expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '300', 10),
-        acl: process.env.COMPANION_AWS_ACL || 'public-read'
+        acl: process.env.COMPANION_AWS_ACL || 'public-read',
+        getKey: process.env.COMPANION_AWS_GET_KEY && Function("req", "filename", "metadata", `'use strict'; return (${process.env.COMPANION_AWS_GET_KEY})`)
       }
     },
     server: {
