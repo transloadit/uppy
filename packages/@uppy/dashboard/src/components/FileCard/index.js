@@ -66,7 +66,7 @@ class FileCard extends Component {
             }, h)
             : (
               <input
-                class={inputCSSClasses.text}
+                class={fieldCSSClasses.text}
                 id={id}
                 type={field.type || 'text'}
                 value={this.state.formState[field.id]}
