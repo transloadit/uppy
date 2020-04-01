@@ -1,4 +1,5 @@
 const Translator = require('@uppy/utils/lib/Translator')
+const hasProperty = require('@uppy/utils/lib/hasProperty')
 const { Plugin } = require('@uppy/core')
 const Tus = require('@uppy/tus')
 const Assembly = require('./Assembly')
@@ -86,8 +87,8 @@ module.exports = class Transloadit extends Plugin {
     this.activeAssemblies = {}
     // Contains a mapping of uploadID to AssemblyWatcher
     this.assemblyWatchers = {}
-    // Contains a list of files who have completed postprocessing
-    this.completedFiles = []
+    // Contains a file IDs that have completed postprocessing before the upload they belong to has entered the postprocess stage.
+    this.completedFiles = Object.create(null)
   }
 
   setOptions (newOpts) {
@@ -260,8 +261,8 @@ module.exports = class Transloadit extends Plugin {
 
     watcher.on('assembly-complete', (id) => {
       const files = this.getAssemblyFiles(id)
-      this.completedFiles = [...this.completedFiles, ...files]
       files.forEach((file) => {
+        this.completedFiles[file.id] = true
         this.uppy.emit('postprocess-complete', file)
       })
     })
@@ -691,7 +692,7 @@ module.exports = class Transloadit extends Plugin {
       return Promise.resolve()
     }
 
-    const incompleteFiles = files.filter(file => !this.completedFiles.includes(file))
+    const incompleteFiles = files.filter(file => !hasProperty(this.completedFiles, file.id))
     incompleteFiles.forEach((file) => {
       this.uppy.emit('postprocess-progress', file)
     })
