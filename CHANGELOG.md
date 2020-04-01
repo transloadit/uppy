@@ -64,12 +64,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] xhr: set the `limit` option to a sensible default, like 10
 - [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
 
-## 1.14
+## 1.15
 
 - [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
 
-## 1.13
+## 1.14
 
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
@@ -83,7 +83,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 # next
 
-## 1.12
+## 1.13
 
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default's store #320
 - [ ] provider: add Box (@ife)
@@ -100,6 +100,29 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] plugins: review & merge screenshot+screencast support similar to Webcam #148 (@arturi)
 - [ ] core: report information about the device --^ (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
+
+## 1.12.0
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3 | 1.5.4 | @uppy/robodog | 1.6.0 |
+| @uppy/companion | 1.11.1 | @uppy/thumbnail-generator | 1.5.7 |
+| @uppy/dashboard | 1.8.0 | @uppy/transloadit | 1.5.4 |
+| @uppy/locales | 1.13.0 | @uppy/xhr-upload | 1.5.4 |
+| @uppy/react | 1.6.0 | uppy | 1.12.0 |
+
+This release adds the Romanian language, more input validation in Companion, and a way to render custom metadata fields in the Dashboard UI.
+
+- @uppy/companion: validate all client provided upload data. (#2160 / @ifedapoolarewaju)
+- @uppy/dashboard: allow custom metadata fields when editing files (#2147 / @galli-leo)
+- @uppy/locales:  Remove obsolete strings from language files. (894c739 / @goto-bus-stop)
+- @uppy/locales: Romanian (ro_RO) language pack added. (#2162 / @akizor)
+- @uppy/robodog: Add Facebook and OneDrive to the bundle. (#2165 / @arturi)
+- @uppy/transloadit: fix progress with very different Assembly runtimes (#2143 / @agreene-coursera)
+- build: Fix locale pack test output (#2153 / @goto-bus-stop)
+- docs: Fix fragment URL (#2156 / @ishendyweb)
+- docs: document `XHRUpload#validateStatus` option. (#2154 / @goto-bus-stop)
+- examples: document `npm run build` step. (697ad04 / @goto-bus-stop)
 
 ## 1.11.0
 
@@ -121,12 +144,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 | @uppy/instagram | 1.4.0 | uppy | 1.11.0 |
 | @uppy/locales | 1.12.0 | - | - |
 
-This Release offers Dahsboard redesign (Dark mode), and Companion's support for Google Docs
+This Release offers Dashboard redesign (Dark mode), and support for Google Docs in Companion.
 
 - @uppy/webcam: Try to respect restrictions (#2090 / @goto-bus-stop)
 - @uppy/dashboard: 2020 redesign 🍿 (#2015 / @arturi)
 - @uppy/companion: drop parallel down/upload for S3 multipart (#2114 / @goto-bus-stop)
-- @uppy/core: add typings for `setOptions()`. (#2135 / @goto_but-stop)
+- @uppy/core: add typings for `setOptions()`. (#2135 / @goto-bus-stop)
 - @uppy/react: fix typescript proptypes for DashboardModal, fixes #2124 (#2136 / @goto-bus-stop)
 - @uppy/companion: emit error to client if download fails (#2139 / @ifedapoolarewaju)
 - @uppy/dashboard: Log warning instead of an error when trigger is not found (#2144 / @arturi)
