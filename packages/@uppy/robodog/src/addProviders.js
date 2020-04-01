@@ -5,6 +5,8 @@ const remoteProviders = {
   dropbox: require('@uppy/dropbox'),
   'google-drive': require('@uppy/google-drive'),
   instagram: require('@uppy/instagram'),
+  facebook: require('@uppy/facebook'),
+  onedrive: require('@uppy/onedrive'),
   url: require('@uppy/url')
 }
 

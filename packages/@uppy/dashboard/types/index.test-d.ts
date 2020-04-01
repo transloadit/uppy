@@ -34,6 +34,7 @@ import Dashboard = require('../')
           expectType<(val: string) => void>(onChange)
           // `h` should be the Preact `h`
           expectError(h([], 'error'))
+          /* Currently `h` typings are limited because of a JSX type conflict between React and Preact.
           return h('input', {
             type: 'checkbox',
             checked: value === 'yes',
@@ -42,6 +43,7 @@ import Dashboard = require('../')
               onChange((event.target as HTMLInputElement).checked ? 'yes' : 'no')
             }
           })
+          */
         }
       }
     ]
