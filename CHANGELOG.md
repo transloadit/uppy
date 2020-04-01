@@ -101,7 +101,24 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: report information about the device --^ (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 
+## 1.12.1
+
+Released 2020-04-01
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3 | 1.5.5 | @uppy/tus | 1.5.7 |
+| @uppy/robodog | 1.6.1 | @uppy/xhr-upload | 1.5.5 |
+| @uppy/transloadit | 1.5.5 | uppy | 1.12.1 |
+
+Patch release to add OneDrive and Facebook to Robodog’s package.json 🙈
+
+- @uppy/tus, @uppy/xhr-upload: emit error when companion returns error during upload creation (#2166 / @ifedapoolarewaju)
+- @uppy/robodog: Add facebook and onedrive to package.json (#2167 / @arturi)
+
 ## 1.12.0
+
+Released 2020-04-01
 
 | Package | Version | Package | Version |
 |-|-|-|-|
