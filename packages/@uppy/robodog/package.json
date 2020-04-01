@@ -34,6 +34,8 @@
     "@uppy/form": "file:../form",
     "@uppy/google-drive": "file:../google-drive",
     "@uppy/instagram": "file:../instagram",
+    "@uppy/facebook": "file:../facebook",
+    "@uppy/onedrive": "file:../onedrive",
     "@uppy/status-bar": "file:../status-bar",
     "@uppy/transloadit": "file:../transloadit",
     "@uppy/url": "file:../url",
