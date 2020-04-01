@@ -694,7 +694,10 @@ module.exports = class Transloadit extends Plugin {
 
     const incompleteFiles = files.filter(file => !hasProperty(this.completedFiles, file.id))
     incompleteFiles.forEach((file) => {
-      this.uppy.emit('postprocess-progress', file)
+      this.uppy.emit('postprocess-progress', file, {
+        mode: 'indeterminate',
+        message: this.i18n('encoding')
+      })
     })
 
     const watcher = this.assemblyWatchers[uploadID]
