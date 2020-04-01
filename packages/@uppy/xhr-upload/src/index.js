@@ -431,6 +431,9 @@ module.exports = class XHRUpload extends Plugin {
 
           return () => socket.close()
         })
+      }).catch((err) => {
+        this.uppy.emit('upload-error', file, err)
+        reject(err)
       })
     })
   }

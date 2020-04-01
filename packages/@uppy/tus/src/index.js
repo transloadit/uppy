@@ -338,7 +338,8 @@ module.exports = class Tus extends Plugin {
       }).then(() => {
         resolve()
       }).catch((err) => {
-        reject(new Error(err))
+        this.uppy.emit('upload-error', file, err)
+        reject(err)
       })
     })
   }
