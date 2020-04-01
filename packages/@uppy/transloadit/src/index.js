@@ -493,10 +493,23 @@ module.exports = class Transloadit extends Plugin {
       })
     }
 
-    // Set up the Assembly instances for existing Assemblies.
+    // Set up the Assembly instances and AssemblyWatchers for existing Assemblies.
     const restoreAssemblies = () => {
-      const { assemblies } = this.getPluginState()
-      Object.keys(assemblies).forEach((id) => {
+      const { assemblies, uploadsAssemblies } = this.getPluginState()
+
+      // Set up the assembly watchers again for all the ongoing uploads.
+      Object.keys(uploadsAssemblies).forEach((uploadID) => {
+        const assemblyIDs = uploadsAssemblies[uploadID]
+        const fileIDsInUpload = assemblyIDs.reduce((acc, assemblyID) => {
+          const fileIDsInAssembly = this.getAssemblyFiles(assemblyID).map((file) => file.id)
+          acc.push(...fileIDsInAssembly)
+          return acc
+        }, [])
+        this._createAssemblyWatcher(assemblyIDs, fileIDsInUpload, uploadID)
+      })
+
+      const allAssemblyIDs = Object.keys(assemblies)
+      allAssemblyIDs.forEach((id) => {
         const assembly = new Assembly(assemblies[id])
         this._connectAssembly(assembly)
       })
