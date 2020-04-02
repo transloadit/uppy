@@ -10,6 +10,7 @@ const dashboardOptionNames = [
   'showProgressDetails',
   'hideRetryButton',
   'hidePauseResumeCancelButtons',
+  'hideUploadButton',
   'hideProgressAfterFinish',
   'note',
   'disableStatusBar',
