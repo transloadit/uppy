@@ -16,7 +16,9 @@ const dashboardOptionNames = [
   'disableStatusBar',
   'disableInformer',
   'disableThumbnailGenerator',
-  'showSelectedFiles'
+  'showSelectedFiles',
+  'proudlyDisplayPoweredByUppy',
+  'theme'
 ]
 
 const modalDashboardOptionNames = [
