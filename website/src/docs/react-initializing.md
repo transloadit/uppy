@@ -45,7 +45,9 @@ const MyComponent = () => {
   const uppy = useRef(Uppy().use(Transloadit, {}));
 
   useEffect(() => {
-    return () => uppy.current.close()
+    const currentUppyInstance = uppy.current;
+
+    return () => currentUppyInstance.close()
   }, [])
 
   return <DashboardModal uppy={uppy.current} />
