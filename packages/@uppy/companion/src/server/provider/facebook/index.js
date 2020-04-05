@@ -21,7 +21,7 @@ class Facebook extends Provider {
     return 'facebook'
   }
 
-  list ({ directory, token, query = {} }, done) {
+  list ({ directory, token, query = { cursor: null } }, done) {
     const qs = {
       fields: 'name,cover_photo,created_time,type'
     }
