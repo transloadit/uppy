@@ -38,11 +38,13 @@ class MyComponent extends React.Component {
 
 ## Functional Components
 
-With react hooks, writing pure functional components are on hype. For wealthy initializing Uppy in a functional component, we need to use the `useRef` hook for keeping the same instance across multiple renders and use `useEffect` for cleaning up things when the component is unmounted.
+With react hooks, writing pure functional components are on hype. For wealthy initializing Uppy in a functional component, we need to use the `useRef` and `useMemo` hooks for keeping the same instance across multiple renders and use `useEffect` for cleaning up things when the component is unmounted.
 
 ```js
 const MyComponent = () => {
-  const uppy = useRef(Uppy().use(Transloadit, {}));
+  const uppyInstance = useMemo(() => Uppy().use(Transloadit, {}), []);
+
+  const uppy = useRef(uppyInstance);
 
   useEffect(() => {
     const currentUppyInstance = uppy.current;
