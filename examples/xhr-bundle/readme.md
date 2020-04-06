@@ -9,6 +9,7 @@ This example uses Uppy with XHRUpload plugin in `bundle` mode. Bundle mode uploa
 To run this example, make sure you've correctly installed the **repository root**:
 ```bash
 npm install
+npm run build
 ```
 That will also install the dependencies for this example.
 

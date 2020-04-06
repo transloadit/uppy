@@ -121,10 +121,11 @@ class DropBox extends Provider {
       })
       .auth(token)
       .request()
-      .on('data', onData)
-      .on('end', () => onData(null))
+      .on('data', (chunk) => onData(null, chunk))
+      .on('end', () => onData(null, null))
       .on('error', (err) => {
         logger.error(err, 'provider.dropbox.download.error')
+        onData(err)
       })
   }
 

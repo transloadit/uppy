@@ -91,18 +91,4 @@ describe('test protected request Agent', () => {
       done()
     })
   })
-
-  test('blocks URLs that have DNS pinned to a private IP address', (done) => {
-    const options = {
-      uri: 'http://127.0.0.1.xip.io:8090',
-      method: 'GET',
-      agentClass: getProtectedHttpAgent('http', true)
-    }
-
-    request(options, (err) => {
-      expect(err).toBeTruthy()
-      expect(err.message.startsWith(FORBIDDEN_IP_ADDRESS)).toEqual(true)
-      done()
-    })
-  })
 })

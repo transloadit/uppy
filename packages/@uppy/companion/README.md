@@ -77,26 +77,6 @@ directory
 npm start
 ```
 
-### Run as a serverless function
-
-Companion can be deployed as a serverless function to AWS Lambda or other cloud providers through `serverless`. Check [this guide](https://serverless.com/framework/docs/getting-started/) to get started.
-
-After you have cloned the repo go inside `examples/serverless`:
-```
-cd examples/serverless
-```
- 
-You can enter your API Keys inside the `serverless.yml` file:
-```
-INSTAGRAM_KEY: <YOUR_INSTAGRAM_KEY>
-INSTAGRAM_SECRET: <YOUR_INSTAGRAM_SECRET>
-```
-
-When you are all set install the dependencies and deploy your function:
-```
-npm install && sls deploy
-```
-
 ### Deploy to heroku
 
 Companion can also be deployed to [Heroku](https://www.heroku.com)

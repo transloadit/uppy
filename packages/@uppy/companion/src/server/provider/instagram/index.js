@@ -21,7 +21,7 @@ class Instagram extends Provider {
     return 'instagram'
   }
 
-  list ({ directory = 'recent', token, query = {} }, done) {
+  list ({ directory = 'recent', token, query = { cursor: null, max_id: null } }, done) {
     const cursor = query.cursor || query.max_id
     const qs = cursor ? { max_id: cursor } : {}
     this.client
@@ -72,17 +72,18 @@ class Instagram extends Provider {
     return mediaObj[`${type}s`].standard_resolution.url
   }
 
-  download ({ id, token, query = {} }, onData) {
+  download ({ id, token, query = { carousel_id: null } }, onData) {
     return this.client
       .get(`media/${id}`)
       .auth(token)
       .request((err, resp, body) => {
         if (err) return logger.error(err, 'provider.instagram.download.error')
         request(this._getMediaUrl(body, query.carousel_id))
-          .on('data', onData)
-          .on('end', () => onData(null))
+          .on('data', (chunk) => onData(null, chunk))
+          .on('end', () => onData(null, null))
           .on('error', (err) => {
             logger.error(err, 'provider.instagram.download.url.error')
+            onData(err)
           })
       })
   }
@@ -94,7 +95,7 @@ class Instagram extends Provider {
     return done(err)
   }
 
-  size ({ id, token, query = {} }, done) {
+  size ({ id, token, query = { carousel_id: null } }, done) {
     return this.client
       .get(`media/${id}`)
       .auth(token)

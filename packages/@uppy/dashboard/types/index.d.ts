@@ -2,10 +2,18 @@ import Uppy = require('@uppy/core')
 import StatusBar = require('@uppy/status-bar')
 import DashboardLocale = require('./generatedLocale')
 
+type FieldRenderOptions = {
+  value: string,
+  onChange: (newVal: string) => void
+}
+
+type PreactRender = (node: any, params: object | null, ...children: any[]) => any
+
 interface MetaField {
   id: string
   name: string
   placeholder?: string
+  render?: (field: FieldRenderOptions, h: PreactRender) => any
 }
 
 declare module Dashboard {

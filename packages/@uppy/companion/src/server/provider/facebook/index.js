@@ -21,7 +21,7 @@ class Facebook extends Provider {
     return 'facebook'
   }
 
-  list ({ directory, token, query = {} }, done) {
+  list ({ directory, token, query = { cursor: null } }, done) {
     const qs = {
       fields: 'name,cover_photo,created_time,type'
     }
@@ -82,10 +82,11 @@ class Facebook extends Provider {
       .request((err, resp, body) => {
         if (err) return logger.error(err, 'provider.facebook.download.error')
         request(this._getMediaUrl(body))
-          .on('data', onData)
-          .on('end', () => onData(null))
+          .on('data', (chunk) => onData(null, chunk))
+          .on('end', () => onData(null, null))
           .on('error', (err) => {
             logger.error(err, 'provider.facebook.download.url.error')
+            onData(err)
           })
       })
   }

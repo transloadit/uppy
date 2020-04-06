@@ -23,73 +23,83 @@ jobs:
     # Run e2e tests on branch builds, not PRs
     # Start this first because it takes a while, so it doesn't only start running after
     # other jobs have run
-    - node_js: 10
-      env: ENDTOEND=true
+    - name: 'Run end-to-end browser tests'
+      node_js: 10
       if: type = push
       addons:
         apt: *APT
         hosts: *HOSTS
         sauce_connect: *SAUCE
-    - node_js: 'stable'
-      env: UNIT=true
-      addons:
-        apt: *APT
-    - node_js: 10
-      env: UNIT=true
-      addons:
-        apt: *APT
-    - node_js: 10
-      env: LINT=true
-      addons:
-        apt: *APT
-    - node_js: 10
-      env: BUILD=true
-      addons:
-        apt: *APT
-    - node_js: 10
-      env: COMPANION=true
-      addons:
-        apt: *APT
-    - node_js: 'stable'
-      env: COMPANION_NODE6=true
-      addons:
-        apt: *APT
+      script: npm run test:endtoend
+    - name: 'Run unit tests'
+      node_js: 'stable'
+      script: npm run test:unit
+    - name: 'Run unit tests on Node.js 10'
+      node_js: 10
+      script: npm run test:unit
+    - name: 'Run Linting and type tests'
+      node_js: 10
+      script:
+        - npm run lint
+        # Need to do a bunch of work to generate the locale typings 🙃
+        - npm run build:lib
+        - npm run build:companion
+        - npm run build:locale-pack
+        - npm run test:type
+    - name: 'Build'
+      node_js: 10
+      if: NOT (branch = master AND type = push AND commit_message =~ /^Release/)
+      script:
+        - npm run build
+    - name: 'Build and update CDN releases'
+      node_js: 10
+      if: branch = master AND type = push AND commit_message =~ /^Release/
+      script:
+        - npm run build
+        - npm run uploadcdn uppy
+        - npm run uploadcdn @uppy/robodog
+        - npm run uploadcdn @uppy/locales
+    - name: 'Run Companion tests'
+      node_js: 10
+      services:
+        - docker
+      script: npm run test:companion
+      deploy:
+      - provider: script
+        skip_cleanup: true
+        script: bin/travis-deploy-companion
+        on:
+          branch: master
+    - name: 'Run Companion tests (Node.js 6)'
+      node_js: 'stable'
+      services:
+        - docker
+      script:
+        - nvm install 6.0.0
+        - nvm use 6.0.0
+        - npm run test:companion
     # Build the website when things are merged to master
-    - node_js: 10
-      env: WEBSITE=true
+    # https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
+    - name: 'Build website'
+      node_js: 10
       if: branch = master AND type = push
-      addons:
-        apt: *APT
+      script: 'true' # no-op, `deploy` step will do the work
+      deploy:
+      - provider: script
+        skip_cleanup: true
+        script: bin/travis-deploy
 
 before_install:
 - nvm install-latest-npm
 install:
 - npm ci
-script:
-- 'if [ -n "${LINT-}" ]; then npm run lint; fi'
-# Need to do a bunch of work to generate the locale typings 🙃
-- 'if [ -n "${LINT-}" ]; then npm run build:lib && npm run build:companion && npm run build:locale-pack && npm run test:type; fi'
-- 'if [ -n "${UNIT-}" ]; then npm run test:unit; fi'
-- 'if [ -n "${COMPANION_NODE6-}" ]; then nvm install 6.0.0 && nvm use 6.0.0; fi'
-- 'if [ -n "${COMPANION-}" ] || [ -n "${COMPANION_NODE6-}" ]; then npm run test:companion; fi'
-- 'if [ -n "${ENDTOEND-}" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm run test:endtoend; fi'
-- 'if [ -n "${BUILD-}" ]; then npm run build; fi'
-# Publish release commits to CDN after a `BUILD=true` run, because we have all the files now
-- |
-  if [ -n "${BUILD-}" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ] &&\
-     [[ "${TRAVIS_COMMIT_MESSAGE}" =~ ^Release* ]]; then
-    npm run uploadcdn uppy
-    npm run uploadcdn @uppy/robodog
-    npm run uploadcdn @uppy/locales
-  fi
+addons:
+  apt: *APT
 cache:
   apt: true
   directories:
   - "~/.npm"
   - "~/.transloadit"
-services:
-# Only required for companion builds, but it's fast so who cares!
-- docker
 env:
   global:
   - CXX=g++-4.8
@@ -119,16 +129,3 @@ env:
 notifications:
   slack:
     secure: L3iQQE8sZ0ik1Z26gPoNMiIam9EOEwYhraHCY60Jk/wmfH6SW/727yKXpgcb/yayx37rUZplvoO7H8e05ISxTJKSepEeqbBUIBQs48S8hr+FHk0VPtpP4HGxqaITRLm+mI1coPRvfISxzrB8d240oup6muhC9Ws4/LXi6v8miyIOs2zoYmGxd56TrUeON3UYlKt6dMava0V4bugARzrafN/tfyI9ccqbHzQLBspQvBI61DzZ5I2vnWpkjfWgIHz9Fl4VzXHqMXwjuTUEu8ibA12b3dHZiJEAoqeb9Oj9QcLPbstPLhlNTZZaOrfiFtwLctI2rFh37slDpAfk5idv3ycxcoG5rbCxgyg5i6dpQqrqHxnyglgHg2/nZ+YA5okeS7nJJNtU/4S6AFRWOUUWMVVY0VBEV+8w+uurl0PDy80RUY3uyK64qAgQ8U0M81/Ys1oyWyn78TqHcbby7V2Ws5I9Yakrq8D+mdfsWYCio8F6LXHSwJ0mt2FanJtdDvpPk9sAwsXZN0n8xhELt5TiRp3bzVIQ0IPUgF54dTG9/zWRvC1P4TFaFU/2fg73ZEUC5aWJoFMnLSZjbZvp5gwpCVd0MjSBk80nF9dHYcavIgJ0wMGI3BMb8Nn6+T11Gw/ycr7OGU4NMkj7i8vSFgKF74piWZyiNW8orkMN6XZgM+o=
-# Travis docs: Note that pull request builds skip deployment step altogether.
-# https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
-deploy:
-- provider: script
-  skip_cleanup: true
-  script: bin/travis-deploy
-  on:
-    branch: master
-- provider: script
-  skip_cleanup: true
-  script: bin/travis-deploy-companion
-  on:
-    branch: master

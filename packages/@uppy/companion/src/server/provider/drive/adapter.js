@@ -29,7 +29,7 @@ exports.getItemIcon = (item) => {
       : `${item.backgroundImageLink}${size}`
   }
 
-  if (item.thumbnailLink) {
+  if (item.thumbnailLink && !item.mimeType.startsWith('application/vnd.google')) {
     const smallerThumbnailLink = item.thumbnailLink.replace('s220', 's40')
     return smallerThumbnailLink
   }
@@ -38,9 +38,7 @@ exports.getItemIcon = (item) => {
 }
 
 exports.getItemSubList = (item) => {
-  return item.files.filter((i) => {
-    return exports.isFolder(i) || !i.mimeType.startsWith('application/vnd.google')
-  })
+  return item.files
 }
 
 exports.getItemName = (item) => {
