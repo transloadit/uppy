@@ -5,7 +5,7 @@
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
     "*.js": "eslint",
-    "*.md": "remark -q"
+    "*.md": "remark -f -q"
   },
   "remarkConfig": {
     "plugins": [
@@ -214,7 +214,7 @@
     "lint:fix": "npm run lint -- --fix",
     "lint:staged": "lint-staged",
     "lint": "eslint . --cache",
-    "lint:markdown": "remark -q .",
+    "lint:markdown": "remark -f -q .",
     "release": "./bin/release",
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
     "start:companion": "./bin/companion",
