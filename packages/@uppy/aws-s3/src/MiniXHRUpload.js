@@ -262,7 +262,8 @@ module.exports = class MiniXHRUpload {
   _uploadRemoteFile (file, current, total) {
     const opts = this._getOptions(file)
     return new Promise((resolve, reject) => {
-      this.uppy.emit('upload-started', file)
+      // This is done in index.js in the S3 plugin.
+      // this.uppy.emit('upload-started', file)
 
       const fields = {}
       const metaFields = Array.isArray(opts.metaFields)
