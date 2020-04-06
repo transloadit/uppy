@@ -141,6 +141,9 @@ module.exports = class MiniXHRUpload {
         ? this._createFormDataUpload(file, opts)
         : this._createBareUpload(file, opts)
 
+      const xhr = new XMLHttpRequest()
+      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+
       const timer = new ProgressTimeout(opts.timeout, () => {
         xhr.abort()
         queuedRequest.done()
@@ -148,9 +151,6 @@ module.exports = class MiniXHRUpload {
         this.uppy.emit('upload-error', file, error)
         reject(error)
       })
-
-      const xhr = new XMLHttpRequest()
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       const id = cuid()
 
