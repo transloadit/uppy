@@ -48,6 +48,7 @@ module.exports = function Dashboard (props) {
     'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible
   })
 
+  // Important: keep these in sync with the percent width values in `src/components/FileItem/index.scss`.
   let itemsPerRow = 1 // mobile
   if (props.containerWidth > WIDTH_XL) {
     itemsPerRow = 5
