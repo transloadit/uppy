@@ -4,7 +4,13 @@
   "version": "0.0.0",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
-    "*.js": "eslint"
+    "*.js": "eslint",
+    "*.md": "remark"
+  },
+  "remarkConfig": {
+    "plugins": [
+      "remark-lint-uppy"
+    ]
   },
   "size-limit": [
     {
@@ -65,6 +71,7 @@
     "@uppy/utils": "file:packages/@uppy/utils",
     "@uppy/webcam": "file:packages/@uppy/webcam",
     "@uppy/xhr-upload": "file:packages/@uppy/xhr-upload",
+    "remark-lint-uppy": "file:private/remark-lint-uppy",
     "uppy": "file:packages/uppy",
     "uppy.io": "file:website"
   },
@@ -169,6 +176,7 @@
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "redux": "4.0.5",
+    "remark-cli": "^8.0.0",
     "replace-x": "1.7.2",
     "rimraf": "2.7.1",
     "stringify-object": "3.3.0",
@@ -206,6 +214,7 @@
     "lint:fix": "npm run lint -- --fix",
     "lint:staged": "lint-staged",
     "lint": "eslint . --cache",
+    "lint:markdown": "remark .",
     "release": "./bin/release",
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
     "start:companion": "./bin/companion",
