@@ -147,7 +147,7 @@ To quickly summarize:
 
 #### Utilities
 
-Syntax: u-[sm-|md-|lg-]<utilityName>
+Syntax: `u-[sm-|md-|lg-]<utilityName>`
 
 ```css
 .u-utilityName
@@ -157,7 +157,7 @@ Syntax: u-[sm-|md-|lg-]<utilityName>
 
 #### Components
 
-Syntax: [<namespace>-]<ComponentName>[-descendentName][--modifierName]
+Syntax: `[<namespace>-]<ComponentName>[-descendentName][--modifierName]`
 
 ```css
 .twt-Button /* Namespaced component */
