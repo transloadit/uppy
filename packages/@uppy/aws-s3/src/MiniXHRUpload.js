@@ -283,6 +283,7 @@ module.exports = class MiniXHRUpload {
         size: file.data.size,
         fieldname: opts.fieldName,
         metadata: fields,
+        httpMethod: opts.method,
         headers: opts.headers
       }).then((res) => {
         const token = res.token
