@@ -44,6 +44,7 @@ declare module Dashboard {
     showSelectedFiles?: boolean
     replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
+    theme?: 'auto' | 'dark' | 'light'
     thumbnailWidth?: number
     trigger?: string
     width?: string | number
