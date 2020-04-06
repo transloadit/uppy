@@ -37,7 +37,7 @@ class Facebook extends Provider {
     }
 
     this.client
-      .get(path)
+      .get(`https://graph.facebook.com/${path}`)
       .qs(qs)
       .auth(token)
       .request((err, resp, body) => {
@@ -76,7 +76,7 @@ class Facebook extends Provider {
 
   download ({ id, token }, onData) {
     return this.client
-      .get(id)
+      .get(`https://graph.facebook.com/${id}`)
       .qs({ fields: 'images' })
       .auth(token)
       .request((err, resp, body) => {
@@ -100,7 +100,7 @@ class Facebook extends Provider {
 
   size ({ id, token }, done) {
     return this.client
-      .get(id)
+      .get(`https://graph.facebook.com/${id}`)
       .qs({ fields: 'images' })
       .auth(token)
       .request((err, resp, body) => {
