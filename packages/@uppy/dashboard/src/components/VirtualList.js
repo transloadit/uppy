@@ -54,18 +54,35 @@ const STYLE_CONTENT = {
 class VirtualList extends Component {
   constructor (props) {
     super(props)
+
+    // The currently focused node, used to retain focus when the visible rows change.
+    // To avoid update loops, this should not cause state updates, so it's kept as a plain property.
+    this.focusElement = null
+
     this.state = {
       offset: 0,
       height: 0
     }
   }
 
-  resize = () => {
+  resize () {
     if (this.state.height !== this.base.offsetHeight) {
       this.setState({
         height: this.base.offsetHeight
       })
     }
+  }
+
+  handleFocusIn = (event) => {
+    this.focusElement = event.target
+  }
+
+  handleFocusOut = () => {
+    this.focusElement = null
+  }
+
+  handleResize = () => {
+    this.resize()
   }
 
   handleScroll = () => {
@@ -78,16 +95,21 @@ class VirtualList extends Component {
   }
 
   componentDidUpdate () {
+    // Maintain focus when rows are added and removed.
+    if (this.focusElement && this.focusElement.parentNode &&
+        document.activeElement !== this.focusElement) {
+      this.focusElement.focus()
+    }
     this.resize()
   }
 
   componentDidMount () {
     this.resize()
-    addEventListener('resize', this.resize)
+    window.addEventListener('resize', this.handleResize)
   }
 
   componentWillUnmount () {
-    removeEventListener('resize', this.resize)
+    window.removeEventListener('resize', this.handleResize)
   }
 
   render ({
@@ -122,7 +144,12 @@ class VirtualList extends Component {
     const styleContent = { ...STYLE_CONTENT, top: start * rowHeight }
 
     return (
-      <div onScroll={this.handleScroll} {...props}>
+      <div
+        onFocusIn={this.handleFocusIn}
+        onFocusOut={this.handleFocusOut}
+        onScroll={this.handleScroll}
+        {...props}
+      >
         <div role="presentation" style={styleInner}>
           <div role="presentation" style={styleContent}>
             {selection.map(renderRow)}
