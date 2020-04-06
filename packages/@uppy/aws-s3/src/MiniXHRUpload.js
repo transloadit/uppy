@@ -355,6 +355,9 @@ module.exports = class MiniXHRUpload {
 
           return () => socket.close()
         })
+      }).catch((err) => {
+        this.uppy.emit('upload-error', file, err)
+        reject(err)
       })
     })
   }
