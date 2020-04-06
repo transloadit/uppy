@@ -37,10 +37,17 @@ jobs:
     - name: 'Run unit tests on Node.js 10'
       node_js: 10
       script: npm run test:unit
-    - name: 'Run Linting and type tests'
+    - name: 'Run Linting'
       node_js: 10
       script:
         - npm run lint
+    - name: 'Run Markdown Linting'
+      node_js: 10
+      script:
+        - npm run lint:markdown
+    - name: 'Run type tests'
+      node_js: 10
+      script:
         # Need to do a bunch of work to generate the locale typings 🙃
         - npm run build:lib
         - npm run build:companion
