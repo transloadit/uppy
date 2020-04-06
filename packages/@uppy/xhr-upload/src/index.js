@@ -217,6 +217,9 @@ module.exports = class XHRUpload extends Plugin {
         ? this.createFormDataUpload(file, opts)
         : this.createBareUpload(file, opts)
 
+      const xhr = new XMLHttpRequest()
+      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+
       const timer = new ProgressTimeout(opts.timeout, () => {
         xhr.abort()
         queuedRequest.done()
@@ -224,9 +227,6 @@ module.exports = class XHRUpload extends Plugin {
         this.uppy.emit('upload-error', file, error)
         reject(error)
       })
-
-      const xhr = new XMLHttpRequest()
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       const id = cuid()
 
@@ -358,7 +358,7 @@ module.exports = class XHRUpload extends Plugin {
         size: file.data.size,
         fieldname: opts.fieldName,
         metadata: fields,
-        httpMethod: this.opts.method,
+        httpMethod: opts.method,
         headers: opts.headers
       }).then((res) => {
         const token = res.token
