@@ -615,8 +615,8 @@ uppy.log('[Dashboard] adding files...')
 #### Parameters
 
 - **message** *{(string|object)}* — `'info message'` or `{ message: 'Oh no!', details: 'File couldn’t be uploaded' }`
-- **type** *{string} [type='info']* — `info`, `warning`, `success` or `error`
-- **duration** *{number} [duration = 3000]* — in milliseconds
+- **type** *{string} \[type='info']* — `info`, `warning`, `success` or `error`
+- **duration** *{number} \[duration = 3000]* — in milliseconds
 
 Sets a message in state, with optional details, that can be shown by notification UI plugins. Currently, that means just the [Informer](/docs/informer/) plugin, included by default in Dashboard.
 

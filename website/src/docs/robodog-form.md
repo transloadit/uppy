@@ -263,5 +263,4 @@ There are no `on*()` _options_ anymore, but `.on('...')` methods are provided in
 | `onDisconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
 | `onReconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
 
-[transloadit]: https://transloadit.com
 [transloadit plugin]: https://uppy.io/docs/transloadit/
