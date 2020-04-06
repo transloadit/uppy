@@ -1,6 +1,8 @@
 'use strict'
 
 exports.plugins = [
+  require('remark-frontmatter'),
+  // Do a lint.
   require('remark-lint'),
   // Unix compatibility.
   require('remark-lint-final-newline'),
