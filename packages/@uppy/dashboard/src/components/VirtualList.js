@@ -73,14 +73,6 @@ class VirtualList extends Component {
     }
   }
 
-  handleFocusIn = (event) => {
-    this.focusElement = event.target
-  }
-
-  handleFocusOut = () => {
-    this.focusElement = null
-  }
-
   handleResize = () => {
     this.resize()
   }
@@ -94,12 +86,19 @@ class VirtualList extends Component {
     }
   }
 
+  componentWillUpdate () {
+    if (this.base.contains(document.activeElement)) {
+      this.focusElement = document.activeElement
+    }
+  }
+
   componentDidUpdate () {
     // Maintain focus when rows are added and removed.
     if (this.focusElement && this.focusElement.parentNode &&
         document.activeElement !== this.focusElement) {
       this.focusElement.focus()
     }
+    this.focusElement = null
     this.resize()
   }
 
@@ -134,8 +133,8 @@ class VirtualList extends Component {
       visibleRowCount += overscanCount
     }
 
-    // last visible + overscan row index
-    const end = start + 1 + visibleRowCount
+    // last visible + overscan row index + padding to allow keyboard focus to travel past the visible area
+    const end = start + visibleRowCount + 4
 
     // data slice currently in viewport plus overscan items
     const selection = data.slice(start, end)
@@ -144,12 +143,7 @@ class VirtualList extends Component {
     const styleContent = { ...STYLE_CONTENT, top: start * rowHeight }
 
     return (
-      <div
-        onFocusIn={this.handleFocusIn}
-        onFocusOut={this.handleFocusOut}
-        onScroll={this.handleScroll}
-        {...props}
-      >
+      <div onScroll={this.handleScroll} {...props}>
         <div role="presentation" style={styleInner}>
           <div role="presentation" style={styleContent}>
             {selection.map(renderRow)}
