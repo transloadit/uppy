@@ -38,6 +38,7 @@ class Uploader {
    * @property {any=} storage
    * @property {any=} headers
    * @property {string=} httpMethod
+   * @property {boolean=} useFormData
    *
    * @param {UploaderOptions} options
    */
@@ -106,6 +107,9 @@ class Uploader {
   }
 
   static reqToOptions (req, size) {
+    const useFormDataIsSet = Object.prototype.hasOwnProperty.call(req.body, 'useFormData')
+    const useFormData = useFormDataIsSet ? req.body.useFormData : true
+
     return {
       companionOptions: req.companion.options,
       endpoint: req.body.endpoint,
@@ -113,7 +117,8 @@ class Uploader {
       protocol: req.body.protocol,
       metadata: req.body.metadata,
       httpMethod: req.body.httpMethod,
-      size: size,
+      useFormData,
+      size,
       fieldname: req.body.fieldname,
       pathPrefix: `${req.companion.options.filePath}`,
       storage: redis.client(),
@@ -492,22 +497,28 @@ class Uploader {
       this.emitIllusiveProgress(bytesUploaded)
     })
 
-    const formData = Object.assign(
-      {},
-      this.options.metadata,
-      {
-        [this.options.fieldname]: {
-          value: file,
-          options: {
-            filename: this.uploadFileName,
-            contentType: this.options.metadata.type
-          }
-        }
-      }
-    )
     const httpMethod = (this.options.httpMethod || '').toLowerCase() === 'put' ? 'put' : 'post'
     const headers = headerSanitize(this.options.headers)
-    request[httpMethod]({ url: this.options.endpoint, headers, formData, encoding: null }, (error, response, body) => {
+    const reqOptions = { url: this.options.endpoint, headers, encoding: null }
+    if (this.options.useFormData) {
+      reqOptions.formData = Object.assign(
+        {},
+        this.options.metadata,
+        {
+          [this.options.fieldname]: {
+            value: file,
+            options: {
+              filename: this.uploadFileName,
+              contentType: this.options.metadata.type
+            }
+          }
+        }
+      )
+    } else {
+      reqOptions.body = file
+    }
+
+    request[httpMethod](reqOptions, (error, response, body) => {
       if (error) {
         logger.error(error, 'upload.multipart.error')
         this.emitError(error)
