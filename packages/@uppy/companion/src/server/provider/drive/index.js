@@ -102,24 +102,36 @@ class Drive extends Provider {
       .request(done)
   }
 
-  _exportGsuiteFile ({ id, token }) {
-    logger.info(`calling google file export for ${id}`, 'provider.drive.export')
+  _exportGsuiteFile (id, token, mimeType) {
+    logger.info(`calling google file export for ${id} to ${mimeType}`, 'provider.drive.export')
     return this.client
       .query()
       .get(`files/${id}/export`)
-      .qs({ supportsAllDrives: true, mimeType: 'application/pdf' })
+      .qs({ supportsAllDrives: true, mimeType })
       .auth(token)
       .request()
   }
 
-  _getGsuiteFileMeta ({ id, token }, onDone) {
+  _getGsuiteFileMeta (id, token, mimeType, onDone) {
     logger.info(`calling Gsuite file meta for ${id}`, 'provider.drive.export.meta')
     return this.client
       .query()
       .head(`files/${id}/export`)
-      .qs({ supportsAllDrives: true, mimeType: 'application/pdf' })
+      .qs({ supportsAllDrives: true, mimeType })
       .auth(token)
       .request(onDone)
+  }
+
+  _getGsuiteExportType (mimeType) {
+    const typeMaps = {
+      'application/vnd.google-apps.document': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.google-apps.drawing': 'image/png',
+      'application/vnd.google-apps.script': 'application/vnd.google-apps.script+json',
+      'application/vnd.google-apps.spreadsheet': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.google-apps.presentation': 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+    }
+
+    return typeMaps[mimeType] || 'application/pdf'
   }
 
   _isGsuiteFile (mimeType) {
@@ -136,7 +148,7 @@ class Drive extends Provider {
 
       let requestStream
       if (this._isGsuiteFile(body.mimeType)) {
-        requestStream = this._exportGsuiteFile({ id, token })
+        requestStream = this._exportGsuiteFile(id, token, this._getGsuiteExportType(body.mimeType))
       } else {
         requestStream = this.client
           .query()
@@ -181,7 +193,7 @@ class Drive extends Provider {
           return
         }
 
-        this._getGsuiteFileMeta({ id, token }, (err, resp) => {
+        this._getGsuiteFileMeta(id, token, this._getGsuiteExportType(body.mimeType), (err, resp) => {
           if (err || resp.statusCode !== 200) {
             err = this._error(err, resp)
             logger.error(err, 'provider.drive.docs.size.error')
