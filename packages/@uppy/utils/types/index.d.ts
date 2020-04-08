@@ -49,16 +49,23 @@ declare module '@uppy/utils/lib/RateLimitedQueue' {
     export type AbortFunction = () => void
     export type PromiseFunction = (...args: any[]) => Promise<any>
     export type QueueEntry = {
-      abort: () => void
-      done: () => void
+      abort: () => void,
+      done: () => void,
+    }
+    export type QueueOptions = {
+      priority?: number
     }
   }
 
   class RateLimitedQueue {
-    constructor (limit: number)
-    run (fn: () => RateLimitedQueue.AbortFunction): RateLimitedQueue.QueueEntry
+    constructor(limit: number)
+    run(
+      fn: () => RateLimitedQueue.AbortFunction,
+      queueOptions?: RateLimitedQueue.QueueOptions
+    ): RateLimitedQueue.QueueEntry
     wrapPromiseFunction(
-      fn: () => RateLimitedQueue.PromiseFunction
+      fn: () => RateLimitedQueue.PromiseFunction,
+      queueOptions?: RateLimitedQueue.QueueOptions
     ): RateLimitedQueue.PromiseFunction
   }
 
@@ -140,7 +147,7 @@ declare module '@uppy/utils/lib/getETA' {
 declare module '@uppy/utils/lib/getFileNameAndExtension' {
   function getFileNameAndExtension(
     filename: string
-  ): { name: string, extension: string | undefined };
+  ): { name: string, extension: string | undefined }
   export = getFileNameAndExtension
 }
 

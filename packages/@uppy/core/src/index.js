@@ -902,7 +902,8 @@ class Uppy {
     // bytesTotal may be null or zero; in that case we can't divide by it
     const canHavePercentage = isFinite(data.bytesTotal) && data.bytesTotal > 0
     this.setFileState(file.id, {
-      progress: Object.assign({}, this.getFile(file.id).progress, {
+      progress: {
+        ...this.getFile(file.id).progress,
         bytesUploaded: data.bytesUploaded,
         bytesTotal: data.bytesTotal,
         percentage: canHavePercentage
@@ -910,7 +911,7 @@ class Uppy {
           // we get more accurate calculations if we don't round this at all.
           ? Math.round(data.bytesUploaded / data.bytesTotal * 100)
           : 0
-      })
+      }
     })
 
     this._calculateTotalProgress()
@@ -922,7 +923,9 @@ class Uppy {
     const files = this.getFiles()
 
     const inProgress = files.filter((file) => {
-      return file.progress.uploadStarted
+      return file.progress.uploadStarted ||
+        file.progress.preprocess ||
+        file.progress.postprocess
     })
 
     if (inProgress.length === 0) {

@@ -104,6 +104,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] plugins: review & merge screenshot+screencast support similar to Webcam #148 (@arturi)
 - [ ] core: report information about the device --^ (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
+- [ ] s3: immediately start uploading files once the signed URL is generated (#2060, @goto-bus-stop)
 
 ## 1.12.1
 

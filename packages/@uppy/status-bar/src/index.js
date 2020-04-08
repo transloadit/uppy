@@ -182,12 +182,12 @@ module.exports = class StatusBar extends Plugin {
 
     let totalSize = 0
     let totalUploadedSize = 0
-    uploadStartedFiles.forEach((file) => {
+    startedFiles.forEach((file) => {
       totalSize = totalSize + (file.progress.bytesTotal || 0)
       totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
     })
 
-    const isUploadStarted = uploadStartedFiles.length > 0
+    const isUploadStarted = startedFiles.length > 0
 
     const isAllComplete = totalProgress === 100 &&
       completeFiles.length === Object.keys(files).length &&
