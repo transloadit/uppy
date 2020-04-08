@@ -25,6 +25,26 @@ import Dashboard = require('../')
         id: 'license',
         name: 'License',
         placeholder: 'Creative Commons, Apache 2.0, ...'
+      },
+      {
+        id: 'public',
+        name: 'Public',
+        render ({ value, onChange }, h) {
+          expectType<string>(value)
+          expectType<(val: string) => void>(onChange)
+          // `h` should be the Preact `h`
+          expectError(h([], 'error'))
+          /* Currently `h` typings are limited because of a JSX type conflict between React and Preact.
+          return h('input', {
+            type: 'checkbox',
+            checked: value === 'yes',
+            onChange: (event) => {
+              expectType<Event>(event)
+              onChange((event.target as HTMLInputElement).checked ? 'yes' : 'no')
+            }
+          })
+          */
+        }
       }
     ]
   })

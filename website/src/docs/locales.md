@@ -33,8 +33,8 @@ const uppy = Uppy({
 Add a `<script>` tag with Uppy bundle and the locale pack you’d like to use. You can copy/paste the link from the CDN column in the [locales table](#List-of-locale-packs). The locale will attach itself to the `Uppy.locales` object.
 
 ```html
-<script src="https://transloadit.edgly.net/releases/uppy/v1.9.3/uppy.min.js"></script>
-<script src="https://transloadit.edgly.net/releases/uppy/locales/v1.11.5/de_DE.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v1.13.0/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/locales/v1.13.1/de_DE.min.js"></script>
 
 <script>
 var uppy = Uppy.Core({
@@ -46,7 +46,7 @@ var uppy = Uppy.Core({
 
 ## Overriding locale strings for a specific plugin
 
-Many plugins come with their own locale strings, and the packs we provide consist of most of those strings. You can, however, override a locale string for a specific plugin, regardless of whether you are using locale pack or not. See the plugin documentation for the list of locale strings it uses (for example, [here’s Dashboard](http://localhost:4000/docs/dashboard/#locale)).
+Many plugins come with their own locale strings, and the packs we provide consist of most of those strings. You can, however, override a locale string for a specific plugin, regardless of whether you are using locale pack or not. See the plugin documentation for the list of locale strings it uses (for example, [here’s how to use it with the Dashboard UI](https://uppy.io/docs/dashboard/#locale)).
 
 ```js
 const Uppy = require('@uppy/core')
@@ -67,7 +67,6 @@ uppy.use(DragDrop, {
     }
   }
 })
-
 ```
 
 ## List of locale packs
@@ -79,7 +78,8 @@ uppy.use(DragDrop, {
 If you speak a language we don’t yet support, you can contribute! Here’s how you do it:
 
 1. Go to the [uppy/locales](https://github.com/transloadit/uppy/tree/master/packages/%40uppy/locales/src) directory in the Uppy GitHub repo.
-2. Go to `en_US.js` and copy its contents, as English is the most up-to-date locale.
-3. Press “Create new file”, name it according to the [`language_COUNTRY` format](http://www.i18nguy.com/unicode/language-identifiers.html), make sure to use underscore `_` as a divider. Examples: `en_US`, `en_GB`, `ru_RU`, `ar_AE`. Variants should be trailing, e.g.: `sr_RS_Latin` for Serbian Latin vs Cyrillic.
-4. Paste what you’ve copied from `en_US.js` and use it as a starting point to translate strings into your language.
-5. When you are ready, save the file — this should create a PR that we’ll then review 🎉 Thanks!
+1. Go to `en_US.js` and copy its contents, as English is the most up-to-date locale.
+1. Press “Create new file”, name it according to the [`language_COUNTRY` format](http://www.i18nguy.com/unicode/language-identifiers.html), make sure to use underscore `_` as a divider. Examples: `en_US`, `en_GB`, `ru_RU`, `ar_AE`. Variants should be trailing, e.g.: `sr_RS_Latin` for Serbian Latin vs Cyrillic.
+1. If your language has different pluralization rules than English, update the `pluralize` implementation. If you are unsure how to do this, please ask us for help in a [GitHub issue](https://github.com/transloadit/uppy/issues/new).
+1. Paste what you’ve copied from `en_US.js` and use it as a starting point to translate strings into your language.
+1. When you are ready, save the file — this should create a PR that we’ll then review 🎉 Thanks!

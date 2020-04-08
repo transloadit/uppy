@@ -178,7 +178,13 @@ app.use((req, res, next) => {
 if (app.get('env') === 'production') {
   // @ts-ignore
   app.use((err, req, res, next) => {
-    console.error('\x1b[31m', req.id, err, '\x1b[0m')
+    // if the error is a URIError from the requested URL we only log the error message
+    // to avoid uneccessary error alerts
+    if (err.status === 400 && err instanceof URIError) {
+      console.error('\x1b[31m', req.id, err.message, '\x1b[0m')
+    } else {
+      console.error('\x1b[31m', req.id, err, '\x1b[0m')
+    }
     res.status(err.status || 500).json({ message: 'Something went wrong', requestId: req.id })
   })
 } else {

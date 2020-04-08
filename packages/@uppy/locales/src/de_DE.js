@@ -14,7 +14,6 @@ de_DE.strings = {
   cancelUpload: 'Upload abbrechen',
   chooseFiles: 'Dateien auswählen',
   closeModal: 'Modal schließen',
-  companionAuthError: 'Authorisierung benötigt',
   companionError: 'Verbindung zu Companion fehlgeschlagen',
   complete: 'Fertig',
   connectedToInternet: 'Verbunden mit dem Internet',
@@ -32,7 +31,6 @@ de_DE.strings = {
   dropPaste: 'Dateien können über Drag/Drop, Einfügen oder per %{browse} hinzugefügt werden',
   dropPasteImport: 'Dateien können über Drag/Drop, Einfügen, per %{browse} oder von folgenden Services hinzugefügt werden',
 
-  edit: 'Bearbeiten',
   editFile: 'Datei bearbeiten',
   editing: '%{file} bearbeiten',
   emptyFolderAdded: 'Keine Dateien konnten hinzugefügt werden, da der Ordner leer war',
@@ -57,7 +55,6 @@ de_DE.strings = {
   },
   import: 'Import',
   importFrom: 'Importieren von %{name}',
-  link: 'Link',
   loading: 'Laden...',
   logOut: 'Ausloggen',
   myDevice: 'Mein Gerät',

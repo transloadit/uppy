@@ -95,11 +95,17 @@ const validateURL = (url, debug) => {
 }
 
 /**
+ * @callback downloadCallback
+ * @param {Error} err
+ * @param {string | Buffer | Buffer[]} chunk
+ */
+
+/**
  * Downloads the content in the specified url, and passes the data
  * to the callback chunk by chunk.
  *
  * @param {string} url
- * @param {typeof Function} onDataChunk
+ * @param {downloadCallback} onDataChunk
  * @param {boolean} blockLocalIPs
  * @param {string=} traceId
  */
@@ -112,7 +118,7 @@ const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
   }
 
   request(opts)
-    .on('data', onDataChunk)
-    .on('end', () => onDataChunk(null))
+    .on('data', (chunk) => onDataChunk(null, chunk))
+    .on('end', () => onDataChunk(null, null))
     .on('error', (err) => logger.error(err, 'controller.url.download.error', traceId))
 }

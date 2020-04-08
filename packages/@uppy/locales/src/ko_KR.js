@@ -1,4 +1,5 @@
-var ko_KR = {}
+const ko_KR = {}
+
 ko_KR.strings = {
   addMore: '파일 추가',
   addMoreFiles: '파일 추가',
@@ -13,7 +14,6 @@ ko_KR.strings = {
   cancelUpload: '업로드 취소',
   chooseFiles: '파일 선택',
   closeModal: '창 닫기',
-  companionAuthError: '인증이 필요함',
   companionError: '연결 실패',
   companionUnauthorizeHint: '%{provider} 연결 해제를 원하시면 %{url}에 방문하세요',
   complete: '완료',
@@ -31,7 +31,6 @@ ko_KR.strings = {
   dropHint: '파일을 여기에 놓으세요.',
   dropPaste: '파일을 여기에 놓고 붙여넣기 또는 %{browse}',
   dropPasteImport: '파일을 여기에 놓거나 붙여넣으세요. %{browse} 또는 가져오기',
-  edit: '수정',
   editFile: '파일 수정',
   editing: '%{file} 수정 중',
   emptyFolderAdded: '빈 폴더입니다.',
@@ -57,7 +56,6 @@ ko_KR.strings = {
   generatingThumbnails: '썸네일 생성 중...',
   import: '가져오기',
   importFrom: '%{name}에서 가져오기',
-  link: '링크',
   loading: '불러오는 중...',
   logOut: '로그아웃',
   myDevice: '내 기기',

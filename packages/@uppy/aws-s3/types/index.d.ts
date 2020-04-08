@@ -15,6 +15,7 @@ declare module AwsS3 {
     getUploadParameters?: (
       file: Uppy.UppyFile
     ) => MaybePromise<AwsS3UploadParameters>
+    metaFields?: string[],
     timeout?: number
     limit?: number
   }

@@ -8,6 +8,7 @@ This serves as an illustration on how integrating custom providers would work
 To run this example, make sure you've correctly installed the **repository root**:
 ```bash
 npm install
+npm run build
 ```
 That will also install the dependencies for this example.
 

@@ -4,34 +4,43 @@
 @import './Buttons/index.scss';
 
 .uppy-DashboardItem {
-  // @media only mobile
-  .uppy-Dashboard:not(.uppy-size--md) & {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid $gray-200;
-    padding: 10px;
-    padding-right: 0;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid $gray-200;
+  padding: 10px;
+  padding-right: 0;
+  
+  [data-uppy-theme="dark"] & {
+    border-bottom: 1px solid $gray-800;
   }
+
   // @media bigger than .md
   $rl-margin: 15px;
+
   .uppy-size--md & {
     // For the Remove button
     position: relative;
-    display: inline-block;
+    display: block;
+    float: left;
     margin: 5px $rl-margin;
+    padding: 0;
     width: calc(33.333% - #{$rl-margin} - #{$rl-margin});
     height: 215px;
+    border-bottom: 0;
   }
+
   .uppy-size--lg & {
     margin: 5px $rl-margin;
     width: calc(25% - #{$rl-margin} - #{$rl-margin});
     height: 190px;
   }
+
   .uppy-size--xl & {
     width: calc(20% - #{$rl-margin} - #{$rl-margin});
     height: 210px;
   }
 }
+
   .uppy-DashboardItem-preview {
     // for the FileProgress.js icons
     position: relative;

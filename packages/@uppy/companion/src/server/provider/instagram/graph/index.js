@@ -28,7 +28,7 @@ class Instagram extends Provider {
     return 'instagram'
   }
 
-  list ({ directory, token, query = {} }, done) {
+  list ({ directory, token, query = { cursor: null } }, done) {
     const qs = {
       fields: 'id,media_type,thumbnail_url,media_url,timestamp,children{media_type,media_url,thumbnail_url,timestamp}'
     }
@@ -78,10 +78,11 @@ class Instagram extends Provider {
       .request((err, resp, body) => {
         if (err) return logger.error(err, 'provider.instagram.download.error')
         request(body.media_url)
-          .on('data', onData)
-          .on('end', () => onData(null))
+          .on('data', (chunk) => onData(null, chunk))
+          .on('end', () => onData(null, null))
           .on('error', (err) => {
             logger.error(err, 'provider.instagram.download.url.error')
+            onData(err)
           })
       })
   }

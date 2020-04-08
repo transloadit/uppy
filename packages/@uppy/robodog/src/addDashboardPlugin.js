@@ -10,12 +10,15 @@ const dashboardOptionNames = [
   'showProgressDetails',
   'hideRetryButton',
   'hidePauseResumeCancelButtons',
+  'hideUploadButton',
   'hideProgressAfterFinish',
   'note',
   'disableStatusBar',
   'disableInformer',
   'disableThumbnailGenerator',
-  'showSelectedFiles'
+  'showSelectedFiles',
+  'proudlyDisplayPoweredByUppy',
+  'theme'
 ]
 
 const modalDashboardOptionNames = [

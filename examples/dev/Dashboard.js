@@ -69,13 +69,13 @@ module.exports = () => {
 
   switch (UPLOADER) {
     case 'tus':
-      uppyDashboard.use(Tus, { endpoint: TUS_ENDPOINT })
+      uppyDashboard.use(Tus, { endpoint: TUS_ENDPOINT, limit: 6 })
       break
     case 's3':
-      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL })
+      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, limit: 6 })
       break
     case 'xhr':
-      uppyDashboard.use(XHRUpload, { endpoint: XHR_ENDPOINT, bundle: true })
+      uppyDashboard.use(XHRUpload, { endpoint: XHR_ENDPOINT, limit: 6, bundle: true })
       break
     case 'transloadit':
       uppyDashboard.use(Transloadit, {

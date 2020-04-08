@@ -114,5 +114,39 @@ describe('Translator', () => {
         translator.translate('filesChosen', { smart_count: 0 })
       ).toEqual('Выбрано 0 файлов')
     })
+
+    it('should support strings without plural forms', () => {
+      const translator = new Translator({
+        strings: {
+          theAmount: 'het aantal is %{smart_count}'
+        },
+        pluralize: () => 0
+      })
+
+      expect(
+        translator.translate('theAmount', { smart_count: 0 })
+      ).toEqual('het aantal is 0')
+      expect(
+        translator.translate('theAmount', { smart_count: 1 })
+      ).toEqual('het aantal is 1')
+      expect(
+        translator.translate('theAmount', { smart_count: 1202530 })
+      ).toEqual('het aantal is 1202530')
+    })
+
+    it('should error when using a plural form without %{smart_count}', () => {
+      const translator = new Translator({
+        strings: {
+          test: {
+            0: 'A test',
+            1: '%{smart_count} tests'
+          }
+        }
+      })
+
+      expect(() => {
+        translator.translate('test')
+      }).toThrow('Attempted to use a string with plural forms, but no value was given for %{smart_count}')
+    })
   })
 })

@@ -105,6 +105,8 @@ module.exports = class XHRUpload extends Plugin {
         return error
       },
       /**
+       * Check if the response from the upload endpoint indicates that the upload was successful.
+       *
        * @param {number} status the response status code
        * @param {string} responseText the response body string
        * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
@@ -227,6 +229,9 @@ module.exports = class XHRUpload extends Plugin {
         ? this.createFormDataUpload(file, opts)
         : this.createBareUpload(file, opts)
 
+      const xhr = new XMLHttpRequest()
+      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+
       const timer = new ProgressTimeout(opts.timeout, () => {
         xhr.abort()
         queuedRequest.done()
@@ -234,9 +239,6 @@ module.exports = class XHRUpload extends Plugin {
         this.uppy.emit('upload-error', file, error)
         reject(error)
       })
-
-      const xhr = new XMLHttpRequest()
-      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       const id = cuid()
 
@@ -368,7 +370,7 @@ module.exports = class XHRUpload extends Plugin {
         size: file.data.size,
         fieldname: opts.fieldName,
         metadata: fields,
-        httpMethod: this.opts.method,
+        httpMethod: opts.method,
         headers: opts.headers
       }).then((res) => {
         const token = res.token
@@ -441,6 +443,9 @@ module.exports = class XHRUpload extends Plugin {
 
           return () => socket.close()
         })
+      }).catch((err) => {
+        this.uppy.emit('upload-error', file, err)
+        reject(err)
       })
     })
   }

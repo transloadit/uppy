@@ -29,11 +29,11 @@ class FileCard extends Component {
     }
   }
 
-  tempStoreMeta = (ev, name) => {
+  updateMeta = (newVal, name) => {
     this.setState({
       formState: {
         ...this.state.formState,
-        [name]: ev.target.value
+        [name]: newVal
       }
     })
   }
@@ -49,24 +49,35 @@ class FileCard extends Component {
 
   renderMetaFields = () => {
     const metaFields = this.props.metaFields || []
+    const fieldCSSClasses = {
+      text: 'uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input'
+    }
 
     return metaFields.map((field) => {
       const id = `uppy-Dashboard-FileCard-input-${field.id}`
       return (
         <fieldset key={field.id} class="uppy-Dashboard-FileCard-fieldset">
           <label class="uppy-Dashboard-FileCard-label" for={id}>{field.name}</label>
-          <input
-            class="uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input"
-            id={id}
-            type="text"
-            value={this.state.formState[field.id]}
-            placeholder={field.placeholder}
-            onkeyup={this.saveOnEnter}
-            onkeydown={this.saveOnEnter}
-            onkeypress={this.saveOnEnter}
-            oninput={ev => this.tempStoreMeta(ev, field.id)}
-            data-uppy-super-focusable
-          />
+          {field.render !== undefined
+            ? field.render({
+              value: this.state.formState[field.id],
+              onChange: (newVal) => this.updateMeta(newVal, field.id),
+              fieldCSSClasses: fieldCSSClasses
+            }, h)
+            : (
+              <input
+                class={fieldCSSClasses.text}
+                id={id}
+                type={field.type || 'text'}
+                value={this.state.formState[field.id]}
+                placeholder={field.placeholder}
+                onkeyup={this.saveOnEnter}
+                onkeydown={this.saveOnEnter}
+                onkeypress={this.saveOnEnter}
+                oninput={ev => this.updateMeta(ev.target.value, field.id)}
+                data-uppy-super-focusable
+              />
+            )}
         </fieldset>
       )
     })
