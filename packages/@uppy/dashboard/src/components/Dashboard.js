@@ -98,11 +98,11 @@ module.exports = function Dashboard (props) {
 
           {showFileList && <PanelTopBar {...props} />}
 
-          {showFileList ? (
+{/*          {showFileList ? (
             <FileList {...props} />
           ) : (
             <AddFiles {...props} isSizeMD={isSizeMD} />
-          )}
+          )}*/}
 
           <TransitionWrapper>
             {props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} isSizeMD={isSizeMD} /> : null}
