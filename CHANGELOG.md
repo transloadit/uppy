@@ -64,12 +64,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] xhr: set the `limit` option to a sensible default, like 10
 - [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
 
-## 1.15
+## 1.16
 
 - [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
 
-## 1.14
+## 1.15
 
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
@@ -83,7 +83,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 # next
 
-## 1.13
+## 1.14
 
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default's store #320
 - [ ] provider: add Box (@ife)
@@ -101,6 +101,39 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: report information about the device --^ (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 - [ ] s3: immediately start uploading files once the signed URL is generated (#2060, @goto-bus-stop)
+
+## 1.13.0
+
+Released 2020-04-08
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.6.0 | @uppy/onedrive | 1.1.1 |
+| @uppy/aws-s3 | 1.6.0 | @uppy/progress-bar | 1.3.9 |
+| @uppy/companion | 1.12.0 | @uppy/provider-views | 1.6.1 |
+| @uppy/core | 1.10.0 | @uppy/react | 1.6.1 |
+| @uppy/dashboard | 1.8.1 | @uppy/robodog | 1.6.2 |
+| @uppy/drag-drop | 1.4.8 | @uppy/status-bar | 1.6.1 |
+| @uppy/dropbox | 1.4.1 | @uppy/thumbnail-generator | 1.5.8 |
+| @uppy/facebook | 1.1.1 | @uppy/transloadit | 1.5.6 |
+| @uppy/file-input | 1.4.7 | @uppy/tus | 1.5.8 |
+| @uppy/form | 1.3.10 | @uppy/url | 1.5.1 |
+| @uppy/golden-retriever | 1.3.9 | @uppy/utils | 2.4.0 |
+| @uppy/google-drive | 1.5.1 | @uppy/webcam | 1.6.1 |
+| @uppy/informer | 1.5.1 | @uppy/xhr-upload | 1.5.6 |
+| @uppy/instagram | 1.4.1 | uppy | 1.13.0 |
+| @uppy/locales | 1.13.1 | - | - |
+
+This Release improves Google Drive's GSuite files support to export files to more flexible + popular formats
+
+- @uppy/companion: favor xlsx, docx, ppt formats when export gsuite files (#2182 / @ifedapoolarewaju)
+- @uppy/locales: remove legacy translations that have been re-translated (@goto-bus-stop)
+- @uppy/companion: use full path for provider URL when the root path depends on user input (#2176 / @ifedapoolarewaju)
+- @uppy/aws-s3: handle upload internally instead of deferring to xhr-upload (#2060 / @goto-bus-stop)
+- @uppy/aws-s3: fix missing typescript type for `metaFields` option (#1866 / @goto-bus-stop)
+- @uppy/robodog: Pass hideUploadButton to Dashboard in Robodog too (#2169 / @arturi)
+- @uppy/dashboard: add `theme` option to typescript typings (@goto-bus-stop)
+- @uppy/aws-s3-multipart: emit upload-error when companion returns error during upload instantiation (#2168 / @ifedapoolarewaju)
 
 ## 1.12.1
 
