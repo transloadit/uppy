@@ -102,32 +102,14 @@ class AddFiles extends Component {
         {this.props.i18n('browse')}
       </button>
 
-    const renderDropFilesSubtitle = (numberOfAcquirers) => {
-      if (numberOfAcquirers > 0) {
-        return this.props.i18nArray('dropPasteImport', { browse })
-      }
-      return this.props.i18nArray('dropPaste', { browse })
-    }
-
     return (
-      <div class="uppy-Dashboard-dropFilesTitleGroup">
-        <div class="uppy-Dashboard-dropFilesTitle">
-          {renderDropFilesSubtitle(numberOfAcquirers)}
-        </div>
+      <div class="uppy-Dashboard-AddFiles-title">
+        {
+          numberOfAcquirers > 0
+            ? this.props.i18nArray('dropPasteImport', { browse })
+            : this.props.i18nArray('dropPaste', { browse })
+        }
       </div>
-    )
-  }
-
-  renderBrowseButton = () => {
-    return (
-      <button
-        type="button"
-        class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-browseBtn"
-        onclick={this.triggerFileInputClick}
-        data-uppy-super-focusable
-      >
-        Browse My Device
-      </button>
     )
   }
 
@@ -158,7 +140,7 @@ class AddFiles extends Component {
     const lastTwoAcquirers = acquirersWithoutLastTwo.splice(acquirers.length - 2, acquirers.length)
 
     return (
-      <div class="uppy-DashboardTabs-list" role="tablist">
+      <div class="uppy-Dashboard-AddFiles-list" role="tablist">
         {this.renderMyDeviceAcquirer()}
         {acquirersWithoutLastTwo.map((acquirer) => this.renderAcquirer(acquirer))}
         <span role="presentation" style="white-space: nowrap;">
@@ -170,15 +152,13 @@ class AddFiles extends Component {
 
   render () {
     return (
-      <div class="uppy-DashboardAddFiles">
+      <div class="uppy-Dashboard-AddFiles">
         {this.renderHiddenFileInput()}
-        <div class="uppy-DashboardTabs">
-          {this.renderDropPasteBrowseTagline()}
-          {this.props.acquirers.length > 0 && this.renderAcquirers(this.props.acquirers)}
-          <div class="uppy-DashboardAddFiles-info">
-            {this.props.note && <div class="uppy-Dashboard-note">{this.props.note}</div>}
-            {this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy(this.props)}
-          </div>
+        {this.renderDropPasteBrowseTagline()}
+        {this.props.acquirers.length > 0 && this.renderAcquirers(this.props.acquirers)}
+        <div class="uppy-Dashboard-AddFiles-info">
+          {this.props.note && <div class="uppy-Dashboard-note">{this.props.note}</div>}
+          {this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy(this.props)}
         </div>
       </div>
     )
