@@ -193,7 +193,7 @@
   }
 }
 
-.uppy-DashboardAddFiles {
+.uppy-Dashboard-AddFiles {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -219,30 +219,10 @@
   }
 }
 
-.uppy-DashboardTabs {
-  display: flex;
-  flex-direction: column;
-  // justify-content: center;
-  width: 100%;
-  height: 100%;
-
-  .uppy-size--md & {
-    align-items: center;
-    height: auto;
-  }
-
-  [data-uppy-num-acquirers="0"] & {
-    height: auto;
-  }
-}
-
-.uppy-DashboardAddFiles-info {
+.uppy-Dashboard-AddFiles-info {
   padding-top: 15px;
   padding-bottom: 15px;
-  // flex: 1;
-  // flex-grow: 0;
-  // flex-shrink: 1;
-  // flex-basis: 0%;
+  margin-top: auto;
   
   // hide on short note and “powered by” on short screens
   // such as CodePen, or inline dashboard with height < 400px
@@ -259,6 +239,10 @@
     right: 0;
     padding-top: 30px;
     padding-bottom: 0;
+  }
+
+  [data-uppy-num-acquirers="0"] & {
+    margin-top: 0;
   }
 }
 
@@ -299,27 +283,25 @@
   }
 }
 
-.uppy-DashboardTabs-list {
-  // display: flex;
-  // flex-direction: column;
-  // flex-grow: 2;
-  // flex-shrink: 1;
-  // flex-basis: 0%;
-  flex: 2;
+.uppy-Dashboard-AddFiles-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   margin-top: 2px;
   padding: 2px 0;
-  // max-height: 350px;
+  width: 100%;
 
   .uppy-size--md & {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
     max-width: 600px;
-    overflow-y: initial;
+    overflow-y: visible;
     margin-top: 15px;
     padding-top: 0;
+    flex: none;
   }
 }
 
@@ -669,7 +651,7 @@
   .uppy-Dashboard-progressindicators {
     opacity: 0.15;
   }
-  .uppy-DashboardAddFiles {
+  .uppy-Dashboard-AddFiles {
     opacity: 0.03;
   }
 }
@@ -683,31 +665,7 @@
   }
 }
 
-.uppy-Dashboard-dropFilesTitleGroup {
-  padding: 0 15px;
-  // display: flex;
-  // flex-grow: 0;
-  // flex-shrink: 0;
-  // max-width: 270px;
-  // margin: auto;
-  flex: 0;
-
-  .uppy-size--md & {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: 0%;
-    // wider, to accomodate for different translations
-    max-width: 450px;
-    font-size: 27px;
-    text-align: center;
-    margin: auto;
-  }
-}
-
-.uppy-Dashboard-dropFilesTitle {
+.uppy-Dashboard-AddFiles-title {
   font-size: 17px;
   line-height: 1.35;
   font-weight: 500;
@@ -715,13 +673,15 @@
   margin-top: 15px;
   margin-bottom: 5px;
   text-align: left;
+  padding: 0 15px;
+  width: 100%;
 
   .uppy-size--md & {
-    display: block;
     font-size: 25px;
     margin-top: 5px;
     font-weight: 400;
     text-align: center;
+    max-width: 480px;
   }
 
   [data-uppy-num-acquirers="0"] & {
@@ -740,39 +700,6 @@
     font-weight: 400;
   }
 }
-
-.uppy-Dashboard-dropFilesMobileTitle {
-  font-size: 11px;
-  text-transform: uppercase;
-  font-weight: 500;
-  color: $gray-600;
-  text-align: left;
-  padding: 0 15px;
-  margin-top: 10px;
-
-  .uppy-size--md & {
-    display: none;
-  }
-}
-
-// .uppy-Dashboard-dropFilesSingleInlineProvider {
-//   @include clear-focus;
-//   // font-size: 16px;
-//   cursor: pointer;
-//   color: rgba($blue, 0.9);
-
-//   svg {
-//     display: inline-block;
-//     vertical-align: middle;
-//     width: 20px;
-//     height: 20px;
-//     margin-left: 4px;
-//   }
-
-//   span:hover, &:focus span {
-//     border-bottom: 1px solid $blue;
-//   }
-// }
 
 .uppy-Dashboard-note {
   font-size: 14px;
