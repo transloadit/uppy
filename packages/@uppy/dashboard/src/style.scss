@@ -677,12 +677,11 @@
   width: 100%;
 
   .uppy-size--md & {
-    display: block;
     font-size: 25px;
     margin-top: 5px;
     font-weight: 400;
     text-align: center;
-    max-width: 450px;
+    max-width: 480px;
   }
 
   [data-uppy-num-acquirers="0"] & {
