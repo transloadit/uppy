@@ -4,6 +4,7 @@
     "website",
     "examples/*",
     "packages/*",
-    "packages/@uppy/*"
+    "packages/@uppy/*",
+    "private/*"
   ]
 }

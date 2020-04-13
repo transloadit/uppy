@@ -1,3 +1,7 @@
+# Changelog
+
+<!--lint disable no-literal-urls-->
+
 Our combined changelog and roadmap. It contains todos as well as dones.
 
 Items can be optionally be tagged tagged by GitHub owner issue if discussion
@@ -319,7 +323,7 @@ This release adds `@uppy/onedrive` to `uppy`’s `package.json`, fixing the bug 
 - build: Actually check types. Use tsd so our typings test files can actually assert that types are correct (#1918 / @goto-bus-stop )
 - @uppy/companion: Only set cookies for providers that need it (#2055 / @ifedapoolarewaju)
 - docs: Add Content-Type header to presigned url example (#2061 / @scherroman)
-- uppy: Add onedrive to uppy package.json ([349247607513bc6b33bf2a90ab0b82f8f2e81d78](https://github.com/transloadit/uppy/commit/349247607513bc6b33bf2a90ab0b82f8f2e81d78 / @arturi))
+- uppy: Add onedrive to uppy package.json ([349247607513bc6b33bf2a90ab0b82f8f2e81d78](https://github.com/transloadit/uppy/commit/349247607513bc6b33bf2a90ab0b82f8f2e81d78) / @arturi)
 
 ## 1.9.1
 
@@ -1269,7 +1273,7 @@ New versions in this release:
 
 Changes:
 
-- build: Add initial version table script [skip ci] (@goto-bus-stop)
+- build: Add initial version table script (@goto-bus-stop)
 - build: Add more checks to release script (#1050 / @goto-bus-stop)
 - build: start companion once in tests (#1052 / @ifedapoolarewaju)
 - buid: set companion config values when running test (@ifedapoolarewaju)
@@ -1524,7 +1528,7 @@ Changed strings:
 
 Released: 2018-05-14.
 
-- core: Pass `allowedFileTypes` and `maxNumberOfFiles` to input[type=file] in UI components: Dashboard, DragDrop, FileInput (#814 / @arturi)
+- core: Pass `allowedFileTypes` and `maxNumberOfFiles` to `input[type=file]` in UI components: Dashboard, DragDrop, FileInput (#814 / @arturi)
 - transloadit: Update Transloadit plugin's Uppy Server handling (#804 / @goto-bus-stop)
 - tus: respect `limit` option for upload parameter requests (#817 / @ap--)
 - docs: Explain name `metadata` vs. `$_FILES[]["name"]` (#1c1bf2e / @goto-bus-stop)
@@ -1987,7 +1991,7 @@ Favorite Uppy Server version: 0.5.0.
 - website: try on a Github ribbon http://tholman.com/github-corners/ (@arturi / #150)
 - website: different meta description for pages and post (@arturi)
 - server: well documented README (@ifedapoolarewaju)
-- react: [WIP] High-level React Components (@goto-bus-stop / #170)
+- react: High-level React Components (@goto-bus-stop / #170)
 - core: add `uppy.close()` for tearing down an Uppy instance (@goto-bus-stop / #182)
 - core: replace `babel-preset-es2015-loose` by standard es2015 preset with `loose` option (@goto-bus-stop / #174)
 

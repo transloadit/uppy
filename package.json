@@ -4,7 +4,13 @@
   "version": "0.0.0",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
-    "*.js": "eslint"
+    "*.js": "eslint",
+    "*.md": "remark -f -q -i .gitignore"
+  },
+  "remarkConfig": {
+    "plugins": [
+      "remark-lint-uppy"
+    ]
   },
   "size-limit": [
     {
@@ -65,6 +71,7 @@
     "@uppy/utils": "file:packages/@uppy/utils",
     "@uppy/webcam": "file:packages/@uppy/webcam",
     "@uppy/xhr-upload": "file:packages/@uppy/xhr-upload",
+    "remark-lint-uppy": "file:private/remark-lint-uppy",
     "uppy": "file:packages/uppy",
     "uppy.io": "file:website"
   },
@@ -169,6 +176,7 @@
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "redux": "4.0.5",
+    "remark-cli": "^8.0.0",
     "replace-x": "1.7.2",
     "rimraf": "2.7.1",
     "stringify-object": "3.3.0",
@@ -204,6 +212,7 @@
     "dev": "npm-run-all --parallel dev:watch-sandbox watch:js:lib watch:css dev:browsersync",
     "example": "node bin/run-example",
     "lint:fix": "npm run lint -- --fix",
+    "lint:markdown": "remark -f -q . -i .gitignore",
     "lint:staged": "lint-staged",
     "lint": "eslint . --cache",
     "release": "./bin/release",

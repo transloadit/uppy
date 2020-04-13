@@ -75,7 +75,7 @@ If both width and height are given, only width is taken into account.
 >
 > uppy.use(ThumbnailGenerator, { thumbnailWidth: 300, thumbnailHeight: 300 }) will produce a 300px width thumbnail with calculated height to match ratio (and ignore the given height).
 >
-> See https://github.com/transloadit/uppy/issues/979 and https://github.com/transloadit/uppy/pull/1096 for details on this feature.
+> See issue [#979](https://github.com/transloadit/uppy/issues/979) and [#1096](https://github.com/transloadit/uppy/pull/1096) for details on this feature.
 
 ### `waitForThumbnailsBeforeUpload: false`
 

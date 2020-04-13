@@ -99,6 +99,7 @@ This takes your `server` instance and your Uppy [Options](#Options) as parameter
 ### Running as a standalone server
 
 > Please ensure that the required environment variables are set before running/using Companion as a standalone server. See [Configure Standalone](#Configuring-a-standalone-server) for the variables required.
+
 Set environment variables first:
 
 ```bash
@@ -354,7 +355,7 @@ The default implementation returns the `filename`, so all files will be uploaded
 
 ### Running in Kubernetes
 
-We have [a detailed guide on running Companion in Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we currently run our example server at https://companion.uppy.io.
+We have [a detailed guide on running Companion in Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we currently run our example server at <https://companion.uppy.io>.
 
 ### Adding custom providers
 
@@ -422,7 +423,7 @@ This would get the Companion instance running on `http://localhost:3020`. It use
 
 ## Live example
 
-An example server is running at https://companion.uppy.io, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md)
+An example server is running at <https://companion.uppy.io>, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md)
 
 
 ## How the Authentication and Token mechanism works
