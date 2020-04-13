@@ -29,37 +29,46 @@ module.exports = class FileInput extends Plugin {
     }
 
     // Merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
-    // i18n
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     this.render = this.render.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
     this.handleClick = this.handleClick.bind(this)
   }
 
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
+  }
+
+  addFiles (files) {
+    const descriptors = files.map((file) => ({
+      source: this.id,
+      name: file.name,
+      type: file.type,
+      data: file
+    }))
+
+    try {
+      this.uppy.addFiles(descriptors)
+    } catch (err) {
+      this.uppy.log(err)
+    }
+  }
+
   handleInputChange (event) {
     this.uppy.log('[FileInput] Something selected through input...')
-
     const files = toArray(event.target.files)
-
-    files.forEach((file) => {
-      try {
-        this.uppy.addFile({
-          source: this.id,
-          name: file.name,
-          type: file.type,
-          data: file
-        })
-      } catch (err) {
-        if (!err.isRestriction) {
-          this.uppy.log(err)
-        }
-      }
-    })
+    this.addFiles(files)
 
     // We clear the input after a file is selected, because otherwise
     // change event is not fired in Chrome and Safari when a file
@@ -90,21 +99,24 @@ module.exports = class FileInput extends Plugin {
 
     return (
       <div class="uppy-Root uppy-FileInput-container">
-        <input class="uppy-FileInput-input"
+        <input
+          class="uppy-FileInput-input"
           style={this.opts.pretty && hiddenInputStyle}
           type="file"
           name={this.opts.inputName}
           onchange={this.handleInputChange}
           multiple={restrictions.maxNumberOfFiles !== 1}
           accept={accept}
-          ref={(input) => { this.input = input }} />
+          ref={(input) => { this.input = input }}
+        />
         {this.opts.pretty &&
-          <button class="uppy-FileInput-btn"
+          <button
+            class="uppy-FileInput-btn"
             type="button"
-            onclick={this.handleClick}>
+            onclick={this.handleClick}
+          >
             {this.i18n('chooseFiles')}
-          </button>
-        }
+          </button>}
       </div>
     )
   }

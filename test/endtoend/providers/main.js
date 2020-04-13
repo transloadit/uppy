@@ -8,7 +8,7 @@ const Dropbox = require('@uppy/dropbox')
 const Tus = require('@uppy/tus')
 
 const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
-const companionUrl = isOnTravis ? 'http://companion.test:3030' : 'http://localhost:3030'
+const companionUrl = isOnTravis ? 'http://companion.test:3030' : 'http://localhost:3020'
 
 window.uppy = Uppy({
   id: 'uppyProvider',
@@ -22,4 +22,14 @@ window.uppy = Uppy({
   .use(GoogleDrive, { target: Dashboard, companionUrl })
   .use(Instagram, { target: Dashboard, companionUrl })
   .use(Dropbox, { target: Dashboard, companionUrl })
-  .use(Tus, { endpoint: 'http://localhost:1080/files/' })
+  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+
+if (window.location.search === '?socketerr=true') {
+  const emitError = (file, data) => {
+    // trigger fake socket error
+    data.uploader.uploaderSockets[file.id].emit(
+      'error', { error: { message: 'nobody likes me, thats ok' } })
+    window.uppy.off('upload-progress', emitError)
+  }
+  window.uppy.on('upload-progress', emitError)
+}

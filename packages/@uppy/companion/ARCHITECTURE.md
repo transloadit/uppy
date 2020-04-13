@@ -5,7 +5,7 @@ The purpose of Companion is to interface with third party APIs and handle remote
 
 ## oAuth with Grant, Sessions
 Companion uses an oAuth middleware library called `Grant` to simplify oAuth authentication.
-Inside of `config/grant.js`, you configure the oAuth providers you wish to use, providing things like client key, 
+Inside of `config/grant.js`, you configure the oAuth providers you wish to use, providing things like client key,
 client secret, scopes, and the callback URL you wish to use.  For example:
 
 ```
@@ -20,11 +20,11 @@ client secret, scopes, and the callback URL you wish to use.  For example:
   }
 ```
 
-Once this `google` config is added to `config/grant.js`, Grant automatically creates a route `/connect/google` that 
+Once this `google` config is added to `config/grant.js`, Grant automatically creates a route `/connect/google` that
 redirects to Google's oAuth page.  So on the client side, you just need to link the user to `https://your-server/connect/google`.
 
 After the user completes the oAuth flow, they should always be redirected to `https://your-server/:provider/callback`.
-The `/:provider/callback` routes are handled by the `callback` controller at `server/controllers/callback.js`.  
+The `/:provider/callback` routes are handled by the `callback` controller at `server/controllers/callback.js`.
 This controller receives the oAuth token, generates a json web token with it, and sends the generated json web token to the client by adding it to the cookies. This way companion doesn't have to save users' oAuth tokens (which is good from the security perspective).
 This json web token would be sent to companion in subsequent requests and the oAuth token can be read from it.
 
@@ -61,10 +61,10 @@ Since each API works differently, we need to describe how to `download` and `lis
 
 **Note:** As of right now, you only need to implement `YourProvider.prototype.list` and `YourProvider.prototype.download` for each provider, I believe.  `stats` seems to be used by Dropbox to get a list of files, so that's required there, but `upload` is optional unless you all decide to allow uploading to third parties.  I got that code from an example.
 
-This whole approach was inspired by an example from `purest 2.x`.  Keep in mind that we're using `3.x`, so the API is different, but here is the example for reference: https://github.com/simov/purest/tree/2.x/examples/storage
+This whole approach was inspired by an example from `purest 2.x`.  Keep in mind that we're using `3.x`, so the API is different, but here is the example for reference: <https://github.com/simov/purest/tree/2.x/examples/storage>
 
 ## WebSockets
-Companion uses WebSockets to transfer `progress` events to the client during file transfers.  It's currently only set up to transfer progress during Tus uploads to the target server.  
+Companion uses WebSockets to transfer `progress` events to the client during file transfers.  It's currently only set up to transfer progress during Tus uploads to the target server.
 
 When a request is made to `/:provider/get` to start a transfer, a token is generated and sent back to the client in response.  The client then connects to `wss://your-server/whatever-their-token-is`.  Any events that are emitted using the token as the name (i.e. `emitter.emit('whatever-their-token-is', progressData)`) are sent back to the client.
 

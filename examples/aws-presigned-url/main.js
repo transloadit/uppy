@@ -32,7 +32,8 @@ uppy.use(AwsS3, {
       return {
         method: data.method,
         url: data.url,
-        fields: data.fields
+        fields: data.fields,
+        headers: data.headers
       }
     })
   }

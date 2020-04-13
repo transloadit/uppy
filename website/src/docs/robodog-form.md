@@ -4,19 +4,19 @@ title: "Robodog: Form API"
 menu: "Robodog Form"
 permalink: docs/robodog/form/
 order: 2
-category: 'File Processing'
+category: "File Processing"
 ---
 
 Add resumable uploads and Transloadit's processing to your existing HTML upload forms. Selected files will be uploaded to Transloadit, and the Assembly information will be submitted to your form endpoint.
 
 ```html
-<form id="myForm" method="POST" action="/upload">
+<form id="upload-form" method="POST" action="/upload">
   <input type="file" multiple>
   ...
 </form>
 
 <script>
-window.Robodog.form('form#myForm', {
+window.Robodog.form('form#upload-form', {
   params: {
     auth: { key: '' },
     template_id: ''
@@ -35,7 +35,7 @@ Finally, we _really_ submit the form—without files, but with those Assembly st
 
 ## Transloadit
 
-All the options to the [Transloadit][transloadit] plugin are supported.
+All the options to the [Transloadit][transloadit plugin] plugin are supported.
 
 ## Locale
 
@@ -78,12 +78,12 @@ Uploads using HTML forms have no builtin progress reporting. With Robodog, you c
 Point it to an element or a CSS selector:
 
 ```html
-<form id="my-form" ...>
+<form id="upload-form" ...>
   <div class="progress"></div>
 </form>
 <script>
-window.Robodog.form('form#my-form', {
-  statusBar: '#my-form .progress'
+window.Robodog.form('form#upload-form', {
+  statusBar: '#upload-form .progress'
   // ...
 })
 </script>
@@ -98,11 +98,11 @@ By default, `Robodog.form` starts uploads when the user submits the form. There 
 The `triggerUploadOnSubmit: false` option is available for this purpose. We recommend using it together with the `modal: true` and `closeAfterFinish: true` options:
 
 ```js
-// Replace file input in #my-form with a button that opens the modal;
+// Replace file input in #upload-form with a button that opens the modal;
 // after the user clicks the "Upload" button inside the modal and all
 // files have been successfully uploaded, the modal closes and the user
 // can submit the form.
-window.Robodog.form('form#my-form', {
+window.Robodog.form('form#upload-form', {
   modal: true,
   closeAfterFinish: true,
   triggerUploadOnSubmit: false
@@ -128,7 +128,7 @@ $(selector).transloadit({
 ```
 ```html
 <!-- The new Robodog way! -->
-<script src="//transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.js"></script>
+<script src="//transloadit.edgly.net/releases/uppy/robodog/v1.6.2/robodog.min.js"></script>
 
 <script>
 window.Robodog.form(selector, {
@@ -140,7 +140,7 @@ window.Robodog.form(selector, {
 Make sure to also include the Uppy css file in your `<head>` tag in case you want to use the `modal: true` option:
 ```html
 <head>
-  <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.css">
+  <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.6.2/robodog.min.css">
 </head>
 ```
 
@@ -152,7 +152,7 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
 <html>
   <head>
     <title>Testing Robodog</title>
-    <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.css">
+    <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.6.2/robodog.min.css">
   </head>
   <body>
     <form id="upload-form" action="/uploads" enctype="multipart/form-data" method="POST">
@@ -162,7 +162,7 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
       <button type="submit">Upload</button>
     </form>
 
-    <script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.2.0/robodog.min.js"></script>
+    <script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.6.2/robodog.min.js"></script>
     <script type="text/javascript">
     window.Robodog.form('#upload-form', {
       waitForEncoding: true,
@@ -207,6 +207,10 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
     })
     .on('error', (error) => {
       console.log('>> Assembly got an error:', error);
+      if (error.assembly) {
+        console.log(`>> Assembly ID ${error.assembly.assembly_id} failed!`);
+        console.log(error.assembly);
+      }
     });
     </script>
   </body>
@@ -259,4 +263,4 @@ There are no `on*()` _options_ anymore, but `.on('...')` methods are provided in
 | `onDisconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
 | `onReconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
 
-[transloadit]: https://transloadit.com
+[transloadit plugin]: https://uppy.io/docs/transloadit/

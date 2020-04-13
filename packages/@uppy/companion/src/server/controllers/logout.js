@@ -1,24 +1,39 @@
 const tokenService = require('../helpers/jwt')
+const { errorToResponse } = require('../provider/error')
 
 /**
  *
  * @param {object} req
  * @param {object} res
  */
-function logout (req, res) {
-  const session = req.session
+function logout (req, res, next) {
+  const cleanSession = () => {
+    if (req.session.grant) {
+      req.session.grant.state = null
+      req.session.grant.dynamic = null
+    }
+  }
   const providerName = req.params.providerName
+  const token = req.companion.providerTokens ? req.companion.providerTokens[providerName] : null
+  if (token) {
+    req.companion.provider.logout({ token }, (err, data) => {
+      if (err) {
+        const errResp = errorToResponse(err)
+        if (errResp) {
+          return res.status(errResp.code).json({ message: errResp.message })
+        }
+        return next(err)
+      }
 
-  if (req.uppy.providerTokens && req.uppy.providerTokens[providerName]) {
-    delete req.uppy.providerTokens[providerName]
-    tokenService.removeFromCookies(res, req.uppy.options, req.uppy.provider.authProviderName)
+      delete req.companion.providerTokens[providerName]
+      tokenService.removeFromCookies(res, req.companion.options, req.companion.provider.authProviderName)
+      cleanSession()
+      res.json(Object.assign({ ok: true }, data))
+    })
+  } else {
+    cleanSession()
+    res.json({ ok: true, revoked: false })
   }
-
-  if (session.grant) {
-    session.grant.state = null
-    session.grant.dynamic = null
-  }
-  res.json({ ok: true })
 }
 
 module.exports = logout

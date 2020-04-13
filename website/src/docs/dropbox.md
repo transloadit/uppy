@@ -5,8 +5,8 @@ title: "Dropbox"
 menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/dropbox"
 permalink: docs/dropbox/
-category: 'Sources'
-tagline: import files from Dropbox
+category: "Sources"
+tagline: "import files from Dropbox"
 ---
 
 The `@uppy/dropbox` plugin lets users import files from their Dropbox account.
@@ -43,7 +43,7 @@ const Dropbox = Uppy.Dropbox
 
 Dashboard plugin is recommended as a container to all Provider plugins, including Dropbox. If you are using Dashboard, it [comes with all the nessesary styles](/docs/dashboard/#CSS) for Dropbox as well.
 
-⚠️ If you are feeling adventurous, and want to use Dropbox plugin separately, without Dashboard, make sure to include `@uppy/provider-views/dist/style.css` (or `style.min.css`) CSS file. This is experimental, not officialy supported and not recommended.
+⚠️ If you are feeling adventurous, and want to use Dropbox plugin separately, without Dashboard, make sure to include `@uppy/provider-views/dist/style.css` (or `style.min.css`) CSS file. This is experimental, not officially supported and not recommended.
 
 
 ## Options
@@ -73,7 +73,7 @@ DOM element, CSS selector, or plugin to mount the Dropbox provider into. This sh
 
 URL to a [Companion](/docs/companion) instance.
 
-### `serverHeaders: {}`
+### `companionHeaders: {}`
 
 Custom headers that should be sent along to [Companion](/docs/companion) on every request.
 

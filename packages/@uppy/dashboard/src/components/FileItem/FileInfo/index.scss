@@ -11,6 +11,10 @@
     // Must be present
     // [Practical check] Firefox, '384048411015659...2309520384n.png' filename
     word-wrap: anywhere;
+
+    [data-uppy-theme="dark"] & {
+      color: $white;
+    }
   }
 
   .uppy-DashboardItem-status {
@@ -18,6 +22,10 @@
     line-height: 1.3;
     font-weight: normal;
     color: $gray-600;
+
+    [data-uppy-theme="dark"] & {
+      color: $gray-300;
+    }
   }
     .uppy-DashboardItem-statusSize {
       display: inline-block;
@@ -25,7 +33,8 @@
       text-transform: uppercase;
     }
     .uppy-DashboardItem-sourceIcon {
-      display: inline-block;
+      // display: inline-block;
+      display: none;
       vertical-align: bottom;
       color: $gray-400;
       &:not(:first-child) {

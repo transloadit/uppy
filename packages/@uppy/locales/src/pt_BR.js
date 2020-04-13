@@ -14,7 +14,6 @@ pt_BR.strings = {
   cancelUpload: 'Cancelar envio de arquivos',
   chooseFiles: 'Selecionar arquivos',
   closeModal: 'Fechar Modal',
-  companionAuthError: 'Autorização necessária',
   companionError: 'Conexão com serviço falhou',
   complete: 'Concluído',
   connectedToInternet: 'Conectado á internet',
@@ -31,7 +30,6 @@ pt_BR.strings = {
   dropHint: 'Solte seus arquivos aqui',
   dropPaste: 'Solte arquivos aqui, cole ou %{browse}',
   dropPasteImport: 'Solte arquivos aqui, cole, %{browse} ou importe de',
-  edit: 'Editar',
   editFile: 'Editar arquivo',
   editing: 'Editando %{file}',
   emptyFolderAdded: 'Nenhum arquivo foi adicionado da pasta vazia',
@@ -56,7 +54,6 @@ pt_BR.strings = {
   },
   import: 'Importar',
   importFrom: 'Importar de %{name}',
-  link: 'Link',
   loading: 'Carregando...',
   logOut: 'Deslogar',
   myDevice: 'Meu dispositivo',
@@ -95,7 +92,7 @@ pt_BR.strings = {
   uploadPaused: 'Envio de arquivos pausado',
   uploadXFiles: {
     '0': 'Enviar %{smart_count} arquivo',
-    '1': 'Enviar %{smart_count} arquivo',
+    '1': 'Enviar %{smart_count} arquivos',
     '2': 'Enviar %{smart_count} arquivos'
   },
   uploadXNewFiles: {

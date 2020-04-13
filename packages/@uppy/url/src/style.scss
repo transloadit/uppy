@@ -9,22 +9,26 @@
   justify-content: center;
   align-items: center;
   flex: 1;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $black;
+  }
 }
 
 .uppy-Url-input {
   width: 90%;
   max-width: 650px;
   margin-bottom: 15px;
-}
 
-  .uppy-size--md .uppy-Url-input  {
+  .uppy-size--md & {
     margin-bottom: 20px;
   }
+}
 
 .uppy-Url-importButton {
   padding: 13px 25px;
-}
 
-  .uppy-size--md .uppy-Url-importButton {
+  .uppy-size--md & {
     padding: 13px 30px;
   }
+}

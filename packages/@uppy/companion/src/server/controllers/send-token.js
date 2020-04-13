@@ -15,19 +15,22 @@ const versionCmp = require('../helpers/version')
  * @param {function} next
  */
 module.exports = function sendToken (req, res, next) {
-  const uppyAuthToken = req.uppy.authToken
-  // add the token to cookies for thumbnail/image requests
-  tokenService.addToCookies(res, uppyAuthToken, req.uppy.options, req.uppy.provider.authProvider)
+  const uppyAuthToken = req.companion.authToken
+  // some providers need the token in cookies for thumbnail/image requests
+  if (req.companion.provider.needsCookieAuth) {
+    tokenService.addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider)
+  }
 
-  const state = (req.session.grant || {}).state
+  const dynamic = (req.session.grant || {}).dynamic || {}
+  const state = dynamic.state
   if (state) {
-    const origin = oAuthState.getFromState(state, 'origin', req.uppy.options.secret)
+    const origin = oAuthState.getFromState(state, 'origin', req.companion.options.secret)
     const clientVersion = oAuthState.getFromState(
       state,
       'clientVersion',
-      req.uppy.options.secret
+      req.companion.options.secret
     )
-    const allowedClients = req.uppy.options.clients
+    const allowedClients = req.companion.options.clients
     // if no preset clients then allow any client
     if (!allowedClients || hasMatch(origin, allowedClients) || hasMatch(parseUrl(origin).host, allowedClients)) {
       const allowsStringMessage = versionCmp.gte(clientVersion, '1.0.2')

@@ -66,6 +66,97 @@ describe('list provider files', () => {
   })
 })
 
+describe('validate upload data', () => {
+  test('invalid upload protocol gets rejected', () => {
+    return request(authServer)
+      .post('/drive/get/README.md')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://master.tus.com/files',
+        protocol: 'tusInvalid'
+      })
+      .expect(400)
+      .then((res) => expect(res.body.error).toBe('unsupported protocol specified'))
+  })
+
+  test('invalid upload fieldname gets rejected', () => {
+    return request(authServer)
+      .post('/drive/get/README.md')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://master.tus.com/files',
+        protocol: 'tus',
+        fieldname: 390
+      })
+      .expect(400)
+      .then((res) => expect(res.body.error).toBe('fieldname must be a string'))
+  })
+
+  test('invalid upload metadata gets rejected', () => {
+    return request(authServer)
+      .post('/drive/get/README.md')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://master.tus.com/files',
+        protocol: 'tus',
+        metadata: 'I am a string instead of object'
+      })
+      .expect(400)
+      .then((res) => expect(res.body.error).toBe('metadata must be an object'))
+  })
+
+  test('invalid upload headers get rejected', () => {
+    return request(authServer)
+      .post('/drive/get/README.md')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://master.tus.com/files',
+        protocol: 'tus',
+        headers: 'I am a string instead of object'
+      })
+      .expect(400)
+      .then((res) => expect(res.body.error).toBe('headers must be an object'))
+  })
+
+  test('invalid upload HTTP Method gets rejected', () => {
+    return request(authServer)
+      .post('/drive/get/README.md')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://master.tus.com/files',
+        protocol: 'tus',
+        httpMethod: 'DELETE'
+      })
+      .expect(400)
+      .then((res) => expect(res.body.error).toBe('unsupported HTTP METHOD specified'))
+  })
+
+  test('valid upload data is allowed', () => {
+    return request(authServer)
+      .post('/drive/get/README.md')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://master.tus.com/files',
+        protocol: 'tus',
+        httpMethod: 'PUT',
+        headers: {
+          customheader: 'header value'
+        },
+        metadata: {
+          mymetadata: 'matadata value'
+        },
+        fieldname: 'uploadField'
+      })
+      .expect(200)
+  })
+})
+
 describe('download provdier file', () => {
   test('specified file gets downloaded from provider', () => {
     return request(authServer)
@@ -87,17 +178,17 @@ describe('test authentication', () => {
       .get('/drive/callback')
       .expect(302)
       .expect((res) => {
-        expect(res.header['location']).toContain('http://localhost:3020/drive/send-token?uppyAuthToken=')
+        expect(res.header.location).toContain('http://localhost:3020/drive/send-token?uppyAuthToken=')
       })
   })
 
   test('the token gets sent via cookie and html', () => {
     // see mock ../../src/server/helpers/oauth-state above for state values
     return request(authServer)
-      .get(`/drive/send-token?uppyAuthToken=${token}&state=state-with-newer-version`)
+      .get(`/dropbox/send-token?uppyAuthToken=${token}&state=state-with-newer-version`)
       .expect(200)
       .expect((res) => {
-        const authToken = res.header['set-cookie'][0].split(';')[0].split('uppyAuthToken--google=')[1]
+        const authToken = res.header['set-cookie'][0].split(';')[0].split('uppyAuthToken--dropbox=')[1]
         expect(authToken).toEqual(token)
         const body = `
     <!DOCTYPE html>

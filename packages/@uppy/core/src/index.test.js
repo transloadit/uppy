@@ -631,20 +631,72 @@ describe('src/Core', () => {
     it('should not allow a file that does not meet the restrictions', () => {
       const core = new Core({
         restrictions: {
-          allowedFileTypes: ['image/gif']
+          allowedFileTypes: ['image/gif', 'video/webm']
         }
       })
-      try {
+
+      expect(() => {
         core.addFile({
           source: 'jest',
           name: 'foo.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' })
         })
-        throw new Error('File was allowed through')
-      } catch (err) {
-        expect(err.message).toEqual('You can only upload: image/gif')
-      }
+      }).toThrow('You can only upload: image/gif, video/webm')
+
+      expect(() => {
+        core.addFile({
+          source: 'jest',
+          name: 'foo.webm',
+          type: 'video/webm; codecs="vp8, opus"',
+          data: new File([sampleImage], { type: 'video/webm; codecs="vp8, opus"' })
+        })
+      }).not.toThrow()
+    })
+
+    it('should not allow a dupicate file, a file with the same id', () => {
+      const core = new Core()
+      const sameFileBlob = new File([sampleImage], { type: 'image/jpeg' })
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: sameFileBlob
+      })
+      expect(() => {
+        core.addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpeg',
+          data: sameFileBlob,
+          meta: {
+            notARelativePath: 'folder/a'
+          }
+        })
+      }).toThrow(
+        "Cannot add the duplicate file 'foo.jpg', it already exists"
+      )
+      expect(core.getFiles().length).toEqual(1)
+    })
+
+    it('should allow a duplicate file if its relativePath is different, thus the id is different', () => {
+      const core = new Core()
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' }),
+        meta: {
+          relativePath: 'folder/a'
+        }
+      })
+      expect(core.getFiles().length).toEqual(2)
     })
 
     it('should not allow a file if onBeforeFileAdded returned false', () => {
@@ -655,36 +707,89 @@ describe('src/Core', () => {
           }
         }
       })
-      core.addFile({
-        source: 'jest',
-        name: 'foo.jpg',
-        type: 'image/jpeg',
-        data: new File([sampleImage], { type: 'image/jpeg' })
-      })
-      expect(core.getFiles().length).toEqual(0)
-    })
-
-    it('allows no new files after upload when allowMultipleUploads: false', async () => {
-      const core = new Core({ allowMultipleUploads: false })
-      core.addFile({
-        source: 'jest',
-        name: 'foo.jpg',
-        type: 'image/jpeg',
-        data: new File([sampleImage], { type: 'image/jpeg' })
-      })
-
-      await core.upload()
-
       expect(() => {
         core.addFile({
           source: 'jest',
-          name: '123.foo',
+          name: 'foo.jpg',
           type: 'image/jpeg',
           data: new File([sampleImage], { type: 'image/jpeg' })
         })
       }).toThrow(
-        /Cannot add new files: already uploading\./
+        'Cannot add the file because onBeforeFileAdded returned false.'
       )
+      expect(core.getFiles().length).toEqual(0)
+    })
+
+    describe('with allowMultipleUploads: false', () => {
+      it('allows no new files after upload', async () => {
+        const core = new Core({ allowMultipleUploads: false })
+        core.addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+
+        await core.upload()
+
+        expect(() => {
+          core.addFile({
+            source: 'jest',
+            name: '123.foo',
+            type: 'image/jpeg',
+            data: new File([sampleImage], { type: 'image/jpeg' })
+          })
+        }).toThrow(
+          /Cannot add new files: already uploading/
+        )
+      })
+
+      it('does not allow new files after the removeFile() if some file is still present', async () => {
+        const core = new Core({ allowMultipleUploads: false })
+
+        // adding 2 files
+        const fileId1 = core.addFile({
+          source: 'jest',
+          name: '1.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+        core.addFile({
+          source: 'jest',
+          name: '2.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+
+        // removing 1 file
+        core.removeFile(fileId1)
+
+        await expect(core.upload()).resolves.toBeDefined()
+      })
+
+      it('allows new files after the last removeFile()', async () => {
+        const core = new Core({ allowMultipleUploads: false })
+
+        // adding 2 files
+        const fileId1 = core.addFile({
+          source: 'jest',
+          name: '1.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+        const fileId2 = core.addFile({
+          source: 'jest',
+          name: '2.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+
+        // removing 2 files
+        core.removeFile(fileId1)
+        core.removeFile(fileId2)
+
+        await expect(core.upload()).resolves.toBeDefined()
+      })
     })
 
     it('does not dedupe different files', async () => {
@@ -927,6 +1032,98 @@ describe('src/Core', () => {
 
       expect(core.getFiles()).toHaveLength(2)
       expect(core.getFiles().map((file) => file.name).sort()).toEqual(['empty.dat', 'foo.jpg'])
+    })
+  })
+
+  describe('setOptions', () => {
+    it('should change options on the fly', () => {
+      const core = new Core()
+      core.setOptions({
+        id: 'lolUppy',
+        autoProceed: true,
+        allowMultipleUploads: true
+      })
+
+      expect(core.opts.id).toEqual('lolUppy')
+      expect(core.opts.autoProceed).toEqual(true)
+      expect(core.opts.allowMultipleUploads).toEqual(true)
+    })
+
+    it('should change locale on the fly', () => {
+      const core = new Core()
+      expect(core.i18n('cancel')).toEqual('Cancel')
+
+      core.setOptions({
+        locale: {
+          strings: {
+            cancel: 'Отмена'
+          }
+        }
+      })
+
+      expect(core.i18n('cancel')).toEqual('Отмена')
+      expect(core.i18n('logOut')).toEqual('Log out')
+    })
+
+    it('should change meta on the fly', () => {
+      const core = new Core({
+        meta: {
+          foo: 'bar'
+        }
+      })
+      expect(core.state.meta).toMatchObject({
+        foo: 'bar'
+      })
+
+      core.setOptions({
+        meta: {
+          beep: 'boop'
+        }
+      })
+
+      expect(core.state.meta).toMatchObject({
+        foo: 'bar',
+        beep: 'boop'
+      })
+    })
+
+    it('should change restrictions on the fly', () => {
+      const core = new Core({
+        restrictions: {
+          allowedFileTypes: ['image/jpeg'],
+          maxNumberOfFiles: 2
+        }
+      })
+
+      try {
+        core.addFile({
+          source: 'jest',
+          name: 'foo1.png',
+          type: 'image/png',
+          data: new File([sampleImage], { type: 'image/png' })
+        })
+      } catch (err) {
+        expect(err).toMatchObject(new Error('You can only upload: image/jpeg'))
+      }
+
+      core.setOptions({
+        restrictions: {
+          allowedFileTypes: ['image/png']
+        }
+      })
+
+      expect(core.opts.restrictions.allowedFileTypes).toMatchObject(['image/png'])
+
+      expect(() => {
+        core.addFile({
+          source: 'jest',
+          name: 'foo1.png',
+          type: 'image/png',
+          data: new File([sampleImage], { type: 'image/png' })
+        })
+      }).not.toThrow()
+
+      expect(core.getFiles().length).toEqual(1)
     })
   })
 
@@ -1291,7 +1488,7 @@ describe('src/Core', () => {
         })
         core.log('hi')
       } catch (err) {
-        expect(err).toMatchObject(new Error(`'restrictions.allowedFileTypes' must be an array`))
+        expect(err).toMatchObject(new Error('`restrictions.allowedFileTypes` must be an array'))
       }
     })
 
@@ -1666,7 +1863,7 @@ describe('src/Core', () => {
       expect(console.error.mock.calls.length).toBe(1)
     })
 
-    it('should not log to console when logger is not set', () => {
+    it('should only log errors to console when logger is not set', () => {
       console.debug = jest.fn()
       console.error = jest.fn()
 
@@ -1677,7 +1874,7 @@ describe('src/Core', () => {
       core.log('beep beep', 'error')
 
       expect(console.debug.mock.calls.length).toBe(0)
-      expect(console.error.mock.calls.length).toBe(0)
+      expect(console.error.mock.calls.length).toBe(1)
     })
   })
 })

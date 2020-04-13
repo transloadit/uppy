@@ -13,7 +13,7 @@ exports.getUsername = (data) => {
 }
 
 exports.isFolder = (item) => {
-  return item.mimeType === 'application/vnd.google-apps.folder' || item.kind === 'drive#teamDrive'
+  return item.mimeType === 'application/vnd.google-apps.folder' || exports.isSharedDrive(item)
 }
 
 exports.getItemSize = (item) => {
@@ -21,7 +21,7 @@ exports.getItemSize = (item) => {
 }
 
 exports.getItemIcon = (item) => {
-  if (item.kind === 'drive#teamDrive') {
+  if (exports.isSharedDrive(item)) {
     const size = '=w16-h16-n'
     const sizeParamRegex = /=[-whncsp0-9]*$/
     return item.backgroundImageLink.match(sizeParamRegex)
@@ -29,7 +29,7 @@ exports.getItemIcon = (item) => {
       : `${item.backgroundImageLink}${size}`
   }
 
-  if (item.thumbnailLink) {
+  if (item.thumbnailLink && !item.mimeType.startsWith('application/vnd.google')) {
     const smallerThumbnailLink = item.thumbnailLink.replace('s220', 's40')
     return smallerThumbnailLink
   }
@@ -38,9 +38,7 @@ exports.getItemIcon = (item) => {
 }
 
 exports.getItemSubList = (item) => {
-  return item.files.filter((i) => {
-    return exports.isFolder(i) || !i.mimeType.startsWith('application/vnd.google')
-  })
+  return item.files
 }
 
 exports.getItemName = (item) => {
@@ -64,20 +62,19 @@ exports.getItemModifiedDate = (item) => {
 }
 
 exports.getItemThumbnailUrl = (item) => {
-  return `/drive/thumbnail/${exports.getItemRequestPath(item)}`
+  return item.thumbnailLink
 }
 
-exports.isTeamDrive = (item) => {
-  return item.kind === 'drive#teamDrive'
+exports.isSharedDrive = (item) => {
+  return item.kind === 'drive#drive'
 }
 
 exports.getNextPagePath = (data, currentQuery, currentPath) => {
   if (!data.nextPageToken) {
     return null
   }
-  const query = {
-    ...currentQuery,
+  const query = Object.assign({}, currentQuery, {
     cursor: data.nextPageToken
-  }
+  })
   return `${currentPath}?${querystring.stringify(query)}`
 }

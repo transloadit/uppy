@@ -76,14 +76,14 @@ describe('Translator', () => {
     }
 
     it('should prioritize language pack strings from Core over default', () => {
-      const translator = new Translator([ defaultStrings, launguagePackLoadedInCore ])
+      const translator = new Translator([defaultStrings, launguagePackLoadedInCore])
       expect(
         translator.translate('youHaveChosen', { fileName: 'img.jpg' })
       ).toEqual('You have chosen: img.jpg')
     })
 
     it('should prioritize user-supplied strings over language pack from Core', () => {
-      const translator = new Translator([ defaultStrings, launguagePackLoadedInCore, userSuppliedStrings ])
+      const translator = new Translator([defaultStrings, launguagePackLoadedInCore, userSuppliedStrings])
       expect(
         translator.translate('youHaveChosen', { fileName: 'img.jpg' })
       ).toEqual('Beep boop: img.jpg')
@@ -113,6 +113,40 @@ describe('Translator', () => {
       expect(
         translator.translate('filesChosen', { smart_count: 0 })
       ).toEqual('Выбрано 0 файлов')
+    })
+
+    it('should support strings without plural forms', () => {
+      const translator = new Translator({
+        strings: {
+          theAmount: 'het aantal is %{smart_count}'
+        },
+        pluralize: () => 0
+      })
+
+      expect(
+        translator.translate('theAmount', { smart_count: 0 })
+      ).toEqual('het aantal is 0')
+      expect(
+        translator.translate('theAmount', { smart_count: 1 })
+      ).toEqual('het aantal is 1')
+      expect(
+        translator.translate('theAmount', { smart_count: 1202530 })
+      ).toEqual('het aantal is 1202530')
+    })
+
+    it('should error when using a plural form without %{smart_count}', () => {
+      const translator = new Translator({
+        strings: {
+          test: {
+            0: 'A test',
+            1: '%{smart_count} tests'
+          }
+        }
+      })
+
+      expect(() => {
+        translator.translate('test')
+      }).toThrow('Attempted to use a string with plural forms, but no value was given for %{smart_count}')
     })
   })
 })

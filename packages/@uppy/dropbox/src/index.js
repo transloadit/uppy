@@ -12,15 +12,17 @@ module.exports = class Dropbox extends Plugin {
     Provider.initPlugin(this, opts)
     this.title = this.opts.title || 'Dropbox'
     this.icon = () => (
-      <svg aria-hidden="true" focusable="false" width="128" height="128" viewBox="0 0 128 128">
-        <path d="M31.997 11L64 31.825 31.997 52.651 0 31.825 31.997 11zM96 11l32 20.825-32 20.826-32-20.826L96 11zM0 73.476l31.997-20.825L64 73.476 31.997 94.302 0 73.476zm96-20.825l32 20.825-32 20.826-32-20.826 32-20.825zm-64.508 48.254l32.003-20.826 31.997 20.826-31.997 20.825-32.003-20.825z" fill="#0260FF" fill-rule="nonzero" />
+      <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" fill-rule="evenodd">
+          <rect fill="#0D2481" width="32" height="32" rx="16" />
+          <path d="M11 8l5 3.185-5 3.186-5-3.186L11 8zm10 0l5 3.185-5 3.186-5-3.186L21 8zM6 17.556l5-3.185 5 3.185-5 3.186-5-3.186zm15-3.185l5 3.185-5 3.186-5-3.186 5-3.185zm-10 7.432l5-3.185 5 3.185-5 3.186-5-3.186z" fill="#FFF" fill-rule="nonzero" />
+        </g>
       </svg>
     )
 
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
-      serverHeaders: this.opts.serverHeaders,
-      storage: this.opts.storage,
+      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
       provider: 'dropbox',
       pluginId: this.id
     })

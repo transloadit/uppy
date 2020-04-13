@@ -89,15 +89,16 @@ exports.config = {
     [CompanionService],
     [StaticServerService, {
       folders: [
+        { mount: '/chaos-monkey', path: './test/endtoend/chaos-monkey/dist' },
+        { mount: '/create-react-app', path: './test/endtoend/create-react-app/build' },
         { mount: '/i18n-drag-drop', path: './test/endtoend/i18n-drag-drop/dist' },
-        { mount: '/tus-drag-drop', path: './test/endtoend/tus-drag-drop/dist' },
-        { mount: '/xhr-limit', path: './test/endtoend/xhr-limit/dist' },
         { mount: '/providers', path: './test/endtoend/providers/dist' },
         { mount: '/thumbnails', path: './test/endtoend/thumbnails/dist' },
         { mount: '/transloadit', path: './test/endtoend/transloadit/dist' },
+        { mount: '/tus-drag-drop', path: './test/endtoend/tus-drag-drop/dist' },
         { mount: '/typescript', path: './test/endtoend/typescript/dist' },
         { mount: '/url-plugin', path: './test/endtoend/url-plugin/dist' },
-        { mount: '/create-react-app', path: './test/endtoend/create-react-app/build' }
+        { mount: '/xhr-limit', path: './test/endtoend/xhr-limit/dist' }
       ]
     }],
     [TusService]
@@ -123,7 +124,7 @@ exports.config = {
    * Gets executed before test execution begins. At this point you can access to all global
    * variables like `browser`. It is the perfect place to define custom commands.
    *
-   * @param {Array.<Object>} capabilities list of capabilities details
+   * @param {Array.<object>} capabilities list of capabilities details
    * @param {Array<string>} specs List of spec file paths that are to be run
    */
   before: function (capabilities, specs) {

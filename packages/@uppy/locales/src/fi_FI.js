@@ -14,7 +14,6 @@ fi_FI.strings = {
   cancelUpload: 'Peruuta lähetys',
   chooseFiles: 'Valitse tiedostot',
   closeModal: 'Sulje ikkuna',
-  companionAuthError: 'Käyttöoikeus vaadittu',
   companionError: 'Yhdistäminen Companioniin epäonnistui',
   complete: 'Valmis',
   connectedToInternet: 'Yhdistetty Internettiin',
@@ -31,7 +30,6 @@ fi_FI.strings = {
   dropHint: 'Raahaa tiedostot tähän',
   dropPaste: 'Raahaa tiedostot tähän, liitä tai %{browse}',
   dropPasteImport: 'Raahaa tiedostot tähän, liitä, %{browse} tai tuo',
-  edit: 'Muokkaa',
   editFile: 'Muokkaa tiedostoa',
   editing: 'Muokataan %{file}',
   emptyFolderAdded: 'Ei lisätty tiedostoja tyhjästä kansiosta',
@@ -56,7 +54,6 @@ fi_FI.strings = {
   },
   import: 'Tuo',
   importFrom: 'Tuo %{name}',
-  link: 'Linkki',
   loading: 'Ladataan...',
   logOut: 'Kirjaudu ulos',
   myDevice: 'Laitteeltani',
@@ -83,9 +80,9 @@ fi_FI.strings = {
   selectAllFilesFromFolderNamed: 'Valitse kaikki tiedostot kansiosta %{name}',
   selectFileNamed: 'Valitse tiedosto %{name}',
   selectX: {
-    '0': 'Valitse %{smart_count} tiedosto',
-    '1': 'Valitse %{smart_count} tiedostoa',
-    '2': 'Valitse %{smart_count} tiedostoa'
+    '0': 'Valitse %{smart_count}',
+    '1': 'Valitse %{smart_count}',
+    '2': 'Valitse %{smart_count}'
   },
   smile: 'Hymyile!',
   startRecording: 'Aloita videon tallennus',

@@ -1,21 +1,17 @@
-import Uppy = require('@uppy/core');
-import CompanionClient = require('@uppy/companion-client');
+import Uppy = require('@uppy/core')
+import CompanionClient = require('@uppy/companion-client')
 
 declare module GoogleDrive {
-  interface GoogleDriveOptions extends Uppy.PluginOptions, CompanionClient.ProviderOptions {
-    companionUrl: string;
-    companionAllowedHosts: string | RegExp | Array<string | RegExp>;
+  interface GoogleDriveOptions
+    extends Uppy.PluginOptions,
+      CompanionClient.PublicProviderOptions {
+    replaceTargetContent?: boolean
+    target?: Uppy.PluginTarget
+    title?: string
+    storage?: CompanionClient.TokenStorage
   }
 }
 
-declare class GoogleDrive extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<GoogleDrive.GoogleDriveOptions>);
-}
+declare class GoogleDrive extends Uppy.Plugin<GoogleDrive.GoogleDriveOptions> {}
 
-export = GoogleDrive;
-
-declare module '@uppy/core' {
-  export interface Uppy {
-    use(pluginClass: typeof GoogleDrive, opts: Partial<GoogleDrive.GoogleDriveOptions>): Uppy.Uppy;
-  }
-}
+export = GoogleDrive

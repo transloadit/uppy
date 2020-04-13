@@ -2,14 +2,50 @@ const { h } = require('preact')
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
+const mimeTypes = require('@uppy/utils/lib/mimeTypes')
 const canvasToBlob = require('@uppy/utils/lib/canvasToBlob')
 const supportsMediaRecorder = require('./supportsMediaRecorder')
 const CameraIcon = require('./CameraIcon')
 const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')
 
-// Setup getUserMedia, with polyfill for older browsers
-// Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+/**
+ * Normalize a MIME type or file extension into a MIME type.
+ *
+ * @param {string} fileType - MIME type or a file extension prefixed with `.`.
+ * @returns {string|undefined} The MIME type or `undefined` if the fileType is an extension and is not known.
+ */
+function toMimeType (fileType) {
+  if (fileType[0] === '.') {
+    return mimeTypes[fileType.slice(1)]
+  }
+  return fileType
+}
+
+/**
+ * Is this MIME type a video?
+ *
+ * @param {string} mimeType - MIME type.
+ * @returns {boolean}
+ */
+function isVideoMimeType (mimeType) {
+  return /^video\/[^*]+$/.test(mimeType)
+}
+
+/**
+ * Is this MIME type an image?
+ *
+ * @param {string} mimeType - MIME type.
+ * @returns {boolean}
+ */
+function isImageMimeType (mimeType) {
+  return /^image\/[^*]+$/.test(mimeType)
+}
+
+/**
+ * Setup getUserMedia, with polyfill for older browsers
+ * Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+ */
 function getMediaDevices () {
   // eslint-disable-next-line compat/compat
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -45,7 +81,14 @@ module.exports = class Webcam extends Plugin {
     this.id = this.opts.id || 'Webcam'
     this.title = this.opts.title || 'Camera'
     this.type = 'acquirer'
-    this.icon = CameraIcon
+    this.icon = () => (
+      <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" fill-rule="evenodd">
+          <rect fill="#03BFEF" width="32" height="32" rx="16" />
+          <path d="M22 11c1.133 0 2 .867 2 2v7.333c0 1.134-.867 2-2 2H10c-1.133 0-2-.866-2-2V13c0-1.133.867-2 2-2h2.333l1.134-1.733C13.6 9.133 13.8 9 14 9h4c.2 0 .4.133.533.267L19.667 11H22zm-6 1.533a3.764 3.764 0 0 0-3.8 3.8c0 2.129 1.672 3.801 3.8 3.801s3.8-1.672 3.8-3.8c0-2.13-1.672-3.801-3.8-3.801zm0 6.261c-1.395 0-2.46-1.066-2.46-2.46 0-1.395 1.065-2.461 2.46-2.461s2.46 1.066 2.46 2.46c0 1.395-1.065 2.461-2.46 2.461z" fill="#FFF" fill-rule="nonzero" />
+        </g>
+      </svg>
+    )
 
     this.defaultLocale = {
       strings: {
@@ -54,7 +97,9 @@ module.exports = class Webcam extends Plugin {
         startRecording: 'Begin video recording',
         stopRecording: 'Stop video recording',
         allowAccessTitle: 'Please allow access to your camera',
-        allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.'
+        allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
+        recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
+        recordingLength: 'Recording length %{recording_length}'
       }
     }
 
@@ -70,16 +115,14 @@ module.exports = class Webcam extends Plugin {
       ],
       mirror: true,
       facingMode: 'user',
-      preferredVideoMimeType: null
+      preferredImageMimeType: null,
+      preferredVideoMimeType: null,
+      showRecordingLength: false
     }
 
-    // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
-    // i18n
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     this.install = this.install.bind(this)
     this.setPluginState = this.setPluginState.bind(this)
@@ -87,19 +130,31 @@ module.exports = class Webcam extends Plugin {
     this.render = this.render.bind(this)
 
     // Camera controls
-    this.start = this.start.bind(this)
-    this.stop = this.stop.bind(this)
-    this.takeSnapshot = this.takeSnapshot.bind(this)
-    this.startRecording = this.startRecording.bind(this)
-    this.stopRecording = this.stopRecording.bind(this)
-    this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
-    this.focus = this.focus.bind(this)
+    this._start = this._start.bind(this)
+    this._stop = this._stop.bind(this)
+    this._takeSnapshot = this._takeSnapshot.bind(this)
+    this._startRecording = this._startRecording.bind(this)
+    this._stopRecording = this._stopRecording.bind(this)
+    this._oneTwoThreeSmile = this._oneTwoThreeSmile.bind(this)
+    this._focus = this._focus.bind(this)
 
     this.webcamActive = false
 
     if (this.opts.countdown) {
-      this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
+      this.opts.onBeforeSnapshot = this._oneTwoThreeSmile
     }
+  }
+
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   isSupported () {
@@ -119,7 +174,7 @@ module.exports = class Webcam extends Plugin {
     }
   }
 
-  start () {
+  _start () {
     if (!this.isSupported()) {
       return Promise.reject(new Error('Webcam access not supported'))
     }
@@ -144,34 +199,89 @@ module.exports = class Webcam extends Plugin {
       })
   }
 
-  startRecording () {
-    let options = {}
-    const preferredVideoMimeType = this.opts.preferredVideoMimeType
+  /**
+   * @returns {object}
+   */
+  _getMediaRecorderOptions () {
+    const options = {}
 
-    // Attempt to use the passed preferredVideoMimeType (if any) during recording.
-    // If the browser doesn't support it, we'll fall back to the browser default instead
-    if (preferredVideoMimeType && MediaRecorder.isTypeSupported(preferredVideoMimeType) && getFileTypeExtension(preferredVideoMimeType)) {
-      options.mimeType = preferredVideoMimeType
+    // Try to use the `opts.preferredVideoMimeType` or one of the `allowedFileTypes` for the recording.
+    // If the browser doesn't support it, we'll fall back to the browser default instead.
+    // Safari doesn't have the `isTypeSupported` API.
+    if (MediaRecorder.isTypeSupported) {
+      const { restrictions } = this.uppy.opts
+      let preferredVideoMimeTypes = []
+      if (this.opts.preferredVideoMimeType) {
+        preferredVideoMimeTypes = [this.opts.preferredVideoMimeType]
+      } else if (restrictions.allowedFileTypes) {
+        preferredVideoMimeTypes = restrictions.allowedFileTypes.map(toMimeType).filter(isVideoMimeType)
+      }
+
+      const acceptableMimeTypes = preferredVideoMimeTypes.filter((candidateType) =>
+        MediaRecorder.isTypeSupported(candidateType) &&
+          getFileTypeExtension(candidateType))
+      if (acceptableMimeTypes.length > 0) {
+        options.mimeType = acceptableMimeTypes[0]
+      }
     }
 
-    this.recorder = new MediaRecorder(this.stream, options)
+    return options
+  }
+
+  _startRecording () {
+    this.recorder = new MediaRecorder(this.stream, this._getMediaRecorderOptions())
     this.recordingChunks = []
+    let stoppingBecauseOfMaxSize = false
     this.recorder.addEventListener('dataavailable', (event) => {
       this.recordingChunks.push(event.data)
+
+      const { restrictions } = this.uppy.opts
+      if (this.recordingChunks.length > 1 &&
+          restrictions.maxFileSize != null &&
+          !stoppingBecauseOfMaxSize) {
+        const totalSize = this.recordingChunks.reduce((acc, chunk) => acc + chunk.size, 0)
+        // Exclude the initial chunk from the average size calculation because it is likely to be a very small outlier
+        const averageChunkSize = (totalSize - this.recordingChunks[0].size) / (this.recordingChunks.length - 1)
+        const expectedEndChunkSize = averageChunkSize * 3
+        const maxSize = Math.max(0, restrictions.maxFileSize - expectedEndChunkSize)
+
+        if (totalSize > maxSize) {
+          stoppingBecauseOfMaxSize = true
+          this.uppy.info(this.i18n('recordingStoppedMaxSize'), 'warning', 4000)
+          this._stopRecording()
+        }
+      }
     })
-    this.recorder.start()
+
+    // use a "time slice" of 500ms: ondataavailable will be called each 500ms
+    // smaller time slices mean we can more accurately check the max file size restriction
+    this.recorder.start(500)
+
+    if (this.opts.showRecordingLength) {
+      // Start the recordingLengthTimer if we are showing the recording length.
+      this.recordingLengthTimer = setInterval(() => {
+        const currentRecordingLength = this.getPluginState().recordingLengthSeconds
+        this.setPluginState({ recordingLengthSeconds: currentRecordingLength + 1 })
+      }, 1000)
+    }
 
     this.setPluginState({
       isRecording: true
     })
   }
 
-  stopRecording () {
+  _stopRecording () {
     const stopped = new Promise((resolve, reject) => {
       this.recorder.addEventListener('stop', () => {
         resolve()
       })
       this.recorder.stop()
+
+      if (this.opts.showRecordingLength) {
+        // Stop the recordingLengthTimer if we are showing the recording length.
+        clearInterval(this.recordingLengthTimer)
+        this.setPluginState({ recordingLengthSeconds: 0 })
+      }
     })
 
     return stopped.then(() => {
@@ -191,12 +301,6 @@ module.exports = class Webcam extends Plugin {
     }).then(() => {
       this.recordingChunks = null
       this.recorder = null
-
-      // Close the Dashboard panel if plugin is installed
-      // into Dashboard (could be other parent UI plugin)
-      // if (this.parent && this.parent.hideAllPanels) {
-      //   this.parent.hideAllPanels()
-      // }
     }, (error) => {
       this.recordingChunks = null
       this.recorder = null
@@ -204,7 +308,7 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  stop () {
+  _stop () {
     this.stream.getAudioTracks().forEach((track) => {
       track.stop()
     })
@@ -215,15 +319,15 @@ module.exports = class Webcam extends Plugin {
     this.stream = null
   }
 
-  getVideoElement () {
+  _getVideoElement () {
     return this.el.querySelector('.uppy-Webcam-video')
   }
 
-  oneTwoThreeSmile () {
+  _oneTwoThreeSmile () {
     return new Promise((resolve, reject) => {
       let count = this.opts.countdown
 
-      let countDown = setInterval(() => {
+      const countDown = setInterval(() => {
         if (!this.webcamActive) {
           clearInterval(countDown)
           this.captureInProgress = false
@@ -242,7 +346,7 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  takeSnapshot () {
+  _takeSnapshot () {
     if (this.captureInProgress) return
     this.captureInProgress = true
 
@@ -251,18 +355,13 @@ module.exports = class Webcam extends Plugin {
       this.uppy.info(message, 'error', 5000)
       return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
     }).then(() => {
-      return this.getImage()
+      return this._getImage()
     }).then((tagFile) => {
       this.captureInProgress = false
-      // Close the Dashboard panel if plugin is installed
-      // into Dashboard (could be other parent UI plugin)
-      // if (this.parent && this.parent.hideAllPanels) {
-      //   this.parent.hideAllPanels()
-      // }
       try {
         this.uppy.addFile(tagFile)
       } catch (err) {
-        // Logging the error, exept restrictions, which is handled in Core
+        // Logging the error, except restrictions, which is handled in Core
         if (!err.isRestriction) {
           this.uppy.log(err)
         }
@@ -273,32 +372,32 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  getImage () {
-    const video = this.getVideoElement()
+  _getImage () {
+    const video = this._getVideoElement()
     if (!video) {
       return Promise.reject(new Error('No video element found, likely due to the Webcam tab being closed.'))
     }
 
-    const name = `cam-${Date.now()}.jpg`
-    const mimeType = 'image/jpeg'
-
     const width = video.videoWidth
     const height = video.videoHeight
-
-    // const scaleH = this.opts.mirror ? -1 : 1 // Set horizontal scale to -1 if flip horizontal
-    // const scaleV = 1
-    // const posX = this.opts.mirror ? width * -1 : 0 // Set x position to -100% if flip horizontal
-    // const posY = 0
 
     const canvas = document.createElement('canvas')
     canvas.width = width
     canvas.height = height
     const ctx = canvas.getContext('2d')
     ctx.drawImage(video, 0, 0)
-    // ctx.save() // Save the current state
-    // ctx.scale(scaleH, scaleV) // Set scale to flip the image
-    // ctx.drawImage(video, posX, posY, width, height) // draw the image
-    // ctx.restore() // Restore the last saved state
+
+    const { restrictions } = this.uppy.opts
+    let preferredImageMimeTypes = []
+    if (this.opts.preferredImageMimeType) {
+      preferredImageMimeTypes = [this.opts.preferredImageMimeType]
+    } else if (restrictions.allowedFileTypes) {
+      preferredImageMimeTypes = restrictions.allowedFileTypes.map(toMimeType).filter(isImageMimeType)
+    }
+
+    const mimeType = preferredImageMimeTypes[0] || 'image/jpeg'
+    const ext = getFileTypeExtension(mimeType) || 'jpg'
+    const name = `cam-${Date.now()}.${ext}`
 
     return canvasToBlob(canvas, mimeType).then((blob) => {
       return {
@@ -330,7 +429,7 @@ module.exports = class Webcam extends Plugin {
     return Promise.resolve(file)
   }
 
-  focus () {
+  _focus () {
     if (!this.opts.countdown) return
     setTimeout(() => {
       this.uppy.info(this.i18n('smile'), 'success', 1500)
@@ -339,35 +438,40 @@ module.exports = class Webcam extends Plugin {
 
   render (state) {
     if (!this.webcamActive) {
-      this.start()
+      this._start()
     }
 
     const webcamState = this.getPluginState()
 
     if (!webcamState.cameraReady) {
-      return <PermissionsScreen
-        icon={CameraIcon}
-        i18n={this.i18n} />
+      return (
+        <PermissionsScreen icon={CameraIcon} i18n={this.i18n} />
+      )
     }
 
-    return <CameraScreen
-      {...webcamState}
-      onSnapshot={this.takeSnapshot}
-      onStartRecording={this.startRecording}
-      onStopRecording={this.stopRecording}
-      onFocus={this.focus}
-      onStop={this.stop}
-      i18n={this.i18n}
-      modes={this.opts.modes}
-      supportsRecording={supportsMediaRecorder()}
-      recording={webcamState.isRecording}
-      mirror={this.opts.mirror}
-      src={this.stream} />
+    return (
+      <CameraScreen
+        {...webcamState}
+        onSnapshot={this._takeSnapshot}
+        onStartRecording={this._startRecording}
+        onStopRecording={this._stopRecording}
+        onFocus={this._focus}
+        onStop={this._stop}
+        i18n={this.i18n}
+        modes={this.opts.modes}
+        showRecordingLength={this.opts.showRecordingLength}
+        supportsRecording={supportsMediaRecorder()}
+        recording={webcamState.isRecording}
+        mirror={this.opts.mirror}
+        src={this.stream}
+      />
+    )
   }
 
   install () {
     this.setPluginState({
-      cameraReady: false
+      cameraReady: false,
+      recordingLengthSeconds: 0
     })
 
     const target = this.opts.target
@@ -378,7 +482,7 @@ module.exports = class Webcam extends Plugin {
 
   uninstall () {
     if (this.stream) {
-      this.stop()
+      this._stop()
     }
 
     this.unmount()

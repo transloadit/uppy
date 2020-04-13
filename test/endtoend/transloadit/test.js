@@ -40,7 +40,7 @@ describe('Transloadit file processing', () => {
         selectFakeFile,
         'uppyTransloadit',
         path.basename(img), // name
-        `image/jpeg`, // type
+        'image/jpeg', // type
         fs.readFileSync(img, 'base64') // b64
       )
       // browser.execute(selectFakeFile, 'uppyTransloadit')

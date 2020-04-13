@@ -10,6 +10,10 @@
   align-items: center;
   justify-content: center;
   flex: 1;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $black;
+  }
 }
 
 .uppy-Provider-auth,
@@ -47,6 +51,10 @@
   .uppy-size--md & {
     font-size: 20px;
   }
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-300;
+  }
 }
 
 .uppy-Provider-breadcrumbs {
@@ -58,6 +66,10 @@
 
   .uppy-size--md & {
     margin-bottom: 0;
+  }
+
+  [data-uppy-theme="dark"] & {
+    color: $white;
   }
 }
   .uppy-Provider-breadcrumbsIcon {
@@ -80,6 +92,7 @@
     // for focus
     padding: 4px;
     border-radius: 3px;
+
     &:hover {
       text-decoration: underline;
       cursor: pointer;
@@ -100,6 +113,10 @@
   margin: 0 8px 0 0;
   font-weight: 500;
   color: $gray-800;
+
+  [data-uppy-theme="dark"] & {
+    color: $white;
+  }
 }
 
   .uppy-ProviderBrowser-user:after {
@@ -114,6 +131,10 @@
   z-index: $zIndex-2;
   border-bottom: 1px solid $gray-200;
   position: relative;
+
+  [data-uppy-theme="dark"] & {
+    border-bottom: 1px solid $gray-800;
+  }
 }
 
 .uppy-ProviderBrowser-headerBar {
@@ -127,6 +148,10 @@
   .uppy-size--md & {
     display: flex;
     align-items: center;
+  }
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
   }
 }
 
@@ -151,6 +176,10 @@
   margin-bottom: 5px;
   display: flex;
   align-items: center;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $black;
+  }
 }
 
 .uppy-ProviderBrowser-searchIcon {
@@ -175,11 +204,20 @@
   padding-left: 27px;
   z-index: $zIndex-2;
   border-radius: 4px;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $black;
+    color: $white;
+  }
 }
 
   .uppy-ProviderBrowser-searchInput:focus {
     outline: 0;
     background-color: $gray-100;
+
+    [data-uppy-theme="dark"] & {
+      background-color: $gray-800;
+    }
   }
 
 .uppy-ProviderBrowser-searchClose {
@@ -219,6 +257,10 @@
   &:hover {
     text-decoration: underline;
   }
+
+  [data-uppy-theme="dark"] & {
+    color: $white;
+  }
 }
 
 .uppy-ProviderBrowser-body {
@@ -245,6 +287,10 @@
   list-style: none;
   margin: 0;
   padding: 0;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $black;
+  }
 }
 
 .uppy-ProviderBrowserItem-inner {
@@ -256,12 +302,17 @@
 .uppy-ProviderBrowser-footer {
   display: flex;
   align-items: center;
-  background: $white;
+  background-color: $white;
   height: 65px;
   border-top: 1px solid $gray-200;
   padding: 0 15px;
 
   & button {
     margin-right: 8px;
+  }
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+    border-top: 1px solid $gray-800;
   }
 }

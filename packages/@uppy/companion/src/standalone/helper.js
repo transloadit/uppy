@@ -13,7 +13,7 @@ const { version } = require('../../package.json')
  *
  * @returns {object}
  */
-exports.getUppyOptions = () => {
+exports.getCompanionOptions = () => {
   return merge({}, getConfigFromEnv(), getConfigFromFile())
 }
 
@@ -41,12 +41,24 @@ const getConfigFromEnv = () => {
         key: process.env.COMPANION_INSTAGRAM_KEY,
         secret: getSecret('COMPANION_INSTAGRAM_SECRET')
       },
+      facebook: {
+        key: process.env.COMPANION_FACEBOOK_KEY,
+        secret: getSecret('COMPANION_FACEBOOK_SECRET')
+      },
+      microsoft: {
+        key: process.env.COMPANION_ONEDRIVE_KEY,
+        secret: getSecret('COMPANION_ONEDRIVE_SECRET')
+      },
       s3: {
         key: process.env.COMPANION_AWS_KEY,
         secret: getSecret('COMPANION_AWS_SECRET'),
         bucket: process.env.COMPANION_AWS_BUCKET,
         endpoint: process.env.COMPANION_AWS_ENDPOINT,
-        region: process.env.COMPANION_AWS_REGION
+        region: process.env.COMPANION_AWS_REGION,
+        useAccelerateEndpoint:
+          process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
+        expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '300', 10),
+        acl: process.env.COMPANION_AWS_ACL || 'public-read'
       }
     },
     server: {
@@ -59,6 +71,9 @@ const getConfigFromEnv = () => {
     },
     filePath: process.env.COMPANION_DATADIR,
     redisUrl: process.env.COMPANION_REDIS_URL,
+    // adding redisOptions to keep all companion options easily visible
+    //  redisOptions refers to https://www.npmjs.com/package/redis#options-object-properties
+    redisOptions: {},
     sendSelfEndpoint: process.env.COMPANION_SELF_ENDPOINT,
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
     secret: getSecret('COMPANION_SECRET') || generateSecret(),
@@ -154,7 +169,7 @@ exports.validateConfig = (config) => {
   }
 
   // validate that specified filePath is writeable/readable.
-  // TODO: consider moving this into the uppy module itself.
+  // TODO: consider moving this into the companion module itself.
   try {
     // @ts-ignore
     fs.accessSync(`${config.filePath}`, fs.R_OK | fs.W_OK)
@@ -173,17 +188,13 @@ exports.hasProtocol = (url) => {
   return url.startsWith('http://') || url.startsWith('https://')
 }
 
-exports.buildHelpfulStartupMessage = (uppyOptions) => {
-  const buildURL = utils.getURLBuilder(uppyOptions)
+exports.buildHelpfulStartupMessage = (companionOptions) => {
+  const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
-  Object.keys(uppyOptions.providerOptions).forEach((providerName) => {
+  Object.keys(companionOptions.providerOptions).forEach((providerName) => {
     // s3 does not need redirect_uris
     if (providerName === 's3') {
       return
-    }
-
-    if (providerName === 'google') {
-      providerName = 'drive'
     }
 
     callbackURLs.push(buildURL(`/connect/${providerName}/callback`, true))

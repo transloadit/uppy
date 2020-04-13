@@ -1,9 +1,12 @@
 const express = require('express')
 const qs = require('querystring')
-const uppy = require('../uppy')
+const companion = require('../companion')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
+const redis = require('../server/redis')
+const { parseURL } = require('../server/helpers/utils')
+const merge = require('lodash.merge')
 // @ts-ignore
 const promBundle = require('express-prom-bundle')
 const session = require('express-session')
@@ -34,21 +37,34 @@ app.use(addRequestId)
 // log server requests.
 app.use(morgan('combined'))
 morgan.token('url', (req, res) => {
-  const mask = (key) => {
-    // don't log access_tokens in urls
-    const query = Object.assign({}, req.query)
-    // replace logged access token with xxxx character
-    query[key] = 'x'.repeat(req.query[key].length)
-    return `${req.path}?${qs.stringify(query)}`
-  }
+  const query = Object.assign({}, req.query)
+  let hasQuery = false;
+  ['access_token', 'uppyAuthToken'].forEach((key) => {
+    if (req.query && req.query[key]) {
+      // replace logged access token with xxxx character
+      query[key] = 'x'.repeat(req.query[key].length)
+      hasQuery = true
+    }
+  })
 
-  if (req.query && req.query['access_token']) {
-    return mask('access_token')
-  } else if (req.query && req.query['uppyAuthToken']) {
-    return mask('uppyAuthToken')
-  }
+  return hasQuery ? `${req.path}?${qs.stringify(query)}` : req.originalUrl || req.url
+})
 
-  return req.originalUrl || req.url
+morgan.token('referrer', (req, res) => {
+  const ref = req.headers.referer || req.headers.referrer
+  if (typeof ref === 'string') {
+    const parsed = parseURL(ref)
+    const query = qs.parse(parsed.search.replace('?', ''));
+    ['uppyAuthToken', 'access_token'].forEach(key => {
+      if (query[key]) {
+        query[key] = 'x'.repeat(query[key].length)
+      }
+    })
+
+    const hasQuery = parsed.search
+    const newURL = `${parsed.href.split('?')[0]}?${qs.stringify(query)}`
+    return hasQuery ? newURL : parsed.href
+  }
 })
 
 // make app metrics available at '/metrics'.
@@ -64,18 +80,19 @@ app.use(helmet.noSniff())
 app.use(helmet.ieNoOpen())
 app.disable('x-powered-by')
 
-const uppyOptions = helper.getUppyOptions()
+const companionOptions = helper.getCompanionOptions()
 const sessionOptions = {
-  secret: uppyOptions.secret,
+  secret: companionOptions.secret,
   resave: true,
   saveUninitialized: true
 }
 
-if (process.env.COMPANION_REDIS_URL) {
+if (companionOptions.redisUrl) {
   const RedisStore = require('connect-redis')(session)
-  sessionOptions.store = new RedisStore({
-    url: process.env.COMPANION_REDIS_URL
-  })
+  const redisClient = redis.client(
+    merge({ url: companionOptions.redisUrl }, companionOptions.redisOptions)
+  )
+  sessionOptions.store = new RedisStore({ client: redisClient })
 }
 
 if (process.env.COMPANION_COOKIE_DOMAIN) {
@@ -101,6 +118,8 @@ app.use((req, res, next) => {
     // @ts-ignore
     if (req.headers.origin && whitelist.indexOf(req.headers.origin) > -1) {
       res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
+      // only allow credentials when origin is whitelisted
+      res.setHeader('Access-Control-Allow-Credentials', 'true')
     }
   } else {
     res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
@@ -114,22 +133,42 @@ app.use((req, res, next) => {
     'Access-Control-Allow-Headers',
     'Authorization, Origin, Content-Type, Accept'
   )
-  res.setHeader('Access-Control-Allow-Credentials', 'true')
   next()
 })
 
 // Routes
 app.get('/', (req, res) => {
   res.setHeader('Content-Type', 'text/plain')
-  res.send(helper.buildHelpfulStartupMessage(uppyOptions))
+  res.send(helper.buildHelpfulStartupMessage(companionOptions))
 })
 
-// initialize uppy
-helper.validateConfig(uppyOptions)
+// initialize companion
+helper.validateConfig(companionOptions)
 if (process.env.COMPANION_PATH) {
-  app.use(process.env.COMPANION_PATH, uppy.app(uppyOptions))
+  app.use(process.env.COMPANION_PATH, companion.app(companionOptions))
 } else {
-  app.use(uppy.app(uppyOptions))
+  app.use(companion.app(companionOptions))
+}
+
+// WARNING: This route is added in order to validate your app with OneDrive.
+// Only set COMPANION_ONEDRIVE_DOMAIN_VALIDATION if you are sure that you are setting the
+// correct value for COMPANION_ONEDRIVE_KEY (i.e application ID). If there's a slightest possiblilty
+// that you might have mixed the values for COMPANION_ONEDRIVE_KEY and COMPANION_ONEDRIVE_SECRET,
+// please do not set a value for COMPANION_ONEDRIVE_DOMAIN_VALIDATION
+if (process.env.COMPANION_ONEDRIVE_DOMAIN_VALIDATION === 'true' && process.env.COMPANION_ONEDRIVE_KEY) {
+  app.get('/.well-known/microsoft-identity-association.json', (req, res) => {
+    const content = JSON.stringify({
+      associatedApplications: [
+        { applicationId: process.env.COMPANION_ONEDRIVE_KEY }
+      ]
+    })
+    res.header('Content-Length', `${Buffer.byteLength(content, 'utf8')}`)
+    // use writeHead to prevent 'charset' from being appended
+    // https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-configure-publisher-domain#to-select-a-verified-domain
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.write(content)
+    res.end()
+  })
 }
 
 app.use((req, res, next) => {
@@ -139,7 +178,13 @@ app.use((req, res, next) => {
 if (app.get('env') === 'production') {
   // @ts-ignore
   app.use((err, req, res, next) => {
-    console.error('\x1b[31m', req.id, err, '\x1b[0m')
+    // if the error is a URIError from the requested URL we only log the error message
+    // to avoid uneccessary error alerts
+    if (err.status === 400 && err instanceof URIError) {
+      console.error('\x1b[31m', req.id, err.message, '\x1b[0m')
+    } else {
+      console.error('\x1b[31m', req.id, err, '\x1b[0m')
+    }
     res.status(err.status || 500).json({ message: 'Something went wrong', requestId: req.id })
   })
 } else {
@@ -150,4 +195,4 @@ if (app.get('env') === 'production') {
   })
 }
 
-module.exports = { app, uppyOptions }
+module.exports = { app, companionOptions }

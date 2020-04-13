@@ -5,19 +5,31 @@ const DragDrop = require('@uppy/drag-drop')
 const ProgressBar = require('@uppy/progress-bar')
 const Tus = require('@uppy/tus')
 
-const uppyOne = new Uppy({debug: true, autoProceed: true})
+// Function for displaying uploaded files
+const onUploadSuccess = (elForUploadedFiles) =>
+  (file, response) => {
+    const url = response.uploadURL
+    const fileName = file.name
+
+    document.querySelector(elForUploadedFiles).innerHTML +=
+      `<li><a href="${url}" target="_blank">${fileName}</a></li>`
+  }
+
+const uppyOne = new Uppy({ debug: true, autoProceed: true })
 uppyOne
-  .use(DragDrop, {target: '.UppyDragDrop-One'})
-  .use(Tus, {endpoint: 'https://master.tus.io/files/'})
-  .use(ProgressBar, {target: '.UppyDragDrop-One-Progress', hideAfterFinish: false})
+  .use(DragDrop, { target: '.example-one .for-DragDrop' })
+  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+  .use(ProgressBar, { target: '.example-one .for-ProgressBar', hideAfterFinish: false })
+  .on('upload-success', onUploadSuccess('.example-one .uploaded-files ol'))
 
-const uppyTwo = new Uppy({debug: true, autoProceed: false})
+const uppyTwo = new Uppy({ debug: true, autoProceed: false })
 uppyTwo
-  .use(DragDrop, {target: '#UppyDragDrop-Two'})
-  .use(Tus, {endpoint: 'https://master.tus.io/files/'})
-  .use(ProgressBar, {target: '.UppyDragDrop-Two-Progress', hideAfterFinish: false})
+  .use(DragDrop, { target: '.example-two .for-DragDrop' })
+  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+  .use(ProgressBar, { target: '.example-two .for-ProgressBar', hideAfterFinish: false })
+  .on('upload-success', onUploadSuccess('.example-two .uploaded-files ol'))
 
-var uploadBtn = document.querySelector('.UppyDragDrop-Two-Upload')
+const uploadBtn = document.querySelector('.example-two button.upload-button')
 uploadBtn.addEventListener('click', function () {
   uppyTwo.upload()
 })

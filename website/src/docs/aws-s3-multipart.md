@@ -4,8 +4,8 @@ order: 3
 title: "AWS S3 Multipart"
 module: "@uppy/aws-s3-multipart"
 permalink: docs/aws-s3-multipart/
-category: 'Destinations'
-tagline: uploader for AWS S3 using its resumable Multipart protocol
+category: "Destinations"
+tagline: "uploader for AWS S3 using its resumable Multipart protocol"
 ---
 
 The `@uppy/aws-s3-multipart` plugin can be used to upload files directly to an S3 bucket using S3's Multipart upload strategy. With this strategy, files are chopped up in parts of 5MB+ each, so they can be uploaded concurrently. It is also very reliable: if a single part fails to upload, only that 5MB chunk has to be retried.
@@ -44,7 +44,15 @@ The maximum amount of chunks to upload simultaneously. Set to `0` to disable lim
 
 ### companionUrl: null
 
-The Companion URL to use for proxying calls to the S3 Multipart API.
+URL of the [Companion](/docs/companion) instance to use for proxying calls to the S3 Multipart API.
+
+This will be used by the default implementations of the upload-related functions below. If you provide your own implementations, a `companionUrl` is unnecessary.
+
+### companionHeaders: {}
+
+Custom headers that should be sent along to [Companion](/docs/companion) on every request.
+
+This will be used by the default implementations of the upload-related functions below. If you provide your own implementations, these headers are not sent automatically.
 
 ### createMultipartUpload(file)
 
@@ -95,6 +103,7 @@ Return a Promise for an object with keys:
      Expires: 5 * 60,
    }, (err, url) => { /* there's the url! */ })
    ```
+ - `headers` - **(Optional)** Custom headers that should be sent to the S3 presigned URL.
 
 ### abortMultipartUpload(file, { uploadId, key })
 

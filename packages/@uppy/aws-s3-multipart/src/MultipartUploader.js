@@ -18,19 +18,32 @@ function remove (arr, el) {
 
 class MultipartUploader {
   constructor (file, options) {
-    this.options = Object.assign({}, defaultOptions, options)
+    this.options = {
+      ...defaultOptions,
+      ...options
+    }
     this.file = file
 
     this.key = this.options.key || null
     this.uploadId = this.options.uploadId || null
     this.parts = this.options.parts || []
 
+    // Do `this.createdPromise.then(OP)` to execute an operation `OP` _only_ if the
+    // upload was created already. That also ensures that the sequencing is right
+    // (so the `OP` definitely happens if the upload is created).
+    //
+    // This mostly exists to make `_abortUpload` work well: only sending the abort request if
+    // the upload was already created, and if the createMultipartUpload request is still in flight,
+    // aborting it immediately after it finishes.
+    this.createdPromise = Promise.reject() // eslint-disable-line prefer-promise-reject-errors
     this.isPaused = false
     this.chunks = null
     this.chunkState = null
     this.uploading = []
 
     this._initChunks()
+
+    this.createdPromise.catch(() => {}) // silence uncaught rejection warning
   }
 
   _initChunks () {
@@ -51,22 +64,21 @@ class MultipartUploader {
   }
 
   _createUpload () {
-    return Promise.resolve().then(() =>
+    this.createdPromise = Promise.resolve().then(() =>
       this.options.createMultipartUpload()
-    ).then((result) => {
+    )
+    return this.createdPromise.then((result) => {
       const valid = typeof result === 'object' && result &&
         typeof result.uploadId === 'string' &&
         typeof result.key === 'string'
       if (!valid) {
-        throw new TypeError(`AwsS3/Multipart: Got incorrect result from 'createMultipartUpload()', expected an object '{ uploadId, key }'.`)
+        throw new TypeError('AwsS3/Multipart: Got incorrect result from `createMultipartUpload()`, expected an object `{ uploadId, key }`.')
       }
-      return result
-    }).then((result) => {
+
       this.key = result.key
       this.uploadId = result.uploadId
 
       this.options.onStart(result)
-    }).then(() => {
       this._uploadParts()
     }).catch((err) => {
       this._onError(err)
@@ -145,11 +157,11 @@ class MultipartUploader {
       const valid = typeof result === 'object' && result &&
         typeof result.url === 'string'
       if (!valid) {
-        throw new TypeError(`AwsS3/Multipart: Got incorrect result from 'prepareUploadPart()', expected an object '{ url }'.`)
+        throw new TypeError('AwsS3/Multipart: Got incorrect result from `prepareUploadPart()`, expected an object `{ url }`.')
       }
       return result
-    }).then(({ url }) => {
-      this._uploadPartBytes(index, url)
+    }).then(({ url, headers }) => {
+      this._uploadPartBytes(index, url, headers)
     }, (err) => {
       this._onError(err)
     })
@@ -177,10 +189,15 @@ class MultipartUploader {
     this._uploadParts()
   }
 
-  _uploadPartBytes (index, url) {
+  _uploadPartBytes (index, url, headers) {
     const body = this.chunks[index]
     const xhr = new XMLHttpRequest()
     xhr.open('PUT', url, true)
+    if (headers) {
+      Object.keys(headers).map((key) => {
+        xhr.setRequestHeader(key, headers[key])
+      })
+    }
     xhr.responseType = 'text'
 
     this.uploading.push(xhr)
@@ -250,9 +267,13 @@ class MultipartUploader {
     this.uploading.slice().forEach(xhr => {
       xhr.abort()
     })
-    this.options.abortMultipartUpload({
-      key: this.key,
-      uploadId: this.uploadId
+    this.createdPromise.then(() => {
+      this.options.abortMultipartUpload({
+        key: this.key,
+        uploadId: this.uploadId
+      })
+    }, () => {
+      // if the creation failed we do not need to abort
     })
     this.uploading = []
   }

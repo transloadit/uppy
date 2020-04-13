@@ -2,19 +2,34 @@
  * Takes a file object and turns it into fileID, by converting file.name to lowercase,
  * removing extra characters and adding type, size and lastModified
  *
- * @param {Object} file
+ * @param {object} file
  * @returns {string} the fileID
- *
  */
 module.exports = function generateFileID (file) {
-  // filter is needed to not join empty values with `-`
-  return [
-    'uppy',
-    file.name ? encodeFilename(file.name.toLowerCase()) : '',
-    file.type,
-    file.data.size,
-    file.data.lastModified
-  ].filter(val => val).join('-')
+  // It's tempting to do `[items].filter(Boolean).join('-')` here, but that
+  // is slower! simple string concatenation is fast
+
+  let id = 'uppy'
+  if (typeof file.name === 'string') {
+    id += '-' + encodeFilename(file.name.toLowerCase())
+  }
+
+  if (file.type !== undefined) {
+    id += '-' + file.type
+  }
+
+  if (file.meta && typeof file.meta.relativePath === 'string') {
+    id += '-' + encodeFilename(file.meta.relativePath.toLowerCase())
+  }
+
+  if (file.data.size !== undefined) {
+    id += '-' + file.data.size
+  }
+  if (file.data.lastModified !== undefined) {
+    id += '-' + file.data.lastModified
+  }
+
+  return id
 }
 
 function encodeFilename (name) {

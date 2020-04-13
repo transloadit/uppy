@@ -1,19 +1,21 @@
 const Uploader = require('../Uploader')
-const redis = require('../redis')
 const logger = require('../logger')
+const { errorToResponse } = require('../provider/error')
 
 function get (req, res, next) {
   const providerName = req.params.providerName
   const id = req.params.id
-  const body = req.body
-  const token = req.uppy.providerTokens[providerName]
-  const provider = req.uppy.provider
-  const { providerOptions } = req.uppy.options
+  const token = req.companion.providerTokens[providerName]
+  const provider = req.companion.provider
 
   // get the file size before proceeding
-  provider.size({ id, token }, (err, size) => {
+  provider.size({ id, token, query: req.query }, (err, size) => {
     if (err) {
-      return err.isAuthError ? res.sendStatus(401) : next(err)
+      const errResp = errorToResponse(err)
+      if (errResp) {
+        return res.status(errResp.code).json({ message: errResp.message })
+      }
+      return next(err)
     }
 
     if (!size) {
@@ -22,22 +24,7 @@ function get (req, res, next) {
     }
 
     logger.debug('Instantiating uploader.', null, req.id)
-    const uploader = new Uploader({
-      uppyOptions: req.uppy.options,
-      endpoint: body.endpoint,
-      uploadUrl: body.uploadUrl,
-      protocol: body.protocol,
-      metadata: body.metadata,
-      size: size,
-      fieldname: body.fieldname,
-      pathPrefix: `${req.uppy.options.filePath}`,
-      storage: redis.client(),
-      s3: req.uppy.s3Client ? {
-        client: req.uppy.s3Client,
-        options: providerOptions.s3
-      } : null,
-      headers: body.headers
-    })
+    const uploader = new Uploader(Uploader.reqToOptions(req, size))
 
     if (uploader.hasError()) {
       const response = uploader.getResponse()

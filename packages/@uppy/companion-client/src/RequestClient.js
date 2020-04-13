@@ -26,16 +26,18 @@ module.exports = class RequestClient {
 
   get defaultHeaders () {
     return {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
       'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`
     }
   }
 
   headers () {
-    return Promise.resolve(
-      Object.assign({}, this.defaultHeaders, this.opts.serverHeaders || {})
-    )
+    const userHeaders = this.opts.companionHeaders || this.opts.serverHeaders || {}
+    return Promise.resolve({
+      ...this.defaultHeaders,
+      ...userHeaders
+    })
   }
 
   _getPostResponseFunc (skip) {

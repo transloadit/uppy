@@ -1,6 +1,7 @@
 .uppy-ProviderBrowserItem-fakeCheckbox {
   position: relative;
   cursor: pointer;
+  flex-shrink: 0;
 
   // Checkmark icon
   &::after {
@@ -10,5 +11,9 @@
     border-left: 2px solid $white;
     border-bottom: 2px solid $white;
     transform: rotate(-45deg);
+  }
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-700;
   }
 }

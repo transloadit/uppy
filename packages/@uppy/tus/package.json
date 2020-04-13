@@ -1,7 +1,7 @@
 {
   "name": "@uppy/tus",
   "description": "Resumable uploads for Uppy using Tus.io",
-  "version": "1.3.0",
+  "version": "1.5.8",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -22,9 +22,10 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@types/tus-js-client": "^1.8.0",
     "@uppy/companion-client": "file:../companion-client",
     "@uppy/utils": "file:../utils",
-    "tus-js-client": "^1.8.0-0"
+    "tus-js-client": "^1.8.0"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"

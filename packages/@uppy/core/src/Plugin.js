@@ -30,7 +30,7 @@ function debounce (fn) {
  *
  * @param {object} main Uppy core object
  * @param {object} object with plugin options
- * @return {array | string} files or success/fail message
+ * @returns {Array|string} files or success/fail message
  */
 module.exports = class Plugin {
   constructor (uppy, opts) {
@@ -62,6 +62,11 @@ module.exports = class Plugin {
     })
   }
 
+  setOptions (newOpts) {
+    this.opts = { ...this.opts, ...newOpts }
+    this.setPluginState() // so that UI re-renders with new options
+  }
+
   update (state) {
     if (typeof this.el === 'undefined') {
       return
@@ -78,11 +83,11 @@ module.exports = class Plugin {
   }
 
   /**
-  * Called when plugin is mounted, whether in DOM or into another plugin.
-  * Needed because sometimes plugins are mounted separately/after `install`,
-  * so this.el and this.parent might not be available in `install`.
-  * This is the case with @uppy/react plugins, for example.
-  */
+   * Called when plugin is mounted, whether in DOM or into another plugin.
+   * Needed because sometimes plugins are mounted separately/after `install`,
+   * so this.el and this.parent might not be available in `install`.
+   * This is the case with @uppy/react plugins, for example.
+   */
   onMount () {
 
   }
@@ -92,7 +97,7 @@ module.exports = class Plugin {
    * If it’s an object — target is a plugin, and we search `plugins`
    * for a plugin with same name and return its target.
    *
-   * @param {string|Object} target
+   * @param {string|object} target
    *
    */
   mount (target, plugin) {

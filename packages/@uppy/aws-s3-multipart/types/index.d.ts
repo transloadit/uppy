@@ -1,32 +1,42 @@
-import Uppy = require('@uppy/core');
+import Uppy = require('@uppy/core')
+
+type MaybePromise<T> = T | Promise<T>
 
 declare module AwsS3Multipart {
   interface AwsS3Part {
-    PartNumber?: number;
-    Size?: number;
-    ETag?: string;
+    PartNumber?: number
+    Size?: number
+    ETag?: string
   }
 
   interface AwsS3MultipartOptions extends Uppy.PluginOptions {
-    companionUrl: string;
-    createMultipartUpload(file: Uppy.UppyFile): Promise<{ uploadId: string, key: string }>;
-    listParts(file: Uppy.UppyFile, opts: { uploadId: string, key: string }): Promise<AwsS3Part[]>;
-    prepareUploadPart(file: Uppy.UppyFile, partData: { uploadId: string, key: string, body: Blob, number: number }): Promise<{ url: string }>;
-    abortMultipartUpload(file: Uppy.UppyFile, opts: { uploadId: string, key: string }): Promise<void>;
-    completeMultipartUpload(file: Uppy.UppyFile, opts: { uploadId: string, key: string, parts: AwsS3Part[] }): Promise<{ location?: string }>;
-    timeout: number;
-    limit: number;
+    companionUrl?: string
+    createMultipartUpload?: (
+      file: Uppy.UppyFile
+    ) => MaybePromise<{ uploadId: string; key: string }>
+    listParts?: (
+      file: Uppy.UppyFile,
+      opts: { uploadId: string; key: string }
+    ) => MaybePromise<AwsS3Part[]>
+    prepareUploadPart?: (
+      file: Uppy.UppyFile,
+      partData: { uploadId: string; key: string; body: Blob; number: number }
+    ) => MaybePromise<{ url: string, headers?: { [k: string]: string } }>
+    abortMultipartUpload?: (
+      file: Uppy.UppyFile,
+      opts: { uploadId: string; key: string }
+    ) => MaybePromise<void>
+    completeMultipartUpload?: (
+      file: Uppy.UppyFile,
+      opts: { uploadId: string; key: string; parts: AwsS3Part[] }
+    ) => MaybePromise<{ location?: string }>
+    timeout?: number
+    limit?: number
   }
 }
 
-declare class AwsS3Multipart extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<AwsS3Multipart.AwsS3MultipartOptions>);
-}
+declare class AwsS3Multipart extends Uppy.Plugin<
+  AwsS3Multipart.AwsS3MultipartOptions
+> {}
 
-export = AwsS3Multipart;
-
-declare module '@uppy/core' {
-  export interface Uppy {
-    use(pluginClass: typeof AwsS3Multipart, opts: Partial<AwsS3Multipart.AwsS3MultipartOptions>): Uppy.Uppy;
-  }
-}
+export = AwsS3Multipart

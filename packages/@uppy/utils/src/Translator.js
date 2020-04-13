@@ -1,3 +1,5 @@
+const has = require('./hasProperty')
+
 /**
  * Translates strings with interpolation & pluralization support.
  * Extensible with custom dictionaries and pluralization functions.
@@ -11,7 +13,7 @@
  */
 module.exports = class Translator {
   /**
-   * @param {Object|Array<Object>} locales - locale or list of locales.
+   * @param {object|Array<object>} locales - locale or list of locales.
    */
   constructor (locales) {
     this.locale = {
@@ -51,7 +53,7 @@ module.exports = class Translator {
    * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
    *
    * @param {string} phrase that needs interpolation, with placeholders
-   * @param {Object} options with values that will be used to replace placeholders
+   * @param {object} options with values that will be used to replace placeholders
    * @returns {string} interpolated
    */
   interpolate (phrase, options) {
@@ -60,8 +62,8 @@ module.exports = class Translator {
     const dollarBillsYall = '$$$$'
     let interpolated = [phrase]
 
-    for (let arg in options) {
-      if (arg !== '_' && options.hasOwnProperty(arg)) {
+    for (const arg in options) {
+      if (arg !== '_' && has(options, arg)) {
         // Ensure replacement value is escaped to prevent special $-prefixed
         // regex replace tokens. the "$$$$" is needed because each "$" needs to
         // be escaped with "$" itself, and we need two in the resulting output.
@@ -81,6 +83,14 @@ module.exports = class Translator {
     function insertReplacement (source, rx, replacement) {
       const newParts = []
       source.forEach((chunk) => {
+        // When the source contains multiple placeholders for interpolation,
+        // we should ignore chunks that are not strings, because those
+        // can be JSX objects and will be otherwise incorrectly turned into strings.
+        // Without this condition we’d get this: [object Object] hello [object Object] my <button>
+        if (typeof chunk !== 'string') {
+          return newParts.push(chunk)
+        }
+
         split.call(chunk, rx).forEach((raw, i, list) => {
           if (raw !== '') {
             newParts.push(raw)
@@ -100,7 +110,7 @@ module.exports = class Translator {
    * Public translate method
    *
    * @param {string} key
-   * @param {Object} options with values that will be used later to replace placeholders in string
+   * @param {object} options with values that will be used later to replace placeholders in string
    * @returns {string} translated (and interpolated)
    */
   translate (key, options) {
@@ -111,15 +121,22 @@ module.exports = class Translator {
    * Get a translation and return the translated and interpolated parts as an array.
    *
    * @param {string} key
-   * @param {Object} options with values that will be used to replace placeholders
+   * @param {object} options with values that will be used to replace placeholders
    * @returns {Array} The translated and interpolated parts, in order.
    */
   translateArray (key, options) {
-    if (options && typeof options.smart_count !== 'undefined') {
-      var plural = this.locale.pluralize(options.smart_count)
-      return this.interpolate(this.locale.strings[key][plural], options)
+    const string = this.locale.strings[key]
+    const hasPluralForms = typeof string === 'object'
+
+    if (hasPluralForms) {
+      if (options && typeof options.smart_count !== 'undefined') {
+        const plural = this.locale.pluralize(options.smart_count)
+        return this.interpolate(string[plural], options)
+      } else {
+        throw new Error('Attempted to use a string with plural forms, but no value was given for %{smart_count}')
+      }
     }
 
-    return this.interpolate(this.locale.strings[key], options)
+    return this.interpolate(string, options)
   }
 }

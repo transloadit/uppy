@@ -1,8 +1,10 @@
+const Provider = require('../Provider')
+
 const request = require('request')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
-const AuthError = require('../error')
+const { ProviderApiError, ProviderAuthError } = require('../error')
 
 // From https://www.dropbox.com/developers/reference/json-encoding:
 //
@@ -17,10 +19,16 @@ function httpHeaderSafeJson (v) {
   )
 }
 
-class DropBox {
+/**
+ * Adapter for API https://www.dropbox.com/developers/documentation/http/documentation
+ */
+class DropBox extends Provider {
   constructor (options) {
+    super(options)
     this.authProvider = options.provider = DropBox.authProvider
     this.client = purest(options)
+    // needed for the thumbnails fetched via companion
+    this.needsCookieAuth = true
   }
 
   static get authProvider () {
@@ -55,7 +63,7 @@ class DropBox {
         done(err)
       } else {
         stats.body.user_email = userInfo.body.email
-        done(null, this.adaptData(stats.body, options.uppy))
+        done(null, this.adaptData(stats.body, options.companion))
       }
     }
 
@@ -94,7 +102,7 @@ class DropBox {
     this.client
       .post('files/list_folder')
       .options({ version: '2' })
-      .where(query)
+      .qs(query)
       .auth(token)
       .json({
         path: `${directory || ''}`
@@ -113,10 +121,11 @@ class DropBox {
       })
       .auth(token)
       .request()
-      .on('data', onData)
-      .on('end', () => onData(null))
+      .on('data', (chunk) => onData(null, chunk))
+      .on('end', () => onData(null, null))
       .on('error', (err) => {
         logger.error(err, 'provider.dropbox.download.error')
+        onData(err)
       })
   }
 
@@ -126,7 +135,7 @@ class DropBox {
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` })
+          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}`, size: 'w256h256' })
         }
       })
       .auth(token)
@@ -160,7 +169,22 @@ class DropBox {
       })
   }
 
-  adaptData (res, uppy) {
+  logout ({ token }, done) {
+    return this.client
+      .post('auth/token/revoke')
+      .options({ version: '2' })
+      .auth(token)
+      .request((err, resp) => {
+        if (err || resp.statusCode !== 200) {
+          logger.error(err, 'provider.dropbox.size.error')
+          done(this._error(err, resp))
+          return
+        }
+        done(null, { revoked: true })
+      })
+  }
+
+  adaptData (res, companion) {
     const data = { username: adapter.getUsername(res), items: [] }
     const items = adapter.getItemSubList(res)
     items.forEach((item) => {
@@ -170,7 +194,7 @@ class DropBox {
         name: adapter.getItemName(item),
         mimeType: adapter.getMimeType(item),
         id: adapter.getItemId(item),
-        thumbnail: uppy.buildURL(adapter.getItemThumbnailUrl(item), true),
+        thumbnail: companion.buildURL(adapter.getItemThumbnailUrl(item), true),
         requestPath: adapter.getItemRequestPath(item),
         modifiedDate: adapter.getItemModifiedDate(item),
         size: adapter.getItemSize(item)
@@ -184,8 +208,9 @@ class DropBox {
 
   _error (err, resp) {
     if (resp) {
-      const errMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
-      return resp.statusCode === 401 ? new AuthError() : new Error(errMsg)
+      const fallbackMessage = `request to ${this.authProvider} returned ${resp.statusCode}`
+      const errMsg = resp.body.error_summary ? resp.body.error_summary : fallbackMessage
+      return resp.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
     }
 
     return err

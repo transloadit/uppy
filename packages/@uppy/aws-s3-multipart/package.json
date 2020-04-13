@@ -1,7 +1,7 @@
 {
   "name": "@uppy/aws-s3-multipart",
   "description": "Upload to Amazon S3 with Uppy and S3's Multipart upload strategy",
-  "version": "1.2.0",
+  "version": "1.6.0",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -24,8 +24,7 @@
   },
   "dependencies": {
     "@uppy/companion-client": "file:../companion-client",
-    "@uppy/utils": "file:../utils",
-    "resolve-url": "^0.2.1"
+    "@uppy/utils": "file:../utils"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"

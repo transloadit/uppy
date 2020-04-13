@@ -1,9 +1,10 @@
-const Exif = require('exif-js')
 const { Plugin } = require('@uppy/core')
+const Translator = require('@uppy/utils/lib/Translator')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 const ORIENTATIONS = require('./image-orientations')
+const exifr = require('exifr/dist/mini.legacy.umd.cjs')
 
 /**
  * The Thumbnail Generator plugin
@@ -14,33 +15,47 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
   constructor (uppy, opts) {
     super(uppy, opts)
-    this.type = 'thumbnail'
+    this.type = 'modifier'
     this.id = this.opts.id || 'ThumbnailGenerator'
     this.title = 'Thumbnail Generator'
     this.queue = []
     this.queueProcessing = false
     this.defaultThumbnailDimension = 200
 
+    this.defaultLocale = {
+      strings: {
+        generatingThumbnails: 'Generating thumbnails...'
+      }
+    }
+
     const defaultOptions = {
       thumbnailWidth: null,
-      thumbnailHeight: null
+      thumbnailHeight: null,
+      waitForThumbnailsBeforeUpload: false
     }
 
-    this.opts = {
-      ...defaultOptions,
-      ...opts
-    }
+    this.opts = { ...defaultOptions, ...opts }
 
-    this.onFileAdded = this.onFileAdded.bind(this)
-    this.onFileRemoved = this.onFileRemoved.bind(this)
-    this.onRestored = this.onRestored.bind(this)
+    this.i18nInit()
+  }
+
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   /**
    * Create a thumbnail for the given Uppy file object.
    *
    * @param {{data: Blob}} file
-   * @param {number} width
+   * @param {number} targetWidth
+   * @param {number} targetHeight
    * @returns {Promise}
    */
   createThumbnail (file, targetWidth, targetHeight) {
@@ -59,10 +74,11 @@ module.exports = class ThumbnailGenerator extends Plugin {
       })
     })
 
-    return Promise.all([onload, this.getOrientation(file)])
-      .then(values => {
-        const image = values[0]
-        const orientation = values[1]
+    const orientationPromise = exifr.orientation(file.data).catch(_err => 1)
+
+    return Promise.all([onload, orientationPromise])
+      .then(([image, rawOrientation]) => {
+        const orientation = ORIENTATIONS[rawOrientation || 1]
         const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.rotation)
         const rotatedImage = this.rotateImage(image, orientation)
         const resizedImage = this.resizeImage(rotatedImage, dimensions.width, dimensions.height)
@@ -103,15 +119,6 @@ module.exports = class ThumbnailGenerator extends Plugin {
       width: this.defaultThumbnailDimension,
       height: Math.round(this.defaultThumbnailDimension / aspect)
     }
-  }
-
-  getOrientation (file) {
-    return new Promise((resolve) => {
-      Exif.getData(file.data, function callback () {
-        const orientation = Exif.getTag(this, 'Orientation') || 1
-        resolve(ORIENTATIONS[orientation])
-      })
-    })
   }
 
   /**
@@ -284,13 +291,13 @@ module.exports = class ThumbnailGenerator extends Plugin {
     return Promise.resolve()
   }
 
-  onFileAdded (file) {
-    if (!file.preview) {
+  onFileAdded = (file) => {
+    if (!file.preview && isPreviewSupported(file.type) && !file.isRemote) {
       this.addToQueue(file)
     }
   }
 
-  onFileRemoved (file) {
+  onFileRemoved = (file) => {
     const index = this.queue.indexOf(file)
     if (index !== -1) {
       this.queue.splice(index, 1)
@@ -302,7 +309,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
     }
   }
 
-  onRestored () {
+  onRestored = () => {
     const { files } = this.uppy.getState()
     const fileIDs = Object.keys(files)
     fileIDs.forEach((fileID) => {
@@ -315,14 +322,52 @@ module.exports = class ThumbnailGenerator extends Plugin {
     })
   }
 
-  install () {
-    this.uppy.on('file-added', this.onFileAdded)
-    this.uppy.on('file-removed', this.onFileRemoved)
-    this.uppy.on('restored', this.onRestored)
+  waitUntilAllProcessed = (fileIDs) => {
+    fileIDs.forEach((fileID) => {
+      const file = this.uppy.getFile(fileID)
+      this.uppy.emit('preprocess-progress', file, {
+        mode: 'indeterminate',
+        message: this.i18n('generatingThumbnails')
+      })
+    })
+
+    const emitPreprocessCompleteForAll = () => {
+      fileIDs.forEach((fileID) => {
+        const file = this.uppy.getFile(fileID)
+        this.uppy.emit('preprocess-complete', file)
+      })
+    }
+
+    return new Promise((resolve, reject) => {
+      if (this.queueProcessing) {
+        this.uppy.once('thumbnail:all-generated', () => {
+          emitPreprocessCompleteForAll()
+          resolve()
+        })
+      } else {
+        emitPreprocessCompleteForAll()
+        resolve()
+      }
+    })
   }
+
+  install () {
+    this.uppy.on('file-removed', this.onFileRemoved)
+    this.uppy.on('file-added', this.onFileAdded)
+    this.uppy.on('restored', this.onRestored)
+
+    if (this.opts.waitForThumbnailsBeforeUpload) {
+      this.uppy.addPreProcessor(this.waitUntilAllProcessed)
+    }
+  }
+
   uninstall () {
-    this.uppy.off('file-added', this.onFileAdded)
     this.uppy.off('file-removed', this.onFileRemoved)
+    this.uppy.off('file-added', this.onFileAdded)
     this.uppy.off('restored', this.onRestored)
+
+    if (this.opts.waitForThumbnailsBeforeUpload) {
+      this.uppy.removePreProcessor(this.waitUntilAllProcessed)
+    }
   }
 }

@@ -28,7 +28,7 @@ companion may either be used as pluggable express app, which you plug to your al
 var express = require('express')
 var bodyParser = require('body-parser')
 var session = require('express-session')
-var uppy = require('@uppy/companion')
+var companion = require('@uppy/companion')
 
 var app = express()
 app.use(bodyParser.json())
@@ -49,17 +49,17 @@ const options = {
   filePath: '/path/to/folder/'
 }
 
-app.use(uppy.app(options))
+app.use(companion.app(options))
 
 ```
 
-To enable uppy socket for realtime feed to the client while upload is going on, you call the `socket` method like so.
+To enable companion socket for realtime feed to the client while upload is going on, you call the `socket` method like so.
 
 ```javascript
 ...
 var server = app.listen(PORT)
 
-uppy.socket(server, options)
+companion.socket(server, options)
 
 ```
 
@@ -75,26 +75,6 @@ directory
 
 ```bash
 npm start
-```
-
-### Run as a serverless function
-
-Companion can be deployed as a serverless function to AWS Lambda or other cloud providers through `serverless`. Check [this guide](https://serverless.com/framework/docs/getting-started/) to get started.
-
-After you have cloned the repo go inside `examples/serverless`:
-```
-cd examples/serverless
-```
- 
-You can enter your API Keys inside the `serverless.yml` file:
-```
-INSTAGRAM_KEY: <YOUR_INSTAGRAM_KEY>
-INSTAGRAM_SECRET: <YOUR_INSTAGRAM_SECRET>
-```
-
-When you are all set install the dependencies and deploy your function:
-```
-npm install && sls deploy
 ```
 
 ### Deploy to heroku

@@ -10,13 +10,13 @@ const renderAcquirerIcon = (acquirer, props) =>
 const renderFileSource = (props) => (
   props.file.source &&
   props.file.source !== props.id &&
-  <div class="uppy-DashboardItem-sourceIcon">
-    {props.acquirers.map(acquirer => {
-      if (acquirer.id === props.file.source) {
-        return renderAcquirerIcon(acquirer, props)
-      }
-    })}
-  </div>
+    <div class="uppy-DashboardItem-sourceIcon">
+      {props.acquirers.map(acquirer => {
+        if (acquirer.id === props.file.source) {
+          return renderAcquirerIcon(acquirer, props)
+        }
+      })}
+    </div>
 )
 
 const renderFileName = (props) => {
@@ -42,14 +42,14 @@ const renderFileName = (props) => {
 
 const renderFileSize = (props) => (
   props.file.data.size &&
-  <div class="uppy-DashboardItem-statusSize">
-    {prettyBytes(props.file.data.size)}
-  </div>
+    <div class="uppy-DashboardItem-statusSize">
+      {prettyBytes(props.file.data.size)}
+    </div>
 )
 
 module.exports = function FileInfo (props) {
   return (
-    <div class="uppy-DashboardItem-fileInfo">
+    <div class="uppy-DashboardItem-fileInfo" data-uppy-file-source={props.file.source}>
       {renderFileName(props)}
       <div class="uppy-DashboardItem-status">
         {renderFileSize(props)}

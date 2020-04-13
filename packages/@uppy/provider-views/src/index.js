@@ -41,7 +41,8 @@ module.exports = class ProviderView {
   static VERSION = require('../package.json').version
 
   /**
-   * @param {Object} instance of the plugin
+   * @param {object} plugin instance of the plugin
+   * @param {object} opts
    */
   constructor (plugin, opts) {
     this.plugin = plugin
@@ -75,6 +76,7 @@ module.exports = class ProviderView {
     this.toggleCheckbox = this.toggleCheckbox.bind(this)
     this.handleError = this.handleError.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
+    this.listAllFiles = this.listAllFiles.bind(this)
     this.donePicking = this.donePicking.bind(this)
     this.cancelPicking = this.cancelPicking.bind(this)
     this.clearSelection = this.clearSelection.bind(this)
@@ -121,8 +123,8 @@ module.exports = class ProviderView {
     return this._loaderWrapper(
       this.provider.list(id),
       (res) => {
-        let folders = []
-        let files = []
+        const folders = []
+        const files = []
         let updatedDirectories
 
         const state = this.plugin.getPluginState()
@@ -144,7 +146,7 @@ module.exports = class ProviderView {
   /**
    * Fetches new folder
    *
-   * @param  {Object} Folder
+   * @param  {object} Folder
    * @param  {string} title Folder title
    */
   getNextFolder (folder) {
@@ -199,9 +201,17 @@ module.exports = class ProviderView {
    * Removes session token on client side.
    */
   logout () {
-    this.provider.logout(location.href)
+    this.provider.logout()
       .then((res) => {
         if (res.ok) {
+          if (!res.revoked) {
+            const message = this.plugin.uppy.i18n('companionUnauthorizeHint', {
+              provider: this.plugin.title,
+              url: res.manual_revoke_url
+            })
+            this.plugin.uppy.info(message, 'info', 7000)
+          }
+
           const newState = {
             authenticated: false,
             files: [],
@@ -243,14 +253,14 @@ module.exports = class ProviderView {
     const state = Object.assign({}, this.plugin.getPluginState())
     const { files, folders, sorting } = state
 
-    let sortedFiles = files.sort((fileA, fileB) => {
+    const sortedFiles = files.sort((fileA, fileB) => {
       if (sorting === 'titleDescending') {
         return fileB.name.localeCompare(fileA.name)
       }
       return fileA.name.localeCompare(fileB.name)
     })
 
-    let sortedFolders = folders.sort((folderA, folderB) => {
+    const sortedFolders = folders.sort((folderA, folderB) => {
       if (sorting === 'titleDescending') {
         return folderB.name.localeCompare(folderA.name)
       }
@@ -268,9 +278,9 @@ module.exports = class ProviderView {
     const state = Object.assign({}, this.plugin.getPluginState())
     const { files, folders, sorting } = state
 
-    let sortedFiles = files.sort((fileA, fileB) => {
-      let a = new Date(fileA.modifiedDate)
-      let b = new Date(fileB.modifiedDate)
+    const sortedFiles = files.sort((fileA, fileB) => {
+      const a = new Date(fileA.modifiedDate)
+      const b = new Date(fileB.modifiedDate)
 
       if (sorting === 'dateDescending') {
         return a > b ? -1 : a < b ? 1 : 0
@@ -278,9 +288,9 @@ module.exports = class ProviderView {
       return a > b ? 1 : a < b ? -1 : 0
     })
 
-    let sortedFolders = folders.sort((folderA, folderB) => {
-      let a = new Date(folderA.modifiedDate)
-      let b = new Date(folderB.modifiedDate)
+    const sortedFolders = folders.sort((folderA, folderB) => {
+      const a = new Date(folderA.modifiedDate)
+      const b = new Date(folderB.modifiedDate)
 
       if (sorting === 'dateDescending') {
         return a > b ? -1 : a < b ? 1 : 0
@@ -305,9 +315,9 @@ module.exports = class ProviderView {
       return
     }
 
-    let sortedFiles = files.sort((fileA, fileB) => {
-      let a = fileA.size
-      let b = fileB.size
+    const sortedFiles = files.sort((fileA, fileB) => {
+      const a = fileA.size
+      const b = fileB.size
 
       if (sorting === 'sizeDescending') {
         return a > b ? -1 : a < b ? 1 : 0
@@ -341,22 +351,19 @@ module.exports = class ProviderView {
   addFolder (folder) {
     const folderId = this.providerFileToId(folder)
     let state = this.plugin.getPluginState()
-    let folders = state.selectedFolders || {}
+    const folders = state.selectedFolders || {}
     if (folderId in folders && folders[folderId].loading) {
       return
     }
     folders[folderId] = { loading: true, files: [] }
     this.plugin.setPluginState({ selectedFolders: folders })
-    return this.provider.list(folder.requestPath).then((res) => {
-      let files = []
-      res.items.forEach((item) => {
-        if (!item.isFolder) {
-          this.addFile(item)
-          files.push(this.providerFileToId(item))
-        }
+    return this.listAllFiles(folder.requestPath).then((files) => {
+      files.forEach((file) => {
+        this.addFile(file)
       })
+      const ids = files.map(this.providerFileToId)
       state = this.plugin.getPluginState()
-      state.selectedFolders[folderId] = { loading: false, files: files }
+      state.selectedFolders[folderId] = { loading: false, files: ids }
       this.plugin.setPluginState({ selectedFolders: folders })
 
       let message
@@ -387,8 +394,8 @@ module.exports = class ProviderView {
     e.stopPropagation()
     e.preventDefault()
     e.currentTarget.focus()
-    let { folders, files } = this.plugin.getPluginState()
-    let items = this.filterItems(folders.concat(files))
+    const { folders, files } = this.plugin.getPluginState()
+    const items = this.filterItems(folders.concat(files))
 
     // Shift-clicking selects a single consecutive list of items
     // starting at the previous click and deselects everything else.
@@ -496,6 +503,27 @@ module.exports = class ProviderView {
     }
   }
 
+  listAllFiles (path, files = null) {
+    files = files || []
+    return new Promise((resolve, reject) => {
+      this.provider.list(path).then((res) => {
+        res.items.forEach((item) => {
+          if (!item.isFolder) {
+            files.push(item)
+          }
+        })
+        const moreFiles = res.nextPagePath || null
+        if (moreFiles) {
+          return this.listAllFiles(moreFiles, files)
+            .then((files) => resolve(files))
+            .catch(e => reject(e))
+        } else {
+          return resolve(files)
+        }
+      }).catch(e => reject(e))
+    })
+  }
+
   donePicking () {
     const { currentSelection } = this.plugin.getPluginState()
     const promises = currentSelection.map((file) => {
@@ -535,7 +563,7 @@ module.exports = class ProviderView {
     this.plugin.setPluginState({ loading: true })
   }
 
-  render (state) {
+  render (state, viewOptions = {}) {
     const { authenticated, didFirstRender } = this.plugin.getPluginState()
     if (!didFirstRender) {
       this.preFirstRender()
@@ -559,11 +587,13 @@ module.exports = class ProviderView {
             pluginIcon={this.plugin.icon}
             handleAuth={this.handleAuth}
             i18n={this.plugin.uppy.i18n}
-            i18nArray={this.plugin.uppy.i18nArray} />
+            i18nArray={this.plugin.uppy.i18nArray}
+          />
         </CloseWrapper>
       )
     }
 
+    const targetViewOptions = { ...this.opts, ...viewOptions }
     const browserProps = Object.assign({}, this.plugin.getPluginState(), {
       username: this.username,
       getNextFolder: this.getNextFolder,
@@ -578,13 +608,14 @@ module.exports = class ProviderView {
       isChecked: this.isChecked,
       toggleCheckbox: this.toggleCheckbox,
       handleScroll: this.handleScroll,
+      listAllFiles: this.listAllFiles,
       done: this.donePicking,
       cancel: this.cancelPicking,
       title: this.plugin.title,
-      viewType: this.opts.viewType,
-      showTitles: this.opts.showTitles,
-      showFilter: this.opts.showFilter,
-      showBreadcrumbs: this.opts.showBreadcrumbs,
+      viewType: targetViewOptions.viewType,
+      showTitles: targetViewOptions.showTitles,
+      showFilter: targetViewOptions.showFilter,
+      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       pluginIcon: this.plugin.icon,
       i18n: this.plugin.uppy.i18n
     })

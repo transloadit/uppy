@@ -23,29 +23,30 @@ const getAriaLabelOfCheckbox = (props) => {
 //   + checkbox (selects file)
 //   + file name (selects file)
 module.exports = (props) => {
-  return <li class={props.className}>
-    <button
-      type="button"
-      class={`uppy-u-reset uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`}
-      onClick={props.toggleCheckbox}
-      // for the <label/>
-      id={props.id}
-      role="option"
-      aria-label={getAriaLabelOfCheckbox(props)}
-      aria-selected={props.isChecked}
-      aria-disabled={props.isDisabled}
-      data-uppy-super-focusable
-    />
+  return (
+    <li class={props.className}>
+      <button
+        type="button"
+        class={`uppy-u-reset uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`}
+        onClick={props.toggleCheckbox}
+        // for the <label/>
+        id={props.id}
+        role="option"
+        aria-label={getAriaLabelOfCheckbox(props)}
+        aria-selected={props.isChecked}
+        aria-disabled={props.isDisabled}
+        data-uppy-super-focusable
+      />
 
-    {
-      props.type === 'file'
+      {props.type === 'file' ? (
         // label for a checkbox
-        ? <label for={props.id} className="uppy-u-reset uppy-ProviderBrowserItem-inner">
+        <label for={props.id} className="uppy-u-reset uppy-ProviderBrowserItem-inner">
           {props.itemIconEl}
           {props.showTitles && props.title}
         </label>
+      ) : (
         // button to open a folder
-        : <button
+        <button
           type="button"
           class="uppy-u-reset uppy-ProviderBrowserItem-inner"
           onclick={props.handleFolderClick}
@@ -54,6 +55,7 @@ module.exports = (props) => {
           {props.itemIconEl}
           {props.showTitles && props.title}
         </button>
-    }
-  </li>
+      )}
+    </li>
+  )
 }

@@ -35,48 +35,59 @@ module.exports = class DragDrop extends Plugin {
     }
 
     // Merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOpts, opts)
+    this.opts = { ...defaultOpts, ...opts }
 
     // Check for browser dragDrop support
     this.isDragDropSupported = isDragDropSupported()
     this.removeDragOverClassTimeout = null
 
-    // i18n
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     // Bind `this` to class methods
-    this.handleInputChange = this.handleInputChange.bind(this)
+    this.onInputChange = this.onInputChange.bind(this)
     this.handleDragOver = this.handleDragOver.bind(this)
     this.handleDragLeave = this.handleDragLeave.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
-    this.addFile = this.addFile.bind(this)
+    this.addFiles = this.addFiles.bind(this)
     this.render = this.render.bind(this)
   }
 
-  addFile (file) {
-    try {
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: file,
-        meta: {
-          relativePath: file.relativePath || null
-        }
-      })
-    } catch (err) {
-      if (!err.isRestriction) {
-        this.uppy.log(err)
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
+  }
+
+  addFiles (files) {
+    const descriptors = files.map((file) => ({
+      source: this.id,
+      name: file.name,
+      type: file.type,
+      data: file,
+      meta: {
+        // path of the file relative to the ancestor directory the user selected.
+        // e.g. 'docs/Old Prague/airbnb.pdf'
+        relativePath: file.relativePath || null
       }
+    }))
+
+    try {
+      this.uppy.addFiles(descriptors)
+    } catch (err) {
+      this.uppy.log(err)
     }
   }
 
-  handleInputChange (event) {
+  onInputChange (event) {
     this.uppy.log('[DragDrop] Files selected through input')
     const files = toArray(event.target.files)
-    files.forEach(this.addFile)
+    this.addFiles(files)
 
     // We clear the input after a file is selected, because otherwise
     // change event is not fired in Chrome and Safari when a file
@@ -91,23 +102,26 @@ module.exports = class DragDrop extends Plugin {
     event.preventDefault()
     event.stopPropagation()
     clearTimeout(this.removeDragOverClassTimeout)
-    // 1. Add a small (+) icon on drop
-    event.dataTransfer.dropEffect = 'copy'
 
     // 2. Remove dragover class
     this.setPluginState({ isDraggingOver: false })
 
     // 3. Add all dropped files
-    this.uppy.log('[DragDrop] File were dropped')
-    getDroppedFiles(event.dataTransfer)
-      .then((files) => {
-        files.forEach(this.addFile)
-      })
+    this.uppy.log('[DragDrop] Files were dropped')
+    const logDropError = (error) => {
+      this.uppy.log(error, 'error')
+    }
+    getDroppedFiles(event.dataTransfer, { logDropError })
+      .then((files) => this.addFiles(files))
   }
 
   handleDragOver (event) {
     event.preventDefault()
     event.stopPropagation()
+
+    // 1. Add a small (+) icon on drop
+    // (and prevent browsers from interpreting this as files being _moved_ into the browser, https://github.com/transloadit/uppy/issues/1978)
+    event.dataTransfer.dropEffect = 'copy'
 
     clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
@@ -136,7 +150,8 @@ module.exports = class DragDrop extends Plugin {
         name={this.opts.inputName}
         multiple={restrictions.maxNumberOfFiles !== 1}
         accept={restrictions.allowedFileTypes}
-        onchange={this.handleInputChange} />
+        onchange={this.onInputChange}
+      />
     )
   }
 
@@ -186,7 +201,8 @@ module.exports = class DragDrop extends Plugin {
         onClick={() => this.fileInputRef.click()}
         onDragOver={this.handleDragOver}
         onDragLeave={this.handleDragLeave}
-        onDrop={this.handleDrop} >
+        onDrop={this.handleDrop}
+      >
         {this.renderHiddenFileInput()}
         <div class="uppy-DragDrop-inner">
           {this.renderArrowSvg()}

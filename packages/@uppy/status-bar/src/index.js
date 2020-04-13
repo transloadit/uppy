@@ -31,25 +31,21 @@ module.exports = class StatusBar extends Plugin {
         resume: 'Resume',
         filesUploadedOfTotal: {
           0: '%{complete} of %{smart_count} file uploaded',
-          1: '%{complete} of %{smart_count} files uploaded',
-          2: '%{complete} of %{smart_count} files uploaded'
+          1: '%{complete} of %{smart_count} files uploaded'
         },
         dataUploadedOfTotal: '%{complete} of %{total}',
         xTimeLeft: '%{time} left',
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
-          1: 'Upload %{smart_count} files',
-          2: 'Upload %{smart_count} files'
+          1: 'Upload %{smart_count} files'
         },
         uploadXNewFiles: {
           0: 'Upload +%{smart_count} file',
-          1: 'Upload +%{smart_count} files',
-          2: 'Upload +%{smart_count} files'
+          1: 'Upload +%{smart_count} files'
         },
         xMoreFilesAdded: {
           0: '%{smart_count} more file added',
-          1: '%{smart_count} more files added',
-          2: '%{smart_count} more files added'
+          1: '%{smart_count} more files added'
         }
       }
     }
@@ -65,14 +61,23 @@ module.exports = class StatusBar extends Plugin {
       hideAfterFinish: true
     }
 
-    // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
-    this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nInit()
 
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
+  }
+
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   getTotalSpeed (files) {
@@ -97,10 +102,8 @@ module.exports = class StatusBar extends Plugin {
   }
 
   startUpload = () => {
-    return this.uppy.upload().catch((err) => {
-      if (!err.isRestriction) {
-        this.uppy.log(err.stack || err.message || err)
-      }
+    return this.uppy.upload().catch(() => {
+      // Error logged in Core
     })
   }
 
@@ -179,19 +182,18 @@ module.exports = class StatusBar extends Plugin {
 
     let totalSize = 0
     let totalUploadedSize = 0
-    uploadStartedFiles.forEach((file) => {
+    startedFiles.forEach((file) => {
       totalSize = totalSize + (file.progress.bytesTotal || 0)
       totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
     })
 
-    const isUploadStarted = uploadStartedFiles.length > 0
+    const isUploadStarted = startedFiles.length > 0
 
     const isAllComplete = totalProgress === 100 &&
       completeFiles.length === Object.keys(files).length &&
       processingFiles.length === 0
 
-    const isAllErrored = isUploadStarted &&
-      erroredFiles.length === uploadStartedFiles.length
+    const isAllErrored = error && erroredFiles.length === filesArray.length
 
     const isAllPaused = inProgressFiles.length !== 0 &&
       pausedFiles.length === inProgressFiles.length

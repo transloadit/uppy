@@ -2,7 +2,6 @@ const glob = require('glob')
 const Uppy = require('../packages/@uppy/core')
 const chalk = require('chalk')
 const path = require('path')
-const flat = require('flat')
 const stringifyObject = require('stringify-object')
 const fs = require('fs')
 const uppy = Uppy()
@@ -18,13 +17,13 @@ if (mode === 'build') {
 } else if (mode === 'test') {
   test()
 } else {
-  throw new Error(`First argument must be either 'build' or 'test'`)
+  throw new Error("First argument must be either 'build' or 'test'")
 }
 
 function getSources (pluginName) {
   const dependencies = {
     // because 'provider-views' doesn't have its own locale, it uses Core's defaultLocale
-    'core': ['provider-views']
+    core: ['provider-views']
   }
 
   const globPath = path.join(__dirname, '..', 'packages', '@uppy', pluginName, 'lib', '**', '*.js')
@@ -49,8 +48,8 @@ function buildPluginsList () {
   const packagesGlobPath = path.join(__dirname, '..', 'packages', '@uppy', '*', 'package.json')
   const files = glob.sync(packagesGlobPath)
 
-  console.log(`--> Checked plugins could be instantiated and have defaultLocale in them:\n`)
-  for (let file of files) {
+  console.log('--> Checked plugins could be instantiated and have defaultLocale in them:\n')
+  for (const file of files) {
     const dirName = path.dirname(file)
     const pluginName = path.basename(dirName)
     if (pluginName === 'locales' || pluginName === 'react-native') {
@@ -115,7 +114,7 @@ function buildPluginsList () {
     }
   }
 
-  console.log(``)
+  console.log('')
 
   return { plugins, sources }
 }
@@ -123,7 +122,7 @@ function buildPluginsList () {
 function addLocaleToPack (plugin, pluginName) {
   const localeStrings = plugin.defaultLocale.strings
 
-  for (let key in localeStrings) {
+  for (const key in localeStrings) {
     const valueInPlugin = JSON.stringify(localeStrings[key])
     const valueInPack = JSON.stringify(localePack[key])
 
@@ -138,9 +137,9 @@ function addLocaleToPack (plugin, pluginName) {
 }
 
 function checkForUnused (fileContents, pluginName, localePack) {
-  let buff = fileContents.join('\n')
-  for (let key in localePack) {
-    let regPat = new RegExp(`(i18n|i18nArray)\\([^\\)]*['\`"]${key}['\`"]`, 'g')
+  const buff = fileContents.join('\n')
+  for (const key in localePack) {
+    const regPat = new RegExp(`(i18n|i18nArray)\\([^\\)]*['\`"]${key}['\`"]`, 'g')
     if (!buff.match(regPat)) {
       console.error(`⚠ defaultLocale key: ${chalk.magenta(key)} not used in plugin: ${chalk.cyan(pluginName)}`)
     }
@@ -154,16 +153,40 @@ function sortObjectAlphabetically (obj, sortFunc) {
   }, {})
 }
 
+function createTypeScriptLocale (plugin, pluginName) {
+  const allowedStringTypes = Object.keys(plugin.defaultLocale.strings)
+    .map(key => `  | '${key}'`)
+    .join('\n')
+
+  const pluginClassName = pluginName === 'core' ? 'Core' : plugin.id
+  const localePath = path.join(__dirname, '..', 'packages', '@uppy', pluginName, 'types', 'generatedLocale.d.ts')
+
+  const localeTypes =
+    'import Uppy = require(\'@uppy/core\')\n' +
+    '\n' +
+    `type ${pluginClassName}Locale = Uppy.Locale` + '<\n' +
+    allowedStringTypes + '\n' +
+    '>\n' +
+    '\n' +
+    `export = ${pluginClassName}Locale\n`
+
+  fs.writeFileSync(localePath, localeTypes)
+}
+
 function build () {
   const { plugins, sources } = buildPluginsList()
 
-  for (let pluginName in plugins) {
+  for (const pluginName in plugins) {
     addLocaleToPack(plugins[pluginName], pluginName)
+  }
+
+  for (const pluginName in plugins) {
+    createTypeScriptLocale(plugins[pluginName], pluginName)
   }
 
   localePack = sortObjectAlphabetically(localePack)
 
-  for (let pluginName in sources) {
+  for (const pluginName in sources) {
     checkForUnused(sources[pluginName], pluginName, sortObjectAlphabetically(plugins[pluginName].defaultLocale.strings))
   }
 
@@ -191,8 +214,13 @@ function test () {
   const localePackagePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'src', '*.js')
   glob.sync(localePackagePath).forEach((localePath) => {
     const localeName = path.basename(localePath, '.js')
-    // Builds array with items like: 'uploadingXFiles.2'
-    followerValues[localeName] = flat(require(localePath).strings)
+    // we renamed the es_GL → gl_ES locale, and kept the old name
+    // for backwards-compat, see https://github.com/transloadit/uppy/pull/1929
+    if (localeName === 'es_GL') return
+
+    // Builds array with items like: 'uploadingXFiles'
+    // We do not check nested items because different languages may have different amounts of plural forms.
+    followerValues[localeName] = require(localePath).strings
     followerLocales[localeName] = Object.keys(followerValues[localeName])
   })
 
@@ -204,14 +232,19 @@ function test () {
   // Compare all follower Locales (RU, DE, etc) with our leader en_US
   const warnings = []
   const fatals = []
-  for (let followerName in followerLocales) {
-    let followerLocale = followerLocales[followerName]
-    let missing = leadingLocale.filter((key) => !followerLocale.includes(key))
-    let excess = followerLocale.filter((key) => !leadingLocale.includes(key))
+  for (const followerName in followerLocales) {
+    const followerLocale = followerLocales[followerName]
+    const missing = leadingLocale.filter((key) => !followerLocale.includes(key))
+    const excess = followerLocale.filter((key) => !leadingLocale.includes(key))
 
     missing.forEach((key) => {
       // Items missing are a non-fatal warning because we don't want CI to bum out over all languages
       // as soon as we add some English
+      let value = leadingValues[key]
+      if (typeof value === 'object') {
+        // For values with plural forms, just take the first one right now
+        value = value[Object.keys(value)[0]]
+      }
       warnings.push(`${chalk.cyan(followerName)} locale has missing string: '${chalk.red(key)}' that is present in ${chalk.cyan(leadingLocaleName)} with value: ${chalk.yellow(leadingValues[key])}`)
     })
     excess.forEach((key) => {
@@ -221,19 +254,19 @@ function test () {
   }
 
   if (warnings.length) {
-    console.error(`--> Locale warnings: `)
+    console.error('--> Locale warnings: ')
     console.error(warnings.join('\n'))
-    console.error(``)
+    console.error('')
   }
   if (fatals.length) {
-    console.error(`--> Locale fatal warnings: `)
+    console.error('--> Locale fatal warnings: ')
     console.error(fatals.join('\n'))
-    console.error(``)
+    console.error('')
     process.exit(1)
   }
 
   if (!warnings.length && !fatals.length) {
     console.log(`--> All locale strings have matching keys ${chalk.green(': )')}`)
-    console.log(``)
+    console.log('')
   }
 }

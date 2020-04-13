@@ -14,12 +14,11 @@ exports.getItemSubList = (item) => {
   item.data.forEach((subItem) => {
     if (subItem.carousel_media) {
       subItem.carousel_media.forEach((i, index) => {
-        const newSubItem = {
-          ...i,
+        const newSubItem = Object.assign({}, i, {
           id: subItem.id,
           created_time: subItem.created_time,
           carousel_id: index
-        }
+        })
         subItems.push(newSubItem)
       })
     } else {
@@ -30,9 +29,9 @@ exports.getItemSubList = (item) => {
 }
 
 exports.getItemName = (item) => {
-  if (item && item['created_time']) {
+  if (item && item.created_time) {
     const ext = item.type === 'video' ? 'mp4' : 'jpeg'
-    let date = new Date(item['created_time'] * 1000)
+    const date = new Date(item.created_time * 1000)
     const name = date.toLocaleDateString([], {
       year: 'numeric',
       month: 'short',
