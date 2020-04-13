@@ -2,7 +2,7 @@ const querystring = require('querystring')
 
 exports.getUsername = (data) => {
   for (const item of data.files) {
-    if (item.ownedByMe) {
+    if (item.ownedByMe && item.permissions) {
       for (const permission of item.permissions) {
         if (permission.role === 'owner') {
           return permission.emailAddress
