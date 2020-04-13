@@ -1,18 +1,13 @@
 const { h } = require('preact')
 
-module.exports = (props) => {
-  return <svg width="22" height="18" aria-hidden="true" fill="#607d8b" focusable="false" viewBox="0 0 22 18">
-    <path
-      style="fill:none"
-      id="path1"
-      d="M -1,-3 H 23 V 21 H -1 Z" />
-    <path
-      id="path2"
-      d="M 20,0 H 2 C 0.89,0 0,0.89 0,2 v 12 c 0,1.1 0.89,2 2,2 h 5 v 2 h 8 v -2 h 5 c 1.1,0 1.99,-0.9 1.99,-2 L 22,2 C 22,0.89 21.1,0 20,0 Z m 0,14 H 2 V 2 h 18 z" />
-    <circle
-      r="3"
-      cy="8"
-      cx="11"
-      id="path3"
-      style="opacity:0.76799999;fill:#d40000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" /></svg>
+module.exports = () => {
+  return (
+    <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" fill-rule="evenodd">
+        <rect fill="#2C3E50" width="32" height="32" rx="16" />
+        <path d="M24.182 9H7.818C6.81 9 6 9.742 6 10.667v10c0 .916.81 1.666 1.818 1.666h4.546V24h7.272v-1.667h4.546c1 0 1.809-.75 1.809-1.666l.009-10C26 9.742 25.182 9 24.182 9zM24 21H8V11h16v10z" fill="#FFF" fill-rule="nonzero" />
+        <circle fill="#FFF" cx="16" cy="16" r="2" />
+      </g>
+    </svg>
+  )
 }

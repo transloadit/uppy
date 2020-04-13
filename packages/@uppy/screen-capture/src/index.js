@@ -29,7 +29,7 @@ module.exports = class ScreenCapture extends Plugin {
     this.mediaDevices = checkDisplayMediaSupport()
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'ScreenCapture'
-    this.title = this.opts.title || 'Capture'
+    this.title = this.opts.title || 'Screencast'
     this.type = 'acquirer'
     this.icon = ScreenRecIcon
 
@@ -50,7 +50,7 @@ module.exports = class ScreenCapture extends Plugin {
 
     // set default options
     // https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints
-    let defaultOptions = {
+    const defaultOptions = {
       // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints#Properties_of_shared_screen_tracks
       displayMediaConstraints: {
         video: {
@@ -70,13 +70,6 @@ module.exports = class ScreenCapture extends Plugin {
       },
       preferredVideoMimeType: 'video/webm'
     }
-
-    // const supported = this.mediaDevices.getSupportedConstraints()
-
-    // set audio constraints if supported
-    /*  if (supported['sampleRate']) {
-      defaultOptions.userMediaConstrainsts.sampleRate = 123
-    } */
 
     // merge default options with the ones set by user
     this.opts = { ...defaultOptions, ...opts }
@@ -114,7 +107,8 @@ module.exports = class ScreenCapture extends Plugin {
     }
 
     this.setPluginState({
-      streamActive: false, audioStreamActive: false
+      streamActive: false,
+      audioStreamActive: false
     })
 
     const target = this.opts.target
@@ -221,7 +215,7 @@ module.exports = class ScreenCapture extends Plugin {
   }
 
   startRecording () {
-    let options = {}
+    const options = {}
     this.capturedMediaFile = null
     this.recordingChunks = []
     const preferredVideoMimeType = this.opts.preferredVideoMimeType
@@ -235,7 +229,7 @@ module.exports = class ScreenCapture extends Plugin {
         }
 
         // prepare tracks
-        let tracks = [videoStream.getVideoTracks()[0]]
+        const tracks = [videoStream.getVideoTracks()[0]]
 
         // merge audio if exits
         if (this.audioStream) {
@@ -253,6 +247,8 @@ module.exports = class ScreenCapture extends Plugin {
         this.recorder.addEventListener('dataavailable', (event) => {
           this.recordingChunks.push(event.data)
         })
+
+        console.log('START RECORDING')
 
         // start recording
         this.recorder.start()
@@ -279,10 +275,8 @@ module.exports = class ScreenCapture extends Plugin {
       }
     } else if (recording) {
       // stop recorder if it is active
-      console.log('Capture stream inactive - stop recording!')
+      this.uppy.log('Capture stream inactive - stop recording!')
       this.stopRecording()
-    } else {
-      // do something...
     }
 
     this.videoStream = null
@@ -320,12 +314,6 @@ module.exports = class ScreenCapture extends Plugin {
     }).then(() => {
       this.recordingChunks = null
       this.recorder = null
-
-      // Close the Dashboard panel if plugin is installed
-      // into Dashboard (could be other parent UI plugin)
-      // if (this.parent && this.parent.hideAllPanels) {
-      //   this.parent.hideAllPanels()
-      // }
     }, (error) => {
       this.recordingChunks = null
       this.recorder = null
@@ -418,13 +406,16 @@ module.exports = class ScreenCapture extends Plugin {
       this.start()
     }
 
-    return <CaptureScreen
-      {...recorderState}
-      onStartRecording={this.startRecording}
-      onStopRecording={this.stopRecording}
-      onStop={this.stop}
-      onSubmit={this.submit}
-      i18n={this.i18n}
-      stream={this.videoStream} />
+    return (
+      <CaptureScreen
+        {...recorderState}
+        onStartRecording={this.startRecording}
+        onStopRecording={this.stopRecording}
+        onStop={this.stop}
+        onSubmit={this.submit}
+        i18n={this.i18n}
+        stream={this.videoStream}
+      />
+    )
   }
 }

@@ -18,15 +18,13 @@
   background-color: $gray-800;
   text-align: center;
   position: relative;
-}
 
-.uppy-size--md .uppy-Capture-videoContainer {
-  max-width: 100%;
+  .uppy-size--md & {
+    max-width: 100%;
+  }
 }
 
 .uppy-Capture-video {
-  // width: 100%;
-  // height: 100%;
   max-width: 100%;
   max-height: 100%;
   position: absolute;
@@ -45,16 +43,30 @@
   align-items: center;
   justify-content: center;
   padding: 0 20px;
+  background-color: $white;
 }
 
 .uppy-Capture-button {
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  background-color: $red;
   color: $white;
   cursor: pointer;
   transition: all 0.3s;
+
+  .uppy-size--md & {
+    width: 60px;
+    height: 60px;
+  }
+
+  &:hover {
+    background-color: darken($red, 5%);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba($blue, 0.5);
+  }
 }
 
 .uppy-Capture-button svg {
@@ -68,38 +80,24 @@
   fill: currentColor;
 }
 
-.uppy-size--md .uppy-Capture-button {
-  width: 60px;
-  height: 60px;
-}
-
-.uppy-Capture-button:hover {
-  background-color: darken($red, 5%);
-}
-
-.uppy-Capture-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 0.2rem rgba($blue, 0.5);
-}
-
 .uppy-Capture-button--picture {
   margin-right: 12px;
 }
 
-.uppy-Capture-button.submit{
+.uppy-Capture-button.submit {
   background-color: $blue;
 }
 
-.uppy-Capture-button.submit:hover{
+.uppy-Capture-button.submit:hover {
   background-color: darken($blue, 5%);
 }
 
-.uppy-Capture-button.submit:disabled{
+.uppy-Capture-button.submit:disabled {
   background-color: $gray-500;
   cursor: default;
 }
 
-.uppy-Capture-button.submit:disabled:hover{
+.uppy-Capture-button.submit:disabled:hover { 
   background-color: $gray-200;
 }
 
@@ -144,7 +142,7 @@
   margin-bottom: 30px;
 }
 
-.uppy-Capture-icon--stream{
+.uppy-Capture-icon--stream {
   position: absolute;
   right: 0;
   top: 0;
@@ -152,40 +150,40 @@
   z-index:1;
 }
 
-video{
+.uppy-Capture video {
   outline: 0;
 }
 
-.uppy-Capture-icon--stream svg{
+.uppy-Capture-icon--stream svg {
   fill: $gray-500;
 }
 
-.uppy-Capture-icon--stream.is-active svg{
+.uppy-Capture-icon--stream.is-active svg {
   animation: uppy-Capture-icon--blink 1s cubic-bezier(0.47, 0, 0.75, 0.72) infinite;
 }
 
-@keyframes uppy-Capture-icon--blink{
-  0%{fill: $blue;}
-  50%{fill: $gray-500;}
-  100%{fill: $blue;}
+@keyframes uppy-Capture-icon--blink {
+  0% { fill: $blue;} 
+  50% { fill: $gray-500; }
+  100% { fill: $blue; }
+}
+
+.uppy-Capture-button--video {
+  color: $white;
+  background: $red;
+
+  &:hover {
+    background-color: darken($red, 10%);
   }
-
-.uppy-Capture-button--video{
-  border: 1px solid $gray-800;
-  background: $white;
 }
 
-.uppy-Capture-button--video:hover {
-  background-color: darken($white, 10%);
-}
+// .uppy-Capture-button--start-rec {
+//   color: $white;
+// }
 
-.uppy-Capture-button--start-rec svg{
-  fill: $red;
-}
-
-.uppy-Capture-button--stop-rec svg{
-  fill: $black;
-}
+// .uppy-Capture-button--stop-rec {
+//   color: $black;
+// }
 
 
 
