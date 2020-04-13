@@ -77,7 +77,7 @@ const getConfigFromEnv = () => {
     sendSelfEndpoint: process.env.COMPANION_SELF_ENDPOINT,
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
     secret: getSecret('COMPANION_SECRET') || generateSecret(),
-    debug: process.env.NODE_ENV !== 'production',
+    debug: process.env.NODE_ENV && process.env.NODE_ENV !== 'production',
     // TODO: this is a temporary hack to support distributed systems.
     // it is not documented, because it should be changed soon.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
