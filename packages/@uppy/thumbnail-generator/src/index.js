@@ -4,7 +4,7 @@ const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 const ORIENTATIONS = require('./image-orientations')
-const exifr = require('exifr/dist/mini.legacy.umd.js')
+const exifr = require('exifr/dist/mini.legacy.umd.cjs')
 
 /**
  * The Thumbnail Generator plugin
