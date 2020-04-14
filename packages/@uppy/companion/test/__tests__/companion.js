@@ -73,7 +73,7 @@ describe('validate upload data', () => {
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
-        endpoint: 'http://master.tus.com/files',
+        endpoint: 'http://master.tus.io/files',
         protocol: 'tusInvalid'
       })
       .expect(400)
@@ -86,7 +86,7 @@ describe('validate upload data', () => {
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
-        endpoint: 'http://master.tus.com/files',
+        endpoint: 'http://master.tus.io/files',
         protocol: 'tus',
         fieldname: 390
       })
@@ -100,7 +100,7 @@ describe('validate upload data', () => {
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
-        endpoint: 'http://master.tus.com/files',
+        endpoint: 'http://master.tus.io/files',
         protocol: 'tus',
         metadata: 'I am a string instead of object'
       })
@@ -114,7 +114,7 @@ describe('validate upload data', () => {
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
-        endpoint: 'http://master.tus.com/files',
+        endpoint: 'http://master.tus.io/files',
         protocol: 'tus',
         headers: 'I am a string instead of object'
       })
@@ -128,7 +128,7 @@ describe('validate upload data', () => {
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
-        endpoint: 'http://master.tus.com/files',
+        endpoint: 'http://master.tus.io/files',
         protocol: 'tus',
         httpMethod: 'DELETE'
       })
@@ -142,7 +142,7 @@ describe('validate upload data', () => {
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
-        endpoint: 'http://master.tus.com/files',
+        endpoint: 'http://master.tus.io/files',
         protocol: 'tus',
         httpMethod: 'POST',
         headers: {
@@ -162,7 +162,7 @@ describe('validate upload data', () => {
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
-        endpoint: 'http://master.tus.com/files',
+        endpoint: 'http://master.tus.io/files',
         protocol: 's3-multipart',
         httpMethod: 'PUT',
         headers: {
@@ -184,7 +184,7 @@ describe('download provdier file', () => {
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
-        endpoint: 'http://master.tus.com/files',
+        endpoint: 'http://master.tus.io/files',
         protocol: 'tus'
       })
       .expect(200)
