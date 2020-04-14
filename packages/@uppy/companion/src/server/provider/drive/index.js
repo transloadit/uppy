@@ -122,22 +122,6 @@ class Drive extends Provider {
       .request(onDone)
   }
 
-  _getGsuiteExportType (mimeType) {
-    const typeMaps = {
-      'application/vnd.google-apps.document': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/vnd.google-apps.drawing': 'image/png',
-      'application/vnd.google-apps.script': 'application/vnd.google-apps.script+json',
-      'application/vnd.google-apps.spreadsheet': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'application/vnd.google-apps.presentation': 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-    }
-
-    return typeMaps[mimeType] || 'application/pdf'
-  }
-
-  _isGsuiteFile (mimeType) {
-    return mimeType.startsWith('application/vnd.google')
-  }
-
   download ({ id, token }, onData) {
     this.stats({ id, token }, (err, resp, body) => {
       if (err) {
@@ -147,8 +131,8 @@ class Drive extends Provider {
       }
 
       let requestStream
-      if (this._isGsuiteFile(body.mimeType)) {
-        requestStream = this._exportGsuiteFile(id, token, this._getGsuiteExportType(body.mimeType))
+      if (adapter.isGsuiteFile(body.mimeType)) {
+        requestStream = this._exportGsuiteFile(id, token, adapter.getGsuiteExportType(body.mimeType))
       } else {
         requestStream = this.client
           .query()
@@ -183,7 +167,7 @@ class Drive extends Provider {
         return done(err)
       }
 
-      if (this._isGsuiteFile(body.mimeType)) {
+      if (adapter.isGsuiteFile(body.mimeType)) {
         // Google Docs file sizes can be determined
         // while Google sheets file sizes can't be determined
         const googleDocMimeType = 'application/vnd.google-apps.document'
@@ -193,7 +177,7 @@ class Drive extends Provider {
           return
         }
 
-        this._getGsuiteFileMeta(id, token, this._getGsuiteExportType(body.mimeType), (err, resp) => {
+        this._getGsuiteFileMeta(id, token, adapter.getGsuiteExportType(body.mimeType), (err, resp) => {
           if (err || resp.statusCode !== 200) {
             err = this._error(err, resp)
             logger.error(err, 'provider.drive.docs.size.error')
