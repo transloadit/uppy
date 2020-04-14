@@ -173,7 +173,7 @@ class Uploader {
 
     // validate protocol
     // @todo this validation should not be conditional once the protocol field is mandatory
-    if (options.protocol && !Object.prototype.hasOwnProperty.call(PROTOCOLS, options.protocol)) {
+    if (options.protocol && !Object.values(PROTOCOLS).includes(options.protocol)) {
       this._errRespMessage = 'unsupported protocol specified'
       return false
     }
