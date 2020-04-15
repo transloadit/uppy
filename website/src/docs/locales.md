@@ -33,7 +33,7 @@ const uppy = Uppy({
 Add a `<script>` tag with Uppy bundle and the locale pack you’d like to use. You can copy/paste the link from the CDN column in the [locales table](#List-of-locale-packs). The locale will attach itself to the `Uppy.locales` object.
 
 ```html
-<script src="https://transloadit.edgly.net/releases/uppy/v1.13.1/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v1.13.2/uppy.min.js"></script>
 <script src="https://transloadit.edgly.net/releases/uppy/locales/v1.13.1/de_DE.min.js"></script>
 
 <script>
