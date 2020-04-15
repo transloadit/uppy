@@ -106,7 +106,7 @@ exports.getNextPagePath = (data, currentQuery, currentPath) => {
 }
 
 exports.isGsuiteFile = (mimeType) => {
-  return mimeType.startsWith('application/vnd.google')
+  return mimeType && mimeType.startsWith('application/vnd.google')
 }
 
 exports.getGsuiteExportType = (mimeType) => {
