@@ -69,7 +69,7 @@ fr_FR.strings = {
   pause: 'Pause',
   pauseUpload: 'Mettre en pause le téléchargement',
   paused: 'En pause',
-  poweredBy: 'Soutenu par',
+  poweredBy: 'Propulsé par',
   preparingUpload: 'Préparation du téléchargement...',
   processingXFiles: {
     '0': 'Traitement de %{smart_count} fichier',
