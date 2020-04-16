@@ -102,9 +102,45 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 - [ ] plugins: review & merge screenshot+screencast support similar to Webcam #148 (@arturi)
-- [ ] core: report information about the device --^ (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 - [ ] s3: immediately start uploading files once the signed URL is generated (#2060, @goto-bus-stop)
+
+## 1.13.2
+
+Released: 2020-04-15
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.6.2 | @uppy/progress-bar | 1.3.11 |
+| @uppy/aws-s3 | 1.6.2 | @uppy/provider-views | 1.6.3 |
+| @uppy/companion | 1.13.1 | @uppy/react | 1.6.3 |
+| @uppy/core | 1.10.2 | @uppy/robodog | 1.6.4 |
+| @uppy/dashboard | 1.8.3 | @uppy/status-bar | 1.6.3 |
+| @uppy/drag-drop | 1.4.10 | @uppy/thumbnail-generator | 1.5.10 |
+| @uppy/dropbox | 1.4.3 | @uppy/transloadit | 1.5.8 |
+| @uppy/facebook | 1.1.3 | @uppy/tus | 1.5.10 |
+| @uppy/file-input | 1.4.9 | @uppy/url | 1.5.3 |
+| @uppy/form | 1.3.12 | @uppy/utils | 2.4.2 |
+| @uppy/golden-retriever | 1.3.11 | @uppy/webcam | 1.6.3 |
+| @uppy/google-drive | 1.5.3 | @uppy/xhr-upload | 1.5.8 |
+| @uppy/informer | 1.5.3 | remark-lint-uppy | 0.1.1 |
+| @uppy/instagram | 1.4.3 | uppy | 1.13.2 |
+| @uppy/onedrive | 1.1.3 | - | - |
+
+- @uppy/companion: mimetype could be undefined (#2201 / @ifedapoolarewaju)
+
+## 1.13.1
+
+Released 2020-04-14
+
+Mainly fixes for the Dashboard provider/tab list in IE10 and correct Gsuit file extensions in Companion.
+
+- @uppy/dashboard: Dashboard tablist IE10 flex fix and refactor (#2192 / @arturi)
+- @uppy/companion: set debug based on `NODE_ENV` only if the env var is available (#2189 / @ifedapoolarewaju)
+- @uppy/companion: fix uploader protocol validation (#2197 / @ifedapoolarewaju)
+- @uppy/companion: set GSuite file extensions (#2194 / @ifedapoolarewaju)
+- docs: fix minor typo in Dashboard docs (#2193 / @mhulet)
+- website: add markdown linting using remark (#2181 / @goto-bus-stop)
 
 ## 1.13.0
 
