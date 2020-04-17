@@ -37,7 +37,9 @@ const qsStringify = require('qs-stringify')
 const MiniXHRUpload = require('./MiniXHRUpload')
 
 function resolveUrl (origin, link) {
-  return new URL_(link, origin).toString()
+  return origin 
+    ? new URL_(link, origin).toString() 
+    : new URL_(link).toString()
 }
 
 function isXml (content, xhr) {
