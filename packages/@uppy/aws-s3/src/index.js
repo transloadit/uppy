@@ -37,8 +37,8 @@ const qsStringify = require('qs-stringify')
 const MiniXHRUpload = require('./MiniXHRUpload')
 
 function resolveUrl (origin, link) {
-  return origin 
-    ? new URL_(link, origin).toString() 
+  return origin
+    ? new URL_(link, origin).toString()
     : new URL_(link).toString()
 }
 
@@ -162,7 +162,8 @@ module.exports = class AwsS3 extends Plugin {
     /**
      * keep track of `getUploadParameters()` responses
      * so we can cancel the calls individually using just a file ID
-     * @type {Object.<string, Promise>}
+     *
+     * @type {object.<string, Promise>}
      */
     const paramsPromises = Object.create(null)
 
