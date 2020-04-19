@@ -57,6 +57,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] *: upgrade to Preact X
 - [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
 - [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems though)
+- [ ] dashboard: set default `trigger: null`, see https://github.com/transloadit/uppy/pull/2144#issuecomment-600581690
 - [ ] docs: Completely drop soft IE10 (and IE11?) support
 - [ ] form: make the `multipleResults` option `true` by default
 - [ ] locales: Remove the old es_GL name alias for gl_ES. Keep gl_ES only.
@@ -206,7 +207,7 @@ This release adds the Romanian language, more input validation in Companion, and
 
 - @uppy/companion: validate all client provided upload data. (#2160 / @ifedapoolarewaju)
 - @uppy/dashboard: allow custom metadata fields when editing files (#2147 / @galli-leo)
-- @uppy/locales:  Remove obsolete strings from language files. (894c739 / @goto-bus-stop)
+- @uppy/locales: Remove obsolete strings from language files. (894c739 / @goto-bus-stop)
 - @uppy/locales: Romanian (ro_RO) language pack added. (#2162 / @akizor)
 - @uppy/robodog: Add Facebook and OneDrive to the bundle. (#2165 / @arturi)
 - @uppy/transloadit: fix progress with very different Assembly runtimes (#2143 / @agreene-coursera)
