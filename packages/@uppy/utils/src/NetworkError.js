@@ -1,12 +1,9 @@
 class NetworkError extends Error {
-  constructor (error = null, xhr = null) {
-    super(error.message)
+  constructor (error, xhr = null) {
+    super(`This looks like a network error, the endpoint might be blocked by an internet provider or a firewall.\n\nSource error: [${error}]`)
 
     this.isNetworkError = true
     this.originalRequest = xhr
-
-    const message = error.message + '. This looks like a network error, the endpoint might be blocked by an ISP or a firewall'
-    this.message = message
   }
 }
 
