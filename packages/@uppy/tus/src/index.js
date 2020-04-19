@@ -179,11 +179,11 @@ module.exports = class Tus extends Plugin {
         this.uppy.log(err)
 
         if (isNetworkError(err.originalRequest)) {
-          err = new NetworkError(err)
+          err = new NetworkError(err, err.originalRequest)
         }
 
         this.uppy.emit('upload-error', file, err)
-        err.message = `Failed because: ${err.message}`
+        err.message = `${err.message}`
 
         this.resetUploaderReferences(file.id)
         queuedRequest.done()

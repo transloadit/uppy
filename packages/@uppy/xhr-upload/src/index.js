@@ -22,7 +22,7 @@ function buildResponseError (xhr, error) {
   }
 
   if (isNetworkError(xhr)) {
-    error = new NetworkError(error)
+    error = new NetworkError(error, xhr)
   }
 
   error.request = xhr
@@ -99,7 +99,7 @@ module.exports = class XHRUpload extends Plugin {
         let error = new Error('Upload error')
 
         if (isNetworkError(response)) {
-          error = new NetworkError(error)
+          error = new NetworkError(error, response)
         }
 
         return error

@@ -151,7 +151,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       const onError = (err) => {
         this.uppy.log(err)
         this.uppy.emit('upload-error', file, err)
-        err.message = `Failed because: ${err.message}`
+        err.message = `${err.message}`
 
         queuedRequest.done()
         this.resetUploaderReferences(file.id)
