@@ -1574,6 +1574,9 @@ class Uppy {
         const uploadID = this._createUpload(waitingFileIDs)
         return this._runUpload(uploadID)
       })
+      .catch((err) => {
+        this.log(err, 'error')
+      })
   }
 }
 
