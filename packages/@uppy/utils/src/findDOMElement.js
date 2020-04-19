@@ -11,7 +11,7 @@ module.exports = function findDOMElement (element, context = document) {
     return context.querySelector(element)
   }
 
-  if (typeof element === 'object' && isDOMElement(element)) {
+  if (isDOMElement(element)) {
     return element
   }
 }
