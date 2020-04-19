@@ -23,6 +23,7 @@ function buildResponseError (xhr, error) {
 
   if (isNetworkError(xhr)) {
     error = new NetworkError(error, xhr)
+    return error
   }
 
   error.request = xhr

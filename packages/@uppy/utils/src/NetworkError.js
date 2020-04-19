@@ -3,7 +3,7 @@ class NetworkError extends Error {
     super(`This looks like a network error, the endpoint might be blocked by an internet provider or a firewall.\n\nSource error: [${error}]`)
 
     this.isNetworkError = true
-    this.originalRequest = xhr
+    this.request = xhr
   }
 }
 
