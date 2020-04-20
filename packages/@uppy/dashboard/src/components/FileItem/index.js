@@ -13,14 +13,14 @@ module.exports = class FileItem extends Component {
 
   componentDidMount () {
     const file = this.props.file
-    if (!file.preview && this.props.handleRequestThumbnail) {
+    if (!file.preview) {
       this.props.handleRequestThumbnail(file)
     }
   }
 
   componentWillUnmount () {
     const file = this.props.file
-    if (!file.preview && this.props.handleCancelThumbnail) {
+    if (!file.preview) {
       this.props.handleCancelThumbnail(file)
     }
   }
