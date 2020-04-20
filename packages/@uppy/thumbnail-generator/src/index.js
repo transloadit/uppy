@@ -35,11 +35,11 @@ module.exports = class ThumbnailGenerator extends Plugin {
       lazy: false
     }
 
-    if (defaultOptions.lazy && defaultOptions.waitForThumbnailsBeforeUpload) {
+    this.opts = { ...defaultOptions, ...opts }
+
+    if (this.opts.lazy && this.opts.waitForThumbnailsBeforeUpload) {
       throw new Error('ThumbnailGenerator: The `lazy` and `waitForThumbnailsBeforeUpload` options are mutually exclusive. Please ensure at most one of them is set to `true`.')
     }
-
-    this.opts = { ...defaultOptions, ...opts }
 
     this.i18nInit()
   }
