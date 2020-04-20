@@ -16,10 +16,4 @@ rm -rf "${__root}/test/endtoend/node_modules"
 
 npm run build
 
-# Allow integration tests to resolve @uppy packages by abusing NODE_PATH :)
-# https://nodejs.org/api/modules.html#modules_loading_from_the_global_folders
-# This is done here, and not inside endtoend-build-tests, because
-# endtoend-build-tests may also run on CI with modules `npm install`ed into the
-# test folders from a local registry.
-NODE_PATH="${__root}/packages" \
-  bash "${__dir}/endtoend-build-tests"
+bash "${__dir}/endtoend-build-tests"
