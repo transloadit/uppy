@@ -66,6 +66,7 @@ module.exports = (props) => {
           <FileItem
             key={fileID}
             {...fileProps}
+            role="listitem"
             file={props.files[fileID]}
           />
         ))}

@@ -52,17 +52,31 @@ module.exports = class FileItem extends Component {
     })
 
     return (
-      <div role="listitem" class={dashboardItemClass} id={`uppy_${file.id}`}>
+      <div
+        class={dashboardItemClass}
+        id={`uppy_${file.id}`}
+        role={this.props.role}
+      >
         <div class="uppy-DashboardItem-preview">
           <FilePreviewAndLink
             file={file}
             showLinkToFileUploadResult={this.props.showLinkToFileUploadResult}
           />
           <FileProgress
-            {...this.props}
             file={file}
             error={error}
             isUploaded={isUploaded}
+
+            hideRetryButton={this.props.hideRetryButton}
+            hidePauseResumeCancelButtons={this.props.hidePauseResumeCancelButtons}
+
+            resumableUploads={this.props.resumableUploads}
+            individualCancellation={this.props.individualCancellation}
+
+            pauseUpload={this.props.pauseUpload}
+            cancelUpload={this.props.cancelUpload}
+            retryUpload={this.props.retryUpload}
+            i18n={this.props.i18n}
           />
         </div>
 
