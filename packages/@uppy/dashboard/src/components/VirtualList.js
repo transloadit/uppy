@@ -142,6 +142,8 @@ class VirtualList extends Component {
     const styleInner = { ...STYLE_INNER, height: data.length * rowHeight }
     const styleContent = { ...STYLE_CONTENT, top: start * rowHeight }
 
+    // The `role="presentation"` attributes ensure that these wrapper elements are not treated as list
+    // items by accessibility and outline tools.
     return (
       <div onScroll={this.handleScroll} {...props}>
         <div role="presentation" style={styleInner}>
