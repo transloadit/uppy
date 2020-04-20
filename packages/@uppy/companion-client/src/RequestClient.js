@@ -191,6 +191,13 @@ module.exports = class RequestClient {
           credentials: 'same-origin',
           body: data ? JSON.stringify(data) : null
         })
+          .catch((err) => {
+            if (err.name === 'AbortError') {
+              throw err
+            } else {
+              throw new NetworkError(err)
+            }
+          })
           .then(this._getPostResponseFunc(skipPostResponse))
           .then((res) => this._json(res).then(resolve))
           .catch((err) => {
