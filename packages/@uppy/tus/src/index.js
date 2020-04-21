@@ -183,7 +183,6 @@ module.exports = class Tus extends Plugin {
         }
 
         this.uppy.emit('upload-error', file, err)
-        err.message = `${err.message}`
 
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
