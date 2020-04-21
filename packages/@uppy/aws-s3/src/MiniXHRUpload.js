@@ -4,6 +4,8 @@ const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
 const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
+const NetworkError = require('@uppy/utils/lib/NetworkError')
+const isNetworkError = require('@uppy/utils/lib/isNetworkError')
 
 // See XHRUpload
 function buildResponseError (xhr, error) {
@@ -14,6 +16,11 @@ function buildResponseError (xhr, error) {
   // Got something else
   if (!(error instanceof Error)) {
     error = Object.assign(new Error('Upload error'), { data: error })
+  }
+
+  if (isNetworkError(xhr)) {
+    error = new NetworkError(error, xhr)
+    return error
   }
 
   error.request = xhr

@@ -1,6 +1,7 @@
 'use strict'
 
 const AuthError = require('./AuthError')
+const NetworkError = require('@uppy/utils/lib/NetworkError')
 
 // Remove the trailing slash so we can always safely append /xyz.
 function stripSlash (url) {
@@ -138,6 +139,13 @@ module.exports = class RequestClient {
           headers: headers,
           credentials: 'same-origin'
         })
+          .catch((err) => {
+            if (err.name === 'AbortError') {
+              throw err
+            } else {
+              throw new NetworkError(err)
+            }
+          })
           .then(this._getPostResponseFunc(skipPostResponse))
           .then((res) => this._json(res).then(resolve))
           .catch((err) => {
@@ -157,6 +165,13 @@ module.exports = class RequestClient {
           credentials: 'same-origin',
           body: JSON.stringify(data)
         })
+          .catch((err) => {
+            if (err.name === 'AbortError') {
+              throw err
+            } else {
+              throw new NetworkError(err)
+            }
+          })
           .then(this._getPostResponseFunc(skipPostResponse))
           .then((res) => this._json(res).then(resolve))
           .catch((err) => {
@@ -176,6 +191,13 @@ module.exports = class RequestClient {
           credentials: 'same-origin',
           body: data ? JSON.stringify(data) : null
         })
+          .catch((err) => {
+            if (err.name === 'AbortError') {
+              throw err
+            } else {
+              throw new NetworkError(err)
+            }
+          })
           .then(this._getPostResponseFunc(skipPostResponse))
           .then((res) => this._json(res).then(resolve))
           .catch((err) => {

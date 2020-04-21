@@ -5,6 +5,8 @@ const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
+const NetworkError = require('@uppy/utils/lib/NetworkError')
+const isNetworkError = require('@uppy/utils/lib/isNetworkError')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const getFingerprint = require('./getFingerprint')
 
@@ -175,8 +177,12 @@ module.exports = class Tus extends Plugin {
 
       optsTus.onError = (err) => {
         this.uppy.log(err)
+
+        if (isNetworkError(err.originalRequest)) {
+          err = new NetworkError(err, err.originalRequest)
+        }
+
         this.uppy.emit('upload-error', file, err)
-        err.message = `Failed because: ${err.message}`
 
         this.resetUploaderReferences(file.id)
         queuedRequest.done()

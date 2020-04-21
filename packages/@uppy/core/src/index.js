@@ -1554,6 +1554,9 @@ class Uppy {
 
     return Promise.resolve()
       .then(() => this._checkMinNumberOfFiles(files))
+      .catch((err) => {
+        this._showOrLogErrorAndThrow(err)
+      })
       .then(() => {
         const { currentUploads } = this.getState()
         // get a list of files that are currently assigned to uploads
@@ -1572,7 +1575,9 @@ class Uppy {
         return this._runUpload(uploadID)
       })
       .catch((err) => {
-        this._showOrLogErrorAndThrow(err)
+        this._showOrLogErrorAndThrow(err, {
+          showInformer: false
+        })
       })
   }
 }
