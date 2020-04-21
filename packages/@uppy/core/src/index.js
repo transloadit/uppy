@@ -1575,7 +1575,9 @@ class Uppy {
         return this._runUpload(uploadID)
       })
       .catch((err) => {
-        this.log(err, 'error')
+        this._showOrLogErrorAndThrow(err, {
+          showInformer: false
+        })
       })
   }
 }
