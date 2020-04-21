@@ -57,6 +57,9 @@ module.exports.app = (options = {}) => {
     providerManager.addCustomProviders(customProviders, providers, grantConfig)
   }
 
+  // mask provider secrets from log messages
+  maskLogger(options)
+
   // create singleton redis client
   if (options.redisUrl) {
     redis.client(merge({ url: options.redisUrl }, options.redisOptions || {}))
@@ -271,4 +274,29 @@ const getOptionsMiddleware = (options) => {
   }
 
   return middleware
+}
+
+/**
+ * Informs the logger about all provider secrets that should be masked
+ * if they are found in a log message
+ * @param {object} companionOptions
+ */
+const maskLogger = (companionOptions) => {
+  const secrets = []
+  const { providerOptions, customProviders } = companionOptions
+  Object.keys(providerOptions).forEach((provider) => {
+    if (providerOptions[provider].secret) {
+      secrets.push(providerOptions[provider].secret)
+    }
+  })
+
+  if (customProviders) {
+    Object.keys(customProviders).forEach((provider) => {
+      if (customProviders[provider].config && customProviders[provider].config.secret) {
+        secrets.push(customProviders[provider].config.secret)
+      }
+    })
+  }
+
+  logger.addMaskables(secrets)
 }

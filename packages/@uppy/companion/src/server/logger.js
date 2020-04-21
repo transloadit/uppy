@@ -1,5 +1,19 @@
 const chalk = require('chalk')
 
+const valuesToMask = []
+/**
+ * Adds a list of strings that should be masked by the logger.
+ * This function can only be called once through out the life of the server.
+ * @param {Array} maskables a list of strings to be masked
+ */
+exports.addMaskables = (maskables) => {
+  maskables.forEach((i) => {
+    valuesToMask.push(i)
+  })
+
+  Object.freeze(valuesToMask)
+}
+
 /**
  * INFO level log
  * @param {string} msg the message to log
@@ -58,7 +72,21 @@ const log = (msg, tag, level, id, color) => {
   id = id || ''
   const whitespace = tag && id ? ' ' : ''
   color = color || ((message) => message)
+  msg = typeof msg === 'string' ? maskMessage(msg) : msg
   // exclude msg from template string so values such as error objects
   // can be well formatted
   console.log(color(`companion: ${time} [${level}] ${id}${whitespace}${tag}`), color(msg))
+}
+
+/**
+ * Mask the secret content of a message
+ * @param {string} msg the message whose content should be masked
+ * @returns {string}
+ */
+const maskMessage = (msg) => {
+  for (const toBeMasked of valuesToMask) {
+    const toBeReplaced = new RegExp(toBeMasked, 'gi')
+    msg = msg.replace(toBeReplaced, '******')
+  }
+  return msg
 }
