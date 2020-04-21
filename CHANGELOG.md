@@ -249,6 +249,7 @@ This Release offers Dashboard redesign (Dark mode), and support for Google Docs 
 - @uppy/companion: add support to download gsuite (google docs, google spreadsheet) files (#2145 / @ifedapoolarewaju)
 - @uppy/locales: Croatian translations added (#2150 / @dkisic)
 - @uppy/core: Only _startIfAutoProceed if some files were actually added (#2146 / @arturi)
+- @uppy/thumbnail-generator: replace exif-js with exifr in thumbnail-generator (#2140 / @MikeKovarik)
 
 ## 1.10.1
 
