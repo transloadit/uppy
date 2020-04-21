@@ -6,16 +6,19 @@ const ScreenRecIcon = require('./ScreenRecIcon')
 const CaptureScreen = require('./CaptureScreen')
 
 // Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-function checkDisplayMediaSupport () {
+function getMediaDevices () {
   // check if screen capturing is supported
-  // eslint-disable-next-line compat/compat
-  if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-    // eslint-disable-next-line compat/compat
+  /* eslint-disable */
+  if (navigator &&
+    navigator.mediaDevices &&
+    navigator.mediaDevices.getDisplayMedia &&
+    window &&
+    window.MediaRecorder) {
     return navigator.mediaDevices
-  } else {
-    console.log('Screencapturing is not supported')
-    return null
   }
+  /* eslint-enable */
+
+  return null
 }
 
 /**
@@ -26,7 +29,7 @@ module.exports = class ScreenCapture extends Plugin {
 
   constructor (uppy, opts) {
     super(uppy, opts)
-    this.mediaDevices = checkDisplayMediaSupport()
+    this.mediaDevices = getMediaDevices()
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'ScreenCapture'
     this.title = this.opts.title || 'Screencast'
@@ -37,14 +40,11 @@ module.exports = class ScreenCapture extends Plugin {
       strings: {
         startCapturing: 'Begin screen capturing',
         stopCapturing: 'Stop screen capturing',
-        selectSourceTitle: 'Please allow access to your screen',
-        selectSourceDescription: 'In order to capture your screen, please allow access for this site.',
         submitRecordedFile: 'Submit captured video',
         streamActive: 'Stream active',
         streamPassive: 'Stream passive',
         micDisabled: 'Microphone access denied by user',
-        micIsOn: 'Microphone is on',
-        recording: 'Recording'
+        timeRecording: 'Recording'
       }
     }
 
@@ -95,14 +95,12 @@ module.exports = class ScreenCapture extends Plugin {
     // initialize
     this.captureActive = false
     this.capturedMediaFile = null
-
-    this.debug = true
   }
 
-  // install plugin. https://uppy.io/docs/writing-plugins/#install
   install () {
-    // return if browser doesn't support getDisplayMedia
+    // Return if browser doesn’t support getDisplayMedia and
     if (!this.mediaDevices) {
+      this.uppy.log('Screen recorder access is not supported', 'error')
       return null
     }
 
@@ -113,7 +111,6 @@ module.exports = class ScreenCapture extends Plugin {
 
     const target = this.opts.target
     if (target) {
-      // mount to target (css, dom, another plugin). https://uppy.io/docs/writing-plugins/#mount-target
       this.mount(target, this)
     }
   }
@@ -248,8 +245,6 @@ module.exports = class ScreenCapture extends Plugin {
           this.recordingChunks.push(event.data)
         })
 
-        console.log('START RECORDING')
-
         // start recording
         this.recorder.start()
 
@@ -259,7 +254,7 @@ module.exports = class ScreenCapture extends Plugin {
         })
       })
       .catch((err) => {
-        console.log(err)
+        this.uppy.log(err, 'error')
       })
   }
 
@@ -275,7 +270,7 @@ module.exports = class ScreenCapture extends Plugin {
       }
     } else if (recording) {
       // stop recorder if it is active
-      this.uppy.log('Capture stream inactive - stop recording!')
+      this.uppy.log('Capture stream inactive — stop recording')
       this.stopRecording()
     }
 
@@ -330,7 +325,7 @@ module.exports = class ScreenCapture extends Plugin {
     } catch (err) {
       // Logging the error, exept restrictions, which is handled in Core
       if (!err.isRestriction) {
-        this.uppy.log(err)
+        this.uppy.log(err, 'error')
       }
     }
   }
@@ -400,7 +395,6 @@ module.exports = class ScreenCapture extends Plugin {
   render (state) {
     // get screen recorder state
     const recorderState = this.getPluginState()
-    // console.log(recorderState)
 
     if (!recorderState.streamActive && !this.captureActive && !this.userDenied) {
       this.start()

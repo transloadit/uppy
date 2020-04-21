@@ -1,7 +1,7 @@
 @import '@uppy/core/src/_utils.scss';
 @import '@uppy/core/src/_variables.scss';
 
-.uppy-Capture-container {
+.uppy-ScreenCapture-container {
   width: 100%;
   height: 100%;
   display: flex;
@@ -10,7 +10,7 @@
   flex-direction: column;
 }
 
-.uppy-Capture-videoContainer {
+.uppy-ScreenCapture-videoContainer {
   width: 100%;
   flex: 1;
   flex-grow: 1;
@@ -24,7 +24,7 @@
   }
 }
 
-.uppy-Capture-video {
+.uppy-ScreenCapture-video {
   max-width: 100%;
   max-height: 100%;
   position: absolute;
@@ -33,9 +33,10 @@
   bottom: 0;
   left: 0;
   margin: auto;
+  outline: 0;
 }
 
-.uppy-Capture-buttonContainer {
+.uppy-ScreenCapture-buttonContainer {
   width: 100%;
   height: 75px;
   border-top: 1px solid $gray-200;
@@ -46,7 +47,7 @@
   background-color: $white;
 }
 
-.uppy-Capture-button {
+.uppy-ScreenCapture-button {
   width: 45px;
   height: 45px;
   border-radius: 50%;
@@ -69,7 +70,7 @@
   }
 }
 
-.uppy-Capture-button svg {
+.uppy-ScreenCapture-button svg {
   width: 30px;
   height: 30px;
   max-width: 100%;
@@ -80,43 +81,25 @@
   fill: currentColor;
 }
 
-.uppy-Capture-button--picture {
-  margin-right: 12px;
-}
-
-.uppy-Capture-button.submit {
+.uppy-ScreenCapture-button--submit {
   background-color: $blue;
+  margin-left: 12px;
+
+  &:hover {
+    background-color: darken($blue, 5%);
+  }
+
+  &:disabled {
+    background-color: $gray-500;
+    cursor: default;
+  }
+
+  &:disabled:hover { 
+    background-color: $gray-200;
+  }
 }
 
-.uppy-Capture-button.submit:hover {
-  background-color: darken($blue, 5%);
-}
-
-.uppy-Capture-button.submit:disabled {
-  background-color: $gray-500;
-  cursor: default;
-}
-
-.uppy-Capture-button.submit:disabled:hover { 
-  background-color: $gray-200;
-}
-
-.uppy-Capture-permissons {
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-flow: column wrap;
-  height: 100%;
-  flex: 1;
-}
-
-.uppy-Capture-permissons p {
-  max-width: 450px;
-  line-height: 1.3;
-}
-
-.uppy-Capture-title {
+.uppy-ScreenCapture-title {
   font-size: 22px;
   line-height: 1.35;
   font-weight: 400;
@@ -128,47 +111,29 @@
   color: $gray-800;
 }
 
-.uppy-Capture-permissons p {
-  text-align: center;
-  line-height: 1.45;
-  color: $gray-500;
-  margin: 0;
-}
-
-.uppy-Capture-permissonsIcon svg {
-  width: 100px;
-  height: 75px;
-  color: $gray-400;
-  margin-bottom: 30px;
-}
-
-.uppy-Capture-icon--stream {
+.uppy-ScreenCapture-icon--stream {
   position: absolute;
   right: 0;
   top: 0;
   margin: 1rem;
   z-index:1;
+
+  svg {
+    fill: $gray-500;
+  }
 }
 
-.uppy-Capture video {
-  outline: 0;
+.uppy-ScreenCapture-icon--streamActive svg {
+  animation: uppy-ScreenCapture-icon--blink 1s cubic-bezier(0.47, 0, 0.75, 0.72) infinite;
 }
 
-.uppy-Capture-icon--stream svg {
-  fill: $gray-500;
-}
+  @keyframes uppy-ScreenCapture-icon--blink {
+    0% { fill: $blue;} 
+    50% { fill: $gray-500; }
+    100% { fill: $blue; }
+  }
 
-.uppy-Capture-icon--stream.is-active svg {
-  animation: uppy-Capture-icon--blink 1s cubic-bezier(0.47, 0, 0.75, 0.72) infinite;
-}
-
-@keyframes uppy-Capture-icon--blink {
-  0% { fill: $blue;} 
-  50% { fill: $gray-500; }
-  100% { fill: $blue; }
-}
-
-.uppy-Capture-button--video {
+.uppy-ScreenCapture-button--video {
   color: $white;
   background: $red;
 
@@ -176,14 +141,3 @@
     background-color: darken($red, 10%);
   }
 }
-
-// .uppy-Capture-button--start-rec {
-//   color: $white;
-// }
-
-// .uppy-Capture-button--stop-rec {
-//   color: $black;
-// }
-
-
-

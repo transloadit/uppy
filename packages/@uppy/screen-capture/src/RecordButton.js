@@ -7,7 +7,7 @@ module.exports = function RecordButton ({ recording, onStartRecording, onStopRec
   if (recording) {
     return (
       <button
-        class="uppy-u-reset uppy-c-btn uppy-Capture-button uppy-Capture-button--video uppy-Capture-button--stop-rec"
+        class="uppy-u-reset uppy-c-btn uppy-ScreenCapture-button uppy-ScreenCapture-button--video uppy-ScreenCapture-button--stop-rec"
         type="button"
         title={i18n('stopRecording')}
         aria-label={i18n('stopRecording')}
@@ -23,10 +23,10 @@ module.exports = function RecordButton ({ recording, onStartRecording, onStopRec
 
   return (
     <button
-      class="uppy-u-reset uppy-c-btn uppy-Capture-button uppy-Capture-button--video uppy-Capture-button--start-rec"
+      class="uppy-u-reset uppy-c-btn uppy-ScreenCapture-button uppy-ScreenCapture-button--video"
       type="button"
-      title={i18n('startRecording')}
-      aria-label={i18n('startRecording')}
+      title={i18n('startCapturing')}
+      aria-label={i18n('stopCapturing')}
       onclick={onStartRecording}
       data-uppy-super-focusable
     >

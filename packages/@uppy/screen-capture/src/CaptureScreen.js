@@ -5,10 +5,6 @@ const StopWatch = require('./StopWatch')
 const StreamStatus = require('./StreamStatus')
 
 class RecorderScreen extends Component {
-  componentDidMount () {
-
-  }
-
   componentWillUnmount () {
     this.props.onStop()
   }
@@ -16,7 +12,7 @@ class RecorderScreen extends Component {
   render () {
     const { recording, stream: videoStream, recordedVideo } = this.props
 
-    let videoProps = {
+    const videoProps = {
       playsinline: true
     }
 
@@ -40,15 +36,14 @@ class RecorderScreen extends Component {
     }
 
     return (
-      <div class="uppy uppy-Capture-container">
-        <div class="uppy-Capture-videoContainer">
+      <div class="uppy uppy-ScreenCapture-container">
+        <div class="uppy-ScreenCapture-videoContainer">
           <StreamStatus {...this.props} />
-          // eslint-disable-next-line no-return-assign
-          <video ref={videoElement => (this.videoElement = videoElement)} class="uppy-Capture-video" {...videoProps} />
+          <video ref={videoElement => (this.videoElement = videoElement)} class="uppy-ScreenCapture-video" {...videoProps} />
           <StopWatch {...this.props} />
         </div>
 
-        <div class="uppy-Capture-buttonContainer">
+        <div class="uppy-ScreenCapture-buttonContainer">
           <RecordButton {...this.props} />
           <SubmitButton {...this.props} />
         </div>

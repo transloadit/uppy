@@ -45,10 +45,6 @@ class Stopwatch extends Component {
     }
   }
 
-  componentDidMount () {
-
-  }
-
   startTimer () {
     this.timerTick()
     this.timerRunning = true
@@ -67,7 +63,9 @@ class Stopwatch extends Component {
     }, 1000)
   }
 
-  fmtMSS (s) { return (s - (s %= 60)) / 60 + (s > 9 ? ':' : ':0') + s }
+  fmtMSS (s) {
+    return (s - (s %= 60)) / 60 + (s > 9 ? ':' : ':0') + s
+  }
 
   render () {
     const { recording, i18n } = { ...this.props }

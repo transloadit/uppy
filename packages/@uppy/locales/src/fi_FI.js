@@ -141,7 +141,6 @@ fi_FI.strings = {
   streamActive: 'Jako aktiivinen',
   streamPassive: 'Jako passiivinen',
   micDisabled: 'Käyttäjä on estänyt mikrofonin',
-  micIsOn: 'Mikrofoni on päällä',
   recording: 'Tallennetaan'
 }
 
