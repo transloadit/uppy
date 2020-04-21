@@ -9,6 +9,7 @@ const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
+const ScreenCapture = require('@uppy/screen-capture')
 const Tus = require('@uppy/tus')
 const localeList = require('../locale_list.json')
 
@@ -133,10 +134,17 @@ function uppySetOptions () {
 
   const WebcamInstance = window.uppy.getPlugin('Webcam')
   if (opts.Webcam && !WebcamInstance) {
-    window.uppy.use(Webcam, { target: Dashboard, companionUrl: COMPANION })
+    window.uppy.use(Webcam, { target: Dashboard })
   }
   if (!opts.Webcam && WebcamInstance) {
     window.uppy.removePlugin(WebcamInstance)
+  }
+
+  const ScreenCapture = window.uppy.getPlugin('ScreenCapture')
+  if (opts.ScreenCapture && !ScreenCapture) {
+    window.uppy.use(ScreenCapture, { target: Dashboard })
+  } else {
+    window.uppy.removePlugin(ScreenCapture)
   }
 }
 

@@ -132,7 +132,16 @@ fi_FI.strings = {
     '0': 'Sinun pitää valita vähintään %{smart_count} tiedosto',
     '1': 'Sinun pitää valita vähintään %{smart_count} tiedostoa',
     '2': 'Sinun pitää valita vähintään %{smart_count} tiedostoa'
-  }
+  },
+  startCapturing: 'Aloita tallennus',
+  stopCapturing: 'Lopeta tallennus',
+  selectSourceTitle: 'Valitse kaappauksen kohde',
+  selectSourceDescription: 'Salli ruudun jako, jotta tallennus on mahdollista.',
+  submitRecordedFile: 'Hyväksy tallenne',
+  streamActive: 'Jako aktiivinen',
+  streamPassive: 'Jako passiivinen',
+  micDisabled: 'Käyttäjä on estänyt mikrofonin',
+  recording: 'Tallennetaan'
 }
 
 fi_FI.pluralize = function (n) {

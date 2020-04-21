@@ -36,6 +36,7 @@ const packages = [
   '@uppy/drag-drop',
   '@uppy/file-input',
   '@uppy/webcam',
+  '@uppy/screen-capture',
   '@uppy/dropbox',
   '@uppy/google-drive',
   '@uppy/instagram',

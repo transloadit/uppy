@@ -26,6 +26,7 @@ export { default as OneDrive } from '@uppy/onedrive'
 export { default as Facebook } from '@uppy/facebook'
 export { default as Url } from '@uppy/url'
 export { default as Webcam } from '@uppy/webcam'
+export { default as ScreenCapture } from '@uppy/screen-capture'
 
 // Uploaders
 export { default as AwsS3 } from '@uppy/aws-s3'
