@@ -121,7 +121,7 @@
     "brake": "1.0.1",
     "browser-resolve": "1.11.3",
     "browser-sync": "2.26.7",
-    "browserify": "16.5.0",
+    "browserify": "16.5.1",
     "chai": "4.2.0",
     "chalk": "2.4.2",
     "cssnano": "4.1.10",
@@ -190,10 +190,10 @@
     "tsify": "4.0.1",
     "tus-node-server": "0.3.2",
     "typescript": "3.7.5",
-    "verdaccio": "4.4.4",
+    "verdaccio": "^4.5.1",
     "watchify": "3.11.1",
     "webdriverio": "5.18.6",
-    "webpack": "4.41.6",
+    "webpack": "4.43.0",
     "whatwg-fetch": "3.0.0"
   },
   "scripts": {
