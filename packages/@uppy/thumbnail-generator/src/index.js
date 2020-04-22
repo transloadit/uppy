@@ -82,7 +82,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
         const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.rotation)
         const rotatedImage = this.rotateImage(image, orientation)
         const resizedImage = this.resizeImage(rotatedImage, dimensions.width, dimensions.height)
-        return this.canvasToBlob(resizedImage, 'image/png')
+        return this.canvasToBlob(resizedImage, 'image/jpeg', 80)
       })
       .then(blob => {
         return URL.createObjectURL(blob)
