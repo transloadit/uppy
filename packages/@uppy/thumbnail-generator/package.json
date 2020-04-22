@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@uppy/utils": "file:../utils",
-    "exifr": "^4.3.4"
+    "exifr": "^5.0.1"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
