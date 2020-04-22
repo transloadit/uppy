@@ -131,8 +131,8 @@ module.exports = class AwsS3 extends Plugin {
       throw new Error('Expected a `companionUrl` option containing a Companion address.')
     }
 
-    const filename = encodeURIComponent(file.meta.name)
-    const type = encodeURIComponent(file.meta.type)
+    const filename = file.meta.name;
+    const type = file.meta.type;
     const metadata = {}
     this.opts.metaFields.forEach((key) => {
       if (file.meta[key] != null) {
