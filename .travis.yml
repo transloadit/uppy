@@ -32,7 +32,7 @@ jobs:
         sauce_connect: *SAUCE
       script: npm run test:endtoend
     - name: 'Run unit tests'
-      node_js: 'stable'
+      node_js: 13
       script: npm run test:unit
     - name: 'Run unit tests on Node.js 10'
       node_js: 10
@@ -78,7 +78,7 @@ jobs:
         on:
           branch: master
     - name: 'Run Companion tests (Node.js 6)'
-      node_js: 'stable'
+      node_js: '12'
       services:
         - docker
       script:
