@@ -1,30 +1,24 @@
 import Uppy = require('@uppy/core');
 
 declare module ScreenCapture {
+  // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints#Properties_of_shared_screen_tracks
+  // TODO: use the global DisplayMediaStreamConstraints once typescript includes it by default
+  interface DisplayMediaStreamConstraints {
+    audio?: boolean | MediaTrackConstraints;
+    video?: boolean | (MediaTrackConstraints & {
+      cursor?: 'always' | 'motion' | 'never',
+      displaySurface?: 'application' | 'browser' | 'monitor' | 'window',
+      logicalSurface?: boolean
+    });
+  }
 
   export interface ScreenCaptureOptions extends Uppy.PluginOptions {
-    displayMediaConstraints: {
-      audio: boolean,
-      video: { 
-        width: number, 
-        height: number,
-        frameRate: { 
-          ideal: number, 
-          max: number } 
-        }
-    },
-    preferredVideoMimeType: string
+    displayMediaConstraints?: DisplayMediaStreamConstraints,
+    userMediaConstraints?: MediaStreamConstraints,
+    preferredVideoMimeType?: string
   }
 }
 
-declare class ScreenCapture extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<ScreenCapture.ScreenCaptureOptions>);
-}
+declare class ScreenCapture extends Uppy.Plugin<ScreenCapture.ScreenCaptureOptions> {}
 
 export = ScreenCapture;
-
-declare module '@uppy/core' {
-  export interface Uppy {
-    use(pluginClass: typeof ScreenCapture, opts: Partial<ScreenCapture.ScreenCaptureOptions>): Uppy.Uppy;
-  }
-}

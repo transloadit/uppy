@@ -59,10 +59,10 @@ module.exports = class ScreenCapture extends Plugin {
           frameRate: {
             ideal: 3,
             max: 5
-          }
-        },
-        cursor: 'motion',
-        displaySurface: 'monitor'
+          },
+          cursor: 'motion',
+          displaySurface: 'monitor'
+        }
       },
       // https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints/audio
       userMediaConstraints: {
