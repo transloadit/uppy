@@ -135,8 +135,6 @@ fi_FI.strings = {
   },
   startCapturing: 'Aloita tallennus',
   stopCapturing: 'Lopeta tallennus',
-  selectSourceTitle: 'Valitse kaappauksen kohde',
-  selectSourceDescription: 'Salli ruudun jako, jotta tallennus on mahdollista.',
   submitRecordedFile: 'Hyväksy tallenne',
   streamActive: 'Jako aktiivinen',
   streamPassive: 'Jako passiivinen',

@@ -62,7 +62,6 @@ en_US.strings = {
   loading: 'Loading...',
   logOut: 'Log out',
   micDisabled: 'Microphone access denied by user',
-  micIsOn: 'Microphone is on',
   myDevice: 'My Device',
   noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
   noFilesFound: 'You have no files or folders here',
@@ -74,7 +73,6 @@ en_US.strings = {
   paused: 'Paused',
   poweredBy: 'Powered by',
   poweredBy2: '%{backwardsCompat} %{uppy}',
-  preparingUpload: 'Preparing upload...',
   processingXFiles: {
     '0': 'Processing %{smart_count} file',
     '1': 'Processing %{smart_count} files'
@@ -91,8 +89,6 @@ en_US.strings = {
   saveChanges: 'Save changes',
   selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
   selectFileNamed: 'Select file %{name}',
-  selectSourceDescription: 'In order to capture your screen, please allow access for this site.',
-  selectSourceTitle: 'Please allow access to your screen',
   selectX: {
     '0': 'Select %{smart_count}',
     '1': 'Select %{smart_count}'
