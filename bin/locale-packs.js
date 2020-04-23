@@ -63,7 +63,7 @@ function buildPluginsList () {
     // @TODO Consider rewriting constructors so they don't make imperative calls that rely on
     // browser environment (OR: just keep this browser mocking, if it's only causing issues for this script, it doesn't matter)
     global.location = { protocol: 'https' }
-    global.navigator = {}
+    global.navigator = { userAgent: '' }
     global.localStorage = {
       key: () => { },
       getItem: () => { }
