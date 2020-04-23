@@ -44,7 +44,7 @@ module.exports = class ScreenCapture extends Plugin {
         streamActive: 'Stream active',
         streamPassive: 'Stream passive',
         micDisabled: 'Microphone access denied by user',
-        timeRecording: 'Recording'
+        recording: 'Recording'
       }
     }
 
