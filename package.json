@@ -163,7 +163,7 @@
     "multi-glob": "1.0.2",
     "namespace-emitter": "2.0.1",
     "nock": "9.6.1",
-    "node-sass": "4.13.1",
+    "node-sass": "4.14.0",
     "nodemon": "1.19.4",
     "npm-auth-to-token": "1.0.0",
     "npm-packlist": "1.4.8",
