@@ -55,9 +55,29 @@ const renderCopyLinkButton = (props) => (
     </button>
 )
 
+const renderErrorButton = (props) => {
+  const displayErrorAlert = () => {
+    alert(props.file.error)
+  }
+
+  return props.showErrorIconInFileList &&
+  props.file.error &&
+    <span
+      class="uppy-StatusBar-details"
+      aria-label={props.file.error}
+      data-microtip-position="bottom-left"
+      data-microtip-size="medium"
+      role="tooltip"
+      onclick={displayErrorAlert}
+    >
+      ?
+    </span>
+}
+
 module.exports = function Buttons (props) {
   return (
     <div className="uppy-DashboardItem-actionWrapper">
+      {renderErrorButton(props)}
       {renderEditButton(props)}
       {renderCopyLinkButton(props)}
       {renderRemoveButton(props)}

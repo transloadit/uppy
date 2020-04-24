@@ -74,6 +74,7 @@ uppy.use(Dashboard, {
   thumbnailWidth: 280,
   defaultTabIcon: defaultTabIcon,
   showLinkToFileUploadResult: true,
+  showErrorIconInFileList: false,
   showProgressDetails: false,
   hideUploadButton: false,
   hideRetryButton: false,
@@ -144,6 +145,10 @@ This is useful because Thumbnail Generator also adds EXIF data to images, and if
 ### `showLinkToFileUploadResult: true`
 
 By default, when a file upload has completed, the file icon in the Dashboard turns into a link to the uploaded file. If your app does not publicly store uploaded files or if it's otherwise unwanted, pass `showLinkToFileUploadResult: false`.
+
+### `showErrorIconInFileList: false`
+
+By default, when a file upload failed, no error message is shown for the file itself but only a global summary is shown. If `showErrorIconInFileList` is set to `true`, an icon is displayed that has the error message as a tooltip and also allows to show the error message on a click.
 
 ### `showProgressDetails: false`
 

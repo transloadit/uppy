@@ -40,6 +40,7 @@ declare module Dashboard {
     plugins?: string[]
     proudlyDisplayPoweredByUppy?: boolean
     showLinkToFileUploadResult?: boolean
+    showErrorIconInFileList?: boolean
     showProgressDetails?: boolean
     showSelectedFiles?: boolean
     replaceTargetContent?: boolean

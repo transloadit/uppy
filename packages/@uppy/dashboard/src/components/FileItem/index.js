@@ -65,6 +65,7 @@ module.exports = class FileItem extends Component {
             metaFields={this.props.metaFields}
 
             showLinkToFileUploadResult={this.props.showLinkToFileUploadResult}
+            showErrorIconInFileList={this.props.showErrorIconInFileList}
             showRemoveButton={showRemoveButton}
 
             uploadInProgressOrComplete={uploadInProgressOrComplete}
