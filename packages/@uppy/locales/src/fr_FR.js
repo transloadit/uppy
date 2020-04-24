@@ -63,7 +63,6 @@ fr_FR.strings = {
   loading: 'Chargement...',
   logOut: 'Déconnexion',
   micDisabled: 'Accès au micro refusé par l\'utilisateur',
-  micIsOn: 'Micro actif',
   myDevice: 'Mon Appareil',
   noDuplicates: 'Impossible d\'ajouter le fichier "%{fileName}", il existe déjà',
   noFilesFound: 'Vous n\'avez aucun fichier ou dossier ici',
@@ -92,8 +91,6 @@ fr_FR.strings = {
   saveChanges: 'Sauvegarder les modifications',
   selectAllFilesFromFolderNamed: 'Sélectionner tous les fichiers du dossier %{name}',
   selectFileNamed: 'Sélectionner le fichier %{name}',
-  selectSourceDescription: 'Afin de réaliser une vidéo de votre écran, veuillez autoriser l\'accès à ce site.',
-  selectSourceTitle: 'Veuillez autoriser l\'accès à votre écran',
   selectX: {
     '0': 'Sélectionner %{smart_count}',
     '1': 'Sélectionner %{smart_count}',
