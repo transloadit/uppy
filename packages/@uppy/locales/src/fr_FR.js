@@ -96,7 +96,7 @@ fr_FR.strings = {
     '1': 'Sélectionner %{smart_count}',
     '2': 'Sélectionner %{smart_count}'
   },
-  smile: 'Souriez!',
+  smile: 'Souriez !',
   startRecording: 'Commencer l\'enregistrement vidéo',
   stopRecording: 'Arrêter l\'enregistrement vidéo',
   streamActive: 'Stream actif',
