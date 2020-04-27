@@ -25,8 +25,13 @@ module.exports = (props) => {
     { 'uppy-Dashboard-files--noFiles': noFiles }
   )
 
-  // 190px height + 2 * 5px margin
-  const rowHeight = 200
+  // It's not great that this is hardcoded!
+  // It's ESPECIALLY not great that this is checking against `itemsPerRow`!
+  const rowHeight = props.itemsPerRow === 1
+    // Mobile
+    ? 71
+    // 190px height + 2 * 5px margin
+    : 200
 
   const fileProps = {
     // FIXME This is confusing, it's actually the Dashboard's plugin ID
