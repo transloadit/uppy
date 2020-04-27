@@ -1,4 +1,5 @@
 const chalk = require('chalk')
+const escapeStringRegexp = require('escape-string-regexp')
 
 const valuesToMask = []
 /**
@@ -6,9 +7,9 @@ const valuesToMask = []
  * This function can only be called once through out the life of the server.
  * @param {Array} maskables a list of strings to be masked
  */
-exports.addMaskables = (maskables) => {
+exports.setMaskables = (maskables) => {
   maskables.forEach((i) => {
-    valuesToMask.push(i)
+    valuesToMask.push(escapeStringRegexp(i))
   })
 
   Object.freeze(valuesToMask)

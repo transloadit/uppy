@@ -298,5 +298,5 @@ const maskLogger = (companionOptions) => {
     })
   }
 
-  logger.addMaskables(secrets)
+  logger.setMaskables(secrets)
 }

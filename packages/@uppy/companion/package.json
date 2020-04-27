@@ -37,6 +37,7 @@
     "common-tags": "1.8.0",
     "connect-redis": "4.0.3",
     "cookie-parser": "1.4.4",
+    "escape-string-regexp": "4.0.0",
     "express": "4.17.1",
     "express-interceptor": "1.2.0",
     "express-prom-bundle": "3.3.0",
@@ -89,6 +90,6 @@
     "test:watch": "npm test -- --watch"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=10.0.0"
   }
 }
