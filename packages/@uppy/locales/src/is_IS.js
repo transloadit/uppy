@@ -71,7 +71,6 @@ is_IS.strings = {
   pauseUpload: 'Gera hlé á upphölun',
   paused: 'Hlé í gangi',
   poweredBy: 'Knúið af',
-  preparingUpload: 'Undirbý upphölun...',
   processingXFiles: {
     '0': 'Vinn %{smart_count} skrá',
     '1': 'Vinn %{smart_count} skrár',

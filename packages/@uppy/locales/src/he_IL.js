@@ -66,7 +66,6 @@ he_IL.strings = {
   pauseUpload: 'השהה העלאה',
   paused: 'מושהה',
   poweredBy: 'בחסות',
-  preparingUpload: 'מכין העלאה...',
   processingXFiles: {
     '0': 'מעבד קובץ %{smart_count}',
     '1': 'מעבד %{smart_count} קבצים',

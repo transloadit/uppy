@@ -65,7 +65,6 @@ hu_HU.strings = {
   pauseUpload: 'Feltöltés szüneteltetése',
   paused: 'Szüneteltetve',
   poweredBy: 'Meghajtja az',
-  preparingUpload: 'Feltöltés előkészítése...',
   processingXFiles: {
     '0': '%{smart_count} fájl feldolgozása',
     '1': '%{smart_count} fájl feldolgozása',

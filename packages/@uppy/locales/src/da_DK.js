@@ -64,7 +64,6 @@ da_DK.strings = {
   pauseUpload: 'Pause upload',
   paused: 'Sat på pause',
   poweredBy: 'Drevet af',
-  preparingUpload: 'Forbereder upload...',
   processingXFiles: {
     '0': 'Behandler %{smart_count} filer',
     '1': 'Behandler %{smart_count} fil',

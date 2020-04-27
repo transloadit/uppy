@@ -72,7 +72,6 @@ zh_TW.strings = {
   pauseUpload: '暫停上傳',
   paused: '已暫停',
   poweredBy: '技術提供者',
-  preparingUpload: '準備上傳中...',
   processingXFiles: {
     '0': '%{smart_count}個檔案處理中',
     '1': '%{smart_count}個檔案處理中',

@@ -63,7 +63,6 @@ pt_BR.strings = {
   pauseUpload: 'Pausar envio de arquivos',
   paused: 'Pausado',
   poweredBy: 'Desenvolvido por',
-  preparingUpload: 'Preparando envio de arquivos...',
   processingXFiles: {
     '0': 'Processando %{smart_count} arquivo',
     '1': 'Processando %{smart_count} arquivos',
