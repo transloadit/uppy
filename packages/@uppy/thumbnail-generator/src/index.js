@@ -3,7 +3,7 @@ const Translator = require('@uppy/utils/lib/Translator')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
-const log2 = require('math-log2')
+const MathLog2 = require('math-log2') // Polyfill for IE.
 const exifr = require('exifr/dist/mini.legacy.umd.js')
 
 /**
@@ -164,9 +164,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     image = this.protect(image)
 
-    // Use the Polyfill for Math.log2() since IE doesn't support log2
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log2#Polyfill
-    var steps = Math.ceil(log2(image.width / targetWidth))
+    var steps = Math.ceil(MathLog2(image.width / targetWidth))
     if (steps < 1) {
       steps = 1
     }
