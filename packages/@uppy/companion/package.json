@@ -85,7 +85,7 @@
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "npm run build",
     "start": "node ./lib/standalone/start-server.js",
-    "test": "/bin/bash -c 'npm run build && source env.test.sh && jest'",
+    "test": "bash -c 'npm run build && source env.test.sh && jest'",
     "test:watch": "npm test -- --watch"
   },
   "engines": {

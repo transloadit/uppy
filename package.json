@@ -159,6 +159,7 @@
     "lint-staged": "9.5.0",
     "mime-types": "2.1.26",
     "minify-stream": "1.2.1",
+    "minimist": "^1.2.5",
     "mkdirp": "0.5.1",
     "multi-glob": "1.0.2",
     "namespace-emitter": "2.0.1",
