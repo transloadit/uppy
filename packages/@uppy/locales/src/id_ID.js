@@ -64,7 +64,6 @@ id_ID.strings = {
   pauseUpload: 'Tunda pengungahan',
   paused: 'Ditunda',
   poweredBy: 'Didukung oleh',
-  preparingUpload: 'Mempersiapkan pengungahan...',
   processingXFiles: {
     '0': 'Pemrosesan %{smart_count} berkas',
     '1': 'Pemrosesan %{smart_count} berkas',

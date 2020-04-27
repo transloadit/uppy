@@ -63,7 +63,6 @@ tr_TR.strings = {
   pauseUpload: 'Yükleme Durdu',
   paused: 'Durdu',
   poweredBy: 'Powered by',
-  preparingUpload: 'Yüklemeye hazırlanıyor...',
   processingXFiles: {
     '0': '%{smart_count} dosya işleniyor',
     '1': '%{smart_count} dosya işleniyor',

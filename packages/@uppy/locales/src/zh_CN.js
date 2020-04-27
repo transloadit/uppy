@@ -63,7 +63,6 @@ zh_CN.strings = {
   pauseUpload: '暂停上传',
   paused: '已暂停',
   poweredBy: '强力驱动于',
-  preparingUpload: '准备上传中...',
   processingXFiles: {
     '0': '%{smart_count}个文件处理中',
     '1': '%{smart_count}个文件处理中',
