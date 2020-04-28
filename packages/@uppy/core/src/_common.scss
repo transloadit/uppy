@@ -117,7 +117,8 @@
   }
 
   [data-uppy-theme="dark"] &:focus {
-    border-color: $gray-300;
+    border-color: $gray-700;
+    box-shadow: none;
   }
 }
 
