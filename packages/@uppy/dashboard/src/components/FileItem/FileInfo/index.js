@@ -1,5 +1,5 @@
 const { h } = require('preact')
-const prettyBytes = require('@uppy/utils/lib/prettyBytes')
+const prettierBytes = require('@transloadit/prettier-bytes')
 const truncateString = require('../../../utils/truncateString')
 
 const renderAcquirerIcon = (acquirer, props) =>
@@ -43,7 +43,7 @@ const renderFileName = (props) => {
 const renderFileSize = (props) => (
   props.file.data.size &&
     <div class="uppy-DashboardItem-statusSize">
-      {prettyBytes(props.file.data.size)}
+      {prettierBytes(props.file.data.size)}
     </div>
 )
 

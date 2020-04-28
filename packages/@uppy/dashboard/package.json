@@ -22,6 +22,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@transloadit/prettier-bytes": "0.0.2",
     "@uppy/informer": "file:../informer",
     "@uppy/provider-views": "file:../provider-views",
     "@uppy/status-bar": "file:../status-bar",

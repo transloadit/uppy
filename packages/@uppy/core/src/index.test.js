@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const prettyBytes = require('@uppy/utils/lib/prettyBytes')
+const prettierBytes = require('@transloadit/prettier-bytes')
 const Core = require('./index')
 const Plugin = require('./Plugin')
 const AcquirerPlugin1 = require('../../../../test/mocks/acquirerPlugin1')
@@ -1553,7 +1553,7 @@ describe('src/Core', () => {
         name: 'test.jpg',
         data: new Blob([Buffer.alloc(2 * maxFileSize)])
       }
-      const errorMessage = `${core.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`
+      const errorMessage = `${core.i18n('exceedsSize')} ${prettierBytes(maxFileSize)}`
       try {
         core.on('restriction-failed', restrictionsViolatedEventMock)
         core.addFile(file)
