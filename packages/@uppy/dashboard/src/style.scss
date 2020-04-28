@@ -217,6 +217,10 @@
   .uppy-Dashboard--modal & {
     border-color: $gray-300;
   }
+
+  [data-uppy-theme="dark"] & {
+    border-color: $gray-600;
+  }
 }
 
 .uppy-Dashboard-AddFiles-info {
