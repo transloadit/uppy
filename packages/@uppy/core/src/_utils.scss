@@ -48,6 +48,14 @@
   }
 }
 
+@mixin blue-border-focus--dark() {
+  @include clear-focus();
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba($highlight--dark, 0.5);
+  }
+}
+
 @mixin clear-focus() {
   &:focus {
     outline: none;

@@ -168,10 +168,7 @@
 
   [data-uppy-theme="dark"] & {
     color: $gray-200;
-  }
-
-  [data-uppy-theme="dark"] &:focus {
-    box-shadow: 0 0 0 3px rgba($blue, 0.6);
+    @include blue-border-focus--dark;
   }
 }
 
@@ -198,6 +195,7 @@
 
   [data-uppy-theme="dark"] & {
     color: $gray-200;
+    @include blue-border-focus--dark;
   }
 
   [data-uppy-theme="dark"] &:hover {

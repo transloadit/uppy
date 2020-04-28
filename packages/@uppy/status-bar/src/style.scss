@@ -210,6 +210,10 @@
   margin: 3px;
   opacity: 0.9;
 
+  [data-uppy-theme="dark"] & {
+    @include blue-border-focus--dark;
+  }
+
   &:hover {
     opacity: 1;
   }
@@ -248,6 +252,10 @@
     color: #fff;
     padding: 1px 6px 3px 18px;
     position: relative;
+
+    [data-uppy-theme="dark"] & {
+      @include blue-border-focus--dark;
+    }
 
     &:hover {
       background-color: darken($pomegranate, 8%);
@@ -291,6 +299,10 @@
     padding-left: 3px;
     padding-bottom: 1px;
     border-radius: 3px;
+
+    [data-uppy-theme="dark"] & {
+      @include blue-border-focus--dark;
+    }
   }
 
 .uppy-StatusBar-details {
