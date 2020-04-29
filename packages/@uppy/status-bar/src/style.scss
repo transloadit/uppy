@@ -275,16 +275,23 @@
     color: $white;
     background-color: $green;
     line-height: 1;
+    
+    &:hover {
+      background-color: darken($green, 5%);
+    }
+
+    [data-uppy-theme="dark"] & {
+      background-color: $darkgreen;
+    }
+
+    [data-uppy-theme="dark"] &:hover {
+      background-color: darken($darkgreen, 5%);
+    }
   }
-
-    .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload:hover {
-      background-color: darken($green, 10%);
-    }
-
-    .uppy-size--md .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
-      padding: 13px 22px;
-      width: auto;
-    }
+  .uppy-size--md .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
+    padding: 13px 22px;
+    width: auto;
+  }
 
   .uppy-StatusBar:not(.is-waiting) .uppy-StatusBar-actionBtn--upload {
     background-color: transparent;
