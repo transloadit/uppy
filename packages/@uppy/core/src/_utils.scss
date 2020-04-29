@@ -52,7 +52,7 @@
   @include clear-focus();
 
   &:focus {
-    box-shadow: 0 0 0 3px rgba($highlight--dark, 0.5);
+    box-shadow: 0 0 0 2px rgba($lightblue, 0.85);
   }
 }
 
