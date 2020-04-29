@@ -41,10 +41,11 @@ exports.warn = (msg, tag, traceId) => {
  * @param {string | Error} msg the message to log
  * @param {string=} tag a unique tag to easily search for this message
  * @param {string=} traceId a unique id to easily trace logs tied to a request
+ * @param {boolean=} shouldLogStackTrace when set to true, errors will be logged with their stack trace
  */
-exports.error = (msg, tag, traceId) => {
+exports.error = (msg, tag, traceId, shouldLogStackTrace) => {
   // @ts-ignore
-  log(msg, tag, 'error', traceId, chalk.bold.red)
+  log(msg, tag, 'error', traceId, chalk.bold.red, shouldLogStackTrace)
 }
 
 /**
@@ -66,14 +67,28 @@ exports.debug = (msg, tag, traceId) => {
  * @param {string} level error | info | debug
  * @param {function=} color function to display the log in appropriate color
  * @param {string=} id a unique id to easily trace logs tied to a request
+ * @param {boolean=} shouldLogStackTrace when set to true, errors will be logged with their stack trace
  */
-const log = (msg, tag, level, id, color) => {
+const log = (msg, tag, level, id, color, shouldLogStackTrace) => {
   const time = new Date().toISOString()
   tag = tag || ''
   id = id || ''
   const whitespace = tag && id ? ' ' : ''
   color = color || ((message) => message)
-  msg = typeof msg === 'string' ? maskMessage(msg) : msg
+  if (typeof msg === 'string') {
+    msg = maskMessage(msg)
+  } else if (msg && typeof msg.message === 'string') {
+    msg.message = maskMessage(msg.message)
+  }
+
+  if (shouldLogStackTrace && msg instanceof Error && typeof msg.stack === 'string') {
+    msg.stack = maskMessage(msg.stack)
+    // exclude msg from template string so values such as error objects
+    // can be well formatted
+    console.log(color(`companion: ${time} [${level}] ${id}${whitespace}${tag}`), color(msg.stack))
+    return
+  }
+
   // exclude msg from template string so values such as error objects
   // can be well formatted
   console.log(color(`companion: ${time} [${level}] ${id}${whitespace}${tag}`), color(msg))
