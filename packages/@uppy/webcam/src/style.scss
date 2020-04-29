@@ -46,6 +46,7 @@
 }
 
 .uppy-Webcam-button {
+  @include blue-border-focus;
   width: 45px;
   height: 45px;
   border-radius: 50%;
@@ -53,6 +54,10 @@
   color: $white;
   cursor: pointer;
   transition: all 0.3s;
+
+  [data-uppy-theme="dark"] & {
+    @include blue-border-focus--dark;
+  }
 }
 
   .uppy-Webcam-button svg {
@@ -73,11 +78,6 @@
 
   .uppy-Webcam-button:hover {
     background-color: darken($red, 5%);
-  }
-
-  .uppy-Webcam-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 0.2rem rgba($blue, 0.5);
   }
 
 .uppy-Webcam-button--picture {
