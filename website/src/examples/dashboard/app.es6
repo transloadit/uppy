@@ -84,7 +84,7 @@ function uppySetOptions () {
     theme: opts.darkMode ? 'dark' : 'light'
   })
 
-  const GoogleDriveInstance = window.uppy.getPlugin('GoogleDrive')
+  const googleDriveInstance = window.uppy.getPlugin('GoogleDrive')
   if (opts.GoogleDrive && !googleDriveInstance) {
     window.uppy.use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION })
   }
