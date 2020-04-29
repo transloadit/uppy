@@ -105,7 +105,7 @@ module.exports = class Dashboard extends Plugin {
       waitForThumbnailsBeforeUpload: false,
       defaultPickerIcon,
       showLinkToFileUploadResult: true,
-      showErrorIconInFileList: false,
+      showErrorIconInFileList: true,
       showProgressDetails: false,
       hideUploadButton: false,
       hideRetryButton: false,
