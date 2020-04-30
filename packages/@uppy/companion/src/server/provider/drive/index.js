@@ -112,18 +112,23 @@ class Drive extends Provider {
       .request()
   }
 
-  _getGsuiteFileMeta (id, token, mimeType, onDone) {
-    logger.info(`calling Gsuite file meta for ${id}`, 'provider.drive.export.meta')
-    return this.client
-      .query()
-      .head(`files/${id}/export`)
-      .qs({ supportsAllDrives: true, mimeType })
-      .auth(token)
-      .request(onDone)
+  _waitForFailedResponse (resp) {
+    return new Promise((resolve, reject) => {
+      let data = ''
+      resp.on('data', (chunk) => {
+        data += chunk
+      }).on('end', () => {
+        try {
+          resolve(JSON.parse(data.toString()))
+        } catch (error) {
+          reject(error)
+        }
+      })
+    })
   }
 
   download ({ id, token }, onData) {
-    this.stats({ id, token }, (err, resp, body) => {
+    this.stats({ id, token }, (err, _, body) => {
       if (err) {
         logger.error(err, 'provider.drive.download.stats.error')
         onData(err)
@@ -143,7 +148,18 @@ class Drive extends Provider {
       }
 
       requestStream
-        .on('data', (chunk) => onData(null, chunk))
+        .on('response', (resp) => {
+          if (resp.statusCode !== 200) {
+            this._waitForFailedResponse(resp)
+              .then((jsonResp) => {
+                resp.body = jsonResp
+                onData(this._error(null, resp))
+              })
+              .catch((err) => onData(this._error(err, resp)))
+          } else {
+            resp.on('data', (chunk) => onData(null, chunk))
+          }
+        })
         .on('end', () => onData(null, null))
         .on('error', (err) => {
           logger.error(err, 'provider.drive.download.error')
@@ -168,25 +184,12 @@ class Drive extends Provider {
       }
 
       if (adapter.isGsuiteFile(body.mimeType)) {
-        // Google Docs file sizes can be determined
-        // while Google sheets file sizes can't be determined
-        const googleDocMimeType = 'application/vnd.google-apps.document'
-        if (body.mimeType !== googleDocMimeType) {
-          const maxExportFileSize = 10 * 1024 * 1024 // 10 MB
-          done(null, maxExportFileSize)
-          return
-        }
-
-        this._getGsuiteFileMeta(id, token, adapter.getGsuiteExportType(body.mimeType), (err, resp) => {
-          if (err || resp.statusCode !== 200) {
-            err = this._error(err, resp)
-            logger.error(err, 'provider.drive.docs.size.error')
-            return done(err)
-          }
-
-          const size = resp.headers['content-length']
-          done(null, size ? parseInt(size) : null)
-        })
+        // Not all GSuite file sizes can be predetermined
+        // also for files whose size can be predetermined,
+        // the request to get it can be sometimes expesnive, depending
+        // on the file size. So we default the size to the size export limit
+        const maxExportFileSize = 10 * 1024 * 1024 // 10 MB
+        done(null, maxExportFileSize)
       } else {
         done(null, parseInt(body.size))
       }

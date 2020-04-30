@@ -80,9 +80,21 @@ class Facebook extends Provider {
       .qs({ fields: 'images' })
       .auth(token)
       .request((err, resp, body) => {
-        if (err) return logger.error(err, 'provider.facebook.download.error')
+        if (err || resp.statusCode !== 200) {
+          err = this._error(err, resp)
+          logger.error(err, 'provider.facebook.download.error')
+          onData(err)
+          return
+        }
+
         request(this._getMediaUrl(body))
-          .on('data', (chunk) => onData(null, chunk))
+          .on('response', (resp) => {
+            if (resp.statusCode !== 200) {
+              onData(this._error(null, resp))
+            } else {
+              resp.on('data', (chunk) => onData(null, chunk))
+            }
+          })
           .on('end', () => onData(null, null))
           .on('error', (err) => {
             logger.error(err, 'provider.facebook.download.url.error')
