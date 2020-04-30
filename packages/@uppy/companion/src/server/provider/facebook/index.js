@@ -87,19 +87,13 @@ class Facebook extends Provider {
           return
         }
 
-        let stopDataTransfer = false
         request(this._getMediaUrl(body))
           .on('response', (resp) => {
             if (resp.statusCode !== 200) {
-              stopDataTransfer = true
               onData(this._error(null, resp))
+            } else {
+              resp.on('data', (chunk) => onData(null, chunk))
             }
-          })
-          .on('data', (chunk) => {
-            if (stopDataTransfer) {
-              return
-            }
-            onData(null, chunk)
           })
           .on('end', () => onData(null, null))
           .on('error', (err) => {

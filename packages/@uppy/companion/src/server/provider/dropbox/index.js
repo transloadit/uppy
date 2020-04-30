@@ -111,7 +111,6 @@ class DropBox extends Provider {
   }
 
   download ({ id, token }, onData) {
-    let stopDataTransfer = false
     return this.client
       .post('https://content.dropboxapi.com/2/files/download')
       .options({
@@ -124,15 +123,10 @@ class DropBox extends Provider {
       .request()
       .on('response', (resp) => {
         if (resp.statusCode !== 200) {
-          stopDataTransfer = true
           onData(this._error(null, resp))
+        } else {
+          resp.on('data', (chunk) => onData(null, chunk))
         }
-      })
-      .on('data', (chunk) => {
-        if (stopDataTransfer) {
-          return
-        }
-        onData(null, chunk)
       })
       .on('end', () => onData(null, null))
       .on('error', (err) => {
