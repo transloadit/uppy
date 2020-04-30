@@ -64,7 +64,6 @@ ru_RU.strings = {
   pause: 'Поставить на паузу',
   pauseUpload: 'Поставить загрузку на паузу',
   paused: 'На паузе',
-  preparingUpload: 'Подготовка к загрузке...',
   processingXFiles: {
     '0': 'Обрабатывается %{smart_count} файл',
     '1': 'Обрабатываются %{smart_count} файла',

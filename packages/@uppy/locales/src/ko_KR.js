@@ -66,7 +66,6 @@ ko_KR.strings = {
   pauseUpload: '업로드 일시정지',
   paused: '일시정지 됨',
   poweredBy: 'Powered by',
-  preparingUpload: '업로드 준비 중...',
   processingXFiles: {
     '0': '%{smart_count}개의 파일 처리 중',
     '1': '%{smart_count}개의 파일 처리 중',

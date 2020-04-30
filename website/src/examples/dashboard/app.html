@@ -10,6 +10,7 @@
   </ul>
   <ul>
     <li><label for="opts-Webcam"><input type="checkbox" id="opts-Webcam" checked/> Webcam</label></li>
+    <li><label for="opts-ScreenCapture"><input type="checkbox" id="opts-ScreenCapture" checked/> Screen Capture</label></li>
     <li><label for="opts-GoogleDrive"><input type="checkbox" id="opts-GoogleDrive" checked/> Google Drive</label></li>
     <li><label for="opts-Dropbox"><input type="checkbox" id="opts-Dropbox" checked/> Dropbox</label></li>
     <li><label for="opts-Instagram"><input type="checkbox" id="opts-Instagram" checked/> Instagram</label></li>
@@ -37,6 +38,7 @@
   var optionInputs = {
     DashboardInline: document.querySelector('#opts-DashboardInline'),
     Webcam: document.querySelector('#opts-Webcam'),
+    ScreenCapture: document.querySelector('#opts-ScreenCapture'),
     GoogleDrive: document.querySelector('#opts-GoogleDrive'),
     Dropbox: document.querySelector('#opts-Dropbox'),
     Instagram: document.querySelector('#opts-Instagram'),
@@ -51,6 +53,7 @@
   var defaultOpts = {
     DashboardInline: true,
     Webcam: true,
+    ScreenCapture: true,
     GoogleDrive: true,
     Instagram: true,
     Dropbox: true,

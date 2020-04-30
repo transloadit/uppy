@@ -66,7 +66,6 @@ vi_VN.strings = {
   pauseUpload: 'Tạm dừng tải lên',
   paused: 'Đã tạm dừng',
   poweredBy: 'Cung cấp bởi',
-  preparingUpload: 'Đang chuẩn bị tải lên...',
   processingXFiles: {
     '0': 'Đang xử lí %{smart_count} tập tin',
     '1': 'Đang xử lí %{smart_count} tập tin',

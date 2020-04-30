@@ -7,6 +7,7 @@ const Dropbox = require('@uppy/dropbox/src')
 const GoogleDrive = require('@uppy/google-drive/src')
 const Url = require('@uppy/url/src')
 const Webcam = require('@uppy/webcam/src')
+const ScreenCapture = require('@uppy/screen-capture/src')
 const GoldenRetriever = require('@uppy/golden-retriever/src')
 const Tus = require('@uppy/tus/src')
 const AwsS3 = require('@uppy/aws-s3/src')
@@ -65,6 +66,7 @@ module.exports = () => {
     .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Url, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Webcam, { target: Dashboard })
+    .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
 
   switch (UPLOADER) {

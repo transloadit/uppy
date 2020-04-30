@@ -64,7 +64,6 @@ fi_FI.strings = {
   pauseUpload: 'Keskeytä lähetys',
   paused: 'Keskeytetty',
   poweredBy: 'Powered by',
-  preparingUpload: 'Valmistellaan lähetystä...',
   processingXFiles: {
     '0': 'Käsitellään %{smart_count} tiedostoa',
     '1': 'Käsitellään %{smart_count} tiedostoa',
@@ -132,7 +131,14 @@ fi_FI.strings = {
     '0': 'Sinun pitää valita vähintään %{smart_count} tiedosto',
     '1': 'Sinun pitää valita vähintään %{smart_count} tiedostoa',
     '2': 'Sinun pitää valita vähintään %{smart_count} tiedostoa'
-  }
+  },
+  startCapturing: 'Aloita tallennus',
+  stopCapturing: 'Lopeta tallennus',
+  submitRecordedFile: 'Hyväksy tallenne',
+  streamActive: 'Jako aktiivinen',
+  streamPassive: 'Jako passiivinen',
+  micDisabled: 'Käyttäjä on estänyt mikrofonin',
+  recording: 'Tallennetaan'
 }
 
 fi_FI.pluralize = function (n) {

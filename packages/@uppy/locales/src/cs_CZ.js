@@ -65,7 +65,6 @@ cs_CZ.strings = {
   pauseUpload: 'Pozastavit nahrávání',
   paused: 'Pozastaveno',
   poweredBy: 'Vytvořeno pomocí ',
-  preparingUpload: 'Připavuje se nahrávání...',
   processingXFiles: {
     '0': 'Zpracování %{smart_count} souborů',
     '1': 'Zpracování %{smart_count} souborů',

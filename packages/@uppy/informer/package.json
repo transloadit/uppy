@@ -1,7 +1,7 @@
 {
   "name": "@uppy/informer",
   "description": "A notification and error pop-up bar for Uppy.",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",

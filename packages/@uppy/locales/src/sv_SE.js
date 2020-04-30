@@ -64,7 +64,6 @@ sv_SE.strings = {
   pauseUpload: 'Pausa uppladdning',
   paused: 'Pausad',
   poweredBy: 'Drivs av',
-  preparingUpload: 'Förbereder uppladdning...',
   processingXFiles: {
     '0': 'Processerar %{smart_count} fil',
     '1': 'Processerar %{smart_count} filer',

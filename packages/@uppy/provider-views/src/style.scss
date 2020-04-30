@@ -12,7 +12,7 @@
   flex: 1;
 
   [data-uppy-theme="dark"] & {
-    background-color: $black;
+    background-color: $gray-900;
   }
 }
 
@@ -69,7 +69,7 @@
   }
 
   [data-uppy-theme="dark"] & {
-    color: $white;
+    color: $gray-200;
   }
 }
   .uppy-Provider-breadcrumbsIcon {
@@ -115,7 +115,7 @@
   color: $gray-800;
 
   [data-uppy-theme="dark"] & {
-    color: $white;
+    color: $gray-200;
   }
 }
 
@@ -178,7 +178,7 @@
   align-items: center;
 
   [data-uppy-theme="dark"] & {
-    background-color: $black;
+    background-color: $gray-900;
   }
 }
 
@@ -206,8 +206,8 @@
   border-radius: 4px;
 
   [data-uppy-theme="dark"] & {
-    background-color: $black;
-    color: $white;
+    background-color: $gray-900;
+    color: $gray-200;
   }
 }
 
@@ -259,7 +259,7 @@
   }
 
   [data-uppy-theme="dark"] & {
-    color: $white;
+    color: $gray-200;
   }
 }
 
@@ -289,7 +289,7 @@
   padding: 0;
 
   [data-uppy-theme="dark"] & {
-    background-color: $black;
+    background-color: $gray-900;
   }
 }
 

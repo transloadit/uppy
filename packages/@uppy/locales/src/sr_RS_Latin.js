@@ -63,7 +63,6 @@ sr_RS_Latin.strings = {
   pauseUpload: 'Privremeno zaustavi otpremanje',
   paused: 'Privremeno zaustavljeno',
   poweredBy: 'Otpremanje pokreće',
-  preparingUpload: 'Pripremam otpremanje...',
   processingXFiles: {
     '0': 'Obrada datoteke',
     '1': 'Broj datoteka koje se obrađuju: %{smart_count}',

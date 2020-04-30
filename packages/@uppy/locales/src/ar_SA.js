@@ -63,7 +63,6 @@ ar_SA.strings = {
   pauseUpload: 'ايقاف الرفع',
   paused: 'موقف',
   poweredBy: 'مشغل ب',
-  preparingUpload: 'تجهيز الرفع...',
   processingXFiles: {
     '0': 'جاري معالجة %{smart_count} ملف',
     '1': 'جاري معالجة %{smart_count} ملفات',

@@ -34,37 +34,56 @@ if (app.get('env') !== 'test') {
   clearInterval(promInterval)
 }
 
+// Query string keys whose values should not end up in logging output.
+const sensitiveKeys = new Set(['access_token', 'uppyAuthToken'])
+
+/**
+ * Obscure the contents of query string keys listed in `sensitiveKeys`.
+ *
+ * Returns a copy of the object with unknown types removed and sensitive values replaced by ***.
+ *
+ * The input type is more broad that it needs to be, this way typescript can help us guarantee that we're dealing with all possible inputs :)
+ *
+ * @param {{ [key: string]: any }} rawQuery
+ * @returns {{
+ *   query: { [key: string]: string },
+ *   censored: boolean
+ * }}
+ */
+function censorQuery (rawQuery) {
+  /** @type {{ [key: string]: string }} */
+  const query = {}
+  let censored = false
+  Object.keys(rawQuery).forEach((key) => {
+    if (typeof rawQuery[key] !== 'string') {
+      return
+    }
+    if (sensitiveKeys.has(key)) {
+      // replace logged access token
+      query[key] = '********'
+      censored = true
+    } else {
+      query[key] = rawQuery[key]
+    }
+  })
+  return { query, censored }
+}
+
 app.use(addRequestId)
 // log server requests.
 app.use(morgan('combined'))
 morgan.token('url', (req, res) => {
-  const query = Object.assign({}, req.query)
-  let hasQuery = false;
-  ['access_token', 'uppyAuthToken'].forEach((key) => {
-    if (req.query && req.query[key]) {
-      // replace logged access token with xxxx character
-      query[key] = 'x'.repeat(req.query[key].length)
-      hasQuery = true
-    }
-  })
-
-  return hasQuery ? `${req.path}?${qs.stringify(query)}` : req.originalUrl || req.url
+  const { query, censored } = censorQuery(req.query)
+  return censored ? `${req.path}?${qs.stringify(query)}` : req.originalUrl || req.url
 })
 
 morgan.token('referrer', (req, res) => {
   const ref = req.headers.referer || req.headers.referrer
   if (typeof ref === 'string') {
     const parsed = parseURL(ref)
-    const query = qs.parse(parsed.search.replace('?', ''));
-    ['uppyAuthToken', 'access_token'].forEach(key => {
-      if (query[key]) {
-        query[key] = 'x'.repeat(query[key].length)
-      }
-    })
-
-    const hasQuery = parsed.search
-    const newURL = `${parsed.href.split('?')[0]}?${qs.stringify(query)}`
-    return hasQuery ? newURL : parsed.href
+    const rawQuery = qs.parse(parsed.search.replace('?', ''))
+    const { query, censored } = censorQuery(rawQuery)
+    return censored ? `${parsed.href.split('?')[0]}?${qs.stringify(query)}` : parsed.href
   }
 })
 

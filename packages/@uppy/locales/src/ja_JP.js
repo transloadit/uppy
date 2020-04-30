@@ -63,7 +63,6 @@ ja_JP.strings = {
   pauseUpload: 'アップロードを一時停止',
   paused: '停止中',
   poweredBy: 'Powered by',
-  preparingUpload: 'アップロードを準備中...',
   processingXFiles: {
     '0': '%{smart_count} ファイル処理中',
     '1': '%{smart_count} ファイル処理中',

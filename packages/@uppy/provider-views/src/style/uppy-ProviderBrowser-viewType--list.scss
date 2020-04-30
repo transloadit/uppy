@@ -6,7 +6,7 @@
   background-color: $white;
 
   [data-uppy-theme="dark"] & {
-    background-color: $black;
+    background-color: $gray-900;
   }
 
   li.uppy-ProviderBrowserItem {
@@ -16,7 +16,7 @@
     margin: 0;
 
     [data-uppy-theme="dark"] & {
-      color: $white;
+      color: $gray-200;
     }
   }
 

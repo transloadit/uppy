@@ -72,7 +72,6 @@ ro_RO.strings = {
   paused: 'Întrerupt',
   poweredBy: 'Susținut de',
   poweredBy2: '%{backwardsCompat} %{uppy}',
-  preparingUpload: 'Se pregătește încărcarea...',
   processingXFiles: {
     '0': 'Se procesează %{smart_count} fișier',
     '1': 'Se procesează %{smart_count} fișiere'
