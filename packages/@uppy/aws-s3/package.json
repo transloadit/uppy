@@ -25,6 +25,7 @@
     "@uppy/companion-client": "file:../companion-client",
     "@uppy/utils": "file:../utils",
     "@uppy/xhr-upload": "file:../xhr-upload",
+    "cuid": "^2.1.1",
     "qs-stringify": "^1.1.0",
     "url-parse": "^1.4.7"
   },
