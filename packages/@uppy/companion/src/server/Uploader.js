@@ -88,7 +88,7 @@ class Uploader {
         this._paused = true
         if (this.tus) {
           const shouldTerminate = !!this.tus.url
-          this.tus.abort(shouldTerminate)
+          this.tus.abort(shouldTerminate).catch(() => {})
         }
         this.cleanUp()
       })
@@ -449,7 +449,6 @@ class Uploader {
       uploadUrl: this.options.uploadUrl,
       // @ts-ignore
       uploadLengthDeferred: false,
-      resume: true,
       retryDelays: [0, 1000, 3000, 5000],
       uploadSize: this.bytesWritten,
       metadata: Object.assign(

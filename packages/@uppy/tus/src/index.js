@@ -23,18 +23,27 @@ const getFingerprint = require('./getFingerprint')
  */
 const tusDefaultOptions = {
   endpoint: '',
-  resume: true,
+
+  uploadUrl: null,
+  metadata: {},
+  uploadSize: null,
+
   onProgress: null,
   onChunkComplete: null,
   onSuccess: null,
   onError: null,
-  headers: {},
-  chunkSize: Infinity,
-  withCredentials: false,
-  uploadUrl: null,
-  uploadSize: null,
+
   overridePatchMethod: false,
-  retryDelays: null
+  headers: {},
+  addRequestId: false,
+
+  chunkSize: Infinity,
+  retryDelays: [0, 1000, 3000, 5000],
+  parallelUploads: 1,
+  storeFingerprintForResuming: true,
+  removeFingerprintOnSuccess: false,
+  uploadLengthDeferred: false,
+  uploadDataDuringCreation: false
 }
 
 /**
@@ -55,7 +64,6 @@ module.exports = class Tus extends Plugin {
 
     // set default options
     const defaultOptions = {
-      resume: true,
       autoRetry: true,
       useFastRemoteRetry: true,
       limit: 0,
@@ -178,8 +186,9 @@ module.exports = class Tus extends Plugin {
       optsTus.onError = (err) => {
         this.uppy.log(err)
 
-        if (isNetworkError(err.originalRequest)) {
-          err = new NetworkError(err, err.originalRequest)
+        const xhr = err.originalRequest ? err.originalRequest.getUnderlyingObject() : null
+        if (isNetworkError(xhr)) {
+          err = new NetworkError(err, xhr)
         }
 
         this.uppy.emit('upload-error', file, err)
