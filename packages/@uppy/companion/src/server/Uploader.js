@@ -88,6 +88,7 @@ class Uploader {
         this._paused = true
         if (this.tus) {
           const shouldTerminate = !!this.tus.url
+          // @ts-ignore
           this.tus.abort(shouldTerminate).catch(() => {})
         }
         this.cleanUp()
