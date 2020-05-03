@@ -25,7 +25,7 @@
     "@types/tus-js-client": "^1.8.0",
     "@uppy/companion-client": "file:../companion-client",
     "@uppy/utils": "file:../utils",
-    "tus-js-client": "^2.0.0-0"
+    "tus-js-client": "^2.0.0-1"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
