@@ -207,9 +207,11 @@
     margin-left: 20px;
   }
 
-  // h2, h3 {
-  //   padding-top: 80px;
-  // }
+  // Fix ancor scroll overflow (i.e. /docs/uppy#upload) for headings
+  [id] {
+    scroll-margin-top: 6em;
+  }
+
 
   // for ancor links to work with fixed header
   h2:before, h3:before {
@@ -235,19 +237,6 @@
   > h2 {
     font-size: 1.3em;
     margin: 0.5em 0 .4em 0;
-    // padding-bottom: .2em;
-    // position: relative;
-    // border-bottom: 1px solid $color-border;
-
-    // &:before {
-    //   content: "#";
-    //   color: $color-primary;
-    //   position: absolute;
-    //   left: -0.7em;
-    //   top: -4px;
-    //   font-size: 1.2em;
-    //   font-weight: bold;
-    // }
   }
 
   .post h3,
