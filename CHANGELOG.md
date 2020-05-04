@@ -69,12 +69,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] xhr: set the `limit` option to a sensible default, like 10
 - [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
 
-## 1.16
+## 1.17
 
 - [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
 
-## 1.15
+## 1.16
 
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
@@ -88,7 +88,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 # next
 
-## 1.14
+## 1.15
 
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default's store #320
 - [ ] provider: add Box (@ife)
@@ -102,9 +102,40 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53 (@arturi)
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] companion: what happens if access token expires during/between an download & upload (@ife)
-- [ ] plugins: review & merge screenshot+screencast support similar to Webcam #148 (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
-- [ ] s3: immediately start uploading files once the signed URL is generated (#2060, @goto-bus-stop)
+
+## 1.14
+
+Released: 2020-04-29
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.6.3 | @uppy/onedrive | 1.1.4 |
+| @uppy/aws-s3 | 1.6.3 | @uppy/progress-bar | 1.3.12 |
+| @uppy/companion-client | 1.4.3 | @uppy/provider-views | 1.6.4 |
+| @uppy/companion | 2.0.0 | @uppy/react | 1.6.4 |
+| @uppy/core | 1.10.3 | @uppy/robodog | 1.6.5 |
+| @uppy/dashboard | 1.8.4 | @uppy/screen-capture | 1.0.0 |
+| @uppy/drag-drop | 1.4.11 | @uppy/status-bar | 1.6.4 |
+| @uppy/dropbox | 1.4.4 | @uppy/thumbnail-generator | 1.5.11 |
+| @uppy/facebook | 1.1.4 | @uppy/transloadit | 1.5.9 |
+| @uppy/file-input | 1.4.10 | @uppy/tus | 1.5.11 |
+| @uppy/form | 1.3.13 | @uppy/url | 1.5.4 |
+| @uppy/golden-retriever | 1.3.12 | @uppy/utils | 2.4.3 |
+| @uppy/google-drive | 1.5.4 | @uppy/webcam | 1.6.4 |
+| @uppy/informer | 1.5.4 | @uppy/xhr-upload | 1.5.9 |
+| @uppy/instagram | 1.4.4 | uppy | 1.14.0 |
+| @uppy/locales | 1.13.2 | - | - |
+
+- @uppy/aws-s3: fix double encoding of the upload params (#2220 / @romain-preston)
+- @uppy/aws-s3: fixing URL constructor use in Safari (#2207 / @NaxYo)
+- @uppy/companion: improve obscuring sensitive values in standalone server (#2219 / @goto-bus-stop)
+- @uppy/companion: upgrade Companion version used in Heroku setup instructions (#2206 / @zacharylawson)
+- @uppy/dashboard: move from white to off-white in Dark Mode (#2222 / @arturi)
+- @uppy/locales: various updates to French translation (#2203 / @louim, #2216 / dtrucs)
+- @uppy/screen-capture: add a new plugin for recording your device screen (#2132 / @jukakoski & @arturi)
+- @uppy/thumbnail-generator: use new exifr.rotation() API  (#2230 / @goto-bus-stop)
+- @uppy/utils: remove duplicate check of element type (#2210 / @jrschumacher)
 
 ## 1.13.2
 
