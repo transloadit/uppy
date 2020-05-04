@@ -743,9 +743,8 @@ module.exports = class Transloadit extends Plugin {
 
   _onTusError (err) {
     if (err && /^tus: /.test(err.message)) {
-      const url = err.originalRequest && err.originalRequest.responseURL
-        ? err.originalRequest.responseURL
-        : null
+      const xhr = err.originalRequest ? err.originalRequest.getUnderlyingObject() : null
+      const url = xhr && xhr.responseURL ? xhr.responseURL : null
       this.client.submitError(err, { url, type: 'TUS_ERROR' }).then((_) => {
         // if we can't report the error that sucks
       })
@@ -779,7 +778,7 @@ module.exports = class Transloadit extends Plugin {
         // were added to the Assembly, so we can properly complete it. All that state is handled by
         // Golden Retriever. So, Golden Retriever is required to do resumability with the Transloadit plugin,
         // and we disable Tus's default resume implementation to prevent bad behaviours.
-        resume: false,
+        storeFingerprintForResuming: false,
         // Disable Companion's retry optimisation; we need to change the endpoint on retry
         // so it can't just reuse the same tus.Upload instance server-side.
         useFastRemoteRetry: false,
