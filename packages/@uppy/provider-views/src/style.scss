@@ -97,6 +97,10 @@
       text-decoration: underline;
       cursor: pointer;
     }
+
+    [data-uppy-theme="dark"] & {
+      color: $gray-200;
+    }
   }
 // ...uppy-Provider-breadcrumbs|
 
