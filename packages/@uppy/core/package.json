@@ -20,7 +20,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@transloadit/prettier-bytes": "0.0.2",
+    "@transloadit/prettier-bytes": "0.0.7",
     "@uppy/store-default": "file:../store-default",
     "@uppy/utils": "file:../utils",
     "cuid": "^2.1.1",

@@ -23,9 +23,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@transloadit/prettier-bytes": "0.0.2",
-    "@uppy/utils": "file:../utils",
-    "prettier-bytes": "^1.0.4"
+    "@transloadit/prettier-bytes": "0.0.7",
+    "@uppy/utils": "file:../utils"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
