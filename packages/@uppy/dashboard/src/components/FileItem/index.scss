@@ -9,7 +9,7 @@
   border-bottom: 1px solid $gray-200;
   padding: 10px;
   padding-right: 0;
-  
+
   [data-uppy-theme="dark"] & {
     border-bottom: 1px solid $gray-800;
   }
@@ -24,6 +24,7 @@
     float: left;
     margin: 5px $rl-margin;
     padding: 0;
+    /* When changing width: also update `itemsPerRow` values in `src/components/Dashboard.js`. */
     width: calc(33.333% - #{$rl-margin} - #{$rl-margin});
     height: 215px;
     border-bottom: 0;
@@ -31,11 +32,13 @@
 
   .uppy-size--lg & {
     margin: 5px $rl-margin;
+    /* When changing width: also update `itemsPerRow` values in `src/components/Dashboard.js`. */
     width: calc(25% - #{$rl-margin} - #{$rl-margin});
     height: 190px;
   }
 
   .uppy-size--xl & {
+    /* When changing width: also update `itemsPerRow` values in `src/components/Dashboard.js`. */
     width: calc(20% - #{$rl-margin} - #{$rl-margin});
     height: 210px;
   }
