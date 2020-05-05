@@ -70,7 +70,13 @@ class OneDrive extends Provider {
       .get(`${rootPath}/items/${id}/content`)
       .auth(token)
       .request()
-      .on('data', (chunk) => onData(null, chunk))
+      .on('response', (resp) => {
+        if (resp.statusCode !== 200) {
+          onData(this._error(null, resp))
+        } else {
+          resp.on('data', (chunk) => onData(null, chunk))
+        }
+      })
       .on('end', () => onData(null, null))
       .on('error', (err) => {
         logger.error(err, 'provider.onedrive.download.error')

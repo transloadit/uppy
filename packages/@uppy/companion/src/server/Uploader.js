@@ -331,7 +331,7 @@ class Uploader {
 
   getResponse () {
     if (this._errRespMessage) {
-      return { body: { error: this._errRespMessage }, status: 400 }
+      return { body: { message: this._errRespMessage }, status: 400 }
     }
     return { body: { token: this.token }, status: 200 }
   }

@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "1.8.3",
+  "version": "1.8.5",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
