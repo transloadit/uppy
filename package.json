@@ -90,6 +90,7 @@
     "@lerna/run": "3.20.0",
     "@octokit/rest": "16.43.1",
     "@size-limit/preset-big-lib": "2.2.4",
+    "@transloadit/prettier-bytes": "0.0.7",
     "@types/aws-serverless-express": "3.3.3",
     "@types/compression": "1.7.0",
     "@types/connect-redis": "0.0.7",
