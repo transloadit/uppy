@@ -12,10 +12,11 @@ declare module AwsS3 {
 
   interface AwsS3Options extends Uppy.PluginOptions {
     companionUrl?: string
+    getChunkSize?: (file: Uppy.UppyFile) => number
     getUploadParameters?: (
       file: Uppy.UppyFile
     ) => MaybePromise<AwsS3UploadParameters>
-    metaFields?: string[],
+    metaFields?: string[]
     timeout?: number
     limit?: number
   }
