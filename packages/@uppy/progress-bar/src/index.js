@@ -30,7 +30,7 @@ module.exports = class ProgressBar extends Plugin {
 
   render (state) {
     const progress = state.totalProgress || 0
-    // before starting and after finish should be hidden
+    // before starting and after finish should be hidden if specified in the options
     const isHidden = (progress === 0 || progress === 100) && this.opts.hideAfterFinish
     return (
       <div
