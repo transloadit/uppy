@@ -60,7 +60,7 @@
     "request": "2.88.0",
     "semver": "6.3.0",
     "serialize-error": "^2.1.0",
-    "tus-js-client": "2.0.0-1",
+    "tus-js-client": "2.0.0",
     "uuid": "3.3.3",
     "validator": "^12.1.0",
     "ws": "6.2.1"

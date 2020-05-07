@@ -153,7 +153,9 @@ module.exports = class Transloadit extends Plugin {
     // Add Assembly-specific Tus endpoint.
     const tus = {
       ...file.tus,
-      endpoint: status.tus_url
+      endpoint: status.tus_url,
+      // Include X-Request-ID headers for better debugging.
+      addRequestId: true
     }
 
     // Set Companion location. We only add this, if 'file' has the attribute
