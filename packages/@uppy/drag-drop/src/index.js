@@ -142,7 +142,7 @@ module.exports = class DragDrop extends Plugin {
     const restrictions = this.uppy.opts.restrictions
     return (
       <input
-        id={'input-' + this.id}
+        id={'uppy-input-' + this.id}
         class="uppy-DragDrop-input"
         type="file"
         tabindex={-1}
