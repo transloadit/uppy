@@ -13,7 +13,11 @@ function MockCore () {
   }
   core.mockFile = (id, f) => { files[id] = f }
   core.getFile = (id) => files[id]
-  core.log = () => null
+  core.log = (message, level = 'log') => {
+    if (level === 'warn' || level === 'error') {
+      console[level](message)
+    }
+  }
   core.getState = () => core.state
   core.setState = () => null
   return core
@@ -78,31 +82,34 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       const plugin = new ThumbnailGeneratorPlugin(core)
       plugin.processQueue = jest.fn()
 
-      const file = { foo: 'bar' }
+      const file = { id: 'bar', type: 'image/jpeg' }
       plugin.queueProcessing = false
-      plugin.addToQueue(file)
-      expect(plugin.queue).toEqual([{ foo: 'bar' }])
+      plugin.addToQueue(file.id)
+      expect(plugin.queue).toEqual(['bar'])
       expect(plugin.processQueue).toHaveBeenCalledTimes(1)
 
-      const file2 = { foo: 'bar2' }
+      const file2 = { id: 'bar2', type: 'image/jpeg' }
       plugin.queueProcessing = true
-      plugin.addToQueue(file2)
-      expect(plugin.queue).toEqual([{ foo: 'bar' }, { foo: 'bar2' }])
+      plugin.addToQueue(file2.id)
+      expect(plugin.queue).toEqual(['bar', 'bar2'])
       expect(plugin.processQueue).toHaveBeenCalledTimes(1)
     })
 
     it('should process items in the queue one by one', () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
-
       plugin.requestThumbnail = jest.fn(() => delay(100))
+      plugin.install()
 
-      const file1 = { foo: 'bar' }
-      const file2 = { foo: 'bar2' }
-      const file3 = { foo: 'bar3' }
-      plugin.addToQueue(file1)
-      plugin.addToQueue(file2)
-      plugin.addToQueue(file3)
+      const file1 = { id: 'bar', type: 'image/jpeg' }
+      const file2 = { id: 'bar2', type: 'image/jpeg' }
+      const file3 = { id: 'bar3', type: 'image/jpeg' }
+      core.mockFile(file1.id, file1)
+      core.emit('file-added', file1)
+      core.mockFile(file2.id, file2)
+      core.emit('file-added', file2)
+      core.mockFile(file3.id, file3)
+      core.emit('file-added', file3)
 
       expect(plugin.requestThumbnail).toHaveBeenCalledTimes(1)
       expect(plugin.requestThumbnail).toHaveBeenCalledWith(file1)
@@ -143,7 +150,9 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
 
         const file1 = { id: 1, name: 'bar.jpg', type: 'image/jpeg' }
         const file2 = { id: 2, name: 'bar2.jpg', type: 'image/jpeg' }
+        core.mockFile(file1.id, file1)
         core.emit('file-added', file1)
+        core.mockFile(file2.id, file2)
         core.emit('file-added', file2)
         expect(plugin.queue).toHaveLength(1)
         // should drop it from the queue
@@ -168,10 +177,11 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
     const plugin = new ThumbnailGeneratorPlugin(core)
     plugin.createThumbnail = jest.fn((file) => delay(100).then(() => `blob:${file.id}.png`))
     plugin.setPreviewURL = jest.fn()
+    plugin.install()
 
     function add (file) {
       core.mockFile(file.id, file)
-      plugin.addToQueue(file)
+      core.emit('file-added', file)
     }
 
     it('should emit thumbnail:generated when a thumbnail was generated', () => new Promise((resolve, reject) => {
@@ -474,9 +484,9 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
   describe('onRestored', () => {
     it('should enqueue restored files', () => {
       const files = {
-        a: { preview: 'blob:abc', isRestored: true },
-        b: { preview: 'blob:def' },
-        c: { preview: 'blob:xyz', isRestored: true }
+        a: { id: 'a', type: 'image/jpeg', preview: 'blob:abc', isRestored: true },
+        b: { id: 'b', type: 'image/jpeg', preview: 'blob:def' },
+        c: { id: 'c', type: 'image/jpeg', preview: 'blob:xyz', isRestored: true }
       }
       const core = Object.assign(new MockCore(), {
         getState () {
@@ -494,8 +504,8 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       core.emit('restored')
 
       expect(plugin.addToQueue).toHaveBeenCalledTimes(2)
-      expect(plugin.addToQueue).toHaveBeenCalledWith(files.a)
-      expect(plugin.addToQueue).toHaveBeenCalledWith(files.c)
+      expect(plugin.addToQueue).toHaveBeenCalledWith(files.a.id)
+      expect(plugin.addToQueue).toHaveBeenCalledWith(files.c.id)
     })
 
     it('should not regenerate thumbnail for remote files', () => {

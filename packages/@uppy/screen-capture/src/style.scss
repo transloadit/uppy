@@ -45,15 +45,25 @@
   justify-content: center;
   padding: 0 20px;
   background-color: $white;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+    border-top: 1px solid $gray-800;
+  }
 }
 
 .uppy-ScreenCapture-button {
+  @include blue-border-focus;
   width: 45px;
   height: 45px;
   border-radius: 50%;
   color: $white;
   cursor: pointer;
   transition: all 0.3s;
+
+  [data-uppy-theme="dark"] & {
+    @include blue-border-focus--dark;
+  }
 
   .uppy-size--md & {
     width: 60px;
@@ -62,11 +72,6 @@
 
   &:hover {
     background-color: darken($red, 5%);
-  }
-
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 0.2rem rgba($blue, 0.5);
   }
 }
 

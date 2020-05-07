@@ -1,12 +1,37 @@
 const FileItem = require('./FileItem/index.js')
+const VirtualList = require('./VirtualList')
 const classNames = require('classnames')
 const { h } = require('preact')
 
-module.exports = (props) => {
-  const dashboardFilesClass = classNames({
-    'uppy-Dashboard-files': true,
-    'uppy-Dashboard-files--noFiles': props.totalFileCount === 0
+function chunks (list, size) {
+  const chunked = []
+  let currentChunk = []
+  list.forEach((item, i) => {
+    if (currentChunk.length < size) {
+      currentChunk.push(item)
+    } else {
+      chunked.push(currentChunk)
+      currentChunk = [item]
+    }
   })
+  if (currentChunk.length) chunked.push(currentChunk)
+  return chunked
+}
+
+module.exports = (props) => {
+  const noFiles = props.totalFileCount === 0
+  const dashboardFilesClass = classNames(
+    'uppy-Dashboard-files',
+    { 'uppy-Dashboard-files--noFiles': noFiles }
+  )
+
+  // It's not great that this is hardcoded!
+  // It's ESPECIALLY not great that this is checking against `itemsPerRow`!
+  const rowHeight = props.itemsPerRow === 1
+    // Mobile
+    ? 71
+    // 190px height + 2 * 5px margin
+    : 200
 
   const fileProps = {
     // FIXME This is confusing, it's actually the Dashboard's plugin ID
@@ -32,22 +57,36 @@ module.exports = (props) => {
     cancelUpload: props.cancelUpload,
     toggleFileCard: props.toggleFileCard,
     removeFile: props.removeFile,
-    handleRequestThumbnail: props.handleRequestThumbnail
+    handleRequestThumbnail: props.handleRequestThumbnail,
+    handleCancelThumbnail: props.handleCancelThumbnail
   }
 
-  function renderItem (fileID) {
+  const rows = chunks(Object.keys(props.files), props.itemsPerRow)
+
+  function renderRow (row) {
     return (
-      <FileItem
-        key={fileID}
-        {...fileProps}
-        file={props.files[fileID]}
-      />
+      // The `role="presentation` attribute ensures that the list items are properly associated with the `VirtualList` element
+      // We use the first file ID as the key—this should not change across scroll rerenders
+      <div role="presentation" key={row[0]}>
+        {row.map((fileID) => (
+          <FileItem
+            key={fileID}
+            {...fileProps}
+            role="listitem"
+            file={props.files[fileID]}
+          />
+        ))}
+      </div>
     )
   }
 
   return (
-    <ul class={dashboardFilesClass}>
-      {Object.keys(props.files).map(renderItem)}
-    </ul>
+    <VirtualList
+      class={dashboardFilesClass}
+      role="list"
+      data={rows}
+      renderRow={renderRow}
+      rowHeight={rowHeight}
+    />
   )
 }

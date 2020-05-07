@@ -8,6 +8,7 @@ const EventTracker = require('@uppy/utils/lib/EventTracker')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
+const hasProperty = require('@uppy/utils/lib/hasProperty')
 const getFingerprint = require('./getFingerprint')
 
 /** @typedef {import('..').TusOptions} TusOptions */
@@ -224,10 +225,7 @@ module.exports = class Tus extends Plugin {
       }
 
       const copyProp = (obj, srcProp, destProp) => {
-        if (
-          Object.prototype.hasOwnProperty.call(obj, srcProp) &&
-          !Object.prototype.hasOwnProperty.call(obj, destProp)
-        ) {
+        if (hasProperty(obj, srcProp) && !hasProperty(obj, destProp)) {
           obj[destProp] = obj[srcProp]
         }
       }

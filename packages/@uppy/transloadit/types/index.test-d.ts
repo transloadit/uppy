@@ -2,6 +2,9 @@ import { expectError, expectType } from 'tsd'
 import Uppy = require('@uppy/core')
 import Transloadit = require('../')
 
+expectType<string>(Transloadit.COMPANION)
+expectType<RegExp>(Transloadit.COMPANION_PATTERN)
+
 const validParams = {
   auth: { key: 'not so secret key' }
 }

@@ -5,7 +5,7 @@ const { exec } = require('child_process')
 const YAML = require('js-yaml')
 const { promisify } = require('util')
 const gzipSize = require('gzip-size')
-const bytes = require('pretty-bytes')
+const prettierBytes = require('@transloadit/prettier-bytes')
 const browserify = require('browserify')
 const touch = require('touch')
 const glob = require('glob')
@@ -102,12 +102,12 @@ async function injectSizes (config) {
       console.info(chalk.green(
         // ✓ @uppy/pkgname:     10.0 kB min  / 2.0 kB gz
         `  ✓ ${pkg}: ${' '.repeat(padTarget - pkg.length)}` +
-        `${bytes(result.minified)} min`.padEnd(10) +
-        ` / ${bytes(result.gzipped)} gz`
+        `${prettierBytes(result.minified)} min`.padEnd(10) +
+        ` / ${prettierBytes(result.gzipped)} gz`
       ))
       return Object.assign(result, {
-        prettyMinified: bytes(result.minified),
-        prettyGzipped: bytes(result.gzipped)
+        prettyMinified: prettierBytes(result.minified),
+        prettyGzipped: prettierBytes(result.gzipped)
       })
     })
   ).then((list) => {

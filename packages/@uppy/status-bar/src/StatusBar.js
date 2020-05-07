@@ -1,7 +1,7 @@
 const throttle = require('lodash.throttle')
 const classNames = require('classnames')
 const statusBarStates = require('./StatusBarStates')
-const prettyBytes = require('@uppy/utils/lib/prettyBytes')
+const prettierBytes = require('@transloadit/prettier-bytes')
 const prettyETA = require('@uppy/utils/lib/prettyETA')
 const { h } = require('preact')
 
@@ -276,8 +276,8 @@ const ProgressDetails = (props) => {
 
         {
           props.i18n('dataUploadedOfTotal', {
-            complete: prettyBytes(props.totalUploadedSize),
-            total: prettyBytes(props.totalSize)
+            complete: prettierBytes(props.totalUploadedSize),
+            total: prettierBytes(props.totalSize)
           })
         }
 

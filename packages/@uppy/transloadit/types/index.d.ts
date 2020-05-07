@@ -38,6 +38,9 @@ declare module Transloadit {
       | AssemblyOptions)
 }
 
-declare class Transloadit extends Uppy.Plugin<Transloadit.TransloaditOptions> {}
+declare class Transloadit extends Uppy.Plugin<Transloadit.TransloaditOptions> {
+  static COMPANION: string
+  static COMPANION_PATTERN: RegExp
+}
 
 export = Transloadit

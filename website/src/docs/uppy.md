@@ -426,9 +426,9 @@ file.preview   // value that can be used to populate "src" attribute of an "img"
 Get an array of all file objects in Uppy. See [uppy.getFile()](#uppy-getFile-fileID) for an example of the file object format.
 
 ```js
-const prettyBytes = require('pretty-bytes')
+const prettierBytes = require('@transloadit/prettier-bytes')
 const items = uppy.getFiles().map(() =>
-  `<li>${file.name} - ${prettyBytes(file.size)}</li>`
+  `<li>${file.name} - ${prettierBytes(file.size)}</li>`
 ).join('')
 document.querySelector('.file-list').innerHTML = `<ul>${items}</ul>`
 ```

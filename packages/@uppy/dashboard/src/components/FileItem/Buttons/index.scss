@@ -10,6 +10,7 @@
   }
 
   [data-uppy-theme="dark"] & {
+    @include blue-border-focus--dark;
     color: $gray-300;
   }
 
