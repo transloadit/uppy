@@ -155,7 +155,7 @@ async function injectGhStars () {
   console.log(`${headers['x-ratelimit-remaining']} requests remaining until we hit GitHub ratelimiter`)
 
   const dstpath = path.join(webRoot, 'themes', 'uppy', 'layout', 'partials', 'generated_stargazers.ejs')
-  fs.writeFileSync(dstpath, data.stargazers_count, 'utf-8')
+  fs.writeFileSync(dstpath, String(data.stargazers_count), 'utf-8')
 
   console.log(`${data.stargazers_count} stargazers written to '${dstpath}'`)
 }
