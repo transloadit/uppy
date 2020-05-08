@@ -48,7 +48,7 @@ const MyComponent = () => {
     return () => uppy.close()
   }, [])
 
-  return <DashboardModal uppy={uppy.current} />
+  return <DashboardModal uppy={uppy} />
 }
 ```
 
