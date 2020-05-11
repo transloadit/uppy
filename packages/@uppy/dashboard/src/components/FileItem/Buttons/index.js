@@ -3,33 +3,44 @@ const copyToClipboard = require('../../../utils/copyToClipboard')
 
 const { iconPencil, iconCross, iconCopyLink } = require('../../icons')
 
-const renderEditButton = (props) => (
-  !props.uploadInProgressOrComplete &&
-  props.metaFields &&
-  props.metaFields.length > 0 &&
-    <button
-      class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--edit"
-      type="button"
-      aria-label={props.i18n('editFile') + ' ' + props.file.meta.name}
-      title={props.i18n('editFile')}
-      onclick={(e) => props.toggleFileCard(props.file.id)}
-    >
-      {iconPencil()}
-    </button>
-)
+function EditButton ({
+  file,
+  uploadInProgressOrComplete,
+  metaFields,
+  i18n,
+  onClick
+}) {
+  if (!uploadInProgressOrComplete &&
+      metaFields &&
+      metaFields.length > 0) {
+    return (
+      <button
+        class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--edit"
+        type="button"
+        aria-label={i18n('editFile') + ' ' + file.meta.name}
+        title={i18n('editFile')}
+        onclick={() => onClick()}
+      >
+        {iconPencil()}
+      </button>
+    )
+  }
+  return null
+}
 
-const renderRemoveButton = (props) => (
-  props.showRemoveButton &&
+function RemoveButton ({ i18n, onClick }) {
+  return (
     <button
       class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--remove"
       type="button"
-      aria-label={props.i18n('removeFile')}
-      title={props.i18n('removeFile')}
-      onclick={() => props.removeFile(props.file.id)}
+      aria-label={i18n('removeFile')}
+      title={i18n('removeFile')}
+      onclick={() => onClick()}
     >
       {iconCross()}
     </button>
-)
+  )
+}
 
 const copyLinkToClipboard = (event, props) =>
   copyToClipboard(props.file.uploadURL, props.i18n('copyLinkToClipboardFallback'))
@@ -41,9 +52,8 @@ const copyLinkToClipboard = (event, props) =>
     // avoid losing focus
     .then(() => event.target.focus({ preventScroll: true }))
 
-const renderCopyLinkButton = (props) => (
-  props.showLinkToFileUploadResult &&
-  props.file.uploadURL &&
+function CopyLinkButton (props) {
+  return (
     <button
       class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--copyLink"
       type="button"
@@ -53,34 +63,67 @@ const renderCopyLinkButton = (props) => (
     >
       {iconCopyLink()}
     </button>
-)
+  )
+}
 
-const renderErrorButton = (props) => {
-  const displayErrorAlert = () => {
-    alert(props.file.error)
+function ErrorButton ({ showErrorIconInFileList, file, onClick }) {
+  if (showErrorIconInFileList && file.error) {
+    return (
+      <span
+        class="uppy-StatusBar-details"
+        aria-label={file.error}
+        data-microtip-position="bottom-left"
+        data-microtip-size="medium"
+        role="tooltip"
+        onclick={onClick}
+      >
+        ?
+      </span>
+    )
   }
-
-  return props.showErrorIconInFileList &&
-  props.file.error &&
-    <span
-      class="uppy-StatusBar-details"
-      aria-label={props.file.error}
-      data-microtip-position="bottom-left"
-      data-microtip-size="medium"
-      role="tooltip"
-      onclick={displayErrorAlert}
-    >
-      ?
-    </span>
+  return null
 }
 
 module.exports = function Buttons (props) {
+  const {
+    file,
+    uploadInProgressOrComplete,
+    metaFields,
+    showErrorIconInFileList,
+    showLinkToFileUploadResult,
+    showRemoveButton,
+    i18n,
+    removeFile,
+    toggleFileCard
+  } = props
+
   return (
     <div className="uppy-DashboardItem-actionWrapper">
-      {renderErrorButton(props)}
-      {renderEditButton(props)}
-      {renderCopyLinkButton(props)}
-      {renderRemoveButton(props)}
+      <ErrorButton
+        file={file}
+        showErrorIconInFileList={showErrorIconInFileList}
+        onClick={() => {
+          alert(file.error)
+        }}
+      />
+      <EditButton
+        i18n={i18n}
+        file={file}
+        uploadInProgressOrComplete={uploadInProgressOrComplete}
+        metaFields={metaFields}
+        onClick={() => toggleFileCard(file.id)}
+      />
+      {showLinkToFileUploadResult && file.uploadURL ? (
+        <CopyLinkButton i18n={i18n} />
+      ) : null}
+      {showRemoveButton ? (
+        <RemoveButton
+          i18n={i18n}
+          info={props.info}
+          log={props.log}
+          onClick={() => removeFile(file.id)}
+        />
+      ) : null}
     </div>
   )
 }

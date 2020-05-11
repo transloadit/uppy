@@ -5,6 +5,7 @@ const helmet = require('helmet')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const redis = require('../server/redis')
+const logger = require('../server/logger')
 const { parseURL } = require('../server/helpers/utils')
 const merge = require('lodash.merge')
 // @ts-ignore
@@ -194,24 +195,22 @@ app.use((req, res, next) => {
   return res.status(404).json({ message: 'Not Found' })
 })
 
-if (app.get('env') === 'production') {
-  // @ts-ignore
-  app.use((err, req, res, next) => {
+// @ts-ignore
+app.use((err, req, res, next) => {
+  const logStackTrace = true
+  if (app.get('env') === 'production') {
     // if the error is a URIError from the requested URL we only log the error message
     // to avoid uneccessary error alerts
     if (err.status === 400 && err instanceof URIError) {
-      console.error('\x1b[31m', req.id, err.message, '\x1b[0m')
+      logger.error(err.message, 'root.error', req.id)
     } else {
-      console.error('\x1b[31m', req.id, err, '\x1b[0m')
+      logger.error(err, 'root.error', req.id, logStackTrace)
     }
     res.status(err.status || 500).json({ message: 'Something went wrong', requestId: req.id })
-  })
-} else {
-  // @ts-ignore
-  app.use((err, req, res, next) => {
-    console.error('\x1b[31m', req.id, err, '\x1b[0m')
+  } else {
+    logger.error(err, 'root.error', req.id, logStackTrace)
     res.status(err.status || 500).json({ message: err.message, error: err, requestId: req.id })
-  })
-}
+  }
+})
 
 module.exports = { app, companionOptions }

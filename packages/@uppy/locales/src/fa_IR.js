@@ -63,7 +63,6 @@ fa_IR.strings = {
   pauseUpload: 'توقف بارگذاری',
   paused: 'متوقف شده',
   poweredBy: 'قدرت گرفته از',
-  preparingUpload: 'درحال آماده سازی برای بارگذاری',
   processingXFiles: {
     '0': 'درحال پردازش %{smart_count} فایل',
     '1': 'درحال پردازش %{smart_count} فایل',

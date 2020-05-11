@@ -1,7 +1,7 @@
 {
   "name": "@uppy/utils",
   "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
-  "version": "2.4.2",
+  "version": "2.4.4",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",

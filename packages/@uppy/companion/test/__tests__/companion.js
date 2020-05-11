@@ -77,7 +77,7 @@ describe('validate upload data', () => {
         protocol: 'tusInvalid'
       })
       .expect(400)
-      .then((res) => expect(res.body.error).toBe('unsupported protocol specified'))
+      .then((res) => expect(res.body.message).toBe('unsupported protocol specified'))
   })
 
   test('invalid upload fieldname gets rejected', () => {
@@ -91,7 +91,7 @@ describe('validate upload data', () => {
         fieldname: 390
       })
       .expect(400)
-      .then((res) => expect(res.body.error).toBe('fieldname must be a string'))
+      .then((res) => expect(res.body.message).toBe('fieldname must be a string'))
   })
 
   test('invalid upload metadata gets rejected', () => {
@@ -105,7 +105,7 @@ describe('validate upload data', () => {
         metadata: 'I am a string instead of object'
       })
       .expect(400)
-      .then((res) => expect(res.body.error).toBe('metadata must be an object'))
+      .then((res) => expect(res.body.message).toBe('metadata must be an object'))
   })
 
   test('invalid upload headers get rejected', () => {
@@ -119,7 +119,7 @@ describe('validate upload data', () => {
         headers: 'I am a string instead of object'
       })
       .expect(400)
-      .then((res) => expect(res.body.error).toBe('headers must be an object'))
+      .then((res) => expect(res.body.message).toBe('headers must be an object'))
   })
 
   test('invalid upload HTTP Method gets rejected', () => {
@@ -133,7 +133,7 @@ describe('validate upload data', () => {
         httpMethod: 'DELETE'
       })
       .expect(400)
-      .then((res) => expect(res.body.error).toBe('unsupported HTTP METHOD specified'))
+      .then((res) => expect(res.body.message).toBe('unsupported HTTP METHOD specified'))
   })
 
   test('valid upload data is allowed - tus', () => {

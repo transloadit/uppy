@@ -1,6 +1,6 @@
 {
   "name": "@uppy/companion",
-  "version": "1.13.1",
+  "version": "2.0.0-alpha.2",
   "description": "OAuth helper and remote fetcher for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
   "main": "lib/companion.js",
   "types": "types/index.d.ts",
@@ -37,6 +37,7 @@
     "common-tags": "1.8.0",
     "connect-redis": "4.0.3",
     "cookie-parser": "1.4.4",
+    "escape-string-regexp": "2.0.0",
     "express": "4.17.1",
     "express-interceptor": "1.2.0",
     "express-prom-bundle": "3.3.0",
@@ -85,7 +86,7 @@
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "npm run build",
     "start": "node ./lib/standalone/start-server.js",
-    "test": "/bin/bash -c 'npm run build && source env.test.sh && jest'",
+    "test": "bash -c 'npm run build && source env.test.sh && jest'",
     "test:watch": "npm test -- --watch"
   },
   "engines": {

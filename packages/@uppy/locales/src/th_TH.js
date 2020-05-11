@@ -66,7 +66,6 @@ th_TH.strings = {
   pauseUpload: 'หยุดการอัปโหลดชั่วคราว',
   paused: 'หยุดชั่วคราว',
   poweredBy: 'ขับเคลื่อนโดย',
-  preparingUpload: 'กำลังเตรียมอัพโหลด...',
   processingXFiles: {
     '0': 'กำลังประมวลผล %{smart_count} ไฟล์',
     '1': 'กำลังประมวลผล %{smart_count} ไฟล์',

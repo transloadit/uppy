@@ -76,9 +76,21 @@ class Instagram extends Provider {
       .qs({ fields: 'media_url' })
       .auth(token)
       .request((err, resp, body) => {
-        if (err) return logger.error(err, 'provider.instagram.download.error')
+        if (err || resp.statusCode !== 200) {
+          err = this._error(err, resp)
+          logger.error(err, 'provider.instagram.download.error')
+          onData(err)
+          return
+        }
+
         request(body.media_url)
-          .on('data', (chunk) => onData(null, chunk))
+          .on('response', (resp) => {
+            if (resp.statusCode !== 200) {
+              onData(this._error(null, resp))
+            } else {
+              resp.on('data', (chunk) => onData(null, chunk))
+            }
+          })
           .on('end', () => onData(null, null))
           .on('error', (err) => {
             logger.error(err, 'provider.instagram.download.url.error')

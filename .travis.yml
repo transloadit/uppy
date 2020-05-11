@@ -24,7 +24,7 @@ jobs:
     # Start this first because it takes a while, so it doesn't only start running after
     # other jobs have run
     - name: 'Run end-to-end browser tests'
-      node_js: 10
+      node_js: 12
       if: type = push
       addons:
         apt: *APT
@@ -32,21 +32,21 @@ jobs:
         sauce_connect: *SAUCE
       script: npm run test:endtoend
     - name: 'Run unit tests'
-      node_js: 'stable'
+      node_js: 14
       script: npm run test:unit
     - name: 'Run unit tests on Node.js 10'
       node_js: 10
       script: npm run test:unit
     - name: 'Run Linting'
-      node_js: 10
+      node_js: 12
       script:
         - npm run lint
     - name: 'Run Markdown Linting'
-      node_js: 10
+      node_js: 12
       script:
         - npm run lint:markdown
     - name: 'Run type tests'
-      node_js: 10
+      node_js: 12
       script:
         # Need to do a bunch of work to generate the locale typings 🙃
         - npm run build:lib
@@ -54,12 +54,12 @@ jobs:
         - npm run build:locale-pack
         - npm run test:type
     - name: 'Build'
-      node_js: 10
+      node_js: 12
       if: NOT (branch = master AND type = push AND commit_message =~ /^Release/)
       script:
         - npm run build
     - name: 'Build and update CDN releases'
-      node_js: 10
+      node_js: 12
       if: branch = master AND type = push AND commit_message =~ /^Release/
       script:
         - npm run build
@@ -67,7 +67,7 @@ jobs:
         - npm run uploadcdn @uppy/robodog
         - npm run uploadcdn @uppy/locales
     - name: 'Run Companion tests'
-      node_js: 10
+      node_js: 12
       services:
         - docker
       script: npm run test:companion
@@ -78,7 +78,7 @@ jobs:
         on:
           branch: master
     - name: 'Run Companion tests (Node.js 6)'
-      node_js: 'stable'
+      node_js: 12
       services:
         - docker
       script:
@@ -88,7 +88,7 @@ jobs:
     # Build the website when things are merged to master
     # https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
     - name: 'Build website'
-      node_js: 10
+      node_js: 12
       if: branch = master AND type = push
       script: 'true' # no-op, `deploy` step will do the work
       deploy:

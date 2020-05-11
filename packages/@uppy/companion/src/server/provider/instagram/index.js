@@ -77,9 +77,21 @@ class Instagram extends Provider {
       .get(`media/${id}`)
       .auth(token)
       .request((err, resp, body) => {
-        if (err) return logger.error(err, 'provider.instagram.download.error')
+        if (err || resp.statusCode !== 200) {
+          err = this._error(err, resp)
+          logger.error(err, 'provider.instagram.download.error')
+          onData(err)
+          return
+        }
+
         request(this._getMediaUrl(body, query.carousel_id))
-          .on('data', (chunk) => onData(null, chunk))
+          .on('response', (resp) => {
+            if (resp.statusCode !== 200) {
+              onData(this._error(null, resp))
+            } else {
+              resp.on('data', (chunk) => onData(null, chunk))
+            }
+          })
           .on('end', () => onData(null, null))
           .on('error', (err) => {
             logger.error(err, 'provider.instagram.download.url.error')

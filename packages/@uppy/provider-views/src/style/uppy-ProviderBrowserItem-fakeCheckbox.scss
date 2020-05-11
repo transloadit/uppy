@@ -8,12 +8,19 @@
     content: '';
     position: absolute;
     cursor: pointer;
-    border-left: 2px solid $white;
-    border-bottom: 2px solid $white;
+    border-left: 2px solid $gray-200;
+    border-bottom: 2px solid $gray-200;
     transform: rotate(-45deg);
   }
 
   [data-uppy-theme="dark"] & {
-    background-color: $gray-700;
+    background-color: $gray-900;
+    border-color: $gray-500;
+  }
+}
+
+.uppy-ProviderBrowserItem-fakeCheckbox--is-checked {
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-800;
   }
 }

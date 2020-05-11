@@ -113,11 +113,12 @@
   [data-uppy-theme="dark"] & {
     background-color: $gray-800;
     border-color: $gray-800;
-    color: $white;
+    color: $gray-200;
   }
 
   [data-uppy-theme="dark"] &:focus {
-    border-color: $gray-300;
+    border-color: $gray-700;
+    box-shadow: none;
   }
 }
 
@@ -165,8 +166,9 @@
     padding: 13px 22px;
   }
 
-  [data-uppy-theme="dark"] &:focus {
-    box-shadow: 0 0 0 3px rgba($blue, 0.6);
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+    @include blue-border-focus--dark;
   }
 }
 
@@ -193,6 +195,7 @@
 
   [data-uppy-theme="dark"] & {
     color: $gray-200;
+    @include blue-border-focus--dark;
   }
 
   [data-uppy-theme="dark"] &:hover {

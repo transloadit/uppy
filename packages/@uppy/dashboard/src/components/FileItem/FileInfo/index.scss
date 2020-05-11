@@ -13,7 +13,7 @@
     word-wrap: anywhere;
 
     [data-uppy-theme="dark"] & {
-      color: $white;
+      color: $gray-200;
     }
   }
 
@@ -24,7 +24,7 @@
     color: $gray-600;
 
     [data-uppy-theme="dark"] & {
-      color: $gray-300;
+      color: $gray-400;
     }
   }
     .uppy-DashboardItem-statusSize {

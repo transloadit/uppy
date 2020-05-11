@@ -10,11 +10,12 @@
   }
 
   [data-uppy-theme="dark"] & {
+    @include blue-border-focus--dark;
     color: $gray-300;
   }
 
   [data-uppy-theme="dark"] &:hover {
-    color: $white;
+    color: $gray-200;
   }  
 }
 

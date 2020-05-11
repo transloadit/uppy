@@ -63,7 +63,6 @@ it_IT.strings = {
   pauseUpload: 'Pausa upload',
   paused: 'In pausa',
   poweredBy: 'Powered by',
-  preparingUpload: 'Upload in preparazione...',
   processingXFiles: {
     '0': 'Sto processando %{smart_count} file',
     '1': 'Sto processando %{smart_count} file',
