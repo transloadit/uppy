@@ -353,7 +353,7 @@ This release offers a bunch of Companion improvements and bug fixes.
 - @uppy/companion:: don’t log redundant errors in production (#2112 / @ifedapoolarewaju)
 - docs: Add S3 ACL option to companion docs (#2109 / @jasonbosco)
 
-## 1.9.5
+## 1.9.4
 
 Released 2020-02-28
 
@@ -364,8 +364,6 @@ This release rolls out a fix for companion an issue introduced after [this PR](h
 | @uppy/companion | 1.9.5 |
 
 - @uppy/companion: read state from session in oauth-redirect controller (#2096 / @ifedapoolarewaju)
-
-## 1.9.4
 
 Released: 2020-02-27
 
