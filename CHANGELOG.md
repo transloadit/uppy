@@ -106,6 +106,40 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 
+## 1.14.1
+
+Released: 2020-05-01
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 2.0.0-alpha.2 | - | - |
+
+- @uppy/companion: make it node 8 compatible (temporarily) (#2234 / @ifedapoolarewaju)
+
+Released: 2020-04-30
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.6.4 | @uppy/locales | 1.13.3 |
+| @uppy/aws-s3 | 1.6.4 | @uppy/onedrive | 1.1.5 |
+| @uppy/companion-client | 1.4.4 | @uppy/progress-bar | 1.3.13 |
+| @uppy/companion | 2.0.0-alpha.1 | @uppy/react | 1.6.5 |
+| @uppy/core | 1.10.4 | @uppy/robodog | 1.6.6 |
+| @uppy/dashboard | 1.8.5 | @uppy/screen-capture | 1.0.1 |
+| @uppy/drag-drop | 1.4.12 | @uppy/status-bar | 1.6.5 |
+| @uppy/dropbox | 1.4.5 | @uppy/thumbnail-generator | 1.5.12 |
+| @uppy/facebook | 1.1.5 | @uppy/transloadit | 1.5.10 |
+| @uppy/file-input | 1.4.11 | @uppy/tus | 1.5.12 |
+| @uppy/form | 1.3.14 | @uppy/url | 1.5.5 |
+| @uppy/golden-retriever | 1.3.13 | @uppy/utils | 2.4.4 |
+| @uppy/google-drive | 1.5.5 | @uppy/webcam | 1.6.5 |
+| @uppy/informer | 1.5.5 | @uppy/xhr-upload | 1.5.10 |
+| @uppy/instagram | 1.4.5 | uppy | 1.14.1 |
+| @uppy/provider-views | 1.6.5 | - | - |
+
+- @uppy/companion: catch download failures via response status codes (#2223 / @ifedapoolarewaju)
+- @uppy/companion: mask secrets present in log messages (#2214 / @ifedapoolarewaju)
+
 ## 1.14
 
 Released: 2020-04-29
@@ -115,7 +149,7 @@ Released: 2020-04-29
 | @uppy/aws-s3-multipart | 1.6.3 | @uppy/onedrive | 1.1.4 |
 | @uppy/aws-s3 | 1.6.3 | @uppy/progress-bar | 1.3.12 |
 | @uppy/companion-client | 1.4.3 | @uppy/provider-views | 1.6.4 |
-| @uppy/companion | 2.0.0 | @uppy/react | 1.6.4 |
+| @uppy/companion | 2.0.0-alpha.0 | @uppy/react | 1.6.4 |
 | @uppy/core | 1.10.3 | @uppy/robodog | 1.6.5 |
 | @uppy/dashboard | 1.8.4 | @uppy/screen-capture | 1.0.0 |
 | @uppy/drag-drop | 1.4.11 | @uppy/status-bar | 1.6.4 |
@@ -319,7 +353,7 @@ This release offers a bunch of Companion improvements and bug fixes.
 - @uppy/companion:: don’t log redundant errors in production (#2112 / @ifedapoolarewaju)
 - docs: Add S3 ACL option to companion docs (#2109 / @jasonbosco)
 
-## 1.9.5
+## 1.9.4
 
 Released 2020-02-28
 
@@ -330,8 +364,6 @@ This release rolls out a fix for companion an issue introduced after [this PR](h
 | @uppy/companion | 1.9.5 |
 
 - @uppy/companion: read state from session in oauth-redirect controller (#2096 / @ifedapoolarewaju)
-
-## 1.9.4
 
 Released: 2020-02-27
 
