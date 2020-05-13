@@ -105,7 +105,6 @@
     "@types/node": "12.12.27",
     "@types/react": "16.9.19",
     "@types/request": "2.48.4",
-    "@types/tus-js-client": "1.8.0",
     "@types/uuid": "3.4.7",
     "@types/ws": "6.0.4",
     "@wdio/cli": "5.18.6",
