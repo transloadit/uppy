@@ -449,6 +449,7 @@ class Uploader {
       uploadLengthDeferred: false,
       retryDelays: [0, 1000, 3000, 5000],
       uploadSize: this.bytesWritten,
+      addRequestId: true,
       metadata: Object.assign(
         {
           // file name and type as required by the tusd tus server
