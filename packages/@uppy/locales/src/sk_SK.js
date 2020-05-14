@@ -77,7 +77,7 @@ sk_SK.strings = {
   poweredBy2: '%{backwardsCompat} %{uppy}',
   processingXFiles: {
     '0': 'Spracovanie %{smart_count} súboru',
-    '1': 'Spracovanie %{smart_count} súborov',
+    '1': 'Spracovanie %{smart_count} súborov'
   },
   recording: 'Nahrávanie',
   recordingLength: 'Dĺžka záznamu %{recording_length}',
