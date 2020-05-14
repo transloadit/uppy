@@ -111,7 +111,7 @@ class FileCard extends Component {
 
         <div class="uppy-Dashboard-FileCard-inner">
           <div class="uppy-Dashboard-FileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
-            <FilePreview file={file} />
+            <FilePreview file={file} uppy={this.props.uppy} />
           </div>
 
           <div class="uppy-Dashboard-FileCard-info">

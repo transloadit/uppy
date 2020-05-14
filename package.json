@@ -61,6 +61,7 @@
     "@uppy/react-native": "file:packages/@uppy/react-native",
     "@uppy/redux-dev-tools": "file:packages/@uppy/redux-dev-tools",
     "@uppy/robodog": "file:packages/@uppy/robodog",
+    "@uppy/screen-capture": "file:packages/@uppy/screen-capture",
     "@uppy/status-bar": "file:packages/@uppy/status-bar",
     "@uppy/store-default": "file:packages/@uppy/store-default",
     "@uppy/store-redux": "file:packages/@uppy/store-redux",
@@ -70,8 +71,8 @@
     "@uppy/url": "file:packages/@uppy/url",
     "@uppy/utils": "file:packages/@uppy/utils",
     "@uppy/webcam": "file:packages/@uppy/webcam",
-    "@uppy/screen-capture": "file:packages/@uppy/screen-capture",
     "@uppy/xhr-upload": "file:packages/@uppy/xhr-upload",
+    "cropperjs": "^1.5.6",
     "remark-lint-uppy": "file:private/remark-lint-uppy",
     "uppy": "file:packages/uppy",
     "uppy.io": "file:website"
