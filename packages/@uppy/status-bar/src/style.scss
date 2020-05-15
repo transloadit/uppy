@@ -330,10 +330,10 @@
   cursor: help;
 }
 
-.uppy-StatusBar-details:after {
-  line-height: 1.3;
-  word-wrap: break-word;
-}
+  .uppy-StatusBar-details:after {
+    line-height: 1.3;
+    word-wrap: break-word;
+  }
 
 .uppy-StatusBar-spinner {
   animation-name: uppy-StatusBar-spinnerAnimation;

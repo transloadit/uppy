@@ -66,6 +66,24 @@ function CopyLinkButton (props) {
   )
 }
 
+function ErrorButton ({ file, onClick }) {
+  if (file.error) {
+    return (
+      <span
+        class="uppy-DashboardItem-errorDetails"
+        aria-label={file.error}
+        data-microtip-position="bottom-left"
+        data-microtip-size="medium"
+        role="tooltip"
+        onclick={onClick}
+      >
+        ?
+      </span>
+    )
+  }
+  return null
+}
+
 module.exports = function Buttons (props) {
   const {
     file,
@@ -80,6 +98,12 @@ module.exports = function Buttons (props) {
 
   return (
     <div className="uppy-DashboardItem-actionWrapper">
+      <ErrorButton
+        file={file}
+        onClick={() => {
+          alert(file.error)
+        }}
+      />
       <EditButton
         i18n={i18n}
         file={file}
