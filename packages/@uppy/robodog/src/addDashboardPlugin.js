@@ -7,7 +7,6 @@ const dashboardOptionNames = [
   'height',
   'thumbnailWidth',
   'showLinkToFileUploadResult',
-  'showErrorIconInFileList',
   'showProgressDetails',
   'hideRetryButton',
   'hidePauseResumeCancelButtons',

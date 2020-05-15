@@ -67,6 +67,7 @@
       height: 140px;
     }
   }
+
   .uppy-DashboardItem-fileInfoAndButtons {
     flex-grow: 1;
     padding-right: 8px;
@@ -83,10 +84,12 @@
       padding-top: 9px;
     }
   }
+
     .uppy-DashboardItem-fileInfo {
       flex-grow: 1;
       flex-shrink: 1;
     }
+
     .uppy-DashboardItem-actionWrapper {
       flex-grow: 0;
       flex-shrink: 0;
@@ -111,3 +114,26 @@
     display: none;
   }
 }
+
+.uppy-DashboardItem-errorDetails {
+  line-height: 12px;
+  width: 13px;
+  height: 13px;
+  display: inline-block;
+  vertical-align: middle;
+  color: $white;
+  background-color: $gray-500;
+  border-radius: 50%;
+  position: relative;
+  top: 0;
+  left: 2px;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  cursor: help;
+}
+
+  .uppy-DashboardItem-errorDetails:after {
+    line-height: 1.3;
+    word-wrap: break-word;
+  }

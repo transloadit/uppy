@@ -49,7 +49,6 @@ module.exports = (props) => {
     hideRetryButton: props.hideRetryButton,
     hidePauseResumeCancelButtons: props.hidePauseResumeCancelButtons,
     showLinkToFileUploadResult: props.showLinkToFileUploadResult,
-    showErrorIconInFileList: props.showErrorIconInFileList,
     isWide: props.isWide,
     metaFields: props.metaFields,
     // callbacks

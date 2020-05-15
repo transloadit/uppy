@@ -66,11 +66,11 @@ function CopyLinkButton (props) {
   )
 }
 
-function ErrorButton ({ showErrorIconInFileList, file, onClick }) {
-  if (showErrorIconInFileList && file.error) {
+function ErrorButton ({ file, onClick }) {
+  if (file.error) {
     return (
       <span
-        class="uppy-StatusBar-details"
+        class="uppy-DashboardItem-errorDetails"
         aria-label={file.error}
         data-microtip-position="bottom-left"
         data-microtip-size="medium"
@@ -89,7 +89,6 @@ module.exports = function Buttons (props) {
     file,
     uploadInProgressOrComplete,
     metaFields,
-    showErrorIconInFileList,
     showLinkToFileUploadResult,
     showRemoveButton,
     i18n,
@@ -101,7 +100,6 @@ module.exports = function Buttons (props) {
     <div className="uppy-DashboardItem-actionWrapper">
       <ErrorButton
         file={file}
-        showErrorIconInFileList={showErrorIconInFileList}
         onClick={() => {
           alert(file.error)
         }}
