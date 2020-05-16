@@ -170,7 +170,7 @@ module.exports = class Webcam extends Plugin {
 
     const videoConstraints = this.opts.constraints ?? {}
     videoConstraints.facingMode = this.opts.facingMode
-        
+
     return {
       audio: acceptsAudio,
       video: acceptsVideo ? videoConstraints : false
