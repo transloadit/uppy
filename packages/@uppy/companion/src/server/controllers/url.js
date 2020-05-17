@@ -31,7 +31,7 @@ const meta = (req, res) => {
     .then((meta) => res.json(meta))
     .catch((err) => {
       logger.error(err, 'controller.url.meta.error', req.id)
-      return res.status(500).json({ error: err })
+      return res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
     })
 }
 
@@ -72,8 +72,7 @@ const get = (req, res) => {
       res.status(response.status).json(response.body)
     }).catch((err) => {
       logger.error(err, 'controller.url.get.error', req.id)
-      // @todo this should send back error (not err)
-      res.json({ err })
+      return res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
     })
 }
 
