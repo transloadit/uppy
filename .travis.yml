@@ -77,14 +77,6 @@ jobs:
         script: bin/travis-deploy-companion
         on:
           branch: master
-    - name: 'Run Companion tests (Node.js 6)'
-      node_js: 12
-      services:
-        - docker
-      script:
-        - nvm install 6.0.0
-        - nvm use 6.0.0
-        - npm run test:companion
     # Build the website when things are merged to master
     # https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
     - name: 'Build website'
