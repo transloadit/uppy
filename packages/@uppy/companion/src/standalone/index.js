@@ -6,7 +6,7 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const redis = require('../server/redis')
 const logger = require('../server/logger')
-const { parseURL } = require('../server/helpers/utils')
+const { URL } = require('url')
 const merge = require('lodash.merge')
 // @ts-ignore
 const promBundle = require('express-prom-bundle')
@@ -80,7 +80,7 @@ morgan.token('url', (req, res) => {
 morgan.token('referrer', (req, res) => {
   const ref = req.headers.referer || req.headers.referrer
   if (typeof ref === 'string') {
-    const parsed = parseURL(ref)
+    const parsed = new URL(ref)
     const rawQuery = qs.parse(parsed.search.replace('?', ''))
     const { query, censored } = censorQuery(rawQuery)
     return censored ? `${parsed.href.split('?')[0]}?${qs.stringify(query)}` : parsed.href

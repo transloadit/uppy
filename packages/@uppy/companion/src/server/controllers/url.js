@@ -1,5 +1,6 @@
 const router = require('express').Router
 const request = require('request')
+const { URL } = require('url')
 const Uploader = require('../Uploader')
 const validator = require('validator')
 const utils = require('../helpers/utils')
@@ -114,7 +115,7 @@ const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
     uri: url,
     method: 'GET',
     followAllRedirects: true,
-    agentClass: getProtectedHttpAgent(utils.parseURL(url).protocol, blockLocalIPs)
+    agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs)
   }
 
   request(opts)
