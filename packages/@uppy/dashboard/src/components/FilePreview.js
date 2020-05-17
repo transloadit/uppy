@@ -4,7 +4,16 @@ const { h } = require('preact')
 module.exports = function FilePreview (props) {
   const file = props.file
 
-  if (file.preview) {
+  const fileTypeGeneral = file.type.split('/')[0]
+  if (fileTypeGeneral === 'video' && file.data) {
+    const fileDataUrl = URL.createObjectURL(file.data)
+    return (
+      <video controls autoPlay class="uppy-DashboardItem-previewVideo">
+        <source src={fileDataUrl} />
+        Video preview is not supported in your browser
+      </video>
+    )
+  } else if (file.preview) {
     return <img class="uppy-DashboardItem-previewImg" alt={file.name} src={file.preview} />
   }
 
