@@ -2,6 +2,9 @@ const MB = 1024 * 1024
 
 const defaultOptions = {
   limit: 1,
+  getChunkSize (file) {
+    return Math.ceil(file.size / 10000)
+  },
   onStart () {},
   onProgress () {},
   onPartComplete () {},
@@ -22,6 +25,11 @@ class MultipartUploader {
       ...defaultOptions,
       ...options
     }
+    // Use default `getChunkSize` if it was null or something
+    if (!this.options.getChunkSize) {
+      this.options.getChunkSize = defaultOptions.getChunkSize
+    }
+
     this.file = file
 
     this.key = this.options.key || null
@@ -48,7 +56,10 @@ class MultipartUploader {
 
   _initChunks () {
     const chunks = []
-    const chunkSize = Math.max(Math.ceil(this.file.size / 10000), 5 * MB)
+    const desiredChunkSize = this.options.getChunkSize(this.file)
+    // at least 5MB per request, at most 10k requests
+    const minChunkSize = Math.max(5 * MB, Math.ceil(this.file.size / 10000))
+    const chunkSize = Math.max(desiredChunkSize, minChunkSize)
 
     for (let i = 0; i < this.file.size; i += chunkSize) {
       const end = Math.min(this.file.size, i + chunkSize)
