@@ -66,7 +66,6 @@ function getMediaDevices () {
     }
   }
 }
-
 /**
  * Webcam
  */
@@ -98,6 +97,8 @@ module.exports = class Webcam extends Plugin {
         stopRecording: 'Stop video recording',
         allowAccessTitle: 'Please allow access to your camera',
         allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
+        noCameraTitle: 'Camera Not Available',
+        noCameraDescription: 'In order to take pictures or record video with your camera, please connect or turn on your camera device',
         recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
         recordingLength: 'Recording length %{recording_length}'
       }
@@ -157,8 +158,14 @@ module.exports = class Webcam extends Plugin {
     this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
-  isSupported () {
-    return !!this.mediaDevices
+  hasCameraCheck () {
+    if (!this.mediaDevices) {
+      return Promise.resolve(false)
+    }
+
+    return this.mediaDevices.enumerateDevices().then(devices => {
+      return devices.some(device => device.kind === 'videoinput')
+    })
   }
 
   getConstraints () {
@@ -175,28 +182,32 @@ module.exports = class Webcam extends Plugin {
   }
 
   _start () {
-    if (!this.isSupported()) {
+    if (!this.supportsUserMedia) {
       return Promise.reject(new Error('Webcam access not supported'))
     }
 
     this.webcamActive = true
-
     const constraints = this.getConstraints()
 
-    // ask user for access to their camera
-    return this.mediaDevices.getUserMedia(constraints)
-      .then((stream) => {
-        this.stream = stream
-        // this.streamSrc = URL.createObjectURL(this.stream)
-        this.setPluginState({
-          cameraReady: true
-        })
+    this.hasCameraCheck().then(hasCamera => {
+      this.setPluginState({
+        hasCamera: hasCamera
       })
-      .catch((err) => {
-        this.setPluginState({
-          cameraError: err
+
+      // ask user for access to their camera
+      return this.mediaDevices.getUserMedia(constraints)
+        .then((stream) => {
+          this.stream = stream
+          this.setPluginState({
+            cameraReady: true
+          })
         })
-      })
+        .catch((err) => {
+          this.setPluginState({
+            cameraError: err
+          })
+        })
+    })
   }
 
   /**
@@ -436,16 +447,20 @@ module.exports = class Webcam extends Plugin {
     }, 1000)
   }
 
-  render (state) {
+  render () {
     if (!this.webcamActive) {
       this._start()
     }
 
     const webcamState = this.getPluginState()
 
-    if (!webcamState.cameraReady) {
+    if (!webcamState.cameraReady || !webcamState.hasCamera) {
       return (
-        <PermissionsScreen icon={CameraIcon} i18n={this.i18n} />
+        <PermissionsScreen
+          icon={CameraIcon}
+          i18n={this.i18n}
+          hasCamera={webcamState.hasCamera}
+        />
       )
     }
 
