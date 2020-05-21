@@ -94,8 +94,9 @@ const getConfigFromEnv = () => {
  * @returns {string}
  */
 const getSecret = (baseEnvVar) => {
-  return `${baseEnvVar}_FILE` in process.env
-    ? fs.readFileSync(process.env[`${baseEnvVar}_FILE`]).toString()
+  const secretFile = process.env[`${baseEnvVar}_FILE`]
+  return secretFile
+    ? fs.readFileSync(secretFile).toString()
     : process.env[baseEnvVar]
 }
 
