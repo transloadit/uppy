@@ -42,7 +42,7 @@ declare module Dashboard {
     showLinkToFileUploadResult?: boolean
     showProgressDetails?: boolean
     showSelectedFiles?: boolean
-    showRemoveButtonAfterComplete: boolean
+    showRemoveButtonAfterComplete?: boolean
     replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
     theme?: 'auto' | 'dark' | 'light'
