@@ -121,6 +121,7 @@ module.exports = class Dashboard extends Plugin {
       proudlyDisplayPoweredByUppy: true,
       onRequestCloseModal: () => this.closeModal(),
       showSelectedFiles: true,
+      showRemoveButtonAfterComplete: false,
       browserBackButtonClose: false,
       theme: 'light'
     }
@@ -852,6 +853,7 @@ module.exports = class Dashboard extends Plugin {
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
       hideCancelButton: this.opts.hideCancelButton,
+      showRemoveButtonAfterComplete: this.opts.showRemoveButtonAfterComplete,
       containerWidth: pluginState.containerWidth,
       containerHeight: pluginState.containerHeight,
       areInsidesReadyToBeVisible: pluginState.areInsidesReadyToBeVisible,
