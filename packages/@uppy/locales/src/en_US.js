@@ -63,6 +63,8 @@ en_US.strings = {
   logOut: 'Log out',
   micDisabled: 'Microphone access denied by user',
   myDevice: 'My Device',
+  noCameraDescription: 'In order to take pictures or record video with your camera, please connect or turn on your camera device',
+  noCameraTitle: 'Camera Not Available',
   noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
   noFilesFound: 'You have no files or folders here',
   noInternetConnection: 'No Internet connection',
