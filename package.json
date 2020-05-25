@@ -180,6 +180,7 @@
     "redux": "4.0.5",
     "remark-cli": "^8.0.0",
     "replace-x": "1.7.2",
+    "replacestream": "^4.0.3",
     "rimraf": "2.7.1",
     "stringify-object": "3.3.0",
     "supertest": "3.4.2",
