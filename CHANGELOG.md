@@ -85,7 +85,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] provider: Image search (via Google or Bing or DuckDuckGo) (@arturi)
 - [ ] core: add AngularJS wrapper component for the Dashboard (@arturi)
 - [ ] dashboard: allow selecting folders (add separate hidden input button for folders) #447 #1027 (@arturi)
-- [ ] dashboard: Customizable meta editor for the Dashboard. Some people want maps, some to disable autocomplete, some validation. Perhaps via jsx rendering. (See https://github.com/transloadit/uppy/issues/2007#issuecomment-573592859, https://github.com/transloadit/uppy/issues/809#issuecomment-417282743) (#617, #809, #454, @arturi)
 - [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112 #362
 
 # next
