@@ -413,9 +413,14 @@ module.exports = class Transloadit extends Plugin {
    * When all files are removed, cancel in-progress Assemblies.
    */
   _onCancelAll () {
-    const { assemblies } = this.getPluginState()
+    const { uploadsAssemblies } = this.getPluginState()
 
-    const cancelPromises = Object.keys(assemblies).map((assemblyID) => {
+    const assemblyIDs = Object.keys(uploadsAssemblies).reduce((acc, uploadID) => {
+      acc.push(...uploadsAssemblies[uploadID])
+      return acc
+    }, [])
+
+    const cancelPromises = assemblyIDs.map((assemblyID) => {
       const assembly = this.getAssembly(assemblyID)
       return this._cancelAssembly(assembly)
     })
