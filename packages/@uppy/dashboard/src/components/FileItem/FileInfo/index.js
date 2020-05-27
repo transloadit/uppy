@@ -47,6 +47,24 @@ const renderFileSize = (props) => (
     </div>
 )
 
+const ErrorButton = ({ file, onClick }) => {
+  if (file.error) {
+    return (
+      <span
+        class="uppy-DashboardItem-errorDetails"
+        aria-label={file.error}
+        data-microtip-position="bottom"
+        data-microtip-size="medium"
+        role="tooltip"
+        onclick={onClick}
+      >
+        ?
+      </span>
+    )
+  }
+  return null
+}
+
 module.exports = function FileInfo (props) {
   return (
     <div class="uppy-DashboardItem-fileInfo" data-uppy-file-source={props.file.source}>
@@ -54,6 +72,12 @@ module.exports = function FileInfo (props) {
       <div class="uppy-DashboardItem-status">
         {renderFileSize(props)}
         {renderFileSource(props)}
+        <ErrorButton
+          file={props.file}
+          onClick={() => {
+            alert(props.file.error)
+          }}
+        />
       </div>
     </div>
   )
