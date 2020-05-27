@@ -12,6 +12,7 @@ const hasProperty = require('@uppy/utils/lib/hasProperty')
 const getFingerprint = require('./getFingerprint')
 
 /** @typedef {import('..').TusOptions} TusOptions */
+/** @typedef {import('tus-js-client').UploadOptions} RawTusOptions */
 /** @typedef {import('@uppy/core').Uppy} Uppy */
 /** @typedef {import('@uppy/core').UppyFile} UppyFile */
 /** @typedef {import('@uppy/core').FailedUppyFile<{}>} FailedUppyFile */
@@ -20,7 +21,7 @@ const getFingerprint = require('./getFingerprint')
  * Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
  * excepted we removed 'fingerprint' key to avoid adding more dependencies
  *
- * @type {TusOptions}
+ * @type {RawTusOptions}
  */
 const tusDefaultOptions = {
   endpoint: '',
@@ -66,6 +67,7 @@ module.exports = class Tus extends Plugin {
     // set default options
     const defaultOptions = {
       autoRetry: true,
+      resume: true,
       useFastRemoteRetry: true,
       limit: 0,
       retryDelays: [0, 1000, 3000, 5000]
@@ -170,21 +172,25 @@ module.exports = class Tus extends Plugin {
     return new Promise((resolve, reject) => {
       this.uppy.emit('upload-started', file)
 
-      const optsTus = Object.assign(
-        {},
-        tusDefaultOptions,
-        this.opts,
-        // Install file-specific upload overrides.
-        file.tus || {}
-      )
+      const opts = {
+        ...this.opts,
+        ...(file.tus || {})
+      }
+
+      /** @type {RawTusOptions} */
+      const uploadOptions = {
+        ...tusDefaultOptions,
+        // TODO only put tus-specific options in?
+        ...opts
+      }
 
       // We override tus fingerprint to uppy’s `file.id`, since the `file.id`
       // now also includes `relativePath` for files added from folders.
       // This means you can add 2 identical files, if one is in folder a,
       // the other in folder b.
-      optsTus.fingerprint = getFingerprint(file)
+      uploadOptions.fingerprint = getFingerprint(file)
 
-      optsTus.onError = (err) => {
+      uploadOptions.onError = (err) => {
         this.uppy.log(err)
 
         const xhr = err.originalRequest ? err.originalRequest.getUnderlyingObject() : null
@@ -200,7 +206,7 @@ module.exports = class Tus extends Plugin {
         reject(err)
       }
 
-      optsTus.onProgress = (bytesUploaded, bytesTotal) => {
+      uploadOptions.onProgress = (bytesUploaded, bytesTotal) => {
         this.onReceiveUploadUrl(file, upload.url)
         this.uppy.emit('upload-progress', file, {
           uploader: this,
@@ -209,7 +215,7 @@ module.exports = class Tus extends Plugin {
         })
       }
 
-      optsTus.onSuccess = () => {
+      uploadOptions.onSuccess = () => {
         const uploadResp = {
           uploadURL: upload.url
         }
@@ -232,9 +238,10 @@ module.exports = class Tus extends Plugin {
         }
       }
 
+      /** @type {{ [name: string]: string }} */
       const meta = {}
-      const metaFields = Array.isArray(optsTus.metaFields)
-        ? optsTus.metaFields
+      const metaFields = Array.isArray(opts.metaFields)
+        ? opts.metaFields
         // Send along all fields by default.
         : Object.keys(file.meta)
       metaFields.forEach((item) => {
@@ -245,9 +252,9 @@ module.exports = class Tus extends Plugin {
       copyProp(meta, 'type', 'filetype')
       copyProp(meta, 'name', 'filename')
 
-      optsTus.metadata = meta
+      uploadOptions.metadata = meta
 
-      const upload = new tus.Upload(file.data, optsTus)
+      const upload = new tus.Upload(file.data, uploadOptions)
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
