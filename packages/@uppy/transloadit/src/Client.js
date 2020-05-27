@@ -1,3 +1,5 @@
+const NetworkError = require('@uppy/utils/lib/NetworkError')
+
 /**
  * A Barebones HTTP API client for Transloadit.
  */
@@ -42,19 +44,28 @@ module.exports = class Client {
       method: 'post',
       headers: this._headers,
       body: data
-    }).then((response) => response.json()).then((assembly) => {
-      if (assembly.error) {
-        const error = new Error(assembly.error)
-        error.details = assembly.message
-        error.assembly = assembly
-        if (assembly.assembly_id) {
-          error.details += ' ' + `Assembly ID: ${assembly.assembly_id}`
+    })
+      .catch((err) => {
+        if (err.name === 'AbortError') {
+          throw err
+        } else {
+          throw new NetworkError(err)
         }
-        throw error
-      }
+      })
+      .then((response) => response.json()).then((assembly) => {
+        if (assembly.error) {
+          const error = new Error(assembly.error)
+          error.details = assembly.message
+          error.assembly = assembly
+          if (assembly.assembly_id) {
+            error.details += ' ' + `Assembly ID: ${assembly.assembly_id}`
+          }
+          throw error
+        }
 
-      return assembly
-    }).catch((err) => this._reportError(err, { url, type: 'API_ERROR' }))
+        return assembly
+      })
+      .catch((err) => this._reportError(err, { url, type: 'API_ERROR' }))
   }
 
   /**
@@ -67,6 +78,13 @@ module.exports = class Client {
     const size = encodeURIComponent(file.size)
     const url = `${assembly.assembly_ssl_url}/reserve_file?size=${size}`
     return fetch(url, { method: 'post', headers: this._headers })
+      .catch((err) => {
+        if (err.name === 'AbortError') {
+          throw err
+        } else {
+          throw new NetworkError(err)
+        }
+      })
       .then((response) => response.json())
       .catch((err) => this._reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
@@ -89,6 +107,13 @@ module.exports = class Client {
     const qs = `size=${size}&filename=${filename}&fieldname=${fieldname}&s3Url=${uploadUrl}`
     const url = `${assembly.assembly_ssl_url}/add_file?${qs}`
     return fetch(url, { method: 'post', headers: this._headers })
+      .catch((err) => {
+        if (err.name === 'AbortError') {
+          throw err
+        } else {
+          throw new NetworkError(err)
+        }
+      })
       .then((response) => response.json())
       .catch((err) => this._reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
@@ -101,6 +126,13 @@ module.exports = class Client {
   cancelAssembly (assembly) {
     const url = assembly.assembly_ssl_url
     return fetch(url, { method: 'delete', headers: this._headers })
+      .catch((err) => {
+        if (err.name === 'AbortError') {
+          throw err
+        } else {
+          throw new NetworkError(err)
+        }
+      })
       .then((response) => response.json())
       .catch((err) => this._reportError(err, { url, type: 'API_ERROR' }))
   }
@@ -112,6 +144,13 @@ module.exports = class Client {
    */
   getAssemblyStatus (url) {
     return fetch(url, { headers: this._headers })
+      .catch((err) => {
+        if (err.name === 'AbortError') {
+          throw err
+        } else {
+          throw new NetworkError(err)
+        }
+      })
       .then((response) => response.json())
       .catch((err) => this._reportError(err, { url, type: 'STATUS_ERROR' }))
   }
@@ -131,7 +170,15 @@ module.exports = class Client {
         client: this.opts.client,
         error: message
       })
-    }).then((response) => response.json())
+    })
+      .catch((err) => {
+        if (err.name === 'AbortError') {
+          throw err
+        } else {
+          throw new NetworkError(err)
+        }
+      })
+      .then((response) => response.json())
   }
 
   _reportError (err, params) {
