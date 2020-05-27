@@ -91,6 +91,7 @@ uppy.use(Dashboard, {
   proudlyDisplayPoweredByUppy: true,
   onRequestCloseModal: () => this.closeModal(),
   showSelectedFiles: true,
+  showRemoveButtonAfterComplete: false,
   locale: defaultLocale,
   browserBackButtonClose: false,
   theme: 'light'
@@ -187,6 +188,10 @@ Hide Status Bar after the upload has finished.
 Show the list (grid) of selected files with preview and file name. In case you are showing selected files in your own app’s UI and want the Uppy Dashboard to just be a picker, the list can be hidden with this option.
 
 See also `disableStatusBar` option, which can hide the progress and upload button.
+
+### `showRemoveButtonAfterComplete: false`
+
+Sometimes you might want to let users remove an uploaded file. Enabling this option only shows the remove `X` button in the Dashboard UI, but to actually send a request you should listen to [`file-removed`](https://uppy.io/docs/uppy/#file-removed) event and add your logic there.
 
 ### `note: null`
 

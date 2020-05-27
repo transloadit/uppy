@@ -42,7 +42,7 @@ function RemoveButton ({ i18n, onClick }) {
   )
 }
 
-const copyLinkToClipboard = (event, props) =>
+const copyLinkToClipboard = (event, props) => {
   copyToClipboard(props.file.uploadURL, props.i18n('copyLinkToClipboardFallback'))
     .then(() => {
       props.log('Link copied to clipboard.')
@@ -51,6 +51,7 @@ const copyLinkToClipboard = (event, props) =>
     .catch(props.log)
     // avoid losing focus
     .then(() => event.target.focus({ preventScroll: true }))
+}
 
 function CopyLinkButton (props) {
   return (
@@ -75,7 +76,9 @@ module.exports = function Buttons (props) {
     showRemoveButton,
     i18n,
     removeFile,
-    toggleFileCard
+    toggleFileCard,
+    log,
+    info
   } = props
 
   return (
@@ -88,7 +91,12 @@ module.exports = function Buttons (props) {
         onClick={() => toggleFileCard(file.id)}
       />
       {showLinkToFileUploadResult && file.uploadURL ? (
-        <CopyLinkButton i18n={i18n} />
+        <CopyLinkButton
+          file={file}
+          i18n={i18n}
+          info={info}
+          log={log}
+        />
       ) : null}
       {showRemoveButton ? (
         <RemoveButton

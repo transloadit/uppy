@@ -43,7 +43,8 @@ function progressIndicatorTitle (props) {
 }
 
 module.exports = function FileProgress (props) {
-  if (props.hideRetryButton && props.error) {
+  if ((props.hideRetryButton && props.error) ||
+      (props.isUploaded && props.showRemoveButtonAfterComplete)) {
     return <div class="uppy-DashboardItem-progress" />
   } else if (
     props.isUploaded ||

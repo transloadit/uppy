@@ -1,7 +1,7 @@
 {
   "name": "@uppy/companion-client",
   "description": "Client library for communication with Companion. Intended for use in Uppy plugins.",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -21,6 +21,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@uppy/utils": "file:../utils",
     "namespace-emitter": "^2.0.1"
   }
 }

@@ -71,12 +71,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
 - [ ] transloadit: remove `UPPY_SERVER` constant
 
-## 1.17
+## 1.18
 
 - [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
 
-## 1.16
+## 1.17
 
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
@@ -85,12 +85,11 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] provider: Image search (via Google or Bing or DuckDuckGo) (@arturi)
 - [ ] core: add AngularJS wrapper component for the Dashboard (@arturi)
 - [ ] dashboard: allow selecting folders (add separate hidden input button for folders) #447 #1027 (@arturi)
-- [ ] dashboard: Customizable meta editor for the Dashboard. Some people want maps, some to disable autocomplete, some validation. Perhaps via jsx rendering. (See https://github.com/transloadit/uppy/issues/2007#issuecomment-573592859, https://github.com/transloadit/uppy/issues/809#issuecomment-417282743) (#617, #809, #454, @arturi)
 - [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112 #362
 
 # next
 
-## 1.15
+## 1.16
 
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default's store #320
 - [ ] provider: add Box (@ife)
@@ -105,6 +104,57 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
+
+## 1.15.0
+
+Released: 2020-05-25
+
+This release features Bug Fixes And Performance Improvements™ (actually significant ones), two new languages, and a handful of nifty new Dashboard features.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.7.0 | @uppy/onedrive | 1.1.6 |
+| @uppy/aws-s3 | 1.6.5 | @uppy/progress-bar | 1.3.14 |
+| @uppy/companion-client | 1.4.5 | @uppy/provider-views | 1.6.6 |
+| @uppy/companion | 2.0.0 | @uppy/react | 1.7.0 |
+| @uppy/core | 1.10.5 | @uppy/robodog | 1.6.7 |
+| @uppy/dashboard | 1.9.0 | @uppy/screen-capture | 1.0.2 |
+| @uppy/drag-drop | 1.4.13 | @uppy/status-bar | 1.6.6 |
+| @uppy/dropbox | 1.4.6 | @uppy/thumbnail-generator | 1.6.0 |
+| @uppy/facebook | 1.1.6 | @uppy/transloadit | 1.5.11 |
+| @uppy/file-input | 1.4.12 | @uppy/tus | 1.5.13 |
+| @uppy/form | 1.3.15 | @uppy/url | 1.5.6 |
+| @uppy/golden-retriever | 1.3.14 | @uppy/utils | 3.0.0 |
+| @uppy/google-drive | 1.5.6 | @uppy/webcam | 1.6.6 |
+| @uppy/informer | 1.5.6 | @uppy/xhr-upload | 1.5.11 |
+| @uppy/instagram | 1.4.6 | uppy | 1.15.0 |
+| @uppy/locales | 1.14.0 | - | - |
+
+- @uppy/aws-s3-multipart: make chunk size configurable (#2253 / @goto-bus-stop)
+- @uppy/aws-s3: add missing `cuid` dependency (#2236 / @tmaier)
+- @uppy/aws-s3: fix accidental overwrite of file metadata (#2276 / @goto-bus-stop)
+- @uppy/companion-client: add missing `@uppy/utils` dependency (#2266 / @goto-bus-stop)
+- @uppy/companion: fix crash if provider returns an empty error response (#2264 / @ifedapoolarewaju)
+- @uppy/companion: ignore environment variables that contain the empty string (#2283 / @ifedapoolarewaju)
+- @uppy/companion: validate options when using the Node.js API (#2275 / @ifedapoolarewaju)
+- @uppy/core: add more suggestions to console warning when incorrect `target` option is provided (#2242 / @goto-bus-stop)
+- @uppy/dashboard: add option to let users remove already uploaded files, UI only (#2284 / @arturi)
+- @uppy/dashboard: display error message for individual files (#2224 / @lafe)
+- @uppy/dashboard: render only visible files to the DOM to drastically improve performance (#2161 / @goto-bus-stop)
+- @uppy/drag-drop: add a more accessible `<label>` element for the hidden input (#2257 / @arturi)
+- @uppy/locales: add Bulgarian `bg_BG` (#2280 / @intenzive)
+- @uppy/locales: add Slovakian `sk_SK` (#2261 / @suchoproduction)
+- @uppy/progress-bar: hide the progress bar if no upload is in progress (#2252 / @nicojones)
+- @uppy/thumbnail-generator: generate 80% quality JPEGs instead of high-quality PNGs for a 30% perf win (#2246 / @goto-bus-stop)
+- @uppy/thumbnail-generator: support optional lazy thumbnail generation (#2161 / @goto-bus-stop)
+- @uppy/transloadit: add typings for Companion URL constants (#2244 / @goto-bus-stop)
+- @uppy/transloadit: fix typo that caused outdated Assembly data in `'complete'` event (#2287 / @goto-bus-stop)
+- @uppy/transloadit: when cancelling all uploads, only cancel assemblies that belong to an ongoing upload (#2277 / @goto-bus-stop)
+- @uppy/tus: fix tus uploads getting terminated if the file is removed from Uppy after the upload completed (#2262 / @zachconner)
+- @uppy/utils: fix typescript typings for the `Translator` constructor (#2263 / @goto-bus-stop)
+- @uppy/utils: remove `@uppy/utils/lib/prettyBytes`, use `@transloadit/prettier-bytes` instead (#2231 / @kvz)
+- @uppy/webcam: show an "Enable Camera" screen if no camera device is available (#2282 / @arturi)
+- website: list Robodog size and sort size stats by plugin name (#2259 / @goto-bus-stop)
 
 ## 1.14.1
 

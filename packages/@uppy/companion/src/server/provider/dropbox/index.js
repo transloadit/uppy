@@ -215,7 +215,7 @@ class DropBox extends Provider {
   _error (err, resp) {
     if (resp) {
       const fallbackMessage = `request to ${this.authProvider} returned ${resp.statusCode}`
-      const errMsg = resp.body.error_summary ? resp.body.error_summary : fallbackMessage
+      const errMsg = (resp.body || {}).error_summary ? resp.body.error_summary : fallbackMessage
       return resp.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
     }
 

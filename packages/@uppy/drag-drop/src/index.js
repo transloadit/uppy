@@ -142,6 +142,7 @@ module.exports = class DragDrop extends Plugin {
     const restrictions = this.uppy.opts.restrictions
     return (
       <input
+        id={this.uppy.id + '-' + this.id}
         class="uppy-DragDrop-input"
         type="file"
         tabindex={-1}
@@ -165,11 +166,11 @@ module.exports = class DragDrop extends Plugin {
 
   renderLabel () {
     return (
-      <div class="uppy-DragDrop-label">
+      <label class="uppy-DragDrop-label" for={this.uppy.id + '-' + this.id}>
         {this.i18nArray('dropHereOr', {
           browse: <span class="uppy-DragDrop-browse">{this.i18n('browse')}</span>
         })}
-      </div>
+      </label>
     )
   }
 

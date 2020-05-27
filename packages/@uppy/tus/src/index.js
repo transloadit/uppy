@@ -192,10 +192,11 @@ module.exports = class Tus extends Plugin {
           err = new NetworkError(err, xhr)
         }
 
-        this.uppy.emit('upload-error', file, err)
-
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
+
+        this.uppy.emit('upload-error', file, err)
+
         reject(err)
       }
 
@@ -213,14 +214,15 @@ module.exports = class Tus extends Plugin {
           uploadURL: upload.url
         }
 
+        this.resetUploaderReferences(file.id)
+        queuedRequest.done()
+
         this.uppy.emit('upload-success', file, uploadResp)
 
         if (upload.url) {
           this.uppy.log('Download ' + upload.file.name + ' from ' + upload.url)
         }
 
-        this.resetUploaderReferences(file.id)
-        queuedRequest.done()
         resolve(upload)
       }
 
@@ -473,6 +475,7 @@ module.exports = class Tus extends Plugin {
         this.uppy.emit('upload-success', file, uploadResp)
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
+
         resolve()
       })
 

@@ -103,6 +103,9 @@ module.exports = () => {
     }
     console.log('successful files:', result.successful)
     console.log('failed files:', result.failed)
+    if (UPLOADER === 'transloadit') {
+      console.log('Transloadit result:', result.transloadit)
+    }
   })
 
   const modalTrigger = document.querySelector('#pick-files')

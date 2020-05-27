@@ -61,16 +61,16 @@
 
 .uppy-DragDrop-label {
   display: block;
-  cursor: pointer;
   font-size: 1.15em;
   margin-bottom: 5px;
+}
+
+.uppy-DragDrop-browse {
+  color: $blue;
+  cursor: pointer;
 }
 
 .uppy-DragDrop-note {
   font-size: 1em;
   color: lighten($gray-500, 10%);
-}
-
-.uppy-DragDrop-browse {
-  color: $blue;
 }

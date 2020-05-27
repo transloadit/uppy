@@ -35,9 +35,13 @@ module.exports = class FileItem extends Component {
     const isPaused = file.isPaused || false
     const error = file.error || false
 
-    const showRemoveButton = this.props.individualCancellation
+    let showRemoveButton = this.props.individualCancellation
       ? !isUploaded
       : !uploadInProgress && !isUploaded
+
+    if (isUploaded && this.props.showRemoveButtonAfterComplete) {
+      showRemoveButton = true
+    }
 
     const dashboardItemClass = classNames({
       'uppy-u-reset': true,
@@ -69,6 +73,7 @@ module.exports = class FileItem extends Component {
 
             hideRetryButton={this.props.hideRetryButton}
             hidePauseResumeCancelButtons={this.props.hidePauseResumeCancelButtons}
+            showRemoveButtonAfterComplete={this.props.showRemoveButtonAfterComplete}
 
             resumableUploads={this.props.resumableUploads}
             individualCancellation={this.props.individualCancellation}

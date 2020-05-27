@@ -158,9 +158,20 @@ module.exports = class Plugin {
     }
 
     this.uppy.log(`Not installing ${callerPluginName}`)
-    throw new Error(`Invalid target option given to ${callerPluginName}. Please make sure that the element
-      exists on the page, or that the plugin you are targeting has been installed. Check that the <script> tag initializing Uppy
-      comes at the bottom of the page, before the closing </body> tag (see https://github.com/transloadit/uppy/issues/1042).`)
+
+    let message = `Invalid target option given to ${callerPluginName}.`
+    if (typeof target === 'function') {
+      message += ' The given target is not a Plugin class. ' +
+        'Please check that you\'re not specifying a React Component instead of a plugin. ' +
+        'If you are using @uppy/* packages directly, make sure you have only 1 version of @uppy/core installed: ' +
+        'run `npm ls @uppy/core` on the command line and verify that all the versions match and are deduped correctly.'
+    } else {
+      message += 'If you meant to target an HTML element, please make sure that the element exists. ' +
+        'Check that the <script> tag initializing Uppy is right before the closing </body> tag at the end of the page. ' +
+        '(see https://github.com/transloadit/uppy/issues/1042)\n\n' +
+        'If you meant to target a plugin, please confirm that your `import` statements or `require` calls are correct.'
+    }
+    throw new Error(message)
   }
 
   render (state) {
