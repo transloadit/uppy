@@ -44,7 +44,6 @@ module.exports = class FileItem extends Component {
     }
 
     const dashboardItemClass = classNames({
-      'uppy-u-reset': true,
       'uppy-DashboardItem': true,
       'is-inprogress': uploadInProgress,
       'is-processing': isProcessing,
@@ -72,7 +71,9 @@ module.exports = class FileItem extends Component {
             isUploaded={isUploaded}
 
             hideRetryButton={this.props.hideRetryButton}
-            hidePauseResumeCancelButtons={this.props.hidePauseResumeCancelButtons}
+            hideCancelButton={this.props.hideCancelButton}
+            hidePauseResumeButton={this.props.hidePauseResumeButton}
+
             showRemoveButtonAfterComplete={this.props.showRemoveButtonAfterComplete}
 
             resumableUploads={this.props.resumableUploads}

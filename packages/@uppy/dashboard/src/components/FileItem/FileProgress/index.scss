@@ -1,5 +1,4 @@
 .uppy-DashboardItem-progress {
-  display: none;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -10,63 +9,70 @@
   width: 120px;
   transition: all .35 ease;
 }
+
   .uppy-DashboardItem-progressIndicator {
-    @include clear-focus;
     display: inline-block;
     width: 38px;
     height: 38px;
     opacity: 0.9;
+
+    .uppy-size--md & {
+      width: 55px;
+      height: 55px;
+    }
+  }
+
+  button.uppy-DashboardItem-progressIndicator {
+    @include clear-focus;
     cursor: pointer;
-    &:focus{
-      svg.UppyIcon-progressCircle .bg,
-      svg.retry{
+
+    &:focus {
+      .bg,
+      .retry {
         fill: lighten($blue, 20%);
       }
     }
   }
-// ...uppy-DashboardItem-progress|
 
-svg.UppyIcon-progressCircle {
+.UppyIcon-progressCircle {
   width: 100%;
   height: 100%;
+
   .bg {
     stroke: rgba($white, 0.4);
-    opacity: 0;
   }
+
   .progress {
     stroke: $white;
     transition: stroke-dashoffset .5s ease-out;
-    opacity: 0;
   }
+
   .play {
     stroke: $white;
     fill: $white;
-    opacity: 0;
     transition: all 0.2s;
-    display: none;
   }
+
   .cancel {
     fill: $white;
-    opacity: 0;
     transition: all 0.2s;
   }
+
   .pause {
     stroke: $white;
     fill: $white;
-    opacity: 0;
     transition: all 0.2s;
-    display: none;
   }
+
   .check {
-    opacity: 0;
     fill: $white;
     transition: all 0.2s;
   }
 }
-svg.UppyIcon.retry {
+
+.retry {
   fill: $white;
 }
-
 
 // Svg styles that depend on the state of the file.
 .uppy-DashboardItem.is-complete .uppy-DashboardItem-progress {
@@ -75,11 +81,6 @@ svg.UppyIcon.retry {
   right: -8px;
   left: initial;
   width: auto;
-}
-.uppy-DashboardItem.is-inprogress .uppy-DashboardItem-progress,
-.uppy-DashboardItem.is-complete .uppy-DashboardItem-progress,
-.uppy-DashboardItem.is-error .uppy-DashboardItem-progress {
-  display: block;
 }
 
 .uppy-DashboardItem.is-error .uppy-DashboardItem-progressIndicator {
@@ -103,57 +104,13 @@ svg.UppyIcon.retry {
   }
 }
 
-.uppy-DashboardItem.is-paused svg.UppyIcon-progressCircle {
-  .pause {
-    opacity: 0;
-  }
-  .play {
-    opacity: 1;
-  }
-}
-
-.uppy-DashboardItem.is-noIndividualCancellation {
-  .uppy-DashboardItem-progressIndicator {
-    cursor: default;
-  }
-
-  .cancel {
-    display: none;
-  }
-}
-
 .uppy-DashboardItem.is-processing .uppy-DashboardItem-progress {
   opacity: 0;
 }
 
 .uppy-DashboardItem.is-complete {
-  .uppy-DashboardItem-progressIndicator {
-    cursor: default;
-  }
-
   .progress {
     stroke: $green;
     fill: $green;
-    opacity: 1;
-  }
-
-  .check {
-    opacity: 1;
-  }
-}
-
-.uppy-size--md .uppy-DashboardItem-progressIndicator {
-  width: 55px;
-  height: 55px;
-}
-
-.uppy-DashboardItem.is-resumable {
-  .pause, .play { display: block; }
-  .cancel { display: none; }
-}
-
-.uppy-DashboardItem.is-inprogress {
-  .bg, .progress, .pause, .cancel {
-    opacity: 1;
   }
 }
