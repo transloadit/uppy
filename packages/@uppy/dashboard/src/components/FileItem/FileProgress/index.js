@@ -1,5 +1,4 @@
 const { h } = require('preact')
-const { iconRetry } = require('../../icons')
 
 function onPauseResumeCancelRetry (props) {
   if (props.isUploaded) return
@@ -39,7 +38,7 @@ function progressIndicatorTitle (props) {
 
 // function PauseResumeCancelIcon (props) {
 //   return (
-//     <svg aria-hidden="true" focusable="false" width="70" height="70" viewBox="0 0 36 36" class="UppyIcon UppyIcon-progressCircle">
+//     <svg aria-hidden="true" focusable="false" width="70" height="70" viewBox="0 0 36 36" class="uppy-c-icon uppy-c-icon-progressCircle">
 //       <g class="progress-group">
 //         <circle class="bg" r="15" cx="18" cy="18" stroke-width="2" fill="none" />
 //         <circle
@@ -88,7 +87,7 @@ function ProgressCircleContainer ({ children }) {
       focusable="false"
       width="70" height="70"
       viewBox="0 0 36 36"
-      class="UppyIcon UppyIcon-progressCircle"
+      class="uppy-c-icon uppy-c-icon-progressCircle"
     >
       {children}
     </svg>
@@ -135,7 +134,12 @@ module.exports = function FileProgress (props) {
   if (props.error && !props.hideRetryButton) {
     return (
       <ProgressIndicatorButton {...props}>
-        {iconRetry()}
+        <svg aria-hidden="true" focusable="false" class="uppy-c-icon retry" width="28" height="31" viewBox="0 0 16 19">
+          <path d="M16 11a8 8 0 1 1-8-8v2a6 6 0 1 0 6 6h2z" />
+          <path d="M7.9 3H10v2H7.9z" />
+          <path d="M8.536.5l3.535 3.536-1.414 1.414L7.12 1.914z" />
+          <path d="M10.657 2.621l1.414 1.415L8.536 7.57 7.12 6.157z" />
+        </svg>
       </ProgressIndicatorButton>
     )
   }
