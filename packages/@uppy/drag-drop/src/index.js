@@ -142,11 +142,8 @@ module.exports = class DragDrop extends Plugin {
     const restrictions = this.uppy.opts.restrictions
     return (
       <input
-        id={this.uppy.id + '-' + this.id}
-        class="uppy-DragDrop-input"
         type="file"
-        tabindex={-1}
-        focusable="false"
+        hidden
         ref={(ref) => { this.fileInputRef = ref }}
         name={this.opts.inputName}
         multiple={restrictions.maxNumberOfFiles !== 1}
@@ -166,11 +163,11 @@ module.exports = class DragDrop extends Plugin {
 
   renderLabel () {
     return (
-      <label class="uppy-DragDrop-label" for={this.uppy.id + '-' + this.id}>
+      <div class="uppy-DragDrop-label">
         {this.i18nArray('dropHereOr', {
           browse: <span class="uppy-DragDrop-browse">{this.i18n('browse')}</span>
         })}
-      </label>
+      </div>
     )
   }
 
