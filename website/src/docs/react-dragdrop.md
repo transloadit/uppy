@@ -1,13 +1,14 @@
 ---
 title: "&lt;DragDrop />"
 type: docs
+module: "@uppy/react"
 permalink: docs/react/drag-drop/
 alias: docs/react/dragdrop/
 order: 2
-category: 'React'
+category: "React"
 ---
 
-The `<DragDrop />` component wraps the [`@uppy/drag-drop`][] plugin.
+The `<DragDrop />` component wraps the [`@uppy/drag-drop`](/docs/drag-drop/) plugin.
 
 ## Installation
 
@@ -63,14 +64,24 @@ class MyComponent extends React.Component {
 
 ## Props
 
-The `<DragDrop />` component supports all [DragDrop][] options as props.
+The `<DragDrop />` component supports all [DragDrop](/docs/drag-drop/) options as props.
 
 ```js
+// assuming `this.uppy` contains an Uppy instance:
+
 <DragDrop
   width="100%"
   height="100%"
   note="Images up to 200×200px"
+  uppy={this.uppy}
+  locale={{
+    strings: {
+      // Text to show on the droppable area.
+      // `%{browse}` is replaced with a link that opens the system file selection dialog.
+      dropHereOr: "Drop here or %{browse}",
+      // Used as the label for the link that opens the system file selection dialog.
+      browse: "browse",
+    },
+  }}
 />
 ```
-
-[`@uppy/drag-drop`]: /docs/drag-drop/

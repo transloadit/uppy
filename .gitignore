@@ -1,13 +1,23 @@
 .DS_Store
 Thumbs.db
 npm-debug.log
-env.sh
+npm-debug.log*
+nohup.out
 node_modules
 .cache
+.eslintcache
+
+env.sh
 
 dist/
 lib/
 coverage/
+examples/dev/bundle.js
+examples/aws-presigned-url/vendor/*
+test/endtoend/create-react-app/build/
+test/endtoend/create-react-app/coverage/
+uppy-*.tgz
+generatedLocale.d.ts
 
 website/db.json
 website/*.log
@@ -17,15 +27,15 @@ website/.deploy*/
 website/src/_drafts
 website/themes/uppy/source/uppy/
 website/themes/uppy/_config.yml
+website/src/_template/list_of_locale_packs.md
+website/src/examples/locale_list.json
+website/themes/uppy/layout/partials/generated_stargazers.ejs
 
-npm-debug.log*
-nohup.out
-
-examples/dev/bundle.js
-uppy-*.tgz
-.eslintcache
-.cache
-
-output/*
+**/output/*
 !output/.keep
 examples/dev/file.txt
+issues.txt
+
+# companion deployment files
+transloadit-cluster-kubeconfig.yaml
+companion-env.yml

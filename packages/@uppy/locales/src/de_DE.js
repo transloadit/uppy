@@ -1,6 +1,4 @@
-/* eslint camelcase: 0 */
-
-var de_DE = {}
+const de_DE = {}
 
 de_DE.strings = {
   addMoreFiles: 'Dateien hinzufügen',
@@ -10,12 +8,12 @@ de_DE.strings = {
   authenticateWith: 'Mit %{pluginName} verbinden',
   authenticateWithTitle: 'Bitte authentifizieren Sie sich mit %{pluginName}, um Dateien auszuwählen',
   back: 'Zurück',
+  addMore: 'Dateien hinzufügen',
   browse: 'Suche',
   cancel: 'Abbrechen',
   cancelUpload: 'Upload abbrechen',
   chooseFiles: 'Dateien auswählen',
   closeModal: 'Modal schließen',
-  companionAuthError: 'Authorisierung benötigt',
   companionError: 'Verbindung zu Companion fehlgeschlagen',
   complete: 'Fertig',
   connectedToInternet: 'Verbunden mit dem Internet',
@@ -33,7 +31,6 @@ de_DE.strings = {
   dropPaste: 'Dateien können über Drag/Drop, Einfügen oder per %{browse} hinzugefügt werden',
   dropPasteImport: 'Dateien können über Drag/Drop, Einfügen, per %{browse} oder von folgenden Services hinzugefügt werden',
 
-  edit: 'Bearbeiten',
   editFile: 'Datei bearbeiten',
   editing: '%{file} bearbeiten',
   emptyFolderAdded: 'Keine Dateien konnten hinzugefügt werden, da der Ordner leer war',
@@ -58,22 +55,23 @@ de_DE.strings = {
   },
   import: 'Import',
   importFrom: 'Importieren von %{name}',
-  link: 'Link',
   loading: 'Laden...',
   logOut: 'Ausloggen',
   myDevice: 'Mein Gerät',
+  noDuplicates: 'Datei \'%{fileName}\' existiert bereits und kann nicht erneut hinzugefügt werden',
   noFilesFound: 'Sie haben keine Dateien oder Ordner hier',
   noInternetConnection: 'Keine Internetverbindung',
+  noNewAlreadyUploading: 'Während der Upload läuft, können keine weiteren Dateien hinzugefügt werden',
   pause: 'Pausieren',
   pauseUpload: 'Upload pausieren',
   paused: 'Pausiert',
   poweredBy: 'Angetrieben von',
-  preparingUpload: 'Upload vorbereiten...',
   processingXFiles: {
     '0': '%{smart_count} Datei verarbeiten',
     '1': '%{smart_count} Dateien verarbeiten',
     '2': '%{smart_count} Dateien verarbeiten'
   },
+  recordingLength: 'Aufnahmedauer %{recording_length}',
   removeFile: 'Datei entfernen',
   resetFilter: 'Filter zurücksetzen',
   resume: 'Fortsetzen',
@@ -81,10 +79,10 @@ de_DE.strings = {
   retry: 'Erneut versuchen',
   retryUpload: 'Upload erneut versuchen',
   saveChanges: 'Änderungen speichern',
-  selectXFiles: {
-    '0': '%{smart_count} Datei auswählen',
-    '1': '%{smart_count} Dateien auswählen',
-    '2': '%{smart_count} Dateien auswählen'
+  selectX: {
+    '0': 'Wählen Sie %{smart_count}',
+    '1': 'Wählen Sie %{smart_count}',
+    '2': 'Wählen Sie %{smart_count}'
   },
   smile: 'Bitte lächeln!',
   startRecording: 'Videoaufnahme starten',
@@ -132,7 +130,12 @@ de_DE.strings = {
     '0': 'Sie müssen mindestens %{smart_count} Datei auswählen',
     '1': 'Sie müssen mindestens %{smart_count} Dateien auswählen',
     '2': 'Sie müssen mindestens %{smart_count} Dateien auswählen'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Wählen Sie alle Dateien aus dem Ordner %{name}',
+  unselectAllFilesFromFolderNamed: 'Heben Sie die Auswahl aller Dateien aus dem Ordner auf %{name}',
+  selectFileNamed: 'Datei aussuchen %{name}',
+  unselectFileNamed: 'Datei abwählen %{name}',
+  openFolderNamed: 'Ordner öffnen %{name}'
 }
 
 de_DE.pluralize = function (n) {

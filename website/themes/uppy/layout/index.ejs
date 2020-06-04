@@ -15,6 +15,29 @@
   </div>
 </section>
 
+<section class="IndexLogos">
+  <div class="IndexLogos-container">
+    <h2 class="IndexLogos-title">Used by:</h2>
+    <div class="IndexLogos-logos">
+      <a href="https://www.coursera.org/" class="IndexLogos-item IndexLogos-item--coursera">
+        <%- inline_svg('/images/featured-customers/coursera.svg') %>
+      </a>
+      <a href="https://www.photobox.com/" class="IndexLogos-item IndexLogos-item--photobox">
+        <%- inline_svg('/images/featured-customers/photobox.svg') %>
+      </a>
+      <a href="https://issuu.com/" class="IndexLogos-item IndexLogos-item--issuu">
+        <%- inline_svg('/images/featured-customers/issuu.svg') %>
+      </a>
+      <a href="https://zulipchat.com/" class="IndexLogos-item IndexLogos-item--zulip">
+        <%- inline_svg('/images/featured-customers/zulip.svg') %>
+      </a>
+    </div>
+    <div class="IndexLogos-join">
+      Using Uppy in your project? <a href="https://github.com/transloadit/uppy/issues/769" rel="noreferrer noopener" target="_blank">Let us know ›</a>
+    </div>
+  </div>
+</section>
+
 <section class="IndexDemo">
   <div class="IndexDemo-tabContent">
     <div class="TabPane TabPane--active" id="live-demo">
@@ -22,7 +45,7 @@
         <div class="IndexDemo-uppy" id="demo"></div>
       </div>
     </div> <!-- /live-demo -->
-    
+
     <div class="TabPane" id="video">
       <div class="IndexDemo-video">
         <video autoplay loop muted playsinline>
@@ -118,7 +141,7 @@
     </li>
 
     <li class="IndexReviews-item">
-      <a class="IndexReviews-link" href="https://twitter.com/smashingmag/status/1097870169043546112?lang=ca" target="_blank" rel="noreferrer noopener">
+      <a class="IndexReviews-link" href="https://twitter.com/smashingmag/status/1097870169043546112" target="_blank" rel="noreferrer noopener">
         <div class="IndexReviews-imgWrapper">
           <img class="IndexReviews-img" src="/images/testimonials/smashing-magazine.png" srcset="/images/testimonials/smashing-magazine@2x.png 2x" alt="Smashing Magazine">
         </div>
@@ -144,8 +167,8 @@
   <p>© <%- date(Date.now(), 'YYYY') %> <a href="https://transloadit.com" target="_blank">Transloadit</a></p>
 </footer>
 
-<link href="https://unpkg.com/uppy@1.0.1/dist/uppy.min.css" rel="stylesheet">
-<script src="https://unpkg.com/uppy@1.0.1/dist/uppy.min.js"></script>
+<link href="https://transloadit.edgly.net/releases/uppy/v1.15.0/uppy.min.css" rel="stylesheet">
+<script src="https://transloadit.edgly.net/releases/uppy/v1.15.0/uppy.min.js"></script>
 
 <script>
   var TUS_ENDPOINT = 'https://master.tus.io/files/'
@@ -154,9 +177,8 @@
     COMPANION_ENDPOINT = '//companion.uppy.io'
   }
 
-  var uppy = Uppy.Core({ debug: true, autoProceed: false })
+  var uppy = Uppy.Core({ debug: true })
     .use(Uppy.Dashboard, {
-      trigger: '#select-files',
       target: '#demo',
       inline: true,
       replaceTargetContent: true,
@@ -167,11 +189,14 @@
     })
     .use(Uppy.GoogleDrive, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
     .use(Uppy.Instagram, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
+    .use(Uppy.Dropbox, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
+    .use(Uppy.Facebook, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
+    .use(Uppy.OneDrive, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
     .use(Uppy.Webcam, { target: Uppy.Dashboard })
     .use(Uppy.Url, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
     .use(Uppy.Tus, { endpoint: TUS_ENDPOINT})
 
-  uppy.on('success', (files) => {
-    console.log(`Upload complete! We’ve uploaded these files: ${files}`)
+  uppy.on('success', function (files) {
+    console.log('Upload complete! We’ve uploaded these files:', files)
   })
 </script>

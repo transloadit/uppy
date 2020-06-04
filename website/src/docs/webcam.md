@@ -4,12 +4,13 @@ order: 3
 title: "Webcam"
 module: "@uppy/webcam"
 permalink: docs/webcam/
-category: 'Sources'
+category: "Sources"
+tagline: "upload selfies or audio / video recordings"
 ---
 
 The `@uppy/webcam` plugin lets you take photos and record videos with a built-in camera on desktop and mobile devices.
 
-> To use the Webcam plugin in Chrome, [your site should be served over https](https://developers.google.com/web/updates/2015/10/chrome-47-webrtc#public_service_announcements). This restriction does not apply on `localhost`, so you don't have to jump through many hoops during development.
+> To use the Webcam plugin in Chrome, [your site must be served over https](https://developers.google.com/web/updates/2015/10/chrome-47-webrtc#public_service_announcements). This restriction does not apply on `localhost`, so you don't have to jump through many hoops during development.
 
 ```js
 const Webcam = require('@uppy/webcam')
@@ -64,6 +65,9 @@ uppy.use(Webcam, {
   ],
   mirror: true,
   facingMode: 'user',
+  showRecordingLength: false,
+  preferredVideoMimeType: null,
+  preferredImageMimeType: null,
   locale: {}
 })
 ```
@@ -112,6 +116,21 @@ Devices sometimes have multiple cameras, front and back, for example. There is a
 - `left`: The video source is facing toward the user but to their left, such as a camera aimed toward the user but over their left shoulder.
 - `right`: The video source is facing toward the user but to their right, such as a camera aimed toward the user but over their right shoulder.
 
+### `showRecordingLength: false`
+
+Configures whether or not to show the length of the recording while the recording is in progress. The default is `false`.
+
+### `preferredVideoMimeType: null`
+
+Set the preferred mime type for video recordings, for example `'video/webm'`. If the browser supports the given mime type, the video will be recorded in this format. If the browser does not support it, it will use the browser default.
+
+If no preferred video mime type is given, the Webcam plugin will prefer types listed in the [`allowedFileTypes` restriction](/docs/uppy/#restrictions), if any.
+
+### `preferredImageMimeType: null`
+
+Set the preferred mime type for images, for example `'image/png'`. If the browser supports rendering the given mime type, the image will be stored in this format. Else `image/jpeg` is used by default.
+
+If no preferred image mime type is given, the Webcam plugin will prefer types listed in the [`allowedFileTypes` restriction](/docs/uppy/#restrictions), if any.
 
 ### `locale: {}`
 
@@ -132,6 +151,9 @@ strings: {
   // Used as the label for the button that stops a video recording.
   // This is not visibly rendered but is picked up by screen readers.
   stopRecording: 'Stop video recording',
+  // Used as the label for the recording length counter. See the showRecordingLength option.
+  // This is not visibly rendered but is picked up by screen readers.
+  recordingLength: 'Recording length %{recording_length}',
   // Title on the “allow access” screen
   allowAccessTitle: 'Please allow access to your camera',
   // Description on the “allow access” screen

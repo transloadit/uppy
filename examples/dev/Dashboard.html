@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard</title>
+    <style>
+      main {
+        padding-top: 100px;
+        text-align: center;
+      }
+
+      #upload-form {
+        max-width: 400px;
+        text-align: left;
+        margin: auto;
+      }
+
+      button,
+      input {
+        color: green;
+        font-size: 30px;
+        text-align: right;
+        border: 2px solid purple;
+      }
+
+      /* css to make sure that Dashboard's css overrides page css */
+      ul {
+        margin: 60px;
+      }
+      li {
+        margin: 60px;
+      }
+      a {
+        color: purple;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="foo">
+      <h1>Dashboard is here</h1>
+
+      <!-- some inputs in a form to check focus management in Dashboard -->
+      <form id="upload-form" action="/">
+        <button type="button" id="pick-files">Pick Files</button><br>
+        True ? <input type="checkbox" name="check_test" value="1" checked><br>
+        Something: <input type="text" name="yo" value="1"><br>
+        <input type="hidden" name="bla" value="12333"><br>
+        <button type="submit">Submit</button>
+      </form>
+    </main>
+
+    <link href="uppy.min.css" rel="stylesheet">
+    <script src="output/index.js"></script>
+  </body>
+</html>

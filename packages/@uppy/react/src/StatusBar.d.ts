@@ -1,14 +1,11 @@
-import { Uppy } from './CommonTypes';
+import { ToUppyProps } from './CommonTypes'
+import StatusBar = require('@uppy/status-bar')
 
-export interface StatusBarProps {
-  uppy: Uppy;
-  showProgressDetails?: boolean;
-  hideAfterFinish?: boolean;
-}
+export type StatusBarProps = ToUppyProps<StatusBar.StatusBarOptions>
 
 /**
  * React component that renders a status bar containing upload progress and speed,
  * processing progress and pause/resume/cancel controls.
  */
-declare const StatusBar: React.ComponentType<StatusBarProps>;
-export default StatusBar;
+declare const StatusBarComponent: React.ComponentType<StatusBarProps>
+export default StatusBarComponent

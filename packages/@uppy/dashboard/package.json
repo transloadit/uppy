@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "1.0.2",
+  "version": "1.9.0",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -22,23 +22,21 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/informer": "1.0.2",
-    "@uppy/provider-views": "1.0.2",
-    "@uppy/status-bar": "1.0.2",
-    "@uppy/thumbnail-generator": "1.0.2",
-    "@uppy/utils": "1.0.2",
+    "@transloadit/prettier-bytes": "0.0.7",
+    "@uppy/informer": "file:../informer",
+    "@uppy/provider-views": "file:../provider-views",
+    "@uppy/status-bar": "file:../status-bar",
+    "@uppy/thumbnail-generator": "file:../thumbnail-generator",
+    "@uppy/utils": "file:../utils",
     "classnames": "^2.2.6",
     "cuid": "^2.1.1",
-    "drag-drop": "2.13.3",
+    "is-shallow-equal": "^1.0.1",
+    "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
+    "memoize-one": "^5.0.4",
     "preact": "8.2.9",
     "preact-css-transition-group": "^1.3.0",
-    "prettier-bytes": "^1.0.4",
     "resize-observer-polyfill": "^1.5.0"
-  },
-  "devDependencies": {
-    "@uppy/core": "1.0.2",
-    "@uppy/google-drive": "1.0.2"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"

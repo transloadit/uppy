@@ -1,23 +1,28 @@
 const { h } = require('preact')
 const ignoreEvent = require('../utils/ignoreEvent.js')
 
-function PanelContent (props) {
+function PickerPanelContent (props) {
   return (
-    <div class="uppy-DashboardContent-panel"
+    <div
+      class="uppy-DashboardContent-panel"
       role="tabpanel"
       data-uppy-panelType="PickerPanel"
-      id={props.activePickerPanel && `uppy-DashboardContent-panel--${props.activePickerPanel.id}`}
+      id={`uppy-DashboardContent-panel--${props.activePickerPanel.id}`}
       onDragOver={ignoreEvent}
       onDragLeave={ignoreEvent}
       onDrop={ignoreEvent}
-      onPaste={ignoreEvent}>
+      onPaste={ignoreEvent}
+    >
       <div class="uppy-DashboardContent-bar">
-        <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
+        <div class="uppy-DashboardContent-title" role="heading" aria-level="1">
           {props.i18n('importFrom', { name: props.activePickerPanel.name })}
         </div>
-        <button class="uppy-DashboardContent-back"
+        <button
+          class="uppy-DashboardContent-back"
           type="button"
-          onclick={props.hideAllPanels}>{props.i18n('done')}</button>
+          onclick={props.hideAllPanels}
+        >{props.i18n('done')}
+        </button>
       </div>
       <div class="uppy-DashboardContent-panelBody">
         {props.getPlugin(props.activePickerPanel.id).render(props.state)}
@@ -26,4 +31,4 @@ function PanelContent (props) {
   )
 }
 
-module.exports = PanelContent
+module.exports = PickerPanelContent

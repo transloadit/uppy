@@ -49,10 +49,13 @@ const toArray = require('@uppy/utils/lib/toArray')
       Take 'text/uri-list' items. Safari has an additional item of .kind === 'file', and you may worry about the item being duplicated (first by DashboardPlugin, and then by UrlPlugin, now), but don't. Directory handling code won't pay attention to this particular item of kind 'file'.
 */
 
-// Finds all links dropped/pasted from one browser window to another.
-// @param {object} dataTransfer - DataTransfer instance, e.g. e.clipboardData, or e.dataTransfer
-// @param {string} isDropOrPaste - either 'drop' or 'paste'
-// @param {function} callback - (urlString) => {}
+/**
+ * Finds all links dropped/pasted from one browser window to another.
+ *
+ * @param {object} dataTransfer - DataTransfer instance, e.g. e.clipboardData, or e.dataTransfer
+ * @param {string} isDropOrPaste - either 'drop' or 'paste'
+ * @param {Function} callback - (urlString) => {}
+ */
 module.exports = function forEachDroppedOrPastedUrl (dataTransfer, isDropOrPaste, callback) {
   const items = toArray(dataTransfer.items)
 

@@ -6,8 +6,24 @@ jest.mock('../../src/server/helpers/oauth-state', () => {
   return {
     generateState: () => 'some-cool-nice-encrytpion',
     addToState: () => 'some-cool-nice-encrytpion',
-    getFromState: (state) => {
-      return state === 'state-with-invalid-instance-url' ? 'http://localhost:3452' : 'http://localhost:3020'
+    getFromState: (state, key) => {
+      if (state === 'state-with-invalid-instance-url') {
+        return 'http://localhost:3452'
+      }
+
+      if (state === 'state-with-older-version' && key === 'clientVersion') {
+        return '@uppy/companion-client=1.0.1'
+      }
+
+      if (state === 'state-with-newer-version' && key === 'clientVersion') {
+        return '@uppy/companion-client=1.0.3'
+      }
+
+      if (state === 'state-with-newer-version-old-style' && key === 'clientVersion') {
+        return 'companion-client:1.0.2'
+      }
+
+      return 'http://localhost:3020'
     }
   }
 })
@@ -50,6 +66,117 @@ describe('list provider files', () => {
   })
 })
 
+describe('validate upload data', () => {
+  test('invalid upload protocol gets rejected', () => {
+    return request(authServer)
+      .post('/drive/get/README.md')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 'tusInvalid'
+      })
+      .expect(400)
+      .then((res) => expect(res.body.message).toBe('unsupported protocol specified'))
+  })
+
+  test('invalid upload fieldname gets rejected', () => {
+    return request(authServer)
+      .post('/drive/get/README.md')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 'tus',
+        fieldname: 390
+      })
+      .expect(400)
+      .then((res) => expect(res.body.message).toBe('fieldname must be a string'))
+  })
+
+  test('invalid upload metadata gets rejected', () => {
+    return request(authServer)
+      .post('/drive/get/README.md')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 'tus',
+        metadata: 'I am a string instead of object'
+      })
+      .expect(400)
+      .then((res) => expect(res.body.message).toBe('metadata must be an object'))
+  })
+
+  test('invalid upload headers get rejected', () => {
+    return request(authServer)
+      .post('/drive/get/README.md')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 'tus',
+        headers: 'I am a string instead of object'
+      })
+      .expect(400)
+      .then((res) => expect(res.body.message).toBe('headers must be an object'))
+  })
+
+  test('invalid upload HTTP Method gets rejected', () => {
+    return request(authServer)
+      .post('/drive/get/README.md')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 'tus',
+        httpMethod: 'DELETE'
+      })
+      .expect(400)
+      .then((res) => expect(res.body.message).toBe('unsupported HTTP METHOD specified'))
+  })
+
+  test('valid upload data is allowed - tus', () => {
+    return request(authServer)
+      .post('/drive/get/README.md')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 'tus',
+        httpMethod: 'POST',
+        headers: {
+          customheader: 'header value'
+        },
+        metadata: {
+          mymetadata: 'matadata value'
+        },
+        fieldname: 'uploadField'
+      })
+      .expect(200)
+  })
+
+  test('valid upload data is allowed - s3-multipart', () => {
+    return request(authServer)
+      .post('/drive/get/README.md')
+      .set('uppy-auth-token', token)
+      .set('Content-Type', 'application/json')
+      .send({
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 's3-multipart',
+        httpMethod: 'PUT',
+        headers: {
+          customheader: 'header value'
+        },
+        metadata: {
+          mymetadata: 'matadata value'
+        },
+        fieldname: 'uploadField'
+      })
+      .expect(200)
+  })
+})
+
 describe('download provdier file', () => {
   test('specified file gets downloaded from provider', () => {
     return request(authServer)
@@ -57,7 +184,7 @@ describe('download provdier file', () => {
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
-        endpoint: 'http://master.tus.com/files',
+        endpoint: 'http://master.tus.io/files',
         protocol: 'tus'
       })
       .expect(200)
@@ -71,18 +198,62 @@ describe('test authentication', () => {
       .get('/drive/callback')
       .expect(302)
       .expect((res) => {
-        expect(res.header['location']).toContain('http://localhost:3020/drive/send-token?uppyAuthToken=')
+        expect(res.header.location).toContain('http://localhost:3020/drive/send-token?uppyAuthToken=')
       })
   })
 
   test('the token gets sent via cookie and html', () => {
+    // see mock ../../src/server/helpers/oauth-state above for state values
     return request(authServer)
-      .get(`/drive/send-token?uppyAuthToken=${token}`)
+      .get(`/dropbox/send-token?uppyAuthToken=${token}&state=state-with-newer-version`)
       .expect(200)
       .expect((res) => {
-        const authToken = res.header['set-cookie'][0].split(';')[0].split('uppyAuthToken--google=')[1]
+        const authToken = res.header['set-cookie'][0].split(';')[0].split('uppyAuthToken--dropbox=')[1]
         expect(authToken).toEqual(token)
-        // see mock ../../src/server/helpers/oauth-state above for http://localhost:3020
+        const body = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <script>
+          window.opener.postMessage(JSON.stringify({token: "${token}"}), "http://localhost:3020")
+          window.close()
+        </script>
+    </head>
+    <body></body>
+    </html>`
+        expect(res.text).toBe(body)
+      })
+  })
+
+  test('the token gets to older clients without stringify', () => {
+    // see mock ../../src/server/helpers/oauth-state above for state values
+    return request(authServer)
+      .get(`/drive/send-token?uppyAuthToken=${token}&state=state-with-older-version`)
+      .expect(200)
+      .expect((res) => {
+        const body = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <script>
+          window.opener.postMessage({token: "${token}"}, "http://localhost:3020")
+          window.close()
+        </script>
+    </head>
+    <body></body>
+    </html>`
+        expect(res.text).toBe(body)
+      })
+  })
+
+  test('the token gets sent to newer clients with old version style', () => {
+    // see mock ../../src/server/helpers/oauth-state above for state values
+    return request(authServer)
+      .get(`/drive/send-token?uppyAuthToken=${token}&state=state-with-newer-version-old-style`)
+      .expect(200)
+      .expect((res) => {
         const body = `
     <!DOCTYPE html>
     <html>

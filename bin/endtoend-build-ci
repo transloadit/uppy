@@ -3,13 +3,26 @@
 set -o pipefail
 set -o errexit
 set -o nounset
-set -o xtrace
 
 # Set magic variables for current file & dir
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
+
+if [ -z "${CI:-}" ]; then
+  echo "!! Running CI-style end-to-end tests but CI environment variable is not set"
+  echo "It is generally ill-advised to run the full end-to-end suite on your local machine."
+  echo "You are probably looking for this instead:"
+  echo "  npm run test:endtoend:local"
+  echo ""
+  echo "Hit Ctrl+C to stop or Enter if you REALLY DO want to run the full thing."
+  read
+else
+  echo travis_fold:start:endtoend_build_ci
+fi
+
+set -o xtrace
 
 VERDACCIO_REGISTRY=http://localhost:4002
 CURRENT_COMMIT="$(git rev-parse HEAD)"
@@ -19,6 +32,10 @@ cleanup() {
   rm -rf "${__root}/test/endtoend/tmp"
   git reset
   git checkout $CURRENT_COMMIT
+
+  if [ -n "${CI:-}" ]; then
+    echo travis_fold:end:endtoend_build_ci
+  fi
 }
 function on_exit() {
   # revert to public registry
@@ -52,22 +69,23 @@ git checkout -- package-lock.json
 ENDTOEND=1 lerna version prerelease --yes \
   --exact \
   --force-publish \
-  --npm-client=npm \
   --no-push
 ENDTOEND=1 lerna publish from-git --yes \
   --registry="$VERDACCIO_REGISTRY" \
-  --no-verify-access \
-  --npm-client=npm
+  --no-verify-access
 
 # install all packages to the endtoend folder
 # (Don't use the npm cache, don't generate a package-lock, don't save dependencies to any package.json)
 pushd "${__root}/test/endtoend"
+  PKG_VERSIONS="$(echo uppy $PACKAGES | sed -e 's/\S\+\b/&@latest/g')"
+  echo '{}' > package.json # temp pkg.json to make sure npm installs deps in this folder
   npm install \
     --prefer-online \
     --registry "$VERDACCIO_REGISTRY" \
     --no-package-lock \
     --no-save \
-    uppy $PACKAGES
+    $PKG_VERSIONS
+  rm package.json
 popd
 
 bash "${__dir}/endtoend-build-tests"

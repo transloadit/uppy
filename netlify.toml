@@ -5,7 +5,6 @@ ID = "uppy"
 # (no main build settings, we use Github Pages)
 
 [context.deploy-preview]
-# netlify caches node_modules and doesn't run `npm install` after the first time,
-# so we have to `run bootstrap` manually in order to get lerna to do its thing
-command = "npm run bootstrap && npm run build && npm run web:install && npm run web:inject-disc && npm run web:build"
+command = "npx lerna bootstrap && npm run build && npm run web:inject-disc && npm run web:build"
+environment = { NODE_VERSION = "12" }
 publish = "website/public"

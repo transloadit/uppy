@@ -8,10 +8,7 @@ After you have successfully forked the repo, clone and install the project:
 git clone git@github.com:YOUR_USERNAME/uppy.git
 cd uppy
 npm install
-npm run bootstrap
 ```
-
-We use lerna to manage the many plugin packages Uppy has. You should always do `npm run bootstrap` after an `npm install` to make sure lerna has installed the dependencies of each package and that the `package-lock.json` in the repository root is up to date.
 
 Our website’s examples section is also our playground, please read the [Local Previews](#Local-previews) section to get up and running.
 
@@ -92,18 +89,16 @@ Releases are managed by [Lerna](https://github.com/lerna/lerna). We do some clea
 npm run release
 ```
 
-If you have two factor authentication enabled on your npm account, you will need to temporarily disable it when doing an uppy release. Lerna doesn't support 2FA, and while there are workarounds, they don't reliably work for us. (In particular, using the `npm_config_otp` environment variable will fail because the token expires by the time the release script starts publishing anything.)
-
-```bash
-npm profile disable-2fa
-npm run release
-npm profile enable-2fa auth-only
-```
+If you have two-factor authentication enabled on your account, Lerna will ask for a one-time password. There is an issue with the CLI where the OTP prompt may be obscured by a publishing progress bar. If Lerna appears to hang just as it starts publishing, chances are it's waiting for the password. Try typing in your OTP and hitting enter.
 
 Other things to keep in mind during release:
 
-* When doing a minor release below 1.0, or a major release >= 1.0, of the `@uppy/core` package, the peerDependency of the plugin packages needs to be updated first. Eg when updating from 0.25.5 to 0.26.0, the peerDependency of each should be `"@uppy/core": "^0.26.0"` before doing `npm run release`.
-* When publishing a new package, publish it manually first with `npm publish --access public`, since by default `@`-prefixed packages are private on NPM, and Lerna will fail.
+* When doing a major release >= 1.0, of the `@uppy/core` package, the `peerDependency` of the plugin packages needs to be updated first. Eg when updating from 1.y.z to 2.0.0, the peerDependency of each should be `"@uppy/core": "^2.0.0"` before doing `npm run release`.
+* When adding a new package, add the following key to its package.json:
+  ```json
+  "publishConfig": { "access": "public" }
+  ```
+  Else, npm will try and fail to publish a _private_ package, because the `@uppy` scope on npm does not support that.
 
 After a release, the demos on transloadit.com should also be updated. After updating, check that some things work locally:
 
@@ -122,28 +117,16 @@ Even though bundled in this repo, the website is regarded as a separate project.
 
 ### Local previews
 
-It is recommended to exclude `./website/public/` from your editor if you want efficient searches.
-
-To install the required node modules, type:
-
-```bash
-npm install && cd website && npm install && cd ..
-```
-
-For local previews on http://localhost:4000, type:
-
-```bash
-npm run web:start # that gets you just the website. if you need companion, etc. you can use `npm start` instead
-```
-
-This will watch the website, as well as Uppy, as the examples, and rebuild everything and refresh your browser as files change.
+1. `npm install`
+1. `npm start`
+1. Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
 
 Then, to work on, for instance, the XHRUpload example, you would edit the following files:
 
 ```bash
-${EDITOR} src/core/Core.js \
-  src/plugins/XHRUpload.js \
-  src/plugins/Plugin.js \
+${EDITOR} packages/@uppy/core/src/index.js \
+  packages/@uppy/core/src/Plugin.js \
+  packages/@uppy/xhr-upload/src/index.js \
   website/src/examples/xhrupload/app.es6
 ```
 
@@ -162,7 +145,7 @@ To quickly summarize:
 
 #### Utilities
 
-Syntax: u-[sm-|md-|lg-]<utilityName>
+Syntax: `u-[sm-|md-|lg-]<utilityName>`
 
 ```css
 .u-utilityName
@@ -172,7 +155,7 @@ Syntax: u-[sm-|md-|lg-]<utilityName>
 
 #### Components
 
-Syntax: [<namespace>-]<ComponentName>[-descendentName][--modifierName]
+Syntax: `[<namespace>-]<ComponentName>[-descendentName][--modifierName]`
 
 ```css
 .twt-Button /* Namespaced component */

@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const es_ES = {}
 
 es_ES.strings = {
@@ -10,12 +8,12 @@ es_ES.strings = {
   authenticateWith: 'Conectar a %{pluginName}',
   authenticateWithTitle: 'Por favor autentícate con %{pluginName} para seleccionar archivos',
   back: 'Atrás',
+  addMore: 'Agregar más',
   browse: 'navegar',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar subida',
   chooseFiles: 'Seleccionar archivos',
   closeModal: 'Cerrar ventana flotante',
-  companionAuthError: 'Autorización requerida',
   companionError: 'Conexión con Companion falló',
   complete: 'Completado',
   connectedToInternet: 'Conectado a Internet',
@@ -32,7 +30,6 @@ es_ES.strings = {
   dropHint: 'Suelta tus archivos aquí',
   dropPaste: 'Soltar archivos aquí, pegar o %{browse}',
   dropPasteImport: 'Soltar archivos aquí, pegar, %{browse} o importar desde',
-  edit: 'Editar',
   editFile: 'Editar archivo',
   editing: 'Editando %{file}',
   emptyFolderAdded: 'Ningún archivo fue agregado desde la carpeta vacía',
@@ -57,7 +54,6 @@ es_ES.strings = {
   },
   import: 'Importar',
   importFrom: 'Importar desde %{name}',
-  link: 'Enlace',
   loading: 'Cargando...',
   logOut: 'Cerrar sesión',
   myDevice: 'Mi Dispositivo',
@@ -67,12 +63,12 @@ es_ES.strings = {
   pauseUpload: 'Pausar subida',
   paused: 'En pausa',
   poweredBy: 'Soportado por',
-  preparingUpload: 'Preparando subida...',
   processingXFiles: {
     '0': 'Procesando %{smart_count} archivo',
     '1': 'Procesando %{smart_count} archivos',
     '2': 'Procesando %{smart_count} archivos'
   },
+  recordingLength: 'Duración de grabación %{recording_length}',
   removeFile: 'Eliminar archivo',
   resetFilter: 'Limpiar filtro',
   resume: 'Reanudar',
@@ -80,10 +76,10 @@ es_ES.strings = {
   retry: 'Intentar nuevamente',
   retryUpload: 'Intentar subida nuevamente',
   saveChanges: 'Guardar cambios',
-  selectXFiles: {
-    '0': 'Seleccionar %{smart_count} archivo',
-    '1': 'Seleccionar %{smart_count} archivos',
-    '2': 'Seleccionar %{smart_count} archivos'
+  selectX: {
+    '0': 'Seleccionar %{smart_count}',
+    '1': 'Seleccionar %{smart_count}',
+    '2': 'Seleccionar %{smart_count}'
   },
   smile: 'Sonríe!',
   startRecording: 'Comenzar la grabación de video',
@@ -131,7 +127,12 @@ es_ES.strings = {
     '0': 'Tienes que seleccionar al menos %{smart_count} archivo',
     '1': 'Tienes que seleccionar al menos %{smart_count} archivos',
     '2': 'Tienes que seleccionar al menos %{smart_count} archivos'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Seleccionar todos los archivos de la carpeta %{name}',
+  unselectAllFilesFromFolderNamed: 'Deselecciona todos los archivos de la carpeta %{name}',
+  selectFileNamed: 'Seleccione archivo %{name}',
+  unselectFileNamed: 'Deseleccionar archivo %{name}',
+  openFolderNamed: 'Carpeta abierta %{name}'
 }
 
 es_ES.pluralize = function (n) {

@@ -1,12 +1,5 @@
 {
-  "private": true,
-  "name": "php-xhr-example",
-  "scripts": {
-    "copy": "cp node_modules/uppy/dist/uppy.min.css .",
-    "start:client": "budo main.js:bundle.js -- -t babelify -g aliasify",
-    "start:server": "mkdir -p uploads && php -S 0.0.0.0:3020",
-    "start": "npm-run-all --serial copy --parallel start:*"
-  },
+  "name": "@uppy-example/php-xhr",
   "dependencies": {
     "@babel/core": "^7.4.4",
     "aliasify": "^2.1.0",
@@ -17,6 +10,13 @@
     "formidable": "^1.2.1",
     "npm-run-all": "^4.1.3",
     "rimraf": "^2.6.2",
-    "uppy": "^0.30.4"
+    "uppy": "file:../../packages/uppy"
+  },
+  "private": true,
+  "scripts": {
+    "copy": "cp ../../packages/uppy/dist/uppy.min.css .",
+    "start": "npm-run-all --serial copy --parallel start:*",
+    "start:client": "budo main.js:bundle.js -- -t babelify -g aliasify",
+    "start:server": "mkdir -p uploads && php -S 0.0.0.0:3020"
   }
 }

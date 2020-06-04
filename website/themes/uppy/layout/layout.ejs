@@ -35,7 +35,7 @@ if (page.series) {
       window.PAGE_TYPE = "<%- page.type %>"
     </script>
     <%- css('css/main').replace('.css', '.css?version=2') %>
-    <!-- ^-- poor man's solution to css cache busting. bump the version when there's something new we really want users to see -->
+    <!-- ^ poor man's solution to css cache busting. bump the version when there's something new we really want users to see -->
   </head>
   <body class="<%= isIndex ? 'page-index' : 'page-inner' %> <%= page.body_class %>">
     <div class="page">
@@ -51,12 +51,13 @@ if (page.series) {
 
         <span id="logo" class="MainLogo">
           <a class="MainLogo-link" href="/"><%- config.title %></a>
-          <a class="MainLogo-version" href="/blog/2019/04/1.0/">
+          <!-- Was used for 1.0, we can re-use for 2.0 or major announcements -->
+          <!-- <a class="MainLogo-version" href="/blog/2019/04/1.0/">
             1.0
             <span class="MainLogo-emoji">
               <img src="/images/party-popper.png" srcset="/images/party-popper@2x.png 2x" alt="🎉">
             </span>
-          </a>
+          </a> -->
         </span>
 
         <nav>

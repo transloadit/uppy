@@ -1,13 +1,11 @@
-import { Uppy, Locale } from './CommonTypes';
+import { ToUppyProps } from './CommonTypes'
+import DragDrop = require('@uppy/drag-drop')
 
-export interface DragDropProps {
-  uppy: Uppy;
-  locale?: Locale;
-}
+export type DragDropProps = ToUppyProps<DragDrop.DragDropOptions>
 
 /**
  * React component that renders an area in which files can be dropped to be
  * uploaded.
  */
-declare const DragDrop: React.ComponentType<DragDropProps>;
-export default DragDrop;
+declare const DragDropComponent: React.ComponentType<DragDropProps>;
+export default DragDropComponent;

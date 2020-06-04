@@ -1,12 +1,10 @@
 {
   "version": "independent",
   "packages": [
+    "website",
+    "examples/*",
     "packages/*",
-    "packages/@uppy/*"
-  ],
-  "command": {
-    "bootstrap": {
-      "hoist": true
-    }
-  }
+    "packages/@uppy/*",
+    "private/*"
+  ]
 }

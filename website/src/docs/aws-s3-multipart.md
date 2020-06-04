@@ -4,7 +4,8 @@ order: 3
 title: "AWS S3 Multipart"
 module: "@uppy/aws-s3-multipart"
 permalink: docs/aws-s3-multipart/
-category: 'Destinations'
+category: "Destinations"
+tagline: "uploader for AWS S3 using its resumable Multipart protocol"
 ---
 
 The `@uppy/aws-s3-multipart` plugin can be used to upload files directly to an S3 bucket using S3's Multipart upload strategy. With this strategy, files are chopped up in parts of 5MB+ each, so they can be uploaded concurrently. It is also very reliable: if a single part fails to upload, only that 5MB chunk has to be retried.
@@ -43,7 +44,23 @@ The maximum amount of chunks to upload simultaneously. Set to `0` to disable lim
 
 ### companionUrl: null
 
-The Companion URL to use for proxying calls to the S3 Multipart API.
+URL of the [Companion](/docs/companion) instance to use for proxying calls to the S3 Multipart API.
+
+This will be used by the default implementations of the upload-related functions below. If you provide your own implementations, a `companionUrl` is unnecessary.
+
+### companionHeaders: {}
+
+Custom headers that should be sent along to [Companion](/docs/companion) on every request.
+
+This will be used by the default implementations of the upload-related functions below. If you provide your own implementations, these headers are not sent automatically.
+
+### getChunkSize(file)
+
+A function that returns the minimum chunk size to use when uploading the given file.
+
+The S3 Multipart plugin uploads files in chunks. Each chunk requires a signing request ([`prepareUploadPart()`](#prepareUploadPart-file-partData)). To reduce the amount of requests for large files, you can choose a larger chunk size, at the cost of having to re-upload more data if one chunk fails to upload.
+
+S3 requires a minimum chunk size of 5MB, and supports at most 10,000 chunks per multipart upload. If `getChunkSize()` returns a size that's too small, Uppy will increase it to S3's minimum requirements.
 
 ### createMultipartUpload(file)
 
@@ -82,7 +99,7 @@ A function that generates a signed URL to upload a single part. Receives the `fi
 
 Return a Promise for an object with keys:
 
- - `url` - The presigned URL to upload a part. This can be generated using the S3 SDK like so:
+ - `url` - The presigned URL to upload a part. This can be generated on the server using the S3 SDK like so:
 
    ```js
    sdkInstance.getSignedUrl('uploadPart', {
@@ -91,9 +108,10 @@ Return a Promise for an object with keys:
      UploadId: partData.uploadId,
      PartNumber: partData.number,
      Body: '', // Empty, because it is uploaded later
-     Expires: Date.now() + 5 * 60 * 1000
+     Expires: 5 * 60,
    }, (err, url) => { /* there's the url! */ })
    ```
+ - `headers` - **(Optional)** Custom headers that should be sent to the S3 presigned URL.
 
 ### abortMultipartUpload(file, { uploadId, key })
 
@@ -132,7 +150,7 @@ While the Uppy AWS S3 plugin uses `POST` requests while uploading files to an S3
 <CORSRule>
   <!-- Change from POST to PUT if you followed the docs for the AWS S3 plugin ... -->
   <AllowedMethod>PUT</AllowedMethod>
-  
+
   <!-- ... keep the existing MaxAgeSeconds and AllowedHeader lines and your other stuff ... -->
 
   <!-- ... and don't forget to add this tag. -->

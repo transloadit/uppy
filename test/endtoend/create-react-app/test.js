@@ -2,82 +2,92 @@
 const testURL = 'http://localhost:4567/create-react-app'
 
 describe('webpack build', () => {
-  beforeEach(() => {
-    browser.url(testURL)
+  beforeEach(async () => {
+    await browser.url(testURL)
   })
 
-  it('should include CSS', () => {
-    const el = $('#inline-dashboard .uppy-Dashboard-inner')
-    el.waitForExist()
-    const bgColor = el.getCssProperty('background-color').value
+  it('should include CSS', async () => {
+    const el = await $('#inline-dashboard .uppy-Dashboard-inner')
+    await el.waitForExist()
+    const bgColor = await el.getCSSProperty('background-color')
     // computed value is rgb() or rgba(), not hex (but listing it here to show the expected value too)
-    expect(/^rgba?\(250, ?250, ?250(?:, ?1)?\)$|^#fafafa$/.test(bgColor)).to.equal(true)
+    expect(/^rgba?\(250, ?250, ?250(?:, ?1)?\)$|^#fafafa$/.test(bgColor.value)).to.equal(true)
   })
 })
 
 describe('React: Dashboard', () => {
-  beforeEach(() => {
-    browser.url(testURL)
+  beforeEach(async () => {
+    await browser.url(testURL)
   })
 
-  it('should have Google Drive panel', () => {
-    const el = $('#inline-dashboard .uppy-Dashboard-inner')
-    el.waitForExist()
+  it('should have Google Drive panel', async () => {
+    const el = await $('#inline-dashboard .uppy-Dashboard-inner')
+    await el.waitForExist()
 
-    const tabs = $$('.uppy-DashboardTab-name')
-    expect(tabs.some(name => name.getText() === 'Google Drive')).to.equal(true)
+    const tabs = await $$('.uppy-DashboardTab-name')
+    let hasGDrive = false
+    for (const name of tabs) {
+      hasGDrive = (await name.getText()) === 'Google Drive'
+      if (hasGDrive) break
+    }
+    expect(hasGDrive).to.equal(true)
   })
 
-  it('should survive being mounted and unmounted', () => {
-    const el = $('#inline-dashboard .uppy-Dashboard-inner')
-    el.waitForExist()
+  it('should survive being mounted and unmounted', async () => {
+    const el = await $('#inline-dashboard .uppy-Dashboard-inner')
+    await el.waitForExist()
+
+    async function toggle () {
+      const button = await $('#inline-dashboard-toggle')
+      await button.click()
+      await browser.pause(250)
+    }
 
     // close
-    browser.click('#inline-dashboard-toggle')
-    browser.pause(250)
+    await toggle()
     // open
-    browser.click('#inline-dashboard-toggle')
-    browser.pause(250)
+    await toggle()
     // close
-    browser.click('#inline-dashboard-toggle')
-    browser.pause(250)
+    await toggle()
     // open
-    browser.click('#inline-dashboard-toggle')
-    browser.pause(250)
+    await toggle()
 
     // open GDrive panel
-    browser.click('.uppy-DashboardTab:nth-child(2) button')
-    browser.pause(500)
+    const gdriveButton = await $('.uppy-DashboardTab:nth-child(1) button')
+    await gdriveButton.click()
+    await browser.pause(500)
 
     // side effecting property access, not a function!
     // eslint-disable-next-line no-unused-expressions
-    expect($('.uppy-Provider-authBtn')).to.exist
+    expect(await $('.uppy-Provider-authBtn')).to.exist
   })
 })
 
 describe('React: DashboardModal', () => {
-  beforeEach(() => {
-    browser.url(testURL)
+  beforeEach(async () => {
+    await browser.url(testURL)
   })
 
-  it('should have controlled open and close', () => {
-    const modalToggle = $('#modal-dashboard-toggle')
-    const modalWrapper = $('#modal-dashboard .uppy-Dashboard--modal')
-    const modalClose = $('#modal-dashboard .uppy-Dashboard-close')
+  it('should have controlled open and close', async () => {
+    const modalToggle = await $('#modal-dashboard-toggle')
+    const modalWrapper = await $('#modal-dashboard .uppy-Dashboard--modal')
+    const modalClose = await $('#modal-dashboard .uppy-Dashboard-close')
 
-    expect(modalWrapper.getAttribute('aria-hidden')).to.equal('true')
+    await modalToggle.waitForExist()
 
-    modalToggle.click()
-    browser.pause(50) // wait for the animation to start
+    expect(await modalWrapper.getAttribute('aria-hidden')).to.equal('true')
+
+    await modalToggle.click()
+    await browser.pause(50) // wait for the animation to start
 
     // Edge appears to report empty string while others report null
-    expect(modalWrapper.getAttribute('aria-hidden')).to.be.oneOf([null, ''])
+    expect(await modalWrapper.getAttribute('aria-hidden')).to.be.oneOf([null, ''])
 
-    browser.pause(500) // wait for the animation to complete
+    await browser.pause(500) // wait for the animation to complete
 
-    modalClose.click()
-    browser.pause(500) // wait for the animation to complete
+    await modalClose.click()
+    await browser.pause(500) // wait for the animation to complete
 
-    expect(modalWrapper.getAttribute('aria-hidden')).to.equal('true')
+    expect(await modalWrapper.getAttribute('aria-hidden')).to.equal('true')
   })
 })

@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const ru_RU = {}
 
 ru_RU.strings = {
@@ -10,12 +8,12 @@ ru_RU.strings = {
   authenticateWithTitle: 'Пожалуйста, авторизуйтесь в %{pluginName} чтобы выбрать файлы',
   authenticateWith: 'Подключиться к %{pluginName}',
   back: 'Назад',
+  addMore: 'Добавить еще',
   browse: 'выберите',
   cancel: 'Отменить',
   cancelUpload: 'Отменить загрузку',
   chooseFiles: 'Выбрать файлы',
   closeModal: 'Закрыть окно',
-  companionAuthError: 'Требуется авторизация',
   companionError: 'Не удалось подключиться к Companion',
   // «Готово» вместо «загрузка завершена», потому что кроме загрузки бывает encoding — транскодирование файлов
   complete: 'Готово',
@@ -33,8 +31,7 @@ ru_RU.strings = {
   dropHereOr: 'Перетащите файлы или %{browse}',
   dropHint: 'Перетащите файлы сюда',
   dropPaste: 'Перетащите файлы, вставьте или %{browse}',
-  dropPasteImport: 'Перетащите файлы, вставьте, %{browse} или импортируйте',
-  edit: 'Редактировать',
+  dropPasteImport: 'Перетащите файлы, вставьте, %{browse} или импортируйте из:',
   editFile: 'Редактировать файл',
   editing: 'Редактируется %{file}',
   emptyFolderAdded: 'Файлы не были добавлены — папка пуста',
@@ -59,7 +56,6 @@ ru_RU.strings = {
   },
   import: 'Импортировать',
   importFrom: 'Импортировать из %{name}',
-  link: 'Ссылка',
   loading: 'Загрузка...',
   logOut: 'Выйти',
   myDevice: 'Мое устройство',
@@ -68,7 +64,6 @@ ru_RU.strings = {
   pause: 'Поставить на паузу',
   pauseUpload: 'Поставить загрузку на паузу',
   paused: 'На паузе',
-  preparingUpload: 'Подготовка к загрузке...',
   processingXFiles: {
     '0': 'Обрабатывается %{smart_count} файл',
     '1': 'Обрабатываются %{smart_count} файла',
@@ -81,11 +76,11 @@ ru_RU.strings = {
   resumeUpload: 'Продолжить загрузку',
   retry: 'Повторить попытку',
   retryUpload: 'Повторить попытку загрузки',
-  saveChanges: 'Сохранить изменения',
-  selectXFiles: {
-    '0': 'Выбрать %{smart_count} файл',
-    '1': 'Выбрать %{smart_count} файла',
-    '2': 'Выбрать %{smart_count} файлов'
+  saveChanges: 'Сохранить',
+  selectX: {
+    '0': 'Выбрать %{smart_count}',
+    '1': 'Выбрать %{smart_count}',
+    '2': 'Выбрать %{smart_count}'
   },
   smile: 'Улыбнитесь!',
   startRecording: 'Начать запись видео',
@@ -133,7 +128,12 @@ ru_RU.strings = {
     '0': 'Вы должны выбрать хотя бы %{smart_count} файл',
     '1': 'Вы должны выбрать хотя бы %{smart_count} файла',
     '2': 'Вы должны выбрать хотя бы %{smart_count} файлов'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Выбрать все файлы из папки %{name}',
+  unselectAllFilesFromFolderNamed: 'Отменить выбор всех файлов из папки %{name}',
+  selectFileNamed: 'Выбрать файл %{name}',
+  unselectFileNamed: 'Отменить выбор файла %{name}',
+  openFolderNamed: 'Открыть папку %{name}'
 }
 
 ru_RU.pluralize = function (n) {

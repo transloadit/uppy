@@ -5,7 +5,8 @@ title: "Import From URL"
 menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/url"
 permalink: docs/url/
-category: 'Sources'
+category: "Sources"
+tagline: "import files from any public URL"
 ---
 
 The `@uppy/url` plugin allows users to import files from the internet. Paste any URL and it will be added!
@@ -96,3 +97,12 @@ strings: {
 }
 ```
 
+## Methods
+
+### `addFile`
+
+You can add a file to the Url plugin directly via the API, like this:
+
+```js
+uppy.getPlugin('Url').addFile('https://example.com/myfile.pdf').then(uppy.upload)
+```

@@ -12,10 +12,12 @@ const defaultSelector = (id) => (state) => state.uppy[id]
  * @param {object} opts.store - The Redux store to use.
  * @param {string} opts.id - This store instance's ID. Defaults to a random string.
  *    If you need to access Uppy state through Redux, eg. to render custom UI, set this to something constant.
- * @param {function} opts.selector - Function, `(state) => uppyState`, to pluck state from the Redux store.
+ * @param {Function} opts.selector - Function, `(state) => uppyState`, to pluck state from the Redux store.
  *    Defaults to retrieving `state.uppy[opts.id]`. Override if you placed Uppy state elsewhere in the Redux store.
  */
 class ReduxStore {
+  static VERSION = require('../package.json').version
+
   constructor (opts) {
     this._store = opts.store
     this._id = opts.id || cuid()

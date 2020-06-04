@@ -3,7 +3,7 @@ type: docs
 order: 5
 title: "Custom Stores"
 permalink: docs/stores/
-category: 'Docs'
+category: "Docs"
 ---
 
 > This section concerns storing the internal application state, if you work with React/Redux, for example. If none of this rings a bell, you can safely skip this section.
@@ -94,10 +94,13 @@ If you'd rather not store the Uppy state under the `state.uppy` key at all, use 
 const uppy = Uppy({
   store: ReduxStore({
     store: store,
+    id: 'avatarUpload',
     selector: state => state.pages.profile.uppy.avatarUpload
   })
 })
 ```
+
+Note that when specifying a custom selector, you **must** also specify a custom store ID. The store `id` tells the reducer in which property it should put Uppy's state. The selector must then take the state from that property. In the example, we set the ID to `avatarUpload` and take the state from the `[reducer mount path].avatarUpload`.
 
 If your app uses [`reselect`](https://npmjs.com/package/reselect), its selectors work very well with this!
 
@@ -142,4 +145,4 @@ function defaultStore () {
 
 A pattern like this, where users can pass options via a function call if necessary, is recommended.
 
-See the [./src/store](https://github.com/transloadit/uppy/tree/master/src/store) folder in the repository for more inspiration.
+See the [@uppy/store-default](https://github.com/transloadit/uppy/tree/master/packages/%40uppy/store-default) package for more inspiration.

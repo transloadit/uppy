@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const it_IT = {}
 
 it_IT.strings = {
@@ -10,12 +8,12 @@ it_IT.strings = {
   authenticateWith: 'Connetti a %{pluginName}',
   authenticateWithTitle: 'Autenticati con %{pluginName} per selezionare i file',
   back: 'Indietro',
+  addMore: 'Aggiungi più',
   browse: 'sfoglia',
   cancel: 'Annulla',
   cancelUpload: 'Annulla upload',
   chooseFiles: 'Scegli i file',
   closeModal: 'Chiudi modale',
-  companionAuthError: 'Autorizzazione richiesta',
   companionError: 'Connessione con Companion fallita',
   complete: 'Completato',
   connectedToInternet: 'Connesso a internet',
@@ -32,7 +30,6 @@ it_IT.strings = {
   dropHint: 'Trascina i file qui',
   dropPaste: 'Trascina i file qui, incolla o %{browse}',
   dropPasteImport: 'Trascina i file qui, incolla, %{browse} o importa da',
-  edit: 'Modifica',
   editFile: 'Modifica file',
   editing: 'Modifica %{file}',
   emptyFolderAdded: 'Nessun file aggiunto dalla cartella vuota',
@@ -57,7 +54,6 @@ it_IT.strings = {
   },
   import: 'Importa',
   importFrom: 'Importa da %{name}',
-  link: 'Link',
   loading: 'Caricamento...',
   logOut: 'Logout',
   myDevice: 'Il mio computer',
@@ -67,7 +63,6 @@ it_IT.strings = {
   pauseUpload: 'Pausa upload',
   paused: 'In pausa',
   poweredBy: 'Powered by',
-  preparingUpload: 'Upload in preparazione...',
   processingXFiles: {
     '0': 'Sto processando %{smart_count} file',
     '1': 'Sto processando %{smart_count} file',
@@ -80,10 +75,10 @@ it_IT.strings = {
   retry: 'Riprova',
   retryUpload: 'Riprova l\'upload',
   saveChanges: 'Salva le modifiche',
-  selectXFiles: {
-    '0': 'Seleziona %{smart_count} file',
-    '1': 'Seleziona %{smart_count} file',
-    '2': 'Seleziona %{smart_count} file'
+  selectX: {
+    '0': 'Seleziona %{smart_count}',
+    '1': 'Seleziona %{smart_count}',
+    '2': 'Seleziona %{smart_count}'
   },
   smile: 'Sorridi!',
   startRecording: 'Inizia la registrazione del video',
@@ -131,7 +126,12 @@ it_IT.strings = {
     '0': 'Devi selezionare almeno %{smart_count} file',
     '1': 'Devi selezionare almeno %{smart_count} file',
     '2': 'Devi selezionare almeno %{smart_count} file'
-  }
+  },
+  selectAllFilesFromFolderNamed: 'Seleziona tutti i file dalla cartella %{name}',
+  unselectAllFilesFromFolderNamed: 'Deseleziona tutti i file dalla cartella %{name}',
+  selectFileNamed: 'Seleziona il file %{name}',
+  unselectFileNamed: 'Deseleziona il file %{name}',
+  openFolderNamed: 'Cartella aperta %{name}'
 }
 
 it_IT.pluralize = function (n) {

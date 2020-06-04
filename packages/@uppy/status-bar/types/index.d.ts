@@ -1,21 +1,19 @@
-import Uppy = require('@uppy/core');
+import Uppy = require('@uppy/core')
+import GeneratedLocale = require('./generatedLocale')
 
 declare module StatusBar {
+  export type StatusBarLocale = GeneratedLocale
+
   export interface StatusBarOptions extends Uppy.PluginOptions {
-    showProgressDetails: boolean;
-    hideUploadButton: boolean;
-    hideAfterFinish: boolean;
+    replaceTargetContent?: boolean
+    target?: Uppy.PluginTarget
+    showProgressDetails?: boolean
+    hideUploadButton?: boolean
+    hideAfterFinish?: boolean
+    locale?: StatusBarLocale
   }
 }
 
-declare class StatusBar extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<StatusBar.StatusBarOptions>);
-}
+declare class StatusBar extends Uppy.Plugin<StatusBar.StatusBarOptions> {}
 
-export = StatusBar;
-
-declare module '@uppy/core' {
-  export interface Uppy {
-    use(pluginClass: typeof StatusBar, opts: Partial<StatusBar.StatusBarOptions>): Uppy.Uppy;
-  }
-}
+export = StatusBar

@@ -1,4 +1,5 @@
 const Uppy = require('@uppy/core')
+const has = require('@uppy/utils/lib/hasProperty')
 
 const eventNames = {
   // File management events
@@ -31,12 +32,13 @@ const uppyOptionNames = [
   'restrictions',
   'meta',
   'onBeforeFileAdded',
-  'onBeforeUpload'
+  'onBeforeUpload',
+  'debug'
 ]
 function createUppy (opts, overrides = {}) {
   const uppyOptions = {}
   uppyOptionNames.forEach((name) => {
-    if (opts.hasOwnProperty(name)) uppyOptions[name] = opts[name]
+    if (has(opts, name)) uppyOptions[name] = opts[name]
   })
   Object.assign(uppyOptions, overrides)
 

@@ -2,7 +2,7 @@
 title: "Contributing"
 type: docs
 order: 0
-category: 'Contributing'
+category: "Contributing"
 ---
 
 <!-- md contributing.md -->

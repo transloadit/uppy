@@ -1,9 +1,9 @@
 ---
 title: "Common Plugin Options"
 type: docs
-permalink: docs/plugins/
+permalink: docs/plugin-options/
 order: 4
-category: 'Docs'
+category: "Docs"
 ---
 
 Each plugin can have any number of options (please see specific plugins for details), but these are shared between some:
@@ -53,6 +53,22 @@ Same as with Uppy.Core’s setting above, this allows you to override plugin’s
 ```
 
 See plugin documentation pages for other plugin-specific options.
+
+## Methods
+
+### setOptions(opts)
+
+You can change options for a plugin on the fly, like this:
+
+```js
+// First get the plugin by its `id`,
+// then change, for example, `width` on the fly
+uppy.getPlugin('Dashboard').setOptions({
+  width: 300
+})
+```
+
+> ⚠️ This should work for most options, except for `limit` and some others related to an upload. This is because some objects/instances are created immediately upon initialization, and not updated later.
 
 <!-- Keep this heading, it is here to avoid breaking existing URLs -->
 <!-- Previously the content that is now at /docs/providers was here -->

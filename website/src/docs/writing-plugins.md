@@ -3,14 +3,17 @@ type: docs
 title: "Writing Plugins"
 permalink: docs/writing-plugins/
 order: 8
-category: 'Contributing'
+category: "Contributing"
 ---
 
 There are already a few useful Uppy plugins out there, but there might come a time when you will want to build your own. Plugins can hook into the upload process or render a custom UI, typically to:
 
  - Render some custom UI element, e.g., [StatusBar](/docs/statusbar) or [Dashboard](/docs/dashboard).
  - Do the actual uploading, e.g., [XHRUpload](/docs/xhrupload) or [Tus](/docs/tus).
+ - Do work before the upload, like compressing an image or calling external API.
  - Interact with a third-party service to process uploads correctly, e.g., [Transloadit](/docs/transloadit) or [AwsS3](/docs/aws-s3).
+
+See a [full example of a plugin](#Example-of-a-custom-plugin) below.
 
 ## Creating A Plugin
 
@@ -215,8 +218,122 @@ This allows them to be overridden by Locale Packs, or directly when users pass `
 // i18n
 this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
 this.i18n = this.translator.translate.bind(this.translator)
-this.i18nArray = this.translator.translateArray.bind(this.translator) 
+this.i18nArray = this.translator.translateArray.bind(this.translator)
 // ^-- Only if you're using i18nArray, which allows you to pass in JSX Components as well.
+```
+
+## Example of a custom plugin
+
+Below is a full example of a [simple plugin](https://github.com/arturi/uppy-plugin-image-compressor) that compresses images before uploading them. You can replace `compressorjs` method with any other work you need to do. This works especially well for async stuff, like calling an external API.
+
+```js
+const { Plugin } = require('@uppy/core')
+const Translator = require('@uppy/utils/lib/Translator')
+const Compressor = require('compressorjs/dist/compressor.common.js')
+
+class UppyImageCompressor extends Plugin {
+  constructor (uppy, opts) {
+    super(uppy, opts)
+    this.id = this.opts.id || 'ImageCompressor'
+    this.type = 'modifier'
+
+    this.defaultLocale = {
+      strings: {
+        compressingImages: 'Compressing images...'
+      }
+    }
+
+    const defaultOptions = {
+      quality: 0.6
+    }
+
+    this.opts = Object.assign({}, defaultOptions, opts)
+
+    // we use those internally in `this.compress`, so they
+    // should not be overriden
+    delete this.opts.success
+    delete this.opts.error
+
+    this.i18nInit()
+
+    this.prepareUpload = this.prepareUpload.bind(this)
+    this.compress = this.compress.bind(this)
+  }
+
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
+  }
+
+  compress (blob) {
+    return new Promise((resolve, reject) => {
+      new Compressor(blob, Object.assign(
+        {},
+        this.opts,
+        {
+          success: (result) => {
+            return resolve(result)
+          },
+          error: (err) => {
+            return reject(err)
+          }
+        }
+      ))
+    })
+  }
+
+  prepareUpload (fileIDs) {
+    const promises = fileIDs.map((fileID) => {
+      const file = this.uppy.getFile(fileID)
+      this.uppy.emit('preprocess-progress', file, {
+        mode: 'indeterminate',
+        message: this.i18n('compressingImages')
+      })
+
+      if (file.type.split('/')[0] !== 'image') {
+        return
+      }
+
+      return this.compress(file.data).then((compressedBlob) => {
+        this.uppy.log(`[Image Compressor] Image ${file.id} size before/after compression: ${file.data.size} / ${compressedBlob.size}`)
+        this.uppy.setFileState(fileID, { data: compressedBlob })
+      }).catch((err) => {
+        this.uppy.log(`[Image Compressor] Failed to compress ${file.id}:`, 'warning')
+        this.uppy.log(err, 'warning')
+      })
+    })
+
+    const emitPreprocessCompleteForAll = () => {
+      fileIDs.forEach((fileID) => {
+        const file = this.uppy.getFile(fileID)
+        this.uppy.emit('preprocess-complete', file)
+      })
+    }
+
+    // Why emit `preprocess-complete` for all files at once, instead of
+    // above when each is processed?
+    // Because it leads to StatusBar showing a weird “upload 6 files” button,
+    // while waiting for all the files to complete pre-processing.
+    return Promise.all(promises)
+      .then(emitPreprocessCompleteForAll)
+  }
+
+  install () {
+    this.uppy.addPreProcessor(this.prepareUpload)
+  }
+  
+  uninstall () {
+    this.uppy.removePreProcessor(this.prepareUpload)
+  }
+}
+
+module.exports = UppyImageCompressor
 ```
 
 [core.setfilestate]: /docs/uppy#uppy-setFileState-fileID-state

@@ -1,15 +1,22 @@
+const Provider = require('../Provider')
+
 const request = require('request')
 // @ts-ignore
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
-const AuthError = require('../error')
+const { ProviderApiError, ProviderAuthError } = require('../error')
 const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
-const TEAM_DRIVE_FIELDS = 'teamDrives(kind,id,name,backgroundImageLink)'
+// using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
+const SHARED_DRIVE_FIELDS = '*'
 
-class Drive {
+/**
+ * Adapter for API https://developers.google.com/drive/api/v3/
+ */
+class Drive extends Provider {
   constructor (options) {
+    super(options)
     this.authProvider = options.provider = Drive.authProvider
     options.alias = 'drive'
     options.version = 'v3'
@@ -24,101 +31,148 @@ class Drive {
   list (options, done) {
     const directory = options.directory || 'root'
     const query = options.query || {}
-    const teamDrive = query.teamDrive
-    let listDone = false
-    let teamDrivesDone = false
-    let teamDrives
-    let listResponse
-    let reqErr
-    const finishReq = () => {
-      if (reqErr || listResponse.statusCode !== 200) {
-        const err = this._error(reqErr, listResponse)
-        logger.error(err, 'provider.drive.list.error')
-        done(err)
-      } else {
-        done(null, this.adaptData(listResponse.body, teamDrives ? teamDrives.body : null, options.uppy))
-      }
+
+    let sharedDrivesPromise = Promise.resolve(undefined)
+
+    const shouldListSharedDrives = directory === 'root' && !query.cursor
+    if (shouldListSharedDrives) {
+      sharedDrivesPromise = new Promise((resolve) => {
+        this.client
+          .query()
+          .get('drives')
+          .qs({ fields: SHARED_DRIVE_FIELDS })
+          .auth(options.token)
+          .request((err, resp) => {
+            if (err) {
+              logger.error(err, 'provider.drive.sharedDrive.error')
+              return
+            }
+            resolve(resp)
+          })
+      })
     }
 
-    if (directory === 'root') {
-      // fetch a list of all Team Drives which the user can access.
+    const where = {
+      fields: DRIVE_FILES_FIELDS,
+      pageToken: query.cursor,
+      q: `'${directory}' in parents and trashed=false`,
+      includeItemsFromAllDrives: true,
+      supportsAllDrives: true
+    }
+
+    const filesPromise = new Promise((resolve, reject) => {
       this.client
         .query()
-        .get('teamdrives')
-        .where({ fields: TEAM_DRIVE_FIELDS })
+        .get('files')
+        .qs(where)
         .auth(options.token)
         .request((err, resp) => {
-          if (err) {
-            logger.error(err, 'provider.drive.teamDrive.error')
+          if (err || resp.statusCode !== 200) {
+            reject(this._error(err, resp))
+            return
           }
-          teamDrivesDone = true
-          teamDrives = resp
-          if (listDone) {
-            finishReq()
-          }
+          resolve(resp)
         })
-    }
+    })
 
-    let where = {
-      fields: DRIVE_FILES_FIELDS,
-      q: `'${directory}' in parents and trashed=false`
-    }
-    if (teamDrive) {
-      // Team Drives require several extra parameters in order to work.
-      where.supportsTeamDrives = true
-      where.includeTeamDriveItems = true
-      where.teamDriveId = directory
-      where.corpora = 'teamDrive'
-    }
-
-    this.client
-      .query()
-      .get('files')
-      .where(where)
-      .auth(options.token)
-      .request((err, resp) => {
-        listDone = true
-        listResponse = resp
-        reqErr = err
-        if (teamDrivesDone || directory !== 'root') {
-          finishReq()
+    Promise.all([sharedDrivesPromise, filesPromise])
+      .then(
+        ([sharedDrives, filesResponse]) => {
+          const returnData = this.adaptData(
+            filesResponse.body,
+            sharedDrives && sharedDrives.body,
+            directory,
+            query
+          )
+          done(null, returnData)
+        },
+        (reqErr) => {
+          logger.error(reqErr, 'provider.drive.list.error')
+          done(reqErr)
         }
-      })
+      )
   }
 
   stats ({ id, token }, done) {
     return this.client
       .query()
       .get(`files/${id}`)
-      .where({ fields: DRIVE_FILE_FIELDS, supportsTeamDrives: true })
+      .qs({ fields: DRIVE_FILE_FIELDS, supportsAllDrives: true })
       .auth(token)
       .request(done)
   }
 
-  download ({ id, token }, onData) {
+  _exportGsuiteFile (id, token, mimeType) {
+    logger.info(`calling google file export for ${id} to ${mimeType}`, 'provider.drive.export')
     return this.client
       .query()
-      .get(`files/${id}`)
-      .where({ alt: 'media', supportsTeamDrives: true })
+      .get(`files/${id}/export`)
+      .qs({ supportsAllDrives: true, mimeType })
       .auth(token)
       .request()
-      .on('data', onData)
-      .on('end', () => onData(null))
-      .on('error', (err) => {
-        logger.error(err, 'provider.drive.download.error')
-      })
   }
 
-  thumbnail ({ id, token }, done) {
-    return this.stats({ id, token }, (err, resp, body) => {
-      if (err || resp.statusCode !== 200) {
-        err = this._error(err, resp)
-        logger.error(err, 'provider.drive.thumbnail.error')
-        return done(err)
+  _waitForFailedResponse (resp) {
+    return new Promise((resolve, reject) => {
+      let data = ''
+      resp.on('data', (chunk) => {
+        data += chunk
+      }).on('end', () => {
+        try {
+          resolve(JSON.parse(data.toString()))
+        } catch (error) {
+          reject(error)
+        }
+      })
+    })
+  }
+
+  download ({ id, token }, onData) {
+    this.stats({ id, token }, (err, _, body) => {
+      if (err) {
+        logger.error(err, 'provider.drive.download.stats.error')
+        onData(err)
+        return
       }
 
-      done(null, body.thumbnailLink ? request(body.thumbnailLink) : null)
+      let requestStream
+      if (adapter.isGsuiteFile(body.mimeType)) {
+        requestStream = this._exportGsuiteFile(id, token, adapter.getGsuiteExportType(body.mimeType))
+      } else {
+        requestStream = this.client
+          .query()
+          .get(`files/${id}`)
+          .qs({ alt: 'media', supportsAllDrives: true })
+          .auth(token)
+          .request()
+      }
+
+      requestStream
+        .on('response', (resp) => {
+          if (resp.statusCode !== 200) {
+            this._waitForFailedResponse(resp)
+              .then((jsonResp) => {
+                resp.body = jsonResp
+                onData(this._error(null, resp))
+              })
+              .catch((err) => onData(this._error(err, resp)))
+          } else {
+            resp.on('data', (chunk) => onData(null, chunk))
+          }
+        })
+        .on('end', () => onData(null, null))
+        .on('error', (err) => {
+          logger.error(err, 'provider.drive.download.error')
+          onData(err)
+        })
     })
+  }
+
+  thumbnail (_, done) {
+    // not implementing this because a public thumbnail from googledrive will be used instead
+    const err = new Error('call to thumbnail is not implemented')
+    logger.error(err, 'provider.drive.thumbnail.error')
+    return done(err)
   }
 
   size ({ id, token }, done) {
@@ -128,40 +182,70 @@ class Drive {
         logger.error(err, 'provider.drive.size.error')
         return done(err)
       }
-      done(null, parseInt(body.size))
+
+      if (adapter.isGsuiteFile(body.mimeType)) {
+        // Not all GSuite file sizes can be predetermined
+        // also for files whose size can be predetermined,
+        // the request to get it can be sometimes expesnive, depending
+        // on the file size. So we default the size to the size export limit
+        const maxExportFileSize = 10 * 1024 * 1024 // 10 MB
+        done(null, maxExportFileSize)
+      } else {
+        done(null, parseInt(body.size))
+      }
     })
   }
 
-  adaptData (res, teamDrivesResp, uppy) {
-    const data = { username: adapter.getUsername(res), items: [] }
-    const items = adapter.getItemSubList(res)
-    const teamDrives = teamDrivesResp ? teamDrivesResp.teamDrives || [] : []
-    items.concat(teamDrives).forEach((item) => {
-      data.items.push({
-        isFolder: adapter.isFolder(item),
-        icon: adapter.getItemIcon(item),
-        name: adapter.getItemName(item),
-        mimeType: adapter.getMimeType(item),
-        id: adapter.getItemId(item),
-        thumbnail: uppy.buildURL(adapter.getItemThumbnailUrl(item), true),
-        requestPath: adapter.getItemRequestPath(item),
-        modifiedDate: adapter.getItemModifiedDate(item),
-        size: adapter.getItemSize(item),
-        custom: {
-          isTeamDrive: adapter.isTeamDrive(item)
+  logout ({ token }, done) {
+    return this.client
+      .get('https://accounts.google.com/o/oauth2/revoke')
+      .qs({ token })
+      .request((err, resp) => {
+        if (err || resp.statusCode !== 200) {
+          logger.error(err, 'provider.drive.logout.error')
+          done(this._error(err, resp))
+          return
         }
+        done(null, { revoked: true })
       })
+  }
+
+  adaptData (res, sharedDrivesResp, directory, query) {
+    const adaptItem = (item) => ({
+      isFolder: adapter.isFolder(item),
+      icon: adapter.getItemIcon(item),
+      name: adapter.getItemName(item),
+      mimeType: adapter.getMimeType(item),
+      id: adapter.getItemId(item),
+      thumbnail: adapter.getItemThumbnailUrl(item),
+      requestPath: adapter.getItemRequestPath(item),
+      modifiedDate: adapter.getItemModifiedDate(item),
+      size: adapter.getItemSize(item),
+      custom: {
+        // @todo isTeamDrive is left for backward compatibility. We should remove it in the next
+        // major release.
+        isTeamDrive: adapter.isSharedDrive(item),
+        isSharedDrive: adapter.isSharedDrive(item)
+      }
     })
 
-    data.nextPagePath = null
+    const items = adapter.getItemSubList(res)
+    const sharedDrives = sharedDrivesResp ? sharedDrivesResp.drives || [] : []
 
-    return data
+    const adaptedItems = sharedDrives.concat(items).map(adaptItem)
+
+    return {
+      username: adapter.getUsername(res),
+      items: adaptedItems,
+      nextPagePath: adapter.getNextPagePath(res, query, directory)
+    }
   }
 
   _error (err, resp) {
     if (resp) {
-      const errMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
-      return resp.statusCode === 401 ? new AuthError() : new Error(errMsg)
+      const fallbackMessage = `request to ${this.authProvider} returned ${resp.statusCode}`
+      const errMsg = (resp.body && resp.body.error) ? resp.body.error.message : fallbackMessage
+      return resp.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
     }
     return err
   }

@@ -1,5 +1,3 @@
-/* eslint camelcase: 0 */
-
 const zh_CN = {}
 
 zh_CN.strings = {
@@ -10,12 +8,12 @@ zh_CN.strings = {
   authenticateWith: '连接到%{pluginName}',
   authenticateWithTitle: '请使用%{pluginName}进行身份验证以选择文件',
   back: '返回',
+  addMore: '添加更多',
   browse: '浏览',
   cancel: '取消',
   cancelUpload: '取消上传',
   chooseFiles: '选择文件',
   closeModal: '关闭模态',
-  companionAuthError: '需要认证',
   companionError: '与Companion的连接失败',
   complete: '完成',
   connectedToInternet: '连接至网络',
@@ -32,7 +30,6 @@ zh_CN.strings = {
   dropHint: '拖动文件到这里',
   dropPaste: '拖动文件到这里，粘贴或者%{browse}',
   dropPasteImport: '拖动文件到这里，粘贴，%{browse}或者导入',
-  edit: '编辑',
   editFile: '编辑文件',
   editing: '正在编辑%{file}',
   emptyFolderAdded: '无法从空文件夹添加文件',
@@ -57,7 +54,6 @@ zh_CN.strings = {
   },
   import: '导入',
   importFrom: '从%{name}导入',
-  link: '链接',
   loading: '载入中...',
   logOut: '登出',
   myDevice: '我的设备',
@@ -67,7 +63,6 @@ zh_CN.strings = {
   pauseUpload: '暂停上传',
   paused: '已暂停',
   poweredBy: '强力驱动于',
-  preparingUpload: '准备上传中...',
   processingXFiles: {
     '0': '%{smart_count}个文件处理中',
     '1': '%{smart_count}个文件处理中',
@@ -80,10 +75,10 @@ zh_CN.strings = {
   retry: '重试',
   retryUpload: '重试上传',
   saveChanges: '保存变更',
-  selectXFiles: {
-    '0': '已选择%{smart_count}个文件',
-    '1': '已选择%{smart_count}个文件',
-    '2': '已选择%{smart_count}个文件'
+  selectX: {
+    '0': '选择%{smart_count}',
+    '1': '选择%{smart_count}',
+    '2': '选择%{smart_count}'
   },
   smile: '笑！',
   startRecording: '开始视频录制',
@@ -131,7 +126,12 @@ zh_CN.strings = {
     '0': '您至少要选择%{smart_count}个文件',
     '1': '您至少要选择%{smart_count}个文件',
     '2': '您至少要选择%{smart_count}个文件'
-  }
+  },
+  selectAllFilesFromFolderNamed: '从文件夹中选择所有文件 %{name}',
+  unselectAllFilesFromFolderNamed: '取消选择文件夹中的所有文件 %{name}',
+  selectFileNamed: '选择文件 %{name}',
+  unselectFileNamed: '取消选择文件 %{name}',
+  openFolderNamed: '打开文件夹 %{name}'
 }
 
 zh_CN.pluralize = function (n) {

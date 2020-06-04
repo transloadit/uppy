@@ -14,7 +14,7 @@
   <p>We're on a monthly release cycle and our latest version is
     <a href="https://github.com/transloadit/uppy/blob/master/CHANGELOG.md#<%- theme.uppy_version_anchor %>">v<%- theme.uppy_version %></a>,
     but the example pages reflect the latest work in our master branch. Here's
-    <a href="https://github.com/transloadit/uppy/compare/v<%- theme.uppy_version %>...master">what changed in master since v<%- theme.uppy_version %></a>
+    <a href="https://github.com/transloadit/uppy/compare/uppy@<%- theme.uppy_version %>...master">what changed in master since v<%- theme.uppy_version %></a>
     in terms of commits, while the CHANGELOG
     provides a higher level view of the things planned for our
     <a href="https://github.com/transloadit/uppy/blob/master/CHANGELOG.md#next">next release</a>.</p>
@@ -23,22 +23,41 @@
   It is later made visible, and moved into the #console-wrapper to position it in layout how
   you see fit. -->
 
-  <blockquote>Files from the examples are uploaded to our test servers and deleted daily.</blockquote>
+  <blockquote>Files from the examples are uploaded to our test servers and deleted every 24-72 hours.</blockquote>
 
   <textarea id="console-log" class="Console"></textarea>
   <script>
-    console.log = (function (log, container) {
-      return function (text) {
-        log(text);
+    function customLog (log, container) {
+      return function () {
+        var text = [];
+        // loop through `arguments`, because console.log accepts multiple
+        var args = Array.prototype.slice.call(arguments);
+        args.forEach(function (arg) {
+          if (arg !== (arg + '')) {
+            // try/catch to prevent TypeError: cyclic object value
+            try {
+              arg = JSON.stringify(arg);
+            } catch (err) {}
+          }
+          text.push(arg);
+        })
 
-        if (text !== (text + '')) {
-          text = JSON.stringify(text);
-        }
+        text = text.join(' ');
+
+        log(text);
 
         container.value += text + '\n';
         container.scrollTop = container.scrollHeight;
       };
-    }(console.log.bind(console), document.getElementById("console-log")));
+    }
+
+    // IE 10 doesn’t support console.debug
+    var consoleDebug = console.debug || console.log
+
+    console.log = customLog(console.log.bind(console), document.getElementById("console-log"));
+    console.debug = customLog(consoleDebug.bind(console), document.getElementById("console-log"));
+    console.warn = customLog(console.warn.bind(console), document.getElementById("console-log"));
+    console.error = customLog(console.error.bind(console), document.getElementById("console-log"));
   </script>
 
   <script>

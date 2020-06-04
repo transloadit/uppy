@@ -4,12 +4,20 @@ This example uses a Python Flask server and `@uppy/xhr-upload` to upload files t
 
 ## Run it
 
-First run `npm install && npm run bootstrap && npm run build` in the root folder of the uppy project.
-
-Then move into this directory (`examples/python-xhr`), and:
-
+To run this example, make sure you've correctly installed the **repository root**:
 ```bash
 npm install
+npm run build
+```
+That will also install the npm dependencies for this example.
+
+Additionally, this example uses python dependencies. Move into this directory, and install them using pip:
+```bash
+cd ./examples/python-xhr
 pip install -r requirements.txt
-npm start
+```
+
+Then, again in the **repository root**, start this example by doing:
+```bash
+npm run example python-xhr
 ```

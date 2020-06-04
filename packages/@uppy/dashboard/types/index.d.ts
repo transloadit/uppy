@@ -1,45 +1,66 @@
-import Uppy = require('@uppy/core');
+import Uppy = require('@uppy/core')
+import StatusBar = require('@uppy/status-bar')
+import DashboardLocale = require('./generatedLocale')
+
+type FieldRenderOptions = {
+  value: string,
+  onChange: (newVal: string) => void
+}
+
+type PreactRender = (node: any, params: object | null, ...children: any[]) => any
+
+interface MetaField {
+  id: string
+  name: string
+  placeholder?: string
+  render?: (field: FieldRenderOptions, h: PreactRender) => any
+}
 
 declare module Dashboard {
   interface DashboardOptions extends Uppy.PluginOptions {
-    onRequestCloseModal: () => void;
-    disablePageScrollWhenModalOpen: boolean;
-    closeModalOnClickOutside: boolean;
-    trigger: string | HTMLElement;
-    inline: boolean;
-    defaultTabIcon: string;
-    hideUploadButton: boolean;
-    width: string | number;
-    height: string | number;
-    note: string;
-    showLinkToFileUploadResult: boolean;
-    proudlyDisplayPoweredByUppy: boolean;
-    metaFields: string[];
-    plugins: string[];
-    disableStatusBar: boolean;
-    showProgressDetails: boolean;
-    hideProgressAfterFinish: boolean;
-    disableInformer: boolean;
-    disableThumbnailGenerator: boolean;
+    animateOpenClose?: boolean
+    browserBackButtonClose?: boolean
+    closeAfterFinish?: boolean
+    closeModalOnClickOutside?: boolean
+    disableInformer?: boolean
+    disablePageScrollWhenModalOpen?: boolean
+    disableStatusBar?: boolean
+    disableThumbnailGenerator?: boolean
+    height?: string | number
+    hideCancelButton?: boolean
+    hidePauseResumeButton?: boolean
+    hideProgressAfterFinish?: boolean
+    hideRetryButton?: boolean
+    hideUploadButton?: boolean
+    inline?: boolean
+    locale?: DashboardLocale & StatusBar.StatusBarLocale
+    metaFields?: MetaField[]
+    note?: string | null
+    onRequestCloseModal?: () => void
+    plugins?: string[]
+    proudlyDisplayPoweredByUppy?: boolean
+    showLinkToFileUploadResult?: boolean
+    showProgressDetails?: boolean
+    showSelectedFiles?: boolean
+    showRemoveButtonAfterComplete?: boolean
+    replaceTargetContent?: boolean
+    target?: Uppy.PluginTarget
+    theme?: 'auto' | 'dark' | 'light'
+    thumbnailWidth?: number
+    trigger?: string
+    width?: string | number
   }
 }
 
-declare class Dashboard extends Uppy.Plugin {
-  constructor(uppy: Uppy.Uppy, opts: Partial<Dashboard.DashboardOptions>);
-  addTarget(plugin: Uppy.Plugin): HTMLElement;
-  hideAllPanels(): void;
-  openModal(): void;
-  closeModal(): void;
-  isModalOpen(): boolean;
-  render(state: object): void;
-  install(): void;
-  uninstall(): void;
+declare class Dashboard extends Uppy.Plugin<Dashboard.DashboardOptions> {
+  addTarget (plugin: Uppy.Plugin): HTMLElement
+  hideAllPanels (): void
+  openModal (): void
+  closeModal (): void
+  isModalOpen (): boolean
+  render (state: object): void
+  install (): void
+  uninstall (): void
 }
 
-export = Dashboard;
-
-declare module '@uppy/core' {
-  export interface Uppy {
-    use(pluginClass: typeof Dashboard, opts: Partial<Dashboard.DashboardOptions>): Uppy.Uppy;
-  }
-}
+export = Dashboard

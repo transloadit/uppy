@@ -1,17 +1,18 @@
 /* global jest:false, test:false, expect:false, describe:false, beforeEach:false */
 
 const providerManager = require('../../src/server/provider')
+const { getCompanionOptions } = require('../../src/standalone/helper')
 let grantConfig
-let uppyOptions
+let companionOptions
 
 describe('Test Provider options', () => {
   beforeEach(() => {
     grantConfig = require('../../src/config/grant')()
-    uppyOptions = require('../../src/standalone/helper').getUppyOptions()
+    companionOptions = getCompanionOptions()
   })
 
   test('adds provider options', () => {
-    providerManager.addProviderOptions(uppyOptions, grantConfig)
+    providerManager.addProviderOptions(companionOptions, grantConfig)
     expect(grantConfig.dropbox.key).toBe('dropbox_key')
     expect(grantConfig.dropbox.secret).toBe('dropbox_secret')
 
@@ -22,11 +23,57 @@ describe('Test Provider options', () => {
     expect(grantConfig.instagram.secret).toBe('instagram_secret')
   })
 
-  test('does not add provider options if protocol and host are not set', () => {
-    delete uppyOptions.server.host
-    delete uppyOptions.server.protocol
+  test('adds extra provider config', () => {
+    process.env.COMPANION_INSTAGRAM_KEY = '123456'
+    providerManager.addProviderOptions(getCompanionOptions(), grantConfig)
+    expect(grantConfig.instagram).toEqual({
+      transport: 'session',
+      callback: '/instagram/callback',
+      key: '123456',
+      secret: 'instagram_secret',
+      protocol: 'https',
+      scope: ['user_profile', 'user_media']
+    })
 
-    providerManager.addProviderOptions(uppyOptions, grantConfig)
+    expect(grantConfig.dropbox).toEqual({
+      key: 'dropbox_key',
+      secret: 'dropbox_secret',
+      transport: 'session',
+      authorize_url: 'https://www.dropbox.com/oauth2/authorize',
+      access_url: 'https://api.dropbox.com/oauth2/token',
+      callback: '/dropbox/callback'
+    })
+
+    expect(grantConfig.google).toEqual({
+      key: 'google_key',
+      secret: 'google_secret',
+      transport: 'session',
+      scope: [
+        'https://www.googleapis.com/auth/drive.readonly'
+      ],
+      callback: '/drive/callback'
+    })
+  })
+
+  test('adds provider options for secret files', () => {
+    process.env.COMPANION_DROPBOX_SECRET_FILE = process.env.PWD + '/test/resources/dropbox_secret_file'
+    process.env.COMPANION_GOOGLE_SECRET_FILE = process.env.PWD + '/test/resources/google_secret_file'
+    process.env.COMPANION_INSTAGRAM_SECRET_FILE = process.env.PWD + '/test/resources/instagram_secret_file'
+
+    companionOptions = getCompanionOptions()
+
+    providerManager.addProviderOptions(companionOptions, grantConfig)
+
+    expect(grantConfig.dropbox.secret).toBe('xobpord')
+    expect(grantConfig.google.secret).toBe('elgoog')
+    expect(grantConfig.instagram.secret).toBe('margatsni')
+  })
+
+  test('does not add provider options if protocol and host are not set', () => {
+    delete companionOptions.server.host
+    delete companionOptions.server.protocol
+
+    providerManager.addProviderOptions(companionOptions, grantConfig)
     expect(grantConfig.dropbox.key).toBeUndefined()
     expect(grantConfig.dropbox.secret).toBeUndefined()
 
@@ -38,8 +85,8 @@ describe('Test Provider options', () => {
   })
 
   test('sets a master redirect uri, if oauthDomain is set', () => {
-    uppyOptions.server.oauthDomain = 'domain.com'
-    providerManager.addProviderOptions(uppyOptions, grantConfig)
+    companionOptions.server.oauthDomain = 'domain.com'
+    providerManager.addProviderOptions(companionOptions, grantConfig)
 
     expect(grantConfig.dropbox.redirect_uri).toBe('http://domain.com/dropbox/redirect')
     expect(grantConfig.google.redirect_uri).toBe('http://domain.com/drive/redirect')

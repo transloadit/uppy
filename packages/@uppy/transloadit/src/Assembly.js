@@ -1,5 +1,6 @@
 const io = requireSocketIo
 const Emitter = require('component-emitter')
+const has = require('@uppy/utils/lib/hasProperty')
 const parseUrl = require('./parseUrl')
 
 // Lazy load socket.io to avoid a console error
@@ -88,12 +89,11 @@ class TransloaditAssembly extends Emitter {
 
     socket.on('assembly_upload_finished', (file) => {
       this.emit('upload', file)
-      this._fetchStatus({ diff: false })
+      this.status.uploads.push(file)
     })
 
     socket.on('assembly_uploading_finished', () => {
       this.emit('executing')
-      this._fetchStatus({ diff: false })
     })
 
     socket.on('assembly_upload_meta_data_extracted', () => {
@@ -103,11 +103,15 @@ class TransloaditAssembly extends Emitter {
 
     socket.on('assembly_result_finished', (stepName, result) => {
       this.emit('result', stepName, result)
-      this._fetchStatus({ diff: false })
+      if (!this.status.results[stepName]) {
+        this.status.results[stepName] = []
+      }
+      this.status.results[stepName].push(result)
     })
 
     socket.on('assembly_error', (err) => {
       this._onError(err)
+      // Refetch for updated status code
       this._fetchStatus({ diff: false })
     })
 
@@ -162,7 +166,7 @@ class TransloaditAssembly extends Emitter {
    * Update this assembly's status with a full new object. Events will be
    * emitted for status changes, new files, and new results.
    *
-   * @param {Object} next The new assembly status object.
+   * @param {object} next The new assembly status object.
    */
   updateStatus (next) {
     this._diffStatus(this.status, next)
@@ -173,8 +177,8 @@ class TransloaditAssembly extends Emitter {
    * Diff two assembly statuses, and emit the events necessary to go from `prev`
    * to `next`.
    *
-   * @param {Object} prev The previous assembly status.
-   * @param {Object} next The new assembly status.
+   * @param {object} prev The previous assembly status.
+   * @param {object} next The new assembly status.
    */
   _diffStatus (prev, next) {
     const prevStatus = prev.ok
@@ -206,9 +210,7 @@ class TransloaditAssembly extends Emitter {
 
     // Find new uploaded files.
     Object.keys(next.uploads)
-      .filter((upload) => (
-        !prev.uploads.hasOwnProperty(upload)
-      ))
+      .filter((upload) => !has(prev.uploads, upload))
       .map((upload) => next.uploads[upload])
       .forEach((upload) => {
         this.emit('upload', upload)

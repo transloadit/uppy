@@ -4,7 +4,7 @@ type: docs
 permalink: docs/
 alias: api/
 order: 0
-category: 'Docs'
+category: "Docs"
 ---
 
 Uppy is a sleek and modular file uploader. It fetches files from local disk, Google Drive, Instagram, remote urls, cameras etc, and then uploads them to the final destination. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
@@ -19,12 +19,12 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
   <head>
     <meta charset="utf-8">
     <title>Uppy</title>
-    <link href="https://transloadit.edgly.net/releases/uppy/v1.0.0/uppy.min.css" rel="stylesheet">
+    <link href="https://transloadit.edgly.net/releases/uppy/v1.15.0/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <div id="drag-drop-area"></div>
 
-    <script src="https://transloadit.edgly.net/releases/uppy/v1.0.0/uppy.min.js"></script>
+    <script src="https://transloadit.edgly.net/releases/uppy/v1.15.0/uppy.min.js"></script>
     <script>
       var uppy = Uppy.Core()
         .use(Uppy.Dashboard, {
@@ -113,12 +113,12 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
 1\. Add a script at the bottom of the closing `</body>` tag:
 
 ``` html
-<script src="https://transloadit.edgly.net/releases/uppy/v1.0.0/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v1.15.0/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 ``` html
-<link href="https://transloadit.edgly.net/releases/uppy/v1.0.0/uppy.min.css" rel="stylesheet">
+<link href="https://transloadit.edgly.net/releases/uppy/v1.15.0/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize at the bottom of the closing `</body>` tag:
@@ -137,7 +137,7 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
 - [Plugins](/docs/plugins/) — list of Uppy plugins and their options.
 - [Server](/docs/companion/) — setting up and running a Companion instance, which adds support for Instagram, Dropbox, Google Drive, direct links, and other remote sources.
 - [React](/docs/react/) — components to integrate Uppy UI plugins with React apps.
-- [Writing Plugins](/docs/writing-plugins) — how to write a plugin for Uppy [documentation in progress].
+- [Writing Plugins](/docs/writing-plugins) — how to write a plugin for Uppy (documentation in progress).
 
 ## Browser Support
 
@@ -145,7 +145,9 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
   <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
 </a>
 
-We currently aim to support IE10+ and recent versions of Safari, Edge, Chrome, Firefox and Opera.
+We currently aim to support IE11+ and recent versions of Safari, Edge, Chrome, Firefox and Opera.
+
+We still run end to end tests with IE10, but we are not actively supporting it or fixing visual / minor issues.
 
 ### Polyfills
 
@@ -167,5 +169,5 @@ const Uppy = require('@uppy/core')
 If you're using Uppy from CDN, `es6-promise` and  `whatwg-fetch` are already included in the bundle, no need to include anything additionally:
 
 ```html
-<script src="https://transloadit.edgly.net/releases/uppy/v1.0.0/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v1.15.0/uppy.min.js"></script>
 ```

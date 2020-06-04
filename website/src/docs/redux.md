@@ -1,9 +1,11 @@
 ---
 title: "Redux"
 type: docs
+module: "@uppy/store-redux"
 permalink: docs/redux/
 order: 9
-category: 'React'
+category: "Miscellaneous"
+tagline: "Uppy can use your app’s Redux store for its files and UI state"
 ---
 
 Uppy supports the popular [Redux](https://redux.js.org/) state management library in two ways:
@@ -27,6 +29,10 @@ const uppy = Uppy({
   })
 })
 ```
+
+Keep in mind that Uppy state is not serializable (because we have to keep track of files with data blobs). So, if you persist your Redux state, you should exclude Uppy state from persistence.
+
+If you’d like to persist your Uppy state — please look into [@uppy/golden-retriever](https://uppy.io/docs/golden-retriever/). It’s a plugin created specifically for saving and restoring Uppy state, including selected files and upload progress.
 
 ## Redux Dev Tools
 

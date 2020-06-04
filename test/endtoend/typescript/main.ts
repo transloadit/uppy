@@ -12,9 +12,11 @@ import {
   Form
 } from 'uppy'
 
-const TUS_ENDPOINT = 'https://master.tus.io/files/'
+// @ts-ignore
+const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
+const TUS_ENDPOINT = `http://${isOnTravis ? 'companion.test' : 'localhost'}:1080/files/`
 
-const uppy = Core({
+const uppy = Core<Core.StrictTypes>({
   debug: true,
   meta: {
     username: 'John',

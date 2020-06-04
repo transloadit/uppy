@@ -54,6 +54,7 @@ const formUppyWithDashboard = robodog.form('#dashboard-form', {
     allowedFileTypes: ['.png']
   },
   waitForEncoding: true,
+  note: 'Only PNG files please!',
   params: {
     auth: { key: TRANSLOADIT_KEY },
     template_id: TEMPLATE_ID
@@ -66,6 +67,7 @@ window.formUppyWithDashboard = formUppyWithDashboard
 const dashboard = robodog.dashboard('#dashboard', {
   debug: true,
   waitForEncoding: true,
+  note: 'Images will be resized with Transloadit',
   params: {
     auth: { key: TRANSLOADIT_KEY },
     template_id: TEMPLATE_ID

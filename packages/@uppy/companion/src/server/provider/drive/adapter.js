@@ -1,6 +1,8 @@
+const querystring = require('querystring')
+
 exports.getUsername = (data) => {
   for (const item of data.files) {
-    if (item.ownedByMe) {
+    if (item.ownedByMe && item.permissions) {
       for (const permission of item.permissions) {
         if (permission.role === 'owner') {
           return permission.emailAddress
@@ -11,7 +13,7 @@ exports.getUsername = (data) => {
 }
 
 exports.isFolder = (item) => {
-  return item.mimeType === 'application/vnd.google-apps.folder' || item.kind === 'drive#teamDrive'
+  return item.mimeType === 'application/vnd.google-apps.folder' || exports.isSharedDrive(item)
 }
 
 exports.getItemSize = (item) => {
@@ -19,11 +21,15 @@ exports.getItemSize = (item) => {
 }
 
 exports.getItemIcon = (item) => {
-  if (item.kind === 'drive#teamDrive') {
-    return item.backgroundImageLink + '=w16-h16-n'
+  if (exports.isSharedDrive(item)) {
+    const size = '=w16-h16-n'
+    const sizeParamRegex = /=[-whncsp0-9]*$/
+    return item.backgroundImageLink.match(sizeParamRegex)
+      ? item.backgroundImageLink.replace(sizeParamRegex, size)
+      : `${item.backgroundImageLink}${size}`
   }
 
-  if (item.thumbnailLink) {
+  if (item.thumbnailLink && !item.mimeType.startsWith('application/vnd.google')) {
     const smallerThumbnailLink = item.thumbnailLink.replace('s220', 's40')
     return smallerThumbnailLink
   }
@@ -32,16 +38,40 @@ exports.getItemIcon = (item) => {
 }
 
 exports.getItemSubList = (item) => {
+  const allowedGSuiteTypes = [
+    'application/vnd.google-apps.document',
+    'application/vnd.google-apps.drawing',
+    'application/vnd.google-apps.script',
+    'application/vnd.google-apps.spreadsheet',
+    'application/vnd.google-apps.presentation'
+  ]
+
   return item.files.filter((i) => {
-    return exports.isFolder(i) || !i.mimeType.startsWith('application/vnd.google')
+    return exports.isFolder(i) || !exports.isGsuiteFile(i.mimeType) || allowedGSuiteTypes.includes(i.mimeType)
   })
 }
 
 exports.getItemName = (item) => {
+  const extensionMaps = {
+    'application/vnd.google-apps.document': '.docx',
+    'application/vnd.google-apps.drawing': '.png',
+    'application/vnd.google-apps.script': '.json',
+    'application/vnd.google-apps.spreadsheet': '.xlsx',
+    'application/vnd.google-apps.presentation': '.ppt'
+  }
+
+  const extension = extensionMaps[item.mimeType]
+  if (extension && item.name && !item.name.endsWith(extension)) {
+    return item.name + extension
+  }
+
   return item.name ? item.name : '/'
 }
 
 exports.getMimeType = (item) => {
+  if (exports.isGsuiteFile(item.mimeType)) {
+    return exports.getGsuiteExportType(item.mimeType)
+  }
   return item.mimeType
 }
 
@@ -50,12 +80,6 @@ exports.getItemId = (item) => {
 }
 
 exports.getItemRequestPath = (item) => {
-  // If it's from a Team Drive, add the Team Drive ID as a query param.
-  // The server needs the Team Drive ID to list files in a Team Drive folder.
-  if (item.teamDriveId) {
-    return item.id + `?teamDriveId=${item.teamDriveId}`
-  }
-
   return item.id
 }
 
@@ -64,9 +88,35 @@ exports.getItemModifiedDate = (item) => {
 }
 
 exports.getItemThumbnailUrl = (item) => {
-  return `/drive/thumbnail/${exports.getItemRequestPath(item)}`
+  return item.thumbnailLink
 }
 
-exports.isTeamDrive = (item) => {
-  return item.kind === 'drive#teamDrive'
+exports.isSharedDrive = (item) => {
+  return item.kind === 'drive#drive'
+}
+
+exports.getNextPagePath = (data, currentQuery, currentPath) => {
+  if (!data.nextPageToken) {
+    return null
+  }
+  const query = Object.assign({}, currentQuery, {
+    cursor: data.nextPageToken
+  })
+  return `${currentPath}?${querystring.stringify(query)}`
+}
+
+exports.isGsuiteFile = (mimeType) => {
+  return mimeType && mimeType.startsWith('application/vnd.google')
+}
+
+exports.getGsuiteExportType = (mimeType) => {
+  const typeMaps = {
+    'application/vnd.google-apps.document': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.google-apps.drawing': 'image/png',
+    'application/vnd.google-apps.script': 'application/vnd.google-apps.script+json',
+    'application/vnd.google-apps.spreadsheet': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.google-apps.presentation': 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+  }
+
+  return typeMaps[mimeType] || 'application/pdf'
 }

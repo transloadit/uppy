@@ -1,12 +1,18 @@
+const Provider = require('../Provider')
+
 const request = require('request')
 const purest = require('purest')({ request })
 const utils = require('../../helpers/utils')
 const logger = require('../../logger')
 const adapter = require('./adapter')
-const AuthError = require('../error')
+const { ProviderApiError, ProviderAuthError } = require('../error')
 
-class Instagram {
+/**
+ * Adapter for API https://www.instagram.com/developer/endpoints/
+ */
+class Instagram extends Provider {
   constructor (options) {
+    super(options)
     this.authProvider = options.provider = Instagram.authProvider
     this.client = purest(options)
   }
@@ -15,10 +21,11 @@ class Instagram {
     return 'instagram'
   }
 
-  list ({ directory = 'recent', token, query = {} }, done) {
-    const qs = query.max_id ? { max_id: query.max_id } : {}
+  list ({ directory = 'recent', token, query = { cursor: null, max_id: null } }, done) {
+    const cursor = query.cursor || query.max_id
+    const qs = cursor ? { max_id: cursor } : {}
     this.client
-      .select(`users/self/media/${directory}`)
+      .get(`users/self/media/${directory}`)
       .qs(qs)
       .auth(token)
       .request((err, resp, body) => {
@@ -27,7 +34,24 @@ class Instagram {
           logger.error(err, 'provider.instagram.list.error')
           return done(err)
         } else {
-          done(null, this.adaptData(body))
+          this._getUsername(token, (err, username) => {
+            err ? done(err) : done(null, this.adaptData(body, username))
+          })
+        }
+      })
+  }
+
+  _getUsername (token, done) {
+    this.client
+      .get('users/self')
+      .auth(token)
+      .request((err, resp, body) => {
+        if (err || resp.statusCode !== 200) {
+          err = this._error(err, resp)
+          logger.error(err, 'provider.instagram.user.error')
+          return done(err)
+        } else {
+          done(null, body.data.username)
         }
       })
   }
@@ -48,48 +72,42 @@ class Instagram {
     return mediaObj[`${type}s`].standard_resolution.url
   }
 
-  download ({ id, token, query = {} }, onData) {
+  download ({ id, token, query = { carousel_id: null } }, onData) {
     return this.client
       .get(`media/${id}`)
       .auth(token)
       .request((err, resp, body) => {
-        if (err) return logger.error(err, 'provider.instagram.download.error')
-        request(this._getMediaUrl(body, query.carousel_id))
-          .on('data', onData)
-          .on('end', () => onData(null))
-          .on('error', (err) => {
-            logger.error(err, 'provider.instagram.download.url.error')
-          })
-      })
-  }
-
-  thumbnail ({ id, token }, done) {
-    return this.client
-      .get(`media/${id}`)
-      .auth(token)
-      .request((err, resp, body) => {
-        if (err) {
+        if (err || resp.statusCode !== 200) {
           err = this._error(err, resp)
-          logger.error(err, 'provider.instagram.thumbnail.error')
-          return done(err)
+          logger.error(err, 'provider.instagram.download.error')
+          onData(err)
+          return
         }
 
-        request(body.data.images.thumbnail.url)
+        request(this._getMediaUrl(body, query.carousel_id))
           .on('response', (resp) => {
             if (resp.statusCode !== 200) {
-              err = this._error(null, resp)
-              logger.error(err, 'provider.instagram.thumbnail.error')
-              return done(err)
+              onData(this._error(null, resp))
+            } else {
+              resp.on('data', (chunk) => onData(null, chunk))
             }
-            done(null, resp)
           })
+          .on('end', () => onData(null, null))
           .on('error', (err) => {
-            logger.error(err, 'provider.instagram.thumbnail.error')
+            logger.error(err, 'provider.instagram.download.url.error')
+            onData(err)
           })
       })
   }
 
-  size ({ id, token, query = {} }, done) {
+  thumbnail (_, done) {
+    // not implementing this because a public thumbnail from instagram will be used instead
+    const err = new Error('call to thumbnail is not implemented')
+    logger.error(err, 'provider.instagram.thumbnail.error')
+    return done(err)
+  }
+
+  size ({ id, token, query = { carousel_id: null } }, done) {
     return this.client
       .get(`media/${id}`)
       .auth(token)
@@ -109,8 +127,13 @@ class Instagram {
       })
   }
 
-  adaptData (res) {
-    const data = { username: adapter.getUsername(res), items: [] }
+  logout (_, done) {
+    // access revoke is not supported by Instagram's API
+    done(null, { revoked: false, manual_revoke_url: 'https://www.instagram.com/accounts/manage_access/' })
+  }
+
+  adaptData (res, username) {
+    const data = { username: username, items: [] }
     const items = adapter.getItemSubList(res)
     items.forEach((item) => {
       data.items.push({
@@ -125,17 +148,18 @@ class Instagram {
       })
     })
 
-    data.nextPagePath = adapter.getNextPagePath(items)
+    data.nextPagePath = adapter.getNextPagePath(res)
     return data
   }
 
   _error (err, resp) {
     if (resp) {
       if (resp.statusCode === 400 && resp.body && resp.body.meta.error_type === 'OAuthAccessTokenException') {
-        return new AuthError()
+        return new ProviderAuthError()
       }
 
-      return new Error(`request to ${this.authProvider} returned ${resp.statusCode}`)
+      const msg = `request to ${this.authProvider} returned ${resp.statusCode}`
+      return new ProviderApiError(msg, resp.statusCode)
     }
 
     return err

@@ -1,9 +1,10 @@
 ---
 title: "Introduction"
 type: docs
+module: "@uppy/react"
 permalink: docs/react/
 order: 0
-category: 'React'
+category: "React"
 ---
 
 Uppy provides [React][] components for the included UI plugins.
@@ -30,9 +31,10 @@ Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instan
 All other props are passed as options to the plugin.
 
 ```js
-const Uppy = require('@uppy/core')
-const Tus = require('@uppy/tus')
-const { DragDrop } = require('@uppy/react')
+import React from 'react'
+import Uppy from '@uppy/core'
+import Tus from '@uppy/tus'
+import { DragDrop } from '@uppy/react'
 
 const uppy = Uppy({
   meta: { type: 'avatar' },
@@ -45,7 +47,7 @@ uppy.use(Tus, { endpoint: '/upload' })
 uppy.on('complete', (result) => {
   const url = result.successful[0].uploadURL
   store.dispatch({
-    type: SET_USER_AVATAR_URL,
+    type: 'SET_USER_AVATAR_URL',
     payload: { url: url }
   })
 })

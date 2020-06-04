@@ -13,7 +13,7 @@ const { version } = require('../../package.json')
  *
  * @returns {object}
  */
-exports.getUppyOptions = () => {
+exports.getCompanionOptions = () => {
   return merge({}, getConfigFromEnv(), getConfigFromFile())
 }
 
@@ -28,26 +28,37 @@ const getConfigFromEnv = () => {
   const validHosts = domains ? domains.split(',') : []
 
   return {
-    // TODO: Rename providerOptions to providers.
     providerOptions: {
       google: {
         key: process.env.COMPANION_GOOGLE_KEY,
-        secret: process.env.COMPANION_GOOGLE_SECRET
+        secret: getSecret('COMPANION_GOOGLE_SECRET')
       },
       dropbox: {
         key: process.env.COMPANION_DROPBOX_KEY,
-        secret: process.env.COMPANION_DROPBOX_SECRET
+        secret: getSecret('COMPANION_DROPBOX_SECRET')
       },
       instagram: {
         key: process.env.COMPANION_INSTAGRAM_KEY,
-        secret: process.env.COMPANION_INSTAGRAM_SECRET
+        secret: getSecret('COMPANION_INSTAGRAM_SECRET')
+      },
+      facebook: {
+        key: process.env.COMPANION_FACEBOOK_KEY,
+        secret: getSecret('COMPANION_FACEBOOK_SECRET')
+      },
+      microsoft: {
+        key: process.env.COMPANION_ONEDRIVE_KEY,
+        secret: getSecret('COMPANION_ONEDRIVE_SECRET')
       },
       s3: {
         key: process.env.COMPANION_AWS_KEY,
-        secret: process.env.COMPANION_AWS_SECRET,
+        secret: getSecret('COMPANION_AWS_SECRET'),
         bucket: process.env.COMPANION_AWS_BUCKET,
         endpoint: process.env.COMPANION_AWS_ENDPOINT,
-        region: process.env.COMPANION_AWS_REGION
+        region: process.env.COMPANION_AWS_REGION,
+        useAccelerateEndpoint:
+          process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
+        expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '300', 10),
+        acl: process.env.COMPANION_AWS_ACL || 'public-read'
       }
     },
     server: {
@@ -60,15 +71,33 @@ const getConfigFromEnv = () => {
     },
     filePath: process.env.COMPANION_DATADIR,
     redisUrl: process.env.COMPANION_REDIS_URL,
+    // adding redisOptions to keep all companion options easily visible
+    //  redisOptions refers to https://www.npmjs.com/package/redis#options-object-properties
+    redisOptions: {},
     sendSelfEndpoint: process.env.COMPANION_SELF_ENDPOINT,
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
-    secret: process.env.COMPANION_SECRET || generateSecret(),
-    debug: process.env.NODE_ENV !== 'production',
+    secret: getSecret('COMPANION_SECRET') || generateSecret(),
+    debug: process.env.NODE_ENV && process.env.NODE_ENV !== 'production',
     // TODO: this is a temporary hack to support distributed systems.
     // it is not documented, because it should be changed soon.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
     multipleInstances: true
   }
+}
+
+/**
+ * Tries to read the secret from a file if the according environment variable is set.
+ * Otherwise it falls back to the standard secret environment variable.
+ *
+ * @param {string} baseEnvVar
+ *
+ * @returns {string}
+ */
+const getSecret = (baseEnvVar) => {
+  const secretFile = process.env[`${baseEnvVar}_FILE`]
+  return secretFile
+    ? fs.readFileSync(secretFile).toString()
+    : process.env[baseEnvVar]
 }
 
 /**
@@ -91,7 +120,6 @@ const getConfigFromFile = () => {
   if (!path) return {}
 
   const rawdata = fs.readFileSync(getConfigPath())
-  // TODO validate the json object fields to match the uppy config schema
   // @ts-ignore
   return JSON.parse(rawdata)
 }
@@ -117,43 +145,6 @@ const getConfigPath = () => {
 }
 
 /**
- * validates that the mandatory companion options are set.
- * If it is invalid, it will console an error of unset options and exits the process.
- * If it is valid, nothing happens.
- *
- * @param {object} config
- */
-exports.validateConfig = (config) => {
-  const mandatoryOptions = ['secret', 'filePath', 'server.host']
-  /** @type {string[]} */
-  const unspecified = []
-
-  mandatoryOptions.forEach((i) => {
-    const value = i.split('.').reduce((prev, curr) => prev[curr], config)
-
-    if (!value) unspecified.push(`"${i}"`)
-  })
-
-  // vaidate that all required config is specified
-  if (unspecified.length) {
-    console.error('\x1b[31m', 'Please specify the following options',
-      'to run companion as Standalone:\n', unspecified.join(',\n'), '\x1b[0m')
-    process.exit(1)
-  }
-
-  // validate that specified filePath is writeable/readable.
-  // TODO: consider moving this into the uppy module itself.
-  try {
-    // @ts-ignore
-    fs.accessSync(`${config.filePath}`, fs.R_OK | fs.W_OK)
-  } catch (err) {
-    console.error('\x1b[31m', `No access to "${config.filePath}".`,
-      'Please ensure the directory exists and with read/write permissions.', '\x1b[0m')
-    process.exit(1)
-  }
-}
-
-/**
  *
  * @param {string} url
  */
@@ -161,17 +152,13 @@ exports.hasProtocol = (url) => {
   return url.startsWith('http://') || url.startsWith('https://')
 }
 
-exports.buildHelpfulStartupMessage = (uppyOptions) => {
-  const buildURL = utils.getURLBuilder(uppyOptions)
+exports.buildHelpfulStartupMessage = (companionOptions) => {
+  const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
-  Object.keys(uppyOptions.providerOptions).forEach((providerName) => {
+  Object.keys(companionOptions.providerOptions).forEach((providerName) => {
     // s3 does not need redirect_uris
     if (providerName === 's3') {
       return
-    }
-
-    if (providerName === 'google') {
-      providerName = 'drive'
     }
 
     callbackURLs.push(buildURL(`/connect/${providerName}/callback`, true))

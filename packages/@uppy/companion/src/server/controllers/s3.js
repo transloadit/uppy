@@ -1,5 +1,4 @@
 const router = require('express').Router
-const ms = require('ms')
 
 module.exports = function s3 (config) {
   if (typeof config.acl !== 'string') {
@@ -16,6 +15,8 @@ module.exports = function s3 (config) {
    *  - filename - The name of the file, given to the `config.getKey`
    *    option to determine the object key name in the S3 bucket.
    *  - type - The MIME type of the file.
+   *  - metadata - Key/value pairs configuring S3 metadata. Both must be ASCII-safe.
+   *    Query parameters are formatted like `metadata[name]=value`.
    *
    * Response JSON:
    *  - method - The HTTP method to use to upload.
@@ -23,9 +24,10 @@ module.exports = function s3 (config) {
    *  - fields - Form fields to send along.
    */
   function getUploadParameters (req, res, next) {
-    // @ts-ignore The `uppy` property is added by middleware before reaching here.
-    const client = req.uppy.s3Client
-    const key = config.getKey(req, req.query.filename)
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
+    const metadata = req.query.metadata || {}
+    const key = config.getKey(req, req.query.filename, metadata)
     if (typeof key !== 'string') {
       return res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
     }
@@ -37,9 +39,13 @@ module.exports = function s3 (config) {
       'content-type': req.query.type
     }
 
+    Object.keys(metadata).forEach((key) => {
+      fields[`x-amz-meta-${key}`] = metadata[key]
+    })
+
     client.createPresignedPost({
       Bucket: config.bucket,
-      Expires: ms('5 minutes') / 1000,
+      Expires: config.expires,
       Fields: fields,
       Conditions: config.conditions
     }, (err, data) => {
@@ -62,16 +68,18 @@ module.exports = function s3 (config) {
    *  - filename - The name of the file, given to the `config.getKey`
    *    option to determine the object key name in the S3 bucket.
    *  - type - The MIME type of the file.
+   *  - metadata - An object with the key/value pairs to set as metadata.
+   *    Keys and values must be ASCII-safe for S3.
    *
    * Response JSON:
    *  - key - The object key in the S3 bucket.
    *  - uploadId - The ID of this multipart upload, to be used in later requests.
    */
   function createMultipartUpload (req, res, next) {
-    // @ts-ignore The `uppy` property is added by middleware before reaching here.
-    const client = req.uppy.s3Client
-    const key = config.getKey(req, req.body.filename)
-    const { type } = req.body
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
+    const key = config.getKey(req, req.body.filename, req.body.metadata || {})
+    const { type, metadata } = req.body
     if (typeof key !== 'string') {
       return res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
     }
@@ -84,7 +92,8 @@ module.exports = function s3 (config) {
       Key: key,
       ACL: config.acl,
       ContentType: type,
-      Expires: ms('5 minutes') / 1000
+      Metadata: metadata,
+      Expires: config.expires
     }, (err, data) => {
       if (err) {
         next(err)
@@ -111,8 +120,8 @@ module.exports = function s3 (config) {
    *     - Size - size of this part.
    */
   function getUploadedParts (req, res, next) {
-    // @ts-ignore The `uppy` property is added by middleware before reaching here.
-    const client = req.uppy.s3Client
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key } = req.query
 
@@ -163,8 +172,8 @@ module.exports = function s3 (config) {
    *  - url - The URL to upload to, including signed query parameters.
    */
   function signPartUpload (req, res, next) {
-    // @ts-ignore The `uppy` property is added by middleware before reaching here.
-    const client = req.uppy.s3Client
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
     const { uploadId, partNumber } = req.params
     const { key } = req.query
 
@@ -181,7 +190,7 @@ module.exports = function s3 (config) {
       UploadId: uploadId,
       PartNumber: partNumber,
       Body: '',
-      Expires: ms('5 minutes') / 1000
+      Expires: config.expires
     }, (err, url) => {
       if (err) {
         next(err)
@@ -202,8 +211,8 @@ module.exports = function s3 (config) {
    *   Empty.
    */
   function abortMultipartUpload (req, res, next) {
-    // @ts-ignore The `uppy` property is added by middleware before reaching here.
-    const client = req.uppy.s3Client
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key } = req.query
 
@@ -237,8 +246,8 @@ module.exports = function s3 (config) {
    *  - location - The full URL to the object in the S3 bucket.
    */
   function completeMultipartUpload (req, res, next) {
-    // @ts-ignore The `uppy` property is added by middleware before reaching here.
-    const client = req.uppy.s3Client
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
     const { uploadId } = req.params
     const { key } = req.query
     const { parts } = req.body

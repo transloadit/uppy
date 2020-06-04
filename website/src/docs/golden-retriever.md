@@ -4,7 +4,8 @@ module: "@uppy/golden-retriever"
 type: docs
 permalink: docs/golden-retriever/
 order: 1
-category: 'Miscellaneous'
+category: "Miscellaneous"
+tagline: "restore files and continue uploading after a page refresh or a browser crash"
 ---
 
 The `@uppy/golden-retriever` plugin saves selected files in your browser cache, so that if the browser crashes, Uppy can restore everything and continue uploading as if nothing happened. You can read more about it [on our blog](https://uppy.io/blog/2017/07/golden-retriever/).

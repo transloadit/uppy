@@ -61,6 +61,11 @@
     padding-left: 1em;
   }
 
+  .menu-root > ul {
+    margin: 0;
+    padding-left: 0;
+  }
+
   &.is-blog ul { padding-left: 0; }
 
   li {
@@ -202,9 +207,11 @@
     margin-left: 20px;
   }
 
-  // h2, h3 {
-  //   padding-top: 80px;
-  // }
+  // Fix ancor scroll overflow (i.e. /docs/uppy#upload) for headings
+  [id] {
+    scroll-margin-top: 6em;
+  }
+
 
   // for ancor links to work with fixed header
   h2:before, h3:before {
@@ -230,19 +237,6 @@
   > h2 {
     font-size: 1.3em;
     margin: 0.5em 0 .4em 0;
-    // padding-bottom: .2em;
-    // position: relative;
-    // border-bottom: 1px solid $color-border;
-
-    // &:before {
-    //   content: "#";
-    //   color: $color-primary;
-    //   position: absolute;
-    //   left: -0.7em;
-    //   top: -4px;
-    //   font-size: 1.2em;
-    //   font-weight: bold;
-    // }
   }
 
   .post h3,
@@ -279,7 +273,8 @@
   .post li,
   > ul li,
   > li {
-    margin-bottom: 0.5em;
+    // @TODO can this safely be removed artur?
+    // margin-bottom: 0.5em;
   }
 
   .post p, .post ul, .post ol,
@@ -351,11 +346,52 @@
   }
 }
 
+// Locale page table overrides
+
+.page-docs-locales table {
+  overflow: visible;
+}
+.page-docs-locales .highlight table {
+  overflow: auto;
+}
 .page-docs-locales table td {
   white-space: nowrap;
+  font-size: 90%;
 }
 
-.page-docs-locales table code {
+// Support page table overrides
+
+.page-support table {
+  overflow: visible;
+}
+.page-support .highlight table {
+  overflow: scroll;
+}
+.page-support table tr:first-child td {
+  white-space: nowrap;
+  font-size: 90%;
+}
+
+// Privacy policy table overrides
+
+.page-privacy table td {
+  padding: 8px 0;
+}
+
+// Plugin list
+
+body.page-plugin-list .Content ul {
+  margin-left: 0;
+}
+
+body.page-plugin-list .Content li {
+  // list-style: none;
+  margin-bottom: 0.5em;
+}
+
+// Locales
+
+body.page-docs-locales table code {
   font-size: 75%;
 }
 

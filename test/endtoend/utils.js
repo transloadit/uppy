@@ -2,6 +2,7 @@
 /* global window, capabilities */
 const path = require('path')
 const { spawn } = require('child_process')
+const { promisify } = require('util')
 
 // This function must be valid ES5, because it is run in the browser
 // and IE10/IE11 do not support new syntax features
@@ -41,7 +42,18 @@ function selectFakeFile (uppyID, name, type, b64) {
   })
 }
 
+function ensureInputVisible (selector) {
+  var input = document.querySelector(selector)
+  input.style = 'width: auto; height: auto; opacity: 1; z-index: 199'
+  input.removeAttribute('hidden')
+  input.removeAttribute('aria-hidden')
+  input.removeAttribute('tabindex')
+}
+
 function supportsChooseFile () {
+  // no remote file uploads right now...
+  if (process.env.CI) return false
+
   // Webdriver for Safari and Edge doesn’t support .chooseFile
   return capabilities.browserName !== 'Safari' &&
          capabilities.browserName !== 'MicrosoftEdge' &&
@@ -58,7 +70,8 @@ class CompanionService {
       path.join(__dirname, '../../packages/@uppy/companion/lib/standalone/start-server')
     ], {
       stdio: 'pipe',
-      env: Object.assign({}, process.env, {
+      env: {
+        ...process.env,
         COMPANION_DATADIR: path.join(__dirname, '../../output'),
         COMPANION_DOMAIN: 'localhost:3030',
         COMPANION_PROTOCOL: 'http',
@@ -68,7 +81,7 @@ class CompanionService {
         COMPANION_DROPBOX_SECRET: process.env.TEST_COMPANION_DROPBOX_SECRET,
         COMPANION_GOOGLE_KEY: process.env.TEST_COMPANION_GOOGLE_KEY,
         COMPANION_GOOGLE_SECRET: process.env.TEST_COMPANION_GOOGLE_SECRET
-      })
+      }
     })
     return new Promise((resolve, reject) => {
       this.companion.on('error', reject)
@@ -93,8 +106,96 @@ class CompanionService {
   }
 }
 
+const express = require('express')
+class StaticServerService {
+  constructor ({ folders, staticServerPort = 4567 }) {
+    this.folders = folders
+    this.port = staticServerPort
+  }
+
+  async onPrepare () {
+    if (!this.folders) return
+
+    this.app = express()
+
+    for (const desc of this.folders) {
+      this.app.use(desc.mount, express.static(desc.path))
+    }
+
+    const listen = promisify(this.app.listen.bind(this.app))
+
+    this.server = await listen(this.port)
+  }
+
+  async onComplete () {
+    if (this.server) {
+      const close = promisify(this.server.close.bind(this.server))
+      await close()
+    }
+    this.app = null
+  }
+}
+
+const tus = require('tus-node-server')
+const os = require('os')
+const rimraf = promisify(require('rimraf'))
+const { randomBytes } = require('crypto')
+const http = require('http')
+const httpProxy = require('http-proxy')
+const brake = require('brake')
+class TusService {
+  constructor ({ tusServerPort = 1080 }) {
+    this.port = tusServerPort
+    this.path = path.join(os.tmpdir(), `uppy-e2e-tus-node-server-${randomBytes(6).toString('hex')}`)
+  }
+
+  async onPrepare () {
+    this.tusServer = new tus.Server()
+    this.tusServer.datastore = new tus.FileStore({
+      path: '/files',
+      directory: this.path
+    })
+
+    const proxy = httpProxy.createProxyServer()
+    this.slowServer = http.createServer((req, res) => {
+      proxy.web(req, res, {
+        target: 'http://localhost:1080',
+        // 200 kbps max upload, checking the rate limit every 20ms
+        buffer: req.pipe(brake({
+          period: 20,
+          rate: 200 * 1024 / 50
+        }))
+      }, (err) => { // eslint-disable-line handle-callback-err
+        // ignore, typically a cancelled request
+      })
+    })
+
+    const listen = promisify(this.tusServer.listen.bind(this.tusServer))
+    this.server = await listen({ host: '0.0.0.0', port: this.port })
+    const listen2 = promisify(this.slowServer.listen.bind(this.slowServer))
+    await listen2(this.port + 1)
+  }
+
+  async onComplete () {
+    if (this.slowServer) {
+      const close = promisify(this.slowServer.close.bind(this.slowServer))
+      await close()
+    }
+    if (this.server) {
+      const close = promisify(this.server.close.bind(this.server))
+      await close()
+    }
+    await rimraf(this.path)
+    this.slowServer = null
+    this.tusServer = null
+  }
+}
+
 module.exports = {
   selectFakeFile,
+  ensureInputVisible,
   supportsChooseFile,
-  CompanionService
+  CompanionService,
+  StaticServerService,
+  TusService
 }

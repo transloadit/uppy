@@ -5,7 +5,8 @@ title: "Google Drive"
 menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/google-drive"
 permalink: docs/google-drive/
-category: 'Sources'
+category: "Sources"
+tagline: "import files from Google Drive"
 ---
 
 The `@uppy/google-drive` plugin lets users import files from their Google Drive account.
@@ -40,7 +41,7 @@ const GoogleDrive = Uppy.GoogleDrive
 
 ## CSS
 
-Dashboard plugin is recommended as a container to all Provider plugins, including Google Drive. If you are using Dashboard, it [comes with all the nessesary styles](/docs/dashboard/#CSS) for Dropbox as well.
+Dashboard plugin is recommended as a container to all Provider plugins, including Google Drive. If you are using Dashboard, it [comes with all the necessary styles](/docs/dashboard/#CSS) for Google Drive as well.
 
 ⚠️ If you are feeling adventurous, and want to use Google Drive plugin separately, without Dashboard, make sure to include `@uppy/provider-views/dist/style.css` (or `style.min.css`) CSS file. This is experimental, not officialy supported and not recommended.
 
@@ -71,7 +72,7 @@ DOM element, CSS selector, or plugin to mount the Google Drive provider into. Th
 
 URL to a [Companion](/docs/companion) instance.
 
-### `serverHeaders: {}`
+### `companionHeaders: {}`
 
 Custom headers that should be sent along to [Companion](/docs/companion) on every request.
 

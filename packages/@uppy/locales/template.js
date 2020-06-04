@@ -1,11 +1,9 @@
-/* eslint camelcase: 0 */
-
 const en_US = {}
 
 en_US.strings = {}
 
-en_US.pluralize = function (n) {
-  if (n === 1) {
+en_US.pluralize = function (count) {
+  if (count === 1) {
     return 0
   }
   return 1

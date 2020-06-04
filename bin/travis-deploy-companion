@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -o pipefail
+set -o errexit
+set -o nounset
+
+./packages/@uppy/companion/infra/kube/gcloud-deploy.sh

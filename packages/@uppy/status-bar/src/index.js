@@ -10,6 +10,8 @@ const getBytesRemaining = require('@uppy/utils/lib/getBytesRemaining')
  * progress percentage and time remaining.
  */
 module.exports = class StatusBar extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'StatusBar'
@@ -29,25 +31,21 @@ module.exports = class StatusBar extends Plugin {
         resume: 'Resume',
         filesUploadedOfTotal: {
           0: '%{complete} of %{smart_count} file uploaded',
-          1: '%{complete} of %{smart_count} files uploaded',
-          2: '%{complete} of %{smart_count} files uploaded'
+          1: '%{complete} of %{smart_count} files uploaded'
         },
         dataUploadedOfTotal: '%{complete} of %{total}',
         xTimeLeft: '%{time} left',
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
-          1: 'Upload %{smart_count} files',
-          2: 'Upload %{smart_count} files'
+          1: 'Upload %{smart_count} files'
         },
         uploadXNewFiles: {
           0: 'Upload +%{smart_count} file',
-          1: 'Upload +%{smart_count} files',
-          2: 'Upload +%{smart_count} files'
+          1: 'Upload +%{smart_count} files'
         },
         xMoreFilesAdded: {
           0: '%{smart_count} more file added',
-          1: '%{smart_count} more files added',
-          2: '%{smart_count} more files added'
+          1: '%{smart_count} more files added'
         }
       }
     }
@@ -63,15 +61,23 @@ module.exports = class StatusBar extends Plugin {
       hideAfterFinish: true
     }
 
-    // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
-    this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
-    this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nInit()
 
-    this.startUpload = this.startUpload.bind(this)
     this.render = this.render.bind(this)
     this.install = this.install.bind(this)
+  }
+
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   getTotalSpeed (files) {
@@ -95,10 +101,9 @@ module.exports = class StatusBar extends Plugin {
     return Math.round(totalBytesRemaining / totalSpeed * 10) / 10
   }
 
-  startUpload () {
-    return this.uppy.upload().catch((err) => {
-      this.uppy.log(err.stack || err.message || err)
-      // Ignore
+  startUpload = () => {
+    return this.uppy.upload().catch(() => {
+      // Error logged in Core
     })
   }
 
@@ -144,79 +149,56 @@ module.exports = class StatusBar extends Plugin {
 
     // TODO: move this to Core, to share between Status Bar and Dashboard
     // (and any other plugin that might need it, too)
-    const newFiles = Object.keys(files).filter((file) => {
-      return !files[file].progress.uploadStarted &&
-        !files[file].progress.preprocess &&
-        !files[file].progress.postprocess
+
+    const filesArray = Object.keys(files).map(file => files[file])
+
+    const newFiles = filesArray.filter((file) => {
+      return !file.progress.uploadStarted &&
+        !file.progress.preprocess &&
+        !file.progress.postprocess
     })
 
-    const uploadStartedFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadStarted
+    const uploadStartedFiles = filesArray.filter(file => file.progress.uploadStarted)
+    const pausedFiles = uploadStartedFiles.filter(file => file.isPaused)
+    const completeFiles = filesArray.filter(file => file.progress.uploadComplete)
+    const erroredFiles = filesArray.filter(file => file.error)
+
+    const inProgressFiles = filesArray.filter((file) => {
+      return !file.progress.uploadComplete &&
+             file.progress.uploadStarted
     })
 
-    const pausedFiles = uploadStartedFiles.filter((file) => {
-      return files[file].isPaused
+    const inProgressNotPausedFiles = inProgressFiles.filter(file => !file.isPaused)
+
+    const startedFiles = filesArray.filter((file) => {
+      return file.progress.uploadStarted ||
+        file.progress.preprocess ||
+        file.progress.postprocess
     })
 
-    const completeFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadComplete
-    })
+    const processingFiles = filesArray.filter(file => file.progress.preprocess || file.progress.postprocess)
 
-    const erroredFiles = Object.keys(files).filter((file) => {
-      return files[file].error
-    })
+    const totalETA = this.getTotalETA(inProgressNotPausedFiles)
 
-    const inProgressFiles = Object.keys(files).filter((file) => {
-      return !files[file].progress.uploadComplete &&
-             files[file].progress.uploadStarted
-    })
-
-    const inProgressNotPausedFiles = inProgressFiles.filter((file) => {
-      return !files[file].isPaused
-    })
-
-    const startedFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadStarted ||
-        files[file].progress.preprocess ||
-        files[file].progress.postprocess
-    })
-
-    const processingFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.preprocess || files[file].progress.postprocess
-    })
-
-    let inProgressNotPausedFilesArray = inProgressNotPausedFiles.map((file) => {
-      return files[file]
-    })
-
-    const totalETA = this.getTotalETA(inProgressNotPausedFilesArray)
-
-    // total size and uploaded size
     let totalSize = 0
     let totalUploadedSize = 0
-    inProgressNotPausedFilesArray.forEach((file) => {
+    startedFiles.forEach((file) => {
       totalSize = totalSize + (file.progress.bytesTotal || 0)
       totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
     })
 
-    const isUploadStarted = uploadStartedFiles.length > 0
+    const isUploadStarted = startedFiles.length > 0
 
     const isAllComplete = totalProgress === 100 &&
       completeFiles.length === Object.keys(files).length &&
       processingFiles.length === 0
 
-    const isAllErrored = isUploadStarted &&
-      erroredFiles.length === uploadStartedFiles.length
+    const isAllErrored = error && erroredFiles.length === filesArray.length
 
     const isAllPaused = inProgressFiles.length !== 0 &&
       pausedFiles.length === inProgressFiles.length
-    // const isAllPaused = inProgressFiles.length === 0 &&
-    //   !isAllComplete &&
-    //   !isAllErrored &&
-    //   uploadStartedFiles.length > 0
 
     const isUploadInProgress = inProgressFiles.length > 0
-
     const resumableUploads = capabilities.resumableUploads || false
     const supportsUploadProgress = capabilities.uploadProgress !== false
 

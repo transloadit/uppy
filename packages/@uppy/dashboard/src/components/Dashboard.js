@@ -5,7 +5,7 @@ const PickerPanelContent = require('./PickerPanelContent')
 const PanelTopBar = require('./PickerPanelTopBar')
 const FileCard = require('./FileCard')
 const classNames = require('classnames')
-const isTouchDevice = require('@uppy/utils/lib/isTouchDevice')
+const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 const { h } = require('preact')
 const PreactCSSTransitionGroup = require('preact-css-transition-group')
 
@@ -17,56 +17,86 @@ function TransitionWrapper (props) {
     <PreactCSSTransitionGroup
       transitionName="uppy-transition-slideDownUp"
       transitionEnterTimeout={250}
-      transitionLeaveTimeout={250}>
+      transitionLeaveTimeout={250}
+    >
       {props.children}
     </PreactCSSTransitionGroup>
   )
 }
 
+const WIDTH_XL = 900
+const WIDTH_LG = 700
+const WIDTH_MD = 576
+const HEIGHT_MD = 400
+
 module.exports = function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
+  const isSizeMD = props.containerWidth > WIDTH_MD
 
-  const dashboardClassName = classNames(
-    { 'uppy-Root': props.isTargetDOMEl },
-    'uppy-Dashboard',
-    { 'Uppy--isTouchDevice': isTouchDevice() },
-    { 'uppy-Dashboard--animateOpenClose': props.animateOpenClose },
-    { 'uppy-Dashboard--isClosing': props.isClosing },
-    { 'uppy-Dashboard--isDraggingOver': props.isDraggingOver },
-    { 'uppy-Dashboard--modal': !props.inline },
-    { 'uppy-size--md': props.containerWidth > 576 },
-    { 'uppy-size--lg': props.containerWidth > 700 },
-    { 'uppy-size--xl': props.containerWidth > 900 },
-    { 'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel },
-    { 'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible }
-  )
+  const dashboardClassName = classNames({
+    'uppy-Root': props.isTargetDOMEl,
+    'uppy-Dashboard': true,
+    'uppy-Dashboard--animateOpenClose': props.animateOpenClose,
+    'uppy-Dashboard--isClosing': props.isClosing,
+    'uppy-Dashboard--isDraggingOver': props.isDraggingOver,
+    'uppy-Dashboard--modal': !props.inline,
+    'uppy-size--md': props.containerWidth > WIDTH_MD,
+    'uppy-size--lg': props.containerWidth > WIDTH_LG,
+    'uppy-size--xl': props.containerWidth > WIDTH_XL,
+    'uppy-size--height-md': props.containerHeight > HEIGHT_MD,
+    'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel,
+    'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible
+  })
+
+  // Important: keep these in sync with the percent width values in `src/components/FileItem/index.scss`.
+  let itemsPerRow = 1 // mobile
+  if (props.containerWidth > WIDTH_XL) {
+    itemsPerRow = 5
+  } else if (props.containerWidth > WIDTH_LG) {
+    itemsPerRow = 4
+  } else if (props.containerWidth > WIDTH_MD) {
+    itemsPerRow = 3
+  }
+
+  const showFileList = props.showSelectedFiles && !noFiles
 
   return (
-    <div class={dashboardClassName}
+    <div
+      class={dashboardClassName}
+      data-uppy-theme={props.theme}
+      data-uppy-num-acquirers={props.acquirers.length}
+      data-uppy-drag-drop-supported={isDragDropSupported()}
       aria-hidden={props.inline ? 'false' : props.isHidden}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
       onpaste={props.handlePaste}
-
       onDragOver={props.handleDragOver}
       onDragLeave={props.handleDragLeave}
       onDrop={props.handleDrop}
     >
-      <div class="uppy-Dashboard-overlay" tabindex={-1} onclick={props.handleClickOutside} />
+      <div
+        class="uppy-Dashboard-overlay"
+        tabindex={-1}
+        onclick={props.handleClickOutside}
+      />
 
-      <div class="uppy-Dashboard-inner"
+      <div
+        class="uppy-Dashboard-inner"
         aria-modal={!props.inline && 'true'}
         role={!props.inline && 'dialog'}
         style={{
           width: props.inline && props.width ? props.width : '',
           height: props.inline && props.height ? props.height : ''
-        }}>
+        }}
+      >
 
         {!props.inline ? (
-          <button class="uppy-u-reset uppy-Dashboard-close"
+          <button
+            class="uppy-u-reset uppy-Dashboard-close"
             type="button"
             aria-label={props.i18n('closeModal')}
             title={props.i18n('closeModal')}
-            onclick={props.closeModal}>
+            onclick={props.closeModal}
+          >
             <span aria-hidden="true">&times;</span>
           </button>
         ) : null}
@@ -76,24 +106,27 @@ module.exports = function Dashboard (props) {
             {props.i18n('dropHint')}
           </div>
 
-          { (!noFiles && props.showSelectedFiles) && <PanelTopBar {...props} /> }
+          {showFileList && <PanelTopBar {...props} />}
 
-          { props.showSelectedFiles ? (
-            noFiles ? <AddFiles {...props} /> : <FileList {...props} />
+          {showFileList ? (
+            <FileList
+              {...props}
+              itemsPerRow={itemsPerRow}
+            />
           ) : (
-            <AddFiles {...props} />
+            <AddFiles {...props} isSizeMD={isSizeMD} />
           )}
 
           <TransitionWrapper>
-            { props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} /> : null }
+            {props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} isSizeMD={isSizeMD} /> : null}
           </TransitionWrapper>
 
           <TransitionWrapper>
-            { props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null }
+            {props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null}
           </TransitionWrapper>
 
           <TransitionWrapper>
-            { props.activePickerPanel ? <PickerPanelContent key="PickerPanelContent" {...props} /> : null }
+            {props.activePickerPanel ? <PickerPanelContent key="PickerPanelContent" {...props} /> : null}
           </TransitionWrapper>
 
           <div class="uppy-Dashboard-progressindicators">

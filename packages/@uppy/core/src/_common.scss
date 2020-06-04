@@ -31,11 +31,6 @@
   overflow: hidden;
 }
 
-.UppyIcon--svg-baseline {
-  bottom: -0.125em;
-  position: relative;
-}
-
 // Utilities
 
 .uppy-u-reset {
@@ -104,17 +99,28 @@
   line-height: 1.5;
   padding: 6px 8px;
   background-color: $white;
-}
 
-  .uppy-size--md .uppy-c-textInput {
+  .uppy-size--md & {
     padding: 8px 10px;
   }
 
-  .uppy-c-textInput:focus {
+  &:focus {
     border-color: rgba($blue, 0.6);
     outline: none;
     box-shadow: 0 0 0 3px rgba($blue, 0.15);
   }
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-800;
+    border-color: $gray-800;
+    color: $gray-200;
+  }
+
+  [data-uppy-theme="dark"] &:focus {
+    border-color: $gray-700;
+    box-shadow: none;
+  }
+}
 
 // Buttons
 
@@ -127,7 +133,8 @@
   font-size: 16px;
   line-height: 1;
   font-weight: 500;
-  transition: background-color 0.3s;
+  transition-property: background-color, color;
+  transition-duration: 0.3s;
   user-select: none;
 }
 
@@ -135,9 +142,9 @@
     cursor: pointer;
   }
 
-.uppy-c-btn::-moz-focus-inner {
-   border: 0;
-}
+  .uppy-c-btn::-moz-focus-inner {
+    border: 0;
+  }
 
 .uppy-c-btn-primary {
   font-size: 14px;
@@ -145,20 +152,25 @@
   border-radius: 4px;
   background-color: $blue;
   color: $white;
-}
 
-  .uppy-size--md .uppy-c-btn-primary {
-    padding: 13px 22px;
-  }
-
-  .uppy-c-btn-primary:hover {
+  &:hover {
     background-color: darken($blue, 10%);
   }
 
-  .uppy-c-btn-primary:focus {
+  &:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba($blue, 0.4);
   }
+
+  .uppy-size--md & {
+    padding: 13px 22px;
+  }
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+    @include blue-border-focus--dark;
+  }
+}
 
 .uppy-c-btn-link {
   font-size: 14px;
@@ -167,28 +179,37 @@
   border-radius: 4px;
   background-color: transparent;
   color: $gray-700;
-}
 
-  .uppy-size--md .uppy-c-btn-link {
-    padding: 13px 18px;
-  }
-
-  .uppy-c-btn-link:hover {
+  &:hover {
     color: $gray-800;
   }
 
-  .uppy-c-btn-link:focus {
+  &:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba($blue, 0.25);
   }
+
+  .uppy-size--md & {
+    padding: 13px 18px;
+  }
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+    @include blue-border-focus--dark;
+  }
+
+  [data-uppy-theme="dark"] &:hover {
+    color: $gray-500;
+  }
+}
 
 .uppy-c-btn--small {
   font-size: 0.9em;
   padding: 7px 16px;
   border-radius: 2px;
-}
 
-  .uppy-size--md .uppy-c-btn--small {
+  .uppy-size--md & {
     padding: 8px 10px;
     border-radius: 2px;
   }
+}

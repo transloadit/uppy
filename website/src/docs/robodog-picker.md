@@ -4,13 +4,13 @@ title: "Robodog: File Picker API"
 menu: "Robodog File Picker"
 permalink: docs/robodog/picker/
 order: 1
-category: 'File Processing'
+category: "File Processing"
 ---
 
 Show a modal UI that allows users to pick files from their device and from the web. It uploads files to Transloadit for processing.
 
 ```js
-const resultPromise = transloadit.pick({
+const resultPromise = Robodog.pick({
   params: {
     auth: { key: '' },
     template_id: ''
@@ -89,7 +89,7 @@ This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
 This is useful when you have your [Uppy Companion][companion] running on multiple hosts. Otherwise, the default value should do just fine.
 
-### `serverHeaders: {}`
+### `companionHeaders: {}`
 
 Custom headers to send to [Uppy Companion][companion].
 
@@ -116,3 +116,4 @@ Specific options for the [Webcam](/docs/webcam) provider.
 [companion]: /docs/companion
 [transloadit]: /docs/transloadit#options
 [assembly-status]: https://transloadit.com/docs/api/#assembly-status-response
+[promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise

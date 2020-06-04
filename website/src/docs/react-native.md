@@ -1,9 +1,10 @@
 ---
 title: "React Native"
 type: docs
+module: "@uppy/react-native"
 permalink: docs/react/native/
 order: 7
-category: 'React'
+category: "React"
 ---
 
 ⚠️ In Beta

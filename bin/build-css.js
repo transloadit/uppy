@@ -44,7 +44,7 @@ async function compileCSS () {
       }
     })
 
-    const postcssResult = await postcss([ autoprefixer ])
+    const postcssResult = await postcss([autoprefixer])
       .process(scssResult.css, { from: file })
     postcssResult.warnings().forEach(function (warn) {
       console.warn(warn.toString())
@@ -54,11 +54,11 @@ async function compileCSS () {
     // Save the `uppy` package's CSS as `uppy.css`,
     // `@uppy/robodog` as `robodog.css`,
     // the rest as `style.css`.
-    // const outfile = path.join(outdir, outdir.includes('packages/uppy/') ? 'uppy.css' : 'style.css')
+    // const outfile = path.join(outdir, outdir.includes(path.normalize('packages/uppy/')) ? 'uppy.css' : 'style.css')
     let outfile = path.join(outdir, 'style.css')
-    if (outdir.includes('packages/uppy/')) {
+    if (outdir.includes(path.normalize('packages/uppy/'))) {
       outfile = path.join(outdir, 'uppy.css')
-    } else if (outdir.includes('packages/@uppy/robodog/')) {
+    } else if (outdir.includes(path.normalize('packages/@uppy/robodog/'))) {
       outfile = path.join(outdir, 'robodog.css')
     }
     await mkdirp(outdir)

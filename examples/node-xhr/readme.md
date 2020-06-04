@@ -4,11 +4,14 @@ This example uses Node server and `@uppy/xhr-upload` to upload files to the loca
 
 ## Run it
 
-First run `npm install && npm run bootstrap && npm run build` in the root folder of the uppy project.
-
-Then move into this directory (`examples/php-xhr`), and:
-
+To run this example, make sure you've correctly installed the **repository root**:
 ```bash
 npm install
-npm start
+npm run build
+```
+That will also install the dependencies for this example.
+
+Then, again in the **repository root**, start this example by doing:
+```bash
+npm run example node-xhr
 ```

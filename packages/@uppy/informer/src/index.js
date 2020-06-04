@@ -9,6 +9,8 @@ const { h } = require('preact')
  *
  */
 module.exports = class Informer extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'progressindicator'
@@ -17,28 +19,47 @@ module.exports = class Informer extends Plugin {
 
     // set default options
     const defaultOptions = {}
-
     // merge default options with the ones set by user
     this.opts = Object.assign({}, defaultOptions, opts)
-
-    this.render = this.render.bind(this)
   }
 
-  render (state) {
+  render = (state) => {
     const { isHidden, message, details } = state.info
 
+    function displayErrorAlert () {
+      const errorMessage = `${message} \n\n ${details}`
+      alert(errorMessage)
+    }
+
+    const handleMouseOver = () => {
+      clearTimeout(this.uppy.infoTimeoutID)
+    }
+
+    const handleMouseLeave = () => {
+      this.uppy.infoTimeoutID = setTimeout(this.uppy.hideInfo, 2000)
+    }
+
     return (
-      <div class="uppy uppy-Informer"
-        aria-hidden={isHidden}>
+      <div
+        class="uppy uppy-Informer"
+        aria-hidden={isHidden}
+      >
         <p role="alert">
           {message}
           {' '}
-          {details && <span
-            aria-label={details}
-            data-microtip-position="top-left"
-            data-microtip-size="medium"
-            role="tooltip">?</span>
-          }
+          {details && (
+            <span
+              aria-label={details}
+              data-microtip-position="top-left"
+              data-microtip-size="medium"
+              role="tooltip"
+              onclick={displayErrorAlert}
+              onMouseOver={handleMouseOver}
+              onMouseLeave={handleMouseLeave}
+            >
+              ?
+            </span>
+          )}
         </p>
       </div>
     )
