@@ -163,21 +163,21 @@ Hide the upload button. Use this if you are providing a custom upload button som
 
 ### `hideRetryButton: false`
 
-Passed to the Status Bar plugin used in the Dashboard.
+Hide the retry button in StatusBar (the progress bar below the file list) and on each individual file.
 
-Hide the retry button. Use this if you are providing a custom retry button somewhere, and using the `uppy.retryAll()` or `uppy.retryUpload(fileID)` API.
+Use this if you are providing a custom retry button somewhere, and using the `uppy.retryAll()` or `uppy.retryUpload(fileID)` API.
 
 ### `hidePauseResumeButton: false`
 
-Passed to the Status Bar plugin used in the Dashboard.
+Hide the pause/resume button (for resumable uploads, via [tus](http://tus.io), for example) in StatusBar and on each individual file.
 
-Hide pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)` or `uppy.removeFile(fileID)` API.
+Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)` or `uppy.removeFile(fileID)` API.
 
 ### `hideCancelButton: false`
 
-Passed to the Status Bar plugin used in the Dashboard.
+Hide the cancel button in StatusBar and on each individual file.
 
-Hide the cancel button. Use this if you are providing a custom retry button somewhere, and using the `uppy.cancelAll()` API.
+Use this if you are providing a custom retry button somewhere, and using the `uppy.cancelAll()` API.
 
 ### `hideProgressAfterFinish: false`
 
