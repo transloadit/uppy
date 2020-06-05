@@ -13,7 +13,7 @@ function EditButton ({
       metaFields.length > 0) {
     return (
       <button
-        class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--edit"
+        class="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit"
         type="button"
         aria-label={i18n('editFile') + ' ' + file.meta.name}
         title={i18n('editFile')}
@@ -35,7 +35,7 @@ function EditButton ({
 function RemoveButton ({ i18n, onClick }) {
   return (
     <button
-      class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--remove"
+      class="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--remove"
       type="button"
       aria-label={i18n('removeFile')}
       title={i18n('removeFile')}
@@ -63,7 +63,7 @@ const copyLinkToClipboard = (event, props) => {
 function CopyLinkButton (props) {
   return (
     <button
-      class="uppy-u-reset uppy-DashboardItem-action uppy-DashboardItem-action--copyLink"
+      class="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--copyLink"
       type="button"
       aria-label={props.i18n('copyLink')}
       title={props.i18n('copyLink')}
@@ -91,7 +91,7 @@ module.exports = function Buttons (props) {
   } = props
 
   return (
-    <div className="uppy-DashboardItem-actionWrapper">
+    <div className="uppy-Dashboard-Item-actionWrapper">
       <EditButton
         i18n={i18n}
         file={file}

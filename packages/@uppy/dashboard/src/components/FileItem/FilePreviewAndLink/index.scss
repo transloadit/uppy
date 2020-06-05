@@ -1,4 +1,4 @@
-.uppy-DashboardItem-previewInnerWrap {
+.uppy-Dashboard-Item-previewInnerWrap {
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -17,7 +17,7 @@
     box-shadow: 0 1px 2px rgba($black, 0.15);
   }
 }
-  .uppy-DashboardItem-previewInnerWrap:after {
+  .uppy-Dashboard-Item-previewInnerWrap:after {
     content: '';
     position: absolute;
     left: 0; right: 0;
@@ -27,7 +27,7 @@
     z-index: $zIndex-2;
   }
 
-  .uppy-DashboardItem-previewLink {
+  .uppy-Dashboard-Item-previewLink {
     position: absolute;
     left: 0; right: 0;
     top: 0; bottom: 0;
@@ -42,7 +42,7 @@
     }
   }
 
-  .uppy-DashboardItem-preview img.uppy-DashboardItem-previewImg {
+  .uppy-Dashboard-Item-preview img.uppy-Dashboard-Item-previewImg {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -52,4 +52,4 @@
     // We need a repeated border-radius because of the transform.
     border-radius: 3px;
   }
-// ...uppy-DashboardItem-previewInnerWrap|
+// ...uppy-Dashboard-Item-previewInnerWrap|

@@ -1,4 +1,4 @@
-.uppy-DashboardItem-progress {
+.uppy-Dashboard-Item-progress {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -10,72 +10,75 @@
   transition: all .35 ease;
 }
 
-  .uppy-DashboardItem-progressIndicator {
-    display: inline-block;
-    width: 38px;
-    height: 38px;
-    opacity: 0.9;
+.uppy-Dashboard-Item-progressIndicator {
+  display: inline-block;
+  width: 38px;
+  height: 38px;
+  opacity: 0.9;
 
-    .uppy-size--md & {
-      width: 55px;
-      height: 55px;
-    }
+  .uppy-size--md & {
+    width: 55px;
+    height: 55px;
   }
+}
 
-  button.uppy-DashboardItem-progressIndicator {
+  button.uppy-Dashboard-Item-progressIndicator {
     @include clear-focus;
     cursor: pointer;
 
     &:focus {
-      .bg,
-      .retry {
+      .uppy-Dashboard-Item-progressIcon--bg,
+      .uppy-Dashboard-Item-progressIcon--retry {
         fill: lighten($blue, 20%);
       }
     }
   }
 
-.uppy-c-icon-progressCircle {
+// ProgressCircle svg styles
+
+.uppy-Dashboard-Item-progressIcon--circle {
   width: 100%;
   height: 100%;
-
-  .bg {
-    stroke: rgba($white, 0.4);
-  }
-
-  .progress {
-    stroke: $white;
-    transition: stroke-dashoffset .5s ease-out;
-  }
-
-  .play {
-    stroke: $white;
-    fill: $white;
-    transition: all 0.2s;
-  }
-
-  .cancel {
-    fill: $white;
-    transition: all 0.2s;
-  }
-
-  .pause {
-    stroke: $white;
-    fill: $white;
-    transition: all 0.2s;
-  }
-
-  .check {
-    fill: $white;
-    transition: all 0.2s;
-  }
 }
 
-.retry {
+.uppy-Dashboard-Item-progressIcon--bg {
+  stroke: rgba($white, 0.4);
+}
+
+.uppy-Dashboard-Item-progressIcon--progress {
+  stroke: $white;
+  transition: stroke-dashoffset .5s ease-out;
+}
+
+.uppy-Dashboard-Item-progressIcon--play {
+  stroke: $white;
+  fill: $white;
+  transition: all 0.2s;
+}
+
+.uppy-Dashboard-Item-progressIcon--cancel {
+  fill: $white;
+  transition: all 0.2s;
+}
+
+.uppy-Dashboard-Item-progressIcon--pause {
+  stroke: $white;
+  fill: $white;
+  transition: all 0.2s;
+}
+
+.uppy-Dashboard-Item-progressIcon--check {
+  fill: $white;
+  transition: all 0.2s;
+}
+
+.uppy-Dashboard-Item-progressIcon--retry {
   fill: $white;
 }
 
 // Svg styles that depend on the state of the file.
-.uppy-DashboardItem.is-complete .uppy-DashboardItem-progress {
+
+.uppy-Dashboard-Item.is-complete .uppy-Dashboard-Item-progress {
   transform: initial;
   top: -9px;
   right: -8px;
@@ -83,7 +86,7 @@
   width: auto;
 }
 
-.uppy-DashboardItem.is-error .uppy-DashboardItem-progressIndicator {
+.uppy-Dashboard-Item.is-error .uppy-Dashboard-Item-progressIndicator {
   width: 18px;
   height: 18px;
 
@@ -93,7 +96,7 @@
   }
 }
 
-.uppy-DashboardItem.is-complete .uppy-DashboardItem-progressIndicator {
+.uppy-Dashboard-Item.is-complete .uppy-Dashboard-Item-progressIndicator {
   width: 18px;
   height: 18px;
   opacity: 1;
@@ -104,13 +107,6 @@
   }
 }
 
-.uppy-DashboardItem.is-processing .uppy-DashboardItem-progress {
+.uppy-Dashboard-Item.is-processing .uppy-Dashboard-Item-progress {
   opacity: 0;
-}
-
-.uppy-DashboardItem.is-complete {
-  .progress {
-    stroke: $green;
-    fill: $green;
-  }
 }

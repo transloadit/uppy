@@ -48,8 +48,8 @@ describe('Chaos monkey', function () {
         window.addLogMessage('Cancelling a file')
         // prefer deleting a file that is uploading right now
         var selector = Math.random() <= 0.7
-          ? '.is-inprogress .uppy-DashboardItem-action--remove'
-          : '.uppy-DashboardItem-action--remove'
+          ? '.is-inprogress .uppy-Dashboard-Item-action--remove'
+          : '.uppy-Dashboard-Item-action--remove'
         var buttons = document.querySelectorAll(selector)
         var del = buttons[Math.floor(Math.random() * buttons.length)]
         if (del) del.click()
