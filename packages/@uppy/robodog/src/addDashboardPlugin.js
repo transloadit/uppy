@@ -9,7 +9,7 @@ const dashboardOptionNames = [
   'showLinkToFileUploadResult',
   'showProgressDetails',
   'hideRetryButton',
-  'hidePauseResumeCancelButtons',
+  'hideCancelButton',
   'hideUploadButton',
   'hideProgressAfterFinish',
   'note',

@@ -32,7 +32,6 @@ module.exports = class FileItem extends Component {
     const isUploaded = file.progress.uploadComplete && !isProcessing && !file.error
     const uploadInProgressOrComplete = file.progress.uploadStarted || isProcessing
     const uploadInProgress = (file.progress.uploadStarted && !file.progress.uploadComplete) || isProcessing
-    const isPaused = file.isPaused || false
     const error = file.error || false
 
     let showRemoveButton = this.props.individualCancellation
@@ -44,12 +43,10 @@ module.exports = class FileItem extends Component {
     }
 
     const dashboardItemClass = classNames({
-      'uppy-u-reset': true,
-      'uppy-DashboardItem': true,
+      'uppy-Dashboard-Item': true,
       'is-inprogress': uploadInProgress,
       'is-processing': isProcessing,
       'is-complete': isUploaded,
-      'is-paused': isPaused,
       'is-error': !!error,
       'is-resumable': this.props.resumableUploads,
       'is-noIndividualCancellation': !this.props.individualCancellation
@@ -61,7 +58,7 @@ module.exports = class FileItem extends Component {
         id={`uppy_${file.id}`}
         role={this.props.role}
       >
-        <div class="uppy-DashboardItem-preview">
+        <div class="uppy-Dashboard-Item-preview">
           <FilePreviewAndLink
             file={file}
             showLinkToFileUploadResult={this.props.showLinkToFileUploadResult}
@@ -72,7 +69,9 @@ module.exports = class FileItem extends Component {
             isUploaded={isUploaded}
 
             hideRetryButton={this.props.hideRetryButton}
-            hidePauseResumeCancelButtons={this.props.hidePauseResumeCancelButtons}
+            hideCancelButton={this.props.hideCancelButton}
+            hidePauseResumeButton={this.props.hidePauseResumeButton}
+
             showRemoveButtonAfterComplete={this.props.showRemoveButtonAfterComplete}
 
             resumableUploads={this.props.resumableUploads}
@@ -85,7 +84,7 @@ module.exports = class FileItem extends Component {
           />
         </div>
 
-        <div class="uppy-DashboardItem-fileInfoAndButtons">
+        <div class="uppy-Dashboard-Item-fileInfoAndButtons">
           <FileInfo
             file={file}
             id={this.props.id}

@@ -10,7 +10,7 @@ const renderAcquirerIcon = (acquirer, props) =>
 const renderFileSource = (props) => (
   props.file.source &&
   props.file.source !== props.id &&
-    <div class="uppy-DashboardItem-sourceIcon">
+    <div class="uppy-Dashboard-Item-sourceIcon">
       {props.acquirers.map(acquirer => {
         if (acquirer.id === props.file.source) {
           return renderAcquirerIcon(acquirer, props)
@@ -34,7 +34,7 @@ const renderFileName = (props) => {
   }
 
   return (
-    <div class="uppy-DashboardItem-name" title={props.file.meta.name}>
+    <div class="uppy-Dashboard-Item-name" title={props.file.meta.name}>
       {truncateString(props.file.meta.name, maxNameLength)}
     </div>
   )
@@ -42,7 +42,7 @@ const renderFileName = (props) => {
 
 const renderFileSize = (props) => (
   props.file.data.size &&
-    <div class="uppy-DashboardItem-statusSize">
+    <div class="uppy-Dashboard-Item-statusSize">
       {prettierBytes(props.file.data.size)}
     </div>
 )
@@ -51,7 +51,7 @@ const ErrorButton = ({ file, onClick }) => {
   if (file.error) {
     return (
       <span
-        class="uppy-DashboardItem-errorDetails"
+        class="uppy-Dashboard-Item-errorDetails"
         aria-label={file.error}
         data-microtip-position="bottom"
         data-microtip-size="medium"
@@ -67,9 +67,9 @@ const ErrorButton = ({ file, onClick }) => {
 
 module.exports = function FileInfo (props) {
   return (
-    <div class="uppy-DashboardItem-fileInfo" data-uppy-file-source={props.file.source}>
+    <div class="uppy-Dashboard-Item-fileInfo" data-uppy-file-source={props.file.source}>
       {renderFileName(props)}
-      <div class="uppy-DashboardItem-status">
+      <div class="uppy-Dashboard-Item-status">
         {renderFileSize(props)}
         {renderFileSource(props)}
         <ErrorButton
