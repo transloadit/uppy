@@ -56,8 +56,8 @@ class AbortControllerPolyfill {
   }
 }
 
-const AbortSignal = window.AbortSignal || AbortSignalPolyfill
-const AbortController = window.AbortController || AbortControllerPolyfill
+const AbortSignal = (typeof window !== 'undefined' && window.AbortSignal) || AbortSignalPolyfill
+const AbortController = (typeof window !== 'undefined' && window.AbortController) || AbortControllerPolyfill
 
 exports.AbortController = AbortController
 exports.AbortSignal = AbortSignal
