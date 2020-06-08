@@ -182,7 +182,7 @@ module.exports = class DragDrop extends Plugin {
       uppy-Root
       uppy-u-reset
       uppy-DragDrop-container
-      ${this.isDragDropSupported ? 'uppy-DragDrop--is-dragdrop-supported' : ''}
+      ${this.isDragDropSupported ? 'uppy-DragDrop--isDragDropSupported' : ''}
       ${this.getPluginState().isDraggingOver ? 'uppy-DragDrop--isDraggingOver' : ''}
     `
 
