@@ -116,7 +116,7 @@ This release features Bug Fixes And Performance Improvements™ (actually signif
 | @uppy/aws-s3-multipart | 1.7.0 | @uppy/onedrive | 1.1.6 |
 | @uppy/aws-s3 | 1.6.5 | @uppy/progress-bar | 1.3.14 |
 | @uppy/companion-client | 1.4.5 | @uppy/provider-views | 1.6.6 |
-| @uppy/companion | 2.0.0 | @uppy/react | 1.7.0 |
+| @uppy/companion | 2.0.0-alpha.3 | @uppy/react | 1.7.0 |
 | @uppy/core | 1.10.5 | @uppy/robodog | 1.6.7 |
 | @uppy/dashboard | 1.9.0 | @uppy/screen-capture | 1.0.2 |
 | @uppy/drag-drop | 1.4.13 | @uppy/status-bar | 1.6.6 |
