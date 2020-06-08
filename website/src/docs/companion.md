@@ -286,7 +286,7 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 6. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
 
-7. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-Custom-Providers) for more information.
+7. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
 
 8. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Companion will only accept uploads to these URLs (useful when you want to make sure a Companion instance is only allowed to upload to your servers, for example).
 
@@ -359,7 +359,7 @@ We have [a detailed guide on running Companion in Kubernetes](https://github.com
 
 ### Adding custom providers
 
-As of now, Companion supports **Google Drive**, **Dropbox**, **Instagram**, and **URL** (remote urls) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
+As of now, Companion supports the [providers listed here](https://uppy.io/docs/companion/#Supported-providers) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
 
 ```javascript
 let options = {
@@ -371,6 +371,7 @@ let options = {
                 oauth: 2,
                 key: "***",
                 secret: "***",
+                callback: '/myprovidername/callback'
                 scope: ["read", "write"]
             },
             module: require('/path/to/provider/module')
@@ -390,13 +391,48 @@ To work well with Companion, the **Module** must be a class with the following m
     - token - authorization token (retrieved from oauth process) to send along with your request
     - directory - the `id/name` of the directory from which data is to be retrieved. This may be ignored if it doesn't apply to your provider
     - query - expressjs query params object received by the server (just in case there is some data you need in there).
-  - `done (err, response, body)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, `response`, and `body`.
-2. `download (options, onData, onResponse)` - downloads a particular file from the provider.
+  - `done (err, data)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, and [`data`]((#list-data)).
+2. `download (options, onData)` - downloads a particular file from the provider.
   - `options` - is an object containing the following attributes:
     - token - authorization token (retrieved from oauth process) to send along with your request.
     - id - ID of the file being downloaded.
-  - `onData (chunk)` - a callback that should be called with each data chunk received on download. This is useful if the size of the downloaded file can be pre-determined. This would allow for pipelined upload of the file (to the desired destination), while the download is still going on.
-  - `onResponse (response)` - if the size of the downloaded file can not be pre-determined by Companion, then this callback should be called in place of the `onData` callback. This callback would be called after the download is done, and would take the downloaded data (response) as the argument.
+    - query - expressjs query params object received by the server (just in case there is some data you need in there).
+  - `onData (err, chunk)` - a callback that should be called with each data chunk received as download is happening. The `err` argument is an error that should be passed if an error occurs during download. It should be `null` if there's no error. Once the download is completed and there are no more chunks to receive, `onData` should be called with `null` values like so `onData(null, null)`
+3. `size (options, done)` - returns the byte size of the file that needs to be downloaded.
+  - `options` - is an object containing the following attributes:
+    - token - authorization token (retrieved from oauth process) to send along with your request.
+    - id - ID of the file being downloaded.
+  - `done (err, size)` - the callback that should be called after the request to your provider is completed. As the signature indicates, the following data should be passed along to the callback `err`, and `size` (number).
+
+The class must also have an `authProvider` string (lowercased) field which typically indicates the name of the provider (e.g "dropbox").
+
+#### list data
+
+```js
+{
+  username: 'username or email of the user whose provider account is being accessed',
+  // list of files and folders in the directory. An item is considered a folder
+  //  if it mainly exists as a collection to contain sub-items
+  items: [
+    {
+      isFolder: false, // boolean value of whether or NOT it's a folder
+      icon: 'icon image URL',
+      name: 'name of the item (e.g "myfile.jpg")',
+      mimeType: 'the mime type of the item. Only relevant if the item is NOT a folder',
+      id: 'the id (in string) of the item',
+      thumbnail: 'thumbnail image URL. Only relevant if the item is NOT a folder',
+      requestPath: 'for folders this is typically the value that will be passed as "directory" in the list(...) method. For files, this is the value that will be passed as id in the download(...) method.',
+      modifiedDate: 'datetime string (in ISO 8601 format) of when this item was last modified',
+      size: 278940, // the size in bytes of the item. Only relevent if the item is NOT a folder
+      custom: {
+        // an object that may contain some more custom fields that you may need to send to the client. Only add this object if you have a need for it.
+      },
+      // more items here
+    }
+  ]
+  nextPagePath: 'if the "items" list is paginated, this is the request path needed to fetch the next page.'
+}
+```
 
 ## Development
 
