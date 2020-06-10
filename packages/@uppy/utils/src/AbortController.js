@@ -1,5 +1,5 @@
 /**
- * A small AbortController ponyfill.
+ * A small AbortController ponyfill. We don't need it do do much, so…
  */
 
 const emitter = require('namespace-emitter')

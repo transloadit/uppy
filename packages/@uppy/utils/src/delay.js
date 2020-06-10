@@ -1,6 +1,8 @@
 const { createAbortError } = require('./AbortController')
 
 /**
+ * Return a Promise that resolves after `ms` milliseconds.
+ *
  * @param {number} ms - Number of milliseconds to wait.
  * @param {{ signal?: AbortSignal }} [opts] - An abort signal that can be used to cancel the delay early.
  * @returns {Promise<void>} A Promise that resolves after the given amount of `ms`.
