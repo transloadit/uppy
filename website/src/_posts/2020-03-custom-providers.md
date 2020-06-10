@@ -5,9 +5,16 @@ author: ife
 published: false
 ---
 
-In this post we will be going through a step by step tutorial on how to develop, and add custom providers to Uppy and Companion. For the purpose of this tutorial we will be building a custom provider for [Unsplash](https://unsplash.com/).
+In this post we will be going through a step by step tutorial on how to develop, and add custom [providers](https://uppy.io/docs/providers/) to Uppy and Companion. For the purpose of this tutorial we will be building a custom provider for [Unsplash](https://unsplash.com/).
 
 <!--more-->
+
+## What are Provider Plugins?
+
+> Provider plugins help you connect to your accounts with remote file providers such as Dropbox, Google Drive, Instagram and remote URLs
+
+Please see [here](https://uppy.io/docs/providers/) for more info on Provider Plugins
+
 
 Creating a custom provider composes of two parts; **Custom Companion Provider** and **Custom Uppy Plugin**
 
@@ -203,7 +210,7 @@ _adaptData (res) {
 }
 ```
 
-the method makes an http request to the unsplash API based on the documentation to [list collections](https://unsplash.com/documentation#list-collections) and [list collection's photos](https://unsplash.com/documentation#get-a-collections-photos). The `_adaptData` method exists to help the conform to [the list data]((https://uppy.io/docs/companion/#list-data))
+the method makes an http request to the unsplash API based on the documentation to [list collections](https://unsplash.com/documentation#list-collections) and [list collection's photos](https://unsplash.com/documentation#get-a-collections-photos). The `_adaptData` method exists to help us conform to [the list data](https://uppy.io/docs/companion/#list-data)
 
 Our `size` method will look something like this:
 
