@@ -70,7 +70,13 @@ module.exports.getDefaultProviders = (companionOptions) => {
 module.exports.addCustomProviders = (customProviders, providers, grantConfig) => {
   Object.keys(customProviders).forEach((providerName) => {
     providers[providerName] = customProviders[providerName].module
-    grantConfig[providerName] = customProviders[providerName].config
+    const providerConfig = Object.assign({}, customProviders[providerName].config)
+    // todo: consider setting these options from a universal point also used
+    // by official providers. It'll prevent these from getting left out if the
+    // requirement changes.
+    providerConfig.callback = `/${providerName}/callback`
+    providerConfig.transport = 'session'
+    grantConfig[providerName] = providerConfig
   })
 }
 
