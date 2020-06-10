@@ -209,12 +209,10 @@ class MultipartUploader {
   _uploadPartRetryable (index) {
     return this._retryable({
       before: () => {
-        console.log('before() this.partsInProgress += 1', this.partsInProgress)
         this.partsInProgress += 1
       },
       attempt: () => this._uploadPart(index),
       after: () => {
-        console.log('after() this.partsInProgress -= 1', this.partsInProgress)
         this.partsInProgress -= 1
       }
     })

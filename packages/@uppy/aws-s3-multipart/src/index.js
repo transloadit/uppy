@@ -28,6 +28,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     const defaultOptions = {
       timeout: 30 * 1000,
       limit: 0,
+      retryDelays: [0, 1000, 3000, 5000],
       createMultipartUpload: this.createMultipartUpload.bind(this),
       listParts: this.listParts.bind(this),
       prepareUploadPart: this.prepareUploadPart.bind(this),
@@ -209,6 +210,7 @@ module.exports = class AwsS3Multipart extends Plugin {
         onPartComplete,
 
         limit: this.opts.limit || 5,
+        retryDelays: this.opts.retryDelays || [],
         ...file.s3Multipart
       })
 
