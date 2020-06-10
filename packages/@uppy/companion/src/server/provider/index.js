@@ -46,7 +46,7 @@ module.exports.getProviderMiddleware = (providers) => {
  */
 module.exports.getDefaultProviders = (companionOptions) => {
   const { providerOptions } = companionOptions || { providerOptions: null }
-  // @todo: 2.0 we should rename drive to googledrive or google-drive or google
+  // @todo: we should rename drive to googledrive or google-drive or google
   const providers = { dropbox, drive, facebook, onedrive }
   // Instagram's Graph API key is just numbers, while the old API key is hex
   const usesGraphAPI = () => /^\d+$/.test(providerOptions.instagram.key)

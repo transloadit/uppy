@@ -271,8 +271,6 @@ const getOptionsMiddleware = (options) => {
     }
 
     logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
-    // @todo remove req.uppy in next major release
-    req.uppy = req.companion
     next()
   }
 
