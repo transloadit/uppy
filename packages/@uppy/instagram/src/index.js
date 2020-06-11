@@ -40,16 +40,6 @@ module.exports = class Instagram extends Plugin {
       showFilter: false,
       showBreadcrumbs: false
     })
-    // Set default state for Instagram
-    this.setPluginState({
-      authenticated: false,
-      files: [],
-      folders: [],
-      directories: [],
-      activeRow: -1,
-      filterInput: '',
-      isSearchVisible: false
-    })
 
     const target = this.opts.target
     if (target) {
