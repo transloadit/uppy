@@ -38,6 +38,8 @@ declare module Dashboard {
     note?: string | null
     onRequestCloseModal?: () => void
     plugins?: string[]
+    browserAllowFiles?: boolean
+    browserAllowFolders?: boolean
     proudlyDisplayPoweredByUppy?: boolean
     showLinkToFileUploadResult?: boolean
     showProgressDetails?: boolean
