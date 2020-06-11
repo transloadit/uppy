@@ -5,6 +5,10 @@ class AddFiles extends Component {
     this.fileInput.click()
   }
 
+  triggerFolderInputClick = () => {
+    this.folderInput.click()
+  }
+
   onFileInputChange = (event) => {
     this.props.handleInputChange(event)
 
@@ -63,6 +67,24 @@ class AddFiles extends Component {
     )
   }
 
+  renderHiddenFolderInput = () => {
+    return (
+      <input
+        class="uppy-Dashboard-input"
+        hidden
+        aria-hidden="true"
+        tabindex={-1}
+        webkitdirectory="true"
+        type="file"
+        name="files[]"
+        multiple={this.props.maxNumberOfFiles !== 1}
+        onchange={this.onFileInputChange}
+        accept={this.props.allowedFileTypes}
+        ref={(ref) => { this.folderInput = ref }}
+      />
+    )
+  }
+
   renderMyDeviceAcquirer = () => {
     return (
       <div class="uppy-DashboardTab" role="presentation">
@@ -86,17 +108,44 @@ class AddFiles extends Component {
     )
   }
 
-  renderDropPasteBrowseTagline = () => {
+  renderBrowseFileButton = () => {
     const numberOfAcquirers = this.props.acquirers.length
-    const browse =
+    return (
       <button
         type="button"
         class="uppy-u-reset uppy-Dashboard-browse"
         onclick={this.triggerFileInputClick}
         data-uppy-super-focusable={numberOfAcquirers === 0}
       >
-        {this.props.i18n('browse')}
+        browse files
       </button>
+    )
+  }
+
+  renderBrowseFolderButton = () => {
+    const numberOfAcquirers = this.props.acquirers.length
+    return (
+      <button
+        type="button"
+        class="uppy-u-reset uppy-Dashboard-browse"
+        onclick={this.triggerFolderInputClick}
+        data-uppy-super-focusable={numberOfAcquirers === 0}
+      >
+        browse folders
+      </button>
+    )
+  }
+
+  renderDropPasteBrowseTagline = () => {
+    const numberOfAcquirers = this.props.acquirers.length
+    const browse = (
+      <span>
+        {!(this.props.browserAllowFiles && this.props.browserAllowFolders) && 'or, '}
+        {(this.props.browserAllowFiles) && this.renderBrowseFileButton()}
+        {(this.props.browserAllowFiles && this.props.browserAllowFolders) && ' or, '}
+        {this.props.browserAllowFolders && this.renderBrowseFolderButton()}
+      </span>
+    )
 
     return (
       <div class="uppy-Dashboard-AddFiles-title">
@@ -150,6 +199,7 @@ class AddFiles extends Component {
     return (
       <div class="uppy-Dashboard-AddFiles">
         {this.renderHiddenFileInput()}
+        {this.renderHiddenFolderInput()}
         {this.renderDropPasteBrowseTagline()}
         {this.props.acquirers.length > 0 && this.renderAcquirers(this.props.acquirers)}
         <div class="uppy-Dashboard-AddFiles-info">

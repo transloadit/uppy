@@ -33,7 +33,7 @@ en_US.strings = {
   done: 'Done',
   dropHereOr: 'Drop files here or %{browse}',
   dropHint: 'Drop your files here',
-  dropPaste: 'Drop files here, paste or %{browse}',
+  dropPaste: 'Drop files here, paste %{browse}',
   dropPasteImport: 'Drop files here, paste, %{browse} or import from:',
   editFile: 'Edit file',
   editing: 'Editing %{file}',
