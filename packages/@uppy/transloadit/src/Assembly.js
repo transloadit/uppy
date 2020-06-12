@@ -3,6 +3,7 @@ const Emitter = require('component-emitter')
 const has = require('@uppy/utils/lib/hasProperty')
 const parseUrl = require('./parseUrl')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
+const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
 
 // Lazy load socket.io to avoid a console error
 // in IE 10 when the Transloadit plugin is not used.
@@ -150,14 +151,7 @@ class TransloaditAssembly extends Emitter {
    * 'status'.
    */
   _fetchStatus ({ diff = true } = {}) {
-    return fetch(this.status.assembly_ssl_url)
-      .catch((err) => {
-        if (err.name === 'AbortError') {
-          throw err
-        } else {
-          throw new NetworkError(err)
-        }
-      })
+    return fetchWithNetworkError(this.status.assembly_ssl_url)
       .then((response) => response.json())
       .then((status) => {
         // Avoid updating if we closed during this request's lifetime.
