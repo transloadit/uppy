@@ -70,6 +70,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] xhr: set the `limit` option to a sensible default, like 10
 - [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
 - [ ] transloadit: remove `UPPY_SERVER` constant
+- [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
 
 ## 1.18
 
@@ -98,7 +99,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: add Vue.js wrapper component for the Dashboard (@arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi) (@arturi)
 - [ ] dashboard: fix Dashboard issues with Angular — it’s incredibly slow presumably because of ResizeObserver. (See #1613) (@arturi)
-- [ ] dashboard: add VirtualList, so it can render 5000 files without lag (@goto-bus-stop, @lakesare)
 - [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
 - [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53 (@arturi)
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
@@ -116,7 +116,7 @@ This release features Bug Fixes And Performance Improvements™ (actually signif
 | @uppy/aws-s3-multipart | 1.7.0 | @uppy/onedrive | 1.1.6 |
 | @uppy/aws-s3 | 1.6.5 | @uppy/progress-bar | 1.3.14 |
 | @uppy/companion-client | 1.4.5 | @uppy/provider-views | 1.6.6 |
-| @uppy/companion | 2.0.0 | @uppy/react | 1.7.0 |
+| @uppy/companion | 2.0.0-alpha.3 | @uppy/react | 1.7.0 |
 | @uppy/core | 1.10.5 | @uppy/robodog | 1.6.7 |
 | @uppy/dashboard | 1.9.0 | @uppy/screen-capture | 1.0.2 |
 | @uppy/drag-drop | 1.4.13 | @uppy/status-bar | 1.6.6 |
@@ -140,7 +140,7 @@ This release features Bug Fixes And Performance Improvements™ (actually signif
 - @uppy/core: add more suggestions to console warning when incorrect `target` option is provided (#2242 / @goto-bus-stop)
 - @uppy/dashboard: add option to let users remove already uploaded files, UI only (#2284 / @arturi)
 - @uppy/dashboard: display error message for individual files (#2224 / @lafe)
-- @uppy/dashboard: render only visible files to the DOM to drastically improve performance (#2161 / @goto-bus-stop)
+- @uppy/dashboard: render only visible files to the DOM (VirtualList) to drastically improve performance (#2161 / @goto-bus-stop)
 - @uppy/drag-drop: add a more accessible `<label>` element for the hidden input (#2257 / @arturi)
 - @uppy/locales: add Bulgarian `bg_BG` (#2280 / @intenzive)
 - @uppy/locales: add Slovakian `sk_SK` (#2261 / @suchoproduction)

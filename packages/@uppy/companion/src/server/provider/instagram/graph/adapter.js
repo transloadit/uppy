@@ -19,22 +19,8 @@ exports.getItemIcon = (item) => {
 exports.getItemSubList = (item) => {
   const newItems = []
   item.data.forEach((subItem) => {
-    // exclude videos because of bug https://developers.facebook.com/support/bugs/801145630390846/
-    // @todo remove this clause when bug is fixed
-    if (isVideo(subItem)) {
-      return
-    }
-
     if (subItem.media_type === MEDIA_TYPES.carousel) {
-      subItem.children.data.forEach((i) => {
-        // exclude videos because of bug https://developers.facebook.com/support/bugs/801145630390846/
-        // @todo remove this clause when bug is fixed
-        if (isVideo(i)) {
-          return
-        }
-
-        newItems.push(i)
-      })
+      subItem.children.data.forEach((i) => newItems.push(i))
     } else {
       newItems.push(subItem)
     }

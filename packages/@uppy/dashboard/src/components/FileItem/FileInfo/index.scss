@@ -1,7 +1,7 @@
-.uppy-DashboardItem-fileInfo {
+.uppy-Dashboard-Item-fileInfo {
   padding-right: 5px;
 }
-  .uppy-DashboardItem-name {
+  .uppy-Dashboard-Item-name {
     font-size: 12px;
     line-height: 1.3;
     font-weight: 500;
@@ -17,7 +17,7 @@
     }
   }
 
-  .uppy-DashboardItem-status {
+  .uppy-Dashboard-Item-status {
     font-size: 11px;
     line-height: 1.3;
     font-weight: normal;
@@ -27,12 +27,12 @@
       color: $gray-400;
     }
   }
-    .uppy-DashboardItem-statusSize {
+    .uppy-Dashboard-Item-statusSize {
       display: inline-block;
       vertical-align: bottom;
       text-transform: uppercase;
     }
-    .uppy-DashboardItem-sourceIcon {
+    .uppy-Dashboard-Item-sourceIcon {
       // display: inline-block;
       display: none;
       vertical-align: bottom;
@@ -53,5 +53,5 @@
         height: 12px;
       }
     }
-  // ...uppy-DashboardItem-status|
-// ...uppy-DashboardItem-fileInfo|
+  // ...uppy-Dashboard-Item-status|
+// ...uppy-Dashboard-Item-fileInfo|

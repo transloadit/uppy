@@ -1,5 +1,5 @@
 const qs = require('querystring')
-const parseUrl = require('url').parse // eslint-disable-line node/no-deprecated-api
+const { URL } = require('url')
 const { hasMatch } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
 
@@ -15,7 +15,7 @@ module.exports = function oauthRedirect (req, res) {
     return res.status(400).send('Cannot find state in session')
   }
   const handler = oAuthState.getFromState(state, 'companionInstance', req.companion.options.secret)
-  const handlerHostName = parseUrl(handler).host
+  const handlerHostName = (new URL(handler)).host
 
   if (hasMatch(handlerHostName, req.companion.options.server.validHosts)) {
     const providerName = req.companion.provider.authProvider

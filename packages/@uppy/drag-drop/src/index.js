@@ -142,11 +142,8 @@ module.exports = class DragDrop extends Plugin {
     const restrictions = this.uppy.opts.restrictions
     return (
       <input
-        id={this.uppy.id + '-' + this.id}
-        class="uppy-DragDrop-input"
         type="file"
-        tabindex={-1}
-        focusable="false"
+        hidden
         ref={(ref) => { this.fileInputRef = ref }}
         name={this.opts.inputName}
         multiple={restrictions.maxNumberOfFiles !== 1}
@@ -158,7 +155,7 @@ module.exports = class DragDrop extends Plugin {
 
   renderArrowSvg () {
     return (
-      <svg aria-hidden="true" focusable="false" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16">
+      <svg aria-hidden="true" focusable="false" class="uppy-c-icon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16">
         <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
       </svg>
     )
@@ -166,11 +163,11 @@ module.exports = class DragDrop extends Plugin {
 
   renderLabel () {
     return (
-      <label class="uppy-DragDrop-label" for={this.uppy.id + '-' + this.id}>
+      <div class="uppy-DragDrop-label">
         {this.i18nArray('dropHereOr', {
           browse: <span class="uppy-DragDrop-browse">{this.i18n('browse')}</span>
         })}
-      </label>
+      </div>
     )
   }
 
@@ -185,7 +182,7 @@ module.exports = class DragDrop extends Plugin {
       uppy-Root
       uppy-u-reset
       uppy-DragDrop-container
-      ${this.isDragDropSupported ? 'uppy-DragDrop--is-dragdrop-supported' : ''}
+      ${this.isDragDropSupported ? 'uppy-DragDrop--isDragDropSupported' : ''}
       ${this.getPluginState().isDraggingOver ? 'uppy-DragDrop--isDraggingOver' : ''}
     `
 
