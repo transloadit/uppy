@@ -164,6 +164,7 @@ class TransloaditAssembly extends Emitter {
           this.status = status
         }
       })
+      .catch((err) => this._onError(err))
   }
 
   update () {
