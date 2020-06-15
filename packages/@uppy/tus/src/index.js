@@ -184,6 +184,14 @@ module.exports = class Tus extends Plugin {
         ...opts
       }
 
+      delete uploadOptions.resume
+
+      // Make `resume: true` work like it did in tus-js-client v1.
+      // TODO: Remove in @uppy/tus v2
+      if (opts.resume) {
+        uploadOptions.storeFingerprintForResuming = true
+      }
+
       // We override tus fingerprint to uppy’s `file.id`, since the `file.id`
       // now also includes `relativePath` for files added from folders.
       // This means you can add 2 identical files, if one is in folder a,
@@ -258,9 +266,25 @@ module.exports = class Tus extends Plugin {
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
+      // Make `resume: true` work like it did in tus-js-client v1.
+      // TODO: Remove in @uppy/tus v2.
+      if (opts.resume) {
+        upload.findPreviousUploads().then((previousUploads) => {
+          const previousUpload = previousUploads[0]
+          if (previousUploads) {
+            this.uppy.log(`[Tus] Resuming upload of ${file.id} started at ${previousUpload.creationTime}`)
+            upload.resumeFromPreviousUpload(previousUpload)
+          }
+        })
+      }
+
       let queuedRequest = this.requests.run(() => {
         if (!file.isPaused) {
-          upload.start()
+          // Ensure this gets scheduled to run _after_ `findPreviousUploads()` returns.
+          // TODO: Remove in @uppy/tus v2.
+          Promise.resolve().then(() => {
+            upload.start()
+          })
         }
         // Don't do anything here, the caller will take care of cancelling the upload itself
         // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
