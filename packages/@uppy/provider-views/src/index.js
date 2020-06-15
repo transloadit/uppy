@@ -85,6 +85,17 @@ module.exports = class ProviderView {
     this.render = this.render.bind(this)
 
     this.clearSelection()
+
+    // Set default state for the plugin
+    this.plugin.setPluginState({
+      authenticated: false,
+      files: [],
+      folders: [],
+      directories: [],
+      activeRow: -1,
+      filterInput: '',
+      isSearchVisible: false
+    })
   }
 
   tearDown () {
