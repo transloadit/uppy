@@ -44,6 +44,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] website: add an example of a mini UI that features drop & progress (may involve a `mini: true` options for dashboard, may involve drop+progress) (@arturi)
 - [ ] xhr: allow sending custom headers per file (as proposed in #785)
 - [ ] dashboard: focus jumps weirdly if you remove a file https://github.com/transloadit/uppy/pull/2161#issuecomment-613565486
+- [ ] plugins: a WakeLock based plugin that keeps your phone from going to sleep while an upload is ongoing https://github.com/transloadit/uppy/issues/1725
 
 ## 2.0
 
