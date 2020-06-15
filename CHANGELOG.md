@@ -73,12 +73,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] transloadit: remove `UPPY_SERVER` constant
 - [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
 
-## 1.18
+## 1.19
 
 - [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
 
-## 1.17
+## 1.18
 
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
@@ -91,7 +91,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 # next
 
-## 1.16
+## 1.17
 
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default's store #320
 - [ ] provider: add Box (@ife)
@@ -105,6 +105,39 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
+
+## 1.16.0
+
+Released: 2020-06-13
+
+This release fixes Drag Drop plugin bug introduced in the previous release (@uppy/drag-drop@1.4.13) and adds NetworkError reporting and `error.isNetworkError` to the Transloadit plugin.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.7.1 | @uppy/onedrive | 1.1.7 |
+| @uppy/aws-s3 | 1.6.6 | @uppy/progress-bar | 1.3.15 |
+| @uppy/companion-client | 1.5.0 | @uppy/provider-views | 1.6.7 |
+| @uppy/companion | 2.0.0-alpha.4 | @uppy/react | 1.8.0 |
+| @uppy/core | 1.11.0 | @uppy/robodog | 1.7.0 |
+| @uppy/dashboard | 1.10.0 | @uppy/screen-capture | 1.0.3 |
+| @uppy/drag-drop | 1.4.14 | @uppy/status-bar | 1.7.0 |
+| @uppy/dropbox | 1.4.7 | @uppy/thumbnail-generator | 1.6.1 |
+| @uppy/facebook | 1.1.7 | @uppy/transloadit | 1.6.0 |
+| @uppy/file-input | 1.4.13 | @uppy/tus | 1.6.0 |
+| @uppy/form | 1.3.16 | @uppy/url | 1.5.7 |
+| @uppy/golden-retriever | 1.3.15 | @uppy/utils | 3.1.0 |
+| @uppy/google-drive | 1.5.7 | @uppy/webcam | 1.6.7 |
+| @uppy/informer | 1.5.7 | @uppy/xhr-upload | 1.6.0 |
+| @uppy/instagram | 1.4.7 | uppy | 1.16.0 |
+| @uppy/locales | 1.15.0 | - | - |
+
+- @uppy/dashboard: Refactor FileProgress component (#2303, #2292 / @arturi, @atsawin)
+- @uppy/dashboard:  Move the FileItem’s new ErrorButton, it was overlapping the edit button (0e78e32e4cf50b276ee4a48f1bf57e6be279b539 / @arturi)
+- @uppy/drag-drop: Fix the issue with click event occuring twice, try hiding the input altogether (#2307 / @arturi)
+- @uppy/transloadit: Add NetworkError handling to Transloadit plugin, refactor things, update docs about `error.isNetworkError` (#2291 / @arturi)
+- @uppy/companion: Companion 2.0 (pre-released as alpha for now) (#2273 / @ifedapoolarewaju)
+- @uppy/locales: Update of Galician i18n strings. (#2308 / @jarey)
+- build: chores: catch custom version suffices (alpha, beta etc.) (#2311 / ifedapoolarewaju)
 
 ## 1.15.0
 
