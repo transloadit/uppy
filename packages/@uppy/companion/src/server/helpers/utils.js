@@ -1,5 +1,5 @@
 const request = require('request')
-const urlParser = require('url')
+const { URL } = require('url')
 const crypto = require('crypto')
 const { getProtectedHttpAgent } = require('./request')
 
@@ -44,17 +44,6 @@ exports.sanitizeHtml = (text) => {
 }
 
 /**
- * Node 6(and beyond) compatible url parser
- * @todo drop the use of url.parse when support for node 6 is dropped
- *
- * @param {string} url URL to be parsed
- */
-exports.parseURL = (url) => {
-  // eslint-disable-next-line
-  return urlParser.URL ? new urlParser.URL(url) : urlParser.parse(url)
-}
-
-/**
  * Gets the size and content type of a url's content
  *
  * @param {string} url
@@ -67,7 +56,7 @@ exports.getURLMeta = (url, blockLocalIPs = false) => {
       uri: url,
       method: 'HEAD',
       followAllRedirects: true,
-      agentClass: getProtectedHttpAgent(exports.parseURL(url).protocol, blockLocalIPs)
+      agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs)
     }
 
     request(opts, (err, response, body) => {

@@ -753,6 +753,18 @@ uppy.on('upload-error', (file, error, response) => {
 })
 ```
 
+If the error is related to network conditions — endpoint unreachable due to firewall or ISP blockage, for instance — the error will have `error.isNetworkError` property set to `true`. Here’s how you can check for network errors:
+
+``` javascript
+uppy.on('upload-error', (file, error, response) => {
+  if (error.isNetworkError) {
+    // Let your users know that file upload could have failed
+    // due to firewall or ISP issues
+    alertUserAboutPossibleFirewallOrISPIssues(error)
+  }
+})
+```
+
 ### `upload-retry`
 
 Fired when an upload has been retried (after an error, for example):

@@ -3,7 +3,7 @@
 @import './FileInfo/index.scss';
 @import './Buttons/index.scss';
 
-.uppy-DashboardItem {
+.uppy-Dashboard-Item {
   display: flex;
   align-items: center;
   border-bottom: 1px solid $gray-200;
@@ -44,7 +44,7 @@
   }
 }
 
-  .uppy-DashboardItem-preview {
+  .uppy-Dashboard-Item-preview {
     // for the FileProgress.js icons
     position: relative;
 
@@ -68,7 +68,7 @@
     }
   }
 
-  .uppy-DashboardItem-fileInfoAndButtons {
+  .uppy-Dashboard-Item-fileInfoAndButtons {
     flex-grow: 1;
     padding-right: 8px;
     padding-left: 12px;
@@ -85,37 +85,34 @@
     }
   }
 
-    .uppy-DashboardItem-fileInfo {
+    .uppy-Dashboard-Item-fileInfo {
       flex-grow: 1;
       flex-shrink: 1;
     }
 
-    .uppy-DashboardItem-actionWrapper {
+    .uppy-Dashboard-Item-actionWrapper {
       flex-grow: 0;
       flex-shrink: 0;
     }
-  // ...uppy-DashboardItem-fileInfoAndButtons|
-// ...uppy-DashboardItem|
+  // ...uppy-Dashboard-Item-fileInfoAndButtons|
+// ...uppy-Dashboard-Item|
 
 
-// Css that depends on status of the file (could be logic in js instead?)
-.uppy-DashboardItem.is-inprogress {
-  .uppy-DashboardItem-previewInnerWrap:after {
+// CSS that depends on status of the file (could be logic in js instead?)
+.uppy-Dashboard-Item.is-inprogress,
+.uppy-Dashboard-Item.is-error {
+  .uppy-Dashboard-Item-previewInnerWrap:after {
     display: block;
   }
 }
-.uppy-DashboardItem.is-error {
-  .uppy-DashboardItem-previewInnerWrap:after {
-    display: block;
-  }
-}
-.uppy-DashboardItem.is-inprogress:not(.is-resumable) {
-  .uppy-DashboardItem-action--remove {
+
+.uppy-Dashboard-Item.is-inprogress:not(.is-resumable) {
+  .uppy-Dashboard-Item-action--remove {
     display: none;
   }
 }
 
-.uppy-DashboardItem-errorDetails {
+.uppy-Dashboard-Item-errorDetails {
   line-height: 12px;
   width: 12px;
   height: 12px;
@@ -133,7 +130,7 @@
   cursor: help;
 }
 
-  .uppy-DashboardItem-errorDetails:after {
+  .uppy-Dashboard-Item-errorDetails:after {
     line-height: 1.3;
     word-wrap: break-word;
   }
