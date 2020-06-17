@@ -34,7 +34,7 @@ class MultipartUploader {
 
     this.key = this.options.key || null
     this.uploadId = this.options.uploadId || null
-    this.parts = this.options.parts || []
+    this.parts = this.options.parts ? [...this.options.parts] : []
 
     // Do `this.createdPromise.then(OP)` to execute an operation `OP` _only_ if the
     // upload was created already. That also ensures that the sequencing is right
