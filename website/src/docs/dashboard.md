@@ -439,3 +439,9 @@ Fired when the user finished editing the file metadata.
 
 This event is useful if you are using the [`showRemoveButtonAfterComplete: true`](/docs/dashboard/#showRemoveButtonAfterComplete-false) option, and want to distinguish when a user has manually removed file in the UI, vs when “cancel all” has been pressed or `uppy.close()` or `uppy.reset()` has been called.
 (See [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176)).
+
+```js
+uppy.on('dashboard:file-removed-ui', (file) => {
+  // Your “file removed” logic
+})
+```
