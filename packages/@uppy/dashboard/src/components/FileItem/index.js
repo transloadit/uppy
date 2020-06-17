@@ -106,6 +106,7 @@ module.exports = class FileItem extends Component {
             i18n={this.props.i18n}
             log={this.props.log}
             info={this.props.info}
+            emit={this.props.emit}
           />
         </div>
       </div>

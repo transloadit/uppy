@@ -842,6 +842,7 @@ module.exports = class Dashboard extends Plugin {
       i18nArray: this.i18nArray,
       removeFile: this.uppy.removeFile,
       info: this.uppy.info,
+      emit: this.uppy.emit,
       note: this.opts.note,
       metaFields: pluginState.metaFields,
       resumableUploads: capabilities.resumableUploads || false,
