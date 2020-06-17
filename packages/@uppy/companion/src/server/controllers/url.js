@@ -3,7 +3,7 @@ const request = require('request')
 const Uploader = require('../Uploader')
 const validator = require('validator')
 const utils = require('../helpers/utils')
-const { getProtectedHttpAgent } = require('../helpers/request')
+const { getProtectedHttpAgent, getRedirectEvaluator } = require('../helpers/request')
 const logger = require('../logger')
 
 module.exports = () => {
@@ -30,7 +30,8 @@ const meta = (req, res) => {
     .then((meta) => res.json(meta))
     .catch((err) => {
       logger.error(err, 'controller.url.meta.error', req.id)
-      return res.status(500).json({ error: err })
+      // @todo send more meaningful error message and status code to client if possible
+      return res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
     })
 }
 
@@ -71,8 +72,8 @@ const get = (req, res) => {
       res.status(response.status).json(response.body)
     }).catch((err) => {
       logger.error(err, 'controller.url.get.error', req.id)
-      // @todo this should send back error (not err)
-      res.json({ err })
+      // @todo send more meaningful error message and status code to client if possible
+      return res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
     })
 }
 
@@ -113,12 +114,22 @@ const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
   const opts = {
     uri: url,
     method: 'GET',
-    followAllRedirects: true,
+    followRedirect: getRedirectEvaluator(url, blockLocalIPs),
     agentClass: getProtectedHttpAgent(utils.parseURL(url).protocol, blockLocalIPs)
   }
 
   request(opts)
-    .on('data', (chunk) => onDataChunk(null, chunk))
+    .on('response', (resp) => {
+      if (resp.statusCode >= 300) {
+        const err = new Error(`URL server responded with status: ${resp.statusCode}`)
+        onDataChunk(err, null)
+      } else {
+        resp.on('data', (chunk) => onDataChunk(null, chunk))
+      }
+    })
     .on('end', () => onDataChunk(null, null))
-    .on('error', (err) => logger.error(err, 'controller.url.download.error', traceId))
+    .on('error', (err) => {
+      logger.error(err, 'controller.url.download.error', traceId)
+      onDataChunk(err, null)
+    })
 }

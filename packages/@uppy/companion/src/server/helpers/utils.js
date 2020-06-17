@@ -1,7 +1,7 @@
 const request = require('request')
 const urlParser = require('url')
 const crypto = require('crypto')
-const { getProtectedHttpAgent } = require('./request')
+const { getProtectedHttpAgent, getRedirectEvaluator } = require('./request')
 
 /**
  *
@@ -66,12 +66,15 @@ exports.getURLMeta = (url, blockLocalIPs = false) => {
     const opts = {
       uri: url,
       method: 'HEAD',
-      followAllRedirects: true,
+      followRedirect: getRedirectEvaluator(url, blockLocalIPs),
       agentClass: getProtectedHttpAgent(exports.parseURL(url).protocol, blockLocalIPs)
     }
 
-    request(opts, (err, response, body) => {
-      if (err) {
+    request(opts, (err, response) => {
+      if (err || response.statusCode >= 300) {
+        // @todo possibly set a status code in the error object to get a more helpful
+        // hint at what the cause of error is.
+        err = err || new Error(`URL server responded with status: ${response.statusCode}`)
         reject(err)
       } else {
         resolve({

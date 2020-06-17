@@ -1,5 +1,6 @@
 const http = require('http')
 const https = require('https')
+const urlParser = require('url')
 const dns = require('dns')
 const ipAddress = require('ip-address')
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
@@ -74,6 +75,27 @@ function isPrivateIP (ipAddress) {
 }
 
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
+
+const parseURL = (url) => {
+  // eslint-disable-next-line
+  return urlParser.URL ? new urlParser.URL(url) : urlParser.parse(url)
+}
+
+module.exports.getRedirectEvaluator = (requestURL, blockPrivateIPs) => {
+  const protocol = parseURL(requestURL).protocol
+  return (res) => {
+    if (!blockPrivateIPs) {
+      return true
+    }
+
+    const redirectURL = res.headers.location
+    if (!redirectURL) {
+      return false
+    }
+
+    return parseURL(redirectURL).protocol === protocol
+  }
+}
 
 /**
  * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
