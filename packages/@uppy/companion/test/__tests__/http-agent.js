@@ -1,9 +1,39 @@
 /* global test:false, expect:false, describe:false, */
 
-const { getProtectedHttpAgent, FORBIDDEN_IP_ADDRESS } = require('../../src/server/helpers/request')
+const { getProtectedHttpAgent, getRedirectEvaluator, FORBIDDEN_IP_ADDRESS } = require('../../src/server/helpers/request')
 const request = require('request')
 const http = require('http')
 const https = require('https')
+
+describe('test getRedirectEvaluator', () => {
+  const httpURL = 'http://uppy.io'
+  const httpsURL = 'https://uppy.io'
+  const httpRedirectResp = {
+    headers: {
+      location: 'http://transloadit.com'
+    }
+  }
+
+  const httpsRedirectResp = {
+    headers: {
+      location: 'https://transloadit.com'
+    }
+  }
+
+  test('when original URL has "https:" as protocol', (done) => {
+    const shouldRedirectHttps = getRedirectEvaluator(httpsURL, true)
+    expect(shouldRedirectHttps(httpsRedirectResp)).toEqual(true)
+    expect(shouldRedirectHttps(httpRedirectResp)).toEqual(false)
+    done()
+  })
+
+  test('when original URL has "http:" as protocol', (done) => {
+    const shouldRedirectHttp = getRedirectEvaluator(httpURL, true)
+    expect(shouldRedirectHttp(httpRedirectResp)).toEqual(true)
+    expect(shouldRedirectHttp(httpsRedirectResp)).toEqual(false)
+    done()
+  })
+})
 
 describe('test getProtectedHttpAgent', () => {
   test('setting "https:" as protocol', (done) => {
