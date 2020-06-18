@@ -75,6 +75,22 @@ function isPrivateIP (ipAddress) {
 
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
 
+module.exports.getRedirectEvaluator = (requestURL, blockPrivateIPs) => {
+  const protocol = (new URL(requestURL)).protocol
+  return (res) => {
+    if (!blockPrivateIPs) {
+      return true
+    }
+
+    const redirectURL = res.headers.location
+    if (!redirectURL) {
+      return false
+    }
+
+    return new URL(redirectURL).protocol === protocol
+  }
+}
+
 /**
  * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
  * @param {string} protocol http or http: or https: or https protocol needed for the request
