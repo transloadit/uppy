@@ -78,7 +78,7 @@ jobs:
         on:
           branch: master
     - name: 'Run Companion tests (Node.js 6)'
-      node_js: 'stable'
+      node_js: 12
       services:
         - docker
       script:
