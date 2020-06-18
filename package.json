@@ -34,7 +34,7 @@
     "@uppy-example/xhr-bundle": "file:examples/xhr-bundle",
     "@uppy/aws-s3": "file:packages/@uppy/aws-s3",
     "@uppy/aws-s3-multipart": "file:packages/@uppy/aws-s3-multipart",
-    "@uppy/backablaze-b2-multipart": "file:packages/@uppy/backblaze-b2-multipart",
+    "@uppy/backblaze-b2-multipart": "file:packages/@uppy/backblaze-b2-multipart",
     "@uppy/companion": "file:packages/@uppy/companion",
     "@uppy/companion-client": "file:packages/@uppy/companion-client",
     "@uppy/core": "file:packages/@uppy/core",
