@@ -108,6 +108,14 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## 1.16.1
 
+Released: 2020-06-19
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 2.0.0-alpha.6 | - | - |
+
+- @uppy/companion: Import url (#2328 / @ifedapoolarewaju)
+
 Released: 2020-06-18
 
 ⚠️ This release patches a Server Side Request Forgery (SSRF) Security vulnerability on `@uppy/companion`
