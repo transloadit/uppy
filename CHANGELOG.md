@@ -106,6 +106,28 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 
+## 1.16.1
+
+Released: 2020-06-18
+
+⚠️ This release patches a Server Side Request Forgery (SSRF) Security vulnerability on `@uppy/companion`
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 1.13.2, 2.0.0-alpha.5 | @uppy/onedrive | 1.1.8 |
+| @uppy/dashboard | 1.10.1 | @uppy/provider-views | 1.6.8 |
+| @uppy/drag-drop | 1.4.15 | @uppy/react | 1.8.1 |
+| @uppy/dropbox | 1.4.8 | @uppy/robodog | 1.7.1 |
+| @uppy/facebook | 1.1.8 | @uppy/thumbnail-generator | 1.6.2 |
+| @uppy/google-drive | 1.5.8 | @uppy/transloadit | 1.6.1 |
+| @uppy/instagram | 1.4.8 | uppy | 1.16.1 |
+
+- @uppy/thumbnail-generator: upgrade exifr (@goto-bus-stop)
+- @uppy/companion: set grant related options for custom providers (#2317 / @ifedapoolarewaju)
+- @uppy/provider-views: handle all plugin state in provider-views (#2318 / @ifedapoolarewaju)
+- @uppy/drag-drop: Add uppy-DragDrop-input class name back (ab88612dff3ce24b001acb3b626516f0e2f7fd0c / @arturi)
+- @uppy/companion: block redirects to urls with different protocol (#2322 / @ifedapoolarewaju)
+
 ## 1.16.0
 
 Released: 2020-06-13
