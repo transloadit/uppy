@@ -1,5 +1,6 @@
 const http = require('http')
 const https = require('https')
+const { URL } = require('url')
 const dns = require('dns')
 const ipAddress = require('ip-address')
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
