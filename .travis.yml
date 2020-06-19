@@ -90,8 +90,8 @@ jobs:
       services:
         - docker
       script:
-        - nvm install 8.0.0
-        - nvm use 8.0.0
+        - nvm install 8.16.0
+        - nvm use 8.16.0
         - npm run test:companion
     # Build the website when things are merged to master
     # https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
