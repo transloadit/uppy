@@ -167,8 +167,8 @@ module.exports = class Dashboard extends Plugin {
 
     if (callerPluginType !== 'acquirer' &&
         callerPluginType !== 'progressindicator' &&
-        callerPluginType !== 'presenter') {
-      const msg = 'Dashboard: Modal can only be used by plugins of types: acquirer, progressindicator, presenter'
+        callerPluginType !== 'editor') {
+      const msg = 'Dashboard: The Dashboard can only be used by plugins of types: acquirer, progressindicator, editor'
       this.uppy.log(msg, 'error')
       return
     }
@@ -194,16 +194,20 @@ module.exports = class Dashboard extends Plugin {
     const update = {
       activePickerPanel: false,
       showAddFilesPanel: false,
-      activeOverlayType: null
+      activeOverlayType: null,
+      showFileEditor: false
     }
 
     const current = this.getPluginState()
     if (current.activePickerPanel === update.activePickerPanel &&
         current.showAddFilesPanel === update.showAddFilesPanel &&
+        current.showFileEditor === update.showFileEditor &&
         current.activeOverlayType === update.activeOverlayType) {
       // avoid doing a state update if nothing changed
       return
     }
+
+    console.log(update)
 
     this.setPluginState(update)
   }
@@ -733,6 +737,12 @@ module.exports = class Dashboard extends Plugin {
       .map(this._attachRenderFunctionToTarget)
   })
 
+  _getEditors = memoize((targets) => {
+    return targets
+      .filter(target => target.type === 'editor')
+      .map(this._attachRenderFunctionToTarget)
+  })
+
   render = (state) => {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
@@ -786,6 +796,7 @@ module.exports = class Dashboard extends Plugin {
 
     const acquirers = this._getAcquirers(pluginState.targets)
     const progressindicators = this._getProgressIndicators(pluginState.targets)
+    const editors = this._getEditors(pluginState.targets)
 
     let theme
     if (this.opts.theme === 'auto') {
@@ -815,10 +826,12 @@ module.exports = class Dashboard extends Plugin {
       acquirers,
       theme,
       activePickerPanel: pluginState.activePickerPanel,
+      showFileEditor: pluginState.showFileEditor,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
       getPlugin: this.uppy.getPlugin,
       progressindicators: progressindicators,
+      editors: editors,
       autoProceed: this.uppy.opts.autoProceed,
       id: this.id,
       closeModal: this.requestCloseModal,
@@ -887,6 +900,7 @@ module.exports = class Dashboard extends Plugin {
       activeOverlayType: null,
       showAddFilesPanel: false,
       activePickerPanel: false,
+      showFileEditor: false,
       metaFields: this.opts.metaFields,
       targets: [],
       // We'll make them visible once .containerWidth is determined
