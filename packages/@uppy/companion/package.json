@@ -31,7 +31,7 @@
   "dependencies": {
     "@purest/providers": "1.0.1",
     "atob": "2.1.2",
-    "aws-sdk": "2.587.0",
+    "aws-sdk": "2.701.0",
     "body-parser": "1.19.0",
     "chalk": "2.4.2",
     "common-tags": "1.8.0",
