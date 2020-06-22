@@ -36,7 +36,7 @@
     "chalk": "2.4.2",
     "common-tags": "1.8.0",
     "connect-redis": "4.0.3",
-    "cookie-parser": "1.4.4",
+    "cookie-parser": "1.4.5",
     "escape-string-regexp": "2.0.0",
     "express": "4.17.1",
     "express-interceptor": "1.2.0",
