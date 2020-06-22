@@ -82,7 +82,7 @@ class Uploader {
         this._paused = true
         if (this.tus) {
           const shouldTerminate = !!this.tus.url
-          this.tus.abort(shouldTerminate)
+          this.tus.abort(shouldTerminate).catch(() => {})
         }
         this.cleanUp()
       })
@@ -414,15 +414,13 @@ class Uploader {
     const file = fs.createReadStream(this.path)
     const uploader = this
 
-    // @ts-ignore
     this.tus = new tus.Upload(file, {
       endpoint: this.options.endpoint,
       uploadUrl: this.options.uploadUrl,
-      // @ts-ignore
       uploadLengthDeferred: false,
-      resume: true,
       retryDelays: [0, 1000, 3000, 5000],
       uploadSize: this.bytesWritten,
+      addRequestId: true,
       metadata: Object.assign(
         {
           // file name and type as required by the tusd tus server
