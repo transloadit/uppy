@@ -134,7 +134,7 @@ module.exports = class AwsS3Multipart extends Plugin {
           s3Multipart: {
             ...cFile.s3Multipart,
             key: data.key,
-            uploadId: data.uploadId,
+            uploadId: data.uploadId
           }
         })
       }
