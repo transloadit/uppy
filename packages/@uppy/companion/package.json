@@ -44,7 +44,7 @@
     "express-request-id": "1.4.1",
     "express-session": "1.17.1",
     "grant": "4.6.5",
-    "helmet": "3.21.2",
+    "helmet": "3.23.1",
     "ip-address": "6.2.0",
     "isobject": "3.0.1",
     "jsonwebtoken": "8.5.1",
