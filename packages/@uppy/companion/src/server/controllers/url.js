@@ -51,7 +51,7 @@ const get = (req, res) => {
     return res.status(400).json({ error: 'Invalid request body' })
   }
 
-  utils.getURLMeta(req.body.url)
+  utils.getURLMeta(req.body.url, !debug)
     .then(({ size }) => {
       // @ts-ignore
       logger.debug('Instantiating uploader.', null, req.id)
