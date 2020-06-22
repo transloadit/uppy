@@ -57,7 +57,7 @@
     "prom-client": "11.5.3",
     "purest": "3.1.0",
     "redis": "3.0.2",
-    "request": "2.88.0",
+    "request": "2.88.2",
     "semver": "6.3.0",
     "serialize-error": "^2.1.0",
     "tus-js-client": "2.1.1",
