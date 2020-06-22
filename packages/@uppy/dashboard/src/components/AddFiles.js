@@ -50,37 +50,28 @@ class AddFiles extends Component {
     )
   }
 
-  renderHiddenFileInput = () => {
+  renderCloudIcon = () => {
     return (
-      <input
-        class="uppy-Dashboard-input"
-        hidden
-        aria-hidden="true"
-        tabindex={-1}
-        type="file"
-        name="files[]"
-        multiple={this.props.maxNumberOfFiles !== 1}
-        onchange={this.onFileInputChange}
-        accept={this.props.allowedFileTypes}
-        ref={(ref) => { this.fileInput = ref }}
-      />
+      <svg class="uppy-Dashboard-dropFilesIcon" aria-hidden="true" width="64" height="45" viewBox="0 0 64 45" xmlns="http://www.w3.org/2000/svg">
+        <path d="M38 44.932V31h8L33 15 20 31h8v13.932H13.538C6.075 44.932 0 38.774 0 31.202c0-6.1 4.06-11.512 9.873-13.162l.005-.017c.345-5.8 5.248-10.534 10.922-10.534.502 0 1.164.017 1.868.16C25.9 2.85 31.225 0 36.923 0c9.5 0 17.23 7.838 17.23 17.473l-.011.565.012.002C60.039 19.685 64 24.975 64 31.203c0 7.57-6.075 13.729-13.538 13.729H38z" fill="#E2E2E2" fill-rule="nonzero" />
+      </svg>
     )
   }
 
-  renderHiddenFolderInput = () => {
+  renderHiddenInput = (isFolder, refName) => {
     return (
       <input
         class="uppy-Dashboard-input"
         hidden
         aria-hidden="true"
         tabindex={-1}
-        webkitdirectory="true"
+        webkitdirectory={isFolder}
         type="file"
         name="files[]"
         multiple={this.props.maxNumberOfFiles !== 1}
         onchange={this.onFileInputChange}
         accept={this.props.allowedFileTypes}
-        ref={(ref) => { this.folderInput = ref }}
+        ref={(ref) => { this[refName] = ref }}
       />
     )
   }
@@ -108,51 +99,36 @@ class AddFiles extends Component {
     )
   }
 
-  renderBrowseFileButton = () => {
+  renderBrowseButton = (text, onClickFn) => {
     const numberOfAcquirers = this.props.acquirers.length
     return (
       <button
         type="button"
         class="uppy-u-reset uppy-Dashboard-browse"
-        onclick={this.triggerFileInputClick}
+        onclick={onClickFn}
         data-uppy-super-focusable={numberOfAcquirers === 0}
       >
-        browse files
-      </button>
-    )
-  }
-
-  renderBrowseFolderButton = () => {
-    const numberOfAcquirers = this.props.acquirers.length
-    return (
-      <button
-        type="button"
-        class="uppy-u-reset uppy-Dashboard-browse"
-        onclick={this.triggerFolderInputClick}
-        data-uppy-super-focusable={numberOfAcquirers === 0}
-      >
-        browse folders
+        {text}
       </button>
     )
   }
 
   renderDropPasteBrowseTagline = () => {
     const numberOfAcquirers = this.props.acquirers.length
-    const browse = (
-      <span>
-        {!(this.props.browserAllowFiles && this.props.browserAllowFolders) && 'or, '}
-        {(this.props.browserAllowFiles) && this.renderBrowseFileButton()}
-        {(this.props.browserAllowFiles && this.props.browserAllowFolders) && ' or, '}
-        {this.props.browserAllowFolders && this.renderBrowseFolderButton()}
-      </span>
-    )
+    const browseFiles = this.renderBrowseButton(this.props.i18n('browseFiles'), this.triggerFileInputClick)
+    const browseFolders = this.renderBrowseButton(this.props.i18n('browseFolders'), this.triggerFolderInputClick)
+
+    // in order to keep the i18n CamelCase and options lower (as are defaults) we will want to transform a lower
+    // to Camel
+    const lowerBrowseType = this.props.browserUploadType
+    const camelBrowseType = lowerBrowseType.charAt(0).toUpperCase() + lowerBrowseType.slice(1)
 
     return (
       <div class="uppy-Dashboard-AddFiles-title">
         {
           numberOfAcquirers > 0
-            ? this.props.i18nArray('dropPasteImport', { browse })
-            : this.props.i18nArray('dropPaste', { browse })
+            ? this.props.i18nArray(`dropPasteImport${camelBrowseType}`, { browseFiles, browseFolders })
+            : this.props.i18nArray(`dropPaste${camelBrowseType}`, { browseFiles, browseFolders })
         }
       </div>
     )
@@ -198,8 +174,8 @@ class AddFiles extends Component {
   render () {
     return (
       <div class="uppy-Dashboard-AddFiles">
-        {this.renderHiddenFileInput()}
-        {this.renderHiddenFolderInput()}
+        {this.renderHiddenInput(false, 'fileInput')}
+        {this.renderHiddenInput(true, 'folderInput')}
         {this.renderDropPasteBrowseTagline()}
         {this.props.acquirers.length > 0 && this.renderAcquirers(this.props.acquirers)}
         <div class="uppy-Dashboard-AddFiles-info">

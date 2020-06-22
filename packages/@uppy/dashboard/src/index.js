@@ -6,6 +6,7 @@ const Informer = require('@uppy/informer')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
+const { strings: enUS } = require('@uppy/locales/lib/en_US')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const trapFocus = require('./utils/trapFocus')
 const cuid = require('cuid')
@@ -68,10 +69,15 @@ module.exports = class Dashboard extends Plugin {
         saveChanges: 'Save changes',
         cancel: 'Cancel',
         myDevice: 'My Device',
-        dropPaste: 'Drop files here, paste %{browse}',
-        dropPasteImport: 'Drop files here, paste, %{browse} or import from:',
+        dropPasteFiles: enUS.dropPasteFiles,
+        dropPasteFolders: enUS.dropPasteFolders,
+        dropPasteBoth: enUS.dropPasteBoth,
+        dropPasteImportFiles: enUS.dropPasteImportFiles,
+        dropPasteImportFolders: enUS.dropPasteImportFolders,
+        dropPasteImportBoth: enUS.dropPasteImportBoth,
         dropHint: 'Drop your files here',
-        browse: 'browse',
+        browseFiles: enUS.browseFiles,
+        browseFolders: enUS.browseFolders,
         uploadComplete: 'Upload complete',
         uploadPaused: 'Upload paused',
         resumeUpload: 'Resume upload',
@@ -126,8 +132,7 @@ module.exports = class Dashboard extends Plugin {
       disableThumbnailGenerator: false,
       disablePageScrollWhenModalOpen: true,
       animateOpenClose: true,
-      browserAllowFiles: true,
-      browserAllowFolders: false,
+      browserUploadType: 'files',
       proudlyDisplayPoweredByUppy: true,
       onRequestCloseModal: () => this.closeModal(),
       showSelectedFiles: true,
@@ -805,6 +810,11 @@ module.exports = class Dashboard extends Plugin {
       theme = this.opts.theme
     }
 
+    if (!['files', 'folders', 'both'].includes(this.opts.browserUploadType)) {
+      this.opts.browserUploadType = 'files'
+      console.error(`Unsupported option for "browserUploadType". Using default of "${this.opts.browserUploadType}".`)
+    }
+
     return DashboardUI({
       state,
       isHidden: pluginState.isHidden,
@@ -861,8 +871,7 @@ module.exports = class Dashboard extends Plugin {
       width: this.opts.width,
       height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
-      browserAllowFiles: this.opts.browserAllowFiles,
-      browserAllowFolders: this.opts.browserAllowFolders,
+      browserUploadType: this.opts.browserUploadType,
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
       hideCancelButton: this.opts.hideCancelButton,
       hideRetryButton: this.opts.hideRetryButton,
