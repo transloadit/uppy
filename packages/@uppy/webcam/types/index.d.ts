@@ -18,6 +18,7 @@ declare module Webcam {
     modes?: WebcamMode[]
     locale?: WebcamLocale
     title?: string
+    videoConstraints?: MediaTrackConstraints
   }
 }
 

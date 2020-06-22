@@ -168,7 +168,7 @@ module.exports = class Webcam extends Plugin {
       this.opts.modes.indexOf('video-only') !== -1 ||
       this.opts.modes.indexOf('picture') !== -1
 
-    const videoConstraints = this.opts.constraints ?? {}
+    const videoConstraints = this.opts.videoConstraints ?? {}
     videoConstraints.facingMode = this.opts.facingMode
 
     return {
