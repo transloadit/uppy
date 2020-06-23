@@ -48,13 +48,13 @@ zh_CN.strings = {
   fileSource: '文件源：%{name}',
   filesUploadedOfTotal: {
     '0': '%{smart_count} 个文件上传 %{complete}',
-    '1': '%{smart_count} 个文件上传 %{complete}',
+    '1': '%{smart_count} 个文件上传 %{complete}'
   },
   filter: '筛选器',
   finishEditingFile: '完成文件编辑',
   folderAdded: {
     '0': '从 %{folder} 添加了 %{smart_count} 个文件',
-    '1': '从 %{folder} 添加了 %{smart_count} 个文件',
+    '1': '从 %{folder} 添加了 %{smart_count} 个文件'
   },
   generatingThumbnails: '正在生成缩略图…',
   import: '导入',
