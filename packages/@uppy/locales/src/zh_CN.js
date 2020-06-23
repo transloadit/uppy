@@ -1,9 +1,9 @@
-const zh_CN = {};
+const zh_CN = {}
 
 zh_CN.strings = {
   addBulkFilesFailed: {
     '0': '内部错误导致添加 %{smart_count} 个文件失败',
-    '1': '内部错误导致添加 %{smart_count} 个文件失败',
+    '1': '内部错误导致添加 %{smart_count} 个文件失败'
   },
   addMore: '添加更多文件',
   addMoreFiles: '添加更多文件',
@@ -77,7 +77,7 @@ zh_CN.strings = {
   poweredBy2: '%{backwardsCompat} %{uppy}',
   processingXFiles: {
     '0': '正在处理 %{smart_count} 个文件',
-    '1': '正在处理 %{smart_count} 个文件',
+    '1': '正在处理 %{smart_count} 个文件'
   },
   recording: '正在录制',
   recordingLength: '录制长度 %{recording_length}',
@@ -93,7 +93,7 @@ zh_CN.strings = {
   selectFileNamed: '选择文件 %{name}',
   selectX: {
     '0': '选择 %{smart_count}',
-    '1': '选择 %{smart_count}',
+    '1': '选择 %{smart_count}'
   },
   smile: '笑一笑！',
   startCapturing: '开始屏幕录制',
@@ -113,46 +113,46 @@ zh_CN.strings = {
   uploadPaused: '上传暂停',
   uploadXFiles: {
     '0': '上传 %{smart_count} 个文件',
-    '1': '上传 %{smart_count} 个文件',
+    '1': '上传 %{smart_count} 个文件'
   },
   uploadXNewFiles: {
     '0': '新上传了 %{smart_count} 个文件',
-    '1': '新上传了 %{smart_count} 个文件',
+    '1': '新上传了 %{smart_count} 个文件'
   },
   uploading: '正在上传',
   uploadingXFiles: {
     '0': '正在上传 %{smart_count} 个文件',
-    '1': '正在上传 %{smart_count} 个文件',
+    '1': '正在上传 %{smart_count} 个文件'
   },
   xFilesSelected: {
     '0': '%{smart_count} 个文件待上传',
-    '1': '%{smart_count} 个文件待上传',
+    '1': '%{smart_count} 个文件待上传'
   },
   xMoreFilesAdded: {
     '0': '又有 %{smart_count} 个文件被添加',
-    '1': '又有 %{smart_count} 个文件被添加',
+    '1': '又有 %{smart_count} 个文件被添加'
   },
   xTimeLeft: '还剩下 %{time}',
   youCanOnlyUploadFileTypes: '您只能上传这些文件类型：%{types}',
   youCanOnlyUploadX: {
     '0': '您只能上传 %{smart_count} 个文件',
-    '1': '您只能上传 %{smart_count} 个文件',
+    '1': '您只能上传 %{smart_count} 个文件'
   },
   youHaveToAtLeastSelectX: {
     '0': '您至少要选择 %{smart_count} 个文件',
     '1': '您至少要选择 %{smart_count} 个文件'
   }
-};
+}
 
 zh_CN.pluralize = function (n) {
   if (n === 1) {
-    return 0;
+    return 0
   }
-  return 1;
-};
-
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.zh_CN = zh_CN;
+  return 1
 }
 
-module.exports = zh_CN;
+if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
+  window.Uppy.locales.zh_CN = zh_CN
+}
+
+module.exports = zh_CN
