@@ -97,7 +97,6 @@ module.exports = class ImageEditor extends Plugin {
   }
 
   render (state) {
-    console.log(this.getPluginState())
     const { currentImage } = this.getPluginState()
 
     if (currentImage === null) {
