@@ -7,6 +7,9 @@ const capabilities = []
 if (args.b) {
   if (!Array.isArray(args.b)) args.b = [args.b]
   args.b.forEach((browserName) => {
+    if (browserName === 'ie') {
+      browserName = 'internet explorer'
+    }
     capabilities.push({ browserName })
   })
 }

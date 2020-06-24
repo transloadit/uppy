@@ -65,7 +65,11 @@ class AddFiles extends Component {
 
   renderMyDeviceAcquirer = () => {
     return (
-      <div class="uppy-DashboardTab" role="presentation">
+      <div
+        class="uppy-DashboardTab"
+        role="presentation"
+        data-acquirer-id="Local"
+      >
         <button
           type="button"
           class="uppy-DashboardTab-btn"
@@ -111,7 +115,11 @@ class AddFiles extends Component {
 
   renderAcquirer = (acquirer) => {
     return (
-      <div class="uppy-DashboardTab" role="presentation">
+      <div
+        class="uppy-DashboardTab"
+        role="presentation"
+        data-acquirer-id={acquirer.id}
+      >
         <button
           type="button"
           class="uppy-DashboardTab-btn"
