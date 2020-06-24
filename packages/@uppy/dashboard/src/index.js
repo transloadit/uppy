@@ -6,7 +6,6 @@ const Informer = require('@uppy/informer')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
-const { strings: enUS } = require('@uppy/locales/lib/en_US')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const trapFocus = require('./utils/trapFocus')
 const cuid = require('cuid')
@@ -76,8 +75,8 @@ module.exports = class Dashboard extends Plugin {
         dropPasteImportFolders: 'Drop files here, paste, %{browseFolders} or import from:',
         dropPasteImportBoth: 'Drop files here, paste, %{browseFiles}, %{browseFolders} or import from:',
         dropHint: 'Drop your files here',
-        browseFiles: enUS.browseFiles,
-        browseFolders: enUS.browseFolders,
+        browseFiles: 'browse files',
+        browseFolders: 'browse folders',
         uploadComplete: 'Upload complete',
         uploadPaused: 'Upload paused',
         resumeUpload: 'Resume upload',

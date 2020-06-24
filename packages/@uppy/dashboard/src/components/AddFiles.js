@@ -50,14 +50,6 @@ class AddFiles extends Component {
     )
   }
 
-  renderCloudIcon = () => {
-    return (
-      <svg class="uppy-Dashboard-dropFilesIcon" aria-hidden="true" width="64" height="45" viewBox="0 0 64 45" xmlns="http://www.w3.org/2000/svg">
-        <path d="M38 44.932V31h8L33 15 20 31h8v13.932H13.538C6.075 44.932 0 38.774 0 31.202c0-6.1 4.06-11.512 9.873-13.162l.005-.017c.345-5.8 5.248-10.534 10.922-10.534.502 0 1.164.017 1.868.16C25.9 2.85 31.225 0 36.923 0c9.5 0 17.23 7.838 17.23 17.473l-.011.565.012.002C60.039 19.685 64 24.975 64 31.203c0 7.57-6.075 13.729-13.538 13.729H38z" fill="#E2E2E2" fill-rule="nonzero" />
-      </svg>
-    )
-  }
-
   renderHiddenInput = (isFolder, refCallback) => {
     return (
       <input
