@@ -69,12 +69,12 @@ module.exports = class Dashboard extends Plugin {
         saveChanges: 'Save changes',
         cancel: 'Cancel',
         myDevice: 'My Device',
-        dropPasteFiles: enUS.dropPasteFiles,
-        dropPasteFolders: enUS.dropPasteFolders,
-        dropPasteBoth: enUS.dropPasteBoth,
-        dropPasteImportFiles: enUS.dropPasteImportFiles,
-        dropPasteImportFolders: enUS.dropPasteImportFolders,
-        dropPasteImportBoth: enUS.dropPasteImportBoth,
+        dropPasteFiles: 'Drop files here, paste or %{browseFiles}',
+        dropPasteFolders: 'Drop files here, paste or %{browseFolders}',
+        dropPasteBoth: 'Drop files here, paste, %{browseFiles} or %{browseFolders}',
+        dropPasteImportFiles: 'Drop files here, paste, %{browseFiles} or import from:',
+        dropPasteImportFolders: 'Drop files here, paste, %{browseFolders} or import from:',
+        dropPasteImportBoth: 'Drop files here, paste, %{browseFiles}, %{browseFolders} or import from:',
         dropHint: 'Drop your files here',
         browseFiles: enUS.browseFiles,
         browseFolders: enUS.browseFolders,
@@ -810,7 +810,7 @@ module.exports = class Dashboard extends Plugin {
       theme = this.opts.theme
     }
 
-    if (!['files', 'folders', 'both'].includes(this.opts.browserUploadType)) {
+    if (['files', 'folders', 'both'].indexOf(this.opts.browserUploadType) < 0) {
       this.opts.browserUploadType = 'files'
       console.error(`Unsupported option for "browserUploadType". Using default of "${this.opts.browserUploadType}".`)
     }

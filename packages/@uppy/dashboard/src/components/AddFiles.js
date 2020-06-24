@@ -58,7 +58,7 @@ class AddFiles extends Component {
     )
   }
 
-  renderHiddenInput = (isFolder, refName) => {
+  renderHiddenInput = (isFolder, refCallback) => {
     return (
       <input
         class="uppy-Dashboard-input"
@@ -71,7 +71,7 @@ class AddFiles extends Component {
         multiple={this.props.maxNumberOfFiles !== 1}
         onchange={this.onFileInputChange}
         accept={this.props.allowedFileTypes}
-        ref={(ref) => { this[refName] = ref }}
+        ref={refCallback}
       />
     )
   }
@@ -127,8 +127,8 @@ class AddFiles extends Component {
       <div class="uppy-Dashboard-AddFiles-title">
         {
           numberOfAcquirers > 0
-            ? this.props.i18nArray(`dropPasteImport${camelBrowseType}`, { browseFiles, browseFolders })
-            : this.props.i18nArray(`dropPaste${camelBrowseType}`, { browseFiles, browseFolders })
+            ? this.props.i18nArray(`dropPasteImport${camelBrowseType}`, { browseFiles, browseFolders, browse: browseFiles })
+            : this.props.i18nArray(`dropPaste${camelBrowseType}`, { browseFiles, browseFolders, browse: browseFiles })
         }
       </div>
     )
@@ -174,8 +174,8 @@ class AddFiles extends Component {
   render () {
     return (
       <div class="uppy-Dashboard-AddFiles">
-        {this.renderHiddenInput(false, 'fileInput')}
-        {this.renderHiddenInput(true, 'folderInput')}
+        {this.renderHiddenInput(false, (ref) => { this.fileInput = ref })}
+        {this.renderHiddenInput(true, (ref) => { this.folderInput = ref })}
         {this.renderDropPasteBrowseTagline()}
         {this.props.acquirers.length > 0 && this.renderAcquirers(this.props.acquirers)}
         <div class="uppy-Dashboard-AddFiles-info">
