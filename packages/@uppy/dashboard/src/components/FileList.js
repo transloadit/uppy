@@ -41,7 +41,6 @@ module.exports = (props) => {
     i18n: props.i18n,
     log: props.log,
     info: props.info,
-    emit: props.emit,
     // features
     acquirers: props.acquirers,
     resumableUploads: props.resumableUploads,

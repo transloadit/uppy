@@ -112,12 +112,7 @@ module.exports = function Buttons (props) {
           i18n={i18n}
           info={props.info}
           log={props.log}
-          onClick={() => {
-            removeFile(file.id)
-            // So that developers can distinguish when users manually removed
-            // files in the UI, vs uppy.reset() (see #2301)
-            this.props.emit('dashboard:file-removed-ui', file)
-          }}
+          onClick={() => removeFile(file.id)}
         />
       ) : null}
     </div>

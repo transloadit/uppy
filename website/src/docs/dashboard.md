@@ -193,8 +193,6 @@ See also `disableStatusBar` option, which can hide the progress and upload butto
 
 Sometimes you might want to let users remove an uploaded file. Enabling this option only shows the remove `X` button in the Dashboard UI, but to actually send a request you should listen to [`file-removed`](https://uppy.io/docs/uppy/#file-removed) event and add your logic there.
 
-> For an implementation example, please see [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176)).
-
 ### `note: null`
 
 Optionally, specify a string of text that explains something about the upload for the user. This is a place to explain any `restrictions` that are put in place. For example: `'Images and video only, 2–3 files, up to 1 MB'`.
@@ -434,14 +432,3 @@ Fired when the user clicks “edit” icon next to a file in the Dashboard. The 
 ### `dashboard:file-edit-complete`
 
 Fired when the user finished editing the file metadata.
-
-### `dashboard:file-removed-ui`
-
-This event is useful if you are using the [`showRemoveButtonAfterComplete: true`](/docs/dashboard/#showRemoveButtonAfterComplete-false) option, and want to distinguish when a user has manually removed file in the UI, vs when “cancel all” has been pressed or `uppy.close()` or `uppy.reset()` has been called.
-(See [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176)).
-
-```js
-uppy.on('dashboard:file-removed-ui', (file) => {
-  // Your “file removed” logic
-})
-```
