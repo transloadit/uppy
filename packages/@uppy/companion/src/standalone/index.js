@@ -182,7 +182,7 @@ if (process.env.COMPANION_PATH) {
 // Only set COMPANION_ONEDRIVE_DOMAIN_VALIDATION if you are sure that you are setting the
 // correct value for COMPANION_ONEDRIVE_KEY (i.e application ID). If there's a slightest possiblilty
 // that you might have mixed the values for COMPANION_ONEDRIVE_KEY and COMPANION_ONEDRIVE_SECRET,
-// please do not set a value for COMPANION_ONEDRIVE_DOMAIN_VALIDATION
+// please DO NOT set any value for COMPANION_ONEDRIVE_DOMAIN_VALIDATION
 if (process.env.COMPANION_ONEDRIVE_DOMAIN_VALIDATION === 'true' && process.env.COMPANION_ONEDRIVE_KEY) {
   app.get('/.well-known/microsoft-identity-association.json', (req, res) => {
     const content = JSON.stringify({

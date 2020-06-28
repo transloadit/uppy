@@ -100,17 +100,17 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
 
   const { oauthDomain } = server
   const keys = Object.keys(providerOptions).filter((key) => key !== 'server')
-  keys.forEach((authProvider) => {
-    if (grantConfig[authProvider]) {
+  keys.forEach((providerName) => {
+    const authProvider = providerNameToAuthName(providerName, companionOptions)
+    if (authProvider && grantConfig[authProvider]) {
       // explicitly add providerOptions so users don't override other providerOptions.
-      grantConfig[authProvider].key = providerOptions[authProvider].key
-      grantConfig[authProvider].secret = providerOptions[authProvider].secret
-      const { provider, name } = authNameToProvider(authProvider, companionOptions)
+      grantConfig[authProvider].key = providerOptions[providerName].key
+      grantConfig[authProvider].secret = providerOptions[providerName].secret
+      const provider = exports.getDefaultProviders(companionOptions)[providerName]
       Object.assign(grantConfig[authProvider], provider.getExtraConfig())
 
       // override grant.js redirect uri with companion's custom redirect url
       if (oauthDomain) {
-        const providerName = name
         const redirectPath = `/${providerName}/redirect`
         const isExternal = !!server.implicitPath
         const fullRedirectPath = getURLBuilder(companionOptions)(redirectPath, isExternal, true)
@@ -131,19 +131,13 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
 
 /**
  *
- * @param {string} authProvider
+ * @param {string} name of the provider
  * @param {{server: object, providerOptions: object}} options
- * @return {{name: string, provider: typeof Provider}}
+ * @return {string} the authProvider for this provider
  */
-const authNameToProvider = (authProvider, options) => {
+const providerNameToAuthName = (name, options) => {
   const providers = exports.getDefaultProviders(options)
-  const providerNames = Object.keys(providers)
-  for (const name of providerNames) {
-    const provider = providers[name]
-    if (provider.authProvider === authProvider) {
-      return { name, provider }
-    }
-  }
+  return (providers[name] || {}).authProvider
 }
 
 /**

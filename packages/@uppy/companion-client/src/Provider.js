@@ -12,7 +12,6 @@ module.exports = class Provider extends RequestClient {
     super(uppy, opts)
     this.provider = opts.provider
     this.id = this.provider
-    this.authProvider = opts.authProvider || this.provider
     this.name = this.opts.name || _getName(this.id)
     this.pluginId = this.opts.pluginId
     this.tokenKey = `companion-${this.pluginId}-auth-token`
