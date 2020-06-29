@@ -681,6 +681,8 @@ module.exports = class Tus extends Plugin {
     this.uppy.on('reset-progress', this.handleResetProgress)
 
     if (this.opts.autoRetry) {
+      this.uppy.log('[Tus] The `autoRetry` option may be removed in Uppy 2.0. See [PR-URL] for alternatives.', 'warning')
+
       this.uppy.on('back-online', this.uppy.retryAll)
     }
   }
