@@ -660,8 +660,22 @@ uppy.on('file-added', (file) => {
 Fired each time a file is removed.
 
 ```javascript
-uppy.on('file-removed', (file) => {
+uppy.on('file-removed', (file, reason) => {
   console.log('Removed file', file)
+})
+```
+
+Reason is provided as a second argument, so that you can distinguish when a user manually removed a file in the UI vs API calling `uppy.reset()` or `uppy.cancel()`. See [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176) for details.
+
+Current reasons are: `removed-by-user` and `cancel-all`.
+
+```js
+uppy.on('file-removed', (file, reason) => {
+  removeFileFromUploadingCounterUI(file)
+
+  if (reason === 'removed-by-user') {
+    sendDeleteRequestForFile(file)
+  }
 })
 ```
 
