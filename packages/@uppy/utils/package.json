@@ -18,6 +18,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "abortcontroller-polyfill": "^1.4.0",
     "lodash.throttle": "^4.1.1"
   }
 }

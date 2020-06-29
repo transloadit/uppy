@@ -1,5 +1,9 @@
 const { AbortController, AbortSignal } = require('./AbortController')
 
+function flushInstantTimeouts () {
+  return new Promise(resolve => setTimeout(resolve, 0))
+}
+
 describe('AbortController', () => {
   it('has the expected shape', () => {
     const controller = new AbortController()
@@ -7,18 +11,20 @@ describe('AbortController', () => {
     expect(controller.signal).toBeInstanceOf(AbortSignal)
   })
 
-  it('emits "abort" when abort() is called', () => {
+  it('emits "abort" when abort() is called', async () => {
     const controller = new AbortController()
     const callback = jest.fn()
 
     controller.signal.addEventListener('abort', callback)
     controller.abort()
 
+    await flushInstantTimeouts()
+
     expect(callback).toHaveBeenCalled()
     expect(callback.mock.calls[0][0]).toBeInstanceOf(Event)
   })
 
-  it('add and remove events', () => {
+  it('add and remove events', async () => {
     const controller = new AbortController()
     const callback = jest.fn()
     const callback2 = jest.fn()
@@ -27,6 +33,8 @@ describe('AbortController', () => {
     controller.signal.addEventListener('abort', callback2)
     controller.signal.removeEventListener('abort', callback)
     controller.abort()
+
+    await flushInstantTimeouts()
 
     expect(callback2).toHaveBeenCalled()
     expect(callback2.mock.calls[0][0]).toBeInstanceOf(Event)

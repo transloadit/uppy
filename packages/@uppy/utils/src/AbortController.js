@@ -1,63 +1,19 @@
 /**
- * A small AbortController ponyfill. We don't need it do do much, so…
+ * Little AbortController proxy module so we can swap out the implementation easily later.
  */
 
-const emitter = require('namespace-emitter')
+const { AbortController, AbortSignal } = require('abortcontroller-polyfill/dist/abortcontroller')
 
-function createAbortEvent () {
+function createAbortError (message = 'Aborted') {
   try {
-    return new Event('abort')
+    return new DOMException(message, 'AbortError')
   } catch {
     // For Internet Explorer
-    const event = document.createEvent('Event')
-    event.initEvent('abort', false, false)
-    return event
-  }
-}
-
-function createAbortError () {
-  try {
-    return new DOMException('Aborted', 'AbortError')
-  } catch {
-    // For Internet Explorer
-    const error = new Error('Aborted')
+    const error = new Error(message)
     error.name = 'AbortError'
     return error
   }
 }
-
-class AbortSignalPolyfill {
-  constructor () {
-    this._emitter = emitter()
-    this.aborted = false
-  }
-
-  _abort () {
-    this._emitter.emit('abort', createAbortEvent())
-    this.aborted = true
-  }
-
-  addEventListener (event, callback) {
-    this._emitter.on(event, callback)
-  }
-
-  removeEventListener (event, callback) {
-    this._emitter.off(event, callback)
-  }
-}
-
-class AbortControllerPolyfill {
-  constructor () {
-    this.signal = new AbortSignalPolyfill()
-  }
-
-  abort () {
-    this.signal._abort()
-  }
-}
-
-const AbortSignal = (typeof window !== 'undefined' && window.AbortSignal) || AbortSignalPolyfill
-const AbortController = (typeof window !== 'undefined' && window.AbortController) || AbortControllerPolyfill
 
 exports.AbortController = AbortController
 exports.AbortSignal = AbortSignal
