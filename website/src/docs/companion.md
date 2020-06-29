@@ -410,27 +410,41 @@ The class must also have an `authProvider` string (lowercased) field which typic
 
 ```js
 {
-  username: 'username or email of the user whose provider account is being accessed',
+  // username or email of the user whose provider account is being accessed
+  username: 'johndoe',
   // list of files and folders in the directory. An item is considered a folder
   //  if it mainly exists as a collection to contain sub-items
   items: [
     {
-      isFolder: false, // boolean value of whether or NOT it's a folder
-      icon: 'icon image URL',
-      name: 'name of the item (e.g "myfile.jpg")',
-      mimeType: 'the mime type of the item. Only relevant if the item is NOT a folder',
-      id: 'the id (in string) of the item',
-      thumbnail: 'thumbnail image URL. Only relevant if the item is NOT a folder',
-      requestPath: 'for folders this is typically the value that will be passed as "directory" in the list(...) method. For files, this is the value that will be passed as id in the download(...) method.',
-      modifiedDate: 'datetime string (in ISO 8601 format) of when this item was last modified',
-      size: 278940, // the size in bytes of the item. Only relevent if the item is NOT a folder
+      // boolean value of whether or NOT it's a folder
+      isFolder: false,
+      // icon image URL
+      icon: 'https://random-api.url.com/fileicon.jpg',
+      // name of the item
+      name: 'myfile.jpg',
+      // the mime type of the item. Only relevant if the item is NOT a folder
+      mimeType: 'image/jpg',
+      // the id (in string) of the item
+      id: 'uniqueitemid',
+      // thumbnail image URL. Only relevant if the item is NOT a folder
+      thumbnail: 'https://random-api.url.com/filethumbnail.jpg',
+      // for folders this is typically the value that will be passed as "directory" in the list(...) method.
+      // For files, this is the value that will be passed as id in the download(...) method.
+      requestPath: 'file-or-folder-requestpath',
+      // datetime string (in ISO 8601 format) of when this item was last modified
+      modifiedDate: '2020-06-29T19:59:58Z',
+      // the size in bytes of the item. Only relevent if the item is NOT a folder
+      size: 278940,
       custom: {
         // an object that may contain some more custom fields that you may need to send to the client. Only add this object if you have a need for it.
+        customData1: 'the value',
+        customData2: 'the value',
       },
       // more items here
     }
   ]
-  nextPagePath: 'if the "items" list is paginated, this is the request path needed to fetch the next page.'
+  // if the "items" list is paginated, this is the request path needed to fetch the next page.
+  nextPagePath: 'directory-name?cursor=cursor-to-next-page'
 }
 ```
 
