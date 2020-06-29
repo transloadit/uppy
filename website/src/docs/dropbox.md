@@ -59,7 +59,7 @@ companion.app({
 })
 ```
 
-You can create a Dropbox App at https://www.dropbox.com/developers/apps/create.
+You can create a Dropbox App on the [Dropbox Developers site](https://www.dropbox.com/developers/apps/create).
 
 Things to note:
 - Choose the "Dropbox API", not the business variant.
@@ -72,7 +72,7 @@ The app page has a "Redirect URIs" field. Here, add:
 https://$YOUR_COMPANION_HOST_NAME/connect/dropbox/callback
 ```
 
-You can only use the integration with your own account initially—make sure to apply for production status on the app page before you publish your app, or they will not be able to sign in!
+You can only use the integration with your own account initially—make sure to apply for production status on the app page before you publish your app, or your users will not be able to sign in!
 
 ## CSS
 
