@@ -48,7 +48,7 @@ Your Uppy instance must be initialized before passing it to an `uppy={}` prop, a
 class MyComponent extends React.Component {
   constructor (props) {
     super(props)
-    this.uppy = Uppy()
+    this.uppy = new Uppy()
       .use(Transloadit, {})
   }
 

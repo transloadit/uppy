@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const Facebook = require('@uppy/facebook')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Facebook, {
   // Options
 })

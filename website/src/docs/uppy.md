@@ -13,7 +13,7 @@ This is the core module that orchestrates everything in Uppy, managing state and
 ```js
 const Uppy = require('@uppy/core')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 ```
 
 ## Installation
@@ -36,7 +36,7 @@ When using TypeScript, Uppy has weak type checking by default. That means that t
 ```ts
 import Uppy = require('@uppy/core')
 import Tus = require('@uppy/tus')
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Tus, {
   invalidOption: null,
   endpoint: ['a', 'wrong', 'type']
@@ -68,7 +68,7 @@ In Uppy 2.0, this generic parameter will be removed, and your plugin options wil
 The Uppy core module has the following configurable options:
 
 ```js
-const uppy = Uppy({
+const uppy = new Uppy({
   id: 'uppy',
   autoProceed: false,
   allowMultipleUploads: true,
@@ -98,8 +98,8 @@ Note that this ID should be persistent across page reloads and navigation—it s
 For example, if one Uppy instance is used to upload user avatars, and another to add photos to a blog post, you might use:
 
 ```js
-const avatarUploader = Uppy({ id: 'avatar' })
-const photoUploader = Uppy({ id: 'post' })
+const avatarUploader = new Uppy({ id: 'avatar' })
+const photoUploader = new Uppy({ id: 'post' })
 ```
 
 ### `autoProceed: false`
@@ -122,7 +122,7 @@ Set `logger: Uppy.debugLogger` to get debug info output to the browser console:
 
 ```js
 const Uppy = require('@uppy/core')
-const uppy = Uppy({
+const uppy = new Uppy({
   logger: Uppy.debugLogger
 })
 ```
@@ -309,7 +309,7 @@ Instead of overriding strings yourself, consider using [one of our language pack
 ```js
 const russianLocale = require('@uppy/locales/lib/ru_RU')
 // ^-- OR: import russianLocale from '@uppy/locales/lib/ru_RU'
-const uppy = Uppy({
+const uppy = new Uppy({
   locale: russianLocale,
 })
 ```
@@ -409,7 +409,7 @@ Add a plugin to Uppy, with an optional plugin options object.
 const Uppy = require('@uppy/core')
 const DragDrop = require('@uppy/drag-drop')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(DragDrop, { target: 'body' })
 ```
 
@@ -623,7 +623,7 @@ uppy.setFileMeta('myfileID', { resize: 1500 })
 Change Uppy options on the fly. For example, to conditionally change `restrictions.allowedFileTypes` or `locale`:
 
 ```js
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.setOptions({
   restrictions: { maxNumberOfFiles: 3 },
   autoProceed: true

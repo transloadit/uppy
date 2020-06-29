@@ -22,7 +22,7 @@ npm i @uppy/core @uppy/locales
 ```js
 const Uppy = require('@uppy/core')
 const German = require('@uppy/locales/lib/de_DE') // see below for the full list of locales
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   locale: German
 })
@@ -52,7 +52,7 @@ Many plugins come with their own locale strings, and the packs we provide consis
 const Uppy = require('@uppy/core')
 const DragDrop = require('@uppy/drag-drop')
 const Russian = require('@uppy/locales/lib/ru_RU')
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   autoProceed: true,
   locale: Russian

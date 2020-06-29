@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 
 const client = new RequestClient(uppy, { companionUrl: 'https://uppy.mywebsite.com/' })
 client.get('/drive/list').then(() => {})

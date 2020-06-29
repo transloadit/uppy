@@ -50,7 +50,7 @@ class MyComponent extends React.Component {
     this.state = {
       isFilePickerVisible: false
     }
-    this.uppy = Uppy()
+    this.uppy = new Uppy()
       .use(Transloadit, {})
   }
 

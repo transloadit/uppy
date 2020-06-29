@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(ThumbnailGenerator, {
   thumbnailWidth: 200
 })

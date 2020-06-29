@@ -5,7 +5,7 @@ const Dashboard = require('@uppy/dashboard')
 const Transloadit = require('@uppy/transloadit')
 
 function initUppyTransloadit (transloaditKey) {
-  var uppyTransloadit = Uppy({
+  var uppyTransloadit = new Uppy({
     id: 'uppyTransloadit',
     debug: true,
     autoProceed: true

@@ -33,7 +33,7 @@ const Webcam = require('@uppy/webcam')
 const ScreenCapture = require('@uppy/screen-capture')
 const Tus = require('@uppy/tus')
 
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   autoProceed: false,
   restrictions: {

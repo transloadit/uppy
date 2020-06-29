@@ -41,7 +41,7 @@ export default class App extends React.Component {
     this.togglePauseResume = this.togglePauseResume.bind(this)
 
     console.log('Is this React Native?', this.isReactNative)
-    this.uppy = Uppy({ autoProceed: true, debug: true })
+    this.uppy = new Uppy({ autoProceed: true, debug: true })
     this.uppy.use(Tus, {
       endpoint: 'https://master.tus.io/files/',
       urlStorage: AsyncStorage,
