@@ -11,9 +11,11 @@ In this post we will be going through a step by step tutorial on how to develop,
 
 ## What are Provider Plugins?
 
-> Provider plugins help you connect to your accounts with remote file providers such as Dropbox, Google Drive, Instagram and remote URLs
+> Provider Plugins help you connect to your accounts with remote file storage providers such as Dropbox, Google Drive, Instagram and remote URLs.
+>
+> They work tightly with [Companion](https://www.npmjs.com/package/@uppy/companion) — Uppy's server-to-server communication handler between your server and file storage providers.
 
-Please see [here](https://uppy.io/docs/providers/) for more info on Provider Plugins
+Read more on [Provider Plugins](https://uppy.io/docs/providers/).
 
 
 Creating a custom provider composes of two parts; **Custom Companion Provider** and **Custom Uppy Plugin**
