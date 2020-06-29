@@ -1,10 +1,10 @@
 .TransloaditBar {
   display: none;
-  height: 29px;
+  height: 35px;
   padding: 0 10px;
   background: $color-darkblue;
   color: #fff;
-  font-size: 11px;
+  font-size: 13px;
   justify-content: space-between;
   align-items: center;
 
@@ -30,12 +30,25 @@
 	}
 
   &-about {
-    flex: 1;
     text-align: right;
+  }
+
+  &-info {
+    text-align: center;
+  }
+
+  &-info-link {
+    color: #b3cbf2;
+    font-weight: 600;
+    
+    &:hover {
+        color: #e05393;
+    }
   }
 
   .page-index & {
     display: flex;
+    padding-right: 20px;
   }
 }
 
