@@ -160,7 +160,6 @@ module.exports = class AwsS3 extends Plugin {
       this.uppy.emit('upload-started', file)
     })
 
-    // Wrapping rate-limited opts.getUploadParameters in a Promise takes some boilerplate!
     const getUploadParameters = this.requests.wrapPromiseFunction((file) => {
       return this.opts.getUploadParameters(file)
     })
@@ -168,10 +167,11 @@ module.exports = class AwsS3 extends Plugin {
     const numberOfFiles = fileIDs.length
 
     return settle(fileIDs.map((id, index) => {
-      const file = this.uppy.getFile(id)
-      paramsPromises[id] = getUploadParameters(file)
+      paramsPromises[id] = getUploadParameters(this.uppy.getFile(id))
       return paramsPromises[id].then((params) => {
         delete paramsPromises[id]
+
+        const file = this.uppy.getFile(id)
         this.validateParameters(file, params)
 
         const {
@@ -199,6 +199,8 @@ module.exports = class AwsS3 extends Plugin {
         return this._uploader.uploadFile(file.id, index, numberOfFiles)
       }).catch((error) => {
         delete paramsPromises[id]
+
+        const file = this.uppy.getFile(id)
         this.uppy.emit('upload-error', file, error)
       })
     })).then((settled) => {

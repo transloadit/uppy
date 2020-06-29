@@ -1,7 +1,7 @@
 const request = require('request')
-const urlParser = require('url')
+const { URL } = require('url')
 const crypto = require('crypto')
-const { getProtectedHttpAgent } = require('./request')
+const { getProtectedHttpAgent, getRedirectEvaluator } = require('./request')
 
 /**
  *
@@ -44,17 +44,6 @@ exports.sanitizeHtml = (text) => {
 }
 
 /**
- * Node 6(and beyond) compatible url parser
- * @todo drop the use of url.parse when support for node 6 is dropped
- *
- * @param {string} url URL to be parsed
- */
-exports.parseURL = (url) => {
-  // eslint-disable-next-line
-  return urlParser.URL ? new urlParser.URL(url) : urlParser.parse(url)
-}
-
-/**
  * Gets the size and content type of a url's content
  *
  * @param {string} url
@@ -66,12 +55,15 @@ exports.getURLMeta = (url, blockLocalIPs = false) => {
     const opts = {
       uri: url,
       method: 'HEAD',
-      followAllRedirects: true,
-      agentClass: getProtectedHttpAgent(exports.parseURL(url).protocol, blockLocalIPs)
+      followRedirect: getRedirectEvaluator(url, blockLocalIPs),
+      agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs)
     }
 
-    request(opts, (err, response, body) => {
-      if (err) {
+    request(opts, (err, response) => {
+      if (err || response.statusCode >= 300) {
+        // @todo possibly set a status code in the error object to get a more helpful
+        // hint at what the cause of error is.
+        err = err || new Error(`URL server responded with status: ${response.statusCode}`)
         reject(err)
       } else {
         resolve({

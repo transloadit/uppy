@@ -153,7 +153,9 @@ module.exports = class Transloadit extends Plugin {
     // Add Assembly-specific Tus endpoint.
     const tus = {
       ...file.tus,
-      endpoint: status.tus_url
+      endpoint: status.tus_url,
+      // Include X-Request-ID headers for better debugging.
+      addRequestId: true
     }
 
     // Set Companion location. We only add this, if 'file' has the attribute
@@ -390,7 +392,7 @@ module.exports = class Transloadit extends Plugin {
   _onAssemblyFinished (status) {
     const url = status.assembly_ssl_url
     this.client.getAssemblyStatus(url).then((finalStatus) => {
-      const assemblyId = finalStatus.assemblyId
+      const assemblyId = finalStatus.assembly_id
       const state = this.getPluginState()
       this.setPluginState({
         assemblies: {
@@ -413,9 +415,14 @@ module.exports = class Transloadit extends Plugin {
    * When all files are removed, cancel in-progress Assemblies.
    */
   _onCancelAll () {
-    const { assemblies } = this.getPluginState()
+    const { uploadsAssemblies } = this.getPluginState()
 
-    const cancelPromises = Object.keys(assemblies).map((assemblyID) => {
+    const assemblyIDs = Object.keys(uploadsAssemblies).reduce((acc, uploadID) => {
+      acc.push(...uploadsAssemblies[uploadID])
+      return acc
+    }, [])
+
+    const cancelPromises = assemblyIDs.map((assemblyID) => {
       const assembly = this.getAssembly(assemblyID)
       return this._cancelAssembly(assembly)
     })
@@ -743,9 +750,8 @@ module.exports = class Transloadit extends Plugin {
 
   _onTusError (err) {
     if (err && /^tus: /.test(err.message)) {
-      const url = err.originalRequest && err.originalRequest.responseURL
-        ? err.originalRequest.responseURL
-        : null
+      const xhr = err.originalRequest ? err.originalRequest.getUnderlyingObject() : null
+      const url = xhr && xhr.responseURL ? xhr.responseURL : null
       this.client.submitError(err, { url, type: 'TUS_ERROR' }).then((_) => {
         // if we can't report the error that sucks
       })
@@ -779,7 +785,7 @@ module.exports = class Transloadit extends Plugin {
         // were added to the Assembly, so we can properly complete it. All that state is handled by
         // Golden Retriever. So, Golden Retriever is required to do resumability with the Transloadit plugin,
         // and we disable Tus's default resume implementation to prevent bad behaviours.
-        resume: false,
+        storeFingerprintForResuming: false,
         // Disable Companion's retry optimisation; we need to change the endpoint on retry
         // so it can't just reuse the same tus.Upload instance server-side.
         useFastRemoteRetry: false,

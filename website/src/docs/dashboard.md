@@ -91,6 +91,7 @@ uppy.use(Dashboard, {
   proudlyDisplayPoweredByUppy: true,
   onRequestCloseModal: () => this.closeModal(),
   showSelectedFiles: true,
+  showRemoveButtonAfterComplete: false,
   locale: defaultLocale,
   browserBackButtonClose: false,
   theme: 'light'
@@ -162,21 +163,21 @@ Hide the upload button. Use this if you are providing a custom upload button som
 
 ### `hideRetryButton: false`
 
-Passed to the Status Bar plugin used in the Dashboard.
+Hide the retry button in StatusBar (the progress bar below the file list) and on each individual file.
 
-Hide the retry button. Use this if you are providing a custom retry button somewhere, and using the `uppy.retryAll()` or `uppy.retryUpload(fileID)` API.
+Use this if you are providing a custom retry button somewhere, and using the `uppy.retryAll()` or `uppy.retryUpload(fileID)` API.
 
 ### `hidePauseResumeButton: false`
 
-Passed to the Status Bar plugin used in the Dashboard.
+Hide the pause/resume button (for resumable uploads, via [tus](http://tus.io), for example) in StatusBar and on each individual file.
 
-Hide pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)` or `uppy.removeFile(fileID)` API.
+Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)` or `uppy.removeFile(fileID)` API.
 
 ### `hideCancelButton: false`
 
-Passed to the Status Bar plugin used in the Dashboard.
+Hide the cancel button in StatusBar and on each individual file.
 
-Hide the cancel button. Use this if you are providing a custom retry button somewhere, and using the `uppy.cancelAll()` API.
+Use this if you are providing a custom retry button somewhere, and using the `uppy.cancelAll()` API.
 
 ### `hideProgressAfterFinish: false`
 
@@ -187,6 +188,20 @@ Hide Status Bar after the upload has finished.
 Show the list (grid) of selected files with preview and file name. In case you are showing selected files in your own app’s UI and want the Uppy Dashboard to just be a picker, the list can be hidden with this option.
 
 See also `disableStatusBar` option, which can hide the progress and upload button.
+
+### `showRemoveButtonAfterComplete: false`
+
+Sometimes you might want to let users remove an uploaded file. Enabling this option only shows the remove `X` button in the Dashboard UI, but to actually send a request you should listen to [`file-removed`](https://uppy.io/docs/uppy/#file-removed) event and add your logic there.
+
+```js
+uppy.on('file-removed', (file, reason) => {
+  if (reason === 'removed-by-user') {
+    sendDeleteRequestForFile(file)
+  }
+})
+```
+
+For an implementation example, please see [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176)).
 
 ### `note: null`
 

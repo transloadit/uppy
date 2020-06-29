@@ -134,8 +134,7 @@ module.exports = class AwsS3Multipart extends Plugin {
           s3Multipart: {
             ...cFile.s3Multipart,
             key: data.key,
-            uploadId: data.uploadId,
-            parts: []
+            uploadId: data.uploadId
           }
         })
       }
@@ -175,20 +174,10 @@ module.exports = class AwsS3Multipart extends Plugin {
       }
 
       const onPartComplete = (part) => {
-        // Store completed parts in state.
         const cFile = this.uppy.getFile(file.id)
         if (!cFile) {
           return
         }
-        this.uppy.setFileState(file.id, {
-          s3Multipart: {
-            ...cFile.s3Multipart,
-            parts: [
-              ...cFile.s3Multipart.parts,
-              part
-            ]
-          }
-        })
 
         this.uppy.emit('s3-multipart:part-uploaded', cFile, part)
       }
@@ -200,6 +189,7 @@ module.exports = class AwsS3Multipart extends Plugin {
         prepareUploadPart: this.opts.prepareUploadPart.bind(this, file),
         completeMultipartUpload: this.opts.completeMultipartUpload.bind(this, file),
         abortMultipartUpload: this.opts.abortMultipartUpload.bind(this, file),
+        getChunkSize: this.opts.getChunkSize ? this.opts.getChunkSize.bind(this) : null,
 
         onStart,
         onProgress,

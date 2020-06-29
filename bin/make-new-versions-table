@@ -21,12 +21,13 @@ const commit = match[1]
 
 const tagStdout = execSync(`git tag --list --contains ${commit}`)
 const tags = tagStdout.toString()
-const rx = /([@/\w-]+)@(\d+\.\d+\.\d+)/g
+const rx = /([@\/\w-]+)@(\d+\.\d+\.\d+)(-alpha\.\d+|-beta\.\d+)?/g
 
 const versions = []
 let m
 while ((m = rx.exec(tags))) {
-  const [, pkg, version] = m
+  const [, pkg, versionPrefix, versionSuffix] = m
+  const version = `${versionPrefix}${versionSuffix || ''}`
   versions.push({ pkg, version })
 }
 

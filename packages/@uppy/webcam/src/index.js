@@ -66,7 +66,6 @@ function getMediaDevices () {
     }
   }
 }
-
 /**
  * Webcam
  */
@@ -82,7 +81,7 @@ module.exports = class Webcam extends Plugin {
     this.title = this.opts.title || 'Camera'
     this.type = 'acquirer'
     this.icon = () => (
-      <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
         <g fill="none" fill-rule="evenodd">
           <rect fill="#03BFEF" width="32" height="32" rx="16" />
           <path d="M22 11c1.133 0 2 .867 2 2v7.333c0 1.134-.867 2-2 2H10c-1.133 0-2-.866-2-2V13c0-1.133.867-2 2-2h2.333l1.134-1.733C13.6 9.133 13.8 9 14 9h4c.2 0 .4.133.533.267L19.667 11H22zm-6 1.533a3.764 3.764 0 0 0-3.8 3.8c0 2.129 1.672 3.801 3.8 3.801s3.8-1.672 3.8-3.8c0-2.13-1.672-3.801-3.8-3.801zm0 6.261c-1.395 0-2.46-1.066-2.46-2.46 0-1.395 1.065-2.461 2.46-2.461s2.46 1.066 2.46 2.46c0 1.395-1.065 2.461-2.46 2.461z" fill="#FFF" fill-rule="nonzero" />
@@ -98,6 +97,8 @@ module.exports = class Webcam extends Plugin {
         stopRecording: 'Stop video recording',
         allowAccessTitle: 'Please allow access to your camera',
         allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
+        noCameraTitle: 'Camera Not Available',
+        noCameraDescription: 'In order to take pictures or record video, please connect a camera device',
         recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
         recordingLength: 'Recording length %{recording_length}'
       }
@@ -157,8 +158,14 @@ module.exports = class Webcam extends Plugin {
     this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
-  isSupported () {
-    return !!this.mediaDevices
+  hasCameraCheck () {
+    if (!this.mediaDevices) {
+      return Promise.resolve(false)
+    }
+
+    return this.mediaDevices.enumerateDevices().then(devices => {
+      return devices.some(device => device.kind === 'videoinput')
+    })
   }
 
   getConstraints () {
@@ -175,28 +182,32 @@ module.exports = class Webcam extends Plugin {
   }
 
   _start () {
-    if (!this.isSupported()) {
+    if (!this.supportsUserMedia) {
       return Promise.reject(new Error('Webcam access not supported'))
     }
 
     this.webcamActive = true
-
     const constraints = this.getConstraints()
 
-    // ask user for access to their camera
-    return this.mediaDevices.getUserMedia(constraints)
-      .then((stream) => {
-        this.stream = stream
-        // this.streamSrc = URL.createObjectURL(this.stream)
-        this.setPluginState({
-          cameraReady: true
-        })
+    this.hasCameraCheck().then(hasCamera => {
+      this.setPluginState({
+        hasCamera: hasCamera
       })
-      .catch((err) => {
-        this.setPluginState({
-          cameraError: err
+
+      // ask user for access to their camera
+      return this.mediaDevices.getUserMedia(constraints)
+        .then((stream) => {
+          this.stream = stream
+          this.setPluginState({
+            cameraReady: true
+          })
         })
-      })
+        .catch((err) => {
+          this.setPluginState({
+            cameraError: err
+          })
+        })
+    })
   }
 
   /**
@@ -436,16 +447,20 @@ module.exports = class Webcam extends Plugin {
     }, 1000)
   }
 
-  render (state) {
+  render () {
     if (!this.webcamActive) {
       this._start()
     }
 
     const webcamState = this.getPluginState()
 
-    if (!webcamState.cameraReady) {
+    if (!webcamState.cameraReady || !webcamState.hasCamera) {
       return (
-        <PermissionsScreen icon={CameraIcon} i18n={this.i18n} />
+        <PermissionsScreen
+          icon={CameraIcon}
+          i18n={this.i18n}
+          hasCamera={webcamState.hasCamera}
+        />
       )
     }
 

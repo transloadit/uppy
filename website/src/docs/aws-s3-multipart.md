@@ -54,6 +54,14 @@ Custom headers that should be sent along to [Companion](/docs/companion) on ever
 
 This will be used by the default implementations of the upload-related functions below. If you provide your own implementations, these headers are not sent automatically.
 
+### getChunkSize(file)
+
+A function that returns the minimum chunk size to use when uploading the given file.
+
+The S3 Multipart plugin uploads files in chunks. Each chunk requires a signing request ([`prepareUploadPart()`](#prepareUploadPart-file-partData)). To reduce the amount of requests for large files, you can choose a larger chunk size, at the cost of having to re-upload more data if one chunk fails to upload.
+
+S3 requires a minimum chunk size of 5MB, and supports at most 10,000 chunks per multipart upload. If `getChunkSize()` returns a size that's too small, Uppy will increase it to S3's minimum requirements.
+
 ### createMultipartUpload(file)
 
 A function that calls the S3 Multipart API to create a new upload. `file` is the file object from Uppy's state. The most relevant keys are `file.name` and `file.type`.

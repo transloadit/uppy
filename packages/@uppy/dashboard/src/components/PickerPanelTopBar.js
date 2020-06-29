@@ -1,5 +1,4 @@
 const { h } = require('preact')
-const { iconPlus } = require('./icons')
 
 const uploadStates = {
   STATE_ERROR: 'error',
@@ -102,7 +101,9 @@ function PanelTopBar (props) {
           title={props.i18n('addMoreFiles')}
           onclick={() => props.toggleAddFilesPanel(true)}
         >
-          {iconPlus()}
+          <svg aria-hidden="true" focusable="false" class="uppy-c-icon" width="15" height="15" viewBox="0 0 15 15">
+            <path d="M8 6.5h6a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5H8v6a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V8h-6a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5h6v-6A.5.5 0 0 1 7 0h.5a.5.5 0 0 1 .5.5v6z" />
+          </svg>
           <span class="uppy-DashboardContent-addMoreCaption">{props.i18n('addMore')}</span>
         </button>
       ) : (

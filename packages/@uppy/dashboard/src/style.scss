@@ -751,7 +751,7 @@ a.uppy-Dashboard-poweredBy {
   vertical-align: text-top;
 }
 
-.uppy-DashboardItem-previewIcon {
+.uppy-Dashboard-Item-previewIcon {
   width: 25px;
   height: 25px;
   z-index: $zIndex-1;
@@ -771,13 +771,13 @@ a.uppy-Dashboard-poweredBy {
   }
 }
 
-.uppy-DashboardItem-previewIconWrap {
+.uppy-Dashboard-Item-previewIconWrap {
   height: 76px;
   max-height: 75%;
   position: relative;
 }
 
-.uppy-DashboardItem-previewIconBg {
+.uppy-Dashboard-Item-previewIconBg {
   width: 100%;
   height: 100%;
   filter: drop-shadow(rgba($black, 0.1) 0px 1px 1px);
@@ -794,7 +794,7 @@ a.uppy-Dashboard-poweredBy {
   }
 }
 
-.uppy-Dashboard-upload .UppyIcon {
+.uppy-Dashboard-upload .uppy-c-icon {
   position: relative;
   top: 1px;
   width: 50%;
