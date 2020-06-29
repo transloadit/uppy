@@ -5,7 +5,7 @@
     "@uppy/dashboard": "file:../../packages/@uppy/dashboard",
     "@uppy/instagram": "file:../../packages/@uppy/instagram",
     "@uppy/react-native": "file:../../packages/@uppy/react-native",
-    "@uppy/tus": "file:../../packages/@uppy/tus",
+    "@uppy/tus": "1.6.0",
     "@uppy/url": "file:../../packages/@uppy/url",
     "@uppy/xhr-upload": "file:../../packages/@uppy/xhr-upload",
     "babel-preset-expo": "^5.0.0",

@@ -44,6 +44,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] website: add an example of a mini UI that features drop & progress (may involve a `mini: true` options for dashboard, may involve drop+progress) (@arturi)
 - [ ] xhr: allow sending custom headers per file (as proposed in #785)
 - [ ] dashboard: focus jumps weirdly if you remove a file https://github.com/transloadit/uppy/pull/2161#issuecomment-613565486
+- [ ] plugins: a WakeLock based plugin that keeps your phone from going to sleep while an upload is ongoing https://github.com/transloadit/uppy/issues/1725
 
 ## 2.0
 
@@ -72,12 +73,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] transloadit: remove `UPPY_SERVER` constant
 - [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
 
-## 1.18
+## 1.19
 
 - [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
 
-## 1.17
+## 1.18
 
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
@@ -90,7 +91,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 # next
 
-## 1.16
+## 1.17
 
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default's store #320
 - [ ] provider: add Box (@ife)
@@ -106,6 +107,69 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 - [x] aws-s3-multipart: retry uploading failed parts (#2312 / @goto-bus-stop)
 
+## 1.16.1
+
+Released: 2020-06-19
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 2.0.0-alpha.6 | - | - |
+
+- @uppy/companion: Import url (#2328 / @ifedapoolarewaju)
+
+Released: 2020-06-18
+
+⚠️ This release patches a Server Side Request Forgery (SSRF) Security vulnerability on `@uppy/companion`
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 1.13.2, 2.0.0-alpha.5 | @uppy/onedrive | 1.1.8 |
+| @uppy/dashboard | 1.10.1 | @uppy/provider-views | 1.6.8 |
+| @uppy/drag-drop | 1.4.15 | @uppy/react | 1.8.1 |
+| @uppy/dropbox | 1.4.8 | @uppy/robodog | 1.7.1 |
+| @uppy/facebook | 1.1.8 | @uppy/thumbnail-generator | 1.6.2 |
+| @uppy/google-drive | 1.5.8 | @uppy/transloadit | 1.6.1 |
+| @uppy/instagram | 1.4.8 | uppy | 1.16.1 |
+
+- @uppy/thumbnail-generator: upgrade exifr (@goto-bus-stop)
+- @uppy/companion: set grant related options for custom providers (#2317 / @ifedapoolarewaju)
+- @uppy/provider-views: handle all plugin state in provider-views (#2318 / @ifedapoolarewaju)
+- @uppy/drag-drop: Add uppy-DragDrop-input class name back (ab88612dff3ce24b001acb3b626516f0e2f7fd0c / @arturi)
+- @uppy/companion: block redirects to urls with different protocol (#2322 / @ifedapoolarewaju)
+
+## 1.16.0
+
+Released: 2020-06-13
+
+This release fixes Drag Drop plugin bug introduced in the previous release (@uppy/drag-drop@1.4.13) and adds NetworkError reporting and `error.isNetworkError` to the Transloadit plugin.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.7.1 | @uppy/onedrive | 1.1.7 |
+| @uppy/aws-s3 | 1.6.6 | @uppy/progress-bar | 1.3.15 |
+| @uppy/companion-client | 1.5.0 | @uppy/provider-views | 1.6.7 |
+| @uppy/companion | 2.0.0-alpha.4 | @uppy/react | 1.8.0 |
+| @uppy/core | 1.11.0 | @uppy/robodog | 1.7.0 |
+| @uppy/dashboard | 1.10.0 | @uppy/screen-capture | 1.0.3 |
+| @uppy/drag-drop | 1.4.14 | @uppy/status-bar | 1.7.0 |
+| @uppy/dropbox | 1.4.7 | @uppy/thumbnail-generator | 1.6.1 |
+| @uppy/facebook | 1.1.7 | @uppy/transloadit | 1.6.0 |
+| @uppy/file-input | 1.4.13 | @uppy/tus | 1.6.0 |
+| @uppy/form | 1.3.16 | @uppy/url | 1.5.7 |
+| @uppy/golden-retriever | 1.3.15 | @uppy/utils | 3.1.0 |
+| @uppy/google-drive | 1.5.7 | @uppy/webcam | 1.6.7 |
+| @uppy/informer | 1.5.7 | @uppy/xhr-upload | 1.6.0 |
+| @uppy/instagram | 1.4.7 | uppy | 1.16.0 |
+| @uppy/locales | 1.15.0 | - | - |
+
+- @uppy/dashboard: Refactor FileProgress component (#2303, #2292 / @arturi, @atsawin)
+- @uppy/dashboard:  Move the FileItem’s new ErrorButton, it was overlapping the edit button (0e78e32e4cf50b276ee4a48f1bf57e6be279b539 / @arturi)
+- @uppy/drag-drop: Fix the issue with click event occuring twice, try hiding the input altogether (#2307 / @arturi)
+- @uppy/transloadit: Add NetworkError handling to Transloadit plugin, refactor things, update docs about `error.isNetworkError` (#2291 / @arturi)
+- @uppy/companion: Companion 2.0 (pre-released as alpha for now) (#2273 / @ifedapoolarewaju)
+- @uppy/locales: Update of Galician i18n strings. (#2308 / @jarey)
+- build: chores: catch custom version suffices (alpha, beta etc.) (#2311 / ifedapoolarewaju)
+
 ## 1.15.0
 
 Released: 2020-05-25
@@ -117,7 +181,7 @@ This release features Bug Fixes And Performance Improvements™ (actually signif
 | @uppy/aws-s3-multipart | 1.7.0 | @uppy/onedrive | 1.1.6 |
 | @uppy/aws-s3 | 1.6.5 | @uppy/progress-bar | 1.3.14 |
 | @uppy/companion-client | 1.4.5 | @uppy/provider-views | 1.6.6 |
-| @uppy/companion | 2.0.0 | @uppy/react | 1.7.0 |
+| @uppy/companion | 2.0.0-alpha.3 | @uppy/react | 1.7.0 |
 | @uppy/core | 1.10.5 | @uppy/robodog | 1.6.7 |
 | @uppy/dashboard | 1.9.0 | @uppy/screen-capture | 1.0.2 |
 | @uppy/drag-drop | 1.4.13 | @uppy/status-bar | 1.6.6 |

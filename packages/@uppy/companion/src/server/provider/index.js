@@ -46,7 +46,7 @@ module.exports.getProviderMiddleware = (providers) => {
  */
 module.exports.getDefaultProviders = (companionOptions) => {
   const { providerOptions } = companionOptions || { providerOptions: null }
-  // @todo: 2.0 we should rename drive to googledrive or google-drive or google
+  // @todo: we should rename drive to googledrive or google-drive or google
   const providers = { dropbox, drive, facebook, onedrive }
   // Instagram's Graph API key is just numbers, while the old API key is hex
   const usesGraphAPI = () => /^\d+$/.test(providerOptions.instagram.key)
@@ -70,7 +70,13 @@ module.exports.getDefaultProviders = (companionOptions) => {
 module.exports.addCustomProviders = (customProviders, providers, grantConfig) => {
   Object.keys(customProviders).forEach((providerName) => {
     providers[providerName] = customProviders[providerName].module
-    grantConfig[providerName] = customProviders[providerName].config
+    const providerConfig = Object.assign({}, customProviders[providerName].config)
+    // todo: consider setting these options from a universal point also used
+    // by official providers. It'll prevent these from getting left out if the
+    // requirement changes.
+    providerConfig.callback = `/${providerName}/callback`
+    providerConfig.transport = 'session'
+    grantConfig[providerName] = providerConfig
   })
 }
 

@@ -37,19 +37,6 @@ module.exports = class GoogleDrive extends Plugin {
     this.view = new DriveProviderViews(this, {
       provider: this.provider
     })
-    // Set default state for Google Drive
-    this.setPluginState({
-      authenticated: false,
-      files: [],
-      folders: [],
-      directories: [],
-      activeRow: -1,
-      filterInput: '',
-      isSearchVisible: false,
-      hasTeamDrives: false,
-      teamDrives: [],
-      teamDriveId: ''
-    })
 
     const target = this.opts.target
     if (target) {

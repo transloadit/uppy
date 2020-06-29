@@ -1,7 +1,9 @@
 const http = require('http')
 const https = require('https')
+const { URL } = require('url')
 const dns = require('dns')
 const ipAddress = require('ip-address')
+const logger = require('../logger')
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 
 function isIPAddress (address) {
@@ -74,6 +76,24 @@ function isPrivateIP (ipAddress) {
 }
 
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
+
+module.exports.getRedirectEvaluator = (requestURL, blockPrivateIPs) => {
+  const protocol = (new URL(requestURL)).protocol
+  return (res) => {
+    if (!blockPrivateIPs) {
+      return true
+    }
+
+    const redirectURL = res.headers.location
+    const shouldRedirect = redirectURL ? new URL(redirectURL).protocol === protocol : false
+    if (!shouldRedirect) {
+      logger.info(
+        `blocking redirect from ${requestURL} to ${redirectURL}`, 'redirect.protection')
+    }
+
+    return shouldRedirect
+  }
+}
 
 /**
  * Returns http Agent that will prevent requests to private IPs (to preven SSRF)

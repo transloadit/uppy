@@ -711,7 +711,7 @@ class Uppy {
     }
   }
 
-  removeFiles (fileIDs) {
+  removeFiles (fileIDs, reason) {
     const { files, currentUploads } = this.getState()
     const updatedFiles = { ...files }
     const updatedUploads = { ...currentUploads }
@@ -764,7 +764,7 @@ class Uppy {
 
     const removedFileIDs = Object.keys(removedFiles)
     removedFileIDs.forEach((fileID) => {
-      this.emit('file-removed', removedFiles[fileID])
+      this.emit('file-removed', removedFiles[fileID], reason)
     })
 
     if (removedFileIDs.length > 5) {
@@ -774,8 +774,8 @@ class Uppy {
     }
   }
 
-  removeFile (fileID) {
-    this.removeFiles([fileID])
+  removeFile (fileID, reason = null) {
+    this.removeFiles([fileID], reason)
   }
 
   pauseResume (fileID) {
@@ -866,7 +866,7 @@ class Uppy {
 
     const fileIDs = Object.keys(files)
     if (fileIDs.length) {
-      this.removeFiles(fileIDs)
+      this.removeFiles(fileIDs, 'cancel-all')
     }
 
     this.setState({
