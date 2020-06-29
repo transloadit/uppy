@@ -111,12 +111,12 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 - [`Drag & Drop`](https://uppy.io/docs/drag-drop/) — plain and simple drag and drop area
 - [`File Input`](https://uppy.io/docs/file-input/) — even plainer “select files” button
 - [`Webcam`](https://uppy.io/docs/webcam/) — snap and record those selfies 📷
-- ⓒ [`Google Drive`](https://uppy.io/docs/google-drive/)
-- ⓒ [`Dropbox`](https://uppy.io/docs/dropbox/)
-- ⓒ [`Instagram`](https://uppy.io/docs/instagram/)
-- ⓒ [`Facebook`](https://uppy.io/docs/facebook/)
-- ⓒ [`OneDrive`](https://uppy.io/docs/onedrive/)
-- ⓒ [`Import From URL`](https://uppy.io/docs/url/) — support picking files from remote providers or direct URLs from anywhere on the web
+- ⓒ [`Google Drive`](https://uppy.io/docs/google-drive/) — import files from Google Drive
+- ⓒ [`Dropbox`](https://uppy.io/docs/dropbox/) — import files from Dropbox
+- ⓒ [`Instagram`](https://uppy.io/docs/instagram/) — import images and videos from Instagram
+- ⓒ [`Facebook`](https://uppy.io/docs/facebook/) — import images and videos from Facebook
+- ⓒ [`OneDrive`](https://uppy.io/docs/onedrive/) — import files from Microsoft OneDrive
+- ⓒ [`Import From URL`](https://uppy.io/docs/url/) — import direct URLs from anywhere on the web
 
 The ⓒ mark means that [`@uppy/companion`](https://uppy.io/docs/companion), a server-side component, is needed for a plugin to work.
 
@@ -124,8 +124,8 @@ The ⓒ mark means that [`@uppy/companion`](https://uppy.io/docs/companion), a s
 
 - [`Tus`](https://uppy.io/docs/tus/) — resumable uploads via the open [tus](http://tus.io) standard
 - [`XHR Upload`](https://uppy.io/docs/xhr-upload/) — regular uploads for any backend out there (like Apache, Nginx)
-- [`AWS S3`](https://uppy.io/docs/aws-s3/) — uploader for AWS S3
-- [`AWS S3 Multipart`](https://uppy.io/docs/aws-s3-multipart/) — upload to AWS S3
+- [`AWS S3`](https://uppy.io/docs/aws-s3/) — plain upload to AWS S3 or compatible services
+- [`AWS S3 Multipart`](https://uppy.io/docs/aws-s3-multipart/) — S3-style "Multipart" upload to AWS or compatible services
 
 ### File Processing
 
