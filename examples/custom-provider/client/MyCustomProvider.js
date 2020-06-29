@@ -12,7 +12,9 @@ module.exports = class MyCustomProvider extends Plugin {
 
     this.title = 'MyUnsplash'
     this.icon = () => (
-      <img src="https://unsplash.com/assets/core/logo-black-df2168ed0c378fa5506b1816e75eb379d06cfcd0af01e07a2eb813ae9b5d7405.svg" width="30" />
+      <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z" fill="#000000" fill-rule="nonzero" />
+      </svg>
     )
 
     this.provider = new Provider(uppy, {
