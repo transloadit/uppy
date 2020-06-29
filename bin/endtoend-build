@@ -16,9 +16,4 @@ rm -rf "${__root}/test/endtoend/node_modules"
 
 npm run build
 
-# Allow integration tests to resolve @uppy packages
-ln -s "${__root}/packages" "${__root}/test/endtoend/node_modules"
-
 bash "${__dir}/endtoend-build-tests"
-
-rm "${__root}/test/endtoend/node_modules"

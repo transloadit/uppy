@@ -11,11 +11,11 @@ tagline: "full-featured sleek UI with file previews, metadata editing, upload/pa
 `@uppy/dashboard` is a universal UI plugin for Uppy, offering several useful features:
 
 - Drag and drop, paste, select from local disk / my device
-- UI for the Webcam plugin and remote sources, such as Google Drive, Dropbox, Instagram (all optional, added via plugins)
-- File previews and info
+- UI for the Webcam plugin and remote sources, such as Google Drive, Dropbox, Instagram, Facebook and OneDrive (all optional, added via plugins)
+- Image previews
 - Metadata editor
-- Progress: total and for individual files
-- Ability to pause/resume or cancel (depending on uploader plugin) individual or all files
+- Upload progress
+- Ability to pause or cancel (depending on the uploader plugin) uploads
 
 ```js
 const Dashboard = require('@uppy/dashboard')
@@ -56,7 +56,7 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 ⚠️ The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
 
-Styles for Provider plugins, like Google Drive and Instagram, are also bundled with Dashboard styles. Styles for other plugins, such as `@uppy/url` and `@uppy/webcam`, are not inluded. If you are using those, please see their docs and make sure to include styles for them as well.
+Styles for Provider plugins, like Google Drive and Instagram, are also bundled with Dashboard styles. Styles for other plugins, such as `@uppy/url` and `@uppy/webcam`, are not included. If you are using those, please see their docs and make sure to include styles for them as well.
 
 ## Options
 
@@ -91,8 +91,10 @@ uppy.use(Dashboard, {
   proudlyDisplayPoweredByUppy: true,
   onRequestCloseModal: () => this.closeModal(),
   showSelectedFiles: true,
+  showRemoveButtonAfterComplete: false,
   locale: defaultLocale,
-  browserBackButtonClose: false
+  browserBackButtonClose: false,
+  theme: 'light'
 })
 ```
 
@@ -161,21 +163,21 @@ Hide the upload button. Use this if you are providing a custom upload button som
 
 ### `hideRetryButton: false`
 
-Passed to the Status Bar plugin used in the Dashboard.
+Hide the retry button in StatusBar (the progress bar below the file list) and on each individual file.
 
-Hide the retry button. Use this if you are providing a custom retry button somewhere, and using the `uppy.retryAll()` or `uppy.retryUpload(fileID)` API.
+Use this if you are providing a custom retry button somewhere, and using the `uppy.retryAll()` or `uppy.retryUpload(fileID)` API.
 
 ### `hidePauseResumeButton: false`
 
-Passed to the Status Bar plugin used in the Dashboard.
+Hide the pause/resume button (for resumable uploads, via [tus](http://tus.io), for example) in StatusBar and on each individual file.
 
-Hide pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for example). Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)` or `uppy.removeFile(fileID)` API.
+Use this if you are providing custom cancel or pause/resume buttons somewhere, and using the `uppy.pauseResume(fileID)` or `uppy.removeFile(fileID)` API.
 
 ### `hideCancelButton: false`
 
-Passed to the Status Bar plugin used in the Dashboard.
+Hide the cancel button in StatusBar and on each individual file.
 
-Hide the cancel button. Use this if you are providing a custom retry button somewhere, and using the `uppy.cancelAll()` API.
+Use this if you are providing a custom retry button somewhere, and using the `uppy.cancelAll()` API.
 
 ### `hideProgressAfterFinish: false`
 
@@ -187,6 +189,10 @@ Show the list (grid) of selected files with preview and file name. In case you a
 
 See also `disableStatusBar` option, which can hide the progress and upload button.
 
+### `showRemoveButtonAfterComplete: false`
+
+Sometimes you might want to let users remove an uploaded file. Enabling this option only shows the remove `X` button in the Dashboard UI, but to actually send a request you should listen to [`file-removed`](https://uppy.io/docs/uppy/#file-removed) event and add your logic there.
+
 ### `note: null`
 
 Optionally, specify a string of text that explains something about the upload for the user. This is a place to explain any `restrictions` that are put in place. For example: `'Images and video only, 2–3 files, up to 1 MB'`.
@@ -197,7 +203,11 @@ An array of UI field objects that will be shown when a user clicks the “edit�
 
 - `id`, the name of the meta field. Note: this will also be used in CSS/HTML as part of the `id` attribute, so it’s better to [avoid using characters like periods, semicolons, etc](https://stackoverflow.com/a/79022).
 - `name`, the label shown in the interface.
-- `placeholder`, the text shown when no value is set in the field.
+- `placeholder`, the text shown when no value is set in the field. (Not needed when a custom render function is provided)
+
+Optionally, you can specify `render: ({value, onChange}, h) => void`, a function for rendering a custom form element.
+It gets passed `({value, onChange}, h)` where `value` is the current value of the meta field, `onChange: (newVal) => void` is a function saving the new value and `h` is the `createElement` function from [preact](https://preactjs.com/guide/v10/api-reference#h--createelement).
+`h` can be useful when using uppy from plain JavaScript, where you cannot write JSX.
 
 ```js
 .use(Dashboard, {
@@ -205,7 +215,10 @@ An array of UI field objects that will be shown when a user clicks the “edit�
   metaFields: [
     { id: 'name', name: 'Name', placeholder: 'file name' },
     { id: 'license', name: 'License', placeholder: 'specify license' },
-    { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
+    { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' },
+    { id: 'public', name: 'Public', render: function({value, onChange}, h) {
+      return h('input', { type: 'checkbox', onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'on' })
+    } }
   ]
 })
 ```
@@ -266,6 +279,8 @@ strings: {
   closeModal: 'Close Modal',
   // Used as the screen reader label for the plus (+) button that shows the “Add more files” screen
   addMoreFiles: 'Add more files',
+  // TODO
+  addingMoreFiles: 'Adding more files',
   // Used as the header for import panels, e.g., “Import from Google Drive”.
   importFrom: 'Import from %{name}',
   // When `inline: false`, used as the screen reader label for the dashboard modal.
@@ -283,6 +298,8 @@ strings: {
   fileSource: 'File source: %{name}',
   // Used as the label for buttons that accept and close panels (remote providers or metadata editor)
   done: 'Done',
+  // TODO
+  back: 'Back',
   // Used as the screen reader label for buttons that remove a file.
   removeFile: 'Remove file',
   // Used as the screen reader label for buttons that open the metadata editor panel for a file.
@@ -294,6 +311,8 @@ strings: {
   // Used as the screen reader label for the button that saves metadata edits and returns to the
   // file list view.
   finishEditingFile: 'Finish editing file',
+  // TODO
+  saveChanges: 'Save changes',
   // Used as the label for the tab button that opens the system file selection dialog.
   myDevice: 'My Device',
   // Shown in the main dashboard area when no files have been selected, and one or more
@@ -304,23 +323,44 @@ strings: {
   // plugins are in use. %{browse} is replaced with a link that opens the system
   // file selection dialog.
   dropPaste: 'Drop files here, paste or %{browse}',
+  // TODO
+  dropHint: 'Drop your files here',
   // This string is clickable and opens the system file selection dialog.
   browse: 'browse',
   // Used as the hover text and screen reader label for file progress indicators when
   // they have been fully uploaded.
   uploadComplete: 'Upload complete',
+  // TODO
+  uploadPaused: 'Upload paused',
   // Used as the hover text and screen reader label for the buttons to resume paused uploads.
   resumeUpload: 'Resume upload',
   // Used as the hover text and screen reader label for the buttons to pause uploads.
   pauseUpload: 'Pause upload',
   // Used as the hover text and screen reader label for the buttons to retry failed uploads.
   retryUpload: 'Retry upload',
+  // Used as the hover text and screen reader label for the buttons to cancel uploads.
+  cancelUpload: 'Cancel upload',
 
   // Used in a title, how many files are currently selected
   xFilesSelected: {
     0: '%{smart_count} file selected',
     1: '%{smart_count} files selected'
   },
+  // TODO
+  uploadingXFiles: {
+    0: 'Uploading %{smart_count} file',
+    1: 'Uploading %{smart_count} files'
+  },
+  // TODO
+  processingXFiles: {
+    0: 'Processing %{smart_count} file',
+    1: 'Processing %{smart_count} files'
+  },
+
+  // The "powered by Uppy" link at the bottom of the Dashboard.
+  // **NOTE**: This string is called `poweredBy2` for backwards compatibility reasons.
+  // See https://github.com/transloadit/uppy/pull/2077
+  poweredBy2: 'Powered by %{uppy}',
 
   // @uppy/status-bar strings:
   uploading: 'Uploading',
@@ -332,6 +372,17 @@ strings: {
 ### `replaceTargetContent: false`
 
 Remove all children of the `target` element before mounting the Dashboard. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, there might be cases when you would want to clear the container element before placing Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not available). Set `replaceTargetContent: true` to clear the `target` before appending.
+
+### `theme: 'light'`
+
+Uppy Dashboard supports “Dark Mode”. You can try it live on [the Dashboard example page](http://localhost:4000/examples/dashboard/).
+
+There are three options:
+- `light` — the default
+- `dark`
+- `auto` — will respect the user’s system settings and switch automatically
+
+![Uppy dark mode screenshot](/images/uppy-dashboard-dark-mar-2020.png)
 
 ## Methods
 

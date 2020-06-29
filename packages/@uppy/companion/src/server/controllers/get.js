@@ -1,5 +1,6 @@
 const Uploader = require('../Uploader')
 const logger = require('../logger')
+const { errorToResponse } = require('../provider/error')
 
 function get (req, res, next) {
   const providerName = req.params.providerName
@@ -10,12 +11,16 @@ function get (req, res, next) {
   // get the file size before proceeding
   provider.size({ id, token, query: req.query }, (err, size) => {
     if (err) {
-      return err.isAuthError ? res.sendStatus(401) : next(err)
+      const errResp = errorToResponse(err)
+      if (errResp) {
+        return res.status(errResp.code).json({ message: errResp.message })
+      }
+      return next(err)
     }
 
     if (!size) {
       logger.error('unable to determine file size', 'controller.get.provider.size', req.id)
-      return res.status(400).json({ error: 'unable to determine file size' })
+      return res.status(400).json({ message: 'unable to determine file size' })
     }
 
     logger.debug('Instantiating uploader.', null, req.id)

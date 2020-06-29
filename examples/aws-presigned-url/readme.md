@@ -7,6 +7,7 @@ This example uses a server-side PHP endpoint to sign uploads to S3.
 To run this example, make sure you've correctly installed the **repository root**:
 ```bash
 npm install
+npm run build
 ```
 That will also install the npm dependencies for this example.
 
@@ -30,4 +31,12 @@ The demo should now be available at http://localhost:8080.
 Optionally, provide a port in the `PORT` environment variable:
 ```bash
 PORT=8080 npm run example aws-presigned-url
+```
+
+You can use a different S3-compatible service like GCS by configuring that service in `~/.aws/config` and `~/.aws/credentials`, and then providing appropriate environment variables:
+```bash
+AWS_PROFILE="gcs" \
+COMPANION_AWS_ENDPOINT="https://storage.googleapis.com" \
+COMPANION_AWS_BUCKET="test-bucket-name" \
+  npm run example aws-presigned-url
 ```

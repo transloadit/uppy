@@ -1,6 +1,7 @@
 'use strict'
 
 const AuthError = require('./AuthError')
+const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
 
 // Remove the trailing slash so we can always safely append /xyz.
 function stripSlash (url) {
@@ -133,7 +134,7 @@ module.exports = class RequestClient {
   get (path, skipPostResponse) {
     return new Promise((resolve, reject) => {
       this.preflightAndHeaders(path).then((headers) => {
-        fetch(this._getUrl(path), {
+        fetchWithNetworkError(this._getUrl(path), {
           method: 'get',
           headers: headers,
           credentials: 'same-origin'
@@ -151,7 +152,7 @@ module.exports = class RequestClient {
   post (path, data, skipPostResponse) {
     return new Promise((resolve, reject) => {
       this.preflightAndHeaders(path).then((headers) => {
-        fetch(this._getUrl(path), {
+        fetchWithNetworkError(this._getUrl(path), {
           method: 'post',
           headers: headers,
           credentials: 'same-origin',
@@ -170,7 +171,7 @@ module.exports = class RequestClient {
   delete (path, data, skipPostResponse) {
     return new Promise((resolve, reject) => {
       this.preflightAndHeaders(path).then((headers) => {
-        fetch(`${this.hostname}/${path}`, {
+        fetchWithNetworkError(`${this.hostname}/${path}`, {
           method: 'delete',
           headers: headers,
           credentials: 'same-origin',

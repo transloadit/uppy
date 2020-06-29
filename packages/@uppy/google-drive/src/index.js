@@ -13,11 +13,10 @@ module.exports = class GoogleDrive extends Plugin {
     Provider.initPlugin(this, opts)
     this.title = this.opts.title || 'Google Drive'
     this.icon = () => (
-      <svg aria-hidden="true" focusable="false" width="18px" height="16px" viewBox="0 0 18 16" version="1.1">
-        <g fill-rule="evenodd">
-          <polygon fill="#3089FC" points="6.32475 10.2 18 10.2 14.999625 15.3 3.324375 15.3" />
-          <polygon fill="#00A85D" points="3.000375 15.3 0 10.2 5.83875 0.275974026 8.838 5.37597403 5.999625 10.2" />
-          <polygon fill="#FFD024" points="11.838375 9.92402597 5.999625 0 12.000375 0 17.839125 9.92402597" />
+      <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
+        <g fill="none" fill-rule="evenodd">
+          <rect fill="#4285F4" width="32" height="32" rx="16" />
+          <path d="M10.324 23.3l3-5.1H25l-3 5.1H10.324zM13 18.2l-3 5.1-3-5.1 5.839-9.924 2.999 5.1L13 18.2zm11.838-.276h-6L13 8h6l5.84 9.924h-.002z" fill="#FFF" />
         </g>
       </svg>
     )
@@ -25,7 +24,6 @@ module.exports = class GoogleDrive extends Plugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
-      storage: this.opts.storage,
       provider: 'drive',
       authProvider: 'google',
       pluginId: this.id
@@ -38,19 +36,6 @@ module.exports = class GoogleDrive extends Plugin {
   install () {
     this.view = new DriveProviderViews(this, {
       provider: this.provider
-    })
-    // Set default state for Google Drive
-    this.setPluginState({
-      authenticated: false,
-      files: [],
-      folders: [],
-      directories: [],
-      activeRow: -1,
-      filterInput: '',
-      isSearchVisible: false,
-      hasTeamDrives: false,
-      teamDrives: [],
-      teamDriveId: ''
     })
 
     const target = this.opts.target

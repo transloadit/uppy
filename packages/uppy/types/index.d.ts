@@ -37,6 +37,8 @@ import Url = require('@uppy/url');
 export { Url };
 import Webcam = require('@uppy/webcam');
 export { Webcam };
+import ScreenCapture = require('@uppy/screen-capture');
+export { ScreenCapture };
 
 // Uploaders
 import AwsS3 = require('@uppy/aws-s3');

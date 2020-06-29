@@ -72,7 +72,7 @@ Google will give you an OAuth client ID and client secret. Use them to configure
 
 ## CSS
 
-Dashboard plugin is recommended as a container to all Provider plugins, including Google Drive. If you are using Dashboard, it [comes with all the nessesary styles](/docs/dashboard/#CSS) for Dropbox as well.
+Dashboard plugin is recommended as a container to all Provider plugins, including Google Drive. If you are using Dashboard, it [comes with all the necessary styles](/docs/dashboard/#CSS) for Google Drive as well.
 
 ⚠️ If you are feeling adventurous, and want to use Google Drive plugin separately, without Dashboard, make sure to include `@uppy/provider-views/dist/style.css` (or `style.min.css`) CSS file. This is experimental, not officialy supported and not recommended.
 

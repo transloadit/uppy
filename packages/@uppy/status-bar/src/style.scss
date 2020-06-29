@@ -13,6 +13,10 @@
   background-color: $white;
   z-index: $zIndex-2;
   transition: height .2s;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+  }
 }
 
   .uppy-size--md .uppy-StatusBar {
@@ -29,6 +33,10 @@
     width: 100%;
     height: 2px;
     background-color: $gray-200;
+
+    [data-uppy-theme="dark"] & {
+      background-color: $gray-600;
+    }
   }
 
 .uppy-StatusBar[aria-hidden=true] {
@@ -56,6 +64,11 @@
   background-color: $white;
   height: 65px;
   border-top: 1px solid $gray-200;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+    border-top: 1px solid $gray-800;
+  }
 }
 
 .uppy-StatusBar-progress {
@@ -101,6 +114,10 @@
   .uppy-size--md & {
     padding-left: 15px;
   }
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
 }
 
 .uppy-StatusBar-status {
@@ -119,6 +136,11 @@
 
 .uppy-StatusBar-statusPrimary {
   font-weight: 500;
+  line-height: 1;
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
 }
 
 .uppy-StatusBar-statusSecondary {
@@ -128,6 +150,10 @@
   display: inline-block;
   color: $gray-600;
   white-space: nowrap;
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-400;
+  }
 }
 
   .uppy-StatusBar-statusSecondaryHint {
@@ -171,6 +197,10 @@
   position: static;
   padding: 0 15px;
   background-color: $gray-50;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+  }
 }
 
 .uppy-StatusBar-actionCircleBtn {
@@ -179,6 +209,10 @@
   cursor: pointer;
   margin: 3px;
   opacity: 0.9;
+
+  [data-uppy-theme="dark"] & {
+    @include blue-border-focus--dark;
+  }
 
   &:hover {
     opacity: 1;
@@ -219,6 +253,10 @@
     padding: 1px 6px 3px 18px;
     position: relative;
 
+    [data-uppy-theme="dark"] & {
+      @include blue-border-focus--dark;
+    }
+
     &:hover {
       background-color: darken($pomegranate, 8%);
     }
@@ -237,16 +275,23 @@
     color: $white;
     background-color: $green;
     line-height: 1;
+    
+    &:hover {
+      background-color: darken($green, 5%);
+    }
+
+    [data-uppy-theme="dark"] & {
+      background-color: $darkgreen;
+    }
+
+    [data-uppy-theme="dark"] &:hover {
+      background-color: darken($darkgreen, 5%);
+    }
   }
-
-    .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload:hover {
-      background-color: darken($green, 10%);
-    }
-
-    .uppy-size--md .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
-      padding: 13px 22px;
-      width: auto;
-    }
+  .uppy-size--md .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
+    padding: 13px 22px;
+    width: auto;
+  }
 
   .uppy-StatusBar:not(.is-waiting) .uppy-StatusBar-actionBtn--upload {
     background-color: transparent;
@@ -261,6 +306,10 @@
     padding-left: 3px;
     padding-bottom: 1px;
     border-radius: 3px;
+
+    [data-uppy-theme="dark"] & {
+      @include blue-border-focus--dark;
+    }
   }
 
 .uppy-StatusBar-details {
@@ -281,10 +330,10 @@
   cursor: help;
 }
 
-.uppy-StatusBar-details:after {
-  line-height: 1.3;
-  word-wrap: break-word;
-}
+  .uppy-StatusBar-details:after {
+    line-height: 1.3;
+    word-wrap: break-word;
+  }
 
 .uppy-StatusBar-spinner {
   animation-name: uppy-StatusBar-spinnerAnimation;

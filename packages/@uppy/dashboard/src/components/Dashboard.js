@@ -5,7 +5,7 @@ const PickerPanelContent = require('./PickerPanelContent')
 const PanelTopBar = require('./PickerPanelTopBar')
 const FileCard = require('./FileCard')
 const classNames = require('classnames')
-const isTouchDevice = require('@uppy/utils/lib/isTouchDevice')
+const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 const { h } = require('preact')
 const PreactCSSTransitionGroup = require('preact-css-transition-group')
 
@@ -27,15 +27,15 @@ function TransitionWrapper (props) {
 const WIDTH_XL = 900
 const WIDTH_LG = 700
 const WIDTH_MD = 576
-const HEIGHT_MD = 576
+const HEIGHT_MD = 400
 
 module.exports = function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
+  const isSizeMD = props.containerWidth > WIDTH_MD
 
   const dashboardClassName = classNames({
     'uppy-Root': props.isTargetDOMEl,
     'uppy-Dashboard': true,
-    'Uppy--isTouchDevice': isTouchDevice(),
     'uppy-Dashboard--animateOpenClose': props.animateOpenClose,
     'uppy-Dashboard--isClosing': props.isClosing,
     'uppy-Dashboard--isDraggingOver': props.isDraggingOver,
@@ -48,20 +48,36 @@ module.exports = function Dashboard (props) {
     'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible
   })
 
+  // Important: keep these in sync with the percent width values in `src/components/FileItem/index.scss`.
+  let itemsPerRow = 1 // mobile
+  if (props.containerWidth > WIDTH_XL) {
+    itemsPerRow = 5
+  } else if (props.containerWidth > WIDTH_LG) {
+    itemsPerRow = 4
+  } else if (props.containerWidth > WIDTH_MD) {
+    itemsPerRow = 3
+  }
+
   const showFileList = props.showSelectedFiles && !noFiles
 
   return (
     <div
       class={dashboardClassName}
+      data-uppy-theme={props.theme}
+      data-uppy-num-acquirers={props.acquirers.length}
+      data-uppy-drag-drop-supported={isDragDropSupported()}
       aria-hidden={props.inline ? 'false' : props.isHidden}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
       onpaste={props.handlePaste}
-
       onDragOver={props.handleDragOver}
       onDragLeave={props.handleDragLeave}
       onDrop={props.handleDrop}
     >
-      <div class="uppy-Dashboard-overlay" tabindex={-1} onclick={props.handleClickOutside} />
+      <div
+        class="uppy-Dashboard-overlay"
+        tabindex={-1}
+        onclick={props.handleClickOutside}
+      />
 
       <div
         class="uppy-Dashboard-inner"
@@ -93,13 +109,16 @@ module.exports = function Dashboard (props) {
           {showFileList && <PanelTopBar {...props} />}
 
           {showFileList ? (
-            <FileList {...props} />
+            <FileList
+              {...props}
+              itemsPerRow={itemsPerRow}
+            />
           ) : (
-            <AddFiles {...props} />
+            <AddFiles {...props} isSizeMD={isSizeMD} />
           )}
 
           <TransitionWrapper>
-            {props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} /> : null}
+            {props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} isSizeMD={isSizeMD} /> : null}
           </TransitionWrapper>
 
           <TransitionWrapper>

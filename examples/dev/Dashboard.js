@@ -7,6 +7,7 @@ const Dropbox = require('@uppy/dropbox/src')
 const GoogleDrive = require('@uppy/google-drive/src')
 const Url = require('@uppy/url/src')
 const Webcam = require('@uppy/webcam/src')
+const ScreenCapture = require('@uppy/screen-capture/src')
 const GoldenRetriever = require('@uppy/golden-retriever/src')
 const Tus = require('@uppy/tus/src')
 const AwsS3 = require('@uppy/aws-s3/src')
@@ -65,17 +66,18 @@ module.exports = () => {
     .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Url, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Webcam, { target: Dashboard })
+    .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
 
   switch (UPLOADER) {
     case 'tus':
-      uppyDashboard.use(Tus, { endpoint: TUS_ENDPOINT })
+      uppyDashboard.use(Tus, { endpoint: TUS_ENDPOINT, limit: 6 })
       break
     case 's3':
-      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL })
+      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, limit: 6 })
       break
     case 'xhr':
-      uppyDashboard.use(XHRUpload, { endpoint: XHR_ENDPOINT, bundle: true })
+      uppyDashboard.use(XHRUpload, { endpoint: XHR_ENDPOINT, limit: 6, bundle: true })
       break
     case 'transloadit':
       uppyDashboard.use(Transloadit, {
@@ -101,6 +103,9 @@ module.exports = () => {
     }
     console.log('successful files:', result.successful)
     console.log('failed files:', result.failed)
+    if (UPLOADER === 'transloadit') {
+      console.log('Transloadit result:', result.transloadit)
+    }
   })
 
   const modalTrigger = document.querySelector('#pick-files')

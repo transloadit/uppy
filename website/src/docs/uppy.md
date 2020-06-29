@@ -30,6 +30,39 @@ In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` gl
 const Core = Uppy.Core
 ```
 
+## TypeScript
+
+When using TypeScript, Uppy has weak type checking by default. That means that the options to plugins are not type-checked. For example, this is allowed:
+```ts
+import Uppy = require('@uppy/core')
+import Tus = require('@uppy/tus')
+const uppy = Uppy()
+uppy.use(Tus, {
+  invalidOption: null,
+  endpoint: ['a', 'wrong', 'type']
+})
+```
+
+As of Uppy 1.10, Uppy supports a strict typechecking mode. This mode typechecks the options passed in to plugins. This will be the only mode in Uppy 2.0, but is currently optional to preserve backwards compatibility. The strict mode can be enabled by passing a special generic type parameter to the Uppy constructor:
+
+```ts
+import Uppy = require('@uppy/core')
+import Tus = require('@uppy/tus')
+const uppy = Uppy<Uppy.StrictTypes>()
+uppy.use(Tus, {
+  invalidOption: null // this will now make the compilation fail!
+})
+```
+
+If you are storing Uppy instances in your code, for example in a property on a React or Angular component class, make sure to add the `StrictTypes` flag there as well:
+```ts
+class MyComponent extends React.Component {
+  private uppy: Uppy<Uppy.StrictTypes>
+}
+```
+
+In Uppy 2.0, this generic parameter will be removed, and your plugin options will always be type-checked.
+
 ## Options
 
 The Uppy core module has the following configurable options:
@@ -51,7 +84,7 @@ const uppy = Uppy({
   onBeforeUpload: (files) => {},
   locale: {},
   store: new DefaultStore(),
-  logger: nullLogger
+  logger: justErrorsLogger
 })
 ```
 
@@ -96,7 +129,7 @@ const uppy = Uppy({
 
 You can also provide your own logger object: it should expose `debug`, `warn` and `error` methods, as shown in the examples below.
 
-By default `logger` is set to `nullLogger`, which does nothing:
+Here’s an example of a `logger` that does nothing:
 
 ```js
 const nullLogger = {
@@ -262,7 +295,9 @@ locale: {
       0: 'You have to select at least %{smart_count} file',
       1: 'You have to select at least %{smart_count} files'
     },
-    exceedsSize: 'This file exceeds maximum allowed size of',
+    // **NOTE**: This string is called `exceedsSize2` for backwards compatibility reasons.
+    // See https://github.com/transloadit/uppy/pull/2077
+    exceedsSize2: 'This file exceeds maximum allowed size of %{size}',
     youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
     companionError: 'Connection with Companion failed'
   }
@@ -339,6 +374,10 @@ uppy.addFile({
   name: 'my-file.jpg', // file name
   type: 'image/jpeg', // file type
   data: blob, // file blob
+  meta: {
+    // optional, store the directory path of a file so Uppy can tell identical files in different directories apart
+    relativePath: webkitFileSystemEntry.relativePath,
+  },
   source: 'Local', // optional, determines the source of the file, for example, Instagram
   isRemote: false // optional, set to true if actual file is not in the browser, but on some remote server, for example, when using companion in combination with Instagram
 })
@@ -387,9 +426,9 @@ file.preview   // value that can be used to populate "src" attribute of an "img"
 Get an array of all file objects in Uppy. See [uppy.getFile()](#uppy-getFile-fileID) for an example of the file object format.
 
 ```js
-const prettyBytes = require('pretty-bytes')
+const prettierBytes = require('@transloadit/prettier-bytes')
 const items = uppy.getFiles().map(() =>
-  `<li>${file.name} - ${prettyBytes(file.size)}</li>`
+  `<li>${file.name} - ${prettierBytes(file.size)}</li>`
 ).join('')
 document.querySelector('.file-list').innerHTML = `<ul>${items}</ul>`
 ```
@@ -521,7 +560,7 @@ uppy.setFileMeta('myfileID', { resize: 1500 })
 
 ### `uppy.setOptions(opts)`
 
-Change Uppy options on the fly. For example, to conditionally change `allowedFileTypes` or `locale`:
+Change Uppy options on the fly. For example, to conditionally change `restrictions.allowedFileTypes` or `locale`:
 
 ```js
 const uppy = Uppy()
@@ -576,8 +615,8 @@ uppy.log('[Dashboard] adding files...')
 #### Parameters
 
 - **message** *{(string|object)}* — `'info message'` or `{ message: 'Oh no!', details: 'File couldn’t be uploaded' }`
-- **type** *{string} [type='info']* — `info`, `warning`, `success` or `error`
-- **duration** *{number} [duration = 3000]* — in milliseconds
+- **type** *{string} \[type='info']* — `info`, `warning`, `success` or `error`
+- **duration** *{number} \[duration = 3000]* — in milliseconds
 
 Sets a message in state, with optional details, that can be shown by notification UI plugins. Currently, that means just the [Informer](/docs/informer/) plugin, included by default in Dashboard.
 
@@ -711,6 +750,18 @@ Fired each time a single upload has errored.
 uppy.on('upload-error', (file, error, response) => {
   console.log('error with file:', file.id)
   console.log('error message:', error)
+})
+```
+
+If the error is related to network conditions — endpoint unreachable due to firewall or ISP blockage, for instance — the error will have `error.isNetworkError` property set to `true`. Here’s how you can check for network errors:
+
+``` javascript
+uppy.on('upload-error', (file, error, response) => {
+  if (error.isNetworkError) {
+    // Let your users know that file upload could have failed
+    // due to firewall or ISP issues
+    alertUserAboutPossibleFirewallOrISPIssues(error)
+  }
 })
 ```
 

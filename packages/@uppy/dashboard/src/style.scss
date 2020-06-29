@@ -8,7 +8,7 @@
 @import './components/FileItem/index.scss';
 @import './components/FileCard/index.scss';
 
-// transitions //
+// Transitions //
 
 .uppy-transition-slideDownUp-enter {
   opacity: 0.01;
@@ -32,7 +32,39 @@
   transform: translate3d(0, -105%, 0);
 }
 
-// end transitions //
+// Modal open/close animations
+
+@keyframes uppy-Dashboard-fadeIn {
+  from { opacity: 0;  }
+  to { opacity: 1;  }
+}
+
+@keyframes uppy-Dashboard-fadeOut {
+  from { opacity: 1;  }
+  to { opacity: 0;  }
+}
+
+@keyframes uppy-Dashboard-slideDownAndFadeIn {
+  from { transform: translate3d(-50%, -70%, 0); opacity: 0; }
+  to { transform: translate3d(-50%, -50%, 0); opacity: 1; }
+}
+
+  @keyframes uppy-Dashboard-slideDownAndFadeIn--small {
+    from { transform: translate3d(0, -20%, 0); opacity: 0; }
+    to { transform: translate3d(0, 0, 0); opacity: 1; }
+  }
+
+@keyframes uppy-Dashboard-slideUpFadeOut {
+  from { transform: translate3d(-50%, -50%, 0); opacity: 1; }
+  to { transform: translate3d(-50%, -70%, 0); opacity: 0; }
+}
+
+  @keyframes uppy-Dashboard-slideUpFadeOut--small {
+    from { transform: translate3d(0, 0, 0); opacity: 1; }
+    to { transform: translate3d(0, -20%, 0); opacity: 0; }
+  }
+
+// End Transitions //
 
 .uppy-Dashboard--modal {
   z-index: $zIndex-2;
@@ -41,38 +73,6 @@
   .uppy-Dashboard--modal[aria-hidden=true] {
     display: none;
   }
-
-  // Modal open/close animations
-
-  @keyframes uppy-Dashboard-fadeIn {
-    from { opacity: 0;  }
-    to { opacity: 1;  }
-  }
-
-  @keyframes uppy-Dashboard-fadeOut {
-    from { opacity: 1;  }
-    to { opacity: 0;  }
-  }
-
-  @keyframes uppy-Dashboard-slideDownAndFadeIn {
-    from { transform: translate3d(-50%, -70%, 0); opacity: 0; }
-    to { transform: translate3d(-50%, -50%, 0); opacity: 1; }
-  }
-
-    @keyframes uppy-Dashboard-slideDownAndFadeIn--small {
-      from { transform: translate3d(0, -20%, 0); opacity: 0; }
-      to { transform: translate3d(0, 0, 0); opacity: 1; }
-    }
-
-  @keyframes uppy-Dashboard-slideUpFadeOut {
-    from { transform: translate3d(-50%, -50%, 0); opacity: 1; }
-    to { transform: translate3d(-50%, -70%, 0); opacity: 0; }
-  }
-
-    @keyframes uppy-Dashboard-slideUpFadeOut--small {
-      from { transform: translate3d(0, 0, 0); opacity: 1; }
-      to { transform: translate3d(0, -20%, 0); opacity: 0; }
-    }
 
   .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose > .uppy-Dashboard-inner {
     animation: uppy-Dashboard-slideDownAndFadeIn--small 0.3s cubic-bezier(0, 0, .2, 1);
@@ -119,9 +119,6 @@
   background-color: $gray-50;
   max-width: 100%;
   max-height: 100%;
-  // min-width: 290px;
-  // min-height: 450px is required for everything to fit on mobile
-  // min-height: 350px;
   outline: none;
   border: 1px solid $gray-200;
   border-radius: 5px;
@@ -137,6 +134,10 @@
 
   .uppy-Dashboard--modal & {
     z-index: $zIndex-3;
+  }
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
   }
 }
 
@@ -184,6 +185,7 @@
   &:focus{
     color: lighten($blue, 25%);
   }
+
   @media #{$screen-medium} {
     font-size: 35px;
     top: -10px;
@@ -191,66 +193,40 @@
   }
 }
 
-.uppy-DashboardAddFiles {
+.uppy-Dashboard-AddFiles {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   height: 100%;
-  max-height: 100%;
   position: relative;
   text-align: center;
-  flex: 1;
 
-  .uppy-size--md & {
+  [data-uppy-drag-drop-supported="true"] & {
     margin: 7px;
+    height: calc(100% - 14px); // to accomodate for the 7px margin
     border-radius: 3px;
-    border: 1px dashed $gray-250; // Show dashed border on large screens only
+    border: 1px dashed $gray-250;
   }
 
   .uppy-Dashboard-AddFilesPanel & {
     border: none;
+    height: calc(100% - 14px - 40px); // to accomodate for the 7px margin and 40px topbar height
   }
 
   .uppy-Dashboard--modal & {
     border-color: $gray-300;
   }
-}
 
-.uppy-DashboardTabs {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-
-  .uppy-size--md & {
-    align-items: center;
-    height: auto;
+  [data-uppy-theme="dark"] & {
+    border-color: $gray-600;
   }
 }
 
-.uppy-DashboardTabs-title {
-  font-size: 14px;
-  line-height: 30px;
-  font-weight: 400;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-  color: $gray-700;
-
-  .uppy-size--md & {
-    font-size: 16px;
-    line-height: 40px;
-  }
-}
-
-.uppy-DashboardAddFiles-info {
+.uppy-Dashboard-AddFiles-info {
   padding-top: 15px;
   padding-bottom: 15px;
-  flex-grow: 0;
-  flex-shrink: 1;
-  flex-basis: 0%;
+  margin-top: auto;
   
   // hide on short note and “powered by” on short screens
   // such as CodePen, or inline dashboard with height < 400px
@@ -262,11 +238,15 @@
 
   .uppy-size--md & {
     position: absolute;
-    bottom: 30px;
+    bottom: 25px;
     left: 0;
     right: 0;
     padding-top: 30px;
     padding-bottom: 0;
+  }
+
+  [data-uppy-num-acquirers="0"] & {
+    margin-top: 0;
   }
 }
 
@@ -276,48 +256,78 @@
   color: rgba($blue, 0.9);
 
   &:hover, &:focus {
-    border-bottom: 2px solid $blue;
+    border-bottom: 1px solid $blue;
+  }
+
+  [data-uppy-theme="dark"] & {
+    color: rgba($highlight--dark, 0.9);
+  }
+
+  [data-uppy-theme="dark"] &:hover,
+  [data-uppy-theme="dark"] &:focus {
+    border-bottom: 1px solid $highlight--dark;
   }
 }
 
-.uppy-DashboardTabs-list {
+.uppy-Dashboard-browseBtn {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 8px;
+  margin-bottom: 5px;
+  width: 100%;
+
+  .uppy-size--md & {
+    font-size: 15px;
+    width: auto;
+    margin: auto;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 13px 44px;
+  }
+}
+
+.uppy-Dashboard-AddFiles-list {
   display: flex;
   flex-direction: column;
-  flex-grow: 2;
-  flex-shrink: 1;
-  flex-basis: 0%;
+  flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  margin-top: 10px;
+  margin-top: 2px;
   padding: 2px 0;
+  width: 100%;
 
   .uppy-size--md & {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
     max-width: 600px;
-    overflow-y: initial;
+    overflow-y: visible;
     margin-top: 15px;
     padding-top: 0;
+    flex: none;
   }
 }
 
 .uppy-DashboardTab {
   width: 100%;
-  display: inline-block;
   text-align: center;
   border-bottom: 1px solid $gray-200;
-  padding: 0px 2px;
+
+  [data-uppy-theme="dark"] & {
+    border-bottom: 1px solid $gray-800;
+  }
 
   .uppy-size--md & {
+    display: inline-block;
     width: initial;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     border-bottom: none;
-    padding: 0;
   }
 }
 
 .uppy-DashboardTab-btn {
+  @include clear-focus;
   width: 100%;
   height: 100%;
   cursor: pointer;
@@ -340,6 +350,10 @@
     padding: 10px 3px;
     border-radius: 5px;
   }
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
 }
 
   .uppy-DashboardTab-btn::-moz-focus-inner {
@@ -348,21 +362,21 @@
 
   .uppy-DashboardTab-btn:hover {
     background-color: $gray-100--highlighted;
+
+    [data-uppy-theme="dark"] & {
+      background-color: $gray-800;
+    }
   }
 
   .uppy-DashboardTab-btn:active,
   .uppy-DashboardTab-btn:focus {
     background-color: $highlight;
-    outline: none;
-  }
 
-  .uppy-DashboardTab-btn svg {
-    margin-right: 10px;
-
-    .uppy-size--md & {
-      margin-right: 0;
+    [data-uppy-theme="dark"] & {
+      background-color: $gray-700;
     }
   }
+
 
   .uppy-DashboardTab-btn svg {
     max-width: 100%;
@@ -371,6 +385,11 @@
     vertical-align: text-top;
     overflow: hidden;
     transition: transform ease-in-out .15s;
+    margin-right: 10px;
+
+    .uppy-size--md & {
+      margin-right: 0;
+    }
   }
 
 .uppy-DashboardTab-name {
@@ -379,7 +398,7 @@
 
   .uppy-size--md & {
     font-size: 11px;
-    line-height: 14px;
+    line-height: 15px;
     margin-top: 8px;
     margin-bottom: 0;
   }
@@ -387,13 +406,13 @@
 
 // On SVG sizing: https://sarasoueidan.com/blog/svg-style-inheritance-and-FOUSVG/
 .uppy-DashboardTab svg {
-  width: 18px;
-  height: 18px;
+  width: 23px;
+  height: 23px;
   vertical-align: middle;
 
   .uppy-size--md & {
-    width: 27px;
-    height: 27px;
+    width: 30px;
+    height: 30px;
   }
 }
 
@@ -427,6 +446,11 @@
     height: 50px;
     padding: 0 15px;
   }
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+    border-bottom: 1px solid $gray-800;
+  }
 }
 
   .uppy-DashboardContent-title {
@@ -451,6 +475,10 @@
       line-height: 50px;
       max-width: 300px;
     }
+
+    [data-uppy-theme="dark"] & {
+      color: $gray-200;
+    }
   }
 
   .uppy-DashboardContent-back {
@@ -466,6 +494,10 @@
 
     .uppy-size--md & {
       font-size: 14px;
+    }
+
+    [data-uppy-theme="dark"] & {
+      color: $highlight--dark;
     }
   }
 
@@ -486,6 +518,10 @@
       width: auto;
       height: auto;
       margin-right: -8px;
+    }
+
+    [data-uppy-theme="dark"] & {
+      color: $highlight--dark;
     }
   }
 
@@ -538,6 +574,11 @@
   border-radius: 5px;
   display: flex;
   flex-direction: column;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-800;
+    background: linear-gradient(0deg, $gray-900 35%, rgba($gray-900, 0.85) 100%);
+  }
 }
 
   .uppy-Dashboard--isAddFilesPanelVisible .uppy-Dashboard-files {
@@ -563,38 +604,6 @@
   height: 100%;
 }
 
-// .uppy-Dashboard-next {
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   width: 100%;
-//   height: 100%;
-//   background: none;
-//   background-color: rgba($gray-500, 0.7);
-//   -webkit-appearance: none;
-//   appearance: none;
-//   border: 0;
-//   z-index: $zIndex-3;
-//   transition: background-color 0.5s;
-//   color: $white;
-//   font-family: inherit;
-//   font-size: 14px;
-//   line-height: 1;
-//   padding: 0;
-//   margin: 0;
-//   outline: none;
-//   cursor: not-allowed;
-// }
-
-// .uppy-Dashboard-next.is-active {
-//   cursor: pointer;
-//   background-color: $blue;
-
-//   &:hover {
-//     background-color: darken($blue, 20%);
-//   }
-// }
-
 .uppy-Dashboard-filesContainer {
   @include clearfix;
   position: relative;
@@ -609,11 +618,11 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   flex: 1;
-}
 
-  .uppy-size--md .uppy-Dashboard-files {
+  .uppy-size--md & {
     padding-top: 10px;
   }
+}
 
 .uppy-Dashboard-dropFilesHereHint {
   display: flex;
@@ -633,8 +642,14 @@
   background-image: url("data:image/svg+xml,%3Csvg width='48' height='48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 1v1C11.85 2 2 11.85 2 24s9.85 22 22 22 22-9.85 22-22S36.15 2 24 2V1zm0 0V0c13.254 0 24 10.746 24 24S37.254 48 24 48 0 37.254 0 24 10.746 0 24 0v1zm7.707 19.293a.999.999 0 1 1-1.414 1.414L25 16.414V34a1 1 0 1 1-2 0V16.414l-5.293 5.293a.999.999 0 1 1-1.414-1.414l7-7a.999.999 0 0 1 1.414 0l7 7z' fill='%232275D7' fill-rule='nonzero'/%3E%3C/svg%3E");
   background-position: 50% 50%;
   background-repeat: no-repeat;
-  color: #707070;
+  color: $gray-600;
   font-size: 16px;
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-400;
+    border-color: $highlight--dark;
+    background-image: url("data:image/svg+xml,%3Csvg width='48' height='48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 1v1C11.85 2 2 11.85 2 24s9.85 22 22 22 22-9.85 22-22S36.15 2 24 2V1zm0 0V0c13.254 0 24 10.746 24 24S37.254 48 24 48 0 37.254 0 24 10.746 0 24 0v1zm7.707 19.293a.999.999 0 1 1-1.414 1.414L25 16.414V34a1 1 0 1 1-2 0V16.414l-5.293 5.293a.999.999 0 1 1-1.414-1.414l7-7a.999.999 0 0 1 1.414 0l7 7z' fill='%2302BAF2' fill-rule='nonzero'/%3E%3C/svg%3E");
+  }
 }
 
 .uppy-Dashboard.uppy-Dashboard--isDraggingOver {
@@ -646,30 +661,53 @@
   .uppy-Dashboard-progressindicators {
     opacity: 0.15;
   }
-  .uppy-DashboardAddFiles {
+  .uppy-Dashboard-AddFiles {
     opacity: 0.03;
   }
 }
 
-.uppy-Dashboard-dropFilesTitle {
-  max-width: 300px;
-  text-align: center;
-  font-size: 16px;
+.uppy-Dashboard-dropFilesIcon {
+  display: none;
+  margin-bottom: 15px;
+
+  .uppy-size--md.uppy-size--height-md & {
+    display: block;
+  }
+}
+
+.uppy-Dashboard-AddFiles-title {
+  font-size: 17px;
   line-height: 1.35;
-  font-weight: 400;
-  color: $gray-700;
-  margin: auto;
+  font-weight: 500;
+  color: $black;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  text-align: left;
   padding: 0 15px;
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: 0%;
+  width: 100%;
 
   .uppy-size--md & {
-    // wider, to accomodate for different translations
-    max-width: 470px;
-    font-size: 27px;
+    font-size: 25px;
+    margin-top: 5px;
+    font-weight: 400;
+    text-align: center;
+    max-width: 480px;
+  }
+
+  [data-uppy-num-acquirers="0"] & {
+    text-align: center;
+  }
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
+
+  button {
+    font-weight: 500;
+  }
+
+  .uppy-size--md & button {
+    font-weight: 400;
   }
 }
 
@@ -683,9 +721,13 @@
   padding: 0 15px;
 
   .uppy-size--md & {
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.35;
     max-width: 600px;
+  }
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-300;
   }
 }
 
@@ -709,7 +751,7 @@ a.uppy-Dashboard-poweredBy {
   vertical-align: text-top;
 }
 
-.uppy-DashboardItem-previewIcon {
+.uppy-Dashboard-Item-previewIcon {
   width: 25px;
   height: 25px;
   z-index: $zIndex-1;
@@ -729,13 +771,13 @@ a.uppy-Dashboard-poweredBy {
   }
 }
 
-.uppy-DashboardItem-previewIconWrap {
+.uppy-Dashboard-Item-previewIconWrap {
   height: 76px;
   max-height: 75%;
   position: relative;
 }
 
-.uppy-DashboardItem-previewIconBg {
+.uppy-Dashboard-Item-previewIconBg {
   width: 100%;
   height: 100%;
   filter: drop-shadow(rgba($black, 0.1) 0px 1px 1px);
@@ -752,7 +794,7 @@ a.uppy-Dashboard-poweredBy {
   }
 }
 
-.uppy-Dashboard-upload .UppyIcon {
+.uppy-Dashboard-upload .uppy-c-icon {
   position: relative;
   top: 1px;
   width: 50%;

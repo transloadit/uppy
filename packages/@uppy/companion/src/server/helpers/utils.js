@@ -1,5 +1,7 @@
 const request = require('request')
+const { URL } = require('url')
 const crypto = require('crypto')
+const { getProtectedHttpAgent, getRedirectEvaluator } = require('./request')
 
 /**
  *
@@ -45,18 +47,23 @@ exports.sanitizeHtml = (text) => {
  * Gets the size and content type of a url's content
  *
  * @param {string} url
+ * @param {boolean=} blockLocalIPs
  * @return {Promise}
  */
-exports.getURLMeta = (url) => {
+exports.getURLMeta = (url, blockLocalIPs = false) => {
   return new Promise((resolve, reject) => {
     const opts = {
       uri: url,
       method: 'HEAD',
-      followAllRedirects: true
+      followRedirect: getRedirectEvaluator(url, blockLocalIPs),
+      agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs)
     }
 
-    request(opts, (err, response, body) => {
-      if (err) {
+    request(opts, (err, response) => {
+      if (err || response.statusCode >= 300) {
+        // @todo possibly set a status code in the error object to get a more helpful
+        // hint at what the cause of error is.
+        err = err || new Error(`URL server responded with status: ${response.statusCode}`)
         reject(err)
       } else {
         resolve({
@@ -123,11 +130,11 @@ function createIv () {
 }
 
 function urlEncode (unencoded) {
-  return unencoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, ',')
+  return unencoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '~')
 }
 
 function urlDecode (encoded) {
-  encoded = encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/,/g, '=')
+  encoded = encoded.replace(/-/g, '+').replace(/_/g, '/').replace(/~/g, '=')
   return encoded
 }
 
@@ -141,10 +148,10 @@ function urlDecode (encoded) {
 module.exports.encrypt = (input, secret) => {
   const iv = createIv()
   const cipher = crypto.createCipheriv('aes256', createSecret(secret), iv)
-  let encrypted = iv.toString('hex')
-  encrypted += urlEncode(cipher.update(input, 'utf8', 'base64'))
-  encrypted += urlEncode(cipher.final('base64'))
-  return encrypted
+  let encrypted = cipher.update(input, 'utf8', 'base64')
+  encrypted += cipher.final('base64')
+  // add iv to encrypted string to use for decryption
+  return iv.toString('hex') + urlEncode(encrypted)
 }
 
 /**
@@ -161,8 +168,9 @@ module.exports.decrypt = (encrypted, secret) => {
   }
 
   const iv = Buffer.from(encrypted.slice(0, 32), 'hex')
+  const encryptionWithoutIv = encrypted.slice(32)
   const decipher = crypto.createDecipheriv('aes256', createSecret(secret), iv)
-  let decrypted = decipher.update(urlDecode(encrypted.slice(32)), 'base64', 'utf8')
+  let decrypted = decipher.update(urlDecode(encryptionWithoutIv), 'base64', 'utf8')
   decrypted += decipher.final('utf8')
   return decrypted
 }

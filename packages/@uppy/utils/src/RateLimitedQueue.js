@@ -1,3 +1,17 @@
+/**
+ * Array.prototype.findIndex ponyfill for old browsers.
+ */
+function findIndex (array, predicate) {
+  for (let i = 0; i < array.length; i++) {
+    if (predicate(array[i])) return i
+  }
+  return -1
+}
+
+function createCancelError () {
+  return new Error('Cancelled')
+}
+
 module.exports = class RateLimitedQueue {
   constructor (limit) {
     if (typeof limit !== 'number' || limit === 0) {
@@ -67,9 +81,10 @@ module.exports = class RateLimitedQueue {
     next.done = handler.done
   }
 
-  _queue (fn) {
+  _queue (fn, options = {}) {
     const handler = {
       fn,
+      priority: options.priority || 0,
       abort: () => {
         this._dequeue(handler)
       },
@@ -77,7 +92,15 @@ module.exports = class RateLimitedQueue {
         throw new Error('Cannot mark a queued request as done: this indicates a bug')
       }
     }
-    this.queuedHandlers.push(handler)
+
+    const index = findIndex(this.queuedHandlers, (other) => {
+      return handler.priority > other.priority
+    })
+    if (index === -1) {
+      this.queuedHandlers.push(handler)
+    } else {
+      this.queuedHandlers.splice(index, 0, handler)
+    }
     return handler
   }
 
@@ -88,44 +111,53 @@ module.exports = class RateLimitedQueue {
     }
   }
 
-  run (fn) {
+  run (fn, queueOptions) {
     if (this.activeRequests < this.limit) {
       return this._call(fn)
     }
-    return this._queue(fn)
+    return this._queue(fn, queueOptions)
   }
 
-  wrapPromiseFunction (fn) {
-    return (...args) => new Promise((resolve, reject) => {
-      const queuedRequest = this.run(() => {
-        let cancelError
-        let promise
-        try {
-          promise = Promise.resolve(fn(...args))
-        } catch (err) {
-          promise = Promise.reject(err)
-        }
-
-        promise.then((result) => {
-          if (cancelError) {
-            reject(cancelError)
-          } else {
-            queuedRequest.done()
-            resolve(result)
+  wrapPromiseFunction (fn, queueOptions) {
+    return (...args) => {
+      let queuedRequest
+      const outerPromise = new Promise((resolve, reject) => {
+        queuedRequest = this.run(() => {
+          let cancelError
+          let innerPromise
+          try {
+            innerPromise = Promise.resolve(fn(...args))
+          } catch (err) {
+            innerPromise = Promise.reject(err)
           }
-        }, (err) => {
-          if (cancelError) {
-            reject(cancelError)
-          } else {
-            queuedRequest.done()
-            reject(err)
-          }
-        })
 
-        return () => {
-          cancelError = new Error('Cancelled')
-        }
+          innerPromise.then((result) => {
+            if (cancelError) {
+              reject(cancelError)
+            } else {
+              queuedRequest.done()
+              resolve(result)
+            }
+          }, (err) => {
+            if (cancelError) {
+              reject(cancelError)
+            } else {
+              queuedRequest.done()
+              reject(err)
+            }
+          })
+
+          return () => {
+            cancelError = createCancelError()
+          }
+        }, queueOptions)
       })
-    })
+
+      outerPromise.abort = () => {
+        queuedRequest.abort()
+      }
+
+      return outerPromise
+    }
   }
 }

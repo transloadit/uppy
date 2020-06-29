@@ -1,0 +1,148 @@
+@import '@uppy/core/src/_utils.scss';
+@import '@uppy/core/src/_variables.scss';
+
+.uppy-ScreenCapture-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.uppy-ScreenCapture-videoContainer {
+  width: 100%;
+  flex: 1;
+  flex-grow: 1;
+  overflow: hidden;
+  background-color: $gray-800;
+  text-align: center;
+  position: relative;
+
+  .uppy-size--md & {
+    max-width: 100%;
+  }
+}
+
+.uppy-ScreenCapture-video {
+  max-width: 100%;
+  max-height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  outline: 0;
+}
+
+.uppy-ScreenCapture-buttonContainer {
+  width: 100%;
+  height: 75px;
+  border-top: 1px solid $gray-200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  background-color: $white;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+    border-top: 1px solid $gray-800;
+  }
+}
+
+.uppy-ScreenCapture-button {
+  @include blue-border-focus;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  color: $white;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  [data-uppy-theme="dark"] & {
+    @include blue-border-focus--dark;
+  }
+
+  .uppy-size--md & {
+    width: 60px;
+    height: 60px;
+  }
+
+  &:hover {
+    background-color: darken($red, 5%);
+  }
+}
+
+.uppy-ScreenCapture-button svg {
+  width: 30px;
+  height: 30px;
+  max-width: 100%;
+  max-height: 100%;
+  display: inline-block;
+  vertical-align: text-top;
+  overflow: hidden;
+  fill: currentColor;
+}
+
+.uppy-ScreenCapture-button--submit {
+  background-color: $blue;
+  margin-left: 12px;
+
+  &:hover {
+    background-color: darken($blue, 5%);
+  }
+
+  &:disabled {
+    background-color: $gray-500;
+    cursor: default;
+  }
+
+  &:disabled:hover { 
+    background-color: $gray-200;
+  }
+}
+
+.uppy-ScreenCapture-title {
+  font-size: 22px;
+  line-height: 1.35;
+  font-weight: 400;
+  margin: 0;
+  margin-bottom: 5px;
+  padding: 0 15px;
+  max-width: 500px;
+  text-align: center;
+  color: $gray-800;
+}
+
+.uppy-ScreenCapture-icon--stream {
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: 1rem;
+  z-index:1;
+
+  svg {
+    fill: $gray-500;
+  }
+}
+
+.uppy-ScreenCapture-icon--streamActive svg {
+  animation: uppy-ScreenCapture-icon--blink 1s cubic-bezier(0.47, 0, 0.75, 0.72) infinite;
+}
+
+  @keyframes uppy-ScreenCapture-icon--blink {
+    0% { fill: $blue;} 
+    50% { fill: $gray-500; }
+    100% { fill: $blue; }
+  }
+
+.uppy-ScreenCapture-button--video {
+  color: $white;
+  background: $red;
+
+  &:hover {
+    background-color: darken($red, 10%);
+  }
+}

@@ -1,7 +1,7 @@
 const throttle = require('lodash.throttle')
 const classNames = require('classnames')
 const statusBarStates = require('./StatusBarStates')
-const prettyBytes = require('@uppy/utils/lib/prettyBytes')
+const prettierBytes = require('@transloadit/prettier-bytes')
 const prettyETA = require('@uppy/utils/lib/prettyETA')
 const { h } = require('preact')
 
@@ -105,10 +105,8 @@ module.exports = (props) => {
     uploadState !== statusBarStates.STATE_WAITING &&
     uploadState !== statusBarStates.STATE_COMPLETE
   const showPauseResumeBtn = resumableUploads && !hidePauseResumeButton &&
-    uploadState !== statusBarStates.STATE_WAITING &&
-    uploadState !== statusBarStates.STATE_PREPROCESSING &&
-    uploadState !== statusBarStates.STATE_POSTPROCESSING &&
-    uploadState !== statusBarStates.STATE_COMPLETE
+    uploadState === statusBarStates.STATE_UPLOADING
+
   const showRetryBtn = error && !hideRetryButton
 
   const progressClassNames = `uppy-StatusBar-progress
@@ -169,10 +167,12 @@ const RetryBtn = (props) => {
   return (
     <button
       type="button"
-      class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry" aria-label={props.i18n('retryUpload')} onclick={props.retryAll}
+      class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
+      aria-label={props.i18n('retryUpload')}
+      onclick={props.retryAll}
       data-uppy-super-focusable
     >
-      <svg aria-hidden="true" focusable="false" class="UppyIcon" width="8" height="10" viewBox="0 0 8 10">
+      <svg aria-hidden="true" focusable="false" class="uppy-c-icon" width="8" height="10" viewBox="0 0 8 10">
         <path d="M4 2.408a2.75 2.75 0 1 0 2.75 2.75.626.626 0 0 1 1.25.018v.023a4 4 0 1 1-4-4.041V.25a.25.25 0 0 1 .389-.208l2.299 1.533a.25.25 0 0 1 0 .416l-2.3 1.533A.25.25 0 0 1 4 3.316v-.908z" />
       </svg>
       {props.i18n('retry')}
@@ -190,7 +190,7 @@ const CancelBtn = (props) => {
       onclick={props.cancelAll}
       data-uppy-super-focusable
     >
-      <svg aria-hidden="true" focusable="false" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16">
+      <svg aria-hidden="true" focusable="false" class="uppy-c-icon" width="16" height="16" viewBox="0 0 16 16">
         <g fill="none" fill-rule="evenodd">
           <circle fill="#888" cx="8" cy="8" r="8" />
           <path fill="#FFF" d="M9.283 8l2.567 2.567-1.283 1.283L8 9.283 5.433 11.85 4.15 10.567 6.717 8 4.15 5.433 5.433 4.15 8 6.717l2.567-2.567 1.283 1.283z" />
@@ -214,14 +214,14 @@ const PauseResumeButton = (props) => {
       data-uppy-super-focusable
     >
       {isAllPaused ? (
-        <svg aria-hidden="true" focusable="false" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16">
+        <svg aria-hidden="true" focusable="false" class="uppy-c-icon" width="16" height="16" viewBox="0 0 16 16">
           <g fill="none" fill-rule="evenodd">
             <circle fill="#888" cx="8" cy="8" r="8" />
             <path fill="#FFF" d="M6 4.25L11.5 8 6 11.75z" />
           </g>
         </svg>
       ) : (
-        <svg aria-hidden="true" focusable="false" class="UppyIcon" width="16" height="16" viewBox="0 0 16 16">
+        <svg aria-hidden="true" focusable="false" class="uppy-c-icon" width="16" height="16" viewBox="0 0 16 16">
           <g fill="none" fill-rule="evenodd">
             <circle fill="#888" cx="8" cy="8" r="8" />
             <path d="M5 4.5h2v7H5v-7zm4 0h2v7H9v-7z" fill="#FFF" />
@@ -234,7 +234,7 @@ const PauseResumeButton = (props) => {
 
 const LoadingSpinner = () => {
   return (
-    <svg aria-hidden="true" focusable="false" class="uppy-StatusBar-spinner" width="14" height="14">
+    <svg class="uppy-StatusBar-spinner" aria-hidden="true" focusable="false" width="14" height="14">
       <path d="M13.983 6.547c-.12-2.509-1.64-4.893-3.939-5.936-2.48-1.127-5.488-.656-7.556 1.094C.524 3.367-.398 6.048.162 8.562c.556 2.495 2.46 4.52 4.94 5.183 2.932.784 5.61-.602 7.256-3.015-1.493 1.993-3.745 3.309-6.298 2.868-2.514-.434-4.578-2.349-5.153-4.84a6.226 6.226 0 0 1 2.98-6.778C6.34.586 9.74 1.1 11.373 3.493c.407.596.693 1.282.842 1.988.127.598.073 1.197.161 1.794.078.525.543 1.257 1.15.864.525-.341.49-1.05.456-1.592-.007-.15.02.3 0 0" fill-rule="evenodd" />
     </svg>
   )
@@ -276,8 +276,8 @@ const ProgressDetails = (props) => {
 
         {
           props.i18n('dataUploadedOfTotal', {
-            complete: prettyBytes(props.totalUploadedSize),
-            total: prettyBytes(props.totalSize)
+            complete: prettierBytes(props.totalUploadedSize),
+            total: prettierBytes(props.totalSize)
           })
         }
 
@@ -357,7 +357,7 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
     <div class="uppy-StatusBar-content" role="status" title={i18n('complete')}>
       <div class="uppy-StatusBar-status">
         <div class="uppy-StatusBar-statusPrimary">
-          <svg aria-hidden="true" focusable="false" class="uppy-StatusBar-statusIndicator UppyIcon" width="15" height="11" viewBox="0 0 15 11">
+          <svg aria-hidden="true" focusable="false" class="uppy-StatusBar-statusIndicator uppy-c-icon" width="15" height="11" viewBox="0 0 15 11">
             <path d="M.414 5.843L1.627 4.63l3.472 3.472L13.202 0l1.212 1.213L5.1 10.528z" />
           </svg>
           {i18n('complete')}
@@ -368,25 +368,28 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
 }
 
 const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
+  function displayErrorAlert () {
+    const errorMessage = `${i18n('uploadFailed')} \n\n ${error}`
+    alert(errorMessage)
+  }
+
   return (
     <div class="uppy-StatusBar-content" role="alert" title={i18n('uploadFailed')}>
       <div class="uppy-StatusBar-status">
         <div class="uppy-StatusBar-statusPrimary">
-          <svg aria-hidden="true" focusable="false" class="uppy-StatusBar-statusIndicator UppyIcon" width="11" height="11" viewBox="0 0 11 11">
+          <svg aria-hidden="true" focusable="false" class="uppy-StatusBar-statusIndicator uppy-c-icon" width="11" height="11" viewBox="0 0 11 11">
             <path d="M4.278 5.5L0 1.222 1.222 0 5.5 4.278 9.778 0 11 1.222 6.722 5.5 11 9.778 9.778 11 5.5 6.722 1.222 11 0 9.778z" />
           </svg>
           {i18n('uploadFailed')}
         </div>
       </div>
-      {/* {!hideRetryButton &&
-        <span class="uppy-StatusBar-contentPadding">{i18n('pleasePressRetry')}</span>
-      } */}
       <span
         class="uppy-StatusBar-details"
         aria-label={error}
         data-microtip-position="top-right"
         data-microtip-size="medium"
         role="tooltip"
+        onclick={displayErrorAlert}
       >
         ?
       </span>

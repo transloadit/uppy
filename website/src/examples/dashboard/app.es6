@@ -9,6 +9,7 @@ const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
+const ScreenCapture = require('@uppy/screen-capture')
 const Tus = require('@uppy/tus')
 const localeList = require('../locale_list.json')
 
@@ -80,63 +81,70 @@ function uppySetOptions () {
 
   window.uppy.getPlugin('Dashboard').setOptions({
     note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : '',
-    browserBackButtonClose: opts.browserBackButtonClose
+    theme: opts.darkMode ? 'dark' : 'light'
   })
 
-  const GoogleDriveInstance = window.uppy.getPlugin('GoogleDrive')
-  if (opts.GoogleDrive && !GoogleDriveInstance) {
+  const googleDriveInstance = window.uppy.getPlugin('GoogleDrive')
+  if (opts.GoogleDrive && !googleDriveInstance) {
     window.uppy.use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION })
   }
-  if (!opts.GoogleDrive && GoogleDriveInstance) {
-    window.uppy.removePlugin(GoogleDriveInstance)
+  if (!opts.GoogleDrive && googleDriveInstance) {
+    window.uppy.removePlugin(googleDriveInstance)
   }
 
-  const DropboxInstance = window.uppy.getPlugin('Dropbox')
-  if (opts.Dropbox && !DropboxInstance) {
+  const dropboxInstance = window.uppy.getPlugin('Dropbox')
+  if (opts.Dropbox && !dropboxInstance) {
     window.uppy.use(Dropbox, { target: Dashboard, companionUrl: COMPANION })
   }
-  if (!opts.Dropbox && DropboxInstance) {
-    window.uppy.removePlugin(DropboxInstance)
+  if (!opts.Dropbox && dropboxInstance) {
+    window.uppy.removePlugin(dropboxInstance)
   }
 
-  const InstagramInstance = window.uppy.getPlugin('Instagram')
-  if (opts.Instagram && !InstagramInstance) {
+  const instagramInstance = window.uppy.getPlugin('Instagram')
+  if (opts.Instagram && !instagramInstance) {
     window.uppy.use(Instagram, { target: Dashboard, companionUrl: COMPANION })
   }
-  if (!opts.Instagram && InstagramInstance) {
-    window.uppy.removePlugin(InstagramInstance)
+  if (!opts.Instagram && instagramInstance) {
+    window.uppy.removePlugin(instagramInstance)
   }
 
-  const UrlInstance = window.uppy.getPlugin('Url')
-  if (opts.Url && !UrlInstance) {
+  const urlInstance = window.uppy.getPlugin('Url')
+  if (opts.Url && !urlInstance) {
     window.uppy.use(Url, { target: Dashboard, companionUrl: COMPANION })
   }
-  if (!opts.Url && UrlInstance) {
-    window.uppy.removePlugin(UrlInstance)
+  if (!opts.Url && urlInstance) {
+    window.uppy.removePlugin(urlInstance)
   }
 
-  const FacebookInstance = window.uppy.getPlugin('Facebook')
-  if (opts.Facebook && !FacebookInstance) {
+  const facebookInstance = window.uppy.getPlugin('Facebook')
+  if (opts.Facebook && !facebookInstance) {
     window.uppy.use(Facebook, { target: Dashboard, companionUrl: COMPANION })
   }
-  if (!opts.Facebook && FacebookInstance) {
-    window.uppy.removePlugin(FacebookInstance)
+  if (!opts.Facebook && facebookInstance) {
+    window.uppy.removePlugin(facebookInstance)
   }
 
-  const OneDriveInstance = window.uppy.getPlugin('OneDrive')
-  if (opts.OneDrive && !OneDriveInstance) {
+  const oneDriveInstance = window.uppy.getPlugin('OneDrive')
+  if (opts.OneDrive && !oneDriveInstance) {
     window.uppy.use(OneDrive, { target: Dashboard, companionUrl: COMPANION })
   }
-  if (!opts.OneDrive && OneDriveInstance) {
-    window.uppy.removePlugin(OneDriveInstance)
+  if (!opts.OneDrive && oneDriveInstance) {
+    window.uppy.removePlugin(oneDriveInstance)
   }
 
-  const WebcamInstance = window.uppy.getPlugin('Webcam')
-  if (opts.Webcam && !WebcamInstance) {
-    window.uppy.use(Webcam, { target: Dashboard, companionUrl: COMPANION })
+  const webcamInstance = window.uppy.getPlugin('Webcam')
+  if (opts.Webcam && !webcamInstance) {
+    window.uppy.use(Webcam, { target: Dashboard })
   }
-  if (!opts.Webcam && WebcamInstance) {
-    window.uppy.removePlugin(WebcamInstance)
+  if (!opts.Webcam && webcamInstance) {
+    window.uppy.removePlugin(webcamInstance)
+  }
+
+  const screenCaptureInstance = window.uppy.getPlugin('ScreenCapture')
+  if (opts.ScreenCapture && !screenCaptureInstance) {
+    window.uppy.use(ScreenCapture, { target: Dashboard })
+  } else {
+    window.uppy.removePlugin(screenCaptureInstance)
   }
 }
 
@@ -154,7 +162,7 @@ function loadLocaleFromCDN (localeName) {
   var head = document.getElementsByTagName('head')[0]
   var js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.11.0/${localeName}.min.js`
+  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.15.0/${localeName}.min.js`
 
   head.appendChild(js)
 }
