@@ -68,7 +68,7 @@ class AddFiles extends Component {
       <div
         class="uppy-DashboardTab"
         role="presentation"
-        data-acquirer-id="MyDevice"
+        data-uppy-acquirer-id="MyDevice"
       >
         <button
           type="button"
@@ -118,7 +118,7 @@ class AddFiles extends Component {
       <div
         class="uppy-DashboardTab"
         role="presentation"
-        data-acquirer-id={acquirer.id}
+        data-uppy-acquirer-id={acquirer.id}
       >
         <button
           type="button"
