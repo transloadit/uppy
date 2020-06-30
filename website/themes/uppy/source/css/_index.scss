@@ -1,15 +1,15 @@
 .TransloaditBar {
   display: none;
-  height: 35px;
-  padding: 0 10px;
+  padding: 5px 10px 8px;
   background: $color-darkblue;
   color: #fff;
   font-size: 13px;
-  justify-content: space-between;
-  align-items: center;
-
+  
   @media #{$screen-medium} {
+    height: 37px;
     padding: 0 60px;
+    justify-content: space-between;
+    align-items: center;
   }
 
   &-link {
@@ -30,11 +30,19 @@
 	}
 
   &-about {
-    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   &-info {
+    margin-top: 10px;
     text-align: center;
+
+    @media #{$screen-medium} {
+      text-align: right;
+      margin-top: 0;
+    }
   }
 
   &-info-link {
@@ -42,13 +50,17 @@
     font-weight: 600;
     
     &:hover {
-        color: #e05393;
+      color: #b3cbf2;
+      text-decoration: underline;
     }
   }
 
   .page-index & {
-    display: flex;
-    padding-right: 20px;
+    display: block;
+
+    @media #{$screen-medium} {
+      display: flex;
+    }
   }
 }
 
