@@ -23,7 +23,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "preact": "8.2.9"
+    "preact": "8.2.9",
+    "cropperjs": "1.5.6"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"

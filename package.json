@@ -72,7 +72,7 @@
     "@uppy/utils": "file:packages/@uppy/utils",
     "@uppy/webcam": "file:packages/@uppy/webcam",
     "@uppy/xhr-upload": "file:packages/@uppy/xhr-upload",
-    "cropperjs": "^1.5.6",
+    "@uppy/image-editor": "file:packages/@uppy/image-editor",
     "remark-lint-uppy": "file:private/remark-lint-uppy",
     "uppy": "file:packages/uppy",
     "uppy.io": "file:website"

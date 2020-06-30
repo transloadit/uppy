@@ -1,6 +1,8 @@
 const { h } = require('preact')
 
 function EditorPanel (props) {
+  const file = this.props.files[this.props.fileCardFor]
+
   return (
     <div
       class="uppy-DashboardContent-panel"
@@ -10,7 +12,9 @@ function EditorPanel (props) {
     >
       <div class="uppy-DashboardContent-bar">
         <div class="uppy-DashboardContent-title" role="heading" aria-level="1">
-          123
+          {props.i18nArray('editing', {
+            file: <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>
+          })}
         </div>
         <button
           class="uppy-DashboardContent-back"

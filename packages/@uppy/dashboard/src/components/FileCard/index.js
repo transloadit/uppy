@@ -111,7 +111,17 @@ class FileCard extends Component {
 
         <div class="uppy-Dashboard-FileCard-inner">
           <div class="uppy-Dashboard-FileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
-            <FilePreview file={file} uppy={this.props.uppy} />
+            <FilePreview
+              file={file}
+              uppy={this.props.uppy}
+              openFileEditor={this.props.openFileEditor}
+            />
+            <button
+              class="uppy-u-reset uppy-c-btn"
+              onClick={() => this.props.openFileEditor(file)}
+            >
+              Edit
+            </button>
           </div>
 
           <div class="uppy-Dashboard-FileCard-info">

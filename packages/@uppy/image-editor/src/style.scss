@@ -1,4 +1,8 @@
 @import '@uppy/core/src/_utils.scss';
 @import '@uppy/core/src/_variables.scss';
-@import 'cropper.scss';
+@import './cropper.scss';
 
+.uppy-ImageCropper-image {
+  max-width: 100%;
+  max-height: 100%;
+}

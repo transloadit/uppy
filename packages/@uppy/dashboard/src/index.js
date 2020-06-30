@@ -204,6 +204,7 @@ module.exports = class Dashboard extends Plugin {
       activePickerPanel: false,
       showAddFilesPanel: false,
       activeOverlayType: null,
+      fileCardFor: null,
       showFileEditor: false
     }
 
@@ -231,6 +232,24 @@ module.exports = class Dashboard extends Plugin {
     this.setPluginState({
       activePickerPanel: activePickerPanel,
       activeOverlayType: 'PickerPanel'
+    })
+  }
+
+  openFileEditor = (file) => {
+    const { targets } = this.getPluginState()
+
+    this.setPluginState({
+      showFileEditor: true
+    })
+
+    const editors = this._getEditors(targets)
+    editors.forEach((editor) => {
+      const editorPlugin = this.uppy.getPlugin(editor.id)
+      editorPlugin.selectFile(file)
+      setTimeout(editorPlugin.initEditor, 4)
+      setTimeout(() => {
+        editorPlugin.edit()
+      }, 5000)
     })
   }
 
@@ -870,6 +889,7 @@ module.exports = class Dashboard extends Plugin {
       toggleAddFilesPanel: this.toggleAddFilesPanel,
       showAddFilesPanel: pluginState.showAddFilesPanel,
       saveFileCard: this.saveFileCard,
+      openFileEditor: this.openFileEditor,
       width: this.opts.width,
       height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
