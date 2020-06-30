@@ -9,10 +9,36 @@ const instagram = require('./instagram')
 const instagramGraph = require('./instagram/graph')
 const facebook = require('./facebook')
 const onedrive = require('./onedrive')
+const zoom = require('./zoom')
 const { getURLBuilder } = require('../helpers/utils')
 const logger = require('../logger')
 // eslint-disable-next-line
 const Provider = require('./Provider')
+
+// leave here for now until Purest Providers gets updated with Zoom provider
+config.zoom = {
+  'https://zoom.us/': {
+    __domain: {
+      auth: {
+        auth: { bearer: '[0]' }
+      }
+    },
+    '[version]/{endpoint}': {
+      __path: {
+        alias: '__default',
+        version: 'v2'
+      }
+    },
+    'oauth/revoke': {
+      __path: {
+        alias: 'logout',
+        auth: {
+          auth: { basic: '[0]' }
+        }
+      }
+    }
+  }
+}
 
 /**
  * adds the desired provider module to the request object,
@@ -47,7 +73,7 @@ module.exports.getProviderMiddleware = (providers) => {
 module.exports.getDefaultProviders = (companionOptions) => {
   const { providerOptions } = companionOptions || { providerOptions: null }
   // @todo: we should rename drive to googledrive or google-drive or google
-  const providers = { dropbox, drive, facebook, onedrive }
+  const providers = { dropbox, drive, facebook, onedrive, zoom }
   // Instagram's Graph API key is just numbers, while the old API key is hex
   const usesGraphAPI = () => /^\d+$/.test(providerOptions.instagram.key)
   if (providerOptions && providerOptions.instagram && usesGraphAPI()) {

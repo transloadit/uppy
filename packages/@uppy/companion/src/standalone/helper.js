@@ -49,6 +49,10 @@ const getConfigFromEnv = () => {
         key: process.env.COMPANION_ONEDRIVE_KEY,
         secret: getSecret('COMPANION_ONEDRIVE_SECRET')
       },
+      zoom: {
+        key: process.env.COMPANION_ZOOM_KEY,
+        secret: getSecret('COMPANION_ZOOM_SECRET')
+      },
       s3: {
         key: process.env.COMPANION_AWS_KEY,
         secret: getSecret('COMPANION_AWS_SECRET'),

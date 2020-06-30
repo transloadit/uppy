@@ -4,6 +4,8 @@ const ProviderViews = require('@uppy/provider-views')
 const { h } = require('preact')
 
 module.exports = class Zoom extends Plugin {
+  static VERSION = require('../package.json').version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Zoom'
@@ -31,7 +33,7 @@ module.exports = class Zoom extends Plugin {
             <g clip-path="url(#e)"><path d="m42 69h128v74h-128z" fill="#fff" /></g>
           </g>
           <g clip-path="url(#a)" transform="translate(0 -178)"><path d="m232 19.25h180v38.17h-180z" fill="#90908f" /></g>
-          <text>Zoom Plugin</text>
+          <text>Zoom</text>
         </g>
       </svg>
     )

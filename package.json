@@ -38,7 +38,6 @@
     "@uppy-example/transloadit-textarea": "file:examples/transloadit-textarea",
     "@uppy-example/uppy-with-companion": "file:examples/uppy-with-companion",
     "@uppy-example/xhr-bundle": "file:examples/xhr-bundle",
-    "@uppy-example/zoom-provider": "file:examples/zoom-provider",
     "@uppy/aws-s3": "file:packages/@uppy/aws-s3",
     "@uppy/aws-s3-multipart": "file:packages/@uppy/aws-s3-multipart",
     "@uppy/companion": "file:packages/@uppy/companion",
@@ -74,6 +73,7 @@
     "@uppy/webcam": "file:packages/@uppy/webcam",
     "@uppy/xhr-upload": "file:packages/@uppy/xhr-upload",
     "@uppy/image-editor": "file:packages/@uppy/image-editor",
+    "@uppy/zoom": "file:packages/@uppy/zoom",
     "remark-lint-uppy": "file:private/remark-lint-uppy",
     "uppy": "file:packages/uppy",
     "uppy.io": "file:website"
