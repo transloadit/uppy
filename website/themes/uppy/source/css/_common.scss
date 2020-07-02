@@ -174,7 +174,7 @@ hr {
   padding: 2em 1.4em 0;
 
   @media #{$screen-medium} {
-    padding: 60px 60px 30px;
+    padding: 0 60px 30px;
   }
 }
 
@@ -265,7 +265,7 @@ hr {
   
   @media #{$screen-medium} {
     display: flex;
-    height: 37px;
+    height: $size-transloaditBarHeight;
     padding: 0 60px;
     justify-content: space-between;
     align-items: center;
@@ -313,14 +313,6 @@ hr {
       text-decoration: underline;
     }
   }
-
-  // .page-index & {
-  //   display: block;
-
-  //   @media #{$screen-medium} {
-  //     display: flex;
-  //   }
-  // }
 }
 
 /**
@@ -328,18 +320,17 @@ hr {
 */
 
 .MainHeader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 9;
   z-index: 2;
   padding-top: 15px;
   padding-bottom: 15px;
   background-color: $color-white;
   text-align: center;
-
+  
   @media #{$screen-medium} {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: auto;
     display: flex;
     align-items: baseline;
