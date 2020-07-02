@@ -325,6 +325,8 @@ hr {
   padding-bottom: 15px;
   background-color: $color-white;
   text-align: center;
+  position: relative;
+  border-bottom: 1px solid rgba($color-lightgray, 0.2);
   
   @media #{$screen-medium} {
     position: sticky;
@@ -336,7 +338,6 @@ hr {
     align-items: baseline;
     padding: 14px 60px 19px;
     z-index: 2;
-    border-bottom: 1px solid rgba($color-lightgray, 0.2);
     text-align: left;
 
     // &.fix-header {

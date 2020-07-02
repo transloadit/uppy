@@ -13,7 +13,7 @@
   top: 0;
   right: 0;
   left: 0;
-  padding: 80px 30px 20px;
+  padding: 160px 30px 20px;
   transition: all .4s cubic-bezier(0.4, 0, 0, 1);
   transform: translate(-100%, 0);
   z-index: 10;
@@ -137,12 +137,13 @@
 * Content
 */
 .Content {
-  padding: 2.2em 0;
+  padding: 0 0 2.2em;
   max-width: 600px;
   margin: 0 auto;
   font-size: 18px;
 
   @media #{$screen-medium} {
+    padding: 2.2em 0;
     &.with-sidebar {
       margin-left: 280px;
     }
