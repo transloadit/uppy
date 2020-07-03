@@ -29,25 +29,25 @@
   // .fix-sidebar & { position: fixed; }
 
   @media #{$screen-medium} {
-    // position: absolute;
-    top: 0;
+    top: $size-headerHeight + $size-transloaditBarHeight;
     left: 0;
     right: auto;
     width: 280px;
-    // bottom: 0;
-    // padding: 2.2em 0;
-    padding-top: 95px + $size-transloaditBarHeight;
+    padding-top: 30px;
     padding-left: 60px;
-    padding-bottom: 130px;
-    // width: 20px;
     margin-right: 20px;
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     -ms-overflow-style: none;
+    transition: none;
     transform: none;
     background-color: transparent;
     box-shadow: none;
+
+    .list {
+      padding-bottom: 100px;
+    }
 
     .main-menu { display: none; }
     &::-webkit-scrollbar { width: 0 !important; }
