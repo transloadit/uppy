@@ -29,6 +29,10 @@
 
     function updateSidebar () {
       var top = (doc && doc.scrollTop) || body.scrollTop
+
+      var headerOffsetTop = header.getBoundingClientRect().top
+      menu.style.top = headerOffsetTop + 70 + 'px'
+
       var headerHeight = header.offsetHeight
       if (top > (headerHeight - 25)) {
         // main.classList.add('fix-sidebar')
