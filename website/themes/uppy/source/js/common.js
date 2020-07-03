@@ -27,12 +27,19 @@
     // window.addEventListener('scroll', updateSidebar)
     // window.addEventListener('resize', updateSidebar)
 
+    function makeSidebarTop () {
+      if (window.matchMedia('(min-width: 1024px)').matches) {
+        var headerHeight = header.offsetHeight
+        var headerTopOffset = header.getBoundingClientRect().top
+        menu.style.top = headerHeight + headerTopOffset + 'px'
+      }
+    }
+
+    window.addEventListener('scroll', makeSidebarTop)
+    window.addEventListener('resize', makeSidebarTop)
+
     function updateSidebar () {
       var top = (doc && doc.scrollTop) || body.scrollTop
-
-      var headerOffsetTop = header.getBoundingClientRect().top
-      menu.style.top = headerOffsetTop + 70 + 'px'
-
       var headerHeight = header.offsetHeight
       if (top > (headerHeight - 25)) {
         // main.classList.add('fix-sidebar')
