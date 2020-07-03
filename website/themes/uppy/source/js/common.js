@@ -30,7 +30,11 @@
 
     function makeSidebarTop () {
       var headerHeight = header.offsetHeight
-      var transloaditBarHeight = transloaditBar.offsetHeight
+      var transloaditBarHeight = 0
+
+      if (transloaditBar) {
+        transloaditBarHeight = transloaditBar.offsetHeight
+      }
 
       if (window.matchMedia('(min-width: 1024px)').matches) {
         var headerTopOffset = header.getBoundingClientRect().top
