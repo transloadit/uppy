@@ -57,10 +57,10 @@ module.exports = class Provider extends RequestClient {
 
   logout () {
     return this.get(`${this.id}/logout`)
-      .then((res) => {
+      .then((response) => Promise.all([
+        response,
         this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
-        return res
-      })
+      ])).then(([response]) => response)
   }
 
   static initPlugin (plugin, opts, defaultOpts) {
