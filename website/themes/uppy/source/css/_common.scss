@@ -262,6 +262,8 @@ hr {
   background: $color-darkblue;
   color: #fff;
   font-size: 13px;
+  position: relative;
+  z-index: 11;
   
   @media #{$screen-medium} {
     display: flex;
@@ -333,7 +335,7 @@ hr {
     top: 0;
     left: 0;
     width: 100%;
-    height: auto;
+    height: $size-headerHeight;
     display: flex;
     align-items: baseline;
     padding: 14px 60px 19px;
