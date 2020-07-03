@@ -22,6 +22,10 @@ class GoogleDrive extends Plugin {
     // snip
   }
 
+  onFirstRender () {
+    return this.view.getFolder('root', '/')
+  }
+
   render (state) {
     return this.view.render(state)
   }
