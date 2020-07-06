@@ -69,7 +69,7 @@ You'll be redirected to the app page. This page lists the app key and app secret
 
 The app page has a "Redirect URIs" field. Here, add:
 ```
-https://$YOUR_COMPANION_HOST_NAME/connect/dropbox/callback
+https://$YOUR_COMPANION_HOST_NAME/dropbox/redirect
 ```
 
 You can only use the integration with your own account initially—make sure to apply for production status on the app page before you publish your app, or your users will not be able to sign in!
