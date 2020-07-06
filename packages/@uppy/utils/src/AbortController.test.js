@@ -38,6 +38,7 @@ describe('AbortController', () => {
 
     expect(callback2).toHaveBeenCalled()
     expect(callback2.mock.calls[0][0]).toBeInstanceOf(Event)
+    expect(callback).not.toHaveBeenCalled()
   })
 
   it('sets `signal.aborted` property when abort() is called', () => {
