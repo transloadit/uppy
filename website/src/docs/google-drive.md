@@ -65,7 +65,7 @@ Create a project for your app if you don't have one yet.
 - On the project's dashboard, [enable the Google Drive API](https://developers.google.com/drive/api/v3/enable-drive-api).
 - [Set up OAuth authorization](https://developers.google.com/drive/api/v3/about-auth). Use this for an authorized redirect URI:
    ```
-   https://$YOUR_COMPANION_HOST_NAME/connect/drive/callback
+   https://$YOUR_COMPANION_HOST_NAME/connect/google/callback
    ```
 
 Google will give you an OAuth client ID and client secret. Use them to configure Companion as shown above.
