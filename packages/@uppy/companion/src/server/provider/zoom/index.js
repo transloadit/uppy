@@ -9,7 +9,7 @@ const { ProviderApiError, ProviderAuthError } = require('../error')
 const BASE_URL = 'https://zoom.us/v2'
 const GET_LIST_PATH = '/users/me/recordings'
 const PAGE_SIZE = 300
-const MAX_MO_RANGE = 3 // waiting on response: https://devforum.zoom.us/t/retrieve-all-past-zoom-cloud-recordings/22487/6?u=mokutsu
+const MAX_MO_RANGE = 3
 
 class Zoom extends Provider {
   constructor (options) {
@@ -22,7 +22,6 @@ class Zoom extends Provider {
     return 'zoom'
   }
 
-  // /users/{userId}/recordings
   async list ({ token, query = { cursor: '', nextPageToken: '' } }, done) {
     /*
     zoom restricts retrieval to 1 month range + records for 300 meetings
@@ -86,7 +85,7 @@ class Zoom extends Provider {
   }
 
   download ({ id, token, query }, done) {
-    // zoom only allows retrieval by meeting so we need meeting ID and file ID to retrieve
+    // meeting id + file id required
     const meetingId = id
     const fileId = query.recordingId
     const GET_MEETING_FILES = `/meetings/${meetingId}/recordings`
@@ -152,8 +151,8 @@ class Zoom extends Provider {
     }
 
     const data = {
-      // is this nextPagePath ever used? It looks like pagination just uses the querystring / cursor key
       nextPagePath: adapter.getQuery(results, dateRange),
+      monthsRetrieved: dateRange.monthsInPast,
       items: []
     }
 

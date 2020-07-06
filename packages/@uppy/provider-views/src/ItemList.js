@@ -14,8 +14,27 @@ const getSharedProps = (fileOrFolder, props) => ({
 })
 
 module.exports = (props) => {
+  const listContainer = document.querySelector('.uppy-ProviderBrowser-list')
+
+  const scrollable = listContainer && listContainer.scrollHeight > listContainer.clientHeight
+
+  const showLoadMoreButton = props.monthsRetrieved && (!listContainer || !scrollable)
+
+  const moreButton = (
+    <div class="uppy-Provider-empty">
+      <button class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-moreBtn" onclick={props.handleLoadClick}>
+        {props.i18n('loadMore')}
+      </button>
+    </div>)
+
   if (!props.folders.length && !props.files.length) {
-    return <div class="uppy-Provider-empty">{props.i18n('noFilesFound')}</div>
+    const message = props.monthsRetrieved ? props.i18n('noRecentFilesFound', { months_retrieved: props.monthsRetrieved }) : props.i18n('noFilesFound')
+    return (
+      <div>
+        <div class="uppy-Provider-empty">{message}</div>
+        {showLoadMoreButton && moreButton}
+      </div>
+    )
   }
 
   return (
@@ -42,6 +61,7 @@ module.exports = (props) => {
             isDisabled: false
           })
         )}
+        {showLoadMoreButton && moreButton}
       </ul>
     </div>
   )

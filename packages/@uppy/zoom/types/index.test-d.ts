@@ -1,2 +1,2 @@
-import Dropbox = require('../')
+import Zoom = require('../')
 // TODO implement

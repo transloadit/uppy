@@ -4,7 +4,7 @@ const MIMETYPES = {
   MP4: 'video/mp4',
   M4A: 'audio/mp4',
   CHAT: 'text/plain',
-  TRANSCRIPT: 'text/plain', // note: waiting confirmation, https://devforum.zoom.us/t/retrieve-all-past-zoom-cloud-recordings/22487/5?u=mokutsu
+  TRANSCRIPT: 'text/vtt',
   CC: 'text/vtt'
 }
 

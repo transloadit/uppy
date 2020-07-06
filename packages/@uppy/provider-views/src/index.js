@@ -75,6 +75,7 @@ module.exports = class ProviderView {
     this.isChecked = this.isChecked.bind(this)
     this.toggleCheckbox = this.toggleCheckbox.bind(this)
     this.handleError = this.handleError.bind(this)
+    this.handleLoadClick = this.handleLoadClick.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.listAllFiles = this.listAllFiles.bind(this)
     this.donePicking = this.donePicking.bind(this)
@@ -113,6 +114,8 @@ module.exports = class ProviderView {
     })
 
     this.plugin.setPluginState({ folders, files })
+    const monthsRetrieved = res.monthsRetrieved
+    this.plugin.setPluginState({ monthsRetrieved })
   }
 
   /**
@@ -498,19 +501,31 @@ module.exports = class ProviderView {
     uppy.info({ message: message, details: error.toString() }, 'error', 5000)
   }
 
+  loadMore () {
+    const path = this.nextPagePath || null
+    if (this._isLoadingMore || !path) {
+      return
+    }
+    this.provider.list(path)
+      .then((res) => {
+        const { files, folders } = this.plugin.getPluginState()
+        this._updateFilesAndFolders(res, files, folders)
+      }).catch(this.handleError)
+      .then(() => {
+        this._isLoadingMore = false
+      })
+    this._isLoadingMore = true
+  }
+
+  handleLoadClick (e) {
+    e.preventDefault()
+    this.loadMore()
+  }
+
   handleScroll (e) {
     const scrollPos = e.target.scrollHeight - (e.target.scrollTop + e.target.offsetHeight)
-    const path = this.nextPagePath || null
-
-    if (scrollPos < 50 && path && !this._isHandlingScroll) {
-      this.provider.list(path)
-        .then((res) => {
-          const { files, folders } = this.plugin.getPluginState()
-          this._updateFilesAndFolders(res, files, folders)
-        }).catch(this.handleError)
-        .then(() => { this._isHandlingScroll = false }) // always called
-
-      this._isHandlingScroll = true
+    if (scrollPos < 50) {
+      this.loadMore()
     }
   }
 
@@ -618,6 +633,7 @@ module.exports = class ProviderView {
       isActiveRow: this.isActiveRow,
       isChecked: this.isChecked,
       toggleCheckbox: this.toggleCheckbox,
+      handleLoadClick: this.handleLoadClick,
       handleScroll: this.handleScroll,
       listAllFiles: this.listAllFiles,
       done: this.donePicking,

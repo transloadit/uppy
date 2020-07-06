@@ -6,6 +6,7 @@ import {
   Instagram,
   Dropbox,
   GoogleDrive,
+  Zoom,
   Url,
   Webcam,
   Tus,
@@ -38,6 +39,7 @@ const uppy = Core<Core.StrictTypes>({
   .use(Instagram, { target: Dashboard, companionUrl: 'http://localhost:3020' })
   .use(Dropbox, { target: Dashboard, companionUrl: 'http://localhost:3020' })
   .use(Url, { target: Dashboard, companionUrl: 'http://localhost:3020' })
+  .use(Zoom, { target: Dashboard, companionUrl: 'http://localhost:3020' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: TUS_ENDPOINT })
   .use(Form, { target: '#upload-form' })
