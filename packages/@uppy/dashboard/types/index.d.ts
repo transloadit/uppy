@@ -38,7 +38,7 @@ declare module Dashboard {
     note?: string | null
     onRequestCloseModal?: () => void
     plugins?: string[]
-    browserUploadType?: 'files' | 'folders' | 'both';
+    fileManagerSelectionType?: 'files' | 'folders' | 'both';
     proudlyDisplayPoweredByUppy?: boolean
     showLinkToFileUploadResult?: boolean
     showProgressDetails?: boolean

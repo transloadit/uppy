@@ -88,7 +88,7 @@ uppy.use(Dashboard, {
   disableThumbnailGenerator: false,
   disablePageScrollWhenModalOpen: true,
   animateOpenClose: true,
-  browserUploadType: 'files',
+  fileManagerSelectionType: 'files',
   proudlyDisplayPoweredByUppy: true,
   onRequestCloseModal: () => this.closeModal(),
   showSelectedFiles: true,
@@ -248,9 +248,9 @@ Page scrolling is disabled by default when the Dashboard modal is open, so when 
 
 Add light animations when the modal dialog is opened or closed, for a more satisfying user experience.
 
-### `browserUploadType: 'files'`
+### `fileManagerSelectionType: 'files'`
 
-Configure the type of upload allowed. May be either 'files', 'folders', or 'both'. Folder upload may not be supported on all [browsers](https://caniuse.com/#feat=input-file-directory).
+Configure the type of selections allowed when browsing your file system via the file manager selection window. May be either 'files', 'folders', or 'both'. Selecting entire folders for upload may not be supported on all [browsers](https://caniuse.com/#feat=input-file-directory).
 
 ### `proudlyDisplayPoweredByUppy: true`
 

@@ -131,7 +131,7 @@ module.exports = class Dashboard extends Plugin {
       disableThumbnailGenerator: false,
       disablePageScrollWhenModalOpen: true,
       animateOpenClose: true,
-      browserUploadType: 'files',
+      fileManagerSelectionType: 'files',
       proudlyDisplayPoweredByUppy: true,
       onRequestCloseModal: () => this.closeModal(),
       showSelectedFiles: true,
@@ -809,9 +809,9 @@ module.exports = class Dashboard extends Plugin {
       theme = this.opts.theme
     }
 
-    if (['files', 'folders', 'both'].indexOf(this.opts.browserUploadType) < 0) {
-      this.opts.browserUploadType = 'files'
-      console.error(`Unsupported option for "browserUploadType". Using default of "${this.opts.browserUploadType}".`)
+    if (['files', 'folders', 'both'].indexOf(this.opts.fileManagerSelectionType) < 0) {
+      this.opts.fileManagerSelectionType = 'files'
+      console.error(`Unsupported option for "fileManagerSelectionType". Using default of "${this.opts.fileManagerSelectionType}".`)
     }
 
     return DashboardUI({
@@ -870,7 +870,7 @@ module.exports = class Dashboard extends Plugin {
       width: this.opts.width,
       height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
-      browserUploadType: this.opts.browserUploadType,
+      fileManagerSelectionType: this.opts.fileManagerSelectionType,
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
       hideCancelButton: this.opts.hideCancelButton,
       hideRetryButton: this.opts.hideRetryButton,

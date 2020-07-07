@@ -112,15 +112,15 @@ class AddFiles extends Component {
 
     // in order to keep the i18n CamelCase and options lower (as are defaults) we will want to transform a lower
     // to Camel
-    const lowerBrowseType = this.props.browserUploadType
-    const camelBrowseType = lowerBrowseType.charAt(0).toUpperCase() + lowerBrowseType.slice(1)
+    const lowerFMSelectionType = this.props.fileManagerSelectionType
+    const camelFMSelectionType = lowerFMSelectionType.charAt(0).toUpperCase() + lowerFMSelectionType.slice(1)
 
     return (
       <div class="uppy-Dashboard-AddFiles-title">
         {
           numberOfAcquirers > 0
-            ? this.props.i18nArray(`dropPasteImport${camelBrowseType}`, { browseFiles, browseFolders, browse: browseFiles })
-            : this.props.i18nArray(`dropPaste${camelBrowseType}`, { browseFiles, browseFolders, browse: browseFiles })
+            ? this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })
+            : this.props.i18nArray(`dropPaste${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })
         }
       </div>
     )
