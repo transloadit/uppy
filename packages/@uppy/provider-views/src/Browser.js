@@ -47,12 +47,10 @@ const Browser = (props) => {
         handleFolderClick={props.getNextFolder}
         toggleCheckbox={props.toggleCheckbox}
         handleScroll={props.handleScroll}
-        handleLoadClick={props.handleLoadClick}
         title={props.title}
         showTitles={props.showTitles}
         i18n={props.i18n}
         viewType={props.viewType}
-        monthsRetrieved={props.monthsRetrieved}
       />
       {selected > 0 && <FooterActions selected={selected} {...props} />}
     </div>

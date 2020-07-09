@@ -64,7 +64,6 @@ class Uppy {
         connectedToInternet: 'Connected to the Internet',
         // Strings for remote providers
         noFilesFound: 'You have no files or folders here',
-        noRecentFilesFound: 'No files or folders found from the last %{months_retrieved} months',
         loadMore: 'Load more',
         selectX: {
           0: 'Select %{smart_count}',

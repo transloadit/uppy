@@ -9,7 +9,9 @@ const { ProviderApiError, ProviderAuthError } = require('../error')
 const BASE_URL = 'https://zoom.us/v2'
 const GET_LIST_PATH = '/users/me/recordings'
 const PAGE_SIZE = 300
-const MAX_MO_RANGE = 3
+const DEFAULT_RANGE_MOS = 23
+// oldest possible folder for any user
+const OLDEST_RECORD = moment().set({ year: 2014, month: 11 })
 
 class Zoom extends Provider {
   constructor (options) {
@@ -22,66 +24,70 @@ class Zoom extends Provider {
     return 'zoom'
   }
 
-  async list ({ token, query = { cursor: '', nextPageToken: '' } }, done) {
+  list (options, done) {
     /*
-    zoom restricts retrieval to 1 month range + records for 300 meetings
-      - if there's enough results to paginate, return that
-      - if there's not enough, keep grabbing older records until we get the max number of results or max date range
+    - show 2 years by default, scroll for older folders
+    - drill down for rest
     */
-    const oldestMonth = query.cursor ? parseInt(query.cursor) : 0
-    let nextPageToken = query.nextPageToken || ''
-    let response = null
-    const results = []
-    let initialMonth = 1
+    const token = options.token || ''
+    const query = options.query || {}
+    const { cursor, from, to } = query
+    const meetingId = options.directory || ''
 
-    if (nextPageToken && oldestMonth) {
-      initialMonth = oldestMonth
-    } else if (oldestMonth) {
-      initialMonth += oldestMonth + 1
+    if (!from && !to && !meetingId) {
+      const end = cursor && moment(cursor)
+      this.client.get(`${BASE_URL}/users/me`)
+        .auth(token)
+        .request((err, resp, body) => {
+          if (err || resp.statusCode !== 200) {
+            err = this._error(err, resp)
+            logger.error(err, 'provider.zoom.list.error')
+            return done(err)
+          }
+          done(null, this._initializeData(end))
+        })
     }
 
-    let monthsPastToQuery = initialMonth
-    let dateRange = this._getDateRange(monthsPastToQuery)
-
-    while (
-      !(response && response.body.next_page_token) &&
-      (monthsPastToQuery - initialMonth < MAX_MO_RANGE) &&
-      results.length < PAGE_SIZE
-    ) {
-      dateRange = this._getDateRange(monthsPastToQuery)
+    if (from && to) {
       const queryObj = {
         page_size: PAGE_SIZE,
-        from: dateRange.fromDate,
-        to: dateRange.toDate
-      }
-      if (nextPageToken) {
-        queryObj.next_page_token = nextPageToken
-      }
-      try {
-        response = await new Promise((resolve, reject) => this.client.get(`${BASE_URL}${GET_LIST_PATH}`)
-          .qs(queryObj)
-          .auth(token)
-          .request((err, resp, body) => {
-            if (err || resp.statusCode !== 200) {
-              reject(this._error(err, resp))
-            } else {
-              resolve(resp)
-            }
-          })
-        )
-      } catch (err) {
-        return done(err)
+        from,
+        to
       }
 
-      if (response.body.next_page_token) {
-        nextPageToken = response.body.next_page_token
-      } else {
-        monthsPastToQuery += 1
+      if (cursor) {
+        queryObj.next_page_token = cursor
       }
-      results.push(response.body)
+
+      this.client.get(`${BASE_URL}${GET_LIST_PATH}`)
+        .qs(queryObj)
+        .auth(token)
+        .request((err, resp, body) => {
+          if (err || resp.statusCode !== 200) {
+            err = this._error(err, resp)
+            logger.error(err, 'provider.zoom.list.error')
+            return done(err)
+          } else {
+            done(null, this._adaptData(body))
+          }
+        })
     }
 
-    done(null, this._adaptData(results, dateRange))
+    if (meetingId) {
+      const GET_MEETING_FILES = `/meetings/${meetingId}/recordings`
+      this.client
+        .get(`${BASE_URL}${GET_MEETING_FILES}`)
+        .auth(token)
+        .request((err, resp, body) => {
+          if (err || resp.statusCode !== 200) {
+            err = this._error(err, resp)
+            logger.error(err, 'provider.zoom.list.error')
+            return done(err)
+          } else {
+            done(null, this._adaptData(body))
+          }
+        })
+    }
   }
 
   download ({ id, token, query }, done) {
@@ -99,7 +105,11 @@ class Zoom extends Provider {
             this._downloadError(resp, done)
             return
           }
-          const file = resp.body.recording_files.find(file => file.id === fileId)
+          // timeline files don't have an ID
+          const file = resp
+            .body
+            .recording_files
+            .find(file => fileId === file.id || fileId === file.file_type)
           if (!file || !file.download_url) {
             return this._downloadError(resp, done)
           }
@@ -117,7 +127,9 @@ class Zoom extends Provider {
             resp.on('data', (chunk) => done(null, chunk))
           }
         })
-        .on('end', () => done(null, null))
+        .on('end', () => {
+          done(null, null)
+        })
         .on('error', (err) => {
           logger.error(err, 'provider.zoom.download.error')
           done(err)
@@ -137,41 +149,76 @@ class Zoom extends Provider {
         if (err || resp.statusCode !== 200) {
           return this._downloadError(resp, done)
         }
-        const file = resp.body.recording_files.find(file => file.id === fileId)
+        const file = resp
+          .body
+          .recording_files
+          .find(file => file.id === fileId || file.file_type === fileId)
+
         if (!file) {
           return this._downloadError(resp, done)
         }
-        done(null, file.file_size)
+        // timeline files don't have file size, but are typically small json files, should be much less than 1MB
+        const maxExportFileSize = 1024 * 1024
+        done(null, file.file_size || maxExportFileSize)
       })
   }
 
-  _adaptData (results, dateRange) {
+  _initializeData (initialEnd = null) {
+    let end = initialEnd || moment()
+    let start = end.clone().date(1)
+
+    const defaultLimit = end.clone().subtract('months', DEFAULT_RANGE_MOS)
+    const limit = defaultLimit > OLDEST_RECORD ? defaultLimit : OLDEST_RECORD
+
+    const data = {
+      items: []
+    }
+
+    while (start > limit) {
+      start = end.clone().date(1)
+      data.items.push({
+        isFolder: true,
+        icon: 'folder',
+        name: adapter.getDateName(start, end),
+        mimeType: null,
+        id: adapter.getDateFolderId(start, end),
+        thumbnail: null,
+        requestPath: adapter.getDateFolderRequestPath(start, end),
+        modifiedDate: adapter.getDateFolderModified,
+        size: null
+      })
+      end = start.clone().subtract(1, 'days')
+    }
+    data.nextPagePath = adapter.getDateQuery(start)
+    return data
+  }
+
+  _adaptData (results) {
     if (!results || results.length === 0) {
       return { items: [] }
     }
 
     const data = {
-      nextPagePath: adapter.getQuery(results, dateRange),
-      monthsRetrieved: dateRange.monthsInPast,
+      nextPagePath: adapter.getQuery(results),
       items: []
     }
-
-    results.forEach(res => {
-      res.meetings.forEach(meeting => {
-        meeting.recording_files.forEach((record, index) => {
-          data.items.push({
-            name: adapter.getItemName(meeting, record, index),
-            mimeType: adapter.getMimeType(record),
-            id: adapter.getId(record),
-            requestPath: adapter.getRequestPath(record),
-            modifiedDate: adapter.getStartDate(record),
-            size: adapter.getSize(record),
-            custom: adapter.getCustomFields(record)
-          })
-        })
+    const items = results.meetings || results.recording_files
+    items.forEach(item => {
+      if (item.file_type && item.file_type === 'TIMELINE') {
+        console.log(item.download_url)
+      }
+      data.items.push({
+        isFolder: adapter.getIsFolder(item),
+        icon: adapter.getIcon(item),
+        name: adapter.getItemName(item),
+        mimeType: adapter.getMimeType(item),
+        id: adapter.getId(item),
+        thumbnail: null,
+        requestPath: adapter.getRequestPath(item),
+        modifiedDate: adapter.getStartDate(item),
+        size: null
       })
     })
-
     return data
   }
 
@@ -209,14 +256,6 @@ class Zoom extends Provider {
     const err = this._error(null, resp)
     logger.error(err, 'provider.zoom.download.error')
     return done(err)
-  }
-
-  _getDateRange (monthsInPast = 1) {
-    return {
-      fromDate: moment().subtract(monthsInPast, 'month').format('YYYY-MM-DD'),
-      toDate: moment().subtract(monthsInPast - 1, 'month').format('YYYY-MM-DD'),
-      monthsInPast
-    }
   }
 }
 
