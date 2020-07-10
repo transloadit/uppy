@@ -36,7 +36,7 @@ class Zoom extends Provider {
 
     if (!from && !to && !meetingId) {
       const end = cursor && moment(cursor)
-      this.client.get(`${BASE_URL}/users/me`)
+      this.client.get(`${BASE_URL}${GET_LIST_PATH}`)
         .auth(token)
         .request((err, resp, body) => {
           if (err || resp.statusCode !== 200) {
