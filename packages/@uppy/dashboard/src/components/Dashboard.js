@@ -119,7 +119,7 @@ module.exports = function Dashboard (props) {
           )}
 
           <TransitionWrapper>
-            {props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} isSizeMD={isSizeMD} /> : null}
+            {props.showAddFilesPanel ? <AddFilesPanel key="AddFiles" {...props} isSizeMD={isSizeMD} /> : null}
           </TransitionWrapper>
 
           <TransitionWrapper>
@@ -127,11 +127,11 @@ module.exports = function Dashboard (props) {
           </TransitionWrapper>
 
           <TransitionWrapper>
-            {props.activePickerPanel ? <PickerPanelContent key="PickerPanelContent" {...props} /> : null}
+            {props.activePickerPanel ? <PickerPanelContent key="Picker" {...props} /> : null}
           </TransitionWrapper>
 
           <TransitionWrapper>
-            {props.showFileEditor ? <EditorPanel key="EditorPanel" {...props} /> : null}
+            {props.showFileEditor ? <EditorPanel key="Editor" {...props} /> : null}
           </TransitionWrapper>
 
           <div class="uppy-Dashboard-progressindicators">

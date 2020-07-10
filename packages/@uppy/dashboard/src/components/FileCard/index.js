@@ -86,6 +86,11 @@ class FileCard extends Component {
   render () {
     const file = this.props.files[this.props.fileCardFor]
 
+    let showEditButton
+    this.props.editors.forEach((target) => {
+      showEditButton = this.props.getPlugin(target.id).сanEditFile(file)
+    })
+
     return (
       <div
         class="uppy-Dashboard-FileCard"
@@ -111,17 +116,15 @@ class FileCard extends Component {
 
         <div class="uppy-Dashboard-FileCard-inner">
           <div class="uppy-Dashboard-FileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
-            <FilePreview
-              file={file}
-              uppy={this.props.uppy}
-              openFileEditor={this.props.openFileEditor}
-            />
-            <button
-              class="uppy-u-reset uppy-c-btn"
-              onClick={() => this.props.openFileEditor(file)}
-            >
-              Edit
-            </button>
+            <FilePreview file={file} />
+            {showEditButton &&
+              <button
+                type="button"
+                class="uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit"
+                onClick={() => this.props.openFileEditor(file)}
+              >
+                {this.props.i18n('editFile')}
+              </button>}
           </div>
 
           <div class="uppy-Dashboard-FileCard-info">

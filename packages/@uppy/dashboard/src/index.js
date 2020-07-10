@@ -239,7 +239,8 @@ module.exports = class Dashboard extends Plugin {
     const { targets } = this.getPluginState()
 
     this.setPluginState({
-      showFileEditor: true
+      showFileEditor: true,
+      activeOverlayType: 'FileEditor'
     })
 
     const editors = this._getEditors(targets)
@@ -247,9 +248,6 @@ module.exports = class Dashboard extends Plugin {
       const editorPlugin = this.uppy.getPlugin(editor.id)
       editorPlugin.selectFile(file)
       setTimeout(editorPlugin.initEditor, 4)
-      setTimeout(() => {
-        editorPlugin.edit()
-      }, 5000)
     })
   }
 
@@ -659,6 +657,7 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', this.hideAllPanels)
     this.uppy.on('dashboard:modal-closed', this.hideAllPanels)
+    this.uppy.on('file-editor:complete', this.hideAllPanels)
     this.uppy.on('complete', this.handleComplete)
 
     // ___Why fire on capture?
