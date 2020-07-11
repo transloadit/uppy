@@ -523,7 +523,7 @@ const updatedFile = Object.assign({}, updatedFiles[fileID], {
     bytesTotal: data.bytesTotal,
     percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
   })
-))
+})
 updatedFiles[data.id] = updatedFile
 uppy.setState({files: updatedFiles})
 ```
