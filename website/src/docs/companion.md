@@ -391,7 +391,7 @@ To work well with Companion, the **Module** must be a class with the following m
     - token - authorization token (retrieved from oauth process) to send along with your request
     - directory - the `id/name` of the directory from which data is to be retrieved. This may be ignored if it doesn't apply to your provider
     - query - expressjs query params object received by the server (just in case there is some data you need in there).
-  - `done (err, data)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, and [`data`]((#list-data)).
+  - `done (err, data)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, and [`data`](#list-data).
 2. `download (options, onData)` - downloads a particular file from the provider.
   - `options` - is an object containing the following attributes:
     - token - authorization token (retrieved from oauth process) to send along with your request.

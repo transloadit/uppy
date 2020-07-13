@@ -4,7 +4,7 @@ type: docs
 module: "@uppy/react"
 permalink: docs/react/drag-drop/
 alias: docs/react/dragdrop/
-order: 2
+order: 3
 category: "React"
 ---
 
@@ -36,35 +36,9 @@ import '@uppy/drag-drop/dist/style.css'
 
 Import general Core styles from `@uppy/core/dist/style.css` first, then add the Drag & Drop styles from `@uppy/drag-drop/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
 
-## Initializing Uppy
-
-Your Uppy instance must be initialized before passing it to an `uppy={}` prop, and should be cleaned up using `uppy.close()` when you are done with it. A simple approach is to initialize it in your React component's `constructor()` and destroy it in `componentWillUnmount()`.
-
-> ⚠ Uppy instances are stateful, so the same instance must be used across different renders.
-> Do **NOT** initialize Uppy in a `render()` method!
-> Do **NOT** initialize Uppy in a function component!
-
-```js
-class MyComponent extends React.Component {
-  constructor (props) {
-    super(props)
-    this.uppy = new Uppy()
-      .use(Transloadit, {})
-  }
-
-  componentWillUnmount () {
-    this.uppy.close()
-  }
-
-  render () {
-    return <DragDrop uppy={this.uppy} />
-  }
-}
-```
-
 ## Props
 
-The `<DragDrop />` component supports all [DragDrop](/docs/drag-drop/) options as props.
+The `<DragDrop />` component supports all [DragDrop](/docs/drag-drop/) options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
 ```js
 // assuming `this.uppy` contains an Uppy instance:

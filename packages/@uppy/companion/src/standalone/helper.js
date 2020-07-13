@@ -29,7 +29,7 @@ const getConfigFromEnv = () => {
 
   return {
     providerOptions: {
-      google: {
+      drive: {
         key: process.env.COMPANION_GOOGLE_KEY,
         secret: getSecret('COMPANION_GOOGLE_SECRET')
       },
@@ -45,7 +45,7 @@ const getConfigFromEnv = () => {
         key: process.env.COMPANION_FACEBOOK_KEY,
         secret: getSecret('COMPANION_FACEBOOK_SECRET')
       },
-      microsoft: {
+      onedrive: {
         key: process.env.COMPANION_ONEDRIVE_KEY,
         secret: getSecret('COMPANION_ONEDRIVE_SECRET')
       },
