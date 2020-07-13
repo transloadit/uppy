@@ -8,8 +8,44 @@ order: 1
 category: "React"
 ---
 
-Your Uppy instance must be initialized before passing it to an `uppy={}` prop in the desired component,
-and should be cleaned up using `uppy.close()` when you are done with it.
+When using Uppy's React components, an Uppy instance must be passed in to the `uppy={}` prop from the outside. This Uppy instance must be initialized before passing it to the desired component, and be cleaned up using `uppy.close()` when you are done with it.
+
+## Functional Components
+
+With React Hooks, the `useMemo` hook can be used to create an instance once and remember it for all rerenders. The `useEffect` hook can close the Uppy instance when the component unmounts.
+
+```js
+const MyComponent = () => {
+  const uppy = React.useMemo(() => {
+    // Do all the configuration here
+    return Uppy()
+      .use(Transloadit, {})
+  }, []);
+
+  React.useEffect(() => {
+    return () => uppy.close()
+  }, [])
+
+  return <DashboardModal uppy={uppy} />
+}
+```
+
+Both hooks must receive the `[]` dependency array parameter, or the Uppy instance will be recreated and/or destroyed every time the component rerenders. To make sure you never forget that, a custom hook could be used:
+```js
+function useUppy (factory) {
+  const uppy = React.useMemo(factory, [])
+  React.useEffect(() => {
+    return () => uppy.close()
+  }, [])
+  return uppy
+}
+
+// Then use it as:
+const uppy = useUppy(() => {
+  return Uppy()
+    .use(Tus, {})
+})
+```
 
 ## Class Components
 
@@ -35,21 +71,3 @@ class MyComponent extends React.Component {
   }
 }
 ```
-
-## Functional Components
-
-With react hooks, writing pure functional components are on hype. For wealthy initializing Uppy in a functional component, we need to use the `useMemo` hook for keeping the same instance across multiple renders and use `useEffect` for cleaning up things when the component is unmounted.
-
-```js
-const MyComponent = () => {
-  const uppy = useMemo(() => Uppy().use(Transloadit, {}), []);
-
-  useEffect(() => {
-    return () => uppy.close()
-  }, [])
-
-  return <DashboardModal uppy={uppy} />
-}
-```
-
-Credits for functional components approach: https://stackoverflow.com/questions/56392794/react-hooks-how-to-write-variables-in-functional-components-that-in-class-compo
