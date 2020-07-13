@@ -7,6 +7,7 @@ function get (req, res, next) {
   const id = req.params.id
   const token = req.companion.providerTokens[providerName]
   const provider = req.companion.provider
+
   // get the file size before proceeding
   provider.size({ id, token, query: req.query }, (err, size) => {
     if (err) {

@@ -75,6 +75,7 @@ describe('Test Provider options', () => {
     process.env.COMPANION_ZOOM_SECRET_FILE = process.env.PWD + '/test/resources/zoom_secret_file'
 
     companionOptions = getCompanionOptions()
+
     providerManager.addProviderOptions(companionOptions, grantConfig)
 
     expect(grantConfig.dropbox.secret).toBe('xobpord')

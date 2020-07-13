@@ -134,6 +134,7 @@ app.use((req, res, next) => {
     const whitelist = process.env.COMPANION_CLIENT_ORIGINS
       .split(',')
       .map((url) => helper.hasProtocol(url) ? url : `${protocol}://${url}`)
+
     // @ts-ignore
     if (req.headers.origin && whitelist.indexOf(req.headers.origin) > -1) {
       res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
@@ -143,6 +144,7 @@ app.use((req, res, next) => {
   } else {
     res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
   }
+
   res.setHeader(
     'Access-Control-Allow-Methods',
     'GET, POST, OPTIONS, PUT, PATCH, DELETE'

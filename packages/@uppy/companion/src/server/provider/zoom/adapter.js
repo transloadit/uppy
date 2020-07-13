@@ -1,4 +1,3 @@
-const qs = require('qs')
 const moment = require('moment')
 
 const MIMETYPES = {
@@ -11,10 +10,10 @@ const MIMETYPES = {
 }
 const ICONS = {
   MP4: 'video',
-  M4A: 'audio',
-  CHAT: 'text',
-  TRANSCRIPT: 'text',
-  CC: 'text',
+  M4A: 'file',
+  CHAT: 'file',
+  TRANSCRIPT: 'file',
+  CC: 'file',
   FOLDER: 'folder'
 }
 
@@ -22,8 +21,16 @@ exports.getDateName = (start, end) => {
   return `${start.format('YYYY-MM-DD')} - ${end.format('YYYY-MM-DD')}`
 }
 
+exports.getAccountCreationDate = (results) => {
+  return moment(results.created_at)
+}
+
+exports.getUserEmail = (results) => {
+  return results.email
+}
+
 exports.getDateFolderId = (start, end) => {
-  return `dates=${start.format('YYYY-MM-DD')}_${end.format('YYYY-MM-DD')}`
+  return `${start.format('YYYY-MM-DD')}_${end.format('YYYY-MM-DD')}`
 }
 
 exports.getDateFolderRequestPath = (start, end) => {
@@ -34,17 +41,13 @@ exports.getDateFolderModified = (end) => {
   return end.format('YYYY-MM-DD')
 }
 
-exports.getDateQuery = (start) => {
-  return `?${qs.stringify({ cursor: start.subtract(1, 'days').format('YYYY-MM-DD') })}`
+exports.getDateNextPagePath = (start) => {
+  return `?cursor=${start.subtract(1, 'days').format('YYYY-MM-DD')}`
 }
 
-exports.getQuery = (results) => {
+exports.getNextPagePath = (results) => {
   if (results.next_page_token) {
-    return `?${qs.stringify({
-      cursor: results.next_page_token || '',
-      from: results.from,
-      to: results.to
-    })}`
+    return `?cursor=${results.next_page_token}&from=${results.from}&to=${results.to}`
   }
   return null
 }
@@ -68,7 +71,7 @@ exports.getItemName = (item) => {
 
 exports.getIcon = (item) => {
   if (item.file_type) {
-    return null
+    return ICONS[item.file_type]
   }
   return ICONS.FOLDER
 }
@@ -81,11 +84,12 @@ exports.getMimeType = (item) => {
 }
 
 exports.getId = (item) => {
-  let id = `${encodeURIComponent(item.id)}`
-  if (item.file_type) {
-    id = `${item.meeting_id}?recordingId=${id}`
+  if (item.file_type && item.file_type === 'TIMELINE') {
+    return `${encodeURIComponent(item.meeting_id)}__TIMELINE`
+  } else if (item.file_type) {
+    return `${encodeURIComponent(item.meeting_id)}__${encodeURIComponent(item.id)}`
   }
-  return id
+  return `${encodeURIComponent(item.id)}`
 }
 
 exports.getRequestPath = (item) => {
@@ -98,17 +102,18 @@ exports.getRequestPath = (item) => {
 }
 
 exports.getStartDate = (item) => {
+  if (item.file_type === 'TIMELINE') {
+    return item.recording_start
+  }
   return item.start_time
 }
 
 exports.getSize = (item) => {
-  return item.file_size
-}
-
-exports.getCustomFields = (item) => {
-  return {
-    recordTrueId: item.id,
-    requestDownloadUrl: item.download_url,
-    recordingDate: item.recording_start
+  if (item.file_type && item.file_type === 'TIMELINE') {
+    const maxExportFileSize = 1024 * 1024
+    return maxExportFileSize
+  } else if (item.file_type) {
+    return item.file_size
   }
+  return item.total_size
 }
