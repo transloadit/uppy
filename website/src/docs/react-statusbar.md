@@ -38,10 +38,11 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 ## Props
 
-The `<StatusBar />` component supports all [`@uppy/status-bar`][] options as props.
+The `<StatusBar />` component supports all [`@uppy/status-bar`][] options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
 ```js
 <StatusBar
+  uppy={uppy}
   hideUploadButton
   hideAfterFinish={false}
   showProgressDetails

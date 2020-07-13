@@ -38,10 +38,11 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 ## Props
 
-The `<ProgressBar />` component supports all [`@uppy/progress-bar`][] options as props.
+The `<ProgressBar />` component supports all [`@uppy/progress-bar`][] options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
 ```js
 <ProgressBar
+  uppy={uppy}
   fixed
   hideAfterFinish
 />

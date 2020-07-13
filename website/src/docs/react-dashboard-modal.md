@@ -48,6 +48,8 @@ On top of all the [`@uppy/dashboard`][] options, the `<DashboardModal />` plugin
  - `open` - Boolean true or false, setting this to `true` opens the modal and setting it to `false` closes it.
  - `onRequestClose` - Callback called when the user attempts to close the modal, either by clicking the close button or by clicking outside the modal (if the `closeModalOnClickOutside` prop is set).
 
+An Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
+
 To use other plugins like [`@uppy/webcam`][] with the `<DashboardModal />` component, add them to the Uppy instance and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
 ```js
@@ -70,8 +72,16 @@ class MusicUploadButton extends React.Component {
       modalOpen: false
     }
 
+    this.uppy = new Uppy()
+      .use(XHRUpload, { endpoint: '/api/songs/upload' })
+      .use(Webcam, { modes: ['audio-only'] })
+
     this.handleOpen = this.handleOpen.bind(this)
     this.handleClose = this.handleClose.bind(this)
+  }
+
+  componentWillUnmount () {
+    this.uppy.close()
   }
 
   handleOpen () {
@@ -91,7 +101,7 @@ class MusicUploadButton extends React.Component {
       <div>
         <button onClick={this.handleOpen}>Upload some music</button>
         <DashboardModal
-          uppy={this.props.uppy}
+          uppy={this.uppy}
           closeModalOnClickOutside
           open={this.state.modalOpen}
           onRequestClose={this.handleClose}

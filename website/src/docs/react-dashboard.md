@@ -41,24 +41,30 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
 
 ## Props
 
-The `<Dashboard />` component supports all [`@uppy/dashboard`][] options as props.
+The `<Dashboard />` component supports all [`@uppy/dashboard`][] options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
 The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
 ```js
-// Do this wherever you initialize Uppy, e.g., in a React component's constructor method.
-// Do NOT do it in `render()` or any other method that is called more than once!
-uppy.use(Webcam) // `id` defaults to "Webcam"
-uppy.use(Webcam, { id: 'MyWebcam' }) // `id` is… "MyWebcam"
-```
+function Uploader () {
+  const uppy = React.useMemo(() => {
+    return Uppy()
+      .use(Webcam) // `id` defaults to "Webcam"
+      // or
+      .use(Webcam, { id: 'MyWebcam' }) // `id` is… "MyWebcam"
+  }, [])
+  React.useEffect(() => {
+    return () => uppy.close()
+  }, [])
 
-Then add the following to `render()`:
-
-```js
-<Dashboard
-  plugins={['Webcam']}
-  {...props}
-/>
+  return (
+    <Dashboard
+      uppy={uppy}
+      plugins={['Webcam']}
+      {...props}
+    />
+  )
+}
 ```
 
 [`@uppy/dashboard`]: /docs/dashboard/

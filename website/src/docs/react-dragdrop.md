@@ -38,7 +38,7 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 ## Props
 
-The `<DragDrop />` component supports all [DragDrop](/docs/drag-drop/) options as props.
+The `<DragDrop />` component supports all [DragDrop](/docs/drag-drop/) options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
 ```js
 // assuming `this.uppy` contains an Uppy instance:
