@@ -33,6 +33,7 @@ declare module AwsS3Multipart {
     ) => MaybePromise<{ location?: string }>
     timeout?: number
     limit?: number
+    retryDelays?: number[] | null
   }
 }
 
