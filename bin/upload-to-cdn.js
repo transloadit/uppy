@@ -30,6 +30,7 @@ const mime = require('mime-types')
 const { promisify } = require('util')
 const readFile = promisify(require('fs').readFile)
 const finished = promisify(require('stream').finished)
+const AdmZip = require('adm-zip')
 
 function delay (ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -41,10 +42,10 @@ const AWS_DIRECTORY = '756b8efaed084669b02cb99d4540d81f/default'
 
 /**
  * Get remote dist/ files by fetching the tarball for the given version
- * from npm and filtering it down to package/dist/ files.
+from npm and filtering it down to package/dist/ files.
  *
- * @param {string} Package name, eg. @uppy/robodog
- * @param {string} Package version, eg. "1.2.0"
+ * @param {string} packageName eg. @uppy/robodog
+ * @param {string} version eg. 1.8.0
  * @returns a Map<string, Buffer>, filename → content
  */
 async function getRemoteDistFiles (packageName, version) {
@@ -74,7 +75,7 @@ async function getRemoteDistFiles (packageName, version) {
  * Get local dist/ files by asking npm-packlist what files would be added
  * to an npm package during publish, and filtering those down to just dist/ files.
  *
- * @param {string} Base file path of the package, eg. ./packages/@uppy/locales
+ * @param {string} packagePath Base file path of the package, eg. ./packages/@uppy/locales
  * @returns a Map<string, Buffer>, filename → content
  */
 async function getLocalDistFiles (packagePath) {
@@ -159,6 +160,16 @@ async function main (packageName, version) {
   const files = remote
     ? await getRemoteDistFiles(packageName, version)
     : await getLocalDistFiles(packagePath)
+
+  if (packageName === 'uppy') {
+    // Create downloadable zip archive
+    const zip = new AdmZip()
+    for (const [filename, buffer] of files.entries()) {
+      zip.addFile(filename, buffer)
+    }
+
+    files.set(`uppy-v${version}.zip`, zip.toBuffer())
+  }
 
   for (const [filename, buffer] of files.entries()) {
     const key = path.posix.join(AWS_DIRECTORY, outputPath, filename)

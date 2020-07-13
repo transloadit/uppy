@@ -5,11 +5,19 @@
 .uppy-ProviderBrowser-viewType--list {
   background-color: $white;
 
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+  }
+
   li.uppy-ProviderBrowserItem {
     display: flex;
     align-items: center;
     padding: 7px 15px;
     margin: 0;
+
+    [data-uppy-theme="dark"] & {
+      color: $gray-200;
+    }
   }
 
   // Checkbox
@@ -32,6 +40,11 @@
       opacity: 0;
       height: 5px; width: 9px;
       left: 3px; top: 4px;
+    }
+
+    [data-uppy-theme="dark"] &:focus {
+      border-color: rgba($highlight--dark, 0.7);
+      box-shadow: 0 0 0 3px rgba($highlight--dark, 0.2);
     }
   }
   // Checked: color the background, show the checkmark

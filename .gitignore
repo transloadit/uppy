@@ -13,9 +13,11 @@ dist/
 lib/
 coverage/
 examples/dev/bundle.js
+examples/aws-presigned-url/vendor/*
 test/endtoend/create-react-app/build/
 test/endtoend/create-react-app/coverage/
 uppy-*.tgz
+generatedLocale.d.ts
 
 website/db.json
 website/*.log
@@ -33,3 +35,7 @@ website/themes/uppy/layout/partials/generated_stargazers.ejs
 !output/.keep
 examples/dev/file.txt
 issues.txt
+
+# companion deployment files
+transloadit-cluster-kubeconfig.yaml
+companion-env.yml

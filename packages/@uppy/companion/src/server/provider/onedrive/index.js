@@ -1,11 +1,17 @@
+const Provider = require('../Provider')
+
 const request = require('request')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
-const AuthError = require('../error')
+const { ProviderApiError, ProviderAuthError } = require('../error')
 
-class OneDrive {
+/**
+ * Adapter for API https://docs.microsoft.com/en-us/onedrive/developer/rest-api/
+ */
+class OneDrive extends Provider {
   constructor (options) {
+    super(options)
     this.authProvider = options.provider = OneDrive.authProvider
     this.client = purest(options)
   }
@@ -30,13 +36,14 @@ class OneDrive {
    */
   list ({ directory, query, token }, done) {
     const path = directory ? `items/${directory}` : 'root'
+    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/drive'
     const qs = { $expand: 'thumbnails' }
     if (query.cursor) {
       qs.$skiptoken = query.cursor
     }
 
     this.client
-      .get(`/drive/${path}/children`)
+      .get(`${rootPath}/${path}/children`)
       .qs(qs)
       .auth(token)
       .request((err, resp, body) => {
@@ -57,15 +64,23 @@ class OneDrive {
       })
   }
 
-  download ({ id, token }, onData) {
+  download ({ id, token, query }, onData) {
+    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/drive'
     return this.client
-      .get(`/drive/items/${id}/content`)
+      .get(`${rootPath}/items/${id}/content`)
       .auth(token)
       .request()
-      .on('data', onData)
-      .on('end', () => onData(null))
+      .on('response', (resp) => {
+        if (resp.statusCode !== 200) {
+          onData(this._error(null, resp))
+        } else {
+          resp.on('data', (chunk) => onData(null, chunk))
+        }
+      })
+      .on('end', () => onData(null, null))
       .on('error', (err) => {
         logger.error(err, 'provider.onedrive.download.error')
+        onData(err)
       })
   }
 
@@ -76,9 +91,10 @@ class OneDrive {
     return done(err)
   }
 
-  size ({ id, token }, done) {
+  size ({ id, query, token }, done) {
+    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/drive'
     return this.client
-      .get(`/drive/items/${id}`)
+      .get(`${rootPath}/items/${id}`)
       .auth(token)
       .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {
@@ -120,8 +136,9 @@ class OneDrive {
 
   _error (err, resp) {
     if (resp) {
-      const errMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
-      return resp.statusCode === 401 ? new AuthError() : new Error(errMsg)
+      const fallbackMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
+      const errMsg = (resp.body || {}).error ? resp.body.error.message : fallbackMsg
+      return resp.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
     }
 
     return err

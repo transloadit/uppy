@@ -83,6 +83,14 @@ module.exports = class Translator {
     function insertReplacement (source, rx, replacement) {
       const newParts = []
       source.forEach((chunk) => {
+        // When the source contains multiple placeholders for interpolation,
+        // we should ignore chunks that are not strings, because those
+        // can be JSX objects and will be otherwise incorrectly turned into strings.
+        // Without this condition we’d get this: [object Object] hello [object Object] my <button>
+        if (typeof chunk !== 'string') {
+          return newParts.push(chunk)
+        }
+
         split.call(chunk, rx).forEach((raw, i, list) => {
           if (raw !== '') {
             newParts.push(raw)
@@ -117,11 +125,18 @@ module.exports = class Translator {
    * @returns {Array} The translated and interpolated parts, in order.
    */
   translateArray (key, options) {
-    if (options && typeof options.smart_count !== 'undefined') {
-      var plural = this.locale.pluralize(options.smart_count)
-      return this.interpolate(this.locale.strings[key][plural], options)
+    const string = this.locale.strings[key]
+    const hasPluralForms = typeof string === 'object'
+
+    if (hasPluralForms) {
+      if (options && typeof options.smart_count !== 'undefined') {
+        const plural = this.locale.pluralize(options.smart_count)
+        return this.interpolate(string[plural], options)
+      } else {
+        throw new Error('Attempted to use a string with plural forms, but no value was given for %{smart_count}')
+      }
     }
 
-    return this.interpolate(this.locale.strings[key], options)
+    return this.interpolate(string, options)
   }
 }

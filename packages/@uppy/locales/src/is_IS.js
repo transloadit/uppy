@@ -16,7 +16,6 @@ is_IS.strings = {
   cancelUpload: 'Hætta við að hlaða upp',
   chooseFiles: 'Veldu skrár',
   closeModal: 'Loka glugga',
-  companionAuthError: 'Leyfi nauðsynlegt',
   companionError: 'Tengin mistókst',
   companionUnauthorizeHint:
         'Til þess að leyfa aðgang að %{provider}, vinsamlegast smelltu hér: %{url}',
@@ -35,7 +34,6 @@ is_IS.strings = {
   dropHint: 'Dragðu skrárnar þínar hingað',
   dropPaste: 'Slepptu skrám hérna, límdu (paste) eða %{browse}',
   dropPasteImport: 'Slepptu skrám hérna, límdu (paste), %{browse} eða bættu við frá',
-  edit: 'Breyta',
   editFile: 'Breyta skrá',
   editing: 'Breyti %{file}',
   emptyFolderAdded: 'Engum skrám var bætt við frá tómri möppu',
@@ -63,7 +61,6 @@ is_IS.strings = {
   generatingThumbnails: 'Bý til smámynd ...',
   import: 'Flytja inn',
   importFrom: 'Flytja inn frá %{name}',
-  link: 'Hlekkur',
   loading: 'Hleð...',
   logOut: 'Skrá út',
   myDevice: 'Mitt tæki',
@@ -74,7 +71,6 @@ is_IS.strings = {
   pauseUpload: 'Gera hlé á upphölun',
   paused: 'Hlé í gangi',
   poweredBy: 'Knúið af',
-  preparingUpload: 'Undirbý upphölun...',
   processingXFiles: {
     '0': 'Vinn %{smart_count} skrá',
     '1': 'Vinn %{smart_count} skrár',

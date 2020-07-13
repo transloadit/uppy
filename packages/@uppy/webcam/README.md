@@ -18,7 +18,8 @@ const Webcam = require('@uppy/webcam')
 const uppy = Uppy()
 uppy.use(Webcam, {
   mirror: true,
-  facingMode: 'user'
+  facingMode: 'user',
+  showRecordingLength: true
 })
 ```
 

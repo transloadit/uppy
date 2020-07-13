@@ -13,6 +13,14 @@ __root="$(cd "$(dirname "${__dir}")" && pwd)"
 is_local="${LOCAL:-0}"
 echo "Local release: $is_local"
 
+CHANGED=$(git diff-index --name-only HEAD --)
+if [ -n "$CHANGED" ]; then
+  echo "Found local, uncomitted git changes"
+  echo ""
+  echo "Please ensure that your working tree is clean"
+  exit 1
+fi
+
 if [[ ! "$@" =~ -y ]]; then
   echo "Make sure to read https://uppy.io/docs/contributing#Releases!"
   echo "Press Enter when ready, or Ctrl+C if you still need to do something."

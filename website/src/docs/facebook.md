@@ -35,17 +35,11 @@ Install from NPM:
 npm install @uppy/facebook
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
-
-```js
-const Facebook = Uppy.Facebook
-```
-
 ## CSS
 
-Dashboard plugin is recommended as a container to all Provider plugins, including Facebook. If you are using Dashboard, it [comes with all the nessesary styles](/docs/dashboard/#CSS) for Dropbox as well.
+Dashboard plugin is recommended as a container to all Provider plugins, including Facebook. If you are using Dashboard, it [comes with all the necessary styles](/docs/dashboard/#CSS) for Facebook as well.
 
-⚠️ If you are feeling adventurous, and want to use Facebook plugin separately, without Dashboard, make sure to include `@uppy/provider-views/dist/style.css` (or `style.min.css`) CSS file. This is experimental, not officialy supported and not recommended.
+⚠️ If you are feeling adventurous, and want to use Facebook plugin separately, without Dashboard, make sure to include `@uppy/provider-views/dist/style.css` (or `style.min.css`) CSS file. This is experimental, not officially supported and not recommended.
 
 ## Options
 
@@ -80,7 +74,7 @@ Custom headers that should be sent along to [Companion](/docs/companion) on ever
 
 ### `companionAllowedHosts: companionUrl`
 
-The valid and authorised URL(s) from which OAuth responses should be accepted.
+The valid and authorized URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 

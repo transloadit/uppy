@@ -2,6 +2,9 @@ const MB = 1024 * 1024
 
 const defaultOptions = {
   limit: 1,
+  getChunkSize (file) {
+    return Math.ceil(file.size / 10000)
+  },
   onStart () {},
   onProgress () {},
   onPartComplete () {},
@@ -22,11 +25,16 @@ class MultipartUploader {
       ...defaultOptions,
       ...options
     }
+    // Use default `getChunkSize` if it was null or something
+    if (!this.options.getChunkSize) {
+      this.options.getChunkSize = defaultOptions.getChunkSize
+    }
+
     this.file = file
 
     this.key = this.options.key || null
     this.uploadId = this.options.uploadId || null
-    this.parts = this.options.parts || []
+    this.parts = []
 
     // Do `this.createdPromise.then(OP)` to execute an operation `OP` _only_ if the
     // upload was created already. That also ensures that the sequencing is right
@@ -48,7 +56,10 @@ class MultipartUploader {
 
   _initChunks () {
     const chunks = []
-    const chunkSize = Math.max(Math.ceil(this.file.size / 10000), 5 * MB)
+    const desiredChunkSize = this.options.getChunkSize(this.file)
+    // at least 5MB per request, at most 10k requests
+    const minChunkSize = Math.max(5 * MB, Math.ceil(this.file.size / 10000))
+    const chunkSize = Math.max(desiredChunkSize, minChunkSize)
 
     for (let i = 0; i < this.file.size; i += chunkSize) {
       const end = Math.min(this.file.size, i + chunkSize)
@@ -160,8 +171,8 @@ class MultipartUploader {
         throw new TypeError('AwsS3/Multipart: Got incorrect result from `prepareUploadPart()`, expected an object `{ url }`.')
       }
       return result
-    }).then(({ url }) => {
-      this._uploadPartBytes(index, url)
+    }).then(({ url, headers }) => {
+      this._uploadPartBytes(index, url, headers)
     }, (err) => {
       this._onError(err)
     })
@@ -189,10 +200,15 @@ class MultipartUploader {
     this._uploadParts()
   }
 
-  _uploadPartBytes (index, url) {
+  _uploadPartBytes (index, url, headers) {
     const body = this.chunks[index]
     const xhr = new XMLHttpRequest()
     xhr.open('PUT', url, true)
+    if (headers) {
+      Object.keys(headers).map((key) => {
+        xhr.setRequestHeader(key, headers[key])
+      })
+    }
     xhr.responseType = 'text'
 
     this.uploading.push(xhr)

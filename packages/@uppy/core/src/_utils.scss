@@ -34,6 +34,10 @@
   &:focus {
     background-color: $highlight;
   }
+
+  [data-uppy-theme="dark"] &:focus {
+    background-color: $gray-800;
+  }
 }
 
 @mixin blue-border-focus() {
@@ -41,6 +45,14 @@
 
   &:focus {
     box-shadow: 0 0 0 3px rgba($blue, 0.5);
+  }
+}
+
+@mixin blue-border-focus--dark() {
+  @include clear-focus();
+
+  &:focus {
+    box-shadow: 0 0 0 2px rgba($lightblue, 0.85);
   }
 }
 

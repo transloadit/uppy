@@ -1,6 +1,10 @@
 const en_US = {}
 
 en_US.strings = {
+  addBulkFilesFailed: {
+    '0': 'Failed to add %{smart_count} file due to an internal error',
+    '1': 'Failed to add %{smart_count} files due to internal errors'
+  },
   addMore: 'Add more',
   addMoreFiles: 'Add more files',
   addingMoreFiles: 'Adding more files',
@@ -14,7 +18,6 @@ en_US.strings = {
   cancelUpload: 'Cancel upload',
   chooseFiles: 'Choose files',
   closeModal: 'Close Modal',
-  companionAuthError: 'Authorization required',
   companionError: 'Connection with Companion failed',
   companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
   complete: 'Complete',
@@ -31,8 +34,7 @@ en_US.strings = {
   dropHereOr: 'Drop files here or %{browse}',
   dropHint: 'Drop your files here',
   dropPaste: 'Drop files here, paste or %{browse}',
-  dropPasteImport: 'Drop files here, paste, %{browse} or import from',
-  edit: 'Edit',
+  dropPasteImport: 'Drop files here, paste, %{browse} or import from:',
   editFile: 'Edit file',
   editing: 'Editing %{file}',
   emptyFolderAdded: 'No files were added from empty folder',
@@ -40,41 +42,46 @@ en_US.strings = {
   enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
   enterUrlToImport: 'Enter URL to import a file',
   exceedsSize: 'This file exceeds maximum allowed size of',
+  exceedsSize2: '%{backwardsCompat} %{size}',
   failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
   failedToUpload: 'Failed to upload %{file}',
   fileSource: 'File source: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} of %{smart_count} file uploaded',
-    '1': '%{complete} of %{smart_count} files uploaded',
-    '2': '%{complete} of %{smart_count} files uploaded'
+    '1': '%{complete} of %{smart_count} files uploaded'
   },
   filter: 'Filter',
   finishEditingFile: 'Finish editing file',
   folderAdded: {
     '0': 'Added %{smart_count} file from %{folder}',
-    '1': 'Added %{smart_count} files from %{folder}',
-    '2': 'Added %{smart_count} files from %{folder}'
+    '1': 'Added %{smart_count} files from %{folder}'
   },
   generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',
   importFrom: 'Import from %{name}',
-  link: 'Link',
   loading: 'Loading...',
   logOut: 'Log out',
+  micDisabled: 'Microphone access denied by user',
   myDevice: 'My Device',
+  noCameraDescription: 'In order to take pictures or record video, please connect a camera device',
+  noCameraTitle: 'Camera Not Available',
+  noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
   noFilesFound: 'You have no files or folders here',
   noInternetConnection: 'No Internet connection',
+  noNewAlreadyUploading: 'Cannot add new files: already uploading',
   openFolderNamed: 'Open folder %{name}',
   pause: 'Pause',
   pauseUpload: 'Pause upload',
   paused: 'Paused',
   poweredBy: 'Powered by',
-  preparingUpload: 'Preparing upload...',
+  poweredBy2: '%{backwardsCompat} %{uppy}',
   processingXFiles: {
     '0': 'Processing %{smart_count} file',
-    '1': 'Processing %{smart_count} files',
-    '2': 'Processing %{smart_count} files'
+    '1': 'Processing %{smart_count} files'
   },
+  recording: 'Recording',
+  recordingLength: 'Recording length %{recording_length}',
+  recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
   removeFile: 'Remove file',
   resetFilter: 'Reset filter',
   resume: 'Resume',
@@ -86,12 +93,16 @@ en_US.strings = {
   selectFileNamed: 'Select file %{name}',
   selectX: {
     '0': 'Select %{smart_count}',
-    '1': 'Select %{smart_count}',
-    '2': 'Select %{smart_count}'
+    '1': 'Select %{smart_count}'
   },
   smile: 'Smile!',
+  startCapturing: 'Begin screen capturing',
   startRecording: 'Begin video recording',
+  stopCapturing: 'Stop screen capturing',
   stopRecording: 'Stop video recording',
+  streamActive: 'Stream active',
+  streamPassive: 'Stream passive',
+  submitRecordedFile: 'Submit captured video',
   takePicture: 'Take a picture',
   timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   unselectAllFilesFromFolderNamed: 'Unselect all files from folder %{name}',
@@ -102,46 +113,39 @@ en_US.strings = {
   uploadPaused: 'Upload paused',
   uploadXFiles: {
     '0': 'Upload %{smart_count} file',
-    '1': 'Upload %{smart_count} files',
-    '2': 'Upload %{smart_count} files'
+    '1': 'Upload %{smart_count} files'
   },
   uploadXNewFiles: {
     '0': 'Upload +%{smart_count} file',
-    '1': 'Upload +%{smart_count} files',
-    '2': 'Upload +%{smart_count} files'
+    '1': 'Upload +%{smart_count} files'
   },
   uploading: 'Uploading',
   uploadingXFiles: {
     '0': 'Uploading %{smart_count} file',
-    '1': 'Uploading %{smart_count} files',
-    '2': 'Uploading %{smart_count} files'
+    '1': 'Uploading %{smart_count} files'
   },
   xFilesSelected: {
     '0': '%{smart_count} file selected',
-    '1': '%{smart_count} files selected',
-    '2': '%{smart_count} files selected'
+    '1': '%{smart_count} files selected'
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} more file added',
-    '1': '%{smart_count} more files added',
-    '2': '%{smart_count} more files added'
+    '1': '%{smart_count} more files added'
   },
   xTimeLeft: '%{time} left',
   youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
   youCanOnlyUploadX: {
     '0': 'You can only upload %{smart_count} file',
-    '1': 'You can only upload %{smart_count} files',
-    '2': 'You can only upload %{smart_count} files'
+    '1': 'You can only upload %{smart_count} files'
   },
   youHaveToAtLeastSelectX: {
     '0': 'You have to select at least %{smart_count} file',
-    '1': 'You have to select at least %{smart_count} files',
-    '2': 'You have to select at least %{smart_count} files'
+    '1': 'You have to select at least %{smart_count} files'
   }
 }
 
-en_US.pluralize = function (n) {
-  if (n === 1) {
+en_US.pluralize = function (count) {
+  if (count === 1) {
     return 0
   }
   return 1

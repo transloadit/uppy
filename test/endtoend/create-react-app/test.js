@@ -53,7 +53,7 @@ describe('React: Dashboard', () => {
     await toggle()
 
     // open GDrive panel
-    const gdriveButton = await $('.uppy-DashboardTab:nth-child(2) button')
+    const gdriveButton = await $('.uppy-DashboardTab[data-uppy-acquirer-id="GoogleDrive"] button')
     await gdriveButton.click()
     await browser.pause(500)
 

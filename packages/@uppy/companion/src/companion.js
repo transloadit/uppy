@@ -1,6 +1,7 @@
+const fs = require('fs')
 const express = require('express')
 // @ts-ignore
-const Grant = require('grant-express')
+const Grant = require('grant').express()
 const grantConfig = require('./config/grant')()
 const providerManager = require('./server/provider')
 const controllers = require('./server/controllers')
@@ -18,8 +19,9 @@ const logger = require('./server/logger')
 const { STORAGE_PREFIX } = require('./server/Uploader')
 const middlewares = require('./server/middlewares')
 const { shortenToken } = require('./server/Uploader')
+const { ProviderApiError, ProviderAuthError } = require('./server/provider/error')
+const ms = require('ms')
 
-const providers = providerManager.getDefaultProviders()
 const defaultOptions = {
   server: {
     protocol: 'http',
@@ -31,11 +33,15 @@ const defaultOptions = {
       endpoint: 'https://{service}.{region}.amazonaws.com',
       conditions: [],
       useAccelerateEndpoint: false,
-      getKey: (req, filename) => filename
+      getKey: (req, filename) => filename,
+      expires: ms('5 minutes') / 1000
     }
   },
   debug: true
 }
+
+// make the errors available publicly for custom providers
+module.exports.errors = { ProviderApiError, ProviderAuthError }
 
 /**
  * Entry point into initializing the Companion app.
@@ -43,13 +49,19 @@ const defaultOptions = {
  * @param {object} options
  */
 module.exports.app = (options = {}) => {
+  validateConfig(options)
+
   options = merge({}, defaultOptions, options)
+  const providers = providerManager.getDefaultProviders(options)
   providerManager.addProviderOptions(options, grantConfig)
 
   const customProviders = options.customProviders
   if (customProviders) {
     providerManager.addCustomProviders(customProviders, providers, grantConfig)
   }
+
+  // mask provider secrets from log messages
+  maskLogger(options)
 
   // create singleton redis client
   if (options.redisUrl) {
@@ -61,7 +73,7 @@ module.exports.app = (options = {}) => {
   app.use(cookieParser()) // server tokens are added to cookies
 
   app.use(interceptGrantErrorResponse)
-  app.use(new Grant(grantConfig))
+  app.use(Grant(grantConfig))
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE')
     res.header(
@@ -212,25 +224,38 @@ const getOptionsMiddleware = (options) => {
   if (options.providerOptions.s3) {
     const S3 = require('aws-sdk/clients/s3')
     const AWS = require('aws-sdk')
-    const config = options.providerOptions.s3
+    const s3ProviderOptions = options.providerOptions.s3
+
+    if (s3ProviderOptions.accessKeyId || s3ProviderOptions.secretAccessKey) {
+      throw new Error('Found `providerOptions.s3.accessKeyId` or `providerOptions.s3.secretAccessKey` configuration, but Companion requires `key` and `secret` option names instead. Please use the `key` property instead of `accessKeyId` and the `secret` property instead of `secretAccessKey`.')
+    }
+
+    const rawClientOptions = s3ProviderOptions.awsClientOptions
+    if (rawClientOptions && (rawClientOptions.accessKeyId || rawClientOptions.secretAccessKey)) {
+      throw new Error('Found unsupported `providerOptions.s3.awsClientOptions.accessKeyId` or `providerOptions.s3.awsClientOptions.secretAccessKey` configuration. Please use the `providerOptions.s3.key` and `providerOptions.s3.secret` options instead.')
+    }
+
+    const s3ClientOptions = Object.assign({
+      signatureVersion: 'v4',
+      endpoint: s3ProviderOptions.endpoint,
+      region: s3ProviderOptions.region,
+      // backwards compat
+      useAccelerateEndpoint: s3ProviderOptions.useAccelerateEndpoint
+    }, rawClientOptions)
+
     // Use credentials to allow assumed roles to pass STS sessions in.
     // If the user doesn't specify key and secret, the default credentials (process-env)
     // will be used by S3 in calls below.
-    let credentials
-    if (config.key && config.secret) {
-      credentials = new AWS.Credentials(config.key, config.secret, config.sessionToken)
+    if (s3ProviderOptions.key && s3ProviderOptions.secret && !s3ClientOptions.credentials) {
+      s3ClientOptions.credentials = new AWS.Credentials(
+        s3ProviderOptions.key,
+        s3ProviderOptions.secret,
+        s3ProviderOptions.sessionToken)
     }
-    s3Client = new S3({
-      region: config.region,
-      endpoint: config.endpoint,
-      credentials,
-      signatureVersion: 'v4',
-      useAccelerateEndpoint: config.useAccelerateEndpoint
-    })
+    s3Client = new S3(s3ClientOptions)
   }
 
   /**
-   *
    * @param {object} req
    * @param {object} res
    * @param {function} next
@@ -245,10 +270,79 @@ const getOptionsMiddleware = (options) => {
       buildURL: getURLBuilder(options)
     }
 
-    // @todo remove req.uppy in next major release
-    req.uppy = req.companion
+    logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
     next()
   }
 
   return middleware
+}
+
+/**
+ * Informs the logger about all provider secrets that should be masked
+ * if they are found in a log message
+ * @param {object} companionOptions
+ */
+const maskLogger = (companionOptions) => {
+  const secrets = []
+  const { providerOptions, customProviders } = companionOptions
+  Object.keys(providerOptions).forEach((provider) => {
+    if (providerOptions[provider].secret) {
+      secrets.push(providerOptions[provider].secret)
+    }
+  })
+
+  if (customProviders) {
+    Object.keys(customProviders).forEach((provider) => {
+      if (customProviders[provider].config && customProviders[provider].config.secret) {
+        secrets.push(customProviders[provider].config.secret)
+      }
+    })
+  }
+
+  logger.setMaskables(secrets)
+}
+
+/**
+ * validates that the mandatory companion options are set.
+ * If it is invalid, it will console an error of unset options and exits the process.
+ * If it is valid, nothing happens.
+ *
+ * @param {object} companionOptions
+ */
+const validateConfig = (companionOptions) => {
+  const mandatoryOptions = ['secret', 'filePath', 'server.host']
+  /** @type {string[]} */
+  const unspecified = []
+
+  mandatoryOptions.forEach((i) => {
+    const value = i.split('.').reduce((prev, curr) => prev ? prev[curr] : undefined, companionOptions)
+
+    if (!value) unspecified.push(`"${i}"`)
+  })
+
+  // vaidate that all required config is specified
+  if (unspecified.length) {
+    const messagePrefix = 'Please specify the following options to use companion:'
+    throw new Error(`${messagePrefix}\n${unspecified.join(',\n')}`)
+  }
+
+  // validate that specified filePath is writeable/readable.
+  try {
+    // @ts-ignore
+    fs.accessSync(`${companionOptions.filePath}`, fs.R_OK | fs.W_OK)
+  } catch (err) {
+    throw new Error(
+      `No access to "${companionOptions.filePath}". Please ensure the directory exists and with read/write permissions.`
+    )
+  }
+
+  const { providerOptions } = companionOptions
+  if (providerOptions) {
+    const deprecatedOptions = { microsoft: 'onedrive', google: 'drive' }
+    Object.keys(deprecatedOptions).forEach((deprected) => {
+      if (providerOptions[deprected]) {
+        throw new Error(`The Provider option "${deprected}" is no longer supported. Please use the option "${deprecatedOptions[deprected]}" instead.`)
+      }
+    })
+  }
 }

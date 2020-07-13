@@ -3,38 +3,48 @@
 @import './FileInfo/index.scss';
 @import './Buttons/index.scss';
 
-.uppy-DashboardItem {
-  // @media only mobile
-  .uppy-Dashboard:not(.uppy-size--md) & {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid $gray-200;
-    padding: 10px;
-    padding-right: 0;
+.uppy-Dashboard-Item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid $gray-200;
+  padding: 10px;
+  padding-right: 0;
+
+  [data-uppy-theme="dark"] & {
+    border-bottom: 1px solid $gray-800;
   }
+
   // @media bigger than .md
   $rl-margin: 15px;
+
   .uppy-size--md & {
     // For the Remove button
     position: relative;
-
     display: block;
     float: left;
     margin: 5px $rl-margin;
+    padding: 0;
+    /* When changing width: also update `itemsPerRow` values in `src/components/Dashboard.js`. */
     width: calc(33.333% - #{$rl-margin} - #{$rl-margin});
     height: 215px;
+    border-bottom: 0;
   }
+
   .uppy-size--lg & {
     margin: 5px $rl-margin;
+    /* When changing width: also update `itemsPerRow` values in `src/components/Dashboard.js`. */
     width: calc(25% - #{$rl-margin} - #{$rl-margin});
     height: 190px;
   }
+
   .uppy-size--xl & {
+    /* When changing width: also update `itemsPerRow` values in `src/components/Dashboard.js`. */
     width: calc(20% - #{$rl-margin} - #{$rl-margin});
     height: 210px;
   }
 }
-  .uppy-DashboardItem-preview {
+
+  .uppy-Dashboard-Item-preview {
     // for the FileProgress.js icons
     position: relative;
 
@@ -57,7 +67,8 @@
       height: 140px;
     }
   }
-  .uppy-DashboardItem-fileInfoAndButtons {
+
+  .uppy-Dashboard-Item-fileInfoAndButtons {
     flex-grow: 1;
     padding-right: 8px;
     padding-left: 12px;
@@ -73,31 +84,53 @@
       padding-top: 9px;
     }
   }
-    .uppy-DashboardItem-fileInfo {
+
+    .uppy-Dashboard-Item-fileInfo {
       flex-grow: 1;
       flex-shrink: 1;
     }
-    .uppy-DashboardItem-actionWrapper {
+
+    .uppy-Dashboard-Item-actionWrapper {
       flex-grow: 0;
       flex-shrink: 0;
     }
-  // ...uppy-DashboardItem-fileInfoAndButtons|
-// ...uppy-DashboardItem|
+  // ...uppy-Dashboard-Item-fileInfoAndButtons|
+// ...uppy-Dashboard-Item|
 
 
-// Css that depends on status of the file (could be logic in js instead?)
-.uppy-DashboardItem.is-inprogress {
-  .uppy-DashboardItem-previewInnerWrap:after {
+// CSS that depends on status of the file (could be logic in js instead?)
+.uppy-Dashboard-Item.is-inprogress,
+.uppy-Dashboard-Item.is-error {
+  .uppy-Dashboard-Item-previewInnerWrap:after {
     display: block;
   }
 }
-.uppy-DashboardItem.is-error {
-  .uppy-DashboardItem-previewInnerWrap:after {
-    display: block;
-  }
-}
-.uppy-DashboardItem.is-inprogress:not(.is-resumable) {
-  .uppy-DashboardItem-action--remove {
+
+.uppy-Dashboard-Item.is-inprogress:not(.is-resumable) {
+  .uppy-Dashboard-Item-action--remove {
     display: none;
   }
 }
+
+.uppy-Dashboard-Item-errorDetails {
+  line-height: 12px;
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  vertical-align: middle;
+  color: $white;
+  background-color: $gray-500;
+  border-radius: 50%;
+  position: relative;
+  top: -1px;
+  left: 6px;
+  font-size: 8px;
+  font-weight: 600;
+  text-align: center;
+  cursor: help;
+}
+
+  .uppy-Dashboard-Item-errorDetails:after {
+    line-height: 1.3;
+    word-wrap: break-word;
+  }

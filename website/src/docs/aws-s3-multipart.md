@@ -44,7 +44,23 @@ The maximum amount of chunks to upload simultaneously. Set to `0` to disable lim
 
 ### companionUrl: null
 
-The Companion URL to use for proxying calls to the S3 Multipart API.
+URL of the [Companion](/docs/companion) instance to use for proxying calls to the S3 Multipart API.
+
+This will be used by the default implementations of the upload-related functions below. If you provide your own implementations, a `companionUrl` is unnecessary.
+
+### companionHeaders: {}
+
+Custom headers that should be sent along to [Companion](/docs/companion) on every request.
+
+This will be used by the default implementations of the upload-related functions below. If you provide your own implementations, these headers are not sent automatically.
+
+### getChunkSize(file)
+
+A function that returns the minimum chunk size to use when uploading the given file.
+
+The S3 Multipart plugin uploads files in chunks. Each chunk requires a signing request ([`prepareUploadPart()`](#prepareUploadPart-file-partData)). To reduce the amount of requests for large files, you can choose a larger chunk size, at the cost of having to re-upload more data if one chunk fails to upload.
+
+S3 requires a minimum chunk size of 5MB, and supports at most 10,000 chunks per multipart upload. If `getChunkSize()` returns a size that's too small, Uppy will increase it to S3's minimum requirements.
 
 ### createMultipartUpload(file)
 
@@ -95,6 +111,7 @@ Return a Promise for an object with keys:
      Expires: 5 * 60,
    }, (err, url) => { /* there's the url! */ })
    ```
+ - `headers` - **(Optional)** Custom headers that should be sent to the S3 presigned URL.
 
 ### abortMultipartUpload(file, { uploadId, key })
 

@@ -14,7 +14,6 @@ fi_FI.strings = {
   cancelUpload: 'Peruuta lähetys',
   chooseFiles: 'Valitse tiedostot',
   closeModal: 'Sulje ikkuna',
-  companionAuthError: 'Käyttöoikeus vaadittu',
   companionError: 'Yhdistäminen Companioniin epäonnistui',
   complete: 'Valmis',
   connectedToInternet: 'Yhdistetty Internettiin',
@@ -31,7 +30,6 @@ fi_FI.strings = {
   dropHint: 'Raahaa tiedostot tähän',
   dropPaste: 'Raahaa tiedostot tähän, liitä tai %{browse}',
   dropPasteImport: 'Raahaa tiedostot tähän, liitä, %{browse} tai tuo',
-  edit: 'Muokkaa',
   editFile: 'Muokkaa tiedostoa',
   editing: 'Muokataan %{file}',
   emptyFolderAdded: 'Ei lisätty tiedostoja tyhjästä kansiosta',
@@ -56,7 +54,6 @@ fi_FI.strings = {
   },
   import: 'Tuo',
   importFrom: 'Tuo %{name}',
-  link: 'Linkki',
   loading: 'Ladataan...',
   logOut: 'Kirjaudu ulos',
   myDevice: 'Laitteeltani',
@@ -67,7 +64,6 @@ fi_FI.strings = {
   pauseUpload: 'Keskeytä lähetys',
   paused: 'Keskeytetty',
   poweredBy: 'Powered by',
-  preparingUpload: 'Valmistellaan lähetystä...',
   processingXFiles: {
     '0': 'Käsitellään %{smart_count} tiedostoa',
     '1': 'Käsitellään %{smart_count} tiedostoa',
@@ -135,7 +131,14 @@ fi_FI.strings = {
     '0': 'Sinun pitää valita vähintään %{smart_count} tiedosto',
     '1': 'Sinun pitää valita vähintään %{smart_count} tiedostoa',
     '2': 'Sinun pitää valita vähintään %{smart_count} tiedostoa'
-  }
+  },
+  startCapturing: 'Aloita tallennus',
+  stopCapturing: 'Lopeta tallennus',
+  submitRecordedFile: 'Hyväksy tallenne',
+  streamActive: 'Jako aktiivinen',
+  streamPassive: 'Jako passiivinen',
+  micDisabled: 'Käyttäjä on estänyt mikrofonin',
+  recording: 'Tallennetaan'
 }
 
 fi_FI.pluralize = function (n) {

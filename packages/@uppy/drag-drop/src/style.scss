@@ -29,16 +29,6 @@
   line-height: 1.4;
 }
 
-// http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/
-.uppy-DragDrop-input {
-  width: 0.1px;
-  height: 0.1px;
-  opacity: 0;
-  overflow: hidden;
-  position: absolute;
-  z-index: -1;
-}
-
 .uppy-DragDrop-arrow {
   width: 60px;
   height: 60px;
@@ -46,7 +36,7 @@
   margin-bottom: 17px;
 }
 
-  .uppy-DragDrop--is-dragdrop-supported {
+  .uppy-DragDrop--isDragDropSupported {
     border: 2px dashed lighten($gray-500, 10%);
   }
 
@@ -61,16 +51,16 @@
 
 .uppy-DragDrop-label {
   display: block;
-  cursor: pointer;
   font-size: 1.15em;
   margin-bottom: 5px;
+}
+
+.uppy-DragDrop-browse {
+  color: $blue;
+  cursor: pointer;
 }
 
 .uppy-DragDrop-note {
   font-size: 1em;
   color: lighten($gray-500, 10%);
-}
-
-.uppy-DragDrop-browse {
-  color: $blue;
 }

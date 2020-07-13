@@ -44,11 +44,11 @@ module.exports = class DragDrop extends Plugin {
     this.i18nInit()
 
     // Bind `this` to class methods
-    this.handleInputChange = this.handleInputChange.bind(this)
+    this.onInputChange = this.onInputChange.bind(this)
     this.handleDragOver = this.handleDragOver.bind(this)
     this.handleDragLeave = this.handleDragLeave.bind(this)
     this.handleDrop = this.handleDrop.bind(this)
-    this.addFile = this.addFile.bind(this)
+    this.addFiles = this.addFiles.bind(this)
     this.render = this.render.bind(this)
   }
 
@@ -64,28 +64,30 @@ module.exports = class DragDrop extends Plugin {
     this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
-  addFile (file) {
-    try {
-      this.uppy.addFile({
-        source: this.id,
-        name: file.name,
-        type: file.type,
-        data: file,
-        meta: {
-          relativePath: file.relativePath || null
-        }
-      })
-    } catch (err) {
-      if (!err.isRestriction) {
-        this.uppy.log(err)
+  addFiles (files) {
+    const descriptors = files.map((file) => ({
+      source: this.id,
+      name: file.name,
+      type: file.type,
+      data: file,
+      meta: {
+        // path of the file relative to the ancestor directory the user selected.
+        // e.g. 'docs/Old Prague/airbnb.pdf'
+        relativePath: file.relativePath || null
       }
+    }))
+
+    try {
+      this.uppy.addFiles(descriptors)
+    } catch (err) {
+      this.uppy.log(err)
     }
   }
 
-  handleInputChange (event) {
+  onInputChange (event) {
     this.uppy.log('[DragDrop] Files selected through input')
     const files = toArray(event.target.files)
-    files.forEach(this.addFile)
+    this.addFiles(files)
 
     // We clear the input after a file is selected, because otherwise
     // change event is not fired in Chrome and Safari when a file
@@ -100,8 +102,6 @@ module.exports = class DragDrop extends Plugin {
     event.preventDefault()
     event.stopPropagation()
     clearTimeout(this.removeDragOverClassTimeout)
-    // 1. Add a small (+) icon on drop
-    event.dataTransfer.dropEffect = 'copy'
 
     // 2. Remove dragover class
     this.setPluginState({ isDraggingOver: false })
@@ -112,14 +112,16 @@ module.exports = class DragDrop extends Plugin {
       this.uppy.log(error, 'error')
     }
     getDroppedFiles(event.dataTransfer, { logDropError })
-      .then((files) => {
-        files.forEach(this.addFile)
-      })
+      .then((files) => this.addFiles(files))
   }
 
   handleDragOver (event) {
     event.preventDefault()
     event.stopPropagation()
+
+    // 1. Add a small (+) icon on drop
+    // (and prevent browsers from interpreting this as files being _moved_ into the browser, https://github.com/transloadit/uppy/issues/1978)
+    event.dataTransfer.dropEffect = 'copy'
 
     clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
@@ -142,20 +144,19 @@ module.exports = class DragDrop extends Plugin {
       <input
         class="uppy-DragDrop-input"
         type="file"
-        tabindex={-1}
-        focusable="false"
+        hidden
         ref={(ref) => { this.fileInputRef = ref }}
         name={this.opts.inputName}
         multiple={restrictions.maxNumberOfFiles !== 1}
         accept={restrictions.allowedFileTypes}
-        onchange={this.handleInputChange}
+        onchange={this.onInputChange}
       />
     )
   }
 
   renderArrowSvg () {
     return (
-      <svg aria-hidden="true" focusable="false" class="UppyIcon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16">
+      <svg aria-hidden="true" focusable="false" class="uppy-c-icon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16">
         <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
       </svg>
     )
@@ -178,11 +179,10 @@ module.exports = class DragDrop extends Plugin {
   }
 
   render (state) {
-    const dragDropClass = `
-      uppy-Root
+    const dragDropClass = `uppy-Root
       uppy-u-reset
       uppy-DragDrop-container
-      ${this.isDragDropSupported ? 'uppy-DragDrop--is-dragdrop-supported' : ''}
+      ${this.isDragDropSupported ? 'uppy-DragDrop--isDragDropSupported' : ''}
       ${this.getPluginState().isDraggingOver ? 'uppy-DragDrop--isDraggingOver' : ''}
     `
 

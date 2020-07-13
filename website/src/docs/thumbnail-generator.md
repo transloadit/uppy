@@ -75,13 +75,13 @@ If both width and height are given, only width is taken into account.
 >
 > uppy.use(ThumbnailGenerator, { thumbnailWidth: 300, thumbnailHeight: 300 }) will produce a 300px width thumbnail with calculated height to match ratio (and ignore the given height).
 >
-> See https://github.com/transloadit/uppy/issues/979 and https://github.com/transloadit/uppy/pull/1096 for details on this feature.
+> See issue [#979](https://github.com/transloadit/uppy/issues/979) and [#1096](https://github.com/transloadit/uppy/pull/1096) for details on this feature.
 
 ### `waitForThumbnailsBeforeUpload: false`
 
-Whether to wait for all thumbnails to be ready before starting the upload. If set to `true`, Thumbnail Generator will envoke Uppy’s internal processing stage and wait for `thumbnail:all-generated` event, before proceeding to the uploading stage.
+Whether to wait for all thumbnails to be ready before starting the upload. If set to `true`, Thumbnail Generator will invoke Uppy’s internal processing stage and wait for `thumbnail:all-generated` event, before proceeding to the uploading stage.
 
-This is useful because Thumbnail Generator also adds EXIF data to images, and if we wait until it’s done processing, this data will be avilable on the server after the upload.
+This is useful because Thumbnail Generator also adds EXIF data to images, and if we wait until it’s done processing, this data will be available on the server after the upload.
 
 ## Event
 

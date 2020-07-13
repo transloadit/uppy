@@ -2,14 +2,14 @@ const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
 const throttle = require('lodash.throttle')
-const prettyBytes = require('@uppy/utils/lib/prettyBytes')
+const prettierBytes = require('@transloadit/prettier-bytes')
 const match = require('mime-match')
 const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
 const supportsUploadProgress = require('./supportsUploadProgress')
-const { nullLogger, debugLogger } = require('./loggers')
+const { justErrorsLogger, debugLogger } = require('./loggers')
 const Plugin = require('./Plugin') // Exported from here.
 
 class RestrictionError extends Error {
@@ -35,20 +35,29 @@ class Uppy {
   constructor (opts) {
     this.defaultLocale = {
       strings: {
+        addBulkFilesFailed: {
+          0: 'Failed to add %{smart_count} file due to an internal error',
+          1: 'Failed to add %{smart_count} files due to internal errors'
+        },
         youCanOnlyUploadX: {
           0: 'You can only upload %{smart_count} file',
-          1: 'You can only upload %{smart_count} files',
-          2: 'You can only upload %{smart_count} files'
+          1: 'You can only upload %{smart_count} files'
         },
         youHaveToAtLeastSelectX: {
           0: 'You have to select at least %{smart_count} file',
-          1: 'You have to select at least %{smart_count} files',
-          2: 'You have to select at least %{smart_count} files'
+          1: 'You have to select at least %{smart_count} files'
         },
+        // The default `exceedsSize2` string only combines the `exceedsSize` string (%{backwardsCompat}) with the size.
+        // Locales can override `exceedsSize2` to specify a different word order. This is for backwards compat with
+        // Uppy 1.9.x and below which did a naive concatenation of `exceedsSize2 + size` instead of using a locale-specific
+        // substitution.
+        // TODO: In 2.0 `exceedsSize2` should be removed in and `exceedsSize` updated to use substitution.
+        exceedsSize2: '%{backwardsCompat} %{size}',
         exceedsSize: 'This file exceeds maximum allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
+        noNewAlreadyUploading: 'Cannot add new files: already uploading',
+        noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
         companionError: 'Connection with Companion failed',
-        companionAuthError: 'Authorization required',
         companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
         failedToUpload: 'Failed to upload %{file}',
         noInternetConnection: 'No Internet connection',
@@ -57,8 +66,7 @@ class Uppy {
         noFilesFound: 'You have no files or folders here',
         selectX: {
           0: 'Select %{smart_count}',
-          1: 'Select %{smart_count}',
-          2: 'Select %{smart_count}'
+          1: 'Select %{smart_count}'
         },
         selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
         unselectAllFilesFromFolderNamed: 'Unselect all files from folder %{name}',
@@ -75,8 +83,7 @@ class Uppy {
         emptyFolderAdded: 'No files were added from empty folder',
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',
-          1: 'Added %{smart_count} files from %{folder}',
-          2: 'Added %{smart_count} files from %{folder}'
+          1: 'Added %{smart_count} files from %{folder}'
         }
       }
     }
@@ -96,7 +103,7 @@ class Uppy {
       onBeforeFileAdded: (currentFile, files) => currentFile,
       onBeforeUpload: (files) => files,
       store: DefaultStore(),
-      logger: nullLogger
+      logger: justErrorsLogger
     }
 
     // Merge default options with the ones set by user,
@@ -111,7 +118,7 @@ class Uppy {
     }
 
     // Support debug: true for backwards-compatability, unless logger is set in opts
-    // opts instead of this.opts to avoid comparing objects — we set logger: nullLogger in defaultOptions
+    // opts instead of this.opts to avoid comparing objects — we set logger: justErrorsLogger in defaultOptions
     if (opts && opts.logger && opts.debug) {
       this.log('You are using a custom `logger`, but also set `debug: true`, which uses built-in logger to output logs to console. Ignoring `debug: true` and using your custom `logger`.', 'warning')
     } else if (opts && opts.debug) {
@@ -200,7 +207,21 @@ class Uppy {
     }
 
     this._addListeners()
+
+    // Re-enable if we’ll need some capabilities on boot, like isMobileDevice
+    // this._setCapabilities()
   }
+
+  // _setCapabilities = () => {
+  //   const capabilities = {
+  //     isMobileDevice: isMobileDevice()
+  //   }
+
+  //   this.setState({
+  //     ...this.getState().capabilities,
+  //     capabilities
+  //   })
+  // }
 
   on (event, callback) {
     this.emitter.on(event, callback)
@@ -416,14 +437,15 @@ class Uppy {
    * Check if file passes a set of restrictions set in options: maxFileSize,
    * maxNumberOfFiles and allowedFileTypes.
    *
+   * @param {object} files Object of IDs → files already added
    * @param {object} file object to check
    * @private
    */
-  _checkRestrictions (file) {
+  _checkRestrictions (files, file) {
     const { maxFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
 
     if (maxNumberOfFiles) {
-      if (Object.keys(this.getState().files).length + 1 > maxNumberOfFiles) {
+      if (Object.keys(files).length + 1 > maxNumberOfFiles) {
         throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
       }
     }
@@ -433,7 +455,7 @@ class Uppy {
         // is this is a mime-type
         if (type.indexOf('/') > -1) {
           if (!file.type) return false
-          return match(file.type, type)
+          return match(file.type.replace(/;.*?$/, ''), type)
         }
 
         // otherwise this is likely an extension
@@ -452,22 +474,40 @@ class Uppy {
     // We can't check maxFileSize if the size is unknown.
     if (maxFileSize && file.data.size != null) {
       if (file.data.size > maxFileSize) {
-        throw new RestrictionError(`${this.i18n('exceedsSize')} ${prettyBytes(maxFileSize)}`)
+        throw new RestrictionError(this.i18n('exceedsSize2', {
+          backwardsCompat: this.i18n('exceedsSize'),
+          size: prettierBytes(maxFileSize)
+        }))
       }
     }
   }
 
-  _showOrLogErrorAndThrow (err, { showInformer = true, file = null } = {}) {
+  /**
+   * Logs an error, sets Informer message, then throws the error.
+   * Emits a 'restriction-failed' event if it’s a restriction error
+   *
+   * @param {object | string} err — Error object or plain string message
+   * @param {object} [options]
+   * @param {boolean} [options.showInformer=true] — Sometimes developer might want to show Informer manually
+   * @param {object} [options.file=null] — File object used to emit the restriction error
+   * @param {boolean} [options.throwErr=true] — Errors shouldn’t be thrown, for example, in `upload-error` event
+   * @private
+   */
+  _showOrLogErrorAndThrow (err, { showInformer = true, file = null, throwErr = true } = {}) {
     const message = typeof err === 'object' ? err.message : err
     const details = (typeof err === 'object' && err.details) ? err.details : ''
 
     // Restriction errors should be logged, but not as errors,
     // as they are expected and shown in the UI.
+    let logMessageWithDetails = message
+    if (details) {
+      logMessageWithDetails += ' ' + details
+    }
     if (err.isRestriction) {
-      this.log(`${message} ${details}`)
+      this.log(logMessageWithDetails)
       this.emit('restriction-failed', file, err)
     } else {
-      this.log(`${message} ${details}`, 'error')
+      this.log(logMessageWithDetails, 'error')
     }
 
     // Sometimes informer has to be shown manually by the developer,
@@ -476,24 +516,27 @@ class Uppy {
       this.info({ message: message, details: details }, 'error', 5000)
     }
 
-    throw (typeof err === 'object' ? err : new Error(err))
+    if (throwErr) {
+      throw (typeof err === 'object' ? err : new Error(err))
+    }
+  }
+
+  _assertNewUploadAllowed (file) {
+    const { allowNewUpload } = this.getState()
+
+    if (allowNewUpload === false) {
+      this._showOrLogErrorAndThrow(new RestrictionError(this.i18n('noNewAlreadyUploading')), { file })
+    }
   }
 
   /**
-   * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
-   * try to guess file type in a clever way, check file against restrictions,
-   * and start an upload if `autoProceed === true`.
+   * Create a file state object based on user-provided `addFile()` options.
    *
-   * @param {object} file object to add
-   * @returns {string} id for the added file
+   * Note this is extremely side-effectful and should only be done when a file state object will be added to state immediately afterward!
+   *
+   * The `files` value is passed in because it may be updated by the caller without updating the store.
    */
-  addFile (file) {
-    const { files, allowNewUpload } = this.getState()
-
-    if (allowNewUpload === false) {
-      this._showOrLogErrorAndThrow(new RestrictionError('Cannot add new files: already uploading.'), { file })
-    }
-
+  _checkAndCreateFileStateObject (files, file) {
     const fileType = getFileType(file)
     file.type = fileType
 
@@ -522,7 +565,7 @@ class Uppy {
     const fileID = generateFileID(file)
 
     if (files[fileID]) {
-      this._showOrLogErrorAndThrow(new RestrictionError(`Cannot add the duplicate file '${fileName}', it already exists.`), { file })
+      this._showOrLogErrorAndThrow(new RestrictionError(this.i18n('noDuplicates', { fileName })), { file })
     }
 
     const meta = file.meta || {}
@@ -536,7 +579,10 @@ class Uppy {
       id: fileID,
       name: fileName,
       extension: fileExtension || '',
-      meta: Object.assign({}, this.getState().meta, meta),
+      meta: {
+        ...this.getState().meta,
+        ...meta
+      },
       type: fileType,
       data: file.data,
       progress: {
@@ -553,20 +599,16 @@ class Uppy {
     }
 
     try {
-      this._checkRestrictions(newFile)
+      this._checkRestrictions(files, newFile)
     } catch (err) {
       this._showOrLogErrorAndThrow(err, { file: newFile })
     }
 
-    this.setState({
-      files: Object.assign({}, files, {
-        [fileID]: newFile
-      })
-    })
+    return newFile
+  }
 
-    this.emit('file-added', newFile)
-    this.log(`Added file: ${fileName}, ${fileID}, mime type: ${fileType}`)
-
+  // Schedule an upload if `autoProceed` is enabled.
+  _startIfAutoProceed () {
     if (this.opts.autoProceed && !this.scheduledAutoProceed) {
       this.scheduledAutoProceed = setTimeout(() => {
         this.scheduledAutoProceed = null
@@ -577,49 +619,163 @@ class Uppy {
         })
       }, 4)
     }
-
-    return fileID
   }
 
-  removeFile (fileID) {
-    const { files, currentUploads } = this.getState()
-    const updatedFiles = Object.assign({}, files)
-    const removedFile = updatedFiles[fileID]
-    delete updatedFiles[fileID]
+  /**
+   * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
+   * try to guess file type in a clever way, check file against restrictions,
+   * and start an upload if `autoProceed === true`.
+   *
+   * @param {object} file object to add
+   * @returns {string} id for the added file
+   */
+  addFile (file) {
+    this._assertNewUploadAllowed(file)
 
-    // Remove this file from its `currentUpload`.
-    const updatedUploads = Object.assign({}, currentUploads)
-    const removeUploads = []
+    const { files } = this.getState()
+    const newFile = this._checkAndCreateFileStateObject(files, file)
+
+    this.setState({
+      files: {
+        ...files,
+        [newFile.id]: newFile
+      }
+    })
+
+    this.emit('file-added', newFile)
+    this.log(`Added file: ${newFile.name}, ${newFile.id}, mime type: ${newFile.type}`)
+
+    this._startIfAutoProceed()
+
+    return newFile.id
+  }
+
+  /**
+   * Add multiple files to `state.files`. See the `addFile()` documentation.
+   *
+   * This cuts some corners for performance, so should typically only be used in cases where there may be a lot of files.
+   *
+   * If an error occurs while adding a file, it is logged and the user is notified. This is good for UI plugins, but not for programmatic use. Programmatic users should usually still use `addFile()` on individual files.
+   */
+  addFiles (fileDescriptors) {
+    this._assertNewUploadAllowed()
+
+    // create a copy of the files object only once
+    const files = { ...this.getState().files }
+    const newFiles = []
+    const errors = []
+    for (let i = 0; i < fileDescriptors.length; i++) {
+      try {
+        const newFile = this._checkAndCreateFileStateObject(files, fileDescriptors[i])
+        newFiles.push(newFile)
+        files[newFile.id] = newFile
+      } catch (err) {
+        if (!err.isRestriction) {
+          errors.push(err)
+        }
+      }
+    }
+
+    this.setState({ files })
+
+    newFiles.forEach((newFile) => {
+      this.emit('file-added', newFile)
+    })
+
+    if (newFiles.length > 5) {
+      this.log(`Added batch of ${newFiles.length} files`)
+    } else {
+      Object.keys(newFiles).forEach(fileID => {
+        this.log(`Added file: ${newFiles[fileID].name}\n id: ${newFiles[fileID].id}\n type: ${newFiles[fileID].type}`)
+      })
+    }
+
+    if (newFiles.length > 0) {
+      this._startIfAutoProceed()
+    }
+
+    if (errors.length > 0) {
+      let message = 'Multiple errors occurred while adding files:\n'
+      errors.forEach((subError) => {
+        message += `\n * ${subError.message}`
+      })
+
+      this.info({
+        message: this.i18n('addBulkFilesFailed', { smart_count: errors.length }),
+        details: message
+      }, 'error', 5000)
+
+      const err = new Error(message)
+      err.errors = errors
+      throw err
+    }
+  }
+
+  removeFiles (fileIDs, reason) {
+    const { files, currentUploads } = this.getState()
+    const updatedFiles = { ...files }
+    const updatedUploads = { ...currentUploads }
+
+    const removedFiles = Object.create(null)
+    fileIDs.forEach((fileID) => {
+      if (files[fileID]) {
+        removedFiles[fileID] = files[fileID]
+        delete updatedFiles[fileID]
+      }
+    })
+
+    // Remove files from the `fileIDs` list in each upload.
+    function fileIsNotRemoved (uploadFileID) {
+      return removedFiles[uploadFileID] === undefined
+    }
+    const uploadsToRemove = []
     Object.keys(updatedUploads).forEach((uploadID) => {
-      const newFileIDs = currentUploads[uploadID].fileIDs.filter((uploadFileID) => uploadFileID !== fileID)
+      const newFileIDs = currentUploads[uploadID].fileIDs.filter(fileIsNotRemoved)
+
       // Remove the upload if no files are associated with it anymore.
       if (newFileIDs.length === 0) {
-        removeUploads.push(uploadID)
+        uploadsToRemove.push(uploadID)
         return
       }
 
-      updatedUploads[uploadID] = Object.assign({}, currentUploads[uploadID], {
+      updatedUploads[uploadID] = {
+        ...currentUploads[uploadID],
         fileIDs: newFileIDs
-      })
+      }
     })
 
-    this.setState({
+    uploadsToRemove.forEach((uploadID) => {
+      delete updatedUploads[uploadID]
+    })
+
+    const stateUpdate = {
       currentUploads: updatedUploads,
-      files: updatedFiles,
-      ...(
-        // If this is the last file we just removed - allow new uploads!
-        Object.keys(updatedFiles).length === 0 &&
-        { allowNewUpload: true }
-      )
-    })
+      files: updatedFiles
+    }
 
-    removeUploads.forEach((uploadID) => {
-      this._removeUpload(uploadID)
-    })
+    // If all files were removed - allow new uploads!
+    if (Object.keys(updatedFiles).length === 0) {
+      stateUpdate.allowNewUpload = true
+      stateUpdate.error = null
+    }
 
+    this.setState(stateUpdate)
     this._calculateTotalProgress()
-    this.emit('file-removed', removedFile)
-    this.log(`File removed: ${removedFile.id}`)
+
+    const removedFileIDs = Object.keys(removedFiles)
+    removedFileIDs.forEach((fileID) => {
+      this.emit('file-removed', removedFiles[fileID], reason)
+    })
+
+    if (removedFileIDs.length > 5) {
+      this.log(`Removed ${removedFileIDs.length} files`)
+    } else {
+      this.log(`Removed files: ${removedFileIDs.join(', ')}`)
+    }
+  }
+
+  removeFile (fileID, reason = null) {
+    this.removeFiles([fileID], reason)
   }
 
   pauseResume (fileID) {
@@ -653,8 +809,8 @@ class Uppy {
       })
       updatedFiles[file] = updatedFile
     })
-    this.setState({ files: updatedFiles })
 
+    this.setState({ files: updatedFiles })
     this.emit('pause-all')
   }
 
@@ -697,17 +853,21 @@ class Uppy {
 
     this.emit('retry-all', filesToRetry)
 
-    const uploadID = this._createUpload(filesToRetry)
+    const uploadID = this._createUpload(filesToRetry, {
+      forceAllowNewUpload: true // create new upload even if allowNewUpload: false
+    })
     return this._runUpload(uploadID)
   }
 
   cancelAll () {
     this.emit('cancel-all')
 
-    const files = Object.keys(this.getState().files)
-    files.forEach((fileID) => {
-      this.removeFile(fileID)
-    })
+    const { files } = this.getState()
+
+    const fileIDs = Object.keys(files)
+    if (fileIDs.length) {
+      this.removeFiles(fileIDs, 'cancel-all')
+    }
 
     this.setState({
       totalProgress: 0,
@@ -723,7 +883,9 @@ class Uppy {
 
     this.emit('upload-retry', fileID)
 
-    const uploadID = this._createUpload([fileID])
+    const uploadID = this._createUpload([fileID], {
+      forceAllowNewUpload: true // create new upload even if allowNewUpload: false
+    })
     return this._runUpload(uploadID)
   }
 
@@ -740,7 +902,8 @@ class Uppy {
     // bytesTotal may be null or zero; in that case we can't divide by it
     const canHavePercentage = isFinite(data.bytesTotal) && data.bytesTotal > 0
     this.setFileState(file.id, {
-      progress: Object.assign({}, this.getFile(file.id).progress, {
+      progress: {
+        ...this.getFile(file.id).progress,
         bytesUploaded: data.bytesUploaded,
         bytesTotal: data.bytesTotal,
         percentage: canHavePercentage
@@ -748,7 +911,7 @@ class Uppy {
           // we get more accurate calculations if we don't round this at all.
           ? Math.round(data.bytesUploaded / data.bytesTotal * 100)
           : 0
-      })
+      }
     })
 
     this._calculateTotalProgress()
@@ -760,7 +923,9 @@ class Uppy {
     const files = this.getFiles()
 
     const inProgress = files.filter((file) => {
-      return file.progress.uploadStarted
+      return file.progress.uploadStarted ||
+        file.progress.preprocess ||
+        file.progress.postprocess
     })
 
     if (inProgress.length === 0) {
@@ -816,22 +981,50 @@ class Uppy {
    */
   _addListeners () {
     this.on('error', (error) => {
-      this.setState({ error: error.message || 'Unknown error' })
+      let errorMsg = 'Unknown error'
+      if (error.message) {
+        errorMsg = error.message
+      }
+
+      if (error.details) {
+        errorMsg += ' ' + error.details
+      }
+
+      this.setState({ error: errorMsg })
     })
 
     this.on('upload-error', (file, error, response) => {
+      let errorMsg = 'Unknown error'
+      if (error.message) {
+        errorMsg = error.message
+      }
+
+      if (error.details) {
+        errorMsg += ' ' + error.details
+      }
+
       this.setFileState(file.id, {
-        error: error.message || 'Unknown error',
+        error: errorMsg,
         response
       })
 
       this.setState({ error: error.message })
 
-      let message = this.i18n('failedToUpload', { file: file.name })
       if (typeof error === 'object' && error.message) {
-        message = { message: message, details: error.message }
+        const newError = new Error(error.message)
+        newError.details = error.message
+        if (error.details) {
+          newError.details += ' ' + error.details
+        }
+        newError.message = this.i18n('failedToUpload', { file: file.name })
+        this._showOrLogErrorAndThrow(newError, {
+          throwErr: false
+        })
+      } else {
+        this._showOrLogErrorAndThrow(error, {
+          throwErr: false
+        })
       }
-      this.info(message, 'error', 5000)
     })
 
     this.on('upload', () => {
@@ -1168,9 +1361,13 @@ class Uppy {
    * @param {Array<string>} fileIDs File IDs to include in this upload.
    * @returns {string} ID of this upload.
    */
-  _createUpload (fileIDs) {
+  _createUpload (fileIDs, opts = {}) {
+    const {
+      forceAllowNewUpload = false // uppy.retryAll sets this to true — when retrying we want to ignore `allowNewUpload: false`
+    } = opts
+
     const { allowNewUpload, currentUploads } = this.getState()
-    if (!allowNewUpload) {
+    if (!allowNewUpload && !forceAllowNewUpload) {
       throw new Error('Cannot create a new upload: already uploading.')
     }
 
@@ -1231,7 +1428,7 @@ class Uppy {
    * @param {string} uploadID The ID of the upload.
    */
   _removeUpload (uploadID) {
-    const currentUploads = Object.assign({}, this.getState().currentUploads)
+    const currentUploads = { ...this.getState().currentUploads }
     delete currentUploads[uploadID]
 
     this.setState({
@@ -1348,10 +1545,18 @@ class Uppy {
 
     if (onBeforeUploadResult && typeof onBeforeUploadResult === 'object') {
       files = onBeforeUploadResult
+      // Updating files in state, because uploader plugins receive file IDs,
+      // and then fetch the actual file object from state
+      this.setState({
+        files: files
+      })
     }
 
     return Promise.resolve()
       .then(() => this._checkMinNumberOfFiles(files))
+      .catch((err) => {
+        this._showOrLogErrorAndThrow(err)
+      })
       .then(() => {
         const { currentUploads } = this.getState()
         // get a list of files that are currently assigned to uploads
@@ -1370,7 +1575,9 @@ class Uppy {
         return this._runUpload(uploadID)
       })
       .catch((err) => {
-        this._showOrLogErrorAndThrow(err)
+        this._showOrLogErrorAndThrow(err, {
+          showInformer: false
+        })
       })
   }
 }

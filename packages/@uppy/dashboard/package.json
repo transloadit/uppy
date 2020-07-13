@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "1.5.0",
+  "version": "1.10.1",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -22,6 +22,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@transloadit/prettier-bytes": "0.0.7",
     "@uppy/informer": "file:../informer",
     "@uppy/provider-views": "file:../provider-views",
     "@uppy/status-bar": "file:../status-bar",

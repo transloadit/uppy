@@ -3,7 +3,7 @@
  * sends auth token to uppy client
  */
 const tokenService = require('../helpers/jwt')
-const parseUrl = require('url').parse // eslint-disable-line node/no-deprecated-api
+const { URL } = require('url')
 const { hasMatch, sanitizeHtml } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
 const versionCmp = require('../helpers/version')
@@ -16,10 +16,13 @@ const versionCmp = require('../helpers/version')
  */
 module.exports = function sendToken (req, res, next) {
   const uppyAuthToken = req.companion.authToken
-  // add the token to cookies for thumbnail/image requests
-  tokenService.addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider)
+  // some providers need the token in cookies for thumbnail/image requests
+  if (req.companion.provider.needsCookieAuth) {
+    tokenService.addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider)
+  }
 
-  const state = (req.session.grant || {}).state
+  const dynamic = (req.session.grant || {}).dynamic || {}
+  const state = dynamic.state
   if (state) {
     const origin = oAuthState.getFromState(state, 'origin', req.companion.options.secret)
     const clientVersion = oAuthState.getFromState(
@@ -29,7 +32,7 @@ module.exports = function sendToken (req, res, next) {
     )
     const allowedClients = req.companion.options.clients
     // if no preset clients then allow any client
-    if (!allowedClients || hasMatch(origin, allowedClients) || hasMatch(parseUrl(origin).host, allowedClients)) {
+    if (!allowedClients || hasMatch(origin, allowedClients) || hasMatch((new URL(origin)).host, allowedClients)) {
       const allowsStringMessage = versionCmp.gte(clientVersion, '1.0.2')
       return res.send(allowsStringMessage ? htmlContent(uppyAuthToken, origin) : oldHtmlContent(uppyAuthToken, origin))
     }

@@ -39,12 +39,46 @@ In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` gl
 const Dropbox = Uppy.Dropbox
 ```
 
+## Setting Up
+
+To use the Dropbox provider, you need to configure the Dropbox keys that Companion should use. With the standalone Companion server, specify environment variables:
+```shell
+export COMPANION_DROPBOX_KEY="Dropbox API key"
+export COMPANION_DROPBOX_SECRET="Dropbox API secret"
+```
+
+When using the Companion Node.js API, configure these options:
+```js
+companion.app({
+  providerOptions: {
+    dropbox: {
+      key: 'Dropbox API key',
+      secret: 'Dropbox API secret'
+    }
+  }
+})
+```
+
+You can create a Dropbox App on the [Dropbox Developers site](https://www.dropbox.com/developers/apps/create).
+
+Things to note:
+- Choose the "Dropbox API", not the business variant.
+- Typically you'll want "Full Dropbox" access, unless you are very certain that you need the other one.
+
+You'll be redirected to the app page. This page lists the app key and app secret, which you should use to configure Companion as shown above.
+
+The app page has a "Redirect URIs" field. Here, add:
+```
+https://$YOUR_COMPANION_HOST_NAME/connect/dropbox/callback
+```
+
+You can only use the integration with your own account initially—make sure to apply for production status on the app page before you publish your app, or your users will not be able to sign in!
+
 ## CSS
 
 Dashboard plugin is recommended as a container to all Provider plugins, including Dropbox. If you are using Dashboard, it [comes with all the nessesary styles](/docs/dashboard/#CSS) for Dropbox as well.
 
-⚠️ If you are feeling adventurous, and want to use Dropbox plugin separately, without Dashboard, make sure to include `@uppy/provider-views/dist/style.css` (or `style.min.css`) CSS file. This is experimental, not officialy supported and not recommended.
-
+⚠️ If you are feeling adventurous, and want to use Dropbox plugin separately, without Dashboard, make sure to include `@uppy/provider-views/dist/style.css` (or `style.min.css`) CSS file. This is experimental, not officially supported and not recommended.
 
 ## Options
 

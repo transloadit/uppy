@@ -5,7 +5,7 @@ const { exec } = require('child_process')
 const YAML = require('js-yaml')
 const { promisify } = require('util')
 const gzipSize = require('gzip-size')
-const bytes = require('pretty-bytes')
+const prettierBytes = require('@transloadit/prettier-bytes')
 const browserify = require('browserify')
 const touch = require('touch')
 const glob = require('glob')
@@ -30,28 +30,35 @@ const defaultConfig = {
 // Keeping a whitelist so utils etc are excluded
 // It may be easier to maintain a blacklist instead
 const packages = [
+  // Bundles
   'uppy',
+  '@uppy/robodog',
+  // Integrations
+  '@uppy/react',
+  // Core
   '@uppy/core',
-  '@uppy/dashboard',
-  '@uppy/drag-drop',
-  '@uppy/file-input',
-  '@uppy/webcam',
-  '@uppy/dropbox',
-  '@uppy/google-drive',
-  '@uppy/instagram',
-  '@uppy/url',
-  '@uppy/tus',
-  '@uppy/xhr-upload',
+  // Plugins -- please keep these sorted alphabetically
   '@uppy/aws-s3',
   '@uppy/aws-s3-multipart',
-  '@uppy/status-bar',
-  '@uppy/progress-bar',
-  '@uppy/informer',
-  '@uppy/transloadit',
+  '@uppy/dashboard',
+  '@uppy/drag-drop',
+  '@uppy/dropbox',
+  '@uppy/file-input',
   '@uppy/form',
   '@uppy/golden-retriever',
-  '@uppy/react',
+  '@uppy/google-drive',
+  '@uppy/informer',
+  '@uppy/instagram',
+  '@uppy/progress-bar',
+  '@uppy/screen-capture',
+  '@uppy/status-bar',
   '@uppy/thumbnail-generator',
+  '@uppy/transloadit',
+  '@uppy/tus',
+  '@uppy/url',
+  '@uppy/webcam',
+  '@uppy/xhr-upload',
+  // Stores
   '@uppy/store-default',
   '@uppy/store-redux'
 ]
@@ -67,6 +74,10 @@ inject().catch((err) => {
 
 async function getMinifiedSize (pkg, name) {
   const b = browserify(pkg)
+
+  const packageJSON = fs.readFileSync(path.join(pkg, 'package.json'))
+  const version = JSON.parse(packageJSON).version
+
   if (name !== '@uppy/core' && name !== 'uppy') {
     b.exclude('@uppy/core')
     // Already unconditionally included through @uppy/core
@@ -82,7 +93,8 @@ async function getMinifiedSize (pkg, name) {
 
   return {
     minified: bundle.length,
-    gzipped
+    gzipped,
+    version
   }
 }
 
@@ -96,12 +108,12 @@ async function injectSizes (config) {
       console.info(chalk.green(
         // ✓ @uppy/pkgname:     10.0 kB min  / 2.0 kB gz
         `  ✓ ${pkg}: ${' '.repeat(padTarget - pkg.length)}` +
-        `${bytes(result.minified)} min`.padEnd(10) +
-        ` / ${bytes(result.gzipped)} gz`
+        `${prettierBytes(result.minified)} min`.padEnd(10) +
+        ` / ${prettierBytes(result.gzipped)} gz`
       ))
       return Object.assign(result, {
-        prettyMinified: bytes(result.minified),
-        prettyGzipped: bytes(result.gzipped)
+        prettyMinified: prettierBytes(result.minified),
+        prettyGzipped: prettierBytes(result.gzipped)
       })
     })
   ).then((list) => {
@@ -138,7 +150,7 @@ async function injectGhStars () {
     opts.auth = process.env.GITHUB_TOKEN
   }
 
-  const Octokit = require('@octokit/rest')
+  const { Octokit } = require('@octokit/rest')
   const octokit = new Octokit(opts)
 
   const { headers, data } = await octokit.repos.get({
@@ -149,7 +161,7 @@ async function injectGhStars () {
   console.log(`${headers['x-ratelimit-remaining']} requests remaining until we hit GitHub ratelimiter`)
 
   const dstpath = path.join(webRoot, 'themes', 'uppy', 'layout', 'partials', 'generated_stargazers.ejs')
-  fs.writeFileSync(dstpath, data.stargazers_count, 'utf-8')
+  fs.writeFileSync(dstpath, String(data.stargazers_count), 'utf-8')
 
   console.log(`${data.stargazers_count} stargazers written to '${dstpath}'`)
 }

@@ -1,76 +1,114 @@
-const { h } = require('preact')
+const { h, Component } = require('preact')
 const classNames = require('classnames')
-const pure = require('../../utils/pure')
+const shallowEqual = require('is-shallow-equal')
 const FilePreviewAndLink = require('./FilePreviewAndLink')
 const FileProgress = require('./FileProgress')
 const FileInfo = require('./FileInfo')
 const Buttons = require('./Buttons')
 
-module.exports = pure(function FileItem (props) {
-  const file = props.file
+module.exports = class FileItem extends Component {
+  shouldComponentUpdate (nextProps) {
+    return !shallowEqual(this.props, nextProps)
+  }
 
-  const isProcessing = file.progress.preprocess || file.progress.postprocess
-  const isUploaded = file.progress.uploadComplete && !isProcessing && !file.error
-  const uploadInProgressOrComplete = file.progress.uploadStarted || isProcessing
-  const uploadInProgress = (file.progress.uploadStarted && !file.progress.uploadComplete) || isProcessing
-  const isPaused = file.isPaused || false
-  const error = file.error || false
+  componentDidMount () {
+    const file = this.props.file
+    if (!file.preview) {
+      this.props.handleRequestThumbnail(file)
+    }
+  }
 
-  const showRemoveButton = props.individualCancellation
-    ? !isUploaded
-    : !uploadInProgress && !isUploaded
+  componentWillUnmount () {
+    const file = this.props.file
+    if (!file.preview) {
+      this.props.handleCancelThumbnail(file)
+    }
+  }
 
-  const dashboardItemClass = classNames(
-    'uppy-u-reset',
-    'uppy-DashboardItem',
-    { 'is-inprogress': uploadInProgress },
-    { 'is-processing': isProcessing },
-    { 'is-complete': isUploaded },
-    { 'is-paused': isPaused },
-    { 'is-error': !!error },
-    { 'is-resumable': props.resumableUploads },
-    { 'is-noIndividualCancellation': !props.individualCancellation }
-  )
+  render () {
+    const file = this.props.file
 
-  return (
-    <li class={dashboardItemClass} id={`uppy_${file.id}`}>
-      <div class="uppy-DashboardItem-preview">
-        <FilePreviewAndLink
-          file={file}
-          showLinkToFileUploadResult={props.showLinkToFileUploadResult}
-        />
-        <FileProgress
-          {...props}
-          file={file}
-          error={error}
-          isUploaded={isUploaded}
-        />
+    const isProcessing = file.progress.preprocess || file.progress.postprocess
+    const isUploaded = file.progress.uploadComplete && !isProcessing && !file.error
+    const uploadInProgressOrComplete = file.progress.uploadStarted || isProcessing
+    const uploadInProgress = (file.progress.uploadStarted && !file.progress.uploadComplete) || isProcessing
+    const error = file.error || false
+
+    let showRemoveButton = this.props.individualCancellation
+      ? !isUploaded
+      : !uploadInProgress && !isUploaded
+
+    if (isUploaded && this.props.showRemoveButtonAfterComplete) {
+      showRemoveButton = true
+    }
+
+    const dashboardItemClass = classNames({
+      'uppy-Dashboard-Item': true,
+      'is-inprogress': uploadInProgress,
+      'is-processing': isProcessing,
+      'is-complete': isUploaded,
+      'is-error': !!error,
+      'is-resumable': this.props.resumableUploads,
+      'is-noIndividualCancellation': !this.props.individualCancellation
+    })
+
+    return (
+      <div
+        class={dashboardItemClass}
+        id={`uppy_${file.id}`}
+        role={this.props.role}
+      >
+        <div class="uppy-Dashboard-Item-preview">
+          <FilePreviewAndLink
+            file={file}
+            showLinkToFileUploadResult={this.props.showLinkToFileUploadResult}
+          />
+          <FileProgress
+            file={file}
+            error={error}
+            isUploaded={isUploaded}
+
+            hideRetryButton={this.props.hideRetryButton}
+            hideCancelButton={this.props.hideCancelButton}
+            hidePauseResumeButton={this.props.hidePauseResumeButton}
+
+            showRemoveButtonAfterComplete={this.props.showRemoveButtonAfterComplete}
+
+            resumableUploads={this.props.resumableUploads}
+            individualCancellation={this.props.individualCancellation}
+
+            pauseUpload={this.props.pauseUpload}
+            cancelUpload={this.props.cancelUpload}
+            retryUpload={this.props.retryUpload}
+            i18n={this.props.i18n}
+          />
+        </div>
+
+        <div class="uppy-Dashboard-Item-fileInfoAndButtons">
+          <FileInfo
+            file={file}
+            id={this.props.id}
+            acquirers={this.props.acquirers}
+            containerWidth={this.props.containerWidth}
+            i18n={this.props.i18n}
+          />
+          <Buttons
+            file={file}
+            metaFields={this.props.metaFields}
+
+            showLinkToFileUploadResult={this.props.showLinkToFileUploadResult}
+            showRemoveButton={showRemoveButton}
+
+            uploadInProgressOrComplete={uploadInProgressOrComplete}
+            removeFile={this.props.removeFile}
+            toggleFileCard={this.props.toggleFileCard}
+
+            i18n={this.props.i18n}
+            log={this.props.log}
+            info={this.props.info}
+          />
+        </div>
       </div>
-
-      <div class="uppy-DashboardItem-fileInfoAndButtons">
-        <FileInfo
-          file={file}
-          id={props.id}
-          acquirers={props.acquirers}
-          containerWidth={props.containerWidth}
-          i18n={props.i18n}
-        />
-        <Buttons
-          file={file}
-          metaFields={props.metaFields}
-
-          showLinkToFileUploadResult={props.showLinkToFileUploadResult}
-          showRemoveButton={showRemoveButton}
-
-          uploadInProgressOrComplete={uploadInProgressOrComplete}
-          removeFile={props.removeFile}
-          toggleFileCard={props.toggleFileCard}
-
-          i18n={props.i18n}
-          log={props.log}
-          info={props.info}
-        />
-      </div>
-    </li>
-  )
-})
+    )
+  }
+}

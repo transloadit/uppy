@@ -9,13 +9,16 @@ const dashboardOptionNames = [
   'showLinkToFileUploadResult',
   'showProgressDetails',
   'hideRetryButton',
-  'hidePauseResumeCancelButtons',
+  'hideCancelButton',
+  'hideUploadButton',
   'hideProgressAfterFinish',
   'note',
   'disableStatusBar',
   'disableInformer',
   'disableThumbnailGenerator',
-  'showSelectedFiles'
+  'showSelectedFiles',
+  'proudlyDisplayPoweredByUppy',
+  'theme'
 ]
 
 const modalDashboardOptionNames = [

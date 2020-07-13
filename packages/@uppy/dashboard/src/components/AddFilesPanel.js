@@ -9,7 +9,7 @@ const AddFilesPanel = (props) => {
       aria-hidden={props.showAddFilesPanel}
     >
       <div class="uppy-DashboardContent-bar">
-        <div class="uppy-DashboardContent-title" role="heading" aria-level="h1">
+        <div class="uppy-DashboardContent-title" role="heading" aria-level="1">
           {props.i18n('addingMoreFiles')}
         </div>
         <button

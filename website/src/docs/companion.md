@@ -19,8 +19,8 @@ Companion handles the server-to-server communication between your server and fil
 
 As of now, Companion is integrated to work with:
 
-- Google Drive
-- Dropbox
+- Google Drive - [Set up instructions](/docs/google-drive/#Setting-Up)
+- Dropbox - [Set up instructions](/docs/dropbox/#Setting-Up)
 - Instagram
 - Facebook
 - OneDrive
@@ -98,7 +98,7 @@ This takes your `server` instance and your Uppy [Options](#Options) as parameter
 
 ### Running as a standalone server
 
-> Please ensure that the required environment variables are set before running/using Companion as a standalone server. See [Configure Standalone](#Configure-Standalone) for the variables required.
+> Please ensure that the required environment variables are set before running/using Companion as a standalone server. See [Configure Standalone](#Configuring-a-standalone-server) for the variables required.
 
 Set environment variables first:
 
@@ -199,6 +199,10 @@ export COMPANION_AWS_BUCKET="YOUR AWS S3 BUCKET"
 export COMPANION_AWS_REGION="AWS REGION"
 # to enable S3 Transfer Acceleration (default: false)
 export COMPANION_AWS_USE_ACCELERATE_ENDPOINT="false"
+# to set X-Amz-Expires query param in presigned urls (in seconds, default: 300)
+export COMPANION_AWS_EXPIRES="300"
+# to set a canned ACL for uploaded objects: https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
+export COMPANION_AWS_ACL="public-read"
 
 # corresponds to the server.oauthDomain option
 export COMPANION_OAUTH_DOMAIN="sub.domain.com"
@@ -241,12 +245,14 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
       secret: "***"
     },
     s3: {
-      getKey: (req, filename) => filename,
+      getKey: (req, filename, metadata) => filename,
       key: "***",
       secret: "***",
       bucket: "bucket-name",
       region: "us-east-1",
-      useAccelerateEndpoint: false // default: false
+      useAccelerateEndpoint: false, // default: false,
+      expires: 3600, // default: 300 (5 minutes)
+      acl: "private" // default: public-read
     }
   },
   server: {
@@ -280,7 +286,7 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 6. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
 
-7. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-Custom-Providers) for more information.
+7. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
 
 8. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Companion will only accept uploads to these URLs (useful when you want to make sure a Companion instance is only allowed to upload to your servers, for example).
 
@@ -290,31 +296,70 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 ### S3 options
 
-The S3 uploader has some options in addition to the ones necessary for authentication.
+Companion comes with signature endpoints for AWS S3. These can be used by the Uppy client to sign requests to upload files directly to S3, without exposing secret S3 keys in the browser. Companion also supports uploading files from providers like Dropbox and Instagram directly into S3.
 
-#### `s3.getKey(req, filename)`
+The S3 features can be configured using the `providerOptions.s3` property.
 
-Get the key name for a file. The key is the file path to which the file will be uploaded in your bucket. This option should be a function receiving two arguments: `req`, the HTTP request, and the original `filename` of the uploaded file. It should return a string `key`. The `req` parameter can be used to upload to a user-specific folder in your bucket, for example:
+#### `providerOptions.s3.key`
+
+The S3 access key ID. The standalone Companion server populates this with the value of the `COMPANION_AWS_KEY` environment variable by default.
+
+#### `providerOptions.s3.secret`
+
+The S3 secret access key. The standalone Companion server populates this with the value of the `COMPANION_AWS_SECRET` environment variable by default.
+
+#### `providerOptions.s3.bucket`
+
+The name of the bucket to store uploaded files in. The standalone Companion server populates this with the value of the `COMPANION_AWS_BUCKET` environment variable by default.
+
+#### `providerOptions.s3.region`
+
+The datacenter region where the target bucket is located. The standalone Companion server populates this with the value of the `COMPANION_AWS_REGION` environment variable by default.
+
+#### `providerOptions.s3.awsClientOptions`
+
+You can supply any [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property) in the `providerOptions.s3.awsClientOptions` object, _except for_ the below:
+
+- `accessKeyId`. Instead, use the `providerOptions.s3.key` property. This is to make configuration names consistent between different Companion features.
+- `secretAccessKey`. Instead, use the `providerOptions.s3.secret` property. This is to make configuration names consistent between different Companion features.
+
+Be aware that some options may cause wrong behaviour if they conflict with Companion's assumptions. If you find that a particular option does not work as expected, please [open an issue on the Uppy repository](https://github.com/transloadit/uppy/issues/new) so we can document it here.
+
+#### `providerOptions.s3.getKey(req, filename, metadata)`
+
+Get the key name for a file. The key is the file path to which the file will be uploaded in your bucket. This option should be a function receiving three arguments:
+- `req`, the HTTP request, for _regular_ S3 uploads using the `@uppy/aws-s3` plugin. This parameter is _not_ available for multipart uploads using the `@uppy/aws-s3-multipart` plugin;
+- `filename`, the original name of the uploaded file;
+- `metadata`, user-provided metadata for the file. See the [`@uppy/aws-s3`](https://uppy.io/docs/aws-s3/#metaFields) docs. Currently, the `@uppy/aws-s3-multipart` plugin unconditionally sends all metadata fields, so all of them are available here.
+
+This function should return a string `key`. The `req` parameter can be used to upload to a user-specific folder in your bucket, for example:
 
 ```js
 app.use(authenticationMiddleware)
 app.use(uppy.app({
-  s3: {
-    getKey: (req, filename) => `${req.user.id}/${filename}`,
-    /* auth options */
+  providerOptions: {
+    s3: {
+      getKey: (req, filename, metadata) => `${req.user.id}/${filename}`,
+      /* auth options */
+    }
   }
 }))
 ```
 
-The default value simply returns `filename`, so all files will be uploaded to the root of the bucket as their original file name.
+The default implementation returns the `filename`, so all files will be uploaded to the root of the bucket as their original file name.
+```js
+({
+  getKey: (req, filename, metadata) => filename
+})
+```
 
 ### Running in Kubernetes
 
-We have [a detailed guide on running Companion in Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we currently run our example server at https://companion.uppy.io.
+We have [a detailed guide on running Companion in Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we currently run our example server at <https://companion.uppy.io>.
 
 ### Adding custom providers
 
-As of now, Companion supports **Google Drive**, **Dropbox**, **Instagram**, and **URL** (remote urls) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
+As of now, Companion supports the [providers listed here](https://uppy.io/docs/companion/#Supported-providers) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
 
 ```javascript
 let options = {
@@ -326,6 +371,7 @@ let options = {
                 oauth: 2,
                 key: "***",
                 secret: "***",
+                callback: '/myprovidername/callback'
                 scope: ["read", "write"]
             },
             module: require('/path/to/provider/module')
@@ -345,13 +391,62 @@ To work well with Companion, the **Module** must be a class with the following m
     - token - authorization token (retrieved from oauth process) to send along with your request
     - directory - the `id/name` of the directory from which data is to be retrieved. This may be ignored if it doesn't apply to your provider
     - query - expressjs query params object received by the server (just in case there is some data you need in there).
-  - `done (err, response, body)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, `response`, and `body`.
-2. `download (options, onData, onResponse)` - downloads a particular file from the provider.
+  - `done (err, data)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, and [`data`](#list-data).
+2. `download (options, onData)` - downloads a particular file from the provider.
   - `options` - is an object containing the following attributes:
     - token - authorization token (retrieved from oauth process) to send along with your request.
     - id - ID of the file being downloaded.
-  - `onData (chunk)` - a callback that should be called with each data chunk received on download. This is useful if the size of the downloaded file can be pre-determined. This would allow for pipelined upload of the file (to the desired destination), while the download is still going on.
-  - `onResponse (response)` - if the size of the downloaded file can not be pre-determined by Companion, then this callback should be called in place of the `onData` callback. This callback would be called after the download is done, and would take the downloaded data (response) as the argument.
+    - query - expressjs query params object received by the server (just in case there is some data you need in there).
+  - `onData (err, chunk)` - a callback that should be called with each data chunk received as download is happening. The `err` argument is an error that should be passed if an error occurs during download. It should be `null` if there's no error. Once the download is completed and there are no more chunks to receive, `onData` should be called with `null` values like so `onData(null, null)`
+3. `size (options, done)` - returns the byte size of the file that needs to be downloaded.
+  - `options` - is an object containing the following attributes:
+    - token - authorization token (retrieved from oauth process) to send along with your request.
+    - id - ID of the file being downloaded.
+  - `done (err, size)` - the callback that should be called after the request to your provider is completed. As the signature indicates, the following data should be passed along to the callback `err`, and `size` (number).
+
+The class must also have an `authProvider` string (lowercased) field which typically indicates the name of the provider (e.g "dropbox").
+
+#### list data
+
+```js
+{
+  // username or email of the user whose provider account is being accessed
+  username: 'johndoe',
+  // list of files and folders in the directory. An item is considered a folder
+  //  if it mainly exists as a collection to contain sub-items
+  items: [
+    {
+      // boolean value of whether or NOT it's a folder
+      isFolder: false,
+      // icon image URL
+      icon: 'https://random-api.url.com/fileicon.jpg',
+      // name of the item
+      name: 'myfile.jpg',
+      // the mime type of the item. Only relevant if the item is NOT a folder
+      mimeType: 'image/jpg',
+      // the id (in string) of the item
+      id: 'uniqueitemid',
+      // thumbnail image URL. Only relevant if the item is NOT a folder
+      thumbnail: 'https://random-api.url.com/filethumbnail.jpg',
+      // for folders this is typically the value that will be passed as "directory" in the list(...) method.
+      // For files, this is the value that will be passed as id in the download(...) method.
+      requestPath: 'file-or-folder-requestpath',
+      // datetime string (in ISO 8601 format) of when this item was last modified
+      modifiedDate: '2020-06-29T19:59:58Z',
+      // the size in bytes of the item. Only relevent if the item is NOT a folder
+      size: 278940,
+      custom: {
+        // an object that may contain some more custom fields that you may need to send to the client. Only add this object if you have a need for it.
+        customData1: 'the value',
+        customData2: 'the value',
+      },
+      // more items here
+    }
+  ]
+  // if the "items" list is paginated, this is the request path needed to fetch the next page.
+  nextPagePath: 'directory-name?cursor=cursor-to-next-page'
+}
+```
 
 ## Development
 
@@ -378,7 +473,7 @@ This would get the Companion instance running on `http://localhost:3020`. It use
 
 ## Live example
 
-An example server is running at https://companion.uppy.io, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md)
+An example server is running at <https://companion.uppy.io>, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md)
 
 
 ## How the Authentication and Token mechanism works

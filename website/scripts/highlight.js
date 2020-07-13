@@ -31,6 +31,8 @@ function highlight (lang, code) {
 function prismify (data) {
   data.content = data.content.replace(unhighlightedCodeRx,
     (_, lang, code) => highlight(lang, entities.decode(code)))
+  data.excerpt = data.excerpt.replace(unhighlightedCodeRx,
+    (_, lang, code) => highlight(lang, entities.decode(code)))
 
   return data
 }

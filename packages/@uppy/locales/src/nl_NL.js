@@ -14,7 +14,6 @@ nl_NL.strings = {
   cancelUpload: 'Annuleer upload',
   chooseFiles: 'Kies bestanden',
   closeModal: 'Sluit Venster',
-  companionAuthError: 'Toestemming vereist',
   companionError: 'Verbinding met Companion mislukt',
   complete: 'Voltooid',
   connectedToInternet: 'Verbonden met het internet',
@@ -31,32 +30,29 @@ nl_NL.strings = {
   dropHint: 'Sleep hier je bestanden naartoe',
   dropPaste: 'Sleep hier je bestanden naartoe, plak of %{browse}',
   dropPasteImport: 'Sleep hier je bestanden naartoe, plak, %{browse} of importeer vanuit',
-  edit: 'Aanpassen',
   editFile: 'Bestand aanpassen',
   editing: 'Bezig %{file} aan te passen',
   emptyFolderAdded: 'Er werden geen bestanden toegevoegd uit de lege map',
   encoding: 'Coderen...',
   enterCorrectUrl: 'Ongeldige URL: Zorg dat je een directe link naar een bestand invoert',
   enterUrlToImport: 'Voeg URL toe om een bestand te importeren',
+  exceedsSize2: 'Dit bestand overschrijdt de maximaal toegelaten bestandsgrootte van %{size}',
   exceedsSize: 'Dit bestand overschrijdt de maximaal toegelaten bestandsgrootte van',
   failedToFetch: 'Companion kan deze URL niet laden, controleer of de URL correct is',
   failedToUpload: 'Kon %{file} niet uploaden',
   fileSource: 'Bronbestand: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} van %{smart_count} bestand geüpload',
-    '1': '%{complete} van %{smart_count} bestanden geüpload',
-    '2': '%{complete} van %{smart_count} bestanden geüpload'
+    '1': '%{complete} van %{smart_count} bestanden geüpload'
   },
   filter: 'Filter',
   finishEditingFile: 'Klaar met bestand aan te passen',
   folderAdded: {
     '0': '%{smart_count} bestand uit %{folder} toegevoegd',
-    '1': '%{smart_count} bestanden uit %{folder} toegevoegd',
-    '2': '%{smart_count} bestanden uit %{folder} toegevoegd'
+    '1': '%{smart_count} bestanden uit %{folder} toegevoegd'
   },
   import: 'Importeer',
   importFrom: 'Importeer vanuit %{name}',
-  link: 'Link',
   loading: 'Bezig met laden...',
   logOut: 'Uitloggen',
   myDevice: 'Mijn apparaat',
@@ -65,13 +61,14 @@ nl_NL.strings = {
   pause: 'Pauze',
   pauseUpload: 'Pauzeer upload',
   paused: 'Gepauzeerd',
+  poweredBy2: 'Mogelijk gemaakt door %{uppy}',
   poweredBy: 'Mogelijk gemaakt door',
-  preparingUpload: 'Upload voorbereiden...',
   processingXFiles: {
     '0': 'Bezig met %{smart_count} bestand te verwerken',
-    '1': 'Bezig met %{smart_count} bestanden te verwerken',
-    '2': 'Bezig met %{smart_count} bestanden te verwerken'
+    '1': 'Bezig met %{smart_count} bestanden te verwerken'
   },
+  recordingLength: 'Opnameduur %{recording_length}',
+  recordingStoppedMaxSize: 'Opname gestopt omdat de bestandsgrootte de limiet bijna overschrijdt',
   removeFile: 'Bestand verwijderen',
   resetFilter: 'Filter resetten',
   resume: 'Hervatten',
@@ -81,8 +78,7 @@ nl_NL.strings = {
   saveChanges: 'Wijzigingen opslaan',
   selectX: {
     '0': 'Selecteer %{smart_count}',
-    '1': 'Selecteer %{smart_count}',
-    '2': 'Selecteer %{smart_count}'
+    '1': 'Selecteer %{smart_count}'
   },
   smile: 'Lach!',
   startRecording: 'Start video-opname',
@@ -95,41 +91,34 @@ nl_NL.strings = {
   uploadPaused: 'Upload gepauzeerd',
   uploadXFiles: {
     '0': 'Upload %{smart_count} bestand',
-    '1': 'Upload %{smart_count} bestanden',
-    '2': 'Upload %{smart_count} bestanden'
+    '1': 'Upload %{smart_count} bestanden'
   },
   uploadXNewFiles: {
     '0': 'Upload +%{smart_count} bestand',
-    '1': 'Upload +%{smart_count} bestanden',
-    '2': 'Upload +%{smart_count} bestanden'
+    '1': 'Upload +%{smart_count} bestanden'
   },
   uploading: 'Bezig met uploaden',
   uploadingXFiles: {
     '0': 'Bezig met %{smart_count} bestand te uploaden',
-    '1': 'Bezig met %{smart_count} bestanden te uploaden',
-    '2': 'Bezig met %{smart_count} bestanden te uploaden'
+    '1': 'Bezig met %{smart_count} bestanden te uploaden'
   },
   xFilesSelected: {
     '0': '%{smart_count} bestand geselecteerd',
-    '1': '%{smart_count} bestanden geselecteerd',
-    '2': '%{smart_count} bestanden geselecteerd'
+    '1': '%{smart_count} bestanden geselecteerd'
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} extra bestand toegevoegd',
-    '1': '%{smart_count} extra bestanden toegevoegd',
-    '2': '%{smart_count} extra bestanden toegevoegd'
+    '1': '%{smart_count} extra bestanden toegevoegd'
   },
   xTimeLeft: '%{time} over',
   youCanOnlyUploadFileTypes: 'Je kan enkel volgende types uploaden: %{types}',
   youCanOnlyUploadX: {
     '0': 'Je kan slechts %{smart_count} bestand uploaden',
-    '1': 'Je kan slechts %{smart_count} bestanden uploaden',
-    '2': 'Je kan slechts %{smart_count} bestanden uploaden'
+    '1': 'Je kan slechts %{smart_count} bestanden uploaden'
   },
   youHaveToAtLeastSelectX: {
     '0': 'Je moet minstens %{smart_count} bestand selecteren',
-    '1': 'Je moet minstens %{smart_count} bestanden selecteren',
-    '2': 'Je moet minstens %{smart_count} bestanden selecteren'
+    '1': 'Je moet minstens %{smart_count} bestanden selecteren'
   },
   selectAllFilesFromFolderNamed: 'Selecteer alle bestanden uit de map %{name}',
   unselectAllFilesFromFolderNamed: 'Deselecteer alle bestanden uit de map %{name}',

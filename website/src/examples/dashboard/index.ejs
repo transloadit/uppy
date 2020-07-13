@@ -28,7 +28,9 @@ const GoogleDrive = require('@uppy/google-drive')
 const Dropbox = require('@uppy/dropbox')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
+const OneDrive = require('@uppy/onedrive')
 const Webcam = require('@uppy/webcam')
+const ScreenCapture = require('@uppy/screen-capture')
 const Tus = require('@uppy/tus')
 
 const uppy = Uppy({
@@ -59,7 +61,9 @@ const uppy = Uppy({
 .use(Dropbox, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
 .use(Instagram, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
 .use(Facebook, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
+.use(OneDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
 .use(Webcam, { target: Dashboard })
+.use(ScreenCapture, { target: Dashboard })
 .use(Tus, { endpoint: 'https://master.tus.io/files/' })
 
 uppy.on('complete', result => {
