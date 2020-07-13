@@ -39,6 +39,8 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 Styles for Provider plugins, like Google Drive and Instagram, are also bundled with Dashboard styles. Styles for other plugins, such as `@uppy/url` and `@uppy/webcam`, are not inluded. If you are using those, please see their docs and make sure to include styles for them as well.
 
+<!-- Make sure the old name of this section still works -->
+<a id="Options"></a>
 ## Props
 
 On top of all the [`@uppy/dashboard`][] options, the `<DashboardModal />` plugin adds two additional props:
