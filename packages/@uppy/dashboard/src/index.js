@@ -177,7 +177,7 @@ module.exports = class Dashboard extends Plugin {
     if (callerPluginType !== 'acquirer' &&
         callerPluginType !== 'progressindicator' &&
         callerPluginType !== 'editor') {
-      const msg = 'Dashboard: The Dashboard can only be used by plugins of types: acquirer, progressindicator, editor'
+      const msg = 'Dashboard: can only be targeted by plugins of types: acquirer, progressindicator, editor'
       this.uppy.log(msg, 'error')
       return
     }
