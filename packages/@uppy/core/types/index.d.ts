@@ -236,6 +236,9 @@ declare module Uppy {
   }
 }
 
+declare interface Uppy<TUseStrictTypes extends Uppy.TypeChecking = Uppy.TypeChecking> {
+  new(opts?: Uppy.UppyOptions): Uppy.Uppy<TUseStrictTypes>
+}
 /**
  * Create an uppy instance.
  *
