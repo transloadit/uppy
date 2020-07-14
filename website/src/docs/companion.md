@@ -39,7 +39,7 @@ If you don't have a Node.js project with a `package.json` you might want to inst
 
 ### Prerequisite
 
-To run Companion, you need to be running `node.js > v10.0.0`.
+Since v2, you now need to be running `node.js > v10.0.0` to use Companion. Please see [Migrating v1 to v2](#Migrating-v1-to-v2)
 
 Unfortunately, Windows is not a supported platform right now. It may work, and we're happy to accept improvements in this area, but we can't provide assistance.
 
@@ -462,6 +462,36 @@ The class must also have an `authProvider` string (lowercased) field which typic
   nextPagePath: 'directory-name?cursor=cursor-to-next-page'
 }
 ```
+
+## Migrating v1 to v2
+
+### Prerequisite
+
+Since v2, you now need to be running `node.js > v10.0.0` to use Companion.
+
+### ProviderOptions
+
+In v2 the `google` and `microsoft` [providerOptions](https://uppy.io/docs/companion/#Options) have been changed to `drive` and `onedrive` respectively.
+
+### OAuth Redirect URIs
+
+On your Providers' respective developer platforms, the OAuth redirect URIs that you should supply has now changed from:
+
+`http(s)://$YOUR_COMPANION_HOST_NAME/connect/$AUTH_PROVIDER/callback` in v1
+
+to:
+
+`http(s)://$YOUR_COMPANION_HOST_NAME/$PROVIDER_NAME/redirect` in v2
+
+Old Redirect URIs vs New Redirect URIs
+
+| Provider | v1 Redirect URI | v2 Redirect URI |
+|-|-|-|
+| Dropbox | https://$YOUR_COMPANION_HOST_NAME/connect/dropbox/callback | https://$YOUR_COMPANION_HOST_NAME/dropbox/redirect |
+| Google drive | https://$YOUR_COMPANION_HOST_NAME/connect/google/callback | https://$YOUR_COMPANION_HOST_NAME/drive/redirect |
+| OneDrive | https://$YOUR_COMPANION_HOST_NAME/connect/microsoft/callback | https://$YOUR_COMPANION_HOST_NAME/onedrive/redirect |
+| Facebook | https://$YOUR_COMPANION_HOST_NAME/connect/facebook/callback | https://$YOUR_COMPANION_HOST_NAME/facebook/redirect |
+| Instagram | https://$YOUR_COMPANION_HOST_NAME/connect/instagram/callback | https://$YOUR_COMPANION_HOST_NAME/instagram/redirect |
 
 ## Development
 
