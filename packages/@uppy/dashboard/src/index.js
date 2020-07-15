@@ -246,17 +246,15 @@ module.exports = class Dashboard extends Plugin {
 
   openFileEditor = (file) => {
     const { targets } = this.getPluginState()
+    const editors = this._getEditors(targets)
 
     this.setPluginState({
       showFileEditor: true,
       activeOverlayType: 'FileEditor'
     })
 
-    const editors = this._getEditors(targets)
     editors.forEach((editor) => {
-      const editorPlugin = this.uppy.getPlugin(editor.id)
-      editorPlugin.selectFile(file)
-      setTimeout(editorPlugin.initEditor, 4)
+      this.uppy.getPlugin(editor.id).selectFile(file)
     })
   }
 

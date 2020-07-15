@@ -16,9 +16,12 @@ module.exports = class Editor extends Component {
   }
 
   save = () => {
-    this.cropper.getCroppedCanvas().toBlob((blob) => {
-      this.props.save(blob)
-    }, this.props.currentImage.type, 0.8)
+    this.cropper.getCroppedCanvas()
+      .toBlob(
+        (blob) => this.props.save(blob),
+        this.props.currentImage.type,
+        0.8
+      )
   }
 
   render () {
