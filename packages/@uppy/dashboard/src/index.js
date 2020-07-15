@@ -235,6 +235,15 @@ module.exports = class Dashboard extends Plugin {
     })
   }
 
+  canEditFile = (file) => {
+    const { targets } = this.getPluginState()
+    const editors = this._getEditors(targets)
+
+    return editors.some((target) => (
+      this.uppy.getPlugin(target.id).сanEditFile(file)
+    ))
+  }
+
   openFileEditor = (file) => {
     const { targets } = this.getPluginState()
 
@@ -889,6 +898,7 @@ module.exports = class Dashboard extends Plugin {
       showAddFilesPanel: pluginState.showAddFilesPanel,
       saveFileCard: this.saveFileCard,
       openFileEditor: this.openFileEditor,
+      canEditFile: this.canEditFile,
       width: this.opts.width,
       height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,

@@ -85,11 +85,7 @@ class FileCard extends Component {
 
   render () {
     const file = this.props.files[this.props.fileCardFor]
-
-    let showEditButton
-    this.props.editors.forEach((target) => {
-      showEditButton = this.props.getPlugin(target.id).сanEditFile(file)
-    })
+    const showEditButton = this.props.canEditFile(file)
 
     return (
       <div
