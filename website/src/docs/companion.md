@@ -39,7 +39,7 @@ If you don't have a Node.js project with a `package.json` you might want to inst
 
 ### Prerequisite
 
-Since v2, you now need to be running `node.js > v10.0.0` to use Companion. Please see [Migrating v1 to v2](#Migrating-v1-to-v2)
+Since v2, you now need to be running `node.js >= v10.0.0` to use Companion. Please see [Migrating v1 to v2](#Migrating-v1-to-v2)
 
 Unfortunately, Windows is not a supported platform right now. It may work, and we're happy to accept improvements in this area, but we can't provide assistance.
 
@@ -467,7 +467,7 @@ The class must also have an `authProvider` string (lowercased) field which typic
 
 ### Prerequisite
 
-Since v2, you now need to be running `node.js > v10.0.0` to use Companion.
+Since v2, you now need to be running `node.js >= v10.0.0` to use Companion.
 
 ### ProviderOptions
 
