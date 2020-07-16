@@ -7,6 +7,8 @@
 
 Image Editor is an image cropping and editing plugin for Uppy. Designed to be used with the Dashboard UI (can in theory work without it).
 
+⚠ In beta.
+
 **[Read the docs](https://uppy.io/docs/image-editor)** | **[Try it](https://uppy.io/examples/dashboard/)**
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
