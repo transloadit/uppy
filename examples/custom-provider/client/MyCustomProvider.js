@@ -10,20 +10,22 @@ module.exports = class MyCustomProvider extends Plugin {
     this.id = this.opts.id || 'MyCustomProvider'
     Provider.initPlugin(this, opts)
 
-    this.title = 'MyCustomProvider'
+    this.title = 'MyUnsplash'
     this.icon = () => (
-      <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="23" />
+      <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z" fill="#000000" fill-rule="nonzero" />
+      </svg>
     )
 
-    // writing out the key explicitly for readability the key used to store
-    // the provider instance must be equal to this.id.
-    this[this.id] = new Provider(uppy, {
+    this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
-      provider: 'mycustomprovider'
+      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      provider: 'myunsplash',
+      pluginId: this.id
     })
 
     this.files = []
-    this.onAuth = this.onAuth.bind(this)
+    this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
 
     // merge default options with the ones set by user
@@ -31,7 +33,9 @@ module.exports = class MyCustomProvider extends Plugin {
   }
 
   install () {
-    this.view = new ProviderViews(this)
+    this.view = new ProviderViews(this, {
+      provider: this.provider
+    })
     // Set default state
     this.setPluginState({
       authenticated: false,
@@ -54,56 +58,8 @@ module.exports = class MyCustomProvider extends Plugin {
     this.unmount()
   }
 
-  onAuth (authenticated) {
-    this.setPluginState({ authenticated })
-    if (authenticated) {
-      this.view.getFolder()
-    }
-  }
-
-  isFolder (item) {
-    return false
-  }
-
-  getItemData (item) {
-    return item
-  }
-
-  getItemIcon (item) {
-    return 'https://uppy.io/images/logos/uppy-dog-head-arrow.svg'
-  }
-
-  getItemSubList (item) {
-    return item.entries
-  }
-
-  getItemName (item) {
-    return item.name
-  }
-
-  getMimeType (item) {
-    // mime types aren't supported.
-    return null
-  }
-
-  getItemId (item) {
-    return item.name
-  }
-
-  getItemRequestPath (item) {
-    return encodeURIComponent(item.name)
-  }
-
-  getItemModifiedDate (item) {
-    return Date.now()
-  }
-
-  getItemThumbnailUrl (item) {
-    return 'https://uppy.io/images/logos/uppy-dog-head-arrow.svg'
-  }
-
-  getUsername () {
-    return 'Cool Dog'
+  onFirstRender () {
+    return this.view.getFolder()
   }
 
   render (state) {

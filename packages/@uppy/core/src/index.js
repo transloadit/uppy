@@ -853,6 +853,13 @@ class Uppy {
 
     this.emit('retry-all', filesToRetry)
 
+    if (filesToRetry.length === 0) {
+      return Promise.resolve({
+        successful: [],
+        failed: []
+      })
+    }
+
     const uploadID = this._createUpload(filesToRetry, {
       forceAllowNewUpload: true // create new upload even if allowNewUpload: false
     })

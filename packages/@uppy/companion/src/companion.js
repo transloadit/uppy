@@ -335,4 +335,14 @@ const validateConfig = (companionOptions) => {
       `No access to "${companionOptions.filePath}". Please ensure the directory exists and with read/write permissions.`
     )
   }
+
+  const { providerOptions } = companionOptions
+  if (providerOptions) {
+    const deprecatedOptions = { microsoft: 'onedrive', google: 'drive' }
+    Object.keys(deprecatedOptions).forEach((deprected) => {
+      if (providerOptions[deprected]) {
+        throw new Error(`The Provider option "${deprected}" is no longer supported. Please use the option "${deprecatedOptions[deprected]}" instead.`)
+      }
+    })
+  }
 }

@@ -33,6 +33,10 @@ app.get('/', (req, res) => {
   res.send('Welcome to my uppy companion service')
 })
 
+// source https://unsplash.com/documentation#user-authentication
+const AUTHORIZE_URL = 'https://unsplash.com/oauth/authorize'
+const ACCESS_URL = 'https://unsplash.com/oauth/token'
+
 // initialize uppy
 const uppyOptions = {
   providerOptions: {
@@ -42,15 +46,16 @@ const uppyOptions = {
     }
   },
   customProviders: {
-    mycustomprovider: {
+    myunsplash: {
       config: {
         // your oauth handlers
-        authorize_url: 'http://localhost:3020/oauth/authorize',
-        access_url: 'http://localhost:3020/oauth/token',
+        authorize_url: AUTHORIZE_URL,
+        access_url: ACCESS_URL,
         oauth: 2,
-        key: '***',
-        secret: '**',
-        scope: ['read', 'write']
+        key: 'your unsplash key here',
+        secret: 'your unsplash secret here',
+        callback: '/myunsplash/callback',
+        transport: 'session'
       },
       // you provider module
       module: require('./customprovider')
@@ -64,12 +69,6 @@ const uppyOptions = {
   secret: 'some-secret',
   debug: true
 }
-
-app.get('/oauth/authorize', (req, res) => {
-  // skips the default oauth process.
-  // ideally this endpoint should handle the actual oauth process
-  res.redirect(`http://localhost:3020/mycustomprovider/callback?state=${req.query.state}&access_token=randombytes`)
-})
 
 app.use(uppy.app(uppyOptions))
 

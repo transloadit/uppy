@@ -420,6 +420,7 @@ class Uploader {
       uploadLengthDeferred: false,
       retryDelays: [0, 1000, 3000, 5000],
       uploadSize: this.bytesWritten,
+      headers: headerSanitize(this.options.headers),
       addRequestId: true,
       metadata: Object.assign(
         {

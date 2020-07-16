@@ -1,41 +1,105 @@
-const fs = require('fs')
-const path = require('path')
-const DUMM_FILE = path.join(__dirname, 'fixtures/image.jpg')
+const request = require('request')
+const BASE_URL = 'https://api.unsplash.com'
 
 /**
  * an example of a custom provider module. It implements @uppy/companion's Provider interface
  */
 class MyCustomProvider {
   constructor (options) {
-    this.authProvider = MyCustomProvider.authProvider
+    this.authProvider = 'myunsplash'
   }
 
-  static get authProvider () {
-    return 'mycustomprovider'
-  }
-
-  list (options, done) {
-    const response = {
-      body: {
-        entries: [
-          { name: 'file1.jpg' },
-          { name: 'file2.jpg' },
-          { name: 'file3.jpg' }
-        ]
+  list ({ token, directory }, done) {
+    const path = directory ? `/${directory}/photos` : ''
+    const options = {
+      url: `${BASE_URL}/collections${path}`,
+      method: 'GET',
+      json: true,
+      headers: {
+        Authorization: `Bearer ${token}`
       }
     }
-    return done(null, response, response.body)
+
+    request(options, (err, resp, body) => {
+      if (err) {
+        console.log(err)
+        done(err)
+        return
+      }
+
+      done(null, this._adaptData(body))
+    })
   }
 
   download ({ id, token }, onData) {
-    return fs.readFile(DUMM_FILE, (err, data) => {
-      if (err) console.error(err)
-      onData(data)
+    const options = {
+      url: `${BASE_URL}/photos/${id}`,
+      method: 'GET',
+      json: true,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+
+    request(options, (err, resp, body) => {
+      if (err) {
+        console.log(err)
+        return
+      }
+
+      const url = body.links.download
+      request.get(url)
+        .on('data', (chunk) => onData(null, chunk))
+        .on('end', () => onData(null, null))
+        .on('error', (err) => console.log(err))
     })
   }
 
   size ({ id, token }, done) {
-    return done(fs.statSync(DUMM_FILE).size)
+    const options = {
+      url: `${BASE_URL}/photos/${id}`,
+      method: 'GET',
+      json: true,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+
+    request(options, (err, resp, body) => {
+      if (err) {
+        console.log(err)
+        done(err)
+        return
+      }
+
+      done(null, body.width * body.height)
+    })
+  }
+
+  _adaptData (res) {
+    const data = {
+      username: null,
+      items: [],
+      nextPagePath: null
+    }
+
+    const items = res
+    items.forEach((item) => {
+      const isFolder = !!item.published_at
+      data.items.push({
+        isFolder: isFolder,
+        icon: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
+        name: item.title || item.description,
+        mimeType: isFolder ? null : 'image/jpeg',
+        id: item.id,
+        thumbnail: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
+        requestPath: item.id,
+        modifiedDate: item.updated_at,
+        size: null
+      })
+    })
+
+    return data
   }
 }
 
