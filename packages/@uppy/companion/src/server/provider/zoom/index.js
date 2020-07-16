@@ -42,7 +42,7 @@ class Zoom extends Provider {
       this.client.get(`${BASE_URL}${GET_USER_PATH}`)
         .auth(token)
         .request((err, resp, body) => {
-          if (err || resp.statusCode !== 200 || !body) {
+          if (err || resp.statusCode !== 200) {
             return this._listError(err, resp, done)
           }
           done(null, this._initializeData(body, end))
@@ -64,11 +64,7 @@ class Zoom extends Provider {
         .qs(queryObj)
         .auth(token)
         .request((err, resp, body) => {
-          if (
-            err ||
-            resp.statusCode !== 200 ||
-            !body
-          ) {
+          if (err || resp.statusCode !== 200) {
             return this._listError(err, resp, done)
           } else {
             done(null, this._adaptData(body))
@@ -83,8 +79,7 @@ class Zoom extends Provider {
         .auth(token)
         .request((err, resp, body) => {
           if (err ||
-            resp.statusCode !== 200 ||
-            !body
+            resp.statusCode !== 200
           ) {
             return this._listError(err, resp, done)
           } else {
@@ -106,10 +101,7 @@ class Zoom extends Provider {
         .get(`${BASE_URL}${GET_MEETING_FILES}`)
         .auth(token)
         .request((err, resp) => {
-          if (err ||
-            resp.statusCode !== 200 ||
-            !resp.body
-          ) {
+          if (err || resp.statusCode !== 200) {
             return this._downloadError(resp, done)
           }
           const file = resp
@@ -208,7 +200,8 @@ class Zoom extends Provider {
 
     const data = {
       nextPagePath: adapter.getNextPagePath(results),
-      items: []
+      items: [],
+      username: null
     }
     const items = results.meetings || results.recording_files
     items.forEach(item => {
@@ -250,12 +243,12 @@ class Zoom extends Provider {
       124, // expired token
       401
     ]
-    if (resp.body) {
-      const fallbackMessage = `request to ${this.authProvider} returned ${resp.statusCode}`
-      const errMsg = resp.body.message || fallbackMessage
+    if (resp) {
+      const fallbackMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
+      const errMsg = (resp.body || {}).message ? resp.body.message : fallbackMsg
       return authErrorCodes.indexOf(resp.statusCode) > -1 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
     }
-    return err || 'No response'
+    return err
   }
 
   _downloadError (resp, done) {

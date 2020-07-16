@@ -64,6 +64,7 @@ describe('Test Provider options', () => {
       transport: 'session',
       authorize_url: 'https://zoom.us/oauth/authorize',
       access_url: 'https://zoom.us/oauth/token',
+      scope: ['recording:read', 'user:read'],
       callback: '/zoom/callback'
     })
   })
