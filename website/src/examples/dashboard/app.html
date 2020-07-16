@@ -7,6 +7,7 @@
     <li><label for="opts-autoProceed"><input type="checkbox" id="opts-autoProceed" checked/> Autoproceed</label></li>
     <li><label for="opts-restrictions"><input type="checkbox" id="opts-restrictions" checked/> Restrictions</label></li>
     <li><label for="opts-darkMode"><input type="checkbox" id="opts-darkMode" checked/> Dark Mode</label></li>
+    <li><label for="opts-imageEditor"><input type="checkbox" id="opts-imageEditor" checked/> Image Editor</label></li>
   </ul>
   <ul>
     <li><label for="opts-Webcam"><input type="checkbox" id="opts-Webcam" checked/> Webcam</label></li>
@@ -47,7 +48,8 @@
     Url: document.querySelector('#opts-Url'),
     autoProceed: document.querySelector('#opts-autoProceed'),
     restrictions: document.querySelector('#opts-restrictions'),
-    darkMode: document.querySelector('#opts-darkMode')
+    darkMode: document.querySelector('#opts-darkMode'),
+    imageEditor: document.querySelector('#opts-imageEditor')
   }
 
   var defaultOpts = {
@@ -62,7 +64,8 @@
     Url: true,
     autoProceed: false,
     restrictions: false,
-    darkMode: true
+    darkMode: true,
+    imageEditor: true
   }
 
   // try to get options from localStorage, if its empty, set to defaultOpts
