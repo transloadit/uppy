@@ -1,16 +1,15 @@
 import Uppy = require('@uppy/core')
-import FileInputLocale = require('./generatedLocale')
+import ImageEditorLocale = require('./generatedLocale')
 
-declare module FileInput {
-  export interface FileInputOptions extends Uppy.PluginOptions {
-    replaceTargetContent?: boolean
+declare module ImageEditor {
+  export interface ImageEditorOptions extends Uppy.PluginOptions {
+    cropperOptions?: object
+    quality?: number,
     target?: Uppy.PluginTarget
-    pretty?: boolean
-    inputName?: string
-    locale?: FileInputLocale
+    locale?: ImageEditorLocale
   }
 }
 
-declare class FileInput extends Uppy.Plugin<FileInput.FileInputOptions> {}
+declare class ImageEditor extends Uppy.Plugin<ImageEditor.ImageEditorOptions> {}
 
-export = FileInput
+export = ImageEditor

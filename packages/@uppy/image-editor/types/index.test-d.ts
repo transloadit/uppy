@@ -1,1 +1,1 @@
-import FileInput = require('../')
+import ImageEditor = require('../')
