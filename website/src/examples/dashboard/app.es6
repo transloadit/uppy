@@ -149,7 +149,7 @@ function uppySetOptions () {
   }
 
   const imageEditorInstance = window.uppy.getPlugin('ImageEditor')
-  if (opts.ImageEditor && !imageEditorInstance) {
+  if (opts.imageEditor && !imageEditorInstance) {
     window.uppy.use(ImageEditor, { target: Dashboard })
   } else {
     window.uppy.removePlugin(imageEditorInstance)
