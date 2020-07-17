@@ -36,18 +36,20 @@ class Zoom extends Provider {
     const query = options.query || {}
     const { cursor, from, to } = query
     const meetingId = options.directory || ''
+    let meetingsPromise = Promise.resolve(undefined)
+    let recordingsPromise = Promise.resolve(undefined)
 
-    if (!from && !to && !meetingId) {
-      const end = cursor && moment(cursor)
-      this.client.get(`${BASE_URL}${GET_USER_PATH}`)
+    const userPromise = new Promise((resolve, reject) => {
+      this.client
+        .get(`${BASE_URL}${GET_USER_PATH}`)
         .auth(token)
         .request((err, resp, body) => {
           if (err || resp.statusCode !== 200) {
             return this._listError(err, resp, done)
           }
-          done(null, this._initializeData(body, end))
+          resolve(resp)
         })
-    }
+    })
 
     if (from && to) {
       const queryObj = {
@@ -60,33 +62,52 @@ class Zoom extends Provider {
         queryObj.next_page_token = cursor
       }
 
-      this.client.get(`${BASE_URL}${GET_LIST_PATH}`)
-        .qs(queryObj)
-        .auth(token)
-        .request((err, resp, body) => {
-          if (err || resp.statusCode !== 200) {
-            return this._listError(err, resp, done)
-          } else {
-            done(null, this._adaptData(body))
-          }
-        })
+      meetingsPromise = new Promise((resolve, reject) => {
+        this.client.get(`${BASE_URL}${GET_LIST_PATH}`)
+          .qs(queryObj)
+          .auth(token)
+          .request((err, resp, body) => {
+            if (err || resp.statusCode !== 200) {
+              return this._listError(err, resp, done)
+            } else {
+              resolve(resp)
+            }
+          })
+      })
+    } else if (meetingId) {
+      const GET_MEETING_FILES = `/meetings/${meetingId}/recordings`
+      recordingsPromise = new Promise((resolve, reject) => {
+        this.client
+          .get(`${BASE_URL}${GET_MEETING_FILES}`)
+          .auth(token)
+          .request((err, resp, body) => {
+            if (err || resp.statusCode !== 200) {
+              return this._listError(err, resp, done)
+            } else {
+              resolve(resp)
+            }
+          })
+      })
     }
 
-    if (meetingId) {
-      const GET_MEETING_FILES = `/meetings/${meetingId}/recordings`
-      this.client
-        .get(`${BASE_URL}${GET_MEETING_FILES}`)
-        .auth(token)
-        .request((err, resp, body) => {
-          if (err ||
-            resp.statusCode !== 200
-          ) {
-            return this._listError(err, resp, done)
-          } else {
-            done(null, this._adaptData(body))
+    Promise.all([userPromise, meetingsPromise, recordingsPromise])
+      .then(
+        ([userResponse, meetingsResponse, recordingsResponse]) => {
+          let returnData = null
+          if (!meetingsResponse && !recordingsResponse) {
+            const end = cursor && moment(cursor)
+            returnData = this._initializeData(userResponse.body, end)
+          } else if (meetingsResponse) {
+            returnData = this._adaptData(userResponse.body, meetingsResponse.body)
+          } else if (recordingsResponse) {
+            returnData = this._adaptData(userResponse.body, recordingsResponse.body)
           }
-        })
-    }
+          done(null, returnData)
+        },
+        (reqErr) => {
+          done(reqErr)
+        }
+      )
   }
 
   download ({ id, token, query }, done) {
@@ -193,7 +214,7 @@ class Zoom extends Provider {
     return data
   }
 
-  _adaptData (results) {
+  _adaptData (userResponse, results) {
     if (!results) {
       return { items: [] }
     }
@@ -201,7 +222,7 @@ class Zoom extends Provider {
     const data = {
       nextPagePath: adapter.getNextPagePath(results),
       items: [],
-      username: null
+      username: adapter.getUserEmail(userResponse)
     }
     const items = results.meetings || results.recording_files
     items.forEach(item => {
@@ -225,8 +246,8 @@ class Zoom extends Provider {
       `${process.env.COMPANION_ZOOM_KEY}:${process.env.COMPANION_ZOOM_SECRET}`, 'binary'
     ).toString('base64')
     return this.client
-      .get('logout')
-      .auth({ basic: encodedAuth })
+      .post('logout')
+      .auth(encodedAuth)
       .qs({ token })
       .request((err, resp) => {
         if (err || resp.statusCode !== 200) {

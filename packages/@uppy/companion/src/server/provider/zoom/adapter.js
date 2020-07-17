@@ -14,7 +14,8 @@ const ICONS = {
   CHAT: 'file',
   TRANSCRIPT: 'file',
   CC: 'file',
-  FOLDER: 'folder'
+  FOLDER: 'folder',
+  TIMELINE: 'file'
 }
 
 exports.getDateName = (start, end) => {
