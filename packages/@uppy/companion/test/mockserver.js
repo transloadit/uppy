@@ -1,21 +1,31 @@
-const { app } = require('../src/standalone')
-
+/* global jest:false */
 const express = require('express')
 const session = require('express-session')
-const authServer = express()
 
-authServer.use(session({ secret: 'grant', resave: true, saveUninitialized: true }))
-authServer.all('*/callback', (req, res, next) => {
-  req.session.grant = {
-    response: { access_token: 'fake token' }
+module.exports.getServer = (env) => {
+  if (env) {
+    Object.keys(env).forEach((key) => {
+      process.env[key] = env[key]
+    })
   }
-  next()
-})
-authServer.all(['*/send-token', '*/redirect'], (req, res, next) => {
-  req.session.grant = { dynamic: { state: req.query.state || 'non-empty-value' } }
-  next()
-})
 
-authServer.use(app)
+  // delete from cache to force the server to reload companionOptions from the new env vars
+  jest.resetModules()
+  const { app } = require('../src/standalone')
+  const authServer = express()
 
-module.exports = { authServer }
+  authServer.use(session({ secret: 'grant', resave: true, saveUninitialized: true }))
+  authServer.all('*/callback', (req, res, next) => {
+    req.session.grant = {
+      response: { access_token: 'fake token' }
+    }
+    next()
+  })
+  authServer.all(['*/send-token', '*/redirect'], (req, res, next) => {
+    req.session.grant = { dynamic: { state: req.query.state || 'non-empty-value' } }
+    next()
+  })
+
+  authServer.use(app)
+  return authServer
+}

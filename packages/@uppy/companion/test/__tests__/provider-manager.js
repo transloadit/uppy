@@ -29,6 +29,7 @@ describe('Test Provider options', () => {
     expect(grantConfig.instagram).toEqual({
       transport: 'session',
       callback: '/instagram/callback',
+      redirect_uri: 'http://localhost:3020/instagram/redirect',
       key: '123456',
       secret: 'instagram_secret',
       protocol: 'https',
@@ -39,6 +40,7 @@ describe('Test Provider options', () => {
       key: 'dropbox_key',
       secret: 'dropbox_secret',
       transport: 'session',
+      redirect_uri: 'http://localhost:3020/dropbox/redirect',
       authorize_url: 'https://www.dropbox.com/oauth2/authorize',
       access_url: 'https://api.dropbox.com/oauth2/token',
       callback: '/dropbox/callback'
@@ -48,6 +50,7 @@ describe('Test Provider options', () => {
       key: 'google_key',
       secret: 'google_secret',
       transport: 'session',
+      redirect_uri: 'http://localhost:3020/drive/redirect',
       scope: [
         'https://www.googleapis.com/auth/drive.readonly'
       ],
