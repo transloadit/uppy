@@ -63,6 +63,7 @@ describe('Test Provider options', () => {
       secret: 'zoom_secret',
       transport: 'session',
       authorize_url: 'https://zoom.us/oauth/authorize',
+      redirect_uri: 'http://localhost:3020/zoom/redirect',
       access_url: 'https://zoom.us/oauth/token',
       scope: ['recording:read', 'user:read'],
       callback: '/zoom/callback'
