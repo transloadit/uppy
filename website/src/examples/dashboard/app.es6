@@ -7,6 +7,7 @@ const Dropbox = require('@uppy/dropbox')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
+const ImageEditor = require('@uppy/image-editor')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
 const ScreenCapture = require('@uppy/screen-capture')
@@ -145,6 +146,13 @@ function uppySetOptions () {
     window.uppy.use(ScreenCapture, { target: Dashboard })
   } else {
     window.uppy.removePlugin(screenCaptureInstance)
+  }
+
+  const imageEditorInstance = window.uppy.getPlugin('ImageEditor')
+  if (opts.imageEditor && !imageEditorInstance) {
+    window.uppy.use(ImageEditor, { target: Dashboard })
+  } else {
+    window.uppy.removePlugin(imageEditorInstance)
   }
 }
 

@@ -10,6 +10,9 @@ en_US.strings = {
   addingMoreFiles: 'Adding more files',
   allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
   allowAccessTitle: 'Please allow access to your camera',
+  aspectRatioLandscape: 'Crop landscape (16:9)',
+  aspectRatioPortrait: 'Crop portrait (9:16)',
+  aspectRatioSquare: 'Crop square',
   authenticateWith: 'Connect to %{pluginName}',
   authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
   back: 'Back',
@@ -52,6 +55,7 @@ en_US.strings = {
   },
   filter: 'Filter',
   finishEditingFile: 'Finish editing file',
+  flipHorizontal: 'Flip horizonal',
   folderAdded: {
     '0': 'Added %{smart_count} file from %{folder}',
     '1': 'Added %{smart_count} files from %{folder}'
@@ -88,6 +92,9 @@ en_US.strings = {
   resumeUpload: 'Resume upload',
   retry: 'Retry',
   retryUpload: 'Retry upload',
+  revert: 'Revert',
+  rotate: 'Rotate',
+  save: 'Save',
   saveChanges: 'Save changes',
   selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
   selectFileNamed: 'Select file %{name}',
@@ -141,7 +148,9 @@ en_US.strings = {
   youHaveToAtLeastSelectX: {
     '0': 'You have to select at least %{smart_count} file',
     '1': 'You have to select at least %{smart_count} files'
-  }
+  },
+  zoomIn: 'Zoom in',
+  zoomOut: 'Zoom out'
 }
 
 en_US.pluralize = function (count) {

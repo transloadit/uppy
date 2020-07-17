@@ -49,6 +49,7 @@ const packages = [
   '@uppy/google-drive',
   '@uppy/informer',
   '@uppy/instagram',
+  '@uppy/image-editor',
   '@uppy/progress-bar',
   '@uppy/screen-capture',
   '@uppy/status-bar',
