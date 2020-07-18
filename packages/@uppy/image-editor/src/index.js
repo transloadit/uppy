@@ -62,7 +62,7 @@ module.exports = class ImageEditor extends Plugin {
   }
 
   сanEditFile (file) {
-    if (!file.type) {
+    if (!file.type || file.isRemote) {
       return false
     }
 
@@ -116,7 +116,7 @@ module.exports = class ImageEditor extends Plugin {
 
   render () {
     const { currentImage } = this.getPluginState()
-    if (currentImage === null) {
+    if (currentImage === null || currentImage.isRemote) {
       return
     }
 
