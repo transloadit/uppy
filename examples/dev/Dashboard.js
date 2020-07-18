@@ -15,6 +15,7 @@ const AwsS3Multipart = require('@uppy/aws-s3-multipart/src')
 const XHRUpload = require('@uppy/xhr-upload/src')
 const Transloadit = require('@uppy/transloadit/src')
 const Form = require('@uppy/form/src')
+const ImageEditor = require('@uppy/image-editor/src')
 
 // DEV CONFIG: pick an uploader
 
@@ -70,6 +71,7 @@ module.exports = () => {
     .use(Webcam, { target: Dashboard })
     .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
+    .use(ImageEditor, { target: Dashboard })
 
   switch (UPLOADER) {
     case 'tus':

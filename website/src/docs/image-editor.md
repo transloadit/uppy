@@ -14,7 +14,7 @@ Designed to be used with the Dashboard UI (can in theory work without it).
 
 ⚠ In beta.
 
-![Screenshor of the image editor in Dashboard](https://user-images.githubusercontent.com/1199054/87208710-654db400-c307-11ea-9471-6e3c6582d2a5.png)
+![Screenshor of the Image Editor plugin UI in Dashboard](https://user-images.githubusercontent.com/1199054/87208710-654db400-c307-11ea-9471-6e3c6582d2a5.png)
 
 ```js
 const Uppy = require('@uppy/core')
@@ -25,7 +25,7 @@ const uppy = Uppy()
 uppy.use(Dashboard)
 uppy.use(ImageEditor, { 
   target: Dashboard,
-  quality: 0.7
+  quality: 0.8
 })
 ```
 
