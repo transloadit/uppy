@@ -11,8 +11,11 @@
     "upload",
     "uppy",
     "uppy-plugin",
-    "image-editor",
-    "cropper"
+    "image editor",
+    "cropper",
+    "crop",
+    "rotate",
+    "resize"
   ],
   "homepage": "https://uppy.io",
   "bugs": {
@@ -28,5 +31,8 @@
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
