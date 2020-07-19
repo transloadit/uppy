@@ -1,7 +1,7 @@
 {
   "name": "@uppy/image-editor",
   "description": "Image editor and cropping UI",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -26,8 +26,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "preact": "8.2.9",
-    "cropperjs": "1.5.7"
+    "cropperjs": "1.5.7",
+    "preact": "8.2.9"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
