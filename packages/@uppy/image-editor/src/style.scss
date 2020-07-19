@@ -31,7 +31,21 @@
 }
 
 .uppy-ImageCropper-controls button {
-  padding: 5px 8px;
+  width: 35px;
+  height: 35px;
+
+  svg {
+    padding: 3px;
+  }
+
+  .uppy-size--md & {
+    width: 40px;
+    height: 40px;
+
+    svg {
+      padding: 1px;
+    }
+  }
 
   &:hover {
     background-color: rgba($blue, 0.8);
