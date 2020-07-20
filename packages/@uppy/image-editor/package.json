@@ -1,0 +1,38 @@
+{
+  "name": "@uppy/image-editor",
+  "description": "Image editor and cropping UI",
+  "version": "0.1.1",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "style": "dist/style.min.css",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "upload",
+    "uppy",
+    "uppy-plugin",
+    "image editor",
+    "cropper",
+    "crop",
+    "rotate",
+    "resize"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "cropperjs": "1.5.7",
+    "preact": "8.2.9"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -24,7 +24,6 @@ module.exports = class Instagram extends Plugin {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
       provider: 'instagram',
-      authProvider: 'instagram',
       pluginId: this.id
     })
 

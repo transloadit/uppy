@@ -176,8 +176,8 @@ module.exports = class Dashboard extends Plugin {
 
     if (callerPluginType !== 'acquirer' &&
         callerPluginType !== 'progressindicator' &&
-        callerPluginType !== 'presenter') {
-      const msg = 'Dashboard: Modal can only be used by plugins of types: acquirer, progressindicator, presenter'
+        callerPluginType !== 'editor') {
+      const msg = 'Dashboard: can only be targeted by plugins of types: acquirer, progressindicator, editor'
       this.uppy.log(msg, 'error')
       return
     }
@@ -203,16 +203,21 @@ module.exports = class Dashboard extends Plugin {
     const update = {
       activePickerPanel: false,
       showAddFilesPanel: false,
-      activeOverlayType: null
+      activeOverlayType: null,
+      fileCardFor: null,
+      showFileEditor: false
     }
 
     const current = this.getPluginState()
     if (current.activePickerPanel === update.activePickerPanel &&
         current.showAddFilesPanel === update.showAddFilesPanel &&
+        current.showFileEditor === update.showFileEditor &&
         current.activeOverlayType === update.activeOverlayType) {
       // avoid doing a state update if nothing changed
       return
     }
+
+    console.log(update)
 
     this.setPluginState(update)
   }
@@ -227,6 +232,29 @@ module.exports = class Dashboard extends Plugin {
     this.setPluginState({
       activePickerPanel: activePickerPanel,
       activeOverlayType: 'PickerPanel'
+    })
+  }
+
+  canEditFile = (file) => {
+    const { targets } = this.getPluginState()
+    const editors = this._getEditors(targets)
+
+    return editors.some((target) => (
+      this.uppy.getPlugin(target.id).сanEditFile(file)
+    ))
+  }
+
+  openFileEditor = (file) => {
+    const { targets } = this.getPluginState()
+    const editors = this._getEditors(targets)
+
+    this.setPluginState({
+      showFileEditor: true,
+      activeOverlayType: 'FileEditor'
+    })
+
+    editors.forEach((editor) => {
+      this.uppy.getPlugin(editor.id).selectFile(file)
     })
   }
 
@@ -636,6 +664,7 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.on('plugin-remove', this.removeTarget)
     this.uppy.on('file-added', this.hideAllPanels)
     this.uppy.on('dashboard:modal-closed', this.hideAllPanels)
+    this.uppy.on('file-editor:complete', this.hideAllPanels)
     this.uppy.on('complete', this.handleComplete)
 
     // ___Why fire on capture?
@@ -742,6 +771,12 @@ module.exports = class Dashboard extends Plugin {
       .map(this._attachRenderFunctionToTarget)
   })
 
+  _getEditors = memoize((targets) => {
+    return targets
+      .filter(target => target.type === 'editor')
+      .map(this._attachRenderFunctionToTarget)
+  })
+
   render = (state) => {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
@@ -795,6 +830,7 @@ module.exports = class Dashboard extends Plugin {
 
     const acquirers = this._getAcquirers(pluginState.targets)
     const progressindicators = this._getProgressIndicators(pluginState.targets)
+    const editors = this._getEditors(pluginState.targets)
 
     let theme
     if (this.opts.theme === 'auto') {
@@ -824,10 +860,12 @@ module.exports = class Dashboard extends Plugin {
       acquirers,
       theme,
       activePickerPanel: pluginState.activePickerPanel,
+      showFileEditor: pluginState.showFileEditor,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
       getPlugin: this.uppy.getPlugin,
       progressindicators: progressindicators,
+      editors: editors,
       autoProceed: this.uppy.opts.autoProceed,
       id: this.id,
       closeModal: this.requestCloseModal,
@@ -841,6 +879,7 @@ module.exports = class Dashboard extends Plugin {
       i18n: this.i18n,
       i18nArray: this.i18nArray,
       removeFile: this.uppy.removeFile,
+      uppy: this.uppy,
       info: this.uppy.info,
       note: this.opts.note,
       metaFields: pluginState.metaFields,
@@ -856,6 +895,8 @@ module.exports = class Dashboard extends Plugin {
       toggleAddFilesPanel: this.toggleAddFilesPanel,
       showAddFilesPanel: pluginState.showAddFilesPanel,
       saveFileCard: this.saveFileCard,
+      openFileEditor: this.openFileEditor,
+      canEditFile: this.canEditFile,
       width: this.opts.width,
       height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
@@ -898,6 +939,7 @@ module.exports = class Dashboard extends Plugin {
       activeOverlayType: null,
       showAddFilesPanel: false,
       activePickerPanel: false,
+      showFileEditor: false,
       metaFields: this.opts.metaFields,
       targets: [],
       // We'll make them visible once .containerWidth is determined

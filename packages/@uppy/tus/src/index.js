@@ -376,6 +376,7 @@ module.exports = class Tus extends Plugin {
         uploadUrl: opts.uploadUrl,
         protocol: 'tus',
         size: file.data.size,
+        headers: opts.headers,
         metadata: file.meta
       }).then((res) => {
         this.uppy.setFileState(file.id, { serverToken: res.token })

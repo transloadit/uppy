@@ -25,7 +25,6 @@ module.exports = class GoogleDrive extends Plugin {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
       provider: 'drive',
-      authProvider: 'google',
       pluginId: this.id
     })
 

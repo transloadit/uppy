@@ -112,7 +112,7 @@ module.exports = function Buttons (props) {
           i18n={i18n}
           info={props.info}
           log={props.log}
-          onClick={() => removeFile(file.id)}
+          onClick={() => removeFile(file.id, 'removed-by-user')}
         />
       ) : null}
     </div>

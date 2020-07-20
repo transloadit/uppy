@@ -17,14 +17,15 @@ module.exports = function callback (req, res, next) {
     req.companion.providerTokens = {}
   }
 
-  if (req.session.grant.response.access_token) {
-    req.companion.providerTokens[providerName] = req.session.grant.response.access_token
+  const grant = req.session.grant || {}
+  if (grant.response && grant.response.access_token) {
+    req.companion.providerTokens[providerName] = grant.response.access_token
     logger.debug(`Generating auth token for provider ${providerName}`, null, req.id)
     const uppyAuthToken = tokenService.generateToken(req.companion.providerTokens, req.companion.options.secret)
     return res.redirect(req.companion.buildURL(`/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`, true))
   }
 
   logger.debug(`Did not receive access token for provider ${providerName}`, null, req.id)
-  logger.debug(req.session.grant.response, 'callback.oauth.resp', req.id)
+  logger.debug(grant.response, 'callback.oauth.resp', req.id)
   return res.sendStatus(400)
 }

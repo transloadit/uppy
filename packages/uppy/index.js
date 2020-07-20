@@ -42,5 +42,6 @@ exports.Form = require('@uppy/form')
 exports.GoldenRetriever = require('@uppy/golden-retriever')
 exports.ReduxDevTools = require('@uppy/redux-dev-tools')
 exports.ThumbnailGenerator = require('@uppy/thumbnail-generator')
+exports.ImageEditor = require('@uppy/image-editor')
 
 exports.locales = {}

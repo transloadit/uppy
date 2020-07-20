@@ -37,7 +37,6 @@ export interface PublicProviderOptions extends RequestClientOptions {
  */
 export interface ProviderOptions extends PublicProviderOptions {
   provider: string
-  authProvider?: string
   name?: string
   pluginId: string
 }

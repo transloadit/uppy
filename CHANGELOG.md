@@ -89,9 +89,9 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: allow selecting folders (add separate hidden input button for folders) #447 #1027 (@arturi)
 - [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112 #362
 
-# next
+## 1.19
 
-## 1.17
+# next
 
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default's store #320
 - [ ] provider: add Box (@ife)
@@ -101,10 +101,38 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi) (@arturi)
 - [ ] dashboard: fix Dashboard issues with Angular — it’s incredibly slow presumably because of ResizeObserver. (See #1613) (@arturi)
 - [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
-- [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53 (@arturi)
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
-- [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
+
+## 1.18
+
+- image-editor: 🎉 add long-awaited image cropping, rotation, flipping and zooming (in beta!) (#2370 / @arturi)
+- companion: override grant's default redirect_uri for consistent provider options (#2364 / @ifedapoolarewaju)
+
+## 1.17
+
+Released: 2020-06-19
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.0 | @uppy/onedrive | 1.1.9 |
+| @uppy/aws-s3 | 1.6.7 | @uppy/progress-bar | 1.3.16 |
+| @uppy/companion-client | 1.5.1 | @uppy/provider-views | 1.7.0 |
+| @uppy/companion | 2.0.0-alpha.7 | @uppy/react | 1.9.0 |
+| @uppy/core | 1.12.0 | @uppy/robodog | 1.7.2 |
+| @uppy/dashboard | 1.10.2 | @uppy/screen-capture | 1.0.4 |
+| @uppy/drag-drop | 1.4.16 | @uppy/status-bar | 1.7.1 |
+| @uppy/dropbox | 1.4.9 | @uppy/thumbnail-generator | 1.6.3 |
+| @uppy/facebook | 1.1.9 | @uppy/transloadit | 1.6.2 |
+| @uppy/file-input | 1.4.14 | @uppy/tus | 1.7.0 |
+| @uppy/form | 1.3.17 | @uppy/url | 1.5.8 |
+| @uppy/golden-retriever | 1.3.16 | @uppy/utils | 3.2.0 |
+| @uppy/google-drive | 1.5.9 | @uppy/webcam | 1.6.8 |
+| @uppy/informer | 1.5.8 | @uppy/xhr-upload | 1.6.1 |
+| @uppy/instagram | 1.4.9 | uppy | 1.17.0 |
+| @uppy/locales | 1.15.1 | - | - |
+
+- aws-s3-multipart: retry uploading failed parts (#2312 / @goto-bus-stop)
 
 ## 1.16.1
 

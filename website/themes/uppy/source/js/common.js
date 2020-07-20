@@ -19,6 +19,7 @@
     var header = document.querySelector('.js-MainHeader')
     var menu = document.querySelector('.js-Sidebar')
     var content = document.querySelector('.js-Content')
+    var transloaditBar = document.querySelector('.js-TransloaditBar')
 
     var animating = false
     var allLinks = []
@@ -26,6 +27,27 @@
     // // listen for scroll event to do positioning & highlights
     // window.addEventListener('scroll', updateSidebar)
     // window.addEventListener('resize', updateSidebar)
+
+    function makeSidebarTop () {
+      var headerHeight = header.offsetHeight
+      var transloaditBarHeight = 0
+
+      if (transloaditBar) {
+        transloaditBarHeight = transloaditBar.offsetHeight
+      }
+
+      if (window.matchMedia('(min-width: 1024px)').matches) {
+        var headerTopOffset = header.getBoundingClientRect().top
+        menu.style.top = headerHeight + headerTopOffset + 'px'
+      } else {
+        menu.style.paddingTop = headerHeight + transloaditBarHeight + 20 + 'px'
+      }
+    }
+
+    makeSidebarTop()
+
+    window.addEventListener('scroll', makeSidebarTop)
+    window.addEventListener('resize', makeSidebarTop)
 
     function updateSidebar () {
       var top = (doc && doc.scrollTop) || body.scrollTop
