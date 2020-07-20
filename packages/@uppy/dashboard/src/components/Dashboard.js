@@ -8,7 +8,7 @@ const FileCard = require('./FileCard')
 const classNames = require('classnames')
 const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 const { h } = require('preact')
-const PreactCSSTransitionGroup = require('preact-css-transition-group')
+const PreactCSSTransitionGroup = require('preact8-css-transition-group')
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
