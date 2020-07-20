@@ -49,6 +49,11 @@ const getConfigFromEnv = () => {
         key: process.env.COMPANION_ONEDRIVE_KEY,
         secret: getSecret('COMPANION_ONEDRIVE_SECRET')
       },
+      searchProviders: {
+        unsplash: {
+          key: process.env.COMPANION_UNSPLASH_KEY
+        }
+      },
       s3: {
         key: process.env.COMPANION_AWS_KEY,
         secret: getSecret('COMPANION_AWS_SECRET'),

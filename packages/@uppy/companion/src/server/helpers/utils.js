@@ -48,7 +48,7 @@ exports.sanitizeHtml = (text) => {
  *
  * @param {string} url
  * @param {boolean=} blockLocalIPs
- * @return {Promise}
+ * @return {Promise<{type: string, size: number}>}
  */
 exports.getURLMeta = (url, blockLocalIPs = false) => {
   return new Promise((resolve, reject) => {

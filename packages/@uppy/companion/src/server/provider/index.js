@@ -9,16 +9,19 @@ const instagram = require('./instagram')
 const instagramGraph = require('./instagram/graph')
 const facebook = require('./facebook')
 const onedrive = require('./onedrive')
+const unsplash = require('./unsplash')
 const { getURLBuilder } = require('../helpers/utils')
 const logger = require('../logger')
 // eslint-disable-next-line
 const Provider = require('./Provider')
+// eslint-disable-next-line
+const SearchProvider = require('./SearchProvider')
 
 /**
  * adds the desired provider module to the request object,
  * based on the providerName parameter specified
  *
- * @param {Object.<string, typeof Provider>} providers
+ * @param {Object.<string, (typeof Provider) | typeof SearchProvider>} providers
  */
 module.exports.getProviderMiddleware = (providers) => {
   /**
@@ -57,6 +60,13 @@ module.exports.getDefaultProviders = (companionOptions) => {
   }
 
   return providers
+}
+
+/**
+ * @return {Object.<string, typeof SearchProvider>}
+ */
+module.exports.getSearchProviders = () => {
+  return { unsplash }
 }
 
 /**

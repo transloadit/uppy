@@ -53,6 +53,7 @@ module.exports.app = (options = {}) => {
 
   options = merge({}, defaultOptions, options)
   const providers = providerManager.getDefaultProviders(options)
+  const searchProviders = providerManager.getSearchProviders()
   providerManager.addProviderOptions(options, grantConfig)
 
   const customProviders = options.customProviders
@@ -120,8 +121,11 @@ module.exports.app = (options = {}) => {
   app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
   app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
   app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
+  app.get('/search/:searchProviderName/list', middlewares.hasSearchQuery, middlewares.loadSearchProviderToken, controllers.list)
+  app.get('/search/:searchProviderName/get/:id', middlewares.loadSearchProviderToken, controllers.get)
 
   app.param('providerName', providerManager.getProviderMiddleware(providers))
+  app.param('searchProviderName', providerManager.getProviderMiddleware(searchProviders))
 
   if (app.get('env') !== 'test') {
     jobs.startCleanUpJob(options.filePath)
