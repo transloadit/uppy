@@ -21,7 +21,7 @@ const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const ImageEditor = require('@uppy/image-editor')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Dashboard)
 uppy.use(ImageEditor, { 
   target: Dashboard,
