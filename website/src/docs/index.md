@@ -53,8 +53,6 @@ Uppy can be used with a module bundler such as [Webpack](http://webpack.js.org/)
 
 > You may need polyfills if your application supports Internet Explorer or other older browsers. See [Browser Support](#Browser-Support).
 
-> If your application uses preact v10+ plugins won't render correctly. Please downgrade to preact v8. Follow this issue for more information [Uppy plugins don't work with Preact X #2226]([https://github/com](https://github.com/transloadit/uppy/issues/2226))
-
 ### With a module bundler
 
 Install the `@uppy/core` package from npm:
