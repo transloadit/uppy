@@ -144,14 +144,16 @@ function uppySetOptions () {
   const screenCaptureInstance = window.uppy.getPlugin('ScreenCapture')
   if (opts.ScreenCapture && !screenCaptureInstance) {
     window.uppy.use(ScreenCapture, { target: Dashboard })
-  } else {
+  }
+  if (!opts.ScreenCapture && screenCaptureInstance) {
     window.uppy.removePlugin(screenCaptureInstance)
   }
 
   const imageEditorInstance = window.uppy.getPlugin('ImageEditor')
   if (opts.imageEditor && !imageEditorInstance) {
     window.uppy.use(ImageEditor, { target: Dashboard })
-  } else {
+  }
+  if (!opts.imageEditor && imageEditorInstance) {
     window.uppy.removePlugin(imageEditorInstance)
   }
 }
