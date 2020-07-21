@@ -73,12 +73,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] transloadit: remove `UPPY_SERVER` constant
 - [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
 
-## 1.21
+## 1.22
 
 - [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
 
-## 1.20
+## 1.21
 
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
@@ -86,10 +86,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
 - [ ] provider: Image search (via Google or Bing or DuckDuckGo) (@arturi)
 - [ ] core: add AngularJS wrapper component for the Dashboard (@arturi)
-- [ ] dashboard: allow selecting folders (add separate hidden input button for folders) #447 #1027 (@arturi)
 - [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112 #362
-
-## 1.19
 
 # next
 
@@ -104,7 +101,19 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 
-## 1.18
+## 1.19.0
+
+Released: 2020-07-21
+
+Note that this release includes a very minor breaking change. If you are using custom translations for the `dropPaste` or `dropPasteImport` locale strings, you need to append the file selection style to the key name. Use `dropPasteFiles`, `dropPasteFolders`, or `dropPasteBoth`, or `dropPasteImportFiles`, `dropPasteImportFolders`, or `dropPasteImportBoth` depending on your dashboard and provider configuration.
+
+- @uppy/image-editor: fix crop/rotate/zoom buttons on mobile (@arturi)
+- uppy: remove unstable `ImageEditor` export (@goto-bus-stop)
+- docs: document preact required version when writing custom plugins (@jrschumacher)
+- @uppy/dashboard: fix preact version conflicts if outer app uses Preact X (#2379 / @goto-bus-stop)
+- @uppy/dashboard: add `fileManagerSelectionType` option, allowing users to select folders (#2334 / @bdirito)
+
+## 1.18.0
 
 Released: 2020-07-19
 
@@ -115,10 +124,10 @@ Released: 2020-07-19
 | @uppy/image-editor | 0.1.1 | uppy | 1.18.0 |
 | @uppy/locales | 1.16.0 | - | - |
 
-- image-editor: 🎉 add long-awaited image cropping, rotation, flipping and zooming (in beta!) (#2370 / @arturi)
-- companion: override grant's default redirect_uri for consistent provider options (#2364 / @ifedapoolarewaju)
+- @uppy/image-editor: 🎉 add long-awaited image cropping, rotation, flipping and zooming (in beta!) (#2370 / @arturi)
+- @uppy/companion: override grant's default redirect_uri for consistent provider options (#2364 / @ifedapoolarewaju)
 
-## 1.17
+## 1.17.0
 
 Released: 2020-07-15
 
