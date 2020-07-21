@@ -132,7 +132,17 @@ Released: 2020-06-19
 | @uppy/instagram | 1.4.9 | uppy | 1.17.0 |
 | @uppy/locales | 1.15.1 | - | - |
 
-- aws-s3-multipart: retry uploading failed parts (#2312 / @goto-bus-stop)
+- ⚠️ @uppy/companion: rename `microsoft` and `google` providerOptions to `onedrive` and `drive` respectively (#2346 / @ifedapoolarewaju)
+- @uppy/aws-s3-multipart: do not store completed parts in state, fixes a resuming bug (#2326 / @yaegor)
+- @uppy/aws-s3-multipart: retry uploading failed parts (#2312 / @goto-bus-stop)
+- @uppy/companion: dependency updates (#2333 / @goto-bus-stop)
+- @uppy/companion: send custom headers to tus uploads (#2338 / @ifedapoolarewaju)
+- @uppy/core: add `reason` parameter to the `uppy.removeFile()` method and the `uppy.on('file-removed')` event (#2323 / @arturi)
+- @uppy/core: do not create an empty upload in retryAll() if there were no errors (#2361 / @goto-bus-stop)
+- @uppy/locales: add missing strings for Simplified Chinese (#2335 / @sparanoid)
+- @uppy/tus: update tus-js-client to v2 (#2239 / @Acconut, @goto-bus-stop)
+- docs: add authentication setup instructions for Dropbox and Google Drive (#2345 / @goto-bus-stop)
+- docs: explain how to use Uppy with React Hooks (#1936 / @pedrofs)
 
 ## 1.16.1
 
