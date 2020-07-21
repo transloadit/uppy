@@ -4,7 +4,7 @@ order: 2
 title: "Image Editor"
 module: "@uppy/image-editor"
 permalink: docs/image-editor/
-category: "Miscellaneous"
+category: "File Processing"
 tagline: "allows users to crop, rotate, zoom and flip images that are added to Uppy"
 ---
 
