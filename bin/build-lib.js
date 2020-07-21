@@ -47,7 +47,7 @@ async function buildLib () {
       }
     }
 
-    const { code, map } = await transformFile(file, {})
+    const { code, map } = await transformFile(file, { sourceMaps: true })
     await mkdirp(path.dirname(libFile))
     await Promise.all([
       writeFile(libFile, code),
