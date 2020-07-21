@@ -68,10 +68,15 @@ module.exports = class Dashboard extends Plugin {
         saveChanges: 'Save changes',
         cancel: 'Cancel',
         myDevice: 'My Device',
-        dropPaste: 'Drop files here, paste or %{browse}',
-        dropPasteImport: 'Drop files here, paste, %{browse} or import from:',
+        dropPasteFiles: 'Drop files here, paste or %{browseFiles}',
+        dropPasteFolders: 'Drop files here, paste or %{browseFolders}',
+        dropPasteBoth: 'Drop files here, paste, %{browseFiles} or %{browseFolders}',
+        dropPasteImportFiles: 'Drop files here, paste, %{browseFiles} or import from:',
+        dropPasteImportFolders: 'Drop files here, paste, %{browseFolders} or import from:',
+        dropPasteImportBoth: 'Drop files here, paste, %{browseFiles}, %{browseFolders} or import from:',
         dropHint: 'Drop your files here',
-        browse: 'browse',
+        browseFiles: 'browse files',
+        browseFolders: 'browse folders',
         uploadComplete: 'Upload complete',
         uploadPaused: 'Upload paused',
         resumeUpload: 'Resume upload',
@@ -126,6 +131,7 @@ module.exports = class Dashboard extends Plugin {
       disableThumbnailGenerator: false,
       disablePageScrollWhenModalOpen: true,
       animateOpenClose: true,
+      fileManagerSelectionType: 'files',
       proudlyDisplayPoweredByUppy: true,
       onRequestCloseModal: () => this.closeModal(),
       showSelectedFiles: true,
@@ -839,6 +845,11 @@ module.exports = class Dashboard extends Plugin {
       theme = this.opts.theme
     }
 
+    if (['files', 'folders', 'both'].indexOf(this.opts.fileManagerSelectionType) < 0) {
+      this.opts.fileManagerSelectionType = 'files'
+      console.error(`Unsupported option for "fileManagerSelectionType". Using default of "${this.opts.fileManagerSelectionType}".`)
+    }
+
     return DashboardUI({
       state,
       isHidden: pluginState.isHidden,
@@ -900,6 +911,7 @@ module.exports = class Dashboard extends Plugin {
       width: this.opts.width,
       height: this.opts.height,
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
+      fileManagerSelectionType: this.opts.fileManagerSelectionType,
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
       hideCancelButton: this.opts.hideCancelButton,
       hideRetryButton: this.opts.hideRetryButton,
