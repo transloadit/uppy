@@ -73,12 +73,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] transloadit: remove `UPPY_SERVER` constant
 - [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
 
-## 1.19
+## 1.21
 
 - [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
 
-## 1.18
+## 1.20
 
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
@@ -106,12 +106,21 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## 1.18
 
+Released: 2020-07-19
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 2.0.0-alpha.8 | @uppy/react | 1.9.1 |
+| @uppy/dashboard | 1.11.0 | @uppy/robodog | 1.8.0 |
+| @uppy/image-editor | 0.1.1 | uppy | 1.18.0 |
+| @uppy/locales | 1.16.0 | - | - |
+
 - image-editor: 🎉 add long-awaited image cropping, rotation, flipping and zooming (in beta!) (#2370 / @arturi)
 - companion: override grant's default redirect_uri for consistent provider options (#2364 / @ifedapoolarewaju)
 
 ## 1.17
 
-Released: 2020-06-19
+Released: 2020-07-15
 
 | Package | Version | Package | Version |
 |-|-|-|-|
