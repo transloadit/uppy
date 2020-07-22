@@ -44,7 +44,7 @@ function resolveUrl (origin, link) {
 function isXml (content, xhr) {
   const rawContentType = (xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type'))
 
-  if (rawContentType === null) {
+  if (!rawContentType || typeof rawContentType !== 'string') {
     return false
   }
 
