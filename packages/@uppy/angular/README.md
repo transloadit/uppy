@@ -1,27 +1,34 @@
-# Angular
+# @uppy/angular
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.3.
+<img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
-## Development server
+<a href="https://www.npmjs.com/package/@uppy/angular"><img src="https://img.shields.io/npm/v/@uppy/angular.svg?style=flat-square"></a>
+<a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:6006/`. The app will automatically reload if you change any of the source files.
+Angular component wrappers around Uppy's officially maintained UI plugins.
 
-## Code scaffolding
+Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Example
 
-## Build
+```ts
+// TODO 
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## Installation
 
-## Running unit tests
+```bash
+$ npm install @uppy/angular --save
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-## Running end-to-end tests
+Alternatively, you can also use this plugin in a pre-built bundle from Transloadit's CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+## Documentation
 
-## Further help
+Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/).
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+## License
+
+[The MIT License](./LICENSE).

@@ -1,10 +1,11 @@
 {
-  "name": "angular",
+  "name": "@uppy/angular",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "start-storybook -p 6006",
     "build": "ng build",
+    "release": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
