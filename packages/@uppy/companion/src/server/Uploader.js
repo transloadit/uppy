@@ -488,6 +488,12 @@ class Uploader {
       reqOptions.body = file
     }
 
+    if (!Object.keys(headers).some(key => key.toLowerCase() === 'content-length')) {
+      const stats = fs.statSync(this.path)
+      const fileSizeInBytes = stats.size
+      reqOptions.headers['content-length'] = fileSizeInBytes
+    }
+
     request[httpMethod](reqOptions, (error, response, body) => {
       if (error) {
         logger.error(error, 'upload.multipart.error')
