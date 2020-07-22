@@ -18,13 +18,10 @@ module.exports = class Provider extends RequestClient {
   }
 
   headers () {
-    return new Promise((resolve, reject) => {
-      super.headers().then((headers) => {
-        this.getAuthToken().then((token) => {
-          resolve(Object.assign({}, headers, { 'uppy-auth-token': token }))
-        })
-      }).catch(reject)
-    })
+    return Promise.all([super.headers(), this.getAuthToken()])
+      .then(([headers, token]) =>
+        Object.assign({}, headers, { 'uppy-auth-token': token })
+      )
   }
 
   onReceiveResponse (response) {
@@ -58,14 +55,11 @@ module.exports = class Provider extends RequestClient {
   }
 
   logout () {
-    return new Promise((resolve, reject) => {
-      this.get(`${this.id}/logout`)
-        .then((res) => {
-          this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
-            .then(() => resolve(res))
-            .catch(reject)
-        }).catch(reject)
-    })
+    return this.get(`${this.id}/logout`)
+      .then((response) => Promise.all([
+        response,
+        this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
+      ])).then(([response]) => response)
   }
 
   static initPlugin (plugin, opts, defaultOpts) {
