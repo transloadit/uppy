@@ -12,7 +12,7 @@ module.exports = class Dropbox extends Plugin {
     Provider.initPlugin(this, opts)
     this.title = this.opts.title || 'Dropbox'
     this.icon = () => (
-      <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
         <g fill="none" fill-rule="evenodd">
           <rect fill="#0D2481" width="32" height="32" rx="16" />
           <path d="M11 8l5 3.185-5 3.186-5-3.186L11 8zm10 0l5 3.185-5 3.186-5-3.186L21 8zM6 17.556l5-3.185 5 3.185-5 3.186-5-3.186zm15-3.185l5 3.185-5 3.186-5-3.186 5-3.185zm-10 7.432l5-3.185 5 3.185-5 3.186-5-3.186z" fill="#FFF" fill-rule="nonzero" />
@@ -34,16 +34,6 @@ module.exports = class Dropbox extends Plugin {
   install () {
     this.view = new ProviderViews(this, {
       provider: this.provider
-    })
-    // Set default state for Dropbox
-    this.setPluginState({
-      authenticated: false,
-      files: [],
-      folders: [],
-      directories: [],
-      activeRow: -1,
-      filterInput: '',
-      isSearchVisible: false
     })
 
     const target = this.opts.target

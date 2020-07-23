@@ -3,7 +3,7 @@ title: "&lt;DashboardModal />"
 type: docs
 module: "@uppy/react"
 permalink: docs/react/dashboard-modal/
-order: 5
+order: 6
 category: "React"
 ---
 
@@ -39,41 +39,16 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 Styles for Provider plugins, like Google Drive and Instagram, are also bundled with Dashboard styles. Styles for other plugins, such as `@uppy/url` and `@uppy/webcam`, are not inluded. If you are using those, please see their docs and make sure to include styles for them as well.
 
-## Initializing Uppy
-
-Your Uppy instance must be initialized before passing it to an `uppy={}` prop, and should be cleaned up using `uppy.close()` when you are done with it. A simple approach is to initialize it in your React component's `constructor()` and destroy it in `componentWillUnmount()`.
-
-> ⚠ Uppy instances are stateful, so the same instance must be used across different renders.
-> Do **NOT** initialize Uppy in a `render()` method!
-> Do **NOT** initialize Uppy in a function component!
-
-```js
-class MyComponent extends React.Component {
-  constructor (props) {
-    super(props)
-    this.uppy = Uppy()
-      .use(Transloadit, {})
-  }
-
-  componentWillUnmount () {
-    this.uppy.close()
-  }
-
-  render () {
-    return <DashboardModal uppy={this.uppy} />
-  }
-}
-```
-
 <!-- Make sure the old name of this section still works -->
 <a id="Options"></a>
-
 ## Props
 
 On top of all the [`@uppy/dashboard`][] options, the `<DashboardModal />` plugin adds two additional props:
 
  - `open` - Boolean true or false, setting this to `true` opens the modal and setting it to `false` closes it.
  - `onRequestClose` - Callback called when the user attempts to close the modal, either by clicking the close button or by clicking outside the modal (if the `closeModalOnClickOutside` prop is set).
+
+An Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
 To use other plugins like [`@uppy/webcam`][] with the `<DashboardModal />` component, add them to the Uppy instance and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
@@ -97,8 +72,16 @@ class MusicUploadButton extends React.Component {
       modalOpen: false
     }
 
+    this.uppy = new Uppy()
+      .use(XHRUpload, { endpoint: '/api/songs/upload' })
+      .use(Webcam, { modes: ['audio-only'] })
+
     this.handleOpen = this.handleOpen.bind(this)
     this.handleClose = this.handleClose.bind(this)
+  }
+
+  componentWillUnmount () {
+    this.uppy.close()
   }
 
   handleOpen () {
@@ -118,7 +101,7 @@ class MusicUploadButton extends React.Component {
       <div>
         <button onClick={this.handleOpen}>Upload some music</button>
         <DashboardModal
-          uppy={this.props.uppy}
+          uppy={this.uppy}
           closeModalOnClickOutside
           open={this.state.modalOpen}
           onRequestClose={this.handleClose}

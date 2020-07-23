@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "1.8.5",
+  "version": "1.12.0",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -35,7 +35,7 @@
     "lodash.throttle": "^4.1.1",
     "memoize-one": "^5.0.4",
     "preact": "8.2.9",
-    "preact-css-transition-group": "^1.3.0",
+    "preact8-css-transition-group": "^2.1.0",
     "resize-observer-polyfill": "^1.5.0"
   },
   "peerDependencies": {

@@ -12,6 +12,7 @@ const hasProperty = require('@uppy/utils/lib/hasProperty')
 const getFingerprint = require('./getFingerprint')
 
 /** @typedef {import('..').TusOptions} TusOptions */
+/** @typedef {import('tus-js-client').UploadOptions} RawTusOptions */
 /** @typedef {import('@uppy/core').Uppy} Uppy */
 /** @typedef {import('@uppy/core').UppyFile} UppyFile */
 /** @typedef {import('@uppy/core').FailedUppyFile<{}>} FailedUppyFile */
@@ -20,22 +21,31 @@ const getFingerprint = require('./getFingerprint')
  * Extracted from https://github.com/tus/tus-js-client/blob/master/lib/upload.js#L13
  * excepted we removed 'fingerprint' key to avoid adding more dependencies
  *
- * @type {TusOptions}
+ * @type {RawTusOptions}
  */
 const tusDefaultOptions = {
   endpoint: '',
-  resume: true,
+
+  uploadUrl: null,
+  metadata: {},
+  uploadSize: null,
+
   onProgress: null,
   onChunkComplete: null,
   onSuccess: null,
   onError: null,
-  headers: {},
-  chunkSize: Infinity,
-  withCredentials: false,
-  uploadUrl: null,
-  uploadSize: null,
+
   overridePatchMethod: false,
-  retryDelays: null
+  headers: {},
+  addRequestId: false,
+
+  chunkSize: Infinity,
+  retryDelays: [0, 1000, 3000, 5000],
+  parallelUploads: 1,
+  storeFingerprintForResuming: true,
+  removeFingerprintOnSuccess: false,
+  uploadLengthDeferred: false,
+  uploadDataDuringCreation: false
 }
 
 /**
@@ -56,8 +66,8 @@ module.exports = class Tus extends Plugin {
 
     // set default options
     const defaultOptions = {
-      resume: true,
       autoRetry: true,
+      resume: true,
       useFastRemoteRetry: true,
       limit: 0,
       retryDelays: [0, 1000, 3000, 5000]
@@ -162,35 +172,49 @@ module.exports = class Tus extends Plugin {
     return new Promise((resolve, reject) => {
       this.uppy.emit('upload-started', file)
 
-      const optsTus = Object.assign(
-        {},
-        tusDefaultOptions,
-        this.opts,
-        // Install file-specific upload overrides.
-        file.tus || {}
-      )
+      const opts = {
+        ...this.opts,
+        ...(file.tus || {})
+      }
+
+      /** @type {RawTusOptions} */
+      const uploadOptions = {
+        ...tusDefaultOptions,
+        // TODO only put tus-specific options in?
+        ...opts
+      }
+
+      delete uploadOptions.resume
+
+      // Make `resume: true` work like it did in tus-js-client v1.
+      // TODO: Remove in @uppy/tus v2
+      if (opts.resume) {
+        uploadOptions.storeFingerprintForResuming = true
+      }
 
       // We override tus fingerprint to uppy’s `file.id`, since the `file.id`
       // now also includes `relativePath` for files added from folders.
       // This means you can add 2 identical files, if one is in folder a,
       // the other in folder b.
-      optsTus.fingerprint = getFingerprint(file)
+      uploadOptions.fingerprint = getFingerprint(file)
 
-      optsTus.onError = (err) => {
+      uploadOptions.onError = (err) => {
         this.uppy.log(err)
 
-        if (isNetworkError(err.originalRequest)) {
-          err = new NetworkError(err, err.originalRequest)
+        const xhr = err.originalRequest ? err.originalRequest.getUnderlyingObject() : null
+        if (isNetworkError(xhr)) {
+          err = new NetworkError(err, xhr)
         }
-
-        this.uppy.emit('upload-error', file, err)
 
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
+
+        this.uppy.emit('upload-error', file, err)
+
         reject(err)
       }
 
-      optsTus.onProgress = (bytesUploaded, bytesTotal) => {
+      uploadOptions.onProgress = (bytesUploaded, bytesTotal) => {
         this.onReceiveUploadUrl(file, upload.url)
         this.uppy.emit('upload-progress', file, {
           uploader: this,
@@ -199,10 +223,13 @@ module.exports = class Tus extends Plugin {
         })
       }
 
-      optsTus.onSuccess = () => {
+      uploadOptions.onSuccess = () => {
         const uploadResp = {
           uploadURL: upload.url
         }
+
+        this.resetUploaderReferences(file.id)
+        queuedRequest.done()
 
         this.uppy.emit('upload-success', file, uploadResp)
 
@@ -210,8 +237,6 @@ module.exports = class Tus extends Plugin {
           this.uppy.log('Download ' + upload.file.name + ' from ' + upload.url)
         }
 
-        this.resetUploaderReferences(file.id)
-        queuedRequest.done()
         resolve(upload)
       }
 
@@ -221,9 +246,10 @@ module.exports = class Tus extends Plugin {
         }
       }
 
+      /** @type {{ [name: string]: string }} */
       const meta = {}
-      const metaFields = Array.isArray(optsTus.metaFields)
-        ? optsTus.metaFields
+      const metaFields = Array.isArray(opts.metaFields)
+        ? opts.metaFields
         // Send along all fields by default.
         : Object.keys(file.meta)
       metaFields.forEach((item) => {
@@ -234,15 +260,31 @@ module.exports = class Tus extends Plugin {
       copyProp(meta, 'type', 'filetype')
       copyProp(meta, 'name', 'filename')
 
-      optsTus.metadata = meta
+      uploadOptions.metadata = meta
 
-      const upload = new tus.Upload(file.data, optsTus)
+      const upload = new tus.Upload(file.data, uploadOptions)
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
+      // Make `resume: true` work like it did in tus-js-client v1.
+      // TODO: Remove in @uppy/tus v2.
+      if (opts.resume) {
+        upload.findPreviousUploads().then((previousUploads) => {
+          const previousUpload = previousUploads[0]
+          if (previousUpload) {
+            this.uppy.log(`[Tus] Resuming upload of ${file.id} started at ${previousUpload.creationTime}`)
+            upload.resumeFromPreviousUpload(previousUpload)
+          }
+        })
+      }
+
       let queuedRequest = this.requests.run(() => {
         if (!file.isPaused) {
-          upload.start()
+          // Ensure this gets scheduled to run _after_ `findPreviousUploads()` returns.
+          // TODO: Remove in @uppy/tus v2.
+          Promise.resolve().then(() => {
+            upload.start()
+          })
         }
         // Don't do anything here, the caller will take care of cancelling the upload itself
         // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
@@ -334,6 +376,7 @@ module.exports = class Tus extends Plugin {
         uploadUrl: opts.uploadUrl,
         protocol: 'tus',
         size: file.data.size,
+        headers: opts.headers,
         metadata: file.meta
       }).then((res) => {
         this.uppy.setFileState(file.id, { serverToken: res.token })
@@ -464,6 +507,7 @@ module.exports = class Tus extends Plugin {
         this.uppy.emit('upload-success', file, uploadResp)
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
+
         resolve()
       })
 

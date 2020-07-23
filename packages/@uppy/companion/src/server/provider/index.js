@@ -46,7 +46,7 @@ module.exports.getProviderMiddleware = (providers) => {
  */
 module.exports.getDefaultProviders = (companionOptions) => {
   const { providerOptions } = companionOptions || { providerOptions: null }
-  // @todo: 2.0 we should rename drive to googledrive or google-drive or google
+  // @todo: we should rename drive to googledrive or google-drive or google
   const providers = { dropbox, drive, facebook, onedrive }
   // Instagram's Graph API key is just numbers, while the old API key is hex
   const usesGraphAPI = () => /^\d+$/.test(providerOptions.instagram.key)
@@ -70,7 +70,13 @@ module.exports.getDefaultProviders = (companionOptions) => {
 module.exports.addCustomProviders = (customProviders, providers, grantConfig) => {
   Object.keys(customProviders).forEach((providerName) => {
     providers[providerName] = customProviders[providerName].module
-    grantConfig[providerName] = customProviders[providerName].config
+    const providerConfig = Object.assign({}, customProviders[providerName].config)
+    // todo: consider setting these options from a universal point also used
+    // by official providers. It'll prevent these from getting left out if the
+    // requirement changes.
+    providerConfig.callback = `/${providerName}/callback`
+    providerConfig.transport = 'session'
+    grantConfig[providerName] = providerConfig
   })
 }
 
@@ -94,19 +100,20 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
 
   const { oauthDomain } = server
   const keys = Object.keys(providerOptions).filter((key) => key !== 'server')
-  keys.forEach((authProvider) => {
-    if (grantConfig[authProvider]) {
+  keys.forEach((providerName) => {
+    const authProvider = providerNameToAuthName(providerName, companionOptions)
+    if (authProvider && grantConfig[authProvider]) {
       // explicitly add providerOptions so users don't override other providerOptions.
-      grantConfig[authProvider].key = providerOptions[authProvider].key
-      grantConfig[authProvider].secret = providerOptions[authProvider].secret
-      const { provider, name } = authNameToProvider(authProvider, companionOptions)
+      grantConfig[authProvider].key = providerOptions[providerName].key
+      grantConfig[authProvider].secret = providerOptions[providerName].secret
+      const provider = exports.getDefaultProviders(companionOptions)[providerName]
       Object.assign(grantConfig[authProvider], provider.getExtraConfig())
 
       // override grant.js redirect uri with companion's custom redirect url
+      const isExternal = !!server.implicitPath
+      const redirectPath = `/${providerName}/redirect`
+      grantConfig[authProvider].redirect_uri = getURLBuilder(companionOptions)(redirectPath, isExternal)
       if (oauthDomain) {
-        const providerName = name
-        const redirectPath = `/${providerName}/redirect`
-        const isExternal = !!server.implicitPath
         const fullRedirectPath = getURLBuilder(companionOptions)(redirectPath, isExternal, true)
         grantConfig[authProvider].redirect_uri = `${server.protocol}://${oauthDomain}${fullRedirectPath}`
       }
@@ -125,19 +132,13 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
 
 /**
  *
- * @param {string} authProvider
+ * @param {string} name of the provider
  * @param {{server: object, providerOptions: object}} options
- * @return {{name: string, provider: typeof Provider}}
+ * @return {string} the authProvider for this provider
  */
-const authNameToProvider = (authProvider, options) => {
+const providerNameToAuthName = (name, options) => {
   const providers = exports.getDefaultProviders(options)
-  const providerNames = Object.keys(providers)
-  for (const name of providerNames) {
-    const provider = providers[name]
-    if (provider.authProvider === authProvider) {
-      return { name, provider }
-    }
-  }
+  return (providers[name] || {}).authProvider
 }
 
 /**

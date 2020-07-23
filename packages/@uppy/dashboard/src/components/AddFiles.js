@@ -1,9 +1,12 @@
-const { iconMyDevice } = require('./icons')
 const { h, Component } = require('preact')
 
 class AddFiles extends Component {
   triggerFileInputClick = () => {
     this.fileInput.click()
+  }
+
+  triggerFolderInputClick = () => {
+    this.folderInput.click()
   }
 
   onFileInputChange = (event) => {
@@ -21,7 +24,7 @@ class AddFiles extends Component {
   renderPoweredByUppy () {
     const uppyBranding = (
       <span>
-        <svg aria-hidden="true" focusable="false" class="UppyIcon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11">
+        <svg aria-hidden="true" focusable="false" class="uppy-c-icon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11">
           <path d="M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z" fill-rule="evenodd" />
         </svg>
         <span class="uppy-Dashboard-poweredByUppy">Uppy</span>
@@ -47,34 +50,31 @@ class AddFiles extends Component {
     )
   }
 
-  renderCloudIcon = () => {
-    return (
-      <svg class="uppy-Dashboard-dropFilesIcon" aria-hidden="true" width="64" height="45" viewBox="0 0 64 45" xmlns="http://www.w3.org/2000/svg">
-        <path d="M38 44.932V31h8L33 15 20 31h8v13.932H13.538C6.075 44.932 0 38.774 0 31.202c0-6.1 4.06-11.512 9.873-13.162l.005-.017c.345-5.8 5.248-10.534 10.922-10.534.502 0 1.164.017 1.868.16C25.9 2.85 31.225 0 36.923 0c9.5 0 17.23 7.838 17.23 17.473l-.011.565.012.002C60.039 19.685 64 24.975 64 31.203c0 7.57-6.075 13.729-13.538 13.729H38z" fill="#E2E2E2" fill-rule="nonzero" />
-      </svg>
-    )
-  }
-
-  renderHiddenFileInput = () => {
+  renderHiddenInput = (isFolder, refCallback) => {
     return (
       <input
         class="uppy-Dashboard-input"
         hidden
         aria-hidden="true"
         tabindex={-1}
+        webkitdirectory={isFolder}
         type="file"
         name="files[]"
         multiple={this.props.maxNumberOfFiles !== 1}
         onchange={this.onFileInputChange}
         accept={this.props.allowedFileTypes}
-        ref={(ref) => { this.fileInput = ref }}
+        ref={refCallback}
       />
     )
   }
 
   renderMyDeviceAcquirer = () => {
     return (
-      <div class="uppy-DashboardTab" role="presentation">
+      <div
+        class="uppy-DashboardTab"
+        role="presentation"
+        data-uppy-acquirer-id="MyDevice"
+      >
         <button
           type="button"
           class="uppy-DashboardTab-btn"
@@ -83,31 +83,48 @@ class AddFiles extends Component {
           data-uppy-super-focusable
           onclick={this.triggerFileInputClick}
         >
-          {iconMyDevice()}
+          <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
+            <g fill="none" fill-rule="evenodd">
+              <rect width="32" height="32" rx="16" fill="#2275D7" />
+              <path d="M21.973 21.152H9.863l-1.108-5.087h14.464l-1.246 5.087zM9.935 11.37h3.958l.886 1.444a.673.673 0 0 0 .585.316h6.506v1.37H9.935v-3.13zm14.898 3.44a.793.793 0 0 0-.616-.31h-.978v-2.126c0-.379-.275-.613-.653-.613H15.75l-.886-1.445a.673.673 0 0 0-.585-.316H9.232c-.378 0-.667.209-.667.587V14.5h-.782a.793.793 0 0 0-.61.303.795.795 0 0 0-.155.663l1.45 6.633c.078.36.396.618.764.618h13.354c.36 0 .674-.246.76-.595l1.631-6.636a.795.795 0 0 0-.144-.675z" fill="#FFF" />
+            </g>
+          </svg>
           <div class="uppy-DashboardTab-name">{this.props.i18n('myDevice')}</div>
         </button>
       </div>
     )
   }
 
-  renderDropPasteBrowseTagline = () => {
+  renderBrowseButton = (text, onClickFn) => {
     const numberOfAcquirers = this.props.acquirers.length
-    const browse =
+    return (
       <button
         type="button"
         class="uppy-u-reset uppy-Dashboard-browse"
-        onclick={this.triggerFileInputClick}
+        onclick={onClickFn}
         data-uppy-super-focusable={numberOfAcquirers === 0}
       >
-        {this.props.i18n('browse')}
+        {text}
       </button>
+    )
+  }
+
+  renderDropPasteBrowseTagline = () => {
+    const numberOfAcquirers = this.props.acquirers.length
+    const browseFiles = this.renderBrowseButton(this.props.i18n('browseFiles'), this.triggerFileInputClick)
+    const browseFolders = this.renderBrowseButton(this.props.i18n('browseFolders'), this.triggerFolderInputClick)
+
+    // in order to keep the i18n CamelCase and options lower (as are defaults) we will want to transform a lower
+    // to Camel
+    const lowerFMSelectionType = this.props.fileManagerSelectionType
+    const camelFMSelectionType = lowerFMSelectionType.charAt(0).toUpperCase() + lowerFMSelectionType.slice(1)
 
     return (
       <div class="uppy-Dashboard-AddFiles-title">
         {
           numberOfAcquirers > 0
-            ? this.props.i18nArray('dropPasteImport', { browse })
-            : this.props.i18nArray('dropPaste', { browse })
+            ? this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })
+            : this.props.i18nArray(`dropPaste${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })
         }
       </div>
     )
@@ -115,7 +132,11 @@ class AddFiles extends Component {
 
   renderAcquirer = (acquirer) => {
     return (
-      <div class="uppy-DashboardTab" role="presentation">
+      <div
+        class="uppy-DashboardTab"
+        role="presentation"
+        data-uppy-acquirer-id={acquirer.id}
+      >
         <button
           type="button"
           class="uppy-DashboardTab-btn"
@@ -153,7 +174,8 @@ class AddFiles extends Component {
   render () {
     return (
       <div class="uppy-Dashboard-AddFiles">
-        {this.renderHiddenFileInput()}
+        {this.renderHiddenInput(false, (ref) => { this.fileInput = ref })}
+        {this.renderHiddenInput(true, (ref) => { this.folderInput = ref })}
         {this.renderDropPasteBrowseTagline()}
         {this.props.acquirers.length > 0 && this.renderAcquirers(this.props.acquirers)}
         <div class="uppy-Dashboard-AddFiles-info">

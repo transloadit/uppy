@@ -6,7 +6,7 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const redis = require('../server/redis')
 const logger = require('../server/logger')
-const { parseURL } = require('../server/helpers/utils')
+const { URL } = require('url')
 const merge = require('lodash.merge')
 // @ts-ignore
 const promBundle = require('express-prom-bundle')
@@ -80,7 +80,7 @@ morgan.token('url', (req, res) => {
 morgan.token('referrer', (req, res) => {
   const ref = req.headers.referer || req.headers.referrer
   if (typeof ref === 'string') {
-    const parsed = parseURL(ref)
+    const parsed = new URL(ref)
     const rawQuery = qs.parse(parsed.search.replace('?', ''))
     const { query, censored } = censorQuery(rawQuery)
     return censored ? `${parsed.href.split('?')[0]}?${qs.stringify(query)}` : parsed.href
@@ -162,19 +162,27 @@ app.get('/', (req, res) => {
   res.send(helper.buildHelpfulStartupMessage(companionOptions))
 })
 
-// initialize companion
-helper.validateConfig(companionOptions)
+let companionApp
+try {
+  // initialize companion
+  companionApp = companion.app(companionOptions)
+} catch (error) {
+  console.error('\x1b[31m', error.message, '\x1b[0m')
+  process.exit(1)
+}
+
+// add companion to server middlewear
 if (process.env.COMPANION_PATH) {
-  app.use(process.env.COMPANION_PATH, companion.app(companionOptions))
+  app.use(process.env.COMPANION_PATH, companionApp)
 } else {
-  app.use(companion.app(companionOptions))
+  app.use(companionApp)
 }
 
 // WARNING: This route is added in order to validate your app with OneDrive.
 // Only set COMPANION_ONEDRIVE_DOMAIN_VALIDATION if you are sure that you are setting the
 // correct value for COMPANION_ONEDRIVE_KEY (i.e application ID). If there's a slightest possiblilty
 // that you might have mixed the values for COMPANION_ONEDRIVE_KEY and COMPANION_ONEDRIVE_SECRET,
-// please do not set a value for COMPANION_ONEDRIVE_DOMAIN_VALIDATION
+// please DO NOT set any value for COMPANION_ONEDRIVE_DOMAIN_VALIDATION
 if (process.env.COMPANION_ONEDRIVE_DOMAIN_VALIDATION === 'true' && process.env.COMPANION_ONEDRIVE_KEY) {
   app.get('/.well-known/microsoft-identity-association.json', (req, res) => {
     const content = JSON.stringify({

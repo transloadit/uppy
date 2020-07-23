@@ -30,7 +30,8 @@ jest.mock('../../src/server/helpers/oauth-state', () => {
 
 const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
-const { authServer } = require('../mockserver')
+const { getServer } = require('../mockserver')
+const authServer = getServer()
 const authData = {
   dropbox: 'token value',
   drive: 'token value'
@@ -297,9 +298,12 @@ describe('connect to provider', () => {
   })
 })
 
-describe('handle oauth redirect', () => {
+describe('handle master oauth redirect', () => {
+  const serverWithMasterOauth = getServer({
+    COMPANION_OAUTH_DOMAIN: 'localhost:3040'
+  })
   test('redirect to a valid uppy instance', () => {
-    return request(authServer)
+    return request(serverWithMasterOauth)
       .get(`/dropbox/redirect?state=${OAUTH_STATE}`)
       .set('uppy-auth-token', token)
       .expect(302)
@@ -308,7 +312,7 @@ describe('handle oauth redirect', () => {
 
   test('do not redirect to invalid uppy instances', () => {
     const state = 'state-with-invalid-instance-url' // see mock ../../src/server/helpers/oauth-state above
-    return request(authServer)
+    return request(serverWithMasterOauth)
       .get(`/dropbox/redirect?state=${state}`)
       .set('uppy-auth-token', token)
       .expect(400)

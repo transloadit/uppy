@@ -12,7 +12,7 @@ module.exports = class OneDrive extends Plugin {
     Provider.initPlugin(this, opts)
     this.title = this.opts.title || 'OneDrive'
     this.icon = () => (
-      <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
         <g fill="none" fill-rule="evenodd">
           <rect width="32" height="32" rx="16" fill="#0262C0" />
           <g fill="#FFF" fill-rule="nonzero">
@@ -37,16 +37,6 @@ module.exports = class OneDrive extends Plugin {
   install () {
     this.view = new ProviderViews(this, {
       provider: this.provider
-    })
-    // Set default state for Dropbox
-    this.setPluginState({
-      authenticated: false,
-      files: [],
-      folders: [],
-      directories: [],
-      activeRow: -1,
-      filterInput: '',
-      isSearchVisible: false
     })
 
     const target = this.opts.target

@@ -1,3 +1,4 @@
+const fs = require('fs')
 const express = require('express')
 // @ts-ignore
 const Grant = require('grant').express()
@@ -48,6 +49,8 @@ module.exports.errors = { ProviderApiError, ProviderAuthError }
  * @param {object} options
  */
 module.exports.app = (options = {}) => {
+  validateConfig(options)
+
   options = merge({}, defaultOptions, options)
   const providers = providerManager.getDefaultProviders(options)
   providerManager.addProviderOptions(options, grantConfig)
@@ -268,8 +271,6 @@ const getOptionsMiddleware = (options) => {
     }
 
     logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
-    // @todo remove req.uppy in next major release
-    req.uppy = req.companion
     next()
   }
 
@@ -299,4 +300,49 @@ const maskLogger = (companionOptions) => {
   }
 
   logger.setMaskables(secrets)
+}
+
+/**
+ * validates that the mandatory companion options are set.
+ * If it is invalid, it will console an error of unset options and exits the process.
+ * If it is valid, nothing happens.
+ *
+ * @param {object} companionOptions
+ */
+const validateConfig = (companionOptions) => {
+  const mandatoryOptions = ['secret', 'filePath', 'server.host']
+  /** @type {string[]} */
+  const unspecified = []
+
+  mandatoryOptions.forEach((i) => {
+    const value = i.split('.').reduce((prev, curr) => prev ? prev[curr] : undefined, companionOptions)
+
+    if (!value) unspecified.push(`"${i}"`)
+  })
+
+  // vaidate that all required config is specified
+  if (unspecified.length) {
+    const messagePrefix = 'Please specify the following options to use companion:'
+    throw new Error(`${messagePrefix}\n${unspecified.join(',\n')}`)
+  }
+
+  // validate that specified filePath is writeable/readable.
+  try {
+    // @ts-ignore
+    fs.accessSync(`${companionOptions.filePath}`, fs.R_OK | fs.W_OK)
+  } catch (err) {
+    throw new Error(
+      `No access to "${companionOptions.filePath}". Please ensure the directory exists and with read/write permissions.`
+    )
+  }
+
+  const { providerOptions } = companionOptions
+  if (providerOptions) {
+    const deprecatedOptions = { microsoft: 'onedrive', google: 'drive' }
+    Object.keys(deprecatedOptions).forEach((deprected) => {
+      if (providerOptions[deprected]) {
+        throw new Error(`The Provider option "${deprected}" is no longer supported. Please use the option "${deprecatedOptions[deprected]}" instead.`)
+      }
+    })
+  }
 }

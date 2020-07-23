@@ -523,7 +523,7 @@ const updatedFile = Object.assign({}, updatedFiles[fileID], {
     bytesTotal: data.bytesTotal,
     percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
   })
-))
+})
 updatedFiles[data.id] = updatedFile
 uppy.setState({files: updatedFiles})
 ```
@@ -660,8 +660,22 @@ uppy.on('file-added', (file) => {
 Fired each time a file is removed.
 
 ```javascript
-uppy.on('file-removed', (file) => {
+uppy.on('file-removed', (file, reason) => {
   console.log('Removed file', file)
+})
+```
+
+Reason is provided as a second argument, so that you can distinguish when a user manually removed a file in the UI vs API calling `uppy.reset()` or `uppy.cancel()`. See [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176) for details.
+
+Current reasons are: `removed-by-user` and `cancel-all`.
+
+```js
+uppy.on('file-removed', (file, reason) => {
+  removeFileFromUploadingCounterUI(file)
+
+  if (reason === 'removed-by-user') {
+    sendDeleteRequestForFile(file)
+  }
 })
 ```
 
@@ -750,6 +764,18 @@ Fired each time a single upload has errored.
 uppy.on('upload-error', (file, error, response) => {
   console.log('error with file:', file.id)
   console.log('error message:', error)
+})
+```
+
+If the error is related to network conditions — endpoint unreachable due to firewall or ISP blockage, for instance — the error will have `error.isNetworkError` property set to `true`. Here’s how you can check for network errors:
+
+``` javascript
+uppy.on('upload-error', (file, error, response) => {
+  if (error.isNetworkError) {
+    // Let your users know that file upload could have failed
+    // due to firewall or ISP issues
+    alertUserAboutPossibleFirewallOrISPIssues(error)
+  }
 })
 ```
 

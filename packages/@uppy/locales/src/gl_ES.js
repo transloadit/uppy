@@ -1,9 +1,9 @@
 const gl_ES = {}
 
 gl_ES.strings = {
-  addMore: 'añadir más',
-  addMoreFiles: 'Agregar máis arquivos',
-  addingMoreFiles: 'Agregando máis arquivos',
+  addMore: 'Engadir máis',
+  addMoreFiles: 'Engadir máis arquivos',
+  addingMoreFiles: 'Engadir máis arquivos',
   allowAccessDescription: 'Para tomar fotos ou grabar video coa túa cámara, por favor permite a este sitio o acceso á cámara.',
   allowAccessTitle: 'Por favor permite o acceso á tua cámara',
   authenticateWith: 'Conectar a %{pluginName}',
@@ -28,8 +28,12 @@ gl_ES.strings = {
   done: 'Feito',
   dropHereOr: 'Soltar arquivos aquí ou %{browse}',
   dropHint: 'Solta os teus arqivos aquí',
-  dropPaste: 'Soltar arquivos aquí, pegar ou %{browse}',
-  dropPasteImport: 'Soltar arquivos aquí, pegar, %{browse} ou importar dende',
+  dropPasteBoth: 'Soltar arquivos aquí, pegar ou %{browse}',
+  dropPasteFiles: 'Soltar arquivos aquí, pegar ou %{browse}',
+  dropPasteFolders: 'Soltar arquivos aquí, pegar ou %{browse}',
+  dropPasteImportBoth: 'Soltar arquivos aquí, pegar, %{browse} ou importar dende',
+  dropPasteImportFiles: 'Soltar arquivos aquí, pegar, %{browse} ou importar dende',
+  dropPasteImportFolders: 'Soltar arquivos aquí, pegar, %{browse} ou importar dende',
   editFile: 'Editar arquivo',
   editing: 'Editando %{file}',
   emptyFolderAdded: 'Ningún arquivo foi agregado dende o cartafol vacía',
@@ -48,9 +52,9 @@ gl_ES.strings = {
   filter: 'Filtrar',
   finishEditingFile: 'Rematar edición de arquivo',
   folderAdded: {
-    '0': 'Agregado %{smart_count} arquivo dende %{folder}',
-    '1': 'Agregados %{smart_count} arquivos dende %{folder}',
-    '2': 'Agregados %{smart_count} arquivos dende %{folder}'
+    '0': 'Engadido %{smart_count} arquivo dende %{folder}',
+    '1': 'Engadidos %{smart_count} arquivos dende %{folder}',
+    '2': 'Engadidos %{smart_count} arquivos dende %{folder}'
   },
   import: 'Importar',
   importFrom: 'Importar dende %{name}',
@@ -82,7 +86,7 @@ gl_ES.strings = {
   },
   smile: 'Sorrí!',
   startRecording: 'Comezar a grabación de vídeo',
-  stopRecording: 'Detener la grabación de vídeo',
+  stopRecording: 'Deter a grabación de vídeo',
   takePicture: 'Tomar unha foto',
   timedOut: 'Subida estancada por %{seconds} segundos, anulando.',
   upload: 'Subir',
@@ -99,7 +103,7 @@ gl_ES.strings = {
     '1': 'Subir +%{smart_count} arquivos',
     '2': 'Subir +%{smart_count} arquivos'
   },
-  uploading: 'Subiendo',
+  uploading: 'Subindo',
   uploadingXFiles: {
     '0': 'Subindo %{smart_count} arquivo',
     '1': 'Subindo %{smart_count} arquivos',
@@ -111,9 +115,9 @@ gl_ES.strings = {
     '2': '%{smart_count} arquivos seleccionados'
   },
   xMoreFilesAdded: {
-    '0': '%{smart_count} arquivo máis agregado',
-    '1': '%{smart_count} arquivos máis agregados',
-    '2': '%{smart_count} arquivos máis agregados'
+    '0': '%{smart_count} arquivo máis engadido',
+    '1': '%{smart_count} arquivos máis engadidos',
+    '2': '%{smart_count} arquivos máis engadidos'
   },
   xTimeLeft: '%{time} restantes',
   youCanOnlyUploadFileTypes: 'Soamente podes subir: %{types}',
@@ -127,11 +131,11 @@ gl_ES.strings = {
     '1': 'Tes que seleccionar polo menos %{smart_count} arquivos',
     '2': 'Tes que seleccionar polo menos %{smart_count} arquivos'
   },
-  selectAllFilesFromFolderNamed: 'Seleccionar todos los archivos de la carpeta %{name}',
-  unselectAllFilesFromFolderNamed: 'Deselecciona todos los archivos de la carpeta %{name}',
-  selectFileNamed: 'Seleccione archivo %{name}',
-  unselectFileNamed: 'Deseleccionar archivo %{name}',
-  openFolderNamed: 'Carpeta abierta %{name}'
+  selectAllFilesFromFolderNamed: 'Seleccionar todos os arquivos do cartafol %{name}',
+  unselectAllFilesFromFolderNamed: 'Deselecciona todos os arquivos do cartafol %{name}',
+  selectFileNamed: 'Seleccione arquivo %{name}',
+  unselectFileNamed: 'Deseleccionar arquivo %{name}',
+  openFolderNamed: 'Cartafol aberto %{name}'
 }
 
 gl_ES.pluralize = function (n) {

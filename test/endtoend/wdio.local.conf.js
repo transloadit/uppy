@@ -2,11 +2,16 @@ const base = require('./wdio.base.conf')
 const args = require('minimist')(process.argv.slice(2))
 
 // Use "npm run test:endtoend:local -- -b chrome" to test in chrome
+// "npm run test:endtoend:local -- -b ie" to test in internet explorer
 // "npm run test:endtoend:local -- -b firefox -b chrome" to test in FF and chrome
 const capabilities = []
 if (args.b) {
   if (!Array.isArray(args.b)) args.b = [args.b]
   args.b.forEach((browserName) => {
+    // no clue how to write a single argument with internal spaces on windows, so support an alias with no spaces
+    if (browserName === 'ie') {
+      browserName = 'internet explorer'
+    }
     capabilities.push({ browserName })
   })
 }
@@ -33,7 +38,6 @@ exports.config = {
   // Set a base URL in order to shorten url command calls. If your url parameter starts
   // with "/", then the base url gets prepended.
   baseUrl: 'http://localhost',
-  path: '/',
 
   // Options to be passed to Mocha.
   // See the full list at http://mochajs.org/
