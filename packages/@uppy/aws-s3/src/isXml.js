@@ -16,11 +16,11 @@ function removeMimeParameters (mimeType) {
  * @returns {bool} Whether the content is (probably) XML.
  */
 function isXml (content, xhr) {
-  const rawContentType = (xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type'))
-
-  if (rawContentType == null) {
-    return false
-  }
+  const rawContentType = xhr.headers
+    ? xhr.headers['content-type']
+    : 'getResponseHeader' in xhr // will exist if xhr is a XMLHttpRequest
+      ? xhr.getResponseHeader('Content-Type')
+      : false
 
   if (typeof rawContentType === 'string') {
     const contentType = removeMimeParameters(rawContentType).toLowerCase()
