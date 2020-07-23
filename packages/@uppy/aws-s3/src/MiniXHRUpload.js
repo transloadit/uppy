@@ -324,13 +324,9 @@ module.exports = class MiniXHRUpload {
         socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
 
         socket.on('success', (data) => {
-          const body = opts.getResponseData(data.response.responseText, data.response)
-          const uploadURL = body[opts.responseUrlFieldName]
-
           const uploadResp = {
             status: data.response.status,
-            body,
-            uploadURL
+            body: data.response.responseText
           }
 
           this.uppy.emit('upload-success', file, uploadResp)
@@ -343,10 +339,7 @@ module.exports = class MiniXHRUpload {
         })
 
         socket.on('error', (errData) => {
-          const resp = errData.response
-          const error = resp
-            ? opts.getResponseError(resp.responseText, resp)
-            : Object.assign(new Error(errData.error.message), { cause: errData.error })
+          const error = Object.assign(new Error(errData.error.message), { cause: errData.error })
           this.uppy.emit('upload-error', file, error)
           queuedRequest.done()
           if (this.uploaderEvents[file.id]) {
