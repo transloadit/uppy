@@ -147,7 +147,15 @@ module.exports = class Webcam extends Plugin {
   }
 
   setOptions (newOpts) {
-    super.setOptions(newOpts)
+    super.setOptions({
+      ...newOpts,
+      videoConstraints: {
+        // May be undefined but ... handles that
+        ...this.opts.videoConstraints,
+        ...newOpts?.videoConstraints
+      }
+    })
+
     this.i18nInit()
   }
 
