@@ -55,7 +55,7 @@ class Uppy {
         exceedsSize2: '%{backwardsCompat} %{size}',
         exceedsSize: 'This file exceeds maximum allowed size of',
         inferiorSize2: '%{backwardsCompat} %{size}',
-        inferiorSize: 'This file smaller than the allowed size of',
+        inferiorSize: 'This file is smaller than the allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
         noNewAlreadyUploading: 'Cannot add new files: already uploading',
         noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
