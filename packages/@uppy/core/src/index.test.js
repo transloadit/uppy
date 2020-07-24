@@ -1583,6 +1583,27 @@ describe('src/Core', () => {
       }
     })
 
+    it('should enforce the minFileSize rule', () => {
+      const core = new Core({
+        restrictions: {
+          minFileSize: 1073741824
+        }
+      })
+
+      try {
+        core.addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+        throw new Error('should have thrown')
+      } catch (err) {
+        expect(err).toMatchObject(new Error('This file smaller than the allowed size of 1 GB'))
+        expect(core.getState().info.message).toEqual('This file smaller than the allowed size of 1 GB')
+      }
+    })
+
     it('should emit `restriction-failed` event when some rule is violated', () => {
       const maxFileSize = 100
       const core = new Core({

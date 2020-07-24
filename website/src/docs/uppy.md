@@ -75,6 +75,7 @@ const uppy = Uppy({
   debug: false,
   restrictions: {
     maxFileSize: null,
+    minFileSize: null,
     maxNumberOfFiles: null,
     minNumberOfFiles: null,
     allowedFileTypes: null
@@ -162,6 +163,7 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 **Parameters**
 
 - `maxFileSize` *null | number* — maximum file size in bytes for each individual file (total max size [has been requested, and is planned](https://github.com/transloadit/uppy/issues/514))
+- `minFileSize` *null | number* — minimum file size in bytes for each individual file
 - `maxNumberOfFiles` *null | number* — total number of files that can be selected
 - `minNumberOfFiles` *null | number* — minimum number of files that must be selected before the upload
 - `allowedFileTypes` *null | array* of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`

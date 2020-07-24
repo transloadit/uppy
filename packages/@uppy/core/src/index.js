@@ -54,6 +54,8 @@ class Uppy {
         // TODO: In 2.0 `exceedsSize2` should be removed in and `exceedsSize` updated to use substitution.
         exceedsSize2: '%{backwardsCompat} %{size}',
         exceedsSize: 'This file exceeds maximum allowed size of',
+        inferiorSize2: '%{backwardsCompat} %{size}',
+        inferiorSize: 'This file smaller than the allowed size of',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
         noNewAlreadyUploading: 'Cannot add new files: already uploading',
         noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
@@ -95,6 +97,7 @@ class Uppy {
       debug: false,
       restrictions: {
         maxFileSize: null,
+        minFileSize: null,
         maxNumberOfFiles: null,
         minNumberOfFiles: null,
         allowedFileTypes: null
@@ -434,7 +437,7 @@ class Uppy {
   }
 
   /**
-   * Check if file passes a set of restrictions set in options: maxFileSize,
+   * Check if file passes a set of restrictions set in options: maxFileSize, minFileSize,
    * maxNumberOfFiles and allowedFileTypes.
    *
    * @param {object} files Object of IDs → files already added
@@ -442,7 +445,7 @@ class Uppy {
    * @private
    */
   _checkRestrictions (files, file) {
-    const { maxFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
+    const { maxFileSize, minFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
 
     if (maxNumberOfFiles) {
       if (Object.keys(files).length + 1 > maxNumberOfFiles) {
@@ -477,6 +480,16 @@ class Uppy {
         throw new RestrictionError(this.i18n('exceedsSize2', {
           backwardsCompat: this.i18n('exceedsSize'),
           size: prettierBytes(maxFileSize)
+        }))
+      }
+    }
+
+    // We can't check minFileSize if the size is unknown.
+    if (minFileSize && file.data.size != null) {
+      if (file.data.size < minFileSize) {
+        throw new RestrictionError(this.i18n('inferiorSize2', {
+          backwardsCompat: this.i18n('inferiorSize'),
+          size: prettierBytes(minFileSize)
         }))
       }
     }

@@ -367,9 +367,9 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 :---: |:---: |:---: |:---: |:---: |:---: |
 [magumbo](https://github.com/magumbo) |[ninesalt](https://github.com/ninesalt) |[luntta](https://github.com/luntta) |[rhymes](https://github.com/rhymes) |[rlebosse](https://github.com/rlebosse) |[rtaieb](https://github.com/rtaieb) |
 
-[<img alt="thanhthot" src="https://avatars0.githubusercontent.com/u/50633205?v=4&s=117" width="117">](https://github.com/thanhthot) |[<img alt="tinny77" src="https://avatars2.githubusercontent.com/u/1872936?v=4&s=117" width="117">](https://github.com/tinny77) |[<img alt="yoann-hellopret" src="https://avatars3.githubusercontent.com/u/46525558?v=4&s=117" width="117">](https://github.com/yoann-hellopret) |[<img alt="olitomas" src="https://avatars0.githubusercontent.com/u/6918659?v=4&s=117" width="117">](https://github.com/olitomas) |
-:---: |:---: |:---: |:---: |
-[thanhthot](https://github.com/thanhthot) |[tinny77](https://github.com/tinny77) |[yoann-hellopret](https://github.com/yoann-hellopret) |[olitomas](https://github.com/olitomas) |
+[<img alt="thanhthot" src="https://avatars0.githubusercontent.com/u/50633205?v=4&s=117" width="117">](https://github.com/thanhthot) |[<img alt="tinny77" src="https://avatars2.githubusercontent.com/u/1872936?v=4&s=117" width="117">](https://github.com/tinny77) |[<img alt="yoann-hellopret" src="https://avatars3.githubusercontent.com/u/46525558?v=4&s=117" width="117">](https://github.com/yoann-hellopret) |[<img alt="olitomas" src="https://avatars0.githubusercontent.com/u/6918659?v=4&s=117" width="117">](https://github.com/olitomas) | [<img alt="anthony0030" src="https://avatars0.githubusercontent.com/u/13033263?v=4&s=117" width="117">](https://github.com/anthony0030)
+:---: |:---: |:---: |:---: |:---: |
+[thanhthot](https://github.com/thanhthot) |[tinny77](https://github.com/tinny77) |[yoann-hellopret](https://github.com/yoann-hellopret) |[olitomas](https://github.com/olitomas) | [anthony0030](https://github.com/anthony0030)
 
 
 <!--/contributors-->

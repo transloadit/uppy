@@ -57,6 +57,10 @@ Set rules and conditions to limit the type and/or number of files that can be se
 
 Maximum file size in bytes for each individual file.
 
+### `restrictions.minFileSize`
+
+Minimum file size in bytes for each individual file.
+
 ### `restrictions.maxNumberOfFiles`
 
 The total number of files that can be selected. If this is larger than 1, the `multiple` attribute will be added to `<input type="file">` fields.
