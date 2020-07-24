@@ -1599,8 +1599,8 @@ describe('src/Core', () => {
         })
         throw new Error('should have thrown')
       } catch (err) {
-        expect(err).toMatchObject(new Error('This file smaller than the allowed size of 1 GB'))
-        expect(core.getState().info.message).toEqual('This file smaller than the allowed size of 1 GB')
+        expect(err).toMatchObject(new Error('This file is smaller than the allowed size of 1 GB'))
+        expect(core.getState().info.message).toEqual('This file is smaller than the allowed size of 1 GB')
       }
     })
 
