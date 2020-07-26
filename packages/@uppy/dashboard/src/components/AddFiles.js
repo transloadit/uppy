@@ -109,23 +109,59 @@ class AddFiles extends Component {
     )
   }
 
+  // TODO(2.x) remove all the backwards compatibility garbage here
   renderDropPasteBrowseTagline = () => {
     const numberOfAcquirers = this.props.acquirers.length
-    const browseFiles = this.renderBrowseButton(this.props.i18n('browseFiles'), this.triggerFileInputClick)
-    const browseFolders = this.renderBrowseButton(this.props.i18n('browseFolders'), this.triggerFolderInputClick)
+
+    // For backwards compatibility, we need to support both 'browse' and 'browseFiles'/'browseFolders' as strings here.
+    let browseFilesText = 'browse'
+    let browseFoldersText = 'browse'
+    try {
+      browseFilesText = this.props.i18n('browse')
+      browseFoldersText = this.props.i18n('browse')
+    } catch {
+      // Ignore, hopefully we can use the 'browseFiles' / 'browseFolders' strings
+    }
+    try {
+      browseFilesText = this.props.i18n('browseFiles')
+      browseFoldersText = this.props.i18n('browseFolders')
+    } catch {
+      // Ignore, use the 'browse' string
+    }
+
+    const browseFiles = this.renderBrowseButton(browseFilesText, this.triggerFileInputClick)
+    const browseFolders = this.renderBrowseButton(browseFoldersText, this.triggerFolderInputClick)
 
     // in order to keep the i18n CamelCase and options lower (as are defaults) we will want to transform a lower
     // to Camel
     const lowerFMSelectionType = this.props.fileManagerSelectionType
     const camelFMSelectionType = lowerFMSelectionType.charAt(0).toUpperCase() + lowerFMSelectionType.slice(1)
 
+    // Before the `fileManagerSelectionType` feature existed, we had two possible
+    // strings here, but now we have six. We use the new-style strings by default:
+    let titleText
+    if (numberOfAcquirers > 0) {
+      titleText = this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })
+    } else {
+      titleText = this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })
+    }
+
+    // We use the old-style strings if available: this implies that the user has
+    // manually specified them, so they should take precedence over the new-style
+    // defaults.
+    try {
+      if (numberOfAcquirers > 0) {
+        titleText = this.props.i18nArray('dropPaste', { browse: browseFiles })
+      } else {
+        titleText = this.props.i18nArray('dropPasteImport', { browse: browseFiles })
+      }
+    } catch {
+      // Ignore, the new-style strings will be used.
+    }
+
     return (
       <div class="uppy-Dashboard-AddFiles-title">
-        {
-          numberOfAcquirers > 0
-            ? this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })
-            : this.props.i18nArray(`dropPaste${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })
-        }
+        {titleText}
       </div>
     )
   }
