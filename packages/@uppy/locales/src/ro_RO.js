@@ -14,6 +14,7 @@ ro_RO.strings = {
   authenticateWithTitle: 'Vă rugăm conectați-vă cu %{pluginName} pentru a selecta fișiere',
   back: 'Înapoi',
   browse: 'rasfoiește',
+  browseFiles: 'rasfoiește',
   cancel: 'Anulare',
   cancelUpload: 'Anulează încărcarea',
   chooseFiles: 'Selectează fișiere',

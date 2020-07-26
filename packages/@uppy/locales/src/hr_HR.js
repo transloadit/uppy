@@ -10,6 +10,7 @@ hr_HR.strings = {
   authenticateWithTitle: 'Molimo Vas da se prijavite putem %{pluginName} kako biste preuzeli datoteke',
   back: 'Natrag',
   browse: 'pretraži',
+  browseFiles: 'pretraži',
   cancel: 'Otkaži',
   cancelUpload: 'Otkaži prijenos',
   chooseFiles: 'Izaberi datoteke',

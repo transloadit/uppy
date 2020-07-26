@@ -10,6 +10,7 @@ da_DK.strings = {
   authenticateWithTitle: 'Venligst autentificer med %{pluginName} for at vælge filer',
   back: 'Tilbage',
   browse: 'gennemse',
+  browseFiles: 'gennemse',
   cancel: 'Annuller',
   cancelUpload: 'Annuller upload',
   chooseFiles: 'Vælg filer',

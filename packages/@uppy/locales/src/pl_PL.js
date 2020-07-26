@@ -14,6 +14,7 @@ pl_PL.strings = {
   authenticateWithTitle: 'Zaloguj się do %{pluginName} aby wybrać pliki',
   back: 'Wstecz',
   browse: 'Wybierz',
+  browseFiles: 'Wybierz',
   cancel: 'Anuluj',
   cancelUpload: 'Anuluj wysyłkę',
   chooseFiles: 'Wybierz pliki',

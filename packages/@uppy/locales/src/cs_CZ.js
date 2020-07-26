@@ -10,6 +10,7 @@ cs_CZ.strings = {
   authenticateWithTitle: 'Prosím přihlaste se k %{pluginName} pro výběr souborů',
   back: 'Zpět',
   browse: 'procházet',
+  browseFiles: 'procházet',
   cancel: 'Zrušit',
   cancelUpload: 'Zrušit nahrávání',
   chooseFiles: 'Vyberte soubory',

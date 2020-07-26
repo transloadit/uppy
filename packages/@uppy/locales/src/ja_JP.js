@@ -10,6 +10,7 @@ ja_JP.strings = {
   authenticateWithTitle: 'ファイルを選択するには%{pluginName}で認証してください',
   back: '戻る',
   browse: '参照',
+  browseFiles: '参照',
   cancel: 'キャンセル',
   cancelUpload: 'アップロードをキャンセル',
   chooseFiles: 'ファイルを選択',
