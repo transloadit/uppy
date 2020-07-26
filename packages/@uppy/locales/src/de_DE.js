@@ -10,6 +10,7 @@ de_DE.strings = {
   back: 'Zurück',
   addMore: 'Dateien hinzufügen',
   browse: 'Suche',
+  browseFiles: 'Suche',
   cancel: 'Abbrechen',
   cancelUpload: 'Upload abbrechen',
   chooseFiles: 'Dateien auswählen',
