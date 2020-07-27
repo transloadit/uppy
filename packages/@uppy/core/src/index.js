@@ -486,8 +486,7 @@ class Uppy {
     // We can't check minFileSize if the size is unknown.
     if (minFileSize && file.data.size != null) {
       if (file.data.size < minFileSize) {
-        throw new RestrictionError(this.i18n('inferiorSize2', {
-          backwardsCompat: this.i18n('inferiorSize'),
+        throw new RestrictionError(this.i18n('inferiorSize', {
           size: prettierBytes(minFileSize)
         }))
       }
