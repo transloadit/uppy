@@ -54,8 +54,7 @@ class Uppy {
         // TODO: In 2.0 `exceedsSize2` should be removed in and `exceedsSize` updated to use substitution.
         exceedsSize2: '%{backwardsCompat} %{size}',
         exceedsSize: 'This file exceeds maximum allowed size of',
-        inferiorSize2: '%{backwardsCompat} %{size}',
-        inferiorSize: 'This file is smaller than the allowed size of',
+        inferiorSize: 'This file is smaller than the allowed size of %{size}',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
         noNewAlreadyUploading: 'Cannot add new files: already uploading',
         noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
