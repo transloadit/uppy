@@ -59,7 +59,7 @@ import DefaultStore = require('@uppy/store-default')
     types: 'are checked'
   }
   class SomePlugin extends Uppy.Plugin<SomeOptions> {}
-  const untypedUppy = new Uppy()
+  const untypedUppy = Uppy()
   untypedUppy.use(SomePlugin, { types: 'are unchecked' })
   const typedUppy = Uppy<Uppy.StrictTypes>()
   expectError(typedUppy.use(SomePlugin, { types: 'are unchecked' }))
@@ -72,7 +72,7 @@ import DefaultStore = require('@uppy/store-default')
 }
 
 {
-  const uppy = new Uppy()
+  const uppy = Uppy()
   // can emit events with internal event types
   uppy.emit('upload')
   uppy.emit('complete', () => {})
@@ -91,7 +91,7 @@ import DefaultStore = require('@uppy/store-default')
 }
 
 {
-  const uppy = new Uppy()
+  const uppy = Uppy()
   uppy.setOptions({
     restrictions: {
       allowedFileTypes: ['.png']
