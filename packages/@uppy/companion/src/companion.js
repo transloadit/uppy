@@ -122,7 +122,7 @@ module.exports.app = (options = {}) => {
   app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
   app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
   app.get('/search/:searchProviderName/list', middlewares.hasSearchQuery, middlewares.loadSearchProviderToken, controllers.list)
-  app.get('/search/:searchProviderName/get/:id', middlewares.loadSearchProviderToken, controllers.get)
+  app.post('/search/:searchProviderName/get/:id', middlewares.loadSearchProviderToken, controllers.get)
 
   app.param('providerName', providerManager.getProviderMiddleware(providers))
   app.param('searchProviderName', providerManager.getProviderMiddleware(searchProviders))

@@ -424,7 +424,7 @@ First, we'll create a `client/MyCustomProvider.js` file. Following the instructi
 ```js
 const { Plugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
-const ProviderViews = require('@uppy/provider-views')
+const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
 module.exports = class MyCustomProvider extends Plugin {

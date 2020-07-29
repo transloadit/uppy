@@ -1,5 +1,4 @@
 const classNames = require('classnames')
-const Breadcrumbs = require('./Breadcrumbs')
 const Filter = require('./Filter')
 const ItemList = require('./ItemList')
 const FooterActions = require('./FooterActions')
@@ -20,16 +19,7 @@ const Browser = (props) => {
     <div class={classNames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${props.viewType}`)}>
       <div class="uppy-ProviderBrowser-header">
         <div class={classNames('uppy-ProviderBrowser-headerBar', !props.showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple')}>
-          {props.showBreadcrumbs && Breadcrumbs({
-            getFolder: props.getFolder,
-            directories: props.directories,
-            breadcrumbsIcon: props.pluginIcon && props.pluginIcon(),
-            title: props.title
-          })}
-          <span class="uppy-ProviderBrowser-user">{props.username}</span>
-          <button type="button" onclick={props.logout} class="uppy-u-reset uppy-ProviderBrowser-userLogout">
-            {props.i18n('logOut')}
-          </button>
+          {props.headerComponent}
         </div>
       </div>
       {props.showFilter && <Filter {...props} />}
@@ -40,7 +30,6 @@ const Browser = (props) => {
         }]}
         folders={filteredFolders}
         files={filteredFiles}
-        activeRow={props.isActiveRow}
         sortByTitle={props.sortByTitle}
         sortByDate={props.sortByDate}
         isChecked={props.isChecked}

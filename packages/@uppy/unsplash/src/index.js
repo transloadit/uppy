@@ -1,8 +1,7 @@
 const { Plugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
-const { RequestClient } = require('@uppy/companion-client')
-const Views = require('./View.js')
+const { SearchProvider } = require('@uppy/companion-client')
+const { SearchProviderViews } = require('@uppy/provider-views')
 
 /**
  * Unsplash
@@ -22,147 +21,39 @@ module.exports = class Unsplash extends Plugin {
       </svg>
     )
 
-    // Set default options and locale
-    this.defaultLocale = {
-      strings: {
-        search: 'Search for images',
-        enterTextToSearch: 'Enter text to search for images',
-        searchFailed: 'Searching for images with Companion failed'
-      }
-    }
-
     const defaultOptions = {}
-
     this.opts = { ...defaultOptions, ...opts }
-
-    this.i18nInit()
-
     this.hostname = this.opts.companionUrl
 
     if (!this.hostname) {
       throw new Error('Companion hostname is required, please consult https://uppy.io/docs/companion')
     }
 
-    // Bind all event handlers for referencability
-    this.search = this.search.bind(this)
-    this.addFile = this.addFile.bind(this)
-
-    this.client = new RequestClient(uppy, {
+    this.provider = new SearchProvider(uppy, {
       companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders
+      companionHeaders: this.opts.companionHeaders,
+      provider: 'unsplash',
+      pluginId: this.id
     })
-
-    // Set default state for the plugin
-    // todo: find out why these can't just be instance fields instead
-    this.setPluginState({
-      isInputMode: true,
-      files: []
-    })
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
-  }
-
-  search (query) {
-    return this.client.get(`search/unsplash/list?q=${query}`)
-      .then((res) => {
-        if (res.error) {
-          this.uppy.log('[Unsplash] Error:')
-          this.uppy.log(res.error)
-          throw new Error('Failed to fetch the file')
-        }
-
-        this.setPluginState({
-          isInputMode: false,
-          files: res.items
-        })
-      })
-  }
-
-  toggleClick (e, file) {
-    e.stopPropagation()
-    e.preventDefault()
-    this.getPluginState()
-  }
-
-  addFile (url) {
-    url = this.addProtocolToURL(url)
-    if (!this.checkIfCorrectURL(url)) {
-      this.uppy.log(`[URL] Incorrect URL entered: ${url}`)
-      this.uppy.info(this.i18n('enterCorrectUrl'), 'error', 4000)
-      return
-    }
-
-    return this.getMeta(url)
-      .then((meta) => {
-        const tagFile = {
-          source: this.id,
-          name: this.getFileNameFromUrl(url),
-          type: meta.type,
-          data: {
-            size: meta.size
-          },
-          isRemote: true,
-          body: {
-            url: url
-          },
-          remote: {
-            companionUrl: this.opts.companionUrl,
-            url: `${this.hostname}/url/get`,
-            body: {
-              fileId: url,
-              url: url
-            },
-            providerOptions: this.client.opts
-          }
-        }
-        return tagFile
-      })
-      .then((tagFile) => {
-        this.uppy.log('[Url] Adding remote file')
-        try {
-          this.uppy.addFile(tagFile)
-        } catch (err) {
-          if (!err.isRestriction) {
-            this.uppy.log(err)
-          }
-        }
-      })
-      .catch((err) => {
-        this.uppy.log(err)
-        this.uppy.info({
-          message: this.i18n('failedToFetch'),
-          details: err
-        }, 'error', 4000)
-      })
-  }
-
-  render (state) {
-    const props = Object.assign({}, this.getPluginState(), {
-      toggleSearch: this.toggleSearch,
-      isChecked: this.isChecked,
-      toggleClick: this.toggleClick,
-      handleScroll: this.handleScroll,
-      done: this.donePicking,
-      cancel: this.cancelPicking,
-      title: this.title,
-      pluginIcon: this.icon,
-      search: this.search
-      // todo: investigate if this is what we need
-      // i18n: this.uppy.i18n
-    })
-
-    return <Views i18n={this.i18n} {...props} />
   }
 
   install () {
+    this.view = new SearchProviderViews(this, {
+      provider: this.provider
+    })
+
     const target = this.opts.target
     if (target) {
       this.mount(target, this)
     }
+  }
+
+  onFirstRender () {
+    // do nothing
+  }
+
+  render (state) {
+    return this.view.render(state)
   }
 
   uninstall () {

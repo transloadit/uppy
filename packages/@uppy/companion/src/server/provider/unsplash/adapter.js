@@ -36,10 +36,12 @@ exports.getItemThumbnailUrl = (item) => {
   return item.urls.thumb
 }
 
-exports.getNextPagePath = (currentQuery) => {
+exports.getNextPageQuery = (currentQuery) => {
   const newCursor = parseInt(currentQuery.cursor || 1) + 1
   const query = Object.assign({}, currentQuery, {
     cursor: newCursor
   })
-  return `?${querystring.stringify(query)}`
+
+  delete query.q
+  return querystring.stringify(query)
 }

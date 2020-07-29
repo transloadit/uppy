@@ -1,4 +1,4 @@
-const ProviderViews = require('@uppy/provider-views')
+const { ProviderViews } = require('@uppy/provider-views')
 
 module.exports = class DriveProviderViews extends ProviderViews {
   toggleCheckbox (e, file) {

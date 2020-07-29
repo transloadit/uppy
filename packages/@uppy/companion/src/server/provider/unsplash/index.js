@@ -102,7 +102,11 @@ class Unsplash extends SearchProvider {
   }
 
   adaptData (body, currentQuery) {
-    const data = { username: null, items: [] }
+    const data = {
+      searchedFor: currentQuery.q,
+      username: null,
+      items: []
+    }
     const items = adapter.getItemSubList(body)
     items.forEach((item) => {
       data.items.push({
@@ -121,7 +125,7 @@ class Unsplash extends SearchProvider {
     const pagesCount = body.total_pages
     const currentPage = parseInt(currentQuery.cursor || 1)
     const hasNextPage = currentPage < pagesCount
-    data.nextPagePath = hasNextPage ? adapter.getNextPagePath(currentQuery) : null
+    data.nextPageQuery = hasNextPage ? adapter.getNextPageQuery(currentQuery) : null
     return data
   }
 

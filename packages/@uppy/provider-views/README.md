@@ -13,7 +13,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 
 ```js
 const Plugin = require('@uppy/core/lib/plugin')
-const ProviderViews = require('@uppy/provider-views')
+const { ProviderViews } = require('@uppy/provider-views')
 
 class GoogleDrive extends Plugin {
   constructor () { /* snip */ }

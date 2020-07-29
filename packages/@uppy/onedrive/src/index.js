@@ -1,6 +1,6 @@
 const { Plugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
-const ProviderViews = require('@uppy/provider-views')
+const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
 module.exports = class OneDrive extends Plugin {

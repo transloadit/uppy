@@ -80,6 +80,8 @@ class Uppy {
         loading: 'Loading...',
         authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
         authenticateWith: 'Connect to %{pluginName}',
+        searchImages: 'Search for images',
+        enterTextToSearch: 'Enter text to search for images',
         emptyFolderAdded: 'No files were added from empty folder',
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',
