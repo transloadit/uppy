@@ -1,0 +1,46 @@
+{
+  "name": "@uppy/react",
+  "author": {
+    "name": "Adam Medford",
+    "email": "adammedford@gmail.com"
+  },
+  "description": "Svelte component wrappers around Uppy's official UI plugins.",
+  "version": "0.0.1",
+  "license": "MIT",
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "keywords": [
+    "file uploader",
+    "uppy",
+    "uppy-plugin",
+    "svelte",
+    "svelte-components"
+  ],
+  "svelte": "src/index.js",
+  "module": "dist/index.mjs",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@uppy/dashboard": "file:../dashboard",
+    "@uppy/drag-drop": "file:../drag-drop",
+    "@uppy/progress-bar": "file:../progress-bar",
+    "@uppy/status-bar": "file:../status-bar",
+    "@uppy/utils": "file:../utils"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^1.0.0"
+  },
+  "files": [
+    "src",
+    "dist"
+  ]
+}

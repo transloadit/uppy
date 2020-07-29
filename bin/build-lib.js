@@ -12,7 +12,7 @@ const stat = promisify(fs.stat)
 
 const SOURCE = 'packages/{*,@uppy/*}/src/**/*.js'
 // Files not to build (such as tests)
-const IGNORE = /\.test\.js$|__mocks__|companion\//
+const IGNORE = /\.test\.js$|__mocks__|companion|svelte\//
 // Files that should trigger a rebuild of everything on change
 const META_FILES = [
   'babel.config.js',
