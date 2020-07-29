@@ -118,10 +118,12 @@ class AddFiles extends Component {
     const camelFMSelectionType = lowerFMSelectionType.charAt(0).toUpperCase() + lowerFMSelectionType.slice(1)
 
     // For backwards compatibility, we need to support both 'browse' and 'browseFiles'/'browseFolders' as strings here.
+    let browseText = 'browse'
     let browseFilesText = 'browse'
     let browseFoldersText = 'browse'
     if (lowerFMSelectionType === 'files') {
       try {
+        browseText = this.props.i18n('browse')
         browseFilesText = this.props.i18n('browse')
         browseFoldersText = this.props.i18n('browse')
       } catch {
@@ -135,6 +137,7 @@ class AddFiles extends Component {
       // Ignore, use the 'browse' string
     }
 
+    const browse = this.renderBrowseButton(browseText, this.triggerFileInputClick)
     const browseFiles = this.renderBrowseButton(browseFilesText, this.triggerFileInputClick)
     const browseFolders = this.renderBrowseButton(browseFoldersText, this.triggerFolderInputClick)
 
@@ -142,9 +145,9 @@ class AddFiles extends Component {
     // strings here, but now we have six. We use the new-style strings by default:
     let titleText
     if (numberOfAcquirers > 0) {
-      titleText = this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })
+      titleText = this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse })
     } else {
-      titleText = this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })
+      titleText = this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse })
     }
 
     // We use the old-style strings if available: this implies that the user has
@@ -153,9 +156,9 @@ class AddFiles extends Component {
     if (lowerFMSelectionType === 'files') {
       try {
         if (numberOfAcquirers > 0) {
-          titleText = this.props.i18nArray('dropPaste', { browse: browseFiles })
+          titleText = this.props.i18nArray('dropPaste', { browse })
         } else {
-          titleText = this.props.i18nArray('dropPasteImport', { browse: browseFiles })
+          titleText = this.props.i18nArray('dropPasteImport', { browse })
         }
       } catch {
         // Ignore, the new-style strings will be used.
