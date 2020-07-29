@@ -27,7 +27,7 @@ const reducer = combineReducers({
 
 const store = createStore(reducer)
 
-const uppy = Uppy({
+const uppy = new Uppy({
   store: ReduxStore({
     store: store
   })

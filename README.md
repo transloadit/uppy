@@ -31,7 +31,7 @@ const Instagram = require('@uppy/instagram')
 const Webcam = require('@uppy/webcam')
 const Tus = require('@uppy/tus')
 
-const uppy = Uppy({ autoProceed: false })
+const uppy = new Uppy({ autoProceed: false })
   .use(Dashboard, { trigger: '#select-files' })
   .use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
   .use(Instagram, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })

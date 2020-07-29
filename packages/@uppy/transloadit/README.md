@@ -17,7 +17,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const Transloadit = require('@uppy/transloadit')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Transloadit, {
   // Plugins
 })

@@ -20,7 +20,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ```js
 const Uppy = require('@uppy/core')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(SomePlugin)
 ```
 

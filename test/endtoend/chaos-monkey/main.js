@@ -13,7 +13,7 @@ window.setup = function (options) {
   id += 1
 
   // Initialise Uppy with Drag & Drop
-  const uppy = Uppy({ id: `uppy${id}`, debug: true })
+  const uppy = new Uppy({ id: `uppy${id}`, debug: true })
 
   uppy.use(Dashboard, { inline: true, target: '#dash' })
   uppy.use(Tus, {

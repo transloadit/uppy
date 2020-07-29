@@ -4,7 +4,7 @@ const Tus = require('@uppy/tus')
 const MyCustomProvider = require('./MyCustomProvider')
 const Dashboard = require('@uppy/dashboard')
 
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true
 })
 

@@ -29,7 +29,7 @@ function uppyInit () {
 
   const opts = window.uppyOptions
 
-  const uppy = Uppy({
+  const uppy = new Uppy({
     logger: Uppy.debugLogger
   })
 

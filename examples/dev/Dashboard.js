@@ -43,7 +43,7 @@ const RESTORE = false
 // Rest is implementation! Obviously edit as necessary...
 
 module.exports = () => {
-  const uppyDashboard = Uppy({
+  const uppyDashboard = new Uppy({
     logger: Uppy.debugLogger,
     meta: {
       username: 'John',
