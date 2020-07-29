@@ -19,8 +19,7 @@
     "s3",
     "google drive",
     "dropbox",
-    "webcam",
-    "zoom"
+    "webcam"
   ],
   "homepage": "https://uppy.io",
   "bugs": {
@@ -58,7 +57,6 @@
     "@uppy/tus": "file:../@uppy/tus",
     "@uppy/url": "file:../@uppy/url",
     "@uppy/webcam": "file:../@uppy/webcam",
-    "@uppy/xhr-upload": "file:../@uppy/xhr-upload",
-    "@uppy/zoom": "file:../@uppy/zoom"
+    "@uppy/xhr-upload": "file:../@uppy/xhr-upload"
   }
 }

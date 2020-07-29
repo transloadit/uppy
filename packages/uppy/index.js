@@ -29,7 +29,6 @@ exports.Facebook = require('@uppy/facebook')
 exports.Url = require('@uppy/url')
 exports.Webcam = require('@uppy/webcam')
 exports.ScreenCapture = require('@uppy/screen-capture')
-exports.Zoom = require('@uppy/zoom')
 
 // Uploaders
 exports.AwsS3 = require('@uppy/aws-s3')

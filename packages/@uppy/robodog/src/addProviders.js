@@ -7,8 +7,7 @@ const remoteProviders = {
   instagram: require('@uppy/instagram'),
   facebook: require('@uppy/facebook'),
   onedrive: require('@uppy/onedrive'),
-  url: require('@uppy/url'),
-  zoom: require('@uppy/zoom')
+  url: require('@uppy/url')
 }
 
 const localProviders = {

@@ -39,8 +39,6 @@ import Webcam = require('@uppy/webcam');
 export { Webcam };
 import ScreenCapture = require('@uppy/screen-capture');
 export { ScreenCapture };
-import Zoom = require('@uppy/zoom');
-export { Zoom }
 
 // Uploaders
 import AwsS3 = require('@uppy/aws-s3');
