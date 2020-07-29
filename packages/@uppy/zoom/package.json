@@ -27,5 +27,8 @@
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
