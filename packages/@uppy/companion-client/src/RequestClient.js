@@ -92,28 +92,26 @@ module.exports = class RequestClient {
   }
 
   preflight (path) {
-    return new Promise((resolve, reject) => {
-      if (this.preflightDone) {
-        return resolve(this.allowedHeaders.slice())
-      }
+    if (this.preflightDone) {
+      return Promise.resolve(this.allowedHeaders.slice())
+    }
 
-      fetch(this._getUrl(path), {
-        method: 'OPTIONS'
-      })
-        .then((response) => {
-          if (response.headers.has('access-control-allow-headers')) {
-            this.allowedHeaders = response.headers.get('access-control-allow-headers')
-              .split(',').map((headerName) => headerName.trim().toLowerCase())
-          }
-          this.preflightDone = true
-          resolve(this.allowedHeaders.slice())
-        })
-        .catch((err) => {
-          this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning')
-          this.preflightDone = true
-          resolve(this.allowedHeaders.slice())
-        })
+    return fetch(this._getUrl(path), {
+      method: 'OPTIONS'
     })
+      .then((response) => {
+        if (response.headers.has('access-control-allow-headers')) {
+          this.allowedHeaders = response.headers.get('access-control-allow-headers')
+            .split(',').map((headerName) => headerName.trim().toLowerCase())
+        }
+        this.preflightDone = true
+        return this.allowedHeaders.slice()
+      })
+      .catch((err) => {
+        this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning')
+        this.preflightDone = true
+        return this.allowedHeaders.slice()
+      })
   }
 
   preflightAndHeaders (path) {
@@ -132,58 +130,52 @@ module.exports = class RequestClient {
   }
 
   get (path, skipPostResponse) {
-    return new Promise((resolve, reject) => {
-      this.preflightAndHeaders(path).then((headers) => {
+    return this.preflightAndHeaders(path)
+      .then((headers) =>
         fetchWithNetworkError(this._getUrl(path), {
           method: 'get',
           headers: headers,
           credentials: 'same-origin'
-        })
-          .then(this._getPostResponseFunc(skipPostResponse))
-          .then((res) => this._json(res).then(resolve))
-          .catch((err) => {
-            err = err.isAuthError ? err : new Error(`Could not get ${this._getUrl(path)}. ${err}`)
-            reject(err)
-          })
-      }).catch(reject)
-    })
+        }))
+      .then(this._getPostResponseFunc(skipPostResponse))
+      .then((res) => this._json(res))
+      .catch((err) => {
+        err = err.isAuthError ? err : new Error(`Could not get ${this._getUrl(path)}. ${err}`)
+        return Promise.reject(err)
+      })
   }
 
   post (path, data, skipPostResponse) {
-    return new Promise((resolve, reject) => {
-      this.preflightAndHeaders(path).then((headers) => {
+    return this.preflightAndHeaders(path)
+      .then((headers) =>
         fetchWithNetworkError(this._getUrl(path), {
           method: 'post',
           headers: headers,
           credentials: 'same-origin',
           body: JSON.stringify(data)
-        })
-          .then(this._getPostResponseFunc(skipPostResponse))
-          .then((res) => this._json(res).then(resolve))
-          .catch((err) => {
-            err = err.isAuthError ? err : new Error(`Could not post ${this._getUrl(path)}. ${err}`)
-            reject(err)
-          })
-      }).catch(reject)
-    })
+        }))
+      .then(this._getPostResponseFunc(skipPostResponse))
+      .then((res) => this._json(res))
+      .catch((err) => {
+        err = err.isAuthError ? err : new Error(`Could not post ${this._getUrl(path)}. ${err}`)
+        return Promise.reject(err)
+      })
   }
 
   delete (path, data, skipPostResponse) {
-    return new Promise((resolve, reject) => {
-      this.preflightAndHeaders(path).then((headers) => {
+    return this.preflightAndHeaders(path)
+      .then((headers) =>
         fetchWithNetworkError(`${this.hostname}/${path}`, {
           method: 'delete',
           headers: headers,
           credentials: 'same-origin',
           body: data ? JSON.stringify(data) : null
-        })
-          .then(this._getPostResponseFunc(skipPostResponse))
-          .then((res) => this._json(res).then(resolve))
-          .catch((err) => {
-            err = err.isAuthError ? err : new Error(`Could not delete ${this._getUrl(path)}. ${err}`)
-            reject(err)
-          })
-      }).catch(reject)
-    })
+        }))
+      .then(this._getPostResponseFunc(skipPostResponse))
+      .then((res) => this._json(res))
+      .catch((err) => {
+        err = err.isAuthError ? err : new Error(`Could not delete ${this._getUrl(path)}. ${err}`)
+        return Promise.reject(err)
+      })
   }
 }

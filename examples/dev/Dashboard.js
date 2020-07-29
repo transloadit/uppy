@@ -11,14 +11,17 @@ const ScreenCapture = require('@uppy/screen-capture/src')
 const GoldenRetriever = require('@uppy/golden-retriever/src')
 const Tus = require('@uppy/tus/src')
 const AwsS3 = require('@uppy/aws-s3/src')
+const AwsS3Multipart = require('@uppy/aws-s3-multipart/src')
 const XHRUpload = require('@uppy/xhr-upload/src')
 const Transloadit = require('@uppy/transloadit/src')
 const Form = require('@uppy/form/src')
+const ImageEditor = require('@uppy/image-editor/src')
 
 // DEV CONFIG: pick an uploader
 
 const UPLOADER = 'tus'
 // const UPLOADER = 's3'
+// const UPLOADER = 's3-multipart'
 // const UPLOADER = 'xhr'
 // const UPLOADER = 'transloadit'
 
@@ -68,6 +71,7 @@ module.exports = () => {
     .use(Webcam, { target: Dashboard })
     .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
+    .use(ImageEditor, { target: Dashboard })
 
   switch (UPLOADER) {
     case 'tus':
@@ -75,6 +79,9 @@ module.exports = () => {
       break
     case 's3':
       uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, limit: 6 })
+      break
+    case 's3-multipart':
+      uppyDashboard.use(AwsS3Multipart, { companionUrl: COMPANION_URL, limit: 6 })
       break
     case 'xhr':
       uppyDashboard.use(XHRUpload, { endpoint: XHR_ENDPOINT, limit: 6, bundle: true })

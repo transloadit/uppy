@@ -34,6 +34,7 @@ const hasProperty = require('@uppy/utils/lib/hasProperty')
 const { RequestClient } = require('@uppy/companion-client')
 const qsStringify = require('qs-stringify')
 const MiniXHRUpload = require('./MiniXHRUpload')
+const isXml = require('./isXml')
 
 function resolveUrl (origin, link) {
   return origin
@@ -41,33 +42,18 @@ function resolveUrl (origin, link) {
     : new URL_(link).toString()
 }
 
-function isXml (content, xhr) {
-  const rawContentType = (xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type'))
-
-  if (rawContentType === null) {
-    return false
-  }
-
-  // Get rid of mime parameters like charset=utf-8
-  const contentType = rawContentType.replace(/;.*$/, '').toLowerCase()
-  if (typeof contentType === 'string') {
-    if (contentType === 'application/xml' || contentType === 'text/xml') {
-      return true
-    }
-    // GCS uses text/html for some reason
-    // https://github.com/transloadit/uppy/issues/896
-    if (contentType === 'text/html' && /^<\?xml /.test(content)) {
-      return true
-    }
-  }
-  return false
-}
-
-function getXmlValue (source, key) {
-  const start = source.indexOf(`<${key}>`)
-  const end = source.indexOf(`</${key}>`, start)
+/**
+ * Get the contents of a named tag in an XML source string.
+ *
+ * @param {string} source - The XML source string.
+ * @param {string} tagName - The name of the tag.
+ * @returns {string} The contents of the tag, or the empty string if the tag does not exist.
+ */
+function getXmlValue (source, tagName) {
+  const start = source.indexOf(`<${tagName}>`)
+  const end = source.indexOf(`</${tagName}>`, start)
   return start !== -1 && end !== -1
-    ? source.slice(start + key.length + 2, end)
+    ? source.slice(start + tagName.length + 2, end)
     : ''
 }
 

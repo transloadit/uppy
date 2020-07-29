@@ -49,6 +49,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
 
       [data-uppy-theme="dark"] & {
         background-color: $gray-800;
@@ -67,6 +68,22 @@
         box-shadow: 0px 3px 20px rgba($black, 0.15);
       }
     // ...uppy-Dashboard-FileCard-preview|
+
+    .uppy-Dashboard-FileCard-edit {
+      @include blue-border-focus;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 13px;
+      background-color: rgba($black, 0.5);
+      color: $white;
+      padding: 7px 15px;
+      border-radius: 50px;
+
+      &:hover {
+        background-color: rgba($black, 0.8);
+      }
+    }
 
     .uppy-Dashboard-FileCard-info {
       height: 40%;

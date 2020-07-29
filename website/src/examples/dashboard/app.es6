@@ -7,6 +7,7 @@ const Dropbox = require('@uppy/dropbox')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
+const ImageEditor = require('@uppy/image-editor')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
 const ScreenCapture = require('@uppy/screen-capture')
@@ -143,8 +144,17 @@ function uppySetOptions () {
   const screenCaptureInstance = window.uppy.getPlugin('ScreenCapture')
   if (opts.ScreenCapture && !screenCaptureInstance) {
     window.uppy.use(ScreenCapture, { target: Dashboard })
-  } else {
+  }
+  if (!opts.ScreenCapture && screenCaptureInstance) {
     window.uppy.removePlugin(screenCaptureInstance)
+  }
+
+  const imageEditorInstance = window.uppy.getPlugin('ImageEditor')
+  if (opts.imageEditor && !imageEditorInstance) {
+    window.uppy.use(ImageEditor, { target: Dashboard })
+  }
+  if (!opts.imageEditor && imageEditorInstance) {
+    window.uppy.removePlugin(imageEditorInstance)
   }
 }
 
@@ -162,7 +172,7 @@ function loadLocaleFromCDN (localeName) {
   var head = document.getElementsByTagName('head')[0]
   var js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.15.0/${localeName}.min.js`
+  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.16.1/${localeName}.min.js`
 
   head.appendChild(js)
 }
