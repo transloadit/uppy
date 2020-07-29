@@ -10,6 +10,7 @@ es_ES.strings = {
   back: 'Atrás',
   addMore: 'Agregar más',
   browse: 'navegar',
+  browseFiles: 'navegar',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar subida',
   chooseFiles: 'Seleccionar archivos',

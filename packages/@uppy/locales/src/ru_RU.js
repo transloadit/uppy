@@ -10,6 +10,7 @@ ru_RU.strings = {
   back: 'Назад',
   addMore: 'Добавить еще',
   browse: 'выберите',
+  browseFiles: 'выберите',
   cancel: 'Отменить',
   cancelUpload: 'Отменить загрузку',
   chooseFiles: 'Выбрать файлы',

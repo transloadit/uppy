@@ -10,6 +10,7 @@ vi_VN.strings = {
   authenticateWithTitle: 'Xác thực với %{pluginName} để chọn tập tin',
   back: 'Quay lại',
   browse: 'chọn',
+  browseFiles: 'chọn',
   cancel: 'Huỷ',
   cancelUpload: 'Huỷ tải lên',
   chooseFiles: 'Chọn tập tin',

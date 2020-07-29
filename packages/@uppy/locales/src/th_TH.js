@@ -10,6 +10,7 @@ th_TH.strings = {
   authenticateWithTitle: 'กรุณาเข้าใช้งานกับ %{pluginName} เพื่อเลือกไฟล์',
   back: 'ย้อนกลับ',
   browse: 'เรียกดู',
+  browseFiles: 'เรียกดู',
   cancel: 'ยกเลิก',
   cancelUpload: 'ยกเลิกการอัปโหลด',
   chooseFiles: 'เลือกไฟล์',

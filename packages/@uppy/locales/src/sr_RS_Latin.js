@@ -10,6 +10,7 @@ sr_RS_Latin.strings = {
   authenticateWithTitle: 'Molimo Vas da se prijavite putem %{pluginName} kako biste preuzeli datoteke',
   back: 'Nazad',
   browse: 'potraži',
+  browseFiles: 'potraži',
   cancel: 'Otkaži',
   cancelUpload: 'Otkaži otpremanje',
   chooseFiles: 'Izaberi datoteke',

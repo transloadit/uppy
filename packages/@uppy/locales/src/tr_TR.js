@@ -10,6 +10,7 @@ tr_TR.strings = {
   authenticateWithTitle: 'Lütfen dosyaları seçmek için %{pluginName} ile bağlanın',
   back: 'Geri',
   browse: 'gözat',
+  browseFiles: 'gözat',
   cancel: 'İptal',
   cancelUpload: 'Yüklemeyi İptal Et',
   chooseFiles: 'Dosyaları seç',

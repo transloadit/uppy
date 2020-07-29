@@ -12,6 +12,7 @@ is_IS.strings = {
         'Vinsamlegast auðkenndu %{pluginName} til þess að velja skrár',
   back: 'Til baka',
   browse: 'skoða',
+  browseFiles: 'skoða',
   cancel: 'Hætta við',
   cancelUpload: 'Hætta við að hlaða upp',
   chooseFiles: 'Veldu skrár',

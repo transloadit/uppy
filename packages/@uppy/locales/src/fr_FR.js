@@ -14,6 +14,7 @@ fr_FR.strings = {
   authenticateWithTitle: 'Veuillez vous authentifier avec %{pluginName} pour sélectionner les fichiers',
   back: 'Retour',
   browse: 'naviguer',
+  browseFiles: 'naviguer',
   cancel: 'Annuler',
   cancelUpload: 'Annuler téléchargement',
   chooseFiles: 'Choisir des fichiers',

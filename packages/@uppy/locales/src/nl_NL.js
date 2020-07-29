@@ -10,6 +10,7 @@ nl_NL.strings = {
   back: 'Terug',
   addMore: 'Meer toevoegen',
   browse: 'blader',
+  browseFiles: 'blader',
   cancel: 'Annuleer',
   cancelUpload: 'Annuleer upload',
   chooseFiles: 'Kies bestanden',
