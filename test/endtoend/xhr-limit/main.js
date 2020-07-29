@@ -6,7 +6,7 @@ const FileInput = require('@uppy/file-input')
 const XHRUpload = require('@uppy/xhr-upload')
 
 function startXHRLimitTest (endpoint) {
-  const uppy = Uppy({
+  const uppy = new Uppy({
     id: 'uppyXhrLimit',
     debug: true,
     autoProceed: false

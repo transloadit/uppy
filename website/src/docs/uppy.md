@@ -13,7 +13,7 @@ This is the core module that orchestrates everything in Uppy, managing state and
 ```js
 const Uppy = require('@uppy/core')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 ```
 
 ## Installation
@@ -36,7 +36,7 @@ When using TypeScript, Uppy has weak type checking by default. That means that t
 ```ts
 import Uppy = require('@uppy/core')
 import Tus = require('@uppy/tus')
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Tus, {
   invalidOption: null,
   endpoint: ['a', 'wrong', 'type']
@@ -68,7 +68,7 @@ In Uppy 2.0, this generic parameter will be removed, and your plugin options wil
 The Uppy core module has the following configurable options:
 
 ```js
-const uppy = Uppy({
+const uppy = new Uppy({
   id: 'uppy',
   autoProceed: false,
   allowMultipleUploads: true,
@@ -98,8 +98,8 @@ Note that this ID should be persistent across page reloads and navigation—it s
 For example, if one Uppy instance is used to upload user avatars, and another to add photos to a blog post, you might use:
 
 ```js
-const avatarUploader = Uppy({ id: 'avatar' })
-const photoUploader = Uppy({ id: 'post' })
+const avatarUploader = new Uppy({ id: 'avatar' })
+const photoUploader = new Uppy({ id: 'post' })
 ```
 
 ### `autoProceed: false`
@@ -122,7 +122,7 @@ Set `logger: Uppy.debugLogger` to get debug info output to the browser console:
 
 ```js
 const Uppy = require('@uppy/core')
-const uppy = Uppy({
+const uppy = new Uppy({
   logger: Uppy.debugLogger
 })
 ```
@@ -309,7 +309,7 @@ Instead of overriding strings yourself, consider using [one of our language pack
 ```js
 const russianLocale = require('@uppy/locales/lib/ru_RU')
 // ^-- OR: import russianLocale from '@uppy/locales/lib/ru_RU'
-const uppy = Uppy({
+const uppy = new Uppy({
   locale: russianLocale,
 })
 ```
@@ -339,6 +339,66 @@ This option can be used to plug Uppy state into an external state management lib
 
 <!-- TODO document store API -->
 
+## File Objects
+
+Uppy internally uses file objects that abstract over local files and files from remote providers, and that contain additional data like user-specified metadata and upload progress information.
+
+### `file.source`
+
+Name of the plugin that was responsible for adding this file. Typically a remote provider plugin like `'GoogleDrive'` or a UI plugin like `'DragDrop'`.
+
+### `file.id`
+
+Unique ID for the file.
+
+### `file.meta`
+
+Object containing file metadata. Any file metadata should be JSON-serializable.
+
+### `file.type`
+
+MIME type of the file. This may actually be guessed if a file type was not provided by the user's browser, so this is a best-effort value and not guaranteed to be accurate.
+
+### `file.data`
+
+For local files, this is the actual [`File`][] or [`Blob`][] object representing the file contents.
+
+For files that are imported from remote providers, the file data is not available in the browser.
+
+[`File`]: https://developer.mozilla.org/en-US/docs/Web/API/File
+[`Blob`]: https://developer.mozilla.org/en-US/docs/Web/API/Blob
+
+### `file.progress`
+
+An object with upload progress data.
+
+**Properties**
+- `bytesUploaded` - Number of bytes uploaded so far.
+- `bytesTotal` - Number of bytes that must be uploaded in total.
+- `uploadStarted` - Null if the upload has not started yet. Once started, this property contains a UNIX timestamp. Note that this is only set _after_ preprocessing.
+- `uploadComplete` - Boolean indicating if the upload has completed. Note this does _not_ mean that postprocessing has completed, too.
+- `percentage` - Integer percentage between 0 and 100.
+
+### `file.size`
+
+Size in bytes of the file.
+
+### `file.isRemote`
+
+Boolean: is this file imported from a remote provider?
+
+### `file.remote`
+
+Grab bag of data for remote providers. Generally not interesting for end users.
+
+### `file.preview`
+
+An optional URL to a visual thumbnail for the file.
+
+### `file.uploadURL`
+
+When an upload is completed, this may contain a URL to the uploaded file. Depending on server configuration it may not be accessible or accurate.
+
 ## Methods
 
 ### `uppy.use(plugin, opts)`
@@ -349,7 +409,7 @@ Add a plugin to Uppy, with an optional plugin options object.
 const Uppy = require('@uppy/core')
 const DragDrop = require('@uppy/drag-drop')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(DragDrop, { target: 'body' })
 ```
 
@@ -407,7 +467,7 @@ Removing a file that is already being uploaded cancels that upload.
 
 ### `uppy.getFile(fileID)`
 
-Get a specific file object by its ID.
+Get a specific [File Object][File Objects] by its ID.
 
 ```js
 const file = uppy.getFile('uppyteamkongjpg1501851828779')
@@ -423,7 +483,7 @@ file.preview   // value that can be used to populate "src" attribute of an "img"
 
 ### `uppy.getFiles()`
 
-Get an array of all file objects in Uppy. See [uppy.getFile()](#uppy-getFile-fileID) for an example of the file object format.
+Get an array of all [File Objects][] that have been added to Uppy.
 
 ```js
 const prettierBytes = require('@transloadit/prettier-bytes')
@@ -440,7 +500,7 @@ Start uploading selected files.
 Returns a Promise `result` that resolves with an object containing two arrays of uploaded files:
 
 - `result.successful` - Files that were uploaded successfully.
-- `result.failed` - Files that did not upload successfully. These file objects will have a `.error` property describing what went wrong.
+- `result.failed` - Files that did not upload successfully. These [File Objects][] will have a `.error` property describing what went wrong.
 
 ```js
 uppy.upload().then((result) => {
@@ -534,7 +594,7 @@ Returns the current state from the [Store](#store-defaultStore).
 
 ### `uppy.setFileState(fileID, state)`
 
-Update the state for a single file. This is mostly useful for plugins that may want to store data on file objects, or that need to pass file-specific configurations to other plugins that support it.
+Update the state for a single file. This is mostly useful for plugins that may want to store data on [File Objects][], or that need to pass file-specific configurations to other plugins that support it.
 
 `fileID` is the string file ID. `state` is an object that will be merged into the file's state object.
 
@@ -563,7 +623,7 @@ uppy.setFileMeta('myfileID', { resize: 1500 })
 Change Uppy options on the fly. For example, to conditionally change `restrictions.allowedFileTypes` or `locale`:
 
 ```js
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.setOptions({
   restrictions: { maxNumberOfFiles: 3 },
   autoProceed: true
@@ -649,6 +709,9 @@ Uppy exposes events that you can subscribe to in your app:
 
 Fired each time a file is added.
 
+**Parameters**
+- `file` - The [File Object][File Objects] representing the file that was added.
+
 ```javascript
 uppy.on('file-added', (file) => {
   console.log('Added file', file)
@@ -659,15 +722,17 @@ uppy.on('file-added', (file) => {
 
 Fired each time a file is removed.
 
+**Parameters**
+- `file` - The [File Object][File Objects] representing the file that was removed.
+- `reason` - A string explaining why the file was removed. See [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176) for details. Current reasons are: `removed-by-user` and `cancel-all`.
+
+**Example**
+
 ```javascript
 uppy.on('file-removed', (file, reason) => {
   console.log('Removed file', file)
 })
 ```
-
-Reason is provided as a second argument, so that you can distinguish when a user manually removed a file in the UI vs API calling `uppy.reset()` or `uppy.cancel()`. See [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176) for details.
-
-Current reasons are: `removed-by-user` and `cancel-all`.
 
 ```js
 uppy.on('file-removed', (file, reason) => {
@@ -696,6 +761,11 @@ uppy.on('upload', (data) => {
 
 Fired each time file upload progress is available:
 
+**Parameters**
+- `file` - The [File Object][File Objects] for the file whose upload has progressed.
+- `progress` - [Progress object](#file-progress).
+
+**Example**
 
 ```javascript
 uppy.on('upload-progress', (file, progress) => {
@@ -709,15 +779,21 @@ uppy.on('upload-progress', (file, progress) => {
 
 Fired each time a single upload is completed.
 
-`response` object (depending on the uploader plugin used, it might contain less info, the example is for `@uppy/xhr-upload`):
+**Parameters**
+- `file` - The [File Object][File Objects] that has just been fully uploaded.
+- `response` - An object with response data from the remote endpoint. The actual contents depend on the uploader plugin that is used.
 
-```js
-{
-  status, // HTTP status code (0, 200, 300)
-  body, // response body
-  uploadURL // the file url, if it was returned
-}
-```
+  For `@uppy/xhr-upload`, the shape is:
+
+  ```js
+  {
+    status, // HTTP status code (0, 200, 300)
+    body, // response body
+    uploadURL // the file url, if it was returned
+  }
+  ```
+
+**Example**
 
 ``` javascript
 uppy.on('upload-success', (file, response) => {
@@ -747,19 +823,35 @@ uppy.on('complete', (result) => {
 
 Fired when Uppy fails to upload/encode the entire upload. That error is then set to `uppy.getState().error`.
 
+**Parameters**
+- `error` - The error object.
+
+**Example**
+```js
+uppy.on('error', (error) => {
+  console.error(error.stack)
+})
+```
+
 ### `upload-error`
 
 Fired each time a single upload has errored.
 
-`response` object is an optional parameter and may be undefined depending on the uploader plugin used, it might contain less info, the example is for `@uppy/xhr-upload`:
+**Parameters**
+- `file` - The [File Object][File Objects] for the file whose upload has just errored.
+- `error` - The error object.
+- `response` - an optional parameter with response data from the upload endpoint. It may be undefined or contain different data depending on the uploader plugin in use.
 
-```js
-{
-  status, // HTTP status code (0, 200, 300)
-  body // response body
-}
-```
+  For `@uppy/xhr-upload`, the shape is:
 
+  ```js
+  {
+    status, // HTTP status code (0, 200, 300)
+    body // response body
+  }
+  ```
+
+**Example**
 ``` javascript
 uppy.on('upload-error', (file, error, response) => {
   console.log('error with file:', file.id)
@@ -781,8 +873,12 @@ uppy.on('upload-error', (file, error, response) => {
 
 ### `upload-retry`
 
-Fired when an upload has been retried (after an error, for example):
+Fired when an upload has been retried (after an error, for example).
 
+**Parameters**
+- `fileID` - ID of the file that is being retried.
+
+**Example**
 ```js
 uppy.on('upload-retry', (fileID) => {
   console.log('upload retried:', fileID)
@@ -833,3 +929,5 @@ uppy.on('reset-progress', () => {
   // progress was reset
 })
 ```
+
+[File Objects]: #File-Objects

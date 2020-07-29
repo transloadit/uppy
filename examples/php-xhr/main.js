@@ -1,9 +1,9 @@
 const Uppy = require('@uppy/core')
 const Webcam = require('@uppy/webcam')
 const Dashboard = require('@uppy/dashboard')
-const xhr = require('@uppy/xhr-upload')
+const XHRUpload = require('@uppy/xhr-upload')
 
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   autoProceed: false
 })
@@ -14,6 +14,6 @@ uppy.use(Dashboard, {
   target: 'body',
   plugins: ['Webcam']
 })
-uppy.use(xhr, {
+uppy.use(XHRUpload, {
   endpoint: 'http://localhost:3020/upload.php'
 })

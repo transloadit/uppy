@@ -42,7 +42,7 @@ function createUppy (opts, overrides = {}) {
   })
   Object.assign(uppyOptions, overrides)
 
-  const uppy = Uppy(uppyOptions)
+  const uppy = new Uppy(uppyOptions)
 
   // Builtin event aliases
   Object.keys(eventNames).forEach((optionName) => {

@@ -18,7 +18,7 @@ With React Hooks, the `useMemo` hook can be used to create an instance once and 
 const MyComponent = () => {
   const uppy = React.useMemo(() => {
     // Do all the configuration here
-    return Uppy()
+    return new Uppy()
       .use(Transloadit, {})
   }, []);
 
@@ -37,12 +37,12 @@ function useUppy (factory) {
   React.useEffect(() => {
     return () => uppy.close()
   }, [])
-  return uppy
+  return new uppy
 }
 
 // Then use it as:
 const uppy = useUppy(() => {
-  return Uppy()
+  return new Uppy()
     .use(Tus, {})
 })
 ```

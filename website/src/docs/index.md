@@ -77,7 +77,7 @@ const Dashboard = require('@uppy/dashboard')
 require('@uppy/core/dist/style.css')
 require('@uppy/dashboard/dist/style.css')
  
-const uppy = Uppy()
+const uppy = new Uppy()
   .use(Dashboard, {
     trigger: '#select-files'
   })

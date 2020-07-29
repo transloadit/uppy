@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const GoldenRetriever = require('@uppy/golden-retriever')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(GoldenRetriever, {
   // Options
 })

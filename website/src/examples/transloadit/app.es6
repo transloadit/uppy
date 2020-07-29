@@ -20,7 +20,7 @@ function initUppy (opts = {}) {
     window.uppy.close()
   }
 
-  const uppy = Uppy({
+  const uppy = new Uppy({
     debug: true,
     autoProceed: false,
     restrictions: {
