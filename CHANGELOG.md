@@ -101,6 +101,33 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 
+## 1.19.2
+
+Released: 2020-07-30
+
+This mostly introduces patches to accommodate for the new `@uppy/zoom` plugin! 🎉
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.2 | @uppy/progress-bar | 1.3.18 |
+| @uppy/aws-s3 | 1.6.9 | @uppy/provider-views | 1.7.2 |
+| @uppy/companion-client | 1.5.3 | @uppy/react | 1.10.2 |
+| @uppy/companion | 2.0.0-alpha.9 | @uppy/redux-dev-tools | 1.3.4 |
+| @uppy/core | 1.12.2 | @uppy/robodog | 1.9.2 |
+| @uppy/dashboard | 1.12.2 | @uppy/screen-capture | 1.0.6 |
+| @uppy/drag-drop | 1.4.18 | @uppy/status-bar | 1.7.3 |
+| @uppy/dropbox | 1.4.11 | @uppy/store-default | 1.2.3 |
+| @uppy/facebook | 1.1.11 | @uppy/store-redux | 1.2.3 |
+| @uppy/file-input | 1.4.16 | @uppy/thumbnail-generator | 1.6.5 |
+| @uppy/form | 1.3.19 | @uppy/transloadit | 1.6.5 |
+| @uppy/golden-retriever | 1.3.18 | @uppy/tus | 1.7.3 |
+| @uppy/google-drive | 1.5.11 | @uppy/url | 1.5.10 |
+| @uppy/image-editor | 0.1.3 | @uppy/utils | 3.2.2 |
+| @uppy/informer | 1.5.10 | @uppy/webcam | 1.6.10 |
+| @uppy/instagram | 1.4.11 | @uppy/xhr-upload | 1.6.3 |
+| @uppy/locales | 1.16.3 | @uppy/zoom | 0.1.0 |
+| @uppy/onedrive | 1.1.11 | uppy | 1.19.2 |
+
 ## 1.19.1
 
 Released: 2020-07-29
