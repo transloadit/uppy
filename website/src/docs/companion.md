@@ -190,6 +190,12 @@ export COMPANION_ONEDRIVE_SECRET="YOUR ONEDRIVE SECRET"
 # specifying a secret file will override a directly set secret
 export COMPANION_ONEDRIVE_SECRET_FILE="PATH/TO/ONEDRIVE/SECRET/FILE"
 
+# to enable Zoom
+export COMPANION_ZOOM_KEY="YOUR ZOOM KEY"
+export COMPANION_ZOOM_SECRET="YOUR ZOOM SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_ZOOM_SECRET_FILE="PATH/TO/ZOOM/SECRET/FILE"
+
 # to enable S3
 export COMPANION_AWS_KEY="YOUR AWS KEY"
 export COMPANION_AWS_SECRET="YOUR AWS SECRET"

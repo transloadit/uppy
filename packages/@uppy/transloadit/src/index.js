@@ -128,6 +128,7 @@ module.exports = class Transloadit extends Plugin {
     addPluginVersion('GoogleDrive', 'uppy-google-drive')
     addPluginVersion('Instagram', 'uppy-instagram')
     addPluginVersion('OneDrive', 'uppy-onedrive')
+    addPluginVersion('Zoom', 'uppy-zoom')
     addPluginVersion('Url', 'uppy-url')
 
     return list.join(',')
