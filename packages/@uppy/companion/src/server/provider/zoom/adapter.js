@@ -2,7 +2,7 @@ const moment = require('moment')
 
 const MIMETYPES = {
   MP4: 'video/mp4',
-  M4A: 'audio/mp4',
+  M4A: 'audio/m4a',
   CHAT: 'text/plain',
   TRANSCRIPT: 'text/vtt',
   CC: 'text/vtt',
@@ -63,8 +63,10 @@ exports.getItemName = (item) => {
     .format('YYYY-MM-DD, kk:mm')
 
   if (item.file_type) {
+    const mime = MIMETYPES[item.file_type]
+    const ext = mime ? `.${mime.split('/')[1]}` : ''
     const itemType = item.recording_type ? ` - ${item.recording_type.split('_').join(' ')}` : ''
-    return `${start}${itemType} (${item.file_type.toLowerCase()})`
+    return `${start}${itemType} (${item.file_type.toLowerCase()})${ext}`
   }
 
   return `${item.topic} (${start})`
