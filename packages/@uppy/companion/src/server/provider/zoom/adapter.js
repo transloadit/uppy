@@ -11,7 +11,7 @@ const MIMETYPES = {
 const EXT = {
   MP4: 'mp4',
   M4A: 'm4a',
-  CHAT: 'plain',
+  CHAT: 'txt',
   TRANSCRIPT: 'vtt',
   CC: 'vtt',
   TIMELINE: 'json'
