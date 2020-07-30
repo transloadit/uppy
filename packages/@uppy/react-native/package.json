@@ -19,5 +19,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "expo-document-picker": "^8.3.0",
+    "expo-image-picker": "^8.4.0",
+    "expo-permissions": "^9.1.0"
   }
 }
