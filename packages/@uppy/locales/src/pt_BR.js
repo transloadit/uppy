@@ -10,6 +10,7 @@ pt_BR.strings = {
   authenticateWithTitle: 'Por favor conecte com %{pluginName} para selecionar arquivos',
   back: 'Voltar',
   browse: 'navegue',
+  browseFiles: 'navegue',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar envio de arquivos',
   chooseFiles: 'Selecionar arquivos',

@@ -10,6 +10,7 @@ id_ID.strings = {
   authenticateWithTitle: 'Silahkan mengotentifikasi menggunakan %{pluginName} untuk memilih berkas',
   back: 'Kembali',
   browse: 'Telusuri',
+  browseFiles: 'Telusuri',
   cancel: 'Batal',
   cancelUpload: 'Batalkan pengungahan',
   chooseFiles: 'Pilih berkas',

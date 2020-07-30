@@ -73,6 +73,7 @@
     "@uppy/webcam": "file:packages/@uppy/webcam",
     "@uppy/xhr-upload": "file:packages/@uppy/xhr-upload",
     "@uppy/image-editor": "file:packages/@uppy/image-editor",
+    "@uppy/zoom": "file:packages/@uppy/zoom",
     "remark-lint-uppy": "file:private/remark-lint-uppy",
     "uppy": "file:packages/uppy",
     "uppy.io": "file:website"

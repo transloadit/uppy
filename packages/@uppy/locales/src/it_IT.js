@@ -10,6 +10,7 @@ it_IT.strings = {
   back: 'Indietro',
   addMore: 'Aggiungi più',
   browse: 'sfoglia',
+  browseFiles: 'sfoglia',
   cancel: 'Annulla',
   cancelUpload: 'Annulla upload',
   chooseFiles: 'Scegli i file',

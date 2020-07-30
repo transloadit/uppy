@@ -10,6 +10,7 @@ gl_ES.strings = {
   authenticateWithTitle: 'Por favor autentícate con %{pluginName} para seleccionar arquivos',
   back: 'Atrás',
   browse: 'navegar',
+  browseFiles: 'navegar',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar subida',
   chooseFiles: 'Seleccionar arquivos',

@@ -101,6 +101,43 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 
+## 1.19.1
+
+Released: 2020-07-29
+
+This is a bugfix release. The breaking change mentioned in 1.19.0 was much more severe than anticipated, because it affected the primary user-facing translation string. 1.19.1 hopes to restore backwards compatibility with all previous 1.x versions. Thanks to [@yaegor](https://github.com/yaegor) for pointing this out and to [@jonathanarbely](https://github.com/jonathanarbely) and [@fingul](https://github.com/fingul) for submitting translations for the new strings for German and Korean!
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.1 | @uppy/provider-views | 1.7.1 |
+| @uppy/aws-s3 | 1.6.8 | @uppy/react | 1.10.1 |
+| @uppy/companion-client | 1.5.2 | @uppy/redux-dev-tools | 1.3.3 |
+| @uppy/core | 1.12.1 | @uppy/robodog | 1.9.1 |
+| @uppy/dashboard | 1.12.1 | @uppy/screen-capture | 1.0.5 |
+| @uppy/drag-drop | 1.4.17 | @uppy/status-bar | 1.7.2 |
+| @uppy/dropbox | 1.4.10 | @uppy/store-default | 1.2.2 |
+| @uppy/facebook | 1.1.10 | @uppy/store-redux | 1.2.2 |
+| @uppy/file-input | 1.4.15 | @uppy/thumbnail-generator | 1.6.4 |
+| @uppy/form | 1.3.18 | @uppy/transloadit | 1.6.4 |
+| @uppy/golden-retriever | 1.3.17 | @uppy/tus | 1.7.2 |
+| @uppy/google-drive | 1.5.10 | @uppy/url | 1.5.9 |
+| @uppy/informer | 1.5.9 | @uppy/utils | 3.2.1 |
+| @uppy/instagram | 1.4.10 | @uppy/webcam | 1.6.9 |
+| @uppy/locales | 1.16.2 | @uppy/xhr-upload | 1.6.2 |
+| @uppy/onedrive | 1.1.10 | uppy | 1.19.1 |
+| @uppy/progress-bar | 1.3.17 | - | - |
+
+- @uppy/aws-s3: tighten type checks in default `getUploadParameters()` implementation (#2388 / @johnnyperkins)
+- @uppy/dashboard: restore backwards compatibility for the locales (#2397 / @goto-bus-stop)
+- @uppy/dashboard: revert Preact X version conflict fix, which was causing new bugs (#2405 / @goto-bus-stop)
+- @uppy/locales: add stub value for `browseFiles` for all remaining translations (#2397 / @goto-bus-stop)
+- @uppy/locales: add stub value for `browseFiles` for the German translation (#2396 / @jonathanarbely)
+- @uppy/locales: tweak Korean wording and add the new `dropPaste*` strings (#2395 / @fingul)
+- docs: document shape of file objects (#2371 / @goto-bus-stop)
+- docs: document transloadit `waitForXYZ` options better (#2371 / @goto-bus-stop)
+- docs: prefer constructor syntax `new Uppy()` over plain call syntax `Uppy()` (#2371 / @goto-bus-stop)
+- website: fix a couple of cases where user-provided values were output to HTML unescaped. Thanks [Shivprsad Sammbhare](https://linkedin.com/in/shivprasadsambhare) for the report!
+
 ## 1.19.0
 
 Released: 2020-07-21

@@ -1,7 +1,7 @@
 {
   "name": "@uppy/robodog",
   "description": "Transloadit SDK for browsers based on Uppy",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",

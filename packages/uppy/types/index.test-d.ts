@@ -21,6 +21,7 @@ import * as Uppy from '../';
     .use(Uppy.Instagram, { target: Uppy.Dashboard, companionUrl: 'https://companion.uppy.io' })
     .use(Uppy.Webcam, { target: Uppy.Dashboard })
     .use(Uppy.ScreenCapture, { target: Uppy.Dashboard })
+    .use(Uppy.Zoom, { target: Uppy.Dashboard })
     .use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
     .on('complete', (result) => {
       console.log('Upload result:', result);
