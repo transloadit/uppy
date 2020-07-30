@@ -241,21 +241,26 @@ class Zoom extends Provider {
     return data
   }
 
-  logout ({ token }, done) {
-    const encodedAuth = Buffer.from(
-      `${process.env.COMPANION_ZOOM_KEY}:${process.env.COMPANION_ZOOM_SECRET}`, 'binary'
-    ).toString('base64')
+  logout ({ companion, token }, done) {
+    const key = companion.options.providerOptions.zoom.key
+    const secret = companion.options.providerOptions.zoom.secret
+    const encodedAuth = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
+
     return this.client
-      .post('logout')
-      .auth(encodedAuth)
+      .post('https://zoom.us/oauth/revoke')
+      .options({
+        headers: {
+          Authorization: `Basic ${encodedAuth}`
+        }
+      })
       .qs({ token })
-      .request((err, resp) => {
+      .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {
           logger.error(err, 'provider.zoom.logout.error')
           done(this._error(err, resp))
           return
         }
-        done(null, { revoked: true })
+        done(null, { revoked: (body || {}).status === 'success' })
       })
   }
 
