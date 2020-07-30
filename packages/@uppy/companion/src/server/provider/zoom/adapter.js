@@ -8,6 +8,14 @@ const MIMETYPES = {
   CC: 'text/vtt',
   TIMELINE: 'application/json'
 }
+const EXT = {
+  MP4: 'mp4',
+  M4A: 'm4a',
+  CHAT: 'txt',
+  TRANSCRIPT: 'vtt',
+  CC: 'vtt',
+  TIMELINE: 'json'
+}
 const ICONS = {
   MP4: 'video',
   M4A: 'file',
@@ -63,8 +71,9 @@ exports.getItemName = (item) => {
     .format('YYYY-MM-DD, kk:mm')
 
   if (item.file_type) {
+    const ext = EXT[item.file_type] ? `.${EXT[item.file_type]}` : ''
     const itemType = item.recording_type ? ` - ${item.recording_type.split('_').join(' ')}` : ''
-    return `${start}${itemType} (${item.file_type.toLowerCase()})`
+    return `${start}${itemType} (${item.file_type.toLowerCase()})${ext}`
   }
 
   return `${item.topic} (${start})`
