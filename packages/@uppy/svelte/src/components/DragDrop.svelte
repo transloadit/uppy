@@ -1,11 +1,10 @@
 <script lang="ts">
     import Base from './Base.svelte';
-    import { onDestroy } from 'svelte';
-    import type { Uppy, Plugin } from '@uppy/core';
+    import type { Uppy } from '@uppy/core';
     import * as DragDrop from '@uppy/drag-drop';
     export let uppy: Uppy;
     export let pluginOptions: DragDrop.DragDropOptions;
-    const pluginType = DragDrop;
+    const pluginType = DragDrop.default;
     const defaultOptions = { id: 'svelte:DragDrop' };
     $: props = { 
         ...defaultOptions,

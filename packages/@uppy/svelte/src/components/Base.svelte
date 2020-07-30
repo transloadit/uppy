@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onDestroy } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import type { Uppy, Plugin } from '@uppy/core';
     
     export let uppy: Uppy;
@@ -8,8 +8,10 @@
 
     let plugin: Plugin;
     let container: HTMLElement;
+    let isMounted: boolean = false;
 
-    $: {
+    $: if (uppy && isMounted) {
+        plugin && uninstall()
         uppy.use(pluginType, {
             target: container,
             ...props
@@ -21,7 +23,10 @@
         uppy.removePlugin(plugin);
     }
 
+    onMount(() => isMounted = true)
 	onDestroy(() => uninstall());
 </script>
 
-<div bind:this={container}></div>
+{#if !props?.target }
+    <div bind:this={container}></div>
+{/if}

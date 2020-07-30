@@ -1,11 +1,10 @@
 <script lang="ts">
     import Base from './Base.svelte';
-    import { onDestroy } from 'svelte';
-    import type { Uppy, Plugin } from '@uppy/core';
+    import type { Uppy } from '@uppy/core';
     import * as StatusBar from '@uppy/status-bar';
     export let uppy: Uppy;
     export let pluginOptions: StatusBar.StatusBarOptions;
-    const pluginType = StatusBar;
+    const pluginType = StatusBar.default;
     const defaultOptions = { id: 'svelte:StatusBar' };
     $: props = { 
         ...defaultOptions,
