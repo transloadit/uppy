@@ -12,6 +12,7 @@ hu_HU.strings = {
   authenticateWithTitle: 'Kérjük lépjen be a %{pluginName}-ba a fájlok kiválasztásához',
   back: 'Vissza',
   browse: 'válasszon',
+  browseFiles: 'válasszon',
   cancel: 'Mégse',
   cancelUpload: 'Feltöltés megszakítása',
   chooseFiles: 'Fájlok kiválasztása',

@@ -10,6 +10,7 @@ sv_SE.strings = {
   authenticateWithTitle: 'Anslut till %{pluginName} för att välja filer',
   back: 'Tillbaka',
   browse: 'bläddra',
+  browseFiles: 'bläddra',
   cancel: 'Avbryt',
   cancelUpload: 'Avbryt uppladdning',
   chooseFiles: 'Välj filer',

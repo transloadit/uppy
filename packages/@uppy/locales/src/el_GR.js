@@ -10,6 +10,7 @@ el_GR.strings = {
   authenticateWithTitle: 'Παρακαλούμε συνδεθείτε με %{pluginName} για να επιλέξετε αρχεία',
   back: 'Πίσω',
   browse: 'Περιήγηση',
+  browseFiles: 'Περιήγηση',
   cancel: 'Άκυρο',
   cancelUpload: 'Ακύρωση μεταφόρτωσης',
   chooseFiles: 'Επιλέξτε αρχεία',

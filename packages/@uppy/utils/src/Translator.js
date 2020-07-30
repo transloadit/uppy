@@ -125,6 +125,10 @@ module.exports = class Translator {
    * @returns {Array} The translated and interpolated parts, in order.
    */
   translateArray (key, options) {
+    if (!has(this.locale.strings, key)) {
+      throw new Error(`missing string: ${key}`)
+    }
+
     const string = this.locale.strings[key]
     const hasPluralForms = typeof string === 'object'
 

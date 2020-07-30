@@ -11,8 +11,14 @@ const onUploadSuccess = (elForUploadedFiles) =>
     const url = response.uploadURL
     const fileName = file.name
 
-    document.querySelector(elForUploadedFiles).innerHTML +=
-      `<li><a href="${url}" target="_blank">${fileName}</a></li>`
+    const li = document.createElement('li')
+    const a = document.createElement('a')
+    a.href = url
+    a.target = '_blank'
+    a.appendChild(document.createTextNode(fileName))
+    li.appendChild(a)
+
+    document.querySelector(elForUploadedFiles).appendChild(li)
   }
 
 const uppyOne = new Uppy({ debug: true, autoProceed: true })

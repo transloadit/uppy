@@ -10,6 +10,7 @@ he_IL.strings = {
   authenticateWithTitle: 'אנא בצע הזדהות עם %{pluginName} על מנת לבחור קבצים',
   back: 'חזרה',
   browse: 'בחר',
+  browseFiles: 'בחר',
   cancel: 'ביטול',
   cancelUpload: 'בטל העלאה',
   chooseFiles: 'בחר קבצים',

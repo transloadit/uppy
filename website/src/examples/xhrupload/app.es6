@@ -25,6 +25,12 @@ uppy.on('upload-success', (file, response) => {
   const url = response.uploadURL
   const fileName = file.name
 
-  document.querySelector('.uploaded-files ol').innerHTML +=
-    `<li><a href="${url}" target="_blank">${fileName}</a></li>`
+  const li = document.createElement('li')
+  const a = document.createElement('a')
+  a.href = url
+  a.target = '_blank'
+  a.appendChild(document.createTextNode(fileName))
+  li.appendChild(a)
+
+  document.querySelector('.uploaded-files ol').appendChild(li)
 })

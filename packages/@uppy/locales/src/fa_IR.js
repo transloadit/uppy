@@ -10,6 +10,7 @@ fa_IR.strings = {
   back: 'بازگشت',
   addMore: 'اضافه کردن بیشتر',
   browse: 'انتخاب کنید',
+  browseFiles: 'انتخاب کنید',
   cancel: 'انصراف',
   cancelUpload: 'لغو بارگذاری',
   chooseFiles: 'انتخاب فایل',

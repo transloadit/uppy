@@ -14,6 +14,7 @@ zh_TW.strings = {
   authenticateWithTitle: '請使用%{pluginName}進行身份驗證以選擇檔案',
   back: '返回',
   browse: '瀏覽',
+  browseFiles: '瀏覽',
   cancel: '取消',
   cancelUpload: '取消上傳',
   chooseFiles: '選擇檔案',

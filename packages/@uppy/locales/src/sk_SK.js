@@ -15,6 +15,7 @@ sk_SK.strings = {
   authenticateWithTitle: 'Prosím príhláste sa k %{pluginName} pre výber súborov',
   back: 'Späť',
   browse: 'prechádzať',
+  browseFiles: 'prechádzať',
   cancel: 'Zrušiť',
   cancelUpload: 'Zrušiť nahrávanie',
   chooseFiles: 'Vyberte súbory',
