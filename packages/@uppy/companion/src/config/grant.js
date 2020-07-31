@@ -21,7 +21,7 @@ module.exports = () => {
     },
     facebook: {
       transport: 'session',
-      scope: ['email', 'user_photos'],
+      scope: ['email', 'user_photos', 'user_videos'],
       callback: '/facebook/callback'
     },
     // for onedrive
