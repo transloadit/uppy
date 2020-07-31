@@ -7,6 +7,7 @@ const Dropbox = require('@uppy/dropbox')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
+const Zoom = require('@uppy/zoom')
 const ImageEditor = require('@uppy/image-editor')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
@@ -131,6 +132,14 @@ function uppySetOptions () {
   }
   if (!opts.OneDrive && oneDriveInstance) {
     window.uppy.removePlugin(oneDriveInstance)
+  }
+
+  const zoomInstance = window.uppy.getPlugin('Zoom')
+  if (opts.Zoom && !zoomInstance) {
+    window.uppy.use(Zoom, { target: Dashboard, companionUrl: 'https://intense-meadow-61813.herokuapp.com/' })
+  }
+  if (!opts.Zoom && zoomInstance) {
+    window.uppy.removePlugin(zoomInstance)
   }
 
   const webcamInstance = window.uppy.getPlugin('Webcam')

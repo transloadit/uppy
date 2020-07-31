@@ -17,6 +17,7 @@
     <li><label for="opts-Instagram"><input type="checkbox" id="opts-Instagram" checked/> Instagram</label></li>
     <li><label for="opts-Facebook"><input type="checkbox" id="opts-Facebook" checked/> Facebook</label></li>
     <li><label for="opts-OneDrive"><input type="checkbox" id="opts-OneDrive" checked/> OneDrive</label></li>
+    <li id="zoom-checkbox"><label for="opts-Zoom"><input type="checkbox" id="opts-Zoom" checked/> Zoom</label></li>
     <li><label for="opts-Url"><input type="checkbox" id="opts-Url" checked/> Url</label></li>
   </ul>
 
@@ -45,6 +46,7 @@
     Instagram: document.querySelector('#opts-Instagram'),
     Facebook: document.querySelector('#opts-Facebook'),
     OneDrive: document.querySelector('#opts-OneDrive'),
+    Zoom: document.querySelector('#opts-Zoom'),
     Url: document.querySelector('#opts-Url'),
     autoProceed: document.querySelector('#opts-autoProceed'),
     restrictions: document.querySelector('#opts-restrictions'),
@@ -105,6 +107,14 @@
       window.uppySetOptions()
     })
   })
+
+  // temp hack to only show zoom when the url is:
+  // https://uppy.io/examples/dashboard/#enable-zoom
+  const zoomCheckbox = document.getElementById('zoom-checkbox')
+  zoomCheckbox.style.display = 'none'
+  if (document.location.hash === '#enable-zoom') {
+    zoomCheckbox.style.display = 'inline-block'
+  }
 
   toggleModalBtn()
 </script>
