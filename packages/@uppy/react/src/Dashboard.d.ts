@@ -6,7 +6,7 @@ type DashboardPropsInner = Omit<
   ToUppyProps<Dashboard.DashboardOptions>,
   // Remove the modal-only props
   'animateOpenClose' | 'browserBackButtonClose' | 'inline' | 'onRequestCloseModal' | 'trigger'
->
+> & React.BaseHTMLAttributes<HTMLDivElement>
 
 export type DashboardProps = {
    [K in keyof DashboardPropsInner]: DashboardPropsInner[K]
