@@ -6,6 +6,17 @@
     <title>Uppy test page</title>
   </head>
   <body>
+      <script>
+        onerror = function (message, source, lineno, colno, error) {
+          setTimeout(function () {
+            document.body.appendChild(document.createTextNode(message))
+            document.body.appendChild(document.createElement('br'))
+            document.body.appendChild(document.createTextNode(source + ':' + lineno + ':' + colno))
+            document.body.appendChild(document.createElement('br'))
+            document.body.appendChild(document.createTextNode(error.stack))
+          },10)
+        }
+      </script>
     <style>
       main {
         max-width: 700px;
