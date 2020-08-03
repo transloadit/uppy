@@ -1,3 +1,4 @@
+// Attributes in the format of htmlAtrribute: reactAttribute
 const possibleStandardNames = {
   accept: 'accept',
   acceptcharset: 'acceptCharset',
@@ -147,20 +148,24 @@ const possibleStandardNames = {
   wmode: 'wmode',
   wrap: 'wrap'
 }
+
+// A decent polyfill for Object.entries for good browser support
 const getEntries = (object) => {
   // eslint-disable-next-line compat/compat
   return Object.entries ? Object.entries : Object.keys(object).map(key => [key, object[key]])
 }
+
+// A polyfill for Object.values for good browser support
 const getValues = (object) => {
   // eslint-disable-next-line compat/compat
   return Object.values ? Object.values : Object.keys(object).map(key => object[key])
 }
-const findValidProps = (props) => {
+const getHTMLProps = (props) => {
+  // Gets all the React props
   const validReactHTMLAttributes = getValues(possibleStandardNames)
+  // Generates an object by adding the key-value pair to the accumulator
   const reducer = (acc, [key, value]) => validReactHTMLAttributes.includes(key) ? { ...acc, [key]: value } : acc
   return getEntries(props).reduce(reducer, {})
 }
 
-module.exports = {
-  findValidProps
-}
+module.exports = getHTMLProps

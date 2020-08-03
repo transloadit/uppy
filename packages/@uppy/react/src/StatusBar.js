@@ -2,7 +2,7 @@ const React = require('react')
 const PropTypes = require('prop-types')
 const StatusBarPlugin = require('@uppy/status-bar')
 const uppyPropType = require('./propTypes').uppy
-const { findValidProps } = require('./common')
+const getHTMLProps = require('./getHTMLProps')
 
 const h = React.createElement
 
@@ -14,7 +14,7 @@ const h = React.createElement
 class StatusBar extends React.Component {
   constructor (props) {
     super(props)
-    this.validProps = findValidProps(props)
+    this.validProps = getHTMLProps(props)
   }
 
   componentDidMount () {
