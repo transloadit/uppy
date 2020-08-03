@@ -147,7 +147,7 @@ class AddFiles extends Component {
     if (numberOfAcquirers > 0) {
       titleText = this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse })
     } else {
-      titleText = this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse })
+      titleText = this.props.i18nArray(`dropPaste${camelFMSelectionType}`, { browseFiles, browseFolders, browse })
     }
 
     // We use the old-style strings if available: this implies that the user has
@@ -156,9 +156,9 @@ class AddFiles extends Component {
     if (lowerFMSelectionType === 'files') {
       try {
         if (numberOfAcquirers > 0) {
-          titleText = this.props.i18nArray('dropPaste', { browse })
-        } else {
           titleText = this.props.i18nArray('dropPasteImport', { browse })
+        } else {
+          titleText = this.props.i18nArray('dropPaste', { browse })
         }
       } catch {
         // Ignore, the new-style strings will be used.
