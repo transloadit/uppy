@@ -9,7 +9,7 @@ type DashboardModalPropsInner = {
   ToUppyProps<Dashboard.DashboardOptions>,
   // Remove the inline-only and force-overridden props
   'inline' | 'onRequestCloseModal'
->
+> & React.BaseHTMLAttributes<HTMLDivElement>
 
 export type DashboardModalProps = {
   [K in keyof DashboardModalPropsInner]: DashboardModalPropsInner[K]
