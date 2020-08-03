@@ -12,11 +12,6 @@ function createCapability (capability) {
 exports.config = {
   ...base.config,
 
-  specs: [
-    'test/endtoend/i18n-drag-drop/test.js'
-  ],
-  suites: {},
-
   logLevel: 'warn',
 
   capabilities: [

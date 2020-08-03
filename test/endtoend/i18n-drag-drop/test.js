@@ -9,10 +9,6 @@ describe('File upload with DragDrop + XHRUpload, i18n translated string', functi
 
   beforeEach(async () => {
     await browser.url(testURL)
-    const debugBody = await browser.$('body')
-    const debugHtml = await debugBody.getHTML(true)
-    console.log({ debugHtml })
-
     await browser.execute(ensureInputVisible, '#uppyi18n .uppy-DragDrop-input')
   })
 
