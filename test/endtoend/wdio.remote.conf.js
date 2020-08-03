@@ -25,7 +25,7 @@ exports.config = {
     { browserName: 'MicrosoftEdge', version: '14', platform: 'Windows 10' },
     { browserName: 'MicrosoftEdge', version: '17', platform: 'Windows 10' },
     { browserName: 'safari', version: '11.1', platform: 'macOS 10.13' },
-    { browserName: 'Safari', platformName: 'iOS', platformVersion: '12.2', deviceOrientation: 'portrait', deviceName: 'iPhone 8 Simulator' },
+    // { browserName: 'Safari', platformName: 'iOS', platformVersion: '12.2', deviceOrientation: 'portrait', deviceName: 'iPhone 8 Simulator' },
     { browserName: 'chrome', platformName: 'Android', platformVersion: '6.0', deviceOrientation: 'portrait', deviceName: 'Android Emulator' }
   ].map(createCapability),
 
