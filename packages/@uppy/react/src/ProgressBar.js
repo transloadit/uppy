@@ -2,7 +2,6 @@ const React = require('react')
 const PropTypes = require('prop-types')
 const ProgressBarPlugin = require('@uppy/progress-bar')
 const uppyPropType = require('./propTypes').uppy
-const { findValidProps } = require('./common')
 
 const h = React.createElement
 
@@ -11,11 +10,6 @@ const h = React.createElement
  */
 
 class ProgressBar extends React.Component {
-  constructor (props) {
-    super(props)
-    this.validProps = findValidProps(props)
-  }
-
   componentDidMount () {
     this.installPlugin()
   }
@@ -55,8 +49,7 @@ class ProgressBar extends React.Component {
     return h('div', {
       ref: (container) => {
         this.container = container
-      },
-      ...this.validProps
+      }
     })
   }
 }
