@@ -1,17 +1,15 @@
 {
   "name": "@uppy/unsplash",
-  "description": "The unsplash plugin lets users import files from the Internet. Paste any unsplash and it’ll be added!",
-  "version": "1.5.8",
+  "description": "Import files from Unsplash, into Uppy.",
+  "version": "0.1.0",
   "license": "MIT",
   "main": "lib/index.js",
-  "style": "dist/style.min.css",
   "types": "types/index.d.ts",
   "keywords": [
     "file uploader",
-    "unsplash",
-    "import from unsplash",
     "uppy",
-    "uppy-plugin"
+    "uppy-plugin",
+    "unsplash"
   ],
   "homepage": "https://uppy.io",
   "bugs": {
@@ -23,6 +21,7 @@
   },
   "dependencies": {
     "@uppy/companion-client": "file:../companion-client",
+    "@uppy/provider-views": "file:../provider-views",
     "@uppy/utils": "file:../utils",
     "preact": "8.2.9"
   },
