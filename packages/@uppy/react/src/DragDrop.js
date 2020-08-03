@@ -1,7 +1,6 @@
 const React = require('react')
 const DragDropPlugin = require('@uppy/drag-drop')
 const propTypes = require('./propTypes')
-const { findValidProps } = require('./common')
 
 const h = React.createElement
 
@@ -11,11 +10,6 @@ const h = React.createElement
  */
 
 class DragDrop extends React.Component {
-  constructor (props) {
-    super(props)
-    this.validProps = findValidProps(props)
-  }
-
   componentDidMount () {
     this.installPlugin()
   }
@@ -55,8 +49,7 @@ class DragDrop extends React.Component {
     return h('div', {
       ref: (container) => {
         this.container = container
-      },
-      ...this.validProps
+      }
     })
   }
 }
