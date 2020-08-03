@@ -13,8 +13,6 @@ describe('File upload with DragDrop + XHRUpload, i18n translated string', functi
     const debugHtml = await debugBody.getHTML(true)
     console.log({ debugHtml })
 
-    const input = await browser.$('#uppyi18n .uppy-DragDrop-input')
-    await input.waitForExist()
     await browser.execute(ensureInputVisible, '#uppyi18n .uppy-DragDrop-input')
   })
 
