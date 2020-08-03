@@ -58,7 +58,7 @@ const possibleStandardNames = {
   formtarget: 'formTarget',
   frameborder: 'frameBorder',
   headers: 'headers',
-  height: 'height',
+  // height: 'height',
   hidden: 'hidden',
   high: 'high',
   href: 'href',
@@ -138,12 +138,12 @@ const possibleStandardNames = {
   style: 'style',
   summary: 'summary',
   tabindex: 'tabIndex',
-  target: 'target',
+  // target: 'target',
   title: 'title',
   type: 'type',
   usemap: 'useMap',
   value: 'value',
-  width: 'width',
+  // width: 'width',
   wmode: 'wmode',
   wrap: 'wrap'
 }
