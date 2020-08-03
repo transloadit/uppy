@@ -1,7 +1,7 @@
 const React = require('react')
 const DashboardPlugin = require('@uppy/dashboard')
 const basePropTypes = require('./propTypes').dashboard
-const { findValidProps } = require('./common')
+const getHTMLProps = require('./getHTMLProps')
 
 const h = React.createElement
 
@@ -13,7 +13,7 @@ const h = React.createElement
 class Dashboard extends React.Component {
   constructor (props) {
     super(props)
-    this.validProps = findValidProps(props)
+    this.validProps = getHTMLProps(props)
   }
 
   componentDidMount () {
