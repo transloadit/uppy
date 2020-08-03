@@ -2,20 +2,19 @@
   <ul class="main-menu">
     <%- partial('partials/main_menu') %>
   </ul>
+  
+  <% if (page.type !== "page") { %>
   <div class="list">
-    <% if (page.type !== "page") { %>
-      <h2>
-        <a href="/<%- type %>"><%- type === 'api' ? 'API' : (type.charAt(0).toUpperCase() + type.slice(1)) %></a>
-      </h2>
-    <% } %>
+    <h2>
+      <a href="/<%- type %>"><%- type === 'api' ? 'API' : (type.charAt(0).toUpperCase() + type.slice(1)) %></a>
+    </h2>
       
     <div class="menu-root">
       <%- partial('partials/docs_menu') %>
     </div>
 
-    <% if (page.type !== "page") { %>
-      <%- partial('partials/social') %>
-    <% } %>
-  </div>
+    <%- partial('partials/social') %>
+    </div>
+  <% } %>
 </div>
 
