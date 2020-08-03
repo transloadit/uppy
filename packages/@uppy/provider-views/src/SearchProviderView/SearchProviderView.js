@@ -1,4 +1,4 @@
-const { h, Component } = require('preact')
+const { h } = require('preact')
 const SearchInput = require('./InputView')
 const Browser = require('../Browser')
 const LoaderView = require('../Loader')
@@ -7,16 +7,7 @@ const getFileType = require('@uppy/utils/lib/getFileType')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 const Header = require('./Header')
 const SharedHandler = require('../SharedHandler')
-
-class CloseWrapper extends Component {
-  componentWillUnmount () {
-    this.props.onUnmount()
-  }
-
-  render () {
-    return this.props.children[0]
-  }
-}
+const CloseWrapper = require('../CloseWrapper')
 
 /**
  * Class to easily generate generic views for Provider plugins

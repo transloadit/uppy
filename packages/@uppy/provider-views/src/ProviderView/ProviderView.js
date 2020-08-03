@@ -1,4 +1,4 @@
-const { h, Component } = require('preact')
+const { h } = require('preact')
 const AuthView = require('./AuthView')
 const Header = require('./Header')
 const Browser = require('../Browser')
@@ -7,6 +7,7 @@ const generateFileID = require('@uppy/utils/lib/generateFileID')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 const SharedHandler = require('../SharedHandler')
+const CloseWrapper = require('../CloseWrapper')
 
 /**
  * Array.prototype.findIndex ponyfill for old browsers.
@@ -24,16 +25,6 @@ function getOrigin () {
     return location.origin // eslint-disable-line compat/compat
   }
   return `${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}`
-}
-
-class CloseWrapper extends Component {
-  componentWillUnmount () {
-    this.props.onUnmount()
-  }
-
-  render () {
-    return this.props.children[0]
-  }
 }
 
 /**
