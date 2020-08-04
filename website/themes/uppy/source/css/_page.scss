@@ -181,13 +181,18 @@
     vertical-align: middle;
   }
 
+  .table-responsive {
+    @media screen and (max-width: 767px) {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
   table {
     width: 100%;
     text-align: left;
-    display: block;
     font-size: 85%;
     border-spacing: 10px;
-    overflow-x: auto;
   }
 
   table td { 

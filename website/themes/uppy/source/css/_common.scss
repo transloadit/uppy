@@ -170,7 +170,6 @@ hr {
 .page-inner .MainContent {
   position: relative;
   z-index: 1;
-  overflow-x: hidden;
   padding: 2em 1.4em 0;
 
   @media #{$screen-medium} {
