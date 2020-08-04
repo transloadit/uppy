@@ -195,9 +195,13 @@
     border-collapse: collapse;
   }
 
+  table th,
+  table td {
+    padding: 8px;
+  }
+
   table td { 
     vertical-align: top;
-    padding: 8px;
     border-bottom: 1px solid #eee;
   }
 
@@ -367,21 +371,12 @@
 
 // Support page table overrides
 
-.page-support table {
-  overflow: visible;
-}
 .page-support .highlight table {
   overflow: scroll;
 }
 .page-support table tr:first-child td {
   white-space: nowrap;
   font-size: 90%;
-}
-
-// Privacy policy table overrides
-
-.page-privacy table td {
-  padding: 8px 0;
 }
 
 // Plugin list
