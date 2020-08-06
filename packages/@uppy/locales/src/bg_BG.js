@@ -14,6 +14,7 @@ bg_BG.strings = {
   authenticateWithTitle: 'Моля, впишете се с %{pluginName}, за да изберете файлове',
   back: 'Назад',
   browse: 'преглед',
+  browseFiles: 'преглед',
   cancel: 'Отказ',
   cancelUpload: 'Отказване на качването',
   chooseFiles: 'Изберете файлове',

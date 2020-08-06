@@ -10,6 +10,7 @@ ar_SA.strings = {
   authenticateWithTitle: 'ارجو الربط مع %{pluginName} من اجل اختيار الملفات',
   back: 'رجوع',
   browse: 'تصفح',
+  browseFiles: 'تصفح',
   cancel: 'الغاء',
   cancelUpload: 'الغاء الدفع',
   chooseFiles: 'اختار الملفات',

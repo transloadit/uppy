@@ -5,7 +5,7 @@ const DragDrop = require('@uppy/drag-drop/src')
 const ProgressBar = require('@uppy/progress-bar/src')
 
 module.exports = () => {
-  const uppyDragDrop = Uppy({
+  const uppyDragDrop = new Uppy({
     debug: true,
     autoProceed: true
   })

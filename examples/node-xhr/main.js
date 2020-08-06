@@ -3,7 +3,7 @@ const Webcam = require('@uppy/webcam')
 const Dashboard = require('@uppy/dashboard')
 const xhr = require('@uppy/xhr-upload')
 
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   autoProceed: false
 })

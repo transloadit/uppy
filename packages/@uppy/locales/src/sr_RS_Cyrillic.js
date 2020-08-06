@@ -10,6 +10,7 @@ sr_RS_Cyrillic.strings = {
   authenticateWithTitle: 'Молимо Вас да се пријавите путем %{pluginName} како бисте преузели датотеке',
   back: 'Назад',
   browse: 'потражи',
+  browseFiles: 'потражи',
   cancel: 'Откажи',
   cancelUpload: 'Откажи отпремање',
   chooseFiles: 'Изабери датотеке',

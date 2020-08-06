@@ -2,7 +2,7 @@ const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const XHRUpload = require('@uppy/xhr-upload')
 
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   meta: { something: 'xyz' }
 })

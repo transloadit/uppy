@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const DefaultStore = require('@uppy/store-default')
 
-const uppy = Uppy({
+const uppy = new Uppy({
   store: DefaultStore()
 })
 ```

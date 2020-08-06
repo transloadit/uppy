@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const AwsS3 = require('@uppy/aws-s3')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(AwsS3, {
   limit: 2,
   timeout: ms('1 minute'),

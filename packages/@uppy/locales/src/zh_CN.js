@@ -14,6 +14,7 @@ zh_CN.strings = {
   authenticateWithTitle: '请使用 %{pluginName} 进行认证以选择文件',
   back: '返回',
   browse: '浏览',
+  browseFiles: '浏览',
   cancel: '取消',
   cancelUpload: '取消上传',
   chooseFiles: '选择文件',

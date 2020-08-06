@@ -29,7 +29,7 @@ function form (target, opts) {
     locale: mergeDefaultLocale(defaultLocaleStrings, opts.locale)
   }
 
-  const uppy = Uppy(opts)
+  const uppy = new Uppy(opts)
   addTransloaditPlugin(uppy, opts)
 
   uppy.use(TransloaditFormResult, {

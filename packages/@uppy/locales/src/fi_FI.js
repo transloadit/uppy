@@ -10,6 +10,7 @@ fi_FI.strings = {
   authenticateWithTitle: '%{pluginName} vaadittu tunnistautumiseen, jotta voit valita tiedostoja',
   back: 'Takaisin',
   browse: 'selaa',
+  browseFiles: 'selaa',
   cancel: 'Peruuta',
   cancelUpload: 'Peruuta lähetys',
   chooseFiles: 'Valitse tiedostot',

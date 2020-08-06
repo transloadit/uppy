@@ -10,7 +10,7 @@ const Tus = require('@uppy/tus')
 const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
 const companionUrl = isOnTravis ? 'http://companion.test:3030' : 'http://localhost:3020'
 
-window.uppy = Uppy({
+window.uppy = new Uppy({
   id: 'uppyProvider',
   debug: true,
   autoProceed: true

@@ -128,6 +128,7 @@ module.exports = class Transloadit extends Plugin {
     addPluginVersion('GoogleDrive', 'uppy-google-drive')
     addPluginVersion('Instagram', 'uppy-instagram')
     addPluginVersion('OneDrive', 'uppy-onedrive')
+    addPluginVersion('Zoom', 'uppy-zoom')
     addPluginVersion('Url', 'uppy-url')
 
     return list.join(',')
@@ -786,6 +787,7 @@ module.exports = class Transloadit extends Plugin {
         // Golden Retriever. So, Golden Retriever is required to do resumability with the Transloadit plugin,
         // and we disable Tus's default resume implementation to prevent bad behaviours.
         storeFingerprintForResuming: false,
+        resume: false,
         // Disable Companion's retry optimisation; we need to change the endpoint on retry
         // so it can't just reuse the same tus.Upload instance server-side.
         useFastRemoteRetry: false,

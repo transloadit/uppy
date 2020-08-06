@@ -16,7 +16,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const StatusBar = require('@uppy/status-bar')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(StatusBar, {
   target: 'body',
   hideUploadButton: false,
