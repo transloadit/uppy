@@ -64,6 +64,7 @@ function uppySetOptions () {
 
   const defaultNullRestrictions = {
     maxFileSize: null,
+    minFileSize: null,
     maxNumberOfFiles: null,
     minNumberOfFiles: null,
     allowedFileTypes: null
