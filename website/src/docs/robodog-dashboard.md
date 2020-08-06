@@ -51,7 +51,7 @@ Maximum file size in bytes for each individual file.
 
 ### `restrictions.minFileSize`
 
-Minimun file size in bytes for each individual file.
+Minimum file size in bytes for each individual file.
 
 ### `restrictions.maxNumberOfFiles`
 
