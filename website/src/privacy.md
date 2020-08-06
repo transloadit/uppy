@@ -33,12 +33,16 @@ Since we do not store data on data subjects, migration or deletion tools are not
 
 We use the following third-party services which also store data about you:
 
+<div class="table-responsive">
+
 | supplier              | subject                 | data                                     | encryption    | anonymized  | discarded  |
 | :---------------------| :---------------------- | :--------------------------------------- | :-----------: | :---------: | :--------: |
 | Transloadit           | end user (data subject) | browser identifiers                      |               |             | instantly  |
 | Transloadit           | end user (data subject) | test files                               |               |             | in 24h     |
 | Tus.io                | end user (data subject) | test files                               |               |             | in 72h     |
 | Google Analytics      | customer (business)     | browser identifiers                      |               | ✅          |            |
+
+</div>
 
 - **anonymized**: Any data that can be used to identify the 'data subject' is scrubbed
 - **discarded**: Data is destroyed
