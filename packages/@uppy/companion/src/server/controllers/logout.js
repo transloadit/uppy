@@ -14,9 +14,10 @@ function logout (req, res, next) {
     }
   }
   const providerName = req.params.providerName
-  const token = req.companion.providerTokens ? req.companion.providerTokens[providerName] : null
+  const companion = req.companion
+  const token = companion.providerTokens ? companion.providerTokens[providerName] : null
   if (token) {
-    req.companion.provider.logout({ token }, (err, data) => {
+    companion.provider.logout({ token, companion }, (err, data) => {
       if (err) {
         const errResp = errorToResponse(err)
         if (errResp) {
@@ -25,8 +26,8 @@ function logout (req, res, next) {
         return next(err)
       }
 
-      delete req.companion.providerTokens[providerName]
-      tokenService.removeFromCookies(res, req.companion.options, req.companion.provider.authProviderName)
+      delete companion.providerTokens[providerName]
+      tokenService.removeFromCookies(res, companion.options, companion.provider.authProviderName)
       cleanSession()
       res.json(Object.assign({ ok: true }, data))
     })

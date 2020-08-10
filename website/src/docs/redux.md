@@ -16,15 +16,15 @@ You can tell Uppy to use your app’s Redux store for its files and UI state. Pl
 
 ```js
 const { createStore } = require('redux')
-const ReduxStore = require('@uppy/store-redux')
+const createReduxStore = require('@uppy/store-redux')
 
 const reducer = combineReducers({
   ...reducers,
   uppy: ReduxStore.reducer
 })
 
-const uppy = Uppy({
-  store: ReduxStore({
+const uppy = new Uppy({
+  store: createReduxStore({
     store: createStore(reducer) // That’s a lot of stores!
   })
 })
@@ -42,7 +42,7 @@ This is a `ReduxDevTools` plugin that simply syncs with the [redux-devtools](htt
 const Uppy = require('@uppy/core')
 const ReduxDevTools = require('@uppy/redux-dev-tools')
 
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   meta: {
     username: 'John',

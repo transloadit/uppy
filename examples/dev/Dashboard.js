@@ -6,6 +6,7 @@ const OneDrive = require('@uppy/onedrive/src')
 const Dropbox = require('@uppy/dropbox/src')
 const GoogleDrive = require('@uppy/google-drive/src')
 const Unsplash = require('@uppy/unsplash/src')
+const Zoom = require('@uppy/zoom/src')
 const Url = require('@uppy/url/src')
 const Webcam = require('@uppy/webcam/src')
 const ScreenCapture = require('@uppy/screen-capture/src')
@@ -44,7 +45,7 @@ const RESTORE = false
 // Rest is implementation! Obviously edit as necessary...
 
 module.exports = () => {
-  const uppyDashboard = Uppy({
+  const uppyDashboard = new Uppy({
     logger: Uppy.debugLogger,
     meta: {
       username: 'John',
@@ -68,6 +69,7 @@ module.exports = () => {
     .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Facebook, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL })
+    .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Url, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Webcam, { target: Dashboard })

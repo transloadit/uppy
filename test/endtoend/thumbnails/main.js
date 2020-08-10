@@ -5,7 +5,7 @@ const Uppy = require('@uppy/core')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const FileInput = require('@uppy/file-input')
 
-const uppyThumbnails = Uppy({
+const uppyThumbnails = new Uppy({
   id: 'uppyThumbnails',
   autoProceed: false,
   debug: true

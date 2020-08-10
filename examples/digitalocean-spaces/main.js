@@ -2,7 +2,7 @@ const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const AwsS3 = require('@uppy/aws-s3')
 
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true
 })
 

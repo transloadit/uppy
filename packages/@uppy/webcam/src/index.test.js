@@ -8,7 +8,7 @@ describe('Webcam', () => {
         isTypeSupported: () => true
       }
 
-      const uppy = Uppy().use(Webcam)
+      const uppy = new Uppy().use(Webcam)
       expect(
         uppy.getPlugin('Webcam')._getMediaRecorderOptions().mimeType
       ).not.toBeDefined()
@@ -19,7 +19,7 @@ describe('Webcam', () => {
         isTypeSupported: (ty) => ty === 'video/webm'
       }
 
-      const uppy = Uppy().use(Webcam, { preferredVideoMimeType: 'video/webm' })
+      const uppy = new Uppy().use(Webcam, { preferredVideoMimeType: 'video/webm' })
       expect(
         uppy.getPlugin('Webcam')._getMediaRecorderOptions().mimeType
       ).toEqual('video/webm')
@@ -30,7 +30,7 @@ describe('Webcam', () => {
         isTypeSupported: (ty) => ty === 'video/webm'
       }
 
-      const uppy = Uppy().use(Webcam, { preferredVideoMimeType: 'video/mp4' })
+      const uppy = new Uppy().use(Webcam, { preferredVideoMimeType: 'video/mp4' })
       expect(
         uppy.getPlugin('Webcam')._getMediaRecorderOptions().mimeType
       ).not.toBeDefined()
@@ -41,7 +41,7 @@ describe('Webcam', () => {
         isTypeSupported: () => true
       }
 
-      const uppy = Uppy({
+      const uppy = new Uppy({
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] }
       }).use(Webcam)
       expect(
@@ -54,7 +54,7 @@ describe('Webcam', () => {
         isTypeSupported: (ty) => ty === 'video/webm'
       }
 
-      const uppy = Uppy({
+      const uppy = new Uppy({
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] }
       }).use(Webcam)
       expect(
@@ -67,7 +67,7 @@ describe('Webcam', () => {
         isTypeSupported: () => true
       }
 
-      const uppy = Uppy({
+      const uppy = new Uppy({
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] }
       })
         .use(Webcam, { preferredVideoMimeType: 'video/webm' })
@@ -81,7 +81,7 @@ describe('Webcam', () => {
         isTypeSupported: () => false
       }
 
-      const uppy = Uppy({
+      const uppy = new Uppy({
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] }
       }).use(Webcam)
       expect(

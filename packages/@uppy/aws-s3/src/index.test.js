@@ -1,3 +1,4 @@
+require('whatwg-fetch')
 const Core = require('@uppy/core')
 const AwsS3 = require('./')
 

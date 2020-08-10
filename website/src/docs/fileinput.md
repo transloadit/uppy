@@ -103,7 +103,7 @@ If you don’t like the look/feel of the button rendered by `@uppy/file-input`, 
 Then add this JS to attach it to Uppy:
 
 ```js
-const uppy = Uppy(...)
+const uppy = new Uppy(...)
 const fileInput = document.querySelector('#my-file-input')
 
 fileInput.addEventListener('change', (event) => {

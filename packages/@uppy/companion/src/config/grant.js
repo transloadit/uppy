@@ -29,6 +29,13 @@ module.exports = () => {
       transport: 'session',
       scope: ['files.read.all', 'offline_access', 'User.Read'],
       callback: '/onedrive/callback'
+    },
+    zoom: {
+      transport: 'session',
+      authorize_url: 'https://zoom.us/oauth/authorize',
+      access_url: 'https://zoom.us/oauth/token',
+      scope: ['recording:read', 'user:read'],
+      callback: '/zoom/callback'
     }
   }
 }

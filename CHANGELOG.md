@@ -73,12 +73,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] transloadit: remove `UPPY_SERVER` constant
 - [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
 
-## 1.19
+## 1.22
 
 - [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
 
-## 1.18
+## 1.21
 
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
@@ -86,12 +86,9 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
 - [ ] provider: Image search (via Google or Bing or DuckDuckGo) (@arturi)
 - [ ] core: add AngularJS wrapper component for the Dashboard (@arturi)
-- [ ] dashboard: allow selecting folders (add separate hidden input button for folders) #447 #1027 (@arturi)
 - [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112 #362
 
 # next
-
-## 1.17
 
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default's store #320
 - [ ] provider: add Box (@ife)
@@ -101,11 +98,133 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi) (@arturi)
 - [ ] dashboard: fix Dashboard issues with Angular — it’s incredibly slow presumably because of ResizeObserver. (See #1613) (@arturi)
 - [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
-- [ ] plugins: Transformations, cropping, filters for images, study https://github.com/MattKetmo/darkroomjs/, https://github.com/fengyuanchen/cropperjs #151 #53 (@arturi)
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
-- [ ] companion: what happens if access token expires during/between an download & upload (@ife)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
-- [x] aws-s3-multipart: retry uploading failed parts (#2312 / @goto-bus-stop)
+
+## 1.19.2
+
+Released: 2020-07-30
+
+This mostly introduces patches to accommodate for the new `@uppy/zoom` plugin! 🎉
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.2 | @uppy/progress-bar | 1.3.18 |
+| @uppy/aws-s3 | 1.6.9 | @uppy/provider-views | 1.7.2 |
+| @uppy/companion-client | 1.5.3 | @uppy/react | 1.10.2 |
+| @uppy/companion | 2.0.0-alpha.9 | @uppy/redux-dev-tools | 1.3.4 |
+| @uppy/core | 1.12.2 | @uppy/robodog | 1.9.2 |
+| @uppy/dashboard | 1.12.2 | @uppy/screen-capture | 1.0.6 |
+| @uppy/drag-drop | 1.4.18 | @uppy/status-bar | 1.7.3 |
+| @uppy/dropbox | 1.4.11 | @uppy/store-default | 1.2.3 |
+| @uppy/facebook | 1.1.11 | @uppy/store-redux | 1.2.3 |
+| @uppy/file-input | 1.4.16 | @uppy/thumbnail-generator | 1.6.5 |
+| @uppy/form | 1.3.19 | @uppy/transloadit | 1.6.5 |
+| @uppy/golden-retriever | 1.3.18 | @uppy/tus | 1.7.3 |
+| @uppy/google-drive | 1.5.11 | @uppy/url | 1.5.10 |
+| @uppy/image-editor | 0.1.3 | @uppy/utils | 3.2.2 |
+| @uppy/informer | 1.5.10 | @uppy/webcam | 1.6.10 |
+| @uppy/instagram | 1.4.11 | @uppy/xhr-upload | 1.6.3 |
+| @uppy/locales | 1.16.3 | @uppy/zoom | 0.1.0 |
+| @uppy/onedrive | 1.1.11 | uppy | 1.19.2 |
+
+## 1.19.1
+
+Released: 2020-07-29
+
+This is a bugfix release. The breaking change mentioned in 1.19.0 was much more severe than anticipated, because it affected the primary user-facing translation string. 1.19.1 hopes to restore backwards compatibility with all previous 1.x versions. Thanks to [@yaegor](https://github.com/yaegor) for pointing this out and to [@jonathanarbely](https://github.com/jonathanarbely) and [@fingul](https://github.com/fingul) for submitting translations for the new strings for German and Korean!
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.1 | @uppy/provider-views | 1.7.1 |
+| @uppy/aws-s3 | 1.6.8 | @uppy/react | 1.10.1 |
+| @uppy/companion-client | 1.5.2 | @uppy/redux-dev-tools | 1.3.3 |
+| @uppy/core | 1.12.1 | @uppy/robodog | 1.9.1 |
+| @uppy/dashboard | 1.12.1 | @uppy/screen-capture | 1.0.5 |
+| @uppy/drag-drop | 1.4.17 | @uppy/status-bar | 1.7.2 |
+| @uppy/dropbox | 1.4.10 | @uppy/store-default | 1.2.2 |
+| @uppy/facebook | 1.1.10 | @uppy/store-redux | 1.2.2 |
+| @uppy/file-input | 1.4.15 | @uppy/thumbnail-generator | 1.6.4 |
+| @uppy/form | 1.3.18 | @uppy/transloadit | 1.6.4 |
+| @uppy/golden-retriever | 1.3.17 | @uppy/tus | 1.7.2 |
+| @uppy/google-drive | 1.5.10 | @uppy/url | 1.5.9 |
+| @uppy/informer | 1.5.9 | @uppy/utils | 3.2.1 |
+| @uppy/instagram | 1.4.10 | @uppy/webcam | 1.6.9 |
+| @uppy/locales | 1.16.2 | @uppy/xhr-upload | 1.6.2 |
+| @uppy/onedrive | 1.1.10 | uppy | 1.19.1 |
+| @uppy/progress-bar | 1.3.17 | - | - |
+
+- @uppy/aws-s3: tighten type checks in default `getUploadParameters()` implementation (#2388 / @johnnyperkins)
+- @uppy/dashboard: restore backwards compatibility for the locales (#2397 / @goto-bus-stop)
+- @uppy/dashboard: revert Preact X version conflict fix, which was causing new bugs (#2405 / @goto-bus-stop)
+- @uppy/locales: add stub value for `browseFiles` for all remaining translations (#2397 / @goto-bus-stop)
+- @uppy/locales: add stub value for `browseFiles` for the German translation (#2396 / @jonathanarbely)
+- @uppy/locales: tweak Korean wording and add the new `dropPaste*` strings (#2395 / @fingul)
+- docs: document shape of file objects (#2371 / @goto-bus-stop)
+- docs: document transloadit `waitForXYZ` options better (#2371 / @goto-bus-stop)
+- docs: prefer constructor syntax `new Uppy()` over plain call syntax `Uppy()` (#2371 / @goto-bus-stop)
+- website: fix a couple of cases where user-provided values were output to HTML unescaped. Thanks [Shivprsad Sammbhare](https://linkedin.com/in/shivprasadsambhare) for the report!
+
+## 1.19.0
+
+Released: 2020-07-21
+
+Note that this release includes a very minor breaking change. If you are using custom translations for the `dropPaste` or `dropPasteImport` locale strings, you need to append the file selection style to the key name. Use `dropPasteFiles`, `dropPasteFolders`, or `dropPasteBoth`, or `dropPasteImportFiles`, `dropPasteImportFolders`, or `dropPasteImportBoth` depending on your dashboard and provider configuration.
+
+- @uppy/image-editor: fix crop/rotate/zoom buttons on mobile (@arturi)
+- uppy: remove unstable `ImageEditor` export (@goto-bus-stop)
+- docs: document preact required version when writing custom plugins (@jrschumacher)
+- @uppy/dashboard: fix preact version conflicts if outer app uses Preact X (#2379 / @goto-bus-stop)
+- @uppy/dashboard: add `fileManagerSelectionType` option, allowing users to select folders (#2334 / @bdirito)
+
+## 1.18.0
+
+Released: 2020-07-19
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 2.0.0-alpha.8 | @uppy/react | 1.9.1 |
+| @uppy/dashboard | 1.11.0 | @uppy/robodog | 1.8.0 |
+| @uppy/image-editor | 0.1.1 | uppy | 1.18.0 |
+| @uppy/locales | 1.16.0 | - | - |
+
+- @uppy/image-editor: 🎉 add long-awaited image cropping, rotation, flipping and zooming (in beta!) (#2370 / @arturi)
+- @uppy/companion: override grant's default redirect_uri for consistent provider options (#2364 / @ifedapoolarewaju)
+
+## 1.17.0
+
+Released: 2020-07-15
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.0 | @uppy/onedrive | 1.1.9 |
+| @uppy/aws-s3 | 1.6.7 | @uppy/progress-bar | 1.3.16 |
+| @uppy/companion-client | 1.5.1 | @uppy/provider-views | 1.7.0 |
+| @uppy/companion | 2.0.0-alpha.7 | @uppy/react | 1.9.0 |
+| @uppy/core | 1.12.0 | @uppy/robodog | 1.7.2 |
+| @uppy/dashboard | 1.10.2 | @uppy/screen-capture | 1.0.4 |
+| @uppy/drag-drop | 1.4.16 | @uppy/status-bar | 1.7.1 |
+| @uppy/dropbox | 1.4.9 | @uppy/thumbnail-generator | 1.6.3 |
+| @uppy/facebook | 1.1.9 | @uppy/transloadit | 1.6.2 |
+| @uppy/file-input | 1.4.14 | @uppy/tus | 1.7.0 |
+| @uppy/form | 1.3.17 | @uppy/url | 1.5.8 |
+| @uppy/golden-retriever | 1.3.16 | @uppy/utils | 3.2.0 |
+| @uppy/google-drive | 1.5.9 | @uppy/webcam | 1.6.8 |
+| @uppy/informer | 1.5.8 | @uppy/xhr-upload | 1.6.1 |
+| @uppy/instagram | 1.4.9 | uppy | 1.17.0 |
+| @uppy/locales | 1.15.1 | - | - |
+
+- ⚠️ @uppy/companion: rename `microsoft` and `google` providerOptions to `onedrive` and `drive` respectively (#2346 / @ifedapoolarewaju)
+- @uppy/aws-s3-multipart: do not store completed parts in state, fixes a resuming bug (#2326 / @yaegor)
+- @uppy/aws-s3-multipart: retry uploading failed parts (#2312 / @goto-bus-stop)
+- @uppy/companion: dependency updates (#2333 / @goto-bus-stop)
+- @uppy/companion: send custom headers to tus uploads (#2338 / @ifedapoolarewaju)
+- @uppy/core: add `reason` parameter to the `uppy.removeFile()` method and the `uppy.on('file-removed')` event (#2323 / @arturi)
+- @uppy/core: do not create an empty upload in retryAll() if there were no errors (#2361 / @goto-bus-stop)
+- @uppy/locales: add missing strings for Simplified Chinese (#2335 / @sparanoid)
+- @uppy/tus: update tus-js-client to v2 (#2239 / @Acconut, @goto-bus-stop)
+- docs: add authentication setup instructions for Dropbox and Google Drive (#2345 / @goto-bus-stop)
+- docs: explain how to use Uppy with React Hooks (#1936 / @pedrofs)
 
 ## 1.16.1
 

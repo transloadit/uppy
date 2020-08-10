@@ -271,7 +271,7 @@ module.exports = class Tus extends Plugin {
       if (opts.resume) {
         upload.findPreviousUploads().then((previousUploads) => {
           const previousUpload = previousUploads[0]
-          if (previousUploads) {
+          if (previousUpload) {
             this.uppy.log(`[Tus] Resuming upload of ${file.id} started at ${previousUpload.creationTime}`)
             upload.resumeFromPreviousUpload(previousUpload)
           }

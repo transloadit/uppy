@@ -5,6 +5,10 @@ class AddFiles extends Component {
     this.fileInput.click()
   }
 
+  triggerFolderInputClick = () => {
+    this.folderInput.click()
+  }
+
   onFileInputChange = (event) => {
     this.props.handleInputChange(event)
 
@@ -46,19 +50,20 @@ class AddFiles extends Component {
     )
   }
 
-  renderHiddenFileInput = () => {
+  renderHiddenInput = (isFolder, refCallback) => {
     return (
       <input
         class="uppy-Dashboard-input"
         hidden
         aria-hidden="true"
         tabindex={-1}
+        webkitdirectory={isFolder}
         type="file"
         name="files[]"
         multiple={this.props.maxNumberOfFiles !== 1}
         onchange={this.onFileInputChange}
         accept={this.props.allowedFileTypes}
-        ref={(ref) => { this.fileInput = ref }}
+        ref={refCallback}
       />
     )
   }
@@ -90,25 +95,79 @@ class AddFiles extends Component {
     )
   }
 
-  renderDropPasteBrowseTagline = () => {
+  renderBrowseButton = (text, onClickFn) => {
     const numberOfAcquirers = this.props.acquirers.length
-    const browse =
+    return (
       <button
         type="button"
         class="uppy-u-reset uppy-Dashboard-browse"
-        onclick={this.triggerFileInputClick}
+        onclick={onClickFn}
         data-uppy-super-focusable={numberOfAcquirers === 0}
       >
-        {this.props.i18n('browse')}
+        {text}
       </button>
+    )
+  }
+
+  // TODO(2.x) remove all the backwards compatibility garbage here
+  renderDropPasteBrowseTagline = () => {
+    const numberOfAcquirers = this.props.acquirers.length
+    // in order to keep the i18n CamelCase and options lower (as are defaults) we will want to transform a lower
+    // to Camel
+    const lowerFMSelectionType = this.props.fileManagerSelectionType
+    const camelFMSelectionType = lowerFMSelectionType.charAt(0).toUpperCase() + lowerFMSelectionType.slice(1)
+
+    // For backwards compatibility, we need to support both 'browse' and 'browseFiles'/'browseFolders' as strings here.
+    let browseText = 'browse'
+    let browseFilesText = 'browse'
+    let browseFoldersText = 'browse'
+    if (lowerFMSelectionType === 'files') {
+      try {
+        browseText = this.props.i18n('browse')
+        browseFilesText = this.props.i18n('browse')
+        browseFoldersText = this.props.i18n('browse')
+      } catch {
+        // Ignore, hopefully we can use the 'browseFiles' / 'browseFolders' strings
+      }
+    }
+    try {
+      browseFilesText = this.props.i18n('browseFiles')
+      browseFoldersText = this.props.i18n('browseFolders')
+    } catch {
+      // Ignore, use the 'browse' string
+    }
+
+    const browse = this.renderBrowseButton(browseText, this.triggerFileInputClick)
+    const browseFiles = this.renderBrowseButton(browseFilesText, this.triggerFileInputClick)
+    const browseFolders = this.renderBrowseButton(browseFoldersText, this.triggerFolderInputClick)
+
+    // Before the `fileManagerSelectionType` feature existed, we had two possible
+    // strings here, but now we have six. We use the new-style strings by default:
+    let titleText
+    if (numberOfAcquirers > 0) {
+      titleText = this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse })
+    } else {
+      titleText = this.props.i18nArray(`dropPaste${camelFMSelectionType}`, { browseFiles, browseFolders, browse })
+    }
+
+    // We use the old-style strings if available: this implies that the user has
+    // manually specified them, so they should take precedence over the new-style
+    // defaults.
+    if (lowerFMSelectionType === 'files') {
+      try {
+        if (numberOfAcquirers > 0) {
+          titleText = this.props.i18nArray('dropPasteImport', { browse })
+        } else {
+          titleText = this.props.i18nArray('dropPaste', { browse })
+        }
+      } catch {
+        // Ignore, the new-style strings will be used.
+      }
+    }
 
     return (
       <div class="uppy-Dashboard-AddFiles-title">
-        {
-          numberOfAcquirers > 0
-            ? this.props.i18nArray('dropPasteImport', { browse })
-            : this.props.i18nArray('dropPaste', { browse })
-        }
+        {titleText}
       </div>
     )
   }
@@ -157,7 +216,8 @@ class AddFiles extends Component {
   render () {
     return (
       <div class="uppy-Dashboard-AddFiles">
-        {this.renderHiddenFileInput()}
+        {this.renderHiddenInput(false, (ref) => { this.fileInput = ref })}
+        {this.renderHiddenInput(true, (ref) => { this.folderInput = ref })}
         {this.renderDropPasteBrowseTagline()}
         {this.props.acquirers.length > 0 && this.renderAcquirers(this.props.acquirers)}
         <div class="uppy-Dashboard-AddFiles-info">

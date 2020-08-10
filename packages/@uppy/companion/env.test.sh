@@ -15,3 +15,6 @@ export COMPANION_GOOGLE_SECRET="google_secret"
 
 export COMPANION_INSTAGRAM_KEY="instagram_key"
 export COMPANION_INSTAGRAM_SECRET="instagram_secret"
+
+export COMPANION_ZOOM_KEY="zoom_key"
+export COMPANION_ZOOM_SECRET="zoom_secret"

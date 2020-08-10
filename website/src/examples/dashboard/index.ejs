@@ -34,7 +34,7 @@ const ScreenCapture = require('@uppy/screen-capture')
 const ImageEditor = require('@uppy/image-editor')
 const Tus = require('@uppy/tus')
 
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   autoProceed: false,
   restrictions: {

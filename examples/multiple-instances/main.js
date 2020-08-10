@@ -4,7 +4,7 @@ const GoldenRetriever = require('@uppy/golden-retriever')
 
 // Initialise two Uppy instances with the GoldenRetriever plugin,
 // but with different `id`s.
-const a = Uppy({
+const a = new Uppy({
   id: 'a',
   debug: true
 })
@@ -15,7 +15,7 @@ const a = Uppy({
   })
   .use(GoldenRetriever, { serviceWorker: false })
 
-const b = Uppy({
+const b = new Uppy({
   id: 'b',
   debug: true
 })

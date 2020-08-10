@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const Dropbox = require('@uppy/dropbox')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Dropbox, {
   // Options
 })

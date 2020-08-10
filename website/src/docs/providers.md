@@ -17,7 +17,7 @@ Here's a quick example:
 ```js
 const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Dashboard, {
   trigger: '#pick-files'
 })

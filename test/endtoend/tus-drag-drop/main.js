@@ -9,7 +9,7 @@ const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
 const endpoint = isOnTravis ? 'http://companion.test:1080' : 'http://localhost:1080'
 
 // Initialise Uppy with Drag & Drop
-const uppyDragDrop = Uppy({
+const uppyDragDrop = new Uppy({
   id: 'uppyDragDrop',
   debug: true,
   autoProceed: true
