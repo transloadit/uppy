@@ -61,7 +61,7 @@ module.exports = class ImageEditor extends Plugin {
     this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
-  сanEditFile (file) {
+  canEditFile (file) {
     if (!file.type || file.isRemote) {
       return false
     }
