@@ -21,6 +21,6 @@ module.exports = class SearchProvider extends RequestClient {
 
   search (text, queries) {
     queries = queries ? `&${queries}` : ''
-    return this.get(`search/${this.id}/list?q=${text}${queries}`)
+    return this.get(`search/${this.id}/list?q=${encodeURIComponent(text)}${queries}`)
   }
 }
