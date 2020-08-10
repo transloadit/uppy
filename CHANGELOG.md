@@ -106,6 +106,15 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 Released: 2020-08-10
 
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.3 | @uppy/react | 1.10.3 |
+| @uppy/companion | 2.0.0-alpha.10 | @uppy/robodog | 1.9.3 |
+| @uppy/core | 1.13.0 | @uppy/status-bar | 1.7.4 |
+| @uppy/dashboard | 1.12.3 | @uppy/transloadit | 1.6.6 |
+| @uppy/image-editor | 0.1.4 | uppy | 1.20.0 |
+| @uppy/locales | 1.16.4 | - | - |
+
 - docs: make global companion install bash line copy-pasteable (#2438 / @goto-bus-stop)
 - @uppy/aws-s3-multipart: handle server returning numbers as strings (@goto-bus-stop)
 - @uppy/status-bar: specify default string for `retryUpload` (#2442 / @goto-bus-stop)
