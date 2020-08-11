@@ -95,3 +95,17 @@ strings: {
   // TODO
 }
 ```
+
+## Zoom Marketplace
+
+If you are a Zoom account owner and you are looking to enable the Transloadit Add-on into your Zoom account, please see the sections below.
+
+### Install Transloadit Zoom Add-on
+
+To enable the Transloadit Add-on on your Zoom account please visit the Transloadit App on the [Zoom Marketplace](https://marketplace.zoom.us/apps/oBMBQjN6SSakyh7OiLZMdA) and click the "Install" button.
+
+### Uninstall via Marketplace
+
+1. Go to the Transloadit App on the [Zoom Marketplace](https://marketplace.zoom.us/apps/oBMBQjN6SSakyh7OiLZMdA)
+2. Click the “Manage” tab
+3. Scroll to the bottom of the page and click the “Uninstall” button
