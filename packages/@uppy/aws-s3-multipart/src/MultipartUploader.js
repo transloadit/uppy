@@ -18,6 +18,16 @@ const defaultOptions = {
   }
 }
 
+function ensureInt (value) {
+  if (typeof value === 'string') {
+    return parseInt(value, 10)
+  }
+  if (typeof value === 'number') {
+    return value
+  }
+  throw new TypeError('Expected a number')
+}
+
 class MultipartUploader {
   constructor (file, options) {
     this.options = {
@@ -120,8 +130,9 @@ class MultipartUploader {
 
       parts.forEach((part) => {
         const i = part.PartNumber - 1
+
         this.chunkState[i] = {
-          uploaded: part.Size,
+          uploaded: ensureInt(part.Size),
           etag: part.ETag,
           done: true
         }
@@ -248,7 +259,7 @@ class MultipartUploader {
   }
 
   _onPartProgress (index, sent, total) {
-    this.chunkState[index].uploaded = sent
+    this.chunkState[index].uploaded = ensureInt(sent)
 
     const totalUploaded = this.chunkState.reduce((n, c) => n + c.uploaded, 0)
     this.options.onProgress(totalUploaded, this.file.size)

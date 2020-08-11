@@ -73,12 +73,12 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] transloadit: remove `UPPY_SERVER` constant
 - [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
 
-## 1.22
+## 1.23
 
 - [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
 
-## 1.21
+## 1.22
 
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
@@ -92,14 +92,29 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default's store #320
 - [ ] provider: add Box (@ife)
-- [ ] plugins: audio/memo recording similar to Webcam #143 #198 (@arturi)
+- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
 - [ ] test: add typescript with JSDoc for @uppy/core https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files (@arturi)
 - [ ] core: add Vue.js wrapper component for the Dashboard (@arturi)
-- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi) (@arturi)
+- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
 - [ ] dashboard: fix Dashboard issues with Angular — it’s incredibly slow presumably because of ResizeObserver. (See #1613) (@arturi)
 - [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
+
+## 1.20.0
+
+Released: 2020-08-10
+
+- docs: make global companion install bash line copy-pasteable (#2438 / @goto-bus-stop)
+- @uppy/aws-s3-multipart: handle server returning numbers as strings (@goto-bus-stop)
+- @uppy/status-bar: specify default string for `retryUpload` (#2442 / @goto-bus-stop)
+- @uppy/core: adds minFileSize option (#2394 / @anthony0030)
+- website: various fixes (#2433 / @nqst)
+- test: re-enable Safari on Sauce (#2430 / @goto-bus-stop)
+- companion: make npm run test work on windows (#2399 / @goto-bus-stop)
+- dashboard: use correct strings on AddFiles UI (#2426 / @goto-bus-stop)
+- transloadit: fully disable Tus fingerprinting (#2425 / @goto-bus-stop)
+- website: enable zoom example conditionally + remove conditional instagram graph example (#2422 / @ifedapoolarewaju)
 
 ## 1.19.2
 

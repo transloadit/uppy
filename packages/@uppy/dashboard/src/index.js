@@ -246,7 +246,7 @@ module.exports = class Dashboard extends Plugin {
     const editors = this._getEditors(targets)
 
     return editors.some((target) => (
-      this.uppy.getPlugin(target.id).сanEditFile(file)
+      this.uppy.getPlugin(target.id).canEditFile(file)
     ))
   }
 
