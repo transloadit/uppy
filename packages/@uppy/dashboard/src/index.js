@@ -557,7 +557,16 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
 
-    // 1. Add a small (+) icon on drop
+    // 1. Check if the "type" of the datatransfer object includes files. If not, deny drop.
+    const types = event.dataTransfer.types
+    const hasFiles = types.find(type => type === 'Files')
+    if (!hasFiles) {
+      event.dataTransfer.dropEffect = 'none'
+      clearTimeout(this.removeDragOverClassTimeout)
+      return
+    }
+
+    // 2. Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the browser, https://github.com/transloadit/uppy/issues/1978)
     event.dataTransfer.dropEffect = 'copy'
 
