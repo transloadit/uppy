@@ -68,7 +68,7 @@ Configures the title / name shown in the UI, for instance, on Dashboard tabs. It
 
 ### `target: null`
 
-DOM element, CSS selector, or plugin to mount the Instagram provider into. This should normally be the Dashboard.
+DOM element, CSS selector, or plugin to mount the Instagram provider into. This should normally be the [`@uppy/dashboard`](/docs/dashboard) plugin.
 
 ### `companionUrl: null`
 
