@@ -72,6 +72,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
 - [ ] transloadit: remove `UPPY_SERVER` constant
 - [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
+- [ ] tus: remove `autoRetry` option (throw error at runtime if it is explicitly given)
 
 ## 1.23
 
