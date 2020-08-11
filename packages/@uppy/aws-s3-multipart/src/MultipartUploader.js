@@ -82,7 +82,7 @@ class MultipartUploader {
     const minChunkSize = Math.max(5 * MB, Math.ceil(this.file.size / 10000))
     const chunkSize = Math.max(desiredChunkSize, minChunkSize)
 
-    for (let i = 0; i < this.file.size; i += chunkSize) {
+    for (let i = 0; i <= this.file.size; i += chunkSize) {
       const end = Math.min(this.file.size, i + chunkSize)
       chunks.push(this.file.slice(i, end))
     }
