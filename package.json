@@ -3,10 +3,6 @@
   "name": "uppy-build",
   "version": "0.0.0",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
-  "lint-staged": {
-    "*.js": "eslint",
-    "*.md": "remark -f -q -i .gitignore"
-  },
   "remarkConfig": {
     "plugins": [
       "remark-lint-uppy"
@@ -17,7 +13,6 @@
       "path": "packages/uppy/index.js"
     }
   ],
-  "pre-commit": "lint:staged",
   "license": "MIT",
   "dependencies": {
     "@uppy-example/aws-companion": "file:examples/aws-companion",
@@ -177,7 +172,6 @@
     "pacote": "9.5.12",
     "postcss": "7.0.26",
     "postcss-safe-important": "1.2.0",
-    "pre-commit": "1.2.2",
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "redux": "4.0.5",
