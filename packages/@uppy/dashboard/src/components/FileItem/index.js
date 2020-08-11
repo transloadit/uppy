@@ -7,6 +7,24 @@ const FileInfo = require('./FileInfo')
 const Buttons = require('./Buttons')
 
 module.exports = class FileItem extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      speakers: 1
+    }
+  }
+
+  setSpeakers = (event) => {
+    this.setState({
+      speakers: event.target.value
+    });
+    var file = this.props.file;
+
+    this.props.setFileMeta(file.id, {
+      speakerCount: event.target.value
+    });
+  }
+
   shouldComponentUpdate (nextProps) {
     return !shallowEqual(this.props, nextProps)
   }
@@ -107,6 +125,15 @@ module.exports = class FileItem extends Component {
             log={this.props.log}
             info={this.props.info}
           />
+          <div class="uppy-DropDown-SpeakerCount">
+            <select class="uppy-Dropdown-SpeakerCount-Select" value={this.state.speakers} onChange={this.setSpeakers}>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
         </div>
       </div>
     )

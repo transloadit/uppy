@@ -56,6 +56,7 @@ module.exports = (props) => {
     // callbacks
     retryUpload: props.retryUpload,
     pauseUpload: props.pauseUpload,
+    setFileMeta: props.uppy.setFileMeta,
     cancelUpload: props.cancelUpload,
     toggleFileCard: props.toggleFileCard,
     removeFile: props.removeFile,

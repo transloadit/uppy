@@ -5,6 +5,9 @@ const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const Uploader = require('./MultipartUploader')
+const firebase = require('firebase/app');
+require('firebase/auth');
+const auth = firebase.auth()
 
 function assertServerError (res) {
   if (res && res.error) {
@@ -75,7 +78,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     }
   }
 
-  createMultipartUpload (file) {
+  async createMultipartUpload (file) {
     this.assertHost('createMultipartUpload')
 
     const metadata = {}
@@ -86,8 +89,10 @@ module.exports = class AwsS3Multipart extends Plugin {
       }
     })
 
+    const idToken = await auth.currentUser.getIdToken(true);
     return this.client.post('s3/multipart', {
       filename: file.name,
+      idToken,
       type: file.type,
       metadata
     }).then(assertServerError)

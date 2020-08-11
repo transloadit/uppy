@@ -10,7 +10,7 @@ const uploadStates = {
   STATE_PAUSED: 'paused'
 }
 
-function getUploadingState (isAllErrored, isAllComplete, isAllPaused, files = {}) {
+function getUploadingState(isAllErrored, isAllComplete, isAllPaused, files = {}) {
   if (isAllErrored) {
     return uploadStates.STATE_ERROR
   }
@@ -45,7 +45,7 @@ function getUploadingState (isAllErrored, isAllComplete, isAllPaused, files = {}
   return state
 }
 
-function UploadStatus (props) {
+function UploadStatus(props) {
   const uploadingState = getUploadingState(
     props.isAllErrored,
     props.isAllComplete,
@@ -68,7 +68,7 @@ function UploadStatus (props) {
   }
 }
 
-function PanelTopBar (props) {
+function PanelTopBar(props) {
   let allowNewUpload = props.allowNewUpload
   // TODO maybe this should be done in ../index.js, then just pass that down as `allowNewUpload`
   if (allowNewUpload && props.maxNumberOfFiles) {
@@ -86,29 +86,31 @@ function PanelTopBar (props) {
           {props.i18n('cancel')}
         </button>
       ) : (
-        <div />
-      )}
+          <div />
+        )}
 
       <div class="uppy-DashboardContent-title" role="heading" aria-level="1">
         <UploadStatus {...props} />
       </div>
-
-      {allowNewUpload ? (
-        <button
-          class="uppy-DashboardContent-addMore"
-          type="button"
-          aria-label={props.i18n('addMoreFiles')}
-          title={props.i18n('addMoreFiles')}
-          onclick={() => props.toggleAddFilesPanel(true)}
-        >
-          <svg aria-hidden="true" focusable="false" class="uppy-c-icon" width="15" height="15" viewBox="0 0 15 15">
-            <path d="M8 6.5h6a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5H8v6a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V8h-6a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5h6v-6A.5.5 0 0 1 7 0h.5a.5.5 0 0 1 .5.5v6z" />
-          </svg>
-          <span class="uppy-DashboardContent-addMoreCaption">{props.i18n('addMore')}</span>
-        </button>
-      ) : (
-        <div />
-      )}
+      <div className="uppy-topBarRightContainer">
+        <div className="uppy-SpeakerCount">Speaker Count</div>
+        {allowNewUpload ? (
+          <button
+            class="uppy-DashboardContent-addMore"
+            type="button"
+            aria-label={props.i18n('addMoreFiles')}
+            title={props.i18n('addMoreFiles')}
+            onclick={() => props.toggleAddFilesPanel(true)}
+          >
+            <svg aria-hidden="true" focusable="false" class="uppy-c-icon" width="15" height="15" viewBox="0 0 15 15">
+              <path d="M8 6.5h6a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5H8v6a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V8h-6a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5h6v-6A.5.5 0 0 1 7 0h.5a.5.5 0 0 1 .5.5v6z" />
+            </svg>
+            <span class="uppy-DashboardContent-addMoreCaption">{props.i18n('addMore')}</span>
+          </button>
+        ) : (
+            <div />
+          )}
+      </div>
     </div>
   )
 }
