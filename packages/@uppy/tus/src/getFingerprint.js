@@ -1,7 +1,5 @@
 const tus = require('tus-js-client')
 
-const defaultFingerprint = tus.defaultOptions.fingerprint
-
 function isCordova () {
   return typeof window !== 'undefined' && (
     typeof window.PhoneGap !== 'undefined' ||
@@ -27,7 +25,7 @@ function isReactNative () {
 module.exports = function getFingerprint (uppyFileObj) {
   return function (file, options) {
     if (isCordova() || isReactNative()) {
-      return defaultFingerprint(file, options)
+      return tus.defaultOptions.fingerprint(file, options)
     }
 
     const uppyFingerprint = [
