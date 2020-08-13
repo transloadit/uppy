@@ -1,5 +1,5 @@
 {
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "extends": ["standard", "standard-jsx"],
   "env": {
     "browser": true,
@@ -10,7 +10,7 @@
     "window": true,
     "hexo": true
   },
-  "plugins": ["jest", "compat", "jsdoc"],
+  "plugins": ["jest", "compat", "jsdoc", "@babel/eslint-plugin"],
   "rules": {
     "jsx-quotes": ["error", "prefer-double"],
     "compat/compat": ["error"],
