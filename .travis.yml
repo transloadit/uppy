@@ -34,14 +34,14 @@ jobs:
     - name: 'Run unit tests'
       node_js: 14
       script: npm run test:unit
-    - name: 'Run unit tests on Node.js 10'
+    - name: 'Run unit tests (Node.js 10)'
       node_js: 10
       script: npm run test:unit
-    - name: 'Run Linting'
+    - name: 'Run linting'
       node_js: 12
       script:
         - npm run lint
-    - name: 'Run Markdown Linting'
+    - name: 'Run Markdown linting'
       node_js: 12
       script:
         - npm run lint:markdown
