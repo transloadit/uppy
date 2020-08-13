@@ -25,7 +25,7 @@ function isReactNative () {
 module.exports = function getFingerprint (uppyFileObj) {
   return function (file, options) {
     if (isCordova() || isReactNative()) {
-      return tus.Upload.defaultOptions.fingerprint(file, options)
+      return tus.defaultOptions.fingerprint(file, options)
     }
 
     const uppyFingerprint = [
