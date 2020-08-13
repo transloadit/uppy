@@ -106,6 +106,16 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 Released: 2020-08-13
 
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.4 | @uppy/provider-views | 1.7.3 |
+| @uppy/dashboard | 1.12.4 | @uppy/react | 1.10.4 |
+| @uppy/dropbox | 1.4.12 | @uppy/robodog | 1.9.4 |
+| @uppy/facebook | 1.1.12 | @uppy/transloadit | 1.6.7 |
+| @uppy/google-drive | 1.5.12 | @uppy/tus | 1.7.4 |
+| @uppy/instagram | 1.4.12 | @uppy/zoom | 0.1.1 |
+| @uppy/onedrive | 1.1.12 | uppy | 1.20.1 |
+
 - @uppy/aws-s3-multipart: enable uploading zero-sized files (#2451 / @vedran555)
 - @uppy/provider-views: fix incorrect files added count when adding folders (#2439 / @ajkachnic)
 - @uppy/transloadit: add auth.expires type (#2457 / @just-mitch, @goto-bus-stop)
