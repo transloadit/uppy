@@ -102,9 +102,23 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 
+## 1.20.1
+
+Released: 2020-08-13
+
+- @uppy/aws-s3-multipart: enable uploading zero-sized files (#2451 / @vedran555)
+- @uppy/provider-views: fix incorrect files added count when adding folders (#2439 / @ajkachnic)
+- @uppy/transloadit: add auth.expires type (#2457 / @just-mitch, @goto-bus-stop)
+- @uppy/tus: docs-deprecate autoRetry (#2347 / @goto-bus-stop)
+- @uppy/tus: fix fallback to default `fingerprint` implementation (#2456 / @Acconut, @goto-bus-stop)
+- docs: add add-on section to Zoom docs (#2452 / @ifedapoolarewaju)
+- docs: add documentation for zoom plugin (#2448 / @ifedapoolarewaju)
+
 ## 1.20.0
 
 Released: 2020-08-10
+
+This release fixes the localized text on the Dashboard (again), fixes an issue when repeatedly uploading the same file using the Transloadit plugin, and adds a new restriction, `minFileSize`, thanks to @anthony0030!
 
 | Package | Version | Package | Version |
 |-|-|-|-|
@@ -115,16 +129,16 @@ Released: 2020-08-10
 | @uppy/image-editor | 0.1.4 | uppy | 1.20.0 |
 | @uppy/locales | 1.16.4 | - | - |
 
-- docs: make global companion install bash line copy-pasteable (#2438 / @goto-bus-stop)
 - @uppy/aws-s3-multipart: handle server returning numbers as strings (@goto-bus-stop)
-- @uppy/status-bar: specify default string for `retryUpload` (#2442 / @goto-bus-stop)
+- @uppy/companion: make npm run test work on windows (#2399 / @goto-bus-stop)
 - @uppy/core: adds minFileSize option (#2394 / @anthony0030)
-- website: various fixes (#2433 / @nqst)
+- @uppy/dashboard: use correct strings on AddFiles UI (#2426 / @goto-bus-stop)
+- @uppy/status-bar: specify default string for `retryUpload` (#2442 / @goto-bus-stop)
+- @uppy/transloadit: fully disable Tus fingerprinting (#2425 / @goto-bus-stop)
+- docs: make global companion install bash line copy-pasteable (#2438 / @goto-bus-stop)
 - test: re-enable Safari on Sauce (#2430 / @goto-bus-stop)
-- companion: make npm run test work on windows (#2399 / @goto-bus-stop)
-- dashboard: use correct strings on AddFiles UI (#2426 / @goto-bus-stop)
-- transloadit: fully disable Tus fingerprinting (#2425 / @goto-bus-stop)
 - website: enable zoom example conditionally + remove conditional instagram graph example (#2422 / @ifedapoolarewaju)
+- website: various fixes (#2433 / @nqst)
 
 ## 1.19.2
 
