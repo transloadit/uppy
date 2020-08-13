@@ -20,7 +20,7 @@ for t in $tests; do
   cp "${__root}/test/endtoend/$t/index.html" "${__root}/test/endtoend/$t/dist"
   browserify "${__root}/test/endtoend/$t/main.js" \
     -o "${__root}/test/endtoend/$t/dist/bundle.js" \
-    -t envify \
+    -t @goto-bus-stop/envify \
     -t babelify
 done
 
@@ -33,5 +33,5 @@ pushd "${__root}/test/endtoend/typescript"
   mkdir -p dist
   cp "${__root}/packages/uppy/dist/uppy.min.css" dist/
   cp index.html dist/
-  browserify main.ts -t envify -p [ tsify --target ES3 ] -o dist/bundle.js
+  browserify main.ts -t @goto-bus-stop/envify -p [ tsify --target ES3 ] -o dist/bundle.js
 popd
