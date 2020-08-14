@@ -5,6 +5,7 @@ const uuid = require('uuid')
 const isObject = require('isobject')
 const validator = require('validator')
 const request = require('request')
+const FormData = require('form-data')
 const emitter = require('./emitter')
 const serializeError = require('serialize-error')
 const { jsonStringify, hasMatch } = require('./helpers/utils')
@@ -471,54 +472,59 @@ class Uploader {
     const headers = headerSanitize(this.options.headers)
     const reqOptions = { url: this.options.endpoint, headers, encoding: null }
     if (this.options.useFormData) {
-      reqOptions.formData = Object.assign(
-        {},
-        this.options.metadata,
-        {
-          [this.options.fieldname]: {
-            value: file,
-            options: {
-              filename: this.uploadFileName,
-              contentType: this.options.metadata.type
-            }
-          }
+      const form = new FormData()
+      for (const property in this.options.metadata) {
+        form.append(property, this.options.metadata[property])
+      }
+      form.append('file', file)
+      form.getLength((error, length) => {
+        if (error) {
+          logger.error(error, 'upload.multipart.error')
         }
-      )
+        reqOptions.headers['content-length'] = length
+        const req = request[httpMethod](reqOptions, (error, response, body) => this._handleUploadMultipart(error, response, body, bytesUploaded))
+        // @ts-ignore
+        req._form = form
+      })
     } else {
+      const stats = fs.statSync(this.path)
+      const fileSizeInBytes = stats.size
+      reqOptions.headers['content-length'] = fileSizeInBytes
       reqOptions.body = file
+      request[httpMethod](reqOptions, (error, response, body) => this._handleUploadMultipart(error, response, body, bytesUploaded))
+    }
+  }
+
+  _handleUploadMultipart (error, response, body, bytesUploaded) {
+    if (error) {
+      logger.error(error, 'upload.multipart.error')
+      this.emitError(error)
+      return
+    }
+    const headers = response.headers
+    // remove browser forbidden headers
+    delete headers['set-cookie']
+    delete headers['set-cookie2']
+
+    const respObj = {
+      responseText: body.toString(),
+      status: response.statusCode,
+      statusText: response.statusMessage,
+      headers
     }
 
-    request[httpMethod](reqOptions, (error, response, body) => {
-      if (error) {
-        logger.error(error, 'upload.multipart.error')
-        this.emitError(error)
-        return
-      }
-      const headers = response.headers
-      // remove browser forbidden headers
-      delete headers['set-cookie']
-      delete headers['set-cookie2']
+    if (response.statusCode >= 400) {
+      logger.error(`upload failed with status: ${response.statusCode}`, 'upload.multipart.error')
+      this.emitError(new Error(response.statusMessage), respObj)
+    } else if (bytesUploaded !== this.bytesWritten && bytesUploaded !== this.options.size) {
+      const errMsg = `uploaded only ${bytesUploaded} of ${this.bytesWritten} with status: ${response.statusCode}`
+      logger.error(errMsg, 'upload.multipart.mismatch.error')
+      this.emitError(new Error(errMsg))
+    } else {
+      this.emitSuccess(null, { response: respObj })
+    }
 
-      const respObj = {
-        responseText: body.toString(),
-        status: response.statusCode,
-        statusText: response.statusMessage,
-        headers
-      }
-
-      if (response.statusCode >= 400) {
-        logger.error(`upload failed with status: ${response.statusCode}`, 'upload.multipart.error')
-        this.emitError(new Error(response.statusMessage), respObj)
-      } else if (bytesUploaded !== this.bytesWritten && bytesUploaded !== this.options.size) {
-        const errMsg = `uploaded only ${bytesUploaded} of ${this.bytesWritten} with status: ${response.statusCode}`
-        logger.error(errMsg, 'upload.multipart.mismatch.error')
-        this.emitError(new Error(errMsg))
-      } else {
-        this.emitSuccess(null, { response: respObj })
-      }
-
-      this.cleanUp()
-    })
+    this.cleanUp()
   }
 
   /**
