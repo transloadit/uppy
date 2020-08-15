@@ -72,6 +72,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
 - [ ] transloadit: remove `UPPY_SERVER` constant
 - [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
+- [ ] tus: remove `autoRetry` option (throw error at runtime if it is explicitly given)
 
 ## 1.23
 
@@ -101,20 +102,53 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 
+## 1.20.1
+
+Released: 2020-08-13
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.4 | @uppy/provider-views | 1.7.3 |
+| @uppy/dashboard | 1.12.4 | @uppy/react | 1.10.4 |
+| @uppy/dropbox | 1.4.12 | @uppy/robodog | 1.9.4 |
+| @uppy/facebook | 1.1.12 | @uppy/transloadit | 1.6.7 |
+| @uppy/google-drive | 1.5.12 | @uppy/tus | 1.7.4 |
+| @uppy/instagram | 1.4.12 | @uppy/zoom | 0.1.1 |
+| @uppy/onedrive | 1.1.12 | uppy | 1.20.1 |
+
+- @uppy/aws-s3-multipart: enable uploading zero-sized files (#2451 / @vedran555)
+- @uppy/provider-views: fix incorrect files added count when adding folders (#2439 / @ajkachnic)
+- @uppy/transloadit: add auth.expires type (#2457 / @just-mitch, @goto-bus-stop)
+- @uppy/tus: docs-deprecate autoRetry (#2347 / @goto-bus-stop)
+- @uppy/tus: fix fallback to default `fingerprint` implementation (#2456 / @Acconut, @goto-bus-stop)
+- docs: add add-on section to Zoom docs (#2452 / @ifedapoolarewaju)
+- docs: add documentation for zoom plugin (#2448 / @ifedapoolarewaju)
+
 ## 1.20.0
 
 Released: 2020-08-10
 
-- docs: make global companion install bash line copy-pasteable (#2438 / @goto-bus-stop)
+This release fixes the localized text on the Dashboard (again), fixes an issue when repeatedly uploading the same file using the Transloadit plugin, and adds a new restriction, `minFileSize`, thanks to @anthony0030!
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.3 | @uppy/react | 1.10.3 |
+| @uppy/companion | 2.0.0-alpha.10 | @uppy/robodog | 1.9.3 |
+| @uppy/core | 1.13.0 | @uppy/status-bar | 1.7.4 |
+| @uppy/dashboard | 1.12.3 | @uppy/transloadit | 1.6.6 |
+| @uppy/image-editor | 0.1.4 | uppy | 1.20.0 |
+| @uppy/locales | 1.16.4 | - | - |
+
 - @uppy/aws-s3-multipart: handle server returning numbers as strings (@goto-bus-stop)
-- @uppy/status-bar: specify default string for `retryUpload` (#2442 / @goto-bus-stop)
+- @uppy/companion: make npm run test work on windows (#2399 / @goto-bus-stop)
 - @uppy/core: adds minFileSize option (#2394 / @anthony0030)
-- website: various fixes (#2433 / @nqst)
+- @uppy/dashboard: use correct strings on AddFiles UI (#2426 / @goto-bus-stop)
+- @uppy/status-bar: specify default string for `retryUpload` (#2442 / @goto-bus-stop)
+- @uppy/transloadit: fully disable Tus fingerprinting (#2425 / @goto-bus-stop)
+- docs: make global companion install bash line copy-pasteable (#2438 / @goto-bus-stop)
 - test: re-enable Safari on Sauce (#2430 / @goto-bus-stop)
-- companion: make npm run test work on windows (#2399 / @goto-bus-stop)
-- dashboard: use correct strings on AddFiles UI (#2426 / @goto-bus-stop)
-- transloadit: fully disable Tus fingerprinting (#2425 / @goto-bus-stop)
 - website: enable zoom example conditionally + remove conditional instagram graph example (#2422 / @ifedapoolarewaju)
+- website: various fixes (#2433 / @nqst)
 
 ## 1.19.2
 

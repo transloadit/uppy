@@ -101,7 +101,7 @@ Title / name shown in the UI, such as Dashboard tabs. It defaults to `'Dropbox'`
 
 ### `target: null`
 
-DOM element, CSS selector, or plugin to mount the Dropbox provider into. This should normally be the Dashboard.
+DOM element, CSS selector, or plugin to mount the Dropbox provider into. This should normally be the [`@uppy/dashboard`](/docs/dashboard) plugin.
 
 ### `companionUrl: null`
 

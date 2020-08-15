@@ -240,6 +240,8 @@ module.exports = class Webcam extends Plugin {
   }
 
   _startRecording () {
+    // only used if supportsMediaRecorder() returned true
+    // eslint-disable-next-line compat/compat
     this.recorder = new MediaRecorder(this.stream, this._getMediaRecorderOptions())
     this.recordingChunks = []
     let stoppingBecauseOfMaxSize = false
