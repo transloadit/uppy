@@ -12,6 +12,7 @@ const GET_LIST_PATH = '/users/me/recordings'
 const GET_USER_PATH = '/users/me'
 const PAGE_SIZE = 300
 const DEFAULT_RANGE_MOS = 23
+const DEAUTH_EVENT_NAME = 'app_deauthorized'
 
 /**
  * Adapter for API https://marketplace.zoom.us/docs/api-reference/zoom-api
@@ -242,8 +243,7 @@ class Zoom extends Provider {
   }
 
   logout ({ companion, token }, done) {
-    const key = companion.options.providerOptions.zoom.key
-    const secret = companion.options.providerOptions.zoom.secret
+    const { key, secret } = companion.options.providerOptions.zoom
     const encodedAuth = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
 
     return this.client
@@ -261,6 +261,44 @@ class Zoom extends Provider {
           return
         }
         done(null, { revoked: (body || {}).status === 'success' })
+      })
+  }
+
+  deauthorizationCallback ({ companion, body, headers }, done) {
+    if (!body || body.event !== DEAUTH_EVENT_NAME) {
+      return done(null, {}, 400)
+    }
+
+    const { verificationToken } = companion.options.providerOptions.zoom.custom
+    const tokenSupplied = headers.authorization
+    if (!tokenSupplied || verificationToken !== tokenSupplied) {
+      return done(null, {}, 400)
+    }
+
+    const { key, secret } = companion.options.providerOptions.zoom
+    const encodedAuth = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
+
+    this.client
+      .post('https://api.zoom.us/oauth/data/compliance')
+      .options({
+        headers: {
+          Authorization: `Basic ${encodedAuth}`
+        }
+      })
+      .json({
+        client_id: key,
+        user_id: body.payload.user_id,
+        account_id: body.payload.account_id,
+        deauthorization_event_received: body.payload,
+        compliance_completed: true
+      })
+      .request((err, resp) => {
+        if (err || resp.statusCode !== 200) {
+          logger.error(err, 'provider.zoom.deauth.error')
+          done(this._error(err, resp))
+          return
+        }
+        done(null, {})
       })
   }
 
