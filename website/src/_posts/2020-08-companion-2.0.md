@@ -9,7 +9,7 @@ Companion 2.0 is here! 🎉 After maintaining and improving the 1.x series for o
 
 ## Node >= v10
 
-As you must have heard, Node v8.x has reached EOL, and in turn Companion 2.0 drops support for Node v6.x, Node v8.x and now requires that you run at least Node v10.x.
+Node.js 8.x has reached End-of-life, and in turn Companion 2.0 drops support for Node.js 6.x, Node.js 8.x and now requires that you run at least Node.js 10.x.
 
 ## Renamed Provider Options
 
