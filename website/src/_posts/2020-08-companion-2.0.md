@@ -21,7 +21,7 @@ On the journey to have more consistent naming with the providers (mentioned abov
 
 ## Compatibility with Uppy 1.x client
 
-Compannion 2.0 is compatible with any Uppy 1.x version, so you don't have to worry what Companion version a server may be runnning before using your Uppy client with it.
+Companion 2.0 is compatible with any Uppy 1.x version, so you don't have to worry what Companion version a server may be runnning before using your Uppy client with it.
 
 ## Migrating from Companion 1.x to 2.x
 
