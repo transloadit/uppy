@@ -269,7 +269,7 @@ class Zoom extends Provider {
       return done(null, {}, 400)
     }
 
-    const { verificationToken } = companion.options.providerOptions.zoom.custom
+    const { verificationToken } = companion.options.providerOptions.zoom
     const tokenSupplied = headers.authorization
     if (!tokenSupplied || verificationToken !== tokenSupplied) {
       return done(null, {}, 400)
