@@ -84,7 +84,7 @@ describe('Test Provider options', () => {
     expect(grantConfig.google.secret).toBe('elgoog')
     expect(grantConfig.instagram.secret).toBe('margatsni')
     expect(grantConfig.zoom.secret).toBe('u8Z5ceq')
-    expect(companionOptions.providerOptions.zoom.custom.verificationToken).toBe('o0u8Z5c')
+    expect(companionOptions.providerOptions.zoom.verificationToken).toBe('o0u8Z5c')
   })
 
   test('does not add provider options if protocol and host are not set', () => {
