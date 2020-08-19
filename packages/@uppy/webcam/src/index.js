@@ -147,7 +147,15 @@ module.exports = class Webcam extends Plugin {
   }
 
   setOptions (newOpts) {
-    super.setOptions(newOpts)
+    super.setOptions({
+      ...newOpts,
+      videoConstraints: {
+        // May be undefined but ... handles that
+        ...this.opts.videoConstraints,
+        ...newOpts?.videoConstraints
+      }
+    })
+
     this.i18nInit()
   }
 
@@ -175,9 +183,13 @@ module.exports = class Webcam extends Plugin {
       this.opts.modes.indexOf('video-only') !== -1 ||
       this.opts.modes.indexOf('picture') !== -1
 
+    const videoConstraints = this.opts.videoConstraints ?? {
+      facingMode: this.opts.facingMode
+    }
+
     return {
       audio: acceptsAudio,
-      video: acceptsVideo ? { facingMode: this.opts.facingMode } : false
+      video: acceptsVideo ? videoConstraints : false
     }
   }
 
@@ -204,8 +216,10 @@ module.exports = class Webcam extends Plugin {
         })
         .catch((err) => {
           this.setPluginState({
+            cameraReady: false,
             cameraError: err
           })
+          this.uppy.info(err.message, 'error')
         })
     })
   }
@@ -322,12 +336,14 @@ module.exports = class Webcam extends Plugin {
   }
 
   _stop () {
-    this.stream.getAudioTracks().forEach((track) => {
-      track.stop()
-    })
-    this.stream.getVideoTracks().forEach((track) => {
-      track.stop()
-    })
+    if (this.stream) {
+      this.stream.getAudioTracks().forEach((track) => {
+        track.stop()
+      })
+      this.stream.getVideoTracks().forEach((track) => {
+        track.stop()
+      })
+    }
     this.webcamActive = false
     this.stream = null
   }
