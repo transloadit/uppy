@@ -17,7 +17,7 @@ Pre 2.0 there were inconsistencies in relation to the Provider names. In some pl
 
 ## Changed Redirect URIs
 
-On the journey to have more consistent naming with the providers (mentioned above), we have made changes to the redirect URIs that is supplied during the OAuth process. For example, for Google Drive, the old redirect URI was of the form `https://mycompanionwebsite.tld/connect/google/callback`. In Companion 2.0, this is now changed to `https://mycompanionwebsite.tld/drive/redirect`. This is a Breaking Change and it means you would need to make these corresponding changes to your redirect URIs on your Providers' API Dashboards.
+Still on consistent naming, we have made some changes to the redirect URIs supplied during the OAuth process. For example, for Google Drive, the old redirect URI was of the form `https://mycompanionwebsite.tld/connect/google/callback`. In Companion 2.0, this is now changed to `https://mycompanionwebsite.tld/drive/redirect`. This is a Breaking Change and it means you would need to make these corresponding changes to your redirect URIs on your Providers' API Dashboards.
 
 ## Compatibility with Uppy 1.x client
 
