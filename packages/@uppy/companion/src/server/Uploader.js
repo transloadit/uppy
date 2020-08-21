@@ -487,7 +487,7 @@ class Uploader {
           return
         }
         reqOptions.headers['content-length'] = length
-        const req = request[httpMethod](reqOptions, (error, response, body) => this._handleUploadMultipart(error, response, body, bytesUploaded))
+        const req = request[httpMethod](reqOptions, (error, response, body) => this._onMultipartComplete(error, response, body, bytesUploaded))
         // @ts-ignore
         req._form = form
       })
@@ -496,11 +496,11 @@ class Uploader {
       const fileSizeInBytes = stats.size
       reqOptions.headers['content-length'] = fileSizeInBytes
       reqOptions.body = file
-      request[httpMethod](reqOptions, (error, response, body) => this._handleUploadMultipart(error, response, body, bytesUploaded))
+      request[httpMethod](reqOptions, (error, response, body) => this._onMultipartComplete(error, response, body, bytesUploaded))
     }
   }
 
-  _handleUploadMultipart (error, response, body, bytesUploaded) {
+  _onMultipartComplete (error, response, body, bytesUploaded) {
     if (error) {
       logger.error(error, 'upload.multipart.error')
       this.emitError(error)
