@@ -476,10 +476,15 @@ class Uploader {
       for (const property in this.options.metadata) {
         form.append(property, this.options.metadata[property])
       }
-      form.append('file', file)
+      form.append(this.options.fieldname, file, {
+        filename: this.uploadFileName,
+        contentType: this.options.metadata.type
+      })
       form.getLength((error, length) => {
         if (error) {
-          logger.error(error, 'upload.multipart.error')
+          logger.error(error, 'upload.multipart.size.error')
+          this.emitError(error)
+          return
         }
         reqOptions.headers['content-length'] = length
         const req = request[httpMethod](reqOptions, (error, response, body) => this._handleUploadMultipart(error, response, body, bytesUploaded))
