@@ -5,7 +5,9 @@ author: ife
 published: false
 ---
 
-Companion 2.0 is here! 🎉 After maintaining and improving the 1.x series for over a year, we're releasing a Major version bump on the Companion package. So what are the changes you'd expect to see on Companion 2.0?
+Companion 2.0 is here! 🎉 After maintaining and improving the 1.x series for over a year, we're releasing a Major version bump on the Companion package. Why you ask? Well, the drive on this release is mainly towards fixing some terminology inconsistencies and aligning with Node.js LTS to ease the maintenance burden.
+
+So what are the changes you'd expect to see on Companion 2.0?
 
 ## Node >= v10
 
