@@ -180,7 +180,10 @@ class MultipartUploader {
     }
 
     candidates.forEach((index) => {
-      this._uploadPartRetryable(index).catch((err) => {
+      this._uploadPartRetryable(index).then(() => {
+        // Continue uploading parts
+        this._uploadParts()
+      }, (err) => {
         this._onError(err)
       })
     })
@@ -281,8 +284,6 @@ class MultipartUploader {
     this.parts.push(part)
 
     this.options.onPartComplete(part)
-
-    this._uploadParts()
   }
 
   _uploadPartBytes (index, url, headers) {
