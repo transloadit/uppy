@@ -74,6 +74,7 @@ const XHRUpload = require('@uppy/xhr-upload')
 const Dashboard = require('@uppy/dashboard')
 
 // And their styles (for UI plugins)
+// With webpack and `style-loader`, you can require them like this:
 require('@uppy/core/dist/style.css')
 require('@uppy/dashboard/dist/style.css')
  
@@ -103,6 +104,10 @@ import Uppy, { XHRUpload, DragDrop } from 'uppy'
 ```
 
 And add the `uppy/dist/uppy.min.css` file to your page.
+
+#### SCSS
+
+If you are using SCSS in your project, you can include the Uppy SCSS source files, instead of using our prebuilt CSS. Uppy's SCSS files do assume Node.js-style resolution for `@import`s, so you may need to [configure a resolver](https://github.com/transloadit/uppy/issues/2296#issuecomment-640649513).
 
 ### With a script tag
 
