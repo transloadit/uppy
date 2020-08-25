@@ -102,6 +102,29 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 
+## 1.20.2
+
+Released: 2020-08-17
+
+This release adds a `deauthorization callback` endpoint to Companion
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.5 | @uppy/provider-views | 1.7.4 |
+| @uppy/companion | 2.0.0-alpha.11 | @uppy/react | 1.10.5 |
+| @uppy/core | 1.13.1 | @uppy/robodog | 1.9.5 |
+| @uppy/dashboard | 1.12.5 | @uppy/screen-capture | 1.0.7 |
+| @uppy/dropbox | 1.4.13 | @uppy/status-bar | 1.7.5 |
+| @uppy/facebook | 1.1.13 | @uppy/thumbnail-generator | 1.6.6 |
+| @uppy/google-drive | 1.5.13 | @uppy/transloadit | 1.6.8 |
+| @uppy/image-editor | 0.1.5 | @uppy/tus | 1.7.5 |
+| @uppy/instagram | 1.4.13 | @uppy/webcam | 1.6.11 |
+| @uppy/locales | 1.16.5 | @uppy/zoom | 0.1.2 |
+| @uppy/onedrive | 1.1.13 | uppy | 1.20.2 |
+
+- @uppy/companion: remove ouath scopes for zoom (#2464 / @ifedapoolarewaju)
+- @uppy/companion: add deauthorization callback endpoint (#2470 / @ifedapoolarewaju)
+
 ## 1.20.1
 
 Released: 2020-08-13
@@ -176,6 +199,11 @@ This mostly introduces patches to accommodate for the new `@uppy/zoom` plugin! ð
 | @uppy/instagram | 1.4.11 | @uppy/xhr-upload | 1.6.3 |
 | @uppy/locales | 1.16.3 | @uppy/zoom | 0.1.0 |
 | @uppy/onedrive | 1.1.11 | uppy | 1.19.2 |
+
+- @uppy/utils: Add support for AVIF images in thumbnails (#2406 / @ajkachnic)
+- @uppy/companion,@uppy/zoom: add implementation for Zoom plugin and Zoom Provider (#2342 / @mokutsu-coursera, @goto-bus-stop)
+- @uppy/companion: fix zoom logout endpoint (#2414 / @ifedapoolarewaju)
+- @uppy/companion: add extensions to zoom file names (#2415 / @ifedapoolarewaju)
 
 ## 1.19.1
 

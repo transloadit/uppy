@@ -82,16 +82,8 @@ jobs:
       services:
         - docker
       script:
-        - nvm install 10.0.0
-        - nvm use 10.0.0
-        - npm run test:companion
-    - name: 'Run Companion tests (Node.js 8)'
-      node_js: 12
-      services:
-        - docker
-      script:
-        - nvm install 8.16.0
-        - nvm use 8.16.0
+        - nvm install 10.20.1
+        - nvm use 10.20.1
         - npm run test:companion
     # Build the website when things are merged to master
     # https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
