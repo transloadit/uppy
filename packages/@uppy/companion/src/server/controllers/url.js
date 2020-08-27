@@ -84,6 +84,10 @@ const get = (req, res) => {
  * @param {boolean} debug whether the server is running in debug mode
  */
 const validateURL = (url, debug) => {
+  if (!url) {
+    return false
+  }
+
   const validURLOpts = {
     protocols: ['http', 'https'],
     require_protocol: true,
