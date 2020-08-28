@@ -492,11 +492,18 @@ class Uploader {
         req._form = form
       })
     } else {
-      const stats = fs.statSync(this.path)
-      const fileSizeInBytes = stats.size
-      reqOptions.headers['content-length'] = fileSizeInBytes
-      reqOptions.body = file
-      request[httpMethod](reqOptions, (error, response, body) => this._onMultipartComplete(error, response, body, bytesUploaded))
+      fs.stat(this.path, (err, stats) => {
+        if (err) {
+          logger.error(err, 'upload.multipart.size.error')
+          this.emitError(err)
+          return
+        }
+
+        const fileSizeInBytes = stats.size
+        reqOptions.headers['content-length'] = fileSizeInBytes
+        reqOptions.body = file
+        request[httpMethod](reqOptions, (error, response, body) => this._onMultipartComplete(error, response, body, bytesUploaded))
+      })
     }
   }
 
