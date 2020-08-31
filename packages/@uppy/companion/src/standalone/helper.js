@@ -13,8 +13,8 @@ const { version } = require('../../package.json')
  *
  * @returns {object}
  */
-exports.getCompanionOptions = () => {
-  return merge({}, getConfigFromEnv(), getConfigFromFile())
+exports.getCompanionOptions = (options = {}) => {
+  return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
 }
 
 /**
