@@ -5,7 +5,6 @@ const uuid = require('uuid')
 const isObject = require('isobject')
 const validator = require('validator')
 const request = require('request')
-const FormData = require('form-data')
 const emitter = require('./emitter')
 const serializeError = require('serialize-error')
 const { jsonStringify, hasMatch } = require('./helpers/utils')
@@ -471,25 +470,24 @@ class Uploader {
     const httpMethod = (this.options.httpMethod || '').toLowerCase() === 'put' ? 'put' : 'post'
     const headers = headerSanitize(this.options.headers)
     const reqOptions = { url: this.options.endpoint, headers, encoding: null }
+    const httpRequest = request[httpMethod]
     if (this.options.useFormData) {
-      const form = new FormData()
-      for (const property in this.options.metadata) {
-        form.append(property, this.options.metadata[property])
-      }
-      form.append(this.options.fieldname, file, {
-        filename: this.uploadFileName,
-        contentType: this.options.metadata.type
-      })
-      form.getLength((error, length) => {
-        if (error) {
-          logger.error(error, 'upload.multipart.size.error')
-          this.emitError(error)
-          return
+      reqOptions.formData = Object.assign(
+        {},
+        this.options.metadata,
+        {
+          [this.options.fieldname]: {
+            value: file,
+            options: {
+              filename: this.uploadFileName,
+              contentType: this.options.metadata.type
+            }
+          }
         }
-        reqOptions.headers['content-length'] = length
-        const req = request[httpMethod](reqOptions, (error, response, body) => this._onMultipartComplete(error, response, body, bytesUploaded))
-        // @ts-ignore
-        req._form = form
+      )
+
+      httpRequest(reqOptions, (error, response, body) => {
+        this._onMultipartComplete(error, response, body, bytesUploaded)
       })
     } else {
       fs.stat(this.path, (err, stats) => {
@@ -502,7 +500,9 @@ class Uploader {
         const fileSizeInBytes = stats.size
         reqOptions.headers['content-length'] = fileSizeInBytes
         reqOptions.body = file
-        request[httpMethod](reqOptions, (error, response, body) => this._onMultipartComplete(error, response, body, bytesUploaded))
+        httpRequest(reqOptions, (error, response, body) => {
+          this._onMultipartComplete(error, response, body, bytesUploaded)
+        })
       })
     }
   }
