@@ -35,33 +35,56 @@
   transform: scaleX(-1);
 }
 
+.uppy-Webcam-footer {
+  width: 100%;
+  min-height: 75px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px;
+}
+
 .uppy-Webcam-videoSourceContainer {
-  padding: 10px 0;
-  border-top: 1px solid $gray-200;
-  width: 33%;
+  width: 100%;
   flex-grow: 0;
+}
+
+.uppy-size--lg .uppy-Webcam-videoSourceContainer {
+  width: 33%;
+  margin: 0; // vertical alignment handled by the flexbox wrapper
 }
 
 .uppy-Webcam-videoSource {
   font-size: 14px;
+  margin-top: 0;
 }
 
 .uppy-Webcam-videoSource-select {
   max-width: 90%;
 }
 
-.uppy-Webcam-footer {
-  width: 100%;
-  height: 75px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
+.uppy-Webcam-buttonContainer {
+  width: 50%;
+  margin-left: 25%;
+  text-align: center;
 }
 
-.uppy-Webcam-buttonContainer {
+.uppy-size--lg .uppy-Webcam-buttonContainer {
   width: 34%;
-  text-align: center;
+  margin-left: 0;
+}
+
+.uppy-Webcam-recordingLength {
+  width: 25%;
+  flex-grow: 0;
+  color: $gray-600;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  text-align: right;
+}
+
+.uppy-size--lg .uppy-Webcam-recordingLength {
+  width: 33%;
 }
 
 .uppy-Webcam-button {
@@ -127,14 +150,6 @@
   height: 75px;
   color: $gray-400;
   margin-bottom: 30px;
-}
-
-.uppy-Webcam-recordingLength {
-  width: 33%;
-  flex-grow: 0;
-  color: $gray-600;
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  text-align: right;
 }
 
 .uppy-Webcam-title {
