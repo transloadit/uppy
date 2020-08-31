@@ -25,6 +25,10 @@ Still on consistent naming, we have made some changes to the redirect URIs suppl
 
 Companion 2.0 is compatible with any Uppy 1.x version, so you don't have to worry about upgrading your Uppy client installations when you upgrade Companion on your server.
 
+## Will Companion v1 still receive updates?
+
+Companion 1.x will continue to receive security patches until March 01, 2021.
+
 ## Migrating from Companion 1.x to 2.x
 
 Given the breaking changes, we've created a [migration tutorial for upgrading from Companion v1 to v2](https://uppy.io/docs/companion/#Migrating-v1-to-v2).
