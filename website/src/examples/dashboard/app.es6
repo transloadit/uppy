@@ -145,7 +145,10 @@ function uppySetOptions () {
 
   const webcamInstance = window.uppy.getPlugin('Webcam')
   if (opts.Webcam && !webcamInstance) {
-    window.uppy.use(Webcam, { target: Dashboard })
+    window.uppy.use(Webcam, {
+      target: Dashboard,
+      showVideoSourceDropdown: true
+    })
   }
   if (!opts.Webcam && webcamInstance) {
     window.uppy.removePlugin(webcamInstance)
