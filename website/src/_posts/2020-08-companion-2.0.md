@@ -11,7 +11,7 @@ So what are the changes you'd expect to see on Companion 2.0?
 
 ## Node >= v10
 
-Node.js 8.x has reached End-of-life, and in turn Companion 2.0 drops support for Node.js 6.x, Node.js 8.x and now requires that you run at least Node.js 10.x.
+Node.js 8.x has reached End-of-life, and in turn Companion 2.0 drops support for Node.js 6.x, Node.js 8.x and now requires that you run at least Node.js 10.20.1.
 
 ## Renamed Provider Options
 
@@ -23,8 +23,8 @@ Still on consistent naming, we have made some changes to the redirect URIs suppl
 
 ## Compatibility with Uppy 1.x client
 
-Companion 2.0 is compatible with any Uppy 1.x version, so you don't have to worry what Companion version a server may be runnning before using your Uppy client with it.
+Companion 2.0 is compatible with any Uppy 1.x version, so you don't have to worry about upgrading your Uppy client installations when you upgrade Companion on your server.
 
 ## Migrating from Companion 1.x to 2.x
 
-Given the breaking changes, we've put together a list of changes to make if you'd like to upgrade to Companion 2.0. You can have a look at this list [here](https://uppy.io/docs/companion/#Migrating-v1-to-v2).
+Given the breaking changes, we've created a [migration tutorial for upgrading from Companion v1 to v2](https://uppy.io/docs/companion/#Migrating-v1-to-v2).
