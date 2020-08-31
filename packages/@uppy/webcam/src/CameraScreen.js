@@ -32,15 +32,18 @@ class CameraScreen extends Component {
         <div class="uppy-Webcam-videoContainer">
           <video class={`uppy-Webcam-video  ${this.props.mirror ? 'uppy-Webcam-video--mirrored' : ''}`} autoplay muted playsinline srcObject={this.props.src || ''} />
         </div>
-        <div class="uppy-Webcam-videoSourceContainer">
-          {shouldShowVideoSourceDropdown ? VideoSourceSelect(this.props) : null}
-        </div>
-        <div class="uppy-Webcam-buttonContainer">
-          {shouldShowRecordingLength ? RecordingLength(this.props) : null}
-          {' '}
-          {shouldShowSnapshotButton ? SnapshotButton(this.props) : null}
-          {' '}
-          {shouldShowRecordButton ? RecordButton(this.props) : null}
+        <div class="uppy-Webcam-footer">
+          <div class="uppy-Webcam-videoSourceContainer">
+            {shouldShowVideoSourceDropdown ? VideoSourceSelect(this.props) : null}
+          </div>
+          <div class="uppy-Webcam-buttonContainer">
+            {shouldShowSnapshotButton ? SnapshotButton(this.props) : null}
+            {' '}
+            {shouldShowRecordButton ? RecordButton(this.props) : null}
+          </div>
+          <div class="uppy-Webcam-recordingLength">
+            {shouldShowRecordingLength ? RecordingLength(this.props) : null}
+          </div>
         </div>
       </div>
     )

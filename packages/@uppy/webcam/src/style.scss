@@ -38,23 +38,30 @@
 .uppy-Webcam-videoSourceContainer {
   padding: 10px 0;
   border-top: 1px solid $gray-200;
+  width: 33%;
+  flex-grow: 0;
 }
 
 .uppy-Webcam-videoSource {
   font-size: 14px;
 }
 
-.uppy-Webcam-videoSource select {
-  margin-left: 10px;
+.uppy-Webcam-videoSource-select {
+  max-width: 90%;
 }
 
-.uppy-Webcam-buttonContainer {
+.uppy-Webcam-footer {
   width: 100%;
   height: 75px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   padding: 0 20px;
+}
+
+.uppy-Webcam-buttonContainer {
+  width: 34%;
+  text-align: center;
 }
 
 .uppy-Webcam-button {
@@ -123,10 +130,11 @@
 }
 
 .uppy-Webcam-recordingLength {
-  position: absolute;
-  right: 20px;
+  width: 33%;
+  flex-grow: 0;
   color: $gray-600;
   font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  text-align: right;
 }
 
 .uppy-Webcam-title {
