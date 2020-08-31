@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const Webcam = require('@uppy/webcam')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Webcam, {
   mirror: true,
   facingMode: 'user',

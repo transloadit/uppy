@@ -983,6 +983,48 @@ describe('src/Core', () => {
     })
   })
 
+  describe('retries', () => {
+    it('should start a new upload with failed files', async () => {
+      const onUpload = jest.fn()
+      const onRetryAll = jest.fn()
+
+      const core = new Core()
+      core.on('upload', onUpload)
+      core.on('retry-all', onRetryAll)
+
+      const id = core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+      core.setFileState(id, {
+        error: 'something went wrong'
+      })
+
+      await core.retryAll()
+      expect(onRetryAll).toHaveBeenCalled()
+      expect(onUpload).toHaveBeenCalled()
+    })
+
+    it('should not start a new upload if there are no failed files', async () => {
+      const onUpload = jest.fn()
+
+      const core = new Core()
+      core.on('upload', onUpload)
+
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+
+      await core.retryAll()
+      expect(onUpload).not.toHaveBeenCalled()
+    })
+  })
+
   describe('restoring a file', () => {
     xit('should restore a file', () => {})
 
@@ -1538,6 +1580,27 @@ describe('src/Core', () => {
       } catch (err) {
         expect(err).toMatchObject(new Error('This file exceeds maximum allowed size of 1.2 KB'))
         expect(core.getState().info.message).toEqual('This file exceeds maximum allowed size of 1.2 KB')
+      }
+    })
+
+    it('should enforce the minFileSize rule', () => {
+      const core = new Core({
+        restrictions: {
+          minFileSize: 1073741824
+        }
+      })
+
+      try {
+        core.addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+        throw new Error('should have thrown')
+      } catch (err) {
+        expect(err).toMatchObject(new Error('This file is smaller than the allowed size of 1 GB'))
+        expect(core.getState().info.message).toEqual('This file is smaller than the allowed size of 1 GB')
       }
     })
 

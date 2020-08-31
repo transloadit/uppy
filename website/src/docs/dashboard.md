@@ -88,6 +88,7 @@ uppy.use(Dashboard, {
   disableThumbnailGenerator: false,
   disablePageScrollWhenModalOpen: true,
   animateOpenClose: true,
+  fileManagerSelectionType: 'files',
   proudlyDisplayPoweredByUppy: true,
   onRequestCloseModal: () => this.closeModal(),
   showSelectedFiles: true,
@@ -193,6 +194,16 @@ See also `disableStatusBar` option, which can hide the progress and upload butto
 
 Sometimes you might want to let users remove an uploaded file. Enabling this option only shows the remove `X` button in the Dashboard UI, but to actually send a request you should listen to [`file-removed`](https://uppy.io/docs/uppy/#file-removed) event and add your logic there.
 
+```js
+uppy.on('file-removed', (file, reason) => {
+  if (reason === 'removed-by-user') {
+    sendDeleteRequestForFile(file)
+  }
+})
+```
+
+For an implementation example, please see [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176)).
+
 ### `note: null`
 
 Optionally, specify a string of text that explains something about the upload for the user. This is a place to explain any `restrictions` that are put in place. For example: `'Images and video only, 2–3 files, up to 1 MB'`.
@@ -246,6 +257,10 @@ Page scrolling is disabled by default when the Dashboard modal is open, so when 
 ### `animateOpenClose: true`
 
 Add light animations when the modal dialog is opened or closed, for a more satisfying user experience.
+
+### `fileManagerSelectionType: 'files'`
+
+Configure the type of selections allowed when browsing your file system via the file manager selection window. May be either 'files', 'folders', or 'both'. Selecting entire folders for upload may not be supported on all [browsers](https://caniuse.com/#feat=input-file-directory).
 
 ### `proudlyDisplayPoweredByUppy: true`
 

@@ -24,7 +24,6 @@ module.exports = class Instagram extends Plugin {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
       provider: 'instagram',
-      authProvider: 'instagram',
       pluginId: this.id
     })
 
@@ -39,16 +38,6 @@ module.exports = class Instagram extends Plugin {
       showTitles: false,
       showFilter: false,
       showBreadcrumbs: false
-    })
-    // Set default state for Instagram
-    this.setPluginState({
-      authenticated: false,
-      files: [],
-      folders: [],
-      directories: [],
-      activeRow: -1,
-      filterInput: '',
-      isSearchVisible: false
     })
 
     const target = this.opts.target

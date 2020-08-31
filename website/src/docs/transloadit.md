@@ -120,8 +120,8 @@ uppy.use(Transloadit, {
       encode: {
         robot: '/video/encode',
         use: {
-          steps: [ ':original' ],
-          fields: [ 'file_input_field2' ]
+          steps: [':original'],
+          fields: ['file_input_field2']
         },
         preset: 'iphone'
       }
@@ -130,13 +130,23 @@ uppy.use(Transloadit, {
 })
 ```
 
-### `waitForEncoding`
+<a id="waitForEncoding"></a>
+### `waitForEncoding: false`
 
-Configures whether or not to wait for all Assemblies to complete before completing the upload.
+By default, the Transloadit plugin uploads files to Assemblies and then marks the files as complete in Uppy. The Assemblies will complete (or error) in the background but Uppy won't know or care about it.
 
-### `waitForMetadata`
+When `waitForEncoding` is set to true, the Transloadit plugin waits for Assemblies to complete before the files are marked as completed. This means users have to wait for a potentially long time, depending on how complicated your Assembly instructions are. But, you can receive transcoding results on the client side, and have a fully client-side experience this way.
 
-Configures whether or not to wait for metadata to be extracted from uploaded files before completing the upload. If `waitForEncoding` is enabled, this has no effect.
+When this is enabled, you can listen for the [`transloadit:result`](#transloadit-result) and [`transloadit:complete`](#transloadit-complete) events.
+
+<a id="waitForMetadata"></a>
+### `waitForMetadata: false`
+
+By default, the Transloadit plugin uploads files to Assemblies and then marks the files as complete in Uppy. The Assemblies will complete (or error) in the background but Uppy won't know or care about it.
+
+When `waitForMetadata` is set to true, the Transloadit plugin waits for Transloadit's backend to extract metadata from all the uploaded files. This is mostly handy if you want to have a quick user experience (so your users don't necessarily need to wait for all the encoding to complete), but you do want to let users know about some types of errors that can be caught early on, like file format issues.
+
+When this is enabled, you can listen for the [`transloadit:upload`](#transloadit-upload) event.
 
 ### `importFromUploadURLs`
 
@@ -328,7 +338,7 @@ Fired when Transloadit has received all uploads, and is currently executing the 
 
 **Parameters**
 
- - `assembly` - The [Assembly Status](https://transloadit.com/docs/api-docs/#assembly-status-response) of the Assembly that is currently executing.
+ - `assembly` - The [Assembly Status](https://transloadit.com/docs/api/#assembly-status-response) of the Assembly that is currently executing.
 
 ### `transloadit:result`
 
@@ -369,4 +379,4 @@ uppy.on('transloadit:complete', (assembly) => {
 })
 ```
 
-[assembly-status]: https://transloadit.com/docs/api-docs/#assembly-status-response
+[assembly-status]: https://transloadit.com/docs/api/#assembly-status-response

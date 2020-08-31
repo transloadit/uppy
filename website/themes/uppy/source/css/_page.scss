@@ -13,7 +13,7 @@
   top: 0;
   right: 0;
   left: 0;
-  padding: 80px 30px 20px;
+  padding: 160px 30px 20px;
   transition: all .4s cubic-bezier(0.4, 0, 0, 1);
   transform: translate(-100%, 0);
   z-index: 10;
@@ -29,25 +29,25 @@
   // .fix-sidebar & { position: fixed; }
 
   @media #{$screen-medium} {
-    // position: absolute;
-    top: 0;
+    top: $size-headerHeight + $size-transloaditBarHeight;
     left: 0;
     right: auto;
     width: 280px;
-    // bottom: 0;
-    // padding: 2.2em 0;
-    padding-top: 95px;
+    padding-top: 30px;
     padding-left: 60px;
-    padding-bottom: 130px;
-    // width: 20px;
     margin-right: 20px;
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     -ms-overflow-style: none;
+    transition: none;
     transform: none;
     background-color: transparent;
     box-shadow: none;
+
+    .list {
+      padding-bottom: 100px;
+    }
 
     .main-menu { display: none; }
     &::-webkit-scrollbar { width: 0 !important; }
@@ -137,12 +137,13 @@
 * Content
 */
 .Content {
-  padding: 2.2em 0;
+  padding: 0 0 2.2em;
   max-width: 600px;
   margin: 0 auto;
   font-size: 18px;
 
   @media #{$screen-medium} {
+    padding: 2.2em 0;
     &.with-sidebar {
       margin-left: 280px;
     }
@@ -180,18 +181,27 @@
     vertical-align: middle;
   }
 
+  .table-responsive {
+    @media screen and (max-width: 767px) {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
   table {
     width: 100%;
     text-align: left;
-    display: block;
     font-size: 85%;
-    border-spacing: 10px;
-    overflow-x: auto;
+    border-collapse: collapse;
+  }
+
+  table th,
+  table td {
+    padding: 14px 8px;
   }
 
   table td { 
     vertical-align: top;
-    padding: 8px;
     border-bottom: 1px solid #eee;
   }
 
@@ -361,21 +371,9 @@
 
 // Support page table overrides
 
-.page-support table {
-  overflow: visible;
-}
-.page-support .highlight table {
-  overflow: scroll;
-}
 .page-support table tr:first-child td {
   white-space: nowrap;
   font-size: 90%;
-}
-
-// Privacy policy table overrides
-
-.page-privacy table td {
-  padding: 8px 0;
 }
 
 // Plugin list

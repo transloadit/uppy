@@ -5,7 +5,7 @@ const DragDrop = require('@uppy/drag-drop')
 const XHRUpload = require('@uppy/xhr-upload')
 const ProgressBar = require('@uppy/progress-bar')
 
-const uppyi18n = Uppy({
+const uppyi18n = new Uppy({
   id: 'uppyi18n',
   debug: true,
   autoProceed: true

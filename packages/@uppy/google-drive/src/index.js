@@ -25,7 +25,6 @@ module.exports = class GoogleDrive extends Plugin {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
       provider: 'drive',
-      authProvider: 'google',
       pluginId: this.id
     })
 
@@ -36,19 +35,6 @@ module.exports = class GoogleDrive extends Plugin {
   install () {
     this.view = new DriveProviderViews(this, {
       provider: this.provider
-    })
-    // Set default state for Google Drive
-    this.setPluginState({
-      authenticated: false,
-      files: [],
-      folders: [],
-      directories: [],
-      activeRow: -1,
-      filterInput: '',
-      isSearchVisible: false,
-      hasTeamDrives: false,
-      teamDrives: [],
-      teamDriveId: ''
     })
 
     const target = this.opts.target

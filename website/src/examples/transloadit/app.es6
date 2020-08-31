@@ -6,6 +6,7 @@ const Webcam = require('@uppy/webcam')
 const Transloadit = require('@uppy/transloadit')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
+const Zoom = require('@uppy/zoom')
 const { createHmac } = require('crypto')
 const COMPANION = require('../env')
 
@@ -20,14 +21,16 @@ function initUppy (opts = {}) {
     window.uppy.close()
   }
 
-  const uppy = Uppy({
+  const zoomMode = document.location.hash === '#enable-zoom'
+  const allowedFileTypes = zoomMode ? ['video/*'] : ['image/*']
+  const uppy = new Uppy({
     debug: true,
     autoProceed: false,
     restrictions: {
       maxFileSize: 1024 * 1024 * 1024,
       maxNumberOfFiles: 2,
       minNumberOfFiles: 1,
-      allowedFileTypes: ['image/*']
+      allowedFileTypes
     },
     locale: {
       strings: {
@@ -74,6 +77,32 @@ function initUppy (opts = {}) {
       }
     }
 
+    if (zoomMode) {
+      params.steps = {
+        resized: {
+          use: ':original',
+          robot: '/video/encode',
+          result: true,
+          ffmpeg_stack: 'v3.3.3',
+          preset: 'ipad-high',
+          resize_strategy: 'fillcrop'
+        },
+        watermarked: {
+          use: 'resized',
+          robot: '/video/encode',
+          result: true,
+          ffmpeg_stack: 'v3.3.3',
+          preset: 'ipad-high',
+          watermark_opacity: 0.7,
+          watermark_position: 'top-right',
+          watermark_size: '25%',
+          watermark_url: 'https://demos.transloadit.com/inputs/transloadit-padded.png',
+          watermark_x_offset: -10,
+          watermark_y_offset: 10
+        }
+      }
+    }
+
     let signature
     if (opts.secret) {
       params = JSON.stringify(params)
@@ -81,18 +110,6 @@ function initUppy (opts = {}) {
     }
 
     return { params, signature }
-  }
-
-  let instagramOptions = {
-    target: Dashboard,
-    companionUrl: 'https://api2.transloadit.com/companion',
-    companionAllowedHosts: Transloadit.COMPANION_PATTERN
-  }
-  if (document.location.hash === '#enable-new-instagram') {
-    instagramOptions = {
-      target: Dashboard,
-      companionUrl: 'https://intense-meadow-61813.herokuapp.com/'
-    }
   }
 
   uppy
@@ -106,24 +123,51 @@ function initUppy (opts = {}) {
       target: '#uppy-dashboard-container',
       note: 'Images only, 1–2 files, up to 1 MB'
     })
-    .use(Instagram, instagramOptions)
+    .use(Instagram, {
+      target: Dashboard,
+      companionUrl: 'https://api2.transloadit.com/companion',
+      companionAllowedHosts: Transloadit.COMPANION_PATTERN
+    })
     .use(Facebook, {
       target: Dashboard,
       companionUrl: COMPANION
     })
     .use(Webcam, { target: Dashboard, modes: ['picture'] })
 
+  if (zoomMode) {
+    uppy.use(Zoom, {
+      target: Dashboard,
+      companionUrl: 'https://api2.transloadit.com/companion',
+      companionAllowedHosts: Transloadit.COMPANION_PATTERN
+    })
+  }
+
   uppy
     .on('transloadit:result', (stepName, result) => {
       const file = uppy.getFile(result.localId)
       var resultContainer = document.createElement('div')
-      resultContainer.innerHTML = `
-        <div>
-          <h3>Name: ${file.name}</h3>
-          <img src="${result.ssl_url}" /> <br />
-          <a href="${result.ssl_url}" target="_blank">View</a>
-        </div>
-      `
+      if (!zoomMode) {
+        resultContainer.innerHTML = `
+          <div>
+            <h3>Name: ${file.name}</h3>
+            <img src="${result.ssl_url}" /> <br />
+            <a href="${result.ssl_url}" target="_blank">View</a>
+          </div>
+        `
+      }
+
+      if (zoomMode && stepName === 'watermarked') {
+        resultContainer.innerHTML = `
+          <div>
+            <h3>Name: ${file.name}</h3>
+            <video controls>
+              <source src="${result.ssl_url}">
+            </video>
+             <br />
+            <a href="${result.ssl_url}" target="_blank">View</a>
+          </div>
+        `
+      }
       document
         .getElementById('uppy-transloadit-result')
         .appendChild(resultContainer)

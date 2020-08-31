@@ -22,7 +22,7 @@ npm i @uppy/core @uppy/locales
 ```js
 const Uppy = require('@uppy/core')
 const German = require('@uppy/locales/lib/de_DE') // see below for the full list of locales
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   locale: German
 })
@@ -33,8 +33,8 @@ const uppy = Uppy({
 Add a `<script>` tag with Uppy bundle and the locale pack you’d like to use. You can copy/paste the link from the CDN column in the [locales table](#List-of-locale-packs). The locale will attach itself to the `Uppy.locales` object.
 
 ```html
-<script src="https://transloadit.edgly.net/releases/uppy/v1.16.0/uppy.min.js"></script>
-<script src="https://transloadit.edgly.net/releases/uppy/locales/v1.15.0/de_DE.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v1.20.2/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/locales/v1.16.5/de_DE.min.js"></script>
 
 <script>
 var uppy = Uppy.Core({
@@ -52,7 +52,7 @@ Many plugins come with their own locale strings, and the packs we provide consis
 const Uppy = require('@uppy/core')
 const DragDrop = require('@uppy/drag-drop')
 const Russian = require('@uppy/locales/lib/ru_RU')
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   autoProceed: true,
   locale: Russian

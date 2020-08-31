@@ -2,6 +2,7 @@ const FileList = require('./FileList')
 const AddFiles = require('./AddFiles')
 const AddFilesPanel = require('./AddFilesPanel')
 const PickerPanelContent = require('./PickerPanelContent')
+const EditorPanel = require('./EditorPanel')
 const PanelTopBar = require('./PickerPanelTopBar')
 const FileCard = require('./FileCard')
 const classNames = require('classnames')
@@ -118,7 +119,7 @@ module.exports = function Dashboard (props) {
           )}
 
           <TransitionWrapper>
-            {props.showAddFilesPanel ? <AddFilesPanel key="AddFilesPanel" {...props} isSizeMD={isSizeMD} /> : null}
+            {props.showAddFilesPanel ? <AddFilesPanel key="AddFiles" {...props} isSizeMD={isSizeMD} /> : null}
           </TransitionWrapper>
 
           <TransitionWrapper>
@@ -126,7 +127,11 @@ module.exports = function Dashboard (props) {
           </TransitionWrapper>
 
           <TransitionWrapper>
-            {props.activePickerPanel ? <PickerPanelContent key="PickerPanelContent" {...props} /> : null}
+            {props.activePickerPanel ? <PickerPanelContent key="Picker" {...props} /> : null}
+          </TransitionWrapper>
+
+          <TransitionWrapper>
+            {props.showFileEditor ? <EditorPanel key="Editor" {...props} /> : null}
           </TransitionWrapper>
 
           <div class="uppy-Dashboard-progressindicators">

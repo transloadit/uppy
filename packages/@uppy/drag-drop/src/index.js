@@ -142,6 +142,7 @@ module.exports = class DragDrop extends Plugin {
     const restrictions = this.uppy.opts.restrictions
     return (
       <input
+        class="uppy-DragDrop-input"
         type="file"
         hidden
         ref={(ref) => { this.fileInputRef = ref }}
@@ -178,8 +179,7 @@ module.exports = class DragDrop extends Plugin {
   }
 
   render (state) {
-    const dragDropClass = `
-      uppy-Root
+    const dragDropClass = `uppy-Root
       uppy-u-reset
       uppy-DragDrop-container
       ${this.isDragDropSupported ? 'uppy-DragDrop--isDragDropSupported' : ''}

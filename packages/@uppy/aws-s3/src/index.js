@@ -28,12 +28,14 @@
 // If global `URL` constructor is available, use it
 const URL_ = typeof URL === 'function' ? URL : require('url-parse')
 const { Plugin } = require('@uppy/core')
+const Translator = require('@uppy/utils/lib/Translator')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const settle = require('@uppy/utils/lib/settle')
 const hasProperty = require('@uppy/utils/lib/hasProperty')
 const { RequestClient } = require('@uppy/companion-client')
 const qsStringify = require('qs-stringify')
 const MiniXHRUpload = require('./MiniXHRUpload')
+const isXml = require('./isXml')
 
 function resolveUrl (origin, link) {
   return origin
@@ -41,33 +43,18 @@ function resolveUrl (origin, link) {
     : new URL_(link).toString()
 }
 
-function isXml (content, xhr) {
-  const rawContentType = (xhr.headers ? xhr.headers['content-type'] : xhr.getResponseHeader('Content-Type'))
-
-  if (rawContentType === null) {
-    return false
-  }
-
-  // Get rid of mime parameters like charset=utf-8
-  const contentType = rawContentType.replace(/;.*$/, '').toLowerCase()
-  if (typeof contentType === 'string') {
-    if (contentType === 'application/xml' || contentType === 'text/xml') {
-      return true
-    }
-    // GCS uses text/html for some reason
-    // https://github.com/transloadit/uppy/issues/896
-    if (contentType === 'text/html' && /^<\?xml /.test(content)) {
-      return true
-    }
-  }
-  return false
-}
-
-function getXmlValue (source, key) {
-  const start = source.indexOf(`<${key}>`)
-  const end = source.indexOf(`</${key}>`, start)
+/**
+ * Get the contents of a named tag in an XML source string.
+ *
+ * @param {string} source - The XML source string.
+ * @param {string} tagName - The name of the tag.
+ * @returns {string} The contents of the tag, or the empty string if the tag does not exist.
+ */
+function getXmlValue (source, tagName) {
+  const start = source.indexOf(`<${tagName}>`)
+  const end = source.indexOf(`</${tagName}>`, start)
   return start !== -1 && end !== -1
-    ? source.slice(start + key.length + 2, end)
+    ? source.slice(start + tagName.length + 2, end)
     : ''
 }
 
@@ -92,6 +79,12 @@ module.exports = class AwsS3 extends Plugin {
     this.id = this.opts.id || 'AwsS3'
     this.title = 'AWS S3'
 
+    this.defaultLocale = {
+      strings: {
+        timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
+      }
+    }
+
     const defaultOptions = {
       timeout: 30 * 1000,
       limit: 0,
@@ -101,9 +94,22 @@ module.exports = class AwsS3 extends Plugin {
 
     this.opts = { ...defaultOptions, ...opts }
 
+    this.i18nInit()
+
     this.client = new RequestClient(uppy, opts)
     this.handleUpload = this.handleUpload.bind(this)
     this.requests = new RateLimitedQueue(this.opts.limit)
+  }
+
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   getUploadParameters (file) {
@@ -276,10 +282,12 @@ module.exports = class AwsS3 extends Plugin {
       getResponseError: defaultGetResponseError
     }
 
+    // Only for MiniXHRUpload, remove once we can depend on XHRUpload directly again
+    xhrOptions.i18n = this.i18n
+
     // Revert to `this.uppy.use(XHRUpload)` once the big comment block at the top of
     // this file is solved
     this._uploader = new MiniXHRUpload(this.uppy, xhrOptions)
-    this._uploader.i18n = this.uppy.i18n
   }
 
   uninstall () {

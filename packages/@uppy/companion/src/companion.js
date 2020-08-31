@@ -112,9 +112,10 @@ module.exports.app = (options = {}) => {
   app.use('/s3', s3(options.providerOptions.s3))
   app.use('/url', url())
 
-  app.get('/:providerName/callback', middlewares.hasSessionAndProvider, controllers.callback)
   app.get('/:providerName/connect', middlewares.hasSessionAndProvider, controllers.connect)
   app.get('/:providerName/redirect', middlewares.hasSessionAndProvider, controllers.redirect)
+  app.get('/:providerName/callback', middlewares.hasSessionAndProvider, controllers.callback)
+  app.post('/:providerName/deauthorization/callback', middlewares.hasSessionAndProvider, controllers.deauthorizationCallback)
   app.get('/:providerName/logout', middlewares.hasSessionAndProvider, middlewares.gentleVerifyToken, controllers.logout)
   app.get('/:providerName/send-token', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.sendToken)
   app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
@@ -334,5 +335,15 @@ const validateConfig = (companionOptions) => {
     throw new Error(
       `No access to "${companionOptions.filePath}". Please ensure the directory exists and with read/write permissions.`
     )
+  }
+
+  const { providerOptions } = companionOptions
+  if (providerOptions) {
+    const deprecatedOptions = { microsoft: 'onedrive', google: 'drive' }
+    Object.keys(deprecatedOptions).forEach((deprected) => {
+      if (providerOptions[deprected]) {
+        throw new Error(`The Provider option "${deprected}" is no longer supported. Please use the option "${deprecatedOptions[deprected]}" instead.`)
+      }
+    })
   }
 }

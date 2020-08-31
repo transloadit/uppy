@@ -85,6 +85,17 @@ module.exports = class ProviderView {
     this.render = this.render.bind(this)
 
     this.clearSelection()
+
+    // Set default state for the plugin
+    this.plugin.setPluginState({
+      authenticated: false,
+      files: [],
+      folders: [],
+      directories: [],
+      activeRow: -1,
+      filterInput: '',
+      isSearchVisible: false
+    })
   }
 
   tearDown () {
@@ -183,10 +194,12 @@ module.exports = class ProviderView {
     this.plugin.uppy.log('Adding remote file')
     try {
       this.plugin.uppy.addFile(tagFile)
+      return true
     } catch (err) {
       if (!err.isRestriction) {
         this.plugin.uppy.log(err)
       }
+      return false
     }
   }
 
@@ -358,8 +371,10 @@ module.exports = class ProviderView {
     folders[folderId] = { loading: true, files: [] }
     this.plugin.setPluginState({ selectedFolders: folders })
     return this.listAllFiles(folder.requestPath).then((files) => {
+      let count = 0
       files.forEach((file) => {
-        this.addFile(file)
+        const success = this.addFile(file)
+        if (success) count++
       })
       const ids = files.map(this.providerFileToId)
       state = this.plugin.getPluginState()
@@ -369,7 +384,7 @@ module.exports = class ProviderView {
       let message
       if (files.length) {
         message = this.plugin.uppy.i18n('folderAdded', {
-          smart_count: files.length, folder: folder.name
+          smart_count: count, folder: folder.name
         })
       } else {
         message = this.plugin.uppy.i18n('emptyFolderAdded')

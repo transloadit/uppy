@@ -39,11 +39,16 @@ if (page.series) {
   </head>
   <body class="<%= isIndex ? 'page-index' : 'page-inner' %> <%= page.body_class %>">
     <div class="page">
-      <div class="TransloaditBar">
-        <a class="TransloaditBar-logo" href="https://transloadit.com/" target="_blank" rel="noopener noreferrer">
-          <img class="TransloaditBar-logoImg" src="/images/transloadit.svg" width="82" height="19" alt="Transloadit">
-        </a>
-        <div class="TransloaditBar-about">Uppy is an open source project by <a class="TransloaditBar-link" href="https://transloadit.com/" target="_blank">Transloadit</a></div>
+      <div class="TransloaditBar js-TransloaditBar">
+        <div class="TransloaditBar-about">
+          <a class="TransloaditBar-logo" href="https://transloadit.com/" target="_blank" rel="noopener noreferrer">
+            <img class="TransloaditBar-logoImg" src="/images/transloadit-white-glyph.svg" width="20" height="20" alt="Transloadit">
+          </a>
+          <span>Uppy is an open source project by <a class="TransloaditBar-link" href="https://transloadit.com/" target="_blank">Transloadit</a></span>
+        </div>
+        <div class="TransloaditBar-info">
+          <b>New: </b><a href="https://www.transloadit.com/pricing" class="TransloaditBar-info-link">Transloadit Community Plan</a> — get free hosted Companion &amp; tusd, unlimited uploading, and 5GB/month encoding traffic!
+        </div>
       </div>
 
       <header id="header" class="MainHeader js-MainHeader">

@@ -64,16 +64,22 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * @returns {Promise}
    */
   createThumbnail (file, targetWidth, targetHeight) {
+    // bug in the compatibility data
+    // eslint-disable-next-line compat/compat
     const originalUrl = URL.createObjectURL(file.data)
 
     const onload = new Promise((resolve, reject) => {
       const image = new Image()
       image.src = originalUrl
       image.addEventListener('load', () => {
+        // bug in the compatibility data
+        // eslint-disable-next-line compat/compat
         URL.revokeObjectURL(originalUrl)
         resolve(image)
       })
       image.addEventListener('error', (event) => {
+        // bug in the compatibility data
+        // eslint-disable-next-line compat/compat
         URL.revokeObjectURL(originalUrl)
         reject(event.error || new Error('Could not create thumbnail'))
       })
@@ -89,6 +95,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
         return this.canvasToBlob(resizedImage, 'image/jpeg', 80)
       })
       .then(blob => {
+        // bug in the compatibility data
+        // eslint-disable-next-line compat/compat
         return URL.createObjectURL(blob)
       })
   }

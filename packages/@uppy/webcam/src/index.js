@@ -151,7 +151,15 @@ module.exports = class Webcam extends Plugin {
   }
 
   setOptions (newOpts) {
-    super.setOptions(newOpts)
+    super.setOptions({
+      ...newOpts,
+      videoConstraints: {
+        // May be undefined but ... handles that
+        ...this.opts.videoConstraints,
+        ...newOpts?.videoConstraints
+      }
+    })
+
     this.i18nInit()
   }
 
@@ -179,7 +187,12 @@ module.exports = class Webcam extends Plugin {
       this.opts.modes.indexOf('video-only') !== -1 ||
       this.opts.modes.indexOf('picture') !== -1
 
-    const videoConstraints = deviceId ? { deviceId: deviceId } : { facingMode: this.opts.facingMode }
+    const videoConstraints = this.opts.videoConstraints ?? {
+      facingMode: this.opts.facingMode
+    }
+    if (deviceId !== null) {
+      videoConstraints.deviceId = deviceId
+    }
 
     return {
       audio: acceptsAudio,
@@ -222,8 +235,10 @@ module.exports = class Webcam extends Plugin {
         })
         .catch((err) => {
           this.setPluginState({
+            cameraReady: false,
             cameraError: err
           })
+          this.uppy.info(err.message, 'error')
         })
     })
   }
@@ -258,6 +273,8 @@ module.exports = class Webcam extends Plugin {
   }
 
   _startRecording () {
+    // only used if supportsMediaRecorder() returned true
+    // eslint-disable-next-line compat/compat
     this.recorder = new MediaRecorder(this.stream, this._getMediaRecorderOptions())
     this.recordingChunks = []
     let stoppingBecauseOfMaxSize = false
@@ -338,12 +355,14 @@ module.exports = class Webcam extends Plugin {
   }
 
   _stop () {
-    this.stream.getAudioTracks().forEach((track) => {
-      track.stop()
-    })
-    this.stream.getVideoTracks().forEach((track) => {
-      track.stop()
-    })
+    if (this.stream) {
+      this.stream.getAudioTracks().forEach((track) => {
+        track.stop()
+      })
+      this.stream.getVideoTracks().forEach((track) => {
+        track.stop()
+      })
+    }
     this.webcamActive = false
     this.stream = null
   }

@@ -1,6 +1,7 @@
 // oauth configuration for provider services that are used.
 module.exports = () => {
   return {
+    // for drive
     google: {
       transport: 'session',
       scope: [
@@ -23,10 +24,17 @@ module.exports = () => {
       scope: ['email', 'user_photos'],
       callback: '/facebook/callback'
     },
+    // for onedrive
     microsoft: {
       transport: 'session',
       scope: ['files.read.all', 'offline_access', 'User.Read'],
       callback: '/onedrive/callback'
+    },
+    zoom: {
+      transport: 'session',
+      authorize_url: 'https://zoom.us/oauth/authorize',
+      access_url: 'https://zoom.us/oauth/token',
+      callback: '/zoom/callback'
     }
   }
 }

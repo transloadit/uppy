@@ -22,7 +22,7 @@ describe('react <DashboardModal />', () => {
   it('can be mounted and unmounted', () => {
     const oninstall = jest.fn()
     const onuninstall = jest.fn()
-    const uppy = Uppy()
+    const uppy = new Uppy()
     const dash = mount((
       <DashboardModal
         uppy={uppy}
@@ -41,7 +41,7 @@ describe('react <DashboardModal />', () => {
   })
 
   it('opens the modal using the `open={true}` prop', () => {
-    const uppy = Uppy()
+    const uppy = new Uppy()
     const dash = mount((
       <DashboardModal
         uppy={uppy}
@@ -60,7 +60,7 @@ describe('react <DashboardModal />', () => {
   })
 
   it('closes the modal using the `open={false}` prop', () => {
-    const uppy = Uppy()
+    const uppy = new Uppy()
     const dash = mount((
       <DashboardModal
         uppy={uppy}

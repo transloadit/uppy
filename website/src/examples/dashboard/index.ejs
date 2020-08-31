@@ -31,9 +31,10 @@ const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
 const Webcam = require('@uppy/webcam')
 const ScreenCapture = require('@uppy/screen-capture')
+const ImageEditor = require('@uppy/image-editor')
 const Tus = require('@uppy/tus')
 
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   autoProceed: false,
   restrictions: {
@@ -64,6 +65,7 @@ const uppy = Uppy({
 .use(OneDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
 .use(Webcam, { target: Dashboard })
 .use(ScreenCapture, { target: Dashboard })
+.use(ImageEditor, { target: Dashboard })
 .use(Tus, { endpoint: 'https://master.tus.io/files/' })
 
 uppy.on('complete', result => {

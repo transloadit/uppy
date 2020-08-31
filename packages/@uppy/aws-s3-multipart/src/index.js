@@ -28,6 +28,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     const defaultOptions = {
       timeout: 30 * 1000,
       limit: 0,
+      retryDelays: [0, 1000, 3000, 5000],
       createMultipartUpload: this.createMultipartUpload.bind(this),
       listParts: this.listParts.bind(this),
       prepareUploadPart: this.prepareUploadPart.bind(this),
@@ -68,14 +69,14 @@ module.exports = class AwsS3Multipart extends Plugin {
     }
   }
 
-  assertHost () {
+  assertHost (method) {
     if (!this.opts.companionUrl) {
-      throw new Error('Expected a `companionUrl` option containing a Companion address.')
+      throw new Error(`Expected a \`companionUrl\` option containing a Companion address, or if you are not using Companion, a custom \`${method}\` implementation.`)
     }
   }
 
   createMultipartUpload (file) {
-    this.assertHost()
+    this.assertHost('createMultipartUpload')
 
     const metadata = {}
 
@@ -93,7 +94,7 @@ module.exports = class AwsS3Multipart extends Plugin {
   }
 
   listParts (file, { key, uploadId }) {
-    this.assertHost()
+    this.assertHost('listParts')
 
     const filename = encodeURIComponent(key)
     return this.client.get(`s3/multipart/${uploadId}?key=${filename}`)
@@ -101,7 +102,7 @@ module.exports = class AwsS3Multipart extends Plugin {
   }
 
   prepareUploadPart (file, { key, uploadId, number }) {
-    this.assertHost()
+    this.assertHost('prepareUploadPart')
 
     const filename = encodeURIComponent(key)
     return this.client.get(`s3/multipart/${uploadId}/${number}?key=${filename}`)
@@ -109,7 +110,7 @@ module.exports = class AwsS3Multipart extends Plugin {
   }
 
   completeMultipartUpload (file, { key, uploadId, parts }) {
-    this.assertHost()
+    this.assertHost('completeMultipartUpload')
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
@@ -118,7 +119,7 @@ module.exports = class AwsS3Multipart extends Plugin {
   }
 
   abortMultipartUpload (file, { key, uploadId }) {
-    this.assertHost()
+    this.assertHost('abortMultipartUpload')
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
@@ -134,8 +135,7 @@ module.exports = class AwsS3Multipart extends Plugin {
           s3Multipart: {
             ...cFile.s3Multipart,
             key: data.key,
-            uploadId: data.uploadId,
-            parts: []
+            uploadId: data.uploadId
           }
         })
       }
@@ -175,20 +175,10 @@ module.exports = class AwsS3Multipart extends Plugin {
       }
 
       const onPartComplete = (part) => {
-        // Store completed parts in state.
         const cFile = this.uppy.getFile(file.id)
         if (!cFile) {
           return
         }
-        this.uppy.setFileState(file.id, {
-          s3Multipart: {
-            ...cFile.s3Multipart,
-            parts: [
-              ...cFile.s3Multipart.parts,
-              part
-            ]
-          }
-        })
 
         this.uppy.emit('s3-multipart:part-uploaded', cFile, part)
       }
@@ -209,6 +199,7 @@ module.exports = class AwsS3Multipart extends Plugin {
         onPartComplete,
 
         limit: this.opts.limit || 5,
+        retryDelays: this.opts.retryDelays || [],
         ...file.s3Multipart
       })
 

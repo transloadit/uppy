@@ -30,7 +30,8 @@ jest.mock('../../src/server/helpers/oauth-state', () => {
 
 const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
-const { authServer } = require('../mockserver')
+const { getServer } = require('../mockserver')
+const authServer = getServer()
 const authData = {
   dropbox: 'token value',
   drive: 'token value'
@@ -297,9 +298,12 @@ describe('connect to provider', () => {
   })
 })
 
-describe('handle oauth redirect', () => {
+describe('handle master oauth redirect', () => {
+  const serverWithMasterOauth = getServer({
+    COMPANION_OAUTH_DOMAIN: 'localhost:3040'
+  })
   test('redirect to a valid uppy instance', () => {
-    return request(authServer)
+    return request(serverWithMasterOauth)
       .get(`/dropbox/redirect?state=${OAUTH_STATE}`)
       .set('uppy-auth-token', token)
       .expect(302)
@@ -308,9 +312,111 @@ describe('handle oauth redirect', () => {
 
   test('do not redirect to invalid uppy instances', () => {
     const state = 'state-with-invalid-instance-url' // see mock ../../src/server/helpers/oauth-state above
-    return request(authServer)
+    return request(serverWithMasterOauth)
       .get(`/dropbox/redirect?state=${state}`)
       .set('uppy-auth-token', token)
       .expect(400)
+  })
+})
+
+// @todo consider moving this to a separate test file (zoom.js maybe)
+// in general, we should consider testing all providers endpoints separately
+describe('handle deauthorization callback', () => {
+  test('providers without support for callback endpoint', () => {
+    return request(authServer)
+      .post('/dropbox/deauthorization/callback')
+      .set('Content-Type', 'application/json')
+      .send({
+        foo: 'bar'
+      })
+    // @todo consider receiving 501 instead
+      .expect(500)
+  })
+
+  test('validate that request credentials match', () => {
+    return request(authServer)
+      .post('/zoom/deauthorization/callback')
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'wrong-verfication-token')
+      .send({
+        event: 'app_deauthorized',
+        payload: {
+          user_data_retention: 'false',
+          account_id: 'EabCDEFghiLHMA',
+          user_id: 'z9jkdsfsdfjhdkfjQ',
+          signature: '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
+          deauthorization_time: '2019-06-17T13:52:28.632Z',
+          client_id: 'ADZ9k9bTWmGUoUbECUKU_a'
+        }
+      })
+      .expect(400)
+  })
+
+  test('validate request credentials is present', () => {
+    // Authorization header is absent
+    return request(authServer)
+      .post('/zoom/deauthorization/callback')
+      .set('Content-Type', 'application/json')
+      .send({
+        event: 'app_deauthorized',
+        payload: {
+          user_data_retention: 'false',
+          account_id: 'EabCDEFghiLHMA',
+          user_id: 'z9jkdsfsdfjhdkfjQ',
+          signature: '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
+          deauthorization_time: '2019-06-17T13:52:28.632Z',
+          client_id: 'ADZ9k9bTWmGUoUbECUKU_a'
+        }
+      })
+      .expect(400)
+  })
+
+  test('validate request content', () => {
+    return request(authServer)
+      .post('/zoom/deauthorization/callback')
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'zoom_verfication_token')
+      .send({
+        invalid: 'content'
+      })
+      .expect(400)
+  })
+
+  test('validate request content (event name)', () => {
+    return request(authServer)
+      .post('/zoom/deauthorization/callback')
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'zoom_verfication_token')
+      .send({
+        event: 'wrong_event_name',
+        payload: {
+          user_data_retention: 'false',
+          account_id: 'EabCDEFghiLHMA',
+          user_id: 'z9jkdsfsdfjhdkfjQ',
+          signature: '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
+          deauthorization_time: '2019-06-17T13:52:28.632Z',
+          client_id: 'ADZ9k9bTWmGUoUbECUKU_a'
+        }
+      })
+      .expect(400)
+  })
+
+  test('allow valid request', () => {
+    return request(authServer)
+      .post('/zoom/deauthorization/callback')
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'zoom_verfication_token')
+      .send({
+        event: 'app_deauthorized',
+        payload: {
+          user_data_retention: 'false',
+          account_id: 'EabCDEFghiLHMA',
+          user_id: 'z9jkdsfsdfjhdkfjQ',
+          signature: '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
+          deauthorization_time: '2019-06-17T13:52:28.632Z',
+          client_id: 'ADZ9k9bTWmGUoUbECUKU_a'
+        }
+      })
+      .expect(200)
   })
 })

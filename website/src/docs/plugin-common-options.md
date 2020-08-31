@@ -19,7 +19,7 @@ Can be a `string` CSS selector, a DOM element, or a Plugin class. Consider the f
 ```js
 const Uppy = require('@uppy/core')
 const DragDrop = require('@uppy/drag-drop')
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(DragDrop, { target: 'body' })
 // or: uppy.use(DragDrop, { target: document.body })
 ```
@@ -30,7 +30,7 @@ While in this one, we are using the `@uppy/dashboard` plugin, which can act as a
 const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const GoogleDrive = require('@uppy/google-drive')
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Dashboard, {
   trigger: '#uppyModalOpener'
 })
