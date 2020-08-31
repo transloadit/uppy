@@ -76,8 +76,6 @@ module.exports = class Webcam extends Plugin {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
-    this.videoSources = []
-    this.currentDeviceId = null
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Webcam'
     this.title = this.opts.title || 'Camera'
@@ -148,6 +146,15 @@ module.exports = class Webcam extends Plugin {
     if (this.opts.countdown) {
       this.opts.onBeforeSnapshot = this._oneTwoThreeSmile
     }
+
+    this.setPluginState({
+      hasCamera: false,
+      cameraReady: false,
+      cameraError: null,
+      recordingLengthSeconds: 0,
+      videoSources: [],
+      currentDeviceId: null
+    })
   }
 
   setOptions (newOpts) {
@@ -219,17 +226,19 @@ module.exports = class Webcam extends Plugin {
         .then((stream) => {
           this.stream = stream
 
+          let currentDeviceId = null
           if (!options || !options.deviceId) {
-            this.currentDeviceId = stream.getVideoTracks()[0].getSettings().deviceId
+            currentDeviceId = stream.getVideoTracks()[0].getSettings().deviceId
           } else {
             stream.getVideoTracks().forEach((videoTrack) => {
               if (videoTrack.getSettings().deviceId === options.deviceId) {
-                this.currentDeviceId = videoTrack.getSettings().deviceId
+                currentDeviceId = videoTrack.getSettings().deviceId
               }
             })
           }
 
           this.setPluginState({
+            currentDeviceId,
             cameraReady: true
           })
         })
@@ -491,8 +500,9 @@ module.exports = class Webcam extends Plugin {
 
   getVideoSources () {
     this.mediaDevices.enumerateDevices().then(res => {
-      this.videoSources = res.filter((device) => device.kind === 'videoinput')
-      this.setPluginState()
+      this.setPluginState({
+        videoSources: res.filter((device) => device.kind === 'videoinput')
+      })
     })
   }
 
@@ -530,8 +540,6 @@ module.exports = class Webcam extends Plugin {
         recording={webcamState.isRecording}
         mirror={this.opts.mirror}
         src={this.stream}
-        currentDeviceId={this.currentDeviceId}
-        videoSources={this.videoSources}
       />
     )
   }
@@ -556,8 +564,10 @@ module.exports = class Webcam extends Plugin {
         if (this.stream) {
           let restartStream = true
 
-          this.videoSources.forEach((videoSource) => {
-            if (this.currentDeviceId === videoSource.deviceId) {
+          const { videoSources, currentDeviceId } = this.getPluginState()
+
+          videoSources.forEach((videoSource) => {
+            if (currentDeviceId === videoSource.deviceId) {
               restartStream = false
             }
           })
