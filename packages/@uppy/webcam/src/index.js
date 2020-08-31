@@ -237,6 +237,9 @@ module.exports = class Webcam extends Plugin {
             })
           }
 
+          // Update the sources now, so we can access the names.
+          this.updateVideoSources()
+
           this.setPluginState({
             currentDeviceId,
             cameraReady: true
@@ -498,10 +501,10 @@ module.exports = class Webcam extends Plugin {
     this._start({ deviceId: deviceId })
   }
 
-  getVideoSources () {
-    this.mediaDevices.enumerateDevices().then(res => {
+  updateVideoSources () {
+    this.mediaDevices.enumerateDevices().then(devices => {
       this.setPluginState({
-        videoSources: res.filter((device) => device.kind === 'videoinput')
+        videoSources: devices.filter((device) => device.kind === 'videoinput')
       })
     })
   }
@@ -556,10 +559,10 @@ module.exports = class Webcam extends Plugin {
     }
 
     if (this.mediaDevices) {
-      this.getVideoSources()
+      this.updateVideoSources()
 
       this.mediaDevices.ondevicechange = (event) => {
-        this.getVideoSources()
+        this.updateVideoSources()
 
         if (this.stream) {
           let restartStream = true
