@@ -70,7 +70,11 @@ module.exports = () => {
     .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Url, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Webcam, { target: Dashboard })
+    .use(Webcam, {
+      target: Dashboard,
+      showVideoSourceDropdown: true,
+      showRecordingLength: true
+    })
     .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
     .use(ImageEditor, { target: Dashboard })
