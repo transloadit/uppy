@@ -72,13 +72,14 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
 - [ ] transloadit: remove `UPPY_SERVER` constant
 - [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
+- [ ] tus: remove `autoRetry` option (throw error at runtime if it is explicitly given)
 
-## 1.22
+## 1.23
 
 - [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
 
-## 1.21
+## 1.22
 
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
@@ -92,14 +93,117 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default's store #320
 - [ ] provider: add Box (@ife)
-- [ ] plugins: audio/memo recording similar to Webcam #143 #198 (@arturi)
+- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
 - [ ] test: add typescript with JSDoc for @uppy/core https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files (@arturi)
 - [ ] core: add Vue.js wrapper component for the Dashboard (@arturi)
-- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi) (@arturi)
+- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
 - [ ] dashboard: fix Dashboard issues with Angular — it’s incredibly slow presumably because of ResizeObserver. (See #1613) (@arturi)
 - [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
+
+## 1.20.2
+
+Released: 2020-08-17
+
+This release adds a `deauthorization callback` endpoint to Companion
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.5 | @uppy/provider-views | 1.7.4 |
+| @uppy/companion | 2.0.0-alpha.11 | @uppy/react | 1.10.5 |
+| @uppy/core | 1.13.1 | @uppy/robodog | 1.9.5 |
+| @uppy/dashboard | 1.12.5 | @uppy/screen-capture | 1.0.7 |
+| @uppy/dropbox | 1.4.13 | @uppy/status-bar | 1.7.5 |
+| @uppy/facebook | 1.1.13 | @uppy/thumbnail-generator | 1.6.6 |
+| @uppy/google-drive | 1.5.13 | @uppy/transloadit | 1.6.8 |
+| @uppy/image-editor | 0.1.5 | @uppy/tus | 1.7.5 |
+| @uppy/instagram | 1.4.13 | @uppy/webcam | 1.6.11 |
+| @uppy/locales | 1.16.5 | @uppy/zoom | 0.1.2 |
+| @uppy/onedrive | 1.1.13 | uppy | 1.20.2 |
+
+- @uppy/companion: remove ouath scopes for zoom (#2464 / @ifedapoolarewaju)
+- @uppy/companion: add deauthorization callback endpoint (#2470 / @ifedapoolarewaju)
+
+## 1.20.1
+
+Released: 2020-08-13
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.4 | @uppy/provider-views | 1.7.3 |
+| @uppy/dashboard | 1.12.4 | @uppy/react | 1.10.4 |
+| @uppy/dropbox | 1.4.12 | @uppy/robodog | 1.9.4 |
+| @uppy/facebook | 1.1.12 | @uppy/transloadit | 1.6.7 |
+| @uppy/google-drive | 1.5.12 | @uppy/tus | 1.7.4 |
+| @uppy/instagram | 1.4.12 | @uppy/zoom | 0.1.1 |
+| @uppy/onedrive | 1.1.12 | uppy | 1.20.1 |
+
+- @uppy/aws-s3-multipart: enable uploading zero-sized files (#2451 / @vedran555)
+- @uppy/provider-views: fix incorrect files added count when adding folders (#2439 / @ajkachnic)
+- @uppy/transloadit: add auth.expires type (#2457 / @just-mitch, @goto-bus-stop)
+- @uppy/tus: docs-deprecate autoRetry (#2347 / @goto-bus-stop)
+- @uppy/tus: fix fallback to default `fingerprint` implementation (#2456 / @Acconut, @goto-bus-stop)
+- docs: add add-on section to Zoom docs (#2452 / @ifedapoolarewaju)
+- docs: add documentation for zoom plugin (#2448 / @ifedapoolarewaju)
+
+## 1.20.0
+
+Released: 2020-08-10
+
+This release fixes the localized text on the Dashboard (again), fixes an issue when repeatedly uploading the same file using the Transloadit plugin, and adds a new restriction, `minFileSize`, thanks to @anthony0030!
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.3 | @uppy/react | 1.10.3 |
+| @uppy/companion | 2.0.0-alpha.10 | @uppy/robodog | 1.9.3 |
+| @uppy/core | 1.13.0 | @uppy/status-bar | 1.7.4 |
+| @uppy/dashboard | 1.12.3 | @uppy/transloadit | 1.6.6 |
+| @uppy/image-editor | 0.1.4 | uppy | 1.20.0 |
+| @uppy/locales | 1.16.4 | - | - |
+
+- @uppy/aws-s3-multipart: handle server returning numbers as strings (@goto-bus-stop)
+- @uppy/companion: make npm run test work on windows (#2399 / @goto-bus-stop)
+- @uppy/core: adds minFileSize option (#2394 / @anthony0030)
+- @uppy/dashboard: use correct strings on AddFiles UI (#2426 / @goto-bus-stop)
+- @uppy/status-bar: specify default string for `retryUpload` (#2442 / @goto-bus-stop)
+- @uppy/transloadit: fully disable Tus fingerprinting (#2425 / @goto-bus-stop)
+- docs: make global companion install bash line copy-pasteable (#2438 / @goto-bus-stop)
+- test: re-enable Safari on Sauce (#2430 / @goto-bus-stop)
+- website: enable zoom example conditionally + remove conditional instagram graph example (#2422 / @ifedapoolarewaju)
+- website: various fixes (#2433 / @nqst)
+
+## 1.19.2
+
+Released: 2020-07-30
+
+This mostly introduces patches to accommodate for the new `@uppy/zoom` plugin! 🎉
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.2 | @uppy/progress-bar | 1.3.18 |
+| @uppy/aws-s3 | 1.6.9 | @uppy/provider-views | 1.7.2 |
+| @uppy/companion-client | 1.5.3 | @uppy/react | 1.10.2 |
+| @uppy/companion | 2.0.0-alpha.9 | @uppy/redux-dev-tools | 1.3.4 |
+| @uppy/core | 1.12.2 | @uppy/robodog | 1.9.2 |
+| @uppy/dashboard | 1.12.2 | @uppy/screen-capture | 1.0.6 |
+| @uppy/drag-drop | 1.4.18 | @uppy/status-bar | 1.7.3 |
+| @uppy/dropbox | 1.4.11 | @uppy/store-default | 1.2.3 |
+| @uppy/facebook | 1.1.11 | @uppy/store-redux | 1.2.3 |
+| @uppy/file-input | 1.4.16 | @uppy/thumbnail-generator | 1.6.5 |
+| @uppy/form | 1.3.19 | @uppy/transloadit | 1.6.5 |
+| @uppy/golden-retriever | 1.3.18 | @uppy/tus | 1.7.3 |
+| @uppy/google-drive | 1.5.11 | @uppy/url | 1.5.10 |
+| @uppy/image-editor | 0.1.3 | @uppy/utils | 3.2.2 |
+| @uppy/informer | 1.5.10 | @uppy/webcam | 1.6.10 |
+| @uppy/instagram | 1.4.11 | @uppy/xhr-upload | 1.6.3 |
+| @uppy/locales | 1.16.3 | @uppy/zoom | 0.1.0 |
+| @uppy/onedrive | 1.1.11 | uppy | 1.19.2 |
+
+- @uppy/utils: Add support for AVIF images in thumbnails (#2406 / @ajkachnic)
+- @uppy/companion,@uppy/zoom: add implementation for Zoom plugin and Zoom Provider (#2342 / @mokutsu-coursera, @goto-bus-stop)
+- @uppy/companion: fix zoom logout endpoint (#2414 / @ifedapoolarewaju)
+- @uppy/companion: add extensions to zoom file names (#2415 / @ifedapoolarewaju)
 
 ## 1.19.1
 

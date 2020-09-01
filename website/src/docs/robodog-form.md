@@ -57,6 +57,10 @@ Set rules and conditions to limit the type and/or number of files that can be se
 
 Maximum file size in bytes for each individual file.
 
+### `restrictions.minFileSize`
+
+Minimum file size in bytes for each individual file.
+
 ### `restrictions.maxNumberOfFiles`
 
 The total number of files that can be selected. If this is larger than 1, the `multiple` attribute will be added to `<input type="file">` fields.
@@ -128,7 +132,7 @@ $(selector).transloadit({
 ```
 ```html
 <!-- The new Robodog way! -->
-<script src="//transloadit.edgly.net/releases/uppy/robodog/v1.9.1/robodog.min.js"></script>
+<script src="//transloadit.edgly.net/releases/uppy/robodog/v1.9.5/robodog.min.js"></script>
 
 <script>
 window.Robodog.form(selector, {
@@ -140,7 +144,7 @@ window.Robodog.form(selector, {
 Make sure to also include the Uppy css file in your `<head>` tag in case you want to use the `modal: true` option:
 ```html
 <head>
-  <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.9.1/robodog.min.css">
+  <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.9.5/robodog.min.css">
 </head>
 ```
 
@@ -152,7 +156,7 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
 <html>
   <head>
     <title>Testing Robodog</title>
-    <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.9.1/robodog.min.css">
+    <link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.9.5/robodog.min.css">
   </head>
   <body>
     <form id="upload-form" action="/uploads" enctype="multipart/form-data" method="POST">
@@ -162,7 +166,7 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
       <button type="submit">Upload</button>
     </form>
 
-    <script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.9.1/robodog.min.js"></script>
+    <script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.9.5/robodog.min.js"></script>
     <script type="text/javascript">
     window.Robodog.form('#upload-form', {
       waitForEncoding: true,

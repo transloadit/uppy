@@ -13,8 +13,8 @@ const { version } = require('../../package.json')
  *
  * @returns {object}
  */
-exports.getCompanionOptions = () => {
-  return merge({}, getConfigFromEnv(), getConfigFromFile())
+exports.getCompanionOptions = (options = {}) => {
+  return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
 }
 
 /**
@@ -48,6 +48,11 @@ const getConfigFromEnv = () => {
       onedrive: {
         key: process.env.COMPANION_ONEDRIVE_KEY,
         secret: getSecret('COMPANION_ONEDRIVE_SECRET')
+      },
+      zoom: {
+        key: process.env.COMPANION_ZOOM_KEY,
+        secret: getSecret('COMPANION_ZOOM_SECRET'),
+        verificationToken: getSecret('COMPANION_ZOOM_VERIFICATION_TOKEN')
       },
       s3: {
         key: process.env.COMPANION_AWS_KEY,

@@ -19,6 +19,9 @@ class MockPurest {
   request (done) {
     if (typeof done === 'function') {
       const responses = {
+        zoom: {
+          default: {}
+        },
         dropbox: {
           default: {
             hash: '0a9f95a989dd4b1851f0103c31e304ce',

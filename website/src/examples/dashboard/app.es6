@@ -7,6 +7,7 @@ const Dropbox = require('@uppy/dropbox')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
+const Zoom = require('@uppy/zoom')
 const ImageEditor = require('@uppy/image-editor')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
@@ -63,6 +64,7 @@ function uppySetOptions () {
 
   const defaultNullRestrictions = {
     maxFileSize: null,
+    minFileSize: null,
     maxNumberOfFiles: null,
     minNumberOfFiles: null,
     allowedFileTypes: null
@@ -133,6 +135,14 @@ function uppySetOptions () {
     window.uppy.removePlugin(oneDriveInstance)
   }
 
+  const zoomInstance = window.uppy.getPlugin('Zoom')
+  if (opts.Zoom && !zoomInstance) {
+    window.uppy.use(Zoom, { target: Dashboard, companionUrl: 'https://intense-meadow-61813.herokuapp.com/' })
+  }
+  if (!opts.Zoom && zoomInstance) {
+    window.uppy.removePlugin(zoomInstance)
+  }
+
   const webcamInstance = window.uppy.getPlugin('Webcam')
   if (opts.Webcam && !webcamInstance) {
     window.uppy.use(Webcam, { target: Dashboard })
@@ -172,7 +182,7 @@ function loadLocaleFromCDN (localeName) {
   var head = document.getElementsByTagName('head')[0]
   var js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.16.2/${localeName}.min.js`
+  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.16.5/${localeName}.min.js`
 
   head.appendChild(js)
 }

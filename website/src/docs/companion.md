@@ -35,7 +35,7 @@ Install from NPM:
 npm install @uppy/companion
 ```
 
-If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@0.30.0`.
+If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@1.x`.
 
 Unfortunately, Windows is not a supported platform right now. It may work, and we're happy to accept improvements in this area, but we can't provide assistance.
 
@@ -189,6 +189,12 @@ export COMPANION_ONEDRIVE_KEY="YOUR ONEDRIVE KEY"
 export COMPANION_ONEDRIVE_SECRET="YOUR ONEDRIVE SECRET"
 # specifying a secret file will override a directly set secret
 export COMPANION_ONEDRIVE_SECRET_FILE="PATH/TO/ONEDRIVE/SECRET/FILE"
+
+# to enable Zoom
+export COMPANION_ZOOM_KEY="YOUR ZOOM KEY"
+export COMPANION_ZOOM_SECRET="YOUR ZOOM SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_ZOOM_SECRET_FILE="PATH/TO/ZOOM/SECRET/FILE"
 
 # to enable S3
 export COMPANION_AWS_KEY="YOUR AWS KEY"

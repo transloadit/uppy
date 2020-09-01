@@ -45,6 +45,7 @@ module.exports = class MiniXHRUpload {
 
     this.requests = opts.__queue
     this.uploaderEvents = Object.create(null)
+    this.i18n = opts.i18n
   }
 
   _getOptions (file) {
