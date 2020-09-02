@@ -1,0 +1,5 @@
+exports.Dashboard = require('./lib/Dashboard.vue.js')
+exports.DashboardModal = require('./lib/DashboardModal.vue.js')
+exports.DragDrop = require('./lib/DragDrop.vue.js')
+exports.ProgressBar = require('./lib/ProgressBar.vue.js')
+exports.StatusBar = require('./lib/StatusBar.vue.js')
