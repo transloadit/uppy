@@ -53,7 +53,7 @@ zh_CN.strings = {
   fileSource: '文件源：%{name}',
   filesUploadedOfTotal: {
     '0': '已上传 %{smart_count} 个文件中的 %{complete} 个',
-    '1': '已上传 %{smart_count} 个文件中的 %{complete} 个',
+    '1': '已上传 %{smart_count} 个文件中的 %{complete} 个'
   },
   filter: '筛选器',
   finishEditingFile: '完成文件编辑',
