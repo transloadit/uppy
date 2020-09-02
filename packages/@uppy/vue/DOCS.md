@@ -95,7 +95,7 @@ export default {
 }
 ```
 
-## Component Differences
+## Components
 - `<Dashboard />` 
   - Takes a `plugins` array for what plugins to use
 - `<DashboardModal />`
