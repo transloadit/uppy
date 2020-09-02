@@ -18,6 +18,9 @@ Install from NPM:
 ```sh
 npm install @uppy/vue
 ```
+## CSS
+
+Make sure to also include the necessary CSS files for each Uppy Vue component you are using.
 
 ## Usage
 
