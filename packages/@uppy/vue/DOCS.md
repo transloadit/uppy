@@ -11,12 +11,12 @@ Uppy provides [Vue][] components for the included UI plugins.
 
 ## Installation
 
-All Vue components will be provided through the `@uppy/vue` package, when fully released. For now, install from `ajkachnic/vue`
+All Vue components are provided through the `@uppy/vue` package
 
 Install from NPM:
 
 ```sh
-npm install ajkachnic/vue
+npm install @uppy/vue
 ```
 
 ## Usage
@@ -35,7 +35,7 @@ Note: At the moment, this example is not functional due to an unresolved issue w
 </template>
 
 <script>
-import { Dashboard } from 'uppy-vue'
+import { Dashboard } from '@uppy/vue'
 
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
