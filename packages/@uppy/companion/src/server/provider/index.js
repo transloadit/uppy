@@ -5,8 +5,7 @@
 const config = require('@purest/providers')
 const dropbox = require('./dropbox')
 const drive = require('./drive')
-const instagram = require('./instagram')
-const instagramGraph = require('./instagram/graph')
+const instagram = require('./instagram/graph')
 const facebook = require('./facebook')
 const onedrive = require('./onedrive')
 const zoom = require('./zoom')
@@ -71,16 +70,8 @@ module.exports.getProviderMiddleware = (providers) => {
  * @return {Object.<string, typeof Provider>}
  */
 module.exports.getDefaultProviders = (companionOptions) => {
-  const { providerOptions } = companionOptions || { providerOptions: null }
   // @todo: we should rename drive to googledrive or google-drive or google
-  const providers = { dropbox, drive, facebook, onedrive, zoom }
-  // Instagram's Graph API key is just numbers, while the old API key is hex
-  const usesGraphAPI = () => /^\d+$/.test(providerOptions.instagram.key)
-  if (providerOptions && providerOptions.instagram && usesGraphAPI()) {
-    providers.instagram = instagramGraph
-  } else {
-    providers.instagram = instagram
-  }
+  const providers = { dropbox, drive, facebook, onedrive, zoom, instagram }
 
   return providers
 }
