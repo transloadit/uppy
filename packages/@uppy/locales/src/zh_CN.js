@@ -30,7 +30,7 @@ zh_CN.strings = {
   creatingAssemblyFailed: 'Transloadit：无法创建程序集',
   dashboardTitle: '文件上传工具',
   dashboardWindowTitle: '文件上传工具窗口（点击离开以关闭）',
-  dataUploadedOfTotal: '%{total}%{complete}',
+  dataUploadedOfTotal: '%{total} / %{complete}',
   done: '完成',
   dropHereOr: '拖拽文件到这里，或%{browse}',
   dropHint: '拖拽文件到这里',
@@ -52,8 +52,8 @@ zh_CN.strings = {
   failedToUpload: '上传 %{file} 失败',
   fileSource: '文件源：%{name}',
   filesUploadedOfTotal: {
-    '0': '%{smart_count} 个文件上传 %{complete}',
-    '1': '%{smart_count} 个文件上传 %{complete}'
+    '0': '已上传 %{smart_count} 个文件中的 %{complete} 个',
+    '1': '已上传 %{smart_count} 个文件中的 %{complete} 个',
   },
   filter: '筛选器',
   finishEditingFile: '完成文件编辑',
@@ -137,7 +137,7 @@ zh_CN.strings = {
     '0': '又有 %{smart_count} 个文件被添加',
     '1': '又有 %{smart_count} 个文件被添加'
   },
-  xTimeLeft: '还剩下 %{time}',
+  xTimeLeft: '剩余 %{time}',
   youCanOnlyUploadFileTypes: '您只能上传这些文件类型：%{types}',
   youCanOnlyUploadX: {
     '0': '您只能上传 %{smart_count} 个文件',
