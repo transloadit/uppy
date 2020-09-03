@@ -18,7 +18,7 @@ Robodog is an Uppy-based library that helps you talk to the Transloadit API. It 
 Robodog can be downloaded from npm:
 
 ```shell
-npm install  @uppy/robodog
+npm install @uppy/robodog
 ```
 
 Then, with a bundler such as [webpack][webpack] or [Browserify][browserify], do:
