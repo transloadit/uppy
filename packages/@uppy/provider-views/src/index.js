@@ -157,7 +157,7 @@ module.exports = class ProviderView {
   /**
    * Fetches new folder
    *
-   * @param  {object} Folder
+   * @param  {object} folder
    * @param  {string} title Folder title
    */
   getNextFolder (folder) {
