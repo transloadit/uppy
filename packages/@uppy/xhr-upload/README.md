@@ -24,7 +24,7 @@ uppy.use(Uppy, {
 ## Installation
 
 ```bash
-$ npm install @uppy/xhr-upload --save
+$ npm install @uppy/xhr-upload 
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

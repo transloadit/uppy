@@ -34,7 +34,7 @@ uppy.use(Dashboard, {
 ## Installation
 
 ```bash
-$ npm install @uppy/dashboard --save
+$ npm install @uppy/dashboard 
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

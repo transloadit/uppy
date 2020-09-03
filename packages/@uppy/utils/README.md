@@ -14,7 +14,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 > Unless you are creating a custom plugin, you should not need to install this manually.
 
 ```bash
-$ npm install @uppy/utils --save
+$ npm install @uppy/utils 
 ```
 
 ## License

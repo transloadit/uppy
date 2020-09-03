@@ -35,7 +35,7 @@ socket.on('progress', () => {})
 > Unless you are writing a custom provider plugin, you do not need to install this.
 
 ```bash
-$ npm install @uppy/companion-client --save
+$ npm install @uppy/companion-client 
 ```
 
 <!-- Undocumented currently

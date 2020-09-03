@@ -28,7 +28,7 @@ uppy.use(Form, {
 ## Installation
 
 ```bash
-$ npm install @uppy/form --save
+$ npm install @uppy/form 
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
