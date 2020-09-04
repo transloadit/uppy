@@ -225,7 +225,8 @@ class Zoom extends Provider {
       items: [],
       username: adapter.getUserEmail(userResponse)
     }
-    const items = results.meetings || results.recording_files
+    const items = results.meetings || results.recording_files.filter(file => file.file_type !== 'TIMELINE')
+
     items.forEach(item => {
       data.items.push({
         isFolder: adapter.getIsFolder(item),
