@@ -189,16 +189,18 @@ class Zoom extends Provider {
     let start = end.clone().date(1)
 
     const accountCreation = adapter.getAccountCreationDate(body)
-    const defaultLimit = end.clone().subtract(DEFAULT_RANGE_MOS, 'months')
-    const limit = accountCreation > defaultLimit ? accountCreation : defaultLimit
+    const defaultLimit = end.clone().subtract(DEFAULT_RANGE_MOS, 'months').date(1)
+    const allResultsShown = accountCreation > defaultLimit
+    const limit = allResultsShown ? accountCreation : defaultLimit
 
     const data = {
       items: [],
       username: adapter.getUserEmail(body)
     }
 
-    while (start > limit) {
-      start = end.clone().date(1)
+    while (start.isSameOrAfter(limit, 'month')) {
+      start = end.isSame(limit, 'month') ? limit.clone() : end.clone().date(1)
+
       data.items.push({
         isFolder: true,
         icon: 'folder',
@@ -210,9 +212,15 @@ class Zoom extends Provider {
         modifiedDate: adapter.getDateFolderModified(end),
         size: null
       })
+
+      if (end.isSame(limit, 'month')) {
+        break
+      }
+
       end = start.clone().subtract(1, 'days')
     }
-    data.nextPagePath = adapter.getDateNextPagePath(start)
+
+    data.nextPagePath = adapter.getDateNextPagePath(start.clone(), allResultsShown)
     return data
   }
 
