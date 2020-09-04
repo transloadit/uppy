@@ -72,9 +72,11 @@ jobs:
         - docker
       script: npm run test:companion
       deploy:
-      - provider: script
+      - provider: heroku
+        api_key:
+          secure: "IbnHioWy5xFxd3QjlX9cGtQVxLHgvIfYFKkdRke7QRh+Rmpt+b1KjPr2h+/SXI2OcTM+XerViQH6P8mGXCKJqPaBS0/FrabuS7blTQv3K0rP81WkgWjdWxYC04uU4GZWpyZkgnV3lJBxcfRaots2OHcnQI6+fdeP25qM9n7g+G8y+btSXru0xZVyJVJ+e0nsl38CuAnxfh0GSmS+4Dd1E1lQIxvlwORZCJmUOU31knxN7T82GQW6O8e23Yqv2HTdPFRUqhOYA0IfdqS+X55yp8GfvJJvtPe7IMr4i/Yn8M0Uhp4ZwkKjTzKYLRwWojTXUxP1zfU6qQxDKu8aWdVGRz6rm39IX9UYThaAqPNyci36fzIidJyJUosUj9WM6Ds7Qs4dLCsLIgTfb/Nl7sPT6P8SSWePb+P4jZr11qL+LlAP1ZzA7c34QCG9wxJG8Qrh2hQi9JMdupmYNF6/0q0Iisya+vPdxRFpsXVdXU7xVW28UwLxVNhw/2yhSNlRlgE/HYfr21zMyRQGW72mJ0AO5jNVbl8paGL96/W0UtjTlZrb4zu7fOW9SJdi6TWkfZx5WhSvHG59P4Ph1nMuty6LG5dYvdqDF/BV4SoK8bdJ8U6O8BOom8hhqZv+lDuP0O60gQVTR17nUQ2aRbI4OAUuJt61QTyPpO2tcJXKN6chH3s="
         skip_cleanup: true
-        script: bin/travis-deploy-companion
+        app: companion-demo
         on:
           branch: master
     - name: 'Run Companion tests (Node.js 10)'
