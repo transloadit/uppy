@@ -35,7 +35,7 @@ class Example extends React.Component {
 ## Installation
 
 ```bash
-$ npm install @uppy/react --save
+$ npm install @uppy/react
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
