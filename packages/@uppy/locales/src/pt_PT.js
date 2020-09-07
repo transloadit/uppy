@@ -52,15 +52,13 @@ pt_PT.strings = {
   fileSource: 'Origem do ficheiro: %{name}',
   filesUploadedOfTotal: {
     0: '%{complete} de %{smart_count} ficheiro enviado',
-    1: '%{complete} de %{smart_count} ficheiros enviados',
-    2: '%{complete} de %{smart_count} ficheiros enviados'
+    1: '%{complete} de %{smart_count} ficheiros enviados'
   },
   filter: 'Filtrar',
   finishEditingFile: 'Concluir edição de ficheiro',
   folderAdded: {
     0: 'Adicionado %{smart_count} ficheiro de %{folder}',
-    1: 'Adicionado %{smart_count} ficheiros de %{folder}',
-    2: 'Adicionado %{smart_count} ficheiros de %{folder}'
+    1: 'Adicionado %{smart_count} ficheiros de %{folder}'
   },
   import: 'Importar',
   importFrom: 'Importar de %{name}',
@@ -75,8 +73,7 @@ pt_PT.strings = {
   poweredBy: 'Desenvolvido por',
   processingXFiles: {
     0: 'A processar %{smart_count} ficheiro',
-    1: 'A processar %{smart_count} ficheiros',
-    2: 'A processar %{smart_count} ficheiros'
+    1: 'A processar %{smart_count} ficheiros'
   },
   removeFile: 'Remover ficheiro',
   resetFilter: 'Limpar filtro',
@@ -87,8 +84,7 @@ pt_PT.strings = {
   saveChanges: 'Salvar alterações',
   selectX: {
     0: 'Selecionar %{smart_count}',
-    1: 'Selecionar %{smart_count}',
-    2: 'Selecionar %{smart_count}'
+    1: 'Selecionar %{smart_count}'
   },
   smile: 'Sorria!',
   startRecording: 'Começar gravação de vídeo',
@@ -101,41 +97,34 @@ pt_PT.strings = {
   uploadPaused: 'Envio de ficheiros pausado',
   uploadXFiles: {
     0: 'Enviar %{smart_count} ficheiro',
-    1: 'Enviar %{smart_count} ficheiros',
-    2: 'Enviar %{smart_count} ficheiros'
+    1: 'Enviar %{smart_count} ficheiros'
   },
   uploadXNewFiles: {
     0: 'Enviar +%{smart_count} ficheiro',
-    1: 'Enviar +%{smart_count} ficheiros',
-    2: 'Enviar +%{smart_count} ficheiros'
+    1: 'Enviar +%{smart_count} ficheiros'
   },
   uploading: 'A enviar',
   uploadingXFiles: {
     0: 'A enviar %{smart_count} ficheiro',
-    1: 'A enviar %{smart_count} ficheiros',
-    2: 'A enviar %{smart_count} ficheiros'
+    1: 'A enviar %{smart_count} ficheiros'
   },
   xFilesSelected: {
     0: '%{smart_count} ficheiro selecionado',
-    1: '%{smart_count} ficheiros selecionados',
-    2: '%{smart_count} ficheiros selecionados'
+    1: '%{smart_count} ficheiros selecionados'
   },
   xMoreFilesAdded: {
     0: '%{smart_count} ficheiro adicionados',
-    1: '%{smart_count} ficheiros adicionados',
-    2: '%{smart_count} ficheiros adicionados'
+    1: '%{smart_count} ficheiros adicionados'
   },
   xTimeLeft: '%{time} restantes',
   youCanOnlyUploadFileTypes: 'Só pode enviar ficheiros: %{types}',
   youCanOnlyUploadX: {
     0: 'Só pode enviar %{smart_count} ficheiro',
-    1: 'Só pode enviar %{smart_count} ficheiros',
-    2: 'Só pode enviar %{smart_count} ficheiros'
+    1: 'Só pode enviar %{smart_count} ficheiros'
   },
   youHaveToAtLeastSelectX: {
     0: 'Precisa de selecionar pelo menos %{smart_count} ficheiro',
-    1: 'Precisa de selecionar pelo menos %{smart_count} ficheiros',
-    2: 'Precisa de selecionar pelo menos %{smart_count} ficheiros'
+    1: 'Precisa de selecionar pelo menos %{smart_count} ficheiros'
   },
   selectAllFilesFromFolderNamed:
     'Selecione todos os ficheiros da pasta %{name}',
