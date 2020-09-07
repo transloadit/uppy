@@ -558,7 +558,8 @@ module.exports = class Dashboard extends Plugin {
     event.stopPropagation()
 
     // 1. Check if the "type" of the datatransfer object includes files. If not, deny drop.
-    const types = event.dataTransfer.types
+    // Use `[...]` to turn this into a real array in IE10
+    const types = [...event.dataTransfer.types]
     const hasFiles = types.some(type => type === 'Files')
     if (!hasFiles) {
       event.dataTransfer.dropEffect = 'none'
