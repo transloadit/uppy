@@ -121,7 +121,7 @@ module.exports = class DragDrop extends Plugin {
 
     // 1. Check if the "type" of the datatransfer object includes files. If not, deny drop.
     const types = event.dataTransfer.types
-    const hasFiles = types.find(type => type === 'Files')
+    const hasFiles = types.some(type => type === 'Files')
     if (!hasFiles) {
       event.dataTransfer.dropEffect = 'none'
       clearTimeout(this.removeDragOverClassTimeout)
