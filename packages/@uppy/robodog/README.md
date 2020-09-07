@@ -10,7 +10,7 @@ Robodog is an Uppy-based library that pulls your files through Transloadit for a
 ## Installation
 
 ```bash
-$ npm install @uppy/robodog --save
+$ npm install @uppy/robodog
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](http://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
@@ -18,8 +18,8 @@ We recommend installing from npm and then using a module bundler such as [Webpac
 Alternatively, you can also use this package in a pre-built bundle from Transloadit's CDN: Edgly.
 
 ```html
-<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v1.20.0/robodog.min.css">
-<script src="https://transloadit.edgly.net/releases/uppy/v1.20.0/robodog.min.js"></script>
+<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/v1.21.0/robodog.min.css">
+<script src="https://transloadit.edgly.net/releases/uppy/v1.21.0/robodog.min.js"></script>
 ```
 
 Then, a global `Robodog` variable will be available. For usage instructions, please see the [main Robodog documentation](https://uppy.io/docs/robodog).

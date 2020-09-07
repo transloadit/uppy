@@ -28,6 +28,7 @@
 // If global `URL` constructor is available, use it
 const URL_ = typeof URL === 'function' ? URL : require('url-parse')
 const { Plugin } = require('@uppy/core')
+const Translator = require('@uppy/utils/lib/Translator')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const settle = require('@uppy/utils/lib/settle')
 const hasProperty = require('@uppy/utils/lib/hasProperty')
@@ -78,6 +79,12 @@ module.exports = class AwsS3 extends Plugin {
     this.id = this.opts.id || 'AwsS3'
     this.title = 'AWS S3'
 
+    this.defaultLocale = {
+      strings: {
+        timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
+      }
+    }
+
     const defaultOptions = {
       timeout: 30 * 1000,
       limit: 0,
@@ -87,9 +94,22 @@ module.exports = class AwsS3 extends Plugin {
 
     this.opts = { ...defaultOptions, ...opts }
 
+    this.i18nInit()
+
     this.client = new RequestClient(uppy, opts)
     this.handleUpload = this.handleUpload.bind(this)
     this.requests = new RateLimitedQueue(this.opts.limit)
+  }
+
+  setOptions (newOpts) {
+    super.setOptions(newOpts)
+    this.i18nInit()
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   getUploadParameters (file) {
@@ -118,7 +138,7 @@ module.exports = class AwsS3 extends Plugin {
       (params.method == null || /^(put|post)$/i.test(params.method))
 
     if (!valid) {
-      const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields, headers }'.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
+      const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields, headers }' but got '${JSON.stringify(params)}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
       console.error(err)
       throw err
     }
@@ -262,10 +282,12 @@ module.exports = class AwsS3 extends Plugin {
       getResponseError: defaultGetResponseError
     }
 
+    // Only for MiniXHRUpload, remove once we can depend on XHRUpload directly again
+    xhrOptions.i18n = this.i18n
+
     // Revert to `this.uppy.use(XHRUpload)` once the big comment block at the top of
     // this file is solved
     this._uploader = new MiniXHRUpload(this.uppy, xhrOptions)
-    this._uploader.i18n = this.uppy.i18n
   }
 
   uninstall () {

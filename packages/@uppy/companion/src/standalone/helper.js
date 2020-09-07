@@ -13,8 +13,8 @@ const { version } = require('../../package.json')
  *
  * @returns {object}
  */
-exports.getCompanionOptions = () => {
-  return merge({}, getConfigFromEnv(), getConfigFromFile())
+exports.getCompanionOptions = (options = {}) => {
+  return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
 }
 
 /**
@@ -51,7 +51,8 @@ const getConfigFromEnv = () => {
       },
       zoom: {
         key: process.env.COMPANION_ZOOM_KEY,
-        secret: getSecret('COMPANION_ZOOM_SECRET')
+        secret: getSecret('COMPANION_ZOOM_SECRET'),
+        verificationToken: getSecret('COMPANION_ZOOM_VERIFICATION_TOKEN')
       },
       s3: {
         key: process.env.COMPANION_AWS_KEY,

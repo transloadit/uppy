@@ -22,7 +22,10 @@ window.setup = function (options) {
   })
   uppy.on('file-added', (file) => {
     randomColorImage().then(function (blob) {
-      uppy.setFileState(file.id, { preview: URL.createObjectURL(blob) })
+      uppy.setFileState(file.id, {
+        // eslint-disable-next-line compat/compat
+        preview: URL.createObjectURL(blob)
+      })
     })
   })
 

@@ -19,12 +19,12 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
   <head>
     <meta charset="utf-8">
     <title>Uppy</title>
-    <link href="https://transloadit.edgly.net/releases/uppy/v1.20.0/uppy.min.css" rel="stylesheet">
+    <link href="https://transloadit.edgly.net/releases/uppy/v1.21.0/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <div id="drag-drop-area"></div>
 
-    <script src="https://transloadit.edgly.net/releases/uppy/v1.20.0/uppy.min.js"></script>
+    <script src="https://transloadit.edgly.net/releases/uppy/v1.21.0/uppy.min.js"></script>
     <script>
       var uppy = Uppy.Core()
         .use(Uppy.Dashboard, {
@@ -74,6 +74,7 @@ const XHRUpload = require('@uppy/xhr-upload')
 const Dashboard = require('@uppy/dashboard')
 
 // And their styles (for UI plugins)
+// With webpack and `style-loader`, you can require them like this:
 require('@uppy/core/dist/style.css')
 require('@uppy/dashboard/dist/style.css')
  
@@ -104,6 +105,10 @@ import Uppy, { XHRUpload, DragDrop } from 'uppy'
 
 And add the `uppy/dist/uppy.min.css` file to your page.
 
+#### SCSS
+
+If you are using SCSS in your project, you can include the Uppy SCSS source files, instead of using our prebuilt CSS. Uppy's SCSS files do assume Node.js-style resolution for `@import`s, so you may need to [configure a resolver](https://github.com/transloadit/uppy/issues/2296#issuecomment-640649513).
+
 ### With a script tag
 
 You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will attach itself to the global `window.Uppy` object.
@@ -113,12 +118,12 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
 1\. Add a script at the bottom of the closing `</body>` tag:
 
 ``` html
-<script src="https://transloadit.edgly.net/releases/uppy/v1.20.0/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v1.21.0/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 ``` html
-<link href="https://transloadit.edgly.net/releases/uppy/v1.20.0/uppy.min.css" rel="stylesheet">
+<link href="https://transloadit.edgly.net/releases/uppy/v1.21.0/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize at the bottom of the closing `</body>` tag:
@@ -169,5 +174,5 @@ const Uppy = require('@uppy/core')
 If you're using Uppy from CDN, `es6-promise` and  `whatwg-fetch` are already included in the bundle, no need to include anything additionally:
 
 ```html
-<script src="https://transloadit.edgly.net/releases/uppy/v1.20.0/uppy.min.js"></script>
+<script src="https://transloadit.edgly.net/releases/uppy/v1.21.0/uppy.min.js"></script>
 ```

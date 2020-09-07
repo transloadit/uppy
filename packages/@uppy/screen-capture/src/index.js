@@ -238,6 +238,7 @@ module.exports = class ScreenCapture extends Plugin {
         this.outputStream = new MediaStream(tracks)
 
         // initialize mediarecorder
+        // eslint-disable-next-line compat/compat
         this.recorder = new MediaRecorder(this.outputStream, options)
 
         // push data to buffer when data available
@@ -304,6 +305,7 @@ module.exports = class ScreenCapture extends Plugin {
 
       // create object url for capture result preview
       this.setPluginState({
+        // eslint-disable-next-line compat/compat
         recordedVideo: URL.createObjectURL(file.data)
       })
     }).then(() => {
