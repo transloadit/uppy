@@ -12,39 +12,39 @@ When using Uppy's React components, an Uppy instance must be passed in to the `u
 
 ## Functional Components
 
-With React Hooks, the `useMemo` hook can be used to create an instance once and remember it for all rerenders. The `useEffect` hook can close the Uppy instance when the component unmounts.
+With React Hooks, the `useRef` hook can be used to create an instance once and remember it for all rerenders. The `useEffect` hook can close the Uppy instance when the component unmounts.
 
 ```js
 const MyComponent = () => {
-  const uppy = React.useMemo(() => {
-    // Do all the configuration here
-    return new Uppy()
+  const uppy = useRef(null);
+  if (uppy.current === null) {
+    uppy.current = new Uppy()
       .use(Transloadit, {})
-  }, []);
+  }
 
   React.useEffect(() => {
-    return () => uppy.close()
+    return () => uppy.current.close()
   }, [])
 
   return <DashboardModal uppy={uppy} />
 }
 ```
 
-Both hooks must receive the `[]` dependency array parameter, or the Uppy instance will be recreated and/or destroyed every time the component rerenders. To make sure you never forget that, a custom hook could be used:
+With useRef you must call `current` to access the Uppy instance and its functions. useEffect must receive the `[]` dependency array parameter, or the Uppy instance will be destroyed every time the component rerenders. To make sure you never forget these requirements, a custom hook could be used:
 ```js
-function useUppy (factory) {
-  const uppy = React.useMemo(factory, [])
+function useUppy(uppyInstance) {
+  const uppy = React.useRef(uppyInstance)
   React.useEffect(() => {
-    return () => uppy.close()
+    return () => uppy.current.close()
   }, [])
-  return new uppy
+  return uppy.current
 }
 
 // Then use it as:
-const uppy = useUppy(() => {
-  return new Uppy()
+const uppy = useUppy(
+  new Uppy()
     .use(Tus, {})
-})
+)
 ```
 
 ## Class Components
