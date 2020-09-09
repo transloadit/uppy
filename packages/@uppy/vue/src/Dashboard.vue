@@ -53,8 +53,7 @@ export default {
     },
     props (current, old) {
       if (JSON.stringify(old) !== JSON.stringify(current)) {
-        this.uninstallPlugin()
-        this.installPlugin()
+        this.plugin.setOptions(current)
       }
     }
   }
