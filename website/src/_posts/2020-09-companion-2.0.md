@@ -1,8 +1,8 @@
 ---
 title: "Companion 2.0 is here"
-date: 2020-08-20
+date: 2020-09-09
 author: ife
-published: false
+published: true
 ---
 
 We are happy to announce version 2.0 of Companion! 🎉 After maintaining and improving the 1.x series for over a year, we're now releasing a major version bump on the Companion package. The drive on this release is mainly towards fixing some terminology inconsistencies and aligning with Node.js LTS to ease the maintenance burden.
