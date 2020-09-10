@@ -25,19 +25,21 @@ function server (moreCompanionOptions = {}) {
   const app = express()
 
   // for server metrics tracking.
-  const metricsMiddleware = promBundle({ includeMethod: true })
-  const promClient = metricsMiddleware.promClient
-  const collectDefaultMetrics = promClient.collectDefaultMetrics
-  const promInterval = collectDefaultMetrics({ register: promClient.register, timeout: 5000 })
+  if (process.env.COMPANION_HIDE_METRICS !== 'true') {
+    const metricsMiddleware = promBundle({ includeMethod: true })
+    const promClient = metricsMiddleware.promClient
+    const collectDefaultMetrics = promClient.collectDefaultMetrics
+    const promInterval = collectDefaultMetrics({ register: promClient.register, timeout: 5000 })
 
-  // Add version as a prometheus gauge
-  const versionGauge = new promClient.Gauge({ name: 'companion_version', help: 'npm version as an integer' })
-  // @ts-ignore
-  const numberVersion = version.replace(/\D/g, '') * 1
-  versionGauge.set(numberVersion)
+    // Add version as a prometheus gauge
+    const versionGauge = new promClient.Gauge({ name: 'companion_version', help: 'npm version as an integer' })
+    // @ts-ignore
+    const numberVersion = version.replace(/\D/g, '') * 1
+    versionGauge.set(numberVersion)
 
-  if (app.get('env') !== 'test') {
-    clearInterval(promInterval)
+    if (app.get('env') !== 'test') {
+      clearInterval(promInterval)
+    }
   }
 
   // Query string keys whose values should not end up in logging output.
@@ -56,7 +58,7 @@ function server (moreCompanionOptions = {}) {
    *   censored: boolean
    * }}
    */
-  function censorQuery (rawQuery) {
+  function censorQuery(rawQuery) {
     /** @type {{ [key: string]: string }} */
     const query = {}
     let censored = false
@@ -94,7 +96,9 @@ function server (moreCompanionOptions = {}) {
   })
 
   // make app metrics available at '/metrics'.
-  app.use(metricsMiddleware)
+  if (process.env.COMPANION_HIDE_METRICS !== 'true') {
+    app.use(metricsMiddleware)
+  }
 
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: false }))
@@ -163,10 +167,12 @@ function server (moreCompanionOptions = {}) {
   })
 
   // Routes
-  app.get('/', (req, res) => {
-    res.setHeader('Content-Type', 'text/plain')
-    res.send(helper.buildHelpfulStartupMessage(companionOptions))
-  })
+  if (process.env.COMPANION_HIDE_WELCOME !== 'true') {
+    app.get('/', (req, res) => {
+      res.setHeader('Content-Type', 'text/plain')
+      res.send(helper.buildHelpfulStartupMessage(companionOptions))
+    })
+  }
 
   let companionApp
   try {

@@ -150,6 +150,10 @@ export COMPANION_PROTOCOL="YOUR SERVER PROTOCOL"
 export COMPANION_PORT="YOUR SERVER PORT"
 # corresponds to the server.port option, defaults to ''
 export COMPANION_PATH="/SERVER/PATH/TO/WHERE/COMPANION/LIVES"
+# disables the welcome page, defaults to false
+export COMPANION_HIDE_WELCOME="true"
+# disables the metrics page, defaults to false
+export COMPANION_HIDE_METRICS="true"
 
 # use this in place of COMPANION_PATH if the server path should not be
 # handled by the express.js app, but maybe by an external server configuration
