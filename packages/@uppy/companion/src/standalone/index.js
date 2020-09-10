@@ -21,11 +21,11 @@ const { version } = require('../../package.json')
  *
  * @returns {object}
  */
-function server(moreCompanionOptions = {}) {
+function server (moreCompanionOptions = {}) {
   const app = express()
 
   // for server metrics tracking.
-  let metricsMiddleware;
+  let metricsMiddleware
   if (process.env.COMPANION_HIDE_METRICS !== 'true') {
     metricsMiddleware = promBundle({ includeMethod: true })
     const promClient = metricsMiddleware.promClient
@@ -59,7 +59,7 @@ function server(moreCompanionOptions = {}) {
    *   censored: boolean
    * }}
    */
-  function censorQuery(rawQuery) {
+  function censorQuery (rawQuery) {
     /** @type {{ [key: string]: string }} */
     const query = {}
     let censored = false
