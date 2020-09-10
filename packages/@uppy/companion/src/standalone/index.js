@@ -21,12 +21,13 @@ const { version } = require('../../package.json')
  *
  * @returns {object}
  */
-function server (moreCompanionOptions = {}) {
+function server(moreCompanionOptions = {}) {
   const app = express()
 
   // for server metrics tracking.
+  let metricsMiddleware;
   if (process.env.COMPANION_HIDE_METRICS !== 'true') {
-    const metricsMiddleware = promBundle({ includeMethod: true })
+    metricsMiddleware = promBundle({ includeMethod: true })
     const promClient = metricsMiddleware.promClient
     const collectDefaultMetrics = promClient.collectDefaultMetrics
     const promInterval = collectDefaultMetrics({ register: promClient.register, timeout: 5000 })
