@@ -1,7 +1,7 @@
 const Provider = require('../Provider')
 
 const request = require('request')
-const moment = require('moment')
+const moment = require('moment-timezone')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
@@ -28,7 +28,7 @@ class Zoom extends Provider {
     return 'zoom'
   }
 
-  list (options, done) {
+  async list (options, done) {
     /*
     - returns list of months by default
     - drill down for specific files in each month
@@ -52,11 +52,13 @@ class Zoom extends Provider {
         })
     })
 
+    const userResponse = await userPromise
+
     if (from && to) {
       const queryObj = {
         page_size: PAGE_SIZE,
-        from,
-        to
+        from: moment.tz(from, userResponse.body.timezone || 'UTC').startOf('day').tz('UTC').format('YYYY-MM-DD'),
+        to: moment.tz(to, userResponse.body.timezone || 'UTC').endOf('day').tz('UTC').format('YYYY-MM-DD')
       }
 
       if (cursor) {
@@ -91,17 +93,17 @@ class Zoom extends Provider {
       })
     }
 
-    Promise.all([userPromise, meetingsPromise, recordingsPromise])
+    Promise.all([meetingsPromise, recordingsPromise])
       .then(
-        ([userResponse, meetingsResponse, recordingsResponse]) => {
+        ([meetingsResponse, recordingsResponse]) => {
           let returnData = null
           if (!meetingsResponse && !recordingsResponse) {
-            const end = cursor && moment(cursor)
+            const end = cursor && moment.utc(cursor).endOf('day').tz(userResponse.timezone || 'UTC')
             returnData = this._initializeData(userResponse.body, end)
           } else if (meetingsResponse) {
-            returnData = this._adaptData(userResponse.body, meetingsResponse.body)
+            returnData = this._adaptData(userResponse.body, meetingsResponse.body, query)
           } else if (recordingsResponse) {
-            returnData = this._adaptData(userResponse.body, recordingsResponse.body)
+            returnData = this._adaptData(userResponse.body, recordingsResponse.body, query)
           }
           done(null, returnData)
         },
@@ -185,13 +187,13 @@ class Zoom extends Provider {
   }
 
   _initializeData (body, initialEnd = null) {
-    let end = initialEnd || moment()
-    const accountCreation = adapter.getAccountCreationDate(body)
-    const defaultLimit = end.clone().subtract(DEFAULT_RANGE_MOS, 'months').date(1)
+    let end = initialEnd || moment.utc().tz(body.timezone || 'UTC')
+    const accountCreation = adapter.getAccountCreationDate(body).tz(body.timezone || 'UTC').startOf('day')
+    const defaultLimit = end.clone().subtract(DEFAULT_RANGE_MOS, 'months').date(1).startOf('day')
     const allResultsShown = accountCreation > defaultLimit
     const limit = allResultsShown ? accountCreation : defaultLimit
     // if the limit is mid-month, keep that exact date
-    let start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1)
+    let start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1).startOf('day')
 
     const data = {
       items: [],
@@ -210,30 +212,43 @@ class Zoom extends Provider {
         modifiedDate: adapter.getDateFolderModified(end),
         size: null
       })
-      end = start.clone().subtract(1, 'days')
-      // if the limit is mid-month, keep that exact date
-      start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1)
+      end = start.clone().subtract(1, 'days').endOf('day')
+      start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1).startOf('day')
     }
-    data.nextPagePath = allResultsShown ? null : adapter.getDateNextPagePath(end.clone())
+    data.nextPagePath = allResultsShown ? null : adapter.getDateNextPagePath(end)
     return data
   }
 
-  _adaptData (userResponse, results) {
+  _adaptData (userResponse, results, query) {
     if (!results) {
       return { items: [] }
     }
+
+    // convert start limit from local time to UTC
+    const utcFrom = moment.tz(query.from, userResponse.timezone || 'UTC').startOf('day').tz('UTC')
+    const utcTo = moment.tz(query.to, userResponse.timezone || 'UTC').endOf('day').tz('UTC')
 
     const data = {
       nextPagePath: adapter.getNextPagePath(results),
       items: [],
       username: adapter.getUserEmail(userResponse)
     }
-    const items = results.meetings || results.recording_files.filter(file => file.file_type !== 'TIMELINE')
+
+    let items = []
+    if (results.meetings) {
+      items = results.meetings
+        .map(item => { return { ...item, utcStart: moment.utc(item.start_time) } })
+        .filter(item => moment.utc(item.start_time).isAfter(utcFrom) && moment.utc(item.start_time).isBefore(utcTo))
+    } else {
+      items = results.recording_files
+        .map(item => item).filter(file => file.file_type !== 'TIMELINE')
+    }
+
     items.forEach(item => {
       data.items.push({
         isFolder: adapter.getIsFolder(item),
         icon: adapter.getIcon(item),
-        name: adapter.getItemName(item),
+        name: adapter.getItemName(item, userResponse),
         mimeType: adapter.getMimeType(item),
         id: adapter.getId(item),
         thumbnail: null,

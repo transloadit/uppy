@@ -1,4 +1,4 @@
-const moment = require('moment')
+const moment = require('moment-timezone')
 
 const MIMETYPES = {
   MP4: 'video/mp4',
@@ -31,7 +31,7 @@ exports.getDateName = (start, end) => {
 }
 
 exports.getAccountCreationDate = (results) => {
-  return moment(results.created_at)
+  return moment.utc(results.created_at)
 }
 
 exports.getUserEmail = (results) => {
@@ -65,10 +65,9 @@ exports.getIsFolder = (item) => {
   return !item.file_type
 }
 
-exports.getItemName = (item) => {
-  const start = moment(item.start_time || item.recording_start)
-    .clone()
-    .format('YYYY-MM-DD, kk:mm')
+exports.getItemName = (item, userResponse) => {
+  const start = moment.tz(item.start_time || item.recording_start, userResponse.timezone || 'UTC')
+    .format('YYYY-MM-DD, HH:mm')
 
   if (item.file_type) {
     const ext = EXT[item.file_type] ? `.${EXT[item.file_type]}` : ''

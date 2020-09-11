@@ -165,6 +165,7 @@
     "minify-stream": "2.0.1",
     "minimist": "^1.2.5",
     "mkdirp": "0.5.1",
+    "moment-timezone": "^0.5.31",
     "multi-glob": "1.0.2",
     "namespace-emitter": "2.0.1",
     "nock": "9.6.1",
