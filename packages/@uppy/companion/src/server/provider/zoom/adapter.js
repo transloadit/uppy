@@ -50,8 +50,8 @@ exports.getDateFolderModified = (end) => {
   return end.format('YYYY-MM-DD')
 }
 
-exports.getDateNextPagePath = (start) => {
-  return `?cursor=${start.subtract(1, 'days').format('YYYY-MM-DD')}`
+exports.getDateNextPagePath = (end) => {
+  return `?cursor=${end.format('YYYY-MM-DD')}`
 }
 
 exports.getNextPagePath = (results) => {
