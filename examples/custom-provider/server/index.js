@@ -40,9 +40,9 @@ const ACCESS_URL = 'https://unsplash.com/oauth/token'
 // initialize uppy
 const uppyOptions = {
   providerOptions: {
-    google: {
-      key: 'your google key',
-      secret: 'your google secret'
+    drive: {
+      key: 'your google drive key',
+      secret: 'your google drive secret'
     }
   },
   customProviders: {
@@ -53,9 +53,7 @@ const uppyOptions = {
         access_url: ACCESS_URL,
         oauth: 2,
         key: 'your unsplash key here',
-        secret: 'your unsplash secret here',
-        callback: '/myunsplash/callback',
-        transport: 'session'
+        secret: 'your unsplash secret here'
       },
       // you provider module
       module: require('./customprovider')

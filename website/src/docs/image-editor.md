@@ -23,7 +23,7 @@ const ImageEditor = require('@uppy/image-editor')
 
 const uppy = new Uppy()
 uppy.use(Dashboard)
-uppy.use(ImageEditor, { 
+uppy.use(ImageEditor, {
   target: Dashboard,
   quality: 0.8
 })
@@ -39,11 +39,7 @@ Install from NPM:
 npm install @uppy/image-editor
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
-
-```js
-const ImageEditor = Uppy.ImageEditor
-```
+The `@uppy/image-editor` plugin is in beta and is not yet available in the [CDN package](/docs/#With-a-script-tag).
 
 ## Options
 
@@ -53,7 +49,7 @@ The `@uppy/image-editor` plugin has the following configurable options:
 uppy.use(ImageEditor, {
   id: 'ImageEditor',
   quality: 0.8,
-  cropperOptions: { 
+  cropperOptions: {
     viewMode: 1,
     background: false,
     autoCropArea: 1,

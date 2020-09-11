@@ -23,7 +23,7 @@ const uppy = new Uppy({
 ## Installation
 
 ```bash
-$ npm install @uppy/store-default --save
+$ npm install @uppy/store-default
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

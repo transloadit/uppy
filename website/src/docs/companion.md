@@ -19,13 +19,13 @@ Companion handles the server-to-server communication between your server and fil
 
 As of now, Companion is integrated to work with:
 
-- Google Drive - [Set up instructions](/docs/google-drive/#Setting-Up)
-- Dropbox - [Set up instructions](/docs/dropbox/#Setting-Up)
-- Instagram
-- Facebook
-- OneDrive
-- Remote URLs
-- Amazon S3
+- Google Drive (name `drive`) - [Set up instructions](/docs/google-drive/#Setting-Up)
+- Dropbox (name `dropbox`) - [Set up instructions](/docs/dropbox/#Setting-Up)
+- Instagram (name `instagram`)
+- Facebook (name `facebook`)
+- OneDrive (name `onedrive`)
+- Remote URLs (name `url`)
+- Amazon S3 (name `s3`)
 
 ## Installation
 
@@ -36,6 +36,10 @@ npm install @uppy/companion
 ```
 
 If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@1.x`.
+
+### Prerequisite
+
+Since v2, you now need to be running `node.js >= v10.20.1` to use Companion. Please see [Migrating v1 to v2](#Migrating-v1-to-v2)
 
 Unfortunately, Windows is not a supported platform right now. It may work, and we're happy to accept improvements in this area, but we can't provide assistance.
 
@@ -61,9 +65,9 @@ app.use(session({secret: 'some secrety secret'}))
 // be sure to place this anywhere after app.use(bodyParser.json()) and app.use(session({...})
 const options = {
   providerOptions: {
-    google: {
-      key: 'GOOGLE_KEY',
-      secret: 'GOOGLE_SECRET'
+    drive: {
+      key: 'GOOGLE_DRIVE_KEY',
+      secret: 'GOOGLE_DRIVE_SECRET'
     }
   },
   server: {
@@ -167,10 +171,10 @@ export COMPANION_DROPBOX_SECRET="YOUR DROPBOX SECRET"
 export COMPANION_DROPBOX_SECRET_FILE="PATH/TO/DROPBOX/SECRET/FILE"
 
 # to enable Google Drive
-export COMPANION_GOOGLE_KEY="YOUR GOOGLE KEY"
-export COMPANION_GOOGLE_SECRET="YOUR GOOGLE SECRET"
+export COMPANION_GOOGLE_KEY="YOUR GOOGLE DRIVE KEY"
+export COMPANION_GOOGLE_SECRET="YOUR GOOGLE DRIVE SECRET"
 # specifying a secret file will override a directly set secret
-export COMPANION_GOOGLE_SECRET_FILE="PATH/TO/GOOGLE/SECRET/FILE"
+export COMPANION_GOOGLE_SECRET_FILE="PATH/TO/GOOGLEDRIVE/SECRET/FILE"
 
 # to enable Instagram
 export COMPANION_INSTAGRAM_KEY="YOUR INSTAGRAM KEY"
@@ -230,7 +234,7 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 ```javascript
 {
   providerOptions: {
-    google: {
+    drive: {
       key: "***",
       secret: "***"
     },
@@ -246,7 +250,7 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
       key: "***",
       secret: "***"
     },
-    microsoft: {
+    onedrive: {
       key: "***",
       secret: "***"
     },
@@ -279,7 +283,7 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 3. **redisOptions(optional)** - An object of [options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties). This option can be used in place of `redisUrl`.
 
-4. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-Providers).
+4. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
 
 5. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set:
 
@@ -299,6 +303,18 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 9. **secret(required)** - A secret string which Companion uses to generate authorization tokens.
 
 10. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
+
+### Provider Redirect URIs
+
+When generating your provider API keys on their corresponding developer platforms (e.g [Google Developer Console](https://console.developers.google.com/)), you'd need to provide a `redirect URI` for the OAuth authorization process. In general the redirect URI for each provider takes the format:
+
+`http(s)://$YOUR_COMPANION_HOST_NAME/$PROVIDER_NAME/redirect`
+
+For example, if your Companion server is hosted on `https://my.companion.server.com`, then the redirect URI you would supply for your OneDrive provider would be:
+
+`https://my.companion.server.com/onedrive/redirect`
+
+Please see [Supported Providers](https://uppy.io/docs/companion/#Supported-providers) for a list of all Providers and their corresponding names.
 
 ### S3 options
 
@@ -377,7 +393,6 @@ let options = {
                 oauth: 2,
                 key: "***",
                 secret: "***",
-                callback: '/myprovidername/callback'
                 scope: ["read", "write"]
             },
             module: require('/path/to/provider/module')
@@ -453,6 +468,36 @@ The class must also have an `authProvider` string (lowercased) field which typic
   nextPagePath: 'directory-name?cursor=cursor-to-next-page'
 }
 ```
+
+## Migrating v1 to v2
+
+### Prerequisite
+
+Since v2, you now need to be running `node.js >= v10.20.1` to use Companion.
+
+### ProviderOptions
+
+In v2 the `google` and `microsoft` [providerOptions](https://uppy.io/docs/companion/#Options) have been changed to `drive` and `onedrive` respectively.
+
+### OAuth Redirect URIs
+
+On your Providers' respective developer platforms, the OAuth redirect URIs that you should supply has now changed from:
+
+`http(s)://$YOUR_COMPANION_HOST_NAME/connect/$AUTH_PROVIDER/callback` in v1
+
+to:
+
+`http(s)://$YOUR_COMPANION_HOST_NAME/$PROVIDER_NAME/redirect` in v2
+
+Old Redirect URIs vs New Redirect URIs
+
+| Provider | v1 Redirect URI | v2 Redirect URI |
+|-|-|-|
+| Dropbox | https://$YOUR_COMPANION_HOST_NAME/connect/dropbox/callback | https://$YOUR_COMPANION_HOST_NAME/dropbox/redirect |
+| Google drive | https://$YOUR_COMPANION_HOST_NAME/connect/google/callback | https://$YOUR_COMPANION_HOST_NAME/drive/redirect |
+| OneDrive | https://$YOUR_COMPANION_HOST_NAME/connect/microsoft/callback | https://$YOUR_COMPANION_HOST_NAME/onedrive/redirect |
+| Facebook | https://$YOUR_COMPANION_HOST_NAME/connect/facebook/callback | https://$YOUR_COMPANION_HOST_NAME/facebook/redirect |
+| Instagram | https://$YOUR_COMPANION_HOST_NAME/connect/instagram/callback | https://$YOUR_COMPANION_HOST_NAME/instagram/redirect |
 
 ## Development
 

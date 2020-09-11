@@ -102,6 +102,51 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 
+## 1.21.0
+
+Released: 2020-09-07
+
+This is mostly a Companion 2.0 release 🎉
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.6 | @uppy/provider-views | 1.7.5 |
+| @uppy/aws-s3 | 1.7.0 | @uppy/react-native | 0.1.4 |
+| @uppy/companion-client | 1.5.4 | @uppy/react | 1.10.6 |
+| @uppy/companion | 2.0.0 | @uppy/redux-dev-tools | 1.3.5 |
+| @uppy/core | 1.13.2 | @uppy/robodog | 1.9.6 |
+| @uppy/dashboard | 1.12.6 | @uppy/screen-capture | 1.0.8 |
+| @uppy/drag-drop | 1.4.19 | @uppy/status-bar | 1.7.6 |
+| @uppy/dropbox | 1.4.14 | @uppy/store-default | 1.2.4 |
+| @uppy/facebook | 1.1.14 | @uppy/store-redux | 1.2.4 |
+| @uppy/file-input | 1.4.17 | @uppy/thumbnail-generator | 1.6.7 |
+| @uppy/form | 1.3.20 | @uppy/transloadit | 1.6.9 |
+| @uppy/golden-retriever | 1.3.19 | @uppy/tus | 1.7.6 |
+| @uppy/google-drive | 1.5.14 | @uppy/url | 1.5.11 |
+| @uppy/image-editor | 0.1.6 | @uppy/utils | 3.2.3 |
+| @uppy/informer | 1.5.11 | @uppy/webcam | 1.7.0 |
+| @uppy/instagram | 1.4.14 | @uppy/xhr-upload | 1.6.4 |
+| @uppy/locales | 1.16.6 | @uppy/zoom | 0.1.3 |
+| @uppy/onedrive | 1.1.14 | uppy | 1.21.0 |
+| @uppy/progress-bar | 1.3.19 | - | - |
+
+- @uppy/webcam: add `videoConstraints` option (#2362 / @ksouthworth)
+- @uppy/screen-capture: fix translations for capturing (#2482 / @leaanthony)
+- @uppy/companion: add calculated content-length for multipart uploads (#2466 / @ifedapoolarewaju, @mejiaej)
+- @uppy/companion: validate url for truthy value (#2484 / @ifedapoolarewaju)
+- @uppy/companion: Support running standalone with custom options (#2428 / @cyu)
+- @uppy/react-native: Fix react native expo permissions (#2418 / @ajkachnic)
+- @uppy/companion: fix multipart upload (#2490 / @ifedapoolarewaju)
+- @uppy/companion: exclude non downloadable files in fetched list for dropbox (#2493 / @johnnyperkins)
+- @uppy/aws-s3-multipart: fix stuck upload with `limit: 1` (#2475 / @goto-bus-stop)
+- @uppy/aws-s3: add default locale for MiniXHRUpload, fixes #2459 (#2477 / @goto-bus-stop)
+- @uppy/locales: fix missleading strings for zh_CN (#2498 / @sparanoid)
+- @uppy/locales: Improve fa_IR Translations (#2494 / @ghasrfakhri)
+- @uppy/aws-s3: Improved validateParameters() error message (#2480 / @kode-ninja)
+- @uppy/companion: remove support for legacy instagram API (#2499 / @ifedapoolarewaju)
+- @uppy/react-native: fix lint (@goto-bus-stop)
+- Update Jest to v26, raise Companion requirements to Node.js >= 10.20.1 (#2472 / @goto-bus-stop)
+
 ## 1.20.2
 
 Released: 2020-08-17
