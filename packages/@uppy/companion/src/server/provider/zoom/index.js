@@ -76,7 +76,7 @@ class Zoom extends Provider {
           })
       })
     } else if (meetingId) {
-      const GET_MEETING_FILES = `/meetings/${meetingId}/recordings`
+      const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
       recordingsPromise = new Promise((resolve, reject) => {
         this.client
           .get(`${BASE_URL}${GET_MEETING_FILES}`)

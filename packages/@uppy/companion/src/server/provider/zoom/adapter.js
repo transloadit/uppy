@@ -108,7 +108,7 @@ exports.getRequestPath = (item) => {
   } else if (item.file_type) {
     return `${encodeURIComponent(item.meeting_id)}?recordingId=${encodeURIComponent(item.id)}`
   }
-  return `${encodeURIComponent(item.uuid)}`
+  return `${encodeURIComponent(encodeURIComponent(item.uuid))}`
 }
 
 exports.getStartDate = (item) => {
