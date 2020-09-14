@@ -76,14 +76,9 @@
       text-decoration: underline;
     }
     img, svg {
-      margin-right: 8px;
+      margin-inline-end: 8px;
       max-width: 20px;
       max-height: 20px;
-
-      [dir="rtl"] & {
-        margin-left: 8px;
-        margin-right: auto;
-      }
     }
     span {
       text-overflow: ellipsis;

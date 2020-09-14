@@ -491,7 +491,7 @@
     cursor: pointer;
     color: $blue;
     padding: 7px 6px;
-    margin-left: -6px;
+    margin-inline-start: -6px;
 
     .uppy-size--md & {
       font-size: 14px;
@@ -683,7 +683,7 @@
   color: $black;
   margin-top: 15px;
   margin-bottom: 5px;
-  text-align: left;
+  text-align: inline-start;
   padding: 0 15px;
   width: 100%;
 

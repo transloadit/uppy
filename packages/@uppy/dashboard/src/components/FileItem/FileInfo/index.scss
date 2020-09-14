@@ -1,5 +1,5 @@
 .uppy-Dashboard-Item-fileInfo {
-  padding-right: 5px;
+  padding-inline-end: 5px;
 }
   .uppy-Dashboard-Item-name {
     font-size: 12px;
@@ -39,7 +39,7 @@
       color: $gray-400;
       &:not(:first-child) {
         position: relative;
-        margin-left: 14px;
+        margin-inline-start: 14px;
       }
       svg,
       svg * {
