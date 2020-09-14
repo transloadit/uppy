@@ -125,7 +125,7 @@ module.exports = class Client {
       ? `${err.message} (${err.details})`
       : err.message
 
-    return fetchWithNetworkError('https://status.transloadit.com/client_error', {
+    return fetchWithNetworkError('https://transloaditstatus.com/client_error', {
       method: 'post',
       body: JSON.stringify({
         endpoint,

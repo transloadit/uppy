@@ -113,9 +113,10 @@ class Zoom extends Provider {
 
   download ({ id, token, query }, done) {
     // meeting id + file id required
-    // timeline files don't have an ID or size
+    // cc files don't have an ID or size
     const meetingId = id
     const fileId = query.recordingId
+    const recordingStart = query.recordingStart
     const GET_MEETING_FILES = `/meetings/${meetingId}/recordings`
 
     const downloadUrlPromise = new Promise((resolve) => {
@@ -129,7 +130,7 @@ class Zoom extends Provider {
           const file = resp
             .body
             .recording_files
-            .find(file => fileId === file.id || fileId === file.file_type)
+            .find(file => fileId === file.id || (file.file_type === fileId && file.recording_start === recordingStart))
           if (!file || !file.download_url) {
             return this._downloadError(resp, done)
           }
@@ -160,6 +161,7 @@ class Zoom extends Provider {
   size ({ id, token, query }, done) {
     const meetingId = id
     const fileId = query.recordingId
+    const recordingStart = query.recordingStart
     const GET_MEETING_FILES = `/meetings/${meetingId}/recordings`
 
     return this.client
@@ -172,32 +174,31 @@ class Zoom extends Provider {
         const file = resp
           .body
           .recording_files
-          .find(file => file.id === fileId || file.file_type === fileId)
+          .find(file => file.id === fileId || (file.file_type === fileId && file.recording_start === recordingStart))
 
         if (!file) {
           return this._downloadError(resp, done)
         }
-        // timeline files don't have file size, but are typically small json files, should be much less than 1MB
-        const maxExportFileSize = 1024 * 1024
+        const maxExportFileSize = 10 * 1024 * 1024 // 10MB
         done(null, file.file_size || maxExportFileSize)
       })
   }
 
   _initializeData (body, initialEnd = null) {
     let end = initialEnd || moment()
-    let start = end.clone().date(1)
-
     const accountCreation = adapter.getAccountCreationDate(body)
-    const defaultLimit = end.clone().subtract(DEFAULT_RANGE_MOS, 'months')
-    const limit = accountCreation > defaultLimit ? accountCreation : defaultLimit
+    const defaultLimit = end.clone().subtract(DEFAULT_RANGE_MOS, 'months').date(1)
+    const allResultsShown = accountCreation > defaultLimit
+    const limit = allResultsShown ? accountCreation : defaultLimit
+    // if the limit is mid-month, keep that exact date
+    let start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1)
 
     const data = {
       items: [],
       username: adapter.getUserEmail(body)
     }
 
-    while (start > limit) {
-      start = end.clone().date(1)
+    while (end.isAfter(limit)) {
       data.items.push({
         isFolder: true,
         icon: 'folder',
@@ -210,8 +211,10 @@ class Zoom extends Provider {
         size: null
       })
       end = start.clone().subtract(1, 'days')
+      // if the limit is mid-month, keep that exact date
+      start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1)
     }
-    data.nextPagePath = adapter.getDateNextPagePath(start)
+    data.nextPagePath = allResultsShown ? null : adapter.getDateNextPagePath(end.clone())
     return data
   }
 
@@ -225,7 +228,7 @@ class Zoom extends Provider {
       items: [],
       username: adapter.getUserEmail(userResponse)
     }
-    const items = results.meetings || results.recording_files
+    const items = results.meetings || results.recording_files.filter(file => file.file_type !== 'TIMELINE')
     items.forEach(item => {
       data.items.push({
         isFolder: adapter.getIsFolder(item),

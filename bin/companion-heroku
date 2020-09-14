@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+env \
+  COMPANION_PORT=$PORT \
+node ./packages/@uppy/companion/src/standalone/start-server.js

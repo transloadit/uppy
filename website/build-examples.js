@@ -37,8 +37,8 @@ function useSourcePackages (b) {
   b._bresolve = (id, opts, cb) => {
     bresolve(id, opts, (err, result, pkg) => {
       if (err) return cb(err)
-      if (/packages\/@uppy\/.*?\/lib\//.test(result)) {
-        result = result.replace(/packages\/@uppy\/(.*?)\/lib\//, 'packages/@uppy/$1/src/')
+      if (/packages\/@uppy\/[^/]+?\/lib\//.test(result)) {
+        result = result.replace(/packages\/@uppy\/([^/]+?)\/lib\//, 'packages/@uppy/$1/src/')
       }
       cb(err, result, pkg)
     })

@@ -18,7 +18,7 @@ Robodog is an Uppy-based library that helps you talk to the Transloadit API. It 
 Robodog can be downloaded from npm:
 
 ```shell
-npm install --save @uppy/robodog
+npm install @uppy/robodog
 ```
 
 Then, with a bundler such as [webpack][webpack] or [Browserify][browserify], do:
@@ -31,8 +31,8 @@ require('@uppy/robodog/dist/robodog.css')
 If you are not using a bundler, you can also import Robodog using an HTML script tag.
 
 ```html
-<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.9.5/robodog.min.css">
-<script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.9.5/robodog.min.js"></script>
+<link rel="stylesheet" href="https://transloadit.edgly.net/releases/uppy/robodog/v1.9.6/robodog.min.css">
+<script src="https://transloadit.edgly.net/releases/uppy/robodog/v1.9.6/robodog.min.js"></script>
 <!-- you can now use: window.Robodog.pick() -->
 ```
 

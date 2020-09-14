@@ -50,8 +50,8 @@ exports.getDateFolderModified = (end) => {
   return end.format('YYYY-MM-DD')
 }
 
-exports.getDateNextPagePath = (start) => {
-  return `?cursor=${start.subtract(1, 'days').format('YYYY-MM-DD')}`
+exports.getDateNextPagePath = (end) => {
+  return `?cursor=${end.format('YYYY-MM-DD')}`
 }
 
 exports.getNextPagePath = (results) => {
@@ -94,8 +94,8 @@ exports.getMimeType = (item) => {
 }
 
 exports.getId = (item) => {
-  if (item.file_type && item.file_type === 'TIMELINE') {
-    return `${encodeURIComponent(item.meeting_id)}__TIMELINE`
+  if (item.file_type && item.file_type === 'CC') {
+    return `${encodeURIComponent(item.meeting_id)}__CC__${encodeURIComponent(item.recording_start)}`
   } else if (item.file_type) {
     return `${encodeURIComponent(item.meeting_id)}__${encodeURIComponent(item.id)}`
   }
@@ -103,8 +103,8 @@ exports.getId = (item) => {
 }
 
 exports.getRequestPath = (item) => {
-  if (item.file_type && item.file_type === 'TIMELINE') {
-    return `${encodeURIComponent(item.meeting_id)}?recordingId=TIMELINE`
+  if (item.file_type && item.file_type === 'CC') {
+    return `${encodeURIComponent(item.meeting_id)}?recordingId=CC&recordingStart=${encodeURIComponent(item.recording_start)}`
   } else if (item.file_type) {
     return `${encodeURIComponent(item.meeting_id)}?recordingId=${encodeURIComponent(item.id)}`
   }
@@ -112,14 +112,14 @@ exports.getRequestPath = (item) => {
 }
 
 exports.getStartDate = (item) => {
-  if (item.file_type === 'TIMELINE') {
+  if (item.file_type === 'CC') {
     return item.recording_start
   }
   return item.start_time
 }
 
 exports.getSize = (item) => {
-  if (item.file_type && item.file_type === 'TIMELINE') {
+  if (item.file_type && item.file_type === 'CC') {
     const maxExportFileSize = 1024 * 1024
     return maxExportFileSize
   } else if (item.file_type) {
