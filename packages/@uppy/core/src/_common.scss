@@ -83,6 +83,10 @@
   white-space: normal;
   z-index: auto;
 }
+[dir="rtl"] .uppy-u-reset {
+  text-align: right;
+}
+
 
 // Inputs
 
@@ -141,6 +145,9 @@
   transition-property: background-color, color;
   transition-duration: 0.3s;
   user-select: none;
+
+  // Override right-to-left variant of the uppy-u-reset class
+  [dir="rtl"] & { text-align: center; }
 }
 
   .uppy-c-btn:not(:disabled):not(.disabled) {
