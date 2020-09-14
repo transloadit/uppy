@@ -13,6 +13,10 @@
   color: $gray-800;
 }
 
+[dir="rtl"] .uppy-Root {
+  text-align: right;
+}
+
 .uppy-Root *, .uppy-Root *:before, .uppy-Root *:after {
   box-sizing: inherit;
 }
