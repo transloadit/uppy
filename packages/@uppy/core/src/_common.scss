@@ -13,7 +13,9 @@
   color: $gray-800;
 }
 
-[dir="rtl"] .uppy-Root {
+// One selector uses the dir attribute declared by the page. If that does not exist, Uppy adds a
+// fallback dir attribute on the root element itself, and we need a second selector to match that.
+[dir="rtl"] .uppy-Root, .uppy-Root[dir="rtl"] {
   text-align: right;
 }
 
