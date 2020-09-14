@@ -166,6 +166,7 @@
   @media #{$screen-medium} {
     top: 50%;
     left: 50%;
+    right: auto; // else the 15px from above may override the positioning
     transform: translate(-50%, -50%);
     box-shadow: 0 5px 15px 4px rgba($black, 0.15);
   }
@@ -227,7 +228,7 @@
   padding-top: 15px;
   padding-bottom: 15px;
   margin-top: auto;
-  
+
   // hide on short note and “powered by” on short screens
   // such as CodePen, or inline dashboard with height < 400px
   display: none;
