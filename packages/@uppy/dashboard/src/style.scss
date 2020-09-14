@@ -177,7 +177,7 @@
   display: block;
   position: absolute;
   top: -33px;
-  right: -2px;
+  inset-inline-end: -2px;
   cursor: pointer;
   color: rgba($white, 0.9);
   font-size: 27px;
@@ -190,7 +190,7 @@
   @media #{$screen-medium} {
     font-size: 35px;
     top: -10px;
-    right: -35px;
+    inset-inline-end: -35px;
   }
 }
 
@@ -346,7 +346,7 @@
 
   .uppy-size--md & {
     width: 86px;
-    margin-right: 1px;
+    margin-inline-end: 1px;
     flex-direction: column;
     padding: 10px 3px;
     border-radius: 5px;
@@ -386,10 +386,10 @@
     vertical-align: text-top;
     overflow: hidden;
     transition: transform ease-in-out .15s;
-    margin-right: 10px;
+    margin-inline-end: 10px;
 
     .uppy-size--md & {
-      margin-right: 0;
+      margin-inline-end: 0;
     }
   }
 
@@ -512,13 +512,13 @@
     width: 29px;
     height: 29px;
     padding: 7px 8px;
-    margin-right: -5px;
+    margin-inline-end: -5px;
 
     .uppy-size--md & {
       font-size: 14px;
       width: auto;
       height: auto;
-      margin-right: -8px;
+      margin-inline-end: -8px;
     }
 
     [data-uppy-theme="dark"] & {
@@ -804,7 +804,7 @@ a.uppy-Dashboard-poweredBy {
 .uppy-Dashboard-uploadCount {
   position: absolute;
   top: -12px;
-  right: -12px;
+  inset-inline-end: -12px;
   background-color: $green;
   color: $white;
   border-radius: 50%;
