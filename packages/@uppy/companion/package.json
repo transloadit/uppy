@@ -49,6 +49,7 @@
     "isobject": "3.0.1",
     "jsonwebtoken": "8.5.1",
     "lodash.merge": "4.6.2",
+    "moment-timezone": "^0.5.31",
     "mime-types": "2.1.25",
     "morgan": "1.10.0",
     "ms": "2.1.2",

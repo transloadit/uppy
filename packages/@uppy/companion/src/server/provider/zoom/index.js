@@ -28,7 +28,7 @@ class Zoom extends Provider {
     return 'zoom'
   }
 
-  async list (options, done) {
+  list (options, done) {
     /*
     - returns list of months by default
     - drill down for specific files in each month
@@ -52,9 +52,13 @@ class Zoom extends Provider {
         })
     })
 
-    const userResponse = await userPromise
+    const userResponse = userPromise
 
     if (from && to) {
+      /*  we need to convert local time to UTC for Zoom query
+      eg: user in PST (UTC-08:00) wants 2020-08-01 (00:00) to 2020-08-31 (23:59)
+      => API call needs to request 2020-07-31 (16:00) to 2020-08-31 (15:59) UTC - but api only takes date, so we remove extra time info
+      */
       const queryObj = {
         page_size: PAGE_SIZE,
         from: moment.tz(from, userResponse.body.timezone || 'UTC').startOf('day').tz('UTC').format('YYYY-MM-DD'),
