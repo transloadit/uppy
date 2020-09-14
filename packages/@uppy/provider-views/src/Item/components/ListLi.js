@@ -53,7 +53,7 @@ module.exports = (props) => {
           aria-label={props.i18n('openFolderNamed', { name: props.title })}
         >
           {props.itemIconEl}
-          {props.showTitles && props.title}
+          {props.showTitles && <span>{props.title}</span>}
         </button>
       )}
     </li>
