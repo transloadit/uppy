@@ -108,6 +108,7 @@ exports.getRequestPath = (item) => {
   } else if (item.file_type) {
     return `${encodeURIComponent(item.meeting_id)}?recordingId=${encodeURIComponent(item.id)}`
   }
+  // Zoom meeting ids are reused so we need to use the UUID. Also, these UUIDs can contain `/` characters which require double encoding (see https://devforum.zoom.us/t/double-encode-meeting-uuids/23729)
   return `${encodeURIComponent(encodeURIComponent(item.uuid))}`
 }
 
