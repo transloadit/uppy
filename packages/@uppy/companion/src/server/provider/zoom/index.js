@@ -37,84 +37,66 @@ class Zoom extends Provider {
     const query = options.query || {}
     const { cursor, from, to } = query
     const meetingId = options.directory || ''
-    let meetingsPromise = Promise.resolve(undefined)
-    let recordingsPromise = Promise.resolve(undefined)
 
-    const userPromise = new Promise((resolve, reject) => {
-      this.client
-        .get(`${BASE_URL}${GET_USER_PATH}`)
-        .auth(token)
-        .request((err, resp, body) => {
-          if (err || resp.statusCode !== 200) {
-            return this._listError(err, resp, done)
-          }
-          resolve(resp)
-        })
-    })
+    this.client
+      .get(`${BASE_URL}${GET_USER_PATH}`)
+      .auth(token)
+      .request((err, userResponse, userBody) => {
+        if (err || userResponse.statusCode !== 200) {
+          return this._listError(err, userResponse, done)
+        }
 
-    const userResponse = userPromise
+        if (!from && !to && !meetingId) {
+          const end = cursor && moment.utc(cursor).endOf('day').tz(userResponse.timezone || 'UTC')
+          return done(null, this._initializeData(userResponse.body, end))
+        }
 
-    if (from && to) {
-      /*  we need to convert local time to UTC for Zoom query
-      eg: user in PST (UTC-08:00) wants 2020-08-01 (00:00) to 2020-08-31 (23:59)
-      => API call needs to request 2020-07-31 (16:00) to 2020-08-31 (15:59) UTC - but api only takes date, so we remove extra time info
-      */
-      const queryObj = {
-        page_size: PAGE_SIZE,
-        from: moment.tz(from, userResponse.body.timezone || 'UTC').startOf('day').tz('UTC').format('YYYY-MM-DD'),
-        to: moment.tz(to, userResponse.body.timezone || 'UTC').endOf('day').tz('UTC').format('YYYY-MM-DD')
-      }
-
-      if (cursor) {
-        queryObj.next_page_token = cursor
-      }
-
-      meetingsPromise = new Promise((resolve, reject) => {
-        this.client.get(`${BASE_URL}${GET_LIST_PATH}`)
-          .qs(queryObj)
-          .auth(token)
-          .request((err, resp, body) => {
-            if (err || resp.statusCode !== 200) {
-              return this._listError(err, resp, done)
-            } else {
-              resolve(resp)
+        if (from && to) {
+          this._meetingInfo({ token, query }, userResponse, (err, meetingResp) => {
+            if (err || meetingResp.statusCode !== 200) {
+              return this._listError(err, meetingResp, done)
             }
+            done(null, this._adaptData(userResponse.body, meetingResp.body, query))
           })
-      })
-    } else if (meetingId) {
-      const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
-      recordingsPromise = new Promise((resolve, reject) => {
-        this.client
-          .get(`${BASE_URL}${GET_MEETING_FILES}`)
-          .auth(token)
-          .request((err, resp, body) => {
-            if (err || resp.statusCode !== 200) {
-              return this._listError(err, resp, done)
-            } else {
-              resolve(resp)
+        } else if (meetingId) {
+          this._recordingInfo({ token }, meetingId, (err, recordingResp) => {
+            if (err || recordingResp.statusCode !== 200) {
+              return this._listError(err, recordingResp, done)
             }
+            done(null, this._adaptData(userResponse.body, recordingResp.body, query))
           })
+        }
       })
+  }
+
+  _meetingInfo ({ token, query }, userResponse, done) {
+    const { cursor, from, to } = query
+    /*  we need to convert local datetime to UTC date for Zoom query
+    eg: user in PST (UTC-08:00) wants 2020-08-01 (00:00) to 2020-08-31 (23:59)
+    => in UTC, that's 2020-07-31 (16:00) to 2020-08-31 (15:59)
+    */
+    const queryObj = {
+      page_size: PAGE_SIZE,
+      from: moment.tz(from, userResponse.body.timezone || 'UTC').startOf('day').tz('UTC').format('YYYY-MM-DD'),
+      to: moment.tz(to, userResponse.body.timezone || 'UTC').endOf('day').tz('UTC').format('YYYY-MM-DD')
     }
 
-    Promise.all([meetingsPromise, recordingsPromise])
-      .then(
-        ([meetingsResponse, recordingsResponse]) => {
-          let returnData = null
-          if (!meetingsResponse && !recordingsResponse) {
-            const end = cursor && moment.utc(cursor).endOf('day').tz(userResponse.timezone || 'UTC')
-            returnData = this._initializeData(userResponse.body, end)
-          } else if (meetingsResponse) {
-            returnData = this._adaptData(userResponse.body, meetingsResponse.body, query)
-          } else if (recordingsResponse) {
-            returnData = this._adaptData(userResponse.body, recordingsResponse.body, query)
-          }
-          done(null, returnData)
-        },
-        (reqErr) => {
-          done(reqErr)
-        }
-      )
+    if (cursor) {
+      queryObj.next_page_token = cursor
+    }
+
+    this.client.get(`${BASE_URL}${GET_LIST_PATH}`)
+      .qs(queryObj)
+      .auth(token)
+      .request(done)
+  }
+
+  _recordingInfo ({ token }, meetingId, done) {
+    const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
+    this.client
+      .get(`${BASE_URL}${GET_MEETING_FILES}`)
+      .auth(token)
+      .request(done)
   }
 
   download ({ id, token, query }, done) {
@@ -123,7 +105,7 @@ class Zoom extends Provider {
     const meetingId = id
     const fileId = query.recordingId
     const recordingStart = query.recordingStart
-    const GET_MEETING_FILES = `/meetings/${meetingId}/recordings`
+    const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
 
     const downloadUrlPromise = new Promise((resolve) => {
       this.client
