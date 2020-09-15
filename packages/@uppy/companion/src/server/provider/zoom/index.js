@@ -52,7 +52,7 @@ class Zoom extends Provider {
         }
 
         if (from && to) {
-          this._meetingInfo({ token, query }, userResponse, (err, meetingResp) => {
+          this._meetingsInfo({ token, query }, userResponse, (err, meetingResp) => {
             if (err || meetingResp.statusCode !== 200) {
               return this._listError(err, meetingResp, done)
             }
@@ -69,7 +69,7 @@ class Zoom extends Provider {
       })
   }
 
-  _meetingInfo ({ token, query }, userResponse, done) {
+  _meetingsInfo ({ token, query }, userResponse, done) {
     const { cursor, from, to } = query
     /*  we need to convert local datetime to UTC date for Zoom query
     eg: user in PST (UTC-08:00) wants 2020-08-01 (00:00) to 2020-08-31 (23:59)
@@ -210,7 +210,7 @@ class Zoom extends Provider {
       return { items: [] }
     }
 
-    // convert start limit from local time to UTC
+    // we query the zoom api by date (from 00:00 - 23:59 UTC) which may include extra results for 00:00 - 23:59 local time that we want to filter out
     const utcFrom = moment.tz(query.from, userResponse.timezone || 'UTC').startOf('day').tz('UTC')
     const utcTo = moment.tz(query.to, userResponse.timezone || 'UTC').endOf('day').tz('UTC')
 
