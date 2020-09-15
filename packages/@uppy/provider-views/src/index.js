@@ -157,7 +157,7 @@ module.exports = class ProviderView {
   /**
    * Fetches new folder
    *
-   * @param  {object} Folder
+   * @param  {object} folder
    * @param  {string} title Folder title
    */
   getNextFolder (folder) {
@@ -363,13 +363,13 @@ module.exports = class ProviderView {
    */
   addFolder (folder) {
     const folderId = this.providerFileToId(folder)
-    let state = this.plugin.getPluginState()
-    const folders = state.selectedFolders || {}
+    const state = this.plugin.getPluginState()
+    const folders = { ...state.selectedFolders }
     if (folderId in folders && folders[folderId].loading) {
       return
     }
     folders[folderId] = { loading: true, files: [] }
-    this.plugin.setPluginState({ selectedFolders: folders })
+    this.plugin.setPluginState({ selectedFolders: { ...folders } })
     return this.listAllFiles(folder.requestPath).then((files) => {
       let count = 0
       files.forEach((file) => {
@@ -377,8 +377,10 @@ module.exports = class ProviderView {
         if (success) count++
       })
       const ids = files.map(this.providerFileToId)
-      state = this.plugin.getPluginState()
-      state.selectedFolders[folderId] = { loading: false, files: ids }
+      folders[folderId] = {
+        loading: false,
+        files: ids
+      }
       this.plugin.setPluginState({ selectedFolders: folders })
 
       let message
@@ -391,9 +393,10 @@ module.exports = class ProviderView {
       }
       this.plugin.uppy.info(message)
     }).catch((e) => {
-      state = this.plugin.getPluginState()
-      delete state.selectedFolders[folderId]
-      this.plugin.setPluginState({ selectedFolders: state.selectedFolders })
+      const state = this.plugin.getPluginState()
+      const selectedFolders = { ...state.selectedFolders }
+      delete selectedFolders[folderId]
+      this.plugin.setPluginState({ selectedFolders })
       this.handleError(e)
     })
   }
