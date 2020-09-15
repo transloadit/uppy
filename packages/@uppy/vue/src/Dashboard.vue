@@ -3,6 +3,7 @@
 </template>
 <script>
 import DashboardPlugin from '@uppy/dashboard'
+import { shallowEqualObjects } from 'shallow-equal'
 
 export default {
   data () {
@@ -52,7 +53,7 @@ export default {
       }
     },
     props (current, old) {
-      if (JSON.stringify(old) !== JSON.stringify(current)) {
+      if (!shallowEqualObjects(current, old)) {
         this.plugin.setOptions(current)
       }
     }
