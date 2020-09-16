@@ -1,7 +1,7 @@
 const Provider = require('../Provider')
 
 const request = require('request')
-const moment = require('moment')
+const moment = require('moment-timezone')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
@@ -37,78 +37,66 @@ class Zoom extends Provider {
     const query = options.query || {}
     const { cursor, from, to } = query
     const meetingId = options.directory || ''
-    let meetingsPromise = Promise.resolve(undefined)
-    let recordingsPromise = Promise.resolve(undefined)
 
-    const userPromise = new Promise((resolve, reject) => {
-      this.client
-        .get(`${BASE_URL}${GET_USER_PATH}`)
-        .auth(token)
-        .request((err, resp, body) => {
-          if (err || resp.statusCode !== 200) {
-            return this._listError(err, resp, done)
-          }
-          resolve(resp)
-        })
-    })
+    this.client
+      .get(`${BASE_URL}${GET_USER_PATH}`)
+      .auth(token)
+      .request((err, userResponse, userBody) => {
+        if (err || userResponse.statusCode !== 200) {
+          return this._listError(err, userResponse, done)
+        }
 
-    if (from && to) {
-      const queryObj = {
-        page_size: PAGE_SIZE,
-        from,
-        to
-      }
+        if (!from && !to && !meetingId) {
+          const end = cursor && moment.utc(cursor).endOf('day').tz(userResponse.timezone || 'UTC')
+          return done(null, this._initializeData(userResponse.body, end))
+        }
 
-      if (cursor) {
-        queryObj.next_page_token = cursor
-      }
-
-      meetingsPromise = new Promise((resolve, reject) => {
-        this.client.get(`${BASE_URL}${GET_LIST_PATH}`)
-          .qs(queryObj)
-          .auth(token)
-          .request((err, resp, body) => {
-            if (err || resp.statusCode !== 200) {
-              return this._listError(err, resp, done)
-            } else {
-              resolve(resp)
+        if (from && to) {
+          this._meetingsInfo({ token, query }, userResponse, (err, meetingResp) => {
+            if (err || meetingResp.statusCode !== 200) {
+              return this._listError(err, meetingResp, done)
             }
+            done(null, this._adaptData(userResponse.body, meetingResp.body, query))
           })
-      })
-    } else if (meetingId) {
-      const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
-      recordingsPromise = new Promise((resolve, reject) => {
-        this.client
-          .get(`${BASE_URL}${GET_MEETING_FILES}`)
-          .auth(token)
-          .request((err, resp, body) => {
-            if (err || resp.statusCode !== 200) {
-              return this._listError(err, resp, done)
-            } else {
-              resolve(resp)
+        } else if (meetingId) {
+          this._recordingInfo({ token }, meetingId, (err, recordingResp) => {
+            if (err || recordingResp.statusCode !== 200) {
+              return this._listError(err, recordingResp, done)
             }
+            done(null, this._adaptData(userResponse.body, recordingResp.body, query))
           })
+        }
       })
+  }
+
+  _meetingsInfo ({ token, query }, userResponse, done) {
+    const { cursor, from, to } = query
+    /*  we need to convert local datetime to UTC date for Zoom query
+    eg: user in PST (UTC-08:00) wants 2020-08-01 (00:00) to 2020-08-31 (23:59)
+    => in UTC, that's 2020-07-31 (16:00) to 2020-08-31 (15:59)
+    */
+    const queryObj = {
+      page_size: PAGE_SIZE,
+      from: moment.tz(from, userResponse.body.timezone || 'UTC').startOf('day').tz('UTC').format('YYYY-MM-DD'),
+      to: moment.tz(to, userResponse.body.timezone || 'UTC').endOf('day').tz('UTC').format('YYYY-MM-DD')
     }
 
-    Promise.all([userPromise, meetingsPromise, recordingsPromise])
-      .then(
-        ([userResponse, meetingsResponse, recordingsResponse]) => {
-          let returnData = null
-          if (!meetingsResponse && !recordingsResponse) {
-            const end = cursor && moment(cursor)
-            returnData = this._initializeData(userResponse.body, end)
-          } else if (meetingsResponse) {
-            returnData = this._adaptData(userResponse.body, meetingsResponse.body)
-          } else if (recordingsResponse) {
-            returnData = this._adaptData(userResponse.body, recordingsResponse.body)
-          }
-          done(null, returnData)
-        },
-        (reqErr) => {
-          done(reqErr)
-        }
-      )
+    if (cursor) {
+      queryObj.next_page_token = cursor
+    }
+
+    this.client.get(`${BASE_URL}${GET_LIST_PATH}`)
+      .qs(queryObj)
+      .auth(token)
+      .request(done)
+  }
+
+  _recordingInfo ({ token }, meetingId, done) {
+    const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
+    this.client
+      .get(`${BASE_URL}${GET_MEETING_FILES}`)
+      .auth(token)
+      .request(done)
   }
 
   download ({ id, token, query }, done) {
@@ -117,7 +105,7 @@ class Zoom extends Provider {
     const meetingId = id
     const fileId = query.recordingId
     const recordingStart = query.recordingStart
-    const GET_MEETING_FILES = `/meetings/${meetingId}/recordings`
+    const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
 
     const downloadUrlPromise = new Promise((resolve) => {
       this.client
@@ -185,13 +173,13 @@ class Zoom extends Provider {
   }
 
   _initializeData (body, initialEnd = null) {
-    let end = initialEnd || moment()
-    const accountCreation = adapter.getAccountCreationDate(body)
-    const defaultLimit = end.clone().subtract(DEFAULT_RANGE_MOS, 'months').date(1)
+    let end = initialEnd || moment.utc().tz(body.timezone || 'UTC')
+    const accountCreation = adapter.getAccountCreationDate(body).tz(body.timezone || 'UTC').startOf('day')
+    const defaultLimit = end.clone().subtract(DEFAULT_RANGE_MOS, 'months').date(1).startOf('day')
     const allResultsShown = accountCreation > defaultLimit
     const limit = allResultsShown ? accountCreation : defaultLimit
     // if the limit is mid-month, keep that exact date
-    let start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1)
+    let start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1).startOf('day')
 
     const data = {
       items: [],
@@ -210,30 +198,43 @@ class Zoom extends Provider {
         modifiedDate: adapter.getDateFolderModified(end),
         size: null
       })
-      end = start.clone().subtract(1, 'days')
-      // if the limit is mid-month, keep that exact date
-      start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1)
+      end = start.clone().subtract(1, 'days').endOf('day')
+      start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1).startOf('day')
     }
-    data.nextPagePath = allResultsShown ? null : adapter.getDateNextPagePath(end.clone())
+    data.nextPagePath = allResultsShown ? null : adapter.getDateNextPagePath(end)
     return data
   }
 
-  _adaptData (userResponse, results) {
+  _adaptData (userResponse, results, query) {
     if (!results) {
       return { items: [] }
     }
+
+    // we query the zoom api by date (from 00:00 - 23:59 UTC) which may include extra results for 00:00 - 23:59 local time that we want to filter out
+    const utcFrom = moment.tz(query.from, userResponse.timezone || 'UTC').startOf('day').tz('UTC')
+    const utcTo = moment.tz(query.to, userResponse.timezone || 'UTC').endOf('day').tz('UTC')
 
     const data = {
       nextPagePath: adapter.getNextPagePath(results),
       items: [],
       username: adapter.getUserEmail(userResponse)
     }
-    const items = results.meetings || results.recording_files.filter(file => file.file_type !== 'TIMELINE')
+
+    let items = []
+    if (results.meetings) {
+      items = results.meetings
+        .map(item => { return { ...item, utcStart: moment.utc(item.start_time) } })
+        .filter(item => moment.utc(item.start_time).isAfter(utcFrom) && moment.utc(item.start_time).isBefore(utcTo))
+    } else {
+      items = results.recording_files
+        .map(item => item).filter(file => file.file_type !== 'TIMELINE')
+    }
+
     items.forEach(item => {
       data.items.push({
         isFolder: adapter.getIsFolder(item),
         icon: adapter.getIcon(item),
-        name: adapter.getItemName(item),
+        name: adapter.getItemName(item, userResponse),
         mimeType: adapter.getMimeType(item),
         id: adapter.getId(item),
         thumbnail: null,
