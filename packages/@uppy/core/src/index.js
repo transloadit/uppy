@@ -1076,6 +1076,7 @@ class Uppy {
       const currentProgress = this.getFile(file.id).progress
       this.setFileState(file.id, {
         progress: Object.assign({}, currentProgress, {
+          postprocess: this.postProcessors.length > 0,
           uploadComplete: true,
           percentage: 100,
           bytesUploaded: currentProgress.bytesTotal
