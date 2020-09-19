@@ -15,7 +15,7 @@ uppy.use(ProgressBar, {
   hideAfterFinish: false
 })
 uppy.use(XHRUpload, {
-  endpoint: 'https://upload-endpoint.uppy.io/upload',
+  endpoint: 'https://xhr-server.herokuapp.com/upload',
   formData: true,
   fieldName: 'files[]'
 })
