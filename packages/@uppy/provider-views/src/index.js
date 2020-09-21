@@ -147,7 +147,7 @@ module.exports = class ProviderView {
           updatedDirectories = state.directories.concat([{ id, title: name }])
         }
 
-        this.username = this.username ? this.username : res.username
+        this.username = res.username || this.username
         this._updateFilesAndFolders(res, files, folders)
         this.plugin.setPluginState({ directories: updatedDirectories })
       },
