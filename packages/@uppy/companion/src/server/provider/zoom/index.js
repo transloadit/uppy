@@ -227,7 +227,8 @@ class Zoom extends Provider {
         .filter(item => moment.utc(item.start_time).isAfter(utcFrom) && moment.utc(item.start_time).isBefore(utcTo))
     } else {
       items = results.recording_files
-        .map(item => item).filter(file => file.file_type !== 'TIMELINE')
+        .map(item => { return { ...item, topic: results.topic } })
+        .filter(file => file.file_type !== 'TIMELINE')
     }
 
     items.forEach(item => {
@@ -240,7 +241,10 @@ class Zoom extends Provider {
         thumbnail: null,
         requestPath: adapter.getRequestPath(item),
         modifiedDate: adapter.getStartDate(item),
-        size: adapter.getSize(item)
+        size: adapter.getSize(item),
+        custom: {
+          topic: adapter.getItemTopic(item)
+        }
       })
     })
     return data
