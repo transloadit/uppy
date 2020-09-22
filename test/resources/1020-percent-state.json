@@ -45,6 +45,11 @@
           "type": "acquirer"
         },
         {
+          "id": "Box",
+          "name": "Box",
+          "type": "acquirer"
+        },
+        {
           "id": "Url",
           "name": "Link",
           "type": "acquirer"
@@ -520,6 +525,17 @@
       "loading": false
     },
     "Dropbox": {
+      "currentSelection": [],
+      "authenticated": false,
+      "files": [],
+      "folders": [],
+      "directories": [],
+      "activeRow": -1,
+      "filterInput": "",
+      "isSearchVisible": false
+    },
+    // TODO -CK
+    "Box": {
       "currentSelection": [],
       "authenticated": false,
       "files": [],

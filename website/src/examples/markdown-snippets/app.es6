@@ -136,7 +136,8 @@ class MarkdownTextarea {
         'url',
         'instagram',
         'google-drive',
-        'dropbox'
+        'dropbox',
+        'box'
       ]
     }).then((result) => {
       if (result === null) return

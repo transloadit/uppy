@@ -41,8 +41,16 @@ const uppyOptions = {
     instagram: {
       key: 'your instagram key',
       secret: 'your instagram secret'
+    },
+    dropbox: {
+      key: 'your dropbox key',
+      secret: 'your dropbox secret'
+    },
+    box: {
+      key: 'your box key',
+      secret: 'your box secret'
     }
-    // you can also add options for dropbox here
+    // you can also add options for additional providers here
   },
   server: {
     host: 'localhost:3020',

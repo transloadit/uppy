@@ -15,6 +15,14 @@ module.exports = () => {
       access_url: 'https://api.dropbox.com/oauth2/token',
       callback: '/dropbox/callback'
     },
+    // TODO - CK
+    box: {
+      transport: 'session',
+      authorize_url: 'https://account.box.com/api/oauth2/authorize',
+      access_url: 'https://api.box.com/oauth2/token',
+      callback: '/box/callback'
+      // scope ???
+    },
     instagram: {
       transport: 'session',
       callback: '/instagram/callback'

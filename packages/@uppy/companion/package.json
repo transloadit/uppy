@@ -20,6 +20,7 @@
     "s3",
     "google drive",
     "dropbox",
+    "box",
     "backend",
     "websocket",
     "express",

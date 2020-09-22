@@ -4,6 +4,7 @@
 // @ts-ignore
 const config = require('@purest/providers')
 const dropbox = require('./dropbox')
+const box = require('./box')
 const drive = require('./drive')
 const instagram = require('./instagram/graph')
 const facebook = require('./facebook')
@@ -74,7 +75,7 @@ module.exports.getProviderMiddleware = (providers) => {
  */
 module.exports.getDefaultProviders = (companionOptions) => {
   // @todo: we should rename drive to googledrive or google-drive or google
-  const providers = { dropbox, drive, facebook, onedrive, zoom, instagram }
+  const providers = { dropbox, box, drive, facebook, onedrive, zoom, instagram }
 
   return providers
 }

@@ -3,6 +3,7 @@ const has = require('@uppy/utils/lib/hasProperty')
 
 const remoteProviders = {
   dropbox: require('@uppy/dropbox'),
+  box: require('@uppy/box'),
   'google-drive': require('@uppy/google-drive'),
   instagram: require('@uppy/instagram'),
   facebook: require('@uppy/facebook'),
