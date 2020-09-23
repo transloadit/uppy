@@ -5,11 +5,11 @@ const mime = require('mime-types')
 const querystring = require('querystring')
 
 exports.getUsername = (data) => {
-  return data.user_email
+  return data.login
 }
 
 exports.isFolder = (item) => {
-  return item['.tag'] === 'folder'
+  return item.type === 'folder'
 }
 
 exports.getItemSize = (item) => {
@@ -17,7 +17,7 @@ exports.getItemSize = (item) => {
 }
 
 exports.getItemIcon = (item) => {
-  return item['.tag']
+  return exports.isFolder(item) ? 'folder' : exports.getItemThumbnailUrl(item)
 }
 
 exports.getItemSubList = (item) => {
@@ -37,21 +37,21 @@ exports.getItemId = (item) => {
 }
 
 exports.getItemRequestPath = (item) => {
-  return encodeURIComponent(item.path_lower)
+  return item.id
 }
 
 exports.getItemModifiedDate = (item) => {
-  return item.server_modified
+  return item.modified_at
 }
 
 exports.getItemThumbnailUrl = (item) => {
-  return `/dropbox/thumbnail/${exports.getItemRequestPath(item)}`
+  return `/box/thumbnail/${exports.getItemRequestPath(item)}`
 }
 
 exports.getNextPagePath = (data) => {
-  if (!data.has_more) {
+  if (data.total_count < data.limit || data.offset + data.limit > data.total_count) {
     return null
   }
-  const query = { cursor: data.cursor }
+  const query = { offset: data.offset + data.limit }
   return `?${querystring.stringify(query)}`
 }

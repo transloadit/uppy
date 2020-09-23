@@ -6,39 +6,27 @@ const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
 
-// From https://www.dropbox.com/developers/reference/json-encoding:
-//
-// This function is simple and has OK performance compared to more
-// complicated ones: http://jsperf.com/json-escape-unicode/4
-const charsToEncode = /[\u007f-\uffff]/g
-function httpHeaderSafeJson (v) {
-  return JSON.stringify(v).replace(charsToEncode,
-    function (c) {
-      return '\\u' + ('000' + c.charCodeAt(0).toString(16)).slice(-4)
-    }
-  )
-}
+// const BOX_FILE_FIELDS = 'id,name,size,type'
+const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,representations,size,type'
+const BOX_THUMBNAIL_SIZE = 32
 
 /**
- * Adapter for API https://www.dropbox.com/developers/documentation/http/documentation
+ * Adapter for API https://developer.box.com/reference/
  */
-class DropBox extends Provider {
+class Box extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = options.provider = DropBox.authProvider
+    this.authProvider = options.provider = Box.authProvider
     this.client = purest(options)
-    // needed for the thumbnails fetched via companion
-    this.needsCookieAuth = true
   }
 
   static get authProvider () {
-    return 'dropbox'
+    return 'box'
   }
 
   _userInfo ({ token }, done) {
     this.client
-      .post('users/get_current_account')
-      .options({ version: '2' })
+      .get('users/me')
       .auth(token)
       .request(done)
   }
@@ -50,76 +38,38 @@ class DropBox extends Provider {
    * @param {object} options
    * @param {function} done
    */
-  list (options, done) {
-    let userInfoDone = false
-    let statsDone = false
-    let userInfo
-    let stats
-    let reqErr
-    const finishReq = () => {
-      if (reqErr || stats.statusCode !== 200) {
-        const err = this._error(reqErr, stats)
-        logger.error(err, 'provider.dropbox.list.error')
-        done(err)
-      } else {
-        stats.body.user_email = userInfo.body.email
-        done(null, this.adaptData(stats.body, options.companion))
-      }
-    }
-
-    this.stats(options, (err, resp) => {
-      statsDone = true
-      stats = resp
-      reqErr = reqErr || err
-      if (userInfoDone) {
-        finishReq()
-      }
-    })
-
-    this._userInfo(options, (err, resp) => {
-      userInfoDone = true
-      userInfo = resp
-      reqErr = reqErr || err
-      if (statsDone) {
-        finishReq()
-      }
-    })
-  }
-
-  stats ({ directory, query, token }, done) {
-    if (query.cursor) {
-      this.client
-        .post('files/list_folder/continue')
-        .options({ version: '2' })
-        .auth(token)
-        .json({
-          cursor: query.cursor
-        })
-        .request(done)
-      return
-    }
+  list ({ directory, token, companion }, done) {
+    const rootFolderID = '0'
+    const path = `folders/${directory || rootFolderID}/items`
 
     this.client
-      .post('files/list_folder')
-      .options({ version: '2' })
-      .qs(query)
-      .auth(token)
-      .json({
-        path: `${directory || ''}`,
-        include_non_downloadable_files: false
+      .get(path)
+      .qs({ fields: BOX_FILES_FIELDS })
+      .options({
+        headers: { 'X-Rep-Hints': '[jpg?dimensions=94x94]' }
       })
-      .request(done)
+      .auth(token)
+      .request((err, resp, body) => {
+        if (err || resp.statusCode !== 200) {
+          err = this._error(err, resp)
+          logger.error(err, 'provider.box.list.error')
+          return done(err)
+        } else {
+          this._userInfo({ token }, (err, infoResp) => {
+            if (err || infoResp.statusCode !== 200) {
+              err = this._error(err, infoResp)
+              logger.error(err, 'provider.token.user.error')
+              return done(err)
+            }
+            done(null, this.adaptData(body, companion))
+          })
+        }
+      })
   }
 
   download ({ id, token }, onData) {
     return this.client
-      .post('https://content.dropboxapi.com/2/files/download')
-      .options({
-        version: '2',
-        headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` })
-        }
-      })
+      .get(`files/${id}/content`)
       .auth(token)
       .request()
       .on('response', (resp) => {
@@ -131,59 +81,38 @@ class DropBox extends Provider {
       })
       .on('end', () => onData(null, null))
       .on('error', (err) => {
-        logger.error(err, 'provider.dropbox.download.error')
+        logger.error(err, 'provider.box.download.error')
         onData(err)
       })
   }
 
   thumbnail ({ id, token }, done) {
+    console.log('HELLO')
     return this.client
-      .post('https://content.dropboxapi.com/2/files/get_thumbnail')
-      .options({
-        version: '2',
-        headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}`, size: 'w256h256' })
-        }
-      })
+      .get(`https://api.box.com/2.0/files/${id}/thumbnail.jpg/`)
+      .qs({ max_width: BOX_THUMBNAIL_SIZE, max_height: BOX_THUMBNAIL_SIZE })
       .auth(token)
       .request()
       .on('response', (resp) => {
         if (resp.statusCode !== 200) {
           const err = this._error(null, resp)
-          logger.error(err, 'provider.dropbox.thumbnail.error')
+          logger.error(err, 'provider.box.thumbnail.error')
           return done(err)
         }
         done(null, resp)
       })
       .on('error', (err) => {
-        logger.error(err, 'provider.dropbox.thumbnail.error')
-      })
-  }
-
-  size ({ id, token }, done) {
-    return this.client
-      .post('files/get_metadata')
-      .options({ version: '2' })
-      .auth(token)
-      .json({ path: id })
-      .request((err, resp, body) => {
-        if (err || resp.statusCode !== 200) {
-          err = this._error(err, resp)
-          logger.error(err, 'provider.dropbox.size.error')
-          return done(err)
-        }
-        done(null, parseInt(body.size))
+        logger.error(err, 'provider.box.thumbnail.error')
       })
   }
 
   logout ({ token }, done) {
     return this.client
-      .post('auth/token/revoke')
-      .options({ version: '2' })
+      .post('https://api.box.com/oauth2/revoke')
       .auth(token)
       .request((err, resp) => {
         if (err || resp.statusCode !== 200) {
-          logger.error(err, 'provider.dropbox.size.error')
+          logger.error(err, 'provider.box.logout.error')
           done(this._error(err, resp))
           return
         }
@@ -224,4 +153,4 @@ class DropBox extends Provider {
   }
 }
 
-module.exports = DropBox
+module.exports = Box
