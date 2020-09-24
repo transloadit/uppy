@@ -7,8 +7,8 @@ const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
 
 // const BOX_FILE_FIELDS = 'id,name,size,type'
-const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,representations,size,type'
-const BOX_THUMBNAIL_SIZE = 32
+const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
+const BOX_THUMBNAIL_SIZE = 256
 
 /**
  * Adapter for API https://developer.box.com/reference/
@@ -45,9 +45,6 @@ class Box extends Provider {
     this.client
       .get(path)
       .qs({ fields: BOX_FILES_FIELDS })
-      .options({
-        headers: { 'X-Rep-Hints': '[jpg?dimensions=94x94]' }
-      })
       .auth(token)
       .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {
@@ -87,10 +84,9 @@ class Box extends Provider {
   }
 
   thumbnail ({ id, token }, done) {
-    console.log('HELLO')
     return this.client
-      .get(`https://api.box.com/2.0/files/${id}/thumbnail.jpg/`)
-      .qs({ max_width: BOX_THUMBNAIL_SIZE, max_height: BOX_THUMBNAIL_SIZE })
+      .get(`files/${id}/thumbnail.png`)
+      .qs({ max_height: BOX_THUMBNAIL_SIZE, max_width: BOX_THUMBNAIL_SIZE })
       .auth(token)
       .request()
       .on('response', (resp) => {

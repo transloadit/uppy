@@ -17,7 +17,7 @@ exports.getItemSize = (item) => {
 }
 
 exports.getItemIcon = (item) => {
-  return exports.isFolder(item) ? 'folder' : exports.getItemThumbnailUrl(item)
+  return item.type
 }
 
 exports.getItemSubList = (item) => {
