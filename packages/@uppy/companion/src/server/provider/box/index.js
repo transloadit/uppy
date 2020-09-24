@@ -18,6 +18,8 @@ class Box extends Provider {
     super(options)
     this.authProvider = options.provider = Box.authProvider
     this.client = purest(options)
+    // needed for the thumbnails fetched via companion
+    this.needsCookieAuth = true
   }
 
   static get authProvider () {
@@ -90,7 +92,7 @@ class Box extends Provider {
       .auth(token)
       .request()
       .on('response', (resp) => {
-        if (resp.statusCode !== 200) {
+        if (![200, 202].includes(resp.statusCode)) {
           const err = this._error(null, resp)
           logger.error(err, 'provider.box.thumbnail.error')
           return done(err)
@@ -99,6 +101,20 @@ class Box extends Provider {
       })
       .on('error', (err) => {
         logger.error(err, 'provider.box.thumbnail.error')
+      })
+  }
+
+  size ({ id, token }, done) {
+    return this.client
+      .get(`files/${id}`)
+      .auth(token)
+      .request((err, resp, body) => {
+        if (err || resp.statusCode !== 200) {
+          err = this._error(err, resp)
+          logger.error(err, 'provider.box.size.error')
+          return done(err)
+        }
+        done(null, parseInt(body.size))
       })
   }
 
