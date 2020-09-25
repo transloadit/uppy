@@ -34,8 +34,7 @@ class Box extends Provider {
   }
 
   /**
-   * Makes 2 requests in parallel - 1. to get files, 2. to get user email
-   * it then waits till both requests are done before proceeding with the callback
+   * Lists files and folders from Box API
    *
    * @param {object} options
    * @param {function} done

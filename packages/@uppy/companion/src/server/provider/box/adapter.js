@@ -1,6 +1,3 @@
-// COPIED FROM DROPBOX
-// TODO - CK
-
 const mime = require('mime-types')
 const querystring = require('querystring')
 
