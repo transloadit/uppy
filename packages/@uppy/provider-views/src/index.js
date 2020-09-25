@@ -528,6 +528,8 @@ module.exports = class ProviderView {
         res.items.forEach((item) => {
           if (!item.isFolder) {
             files.push(item)
+          } else {
+            this.addFolder(item)
           }
         })
         const moreFiles = res.nextPagePath || null
