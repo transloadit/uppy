@@ -118,9 +118,18 @@ class Box extends Provider {
       })
   }
 
-  logout ({ token }, done) {
+  logout ({ companion, token }, done) {
+    const { key, secret } = companion.options.providerOptions.box
+
     return this.client
       .post('https://api.box.com/oauth2/revoke')
+      .options({
+        formData: {
+          client_id: key,
+          client_secret: secret,
+          token
+        }
+      })
       .auth(token)
       .request((err, resp) => {
         if (err || resp.statusCode !== 200) {
