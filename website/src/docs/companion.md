@@ -164,6 +164,10 @@ export COMPANION_CLIENT_ORIGINS="localhost:3452,uppy.io"
 # this also enables Redis session storage if set
 export COMPANION_REDIS_URL="REDIS URL"
 
+# a comma-separated list of cookies to pass along from the incoming request to the upload destination
+# can be used to pass a session cookie from a website through Companion and then to the Tus server
+export COMPANION_SEND_COOKIES="session_cookie"
+
 # to enable Dropbox
 export COMPANION_DROPBOX_KEY="YOUR DROPBOX KEY"
 export COMPANION_DROPBOX_SECRET="YOUR DROPBOX SECRET"

@@ -19,3 +19,5 @@ export COMPANION_INSTAGRAM_SECRET="instagram_secret"
 export COMPANION_ZOOM_KEY="zoom_key"
 export COMPANION_ZOOM_SECRET="zoom_secret"
 export COMPANION_ZOOM_VERIFICATION_TOKEN="zoom_verfication_token"
+
+export COMPANION_SEND_COOKIES=".AspNet.ApplicationCookie"

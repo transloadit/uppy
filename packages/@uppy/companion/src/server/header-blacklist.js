@@ -11,7 +11,6 @@ const forbiddenNames = [
   'access-control-request-method',
   'connection',
   'content-length',
-  'cookie',
   'cookie2',
   'date',
   'dnt',

@@ -60,6 +60,10 @@ Custom headers that should be sent along to [Companion](/docs/companion) on ever
 
 This will be used by the default implementations of the upload-related functions below. If you provide your own implementations, these headers are not sent automatically.
 
+### `credentials: 'same-origin'`
+
+The `credentials` setting for requests [Companion](/docs/companion). Allowed values are 'omit', 'same-origin' (the default), and 'include'.
+
 ### `getChunkSize(file)`
 
 A function that returns the minimum chunk size to use when uploading the given file.

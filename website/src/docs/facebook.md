@@ -72,6 +72,10 @@ URL to a [Companion](/docs/companion) instance.
 
 Custom headers that should be sent along to [Companion](/docs/companion) on every request.
 
+### `credentials: 'same-origin'`
+
+The `credentials` setting for requests [Companion](/docs/companion). Allowed values are 'omit', 'same-origin' (the default), and 'include'.
+
 ### `companionAllowedHosts: companionUrl`
 
 The valid and authorized URL(s) from which OAuth responses should be accepted.

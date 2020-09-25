@@ -97,6 +97,10 @@ This is useful when you have your [Uppy Companion][companion] running on multipl
 
 Custom headers to send to [Uppy Companion][companion].
 
+### `credentials: 'same-origin'`
+
+The `credentials` setting for requests [Companion](/docs/companion). Allowed values are 'omit', 'same-origin' (the default), and 'include'.
+
 ### `dropbox: {}`
 
 Specific options for the [Dropbox](/docs/dropbox) provider.

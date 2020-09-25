@@ -11,6 +11,7 @@ export interface TokenStorage {
 export interface RequestClientOptions {
   companionUrl: string
   companionHeaders?: object
+  credentials?: RequestCredentials
   /**
    * Deprecated, use `companionHeaders` instead.
    */

@@ -135,7 +135,7 @@ module.exports = class RequestClient {
         fetchWithNetworkError(this._getUrl(path), {
           method: 'get',
           headers: headers,
-          credentials: 'same-origin'
+          credentials: this.opts.credentials
         }))
       .then(this._getPostResponseFunc(skipPostResponse))
       .then((res) => this._json(res))
@@ -151,7 +151,7 @@ module.exports = class RequestClient {
         fetchWithNetworkError(this._getUrl(path), {
           method: 'post',
           headers: headers,
-          credentials: 'same-origin',
+          credentials: this.opts.credentials,
           body: JSON.stringify(data)
         }))
       .then(this._getPostResponseFunc(skipPostResponse))
@@ -168,7 +168,7 @@ module.exports = class RequestClient {
         fetchWithNetworkError(`${this.hostname}/${path}`, {
           method: 'delete',
           headers: headers,
-          credentials: 'same-origin',
+          credentials: this.opts.credentials,
           body: data ? JSON.stringify(data) : null
         }))
       .then(this._getPostResponseFunc(skipPostResponse))

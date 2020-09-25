@@ -104,6 +104,30 @@ class Uploader {
     const useFormDataIsSet = Object.prototype.hasOwnProperty.call(req.body, 'useFormData')
     const useFormData = useFormDataIsSet ? req.body.useFormData : true
 
+    if (process.env.COMPANION_SEND_COOKIES && req.cookies) {
+      const supportedCookies = process.env.COMPANION_SEND_COOKIES.split(',')
+      let cookieStr = ''
+      Object.keys(req.cookies).forEach(key => {
+        if (supportedCookies.indexOf(key) !== -1) {
+          cookieStr += key + '=' + req.cookies[key]
+        }
+      })
+
+      if (cookieStr) {
+        if (!req.body.headers) {
+          req.body.headers = {}
+        }
+        // Append the cookie value to the existing cookie header, or create a new one
+        if (req.body.headers.Cookie) {
+          req.body.headers.Cookie += '; ' + cookieStr
+        } else if (req.body.headers.cookie) {
+          req.body.headers.cookie += '; ' + cookieStr
+        } else {
+          req.body.headers.Cookie = cookieStr
+        }
+      }
+    }
+
     return {
       companionOptions: req.companion.options,
       endpoint: req.body.endpoint,
