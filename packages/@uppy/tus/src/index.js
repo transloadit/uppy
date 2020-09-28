@@ -201,7 +201,7 @@ module.exports = class Tus extends Plugin {
 
       uploadOptions.onBeforeRequest = (req) => {
         const xhr = req.getUnderlyingObject()
-        xhr.withCredentials = !!this.opts.withCredentials
+        xhr.withCredentials = !!opts.withCredentials
       }
 
       uploadOptions.onError = (err) => {
