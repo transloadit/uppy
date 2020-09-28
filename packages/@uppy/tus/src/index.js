@@ -70,7 +70,8 @@ module.exports = class Tus extends Plugin {
       resume: true,
       useFastRemoteRetry: true,
       limit: 0,
-      retryDelays: [0, 1000, 3000, 5000]
+      retryDelays: [0, 1000, 3000, 5000],
+      withCredentials: false
     }
 
     // merge default options with the ones set by user
@@ -197,6 +198,11 @@ module.exports = class Tus extends Plugin {
       // This means you can add 2 identical files, if one is in folder a,
       // the other in folder b.
       uploadOptions.fingerprint = getFingerprint(file)
+
+      uploadOptions.onBeforeRequest = (req) => {
+        const xhr = req.getUnderlyingObject()
+        xhr.withCredentials = !!opts.withCredentials
+      }
 
       uploadOptions.onError = (err) => {
         this.uppy.log(err)

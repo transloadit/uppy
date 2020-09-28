@@ -1,10 +1,11 @@
 const { h } = require('preact')
+const classNames = require('classnames')
 const AddFiles = require('./AddFiles')
 
 const AddFilesPanel = (props) => {
   return (
     <div
-      class="uppy-Dashboard-AddFilesPanel"
+      class={classNames('uppy-Dashboard-AddFilesPanel', props.className)}
       data-uppy-panelType="AddFiles"
       aria-hidden={props.showAddFilesPanel}
     >

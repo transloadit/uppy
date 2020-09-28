@@ -5,25 +5,13 @@ const PickerPanelContent = require('./PickerPanelContent')
 const EditorPanel = require('./EditorPanel')
 const PanelTopBar = require('./PickerPanelTopBar')
 const FileCard = require('./FileCard')
+const Slide = require('./Slide')
 const classNames = require('classnames')
 const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 const { h } = require('preact')
-const PreactCSSTransitionGroup = require('preact-css-transition-group')
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
-
-function TransitionWrapper (props) {
-  return (
-    <PreactCSSTransitionGroup
-      transitionName="uppy-transition-slideDownUp"
-      transitionEnterTimeout={250}
-      transitionLeaveTimeout={250}
-    >
-      {props.children}
-    </PreactCSSTransitionGroup>
-  )
-}
 
 const WIDTH_XL = 900
 const WIDTH_LG = 700
@@ -118,21 +106,21 @@ module.exports = function Dashboard (props) {
             <AddFiles {...props} isSizeMD={isSizeMD} />
           )}
 
-          <TransitionWrapper>
+          <Slide>
             {props.showAddFilesPanel ? <AddFilesPanel key="AddFiles" {...props} isSizeMD={isSizeMD} /> : null}
-          </TransitionWrapper>
+          </Slide>
 
-          <TransitionWrapper>
+          <Slide>
             {props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null}
-          </TransitionWrapper>
+          </Slide>
 
-          <TransitionWrapper>
+          <Slide>
             {props.activePickerPanel ? <PickerPanelContent key="Picker" {...props} /> : null}
-          </TransitionWrapper>
+          </Slide>
 
-          <TransitionWrapper>
+          <Slide>
             {props.showFileEditor ? <EditorPanel key="Editor" {...props} /> : null}
-          </TransitionWrapper>
+          </Slide>
 
           <div class="uppy-Dashboard-progressindicators">
             {props.progressindicators.map((target) => {
