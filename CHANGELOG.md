@@ -58,7 +58,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core/dashboard: replace `poweredBy` and `exceedsSize` locale keys by word order aware versions, see PR #2077
 - [ ] *: upgrade to Preact X
 - [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
-- [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems though)
+- [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems)
 - [ ] dashboard: set default `trigger: null`, see https://github.com/transloadit/uppy/pull/2144#issuecomment-600581690
 - [ ] docs: Completely drop soft IE10 (and IE11?) support
 - [ ] form: make the `multipleResults` option `true` by default
@@ -101,6 +101,34 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
+
+## 1.21.1
+
+Released: 2020-09-16
+
+Zoom fixes and  preact-css-transition-group removed.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 2.0.1 | @uppy/onedrive | 1.1.15 |
+| @uppy/dashboard | 1.12.7 | @uppy/provider-views | 1.7.6 |
+| @uppy/dropbox | 1.4.15 | @uppy/react | 1.10.7 |
+| @uppy/facebook | 1.1.15 | @uppy/robodog | 1.9.7 |
+| @uppy/google-drive | 1.5.15 | @uppy/transloadit | 1.6.10 |
+| @uppy/instagram | 1.4.15 | @uppy/zoom | 0.1.4 |
+| @uppy/locales | 1.16.7 | uppy | 1.21.1 |
+
+- @uppy/locales: added pt_PT and fixed some typos in pt_BR (#2510 / @Jmales)
+- @uppy/locales: fixed translation of uploadingX in french locale (#2523 / @phil714)
+- @uppy/zoom: omit timeline files and fix cc type files for zoom provider (#2508 / @mokutsu-coursera)
+- @uppy/zoom: update the pagination limit / boundary on the zoom provider (#2511 / @mokutsu-coursera)
+- @uppy/zoom: fix cases where a meeting UUID has slashes (#2526 / @mokutsu-coursera)
+- @uppy/zoom: fix meeting timestamp for user timezones and explicitly include moment-timezone dependency (#2525 / @mokutsu-coursera)
+- @uppy/dashboard: fix truncation and ellipses for very long file names (#2533 / @mokutsu-coursera)
+- @uppy/dashboard: remove preact-css-transition-group (#2444 / @goto-bus-stop)
+- @uppy/provider-views: fix mutating state where not intended (#2504 / @johnnyperkins)
+- docs: Update readme pages for npm (#2527 / @mokutsu-coursera)
+- build: fix overeager regex in website examples build (@goto-bus-stop)
 
 ## 1.21.0
 
@@ -151,7 +179,7 @@ This is mostly a Companion 2.0 release 🎉
 
 Released: 2020-08-17
 
-This release adds a `deauthorization callback` endpoint to Companion
+This release adds a `deauthorization callback` endpoint to Companion.
 
 | Package | Version | Package | Version |
 |-|-|-|-|
