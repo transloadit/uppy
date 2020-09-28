@@ -70,7 +70,8 @@ module.exports = class Tus extends Plugin {
       resume: true,
       useFastRemoteRetry: true,
       limit: 0,
-      retryDelays: [0, 1000, 3000, 5000]
+      retryDelays: [0, 1000, 3000, 5000],
+      withCredentials: false
     }
 
     // merge default options with the ones set by user
