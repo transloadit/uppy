@@ -201,7 +201,8 @@
     "watchify": "3.11.1",
     "webdriverio": "5.18.6",
     "webpack": "4.44.1",
-    "whatwg-fetch": "3.0.0"
+    "whatwg-fetch": "3.0.0",
+    "vue-template-compiler": "^2.6.11"
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
