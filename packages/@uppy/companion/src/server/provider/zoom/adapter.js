@@ -72,7 +72,7 @@ exports.getItemName = (item, userResponse) => {
   if (item.file_type) {
     const ext = EXT[item.file_type] ? `.${EXT[item.file_type]}` : ''
     const itemType = item.recording_type ? ` - ${item.recording_type.split('_').join(' ')}` : ''
-    return `${start}${itemType} (${item.file_type.toLowerCase()})${ext}`
+    return `${item.topic}${itemType} (${start})${ext}`
   }
 
   return `${item.topic} (${start})`
@@ -126,4 +126,8 @@ exports.getSize = (item) => {
     return item.file_size
   }
   return item.total_size
+}
+
+exports.getItemTopic = (item) => {
+  return item.topic
 }
