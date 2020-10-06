@@ -1,9 +1,18 @@
 <template>
   <div id="app">
-    <HelloWorld msg="Welcome to Uppy Vue Demo"/>
-
-    <dashboard-modal 
-      :uppy="uppy" 
+    <!-- <HelloWorld msg="Welcome to Uppy Vue Demo"/> -->
+    <h1>Welcome to Uppy Vue Demo!</h1>
+    <dashboard
+      :uppy="uppy1" 
+      :props="{
+        onRequestCloseModal: handleClose
+      }"
+    />
+    <button @click="open = true">
+      Open the dashboard
+    </button>
+    <dashboard-modal
+      :uppy="uppy2" 
       :open="open" 
       :props="{
         onRequestCloseModal: handleClose
@@ -13,30 +22,35 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+// import HelloWorld from './components/HelloWorld.vue'
 
 import Uppy from '@uppy/core'
-import { DashboardModal } from '../../../packages/@uppy/vue'
+import { Dashboard, DashboardModal } from '../../../packages/@uppy/vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
+    // HelloWorld,
+    Dashboard,
     DashboardModal
   },
   computed: {
-    uppy: () => new Uppy()
+    uppy1: () => new Uppy(),
+    uppy2: () => new Uppy(),
   },
   data () {
     return {
-      open: true
+      open: false
     }
   },
   methods: {
-    handleClose: () => ''
+    handleClose() { this.open = false }
   }
 }
 </script>
+<style src='@uppy/core/dist/style.css'></style> 
+<style src='@uppy/dashboard/dist/style.css'></style> 
+
 
 <style>
 #app {
