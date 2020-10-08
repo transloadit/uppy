@@ -61,7 +61,7 @@ const Dropbox = require('@uppy/dropbox')
 const Transloadit = require('@uppy/transloadit')
 
 uppy.use(Dropbox, {
-  companionUrl: Transloadit.COMPANION
+  companionUrl: Transloadit.COMPANION,
   companionAllowedHosts: Transloadit.COMPANION_PATTERN
 })
 ```
@@ -87,7 +87,7 @@ const Dropbox = require('@uppy/dropbox')
 const Transloadit = require('@uppy/transloadit')
 
 uppy.use(Dropbox, {
-  companionUrl: Transloadit.COMPANION
+  companionUrl: Transloadit.COMPANION,
   companionAllowedHosts: Transloadit.COMPANION_PATTERN
 })
 ```
