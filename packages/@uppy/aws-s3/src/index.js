@@ -135,13 +135,23 @@ module.exports = class AwsS3 extends Plugin {
     const valid = typeof params === 'object' && params &&
       typeof params.url === 'string' &&
       (typeof params.fields === 'object' || params.fields == null) &&
-      (params.method == null || /^(put|post)$/i.test(params.method))
+      params.method == null;
 
     if (!valid) {
       const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields, headers }' but got '${JSON.stringify(params)}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
       console.error(err)
       throw err
     }
+
+    const methodIsValid = /^(put|post)$/i.test(params.method);
+
+    if (!methodIsValid) {
+      const err = new TypeError(`AwsS3: got incorrect method from 'getUploadParameters()' for file '${file.name}', expected  'put,post' but got '${params.method}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
+      console.error(err)
+      throw err
+    }
+
+
   }
 
   handleUpload (fileIDs) {
