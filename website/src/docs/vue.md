@@ -28,8 +28,6 @@ The components can be used with [Vue][] and frameworks that use it, like [Nuxt][
 
 Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instance can be passed into components as an `uppy` prop. 
 
-Note: At the moment, this example is not functional due to an unresolved issue with using other plugins with the Dashboard
-
 ```vue
 <template>
   <div id="app">
@@ -147,5 +145,4 @@ The `<DashboardModal />` cannot be passed to a `target:` option of a remote prov
 [Vue]: https://vuejs.org
 [Nuxt]: https://nuxtjs.org
 
-[`@uppy/dashboard`]: /docs/dashboard/
 [`@uppy/webcam`]: /docs/webcam/
