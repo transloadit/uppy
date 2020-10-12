@@ -102,6 +102,21 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] core: add maxTotalFileSize restriction #514 (@arturi)
 - [ ] providers: Provider Browser don't handle uppy restrictions, can we hide things that don't match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 
+## 1.21.2
+
+Released: 2020-10-02
+
+Fixed nesting folder uploading from third-party providers, included Zoom meeting name in the file name.
+
+- website: Fix XHR upload demos, fixes #2517 (#2537 / @goto-bus-stop)
+- docs: Corrected localhost URL to actual URL (#2543 / @adritasharma)
+- docs: Include required CSS import (#2548 / @Gkleinereva)
+- @uppy/provider-views: szh fix username not updating when switching OneDrive accounts (#2538 / @szh)
+- @uppy/provider-views: Add support for uploading nested folders (#2557 / @mokutsu-coursera)
+- @uppy/dashboard: Fix missing `preact.h` import, enable lint for that (25b232eccc04795a869ff60eb6453180e41cdd03 / @goto-bus-stop)
+- @uppy/tus: add withCredentials, fix #2518 (#2544 / @szh)
+- @uppy/zoom: Include meeting name in file name, and include meeting data in response object so it is available in later uppy lifecycle methods when interacting with file object (#2547 / @mokutsu-coursera)
+
 ## 1.21.1
 
 Released: 2020-09-16
