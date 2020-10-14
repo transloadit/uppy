@@ -22,15 +22,12 @@
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
-
 import Uppy from '@uppy/core'
 import { Dashboard, DashboardModal } from '@uppy/vue'
 
 export default {
   name: 'App',
   components: {
-    // HelloWorld,
     Dashboard,
     DashboardModal
   },
