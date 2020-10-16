@@ -2,9 +2,9 @@ const { h } = require('preact')
 
 module.exports = ({ currentDeviceId, videoSources, onChangeVideoSource }) => {
   return (
-    <p className="uppy-Webcam-videoSource">Video source:
+    <div className="uppy-Webcam-videoSource">
       <select
-        className="uppy-Webcam-videoSource-select"
+        className="uppy-u-reset uppy-Webcam-videoSource-select"
         onchange={(event) => { onChangeVideoSource(event.target.value) }}
       >
         {videoSources.map((videoSource) =>
@@ -16,6 +16,6 @@ module.exports = ({ currentDeviceId, videoSources, onChangeVideoSource }) => {
             {videoSource.label}
           </option>)}
       </select>
-    </p>
+    </div>
   )
 }
