@@ -132,6 +132,10 @@ For a full list of available properties, see MDN's [MediaTrackConstraints][] doc
 [`height`]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/height
 [`facingMode`]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/facingMode
 
+### `showVideoSourceDropdown: false`
+
+Configures whether or not to show a dropdown which enables to choose the video device to use. This option will have priority over `facingMode` if enabled. The default is `false`.
+
 ### `showRecordingLength: false`
 
 Configures whether or not to show the length of the recording while the recording is in progress. The default is `false`.
