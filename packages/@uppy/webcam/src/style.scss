@@ -69,8 +69,10 @@
   background-size: .65em auto, 100%;
   margin: auto;
   margin-bottom: 10px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 
-  .uppy-size--md & {
+  .uppy-size--lg & {
     font-size: 14px;
     margin-bottom: 0;
   }
