@@ -63,6 +63,8 @@ de_DE.strings = {
   loading: 'Laden...',
   logOut: 'Ausloggen',
   myDevice: 'Mein Gerät',
+  noCameraDescription: 'Bitte Kamera anschließen, um Bilder oder Videos aufzunehmen',
+  noCameraTitle: 'Kamera nicht verfügbar',
   noDuplicates: 'Datei \'%{fileName}\' existiert bereits und kann nicht erneut hinzugefügt werden',
   noFilesFound: 'Sie haben keine Dateien oder Ordner hier',
   noInternetConnection: 'Keine Internetverbindung',

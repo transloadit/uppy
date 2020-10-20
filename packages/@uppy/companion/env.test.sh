@@ -2,6 +2,8 @@ export NODE_ENV="test"
 export COMPANION_PORT=3020
 export COMPANION_DOMAIN="localhost:3020"
 export COMPANION_SELF_ENDPOINT="localhost:3020"
+export COMPANION_HIDE_METRICS="false"
+export COMPANION_HIDE_WELCOME="false"
 
 export COMPANION_PROTOCOL="http"
 export COMPANION_DATADIR="./test/output"

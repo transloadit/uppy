@@ -5,7 +5,9 @@
 <a href="https://www.npmjs.com/package/@uppy/zoom"><img src="https://img.shields.io/npm/v/@uppy/zoom.svg?style=flat-square"></a>
 <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
 
-A description of this plugin or module goes here.
+The Zoom plugin for Uppy lets users import recordings and related files from their Zoom account.
+
+A Companion instance and zoom account with cloud recordings is required for the Zoom plugin to work. Companion handles authentication with Zoom, downloads files from Zoom and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
 

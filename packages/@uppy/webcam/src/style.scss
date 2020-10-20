@@ -31,18 +31,78 @@
   margin: auto;
 }
 
-  .uppy-Webcam-video--mirrored {
-    transform: scaleX(-1);
+.uppy-Webcam-video--mirrored {
+  transform: scaleX(-1);
+}
+
+.uppy-Webcam-footer {
+  width: 100%;
+  min-height: 75px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px;
+}
+
+.uppy-Webcam-videoSourceContainer {
+  width: 100%;
+  flex-grow: 0;
+}
+
+.uppy-size--lg .uppy-Webcam-videoSourceContainer {
+  width: 33%;
+  margin: 0; // vertical alignment handled by the flexbox wrapper
+}
+
+.uppy-Webcam-videoSource-select {
+  display: block;
+  font-size: 16px;
+  line-height: 1.2;
+  padding: .4em 1em .3em .4em;
+  width: 100%;
+  max-width: 90%;
+  border: 1px solid $gray-600;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23757575%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right .4em top 50%, 0 0;
+  background-size: .65em auto, 100%;
+  margin: auto;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  .uppy-size--lg & {
+    font-size: 14px;
+    margin-bottom: 0;
+  }
+}
+
+  .uppy-Webcam-videoSource-select::-ms-expand {
+    display: none;
   }
 
 .uppy-Webcam-buttonContainer {
-  width: 100%;
-  height: 75px;
-  border-top: 1px solid $gray-200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 20px;
+  width: 50%;
+  margin-left: 25%;
+  text-align: center;
+}
+
+.uppy-size--lg .uppy-Webcam-buttonContainer {
+  width: 34%;
+  margin-left: 0;
+}
+
+.uppy-Webcam-recordingLength {
+  width: 25%;
+  flex-grow: 0;
+  color: $gray-600;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  text-align: right;
+}
+
+.uppy-size--lg .uppy-Webcam-recordingLength {
+  width: 33%;
 }
 
 .uppy-Webcam-button {
@@ -108,13 +168,6 @@
   height: 75px;
   color: $gray-400;
   margin-bottom: 30px;
-}
-
-.uppy-Webcam-recordingLength {
-  position: absolute;
-  right: 20px;
-  color: $gray-600;
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .uppy-Webcam-title {

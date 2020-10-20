@@ -1,4 +1,4 @@
-const moment = require('moment')
+const moment = require('moment-timezone')
 
 const MIMETYPES = {
   MP4: 'video/mp4',
@@ -31,7 +31,7 @@ exports.getDateName = (start, end) => {
 }
 
 exports.getAccountCreationDate = (results) => {
-  return moment(results.created_at)
+  return moment.utc(results.created_at)
 }
 
 exports.getUserEmail = (results) => {
@@ -50,8 +50,8 @@ exports.getDateFolderModified = (end) => {
   return end.format('YYYY-MM-DD')
 }
 
-exports.getDateNextPagePath = (start) => {
-  return `?cursor=${start.subtract(1, 'days').format('YYYY-MM-DD')}`
+exports.getDateNextPagePath = (end) => {
+  return `?cursor=${end.format('YYYY-MM-DD')}`
 }
 
 exports.getNextPagePath = (results) => {
@@ -65,15 +65,14 @@ exports.getIsFolder = (item) => {
   return !item.file_type
 }
 
-exports.getItemName = (item) => {
-  const start = moment(item.start_time || item.recording_start)
-    .clone()
-    .format('YYYY-MM-DD, kk:mm')
+exports.getItemName = (item, userResponse) => {
+  const start = moment.tz(item.start_time || item.recording_start, userResponse.timezone || 'UTC')
+    .format('YYYY-MM-DD, HH:mm')
 
   if (item.file_type) {
     const ext = EXT[item.file_type] ? `.${EXT[item.file_type]}` : ''
     const itemType = item.recording_type ? ` - ${item.recording_type.split('_').join(' ')}` : ''
-    return `${start}${itemType} (${item.file_type.toLowerCase()})${ext}`
+    return `${item.topic}${itemType} (${start})${ext}`
   }
 
   return `${item.topic} (${start})`
@@ -108,7 +107,8 @@ exports.getRequestPath = (item) => {
   } else if (item.file_type) {
     return `${encodeURIComponent(item.meeting_id)}?recordingId=${encodeURIComponent(item.id)}`
   }
-  return `${encodeURIComponent(item.uuid)}`
+  // Zoom meeting ids are reused so we need to use the UUID. Also, these UUIDs can contain `/` characters which require double encoding (see https://devforum.zoom.us/t/double-encode-meeting-uuids/23729)
+  return `${encodeURIComponent(encodeURIComponent(item.uuid))}`
 }
 
 exports.getStartDate = (item) => {
@@ -126,4 +126,8 @@ exports.getSize = (item) => {
     return item.file_size
   }
   return item.total_size
+}
+
+exports.getItemTopic = (item) => {
+  return item.topic
 }

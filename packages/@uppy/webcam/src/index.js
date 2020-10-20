@@ -115,6 +115,7 @@ module.exports = class Webcam extends Plugin {
         'picture'
       ],
       mirror: true,
+      showVideoSourceDropdown: false,
       facingMode: 'user',
       preferredImageMimeType: null,
       preferredVideoMimeType: null,
@@ -138,12 +139,22 @@ module.exports = class Webcam extends Plugin {
     this._stopRecording = this._stopRecording.bind(this)
     this._oneTwoThreeSmile = this._oneTwoThreeSmile.bind(this)
     this._focus = this._focus.bind(this)
+    this._changeVideoSource = this._changeVideoSource.bind(this)
 
     this.webcamActive = false
 
     if (this.opts.countdown) {
       this.opts.onBeforeSnapshot = this._oneTwoThreeSmile
     }
+
+    this.setPluginState({
+      hasCamera: false,
+      cameraReady: false,
+      cameraError: null,
+      recordingLengthSeconds: 0,
+      videoSources: [],
+      currentDeviceId: null
+    })
   }
 
   setOptions (newOpts) {
@@ -176,15 +187,18 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  getConstraints () {
+  getConstraints (deviceId = null) {
     const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1 ||
       this.opts.modes.indexOf('audio-only') !== -1
     const acceptsVideo = this.opts.modes.indexOf('video-audio') !== -1 ||
       this.opts.modes.indexOf('video-only') !== -1 ||
       this.opts.modes.indexOf('picture') !== -1
 
-    const videoConstraints = this.opts.videoConstraints ?? {
-      facingMode: this.opts.facingMode
+    const videoConstraints = {
+      ...(this.opts.videoConstraints ?? { facingMode: this.opts.facingMode }),
+      // facingMode takes precedence over deviceId, and not needed
+      // when specific device is selected
+      ...(deviceId ? { deviceId, facingMode: null } : {})
     }
 
     return {
@@ -193,13 +207,14 @@ module.exports = class Webcam extends Plugin {
     }
   }
 
-  _start () {
+  _start (options = null) {
     if (!this.supportsUserMedia) {
       return Promise.reject(new Error('Webcam access not supported'))
     }
 
     this.webcamActive = true
-    const constraints = this.getConstraints()
+
+    const constraints = this.getConstraints(options && options.deviceId ? options.deviceId : null)
 
     this.hasCameraCheck().then(hasCamera => {
       this.setPluginState({
@@ -210,7 +225,23 @@ module.exports = class Webcam extends Plugin {
       return this.mediaDevices.getUserMedia(constraints)
         .then((stream) => {
           this.stream = stream
+
+          let currentDeviceId = null
+          if (!options || !options.deviceId) {
+            currentDeviceId = stream.getVideoTracks()[0].getSettings().deviceId
+          } else {
+            stream.getVideoTracks().forEach((videoTrack) => {
+              if (videoTrack.getSettings().deviceId === options.deviceId) {
+                currentDeviceId = videoTrack.getSettings().deviceId
+              }
+            })
+          }
+
+          // Update the sources now, so we can access the names.
+          this.updateVideoSources()
+
           this.setPluginState({
+            currentDeviceId,
             cameraReady: true
           })
         })
@@ -465,6 +496,19 @@ module.exports = class Webcam extends Plugin {
     }, 1000)
   }
 
+  _changeVideoSource (deviceId) {
+    this._stop()
+    this._start({ deviceId: deviceId })
+  }
+
+  updateVideoSources () {
+    this.mediaDevices.enumerateDevices().then(devices => {
+      this.setPluginState({
+        videoSources: devices.filter((device) => device.kind === 'videoinput')
+      })
+    })
+  }
+
   render () {
     if (!this.webcamActive) {
       this._start()
@@ -485,6 +529,7 @@ module.exports = class Webcam extends Plugin {
     return (
       <CameraScreen
         {...webcamState}
+        onChangeVideoSource={this._changeVideoSource}
         onSnapshot={this._takeSnapshot}
         onStartRecording={this._startRecording}
         onStopRecording={this._stopRecording}
@@ -493,6 +538,7 @@ module.exports = class Webcam extends Plugin {
         i18n={this.i18n}
         modes={this.opts.modes}
         showRecordingLength={this.opts.showRecordingLength}
+        showVideoSourceDropdown={this.opts.showVideoSourceDropdown}
         supportsRecording={supportsMediaRecorder()}
         recording={webcamState.isRecording}
         mirror={this.opts.mirror}
@@ -510,6 +556,31 @@ module.exports = class Webcam extends Plugin {
     const target = this.opts.target
     if (target) {
       this.mount(target, this)
+    }
+
+    if (this.mediaDevices) {
+      this.updateVideoSources()
+
+      this.mediaDevices.ondevicechange = (event) => {
+        this.updateVideoSources()
+
+        if (this.stream) {
+          let restartStream = true
+
+          const { videoSources, currentDeviceId } = this.getPluginState()
+
+          videoSources.forEach((videoSource) => {
+            if (currentDeviceId === videoSource.deviceId) {
+              restartStream = false
+            }
+          })
+
+          if (restartStream) {
+            this._stop()
+            this._start()
+          }
+        }
+      }
     }
   }
 

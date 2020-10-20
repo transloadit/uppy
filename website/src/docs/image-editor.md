@@ -41,6 +41,16 @@ npm install @uppy/image-editor
 
 The `@uppy/image-editor` plugin is in beta and is not yet available in the [CDN package](/docs/#With-a-script-tag).
 
+## CSS
+
+The `@Uppy/image-editor` plugin requires the following CSS for styling:
+
+```js
+import '@uppy/image-editor/dist/style.css'
+```
+
+A minified version is also available as `style.min.css` at the same path.  Include this import after your import of the core stylesheet and the dashboard stylesheet.
+
 ## Options
 
 The `@uppy/image-editor` plugin has the following configurable options:

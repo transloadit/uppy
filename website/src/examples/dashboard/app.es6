@@ -145,7 +145,10 @@ function uppySetOptions () {
 
   const webcamInstance = window.uppy.getPlugin('Webcam')
   if (opts.Webcam && !webcamInstance) {
-    window.uppy.use(Webcam, { target: Dashboard })
+    window.uppy.use(Webcam, {
+      target: Dashboard,
+      showVideoSourceDropdown: true
+    })
   }
   if (!opts.Webcam && webcamInstance) {
     window.uppy.removePlugin(webcamInstance)
@@ -182,7 +185,7 @@ function loadLocaleFromCDN (localeName) {
   var head = document.getElementsByTagName('head')[0]
   var js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.16.6/${localeName}.min.js`
+  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.16.8/${localeName}.min.js`
 
   head.appendChild(js)
 }
