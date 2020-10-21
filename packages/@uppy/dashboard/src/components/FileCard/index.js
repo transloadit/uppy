@@ -1,4 +1,5 @@
 const { h, Component } = require('preact')
+const classNames = require('classnames')
 const getFileTypeIcon = require('../../utils/getFileTypeIcon')
 const ignoreEvent = require('../../utils/ignoreEvent.js')
 const FilePreview = require('../FilePreview')
@@ -89,7 +90,7 @@ class FileCard extends Component {
 
     return (
       <div
-        class="uppy-Dashboard-FileCard"
+        class={classNames('uppy-Dashboard-FileCard', this.props.className)}
         data-uppy-panelType="FileCard"
         onDragOver={ignoreEvent}
         onDragLeave={ignoreEvent}

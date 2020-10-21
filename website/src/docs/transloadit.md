@@ -61,7 +61,7 @@ const Dropbox = require('@uppy/dropbox')
 const Transloadit = require('@uppy/transloadit')
 
 uppy.use(Dropbox, {
-  companionUrl: Transloadit.COMPANION
+  companionUrl: Transloadit.COMPANION,
   companionAllowedHosts: Transloadit.COMPANION_PATTERN
 })
 ```
@@ -87,7 +87,7 @@ const Dropbox = require('@uppy/dropbox')
 const Transloadit = require('@uppy/transloadit')
 
 uppy.use(Dropbox, {
-  companionUrl: Transloadit.COMPANION
+  companionUrl: Transloadit.COMPANION,
   companionAllowedHosts: Transloadit.COMPANION_PATTERN
 })
 ```
@@ -338,7 +338,7 @@ Fired when Transloadit has received all uploads, and is currently executing the 
 
 **Parameters**
 
- - `assembly` - The [Assembly Status](https://transloadit.com/docs/api-docs/#assembly-status-response) of the Assembly that is currently executing.
+ - `assembly` - The [Assembly Status](https://transloadit.com/docs/api/#assembly-status-response) of the Assembly that is currently executing.
 
 ### `transloadit:result`
 
@@ -379,4 +379,4 @@ uppy.on('transloadit:complete', (assembly) => {
 })
 ```
 
-[assembly-status]: https://transloadit.com/docs/api-docs/#assembly-status-response
+[assembly-status]: https://transloadit.com/docs/api/#assembly-status-response

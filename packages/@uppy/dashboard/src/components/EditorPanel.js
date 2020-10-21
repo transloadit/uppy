@@ -1,11 +1,12 @@
 const { h } = require('preact')
+const classNames = require('classnames')
 
 function EditorPanel (props) {
   const file = this.props.files[this.props.fileCardFor]
 
   return (
     <div
-      class="uppy-DashboardContent-panel"
+      class={classNames('uppy-DashboardContent-panel', props.className)}
       role="tabpanel"
       data-uppy-panelType="FileEditor"
       id="uppy-DashboardContent-panel--editor"

@@ -1,5 +1,5 @@
 {
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "extends": ["standard", "standard-jsx"],
   "env": {
     "browser": true,
@@ -10,11 +10,12 @@
     "window": true,
     "hexo": true
   },
-  "plugins": ["jest", "compat", "jsdoc"],
+  "plugins": ["jest", "compat", "jsdoc", "@babel/eslint-plugin"],
   "rules": {
     "jsx-quotes": ["error", "prefer-double"],
     "compat/compat": ["error"],
     "react/jsx-handler-names": ["warn"], // maybe we want to do this in the future?
+    "react/react-in-jsx-scope": ["error"],
 
     "jsdoc/check-alignment": ["warn"],
     "jsdoc/check-examples": ["warn"],

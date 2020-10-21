@@ -55,6 +55,16 @@ class Provider {
   }
 
   /**
+   * handle deauthorization notification from oauth providers
+   * @param {object} options
+   * @param {function} cb
+   */
+  deauthorizationCallback (options, cb) {
+    // @todo consider doing something like cb(new NotImplementedError()) instead
+    throw new Error('method not implemented')
+  }
+
+  /**
    * @returns {string}
    */
   static get authProvider () {

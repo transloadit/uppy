@@ -16,7 +16,6 @@ const Tus = require('@uppy/tus')
 uppy.use(Tus, {
   endpoint: 'https://master.tus.io/files/', // use your tus endpoint here
   resume: true,
-  autoRetry: true,
   retryDelays: [0, 1000, 3000, 5000]
 })
 ```
@@ -90,6 +89,14 @@ Pass an array of field names to limit the metadata fields that will be added to 
 * Set this to an empty array `[]` to not send any fields.
 
 ### `autoRetry: true`
+
+> This option may be removed in Uppy 2.0. Consider implementing the feature manually:
+>
+> ```js
+> uppy.on('back-online', () => {
+>   uppy.retryAll()
+> })
+> ```
 
 Configures whether or not to auto-retry the upload when the user's internet connection is back online after an outage.
 

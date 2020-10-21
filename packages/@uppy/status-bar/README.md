@@ -28,7 +28,7 @@ uppy.use(StatusBar, {
 ## Installation
 
 ```bash
-$ npm install @uppy/status-bar --save
+$ npm install @uppy/status-bar
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

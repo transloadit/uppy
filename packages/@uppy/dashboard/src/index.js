@@ -1,3 +1,4 @@
+const { h } = require('preact')
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const DashboardUI = require('./components/Dashboard')
@@ -246,7 +247,7 @@ module.exports = class Dashboard extends Plugin {
     const editors = this._getEditors(targets)
 
     return editors.some((target) => (
-      this.uppy.getPlugin(target.id).сanEditFile(file)
+      this.uppy.getPlugin(target.id).canEditFile(file)
     ))
   }
 

@@ -2,6 +2,8 @@ export NODE_ENV="test"
 export COMPANION_PORT=3020
 export COMPANION_DOMAIN="localhost:3020"
 export COMPANION_SELF_ENDPOINT="localhost:3020"
+export COMPANION_HIDE_METRICS="false"
+export COMPANION_HIDE_WELCOME="false"
 
 export COMPANION_PROTOCOL="http"
 export COMPANION_DATADIR="./test/output"
@@ -18,3 +20,4 @@ export COMPANION_INSTAGRAM_SECRET="instagram_secret"
 
 export COMPANION_ZOOM_KEY="zoom_key"
 export COMPANION_ZOOM_SECRET="zoom_secret"
+export COMPANION_ZOOM_VERIFICATION_TOKEN="zoom_verfication_token"

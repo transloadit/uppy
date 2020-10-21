@@ -24,7 +24,7 @@ uppy.use(Informer, {
 ## Installation
 
 ```bash
-$ npm install @uppy/informer --save
+$ npm install @uppy/informer
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

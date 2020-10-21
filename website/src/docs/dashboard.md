@@ -390,7 +390,7 @@ Remove all children of the `target` element before mounting the Dashboard. By de
 
 ### `theme: 'light'`
 
-Uppy Dashboard supports “Dark Mode”. You can try it live on [the Dashboard example page](http://localhost:4000/examples/dashboard/).
+Uppy Dashboard supports “Dark Mode”. You can try it live on [the Dashboard example page](https://uppy.io/examples/dashboard/).
 
 There are three options:
 - `light` — the default

@@ -1,7 +1,7 @@
 const Provider = require('../Provider')
 
 const request = require('request')
-const moment = require('moment')
+const moment = require('moment-timezone')
 const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
@@ -12,6 +12,7 @@ const GET_LIST_PATH = '/users/me/recordings'
 const GET_USER_PATH = '/users/me'
 const PAGE_SIZE = 300
 const DEFAULT_RANGE_MOS = 23
+const DEAUTH_EVENT_NAME = 'app_deauthorized'
 
 /**
  * Adapter for API https://marketplace.zoom.us/docs/api-reference/zoom-api
@@ -36,86 +37,75 @@ class Zoom extends Provider {
     const query = options.query || {}
     const { cursor, from, to } = query
     const meetingId = options.directory || ''
-    let meetingsPromise = Promise.resolve(undefined)
-    let recordingsPromise = Promise.resolve(undefined)
 
-    const userPromise = new Promise((resolve, reject) => {
-      this.client
-        .get(`${BASE_URL}${GET_USER_PATH}`)
-        .auth(token)
-        .request((err, resp, body) => {
-          if (err || resp.statusCode !== 200) {
-            return this._listError(err, resp, done)
-          }
-          resolve(resp)
-        })
-    })
+    this.client
+      .get(`${BASE_URL}${GET_USER_PATH}`)
+      .auth(token)
+      .request((err, userResponse, userBody) => {
+        if (err || userResponse.statusCode !== 200) {
+          return this._listError(err, userResponse, done)
+        }
 
-    if (from && to) {
-      const queryObj = {
-        page_size: PAGE_SIZE,
-        from,
-        to
-      }
+        if (!from && !to && !meetingId) {
+          const end = cursor && moment.utc(cursor).endOf('day').tz(userResponse.timezone || 'UTC')
+          return done(null, this._initializeData(userResponse.body, end))
+        }
 
-      if (cursor) {
-        queryObj.next_page_token = cursor
-      }
-
-      meetingsPromise = new Promise((resolve, reject) => {
-        this.client.get(`${BASE_URL}${GET_LIST_PATH}`)
-          .qs(queryObj)
-          .auth(token)
-          .request((err, resp, body) => {
-            if (err || resp.statusCode !== 200) {
-              return this._listError(err, resp, done)
-            } else {
-              resolve(resp)
+        if (from && to) {
+          this._meetingsInfo({ token, query }, userResponse, (err, meetingResp) => {
+            if (err || meetingResp.statusCode !== 200) {
+              return this._listError(err, meetingResp, done)
             }
+            done(null, this._adaptData(userResponse.body, meetingResp.body, query))
           })
-      })
-    } else if (meetingId) {
-      const GET_MEETING_FILES = `/meetings/${meetingId}/recordings`
-      recordingsPromise = new Promise((resolve, reject) => {
-        this.client
-          .get(`${BASE_URL}${GET_MEETING_FILES}`)
-          .auth(token)
-          .request((err, resp, body) => {
-            if (err || resp.statusCode !== 200) {
-              return this._listError(err, resp, done)
-            } else {
-              resolve(resp)
+        } else if (meetingId) {
+          this._recordingInfo({ token }, meetingId, (err, recordingResp) => {
+            if (err || recordingResp.statusCode !== 200) {
+              return this._listError(err, recordingResp, done)
             }
+            done(null, this._adaptData(userResponse.body, recordingResp.body, query))
           })
+        }
       })
+  }
+
+  _meetingsInfo ({ token, query }, userResponse, done) {
+    const { cursor, from, to } = query
+    /*  we need to convert local datetime to UTC date for Zoom query
+    eg: user in PST (UTC-08:00) wants 2020-08-01 (00:00) to 2020-08-31 (23:59)
+    => in UTC, that's 2020-07-31 (16:00) to 2020-08-31 (15:59)
+    */
+    const queryObj = {
+      page_size: PAGE_SIZE,
+      from: moment.tz(from, userResponse.body.timezone || 'UTC').startOf('day').tz('UTC').format('YYYY-MM-DD'),
+      to: moment.tz(to, userResponse.body.timezone || 'UTC').endOf('day').tz('UTC').format('YYYY-MM-DD')
     }
 
-    Promise.all([userPromise, meetingsPromise, recordingsPromise])
-      .then(
-        ([userResponse, meetingsResponse, recordingsResponse]) => {
-          let returnData = null
-          if (!meetingsResponse && !recordingsResponse) {
-            const end = cursor && moment(cursor)
-            returnData = this._initializeData(userResponse.body, end)
-          } else if (meetingsResponse) {
-            returnData = this._adaptData(userResponse.body, meetingsResponse.body)
-          } else if (recordingsResponse) {
-            returnData = this._adaptData(userResponse.body, recordingsResponse.body)
-          }
-          done(null, returnData)
-        },
-        (reqErr) => {
-          done(reqErr)
-        }
-      )
+    if (cursor) {
+      queryObj.next_page_token = cursor
+    }
+
+    this.client.get(`${BASE_URL}${GET_LIST_PATH}`)
+      .qs(queryObj)
+      .auth(token)
+      .request(done)
+  }
+
+  _recordingInfo ({ token }, meetingId, done) {
+    const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
+    this.client
+      .get(`${BASE_URL}${GET_MEETING_FILES}`)
+      .auth(token)
+      .request(done)
   }
 
   download ({ id, token, query }, done) {
     // meeting id + file id required
-    // timeline files don't have an ID or size
+    // cc files don't have an ID or size
     const meetingId = id
     const fileId = query.recordingId
-    const GET_MEETING_FILES = `/meetings/${meetingId}/recordings`
+    const recordingStart = query.recordingStart
+    const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
 
     const downloadUrlPromise = new Promise((resolve) => {
       this.client
@@ -128,7 +118,7 @@ class Zoom extends Provider {
           const file = resp
             .body
             .recording_files
-            .find(file => fileId === file.id || fileId === file.file_type)
+            .find(file => fileId === file.id || (file.file_type === fileId && file.recording_start === recordingStart))
           if (!file || !file.download_url) {
             return this._downloadError(resp, done)
           }
@@ -159,6 +149,7 @@ class Zoom extends Provider {
   size ({ id, token, query }, done) {
     const meetingId = id
     const fileId = query.recordingId
+    const recordingStart = query.recordingStart
     const GET_MEETING_FILES = `/meetings/${meetingId}/recordings`
 
     return this.client
@@ -171,32 +162,31 @@ class Zoom extends Provider {
         const file = resp
           .body
           .recording_files
-          .find(file => file.id === fileId || file.file_type === fileId)
+          .find(file => file.id === fileId || (file.file_type === fileId && file.recording_start === recordingStart))
 
         if (!file) {
           return this._downloadError(resp, done)
         }
-        // timeline files don't have file size, but are typically small json files, should be much less than 1MB
-        const maxExportFileSize = 1024 * 1024
+        const maxExportFileSize = 10 * 1024 * 1024 // 10MB
         done(null, file.file_size || maxExportFileSize)
       })
   }
 
   _initializeData (body, initialEnd = null) {
-    let end = initialEnd || moment()
-    let start = end.clone().date(1)
-
-    const accountCreation = adapter.getAccountCreationDate(body)
-    const defaultLimit = end.clone().subtract(DEFAULT_RANGE_MOS, 'months')
-    const limit = accountCreation > defaultLimit ? accountCreation : defaultLimit
+    let end = initialEnd || moment.utc().tz(body.timezone || 'UTC')
+    const accountCreation = adapter.getAccountCreationDate(body).tz(body.timezone || 'UTC').startOf('day')
+    const defaultLimit = end.clone().subtract(DEFAULT_RANGE_MOS, 'months').date(1).startOf('day')
+    const allResultsShown = accountCreation > defaultLimit
+    const limit = allResultsShown ? accountCreation : defaultLimit
+    // if the limit is mid-month, keep that exact date
+    let start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1).startOf('day')
 
     const data = {
       items: [],
       username: adapter.getUserEmail(body)
     }
 
-    while (start > limit) {
-      start = end.clone().date(1)
+    while (end.isAfter(limit)) {
       data.items.push({
         isFolder: true,
         icon: 'folder',
@@ -208,42 +198,60 @@ class Zoom extends Provider {
         modifiedDate: adapter.getDateFolderModified(end),
         size: null
       })
-      end = start.clone().subtract(1, 'days')
+      end = start.clone().subtract(1, 'days').endOf('day')
+      start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1).startOf('day')
     }
-    data.nextPagePath = adapter.getDateNextPagePath(start)
+    data.nextPagePath = allResultsShown ? null : adapter.getDateNextPagePath(end)
     return data
   }
 
-  _adaptData (userResponse, results) {
+  _adaptData (userResponse, results, query) {
     if (!results) {
       return { items: [] }
     }
+
+    // we query the zoom api by date (from 00:00 - 23:59 UTC) which may include extra results for 00:00 - 23:59 local time that we want to filter out
+    const utcFrom = moment.tz(query.from, userResponse.timezone || 'UTC').startOf('day').tz('UTC')
+    const utcTo = moment.tz(query.to, userResponse.timezone || 'UTC').endOf('day').tz('UTC')
 
     const data = {
       nextPagePath: adapter.getNextPagePath(results),
       items: [],
       username: adapter.getUserEmail(userResponse)
     }
-    const items = results.meetings || results.recording_files
+
+    let items = []
+    if (results.meetings) {
+      items = results.meetings
+        .map(item => { return { ...item, utcStart: moment.utc(item.start_time) } })
+        .filter(item => moment.utc(item.start_time).isAfter(utcFrom) && moment.utc(item.start_time).isBefore(utcTo))
+    } else {
+      items = results.recording_files
+        .map(item => { return { ...item, topic: results.topic } })
+        .filter(file => file.file_type !== 'TIMELINE')
+    }
+
     items.forEach(item => {
       data.items.push({
         isFolder: adapter.getIsFolder(item),
         icon: adapter.getIcon(item),
-        name: adapter.getItemName(item),
+        name: adapter.getItemName(item, userResponse),
         mimeType: adapter.getMimeType(item),
         id: adapter.getId(item),
         thumbnail: null,
         requestPath: adapter.getRequestPath(item),
         modifiedDate: adapter.getStartDate(item),
-        size: adapter.getSize(item)
+        size: adapter.getSize(item),
+        custom: {
+          topic: adapter.getItemTopic(item)
+        }
       })
     })
     return data
   }
 
   logout ({ companion, token }, done) {
-    const key = companion.options.providerOptions.zoom.key
-    const secret = companion.options.providerOptions.zoom.secret
+    const { key, secret } = companion.options.providerOptions.zoom
     const encodedAuth = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
 
     return this.client
@@ -261,6 +269,44 @@ class Zoom extends Provider {
           return
         }
         done(null, { revoked: (body || {}).status === 'success' })
+      })
+  }
+
+  deauthorizationCallback ({ companion, body, headers }, done) {
+    if (!body || body.event !== DEAUTH_EVENT_NAME) {
+      return done(null, {}, 400)
+    }
+
+    const { verificationToken } = companion.options.providerOptions.zoom
+    const tokenSupplied = headers.authorization
+    if (!tokenSupplied || verificationToken !== tokenSupplied) {
+      return done(null, {}, 400)
+    }
+
+    const { key, secret } = companion.options.providerOptions.zoom
+    const encodedAuth = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
+
+    this.client
+      .post('https://api.zoom.us/oauth/data/compliance')
+      .options({
+        headers: {
+          Authorization: `Basic ${encodedAuth}`
+        }
+      })
+      .json({
+        client_id: key,
+        user_id: body.payload.user_id,
+        account_id: body.payload.account_id,
+        deauthorization_event_received: body.payload,
+        compliance_completed: true
+      })
+      .request((err, resp) => {
+        if (err || resp.statusCode !== 200) {
+          logger.error(err, 'provider.zoom.deauth.error')
+          done(this._error(err, resp))
+          return
+        }
+        done(null, {})
       })
   }
 

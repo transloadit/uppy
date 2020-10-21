@@ -75,5 +75,10 @@
       max-width: 20px;
       max-height: 20px;
     }
+    span {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
   }
 }

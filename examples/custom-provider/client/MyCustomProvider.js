@@ -36,16 +36,6 @@ module.exports = class MyCustomProvider extends Plugin {
     this.view = new ProviderViews(this, {
       provider: this.provider
     })
-    // Set default state
-    this.setPluginState({
-      authenticated: false,
-      files: [],
-      folders: [],
-      directories: [],
-      activeRow: -1,
-      filterInput: '',
-      isSearchVisible: false
-    })
 
     const target = this.opts.target
     if (target) {

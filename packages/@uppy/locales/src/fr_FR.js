@@ -126,9 +126,9 @@ fr_FR.strings = {
   },
   uploading: 'Téléchargement en cours',
   uploadingXFiles: {
-    '0': 'Uploading %{smart_count} file',
-    '1': 'Uploading %{smart_count} files',
-    '2': 'Uploading %{smart_count} files'
+    '0': 'Téléchargement de %{smart_count} fichier',
+    '1': 'Téléchargement de %{smart_count} fichiers',
+    '2': 'Téléchargement de %{smart_count} fichiers'
   },
   xFilesSelected: {
     '0': '%{smart_count} fichier sélectionné',

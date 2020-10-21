@@ -65,7 +65,6 @@ describe('Test Provider options', () => {
       authorize_url: 'https://zoom.us/oauth/authorize',
       redirect_uri: 'http://localhost:3020/zoom/redirect',
       access_url: 'https://zoom.us/oauth/token',
-      scope: ['recording:read', 'user:read'],
       callback: '/zoom/callback'
     })
   })
@@ -75,6 +74,7 @@ describe('Test Provider options', () => {
     process.env.COMPANION_GOOGLE_SECRET_FILE = process.env.PWD + '/test/resources/google_secret_file'
     process.env.COMPANION_INSTAGRAM_SECRET_FILE = process.env.PWD + '/test/resources/instagram_secret_file'
     process.env.COMPANION_ZOOM_SECRET_FILE = process.env.PWD + '/test/resources/zoom_secret_file'
+    process.env.COMPANION_ZOOM_VERIFICATION_TOKEN_FILE = process.env.PWD + '/test/resources/zoom_verification_token_file'
 
     companionOptions = getCompanionOptions()
 
@@ -84,6 +84,7 @@ describe('Test Provider options', () => {
     expect(grantConfig.google.secret).toBe('elgoog')
     expect(grantConfig.instagram.secret).toBe('margatsni')
     expect(grantConfig.zoom.secret).toBe('u8Z5ceq')
+    expect(companionOptions.providerOptions.zoom.verificationToken).toBe('o0u8Z5c')
   })
 
   test('does not add provider options if protocol and host are not set', () => {

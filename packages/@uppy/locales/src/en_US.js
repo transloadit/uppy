@@ -69,6 +69,7 @@ en_US.strings = {
   generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',
   importFrom: 'Import from %{name}',
+  inferiorSize: 'This file is smaller than the allowed size of %{size}',
   loading: 'Loading...',
   logOut: 'Log out',
   micDisabled: 'Microphone access denied by user',

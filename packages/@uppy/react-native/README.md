@@ -12,7 +12,7 @@ Basic Uppy component for React Native with Expo. It is in Beta, and is not full-
 ## Installation
 
 ```bash
-$ npm install @uppy/react-native --save
+$ npm install @uppy/react-native
 ```
 
 ## Documentation

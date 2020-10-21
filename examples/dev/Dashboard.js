@@ -31,7 +31,7 @@ const UPLOADER = 'tus'
 
 const COMPANION_URL = 'http://localhost:3020'
 const TUS_ENDPOINT = 'https://master.tus.io/files/'
-const XHR_ENDPOINT = 'https://upload-endpoint.uppy.io/upload'
+const XHR_ENDPOINT = 'https://xhr-server.herokuapp.com/upload'
 
 // DEV CONFIG: Transloadit keys
 
@@ -72,7 +72,11 @@ module.exports = () => {
     .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Url, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Webcam, { target: Dashboard })
+    .use(Webcam, {
+      target: Dashboard,
+      showVideoSourceDropdown: true,
+      showRecordingLength: true
+    })
     .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
     .use(ImageEditor, { target: Dashboard })

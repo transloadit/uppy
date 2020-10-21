@@ -470,6 +470,7 @@ class Uploader {
     const httpMethod = (this.options.httpMethod || '').toLowerCase() === 'put' ? 'put' : 'post'
     const headers = headerSanitize(this.options.headers)
     const reqOptions = { url: this.options.endpoint, headers, encoding: null }
+    const httpRequest = request[httpMethod]
     if (this.options.useFormData) {
       reqOptions.formData = Object.assign(
         {},
@@ -484,41 +485,58 @@ class Uploader {
           }
         }
       )
+
+      httpRequest(reqOptions, (error, response, body) => {
+        this._onMultipartComplete(error, response, body, bytesUploaded)
+      })
     } else {
-      reqOptions.body = file
+      fs.stat(this.path, (err, stats) => {
+        if (err) {
+          logger.error(err, 'upload.multipart.size.error')
+          this.emitError(err)
+          return
+        }
+
+        const fileSizeInBytes = stats.size
+        reqOptions.headers['content-length'] = fileSizeInBytes
+        reqOptions.body = file
+        httpRequest(reqOptions, (error, response, body) => {
+          this._onMultipartComplete(error, response, body, bytesUploaded)
+        })
+      })
+    }
+  }
+
+  _onMultipartComplete (error, response, body, bytesUploaded) {
+    if (error) {
+      logger.error(error, 'upload.multipart.error')
+      this.emitError(error)
+      return
+    }
+    const headers = response.headers
+    // remove browser forbidden headers
+    delete headers['set-cookie']
+    delete headers['set-cookie2']
+
+    const respObj = {
+      responseText: body.toString(),
+      status: response.statusCode,
+      statusText: response.statusMessage,
+      headers
     }
 
-    request[httpMethod](reqOptions, (error, response, body) => {
-      if (error) {
-        logger.error(error, 'upload.multipart.error')
-        this.emitError(error)
-        return
-      }
-      const headers = response.headers
-      // remove browser forbidden headers
-      delete headers['set-cookie']
-      delete headers['set-cookie2']
+    if (response.statusCode >= 400) {
+      logger.error(`upload failed with status: ${response.statusCode}`, 'upload.multipart.error')
+      this.emitError(new Error(response.statusMessage), respObj)
+    } else if (bytesUploaded !== this.bytesWritten && bytesUploaded !== this.options.size) {
+      const errMsg = `uploaded only ${bytesUploaded} of ${this.bytesWritten} with status: ${response.statusCode}`
+      logger.error(errMsg, 'upload.multipart.mismatch.error')
+      this.emitError(new Error(errMsg))
+    } else {
+      this.emitSuccess(null, { response: respObj })
+    }
 
-      const respObj = {
-        responseText: body.toString(),
-        status: response.statusCode,
-        statusText: response.statusMessage,
-        headers
-      }
-
-      if (response.statusCode >= 400) {
-        logger.error(`upload failed with status: ${response.statusCode}`, 'upload.multipart.error')
-        this.emitError(new Error(response.statusMessage), respObj)
-      } else if (bytesUploaded !== this.bytesWritten && bytesUploaded !== this.options.size) {
-        const errMsg = `uploaded only ${bytesUploaded} of ${this.bytesWritten} with status: ${response.statusCode}`
-        logger.error(errMsg, 'upload.multipart.mismatch.error')
-        this.emitError(new Error(errMsg))
-      } else {
-        this.emitSuccess(null, { response: respObj })
-      }
-
-      this.cleanUp()
-    })
+    this.cleanUp()
   }
 
   /**

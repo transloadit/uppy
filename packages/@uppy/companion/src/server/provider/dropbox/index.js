@@ -105,7 +105,8 @@ class DropBox extends Provider {
       .qs(query)
       .auth(token)
       .json({
-        path: `${directory || ''}`
+        path: `${directory || ''}`,
+        include_non_downloadable_files: false
       })
       .request(done)
   }

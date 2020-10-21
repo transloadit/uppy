@@ -51,7 +51,7 @@ with all that done, my package.json file looks something like this:
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "request": "^2.88.0",
-    "uppy": "^1.14.1",
+    "uppy": "^1.16.1",
     "@uppy/companion": "^2.0.0"
   },
   "private": true,
@@ -396,8 +396,6 @@ const uppyOptions = {
         oauth: 2,
         key: 'YOUR UNSPLASH API KEY',
         secret: 'YOUR UNSPLASH API SECRET',
-        callback: '/myunsplash/callback',
-        transport: 'session',
       },
       // you provider module
       module: require('./customprovider')
@@ -459,16 +457,6 @@ module.exports = class MyCustomProvider extends Plugin {
   install () {
     this.view = new ProviderViews(this, {
       provider: this.provider
-    })
-    // Set default state
-    this.setPluginState({
-      authenticated: false,
-      files: [],
-      folders: [],
-      directories: [],
-      activeRow: -1,
-      filterInput: '',
-      isSearchVisible: false
     })
 
     const target = this.opts.target

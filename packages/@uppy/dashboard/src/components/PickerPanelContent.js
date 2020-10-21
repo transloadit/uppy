@@ -1,10 +1,11 @@
 const { h } = require('preact')
+const classNames = require('classnames')
 const ignoreEvent = require('../utils/ignoreEvent.js')
 
 function PickerPanelContent (props) {
   return (
     <div
-      class="uppy-DashboardContent-panel"
+      class={classNames('uppy-DashboardContent-panel', props.className)}
       role="tabpanel"
       data-uppy-panelType="PickerPanel"
       id={`uppy-DashboardContent-panel--${props.activePickerPanel.id}`}

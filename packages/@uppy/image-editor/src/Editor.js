@@ -24,6 +24,7 @@ module.exports = class Editor extends Component {
 
   render () {
     const { currentImage, i18n } = this.props
+    // eslint-disable-next-line compat/compat
     const imageURL = URL.createObjectURL(currentImage.data)
 
     return (
