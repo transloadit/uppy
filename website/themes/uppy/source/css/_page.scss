@@ -141,6 +141,7 @@
   max-width: 600px;
   margin: 0 auto;
   font-size: 18px;
+  word-wrap: break-word; // it prevents long code blocks from breaking the layout
 
   @media #{$screen-medium} {
     padding: 2.2em 0;
@@ -266,7 +267,7 @@
 
   .post h4,
   > h4 {
-    font-size: 0.8em;
+    font-size: 1em;
   }
 
   .post figure, .post ul, .post ol,
