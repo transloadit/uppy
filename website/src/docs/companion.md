@@ -493,15 +493,19 @@ to:
 
 `http(s)://$YOUR_COMPANION_HOST_NAME/$PROVIDER_NAME/redirect` in v2
 
-Old Redirect URIs vs New Redirect URIs
+#### Old Redirect URIs vs New Redirect URIs
 
-| Provider | v1 Redirect URI | v2 Redirect URI |
-|-|-|-|
-| Dropbox | https://$YOUR_COMPANION_HOST_NAME/connect/dropbox/callback | https://$YOUR_COMPANION_HOST_NAME/dropbox/redirect |
-| Google drive | https://$YOUR_COMPANION_HOST_NAME/connect/google/callback | https://$YOUR_COMPANION_HOST_NAME/drive/redirect |
-| OneDrive | https://$YOUR_COMPANION_HOST_NAME/connect/microsoft/callback | https://$YOUR_COMPANION_HOST_NAME/onedrive/redirect |
-| Facebook | https://$YOUR_COMPANION_HOST_NAME/connect/facebook/callback | https://$YOUR_COMPANION_HOST_NAME/facebook/redirect |
-| Instagram | https://$YOUR_COMPANION_HOST_NAME/connect/instagram/callback | https://$YOUR_COMPANION_HOST_NAME/instagram/redirect |
+<div class="table-responsive">
+
+| Provider | New Redirect URI
+|-|-|
+| Dropbox | `https://$YOUR_COMPANION_HOST_NAME/dropbox/redirect` |
+| Google Drive | `https://$YOUR_COMPANION_HOST_NAME/drive/redirect` |
+| OneDrive | `https://$YOUR_COMPANION_HOST_NAME/onedrive/redirect` |
+| Facebook | `https://$YOUR_COMPANION_HOST_NAME/facebook/redirect` |
+| Instagram | `https://$YOUR_COMPANION_HOST_NAME/instagram/redirect` |
+
+</div>
 
 ## Development
 
