@@ -493,7 +493,7 @@ to:
 
 `http(s)://$YOUR_COMPANION_HOST_NAME/$PROVIDER_NAME/redirect` in v2
 
-#### Old Redirect URIs vs New Redirect URIs
+#### New Redirect URIs
 
 <div class="table-responsive">
 
