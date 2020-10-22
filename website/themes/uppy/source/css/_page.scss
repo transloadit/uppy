@@ -206,6 +206,11 @@
     border-bottom: 1px solid #eee;
   }
 
+  // Remove the last row's border-bottom
+table tr:last-child td {
+  border-bottom: 0;
+}
+
   // Don't set padding for the first column cells
   table th:first-child,
   table td:first-child {
