@@ -196,14 +196,20 @@
     border-collapse: collapse;
   }
 
-  table th,
-  table td {
-    padding: 14px 8px;
+  table th {
+    padding: 8px 8px 4px;
   }
 
-  table td { 
+  table td {
+    padding: 14px 8px;
     vertical-align: top;
     border-bottom: 1px solid #eee;
+  }
+
+  // Don't set padding for the first column cells
+  table th:first-child,
+  table td:first-child {
+    padding-left: 0;
   }
 
   .light {
@@ -252,7 +258,7 @@
 
   .post h3,
   > h3 {
-    margin: 3em 0 1.2em;
+    margin: 3em 0 1em;
     position: relative;
     &:before {
       content: "#";
@@ -268,6 +274,7 @@
   .post h4,
   > h4 {
     font-size: 1em;
+    margin-bottom: 0.5em;
   }
 
   .post figure, .post ul, .post ol,
