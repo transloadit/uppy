@@ -487,11 +487,11 @@ In v2 the `google` and `microsoft` [providerOptions](https://uppy.io/docs/compan
 
 On your Providers' respective developer platforms, the OAuth redirect URIs that you should supply has now changed from:
 
-`http(s)://$YOUR_COMPANION_HOST_NAME/connect/$AUTH_PROVIDER/callback` in v1
+`http(s)://$COMPANION_HOST_NAME/connect/$AUTH_PROVIDER/callback` in v1
 
 to:
 
-`http(s)://$YOUR_COMPANION_HOST_NAME/$PROVIDER_NAME/redirect` in v2
+`http(s)://$COMPANION_HOST_NAME/$PROVIDER_NAME/redirect` in v2
 
 #### New Redirect URIs
 
@@ -499,11 +499,11 @@ to:
 
 | Provider | New Redirect URI
 |-|-|
-| Dropbox | `https://$YOUR_COMPANION_HOST_NAME/dropbox/redirect` |
-| Google Drive | `https://$YOUR_COMPANION_HOST_NAME/drive/redirect` |
-| OneDrive | `https://$YOUR_COMPANION_HOST_NAME/onedrive/redirect` |
-| Facebook | `https://$YOUR_COMPANION_HOST_NAME/facebook/redirect` |
-| Instagram | `https://$YOUR_COMPANION_HOST_NAME/instagram/redirect` |
+| Dropbox | `https://$COMPANION_HOST_NAME/dropbox/redirect` |
+| Google Drive | `https://$COMPANION_HOST_NAME/drive/redirect` |
+| OneDrive | `https://$COMPANION_HOST_NAME/onedrive/redirect` |
+| Facebook | `https://$COMPANION_HOST_NAME/facebook/redirect` |
+| Instagram | `https://$COMPANION_HOST_NAME/instagram/redirect` |
 
 </div>
 
