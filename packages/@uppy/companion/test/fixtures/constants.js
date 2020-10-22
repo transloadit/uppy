@@ -1,0 +1,9 @@
+module.exports.NEXT_PAGE_TOKEN = 'DUMMY-NEXT-PAGE-TOKEN'
+module.exports.ITEM_ID = 'DUMMY-FILE-ID'
+module.exports.ITEM_NAME = 'MY DUMMY FILE NAME.mp4'
+module.exports.ICON = 'https://DUMMY-THUMBNAIL.com/file.jpg'
+module.exports.THUMBNAIL_URL = 'https://DUMMY-THUMBNAIL.com/file.jpg'
+module.exports.MODIFIED_DATE = '2016-07-10T20:00:08.096Z'
+module.exports.MIME_TYPE = 'video/mp4'
+module.exports.USERNAME = 'john.doe@transloadit.com'
+module.exports.FILE_SIZE = 758051

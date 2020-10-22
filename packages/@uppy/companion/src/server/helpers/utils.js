@@ -1,7 +1,4 @@
-const request = require('request')
-const { URL } = require('url')
 const crypto = require('crypto')
-const { getProtectedHttpAgent, getRedirectEvaluator } = require('./request')
 
 /**
  *
@@ -41,38 +38,6 @@ exports.jsonStringify = (data) => {
  */
 exports.sanitizeHtml = (text) => {
   return text ? text.replace(/<\/?[^>]+(>|$)/g, '') : text
-}
-
-/**
- * Gets the size and content type of a url's content
- *
- * @param {string} url
- * @param {boolean=} blockLocalIPs
- * @return {Promise}
- */
-exports.getURLMeta = (url, blockLocalIPs = false) => {
-  return new Promise((resolve, reject) => {
-    const opts = {
-      uri: url,
-      method: 'HEAD',
-      followRedirect: getRedirectEvaluator(url, blockLocalIPs),
-      agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs)
-    }
-
-    request(opts, (err, response) => {
-      if (err || response.statusCode >= 300) {
-        // @todo possibly set a status code in the error object to get a more helpful
-        // hint at what the cause of error is.
-        err = err || new Error(`URL server responded with status: ${response.statusCode}`)
-        reject(err)
-      } else {
-        resolve({
-          type: response.headers['content-type'],
-          size: parseInt(response.headers['content-length'])
-        })
-      }
-    })
-  })
 }
 
 // all paths are assumed to be '/' prepended

@@ -3,8 +3,7 @@ const request = require('request')
 const { URL } = require('url')
 const Uploader = require('../Uploader')
 const validator = require('validator')
-const utils = require('../helpers/utils')
-const { getProtectedHttpAgent, getRedirectEvaluator } = require('../helpers/request')
+const reqUtil = require('../helpers/request')
 const logger = require('../logger')
 
 module.exports = () => {
@@ -27,7 +26,7 @@ const meta = (req, res) => {
     return res.status(400).json({ error: 'Invalid request body' })
   }
 
-  utils.getURLMeta(req.body.url, !debug)
+  reqUtil.getURLMeta(req.body.url, !debug)
     .then((meta) => res.json(meta))
     .catch((err) => {
       logger.error(err, 'controller.url.meta.error', req.id)
@@ -51,7 +50,7 @@ const get = (req, res) => {
     return res.status(400).json({ error: 'Invalid request body' })
   }
 
-  utils.getURLMeta(req.body.url, !debug)
+  reqUtil.getURLMeta(req.body.url, !debug)
     .then(({ size }) => {
       // @ts-ignore
       logger.debug('Instantiating uploader.', null, req.id)
@@ -119,8 +118,8 @@ const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
   const opts = {
     uri: url,
     method: 'GET',
-    followRedirect: getRedirectEvaluator(url, blockLocalIPs),
-    agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs)
+    followRedirect: reqUtil.getRedirectEvaluator(url, blockLocalIPs),
+    agentClass: reqUtil.getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs)
   }
 
   request(opts)
