@@ -1604,6 +1604,34 @@ describe('src/Core', () => {
       }
     })
 
+    it('should enforce the maxTotalFileSize rule', () => {
+      const core = new Core({
+        restrictions: {
+          maxTotalFileSize: 34000
+        }
+      })
+
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' })
+      })
+
+      try {
+        core.addFile({
+          source: 'jest',
+          name: 'foo1.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' })
+        })
+        throw new Error('should have thrown')
+      } catch (err) {
+        expect(err).toMatchObject(new Error('This file exceeds maximum allowed size of 33 KB'))
+        expect(core.getState().info.message).toEqual('This file exceeds maximum allowed size of 33 KB')
+      }
+    })
+
     it('should emit `restriction-failed` event when some rule is violated', () => {
       const maxFileSize = 100
       const core = new Core({

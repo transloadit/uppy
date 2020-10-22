@@ -97,6 +97,7 @@ class Uppy {
       restrictions: {
         maxFileSize: null,
         minFileSize: null,
+        maxTotalFileSize: null,
         maxNumberOfFiles: null,
         minNumberOfFiles: null,
         allowedFileTypes: null
@@ -444,7 +445,7 @@ class Uppy {
    * @private
    */
   _checkRestrictions (files, file) {
-    const { maxFileSize, minFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
+    const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
 
     if (maxNumberOfFiles) {
       if (Object.keys(files).length + 1 > maxNumberOfFiles) {
@@ -470,6 +471,21 @@ class Uppy {
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
         throw new RestrictionError(this.i18n('youCanOnlyUploadFileTypes', { types: allowedFileTypesString }))
+      }
+    }
+
+    // We can't check maxTotalFileSize if the size is unknown.
+    if (maxTotalFileSize && file.data.size != null) {
+      let totalFilesSize = 0
+      totalFilesSize += file.size
+      Object.keys(files).forEach((file) => {
+        totalFilesSize += files[file].size
+      })
+      if (totalFilesSize > maxTotalFileSize) {
+        throw new RestrictionError(this.i18n('exceedsSize2', {
+          backwardsCompat: this.i18n('exceedsSize'),
+          size: prettierBytes(maxTotalFileSize)
+        }))
       }
     }
 
