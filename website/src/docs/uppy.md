@@ -76,6 +76,7 @@ const uppy = new Uppy({
   restrictions: {
     maxFileSize: null,
     minFileSize: null,
+    maxTotalFileSize: null,
     maxNumberOfFiles: null,
     minNumberOfFiles: null,
     allowedFileTypes: null
@@ -164,6 +165,7 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 
 - `maxFileSize` *null | number* — maximum file size in bytes for each individual file (total max size [has been requested, and is planned](https://github.com/transloadit/uppy/issues/514))
 - `minFileSize` *null | number* — minimum file size in bytes for each individual file
+- `maxTotalFileSize` *null | number* — maximum file size in bytes for all the files that can be selected for upload
 - `maxNumberOfFiles` *null | number* — total number of files that can be selected
 - `minNumberOfFiles` *null | number* — minimum number of files that must be selected before the upload
 - `allowedFileTypes` *null | array* of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
@@ -688,9 +690,9 @@ this.info('Oh my, something good happened!', 'success', 3000)
 
 ```js
 this.info({
-    message: 'Oh no, something bad happened!',
-    details: 'File couldn’t be uploaded because there is no internet connection',
-  }, 'error', 5000)
+  message: 'Oh no, something bad happened!',
+  details: 'File couldn’t be uploaded because there is no internet connection',
+}, 'error', 5000)
 ```
 
 `info-visible` and `info-hidden` events are emitted when this info message should be visible or hidden.
