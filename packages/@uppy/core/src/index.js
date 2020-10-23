@@ -477,9 +477,9 @@ class Uppy {
     // We can't check maxTotalFileSize if the size is unknown.
     if (maxTotalFileSize && file.data.size != null) {
       let totalFilesSize = 0
-      totalFilesSize += file.size
+      totalFilesSize += file.data.size
       Object.keys(files).forEach((file) => {
-        totalFilesSize += files[file].size
+        totalFilesSize += files[file].data.size
       })
       if (totalFilesSize > maxTotalFileSize) {
         throw new RestrictionError(this.i18n('exceedsSize2', {
