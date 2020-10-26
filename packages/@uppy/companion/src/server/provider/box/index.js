@@ -6,7 +6,6 @@ const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
 
-// const BOX_FILE_FIELDS = 'id,name,size,type'
 const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
 const BOX_THUMBNAIL_SIZE = 256
 
@@ -165,7 +164,7 @@ class Box extends Provider {
   _error (err, resp) {
     if (resp) {
       const fallbackMessage = `request to ${this.authProvider} returned ${resp.statusCode}`
-      const errMsg = (resp.body || {}).error_summary ? resp.body.error_summary : fallbackMessage
+      const errMsg = (resp.body || {}).message ? resp.body.message : fallbackMessage
       return resp.statusCode === 401 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
     }
 
