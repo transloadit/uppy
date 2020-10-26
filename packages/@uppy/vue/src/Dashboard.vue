@@ -1,14 +1,29 @@
 <template>
   <div ref="container" />
 </template>
-<script>
+<script lang="ts">
+import Vue, { PropType } from 'vue'
+import type { Uppy, Plugin } from '@uppy/core'
 import DashboardPlugin from '@uppy/dashboard'
 import { shallowEqualObjects } from 'shallow-equal'
 
-export default {
+interface Data {
+  plugin: Plugin 
+}
+interface Props {
+  uppy: Uppy,
+  props: Object,
+  plugins: Plugin[]
+}
+interface Methods {
+  installPlugin(): void,
+  uninstallPlugin(uppy: Uppy): void,
+}
+
+export default Vue.extend<Data, Methods, unknown, Props>({
   data () {
     return {
-      plugin: null
+      plugin: {} as Plugin
     }
   },
   props: {
@@ -38,15 +53,15 @@ export default {
       uppy.use(DashboardPlugin, options)
       this.plugin = uppy.getPlugin(options.id)
     },
-    uninstallPlugin (uppy = this.uppy) {
+    uninstallPlugin (uppy: Uppy) {
       uppy.removePlugin(this.plugin)
     }
   },
   beforeDestroy () {
-    this.uninstallPlugin()
+    this.uninstallPlugin(this.uppy)
   },
   watch: {
-    uppy (current, old) {
+    uppy (current: Uppy, old: Uppy) {
       if (old !== current) {
         this.uninstallPlugin(old)
         this.installPlugin()
@@ -58,5 +73,5 @@ export default {
       }
     }
   }
-}
+})
 </script>

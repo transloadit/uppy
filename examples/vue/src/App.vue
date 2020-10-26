@@ -2,15 +2,28 @@
   <div id="app">
     <!-- <HelloWorld msg="Welcome to Uppy Vue Demo"/> -->
     <h1>Welcome to Uppy Vue Demo!</h1>
+    <h2>Inline Dashboard</h2>
+    <label>
+      <input
+        type="checkbox"
+        :checked="showInlineDashboard"
+        @change="(event) => {
+          showInlineDashboard = event.target.checked
+        }"
+      />
+      Show Dashboard
+    </label>
     <dashboard
-      :uppy="uppy1" 
+      v-if="showInlineDashboard"
+      :uppy="uppy1"
+      :plugins="['GoogleDrive']"
       :props="{
-        onRequestCloseModal: handleClose
+        metaFields: [{ id: 'name', name: 'Name', placeholder: 'File name' }]
       }"
     />
-    <button @click="open = true">
-      Open the dashboard
-    </button>
+    <h2>Modal Dashboard</h2>
+    <div>
+      <button @click="open = true">Show Dashboard</button>
     <dashboard-modal
       :uppy="uppy2" 
       :open="open" 
@@ -18,29 +31,57 @@
         onRequestCloseModal: handleClose
       }"
     />
+    </div>
+
+    <h2>Drag Drop Area</h2>
+    <drag-drop 
+      :uppy="uppy"
+      :props="{
+        locale: {
+          strings: {
+            chooseFile: 'Boop a file',
+            orDragDrop: 'or yoink it here'
+          }
+        }
+      }"
+    />
+
+    <h2>Progress Bar</h2>
+    <progress-bar 
+      :uppy="uppy"
+      :props="{
+        hideAfterFinish: false
+      }"
+    />
   </div>
 </template>
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
-
+import Vue from 'vue'
 import Uppy from '@uppy/core'
-import { Dashboard, DashboardModal } from '@uppy/vue'
+import Tus from '@uppy/tus'
+import GoogleDrive from '@uppy/google-drive'
+import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/vue'
 
 export default {
   name: 'App',
   components: {
-    // HelloWorld,
     Dashboard,
-    DashboardModal
+    DashboardModal,
+    DragDrop,
+    ProgressBar
   },
   computed: {
-    uppy1: () => new Uppy(),
-    uppy2: () => new Uppy(),
+    uppy1: () => new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
+      .use(Tus, { endpoint: 'https://master.tus.io/files/' }),
+    uppy2: () => new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
+      .use(Tus, { endpoint: 'https://master.tus.io/files/' }),
   },
   data () {
     return {
-      open: false
+      open: false,
+      showInlineDashboard: false
     }
   },
   methods: {
