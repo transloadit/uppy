@@ -141,6 +141,7 @@
   max-width: 600px;
   margin: 0 auto;
   font-size: 18px;
+  word-wrap: break-word; // it prevents long code blocks from breaking the layout
 
   @media #{$screen-medium} {
     padding: 2.2em 0;
@@ -195,14 +196,25 @@
     border-collapse: collapse;
   }
 
-  table th,
-  table td {
-    padding: 14px 8px;
+  table th {
+    padding: 8px 8px 4px;
   }
 
-  table td { 
+  table td {
+    padding: 14px 8px;
     vertical-align: top;
     border-bottom: 1px solid #eee;
+  }
+
+  // Remove the last row's border-bottom
+table tr:last-child td {
+  border-bottom: 0;
+}
+
+  // Don't set padding for the first column cells
+  table th:first-child,
+  table td:first-child {
+    padding-left: 0;
   }
 
   .light {
@@ -251,7 +263,7 @@
 
   .post h3,
   > h3 {
-    margin: 3em 0 1.2em;
+    margin: 3em 0 1em;
     position: relative;
     &:before {
       content: "#";
@@ -266,7 +278,8 @@
 
   .post h4,
   > h4 {
-    font-size: 0.8em;
+    font-size: 1em;
+    margin-bottom: 0.5em;
   }
 
   .post figure, .post ul, .post ol,
