@@ -1,13 +1,28 @@
 <template>
   <div ref="container" />
 </template>
-<script>
+<script lang="ts">
+import Vue, { PropType } from 'vue'
+import type { Uppy, Plugin } from '@uppy/core'
 import DragDropPlugin from '@uppy/drag-drop'
+import { shallowEqualObjects } from 'shallow-equal'
 
-export default {
+interface Data {
+  plugin: Plugin 
+}
+interface Props {
+  uppy: Uppy,
+  props: Object,
+}
+interface Methods {
+  installPlugin(): void,
+  uninstallPlugin(uppy: Uppy): void,
+}
+
+export default Vue.extend<Data, Methods, unknown, Props>({
   data () {
     return {
-      plugin: null
+      plugin: {} as Plugin
     }
   },
   props: {
@@ -32,26 +47,25 @@ export default {
       uppy.use(DragDropPlugin, options)
       this.plugin = uppy.getPlugin(options.id)
     },
-    uninstallPlugin (uppy = this.uppy) {
+    uninstallPlugin (uppy: Uppy) {
       uppy.removePlugin(this.plugin)
     }
   },
   beforeDestroy () {
-    this.uninstallPlugin()
+    this.uninstallPlugin(this.uppy)
   },
   watch: {
-    uppy (current, old) {
+    uppy (current: Uppy, old: Uppy) {
       if (old !== current) {
         this.uninstallPlugin(old)
         this.installPlugin()
       }
     },
     props (current, old) {
-      if (JSON.stringify(old) !== JSON.stringify(current)) {
-        this.uninstallPlugin()
-        this.installPlugin()
+      if (!shallowEqualObjects(current, old)) {
+        this.plugin.setOptions(current)
       }
     }
   }
-}
+})
 </script>
