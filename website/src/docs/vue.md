@@ -32,7 +32,7 @@ The components can be used with [Vue][] and frameworks that use it, like [Nuxt][
 
 Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instance can be passed into components as an `uppy` prop. 
 
-```vue
+```html
 <template>
   <div id="app">
     <dashboard :uppy="uppy" :plugins="['Webcam']"/>
