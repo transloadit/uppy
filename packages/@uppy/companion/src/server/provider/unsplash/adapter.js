@@ -14,8 +14,10 @@ exports.getItemSubList = (item) => {
 }
 
 exports.getItemName = (item) => {
-  if (item.description) {
-    return truncateString(item.description, 30) + '.jpg'
+  const description = item.description ? item.description : item.alt_description
+  console.log(description)
+  if (description) {
+    return truncateString(description, 30) + '.jpg'
   }
 }
 
