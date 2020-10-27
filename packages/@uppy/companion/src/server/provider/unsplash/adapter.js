@@ -1,4 +1,5 @@
 const querystring = require('querystring')
+const truncateString = require('@uppy/utils/lib/truncateString')
 
 exports.isFolder = (item) => {
   return false
@@ -13,7 +14,9 @@ exports.getItemSubList = (item) => {
 }
 
 exports.getItemName = (item) => {
-  return item.description
+  if (item.description) {
+    return truncateString(item.description, 30) + '.jpg'
+  }
 }
 
 exports.getMimeType = (item) => {
