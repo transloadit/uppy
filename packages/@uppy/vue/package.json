@@ -4,6 +4,7 @@
   "private": false,
   "main": "lib/index.js",
   "module": "lib/index.js",
+  "types": "types/components.d.ts",
   "scripts": {
     "build": "parcel build src/index.ts --out-dir lib",
     "dev": "parcel src/index.ts  --out-dir lib"
