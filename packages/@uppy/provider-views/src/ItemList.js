@@ -1,4 +1,5 @@
 const { h } = require('preact')
+const remoteFileObjToLocal = require('@uppy/utils/lib/remoteFileObjToLocal')
 const Item = require('./Item/index')
 
 const getSharedProps = (fileOrFolder, props) => ({
@@ -35,13 +36,17 @@ module.exports = (props) => {
             handleFolderClick: () => props.handleFolderClick(folder)
           })
         )}
-        {props.files.map(file =>
-          Item({
+        {props.files.map(file => {
+          const passesRestrictions = props.passesRestrictions(
+            remoteFileObjToLocal(file)
+          )
+          return Item({
             ...getSharedProps(file, props),
             type: 'file',
-            isDisabled: false
+            isDisabled: !passesRestrictions.result,
+            restrictionReason: passesRestrictions.reason
           })
-        )}
+        })}
       </ul>
     </div>
   )

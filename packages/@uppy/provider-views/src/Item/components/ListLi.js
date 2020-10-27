@@ -24,7 +24,7 @@ const getAriaLabelOfCheckbox = (props) => {
 //   + file name (selects file)
 module.exports = (props) => {
   return (
-    <li class={props.className}>
+    <li class={props.className} title={props.restrictionReason}>
       <button
         type="button"
         class={`uppy-u-reset uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`}
@@ -35,6 +35,7 @@ module.exports = (props) => {
         aria-label={getAriaLabelOfCheckbox(props)}
         aria-selected={props.isChecked}
         aria-disabled={props.isDisabled}
+        disabled={props.isDisabled}
         data-uppy-super-focusable
       />
 

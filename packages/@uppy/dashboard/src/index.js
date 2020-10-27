@@ -224,8 +224,6 @@ module.exports = class Dashboard extends Plugin {
       return
     }
 
-    console.log(update)
-
     this.setPluginState(update)
   }
 

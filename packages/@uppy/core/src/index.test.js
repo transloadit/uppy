@@ -1630,6 +1630,48 @@ describe('src/Core', () => {
       )
     })
 
+    it('should check if a file passesRestrictions', () => {
+      const core = new Core({
+        restrictions: {
+          minFileSize: 300000
+        }
+      })
+
+      const core2 = new Core({
+        restrictions: {
+          allowedFileTypes: ['image/png']
+        }
+      })
+
+      const newFile = {
+        source: 'jest',
+        name: 'foo1.jpg',
+        extension: 'jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' }),
+        isFolder: false,
+        mimeType: 'image/jpeg',
+        modifiedDate: '2016-04-13T15:11:31.204Z',
+        size: 270733
+      }
+
+      const passesRestrictions1 = core.passesRestrictions(newFile)
+      const passesRestrictions2 = core2.passesRestrictions(newFile)
+
+      expect(passesRestrictions1).toMatchObject(
+        {
+          result: false,
+          reason: 'This file is smaller than the allowed size of 293 KB'
+        }
+      )
+      expect(passesRestrictions2).toMatchObject(
+        {
+          result: false,
+          reason: 'You can only upload: image/png'
+        }
+      )
+    })
+
     it('should emit `restriction-failed` event when some rule is violated', () => {
       const maxFileSize = 100
       const core = new Core({

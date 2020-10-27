@@ -243,7 +243,7 @@ module.exports = class ProviderView {
     }))
   }
 
-  toggleSearch (inputEl) {
+  toggleSearch () {
     const state = this.plugin.getPluginState()
 
     this.plugin.setPluginState({
@@ -637,7 +637,8 @@ module.exports = class ProviderView {
       showFilter: targetViewOptions.showFilter,
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       pluginIcon: this.plugin.icon,
-      i18n: this.plugin.uppy.i18n
+      i18n: this.plugin.uppy.i18n,
+      passesRestrictions: this.plugin.uppy.passesRestrictions
     })
 
     return (
