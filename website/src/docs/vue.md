@@ -9,14 +9,18 @@ category: "Vue"
 
 Uppy provides [Vue][] components for the included UI plugins.
 
+Note: *All plugin names are in kebab-case for the HTML element, and in CamelCase for the JavaScript imports, following Vue conventions*
+
 ## Installation
 
 All Vue components are provided through the `@uppy/vue` package
 
 Install from NPM:
 
-```sh
+```shell
 npm install @uppy/vue
+# Or with yarn
+yarn add @uppy/vue
 ```
 ## CSS
 
@@ -31,7 +35,7 @@ Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instan
 ```vue
 <template>
   <div id="app">
-    <Dashboard :uppy="uppy" :plugins="['Webcam']"/>
+    <dashboard :uppy="uppy" :plugins="['Webcam']"/>
   </div>
 </template>
 
@@ -61,11 +65,11 @@ export default {
 
 The following plugins are available as Vue component wrappers:
 
- - `<Dashboard />` - renders an inline `@uppy/dashboard`
- - `<DashboardModal />` - renders a `@uppy/dashboard` modal
- - `<DragDrop />` - renders a `@uppy/drag-drop` area
- - `<ProgressBar />` - renders a `@uppy/progress-bar`
- - `<StatusBar />` - renders a `@uppy/status-bar`
+ - `<dashboard />` - renders an inline `@uppy/dashboard`
+ - `<dashboard-modal />` - renders a `@uppy/dashboard` modal
+ - `<drag-drop />` - renders a `@uppy/drag-drop` area
+ - `<progress-bar />` - renders a `@uppy/progress-bar`
+ - `<status-bar />` - renders a `@uppy/status-bar`
 
 Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, make it easy to add your plugins. 
 
@@ -94,18 +98,18 @@ export default {
 
 ## Components
 
-### `<Dashboard />` 
+### `<dashboard />` 
   
 #### CSS
 
 The `Dashboard` component requires the following CSS for styling:
 
-```js
-import '@uppy/core/dist/style.css'
-import '@uppy/dashboard/dist/style.css'
+```html
+<style src='@uppy/core/dist/style.css'></style> 
+<style src='@uppy/dashboard/dist/style.css'></style> 
 ```
 
-Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system. With default Vue, you can just add a `style` tag and make the `src` attribute the file you need.
 
 ⚠️ The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
 
@@ -113,22 +117,22 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
 
 #### Props
 
-The `Dashboard` component supports all `@uppy/dashboard` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop. 
+The `<dashboard />` component supports all `@uppy/dashboard` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop. 
 
-The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
+The `<dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
-### `<DashboardModal />` 
+### `<dashboard-modal />` 
   
 #### CSS
 
 The `DashboardModal` component requires the following CSS for styling:
 
-```js
-import '@uppy/core/dist/style.css'
-import '@uppy/dashboard/dist/style.css'
+```html
+<style src='@uppy/core/dist/style.css'></style> 
+<style src='@uppy/dashboard/dist/style.css'></style> 
 ```
 
-Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system. With default Vue, you can just add a `style` tag and make the `src` attribute the file you need.
 
 ⚠️ The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
 
@@ -136,11 +140,60 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
 
 #### Props
 
-The `DashboardModal` component supports all `@uppy/dashboard` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop. 
+The `<dashboard-modal />` component supports all `@uppy/dashboard` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop. 
 
-The `<DashboardModal />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<DashboardModal />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
+The `<dashboard-modal />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<dashboard-modal />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
+### `<drag-drop />`
 
+#### CSS
+
+The `DragDrop` component includes some simple styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead:
+
+```html
+<style src='@uppy/core/dist/style.css'></style> 
+<style src='@uppy/drag-drop/dist/style.css'></style> 
+```
+
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Drag & Drop styles from `@uppy/drag-drop/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+
+#### Props
+
+The `<drag-drop />` component supports all `@uppy/drag-drop` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop. 
+
+### `<progress-bar />`
+
+#### CSS
+
+The `ProgressBar` plugin requires the following CSS for styling:
+
+```html
+<style src='@uppy/core/dist/style.css'></style> 
+<style src='@uppy/progress-bar/dist/style.css'></style> 
+```
+
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Progress Bar styles from `@uppy/progress-bar/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+
+#### Props
+
+The `<progress-bar />` component supports all `@uppy/progress-bar` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop. 
+
+### `<status-bar />`
+
+#### CSS
+
+The `StatusBar` plugin requires the following CSS for styling:
+
+```html
+<style src='@uppy/core/dist/style.css'></style> 
+<style src='@uppy/status-bar/dist/style.css'></style> 
+```
+
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Status Bar styles from `@uppy/status-bar/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+
+#### Props
+
+The `<status-bar />` component supports all `@uppy/status-bar` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop. 
 
 [Vue]: https://vuejs.org
 [Nuxt]: https://nuxtjs.org
