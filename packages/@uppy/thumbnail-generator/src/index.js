@@ -92,7 +92,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
         const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.deg)
         const rotatedImage = this.rotateImage(image, orientation)
         const resizedImage = this.resizeImage(rotatedImage, dimensions.width, dimensions.height)
-        return this.canvasToBlob(resizedImage, 'image/jpeg', 80)
+        return this.canvasToBlob(resizedImage, 'image/png', 80)
       })
       .then(blob => {
         // bug in the compatibility data
