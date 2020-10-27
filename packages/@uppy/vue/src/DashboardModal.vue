@@ -24,7 +24,7 @@ interface Methods {
 export default Vue.extend<Data, Methods, unknown, Props>({
   data () {
     return {
-      plugin: {} as Plugin
+      plugin: {} as DashboardPlugin
     }
   },
   props: {
