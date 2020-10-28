@@ -15,7 +15,7 @@ exports.getItemSubList = (item) => {
 exports.getItemName = (item) => {
   const description = item.description || item.alt_description
   if (description) {
-    return description.replace(/^(.{30})..+/, '$1...') + '.jpg'
+    return description.replace(/^([\S\s]{27})[\S\s]{3,}/, '$1...') + '.jpg'
   }
 }
 

@@ -1,6 +1,6 @@
 const SearchProvider = require('../SearchProvider')
 const request = require('request')
-const utils = require('../../helpers/utils')
+const { getURLMeta } = require('../../helpers/request')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError } = require('../error')
@@ -92,7 +92,7 @@ class Unsplash extends SearchProvider {
         return
       }
 
-      utils.getURLMeta(body.links.download)
+      getURLMeta(body.links.download)
         .then(({ size }) => done(null, size))
         .catch((err) => {
           logger.error(err, 'provider.unsplash.size.error')
