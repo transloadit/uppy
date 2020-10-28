@@ -1,5 +1,4 @@
 const querystring = require('querystring')
-const truncateString = require('@uppy/utils/lib/truncateString')
 
 exports.isFolder = (item) => {
   return false
@@ -14,10 +13,9 @@ exports.getItemSubList = (item) => {
 }
 
 exports.getItemName = (item) => {
-  const description = item.description ? item.description : item.alt_description
-  console.log(description)
+  const description = item.description || item.alt_description
   if (description) {
-    return truncateString(description, 30) + '.jpg'
+    return description.replace(/^(.{30})..+/, '$1...') + '.jpg'
   }
 }
 
