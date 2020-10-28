@@ -30,17 +30,13 @@ function server (moreCompanionOptions = {}) {
     metricsMiddleware = promBundle({ includeMethod: true })
     const promClient = metricsMiddleware.promClient
     const collectDefaultMetrics = promClient.collectDefaultMetrics
-    const promInterval = collectDefaultMetrics({ register: promClient.register, timeout: 5000 })
+    collectDefaultMetrics({ register: promClient.register })
 
     // Add version as a prometheus gauge
     const versionGauge = new promClient.Gauge({ name: 'companion_version', help: 'npm version as an integer' })
     // @ts-ignore
     const numberVersion = version.replace(/\D/g, '') * 1
     versionGauge.set(numberVersion)
-
-    if (app.get('env') !== 'test') {
-      clearInterval(promInterval)
-    }
   }
 
   // Query string keys whose values should not end up in logging output.

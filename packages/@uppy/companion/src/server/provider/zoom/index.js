@@ -47,7 +47,7 @@ class Zoom extends Provider {
         }
 
         if (!from && !to && !meetingId) {
-          const end = cursor && moment.utc(cursor).endOf('day').tz(userResponse.timezone || 'UTC')
+          const end = cursor && moment.utc(cursor).endOf('day').tz(userBody.timezone || 'UTC')
           return done(null, this._initializeData(userResponse.body, end))
         }
 
@@ -150,7 +150,7 @@ class Zoom extends Provider {
     const meetingId = id
     const fileId = query.recordingId
     const recordingStart = query.recordingStart
-    const GET_MEETING_FILES = `/meetings/${meetingId}/recordings`
+    const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
 
     return this.client
       .get(`${BASE_URL}${GET_MEETING_FILES}`)

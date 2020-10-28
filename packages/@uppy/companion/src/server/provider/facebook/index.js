@@ -2,7 +2,7 @@ const Provider = require('../Provider')
 
 const request = require('request')
 const purest = require('purest')({ request })
-const utils = require('../../helpers/utils')
+const { getURLMeta } = require('../../helpers/request')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
@@ -122,7 +122,7 @@ class Facebook extends Provider {
           return done(err)
         }
 
-        utils.getURLMeta(this._getMediaUrl(body))
+        getURLMeta(this._getMediaUrl(body))
           .then(({ size }) => done(null, size))
           .catch((err) => {
             logger.error(err, 'provider.facebook.size.error')
@@ -154,6 +154,7 @@ class Facebook extends Provider {
         icon: adapter.getItemIcon(item),
         name: adapter.getItemName(item),
         mimeType: adapter.getMimeType(item),
+        size: null,
         id: adapter.getItemId(item),
         thumbnail: adapter.getItemThumbnailUrl(item),
         requestPath: adapter.getItemRequestPath(item),
