@@ -55,6 +55,7 @@
     "@uppy/thumbnail-generator": "file:../@uppy/thumbnail-generator",
     "@uppy/transloadit": "file:../@uppy/transloadit",
     "@uppy/tus": "file:../@uppy/tus",
+    "@uppy/unsplash": "file:../@uppy/unsplash",
     "@uppy/url": "file:../@uppy/url",
     "@uppy/webcam": "file:../@uppy/webcam",
     "@uppy/xhr-upload": "file:../@uppy/xhr-upload"

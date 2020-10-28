@@ -68,6 +68,7 @@
     "@uppy/thumbnail-generator": "file:packages/@uppy/thumbnail-generator",
     "@uppy/transloadit": "file:packages/@uppy/transloadit",
     "@uppy/tus": "file:packages/@uppy/tus",
+    "@uppy/unsplash": "file:packages/@uppy/unsplash",
     "@uppy/url": "file:packages/@uppy/url",
     "@uppy/utils": "file:packages/@uppy/utils",
     "@uppy/webcam": "file:packages/@uppy/webcam",

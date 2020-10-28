@@ -15,6 +15,15 @@ exports.hasSessionAndProvider = (req, res, next) => {
   return next()
 }
 
+exports.hasSearchQuery = (req, res, next) => {
+  if (typeof req.query.q !== 'string') {
+    logger.debug('search request has no search query', 'search.query.check', req.id)
+    return res.sendStatus(400)
+  }
+
+  return next()
+}
+
 exports.verifyToken = (req, res, next) => {
   const token = req.companion.authToken
   if (token == null) {
@@ -30,6 +39,7 @@ exports.verifyToken = (req, res, next) => {
     return res.sendStatus(401)
   }
   req.companion.providerTokens = payload
+  req.companion.providerToken = payload[providerName]
   next()
 }
 
@@ -48,4 +58,16 @@ exports.gentleVerifyToken = (req, res, next) => {
 exports.cookieAuthToken = (req, res, next) => {
   req.companion.authToken = req.cookies[`uppyAuthToken--${req.companion.provider.authProvider}`]
   return next()
+}
+
+exports.loadSearchProviderToken = (req, res, next) => {
+  const { searchProviders } = req.companion.options.providerOptions
+  const providerName = req.params.searchProviderName
+  if (!searchProviders || !searchProviders[providerName] || !searchProviders[providerName].key) {
+    logger.info(`unconfigured credentials for ${providerName}`, 'searchtoken.load.unset', req.id)
+    return res.sendStatus(501)
+  }
+
+  req.companion.providerToken = searchProviders[providerName].key
+  next()
 }
