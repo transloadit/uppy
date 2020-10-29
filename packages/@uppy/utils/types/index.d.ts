@@ -247,6 +247,7 @@ declare module '@uppy/utils' {
     data: Blob | File
     extension: string
     id: string
+    isFromFolder?: boolean
     isPaused?: boolean
     isRemote: boolean
     meta: InternalMetadata & TMeta
