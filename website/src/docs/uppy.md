@@ -403,6 +403,10 @@ An optional URL to a visual thumbnail for the file.
 
 When an upload is completed, this may contain a URL to the uploaded file. Depending on server configuration it may not be accessible or accurate.
 
+### `file.isFromFolder`
+
+Boolean: indicates whether a file is uploading based off folder selection. Useful to distinguish specific file selection or folder selection for  providers such as [Dropbox](/docs/dropbox).
+
 ## Methods
 
 ### `uppy.use(plugin, opts)`
