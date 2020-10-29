@@ -324,6 +324,7 @@ module.exports = class ProviderView {
     return this.listAllFiles(folder.requestPath).then((files) => {
       let count = 0
       files.forEach((file) => {
+        file.isFromFolder = true
         const success = this.addFile(file)
         if (success) count++
       })
