@@ -80,7 +80,7 @@ If both width and height are given, only width is taken into account.
 
 ### `thumbnailtype: 'image/jpeg'`
 
-MIME type of the resulting thumbnail. Default thumbnail MIME type is `image/jpeg`. 
+MIME type of the resulting thumbnail. Default thumbnail MIME type is `image/jpeg`. This is useful if you want to support transparency in your thumbnails by switching to `image/png`.
 
 ### `waitForThumbnailsBeforeUpload: false`
 
