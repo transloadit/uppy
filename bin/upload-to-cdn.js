@@ -5,7 +5,7 @@
 //
 //  - Assumes EDGLY_KEY and EDGLY_SECRET are available (e.g. set via Travis secrets)
 //  - Assumes a fully built uppy is in root dir (unless a specific tag was specified, then it's fetched from npm)
-//  - Collects dist/ files that would be in an npm package release, and uploads to eg. https://transloadit.edgly.net/releases/uppy/v1.0.1/uppy.css
+//  - Collects dist/ files that would be in an npm package release, and uploads to eg. https://releases.transloadit.com/uppy/v1.0.1/uppy.css
 //  - Uses local package by default, if [version] argument was specified, takes package from npm
 //
 // Run as:
@@ -37,8 +37,8 @@ function delay (ms) {
 }
 
 const AWS_REGION = 'us-east-1'
-const AWS_BUCKET = 'crates.edgly.net'
-const AWS_DIRECTORY = '756b8efaed084669b02cb99d4540d81f/default'
+const AWS_BUCKET = 'releases.transloadit.com'
+const AWS_DIRECTORY = 'uppy'
 
 /**
  * Get remote dist/ files by fetching the tarball for the given version

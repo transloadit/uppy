@@ -752,15 +752,15 @@ This Release offers Dashboard redesign (Dark mode), and support for Google Docs 
 This release moves `@uppy/facebook` out of beta to a `1.0.0` and adds `Uppy.Facebook` to the Uppy CDN bundle:
 
 ```
-https://transloadit.edgly.net/releases/uppy/v1.10.1/uppy.min.js
-https://transloadit.edgly.net/releases/uppy/v1.10.1/uppy.min.css
+https://releases.transloadit.com/uppy/v1.10.1/uppy.min.js
+https://releases.transloadit.com/uppy/v1.10.1/uppy.min.css
 ```
 
 - uppy: add @uppy/facebook to `uppy` NPM and CDN bundles
 - @uppy/facebook: Get Facebook integration on its feet (@ifedapoolarewaju)
 - website: Add featured customers logos (#2120 / @nqst)
 
-You can optionally download `1.10.1` release bundle: https://transloadit.edgly.net/releases/uppy/v1.10.1/uppy-v1.10.1.zip
+You can optionally download `1.10.1` release bundle: https://releases.transloadit.com/uppy/v1.10.1/uppy-v1.10.1.zip
 
 ### 1.10.0
 
@@ -2652,7 +2652,7 @@ Theme: Getting together.
 - tus: add `resumable` capability flag (@arturi)
 - tus: start fixing pause/resume issues and race conditions (@arturi)
 - test: working Uppy example on Require Bin — latest version straight from NPM http://requirebin.com/?gist=54e076cccc929cc567cb0aba38815105 (@arturi @acconut)
-- meta: update readme docs, add unpkg CDN links (https://transloadit.edgly.net/releases/uppy/v0.22.0/dist/uppy.min.css) (@arturi)
+- meta: update readme docs, add unpkg CDN links (https://releases.transloadit.com/uppy/v0.22.0/dist/uppy.min.css) (@arturi)
 - meta: write 0.10 release blog post (@arturi)
 
 ### 0.9.0

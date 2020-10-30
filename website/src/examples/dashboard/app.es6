@@ -185,7 +185,7 @@ function loadLocaleFromCDN (localeName) {
   var head = document.getElementsByTagName('head')[0]
   var js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.16.9/${localeName}.min.js`
+  js.src = `https://releases.transloadit.com/uppy/locales/v1.16.9/${localeName}.min.js`
 
   head.appendChild(js)
 }
