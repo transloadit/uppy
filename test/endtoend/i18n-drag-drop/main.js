@@ -22,4 +22,4 @@ uppyi18n
     }
   })
   .use(ProgressBar, { target: '#uppyi18n-progress' })
-  .use(XHRUpload, { endpoint: 'https://api2.transloadit.com' })
+  .use(XHRUpload, { endpoint: 'https://xhr-server.herokuapp.com/upload' })
