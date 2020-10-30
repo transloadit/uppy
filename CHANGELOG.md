@@ -91,28 +91,41 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## November 2020
 
+### next
+
 Planned: 2020-11-27
 
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
 - [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510)
-- [ ] provider: Unsplash (@ife)
 - [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
 - [ ] add Vue.js wrapper component for the Dashboard (@ajkachnic)
 - [ ] add Angular integration (@adammedford)
 - [ ] dashboard: fix Dashboard issues with Angular — it’s incredibly slow presumably because of ResizeObserver? (See #1613) (@adammedford)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
 - [ ] companion: configurable oauth 3rd party credentials — provide your own Google Drive, Instagram application key/secret at the time of the request (@ife)
+- [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default’s store #320 (@arturi)
+- [ ] provider: add Box (@cartfisk, @ife)
+- [ ] providers: Provider Browser should handle uppy restrictions, can we gray out things that don’t match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 
 ## October 2020
 
-### next
+### 1.22.0
 
-Planned: 2020-10-29
+Released: 2020-10-29
 
-- [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default’s store #320 (@arturi)
-- [ ] provider: add Box (@cartfisk, @ife)
-- [ ] core: add maxTotalFileSize restriction #514 (@arturi)
-- [ ] providers: Provider Browser should handle uppy restrictions, can we gray out things that don’t match the restrictions in Google Drive and Instagram? #1827 (@arturi)
+- @uppy/companion: add option to hide welcome and metrics (#2521 / @szh)
+- @uppy/companion: add more test cases to companion tests (#2585 / @ifedapoolarewaju)
+- @uppy/companion: upgrade prometheus (fixes memory leak) (#2600 / @ifedapoolarewaju)
+- @uppy/unsplash: add Unsplash provider (#2431 / @ifedapoolarewaju)
+- @uppy/locales: update th_TH.js (#2571 / @dogrocker)
+- @uppy/locales: add missing camera translations to de_DE (#2574 / @ferdiusa)
+- @uppy/locales: update el_GR.js with more proper wording for Drag'n'Drop (#2578 / @aalepis)
+- @uppy/core: core: add maxTotalFileSize restriction #514 (#2594 / @arturi)
+- @uppy/core: add postprocess progress when upload success (#2535 / @mejiaej)
+- @uppy/webcam: add video source selector (#2492 / @goto-bus-stop, @arturi)
+- @uppy/react: Webpack5: Fix react imports (#2589 / @@olemoign)
+- @uppy/thumbnail-generator: Add support for png thumbnails (#2603 / @SxDx)
+- website: mobile issues fixes + compact Companion migration table (#2593 / @nqst)
 
 ### 1.21.2
 
