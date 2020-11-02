@@ -80,6 +80,8 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] test: add typescript with JSDoc for @uppy/core https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files (@arturi)
 - [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112 #362
 - [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
+- [ ] add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
+- [ ] dashboard: fix Dashboard issues with Angular — it’s incredibly slow presumably because of ResizeObserver? (See #1613) (@adammedford)
 
 ## December 2020
 
@@ -88,6 +90,8 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
 - [ ] dashboard: a mini UI that features drop & progress (may involve a `mini: true` options for dashboard, may involve drop+progress or new plugin) (@arturi)
 - [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
+- [ ] add Svelte integration (@ajkachnic)
+- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
 
 ## November 2020
 
@@ -95,17 +99,14 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 Planned: 2020-11-27
 
-- [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530)
-- [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510)
-- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
-- [ ] add Vue.js wrapper component for the Dashboard (@ajkachnic)
-- [ ] add Angular integration (@adammedford)
-- [ ] dashboard: fix Dashboard issues with Angular — it’s incredibly slow presumably because of ResizeObserver? (See #1613) (@adammedford)
-- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
+- [ ] vue: add Vue.js wrapper component for the Dashboard (@ajkachnic)
 - [ ] companion: configurable oauth 3rd party credentials — provide your own Google Drive, Instagram application key/secret at the time of the request (@ife)
-- [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default’s store #320 (@arturi)
-- [ ] provider: add Box (@cartfisk, @ife)
+- [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510, @arturi)
+- [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530, @arturi)
+- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
+- [ ] providers: add Box (@cartfisk, @ife)
 - [ ] providers: Provider Browser should handle uppy restrictions, can we gray out things that don’t match the restrictions in Google Drive and Instagram? #1827 (@arturi)
+- [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default’s store #320 (@arturi)
 
 ## October 2020
 
