@@ -124,7 +124,7 @@ Released: 2020-10-29
 - @uppy/core: core: add maxTotalFileSize restriction #514 (#2594 / @arturi)
 - @uppy/core: add postprocess progress when upload success (#2535 / @mejiaej)
 - @uppy/webcam: add video source selector (#2492 / @goto-bus-stop, @arturi)
-- @uppy/react: Webpack5: Fix react imports (#2589 / @@olemoign)
+- @uppy/react: Webpack5: Fix react imports (#2589 / @olemoign)
 - @uppy/thumbnail-generator: Add support for png thumbnails (#2603 / @SxDx)
 - website: mobile issues fixes + compact Companion migration table (#2593 / @nqst)
 
