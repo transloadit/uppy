@@ -31,28 +31,6 @@ jobs:
         hosts: *HOSTS
         sauce_connect: *SAUCE
       script: npm run test:endtoend
-    - name: 'Run unit tests'
-      node_js: 14
-      script: npm run test:unit
-    - name: 'Run unit tests (Node.js 10)'
-      node_js: 10
-      script: npm run test:unit
-    - name: 'Run linting'
-      node_js: 12
-      script:
-        - npm run lint
-    - name: 'Run Markdown linting'
-      node_js: 12
-      script:
-        - npm run lint:markdown
-    - name: 'Run type tests'
-      node_js: 12
-      script:
-        # Need to do a bunch of work to generate the locale typings 🙃
-        - npm run build:lib
-        - npm run build:companion
-        - npm run build:locale-pack
-        - npm run test:type
     - name: 'Build'
       node_js: 12
       if: NOT (branch = master AND type = push AND commit_message =~ /^Release/)
@@ -79,14 +57,6 @@ jobs:
         app: companion-demo
         on:
           branch: master
-    - name: 'Run Companion tests (Node.js 10)'
-      node_js: 12
-      services:
-        - docker
-      script:
-        - nvm install 10.20.1
-        - nvm use 10.20.1
-        - npm run test:companion
     # Build the website when things are merged to master
     # https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
     - name: 'Build website'
