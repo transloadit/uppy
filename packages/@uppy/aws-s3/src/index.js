@@ -143,7 +143,7 @@ module.exports = class AwsS3 extends Plugin {
       throw err
     }
 
-    const methodIsValid = /^(put|post)$/i.test(params.method);
+    const methodIsValid = params.method == null || /^(put|post)$/i.test(params.method)
 
     if (!methodIsValid) {
       const err = new TypeError(`AwsS3: got incorrect method from 'getUploadParameters()' for file '${file.name}', expected  'put,post' but got '${params.method}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
