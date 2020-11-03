@@ -15,8 +15,7 @@
     </label>
     <dashboard
       v-if="showInlineDashboard"
-      :uppy="uppy1"
-      :plugins="['GoogleDrive']"
+      :uppy="uppy"
       :props="{
         metaFields: [{ id: 'name', name: 'Name', placeholder: 'File name' }]
       }"
@@ -61,7 +60,6 @@
 import Vue from 'vue'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
-import GoogleDrive from '@uppy/google-drive'
 import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/vue'
 
 export default {
@@ -73,7 +71,7 @@ export default {
     ProgressBar
   },
   computed: {
-    uppy1: () => new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
+    uppy: () => new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' }),
     uppy2: () => new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
       .use(Tus, { endpoint: 'https://master.tus.io/files/' }),
@@ -86,11 +84,14 @@ export default {
   },
   methods: {
     handleClose() { this.open = false }
-  }
+  },
+  
 }
 </script>
 <style src='@uppy/core/dist/style.css'></style> 
 <style src='@uppy/dashboard/dist/style.css'></style> 
+<style src='@uppy/drag-drop/dist/style.css'></style> 
+<style src='@uppy/progress-bar/dist/style.css'></style> 
 
 
 <style>

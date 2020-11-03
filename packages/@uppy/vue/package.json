@@ -28,7 +28,6 @@
     "@uppy/status-bar": "^1.7.5",
     "@vue/component-compiler-utils": "^3.2.0",
     "parcel-bundler": "^1.12.4",
-    "parcel-plugin-bundle-visualiser": "^1.2.0",
     "typescript": "^4.0.3",
     "vue": "^2.6.12"
   }
