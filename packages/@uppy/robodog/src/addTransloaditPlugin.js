@@ -3,7 +3,6 @@ const has = require('@uppy/utils/lib/hasProperty')
 const TransloaditResults = require('./TransloaditResultsPlugin')
 
 const transloaditOptionNames = [
-  'id',
   'service',
   'waitForEncoding',
   'waitForMetadata',
