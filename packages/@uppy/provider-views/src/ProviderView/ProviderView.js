@@ -447,14 +447,20 @@ module.exports = class ProviderView {
     }
   }
 
-  listAllFiles (path, files = null, { previousRelativePath, currentFolder }) {
+  listAllFiles (path, files = null, meta = undefined) {
     files = files || []
     return new Promise((resolve, reject) => {
       this.provider.list(path).then((res) => {
-        const itemsRelativePath = `${previousRelativePath}/${currentFolder.name}`
+        let itemsRelativePath
+
+        if (meta && meta.previousRelativePath && meta.currentFolder) {
+          const { previousRelativePath, currentFolder } = meta
+
+          itemsRelativePath = `${previousRelativePath}/${currentFolder.name}`
+        }
 
         res.items.forEach((item) => {
-          if (previousRelativePath !== undefined) {
+          if (itemsRelativePath) {
             item.relativePath = itemsRelativePath
           }
 
