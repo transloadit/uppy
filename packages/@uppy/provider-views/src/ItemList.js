@@ -28,24 +28,36 @@ module.exports = (props) => {
         // making <ul> not focusable for firefox
         tabindex="-1"
       >
-        {props.folders.map(folder =>
-          Item({
-            ...getSharedProps(folder, props),
+        {props.folders.map(folder => {
+          const sharedProps = getSharedProps(folder, props)
+          let isDisabled = props.isChecked(folder) ? props.isChecked(folder).loading : false
+          if (!props.canSelectMore) {
+            isDisabled = true
+          }
+          const restrictionReason = sharedProps.i18n('youCanOnlyUploadX', { smart_count: props.maxNumberOfFiles })
+          return Item({
+            ...sharedProps,
             type: 'folder',
-            isDisabled: props.isChecked(folder) ? props.isChecked(folder).loading : false,
-            handleFolderClick: () => props.handleFolderClick(folder)
+            isDisabled,
+            handleFolderClick: () => props.handleFolderClick(folder),
+            restrictionReason: restrictionReason
           })
-        )}
+        })}
         {props.files.map(file => {
           const passesRestrictions = props.passesRestrictions(
             remoteFileObjToLocal(file)
           )
           const sharedProps = getSharedProps(file, props)
+          let restrictionReason = passesRestrictions.reason
+          if (!props.canSelectMore && !sharedProps.isChecked) {
+            restrictionReason = sharedProps.i18n('youCanOnlyUploadX', { smart_count: props.maxNumberOfFiles })
+          }
+
           return Item({
             ...sharedProps,
             type: 'file',
             isDisabled: !passesRestrictions.result || (!props.canSelectMore && !sharedProps.isChecked),
-            restrictionReason: passesRestrictions.reason
+            restrictionReason: restrictionReason
           })
         })}
       </ul>

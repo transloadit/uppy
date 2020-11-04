@@ -433,7 +433,6 @@ class Uppy {
    * @returns {object} { result: true/false, reason: why file didn’t pass restrictions }
    */
   passesRestrictions (file) {
-    console.log(file)
     try {
       this._checkRestrictions(file)
       return {
