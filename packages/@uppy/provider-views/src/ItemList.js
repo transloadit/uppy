@@ -29,18 +29,11 @@ module.exports = (props) => {
         tabindex="-1"
       >
         {props.folders.map(folder => {
-          const sharedProps = getSharedProps(folder, props)
-          let isDisabled = props.isChecked(folder) ? props.isChecked(folder).loading : false
-          if (!props.canSelectMore) {
-            isDisabled = true
-          }
-          const restrictionReason = sharedProps.i18n('youCanOnlyUploadX', { smart_count: props.maxNumberOfFiles })
           return Item({
-            ...sharedProps,
+            ...getSharedProps(folder, props),
             type: 'folder',
-            isDisabled,
-            handleFolderClick: () => props.handleFolderClick(folder),
-            restrictionReason: restrictionReason
+            isDisabled: props.isChecked(folder) ? props.isChecked(folder).loading : false,
+            handleFolderClick: () => props.handleFolderClick(folder)
           })
         })}
         {props.files.map(file => {
