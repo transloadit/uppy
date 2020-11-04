@@ -21,6 +21,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
     this.queue = []
     this.queueProcessing = false
     this.defaultThumbnailDimension = 200
+    this.thumbnailType = this.opts.thumbnailType || 'image/jpeg'
 
     this.defaultLocale = {
       strings: {
@@ -92,7 +93,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
         const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.deg)
         const rotatedImage = this.rotateImage(image, orientation)
         const resizedImage = this.resizeImage(rotatedImage, dimensions.width, dimensions.height)
-        return this.canvasToBlob(resizedImage, 'image/jpeg', 80)
+        return this.canvasToBlob(resizedImage, this.thumbnailType, 80)
       })
       .then(blob => {
         // bug in the compatibility data

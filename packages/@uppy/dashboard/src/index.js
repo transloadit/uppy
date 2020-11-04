@@ -115,6 +115,7 @@ module.exports = class Dashboard extends Plugin {
       width: 750,
       height: 550,
       thumbnailWidth: 280,
+      thumbnailType: 'image/jpeg',
       waitForThumbnailsBeforeUpload: false,
       defaultPickerIcon,
       showLinkToFileUploadResult: true,
@@ -223,8 +224,6 @@ module.exports = class Dashboard extends Plugin {
       // avoid doing a state update if nothing changed
       return
     }
-
-    console.log(update)
 
     this.setPluginState(update)
   }
@@ -1008,6 +1007,7 @@ module.exports = class Dashboard extends Plugin {
       this.uppy.use(ThumbnailGenerator, {
         id: `${this.id}:ThumbnailGenerator`,
         thumbnailWidth: this.opts.thumbnailWidth,
+        thumbnailType: this.opts.thumbnailType,
         waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload,
         // If we don't block on thumbnails, we can lazily generate them
         lazy: !this.opts.waitForThumbnailsBeforeUpload
