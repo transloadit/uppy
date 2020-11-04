@@ -40,10 +40,11 @@ module.exports = (props) => {
           const passesRestrictions = props.passesRestrictions(
             remoteFileObjToLocal(file)
           )
+          const sharedProps = getSharedProps(file, props)
           return Item({
-            ...getSharedProps(file, props),
+            ...sharedProps,
             type: 'file',
-            isDisabled: !passesRestrictions.result,
+            isDisabled: !passesRestrictions.result || (!props.canSelectMore && !sharedProps.isChecked),
             restrictionReason: passesRestrictions.reason
           })
         })}

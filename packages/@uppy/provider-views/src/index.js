@@ -413,6 +413,7 @@ module.exports = class ProviderView {
     e.preventDefault()
     e.currentTarget.focus()
     const { folders, files } = this.plugin.getPluginState()
+
     const items = this.filterItems(folders.concat(files))
 
     // Shift-clicking selects a single consecutive list of items
@@ -432,6 +433,7 @@ module.exports = class ProviderView {
 
     this.lastCheckbox = file
     const { currentSelection } = this.plugin.getPluginState()
+
     if (this.isChecked(file)) {
       this.plugin.setPluginState({
         currentSelection: currentSelection.filter((item) => item.id !== file.id)
@@ -638,6 +640,8 @@ module.exports = class ProviderView {
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       pluginIcon: this.plugin.icon,
       i18n: this.plugin.uppy.i18n,
+      maxNumberOfFiles: this.plugin.uppy.opts.restrictions.maxNumberOfFiles,
+      uppyFiles: this.plugin.uppy.getFiles(),
       passesRestrictions: this.plugin.uppy.passesRestrictions
     })
 

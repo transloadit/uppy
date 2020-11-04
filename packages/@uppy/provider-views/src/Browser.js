@@ -16,6 +16,11 @@ const Browser = (props) => {
 
   const selected = props.currentSelection.length
 
+  let canSelectMore = true
+  if (props.uppyFiles.length + selected >= props.maxNumberOfFiles) {
+    canSelectMore = false
+  }
+
   return (
     <div class={classNames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${props.viewType}`)}>
       <div class="uppy-ProviderBrowser-header">
@@ -52,6 +57,7 @@ const Browser = (props) => {
         i18n={props.i18n}
         viewType={props.viewType}
         passesRestrictions={props.passesRestrictions}
+        canSelectMore={canSelectMore}
       />
       {selected > 0 && <FooterActions selected={selected} {...props} />}
     </div>
