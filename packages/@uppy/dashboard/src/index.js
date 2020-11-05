@@ -256,6 +256,7 @@ module.exports = class Dashboard extends Plugin {
 
     this.setPluginState({
       showFileEditor: true,
+      fileCardFor: file.id || null,
       activeOverlayType: 'FileEditor'
     })
 
