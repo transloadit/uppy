@@ -95,10 +95,8 @@ module.exports = function Buttons (props) {
 
   const editAction = () => {
     if (metaFields && metaFields.length > 0) {
-      console.log('TOGGLE FILE CARD')
       toggleFileCard(file.id)
     } else {
-      console.log('OPEN FILE EDITOR')
       openFileEditor(file)
     }
   }
