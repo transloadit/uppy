@@ -64,6 +64,16 @@ uppy.use(ImageEditor, {
     background: false,
     autoCropArea: 1,
     responsive: true
+  },
+  actions: {
+    revert: true,
+    rotate: true,
+    flip: true,
+    zoomIn: true,
+    zoomOut: true,
+    cropSquare: true,
+    cropWidescreen: true,
+    cropWidescreenVertical: true
   }
 })
 ```
@@ -79,6 +89,10 @@ Quality of the resulting blob that will be saved in Uppy after editing/cropping.
 ### `cropperOptions`
 
 Image Editor is using the excellent [Cropper.js](https://fengyuanchen.github.io/cropperjs/), and if you’d like to fine tune the Cropper.js instance, you can pass options to it.
+
+### `actions`
+
+Image Editor actions buttons, which will be shown. If you you’d like to hide any action pass `false` to it. By default all the actions are visible.
 
 ## Events
 
