@@ -98,10 +98,12 @@ module.exports = class FileItem extends Component {
 
             showLinkToFileUploadResult={this.props.showLinkToFileUploadResult}
             showRemoveButton={showRemoveButton}
+            canEditFile={this.props.canEditFile}
 
             uploadInProgressOrComplete={uploadInProgressOrComplete}
             removeFile={this.props.removeFile}
             toggleFileCard={this.props.toggleFileCard}
+            openFileEditor={this.props.openFileEditor}
 
             i18n={this.props.i18n}
             log={this.props.log}
