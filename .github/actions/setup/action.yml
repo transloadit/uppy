@@ -1,0 +1,17 @@
+name: Setup transloadit/uppy
+description: Checkout sources and install dependencies for transloadit/uppy.
+inputs:
+  node-version:
+    description: Node.js version to use.
+    default: '14.x'
+runs:
+  using: composite
+  steps:
+    - name: Checkout sources
+      uses: actions/checkout@v2
+    - name: Install Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{inputs.node-version}}
+    - name: Install dependencies
+      run: npm ci
