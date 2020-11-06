@@ -36,7 +36,7 @@ class OneDrive extends Provider {
    */
   list ({ directory, query, token }, done) {
     const path = directory ? `items/${directory}` : 'root'
-    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/drive'
+    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/me/drive'
     const qs = { $expand: 'thumbnails' }
     if (query.cursor) {
       qs.$skiptoken = query.cursor
@@ -65,7 +65,7 @@ class OneDrive extends Provider {
   }
 
   download ({ id, token, query }, onData) {
-    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/drive'
+    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/me/drive'
     return this.client
       .get(`${rootPath}/items/${id}/content`)
       .auth(token)
@@ -92,7 +92,7 @@ class OneDrive extends Provider {
   }
 
   size ({ id, query, token }, done) {
-    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/drive'
+    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/me/drive'
     return this.client
       .get(`${rootPath}/items/${id}`)
       .auth(token)

@@ -1,6 +1,6 @@
 const { h } = require('preact')
 const prettierBytes = require('@transloadit/prettier-bytes')
-const truncateString = require('../../../utils/truncateString')
+const truncateString = require('@uppy/utils/lib/truncateString')
 
 const renderAcquirerIcon = (acquirer, props) =>
   <span title={props.i18n('fileSource', { name: acquirer.name })}>

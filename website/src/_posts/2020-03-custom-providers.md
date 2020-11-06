@@ -422,7 +422,7 @@ First, we'll create a `client/MyCustomProvider.js` file. Following the instructi
 ```js
 const { Plugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
-const ProviderViews = require('@uppy/provider-views')
+const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
 module.exports = class MyCustomProvider extends Plugin {
@@ -544,7 +544,7 @@ module.exports = (api) => {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Uppy Custom provider Example</title>
-    <link href="https://transloadit.edgly.net/releases/uppy/v1.15.0/uppy.min.css" rel="stylesheet">
+    <link href="https://releases.transloadit.com/uppy/v1.15.0/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <script src="bundle.js"></script>

@@ -5,6 +5,7 @@ const Facebook = require('@uppy/facebook/src')
 const OneDrive = require('@uppy/onedrive/src')
 const Dropbox = require('@uppy/dropbox/src')
 const GoogleDrive = require('@uppy/google-drive/src')
+const Unsplash = require('@uppy/unsplash/src')
 const Zoom = require('@uppy/zoom/src')
 const Url = require('@uppy/url/src')
 const Webcam = require('@uppy/webcam/src')
@@ -70,6 +71,7 @@ module.exports = () => {
     .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Url, { target: Dashboard, companionUrl: COMPANION_URL })
+    .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Webcam, {
       target: Dashboard,
       showVideoSourceDropdown: true,
