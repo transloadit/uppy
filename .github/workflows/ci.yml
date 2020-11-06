@@ -9,10 +9,14 @@ jobs:
       matrix:
         node-version: [10.x, 12.x, 14.x]
     steps:
-      - name: Setup
-        uses: ./.github/actions/setup
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v1
         with:
           node-version: ${{matrix.node-version}}
+      - name: Install dependencies
+        run: npm ci
       - name: Run tests
         run: npm run test:unit
 
@@ -20,8 +24,14 @@ jobs:
     name: Lint JavaScript
     runs-on: ubuntu-latest
     steps:
-      - name: Setup
-        uses: ./.github/actions/setup
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Install dependencies
+        run: npm ci
       - name: Run linter
         run: npm run lint
 
@@ -29,8 +39,14 @@ jobs:
     name: Lint Markdown
     runs-on: ubuntu-latest
     steps:
-      - name: Setup
-        uses: ./.github/actions/setup
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Install dependencies
+        run: npm ci
       - name: Run linter
         run: npm run lint:markdown
 
@@ -38,8 +54,14 @@ jobs:
     name: Type tests
     runs-on: ubuntu-latest
     steps:
-      - name: Setup
-        uses: ./.github/actions/setup
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Install dependencies
+        run: npm ci
       - name: Run linter
         run: npm run lint:markdown
         # Need to do a bunch of work to generate the locale typings 🙃

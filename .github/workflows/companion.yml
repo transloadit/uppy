@@ -9,10 +9,14 @@ jobs:
       matrix:
         node-version: [10.20.1, 12.x, 14.x]
     steps:
-      - name: Setup
-        uses: ./.github/actions/setup
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v1
         with:
           node-version: ${{matrix.node-version}}
+      - name: Install dependencies
+        run: npm ci
       - name: Run tests
         run: npm run test:companion
 
@@ -22,10 +26,6 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Setup
-        uses: ./.github/actions/setup
-      - name: Run Companion build
-        run: npm run build:companion
       - name: Deploy to heroku
         uses: akhileshns/heroku-deploy@v3.5.6
         with:
