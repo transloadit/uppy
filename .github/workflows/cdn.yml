@@ -1,0 +1,27 @@
+name: CDN
+on:
+  push:
+    branches: master
+
+jobs:
+  release:
+    if: ${{startsWith(github.event.head_commit.message, 'Release')}}
+    name: Publish releases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Install dependencies
+        run: npm ci
+      - name: Build bundles
+        run: npm run build
+      - name: Upload `uppy` to CDN
+        run: npm run uploadcdn uppy
+      - name: Upload `@uppy/robodog` to CDN
+        run: npm run uploadcdn @uppy/robodog
+      - name: Upload `@uppy/locales` to CDN
+        run: npm run uploadcdn @uppy/locales
