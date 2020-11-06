@@ -24,6 +24,6 @@ jobs:
         uses: saucelabs/sauce-connect-action@v1.1.1
         with:
           username: ${{secrets.SAUCE_USERNAME}}
-          accessKey: ${{secrets.SAUCE_ACCCESS_KEY}}
+          accessKey: ${{secrets.SAUCE_ACCESS_KEY}}
       - name: Run end-to-end browser tests
         run: npm run test:endtoend
