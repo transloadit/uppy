@@ -9,9 +9,7 @@ jobs:
       matrix:
         node-version: [10.x, 12.x, 14.x]
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-      - name: Setup repository
+      - name: Setup
         uses: ./.github/actions/setup
         with:
           node-version: ${{matrix.node-version}}
@@ -22,9 +20,7 @@ jobs:
     name: Lint JavaScript
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-      - name: Setup repository
+      - name: Setup
         uses: ./.github/actions/setup
       - name: Run linter
         run: npm run lint
@@ -33,9 +29,7 @@ jobs:
     name: Lint Markdown
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-      - name: Setup repository
+      - name: Setup
         uses: ./.github/actions/setup
       - name: Run linter
         run: npm run lint:markdown
@@ -44,9 +38,7 @@ jobs:
     name: Type tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-      - name: Setup repository
+      - name: Setup
         uses: ./.github/actions/setup
       - name: Run linter
         run: npm run lint:markdown

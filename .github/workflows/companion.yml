@@ -9,9 +9,7 @@ jobs:
       matrix:
         node-version: [10.20.1, 12.x, 14.x]
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-      - name: Setup repository
+      - name: Setup
         uses: ./.github/actions/setup
         with:
           node-version: ${{matrix.node-version}}
@@ -24,9 +22,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-      - name: Setup repository
+      - name: Setup
         uses: ./.github/actions/setup
       - name: Run Companion build
         run: npm run build:companion
