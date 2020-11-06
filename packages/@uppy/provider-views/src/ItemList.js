@@ -1,5 +1,6 @@
 const { h } = require('preact')
 const remoteFileObjToLocal = require('@uppy/utils/lib/remoteFileObjToLocal')
+const prettierBytes = require('@transloadit/prettier-bytes')
 const Item = require('./Item/index')
 
 const getSharedProps = (fileOrFolder, props) => ({
@@ -43,7 +44,14 @@ module.exports = (props) => {
           const sharedProps = getSharedProps(file, props)
           let restrictionReason = passesRestrictions.reason
           if (!props.canSelectMore && !sharedProps.isChecked) {
-            restrictionReason = sharedProps.i18n('youCanOnlyUploadX', { smart_count: props.maxNumberOfFiles })
+            if (props.maxNumberOfFiles) {
+              restrictionReason = sharedProps.i18n('youCanOnlyUploadX', { smart_count: props.maxNumberOfFiles })
+            } else {
+              restrictionReason = sharedProps.i18n('exceedsSize2', {
+                backwardsCompat: this.i18n('exceedsSize'),
+                size: prettierBytes(props.maxTotalFileSize)
+              })
+            }
           }
 
           return Item({

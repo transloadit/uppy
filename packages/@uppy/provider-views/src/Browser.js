@@ -6,19 +6,43 @@ const FooterActions = require('./FooterActions')
 const { h } = require('preact')
 
 const Browser = (props) => {
-  let filteredFolders = props.folders
-  let filteredFiles = props.files
+  const {
+    currentSelection,
+    folders,
+    files,
+    uppyFiles,
+    filterItems,
+    filterInput,
+    maxNumberOfFiles,
+    maxTotalFileSize
+  } = props
 
-  if (props.filterInput !== '') {
-    filteredFolders = props.filterItems(props.folders)
-    filteredFiles = props.filterItems(props.files)
+  console.log(files)
+
+  let filteredFolders = folders
+  let filteredFiles = files
+
+  if (filterInput !== '') {
+    filteredFolders = filterItems(folders)
+    filteredFiles = filterItems(files)
   }
 
-  const selected = props.currentSelection.length
+  const selected = currentSelection.length
 
   let canSelectMore = true
-  if (props.uppyFiles.length + selected >= props.maxNumberOfFiles) {
+  if (uppyFiles.length + selected >= maxNumberOfFiles) {
     canSelectMore = false
+  }
+
+  if (currentSelection) {
+    let totalCurrentSelectionFileSize = 0
+    currentSelection.forEach(file => {
+      totalCurrentSelectionFileSize += file.size
+    })
+
+    if (totalCurrentSelectionFileSize >= maxTotalFileSize) {
+      canSelectMore = false
+    }
   }
 
   return (
