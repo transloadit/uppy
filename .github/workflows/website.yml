@@ -2,7 +2,7 @@ name: Deploy uppy.io
 
 on:
   push:
-    branches: [master]
+    branches: [master, github-actions]
 
 env:
   GIT_AUTHOR_NAME: Uppy Bot
@@ -25,3 +25,5 @@ jobs:
         run: npm ci
       - name: Build and deploy
         run: npm run web:deploy --quiet
+        env:
+          GHPAGES_BRANCH: test-website-deploy-from-github-actions
