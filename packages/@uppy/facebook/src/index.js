@@ -23,6 +23,7 @@ module.exports = class Facebook extends Plugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      cookiesSendRule: this.opts.cookiesSendRule,
       provider: 'facebook',
       pluginId: this.id
     })

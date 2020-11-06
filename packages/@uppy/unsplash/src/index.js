@@ -34,6 +34,7 @@ module.exports = class Unsplash extends Plugin {
     this.provider = new SearchProvider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders,
+      cookiesSendRule: this.opts.cookiesSendRule,
       provider: 'unsplash',
       pluginId: this.id
     })

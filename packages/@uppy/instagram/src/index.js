@@ -23,6 +23,7 @@ module.exports = class Instagram extends Plugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      cookiesSendRule: this.opts.cookiesSendRule,
       provider: 'instagram',
       pluginId: this.id
     })
