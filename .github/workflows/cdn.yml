@@ -9,7 +9,9 @@ jobs:
     name: Publish releases
     runs-on: ubuntu-latest
     steps:
-      - name: Setup
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Setup repository
         uses: ./.github/actions/setup
       - name: Build bundles
         run: npm run build

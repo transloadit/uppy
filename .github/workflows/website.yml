@@ -9,7 +9,9 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Setup
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Setup repository
         uses: ./.github/actions/setup
       - name: Configure git author
         run: |
