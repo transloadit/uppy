@@ -17,8 +17,6 @@ const Browser = (props) => {
     maxTotalFileSize
   } = props
 
-  console.log(files)
-
   let filteredFolders = folders
   let filteredFiles = files
 
@@ -30,7 +28,8 @@ const Browser = (props) => {
   const selected = currentSelection.length
 
   let canSelectMore = true
-  if (uppyFiles.length + selected >= maxNumberOfFiles) {
+
+  if (maxNumberOfFiles && (uppyFiles.length + selected >= maxNumberOfFiles)) {
     canSelectMore = false
   }
 
@@ -82,6 +81,7 @@ const Browser = (props) => {
         viewType={props.viewType}
         passesRestrictions={props.passesRestrictions}
         maxNumberOfFiles={props.maxNumberOfFiles}
+        maxTotalFileSize={props.maxTotalFileSize}
         canSelectMore={canSelectMore}
       />
       {selected > 0 && <FooterActions selected={selected} {...props} />}

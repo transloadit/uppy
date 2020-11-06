@@ -48,7 +48,7 @@ module.exports = (props) => {
               restrictionReason = sharedProps.i18n('youCanOnlyUploadX', { smart_count: props.maxNumberOfFiles })
             } else {
               restrictionReason = sharedProps.i18n('exceedsSize2', {
-                backwardsCompat: this.i18n('exceedsSize'),
+                backwardsCompat: sharedProps.i18n('exceedsSize'),
                 size: prettierBytes(props.maxTotalFileSize)
               })
             }
