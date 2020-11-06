@@ -235,7 +235,11 @@ module.exports = class ProviderView {
       showFilter: targetViewOptions.showFilter,
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       pluginIcon: this.plugin.icon,
-      i18n: this.plugin.uppy.i18n
+      i18n: this.plugin.uppy.i18n,
+      maxNumberOfFiles: this.plugin.uppy.opts.restrictions.maxNumberOfFiles,
+      maxTotalFileSize: this.plugin.uppy.opts.restrictions.maxTotalFileSize,
+      uppyFiles: this.plugin.uppy.getFiles(),
+      passesRestrictions: this.plugin.uppy.passesRestrictions
     })
 
     return (
