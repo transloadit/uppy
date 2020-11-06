@@ -38,6 +38,7 @@ module.exports = (props) => {
           })
         })}
         {props.files.map(file => {
+          console.log(file)
           const passesRestrictions = props.passesRestrictions(
             remoteFileObjToLocal(file)
           )
@@ -46,7 +47,7 @@ module.exports = (props) => {
           if (!props.canSelectMore && !sharedProps.isChecked) {
             if (props.maxNumberOfFiles) {
               restrictionReason = sharedProps.i18n('youCanOnlyUploadX', { smart_count: props.maxNumberOfFiles })
-            } else {
+            } else if (props.maxTotalFileSize) {
               restrictionReason = sharedProps.i18n('exceedsSize2', {
                 backwardsCompat: sharedProps.i18n('exceedsSize'),
                 size: prettierBytes(props.maxTotalFileSize)

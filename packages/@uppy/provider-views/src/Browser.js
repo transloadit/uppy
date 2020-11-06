@@ -25,22 +25,22 @@ const Browser = (props) => {
   }
 
   const selected = currentSelection.length
-
   let canSelectMore = true
 
   if (maxNumberOfFiles && (uppyFiles.length + selected >= maxNumberOfFiles)) {
     canSelectMore = false
   }
 
+  let totalCurrentSelectionFileSize = 0
+
   if (currentSelection) {
-    let totalCurrentSelectionFileSize = 0
     currentSelection.forEach(file => {
       totalCurrentSelectionFileSize += file.size
     })
+  }
 
-    if (totalCurrentSelectionFileSize >= maxTotalFileSize) {
-      canSelectMore = false
-    }
+  if (maxTotalFileSize && totalCurrentSelectionFileSize >= maxTotalFileSize) {
+    canSelectMore = false
   }
 
   return (
