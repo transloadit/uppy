@@ -25,5 +25,11 @@ jobs:
         with:
           username: ${{secrets.SAUCE_USERNAME}}
           accessKey: ${{secrets.SAUCE_ACCESS_KEY}}
+          tunnelIdentifier: ${{github.run_id}}.${{github.run_number}}
       - name: Run end-to-end browser tests
         run: npm run test:endtoend
+        env:
+          TRAVIS_JOB_NUMBER: ${{github.run_id}}.${{github.run_number}}
+          TRAVIS_BUILD_NUMBER: ${{github.run_id}}
+          SAUCE_USERNAME: ${{secrets.SAUCE_USERNAME}}
+          SAUCE_ACCESS_KEY: ${{secrets.SAUCE_ACCESS_KEY}}
