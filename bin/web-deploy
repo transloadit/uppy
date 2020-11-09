@@ -8,8 +8,7 @@ ghpages_repo=${GHPAGES_REPO:-"transloadit/uppy"}
 ghpages_branch=${GHPAGES_BRANCH:-"gh-pages"}
 ghpages_url=${GHPAGES_URL:-"git@github.com:${ghpages_repo}.git"}
 
-localDir="${HOME:-/home/${USER:-travis}}/.${ghpages_repo}/deploy"
-
+localDir="${DEPLOY_DIR:-${HOME:-/home/${USER:-travis}}/.${ghpages_repo}/deploy}"
 echo "--> Preparing deployment in '${localDir}'.."
 mkdir -p "${localDir}"
 
