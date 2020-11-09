@@ -24,6 +24,7 @@ module.exports = class Zoom extends Plugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      credentialsRequestParams: this.opts.credentialsRequestParams,
       provider: 'zoom',
       pluginId: this.id
     })
@@ -49,7 +50,10 @@ module.exports = class Zoom extends Plugin {
   }
 
   onFirstRender () {
-    return this.view.getFolder()
+    return Promise.all([
+      this.provider.fetchPreAuthToken(),
+      this.view.getFolder()
+    ])
   }
 
   render (state) {

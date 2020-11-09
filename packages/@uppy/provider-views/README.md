@@ -23,7 +23,10 @@ class GoogleDrive extends Plugin {
   }
 
   onFirstRender () {
-    return this.view.getFolder('root', '/')
+    return Promise.all([
+      this.provider.fetchPreAuthToken(),
+      this.view.getFolder('root', '/')
+    ])
   }
 
   render (state) {

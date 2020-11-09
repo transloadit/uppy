@@ -15,13 +15,25 @@ module.exports = class Provider extends RequestClient {
     this.name = this.opts.name || _getName(this.id)
     this.pluginId = this.opts.pluginId
     this.tokenKey = `companion-${this.pluginId}-auth-token`
+    this.credentialsRequestParams = this.opts.credentialsRequestParams
+    this.preAuthToken = null
   }
 
   headers () {
     return Promise.all([super.headers(), this.getAuthToken()])
-      .then(([headers, token]) =>
-        Object.assign({}, headers, { 'uppy-auth-token': token })
-      )
+      .then(([headers, token]) => {
+        const authHeaders = {}
+        if (token) {
+          authHeaders['uppy-auth-token'] = token
+        }
+
+        if (this.credentialsRequestParams) {
+          authHeaders['uppy-credentials-params'] = btoa(
+            JSON.stringify({ params: this.credentialsRequestParams })
+          )
+        }
+        return Object.assign({}, headers, authHeaders)
+      })
   }
 
   onReceiveResponse (response) {
@@ -42,12 +54,36 @@ module.exports = class Provider extends RequestClient {
     return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
   }
 
-  authUrl () {
-    return `${this.hostname}/${this.id}/connect`
+  authUrl (queries) {
+    const urlQueries = []
+    if (queries) {
+      urlQueries.push(queries)
+    }
+
+    if (this.preAuthToken) {
+      urlQueries.push(`uppyPreAuthToken=${this.preAuthToken}`)
+    }
+
+    queries = urlQueries.join('&')
+    queries = queries ? `?${queries}` : queries
+    return `${this.hostname}/${this.id}/connect${queries}`
   }
 
   fileUrl (id) {
     return `${this.hostname}/${this.id}/get/${id}`
+  }
+
+  fetchPreAuthToken () {
+    if (!this.credentialsRequestParams) {
+      return Promise.resolve()
+    }
+
+    return this.post(`${this.id}/preauth/`, { params: this.credentialsRequestParams })
+      .then((res) => {
+        this.preAuthToken = res.token
+      }).catch((err) => {
+        this.uppy.log(`[CompanionClient] unable to fetch preAuthToken ${err}`, 'warning')
+      })
   }
 
   list (directory) {
