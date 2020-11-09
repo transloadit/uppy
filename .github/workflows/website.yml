@@ -17,11 +17,21 @@ jobs:
           node-version: 14.x
       - name: Install dependencies
         run: npm ci
-      - name: Build and deploy
+      - name: Build Uppy
+        run: npm run build
+      - name: Build website
+        run: npm run web:build
+      - name: Prepare deployment
         run: npm run web:deploy --quiet
+      - name: Push to Github Pages
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: test-website-deploy-from-github-actions
+          build_dir: /home/runner/.transloadit/uppy/deploy
+          committer: 'Uppy Bot <uppybot@uppy.io>'
+          author: 'Uppy Bot <uppybot@uppy.io>'
+          commit_message: Update transloadit/uppy website
+          fqdn: uppy.io
+          jekyll: false
         env:
-          GHPAGES_BRANCH: test-website-deploy-from-github-actions
-          GIT_AUTHOR_NAME: Uppy Bot
-          GIT_COMMITTER_NAME: Uppy Bot
-          GIT_AUTHOR_EMAIL: uppybot@uppy.io
-          GIT_COMMITTER_EMAIL: uppybot@uppy.io
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
