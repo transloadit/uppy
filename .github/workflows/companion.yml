@@ -29,6 +29,6 @@ jobs:
       - name: Deploy to heroku
         uses: akhileshns/heroku-deploy@v3.5.6
         with:
-          heroku_api_key : ${{secrets.HEROKU_API_KEY}}
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: companion-demo
-          heroku_email   : ${{secrets.HEROKU_USER_EMAIL}}
+          heroku_email: ${{secrets.HEROKU_USER_EMAIL}}

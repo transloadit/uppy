@@ -24,12 +24,12 @@ jobs:
       - name: Prepare deployment
         run: npm run web:deploy --quiet
         env:
-          DEPLOY_DIR: ${{runner.temp}}/_deploy
+          DEPLOY_DIR: ${{github.workspace}}/_deploy
       - name: Push to Github Pages
         uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: test-website-deploy-from-github-actions
-          build_dir: ${{runner.temp}}/_deploy
+          build_dir: _deploy # relative to `github.workspace`
           committer: 'Uppy Bot <uppybot@uppy.io>'
           author: 'Uppy Bot <uppybot@uppy.io>'
           commit_message: Update transloadit/uppy website
