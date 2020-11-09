@@ -75,7 +75,6 @@
     "@uppy/xhr-upload": "file:packages/@uppy/xhr-upload",
     "@uppy/image-editor": "file:packages/@uppy/image-editor",
     "@uppy/zoom": "file:packages/@uppy/zoom",
-    "hexo-renderer-scss": "file:private/hexo-renderer-scss",
     "remark-lint-uppy": "file:private/remark-lint-uppy",
     "uppy": "file:packages/uppy",
     "uppy.io": "file:website"
@@ -170,7 +169,7 @@
     "multi-glob": "1.0.2",
     "namespace-emitter": "2.0.1",
     "nock": "9.6.1",
-    "node-sass": "5.0.0",
+    "node-sass": "4.14.0",
     "nodemon": "1.19.4",
     "npm-auth-to-token": "1.0.0",
     "npm-packlist": "1.4.8",
