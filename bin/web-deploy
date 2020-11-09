@@ -36,10 +36,13 @@ echo 'This branch is just a deploy target. Do not edit. You changes will be lost
   |tee "${localDir}/README.md" > /dev/null
 
 (cd "${localDir}" \
-  && ([ -d .git ] || git init) && git checkout -B "${ghpages_branch}" && (git pull origin "${ghpages_branch}" || true) && git add --all . \
-  && git commit --allow-empty --no-verify --message="Update ${ghpages_repo} website by ${USER}" \
+  && ([ -d .git ] || git init) \
   && (git remote add origin "${ghpages_url}"|| true)  \
   && (git remote set-url origin "${ghpages_url}" || true)  \
+  && git checkout -B "${ghpages_branch}" \
+  && (git pull origin "${ghpages_branch}" || true) \
+  && git add --all . \
+  && git commit --allow-empty --no-verify --message="Update ${ghpages_repo} website by ${USER}" \
   && (git push origin "${ghpages_branch}:refs/heads/${ghpages_branch}" || git push origin "${ghpages_branch}:refs/heads/${ghpages_branch}" --force) \
 ) > /dev/null
 
