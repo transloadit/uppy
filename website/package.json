@@ -30,7 +30,7 @@
     "hexo-include-markdown": "^1.0.2",
     "hexo-renderer-ejs": "^1.0.0",
     "hexo-renderer-marked": "2.0.0",
-    "hexo-renderer-scss": "^1.2.0",
+    "hexo-renderer-scss": "file:../private/hexo-renderer-scss",
     "hexo-server": "^1.0.0",
     "hexo-util": "^1.5.0",
     "js-yaml": "^3.13.1",
