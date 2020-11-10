@@ -7,7 +7,7 @@ const tokenService = require('../helpers/jwt')
 
 exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
   return (req, res, next) => {
-    const { authProvider } = req.params
+    const { authProvider, override } = req.params
     const [providerName] = Object.keys(providers).filter((name) => providers[name].authProvider === authProvider)
     if (!providerName) {
       return next()
@@ -18,7 +18,9 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
     }
 
     const dynamic = (req.session.grant || {}).dynamic || {}
-    const state = dynamic.state || req.query.state
+    // only use state via session object if user isn't making intial "connect" request.
+    // override param indicates subsequent requests from the oauth flow
+    const state = override ? dynamic.state : req.query.state
     if (!state) {
       return next()
     }
