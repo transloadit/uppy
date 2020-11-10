@@ -9,7 +9,6 @@ module.exports = (props) => {
         type="button"
         class="uppy-u-reset uppy-ProviderBrowserItem-inner"
         onclick={props.toggleCheckbox}
-
         role="option"
         aria-label={props.isChecked ? props.i18n('unselectFileNamed', { name: props.title }) : props.i18n('selectFileNamed', { name: props.title })}
         aria-selected={props.isChecked}

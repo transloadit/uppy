@@ -154,7 +154,7 @@ class Uppy {
     this.addFile = this.addFile.bind(this)
     this.removeFile = this.removeFile.bind(this)
     this.pauseResume = this.pauseResume.bind(this)
-    this.passesRestrictions = this.passesRestrictions.bind(this)
+    this.validateRestrictions = this.validateRestrictions.bind(this)
 
     // ___Why throttle at 500ms?
     //    - We must throttle at >250ms for superfocus in Dashboard to work well (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
@@ -435,7 +435,7 @@ class Uppy {
    * @param {object} file object to check
    * @returns {object} { result: true/false, reason: why file didn’t pass restrictions }
    */
-  passesRestrictions (file) {
+  validateRestrictions (file) {
     try {
       this._checkRestrictions(file)
       return {

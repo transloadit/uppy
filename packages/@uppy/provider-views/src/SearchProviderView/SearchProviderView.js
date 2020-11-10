@@ -239,7 +239,7 @@ module.exports = class ProviderView {
       maxNumberOfFiles: this.plugin.uppy.opts.restrictions.maxNumberOfFiles,
       maxTotalFileSize: this.plugin.uppy.opts.restrictions.maxTotalFileSize,
       uppyFiles: this.plugin.uppy.getFiles(),
-      passesRestrictions: this.plugin.uppy.passesRestrictions
+      validateRestrictions: this.plugin.uppy.validateRestrictions
     })
 
     return (

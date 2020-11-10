@@ -2,6 +2,7 @@ const classNames = require('classnames')
 const Filter = require('./Filter')
 const ItemList = require('./ItemList')
 const FooterActions = require('./FooterActions')
+const prettierBytes = require('@transloadit/prettier-bytes')
 const { h } = require('preact')
 
 const Browser = (props) => {
@@ -13,7 +14,8 @@ const Browser = (props) => {
     filterItems,
     filterInput,
     maxNumberOfFiles,
-    maxTotalFileSize
+    maxTotalFileSize,
+    i18n
   } = props
 
   let filteredFolders = folders
@@ -25,14 +27,15 @@ const Browser = (props) => {
   }
 
   const selected = currentSelection.length
+  let restrictionReason = ''
   let canSelectMore = true
 
   if (maxNumberOfFiles && (uppyFiles.length + selected >= maxNumberOfFiles)) {
     canSelectMore = false
+    restrictionReason = i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })
   }
 
   let totalCurrentSelectionFileSize = 0
-
   if (currentSelection) {
     currentSelection.forEach(file => {
       totalCurrentSelectionFileSize += file.size
@@ -41,6 +44,10 @@ const Browser = (props) => {
 
   if (maxTotalFileSize && totalCurrentSelectionFileSize >= maxTotalFileSize) {
     canSelectMore = false
+    restrictionReason = restrictionReason = i18n('exceedsSize2', {
+      backwardsCompat: i18n('exceedsSize'),
+      size: prettierBytes(maxTotalFileSize)
+    })
   }
 
   return (
@@ -68,7 +75,8 @@ const Browser = (props) => {
         showTitles={props.showTitles}
         i18n={props.i18n}
         viewType={props.viewType}
-        passesRestrictions={props.passesRestrictions}
+        validateRestrictions={props.validateRestrictions}
+        restrictionReason={restrictionReason}
         maxNumberOfFiles={props.maxNumberOfFiles}
         maxTotalFileSize={props.maxTotalFileSize}
         canSelectMore={canSelectMore}

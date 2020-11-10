@@ -1,6 +1,5 @@
 const { h } = require('preact')
 const remoteFileObjToLocal = require('@uppy/utils/lib/remoteFileObjToLocal')
-const prettierBytes = require('@transloadit/prettier-bytes')
 const Item = require('./Item/index')
 
 const getSharedProps = (fileOrFolder, props) => ({
@@ -38,27 +37,16 @@ module.exports = (props) => {
           })
         })}
         {props.files.map(file => {
-          console.log(file)
-          const passesRestrictions = props.passesRestrictions(
+          const validateRestrictions = props.validateRestrictions(
             remoteFileObjToLocal(file)
           )
           const sharedProps = getSharedProps(file, props)
-          let restrictionReason = passesRestrictions.reason
-          if (!props.canSelectMore && !sharedProps.isChecked) {
-            if (props.maxNumberOfFiles) {
-              restrictionReason = sharedProps.i18n('youCanOnlyUploadX', { smart_count: props.maxNumberOfFiles })
-            } else if (props.maxTotalFileSize) {
-              restrictionReason = sharedProps.i18n('exceedsSize2', {
-                backwardsCompat: sharedProps.i18n('exceedsSize'),
-                size: prettierBytes(props.maxTotalFileSize)
-              })
-            }
-          }
+          const restrictionReason = validateRestrictions.reason || props.restrictionReason
 
           return Item({
             ...sharedProps,
             type: 'file',
-            isDisabled: !passesRestrictions.result || (!props.canSelectMore && !sharedProps.isChecked),
+            isDisabled: !validateRestrictions.result || (!props.canSelectMore && !sharedProps.isChecked),
             restrictionReason: restrictionReason
           })
         })}

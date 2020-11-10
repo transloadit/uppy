@@ -1630,7 +1630,7 @@ describe('src/Core', () => {
       )
     })
 
-    it('should check if a file passesRestrictions', () => {
+    it('should check if a file validateRestrictions', () => {
       const core = new Core({
         restrictions: {
           minFileSize: 300000
@@ -1655,16 +1655,16 @@ describe('src/Core', () => {
         size: 270733
       }
 
-      const passesRestrictions1 = core.passesRestrictions(newFile)
-      const passesRestrictions2 = core2.passesRestrictions(newFile)
+      const validateRestrictions1 = core.validateRestrictions(newFile)
+      const validateRestrictions2 = core2.validateRestrictions(newFile)
 
-      expect(passesRestrictions1).toMatchObject(
+      expect(validateRestrictions1).toMatchObject(
         {
           result: false,
           reason: 'This file is smaller than the allowed size of 293 KB'
         }
       )
-      expect(passesRestrictions2).toMatchObject(
+      expect(validateRestrictions2).toMatchObject(
         {
           result: false,
           reason: 'You can only upload: image/png'

@@ -41,8 +41,10 @@ module.exports = (props) => {
 
       {props.type === 'file' ? (
         // label for a checkbox
-        <label for={props.id} className="uppy-u-reset uppy-ProviderBrowserItem-inner">
-          {props.itemIconEl}
+        <label for={props.id} class="uppy-u-reset uppy-ProviderBrowserItem-inner">
+          <div class="uppy-ProviderBrowserItem-iconWrap">
+            {props.itemIconEl}
+          </div>
           {props.showTitles && props.title}
         </label>
       ) : (
@@ -53,7 +55,9 @@ module.exports = (props) => {
           onclick={props.handleFolderClick}
           aria-label={props.i18n('openFolderNamed', { name: props.title })}
         >
-          {props.itemIconEl}
+          <div class="uppy-ProviderBrowserItem-iconWrap">
+            {props.itemIconEl}
+          </div>
           {props.showTitles && <span>{props.title}</span>}
         </button>
       )}
