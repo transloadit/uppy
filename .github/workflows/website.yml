@@ -2,7 +2,7 @@ name: Deploy uppy.io
 
 on:
   push:
-    branches: [master, github-actions]
+    branches: master
 
 jobs:
   deploy:
@@ -28,7 +28,7 @@ jobs:
       - name: Push to Github Pages
         uses: crazy-max/ghaction-github-pages@v2
         with:
-          target_branch: test-website-deploy-from-github-actions
+          target_branch: gh-pages
           build_dir: _deploy # relative to `github.workspace`
           committer: 'Uppy Bot <uppybot@uppy.io>'
           author: 'Uppy Bot <uppybot@uppy.io>'
