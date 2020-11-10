@@ -35,14 +35,19 @@ const Browser = (props) => {
     restrictionReason = i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })
   }
 
-  let totalCurrentSelectionFileSize = 0
+  let currentSelectionFileSizes = 0
+  let uppyFileSizes = 0
   if (currentSelection) {
     currentSelection.forEach(file => {
-      totalCurrentSelectionFileSize += file.size
+      currentSelectionFileSizes += file.size
+    })
+
+    uppyFiles.forEach(file => {
+      uppyFileSizes += file.size
     })
   }
 
-  if (maxTotalFileSize && totalCurrentSelectionFileSize >= maxTotalFileSize) {
+  if (maxTotalFileSize && (uppyFileSizes + currentSelectionFileSizes >= maxTotalFileSize)) {
     canSelectMore = false
     restrictionReason = restrictionReason = i18n('exceedsSize2', {
       backwardsCompat: i18n('exceedsSize'),
