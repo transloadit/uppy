@@ -3,10 +3,9 @@
   "version": "0.0.1",
   "private": false,
   "main": "lib/index.js",
-  "module": "lib/index.js",
-  "types": "types/components.d.ts",
+  "types": "types/index.d.ts",
   "scripts": {
-    "build": "parcel build src/index.ts --out-dir lib",
+    "build": "tsc",
     "dev": "parcel src/index.ts  --out-dir lib"
   },
   "peerDependencies": {

@@ -1,14 +1,10 @@
-<template>
-  <div ref="container" />
-</template>
-<script lang="ts">
 import Vue, { PropType } from 'vue'
 import type { Uppy, Plugin } from '@uppy/core'
-import DragDropPlugin from '@uppy/drag-drop'
+import ProgressBarPlugin from '@uppy/progress-bar'
 import { shallowEqualObjects } from 'shallow-equal'
 
 interface Data {
-  plugin: Plugin 
+  plugin: Plugin
 }
 interface Props {
   uppy: Uppy,
@@ -40,11 +36,11 @@ export default Vue.extend<Data, Methods, unknown, Props>({
     installPlugin () {
       const uppy = this.uppy
       const options = {
-        id: 'vue:DragDrop',
+        id: 'vue:ProgressBar',
         ...this.props,
         target: this.$refs.container
       }
-      uppy.use(DragDropPlugin, options)
+      uppy.use(ProgressBarPlugin, options)
       this.plugin = uppy.getPlugin(options.id)
     },
     uninstallPlugin (uppy: Uppy) {
@@ -55,7 +51,7 @@ export default Vue.extend<Data, Methods, unknown, Props>({
     this.uninstallPlugin(this.uppy)
   },
   watch: {
-    uppy (current: Uppy, old: Uppy) {
+    uppy (current, old) {
       if (old !== current) {
         this.uninstallPlugin(old)
         this.installPlugin()
@@ -66,6 +62,10 @@ export default Vue.extend<Data, Methods, unknown, Props>({
         this.plugin.setOptions(current)
       }
     }
+  },
+  render(createElement) {
+    return createElement('div', {
+      ref: 'container'
+    })
   }
 })
-</script>

@@ -1,20 +1,14 @@
-<template>
-  <div ref="container" />
-</template>
-<script lang="ts">
 import Vue, { PropType } from 'vue'
 import type { Uppy, Plugin } from '@uppy/core'
-import DashboardPlugin from '@uppy/dashboard'
+import DragDropPlugin from '@uppy/drag-drop'
 import { shallowEqualObjects } from 'shallow-equal'
 
 interface Data {
-  plugin: DashboardPlugin 
+  plugin: Plugin 
 }
 interface Props {
   uppy: Uppy,
   props: Object,
-  plugins: Plugin[],
-  open: boolean 
 }
 interface Methods {
   installPlugin(): void,
@@ -24,7 +18,7 @@ interface Methods {
 export default Vue.extend<Data, Methods, unknown, Props>({
   data () {
     return {
-      plugin: {} as DashboardPlugin
+      plugin: {} as Plugin
     }
   },
   props: {
@@ -33,13 +27,6 @@ export default Vue.extend<Data, Methods, unknown, Props>({
     },
     props: {
       type: Object
-    },
-    plugins: {
-      type: Array
-    },
-    open: {
-      type: Boolean,
-      required: true
     }
   },
   mounted () {
@@ -49,16 +36,12 @@ export default Vue.extend<Data, Methods, unknown, Props>({
     installPlugin () {
       const uppy = this.uppy
       const options = {
-        id: 'vue:DashboardModal',
-        plugins: this.plugins,
+        id: 'vue:DragDrop',
         ...this.props,
         target: this.$refs.container
       }
-      uppy.use(DashboardPlugin, options)
-      this.plugin = uppy.getPlugin(options.id) as DashboardPlugin
-      if (this.open) {
-        this.plugin.openModal()
-      }
+      uppy.use(DragDropPlugin, options)
+      this.plugin = uppy.getPlugin(options.id)
     },
     uninstallPlugin (uppy: Uppy) {
       uppy.removePlugin(this.plugin)
@@ -74,19 +57,15 @@ export default Vue.extend<Data, Methods, unknown, Props>({
         this.installPlugin()
       }
     },
-    open (current, old) {
-      if (current && !old) {
-        this.plugin.openModal()
-      }
-      if (!current && old) {
-        this.plugin.closeModal()
-      }
-    },
     props (current, old) {
       if (!shallowEqualObjects(current, old)) {
         this.plugin.setOptions(current)
       }
     }
+  },
+  render(createElement) {
+    return createElement('div', {
+      ref: 'container'
+    })
   }
 })
-</script>

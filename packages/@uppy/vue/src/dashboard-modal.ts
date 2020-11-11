@@ -1,18 +1,16 @@
-<template>
-  <div ref="container" />
-</template>
-<script lang="ts">
 import Vue, { PropType } from 'vue'
 import type { Uppy, Plugin } from '@uppy/core'
-import ProgressBarPlugin from '@uppy/progress-bar'
+import DashboardPlugin from '@uppy/dashboard'
 import { shallowEqualObjects } from 'shallow-equal'
 
 interface Data {
-  plugin: Plugin
+  plugin: DashboardPlugin 
 }
 interface Props {
   uppy: Uppy,
   props: Object,
+  plugins: Plugin[],
+  open: boolean 
 }
 interface Methods {
   installPlugin(): void,
@@ -22,7 +20,7 @@ interface Methods {
 export default Vue.extend<Data, Methods, unknown, Props>({
   data () {
     return {
-      plugin: {} as Plugin
+      plugin: {} as DashboardPlugin
     }
   },
   props: {
@@ -31,6 +29,13 @@ export default Vue.extend<Data, Methods, unknown, Props>({
     },
     props: {
       type: Object
+    },
+    plugins: {
+      type: Array
+    },
+    open: {
+      type: Boolean,
+      required: true
     }
   },
   mounted () {
@@ -40,12 +45,16 @@ export default Vue.extend<Data, Methods, unknown, Props>({
     installPlugin () {
       const uppy = this.uppy
       const options = {
-        id: 'vue:ProgressBar',
+        id: 'vue:DashboardModal',
+        plugins: this.plugins,
         ...this.props,
         target: this.$refs.container
       }
-      uppy.use(ProgressBarPlugin, options)
-      this.plugin = uppy.getPlugin(options.id)
+      uppy.use(DashboardPlugin, options)
+      this.plugin = uppy.getPlugin(options.id) as DashboardPlugin
+      if (this.open) {
+        this.plugin.openModal()
+      }
     },
     uninstallPlugin (uppy: Uppy) {
       uppy.removePlugin(this.plugin)
@@ -55,10 +64,18 @@ export default Vue.extend<Data, Methods, unknown, Props>({
     this.uninstallPlugin(this.uppy)
   },
   watch: {
-    uppy (current, old) {
+    uppy (current: Uppy, old: Uppy) {
       if (old !== current) {
         this.uninstallPlugin(old)
         this.installPlugin()
+      }
+    },
+    open (current, old) {
+      if (current && !old) {
+        this.plugin.openModal()
+      }
+      if (!current && old) {
+        this.plugin.closeModal()
       }
     },
     props (current, old) {
@@ -66,6 +83,10 @@ export default Vue.extend<Data, Methods, unknown, Props>({
         this.plugin.setOptions(current)
       }
     }
+  },
+  render(createElement) {
+    return createElement('div', {
+      ref: 'container'
+    })
   }
 })
-</script>

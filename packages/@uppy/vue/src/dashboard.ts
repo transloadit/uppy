@@ -1,24 +1,19 @@
-<template>
-  <div ref="container" />
-</template>
-<script lang="ts">
 import Vue, { PropType } from 'vue'
 import type { Uppy, Plugin } from '@uppy/core'
-import StatusBarPlugin from '@uppy/status-bar'
+import DashboardPlugin from '@uppy/dashboard'
 import { shallowEqualObjects } from 'shallow-equal'
-
 interface Data {
-  plugin: Plugin
+  plugin: Plugin 
 }
 interface Props {
   uppy: Uppy,
   props: Object,
+  plugins: Plugin[]
 }
 interface Methods {
   installPlugin(): void,
   uninstallPlugin(uppy: Uppy): void,
 }
-
 export default Vue.extend<Data, Methods, unknown, Props>({
   data () {
     return {
@@ -31,6 +26,9 @@ export default Vue.extend<Data, Methods, unknown, Props>({
     },
     props: {
       type: Object
+    },
+    plugins: {
+      type: Array
     }
   },
   mounted () {
@@ -40,11 +38,13 @@ export default Vue.extend<Data, Methods, unknown, Props>({
     installPlugin () {
       const uppy = this.uppy
       const options = {
-        id: 'vue:StatusBar',
+        id: 'vue:Dashboard',
+        inline: true,
+        plugins: this.plugins,
         ...this.props,
         target: this.$refs.container
       }
-      uppy.use(StatusBarPlugin, options)
+      uppy.use(DashboardPlugin, options)
       this.plugin = uppy.getPlugin(options.id)
     },
     uninstallPlugin (uppy: Uppy) {
@@ -55,7 +55,7 @@ export default Vue.extend<Data, Methods, unknown, Props>({
     this.uninstallPlugin(this.uppy)
   },
   watch: {
-    uppy (current, old) {
+    uppy (current: Uppy, old: Uppy) {
       if (old !== current) {
         this.uninstallPlugin(old)
         this.installPlugin()
@@ -66,6 +66,10 @@ export default Vue.extend<Data, Methods, unknown, Props>({
         this.plugin.setOptions(current)
       }
     }
+  },
+  render(createElement) {
+    return createElement('div', {
+      ref: 'container'
+    })
   }
 })
-</script>

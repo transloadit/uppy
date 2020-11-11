@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "target": "es5",
+    "module": "ESNext",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
@@ -9,8 +9,10 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
+    "declaration": true,
     "baseUrl": ".",
+    "declarationDir": "types",
+    "outDir": "lib",
     "paths": {
       "@/*": [
         "src/*"
@@ -24,11 +26,11 @@
     ]
   },
   "include": [
-    "src/**/*.ts",
+    "src/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx", "src/dashboard.ts"
   ],
   "exclude": [
     "node_modules"
