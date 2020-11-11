@@ -109,7 +109,8 @@ class Uppy {
       onBeforeFileAdded: (currentFile, files) => currentFile,
       onBeforeUpload: (files) => files,
       store: DefaultStore(),
-      logger: justErrorsLogger
+      logger: justErrorsLogger,
+      infoTimeout: 5000
     }
 
     // Merge default options with the ones set by user,
@@ -566,7 +567,7 @@ class Uppy {
     // Sometimes informer has to be shown manually by the developer,
     // for example, in `onBeforeFileAdded`.
     if (showInformer) {
-      this.info({ message: message, details: details }, 'error', 5000)
+      this.info({ message: message, details: details }, 'error', this.opts.infoTimeout)
     }
 
     if (throwErr) {
@@ -756,7 +757,7 @@ class Uppy {
       this.info({
         message: this.i18n('addBulkFilesFailed', { smart_count: errors.length }),
         details: message
-      }, 'error', 5000)
+      }, 'error', this.opts.infoTimeout)
 
       const err = new Error(message)
       err.errors = errors

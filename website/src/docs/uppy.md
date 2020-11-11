@@ -86,7 +86,8 @@ const uppy = new Uppy({
   onBeforeUpload: (files) => {},
   locale: {},
   store: new DefaultStore(),
-  logger: justErrorsLogger
+  logger: justErrorsLogger,
+  infoTimeout: 5000
 })
 ```
 
@@ -334,7 +335,6 @@ locale: {
 
 We are using a forked [Polyglot.js](https://github.com/airbnb/polyglot.js/blob/master/index.js#L37-L60).
 
-
 ### `store: defaultStore()`
 
 The Store that is used to keep track of internal state. By [default](/docs/stores/#DefaultStore), a simple object is used.
@@ -342,6 +342,12 @@ The Store that is used to keep track of internal state. By [default](/docs/store
 This option can be used to plug Uppy state into an external state management library, such as [Redux](/docs/stores/#ReduxStore). You can then write custom views with the library that is also used by the rest of the application.
 
 <!-- TODO document store API -->
+
+### `infoTimeout`
+
+**default:** 5000
+
+Set the time during which the Informer message will be visible with messages about errors, restrictions, etc.
 
 ## File Objects
 
