@@ -51,6 +51,10 @@ Maximum file size in bytes for each individual file.
 
 Minimum file size in bytes for each individual file.
 
+### `restrictions.maxTotalFileSize`
+
+Maximum file size in bytes for all the files together.
+
 ### `restrictions.maxNumberOfFiles`
 
 The total number of files that can be selected. If this is equal to 1, users can only select a single file in system dialogs; else they can select multiple.

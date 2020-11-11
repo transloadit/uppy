@@ -54,6 +54,11 @@ const getConfigFromEnv = () => {
         secret: getSecret('COMPANION_ZOOM_SECRET'),
         verificationToken: getSecret('COMPANION_ZOOM_VERIFICATION_TOKEN')
       },
+      searchProviders: {
+        unsplash: {
+          key: process.env.COMPANION_UNSPLASH_KEY
+        }
+      },
       s3: {
         key: process.env.COMPANION_AWS_KEY,
         secret: getSecret('COMPANION_AWS_SECRET'),

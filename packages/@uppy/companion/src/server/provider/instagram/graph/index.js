@@ -2,7 +2,7 @@ const Provider = require('../../Provider')
 
 const request = require('request')
 const purest = require('purest')({ request })
-const utils = require('../../../helpers/utils')
+const { getURLMeta } = require('../../../helpers/request')
 const logger = require('../../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../../error')
@@ -118,7 +118,7 @@ class Instagram extends Provider {
           return done(err)
         }
 
-        utils.getURLMeta(body.media_url)
+        getURLMeta(body.media_url)
           .then(({ size }) => done(null, size))
           .catch((err) => {
             logger.error(err, 'provider.instagram.size.error')
@@ -142,6 +142,7 @@ class Instagram extends Provider {
         name: adapter.getItemName(item, i),
         mimeType: adapter.getMimeType(item),
         id: adapter.getItemId(item),
+        size: null,
         thumbnail: adapter.getItemThumbnailUrl(item),
         requestPath: adapter.getItemRequestPath(item),
         modifiedDate: adapter.getItemModifiedDate(item)

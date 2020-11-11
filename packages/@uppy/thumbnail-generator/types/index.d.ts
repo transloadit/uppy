@@ -3,8 +3,12 @@ import ThumbnailGeneratorLocale = require('./generatedLocale')
 
 declare module ThumbnailGenerator {
   interface ThumbnailGeneratorOptions extends Uppy.PluginOptions {
-    thumbnailWidth?: number
-    locale?: ThumbnailGeneratorLocale
+    thumbnailWidth?: number,
+    thumbnailHeight?: number,
+    thumbnailType?: string, 
+    waitForThumbnailsBeforeUpload?: boolean,
+    lazy?: boolean,
+    locale?: ThumbnailGeneratorLocale,
   }
 }
 

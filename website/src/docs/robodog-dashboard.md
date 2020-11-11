@@ -53,6 +53,10 @@ Maximum file size in bytes for each individual file.
 
 Minimum file size in bytes for each individual file.
 
+### `restrictions.maxTotalFileSize`
+
+Maximum file size in bytes for all the files together.
+
 ### `restrictions.maxNumberOfFiles`
 
 The total number of files that can be selected. If this is larger than 1, the `multiple` attribute will be added to `<input type="file">` fields.

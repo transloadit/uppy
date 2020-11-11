@@ -16,6 +16,7 @@ en_US.strings = {
   authenticateWith: 'Connect to %{pluginName}',
   authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
   back: 'Back',
+  backToSearch: 'Back to Search',
   browse: 'browse',
   browseFiles: 'browse files',
   browseFolders: 'browse folders',
@@ -49,6 +50,7 @@ en_US.strings = {
   emptyFolderAdded: 'No files were added from empty folder',
   encoding: 'Encoding...',
   enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
+  enterTextToSearch: 'Enter text to search for images',
   enterUrlToImport: 'Enter URL to import a file',
   exceedsSize: 'This file exceeds maximum allowed size of',
   exceedsSize2: '%{backwardsCompat} %{size}',
@@ -103,6 +105,7 @@ en_US.strings = {
   rotate: 'Rotate',
   save: 'Save',
   saveChanges: 'Save changes',
+  searchImages: 'Search for images',
   selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
   selectFileNamed: 'Select file %{name}',
   selectX: {

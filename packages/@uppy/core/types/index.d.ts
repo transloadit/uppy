@@ -76,6 +76,7 @@ declare module Uppy {
   interface Restrictions {
     maxFileSize?: number | null
     minFileSize?: number | null
+    maxTotalFileSize?: number | null
     maxNumberOfFiles?: number | null
     minNumberOfFiles?: number | null
     allowedFileTypes?: string[] | null
@@ -97,6 +98,7 @@ declare module Uppy {
     }) => { [key: string]: UppyFile<TMeta> } | boolean
     locale?: Locale
     store?: Store
+    infoTimeout?: number
   }
 
   interface UploadResult<

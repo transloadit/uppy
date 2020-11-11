@@ -8,11 +8,14 @@ const drive = require('./drive')
 const instagram = require('./instagram/graph')
 const facebook = require('./facebook')
 const onedrive = require('./onedrive')
+const unsplash = require('./unsplash')
 const zoom = require('./zoom')
 const { getURLBuilder } = require('../helpers/utils')
 const logger = require('../logger')
 // eslint-disable-next-line
 const Provider = require('./Provider')
+// eslint-disable-next-line
+const SearchProvider = require('./SearchProvider')
 
 // leave here for now until Purest Providers gets updated with Zoom provider
 config.zoom = {
@@ -43,7 +46,7 @@ config.zoom = {
  * adds the desired provider module to the request object,
  * based on the providerName parameter specified
  *
- * @param {Object.<string, typeof Provider>} providers
+ * @param {Object.<string, (typeof Provider) | typeof SearchProvider>} providers
  */
 module.exports.getProviderMiddleware = (providers) => {
   /**
@@ -74,6 +77,13 @@ module.exports.getDefaultProviders = (companionOptions) => {
   const providers = { dropbox, drive, facebook, onedrive, zoom, instagram }
 
   return providers
+}
+
+/**
+ * @return {Object.<string, typeof SearchProvider>}
+ */
+module.exports.getSearchProviders = () => {
+  return { unsplash }
 }
 
 /**
