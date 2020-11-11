@@ -1,3 +1,5 @@
+const remoteFileObjToLocal = require('@uppy/utils/lib/remoteFileObjToLocal')
+
 module.exports = class SharedHandler {
   constructor (plugin) {
     this.plugin = plugin
@@ -42,6 +44,20 @@ module.exports = class SharedHandler {
       } else {
         currentSelection = items.slice(currentIndex, prevIndex + 1)
       }
+      // Check restrictions on each file in currentSelection,
+      // reduce it to only contain files that pass restrictions
+      currentSelection = currentSelection.reduce((reducedCurrentSelection, item) => {
+        const uppy = this.plugin.uppy
+        const validatedRestrictions = uppy.validateRestrictions(
+          remoteFileObjToLocal(item),
+          [...uppy.getFiles(), ...reducedCurrentSelection]
+        )
+        if (!validatedRestrictions.result) {
+          uppy.info({ message: validatedRestrictions.reason }, 'error', uppy.opts.infoTimeout)
+          return reducedCurrentSelection
+        }
+        return [...reducedCurrentSelection, item]
+      })
       this.plugin.setPluginState({ currentSelection })
       return
     }
