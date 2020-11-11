@@ -199,10 +199,12 @@ module.exports = class Tus extends Plugin {
       // the other in folder b.
       uploadOptions.fingerprint = getFingerprint(file)
 
-      if (typeof uploadOptions.onBeforeRequest !== 'function') {
-        uploadOptions.onBeforeRequest = (req) => {
-          const xhr = req.getUnderlyingObject()
-          xhr.withCredentials = !!opts.withCredentials
+      uploadOptions.onBeforeRequest = (req) => {
+        const xhr = req.getUnderlyingObject()
+        xhr.withCredentials = !!opts.withCredentials
+
+        if (typeof opts.onBeforeRequest === 'function') {
+          opts.onBeforeRequest(req)
         }
       }
 
