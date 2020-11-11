@@ -1,24 +1,11 @@
-import Vue, { PropType } from 'vue'
-import type { Uppy, Plugin } from '@uppy/core'
-import ProgressBarPlugin from '@uppy/progress-bar'
+import Vue from 'vue'
+import DragDropPlugin from '@uppy/drag-drop'
 import { shallowEqualObjects } from 'shallow-equal'
 
-interface Data {
-  plugin: Plugin
-}
-interface Props {
-  uppy: Uppy,
-  props: Object,
-}
-interface Methods {
-  installPlugin(): void,
-  uninstallPlugin(uppy: Uppy): void,
-}
-
-export default Vue.extend<Data, Methods, unknown, Props>({
+export default Vue.extend({
   data () {
     return {
-      plugin: {} as Plugin
+      plugin: {}
     }
   },
   props: {
@@ -36,14 +23,14 @@ export default Vue.extend<Data, Methods, unknown, Props>({
     installPlugin () {
       const uppy = this.uppy
       const options = {
-        id: 'vue:ProgressBar',
+        id: 'vue:DragDrop',
         ...this.props,
         target: this.$refs.container
       }
-      uppy.use(ProgressBarPlugin, options)
+      uppy.use(DragDropPlugin, options)
       this.plugin = uppy.getPlugin(options.id)
     },
-    uninstallPlugin (uppy: Uppy) {
+    uninstallPlugin (uppy) {
       uppy.removePlugin(this.plugin)
     }
   },
@@ -63,7 +50,7 @@ export default Vue.extend<Data, Methods, unknown, Props>({
       }
     }
   },
-  render(createElement) {
+  render (createElement) {
     return createElement('div', {
       ref: 'container'
     })

@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import type { Uppy, Plugin } from '@uppy/core';
+import * as DashboardPlugin from '@uppy/dashboard';
 interface Data {
-    plugin: Plugin;
+    plugin: DashboardPlugin;
 }
 interface Props {
     uppy: Uppy;

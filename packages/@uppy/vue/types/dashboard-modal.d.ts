@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import type { Uppy, Plugin } from '@uppy/core';
-import DashboardPlugin from '@uppy/dashboard';
+import * as DashboardPlugin from '@uppy/dashboard';
 interface Data {
     plugin: DashboardPlugin;
 }
