@@ -38,15 +38,16 @@ module.exports = (props) => {
         })}
         {props.files.map(file => {
           const validateRestrictions = props.validateRestrictions(
-            remoteFileObjToLocal(file)
+            remoteFileObjToLocal(file),
+            [...props.uppyFiles, ...props.currentSelection]
           )
           const sharedProps = getSharedProps(file, props)
-          const restrictionReason = validateRestrictions.reason || props.restrictionReason
+          const restrictionReason = validateRestrictions.reason
 
           return Item({
             ...sharedProps,
             type: 'file',
-            isDisabled: !validateRestrictions.result || (!props.canSelectMore && !sharedProps.isChecked),
+            isDisabled: !validateRestrictions.result && !sharedProps.isChecked,
             restrictionReason: restrictionReason
           })
         })}

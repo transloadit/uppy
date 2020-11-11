@@ -429,15 +429,16 @@ class Uppy {
   }
 
   /**
-   * A public wrapper for _checkRestrictions — checks if file passes a set of restrictions.
+   * A public wrapper for _checkRestrictions — checks if a file passes a set of restrictions.
    * For use in UI pluigins (like Providers), to disallow selecting files that won’t pass restrictions.
    *
    * @param {object} file object to check
+   * @param {Array} [files] array to check maxNumberOfFiles and maxTotalFileSize
    * @returns {object} { result: true/false, reason: why file didn’t pass restrictions }
    */
-  validateRestrictions (file) {
+  validateRestrictions (file, files) {
     try {
-      this._checkRestrictions(file)
+      this._checkRestrictions(file, files)
       return {
         result: true
       }
@@ -454,11 +455,11 @@ class Uppy {
    * maxNumberOfFiles and allowedFileTypes.
    *
    * @param {object} file object to check
+   * @param {Array} [files] array to check maxNumberOfFiles and maxTotalFileSize
    * @private
    */
-  _checkRestrictions (file) {
+  _checkRestrictions (file, files = this.getFiles()) {
     const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
-    const files = this.getFiles()
 
     if (maxNumberOfFiles) {
       if (files.length + 1 > maxNumberOfFiles) {
@@ -492,7 +493,7 @@ class Uppy {
       let totalFilesSize = 0
       totalFilesSize += file.size
       files.forEach((file) => {
-        totalFilesSize += file.data.size
+        totalFilesSize += file.size
       })
       if (totalFilesSize > maxTotalFileSize) {
         throw new RestrictionError(this.i18n('exceedsSize2', {
