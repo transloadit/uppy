@@ -1,8 +1,7 @@
-import Vue from 'vue'
 import DashboardPlugin from '@uppy/dashboard'
 import { shallowEqualObjects } from 'shallow-equal'
 
-export default Vue.extend({
+export default {
   data () {
     return {
       plugin: {}
@@ -65,7 +64,7 @@ export default Vue.extend({
     },
     props (current, old) {
       if (!shallowEqualObjects(current, old)) {
-        this.plugin.setOptions(current)
+        this.plugin.setOptions({ ...current })
       }
     }
   },
@@ -74,4 +73,4 @@ export default Vue.extend({
       ref: 'container'
     })
   }
-})
+}
