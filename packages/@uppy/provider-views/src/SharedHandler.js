@@ -53,7 +53,7 @@ module.exports = class SharedHandler {
           [...uppy.getFiles(), ...reducedCurrentSelection]
         )
         if (!validatedRestrictions.result) {
-          uppy.info({ message: validatedRestrictions.reason }, 'error', 5000)
+          uppy.info({ message: validatedRestrictions.reason }, 'error', uppy.opts.infoTimeout)
           return reducedCurrentSelection
         }
         return [...reducedCurrentSelection, item]
