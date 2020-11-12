@@ -23,17 +23,11 @@ module.exports = class Editor extends Component {
   }
 
   renderRevert () {
-    const { i18n, opts } = this.props
-
-    if (!opts.actions.revert) {
-      return null
-    }
-
     return (
       <button
         type="button"
         class="uppy-u-reset uppy-c-btn"
-        aria-label={i18n('revert')}
+        aria-label={this.props.i18n('revert')}
         data-microtip-position="top"
         role="tooltip"
         onClick={() => {
@@ -50,18 +44,12 @@ module.exports = class Editor extends Component {
   }
 
   renderRotate () {
-    const { i18n, opts } = this.props
-
-    if (!opts.actions.rotate) {
-      return null
-    }
-
     return (
       <button
         type="button"
         class="uppy-u-reset uppy-c-btn"
         onClick={() => this.cropper.rotate(90)}
-        aria-label={i18n('rotate')}
+        aria-label={this.props.i18n('rotate')}
         data-microtip-position="top"
         role="tooltip"
       >
@@ -74,17 +62,11 @@ module.exports = class Editor extends Component {
   }
 
   renderFlip () {
-    const { i18n, opts } = this.props
-
-    if (!opts.actions.flit) {
-      return null
-    }
-
     return (
       <button
         type="button"
         class="uppy-u-reset uppy-c-btn"
-        aria-label={i18n('flipHorizontal')}
+        aria-label={this.props.i18n('flipHorizontal')}
         data-microtip-position="top"
         role="tooltip"
         onClick={() => this.cropper.scaleX(-this.cropper.getData().scaleX || -1)}
@@ -98,17 +80,11 @@ module.exports = class Editor extends Component {
   }
 
   renderZoomIn () {
-    const { i18n, opts } = this.props
-
-    if (!opts.actions.zoomIn) {
-      return null
-    }
-
     return (
       <button
         type="button"
         class="uppy-u-reset uppy-c-btn"
-        aria-label={i18n('flipHorizontal')}
+        aria-label={this.props.i18n('flipHorizontal')}
         data-microtip-position="top"
         role="tooltip"
         onClick={() => this.cropper.scaleX(-this.cropper.getData().scaleX || -1)}
@@ -122,17 +98,11 @@ module.exports = class Editor extends Component {
   }
 
   renderZoomOut () {
-    const { i18n, opts } = this.props
-
-    if (!opts.actions.zoomOut) {
-      return null
-    }
-
     return (
       <button
         type="button"
         class="uppy-u-reset uppy-c-btn"
-        aria-label={i18n('zoomOut')}
+        aria-label={this.props.i18n('zoomOut')}
         data-microtip-position="top"
         role="tooltip"
         onClick={() => this.cropper.zoom(-0.1)}
@@ -146,17 +116,11 @@ module.exports = class Editor extends Component {
   }
 
   renderCropSquare () {
-    const { i18n, opts } = this.props
-
-    if (!opts.actions.cropSquare) {
-      return null
-    }
-
     return (
       <button
         type="button"
         class="uppy-u-reset uppy-c-btn"
-        aria-label={i18n('aspectRatioSquare')}
+        aria-label={this.props.i18n('aspectRatioSquare')}
         data-microtip-position="top"
         role="tooltip"
         onClick={() => this.cropper.setAspectRatio(1)}
@@ -170,17 +134,11 @@ module.exports = class Editor extends Component {
   }
 
   renderCropWidescreen () {
-    const { i18n, opts } = this.props
-
-    if (!opts.actions.cropWidescreen) {
-      return null
-    }
-
     return (
       <button
         type="button"
         class="uppy-u-reset uppy-c-btn"
-        aria-label={i18n('aspectRatioLandscape')}
+        aria-label={this.props.i18n('aspectRatioLandscape')}
         data-microtip-position="top"
         role="tooltip"
         onClick={() => this.cropper.setAspectRatio(16 / 9)}
@@ -194,17 +152,11 @@ module.exports = class Editor extends Component {
   }
 
   renderCropWidescreenVertical () {
-    const { i18n, opts } = this.props
-
-    if (!opts.actions.cropWidescreenVertical) {
-      return null
-    }
-
     return (
       <button
         type="button"
         class="uppy-u-reset uppy-c-btn"
-        aria-label={i18n('aspectRatioPortrait')}
+        aria-label={this.props.i18n('aspectRatioPortrait')}
         data-microtip-position="top"
         role="tooltip"
         onClick={() => this.cropper.setAspectRatio(9 / 16)}
@@ -218,7 +170,8 @@ module.exports = class Editor extends Component {
   }
 
   render () {
-    const { currentImage, i18n } = this.props
+    const { currentImage, i18n, opts } = this.props
+    const actions = opts.actions
     // eslint-disable-next-line compat/compat
     const imageURL = URL.createObjectURL(currentImage.data)
 
@@ -248,14 +201,14 @@ module.exports = class Editor extends Component {
             </svg>
           </button>
 
-          {this.renderRevert()}
-          {this.renderRotate()}
-          {this.renderFlip()}
-          {this.renderZoomIn()}
-          {this.renderZoomOut()}
-          {this.renderCropSquare()}
-          {this.renderCropWidescreen()}
-          {this.renderCropWidescreenVertical()}
+          {actions.revert && this.renderRevert()}
+          {actions.rotate && this.renderRotate()}
+          {actions.flip && this.renderFlip()}
+          {actions.zoomIn && this.renderZoomIn()}
+          {actions.zoomOut && this.renderZoomOut()}
+          {actions.cropSquare && this.renderCropSquare()}
+          {actions.cropWidescreen && this.renderCropWidescreen()}
+          {actions.cropWidescreenVertical && this.renderCropWidescreenVertical()}
         </div>
       </div>
     )
