@@ -1,109 +1,98 @@
 os: linux
 dist: bionic
 language: node_js
-
-# Addons configuration that can be referenced by each `jobs` matrix entry,
-# this way we can easily enable Sauce Connect for end-to-end tests only.
-.apt: &APT
+".apt": &1
   sources:
   - ubuntu-toolchain-r-test
   packages:
   - g++-4.8
-.hosts: &HOSTS
-  - companion.test
-.sauce_connect: &SAUCE
+".hosts": &2
+- companion.test
+".sauce_connect": &3
   username:
     secure: nAMJ/d1fm9urTYsQ+1uqj6Jjf71J8rzwYBSZbTDAeUEZzAdvGc0a9H3PYWM4pnUDPo5s1c9MMetXi2XNdUbXgMKHbEnePZ2mJamqFtXMmpG8pgFmMqj+btMd7Yybt070tRsn4Vy0uBSi2H/en7F3j+grABJV+SAXqWkSB7CU1fZaN/u0DpoGBNj1ZNwkYCIhpLueYJTPRWBOodMAarXuFv5+7KFOKuZM3tF/JjsMNSSaDgTkz13BZnbX6vNPxGJJNJcyJGSaXrVW8hh1Zmvnk/XdiLy+vt7Wz1wz3A9ebiFDuydo5AAkxrLFsCJ5nGEqLg3bkr6NaTRpbM84ZT3i1FQMTdKP6OHHqwAeBscB6BkyhZhzvsFtl2YRBNK9mA3OtOYvBmTkFkNqvrPQlfu7cFtyG5+AUfSCiTTgS/vWIwoqSVAXaOEqN8Fp54ecUdkzCTttl3gXteZzNLRYvyQcFpoJb6E+dS8qAW0OFOteiwKVuPCh3nGUzBP13bRo1i9UAX7ZCTlpjinkxE8ryzbToo6ZcVQMBAkKhaw/x8GzOtfm5rgYMeQzGEoBJNfr7qqfs7JMxAIEMYjrTL9PXVOp/R8F3FdsqbV70jSyfsxMSMkwSWFRmVslG8+Djy8P3LnckGy1FEbMHnH8GZHZg+hbBzN8Be1/1fV0oRRAr939WRc=
   access_key:
     secure: OY3oWwiJghfty9wSPVvlhirvFGxPHDdIRuVkzAv6j7C/hj2BWYAP/UHrwdQ9XiYisHi/B5mGeyRVlrAf0MNGrG84rTDUbTWZbmktfuxl7A+Y6c0czk+s4SdhOiANG5b3tFl5wKq8h7uhrWH5/jWoKQ2Fz1VDCqxTvvZQbo41jSBhi7TBia626hxEePzdaiuw6HhGFZtfaoVs/FX30ylz8WDNrBjwCynjxsT52BaQrVvgEhuyzlOpI69YkZBPOq4fc3KiZ2YR43gLTx8K+sYCE9yJxdg1xT/UAawEhmedU83nyBZVo4rr7+03AixIxtI28MUCfBMlcsGwBxcKEKY/IWcp9UkPCq6+zALQoncV478tP21eYvlmxSFhYCrv+WEQlN+BcNjr4OJlmmFDbCVaF7r9qLeQPImU0+9iJU3OjrW7lpfLxORpGDEr2Nx6awKkIJCxNyK9weefeNo6Fz3V1kkyZ/7yWFeniJnRUCbahrB2XgzxIE+W307s1Qs4fm6JK7hVLTtG4fBzjChmAyGIzu744ws9WqmjvkC9D7OfnuXqanv/VcBFqPiudInerv7NL8FketUC+fxe/7XJfcxdaDGBjk8Kq7zXDohGRGymUXEoMDNJsKkMMlaKzdf7tgqdhsRJoH9NCVqrDXuG5al0UtrDP5RS7qfoxUunJmNFhlg=
   no_ssl_bump_domains: companion.test
-
 jobs:
   include:
-    # Run e2e tests on branch builds, not PRs
-    # Start this first because it takes a while, so it doesn't only start running after
-    # other jobs have run
-    - name: 'Run end-to-end browser tests'
-      node_js: 12
-      if: type = push
-      addons:
-        apt: *APT
-        hosts: *HOSTS
-        sauce_connect: *SAUCE
-      script: npm run test:endtoend
-    - name: 'Run unit tests'
-      node_js: 14
-      script: npm run test:unit
-    - name: 'Run unit tests (Node.js 10)'
-      node_js: 10
-      script: npm run test:unit
-    - name: 'Run linting'
-      node_js: 12
-      script:
-        - npm run lint
-    - name: 'Run Markdown linting'
-      node_js: 12
-      script:
-        - npm run lint:markdown
-    - name: 'Run type tests'
-      node_js: 12
-      script:
-        # Need to do a bunch of work to generate the locale typings 🙃
-        - npm run build:lib
-        - npm run build:companion
-        - npm run build:locale-pack
-        - npm run test:type
-    - name: 'Build'
-      node_js: 12
-      if: NOT (branch = master AND type = push AND commit_message =~ /^Release/)
-      script:
-        - npm run build
-    - name: 'Build and update CDN releases'
-      node_js: 12
-      if: branch = master AND type = push AND commit_message =~ /^Release/
-      script:
-        - npm run build
-        - npm run uploadcdn uppy
-        - npm run uploadcdn @uppy/robodog
-        - npm run uploadcdn @uppy/locales
-    - name: 'Run Companion tests'
-      node_js: 12
-      services:
-        - docker
-      script: npm run test:companion
-      deploy:
-      - provider: heroku
-        api_key:
-          secure: "IbnHioWy5xFxd3QjlX9cGtQVxLHgvIfYFKkdRke7QRh+Rmpt+b1KjPr2h+/SXI2OcTM+XerViQH6P8mGXCKJqPaBS0/FrabuS7blTQv3K0rP81WkgWjdWxYC04uU4GZWpyZkgnV3lJBxcfRaots2OHcnQI6+fdeP25qM9n7g+G8y+btSXru0xZVyJVJ+e0nsl38CuAnxfh0GSmS+4Dd1E1lQIxvlwORZCJmUOU31knxN7T82GQW6O8e23Yqv2HTdPFRUqhOYA0IfdqS+X55yp8GfvJJvtPe7IMr4i/Yn8M0Uhp4ZwkKjTzKYLRwWojTXUxP1zfU6qQxDKu8aWdVGRz6rm39IX9UYThaAqPNyci36fzIidJyJUosUj9WM6Ds7Qs4dLCsLIgTfb/Nl7sPT6P8SSWePb+P4jZr11qL+LlAP1ZzA7c34QCG9wxJG8Qrh2hQi9JMdupmYNF6/0q0Iisya+vPdxRFpsXVdXU7xVW28UwLxVNhw/2yhSNlRlgE/HYfr21zMyRQGW72mJ0AO5jNVbl8paGL96/W0UtjTlZrb4zu7fOW9SJdi6TWkfZx5WhSvHG59P4Ph1nMuty6LG5dYvdqDF/BV4SoK8bdJ8U6O8BOom8hhqZv+lDuP0O60gQVTR17nUQ2aRbI4OAUuJt61QTyPpO2tcJXKN6chH3s="
-        skip_cleanup: true
-        app: companion-demo
-        on:
-          branch: master
-    - name: 'Run Companion tests (Node.js 10)'
-      node_js: 12
-      services:
-        - docker
-      script:
-        - nvm install 10.20.1
-        - nvm use 10.20.1
-        - npm run test:companion
-    # Build the website when things are merged to master
-    # https://docs.travis-ci.com/user/deployment/#Conditional-Releases-with-on
-    - name: 'Build website'
-      node_js: 12
-      if: branch = master AND type = push
-      script: 'true' # no-op, `deploy` step will do the work
-      deploy:
-      - provider: script
-        skip_cleanup: true
-        script: bin/travis-deploy
-
+  - name: Run end-to-end browser tests
+    node_js: 12
+    if: type = push
+    addons:
+      apt: *1
+      hosts: *2
+      sauce_connect: *3
+    script: npm run test:endtoend
+  - name: Run unit tests
+    node_js: 14
+    script: npm run test:unit
+  - name: Run unit tests (Node.js 10)
+    node_js: 10
+    script: npm run test:unit
+  - name: Run linting
+    node_js: 12
+    script:
+    - npm run lint
+  - name: Run Markdown linting
+    node_js: 12
+    script:
+    - npm run lint:markdown
+  - name: Run type tests
+    node_js: 12
+    script:
+    - npm run build:lib
+    - npm run build:companion
+    - npm run build:locale-pack
+    - npm run test:type
+  - name: Build
+    node_js: 12
+    if: NOT (branch = master AND type = push AND commit_message =~ /^Release/)
+    script:
+    - npm run build
+  - name: Build and update CDN releases
+    node_js: 12
+    if: branch = master AND type = push AND commit_message =~ /^Release/
+    script:
+    - npm run build
+    - npm run uploadcdn uppy
+    - npm run uploadcdn @uppy/robodog
+    - npm run uploadcdn @uppy/locales
+  - name: Run Companion tests
+    node_js: 12
+    services:
+    - docker
+    script: npm run test:companion
+    deploy:
+    - provider: heroku
+      api_key:
+        secure: IbnHioWy5xFxd3QjlX9cGtQVxLHgvIfYFKkdRke7QRh+Rmpt+b1KjPr2h+/SXI2OcTM+XerViQH6P8mGXCKJqPaBS0/FrabuS7blTQv3K0rP81WkgWjdWxYC04uU4GZWpyZkgnV3lJBxcfRaots2OHcnQI6+fdeP25qM9n7g+G8y+btSXru0xZVyJVJ+e0nsl38CuAnxfh0GSmS+4Dd1E1lQIxvlwORZCJmUOU31knxN7T82GQW6O8e23Yqv2HTdPFRUqhOYA0IfdqS+X55yp8GfvJJvtPe7IMr4i/Yn8M0Uhp4ZwkKjTzKYLRwWojTXUxP1zfU6qQxDKu8aWdVGRz6rm39IX9UYThaAqPNyci36fzIidJyJUosUj9WM6Ds7Qs4dLCsLIgTfb/Nl7sPT6P8SSWePb+P4jZr11qL+LlAP1ZzA7c34QCG9wxJG8Qrh2hQi9JMdupmYNF6/0q0Iisya+vPdxRFpsXVdXU7xVW28UwLxVNhw/2yhSNlRlgE/HYfr21zMyRQGW72mJ0AO5jNVbl8paGL96/W0UtjTlZrb4zu7fOW9SJdi6TWkfZx5WhSvHG59P4Ph1nMuty6LG5dYvdqDF/BV4SoK8bdJ8U6O8BOom8hhqZv+lDuP0O60gQVTR17nUQ2aRbI4OAUuJt61QTyPpO2tcJXKN6chH3s=
+      skip_cleanup: true
+      app: companion-demo
+      on:
+        branch: master
+  - name: Run Companion tests (Node.js 10)
+    node_js: 12
+    services:
+    - docker
+    script:
+    - nvm install 10.20.1
+    - nvm use 10.20.1
+    - npm run test:companion
+  - name: Build website
+    node_js: 12
+    if: branch = master AND type = push
+    script: 'true'
+    deploy:
+    - provider: script
+      skip_cleanup: true
+      script: bin/travis-deploy
 before_install:
 - nvm install-latest-npm
 install:
 - npm ci
 addons:
-  apt: *APT
+  apt: *1
 cache:
   apt: true
   directories:
@@ -135,6 +124,7 @@ env:
   - secure: rVsiFPA9TvH/d2wkP8+1i5QGUuYw0q2BUAUdxyxO9hQcG/nRiHXtQfLbTRZHKwvqf0vyV6J1pJqLlVN4JO/bPhAvk55KAQJWl8UqyaeZiEN9KMcTr3fJuNFlBj4ciYiZ3BWwakblsiaGCjKMRdjki58a9f8XL2rcM8R6ccndjkTMYnBKaopSsAgouI8D5n74wQz6lODUayGOlbwlGLfGtPYplUfSLK4wghC+jgWsNjJySqJhfgYS0JCZc10Qw+FI2BoU4SZ4+P0L0YPIC9zV/cUW4qDT11N/oUgwfjZbPWfM9A/xn/d7sgDH+SpeoGdYler/lvxojj6L2mD/wAh8/lg1E6nL2aKgExE3z+fd2XV8L0osB/sulB7/Exrezg/mVejAx2IkWVHi4VEJmcTV+3WeEvTFOM3fID8dOVf+GUv+hcHdZMxS/hfj3keKCYG1P5ameMJO8FehRqhetNYnr6FTyrK+S+xitaZ/nXrTbHItPS0pZ4XA6CFs5uzMBPeDnk5/D7paPyrE/k2HAc1WmA6g37OyzYIMEV1laBz8IG0qMqg6JJmr09P/Iwrim5Ex2fAssT9Yr1WuOE2gWoF0A3XuVXQHVf4tJT6x/WDKChmbX588a47AvBgkFyoXLRilUYlET2tWnEpVxUovsbJXqvHwTXWMLO9riRjjeInbpvA=
   - secure: eq5hOqRBN2R7YO2dYdn5OjZc/zLLYYDZcCpCu/K/8fU4HYWTqxrBntjv8T0sZ5qdlAs3IniEfXxemz9V3zwvxR+vh2bGuYr2Xo7RRa2TIDuw+KUPZogrVxhXHPKfyJqstxy+dee2+pWhGkAP7caiu49eyqlboBMkzgpO/xcdehEWYRY5jPgvnlH+QRZ3GADKs1JEeltHDiZ6rYA7nj5Tyx9UoLgv4Av9UXdC29we7dLFTkVfCHE//7wfZW9+/IbxthA4qMjQOFaBrmagN5yweDg87iPTqNMth7FjzOavdUgQ2TW6d10VDEhLIZh36gLGreViKMDCEWKMQ8f/mv05Ao8+DXyXgxIn56II8lhUp5ukQ27ZWixfEKFx2lynJWRZE0pWwf8ec1+bXLQiBOE181Cl4nUT/TbFWzvV6yA+cMiQKe4y59bC4nhkK3IYgpR5kfCFOT+1tFknQ4hNJNacWwUmaDFMxYJaXEtRUn5jJa7eGRYSCrmnymbnzZ6w3Q3nQGNvNxpbBIXX/pzs0VDVTxSlgN4gA+n2jeCyjgVVrMQ/HoAS4uwm1cx89AttW+TANppg1PqWhhrJYuVEZSnvV8PM6R7rbvlS5tluezQj41YklgjsSopH7//+dbGGDNbrTTLic4J9PJR3yEtlAMdOCi53iT0R0Dt5X2WBv2QT5Eg=
   - secure: ZOSwtE0lBuVO8ncxedW3yGRactSMy+QH/ySPBy79eRmuqrNR+c4mfhiYQAyJ9jmw746YT+8+X/eRwlKOa0SDzUOxEdq6lHqUjubaLvLvy7mr5WHR2b2HDmVYUNNvKgLxn9QPgNwja1toSq/gtK/oi69ENbQLMOHgP8anOK4P6UK4NvoMu1DjyPmBStMAWeEMwuwAaYf4RgAkCsOLTJBejL8kCtWSZNBJmT05lBbE1oSFy77Tg4h93PESOOODek2RRgIikR7LK2rI4tG2oHeo5uFnCe83yu7ZTEI3ArxYtqynYn8iy/zOHf3ewIwgqcqRV/EcvKKwCHx7yi/VNk3qKoz5/jWzE9+ceoUd3vXaU7r1SfXX8ACTmQArZqzU7Rng2s+7r8I8//XCGAsGI6/cOOlS7I7Yr7Ack6CqLlL2HBIoNGYT+jXP/VY9pgkm6YlpNAphdoQrZ1vm/0CtQQ/q5H0fW16qgUJZ1vCk+3PZYNt//83bI7TyIwX72dCrMKzub6bhQtWRMSCfxZELFgue8f+cQf/+NmHhmd9yRJyVhiZvtE/4RN4F32dJbJjtOb4HjFTQIAyE2rZlB4tjOsTKJK7cT+X4enRzyinDYpAjMgNwloAg8xsn+YE53pZJLFUqk8q1yUE6XkSK9fYRSKVc3mb4ICDY4/hTzJRBf+tSUSI=
+  - secure: I+xjM/yl9RuP3p8GcnxTnC6/0K3S3PN0o71XIjQVkSMtDwnn6qDVl6yMy6KMPlPtg1xCU59LslojTv9wKyQpECqzjR0ugIlNsvPmnmcIWuPJZlG465lwQU2ycRbNF/S2Eea/wf76HpY8hemSaXz8iXKxP3eQpFKKP+tcf8o+/g1rlbtIvVQfXb2vUb4luQdnjJFNhUt9R0JpAt6/P0mOUJuqgj3KkfwiILB6m/hZ8dWhCQ0W/S/HsZMbXcxgGmS5RL7K4jgYM4KqE5aDoZGu3dIqkjpHLqNTQGC3TK6Be2EXan+Id1jubTDnflOq6F7QRwisSnmtc8WgByjKLzJzBeM2nz+jah/kYVs3dUGxMfWR++I7t0ioPtUGRW5ZLUeIk4hrRnoLAGq9t9wladuDtdWNioZ4zY33fpDxc6B+dxuhW4pMPzKIlBBiYFBflxrHI9FnAOohFiWVwR99asAydnkNkmQLMg68VT86MpT4EQKahvM1jBHvFd7yPdSc0UCAlQWAOv7Wl2HompxJPlqPNXZcv6hdX5XkKQRlgscl7WcvXaeQV47+J4+bewUJoCOEuL9qeTke6MP74WuHQwOhnwvEf+AYhQ6G7T+jaFGghSexfvkZHesYLOG/Aln/CYk/ZJuLmH5cr6XMN28Nb5SqJdsYpfRwmU5LvT7MFqHwEqs=
 notifications:
   slack:
     secure: L3iQQE8sZ0ik1Z26gPoNMiIam9EOEwYhraHCY60Jk/wmfH6SW/727yKXpgcb/yayx37rUZplvoO7H8e05ISxTJKSepEeqbBUIBQs48S8hr+FHk0VPtpP4HGxqaITRLm+mI1coPRvfISxzrB8d240oup6muhC9Ws4/LXi6v8miyIOs2zoYmGxd56TrUeON3UYlKt6dMava0V4bugARzrafN/tfyI9ccqbHzQLBspQvBI61DzZ5I2vnWpkjfWgIHz9Fl4VzXHqMXwjuTUEu8ibA12b3dHZiJEAoqeb9Oj9QcLPbstPLhlNTZZaOrfiFtwLctI2rFh37slDpAfk5idv3ycxcoG5rbCxgyg5i6dpQqrqHxnyglgHg2/nZ+YA5okeS7nJJNtU/4S6AFRWOUUWMVVY0VBEV+8w+uurl0PDy80RUY3uyK64qAgQ8U0M81/Ys1oyWyn78TqHcbby7V2Ws5I9Yakrq8D+mdfsWYCio8F6LXHSwJ0mt2FanJtdDvpPk9sAwsXZN0n8xhELt5TiRp3bzVIQ0IPUgF54dTG9/zWRvC1P4TFaFU/2fg73ZEUC5aWJoFMnLSZjbZvp5gwpCVd0MjSBk80nF9dHYcavIgJ0wMGI3BMb8Nn6+T11Gw/ycr7OGU4NMkj7i8vSFgKF74piWZyiNW8orkMN6XZgM+o=
