@@ -96,7 +96,7 @@ describe('Test Provider options', () => {
     providerManager.addProviderOptions(companionOptions, grantConfig)
 
     expect(grantConfig.dropbox.secret).toBe('xobpord')
-    expect(grantConfig.box.secret).toBe('xobpord')
+    expect(grantConfig.box.secret).toBe('xwbepqd')
     expect(grantConfig.google.secret).toBe('elgoog')
     expect(grantConfig.instagram.secret).toBe('margatsni')
     expect(grantConfig.zoom.secret).toBe('u8Z5ceq')
