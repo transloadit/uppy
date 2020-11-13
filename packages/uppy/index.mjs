@@ -20,7 +20,6 @@ export { default as StatusBar } from '@uppy/status-bar'
 
 // Acquirers
 export { default as Dropbox } from '@uppy/dropbox'
-export { default as Box } from '@uppy/box'
 export { default as GoogleDrive } from '@uppy/google-drive'
 export { default as Instagram } from '@uppy/instagram'
 export { default as OneDrive } from '@uppy/onedrive'

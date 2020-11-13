@@ -22,7 +22,6 @@ exports.StatusBar = require('@uppy/status-bar')
 
 // Acquirers
 exports.Dropbox = require('@uppy/dropbox')
-exports.Box = require('@uppy/box')
 exports.GoogleDrive = require('@uppy/google-drive')
 exports.Instagram = require('@uppy/instagram')
 exports.OneDrive = require('@uppy/onedrive')

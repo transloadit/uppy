@@ -4,7 +4,6 @@ const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const GoogleDrive = require('@uppy/google-drive')
 const Dropbox = require('@uppy/dropbox')
-const Box = require('@uppy/box')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
@@ -102,14 +101,6 @@ function uppySetOptions () {
   }
   if (!opts.Dropbox && dropboxInstance) {
     window.uppy.removePlugin(dropboxInstance)
-  }
-
-  const boxInstance = window.uppy.getPlugin('Box')
-  if (opts.Box && !boxInstance) {
-    window.uppy.use(Box, { target: Dashboard, companionUrl: COMPANION })
-  }
-  if (!opts.Box && boxInstance) {
-    window.uppy.removePlugin(boxInstance)
   }
 
   const instagramInstance = window.uppy.getPlugin('Instagram')

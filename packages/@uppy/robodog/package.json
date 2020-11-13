@@ -31,7 +31,6 @@
     "@uppy/core": "file:../core",
     "@uppy/dashboard": "file:../dashboard",
     "@uppy/dropbox": "file:../dropbox",
-    "@uppy/box": "file:../box",
     "@uppy/facebook": "file:../facebook",
     "@uppy/form": "file:../form",
     "@uppy/google-drive": "file:../google-drive",
