@@ -189,7 +189,7 @@ class DropBox extends Provider {
       .auth(token)
       .request((err, resp) => {
         if (err || resp.statusCode !== 200) {
-          logger.error(err, 'provider.dropbox.size.error')
+          logger.error(err, 'provider.dropbox.logout.error')
           done(this._error(err, resp))
           return
         }

@@ -12,6 +12,9 @@ export COMPANION_SECRET="secret"
 export COMPANION_DROPBOX_KEY="dropbox_key"
 export COMPANION_DROPBOX_SECRET="dropbox_secret"
 
+export COMPANION_BOX_KEY="box_key"
+export COMPANION_BOX_SECRET="box_secret"
+
 export COMPANION_GOOGLE_KEY="google_key"
 export COMPANION_GOOGLE_SECRET="google_secret"
 

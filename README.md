@@ -7,7 +7,7 @@
 
 Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly with any application. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
 
-- **Fetch** files from local disk, remote URLs, Google Drive, Dropbox, Instagram or snap and record selfies with a camera
+- **Fetch** files from local disk, remote URLs, Google Drive, Dropbox, Box, Instagram or snap and record selfies with a camera
 - **Preview** and edit metadata with a nice interface
 - **Upload** to the final destination, optionally process/encode
 
@@ -48,7 +48,7 @@ const uppy = new Uppy({ autoProceed: false })
 
 - Lightweight, modular plugin-based architecture, easy on dependencies :zap:
 - Resumable file uploads via the open [tus](https://tus.io/) standard, so large uploads survive network hiccups
-- Supports picking files from: Webcam, Dropbox, Google Drive, Instagram, bypassing the user’s device where possible, syncing between servers directly via [@uppy/companion](https://uppy.io/docs/companion)
+- Supports picking files from: Webcam, Dropbox, Box, Google Drive, Instagram, bypassing the user’s device where possible, syncing between servers directly via [@uppy/companion](https://uppy.io/docs/companion)
 - Works great with file encoding and processing backends, such as [Transloadit](https://transloadit.com), works great without (just roll your own Apache/Nginx/Node/FFmpeg/etc backend)
 - Sleek user interface :sparkles:
 - Optional file recovery (after a browser crash) with [Golden Retriever](https://uppy.io/docs/golden-retriever/)
@@ -91,7 +91,7 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 
 - [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods and events
 - [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their options
-- [Companion](https://uppy.io/docs/companion/) — setting up and running a Companion instance, which adds support for Instagram, Dropbox, Google Drive and remote URLs
+- [Companion](https://uppy.io/docs/companion/) — setting up and running a Companion instance, which adds support for Instagram, Dropbox, Box, Google Drive and remote URLs
 - [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps
 - [Architecture & Writing a Plugin](https://uppy.io/docs/writing-plugins/) — how to write a plugin for Uppy
 
@@ -113,6 +113,7 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 - [`Webcam`](https://uppy.io/docs/webcam/) — snap and record those selfies 📷
 - ⓒ [`Google Drive`](https://uppy.io/docs/google-drive/) — import files from Google Drive
 - ⓒ [`Dropbox`](https://uppy.io/docs/dropbox/) — import files from Dropbox
+- ⓒ [`Box`](https://uppy.io/docs/box/) — import files from Box
 - ⓒ [`Instagram`](https://uppy.io/docs/instagram/) — import images and videos from Instagram
 - ⓒ [`Facebook`](https://uppy.io/docs/facebook/) — import images and videos from Facebook
 - ⓒ [`OneDrive`](https://uppy.io/docs/onedrive/) — import files from Microsoft OneDrive

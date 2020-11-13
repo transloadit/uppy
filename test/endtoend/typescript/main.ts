@@ -5,6 +5,7 @@ import {
   Dashboard,
   Instagram,
   Dropbox,
+  Box,
   GoogleDrive,
   Url,
   Webcam,
@@ -37,6 +38,7 @@ const uppy = Core<Core.StrictTypes>({
   .use(GoogleDrive, { target: Dashboard, companionUrl: 'http://localhost:3020' })
   .use(Instagram, { target: Dashboard, companionUrl: 'http://localhost:3020' })
   .use(Dropbox, { target: Dashboard, companionUrl: 'http://localhost:3020' })
+  .use(Box, { target: Dashboard, companionUrl: 'http://localhost:3020' })
   .use(Url, { target: Dashboard, companionUrl: 'http://localhost:3020' })
   .use(Webcam, { target: Dashboard })
   .use(Tus, { endpoint: TUS_ENDPOINT })
