@@ -38,13 +38,13 @@ class Box extends Provider {
    * @param {object} options
    * @param {function} done
    */
-  list ({ directory, token, companion }, done) {
+  list ({ directory, token, query, companion }, done) {
     const rootFolderID = '0'
     const path = `folders/${directory || rootFolderID}/items`
 
     this.client
       .get(path)
-      .qs({ fields: BOX_FILES_FIELDS })
+      .qs({ fields: BOX_FILES_FIELDS, offset: query.cursor })
       .auth(token)
       .request((err, resp, body) => {
         if (err || resp.statusCode !== 200) {
@@ -58,7 +58,7 @@ class Box extends Provider {
               logger.error(err, 'provider.token.user.error')
               return done(err)
             }
-            done(null, this.adaptData(body, companion))
+            done(null, this.adaptData(body, infoResp.body.login, companion))
           })
         }
       })
@@ -90,7 +90,23 @@ class Box extends Provider {
       .auth(token)
       .request()
       .on('response', (resp) => {
-        if (![200, 202].includes(resp.statusCode)) {
+        // box generates a thumbnail on first request
+        // so they return a placeholder in the header while that's happening
+        if (resp.statusCode === 202 && resp.headers.location) {
+          return this.client.get(resp.headers.location)
+            .request()
+            .on('response', (placeholderResp) => {
+              if (placeholderResp.statusCode !== 200) {
+                const err = this._error(null, placeholderResp)
+                logger.error(err, 'provider.box.thumbnail.error')
+                return done(err)
+              }
+
+              done(null, placeholderResp)
+            })
+        }
+
+        if (resp.statusCode !== 200) {
           const err = this._error(null, resp)
           logger.error(err, 'provider.box.thumbnail.error')
           return done(err)
@@ -139,8 +155,8 @@ class Box extends Provider {
       })
   }
 
-  adaptData (res, companion) {
-    const data = { username: adapter.getUsername(res), items: [] }
+  adaptData (res, username, companion) {
+    const data = { username, items: [] }
     const items = adapter.getItemSubList(res)
     items.forEach((item) => {
       data.items.push({
