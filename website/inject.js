@@ -43,7 +43,6 @@ const packages = [
   '@uppy/dashboard',
   '@uppy/drag-drop',
   '@uppy/dropbox',
-  '@uppy/box',
   '@uppy/file-input',
   '@uppy/form',
   '@uppy/golden-retriever',

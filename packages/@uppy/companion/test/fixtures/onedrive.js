@@ -7,7 +7,7 @@ module.exports.responses = {
       mail: defaults.USERNAME
     }
   },
-  '/drive/root/children': {
+  '/me/drive/root/children': {
     get: {
       value: [
         {
