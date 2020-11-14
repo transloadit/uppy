@@ -2,7 +2,7 @@ import Uppy = require('@uppy/core')
 import ImageEditorLocale = require('./generatedLocale')
 
 declare module ImageEditor {
-  type Actions {
+  type Actions = {
     revert: boolean
     rotate: boolean
     flip: boolean
