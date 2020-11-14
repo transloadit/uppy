@@ -84,14 +84,15 @@ module.exports = class Editor extends Component {
       <button
         type="button"
         class="uppy-u-reset uppy-c-btn"
-        aria-label={this.props.i18n('flipHorizontal')}
+        aria-label={this.props.i18n('zoomIn')}
         data-microtip-position="top"
         role="tooltip"
-        onClick={() => this.cropper.scaleX(-this.cropper.getData().scaleX || -1)}
+        onClick={() => this.cropper.zoom(0.1)}
       >
-        <svg aria-hidden="true" class="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
-          <path d="M0 0h24v24H0z" fill="none" />
-          <path d="M15 21h2v-2h-2v2zm4-12h2V7h-2v2zM3 5v14c0 1.1.9 2 2 2h4v-2H5V5h4V3H5c-1.1 0-2 .9-2 2zm16-2v2h2c0-1.1-.9-2-2-2zm-8 20h2V1h-2v22zm8-6h2v-2h-2v2zM15 5h2V3h-2v2zm4 8h2v-2h-2v2zm0 8c1.1 0 2-.9 2-2h-2v2z" />
+        <svg aria-hidden="true" class="uppy-c-icon" height="24" viewBox="0 0 24 24" width="24">
+          <path d="M0 0h24v24H0V0z" fill="none" />
+          <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+          <path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z" />
         </svg>
       </button>
     )
