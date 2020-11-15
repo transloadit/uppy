@@ -1,10 +1,6 @@
 const mime = require('mime-types')
 const querystring = require('querystring')
 
-exports.getUsername = (data) => {
-  return data.login
-}
-
 exports.isFolder = (item) => {
   return item.type === 'folder'
 }
@@ -49,6 +45,6 @@ exports.getNextPagePath = (data) => {
   if (data.total_count < data.limit || data.offset + data.limit > data.total_count) {
     return null
   }
-  const query = { offset: data.offset + data.limit }
+  const query = { cursor: data.offset + data.limit }
   return `?${querystring.stringify(query)}`
 }
