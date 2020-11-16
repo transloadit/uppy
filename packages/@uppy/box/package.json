@@ -1,7 +1,7 @@
 {
   "name": "@uppy/box",
   "description": "Import files from Box, into Uppy.",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -27,5 +27,8 @@
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
