@@ -134,7 +134,7 @@ module.exports = class AwsS3 extends Plugin {
   validateParameters (file, params) {
     const valid = typeof params === 'object' && params &&
       typeof params.url === 'string' &&
-      (typeof params.fields === 'object' || params.fields == null) &&
+      (typeof params.fields === 'object' || params.fields == null)
 
     if (!valid) {
       const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields, headers }' but got '${JSON.stringify(params)}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
