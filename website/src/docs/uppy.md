@@ -767,6 +767,22 @@ uppy.on('upload', (data) => {
 })
 ```
 
+### `progress`
+
+Fired each time the total upload progress is updated:
+
+**Parameters**
+- `progress` - An integer representing the total upload progress.
+
+**Example**
+
+```javascript
+uppy.on('progress', (progress) => {
+  // progress: integer (total progress percentage)
+  console.log(progress)
+})
+```
+
 ### `upload-progress`
 
 Fired each time file upload progress is available:
