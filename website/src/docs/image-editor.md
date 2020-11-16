@@ -80,7 +80,7 @@ uppy.use(ImageEditor, {
 
 ### `id: 'ImageEditor'`
 
-A unique identifier for this plugin. It defaults to `'ThumbnailGenerator'`.
+A unique identifier for this plugin. It defaults to `'ImageEditor'`.
 
 ### `quality: 0.8`
 
