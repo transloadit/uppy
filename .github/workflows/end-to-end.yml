@@ -29,7 +29,7 @@ jobs:
       - name: Run end-to-end browser tests
         run: npm run test:endtoend
         env:
-          TRAVIS_JOB_NUMBER: ${{github.run_id}}.${{github.run_number}}
-          TRAVIS_BUILD_NUMBER: ${{github.run_id}}
+          SAUCE_TUNNEL_IDENTIFIER: ${{github.run_id}}.${{github.run_number}}
+          SAUCE_BUILD: ${{github.run_id}}
           SAUCE_USERNAME: ${{secrets.SAUCE_USERNAME}}
           SAUCE_ACCESS_KEY: ${{secrets.SAUCE_ACCESS_KEY}}
