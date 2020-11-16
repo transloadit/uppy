@@ -110,6 +110,24 @@ Planned: 2020-11-27
 
 ## October 2020
 
+### 1.23.1
+
+Released: 2020-11-16
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/box | 0.3.0 | @uppy/transloadit | 1.6.14 |
+| @uppy/companion | 2.2.0 | @uppy/tus | 1.8.0 |
+| @uppy/image-editor | 0.1.8 | uppy | 1.23.1 |
+| @uppy/robodog | 1.9.11 | - | - |
+
+- @uppy/box: Box provider implementation (#2549 / @cartfisk, @ifedapoolarewaju)
+- @uppy/box: Fix the thumbnail for Box provider (#2630 / @ifedapoolarewaju)
+- @uppy/image-editor: zoom button and types fix (#2632 / @arturi)
+- @uppy/companion: fix box provider tests + remove unused e2e test files (#2628 / @ifedapoolarewaju)
+- @uppy/tus: tus: add `onBeforeRequest` option (#2611 / @bedgerotto, @Acconut)
+- @uppy/companion: catch errors when fetching dropbox user email (#2627 /@ifedapoolarewaju)
+
 ### 1.23.0
 
 Released: 2020-11-13
@@ -134,6 +152,18 @@ Released: 2020-11-13
 | @uppy/instagram | 1.4.18 | @uppy/zoom | 0.1.7 |
 | @uppy/locales | 1.16.10 | uppy | 1.23.0 |
 | @uppy/onedrive | 1.1.18 | - | - |
+
+Optional buttons for the Image Editor, @uppy/core `infoTimeout` option and Robodog fixes.
+
+- @uppy/image-editor: Image Editor optional buttons (#2615 / @lamartire, @arturi)
+- @uppy/image-editor: show “edit” icon even when metaFields are not specified (#2614 / @arturi)
+- @uppy/dashboard: Uppy console logging within hideAllPanels (#2597 / @onassar)
+- @uppy/robodog: Update addTransloaditPlugin.js to include missing configurable Transloadit plugin options (#2612 / @ethanwillis)
+- @uppy/provider-views: add `uppy.validateRestrictions(file, files)` and disallow selecting files that don’t pass restrictions in providers (#2602 / @arturi, @lakesare)
+- @uppy/core: add `uppy.opts.infoTimeout` (#2619 / @arturi)
+- @uppy/onedrive: fix OneDrive for Business (#2536 / @szh)
+- build: use new releases domain (#2608 / @kvz)
+- website: switch to xhr-server.herokuapp.com endpoint (@arturi)
 
 ### 1.22.0
 
