@@ -20,6 +20,8 @@ jobs:
         with:
           context: packages/@uppy/companion
           file: packages/@uppy/companion/Dockerfile
+          # TODO add a companion version tag if this is a "Release" commit
+          # Punting on that since it didn't work on travis either, so current users must already be relying on commit hashes
           tags: transloadit/companion:latest,transloadit/companion:${{github.sha}}
 
   heroku:
