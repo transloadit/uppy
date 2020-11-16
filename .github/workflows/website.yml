@@ -22,7 +22,7 @@ jobs:
       - name: Build website
         run: npm run web:build
       - name: Prepare deployment
-        run: npm run web:deploy --quiet
+        run: npm run web:prepare-deploy --quiet
         env:
           DEPLOY_DIR: ${{github.workspace}}/_deploy
       - name: Push to Github Pages
