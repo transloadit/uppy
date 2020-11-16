@@ -1,4 +1,5 @@
 module.exports.providers = {
+  box: require('./box'),
   drive: require('./drive'),
   dropbox: require('./dropbox'),
   instagram: require('./instagram'),

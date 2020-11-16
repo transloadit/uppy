@@ -3,6 +3,10 @@
   cursor: pointer;
   flex-shrink: 0;
 
+  &:disabled {
+    cursor: default;
+  }
+
   // Checkmark icon
   &::after {
     content: '';
@@ -11,6 +15,10 @@
     border-left: 2px solid $gray-200;
     border-bottom: 2px solid $gray-200;
     transform: rotate(-45deg);
+  }
+
+  &:disabled::after {
+    cursor: default;
   }
 
   [data-uppy-theme="dark"] & {

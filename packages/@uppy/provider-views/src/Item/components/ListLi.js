@@ -24,7 +24,7 @@ const getAriaLabelOfCheckbox = (props) => {
 //   + file name (selects file)
 module.exports = (props) => {
   return (
-    <li class={props.className}>
+    <li class={props.className} title={props.isDisabled ? props.restrictionReason : null}>
       <button
         type="button"
         class={`uppy-u-reset uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`}
@@ -35,13 +35,16 @@ module.exports = (props) => {
         aria-label={getAriaLabelOfCheckbox(props)}
         aria-selected={props.isChecked}
         aria-disabled={props.isDisabled}
+        disabled={props.isDisabled}
         data-uppy-super-focusable
       />
 
       {props.type === 'file' ? (
         // label for a checkbox
-        <label for={props.id} className="uppy-u-reset uppy-ProviderBrowserItem-inner">
-          {props.itemIconEl}
+        <label for={props.id} class="uppy-u-reset uppy-ProviderBrowserItem-inner">
+          <div class="uppy-ProviderBrowserItem-iconWrap">
+            {props.itemIconEl}
+          </div>
           {props.showTitles && props.title}
         </label>
       ) : (
@@ -52,7 +55,9 @@ module.exports = (props) => {
           onclick={props.handleFolderClick}
           aria-label={props.i18n('openFolderNamed', { name: props.title })}
         >
-          {props.itemIconEl}
+          <div class="uppy-ProviderBrowserItem-iconWrap">
+            {props.itemIconEl}
+          </div>
           {props.showTitles && <span>{props.title}</span>}
         </button>
       )}

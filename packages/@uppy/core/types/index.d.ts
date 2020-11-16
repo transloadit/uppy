@@ -98,6 +98,7 @@ declare module Uppy {
     }) => { [key: string]: UppyFile<TMeta> } | boolean
     locale?: Locale
     store?: Store
+    infoTimeout?: number
   }
 
   interface UploadResult<

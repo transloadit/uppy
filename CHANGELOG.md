@@ -110,6 +110,31 @@ Planned: 2020-11-27
 
 ## October 2020
 
+### 1.23.0
+
+Released: 2020-11-13
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.8 | @uppy/progress-bar | 1.3.21 |
+| @uppy/aws-s3 | 1.7.2 | @uppy/provider-views | 1.9.0 |
+| @uppy/companion-client | 1.6.1 | @uppy/react | 1.10.10 |
+| @uppy/companion | 2.1.1 | @uppy/redux-dev-tools | 1.3.6 |
+| @uppy/core | 1.14.0 | @uppy/robodog | 1.9.10 |
+| @uppy/dashboard | 1.12.10 | @uppy/screen-capture | 1.0.10 |
+| @uppy/drag-drop | 1.4.21 | @uppy/status-bar | 1.7.8 |
+| @uppy/dropbox | 1.4.18 | @uppy/thumbnail-generator | 1.7.1 |
+| @uppy/facebook | 1.1.18 | @uppy/transloadit | 1.6.13 |
+| @uppy/file-input | 1.4.19 | @uppy/tus | 1.7.9 |
+| @uppy/form | 1.3.22 | @uppy/unsplash | 0.1.2 |
+| @uppy/golden-retriever | 1.3.21 | @uppy/url | 1.5.13 |
+| @uppy/google-drive | 1.5.18 | @uppy/utils | 3.2.5 |
+| @uppy/image-editor | 0.1.7 | @uppy/webcam | 1.8.1 |
+| @uppy/informer | 1.5.13 | @uppy/xhr-upload | 1.6.6 |
+| @uppy/instagram | 1.4.18 | @uppy/zoom | 0.1.7 |
+| @uppy/locales | 1.16.10 | uppy | 1.23.0 |
+| @uppy/onedrive | 1.1.18 | - | - |
+
 ### 1.22.0
 
 Released: 2020-10-29

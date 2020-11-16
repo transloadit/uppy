@@ -41,6 +41,10 @@
     }
   }
 
+  li.uppy-ProviderBrowserItem--disabled {
+    opacity: 0.5;
+  }
+
   li.uppy-ProviderBrowserItem--noPreview {
     .uppy-ProviderBrowserItem-inner {
       background-color: rgba($gray-500, 0.2);

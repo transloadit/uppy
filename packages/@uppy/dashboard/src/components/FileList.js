@@ -75,6 +75,8 @@ module.exports = (props) => {
             key={fileID}
             {...fileProps}
             role="listitem"
+            openFileEditor={props.openFileEditor}
+            canEditFile={props.canEditFile}
             file={props.files[fileID]}
           />
         ))}
