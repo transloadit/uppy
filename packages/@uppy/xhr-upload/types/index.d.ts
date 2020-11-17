@@ -14,6 +14,8 @@ declare module XHRUpload {
     endpoint: string
     method?: 'GET' | 'POST' | 'PUT' | 'HEAD' | 'get' | 'post' | 'put' | 'head'
     locale?: XHRUploadLocale
+    responseType?: string
+    withCredentials?: boolean    
   }
 }
 
