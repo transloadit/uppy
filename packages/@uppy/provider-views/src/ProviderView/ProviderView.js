@@ -453,7 +453,7 @@ module.exports = class ProviderView {
       this.provider.list(path).then((res) => {
         let itemsRelativePath
 
-        if (meta && meta.previousRelativePath && meta.currentFolder) {
+        if (meta) {
           const { previousRelativePath, currentFolder } = meta
 
           itemsRelativePath = `${previousRelativePath}/${currentFolder.name}`
