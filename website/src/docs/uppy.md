@@ -164,7 +164,7 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 
 **Parameters**
 
-- `maxFileSize` *null | number* — maximum file size in bytes for each individual file (total max size [has been requested, and is planned](https://github.com/transloadit/uppy/issues/514))
+- `maxFileSize` *null | number* — maximum file size in bytes for each individual file
 - `minFileSize` *null | number* — minimum file size in bytes for each individual file
 - `maxTotalFileSize` *null | number* — maximum file size in bytes for all the files that can be selected for upload
 - `maxNumberOfFiles` *null | number* — total number of files that can be selected
