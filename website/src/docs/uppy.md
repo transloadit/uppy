@@ -785,7 +785,7 @@ uppy.on('progress', (progress) => {
 
 ### `upload-progress`
 
-Fired each time file upload progress is available:
+Fired each time an individual file upload progress is available:
 
 **Parameters**
 - `file` - The [File Object][File Objects] for the file whose upload has progressed.
