@@ -772,7 +772,7 @@ uppy.on('upload', (data) => {
 Fired each time the total upload progress is updated:
 
 **Parameters**
-- `progress` - An integer representing the total upload progress.
+- `progress` - An integer (0-100) representing the total upload progress.
 
 **Example**
 
