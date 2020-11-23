@@ -21,7 +21,16 @@ jobs:
         run: npm run build
       - name: Upload `uppy` to CDN
         run: npm run uploadcdn uppy
+        env:
+          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
+          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload `@uppy/robodog` to CDN
         run: npm run uploadcdn @uppy/robodog
+        env:
+          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
+          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload `@uppy/locales` to CDN
         run: npm run uploadcdn @uppy/locales
+        env:
+          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
+          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
