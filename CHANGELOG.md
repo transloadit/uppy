@@ -104,9 +104,8 @@ Planned: 2020-11-27
 - [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510, @arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530, @arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] providers: add Box (@cartfisk, @ife)
-- [ ] providers: Provider Browser should handle uppy restrictions, can we gray out things that don’t match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default’s store #320 (@arturi)
+- [ ] misc: switch to GitHub Actions (@goto-bus-stop)
 
 ## October 2020
 
