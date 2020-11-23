@@ -1,3 +1,8 @@
+/**
+ * instantiates the aws-sdk s3 client that will be used for s3 uploads.
+ *
+ * @param {object} companionOptions the companion options object
+ */
 module.exports = (companionOptions) => {
   let s3Client = null
   if (companionOptions.providerOptions.s3) {
