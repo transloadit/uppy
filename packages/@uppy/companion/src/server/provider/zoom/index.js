@@ -269,7 +269,7 @@ class Zoom extends Provider {
           }
           done(null, { revoked: (body || {}).status === 'success' })
         })
-    })
+    }).catch((err) => done(err))
   }
 
   deauthorizationCallback ({ companion, body, headers }, done) {
@@ -306,7 +306,7 @@ class Zoom extends Provider {
           }
           done(null, {})
         })
-    })
+    }).catch((err) => done(err))
   }
 
   _error (err, resp) {
