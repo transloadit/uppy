@@ -993,7 +993,11 @@ module.exports = class Dashboard extends Plugin {
         hideCancelButton: this.opts.hideCancelButton,
         showProgressDetails: this.opts.showProgressDetails,
         hideAfterFinish: this.opts.hideProgressAfterFinish,
-        locale: this.opts.locale
+        locale: this.opts.locale,
+        doneButtonHandler: () => {
+          this.uppy.reset()
+          this.requestCloseModal()
+        }
       })
     }
 
