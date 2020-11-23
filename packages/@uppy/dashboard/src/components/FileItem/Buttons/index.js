@@ -9,9 +9,10 @@ function EditButton ({
   i18n,
   onClick
 }) {
-  if ((!uploadInProgressOrComplete &&
-      metaFields &&
-      metaFields.length > 0) || canEditFile(file)) {
+  if (
+    (!uploadInProgressOrComplete && metaFields && metaFields.length > 0) ||
+    (!uploadInProgressOrComplete && canEditFile(file))
+  ) {
     return (
       <button
         class="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit"
