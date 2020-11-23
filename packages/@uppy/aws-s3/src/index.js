@@ -149,7 +149,6 @@ module.exports = class AwsS3 extends Plugin {
       console.error(err)
       throw err
     }
-
   }
 
   handleUpload (fileIDs) {
