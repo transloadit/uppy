@@ -11,6 +11,8 @@ const transloaditOptionNames = [
   'signature',
   'params',
   'fields',
+  'limit',
+  'locale',
   'getAssemblyOptions'
 ]
 

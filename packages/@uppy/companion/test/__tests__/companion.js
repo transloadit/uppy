@@ -10,6 +10,7 @@ const { getServer } = require('../mockserver')
 const authServer = getServer()
 const authData = {
   dropbox: 'token value',
+  box: 'token value',
   drive: 'token value'
 }
 const token = tokenService.generateToken(authData, process.env.COMPANION_SECRET)

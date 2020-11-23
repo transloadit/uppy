@@ -104,11 +104,65 @@ Planned: 2020-11-27
 - [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510, @arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530, @arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] providers: add Box (@cartfisk, @ife)
-- [ ] providers: Provider Browser should handle uppy restrictions, can we gray out things that don’t match the restrictions in Google Drive and Instagram? #1827 (@arturi)
 - [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default’s store #320 (@arturi)
+- [ ] misc: switch to GitHub Actions (@goto-bus-stop)
 
 ## October 2020
+
+### 1.23.1
+
+Released: 2020-11-16
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/box | 0.3.0 | @uppy/transloadit | 1.6.14 |
+| @uppy/companion | 2.2.0 | @uppy/tus | 1.8.0 |
+| @uppy/image-editor | 0.1.8 | uppy | 1.23.1 |
+| @uppy/robodog | 1.9.11 | - | - |
+
+- @uppy/box: Box provider implementation (#2549 / @cartfisk, @ifedapoolarewaju)
+- @uppy/box: Fix the thumbnail for Box provider (#2630 / @ifedapoolarewaju)
+- @uppy/image-editor: zoom button and types fix (#2632 / @arturi)
+- @uppy/companion: fix box provider tests + remove unused e2e test files (#2628 / @ifedapoolarewaju)
+- @uppy/tus: tus: add `onBeforeRequest` option (#2611 / @bedgerotto, @Acconut)
+- @uppy/companion: catch errors when fetching dropbox user email (#2627 /@ifedapoolarewaju)
+
+### 1.23.0
+
+Released: 2020-11-13
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.8 | @uppy/progress-bar | 1.3.21 |
+| @uppy/aws-s3 | 1.7.2 | @uppy/provider-views | 1.9.0 |
+| @uppy/companion-client | 1.6.1 | @uppy/react | 1.10.10 |
+| @uppy/companion | 2.1.1 | @uppy/redux-dev-tools | 1.3.6 |
+| @uppy/core | 1.14.0 | @uppy/robodog | 1.9.10 |
+| @uppy/dashboard | 1.12.10 | @uppy/screen-capture | 1.0.10 |
+| @uppy/drag-drop | 1.4.21 | @uppy/status-bar | 1.7.8 |
+| @uppy/dropbox | 1.4.18 | @uppy/thumbnail-generator | 1.7.1 |
+| @uppy/facebook | 1.1.18 | @uppy/transloadit | 1.6.13 |
+| @uppy/file-input | 1.4.19 | @uppy/tus | 1.7.9 |
+| @uppy/form | 1.3.22 | @uppy/unsplash | 0.1.2 |
+| @uppy/golden-retriever | 1.3.21 | @uppy/url | 1.5.13 |
+| @uppy/google-drive | 1.5.18 | @uppy/utils | 3.2.5 |
+| @uppy/image-editor | 0.1.7 | @uppy/webcam | 1.8.1 |
+| @uppy/informer | 1.5.13 | @uppy/xhr-upload | 1.6.6 |
+| @uppy/instagram | 1.4.18 | @uppy/zoom | 0.1.7 |
+| @uppy/locales | 1.16.10 | uppy | 1.23.0 |
+| @uppy/onedrive | 1.1.18 | - | - |
+
+Optional buttons for the Image Editor, @uppy/core `infoTimeout` option and Robodog fixes.
+
+- @uppy/image-editor: Image Editor optional buttons (#2615 / @lamartire, @arturi)
+- @uppy/image-editor: show “edit” icon even when metaFields are not specified (#2614 / @arturi)
+- @uppy/dashboard: Uppy console logging within hideAllPanels (#2597 / @onassar)
+- @uppy/robodog: Update addTransloaditPlugin.js to include missing configurable Transloadit plugin options (#2612 / @ethanwillis)
+- @uppy/provider-views: add `uppy.validateRestrictions(file, files)` and disallow selecting files that don’t pass restrictions in providers (#2602 / @arturi, @lakesare)
+- @uppy/core: add `uppy.opts.infoTimeout` (#2619 / @arturi)
+- @uppy/onedrive: fix OneDrive for Business (#2536 / @szh)
+- build: use new releases domain (#2608 / @kvz)
+- website: switch to xhr-server.herokuapp.com endpoint (@arturi)
 
 ### 1.22.0
 

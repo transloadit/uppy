@@ -56,7 +56,8 @@ exports.error = (msg, tag, traceId, shouldLogStackTrace) => {
  */
 exports.debug = (msg, tag, traceId) => {
   if (process.env.NODE_ENV !== 'production') {
-    log(msg, tag, 'debug', traceId)
+    // @ts-ignore
+    log(msg, tag, 'debug', traceId, chalk.bold.blue)
   }
 }
 

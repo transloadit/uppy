@@ -543,7 +543,9 @@ module.exports = class ProviderView {
       showFilter: targetViewOptions.showFilter,
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       pluginIcon: this.plugin.icon,
-      i18n: this.plugin.uppy.i18n
+      i18n: this.plugin.uppy.i18n,
+      uppyFiles: this.plugin.uppy.getFiles(),
+      validateRestrictions: this.plugin.uppy.validateRestrictions
     })
 
     return (

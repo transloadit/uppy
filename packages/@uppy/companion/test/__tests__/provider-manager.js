@@ -16,11 +16,15 @@ describe('Test Provider options', () => {
     expect(grantConfig.dropbox.key).toBe('dropbox_key')
     expect(grantConfig.dropbox.secret).toBe('dropbox_secret')
 
+    expect(grantConfig.box.key).toBe('box_key')
+    expect(grantConfig.box.secret).toBe('box_secret')
+
     expect(grantConfig.google.key).toBe('google_key')
     expect(grantConfig.google.secret).toBe('google_secret')
 
     expect(grantConfig.instagram.key).toBe('instagram_key')
     expect(grantConfig.instagram.secret).toBe('instagram_secret')
+
     expect(grantConfig.zoom.key).toBe('zoom_key')
     expect(grantConfig.zoom.secret).toBe('zoom_secret')
   })
@@ -48,6 +52,16 @@ describe('Test Provider options', () => {
       callback: '/dropbox/callback'
     })
 
+    expect(grantConfig.box).toEqual({
+      key: 'box_key',
+      secret: 'box_secret',
+      transport: 'session',
+      redirect_uri: 'http://localhost:3020/box/redirect',
+      authorize_url: 'https://account.box.com/api/oauth2/authorize',
+      access_url: 'https://api.box.com/oauth2/token',
+      callback: '/box/callback'
+    })
+
     expect(grantConfig.google).toEqual({
       key: 'google_key',
       secret: 'google_secret',
@@ -71,6 +85,7 @@ describe('Test Provider options', () => {
 
   test('adds provider options for secret files', () => {
     process.env.COMPANION_DROPBOX_SECRET_FILE = process.env.PWD + '/test/resources/dropbox_secret_file'
+    process.env.COMPANION_BOX_SECRET_FILE = process.env.PWD + '/test/resources/box_secret_file'
     process.env.COMPANION_GOOGLE_SECRET_FILE = process.env.PWD + '/test/resources/google_secret_file'
     process.env.COMPANION_INSTAGRAM_SECRET_FILE = process.env.PWD + '/test/resources/instagram_secret_file'
     process.env.COMPANION_ZOOM_SECRET_FILE = process.env.PWD + '/test/resources/zoom_secret_file'
@@ -81,6 +96,7 @@ describe('Test Provider options', () => {
     providerManager.addProviderOptions(companionOptions, grantConfig)
 
     expect(grantConfig.dropbox.secret).toBe('xobpord')
+    expect(grantConfig.box.secret).toBe('xwbepqd')
     expect(grantConfig.google.secret).toBe('elgoog')
     expect(grantConfig.instagram.secret).toBe('margatsni')
     expect(grantConfig.zoom.secret).toBe('u8Z5ceq')
@@ -94,6 +110,9 @@ describe('Test Provider options', () => {
     providerManager.addProviderOptions(companionOptions, grantConfig)
     expect(grantConfig.dropbox.key).toBeUndefined()
     expect(grantConfig.dropbox.secret).toBeUndefined()
+
+    expect(grantConfig.box.key).toBeUndefined()
+    expect(grantConfig.box.secret).toBeUndefined()
 
     expect(grantConfig.google.key).toBeUndefined()
     expect(grantConfig.google.secret).toBeUndefined()
@@ -110,6 +129,7 @@ describe('Test Provider options', () => {
     providerManager.addProviderOptions(companionOptions, grantConfig)
 
     expect(grantConfig.dropbox.redirect_uri).toBe('http://domain.com/dropbox/redirect')
+    expect(grantConfig.box.redirect_uri).toBe('http://domain.com/box/redirect')
     expect(grantConfig.google.redirect_uri).toBe('http://domain.com/drive/redirect')
     expect(grantConfig.instagram.redirect_uri).toBe('http://domain.com/instagram/redirect')
     expect(grantConfig.zoom.redirect_uri).toBe('http://domain.com/zoom/redirect')

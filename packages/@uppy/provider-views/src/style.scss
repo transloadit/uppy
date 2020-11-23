@@ -296,6 +296,10 @@
   [data-uppy-theme="dark"] & {
     background-color: $gray-900;
   }
+
+  &:focus {
+    outline: none;
+  }
 }
 
 .uppy-ProviderBrowserItem-inner {
