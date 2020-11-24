@@ -125,6 +125,10 @@ module.exports = class Dashboard extends Plugin {
       hideRetryButton: false,
       hidePauseResumeButton: false,
       hideProgressAfterFinish: false,
+      doneButtonHandler: () => {
+        this.uppy.reset()
+        this.requestCloseModal()
+      },
       note: null,
       closeModalOnClickOutside: false,
       closeAfterFinish: false,
@@ -994,10 +998,7 @@ module.exports = class Dashboard extends Plugin {
         showProgressDetails: this.opts.showProgressDetails,
         hideAfterFinish: this.opts.hideProgressAfterFinish,
         locale: this.opts.locale,
-        doneButtonHandler: () => {
-          this.uppy.reset()
-          this.requestCloseModal()
-        }
+        doneButtonHandler: this.opts.doneButtonHandler
       })
     }
 

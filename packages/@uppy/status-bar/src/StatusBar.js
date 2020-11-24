@@ -241,8 +241,6 @@ const DoneBtn = (props) => {
     <button
       type="button"
       class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--done"
-      title={i18n('done')}
-      aria-label={i18n('done')}
       onClick={props.doneButtonHandler}
       data-uppy-super-focusable
     >
