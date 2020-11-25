@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import type { Uppy, Plugin } from '@uppy/core';
+import { Uppy, Plugin } from '@uppy/core';
 interface Data {
     plugin: Plugin;
 }
