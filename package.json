@@ -52,6 +52,7 @@
     "@uppy/form": "file:packages/@uppy/form",
     "@uppy/golden-retriever": "file:packages/@uppy/golden-retriever",
     "@uppy/google-drive": "file:packages/@uppy/google-drive",
+    "@uppy/image-editor": "file:packages/@uppy/image-editor",
     "@uppy/informer": "file:packages/@uppy/informer",
     "@uppy/instagram": "file:packages/@uppy/instagram",
     "@uppy/locales": "file:packages/@uppy/locales",
@@ -74,8 +75,8 @@
     "@uppy/utils": "file:packages/@uppy/utils",
     "@uppy/webcam": "file:packages/@uppy/webcam",
     "@uppy/xhr-upload": "file:packages/@uppy/xhr-upload",
-    "@uppy/image-editor": "file:packages/@uppy/image-editor",
     "@uppy/zoom": "file:packages/@uppy/zoom",
+    "deep-freeze": "0.0.1",
     "remark-lint-uppy": "file:private/remark-lint-uppy",
     "uppy": "file:packages/uppy",
     "uppy.io": "file:website"
