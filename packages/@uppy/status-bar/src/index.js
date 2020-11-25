@@ -30,6 +30,7 @@ module.exports = class StatusBar extends Plugin {
         cancel: 'Cancel',
         pause: 'Pause',
         resume: 'Resume',
+        done: 'Done',
         filesUploadedOfTotal: {
           0: '%{complete} of %{smart_count} file uploaded',
           1: '%{complete} of %{smart_count} files uploaded'
@@ -59,7 +60,8 @@ module.exports = class StatusBar extends Plugin {
       hidePauseResumeButton: false,
       hideCancelButton: false,
       showProgressDetails: false,
-      hideAfterFinish: true
+      hideAfterFinish: true,
+      doneButtonHandler: null
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -226,6 +228,7 @@ module.exports = class StatusBar extends Plugin {
       retryAll: this.uppy.retryAll,
       cancelAll: this.uppy.cancelAll,
       startUpload: this.startUpload,
+      doneButtonHandler: this.opts.doneButtonHandler,
       resumableUploads,
       supportsUploadProgress,
       showProgressDetails: this.opts.showProgressDetails,
