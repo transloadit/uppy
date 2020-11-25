@@ -1,10 +1,10 @@
 ---
-title: "Vue Integration"
+title: "Vue"
 type: docs
 module: "@uppy/vue"
 permalink: docs/vue/
 order: 0
-category: "Vue"
+category: "Other Integrations"
 ---
 
 Uppy provides [Vue][] components for the included UI plugins.
