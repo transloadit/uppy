@@ -153,7 +153,7 @@ module.exports = class StatusBar extends Plugin {
     // TODO: move this to Core, to share between Status Bar and Dashboard
     // (and any other plugin that might need it, too)
 
-    const filesArray = this.uppy.getFiles()
+    const filesArray = Object.keys(files).map(file => files[file])
 
     const newFiles = filesArray.filter((file) => {
       return !file.progress.uploadStarted &&
