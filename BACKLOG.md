@@ -1,5 +1,7 @@
 # Backlog
 
+<!--lint disable no-literal-urls-->
+
 This is our roadmap which contains a list of todos.
 
 These are ideas that are planned and find their way into a release at one point.
