@@ -490,19 +490,18 @@ class Uploader {
         this._onMultipartComplete(error, response, body, bytesUploaded)
       })
     } else {
-      fs.stat(this.path, (err, stats) => {
-        if (err) {
-          logger.error(err, 'upload.multipart.size.error')
-          this.emitError(err)
-          return
-        }
-
+      try {
+        const stats = fs.statSync(this.path)
         const fileSizeInBytes = stats.size
         reqOptions.headers['content-length'] = fileSizeInBytes
-        reqOptions.body = file
-        httpRequest(reqOptions, (error, response, body) => {
-          this._onMultipartComplete(error, response, body, bytesUploaded)
-        })
+      } catch (err) {
+        logger.error(err, 'upload.multipart.size.error')
+        this.emitError(err)
+        return
+      }
+      reqOptions.body = file
+      httpRequest(reqOptions, (error, response, body) => {
+        this._onMultipartComplete(error, response, body, bytesUploaded)
       })
     }
   }
