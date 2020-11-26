@@ -38,7 +38,6 @@ function delay (ms) {
 
 const AWS_REGION = 'us-east-1'
 const AWS_BUCKET = 'releases.transloadit.com'
-const AWS_DIRECTORY = 'uppy'
 
 /**
  * Get remote dist/ files by fetching the tarball for the given version
@@ -142,11 +141,11 @@ async function main (packageName, version) {
     ? packageName.replace(/^@/, '')
     : 'uppy'
 
-  const outputPath = path.posix.join('releases', dirName, `v${version}`)
+  const outputPath = path.posix.join(dirName, `v${version}`)
 
   const { Contents: existing } = await s3.listObjects({
     Bucket: AWS_BUCKET,
-    Prefix: `${AWS_DIRECTORY}/${outputPath}/`
+    Prefix: outputPath
   }).promise()
   if (existing.length > 0) {
     if (process.argv.includes('--force')) {
@@ -172,7 +171,7 @@ async function main (packageName, version) {
   }
 
   for (const [filename, buffer] of files.entries()) {
-    const key = path.posix.join(AWS_DIRECTORY, outputPath, filename)
+    const key = path.posix.join(outputPath, filename)
     console.log(`pushing s3://${AWS_BUCKET}/${key}`)
     await s3.putObject({
       Bucket: AWS_BUCKET,
