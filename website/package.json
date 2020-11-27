@@ -43,5 +43,8 @@
     "prismjs": "^1.17.1",
     "sass": "^1.29.0",
     "watchify": "^3.11.0"
+  },
+  "scripts": {
+    "hexo": "hexo"
   }
 }
