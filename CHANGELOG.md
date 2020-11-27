@@ -12,22 +12,43 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
-
-## November 2020
+## December 2020
 
 ### next
 
-Planned: 2020-11-27
+Planned: 2020-12-18
 
-- [ ] vue: add Vue.js wrapper component for the Dashboard (@ajkachnic)
 - [ ] companion: configurable oauth 3rd party credentials — provide your own Google Drive, Instagram application key/secret at the time of the request (@ife)
-- [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510, @arturi)
 - [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530, @arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default’s store #320 (@arturi)
-- [ ] misc: switch to GitHub Actions (@goto-bus-stop)
+- [ ] work on Angular integration (@ajkachnic)
+- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
 
-## October 2020
+## November 2020
+
+## 1.23.2
+
+Released: 2020-11-27
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3 | 1.7.3 | @uppy/robodog | 1.9.12 |
+| @uppy/companion | 2.3.0 | @uppy/status-bar | 1.8.0 |
+| @uppy/core | 1.14.1 | @uppy/vue | 0.1.0 |
+| @uppy/dashboard | 1.13.0 | @uppy/xhr-upload | 1.6.7 |
+| @uppy/react | 1.10.11 | uppy | 1.23.2 |
+
+This release brings Vue.js support to Uppy! 💥 Plus a “Done” button for Status Bar, to close the Dashboard modal when an upload is finished.
+
+- @uppy/vue: add Vue.js wrapper component for the Dashboard (#2500 / @ajkachnic)
+- @uppy/core: pass files array to _checkRestrictions (#2655 / @arturi)
+- @uppy/status-bar, @uppy/dashboard: Added “Done” button for when upload is successfully finished (#2653 / @arturi, @nqst)
+- @uppy/dashboard: show the edit button only when !uploadInProgressOrComplete (55d38e7b5fd0d1031caa5b3316fc7c85407ffac7 / @arturi)
+- @uppy/xhr-upload:  Add missing option types to XHRUploadOptions (#2639 / @wbaaron)
+- docs: Updated website docs added total upload progress event (#2637 / @mkabatek)
+- test: added test DeepFrozenStore with deepFreeze to try and assert that state in not mutated anywhere by accident (#2607 / @arturi)
+- build: switched to GitHub Actions (@goto-bus-stop)
+- meta: separated backlog from CHANGELOG.md into BACKLOG.md (#2646 / @azizk) 
 
 ### 1.23.1
 
@@ -84,6 +105,8 @@ Optional buttons for the Image Editor, @uppy/core `infoTimeout` option and Robod
 - build: use new releases domain (#2608 / @kvz)
 - website: switch to xhr-server.herokuapp.com endpoint (@arturi)
 
+## October 2020
+
 ### 1.22.0
 
 Released: 2020-10-29
@@ -116,6 +139,8 @@ Fixed nesting folder uploading from third-party providers, included Zoom meeting
 - @uppy/dashboard: Fix missing `preact.h` import, enable lint for that (25b232eccc04795a869ff60eb6453180e41cdd03 / @goto-bus-stop)
 - @uppy/tus: add withCredentials, fix #2518 (#2544 / @szh)
 - @uppy/zoom: Include meeting name in file name, and include meeting data in response object so it is available in later uppy lifecycle methods when interacting with file object (#2547 / @mokutsu-coursera)
+
+## September 2020
 
 ### 1.21.1
 
