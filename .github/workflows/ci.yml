@@ -12,7 +12,7 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
       - name: Install Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2-beta
         with:
           node-version: ${{matrix.node-version}}
       - name: Install dependencies
@@ -27,7 +27,7 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
       - name: Install Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2-beta
         with:
           node-version: 14.x
       - name: Install dependencies
@@ -42,7 +42,7 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
       - name: Install Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2-beta
         with:
           node-version: 14.x
       - name: Install dependencies
@@ -57,7 +57,7 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
       - name: Install Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2-beta
         with:
           node-version: 14.x
       - name: Install dependencies
