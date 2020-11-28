@@ -44,11 +44,11 @@ This release brings Vue.js support to Uppy! 💥 Plus a “Done” button for St
 - @uppy/core: pass files array to _checkRestrictions (#2655 / @arturi)
 - @uppy/status-bar, @uppy/dashboard: Added “Done” button for when upload is successfully finished (#2653 / @arturi, @nqst)
 - @uppy/dashboard: show the edit button only when !uploadInProgressOrComplete (55d38e7b5fd0d1031caa5b3316fc7c85407ffac7 / @arturi)
-- @uppy/xhr-upload:  Add missing option types to XHRUploadOptions (#2639 / @wbaaron)
-- docs: Updated website docs added total upload progress event (#2637 / @mkabatek)
+- @uppy/xhr-upload: Add missing option types to XHRUploadOptions (#2639 / @wbaaron)
+- docs: Updated website docs, added total upload progress event (#2637 / @mkabatek)
 - test: added test DeepFrozenStore with deepFreeze to try and assert that state in not mutated anywhere by accident (#2607 / @arturi)
-- build: switched to GitHub Actions (@goto-bus-stop)
-- meta: separated backlog from CHANGELOG.md into BACKLOG.md (#2646 / @azizk) 
+- build: switched from Travis to GitHub Actions (@goto-bus-stop)
+- meta: separated backlog from CHANGELOG.md into BACKLOG.md (#2646 / @azizk)
 
 ### 1.23.1
 
@@ -60,6 +60,8 @@ Released: 2020-11-16
 | @uppy/companion | 2.2.0 | @uppy/tus | 1.8.0 |
 | @uppy/image-editor | 0.1.8 | uppy | 1.23.1 |
 | @uppy/robodog | 1.9.11 | - | - |
+
+This release introduces a new Box provider plugin.
 
 - @uppy/box: Box provider implementation (#2549 / @cartfisk, @ifedapoolarewaju)
 - @uppy/box: Fix the thumbnail for Box provider (#2630 / @ifedapoolarewaju)
