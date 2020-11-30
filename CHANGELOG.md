@@ -19,10 +19,11 @@ In the current stage we aim to release a new version at least every month.
 Planned: 2020-12-18
 
 - [ ] companion: configurable oauth 3rd party credentials — provide your own Google Drive, Instagram application key/secret at the time of the request (@ife)
-- [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530, @arturi)
+- [ ] dashboard: Add a `disabled` (`true`||`false`) option (later for /dragndrop and fileinput) (#1530, @arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] work on Angular integration (@ajkachnic)
-- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
+- [ ] add Svelte integration (@ajkachnic)
+- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi, @goto-bus-stop)
+- [ ] react: add useUppy() hook (@goto-bus-stop)
 
 ## November 2020
 
