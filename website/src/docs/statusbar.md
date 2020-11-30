@@ -65,6 +65,7 @@ uppy.use(StatusBar, {
   hideRetryButton: false,
   hidePauseResumeButton: false,
   hideCancelButton: false,
+  doneButtonHandler: null,
   locale: {}
 })
 ```
@@ -104,6 +105,17 @@ Hide pause/resume buttons (for resumable uploads, via [tus](http://tus.io), for 
 
 Hide the cancel button. Use this if you are providing a custom retry button somewhere, and using the `uppy.cancelAll()` API.
 
+### `doneButtonHandler`
+
+If passed a function, Status Bar will render a “Done” button in place of pause/resume/cancel buttons, once the upload/encoding is done. The behaviour of this “Done” button is defined by the handler function — can be used to close file picker modals or clear the upload state. This is what the Dashboard plugin, which uses Status Bar internally, sets:
+
+```js
+doneButtonHandler: () => {
+  this.uppy.reset()
+  this.requestCloseModal()
+}
+```
+
 ### `locale: {}`
 
 Localize text that is shown to the user.
@@ -124,14 +136,12 @@ strings: {
   retry: 'Retry',
   // Used as the label for the button that cancels an upload.
   cancel: 'Cancel',
-  // Used as the screen reader label for the button that retries an upload.
-  retryUpload: 'Retry upload',
-  // Used as the screen reader label for the button that pauses an upload.
-  pauseUpload: 'Pause upload',
-  // Used as the screen reader label for the button that resumes a paused upload.
-  resumeUpload: 'Resume upload',
-  // Used as the screen reader label for the button that cancels an upload.
-  cancelUpload: 'Cancel upload',
+  // Used as the label for the button that pauses an upload.
+  pause: 'Pause',
+  // Used as the label for the button that resumes an upload.
+  resume: 'Resume',
+  // Used as the label for the button that resets the upload state after an upload
+  done: 'Done',
   // When `showProgressDetails` is set, shows the number of files that have been fully uploaded so far.
   filesUploadedOfTotal: {
     0: '%{complete} of %{smart_count} file uploaded',

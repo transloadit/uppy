@@ -2,8 +2,8 @@ const base = require('./wdio.base.conf')
 
 function createCapability (capability) {
   return {
-    'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER,
-    build: process.env.TRAVIS_BUILD_NUMBER,
+    'tunnel-identifier': process.env.SAUCE_TUNNEL_IDENTIFIER,
+    build: process.env.SAUCE_BUILD,
     extendedDebugging: true,
     ...capability
   }

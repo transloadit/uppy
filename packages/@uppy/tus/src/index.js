@@ -256,7 +256,7 @@ module.exports = class Tus extends Plugin {
         }
       }
 
-      /** @type {{ [name: string]: string }} */
+      /** @type {Record<string, string>} */
       const meta = {}
       const metaFields = Array.isArray(opts.metaFields)
         ? opts.metaFields

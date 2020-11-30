@@ -2,7 +2,7 @@
   "name": "uppy.io",
   "private": true,
   "hexo": {
-    "version": "4.0.0"
+    "version": "4.2.1"
   },
   "dependencies": {
     "@babel/core": "^7.4.4",
@@ -16,7 +16,7 @@
     "drag-drop": "^4.2.0",
     "glob": "^7.1.2",
     "he": "^1.2.0",
-    "hexo": "4.0.0",
+    "hexo": "4.2.1",
     "hexo-browsersync": "^0.3.0",
     "hexo-cli": "3.1.0",
     "hexo-filter-github-emojis": "arturi/hexo-filter-github-emojis",
@@ -30,9 +30,8 @@
     "hexo-include-markdown": "^1.0.2",
     "hexo-renderer-ejs": "^1.0.0",
     "hexo-renderer-marked": "2.0.0",
-    "hexo-renderer-scss": "^1.2.0",
     "hexo-server": "^1.0.0",
-    "hexo-util": "^1.5.0",
+    "hexo-util": "^1.9.1",
     "js-yaml": "^3.13.1",
     "locale-code": "^2.0.2",
     "marked": "^0.7.0",
@@ -42,6 +41,10 @@
     "node-notifier": "^5.2.1",
     "postcss-inline-svg": "^3.1.1",
     "prismjs": "^1.17.1",
+    "sass": "^1.29.0",
     "watchify": "^3.11.0"
+  },
+  "scripts": {
+    "hexo": "hexo"
   }
 }

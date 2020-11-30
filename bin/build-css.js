@@ -1,4 +1,4 @@
-const sass = require('node-sass')
+const sass = require('sass')
 const postcss = require('postcss')
 const autoprefixer = require('autoprefixer')
 const cssnano = require('cssnano')
@@ -23,9 +23,9 @@ function handleErr (err) {
 async function compileCSS () {
   const files = await glob('packages/{,@uppy/}*/src/style.scss')
   for (const file of files) {
+    const importedFiles = new Set()
     const scssResult = await renderScss({
       file,
-      importedFiles: new Set(),
       importer (url, from, done) {
         resolve(url, {
           basedir: path.dirname(from),
@@ -36,8 +36,8 @@ async function compileCSS () {
 
           res = fs.realpathSync(res)
 
-          if (this.options.importedFiles.has(res)) return done({ contents: '' })
-          this.options.importedFiles.add(res)
+          if (importedFiles.has(res)) return done({ contents: '' })
+          importedFiles.add(res)
 
           done({ file: res })
         })

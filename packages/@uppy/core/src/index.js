@@ -653,7 +653,8 @@ class Uppy {
     }
 
     try {
-      this._checkRestrictions(newFile)
+      const filesArray = Object.keys(files).map(i => files[i])
+      this._checkRestrictions(newFile, filesArray)
     } catch (err) {
       this._showOrLogErrorAndThrow(err, { file: newFile })
     }

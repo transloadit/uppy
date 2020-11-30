@@ -109,6 +109,8 @@ module.exports = (props) => {
 
   const showRetryBtn = error && !hideRetryButton
 
+  const showDoneBtn = props.doneButtonHandler && uploadState === statusBarStates.STATE_COMPLETE
+
   const progressClassNames = `uppy-StatusBar-progress
                            ${progressMode ? 'is-' + progressMode : ''}`
 
@@ -134,6 +136,7 @@ module.exports = (props) => {
         {showRetryBtn ? <RetryBtn {...props} /> : null}
         {showPauseResumeBtn ? <PauseResumeButton {...props} /> : null}
         {showCancelBtn ? <CancelBtn {...props} /> : null}
+        {showDoneBtn ? <DoneBtn {...props} /> : null}
       </div>
     </div>
   )
@@ -228,6 +231,20 @@ const PauseResumeButton = (props) => {
           </g>
         </svg>
       )}
+    </button>
+  )
+}
+
+const DoneBtn = (props) => {
+  const { i18n } = props
+  return (
+    <button
+      type="button"
+      class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--done"
+      onClick={props.doneButtonHandler}
+      data-uppy-super-focusable
+    >
+      {i18n('done')}
     </button>
   )
 }
