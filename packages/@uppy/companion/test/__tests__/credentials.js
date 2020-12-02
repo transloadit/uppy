@@ -12,7 +12,7 @@ jest.mock('request', () => {
           return done(new Error('wrong provider'))
         }
 
-        if (body.params !== 'ZOOM-CREDENTIALS-PARAMS') {
+        if (body.parameters !== 'ZOOM-CREDENTIALS-PARAMS') {
           return done(new Error('wrong params'))
         }
 

@@ -115,7 +115,7 @@ const fetchKeys = (url, providerName, credentialRequestParams) => {
     const options = {
       body: {
         provider: providerName,
-        params: credentialRequestParams
+        parameters: credentialRequestParams
       },
       json: true
     }
