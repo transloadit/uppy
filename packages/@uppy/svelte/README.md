@@ -1,0 +1,3 @@
+# @uppy/svelte
+
+This is a work in progress, more info coming soon...
