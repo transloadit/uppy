@@ -6,7 +6,7 @@ const Tus = require('@uppy/tus')
 const ProgressBar = require('@uppy/progress-bar')
 
 // const endpoint = 'http://localhost:1080'
-const endpoint = 'https://master.tus.io/files/'
+const endpoint = 'https://master.tus.io'
 
 // Initialise Uppy with Drag & Drop
 const uppyDragDrop = new Uppy({
