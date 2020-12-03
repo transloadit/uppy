@@ -77,7 +77,7 @@ module.exports.getCredentialsResolver = (providerName, companionOptions, req) =>
       try {
         credentialRequestParams = JSON.parse(atob(encodedCredentialsParams)).params
       } catch (error) {
-        logger.error(error, 'credentilas.resolve.fail', req.id)
+        logger.error(error, 'credentials.resolve.fail', req.id)
       }
     }
 
@@ -126,7 +126,7 @@ const fetchKeys = (url, providerName, credentialRequestParams) => {
       }
 
       if (resp.statusCode !== 200 || !body.credentials) {
-        const err = new Error(`recevied status: ${resp.statusCode} with no credentials`)
+        const err = new Error(`received status: ${resp.statusCode} with no credentials`)
         logger.error(err, 'credentials.fetch.fail')
         return reject(err)
       }
