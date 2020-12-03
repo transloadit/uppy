@@ -1,5 +1,6 @@
 'use strict'
 
+const qsStringify = require('qs-stringify')
 const RequestClient = require('./RequestClient')
 const tokenStorage = require('./tokenStorage')
 
@@ -54,19 +55,14 @@ module.exports = class Provider extends RequestClient {
     return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
   }
 
-  authUrl (queries) {
-    const urlQueries = []
-    if (queries) {
-      urlQueries.push(queries)
-    }
-
+  authUrl (queries = {}) {
     if (this.preAuthToken) {
-      urlQueries.push(`uppyPreAuthToken=${this.preAuthToken}`)
+      queries.uppyPreAuthToken = this.preAuthToken
     }
 
-    queries = urlQueries.join('&')
-    queries = queries ? `?${queries}` : queries
-    return `${this.hostname}/${this.id}/connect${queries}`
+    let strigifiedQueries = qsStringify(queries)
+    strigifiedQueries = strigifiedQueries ? `?${strigifiedQueries}` : strigifiedQueries
+    return `${this.hostname}/${this.id}/connect${strigifiedQueries}`
   }
 
   fileUrl (id) {
