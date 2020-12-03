@@ -1,4 +1,4 @@
-const { h, Component } = require('preact')
+const { Component } = require('preact')
 
 module.exports = class CloseWrapper extends Component {
   componentWillUnmount () {

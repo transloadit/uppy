@@ -5,7 +5,7 @@
 <a href="https://www.npmjs.com/package/@uppy/unsplash"><img src="https://img.shields.io/npm/v/@uppy/unsplash.svg?style=flat-square"></a>
 <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
 
-The Unsplash plugin lets users import files from the Internet. Paste any URL and it’ll be added!
+The Unsplash plugin lets users import files from Unsplash, the free stock photography resource.
 
 A Companion instance is required for the Unsplash plugin to work. Companion will download the files and upload them to their destination. This saves bandwidth for the user (especially on mobile connections) and helps avoid CORS restrictions.
 

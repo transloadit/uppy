@@ -115,6 +115,7 @@ module.exports = class Dashboard extends Plugin {
       width: 750,
       height: 550,
       thumbnailWidth: 280,
+      thumbnailType: 'image/jpeg',
       waitForThumbnailsBeforeUpload: false,
       defaultPickerIcon,
       showLinkToFileUploadResult: true,
@@ -124,6 +125,10 @@ module.exports = class Dashboard extends Plugin {
       hideRetryButton: false,
       hidePauseResumeButton: false,
       hideProgressAfterFinish: false,
+      doneButtonHandler: () => {
+        this.uppy.reset()
+        this.requestCloseModal()
+      },
       note: null,
       closeModalOnClickOutside: false,
       closeAfterFinish: false,
@@ -224,8 +229,6 @@ module.exports = class Dashboard extends Plugin {
       return
     }
 
-    console.log(update)
-
     this.setPluginState(update)
   }
 
@@ -257,6 +260,7 @@ module.exports = class Dashboard extends Plugin {
 
     this.setPluginState({
       showFileEditor: true,
+      fileCardFor: file.id || null,
       activeOverlayType: 'FileEditor'
     })
 
@@ -993,7 +997,8 @@ module.exports = class Dashboard extends Plugin {
         hideCancelButton: this.opts.hideCancelButton,
         showProgressDetails: this.opts.showProgressDetails,
         hideAfterFinish: this.opts.hideProgressAfterFinish,
-        locale: this.opts.locale
+        locale: this.opts.locale,
+        doneButtonHandler: this.opts.doneButtonHandler
       })
     }
 
@@ -1008,6 +1013,7 @@ module.exports = class Dashboard extends Plugin {
       this.uppy.use(ThumbnailGenerator, {
         id: `${this.id}:ThumbnailGenerator`,
         thumbnailWidth: this.opts.thumbnailWidth,
+        thumbnailType: this.opts.thumbnailType,
         waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload,
         // If we don't block on thumbnails, we can lazily generate them
         lazy: !this.opts.waitForThumbnailsBeforeUpload

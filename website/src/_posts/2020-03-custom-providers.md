@@ -544,7 +544,7 @@ module.exports = (api) => {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Uppy Custom provider Example</title>
-    <link href="https://transloadit.edgly.net/releases/uppy/v1.15.0/uppy.min.css" rel="stylesheet">
+    <link href="https://releases.transloadit.com/uppy/v1.15.0/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <script src="bundle.js"></script>

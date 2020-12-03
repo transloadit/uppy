@@ -18,9 +18,12 @@ module.exports = class Client {
    * Create a new assembly.
    *
    * @param {object} options
+   * @param {string|object} options.params
+   * @param {object} options.fields
+   * @param {string} options.signature
+   * @param {number} options.expectedFiles
    */
   createAssembly ({
-    templateId,
     params,
     fields,
     signature,

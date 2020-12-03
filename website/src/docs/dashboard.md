@@ -80,6 +80,10 @@ uppy.use(Dashboard, {
   hidePauseResumeButton: false,
   hideCancelButton: false,
   hideProgressAfterFinish: false,
+  doneButtonHandler: () => {
+    this.uppy.reset()
+    this.requestCloseModal()
+  },
   note: null,
   closeModalOnClickOutside: false,
   closeAfterFinish: false,
@@ -183,6 +187,19 @@ Use this if you are providing a custom retry button somewhere, and using the `up
 ### `hideProgressAfterFinish: false`
 
 Hide Status Bar after the upload has finished.
+
+### `doneButtonHandler`
+
+This option is passed to the StatusBar, and will render a “Done” button in place of pause/resume/cancel buttons, once the upload/encoding is done. The behaviour of this “Done” button is defined by the handler function — can be used to close file picker modals or clear the upload state. This is what the Dashboard sets by default:
+
+```js
+doneButtonHandler: () => {
+  this.uppy.reset()
+  this.requestCloseModal()
+}
+```
+
+Set to `null` to disable the “Done” button.
 
 ### `showSelectedFiles: true`
 
