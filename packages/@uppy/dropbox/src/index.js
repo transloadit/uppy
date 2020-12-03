@@ -23,7 +23,7 @@ module.exports = class Dropbox extends Plugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
-      credentialsRequestParams: this.opts.credentialsRequestParams,
+      companionKeysParams: this.opts.companionKeysParams,
       provider: 'dropbox',
       pluginId: this.id
     })

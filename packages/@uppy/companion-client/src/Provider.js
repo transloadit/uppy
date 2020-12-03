@@ -16,7 +16,7 @@ module.exports = class Provider extends RequestClient {
     this.name = this.opts.name || _getName(this.id)
     this.pluginId = this.opts.pluginId
     this.tokenKey = `companion-${this.pluginId}-auth-token`
-    this.credentialsRequestParams = this.opts.credentialsRequestParams
+    this.companionKeysParams = this.opts.companionKeysParams
     this.preAuthToken = null
   }
 
@@ -28,9 +28,9 @@ module.exports = class Provider extends RequestClient {
           authHeaders['uppy-auth-token'] = token
         }
 
-        if (this.credentialsRequestParams) {
+        if (this.companionKeysParams) {
           authHeaders['uppy-credentials-params'] = btoa(
-            JSON.stringify({ params: this.credentialsRequestParams })
+            JSON.stringify({ params: this.companionKeysParams })
           )
         }
         return Object.assign({}, headers, authHeaders)
@@ -70,11 +70,11 @@ module.exports = class Provider extends RequestClient {
   }
 
   fetchPreAuthToken () {
-    if (!this.credentialsRequestParams) {
+    if (!this.companionKeysParams) {
       return Promise.resolve()
     }
 
-    return this.post(`${this.id}/preauth/`, { params: this.credentialsRequestParams })
+    return this.post(`${this.id}/preauth/`, { params: this.companionKeysParams })
       .then((res) => {
         this.preAuthToken = res.token
       }).catch((err) => {
