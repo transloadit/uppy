@@ -33,8 +33,6 @@ module.exports = class ReduxDevTools extends Plugin {
     this.devTools = window.devToolsExtension.connect()
     this.devToolsUnsubscribe = this.devTools.subscribe((message) => {
       if (message.type === 'DISPATCH') {
-        console.log(message.payload.type)
-
         // Implement monitors actions
         switch (message.payload.type) {
           case 'RESET':

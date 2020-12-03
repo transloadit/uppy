@@ -2,6 +2,10 @@ const fs = require('fs')
 const qs = require('querystring')
 const fixtures = require('../fixtures').providers
 
+function has (object, property) {
+  return Object.prototype.hasOwnProperty.call(object, property)
+}
+
 class MockPurest {
   constructor (opts) {
     const methodsToMock = ['query', 'select', 'where', 'auth', 'json']
@@ -34,6 +38,10 @@ class MockPurest {
       const responses = fixtures[this.opts.providerName].responses
       const url = this._query ? `${this._requestUrl}?${this._query}` : this._requestUrl
       const endpointResponses = responses[url] || responses[this._requestUrl]
+      if (endpointResponses == null || !has(endpointResponses, this._method)) {
+        done(new Error(`No fixture for ${this._method} ${url}`))
+        return
+      }
 
       let statusCode = 200
       const validators = fixtures[this.opts.providerName].validators

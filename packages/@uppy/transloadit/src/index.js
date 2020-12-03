@@ -124,6 +124,7 @@ module.exports = class Transloadit extends Plugin {
     }
 
     addPluginVersion('Dropbox', 'uppy-dropbox')
+    addPluginVersion('Box', 'uppy-box')
     addPluginVersion('Facebook', 'uppy-facebook')
     addPluginVersion('GoogleDrive', 'uppy-google-drive')
     addPluginVersion('Instagram', 'uppy-instagram')

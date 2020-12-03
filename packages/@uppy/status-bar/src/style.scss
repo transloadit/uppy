@@ -312,6 +312,21 @@
     }
   }
 
+  .uppy-StatusBar-actionBtn--done {
+    @include highlight-focus;
+    line-height: 1;
+    border-radius: 3px;
+    padding: 7px 8px;
+
+    [data-uppy-theme="dark"] & {
+      color: $highlight--dark;
+    }
+  }
+
+  .uppy-size--md .uppy-StatusBar-actionBtn--done {
+    font-size: 14px;
+  }
+
 .uppy-StatusBar-details {
   line-height: 12px;
   width: 13px;

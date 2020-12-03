@@ -56,7 +56,7 @@ const uppy = new Uppy({
     { id: 'name', name: 'Name', placeholder: 'file name' },
     { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
   ],
-  browserBackButtonClose: true
+  browserBackButtonClose: false
 })
 .use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
 .use(Dropbox, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })

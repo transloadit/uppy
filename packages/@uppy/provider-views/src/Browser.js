@@ -5,15 +5,24 @@ const FooterActions = require('./FooterActions')
 const { h } = require('preact')
 
 const Browser = (props) => {
-  let filteredFolders = props.folders
-  let filteredFiles = props.files
+  const {
+    currentSelection,
+    folders,
+    files,
+    uppyFiles,
+    filterItems,
+    filterInput
+  } = props
 
-  if (props.filterInput !== '') {
-    filteredFolders = props.filterItems(props.folders)
-    filteredFiles = props.filterItems(props.files)
+  let filteredFolders = folders
+  let filteredFiles = files
+
+  if (filterInput !== '') {
+    filteredFolders = filterItems(folders)
+    filteredFiles = filterItems(files)
   }
 
-  const selected = props.currentSelection.length
+  const selected = currentSelection.length
 
   return (
     <div class={classNames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${props.viewType}`)}>
@@ -40,6 +49,9 @@ const Browser = (props) => {
         showTitles={props.showTitles}
         i18n={props.i18n}
         viewType={props.viewType}
+        validateRestrictions={props.validateRestrictions}
+        uppyFiles={uppyFiles}
+        currentSelection={currentSelection}
       />
       {selected > 0 && <FooterActions selected={selected} {...props} />}
     </div>

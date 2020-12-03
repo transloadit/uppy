@@ -109,7 +109,8 @@ class Uppy {
       onBeforeFileAdded: (currentFile, files) => currentFile,
       onBeforeUpload: (files) => files,
       store: DefaultStore(),
-      logger: justErrorsLogger
+      logger: justErrorsLogger,
+      infoTimeout: 5000
     }
 
     // Merge default options with the ones set by user,
@@ -154,6 +155,7 @@ class Uppy {
     this.addFile = this.addFile.bind(this)
     this.removeFile = this.removeFile.bind(this)
     this.pauseResume = this.pauseResume.bind(this)
+    this.validateRestrictions = this.validateRestrictions.bind(this)
 
     // ___Why throttle at 500ms?
     //    - We must throttle at >250ms for superfocus in Dashboard to work well (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
@@ -428,14 +430,24 @@ class Uppy {
   }
 
   /**
-   * Check if minNumberOfFiles restriction is reached before uploading.
+   * A public wrapper for _checkRestrictions — checks if a file passes a set of restrictions.
+   * For use in UI pluigins (like Providers), to disallow selecting files that won’t pass restrictions.
    *
-   * @private
+   * @param {object} file object to check
+   * @param {Array} [files] array to check maxNumberOfFiles and maxTotalFileSize
+   * @returns {object} { result: true/false, reason: why file didn’t pass restrictions }
    */
-  _checkMinNumberOfFiles (files) {
-    const { minNumberOfFiles } = this.opts.restrictions
-    if (Object.keys(files).length < minNumberOfFiles) {
-      throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
+  validateRestrictions (file, files) {
+    try {
+      this._checkRestrictions(file, files)
+      return {
+        result: true
+      }
+    } catch (err) {
+      return {
+        result: false,
+        reason: err.message
+      }
     }
   }
 
@@ -443,29 +455,29 @@ class Uppy {
    * Check if file passes a set of restrictions set in options: maxFileSize, minFileSize,
    * maxNumberOfFiles and allowedFileTypes.
    *
-   * @param {object} files Object of IDs → files already added
    * @param {object} file object to check
+   * @param {Array} [files] array to check maxNumberOfFiles and maxTotalFileSize
    * @private
    */
-  _checkRestrictions (files, file) {
+  _checkRestrictions (file, files = this.getFiles()) {
     const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
 
     if (maxNumberOfFiles) {
-      if (Object.keys(files).length + 1 > maxNumberOfFiles) {
+      if (files.length + 1 > maxNumberOfFiles) {
         throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
       }
     }
 
     if (allowedFileTypes) {
       const isCorrectFileType = allowedFileTypes.some((type) => {
-        // is this is a mime-type
+        // check if this is a mime-type
         if (type.indexOf('/') > -1) {
           if (!file.type) return false
           return match(file.type.replace(/;.*?$/, ''), type)
         }
 
         // otherwise this is likely an extension
-        if (type[0] === '.') {
+        if (type[0] === '.' && file.extension) {
           return file.extension.toLowerCase() === type.substr(1).toLowerCase()
         }
         return false
@@ -478,11 +490,11 @@ class Uppy {
     }
 
     // We can't check maxTotalFileSize if the size is unknown.
-    if (maxTotalFileSize && file.data.size != null) {
+    if (maxTotalFileSize && file.size != null) {
       let totalFilesSize = 0
-      totalFilesSize += file.data.size
-      Object.keys(files).forEach((file) => {
-        totalFilesSize += files[file].data.size
+      totalFilesSize += file.size
+      files.forEach((file) => {
+        totalFilesSize += file.size
       })
       if (totalFilesSize > maxTotalFileSize) {
         throw new RestrictionError(this.i18n('exceedsSize2', {
@@ -493,8 +505,8 @@ class Uppy {
     }
 
     // We can't check maxFileSize if the size is unknown.
-    if (maxFileSize && file.data.size != null) {
-      if (file.data.size > maxFileSize) {
+    if (maxFileSize && file.size != null) {
+      if (file.size > maxFileSize) {
         throw new RestrictionError(this.i18n('exceedsSize2', {
           backwardsCompat: this.i18n('exceedsSize'),
           size: prettierBytes(maxFileSize)
@@ -503,12 +515,24 @@ class Uppy {
     }
 
     // We can't check minFileSize if the size is unknown.
-    if (minFileSize && file.data.size != null) {
-      if (file.data.size < minFileSize) {
+    if (minFileSize && file.size != null) {
+      if (file.size < minFileSize) {
         throw new RestrictionError(this.i18n('inferiorSize', {
           size: prettierBytes(minFileSize)
         }))
       }
+    }
+  }
+
+  /**
+   * Check if minNumberOfFiles restriction is reached before uploading.
+   *
+   * @private
+   */
+  _checkMinNumberOfFiles (files) {
+    const { minNumberOfFiles } = this.opts.restrictions
+    if (Object.keys(files).length < minNumberOfFiles) {
+      throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
     }
   }
 
@@ -543,7 +567,7 @@ class Uppy {
     // Sometimes informer has to be shown manually by the developer,
     // for example, in `onBeforeFileAdded`.
     if (showInformer) {
-      this.info({ message: message, details: details }, 'error', 5000)
+      this.info({ message: message, details: details }, 'error', this.opts.infoTimeout)
     }
 
     if (throwErr) {
@@ -629,7 +653,8 @@ class Uppy {
     }
 
     try {
-      this._checkRestrictions(files, newFile)
+      const filesArray = Object.keys(files).map(i => files[i])
+      this._checkRestrictions(newFile, filesArray)
     } catch (err) {
       this._showOrLogErrorAndThrow(err, { file: newFile })
     }
@@ -733,7 +758,7 @@ class Uppy {
       this.info({
         message: this.i18n('addBulkFilesFailed', { smart_count: errors.length }),
         details: message
-      }, 'error', 5000)
+      }, 'error', this.opts.infoTimeout)
 
       const err = new Error(message)
       err.errors = errors

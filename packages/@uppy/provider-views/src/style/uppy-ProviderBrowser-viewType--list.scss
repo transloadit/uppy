@@ -20,6 +20,10 @@
     }
   }
 
+  li.uppy-ProviderBrowserItem--disabled {
+    opacity: 0.6;
+  }
+
   // Checkbox
   .uppy-ProviderBrowserItem-fakeCheckbox {
     margin-right: 15px;
@@ -45,7 +49,7 @@
     [data-uppy-theme="dark"] &:focus {
       border-color: rgba($highlight--dark, 0.7);
       box-shadow: 0 0 0 3px rgba($highlight--dark, 0.2);
-    }
+    }   
   }
   // Checked: color the background, show the checkmark
   .uppy-ProviderBrowserItem-fakeCheckbox--is-checked {
@@ -64,6 +68,7 @@
     overflow: hidden;
     display: flex;
     align-items: center;
+
     // For better outline
     padding: 2px;
     &:focus {
@@ -80,5 +85,14 @@
       white-space: nowrap;
       overflow: hidden;
     }
+  }
+
+  .uppy-ProviderBrowserItem--disabled .uppy-ProviderBrowserItem-inner  {
+    cursor: default;
+  }
+
+  .uppy-ProviderBrowserItem-iconWrap {
+    width: 20px;
+    margin-right: 7px;
   }
 }

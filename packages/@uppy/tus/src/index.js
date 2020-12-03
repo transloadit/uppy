@@ -202,6 +202,10 @@ module.exports = class Tus extends Plugin {
       uploadOptions.onBeforeRequest = (req) => {
         const xhr = req.getUnderlyingObject()
         xhr.withCredentials = !!opts.withCredentials
+
+        if (typeof opts.onBeforeRequest === 'function') {
+          opts.onBeforeRequest(req)
+        }
       }
 
       uploadOptions.onError = (err) => {
@@ -252,7 +256,7 @@ module.exports = class Tus extends Plugin {
         }
       }
 
-      /** @type {{ [name: string]: string }} */
+      /** @type {Record<string, string>} */
       const meta = {}
       const metaFields = Array.isArray(opts.metaFields)
         ? opts.metaFields

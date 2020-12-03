@@ -103,7 +103,7 @@ Other things to keep in mind during release:
 After a release, the demos on transloadit.com should also be updated. After updating, check that some things work locally:
 
  - the demos in the demo section work (try one that uses an import robot, and one that you need to upload to)
- - the demos on the homepage work and can import from GDrive, Insta, Dropbox
+ - the demos on the homepage work and can import from Google Drive, Instagram, Dropbox, etc.
 
 If you don't have access to the transloadit.com source code ping @arturi or @goto-bus-stop and we'll pick it up. :sparkles:
 

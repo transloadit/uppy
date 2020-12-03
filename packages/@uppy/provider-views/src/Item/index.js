@@ -10,6 +10,7 @@ module.exports = (props) => {
   const className = classNames(
     'uppy-ProviderBrowserItem',
     { 'uppy-ProviderBrowserItem--selected': props.isChecked },
+    { 'uppy-ProviderBrowserItem--disabled': props.isDisabled },
     { 'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video' }
   )
 

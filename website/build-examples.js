@@ -112,8 +112,7 @@ glob(srcPattern, (err, files) => {
      * Creates bundle and writes it to static and public folders.
      * Changes to
      *
-     * @param  {[type]} ids [description]
-     * @returns {[type]}     [description]
+     * @param  {string[]} ids
      */
     function bundle (ids = []) {
       ids.forEach((id) => {

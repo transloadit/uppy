@@ -5,12 +5,14 @@ function EditButton ({
   file,
   uploadInProgressOrComplete,
   metaFields,
+  canEditFile,
   i18n,
   onClick
 }) {
-  if (!uploadInProgressOrComplete &&
-      metaFields &&
-      metaFields.length > 0) {
+  if (
+    (!uploadInProgressOrComplete && metaFields && metaFields.length > 0) ||
+    (!uploadInProgressOrComplete && canEditFile(file))
+  ) {
     return (
       <button
         class="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit"
@@ -80,15 +82,25 @@ module.exports = function Buttons (props) {
   const {
     file,
     uploadInProgressOrComplete,
+    canEditFile,
     metaFields,
     showLinkToFileUploadResult,
     showRemoveButton,
     i18n,
     removeFile,
     toggleFileCard,
+    openFileEditor,
     log,
     info
   } = props
+
+  const editAction = () => {
+    if (metaFields && metaFields.length > 0) {
+      toggleFileCard(file.id)
+    } else {
+      openFileEditor(file)
+    }
+  }
 
   return (
     <div className="uppy-Dashboard-Item-actionWrapper">
@@ -96,8 +108,9 @@ module.exports = function Buttons (props) {
         i18n={i18n}
         file={file}
         uploadInProgressOrComplete={uploadInProgressOrComplete}
+        canEditFile={canEditFile}
         metaFields={metaFields}
-        onClick={() => toggleFileCard(file.id)}
+        onClick={editAction}
       />
       {showLinkToFileUploadResult && file.uploadURL ? (
         <CopyLinkButton

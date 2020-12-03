@@ -8,6 +8,7 @@ const AcquirerPlugin2 = require('../../../../test/mocks/acquirerPlugin2')
 const InvalidPlugin = require('../../../../test/mocks/invalidPlugin')
 const InvalidPluginWithoutId = require('../../../../test/mocks/invalidPluginWithoutId')
 const InvalidPluginWithoutType = require('../../../../test/mocks/invalidPluginWithoutType')
+const DeepFrozenStore = require('../../../../test/resources/DeepFrozenStore.js')
 
 jest.mock('cuid', () => {
   return () => 'cjd09qwxb000dlql4tp4doz8h'
@@ -209,7 +210,10 @@ describe('src/Core', () => {
   })
 
   it('should reset when the reset method is called', () => {
-    const core = new Core()
+    // use DeepFrozenStore in some tests to make sure we are not mutating things
+    const core = new Core({
+      store: DeepFrozenStore()
+    })
     // const corePauseEventMock = jest.fn()
     const coreCancelEventMock = jest.fn()
     const coreStateUpdateEventMock = jest.fn()
@@ -265,7 +269,10 @@ describe('src/Core', () => {
   })
 
   it('should close, reset and uninstall when the close method is called', () => {
-    const core = new Core()
+    // use DeepFrozenStore in some tests to make sure we are not mutating things
+    const core = new Core({
+      store: DeepFrozenStore()
+    })
     core.use(AcquirerPlugin1)
 
     const coreCancelEventMock = jest.fn()
@@ -277,7 +284,6 @@ describe('src/Core', () => {
 
     core.close()
 
-    // expect(corePauseEventMock.mock.calls.length).toEqual(1)
     expect(coreCancelEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls[0][1]).toEqual({
@@ -834,7 +840,10 @@ describe('src/Core', () => {
     })
 
     it('should return files with errors in the { failed } key', () => {
-      const core = new Core()
+      // use DeepFrozenStore in some tests to make sure we are not mutating things
+      const core = new Core({
+        store: DeepFrozenStore()
+      })
       core.addUploader((fileIDs) => {
         fileIDs.forEach((fileID) => {
           const file = core.getFile(fileID)
@@ -1171,7 +1180,9 @@ describe('src/Core', () => {
 
   describe('meta data', () => {
     it('should set meta data by calling setMeta', () => {
+      // use DeepFrozenStore in some tests to make sure we are not mutating things
       const core = new Core({
+        store: DeepFrozenStore(),
         meta: { foo2: 'bar2' }
       })
       core.setMeta({ foo: 'bar', bur: 'mur' })
@@ -1376,7 +1387,10 @@ describe('src/Core', () => {
     })
 
     it('should calculate the total progress of all file uploads', () => {
-      const core = new Core()
+      // use DeepFrozenStore in some tests to make sure we are not mutating things
+      const core = new Core({
+        store: DeepFrozenStore()
+      })
 
       core.addFile({
         source: 'jest',
@@ -1627,6 +1641,48 @@ describe('src/Core', () => {
         })
       }).toThrowError(
         new Error('This file exceeds maximum allowed size of 33 KB')
+      )
+    })
+
+    it('should check if a file validateRestrictions', () => {
+      const core = new Core({
+        restrictions: {
+          minFileSize: 300000
+        }
+      })
+
+      const core2 = new Core({
+        restrictions: {
+          allowedFileTypes: ['image/png']
+        }
+      })
+
+      const newFile = {
+        source: 'jest',
+        name: 'foo1.jpg',
+        extension: 'jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' }),
+        isFolder: false,
+        mimeType: 'image/jpeg',
+        modifiedDate: '2016-04-13T15:11:31.204Z',
+        size: 270733
+      }
+
+      const validateRestrictions1 = core.validateRestrictions(newFile)
+      const validateRestrictions2 = core2.validateRestrictions(newFile)
+
+      expect(validateRestrictions1).toMatchObject(
+        {
+          result: false,
+          reason: 'This file is smaller than the allowed size of 293 KB'
+        }
+      )
+      expect(validateRestrictions2).toMatchObject(
+        {
+          result: false,
+          reason: 'You can only upload: image/png'
+        }
       )
     })
 

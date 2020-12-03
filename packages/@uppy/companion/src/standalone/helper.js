@@ -39,6 +39,10 @@ const getConfigFromEnv = () => {
         secret: getSecret('COMPANION_DROPBOX_SECRET'),
         credentialsURL: process.env.COMPANION_DROPBOX_KEYS_ENDPOINT
       },
+      box: {
+        key: process.env.COMPANION_BOX_KEY,
+        secret: getSecret('COMPANION_BOX_SECRET')
+      },
       instagram: {
         key: process.env.COMPANION_INSTAGRAM_KEY,
         secret: getSecret('COMPANION_INSTAGRAM_SECRET'),

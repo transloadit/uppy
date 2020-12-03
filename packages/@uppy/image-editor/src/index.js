@@ -33,6 +33,17 @@ module.exports = class ImageEditor extends Plugin {
       responsive: true
     }
 
+    const defaultActions = {
+      revert: true,
+      rotate: true,
+      flip: true,
+      zoomIn: true,
+      zoomOut: true,
+      cropSquare: true,
+      cropWidescreen: true,
+      cropWidescreenVertical: true
+    }
+
     const defaultOptions = {
       quality: 0.8
     }
@@ -40,6 +51,10 @@ module.exports = class ImageEditor extends Plugin {
     this.opts = {
       ...defaultOptions,
       ...opts,
+      actions: {
+        ...defaultActions,
+        ...opts.actions
+      },
       cropperOptions: {
         ...defaultCropperOptions,
         ...opts.cropperOptions
