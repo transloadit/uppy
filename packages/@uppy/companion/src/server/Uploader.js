@@ -486,6 +486,7 @@ class Uploader {
         }
       )
 
+      logger.debug(JSON.stringify(reqOptions), 'upload.multipart.request')
       httpRequest(reqOptions, (error, response, body) => {
         this._onMultipartComplete(error, response, body, bytesUploaded)
       })
@@ -500,6 +501,7 @@ class Uploader {
         return
       }
       reqOptions.body = file
+      logger.debug(JSON.stringify(reqOptions), 'upload.multipart.request')
       httpRequest(reqOptions, (error, response, body) => {
         this._onMultipartComplete(error, response, body, bytesUploaded)
       })
@@ -524,6 +526,7 @@ class Uploader {
       headers
     }
 
+    logger.debug(JSON.stringify(respObj), 'upload.multipart.response')
     if (response.statusCode >= 400) {
       logger.error(`upload failed with status: ${response.statusCode}`, 'upload.multipart.error')
       this.emitError(new Error(response.statusMessage), respObj)
