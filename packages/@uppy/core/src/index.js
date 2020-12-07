@@ -698,6 +698,7 @@ class Uppy {
     })
 
     this.emit('file-added', newFile)
+    this.emit('final-file-added', newFile)
     this.log(`Added file: ${newFile.name}, ${newFile.id}, mime type: ${newFile.type}`)
 
     this._startIfAutoProceed()
@@ -733,8 +734,12 @@ class Uppy {
 
     this.setState({ files })
 
-    newFiles.forEach((newFile) => {
+    newFiles.forEach((newFile, i) => {
       this.emit('file-added', newFile)
+
+      if (i + 1 === newFiles.length) {
+        this.emit('final-file-added', newFile)
+      }
     })
 
     if (newFiles.length > 5) {
