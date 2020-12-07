@@ -99,7 +99,8 @@ uppy.use(Dashboard, {
   showRemoveButtonAfterComplete: false,
   locale: defaultLocale,
   browserBackButtonClose: false,
-  theme: 'light'
+  theme: 'light',
+  autoOpenFileEditor: false
 })
 ```
 
@@ -415,6 +416,12 @@ There are three options:
 - `auto` — will respect the user’s system settings and switch automatically
 
 ![Uppy dark mode screenshot](/images/uppy-dashboard-dark-mar-2020.png)
+
+### `autoOpenFileEditor: false`
+
+Automatically open file editor (see [`@uppy/image-editor`](/docs/image-editor/)) for the last file that has been added in a batch.
+
+Most common use case: user adds an image — Uppy opens Image Editor right away — user crops / adjusts the image — upload.
 
 ## Methods
 

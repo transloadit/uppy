@@ -754,6 +754,13 @@ uppy.on('file-removed', (file, reason) => {
 })
 ```
 
+### `final-file-added`
+
+**Parameters**
+- `file` - The [File Object][File Objects] representing the last file that was added in one batch.
+
+Fired when the last file from a batch has been added. If you drag and drop files `a`, `b`, `bob` and `tom`, `tom` will be passed. If you only add `bob`, `bob` will be past.
+
 ### `upload`
 
 Fired when upload starts.
