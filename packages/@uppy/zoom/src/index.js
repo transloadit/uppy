@@ -24,7 +24,7 @@ module.exports = class Zoom extends Plugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
-      cookiesSendRule: this.opts.cookiesSendRule,
+      companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'zoom',
       pluginId: this.id
     })

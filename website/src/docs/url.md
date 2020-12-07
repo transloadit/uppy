@@ -78,7 +78,7 @@ DOM element, CSS selector, or plugin to mount the URL provider into. This should
 
 URL to an Companion instance.
 
-### `cookiesSendRule: 'same-origin'`
+### `companionCookiesRule: 'same-origin'`
 
 This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
 
