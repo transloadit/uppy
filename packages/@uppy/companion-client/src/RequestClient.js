@@ -15,8 +15,6 @@ module.exports = class RequestClient {
     this.uppy = uppy
     this.opts = opts
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
-    this.allowedHeaders = ['accept', 'content-type', 'uppy-auth-token']
-    this.preflightDone = false
   }
 
   get hostname () {
@@ -86,57 +84,19 @@ module.exports = class RequestClient {
           errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg
           errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg
           throw new Error(errMsg)
-        }).catch(() => { throw new Error(errMsg) })
+        }).catch(() => {
+          throw new Error(errMsg)
+        })
     }
     return res.json()
   }
 
-  preflight (path) {
-    if (this.preflightDone) {
-      return Promise.resolve(this.allowedHeaders.slice())
-    }
-
-    return fetch(this._getUrl(path), {
-      method: 'OPTIONS'
-    })
-      .then((response) => {
-        if (response.headers.has('access-control-allow-headers')) {
-          this.allowedHeaders = response.headers.get('access-control-allow-headers')
-            .split(',').map((headerName) => headerName.trim().toLowerCase())
-        }
-        this.preflightDone = true
-        return this.allowedHeaders.slice()
-      })
-      .catch((err) => {
-        this.uppy.log(`[CompanionClient] unable to make preflight request ${err}`, 'warning')
-        this.preflightDone = true
-        return this.allowedHeaders.slice()
-      })
-  }
-
-  preflightAndHeaders (path) {
-    return Promise.all([this.preflight(path), this.headers()])
-      .then(([allowedHeaders, headers]) => {
-        // filter to keep only allowed Headers
-        Object.keys(headers).forEach((header) => {
-          if (allowedHeaders.indexOf(header.toLowerCase()) === -1) {
-            this.uppy.log(`[CompanionClient] excluding unallowed header ${header}`)
-            delete headers[header]
-          }
-        })
-
-        return headers
-      })
-  }
-
   get (path, skipPostResponse) {
-    return this.preflightAndHeaders(path)
-      .then((headers) =>
-        fetchWithNetworkError(this._getUrl(path), {
-          method: 'get',
-          headers: headers,
-          credentials: 'same-origin'
-        }))
+    return fetchWithNetworkError(this._getUrl(path), {
+      method: 'get',
+      headers: this.headers(),
+      credentials: 'same-origin'
+    })
       .then(this._getPostResponseFunc(skipPostResponse))
       .then((res) => this._json(res))
       .catch((err) => {
@@ -146,14 +106,12 @@ module.exports = class RequestClient {
   }
 
   post (path, data, skipPostResponse) {
-    return this.preflightAndHeaders(path)
-      .then((headers) =>
-        fetchWithNetworkError(this._getUrl(path), {
-          method: 'post',
-          headers: headers,
-          credentials: 'same-origin',
-          body: JSON.stringify(data)
-        }))
+    return fetchWithNetworkError(this._getUrl(path), {
+      method: 'post',
+      headers: this.headers(),
+      credentials: 'same-origin',
+      body: JSON.stringify(data)
+    })
       .then(this._getPostResponseFunc(skipPostResponse))
       .then((res) => this._json(res))
       .catch((err) => {
@@ -163,14 +121,12 @@ module.exports = class RequestClient {
   }
 
   delete (path, data, skipPostResponse) {
-    return this.preflightAndHeaders(path)
-      .then((headers) =>
-        fetchWithNetworkError(`${this.hostname}/${path}`, {
-          method: 'delete',
-          headers: headers,
-          credentials: 'same-origin',
-          body: data ? JSON.stringify(data) : null
-        }))
+    return fetchWithNetworkError(`${this.hostname}/${path}`, {
+      method: 'delete',
+      headers: this.headers(),
+      credentials: 'same-origin',
+      body: data ? JSON.stringify(data) : null
+    })
       .then(this._getPostResponseFunc(skipPostResponse))
       .then((res) => this._json(res))
       .catch((err) => {
