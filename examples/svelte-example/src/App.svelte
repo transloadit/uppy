@@ -1,11 +1,15 @@
 <script lang="ts">
-	import { onMount } from "svelte"
 	import { Dashboard, DashboardModal, DragDrop, ProgressBar } from "@uppy/svelte"
-	import { Uppy } from "@uppy/core"
+	import Uppy from "@uppy/core"
 	import Webcam from '@uppy/webcam'
 
-	let uppy1: Uppy = new Uppy().use(Webcam)
-	let uppy2: Uppy = new Uppy().use(Webcam)
+	import '@uppy/core/dist/style.css'
+	import '@uppy/dashboard/dist/style.css'
+	import '@uppy/drag-drop/dist/style.css'
+	import '@uppy/progress-bar/dist/style.css'
+
+	let uppy1 = Uppy().use(Webcam)
+	let uppy2 = Uppy().use(Webcam)
 
 	let open = false;
 	let showInlineDashboard = false;
