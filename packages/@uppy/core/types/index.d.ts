@@ -191,7 +191,7 @@ declare module Uppy {
     >(): Array<UppyFile<TMeta, TBody>>
     addFile<TMeta extends IndexedObject<any> = {}>(
       file: AddFileOptions<TMeta>
-    ): void
+    ): string
     removeFile(fileID: string): void
     pauseResume(fileID: string): boolean
     pauseAll(): void
