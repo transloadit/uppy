@@ -1,0 +1,38 @@
+name: Companion Deploy
+on:
+  push:
+    branches: [master]
+
+jobs:
+  docker:
+    name: DockerHub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Log in to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{secrets.DOCKER_USERNAME}}
+          password: ${{secrets.DOCKER_PASSWORD}}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: packages/@uppy/companion
+          file: packages/@uppy/companion/Dockerfile
+          # TODO add a companion version tag if this is a "Release" commit
+          # Punting on that since it didn't work on travis either, so current users must already be relying on commit hashes
+          tags: transloadit/companion:latest,transloadit/companion:${{github.sha}}
+
+  heroku:
+    name: Heroku
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Deploy to heroku
+        uses: akhileshns/heroku-deploy@v3.5.6
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: companion-demo
+          heroku_email: ${{secrets.HEROKU_EMAIL}}

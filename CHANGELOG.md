@@ -2,10 +2,9 @@
 
 <!--lint disable no-literal-urls-->
 
-Our combined changelog and roadmap. It contains todos as well as dones.
+This is our changelog which contains planned todos and past dones.
 
-Items can be optionally be tagged tagged by GitHub owner issue if discussion
-happened / is needed.
+Items can be optionally tagged by the GitHub issue's owner, if a discussion happened / is needed.
 
 Please add your entries in this format:
 
@@ -13,100 +12,101 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
-## Backlog
-
-Ideas that will be planned and find their way into a release at one point.
-PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
-
-- [ ] core: Add an option to force metafield data when uploading a file. Mark files with restriction errors in the UI. Having an icon showing close to the file to inform if it passed any rule would provide an awesome user experience. The user would be able to edit the file name or any meta tags necessary to pass validation via uppy dashboard, and anytime the user updates the file info, the validation runs again and the icon is updated. #1703
-- [ ] core: Make sure Uppy works well in VR
-- [ ] core: normalize file names when uploading from iOS? Can we do it with meta data? date? `image-${index}`? #678
-- [ ] dashboard: add option to disable uploading from local disk #657
-- [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-- [ ] dashboard: display data like image resolution on file cards. should be done by thumbnail generator maybe #783
-- [ ] dashboard: possibility to edit/delete more than one file at once. example: add copyrigh info to 1000 files #118, #97
-- [ ] dashboard: possibility to work on already uploaded / in progress files. We'll just provide the `fileId` to the `file-edit-complete` event so that folks can more easily roll out custom code for this themselves #112, #113, #2063
-- [ ] dashboard: Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
-- [ ] goldenretriever: make it work with aws multipart https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888 (@goto-bus-stop)
-- [ ] plugins: WordPress Front-end Gravity Forms Uppy plugin so one form field could be an Uppy-powered file input
-- [ ] provider: add sorting (by date) #254
-- [ ] qa: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
-- [ ] react: Add a React Hook to manage an Uppy instance https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951 (@goto-bus-stop)
-- [ ] rn: Uppy React Native works with Expo, now let's make it work without
-- [ ] rn: Uppy React Native works with Url Plugin, now let's make it work with Instagram
-- [ ] security: consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe
-- [ ] statusbar: Add a confirmation of the cancel action (https://github.com/transloadit/uppy/issues/1418) as well as ask the user if they really want to navigate away while an upload is in progress via `onbeforeunload` (@arturi)
-- [ ] test: Add a prepublish test that checks if `npm pack` is not massive (@goto-bus-stop)
-- [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
-- [ ] test: add lighthouse for automated performance testing?
-- [ ] test: Switch one existing e2e test to use Parcel (create-react-app already using webpack) (@arturi)
-- [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused. Perhaps the button can be disabled and say `Pausing..` until Companion has actually stopped transmitting updates (@arturi, @ifedapoolarewaju)
-- [ ] xhr: allow sending custom headers per file (as proposed in #785)
-- [ ] dashboard: focus jumps weirdly if you remove a file https://github.com/transloadit/uppy/pull/2161#issuecomment-613565486
-- [ ] plugins: a WakeLock based plugin that keeps your phone from going to sleep while an upload is ongoing https://github.com/transloadit/uppy/issues/1725
-- [ ] provider: Image search (via Google or Bing or DuckDuckGo): use duckduckgo-images-api or Google Search API (@arturi)
-
-### 2.0
-
-- [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog
-- [ ] core: change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
-- [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
-- [ ] core: force the `new` keyword when instantiating Uppy — now we support both `mew Uppy()` and `Uppy()` which is harder to maintain and might lead to confusion
-- [ ] core: maybe we remove `file.name` and only keep `file.meta.name`; we can change the file.name here actually because it's just a plain object. we can't change the file.data.name where data is a File instance from an input or something. For XHRUpload, where we put the File instance in a FormData object and it uses the unchangeable .name property.
-- [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
-- [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now
-- [ ] core/dashboard: replace `poweredBy` and `exceedsSize` locale keys by word order aware versions, see PR #2077
-- [ ] *: upgrade to Preact X
-- [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
-- [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems)
-- [ ] dashboard: set default `trigger: null`, see https://github.com/transloadit/uppy/pull/2144#issuecomment-600581690
-- [ ] docs: Completely drop soft IE10 (and IE11?) support
-- [ ] form: make the `multipleResults` option `true` by default
-- [ ] locales: Remove the old es_GL name alias for gl_ES. Keep gl_ES only.
-- [ ] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861
-- [ ] redux-store: make action signatures flux-standard-action compatible #1642
-- [ ] tus: set the `limit` option to a sensible default, like 10
-- [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
-- [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
-- [ ] xhr: set the `limit` option to a sensible default, like 10
-- [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
-- [ ] transloadit: remove `UPPY_SERVER` constant
-- [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
-- [ ] tus: remove `autoRetry` option (throw error at runtime if it is explicitly given)
-
-### 1.26
-
-- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
-- [ ] test: add typescript with JSDoc for @uppy/core https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files (@arturi)
-- [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112 #362
-- [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
-- [ ] add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
-- [ ] dashboard: fix Dashboard issues with Angular — it’s incredibly slow presumably because of ResizeObserver? (See #1613) (@adammedford)
-
 ## December 2020
-
-- [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
-- [ ] provider: Giphy image search (on top of Unsplash plugin) (@ife)
-- [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
-- [ ] dashboard: a mini UI that features drop & progress (may involve a `mini: true` options for dashboard, may involve drop+progress or new plugin) (@arturi)
-- [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
-- [ ] add Svelte integration (@ajkachnic)
-- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
-
-## November 2020
 
 ### next
 
-Planned: 2020-11-27
+Planned: 2020-12-18
 
-- [ ] vue: add Vue.js wrapper component for the Dashboard (@ajkachnic)
 - [ ] companion: configurable oauth 3rd party credentials — provide your own Google Drive, Instagram application key/secret at the time of the request (@ife)
-- [ ] dashboard: Add Done button when upload is successfully finished (https://github.com/transloadit/uppy/issues/1510, @arturi)
-- [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530, @arturi)
+- [ ] dashboard: Add a `disabled` (`true`||`false`) option (later for /dragndrop and fileinput) (#1530, @arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] providers: add Box (@cartfisk, @ife)
-- [ ] providers: Provider Browser should handle uppy restrictions, can we gray out things that don’t match the restrictions in Google Drive and Instagram? #1827 (@arturi)
-- [ ] test: add deepFreeze to test that state in not mutated anywhere by accident, use default’s store #320 (@arturi)
+- [ ] add Svelte integration (@ajkachnic)
+- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi, @goto-bus-stop)
+- [ ] react: add useUppy() hook (@goto-bus-stop)
+
+## November 2020
+
+## 1.23.2
+
+Released: 2020-11-27
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3 | 1.7.3 | @uppy/robodog | 1.9.12 |
+| @uppy/companion | 2.3.0 | @uppy/status-bar | 1.8.0 |
+| @uppy/core | 1.14.1 | @uppy/vue | 0.1.0 |
+| @uppy/dashboard | 1.13.0 | @uppy/xhr-upload | 1.6.7 |
+| @uppy/react | 1.10.11 | uppy | 1.23.2 |
+
+This release brings Vue.js support to Uppy! 💥 Plus a “Done” button for Status Bar, to close the Dashboard modal when an upload is finished.
+
+- @uppy/vue: add Vue.js wrapper component for the Dashboard (#2500 / @ajkachnic)
+- @uppy/core: pass files array to _checkRestrictions (#2655 / @arturi)
+- @uppy/status-bar, @uppy/dashboard: Added “Done” button for when upload is successfully finished (#2653 / @arturi, @nqst)
+- @uppy/dashboard: show the edit button only when !uploadInProgressOrComplete (55d38e7b5fd0d1031caa5b3316fc7c85407ffac7 / @arturi)
+- @uppy/xhr-upload: Add missing option types to XHRUploadOptions (#2639 / @wbaaron)
+- docs: Updated website docs, added total upload progress event (#2637 / @mkabatek)
+- test: added test DeepFrozenStore with deepFreeze to try and assert that state in not mutated anywhere by accident (#2607 / @arturi)
+- build: switched from Travis to GitHub Actions (@goto-bus-stop)
+- meta: separated backlog from CHANGELOG.md into BACKLOG.md (#2646 / @azizk)
+
+### 1.23.1
+
+Released: 2020-11-16
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/box | 0.3.0 | @uppy/transloadit | 1.6.14 |
+| @uppy/companion | 2.2.0 | @uppy/tus | 1.8.0 |
+| @uppy/image-editor | 0.1.8 | uppy | 1.23.1 |
+| @uppy/robodog | 1.9.11 | - | - |
+
+This release introduces a new Box provider plugin.
+
+- @uppy/box: Box provider implementation (#2549 / @cartfisk, @ifedapoolarewaju)
+- @uppy/box: Fix the thumbnail for Box provider (#2630 / @ifedapoolarewaju)
+- @uppy/image-editor: zoom button and types fix (#2632 / @arturi)
+- @uppy/companion: fix box provider tests + remove unused e2e test files (#2628 / @ifedapoolarewaju)
+- @uppy/tus: tus: add `onBeforeRequest` option (#2611 / @bedgerotto, @Acconut)
+- @uppy/companion: catch errors when fetching dropbox user email (#2627 /@ifedapoolarewaju)
+
+### 1.23.0
+
+Released: 2020-11-13
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.8 | @uppy/progress-bar | 1.3.21 |
+| @uppy/aws-s3 | 1.7.2 | @uppy/provider-views | 1.9.0 |
+| @uppy/companion-client | 1.6.1 | @uppy/react | 1.10.10 |
+| @uppy/companion | 2.1.1 | @uppy/redux-dev-tools | 1.3.6 |
+| @uppy/core | 1.14.0 | @uppy/robodog | 1.9.10 |
+| @uppy/dashboard | 1.12.10 | @uppy/screen-capture | 1.0.10 |
+| @uppy/drag-drop | 1.4.21 | @uppy/status-bar | 1.7.8 |
+| @uppy/dropbox | 1.4.18 | @uppy/thumbnail-generator | 1.7.1 |
+| @uppy/facebook | 1.1.18 | @uppy/transloadit | 1.6.13 |
+| @uppy/file-input | 1.4.19 | @uppy/tus | 1.7.9 |
+| @uppy/form | 1.3.22 | @uppy/unsplash | 0.1.2 |
+| @uppy/golden-retriever | 1.3.21 | @uppy/url | 1.5.13 |
+| @uppy/google-drive | 1.5.18 | @uppy/utils | 3.2.5 |
+| @uppy/image-editor | 0.1.7 | @uppy/webcam | 1.8.1 |
+| @uppy/informer | 1.5.13 | @uppy/xhr-upload | 1.6.6 |
+| @uppy/instagram | 1.4.18 | @uppy/zoom | 0.1.7 |
+| @uppy/locales | 1.16.10 | uppy | 1.23.0 |
+| @uppy/onedrive | 1.1.18 | - | - |
+
+Optional buttons for the Image Editor, @uppy/core `infoTimeout` option and Robodog fixes.
+
+- @uppy/image-editor: Image Editor optional buttons (#2615 / @lamartire, @arturi)
+- @uppy/image-editor: show “edit” icon even when metaFields are not specified (#2614 / @arturi)
+- @uppy/dashboard: Uppy console logging within hideAllPanels (#2597 / @onassar)
+- @uppy/robodog: Update addTransloaditPlugin.js to include missing configurable Transloadit plugin options (#2612 / @ethanwillis)
+- @uppy/provider-views: add `uppy.validateRestrictions(file, files)` and disallow selecting files that don’t pass restrictions in providers (#2602 / @arturi, @lakesare)
+- @uppy/core: add `uppy.opts.infoTimeout` (#2619 / @arturi)
+- @uppy/onedrive: fix OneDrive for Business (#2536 / @szh)
+- build: use new releases domain (#2608 / @kvz)
+- website: switch to xhr-server.herokuapp.com endpoint (@arturi)
 
 ## October 2020
 
@@ -142,6 +142,8 @@ Fixed nesting folder uploading from third-party providers, included Zoom meeting
 - @uppy/dashboard: Fix missing `preact.h` import, enable lint for that (25b232eccc04795a869ff60eb6453180e41cdd03 / @goto-bus-stop)
 - @uppy/tus: add withCredentials, fix #2518 (#2544 / @szh)
 - @uppy/zoom: Include meeting name in file name, and include meeting data in response object so it is available in later uppy lifecycle methods when interacting with file object (#2547 / @mokutsu-coursera)
+
+## September 2020
 
 ### 1.21.1
 

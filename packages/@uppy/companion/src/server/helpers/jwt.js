@@ -28,7 +28,7 @@ module.exports.verifyToken = (token, secret) => {
  *
  * @param {object} res
  * @param {string} token
- * @param {object=} companionOptions
+ * @param {object} companionOptions
  * @param {string} providerName
  */
 module.exports.addToCookies = (res, token, companionOptions, providerName) => {
@@ -47,7 +47,7 @@ module.exports.addToCookies = (res, token, companionOptions, providerName) => {
 /**
  *
  * @param {object} res
- * @param {object=} companionOptions
+ * @param {object} companionOptions
  * @param {string} providerName
  */
 module.exports.removeFromCookies = (res, companionOptions, providerName) => {

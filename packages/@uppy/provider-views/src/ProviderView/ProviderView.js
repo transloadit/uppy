@@ -146,7 +146,6 @@ module.exports = class ProviderView {
    * Fetches new folder
    *
    * @param  {object} folder
-   * @param  {string} title Folder title
    */
   getNextFolder (folder) {
     this.getFolder(folder.requestPath, folder.name)
@@ -543,7 +542,9 @@ module.exports = class ProviderView {
       showFilter: targetViewOptions.showFilter,
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       pluginIcon: this.plugin.icon,
-      i18n: this.plugin.uppy.i18n
+      i18n: this.plugin.uppy.i18n,
+      uppyFiles: this.plugin.uppy.getFiles(),
+      validateRestrictions: this.plugin.uppy.validateRestrictions
     })
 
     return (

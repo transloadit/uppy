@@ -21,6 +21,7 @@ As of now, Companion is integrated to work with:
 
 - Google Drive (name `drive`) - [Set up instructions](/docs/google-drive/#Setting-Up)
 - Dropbox (name `dropbox`) - [Set up instructions](/docs/dropbox/#Setting-Up)
+- Box (name `box`) - [Set up instructions](/docs/box/#Setting-Up)
 - Instagram (name `instagram`)
 - Facebook (name `facebook`)
 - OneDrive (name `onedrive`)
@@ -173,6 +174,12 @@ export COMPANION_DROPBOX_KEY="YOUR DROPBOX KEY"
 export COMPANION_DROPBOX_SECRET="YOUR DROPBOX SECRET"
 # specifying a secret file will override a directly set secret
 export COMPANION_DROPBOX_SECRET_FILE="PATH/TO/DROPBOX/SECRET/FILE"
+
+# to enable Box
+export COMPANION_BOX_KEY="YOUR BOX KEY"
+export COMPANION_BOX_SECRET="YOUR BOX SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_BOX_SECRET_FILE="PATH/TO/BOX/SECRET/FILE"
 
 # to enable Google Drive
 export COMPANION_GOOGLE_KEY="YOUR GOOGLE DRIVE KEY"
@@ -502,6 +509,7 @@ to:
 | Dropbox | `https://$COMPANION_HOST_NAME/dropbox/redirect` |
 | Google Drive | `https://$COMPANION_HOST_NAME/drive/redirect` |
 | OneDrive | `https://$COMPANION_HOST_NAME/onedrive/redirect` |
+| Box | `https://$YOUR_COMPANION_HOST_NAME/box/redirect` |
 | Facebook | `https://$COMPANION_HOST_NAME/facebook/redirect` |
 | Instagram | `https://$COMPANION_HOST_NAME/instagram/redirect` |
 
@@ -537,7 +545,7 @@ An example server is running at <https://companion.uppy.io>, which is deployed w
 
 ## How the Authentication and Token mechanism works
 
-This section describes how Authentication works between Companion and Providers. While this behaviour is the same for all Providers (Dropbox, Instagram, Google Drive), we are going to be referring to Dropbox in place of any Provider throughout this section.
+This section describes how Authentication works between Companion and Providers. While this behaviour is the same for all Providers (Dropbox, Instagram, Google Drive, etc.), we are going to be referring to Dropbox in place of any Provider throughout this section.
 
 The following steps describe the actions that take place when a user Authenticates and Uploads from Dropbox through Companion:
 

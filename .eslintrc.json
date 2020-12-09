@@ -14,7 +14,7 @@
   "rules": {
     "jsx-quotes": ["error", "prefer-double"],
     "compat/compat": ["error"],
-    "react/jsx-handler-names": ["warn"], // maybe we want to do this in the future?
+    "react/jsx-handler-names": ["off"],
     "react/react-in-jsx-scope": ["error"],
 
     "jsdoc/check-alignment": ["warn"],
@@ -30,6 +30,9 @@
   "settings": {
     "react": {
       "pragma": "h"
+    },
+    "jsdoc": {
+      "mode": "typescript"
     },
     "polyfills": [
       "Promise",

@@ -43,13 +43,13 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
 
 The `<Dashboard />` component supports all [`@uppy/dashboard`][] options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
-The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
+> The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] (Image Editor, Google Drive, etc) with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
 ```js
 function Uploader () {
   const uppy = React.useMemo(() => {
     return Uppy()
-      .use(Webcam) // `id` defaults to "Webcam"
+      .use(Webcam) // `id` defaults to "Webcam". Note: no `target` option!
       // or
       .use(Webcam, { id: 'MyWebcam' }) // `id` is… "MyWebcam"
   }, [])
