@@ -13,6 +13,9 @@
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@rollup/plugin-typescript": "^6.0.0",
     "@tsconfig/svelte": "^1.0.0",
+    "postcss": "^8.2.1",
+    "postcss-import": "^13.0.0",
+    "postcss-load-config": "^3.0.0",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.0.0",
     "rollup-plugin-livereload": "^2.0.0",
@@ -28,6 +31,7 @@
     "@uppy/core": "^1.14.1",
     "@uppy/svelte": "../../packages/@uppy/svelte",
     "@uppy/webcam": "^1.8.1",
+    "@uppy/xhr-upload": "^1.6.7",
     "sirv-cli": "^1.0.0"
   }
 }

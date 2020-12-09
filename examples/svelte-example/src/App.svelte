@@ -2,17 +2,20 @@
 	import { Dashboard, DashboardModal, DragDrop, ProgressBar } from "@uppy/svelte"
 	import Uppy from "@uppy/core"
 	import Webcam from '@uppy/webcam'
+	import XHRUpload from '@uppy/xhr-upload'
 
-	import '@uppy/core/dist/style.css'
-	import '@uppy/dashboard/dist/style.css'
-	import '@uppy/drag-drop/dist/style.css'
-	import '@uppy/progress-bar/dist/style.css'
+	let createUppy = () => Uppy().use(Webcam).use(XHRUpload, {
+		bundle: true,
+		endpoint: 'http://localhost:9967/upload',
+		metaFields: ['something'],
+		fieldName: 'files'
+	})
 
-	let uppy1 = Uppy().use(Webcam)
-	let uppy2 = Uppy().use(Webcam)
+	let uppy1 = createUppy()
+	let uppy2 = createUppy() 
 
 	let open = false;
-	let showInlineDashboard = false;
+	let showInlineDashboard = true;
 </script>
 
 <main>
@@ -57,7 +60,11 @@
 		}}
 	/>
 </main>
-<style>
+<style global>
+	@import "@uppy/core/dist/style.min.css";
+	@import "@uppy/dashboard/dist/style.min.css";
+	@import "@uppy/drag-drop/dist/style.min.css";
+	@import "@uppy/progress-bar/dist/style.min.css";
 	input[type="checkbox"] {
 		user-select: none;
 	}

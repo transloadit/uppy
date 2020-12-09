@@ -40,7 +40,9 @@ export default {
   },
   plugins: [
     svelte({
-      preprocess: sveltePreprocess({}),
+      preprocess: sveltePreprocess({
+        postcss: true
+      }),
       compilerOptions: {
         // enable run-time checks when not in production
         dev: !production
@@ -57,7 +59,7 @@ export default {
     // https://github.com/rollup/plugins/tree/master/packages/commonjs
     resolve({
       browser: true,
-      dedupe: ['svelte']
+      dedupe: ['svelte', '@uppy/core']
     }),
     commonjs(),
     typescript({

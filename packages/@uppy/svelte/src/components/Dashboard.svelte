@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
-  import type { Uppy, Plugin } from '@uppy/core';
+  import type { Uppy } from '@uppy/core';
   import DashboardPlugin from '@uppy/dashboard'
 
   let container: HTMLElement;
@@ -8,11 +8,9 @@
 
   export let uppy: Uppy;
   export let props: Object | undefined = {};
-  export let plugins: string[];
+  export let plugins: string[] = [];
 
   const installPlugin = () => {
-    console.log(plugins);
-    
     const options = {
       id: 'svelte:Dashboard',
       inline: true,
@@ -34,6 +32,8 @@
   $: {
     const options = {
       id: 'svelte:Dashboard',
+      inline: true,
+      plugins,
       ...props,
       target: container
     }

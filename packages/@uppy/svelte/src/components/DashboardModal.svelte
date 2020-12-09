@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
-  import type { Uppy, Plugin } from '@uppy/core';
+  import type { Uppy } from '@uppy/core';
   import DashboardPlugin from '@uppy/dashboard'
 
   let container: HTMLElement;
@@ -23,7 +23,6 @@
 
     uppy.use(DashboardPlugin, options);
     plugin = uppy.getPlugin(options.id) as DashboardPlugin;
-    console.log(open)
     if(open) plugin.openModal();
   }
   const uninstallPlugin = (uppyInstance: Uppy = uppy) => {
@@ -36,6 +35,7 @@
   $: {
     const options = {
       id: 'svelte:DashboardModal',
+      plugins,
       ...props,
       target: container
     }
@@ -43,7 +43,6 @@
   }
   $: {
     if(open && !lastOpen) {
-      console.log('opening')
       plugin.openModal()
     }
     if (!open && lastOpen) {
