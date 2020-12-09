@@ -24,6 +24,37 @@ yarn add @uppy/svelte
 
 Make sure to also include the necessary CSS files for each Uppy Svelte component you are using.
 
+For [the example](https://github.com/transloadit/uppy/tree/master/examples/svelte-example), we used `svelte-preprocess` and `postcss` to allow imports in CSS. Here is a basic guide for getting that configured with Rollup.
+
+```shell
+npm install -D postcss postcss-import postcss-load-config
+# Or with yarn
+yarn add -D postcss postcss-import postcss-load-config
+```
+
+Then create a `postcss.config.js` like so:
+
+```js
+module.exports = {
+  plugins: [
+    require('postcss-import')()
+  ]
+}
+```
+
+Finally, enable `postcss` in your `rollup.config.js`
+
+```js
+import preprocess from 'svelte-preprocess'
+// ...
+svelte({
+  preprocess: preprocess({
+    postcss: true
+  })
+})
+// ...
+```
+
 ## Usage
 
 The components can be used with [Svelte][] and frameworks that are based off it, like [Sapper][].
@@ -77,12 +108,14 @@ let uppy = new Uppy().use(Webcam)
 
 The `Dashboard` component requires the following CSS for styling:
 
-```js
-import '@uppy/core/dist/style.css';
-import '@uppy/dashboard/dist/style.css';
+```html
+<style global>
+@import '@uppy/core/dist/style.css';
+@import '@uppy/dashboard/dist/style.css';
+</style>
 ```
 
-Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system. With the svelte starter project found [here](https://github.com/sveltejs/template), there is already a Rollup plugin configured to let you do this, so you can just follow the code above. If this doesn't work, add `rollup-plugin-css-only` at some point in your build config
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system. 
 
 ⚠️ The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
 
@@ -100,12 +133,14 @@ The `<Dashboard />` cannot be passed to a `target:` option of a remote provider 
 
 The `DashboardModal` component requires the following CSS for styling:
 
-```js
-import '@uppy/core/dist/style.css';
-import '@uppy/dashboard/dist/style.css';
+```html
+<style global>
+@import '@uppy/core/dist/style.css';
+@import '@uppy/dashboard/dist/style.css';
+</style>
 ```
 
-Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system. With the svelte starter project found [here](https://github.com/sveltejs/template), there is already a Rollup plugin configured to let you do this, so you can just follow the code above. If this doesn't work, add `rollup-plugin-css-only` at some point in your build config
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
 
 ⚠️ The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
 
@@ -124,9 +159,11 @@ The `<DashboardModal />` cannot be passed to a `target:` option of a remote prov
 
 The `DragDrop` component includes some simple styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead:
 
-```js
-import '@uppy/core/dist/style.css'
-import '@uppy/drag-drop/dist/style.css'
+```html
+<style global>
+@import '@uppy/core/dist/style.css';
+@import '@uppy/drag-drop/dist/style.css';
+</style>
 ```
 
 Import general Core styles from `@uppy/core/dist/style.css` first, then add the Drag & Drop styles from `@uppy/drag-drop/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.js
@@ -141,9 +178,11 @@ The `<DragDrop />` component supports all `@uppy/drag-drop` options to be passed
 
 The `ProgressBar` plugin requires the following CSS for styling:
 
-```js
-import '@uppy/core/dist/style.css'
-import '@uppy/progress-bar/dist/style.css'
+```html
+<style global>
+@import '@uppy/core/dist/style.css';
+@import '@uppy/progress-bar/dist/style.css';
+</style>
 ```
 
 Import general Core styles from `@uppy/core/dist/style.css` first, then add the Progress Bar styles from `@uppy/progress-bar/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
@@ -158,9 +197,11 @@ The `<ProgressBar />` component supports all `@uppy/progress-bar` options to be 
 
 The `StatusBar` plugin requires the following CSS for styling:
 
-```js
-import '@uppy/core/dist/style.css'
-import '@uppy/status-bar/dist/style.css'
+```html
+<style global>
+@import '@uppy/core/dist/style.css';
+@import '@uppy/status-bar/dist/style.css';
+</style>
 ```
 
 Import general Core styles from `@uppy/core/dist/style.css` first, then add the Status Bar styles from `@uppy/status-bar/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
