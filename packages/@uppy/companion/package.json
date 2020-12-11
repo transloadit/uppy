@@ -41,7 +41,7 @@
     "escape-string-regexp": "2.0.0",
     "express": "4.17.1",
     "express-interceptor": "1.2.0",
-    "express-prom-bundle": "5.0.0",
+    "express-prom-bundle": "6.3.0",
     "express-request-id": "1.4.1",
     "express-session": "1.17.1",
     "grant": "4.7.0",
