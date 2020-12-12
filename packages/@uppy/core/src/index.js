@@ -783,13 +783,13 @@ class Uppy {
     function fileIsNotRemoved (uploadFileID) {
       return removedFiles[uploadFileID] === undefined
     }
-    const uploadsToRemove = []
+
     Object.keys(updatedUploads).forEach((uploadID) => {
       const newFileIDs = currentUploads[uploadID].fileIDs.filter(fileIsNotRemoved)
 
       // Remove the upload if no files are associated with it anymore.
       if (newFileIDs.length === 0) {
-        uploadsToRemove.push(uploadID)
+        delete updatedUploads[uploadID]
         return
       }
 
@@ -797,10 +797,6 @@ class Uppy {
         ...currentUploads[uploadID],
         fileIDs: newFileIDs
       }
-    })
-
-    uploadsToRemove.forEach((uploadID) => {
-      delete updatedUploads[uploadID]
     })
 
     const stateUpdate = {
