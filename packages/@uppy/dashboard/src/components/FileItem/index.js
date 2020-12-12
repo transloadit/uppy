@@ -34,6 +34,10 @@ module.exports = class FileItem extends Component {
     const uploadInProgress = (file.progress.uploadStarted && !file.progress.uploadComplete) || isProcessing
     const error = file.error || false
 
+    // File that Golden Retriever was able to partly restore (only meta, not blob),
+    // users still need to re-add it, so it’s a ghost
+    const isGhost = file.isGhost
+
     let showRemoveButton = this.props.individualCancellation
       ? !isUploaded
       : !uploadInProgress && !isUploaded
@@ -49,7 +53,8 @@ module.exports = class FileItem extends Component {
       'is-complete': isUploaded,
       'is-error': !!error,
       'is-resumable': this.props.resumableUploads,
-      'is-noIndividualCancellation': !this.props.individualCancellation
+      'is-noIndividualCancellation': !this.props.individualCancellation,
+      'is-ghost': isGhost
     })
 
     return (

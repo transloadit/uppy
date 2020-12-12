@@ -204,6 +204,7 @@ module.exports = class StatusBar extends Plugin {
     const isUploadInProgress = inProgressFiles.length > 0
     const resumableUploads = capabilities.resumableUploads || false
     const supportsUploadProgress = capabilities.uploadProgress !== false
+    const isSomeGhost = filesArray.some((file) => file.isGhost)
 
     return StatusBarUI({
       error,
@@ -217,6 +218,7 @@ module.exports = class StatusBar extends Plugin {
       isAllErrored,
       isUploadStarted,
       isUploadInProgress,
+      isSomeGhost,
       complete: completeFiles.length,
       newFiles: newFiles.length,
       numUploads: startedFiles.length,

@@ -157,6 +157,7 @@ const UploadBtn = (props) => {
       class={uploadBtnClassNames}
       aria-label={props.i18n('uploadXFiles', { smart_count: props.newFiles })}
       onclick={props.startUpload}
+      disabled={props.isSomeGhost}
       data-uppy-super-focusable
     >
       {props.newFiles && props.isUploadStarted
