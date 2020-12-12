@@ -260,8 +260,9 @@ module.exports = class AwsS3Multipart extends Plugin {
         })
       })
 
-      if (!file.isRestored) {
-        this.uppy.emit('upload-started', file, upload)
+      // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+      if (!file.progress.uploadStarted || !file.isRestored) {
+        this.uppy.emit('upload-started', file)
       }
     })
   }
@@ -269,7 +270,11 @@ module.exports = class AwsS3Multipart extends Plugin {
   uploadRemote (file) {
     this.resetUploaderReferences(file.id)
 
-    this.uppy.emit('upload-started', file)
+    // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+    if (!file.progress.uploadStarted || !file.isRestored) {
+      this.uppy.emit('upload-started', file)
+    }
+
     if (file.serverToken) {
       return this.connectToServerSocket(file)
     }
