@@ -36,7 +36,7 @@ const uppy = new Uppy({ autoProceed: false })
   .use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
   .use(Instagram, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
   .use(Webcam, { target: Dashboard })
-  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+  .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
   .on('complete', (result) => {
     console.log('Upload result:', result)
   })
@@ -83,7 +83,7 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 <script>
   var uppy = Uppy.Core()
   uppy.use(Uppy.DragDrop, { target: '.UppyDragDrop' })
-  uppy.use(Uppy.Tus, { endpoint: '//master.tus.io/files/' })
+  uppy.use(Uppy.Tus, { endpoint: '//tusd.tusdemo.net/files/' })
 </script>
 ```
 

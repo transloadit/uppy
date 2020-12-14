@@ -50,7 +50,7 @@ describe('url get', () => {
       .set('Content-Type', 'application/json')
       .send({
         url: 'http://url.myendpoint.com/files',
-        endpoint: 'http://master.tus.io/files',
+        endpoint: 'http://tusd.tusdemo.net/files',
         protocol: 'tus'
       })
       .expect(200)
@@ -63,7 +63,7 @@ describe('url get', () => {
       .set('Content-Type', 'application/json')
       .send({
         url: urlCase,
-        endpoint: 'http://master.tus.io/files',
+        endpoint: 'http://tusd.tusdemo.net/files',
         protocol: 'tus'
       })
       .expect(400)

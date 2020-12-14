@@ -22,7 +22,7 @@ window.uppy = new Uppy({
   .use(GoogleDrive, { target: Dashboard, companionUrl })
   .use(Instagram, { target: Dashboard, companionUrl })
   .use(Dropbox, { target: Dashboard, companionUrl })
-  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+  .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 
 if (window.location.search === '?socketerr=true') {
   const emitError = (file, data) => {

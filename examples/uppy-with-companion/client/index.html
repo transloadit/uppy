@@ -14,7 +14,7 @@
         .use(Uppy.Dashboard, { trigger: '#uppyModalOpener' })
         .use(Uppy.Instagram, { target: Uppy.Dashboard, companionUrl: 'http://localhost:3020' })
         .use(Uppy.GoogleDrive, { target: Uppy.Dashboard, companionUrl: 'http://localhost:3020' })
-        .use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
+        .use(Uppy.Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 
       uppy.on('success', (fileCount) => {
         console.log(`${fileCount} files uploaded`)

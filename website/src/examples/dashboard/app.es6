@@ -34,7 +34,7 @@ function uppyInit () {
     logger: Uppy.debugLogger
   })
 
-  uppy.use(Tus, { endpoint: 'https://master.tus.io/files/', resume: true })
+  uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/', resume: true })
 
   uppy.on('complete', result => {
     console.log('successful files:')

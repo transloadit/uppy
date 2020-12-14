@@ -75,7 +75,7 @@ describe('download provdier file', () => {
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
-        endpoint: 'http://master.tus.io/files',
+        endpoint: 'http://tusd.tusdemo.net/files',
         protocol: 'tus'
       })
       .expect(200)
