@@ -19,10 +19,42 @@ In the current stage we aim to release a new version at least every month.
 Planned: 2020-12-18
 
 - [ ] companion: configurable oauth 3rd party credentials — provide your own Google Drive, Instagram application key/secret at the time of the request (@ife)
-- [ ] dashboard/dragndrop/fileinput: Add a `disabled` (`true`||`false`) option (https://github.com/transloadit/uppy/issues/1530, @arturi)
+- [ ] dashboard: Add a `disabled` (`true`||`false`) option (later for /dragndrop and fileinput) (#1530, @arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] work on Angular integration (@ajkachnic)
-- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi)
+- [ ] add Svelte integration (@ajkachnic)
+- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi, @goto-bus-stop)
+- [ ] react: add useUppy() hook (@goto-bus-stop)
+
+## 1.23.3
+
+Released: 2020-12-11
+
+This release fixes a peerDependency mismatch in `@uppy/companion` and a mistake in the return type for `uppy.addFile()`.
+
+And thanks to @elkebab, Norwegian (bokmål) translations are now available!
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.9 | @uppy/provider-views | 1.9.1 |
+| @uppy/box | 0.3.1 | @uppy/react | 1.10.12 |
+| @uppy/companion | 2.3.1 | @uppy/robodog | 1.9.13 |
+| @uppy/core | 1.14.2 | @uppy/thumbnail-generator | 1.7.2 |
+| @uppy/dashboard | 1.13.1 | @uppy/transloadit | 1.6.15 |
+| @uppy/dropbox | 1.4.19 | @uppy/tus | 1.8.1 |
+| @uppy/facebook | 1.1.19 | @uppy/unsplash | 0.1.3 |
+| @uppy/google-drive | 1.5.19 | @uppy/vue | 0.1.1 |
+| @uppy/instagram | 1.4.19 | @uppy/zoom | 0.1.8 |
+| @uppy/locales | 1.17.0 | uppy | 1.23.3 |
+| @uppy/onedrive | 1.1.19 | - | - |
+
+- @uppy/aws-s3-multipart: expand result as body on success (#2623 / @abannach)
+- @uppy/companion: fix crash when Dropbox API returns an error (#2687 / @ifedapoolarewaju)
+- @uppy/companion: remove unnecessary `fs.stat()` call (#2683 / @mejiaej)
+- @uppy/companion: upgrade express-prom-bundle to v6 (#2689 / @goto-bus-stop)
+- @uppy/core: `addFile()` returns `string`, not `void` (#2685 / @arturi)
+- @uppy/locales: add Norwegian (bokmål) (#2677 / @elkebab)
+- @uppy/thumbnail-generator: upgrade exifr to v6 (#2667 / @goto-bus-stop)
+- @uppy/unsplash: needs @uppy/core to be `^1.13.3` (#2676 / @ifedapoolarewaju)
 
 ## November 2020
 
