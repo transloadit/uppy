@@ -43,7 +43,7 @@ export default class App extends React.Component {
     console.log('Is this React Native?', this.isReactNative)
     this.uppy = new Uppy({ autoProceed: true, debug: true })
     this.uppy.use(Tus, {
-      endpoint: 'https://master.tus.io/files/',
+      endpoint: 'https://tusd.tusdemo.net/files/',
       urlStorage: AsyncStorage,
       fileReader: getTusFileReader,
       chunkSize: 10 * 1024 * 1024 // keep the chunk size small to avoid memory exhaustion

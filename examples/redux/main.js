@@ -77,6 +77,6 @@ uppy.use(Dashboard, {
   inline: true,
   width: 400
 })
-uppy.use(Tus, { endpoint: 'https://master.tus.io/' })
+uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/' })
 
 window.uppy = uppy

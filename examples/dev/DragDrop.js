@@ -13,7 +13,7 @@ module.exports = () => {
       target: '#uppyDragDrop'
     })
     .use(ProgressBar, { target: '#uppyDragDrop-progress', hideAfterFinish: false })
-    .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+    .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 
   window.uppy = uppyDragDrop
 

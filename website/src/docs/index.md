@@ -31,7 +31,7 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
           inline: true,
           target: '#drag-drop-area'
         })
-        .use(Uppy.Tus, {endpoint: 'https://master.tus.io/files/'})
+        .use(Uppy.Tus, {endpoint: 'https://tusd.tusdemo.net/files/'})
 
       uppy.on('complete', (result) => {
         console.log('Upload complete! We’ve uploaded these files:', result.successful)
@@ -132,7 +132,7 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
 <script>
   var uppy = Uppy.Core()
   uppy.use(Uppy.DragDrop, { target: '#drag-drop-area' })
-  uppy.use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
+  uppy.use(Uppy.Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 </script>
 ```
 

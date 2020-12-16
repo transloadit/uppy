@@ -235,7 +235,7 @@ export COMPANION_SELF_ENDPOINT="THIS SHOULD BE SAME AS YOUR DOMAIN + PATH"
 
 # comma-separated URLs
 # corresponds to the uploadUrls option
-export COMPANION_UPLOAD_URLS="http://master.tus.io/files/,https://master.tus.io/files/"
+export COMPANION_UPLOAD_URLS="http://tusd.tusdemo.net/files/,https://tusd.tusdemo.net/files/"
 ```
 
 See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example.sh) for an example configuration script.

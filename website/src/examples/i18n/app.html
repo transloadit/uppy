@@ -34,7 +34,7 @@
     target: '.for-ProgressBar',
      hideAfterFinish: false
   });
-  uppy.use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' });
+  uppy.use(Uppy.Tus, { endpoint: 'https://tusd.tusdemo.net/files/' });
   uppy.on('upload-success', function (file, response) {
     var url = response.uploadURL
     var fileName = file.name

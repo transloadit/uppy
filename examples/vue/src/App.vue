@@ -72,9 +72,9 @@ export default {
   },
   computed: {
     uppy: () => new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
-      .use(Tus, { endpoint: 'https://master.tus.io/files/' }),
+      .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' }),
     uppy2: () => new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
-      .use(Tus, { endpoint: 'https://master.tus.io/files/' }),
+      .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' }),
   },
   data () {
     return {
