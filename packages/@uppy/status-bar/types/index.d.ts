@@ -13,7 +13,7 @@ declare module StatusBar {
     hideRetryButton?: boolean,
     hidePauseResumeButton?: boolean,
     hideCancelButton?: boolean,
-    doneButtonHandler: Function | null,
+    doneButtonHandler?: () => void,
     locale?: StatusBarLocale
   }
 }
