@@ -10,7 +10,7 @@ category: "React"
 
 When using Uppy's React components, an Uppy instance must be passed in to the `uppy={}` prop from the outside. This Uppy instance must be initialized before passing it to the desired component, and be cleaned up using `uppy.close()` when you are done with it.
 
-## Functionl Components
+## Functional Components
 
 Functional components are re-run on every render. This makes it very easy to accidentally recreate a fresh Uppy instance every time, causing state to be reset and resources to be wasted.
 
