@@ -49,6 +49,8 @@ module.exports = function Dashboard (props) {
 
   const showFileList = props.showSelectedFiles && !noFiles
 
+  const numberOfFilesForRecovery = props.recoveryState ? Object.keys(props.recoveryState.files).length : null
+  console.log(numberOfFilesForRecovery)
   return (
     <div
       class={dashboardClassName}
@@ -96,6 +98,26 @@ module.exports = function Dashboard (props) {
           </div>
 
           {showFileList && <PanelTopBar {...props} />}
+
+          {numberOfFilesForRecovery ? (
+            <div class="uppy-Dashboard-serviceMsg">
+              <svg class="uppy-Dashboard-serviceMsg-icon" aria-hidden="true" focusable="false" width="24" height="19" viewBox="0 0 24 19">
+                <g transform="translate(0 -1)" fill="none" fill-rule="evenodd">
+                  <path d="M12.857 1.43l10.234 17.056A1 1 0 0122.234 20H1.766a1 1 0 01-.857-1.514L11.143 1.429a1 1 0 011.714 0z" fill="#FFD300" />
+                  <path fill="#000" d="M11 6h2l-.3 8h-1.4z" />
+                  <circle fill="#000" cx="12" cy="17" r="1" />
+                </g>
+              </svg>
+              We’ve recovered {numberOfFilesForRecovery} files you’ve previousely selected. You can keep them or
+              {' '}
+              <button
+                class="uppy-u-reset uppy-c-btn uppy-Dashboard-serviceMsg-actionBtn"
+                onClick={props.cancelAll}
+              >
+                start over
+              </button>
+            </div>
+          ) : null}
 
           {showFileList ? (
             <FileList

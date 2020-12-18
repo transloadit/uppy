@@ -49,6 +49,17 @@ function togglePauseResume (props) {
   return props.pauseAll()
 }
 
+function RenderReSelectGhosts () {
+  return (
+    <div class="uppy-StatusBar-ghosts">
+      Please re-select (or remove) files marked with ghosts
+      <svg class="uppy-c-icon uppy-StatusBar-ghostsIcon" aria-hidden="true" width="15" height="19" viewBox="0 0 35 39">
+        <path d="M1.708 38.66c1.709 0 3.417-3.417 6.834-3.417 3.416 0 5.125 3.417 8.61 3.417 3.348 0 5.056-3.417 8.473-3.417 4.305 0 5.125 3.417 6.833 3.417.889 0 1.709-.889 1.709-1.709v-19.68C34.167-5.757 0-5.757 0 17.271v19.68c0 .82.888 1.709 1.708 1.709zm8.542-17.084a3.383 3.383 0 01-3.417-3.416 3.383 3.383 0 013.417-3.417 3.383 3.383 0 013.417 3.417 3.383 3.383 0 01-3.417 3.416zm13.667 0A3.383 3.383 0 0120.5 18.16a3.383 3.383 0 013.417-3.417 3.383 3.383 0 013.416 3.417 3.383 3.383 0 01-3.416 3.416z" fill="#000" fill-rule="nonzero" />
+      </svg>
+    </div>
+  )
+}
+
 module.exports = (props) => {
   props = props || {}
 
@@ -117,7 +128,8 @@ module.exports = (props) => {
   const statusBarClassNames = classNames(
     { 'uppy-Root': props.isTargetDOMEl },
     'uppy-StatusBar',
-    `is-${uploadState}`
+    `is-${uploadState}`,
+    { 'has-ghosts': props.isSomeGhost }
   )
 
   return (
@@ -137,6 +149,8 @@ module.exports = (props) => {
         {showPauseResumeBtn ? <PauseResumeButton {...props} /> : null}
         {showCancelBtn ? <CancelBtn {...props} /> : null}
         {showDoneBtn ? <DoneBtn {...props} /> : null}
+
+        {props.isSomeGhost ? <RenderReSelectGhosts /> : null}
       </div>
     </div>
   )
@@ -148,7 +162,8 @@ const UploadBtn = (props) => {
     'uppy-c-btn',
     'uppy-StatusBar-actionBtn',
     'uppy-StatusBar-actionBtn--upload',
-    { 'uppy-c-btn-primary': props.uploadState === statusBarStates.STATE_WAITING }
+    { 'uppy-c-btn-primary': props.uploadState === statusBarStates.STATE_WAITING },
+    { 'uppy-StatusBar-actionBtn--disabled': props.isSomeGhost }
   )
 
   return (

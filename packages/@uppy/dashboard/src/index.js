@@ -658,6 +658,18 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
+  handleRestored = () => {
+    // Hide and show files to trigger re-render, so that
+    // VirtualList mounts FileItems again and they emit `thumbnail:request`
+    // Otherwise thumbnails are broken or missing after Golden Retriever restores files
+    if (this.opts.showSelectedFiles) {
+      this.setOptions({ showSelectedFiles: false })
+      setTimeout(() => {
+        this.setOptions({ showSelectedFiles: true })
+      }, 4)
+    }
+  }
+
   initEvents = () => {
     // Modal open button
     if (this.opts.trigger && !this.opts.inline) {
@@ -686,6 +698,8 @@ module.exports = class Dashboard extends Plugin {
     if (this.opts.inline) {
       this.el.addEventListener('keydown', this.handleKeyDownInInline)
     }
+
+    this.uppy.on('restored', this.handleRestored)
   }
 
   removeEvents = () => {
@@ -709,6 +723,8 @@ module.exports = class Dashboard extends Plugin {
     if (this.opts.inline) {
       this.el.removeEventListener('keydown', this.handleKeyDownInInline)
     }
+
+    this.uppy.off('restored', this.handleRestored)
   }
 
   superFocusOnEachUpdate = () => {
@@ -898,6 +914,7 @@ module.exports = class Dashboard extends Plugin {
       uppy: this.uppy,
       info: this.uppy.info,
       note: this.opts.note,
+      recoveryState: state.recoveryState,
       metaFields: pluginState.metaFields,
       resumableUploads: capabilities.resumableUploads || false,
       individualCancellation: capabilities.individualCancellation,

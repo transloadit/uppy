@@ -41,9 +41,9 @@ const renderFileName = (props) => {
 }
 
 const renderFileSize = (props) => (
-  props.file.data.size &&
+  props.file.size &&
     <div class="uppy-Dashboard-Item-statusSize">
-      {prettierBytes(props.file.data.size)}
+      {prettierBytes(props.file.size)}
     </div>
 )
 

@@ -203,6 +203,14 @@
   }
 }
 
+// .uppy-StatusBar.has-ghosts .uppy-StatusBar-actions  {
+//   flex-direction: column;
+
+//   .uppy-size--md & {
+//     flex-direction: row;
+//   }
+// }
+
 .uppy-StatusBar-actionCircleBtn {
   @include blue-border-focus;
   line-height: 1;
@@ -238,9 +246,9 @@
   }
 }
 
-  // .uppy-size--md .uppy-StatusBar-actionBtn {
-  //   padding: 2px 4px;
-  // }
+  .uppy-StatusBar-actionBtn--disabled {
+    opacity: 0.4;
+  }
 
   .uppy-StatusBar-actionBtn--retry {
     @include blue-border-focus();
@@ -288,14 +296,18 @@
       background-color: darken($darkgreen, 5%);
     }
   }
+
   .uppy-size--md .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
     padding: 13px 22px;
     width: auto;
   }
 
+  .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload.uppy-StatusBar-actionBtn--disabled:hover {
+    background-color: $green;
+  }
+
   .uppy-StatusBar:not(.is-waiting) .uppy-StatusBar-actionBtn--upload {
     background-color: transparent;
-    // border: 1px solid $white;
     color: $blue;
   }
 
@@ -326,6 +338,33 @@
   .uppy-size--md .uppy-StatusBar-actionBtn--done {
     font-size: 14px;
   }
+
+.uppy-StatusBar-ghosts {
+  font-size: 11px;
+  line-height: 1.1;
+  color: $black;
+  padding-left: 10px;
+  
+  .uppy-size--md & {
+    font-size: 14px;
+    padding-left: 15px;
+  }
+}
+
+.uppy-StatusBar-ghostsIcon {
+  opacity: 0.5;
+  vertical-align: text-bottom;
+  position: relative;
+  top: 2px;
+  left: 6px;
+  width: 10px;
+
+  .uppy-size--md & {
+    width: 20px;
+    left: 11px;
+    top: 0;
+  }
+}
 
 .uppy-StatusBar-details {
   line-height: 12px;

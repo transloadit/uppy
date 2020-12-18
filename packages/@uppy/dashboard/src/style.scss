@@ -193,6 +193,34 @@
   }
 }
 
+// Service Message
+
+.uppy-Dashboard-serviceMsg {
+  background-color: $white-50;
+  border-top: 1px solid $beige;
+  border-bottom: 1px solid $beige;
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 500;
+  padding: 12px 45px;
+  position: relative;
+  top: -1px;
+  z-index: $zIndex-5;
+}
+
+.uppy-Dashboard-serviceMsg-actionBtn {
+  font-size: inherit;
+  font-weight: inherit;
+  vertical-align: initial;
+  color: $blue;
+}
+
+.uppy-Dashboard-serviceMsg-icon {
+  position: absolute;
+  top: 13px;
+  left: 15px;
+}
+
 .uppy-Dashboard-AddFiles {
   display: flex;
   justify-content: center;
