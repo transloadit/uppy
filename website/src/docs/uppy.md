@@ -728,6 +728,13 @@ uppy.on('file-added', (file) => {
 })
 ```
 
+### `files-added`
+
+**Parameters**
+- `files` - An array of [File Objects][File Objects] representing all files that were added at once, in a batch.
+
+Fired each time when one or multiple files are added — one event, for all files
+
 ### `file-removed`
 
 Fired each time a file is removed.
@@ -753,13 +760,6 @@ uppy.on('file-removed', (file, reason) => {
   }
 })
 ```
-
-### `final-file-added`
-
-**Parameters**
-- `file` - The [File Object][File Objects] representing the last file that was added in one batch.
-
-Fired when the last file from a batch has been added. If you drag and drop files `a`, `b`, `bob` and `tom`, `tom` will be passed. If you only add `bob`, `bob` will be past.
 
 ### `upload`
 

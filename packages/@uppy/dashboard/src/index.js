@@ -659,9 +659,10 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
-  _openFileEditorWhenSingleFileAdded = (file) => {
-    if (this.canEditFile(file)) {
-      this.openFileEditor(file)
+  _openFileEditorWhenFilesAdded = (files) => {
+    const firstFile = files[0]
+    if (this.canEditFile(firstFile)) {
+      this.openFileEditor(firstFile)
     }
   }
 
@@ -695,7 +696,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     if (this.opts.autoOpenFileEditor) {
-      this.uppy.on('final-file-added', this._openFileEditorWhenSingleFileAdded)
+      this.uppy.on('files-added', this._openFileEditorWhenFilesAdded)
     }
   }
 
@@ -722,7 +723,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     if (this.opts.autoOpenFileEditor) {
-      this.uppy.off('final-file-added', this._openFileEditorWhenSingleFileAdded)
+      this.uppy.off('files-added', this._openFileEditorWhenFilesAdded)
     }
   }
 
