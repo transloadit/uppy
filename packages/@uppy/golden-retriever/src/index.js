@@ -2,6 +2,7 @@ const { Plugin } = require('@uppy/core')
 const ServiceWorkerStore = require('./ServiceWorkerStore')
 const IndexedDBStore = require('./IndexedDBStore')
 const MetaDataStore = require('./MetaDataStore')
+const throttle = require('lodash.throttle')
 
 /**
  * The GoldenRetriever plugin — restores selected files and resumes uploads
@@ -39,7 +40,7 @@ module.exports = class GoldenRetriever extends Plugin {
       this.opts.indexedDB || {},
       { storeName: uppy.getID() }))
 
-    this.saveFilesStateToLocalStorage = this.saveFilesStateToLocalStorage.bind(this)
+    this.saveFilesStateToLocalStorage = throttle(this.saveFilesStateToLocalStorage.bind(this), 500, { leading: true, trailing: true })
     this.loadFilesStateFromLocalStorage = this.loadFilesStateFromLocalStorage.bind(this)
     this.loadFileBlobsFromServiceWorker = this.loadFileBlobsFromServiceWorker.bind(this)
     this.loadFileBlobsFromIndexedDB = this.loadFileBlobsFromIndexedDB.bind(this)
@@ -48,14 +49,13 @@ module.exports = class GoldenRetriever extends Plugin {
 
   loadFilesStateFromLocalStorage () {
     const savedState = this.MetaDataStore.load()
-
     if (savedState) {
       this.uppy.log('[GoldenRetriever] Recovered some state from Local Storage')
       this.uppy.setState({
         currentUploads: savedState.currentUploads || {},
-        files: savedState.files || {}
+        files: savedState.files || {},
+        recoveryState: savedState
       })
-
       this.savedPluginData = savedState.pluginData
     }
   }
@@ -118,7 +118,8 @@ module.exports = class GoldenRetriever extends Plugin {
         filesToSaveWithoutData[file] = {
           ...filesToSave[file],
           isRestored: true,
-          data: null
+          data: null,
+          preview: null
         }
       }
     })
