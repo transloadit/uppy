@@ -27,6 +27,7 @@
     "@uppy/progress-bar": "file:../progress-bar",
     "@uppy/status-bar": "file:../status-bar",
     "@uppy/utils": "file:../utils",
+    "@uppy/file-input": "file:../file-input",
     "prop-types": "^15.6.1"
   },
   "peerDependencies": {
