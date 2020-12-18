@@ -618,7 +618,7 @@ class Uppy {
 
     const fileID = generateFileID(file)
 
-    if (files[fileID]) {
+    if (files[fileID] && !files[fileID].isGhost) {
       this._showOrLogErrorAndThrow(new RestrictionError(this.i18n('noDuplicates', { fileName })), { file })
     }
 
@@ -929,7 +929,8 @@ class Uppy {
 
     this.setState({
       totalProgress: 0,
-      error: null
+      error: null,
+      recoveryState: null
     })
   }
 
