@@ -876,6 +876,7 @@ module.exports = class Dashboard extends Plugin {
       allowNewUpload,
       acquirers,
       theme,
+      direction: this.opts.direction,
       activePickerPanel: pluginState.activePickerPanel,
       showFileEditor: pluginState.showFileEditor,
       animateOpenClose: this.opts.animateOpenClose,

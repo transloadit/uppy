@@ -52,6 +52,7 @@ module.exports = function Dashboard (props) {
   return (
     <div
       class={dashboardClassName}
+      dir={props.direction}
       data-uppy-theme={props.theme}
       data-uppy-num-acquirers={props.acquirers.length}
       data-uppy-drag-drop-supported={isDragDropSupported()}
