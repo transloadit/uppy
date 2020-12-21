@@ -49,7 +49,7 @@
     [data-uppy-theme="dark"] &:focus {
       border-color: rgba($highlight--dark, 0.7);
       box-shadow: 0 0 0 3px rgba($highlight--dark, 0.2);
-    }   
+    }
   }
   // Checked: color the background, show the checkmark
   .uppy-ProviderBrowserItem-fakeCheckbox--is-checked {
@@ -93,6 +93,6 @@
 
   .uppy-ProviderBrowserItem-iconWrap {
     width: 20px;
-    margin-right: 7px;
+    margin-inline-end: 7px;
   }
 }
