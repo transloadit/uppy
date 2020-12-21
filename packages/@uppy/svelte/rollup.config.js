@@ -33,8 +33,6 @@ export default {
   plugins: [
     svelte({
       include: 'src/**/*.svelte',
-      immutable: true,
-      css: false,
       preprocess: preprocess()
     }),
     resolve({

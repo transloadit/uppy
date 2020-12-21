@@ -97,7 +97,6 @@
     "@lerna/run": "^3.21.0",
     "@octokit/rest": "16.43.1",
     "@rollup/plugin-node-resolve": "^11.0.0",
-    "@rollup/plugin-typescript": "^8.0.0",
     "@size-limit/preset-big-lib": "4.5.6",
     "@transloadit/prettier-bytes": "0.0.7",
     "@tsconfig/svelte": "^1.0.10",
