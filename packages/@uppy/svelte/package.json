@@ -31,6 +31,9 @@
     "@uppy/core": ">=^1.0.0",
     "svelte": "^3.0.0"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "svelte"
   ],
