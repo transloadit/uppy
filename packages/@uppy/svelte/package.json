@@ -9,18 +9,6 @@
     "prepublishOnly": "npm run build",
     "validate": "svelte-check"
   },
-  "devDependencies": {
-    "@rollup/plugin-node-resolve": "^9.0.0",
-    "@tsconfig/svelte": "^1.0.0",
-    "@uppy/core": "file:../../@uppy/core",
-    "rollup": "^2.0.0",
-    "rollup-plugin-svelte": "^6.0.0",
-    "svelte": "^3.0.0",
-    "svelte-check": "^1.0.0",
-    "svelte-preprocess": "^4.0.0",
-    "tslib": "^2.0.0",
-    "typescript": "^3.9.3"
-  },
   "dependencies": {
     "@uppy/dashboard": "1.13.0",
     "@uppy/drag-drop": "^1.4.18",
