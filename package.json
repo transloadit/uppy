@@ -32,6 +32,7 @@
     "@uppy-example/php-xhr": "file:examples/php-xhr",
     "@uppy-example/python-xhr": "file:examples/python-xhr",
     "@uppy-example/react-example": "file:examples/react-example",
+    "@uppy-example/svelte-example": "file:examples/svelte-example",
     "@uppy-example/react-native-expo": "file:examples/react-native-expo",
     "@uppy-example/redux": "file:examples/redux",
     "@uppy-example/transloadit": "file:examples/transloadit",
