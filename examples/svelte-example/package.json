@@ -33,5 +33,6 @@
     "@uppy/webcam": "^1.8.1",
     "@uppy/xhr-upload": "^1.6.7",
     "sirv-cli": "^1.0.0"
-  }
+  },
+  "private": true
 }
