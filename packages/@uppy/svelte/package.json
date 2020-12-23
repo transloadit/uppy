@@ -1,0 +1,32 @@
+{
+  "name": "@uppy/svelte",
+  "svelte": "src/index.js",
+  "module": "dist/index.mjs",
+  "main": "dist/index.js",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build",
+    "validate": "svelte-check"
+  },
+  "dependencies": {
+    "@uppy/dashboard": "file:../dashboard",
+    "@uppy/drag-drop": "file:../drag-drop",
+    "@uppy/progress-bar": "file:../progress-bar",
+    "@uppy/status-bar": "file:../status-bar"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^1.0.0",
+    "svelte": "^3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "svelte"
+  ],
+  "files": [
+    "src",
+    "dist"
+  ]
+}
