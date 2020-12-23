@@ -16,7 +16,7 @@
     "@uppy/status-bar": "1.8.0"
   },
   "peerDependencies": {
-    "@uppy/core": ">=^1.0.0",
+    "@uppy/core": "^1.0.0",
     "svelte": "^3.0.0"
   },
   "publishConfig": {
