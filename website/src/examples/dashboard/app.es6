@@ -34,7 +34,7 @@ function uppyInit () {
     logger: Uppy.debugLogger
   })
 
-  uppy.use(Tus, { endpoint: 'https://master.tus.io/files/', resume: true })
+  uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/', resume: true })
 
   uppy.on('complete', result => {
     console.log('successful files:')
@@ -185,7 +185,7 @@ function loadLocaleFromCDN (localeName) {
   var head = document.getElementsByTagName('head')[0]
   var js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://releases.transloadit.com/uppy/locales/v1.16.10/${localeName}.min.js`
+  js.src = `https://releases.transloadit.com/uppy/locales/v1.17.0/${localeName}.min.js`
 
   head.appendChild(js)
 }

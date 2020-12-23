@@ -14,7 +14,7 @@ The `@uppy/tus` plugin brings resumable file uploading by [tus.io](http://tus.io
 const Tus = require('@uppy/tus')
 
 uppy.use(Tus, {
-  endpoint: 'https://master.tus.io/files/', // use your tus endpoint here
+  endpoint: 'https://tusd.tusdemo.net/files/', // use your tus endpoint here
   resume: true,
   retryDelays: [0, 1000, 3000, 5000]
 })

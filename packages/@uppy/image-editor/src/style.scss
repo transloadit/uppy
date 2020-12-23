@@ -56,3 +56,14 @@
     background-color: rgba($blue, 0.8);
   }
 }
+
+// Cropper overrides
+
+.uppy-ImageCropper .cropper-point {
+  width: 8px;
+  height: 8px;
+}
+
+.uppy-ImageCropper .cropper-view-box {
+  outline: 2px solid #39f;
+}

@@ -41,7 +41,7 @@ data:
   COMPANION_AWS_BUCKET: "YOUR AWS S3 BUCKET"
   COMPANION_AWS_REGION: "AWS REGION"
   COMPANION_OAUTH_DOMAIN: "sub.domain.com"
-  COMPANION_UPLOAD_URLS: "http://master.tus.io/files/,https://master.tus.io/files/"
+  COMPANION_UPLOAD_URLS: "http://tusd.tusdemo.net/files/,https://tusd.tusdemo.net/files/"
 kind: Secret
 metadata:
   name: companion-env

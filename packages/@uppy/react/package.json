@@ -1,7 +1,7 @@
 {
   "name": "@uppy/react",
   "description": "React component wrappers around Uppy's official UI plugins.",
-  "version": "1.10.11",
+  "version": "1.10.12",
   "license": "MIT",
   "main": "index.js",
   "module": "index.mjs",
@@ -27,6 +27,7 @@
     "@uppy/progress-bar": "file:../progress-bar",
     "@uppy/status-bar": "file:../status-bar",
     "@uppy/utils": "file:../utils",
+    "@uppy/file-input": "file:../file-input",
     "prop-types": "^15.6.1"
   },
   "peerDependencies": {
