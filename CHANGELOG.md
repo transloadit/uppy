@@ -23,6 +23,8 @@ In the current stage we aim to release a new version at least every month.
 
 ## December 2020
 
+### 1.24.0
+
 Released: 2020-12-23
 
 - @uppy/svelte: add Svelte integration (#2671 / @ajkachnic, @adammedford)
@@ -34,7 +36,7 @@ Released: 2020-12-23
 - @uppy/dashboard: add autoopen for file editors (@uppy/image-editor) (#2681 / @arturi)
 - meta: use `tusd.tusdemo.net` (#2691 / @goto-bus-stop)
 
-## 1.23.3
+### 1.23.3
 
 Released: 2020-12-11
 
@@ -67,7 +69,7 @@ And thanks to @elkebab, Norwegian (bokmål) translations are now available!
 
 ## November 2020
 
-## 1.23.2
+### 1.23.2
 
 Released: 2020-11-27
 
