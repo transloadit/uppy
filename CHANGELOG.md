@@ -27,6 +27,29 @@ In the current stage we aim to release a new version at least every month.
 
 Released: 2020-12-23
 
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.10 | @uppy/progress-bar | 1.3.22 |
+| @uppy/aws-s3 | 1.7.4 | @uppy/provider-views | 1.9.2 |
+| @uppy/box | 0.3.2 | @uppy/react | 1.11.0 |
+| @uppy/companion-client | 1.7.0 | @uppy/robodog | 1.10.0 |
+| @uppy/companion | 2.4.0 | @uppy/screen-capture | 1.0.11 |
+| @uppy/core | 1.15.0 | @uppy/status-bar | 1.8.1 |
+| @uppy/dashboard | 1.14.0 | @uppy/svelte | 0.1.1 |
+| @uppy/drag-drop | 1.4.22 | @uppy/thumbnail-generator | 1.7.3 |
+| @uppy/dropbox | 1.4.20 | @uppy/transloadit | 1.6.16 |
+| @uppy/facebook | 1.1.20 | @uppy/tus | 1.8.2 |
+| @uppy/file-input | 1.4.20 | @uppy/unsplash | 0.1.4 |
+| @uppy/form | 1.3.23 | @uppy/url | 1.5.14 |
+| @uppy/golden-retriever | 1.3.22 | @uppy/utils | 3.3.0 |
+| @uppy/google-drive | 1.5.20 | @uppy/vue | 0.1.2 |
+| @uppy/image-editor | 0.2.0 | @uppy/webcam | 1.8.2 |
+| @uppy/informer | 1.5.14 | @uppy/xhr-upload | 1.6.8 |
+| @uppy/instagram | 1.4.20 | @uppy/zoom | 0.1.9 |
+| @uppy/onedrive | 1.1.20 | uppy | 1.24.0 |
+
+This release adds new Svelte wrapper components, a React FileInput component, and an `autoOpenFileEditor` option for the Dashboard. 
+
 - @uppy/svelte: add Svelte integration (#2671 / @ajkachnic, @adammedford)
 - @uppy/core: new event `files-added` with all files added in one batch (#2681 / @arturi)
 - @uppy/react: add useUppy() hook (#2666 / @goto-bus-stop)
