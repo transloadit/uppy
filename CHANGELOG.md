@@ -27,6 +27,8 @@ In the current stage we aim to release a new version at least every month.
 
 Released: 2020-12-23
 
+This release adds new Svelte wrapper components, a React FileInput component, and an `autoOpenFileEditor` option for the Dashboard. 
+
 | Package | Version | Package | Version |
 |-|-|-|-|
 | @uppy/aws-s3-multipart | 1.8.10 | @uppy/progress-bar | 1.3.22 |
@@ -47,8 +49,6 @@ Released: 2020-12-23
 | @uppy/informer | 1.5.14 | @uppy/xhr-upload | 1.6.8 |
 | @uppy/instagram | 1.4.20 | @uppy/zoom | 0.1.9 |
 | @uppy/onedrive | 1.1.20 | uppy | 1.24.0 |
-
-This release adds new Svelte wrapper components, a React FileInput component, and an `autoOpenFileEditor` option for the Dashboard. 
 
 - @uppy/svelte: add Svelte integration (#2671 / @ajkachnic, @adammedford)
 - @uppy/core: new event `files-added` with all files added in one batch (#2681 / @arturi)
