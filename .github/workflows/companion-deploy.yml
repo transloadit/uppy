@@ -9,8 +9,8 @@ jobs:
     name: DockerHub
     runs-on: ubuntu-latest
     env: 
-      DOCKER_BUILDKIT=0
-      COMPOSE_DOCKER_CLI_BUILD=0
+      DOCKER_BUILDKIT: 0
+      COMPOSE_DOCKER_CLI_BUILD: 0
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
