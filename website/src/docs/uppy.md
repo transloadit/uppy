@@ -728,6 +728,13 @@ uppy.on('file-added', (file) => {
 })
 ```
 
+### `files-added`
+
+**Parameters**
+- `files` - An array of [File Objects][File Objects] representing all files that were added at once, in a batch.
+
+Fired each time when one or multiple files are added — one event, for all files
+
 ### `file-removed`
 
 Fired each time a file is removed.

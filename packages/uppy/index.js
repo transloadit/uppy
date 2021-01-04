@@ -19,6 +19,7 @@ exports.FileInput = require('@uppy/file-input')
 exports.Informer = require('@uppy/informer')
 exports.ProgressBar = require('@uppy/progress-bar')
 exports.StatusBar = require('@uppy/status-bar')
+exports.ImageEditor = require('@uppy/image-editor')
 
 // Acquirers
 exports.Dropbox = require('@uppy/dropbox')

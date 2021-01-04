@@ -12,20 +12,54 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
-## December 2020
+## January 2021
 
 ### next
-
-Planned: 2020-12-18
 
 - [ ] companion: configurable oauth 3rd party credentials — provide your own Google Drive, Instagram application key/secret at the time of the request (@ife)
 - [ ] dashboard: Add a `disabled` (`true`||`false`) option (later for /dragndrop and fileinput) (#1530, @arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] add Svelte integration (@ajkachnic)
-- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi, @goto-bus-stop)
-- [ ] react: add useUppy() hook (@goto-bus-stop)
+- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@goto-bus-stop)
 
-## 1.23.3
+## December 2020
+
+### 1.24.0
+
+Released: 2020-12-23
+
+This release adds new Svelte wrapper components, a React FileInput component, and an `autoOpenFileEditor` option for the Dashboard. 
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.10 | @uppy/progress-bar | 1.3.22 |
+| @uppy/aws-s3 | 1.7.4 | @uppy/provider-views | 1.9.2 |
+| @uppy/box | 0.3.2 | @uppy/react | 1.11.0 |
+| @uppy/companion-client | 1.7.0 | @uppy/robodog | 1.10.0 |
+| @uppy/companion | 2.4.0 | @uppy/screen-capture | 1.0.11 |
+| @uppy/core | 1.15.0 | @uppy/status-bar | 1.8.1 |
+| @uppy/dashboard | 1.14.0 | @uppy/svelte | 0.1.1 |
+| @uppy/drag-drop | 1.4.22 | @uppy/thumbnail-generator | 1.7.3 |
+| @uppy/dropbox | 1.4.20 | @uppy/transloadit | 1.6.16 |
+| @uppy/facebook | 1.1.20 | @uppy/tus | 1.8.2 |
+| @uppy/file-input | 1.4.20 | @uppy/unsplash | 0.1.4 |
+| @uppy/form | 1.3.23 | @uppy/url | 1.5.14 |
+| @uppy/golden-retriever | 1.3.22 | @uppy/utils | 3.3.0 |
+| @uppy/google-drive | 1.5.20 | @uppy/vue | 0.1.2 |
+| @uppy/image-editor | 0.2.0 | @uppy/webcam | 1.8.2 |
+| @uppy/informer | 1.5.14 | @uppy/xhr-upload | 1.6.8 |
+| @uppy/instagram | 1.4.20 | @uppy/zoom | 0.1.9 |
+| @uppy/onedrive | 1.1.20 | uppy | 1.24.0 |
+
+- @uppy/svelte: add Svelte integration (#2671 / @ajkachnic, @adammedford)
+- @uppy/core: new event `files-added` with all files added in one batch (#2681 / @arturi)
+- @uppy/react: add useUppy() hook (#2666 / @goto-bus-stop)
+- @uppy/react: add FileInput component to React (#2706 / @ajkachnic)
+- @uppy/status-bar: corrected StatusBar types (#2697 / @ajkachnic)
+- @uppy/utils: Add archive mime types (#2703 / @ahmedkandel)
+- @uppy/dashboard: add autoopen for file editors (@uppy/image-editor) (#2681 / @arturi)
+- meta: use `tusd.tusdemo.net` (#2691 / @goto-bus-stop)
+
+### 1.23.3
 
 Released: 2020-12-11
 
@@ -58,7 +92,7 @@ And thanks to @elkebab, Norwegian (bokmål) translations are now available!
 
 ## November 2020
 
-## 1.23.2
+### 1.23.2
 
 Released: 2020-11-27
 

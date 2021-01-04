@@ -17,6 +17,7 @@ export { default as FileInput } from '@uppy/file-input'
 export { default as Informer } from '@uppy/informer'
 export { default as ProgressBar } from '@uppy/progress-bar'
 export { default as StatusBar } from '@uppy/status-bar'
+export { default as ImageEditor } from '@uppy/image-editor'
 
 // Acquirers
 export { default as Dropbox } from '@uppy/dropbox'
