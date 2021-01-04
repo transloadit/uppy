@@ -22,8 +22,11 @@ module.exports = function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
   const isSizeMD = props.containerWidth > WIDTH_MD
 
+  const wrapperClassName = classNames({
+    'uppy-Root': props.isTargetDOMEl
+  })
+
   const dashboardClassName = classNames({
-    'uppy-Root': props.isTargetDOMEl,
     'uppy-Dashboard': true,
     'uppy-Dashboard--animateOpenClose': props.animateOpenClose,
     'uppy-Dashboard--isClosing': props.isClosing,
@@ -49,10 +52,9 @@ module.exports = function Dashboard (props) {
 
   const showFileList = props.showSelectedFiles && !noFiles
 
-  return (
+  const dashboard = (
     <div
       class={dashboardClassName}
-      dir={props.direction}
       data-uppy-theme={props.theme}
       data-uppy-num-acquirers={props.acquirers.length}
       data-uppy-drag-drop-supported={isDragDropSupported()}
@@ -130,6 +132,13 @@ module.exports = function Dashboard (props) {
           </div>
         </div>
       </div>
+    </div>
+  )
+
+  return (
+    // Wrap it for RTL language support
+    <div class={wrapperClassName} dir={props.direction}>
+      {dashboard}
     </div>
   )
 }
