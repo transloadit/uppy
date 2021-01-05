@@ -76,8 +76,8 @@ module.exports.app = (options = {}) => {
   app.use(interceptGrantErrorResponse)
   app.use(Grant(grantConfig))
   app.use((req, res, next) => {
-    const appHeaders = (res.getHeaders()['access-control-allow-methods']).split(',')
-    const mergedHeaders = ([...new Set([...appHeaders, ...('GET,POST,OPTIONS,DELETE').split(',')])]).join()
+    const appHeaders = (res.getHeaders()['access-control-allow-methods']).toString().replaceAll(/ /g, '').split(',')
+    const mergedHeaders = ([...new Set([...appHeaders, ...('GET,POST,OPTIONS,DELETE').toString().split(',')])]).join()
     res.header('Access-Control-Allow-Methods', mergedHeaders)
     res.header(
       'Access-Control-Allow-Headers',
