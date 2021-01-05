@@ -76,16 +76,16 @@ module.exports.app = (options = {}) => {
   app.use(interceptGrantErrorResponse)
   app.use(Grant(grantConfig))
   app.use((req, res, next) => {
-    let appHeaders = (res.getHeaders()["access-control-allow-methods"])
-    let mergedHeaders = ([...new Set([...appHeaders.replace(/\s+/g, '').split(','), ...('GET,POST,OPTIONS,DELETE').split(',')])]).join()
+    const appHeaders = (res.getHeaders()['access-control-allow-methods'])
+    const mergedHeaders = ([...new Set([...appHeaders.replace(/ /g, '').split(','), ...('GET,POST,OPTIONS,DELETE').split(',')])]).join()
     res.header('Access-Control-Allow-Methods', mergedHeaders)
     res.header(
-      "Access-Control-Allow-Headers",
+      'Access-Control-Allow-Headers',
       [
-        "uppy-auth-token",
-        "uppy-versions",
-        res.get("Access-Control-Allow-Headers"),
-      ].join(",")
+        'uppy-auth-token',
+        'uppy-versions',
+        res.get('Access-Control-Allow-Headers')
+      ].join(',')
     )
 
     const exposedHeaders = [
