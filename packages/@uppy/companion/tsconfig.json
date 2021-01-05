@@ -1,4 +1,5 @@
 {
+  "lib": ["ESNext.String"],
   "compilerOptions": {
     "outDir": "./lib",
     "module": "commonjs",
