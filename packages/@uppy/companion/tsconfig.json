@@ -3,13 +3,12 @@
   "compilerOptions": {
     "outDir": "./lib",
     "module": "commonjs",
-    "target": "es2018",
+    "target": "es2016",
     "noImplicitAny": false,
     "sourceMap": false,
     "allowJs": true,
     "checkJs": true,
     "noEmitOnError": true,
-    "lib": ["es6", "dom", "es2017"]
   },
   "include": [
     "src/**/*"
