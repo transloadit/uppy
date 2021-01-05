@@ -77,6 +77,8 @@ module.exports.app = (options = {}) => {
   app.use(Grant(grantConfig))
   app.use((req, res, next) => {
     const appHeaders = (res.getHeaders()['access-control-allow-methods'])
+    console.log(appHeaders)
+    console.log(typeof(appHeaders))
     const mergedHeaders = ([...new Set([...appHeaders.replace(/ /g, '').split(','), ...('GET,POST,OPTIONS,DELETE').split(',')])]).join()
     res.header('Access-Control-Allow-Methods', mergedHeaders)
     res.header(
