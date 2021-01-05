@@ -3,12 +3,12 @@
   "compilerOptions": {
     "outDir": "./lib",
     "module": "commonjs",
-    "target": "es2016",
+    "target": "es6",
     "noImplicitAny": false,
     "sourceMap": false,
     "allowJs": true,
     "checkJs": true,
-    "noEmitOnError": true,
+    "noEmitOnError": true
   },
   "include": [
     "src/**/*"
