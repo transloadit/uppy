@@ -1,5 +1,4 @@
 {
-  
   "compilerOptions": {
     "outDir": "./lib",
     "module": "commonjs",
