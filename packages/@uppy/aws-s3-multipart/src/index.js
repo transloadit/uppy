@@ -164,6 +164,9 @@ module.exports = class AwsS3Multipart extends Plugin {
 
       const onSuccess = (result) => {
         const uploadResp = {
+          body: {
+            ...result
+          },
           uploadURL: result.location
         }
 

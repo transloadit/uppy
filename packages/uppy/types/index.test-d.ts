@@ -22,7 +22,7 @@ import * as Uppy from '../';
     .use(Uppy.Webcam, { target: Uppy.Dashboard })
     .use(Uppy.ScreenCapture, { target: Uppy.Dashboard })
     .use(Uppy.Zoom, { target: Uppy.Dashboard })
-    .use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
+    .use(Uppy.Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
     .on('complete', (result) => {
       console.log('Upload result:', result);
     });
@@ -31,5 +31,5 @@ import * as Uppy from '../';
 (() => {
   const uppy = Uppy.Core();
   uppy.use(Uppy.DragDrop, { target: '.UppyDragDrop' });
-  uppy.use(Uppy.Tus, { endpoint: '//master.tus.io/files/' });
+  uppy.use(Uppy.Tus, { endpoint: '//tusd.tusdemo.net/files/' });
 })();

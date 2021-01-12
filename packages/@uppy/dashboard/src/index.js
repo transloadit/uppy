@@ -143,7 +143,8 @@ module.exports = class Dashboard extends Plugin {
       showSelectedFiles: true,
       showRemoveButtonAfterComplete: false,
       browserBackButtonClose: false,
-      theme: 'light'
+      theme: 'light',
+      autoOpenFileEditor: false
     }
 
     // merge default options with the ones set by user
@@ -651,10 +652,17 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
-  handleComplete = ({ failed, uploadID }) => {
+  handleComplete = ({ failed }) => {
     if (this.opts.closeAfterFinish && failed.length === 0) {
       // All uploads are done
       this.requestCloseModal()
+    }
+  }
+
+  _openFileEditorWhenFilesAdded = (files) => {
+    const firstFile = files[0]
+    if (this.canEditFile(firstFile)) {
+      this.openFileEditor(firstFile)
     }
   }
 
@@ -686,6 +694,10 @@ module.exports = class Dashboard extends Plugin {
     if (this.opts.inline) {
       this.el.addEventListener('keydown', this.handleKeyDownInInline)
     }
+
+    if (this.opts.autoOpenFileEditor) {
+      this.uppy.on('files-added', this._openFileEditorWhenFilesAdded)
+    }
   }
 
   removeEvents = () => {
@@ -708,6 +720,10 @@ module.exports = class Dashboard extends Plugin {
 
     if (this.opts.inline) {
       this.el.removeEventListener('keydown', this.handleKeyDownInInline)
+    }
+
+    if (this.opts.autoOpenFileEditor) {
+      this.uppy.off('files-added', this._openFileEditorWhenFilesAdded)
     }
   }
 

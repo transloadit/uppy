@@ -3,7 +3,7 @@ const React = require('react')
 const Uppy = require('@uppy/core')
 const Tus = require('@uppy/tus')
 const GoogleDrive = require('@uppy/google-drive')
-const { Dashboard, DashboardModal, DragDrop, ProgressBar } = require('@uppy/react')
+const { Dashboard, DashboardModal, DragDrop, ProgressBar, FileInput } = require('@uppy/react')
 
 module.exports = class App extends React.Component {
   constructor (props) {
@@ -15,11 +15,11 @@ module.exports = class App extends React.Component {
     }
 
     this.uppy = new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
-      .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+      .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
       .use(GoogleDrive, { companionUrl: 'https://companion.uppy.io' })
 
     this.uppy2 = new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
-      .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+      .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 
     this.handleModalClick = this.handleModalClick.bind(this)
   }
@@ -92,6 +92,11 @@ module.exports = class App extends React.Component {
         <ProgressBar
           uppy={this.uppy}
           hideAfterFinish={false}
+        />
+
+        <h2>File Input</h2>
+        <FileInput
+          uppy={this.uppy}
         />
       </div>
     )

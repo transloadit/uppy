@@ -9,7 +9,7 @@
     "aliasify": "^2.1.0",
     "browserify": "^16.5.2",
     "drag-drop": "^4.2.0",
-    "ecstatic": "^3.0.0",
+    "ecstatic": "^4.1.4",
     "marked": "^0.7.0"
   },
   "private": true,

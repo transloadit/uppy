@@ -31,7 +31,7 @@ const UPLOADER = 'tus'
 // DEV CONFIG: Endpoint URLs
 
 const COMPANION_URL = 'http://localhost:3020'
-const TUS_ENDPOINT = 'https://master.tus.io/files/'
+const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
 const XHR_ENDPOINT = 'https://xhr-server.herokuapp.com/upload'
 
 // DEV CONFIG: Transloadit keys

@@ -1,7 +1,9 @@
 import React = require('react')
 import Uppy = require('@uppy/core')
-import { expectError } from 'tsd'
+import { expectType, expectError } from 'tsd'
 import * as components from '../'
+
+const { useUppy } = components
 
 const uppy = Uppy<Uppy.StrictTypes>()
 
@@ -55,4 +57,10 @@ expectError(<components.DashboardModal replaceTargetContent />)
 
   // use onRequestClose instead.
   expectError(<components.DashboardModal onRequestCloseModal />)
+}
+
+function TestHook () {
+  expectType<Uppy.Uppy<Uppy.StrictTypes>>(useUppy(() => uppy))
+  expectType<Uppy.Uppy<Uppy.LooseTypes>>(useUppy(() => Uppy()))
+  expectError(useUppy(uppy))
 }
