@@ -127,6 +127,7 @@ module.exports = class Url extends Plugin {
           source: this.id,
           name: this.getFileNameFromUrl(url),
           type: meta.type,
+          thumbnail: meta.thumbnail || '',
           data: {
             size: meta.size
           },
