@@ -24,6 +24,8 @@
   "dependencies": {
     "@uppy/companion-client": "file:../companion-client",
     "@uppy/utils": "file:../utils",
+    "get-youtube-id": "^1.0.1",
+    "get-youtube-title": "^1.0.1",
     "preact": "8.2.9"
   },
   "peerDependencies": {

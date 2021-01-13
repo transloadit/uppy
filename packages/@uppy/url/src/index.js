@@ -4,6 +4,8 @@ const { h } = require('preact')
 const { RequestClient } = require('@uppy/companion-client')
 const UrlUI = require('./UrlUI.js')
 const forEachDroppedOrPastedUrl = require('./utils/forEachDroppedOrPastedUrl')
+const getYouTubeID = require('get-youtube-id');
+const getYoutubeTitle  = require('get-youtube-title');
 
 function UrlIcon () {
   return (
@@ -77,6 +79,13 @@ module.exports = class Url extends Plugin {
   }
 
   getFileNameFromUrl (url) {
+    if (url.match(/(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/)) {
+      const id = getYouTubeID(url, {fuzzy: false});
+      getYoutubeTitle(id, function (err, title) {
+        return title
+      })
+    }
+    
     return url.substring(url.lastIndexOf('/') + 1)
   }
 
