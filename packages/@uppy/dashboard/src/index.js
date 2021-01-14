@@ -399,16 +399,16 @@ module.exports = class Dashboard extends Plugin {
     this.setDarkModeCapability(isDarkModeOnNow)
   }
 
-  toggleFileCard = (fileId) => {
-    if (fileId) {
-      this.uppy.emit('dashboard:file-edit-start')
+  toggleFileCard = (show, fileId) => {
+    if (show) {
+      this.uppy.emit('dashboard:file-edit-start', fileId)
     } else {
-      this.uppy.emit('dashboard:file-edit-complete')
+      this.uppy.emit('dashboard:file-edit-complete', fileId)
     }
 
     this.setPluginState({
-      fileCardFor: fileId || null,
-      activeOverlayType: fileId ? 'FileCard' : null
+      fileCardFor: show ? fileId : null,
+      activeOverlayType: show ? 'FileCard' : null
     })
   }
 
@@ -765,7 +765,7 @@ module.exports = class Dashboard extends Plugin {
 
   saveFileCard = (meta, fileID) => {
     this.uppy.setFileMeta(fileID, meta)
-    this.toggleFileCard()
+    this.toggleFileCard(false, fileID)
   }
 
   _attachRenderFunctionToTarget = (target) => {
