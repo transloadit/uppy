@@ -467,8 +467,16 @@ Fired when the Dashboard modal is closed.
 
 ### `dashboard:file-edit-start`
 
+**Parameters:**
+
+- `fileId` — the fileId of the file that was opened for editing
+
 Fired when the user clicks “edit” icon next to a file in the Dashboard. The FileCard panel is then open with file metadata available for editing.
 
 ### `dashboard:file-edit-complete`
+
+**Parameters:**
+
+- `fileId` — the fileId of the file that was edited
 
 Fired when the user finished editing the file metadata.
