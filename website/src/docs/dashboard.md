@@ -469,7 +469,7 @@ Fired when the Dashboard modal is closed.
 
 **Parameters:**
 
-- `fileId` — the fileId of the file that was opened for editing
+- `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was opened for editing.
 
 Fired when the user clicks “edit” icon next to a file in the Dashboard. The FileCard panel is then open with file metadata available for editing.
 
@@ -477,6 +477,6 @@ Fired when the user clicks “edit” icon next to a file in the Dashboard. The 
 
 **Parameters:**
 
-- `fileId` — the fileId of the file that was edited
+- `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was edited.
 
 Fired when the user finished editing the file metadata.

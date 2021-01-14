@@ -400,10 +400,11 @@ module.exports = class Dashboard extends Plugin {
   }
 
   toggleFileCard = (show, fileID) => {
+    const file = this.uppy.getFile(fileID)
     if (show) {
-      this.uppy.emit('dashboard:file-edit-start', fileID)
+      this.uppy.emit('dashboard:file-edit-start', file)
     } else {
-      this.uppy.emit('dashboard:file-edit-complete', fileID)
+      this.uppy.emit('dashboard:file-edit-complete', file)
     }
 
     this.setPluginState({
