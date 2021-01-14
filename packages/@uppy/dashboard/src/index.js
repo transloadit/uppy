@@ -399,15 +399,15 @@ module.exports = class Dashboard extends Plugin {
     this.setDarkModeCapability(isDarkModeOnNow)
   }
 
-  toggleFileCard = (show, fileId) => {
+  toggleFileCard = (show, fileID) => {
     if (show) {
-      this.uppy.emit('dashboard:file-edit-start', fileId)
+      this.uppy.emit('dashboard:file-edit-start', fileID)
     } else {
-      this.uppy.emit('dashboard:file-edit-complete', fileId)
+      this.uppy.emit('dashboard:file-edit-complete', fileID)
     }
 
     this.setPluginState({
-      fileCardFor: show ? fileId : null,
+      fileCardFor: show ? fileID : null,
       activeOverlayType: show ? 'FileCard' : null
     })
   }
