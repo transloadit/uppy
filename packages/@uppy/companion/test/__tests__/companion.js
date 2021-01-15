@@ -13,7 +13,7 @@ const authData = {
   box: 'token value',
   drive: 'token value'
 }
-const token = tokenService.generateToken(authData, process.env.COMPANION_SECRET)
+const token = tokenService.generateEncryptedToken(authData, process.env.COMPANION_SECRET)
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 
 describe('validate upload data', () => {

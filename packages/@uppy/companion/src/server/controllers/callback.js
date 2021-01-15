@@ -21,7 +21,7 @@ module.exports = function callback (req, res, next) {
   if (grant.response && grant.response.access_token) {
     req.companion.providerTokens[providerName] = grant.response.access_token
     logger.debug(`Generating auth token for provider ${providerName}`, null, req.id)
-    const uppyAuthToken = tokenService.generateToken(req.companion.providerTokens, req.companion.options.secret)
+    const uppyAuthToken = tokenService.generateEncryptedToken(req.companion.providerTokens, req.companion.options.secret)
     return res.redirect(req.companion.buildURL(`/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`, true))
   }
 

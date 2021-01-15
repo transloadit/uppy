@@ -25,5 +25,9 @@ module.exports = function connect (req, res) {
     state = oAuthState.addToState(state, { clientVersion: req.companion.clientVersion }, secret)
   }
 
+  if (req.query.uppyPreAuthToken) {
+    state = oAuthState.addToState(state, { preAuthToken: req.query.uppyPreAuthToken }, secret)
+  }
+
   res.redirect(req.companion.buildURL(`/connect/${req.companion.provider.authProvider}?state=${state}`, true))
 }

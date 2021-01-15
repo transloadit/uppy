@@ -61,5 +61,19 @@ module.exports.expects = {
   itemName: 'DUMMY TOPIC - shared screen with speaker view (2020-05-29, 13:23).mp4',
   itemId: 'DUMMY-UUID%3D%3D__DUMMY-FILE-ID',
   itemRequestPath: 'DUMMY-UUID%3D%3D?recordingId=DUMMY-FILE-ID',
-  itemIcon: 'video'
+  itemIcon: 'video',
+  remoteZoomKey: 'REMOTE-ZOOM-KEY',
+  remoteZoomSecret: 'REMOTE-ZOOM-SECRET',
+  remoteZoomVerificationToken: 'REMOTE-ZOOM-VERIFICATION-TOKEN'
+}
+
+module.exports.validators = {
+  'https://zoom.us/oauth/revoke': ({ headers }) => {
+    if (process.env.COMPANION_ZOOM_KEYS_ENDPOINT) {
+      const auth = `${module.exports.expects.remoteZoomKey}:${module.exports.expects.remoteZoomSecret}`
+      return headers.Authorization === `Basic ${Buffer.from(auth, 'binary').toString('base64')}`
+    }
+
+    return true
+  }
 }
