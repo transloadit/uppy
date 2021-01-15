@@ -274,11 +274,14 @@ Your `package.json` should resemble something like this:
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
 ```
 
-The most important part about this is that `@uppy/core` is a peer dependency. If you're framework complains about `@uppy/core` not being resolved, you can also add it as a dev dependency
+The most important part about this is that `@uppy/core` is a peer dependency. If your framework complains about `@uppy/core` not being resolved, you can also add it as a dev dependency
 
 ### Adding TypeScript Support
 
