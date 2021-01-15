@@ -78,15 +78,18 @@ module.exports = class Url extends Plugin {
     this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
-  getFileNameFromUrl (url) {
-    if (url.match(/(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/)) {
-      const id = getYouTubeID(url, {fuzzy: false});
-      getYoutubeTitle(id, function (err, title) {
-        return title
-      })
-    }
-    
-    return url.substring(url.lastIndexOf('/') + 1)
+  async getFileNameFromUrl (url) {
+    return new Promise((resolve, reject) => {
+      if (url.match(/(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/)) {
+        const id = getYouTubeID(url, {fuzzy: false});
+        getYoutubeTitle(id, function (err, title) {
+          resolve(title)
+        })
+      }
+      
+      resolve(url.substring(url.lastIndexOf('/') + 1))
+  
+    })
   }
 
   checkIfCorrectURL (url) {
@@ -122,7 +125,7 @@ module.exports = class Url extends Plugin {
       })
   }
 
-  addFile (url) {
+  async addFile (url) {
     url = this.addProtocolToURL(url)
     if (!this.checkIfCorrectURL(url)) {
       this.uppy.log(`[URL] Incorrect URL entered: ${url}`)
@@ -131,10 +134,10 @@ module.exports = class Url extends Plugin {
     }
 
     return this.getMeta(url)
-      .then((meta) => {
+      .then(async (meta) => {
         const tagFile = {
           source: this.id,
-          name: this.getFileNameFromUrl(url),
+          name: await this.getFileNameFromUrl(url),
           type: meta.type,
           thumbnail: meta.thumbnail || '',
           data: {
