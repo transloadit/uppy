@@ -698,6 +698,7 @@ class Uppy {
     })
 
     this.emit('file-added', newFile)
+    this.emit('files-added', [newFile])
     this.log(`Added file: ${newFile.name}, ${newFile.id}, mime type: ${newFile.type}`)
 
     this._startIfAutoProceed()
@@ -736,6 +737,8 @@ class Uppy {
     newFiles.forEach((newFile) => {
       this.emit('file-added', newFile)
     })
+
+    this.emit('files-added', newFiles)
 
     if (newFiles.length > 5) {
       this.log(`Added batch of ${newFiles.length} files`)

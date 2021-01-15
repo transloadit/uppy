@@ -28,6 +28,7 @@ function server (moreCompanionOptions = {}) {
   let metricsMiddleware
   if (process.env.COMPANION_HIDE_METRICS !== 'true') {
     metricsMiddleware = promBundle({ includeMethod: true })
+    // @ts-ignore Not in the typings, but it does exist
     const promClient = metricsMiddleware.promClient
     const collectDefaultMetrics = promClient.collectDefaultMetrics
     collectDefaultMetrics({ register: promClient.register })

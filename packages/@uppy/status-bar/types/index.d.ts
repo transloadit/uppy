@@ -10,6 +10,10 @@ declare module StatusBar {
     showProgressDetails?: boolean
     hideUploadButton?: boolean
     hideAfterFinish?: boolean
+    hideRetryButton?: boolean,
+    hidePauseResumeButton?: boolean,
+    hideCancelButton?: boolean,
+    doneButtonHandler?: () => void,
     locale?: StatusBarLocale
   }
 }

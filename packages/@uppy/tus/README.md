@@ -3,7 +3,7 @@
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
 <a href="https://www.npmjs.com/package/@uppy/tus"><img src="https://img.shields.io/npm/v/@uppy/tus.svg?style=flat-square"></a>
-<a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
+<img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
 
 The Tus plugin brings [tus.io][] resumable file uploading to Uppy by wrapping the [tus-js-client][].
 
@@ -17,7 +17,7 @@ const Tus = require('@uppy/tus')
 
 const uppy = new Uppy()
 uppy.use(Tus, {
-  endpoint: 'https://master.tus.io/files/', // use your tus endpoint here
+  endpoint: 'https://tusd.tusdemo.net/files/', // use your tus endpoint here
   resume: true,
   autoRetry: true,
   retryDelays: [0, 1000, 3000, 5000]

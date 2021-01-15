@@ -24,6 +24,7 @@ module.exports = class Facebook extends Plugin {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
       companionKeysParams: this.opts.companionKeysParams,
+      companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'facebook',
       pluginId: this.id
     })

@@ -12,6 +12,7 @@ function thumbnail (req, res, next) {
   provider.thumbnail({ id, token }, (err, response) => {
     if (err) {
       err.isAuthError ? res.sendStatus(401) : next(err)
+      return
     }
     response ? response.pipe(res) : res.sendStatus(404)
   })
