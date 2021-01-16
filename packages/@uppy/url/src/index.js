@@ -82,12 +82,13 @@ module.exports = class Url extends Plugin {
     return new Promise((resolve, reject) => {
       if (url.match(/(http:|https:)?\/\/(www\.)?(youtube.com|youtu.be)\/(watch)?(\?v=)?(\S+)?/)) {
         const id = getYouTubeID(url, {fuzzy: false});
-        getYoutubeTitle(id, function (err, title) {
+        getYoutubeTitle(id, 'AIzaSyCM3w7SKmg25eRBgh4tmjPpXDWED-iFp9Q', function (err, title) {
           resolve(title)
         })
       }
-      
-      resolve(url.substring(url.lastIndexOf('/') + 1))
+      else {
+        resolve(url.substring(url.lastIndexOf('/') + 1))
+      }
   
     })
   }
