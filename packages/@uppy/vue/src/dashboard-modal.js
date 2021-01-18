@@ -1,5 +1,6 @@
 import DashboardPlugin from '@uppy/dashboard'
 import { shallowEqualObjects } from 'shallow-equal'
+import { h as createElement } from 'vue'
 
 export default {
   data () {
@@ -68,9 +69,22 @@ export default {
       }
     }
   },
-  render (createElement) {
-    return createElement('div', {
-      ref: 'container'
-    })
+  render () {
+    // Hack to allow support for Vue 2 and 3
+    if (arguments.length > 0 && typeof arguments[0] === 'function') {
+      // TODO: Remove, for debugging purposes
+      window.vueArgs = arguments
+
+      // If it has arguments, then it's a Vue 2 app, and we handle it accordingly
+      const [createElement] = arguments
+      return createElement('div', {
+        ref: 'container'
+      })
+    } else {
+      // Other wise, we import the `h` function from the Vue package (in Vue 3 fashion)
+      return createElement('div', {
+        ref: 'container'
+      })
+    }
   }
 }
