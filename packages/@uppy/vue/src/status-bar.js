@@ -1,6 +1,10 @@
 import StatusBarPlugin from '@uppy/status-bar'
 import { shallowEqualObjects } from 'shallow-equal'
 
+// Cross compatibility dependencies
+import { h as createElement } from 'vue'
+import { isVue2 } from './utils'
+
 export default {
   data () {
     return {
@@ -49,9 +53,19 @@ export default {
       }
     }
   },
-  render (createElement) {
-    return createElement('div', {
-      ref: 'container'
-    })
+  render (...args) {
+    // Hack to allow support for Vue 2 and 3
+    if (isVue2(...args)) {
+      // If it's first argument is a function, then it's a Vue 2 App
+      const [createElement] = arguments
+      return createElement('div', {
+        ref: 'container'
+      })
+    } else {
+      // Other wise, we import the `h` function from the Vue package (in Vue 3 fashion)
+      return createElement('div', {
+        ref: 'container'
+      })
+    }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- <HelloWorld msg="Welcome to Uppy Vue Demo"/> -->
-    <!-- <h1>Welcome to Uppy Vue Demo!</h1>
+    <h1>Welcome to Uppy Vue Demo!</h1>
     <h2>Inline Dashboard</h2>
     <label>
       <input
@@ -19,7 +19,7 @@
       :props="{
         metaFields: [{ id: 'name', name: 'Name', placeholder: 'File name' }]
       }"
-    /> -->
+    />
     <h2>Modal Dashboard</h2>
     <div>
       <button @click="open = true">Show Dashboard</button>
@@ -32,7 +32,7 @@
     />
     </div>
 
-    <!-- <h2>Drag Drop Area</h2>
+    <h2>Drag Drop Area</h2>
     <drag-drop 
       :uppy="uppy"
       :props="{
@@ -51,24 +51,22 @@
       :props="{
         hideAfterFinish: false
       }"
-    /> -->
+    />
   </div>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
 import Uppy from '@uppy/core'
 // import Tus from '@uppy/tus'
-// import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/vue'
-import { DashboardModal } from '@uppy/vue'
+import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/vue'
 
 export default {
   name: 'App',
   components: {
-    // Dashboard,
+    Dashboard,
     DashboardModal,
-    // DragDrop,
-    // ProgressBar
+    DragDrop,
+    ProgressBar
   },
   computed: {
     uppy: () => new Uppy({ id: 'uppy1', autoProceed: true, debug: true }),
