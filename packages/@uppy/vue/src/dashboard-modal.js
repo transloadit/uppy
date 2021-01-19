@@ -1,6 +1,7 @@
 import DashboardPlugin from '@uppy/dashboard'
 import { shallowEqualObjects } from 'shallow-equal'
 import { h as createElement } from 'vue'
+import { isVue2 } from './utils'
 
 export default {
   data () {
@@ -48,6 +49,9 @@ export default {
   beforeDestroy () {
     this.uninstallPlugin(this.uppy)
   },
+  beforeUnmount () {
+    this.uninstallPlugin(this.uppy)
+  },
   watch: {
     uppy (current, old) {
       if (old !== current) {
@@ -69,13 +73,10 @@ export default {
       }
     }
   },
-  render () {
+  render (...args) {
     // Hack to allow support for Vue 2 and 3
-    if (arguments.length > 0 && typeof arguments[0] === 'function') {
-      // TODO: Remove, for debugging purposes
-      window.vueArgs = arguments
-
-      // If it has arguments, then it's a Vue 2 app, and we handle it accordingly
+    if (isVue2(...args)) {
+      // If it's first argument is a function, then it's a Vue 2 App
       const [createElement] = arguments
       return createElement('div', {
         ref: 'container'
