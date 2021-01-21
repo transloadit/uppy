@@ -14,7 +14,7 @@ function matchYoutubeUrl(url) {
 module.exports = function FilePreviewAndLink(props) {
   let thumbnail = false
   const url = props?.file?.remote?.body?.url
-  if (matchYoutubeUrl(url)) {
+  if (url && matchYoutubeUrl(url)) {
     const videoID = getYouTubeID(url, { fuzzy: false });
     thumbnail = `https://img.youtube.com/vi/${videoID}/default.jpg`
   }

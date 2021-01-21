@@ -89,7 +89,6 @@ module.exports = class Url extends Plugin {
       else {
         resolve(url.substring(url.lastIndexOf('/') + 1))
       }
-  
     })
   }
 
