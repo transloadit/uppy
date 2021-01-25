@@ -564,6 +564,7 @@ class Uploader {
       Key: options.getKey(null, filename, this.options.metadata),
       ACL: options.acl,
       ContentType: this.options.metadata.type,
+      Metadata: this.options.metadata,
       Body: stream
     })
 
