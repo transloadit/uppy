@@ -24,6 +24,8 @@ module.exports = class GoogleDrive extends Plugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionKeysParams: this.opts.companionKeysParams,
+      companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'drive',
       pluginId: this.id
     })
@@ -49,7 +51,10 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   onFirstRender () {
-    return this.view.getFolder('root', '/')
+    return Promise.all([
+      this.provider.fetchPreAuthToken(),
+      this.view.getFolder('root', '/')
+    ])
   }
 
   render (state) {

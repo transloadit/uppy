@@ -436,6 +436,14 @@ class Uploader {
        */
       onError (error) {
         logger.error(error, 'uploader.tus.error')
+        // deleting tus originalRequest field because it uses the same http-agent
+        // as companion, and this agent may contain sensitive request details (e.g headers)
+        // previously made to providers. Deleting the field would prevent it from getting leaked
+        // to the frontend etc.
+        // @ts-ignore
+        delete error.originalRequest
+        // @ts-ignore
+        delete error.originalResponse
         uploader.emitError(error)
       },
       /**
@@ -556,6 +564,7 @@ class Uploader {
       Key: options.getKey(null, filename, this.options.metadata),
       ACL: options.acl,
       ContentType: this.options.metadata.type,
+      Metadata: this.options.metadata,
       Body: stream
     })
 

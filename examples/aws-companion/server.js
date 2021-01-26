@@ -18,7 +18,7 @@ app.use(require('express-session')({
 
 const options = {
   providerOptions: {
-    google: {
+    drive: {
       key: process.env.COMPANION_GOOGLE_KEY,
       secret: process.env.COMPANION_GOOGLE_SECRET
     },

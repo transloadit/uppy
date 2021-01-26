@@ -47,6 +47,7 @@
     "@uppy/informer": "file:../@uppy/informer",
     "@uppy/instagram": "file:../@uppy/instagram",
     "@uppy/onedrive": "file:../@uppy/onedrive",
+    "@uppy/image-editor": "file:../@uppy/image-editor",
     "@uppy/progress-bar": "file:../@uppy/progress-bar",
     "@uppy/provider-views": "file:../@uppy/provider-views",
     "@uppy/redux-dev-tools": "file:../@uppy/redux-dev-tools",

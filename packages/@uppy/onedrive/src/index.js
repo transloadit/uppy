@@ -26,6 +26,7 @@ module.exports = class OneDrive extends Plugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'onedrive',
       pluginId: this.id
     })
@@ -51,7 +52,10 @@ module.exports = class OneDrive extends Plugin {
   }
 
   onFirstRender () {
-    return this.view.getFolder()
+    return Promise.all([
+      this.provider.fetchPreAuthToken(),
+      this.view.getFolder()
+    ])
   }
 
   render (state) {

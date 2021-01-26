@@ -119,6 +119,10 @@ This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
 This is useful when you have your [Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should do just fine.
 
+### `companionCookiesRule: 'same-origin'`
+
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
+
 ### `locale: {}`
 
 Localize text that is shown to the user.

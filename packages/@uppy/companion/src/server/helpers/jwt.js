@@ -1,13 +1,15 @@
 const jwt = require('jsonwebtoken')
 const { encrypt, decrypt } = require('./utils')
 
+const EXPIRY = 60 * 60 * 24 // one day (24 hrs)
+
 /**
  *
  * @param {*} payload
  * @param {string} secret
  */
 module.exports.generateToken = (payload, secret) => {
-  return encrypt(jwt.sign({ data: payload }, secret, { expiresIn: 60 * 60 * 24 }), secret)
+  return jwt.sign({ data: payload }, secret, { expiresIn: EXPIRY })
 }
 
 /**
@@ -18,7 +20,7 @@ module.exports.generateToken = (payload, secret) => {
 module.exports.verifyToken = (token, secret) => {
   try {
     // @ts-ignore
-    return { payload: jwt.verify(decrypt(token, secret), secret, {}).data }
+    return { payload: jwt.verify(token, secret, {}).data }
   } catch (err) {
     return { err }
   }
@@ -26,14 +28,30 @@ module.exports.verifyToken = (token, secret) => {
 
 /**
  *
- * @param {object} res
- * @param {string} token
- * @param {object} companionOptions
- * @param {string} providerName
+ * @param {*} payload
+ * @param {string} secret
  */
-module.exports.addToCookies = (res, token, companionOptions, providerName) => {
+module.exports.generateEncryptedToken = (payload, secret) => {
+  return encrypt(module.exports.generateToken(payload, secret), secret)
+}
+
+/**
+ *
+ * @param {string} token
+ * @param {string} secret
+ */
+module.exports.verifyEncryptedToken = (token, secret) => {
+  try {
+    // @ts-ignore
+    return module.exports.verifyToken(decrypt(token, secret), secret)
+  } catch (err) {
+    return { err }
+  }
+}
+
+const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
   const cookieOptions = {
-    maxAge: 1000 * 60 * 60 * 24 * 30, // would expire after 30 days
+    maxAge: 1000 * EXPIRY, // would expire after one day (24 hrs)
     httpOnly: true
   }
 
@@ -41,18 +59,29 @@ module.exports.addToCookies = (res, token, companionOptions, providerName) => {
     cookieOptions.domain = companionOptions.cookieDomain
   }
   // send signed token to client.
-  res.cookie(`uppyAuthToken--${providerName}`, token, cookieOptions)
+  res.cookie(`${prefix}--${authProvider}`, token, cookieOptions)
+}
+
+/**
+ *
+ * @param {object} res
+ * @param {string} token
+ * @param {object} companionOptions
+ * @param {string} authProvider
+ */
+module.exports.addToCookies = (res, token, companionOptions, authProvider) => {
+  addToCookies(res, token, companionOptions, authProvider, 'uppyAuthToken')
 }
 
 /**
  *
  * @param {object} res
  * @param {object} companionOptions
- * @param {string} providerName
+ * @param {string} authProvider
  */
-module.exports.removeFromCookies = (res, companionOptions, providerName) => {
+module.exports.removeFromCookies = (res, companionOptions, authProvider) => {
   const cookieOptions = {
-    maxAge: 1000 * 60 * 60 * 24 * 30, // would expire after 30 days
+    maxAge: 1000 * EXPIRY, // would expire after one day (24 hrs)
     httpOnly: true
   }
 
@@ -60,5 +89,5 @@ module.exports.removeFromCookies = (res, companionOptions, providerName) => {
     cookieOptions.domain = companionOptions.cookieDomain
   }
 
-  res.clearCookie(`uppyAuthToken--${providerName}`, cookieOptions)
+  res.clearCookie(`uppyAuthToken--${authProvider}`, cookieOptions)
 }

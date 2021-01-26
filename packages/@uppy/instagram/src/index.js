@@ -23,6 +23,8 @@ module.exports = class Instagram extends Plugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionKeysParams: this.opts.companionKeysParams,
+      companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'instagram',
       pluginId: this.id
     })
@@ -52,7 +54,10 @@ module.exports = class Instagram extends Plugin {
   }
 
   onFirstRender () {
-    this.view.getFolder('recent')
+    return Promise.all([
+      this.provider.fetchPreAuthToken(),
+      this.view.getFolder('recent')
+    ])
   }
 
   render (state) {

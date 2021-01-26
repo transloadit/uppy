@@ -45,7 +45,7 @@ class FileCard extends Component {
   }
 
   handleCancel = () => {
-    this.props.toggleFileCard()
+    this.props.toggleFileCard(false)
   }
 
   renderMetaFields = () => {
