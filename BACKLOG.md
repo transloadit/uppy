@@ -68,6 +68,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 - [ ] provider: Giphy image search (on top of Unsplash plugin) ()
 - [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
+- [ ] xhr-upload: allow setting http headers on per file basis? (#2299 / @goto-bus-stop)
 
 ## January 2021
 
