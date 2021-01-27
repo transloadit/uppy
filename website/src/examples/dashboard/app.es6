@@ -17,6 +17,8 @@ const localeList = require('../locale_list.json')
 
 const COMPANION = require('../env')
 
+const RTL_LOCALES = ['ar_SA', 'fa_IR', 'he_IL']
+
 if (typeof window !== 'undefined' && typeof window.Uppy === 'undefined') {
   window.Uppy = {
     locales: {}
@@ -195,8 +197,16 @@ function setLocale (localeName) {
     loadLocaleFromCDN(localeName)
   }
   whenLocaleAvailable(localeName, (localeObj) => {
+    const direction = RTL_LOCALES.indexOf(localeName) !== -1
+      ? 'rtl'
+      : 'ltr'
+
     window.uppy.setOptions({
       locale: localeObj
+    })
+
+    window.uppy.getPlugin('Dashboard').setOptions({
+      direction
     })
   })
 }

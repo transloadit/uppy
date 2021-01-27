@@ -23,11 +23,11 @@
     .uppy-size--md & {
       width: 33.3333%;
     }
-    
+
     .uppy-size--lg & {
       width: 25%;
     }
-    
+
     &::before {
       content: '';
       padding-top: 100%;
@@ -107,7 +107,7 @@
     // Checkmark icon
     &:after {
       width: 12px; height: 7px;
-      left: 7px; top: 8px;
+      inset-inline-start: 7px; top: 8px;
     }
   }
   // Checked: show the checkmark
