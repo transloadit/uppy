@@ -12,15 +12,27 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
-## January 2021
+## February 2021
 
 ### next
 
 - [ ] dashboard: Add a `disabled` (`true`||`false`) option (later for /dragndrop and fileinput) (#1530, @arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@goto-bus-stop)
+
+## January 2021
+
+### 1.25.0
+
+This release adds support for right-to-left scripts, and includes Box in the Uppy CDN.
+
+Released: 2021-01-28
+
+- @uppy/dashboard, @uppy/core: improve support for right-to-left scripts (Arabic, Hebrew) (#2705 / @goto-bus-stop)
+- uppy: add Box to Uppy CDN (cfb29dda085c0cf76f7c7f9df42d8fe727c33da3 / @arturi)
 
 ### 1.24.1
+
+Released: 2021-01-27
 
 In this release Companion gains support for setting 3rd party credentials in runtime and will now pass metadata to S3. Ukrainian locale has been added.
 
