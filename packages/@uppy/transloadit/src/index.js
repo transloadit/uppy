@@ -296,7 +296,7 @@ module.exports = class Transloadit extends Plugin {
   _reserveFiles (assembly, fileIDs) {
     return Promise.all(fileIDs.map((fileID) => {
       const file = this.uppy.getFile(fileID)
-      return this.client.reserveFile(assembly, file)
+      return this.client.reserveFile(assembly.status, file)
     }))
   }
 
