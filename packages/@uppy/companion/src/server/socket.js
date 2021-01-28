@@ -8,7 +8,7 @@ const { STORAGE_PREFIX, shortenToken } = require('./Uploader')
 /**
  * the socket is used to send progress events during an upload
  *
- * @param {object} server
+ * @param {import('http').Server | import('https').Server} server
  */
 module.exports = (server) => {
   const wss = new SocketServer({ server })
