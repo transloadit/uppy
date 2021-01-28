@@ -92,8 +92,7 @@ module.exports = function s3 (config) {
       Key: key,
       ACL: config.acl,
       ContentType: type,
-      Metadata: metadata,
-      Expires: config.expires
+      Metadata: metadata
     }, (err, data) => {
       if (err) {
         next(err)
