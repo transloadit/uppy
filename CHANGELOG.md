@@ -23,9 +23,29 @@ In the current stage we aim to release a new version at least every month.
 
 ### 1.25.0
 
+Released: 2021-01-28
+
 This release adds support for right-to-left scripts, and includes Box in the Uppy CDN.
 
-Released: 2021-01-28
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.12 | @uppy/provider-views | 1.11.0 |
+| @uppy/aws-s3 | 1.7.6 | @uppy/react | 1.11.2 |
+| @uppy/box | 0.3.4 | @uppy/robodog | 1.10.2 |
+| @uppy/companion-client | 1.8.1 | @uppy/screen-capture | 1.0.13 |
+| @uppy/core | 1.16.0 | @uppy/status-bar | 1.9.0 |
+| @uppy/dashboard | 1.16.0 | @uppy/svelte | 0.1.3 |
+| @uppy/drag-drop | 1.4.24 | @uppy/thumbnail-generator | 1.7.5 |
+| @uppy/dropbox | 1.4.22 | @uppy/transloadit | 1.6.18 |
+| @uppy/facebook | 1.1.22 | @uppy/tus | 1.8.4 |
+| @uppy/file-input | 1.4.22 | @uppy/unsplash | 0.1.6 |
+| @uppy/form | 1.3.25 | @uppy/url | 1.5.16 |
+| @uppy/golden-retriever | 1.3.24 | @uppy/utils | 3.4.0 |
+| @uppy/google-drive | 1.5.22 | @uppy/vue | 0.1.4 |
+| @uppy/informer | 1.6.0 | @uppy/webcam | 1.8.4 |
+| @uppy/instagram | 1.4.22 | @uppy/xhr-upload | 1.6.10 |
+| @uppy/onedrive | 1.1.22 | @uppy/zoom | 0.1.11 |
+| @uppy/progress-bar | 1.3.24 | uppy | 1.25.0 |
 
 - @uppy/dashboard, @uppy/core: improve support for right-to-left scripts (Arabic, Hebrew) (#2705 / @goto-bus-stop)
 - uppy: add Box to Uppy CDN (cfb29dda085c0cf76f7c7f9df42d8fe727c33da3 / @arturi)
