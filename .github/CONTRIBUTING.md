@@ -300,13 +300,11 @@ Generally, documentation for integrations can be broken down into a few pieces t
 
 It may be easier to copy the documentation of earlier integrations and change the parts that need to be changed rather than writing this from scratch. Preferably, keep the documentation to one page. For the front-matter, write something like:
 ```markdown
----
 title: Framework Name
 type: docs
 module: "@uppy/framework"
 order: 0
 category: "Other Integrations"
----
 ```
 
 This data is used to generate Uppy's website. Refer to [the section about running the website locally](#website-previews) if you'd like to see how the docs look on the website.
