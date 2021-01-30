@@ -12,22 +12,167 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
-## December 2020
+## February 2021
 
 ### next
 
-Planned: 2020-12-18
-
-- [ ] companion: configurable oauth 3rd party credentials — provide your own Google Drive, Instagram application key/secret at the time of the request (@ife)
 - [ ] dashboard: Add a `disabled` (`true`||`false`) option (later for /dragndrop and fileinput) (#1530, @arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] add Svelte integration (@ajkachnic)
-- [ ] dashboard: support for right-to-left languages (Arabic, Hebrew) (@arturi, @goto-bus-stop)
-- [ ] react: add useUppy() hook (@goto-bus-stop)
+
+## January 2021
+
+### 1.25.0
+
+Released: 2021-01-28
+
+This release adds support for right-to-left scripts, and includes Box in the Uppy CDN.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.12 | @uppy/provider-views | 1.11.0 |
+| @uppy/aws-s3 | 1.7.6 | @uppy/react | 1.11.2 |
+| @uppy/box | 0.3.4 | @uppy/robodog | 1.10.2 |
+| @uppy/companion-client | 1.8.1 | @uppy/screen-capture | 1.0.13 |
+| @uppy/core | 1.16.0 | @uppy/status-bar | 1.9.0 |
+| @uppy/dashboard | 1.16.0 | @uppy/svelte | 0.1.3 |
+| @uppy/drag-drop | 1.4.24 | @uppy/thumbnail-generator | 1.7.5 |
+| @uppy/dropbox | 1.4.22 | @uppy/transloadit | 1.6.18 |
+| @uppy/facebook | 1.1.22 | @uppy/tus | 1.8.4 |
+| @uppy/file-input | 1.4.22 | @uppy/unsplash | 0.1.6 |
+| @uppy/form | 1.3.25 | @uppy/url | 1.5.16 |
+| @uppy/golden-retriever | 1.3.24 | @uppy/utils | 3.4.0 |
+| @uppy/google-drive | 1.5.22 | @uppy/vue | 0.1.4 |
+| @uppy/informer | 1.6.0 | @uppy/webcam | 1.8.4 |
+| @uppy/instagram | 1.4.22 | @uppy/xhr-upload | 1.6.10 |
+| @uppy/onedrive | 1.1.22 | @uppy/zoom | 0.1.11 |
+| @uppy/progress-bar | 1.3.24 | uppy | 1.25.0 |
+
+- @uppy/dashboard, @uppy/core: improve support for right-to-left scripts (Arabic, Hebrew) (#2705 / @goto-bus-stop)
+- uppy: add Box to Uppy CDN (cfb29dda085c0cf76f7c7f9df42d8fe727c33da3 / @arturi)
+
+### 1.24.1
+
+Released: 2021-01-27
+
+In this release Companion gains support for setting 3rd party credentials in runtime and will now pass metadata to S3. Ukrainian locale has been added.
+
+This releases also fixes an issue with image-editor package being unavailable in the previous `uppy@1.24.0` package.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.11 | @uppy/react-native | 0.1.5 |
+| @uppy/aws-s3 | 1.7.5 | @uppy/react | 1.11.1 |
+| @uppy/box | 0.3.3 | @uppy/redux-dev-tools | 1.3.7 |
+| @uppy/companion-client | 1.8.0 | @uppy/robodog | 1.10.1 |
+| @uppy/companion | 2.5.0 | @uppy/screen-capture | 1.0.12 |
+| @uppy/core | 1.15.1 | @uppy/status-bar | 1.8.2 |
+| @uppy/dashboard | 1.15.0 | @uppy/store-default | 1.2.5 |
+| @uppy/drag-drop | 1.4.23 | @uppy/store-redux | 1.2.5 |
+| @uppy/dropbox | 1.4.21 | @uppy/svelte | 0.1.2 |
+| @uppy/facebook | 1.1.21 | @uppy/thumbnail-generator | 1.7.4 |
+| @uppy/file-input | 1.4.21 | @uppy/transloadit | 1.6.17 |
+| @uppy/form | 1.3.24 | @uppy/tus | 1.8.3 |
+| @uppy/golden-retriever | 1.3.23 | @uppy/unsplash | 0.1.5 |
+| @uppy/google-drive | 1.5.21 | @uppy/url | 1.5.15 |
+| @uppy/image-editor | 0.2.1 | @uppy/utils | 3.3.1 |
+| @uppy/informer | 1.5.15 | @uppy/vue | 0.1.3 |
+| @uppy/instagram | 1.4.21 | @uppy/webcam | 1.8.3 |
+| @uppy/locales | 1.17.1 | @uppy/xhr-upload | 1.6.9 |
+| @uppy/onedrive | 1.1.21 | @uppy/zoom | 0.1.10 |
+| @uppy/progress-bar | 1.3.23 | uppy | 1.24.1 |
+| @uppy/provider-views | 1.10.0 | - | - |
+
+- uppy: added @uppy/image-editor to package.json (2f11dcc65307d23a43fdaa669bc92cd6f912b54f/ @arturi, @koenvu)
+- @uppy/companion: configurable oauth 3rd party credentials — provide your own Google Drive, Instagram application key/secret at request time (#2622 / @ife)
+- @uppy/companion: delete tus error's originalRequest field before propagating error (#2733 / @ife)
+- @uppy/companion: pass-through metadata to S3, fixes #2531 (goto-bus-stop / #2742)
+- @uppy/companion: use multi-stage docker build (#2732 / @kiloreux)
+- @uppy/locales: added Ukrainian localization (uk-UA) (#2713 / @DenysNosov)
+- @uppy/locales: fixed Russian grammar (#2714 / @DenysNosov)
+- @uppy/dashboard: emit fileId on both file-edit-start and file-edit-complete events (#2729 / @arturi)
+- build: fixes around Github actions and Companion deploys (#2717 / @kiloreux)
+- docs: Add Integration Guide (#2696 / @ajkachnic) 
+- docs: list required permissions to upload S3 files using companion (#1825 / @mkopinsky)
+- docs: remove warning about multiple uploads on S3 which is now fixed (#2720 / @Jbithell)
+- docs: update xhrupload.md (#2731 / @hxgf)
+- @uppy/companion-client: support options cookies send rule (#2618 / @ifedapoolarewaju)
+- meta: add all the CI badges (#2725 / @goto-bus-stop, @arturi)
+
+
+## December 2020
+
+### 1.24.0
+
+Released: 2020-12-23
+
+This release adds new Svelte wrapper components, a React FileInput component, and an `autoOpenFileEditor` option for the Dashboard.
+
+The `uppy@1.24.0` package was deprecated due to @uppy/image-editor missing from package.json, it is fixed in v1.24.1. This only affects the “bundled/CDN” `uppy` package.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.10 | @uppy/progress-bar | 1.3.22 |
+| @uppy/aws-s3 | 1.7.4 | @uppy/provider-views | 1.9.2 |
+| @uppy/box | 0.3.2 | @uppy/react | 1.11.0 |
+| @uppy/companion-client | 1.7.0 | @uppy/robodog | 1.10.0 |
+| @uppy/companion | 2.4.0 | @uppy/screen-capture | 1.0.11 |
+| @uppy/core | 1.15.0 | @uppy/status-bar | 1.8.1 |
+| @uppy/dashboard | 1.14.0 | @uppy/svelte | 0.1.1 |
+| @uppy/drag-drop | 1.4.22 | @uppy/thumbnail-generator | 1.7.3 |
+| @uppy/dropbox | 1.4.20 | @uppy/transloadit | 1.6.16 |
+| @uppy/facebook | 1.1.20 | @uppy/tus | 1.8.2 |
+| @uppy/file-input | 1.4.20 | @uppy/unsplash | 0.1.4 |
+| @uppy/form | 1.3.23 | @uppy/url | 1.5.14 |
+| @uppy/golden-retriever | 1.3.22 | @uppy/utils | 3.3.0 |
+| @uppy/google-drive | 1.5.20 | @uppy/vue | 0.1.2 |
+| @uppy/image-editor | 0.2.0 | @uppy/webcam | 1.8.2 |
+| @uppy/informer | 1.5.14 | @uppy/xhr-upload | 1.6.8 |
+| @uppy/instagram | 1.4.20 | @uppy/zoom | 0.1.9 |
+| @uppy/onedrive | 1.1.20 | uppy | 1.24.0 |
+
+- @uppy/svelte: add Svelte integration (#2671 / @ajkachnic, @adammedford)
+- @uppy/core: new event `files-added` with all files added in one batch (#2681 / @arturi)
+- @uppy/react: add useUppy() hook (#2666 / @goto-bus-stop)
+- @uppy/react: add FileInput component to React (#2706 / @ajkachnic)
+- @uppy/status-bar: corrected StatusBar types (#2697 / @ajkachnic)
+- @uppy/utils: Add archive mime types (#2703 / @ahmedkandel)
+- @uppy/dashboard: add autoopen for file editors (@uppy/image-editor) (#2681 / @arturi)
+- meta: use `tusd.tusdemo.net` (#2691 / @goto-bus-stop)
+
+### 1.23.3
+
+Released: 2020-12-11
+
+This release fixes a peerDependency mismatch in `@uppy/companion` and a mistake in the return type for `uppy.addFile()`.
+
+And thanks to @elkebab, Norwegian (bokmål) translations are now available!
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.9 | @uppy/provider-views | 1.9.1 |
+| @uppy/box | 0.3.1 | @uppy/react | 1.10.12 |
+| @uppy/companion | 2.3.1 | @uppy/robodog | 1.9.13 |
+| @uppy/core | 1.14.2 | @uppy/thumbnail-generator | 1.7.2 |
+| @uppy/dashboard | 1.13.1 | @uppy/transloadit | 1.6.15 |
+| @uppy/dropbox | 1.4.19 | @uppy/tus | 1.8.1 |
+| @uppy/facebook | 1.1.19 | @uppy/unsplash | 0.1.3 |
+| @uppy/google-drive | 1.5.19 | @uppy/vue | 0.1.1 |
+| @uppy/instagram | 1.4.19 | @uppy/zoom | 0.1.8 |
+| @uppy/locales | 1.17.0 | uppy | 1.23.3 |
+| @uppy/onedrive | 1.1.19 | - | - |
+
+- @uppy/aws-s3-multipart: expand result as body on success (#2623 / @abannach)
+- @uppy/companion: fix crash when Dropbox API returns an error (#2687 / @ifedapoolarewaju)
+- @uppy/companion: remove unnecessary `fs.stat()` call (#2683 / @mejiaej)
+- @uppy/companion: upgrade express-prom-bundle to v6 (#2689 / @goto-bus-stop)
+- @uppy/core: `addFile()` returns `string`, not `void` (#2685 / @arturi)
+- @uppy/locales: add Norwegian (bokmål) (#2677 / @elkebab)
+- @uppy/thumbnail-generator: upgrade exifr to v6 (#2667 / @goto-bus-stop)
+- @uppy/unsplash: needs @uppy/core to be `^1.13.3` (#2676 / @ifedapoolarewaju)
 
 ## November 2020
 
-## 1.23.2
+### 1.23.2
 
 Released: 2020-11-27
 

@@ -13,6 +13,7 @@ const unsplash = require('./unsplash')
 const zoom = require('./zoom')
 const { getURLBuilder } = require('../helpers/utils')
 const logger = require('../logger')
+const { getCredentialsResolver } = require('./credentials')
 // eslint-disable-next-line
 const Provider = require('./Provider')
 // eslint-disable-next-line
@@ -48,8 +49,9 @@ config.zoom = {
  * based on the providerName parameter specified
  *
  * @param {Object.<string, (typeof Provider) | typeof SearchProvider>} providers
+ * @param {boolean=} needsProviderCredentials
  */
-module.exports.getProviderMiddleware = (providers) => {
+module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => {
   /**
    *
    * @param {object} req
@@ -60,6 +62,9 @@ module.exports.getProviderMiddleware = (providers) => {
   const middleware = (req, res, next, providerName) => {
     if (providers[providerName] && validOptions(req.companion.options)) {
       req.companion.provider = new providers[providerName]({ providerName, config })
+      if (needsProviderCredentials) {
+        req.companion.getProviderCredentials = getCredentialsResolver(providerName, req.companion.options, req)
+      }
     } else {
       logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid', req.id)
     }
@@ -134,6 +139,10 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
       // explicitly add providerOptions so users don't override other providerOptions.
       grantConfig[authProvider].key = providerOptions[providerName].key
       grantConfig[authProvider].secret = providerOptions[providerName].secret
+      if (providerOptions[providerName].credentialsURL) {
+        grantConfig[authProvider].dynamic = ['key', 'secret', 'redirect_uri']
+      }
+
       const provider = exports.getDefaultProviders(companionOptions)[providerName]
       Object.assign(grantConfig[authProvider], provider.getExtraConfig())
 
@@ -152,7 +161,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
       } else if (server.path) {
         grantConfig[authProvider].callback = `${server.path}${grantConfig[authProvider].callback}`
       }
-    } else if (providerName !== 's3') {
+    } else if (!['s3', 'searchProviders'].includes(providerName)) {
       logger.warn(`skipping one found unsupported provider "${providerName}".`, 'provider.options.skip')
     }
   })

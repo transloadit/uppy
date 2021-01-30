@@ -10,7 +10,7 @@ const authData = {
   dropbox: 'token value',
   drive: 'token value'
 }
-const token = tokenService.generateToken(authData, process.env.COMPANION_SECRET)
+const token = tokenService.generateEncryptedToken(authData, process.env.COMPANION_SECRET)
 
 describe('test authentication callback', () => {
   test('authentication callback redirects to send-token url', () => {

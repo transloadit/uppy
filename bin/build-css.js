@@ -1,6 +1,8 @@
 const sass = require('sass')
 const postcss = require('postcss')
 const autoprefixer = require('autoprefixer')
+const postcssLogical = require('postcss-logical')
+const postcssDirPseudoClass = require('postcss-dir-pseudo-class')
 const cssnano = require('cssnano')
 // const safeImportant = require('postcss-safe-important')
 const chalk = require('chalk')
@@ -44,7 +46,12 @@ async function compileCSS () {
       }
     })
 
-    const postcssResult = await postcss([autoprefixer])
+    const plugins = [
+      autoprefixer,
+      postcssLogical(),
+      postcssDirPseudoClass()
+    ]
+    const postcssResult = await postcss(plugins)
       .process(scssResult.css, { from: file })
     postcssResult.warnings().forEach(function (warn) {
       console.warn(warn.toString())

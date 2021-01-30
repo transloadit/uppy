@@ -13,6 +13,12 @@
   color: $gray-800;
 }
 
+// One selector uses the dir attribute declared by the page. If that does not exist, Uppy adds a
+// fallback dir attribute on the root element itself, and we need a second selector to match that.
+[dir="rtl"] .uppy-Root, .uppy-Root[dir="rtl"] {
+  text-align: right;
+}
+
 .uppy-Root *, .uppy-Root *:before, .uppy-Root *:after {
   box-sizing: inherit;
 }
@@ -79,6 +85,10 @@
   white-space: normal;
   z-index: auto;
 }
+[dir="rtl"] .uppy-u-reset {
+  text-align: right;
+}
+
 
 // Inputs
 
@@ -137,6 +147,9 @@
   transition-property: background-color, color;
   transition-duration: 0.3s;
   user-select: none;
+
+  // Override right-to-left variant of the uppy-u-reset class
+  [dir="rtl"] & { text-align: center; }
 }
 
   .uppy-c-btn:not(:disabled):not(.disabled) {

@@ -1,4 +1,4 @@
-FROM node:10.21.0-alpine
+FROM node:14.15.3-alpine as build
 
 COPY package.json /app/package.json
 
@@ -17,6 +17,20 @@ RUN apk add bash
 COPY . /app
 ENV PATH "${PATH}:/app/node_modules/.bin"
 RUN npm run build
+
+FROM node:14.15.3-alpine
+
+RUN mkdir -p /app
+WORKDIR /app
+
+# copy required files from build stage.
+COPY --from=build /app/bin /app/bin
+COPY --from=build /app/lib /app/lib
+COPY --from=build /app/package.json /app/package.json
+COPY --from=build /tmp/node_modules /app/node_modules
+
+ENV PATH "${PATH}:/app/node_modules/.bin"
+
 CMD ["node","/app/bin/companion"]
 # This can be overruled later
 EXPOSE 3020

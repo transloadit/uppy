@@ -55,6 +55,7 @@ exports.error = (msg, tag, traceId, shouldLogStackTrace) => {
  * @param {string=} traceId a unique id to easily trace logs tied to a request
  */
 exports.debug = (msg, tag, traceId) => {
+  // @todo: this function should depend on companion's debug option instead
   if (process.env.NODE_ENV !== 'production') {
     // @ts-ignore
     log(msg, tag, 'debug', traceId, chalk.bold.blue)

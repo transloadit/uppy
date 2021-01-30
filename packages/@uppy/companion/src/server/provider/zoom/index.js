@@ -251,25 +251,25 @@ class Zoom extends Provider {
   }
 
   logout ({ companion, token }, done) {
-    const { key, secret } = companion.options.providerOptions.zoom
-    const encodedAuth = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
-
-    return this.client
-      .post('https://zoom.us/oauth/revoke')
-      .options({
-        headers: {
-          Authorization: `Basic ${encodedAuth}`
-        }
-      })
-      .qs({ token })
-      .request((err, resp, body) => {
-        if (err || resp.statusCode !== 200) {
-          logger.error(err, 'provider.zoom.logout.error')
-          done(this._error(err, resp))
-          return
-        }
-        done(null, { revoked: (body || {}).status === 'success' })
-      })
+    companion.getProviderCredentials().then(({ key, secret }) => {
+      const encodedAuth = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
+      return this.client
+        .post('https://zoom.us/oauth/revoke')
+        .options({
+          headers: {
+            Authorization: `Basic ${encodedAuth}`
+          }
+        })
+        .qs({ token })
+        .request((err, resp, body) => {
+          if (err || resp.statusCode !== 200) {
+            logger.error(err, 'provider.zoom.logout.error')
+            done(this._error(err, resp))
+            return
+          }
+          done(null, { revoked: (body || {}).status === 'success' })
+        })
+    }).catch((err) => done(err))
   }
 
   deauthorizationCallback ({ companion, body, headers }, done) {
@@ -277,37 +277,36 @@ class Zoom extends Provider {
       return done(null, {}, 400)
     }
 
-    const { verificationToken } = companion.options.providerOptions.zoom
-    const tokenSupplied = headers.authorization
-    if (!tokenSupplied || verificationToken !== tokenSupplied) {
-      return done(null, {}, 400)
-    }
+    companion.getProviderCredentials().then(({ verificationToken, key, secret }) => {
+      const tokenSupplied = headers.authorization
+      if (!tokenSupplied || verificationToken !== tokenSupplied) {
+        return done(null, {}, 400)
+      }
 
-    const { key, secret } = companion.options.providerOptions.zoom
-    const encodedAuth = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
-
-    this.client
-      .post('https://api.zoom.us/oauth/data/compliance')
-      .options({
-        headers: {
-          Authorization: `Basic ${encodedAuth}`
-        }
-      })
-      .json({
-        client_id: key,
-        user_id: body.payload.user_id,
-        account_id: body.payload.account_id,
-        deauthorization_event_received: body.payload,
-        compliance_completed: true
-      })
-      .request((err, resp) => {
-        if (err || resp.statusCode !== 200) {
-          logger.error(err, 'provider.zoom.deauth.error')
-          done(this._error(err, resp))
-          return
-        }
-        done(null, {})
-      })
+      const encodedAuth = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
+      this.client
+        .post('https://api.zoom.us/oauth/data/compliance')
+        .options({
+          headers: {
+            Authorization: `Basic ${encodedAuth}`
+          }
+        })
+        .json({
+          client_id: key,
+          user_id: body.payload.user_id,
+          account_id: body.payload.account_id,
+          deauthorization_event_received: body.payload,
+          compliance_completed: true
+        })
+        .request((err, resp) => {
+          if (err || resp.statusCode !== 200) {
+            logger.error(err, 'provider.zoom.deauth.error')
+            done(this._error(err, resp))
+            return
+          }
+          done(null, {})
+        })
+    }).catch((err) => done(err))
   }
 
   _error (err, resp) {

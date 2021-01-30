@@ -26,8 +26,6 @@ There are broadly two ways of uploading to S3 in a browser. A server can generat
 
 There is also a separate plugin for S3 Multipart uploads. Multipart in this sense refers to Amazon's proprietary chunked, resumable upload mechanism for large files. See the [`@uppy/aws-s3-multipart`](/docs/aws-s3-multipart) documentation.
 
-> Currently, there is an [issue](https://github.com/transloadit/uppy/issues/1915#issuecomment-546895952) with the this plugin when uploading many files. It requires a refactor in core parts of Uppy to address, which is planned for Q1 2020. In the mean time, if you expect users to upload more than a few dozen files at a time, consider using the [`@uppy/aws-s3-multipart`](/docs/aws-s3-multipart) plugin instead, which does not have this issue.
-
 ## Installation
 
 This plugin is published as the `@uppy/aws-s3` package.
@@ -205,6 +203,8 @@ The final configuration should look something like this:
 Even with these CORS rules in place, you browser might still encounter HTTP status 403 responses with `AccessDenied` in the response body when it tries to `POST` to your bucket. In this case, within the "Permissions" tab of the [S3 Management Console](https://console.aws.amazon.com/s3/home), choose "Public access settings".
 
 It will list general *Public access settings for this bucket*, which can override the rules imposed by your CORS settings. Click on *edit* to manage these settings. Under *Manage public access control lists (ACLs) for this bucket*, make sure that *Block new public ACLs and uploading public objects (Recommended)* is unchecked, and *Save* these settings.
+
+If you are using an IAM policy to allow access to the S3 bucket, the policy must have at least the `s3:PutObject` and `s3:PutObjectAcl` permissions scoped to the bucket in question.
 
 In-depth documentation about CORS rules is available on the [AWS documentation site](https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html).
 

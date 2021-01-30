@@ -99,7 +99,8 @@ uppy.use(Dashboard, {
   showRemoveButtonAfterComplete: false,
   locale: defaultLocale,
   browserBackButtonClose: false,
-  theme: 'light'
+  theme: 'light',
+  autoOpenFileEditor: false
 })
 ```
 
@@ -410,11 +411,18 @@ Remove all children of the `target` element before mounting the Dashboard. By de
 Uppy Dashboard supports “Dark Mode”. You can try it live on [the Dashboard example page](https://uppy.io/examples/dashboard/).
 
 There are three options:
+
 - `light` — the default
 - `dark`
 - `auto` — will respect the user’s system settings and switch automatically
 
 ![Uppy dark mode screenshot](/images/uppy-dashboard-dark-mar-2020.png)
+
+### `autoOpenFileEditor: false`
+
+Automatically open file editor (see [`@uppy/image-editor`](/docs/image-editor/)) for the first file in a batch. If one file is added, editor opens for that file, if 10 files are added — editor opens for the first file.
+
+Use case: user adds an image — Uppy opens Image Editor right away — user crops / adjusts the image — upload.
 
 ## Methods
 
@@ -459,8 +467,16 @@ Fired when the Dashboard modal is closed.
 
 ### `dashboard:file-edit-start`
 
+**Parameters:**
+
+- `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was opened for editing.
+
 Fired when the user clicks “edit” icon next to a file in the Dashboard. The FileCard panel is then open with file metadata available for editing.
 
 ### `dashboard:file-edit-complete`
+
+**Parameters:**
+
+- `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was edited.
 
 Fired when the user finished editing the file metadata.

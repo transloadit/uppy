@@ -60,6 +60,10 @@ Custom headers that should be sent along to [Companion](/docs/companion) on ever
 
 This will be used by the default implementations of the upload-related functions below. If you provide your own implementations, these headers are not sent automatically.
 
+### `companionCookiesRule: 'same-origin'`
+
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
+
 ### `getChunkSize(file)`
 
 A function that returns the minimum chunk size to use when uploading the given file.

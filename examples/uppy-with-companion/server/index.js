@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
 // initialize uppy
 const uppyOptions = {
   providerOptions: {
-    google: {
+    drive: {
       key: 'your google key',
       secret: 'your google secret'
     },

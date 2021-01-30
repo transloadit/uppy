@@ -31,8 +31,8 @@ require('@uppy/robodog/dist/robodog.css')
 If you are not using a bundler, you can also import Robodog using an HTML script tag.
 
 ```html
-<link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v1.9.12/robodog.min.css">
-<script src="https://releases.transloadit.com/uppy/robodog/v1.9.12/robodog.min.js"></script>
+<link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v1.10.2/robodog.min.css">
+<script src="https://releases.transloadit.com/uppy/robodog/v1.10.2/robodog.min.js"></script>
 <!-- you can now use: window.Robodog.pick() -->
 ```
 

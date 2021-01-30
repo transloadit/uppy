@@ -25,7 +25,7 @@ const authData = {}
 providerNames.forEach((provider) => {
   authData[provider] = 'token value'
 })
-const token = tokenService.generateToken(authData, process.env.COMPANION_SECRET)
+const token = tokenService.generateEncryptedToken(authData, process.env.COMPANION_SECRET)
 
 const thisOrThat = (value1, value2) => {
   if (value1 !== undefined) {
@@ -75,7 +75,7 @@ describe('download provdier file', () => {
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
-        endpoint: 'http://master.tus.io/files',
+        endpoint: 'http://tusd.tusdemo.net/files',
         protocol: 'tus'
       })
       .expect(200)

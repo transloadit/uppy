@@ -34,6 +34,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: focus jumps weirdly if you remove a file https://github.com/transloadit/uppy/pull/2161#issuecomment-613565486
 - [ ] plugins: a WakeLock based plugin that keeps your phone from going to sleep while an upload is ongoing https://github.com/transloadit/uppy/issues/1725
 - [ ] provider: Image search (via Google or Bing or DuckDuckGo): use duckduckgo-images-api or Google Search API (@arturi)
+- [ ] provider: Google Photos (#2163) 
 
 ### 2.0
 
@@ -67,6 +68,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 - [ ] provider: Giphy image search (on top of Unsplash plugin) ()
 - [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
+- [ ] xhr-upload: allow setting http headers on per file basis? (#2299 / @goto-bus-stop)
 
 ## January 2021
 
