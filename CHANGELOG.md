@@ -18,6 +18,10 @@ In the current stage we aim to release a new version at least every month.
 
 - [ ] dashboard: Add a `disabled` (`true`||`false`) option (later for /dragndrop and fileinput) (#1530, @arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
+- [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
+- [ ] integration: Vue 3
+- [ ] plugin: audio/memo recording similar to Webcam #143 #198
+- [ ] xhr-upload: allow setting http headers on per file basis? (#2299 / @goto-bus-stop)
 
 ## January 2021
 
