@@ -151,13 +151,26 @@ module.exports = class XHRUpload extends Plugin {
 
   getOptions (file) {
     const overrides = this.uppy.getState().xhrUpload
+    const headers = this.opts.headers
+
     const opts = {
       ...this.opts,
       ...(overrides || {}),
       ...(file.xhrUpload || {}),
       headers: {}
     }
-    Object.assign(opts.headers, this.opts.headers)
+    // Support for `headers` as a function, only in the XHRUpload settings.
+    // Options set by other plugins in Uppy state or on the files themselves are still merged in afterward.
+    //
+    // ```js
+    // headers: (file) => ({ expires: file.meta.expires })
+    // ```
+    if (typeof headers === 'function') {
+      opts.headers = headers(file)
+    } else {
+      Object.assign(opts.headers, this.opts.headers)
+    }
+
     if (overrides) {
       Object.assign(opts.headers, overrides.headers)
     }
@@ -617,7 +630,11 @@ module.exports = class XHRUpload extends Plugin {
       // if bundle: true, we don’t support remote uploads
       const isSomeFileRemote = files.some(file => file.isRemote)
       if (isSomeFileRemote) {
-        throw new Error('Can’t upload remote files when bundle: true option is set')
+        throw new Error('Can’t upload remote files when the `bundle: true` option is set')
+      }
+
+      if (typeof this.opts.headers === 'function') {
+        throw new TypeError('`headers` may not be a function when the `bundle: true` option is set')
       }
 
       return this.uploadBundle(files)

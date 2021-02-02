@@ -76,4 +76,37 @@ describe('XHRUpload', () => {
       })
     })
   })
+
+  describe('headers', () => {
+    it('can be a function', async () => {
+      const scope = nock('https://fake-endpoint.uppy.io')
+        .defaultReplyHeaders({
+          'access-control-allow-method': 'POST',
+          'access-control-allow-origin': '*',
+          'access-control-allow-headers': 'x-sample-header'
+        })
+      scope.options('/')
+        .reply(200, {})
+      scope.post('/')
+        .matchHeader('x-sample-header', 'test.jpg')
+        .reply(200, {})
+
+      const core = new Core()
+      core.use(XHRUpload, {
+        id: 'XHRUpload',
+        endpoint: 'https://fake-endpoint.uppy.io',
+        headers: (file) => ({
+          'x-sample-header': file.name
+        })
+      })
+      core.addFile({
+        name: 'test.jpg',
+        data: new Blob([Buffer.alloc(8192)])
+      })
+
+      await core.upload()
+
+      expect(scope.isDone()).toBe(true)
+    })
+  })
 })
