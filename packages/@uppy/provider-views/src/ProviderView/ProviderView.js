@@ -361,8 +361,8 @@ module.exports = class ProviderView {
 
   handleAuth () {
     const authState = btoa(JSON.stringify({ origin: getOrigin() }))
-    const clientVersion = encodeURIComponent(`@uppy/provider-views=${ProviderView.VERSION}`)
-    const link = `${this.provider.authUrl()}?state=${authState}&uppyVersions=${clientVersion}`
+    const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`
+    const link = this.provider.authUrl({ state: authState, uppyVersions: clientVersion })
 
     const authWindow = window.open(link, '_blank')
     const handleToken = (e) => {

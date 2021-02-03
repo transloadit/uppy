@@ -234,3 +234,97 @@ h1 {
   width: 940px;
 }
 ```
+
+## Adding a new integration
+
+Before opening a pull request for the new integration, open an issue to discuss said integration with the Uppy team. After discussing the integration, you can get started on it. First off, you need to construct the basic components for your integration. The following components are the current standard:
+
+- `Dashboard`: Inline Dashboard (`inline: true`)
+- `DashboardModal`: Dashboard as a modal
+- `DragDrop`
+- `ProgressBar`
+- `StatusBar`
+
+All of these components should function as references to the normal component. Depending on how the framework you're using handles references to the DOM, your approach to creating these may be different. For example, in React, you can assign a property of the component to the reference of a component ([see here](https://github.com/transloadit/uppy/blob/425f9ecfbc8bc48ce6b734e4fc14fa60d25daa97/packages/%40uppy/react/src/Dashboard.js#L47-L54)). This may differ in your framework, but from what we've found, the concepts are generally pretty similar.
+
+If you're familiar with React, Vue or soon Svelte, it might be useful to read through the code of those integrations, as they lay out a pretty good structure. After the basic components have been built, there are a few more important tasks to get done:
+
+- Add TypeScript support in some capacity (if possible)
+- Write documentation
+- Add an example
+- Configuring the build system
+
+### Common issues
+
+Before going into these tasks, there are a few common gotchas that you should be aware of.
+
+#### Dependencies
+
+Your `package.json` should resemble something like this:
+```json
+{
+  "name": "@uppy/framework",
+  "dependencies": {
+    "@uppy/dashboard": "file:../dashboard",
+    "@uppy/drag-drop": "file:../drag-drop",
+    "@uppy/progress-bar": "file:../progress-bar",
+    "@uppy/status-bar": "file:../status-bar",
+    "@uppy/utils": "file:../utils",
+    "prop-types": "^15.6.1"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
+```
+
+The most important part about this is that `@uppy/core` is a peer dependency. If your framework complains about `@uppy/core` not being resolved, you can also add it as a dev dependency
+
+### Adding TypeScript Support
+
+This section won't be too in-depth, because TypeScript depends on your framework. As general advice, prefer using `d.ts` files and vanilla JavaScript over TypeScript files. This is of course circumstantial, but it makes handling the build system a lot easier when TypeScript doesn't have to transpiled. The version of typescript in the monorepo is `3.7.5`, so features like `import type` will not work at build time. For upcoming integrations, like Angular, this may be updated.
+
+### Writing docs
+
+Generally, documentation for integrations can be broken down into a few pieces that apply to every component, and then documentation for each component. The structure should look something like this:
+
+- Installation
+- Initializing Uppy (may vary depending on how the framework handles reactivity)
+- Usage
+- *For each component*
+  - Loading CSS
+  - Props
+
+It may be easier to copy the documentation of earlier integrations and change the parts that need to be changed rather than writing this from scratch. Preferably, keep the documentation to one page. For the front-matter, write something like:
+```markdown
+title: Framework Name
+type: docs
+module: "@uppy/framework"
+order: 0
+category: "Other Integrations"
+```
+
+This data is used to generate Uppy's website. Refer to [the section about running the website locally](#website-previews) if you'd like to see how the docs look on the website.
+
+### Adding an example
+
+This is pretty simple to do, as you can likely use whatever code generation tool for your framework (ex. `create-react-app`) to create this example. Make sure you add the same version of `@uppy/core` to this as your peer dependency required, or you may run into strange issues. Try to include all of the components are some of their functionality. [The React example](https://github.com/transloadit/uppy/blob/master/examples/react-example/App.js) is a great... well example of how to do this well.
+
+### Integrating the build system
+
+The biggest part of this is understanding Uppy's build system. The high level description is basically `babel` goes through almost all of the packages and transpiles all the Javascript files in the `src` directory to more compatible JavaScript in the `lib` folder. If you're using vanilla JavaScript for your integration (like React and Vue do), then you can just use this build system and use the files generated as your entry points. 
+
+If you're using some kind of more abstract file format (like Svelte), then you probably want do to a few things: add the directory name to [this `IGNORE` regex](https://github.com/transloadit/uppy/blob/425f9ecfbc8bc48ce6b734e4fc14fa60d25daa97/bin/build-lib.js#L15); add all of your build dependencies to the root `package.json` (try to keep this small); add a new `build:framework` script to the root `package.json`. This script usually looks something like this:
+
+```json
+{
+  "scripts": {
+    "build:framework": "cd framework && npm run build"
+  }
+}
+```
+
+Then, add this script to the `build:js` script. Try running the `build:js` script and make sure it does not error. It may also be of use to ensure that global dependencies aren't being used (ex. not having rollup locally and relying on a global install), as these dependencies won't be present on the machine's handling building.

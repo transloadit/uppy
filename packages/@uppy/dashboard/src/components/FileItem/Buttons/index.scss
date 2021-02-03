@@ -6,7 +6,7 @@
 
   &:hover {
     opacity: 1;
-    color: $gray-900;    
+    color: $gray-900;
   }
 
   [data-uppy-theme="dark"] & {
@@ -16,7 +16,7 @@
 
   [data-uppy-theme="dark"] &:hover {
     color: $gray-200;
-  }  
+  }
 }
 
 .uppy-Dashboard-Item-action--remove {
@@ -73,7 +73,7 @@
     z-index: $zIndex-3;
     position: absolute;
     top: -8px;
-    right: -8px;
+    inset-inline-end: -8px;
     width: 18px;
     height: 18px;
     padding: 0;

@@ -177,6 +177,8 @@
     "onchange": "4.1.0",
     "pacote": "9.5.12",
     "postcss": "7.0.26",
+    "postcss-dir-pseudo-class": "^5.0.0",
+    "postcss-logical": "^4.0.2",
     "postcss-safe-important": "1.2.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",

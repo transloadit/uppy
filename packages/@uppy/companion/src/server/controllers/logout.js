@@ -27,7 +27,7 @@ function logout (req, res, next) {
       }
 
       delete companion.providerTokens[providerName]
-      tokenService.removeFromCookies(res, companion.options, companion.provider.authProviderName)
+      tokenService.removeFromCookies(res, companion.options, companion.provider.authProvider)
       cleanSession()
       res.json(Object.assign({ ok: true }, data))
     })

@@ -17,6 +17,8 @@ const localeList = require('../locale_list.json')
 
 const COMPANION = require('../env')
 
+const RTL_LOCALES = ['ar_SA', 'fa_IR', 'he_IL']
+
 if (typeof window !== 'undefined' && typeof window.Uppy === 'undefined') {
   window.Uppy = {
     locales: {}
@@ -185,7 +187,7 @@ function loadLocaleFromCDN (localeName) {
   var head = document.getElementsByTagName('head')[0]
   var js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://releases.transloadit.com/uppy/locales/v1.17.0/${localeName}.min.js`
+  js.src = `https://releases.transloadit.com/uppy/locales/v1.17.1/${localeName}.min.js`
 
   head.appendChild(js)
 }
@@ -195,8 +197,16 @@ function setLocale (localeName) {
     loadLocaleFromCDN(localeName)
   }
   whenLocaleAvailable(localeName, (localeObj) => {
+    const direction = RTL_LOCALES.indexOf(localeName) !== -1
+      ? 'rtl'
+      : 'ltr'
+
     window.uppy.setOptions({
       locale: localeObj
+    })
+
+    window.uppy.getPlugin('Dashboard').setOptions({
+      direction
     })
   })
 }
