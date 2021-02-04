@@ -77,20 +77,10 @@ module.exports.app = (options = {}) => {
   // override provider credentials at request time
   app.use('/connect/:authProvider/:override?', getCredentialsOverrideMiddleware(providers, options))
   app.use(Grant(grantConfig))
+
+  app.use(middlewares.mergeAccessControlAllowMethods)
+
   app.use((req, res, next) => {
-    let previouslySetMethods = res.header('Access-Control-Allow-Methods') || ''
-    previouslySetMethods = `${previouslySetMethods}`.replace(/\s/g, '').split(',')
-
-    res.header('Access-Control-Allow-Methods',
-      ['GET', 'POST', 'OPTIONS', 'DELETE']
-      .concat(previouslySetMethods)
-      // Achieve uniqueness
-      .filter((value, index, self) => {
-        return self.indexOf(value) === index
-      })
-      .join(',')
-    )
-
     res.header(
       'Access-Control-Allow-Headers',
       [
