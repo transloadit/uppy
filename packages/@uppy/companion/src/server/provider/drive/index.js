@@ -1,8 +1,8 @@
 const Provider = require('../Provider')
 
+const { callbackify } = require('util')
 const request = require('request')
-// @ts-ignore
-const purest = require('purest')({ request })
+const Purest = require('purest')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
@@ -21,76 +21,78 @@ class Drive extends Provider {
     options.alias = 'drive'
     options.version = 'v3'
 
-    this.client = purest(options)
+    this.client = Purest({ request })(options)
+    this.promiseClient = Purest({ request, promise: Promise })(options)
   }
 
   static get authProvider () {
     return 'google'
   }
 
-  list (options, done) {
+  async _list (options) {
     const directory = options.directory || 'root'
     const query = options.query || {}
 
-    let sharedDrivesPromise = Promise.resolve(undefined)
+    const client = this.promiseClient
+    const handleErrorResponse = this._error.bind(this)
 
-    const shouldListSharedDrives = directory === 'root' && !query.cursor
-    if (shouldListSharedDrives) {
-      sharedDrivesPromise = new Promise((resolve) => {
-        this.client
-          .query()
+    async function fetchSharedDrives () {
+      try {
+        const shouldListSharedDrives = directory === 'root' && !query.cursor
+        if (!shouldListSharedDrives) return undefined
+
+        const [resp] = await client
           .get('drives')
           .qs({ fields: SHARED_DRIVE_FIELDS })
           .auth(options.token)
-          .request((err, resp) => {
-            if (err) {
-              logger.error(err, 'provider.drive.sharedDrive.error')
-              return
-            }
-            resolve(resp)
-          })
-      })
+          .request()
+
+        if (resp.statusCode !== 200) throw handleErrorResponse(undefined, resp)
+        return resp
+      } catch (err) {
+        logger.error(err, 'provider.drive.sharedDrive.error')
+        throw err
+      }
     }
 
-    const where = {
-      fields: DRIVE_FILES_FIELDS,
-      pageToken: query.cursor,
-      q: `'${directory}' in parents and trashed=false`,
-      includeItemsFromAllDrives: true,
-      supportsAllDrives: true
+    async function fetchFiles () {
+      const where = {
+        fields: DRIVE_FILES_FIELDS,
+        pageToken: query.cursor,
+        q: `'${directory}' in parents and trashed=false`,
+        includeItemsFromAllDrives: true,
+        supportsAllDrives: true
+      }
+
+      try {
+        const [resp] = await client
+          .query()
+          .get('files')
+          .qs(where)
+          .auth(options.token)
+          .request()
+
+        if (resp.statusCode !== 200) throw handleErrorResponse(undefined, resp)
+        return resp
+      } catch (err) {
+        logger.error(err, 'provider.drive.list.error')
+        throw err
+      }
     }
 
-    const filesPromise = new Promise((resolve, reject) => {
-      this.client
-        .query()
-        .get('files')
-        .qs(where)
-        .auth(options.token)
-        .request((err, resp) => {
-          if (err || resp.statusCode !== 200) {
-            reject(this._error(err, resp))
-            return
-          }
-          resolve(resp)
-        })
-    })
+    const [sharedDrives, filesResponse] = await Promise.all([fetchSharedDrives(), fetchFiles()])
 
-    Promise.all([sharedDrivesPromise, filesPromise])
-      .then(
-        ([sharedDrives, filesResponse]) => {
-          const returnData = this.adaptData(
-            filesResponse.body,
-            sharedDrives && sharedDrives.body,
-            directory,
-            query
-          )
-          done(null, returnData)
-        },
-        (reqErr) => {
-          logger.error(reqErr, 'provider.drive.list.error')
-          done(reqErr)
-        }
-      )
+    return this.adaptData(
+      filesResponse.body,
+      sharedDrives && sharedDrives.body,
+      directory,
+      query
+    )
+  }
+
+  list (options, done) {
+    // @ts-ignore
+    callbackify(this._list.bind(this))(options, done)
   }
 
   stats ({ id, token }, done) {
