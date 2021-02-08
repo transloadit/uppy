@@ -36,9 +36,11 @@ class Drive extends Provider {
     const client = this.promiseClient
     const handleErrorResponse = this._error.bind(this)
 
+    const isRoot = directory === 'root'
+
     async function fetchSharedDrives () {
       try {
-        const shouldListSharedDrives = directory === 'root' && !query.cursor
+        const shouldListSharedDrives = isRoot && !query.cursor
         if (!shouldListSharedDrives) return undefined
 
         const [resp] = await client
@@ -56,10 +58,15 @@ class Drive extends Provider {
     }
 
     async function fetchFiles () {
+      // Shared with me items in root don't have any parents
+      const q = isRoot
+        ? `('${directory}' in parents or sharedWithMe) and trashed=false`
+        : `('${directory}' in parents) and trashed=false`
+
       const where = {
         fields: DRIVE_FILES_FIELDS,
         pageToken: query.cursor,
-        q: `'${directory}' in parents and trashed=false`,
+        q,
         includeItemsFromAllDrives: true,
         supportsAllDrives: true
       }
