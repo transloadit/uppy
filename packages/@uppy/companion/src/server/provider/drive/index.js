@@ -2,7 +2,7 @@ const Provider = require('../Provider')
 
 const { callbackify } = require('util')
 const request = require('request')
-const Purest = require('purest')
+const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
@@ -21,8 +21,7 @@ class Drive extends Provider {
     options.alias = 'drive'
     options.version = 'v3'
 
-    this.client = Purest({ request })(options)
-    this.promiseClient = Purest({ request, promise: Promise })(options)
+    this.client = purest(options)
   }
 
   static get authProvider () {
@@ -33,7 +32,7 @@ class Drive extends Provider {
     const directory = options.directory || 'root'
     const query = options.query || {}
 
-    const client = this.promiseClient
+    const client = this.client
     const handleErrorResponse = this._error.bind(this)
 
     const isRoot = directory === 'root'
@@ -43,13 +42,15 @@ class Drive extends Provider {
         const shouldListSharedDrives = isRoot && !query.cursor
         if (!shouldListSharedDrives) return undefined
 
-        const [resp] = await client
+        const resp = await new Promise((resolve, reject) => client
           .get('drives')
           .qs({ fields: SHARED_DRIVE_FIELDS })
           .auth(options.token)
-          .request()
+          .request((err, resp) => {
+            if (resp.statusCode !== 200) return reject(handleErrorResponse(err, resp))
+            resolve(resp)
+          }))
 
-        if (resp.statusCode !== 200) throw handleErrorResponse(undefined, resp)
         return resp
       } catch (err) {
         logger.error(err, 'provider.drive.sharedDrive.error')
@@ -72,14 +73,16 @@ class Drive extends Provider {
       }
 
       try {
-        const [resp] = await client
+        const resp = await new Promise((resolve, reject) => client
           .query()
           .get('files')
           .qs(where)
           .auth(options.token)
-          .request()
+          .request((err, resp) => {
+            if (resp.statusCode !== 200) return reject(handleErrorResponse(err, resp))
+            resolve(resp)
+          }))
 
-        if (resp.statusCode !== 200) throw handleErrorResponse(undefined, resp)
         return resp
       } catch (err) {
         logger.error(err, 'provider.drive.list.error')
