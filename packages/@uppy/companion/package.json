@@ -49,7 +49,7 @@
     "ip-address": "6.2.0",
     "isobject": "3.0.1",
     "jsonwebtoken": "8.5.1",
-    "lodash.merge": "4.6.2",
+    "lodash": "^4.17.20",
     "mime-types": "2.1.25",
     "moment-timezone": "^0.5.31",
     "morgan": "1.10.0",
