@@ -724,6 +724,12 @@ module.exports = class Transloadit extends Plugin {
 
     const watcher = this.assemblyWatchers[uploadID]
     return watcher.promise.then(() => {
+      assemblyIDs.forEach((id) => {
+        const assembly = this.activeAssemblies[id]
+        assembly.close()
+        delete this.activeAssemblies[id]
+      })
+
       const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
 
       // Remove the Assembly ID list for this upload,
