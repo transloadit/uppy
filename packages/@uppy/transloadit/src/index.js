@@ -694,14 +694,18 @@ module.exports = class Transloadit extends Plugin {
 
     const assemblyIDs = state.uploadsAssemblies[uploadID]
 
-    // If we don't have to wait for encoding metadata or results, we can close
-    // the socket immediately and finish the upload.
-    if (!this._shouldWaitAfterUpload()) {
+    const closeSocketConnections = () => {
       assemblyIDs.forEach((assemblyID) => {
         const assembly = this.activeAssemblies[assemblyID]
         assembly.close()
         delete this.activeAssemblies[assemblyID]
       })
+    }
+
+    // If we don't have to wait for encoding metadata or results, we can close
+    // the socket immediately and finish the upload.
+    if (!this._shouldWaitAfterUpload()) {
+      closeSocketConnections()
       const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
       this.uppy.addResultData(uploadID, { transloadit: assemblies })
       return Promise.resolve()
@@ -724,11 +728,7 @@ module.exports = class Transloadit extends Plugin {
 
     const watcher = this.assemblyWatchers[uploadID]
     return watcher.promise.then(() => {
-      assemblyIDs.forEach((id) => {
-        const assembly = this.activeAssemblies[id]
-        assembly.close()
-        delete this.activeAssemblies[id]
-      })
+      closeSocketConnections()
 
       const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
 
