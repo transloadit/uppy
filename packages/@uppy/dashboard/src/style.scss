@@ -605,6 +605,11 @@
   height: 100%;
 }
 
+// Do not show progress details in the StatusBar if we do not have space.
+.uppy-Dashboard:not(.uppy-size--md) .uppy-StatusBar-additionalInfo {
+  display: none;
+}
+
 .uppy-Dashboard-filesContainer {
   @include clearfix;
   position: relative;
