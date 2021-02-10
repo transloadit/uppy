@@ -23,6 +23,14 @@ In the current stage we aim to release a new version at least every month.
 - [ ] plugin: audio/memo recording similar to Webcam #143 #198
 - [ ] xhr-upload: allow setting http headers on per file basis? (#2299 / @goto-bus-stop)
 
+## 1.25.1
+
+- @uppy/companion: Companion should respect previously set value for Accesss-Control-Allow-Methods (#2726 / @tim-kos, @mifi, @so-steve)
+- @uppy/xhr-upload: accept a `headers: (file) => {}` function (#2747 / @goto-but-stop)
+- @uppy/transloadit: fix polling fallback bugs (#2759 / @goto-bus-stop)
+- @uppy/dashboard: fix showing showProgressDetails on md and up (#2760 / @goto-bus-stop)
+- @uppy/utils: added mp4 file type support — Safari 14.0 on Mac records audio using audio/mp4 MIME type which isn't currently recognised by Uppy (#2753 / @dominiceden)
+
 ## January 2021
 
 ### 1.25.0
