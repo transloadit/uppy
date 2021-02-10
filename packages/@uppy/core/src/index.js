@@ -1181,10 +1181,15 @@ class Uppy {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
-      const files = Object.assign({}, this.getState().files)
-      files[file.id] = Object.assign({}, files[file.id], {
-        progress: Object.assign({}, files[file.id].progress)
-      })
+      const files = {
+        ...this.getState().files
+      }
+      files[file.id] = {
+        ...files[file.id],
+        progress: {
+          ...files[file.id].progress
+        }
+      }
       delete files[file.id].progress.postprocess
       // TODO should we set some kind of `fullyComplete` property on the file object
       // so it's easier to see that the file is upload…fully complete…rather than
@@ -1532,13 +1537,16 @@ class Uppy {
           return
         }
 
-        const updatedUpload = Object.assign({}, currentUpload, {
-          step: step
-        })
+        const updatedUpload = {
+          ...currentUpload,
+          step
+        }
+
         this.setState({
-          currentUploads: Object.assign({}, currentUploads, {
+          currentUploads: {
+            ...currentUploads,
             [uploadID]: updatedUpload
-          })
+          }
         })
 
         // TODO give this the `updatedUpload` object as its only parameter maybe?
@@ -1564,8 +1572,24 @@ class Uppy {
         return
       }
 
-      const files = currentUpload.fileIDs
-        .map((fileID) => this.getFile(fileID))
+      // Mark postprocessing step as complete if necessary; this addresses a case where we might get
+      // stuck in the postprocessing UI while the upload is fully complete.
+      // If the postprocessing steps do not do any work, they may not emit postprocessing events at
+      // all, and never mark the postprocessing as complete. This is fine on its own but we
+      // introduced code in the @uppy/core upload-success handler to prepare postprocessing progress
+      // state if any postprocessors are registered. That is to avoid a "flash of completed state"
+      // before the postprocessing plugins can emit events.
+      //
+      // So, just in case an upload with postprocessing plugins *has* completed *without* emitting
+      // postprocessing completion, we do it instead.
+      currentUpload.fileIDs.forEach((fileID) => {
+        const file = this.getFile(fileID)
+        if (file && file.progress.postprocess) {
+          this.emit('postprocess-complete', file)
+        }
+      })
+
+      const files = currentUpload.fileIDs.map((fileID) => this.getFile(fileID))
       const successful = files.filter((file) => !file.error)
       const failed = files.filter((file) => file.error)
       this.addResultData(uploadID, { successful, failed, uploadID })
