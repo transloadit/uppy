@@ -7,7 +7,7 @@ const bodyParser = require('body-parser')
 const redis = require('../server/redis')
 const logger = require('../server/logger')
 const { URL } = require('url')
-const merge = require('lodash.merge')
+const merge = require('lodash/merge')
 // @ts-ignore
 const promBundle = require('express-prom-bundle')
 const session = require('express-session')
