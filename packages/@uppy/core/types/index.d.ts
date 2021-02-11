@@ -26,10 +26,7 @@ declare module Uppy {
     error: string
   }
 
- /* interface UppyReadableStream extends ReadableStreamDefaultReader
-  {
-    size:number;
-  }*/
+ 
   // Replace the `meta` property type with one that allows omitting internal metadata; addFile() will add that
   type UppyFileWithoutMeta<TMeta, TBody> = OmitKey<
     UppyFile<TMeta, TBody>,
