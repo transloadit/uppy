@@ -240,11 +240,15 @@ declare module '@uppy/utils' {
     [key: number]: T
   }
   export type InternalMetadata = { name: string; type?: string }
+ export interface UppyReadableStream extends ReadableStreamDefaultReader<Blob>
+  {
+    size:number;
+  }
   export interface UppyFile<
     TMeta = IndexedObject<any>,
     TBody = IndexedObject<any>
   > {
-    data: Blob | File
+    data: Blob | File | UppyReadableStream
     extension: string
     id: string
     isPaused?: boolean

@@ -271,7 +271,7 @@ module.exports = class Tus extends Plugin {
       copyProp(meta, 'name', 'filename')
 
       uploadOptions.metadata = meta
-
+      uploadOptions.uploadSize = file.data.size
       const upload = new tus.Upload(file.data, uploadOptions)
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)

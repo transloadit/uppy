@@ -1,3 +1,4 @@
+import { UppyReadableStream } from '@uppy/utils'
 import UppyUtils = require('@uppy/utils')
 
 declare module Uppy {
@@ -25,6 +26,10 @@ declare module Uppy {
     error: string
   }
 
+ /* interface UppyReadableStream extends ReadableStreamDefaultReader
+  {
+    size:number;
+  }*/
   // Replace the `meta` property type with one that allows omitting internal metadata; addFile() will add that
   type UppyFileWithoutMeta<TMeta, TBody> = OmitKey<
     UppyFile<TMeta, TBody>,
@@ -35,7 +40,7 @@ declare module Uppy {
     TBody = IndexedObject<any>
   > extends Partial<UppyFileWithoutMeta<TMeta, TBody>> {
     // `.data` is the only required property here.
-    data: Blob | File
+    data: Blob | File |UppyReadableStream
     meta?: Partial<InternalMetadata> & TMeta
   }
 
