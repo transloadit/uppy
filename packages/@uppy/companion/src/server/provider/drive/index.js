@@ -47,7 +47,7 @@ class Drive extends Provider {
           .qs({ fields: SHARED_DRIVE_FIELDS })
           .auth(options.token)
           .request((err, resp) => {
-            if (resp.statusCode !== 200) return reject(handleErrorResponse(err, resp))
+            if (err || resp.statusCode !== 200) return reject(handleErrorResponse(err, resp))
             resolve(resp)
           }))
 
@@ -79,7 +79,7 @@ class Drive extends Provider {
           .qs(where)
           .auth(options.token)
           .request((err, resp) => {
-            if (resp.statusCode !== 200) return reject(handleErrorResponse(err, resp))
+            if (err || resp.statusCode !== 200) return reject(handleErrorResponse(err, resp))
             resolve(resp)
           }))
 
