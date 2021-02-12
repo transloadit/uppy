@@ -1657,8 +1657,8 @@ class Uppy {
         const waitingFileIDs = []
         Object.keys(files).forEach((fileID) => {
           const file = this.getFile(fileID)
-          // if the file hasn't started uploading and hasn't already been assigned to an upload..
-          if ((!file.progress.uploadStarted) && (currentlyUploadingFiles.indexOf(fileID) === -1)) {
+          // if the file hasn't started or finished uploading, and hasn't already been assigned to an upload
+          if ((!file.progress.uploadStarted) && (!file.progress.uploadComplete) && (currentlyUploadingFiles.indexOf(fileID) === -1)) {
             waitingFileIDs.push(file.id)
           }
         })
