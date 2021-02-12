@@ -25,6 +25,29 @@ In the current stage we aim to release a new version at least every month.
 
 ## 1.25.1
 
+Released: 2021-02-10
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.13 | @uppy/provider-views | 1.11.1 |
+| @uppy/aws-s3 | 1.7.7 | @uppy/react | 1.11.3 |
+| @uppy/box | 0.3.5 | @uppy/robodog | 1.10.3 |
+| @uppy/companion-client | 1.8.2 | @uppy/screen-capture | 1.0.14 |
+| @uppy/companion | 2.5.1 | @uppy/status-bar | 1.9.1 |
+| @uppy/core | 1.16.1 | @uppy/svelte | 0.1.4 |
+| @uppy/dashboard | 1.16.1 | @uppy/thumbnail-generator | 1.7.6 |
+| @uppy/drag-drop | 1.4.25 | @uppy/transloadit | 1.6.19 |
+| @uppy/dropbox | 1.4.23 | @uppy/tus | 1.8.5 |
+| @uppy/facebook | 1.1.23 | @uppy/unsplash | 0.1.7 |
+| @uppy/file-input | 1.4.23 | @uppy/url | 1.5.17 |
+| @uppy/form | 1.3.26 | @uppy/utils | 3.4.1 |
+| @uppy/golden-retriever | 1.3.25 | @uppy/vue | 0.1.5 |
+| @uppy/google-drive | 1.5.23 | @uppy/webcam | 1.8.5 |
+| @uppy/informer | 1.6.1 | @uppy/xhr-upload | 1.7.0 |
+| @uppy/instagram | 1.4.23 | @uppy/zoom | 0.1.12 |
+| @uppy/onedrive | 1.1.23 | uppy | 1.25.1 |
+| @uppy/progress-bar | 1.3.25 | - | - |
+
 - @uppy/companion: Companion should respect previously set value for Accesss-Control-Allow-Methods (#2726 / @tim-kos, @mifi, @so-steve)
 - @uppy/xhr-upload: accept a `headers: (file) => {}` function (#2747 / @goto-but-stop)
 - @uppy/transloadit: fix polling fallback bugs (#2759 / @goto-bus-stop)
@@ -103,7 +126,7 @@ This releases also fixes an issue with image-editor package being unavailable in
 - @uppy/locales: fixed Russian grammar (#2714 / @DenysNosov)
 - @uppy/dashboard: emit fileId on both file-edit-start and file-edit-complete events (#2729 / @arturi)
 - build: fixes around Github actions and Companion deploys (#2717 / @kiloreux)
-- docs: Add Integration Guide (#2696 / @ajkachnic) 
+- docs: Add Integration Guide (#2696 / @ajkachnic)
 - docs: list required permissions to upload S3 files using companion (#1825 / @mkopinsky)
 - docs: remove warning about multiple uploads on S3 which is now fixed (#2720 / @Jbithell)
 - docs: update xhrupload.md (#2731 / @hxgf)
