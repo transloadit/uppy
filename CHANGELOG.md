@@ -23,6 +23,17 @@ In the current stage we aim to release a new version at least every month.
 - [ ] plugin: audio/memo recording similar to Webcam #143 #198
 - [ ] xhr-upload: allow setting http headers on per file basis? (#2299 / @goto-bus-stop)
 
+## 1.25.2
+
+Released: 2021-02-12
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/robodog | 1.10.4 | uppy | 1.25.2 |
+| @uppy/transloadit | 1.6.20 | - | - |
+
+- @uppy/transloadit: fix a case where the plugin used stale file data. (@goto-bus-stop)
+
 ## 1.25.1
 
 Released: 2021-02-10
