@@ -18,6 +18,13 @@ function assertServerError (res) {
   return res
 }
 
+function removeMetaProperty (object) {
+  if (!object) return false
+  // add more here?
+  const { name, ...newFileObject } = object
+  return newFileObject
+}
+
 module.exports = class AwsS3Multipart extends Plugin {
   static VERSION = require('../package.json').version
 
@@ -291,7 +298,7 @@ module.exports = class AwsS3Multipart extends Plugin {
           ...file.remote.body,
           protocol: 's3-multipart',
           size: file.data.size,
-          metadata: file.meta
+          metadata: removeMetaProperty(metadata)
         }
       ).then((res) => {
         this.uppy.setFileState(file.id, { serverToken: res.token })
