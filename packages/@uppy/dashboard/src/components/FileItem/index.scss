@@ -44,7 +44,8 @@
   }
 }
 
-  .uppy-Dashboard-Item.is-ghost {
+  .uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-preview,
+  .uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-fileInfo {
     opacity: 0.5;
   }
 
@@ -60,11 +61,10 @@
     background-position: 50% 10px;
     background-size: 25px;
     z-index: $zIndex-5;
-    opacity: 0.8;
 
     .uppy-size--md & {
-      background-size: 45px;
-      background-position: 50% 30px;
+      background-size: 40px;
+      background-position: 50% 50%;
     }
   }
 

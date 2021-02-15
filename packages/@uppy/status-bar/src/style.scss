@@ -14,14 +14,14 @@
   z-index: $zIndex-2;
   transition: height .2s;
 
+  .uppy-size--md & {
+    height: 46px;
+  }
+
   [data-uppy-theme="dark"] & {
     background-color: $gray-900;
   }
 }
-
-  .uppy-size--md .uppy-StatusBar {
-    height: 46px;
-  }
 
   .uppy-StatusBar:before {
     content: '';
@@ -167,9 +167,6 @@
     }
   }
 
-  // .uppy-StatusBar--detailedProgress .uppy-StatusBar-statusSecondary {
-  //   display: inline-block;
-  // }
 
 .uppy-StatusBar-statusIndicator {
   position: relative;
@@ -194,6 +191,7 @@
 
 .uppy-StatusBar.is-waiting .uppy-StatusBar-actions {
   width: 100%;
+  height: 100%;
   position: static;
   padding: 0 15px;
   background-color: $gray-50;
@@ -203,13 +201,25 @@
   }
 }
 
-// .uppy-StatusBar.has-ghosts .uppy-StatusBar-actions  {
-//   flex-direction: column;
+.uppy-StatusBar:not([aria-hidden="true"]).is-waiting.has-ghosts {
+  height: 90px;
+  flex-direction: column;
 
-//   .uppy-size--md & {
-//     flex-direction: row;
-//   }
-// }
+  .uppy-size--md & {
+    height: 65px;
+    flex-direction: row;
+  }
+
+  .uppy-StatusBar-actions {
+    flex-direction: column;
+    justify-content: center;
+
+    .uppy-size--md & {
+      flex-direction: row;
+      justify-content: initial;
+    }
+  }
+}
 
 .uppy-StatusBar-actionCircleBtn {
   @include blue-border-focus;
@@ -360,9 +370,9 @@
   width: 10px;
 
   .uppy-size--md & {
-    width: 20px;
-    left: 11px;
-    top: 0;
+    width: 15px;
+    left: 10px;
+    top: 1px;
   }
 }
 
