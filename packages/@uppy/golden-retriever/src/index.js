@@ -41,13 +41,13 @@ module.exports = class GoldenRetriever extends Plugin {
       { storeName: uppy.getID() }))
 
     this.saveFilesStateToLocalStorage = throttle(this.saveFilesStateToLocalStorage.bind(this), 500, { leading: true, trailing: true })
-    this.loadFilesStateFromLocalStorage = this.loadFilesStateFromLocalStorage.bind(this)
+    this.restoreState = this.restoreState.bind(this)
     this.loadFileBlobsFromServiceWorker = this.loadFileBlobsFromServiceWorker.bind(this)
     this.loadFileBlobsFromIndexedDB = this.loadFileBlobsFromIndexedDB.bind(this)
     this.onBlobsLoaded = this.onBlobsLoaded.bind(this)
   }
 
-  loadFilesStateFromLocalStorage () {
+  restoreState () {
     const savedState = this.MetaDataStore.load()
     if (savedState) {
       this.uppy.log('[GoldenRetriever] Recovered some state from Local Storage')
@@ -141,7 +141,11 @@ module.exports = class GoldenRetriever extends Plugin {
   }
 
   loadFileBlobsFromServiceWorker () {
-    this.ServiceWorkerStore.list().then((blobs) => {
+    if (!this.ServiceWorkerStore) {
+      return Promise.resolve({})
+    }
+
+    return this.ServiceWorkerStore.list().then((blobs) => {
       const files = this.uppy.getFiles()
       const localFilesOnly = files.filter((file) => {
         // maybe && !file.progress.uploadComplete
@@ -153,30 +157,31 @@ module.exports = class GoldenRetriever extends Plugin {
 
       if (numberOfFilesRecovered === numberOfFilesTryingToRecover) {
         this.uppy.log(`[GoldenRetriever] Successfully recovered ${numberOfFilesRecovered} blobs from Service Worker!`)
-        this.uppy.info(`Successfully recovered ${numberOfFilesRecovered} files`, 'success', 3000)
-        return this.onBlobsLoaded(blobs)
+        return blobs
       }
       this.uppy.log('[GoldenRetriever] No blobs found in Service Worker, trying IndexedDB now...')
-      return this.loadFileBlobsFromIndexedDB()
+      return {}
     }).catch((err) => {
       this.uppy.log('[GoldenRetriever] Failed to recover blobs from Service Worker', 'warning')
       this.uppy.log(err)
+      return {}
     })
   }
 
   loadFileBlobsFromIndexedDB () {
-    this.IndexedDBStore.list().then((blobs) => {
+    return this.IndexedDBStore.list().then((blobs) => {
       const numberOfFilesRecovered = Object.keys(blobs).length
 
       if (numberOfFilesRecovered > 0) {
         this.uppy.log(`[GoldenRetriever] Successfully recovered ${numberOfFilesRecovered} blobs from IndexedDB!`)
-        this.uppy.info(`Successfully recovered ${numberOfFilesRecovered} files`, 'success', 3000)
-        return this.onBlobsLoaded(blobs)
+        return blobs
       }
       this.uppy.log('[GoldenRetriever] No blobs found in IndexedDB')
+      return {}
     }).catch((err) => {
       this.uppy.log('[GoldenRetriever] Failed to recover blobs from IndexedDB', 'warning')
       this.uppy.log(err)
+      return {}
     })
   }
 
@@ -196,10 +201,10 @@ module.exports = class GoldenRetriever extends Plugin {
 
       const updatedFileData = {
         data: cachedData,
-        isRestored: true
+        isRestored: true,
+        isGhost: false
       }
-      const updatedFile = Object.assign({}, originalFile, updatedFileData)
-      updatedFiles[fileID] = updatedFile
+      updatedFiles[fileID] = Object.assign({}, originalFile, updatedFileData)
     })
 
     // Loop through files that we can’t restore fully — we only have meta, not blobs,
@@ -242,71 +247,93 @@ module.exports = class GoldenRetriever extends Plugin {
     return Promise.all(promises)
   }
 
-  install () {
-    this.loadFilesStateFromLocalStorage()
+  addBlobToStores = (file) => {
+    if (file.isRemote) return
 
+    if (this.ServiceWorkerStore) {
+      this.ServiceWorkerStore.put(file).catch((err) => {
+        this.uppy.log('[GoldenRetriever] Could not store file', 'warning')
+        this.uppy.log(err)
+      })
+    }
+
+    this.IndexedDBStore.put(file).catch((err) => {
+      this.uppy.log('[GoldenRetriever] Could not store file', 'warning')
+      this.uppy.log(err)
+    })
+  }
+
+  removeBlobFromStores = (file) => {
+    if (this.ServiceWorkerStore) {
+      this.ServiceWorkerStore.delete(file.id).catch((err) => {
+        this.uppy.log('[GoldenRetriever] Failed to remove file', 'warning')
+        this.uppy.log(err)
+      })
+    }
+    this.IndexedDBStore.delete(file.id).catch((err) => {
+      this.uppy.log('[GoldenRetriever] Failed to remove file', 'warning')
+      this.uppy.log(err)
+    })
+  }
+
+  replaceBlobInStores = (file) => {
+    this.removeBlobFromStores(file)
+    this.addBlobToStores(file)
+  }
+
+  handleRestoreConfirmed = () => {
+    // start all uploads again when file blobs are restored
+    const { currentUploads } = this.uppy.getState()
+    if (currentUploads) {
+      Object.keys(currentUploads).forEach((uploadId) => {
+        this.uppy.restore(uploadId, currentUploads[uploadId])
+      })
+    }
+  }
+
+  handleComplete = ({ successful }) => {
+    const fileIDs = successful.map((file) => file.id)
+    this.deleteBlobs(fileIDs).then(() => {
+      this.uppy.log(`[GoldenRetriever] Removed ${successful.length} files that finished uploading`)
+    }).catch((err) => {
+      this.uppy.log(`[GoldenRetriever] Could not remove ${successful.length} files that finished uploading`, 'warning')
+      this.uppy.log(err)
+    })
+  }
+
+  restoreBlobs = () => {
     if (this.uppy.getFiles().length > 0) {
-      if (this.ServiceWorkerStore) {
-        this.uppy.log('[GoldenRetriever] Attempting to load files from Service Worker...')
-        this.loadFileBlobsFromServiceWorker()
-      } else {
-        this.uppy.log('[GoldenRetriever] Attempting to load files from Indexed DB...')
+      Promise.all([
+        this.loadFileBlobsFromServiceWorker(),
         this.loadFileBlobsFromIndexedDB()
-      }
+      ]).then((resultingArrayOfObjects) => {
+        const blobs = { ...resultingArrayOfObjects[0], ...resultingArrayOfObjects[1] }
+        this.onBlobsLoaded(blobs)
+      })
     } else {
       this.uppy.log('[GoldenRetriever] No files need to be loaded, only restoring processing state...')
       this.onBlobsLoaded([])
     }
+  }
 
-    this.uppy.on('file-added', (file) => {
-      if (file.isRemote) return
+  install () {
+    this.restoreState()
+    this.restoreBlobs()
 
-      if (this.ServiceWorkerStore) {
-        this.ServiceWorkerStore.put(file).catch((err) => {
-          this.uppy.log('[GoldenRetriever] Could not store file', 'warning')
-          this.uppy.log(err)
-        })
-      }
-
-      this.IndexedDBStore.put(file).catch((err) => {
-        this.uppy.log('[GoldenRetriever] Could not store file', 'warning')
-        this.uppy.log(err)
-      })
-    })
-
-    this.uppy.on('file-removed', (file) => {
-      if (this.ServiceWorkerStore) {
-        this.ServiceWorkerStore.delete(file.id).catch((err) => {
-          this.uppy.log('[GoldenRetriever] Failed to remove file', 'warning')
-          this.uppy.log(err)
-        })
-      }
-      this.IndexedDBStore.delete(file.id).catch((err) => {
-        this.uppy.log('[GoldenRetriever] Failed to remove file', 'warning')
-        this.uppy.log(err)
-      })
-    })
-
-    this.uppy.on('complete', ({ successful }) => {
-      const fileIDs = successful.map((file) => file.id)
-      this.deleteBlobs(fileIDs).then(() => {
-        this.uppy.log(`[GoldenRetriever] Removed ${successful.length} files that finished uploading`)
-      }).catch((err) => {
-        this.uppy.log(`[GoldenRetriever] Could not remove ${successful.length} files that finished uploading`, 'warning')
-        this.uppy.log(err)
-      })
-    })
-
+    this.uppy.on('file-added', this.addBlobToStores)
+    this.uppy.on('file-editor:complete', this.replaceBlobInStores)
+    this.uppy.on('file-removed', this.removeBlobFromStores)
     this.uppy.on('state-update', this.saveFilesStateToLocalStorage)
+    this.uppy.on('restore-confirmed', this.handleRestoreConfirmed)
+    this.uppy.on('complete', this.handleComplete)
+  }
 
-    this.uppy.on('restore-confirmed', () => {
-      // start all uploads again when file blobs are restored
-      const { currentUploads } = this.uppy.getState()
-      if (currentUploads) {
-        Object.keys(currentUploads).forEach((uploadId) => {
-          this.uppy.restore(uploadId, currentUploads[uploadId])
-        })
-      }
-    })
+  uninstall () {
+    this.uppy.off('file-added', this.addBlobToStores)
+    this.uppy.off('file-editor:complete', this.replaceBlobInStores)
+    this.uppy.off('file-removed', this.removeBlobFromStores)
+    this.uppy.off('state-update', this.saveFilesStateToLocalStorage)
+    this.uppy.off('restore-confirmed', this.handleRestoreConfirmed)
+    this.uppy.off('complete', this.handleComplete)
   }
 }
