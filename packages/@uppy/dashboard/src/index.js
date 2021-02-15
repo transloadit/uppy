@@ -661,18 +661,6 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
-  handleRestored = () => {
-    // Hide and show files to trigger re-render, so that
-    // VirtualList mounts FileItems again and they emit `thumbnail:request`
-    // Otherwise thumbnails are broken or missing after Golden Retriever restores files
-    if (this.opts.showSelectedFiles) {
-      this.setOptions({ showSelectedFiles: false })
-      setTimeout(() => {
-        this.setOptions({ showSelectedFiles: true })
-      }, 4)
-    }
-  }
-
   _openFileEditorWhenFilesAdded = (files) => {
     const firstFile = files[0]
     if (this.canEditFile(firstFile)) {
@@ -709,8 +697,6 @@ module.exports = class Dashboard extends Plugin {
       this.el.addEventListener('keydown', this.handleKeyDownInInline)
     }
 
-    this.uppy.on('restored', this.handleRestored)
-
     if (this.opts.autoOpenFileEditor) {
       this.uppy.on('files-added', this._openFileEditorWhenFilesAdded)
     }
@@ -729,6 +715,7 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.off('plugin-remove', this.removeTarget)
     this.uppy.off('file-added', this.hideAllPanels)
     this.uppy.off('dashboard:modal-closed', this.hideAllPanels)
+    this.uppy.off('file-editor:complete', this.hideAllPanels)
     this.uppy.off('complete', this.handleComplete)
 
     document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently)
@@ -737,8 +724,6 @@ module.exports = class Dashboard extends Plugin {
     if (this.opts.inline) {
       this.el.removeEventListener('keydown', this.handleKeyDownInInline)
     }
-
-    this.uppy.off('restored', this.handleRestored)
 
     if (this.opts.autoOpenFileEditor) {
       this.uppy.off('files-added', this._openFileEditorWhenFilesAdded)

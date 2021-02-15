@@ -53,7 +53,6 @@ module.exports = function Dashboard (props) {
   const showFileList = props.showSelectedFiles && !noFiles
 
   const numberOfFilesForRecovery = props.recoveryState ? Object.keys(props.recoveryState.files).length : null
-  console.log(numberOfFilesForRecovery)
 
   const dashboard = (
     <div
