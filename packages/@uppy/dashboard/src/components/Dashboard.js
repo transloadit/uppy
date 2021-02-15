@@ -28,6 +28,7 @@ module.exports = function Dashboard (props) {
 
   const dashboardClassName = classNames({
     'uppy-Dashboard': true,
+    'uppy-Dashboard--isDisabled': props.disabled,
     'uppy-Dashboard--animateOpenClose': props.animateOpenClose,
     'uppy-Dashboard--isClosing': props.isClosing,
     'uppy-Dashboard--isDraggingOver': props.isDraggingOver,

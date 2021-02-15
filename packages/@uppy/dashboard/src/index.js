@@ -145,7 +145,8 @@ module.exports = class Dashboard extends Plugin {
       showRemoveButtonAfterComplete: false,
       browserBackButtonClose: false,
       theme: 'light',
-      autoOpenFileEditor: false
+      autoOpenFileEditor: false,
+      disabled: false
     }
 
     // merge default options with the ones set by user
@@ -565,6 +566,10 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
 
+    if (this.opts.disabled) {
+      return
+    }
+
     // 1. Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the browser, https://github.com/transloadit/uppy/issues/1978)
     event.dataTransfer.dropEffect = 'copy'
@@ -577,6 +582,10 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
 
+    if (this.opts.disabled) {
+      return
+    }
+
     clearTimeout(this.removeDragOverClassTimeout)
     // Timeout against flickering, this solution is taken from drag-drop library. Solution with 'pointer-events: none' didn't work across browsers.
     this.removeDragOverClassTimeout = setTimeout(() => {
@@ -587,6 +596,11 @@ module.exports = class Dashboard extends Plugin {
   handleDrop = (event, dropCategory) => {
     event.preventDefault()
     event.stopPropagation()
+
+    if (this.opts.disabled) {
+      return
+    }
+
     clearTimeout(this.removeDragOverClassTimeout)
 
     // 2. Remove dragover class
@@ -893,6 +907,7 @@ module.exports = class Dashboard extends Plugin {
       allowNewUpload,
       acquirers,
       theme,
+      disabled: this.opts.disabled,
       direction: this.opts.direction,
       activePickerPanel: pluginState.activePickerPanel,
       showFileEditor: pluginState.showFileEditor,
