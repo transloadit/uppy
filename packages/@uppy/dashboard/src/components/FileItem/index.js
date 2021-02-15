@@ -18,6 +18,15 @@ module.exports = class FileItem extends Component {
     }
   }
 
+  // VirtualList mounts FileItems again and they emit `thumbnail:request`
+  // Otherwise thumbnails are broken or missing after Golden Retriever restores files
+  componentDidUpdate () {
+    const file = this.props.file
+    if (!file.preview) {
+      this.props.handleRequestThumbnail(file)
+    }
+  }
+
   componentWillUnmount () {
     const file = this.props.file
     if (!file.preview) {
