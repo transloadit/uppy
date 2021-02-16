@@ -12,6 +12,13 @@ const logger = require('./logger')
 const headerSanitize = require('./header-blacklist')
 const redis = require('./redis')
 
+function removeMetadataProperties (object) {
+  if (!object) return false
+  // add more here?
+  const { idToken, uploadCode, ...newFileObject } = object
+  return newFileObject
+}
+
 const DEFAULT_FIELD_NAME = 'files[]'
 const PROTOCOLS = Object.freeze({
   multipart: 'multipart',
@@ -559,12 +566,13 @@ class Uploader {
     const filename = this.options.metadata.name || path.basename(this.path)
     const { client, options } = this.options.s3
 
+    const speakerCount = (this.options?.metadata?.speakerCount && this.options.metadata.speakerCount.toString()) || '1'  
     const upload = client.upload({
       Bucket: options.bucket,
       Key: options.getKey(null, filename, this.options.metadata),
       ACL: options.acl,
       ContentType: this.options.metadata.type,
-      Metadata: this.options.metadata,
+      Metadata: {...removeMetadataProperties(this.options.metadata), speakerCount},
       Body: stream
     })
 
