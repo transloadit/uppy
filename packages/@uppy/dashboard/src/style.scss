@@ -139,6 +139,10 @@
   [data-uppy-theme="dark"] & {
     background-color: $gray-900;
   }
+
+  .uppy-Dashboard--isDisabled & {
+    cursor: not-allowed;
+  }
 }
 
 .uppy-Dashboard-innerWrap {
@@ -156,9 +160,14 @@
 
   .uppy-Dashboard--isDisabled & {
     pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.4;
     filter: grayscale(100%);
+    user-select: none;
   }
+}
+
+.uppy-Dashboard--isDisabled .uppy-ProviderIconBg {
+  fill: #9f9f9f;
 }
 
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
