@@ -1,5 +1,10 @@
 const router = require('express').Router
-
+function removeMetadataProperties (object) {
+  if (!object) return false
+  // add more here?
+  const { idToken, uploadCode, ...newFileObject } = object
+  return newFileObject
+}
 module.exports = function s3 (config) {
   if (typeof config.acl !== 'string') {
     throw new TypeError('s3: The `acl` option must be a string')
@@ -26,7 +31,7 @@ module.exports = function s3 (config) {
   function getUploadParameters (req, res, next) {
     // @ts-ignore The `companion` property is added by middleware before reaching here.
     const client = req.companion.s3Client
-    const metadata = req.query.metadata || {}
+    const metadata = removeMetadataProperties(req.query.metadata) || {}
     const key = config.getKey(req, req.query.filename, metadata)
     if (typeof key !== 'string') {
       return res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
@@ -92,7 +97,7 @@ module.exports = function s3 (config) {
       Key: key,
       ACL: config.acl,
       ContentType: type,
-      Metadata: metadata
+      Metadata: removeMetadataProperties(metadata)
     }, (err, data) => {
       if (err) {
         next(err)
