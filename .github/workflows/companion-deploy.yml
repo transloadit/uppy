@@ -16,7 +16,7 @@ jobs:
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
         with:
-          images: name/app
+          images: transloadit/companion
           tag-sha: true
           tag-semver: |
             {{version}}
