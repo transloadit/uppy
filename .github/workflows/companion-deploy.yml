@@ -1,6 +1,6 @@
 name: Companion Deploy
 
-on: 
+on:
   push:
     branches: [master]
 
