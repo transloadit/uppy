@@ -1008,6 +1008,13 @@ class Uppy {
       },
     })
 
+    // If file is a google doc uploaded by companion
+    // file.size is null
+    if (data.bytesTotal === data.bytesUploaded && !file.size) {
+      this.setFileState(file.id, {
+        size: data.bytesTotal
+      })
+    }
     this._calculateTotalProgress()
   }
 
