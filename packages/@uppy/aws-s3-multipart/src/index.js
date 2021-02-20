@@ -101,7 +101,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       filename: file.name,
       idToken,
       type: file.type,
-      metadata: removeMetaProperty(metadata
+      metadata: removeMetaProperty(metadata)
     }).then(assertServerError)
   }
 
