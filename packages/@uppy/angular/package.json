@@ -1,6 +1,7 @@
 {
   "name": "@uppy/angular",
   "version": "0.0.0",
+  "main": "dist/angular/esm2015/uppy-angular.js",
   "scripts": {
     "ng": "ng",
     "start": "start-storybook -p 6006",
