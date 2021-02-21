@@ -9,7 +9,8 @@ export abstract class UppyAngularWrapper {
     plugin: Plugin;
 
     handleChanges(changes: SimpleChanges, plugin: any, defaultOptions: any): void {
-        if (changes.uppy && this.uppy !== changes.uppy.previousValue) {
+        // Without the last part of this conditional, it tries to uninstall before the plugin is mounted
+        if (changes.uppy && this.uppy !== changes.uppy.previousValue && changes.uppy.previousValue !== undefined) {
             this.uninstall(changes.uppy.previousValue);
         }
         this.options = {
@@ -24,6 +25,7 @@ export abstract class UppyAngularWrapper {
     }
 
     uninstall(uppy = this.uppy): void {
+        console.log('Uninstalling...')
         uppy.removePlugin(this.plugin);
     }
 
