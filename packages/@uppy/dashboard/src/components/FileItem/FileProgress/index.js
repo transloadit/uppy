@@ -103,6 +103,10 @@ module.exports = function FileProgress (props) {
     )
   }
 
+  if (props.recoveredState) {
+    return
+  }
+
   // Retry button for error
   if (props.error && !props.hideRetryButton) {
     return (

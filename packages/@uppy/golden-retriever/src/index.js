@@ -54,7 +54,7 @@ module.exports = class GoldenRetriever extends Plugin {
       this.uppy.setState({
         currentUploads: savedState.currentUploads || {},
         files: savedState.files || {},
-        recoveryState: savedState
+        recoveredState: savedState
       })
       this.savedPluginData = savedState.pluginData
     }
@@ -99,10 +99,10 @@ module.exports = class GoldenRetriever extends Plugin {
   }
 
   saveFilesStateToLocalStorage () {
-    const filesToSave = Object.assign(
-      this.getWaitingFiles(),
-      this.getUploadingFiles()
-    )
+    const filesToSave = {
+      ...this.getWaitingFiles(),
+      ...this.getUploadingFiles()
+    }
 
     // We dont’t need to store file.data on local files, because the actual blob will be restored later,
     // and we want to avoid having weird properties in the serialized object.
@@ -120,6 +120,13 @@ module.exports = class GoldenRetriever extends Plugin {
           isRestored: true,
           data: null,
           preview: null
+          // progress: {
+          //   ...filesToSave[file].progress,
+          //   percentage: 0,
+          //   bytesUploaded: 0,
+          //   uploadComplete: false,
+          //   uploadStarted: null
+          // }
         }
       }
     })
@@ -187,7 +194,7 @@ module.exports = class GoldenRetriever extends Plugin {
 
   onBlobsLoaded (blobs) {
     const obsoleteBlobs = []
-    const updatedFiles = Object.assign({}, this.uppy.getState().files)
+    const updatedFiles = { ...this.uppy.getState().files }
 
     // Loop through blobs that we can restore, add blobs to file objects
     Object.keys(blobs).forEach((fileID) => {
@@ -289,6 +296,13 @@ module.exports = class GoldenRetriever extends Plugin {
         this.uppy.restore(uploadId, currentUploads[uploadId])
       })
     }
+    this.uppy.upload()
+    this.uppy.setState({ recoveredState: null })
+  }
+
+  abortRestore = () => {
+    this.uppy.cancelAll()
+    this.uppy.setState({ recoveredState: null })
   }
 
   handleComplete = ({ successful }) => {
@@ -325,6 +339,7 @@ module.exports = class GoldenRetriever extends Plugin {
     this.uppy.on('file-removed', this.removeBlobFromStores)
     this.uppy.on('state-update', this.saveFilesStateToLocalStorage)
     this.uppy.on('restore-confirmed', this.handleRestoreConfirmed)
+    this.uppy.on('restore-canceled', this.abortRestore)
     this.uppy.on('complete', this.handleComplete)
   }
 
@@ -334,6 +349,7 @@ module.exports = class GoldenRetriever extends Plugin {
     this.uppy.off('file-removed', this.removeBlobFromStores)
     this.uppy.off('state-update', this.saveFilesStateToLocalStorage)
     this.uppy.off('restore-confirmed', this.handleRestoreConfirmed)
+    this.uppy.off('restore-canceled', this.abortRestore)
     this.uppy.off('complete', this.handleComplete)
   }
 }

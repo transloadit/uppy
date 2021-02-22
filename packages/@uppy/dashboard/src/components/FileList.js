@@ -53,6 +53,7 @@ module.exports = (props) => {
     showRemoveButtonAfterComplete: props.showRemoveButtonAfterComplete,
     isWide: props.isWide,
     metaFields: props.metaFields,
+    recoveredState: props.recoveredState,
     // callbacks
     retryUpload: props.retryUpload,
     pauseUpload: props.pauseUpload,

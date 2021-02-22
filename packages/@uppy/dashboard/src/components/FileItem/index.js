@@ -57,7 +57,7 @@ module.exports = class FileItem extends Component {
 
     const dashboardItemClass = classNames({
       'uppy-Dashboard-Item': true,
-      'is-inprogress': uploadInProgress,
+      'is-inprogress': uploadInProgress && !this.props.recoveredState,
       'is-processing': isProcessing,
       'is-complete': isUploaded,
       'is-error': !!error,
@@ -85,6 +85,7 @@ module.exports = class FileItem extends Component {
             hideRetryButton={this.props.hideRetryButton}
             hideCancelButton={this.props.hideCancelButton}
             hidePauseResumeButton={this.props.hidePauseResumeButton}
+            recoveredState={this.props.recoveredState}
 
             showRemoveButtonAfterComplete={this.props.showRemoveButtonAfterComplete}
 

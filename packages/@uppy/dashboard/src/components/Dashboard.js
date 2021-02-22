@@ -52,7 +52,7 @@ module.exports = function Dashboard (props) {
 
   const showFileList = props.showSelectedFiles && !noFiles
 
-  const numberOfFilesForRecovery = props.recoveryState ? Object.keys(props.recoveryState.files).length : null
+  const numberOfFilesForRecovery = props.recoveredState ? Object.keys(props.recoveredState.files).length : null
 
   const dashboard = (
     <div
@@ -115,7 +115,7 @@ module.exports = function Dashboard (props) {
               {' '}
               <button
                 class="uppy-u-reset uppy-c-btn uppy-Dashboard-serviceMsg-actionBtn"
-                onClick={props.cancelAll}
+                onClick={props.handleCancelRestore}
               >
                 start over
               </button>

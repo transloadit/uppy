@@ -73,7 +73,8 @@ module.exports = (props) => {
     hideUploadButton,
     hidePauseResumeButton,
     hideCancelButton,
-    hideRetryButton
+    hideRetryButton,
+    recoveredState
   } = props
 
   const uploadState = props.uploadState
@@ -105,13 +106,19 @@ module.exports = (props) => {
   }
 
   const width = typeof progressValue === 'number' ? progressValue : 100
-  const isHidden = (uploadState === statusBarStates.STATE_WAITING && props.hideUploadButton) ||
+  let isHidden = (uploadState === statusBarStates.STATE_WAITING && props.hideUploadButton) ||
     (uploadState === statusBarStates.STATE_WAITING && !props.newFiles > 0) ||
     (uploadState === statusBarStates.STATE_COMPLETE && props.hideAfterFinish)
 
-  const showUploadBtn = !error && newFiles &&
+  let showUploadBtn = !error && newFiles &&
     !isUploadInProgress && !isAllPaused &&
     allowNewUpload && !hideUploadButton
+
+  if (recoveredState) {
+    isHidden = false
+    showUploadBtn = true
+  }
+
   const showCancelBtn = !hideCancelButton &&
     uploadState !== statusBarStates.STATE_WAITING &&
     uploadState !== statusBarStates.STATE_COMPLETE
@@ -166,6 +173,10 @@ const UploadBtn = (props) => {
     { 'uppy-StatusBar-actionBtn--disabled': props.isSomeGhost }
   )
 
+  const uploadBtnText = props.newFiles && props.isUploadStarted && !props.recoveredState
+    ? props.i18n('uploadXNewFiles', { smart_count: props.newFiles })
+    : props.i18n('uploadXFiles', { smart_count: props.newFiles })
+
   return (
     <button
       type="button"
@@ -175,9 +186,7 @@ const UploadBtn = (props) => {
       disabled={props.isSomeGhost}
       data-uppy-super-focusable
     >
-      {props.newFiles && props.isUploadStarted
-        ? props.i18n('uploadXNewFiles', { smart_count: props.newFiles })
-        : props.i18n('uploadXFiles', { smart_count: props.newFiles })}
+      {uploadBtnText}
     </button>
   )
 }

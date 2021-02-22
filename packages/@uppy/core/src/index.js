@@ -807,10 +807,12 @@ class Uppy {
       files: updatedFiles
     }
 
-    // If all files were removed - allow new uploads!
+    // If all files were removed - allow new uploads,
+    // and clear recoveredState
     if (Object.keys(updatedFiles).length === 0) {
       stateUpdate.allowNewUpload = true
       stateUpdate.error = null
+      stateUpdate.recoveredState = null
     }
 
     this.setState(stateUpdate)
@@ -933,7 +935,7 @@ class Uppy {
     this.setState({
       totalProgress: 0,
       error: null,
-      recoveryState: null
+      recoveredState: null
     })
   }
 

@@ -661,6 +661,10 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
+  handleCancelRestore = () => {
+    this.uppy.emit('restore-canceled')
+  }
+
   _openFileEditorWhenFilesAdded = (files) => {
     const firstFile = files[0]
     if (this.canEditFile(firstFile)) {
@@ -918,7 +922,7 @@ module.exports = class Dashboard extends Plugin {
       uppy: this.uppy,
       info: this.uppy.info,
       note: this.opts.note,
-      recoveryState: state.recoveryState,
+      recoveredState: state.recoveredState,
       metaFields: pluginState.metaFields,
       resumableUploads: capabilities.resumableUploads || false,
       individualCancellation: capabilities.individualCancellation,
@@ -951,6 +955,7 @@ module.exports = class Dashboard extends Plugin {
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
       showSelectedFiles: this.opts.showSelectedFiles,
+      handleCancelRestore: this.handleCancelRestore,
       handleRequestThumbnail: this.handleRequestThumbnail,
       handleCancelThumbnail: this.handleCancelThumbnail,
       // drag props
