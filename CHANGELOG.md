@@ -12,16 +12,18 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## March 2021
+
+- [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
+- [ ] plugin: audio/memo recording similar to Webcam #143 #198
+- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
+
 ## February 2021
 
 ### next
 
 - [ ] dashboard: Add a `disabled` (`true`||`false`) option (later for /dragndrop and fileinput) (#1530, @arturi)
-- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
-- [ ] integration: Vue 3
-- [ ] plugin: audio/memo recording similar to Webcam #143 #198
-- [ ] xhr-upload: allow setting http headers on per file basis? (#2299 / @goto-bus-stop)
+- [ ] integration: Vue 3 (#2755 / @ajkachnic)
 
 ## 1.25.2
 
@@ -60,7 +62,7 @@ Released: 2021-02-10
 | @uppy/progress-bar | 1.3.25 | - | - |
 
 - @uppy/companion: Companion should respect previously set value for Accesss-Control-Allow-Methods (#2726 / @tim-kos, @mifi, @so-steve)
-- @uppy/xhr-upload: accept a `headers: (file) => {}` function (#2747 / @goto-but-stop)
+- @uppy/xhr-upload: accept a `headers: (file) => {}` function (#2747, #2299 / @goto-but-stop)
 - @uppy/transloadit: fix polling fallback bugs (#2759 / @goto-bus-stop)
 - @uppy/dashboard: fix showing showProgressDetails on md and up (#2760 / @goto-bus-stop)
 - @uppy/utils: added mp4 file type support — Safari 14.0 on Mac records audio using audio/mp4 MIME type which isn't currently recognised by Uppy (#2753 / @dominiceden)
