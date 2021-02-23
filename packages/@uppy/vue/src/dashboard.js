@@ -42,9 +42,9 @@ export default {
       uppy.removePlugin(this.plugin)
     }
   },
-  // beforeDestroy () {
-  //   this.uninstallPlugin(this.uppy)
-  // },
+  beforeDestroy () {
+    this.uninstallPlugin(this.uppy)
+  },
   beforeUnmount () {
     this.uninstallPlugin(this.uppy)
   },

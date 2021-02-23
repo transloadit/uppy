@@ -40,6 +40,9 @@ export default {
   beforeDestroy () {
     this.uninstallPlugin(this.uppy)
   },
+  beforeUnmount () {
+    this.uninstallPlugin(this.uppy)
+  },
   watch: {
     uppy (current, old) {
       if (old !== current) {
