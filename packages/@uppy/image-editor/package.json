@@ -26,6 +26,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@uppy/utils": "file:../utils",
     "cropperjs": "1.5.7",
     "preact": "8.2.9"
   },
