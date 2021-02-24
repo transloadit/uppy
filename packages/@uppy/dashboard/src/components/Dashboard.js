@@ -60,6 +60,7 @@ module.exports = function Dashboard (props) {
       data-uppy-num-acquirers={props.acquirers.length}
       data-uppy-drag-drop-supported={isDragDropSupported()}
       aria-hidden={props.inline ? 'false' : props.isHidden}
+      aria-disabled={props.disabled}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
       onpaste={props.handlePaste}
       onDragOver={props.handleDragOver}

@@ -14,6 +14,7 @@ const cuid = require('cuid')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const createSuperFocus = require('./utils/createSuperFocus')
 const memoize = require('memoize-one').default || require('memoize-one')
+const FOCUSABLE_ELEMENTS = require('@uppy/utils/lib/FOCUSABLE_ELEMENTS')
 
 const TAB_KEY = 9
 const ESC_KEY = 27
@@ -503,6 +504,12 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
+  disableAllFocusableElements = (disable) => {
+    const focusableNodes = toArray(this.el.querySelectorAll(FOCUSABLE_ELEMENTS))
+    focusableNodes.forEach(node => node.setAttribute('tabindex', disable ? '-1' : '0'))
+    this.dashboardIsDisabled = disable
+  }
+
   updateBrowserHistory = () => {
     // Ensure history state does not already contain our modal name to avoid double-pushing
     if (!history.state || !history.state[this.modalName]) {
@@ -772,6 +779,15 @@ module.exports = class Dashboard extends Plugin {
   }
 
   afterUpdate = () => {
+    if (this.opts.disabled && !this.dashboardIsDisabled) {
+      this.disableAllFocusableElements(true)
+      return
+    }
+
+    if (!this.opts.disabled && this.dashboardIsDisabled) {
+      this.disableAllFocusableElements(false)
+    }
+
     this.superFocusOnEachUpdate()
   }
 
@@ -911,6 +927,7 @@ module.exports = class Dashboard extends Plugin {
       direction: this.opts.direction,
       activePickerPanel: pluginState.activePickerPanel,
       showFileEditor: pluginState.showFileEditor,
+      disableAllFocusableElements: this.disableAllFocusableElements,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
       getPlugin: this.uppy.getPlugin,
