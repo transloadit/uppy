@@ -1008,9 +1008,9 @@ class Uppy {
       },
     })
 
-    // If file is a google doc uploaded by companion
-    // file.size is null
-    if (data.bytesTotal === data.bytesUploaded && !file.size) {
+    // Remote providers sometimes don't tell us the file size,
+    // but we can know how many bytes we uploaded once the upload is complete.
+    if (data.bytesTotal === data.bytesUploaded && file.size == null) {
       this.setFileState(file.id, {
         size: data.bytesTotal
       })
