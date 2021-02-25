@@ -337,11 +337,15 @@ module.exports = class XHRUpload extends Plugin {
         xhr.responseType = opts.responseType
       }
 
-      Object.keys(opts.headers).forEach((header) => {
-        xhr.setRequestHeader(header, opts.headers[header])
-      })
-
       const queuedRequest = this.requests.run(() => {
+        // When using an authentication system like JWT, the bearer token goes as a header. This
+        // header needs to be fresh each time the token is refreshed so computing and setting the
+        // headers just before the upload starts enables this kind of authentication to work properly.
+        // Otherwise, half-way through the list of uploads the token could be stale and the upload would fail.
+        const currentOpts = this.getOptions(file)
+        Object.keys(currentOpts.headers).forEach((header) => {
+          xhr.setRequestHeader(header, currentOpts.headers[header])
+        })
         xhr.send(data)
         return () => {
           timer.done()
