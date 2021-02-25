@@ -1008,13 +1008,6 @@ class Uppy {
       },
     })
 
-    // Remote providers sometimes don't tell us the file size,
-    // but we can know how many bytes we uploaded once the upload is complete.
-    if (data.bytesTotal === data.bytesUploaded && file.size == null) {
-      this.setFileState(file.id, {
-        size: data.bytesTotal
-      })
-    }
     this._calculateTotalProgress()
   }
 
@@ -1171,6 +1164,14 @@ class Uppy {
         uploadURL: uploadResp.uploadURL,
         isPaused: false,
       })
+
+      // Remote providers sometimes don't tell us the file size,
+      // but we can know how many bytes we uploaded once the upload is complete.
+      if (file.size == null) {
+        this.setFileState(file.id, {
+          size: currentProgress.bytesTotal
+        })
+      }
 
       this._calculateTotalProgress()
     })
