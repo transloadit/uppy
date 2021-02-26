@@ -14,16 +14,41 @@ In the current stage we aim to release a new version at least every month.
 
 ## March 2021
 
+### next
+
 - [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
 - [ ] plugin: audio/memo recording similar to Webcam #143 #198
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
+- [ ] integration: Vue 3 (#2755 / @ajkachnic)
 
 ## February 2021
 
-### next
+## 1.26.0
 
-- [ ] dashboard: Add a `disabled` (`true`||`false`) option (later for /dragndrop and fileinput) (#1530, @arturi)
-- [ ] integration: Vue 3 (#2755 / @ajkachnic)
+Released: 2021-02-26
+
+This release adds a new `disabled` option for the Dashboard, some build system improvements and a fix for Transloadit plugin.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/box | 0.3.6 | @uppy/robodog | 1.10.5 |
+| @uppy/dashboard | 1.17.0 | @uppy/screen-capture | 1.0.15 |
+| @uppy/dropbox | 1.4.24 | @uppy/svelte | 0.1.5 |
+| @uppy/facebook | 1.1.24 | @uppy/transloadit | 1.6.21 |
+| @uppy/google-drive | 1.5.24 | @uppy/unsplash | 0.1.8 |
+| @uppy/image-editor | 0.2.2 | @uppy/url | 1.5.18 |
+| @uppy/instagram | 1.4.24 | @uppy/vue | 0.1.6 |
+| @uppy/locales | 1.17.2 | @uppy/webcam | 1.8.6 |
+| @uppy/onedrive | 1.1.24 | @uppy/zoom | 0.1.13 |
+| @uppy/react | 1.11.4 | uppy | 1.26.0 |
+
+- build: set legacy-peer-deps for npm 7. We have some peerDependency mismatches in our install tree. In npm 6 this was OK (maybe reason for a warning) but in npm 7 they hard fail the install
+- build: added npm version check (33e656cad32b865f960dbd88abf4d3839c8377f0 / @goto-bus-stop)
+- @uppy/locales: fix Dutch spelling mistake (#2775 / @janwilts)
+- @uppy/transloadit: make url concatenation more robust (#2777 /@ethanwillis)
+- @uppy/companion: Docker tag release (#2771 / @kiloreux)
+- @uppy/image-editor: Added missing @uppy/utils dependency in @uppy/image-editor package.json (#2770 / @mrogelja)
+- @uppy/dashboard: Added `opts.disabled` for the Dashboard (#2768, #1530 / @arturi, @nqst)
 
 ## 1.25.2
 
