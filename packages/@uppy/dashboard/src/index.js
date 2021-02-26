@@ -506,7 +506,24 @@ module.exports = class Dashboard extends Plugin {
 
   disableAllFocusableElements = (disable) => {
     const focusableNodes = toArray(this.el.querySelectorAll(FOCUSABLE_ELEMENTS))
-    focusableNodes.forEach(node => node.setAttribute('tabindex', disable ? '-1' : '0'))
+    if (disable) {
+      focusableNodes.forEach((node) => {
+        // save previous tabindex in a data-attribute, to restore when enabling
+        const currentTabIndex = node.getAttribute('tabindex')
+        if (currentTabIndex) {
+          node.dataset.inertTabindex = currentTabIndex
+        }
+        node.setAttribute('tabindex', '-1')
+      })
+    } else {
+      focusableNodes.forEach((node) => {
+        if ('inertTabindex' in node.dataset) {
+          node.setAttribute('tabindex', node.dataset.inertTabindex)
+        } else {
+          node.removeAttribute('tabindex')
+        }
+      })
+    }
     this.dashboardIsDisabled = disable
   }
 
