@@ -1169,7 +1169,7 @@ class Uppy {
       // but we can know how many bytes we uploaded once the upload is complete.
       if (file.size == null) {
         this.setFileState(file.id, {
-          size: currentProgress.bytesTotal
+          size: currentProgress.bytesTotal || uploadResp.bytesUploaded
         })
       }
 
