@@ -304,7 +304,8 @@ module.exports = class Transloadit extends Plugin {
    * Used when `importFromUploadURLs` is enabled: adds files to the Assembly
    * once they have been fully uploaded.
    */
-  _onFileUploadURLAvailable (file) {
+  _onFileUploadURLAvailable (rawFile) {
+    const file = this.uppy.getFile(rawFile.id)
     if (!file || !file.transloadit || !file.transloadit.assembly) {
       return
     }
