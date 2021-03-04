@@ -117,7 +117,6 @@
 
 .IndexLogos--customers path {
   fill: $color-dark;
-  transition: fill 0.3s ease;
 }
 
 .IndexLogos-item--coursera:hover {
@@ -145,6 +144,30 @@
 .IndexLogos-item--zulip:hover {
   .zulip {
     fill: #50a395;
+  }
+}
+
+.IndexLogos-item--js:hover {
+  .js {
+    fill: #ffaa00;
+  }
+}
+
+.IndexLogos-item--react:hover {
+  .react {
+    fill: #37c1e7;
+  }
+}
+
+.IndexLogos-item--vue:hover {
+  .vue {
+    fill: #41b783;
+  }
+}
+
+.IndexLogos-item--svelte:hover {
+  .svelte {
+    fill: #ff3f00;
   }
 }
 
