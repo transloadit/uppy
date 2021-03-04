@@ -15,7 +15,7 @@ const redis = require('./redis')
 function removeMetadataProperties (object) {
   if (!object) return false
   // add more here?
-  const { idToken, uploadCode, ...newFileObject } = object
+  const { idToken, uploadCode, name, ...newFileObject } = object
   return newFileObject
 }
 
