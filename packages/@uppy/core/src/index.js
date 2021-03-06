@@ -8,10 +8,10 @@ const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
+const findIndex = require('@uppy/utils/lib/findIndex')
 const supportsUploadProgress = require('./supportsUploadProgress')
 const { justErrorsLogger, debugLogger } = require('./loggers')
 const Plugin = require('./Plugin') // Exported from here.
-
 class RestrictionError extends Error {
   constructor (...args) {
     super(...args)
@@ -1321,14 +1321,22 @@ class Uppy {
     }
 
     const list = this.plugins[instance.type].slice()
-    const index = list.indexOf(instance)
+    // list.indexOf failed here, because Vue3 converted the plugin instance
+    // to a Proxy object, which failed the strict comparison test:
+    // obj !== objProxy
+    const index = findIndex(list, item => item.id === instance.id)
     if (index !== -1) {
       list.splice(index, 1)
       this.plugins[instance.type] = list
     }
 
-    const updatedState = this.getState()
-    delete updatedState.plugins[instance.id]
+    const state = this.getState()
+    const updatedState = {
+      plugins: {
+        ...state.plugins,
+        [instance.id]: undefined
+      }
+    }
     this.setState(updatedState)
   }
 
