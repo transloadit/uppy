@@ -6,7 +6,7 @@ const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
-const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId'
+const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
@@ -225,7 +225,14 @@ class Drive extends Provider {
         // @todo isTeamDrive is left for backward compatibility. We should remove it in the next
         // major release.
         isTeamDrive: adapter.isSharedDrive(item),
-        isSharedDrive: adapter.isSharedDrive(item)
+        isSharedDrive: adapter.isSharedDrive(item),
+        imageHeight: adapter.getImageHeight(item),
+        imageWidth: adapter.getImageWidth(item),
+        imageRotation: adapter.getImageRotation(item),
+        imageDateTime: adapter.getImageDate(item),
+        videoHeight: adapter.getVideoHeight(item),
+        videoWidth: adapter.getVideoWidth(item),
+        videoDurationMillis: adapter.getVideoDurationMillis(item)
       }
     })
 
