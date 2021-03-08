@@ -32,7 +32,7 @@
 }
 
 .IndexHero-description {
-  color: $color-gray;
+  color: $color-medium-gray;
   font-size: 14px;
   line-height: 1.45;
   margin-bottom: 24px;
@@ -60,12 +60,18 @@
 
 .IndexLogos {
   font-size: 12px;
-  color: $color-gray;
+  color: $color-dark;
   text-align: center;
   margin: 80px 0;
 
   @media #{$screen-medium} {
     margin-top: 120px;
+  }
+
+  &--customers {
+    @media #{$screen-medium} {
+      margin: 150px 0 120px;
+    }
   }
 
   &-container {
@@ -78,7 +84,7 @@
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     font-size: inherit;
     color: inherit;
   }
@@ -95,11 +101,13 @@
     vertical-align: middle;
 
     @media #{$screen-medium} {
-      margin: 0 30px 5px;
+      margin: 0 30px 10px;
     }
   }
 
   &-join {
+    color: $color-gray;
+
     a {
       color: inherit;
       text-decoration: underline;
@@ -107,9 +115,8 @@
   }
 }
 
-.IndexLogos-item path {
-  fill: #b7b9bb;
-  transition: fill 0.3s ease;
+.IndexLogos--customers path {
+  fill: $color-dark;
 }
 
 .IndexLogos-item--coursera:hover {
@@ -137,6 +144,30 @@
 .IndexLogos-item--zulip:hover {
   .zulip {
     fill: #50a395;
+  }
+}
+
+.IndexLogos-item--js:hover {
+  .js {
+    fill: #ffaa00;
+  }
+}
+
+.IndexLogos-item--react:hover {
+  .react {
+    fill: #37c1e7;
+  }
+}
+
+.IndexLogos-item--vue:hover {
+  .vue {
+    fill: #41b783;
+  }
+}
+
+.IndexLogos-item--svelte:hover {
+  .svelte {
+    fill: #ff3f00;
   }
 }
 
