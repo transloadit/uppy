@@ -10,6 +10,7 @@ declare module AwsS3Multipart {
   }
 
   interface AwsS3MultipartOptions extends Uppy.PluginOptions {
+    companionHeaders?: { [type: string]: string }
     companionUrl?: string
     getChunkSize?: (file: Uppy.UppyFile) => number
     createMultipartUpload?: (

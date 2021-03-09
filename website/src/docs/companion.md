@@ -36,7 +36,7 @@ Install from NPM:
 npm install @uppy/companion
 ```
 
-If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@1.x`.
+If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@2.x`.
 
 ### Prerequisite
 

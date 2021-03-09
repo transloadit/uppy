@@ -1,4 +1,5 @@
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
+const URL = require('url-parse')
 
 /**
  * A Barebones HTTP API client for Transloadit.
@@ -42,7 +43,7 @@ module.exports = class Client {
     })
     data.append('num_expected_upload_files', expectedFiles)
 
-    const url = `${this.opts.service}/assemblies`
+    const url = new URL('/assemblies', `${this.opts.service}`).href
     return fetchWithNetworkError(url, {
       method: 'post',
       headers: this._headers,

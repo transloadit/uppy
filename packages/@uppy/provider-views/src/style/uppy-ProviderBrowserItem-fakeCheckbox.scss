@@ -12,6 +12,8 @@
     content: '';
     position: absolute;
     cursor: pointer;
+    // Not using border-inline-start here: this is part of a CSS trick to get
+    // a check mark icon that only works in one direction
     border-left: 2px solid $gray-200;
     border-bottom: 2px solid $gray-200;
     transform: rotate(-45deg);

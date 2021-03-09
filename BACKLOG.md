@@ -34,6 +34,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] dashboard: focus jumps weirdly if you remove a file https://github.com/transloadit/uppy/pull/2161#issuecomment-613565486
 - [ ] plugins: a WakeLock based plugin that keeps your phone from going to sleep while an upload is ongoing https://github.com/transloadit/uppy/issues/1725
 - [ ] provider: Image search (via Google or Bing or DuckDuckGo): use duckduckgo-images-api or Google Search API (@arturi)
+- [ ] provider: Google Photos (#2163)
 
 ### 2.0
 
@@ -63,19 +64,13 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
 - [ ] tus: remove `autoRetry` option (throw error at runtime if it is explicitly given)
 
-## February 2021
+## 1.x
 
-- [ ] provider: Giphy image search (on top of Unsplash plugin) ()
-- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
-
-## January 2021
-
-- [ ] test: add typescript with JSDoc for @uppy/core https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files (@arturi)
-- [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112 #362
-- [ ] plugins: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
-- [ ] add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
-- [ ] dashboard: fix Dashboard issues with Angular — it’s incredibly slow presumably because of ResizeObserver? (See #1613) (@adammedford)
-- [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
-- [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
-- [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
 - [ ] dashboard: a mini UI that features drop & progress (may involve a `mini: true` options for dashboard, may involve drop+progress or new plugin) (@arturi)
+- [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
+- [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
+- [ ] plugin: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
+- [ ] provider: Giphy image search (on top of Unsplash plugin) ()
+- [ ] test: add typescript with JSDoc for @uppy/core https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files (@arturi)
+- [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
+- [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112 #362

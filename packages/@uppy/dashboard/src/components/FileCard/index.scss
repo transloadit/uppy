@@ -73,7 +73,7 @@
       @include blue-border-focus;
       position: absolute;
       top: 10px;
-      right: 10px;
+      inset-inline-end: 10px;
       font-size: 13px;
       background-color: rgba($black, 0.5);
       color: $white;
@@ -153,7 +153,7 @@
     }
 
       .uppy-Dashboard-FileCard-actionsBtn {
-        margin-right: 10px;
+        margin-inline-end: 10px;
       }
     // ...uppy-Dashboard-FileCard-actions|
 

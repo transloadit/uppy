@@ -105,14 +105,14 @@
   align-items: center;
   position: relative;
   z-index: $zIndex-3;
-  padding-left: 10px;
+  padding-inline-start: 10px;
   white-space: nowrap;
   text-overflow: ellipsis;
   color: $gray-800;
   height: 100%;
 
   .uppy-size--md & {
-    padding-left: 15px;
+    padding-inline-start: 15px;
   }
 
   [data-uppy-theme="dark"] & {
@@ -126,12 +126,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-right: 0.3em;
-}
-
-// Don't display elements with class .-additionalInfo if we're not at least on .md
-.uppy-Root:not(.uppy-size--md) .uppy-StatusBar-additionalInfo {
-  display: none;
+  padding-inline-end: 0.3em;
 }
 
 .uppy-StatusBar-statusPrimary {
@@ -159,11 +154,11 @@
   .uppy-StatusBar-statusSecondaryHint {
     display: inline-block;
     vertical-align: middle;
-    margin-right: 5px;
+    margin-inline-end: 5px;
     line-height: 1;
 
     .uppy-size--md & {
-      margin-right: 8px;
+      margin-inline-end: 8px;
     }
   }
 
@@ -175,7 +170,7 @@
   position: relative;
   top: 1px;
   color: $gray-700;
-  margin-right: 7px;
+  margin-inline-end: 7px;
 
   svg {
     vertical-align: text-bottom;
@@ -188,7 +183,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 10px;
+  inset-inline-end: 10px;
   z-index: $zIndex-4;
 }
 
@@ -246,7 +241,7 @@
     @include blue-border-focus();
     height: 16px;
     border-radius: 8px;
-    margin-right: 6px;
+    margin-inline-end: 6px;
     background-color: $pomegranate;
     line-height: 1;
     color: #fff;
@@ -264,7 +259,7 @@
     svg {
       position: absolute;
       top: 3px;
-      left: 6px;
+      inset-inline-start: 6px;
     }
   }
 
@@ -275,7 +270,7 @@
     color: $white;
     background-color: $green;
     line-height: 1;
-    
+
     &:hover {
       background-color: darken($green, 5%);
     }
@@ -302,8 +297,8 @@
   .uppy-StatusBar-actionBtn--uploadNewlyAdded {
     // for focus
     @include blue-border-focus;
-    padding-right: 3px;
-    padding-left: 3px;
+    padding-inline-end: 3px;
+    padding-inline-start: 3px;
     padding-bottom: 1px;
     border-radius: 3px;
 
@@ -338,7 +333,7 @@
   border-radius: 50%;
   position: relative;
   top: 0;
-  left: 2px;
+  inset-inline-start: 2px;
   font-size: 10px;
   font-weight: 600;
   text-align: center;
@@ -355,7 +350,7 @@
   animation-duration: 1s;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
-  margin-right: 10px;
+  margin-inline-end: 10px;
   fill: $blue;
 }
 
