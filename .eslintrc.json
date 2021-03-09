@@ -30,7 +30,7 @@
     }
   },
   "rules": {
-    // transloadit rules we are actually ok with
+    // transloadit rules we are actually ok with in the uppy repo
     ////////////////////////////////////////////////////////////
     "guard-for-in": 0,
     "import/extensions": 0,
