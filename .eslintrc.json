@@ -1,22 +1,87 @@
 {
-  "parser": "@babel/eslint-parser",
-  "extends": ["standard", "standard-jsx"],
+  "extends": ["transloadit"],
   "env": {
-    "browser": true,
+    "es6": true,
+    "jest": true,
     "node": true,
-    "jest": true
+    // extra:
+    "browser": true
   },
   "globals": {
     "window": true,
     "hexo": true
   },
-  "plugins": ["jest", "compat", "jsdoc", "@babel/eslint-plugin"],
+  "plugins": [
+    "@babel/eslint-plugin",
+    "jest",
+    "node",
+    "prefer-import",
+    "promise",
+    "react",
+    // extra:
+    "compat",
+    "jsdoc"
+  ],
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
   "rules": {
-    "jsx-quotes": ["error", "prefer-double"],
-    "compat/compat": ["error"],
-    "react/jsx-handler-names": ["off"],
-    "react/react-in-jsx-scope": ["error"],
+    // transloadit rules we are actually ok with
+    ////////////////////////////////////////////////////////////
+    "guard-for-in": 0,
+    "import/extensions": 0,
 
+    // transloadit rules we would like to enforce in the future
+    // but will require separate PRs to gradually get there
+    // and so the meantime: just warn
+    ////////////////////////////////////////////////////////////
+    "array-callback-return": ["warn"],
+    "block-scoped-var": ["warn"],
+    "class-methods-use-this": ["warn"],
+    "consistent-return": ["warn"],
+    "default-case": ["warn"],
+    "global-require": ["warn"],
+    "implicit-arrow-linebreak": ["warn"],
+    "import/no-dynamic-require": ["warn"],
+    "import/no-extraneous-dependencies": ["warn"],
+    "import/no-unresolved": ["warn"],
+    "import/order": ["warn"],
+    "no-await-in-loop": ["warn"],
+    "no-bitwise": ["warn"],
+    "no-continue": ["warn"],
+    "no-empty": ["warn"],
+    "no-lonely-if": ["warn"],
+    "no-mixed-operators": ["warn"],
+    "no-nested-ternary": ["warn"],
+    "no-param-reassign": ["warn"],
+    "no-redeclare": ["warn"],
+    "no-restricted-globals": ["warn"],
+    "no-restricted-properties": ["warn"],
+    "no-restricted-syntax": ["warn"],
+    "no-return-assign": ["warn"],
+    "no-shadow": ["warn"],
+    "no-underscore-dangle": ["warn"],
+    "no-unused-expressions": ["warn"],
+    "no-unused-vars": ["warn"],
+    "no-use-before-define": ["warn"],
+    "no-useless-concat": ["warn"],
+    "no-var": ["warn"],
+    "node/handle-callback-err": ["warn"],
+    "prefer-destructuring": ["warn"],
+    "prefer-spread": ["warn"],
+    "radix": ["warn"],
+    "vars-on-top": ["warn"],
+
+    // compat
+    ////////////////////////////////////////////////////////////
+    "compat/compat": ["error"],
+
+    // jsdoc
+    ////////////////////////////////////////////////////////////
     "jsdoc/check-alignment": ["warn"],
     "jsdoc/check-examples": ["warn"],
     "jsdoc/check-param-names": ["warn"],
@@ -25,7 +90,7 @@
     "jsdoc/check-types": ["warn"],
     "jsdoc/newline-after-description": ["warn"],
     "jsdoc/valid-types": ["warn"],
-    "jsdoc/check-indentation": ["off"]
+    "jsdoc/check-indentation": 0
   },
   "settings": {
     "react": {
@@ -49,7 +114,7 @@
       "bin/*.js"
     ],
     "rules": {
-      "compat/compat": "off"
+      "compat/compat": 0
     }
   },{
     "files": [
@@ -57,8 +122,16 @@
       "packages/@uppy/locales/template.js"
     ],
     "rules": {
-      "camelcase": "off",
-      "quote-props": "off"
+      "camelcase": 0,
+      "quote-props": 0,
+      "key-spacing": 0 // <-- do not vertically align language definitions, it may scare off translators thinking they need to maintain order by hand
+    }
+  },{
+    "files": [
+      "website/themes/uppy/source/js/*.js"
+    ],
+    "rules": {
+      "prefer-const": 0
     }
   }]
 }

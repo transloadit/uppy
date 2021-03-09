@@ -149,6 +149,7 @@
     "eslint-plugin-jest": "23.20.0",
     "eslint-plugin-jsdoc": "30.2.2",
     "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prefer-import": "0.0.1",
     "eslint-plugin-promise": "4.2.1",
     "eslint-plugin-react": "7.20.6",
     "eslint-plugin-standard": "4.0.1",
