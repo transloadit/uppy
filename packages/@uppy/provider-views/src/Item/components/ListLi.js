@@ -4,16 +4,13 @@ const getAriaLabelOfCheckbox = (props) => {
   if (props.type === 'folder') {
     if (props.isChecked) {
       return props.i18n('unselectAllFilesFromFolderNamed', { name: props.title })
-    } else {
-      return props.i18n('selectAllFilesFromFolderNamed', { name: props.title })
     }
-  } else {
-    if (props.isChecked) {
-      return props.i18n('unselectFileNamed', { name: props.title })
-    } else {
-      return props.i18n('selectFileNamed', { name: props.title })
-    }
+    return props.i18n('selectAllFilesFromFolderNamed', { name: props.title })
   }
+  if (props.isChecked) {
+    return props.i18n('unselectFileNamed', { name: props.title })
+  }
+  return props.i18n('selectFileNamed', { name: props.title })
 }
 
 // if folder:
@@ -22,8 +19,7 @@ const getAriaLabelOfCheckbox = (props) => {
 // if file:
 //   + checkbox (selects file)
 //   + file name (selects file)
-module.exports = (props) => {
-  return (
+module.exports = (props) => (
     <li class={props.className} title={props.isDisabled ? props.restrictionReason : null}>
       <button
         type="button"
@@ -62,5 +58,4 @@ module.exports = (props) => {
         </button>
       )}
     </li>
-  )
-}
+)

@@ -1,6 +1,7 @@
 const prettierBytes = require('@transloadit/prettier-bytes')
-const indexedDB = typeof window !== 'undefined' &&
-  (window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB)
+
+const indexedDB = typeof window !== 'undefined'
+  && (window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB)
 
 const isSupported = !!indexedDB
 
@@ -67,19 +68,18 @@ function waitForRequest (request) {
 let cleanedUp = false
 class IndexedDBStore {
   constructor (opts) {
-    this.opts = Object.assign({
-      dbName: DB_NAME,
-      storeName: 'default',
-      expires: DEFAULT_EXPIRY, // 24 hours
-      maxFileSize: 10 * 1024 * 1024, // 10 MB
-      maxTotalSize: 300 * 1024 * 1024 // 300 MB
-    }, opts)
+    this.opts = {
+      dbName      : DB_NAME,
+      storeName   : 'default',
+      expires     : DEFAULT_EXPIRY, // 24 hours
+      maxFileSize : 10 * 1024 * 1024, // 10 MB
+      maxTotalSize: 300 * 1024 * 1024, // 300 MB
+      ...opts,
+    }
 
     this.name = this.opts.storeName
 
-    const createConnection = () => {
-      return connect(this.opts.dbName)
-    }
+    const createConnection = () => connect(this.opts.dbName)
 
     if (!cleanedUp) {
       cleanedUp = true
@@ -123,8 +123,8 @@ class IndexedDBStore {
         .get(this.key(fileID))
       return waitForRequest(request)
     }).then((result) => ({
-      id: result.data.fileID,
-      data: result.data.data
+      id  : result.data.fileID,
+      data: result.data.data,
     }))
   }
 
@@ -172,11 +172,11 @@ class IndexedDBStore {
     }).then((db) => {
       const transaction = db.transaction([STORE_NAME], 'readwrite')
       const request = transaction.objectStore(STORE_NAME).add({
-        id: this.key(file.id),
-        fileID: file.id,
-        store: this.name,
+        id     : this.key(file.id),
+        fileID : file.id,
+        store  : this.name,
         expires: Date.now() + this.opts.expires,
-        data: file.data
+        data   : file.data,
       })
       return waitForRequest(request)
     })
@@ -212,7 +212,8 @@ class IndexedDBStore {
             console.log(
               '[IndexedDBStore] Deleting record', entry.fileID,
               'of size', prettierBytes(entry.data.size),
-              '- expired on', new Date(entry.expires))
+              '- expired on', new Date(entry.expires),
+            )
             cursor.delete() // Ignoring return value … it's not terrible if this goes wrong.
             cursor.continue()
           } else {

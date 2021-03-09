@@ -1,8 +1,7 @@
 const { h } = require('preact')
 
 // TODO use Fragment when upgrading to preact X
-const Breadcrumb = (props) => {
-  return (
+const Breadcrumb = (props) => (
     <span>
       <button
         type="button"
@@ -13,11 +12,9 @@ const Breadcrumb = (props) => {
       </button>
       {!props.isLast ? ' / ' : ''}
     </span>
-  )
-}
+)
 
-module.exports = (props) => {
-  return (
+module.exports = (props) => (
     <div class="uppy-Provider-breadcrumbs">
       <div class="uppy-Provider-breadcrumbsIcon">{props.breadcrumbsIcon}</div>
       {
@@ -31,5 +28,4 @@ module.exports = (props) => {
         ))
       }
     </div>
-  )
-}
+)

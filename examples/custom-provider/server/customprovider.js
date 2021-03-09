@@ -1,4 +1,5 @@
 const request = require('request')
+
 const BASE_URL = 'https://api.unsplash.com'
 
 /**
@@ -12,12 +13,12 @@ class MyCustomProvider {
   list ({ token, directory }, done) {
     const path = directory ? `/${directory}/photos` : ''
     const options = {
-      url: `${BASE_URL}/collections${path}`,
-      method: 'GET',
-      json: true,
+      url    : `${BASE_URL}/collections${path}`,
+      method : 'GET',
+      json   : true,
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     }
 
     request(options, (err, resp, body) => {
@@ -33,12 +34,12 @@ class MyCustomProvider {
 
   download ({ id, token }, onData) {
     const options = {
-      url: `${BASE_URL}/photos/${id}`,
-      method: 'GET',
-      json: true,
+      url    : `${BASE_URL}/photos/${id}`,
+      method : 'GET',
+      json   : true,
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     }
 
     request(options, (err, resp, body) => {
@@ -57,12 +58,12 @@ class MyCustomProvider {
 
   size ({ id, token }, done) {
     const options = {
-      url: `${BASE_URL}/photos/${id}`,
-      method: 'GET',
-      json: true,
+      url    : `${BASE_URL}/photos/${id}`,
+      method : 'GET',
+      json   : true,
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     }
 
     request(options, (err, resp, body) => {
@@ -78,24 +79,24 @@ class MyCustomProvider {
 
   _adaptData (res) {
     const data = {
-      username: null,
-      items: [],
-      nextPagePath: null
+      username    : null,
+      items       : [],
+      nextPagePath: null,
     }
 
     const items = res
     items.forEach((item) => {
       const isFolder = !!item.published_at
       data.items.push({
-        isFolder: isFolder,
-        icon: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
-        name: item.title || item.description,
-        mimeType: isFolder ? null : 'image/jpeg',
-        id: item.id,
-        thumbnail: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
-        requestPath: item.id,
+        isFolder,
+        icon        : isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
+        name        : item.title || item.description,
+        mimeType    : isFolder ? null : 'image/jpeg',
+        id          : item.id,
+        thumbnail   : isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
+        requestPath : item.id,
         modifiedDate: item.updated_at,
-        size: null
+        size        : null,
       })
     })
 

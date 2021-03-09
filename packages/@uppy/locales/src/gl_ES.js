@@ -48,14 +48,14 @@ gl_ES.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete} de %{smart_count} arquivo subido',
     '1': '%{complete} de %{smart_count} arquivos subidos',
-    '2': '%{complete} de %{smart_count} arquivos subidos'
+    '2': '%{complete} de %{smart_count} arquivos subidos',
   },
   filter: 'Filtrar',
   finishEditingFile: 'Rematar edición de arquivo',
   folderAdded: {
     '0': 'Engadido %{smart_count} arquivo dende %{folder}',
     '1': 'Engadidos %{smart_count} arquivos dende %{folder}',
-    '2': 'Engadidos %{smart_count} arquivos dende %{folder}'
+    '2': 'Engadidos %{smart_count} arquivos dende %{folder}',
   },
   import: 'Importar',
   importFrom: 'Importar dende %{name}',
@@ -71,7 +71,7 @@ gl_ES.strings = {
   processingXFiles: {
     '0': 'Procesando %{smart_count} arquivo',
     '1': 'Procesando %{smart_count} arquivos',
-    '2': 'Procesando %{smart_count} arquivos'
+    '2': 'Procesando %{smart_count} arquivos',
   },
   removeFile: 'Eliminar arquivo',
   resetFilter: 'Limpar filtro',
@@ -83,7 +83,7 @@ gl_ES.strings = {
   selectX: {
     '0': 'Seleccionar %{smart_count}',
     '1': 'Seleccionar %{smart_count}',
-    '2': 'Seleccionar %{smart_count}'
+    '2': 'Seleccionar %{smart_count}',
   },
   smile: 'Sorrí!',
   startRecording: 'Comezar a grabación de vídeo',
@@ -97,46 +97,46 @@ gl_ES.strings = {
   uploadXFiles: {
     '0': 'Subir %{smart_count} arquivo',
     '1': 'Subir %{smart_count} arquivos',
-    '2': 'Subir %{smart_count} arquivos'
+    '2': 'Subir %{smart_count} arquivos',
   },
   uploadXNewFiles: {
     '0': 'Subir +%{smart_count} arquivo',
     '1': 'Subir +%{smart_count} arquivos',
-    '2': 'Subir +%{smart_count} arquivos'
+    '2': 'Subir +%{smart_count} arquivos',
   },
   uploading: 'Subindo',
   uploadingXFiles: {
     '0': 'Subindo %{smart_count} arquivo',
     '1': 'Subindo %{smart_count} arquivos',
-    '2': 'Subindo %{smart_count} arquivos'
+    '2': 'Subindo %{smart_count} arquivos',
   },
   xFilesSelected: {
     '0': '%{smart_count} arquivo seleccionado',
     '1': '%{smart_count} arquivos seleccionados',
-    '2': '%{smart_count} arquivos seleccionados'
+    '2': '%{smart_count} arquivos seleccionados',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} arquivo máis engadido',
     '1': '%{smart_count} arquivos máis engadidos',
-    '2': '%{smart_count} arquivos máis engadidos'
+    '2': '%{smart_count} arquivos máis engadidos',
   },
   xTimeLeft: '%{time} restantes',
   youCanOnlyUploadFileTypes: 'Soamente podes subir: %{types}',
   youCanOnlyUploadX: {
     '0': 'Soamente podes subir %{smart_count} arquivo',
     '1': 'Soamente podes subir %{smart_count} arquivos',
-    '2': 'Soamente podes subir %{smart_count} arquivos'
+    '2': 'Soamente podes subir %{smart_count} arquivos',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Tes que seleccionar polo menos %{smart_count} arquivo',
     '1': 'Tes que seleccionar polo menos %{smart_count} arquivos',
-    '2': 'Tes que seleccionar polo menos %{smart_count} arquivos'
+    '2': 'Tes que seleccionar polo menos %{smart_count} arquivos',
   },
   selectAllFilesFromFolderNamed: 'Seleccionar todos os arquivos do cartafol %{name}',
   unselectAllFilesFromFolderNamed: 'Deselecciona todos os arquivos do cartafol %{name}',
   selectFileNamed: 'Seleccione arquivo %{name}',
   unselectFileNamed: 'Deseleccionar arquivo %{name}',
-  openFolderNamed: 'Cartafol aberto %{name}'
+  openFolderNamed: 'Cartafol aberto %{name}',
 }
 
 gl_ES.pluralize = function (n) {

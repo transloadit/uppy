@@ -26,26 +26,26 @@ const getFingerprint = require('./getFingerprint')
 const tusDefaultOptions = {
   endpoint: '',
 
-  uploadUrl: null,
-  metadata: {},
+  uploadUrl : null,
+  metadata  : {},
   uploadSize: null,
 
-  onProgress: null,
+  onProgress     : null,
   onChunkComplete: null,
-  onSuccess: null,
-  onError: null,
+  onSuccess      : null,
+  onError        : null,
 
   overridePatchMethod: false,
-  headers: {},
-  addRequestId: false,
+  headers            : {},
+  addRequestId       : false,
 
-  chunkSize: Infinity,
-  retryDelays: [0, 1000, 3000, 5000],
-  parallelUploads: 1,
+  chunkSize                  : Infinity,
+  retryDelays                : [0, 1000, 3000, 5000],
+  parallelUploads            : 1,
   storeFingerprintForResuming: true,
-  removeFingerprintOnSuccess: false,
-  uploadLengthDeferred: false,
-  uploadDataDuringCreation: false
+  removeFingerprintOnSuccess : false,
+  uploadLengthDeferred       : false,
+  uploadDataDuringCreation   : false,
 }
 
 /**
@@ -66,17 +66,17 @@ module.exports = class Tus extends Plugin {
 
     // set default options
     const defaultOptions = {
-      autoRetry: true,
-      resume: true,
+      autoRetry         : true,
+      resume            : true,
       useFastRemoteRetry: true,
-      limit: 0,
-      retryDelays: [0, 1000, 3000, 5000],
-      withCredentials: false
+      limit             : 0,
+      retryDelays       : [0, 1000, 3000, 5000],
+      withCredentials   : false,
     }
 
     // merge default options with the ones set by user
     /** @type {import("..").TusOptions} */
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
     /**
      * Simultaneous upload limiting is shared across all uploads with this plugin.
@@ -94,13 +94,13 @@ module.exports = class Tus extends Plugin {
   }
 
   handleResetProgress () {
-    const files = Object.assign({}, this.uppy.getState().files)
+    const files = { ...this.uppy.getState().files }
     Object.keys(files).forEach((fileID) => {
       // Only clone the file object if it has a Tus `uploadUrl` attached.
       if (files[fileID].tus && files[fileID].tus.uploadUrl) {
-        const tusState = Object.assign({}, files[fileID].tus)
+        const tusState = { ...files[fileID].tus }
         delete tusState.uploadUrl
-        files[fileID] = Object.assign({}, files[fileID], { tus: tusState })
+        files[fileID] = { ...files[fileID], tus: tusState }
       }
     })
 
@@ -175,14 +175,14 @@ module.exports = class Tus extends Plugin {
 
       const opts = {
         ...this.opts,
-        ...(file.tus || {})
+        ...(file.tus || {}),
       }
 
       /** @type {RawTusOptions} */
       const uploadOptions = {
         ...tusDefaultOptions,
         // TODO only put tus-specific options in?
-        ...opts
+        ...opts,
       }
 
       delete uploadOptions.resume
@@ -228,14 +228,14 @@ module.exports = class Tus extends Plugin {
         this.onReceiveUploadUrl(file, upload.url)
         this.uppy.emit('upload-progress', file, {
           uploader: this,
-          bytesUploaded: bytesUploaded,
-          bytesTotal: bytesTotal
+          bytesUploaded,
+          bytesTotal,
         })
       }
 
       uploadOptions.onSuccess = () => {
         const uploadResp = {
-          uploadURL: upload.url
+          uploadURL: upload.url,
         }
 
         this.resetUploaderReferences(file.id)
@@ -244,7 +244,7 @@ module.exports = class Tus extends Plugin {
         this.uppy.emit('upload-success', file, uploadResp)
 
         if (upload.url) {
-          this.uppy.log('Download ' + upload.file.name + ' from ' + upload.url)
+          this.uppy.log(`Download ${upload.file.name} from ${upload.url}`)
         }
 
         resolve(upload)
@@ -382,12 +382,12 @@ module.exports = class Tus extends Plugin {
       // !! cancellation is NOT supported at this stage yet
       client.post(file.remote.url, {
         ...file.remote.body,
-        endpoint: opts.endpoint,
+        endpoint : opts.endpoint,
         uploadUrl: opts.uploadUrl,
-        protocol: 'tus',
-        size: file.data.size,
-        headers: opts.headers,
-        metadata: file.meta
+        protocol : 'tus',
+        size     : file.data.size,
+        headers  : opts.headers,
+        metadata : file.meta,
       }).then((res) => {
         this.uppy.setFileState(file.id, { serverToken: res.token })
         file = this.uppy.getFile(file.id)
@@ -498,7 +498,7 @@ module.exports = class Tus extends Plugin {
           this.resetUploaderReferences(file.id)
           // Remove the serverToken so that a new one will be created for the retry.
           this.uppy.setFileState(file.id, {
-            serverToken: null
+            serverToken: null,
           })
         } else {
           socket.close()
@@ -511,7 +511,7 @@ module.exports = class Tus extends Plugin {
 
       socket.on('success', (data) => {
         const uploadResp = {
-          uploadURL: data.url
+          uploadURL: data.url,
         }
 
         this.uppy.emit('upload-success', file, uploadResp)
@@ -552,9 +552,7 @@ module.exports = class Tus extends Plugin {
     if (!currentFile.tus || currentFile.tus.uploadUrl !== uploadURL) {
       this.uppy.log('[Tus] Storing upload url')
       this.uppy.setFileState(currentFile.id, {
-        tus: Object.assign({}, currentFile.tus, {
-          uploadUrl: uploadURL
-        })
+        tus: { ...currentFile.tus, uploadUrl: uploadURL },
       })
     }
   }
@@ -648,11 +646,10 @@ module.exports = class Tus extends Plugin {
 
       if ('error' in file && file.error) {
         return Promise.reject(new Error(file.error))
-      } else if (file.isRemote) {
+      } if (file.isRemote) {
         return this.uploadRemote(file, current, total)
-      } else {
-        return this.upload(file, current, total)
       }
+      return this.upload(file, current, total)
     })
 
     return settle(promises)
@@ -670,7 +667,7 @@ module.exports = class Tus extends Plugin {
     if (this.opts.limit === 0) {
       this.uppy.log(
         '[Tus] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/tus/#limit-0',
-        'warning'
+        'warning',
       )
     }
 
@@ -683,9 +680,7 @@ module.exports = class Tus extends Plugin {
 
   install () {
     this.uppy.setState({
-      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
-        resumableUploads: true
-      })
+      capabilities: { ...this.uppy.getState().capabilities, resumableUploads: true },
     })
     this.uppy.addUploader(this.handleUpload)
 
@@ -698,9 +693,7 @@ module.exports = class Tus extends Plugin {
 
   uninstall () {
     this.uppy.setState({
-      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
-        resumableUploads: false
-      })
+      capabilities: { ...this.uppy.getState().capabilities, resumableUploads: false },
     })
     this.uppy.removeUploader(this.handleUpload)
 

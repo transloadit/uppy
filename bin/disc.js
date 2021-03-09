@@ -13,16 +13,16 @@ function minifyify (filename) {
   if (filename.endsWith('.js')) {
     return minify({
       sourceMap: false,
-      toplevel: true,
-      compress: { unsafe: true }
+      toplevel : true,
+      compress : { unsafe: true },
     })
   }
   return new PassThrough()
 }
 
 const bundler = browserify(path.join(__dirname, '../packages/uppy/index.js'), {
-  fullPaths: true,
-  standalone: 'Uppy'
+  fullPaths : true,
+  standalone: 'Uppy',
 })
 
 bundler.transform(babelify)

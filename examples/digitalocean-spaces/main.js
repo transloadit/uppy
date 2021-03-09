@@ -3,12 +3,12 @@ const Dashboard = require('@uppy/dashboard')
 const AwsS3 = require('@uppy/aws-s3')
 
 const uppy = new Uppy({
-  debug: true
+  debug: true,
 })
 
 uppy.use(Dashboard, {
   inline: true,
-  target: 'body'
+  target: 'body',
 })
 
 // No client side changes needed!

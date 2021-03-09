@@ -4,7 +4,7 @@ import {
   Modal,
   Text,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native'
 import takePicture from './takePicture'
 import selectImage from './selectImage'
@@ -20,11 +20,11 @@ export default class UppyReactNativeFilePicker extends React.Component {
         { id: 'LocalImages', title: 'Pick Local Images/Videos' },
         { id: 'LocalDocuments', title: 'Pick Documents' },
         { id: 'LocalCamera', title: 'Take a Picture' },
-        { id: 'Url', title: 'Url' }
+        { id: 'Url', title: 'Url' },
         // { id: 'GoogleDrive', title: 'Google Drive' },
         // { id: 'Instagram', title: 'Instagram' }
       ],
-      openProvider: null
+      openProvider: null,
     }
 
     this.takePicture = this.takePicture.bind(this)
@@ -40,9 +40,9 @@ export default class UppyReactNativeFilePicker extends React.Component {
     takePicture().then((file) => {
       this.uppy.addFile({
         source: 'React Native',
-        name: `media_${Date.now()}.jpg`,
-        type: file.type,
-        data: file
+        name  : `media_${Date.now()}.jpg`,
+        type  : file.type,
+        data  : file,
       })
       this.props.onRequestClose()
     }).catch((err) => {
@@ -54,9 +54,9 @@ export default class UppyReactNativeFilePicker extends React.Component {
     selectImage({ exif: true }).then((file) => {
       this.uppy.addFile({
         source: 'React Native',
-        name: `media_${Date.now()}.jpg`,
-        type: file.type,
-        data: file
+        name  : `media_${Date.now()}.jpg`,
+        type  : file.type,
+        data  : file,
       })
       this.props.onRequestClose()
     }).catch((err) => {
@@ -68,8 +68,8 @@ export default class UppyReactNativeFilePicker extends React.Component {
     selectDocument().then((file) => {
       this.uppy.addFile({
         source: 'React Native',
-        name: file.name,
-        data: file
+        name  : file.name,
+        data  : file,
       })
       this.props.onRequestClose()
     }).catch((err) => {
@@ -80,7 +80,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
   openProvider (id) {
     console.log('Open provider:', id)
     this.setState({
-      openProvider: id
+      openProvider: id,
     })
   }
 
@@ -107,20 +107,18 @@ export default class UppyReactNativeFilePicker extends React.Component {
       <ScrollView
         contentContainerStyle={styles.providerList}
       >
-        {this.state.providers.map((item, index) => {
-          return (
+        {this.state.providers.map((item, index) => (
             <TouchableOpacity
               style={styles.providerButton}
               key={index}
-              onPress={ev => this.chooseProvider(item.id)}
+              onPress={(ev) => this.chooseProvider(item.id)}
             >
               <Text style={styles.providerButtonText}>{item.title}</Text>
             </TouchableOpacity>
-          )
-        })}
+        ))}
         <TouchableOpacity
           style={styles.cancelButton}
-          onPress={ev => this.props.onRequestClose()}
+          onPress={(ev) => this.props.onRequestClose()}
         >
           <Text style={styles.cancelButtonText}>Cancel</Text>
         </TouchableOpacity>
@@ -143,7 +141,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
             uppy={this.uppy}
             onDone={() => {
               this.setState({
-                openProvider: null
+                openProvider: null,
               })
               this.props.onRequestClose()
             }}
@@ -159,33 +157,33 @@ export default class UppyReactNativeFilePicker extends React.Component {
 
 const styles = StyleSheet.create({
   providerList: {
-    flex: 1,
-    marginTop: 22,
-    justifyContent: 'center'
+    flex          : 1,
+    marginTop     : 22,
+    justifyContent: 'center',
   },
   providerButton: {
-    alignItems: 'center',
+    alignItems     : 'center',
     backgroundColor: '#0077cc',
-    marginBottom: 15,
-    marginLeft: 50,
-    marginRight: 50,
-    padding: 10,
-    borderRadius: 5
+    marginBottom   : 15,
+    marginLeft     : 50,
+    marginRight    : 50,
+    padding        : 10,
+    borderRadius   : 5,
   },
   providerButtonText: {
-    color: '#fff'
+    color: '#fff',
   },
   cancelButton: {
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#0077cc',
+    alignItems  : 'center',
+    borderWidth : 1,
+    borderColor : '#0077cc',
     marginBottom: 15,
-    marginLeft: 50,
-    marginRight: 50,
-    padding: 10,
-    borderRadius: 5
+    marginLeft  : 50,
+    marginRight : 50,
+    padding     : 10,
+    borderRadius: 5,
   },
   cancelButtonText: {
-    color: '#0077cc'
-  }
+    color: '#0077cc',
+  },
 })

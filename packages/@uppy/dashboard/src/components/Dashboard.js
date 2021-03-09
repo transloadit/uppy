@@ -23,22 +23,22 @@ module.exports = function Dashboard (props) {
   const isSizeMD = props.containerWidth > WIDTH_MD
 
   const wrapperClassName = classNames({
-    'uppy-Root': props.isTargetDOMEl
+    'uppy-Root': props.isTargetDOMEl,
   })
 
   const dashboardClassName = classNames({
-    'uppy-Dashboard': true,
-    'uppy-Dashboard--isDisabled': props.disabled,
-    'uppy-Dashboard--animateOpenClose': props.animateOpenClose,
-    'uppy-Dashboard--isClosing': props.isClosing,
-    'uppy-Dashboard--isDraggingOver': props.isDraggingOver,
-    'uppy-Dashboard--modal': !props.inline,
-    'uppy-size--md': props.containerWidth > WIDTH_MD,
-    'uppy-size--lg': props.containerWidth > WIDTH_LG,
-    'uppy-size--xl': props.containerWidth > WIDTH_XL,
-    'uppy-size--height-md': props.containerHeight > HEIGHT_MD,
+    'uppy-Dashboard'                        : true,
+    'uppy-Dashboard--isDisabled'            : props.disabled,
+    'uppy-Dashboard--animateOpenClose'      : props.animateOpenClose,
+    'uppy-Dashboard--isClosing'             : props.isClosing,
+    'uppy-Dashboard--isDraggingOver'        : props.isDraggingOver,
+    'uppy-Dashboard--modal'                 : !props.inline,
+    'uppy-size--md'                         : props.containerWidth > WIDTH_MD,
+    'uppy-size--lg'                         : props.containerWidth > WIDTH_LG,
+    'uppy-size--xl'                         : props.containerWidth > WIDTH_XL,
+    'uppy-size--height-md'                  : props.containerHeight > HEIGHT_MD,
     'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel,
-    'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible
+    'uppy-Dashboard--isInnerWrapVisible'    : props.areInsidesReadyToBeVisible,
   })
 
   // Important: keep these in sync with the percent width values in `src/components/FileItem/index.scss`.
@@ -78,8 +78,8 @@ module.exports = function Dashboard (props) {
         aria-modal={!props.inline && 'true'}
         role={!props.inline && 'dialog'}
         style={{
-          width: props.inline && props.width ? props.width : '',
-          height: props.inline && props.height ? props.height : ''
+          width : props.inline && props.width ? props.width : '',
+          height: props.inline && props.height ? props.height : '',
         }}
       >
 
@@ -128,9 +128,7 @@ module.exports = function Dashboard (props) {
           </Slide>
 
           <div class="uppy-Dashboard-progressindicators">
-            {props.progressindicators.map((target) => {
-              return props.getPlugin(target.id).render(props.state)
-            })}
+            {props.progressindicators.map((target) => props.getPlugin(target.id).render(props.state))}
           </div>
         </div>
       </div>

@@ -8,10 +8,10 @@ const renderAcquirerIcon = (acquirer, props) =>
   </span>
 
 const renderFileSource = (props) => (
-  props.file.source &&
-  props.file.source !== props.id &&
-    <div class="uppy-Dashboard-Item-sourceIcon">
-      {props.acquirers.map(acquirer => {
+  props.file.source
+  && props.file.source !== props.id
+    && <div class="uppy-Dashboard-Item-sourceIcon">
+      {props.acquirers.map((acquirer) => {
         if (acquirer.id === props.file.source) {
           return renderAcquirerIcon(acquirer, props)
         }
@@ -41,8 +41,8 @@ const renderFileName = (props) => {
 }
 
 const renderFileSize = (props) => (
-  props.file.data.size &&
-    <div class="uppy-Dashboard-Item-statusSize">
+  props.file.data.size
+    && <div class="uppy-Dashboard-Item-statusSize">
       {prettierBytes(props.file.data.size)}
     </div>
 )

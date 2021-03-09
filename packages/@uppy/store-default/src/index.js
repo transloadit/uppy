@@ -14,8 +14,8 @@ class DefaultStore {
   }
 
   setState (patch) {
-    const prevState = Object.assign({}, this.state)
-    const nextState = Object.assign({}, this.state, patch)
+    const prevState = { ...this.state }
+    const nextState = { ...this.state, ...patch }
 
     this.state = nextState
     this._publish(prevState, nextState, patch)
@@ -27,7 +27,7 @@ class DefaultStore {
       // Remove the listener.
       this.callbacks.splice(
         this.callbacks.indexOf(listener),
-        1
+        1,
       )
     }
   }

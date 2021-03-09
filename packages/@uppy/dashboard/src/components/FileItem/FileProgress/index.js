@@ -29,7 +29,7 @@ function progressIndicatorTitle (props) {
       return props.i18n('resumeUpload')
     }
     return props.i18n('pauseUpload')
-  } else if (props.individualCancellation) {
+  } if (props.individualCancellation) {
     return props.i18n('cancelUpload')
   }
 

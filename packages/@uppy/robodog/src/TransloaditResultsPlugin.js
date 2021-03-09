@@ -31,14 +31,14 @@ class TransloaditResultsPlugin extends Plugin {
           assemblyResults.push({
             ...result,
             assemblyId: assembly.assembly_id,
-            stepName
+            stepName,
           })
         })
       })
     })
 
     this.uppy.addResultData(uploadID, {
-      results: assemblyResults
+      results: assemblyResults,
     })
   }
 }

@@ -18,10 +18,10 @@ module.exports = class MyCustomProvider extends Plugin {
     )
 
     this.provider = new Provider(uppy, {
-      companionUrl: this.opts.companionUrl,
+      companionUrl    : this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
-      provider: 'myunsplash',
-      pluginId: this.id
+      provider        : 'myunsplash',
+      pluginId        : this.id,
     })
 
     this.files = []
@@ -29,12 +29,12 @@ module.exports = class MyCustomProvider extends Plugin {
     this.render = this.render.bind(this)
 
     // merge default options with the ones set by user
-    this.opts = Object.assign({}, opts)
+    this.opts = { ...opts }
   }
 
   install () {
     this.view = new ProviderViews(this, {
-      provider: this.provider
+      provider: this.provider,
     })
 
     const target = this.opts.target

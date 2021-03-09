@@ -21,9 +21,7 @@ function calculateProcessingProgress (files) {
   // In the future we should probably do this differently. For now we'll take the
   // mode and message from the first file…
   const { mode, message } = progresses[0]
-  const value = progresses.filter(isDeterminate).reduce((total, progress, index, all) => {
-    return total + progress.value / all.length
-  }, 0)
+  const value = progresses.filter(isDeterminate).reduce((total, progress, index, all) => total + progress.value / all.length, 0)
   function isDeterminate (progress) {
     return progress.mode === 'determinate'
   }
@@ -31,7 +29,7 @@ function calculateProcessingProgress (files) {
   return {
     mode,
     message,
-    value
+    value,
   }
 }
 
@@ -62,7 +60,7 @@ module.exports = (props) => {
     hideUploadButton,
     hidePauseResumeButton,
     hideCancelButton,
-    hideRetryButton
+    hideRetryButton,
   } = props
 
   const uploadState = props.uploadState
@@ -94,37 +92,37 @@ module.exports = (props) => {
   }
 
   const width = typeof progressValue === 'number' ? progressValue : 100
-  const isHidden = (uploadState === statusBarStates.STATE_WAITING && props.hideUploadButton) ||
-    (uploadState === statusBarStates.STATE_WAITING && !props.newFiles > 0) ||
-    (uploadState === statusBarStates.STATE_COMPLETE && props.hideAfterFinish)
+  const isHidden = (uploadState === statusBarStates.STATE_WAITING && props.hideUploadButton)
+    || (uploadState === statusBarStates.STATE_WAITING && !props.newFiles > 0)
+    || (uploadState === statusBarStates.STATE_COMPLETE && props.hideAfterFinish)
 
-  const showUploadBtn = !error && newFiles &&
-    !isUploadInProgress && !isAllPaused &&
-    allowNewUpload && !hideUploadButton
-  const showCancelBtn = !hideCancelButton &&
-    uploadState !== statusBarStates.STATE_WAITING &&
-    uploadState !== statusBarStates.STATE_COMPLETE
-  const showPauseResumeBtn = resumableUploads && !hidePauseResumeButton &&
-    uploadState === statusBarStates.STATE_UPLOADING
+  const showUploadBtn = !error && newFiles
+    && !isUploadInProgress && !isAllPaused
+    && allowNewUpload && !hideUploadButton
+  const showCancelBtn = !hideCancelButton
+    && uploadState !== statusBarStates.STATE_WAITING
+    && uploadState !== statusBarStates.STATE_COMPLETE
+  const showPauseResumeBtn = resumableUploads && !hidePauseResumeButton
+    && uploadState === statusBarStates.STATE_UPLOADING
 
   const showRetryBtn = error && !hideRetryButton
 
   const showDoneBtn = props.doneButtonHandler && uploadState === statusBarStates.STATE_COMPLETE
 
   const progressClassNames = `uppy-StatusBar-progress
-                           ${progressMode ? 'is-' + progressMode : ''}`
+                           ${progressMode ? `is-${progressMode}` : ''}`
 
   const statusBarClassNames = classNames(
     { 'uppy-Root': props.isTargetDOMEl },
     'uppy-StatusBar',
-    `is-${uploadState}`
+    `is-${uploadState}`,
   )
 
   return (
     <div class={statusBarClassNames} aria-hidden={isHidden}>
       <div
         class={progressClassNames}
-        style={{ width: width + '%' }}
+        style={{ width: `${width}%` }}
         role="progressbar"
         aria-valuemin="0"
         aria-valuemax="100"
@@ -148,7 +146,7 @@ const UploadBtn = (props) => {
     'uppy-c-btn',
     'uppy-StatusBar-actionBtn',
     'uppy-StatusBar-actionBtn--upload',
-    { 'uppy-c-btn-primary': props.uploadState === statusBarStates.STATE_WAITING }
+    { 'uppy-c-btn-primary': props.uploadState === statusBarStates.STATE_WAITING },
   )
 
   return (
@@ -166,8 +164,7 @@ const UploadBtn = (props) => {
   )
 }
 
-const RetryBtn = (props) => {
-  return (
+const RetryBtn = (props) => (
     <button
       type="button"
       class="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
@@ -180,11 +177,9 @@ const RetryBtn = (props) => {
       </svg>
       {props.i18n('retry')}
     </button>
-  )
-}
+)
 
-const CancelBtn = (props) => {
-  return (
+const CancelBtn = (props) => (
     <button
       type="button"
       class="uppy-u-reset uppy-StatusBar-actionCircleBtn"
@@ -200,8 +195,7 @@ const CancelBtn = (props) => {
         </g>
       </svg>
     </button>
-  )
-}
+)
 
 const PauseResumeButton = (props) => {
   const { isAllPaused, i18n } = props
@@ -249,13 +243,11 @@ const DoneBtn = (props) => {
   )
 }
 
-const LoadingSpinner = () => {
-  return (
+const LoadingSpinner = () => (
     <svg class="uppy-StatusBar-spinner" aria-hidden="true" focusable="false" width="14" height="14">
       <path d="M13.983 6.547c-.12-2.509-1.64-4.893-3.939-5.936-2.48-1.127-5.488-.656-7.556 1.094C.524 3.367-.398 6.048.162 8.562c.556 2.495 2.46 4.52 4.94 5.183 2.932.784 5.61-.602 7.256-3.015-1.493 1.993-3.745 3.309-6.298 2.868-2.514-.434-4.578-2.349-5.153-4.84a6.226 6.226 0 0 1 2.98-6.778C6.34.586 9.74 1.1 11.373 3.493c.407.596.693 1.282.842 1.988.127.598.073 1.197.161 1.794.078.525.543 1.257 1.15.864.525-.341.49-1.05.456-1.592-.007-.15.02.3 0 0" fill-rule="evenodd" />
     </svg>
-  )
-}
+)
 
 const ProgressBarProcessing = (props) => {
   const value = Math.round(props.value * 100)
@@ -278,10 +270,10 @@ const ProgressDetails = (props) => {
   return (
     <div class="uppy-StatusBar-statusSecondary">
       {
-        ifShowFilesUploadedOfTotal &&
-        props.i18n('filesUploadedOfTotal', {
-          complete: props.complete,
-          smart_count: props.numUploads
+        ifShowFilesUploadedOfTotal
+        && props.i18n('filesUploadedOfTotal', {
+          complete   : props.complete,
+          smart_count: props.numUploads,
         })
       }
       <span class="uppy-StatusBar-additionalInfo">
@@ -294,7 +286,7 @@ const ProgressDetails = (props) => {
         {
           props.i18n('dataUploadedOfTotal', {
             complete: prettierBytes(props.totalUploadedSize),
-            total: prettierBytes(props.totalSize)
+            total   : prettierBytes(props.totalSize),
           })
         }
 
@@ -302,7 +294,7 @@ const ProgressDetails = (props) => {
 
         {
           props.i18n('xTimeLeft', {
-            time: prettyETA(props.totalETA)
+            time: prettyETA(props.totalETA),
           })
         }
       </span>
@@ -310,20 +302,18 @@ const ProgressDetails = (props) => {
   )
 }
 
-const UnknownProgressDetails = (props) => {
-  return (
+const UnknownProgressDetails = (props) => (
     <div class="uppy-StatusBar-statusSecondary">
       {props.i18n('filesUploadedOfTotal', { complete: props.complete, smart_count: props.numUploads })}
     </div>
-  )
-}
+)
 
 const UploadNewlyAddedFiles = (props) => {
   const uploadBtnClassNames = classNames(
     'uppy-u-reset',
     'uppy-c-btn',
     'uppy-StatusBar-actionBtn',
-    'uppy-StatusBar-actionBtn--uploadNewlyAdded'
+    'uppy-StatusBar-actionBtn--uploadNewlyAdded',
   )
 
   return (
@@ -369,8 +359,7 @@ const ProgressBarUploading = (props) => {
   )
 }
 
-const ProgressBarComplete = ({ totalProgress, i18n }) => {
-  return (
+const ProgressBarComplete = ({ totalProgress, i18n }) => (
     <div class="uppy-StatusBar-content" role="status" title={i18n('complete')}>
       <div class="uppy-StatusBar-status">
         <div class="uppy-StatusBar-statusPrimary">
@@ -381,8 +370,7 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
         </div>
       </div>
     </div>
-  )
-}
+)
 
 const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
   function displayErrorAlert () {

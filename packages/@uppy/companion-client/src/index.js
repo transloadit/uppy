@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Manages communications with Companion
  */
@@ -13,5 +11,5 @@ module.exports = {
   RequestClient,
   Provider,
   SearchProvider,
-  Socket
+  Socket,
 }

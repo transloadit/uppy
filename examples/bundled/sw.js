@@ -44,9 +44,9 @@ function removeFile (store, fileID) {
 
 function getFiles (store) {
   sendMessageToAllClients({
-    type: 'uppy/ALL_FILES',
-    store: store,
-    files: getCache(store)
+    type : 'uppy/ALL_FILES',
+    store,
+    files: getCache(store),
   })
 }
 

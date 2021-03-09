@@ -11,7 +11,7 @@ async function updateContributorsListInReadme () {
     '--cols', '6',
     '--format', 'md',
     '--showlogin', 'true',
-    '--sortOrder', 'desc'
+    '--sortOrder', 'desc',
   ]
 
   if (process.env.GITHUB_TOKEN) {
@@ -27,7 +27,7 @@ async function updateContributorsListInReadme () {
 
   const readmeWithUpdatedContributors = readme.replace(
     /<!--contributors-->[\s\S]+<!--\/contributors-->/,
-    `<!--contributors-->\n${stdout}\n<!--/contributors-->`
+    `<!--contributors-->\n${stdout}\n<!--/contributors-->`,
   )
   fs.writeFileSync(README_FILE_NAME, readmeWithUpdatedContributors)
 }

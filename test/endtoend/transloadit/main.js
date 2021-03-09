@@ -6,31 +6,31 @@ const Transloadit = require('@uppy/transloadit')
 
 function initUppyTransloadit (transloaditKey) {
   var uppyTransloadit = new Uppy({
-    id: 'uppyTransloadit',
-    debug: true,
-    autoProceed: true
+    id         : 'uppyTransloadit',
+    debug      : true,
+    autoProceed: true,
   })
 
   uppyTransloadit
     .use(Dashboard, {
       target: '#uppy-transloadit',
-      inline: true
+      inline: true,
     })
     .use(Transloadit, {
       service: 'https://api2-ap-southeast-1.transloadit.com',
-      params: {
-        auth: { key: transloaditKey },
+      params : {
+        auth : { key: transloaditKey },
         steps: {
           crop_thumbed: {
-            use: [':original'],
-            robot: '/image/resize',
-            height: 100,
+            use            : [':original'],
+            robot          : '/image/resize',
+            height         : 100,
             resize_strategy: 'crop',
-            width: 100
-          }
-        }
+            width          : 100,
+          },
+        },
       },
-      waitForEncoding: true
+      waitForEncoding: true,
     })
 
   uppyTransloadit.on('transloadit:result', (stepName, result) => {

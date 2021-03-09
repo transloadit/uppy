@@ -22,11 +22,11 @@ export default function PauseResumeButton (props) {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: '#cc0077',
-    padding: 10
+    padding        : 10,
   },
   text: {
-    color: '#fff',
+    color    : '#fff',
     textAlign: 'center',
-    fontSize: 17
-  }
+    fontSize : 17,
+  },
 })

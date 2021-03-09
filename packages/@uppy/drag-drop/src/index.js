@@ -21,17 +21,17 @@ module.exports = class DragDrop extends Plugin {
     this.defaultLocale = {
       strings: {
         dropHereOr: 'Drop files here or %{browse}',
-        browse: 'browse'
-      }
+        browse    : 'browse',
+      },
     }
 
     // Default options
     const defaultOpts = {
-      target: null,
+      target   : null,
       inputName: 'files[]',
-      width: '100%',
-      height: '100%',
-      note: null
+      width    : '100%',
+      height   : '100%',
+      note     : null,
     }
 
     // Merge default options with the ones set by user
@@ -67,14 +67,14 @@ module.exports = class DragDrop extends Plugin {
   addFiles (files) {
     const descriptors = files.map((file) => ({
       source: this.id,
-      name: file.name,
-      type: file.type,
-      data: file,
-      meta: {
+      name  : file.name,
+      type  : file.type,
+      data  : file,
+      meta  : {
         // path of the file relative to the ancestor directory the user selected.
         // e.g. 'docs/Old Prague/airbnb.pdf'
-        relativePath: file.relativePath || null
-      }
+        relativePath: file.relativePath || null,
+      },
     }))
 
     try {
@@ -166,7 +166,7 @@ module.exports = class DragDrop extends Plugin {
     return (
       <div class="uppy-DragDrop-label">
         {this.i18nArray('dropHereOr', {
-          browse: <span class="uppy-DragDrop-browse">{this.i18n('browse')}</span>
+          browse: <span class="uppy-DragDrop-browse">{this.i18n('browse')}</span>,
         })}
       </div>
     )
@@ -187,8 +187,8 @@ module.exports = class DragDrop extends Plugin {
     `
 
     const dragDropStyle = {
-      width: this.opts.width,
-      height: this.opts.height
+      width : this.opts.width,
+      height: this.opts.height,
     }
 
     return (
@@ -213,7 +213,7 @@ module.exports = class DragDrop extends Plugin {
 
   install () {
     this.setPluginState({
-      isDraggingOver: false
+      isDraggingOver: false,
     })
     const target = this.opts.target
     if (target) {

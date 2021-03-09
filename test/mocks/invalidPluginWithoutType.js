@@ -9,9 +9,9 @@ module.exports = class InvalidPluginWithoutType extends Plugin {
 
   run (results) {
     this.uppy.log({
-      class: this.constructor.name,
+      class : this.constructor.name,
       method: 'run',
-      results: results
+      results,
     })
 
     return Promise.resolve('success')

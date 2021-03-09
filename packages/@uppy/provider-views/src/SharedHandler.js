@@ -14,9 +14,7 @@ module.exports = class SharedHandler {
     if (!state.filterInput || state.filterInput === '') {
       return items
     }
-    return items.filter((folder) => {
-      return folder.name.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1
-    })
+    return items.filter((folder) => folder.name.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1)
   }
 
   /**
@@ -50,7 +48,7 @@ module.exports = class SharedHandler {
         const uppy = this.plugin.uppy
         const validatedRestrictions = uppy.validateRestrictions(
           remoteFileObjToLocal(item),
-          [...uppy.getFiles(), ...reducedCurrentSelection]
+          [...uppy.getFiles(), ...reducedCurrentSelection],
         )
         if (!validatedRestrictions.result) {
           uppy.info({ message: validatedRestrictions.reason }, 'error', uppy.opts.infoTimeout)
@@ -66,11 +64,11 @@ module.exports = class SharedHandler {
     const { currentSelection } = this.plugin.getPluginState()
     if (this.isChecked(file)) {
       this.plugin.setPluginState({
-        currentSelection: currentSelection.filter((item) => item.id !== file.id)
+        currentSelection: currentSelection.filter((item) => item.id !== file.id),
       })
     } else {
       this.plugin.setPluginState({
-        currentSelection: currentSelection.concat([file])
+        currentSelection: currentSelection.concat([file]),
       })
     }
   }

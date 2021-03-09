@@ -11,7 +11,7 @@ const Browser = (props) => {
     files,
     uppyFiles,
     filterItems,
-    filterInput
+    filterInput,
   } = props
 
   let filteredFolders = folders
@@ -35,7 +35,7 @@ const Browser = (props) => {
       <ItemList
         columns={[{
           name: 'Name',
-          key: 'title'
+          key : 'title',
         }]}
         folders={filteredFolders}
         files={filteredFiles}

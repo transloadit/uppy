@@ -34,7 +34,7 @@ class AddFiles extends Component {
     // Support both the old word-order-insensitive string `poweredBy` and the new word-order-sensitive string `poweredBy2`
     const linkText = this.props.i18nArray('poweredBy2', {
       backwardsCompat: this.props.i18n('poweredBy'),
-      uppy: uppyBranding
+      uppy           : uppyBranding,
     })
 
     return (
@@ -50,8 +50,7 @@ class AddFiles extends Component {
     )
   }
 
-  renderHiddenInput = (isFolder, refCallback) => {
-    return (
+  renderHiddenInput = (isFolder, refCallback) => (
       <input
         class="uppy-Dashboard-input"
         hidden
@@ -65,11 +64,9 @@ class AddFiles extends Component {
         accept={this.props.allowedFileTypes}
         ref={refCallback}
       />
-    )
-  }
+  )
 
-  renderMyDeviceAcquirer = () => {
-    return (
+  renderMyDeviceAcquirer = () => (
       <div
         class="uppy-DashboardTab"
         role="presentation"
@@ -92,8 +89,7 @@ class AddFiles extends Component {
           <div class="uppy-DashboardTab-name">{this.props.i18n('myDevice')}</div>
         </button>
       </div>
-    )
-  }
+  )
 
   renderBrowseButton = (text, onClickFn) => {
     const numberOfAcquirers = this.props.acquirers.length
@@ -172,8 +168,7 @@ class AddFiles extends Component {
     )
   }
 
-  renderAcquirer = (acquirer) => {
-    return (
+  renderAcquirer = (acquirer) => (
       <div
         class="uppy-DashboardTab"
         role="presentation"
@@ -193,8 +188,7 @@ class AddFiles extends Component {
           <div class="uppy-DashboardTab-name">{acquirer.name}</div>
         </button>
       </div>
-    )
-  }
+  )
 
   renderAcquirers = (acquirers) => {
     // Group last two buttons, so we don’t end up with

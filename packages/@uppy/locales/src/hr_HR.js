@@ -48,14 +48,14 @@ hr_HR.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete}. Ukupno prenesenih datoteka: %{smart_count}',
     '1': '%{complete}. Ukupno prenesenih datoteka: %{smart_count}',
-    '2': '%{complete}. Ukupno prenesenih datoteka: %{smart_count}'
+    '2': '%{complete}. Ukupno prenesenih datoteka: %{smart_count}',
   },
   filter: 'Filtriraj',
   finishEditingFile: 'Završi uređivanje datoteke',
   folderAdded: {
     '0': 'Broj datoteka preuzetih iz %{folder}: %{smart_count}',
     '1': 'Broj datoteka preuzetih iz %{folder}: %{smart_count}',
-    '2': 'Broj datoteka preuzetih iz %{folder}: %{smart_count}'
+    '2': 'Broj datoteka preuzetih iz %{folder}: %{smart_count}',
   },
   import: 'Preuzmi',
   importFrom: 'Preuzmi s %{name}',
@@ -71,7 +71,7 @@ hr_HR.strings = {
   processingXFiles: {
     '0': 'Obrada datoteke',
     '1': 'Broj datoteka koje se obrađuju: %{smart_count}',
-    '2': 'Broj datoteka koje se obrađuju: %{smart_count}'
+    '2': 'Broj datoteka koje se obrađuju: %{smart_count}',
   },
   removeFile: 'Ukloni datoteku',
   resetFilter: 'Izbriši filter',
@@ -83,7 +83,7 @@ hr_HR.strings = {
   selectX: {
     '0': 'Izaberi datoteku',
     '1': 'Izaberi %{smart_count}',
-    '2': 'Izaberi %{smart_count}'
+    '2': 'Izaberi %{smart_count}',
   },
   smile: 'Osmijeh!',
   startRecording: 'Započni snimanje video zapisa',
@@ -97,46 +97,46 @@ hr_HR.strings = {
   uploadXFiles: {
     '0': 'Prenesi datoteku',
     '1': 'Prenesi datoteke. Ukupno: %{smart_count}',
-    '2': 'Prenesi datoteke. Ukupno: %{smart_count}'
+    '2': 'Prenesi datoteke. Ukupno: %{smart_count}',
   },
   uploadXNewFiles: {
     '0': 'Prenesi +%{smart_count} datoteku',
     '1': 'Prenesi datoteke. Ukupno: +%{smart_count}',
-    '2': 'Prenesi datoteke. Ukupno: +%{smart_count}'
+    '2': 'Prenesi datoteke. Ukupno: +%{smart_count}',
   },
   uploading: 'Datoteka se prenosi',
   uploadingXFiles: {
     '0': 'Broj datoteka koje se trenutno prenose: %{smart_count}',
     '1': 'Broj datoteka koje se trenutno prenose: %{smart_count}',
-    '2': 'Broj datoteka koje se trenutno prenose: %{smart_count}'
+    '2': 'Broj datoteka koje se trenutno prenose: %{smart_count}',
   },
   xFilesSelected: {
     '0': 'Broj datoteka za prijenos: %{smart_count}',
     '1': 'Broj datoteka za prijenos: %{smart_count}',
-    '2': 'Broj datoteka za prijenos: %{smart_count}'
+    '2': 'Broj datoteka za prijenos: %{smart_count}',
   },
   xMoreFilesAdded: {
     '0': 'Broj dodatih datoteka: %{smart_count}',
     '1': 'Broj dodatih datoteka: %{smart_count}',
-    '2': 'Broj dodatih datoteka: %{smart_count}'
+    '2': 'Broj dodatih datoteka: %{smart_count}',
   },
   xTimeLeft: 'Preostalo vrijeme %{time} ',
   youCanOnlyUploadFileTypes: 'Moguće je prenijeti samo: %{types}',
   youCanOnlyUploadX: {
     '0': 'Dozvoljeni broj datoteka za prijenos: %{smart_count}',
     '1': 'Dozvoljeni broj datoteka za prijenos: %{smart_count}',
-    '2': 'Dozvoljeni broj datoteka za prijenos: %{smart_count}'
+    '2': 'Dozvoljeni broj datoteka za prijenos: %{smart_count}',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Izaberite bar jednu datoteku',
     '1': 'Izaberite datoteke. Najmanje: %{smart_count}',
-    '2': 'Izaberite datoteke. Najmanje: %{smart_count}'
+    '2': 'Izaberite datoteke. Najmanje: %{smart_count}',
   },
   selectAllFilesFromFolderNamed: 'Izaberite sve datoteke iz mape %{name}',
   unselectAllFilesFromFolderNamed: 'Isključite sve datoteke iz mape %{name}',
   selectFileNamed: 'Izaberite datoteku %{name}',
   unselectFileNamed: 'Isključite datoteku %{name}',
-  openFolderNamed: 'Otvori mapu %{name}'
+  openFolderNamed: 'Otvori mapu %{name}',
 }
 
 hr_HR.pluralize = function (n) {

@@ -19,9 +19,9 @@ class CameraScreen extends Component {
 
   render () {
     const shouldShowRecordButton = this.props.supportsRecording && (
-      isModeAvailable(this.props.modes, 'video-only') ||
-      isModeAvailable(this.props.modes, 'audio-only') ||
-      isModeAvailable(this.props.modes, 'video-audio')
+      isModeAvailable(this.props.modes, 'video-only')
+      || isModeAvailable(this.props.modes, 'audio-only')
+      || isModeAvailable(this.props.modes, 'video-audio')
     )
     const shouldShowSnapshotButton = isModeAvailable(this.props.modes, 'picture')
     const shouldShowRecordingLength = this.props.supportsRecording && this.props.showRecordingLength

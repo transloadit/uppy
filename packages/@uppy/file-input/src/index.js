@@ -17,15 +17,15 @@ module.exports = class FileInput extends Plugin {
         // The same key is used for the same purpose by @uppy/robodog's `form()` API, but our
         // locale pack scripts can't access it in Robodog. If it is updated here, it should
         // also be updated there!
-        chooseFiles: 'Choose files'
-      }
+        chooseFiles: 'Choose files',
+      },
     }
 
     // Default options
     const defaultOptions = {
-      target: null,
-      pretty: true,
-      inputName: 'files[]'
+      target   : null,
+      pretty   : true,
+      inputName: 'files[]',
     }
 
     // Merge default options with the ones set by user
@@ -53,9 +53,9 @@ module.exports = class FileInput extends Plugin {
   addFiles (files) {
     const descriptors = files.map((file) => ({
       source: this.id,
-      name: file.name,
-      type: file.type,
-      data: file
+      name  : file.name,
+      type  : file.type,
+      data  : file,
     }))
 
     try {
@@ -86,12 +86,12 @@ module.exports = class FileInput extends Plugin {
   render (state) {
     /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
     const hiddenInputStyle = {
-      width: '0.1px',
-      height: '0.1px',
-      opacity: 0,
+      width   : '0.1px',
+      height  : '0.1px',
+      opacity : 0,
       overflow: 'hidden',
       position: 'absolute',
-      zIndex: -1
+      zIndex  : -1,
     }
 
     const restrictions = this.uppy.opts.restrictions
@@ -109,8 +109,8 @@ module.exports = class FileInput extends Plugin {
           accept={accept}
           ref={(input) => { this.input = input }}
         />
-        {this.opts.pretty &&
-          <button
+        {this.opts.pretty
+          && <button
             class="uppy-FileInput-btn"
             type="button"
             onclick={this.handleClick}

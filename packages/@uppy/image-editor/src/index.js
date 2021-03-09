@@ -14,38 +14,38 @@ module.exports = class ImageEditor extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        save: 'Save',
-        revert: 'Revert',
-        rotate: 'Rotate',
-        zoomIn: 'Zoom in',
-        zoomOut: 'Zoom out',
-        flipHorizontal: 'Flip horizonal',
-        aspectRatioSquare: 'Crop square',
+        save                : 'Save',
+        revert              : 'Revert',
+        rotate              : 'Rotate',
+        zoomIn              : 'Zoom in',
+        zoomOut             : 'Zoom out',
+        flipHorizontal      : 'Flip horizonal',
+        aspectRatioSquare   : 'Crop square',
         aspectRatioLandscape: 'Crop landscape (16:9)',
-        aspectRatioPortrait: 'Crop portrait (9:16)'
-      }
+        aspectRatioPortrait : 'Crop portrait (9:16)',
+      },
     }
 
     const defaultCropperOptions = {
-      viewMode: 1,
-      background: false,
+      viewMode    : 1,
+      background  : false,
       autoCropArea: 1,
-      responsive: true
+      responsive  : true,
     }
 
     const defaultActions = {
-      revert: true,
-      rotate: true,
-      flip: true,
-      zoomIn: true,
-      zoomOut: true,
-      cropSquare: true,
-      cropWidescreen: true,
-      cropWidescreenVertical: true
+      revert                : true,
+      rotate                : true,
+      flip                  : true,
+      zoomIn                : true,
+      zoomOut               : true,
+      cropSquare            : true,
+      cropWidescreen        : true,
+      cropWidescreenVertical: true,
     }
 
     const defaultOptions = {
-      quality: 0.8
+      quality: 0.8,
     }
 
     this.opts = {
@@ -53,12 +53,12 @@ module.exports = class ImageEditor extends Plugin {
       ...opts,
       actions: {
         ...defaultActions,
-        ...opts.actions
+        ...opts.actions,
       },
       cropperOptions: {
         ...defaultCropperOptions,
-        ...opts.cropperOptions
-      }
+        ...opts.cropperOptions,
+      },
     }
 
     this.i18nInit()
@@ -94,15 +94,15 @@ module.exports = class ImageEditor extends Plugin {
     const { currentImage } = this.getPluginState()
 
     this.uppy.setFileState(currentImage.id, {
-      data: blob,
-      size: blob.size,
-      preview: null
+      data   : blob,
+      size   : blob.size,
+      preview: null,
     })
 
     const updatedFile = this.uppy.getFile(currentImage.id)
     this.uppy.emit('thumbnail:request', updatedFile)
     this.setPluginState({
-      currentImage: updatedFile
+      currentImage: updatedFile,
     })
     this.uppy.emit('file-editor:complete', updatedFile)
   }
@@ -110,13 +110,13 @@ module.exports = class ImageEditor extends Plugin {
   selectFile = (file) => {
     this.uppy.emit('file-editor:start', file)
     this.setPluginState({
-      currentImage: file
+      currentImage: file,
     })
   }
 
   install () {
     this.setPluginState({
-      currentImage: null
+      currentImage: null,
     })
 
     const target = this.opts.target

@@ -24,11 +24,11 @@ module.exports = class OneDrive extends Plugin {
     )
 
     this.provider = new Provider(uppy, {
-      companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionUrl        : this.opts.companionUrl,
+      companionHeaders    : this.opts.companionHeaders || this.opts.serverHeaders,
       companionCookiesRule: this.opts.companionCookiesRule,
-      provider: 'onedrive',
-      pluginId: this.id
+      provider            : 'onedrive',
+      pluginId            : this.id,
     })
 
     this.onFirstRender = this.onFirstRender.bind(this)
@@ -37,7 +37,7 @@ module.exports = class OneDrive extends Plugin {
 
   install () {
     this.view = new ProviderViews(this, {
-      provider: this.provider
+      provider: this.provider,
     })
 
     const target = this.opts.target
@@ -54,7 +54,7 @@ module.exports = class OneDrive extends Plugin {
   onFirstRender () {
     return Promise.all([
       this.provider.fetchPreAuthToken(),
-      this.view.getFolder()
+      this.view.getFolder(),
     ])
   }
 

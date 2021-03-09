@@ -29,9 +29,9 @@ class ReduxStore {
 
   setState (patch) {
     this._store.dispatch({
-      type: STATE_UPDATE,
-      id: this._id,
-      payload: patch
+      type   : STATE_UPDATE,
+      id     : this._id,
+      payload: patch,
     })
   }
 
@@ -63,10 +63,8 @@ function getPatch (prev, next) {
 
 function reducer (state = {}, action) {
   if (action.type === STATE_UPDATE) {
-    const newState = Object.assign({}, state[action.id], action.payload)
-    return Object.assign({}, state, {
-      [action.id]: newState
-    })
+    const newState = { ...state[action.id], ...action.payload }
+    return { ...state, [action.id]: newState }
   }
   return state
 }

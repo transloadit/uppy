@@ -1,7 +1,6 @@
 const { h } = require('preact')
 
-module.exports = () => {
-  return (
+module.exports = () => (
     <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
       <g fill="none" fill-rule="evenodd">
         <rect class="uppy-ProviderIconBg" fill="#2C3E50" width="32" height="32" rx="16" />
@@ -9,5 +8,4 @@ module.exports = () => {
         <circle fill="#FFF" cx="16" cy="16" r="2" />
       </g>
     </svg>
-  )
-}
+)

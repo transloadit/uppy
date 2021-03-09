@@ -13,8 +13,8 @@ beforeAll(() => {
 
 beforeEach(() => {
   Object.assign(require('@uppy/dashboard').prototype, {
-    openModal: jest.fn(),
-    closeModal: jest.fn()
+    openModal : jest.fn(),
+    closeModal: jest.fn(),
   })
 })
 

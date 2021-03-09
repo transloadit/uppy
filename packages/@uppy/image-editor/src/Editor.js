@@ -5,7 +5,7 @@ module.exports = class Editor extends Component {
   componentDidMount () {
     this.cropper = new Cropper(
       this.imgElement,
-      this.props.opts.cropperOptions
+      this.props.opts.cropperOptions,
     )
   }
 
@@ -18,7 +18,7 @@ module.exports = class Editor extends Component {
       .toBlob(
         (blob) => this.props.save(blob),
         this.props.currentImage.type,
-        this.props.opts.quality
+        this.props.opts.quality,
       )
   }
 
@@ -183,7 +183,7 @@ module.exports = class Editor extends Component {
             class="uppy-ImageCropper-image"
             alt={currentImage.name}
             src={imageURL}
-            ref={ref => { this.imgElement = ref }}
+            ref={(ref) => { this.imgElement = ref }}
           />
         </div>
 

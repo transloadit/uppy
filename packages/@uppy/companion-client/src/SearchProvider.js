@@ -1,10 +1,6 @@
-'use strict'
-
 const RequestClient = require('./RequestClient')
 
-const _getName = (id) => {
-  return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
-}
+const _getName = (id) => id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 
 module.exports = class SearchProvider extends RequestClient {
   constructor (uppy, opts) {

@@ -48,14 +48,14 @@ sr_RS_Latin.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete}. Ukupno otremljenih datoteka: %{smart_count}',
     '1': '%{complete}. Ukupno otremljenih datoteka: %{smart_count}',
-    '2': '%{complete}. Ukupno otremljenih datoteka: %{smart_count}'
+    '2': '%{complete}. Ukupno otremljenih datoteka: %{smart_count}',
   },
   filter: 'Filter',
   finishEditingFile: 'Završi menjanje fajla',
   folderAdded: {
     '0': 'Broj datoteka preuzetih iz %{folder}: %{smart_count}',
     '1': 'Broj datoteka preuzetih iz %{folder}: %{smart_count}',
-    '2': 'Broj datoteka preuzetih iz %{folder}: %{smart_count}'
+    '2': 'Broj datoteka preuzetih iz %{folder}: %{smart_count}',
   },
   import: 'Preuzmi',
   importFrom: 'Preuzmi sa %{name}',
@@ -71,7 +71,7 @@ sr_RS_Latin.strings = {
   processingXFiles: {
     '0': 'Obrada datoteke',
     '1': 'Broj datoteka koje se obrađuju: %{smart_count}',
-    '2': 'Broj datoteka koje se obrađuju: %{smart_count}'
+    '2': 'Broj datoteka koje se obrađuju: %{smart_count}',
   },
   removeFile: 'Ukloni dadoteku',
   resetFilter: 'Izbriši filter',
@@ -83,7 +83,7 @@ sr_RS_Latin.strings = {
   selectX: {
     '0': 'Izaberi datoteku',
     '1': 'Izaberi %{smart_count}',
-    '2': 'Izaberi %{smart_count}'
+    '2': 'Izaberi %{smart_count}',
   },
   smile: 'Osmeh!',
   startRecording: 'Započni snimanje video zapisa',
@@ -97,46 +97,46 @@ sr_RS_Latin.strings = {
   uploadXFiles: {
     '0': 'Otpremi datoteku',
     '1': 'Otpremi datoteke. Ukupno: %{smart_count}',
-    '2': 'Otpremi datoteke. Ukupno: %{smart_count}'
+    '2': 'Otpremi datoteke. Ukupno: %{smart_count}',
   },
   uploadXNewFiles: {
     '0': 'Otpremi +%{smart_count} datoteku',
     '1': 'Otpremi datoteke. Ukupno: +%{smart_count}',
-    '2': 'Otpremi datoteke. Ukupno: +%{smart_count}'
+    '2': 'Otpremi datoteke. Ukupno: +%{smart_count}',
   },
   uploading: 'Otpremanje',
   uploadingXFiles: {
     '0': 'Broj datoteka koje se trenutno otpremaju: %{smart_count}',
     '1': 'Broj datoteka koje se trenutno otpremaju: %{smart_count}',
-    '2': 'Broj datoteka koje se trenutno otpremaju: %{smart_count}'
+    '2': 'Broj datoteka koje se trenutno otpremaju: %{smart_count}',
   },
   xFilesSelected: {
     '0': 'Broj datoteka za otpremanje: %{smart_count}',
     '1': 'Broj datoteka za otpremanje: %{smart_count}',
-    '2': 'Broj datoteka za otpremanje: %{smart_count}'
+    '2': 'Broj datoteka za otpremanje: %{smart_count}',
   },
   xMoreFilesAdded: {
     '0': 'Broj dodatih datoteka: %{smart_count}',
     '1': 'Broj dodatih datoteka: %{smart_count}',
-    '2': 'Broj dodatih datoteka: %{smart_count}'
+    '2': 'Broj dodatih datoteka: %{smart_count}',
   },
   xTimeLeft: 'Preostalo vreme %{time} ',
   youCanOnlyUploadFileTypes: 'Možete da otpremite samo: %{types}',
   youCanOnlyUploadX: {
     '0': 'Dozvoljeni broj datoteka za otpremanje: %{smart_count}',
     '1': 'Dozvoljeni broj datoteka za otpremanje: %{smart_count}',
-    '2': 'Dozvoljeni broj datoteka za otpremanje: %{smart_count}'
+    '2': 'Dozvoljeni broj datoteka za otpremanje: %{smart_count}',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Izaberite bar jednu datoteku',
     '1': 'Izaberite datoteke. Najmanje: %{smart_count}',
-    '2': 'Izaberite datoteke. Najmanje: %{smart_count}'
+    '2': 'Izaberite datoteke. Najmanje: %{smart_count}',
   },
   selectAllFilesFromFolderNamed: 'Izaberite sve datoteke iz foldera %{name}',
   unselectAllFilesFromFolderNamed: 'Isključite sve datoteke iz foldera %{name}',
   selectFileNamed: 'Izaberite fajl %{name}',
   unselectFileNamed: 'Isključite fajl %{name}',
-  openFolderNamed: 'Otvori folder %{name}'
+  openFolderNamed: 'Otvori folder %{name}',
 }
 
 sr_RS_Latin.pluralize = function (n) {

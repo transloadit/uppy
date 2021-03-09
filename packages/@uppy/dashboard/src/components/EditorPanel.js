@@ -14,7 +14,7 @@ function EditorPanel (props) {
       <div class="uppy-DashboardContent-bar">
         <div class="uppy-DashboardContent-title" role="heading" aria-level="1">
           {props.i18nArray('editing', {
-            file: <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>
+            file: <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>,
           })}
         </div>
         <button
@@ -26,9 +26,7 @@ function EditorPanel (props) {
         </button>
       </div>
       <div class="uppy-DashboardContent-panelBody">
-        {props.editors.map((target) => {
-          return props.getPlugin(target.id).render(props.state)
-        })}
+        {props.editors.map((target) => props.getPlugin(target.id).render(props.state))}
       </div>
     </div>
   )

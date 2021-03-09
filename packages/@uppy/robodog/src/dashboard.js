@@ -10,17 +10,17 @@ function dashboard (target, opts = {}) {
   const uppy = createUppy(opts)
   addTransloaditPlugin(uppy, opts)
   addDashboardPlugin(uppy, opts, {
-    id: pluginId,
+    id              : pluginId,
     inline,
     target,
-    closeAfterFinish: false
+    closeAfterFinish: false,
   })
 
   if (Array.isArray(opts.providers)) {
     addProviders(uppy, opts.providers, {
       ...opts,
       // Install providers into the Dashboard.
-      target: uppy.getPlugin(pluginId)
+      target: uppy.getPlugin(pluginId),
     })
   }
 

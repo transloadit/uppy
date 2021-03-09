@@ -9,10 +9,10 @@ const images = [
   path.join(__dirname, '../../resources/image.jpg'),
   path.join(__dirname, '../../resources/baboon.png'),
   path.join(__dirname, '../../resources/kodim23.png'),
-  path.join(__dirname, '../../resources/invalid.png')
+  path.join(__dirname, '../../resources/invalid.png'),
 ]
 const notImages = [
-  { type: 'text/javascript', file: __filename }
+  { type: 'text/javascript', file: __filename },
 ]
 
 describe('ThumbnailGenerator', () => {
@@ -30,8 +30,8 @@ describe('ThumbnailGenerator', () => {
     const input = await $('#uppyThumbnails .uppy-FileInput-input')
     await input.waitForExist()
 
-    await browser.execute(/* must be valid ES5 for IE */ function () {
-      window.thumbnailsReady = new Promise(function (resolve) {
+    await browser.execute(/* must be valid ES5 for IE */ () => {
+      window.thumbnailsReady = new Promise((resolve) => {
         window.uppyThumbnails.on('thumbnail:all-generated', resolve)
       })
     })
@@ -50,7 +50,7 @@ describe('ThumbnailGenerator', () => {
           'uppyThumbnails',
           path.basename(img), // name
           `image/${path.extname(img).slice(1)}`, // type
-          fs.readFileSync(img, 'base64') // b64
+          fs.readFileSync(img, 'base64'), // b64
         )
       }
       for (const { type, file } of notImages) {
@@ -59,12 +59,12 @@ describe('ThumbnailGenerator', () => {
           'uppyThumbnails',
           path.basename(file), // name
           type, // type
-          fs.readFileSync(file, 'base64') // b64
+          fs.readFileSync(file, 'base64'), // b64
         )
       }
     }
 
-    await browser.executeAsync(/* must be valid ES5 for IE */ function (done) {
+    await browser.executeAsync(/* must be valid ES5 for IE */ (done) => {
       window.thumbnailsReady.then(done)
     })
 
@@ -98,8 +98,6 @@ async function getWidth (ref) {
   try {
     return await ref.getSize('width')
   } catch (err) {
-    return browser.execute(function (el) {
-      return el.getBoundingClientRect().width
-    }, ref)
+    return browser.execute((el) => el.getBoundingClientRect().width, ref)
   }
 }

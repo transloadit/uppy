@@ -43,7 +43,7 @@ module.exports = class RateLimitedQueue {
         done = true
         this.activeRequests -= 1
         this._queueNext()
-      }
+      },
     }
   }
 
@@ -77,17 +77,15 @@ module.exports = class RateLimitedQueue {
     const handler = {
       fn,
       priority: options.priority || 0,
-      abort: () => {
+      abort   : () => {
         this._dequeue(handler)
       },
       done: () => {
         throw new Error('Cannot mark a queued request as done: this indicates a bug')
-      }
+      },
     }
 
-    const index = findIndex(this.queuedHandlers, (other) => {
-      return handler.priority > other.priority
-    })
+    const index = findIndex(this.queuedHandlers, (other) => handler.priority > other.priority)
     if (index === -1) {
       this.queuedHandlers.push(handler)
     } else {

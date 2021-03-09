@@ -7,17 +7,17 @@ function EditButton ({
   metaFields,
   canEditFile,
   i18n,
-  onClick
+  onClick,
 }) {
   if (
-    (!uploadInProgressOrComplete && metaFields && metaFields.length > 0) ||
-    (!uploadInProgressOrComplete && canEditFile(file))
+    (!uploadInProgressOrComplete && metaFields && metaFields.length > 0)
+    || (!uploadInProgressOrComplete && canEditFile(file))
   ) {
     return (
       <button
         class="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit"
         type="button"
-        aria-label={i18n('editFile') + ' ' + file.meta.name}
+        aria-label={`${i18n('editFile')} ${file.meta.name}`}
         title={i18n('editFile')}
         onclick={() => onClick()}
       >
@@ -91,7 +91,7 @@ module.exports = function Buttons (props) {
     toggleFileCard,
     openFileEditor,
     log,
-    info
+    info,
   } = props
 
   const editAction = () => {

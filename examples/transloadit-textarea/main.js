@@ -26,7 +26,8 @@ class MarkdownTextarea {
     this.uploadLine.classList.add('mdtxt-upload')
 
     this.uploadLine.appendChild(
-      document.createTextNode('Upload an attachment'))
+      document.createTextNode('Upload an attachment'),
+    )
   }
 
   install () {
@@ -104,15 +105,15 @@ class MarkdownTextarea {
   uploadFiles (files) {
     robodog.upload({
       waitForEncoding: true,
-      params: {
-        auth: { key: TRANSLOADIT_EXAMPLE_KEY },
-        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE
-      }
+      params         : {
+        auth       : { key: TRANSLOADIT_EXAMPLE_KEY },
+        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE,
+      },
     }).then((result) => {
       // Was cancelled
       if (result == null) return
       this.insertAttachments(
-        this.matchFilesAndThumbs(result.results)
+        this.matchFilesAndThumbs(result.results),
       )
     }).catch((err) => {
       console.error(err)
@@ -123,15 +124,15 @@ class MarkdownTextarea {
   pickFiles () {
     robodog.pick({
       waitForEncoding: true,
-      params: {
-        auth: { key: TRANSLOADIT_EXAMPLE_KEY },
-        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE
-      }
+      params         : {
+        auth       : { key: TRANSLOADIT_EXAMPLE_KEY },
+        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE,
+      },
     }).then((result) => {
       // Was cancelled
       if (result == null) return
       this.insertAttachments(
-        this.matchFilesAndThumbs(result.results)
+        this.matchFilesAndThumbs(result.results),
       )
     }).catch((err) => {
       console.error(err)
@@ -141,7 +142,8 @@ class MarkdownTextarea {
 }
 
 const textarea = new MarkdownTextarea(
-  document.querySelector('#new textarea'))
+  document.querySelector('#new textarea'),
+)
 textarea.install()
 
 function renderSnippet (title, text) {
@@ -173,8 +175,8 @@ function loadSnippets () {
 document.querySelector('#new').addEventListener('submit', (event) => {
   event.preventDefault()
 
-  const title = event.target.querySelector('input[name="title"]').value ||
-    'Unnamed Snippet'
+  const title = event.target.querySelector('input[name="title"]').value
+    || 'Unnamed Snippet'
   const text = textarea.element.value
 
   saveSnippet(title, text)

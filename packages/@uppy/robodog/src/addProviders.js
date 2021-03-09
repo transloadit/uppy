@@ -2,16 +2,16 @@ const Transloadit = require('@uppy/transloadit')
 const has = require('@uppy/utils/lib/hasProperty')
 
 const remoteProviders = {
-  dropbox: require('@uppy/dropbox'),
+  dropbox       : require('@uppy/dropbox'),
   'google-drive': require('@uppy/google-drive'),
-  instagram: require('@uppy/instagram'),
-  facebook: require('@uppy/facebook'),
-  onedrive: require('@uppy/onedrive'),
-  url: require('@uppy/url')
+  instagram     : require('@uppy/instagram'),
+  facebook      : require('@uppy/facebook'),
+  onedrive      : require('@uppy/onedrive'),
+  url           : require('@uppy/url'),
 }
 
 const localProviders = {
-  webcam: require('@uppy/webcam')
+  webcam: require('@uppy/webcam'),
 }
 
 const remoteProviderOptionNames = [
@@ -19,20 +19,20 @@ const remoteProviderOptionNames = [
   'companionAllowedHosts',
   'companionHeaders',
   'serverHeaders',
-  'target'
+  'target',
 ]
 
 // No shared options.
 const localProviderOptionNames = [
-  'target'
+  'target',
 ]
 
 function addRemoteProvider (uppy, name, opts) {
   const Provider = remoteProviders[name]
   const providerOptions = {
     // Default to the :tl: Companion servers.
-    companionUrl: Transloadit.COMPANION,
-    companionAllowedHosts: Transloadit.COMPANION_PATTERN
+    companionUrl         : Transloadit.COMPANION,
+    companionAllowedHosts: Transloadit.COMPANION_PATTERN,
   }
 
   remoteProviderOptionNames.forEach((name) => {
@@ -70,7 +70,7 @@ function addProviders (uppy, names, opts = {}) {
     } else {
       const validNames = [
         ...Object.keys(remoteProviders),
-        ...Object.keys(localProviders)
+        ...Object.keys(localProviders),
       ]
       const expectedNameString = validNames
         .sort()

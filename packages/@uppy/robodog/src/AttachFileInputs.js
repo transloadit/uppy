@@ -26,9 +26,9 @@ class AttachFileInputs extends Plugin {
       try {
         this.uppy.addFile({
           source: this.id,
-          name: file.name,
-          type: file.type,
-          data: file
+          name  : file.name,
+          type  : file.type,
+          data  : file,
         })
       } catch (err) {
         if (!err.isRestriction) {

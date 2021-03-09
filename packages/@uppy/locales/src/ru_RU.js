@@ -50,14 +50,14 @@ ru_RU.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete} из %{smart_count} файла загружено',
     '1': '%{complete} из %{smart_count} файлов загружено',
-    '2': '%{complete} из %{smart_count} файлов загружено'
+    '2': '%{complete} из %{smart_count} файлов загружено',
   },
   filter: 'Фильтр',
   finishEditingFile: 'Закончить редактирование файла',
   folderAdded: {
     '0': 'Добавлен %{smart_count} файл из %{folder}',
     '1': 'Добавлено %{smart_count} файла из %{folder}',
-    '2': 'Добавлено %{smart_count} файлов из %{folder}'
+    '2': 'Добавлено %{smart_count} файлов из %{folder}',
   },
   import: 'Импортировать',
   importFrom: 'Импортировать из %{name}',
@@ -72,7 +72,7 @@ ru_RU.strings = {
   processingXFiles: {
     '0': 'Обрабатывается %{smart_count} файл',
     '1': 'Обрабатываются %{smart_count} файла',
-    '2': 'Обрабатываются %{smart_count} файлов'
+    '2': 'Обрабатываются %{smart_count} файлов',
   },
   poweredBy: 'Работает на',
   removeFile: 'Удалить файл',
@@ -85,7 +85,7 @@ ru_RU.strings = {
   selectX: {
     '0': 'Выбрать %{smart_count}',
     '1': 'Выбрать %{smart_count}',
-    '2': 'Выбрать %{smart_count}'
+    '2': 'Выбрать %{smart_count}',
   },
   smile: 'Улыбнитесь!',
   startRecording: 'Начать запись видео',
@@ -99,46 +99,46 @@ ru_RU.strings = {
   uploadXFiles: {
     '0': 'Загрузить %{smart_count} файл',
     '1': 'Загрузить %{smart_count} файла',
-    '2': 'Загрузить %{smart_count} файлов'
+    '2': 'Загрузить %{smart_count} файлов',
   },
   uploadXNewFiles: {
     '0': 'Загрузить +%{smart_count} файл',
     '1': 'Загрузить +%{smart_count} файла',
-    '2': 'Загрузить +%{smart_count} файлов'
+    '2': 'Загрузить +%{smart_count} файлов',
   },
   uploading: 'Загрузка',
   uploadingXFiles: {
     '0': 'Загружается %{smart_count} файл',
     '1': 'Загружается %{smart_count} файла',
-    '2': 'Загружается %{smart_count} файлов'
+    '2': 'Загружается %{smart_count} файлов',
   },
   xFilesSelected: {
     '0': '%{smart_count} файл выбран',
     '1': '%{smart_count} файла выбрано',
-    '2': '%{smart_count} файлов выбрано'
+    '2': '%{smart_count} файлов выбрано',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} дополнительный файл добавлен',
     '1': '%{smart_count} дополнительных файла добавлено',
-    '2': '%{smart_count} дополнительных файлов добавлено'
+    '2': '%{smart_count} дополнительных файлов добавлено',
   },
   xTimeLeft: 'осталось %{time}',
   youCanOnlyUploadFileTypes: 'Вы можете загрузить только: %{types}',
   youCanOnlyUploadX: {
     '0': 'Вы можете загрузить только %{smart_count} файл',
     '1': 'Вы можете загрузить только %{smart_count} файла',
-    '2': 'Вы можете загрузить только %{smart_count} файлов'
+    '2': 'Вы можете загрузить только %{smart_count} файлов',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Вы должны выбрать хотя бы %{smart_count} файл',
     '1': 'Вы должны выбрать хотя бы %{smart_count} файла',
-    '2': 'Вы должны выбрать хотя бы %{smart_count} файлов'
+    '2': 'Вы должны выбрать хотя бы %{smart_count} файлов',
   },
   selectAllFilesFromFolderNamed: 'Выбрать все файлы из папки %{name}',
   unselectAllFilesFromFolderNamed: 'Отменить выбор всех файлов из папки %{name}',
   selectFileNamed: 'Выбрать файл %{name}',
   unselectFileNamed: 'Отменить выбор файла %{name}',
-  openFolderNamed: 'Открыть папку %{name}'
+  openFolderNamed: 'Открыть папку %{name}',
 }
 
 ru_RU.pluralize = function (n) {

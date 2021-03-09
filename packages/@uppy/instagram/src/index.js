@@ -21,12 +21,12 @@ module.exports = class Instagram extends Plugin {
     )
 
     this.provider = new Provider(uppy, {
-      companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
-      companionKeysParams: this.opts.companionKeysParams,
+      companionUrl        : this.opts.companionUrl,
+      companionHeaders    : this.opts.companionHeaders || this.opts.serverHeaders,
+      companionKeysParams : this.opts.companionKeysParams,
       companionCookiesRule: this.opts.companionCookiesRule,
-      provider: 'instagram',
-      pluginId: this.id
+      provider            : 'instagram',
+      pluginId            : this.id,
     })
 
     this.onFirstRender = this.onFirstRender.bind(this)
@@ -35,11 +35,11 @@ module.exports = class Instagram extends Plugin {
 
   install () {
     this.view = new ProviderViews(this, {
-      provider: this.provider,
-      viewType: 'grid',
-      showTitles: false,
-      showFilter: false,
-      showBreadcrumbs: false
+      provider       : this.provider,
+      viewType       : 'grid',
+      showTitles     : false,
+      showFilter     : false,
+      showBreadcrumbs: false,
     })
 
     const target = this.opts.target
@@ -56,7 +56,7 @@ module.exports = class Instagram extends Plugin {
   onFirstRender () {
     return Promise.all([
       this.provider.fetchPreAuthToken(),
-      this.view.getFolder('recent')
+      this.view.getFolder('recent'),
     ])
   }
 

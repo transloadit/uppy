@@ -81,15 +81,15 @@ module.exports = class AwsS3 extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
-      }
+        timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
+      },
     }
 
     const defaultOptions = {
-      timeout: 30 * 1000,
-      limit: 0,
-      metaFields: [], // have to opt in
-      getUploadParameters: this.getUploadParameters.bind(this)
+      timeout            : 30 * 1000,
+      limit              : 0,
+      metaFields         : [], // have to opt in
+      getUploadParameters: this.getUploadParameters.bind(this),
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -132,9 +132,9 @@ module.exports = class AwsS3 extends Plugin {
   }
 
   validateParameters (file, params) {
-    const valid = typeof params === 'object' && params &&
-      typeof params.url === 'string' &&
-      (typeof params.fields === 'object' || params.fields == null)
+    const valid = typeof params === 'object' && params
+      && typeof params.url === 'string'
+      && (typeof params.fields === 'object' || params.fields == null)
 
     if (!valid) {
       const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields, headers }' but got '${JSON.stringify(params)}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
@@ -173,9 +173,7 @@ module.exports = class AwsS3 extends Plugin {
       this.uppy.emit('upload-started', file)
     })
 
-    const getUploadParameters = this.requests.wrapPromiseFunction((file) => {
-      return this.opts.getUploadParameters(file)
-    })
+    const getUploadParameters = this.requests.wrapPromiseFunction((file) => this.opts.getUploadParameters(file))
 
     const numberOfFiles = fileIDs.length
 
@@ -191,13 +189,13 @@ module.exports = class AwsS3 extends Plugin {
           method = 'post',
           url,
           fields,
-          headers
+          headers,
         } = params
         const xhrOpts = {
           method,
-          formData: method.toLowerCase() === 'post',
-          endpoint: url,
-          metaFields: fields ? Object.keys(fields) : []
+          formData  : method.toLowerCase() === 'post',
+          endpoint  : url,
+          metaFields: fields ? Object.keys(fields) : [],
         }
 
         if (headers) {
@@ -205,8 +203,8 @@ module.exports = class AwsS3 extends Plugin {
         }
 
         this.uppy.setFileState(file.id, {
-          meta: { ...file.meta, ...fields },
-          xhrUpload: xhrOpts
+          meta     : { ...file.meta, ...fields },
+          xhrUpload: xhrOpts,
         })
 
         return this._uploader.uploadFile(file.id, index, numberOfFiles)
@@ -260,9 +258,9 @@ module.exports = class AwsS3 extends Plugin {
         // Some S3 alternatives do not reply with an absolute URL.
         // Eg DigitalOcean Spaces uses /$bucketName/xyz
         location: resolveUrl(xhr.responseURL, getXmlValue(content, 'Location')),
-        bucket: getXmlValue(content, 'Bucket'),
-        key: getXmlValue(content, 'Key'),
-        etag: getXmlValue(content, 'ETag')
+        bucket  : getXmlValue(content, 'Bucket'),
+        key     : getXmlValue(content, 'Key'),
+        etag    : getXmlValue(content, 'ETag'),
       }
     }
 
@@ -279,14 +277,14 @@ module.exports = class AwsS3 extends Plugin {
     }
 
     const xhrOptions = {
-      fieldName: 'file',
+      fieldName           : 'file',
       responseUrlFieldName: 'location',
-      timeout: this.opts.timeout,
+      timeout             : this.opts.timeout,
       // Share the rate limiting queue with XHRUpload.
-      __queue: this.requests,
-      responseType: 'text',
-      getResponseData: this.opts.getResponseData || defaultGetResponseData,
-      getResponseError: defaultGetResponseError
+      __queue             : this.requests,
+      responseType        : 'text',
+      getResponseData     : this.opts.getResponseData || defaultGetResponseData,
+      getResponseError    : defaultGetResponseError,
     }
 
     // Only for MiniXHRUpload, remove once we can depend on XHRUpload directly again

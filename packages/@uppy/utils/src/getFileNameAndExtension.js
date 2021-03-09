@@ -9,13 +9,12 @@ module.exports = function getFileNameAndExtension (fullFileName) {
   // these count as no extension: "no-dot", "trailing-dot."
   if (lastDot === -1 || lastDot === fullFileName.length - 1) {
     return {
-      name: fullFileName,
-      extension: undefined
+      name     : fullFileName,
+      extension: undefined,
     }
-  } else {
-    return {
-      name: fullFileName.slice(0, lastDot),
-      extension: fullFileName.slice(lastDot + 1)
-    }
+  }
+  return {
+    name     : fullFileName.slice(0, lastDot),
+    extension: fullFileName.slice(lastDot + 1),
   }
 }

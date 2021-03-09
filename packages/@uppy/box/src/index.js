@@ -24,10 +24,10 @@ module.exports = class Box extends Plugin {
     )
 
     this.provider = new Provider(uppy, {
-      companionUrl: this.opts.companionUrl,
+      companionUrl    : this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
-      provider: 'box',
-      pluginId: this.id
+      provider        : 'box',
+      pluginId        : this.id,
     })
 
     this.onFirstRender = this.onFirstRender.bind(this)
@@ -36,7 +36,7 @@ module.exports = class Box extends Plugin {
 
   install () {
     this.view = new ProviderViews(this, {
-      provider: this.provider
+      provider: this.provider,
     })
 
     const target = this.opts.target

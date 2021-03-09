@@ -1,13 +1,13 @@
 const { h } = require('preact')
 
 const uploadStates = {
-  STATE_ERROR: 'error',
-  STATE_WAITING: 'waiting',
-  STATE_PREPROCESSING: 'preprocessing',
-  STATE_UPLOADING: 'uploading',
+  STATE_ERROR         : 'error',
+  STATE_WAITING       : 'waiting',
+  STATE_PREPROCESSING : 'preprocessing',
+  STATE_UPLOADING     : 'uploading',
   STATE_POSTPROCESSING: 'postprocessing',
-  STATE_COMPLETE: 'complete',
-  STATE_PAUSED: 'paused'
+  STATE_COMPLETE      : 'complete',
+  STATE_PAUSED        : 'paused',
 }
 
 function getUploadingState (isAllErrored, isAllComplete, isAllPaused, files = {}) {
@@ -50,7 +50,7 @@ function UploadStatus (props) {
     props.isAllErrored,
     props.isAllComplete,
     props.isAllPaused,
-    props.files
+    props.files,
   )
 
   switch (uploadingState) {

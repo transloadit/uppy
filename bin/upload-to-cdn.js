@@ -33,7 +33,7 @@ const finished = promisify(require('stream').finished)
 const AdmZip = require('adm-zip')
 
 function delay (ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 const AWS_REGION = 'us-east-1'
@@ -79,14 +79,14 @@ async function getRemoteDistFiles (packageName, version) {
  */
 async function getLocalDistFiles (packagePath) {
   const files = (await packlist({ path: packagePath }))
-    .filter(f => f.startsWith('dist/'))
-    .map(f => f.replace(/^dist\//, ''))
+    .filter((f) => f.startsWith('dist/'))
+    .map((f) => f.replace(/^dist\//, ''))
 
   const entries = await Promise.all(
     files.map(async (f) => [
       f,
-      await readFile(path.join(packagePath, 'dist', f))
-    ])
+      await readFile(path.join(packagePath, 'dist', f)),
+    ]),
   )
 
   return new Map(entries)
@@ -111,10 +111,10 @@ async function main (packageName, version) {
 
   const s3 = new AWS.S3({
     credentials: new AWS.Credentials({
-      accessKeyId: process.env.EDGLY_KEY,
-      secretAccessKey: process.env.EDGLY_SECRET
+      accessKeyId    : process.env.EDGLY_KEY,
+      secretAccessKey: process.env.EDGLY_SECRET,
     }),
-    region: AWS_REGION
+    region: AWS_REGION,
   })
 
   const remote = !!version
@@ -145,7 +145,7 @@ async function main (packageName, version) {
 
   const { Contents: existing } = await s3.listObjects({
     Bucket: AWS_BUCKET,
-    Prefix: outputPath
+    Prefix: outputPath,
   }).promise()
   if (existing.length > 0) {
     if (process.argv.includes('--force')) {
@@ -174,10 +174,10 @@ async function main (packageName, version) {
     const key = path.posix.join(outputPath, filename)
     console.log(`pushing s3://${AWS_BUCKET}/${key}`)
     await s3.putObject({
-      Bucket: AWS_BUCKET,
-      Key: key,
+      Bucket     : AWS_BUCKET,
+      Key        : key,
       ContentType: mime.lookup(filename),
-      Body: buffer
+      Body       : buffer,
     }).promise()
   }
 }

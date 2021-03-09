@@ -66,7 +66,7 @@ function iconText () {
 module.exports = function getIconByMime (fileType) {
   const defaultChoice = {
     color: '#838999',
-    icon: iconFile()
+    icon : iconFile(),
   }
 
   if (!fileType) return defaultChoice
@@ -78,7 +78,7 @@ module.exports = function getIconByMime (fileType) {
   if (fileTypeGeneral === 'text') {
     return {
       color: '#5a5e69',
-      icon: iconText()
+      icon : iconText(),
     }
   }
 
@@ -86,7 +86,7 @@ module.exports = function getIconByMime (fileType) {
   if (fileTypeGeneral === 'image') {
     return {
       color: '#686de0',
-      icon: iconImage()
+      icon : iconImage(),
     }
   }
 
@@ -94,7 +94,7 @@ module.exports = function getIconByMime (fileType) {
   if (fileTypeGeneral === 'audio') {
     return {
       color: '#068dbb',
-      icon: iconAudio()
+      icon : iconAudio(),
     }
   }
 
@@ -102,7 +102,7 @@ module.exports = function getIconByMime (fileType) {
   if (fileTypeGeneral === 'video') {
     return {
       color: '#19af67',
-      icon: iconVideo()
+      icon : iconVideo(),
     }
   }
 
@@ -110,7 +110,7 @@ module.exports = function getIconByMime (fileType) {
   if (fileTypeGeneral === 'application' && fileTypeSpecific === 'pdf') {
     return {
       color: '#e25149',
-      icon: iconPDF()
+      icon : iconPDF(),
     }
   }
 
@@ -119,7 +119,7 @@ module.exports = function getIconByMime (fileType) {
   if (fileTypeGeneral === 'application' && archiveTypes.indexOf(fileTypeSpecific) !== -1) {
     return {
       color: '#00C469',
-      icon: iconArchive()
+      icon : iconArchive(),
     }
   }
 

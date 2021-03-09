@@ -9,9 +9,9 @@ module.exports = function FilePreviewAndLink (props) {
       style={{ backgroundColor: getFileTypeIcon(props.file.type).color }}
     >
       {
-        props.showLinkToFileUploadResult &&
-        props.file.uploadURL &&
-          <a
+        props.showLinkToFileUploadResult
+        && props.file.uploadURL
+          && <a
             class="uppy-Dashboard-Item-previewLink"
             href={props.file.uploadURL}
             rel="noreferrer noopener"

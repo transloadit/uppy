@@ -5,38 +5,38 @@ import pkg from './package.json'
 
 const name = pkg.name
   .replace(/^(@\S+\/)?(svelte-)?(\S+)/, '$3')
-  .replace(/^\w/, m => m.toUpperCase())
-  .replace(/-\w/g, m => m[1].toUpperCase())
+  .replace(/^\w/, (m) => m.toUpperCase())
+  .replace(/-\w/g, (m) => m[1].toUpperCase())
 
 const globals = {
-  '@uppy/dashboard': 'Dashboard',
-  '@uppy/drag-drop': 'DragDrop',
+  '@uppy/dashboard'   : 'Dashboard',
+  '@uppy/drag-drop'   : 'DragDrop',
   '@uppy/progress-bar': 'ProgressBar',
-  '@uppy/status-bar': 'StatusBar'
+  '@uppy/status-bar'  : 'StatusBar',
 }
 
 export default {
-  input: 'src/index.js',
+  input : 'src/index.js',
   output: [
     {
-      file: pkg.module,
+      file  : pkg.module,
       format: 'es',
-      globals
+      globals,
     },
     {
-      file: pkg.main,
+      file  : pkg.main,
       format: 'umd',
       name,
-      globals
-    }
+      globals,
+    },
   ],
   plugins: [
     svelte({
-      include: 'src/**/*.svelte',
-      preprocess: preprocess()
+      include   : 'src/**/*.svelte',
+      preprocess: preprocess(),
     }),
     resolve({
-      resolveOnly: ['svelte']
-    })
-  ]
+      resolveOnly: ['svelte'],
+    }),
+  ],
 }

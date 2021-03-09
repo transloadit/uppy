@@ -30,9 +30,9 @@ async function compileCSS () {
       file,
       importer (url, from, done) {
         resolve(url, {
-          basedir: path.dirname(from),
-          filename: from,
-          extensions: ['.scss']
+          basedir   : path.dirname(from),
+          filename  : from,
+          extensions: ['.scss'],
         }, (err, res) => {
           if (err) return done(err)
 
@@ -43,17 +43,17 @@ async function compileCSS () {
 
           done({ file: res })
         })
-      }
+      },
     })
 
     const plugins = [
       autoprefixer,
       postcssLogical(),
-      postcssDirPseudoClass()
+      postcssDirPseudoClass(),
     ]
     const postcssResult = await postcss(plugins)
       .process(scssResult.css, { from: file })
-    postcssResult.warnings().forEach(function (warn) {
+    postcssResult.warnings().forEach((warn) => {
       console.warn(warn.toString())
     })
 
@@ -72,19 +72,19 @@ async function compileCSS () {
     await writeFile(outfile, postcssResult.css)
     console.info(
       chalk.green('✓ Built Uppy CSS:'),
-      chalk.magenta(path.relative(cwd, outfile))
+      chalk.magenta(path.relative(cwd, outfile)),
     )
 
     const minifiedResult = await postcss([
-      cssnano({ safe: true })
+      cssnano({ safe: true }),
     ]).process(postcssResult.css, { from: outfile })
-    minifiedResult.warnings().forEach(function (warn) {
+    minifiedResult.warnings().forEach((warn) => {
       console.warn(warn.toString())
     })
     await writeFile(outfile.replace(/\.css$/, '.min.css'), minifiedResult.css)
     console.info(
       chalk.green('✓ Minified Bundle CSS:'),
-      chalk.magenta(path.relative(cwd, outfile).replace(/\.css$/, '.min.css'))
+      chalk.magenta(path.relative(cwd, outfile).replace(/\.css$/, '.min.css')),
     )
   }
 }

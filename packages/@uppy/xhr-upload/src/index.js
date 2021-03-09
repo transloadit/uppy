@@ -54,23 +54,23 @@ module.exports = class XHRUpload extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
-      }
+        timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
+      },
     }
 
     // Default options
     const defaultOptions = {
-      formData: true,
-      fieldName: 'files[]',
-      method: 'post',
-      metaFields: null,
+      formData            : true,
+      fieldName           : 'files[]',
+      method              : 'post',
+      metaFields          : null,
       responseUrlFieldName: 'url',
-      bundle: false,
-      headers: {},
-      timeout: 30 * 1000,
-      limit: 0,
-      withCredentials: false,
-      responseType: '',
+      bundle              : false,
+      headers             : {},
+      timeout             : 30 * 1000,
+      limit               : 0,
+      withCredentials     : false,
+      responseType        : '',
       /**
        * @typedef respObj
        * @property {string} responseText
@@ -114,7 +114,7 @@ module.exports = class XHRUpload extends Plugin {
        */
       validateStatus (status, responseText, response) {
         return status >= 200 && status < 300
-      }
+      },
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -157,7 +157,7 @@ module.exports = class XHRUpload extends Plugin {
       ...this.opts,
       ...(overrides || {}),
       ...(file.xhrUpload || {}),
-      headers: {}
+      headers: {},
     }
     // Support for `headers` as a function, only in the XHRUpload settings.
     // Options set by other plugins in Uppy state or on the files themselves are still merged in afterward.
@@ -268,9 +268,9 @@ module.exports = class XHRUpload extends Plugin {
 
         if (ev.lengthComputable) {
           this.uppy.emit('upload-progress', file, {
-            uploader: this,
+            uploader     : this,
             bytesUploaded: ev.loaded,
-            bytesTotal: ev.total
+            bytesTotal   : ev.total,
           })
         }
       })
@@ -291,7 +291,7 @@ module.exports = class XHRUpload extends Plugin {
           const uploadResp = {
             status: ev.target.status,
             body,
-            uploadURL
+            uploadURL,
           }
 
           this.uppy.emit('upload-success', file, uploadResp)
@@ -301,18 +301,17 @@ module.exports = class XHRUpload extends Plugin {
           }
 
           return resolve(file)
-        } else {
-          const body = opts.getResponseData(xhr.responseText, xhr)
-          const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
-
-          const response = {
-            status: ev.target.status,
-            body
-          }
-
-          this.uppy.emit('upload-error', file, error, response)
-          return reject(error)
         }
+        const body = opts.getResponseData(xhr.responseText, xhr)
+        const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
+
+        const response = {
+          status: ev.target.status,
+          body,
+        }
+
+        this.uppy.emit('upload-error', file, error, response)
+        return reject(error)
       })
 
       xhr.addEventListener('error', (ev) => {
@@ -380,13 +379,13 @@ module.exports = class XHRUpload extends Plugin {
       const client = new Client(this.uppy, file.remote.providerOptions)
       client.post(file.remote.url, {
         ...file.remote.body,
-        endpoint: opts.endpoint,
-        size: file.data.size,
-        fieldname: opts.fieldName,
-        metadata: fields,
-        httpMethod: opts.method,
+        endpoint   : opts.endpoint,
+        size       : file.data.size,
+        fieldname  : opts.fieldName,
+        metadata   : fields,
+        httpMethod : opts.method,
         useFormData: opts.formData,
-        headers: opts.headers
+        headers    : opts.headers,
       }).then((res) => {
         const token = res.token
         const host = getSocketHost(file.remote.companionUrl)
@@ -424,7 +423,7 @@ module.exports = class XHRUpload extends Plugin {
           const uploadResp = {
             status: data.response.status,
             body,
-            uploadURL
+            uploadURL,
           }
 
           this.uppy.emit('upload-success', file, uploadResp)
@@ -473,7 +472,7 @@ module.exports = class XHRUpload extends Plugin {
       const optsFromState = this.uppy.getState().xhrUpload
       const formData = this.createBundledUpload(files, {
         ...this.opts,
-        ...(optsFromState || {})
+        ...(optsFromState || {}),
       })
 
       const xhr = new XMLHttpRequest()
@@ -503,9 +502,9 @@ module.exports = class XHRUpload extends Plugin {
 
         files.forEach((file) => {
           this.uppy.emit('upload-progress', file, {
-            uploader: this,
+            uploader     : this,
             bytesUploaded: ev.loaded / ev.total * file.size,
-            bytesTotal: file.size
+            bytesTotal   : file.size,
           })
         })
       })
@@ -517,7 +516,7 @@ module.exports = class XHRUpload extends Plugin {
           const body = this.opts.getResponseData(xhr.responseText, xhr)
           const uploadResp = {
             status: ev.target.status,
-            body
+            body,
           }
           files.forEach((file) => {
             this.uppy.emit('upload-success', file, uploadResp)
@@ -571,11 +570,10 @@ module.exports = class XHRUpload extends Plugin {
 
       if (file.error) {
         return Promise.reject(new Error(file.error))
-      } else if (file.isRemote) {
+      } if (file.isRemote) {
         return this.uploadRemote(file, current, total)
-      } else {
-        return this.upload(file, current, total)
       }
+      return this.upload(file, current, total)
     })
 
     return settle(promises)
@@ -619,7 +617,7 @@ module.exports = class XHRUpload extends Plugin {
     if (this.opts.limit === 0 && !this.opts.__queue) {
       this.uppy.log(
         '[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0',
-        'warning'
+        'warning',
       )
     }
 
@@ -628,7 +626,7 @@ module.exports = class XHRUpload extends Plugin {
 
     if (this.opts.bundle) {
       // if bundle: true, we don’t support remote uploads
-      const isSomeFileRemote = files.some(file => file.isRemote)
+      const isSomeFileRemote = files.some((file) => file.isRemote)
       if (isSomeFileRemote) {
         throw new Error('Can’t upload remote files when the `bundle: true` option is set')
       }
@@ -649,8 +647,8 @@ module.exports = class XHRUpload extends Plugin {
       this.uppy.setState({
         capabilities: {
           ...capabilities,
-          individualCancellation: false
-        }
+          individualCancellation: false,
+        },
       })
     }
 
@@ -663,8 +661,8 @@ module.exports = class XHRUpload extends Plugin {
       this.uppy.setState({
         capabilities: {
           ...capabilities,
-          individualCancellation: true
-        }
+          individualCancellation: true,
+        },
       })
     }
 
