@@ -298,10 +298,13 @@ hr {
   &-info {
     margin-top: 10px;
     text-align: center;
+    display: none;
 
     @media #{$screen-medium} {
+      display: block;
       text-align: right;
       margin-top: 0;
+      margin-left: 20px;
     }
   }
 
