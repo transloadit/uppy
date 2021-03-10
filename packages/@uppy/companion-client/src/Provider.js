@@ -117,7 +117,7 @@ module.exports = class Provider extends RequestClient {
       if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
         plugin.opts.companionAllowedHosts = `https://${opts.companionUrl.replace(/^\/\//, '')}`
       } else {
-        plugin.opts.companionAllowedHosts = opts.companionUrl
+        plugin.opts.companionAllowedHosts = new URL(opts.companionUrl).origin
       }
     }
 
