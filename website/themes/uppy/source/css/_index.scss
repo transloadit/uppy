@@ -96,12 +96,19 @@
 
   &-item {
     font-size: 14px;
-    display: inline-block;
-    margin: 0 20px 5px;
-    vertical-align: middle;
+    display: inline-flex;
+    margin: 0 16px 10px;
+    min-height: 42px;
+    align-items: center;
+
+    @media screen and (min-width: 375px) {
+      margin-right: 20px;
+      margin-left: 20px;
+    }
 
     @media #{$screen-medium} {
-      margin: 0 30px 10px;
+      margin-right: 30px;
+      margin-left: 30px;
     }
   }
 
