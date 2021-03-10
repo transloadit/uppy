@@ -26,10 +26,15 @@ module.exports = function s3 (config) {
   function getUploadParameters (req, res, next) {
     // @ts-ignore The `companion` property is added by middleware before reaching here.
     const client = req.companion.s3Client
+
+    if (!client || typeof config.bucket !== 'string') {
+      return res.status(400).json({ error: 'This Companion server does not support uploading to S3' })
+    }
+
     const metadata = req.query.metadata || {}
     const key = config.getKey(req, req.query.filename, metadata)
     if (typeof key !== 'string') {
-      return res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
+      return res.status(500).json({ error: 'S3 uploads are misconfigured: filename returned from `getKey` must be a string' })
     }
 
     const fields = {
