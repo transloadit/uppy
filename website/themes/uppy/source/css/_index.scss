@@ -84,22 +84,24 @@
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    margin-bottom: 20px;
     font-size: inherit;
     color: inherit;
   }
 
   &-logos {
-    margin: 12px 0 0;
+    margin: 20px 0 0;
     font-size: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   &-item {
     font-size: 14px;
-    display: inline-flex;
+    display: block;
     margin: 0 16px 10px;
     min-height: 42px;
-    align-items: center;
 
     @media screen and (min-width: 375px) {
       margin-right: 20px;
