@@ -11,9 +11,9 @@ const Provider = require('./Provider')
  * Returns a request middleware function that can be used to pre-fetch a provider's
  * Oauth credentials before the request is passed to the Oauth handler (https://github.com/simov/grant in this case).
  *
- * @param {Object.<string, (typeof Provider)>} providers provider classes enabled for this server
+ * @param {Record<string, typeof Provider>} providers provider classes enabled for this server
  * @param {object} companionOptions companion options object
- * @returns {(req: object, res: object, next: Function) => void}
+ * @returns {import('express').RequestHandler}
  */
 exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
   return (req, res, next) => {
