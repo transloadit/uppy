@@ -56,7 +56,13 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
       if (credentials.redirect_uri) {
         res.locals.grant.dynamic.redirect_uri = credentials.redirect_uri
       }
-    }).finally(() => next())
+
+      next()
+    }).catch((err) => {
+      // TODO we should return an html page here that can communicate the error
+      // back to the Uppy client
+      next(err)
+    })
   }
 }
 
