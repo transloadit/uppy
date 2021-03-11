@@ -46,7 +46,7 @@ function addRemoteProvider (uppy, name, opts) {
     // Use the app's own oauth credentials instead of the shared
     // Transloadit ones.
     if (overrides.credentialsName) {
-      const { key } = opts.params
+      const { key } = opts.params.auth
       overrides.companionKeysParams = {
         key,
         credentialsName: overrides.credentialsName
