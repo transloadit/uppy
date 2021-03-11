@@ -69,7 +69,7 @@ module.exports.app = (options = {}) => {
   if (options.redisUrl) {
     redis.client(merge({ url: options.redisUrl }, options.redisOptions || {}))
   }
-  emitter(options.multipleInstances && options.redisUrl)
+  emitter(options.multipleInstances && options.redisUrl, options.redisPubSubScope)
 
   const app = express()
   app.use(cookieParser()) // server tokens are added to cookies
