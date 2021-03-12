@@ -173,7 +173,12 @@ hr {
   padding: 2em 1.4em 0;
 
   @media #{$screen-medium} {
-    padding: 0 60px 30px;
+    padding: 0 20px 30px;
+  }
+
+  @media #{$screen-large} {
+    padding-right: 60px;
+    padding-left: 60px;
   }
 }
 
@@ -267,9 +272,13 @@ hr {
   @media #{$screen-medium} {
     display: flex;
     height: $size-transloaditBarHeight;
-    padding: 0 60px;
+    padding: 0 20px;
     justify-content: space-between;
     align-items: center;
+  }
+
+  @media #{$screen-large} {
+    padding: 0 60px;
   }
 
   &-link {
@@ -298,10 +307,13 @@ hr {
   &-info {
     margin-top: 10px;
     text-align: center;
+    display: none;
 
     @media #{$screen-medium} {
+      display: block;
       text-align: right;
       margin-top: 0;
+      margin-left: 20px;
     }
   }
 
@@ -337,13 +349,18 @@ hr {
     height: $size-headerHeight;
     display: flex;
     align-items: baseline;
-    padding: 14px 60px 19px;
+    padding: 14px 20px 19px;
     z-index: 2;
     text-align: left;
 
     // &.fix-header {
     //   box-shadow: 0 0 4px rgba(0,0,0,.25);
     // }
+  }
+
+  @media #{$screen-large} {
+    padding-right: 60px;
+    padding-left: 60px;
   }
 
   .page-index & {

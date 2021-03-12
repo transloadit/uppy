@@ -47,6 +47,7 @@ module.exports.socket = require('./server/socket')
  * Entry point into initializing the Companion app.
  *
  * @param {object} options
+ * @returns {import('express').Express}
  */
 module.exports.app = (options = {}) => {
   validateConfig(options)

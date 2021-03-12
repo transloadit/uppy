@@ -21,6 +21,40 @@ In the current stage we aim to release a new version at least every month.
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
 - [ ] integration: Vue 3 (#2755 / @ajkachnic)
 
+## 1.26.1
+
+Released: 2021-03-10
+
+⚠️ This release fixes a DOS vulnerability in Companion if you were *not* using S3 uploads.
+We recommend updating ASAP if you run your own Companion instance.
+
+It also adds typescript typings for Companion.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.14 | @uppy/progress-bar | 1.3.26 |
+| @uppy/aws-s3 | 1.7.8 | @uppy/provider-views | 1.11.2 |
+| @uppy/box | 0.3.7 | @uppy/react | 1.11.5 |
+| @uppy/companion-client | 1.8.3 | @uppy/robodog | 1.10.6 |
+| @uppy/companion | 2.6.0 | @uppy/screen-capture | 1.0.16 |
+| @uppy/core | 1.16.2 | @uppy/status-bar | 1.9.2 |
+| @uppy/dashboard | 1.17.1 | @uppy/svelte | 0.1.6 |
+| @uppy/drag-drop | 1.4.26 | @uppy/thumbnail-generator | 1.7.7 |
+| @uppy/dropbox | 1.4.25 | @uppy/transloadit | 1.6.22 |
+| @uppy/facebook | 1.1.25 | @uppy/tus | 1.8.6 |
+| @uppy/file-input | 1.4.24 | @uppy/unsplash | 0.1.9 |
+| @uppy/form | 1.3.27 | @uppy/url | 1.5.19 |
+| @uppy/golden-retriever | 1.3.26 | @uppy/utils | 3.4.2 |
+| @uppy/google-drive | 1.5.25 | @uppy/vue | 0.1.7 |
+| @uppy/image-editor | 0.2.3 | @uppy/webcam | 1.8.7 |
+| @uppy/informer | 1.6.2 | @uppy/xhr-upload | 1.7.1 |
+| @uppy/instagram | 1.4.25 | @uppy/zoom | 0.1.14 |
+| @uppy/onedrive | 1.1.25 | uppy | 1.26.1 |
+
+- @uppy/companion: fix crash when S3 is not configured (#2798 / @goto-bus-stop)
+- @uppy/companion: generate type declaration file (#2749 / @goto-bus-stop)
+- @uppy/core: support Vue 3's proxied objects in `removePlugin()` (#2793 / @arturi)
+
 ## February 2021
 
 ## 1.26.0
