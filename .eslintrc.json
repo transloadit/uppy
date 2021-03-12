@@ -160,6 +160,8 @@
       }
     },
 
+    { "files": ["packages/uppy/**.js"], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "packages/uppy/"}] } },
+
     { "files": ["packages/@uppy/aws-s3/**.js"], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "packages/@uppy/aws-s3/"}] } },
     { "files": ["packages/@uppy/aws-s3-multipart/**.js"], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "packages/@uppy/aws-s3-multipart/"}] } },
     { "files": ["packages/@uppy/box/**.js"], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "packages/@uppy/box/"}] } },
@@ -199,6 +201,28 @@
     { "files": ["packages/@uppy/vue/**.js"], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "packages/@uppy/vue/"}] } },
     { "files": ["packages/@uppy/webcam/**.js"], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "packages/@uppy/webcam/"}] } },
     { "files": ["packages/@uppy/xhr-upload/**.js"], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "packages/@uppy/xhr-upload/"}] } },
-    { "files": ["packages/@uppy/zoom/**.js"], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "packages/@uppy/zoom/"}] } }
+    { "files": ["packages/@uppy/zoom/**.js"], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "packages/@uppy/zoom/"}] } },
+
+
+    { "files": ["examples/aws-companion/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/aws-companion/"}] } },
+    { "files": ["examples/aws-presigned-url/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/aws-presigned-url/"}] } },
+    { "files": ["examples/bundled/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/bundled/"}] } },
+    { "files": ["examples/cdn-example/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/cdn-example/"}] } },
+    { "files": ["examples/custom-provider/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/custom-provider/"}] } },
+    { "files": ["examples/dev/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/dev/"}] } },
+    { "files": ["examples/digitalocean-spaces/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/digitalocean-spaces/"}] } },
+    { "files": ["examples/multiple-instances/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/multiple-instances/"}] } },
+    { "files": ["examples/node-xhr/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/node-xhr/"}] } },
+    { "files": ["examples/php-xhr/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/php-xhr/"}] } },
+    { "files": ["examples/python-xhr/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/python-xhr/"}] } },
+    { "files": ["examples/react-example/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/react-example/"}] } },
+    { "files": ["examples/react-native-expo/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/react-native-expo/"}] } },
+    { "files": ["examples/redux/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/redux/"}] } },
+    { "files": ["examples/svelte-example/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/svelte-example/"}] } },
+    { "files": ["examples/transloadit/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/transloadit/"}] } },
+    { "files": ["examples/transloadit-textarea/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/transloadit-textarea/"}] } },
+    { "files": ["examples/uppy-with-companion/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/uppy-with-companion/"}] } },
+    { "files": ["examples/vue/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/vue/"}] } },
+    { "files": ["examples/xhr-bundle/**.js" ], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "examples/xhr-bundle/"}] } }
   ]
 }
