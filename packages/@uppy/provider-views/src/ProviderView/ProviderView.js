@@ -143,11 +143,14 @@ module.exports = class ProviderView {
     this.lastCheckbox = undefined
   }
 
-  addFile (file) {
+  addFile (file, meta) {
     const tagFile = {
       id: this.providerFileToId(file),
       source: this.plugin.id,
-      data: file,
+      data: {
+        ...file,
+        path: file.requestPath
+      },
       name: file.name || file.id,
       type: file.mimeType,
       isRemote: true,
@@ -161,7 +164,8 @@ module.exports = class ProviderView {
           fileId: file.id
         },
         providerOptions: this.provider.opts
-      }
+      },
+      ...(Boolean(meta) && { meta })
     }
 
     const fileType = getFileType(tagFile)
@@ -311,10 +315,23 @@ module.exports = class ProviderView {
     }
     folders[folderId] = { loading: true, files: [] }
     this.plugin.setPluginState({ selectedFolders: { ...folders } })
-    return this.listAllFiles(folder.requestPath).then((files) => {
+
+    folder.relativePath = folder.relativePath || ''
+    const filesRelativePath = `${folder.relativePath}/${folder.name}`
+
+    return this.listAllFiles(
+      folder.requestPath,
+      null,
+      { previousRelativePath: folder.relativePath, currentFolder: folder }
+    ).then((files) => {
       let count = 0
       files.forEach((file) => {
-        const success = this.addFile(file)
+        const success = this.addFile(file, {
+          relativePath: filesRelativePath,
+          // Indicates that this file was selected through
+          // folder selection.
+          isSelectedFromFolder: true
+        })
         if (success) count++
       })
       const ids = files.map(this.providerFileToId)
@@ -420,11 +437,23 @@ module.exports = class ProviderView {
     }
   }
 
-  listAllFiles (path, files = null) {
+  listAllFiles (path, files = null, meta = undefined) {
     files = files || []
     return new Promise((resolve, reject) => {
       this.provider.list(path).then((res) => {
+        let itemsRelativePath
+
+        if (meta) {
+          const { previousRelativePath, currentFolder } = meta
+
+          itemsRelativePath = `${previousRelativePath}/${currentFolder.name}`
+        }
+
         res.items.forEach((item) => {
+          if (itemsRelativePath) {
+            item.relativePath = itemsRelativePath
+          }
+
           if (!item.isFolder) {
             files.push(item)
           } else {

@@ -239,7 +239,7 @@ declare module '@uppy/utils' {
     [key: string]: T
     [key: number]: T
   }
-  export type InternalMetadata = { name: string; type?: string }
+  export type InternalMetadata = { name: string; type?: string; isSelectedFromFolder?: boolean; relativePath?: string; }
   export interface UppyFile<
     TMeta = IndexedObject<any>,
     TBody = IndexedObject<any>
