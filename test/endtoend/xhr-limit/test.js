@@ -7,7 +7,7 @@ const { supportsChooseFile } = require('../utils')
 const devNull = () => Writable({
   write (chunk, enc, cb) {
     cb()
-  }
+  },
 })
 
 const testURL = 'http://localhost:4567/xhr-limit'
@@ -18,7 +18,7 @@ describe.skip('XHRUpload with `limit`', () => {
     server = http.createServer((req, res) => {
       res.writeHead(200, {
         'content-type': 'application/json',
-        'access-control-allow-origin': '*'
+        'access-control-allow-origin': '*',
       })
       req.pipe(devNull())
       req.on('end', () => {
@@ -48,7 +48,7 @@ describe.skip('XHRUpload with `limit`', () => {
       makeFile(1000),
       makeFile(1000),
       makeFile(1000),
-      makeFile(1000)
+      makeFile(1000),
     ]
 
     const endpoint = `http://localhost:${server.address().port}`
@@ -68,7 +68,7 @@ describe.skip('XHRUpload with `limit`', () => {
             source: 'test',
             name: `testfile${i}`,
             type: 'text/plain',
-            data: new Blob([data], { type: 'text/plain' })
+            data: new Blob([data], { type: 'text/plain' }),
           })
         })
       }, files.map((file) => file.content.toString('hex')))
@@ -80,7 +80,7 @@ describe.skip('XHRUpload with `limit`', () => {
     await browser.pause(5000)
     const status = await browser.execute(() => ({
       started: window.uppyXhrLimit.uploadsStarted,
-      complete: window.uppyXhrLimit.uploadsComplete
+      complete: window.uppyXhrLimit.uploadsComplete,
     }))
     console.log(status)
     expect(status.started).to.be.equal(files.length)

@@ -13,5 +13,5 @@ module.exports = {
   RequestClient,
   Provider,
   SearchProvider,
-  Socket
+  Socket,
 }

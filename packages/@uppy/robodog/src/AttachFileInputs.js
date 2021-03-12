@@ -28,7 +28,7 @@ class AttachFileInputs extends Plugin {
           source: this.id,
           name: file.name,
           type: file.type,
-          data: file
+          data: file,
         })
       } catch (err) {
         if (!err.isRestriction) {

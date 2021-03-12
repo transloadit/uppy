@@ -13,7 +13,7 @@ const b = browserify({
   cache: {},
   packageCache: {},
   debug: true,
-  entries: path.join(__dirname, './main.js')
+  entries: path.join(__dirname, './main.js'),
 })
 
 b.plugin(watchify)
@@ -21,8 +21,8 @@ b.plugin(watchify)
 b.transform(babelify)
 b.transform(aliasify, {
   aliases: {
-    '@uppy': path.join(__dirname, '../../packages/@uppy')
-  }
+    '@uppy': path.join(__dirname, '../../packages/@uppy'),
+  },
 })
 
 function bundle () {
@@ -43,6 +43,6 @@ console.log('bundling...')
 bundle().on('finish', () => {
   // Start the PHP delevopment server.
   spawn('php', ['-S', `localhost:${port}`], {
-    stdio: 'inherit'
+    stdio: 'inherit',
   })
 })

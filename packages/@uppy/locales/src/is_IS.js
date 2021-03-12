@@ -54,14 +54,14 @@ is_IS.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete} af %{smart_count} skrá upphalað',
     '1': '%{complete} af %{smart_count} skrám upphalað',
-    '2': '%{complete} af %{smart_count} skrám upphalað'
+    '2': '%{complete} af %{smart_count} skrám upphalað',
   },
   filter: 'Sía',
   finishEditingFile: 'Klára að breyta skrá',
   folderAdded: {
     '0': 'Bætt við %{smart_count} skrá frá %{folder}',
     '1': 'Bætt við %{smart_count} skrám frá %{folder}',
-    '2': 'Bætt við %{smart_count} skrám frá %{folder}'
+    '2': 'Bætt við %{smart_count} skrám frá %{folder}',
   },
   generatingThumbnails: 'Bý til smámynd ...',
   import: 'Flytja inn',
@@ -79,7 +79,7 @@ is_IS.strings = {
   processingXFiles: {
     '0': 'Vinn %{smart_count} skrá',
     '1': 'Vinn %{smart_count} skrár',
-    '2': 'Vinn %{smart_count} skrár'
+    '2': 'Vinn %{smart_count} skrár',
   },
   removeFile: 'Fjarlægja skrá',
   resetFilter: 'Endurstilla síu',
@@ -93,7 +93,7 @@ is_IS.strings = {
   selectX: {
     '0': 'Velja %{smart_count}',
     '1': 'Velja %{smart_count}',
-    '2': 'Velja %{smart_count}'
+    '2': 'Velja %{smart_count}',
   },
   smile: 'Brostu!',
   startRecording: 'Byrja myndbandsupptöku',
@@ -109,41 +109,41 @@ is_IS.strings = {
   uploadXFiles: {
     '0': 'Upphala %{smart_count} skrá',
     '1': 'Upphala %{smart_count} skrám',
-    '2': 'Upphala %{smart_count} skrám'
+    '2': 'Upphala %{smart_count} skrám',
   },
   uploadXNewFiles: {
     '0': 'Upphala +%{smart_count} skrá',
     '1': 'Upphala +%{smart_count} skrám',
-    '2': 'Upphala +%{smart_count} skrám'
+    '2': 'Upphala +%{smart_count} skrám',
   },
   uploading: 'Upphala',
   uploadingXFiles: {
     '0': 'Upphala %{smart_count} skrá',
     '1': 'Upphala %{smart_count} skrám',
-    '2': 'Upphala %{smart_count} skrám'
+    '2': 'Upphala %{smart_count} skrám',
   },
   xFilesSelected: {
     '0': '%{smart_count} skrá valin',
     '1': '%{smart_count} skrár valdar',
-    '2': '%{smart_count} skrár valdar'
+    '2': '%{smart_count} skrár valdar',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} fleiri skrá bætt við',
     '1': '%{smart_count} fleiri skrám bætt við',
-    '2': '%{smart_count} fleiri skrám bætt við'
+    '2': '%{smart_count} fleiri skrám bætt við',
   },
   xTimeLeft: '%{time} eftir',
   youCanOnlyUploadFileTypes: 'Þú getur aðeins upphalað: %{types}',
   youCanOnlyUploadX: {
     '0': 'Þú getur aðeins upphalað %{smart_count} skrá',
     '1': 'Þú getur aðeins upphalað %{smart_count} skrám',
-    '2': 'Þú getur aðeins upphalað %{smart_count} skrám'
+    '2': 'Þú getur aðeins upphalað %{smart_count} skrám',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Þú verður að velja lágmark %{smart_count} skrá',
     '1': 'Þú verður að velja lágmark %{smart_count} skrár',
-    '2': 'Þú verður að velja lágmark %{smart_count} skrár'
-  }
+    '2': 'Þú verður að velja lágmark %{smart_count} skrár',
+  },
 }
 
 is_IS.pluralize = function (n) {

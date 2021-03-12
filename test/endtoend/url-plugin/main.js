@@ -11,14 +11,14 @@ const endpoint = isOnTravis ? 'http://companion.test:1080' : 'http://localhost:1
 
 window.uppy = new Uppy({
   id: 'uppyProvider',
-  debug: true
+  debug: true,
 })
   .use(Dashboard, {
     target: '#uppyDashboard',
-    inline: true
+    inline: true,
   })
   .use(Url, {
     target: Dashboard,
-    companionUrl: companionUrl
+    companionUrl,
   })
   .use(Tus, { endpoint: `${endpoint}/files/` })

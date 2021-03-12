@@ -6,7 +6,7 @@ describe('getSpeed', () => {
     const date5SecondsAgo = new Date(dateNow.getTime() - 5 * 1000)
     const fileProgress = {
       bytesUploaded: 1024,
-      uploadStarted: date5SecondsAgo
+      uploadStarted: date5SecondsAgo,
     }
     expect(Math.round(getSpeed(fileProgress))).toEqual(Math.round(205))
   })

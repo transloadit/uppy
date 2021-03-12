@@ -88,15 +88,15 @@ module.exports = class Dashboard extends Plugin {
         cancelUpload: 'Cancel upload',
         xFilesSelected: {
           0: '%{smart_count} file selected',
-          1: '%{smart_count} files selected'
+          1: '%{smart_count} files selected',
         },
         uploadingXFiles: {
           0: 'Uploading %{smart_count} file',
-          1: 'Uploading %{smart_count} files'
+          1: 'Uploading %{smart_count} files',
         },
         processingXFiles: {
           0: 'Processing %{smart_count} file',
-          1: 'Processing %{smart_count} files'
+          1: 'Processing %{smart_count} files',
         },
         // The default `poweredBy2` string only combines the `poweredBy` string (%{backwardsCompat}) with the size.
         // Locales can override `poweredBy2` to specify a different word order. This is for backwards compat with
@@ -104,8 +104,8 @@ module.exports = class Dashboard extends Plugin {
         // substitution.
         // TODO: In 2.0 `poweredBy2` should be removed in and `poweredBy` updated to use substitution.
         poweredBy2: '%{backwardsCompat} %{uppy}',
-        poweredBy: 'Powered by'
-      }
+        poweredBy: 'Powered by',
+      },
     }
 
     // set default options
@@ -147,7 +147,7 @@ module.exports = class Dashboard extends Plugin {
       browserBackButtonClose: false,
       theme: 'light',
       autoOpenFileEditor: false,
-      disabled: false
+      disabled: false,
     }
 
     // merge default options with the ones set by user
@@ -181,7 +181,7 @@ module.exports = class Dashboard extends Plugin {
     const newTargets = pluginState.targets.filter(target => target.id !== plugin.id)
 
     this.setPluginState({
-      targets: newTargets
+      targets: newTargets,
     })
   }
 
@@ -190,9 +190,9 @@ module.exports = class Dashboard extends Plugin {
     const callerPluginName = plugin.title || callerPluginId
     const callerPluginType = plugin.type
 
-    if (callerPluginType !== 'acquirer' &&
-        callerPluginType !== 'progressindicator' &&
-        callerPluginType !== 'editor') {
+    if (callerPluginType !== 'acquirer'
+        && callerPluginType !== 'progressindicator'
+        && callerPluginType !== 'editor') {
       const msg = 'Dashboard: can only be targeted by plugins of types: acquirer, progressindicator, editor'
       this.uppy.log(msg, 'error')
       return
@@ -201,7 +201,7 @@ module.exports = class Dashboard extends Plugin {
     const target = {
       id: callerPluginId,
       name: callerPluginName,
-      type: callerPluginType
+      type: callerPluginType,
     }
 
     const state = this.getPluginState()
@@ -209,7 +209,7 @@ module.exports = class Dashboard extends Plugin {
     newTargets.push(target)
 
     this.setPluginState({
-      targets: newTargets
+      targets: newTargets,
     })
 
     return this.el
@@ -221,14 +221,14 @@ module.exports = class Dashboard extends Plugin {
       showAddFilesPanel: false,
       activeOverlayType: null,
       fileCardFor: null,
-      showFileEditor: false
+      showFileEditor: false,
     }
 
     const current = this.getPluginState()
-    if (current.activePickerPanel === update.activePickerPanel &&
-        current.showAddFilesPanel === update.showAddFilesPanel &&
-        current.showFileEditor === update.showFileEditor &&
-        current.activeOverlayType === update.activeOverlayType) {
+    if (current.activePickerPanel === update.activePickerPanel
+        && current.showAddFilesPanel === update.showAddFilesPanel
+        && current.showFileEditor === update.showFileEditor
+        && current.activeOverlayType === update.activeOverlayType) {
       // avoid doing a state update if nothing changed
       return
     }
@@ -244,8 +244,8 @@ module.exports = class Dashboard extends Plugin {
     })[0]
 
     this.setPluginState({
-      activePickerPanel: activePickerPanel,
-      activeOverlayType: 'PickerPanel'
+      activePickerPanel,
+      activeOverlayType: 'PickerPanel',
     })
   }
 
@@ -265,7 +265,7 @@ module.exports = class Dashboard extends Plugin {
     this.setPluginState({
       showFileEditor: true,
       fileCardFor: file.id || null,
-      activeOverlayType: 'FileEditor'
+      activeOverlayType: 'FileEditor',
     })
 
     editors.forEach((editor) => {
@@ -287,7 +287,7 @@ module.exports = class Dashboard extends Plugin {
     if (this.opts.animateOpenClose && this.getPluginState().isClosing) {
       const handler = () => {
         this.setPluginState({
-          isHidden: false
+          isHidden: false,
         })
         this.el.removeEventListener('animationend', handler, false)
         resolve()
@@ -295,7 +295,7 @@ module.exports = class Dashboard extends Plugin {
       this.el.addEventListener('animationend', handler, false)
     } else {
       this.setPluginState({
-        isHidden: false
+        isHidden: false,
       })
       resolve()
     }
@@ -314,7 +314,7 @@ module.exports = class Dashboard extends Plugin {
 
   closeModal = (opts = {}) => {
     const {
-      manualClose = true // Whether the modal is being closed by the user (`true`) or by other means (e.g. browser back button)
+      manualClose = true, // Whether the modal is being closed by the user (`true`) or by other means (e.g. browser back button)
     } = opts
 
     const { isHidden, isClosing } = this.getPluginState()
@@ -331,12 +331,12 @@ module.exports = class Dashboard extends Plugin {
 
     if (this.opts.animateOpenClose) {
       this.setPluginState({
-        isClosing: true
+        isClosing: true,
       })
       const handler = () => {
         this.setPluginState({
           isHidden: true,
-          isClosing: false
+          isClosing: false,
         })
 
         this.superFocus.cancel()
@@ -348,7 +348,7 @@ module.exports = class Dashboard extends Plugin {
       this.el.addEventListener('animationend', handler, false)
     } else {
       this.setPluginState({
-        isHidden: true
+        isHidden: true,
       })
 
       this.superFocus.cancel()
@@ -391,8 +391,8 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.setState({
       capabilities: {
         ...capabilities,
-        darkMode: isDarkModeOn
-      }
+        darkMode: isDarkModeOn,
+      },
     })
   }
 
@@ -412,14 +412,14 @@ module.exports = class Dashboard extends Plugin {
 
     this.setPluginState({
       fileCardFor: show ? fileID : null,
-      activeOverlayType: show ? 'FileCard' : null
+      activeOverlayType: show ? 'FileCard' : null,
     })
   }
 
   toggleAddFilesPanel = (show) => {
     this.setPluginState({
       showAddFilesPanel: show,
-      activeOverlayType: show ? 'AddFiles' : null
+      activeOverlayType: show ? 'AddFiles' : null,
     })
   }
 
@@ -432,8 +432,8 @@ module.exports = class Dashboard extends Plugin {
       meta: {
         // path of the file relative to the ancestor directory the user selected.
         // e.g. 'docs/Old Prague/airbnb.pdf'
-        relativePath: file.relativePath || null
-      }
+        relativePath: file.relativePath || null,
+      },
     }))
 
     try {
@@ -461,7 +461,7 @@ module.exports = class Dashboard extends Plugin {
       this.setPluginState({
         containerWidth: width,
         containerHeight: height,
-        areInsidesReadyToBeVisible: true
+        areInsidesReadyToBeVisible: true,
       })
     })
     this.resizeObserver.observe(this.el.querySelector('.uppy-Dashboard-inner'))
@@ -472,14 +472,14 @@ module.exports = class Dashboard extends Plugin {
       const isModalAndClosed = !this.opts.inline && pluginState.isHidden
       if (
         // if ResizeObserver hasn't yet fired,
-        !pluginState.areInsidesReadyToBeVisible &&
+        !pluginState.areInsidesReadyToBeVisible
         // and it's not due to the modal being closed
-        !isModalAndClosed
+        && !isModalAndClosed
       ) {
         this.uppy.log("[Dashboard] resize event didn't fire on time: defaulted to mobile layout", 'debug')
 
         this.setPluginState({
-          areInsidesReadyToBeVisible: true
+          areInsidesReadyToBeVisible: true,
         })
       }
     }, 1000)
@@ -533,7 +533,7 @@ module.exports = class Dashboard extends Plugin {
       // Push to history so that the page is not lost on browser back button press
       history.pushState({
         ...history.state,
-        [this.modalName]: true
+        [this.modalName]: true,
       }, '')
     }
 
@@ -776,17 +776,17 @@ module.exports = class Dashboard extends Plugin {
 
     if (
       // If update is connected to showing the Informer - let the screen reader calmly read it.
-      isInformerHidden &&
-      (
+      isInformerHidden
+      && (
         // If we are in a modal - always superfocus without concern for other elements on the page (user is unlikely to want to interact with the rest of the page)
-        isModal ||
+        isModal
         // If we are already inside of Uppy, or
-        isFocusInUppy ||
+        || isFocusInUppy
         // If we are not focused on anything BUT we have already, at least once, focused on uppy
         //   1. We focus when isFocusNowhere, because when the element we were focused on disappears (e.g. an overlay), - focus gets lost. If user is typing something somewhere else on the page, - focus won't be 'nowhere'.
         //   2. We only focus when focus is nowhere AND this.ifFocusedOnUppyRecently, to avoid focus jumps if we do something else on the page.
         //   [Practical check] Without '&& this.ifFocusedOnUppyRecently', in Safari, in inline mode, when file is uploading, - navigate via tab to the checkbox, try to press space multiple times. Focus will jump to Uppy.
-        (isFocusNowhere && this.ifFocusedOnUppyRecently)
+        || (isFocusNowhere && this.ifFocusedOnUppyRecently)
       )
     ) {
       this.superFocus(this.el, this.getPluginState().activeOverlayType)
@@ -822,7 +822,7 @@ module.exports = class Dashboard extends Plugin {
     return {
       ...target,
       icon: plugin.icon || this.opts.defaultPickerIcon,
-      render: plugin.render
+      render: plugin.render,
     }
   }
 
@@ -880,8 +880,8 @@ module.exports = class Dashboard extends Plugin {
     })
 
     const inProgressFiles = Object.keys(files).filter((file) => {
-      return !files[file].progress.uploadComplete &&
-             files[file].progress.uploadStarted
+      return !files[file].progress.uploadComplete
+             && files[file].progress.uploadStarted
     })
 
     const inProgressNotPausedFiles = inProgressFiles.filter((file) => {
@@ -894,15 +894,15 @@ module.exports = class Dashboard extends Plugin {
 
     const isUploadStarted = uploadStartedFiles.length > 0
 
-    const isAllComplete = state.totalProgress === 100 &&
-      completeFiles.length === Object.keys(files).length &&
-      processingFiles.length === 0
+    const isAllComplete = state.totalProgress === 100
+      && completeFiles.length === Object.keys(files).length
+      && processingFiles.length === 0
 
-    const isAllErrored = isUploadStarted &&
-      erroredFiles.length === uploadStartedFiles.length
+    const isAllErrored = isUploadStarted
+      && erroredFiles.length === uploadStartedFiles.length
 
-    const isAllPaused = inProgressFiles.length !== 0 &&
-      pausedFiles.length === inProgressFiles.length
+    const isAllPaused = inProgressFiles.length !== 0
+      && pausedFiles.length === inProgressFiles.length
 
     const acquirers = this._getAcquirers(pluginState.targets)
     const progressindicators = this._getProgressIndicators(pluginState.targets)
@@ -948,8 +948,8 @@ module.exports = class Dashboard extends Plugin {
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
       getPlugin: this.uppy.getPlugin,
-      progressindicators: progressindicators,
-      editors: editors,
+      progressindicators,
+      editors,
       autoProceed: this.uppy.opts.autoProceed,
       id: this.id,
       closeModal: this.requestCloseModal,
@@ -1004,7 +1004,7 @@ module.exports = class Dashboard extends Plugin {
       isDraggingOver: pluginState.isDraggingOver,
       handleDragOver: this.handleDragOver,
       handleDragLeave: this.handleDragLeave,
-      handleDrop: this.handleDrop
+      handleDrop: this.handleDrop,
     })
   }
 
@@ -1038,7 +1038,7 @@ module.exports = class Dashboard extends Plugin {
       targets: [],
       // We'll make them visible once .containerWidth is determined
       areInsidesReadyToBeVisible: false,
-      isDraggingOver: false
+      isDraggingOver: false,
     })
 
     const { inline, closeAfterFinish } = this.opts
@@ -1075,14 +1075,14 @@ module.exports = class Dashboard extends Plugin {
         showProgressDetails: this.opts.showProgressDetails,
         hideAfterFinish: this.opts.hideProgressAfterFinish,
         locale: this.opts.locale,
-        doneButtonHandler: this.opts.doneButtonHandler
+        doneButtonHandler: this.opts.doneButtonHandler,
       })
     }
 
     if (!this.opts.disableInformer) {
       this.uppy.use(Informer, {
         id: `${this.id}:Informer`,
-        target: this
+        target: this,
       })
     }
 
@@ -1093,7 +1093,7 @@ module.exports = class Dashboard extends Plugin {
         thumbnailType: this.opts.thumbnailType,
         waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload,
         // If we don't block on thumbnails, we can lazily generate them
-        lazy: !this.opts.waitForThumbnailsBeforeUpload
+        lazy: !this.opts.waitForThumbnailsBeforeUpload,
       })
     }
 

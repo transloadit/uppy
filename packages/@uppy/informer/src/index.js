@@ -20,7 +20,7 @@ module.exports = class Informer extends Plugin {
     // set default options
     const defaultOptions = {}
     // merge default options with the ones set by user
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
   }
 
   render = (state) => {
@@ -41,7 +41,7 @@ module.exports = class Informer extends Plugin {
 
     return (
       <div
-        class="uppy uppy-Informer"
+        className="uppy uppy-Informer"
         aria-hidden={isHidden}
       >
         <p role="alert">
@@ -53,7 +53,7 @@ module.exports = class Informer extends Plugin {
               data-microtip-position="top-left"
               data-microtip-size="medium"
               role="tooltip"
-              onclick={displayErrorAlert}
+              onClick={displayErrorAlert}
               onMouseOver={handleMouseOver}
               onMouseLeave={handleMouseLeave}
             >

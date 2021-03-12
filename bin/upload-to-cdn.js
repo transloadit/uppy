@@ -85,7 +85,7 @@ async function getLocalDistFiles (packagePath) {
   const entries = await Promise.all(
     files.map(async (f) => [
       f,
-      await readFile(path.join(packagePath, 'dist', f))
+      await readFile(path.join(packagePath, 'dist', f)),
     ])
   )
 
@@ -112,9 +112,9 @@ async function main (packageName, version) {
   const s3 = new AWS.S3({
     credentials: new AWS.Credentials({
       accessKeyId: process.env.EDGLY_KEY,
-      secretAccessKey: process.env.EDGLY_SECRET
+      secretAccessKey: process.env.EDGLY_SECRET,
     }),
-    region: AWS_REGION
+    region: AWS_REGION,
   })
 
   const remote = !!version
@@ -145,7 +145,7 @@ async function main (packageName, version) {
 
   const { Contents: existing } = await s3.listObjects({
     Bucket: AWS_BUCKET,
-    Prefix: outputPath
+    Prefix: outputPath,
   }).promise()
   if (existing.length > 0) {
     if (process.argv.includes('--force')) {
@@ -177,7 +177,7 @@ async function main (packageName, version) {
       Bucket: AWS_BUCKET,
       Key: key,
       ContentType: mime.lookup(filename),
-      Body: buffer
+      Body: buffer,
     }).promise()
   }
 }

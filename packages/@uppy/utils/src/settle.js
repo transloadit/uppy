@@ -15,7 +15,7 @@ module.exports = function settle (promises) {
   return wait.then(() => {
     return {
       successful: resolutions,
-      failed: rejections
+      failed: rejections,
     }
   })
 }

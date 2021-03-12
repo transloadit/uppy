@@ -11,7 +11,7 @@ function defaultGetAssemblyOptions (file, options) {
   return {
     params: options.params,
     signature: options.signature,
-    fields: options.fields
+    fields: options.fields,
   }
 }
 
@@ -38,8 +38,8 @@ module.exports = class Transloadit extends Plugin {
       strings: {
         creatingAssembly: 'Preparing upload...',
         creatingAssemblyFailed: 'Transloadit: Could not create Assembly',
-        encoding: 'Encoding...'
-      }
+        encoding: 'Encoding...',
+      },
     }
 
     const defaultOptions = {
@@ -53,7 +53,7 @@ module.exports = class Transloadit extends Plugin {
       params: null,
       fields: {},
       getAssemblyOptions: defaultGetAssemblyOptions,
-      limit: 0
+      limit: 0,
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -81,7 +81,7 @@ module.exports = class Transloadit extends Plugin {
     this.client = new Client({
       service: this.opts.service,
       client: this._getClientVersion(),
-      errorReporting: this.opts.errorReporting
+      errorReporting: this.opts.errorReporting,
     })
     // Contains Assembly instances for in-progress Assemblies.
     this.activeAssemblies = {}
@@ -107,7 +107,7 @@ module.exports = class Transloadit extends Plugin {
     const list = [
       `uppy-core:${this.uppy.constructor.VERSION}`,
       `uppy-transloadit:${this.constructor.VERSION}`,
-      `uppy-tus:${Tus.VERSION}`
+      `uppy-tus:${Tus.VERSION}`,
     ]
 
     const addPluginVersion = (pluginName, versionName) => {
@@ -150,14 +150,14 @@ module.exports = class Transloadit extends Plugin {
       ...file.meta,
       assembly_url: status.assembly_url,
       filename: file.name,
-      fieldname: 'file'
+      fieldname: 'file',
     }
     // Add Assembly-specific Tus endpoint.
     const tus = {
       ...file.tus,
       endpoint: status.tus_url,
       // Include X-Request-ID headers for better debugging.
-      addRequestId: true
+      addRequestId: true,
     }
 
     // Set Companion location. We only add this, if 'file' has the attribute
@@ -167,9 +167,10 @@ module.exports = class Transloadit extends Plugin {
     let remote = file.remote
     if (file.remote && TL_UPPY_SERVER.test(file.remote.companionUrl)) {
       const err = new Error(
-        'The https://api2.transloadit.com/uppy-server endpoint was renamed to ' +
-        'https://api2.transloadit.com/companion, please update your `companionUrl` ' +
-        'options accordingly.')
+        'The https://api2.transloadit.com/uppy-server endpoint was renamed to '
+        + 'https://api2.transloadit.com/companion, please update your `companionUrl` '
+        + 'options accordingly.'
+      )
       // Explicitly log this error here because it is caught by the `createAssembly`
       // Promise further along.
       // That's fine, but createAssembly only shows the informer, we need something a
@@ -188,7 +189,7 @@ module.exports = class Transloadit extends Plugin {
       remote = {
         ...file.remote,
         companionUrl: newHost,
-        url: `${newHost}/${path}`
+        url: `${newHost}/${path}`,
       }
     }
 
@@ -196,8 +197,8 @@ module.exports = class Transloadit extends Plugin {
     const newFile = {
       ...file,
       transloadit: {
-        assembly: status.assembly_id
-      }
+        assembly: status.assembly_id,
+      },
     }
     // Only configure the Tus plugin if we are uploading straight to Transloadit (the default).
     if (!this.opts.importFromUploadURLs) {
@@ -213,7 +214,7 @@ module.exports = class Transloadit extends Plugin {
       params: options.params,
       fields: options.fields,
       expectedFiles: fileIDs.length,
-      signature: options.signature
+      signature: options.signature,
     }).then((newAssembly) => {
       const assembly = new Assembly(newAssembly)
       const status = assembly.status
@@ -224,16 +225,16 @@ module.exports = class Transloadit extends Plugin {
         // Store the Assembly status.
         assemblies: {
           ...assemblies,
-          [assemblyID]: status
+          [assemblyID]: status,
         },
         // Store the list of Assemblies related to this upload.
         uploadsAssemblies: {
           ...uploadsAssemblies,
           [uploadID]: [
             ...uploadsAssemblies[uploadID],
-            assemblyID
-          ]
-        }
+            assemblyID,
+          ],
+        },
       })
 
       const { files } = this.uppy.getState()
@@ -244,8 +245,8 @@ module.exports = class Transloadit extends Plugin {
       this.uppy.setState({
         files: {
           ...files,
-          ...updatedFiles
-        }
+          ...updatedFiles,
+        },
       })
 
       this.uppy.emit('transloadit:assembly-created', status, fileIDs)
@@ -353,9 +354,9 @@ module.exports = class Transloadit extends Plugin {
         [uploadedFile.id]: {
           assembly: assemblyId,
           id: file.id,
-          uploadedFile
-        }
-      }
+          uploadedFile,
+        },
+      },
     })
     this.uppy.emit('transloadit:upload', uploadedFile, this.getAssembly(assemblyId))
   }
@@ -377,11 +378,11 @@ module.exports = class Transloadit extends Plugin {
       result,
       stepName,
       id: result.id,
-      assembly: assemblyId
+      assembly: assemblyId,
     }
 
     this.setPluginState({
-      results: [...state.results, entry]
+      results: [...state.results, entry],
     })
     this.uppy.emit('transloadit:result', stepName, result, this.getAssembly(assemblyId))
   }
@@ -400,8 +401,8 @@ module.exports = class Transloadit extends Plugin {
       this.setPluginState({
         assemblies: {
           ...state.assemblies,
-          [assemblyId]: finalStatus
-        }
+          [assemblyId]: finalStatus,
+        },
       })
       this.uppy.emit('transloadit:complete', finalStatus)
     })
@@ -449,8 +450,8 @@ module.exports = class Transloadit extends Plugin {
     setData({
       [this.id]: {
         assemblies,
-        uploadsAssemblies
-      }
+        uploadsAssemblies,
+      },
     })
   }
 
@@ -476,7 +477,7 @@ module.exports = class Transloadit extends Plugin {
           files[uploadedFile.id] = {
             id: file.id,
             assembly: id,
-            uploadedFile
+            uploadedFile,
           }
         })
 
@@ -489,7 +490,7 @@ module.exports = class Transloadit extends Plugin {
               id: result.id,
               result,
               stepName,
-              assembly: id
+              assembly: id,
             })
           })
         })
@@ -499,7 +500,7 @@ module.exports = class Transloadit extends Plugin {
         assemblies,
         files,
         results,
-        uploadsAssemblies
+        uploadsAssemblies,
       })
     }
 
@@ -558,8 +559,8 @@ module.exports = class Transloadit extends Plugin {
       this.setPluginState({
         assemblies: {
           ...assemblies,
-          [id]: newStatus
-        }
+          [id]: newStatus,
+        },
       })
     })
 
@@ -618,7 +619,7 @@ module.exports = class Transloadit extends Plugin {
       const file = this.uppy.getFile(fileID)
       this.uppy.emit('preprocess-progress', file, {
         mode: 'indeterminate',
-        message: this.i18n('creatingAssembly')
+        message: this.i18n('creatingAssembly'),
       })
     })
 
@@ -651,8 +652,8 @@ module.exports = class Transloadit extends Plugin {
     this.setPluginState({
       uploadsAssemblies: {
         ...uploadsAssemblies,
-        [uploadID]: []
-      }
+        [uploadID]: [],
+      },
     })
 
     const files = fileIDs.map((id) => this.uppy.getFile(id))
@@ -723,7 +724,7 @@ module.exports = class Transloadit extends Plugin {
     incompleteFiles.forEach((file) => {
       this.uppy.emit('postprocess-progress', file, {
         mode: 'indeterminate',
-        message: this.i18n('encoding')
+        message: this.i18n('encoding'),
       })
     })
 
@@ -741,7 +742,7 @@ module.exports = class Transloadit extends Plugin {
       this.setPluginState({ uploadsAssemblies })
 
       this.uppy.addResultData(uploadID, {
-        transloadit: assemblies
+        transloadit: assemblies,
       })
     })
   }
@@ -802,7 +803,7 @@ module.exports = class Transloadit extends Plugin {
         // Only send Assembly metadata to the tus endpoint.
         metaFields: ['assembly_url', 'filename', 'fieldname'],
         // Pass the limit option to @uppy/tus
-        limit: this.opts.limit
+        limit: this.opts.limit,
       })
     }
 
@@ -817,7 +818,7 @@ module.exports = class Transloadit extends Plugin {
       // Contains file data from Transloadit, indexed by their Transloadit-assigned ID.
       files: {},
       // Contains result data from Transloadit.
-      results: []
+      results: [],
     })
 
     // We cannot cancel individual files because Assemblies tend to contain many files.
@@ -825,8 +826,8 @@ module.exports = class Transloadit extends Plugin {
     this.uppy.setState({
       capabilities: {
         ...capabilities,
-        individualCancellation: false
-      }
+        individualCancellation: false,
+      },
     })
   }
 
@@ -843,8 +844,8 @@ module.exports = class Transloadit extends Plugin {
     this.uppy.setState({
       capabilities: {
         ...capabilities,
-        individualCancellation: true
-      }
+        individualCancellation: true,
+      },
     })
   }
 

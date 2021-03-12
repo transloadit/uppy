@@ -34,23 +34,23 @@ module.exports = class StatusBar extends Plugin {
         done: 'Done',
         filesUploadedOfTotal: {
           0: '%{complete} of %{smart_count} file uploaded',
-          1: '%{complete} of %{smart_count} files uploaded'
+          1: '%{complete} of %{smart_count} files uploaded',
         },
         dataUploadedOfTotal: '%{complete} of %{total}',
         xTimeLeft: '%{time} left',
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
-          1: 'Upload %{smart_count} files'
+          1: 'Upload %{smart_count} files',
         },
         uploadXNewFiles: {
           0: 'Upload +%{smart_count} file',
-          1: 'Upload +%{smart_count} files'
+          1: 'Upload +%{smart_count} files',
         },
         xMoreFilesAdded: {
           0: '%{smart_count} more file added',
-          1: '%{smart_count} more files added'
-        }
-      }
+          1: '%{smart_count} more files added',
+        },
+      },
     }
 
     // set default options
@@ -62,7 +62,7 @@ module.exports = class StatusBar extends Plugin {
       hideCancelButton: false,
       showProgressDetails: false,
       hideAfterFinish: true,
-      doneButtonHandler: null
+      doneButtonHandler: null,
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -87,7 +87,7 @@ module.exports = class StatusBar extends Plugin {
   getTotalSpeed (files) {
     let totalSpeed = 0
     files.forEach((file) => {
-      totalSpeed = totalSpeed + getSpeed(file.progress)
+      totalSpeed += getSpeed(file.progress)
     })
     return totalSpeed
   }
@@ -148,7 +148,7 @@ module.exports = class StatusBar extends Plugin {
       files,
       allowNewUpload,
       totalProgress,
-      error
+      error,
     } = state
 
     // TODO: move this to Core, to share between Status Bar and Dashboard
@@ -157,9 +157,9 @@ module.exports = class StatusBar extends Plugin {
     const filesArray = Object.keys(files).map(file => files[file])
 
     const newFiles = filesArray.filter((file) => {
-      return !file.progress.uploadStarted &&
-        !file.progress.preprocess &&
-        !file.progress.postprocess
+      return !file.progress.uploadStarted
+        && !file.progress.preprocess
+        && !file.progress.postprocess
     })
 
     const uploadStartedFiles = filesArray.filter(file => file.progress.uploadStarted)
@@ -168,16 +168,16 @@ module.exports = class StatusBar extends Plugin {
     const erroredFiles = filesArray.filter(file => file.error)
 
     const inProgressFiles = filesArray.filter((file) => {
-      return !file.progress.uploadComplete &&
-             file.progress.uploadStarted
+      return !file.progress.uploadComplete
+             && file.progress.uploadStarted
     })
 
     const inProgressNotPausedFiles = inProgressFiles.filter(file => !file.isPaused)
 
     const startedFiles = filesArray.filter((file) => {
-      return file.progress.uploadStarted ||
-        file.progress.preprocess ||
-        file.progress.postprocess
+      return file.progress.uploadStarted
+        || file.progress.preprocess
+        || file.progress.postprocess
     })
 
     const processingFiles = filesArray.filter(file => file.progress.preprocess || file.progress.postprocess)
@@ -187,20 +187,20 @@ module.exports = class StatusBar extends Plugin {
     let totalSize = 0
     let totalUploadedSize = 0
     startedFiles.forEach((file) => {
-      totalSize = totalSize + (file.progress.bytesTotal || 0)
-      totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
+      totalSize += (file.progress.bytesTotal || 0)
+      totalUploadedSize += (file.progress.bytesUploaded || 0)
     })
 
     const isUploadStarted = startedFiles.length > 0
 
-    const isAllComplete = totalProgress === 100 &&
-      completeFiles.length === Object.keys(files).length &&
-      processingFiles.length === 0
+    const isAllComplete = totalProgress === 100
+      && completeFiles.length === Object.keys(files).length
+      && processingFiles.length === 0
 
     const isAllErrored = error && erroredFiles.length === filesArray.length
 
-    const isAllPaused = inProgressFiles.length !== 0 &&
-      pausedFiles.length === inProgressFiles.length
+    const isAllPaused = inProgressFiles.length !== 0
+      && pausedFiles.length === inProgressFiles.length
 
     const isUploadInProgress = inProgressFiles.length > 0
     const resumableUploads = capabilities.resumableUploads || false
@@ -238,7 +238,7 @@ module.exports = class StatusBar extends Plugin {
       hidePauseResumeButton: this.opts.hidePauseResumeButton,
       hideCancelButton: this.opts.hideCancelButton,
       hideAfterFinish: this.opts.hideAfterFinish,
-      isTargetDOMEl: this.isTargetDOMEl
+      isTargetDOMEl: this.isTargetDOMEl,
     })
   }
 

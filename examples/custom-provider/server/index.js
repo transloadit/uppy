@@ -11,7 +11,7 @@ app.use(bodyParser.json())
 app.use(session({
   secret: 'some-secret',
   resave: true,
-  saveUninitialized: true
+  saveUninitialized: true,
 }))
 
 app.use((req, res, next) => {
@@ -42,8 +42,8 @@ const uppyOptions = {
   providerOptions: {
     drive: {
       key: 'your google drive key',
-      secret: 'your google drive secret'
-    }
+      secret: 'your google drive secret',
+    },
   },
   customProviders: {
     myunsplash: {
@@ -53,19 +53,19 @@ const uppyOptions = {
         access_url: ACCESS_URL,
         oauth: 2,
         key: 'your unsplash key here',
-        secret: 'your unsplash secret here'
+        secret: 'your unsplash secret here',
       },
       // you provider module
-      module: require('./customprovider')
-    }
+      module: require('./customprovider'),
+    },
   },
   server: {
     host: 'localhost:3020',
-    protocol: 'http'
+    protocol: 'http',
   },
   filePath: './output',
   secret: 'some-secret',
-  debug: true
+  debug: true,
 }
 
 app.use(uppy.app(uppyOptions))

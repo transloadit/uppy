@@ -95,7 +95,7 @@ ko_KR.strings = {
   xTimeLeft: '%{time} 남음',
   youCanOnlyUploadFileTypes: '업로드 가능 형식: %{types}',
   youCanOnlyUploadX: '%{smart_count}개의 파일만 업로드할 수 있습니다',
-  youHaveToAtLeastSelectX: '최소 %{smart_count}개의 파일을 선택해야 합니다'
+  youHaveToAtLeastSelectX: '최소 %{smart_count}개의 파일을 선택해야 합니다',
 }
 
 ko_KR.pluralize = function (n) {

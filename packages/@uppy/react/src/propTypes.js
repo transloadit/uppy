@@ -10,21 +10,21 @@ const plugins = PropTypes.arrayOf(PropTypes.string)
 // Language strings for this component.
 const locale = PropTypes.shape({
   strings: PropTypes.object,
-  pluralize: PropTypes.func
+  pluralize: PropTypes.func,
 })
 
 // List of meta fields for the editor in the Dashboard.
 const metaField = PropTypes.shape({
   id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  placeholder: PropTypes.string
+  placeholder: PropTypes.string,
 })
 const metaFields = PropTypes.arrayOf(metaField)
 
 // A size in pixels (number) or with some other unit (string).
 const cssSize = PropTypes.oneOfType([
   PropTypes.string,
-  PropTypes.number
+  PropTypes.number,
 ])
 
 // Common props for dashboardy components (Dashboard and DashboardModal).
@@ -45,11 +45,11 @@ const dashboard = {
   disableThumbnailGenerator: PropTypes.bool,
   // pass-through to ThumbnailGenerator
   thumbnailWidth: PropTypes.number,
-  locale
+  locale,
 }
 
 module.exports = {
   uppy,
   locale,
-  dashboard
+  dashboard,
 }

@@ -14,7 +14,7 @@ function minifyify (filename) {
     return minify({
       sourceMap: false,
       toplevel: true,
-      compress: { unsafe: true }
+      compress: { unsafe: true },
     })
   }
   return new PassThrough()
@@ -22,7 +22,7 @@ function minifyify (filename) {
 
 const bundler = browserify(path.join(__dirname, '../packages/uppy/index.js'), {
   fullPaths: true,
-  standalone: 'Uppy'
+  standalone: 'Uppy',
 })
 
 bundler.transform(babelify)

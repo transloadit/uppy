@@ -13,7 +13,7 @@ module.exports = class MyCustomProvider extends Plugin {
     this.title = 'MyUnsplash'
     this.icon = () => (
       <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z" fill="#000000" fill-rule="nonzero" />
+        <path d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z" fill="#000000" fillRule="nonzero" />
       </svg>
     )
 
@@ -21,7 +21,7 @@ module.exports = class MyCustomProvider extends Plugin {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
       provider: 'myunsplash',
-      pluginId: this.id
+      pluginId: this.id,
     })
 
     this.files = []
@@ -29,12 +29,12 @@ module.exports = class MyCustomProvider extends Plugin {
     this.render = this.render.bind(this)
 
     // merge default options with the ones set by user
-    this.opts = Object.assign({}, opts)
+    this.opts = { ...opts }
   }
 
   install () {
     this.view = new ProviderViews(this, {
-      provider: this.provider
+      provider: this.provider,
     })
 
     const target = this.opts.target

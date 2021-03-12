@@ -11,15 +11,15 @@ function validateParams (params) {
       params = JSON.parse(params)
     } catch (err) {
       // Tell the user that this is not an Uppy bug!
-      err.message = 'Transloadit: The `params` option is a malformed JSON string: ' +
-        err.message
+      err.message = `Transloadit: The \`params\` option is a malformed JSON string: ${
+        err.message}`
       throw err
     }
   }
 
   if (!params.auth || !params.auth.key) {
-    throw new Error('Transloadit: The `params.auth.key` option is required. ' +
-      'You can find your Transloadit API key at https://transloadit.com/account/api-settings.')
+    throw new Error('Transloadit: The `params.auth.key` option is required. '
+      + 'You can find your Transloadit API key at https://transloadit.com/account/api-settings.')
   }
 }
 
@@ -71,7 +71,7 @@ class AssemblyOptions {
 
         return {
           fileIDs: [file.id],
-          options: assemblyOptions
+          options: assemblyOptions,
         }
       })
   }
@@ -89,7 +89,7 @@ class AssemblyOptions {
       } else {
         dedupeMap[id] = {
           options,
-          fileIDs: [...fileIDs]
+          fileIDs: [...fileIDs],
         }
       }
     })
@@ -122,7 +122,7 @@ class AssemblyOptions {
         validateParams(assemblyOptions.params)
         return [{
           fileIDs: this.files.map((file) => file.id),
-          options: assemblyOptions
+          options: assemblyOptions,
         }]
       })
     }

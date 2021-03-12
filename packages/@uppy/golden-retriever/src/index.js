@@ -21,23 +21,24 @@ module.exports = class GoldenRetriever extends Plugin {
 
     const defaultOptions = {
       expires: 24 * 60 * 60 * 1000, // 24 hours
-      serviceWorker: false
+      serviceWorker: false,
     }
 
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
     this.MetaDataStore = new MetaDataStore({
       expires: this.opts.expires,
-      storeName: uppy.getID()
+      storeName: uppy.getID(),
     })
     this.ServiceWorkerStore = null
     if (this.opts.serviceWorker) {
       this.ServiceWorkerStore = new ServiceWorkerStore({ storeName: uppy.getID() })
     }
-    this.IndexedDBStore = new IndexedDBStore(Object.assign(
-      { expires: this.opts.expires },
-      this.opts.indexedDB || {},
-      { storeName: uppy.getID() }))
+    this.IndexedDBStore = new IndexedDBStore({
+      expires: this.opts.expires,
+      ...this.opts.indexedDB || {},
+      storeName: uppy.getID(),
+    })
 
     this.saveFilesStateToLocalStorage = this.saveFilesStateToLocalStorage.bind(this)
     this.loadFilesStateFromLocalStorage = this.loadFilesStateFromLocalStorage.bind(this)
@@ -53,7 +54,7 @@ module.exports = class GoldenRetriever extends Plugin {
       this.uppy.log('[GoldenRetriever] Recovered some state from Local Storage')
       this.uppy.setState({
         currentUploads: savedState.currentUploads || {},
-        files: savedState.files || {}
+        files: savedState.files || {},
       })
 
       this.savedPluginData = savedState.pluginData
@@ -114,9 +115,9 @@ module.exports = class GoldenRetriever extends Plugin {
 
     const { currentUploads } = this.uppy.getState()
     this.MetaDataStore.save({
-      currentUploads: currentUploads,
+      currentUploads,
       files: filesToSave,
-      pluginData: pluginData
+      pluginData,
     })
   }
 
@@ -155,7 +156,7 @@ module.exports = class GoldenRetriever extends Plugin {
 
   onBlobsLoaded (blobs) {
     const obsoleteBlobs = []
-    const updatedFiles = Object.assign({}, this.uppy.getState().files)
+    const updatedFiles = { ...this.uppy.getState().files }
     Object.keys(blobs).forEach((fileID) => {
       const originalFile = this.uppy.getFile(fileID)
       if (!originalFile) {
@@ -167,14 +168,14 @@ module.exports = class GoldenRetriever extends Plugin {
 
       const updatedFileData = {
         data: cachedData,
-        isRestored: true
+        isRestored: true,
       }
-      const updatedFile = Object.assign({}, originalFile, updatedFileData)
+      const updatedFile = { ...originalFile, ...updatedFileData }
       updatedFiles[fileID] = updatedFile
     })
 
     this.uppy.setState({
-      files: updatedFiles
+      files: updatedFiles,
     })
 
     this.uppy.emit('restored', this.savedPluginData)

@@ -20,11 +20,11 @@ export default class UppyReactNativeFilePicker extends React.Component {
         { id: 'LocalImages', title: 'Pick Local Images/Videos' },
         { id: 'LocalDocuments', title: 'Pick Documents' },
         { id: 'LocalCamera', title: 'Take a Picture' },
-        { id: 'Url', title: 'Url' }
+        { id: 'Url', title: 'Url' },
         // { id: 'GoogleDrive', title: 'Google Drive' },
         // { id: 'Instagram', title: 'Instagram' }
       ],
-      openProvider: null
+      openProvider: null,
     }
 
     this.takePicture = this.takePicture.bind(this)
@@ -42,7 +42,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
         source: 'React Native',
         name: `media_${Date.now()}.jpg`,
         type: file.type,
-        data: file
+        data: file,
       })
       this.props.onRequestClose()
     }).catch((err) => {
@@ -56,7 +56,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
         source: 'React Native',
         name: `media_${Date.now()}.jpg`,
         type: file.type,
-        data: file
+        data: file,
       })
       this.props.onRequestClose()
     }).catch((err) => {
@@ -69,7 +69,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
       this.uppy.addFile({
         source: 'React Native',
         name: file.name,
-        data: file
+        data: file,
       })
       this.props.onRequestClose()
     }).catch((err) => {
@@ -80,7 +80,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
   openProvider (id) {
     console.log('Open provider:', id)
     this.setState({
-      openProvider: id
+      openProvider: id,
     })
   }
 
@@ -143,7 +143,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
             uppy={this.uppy}
             onDone={() => {
               this.setState({
-                openProvider: null
+                openProvider: null,
               })
               this.props.onRequestClose()
             }}
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   providerList: {
     flex: 1,
     marginTop: 22,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   providerButton: {
     alignItems: 'center',
@@ -170,10 +170,10 @@ const styles = StyleSheet.create({
     marginLeft: 50,
     marginRight: 50,
     padding: 10,
-    borderRadius: 5
+    borderRadius: 5,
   },
   providerButtonText: {
-    color: '#fff'
+    color: '#fff',
   },
   cancelButton: {
     alignItems: 'center',
@@ -183,9 +183,9 @@ const styles = StyleSheet.create({
     marginLeft: 50,
     marginRight: 50,
     padding: 10,
-    borderRadius: 5
+    borderRadius: 5,
   },
   cancelButtonText: {
-    color: '#0077cc'
-  }
+    color: '#0077cc',
+  },
 })

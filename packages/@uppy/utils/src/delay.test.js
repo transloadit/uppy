@@ -24,7 +24,7 @@ describe('delay', () => {
     const testDelay = delay(100, { signal: controller.signal })
     await Promise.all([
       delay(50).then(() => controller.abort()),
-      expect(testDelay).rejects.toHaveProperty('name', 'AbortError')
+      expect(testDelay).rejects.toHaveProperty('name', 'AbortError'),
     ])
 
     // should have rejected before the timer is done

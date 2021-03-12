@@ -18,7 +18,7 @@ const dashboardOptionNames = [
   'disableThumbnailGenerator',
   'showSelectedFiles',
   'proudlyDisplayPoweredByUppy',
-  'theme'
+  'theme',
 ]
 
 const modalDashboardOptionNames = [
@@ -28,7 +28,7 @@ const modalDashboardOptionNames = [
   'disablePageScrollWhenModalOpen',
   'animateOpenClose',
   'onRequestCloseModal',
-  'browserBackButtonClose'
+  'browserBackButtonClose',
 ]
 
 function addDashboardPlugin (uppy, opts, overrideOpts) {
@@ -50,7 +50,7 @@ function addDashboardPlugin (uppy, opts, overrideOpts) {
 
   uppy.use(Dashboard, {
     ...dashboardOpts,
-    ...overrideOpts
+    ...overrideOpts,
   })
 }
 

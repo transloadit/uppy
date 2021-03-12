@@ -3,7 +3,7 @@ const nb_NO = {}
 nb_NO.strings = {
   addBulkFilesFailed: {
     0: 'Kunne ikke legge til %{smart_count} fil på grunn av en intern feil',
-    1: 'Kunne ikke legge til %{smart_count} filer på grunn av en intern feil'
+    1: 'Kunne ikke legge til %{smart_count} filer på grunn av en intern feil',
   },
   addMore: 'Legg til',
   addMoreFiles: 'Legg til filer',
@@ -58,14 +58,14 @@ nb_NO.strings = {
   fileSource: 'Filkilde: %{name}',
   filesUploadedOfTotal: {
     0: '%{complete} av %{smart_count} fil opplastet',
-    1: '%{complete} av %{smart_count} filer opplastet'
+    1: '%{complete} av %{smart_count} filer opplastet',
   },
   filter: 'Filtrer',
   finishEditingFile: 'Avslutt redigering av fil',
   flipHorizontal: 'Snu horisontalt',
   folderAdded: {
     0: 'La til %{smart_count} fil fra %{folder}',
-    1: 'La til %{smart_count} filer fra %{folder}'
+    1: 'La til %{smart_count} filer fra %{folder}',
   },
   generatingThumbnails: 'Genererer miniatyrbilde...',
   import: 'Importer',
@@ -89,7 +89,7 @@ nb_NO.strings = {
   poweredBy2: '%{backwardsCompat} %{uppy}',
   processingXFiles: {
     0: 'Prosesserer %{smart_count} fil',
-    1: 'Prosesserer %{smart_count} filer'
+    1: 'Prosesserer %{smart_count} filer',
   },
   recording: 'Opptak pågår',
   recordingLength: 'Lengde på opptak: %{recording_length}',
@@ -109,7 +109,7 @@ nb_NO.strings = {
   selectFileNamed: 'Velg fil %{name}',
   selectX: {
     0: 'Velg %{smart_count}',
-    1: 'Velg %{smart_count}'
+    1: 'Velg %{smart_count}',
   },
   smile: 'Smil!',
   startCapturing: 'Start skjermopptak',
@@ -129,37 +129,37 @@ nb_NO.strings = {
   uploadPaused: 'Opplasting midlertidig stoppet',
   uploadXFiles: {
     0: 'Last opp %{smart_count} fil',
-    1: 'Last opp %{smart_count} filer'
+    1: 'Last opp %{smart_count} filer',
   },
   uploadXNewFiles: {
     0: 'Last opp +%{smart_count} fil',
-    1: 'Last opp +%{smart_count} filer'
+    1: 'Last opp +%{smart_count} filer',
   },
   uploading: 'Laster opp',
   uploadingXFiles: {
     0: 'Laster opp %{smart_count} fil',
-    1: 'Laster opp %{smart_count} filer'
+    1: 'Laster opp %{smart_count} filer',
   },
   xFilesSelected: {
     0: '%{smart_count} fil valgt',
-    1: '%{smart_count} filer valgt'
+    1: '%{smart_count} filer valgt',
   },
   xMoreFilesAdded: {
     0: '%{smart_count} fil lagt til',
-    1: '%{smart_count} filer lagt til'
+    1: '%{smart_count} filer lagt til',
   },
   xTimeLeft: '%{time} igjen',
   youCanOnlyUploadFileTypes: 'Du kan bare laste opp: %{types}',
   youCanOnlyUploadX: {
     0: 'Du kan bare laste opp %{smart_count} fil',
-    1: 'Du kan bare laste opp %{smart_count} filer'
+    1: 'Du kan bare laste opp %{smart_count} filer',
   },
   youHaveToAtLeastSelectX: {
     0: 'Du må velge minst %{smart_count} fil',
-    1: 'Du må velge minst %{smart_count} filer'
+    1: 'Du må velge minst %{smart_count} filer',
   },
   zoomIn: 'Zoom inn',
-  zoomOut: 'Zoom ut'
+  zoomOut: 'Zoom ut',
 }
 
 nb_NO.pluralize = function (count) {

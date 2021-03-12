@@ -5,7 +5,7 @@ describe('findIndex', () => {
     const arr = [
       { name: 'foo' },
       { name: 'bar' },
-      { name: '123' }
+      { name: '123' },
     ]
     const index = findIndex(arr, item => item.name === 'bar')
     expect(index).toEqual(1)
@@ -15,7 +15,7 @@ describe('findIndex', () => {
     const arr = [
       { name: 'foo' },
       { name: 'bar' },
-      { name: '123' }
+      { name: '123' },
     ]
     const index = findIndex(arr, item => item.name === 'hello')
     expect(index).toEqual(-1)

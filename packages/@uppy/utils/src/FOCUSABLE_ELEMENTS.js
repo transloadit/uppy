@@ -9,5 +9,5 @@ module.exports = [
   'object:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
   'embed:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
   '[contenteditable]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
-  '[tabindex]:not([tabindex^="-"]):not([inert]):not([aria-hidden])'
+  '[tabindex]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
 ]
