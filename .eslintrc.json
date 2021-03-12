@@ -35,21 +35,7 @@
     "guard-for-in": ["off"],
     "import/extensions": ["off"],
     "strict": ["off"],
-    "key-spacing": [
-      "error",
-      {
-        "multiLine": {
-          "beforeColon": false,
-          "afterColon": false
-        },
-        "align": {
-          "beforeColon": false,
-          "afterColon": false,
-          "on": "colon",
-          "mode": "strict"
-        }
-      }
-    ],
+    "key-spacing": ["off"],
 
     // transloadit rules we would like to enforce in the future
     // but will require separate PRs to gradually get there
@@ -140,7 +126,6 @@
     "rules": {
       "camelcase": ["off"],
       "quote-props": ["off"],
-      "key-spacing": ["off"] // <-- do not vertically align language definitions, it may scare off translators thinking they need to maintain order by hand
     }
   },{
     "files": [
