@@ -34,6 +34,7 @@
     ////////////////////////////////////////////////////////////
     "guard-for-in": ["off"],
     "import/extensions": ["off"],
+    "strict": ["off"],
 
     // transloadit rules we would like to enforce in the future
     // but will require separate PRs to gradually get there
