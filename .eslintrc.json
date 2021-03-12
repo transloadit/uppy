@@ -160,6 +160,9 @@
       }
     },
 
+    { "files": ["bin/**.js"], "rules": { "import/no-extraneous-dependencies": ["error", {"devDependencies": true}] } },
+
+
     { "files": ["packages/uppy/**.js"], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "packages/uppy/"}] } },
 
     { "files": ["packages/@uppy/aws-s3/**.js"], "rules": { "import/no-extraneous-dependencies": ["error", {"packageDir": "packages/@uppy/aws-s3/"}] } },
