@@ -14,16 +14,16 @@ module.exports = function copyToClipboard (textToCopy, fallbackString) {
   return new Promise((resolve) => {
     const textArea = document.createElement('textarea')
     textArea.setAttribute('style', {
-      position  : 'fixed',
-      top       : 0,
-      left      : 0,
-      width     : '2em',
-      height    : '2em',
-      padding   : 0,
-      border    : 'none',
-      outline   : 'none',
-      boxShadow : 'none',
-      background: 'transparent',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '2em',
+      height: '2em',
+      padding: 0,
+      border: 'none',
+      outline: 'none',
+      boxShadow: 'none',
+      background: 'transparent'
     })
 
     textArea.value = textToCopy

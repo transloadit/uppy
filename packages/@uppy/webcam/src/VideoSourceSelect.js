@@ -1,6 +1,7 @@
 const { h } = require('preact')
 
-module.exports = ({ currentDeviceId, videoSources, onChangeVideoSource }) => (
+module.exports = ({ currentDeviceId, videoSources, onChangeVideoSource }) => {
+  return (
     <div className="uppy-Webcam-videoSource">
       <select
         className="uppy-u-reset uppy-Webcam-videoSource-select"
@@ -16,4 +17,5 @@ module.exports = ({ currentDeviceId, videoSources, onChangeVideoSource }) => (
           </option>)}
       </select>
     </div>
-)
+  )
+}

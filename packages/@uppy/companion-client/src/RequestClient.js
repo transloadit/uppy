@@ -1,3 +1,5 @@
+'use strict'
+
 const AuthError = require('./AuthError')
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
 
@@ -25,9 +27,9 @@ module.exports = class RequestClient {
 
   get defaultHeaders () {
     return {
-      Accept         : 'application/json',
-      'Content-Type' : 'application/json',
-      'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`
     }
   }
 
@@ -35,7 +37,7 @@ module.exports = class RequestClient {
     const userHeaders = this.opts.companionHeaders || this.opts.serverHeaders || {}
     return Promise.resolve({
       ...this.defaultHeaders,
-      ...userHeaders,
+      ...userHeaders
     })
   }
 
@@ -57,7 +59,9 @@ module.exports = class RequestClient {
     // Store the self-identified domain name for the Companion instance we just hit.
     if (headers.has('i-am') && headers.get('i-am') !== companion[host]) {
       this.uppy.setState({
-        companion: { ...companion, [host]: headers.get('i-am') },
+        companion: Object.assign({}, companion, {
+          [host]: headers.get('i-am')
+        })
       })
     }
     return response
@@ -93,7 +97,7 @@ module.exports = class RequestClient {
     }
 
     return fetch(this._getUrl(path), {
-      method: 'OPTIONS',
+      method: 'OPTIONS'
     })
       .then((response) => {
         if (response.headers.has('access-control-allow-headers')) {
@@ -129,9 +133,9 @@ module.exports = class RequestClient {
     return this.preflightAndHeaders(path)
       .then((headers) =>
         fetchWithNetworkError(this._getUrl(path), {
-          method     : 'get',
-          headers,
-          credentials: this.opts.companionCookiesRule || 'same-origin',
+          method: 'get',
+          headers: headers,
+          credentials: this.opts.companionCookiesRule || 'same-origin'
         }))
       .then(this._getPostResponseFunc(skipPostResponse))
       .then((res) => this._json(res))
@@ -145,10 +149,10 @@ module.exports = class RequestClient {
     return this.preflightAndHeaders(path)
       .then((headers) =>
         fetchWithNetworkError(this._getUrl(path), {
-          method     : 'post',
-          headers,
+          method: 'post',
+          headers: headers,
           credentials: this.opts.companionCookiesRule || 'same-origin',
-          body       : JSON.stringify(data),
+          body: JSON.stringify(data)
         }))
       .then(this._getPostResponseFunc(skipPostResponse))
       .then((res) => this._json(res))
@@ -162,10 +166,10 @@ module.exports = class RequestClient {
     return this.preflightAndHeaders(path)
       .then((headers) =>
         fetchWithNetworkError(`${this.hostname}/${path}`, {
-          method     : 'delete',
-          headers,
+          method: 'delete',
+          headers: headers,
           credentials: this.opts.companionCookiesRule || 'same-origin',
-          body       : data ? JSON.stringify(data) : null,
+          body: data ? JSON.stringify(data) : null
         }))
       .then(this._getPostResponseFunc(skipPostResponse))
       .then((res) => this._json(res))

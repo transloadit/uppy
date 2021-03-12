@@ -24,6 +24,6 @@ module.exports = function getFilesAndDirectoriesFromDirectory (directoryReader, 
     (error) => {
       logDropError(error)
       onSuccess(oldEntries)
-    },
+    }
   )
 }

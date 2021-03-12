@@ -50,22 +50,22 @@ const RESTORE = false
 module.exports = () => {
   const uppyDashboard = new Uppy({
     logger: Uppy.debugLogger,
-    meta  : {
+    meta: {
       username: 'John',
-      license : 'Creative Commons',
-    },
+      license: 'Creative Commons'
+    }
   })
     .use(Dashboard, {
-      trigger   : '#pick-files',
+      trigger: '#pick-files',
       // inline: true,
-      target    : '.foo',
+      target: '.foo',
       metaFields: [
         { id: 'license', name: 'License', placeholder: 'specify license' },
-        { id: 'caption', name: 'Caption', placeholder: 'add caption' },
+        { id: 'caption', name: 'Caption', placeholder: 'add caption' }
       ],
-      showProgressDetails        : true,
+      showProgressDetails: true,
       proudlyDisplayPoweredByUppy: true,
-      note                       : '2 files, images and video only',
+      note: '2 files, images and video only'
     })
     .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL })
@@ -77,9 +77,9 @@ module.exports = () => {
     .use(Url, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Webcam, {
-      target                 : Dashboard,
+      target: Dashboard,
       showVideoSourceDropdown: true,
-      showRecordingLength    : true,
+      showRecordingLength: true
     })
     .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
@@ -101,35 +101,35 @@ module.exports = () => {
     case 'transloadit':
       uppyDashboard.use(Transloadit, {
         waitForEncoding: true,
-        params         : {
-          auth       : { key: TRANSLOADIT_KEY },
-          template_id: TRANSLOADIT_TEMPLATE,
-        },
+        params: {
+          auth: { key: TRANSLOADIT_KEY },
+          template_id: TRANSLOADIT_TEMPLATE
+        }
       })
       break
     case 'transloadit-s3':
       uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL })
       uppyDashboard.use(Transloadit, {
-        waitForEncoding     : true,
+        waitForEncoding: true,
         importFromUploadURLs: true,
-        params              : {
-          auth       : { key: TRANSLOADIT_KEY },
-          template_id: TRANSLOADIT_TEMPLATE,
-        },
+        params: {
+          auth: { key: TRANSLOADIT_KEY },
+          template_id: TRANSLOADIT_TEMPLATE
+        }
       })
       break
     case 'transloadit-xhr':
       uppyDashboard.setMeta({
         params: JSON.stringify({
-          auth       : { key: TRANSLOADIT_KEY },
-          template_id: TRANSLOADIT_TEMPLATE,
-        }),
+          auth: { key: TRANSLOADIT_KEY },
+          template_id: TRANSLOADIT_TEMPLATE
+        })
       })
       uppyDashboard.use(XHRUpload, {
-        method    : 'POST',
-        endpoint  : 'https://api2.transloadit.com/assemblies',
+        method: 'POST',
+        endpoint: 'https://api2.transloadit.com/assemblies',
         metaFields: ['params'],
-        bundle    : true,
+        bundle: true
       })
       break
   }

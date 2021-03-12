@@ -21,48 +21,48 @@ module.exports = class StatusBar extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        uploading           : 'Uploading',
-        upload              : 'Upload',
-        complete            : 'Complete',
-        uploadFailed        : 'Upload failed',
-        paused              : 'Paused',
-        retry               : 'Retry',
-        retryUpload         : 'Retry upload',
-        cancel              : 'Cancel',
-        pause               : 'Pause',
-        resume              : 'Resume',
-        done                : 'Done',
+        uploading: 'Uploading',
+        upload: 'Upload',
+        complete: 'Complete',
+        uploadFailed: 'Upload failed',
+        paused: 'Paused',
+        retry: 'Retry',
+        retryUpload: 'Retry upload',
+        cancel: 'Cancel',
+        pause: 'Pause',
+        resume: 'Resume',
+        done: 'Done',
         filesUploadedOfTotal: {
           0: '%{complete} of %{smart_count} file uploaded',
-          1: '%{complete} of %{smart_count} files uploaded',
+          1: '%{complete} of %{smart_count} files uploaded'
         },
         dataUploadedOfTotal: '%{complete} of %{total}',
-        xTimeLeft          : '%{time} left',
-        uploadXFiles       : {
+        xTimeLeft: '%{time} left',
+        uploadXFiles: {
           0: 'Upload %{smart_count} file',
-          1: 'Upload %{smart_count} files',
+          1: 'Upload %{smart_count} files'
         },
         uploadXNewFiles: {
           0: 'Upload +%{smart_count} file',
-          1: 'Upload +%{smart_count} files',
+          1: 'Upload +%{smart_count} files'
         },
         xMoreFilesAdded: {
           0: '%{smart_count} more file added',
-          1: '%{smart_count} more files added',
-        },
-      },
+          1: '%{smart_count} more files added'
+        }
+      }
     }
 
     // set default options
     const defaultOptions = {
-      target               : 'body',
-      hideUploadButton     : false,
-      hideRetryButton      : false,
+      target: 'body',
+      hideUploadButton: false,
+      hideRetryButton: false,
       hidePauseResumeButton: false,
-      hideCancelButton     : false,
-      showProgressDetails  : false,
-      hideAfterFinish      : true,
-      doneButtonHandler    : null,
+      hideCancelButton: false,
+      showProgressDetails: false,
+      hideAfterFinish: true,
+      doneButtonHandler: null
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -87,7 +87,7 @@ module.exports = class StatusBar extends Plugin {
   getTotalSpeed (files) {
     let totalSpeed = 0
     files.forEach((file) => {
-      totalSpeed += getSpeed(file.progress)
+      totalSpeed = totalSpeed + getSpeed(file.progress)
     })
     return totalSpeed
   }
@@ -98,14 +98,18 @@ module.exports = class StatusBar extends Plugin {
       return 0
     }
 
-    const totalBytesRemaining = files.reduce((total, file) => total + getBytesRemaining(file.progress), 0)
+    const totalBytesRemaining = files.reduce((total, file) => {
+      return total + getBytesRemaining(file.progress)
+    }, 0)
 
     return Math.round(totalBytesRemaining / totalSpeed * 10) / 10
   }
 
-  startUpload = () => this.uppy.upload().catch(() => {
-    // Error logged in Core
-  })
+  startUpload = () => {
+    return this.uppy.upload().catch(() => {
+      // Error logged in Core
+    })
+  }
 
   getUploadingState (isAllErrored, isAllComplete, files) {
     if (isAllErrored) {
@@ -144,53 +148,59 @@ module.exports = class StatusBar extends Plugin {
       files,
       allowNewUpload,
       totalProgress,
-      error,
+      error
     } = state
 
     // TODO: move this to Core, to share between Status Bar and Dashboard
     // (and any other plugin that might need it, too)
 
-    const filesArray = Object.keys(files).map((file) => files[file])
+    const filesArray = Object.keys(files).map(file => files[file])
 
-    const newFiles = filesArray.filter((file) => !file.progress.uploadStarted
-        && !file.progress.preprocess
-        && !file.progress.postprocess)
+    const newFiles = filesArray.filter((file) => {
+      return !file.progress.uploadStarted &&
+        !file.progress.preprocess &&
+        !file.progress.postprocess
+    })
 
-    const uploadStartedFiles = filesArray.filter((file) => file.progress.uploadStarted)
-    const pausedFiles = uploadStartedFiles.filter((file) => file.isPaused)
-    const completeFiles = filesArray.filter((file) => file.progress.uploadComplete)
-    const erroredFiles = filesArray.filter((file) => file.error)
+    const uploadStartedFiles = filesArray.filter(file => file.progress.uploadStarted)
+    const pausedFiles = uploadStartedFiles.filter(file => file.isPaused)
+    const completeFiles = filesArray.filter(file => file.progress.uploadComplete)
+    const erroredFiles = filesArray.filter(file => file.error)
 
-    const inProgressFiles = filesArray.filter((file) => !file.progress.uploadComplete
-             && file.progress.uploadStarted)
+    const inProgressFiles = filesArray.filter((file) => {
+      return !file.progress.uploadComplete &&
+             file.progress.uploadStarted
+    })
 
-    const inProgressNotPausedFiles = inProgressFiles.filter((file) => !file.isPaused)
+    const inProgressNotPausedFiles = inProgressFiles.filter(file => !file.isPaused)
 
-    const startedFiles = filesArray.filter((file) => file.progress.uploadStarted
-        || file.progress.preprocess
-        || file.progress.postprocess)
+    const startedFiles = filesArray.filter((file) => {
+      return file.progress.uploadStarted ||
+        file.progress.preprocess ||
+        file.progress.postprocess
+    })
 
-    const processingFiles = filesArray.filter((file) => file.progress.preprocess || file.progress.postprocess)
+    const processingFiles = filesArray.filter(file => file.progress.preprocess || file.progress.postprocess)
 
     const totalETA = this.getTotalETA(inProgressNotPausedFiles)
 
     let totalSize = 0
     let totalUploadedSize = 0
     startedFiles.forEach((file) => {
-      totalSize += (file.progress.bytesTotal || 0)
-      totalUploadedSize += (file.progress.bytesUploaded || 0)
+      totalSize = totalSize + (file.progress.bytesTotal || 0)
+      totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
     })
 
     const isUploadStarted = startedFiles.length > 0
 
-    const isAllComplete = totalProgress === 100
-      && completeFiles.length === Object.keys(files).length
-      && processingFiles.length === 0
+    const isAllComplete = totalProgress === 100 &&
+      completeFiles.length === Object.keys(files).length &&
+      processingFiles.length === 0
 
     const isAllErrored = error && erroredFiles.length === filesArray.length
 
-    const isAllPaused = inProgressFiles.length !== 0
-      && pausedFiles.length === inProgressFiles.length
+    const isAllPaused = inProgressFiles.length !== 0 &&
+      pausedFiles.length === inProgressFiles.length
 
     const isUploadInProgress = inProgressFiles.length > 0
     const resumableUploads = capabilities.resumableUploads || false
@@ -198,7 +208,7 @@ module.exports = class StatusBar extends Plugin {
 
     return StatusBarUI({
       error,
-      uploadState          : this.getUploadingState(isAllErrored, isAllComplete, state.files || {}),
+      uploadState: this.getUploadingState(isAllErrored, isAllComplete, state.files || {}),
       allowNewUpload,
       totalProgress,
       totalSize,
@@ -208,27 +218,27 @@ module.exports = class StatusBar extends Plugin {
       isAllErrored,
       isUploadStarted,
       isUploadInProgress,
-      complete             : completeFiles.length,
-      newFiles             : newFiles.length,
-      numUploads           : startedFiles.length,
+      complete: completeFiles.length,
+      newFiles: newFiles.length,
+      numUploads: startedFiles.length,
       totalETA,
       files,
-      i18n                 : this.i18n,
-      pauseAll             : this.uppy.pauseAll,
-      resumeAll            : this.uppy.resumeAll,
-      retryAll             : this.uppy.retryAll,
-      cancelAll            : this.uppy.cancelAll,
-      startUpload          : this.startUpload,
-      doneButtonHandler    : this.opts.doneButtonHandler,
+      i18n: this.i18n,
+      pauseAll: this.uppy.pauseAll,
+      resumeAll: this.uppy.resumeAll,
+      retryAll: this.uppy.retryAll,
+      cancelAll: this.uppy.cancelAll,
+      startUpload: this.startUpload,
+      doneButtonHandler: this.opts.doneButtonHandler,
       resumableUploads,
       supportsUploadProgress,
-      showProgressDetails  : this.opts.showProgressDetails,
-      hideUploadButton     : this.opts.hideUploadButton,
-      hideRetryButton      : this.opts.hideRetryButton,
+      showProgressDetails: this.opts.showProgressDetails,
+      hideUploadButton: this.opts.hideUploadButton,
+      hideRetryButton: this.opts.hideRetryButton,
       hidePauseResumeButton: this.opts.hidePauseResumeButton,
-      hideCancelButton     : this.opts.hideCancelButton,
-      hideAfterFinish      : this.opts.hideAfterFinish,
-      isTargetDOMEl        : this.isTargetDOMEl,
+      hideCancelButton: this.opts.hideCancelButton,
+      hideAfterFinish: this.opts.hideAfterFinish,
+      isTargetDOMEl: this.isTargetDOMEl
     })
   }
 

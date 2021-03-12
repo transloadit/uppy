@@ -26,10 +26,10 @@ module.exports = class ProviderView {
 
     // set default options
     const defaultOptions = {
-      viewType       : 'grid',
-      showTitles     : false,
-      showFilter     : false,
-      showBreadcrumbs: false,
+      viewType: 'grid',
+      showTitles: false,
+      showFilter: false,
+      showBreadcrumbs: false
     }
 
     // merge default options with the ones set by user
@@ -53,12 +53,12 @@ module.exports = class ProviderView {
 
     // Set default state for the plugin
     this.plugin.setPluginState({
-      isInputMode    : true,
-      files          : [],
-      folders        : [],
-      directories    : [],
-      filterInput    : '',
-      isSearchVisible: false,
+      isInputMode: true,
+      files: [],
+      folders: [],
+      directories: [],
+      filterInput: '',
+      isSearchVisible: false
     })
   }
 
@@ -94,7 +94,7 @@ module.exports = class ProviderView {
       (res) => {
         this._updateFilesAndInputMode(res, [])
       },
-      this.handleError,
+      this.handleError
     )
   }
 
@@ -106,23 +106,23 @@ module.exports = class ProviderView {
   // maybe we should consider creating a base ProviderPlugin class that has this method
   addFile (file) {
     const tagFile = {
-      id      : this.providerFileToId(file),
-      source  : this.plugin.id,
-      data    : file,
-      name    : file.name || file.id,
-      type    : file.mimeType,
+      id: this.providerFileToId(file),
+      source: this.plugin.id,
+      data: file,
+      name: file.name || file.id,
+      type: file.mimeType,
       isRemote: true,
-      body    : {
-        fileId: file.id,
+      body: {
+        fileId: file.id
       },
       remote: {
         companionUrl: this.plugin.opts.companionUrl,
-        url         : `${this.provider.fileUrl(file.requestPath)}`,
-        body        : {
-          fileId: file.id,
+        url: `${this.provider.fileUrl(file.requestPath)}`,
+        body: {
+          fileId: file.id
         },
-        providerOptions: { ...this.provider.opts, provider: null },
-      },
+        providerOptions: Object.assign({}, this.provider.opts, { provider: null })
+      }
     }
 
     const fileType = getFileType(tagFile)
@@ -144,7 +144,7 @@ module.exports = class ProviderView {
     return generateFileID({
       data: file,
       name: file.name || file.id,
-      type: file.mimeType,
+      type: file.mimeType
     })
   }
 
@@ -152,7 +152,7 @@ module.exports = class ProviderView {
     const uppy = this.plugin.uppy
     uppy.log(error.toString())
     const message = uppy.i18n('companionError')
-    uppy.info({ message, details: error.toString() }, 'error', 5000)
+    uppy.info({ message: message, details: error.toString() }, 'error', 5000)
   }
 
   handleScroll (e) {
@@ -219,27 +219,26 @@ module.exports = class ProviderView {
     }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
-    const browserProps = {
-      ...this.plugin.getPluginState(),
-      isChecked      : this._sharedHandler.isChecked,
-      toggleCheckbox : this._sharedHandler.toggleCheckbox,
-      handleScroll   : this.handleScroll,
-      done           : this.donePicking,
-      cancel         : this.cancelPicking,
+    const browserProps = Object.assign({}, this.plugin.getPluginState(), {
+      isChecked: this._sharedHandler.isChecked,
+      toggleCheckbox: this._sharedHandler.toggleCheckbox,
+      handleScroll: this.handleScroll,
+      done: this.donePicking,
+      cancel: this.cancelPicking,
       headerComponent: Header({
         triggerSearchInput: this.triggerSearchInput,
-        i18n              : this.plugin.uppy.i18n,
+        i18n: this.plugin.uppy.i18n
       }),
-      title               : this.plugin.title,
-      viewType            : targetViewOptions.viewType,
-      showTitles          : targetViewOptions.showTitles,
-      showFilter          : targetViewOptions.showFilter,
-      showBreadcrumbs     : targetViewOptions.showBreadcrumbs,
-      pluginIcon          : this.plugin.icon,
-      i18n                : this.plugin.uppy.i18n,
-      uppyFiles           : this.plugin.uppy.getFiles(),
-      validateRestrictions: this.plugin.uppy.validateRestrictions,
-    }
+      title: this.plugin.title,
+      viewType: targetViewOptions.viewType,
+      showTitles: targetViewOptions.showTitles,
+      showFilter: targetViewOptions.showFilter,
+      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
+      pluginIcon: this.plugin.icon,
+      i18n: this.plugin.uppy.i18n,
+      uppyFiles: this.plugin.uppy.getFiles(),
+      validateRestrictions: this.plugin.uppy.validateRestrictions
+    })
 
     return (
       <CloseWrapper onUnmount={this.clearSelection}>

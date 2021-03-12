@@ -14,8 +14,8 @@ class DeepFrozenStore {
   }
 
   setState (patch) {
-    const prevState = { ...this.state }
-    const nextState = deepFreeze({ ...this.state, ...patch })
+    const prevState = Object.assign({}, this.state)
+    const nextState = deepFreeze(Object.assign({}, this.state, patch))
 
     this.state = nextState
     this._publish(prevState, nextState, patch)
@@ -27,7 +27,7 @@ class DeepFrozenStore {
       // Remove the listener.
       this.callbacks.splice(
         this.callbacks.indexOf(listener),
-        1,
+        1
       )
     }
   }

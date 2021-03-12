@@ -21,7 +21,7 @@ describe('Dashboard', () => {
     expect(() => {
       core.use(DashboardPlugin, {
         inline: true,
-        target: 'body',
+        target: 'body'
       })
     }).not.toThrow()
 
@@ -33,7 +33,7 @@ describe('Dashboard', () => {
     expect(() => {
       core.use(DashboardPlugin, {
         inline: true,
-        target: 'body',
+        target: 'body'
       })
       core.use(GoogleDrivePlugin, { target: DashboardPlugin, companionUrl: 'https://fake.uppy.io/' })
     }).not.toThrow()
@@ -47,9 +47,9 @@ describe('Dashboard', () => {
 
     expect(() => {
       core.use(DashboardPlugin, {
-        inline : true,
-        target : 'body',
-        plugins: ['GoogleDrive'],
+        inline: true,
+        target: 'body',
+        plugins: ['GoogleDrive']
       })
     }).not.toThrow()
 
@@ -60,15 +60,15 @@ describe('Dashboard', () => {
     const core = new Core()
     core.use(DashboardPlugin, {
       inline: true,
-      target: 'body',
+      target: 'body'
     })
 
     core.getPlugin('Dashboard').setOptions({
-      width: 300,
+      width: 300
     })
 
     expect(
-      core.getPlugin('Dashboard').opts.width,
+      core.getPlugin('Dashboard').opts.width
     ).toEqual(300)
   })
 
@@ -76,19 +76,19 @@ describe('Dashboard', () => {
     const core = new Core()
     core.use(DashboardPlugin, {
       inline: true,
-      target: 'body',
+      target: 'body'
     })
 
     core.setOptions({
       locale: {
         strings: {
-          myDevice: 'Май дивайс',
-        },
-      },
+          myDevice: 'Май дивайс'
+        }
+      }
     })
 
     expect(
-      core.getPlugin('Dashboard').i18n('myDevice'),
+      core.getPlugin('Dashboard').i18n('myDevice')
     ).toEqual('Май дивайс')
   })
 })

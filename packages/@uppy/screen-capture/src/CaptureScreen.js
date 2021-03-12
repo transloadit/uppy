@@ -13,7 +13,7 @@ class RecorderScreen extends Component {
     const { recording, stream: videoStream, recordedVideo } = this.props
 
     const videoProps = {
-      playsinline: true,
+      playsinline: true
     }
 
     // show stream
@@ -39,7 +39,7 @@ class RecorderScreen extends Component {
       <div class="uppy uppy-ScreenCapture-container">
         <div class="uppy-ScreenCapture-videoContainer">
           <StreamStatus {...this.props} />
-          <video ref={(videoElement) => (this.videoElement = videoElement)} class="uppy-ScreenCapture-video" {...videoProps} />
+          <video ref={videoElement => (this.videoElement = videoElement)} class="uppy-ScreenCapture-video" {...videoProps} />
           <StopWatch {...this.props} />
         </div>
 

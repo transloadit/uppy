@@ -10,7 +10,6 @@
   Hence, provider tokens (Google, Instagram, Dropbox) may be at risk of getting hijacked.
 */
 const { finishUploadTest, startUploadTest, uploadWithRetry } = require('./helper')
-
 const testURL = 'http://localhost:4567/providers'
 
 describe('File upload with Instagram Provider', () => {
@@ -53,8 +52,7 @@ describe('File upload with Instagram Provider', () => {
           async () => {
             await securityCodeInput.getValue()
           },
-          30000, 'expected security code to be manually entered',
-        )
+          30000, 'expected security code to be manually entered')
       }
 
       // instagram may ask for auth confirmation to allow companion

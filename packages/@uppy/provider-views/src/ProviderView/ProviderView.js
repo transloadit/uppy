@@ -35,10 +35,10 @@ module.exports = class ProviderView {
 
     // set default options
     const defaultOptions = {
-      viewType       : 'list',
-      showTitles     : true,
-      showFilter     : true,
-      showBreadcrumbs: true,
+      viewType: 'list',
+      showTitles: true,
+      showFilter: true,
+      showBreadcrumbs: true
     }
 
     // merge default options with the ones set by user
@@ -68,12 +68,12 @@ module.exports = class ProviderView {
 
     // Set default state for the plugin
     this.plugin.setPluginState({
-      authenticated  : false,
-      files          : [],
-      folders        : [],
-      directories    : [],
-      filterInput    : '',
-      isSearchVisible: false,
+      authenticated: false,
+      files: [],
+      folders: [],
+      directories: [],
+      filterInput: '',
+      isSearchVisible: false
     })
   }
 
@@ -130,8 +130,7 @@ module.exports = class ProviderView {
         this._updateFilesAndFolders(res, files, folders)
         this.plugin.setPluginState({ directories: updatedDirectories })
       },
-      this.handleError,
-    )
+      this.handleError)
   }
 
   /**
@@ -146,23 +145,23 @@ module.exports = class ProviderView {
 
   addFile (file) {
     const tagFile = {
-      id      : this.providerFileToId(file),
-      source  : this.plugin.id,
-      data    : file,
-      name    : file.name || file.id,
-      type    : file.mimeType,
+      id: this.providerFileToId(file),
+      source: this.plugin.id,
+      data: file,
+      name: file.name || file.id,
+      type: file.mimeType,
       isRemote: true,
-      body    : {
-        fileId: file.id,
+      body: {
+        fileId: file.id
       },
       remote: {
         companionUrl: this.plugin.opts.companionUrl,
-        url         : `${this.provider.fileUrl(file.requestPath)}`,
-        body        : {
-          fileId: file.id,
+        url: `${this.provider.fileUrl(file.requestPath)}`,
+        body: {
+          fileId: file.id
         },
-        providerOptions: this.provider.opts,
-      },
+        providerOptions: this.provider.opts
+      }
     }
 
     const fileType = getFileType(tagFile)
@@ -192,16 +191,16 @@ module.exports = class ProviderView {
           if (!res.revoked) {
             const message = this.plugin.uppy.i18n('companionUnauthorizeHint', {
               provider: this.plugin.title,
-              url     : res.manual_revoke_url,
+              url: res.manual_revoke_url
             })
             this.plugin.uppy.info(message, 'info', 7000)
           }
 
           const newState = {
             authenticated: false,
-            files        : [],
-            folders      : [],
-            directories  : [],
+            files: [],
+            folders: [],
+            directories: []
           }
           this.plugin.setPluginState(newState)
         }
@@ -210,11 +209,13 @@ module.exports = class ProviderView {
 
   filterQuery (e) {
     const state = this.plugin.getPluginState()
-    this.plugin.setPluginState({ ...state, filterInput: e ? e.target.value : '' })
+    this.plugin.setPluginState(Object.assign({}, state, {
+      filterInput: e ? e.target.value : ''
+    }))
   }
 
   sortByTitle () {
-    const state = { ...this.plugin.getPluginState() }
+    const state = Object.assign({}, this.plugin.getPluginState())
     const { files, folders, sorting } = state
 
     const sortedFiles = files.sort((fileA, fileB) => {
@@ -231,16 +232,15 @@ module.exports = class ProviderView {
       return folderA.name.localeCompare(folderB.name)
     })
 
-    this.plugin.setPluginState({
-      ...state,
-      files  : sortedFiles,
+    this.plugin.setPluginState(Object.assign({}, state, {
+      files: sortedFiles,
       folders: sortedFolders,
-      sorting: (sorting === 'titleDescending') ? 'titleAscending' : 'titleDescending',
-    })
+      sorting: (sorting === 'titleDescending') ? 'titleAscending' : 'titleDescending'
+    }))
   }
 
   sortByDate () {
-    const state = { ...this.plugin.getPluginState() }
+    const state = Object.assign({}, this.plugin.getPluginState())
     const { files, folders, sorting } = state
 
     const sortedFiles = files.sort((fileA, fileB) => {
@@ -264,16 +264,15 @@ module.exports = class ProviderView {
       return a > b ? 1 : a < b ? -1 : 0
     })
 
-    this.plugin.setPluginState({
-      ...state,
-      files  : sortedFiles,
+    this.plugin.setPluginState(Object.assign({}, state, {
+      files: sortedFiles,
       folders: sortedFolders,
-      sorting: (sorting === 'dateDescending') ? 'dateAscending' : 'dateDescending',
-    })
+      sorting: (sorting === 'dateDescending') ? 'dateAscending' : 'dateDescending'
+    }))
   }
 
   sortBySize () {
-    const state = { ...this.plugin.getPluginState() }
+    const state = Object.assign({}, this.plugin.getPluginState())
     const { files, sorting } = state
 
     // check that plugin supports file sizes
@@ -291,11 +290,10 @@ module.exports = class ProviderView {
       return a > b ? 1 : a < b ? -1 : 0
     })
 
-    this.plugin.setPluginState({
-      ...state,
-      files  : sortedFiles,
-      sorting: (sorting === 'sizeDescending') ? 'sizeAscending' : 'sizeDescending',
-    })
+    this.plugin.setPluginState(Object.assign({}, state, {
+      files: sortedFiles,
+      sorting: (sorting === 'sizeDescending') ? 'sizeAscending' : 'sizeDescending'
+    }))
   }
 
   /**
@@ -322,14 +320,14 @@ module.exports = class ProviderView {
       const ids = files.map(this.providerFileToId)
       folders[folderId] = {
         loading: false,
-        files  : ids,
+        files: ids
       }
       this.plugin.setPluginState({ selectedFolders: folders })
 
       let message
       if (files.length) {
         message = this.plugin.uppy.i18n('folderAdded', {
-          smart_count: count, folder: folder.name,
+          smart_count: count, folder: folder.name
         })
       } else {
         message = this.plugin.uppy.i18n('emptyFolderAdded')
@@ -348,7 +346,7 @@ module.exports = class ProviderView {
     return generateFileID({
       data: file,
       name: file.name || file.id,
-      type: file.mimeType,
+      type: file.mimeType
     })
   }
 
@@ -385,7 +383,7 @@ module.exports = class ProviderView {
     const getRegex = (value) => {
       if (typeof value === 'string') {
         return new RegExp(`^${value}$`)
-      } if (value instanceof RegExp) {
+      } else if (value instanceof RegExp) {
         return value
       }
     }
@@ -403,7 +401,7 @@ module.exports = class ProviderView {
       return
     }
     const message = uppy.i18n('companionError')
-    uppy.info({ message, details: error.toString() }, 'error', 5000)
+    uppy.info({ message: message, details: error.toString() }, 'error', 5000)
   }
 
   handleScroll (e) {
@@ -437,10 +435,11 @@ module.exports = class ProviderView {
         if (moreFiles) {
           return this.listAllFiles(moreFiles, files)
             .then((files) => resolve(files))
-            .catch((e) => reject(e))
+            .catch(e => reject(e))
+        } else {
+          return resolve(files)
         }
-        return resolve(files)
-      }).catch((e) => reject(e))
+      }).catch(e => reject(e))
     })
   }
 
@@ -449,8 +448,9 @@ module.exports = class ProviderView {
     const promises = currentSelection.map((file) => {
       if (file.isFolder) {
         return this.addFolder(file)
+      } else {
+        return this.addFile(file)
       }
-      return this.addFile(file)
     })
 
     this._sharedHandler.loaderWrapper(Promise.all(promises), () => {
@@ -502,42 +502,41 @@ module.exports = class ProviderView {
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const headerProps = {
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      getFolder      : this.getFolder,
-      directories    : this.plugin.getPluginState().directories,
-      pluginIcon     : this.plugin.icon,
-      title          : this.plugin.title,
-      logout         : this.logout,
-      username       : this.username,
-      i18n           : this.plugin.uppy.i18n,
+      getFolder: this.getFolder,
+      directories: this.plugin.getPluginState().directories,
+      pluginIcon: this.plugin.icon,
+      title: this.plugin.title,
+      logout: this.logout,
+      username: this.username,
+      i18n: this.plugin.uppy.i18n
     }
 
-    const browserProps = {
-      ...this.plugin.getPluginState(),
-      username            : this.username,
-      getNextFolder       : this.getNextFolder,
-      getFolder           : this.getFolder,
-      filterItems         : this._sharedHandler.filterItems,
-      filterQuery         : this.filterQuery,
-      sortByTitle         : this.sortByTitle,
-      sortByDate          : this.sortByDate,
-      logout              : this.logout,
-      isChecked           : this._sharedHandler.isChecked,
-      toggleCheckbox      : this._sharedHandler.toggleCheckbox,
-      handleScroll        : this.handleScroll,
-      listAllFiles        : this.listAllFiles,
-      done                : this.donePicking,
-      cancel              : this.cancelPicking,
-      headerComponent     : Header(headerProps),
-      title               : this.plugin.title,
-      viewType            : targetViewOptions.viewType,
-      showTitles          : targetViewOptions.showTitles,
-      showFilter          : targetViewOptions.showFilter,
-      showBreadcrumbs     : targetViewOptions.showBreadcrumbs,
-      pluginIcon          : this.plugin.icon,
-      i18n                : this.plugin.uppy.i18n,
-      uppyFiles           : this.plugin.uppy.getFiles(),
-      validateRestrictions: this.plugin.uppy.validateRestrictions,
-    }
+    const browserProps = Object.assign({}, this.plugin.getPluginState(), {
+      username: this.username,
+      getNextFolder: this.getNextFolder,
+      getFolder: this.getFolder,
+      filterItems: this._sharedHandler.filterItems,
+      filterQuery: this.filterQuery,
+      sortByTitle: this.sortByTitle,
+      sortByDate: this.sortByDate,
+      logout: this.logout,
+      isChecked: this._sharedHandler.isChecked,
+      toggleCheckbox: this._sharedHandler.toggleCheckbox,
+      handleScroll: this.handleScroll,
+      listAllFiles: this.listAllFiles,
+      done: this.donePicking,
+      cancel: this.cancelPicking,
+      headerComponent: Header(headerProps),
+      title: this.plugin.title,
+      viewType: targetViewOptions.viewType,
+      showTitles: targetViewOptions.showTitles,
+      showFilter: targetViewOptions.showFilter,
+      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
+      pluginIcon: this.plugin.icon,
+      i18n: this.plugin.uppy.i18n,
+      uppyFiles: this.plugin.uppy.getFiles(),
+      validateRestrictions: this.plugin.uppy.validateRestrictions
+    })
 
     return (
       <CloseWrapper onUnmount={this.clearSelection}>

@@ -7,20 +7,20 @@ const app = express()
 
 app.use(bodyParser.json())
 app.use(session({
-  secret           : 'some-secret',
-  resave           : true,
-  saveUninitialized: true,
+  secret: 'some-secret',
+  resave: true,
+  saveUninitialized: true
 }))
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
   res.setHeader(
     'Access-Control-Allow-Methods',
-    'GET, POST, OPTIONS, PUT, PATCH, DELETE',
+    'GET, POST, OPTIONS, PUT, PATCH, DELETE'
   )
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'Authorization, Origin, Content-Type, Accept',
+    'Authorization, Origin, Content-Type, Accept'
   )
   next()
 })
@@ -35,36 +35,38 @@ app.get('/', (req, res) => {
 const uppyOptions = {
   providerOptions: {
     drive: {
-      key   : 'your google key',
-      secret: 'your google secret',
+      key: 'your google key',
+      secret: 'your google secret'
     },
     instagram: {
-      key   : 'your instagram key',
-      secret: 'your instagram secret',
+      key: 'your instagram key',
+      secret: 'your instagram secret'
     },
     dropbox: {
-      key   : 'your dropbox key',
-      secret: 'your dropbox secret',
+      key: 'your dropbox key',
+      secret: 'your dropbox secret'
     },
     box: {
-      key   : 'your box key',
-      secret: 'your box secret',
-    },
+      key: 'your box key',
+      secret: 'your box secret'
+    }
     // you can also add options for additional providers here
   },
   server: {
-    host    : 'localhost:3020',
-    protocol: 'http',
+    host: 'localhost:3020',
+    protocol: 'http'
   },
   filePath: './output',
-  secret  : 'some-secret',
-  debug   : true,
+  secret: 'some-secret',
+  debug: true
 }
 
 app.use(companion.app(uppyOptions))
 
 // handle 404
-app.use((req, res, next) => res.status(404).json({ message: 'Not Found' }))
+app.use((req, res, next) => {
+  return res.status(404).json({ message: 'Not Found' })
+})
 
 // handle server errors
 app.use((err, req, res, next) => {

@@ -5,24 +5,24 @@ const GoldenRetriever = require('@uppy/golden-retriever')
 // Initialise two Uppy instances with the GoldenRetriever plugin,
 // but with different `id`s.
 const a = new Uppy({
-  id   : 'a',
-  debug: true,
+  id: 'a',
+  debug: true
 })
   .use(Dashboard, {
     target: '#a',
     inline: true,
-    width : 400,
+    width: 400
   })
   .use(GoldenRetriever, { serviceWorker: false })
 
 const b = new Uppy({
-  id   : 'b',
-  debug: true,
+  id: 'b',
+  debug: true
 })
   .use(Dashboard, {
     target: '#b',
     inline: true,
-    width : 400,
+    width: 400
   })
   .use(GoldenRetriever, { serviceWorker: false })
 

@@ -8,17 +8,17 @@ module.exports = class TestSelector2 extends Plugin {
     this.name = this.constructor.name
 
     this.mocks = {
-      run      : jest.fn(),
-      update   : jest.fn(),
-      uninstall: jest.fn(),
+      run: jest.fn(),
+      update: jest.fn(),
+      uninstall: jest.fn()
     }
   }
 
   run (results) {
     this.uppy.log({
-      class : this.constructor.name,
+      class: this.constructor.name,
       method: 'run',
-      results,
+      results: results
     })
     this.mocks.run(results)
     return Promise.resolve('success')

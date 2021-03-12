@@ -1,13 +1,11 @@
 // Core
 exports.Core = require('@uppy/core')
-
 exports.debugLogger = exports.Core.debugLogger
 
 // Utilities
 exports.server = require('@uppy/companion-client')
-
 exports.views = {
-  ProviderView: require('@uppy/provider-views'),
+  ProviderView: require('@uppy/provider-views')
 }
 
 // Stores

@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   Text,
   TextInput,
-  View,
+  View
 } from 'react-native'
 import Url from '@uppy/url'
 
@@ -14,7 +14,7 @@ export default class UppyRNUrl extends React.Component {
     super()
 
     this.state = {
-      url: null,
+      url: null
     }
 
     this.onPressImport = this.onPressImport.bind(this)
@@ -22,11 +22,11 @@ export default class UppyRNUrl extends React.Component {
 
   componentDidMount () {
     const uppy = this.props.uppy
-    const options = {
-      id: 'uppyRN:Url',
-      ...this.props,
-
-    }
+    const options = Object.assign(
+      { id: 'uppyRN:Url' },
+      this.props,
+      { }
+    )
     delete options.uppy
 
     uppy.use(Url, options)
@@ -53,7 +53,7 @@ export default class UppyRNUrl extends React.Component {
           style={styles.input}
           autoFocus
           onChangeText={(text) => this.setState({
-            url: text,
+            url: text
           })}
           placeholder="Enter URL to import a file"
         />
@@ -65,7 +65,7 @@ export default class UppyRNUrl extends React.Component {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonCancel}
-          onPress={(ev) => this.props.onDone()}
+          onPress={ev => this.props.onDone()}
         >
           <Text style={styles.buttonCancelText}>Cancel</Text>
         </TouchableOpacity>
@@ -76,37 +76,37 @@ export default class UppyRNUrl extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex          : 1,
-    alignItems    : 'center',
-    justifyContent: 'center',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   input: {
-    width       : '90%',
-    height      : 40,
-    borderColor : '#7f8a93',
-    borderWidth : 1,
-    padding     : 5,
+    width: '90%',
+    height: 40,
+    borderColor: '#7f8a93',
+    borderWidth: 1,
+    padding: 5,
     borderRadius: 4,
-    marginBottom: 15,
+    marginBottom: 15
   },
   buttonImport: {
-    alignItems       : 'center',
-    backgroundColor  : '#2275d7',
+    alignItems: 'center',
+    backgroundColor: '#2275d7',
     paddingHorizontal: 25,
-    paddingVertical  : 8,
-    borderRadius     : 5,
-    marginBottom     : 10,
+    paddingVertical: 8,
+    borderRadius: 5,
+    marginBottom: 10
   },
   buttonCancel: {
-    alignItems       : 'center',
+    alignItems: 'center',
     paddingHorizontal: 15,
-    paddingVertical  : 8,
-    borderRadius     : 5,
+    paddingVertical: 8,
+    borderRadius: 5
   },
   buttonImportText: {
-    color: '#fff',
+    color: '#fff'
   },
   buttonCancelText: {
-    color: '#0077cc',
-  },
+    color: '#0077cc'
+  }
 })

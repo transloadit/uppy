@@ -4,13 +4,13 @@ import {
   View,
   FlatList,
   Image,
-  WebView,
+  WebView
 } from 'react-native'
 import Instagram from '@uppy/instagram'
 
 function getQueryParamValueFromUrl (name, url) {
   name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]')
-  var regexS = `[\\?&]${name}=([^&#]*)`
+  var regexS = '[\\?&]' + name + '=([^&#]*)'
   var regex = new RegExp(regexS)
   var results = regex.exec(url)
   return results == null ? null : results[1]
@@ -23,7 +23,7 @@ export default class UppyRNInstagram extends React.Component {
 
     this.state = {
       instagram: {
-        user : 'bla@gmail.com',
+        user: 'bla@gmail.com',
         items: [
           { caption: Date.now(), url: 'http://lorempixel.com/200/200/cats/1' },
           { caption: Date.now(), url: 'http://lorempixel.com/200/200/cats/2' },
@@ -33,25 +33,25 @@ export default class UppyRNInstagram extends React.Component {
           { caption: Date.now(), url: 'http://lorempixel.com/200/200/' },
           { caption: Date.now(), url: 'http://lorempixel.com/200/200/' },
           { caption: Date.now(), url: 'http://lorempixel.com/200/200/' },
-          { caption: Date.now(), url: 'http://lorempixel.com/200/200/' },
-        ],
-      },
+          { caption: Date.now(), url: 'http://lorempixel.com/200/200/' }
+        ]
+      }
     }
   }
 
   componentDidMount () {
     const uppy = this.props.uppy
-    const options = {
-      id     : 'uppyRN:Instagram',
-      ...this.props,
-      storage: AsyncStorage,
-    }
+    const options = Object.assign(
+      { id: 'uppyRN:Instagram' },
+      this.props,
+      { storage: AsyncStorage }
+    )
     delete options.uppy
     uppy.use(Instagram, options)
     this.plugin = uppy.getPlugin(options.id)
 
     this.setState({
-      authUrl: this.plugin.provider.authUrl(),
+      authUrl: this.plugin.provider.authUrl()
     })
   }
 
@@ -103,12 +103,12 @@ export default class UppyRNInstagram extends React.Component {
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
-    flex          : 1,
-    paddingTop    : 30,
+    flex: 1,
+    paddingTop: 30
   },
   item: {
     justifyContent: 'center',
-    alignItems    : 'center',
-    height        : 100,
-  },
+    alignItems: 'center',
+    height: 100
+  }
 })

@@ -6,42 +6,42 @@ class Stopwatch extends Component {
     this.state = { elapsedTime: 0 }
 
     this.wrapperStyle = {
-      width  : '100%',
-      height : '100%',
-      display: 'flex',
+      width: '100%',
+      height: '100%',
+      display: 'flex'
     }
 
     this.overlayStyle = {
-      position  : 'absolute',
-      width     : '100%',
-      height    : '100%',
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
       background: 'black',
-      opacity   : 0.7,
+      opacity: 0.7
     }
 
     this.infoContainerStyle = {
-      marginLeft  : 'auto',
-      marginRight : 'auto',
-      marginTop   : 'auto',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      marginTop: 'auto',
       marginBottom: 'auto',
-      zIndex      : 1,
-      color       : 'white',
+      zIndex: 1,
+      color: 'white'
     }
 
     this.infotextStyle = {
-      marginLeft  : 'auto',
-      marginRight : 'auto',
+      marginLeft: 'auto',
+      marginRight: 'auto',
       marginBottom: '1rem',
-      fontSize    : '1.5rem',
+      fontSize: '1.5rem'
     }
 
     this.timeStyle = {
-      display    : 'block',
-      fontWeight : 'bold',
-      marginLeft : 'auto',
+      display: 'block',
+      fontWeight: 'bold',
+      marginLeft: 'auto',
       marginRight: 'auto',
-      fontSize   : '3rem',
-      fontFamily : 'Courier New',
+      fontSize: '3rem',
+      fontFamily: 'Courier New'
     }
   }
 
@@ -96,8 +96,9 @@ class Stopwatch extends Component {
 
         </div>
       )
+    } else {
+      return null
     }
-    return null
   }
 }
 

@@ -10,20 +10,20 @@ function pick (opts = {}) {
 
   const pluginId = 'pick'
   const uppy = createUppy(opts, {
-    allowMultipleUploads: false,
+    allowMultipleUploads: false
   })
   addTransloaditPlugin(uppy, opts)
   addDashboardPlugin(uppy, opts, {
-    id              : pluginId,
+    id: pluginId,
     target,
-    closeAfterFinish: true,
+    closeAfterFinish: true
   })
 
   if (Array.isArray(opts.providers)) {
     addProviders(uppy, opts.providers, {
       ...opts,
       // Install providers into the Dashboard.
-      target: uppy.getPlugin(pluginId),
+      target: uppy.getPlugin(pluginId)
     })
   }
 
@@ -37,7 +37,9 @@ function pick (opts = {}) {
     uppy.on('cancel-all', () => reject(CANCEL))
     uppy.getPlugin(pluginId)
       .openModal()
-  }).then((result) => result, (err) => {
+  }).then((result) => {
+    return result
+  }, (err) => {
     if (err === CANCEL) {
       uppy.getPlugin(pluginId)
         .requestCloseModal()

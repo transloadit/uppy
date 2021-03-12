@@ -38,9 +38,9 @@
 
       if (window.matchMedia('(min-width: 1024px)').matches) {
         var headerTopOffset = header.getBoundingClientRect().top
-        menu.style.top = `${headerHeight + headerTopOffset}px`
+        menu.style.top = headerHeight + headerTopOffset + 'px'
       } else {
-        menu.style.paddingTop = `${headerHeight + transloaditBarHeight + 20}px`
+        menu.style.paddingTop = headerHeight + transloaditBarHeight + 20 + 'px'
       }
     }
 
@@ -82,9 +82,10 @@
       h.id = h.id
         .replace(/\(.*\)$/, '')
         .replace(/\$/, '')
-      link.innerHTML =        `<a class="section-link" data-scroll href="#${h.id}">${
-        text
-      }</a>`
+      link.innerHTML =
+        '<a class="section-link" data-scroll href="#' + h.id + '">' +
+          text +
+        '</a>'
       return link
     }
 
@@ -105,7 +106,7 @@
       if (small) {
         container.className = 'menu-sub'
       }
-      h3s.forEach((h) => {
+      h3s.forEach(function (h) {
         container.appendChild(makeLink(h))
       })
       return container
@@ -114,7 +115,7 @@
     function setActive (id) {
       var previousActive = menu.querySelector('.section-link.active')
       var currentActive = typeof id === 'string'
-        ? menu.querySelector(`.section-link[href="#${id}"]`)
+        ? menu.querySelector('.section-link[href="#' + id + '"]')
         : id
       if (currentActive !== previousActive) {
         if (previousActive) previousActive.classList.remove('active')
@@ -127,17 +128,17 @@
         return
       }
       var wrapper = document.createElement('a')
-      wrapper.href = `#${link.id}`
+      wrapper.href = '#' + link.id
       wrapper.setAttribute('data-scroll', '')
       link.parentNode.insertBefore(wrapper, link)
       wrapper.appendChild(link)
     }
 
-    menuButton.addEventListener('click', () => {
+    menuButton.addEventListener('click', function () {
       menu.classList.toggle('is-open')
     })
 
-    body.addEventListener('click', (e) => {
+    body.addEventListener('click', function (e) {
       if (e.target !== menuButton && !menu.contains(e.target)) {
         menu.classList.remove('is-open')
       }
@@ -168,7 +169,7 @@
         var h2s = content.querySelectorAll('h2')
 
         if (h2s.length) {
-          each.call(h2s, (h) => {
+          each.call(h2s, function (h) {
             sectionContainer.appendChild(makeLink(h))
             var h3s = collectH3s(h)
             allLinks.push(h)
@@ -179,19 +180,19 @@
           })
         } else {
           var h3s = content.querySelectorAll('h3')
-          each.call(h3s, (h) => {
+          each.call(h3s, function (h) {
             sectionContainer.appendChild(makeLink(h))
             allLinks.push(h)
           })
         }
 
-        sectionContainer.addEventListener('click', (e) => {
+        sectionContainer.addEventListener('click', function (e) {
           e.preventDefault()
           if (e.target.classList.contains('section-link')) {
             menu.classList.remove('open')
             setActive(e.target)
             animating = true
-            setTimeout(() => {
+            setTimeout(function () {
               animating = false
             }, 400)
           }
@@ -202,7 +203,7 @@
 
         // init smooth scroll
         window.smoothScroll.init({
-          speed: 400,
+          speed: 400
           // offset: window.innerWidth > 720
           //   ? 40
           //   : 58
@@ -222,7 +223,7 @@
 
   function IndexPage () {
     // Tabs
-    window.addEventListener('load', () => {
+    window.addEventListener('load', function () {
       var tabs = document.querySelectorAll('.Tabs-link')
 
       function myTabClicks (tabClickEvent) {
@@ -278,7 +279,7 @@
 
     function showTagline (taglineText) {
       tagline.classList.remove('is-visible')
-      setTimeout(() => {
+      setTimeout(function () {
         taglinePart.innerHTML = taglineText
         tagline.classList.add('is-visible')
       }, 800)
@@ -310,4 +311,4 @@
   //     // TODO when 1.x is out
   //   }
   // })
-}())
+})()

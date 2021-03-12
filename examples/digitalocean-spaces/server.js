@@ -26,21 +26,20 @@ const app = router()
 // Set up the /params endpoint that will create signed URLs for us.
 app.use(require('cors')())
 app.use(require('body-parser').json())
-
 app.use('/companion', companion.app({
   providerOptions: {
     s3: {
       // This is the crucial part; set an endpoint template for the service you want to use.
       endpoint: 'https://{region}.digitaloceanspaces.com',
-      getKey  : (req, filename) => `uploads/${filename}`,
+      getKey: (req, filename) => `uploads/${filename}`,
 
-      key   : process.env.COMPANION_AWS_KEY,
+      key: process.env.COMPANION_AWS_KEY,
       secret: process.env.COMPANION_AWS_SECRET,
       bucket: process.env.COMPANION_AWS_BUCKET,
-      region: process.env.COMPANION_AWS_REGION,
-    },
+      region: process.env.COMPANION_AWS_REGION
+    }
   },
-  server: { serverUrl: `localhost:${PORT}` },
+  server: { serverUrl: `localhost:${PORT}` }
 }))
 
 // Serve the built CSS file.
@@ -51,18 +50,18 @@ app.get('/uppy.min.css', (req, res) => {
 
 // Start the development server, budo.
 budo(path.join(__dirname, 'main.js'), {
-  live      : true,
-  stream    : process.stdout,
-  port      : PORT,
+  live: true,
+  stream: process.stdout,
+  port: PORT,
   middleware: app,
   browserify: {
     transform: [
       'babelify',
       ['aliasify', {
         aliases: {
-          '@uppy': path.join(__dirname, '../../packages/@uppy'),
-        },
-      }],
-    ],
-  },
+          '@uppy': path.join(__dirname, '../../packages/@uppy')
+        }
+      }]
+    ]
+  }
 })

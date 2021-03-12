@@ -3,7 +3,9 @@ const Redux = require('redux')
 
 describe('ReduxStore', () => {
   function createStore (reducers = {}) {
-    const reducer = Redux.combineReducers({ ...reducers, uppy: ReduxStore.reducer })
+    const reducer = Redux.combineReducers(Object.assign({}, reducers, {
+      uppy: ReduxStore.reducer
+    }))
     return Redux.createStore(reducer)
   }
 
@@ -22,7 +24,7 @@ describe('ReduxStore', () => {
 
     store.setState({
       a: 1,
-      b: 2,
+      b: 2
     })
     expect(store.getState()).toEqual({ a: 1, b: 2 })
 
@@ -45,7 +47,7 @@ describe('ReduxStore', () => {
     expected = [{}, { a: 1, b: 2 }, { a: 1, b: 2 }]
     store.setState({
       a: 1,
-      b: 2,
+      b: 2
     })
 
     expected = [{ a: 1, b: 2 }, { a: 1, b: 3 }, { b: 3 }]
@@ -79,12 +81,12 @@ describe('ReduxStore', () => {
     expected = [{ a: 1 }, { b: 2 }, { b: 2 }]
     // redux-devtools's `JUMP_TO_STATE` is similar to this.
     r.dispatch({
-      type   : 'SET',
+      type: 'SET',
       payload: {
         uppy: {
-          [store._id]: { b: 2 },
-        },
-      },
+          [store._id]: { b: 2 }
+        }
+      }
     })
 
     expect(calls).toBe(2)
@@ -92,22 +94,22 @@ describe('ReduxStore', () => {
 
   it('can mount in a custom state key', () => {
     const reducer = Redux.combineReducers({
-      hello: ReduxStore.reducer,
+      hello: ReduxStore.reducer
     })
     const r = Redux.createStore(reducer)
     const store = ReduxStore({
-      store   : r,
-      id      : 'world',
-      selector: (state) => state.hello.world,
+      store: r,
+      id: 'world',
+      selector: state => state.hello.world
     })
     store.setState({ a: 1 })
 
     expect(r.getState()).toEqual({
       hello: {
         world: {
-          a: 1,
-        },
-      },
+          a: 1
+        }
+      }
     })
   })
 })

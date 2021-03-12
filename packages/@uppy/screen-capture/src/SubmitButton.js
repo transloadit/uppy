@@ -20,6 +20,7 @@ module.exports = function SubmitButton ({ recording, recordedVideo, onSubmit, i1
         </svg>
       </button>
     )
+  } else {
+    return null
   }
-  return null
 }

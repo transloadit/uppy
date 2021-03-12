@@ -13,7 +13,6 @@
 
 const path = require('path')
 const { execSync } = require('child_process')
-
 const exampleName = process.argv[2]
 
 if (!exampleName) {

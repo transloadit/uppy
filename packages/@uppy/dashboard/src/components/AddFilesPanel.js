@@ -2,7 +2,8 @@ const { h } = require('preact')
 const classNames = require('classnames')
 const AddFiles = require('./AddFiles')
 
-const AddFilesPanel = (props) => (
+const AddFilesPanel = (props) => {
+  return (
     <div
       class={classNames('uppy-Dashboard-AddFilesPanel', props.className)}
       data-uppy-panelType="AddFiles"
@@ -21,6 +22,7 @@ const AddFilesPanel = (props) => (
       </div>
       <AddFiles {...props} />
     </div>
-)
+  )
+}
 
 module.exports = AddFilesPanel

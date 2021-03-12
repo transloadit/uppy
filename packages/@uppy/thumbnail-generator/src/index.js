@@ -25,15 +25,15 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        generatingThumbnails: 'Generating thumbnails...',
-      },
+        generatingThumbnails: 'Generating thumbnails...'
+      }
     }
 
     const defaultOptions = {
-      thumbnailWidth               : null,
-      thumbnailHeight              : null,
+      thumbnailWidth: null,
+      thumbnailHeight: null,
       waitForThumbnailsBeforeUpload: false,
-      lazy                         : false,
+      lazy: false
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -86,7 +86,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
       })
     })
 
-    const orientationPromise = exifr.rotation(file.data).catch((_err) => 1)
+    const orientationPromise = exifr.rotation(file.data).catch(_err => 1)
 
     return Promise.all([onload, orientationPromise])
       .then(([image, orientation]) => {
@@ -95,10 +95,11 @@ module.exports = class ThumbnailGenerator extends Plugin {
         const resizedImage = this.resizeImage(rotatedImage, dimensions.width, dimensions.height)
         return this.canvasToBlob(resizedImage, this.thumbnailType, 80)
       })
-      .then((blob) =>
+      .then(blob => {
         // bug in the compatibility data
         // eslint-disable-next-line compat/compat
-        URL.createObjectURL(blob))
+        return URL.createObjectURL(blob)
+      })
   }
 
   /**
@@ -115,21 +116,21 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     if (width != null) {
       return {
-        width,
-        height: Math.round(width / aspect),
+        width: width,
+        height: Math.round(width / aspect)
       }
     }
 
     if (height != null) {
       return {
         width: Math.round(height * aspect),
-        height,
+        height: height
       }
     }
 
     return {
-      width : this.defaultThumbnailDimension,
-      height: Math.round(this.defaultThumbnailDimension / aspect),
+      width: this.defaultThumbnailDimension,
+      height: Math.round(this.defaultThumbnailDimension / aspect)
     }
   }
 
@@ -239,7 +240,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
     }
 
     if (canvas.toBlob) {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         canvas.toBlob(resolve, type, quality)
       }).then((blob) => {
         if (blob === null) {
@@ -248,7 +249,9 @@ module.exports = class ThumbnailGenerator extends Plugin {
         return blob
       })
     }
-    return Promise.resolve().then(() => dataURItoBlob(canvas.toDataURL(type, quality), {})).then((blob) => {
+    return Promise.resolve().then(() => {
+      return dataURItoBlob(canvas.toDataURL(type, quality), {})
+    }).then((blob) => {
       if (blob === null) {
         throw new Error('could not extract blob, probably an old browser')
       }
@@ -279,23 +282,24 @@ module.exports = class ThumbnailGenerator extends Plugin {
         return
       }
       return this.requestThumbnail(current)
-        .catch((err) => {}) // eslint-disable-line handle-callback-err
+        .catch(err => {}) // eslint-disable-line handle-callback-err
         .then(() => this.processQueue())
+    } else {
+      this.queueProcessing = false
+      this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue')
+      this.uppy.emit('thumbnail:all-generated')
     }
-    this.queueProcessing = false
-    this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue')
-    this.uppy.emit('thumbnail:all-generated')
   }
 
   requestThumbnail (file) {
     if (isPreviewSupported(file.type) && !file.isRemote) {
       return this.createThumbnail(file, this.opts.thumbnailWidth, this.opts.thumbnailHeight)
-        .then((preview) => {
+        .then(preview => {
           this.setPreviewURL(file.id, preview)
           this.uppy.log(`[ThumbnailGenerator] Generated thumbnail for ${file.id}`)
           this.uppy.emit('thumbnail:generated', this.uppy.getFile(file.id), preview)
         })
-        .catch((err) => {
+        .catch(err => {
           this.uppy.log(`[ThumbnailGenerator] Failed thumbnail for ${file.id}:`, 'warning')
           this.uppy.log(err, 'warning')
           this.uppy.emit('thumbnail:error', this.uppy.getFile(file.id), err)
@@ -352,8 +356,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
     fileIDs.forEach((fileID) => {
       const file = this.uppy.getFile(fileID)
       this.uppy.emit('preprocess-progress', file, {
-        mode   : 'indeterminate',
-        message: this.i18n('generatingThumbnails'),
+        mode: 'indeterminate',
+        message: this.i18n('generatingThumbnails')
       })
     })
 

@@ -19,13 +19,13 @@ module.exports = class Form extends Plugin {
 
     // set default options
     const defaultOptions = {
-      target               : null,
-      resultName           : 'uppyResult',
-      getMetaFromForm      : true,
-      addResultToForm      : true,
-      multipleResults      : false,
-      submitOnSuccess      : false,
-      triggerUploadOnSubmit: false,
+      target: null,
+      resultName: 'uppyResult',
+      getMetaFromForm: true,
+      addResultToForm: true,
+      multipleResults: false,
+      submitOnSuccess: false,
+      triggerUploadOnSubmit: false
     }
 
     // merge default options with the ones set by user

@@ -17,8 +17,8 @@ class TusFileReader {
     end = Math.min(end, this.size)
     const options = {
       encoding: Expo.FileSystem.EncodingTypes.Base64,
-      length  : end - start,
-      position: start,
+      length: end - start,
+      position: start
     }
     Expo.FileSystem.readAsStringAsync(this.file.uri, options).then((data) => {
       cb(null, base64.toByteArray(data))

@@ -21,18 +21,18 @@ const TEMPLATE_ID = 'bbc273f69e0c4694a5a9d1b587abc1bc'
  */
 
 const formUppy = robodog.form('#test-form', {
-  debug       : true,
-  fields      : ['message'],
+  debug: true,
+  fields: ['message'],
   restrictions: {
-    allowedFileTypes: ['.png'],
+    allowedFileTypes: ['.png']
   },
   waitForEncoding: true,
-  params         : {
-    auth       : { key: TRANSLOADIT_KEY },
-    template_id: TEMPLATE_ID,
+  params: {
+    auth: { key: TRANSLOADIT_KEY },
+    template_id: TEMPLATE_ID
   },
-  modal      : true,
-  progressBar: '#test-form .progress',
+  modal: true,
+  progressBar: '#test-form .progress'
 })
 
 formUppy.on('error', (err) => {
@@ -48,30 +48,30 @@ formUppy.on('upload-error', (file, err) => {
 window.formUppy = formUppy
 
 const formUppyWithDashboard = robodog.form('#dashboard-form', {
-  debug       : true,
-  fields      : ['message'],
+  debug: true,
+  fields: ['message'],
   restrictions: {
-    allowedFileTypes: ['.png'],
+    allowedFileTypes: ['.png']
   },
   waitForEncoding: true,
-  note           : 'Only PNG files please!',
-  params         : {
-    auth       : { key: TRANSLOADIT_KEY },
-    template_id: TEMPLATE_ID,
+  note: 'Only PNG files please!',
+  params: {
+    auth: { key: TRANSLOADIT_KEY },
+    template_id: TEMPLATE_ID
   },
-  dashboard: '#dashboard-form .dashboard',
+  dashboard: '#dashboard-form .dashboard'
 })
 
 window.formUppyWithDashboard = formUppyWithDashboard
 
 const dashboard = robodog.dashboard('#dashboard', {
-  debug          : true,
+  debug: true,
   waitForEncoding: true,
-  note           : 'Images will be resized with Transloadit',
-  params         : {
-    auth       : { key: TRANSLOADIT_KEY },
-    template_id: TEMPLATE_ID,
-  },
+  note: 'Images will be resized with Transloadit',
+  params: {
+    auth: { key: TRANSLOADIT_KEY },
+    template_id: TEMPLATE_ID
+  }
 })
 
 window.dashboard = dashboard
@@ -83,16 +83,16 @@ window.dashboard = dashboard
 function openModal () {
   robodog.pick({
     restrictions: {
-      allowedFileTypes: ['.png'],
+      allowedFileTypes: ['.png']
     },
     waitForEncoding: true,
-    params         : {
-      auth       : { key: TRANSLOADIT_KEY },
-      template_id: TEMPLATE_ID,
+    params: {
+      auth: { key: TRANSLOADIT_KEY },
+      template_id: TEMPLATE_ID
     },
     providers: [
-      'webcam',
-    ],
+      'webcam'
+    ]
     // if providers need custom config
     // webcam: {
     //   option: 'whatever'
@@ -111,10 +111,10 @@ window.doUpload = (event) => {
   const errorEl = document.querySelector('#upload-error')
   robodog.upload(event.target.files, {
     waitForEncoding: true,
-    params         : {
-      auth       : { key: TRANSLOADIT_KEY },
-      template_id: TEMPLATE_ID,
-    },
+    params: {
+      auth: { key: TRANSLOADIT_KEY },
+      template_id: TEMPLATE_ID
+    }
   }).then((result) => {
     resultEl.classList.remove('hidden')
     errorEl.classList.add('hidden')

@@ -7,13 +7,13 @@ module.exports = function parseUrl (url) {
   const slashIndex = url.indexOf('/', i)
   if (slashIndex === -1) {
     return {
-      origin  : url,
-      pathname: '/',
+      origin: url,
+      pathname: '/'
     }
   }
 
   return {
-    origin  : url.slice(0, slashIndex),
-    pathname: url.slice(slashIndex),
+    origin: url.slice(0, slashIndex),
+    pathname: url.slice(slashIndex)
   }
 }

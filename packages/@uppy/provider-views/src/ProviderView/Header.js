@@ -5,17 +5,17 @@ module.exports = (props) => {
   const components = []
   if (props.showBreadcrumbs) {
     components.push(Breadcrumbs({
-      getFolder      : props.getFolder,
-      directories    : props.directories,
+      getFolder: props.getFolder,
+      directories: props.directories,
       breadcrumbsIcon: props.pluginIcon && props.pluginIcon(),
-      title          : props.title,
+      title: props.title
     }))
   }
 
   components.push(User({
-    logout  : props.logout,
+    logout: props.logout,
     username: props.username,
-    i18n    : props.i18n,
+    i18n: props.i18n
   }))
 
   return components

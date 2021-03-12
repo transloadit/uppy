@@ -1,6 +1,6 @@
 const RateLimitedQueue = require('./RateLimitedQueue')
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 describe('RateLimitedQueue', () => {
   let pending = 0
@@ -16,7 +16,7 @@ describe('RateLimitedQueue', () => {
     const result = Promise.all([
       fn2(), fn2(), fn2(), fn2(),
       fn2(), fn2(), fn2(), fn2(),
-      fn2(), fn2(),
+      fn2(), fn2()
     ])
 
     expect(pending).toBe(4)
@@ -35,7 +35,7 @@ describe('RateLimitedQueue', () => {
     const result = Promise.all([
       fn2(), fn2(), fn2(), fn2(),
       fn2(), fn2(), fn2(), fn2(),
-      fn2(), fn2(),
+      fn2(), fn2()
     ])
 
     expect(pending).toBe(10)
@@ -53,7 +53,7 @@ describe('RateLimitedQueue', () => {
     return Promise.all([
       fn2(), fn2(), fn2(), fn2(),
       fn2(), fn2(), fn2(), fn2(),
-      fn2(), fn2(),
+      fn2(), fn2()
     ])
   })
 })

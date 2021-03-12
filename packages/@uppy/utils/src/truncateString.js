@@ -13,13 +13,14 @@ module.exports = function truncateString (string, maxLength) {
   if (string.length <= maxLength) {
     return string
   // Return truncated substring without '...' if string can't be meaningfully truncated
-  } if (maxLength <= separator.length) {
+  } else if (maxLength <= separator.length) {
     return string.substr(0, maxLength)
   // Return truncated string divided in half by '...'
-  }
-  const charsToShow = maxLength - separator.length
-  const frontChars = Math.ceil(charsToShow / 2)
-  const backChars = Math.floor(charsToShow / 2)
+  } else {
+    const charsToShow = maxLength - separator.length
+    const frontChars = Math.ceil(charsToShow / 2)
+    const backChars = Math.floor(charsToShow / 2)
 
-  return string.substr(0, frontChars) + separator + string.substr(string.length - backChars)
+    return string.substr(0, frontChars) + separator + string.substr(string.length - backChars)
+  }
 }

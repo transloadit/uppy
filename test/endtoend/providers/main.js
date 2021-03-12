@@ -11,13 +11,13 @@ const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
 const companionUrl = isOnTravis ? 'http://companion.test:3030' : 'http://localhost:3020'
 
 window.uppy = new Uppy({
-  id         : 'uppyProvider',
-  debug      : true,
-  autoProceed: true,
+  id: 'uppyProvider',
+  debug: true,
+  autoProceed: true
 })
   .use(Dashboard, {
     target: '#uppyDashboard',
-    inline: true,
+    inline: true
   })
   .use(GoogleDrive, { target: Dashboard, companionUrl })
   .use(Instagram, { target: Dashboard, companionUrl })
@@ -28,8 +28,7 @@ if (window.location.search === '?socketerr=true') {
   const emitError = (file, data) => {
     // trigger fake socket error
     data.uploader.uploaderSockets[file.id].emit(
-      'error', { error: { message: 'nobody likes me, thats ok' } },
-    )
+      'error', { error: { message: 'nobody likes me, thats ok' } })
     window.uppy.off('upload-progress', emitError)
   }
   window.uppy.on('upload-progress', emitError)

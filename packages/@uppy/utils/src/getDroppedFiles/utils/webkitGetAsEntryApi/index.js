@@ -28,7 +28,7 @@ module.exports = function webkitGetAsEntryApi (dataTransfer, logDropError) {
           (error) => {
             logDropError(error)
             resolve()
-          },
+          }
         )
       // This is a recursive call
       } else if (entry.isDirectory) {
@@ -37,7 +37,7 @@ module.exports = function webkitGetAsEntryApi (dataTransfer, logDropError) {
           onSuccess: (entries) => {
             const promises = entries.map((entry) => createPromiseToAddFileOrParseDirectory(entry))
             Promise.all(promises).then(() => resolve())
-          },
+          }
         })
       }
     })

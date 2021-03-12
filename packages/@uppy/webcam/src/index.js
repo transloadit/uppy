@@ -63,7 +63,7 @@ function getMediaDevices () {
       return new Promise((resolve, reject) => {
         getUserMedia.call(navigator, opts, resolve, reject)
       })
-    },
+    }
   }
 }
 /**
@@ -91,35 +91,35 @@ module.exports = class Webcam extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        smile                  : 'Smile!',
-        takePicture            : 'Take a picture',
-        startRecording         : 'Begin video recording',
-        stopRecording          : 'Stop video recording',
-        allowAccessTitle       : 'Please allow access to your camera',
-        allowAccessDescription : 'In order to take pictures or record video with your camera, please allow camera access for this site.',
-        noCameraTitle          : 'Camera Not Available',
-        noCameraDescription    : 'In order to take pictures or record video, please connect a camera device',
+        smile: 'Smile!',
+        takePicture: 'Take a picture',
+        startRecording: 'Begin video recording',
+        stopRecording: 'Stop video recording',
+        allowAccessTitle: 'Please allow access to your camera',
+        allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
+        noCameraTitle: 'Camera Not Available',
+        noCameraDescription: 'In order to take pictures or record video, please connect a camera device',
         recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
-        recordingLength        : 'Recording length %{recording_length}',
-      },
+        recordingLength: 'Recording length %{recording_length}'
+      }
     }
 
     // set default options
     const defaultOptions = {
       onBeforeSnapshot: () => Promise.resolve(),
-      countdown       : false,
-      modes           : [
+      countdown: false,
+      modes: [
         'video-audio',
         'video-only',
         'audio-only',
-        'picture',
+        'picture'
       ],
-      mirror                 : true,
+      mirror: true,
       showVideoSourceDropdown: false,
-      facingMode             : 'user',
-      preferredImageMimeType : null,
-      preferredVideoMimeType : null,
-      showRecordingLength    : false,
+      facingMode: 'user',
+      preferredImageMimeType: null,
+      preferredVideoMimeType: null,
+      showRecordingLength: false
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -148,12 +148,12 @@ module.exports = class Webcam extends Plugin {
     }
 
     this.setPluginState({
-      hasCamera             : false,
-      cameraReady           : false,
-      cameraError           : null,
+      hasCamera: false,
+      cameraReady: false,
+      cameraError: null,
       recordingLengthSeconds: 0,
-      videoSources          : [],
-      currentDeviceId       : null,
+      videoSources: [],
+      currentDeviceId: null
     })
   }
 
@@ -163,8 +163,8 @@ module.exports = class Webcam extends Plugin {
       videoConstraints: {
         // May be undefined but ... handles that
         ...this.opts.videoConstraints,
-        ...newOpts?.videoConstraints,
-      },
+        ...newOpts?.videoConstraints
+      }
     })
 
     this.i18nInit()
@@ -182,26 +182,28 @@ module.exports = class Webcam extends Plugin {
       return Promise.resolve(false)
     }
 
-    return this.mediaDevices.enumerateDevices().then((devices) => devices.some((device) => device.kind === 'videoinput'))
+    return this.mediaDevices.enumerateDevices().then(devices => {
+      return devices.some(device => device.kind === 'videoinput')
+    })
   }
 
   getConstraints (deviceId = null) {
-    const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1
-      || this.opts.modes.indexOf('audio-only') !== -1
-    const acceptsVideo = this.opts.modes.indexOf('video-audio') !== -1
-      || this.opts.modes.indexOf('video-only') !== -1
-      || this.opts.modes.indexOf('picture') !== -1
+    const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1 ||
+      this.opts.modes.indexOf('audio-only') !== -1
+    const acceptsVideo = this.opts.modes.indexOf('video-audio') !== -1 ||
+      this.opts.modes.indexOf('video-only') !== -1 ||
+      this.opts.modes.indexOf('picture') !== -1
 
     const videoConstraints = {
       ...(this.opts.videoConstraints ?? { facingMode: this.opts.facingMode }),
       // facingMode takes precedence over deviceId, and not needed
       // when specific device is selected
-      ...(deviceId ? { deviceId, facingMode: null } : {}),
+      ...(deviceId ? { deviceId, facingMode: null } : {})
     }
 
     return {
       audio: acceptsAudio,
-      video: acceptsVideo ? videoConstraints : false,
+      video: acceptsVideo ? videoConstraints : false
     }
   }
 
@@ -214,9 +216,9 @@ module.exports = class Webcam extends Plugin {
 
     const constraints = this.getConstraints(options && options.deviceId ? options.deviceId : null)
 
-    this.hasCameraCheck().then((hasCamera) => {
+    this.hasCameraCheck().then(hasCamera => {
       this.setPluginState({
-        hasCamera,
+        hasCamera: hasCamera
       })
 
       // ask user for access to their camera
@@ -240,13 +242,13 @@ module.exports = class Webcam extends Plugin {
 
           this.setPluginState({
             currentDeviceId,
-            cameraReady: true,
+            cameraReady: true
           })
         })
         .catch((err) => {
           this.setPluginState({
             cameraReady: false,
-            cameraError: err,
+            cameraError: err
           })
           this.uppy.info(err.message, 'error')
         })
@@ -272,8 +274,8 @@ module.exports = class Webcam extends Plugin {
       }
 
       const acceptableMimeTypes = preferredVideoMimeTypes.filter((candidateType) =>
-        MediaRecorder.isTypeSupported(candidateType)
-          && getFileTypeExtension(candidateType))
+        MediaRecorder.isTypeSupported(candidateType) &&
+          getFileTypeExtension(candidateType))
       if (acceptableMimeTypes.length > 0) {
         options.mimeType = acceptableMimeTypes[0]
       }
@@ -292,9 +294,9 @@ module.exports = class Webcam extends Plugin {
       this.recordingChunks.push(event.data)
 
       const { restrictions } = this.uppy.opts
-      if (this.recordingChunks.length > 1
-          && restrictions.maxFileSize != null
-          && !stoppingBecauseOfMaxSize) {
+      if (this.recordingChunks.length > 1 &&
+          restrictions.maxFileSize != null &&
+          !stoppingBecauseOfMaxSize) {
         const totalSize = this.recordingChunks.reduce((acc, chunk) => acc + chunk.size, 0)
         // Exclude the initial chunk from the average size calculation because it is likely to be a very small outlier
         const averageChunkSize = (totalSize - this.recordingChunks[0].size) / (this.recordingChunks.length - 1)
@@ -322,7 +324,7 @@ module.exports = class Webcam extends Plugin {
     }
 
     this.setPluginState({
-      isRecording: true,
+      isRecording: true
     })
   }
 
@@ -342,7 +344,7 @@ module.exports = class Webcam extends Plugin {
 
     return stopped.then(() => {
       this.setPluginState({
-        isRecording: false,
+        isRecording: false
       })
       return this.getVideo()
     }).then((file) => {
@@ -412,7 +414,9 @@ module.exports = class Webcam extends Plugin {
       const message = typeof err === 'object' ? err.message : err
       this.uppy.info(message, 'error', 5000)
       return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
-    }).then(() => this._getImage()).then((tagFile) => {
+    }).then(() => {
+      return this._getImage()
+    }).then((tagFile) => {
       this.captureInProgress = false
       try {
         this.uppy.addFile(tagFile)
@@ -455,12 +459,14 @@ module.exports = class Webcam extends Plugin {
     const ext = getFileTypeExtension(mimeType) || 'jpg'
     const name = `cam-${Date.now()}.${ext}`
 
-    return canvasToBlob(canvas, mimeType).then((blob) => ({
-      source: this.id,
-      name,
-      data  : new Blob([blob], { type: mimeType }),
-      type  : mimeType,
-    }))
+    return canvasToBlob(canvas, mimeType).then((blob) => {
+      return {
+        source: this.id,
+        name: name,
+        data: new Blob([blob], { type: mimeType }),
+        type: mimeType
+      }
+    })
   }
 
   getVideo () {
@@ -475,9 +481,9 @@ module.exports = class Webcam extends Plugin {
     const blob = new Blob(this.recordingChunks, { type: mimeType })
     const file = {
       source: this.id,
-      name,
-      data  : new Blob([blob], { type: mimeType }),
-      type  : mimeType,
+      name: name,
+      data: new Blob([blob], { type: mimeType }),
+      type: mimeType
     }
 
     return Promise.resolve(file)
@@ -492,13 +498,13 @@ module.exports = class Webcam extends Plugin {
 
   _changeVideoSource (deviceId) {
     this._stop()
-    this._start({ deviceId })
+    this._start({ deviceId: deviceId })
   }
 
   updateVideoSources () {
-    this.mediaDevices.enumerateDevices().then((devices) => {
+    this.mediaDevices.enumerateDevices().then(devices => {
       this.setPluginState({
-        videoSources: devices.filter((device) => device.kind === 'videoinput'),
+        videoSources: devices.filter((device) => device.kind === 'videoinput')
       })
     })
   }
@@ -543,8 +549,8 @@ module.exports = class Webcam extends Plugin {
 
   install () {
     this.setPluginState({
-      cameraReady           : false,
-      recordingLengthSeconds: 0,
+      cameraReady: false,
+      recordingLengthSeconds: 0
     })
 
     const target = this.opts.target

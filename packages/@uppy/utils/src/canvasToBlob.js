@@ -12,5 +12,7 @@ module.exports = function canvasToBlob (canvas, type, quality) {
       canvas.toBlob(resolve, type, quality)
     })
   }
-  return Promise.resolve().then(() => dataURItoBlob(canvas.toDataURL(type, quality), {}))
+  return Promise.resolve().then(() => {
+    return dataURItoBlob(canvas.toDataURL(type, quality), {})
+  })
 }

@@ -43,13 +43,13 @@ module.exports = class FileItem extends Component {
     }
 
     const dashboardItemClass = classNames({
-      'uppy-Dashboard-Item'        : true,
-      'is-inprogress'              : uploadInProgress,
-      'is-processing'              : isProcessing,
-      'is-complete'                : isUploaded,
-      'is-error'                   : !!error,
-      'is-resumable'               : this.props.resumableUploads,
-      'is-noIndividualCancellation': !this.props.individualCancellation,
+      'uppy-Dashboard-Item': true,
+      'is-inprogress': uploadInProgress,
+      'is-processing': isProcessing,
+      'is-complete': isUploaded,
+      'is-error': !!error,
+      'is-resumable': this.props.resumableUploads,
+      'is-noIndividualCancellation': !this.props.individualCancellation
     })
 
     return (

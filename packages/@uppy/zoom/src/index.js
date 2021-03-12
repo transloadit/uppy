@@ -22,12 +22,12 @@ module.exports = class Zoom extends Plugin {
     )
 
     this.provider = new Provider(uppy, {
-      companionUrl        : this.opts.companionUrl,
-      companionHeaders    : this.opts.companionHeaders || this.opts.serverHeaders,
-      companionKeysParams : this.opts.companionKeysParams,
+      companionUrl: this.opts.companionUrl,
+      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionKeysParams: this.opts.companionKeysParams,
       companionCookiesRule: this.opts.companionCookiesRule,
-      provider            : 'zoom',
-      pluginId            : this.id,
+      provider: 'zoom',
+      pluginId: this.id
     })
 
     this.onFirstRender = this.onFirstRender.bind(this)
@@ -36,7 +36,7 @@ module.exports = class Zoom extends Plugin {
 
   install () {
     this.view = new ProviderViews(this, {
-      provider: this.provider,
+      provider: this.provider
     })
 
     const target = this.opts.target
@@ -53,7 +53,7 @@ module.exports = class Zoom extends Plugin {
   onFirstRender () {
     return Promise.all([
       this.provider.fetchPreAuthToken(),
-      this.view.getFolder(),
+      this.view.getFolder()
     ])
   }
 

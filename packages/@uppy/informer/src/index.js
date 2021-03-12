@@ -20,7 +20,7 @@ module.exports = class Informer extends Plugin {
     // set default options
     const defaultOptions = {}
     // merge default options with the ones set by user
-    this.opts = { ...defaultOptions, ...opts }
+    this.opts = Object.assign({}, defaultOptions, opts)
   }
 
   render = (state) => {

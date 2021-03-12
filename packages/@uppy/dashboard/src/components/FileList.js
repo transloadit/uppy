@@ -22,7 +22,7 @@ module.exports = (props) => {
   const noFiles = props.totalFileCount === 0
   const dashboardFilesClass = classNames(
     'uppy-Dashboard-files',
-    { 'uppy-Dashboard-files--noFiles': noFiles },
+    { 'uppy-Dashboard-files--noFiles': noFiles }
   )
 
   // It's not great that this is hardcoded!
@@ -35,32 +35,32 @@ module.exports = (props) => {
 
   const fileProps = {
     // FIXME This is confusing, it's actually the Dashboard's plugin ID
-    id                           : props.id,
-    error                        : props.error,
+    id: props.id,
+    error: props.error,
     // TODO move this to context
-    i18n                         : props.i18n,
-    log                          : props.log,
-    info                         : props.info,
+    i18n: props.i18n,
+    log: props.log,
+    info: props.info,
     // features
-    acquirers                    : props.acquirers,
-    resumableUploads             : props.resumableUploads,
-    individualCancellation       : props.individualCancellation,
+    acquirers: props.acquirers,
+    resumableUploads: props.resumableUploads,
+    individualCancellation: props.individualCancellation,
     // visual options
-    hideRetryButton              : props.hideRetryButton,
-    hidePauseResumeButton        : props.hidePauseResumeButton,
-    hideCancelButton             : props.hideCancelButton,
-    showLinkToFileUploadResult   : props.showLinkToFileUploadResult,
+    hideRetryButton: props.hideRetryButton,
+    hidePauseResumeButton: props.hidePauseResumeButton,
+    hideCancelButton: props.hideCancelButton,
+    showLinkToFileUploadResult: props.showLinkToFileUploadResult,
     showRemoveButtonAfterComplete: props.showRemoveButtonAfterComplete,
-    isWide                       : props.isWide,
-    metaFields                   : props.metaFields,
+    isWide: props.isWide,
+    metaFields: props.metaFields,
     // callbacks
-    retryUpload                  : props.retryUpload,
-    pauseUpload                  : props.pauseUpload,
-    cancelUpload                 : props.cancelUpload,
-    toggleFileCard               : props.toggleFileCard,
-    removeFile                   : props.removeFile,
-    handleRequestThumbnail       : props.handleRequestThumbnail,
-    handleCancelThumbnail        : props.handleCancelThumbnail,
+    retryUpload: props.retryUpload,
+    pauseUpload: props.pauseUpload,
+    cancelUpload: props.cancelUpload,
+    toggleFileCard: props.toggleFileCard,
+    removeFile: props.removeFile,
+    handleRequestThumbnail: props.handleRequestThumbnail,
+    handleCancelThumbnail: props.handleCancelThumbnail
   }
 
   const rows = chunks(Object.keys(props.files), props.itemsPerRow)

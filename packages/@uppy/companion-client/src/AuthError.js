@@ -1,3 +1,5 @@
+'use strict'
+
 class AuthError extends Error {
   constructor () {
     super('Authorization required')

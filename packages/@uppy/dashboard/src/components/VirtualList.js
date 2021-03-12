@@ -29,26 +29,26 @@
 const { h, Component } = require('preact')
 
 const STYLE_INNER = {
-  position : 'relative',
+  position: 'relative',
   // Disabled for our use case: the wrapper elements around FileList already deal with overflow,
   // and this additional property would hide things that we want to show.
   //
   // overflow: 'hidden',
-  width    : '100%',
-  minHeight: '100%',
+  width: '100%',
+  minHeight: '100%'
 }
 
 const STYLE_CONTENT = {
   position: 'absolute',
-  top     : 0,
-  left    : 0,
+  top: 0,
+  left: 0,
   // Because the `top` value gets set to some offset, this `height` being 100% would make the scrollbar
   // stretch far beyond the content. For our use case, the content div actually can get its height from
   // the elements inside it, so we don't need to specify a `height` property at all.
   //
   // height: '100%',
-  width   : '100%',
-  overflow: 'visible',
+  width: '100%',
+  overflow: 'visible'
 }
 
 class VirtualList extends Component {
@@ -61,14 +61,14 @@ class VirtualList extends Component {
 
     this.state = {
       offset: 0,
-      height: 0,
+      height: 0
     }
   }
 
   resize () {
     if (this.state.height !== this.base.offsetHeight) {
       this.setState({
-        height: this.base.offsetHeight,
+        height: this.base.offsetHeight
       })
     }
   }
@@ -79,7 +79,7 @@ class VirtualList extends Component {
 
   handleScroll = () => {
     this.setState({
-      offset: this.base.scrollTop,
+      offset: this.base.scrollTop
     })
     if (this.props.sync) {
       this.forceUpdate()
@@ -94,8 +94,8 @@ class VirtualList extends Component {
 
   componentDidUpdate () {
     // Maintain focus when rows are added and removed.
-    if (this.focusElement && this.focusElement.parentNode
-        && document.activeElement !== this.focusElement) {
+    if (this.focusElement && this.focusElement.parentNode &&
+        document.activeElement !== this.focusElement) {
       this.focusElement.focus()
     }
     this.focusElement = null

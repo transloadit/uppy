@@ -4,7 +4,7 @@ const delay = require('@uppy/utils/lib/delay')
 const MB = 1024 * 1024
 
 const defaultOptions = {
-  limit      : 1,
+  limit: 1,
   retryDelays: [0, 1000, 3000, 5000],
   getChunkSize (file) {
     return Math.ceil(file.size / 10000)
@@ -15,7 +15,7 @@ const defaultOptions = {
   onSuccess () {},
   onError (err) {
     throw err
-  },
+  }
 }
 
 function ensureInt (value) {
@@ -32,7 +32,7 @@ class MultipartUploader {
   constructor (file, options) {
     this.options = {
       ...defaultOptions,
-      ...options,
+      ...options
     }
     // Use default `getChunkSize` if it was null or something
     if (!this.options.getChunkSize) {
@@ -95,20 +95,21 @@ class MultipartUploader {
     this.chunks = chunks
     this.chunkState = chunks.map(() => ({
       uploaded: 0,
-      busy    : false,
-      done    : false,
+      busy: false,
+      done: false
     }))
   }
 
   _createUpload () {
     this.createdPromise = Promise.resolve().then(() =>
-      this.options.createMultipartUpload())
+      this.options.createMultipartUpload()
+    )
     return this.createdPromise.then((result) => {
       if (this._aborted()) throw createAbortError()
 
-      const valid = typeof result === 'object' && result
-        && typeof result.uploadId === 'string'
-        && typeof result.key === 'string'
+      const valid = typeof result === 'object' && result &&
+        typeof result.uploadId === 'string' &&
+        typeof result.key === 'string'
       if (!valid) {
         throw new TypeError('AwsS3/Multipart: Got incorrect result from `createMultipartUpload()`, expected an object `{ uploadId, key }`.')
       }
@@ -127,8 +128,9 @@ class MultipartUploader {
     return Promise.resolve().then(() =>
       this.options.listParts({
         uploadId: this.uploadId,
-        key     : this.key,
-      })).then((parts) => {
+        key: this.key
+      })
+    ).then((parts) => {
       if (this._aborted()) throw createAbortError()
 
       parts.forEach((part) => {
@@ -136,15 +138,15 @@ class MultipartUploader {
 
         this.chunkState[i] = {
           uploaded: ensureInt(part.Size),
-          etag    : part.ETag,
-          done    : true,
+          etag: part.ETag,
+          done: true
         }
 
         // Only add if we did not yet know about this part.
         if (!this.parts.some((p) => p.PartNumber === part.PartNumber)) {
           this.parts.push({
             PartNumber: part.PartNumber,
-            ETag      : part.ETag,
+            ETag: part.ETag
           })
         }
       })
@@ -209,8 +211,9 @@ class MultipartUploader {
         if (shouldRetry(err) && retryAttempt < retryDelays.length) {
           return delay(retryDelays[retryAttempt], { signal })
             .then(() => doAttempt(retryAttempt + 1))
+        } else {
+          throw err
         }
-        throw err
       })
 
     return doAttempt(0).then((result) => {
@@ -228,9 +231,9 @@ class MultipartUploader {
         this.partsInProgress += 1
       },
       attempt: () => this._uploadPart(index),
-      after  : () => {
+      after: () => {
         this.partsInProgress -= 1
-      },
+      }
     })
   }
 
@@ -240,13 +243,14 @@ class MultipartUploader {
 
     return Promise.resolve().then(() =>
       this.options.prepareUploadPart({
-        key     : this.key,
+        key: this.key,
         uploadId: this.uploadId,
         body,
-        number  : index + 1,
-      })).then((result) => {
-      const valid = typeof result === 'object' && result
-        && typeof result.url === 'string'
+        number: index + 1
+      })
+    ).then((result) => {
+      const valid = typeof result === 'object' && result &&
+        typeof result.url === 'string'
       if (!valid) {
         throw new TypeError('AwsS3/Multipart: Got incorrect result from `prepareUploadPart()`, expected an object `{ url }`.')
       }
@@ -275,7 +279,7 @@ class MultipartUploader {
 
     const part = {
       PartNumber: index + 1,
-      ETag      : etag,
+      ETag: etag
     }
     this.parts.push(part)
 
@@ -365,10 +369,11 @@ class MultipartUploader {
 
     return Promise.resolve().then(() =>
       this.options.completeMultipartUpload({
-        key     : this.key,
+        key: this.key,
         uploadId: this.uploadId,
-        parts   : this.parts,
-      })).then((result) => {
+        parts: this.parts
+      })
+    ).then((result) => {
       this.options.onSuccess(result)
     }, (err) => {
       this._onError(err)
@@ -380,8 +385,8 @@ class MultipartUploader {
 
     this.createdPromise.then(() => {
       this.options.abortMultipartUpload({
-        key     : this.key,
-        uploadId: this.uploadId,
+        key: this.key,
+        uploadId: this.uploadId
       })
     }, () => {
       // if the creation failed we do not need to abort

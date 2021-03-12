@@ -16,14 +16,14 @@ module.exports = class ProgressBar extends Plugin {
 
     // set default options
     const defaultOptions = {
-      target              : 'body',
+      target: 'body',
       replaceTargetContent: false,
-      fixed               : false,
-      hideAfterFinish     : true,
+      fixed: false,
+      hideAfterFinish: true
     }
 
     // merge default options with the ones set by user
-    this.opts = { ...defaultOptions, ...opts }
+    this.opts = Object.assign({}, defaultOptions, opts)
 
     this.render = this.render.bind(this)
   }
@@ -38,7 +38,7 @@ module.exports = class ProgressBar extends Plugin {
         style={{ position: this.opts.fixed ? 'fixed' : 'initial' }}
         aria-hidden={isHidden}
       >
-        <div class="uppy-ProgressBar-inner" style={{ width: `${progress}%` }} />
+        <div class="uppy-ProgressBar-inner" style={{ width: progress + '%' }} />
         <div class="uppy-ProgressBar-percentage">{progress}</div>
       </div>
     )

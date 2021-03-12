@@ -38,14 +38,14 @@ module.exports = class ScreenCapture extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        startCapturing    : 'Begin screen capturing',
-        stopCapturing     : 'Stop screen capturing',
+        startCapturing: 'Begin screen capturing',
+        stopCapturing: 'Stop screen capturing',
         submitRecordedFile: 'Submit captured video',
-        streamActive      : 'Stream active',
-        streamPassive     : 'Stream passive',
-        micDisabled       : 'Microphone access denied by user',
-        recording         : 'Recording',
-      },
+        streamActive: 'Stream active',
+        streamPassive: 'Stream passive',
+        micDisabled: 'Microphone access denied by user',
+        recording: 'Recording'
+      }
     }
 
     // set default options
@@ -54,21 +54,21 @@ module.exports = class ScreenCapture extends Plugin {
       // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints#Properties_of_shared_screen_tracks
       displayMediaConstraints: {
         video: {
-          width    : 1280,
-          height   : 720,
+          width: 1280,
+          height: 720,
           frameRate: {
             ideal: 3,
-            max  : 5,
+            max: 5
           },
-          cursor        : 'motion',
-          displaySurface: 'monitor',
-        },
+          cursor: 'motion',
+          displaySurface: 'monitor'
+        }
       },
       // https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints/audio
       userMediaConstraints: {
-        audio: true,
+        audio: true
       },
-      preferredVideoMimeType: 'video/webm',
+      preferredVideoMimeType: 'video/webm'
     }
 
     // merge default options with the ones set by user
@@ -105,8 +105,8 @@ module.exports = class ScreenCapture extends Plugin {
     }
 
     this.setPluginState({
-      streamActive     : false,
-      audioStreamActive: false,
+      streamActive: false,
+      audioStreamActive: false
     })
 
     const target = this.opts.target
@@ -133,7 +133,7 @@ module.exports = class ScreenCapture extends Plugin {
     this.selectAudioStreamSource()
 
     this.selectVideoStreamSource()
-      .then((res) => {
+      .then(res => {
         // something happened in start -> return
         if (res === false) {
           // Close the Dashboard panel if plugin is installed
@@ -149,7 +149,7 @@ module.exports = class ScreenCapture extends Plugin {
   selectVideoStreamSource () {
     // if active stream available, return it
     if (this.videoStream) {
-      return new Promise((resolve) => resolve(this.videoStream))
+      return new Promise(resolve => resolve(this.videoStream))
     }
 
     // ask user to select source to record and get mediastream from that
@@ -164,14 +164,14 @@ module.exports = class ScreenCapture extends Plugin {
         })
 
         this.setPluginState({
-          streamActive: true,
+          streamActive: true
         })
 
         return videoStream
       })
       .catch((err) => {
         this.setPluginState({
-          screenRecError: err,
+          screenRecError: err
         })
 
         this.userDenied = true
@@ -187,7 +187,7 @@ module.exports = class ScreenCapture extends Plugin {
   selectAudioStreamSource () {
     // if active stream available, return it
     if (this.audioStream) {
-      return new Promise((resolve) => resolve(this.audioStream))
+      return new Promise(resolve => resolve(this.audioStream))
     }
 
     // ask user to select source to record and get mediastream from that
@@ -197,7 +197,7 @@ module.exports = class ScreenCapture extends Plugin {
         this.audioStream = audioStream
 
         this.setPluginState({
-          audioStreamActive: true,
+          audioStreamActive: true
         })
 
         return audioStream
@@ -251,7 +251,7 @@ module.exports = class ScreenCapture extends Plugin {
 
         // set plugin state to recording
         this.setPluginState({
-          recording: true,
+          recording: true
         })
       })
       .catch((err) => {
@@ -279,7 +279,7 @@ module.exports = class ScreenCapture extends Plugin {
     this.audioStream = null
 
     this.setPluginState({
-      streamActive: false, audioStreamActive: false,
+      streamActive: false, audioStreamActive: false
     })
   }
 
@@ -295,7 +295,7 @@ module.exports = class ScreenCapture extends Plugin {
     return stopped.then(() => {
       // recording stopped
       this.setPluginState({
-        recording: false,
+        recording: false
       })
       // get video file after recorder stopped
       return this.getVideo()
@@ -306,7 +306,7 @@ module.exports = class ScreenCapture extends Plugin {
       // create object url for capture result preview
       this.setPluginState({
         // eslint-disable-next-line compat/compat
-        recordedVideo: URL.createObjectURL(file.data),
+        recordedVideo: URL.createObjectURL(file.data)
       })
     }).then(() => {
       this.recordingChunks = null
@@ -368,7 +368,7 @@ module.exports = class ScreenCapture extends Plugin {
 
     // remove preview video
     this.setPluginState({
-      recordedVideo: null,
+      recordedVideo: null
     })
 
     this.captureActive = false
@@ -386,9 +386,9 @@ module.exports = class ScreenCapture extends Plugin {
     const blob = new Blob(this.recordingChunks, { type: mimeType })
     const file = {
       source: this.id,
-      name,
-      data  : new Blob([blob], { type: mimeType }),
-      type  : mimeType,
+      name: name,
+      data: new Blob([blob], { type: mimeType }),
+      type: mimeType
     }
 
     return Promise.resolve(file)

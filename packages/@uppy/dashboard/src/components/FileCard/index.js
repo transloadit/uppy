@@ -17,7 +17,7 @@ class FileCard extends Component {
     })
 
     this.state = {
-      formState: storedMetaData,
+      formState: storedMetaData
     }
   }
 
@@ -34,8 +34,8 @@ class FileCard extends Component {
     this.setState({
       formState: {
         ...this.state.formState,
-        [name]: newVal,
-      },
+        [name]: newVal
+      }
     })
   }
 
@@ -51,7 +51,7 @@ class FileCard extends Component {
   renderMetaFields = () => {
     const metaFields = this.props.metaFields || []
     const fieldCSSClasses = {
-      text: 'uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input',
+      text: 'uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input'
     }
 
     return metaFields.map((field) => {
@@ -61,9 +61,9 @@ class FileCard extends Component {
           <label class="uppy-Dashboard-FileCard-label" for={id}>{field.name}</label>
           {field.render !== undefined
             ? field.render({
-              value   : this.state.formState[field.id],
+              value: this.state.formState[field.id],
               onChange: (newVal) => this.updateMeta(newVal, field.id),
-              fieldCSSClasses,
+              fieldCSSClasses: fieldCSSClasses
             }, h)
             : (
               <input
@@ -75,7 +75,7 @@ class FileCard extends Component {
                 onkeyup={this.saveOnEnter}
                 onkeydown={this.saveOnEnter}
                 onkeypress={this.saveOnEnter}
-                oninput={(ev) => this.updateMeta(ev.target.value, field.id)}
+                oninput={ev => this.updateMeta(ev.target.value, field.id)}
                 data-uppy-super-focusable
               />
             )}
@@ -100,7 +100,7 @@ class FileCard extends Component {
         <div class="uppy-DashboardContent-bar">
           <div class="uppy-DashboardContent-title" role="heading" aria-level="1">
             {this.props.i18nArray('editing', {
-              file: <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>,
+              file: <span class="uppy-DashboardContent-titleFile">{file.meta ? file.meta.name : file.name}</span>
             })}
           </div>
           <button
@@ -114,8 +114,8 @@ class FileCard extends Component {
         <div class="uppy-Dashboard-FileCard-inner">
           <div class="uppy-Dashboard-FileCard-preview" style={{ backgroundColor: getFileTypeIcon(file.type).color }}>
             <FilePreview file={file} />
-            {showEditButton
-              && <button
+            {showEditButton &&
+              <button
                 type="button"
                 class="uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit"
                 onClick={() => this.props.openFileEditor(file)}

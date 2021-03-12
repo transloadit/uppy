@@ -8,10 +8,11 @@ module.exports = function getFileType (file) {
   if (file.type) {
     // if mime type is set in the file object already, use that
     return file.type
-  } if (fileExtension && mimeTypes[fileExtension]) {
+  } else if (fileExtension && mimeTypes[fileExtension]) {
     // else, see if we can map extension to a mime type
     return mimeTypes[fileExtension]
+  } else {
+    // if all fails, fall back to a generic byte stream type
+    return 'application/octet-stream'
   }
-  // if all fails, fall back to a generic byte stream type
-  return 'application/octet-stream'
 }

@@ -1,8 +1,12 @@
+'use strict'
+
 const qsStringify = require('qs-stringify')
 const RequestClient = require('./RequestClient')
 const tokenStorage = require('./tokenStorage')
 
-const _getName = (id) => id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
+const _getName = (id) => {
+  return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
+}
 
 module.exports = class Provider extends RequestClient {
   constructor (uppy, opts) {
@@ -26,10 +30,10 @@ module.exports = class Provider extends RequestClient {
 
         if (this.companionKeysParams) {
           authHeaders['uppy-credentials-params'] = btoa(
-            JSON.stringify({ params: this.companionKeysParams }),
+            JSON.stringify({ params: this.companionKeysParams })
           )
         }
-        return { ...headers, ...authHeaders }
+        return Object.assign({}, headers, authHeaders)
       })
   }
 
@@ -86,7 +90,7 @@ module.exports = class Provider extends RequestClient {
     return this.get(`${this.id}/logout`)
       .then((response) => Promise.all([
         response,
-        this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey),
+        this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
       ])).then(([response]) => response)
   }
 
@@ -94,7 +98,7 @@ module.exports = class Provider extends RequestClient {
     plugin.type = 'acquirer'
     plugin.files = []
     if (defaultOpts) {
-      plugin.opts = { ...defaultOpts, ...opts }
+      plugin.opts = Object.assign({}, defaultOpts, opts)
     }
 
     if (opts.serverUrl || opts.serverPattern) {

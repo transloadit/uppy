@@ -8,7 +8,9 @@ describe('Project compiled with Uppy\'s TypeScript typings', () => {
     await root.waitForExist()
     await trigger.click()
 
-    const typeofUppy = await browser.execute(() => typeof window.uppy)
+    const typeofUppy = await browser.execute(function () {
+      return typeof window.uppy
+    })
     // It was initialized correctly
     expect(typeofUppy).to.equal('object')
 

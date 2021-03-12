@@ -1,7 +1,8 @@
 const { h } = require('preact')
 
 // it could be a <li><button class="fake-checkbox"/> <button/></li>
-module.exports = (props) => (
+module.exports = (props) => {
+  return (
     <li class={props.className} title={props.isDisabled ? props.restrictionReason : null}>
       <div aria-hidden class={`uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`} />
       <button
@@ -19,4 +20,5 @@ module.exports = (props) => (
         {props.showTitles && props.title}
       </button>
     </li>
-)
+  )
+}

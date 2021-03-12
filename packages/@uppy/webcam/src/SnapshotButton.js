@@ -1,7 +1,8 @@
 const { h } = require('preact')
 const CameraIcon = require('./CameraIcon')
 
-module.exports = ({ onSnapshot, i18n }) => (
+module.exports = ({ onSnapshot, i18n }) => {
+  return (
     <button
       class="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--picture"
       type="button"
@@ -12,4 +13,5 @@ module.exports = ({ onSnapshot, i18n }) => (
     >
       {CameraIcon()}
     </button>
-)
+  )
+}

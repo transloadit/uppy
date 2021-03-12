@@ -36,7 +36,7 @@ function UppyDashboardFileIcon (props) {
     <View
       style={{
         ...styles.itemIconContainer,
-        backgroundColor: color,
+        backgroundColor: color
       }}
     >
       <SvgUri
@@ -61,7 +61,8 @@ export default function FileList (props) {
         data={uppyFilesArray}
         keyExtractor={(item, index) => item.id}
         numColumns={2}
-        renderItem={({ item }) => (
+        renderItem={({ item }) => {
+          return (
             <View style={styles.item}>
               {item.type === 'image' ? (
                 <Image
@@ -74,7 +75,8 @@ export default function FileList (props) {
               <Text style={styles.itemName}>{truncateString(item.name, 20)}</Text>
               <Text style={styles.itemType}>{item.type}</Text>
             </View>
-        )}
+          )
+        }}
       />
     </View>
   )
@@ -82,48 +84,48 @@ export default function FileList (props) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop     : 20,
-    marginBottom  : 20,
-    flex          : 1,
-    justifyContent: 'center',
+    marginTop: 20,
+    marginBottom: 20,
+    flex: 1,
+    justifyContent: 'center'
   },
   item: {
-    width       : 100,
-    marginTop   : 5,
+    width: 100,
+    marginTop: 5,
     marginBottom: 15,
-    marginRight : 25,
+    marginRight: 25
   },
   itemImage: {
-    width       : 100,
-    height      : 100,
+    width: 100,
+    height: 100,
     borderRadius: 5,
-    marginBottom: 5,
+    marginBottom: 5
   },
   itemIconContainer: {
-    width          : 100,
-    height         : 100,
-    borderRadius   : 5,
-    marginBottom   : 5,
+    width: 100,
+    height: 100,
+    borderRadius: 5,
+    marginBottom: 5,
     backgroundColor: '#cfd3d6',
-    alignItems     : 'center',
-    justifyContent : 'center',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   itemIcon: {
-    width : 42,
-    height: 56,
+    width: 42,
+    height: 56
   },
   itemIconSVG: {
-    width : 50,
-    height: 50,
+    width: 50,
+    height: 50
   },
   itemName: {
-    fontSize  : 13,
-    color     : '#2c3e50',
-    fontWeight: '600',
+    fontSize: 13,
+    color: '#2c3e50',
+    fontWeight: '600'
   },
   itemType: {
     fontWeight: '600',
-    fontSize  : 12,
-    color     : '#95a5a6',
-  },
+    fontSize: 12,
+    color: '#95a5a6'
+  }
 })

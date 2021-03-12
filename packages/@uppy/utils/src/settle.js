@@ -9,11 +9,13 @@ module.exports = function settle (promises) {
   }
 
   const wait = Promise.all(
-    promises.map((promise) => promise.then(resolved, rejected)),
+    promises.map((promise) => promise.then(resolved, rejected))
   )
 
-  return wait.then(() => ({
-    successful: resolutions,
-    failed    : rejections,
-  }))
+  return wait.then(() => {
+    return {
+      successful: resolutions,
+      failed: rejections
+    }
+  })
 }

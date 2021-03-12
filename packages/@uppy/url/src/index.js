@@ -33,11 +33,11 @@ module.exports = class Url extends Plugin {
     // Set default options and locale
     this.defaultLocale = {
       strings: {
-        import          : 'Import',
+        import: 'Import',
         enterUrlToImport: 'Enter URL to import a file',
-        failedToFetch   : 'Companion failed to fetch this URL, please make sure it’s correct',
-        enterCorrectUrl : 'Incorrect URL: Please make sure you are entering a direct link to a file',
-      },
+        failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
+        enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file'
+      }
     }
 
     const defaultOptions = {}
@@ -59,8 +59,8 @@ module.exports = class Url extends Plugin {
     this.handleRootPaste = this.handleRootPaste.bind(this)
 
     this.client = new RequestClient(uppy, {
-      companionUrl    : this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionUrl: this.opts.companionUrl,
+      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders
     })
   }
 
@@ -125,24 +125,24 @@ module.exports = class Url extends Plugin {
       .then((meta) => {
         const tagFile = {
           source: this.id,
-          name  : this.getFileNameFromUrl(url),
-          type  : meta.type,
-          data  : {
-            size: meta.size,
+          name: this.getFileNameFromUrl(url),
+          type: meta.type,
+          data: {
+            size: meta.size
           },
           isRemote: true,
-          body    : {
-            url,
+          body: {
+            url: url
           },
           remote: {
             companionUrl: this.opts.companionUrl,
-            url         : `${this.hostname}/url/get`,
-            body        : {
+            url: `${this.hostname}/url/get`,
+            body: {
               fileId: url,
-              url,
+              url: url
             },
-            providerOptions: this.client.opts,
-          },
+            providerOptions: this.client.opts
+          }
         }
         return tagFile
       })
@@ -160,7 +160,7 @@ module.exports = class Url extends Plugin {
         this.uppy.log(err)
         this.uppy.info({
           message: this.i18n('failedToFetch'),
-          details: err,
+          details: err
         }, 'error', 4000)
       })
   }

@@ -11,15 +11,15 @@ function validateParams (params) {
       params = JSON.parse(params)
     } catch (err) {
       // Tell the user that this is not an Uppy bug!
-      err.message = `Transloadit: The \`params\` option is a malformed JSON string: ${
-        err.message}`
+      err.message = 'Transloadit: The `params` option is a malformed JSON string: ' +
+        err.message
       throw err
     }
   }
 
   if (!params.auth || !params.auth.key) {
-    throw new Error('Transloadit: The `params.auth.key` option is required. '
-      + 'You can find your Transloadit API key at https://transloadit.com/account/api-settings.')
+    throw new Error('Transloadit: The `params.auth.key` option is required. ' +
+      'You can find your Transloadit API key at https://transloadit.com/account/api-settings.')
   }
 }
 
@@ -60,14 +60,18 @@ class AssemblyOptions {
     const options = this.opts
 
     return Promise.resolve()
-      .then(() => options.getAssemblyOptions(file, options))
-      .then((assemblyOptions) => this._normalizeAssemblyOptions(file, assemblyOptions))
+      .then(() => {
+        return options.getAssemblyOptions(file, options)
+      })
+      .then((assemblyOptions) => {
+        return this._normalizeAssemblyOptions(file, assemblyOptions)
+      })
       .then((assemblyOptions) => {
         validateParams(assemblyOptions.params)
 
         return {
           fileIDs: [file.id],
-          options: assemblyOptions,
+          options: assemblyOptions
         }
       })
   }
@@ -85,7 +89,7 @@ class AssemblyOptions {
       } else {
         dedupeMap[id] = {
           options,
-          fileIDs: [...fileIDs],
+          fileIDs: [...fileIDs]
         }
       }
     })
@@ -104,19 +108,21 @@ class AssemblyOptions {
 
     if (this.files.length > 0) {
       return Promise.all(
-        this.files.map((file) => this._getAssemblyOptions(file)),
-      ).then((list) => this._dedupe(list))
+        this.files.map((file) => this._getAssemblyOptions(file))
+      ).then((list) => {
+        return this._dedupe(list)
+      })
     }
 
     if (options.alwaysRunAssembly) {
       // No files, just generate one Assembly
       return Promise.resolve(
-        options.getAssemblyOptions(null, options),
+        options.getAssemblyOptions(null, options)
       ).then((assemblyOptions) => {
         validateParams(assemblyOptions.params)
         return [{
           fileIDs: this.files.map((file) => file.id),
-          options: assemblyOptions,
+          options: assemblyOptions
         }]
       })
     }
