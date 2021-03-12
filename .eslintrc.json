@@ -32,8 +32,8 @@
   "rules": {
     // transloadit rules we are actually ok with in the uppy repo
     ////////////////////////////////////////////////////////////
-    "guard-for-in": 0,
-    "import/extensions": 0,
+    "guard-for-in": ["off"],
+    "import/extensions": ["off"],
 
     // transloadit rules we would like to enforce in the future
     // but will require separate PRs to gradually get there
@@ -90,7 +90,7 @@
     "jsdoc/check-types": ["warn"],
     "jsdoc/newline-after-description": ["warn"],
     "jsdoc/valid-types": ["warn"],
-    "jsdoc/check-indentation": 0
+    "jsdoc/check-indentation": ["off"]
   },
   "settings": {
     "react": {
@@ -114,7 +114,7 @@
       "bin/*.js"
     ],
     "rules": {
-      "compat/compat": 0
+      "compat/compat": ["off"]
     }
   },{
     "files": [
@@ -122,16 +122,16 @@
       "packages/@uppy/locales/template.js"
     ],
     "rules": {
-      "camelcase": 0,
-      "quote-props": 0,
-      "key-spacing": 0 // <-- do not vertically align language definitions, it may scare off translators thinking they need to maintain order by hand
+      "camelcase": ["off"],
+      "quote-props": ["off"],
+      "key-spacing": ["off"] // <-- do not vertically align language definitions, it may scare off translators thinking they need to maintain order by hand
     }
   },{
     "files": [
       "website/themes/uppy/source/js/*.js"
     ],
     "rules": {
-      "prefer-const": 0
+      "prefer-const": ["off"]
     }
   }]
 }
