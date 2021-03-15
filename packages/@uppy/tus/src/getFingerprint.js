@@ -2,16 +2,16 @@ const tus = require('tus-js-client')
 
 function isCordova () {
   return typeof window !== 'undefined' && (
-    typeof window.PhoneGap !== 'undefined' ||
-    typeof window.Cordova !== 'undefined' ||
-    typeof window.cordova !== 'undefined'
+    typeof window.PhoneGap !== 'undefined'
+    || typeof window.Cordova !== 'undefined'
+    || typeof window.cordova !== 'undefined'
   )
 }
 
 function isReactNative () {
-  return typeof navigator !== 'undefined' &&
-    typeof navigator.product === 'string' &&
-    navigator.product.toLowerCase() === 'reactnative'
+  return typeof navigator !== 'undefined'
+    && typeof navigator.product === 'string'
+    && navigator.product.toLowerCase() === 'reactnative'
 }
 
 // We override tus fingerprint to uppy’s `file.id`, since the `file.id`
@@ -31,7 +31,7 @@ module.exports = function getFingerprint (uppyFileObj) {
     const uppyFingerprint = [
       'tus',
       uppyFileObj.id,
-      options.endpoint
+      options.endpoint,
     ].join('-')
 
     return Promise.resolve(uppyFingerprint)

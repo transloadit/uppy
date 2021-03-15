@@ -12,12 +12,12 @@ const endpoint = 'https://tusd.tusdemo.net'
 const uppyDragDrop = new Uppy({
   id: 'uppyDragDrop',
   debug: true,
-  autoProceed: true
+  autoProceed: true,
 })
 
 uppyDragDrop
   .use(DragDrop, {
-    target: '#uppyDragDrop'
+    target: '#uppyDragDrop',
   })
   .use(ProgressBar, { target: '#uppyDragDrop-progress' })
   .use(Tus, { endpoint: `${endpoint}/files/` })

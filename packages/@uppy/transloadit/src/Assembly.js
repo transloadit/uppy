@@ -25,7 +25,7 @@ const ASSEMBLY_COMPLETED = 'ASSEMBLY_COMPLETED'
 const statusOrder = [
   ASSEMBLY_UPLOADING,
   ASSEMBLY_EXECUTING,
-  ASSEMBLY_COMPLETED
+  ASSEMBLY_COMPLETED,
 ]
 
 /**
@@ -70,12 +70,12 @@ class TransloaditAssembly extends Emitter {
     const parsed = parseUrl(this.status.websocket_url)
     const socket = io().connect(parsed.origin, {
       transports: ['websocket'],
-      path: parsed.pathname
+      path: parsed.pathname,
     })
 
     socket.on('connect', () => {
       socket.emit('assembly_connect', {
-        id: this.status.assembly_id
+        id: this.status.assembly_id,
       })
 
       this.emit('connect')
@@ -206,9 +206,9 @@ class TransloaditAssembly extends Emitter {
     // The below checks run in this order, that way even if we jump from
     // UPLOADING straight to FINISHED all the events are emitted as expected.
 
-    const nowExecuting =
-      isStatus(nextStatus, ASSEMBLY_EXECUTING) &&
-      !isStatus(prevStatus, ASSEMBLY_EXECUTING)
+    const nowExecuting
+      = isStatus(nextStatus, ASSEMBLY_EXECUTING)
+      && !isStatus(prevStatus, ASSEMBLY_EXECUTING)
     if (nowExecuting) {
       // Without WebSockets, this is our only way to tell if uploading finished.
       // Hence, we emit this just before the 'upload's and before the 'metadata'
@@ -241,8 +241,8 @@ class TransloaditAssembly extends Emitter {
         })
     })
 
-    if (isStatus(nextStatus, ASSEMBLY_COMPLETED) &&
-        !isStatus(prevStatus, ASSEMBLY_COMPLETED)) {
+    if (isStatus(nextStatus, ASSEMBLY_COMPLETED)
+        && !isStatus(prevStatus, ASSEMBLY_COMPLETED)) {
       this.emit('finished')
     }
   }

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 'use strict'
 
 const userAgent = process.env.npm_config_user_agent

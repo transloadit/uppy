@@ -3,7 +3,7 @@ const zh_TW = {}
 zh_TW.strings = {
   addBulkFilesFailed: {
     '0': '因伺服器錯誤，無法新增 %{smart_count} 個檔案',
-    '1': '因伺服器錯誤，無法新增 %{smart_count} 個檔案'
+    '1': '因伺服器錯誤，無法新增 %{smart_count} 個檔案',
   },
   addMore: '新增更多',
   addMoreFiles: '新增更多檔案',
@@ -53,14 +53,14 @@ zh_TW.strings = {
   filesUploadedOfTotal: {
     '0': '%{smart_count}個檔案上傳%{complete}',
     '1': '%{smart_count}個檔案上傳%{complete}',
-    '2': '%{smart_count}個檔案上傳%{complete}'
+    '2': '%{smart_count}個檔案上傳%{complete}',
   },
   filter: '篩選器',
   finishEditingFile: '完成檔案編輯',
   folderAdded: {
     '0': '從%{folder}新增了%{smart_count}個檔案',
     '1': '從%{folder}新增了%{smart_count}個檔案',
-    '2': '從%{folder}新增了%{smart_count}個檔案'
+    '2': '從%{folder}新增了%{smart_count}個檔案',
   },
   generatingThumbnails: '產生縮圖中...',
   import: '匯入',
@@ -80,7 +80,7 @@ zh_TW.strings = {
   processingXFiles: {
     '0': '%{smart_count}個檔案處理中',
     '1': '%{smart_count}個檔案處理中',
-    '2': '%{smart_count}個檔案處理中'
+    '2': '%{smart_count}個檔案處理中',
   },
   recordingLength: '錄影長度 %{recording_length}',
   removeFile: '移除檔案',
@@ -95,7 +95,7 @@ zh_TW.strings = {
   selectX: {
     '0': '選擇%{smart_count}',
     '1': '選擇%{smart_count}',
-    '2': '選擇%{smart_count}'
+    '2': '選擇%{smart_count}',
   },
   smile: '請微笑！',
   startRecording: '開始錄影',
@@ -111,41 +111,41 @@ zh_TW.strings = {
   uploadXFiles: {
     '0': '上傳%{smart_count}個檔案',
     '1': '上傳%{smart_count}個檔案',
-    '2': '上傳%{smart_count}個檔案'
+    '2': '上傳%{smart_count}個檔案',
   },
   uploadXNewFiles: {
     '0': '新上傳了%{smart_count}個檔案',
     '1': '新上傳了%{smart_count}個檔案',
-    '2': '新上傳了%{smart_count}個檔案'
+    '2': '新上傳了%{smart_count}個檔案',
   },
   uploading: '上傳中',
   uploadingXFiles: {
     '0': '上傳%{smart_count}個檔案中',
     '1': '上傳%{smart_count}個檔案中',
-    '2': '上傳%{smart_count}個檔案中'
+    '2': '上傳%{smart_count}個檔案中',
   },
   xFilesSelected: {
     '0': '已選擇%{smart_count}個檔案',
     '1': '已選擇%{smart_count}個檔案',
-    '2': '已選擇%{smart_count}個檔案'
+    '2': '已選擇%{smart_count}個檔案',
   },
   xMoreFilesAdded: {
     '0': '又新增%{smart_count}個檔案',
     '1': '又新增%{smart_count}個檔案',
-    '2': '又新增%{smart_count}個檔案'
+    '2': '又新增%{smart_count}個檔案',
   },
   xTimeLeft: '還剩下%{time}',
   youCanOnlyUploadFileTypes: '您只能上傳這些檔案類型：%{types}',
   youCanOnlyUploadX: {
     '0': '您只能上傳%{smart_count}個檔案',
     '1': '您只能上傳%{smart_count}個檔案',
-    '2': '您只能上傳%{smart_count}個檔案'
+    '2': '您只能上傳%{smart_count}個檔案',
   },
   youHaveToAtLeastSelectX: {
     '0': '您至少要選擇%{smart_count}個檔案',
     '1': '您至少要選擇%{smart_count}個檔案',
-    '2': '您至少要選擇%{smart_count}個檔案'
-  }
+    '2': '您至少要選擇%{smart_count}個檔案',
+  },
 }
 
 zh_TW.pluralize = function (n) {

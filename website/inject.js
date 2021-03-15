@@ -26,7 +26,7 @@ const defaultConfig = {
   uppy_version_anchor: '001',
   uppy_version: '0.0.1',
   uppy_bundle_kb_sizes: {},
-  config: {}
+  config: {},
 }
 
 // Keeping a whitelist so utils etc are excluded
@@ -63,11 +63,11 @@ const packages = [
   '@uppy/xhr-upload',
   // Stores
   '@uppy/store-default',
-  '@uppy/store-redux'
+  '@uppy/store-redux',
 ]
 
 const excludes = {
-  '@uppy/react': ['react']
+  '@uppy/react': ['react'],
 }
 
 inject().catch((err) => {
@@ -97,7 +97,7 @@ async function getMinifiedSize (pkg, name) {
   return {
     minified: bundle.length,
     gzipped,
-    version
+    version,
   }
 }
 
@@ -110,13 +110,13 @@ async function injectSizes (config) {
       const result = await getMinifiedSize(path.join(__dirname, '../packages', pkg), pkg)
       console.info(chalk.green(
         // ✓ @uppy/pkgname:     10.0 kB min  / 2.0 kB gz
-        `  ✓ ${pkg}: ${' '.repeat(padTarget - pkg.length)}` +
-        `${prettierBytes(result.minified)} min`.padEnd(10) +
-        ` / ${prettierBytes(result.gzipped)} gz`
+        `  ✓ ${pkg}: ${' '.repeat(padTarget - pkg.length)}${
+          `${prettierBytes(result.minified)} min`.padEnd(10)
+        } / ${prettierBytes(result.gzipped)} gz`
       ))
       return Object.assign(result, {
         prettyMinified: prettierBytes(result.minified),
-        prettyGzipped: prettierBytes(result.gzipped)
+        prettyGzipped: prettierBytes(result.gzipped),
       })
     })
   ).then((list) => {
@@ -136,11 +136,11 @@ async function injectBundles () {
     `mkdir -p ${path.join(webRoot, '/themes/uppy/source/uppy/locales')}`,
     `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`,
     `cp -vfR ${path.join(robodogRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`,
-    `cp -vfR ${path.join(localesRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/locales')}`
+    `cp -vfR ${path.join(localesRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/locales')}`,
   ].join(' && ')
 
   const { stdout } = await promisify(exec)(cmds)
-  stdout.trim().split('\n').forEach(function (line) {
+  stdout.trim().split('\n').forEach((line) => {
     console.info(chalk.green('✓ injected: '), chalk.grey(line))
   })
 }
@@ -158,7 +158,7 @@ async function injectGhStars () {
 
   const { headers, data } = await octokit.repos.get({
     owner: 'transloadit',
-    repo: 'uppy'
+    repo: 'uppy',
   })
 
   console.log(`${headers['x-ratelimit-remaining']} requests remaining until we hit GitHub ratelimiter`)
@@ -172,7 +172,7 @@ async function injectGhStars () {
 async function injectMarkdown () {
   const sources = {
     '.github/ISSUE_TEMPLATE/integration_help.md': 'src/_template/integration_help.md',
-    '.github/CONTRIBUTING.md': 'src/_template/contributing.md'
+    '.github/CONTRIBUTING.md': 'src/_template/contributing.md',
   }
 
   for (const src in sources) {
@@ -197,7 +197,7 @@ function injectLocaleList () {
   const mdTable = [
     `<!-- WARNING! This file was automatically injected. Please run "${path.basename(__filename)}" to re-generate -->\n\n`,
     '| %count% Locales | NPM                | CDN                 | Source on GitHub |',
-    '| --------------- | ------------------ | ------------------- | ---------------- |'
+    '| --------------- | ------------------ | ------------------- | ---------------- |',
   ]
   const mdRows = []
   const localeList = {}
@@ -255,7 +255,7 @@ async function inject () {
   config.uppy_version_anchor = version.replace(/[^\d]+/g, '')
   await injectSizes(config)
 
-  const saveConfig = Object.assign({}, defaultConfig, config)
+  const saveConfig = { ...defaultConfig, ...config }
   await promisify(fs.writeFile)(configPath, YAML.safeDump(saveConfig), 'utf-8')
   console.info(chalk.green('✓ rewritten: '), chalk.grey(configPath))
 
@@ -264,7 +264,7 @@ async function inject () {
   } catch (error) {
     console.error(
       chalk.red('x failed to inject: '),
-      chalk.grey('uppy bundle into site, because: ' + error)
+      chalk.grey(`uppy bundle into site, because: ${error}`)
     )
     process.exit(1)
   }

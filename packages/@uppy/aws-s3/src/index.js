@@ -81,15 +81,15 @@ module.exports = class AwsS3 extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
-      }
+        timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
+      },
     }
 
     const defaultOptions = {
       timeout: 30 * 1000,
       limit: 0,
       metaFields: [], // have to opt in
-      getUploadParameters: this.getUploadParameters.bind(this)
+      getUploadParameters: this.getUploadParameters.bind(this),
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -132,9 +132,9 @@ module.exports = class AwsS3 extends Plugin {
   }
 
   validateParameters (file, params) {
-    const valid = typeof params === 'object' && params &&
-      typeof params.url === 'string' &&
-      (typeof params.fields === 'object' || params.fields == null)
+    const valid = typeof params === 'object' && params
+      && typeof params.url === 'string'
+      && (typeof params.fields === 'object' || params.fields == null)
 
     if (!valid) {
       const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields, headers }' but got '${JSON.stringify(params)}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
@@ -191,13 +191,13 @@ module.exports = class AwsS3 extends Plugin {
           method = 'post',
           url,
           fields,
-          headers
+          headers,
         } = params
         const xhrOpts = {
           method,
           formData: method.toLowerCase() === 'post',
           endpoint: url,
-          metaFields: fields ? Object.keys(fields) : []
+          metaFields: fields ? Object.keys(fields) : [],
         }
 
         if (headers) {
@@ -206,7 +206,7 @@ module.exports = class AwsS3 extends Plugin {
 
         this.uppy.setFileState(file.id, {
           meta: { ...file.meta, ...fields },
-          xhrUpload: xhrOpts
+          xhrUpload: xhrOpts,
         })
 
         return this._uploader.uploadFile(file.id, index, numberOfFiles)
@@ -262,7 +262,7 @@ module.exports = class AwsS3 extends Plugin {
         location: resolveUrl(xhr.responseURL, getXmlValue(content, 'Location')),
         bucket: getXmlValue(content, 'Bucket'),
         key: getXmlValue(content, 'Key'),
-        etag: getXmlValue(content, 'ETag')
+        etag: getXmlValue(content, 'ETag'),
       }
     }
 
@@ -286,7 +286,7 @@ module.exports = class AwsS3 extends Plugin {
       __queue: this.requests,
       responseType: 'text',
       getResponseData: this.opts.getResponseData || defaultGetResponseData,
-      getResponseError: defaultGetResponseError
+      getResponseError: defaultGetResponseError,
     }
 
     // Only for MiniXHRUpload, remove once we can depend on XHRUpload directly again

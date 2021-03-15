@@ -21,7 +21,7 @@ describe('Dashboard', () => {
     expect(() => {
       core.use(DashboardPlugin, {
         inline: true,
-        target: 'body'
+        target: 'body',
       })
     }).not.toThrow()
 
@@ -33,7 +33,7 @@ describe('Dashboard', () => {
     expect(() => {
       core.use(DashboardPlugin, {
         inline: true,
-        target: 'body'
+        target: 'body',
       })
       core.use(GoogleDrivePlugin, { target: DashboardPlugin, companionUrl: 'https://fake.uppy.io/' })
     }).not.toThrow()
@@ -49,7 +49,7 @@ describe('Dashboard', () => {
       core.use(DashboardPlugin, {
         inline: true,
         target: 'body',
-        plugins: ['GoogleDrive']
+        plugins: ['GoogleDrive'],
       })
     }).not.toThrow()
 
@@ -60,11 +60,11 @@ describe('Dashboard', () => {
     const core = new Core()
     core.use(DashboardPlugin, {
       inline: true,
-      target: 'body'
+      target: 'body',
     })
 
     core.getPlugin('Dashboard').setOptions({
-      width: 300
+      width: 300,
     })
 
     expect(
@@ -76,15 +76,15 @@ describe('Dashboard', () => {
     const core = new Core()
     core.use(DashboardPlugin, {
       inline: true,
-      target: 'body'
+      target: 'body',
     })
 
     core.setOptions({
       locale: {
         strings: {
-          myDevice: 'Май дивайс'
-        }
-      }
+          myDevice: 'Май дивайс',
+        },
+      },
     })
 
     expect(

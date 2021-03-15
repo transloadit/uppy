@@ -3,7 +3,7 @@ const en_US = {}
 en_US.strings = {
   addBulkFilesFailed: {
     '0': 'Failed to add %{smart_count} file due to an internal error',
-    '1': 'Failed to add %{smart_count} files due to internal errors'
+    '1': 'Failed to add %{smart_count} files due to internal errors',
   },
   addMore: 'Add more',
   addMoreFiles: 'Add more files',
@@ -59,14 +59,14 @@ en_US.strings = {
   fileSource: 'File source: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} of %{smart_count} file uploaded',
-    '1': '%{complete} of %{smart_count} files uploaded'
+    '1': '%{complete} of %{smart_count} files uploaded',
   },
   filter: 'Filter',
   finishEditingFile: 'Finish editing file',
   flipHorizontal: 'Flip horizonal',
   folderAdded: {
     '0': 'Added %{smart_count} file from %{folder}',
-    '1': 'Added %{smart_count} files from %{folder}'
+    '1': 'Added %{smart_count} files from %{folder}',
   },
   generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',
@@ -90,7 +90,7 @@ en_US.strings = {
   poweredBy2: '%{backwardsCompat} %{uppy}',
   processingXFiles: {
     '0': 'Processing %{smart_count} file',
-    '1': 'Processing %{smart_count} files'
+    '1': 'Processing %{smart_count} files',
   },
   recording: 'Recording',
   recordingLength: 'Recording length %{recording_length}',
@@ -110,7 +110,7 @@ en_US.strings = {
   selectFileNamed: 'Select file %{name}',
   selectX: {
     '0': 'Select %{smart_count}',
-    '1': 'Select %{smart_count}'
+    '1': 'Select %{smart_count}',
   },
   smile: 'Smile!',
   startCapturing: 'Begin screen capturing',
@@ -130,37 +130,37 @@ en_US.strings = {
   uploadPaused: 'Upload paused',
   uploadXFiles: {
     '0': 'Upload %{smart_count} file',
-    '1': 'Upload %{smart_count} files'
+    '1': 'Upload %{smart_count} files',
   },
   uploadXNewFiles: {
     '0': 'Upload +%{smart_count} file',
-    '1': 'Upload +%{smart_count} files'
+    '1': 'Upload +%{smart_count} files',
   },
   uploading: 'Uploading',
   uploadingXFiles: {
     '0': 'Uploading %{smart_count} file',
-    '1': 'Uploading %{smart_count} files'
+    '1': 'Uploading %{smart_count} files',
   },
   xFilesSelected: {
     '0': '%{smart_count} file selected',
-    '1': '%{smart_count} files selected'
+    '1': '%{smart_count} files selected',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} more file added',
-    '1': '%{smart_count} more files added'
+    '1': '%{smart_count} more files added',
   },
   xTimeLeft: '%{time} left',
   youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
   youCanOnlyUploadX: {
     '0': 'You can only upload %{smart_count} file',
-    '1': 'You can only upload %{smart_count} files'
+    '1': 'You can only upload %{smart_count} files',
   },
   youHaveToAtLeastSelectX: {
     '0': 'You have to select at least %{smart_count} file',
-    '1': 'You have to select at least %{smart_count} files'
+    '1': 'You have to select at least %{smart_count} files',
   },
   zoomIn: 'Zoom in',
-  zoomOut: 'Zoom out'
+  zoomOut: 'Zoom out',
 }
 
 en_US.pluralize = function (count) {

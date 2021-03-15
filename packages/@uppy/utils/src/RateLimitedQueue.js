@@ -43,7 +43,7 @@ module.exports = class RateLimitedQueue {
         done = true
         this.activeRequests -= 1
         this._queueNext()
-      }
+      },
     }
   }
 
@@ -82,7 +82,7 @@ module.exports = class RateLimitedQueue {
       },
       done: () => {
         throw new Error('Cannot mark a queued request as done: this indicates a bug')
-      }
+      },
     }
 
     const index = findIndex(this.queuedHandlers, (other) => {

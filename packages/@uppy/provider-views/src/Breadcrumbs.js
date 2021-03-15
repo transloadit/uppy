@@ -6,8 +6,8 @@ const Breadcrumb = (props) => {
     <span>
       <button
         type="button"
-        class="uppy-u-reset"
-        onclick={props.getFolder}
+        className="uppy-u-reset"
+        onClick={props.getFolder}
       >
         {props.title}
       </button>
@@ -18,8 +18,8 @@ const Breadcrumb = (props) => {
 
 module.exports = (props) => {
   return (
-    <div class="uppy-Provider-breadcrumbs">
-      <div class="uppy-Provider-breadcrumbsIcon">{props.breadcrumbsIcon}</div>
+    <div className="uppy-Provider-breadcrumbs">
+      <div className="uppy-Provider-breadcrumbsIcon">{props.breadcrumbsIcon}</div>
       {
         props.directories.map((directory, i) => (
           <Breadcrumb

@@ -24,15 +24,15 @@ const formUppy = robodog.form('#test-form', {
   debug: true,
   fields: ['message'],
   restrictions: {
-    allowedFileTypes: ['.png']
+    allowedFileTypes: ['.png'],
   },
   waitForEncoding: true,
   params: {
     auth: { key: TRANSLOADIT_KEY },
-    template_id: TEMPLATE_ID
+    template_id: TEMPLATE_ID,
   },
   modal: true,
-  progressBar: '#test-form .progress'
+  progressBar: '#test-form .progress',
 })
 
 formUppy.on('error', (err) => {
@@ -51,15 +51,15 @@ const formUppyWithDashboard = robodog.form('#dashboard-form', {
   debug: true,
   fields: ['message'],
   restrictions: {
-    allowedFileTypes: ['.png']
+    allowedFileTypes: ['.png'],
   },
   waitForEncoding: true,
   note: 'Only PNG files please!',
   params: {
     auth: { key: TRANSLOADIT_KEY },
-    template_id: TEMPLATE_ID
+    template_id: TEMPLATE_ID,
   },
-  dashboard: '#dashboard-form .dashboard'
+  dashboard: '#dashboard-form .dashboard',
 })
 
 window.formUppyWithDashboard = formUppyWithDashboard
@@ -70,8 +70,8 @@ const dashboard = robodog.dashboard('#dashboard', {
   note: 'Images will be resized with Transloadit',
   params: {
     auth: { key: TRANSLOADIT_KEY },
-    template_id: TEMPLATE_ID
-  }
+    template_id: TEMPLATE_ID,
+  },
 })
 
 window.dashboard = dashboard
@@ -83,16 +83,16 @@ window.dashboard = dashboard
 function openModal () {
   robodog.pick({
     restrictions: {
-      allowedFileTypes: ['.png']
+      allowedFileTypes: ['.png'],
     },
     waitForEncoding: true,
     params: {
       auth: { key: TRANSLOADIT_KEY },
-      template_id: TEMPLATE_ID
+      template_id: TEMPLATE_ID,
     },
     providers: [
-      'webcam'
-    ]
+      'webcam',
+    ],
     // if providers need custom config
     // webcam: {
     //   option: 'whatever'
@@ -113,8 +113,8 @@ window.doUpload = (event) => {
     waitForEncoding: true,
     params: {
       auth: { key: TRANSLOADIT_KEY },
-      template_id: TEMPLATE_ID
-    }
+      template_id: TEMPLATE_ID,
+    },
   }).then((result) => {
     resultEl.classList.remove('hidden')
     errorEl.classList.add('hidden')

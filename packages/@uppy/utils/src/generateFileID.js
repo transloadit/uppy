@@ -11,22 +11,22 @@ module.exports = function generateFileID (file) {
 
   let id = 'uppy'
   if (typeof file.name === 'string') {
-    id += '-' + encodeFilename(file.name.toLowerCase())
+    id += `-${encodeFilename(file.name.toLowerCase())}`
   }
 
   if (file.type !== undefined) {
-    id += '-' + file.type
+    id += `-${file.type}`
   }
 
   if (file.meta && typeof file.meta.relativePath === 'string') {
-    id += '-' + encodeFilename(file.meta.relativePath.toLowerCase())
+    id += `-${encodeFilename(file.meta.relativePath.toLowerCase())}`
   }
 
   if (file.data.size !== undefined) {
-    id += '-' + file.data.size
+    id += `-${file.data.size}`
   }
   if (file.data.lastModified !== undefined) {
-    id += '-' + file.data.lastModified
+    id += `-${file.data.lastModified}`
   }
 
   return id
@@ -35,7 +35,7 @@ module.exports = function generateFileID (file) {
 function encodeFilename (name) {
   let suffix = ''
   return name.replace(/[^A-Z0-9]/ig, (character) => {
-    suffix += '-' + encodeCharacter(character)
+    suffix += `-${encodeCharacter(character)}`
     return '/'
   }) + suffix
 }

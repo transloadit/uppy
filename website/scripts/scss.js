@@ -8,7 +8,7 @@ function scssRenderer (data) {
     sourceComments: false,
     indentedSyntax: data.path.endsWith('.sass'),
     ...this.theme.config.node_sass,
-    ...this.config.node_sass
+    ...this.config.node_sass,
   })
 
   return result.css.toString()

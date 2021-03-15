@@ -1,22 +1,111 @@
 {
-  "parser": "@babel/eslint-parser",
-  "extends": ["standard", "standard-jsx"],
+  "extends": ["transloadit"],
   "env": {
-    "browser": true,
+    "es6": true,
+    "jest": true,
     "node": true,
-    "jest": true
+    // extra:
+    "browser": true
   },
   "globals": {
     "window": true,
     "hexo": true
   },
-  "plugins": ["jest", "compat", "jsdoc", "@babel/eslint-plugin"],
+  "plugins": [
+    "@babel/eslint-plugin",
+    "jest",
+    "node",
+    "prefer-import",
+    "promise",
+    "react",
+    // extra:
+    "compat",
+    "jsdoc"
+  ],
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
   "rules": {
-    "jsx-quotes": ["error", "prefer-double"],
-    "compat/compat": ["error"],
-    "react/jsx-handler-names": ["off"],
-    "react/react-in-jsx-scope": ["error"],
+    // transloadit rules we are actually ok with in the uppy repo
+    ////////////////////////////////////////////////////////////
+    "guard-for-in": ["off"],
+    "import/extensions": ["off"],
+    "strict": ["off"],
+    "key-spacing": ["off"],
 
+    // transloadit rules we would like to enforce in the future
+    // but will require separate PRs to gradually get there
+    // and so the meantime: just warn
+    ////////////////////////////////////////////////////////////
+    "array-callback-return": ["warn"],
+    "block-scoped-var": ["warn"],
+    "class-methods-use-this": ["warn"],
+    "consistent-return": ["warn"],
+    "default-case": ["warn"],
+    "global-require": ["warn"],
+    "implicit-arrow-linebreak": ["warn"],
+    "import/no-dynamic-require": ["warn"],
+    "import/no-unresolved": ["warn"],
+    "import/order": ["warn"],
+    "jsx-a11y/alt-text": ["warn"],
+    "jsx-a11y/anchor-has-content": ["warn"],
+    "jsx-a11y/click-events-have-key-events": ["warn"],
+    "jsx-a11y/control-has-associated-label": ["warn"],
+    "jsx-a11y/label-has-associated-control": ["warn"],
+    "jsx-a11y/media-has-caption": ["warn"],
+    "jsx-a11y/mouse-events-have-key-events": ["warn"],
+    "jsx-a11y/no-interactive-element-to-noninteractive-role": ["warn"],
+    "jsx-a11y/no-noninteractive-element-interactions": ["warn"],
+    "jsx-a11y/no-static-element-interactions": ["warn"],
+    "no-await-in-loop": ["warn"],
+    "no-bitwise": ["warn"],
+    "no-continue": ["warn"],
+    "no-empty": ["warn"],
+    "no-lonely-if": ["warn"],
+    "no-mixed-operators": ["warn"],
+    "no-nested-ternary": ["warn"],
+    "no-param-reassign": ["warn"],
+    "no-redeclare": ["warn"],
+    "no-restricted-globals": ["warn"],
+    "no-restricted-properties": ["warn"],
+    "no-restricted-syntax": ["warn"],
+    "no-return-assign": ["warn"],
+    "no-shadow": ["warn"],
+    "no-underscore-dangle": ["warn"],
+    "no-unused-expressions": ["warn"],
+    "no-unused-vars": ["warn"],
+    "no-use-before-define": ["warn"],
+    "no-useless-concat": ["warn"],
+    "no-var": ["warn"],
+    "node/handle-callback-err": ["warn"],
+    "prefer-destructuring": ["warn"],
+    "prefer-spread": ["warn"],
+    "radix": ["warn"],
+    "react/button-has-type": ["warn"],
+    "react/destructuring-assignment": ["warn"],
+    "react/forbid-prop-types": ["warn"],
+    "react/jsx-props-no-spreading": ["warn"],
+    "react/no-access-state-in-setstate": ["warn"],
+    "react/no-array-index-key": ["warn"],
+    "react/no-deprecated": ["warn"],
+    "react/no-this-in-sfc": ["warn"],
+    "react/no-will-update-set-state": ["warn"],
+    "react/prefer-stateless-function": ["warn"],
+    "react/sort-comp": ["warn"],
+    "react/style-prop-object": ["warn"],
+    "vars-on-top": ["warn"],
+    "import/no-extraneous-dependencies": ["warn"],
+
+    // compat
+    ////////////////////////////////////////////////////////////
+    "compat/compat": ["error"],
+
+    // jsdoc
+    ////////////////////////////////////////////////////////////
     "jsdoc/check-alignment": ["warn"],
     "jsdoc/check-examples": ["warn"],
     "jsdoc/check-param-names": ["warn"],
@@ -41,24 +130,103 @@
       "document.querySelector"
     ]
   },
-  "overrides": [{
-    "files": [
-      "*.test.js",
-      "test/endtoend/*.js",
-      "website/*.js",
-      "bin/*.js"
-    ],
-    "rules": {
-      "compat/compat": "off"
-    }
-  },{
-    "files": [
-      "packages/@uppy/locales/src/*.js",
-      "packages/@uppy/locales/template.js"
-    ],
-    "rules": {
-      "camelcase": "off",
-      "quote-props": "off"
-    }
-  }]
+  "overrides": [
+    {
+      "files": [
+        "*.test.js",
+        "test/endtoend/*.js",
+        "website/*.js",
+        "bin/*.js"
+      ],
+      "rules": {
+        "compat/compat": ["off"]
+      }
+    },
+    {
+      "files": [
+        "packages/@uppy/locales/src/*.js",
+        "packages/@uppy/locales/template.js"
+      ],
+      "rules": {
+        "camelcase": ["off"],
+        "quote-props": ["off"]
+      }
+    },
+    {
+      "files": [
+        "website/themes/uppy/source/js/*.js"
+      ],
+      "rules": {
+        "prefer-const": ["off"]
+      }
+    },
+
+    { "files": ["bin/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"devDependencies": true}] } },
+
+
+    { "files": ["packages/uppy/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/uppy/"}] } },
+
+    { "files": ["packages/@uppy/aws-s3/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/aws-s3/"}] } },
+    { "files": ["packages/@uppy/aws-s3-multipart/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/aws-s3-multipart/"}] } },
+    { "files": ["packages/@uppy/box/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/box/"}] } },
+    { "files": ["packages/@uppy/companion/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/companion/"}] } },
+    { "files": ["packages/@uppy/companion-client/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/companion-client/"}] } },
+    { "files": ["packages/@uppy/core/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/core/"}] } },
+    { "files": ["packages/@uppy/dashboard/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/dashboard/"}] } },
+    { "files": ["packages/@uppy/drag-drop/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/drag-drop/"}] } },
+    { "files": ["packages/@uppy/dropbox/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/dropbox/"}] } },
+    { "files": ["packages/@uppy/facebook/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/facebook/"}] } },
+    { "files": ["packages/@uppy/file-input/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/file-input/"}] } },
+    { "files": ["packages/@uppy/form/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/form/"}] } },
+    { "files": ["packages/@uppy/golden-retriever/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/golden-retriever/"}] } },
+    { "files": ["packages/@uppy/google-drive/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/google-drive/"}] } },
+    { "files": ["packages/@uppy/image-editor/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/image-editor/"}] } },
+    { "files": ["packages/@uppy/informer/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/informer/"}] } },
+    { "files": ["packages/@uppy/instagram/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/instagram/"}] } },
+    { "files": ["packages/@uppy/locales/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/locales/"}] } },
+    { "files": ["packages/@uppy/onedrive/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/onedrive/"}] } },
+    { "files": ["packages/@uppy/progress-bar/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/progress-bar/"}] } },
+    { "files": ["packages/@uppy/provider-views/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/provider-views/"}] } },
+    { "files": ["packages/@uppy/react/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/react/"}] } },
+    { "files": ["packages/@uppy/react-native/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/react-native/"}] } },
+    { "files": ["packages/@uppy/redux-dev-tools/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/redux-dev-tools/"}] } },
+    { "files": ["packages/@uppy/robodog/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/robodog/"}] } },
+    { "files": ["packages/@uppy/screen-capture/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/screen-capture/"}] } },
+    { "files": ["packages/@uppy/status-bar/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/status-bar/"}] } },
+    { "files": ["packages/@uppy/store-default/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/store-default/"}] } },
+    { "files": ["packages/@uppy/store-redux/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/store-redux/"}] } },
+    { "files": ["packages/@uppy/svelte/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/svelte/"}] } },
+    { "files": ["packages/@uppy/thumbnail-generator/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/thumbnail-generator/"}] } },
+    { "files": ["packages/@uppy/transloadit/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/transloadit/"}] } },
+    { "files": ["packages/@uppy/tus/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/tus/"}] } },
+    { "files": ["packages/@uppy/unsplash/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/unsplash/"}] } },
+    { "files": ["packages/@uppy/url/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/url/"}] } },
+    { "files": ["packages/@uppy/utils/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/utils/"}] } },
+    { "files": ["packages/@uppy/vue/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/vue/"}] } },
+    { "files": ["packages/@uppy/webcam/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/webcam/"}] } },
+    { "files": ["packages/@uppy/xhr-upload/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/xhr-upload/"}] } },
+    { "files": ["packages/@uppy/zoom/**.js"], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "packages/@uppy/zoom/"}] } },
+
+
+    { "files": ["examples/aws-companion/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/aws-companion/"}] } },
+    { "files": ["examples/aws-presigned-url/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/aws-presigned-url/"}] } },
+    { "files": ["examples/bundled/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/bundled/"}] } },
+    { "files": ["examples/cdn-example/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/cdn-example/"}] } },
+    { "files": ["examples/custom-provider/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/custom-provider/"}] } },
+    { "files": ["examples/dev/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/dev/"}] } },
+    { "files": ["examples/digitalocean-spaces/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/digitalocean-spaces/"}] } },
+    { "files": ["examples/multiple-instances/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/multiple-instances/"}] } },
+    { "files": ["examples/node-xhr/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/node-xhr/"}] } },
+    { "files": ["examples/php-xhr/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/php-xhr/"}] } },
+    { "files": ["examples/python-xhr/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/python-xhr/"}] } },
+    { "files": ["examples/react-example/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/react-example/"}] } },
+    { "files": ["examples/react-native-expo/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/react-native-expo/"}] } },
+    { "files": ["examples/redux/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/redux/"}] } },
+    { "files": ["examples/svelte-example/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/svelte-example/"}] } },
+    { "files": ["examples/transloadit/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/transloadit/"}] } },
+    { "files": ["examples/transloadit-textarea/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/transloadit-textarea/"}] } },
+    { "files": ["examples/uppy-with-companion/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/uppy-with-companion/"}] } },
+    { "files": ["examples/vue/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/vue/"}] } },
+    { "files": ["examples/xhr-bundle/**.js" ], "rules": { "import/no-extraneous-dependencies": ["warn", {"packageDir": "examples/xhr-bundle/"}] } }
+  ]
 }

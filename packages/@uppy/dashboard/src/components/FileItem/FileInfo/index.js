@@ -2,21 +2,24 @@ const { h } = require('preact')
 const prettierBytes = require('@transloadit/prettier-bytes')
 const truncateString = require('@uppy/utils/lib/truncateString')
 
-const renderAcquirerIcon = (acquirer, props) =>
+const renderAcquirerIcon = (acquirer, props) => (
   <span title={props.i18n('fileSource', { name: acquirer.name })}>
     {acquirer.icon()}
   </span>
+)
 
 const renderFileSource = (props) => (
-  props.file.source &&
-  props.file.source !== props.id &&
-    <div class="uppy-Dashboard-Item-sourceIcon">
+  props.file.source
+  && props.file.source !== props.id
+    && (
+    <div className="uppy-Dashboard-Item-sourceIcon">
       {props.acquirers.map(acquirer => {
         if (acquirer.id === props.file.source) {
           return renderAcquirerIcon(acquirer, props)
         }
       })}
     </div>
+    )
 )
 
 const renderFileName = (props) => {
@@ -34,29 +37,31 @@ const renderFileName = (props) => {
   }
 
   return (
-    <div class="uppy-Dashboard-Item-name" title={props.file.meta.name}>
+    <div className="uppy-Dashboard-Item-name" title={props.file.meta.name}>
       {truncateString(props.file.meta.name, maxNameLength)}
     </div>
   )
 }
 
 const renderFileSize = (props) => (
-  props.file.data.size &&
-    <div class="uppy-Dashboard-Item-statusSize">
+  props.file.data.size
+    && (
+    <div className="uppy-Dashboard-Item-statusSize">
       {prettierBytes(props.file.data.size)}
     </div>
+    )
 )
 
 const ErrorButton = ({ file, onClick }) => {
   if (file.error) {
     return (
       <span
-        class="uppy-Dashboard-Item-errorDetails"
+        className="uppy-Dashboard-Item-errorDetails"
         aria-label={file.error}
         data-microtip-position="bottom"
         data-microtip-size="medium"
         role="tooltip"
-        onclick={onClick}
+        onClick={onClick}
       >
         ?
       </span>
@@ -67,9 +72,9 @@ const ErrorButton = ({ file, onClick }) => {
 
 module.exports = function FileInfo (props) {
   return (
-    <div class="uppy-Dashboard-Item-fileInfo" data-uppy-file-source={props.file.source}>
+    <div className="uppy-Dashboard-Item-fileInfo" data-uppy-file-source={props.file.source}>
       {renderFileName(props)}
-      <div class="uppy-Dashboard-Item-status">
+      <div className="uppy-Dashboard-Item-status">
         {renderFileSize(props)}
         {renderFileSource(props)}
         <ErrorButton

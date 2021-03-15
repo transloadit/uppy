@@ -10,6 +10,7 @@
   Hence, provider tokens (Google, Instagram, Dropbox) may be at risk of getting hijacked.
 */
 const { finishUploadTest, startUploadTest, uploadWithRetry } = require('./helper')
+
 const testURL = 'http://localhost:4567/providers'
 
 describe('File upload with Google Drive Provider', () => {

@@ -63,7 +63,7 @@ function getMediaDevices () {
       return new Promise((resolve, reject) => {
         getUserMedia.call(navigator, opts, resolve, reject)
       })
-    }
+    },
   }
 }
 /**
@@ -82,9 +82,9 @@ module.exports = class Webcam extends Plugin {
     this.type = 'acquirer'
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
-        <g fill="none" fill-rule="evenodd">
-          <rect class="uppy-ProviderIconBg" fill="#03BFEF" width="32" height="32" rx="16" />
-          <path d="M22 11c1.133 0 2 .867 2 2v7.333c0 1.134-.867 2-2 2H10c-1.133 0-2-.866-2-2V13c0-1.133.867-2 2-2h2.333l1.134-1.733C13.6 9.133 13.8 9 14 9h4c.2 0 .4.133.533.267L19.667 11H22zm-6 1.533a3.764 3.764 0 0 0-3.8 3.8c0 2.129 1.672 3.801 3.8 3.801s3.8-1.672 3.8-3.8c0-2.13-1.672-3.801-3.8-3.801zm0 6.261c-1.395 0-2.46-1.066-2.46-2.46 0-1.395 1.065-2.461 2.46-2.461s2.46 1.066 2.46 2.46c0 1.395-1.065 2.461-2.46 2.461z" fill="#FFF" fill-rule="nonzero" />
+        <g fill="none" fillRule="evenodd">
+          <rect className="uppy-ProviderIconBg" fill="#03BFEF" width="32" height="32" rx="16" />
+          <path d="M22 11c1.133 0 2 .867 2 2v7.333c0 1.134-.867 2-2 2H10c-1.133 0-2-.866-2-2V13c0-1.133.867-2 2-2h2.333l1.134-1.733C13.6 9.133 13.8 9 14 9h4c.2 0 .4.133.533.267L19.667 11H22zm-6 1.533a3.764 3.764 0 0 0-3.8 3.8c0 2.129 1.672 3.801 3.8 3.801s3.8-1.672 3.8-3.8c0-2.13-1.672-3.801-3.8-3.801zm0 6.261c-1.395 0-2.46-1.066-2.46-2.46 0-1.395 1.065-2.461 2.46-2.461s2.46 1.066 2.46 2.46c0 1.395-1.065 2.461-2.46 2.461z" fill="#FFF" fillRule="nonzero" />
         </g>
       </svg>
     )
@@ -100,8 +100,8 @@ module.exports = class Webcam extends Plugin {
         noCameraTitle: 'Camera Not Available',
         noCameraDescription: 'In order to take pictures or record video, please connect a camera device',
         recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
-        recordingLength: 'Recording length %{recording_length}'
-      }
+        recordingLength: 'Recording length %{recording_length}',
+      },
     }
 
     // set default options
@@ -112,14 +112,14 @@ module.exports = class Webcam extends Plugin {
         'video-audio',
         'video-only',
         'audio-only',
-        'picture'
+        'picture',
       ],
       mirror: true,
       showVideoSourceDropdown: false,
       facingMode: 'user',
       preferredImageMimeType: null,
       preferredVideoMimeType: null,
-      showRecordingLength: false
+      showRecordingLength: false,
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -153,7 +153,7 @@ module.exports = class Webcam extends Plugin {
       cameraError: null,
       recordingLengthSeconds: 0,
       videoSources: [],
-      currentDeviceId: null
+      currentDeviceId: null,
     })
   }
 
@@ -163,8 +163,8 @@ module.exports = class Webcam extends Plugin {
       videoConstraints: {
         // May be undefined but ... handles that
         ...this.opts.videoConstraints,
-        ...newOpts?.videoConstraints
-      }
+        ...newOpts?.videoConstraints,
+      },
     })
 
     this.i18nInit()
@@ -188,22 +188,22 @@ module.exports = class Webcam extends Plugin {
   }
 
   getConstraints (deviceId = null) {
-    const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1 ||
-      this.opts.modes.indexOf('audio-only') !== -1
-    const acceptsVideo = this.opts.modes.indexOf('video-audio') !== -1 ||
-      this.opts.modes.indexOf('video-only') !== -1 ||
-      this.opts.modes.indexOf('picture') !== -1
+    const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1
+      || this.opts.modes.indexOf('audio-only') !== -1
+    const acceptsVideo = this.opts.modes.indexOf('video-audio') !== -1
+      || this.opts.modes.indexOf('video-only') !== -1
+      || this.opts.modes.indexOf('picture') !== -1
 
     const videoConstraints = {
       ...(this.opts.videoConstraints ?? { facingMode: this.opts.facingMode }),
       // facingMode takes precedence over deviceId, and not needed
       // when specific device is selected
-      ...(deviceId ? { deviceId, facingMode: null } : {})
+      ...(deviceId ? { deviceId, facingMode: null } : {}),
     }
 
     return {
       audio: acceptsAudio,
-      video: acceptsVideo ? videoConstraints : false
+      video: acceptsVideo ? videoConstraints : false,
     }
   }
 
@@ -218,7 +218,7 @@ module.exports = class Webcam extends Plugin {
 
     this.hasCameraCheck().then(hasCamera => {
       this.setPluginState({
-        hasCamera: hasCamera
+        hasCamera,
       })
 
       // ask user for access to their camera
@@ -242,13 +242,13 @@ module.exports = class Webcam extends Plugin {
 
           this.setPluginState({
             currentDeviceId,
-            cameraReady: true
+            cameraReady: true,
           })
         })
         .catch((err) => {
           this.setPluginState({
             cameraReady: false,
-            cameraError: err
+            cameraError: err,
           })
           this.uppy.info(err.message, 'error')
         })
@@ -274,8 +274,8 @@ module.exports = class Webcam extends Plugin {
       }
 
       const acceptableMimeTypes = preferredVideoMimeTypes.filter((candidateType) =>
-        MediaRecorder.isTypeSupported(candidateType) &&
-          getFileTypeExtension(candidateType))
+        MediaRecorder.isTypeSupported(candidateType)
+          && getFileTypeExtension(candidateType))
       if (acceptableMimeTypes.length > 0) {
         options.mimeType = acceptableMimeTypes[0]
       }
@@ -294,9 +294,9 @@ module.exports = class Webcam extends Plugin {
       this.recordingChunks.push(event.data)
 
       const { restrictions } = this.uppy.opts
-      if (this.recordingChunks.length > 1 &&
-          restrictions.maxFileSize != null &&
-          !stoppingBecauseOfMaxSize) {
+      if (this.recordingChunks.length > 1
+          && restrictions.maxFileSize != null
+          && !stoppingBecauseOfMaxSize) {
         const totalSize = this.recordingChunks.reduce((acc, chunk) => acc + chunk.size, 0)
         // Exclude the initial chunk from the average size calculation because it is likely to be a very small outlier
         const averageChunkSize = (totalSize - this.recordingChunks[0].size) / (this.recordingChunks.length - 1)
@@ -324,7 +324,7 @@ module.exports = class Webcam extends Plugin {
     }
 
     this.setPluginState({
-      isRecording: true
+      isRecording: true,
     })
   }
 
@@ -344,7 +344,7 @@ module.exports = class Webcam extends Plugin {
 
     return stopped.then(() => {
       this.setPluginState({
-        isRecording: false
+        isRecording: false,
       })
       return this.getVideo()
     }).then((file) => {
@@ -462,9 +462,9 @@ module.exports = class Webcam extends Plugin {
     return canvasToBlob(canvas, mimeType).then((blob) => {
       return {
         source: this.id,
-        name: name,
+        name,
         data: new Blob([blob], { type: mimeType }),
-        type: mimeType
+        type: mimeType,
       }
     })
   }
@@ -481,9 +481,9 @@ module.exports = class Webcam extends Plugin {
     const blob = new Blob(this.recordingChunks, { type: mimeType })
     const file = {
       source: this.id,
-      name: name,
+      name,
       data: new Blob([blob], { type: mimeType }),
-      type: mimeType
+      type: mimeType,
     }
 
     return Promise.resolve(file)
@@ -498,13 +498,13 @@ module.exports = class Webcam extends Plugin {
 
   _changeVideoSource (deviceId) {
     this._stop()
-    this._start({ deviceId: deviceId })
+    this._start({ deviceId })
   }
 
   updateVideoSources () {
     this.mediaDevices.enumerateDevices().then(devices => {
       this.setPluginState({
-        videoSources: devices.filter((device) => device.kind === 'videoinput')
+        videoSources: devices.filter((device) => device.kind === 'videoinput'),
       })
     })
   }
@@ -550,7 +550,7 @@ module.exports = class Webcam extends Plugin {
   install () {
     this.setPluginState({
       cameraReady: false,
-      recordingLengthSeconds: 0
+      recordingLengthSeconds: 0,
     })
 
     const target = this.opts.target

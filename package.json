@@ -79,6 +79,7 @@
     "@uppy/xhr-upload": "file:packages/@uppy/xhr-upload",
     "@uppy/zoom": "file:packages/@uppy/zoom",
     "deep-freeze": "0.0.1",
+    "eslint-config-transloadit": "^1.1.4",
     "remark-lint-uppy": "file:private/remark-lint-uppy",
     "uppy": "file:packages/uppy",
     "uppy.io": "file:website"
@@ -149,6 +150,7 @@
     "eslint-plugin-jest": "23.20.0",
     "eslint-plugin-jsdoc": "30.2.2",
     "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prefer-import": "0.0.1",
     "eslint-plugin-promise": "4.2.1",
     "eslint-plugin-react": "7.20.6",
     "eslint-plugin-standard": "4.0.1",

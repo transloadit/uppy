@@ -12,7 +12,7 @@ const globals = {
   '@uppy/dashboard': 'Dashboard',
   '@uppy/drag-drop': 'DragDrop',
   '@uppy/progress-bar': 'ProgressBar',
-  '@uppy/status-bar': 'StatusBar'
+  '@uppy/status-bar': 'StatusBar',
 }
 
 export default {
@@ -21,22 +21,22 @@ export default {
     {
       file: pkg.module,
       format: 'es',
-      globals
+      globals,
     },
     {
       file: pkg.main,
       format: 'umd',
       name,
-      globals
-    }
+      globals,
+    },
   ],
   plugins: [
     svelte({
       include: 'src/**/*.svelte',
-      preprocess: preprocess()
+      preprocess: preprocess(),
     }),
     resolve({
-      resolveOnly: ['svelte']
-    })
-  ]
+      resolveOnly: ['svelte'],
+    }),
+  ],
 }

@@ -40,7 +40,7 @@ describe('Socket', () => {
     expect(UppySocket.name).toEqual('UppySocket')
     expect(
       new UppySocket({
-        target: 'foo'
+        target: 'foo',
       }) instanceof UppySocket
     )
   })
@@ -58,7 +58,7 @@ describe('Socket', () => {
     uppySocket.send('bar', 'boo')
     expect(webSocketSendSpy.mock.calls.length).toEqual(1)
     expect(webSocketSendSpy.mock.calls[0]).toEqual([
-      JSON.stringify({ action: 'bar', payload: 'boo' })
+      JSON.stringify({ action: 'bar', payload: 'boo' }),
     ])
   })
 
@@ -78,7 +78,7 @@ describe('Socket', () => {
     uppySocket.send('moo', 'baa')
     expect(uppySocket._queued).toEqual([
       { action: 'bar', payload: 'boo' },
-      { action: 'moo', payload: 'baa' }
+      { action: 'moo', payload: 'baa' },
     ])
     expect(webSocketSendSpy.mock.calls.length).toEqual(0)
 
@@ -87,10 +87,10 @@ describe('Socket', () => {
     expect(uppySocket._queued).toEqual([])
     expect(webSocketSendSpy.mock.calls.length).toEqual(2)
     expect(webSocketSendSpy.mock.calls[0]).toEqual([
-      JSON.stringify({ action: 'bar', payload: 'boo' })
+      JSON.stringify({ action: 'bar', payload: 'boo' }),
     ])
     expect(webSocketSendSpy.mock.calls[1]).toEqual([
-      JSON.stringify({ action: 'moo', payload: 'baa' })
+      JSON.stringify({ action: 'moo', payload: 'baa' }),
     ])
   })
 
@@ -124,10 +124,10 @@ describe('Socket', () => {
 
     webSocketInstance.triggerOpen()
     webSocketInstance.onmessage({
-      data: JSON.stringify({ action: 'hi', payload: 'ho' })
+      data: JSON.stringify({ action: 'hi', payload: 'ho' }),
     })
     expect(emitterListenerMock.mock.calls).toEqual([
-      ['ho', undefined, undefined, undefined, undefined, undefined]
+      ['ho', undefined, undefined, undefined, undefined, undefined],
     ])
   })
 
@@ -150,8 +150,8 @@ describe('Socket', () => {
         undefined,
         undefined,
         undefined,
-        undefined
-      ]
+        undefined,
+      ],
     ])
   })
 
@@ -167,7 +167,7 @@ describe('Socket', () => {
 
     expect(emitterListenerMock.mock.calls.length).toEqual(1)
     expect(emitterListenerMock.mock.calls).toEqual([
-      ['ho', undefined, undefined, undefined, undefined, undefined]
+      ['ho', undefined, undefined, undefined, undefined, undefined],
     ])
   })
 })
