@@ -5,16 +5,17 @@ module.exports = ({ currentDeviceId, videoSources, onChangeVideoSource }) => {
     <div className="uppy-Webcam-videoSource">
       <select
         className="uppy-u-reset uppy-Webcam-videoSource-select"
-        onchange={(event) => { onChangeVideoSource(event.target.value) }}
+        onChange={(event) => { onChangeVideoSource(event.target.value) }}
       >
-        {videoSources.map((videoSource) =>
+        {videoSources.map((videoSource) => (
           <option
             key={videoSource.deviceId}
             value={videoSource.deviceId}
             selected={videoSource.deviceId === currentDeviceId}
           >
             {videoSource.label}
-          </option>)}
+          </option>
+        ))}
       </select>
     </div>
   )

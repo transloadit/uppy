@@ -52,13 +52,13 @@ pt_BR.strings = {
   fileSource: 'Origem do arquivo: %{name}',
   filesUploadedOfTotal: {
     0: '%{complete} de %{smart_count} arquivo enviado',
-    1: '%{complete} de %{smart_count} arquivos enviados'
+    1: '%{complete} de %{smart_count} arquivos enviados',
   },
   filter: 'Filtrar',
   finishEditingFile: 'Finalizar edição de arquivo',
   folderAdded: {
     0: 'Adicionado %{smart_count} arquivo de %{folder}',
-    1: 'Adicionado %{smart_count} arquivos de %{folder}'
+    1: 'Adicionado %{smart_count} arquivos de %{folder}',
   },
   import: 'Importar',
   importFrom: 'Importar de %{name}',
@@ -73,7 +73,7 @@ pt_BR.strings = {
   poweredBy: 'Desenvolvido por',
   processingXFiles: {
     0: 'Processando %{smart_count} arquivo',
-    1: 'Processando %{smart_count} arquivos'
+    1: 'Processando %{smart_count} arquivos',
   },
   removeFile: 'Remover arquivo',
   resetFilter: 'Resetar filtro',
@@ -84,7 +84,7 @@ pt_BR.strings = {
   saveChanges: 'Salvar alterações',
   selectX: {
     0: 'Selecionar %{smart_count}',
-    1: 'Selecionar %{smart_count}'
+    1: 'Selecionar %{smart_count}',
   },
   smile: 'Sorria!',
   startRecording: 'Começar gravação de vídeo',
@@ -97,41 +97,41 @@ pt_BR.strings = {
   uploadPaused: 'Envio de arquivos pausado',
   uploadXFiles: {
     0: 'Enviar %{smart_count} arquivo',
-    1: 'Enviar %{smart_count} arquivos'
+    1: 'Enviar %{smart_count} arquivos',
   },
   uploadXNewFiles: {
     0: 'Enviar +%{smart_count} arquivo',
-    1: 'Enviar +%{smart_count} arquivos'
+    1: 'Enviar +%{smart_count} arquivos',
   },
   uploading: 'Enviando',
   uploadingXFiles: {
     0: 'Enviando %{smart_count} arquivo',
-    1: 'Enviando %{smart_count} arquivos'
+    1: 'Enviando %{smart_count} arquivos',
   },
   xFilesSelected: {
     0: '%{smart_count} arquivo selecionado',
-    1: '%{smart_count} arquivos selecionados'
+    1: '%{smart_count} arquivos selecionados',
   },
   xMoreFilesAdded: {
     0: '%{smart_count} arquivo adicionados',
-    1: '%{smart_count} arquivos adicionados'
+    1: '%{smart_count} arquivos adicionados',
   },
   xTimeLeft: '%{time} restantes',
   youCanOnlyUploadFileTypes: 'Você pode enviar apenas arquivos: %{types}',
   youCanOnlyUploadX: {
     0: 'Você pode enviar apenas %{smart_count} arquivo',
-    1: 'Você pode enviar apenas %{smart_count} arquivos'
+    1: 'Você pode enviar apenas %{smart_count} arquivos',
   },
   youHaveToAtLeastSelectX: {
     0: 'Você precisa selecionar pelo menos %{smart_count} arquivo',
-    1: 'Você precisa selecionar pelo menos %{smart_count} arquivos'
+    1: 'Você precisa selecionar pelo menos %{smart_count} arquivos',
   },
   selectAllFilesFromFolderNamed: 'Selecione todos os arquivos da pasta %{name}',
   unselectAllFilesFromFolderNamed:
     'Desmarque todos os arquivos da pasta %{name}',
   selectFileNamed: 'Selecione o arquivo %{name}',
   unselectFileNamed: 'Deselecionar arquivo %{name}',
-  openFolderNamed: 'Pasta aberta %{name}'
+  openFolderNamed: 'Pasta aberta %{name}',
 }
 
 pt_BR.pluralize = function (n) {

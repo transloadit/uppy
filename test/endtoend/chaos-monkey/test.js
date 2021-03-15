@@ -13,7 +13,7 @@ describe('Chaos monkey', function () {
   })
 
   it('Add and cancel a bunch', async () => {
-    await browser.execute(function () {
+    await browser.execute(() => {
       window.currentUppy = window.setup({ limit: 3 })
       window.onerror = function (message) {
         window.anyError = message
@@ -22,18 +22,18 @@ describe('Chaos monkey', function () {
 
     const types = ['application/octet-stream', 'text/plain']
     const generate = {
-      'application/octet-stream' () {
+      'application/octet-stream': function () {
         const len = Math.round(Math.random() * 5000000)
         return crypto.randomBytes(len)
       },
-      'text/plain' () {
+      'text/plain': function () {
         const len = Math.round(Math.random() * 5000000)
         return Buffer.from(lorem(len))
-      }
+      },
     }
 
     async function addFile () {
-      await browser.execute(function () {
+      await browser.execute(() => {
         window.addLogMessage('Adding a file')
       })
       const type = types[Math.floor(Math.random() * types.length)]
@@ -44,7 +44,7 @@ describe('Chaos monkey', function () {
     }
 
     function cancelFile () {
-      return browser.execute(function () {
+      return browser.execute(() => {
         window.addLogMessage('Cancelling a file')
         // prefer deleting a file that is uploading right now
         var selector = Math.random() <= 0.7
@@ -57,7 +57,7 @@ describe('Chaos monkey', function () {
     }
 
     function startUploadIfAnyWaitingFiles () {
-      return browser.execute(function () {
+      return browser.execute(() => {
         window.addLogMessage('Starting upload')
         var start = document.querySelector('.uppy-StatusBar-actionBtn--upload')
         if (start) start.click()
@@ -65,7 +65,7 @@ describe('Chaos monkey', function () {
     }
 
     function cancelAll () {
-      return browser.execute(function () {
+      return browser.execute(() => {
         window.addLogMessage('Cancelling everything')
         var button = document.querySelector('.uppy-DashboardContent-back')
         if (button) button.click()
@@ -94,7 +94,7 @@ describe('Chaos monkey', function () {
 
     await cancelAll()
 
-    const errorMessage = await browser.execute(function () {
+    const errorMessage = await browser.execute(() => {
       return window.anyError
     })
     // yikes chai, why can this not be a function call

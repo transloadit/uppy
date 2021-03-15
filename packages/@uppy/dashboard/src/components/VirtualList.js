@@ -35,7 +35,7 @@ const STYLE_INNER = {
   //
   // overflow: 'hidden',
   width: '100%',
-  minHeight: '100%'
+  minHeight: '100%',
 }
 
 const STYLE_CONTENT = {
@@ -48,7 +48,7 @@ const STYLE_CONTENT = {
   //
   // height: '100%',
   width: '100%',
-  overflow: 'visible'
+  overflow: 'visible',
 }
 
 class VirtualList extends Component {
@@ -61,14 +61,14 @@ class VirtualList extends Component {
 
     this.state = {
       offset: 0,
-      height: 0
+      height: 0,
     }
   }
 
   resize () {
     if (this.state.height !== this.base.offsetHeight) {
       this.setState({
-        height: this.base.offsetHeight
+        height: this.base.offsetHeight,
       })
     }
   }
@@ -79,7 +79,7 @@ class VirtualList extends Component {
 
   handleScroll = () => {
     this.setState({
-      offset: this.base.scrollTop
+      offset: this.base.scrollTop,
     })
     if (this.props.sync) {
       this.forceUpdate()
@@ -94,8 +94,8 @@ class VirtualList extends Component {
 
   componentDidUpdate () {
     // Maintain focus when rows are added and removed.
-    if (this.focusElement && this.focusElement.parentNode &&
-        document.activeElement !== this.focusElement) {
+    if (this.focusElement && this.focusElement.parentNode
+        && document.activeElement !== this.focusElement) {
       this.focusElement.focus()
     }
     this.focusElement = null

@@ -29,12 +29,12 @@ export default class App extends React.Component {
       uploadStarted: false,
       uploadComplete: false,
       info: null,
-      totalProgress: 0
+      totalProgress: 0,
     }
 
-    this.isReactNative = (typeof navigator !== 'undefined' &&
-      typeof navigator.product === 'string' &&
-      navigator.product.toLowerCase() === 'reactnative')
+    this.isReactNative = (typeof navigator !== 'undefined'
+      && typeof navigator.product === 'string'
+      && navigator.product.toLowerCase() === 'reactnative')
 
     this.showFilePicker = this.showFilePicker.bind(this)
     this.hideFilePicker = this.hideFilePicker.bind(this)
@@ -46,14 +46,14 @@ export default class App extends React.Component {
       endpoint: 'https://tusd.tusdemo.net/files/',
       urlStorage: AsyncStorage,
       fileReader: getTusFileReader,
-      chunkSize: 10 * 1024 * 1024 // keep the chunk size small to avoid memory exhaustion
+      chunkSize: 10 * 1024 * 1024, // keep the chunk size small to avoid memory exhaustion
     })
     this.uppy.on('upload-progress', (file, progress) => {
       this.setState({
         progress: progress.bytesUploaded,
         total: progress.bytesTotal,
         totalProgress: this.uppy.state.totalProgress,
-        uploadStarted: true
+        uploadStarted: true,
       })
     })
     this.uppy.on('upload-success', (file, response) => {
@@ -64,7 +64,7 @@ export default class App extends React.Component {
         status: 'Upload complete ✅',
         uploadURL: result.successful[0] ? result.successful[0].uploadURL : null,
         uploadComplete: true,
-        uploadStarted: false
+        uploadStarted: false,
       })
       console.log('Upload complete:', result)
     })
@@ -72,14 +72,14 @@ export default class App extends React.Component {
     this.uppy.on('info-visible', () => {
       const info = this.uppy.getState().info
       this.setState({
-        info: info
+        info,
       })
       console.log('uppy-info:', info)
     })
 
     this.uppy.on('info-hidden', () => {
       this.setState({
-        info: null
+        info: null,
       })
     })
   }
@@ -88,13 +88,13 @@ export default class App extends React.Component {
     this.setState({
       isFilePickerVisible: true,
       uploadStarted: false,
-      uploadComplete: false
+      uploadComplete: false,
     })
   }
 
   hideFilePicker () {
     this.setState({
-      isFilePickerVisible: false
+      isFilePickerVisible: false,
     })
   }
 
@@ -102,12 +102,12 @@ export default class App extends React.Component {
     if (this.state.isPaused) {
       this.uppy.resumeAll()
       this.setState({
-        isPaused: false
+        isPaused: false,
       })
     } else {
       this.uppy.pauseAll()
       this.setState({
-        isPaused: true
+        isPaused: true,
       })
     }
   }
@@ -118,15 +118,16 @@ export default class App extends React.Component {
         paddingTop: 100,
         paddingLeft: 50,
         paddingRight: 50,
-        flex: 1
+        flex: 1,
       }}
       >
         <Text style={{
           fontSize: 25,
           marginBottom: 20,
-          textAlign: 'center'
+          textAlign: 'center',
         }}
-        >Uppy in React Native
+        >
+          Uppy in React Native
         </Text>
         <View style={{ alignItems: 'center' }}>
           <Image
@@ -141,7 +142,7 @@ export default class App extends React.Component {
             style={{
               marginBottom: 10,
               marginTop: 10,
-              color: '#b8006b'
+              color: '#b8006b',
             }}
           >
             {this.state.info.message}

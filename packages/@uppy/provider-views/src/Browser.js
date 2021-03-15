@@ -11,7 +11,7 @@ const Browser = (props) => {
     files,
     uppyFiles,
     filterItems,
-    filterInput
+    filterInput,
   } = props
 
   let filteredFolders = folders
@@ -25,9 +25,9 @@ const Browser = (props) => {
   const selected = currentSelection.length
 
   return (
-    <div class={classNames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${props.viewType}`)}>
-      <div class="uppy-ProviderBrowser-header">
-        <div class={classNames('uppy-ProviderBrowser-headerBar', !props.showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple')}>
+    <div className={classNames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${props.viewType}`)}>
+      <div className="uppy-ProviderBrowser-header">
+        <div className={classNames('uppy-ProviderBrowser-headerBar', !props.showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple')}>
           {props.headerComponent}
         </div>
       </div>
@@ -35,7 +35,7 @@ const Browser = (props) => {
       <ItemList
         columns={[{
           name: 'Name',
-          key: 'title'
+          key: 'title',
         }]}
         folders={filteredFolders}
         files={filteredFiles}

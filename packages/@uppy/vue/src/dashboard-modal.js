@@ -4,23 +4,23 @@ import { shallowEqualObjects } from 'shallow-equal'
 export default {
   data () {
     return {
-      plugin: {}
+      plugin: {},
     }
   },
   props: {
     uppy: {
-      required: true
+      required: true,
     },
     props: {
-      type: Object
+      type: Object,
     },
     plugins: {
-      type: Array
+      type: Array,
     },
     open: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   mounted () {
     this.installPlugin()
@@ -32,7 +32,7 @@ export default {
         id: 'vue:DashboardModal',
         plugins: this.plugins,
         ...this.props,
-        target: this.$refs.container
+        target: this.$refs.container,
       }
       uppy.use(DashboardPlugin, options)
       this.plugin = uppy.getPlugin(options.id)
@@ -42,7 +42,7 @@ export default {
     },
     uninstallPlugin (uppy) {
       uppy.removePlugin(this.plugin)
-    }
+    },
   },
   beforeDestroy () {
     this.uninstallPlugin(this.uppy)
@@ -66,11 +66,11 @@ export default {
       if (!shallowEqualObjects(current, old)) {
         this.plugin.setOptions({ ...current })
       }
-    }
+    },
   },
   render (createElement) {
     return createElement('div', {
-      ref: 'container'
+      ref: 'container',
     })
-  }
+  },
 }

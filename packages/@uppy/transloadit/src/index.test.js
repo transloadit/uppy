@@ -1,5 +1,5 @@
 const Core = require('@uppy/core')
-const Transloadit = require('./')
+const Transloadit = require('.')
 
 describe('Transloadit', () => {
   it('Throws errors if options are missing', () => {
@@ -15,18 +15,18 @@ describe('Transloadit', () => {
 
     expect(() => {
       uppy.use(Transloadit, {
-        params: 'not json'
+        params: 'not json',
       })
     }).toThrowError(/The `params` option is a malformed JSON string/)
 
     expect(() => {
       uppy.use(Transloadit, {
-        params: '{"template_id":"some template id string"}'
+        params: '{"template_id":"some template id string"}',
       })
     }).toThrowError(/The `params\.auth\.key` option is required/)
     expect(() => {
       uppy.use(Transloadit, {
-        params: '{"auth":{"key":"some auth key string"},"template_id":"some template id string"}'
+        params: '{"auth":{"key":"some auth key string"},"template_id":"some template id string"}',
       })
     }).not.toThrowError(/The `params\.auth\.key` option is required/)
   })
@@ -36,13 +36,13 @@ describe('Transloadit', () => {
     uppy.use(Transloadit, {
       getAssemblyOptions (file) {
         return Promise.reject(new Error('Failure!'))
-      }
+      },
     })
 
     uppy.addFile({
       source: 'jest',
       name: 'abc',
-      data: new Uint8Array(100)
+      data: new Uint8Array(100),
     })
 
     return uppy.upload().then(() => {
@@ -60,8 +60,8 @@ describe('Transloadit', () => {
     uppy.use(Transloadit, {
       params: {
         auth: { key: 'some auth key string' },
-        template_id: 'some template id string'
-      }
+        template_id: 'some template id string',
+      },
     })
 
     uppy.getPlugin('Transloadit').client.createAssembly = () =>
@@ -70,7 +70,7 @@ describe('Transloadit', () => {
     uppy.addFile({
       source: 'jest',
       name: 'abc',
-      data: new Uint8Array(100)
+      data: new Uint8Array(100),
     })
 
     return uppy.upload().then(() => {

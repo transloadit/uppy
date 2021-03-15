@@ -4,6 +4,7 @@ describe('getFileTypeExtension', () => {
   it('should return the filetype based on the specified mime type', () => {
     expect(getFileTypeExtension('video/ogg')).toEqual('ogv')
     expect(getFileTypeExtension('audio/ogg')).toEqual('ogg')
+    expect(getFileTypeExtension('audio/mp4')).toEqual('mp4')
     expect(getFileTypeExtension('video/webm')).toEqual('webm')
     // Supports mime types with additional data
     expect(getFileTypeExtension('video/webm;codecs=vp8,opus')).toEqual('webm')

@@ -34,7 +34,7 @@
     right: auto;
     width: 280px;
     padding-top: 30px;
-    padding-left: 60px;
+    padding-left: 20px;
     margin-right: 20px;
     overflow-x: hidden;
     overflow-y: auto;
@@ -52,6 +52,10 @@
     .main-menu { display: none; }
     &::-webkit-scrollbar { width: 0 !important; }
     h2 { margin-top: .2em; }
+  }
+
+  @media #{$screen-large} {
+    padding-left: 60px;
   }
 
   ul {

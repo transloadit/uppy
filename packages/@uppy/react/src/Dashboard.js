@@ -27,11 +27,11 @@ class Dashboard extends React.Component {
 
   installPlugin () {
     const uppy = this.props.uppy
-    const options = Object.assign(
-      { id: 'react:Dashboard' },
-      this.props,
-      { target: this.container }
-    )
+    const options = {
+      id: 'react:Dashboard',
+      ...this.props,
+      target: this.container,
+    }
     delete options.uppy
     uppy.use(DashboardPlugin, options)
 
@@ -48,7 +48,7 @@ class Dashboard extends React.Component {
     return h('div', {
       ref: (container) => {
         this.container = container
-      }
+      },
     })
   }
 }
@@ -56,7 +56,7 @@ class Dashboard extends React.Component {
 Dashboard.propTypes = basePropTypes
 
 Dashboard.defaultProps = {
-  inline: true
+  inline: true,
 }
 
 module.exports = Dashboard

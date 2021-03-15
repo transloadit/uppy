@@ -52,5 +52,5 @@ module.exports = {
   rar: 'application/x-rar-compressed',
   tar: 'application/x-tar',
   gz: 'application/gzip',
-  dmg: 'application/x-apple-diskimage'
+  dmg: 'application/x-apple-diskimage',
 }

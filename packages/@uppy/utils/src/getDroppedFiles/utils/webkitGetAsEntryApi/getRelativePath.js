@@ -8,9 +8,8 @@
 module.exports = function getRelativePath (fileEntry) {
   // fileEntry.fullPath - "/simpsons/hi.jpeg" or undefined (for browsers that don't support it)
   // fileEntry.name - "hi.jpeg"
-  if (!fileEntry.fullPath || fileEntry.fullPath === '/' + fileEntry.name) {
+  if (!fileEntry.fullPath || fileEntry.fullPath === `/${fileEntry.name}`) {
     return null
-  } else {
-    return fileEntry.fullPath
   }
+  return fileEntry.fullPath
 }

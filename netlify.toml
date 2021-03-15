@@ -6,5 +6,5 @@ ID = "uppy"
 
 [context.deploy-preview]
 command = "npx lerna bootstrap && npm run build && npm run web:inject-disc && npm run web:build"
-environment = { NODE_VERSION = "12" }
+environment = { NODE_VERSION = "14" }
 publish = "website/public"

@@ -4,6 +4,7 @@
 // most of which will go unused, so not sure if that's worth it.
 const mimeToExtensions = {
   'audio/mp3': 'mp3',
+  'audio/mp4': 'mp4',
   'audio/ogg': 'ogg',
   'audio/webm': 'webm',
   'image/gif': 'gif',
@@ -17,7 +18,7 @@ const mimeToExtensions = {
   'video/quicktime': 'mov',
   'video/webm': 'webm',
   'video/x-matroska': 'mkv',
-  'video/x-msvideo': 'avi'
+  'video/x-msvideo': 'avi',
 }
 
 module.exports = function getFileTypeExtension (mimeType) {

@@ -33,7 +33,6 @@
     "hexo-server": "^1.0.0",
     "hexo-util": "^1.9.1",
     "js-yaml": "^3.13.1",
-    "locale-code": "^2.0.2",
     "marked": "^0.7.0",
     "mdast-util-inject": "1.1.0",
     "mkdirp": "0.5.1",

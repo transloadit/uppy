@@ -4,6 +4,7 @@ const chalk = require('chalk')
 const path = require('path')
 const stringifyObject = require('stringify-object')
 const fs = require('fs')
+
 const uppy = new Uppy()
 let localePack = {}
 const plugins = {}
@@ -23,7 +24,7 @@ if (mode === 'build') {
 function getSources (pluginName) {
   const dependencies = {
     // because 'provider-views' doesn't have its own locale, it uses Core's defaultLocale
-    core: ['provider-views']
+    core: ['provider-views'],
   }
 
   const globPath = path.join(__dirname, '..', 'packages', '@uppy', pluginName, 'lib', '**', '*.js')
@@ -52,10 +53,10 @@ function buildPluginsList () {
   for (const file of files) {
     const dirName = path.dirname(file)
     const pluginName = path.basename(dirName)
-    if (pluginName === 'locales' ||
-        pluginName === 'react-native' ||
-        pluginName === 'vue' ||
-        pluginName === 'svelte') {
+    if (pluginName === 'locales'
+        || pluginName === 'react-native'
+        || pluginName === 'vue'
+        || pluginName === 'svelte') {
       continue
     }
     const Plugin = require(dirName)
@@ -69,24 +70,24 @@ function buildPluginsList () {
     global.navigator = { userAgent: '' }
     global.localStorage = {
       key: () => { },
-      getItem: () => { }
+      getItem: () => { },
     }
     global.window = {
       indexedDB: {
-        open: () => { return {} }
-      }
+        open: () => { return {} },
+      },
     }
     global.document = {
       createElement: () => {
         return { style: {} }
-      }
+      },
     }
 
     try {
       if (pluginName === 'provider-views') {
         plugin = new Plugin(plugins['drag-drop'], {
           companionPattern: '',
-          companionUrl: 'https://companion.uppy.io'
+          companionUrl: 'https://companion.uppy.io',
         })
       } else if (pluginName === 'store-redux') {
         plugin = new Plugin({ store: { dispatch: () => { } } })
@@ -96,9 +97,9 @@ function buildPluginsList () {
           companionUrl: 'https://companion.uppy.io',
           params: {
             auth: {
-              key: 'x'
-            }
-          }
+              key: 'x',
+            },
+          },
         })
       }
     } catch (err) {
@@ -150,7 +151,7 @@ function checkForUnused (fileContents, pluginName, localePack) {
 }
 
 function sortObjectAlphabetically (obj, sortFunc) {
-  return Object.keys(obj).sort(sortFunc).reduce(function (result, key) {
+  return Object.keys(obj).sort(sortFunc).reduce((result, key) => {
     result[key] = obj[key]
     return result
   }, {})
@@ -164,14 +165,14 @@ function createTypeScriptLocale (plugin, pluginName) {
   const pluginClassName = pluginName === 'core' ? 'Core' : plugin.id
   const localePath = path.join(__dirname, '..', 'packages', '@uppy', pluginName, 'types', 'generatedLocale.d.ts')
 
-  const localeTypes =
-    'import Uppy = require(\'@uppy/core\')\n' +
-    '\n' +
-    `type ${pluginClassName}Locale = Uppy.Locale` + '<\n' +
-    allowedStringTypes + '\n' +
-    '>\n' +
-    '\n' +
-    `export = ${pluginClassName}Locale\n`
+  const localeTypes
+    = `${'import Uppy = require(\'@uppy/core\')\n'
+    + '\n'
+    + `type ${pluginClassName}Locale = Uppy.Locale` + '<\n'}${
+      allowedStringTypes}\n`
+    + `>\n`
+    + `\n`
+    + `export = ${pluginClassName}Locale\n`
 
   fs.writeFileSync(localePath, localeTypes)
 }
@@ -196,13 +197,13 @@ function build () {
   const prettyLocale = stringifyObject(localePack, {
     indent: '  ',
     singleQuotes: true,
-    inlineCharacterLimit: 12
+    inlineCharacterLimit: 12,
   })
 
   const localeTemplatePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'template.js')
   const template = fs.readFileSync(localeTemplatePath, 'utf-8')
 
-  const finalLocale = template.replace('en_US.strings = {}', 'en_US.strings = ' + prettyLocale)
+  const finalLocale = template.replace('en_US.strings = {}', `en_US.strings = ${prettyLocale}`)
 
   const localePackagePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'src', 'en_US.js')
   fs.writeFileSync(localePackagePath, finalLocale, 'utf-8')

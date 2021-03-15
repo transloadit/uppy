@@ -12,16 +12,119 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
-## February 2021
+## March 2021
 
 ### next
 
-- [ ] dashboard: Add a `disabled` (`true`||`false`) option (later for /dragndrop and fileinput) (#1530, @arturi)
-- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
 - [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
-- [ ] integration: Vue 3
 - [ ] plugin: audio/memo recording similar to Webcam #143 #198
-- [ ] xhr-upload: allow setting http headers on per file basis? (#2299 / @goto-bus-stop)
+- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
+- [ ] integration: Vue 3 (#2755 / @ajkachnic)
+
+## 1.26.1
+
+Released: 2021-03-10
+
+⚠️ This release fixes a DOS vulnerability in Companion if you were *not* using S3 uploads.
+We recommend updating ASAP if you run your own Companion instance.
+
+It also adds typescript typings for Companion.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.14 | @uppy/progress-bar | 1.3.26 |
+| @uppy/aws-s3 | 1.7.8 | @uppy/provider-views | 1.11.2 |
+| @uppy/box | 0.3.7 | @uppy/react | 1.11.5 |
+| @uppy/companion-client | 1.8.3 | @uppy/robodog | 1.10.6 |
+| @uppy/companion | 2.6.0 | @uppy/screen-capture | 1.0.16 |
+| @uppy/core | 1.16.2 | @uppy/status-bar | 1.9.2 |
+| @uppy/dashboard | 1.17.1 | @uppy/svelte | 0.1.6 |
+| @uppy/drag-drop | 1.4.26 | @uppy/thumbnail-generator | 1.7.7 |
+| @uppy/dropbox | 1.4.25 | @uppy/transloadit | 1.6.22 |
+| @uppy/facebook | 1.1.25 | @uppy/tus | 1.8.6 |
+| @uppy/file-input | 1.4.24 | @uppy/unsplash | 0.1.9 |
+| @uppy/form | 1.3.27 | @uppy/url | 1.5.19 |
+| @uppy/golden-retriever | 1.3.26 | @uppy/utils | 3.4.2 |
+| @uppy/google-drive | 1.5.25 | @uppy/vue | 0.1.7 |
+| @uppy/image-editor | 0.2.3 | @uppy/webcam | 1.8.7 |
+| @uppy/informer | 1.6.2 | @uppy/xhr-upload | 1.7.1 |
+| @uppy/instagram | 1.4.25 | @uppy/zoom | 0.1.14 |
+| @uppy/onedrive | 1.1.25 | uppy | 1.26.1 |
+
+- @uppy/companion: fix crash when S3 is not configured (#2798 / @goto-bus-stop)
+- @uppy/companion: generate type declaration file (#2749 / @goto-bus-stop)
+- @uppy/core: support Vue 3's proxied objects in `removePlugin()` (#2793 / @arturi)
+
+## February 2021
+
+## 1.26.0
+
+Released: 2021-02-26
+
+This release adds a new `disabled` option for the Dashboard, some build system improvements and a fix for Transloadit plugin.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/box | 0.3.6 | @uppy/robodog | 1.10.5 |
+| @uppy/dashboard | 1.17.0 | @uppy/screen-capture | 1.0.15 |
+| @uppy/dropbox | 1.4.24 | @uppy/svelte | 0.1.5 |
+| @uppy/facebook | 1.1.24 | @uppy/transloadit | 1.6.21 |
+| @uppy/google-drive | 1.5.24 | @uppy/unsplash | 0.1.8 |
+| @uppy/image-editor | 0.2.2 | @uppy/url | 1.5.18 |
+| @uppy/instagram | 1.4.24 | @uppy/vue | 0.1.6 |
+| @uppy/locales | 1.17.2 | @uppy/webcam | 1.8.6 |
+| @uppy/onedrive | 1.1.24 | @uppy/zoom | 0.1.13 |
+| @uppy/react | 1.11.4 | uppy | 1.26.0 |
+
+- build: set legacy-peer-deps for npm 7. We have some peerDependency mismatches in our install tree. In npm 6 this was OK (maybe reason for a warning) but in npm 7 they hard fail the install
+- build: added npm version check (33e656cad32b865f960dbd88abf4d3839c8377f0 / @goto-bus-stop)
+- @uppy/locales: fix Dutch spelling mistake (#2775 / @janwilts)
+- @uppy/transloadit: make url concatenation more robust (#2777 /@ethanwillis)
+- @uppy/companion: Docker tag release (#2771 / @kiloreux)
+- @uppy/image-editor: Added missing @uppy/utils dependency in @uppy/image-editor package.json (#2770 / @mrogelja)
+- @uppy/dashboard: Added `opts.disabled` for the Dashboard (#2768, #1530 / @arturi, @nqst)
+
+## 1.25.2
+
+Released: 2021-02-12
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/robodog | 1.10.4 | uppy | 1.25.2 |
+| @uppy/transloadit | 1.6.20 | - | - |
+
+- @uppy/transloadit: fix a case where the plugin used stale file data. (@goto-bus-stop)
+
+## 1.25.1
+
+Released: 2021-02-10
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.13 | @uppy/provider-views | 1.11.1 |
+| @uppy/aws-s3 | 1.7.7 | @uppy/react | 1.11.3 |
+| @uppy/box | 0.3.5 | @uppy/robodog | 1.10.3 |
+| @uppy/companion-client | 1.8.2 | @uppy/screen-capture | 1.0.14 |
+| @uppy/companion | 2.5.1 | @uppy/status-bar | 1.9.1 |
+| @uppy/core | 1.16.1 | @uppy/svelte | 0.1.4 |
+| @uppy/dashboard | 1.16.1 | @uppy/thumbnail-generator | 1.7.6 |
+| @uppy/drag-drop | 1.4.25 | @uppy/transloadit | 1.6.19 |
+| @uppy/dropbox | 1.4.23 | @uppy/tus | 1.8.5 |
+| @uppy/facebook | 1.1.23 | @uppy/unsplash | 0.1.7 |
+| @uppy/file-input | 1.4.23 | @uppy/url | 1.5.17 |
+| @uppy/form | 1.3.26 | @uppy/utils | 3.4.1 |
+| @uppy/golden-retriever | 1.3.25 | @uppy/vue | 0.1.5 |
+| @uppy/google-drive | 1.5.23 | @uppy/webcam | 1.8.5 |
+| @uppy/informer | 1.6.1 | @uppy/xhr-upload | 1.7.0 |
+| @uppy/instagram | 1.4.23 | @uppy/zoom | 0.1.12 |
+| @uppy/onedrive | 1.1.23 | uppy | 1.25.1 |
+| @uppy/progress-bar | 1.3.25 | - | - |
+
+- @uppy/companion: Companion should respect previously set value for Accesss-Control-Allow-Methods (#2726 / @tim-kos, @mifi, @so-steve)
+- @uppy/xhr-upload: accept a `headers: (file) => {}` function (#2747, #2299 / @goto-but-stop)
+- @uppy/transloadit: fix polling fallback bugs (#2759 / @goto-bus-stop)
+- @uppy/dashboard: fix showing showProgressDetails on md and up (#2760 / @goto-bus-stop)
+- @uppy/utils: added mp4 file type support — Safari 14.0 on Mac records audio using audio/mp4 MIME type which isn't currently recognised by Uppy (#2753 / @dominiceden)
 
 ## January 2021
 
@@ -95,7 +198,7 @@ This releases also fixes an issue with image-editor package being unavailable in
 - @uppy/locales: fixed Russian grammar (#2714 / @DenysNosov)
 - @uppy/dashboard: emit fileId on both file-edit-start and file-edit-complete events (#2729 / @arturi)
 - build: fixes around Github actions and Companion deploys (#2717 / @kiloreux)
-- docs: Add Integration Guide (#2696 / @ajkachnic) 
+- docs: Add Integration Guide (#2696 / @ajkachnic)
 - docs: list required permissions to upload S3 files using companion (#1825 / @mkopinsky)
 - docs: remove warning about multiple uploads on S3 which is now fixed (#2720 / @Jbithell)
 - docs: update xhrupload.md (#2731 / @hxgf)

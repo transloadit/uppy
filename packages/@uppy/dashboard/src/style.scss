@@ -139,6 +139,10 @@
   [data-uppy-theme="dark"] & {
     background-color: $gray-900;
   }
+
+  .uppy-Dashboard--isDisabled & {
+    cursor: not-allowed;
+  }
 }
 
 .uppy-Dashboard-innerWrap {
@@ -149,11 +153,22 @@
   position: relative;
   border-radius: 5px;
   opacity: 0;
-}
 
-  .uppy-Dashboard--isInnerWrapVisible .uppy-Dashboard-innerWrap {
+  .uppy-Dashboard--isInnerWrapVisible & {
     opacity: 1;
   }
+
+  .uppy-Dashboard--isDisabled & {
+    pointer-events: none;
+    opacity: 0.6;
+    filter: grayscale(100%);
+    user-select: none;
+  }
+}
+
+.uppy-Dashboard--isDisabled .uppy-ProviderIconBg {
+  fill: #9f9f9f;
+}
 
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
   position: fixed;
@@ -603,6 +618,11 @@
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+// Do not show progress details in the StatusBar if we do not have space.
+.uppy-Dashboard:not(.uppy-size--md) .uppy-StatusBar-additionalInfo {
+  display: none;
 }
 
 .uppy-Dashboard-filesContainer {

@@ -28,11 +28,11 @@ class FileInput extends React.Component {
 
   installPlugin () {
     const uppy = this.props.uppy
-    const options = Object.assign(
-      { id: 'react:FileInput' },
-      this.props,
-      { target: this.container }
-    )
+    const options = {
+      id: 'react:FileInput',
+      ...this.props,
+      target: this.container,
+    }
     delete options.uppy
 
     uppy.use(FileInputPlugin, options)
@@ -50,7 +50,7 @@ class FileInput extends React.Component {
     return h('div', {
       ref: (container) => {
         this.container = container
-      }
+      },
     })
   }
 }
@@ -59,7 +59,7 @@ FileInput.propTypes = {
   uppy: propTypes.uppy,
   locale: propTypes.locale,
   pretty: PropTypes.bool,
-  inputName: PropTypes.string
+  inputName: PropTypes.string,
 }
 FileInput.defaultProps = {
 }

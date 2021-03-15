@@ -11,29 +11,29 @@ const getSharedProps = (fileOrFolder, props) => ({
   columns: props.columns,
   showTitles: props.showTitles,
   viewType: props.viewType,
-  i18n: props.i18n
+  i18n: props.i18n,
 })
 
 module.exports = (props) => {
   if (!props.folders.length && !props.files.length) {
-    return <div class="uppy-Provider-empty">{props.i18n('noFilesFound')}</div>
+    return <div className="uppy-Provider-empty">{props.i18n('noFilesFound')}</div>
   }
 
   return (
-    <div class="uppy-ProviderBrowser-body">
+    <div className="uppy-ProviderBrowser-body">
       <ul
-        class="uppy-ProviderBrowser-list"
-        onscroll={props.handleScroll}
+        className="uppy-ProviderBrowser-list"
+        onScroll={props.handleScroll}
         role="listbox"
         // making <ul> not focusable for firefox
-        tabindex="-1"
+        tabIndex="-1"
       >
         {props.folders.map(folder => {
           return Item({
             ...getSharedProps(folder, props),
             type: 'folder',
             isDisabled: props.isChecked(folder) ? props.isChecked(folder).loading : false,
-            handleFolderClick: () => props.handleFolderClick(folder)
+            handleFolderClick: () => props.handleFolderClick(folder),
           })
         })}
         {props.files.map(file => {
@@ -48,7 +48,7 @@ module.exports = (props) => {
             ...sharedProps,
             type: 'file',
             isDisabled: !validateRestrictions.result && !sharedProps.isChecked,
-            restrictionReason: restrictionReason
+            restrictionReason,
           })
         })}
       </ul>

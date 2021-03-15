@@ -29,7 +29,7 @@ module.exports = class ProviderView {
       viewType: 'grid',
       showTitles: false,
       showFilter: false,
-      showBreadcrumbs: false
+      showBreadcrumbs: false,
     }
 
     // merge default options with the ones set by user
@@ -58,7 +58,7 @@ module.exports = class ProviderView {
       folders: [],
       directories: [],
       filterInput: '',
-      isSearchVisible: false
+      isSearchVisible: false,
     })
   }
 
@@ -113,16 +113,16 @@ module.exports = class ProviderView {
       type: file.mimeType,
       isRemote: true,
       body: {
-        fileId: file.id
+        fileId: file.id,
       },
       remote: {
         companionUrl: this.plugin.opts.companionUrl,
         url: `${this.provider.fileUrl(file.requestPath)}`,
         body: {
-          fileId: file.id
+          fileId: file.id,
         },
-        providerOptions: Object.assign({}, this.provider.opts, { provider: null })
-      }
+        providerOptions: { ...this.provider.opts, provider: null },
+      },
     }
 
     const fileType = getFileType(tagFile)
@@ -144,7 +144,7 @@ module.exports = class ProviderView {
     return generateFileID({
       data: file,
       name: file.name || file.id,
-      type: file.mimeType
+      type: file.mimeType,
     })
   }
 
@@ -152,7 +152,7 @@ module.exports = class ProviderView {
     const uppy = this.plugin.uppy
     uppy.log(error.toString())
     const message = uppy.i18n('companionError')
-    uppy.info({ message: message, details: error.toString() }, 'error', 5000)
+    uppy.info({ message, details: error.toString() }, 'error', 5000)
   }
 
   handleScroll (e) {
@@ -219,7 +219,8 @@ module.exports = class ProviderView {
     }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
-    const browserProps = Object.assign({}, this.plugin.getPluginState(), {
+    const browserProps = {
+      ...this.plugin.getPluginState(),
       isChecked: this._sharedHandler.isChecked,
       toggleCheckbox: this._sharedHandler.toggleCheckbox,
       handleScroll: this.handleScroll,
@@ -227,7 +228,7 @@ module.exports = class ProviderView {
       cancel: this.cancelPicking,
       headerComponent: Header({
         triggerSearchInput: this.triggerSearchInput,
-        i18n: this.plugin.uppy.i18n
+        i18n: this.plugin.uppy.i18n,
       }),
       title: this.plugin.title,
       viewType: targetViewOptions.viewType,
@@ -237,8 +238,8 @@ module.exports = class ProviderView {
       pluginIcon: this.plugin.icon,
       i18n: this.plugin.uppy.i18n,
       uppyFiles: this.plugin.uppy.getFiles(),
-      validateRestrictions: this.plugin.uppy.validateRestrictions
-    })
+      validateRestrictions: this.plugin.uppy.validateRestrictions,
+    }
 
     return (
       <CloseWrapper onUnmount={this.clearSelection}>
