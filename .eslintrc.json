@@ -98,6 +98,7 @@
     "react/sort-comp": ["warn"],
     "react/style-prop-object": ["warn"],
     "vars-on-top": ["warn"],
+    "import/no-extraneous-dependencies": ["warn"],
 
     // compat
     ////////////////////////////////////////////////////////////
