@@ -104,6 +104,13 @@ module.exports = class GoldenRetriever extends Plugin {
       ...this.getUploadingFiles()
     }
 
+    // If all files have been removed by the user, clear recovery state
+    if (Object.keys(filesToSave).length === 0) {
+      this.uppy.setState({ recoveredState: null })
+      MetaDataStore.cleanup(this.uppy.opts.id)
+      return
+    }
+
     // We dont’t need to store file.data on local files, because the actual blob will be restored later,
     // and we want to avoid having weird properties in the serialized object.
     // Also adding file.isRestored to all files, since they will be restored from local storage
@@ -120,13 +127,6 @@ module.exports = class GoldenRetriever extends Plugin {
           isRestored: true,
           data: null,
           preview: null
-          // progress: {
-          //   ...filesToSave[file].progress,
-          //   percentage: 0,
-          //   bytesUploaded: 0,
-          //   uploadComplete: false,
-          //   uploadStarted: null
-          // }
         }
       }
     })
@@ -140,6 +140,7 @@ module.exports = class GoldenRetriever extends Plugin {
     })
 
     const { currentUploads } = this.uppy.getState()
+
     this.MetaDataStore.save({
       currentUploads: currentUploads,
       files: filesToSaveWithoutData,
@@ -289,6 +290,7 @@ module.exports = class GoldenRetriever extends Plugin {
   }
 
   handleRestoreConfirmed = () => {
+    this.uppy.log('[GoldenRetriever] Restore confirmed, proceeding...')
     // start all uploads again when file blobs are restored
     const { currentUploads } = this.uppy.getState()
     if (currentUploads) {
@@ -301,8 +303,19 @@ module.exports = class GoldenRetriever extends Plugin {
   }
 
   abortRestore = () => {
+    this.uppy.log('[GoldenRetriever] Aborting restore...')
+
+    const fileIDs = Object.keys(this.uppy.getState().files)
+    this.deleteBlobs(fileIDs).then(() => {
+      this.uppy.log(`[GoldenRetriever] Removed ${fileIDs.length} files`)
+    }).catch((err) => {
+      this.uppy.log(`[GoldenRetriever] Could not remove ${fileIDs.length} files`, 'warning')
+      this.uppy.log(err)
+    })
+
     this.uppy.cancelAll()
     this.uppy.setState({ recoveredState: null })
+    MetaDataStore.cleanup(this.uppy.opts.id)
   }
 
   handleComplete = ({ successful }) => {
@@ -313,6 +326,9 @@ module.exports = class GoldenRetriever extends Plugin {
       this.uppy.log(`[GoldenRetriever] Could not remove ${successful.length} files that finished uploading`, 'warning')
       this.uppy.log(err)
     })
+
+    this.uppy.setState({ recoveredState: null })
+    MetaDataStore.cleanup(this.uppy.opts.id)
   }
 
   restoreBlobs = () => {

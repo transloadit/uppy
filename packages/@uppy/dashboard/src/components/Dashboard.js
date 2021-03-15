@@ -51,8 +51,18 @@ module.exports = function Dashboard (props) {
   }
 
   const showFileList = props.showSelectedFiles && !noFiles
-
   const numberOfFilesForRecovery = props.recoveredState ? Object.keys(props.recoveredState.files).length : null
+
+  const renderStartOverBtn = () => {
+    return (
+      <button
+        class="uppy-u-reset uppy-c-btn uppy-Dashboard-serviceMsg-actionBtn"
+        onClick={props.handleCancelRestore}
+      >
+        {props.i18n('startOver')}
+      </button>
+    )
+  }
 
   const dashboard = (
     <div
@@ -111,14 +121,10 @@ module.exports = function Dashboard (props) {
                   <circle fill="#000" cx="12" cy="17" r="1" />
                 </g>
               </svg>
-              We’ve recovered {numberOfFilesForRecovery} files you’ve previousely selected. You can keep them or
-              {' '}
-              <button
-                class="uppy-u-reset uppy-c-btn uppy-Dashboard-serviceMsg-actionBtn"
-                onClick={props.handleCancelRestore}
-              >
-                start over
-              </button>
+              {props.i18nArray('recoveredXFiles', {
+                smart_count: numberOfFilesForRecovery,
+                startOver: renderStartOverBtn()
+              })}
             </div>
           ) : null}
 
