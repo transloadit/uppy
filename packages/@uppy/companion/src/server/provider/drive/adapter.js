@@ -131,8 +131,8 @@ exports.getImageRotation = (item) => item.imageMediaMetadata && item.imageMediaM
 
 exports.getImageDate = (item) => item.imageMediaMetadata && item.imageMediaMetadata.date
 
-exports.getVideoHeight = (item) => item.videoMediaMetadata && item.videoMetadata.height
+exports.getVideoHeight = (item) => item.videoMediaMetadata && item.videoMediaMetadata.height
 
-exports.getVideoWidth = (item) => item.videoMediaMetadata && item.videoMetadata.width
+exports.getVideoWidth = (item) => item.videoMediaMetadata && item.videoMediaMetadata.width
 
-exports.getVideoDurationMillis = (item) => item.videoMediaMetadata && item.videoMetadata.durationMillis
+exports.getVideoDurationMillis = (item) => item.videoMediaMetadata && item.videoMediaMetadata.durationMillis
