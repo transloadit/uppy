@@ -49,7 +49,8 @@ module.exports = class StatusBar extends Plugin {
         xMoreFilesAdded: {
           0: '%{smart_count} more file added',
           1: '%{smart_count} more files added'
-        }
+        },
+        reSelectGhosts: 'Please re-select (or remove) files marked with ghosts'
       }
     }
 
