@@ -122,3 +122,17 @@ exports.getGsuiteExportType = (mimeType) => {
 
   return typeMaps[mimeType] || 'application/pdf'
 }
+
+exports.getImageHeight = (item) => item.imageMediaMetadata && item.imageMediaMetadata.height
+
+exports.getImageWidth = (item) => item.imageMediaMetadata && item.imageMediaMetadata.width
+
+exports.getImageRotation = (item) => item.imageMediaMetadata && item.imageMediaMetadata.rotation
+
+exports.getImageDate = (item) => item.imageMediaMetadata && item.imageMediaMetadata.date
+
+exports.getVideoHeight = (item) => item.videoMediaMetadata && item.videoMetadata.height
+
+exports.getVideoWidth = (item) => item.videoMediaMetadata && item.videoMetadata.width
+
+exports.getVideoDurationMillis = (item) => item.videoMediaMetadata && item.videoMetadata.durationMillis
