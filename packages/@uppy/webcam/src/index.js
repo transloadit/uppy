@@ -187,12 +187,17 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
+  isAudioOnly () {
+    return this.opts.modes.length === 1 && this.opts.modes[0] === 'audio-only'
+  }
+
   getConstraints (deviceId = null) {
     const acceptsAudio = this.opts.modes.indexOf('video-audio') !== -1
       || this.opts.modes.indexOf('audio-only') !== -1
-    const acceptsVideo = this.opts.modes.indexOf('video-audio') !== -1
-      || this.opts.modes.indexOf('video-only') !== -1
-      || this.opts.modes.indexOf('picture') !== -1
+    const acceptsVideo = !this.isAudioOnly()
+        && (this.opts.modes.indexOf('video-audio') !== -1
+          || this.opts.modes.indexOf('video-only') !== -1
+          || this.opts.modes.indexOf('picture') !== -1)
 
     const videoConstraints = {
       ...(this.opts.videoConstraints ?? { facingMode: this.opts.facingMode }),
@@ -227,12 +232,14 @@ module.exports = class Webcam extends Plugin {
           this.stream = stream
 
           let currentDeviceId = null
+          const tracks = this.isAudioOnly() ? stream.getAudioTracks() : stream.getVideoTracks()
+
           if (!options || !options.deviceId) {
-            currentDeviceId = stream.getVideoTracks()[0].getSettings().deviceId
+            currentDeviceId = tracks[0].getSettings().deviceId
           } else {
-            stream.getVideoTracks().forEach((videoTrack) => {
-              if (videoTrack.getSettings().deviceId === options.deviceId) {
-                currentDeviceId = videoTrack.getSettings().deviceId
+            tracks.forEach((track) => {
+              if (track.getSettings().deviceId === options.deviceId) {
+                currentDeviceId = track.getSettings().deviceId
               }
             })
           }
@@ -273,8 +280,7 @@ module.exports = class Webcam extends Plugin {
         preferredVideoMimeTypes = restrictions.allowedFileTypes.map(toMimeType).filter(isVideoMimeType)
       }
 
-      const acceptableMimeTypes = preferredVideoMimeTypes.filter((candidateType) =>
-        MediaRecorder.isTypeSupported(candidateType)
+      const acceptableMimeTypes = preferredVideoMimeTypes.filter((candidateType) => MediaRecorder.isTypeSupported(candidateType)
           && getFileTypeExtension(candidateType))
       if (acceptableMimeTypes.length > 0) {
         options.mimeType = acceptableMimeTypes[0]
@@ -553,7 +559,7 @@ module.exports = class Webcam extends Plugin {
       recordingLengthSeconds: 0,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
