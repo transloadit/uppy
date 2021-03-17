@@ -20,8 +20,11 @@ const DEAUTH_EVENT_NAME = 'app_deauthorized'
 class Zoom extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = options.provider = Zoom.authProvider
-    this.client = purest(options)
+    this.authProvider = Zoom.authProvider
+    this.client = purest({
+      ...options,
+      provider: Zoom.authProvider,
+    })
   }
 
   static get authProvider () {
@@ -33,7 +36,7 @@ class Zoom extends Provider {
     - returns list of months by default
     - drill down for specific files in each month
     */
-    const token = options.token
+    const { token } = options
     const query = options.query || {}
     const { cursor, from, to } = query
     const meetingId = options.directory || ''
@@ -78,7 +81,7 @@ class Zoom extends Provider {
     const queryObj = {
       page_size: PAGE_SIZE,
       from: moment.tz(from, userResponse.body.timezone || 'UTC').startOf('day').tz('UTC').format('YYYY-MM-DD'),
-      to: moment.tz(to, userResponse.body.timezone || 'UTC').endOf('day').tz('UTC').format('YYYY-MM-DD')
+      to: moment.tz(to, userResponse.body.timezone || 'UTC').endOf('day').tz('UTC').format('YYYY-MM-DD'),
     }
 
     if (cursor) {
@@ -104,7 +107,7 @@ class Zoom extends Provider {
     // cc files don't have an ID or size
     const meetingId = id
     const fileId = query.recordingId
-    const recordingStart = query.recordingStart
+    const { recordingStart } = query
     const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
 
     const downloadUrlPromise = new Promise((resolve) => {
@@ -149,7 +152,7 @@ class Zoom extends Provider {
   size ({ id, token, query }, done) {
     const meetingId = id
     const fileId = query.recordingId
-    const recordingStart = query.recordingStart
+    const { recordingStart } = query
     const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
 
     return this.client
@@ -183,7 +186,7 @@ class Zoom extends Provider {
 
     const data = {
       items: [],
-      username: adapter.getUserEmail(body)
+      username: adapter.getUserEmail(body),
     }
 
     while (end.isAfter(limit)) {
@@ -196,7 +199,7 @@ class Zoom extends Provider {
         thumbnail: null,
         requestPath: adapter.getDateFolderRequestPath(start, end),
         modifiedDate: adapter.getDateFolderModified(end),
-        size: null
+        size: null,
       })
       end = start.clone().subtract(1, 'days').endOf('day')
       start = (end.isSame(limit, 'month') && limit.date() !== 1) ? limit.clone() : end.clone().date(1).startOf('day')
@@ -217,7 +220,7 @@ class Zoom extends Provider {
     const data = {
       nextPagePath: adapter.getNextPagePath(results),
       items: [],
-      username: adapter.getUserEmail(userResponse)
+      username: adapter.getUserEmail(userResponse),
     }
 
     let items = []
@@ -243,8 +246,8 @@ class Zoom extends Provider {
         modifiedDate: adapter.getStartDate(item),
         size: adapter.getSize(item),
         custom: {
-          topic: adapter.getItemTopic(item)
-        }
+          topic: adapter.getItemTopic(item),
+        },
       })
     })
     return data
@@ -257,8 +260,8 @@ class Zoom extends Provider {
         .post('https://zoom.us/oauth/revoke')
         .options({
           headers: {
-            Authorization: `Basic ${encodedAuth}`
-          }
+            Authorization: `Basic ${encodedAuth}`,
+          },
         })
         .qs({ token })
         .request((err, resp, body) => {
@@ -288,15 +291,15 @@ class Zoom extends Provider {
         .post('https://api.zoom.us/oauth/data/compliance')
         .options({
           headers: {
-            Authorization: `Basic ${encodedAuth}`
-          }
+            Authorization: `Basic ${encodedAuth}`,
+          },
         })
         .json({
           client_id: key,
           user_id: body.payload.user_id,
           account_id: body.payload.account_id,
           deauthorization_event_received: body.payload,
-          compliance_completed: true
+          compliance_completed: true,
         })
         .request((err, resp) => {
           if (err || resp.statusCode !== 200) {
@@ -312,7 +315,7 @@ class Zoom extends Provider {
   _error (err, resp) {
     const authErrorCodes = [
       124, // expired token
-      401
+      401,
     ]
     if (resp) {
       const fallbackMsg = `request to ${this.authProvider} returned ${resp.statusCode}`

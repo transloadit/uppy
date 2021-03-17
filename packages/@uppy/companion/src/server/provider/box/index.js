@@ -15,8 +15,11 @@ const BOX_THUMBNAIL_SIZE = 256
 class Box extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = options.provider = Box.authProvider
-    this.client = purest(options)
+    this.authProvider = Box.authProvider
+    this.client = purest({
+      ...options,
+      provider: Box.authProvider,
+    })
     // needed for the thumbnails fetched via companion
     this.needsCookieAuth = true
   }
@@ -36,7 +39,7 @@ class Box extends Provider {
    * Lists files and folders from Box API
    *
    * @param {object} options
-   * @param {function} done
+   * @param {Function} done
    */
   list ({ directory, token, query, companion }, done) {
     const rootFolderID = '0'
@@ -51,16 +54,15 @@ class Box extends Provider {
           err = this._error(err, resp)
           logger.error(err, 'provider.box.list.error')
           return done(err)
-        } else {
-          this._userInfo({ token }, (err, infoResp) => {
-            if (err || infoResp.statusCode !== 200) {
-              err = this._error(err, infoResp)
-              logger.error(err, 'provider.token.user.error')
-              return done(err)
-            }
-            done(null, this.adaptData(body, infoResp.body.login, companion))
-          })
         }
+        this._userInfo({ token }, (err, infoResp) => {
+          if (err || infoResp.statusCode !== 200) {
+            err = this._error(err, infoResp)
+            logger.error(err, 'provider.token.user.error')
+            return done(err)
+          }
+          done(null, this.adaptData(body, infoResp.body.login, companion))
+        })
       })
   }
 
@@ -141,8 +143,8 @@ class Box extends Provider {
         formData: {
           client_id: key,
           client_secret: secret,
-          token
-        }
+          token,
+        },
       })
       .auth(token)
       .request((err, resp) => {
@@ -168,7 +170,7 @@ class Box extends Provider {
         thumbnail: companion.buildURL(adapter.getItemThumbnailUrl(item), true),
         requestPath: adapter.getItemRequestPath(item),
         modifiedDate: adapter.getItemModifiedDate(item),
-        size: adapter.getItemSize(item)
+        size: adapter.getItemSize(item),
       })
     })
 

@@ -7,11 +7,12 @@ jest.mock('../../src/server/helpers/oauth-state', () => require('../mockoauthsta
 const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
+
 const authServer = getServer()
 const authData = {
   dropbox: 'token value',
   box: 'token value',
-  drive: 'token value'
+  drive: 'token value',
 }
 const token = tokenService.generateEncryptedToken(authData, process.env.COMPANION_SECRET)
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
@@ -24,7 +25,7 @@ describe('validate upload data', () => {
       .set('Content-Type', 'application/json')
       .send({
         endpoint: 'http://url.myendpoint.com/files',
-        protocol: 'tusInvalid'
+        protocol: 'tusInvalid',
       })
       .expect(400)
       .then((res) => expect(res.body.message).toBe('unsupported protocol specified'))
@@ -38,7 +39,7 @@ describe('validate upload data', () => {
       .send({
         endpoint: 'http://url.myendpoint.com/files',
         protocol: 'tus',
-        fieldname: 390
+        fieldname: 390,
       })
       .expect(400)
       .then((res) => expect(res.body.message).toBe('fieldname must be a string'))
@@ -52,7 +53,7 @@ describe('validate upload data', () => {
       .send({
         endpoint: 'http://url.myendpoint.com/files',
         protocol: 'tus',
-        metadata: 'I am a string instead of object'
+        metadata: 'I am a string instead of object',
       })
       .expect(400)
       .then((res) => expect(res.body.message).toBe('metadata must be an object'))
@@ -66,7 +67,7 @@ describe('validate upload data', () => {
       .send({
         endpoint: 'http://url.myendpoint.com/files',
         protocol: 'tus',
-        headers: 'I am a string instead of object'
+        headers: 'I am a string instead of object',
       })
       .expect(400)
       .then((res) => expect(res.body.message).toBe('headers must be an object'))
@@ -80,7 +81,7 @@ describe('validate upload data', () => {
       .send({
         endpoint: 'http://url.myendpoint.com/files',
         protocol: 'tus',
-        httpMethod: 'DELETE'
+        httpMethod: 'DELETE',
       })
       .expect(400)
       .then((res) => expect(res.body.message).toBe('unsupported HTTP METHOD specified'))
@@ -96,12 +97,12 @@ describe('validate upload data', () => {
         protocol: 'tus',
         httpMethod: 'POST',
         headers: {
-          customheader: 'header value'
+          customheader: 'header value',
         },
         metadata: {
-          mymetadata: 'matadata value'
+          mymetadata: 'matadata value',
         },
-        fieldname: 'uploadField'
+        fieldname: 'uploadField',
       })
       .expect(200)
   })
@@ -116,12 +117,12 @@ describe('validate upload data', () => {
         protocol: 's3-multipart',
         httpMethod: 'PUT',
         headers: {
-          customheader: 'header value'
+          customheader: 'header value',
         },
         metadata: {
-          mymetadata: 'matadata value'
+          mymetadata: 'matadata value',
         },
-        fieldname: 'uploadField'
+        fieldname: 'uploadField',
       })
       .expect(200)
   })
@@ -129,7 +130,7 @@ describe('validate upload data', () => {
 
 describe('handle master oauth redirect', () => {
   const serverWithMasterOauth = getServer({
-    COMPANION_OAUTH_DOMAIN: 'localhost:3040'
+    COMPANION_OAUTH_DOMAIN: 'localhost:3040',
   })
   test('redirect to a valid uppy instance', () => {
     return request(serverWithMasterOauth)

@@ -2,6 +2,7 @@
 
 const providerManager = require('../../src/server/provider')
 const { getCompanionOptions } = require('../../src/standalone/helper')
+
 let grantConfig
 let companionOptions
 
@@ -39,7 +40,7 @@ describe('Test Provider options', () => {
       key: '123456',
       secret: 'instagram_secret',
       protocol: 'https',
-      scope: ['user_profile', 'user_media']
+      scope: ['user_profile', 'user_media'],
     })
 
     expect(grantConfig.dropbox).toEqual({
@@ -49,7 +50,7 @@ describe('Test Provider options', () => {
       redirect_uri: 'http://localhost:3020/dropbox/redirect',
       authorize_url: 'https://www.dropbox.com/oauth2/authorize',
       access_url: 'https://api.dropbox.com/oauth2/token',
-      callback: '/dropbox/callback'
+      callback: '/dropbox/callback',
     })
 
     expect(grantConfig.box).toEqual({
@@ -59,7 +60,7 @@ describe('Test Provider options', () => {
       redirect_uri: 'http://localhost:3020/box/redirect',
       authorize_url: 'https://account.box.com/api/oauth2/authorize',
       access_url: 'https://api.box.com/oauth2/token',
-      callback: '/box/callback'
+      callback: '/box/callback',
     })
 
     expect(grantConfig.google).toEqual({
@@ -68,9 +69,9 @@ describe('Test Provider options', () => {
       transport: 'session',
       redirect_uri: 'http://localhost:3020/drive/redirect',
       scope: [
-        'https://www.googleapis.com/auth/drive.readonly'
+        'https://www.googleapis.com/auth/drive.readonly',
       ],
-      callback: '/drive/callback'
+      callback: '/drive/callback',
     })
     expect(grantConfig.zoom).toEqual({
       key: 'zoom_key',
@@ -79,17 +80,17 @@ describe('Test Provider options', () => {
       authorize_url: 'https://zoom.us/oauth/authorize',
       redirect_uri: 'http://localhost:3020/zoom/redirect',
       access_url: 'https://zoom.us/oauth/token',
-      callback: '/zoom/callback'
+      callback: '/zoom/callback',
     })
   })
 
   test('adds provider options for secret files', () => {
-    process.env.COMPANION_DROPBOX_SECRET_FILE = process.env.PWD + '/test/resources/dropbox_secret_file'
-    process.env.COMPANION_BOX_SECRET_FILE = process.env.PWD + '/test/resources/box_secret_file'
-    process.env.COMPANION_GOOGLE_SECRET_FILE = process.env.PWD + '/test/resources/google_secret_file'
-    process.env.COMPANION_INSTAGRAM_SECRET_FILE = process.env.PWD + '/test/resources/instagram_secret_file'
-    process.env.COMPANION_ZOOM_SECRET_FILE = process.env.PWD + '/test/resources/zoom_secret_file'
-    process.env.COMPANION_ZOOM_VERIFICATION_TOKEN_FILE = process.env.PWD + '/test/resources/zoom_verification_token_file'
+    process.env.COMPANION_DROPBOX_SECRET_FILE = `${process.env.PWD}/test/resources/dropbox_secret_file`
+    process.env.COMPANION_BOX_SECRET_FILE = `${process.env.PWD}/test/resources/box_secret_file`
+    process.env.COMPANION_GOOGLE_SECRET_FILE = `${process.env.PWD}/test/resources/google_secret_file`
+    process.env.COMPANION_INSTAGRAM_SECRET_FILE = `${process.env.PWD}/test/resources/instagram_secret_file`
+    process.env.COMPANION_ZOOM_SECRET_FILE = `${process.env.PWD}/test/resources/zoom_secret_file`
+    process.env.COMPANION_ZOOM_VERIFICATION_TOKEN_FILE = `${process.env.PWD}/test/resources/zoom_verification_token_file`
 
     companionOptions = getCompanionOptions()
 
@@ -143,10 +144,10 @@ describe('Test Custom Provider options', () => {
       foo: {
         config: {
           key: 'foo_key',
-          secret: 'foo_secret'
+          secret: 'foo_secret',
         },
-        module: jest.mock()
-      }
+        module: jest.mock(),
+      },
     }, providers, grantConfig)
 
     expect(grantConfig.foo.key).toBe('foo_key')

@@ -13,8 +13,8 @@ function logout (req, res, next) {
       req.session.grant.dynamic = null
     }
   }
-  const providerName = req.params.providerName
-  const companion = req.companion
+  const { providerName } = req.params
+  const { companion } = req
   const token = companion.providerTokens ? companion.providerTokens[providerName] : null
   if (token) {
     companion.provider.logout({ token, companion }, (err, data) => {
@@ -29,7 +29,7 @@ function logout (req, res, next) {
       delete companion.providerTokens[providerName]
       tokenService.removeFromCookies(res, companion.options, companion.provider.authProvider)
       cleanSession()
-      res.json(Object.assign({ ok: true }, data))
+      res.json({ ok: true, ...data })
     })
   } else {
     cleanSession()

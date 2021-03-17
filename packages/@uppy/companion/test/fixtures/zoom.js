@@ -12,8 +12,8 @@ module.exports.responses = {
       group_ids: [],
       im_group_ids: [],
       account_id: 'DUMMY-ACCOUNT-ID',
-      language: 'en-US'
-    }
+      language: 'en-US',
+    },
   },
   'https://zoom.us/v2/meetings/DUMMY-UUID%3D%3D/recordings': {
     get: {
@@ -40,20 +40,20 @@ module.exports.responses = {
             play_url: 'https://us02web.zoom.us/rec/play/DUMMY-DOWNLOAD-PATH',
             download_url: 'https://us02web.zoom.us/rec/download/DUMMY-DOWNLOAD-PATH',
             status: 'completed',
-            recording_type: 'shared_screen_with_speaker_view'
-          }
-        ]
-    }
+            recording_type: 'shared_screen_with_speaker_view',
+          },
+        ],
+    },
   },
   'https://us02web.zoom.us/rec/play/DUMMY-DOWNLOAD-PATH': {
-    get: {}
+    get: {},
   },
   'https://api.zoom.us/oauth/data/compliance': {
-    post: {}
+    post: {},
   },
   'https://zoom.us/oauth/revoke': {
-    post: {}
-  }
+    post: {},
+  },
 }
 
 module.exports.expects = {
@@ -64,7 +64,7 @@ module.exports.expects = {
   itemIcon: 'video',
   remoteZoomKey: 'REMOTE-ZOOM-KEY',
   remoteZoomSecret: 'REMOTE-ZOOM-SECRET',
-  remoteZoomVerificationToken: 'REMOTE-ZOOM-VERIFICATION-TOKEN'
+  remoteZoomVerificationToken: 'REMOTE-ZOOM-VERIFICATION-TOKEN',
 }
 
 module.exports.validators = {
@@ -75,5 +75,5 @@ module.exports.validators = {
     }
 
     return true
-  }
+  },
 }

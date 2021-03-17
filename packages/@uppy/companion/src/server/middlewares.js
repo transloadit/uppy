@@ -1,6 +1,6 @@
+const uniq = require('lodash/uniq')
 const tokenService = require('./helpers/jwt')
 const logger = require('./logger')
-const uniq = require('lodash/uniq')
 
 exports.hasSessionAndProvider = (req, res, next) => {
   if (!req.session || !req.body) {
@@ -31,7 +31,7 @@ exports.verifyToken = (req, res, next) => {
     logger.info('cannot auth token', 'token.verify.unset', req.id)
     return res.sendStatus(401)
   }
-  const providerName = req.params.providerName
+  const { providerName } = req.params
   const { err, payload } = tokenService.verifyEncryptedToken(token, req.companion.options.secret)
   if (err || !payload[providerName]) {
     if (err) {
@@ -46,7 +46,7 @@ exports.verifyToken = (req, res, next) => {
 
 // does not fail if token is invalid
 exports.gentleVerifyToken = (req, res, next) => {
-  const providerName = req.params.providerName
+  const { providerName } = req.params
   if (req.companion.authToken) {
     const { err, payload } = tokenService.verifyEncryptedToken(req.companion.authToken, req.companion.options.secret)
     if (!err && payload[providerName]) {

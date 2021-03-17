@@ -52,7 +52,7 @@ module.exports.verifyEncryptedToken = (token, secret) => {
 const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
   const cookieOptions = {
     maxAge: 1000 * EXPIRY, // would expire after one day (24 hrs)
-    httpOnly: true
+    httpOnly: true,
   }
 
   if (companionOptions.cookieDomain) {
@@ -82,7 +82,7 @@ module.exports.addToCookies = (res, token, companionOptions, authProvider) => {
 module.exports.removeFromCookies = (res, companionOptions, authProvider) => {
   const cookieOptions = {
     maxAge: 1000 * EXPIRY, // would expire after one day (24 hrs)
-    httpOnly: true
+    httpOnly: true,
   }
 
   if (companionOptions.cookieDomain) {

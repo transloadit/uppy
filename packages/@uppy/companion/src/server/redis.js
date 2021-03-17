@@ -1,4 +1,5 @@
 const redis = require('redis')
+
 let redisClient
 
 /**

@@ -20,8 +20,9 @@ class Provider {
 
   /**
    * list the files and folders in the provider account
+   *
    * @param {object} options
-   * @param {function} cb
+   * @param {Function} cb
    */
   list (options, cb) {
     throw new Error('method not implemented')
@@ -29,8 +30,9 @@ class Provider {
 
   /**
    * download a certain file from the provider account
+   *
    * @param {object} options
-   * @param {function} cb
+   * @param {Function} cb
    */
   download (options, cb) {
     throw new Error('method not implemented')
@@ -38,8 +40,9 @@ class Provider {
 
   /**
    * return a thumbnail for a provider file
+   *
    * @param {object} options
-   * @param {function} cb
+   * @param {Function} cb
    */
   thumbnail (options, cb) {
     throw new Error('method not implemented')
@@ -47,8 +50,9 @@ class Provider {
 
   /**
    * get the size of a certain file in the provider account
+   *
    * @param {object} options
-   * @param {function} cb
+   * @param {Function} cb
    */
   size (options, cb) {
     throw new Error('method not implemented')
@@ -56,8 +60,9 @@ class Provider {
 
   /**
    * handle deauthorization notification from oauth providers
+   *
    * @param {object} options
-   * @param {function} cb
+   * @param {Function} cb
    */
   deauthorizationCallback (options, cb) {
     // @todo consider doing something like cb(new NotImplementedError()) instead
