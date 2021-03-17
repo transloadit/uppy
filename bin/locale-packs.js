@@ -1,9 +1,10 @@
 const glob = require('glob')
-const Uppy = require('../packages/@uppy/core')
+const { ESLint } = require('eslint')
 const chalk = require('chalk')
 const path = require('path')
 const stringifyObject = require('stringify-object')
 const fs = require('fs')
+const Uppy = require('../packages/@uppy/core')
 
 const uppy = new Uppy()
 let localePack = {}
@@ -177,7 +178,7 @@ function createTypeScriptLocale (plugin, pluginName) {
   fs.writeFileSync(localePath, localeTypes)
 }
 
-function build () {
+async function build () {
   const { plugins, sources } = buildPluginsList()
 
   for (const pluginName in plugins) {
@@ -206,7 +207,16 @@ function build () {
   const finalLocale = template.replace('en_US.strings = {}', `en_US.strings = ${prettyLocale}`)
 
   const localePackagePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'src', 'en_US.js')
-  fs.writeFileSync(localePackagePath, finalLocale, 'utf-8')
+
+  const linter = new ESLint({
+    fix: true,
+  })
+
+  const [lintResult] = await linter.lintText(finalLocale, {
+    filePath: localePackagePath,
+  })
+  fs.writeFileSync(localePackagePath, lintResult.output, 'utf8')
+
   console.log(`✅ Written '${localePackagePath}'`)
 }
 
