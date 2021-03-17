@@ -76,6 +76,14 @@ glob.sync(localePackagePath).forEach((localePath) => {
   )
 })
 
+// Add BUNDLE-README.MD
+methods.push(
+  fs.promises.copyFile(
+    `${__dirname}/../BUNDLE-README.md`,
+    `./packages/uppy/dist/README.md`
+  )
+)
+
 Promise.all(methods).then(() => {
   console.info(chalk.yellow('✓ JS bundles 🎉'))
 })
