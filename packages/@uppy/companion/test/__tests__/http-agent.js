@@ -64,7 +64,7 @@ describe('test getProtectedHttpAgent', () => {
 describe('test protected request Agent', () => {
   test('allows URLs without IP addresses', (done) => {
     const options = {
-      uri: 'https://www.transloadit.com',
+      uri: 'https://transloadit.com',
       method: 'GET',
       agentClass: getProtectedHttpAgent('https', true)
     }
