@@ -204,6 +204,15 @@ module.exports = {
       },
     },
 
+    {
+      files: ['packages/@uppy/react/src/**/*.js'],
+      rules: {
+        'import/no-extraneous-dependencies': ['error', {
+          peerDependencies: true,
+        }],
+      },
+    },
+
     ...importRules,
   ],
 }

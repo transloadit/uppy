@@ -1,3 +1,4 @@
+// The @uppy/ dependencies are resolved using aliasify
 /* eslint-disable import/no-extraneous-dependencies */
 const Uppy = require('@uppy/core/src')
 const Dashboard = require('@uppy/dashboard/src')
