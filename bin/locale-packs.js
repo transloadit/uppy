@@ -15,7 +15,10 @@ console.warn('\n--> Make sure to run `npm run build:lib` for this locale script 
 
 const mode = process.argv[2]
 if (mode === 'build') {
-  build()
+  build().catch((error) => {
+    console.error(error)
+    process.exit(1)
+  })
 } else if (mode === 'test') {
   test()
 } else {
