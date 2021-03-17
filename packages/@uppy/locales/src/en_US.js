@@ -63,7 +63,7 @@ en_US.strings = {
   },
   filter: 'Filter',
   finishEditingFile: 'Finish editing file',
-  flipHorizontal: 'Flip horizonal',
+  flipHorizontal: 'Flip horizontal',
   folderAdded: {
     '0': 'Added %{smart_count} file from %{folder}',
     '1': 'Added %{smart_count} files from %{folder}',
