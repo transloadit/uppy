@@ -17,10 +17,10 @@ function counter (state = 0, action) {
 }
 
 const reducer = combineReducers({
-  counter: counter,
+  counter,
   // You don't have to use the `uppy` key. But if you don't,
   // you need to provide a custom `selector` to the `uppyReduxStore` call below.
-  uppy: uppyReduxStore.reducer
+  uppy: uppyReduxStore.reducer,
 })
 
 let enhancer = applyMiddleware(
@@ -61,7 +61,7 @@ document.querySelector('#incrementAsync').onclick = () => {
 // Uppy using the same store
 const uppy = new Uppy({
   id: 'redux',
-  store: uppyReduxStore({ store: store }),
+  store: uppyReduxStore({ store }),
   // If we had placed our `reducer` elsewhere in Redux, eg. under an `uppy` key in the state for a profile page,
   // we'd do something like:
   //
@@ -70,12 +70,12 @@ const uppy = new Uppy({
   //   id: 'avatar',
   //   selector: state => state.pages.profile.uppy
   // }),
-  debug: true
+  debug: true,
 })
 uppy.use(Dashboard, {
   target: '#app',
   inline: true,
-  width: 400
+  width: 400,
 })
 uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/' })
 

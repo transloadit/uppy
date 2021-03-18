@@ -3,5 +3,5 @@ const SearchProviderViews = require('./SearchProviderView')
 
 module.exports = {
   ProviderViews,
-  SearchProviderViews
+  SearchProviderViews,
 }

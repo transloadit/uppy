@@ -25,7 +25,7 @@ class App extends Component {
 
     this.state = {
       showInlineDashboard: true,
-      open: false
+      open: false,
     }
 
     this.handleModalClick = this.handleModalClick.bind(this)
@@ -38,7 +38,7 @@ class App extends Component {
 
   handleModalClick () {
     this.setState({
-      open: !this.state.open
+      open: !this.state.open,
     })
   }
 
@@ -57,7 +57,7 @@ class App extends Component {
               checked={showInlineDashboard}
               onChange={(event) => {
                 this.setState({
-                  showInlineDashboard: event.target.checked
+                  showInlineDashboard: event.target.checked,
                 })
               }}
             />
@@ -68,7 +68,7 @@ class App extends Component {
               uppy={this.uppy}
               plugins={['GoogleDrive']}
               metaFields={[
-                { id: 'name', name: 'Name', placeholder: 'File name' }
+                { id: 'name', name: 'Name', placeholder: 'File name' },
               ]}
             />
           )}

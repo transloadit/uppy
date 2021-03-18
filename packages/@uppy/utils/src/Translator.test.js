@@ -6,15 +6,15 @@ const english = {
     youHaveChosen: 'You have chosen: %{fileName}',
     filesChosen: {
       0: '%{smart_count} file selected',
-      1: '%{smart_count} files selected'
+      1: '%{smart_count} files selected',
     },
-    pluralize: function (n) {
+    pluralize (n) {
       if (n === 1) {
         return 0
       }
       return 1
-    }
-  }
+    },
+  },
 }
 
 const russian = {
@@ -24,10 +24,10 @@ const russian = {
     filesChosen: {
       0: 'Выбран %{smart_count} файл',
       1: 'Выбрано %{smart_count} файла',
-      2: 'Выбрано %{smart_count} файлов'
-    }
+      2: 'Выбрано %{smart_count} файлов',
+    },
   },
-  pluralize: function (n) {
+  pluralize (n) {
     if (n % 10 === 1 && n % 100 !== 11) {
       return 0
     }
@@ -37,7 +37,7 @@ const russian = {
     }
 
     return 2
-  }
+  },
 }
 
 describe('Translator', () => {
@@ -51,14 +51,14 @@ describe('Translator', () => {
       const translator = new Translator({
         strings: {
           test: 'Hello %{who}!',
-          test2: 'Hello %{who}'
-        }
+          test2: 'Hello %{who}',
+        },
       })
 
       const who = Symbol('who')
-      expect(translator.translateArray('test', { who: who })).toEqual(['Hello ', who, '!'])
+      expect(translator.translateArray('test', { who })).toEqual(['Hello ', who, '!'])
       // No empty string at the end.
-      expect(translator.translateArray('test2', { who: who })).toEqual(['Hello ', who])
+      expect(translator.translateArray('test2', { who })).toEqual(['Hello ', who])
     })
   })
 
@@ -66,13 +66,13 @@ describe('Translator', () => {
     const launguagePackLoadedInCore = english
     const defaultStrings = {
       strings: {
-        youHaveChosen: 'You have chosen 123: %{fileName}'
-      }
+        youHaveChosen: 'You have chosen 123: %{fileName}',
+      },
     }
     const userSuppliedStrings = {
       strings: {
-        youHaveChosen: 'Beep boop: %{fileName}'
-      }
+        youHaveChosen: 'Beep boop: %{fileName}',
+      },
     }
 
     it('should prioritize language pack strings from Core over default', () => {
@@ -118,9 +118,9 @@ describe('Translator', () => {
     it('should support strings without plural forms', () => {
       const translator = new Translator({
         strings: {
-          theAmount: 'het aantal is %{smart_count}'
+          theAmount: 'het aantal is %{smart_count}',
         },
-        pluralize: () => 0
+        pluralize: () => 0,
       })
 
       expect(
@@ -139,9 +139,9 @@ describe('Translator', () => {
         strings: {
           test: {
             0: 'A test',
-            1: '%{smart_count} tests'
-          }
-        }
+            1: '%{smart_count} tests',
+          },
+        },
       })
 
       expect(() => {

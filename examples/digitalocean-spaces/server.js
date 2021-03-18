@@ -26,6 +26,7 @@ const app = router()
 // Set up the /params endpoint that will create signed URLs for us.
 app.use(require('cors')())
 app.use(require('body-parser').json())
+
 app.use('/companion', companion.app({
   providerOptions: {
     s3: {
@@ -36,10 +37,10 @@ app.use('/companion', companion.app({
       key: process.env.COMPANION_AWS_KEY,
       secret: process.env.COMPANION_AWS_SECRET,
       bucket: process.env.COMPANION_AWS_BUCKET,
-      region: process.env.COMPANION_AWS_REGION
-    }
+      region: process.env.COMPANION_AWS_REGION,
+    },
   },
-  server: { serverUrl: `localhost:${PORT}` }
+  server: { serverUrl: `localhost:${PORT}` },
 }))
 
 // Serve the built CSS file.
@@ -59,9 +60,9 @@ budo(path.join(__dirname, 'main.js'), {
       'babelify',
       ['aliasify', {
         aliases: {
-          '@uppy': path.join(__dirname, '../../packages/@uppy')
-        }
-      }]
-    ]
-  }
+          '@uppy': path.join(__dirname, '../../packages/@uppy'),
+        },
+      }],
+    ],
+  },
 })

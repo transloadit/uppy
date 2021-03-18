@@ -48,14 +48,14 @@ sv_SE.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete} av %{smart_count} fil uppladdad',
     '1': '%{complete} av %{smart_count} filer uppladdade',
-    '2': '%{complete} av %{smart_count} filer uppladdade'
+    '2': '%{complete} av %{smart_count} filer uppladdade',
   },
   filter: 'Filtrera',
   finishEditingFile: 'Avsluta redigering av filen',
   folderAdded: {
     '0': 'La till %{smart_count} fil från %{folder}',
     '1': 'La till %{smart_count} filer från %{folder}',
-    '2': 'La till %{smart_count} filer från %{folder}'
+    '2': 'La till %{smart_count} filer från %{folder}',
   },
   import: 'Importera',
   importFrom: 'Importera från %{name}',
@@ -72,7 +72,7 @@ sv_SE.strings = {
   processingXFiles: {
     '0': 'Processerar %{smart_count} fil',
     '1': 'Processerar %{smart_count} filer',
-    '2': 'Processerar %{smart_count} filer'
+    '2': 'Processerar %{smart_count} filer',
   },
   removeFile: 'Ta bort fil',
   resetFilter: 'Nollställ filter',
@@ -86,7 +86,7 @@ sv_SE.strings = {
   selectX: {
     '0': 'Välj %{smart_count}',
     '1': 'Välj %{smart_count}',
-    '2': 'Välj %{smart_count}'
+    '2': 'Välj %{smart_count}',
   },
   smile: 'Säg omelett!', // translates to "Say cheese!" - which works well in this context in Swedish
   startRecording: 'Starta inspelning',
@@ -102,41 +102,41 @@ sv_SE.strings = {
   uploadXFiles: {
     '0': 'Ladda upp %{smart_count} fil',
     '1': 'Ladda upp %{smart_count} filer',
-    '2': 'Ladda upp %{smart_count} filer'
+    '2': 'Ladda upp %{smart_count} filer',
   },
   uploadXNewFiles: {
     '0': 'Ladda upp %{smart_count} fil',
     '1': 'Ladda upp %{smart_count} filer',
-    '2': 'Ladda upp %{smart_count} filer'
+    '2': 'Ladda upp %{smart_count} filer',
   },
   uploading: 'Laddar upp',
   uploadingXFiles: {
     '0': 'Ladda upp %{smart_count} fil',
     '1': 'Ladda upp %{smart_count} filer',
-    '2': 'Ladda upp %{smart_count} filer'
+    '2': 'Ladda upp %{smart_count} filer',
   },
   xFilesSelected: {
     '0': '%{smart_count} fil vald',
     '1': '%{smart_count} filer valda',
-    '2': '%{smart_count} filer valda'
+    '2': '%{smart_count} filer valda',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} fil tillagd',
     '1': '%{smart_count} filer tillagda',
-    '2': '%{smart_count} filer tillagda'
+    '2': '%{smart_count} filer tillagda',
   },
   xTimeLeft: '%{time} återstår',
   youCanOnlyUploadFileTypes: 'Du kan endast ladda upp: %{types}',
   youCanOnlyUploadX: {
     '0': 'Du kan endast ladda upp %{smart_count} fil',
     '1': 'Du kan endast ladda upp %{smart_count} filer',
-    '2': 'Du kan endast ladda upp %{smart_count} filer'
+    '2': 'Du kan endast ladda upp %{smart_count} filer',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Du måste välja minst %{smart_count} fil',
     '1': 'Du måste välja minst %{smart_count} filer',
-    '2': 'Du måste välja minst %{smart_count} filer'
-  }
+    '2': 'Du måste välja minst %{smart_count} filer',
+  },
 }
 
 sv_SE.pluralize = function (n) {

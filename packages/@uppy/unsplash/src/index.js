@@ -36,13 +36,13 @@ module.exports = class Unsplash extends Plugin {
       companionHeaders: this.opts.companionHeaders,
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'unsplash',
-      pluginId: this.id
+      pluginId: this.id,
     })
   }
 
   install () {
     this.view = new SearchProviderViews(this, {
-      provider: this.provider
+      provider: this.provider,
     })
 
     const target = this.opts.target

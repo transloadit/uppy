@@ -20,12 +20,12 @@ function buildBundle (srcFile, bundleFile, { minify = false, standalone = '' } =
   b.transform(babelify)
   b.on('error', handleErr)
 
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     b.bundle()
-      .pipe(exorcist(bundleFile + '.map'))
+      .pipe(exorcist(`${bundleFile}.map`))
       .pipe(fs.createWriteStream(bundleFile), 'utf8')
       .on('error', handleErr)
-      .on('finish', function () {
+      .on('finish', () => {
         if (minify) {
           console.info(chalk.green(`✓ Built Minified Bundle [${standalone}]:`), chalk.magenta(bundleFile))
         } else {
@@ -60,7 +60,7 @@ const methods = [
     './packages/@uppy/robodog/bundle.js',
     './packages/@uppy/robodog/dist/robodog.min.js',
     { standalone: 'Robodog', minify: true }
-  )
+  ),
 ]
 
 // Build minified versions of all the locales
@@ -76,6 +76,6 @@ glob.sync(localePackagePath).forEach((localePath) => {
   )
 })
 
-Promise.all(methods).then(function () {
+Promise.all(methods).then(() => {
   console.info(chalk.yellow('✓ JS bundles 🎉'))
 })

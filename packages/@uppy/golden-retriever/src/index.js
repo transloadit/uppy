@@ -22,23 +22,24 @@ module.exports = class GoldenRetriever extends Plugin {
 
     const defaultOptions = {
       expires: 24 * 60 * 60 * 1000, // 24 hours
-      serviceWorker: false
+      serviceWorker: false,
     }
 
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
     this.MetaDataStore = new MetaDataStore({
       expires: this.opts.expires,
-      storeName: uppy.getID()
+      storeName: uppy.getID(),
     })
     this.ServiceWorkerStore = null
     if (this.opts.serviceWorker) {
       this.ServiceWorkerStore = new ServiceWorkerStore({ storeName: uppy.getID() })
     }
-    this.IndexedDBStore = new IndexedDBStore(Object.assign(
-      { expires: this.opts.expires },
-      this.opts.indexedDB || {},
-      { storeName: uppy.getID() }))
+    this.IndexedDBStore = new IndexedDBStore({
+      expires: this.opts.expires,
+      ...this.opts.indexedDB || {},
+      storeName: uppy.getID(),
+    })
 
     this.saveFilesStateToLocalStorage = throttle(this.saveFilesStateToLocalStorage.bind(this), 500, { leading: true, trailing: true })
     this.restoreState = this.restoreState.bind(this)
@@ -54,7 +55,7 @@ module.exports = class GoldenRetriever extends Plugin {
       this.uppy.setState({
         currentUploads: savedState.currentUploads || {},
         files: savedState.files || {},
-        recoveredState: savedState
+        recoveredState: savedState,
       })
       this.savedPluginData = savedState.pluginData
     }
@@ -101,7 +102,7 @@ module.exports = class GoldenRetriever extends Plugin {
   saveFilesStateToLocalStorage () {
     const filesToSave = {
       ...this.getWaitingFiles(),
-      ...this.getUploadingFiles()
+      ...this.getUploadingFiles(),
     }
 
     // If all files have been removed by the user, clear recovery state
@@ -119,14 +120,14 @@ module.exports = class GoldenRetriever extends Plugin {
       if (filesToSave[file].isRemote) {
         filesToSaveWithoutData[file] = {
           ...filesToSave[file],
-          isRestored: true
+          isRestored: true,
         }
       } else {
         filesToSaveWithoutData[file] = {
           ...filesToSave[file],
           isRestored: true,
           data: null,
-          preview: null
+          preview: null,
         }
       }
     })
@@ -142,9 +143,9 @@ module.exports = class GoldenRetriever extends Plugin {
     const { currentUploads } = this.uppy.getState()
 
     this.MetaDataStore.save({
-      currentUploads: currentUploads,
+      currentUploads,
       files: filesToSaveWithoutData,
-      pluginData: pluginData
+      pluginData,
     })
   }
 
@@ -210,9 +211,9 @@ module.exports = class GoldenRetriever extends Plugin {
       const updatedFileData = {
         data: cachedData,
         isRestored: true,
-        isGhost: false
+        isGhost: false,
       }
-      updatedFiles[fileID] = Object.assign({}, originalFile, updatedFileData)
+      updatedFiles[fileID] = { ...originalFile, ...updatedFileData }
     })
 
     // Loop through files that we can’t restore fully — we only have meta, not blobs,
@@ -221,13 +222,13 @@ module.exports = class GoldenRetriever extends Plugin {
       if (updatedFiles[fileID].data === null) {
         updatedFiles[fileID] = {
           ...updatedFiles[fileID],
-          isGhost: true
+          isGhost: true,
         }
       }
     })
 
     this.uppy.setState({
-      files: updatedFiles
+      files: updatedFiles,
     })
 
     this.uppy.emit('restored', this.savedPluginData)
@@ -335,7 +336,7 @@ module.exports = class GoldenRetriever extends Plugin {
     if (this.uppy.getFiles().length > 0) {
       Promise.all([
         this.loadFileBlobsFromServiceWorker(),
-        this.loadFileBlobsFromIndexedDB()
+        this.loadFileBlobsFromIndexedDB(),
       ]).then((resultingArrayOfObjects) => {
         const blobs = { ...resultingArrayOfObjects[0], ...resultingArrayOfObjects[1] }
         this.onBlobsLoaded(blobs)

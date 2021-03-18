@@ -63,16 +63,16 @@ module.exports = class FileItem extends Component {
       'is-error': !!error,
       'is-resumable': this.props.resumableUploads,
       'is-noIndividualCancellation': !this.props.individualCancellation,
-      'is-ghost': isGhost
+      'is-ghost': isGhost,
     })
 
     return (
       <div
-        class={dashboardItemClass}
+        className={dashboardItemClass}
         id={`uppy_${file.id}`}
         role={this.props.role}
       >
-        <div class="uppy-Dashboard-Item-preview">
+        <div className="uppy-Dashboard-Item-preview">
           <FilePreviewAndLink
             file={file}
             showLinkToFileUploadResult={this.props.showLinkToFileUploadResult}
@@ -99,7 +99,7 @@ module.exports = class FileItem extends Component {
           />
         </div>
 
-        <div class="uppy-Dashboard-Item-fileInfoAndButtons">
+        <div className="uppy-Dashboard-Item-fileInfoAndButtons">
           <FileInfo
             file={file}
             id={this.props.id}

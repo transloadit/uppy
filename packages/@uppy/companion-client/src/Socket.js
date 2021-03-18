@@ -56,7 +56,7 @@ module.exports = class UppySocket {
 
     this.socket.send(JSON.stringify({
       action,
-      payload
+      payload,
     }))
   }
 

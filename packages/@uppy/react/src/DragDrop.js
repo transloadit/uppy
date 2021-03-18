@@ -27,11 +27,11 @@ class DragDrop extends React.Component {
 
   installPlugin () {
     const uppy = this.props.uppy
-    const options = Object.assign(
-      { id: 'react:DragDrop' },
-      this.props,
-      { target: this.container }
-    )
+    const options = {
+      id: 'react:DragDrop',
+      ...this.props,
+      target: this.container,
+    }
     delete options.uppy
 
     uppy.use(DragDropPlugin, options)
@@ -49,14 +49,14 @@ class DragDrop extends React.Component {
     return h('div', {
       ref: (container) => {
         this.container = container
-      }
+      },
     })
   }
 }
 
 DragDrop.propTypes = {
   uppy: propTypes.uppy,
-  locale: propTypes.locale
+  locale: propTypes.locale,
 }
 DragDrop.defaultProps = {
 }

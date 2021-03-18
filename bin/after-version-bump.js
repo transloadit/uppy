@@ -16,6 +16,7 @@ const { promisify } = require('util')
 const once = require('events.once')
 const globby = require('globby')
 const fs = require('fs')
+
 const readFile = promisify(fs.readFile)
 const writeFile = promisify(fs.writeFile)
 
@@ -36,7 +37,7 @@ async function updateVersions (files, packageName) {
   const urlPart = packageName === 'uppy' ? packageName : packageName.slice(1)
 
   const replacements = new Map([
-    [RegExp(`${urlPart}/v\\d+\\.\\d+\\.\\d+\\/`, 'g'), `${urlPart}/v${version}/`]
+    [RegExp(`${urlPart}/v\\d+\\.\\d+\\.\\d+\\/`, 'g'), `${urlPart}/v${version}/`],
     // maybe more later
   ])
 
@@ -62,8 +63,8 @@ async function npmRunBuild () {
     env: {
       ...process.env,
       FRESH: true, // force rebuild everything
-      IS_RELEASE_BUILD: true
-    }
+      IS_RELEASE_BUILD: true,
+    },
   })
   const [exitCode] = await once(npmRun, 'exit')
   if (exitCode !== 0) {
@@ -91,7 +92,7 @@ async function main () {
     'website/src/docs/**',
     'website/src/examples/**',
     'website/themes/uppy/layout/**',
-    '!**/node_modules/**'
+    '!**/node_modules/**',
   ])
 
   await updateVersions(files, 'uppy')
@@ -106,7 +107,7 @@ async function main () {
   await npmRunBuild()
 }
 
-main().catch(function (err) {
+main().catch((err) => {
   console.error(err.stack)
   process.exit(1)
 })

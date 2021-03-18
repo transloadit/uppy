@@ -48,14 +48,14 @@ el_GR.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete} από %{smart_count} αρχεία ανέβηκαν',
     '1': '%{complete} από %{smart_count} αρχείο ανέβηκε',
-    '2': '%{complete} από %{smart_count} αρχεία ανέβηκαν'
+    '2': '%{complete} από %{smart_count} αρχεία ανέβηκαν',
   },
   filter: 'Φιλτράρισμα',
   finishEditingFile: 'Ολοκλήρωση επεξεργασίας αρχείου',
   folderAdded: {
     '0': 'Προστέθηκαν %{smart_count} αρχεία από %{folder}',
     '1': 'Προστέθηκε %{smart_count} αρχείο από %{folder}',
-    '2': 'Προστέθηκαν %{smart_count} αρχεία από %{folder}'
+    '2': 'Προστέθηκαν %{smart_count} αρχεία από %{folder}',
   },
   import: 'Εισαγωγή',
   importFrom: 'Εισαγωγή από %{name}',
@@ -72,7 +72,7 @@ el_GR.strings = {
   processingXFiles: {
     '0': 'Προετοιμασία %{smart_count} αρχείων',
     '1': 'Προετοιμασία %{smart_count} αρχείου',
-    '2': 'Προετοιμασία %{smart_count} αρχείων'
+    '2': 'Προετοιμασία %{smart_count} αρχείων',
   },
   removeFile: 'Αφαίρεση αρχείου',
   resetFilter: 'Επαναφορά φίλτρου',
@@ -86,7 +86,7 @@ el_GR.strings = {
   selectX: {
     '0': 'Επιλογή %{smart_count}',
     '1': 'Επιλογή %{smart_count}',
-    '2': 'Επιλογή %{smart_count}'
+    '2': 'Επιλογή %{smart_count}',
   },
   smile: 'Χαμογελάστε!',
   startRecording: 'Ξεκίνημα εγγραφής βίντεο',
@@ -102,41 +102,41 @@ el_GR.strings = {
   uploadXFiles: {
     '0': 'Μεταφόρτωση %{smart_count} αρχείων',
     '1': 'Μεταφόρτωση %{smart_count} αρχείου',
-    '2': 'Μεταφόρτωση %{smart_count} αρχείων'
+    '2': 'Μεταφόρτωση %{smart_count} αρχείων',
   },
   uploadXNewFiles: {
     '0': 'Μεταφόρτωση +%{smart_count} αρχείων',
     '1': 'Μεταφόρτωση +%{smart_count} αρχείου',
-    '2': 'Μεταφόρτωση +%{smart_count} αρχείων'
+    '2': 'Μεταφόρτωση +%{smart_count} αρχείων',
   },
   uploading: 'Γίνεται μεταφόρτωση',
   uploadingXFiles: {
     '0': 'Μεταφορτώνονται %{smart_count} αρχεία',
     '1': 'Μεταφορτώνεται %{smart_count} αρχείο',
-    '2': 'Μεταφορτώνονται %{smart_count} αρχεία'
+    '2': 'Μεταφορτώνονται %{smart_count} αρχεία',
   },
   xFilesSelected: {
     '0': '%{smart_count} επιλεγμένα αρχεία',
     '1': '%{smart_count} επιλεγμένο αρχείο',
-    '2': '%{smart_count} επιλεγμένα αρχεία'
+    '2': '%{smart_count} επιλεγμένα αρχεία',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} ακόμα αρχεία προστέθηκαν',
     '1': '%{smart_count} ακόμα αρχείο προστέθηκε',
-    '2': '%{smart_count} ακόμα αρχεία προστέθηκαν'
+    '2': '%{smart_count} ακόμα αρχεία προστέθηκαν',
   },
   xTimeLeft: '%{time} απομένουν',
   youCanOnlyUploadFileTypes: 'Μπορείτε να ανεβάσετε μόνο: %{types}',
   youCanOnlyUploadX: {
     '0': 'Μπορείτε να ανεβάσετε μόνο %{smart_count} αρχεία',
     '1': 'Μπορείτε να ανεβάσετε μόνο %{smart_count} αρχείο',
-    '2': 'Μπορείτε να ανεβάσετε μόνο %{smart_count} αρχεία'
+    '2': 'Μπορείτε να ανεβάσετε μόνο %{smart_count} αρχεία',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχεία',
     '1': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχείο',
-    '2': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχεία'
-  }
+    '2': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχεία',
+  },
 }
 
 el_GR.pluralize = function (n) {

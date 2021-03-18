@@ -48,7 +48,7 @@ describe('useUppy()', () => {
 
     function GarbageUppy () {
       const uppy = useUppy(() => ({
-        garbage: 'lala'
+        garbage: 'lala',
       }))
 
       return <div x={uppy} />

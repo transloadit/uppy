@@ -33,6 +33,7 @@ const browserify = require('browserify')
 const watchify = require('watchify')
 
 const bresolve = require('browser-resolve')
+
 function useSourcePackages (b) {
   b._bresolve = (id, opts, cb) => {
     bresolve(id, opts, (err, result, pkg) => {
@@ -82,18 +83,18 @@ glob(srcPattern, (err, files) => {
       cache: {},
       packageCache: {},
       debug: true,
-      plugin: browserifyPlugins
+      plugin: browserifyPlugins,
     })
 
     // Aliasing for using `require('uppy')`, etc.
     b
       .transform(babelify, {
-        root: path.join(__dirname, '..')
+        root: path.join(__dirname, '..'),
       })
       .transform(aliasify, {
         aliases: {
-          '@uppy': `./${path.relative(process.cwd(), path.join(__dirname, '../packages/@uppy'))}`
-        }
+          '@uppy': `./${path.relative(process.cwd(), path.join(__dirname, '../packages/@uppy'))}`,
+        },
       })
 
     // Listeners for changes, errors, and completion.
@@ -151,7 +152,7 @@ function onError (err) {
   console.error(chalk.red('✗ error:'), chalk.red(err.message))
   notifier.notify({
     title: 'Build failed:',
-    message: err.message
+    message: err.message,
   })
   this.emit('end')
 
