@@ -201,7 +201,8 @@ class Uppy {
         isHidden: true,
         type: 'info',
         message: ''
-      }
+      },
+      recoveredState: null
     })
 
     this._storeUnsubscribe = this.store.subscribe((prevState, nextState, patch) => {

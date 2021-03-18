@@ -159,7 +159,8 @@ describe('src/Core', () => {
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
         plugins: {},
-        totalProgress: 0
+        totalProgress: 0,
+        recoveredState: null
       }
 
       expect(core.getState()).toEqual(newState)
@@ -183,7 +184,8 @@ describe('src/Core', () => {
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
         plugins: {},
-        totalProgress: 0
+        totalProgress: 0,
+        recoveredState: null
       })
       // new state
       expect(stateUpdateEventMock.mock.calls[1][1]).toEqual({
@@ -196,7 +198,8 @@ describe('src/Core', () => {
         info: { isHidden: true, message: '', type: 'info' },
         meta: {},
         plugins: {},
-        totalProgress: 0
+        totalProgress: 0,
+        recoveredState: null
       })
     })
 
@@ -235,7 +238,8 @@ describe('src/Core', () => {
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
       plugins: {},
-      totalProgress: 0
+      totalProgress: 0,
+      recoveredState: null
     })
   })
 
@@ -295,7 +299,8 @@ describe('src/Core', () => {
       info: { isHidden: true, message: '', type: 'info' },
       meta: {},
       plugins: {},
-      totalProgress: 0
+      totalProgress: 0,
+      recoveredState: null
     })
     expect(plugin.mocks.uninstall.mock.calls.length).toEqual(1)
     expect(core.plugins[Object.keys(core.plugins)[0]].length).toEqual(0)
