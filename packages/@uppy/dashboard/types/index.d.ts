@@ -26,6 +26,7 @@ declare module Dashboard {
     disablePageScrollWhenModalOpen?: boolean
     disableStatusBar?: boolean
     disableThumbnailGenerator?: boolean
+    doneButtonHandler?: () => void
     height?: string | number
     hideCancelButton?: boolean
     hidePauseResumeButton?: boolean
