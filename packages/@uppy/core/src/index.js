@@ -8,10 +8,11 @@ const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
+const findIndex = require('@uppy/utils/lib/findIndex')
 const supportsUploadProgress = require('./supportsUploadProgress')
 const { justErrorsLogger, debugLogger } = require('./loggers')
-const Plugin = require('./Plugin') // Exported from here.
-
+const Plugin = require('./Plugin')
+// Exported from here.
 class RestrictionError extends Error {
   constructor (...args) {
     super(...args)
@@ -1170,8 +1171,15 @@ class Uppy {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
-      const files = { ...this.getState().files }
-      files[file.id] = { ...files[file.id], progress: { ...files[file.id].progress } }
+      const files = {
+        ...this.getState().files,
+      }
+      files[file.id] = {
+        ...files[file.id],
+        progress: {
+          ...files[file.id].progress,
+        },
+      }
       delete files[file.id].progress.postprocess
       // TODO should we set some kind of `fullyComplete` property on the file object
       // so it's easier to see that the file is upload…fully complete…rather than
@@ -1303,14 +1311,22 @@ class Uppy {
     }
 
     const list = this.plugins[instance.type].slice()
-    const index = list.indexOf(instance)
+    // list.indexOf failed here, because Vue3 converted the plugin instance
+    // to a Proxy object, which failed the strict comparison test:
+    // obj !== objProxy
+    const index = findIndex(list, item => item.id === instance.id)
     if (index !== -1) {
       list.splice(index, 1)
       this.plugins[instance.type] = list
     }
 
-    const updatedState = this.getState()
-    delete updatedState.plugins[instance.id]
+    const state = this.getState()
+    const updatedState = {
+      plugins: {
+        ...state.plugins,
+        [instance.id]: undefined,
+      },
+    }
     this.setState(updatedState)
   }
 
@@ -1513,9 +1529,16 @@ class Uppy {
           return
         }
 
-        const updatedUpload = { ...currentUpload, step }
+        const updatedUpload = {
+          ...currentUpload,
+          step,
+        }
+
         this.setState({
-          currentUploads: { ...currentUploads, [uploadID]: updatedUpload },
+          currentUploads: {
+            ...currentUploads,
+            [uploadID]: updatedUpload,
+          },
         })
 
         // TODO give this the `updatedUpload` object as its only parameter maybe?
@@ -1541,8 +1564,24 @@ class Uppy {
         return
       }
 
-      const files = currentUpload.fileIDs
-        .map((fileID) => this.getFile(fileID))
+      // Mark postprocessing step as complete if necessary; this addresses a case where we might get
+      // stuck in the postprocessing UI while the upload is fully complete.
+      // If the postprocessing steps do not do any work, they may not emit postprocessing events at
+      // all, and never mark the postprocessing as complete. This is fine on its own but we
+      // introduced code in the @uppy/core upload-success handler to prepare postprocessing progress
+      // state if any postprocessors are registered. That is to avoid a "flash of completed state"
+      // before the postprocessing plugins can emit events.
+      //
+      // So, just in case an upload with postprocessing plugins *has* completed *without* emitting
+      // postprocessing completion, we do it instead.
+      currentUpload.fileIDs.forEach((fileID) => {
+        const file = this.getFile(fileID)
+        if (file && file.progress.postprocess) {
+          this.emit('postprocess-complete', file)
+        }
+      })
+
+      const files = currentUpload.fileIDs.map((fileID) => this.getFile(fileID))
       const successful = files.filter((file) => !file.error)
       const failed = files.filter((file) => file.error)
       this.addResultData(uploadID, { successful, failed, uploadID })

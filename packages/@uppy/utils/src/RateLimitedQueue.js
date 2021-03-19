@@ -1,12 +1,4 @@
-/**
- * Array.prototype.findIndex ponyfill for old browsers.
- */
-function findIndex (array, predicate) {
-  for (let i = 0; i < array.length; i++) {
-    if (predicate(array[i])) return i
-  }
-  return -1
-}
+const findIndex = require('@uppy/utils/lib/findIndex')
 
 function createCancelError () {
   return new Error('Cancelled')

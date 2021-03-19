@@ -50,6 +50,8 @@ declare module Dashboard {
     thumbnailWidth?: number
     trigger?: string
     width?: string | number
+    autoOpenFileEditor?: boolean
+    disabled?: boolean
   }
 }
 

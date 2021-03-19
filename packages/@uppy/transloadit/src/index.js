@@ -305,7 +305,8 @@ module.exports = class Transloadit extends Plugin {
    * Used when `importFromUploadURLs` is enabled: adds files to the Assembly
    * once they have been fully uploaded.
    */
-  _onFileUploadURLAvailable (file) {
+  _onFileUploadURLAvailable (rawFile) {
+    const file = this.uppy.getFile(rawFile.id)
     if (!file || !file.transloadit || !file.transloadit.assembly) {
       return
     }
@@ -695,14 +696,18 @@ module.exports = class Transloadit extends Plugin {
 
     const assemblyIDs = state.uploadsAssemblies[uploadID]
 
-    // If we don't have to wait for encoding metadata or results, we can close
-    // the socket immediately and finish the upload.
-    if (!this._shouldWaitAfterUpload()) {
+    const closeSocketConnections = () => {
       assemblyIDs.forEach((assemblyID) => {
         const assembly = this.activeAssemblies[assemblyID]
         assembly.close()
         delete this.activeAssemblies[assemblyID]
       })
+    }
+
+    // If we don't have to wait for encoding metadata or results, we can close
+    // the socket immediately and finish the upload.
+    if (!this._shouldWaitAfterUpload()) {
+      closeSocketConnections()
       const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
       this.uppy.addResultData(uploadID, { transloadit: assemblies })
       return Promise.resolve()
@@ -725,6 +730,8 @@ module.exports = class Transloadit extends Plugin {
 
     const watcher = this.assemblyWatchers[uploadID]
     return watcher.promise.then(() => {
+      closeSocketConnections()
+
       const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
 
       // Remove the Assembly ID list for this upload,

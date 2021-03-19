@@ -14,6 +14,7 @@ const cuid = require('cuid')
 const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const createSuperFocus = require('./utils/createSuperFocus')
 const memoize = require('memoize-one').default || require('memoize-one')
+const FOCUSABLE_ELEMENTS = require('@uppy/utils/lib/FOCUSABLE_ELEMENTS')
 
 const TAB_KEY = 9
 const ESC_KEY = 27
@@ -152,6 +153,7 @@ module.exports = class Dashboard extends Plugin {
       browserBackButtonClose: false,
       theme: 'light',
       autoOpenFileEditor: false,
+      disabled: false,
     }
 
     // merge default options with the ones set by user
@@ -508,6 +510,29 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
+  disableAllFocusableElements = (disable) => {
+    const focusableNodes = toArray(this.el.querySelectorAll(FOCUSABLE_ELEMENTS))
+    if (disable) {
+      focusableNodes.forEach((node) => {
+        // save previous tabindex in a data-attribute, to restore when enabling
+        const currentTabIndex = node.getAttribute('tabindex')
+        if (currentTabIndex) {
+          node.dataset.inertTabindex = currentTabIndex
+        }
+        node.setAttribute('tabindex', '-1')
+      })
+    } else {
+      focusableNodes.forEach((node) => {
+        if ('inertTabindex' in node.dataset) {
+          node.setAttribute('tabindex', node.dataset.inertTabindex)
+        } else {
+          node.removeAttribute('tabindex')
+        }
+      })
+    }
+    this.dashboardIsDisabled = disable
+  }
+
   updateBrowserHistory = () => {
     // Ensure history state does not already contain our modal name to avoid double-pushing
     if (!history.state || !history.state[this.modalName]) {
@@ -571,6 +596,10 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
 
+    if (this.opts.disabled) {
+      return
+    }
+
     // 1. Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the browser, https://github.com/transloadit/uppy/issues/1978)
     event.dataTransfer.dropEffect = 'copy'
@@ -583,6 +612,10 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
 
+    if (this.opts.disabled) {
+      return
+    }
+
     clearTimeout(this.removeDragOverClassTimeout)
     // Timeout against flickering, this solution is taken from drag-drop library. Solution with 'pointer-events: none' didn't work across browsers.
     this.removeDragOverClassTimeout = setTimeout(() => {
@@ -593,6 +626,11 @@ module.exports = class Dashboard extends Plugin {
   handleDrop = (event, dropCategory) => {
     event.preventDefault()
     event.stopPropagation()
+
+    if (this.opts.disabled) {
+      return
+    }
+
     clearTimeout(this.removeDragOverClassTimeout)
 
     // 2. Remove dragover class
@@ -769,6 +807,15 @@ module.exports = class Dashboard extends Plugin {
   }
 
   afterUpdate = () => {
+    if (this.opts.disabled && !this.dashboardIsDisabled) {
+      this.disableAllFocusableElements(true)
+      return
+    }
+
+    if (!this.opts.disabled && this.dashboardIsDisabled) {
+      this.disableAllFocusableElements(false)
+    }
+
     this.superFocusOnEachUpdate()
   }
 
@@ -904,9 +951,11 @@ module.exports = class Dashboard extends Plugin {
       allowNewUpload,
       acquirers,
       theme,
+      disabled: this.opts.disabled,
       direction: this.opts.direction,
       activePickerPanel: pluginState.activePickerPanel,
       showFileEditor: pluginState.showFileEditor,
+      disableAllFocusableElements: this.disableAllFocusableElements,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
       getPlugin: this.uppy.getPlugin,

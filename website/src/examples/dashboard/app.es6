@@ -86,7 +86,8 @@ function uppySetOptions () {
 
   window.uppy.getPlugin('Dashboard').setOptions({
     note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : '',
-    theme: opts.darkMode ? 'dark' : 'light'
+    theme: opts.darkMode ? 'dark' : 'light',
+    disabled: opts.disabled
   })
 
   const googleDriveInstance = window.uppy.getPlugin('GoogleDrive')
@@ -187,7 +188,7 @@ function loadLocaleFromCDN (localeName) {
   var head = document.getElementsByTagName('head')[0]
   var js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://releases.transloadit.com/uppy/locales/v1.17.1/${localeName}.min.js`
+  js.src = `https://releases.transloadit.com/uppy/locales/v1.17.2/${localeName}.min.js`
 
   head.appendChild(js)
 }

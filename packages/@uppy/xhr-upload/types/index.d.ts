@@ -2,11 +2,14 @@ import Uppy = require('@uppy/core')
 import XHRUploadLocale = require('./generatedLocale')
 
 declare module XHRUpload {
+  type Headers = {
+    [name: string]: string | number
+  }
   export interface XHRUploadOptions extends Uppy.PluginOptions {
     limit?: number
     bundle?: boolean
     formData?: boolean
-    headers?: any
+    headers?: Headers | ((file: Uppy.UppyFile) => Headers)
     metaFields?: string[]
     fieldName?: string
     timeout?: number
@@ -15,7 +18,7 @@ declare module XHRUpload {
     method?: 'GET' | 'POST' | 'PUT' | 'HEAD' | 'get' | 'post' | 'put' | 'head'
     locale?: XHRUploadLocale
     responseType?: string
-    withCredentials?: boolean    
+    withCredentials?: boolean
   }
 }
 

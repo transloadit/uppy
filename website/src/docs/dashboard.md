@@ -424,6 +424,21 @@ Automatically open file editor (see [`@uppy/image-editor`](/docs/image-editor/))
 
 Use case: user adds an image — Uppy opens Image Editor right away — user crops / adjusts the image — upload.
 
+### `disabled: false`
+
+Enabling this option makes the Dashboard grayed-out and non-interactive. Users won’t be able to click on buttons or drop files.
+
+Useful when you need to confitionally enable/disable file uploading or manipulation, based on a condition in your app. Can be set on init or via API:
+
+```js
+const dashboard = uppy.getPlugin('Dashboard')
+dashboard.setOptions({ disabled: true })
+
+userNameInput.addEventListener('change', () => {
+  dashboard.setOptions({ disabled: false })
+})
+```
+
 ## Methods
 
 ### `openModal()`

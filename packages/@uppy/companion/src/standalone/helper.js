@@ -1,5 +1,5 @@
 const fs = require('fs')
-const merge = require('lodash.merge')
+const merge = require('lodash/merge')
 const stripIndent = require('common-tags/lib/stripIndent')
 const utils = require('../server/helpers/utils')
 const logger = require('../server/logger')

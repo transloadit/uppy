@@ -173,6 +173,9 @@ module.exports = class StatusBar extends Plugin {
         && !file.progress.postprocess
     })
 
+    // If some state was recovered, we want to show Upload button/counter
+    // for all the files, because in this case it’s not an Upload button,
+    // but “Confirm Restore Button”
     if (recoveredState) {
       newFiles = filesArray
     }

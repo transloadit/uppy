@@ -10,7 +10,7 @@ const s3 = require('./server/controllers/s3')
 const getS3Client = require('./server/s3-client')
 const url = require('./server/controllers/url')
 const emitter = require('./server/emitter')
-const merge = require('lodash.merge')
+const merge = require('lodash/merge')
 const redis = require('./server/redis')
 const cookieParser = require('cookie-parser')
 const { getURLBuilder } = require('./server/helpers/utils')
@@ -47,6 +47,7 @@ module.exports.socket = require('./server/socket')
  * Entry point into initializing the Companion app.
  *
  * @param {object} options
+ * @returns {import('express').Express}
  */
 module.exports.app = (options = {}) => {
   validateConfig(options)
@@ -77,8 +78,10 @@ module.exports.app = (options = {}) => {
   // override provider credentials at request time
   app.use('/connect/:authProvider/:override?', getCredentialsOverrideMiddleware(providers, options))
   app.use(Grant(grantConfig))
+
+  app.use(middlewares.mergeAccessControlAllowMethods)
+
   app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE')
     res.header(
       'Access-Control-Allow-Headers',
       [

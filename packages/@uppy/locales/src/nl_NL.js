@@ -6,7 +6,7 @@ nl_NL.strings = {
   allowAccessDescription: 'Geef toestemming om foto\'s of videobeelden te kunnen maken.',
   allowAccessTitle: 'Geef toestemming om je camera te gebruiken',
   authenticateWith: 'Verbinden met %{pluginName}',
-  authenticateWithTitle: 'Verbindt met %{pluginName} om bestanden te selecteren',
+  authenticateWithTitle: 'Verbind met %{pluginName} om bestanden te selecteren',
   back: 'Terug',
   addMore: 'Meer toevoegen',
   browse: 'blader',

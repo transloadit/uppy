@@ -28,6 +28,7 @@ module.exports = function Dashboard (props) {
 
   const dashboardClassName = classNames({
     'uppy-Dashboard': true,
+    'uppy-Dashboard--isDisabled': props.disabled,
     'uppy-Dashboard--animateOpenClose': props.animateOpenClose,
     'uppy-Dashboard--isClosing': props.isClosing,
     'uppy-Dashboard--isDraggingOver': props.isDraggingOver,
@@ -71,6 +72,7 @@ module.exports = function Dashboard (props) {
       data-uppy-num-acquirers={props.acquirers.length}
       data-uppy-drag-drop-supported={isDragDropSupported()}
       aria-hidden={props.inline ? 'false' : props.isHidden}
+      aria-disabled={props.disabled}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
       onPaste={props.handlePaste}
       onDragOver={props.handleDragOver}

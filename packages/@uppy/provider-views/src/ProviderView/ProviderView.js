@@ -5,19 +5,10 @@ const Browser = require('../Browser')
 const LoaderView = require('../Loader')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
 const getFileType = require('@uppy/utils/lib/getFileType')
+const findIndex = require('@uppy/utils/lib/findIndex')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 const SharedHandler = require('../SharedHandler')
 const CloseWrapper = require('../CloseWrapper')
-
-/**
- * Array.prototype.findIndex ponyfill for old browsers.
- */
-function findIndex (array, predicate) {
-  for (let i = 0; i < array.length; i++) {
-    if (predicate(array[i])) return i
-  }
-  return -1
-}
 
 // location.origin does not exist in IE
 function getOrigin () {

@@ -18,7 +18,7 @@ module.exports = class Unsplash extends Plugin {
     this.icon = () => (
       <svg viewBox="0 0 32 32" height="32" width="32" aria-hidden="true">
         <path d="M46.575 10.883v-9h12v9zm12 5h10v18h-32v-18h10v9h12z" fill="#fff" />
-        <rect width="32" height="32" rx="16" />
+        <rect className="uppy-ProviderIconBg" width="32" height="32" rx="16" />
         <path d="M13 12.5V8h6v4.5zm6 2.5h5v9H8v-9h5v4.5h6z" fill="#fff" />
       </svg>
     )
