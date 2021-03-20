@@ -2,8 +2,8 @@
  *
  * sends auth token to uppy client
  */
-const tokenService = require('../helpers/jwt')
 const { URL } = require('url')
+const tokenService = require('../helpers/jwt')
 const { hasMatch, sanitizeHtml } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
 const versionCmp = require('../helpers/version')
@@ -12,7 +12,7 @@ const versionCmp = require('../helpers/version')
  *
  * @param {object} req
  * @param {object} res
- * @param {function} next
+ * @param {Function} next
  */
 module.exports = function sendToken (req, res, next) {
   const uppyAuthToken = req.companion.authToken
@@ -22,7 +22,7 @@ module.exports = function sendToken (req, res, next) {
   }
 
   const dynamic = (req.session.grant || {}).dynamic || {}
-  const state = dynamic.state
+  const { state } = dynamic
   if (state) {
     const origin = oAuthState.getFromState(state, 'origin', req.companion.options.secret)
     const clientVersion = oAuthState.getFromState(

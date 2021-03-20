@@ -1,6 +1,6 @@
+const atob = require('atob')
 const oAuthState = require('../helpers/oauth-state')
 // @ts-ignore
-const atob = require('atob')
 
 /**
  * initializes the oAuth flow for a provider.
@@ -9,7 +9,7 @@ const atob = require('atob')
  * @param {object} res
  */
 module.exports = function connect (req, res) {
-  const secret = req.companion.options.secret
+  const { secret } = req.companion.options
   let state = oAuthState.generateState(secret)
   if (req.query.state) {
     // todo change this query from state to "origin"

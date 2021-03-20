@@ -56,13 +56,6 @@ budo(path.join(__dirname, 'main.js'), {
   port: PORT,
   middleware: app,
   browserify: {
-    transform: [
-      'babelify',
-      ['aliasify', {
-        aliases: {
-          '@uppy': path.join(__dirname, '../../packages/@uppy'),
-        },
-      }],
-    ],
+    transform: ['babelify'],
   },
 })

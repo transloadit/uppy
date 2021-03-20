@@ -5,10 +5,11 @@ jest.mock('../../src/server/helpers/oauth-state', () => require('../mockoauthsta
 const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
+
 const authServer = getServer()
 const authData = {
   dropbox: 'token value',
-  drive: 'token value'
+  drive: 'token value',
 }
 const token = tokenService.generateEncryptedToken(authData, process.env.COMPANION_SECRET)
 

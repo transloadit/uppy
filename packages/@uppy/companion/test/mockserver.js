@@ -17,7 +17,7 @@ module.exports.getServer = (env) => {
   authServer.use(session({ secret: 'grant', resave: true, saveUninitialized: true }))
   authServer.all('*/callback', (req, res, next) => {
     req.session.grant = {
-      response: { access_token: 'fake token' }
+      response: { access_token: 'fake token' },
     }
     next()
   })

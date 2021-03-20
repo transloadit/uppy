@@ -16,13 +16,13 @@ module.exports.responses = {
           modifiedTime: '2016-07-10T20:00:08.096Z',
           ownedByMe: true,
           permissions: [{ role: 'owner', emailAddress: defaults.USERNAME }],
-          size: '758051'
-        }
-      ]
-    }
+          size: '758051',
+        },
+      ],
+    },
   },
   drives: {
-    get: { kind: 'drive#driveList', drives: [] }
+    get: { kind: 'drive#driveList', drives: [] },
   },
   [`files/${defaults.ITEM_ID}`]: {
     get: {
@@ -35,15 +35,15 @@ module.exports.responses = {
       modifiedTime: '2016-07-10T20:00:08.096Z',
       ownedByMe: true,
       permissions: [{ role: 'owner', emailAddress: 'john.doe@transloadit.com' }],
-      size: '758051'
-    }
+      size: '758051',
+    },
   },
   [`files/${defaults.ITEM_ID}?alt=media&supportsAllDrives=true`]: {
-    get: {}
+    get: {},
   },
   'https://accounts.google.com/o/oauth2/revoke': {
-    get: {}
-  }
+    get: {},
+  },
 }
 
 module.exports.expects = {}

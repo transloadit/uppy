@@ -1,4 +1,4 @@
-const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
+const getFileNameAndExtension = require('./getFileNameAndExtension')
 
 module.exports = function remoteFileObjToLocal (file) {
   return {

@@ -8,5 +8,5 @@ module.exports = {
   logout: require('./logout'),
   connect: require('./connect'),
   preauth: require('./preauth'),
-  redirect: require('./oauth-redirect')
+  redirect: require('./oauth-redirect'),
 }

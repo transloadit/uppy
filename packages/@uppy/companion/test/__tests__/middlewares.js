@@ -6,7 +6,7 @@ describe('mergeAccessControlAllowMethods', () => {
   test('should properly merge', () => {
     const res = {
       get: () => 'PATCH,OPTIONS, post',
-      header: jest.fn()
+      header: jest.fn(),
     }
     const next = jest.fn()
     mergeAccessControlAllowMethods(undefined, res, next)
@@ -16,7 +16,7 @@ describe('mergeAccessControlAllowMethods', () => {
   test('should also work when nothing added', () => {
     const res = {
       get: () => undefined,
-      header: jest.fn()
+      header: jest.fn(),
     }
     const next = jest.fn()
     mergeAccessControlAllowMethods(undefined, res, next)

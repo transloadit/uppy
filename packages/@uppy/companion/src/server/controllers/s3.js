@@ -39,9 +39,9 @@ module.exports = function s3 (config) {
 
     const fields = {
       acl: config.acl,
-      key: key,
+      key,
       success_action_status: '201',
-      'content-type': req.query.type
+      'content-type': req.query.type,
     }
 
     Object.keys(metadata).forEach((key) => {
@@ -52,7 +52,7 @@ module.exports = function s3 (config) {
       Bucket: config.bucket,
       Expires: config.expires,
       Fields: fields,
-      Conditions: config.conditions
+      Conditions: config.conditions,
     }, (err, data) => {
       if (err) {
         next(err)
@@ -61,7 +61,7 @@ module.exports = function s3 (config) {
       res.json({
         method: 'post',
         url: data.url,
-        fields: data.fields
+        fields: data.fields,
       })
     })
   }
@@ -97,7 +97,7 @@ module.exports = function s3 (config) {
       Key: key,
       ACL: config.acl,
       ContentType: type,
-      Metadata: metadata
+      Metadata: metadata,
     }, (err, data) => {
       if (err) {
         next(err)
@@ -105,7 +105,7 @@ module.exports = function s3 (config) {
       }
       res.json({
         key: data.Key,
-        uploadId: data.UploadId
+        uploadId: data.UploadId,
       })
     })
   }
@@ -141,7 +141,7 @@ module.exports = function s3 (config) {
         Bucket: config.bucket,
         Key: key,
         UploadId: uploadId,
-        PartNumberMarker: startAt
+        PartNumberMarker: startAt,
       }, (err, data) => {
         if (err) {
           next(err)
@@ -194,7 +194,7 @@ module.exports = function s3 (config) {
       UploadId: uploadId,
       PartNumber: partNumber,
       Body: '',
-      Expires: config.expires
+      Expires: config.expires,
     }, (err, url) => {
       if (err) {
         next(err)
@@ -227,7 +227,7 @@ module.exports = function s3 (config) {
     client.abortMultipartUpload({
       Bucket: config.bucket,
       Key: key,
-      UploadId: uploadId
+      UploadId: uploadId,
     }, (err, data) => {
       if (err) {
         next(err)
@@ -268,15 +268,15 @@ module.exports = function s3 (config) {
       Key: key,
       UploadId: uploadId,
       MultipartUpload: {
-        Parts: parts
-      }
+        Parts: parts,
+      },
     }, (err, data) => {
       if (err) {
         next(err)
         return
       }
       res.json({
-        location: data.Location
+        location: data.Location,
       })
     })
   }

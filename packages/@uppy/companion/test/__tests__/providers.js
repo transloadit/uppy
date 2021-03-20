@@ -4,7 +4,7 @@ jest.mock('tus-js-client')
 jest.mock('purest')
 jest.mock('../../src/server/helpers/request', () => {
   return {
-    getURLMeta: () => Promise.resolve({ size: 758051 })
+    getURLMeta: () => Promise.resolve({ size: 758051 }),
   }
 })
 jest.mock('../../src/server/helpers/oauth-state', () => require('../mockoauthstate')())
@@ -13,13 +13,15 @@ const request = require('supertest')
 const fixtures = require('../fixtures')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
+
 const authServer = getServer()
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 const providers = require('../../src/server/provider').getDefaultProviders()
+
 const providerNames = Object.keys(providers)
 const AUTH_PROVIDERS = {
   drive: 'google',
-  onedrive: 'microsoft'
+  onedrive: 'microsoft',
 }
 const authData = {}
 providerNames.forEach((provider) => {
@@ -76,7 +78,7 @@ describe('download provdier file', () => {
       .set('Content-Type', 'application/json')
       .send({
         endpoint: 'http://tusd.tusdemo.net/files',
-        protocol: 'tus'
+        protocol: 'tus',
       })
       .expect(200)
       .then((res) => expect(res.body.token).toBeTruthy())

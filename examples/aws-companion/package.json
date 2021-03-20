@@ -1,13 +1,12 @@
 {
   "name": "@uppy-example/aws-companion",
-  "aliasify": {
-    "aliases": {
-      "@uppy": "../../packages/@uppy"
-    }
-  },
   "dependencies": {
     "@babel/core": "^7.2.2",
-    "aliasify": "^2.1.0",
+    "@uppy/aws-s3": "file:../../packages/@uppy/aws-s3",
+    "@uppy/core": "file:../../packages/@uppy/core",
+    "@uppy/dashboard": "file:../../packages/@uppy/dashboard",
+    "@uppy/google-drive": "file:../../packages/@uppy/google-drive",
+    "@uppy/webcam": "file:../../packages/@uppy/webcam",
     "babelify": "^10.0.0",
     "body-parser": "^1.18.3",
     "budo": "^11.6.1",
@@ -22,7 +21,7 @@
   "scripts": {
     "copy": "cp ../../packages/uppy/dist/uppy.min.css .",
     "start": "npm-run-all --serial copy --parallel start:*",
-    "start:client": "budo main.js:bundle.js -- -t babelify -g aliasify",
+    "start:client": "budo main.js:bundle.js -- -t babelify",
     "start:server": "node server.js"
   }
 }
