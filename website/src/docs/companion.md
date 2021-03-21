@@ -162,8 +162,12 @@ export COMPANION_HIDE_METRICS="true"
 export COMPANION_IMPLICIT_PATH="/SERVER/PATH/TO/WHERE/UPPY/SERVER/LIVES"
 
 # comma-separated client hosts to whitlelist by the server
-# if not specified, the server would allow any host
+# if neither this or COMPANION_CLIENT_ORIGINS_REGEX specified, the server would allow any host
 export COMPANION_CLIENT_ORIGINS="localhost:3452,uppy.io"
+
+# Like COMPANION_CLIENT_ORIGINS, but allows a single regex instead
+# (COMPANION_CLIENT_ORIGINS will be ignored if this is used and vice versa)
+export COMPANION_CLIENT_ORIGINS_REGEX="https://.*\.example\.(com|eu)$"
 
 # corresponds to the redisUrl option
 # this also enables Redis session storage if set
