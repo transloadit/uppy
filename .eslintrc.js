@@ -1,3 +1,5 @@
+/* eslint-disable quote-props */
+
 'use strict'
 
 const glob = require('glob')
@@ -57,7 +59,7 @@ module.exports = {
     // transloadit rules we are actually ok with in the uppy repo
     'guard-for-in': ['off'],
     'import/extensions': ['off'],
-    strict: ['off'],
+    'strict': ['off'],
     'key-spacing': ['off'],
 
     // transloadit rules we would like to enforce in the future
@@ -106,7 +108,7 @@ module.exports = {
     'node/handle-callback-err': ['warn'],
     'prefer-destructuring': ['warn'],
     'prefer-spread': ['warn'],
-    radix: ['warn'],
+    'radix': ['warn'],
     'react/button-has-type': ['warn'],
     'react/destructuring-assignment': ['warn'],
     'react/forbid-prop-types': ['warn'],
@@ -171,6 +173,7 @@ module.exports = {
         '.eslintrc.js',
       ],
       rules: {
+        'no-console': ['off'],
         'import/no-extraneous-dependencies': ['error', {
           devDependencies: true,
         }],
