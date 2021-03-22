@@ -13,6 +13,9 @@ const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FI
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
 
+// Hopefully this name will not be used by Google
+const VIRTUAL_SHARED_DIR = 'shared-with-me'
+
 function waitForFailedResponse (resp) {
   return new Promise((resolve, reject) => {
     let data = ''
@@ -56,6 +59,7 @@ class Drive extends Provider {
     const handleErrorResponse = this._error.bind(this)
 
     const isRoot = directory === 'root'
+    const isVirtualSharedDirRoot = directory === VIRTUAL_SHARED_DIR
 
     async function fetchSharedDrives () {
       try {
@@ -71,7 +75,7 @@ class Drive extends Provider {
             return resolve(resp2)
           }))
 
-        return resp
+        return resp && resp.body
       } catch (err) {
         logger.error(err, 'provider.drive.sharedDrive.error')
         throw err
@@ -80,14 +84,15 @@ class Drive extends Provider {
 
     async function fetchFiles () {
       // Shared with me items in root don't have any parents
-      const q = isRoot
-        ? `('${directory}' in parents or sharedWithMe) and trashed=false`
+      const q = isVirtualSharedDirRoot
+        ? `sharedWithMe and trashed=false`
         : `('${directory}' in parents) and trashed=false`
 
       const where = {
         fields: DRIVE_FILES_FIELDS,
         pageToken: query.cursor,
         q,
+        // pageSize: 10, // can be used for testing pagination if you don't have many files
         includeItemsFromAllDrives: true,
         supportsAllDrives: true,
       }
@@ -103,7 +108,7 @@ class Drive extends Provider {
             return resolve(resp2)
           }))
 
-        return resp
+        return resp && resp.body
       } catch (err) {
         logger.error(err, 'provider.drive.list.error')
         throw err
@@ -111,12 +116,14 @@ class Drive extends Provider {
     }
 
     const [sharedDrives, filesResponse] = await Promise.all([fetchSharedDrives(), fetchFiles()])
+    // console.log({ directory, sharedDrives, filesResponse })
 
     return this.adaptData(
-      filesResponse.body,
-      sharedDrives && sharedDrives.body,
+      filesResponse,
+      sharedDrives,
       directory,
-      query
+      query,
+      isRoot && !query.cursor // we can only show it on the first page request, or else we will have duplicates of it
     )
   }
 
@@ -227,7 +234,7 @@ class Drive extends Provider {
       })
   }
 
-  adaptData (res, sharedDrivesResp, directory, query) {
+  adaptData (listFilesResp, sharedDrivesResp, directory, query, showSharedWithMe) {
     const adaptItem = (item) => ({
       isFolder: adapter.isFolder(item),
       icon: adapter.getItemIcon(item),
@@ -253,15 +260,27 @@ class Drive extends Provider {
       },
     })
 
-    const items = adapter.getItemSubList(res)
+    const items = adapter.getItemSubList(listFilesResp)
     const sharedDrives = sharedDrivesResp ? sharedDrivesResp.drives || [] : []
 
-    const adaptedItems = sharedDrives.concat(items).map(adaptItem)
+    const virtualItem = showSharedWithMe && ({
+      isFolder: true,
+      icon: 'folder',
+      name: 'Shared with me',
+      mimeType: 'application/vnd.google-apps.folder',
+      id: VIRTUAL_SHARED_DIR,
+      requestPath: VIRTUAL_SHARED_DIR,
+    })
+
+    const adaptedItems = [
+      ...(virtualItem ? [virtualItem] : []), // shared folder first
+      ...([...sharedDrives, ...items].map(adaptItem)),
+    ]
 
     return {
-      username: adapter.getUsername(res),
+      username: adapter.getUsername(listFilesResp),
       items: adaptedItems,
-      nextPagePath: adapter.getNextPagePath(res, query, directory),
+      nextPagePath: adapter.getNextPagePath(listFilesResp, query, directory),
     }
   }
 
