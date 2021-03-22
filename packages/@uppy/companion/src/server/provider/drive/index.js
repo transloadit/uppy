@@ -1,8 +1,9 @@
-const Provider = require('../Provider')
-
+/* eslint-disable no-underscore-dangle */
 const { callbackify } = require('util')
 const request = require('request')
 const purest = require('purest')({ request })
+
+const Provider = require('../Provider')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
@@ -11,6 +12,21 @@ const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,pe
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
+
+function waitForFailedResponse (resp) {
+  return new Promise((resolve, reject) => {
+    let data = ''
+    resp.on('data', (chunk) => {
+      data += chunk
+    }).on('end', () => {
+      try {
+        resolve(JSON.parse(data.toString()))
+      } catch (error) {
+        reject(error)
+      }
+    })
+  })
+}
 
 /**
  * Adapter for API https://developers.google.com/drive/api/v3/
@@ -36,7 +52,7 @@ class Drive extends Provider {
     const directory = options.directory || 'root'
     const query = options.query || {}
 
-    const client = this.client
+    const { client } = this
     const handleErrorResponse = this._error.bind(this)
 
     const isRoot = directory === 'root'
@@ -50,9 +66,9 @@ class Drive extends Provider {
           .get('drives')
           .qs({ fields: SHARED_DRIVE_FIELDS })
           .auth(options.token)
-          .request((err, resp) => {
-            if (err || resp.statusCode !== 200) return reject(handleErrorResponse(err, resp))
-            resolve(resp)
+          .request((err, resp2) => {
+            if (err || resp2.statusCode !== 200) return reject(handleErrorResponse(err, resp2))
+            return resolve(resp2)
           }))
 
         return resp
@@ -82,9 +98,9 @@ class Drive extends Provider {
           .get('files')
           .qs(where)
           .auth(options.token)
-          .request((err, resp) => {
-            if (err || resp.statusCode !== 200) return reject(handleErrorResponse(err, resp))
-            resolve(resp)
+          .request((err, resp2) => {
+            if (err || resp2.statusCode !== 200) return reject(handleErrorResponse(err, resp2))
+            return resolve(resp2)
           }))
 
         return resp
@@ -128,21 +144,6 @@ class Drive extends Provider {
       .request()
   }
 
-  _waitForFailedResponse (resp) {
-    return new Promise((resolve, reject) => {
-      let data = ''
-      resp.on('data', (chunk) => {
-        data += chunk
-      }).on('end', () => {
-        try {
-          resolve(JSON.parse(data.toString()))
-        } catch (error) {
-          reject(error)
-        }
-      })
-    })
-  }
-
   download ({ id, token }, onData) {
     this.stats({ id, token }, (err, _, body) => {
       if (err) {
@@ -166,20 +167,19 @@ class Drive extends Provider {
       requestStream
         .on('response', (resp) => {
           if (resp.statusCode !== 200) {
-            this._waitForFailedResponse(resp)
+            waitForFailedResponse(resp)
               .then((jsonResp) => {
-                resp.body = jsonResp
-                onData(this._error(null, resp))
+                onData(this._error(null, { ...resp, body: jsonResp }))
               })
-              .catch((err) => onData(this._error(err, resp)))
+              .catch((err2) => onData(this._error(err2, resp)))
           } else {
             resp.on('data', (chunk) => onData(null, chunk))
           }
         })
         .on('end', () => onData(null, null))
-        .on('error', (err) => {
-          logger.error(err, 'provider.drive.download.error')
-          onData(err)
+        .on('error', (err2) => {
+          logger.error(err2, 'provider.drive.download.error')
+          onData(err2)
         })
     })
   }
@@ -194,9 +194,10 @@ class Drive extends Provider {
   size ({ id, token }, done) {
     return this.stats({ id, token }, (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
-        err = this._error(err, resp)
-        logger.error(err, 'provider.drive.size.error')
-        return done(err)
+        const err2 = this._error(err, resp)
+        logger.error(err2, 'provider.drive.size.error')
+        done(err2)
+        return
       }
 
       if (adapter.isGsuiteFile(body.mimeType)) {
@@ -207,7 +208,7 @@ class Drive extends Provider {
         const maxExportFileSize = 10 * 1024 * 1024 // 10 MB
         done(null, maxExportFileSize)
       } else {
-        done(null, parseInt(body.size))
+        done(null, parseInt(body.size, 10))
       }
     })
   }
