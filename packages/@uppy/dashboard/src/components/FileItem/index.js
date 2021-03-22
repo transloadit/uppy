@@ -49,16 +49,16 @@ module.exports = class FileItem extends Component {
       'is-complete': isUploaded,
       'is-error': !!error,
       'is-resumable': this.props.resumableUploads,
-      'is-noIndividualCancellation': !this.props.individualCancellation
+      'is-noIndividualCancellation': !this.props.individualCancellation,
     })
 
     return (
       <div
-        class={dashboardItemClass}
+        className={dashboardItemClass}
         id={`uppy_${file.id}`}
         role={this.props.role}
       >
-        <div class="uppy-Dashboard-Item-preview">
+        <div className="uppy-Dashboard-Item-preview">
           <FilePreviewAndLink
             file={file}
             showLinkToFileUploadResult={this.props.showLinkToFileUploadResult}
@@ -67,16 +67,12 @@ module.exports = class FileItem extends Component {
             file={file}
             error={error}
             isUploaded={isUploaded}
-
             hideRetryButton={this.props.hideRetryButton}
             hideCancelButton={this.props.hideCancelButton}
             hidePauseResumeButton={this.props.hidePauseResumeButton}
-
             showRemoveButtonAfterComplete={this.props.showRemoveButtonAfterComplete}
-
             resumableUploads={this.props.resumableUploads}
             individualCancellation={this.props.individualCancellation}
-
             pauseUpload={this.props.pauseUpload}
             cancelUpload={this.props.cancelUpload}
             retryUpload={this.props.retryUpload}
@@ -84,7 +80,7 @@ module.exports = class FileItem extends Component {
           />
         </div>
 
-        <div class="uppy-Dashboard-Item-fileInfoAndButtons">
+        <div className="uppy-Dashboard-Item-fileInfoAndButtons">
           <FileInfo
             file={file}
             id={this.props.id}
@@ -95,16 +91,13 @@ module.exports = class FileItem extends Component {
           <Buttons
             file={file}
             metaFields={this.props.metaFields}
-
             showLinkToFileUploadResult={this.props.showLinkToFileUploadResult}
             showRemoveButton={showRemoveButton}
             canEditFile={this.props.canEditFile}
-
             uploadInProgressOrComplete={uploadInProgressOrComplete}
             removeFile={this.props.removeFile}
             toggleFileCard={this.props.toggleFileCard}
             openFileEditor={this.props.openFileEditor}
-
             i18n={this.props.i18n}
             log={this.props.log}
             info={this.props.info}

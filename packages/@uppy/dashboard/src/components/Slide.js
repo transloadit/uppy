@@ -19,7 +19,7 @@ class Slide extends Component {
 
     this.state = {
       cachedChildren: null,
-      className: ''
+      className: '',
     }
   }
 
@@ -30,7 +30,7 @@ class Slide extends Component {
     if (cachedChildren === child) return
 
     const patch = {
-      cachedChildren: child
+      cachedChildren: child,
     }
 
     // Enter transition
@@ -46,7 +46,7 @@ class Slide extends Component {
         this.base.getBoundingClientRect()
 
         this.setState({
-          className: `${transitionName}-enter ${transitionName}-enter-active`
+          className: `${transitionName}-enter ${transitionName}-enter-active`,
         })
 
         this.enterTimeout = setTimeout(() => {
@@ -65,13 +65,13 @@ class Slide extends Component {
       this.enterTimeout = undefined
       this.animationFrame = requestAnimationFrame(() => {
         this.setState({
-          className: `${transitionName}-leave ${transitionName}-leave-active`
+          className: `${transitionName}-leave ${transitionName}-leave-active`,
         })
 
         this.leaveTimeout = setTimeout(() => {
           this.setState({
             cachedChildren: null,
-            className: ''
+            className: '',
           })
         }, duration)
       })
@@ -88,7 +88,7 @@ class Slide extends Component {
     }
 
     return cloneElement(cachedChildren, {
-      className: classNames(className, cachedChildren.attributes.className)
+      className: classNames(className, cachedChildren.attributes.className),
     })
   }
 }

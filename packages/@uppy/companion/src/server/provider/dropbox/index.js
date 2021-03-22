@@ -13,10 +13,9 @@ const { ProviderApiError, ProviderAuthError } = require('../error')
 const charsToEncode = /[\u007f-\uffff]/g
 function httpHeaderSafeJson (v) {
   return JSON.stringify(v).replace(charsToEncode,
-    function (c) {
-      return '\\u' + ('000' + c.charCodeAt(0).toString(16)).slice(-4)
-    }
-  )
+    (c) => {
+      return `\\u${(`000${c.charCodeAt(0).toString(16)}`).slice(-4)}`
+    })
 }
 
 /**
@@ -25,8 +24,11 @@ function httpHeaderSafeJson (v) {
 class DropBox extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = options.provider = DropBox.authProvider
-    this.client = purest(options)
+    this.authProvider = DropBox.authProvider
+    this.client = purest({
+      ...options,
+      provider: DropBox.authProvider,
+    })
     // needed for the thumbnails fetched via companion
     this.needsCookieAuth = true
   }
@@ -48,7 +50,7 @@ class DropBox extends Provider {
    * it then waits till both requests are done before proceeding with the callback
    *
    * @param {object} options
-   * @param {function} done
+   * @param {Function} done
    */
   list (options, done) {
     let userInfoDone = false
@@ -99,7 +101,7 @@ class DropBox extends Provider {
         .options({ version: '2' })
         .auth(token)
         .json({
-          cursor: query.cursor
+          cursor: query.cursor,
         })
         .request(done)
       return
@@ -112,7 +114,7 @@ class DropBox extends Provider {
       .auth(token)
       .json({
         path: `${directory || ''}`,
-        include_non_downloadable_files: false
+        include_non_downloadable_files: false,
       })
       .request(done)
   }
@@ -123,8 +125,8 @@ class DropBox extends Provider {
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` })
-        }
+          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` }),
+        },
       })
       .auth(token)
       .request()
@@ -148,8 +150,8 @@ class DropBox extends Provider {
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}`, size: 'w256h256' })
-        }
+          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}`, size: 'w256h256' }),
+        },
       })
       .auth(token)
       .request()
@@ -210,7 +212,7 @@ class DropBox extends Provider {
         thumbnail: companion.buildURL(adapter.getItemThumbnailUrl(item), true),
         requestPath: adapter.getItemRequestPath(item),
         modifiedDate: adapter.getItemModifiedDate(item),
-        size: adapter.getItemSize(item)
+        size: adapter.getItemSize(item),
       })
     })
 

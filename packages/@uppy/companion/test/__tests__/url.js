@@ -5,15 +5,17 @@ jest.mock('../../src/server/helpers/request', () => {
   return {
     getURLMeta: (url) => {
       return Promise.resolve({ size: 7580, type: 'image/jpg' })
-    }
+    },
   }
 })
 const { getServer } = require('../mockserver')
+
 const mockServer = getServer()
 const request = require('supertest')
+
 const invalids = [
   // no url at all or unsupported protocol
-  null, '', 'ftp://url.myendpoint.com/files'
+  null, '', 'ftp://url.myendpoint.com/files',
 ]
 
 describe('url meta', () => {
@@ -22,7 +24,7 @@ describe('url meta', () => {
       .post('/url/meta')
       .set('Content-Type', 'application/json')
       .send({
-        url: 'http://url.myendpoint.com/files'
+        url: 'http://url.myendpoint.com/files',
       })
       .expect(200)
       .then((res) => {
@@ -36,7 +38,7 @@ describe('url meta', () => {
       .post('/url/meta')
       .set('Content-Type', 'application/json')
       .send({
-        url: urlCase
+        url: urlCase,
       })
       .expect(400)
       .then((res) => expect(res.body.error).toBe('Invalid request body'))
@@ -51,7 +53,7 @@ describe('url get', () => {
       .send({
         url: 'http://url.myendpoint.com/files',
         endpoint: 'http://tusd.tusdemo.net/files',
-        protocol: 'tus'
+        protocol: 'tus',
       })
       .expect(200)
       .then((res) => expect(res.body.token).toBeTruthy())
@@ -64,7 +66,7 @@ describe('url get', () => {
       .send({
         url: urlCase,
         endpoint: 'http://tusd.tusdemo.net/files',
-        protocol: 'tus'
+        protocol: 'tus',
       })
       .expect(400)
       .then((res) => expect(res.body.error).toBe('Invalid request body'))

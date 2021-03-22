@@ -1,8 +1,8 @@
 module.exports = {
   plugins: {
     'postcss-inline-svg': {
-      path: 'src/images'
+      path: 'src/images',
     },
-    cssnano: { safe: true }
-  }
+    cssnano: { safe: true },
+  },
 }

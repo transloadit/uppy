@@ -6,13 +6,13 @@ function _emitSocketProgress (uploader, progressData, file) {
     uploader.uppy.log(`Upload progress: ${progress}`)
     uploader.uppy.emit('upload-progress', file, {
       uploader,
-      bytesUploaded: bytesUploaded,
-      bytesTotal: bytesTotal
+      bytesUploaded,
+      bytesTotal,
     })
   }
 }
 
 module.exports = throttle(_emitSocketProgress, 300, {
   leading: true,
-  trailing: true
+  trailing: true,
 })

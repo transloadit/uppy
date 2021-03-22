@@ -50,14 +50,14 @@ hu_HU.strings = {
   filesUploadedOfTotal: {
     '0': 'A %{smart_count}-ból %{complete} fájl feltöltve',
     '1': 'A %{smart_count}-ból %{complete} fájl feltöltve',
-    '2': 'A %{smart_count}-ból %{complete} fájl feltöltve'
+    '2': 'A %{smart_count}-ból %{complete} fájl feltöltve',
   },
   filter: 'Szűrő',
   finishEditingFile: 'Fájl szerkesztésének befejezése',
   folderAdded: {
     '0': 'A %{folder}-ból %{smart_count} fájl hozzáadva',
     '1': 'A %{folder}-ból %{smart_count} fájl hozzáadva',
-    '2': 'A %{folder}-ból %{smart_count} fájl hozzáadva'
+    '2': 'A %{folder}-ból %{smart_count} fájl hozzáadva',
   },
   import: 'Importálás',
   importFrom: 'Importálás innen: %{name}',
@@ -73,7 +73,7 @@ hu_HU.strings = {
   processingXFiles: {
     '0': '%{smart_count} fájl feldolgozása',
     '1': '%{smart_count} fájl feldolgozása',
-    '2': '%{smart_count} fájl feldolgozása'
+    '2': '%{smart_count} fájl feldolgozása',
   },
   removeFile: 'Fájl törlése',
   resetFilter: 'Szűrő visszaállítása',
@@ -85,7 +85,7 @@ hu_HU.strings = {
   selectX: {
     '0': 'Válassza az %{smart_count} lehetőséget',
     '1': 'Válassza az %{smart_count} lehetőséget',
-    '2': 'Válassza az %{smart_count} lehetőséget'
+    '2': 'Válassza az %{smart_count} lehetőséget',
   },
   smile: 'Csíííz!',
   startRecording: 'Videófeltével indul',
@@ -99,46 +99,46 @@ hu_HU.strings = {
   uploadXFiles: {
     '0': '%{smart_count} fájl feltöltése',
     '1': '%{smart_count} fájl feltöltése',
-    '2': '%{smart_count} fájl feltöltése'
+    '2': '%{smart_count} fájl feltöltése',
   },
   uploadXNewFiles: {
     '0': '+%{smart_count} fájl feltöltése',
     '1': '+%{smart_count} fájl feltöltése',
-    '2': '+%{smart_count} fájl feltöltése'
+    '2': '+%{smart_count} fájl feltöltése',
   },
   uploading: 'Feltölés',
   uploadingXFiles: {
     '0': '+%{smart_count} fájl feltöltése',
     '1': '+%{smart_count} fájl feltöltése',
-    '2': '+%{smart_count} fájl feltöltése'
+    '2': '+%{smart_count} fájl feltöltése',
   },
   xFilesSelected: {
     '0': '%{smart_count} fájl kiválasztva',
     '1': '%{smart_count} fájl kiválasztva',
-    '2': '%{smart_count} fájl kiválasztva'
+    '2': '%{smart_count} fájl kiválasztva',
   },
   xMoreFilesAdded: {
     '0': 'további %{smart_count} fájl hozzáadva',
     '1': 'további %{smart_count} fájl hozzáadva',
-    '2': 'további %{smart_count} fájl hozzáadva'
+    '2': 'további %{smart_count} fájl hozzáadva',
   },
   xTimeLeft: '%{time} van hátra',
   youCanOnlyUploadFileTypes: 'Feltölthető formátumok: %{types}',
   youCanOnlyUploadX: {
     '0': 'Csak %{smart_count} fájl tölthető fel',
     '1': 'Csak %{smart_count} fájl tölthető fel',
-    '2': 'Csak %{smart_count} fájl tölthető fel'
+    '2': 'Csak %{smart_count} fájl tölthető fel',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Legalább %{smart_count} fájlt ki kell választania',
     '1': 'Legalább %{smart_count} fájlt ki kell választania',
-    '2': 'Legalább %{smart_count} fájlt ki kell választania'
+    '2': 'Legalább %{smart_count} fájlt ki kell választania',
   },
   selectAllFilesFromFolderNamed: 'Válassza ki az összes fájlt a mappából %{name}',
   unselectAllFilesFromFolderNamed: 'Az összes fájl törlése a mappából %{name}',
   selectFileNamed: 'Válaszd ki a fájlt %{name}',
   unselectFileNamed: 'A fájl törlése %{name}',
-  openFolderNamed: 'Nyitott mappa %{name}'
+  openFolderNamed: 'Nyitott mappa %{name}',
 }
 
 hu_HU.pluralize = function (n) {

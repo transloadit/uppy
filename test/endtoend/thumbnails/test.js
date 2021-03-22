@@ -9,10 +9,10 @@ const images = [
   path.join(__dirname, '../../resources/image.jpg'),
   path.join(__dirname, '../../resources/baboon.png'),
   path.join(__dirname, '../../resources/kodim23.png'),
-  path.join(__dirname, '../../resources/invalid.png')
+  path.join(__dirname, '../../resources/invalid.png'),
 ]
 const notImages = [
-  { type: 'text/javascript', file: __filename }
+  { type: 'text/javascript', file: __filename },
 ]
 
 describe('ThumbnailGenerator', () => {
@@ -30,8 +30,8 @@ describe('ThumbnailGenerator', () => {
     const input = await $('#uppyThumbnails .uppy-FileInput-input')
     await input.waitForExist()
 
-    await browser.execute(/* must be valid ES5 for IE */ function () {
-      window.thumbnailsReady = new Promise(function (resolve) {
+    await browser.execute(/* must be valid ES5 for IE */ () => {
+      window.thumbnailsReady = new Promise((resolve) => {
         window.uppyThumbnails.on('thumbnail:all-generated', resolve)
       })
     })
@@ -64,7 +64,7 @@ describe('ThumbnailGenerator', () => {
       }
     }
 
-    await browser.executeAsync(/* must be valid ES5 for IE */ function (done) {
+    await browser.executeAsync(/* must be valid ES5 for IE */ (done) => {
       window.thumbnailsReady.then(done)
     })
 
@@ -98,7 +98,7 @@ async function getWidth (ref) {
   try {
     return await ref.getSize('width')
   } catch (err) {
-    return browser.execute(function (el) {
+    return browser.execute((el) => {
       return el.getBoundingClientRect().width
     }, ref)
   }

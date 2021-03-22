@@ -5,7 +5,7 @@ describe('Webcam', () => {
   describe('_getMediaRecorderOptions', () => {
     it('should not have a mimeType set if no preferences given', () => {
       global.MediaRecorder = {
-        isTypeSupported: () => true
+        isTypeSupported: () => true,
       }
 
       const uppy = new Uppy().use(Webcam)
@@ -16,7 +16,7 @@ describe('Webcam', () => {
 
     it('should use preferredVideoMimeType', () => {
       global.MediaRecorder = {
-        isTypeSupported: (ty) => ty === 'video/webm'
+        isTypeSupported: (ty) => ty === 'video/webm',
       }
 
       const uppy = new Uppy().use(Webcam, { preferredVideoMimeType: 'video/webm' })
@@ -27,7 +27,7 @@ describe('Webcam', () => {
 
     it('should not use preferredVideoMimeType if it is not supported', () => {
       global.MediaRecorder = {
-        isTypeSupported: (ty) => ty === 'video/webm'
+        isTypeSupported: (ty) => ty === 'video/webm',
       }
 
       const uppy = new Uppy().use(Webcam, { preferredVideoMimeType: 'video/mp4' })
@@ -38,11 +38,11 @@ describe('Webcam', () => {
 
     it('should pick type based on `allowedFileTypes`', () => {
       global.MediaRecorder = {
-        isTypeSupported: () => true
+        isTypeSupported: () => true,
       }
 
       const uppy = new Uppy({
-        restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] }
+        restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam)
       expect(
         uppy.getPlugin('Webcam')._getMediaRecorderOptions().mimeType
@@ -51,11 +51,11 @@ describe('Webcam', () => {
 
     it('should use first supported type from allowedFileTypes', () => {
       global.MediaRecorder = {
-        isTypeSupported: (ty) => ty === 'video/webm'
+        isTypeSupported: (ty) => ty === 'video/webm',
       }
 
       const uppy = new Uppy({
-        restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] }
+        restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam)
       expect(
         uppy.getPlugin('Webcam')._getMediaRecorderOptions().mimeType
@@ -64,11 +64,11 @@ describe('Webcam', () => {
 
     it('should prefer preferredVideoMimeType over allowedFileTypes', () => {
       global.MediaRecorder = {
-        isTypeSupported: () => true
+        isTypeSupported: () => true,
       }
 
       const uppy = new Uppy({
-        restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] }
+        restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       })
         .use(Webcam, { preferredVideoMimeType: 'video/webm' })
       expect(
@@ -78,11 +78,11 @@ describe('Webcam', () => {
 
     it('should not use allowedFileTypes if they are unsupported', () => {
       global.MediaRecorder = {
-        isTypeSupported: () => false
+        isTypeSupported: () => false,
       }
 
       const uppy = new Uppy({
-        restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] }
+        restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam)
       expect(
         uppy.getPlugin('Webcam')._getMediaRecorderOptions().mimeType

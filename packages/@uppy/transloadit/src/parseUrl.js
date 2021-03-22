@@ -8,12 +8,12 @@ module.exports = function parseUrl (url) {
   if (slashIndex === -1) {
     return {
       origin: url,
-      pathname: '/'
+      pathname: '/',
     }
   }
 
   return {
     origin: url.slice(0, slashIndex),
-    pathname: url.slice(slashIndex)
+    pathname: url.slice(slashIndex),
   }
 }

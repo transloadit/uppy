@@ -110,7 +110,7 @@ zh_CN.strings = {
   xTimeLeft: '剩余 %{time}',
   youCanOnlyUploadFileTypes: '您只能上传这些文件类型：%{types}',
   youCanOnlyUploadX: '您只能上传 %{smart_count} 个文件',
-  youHaveToAtLeastSelectX: '您至少要选择 %{smart_count} 个文件'
+  youHaveToAtLeastSelectX: '您至少要选择 %{smart_count} 个文件',
 }
 
 // There is just one form.

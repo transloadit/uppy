@@ -15,7 +15,6 @@ module.exports = function getDroppedFiles (dataTransfer, { logDropError = () => 
   if (dataTransfer.items && dataTransfer.items[0] && 'webkitGetAsEntry' in dataTransfer.items[0]) {
     return webkitGetAsEntryApi(dataTransfer, logDropError)
   // Otherwise just return all first-order files
-  } else {
-    return fallbackApi(dataTransfer)
   }
+  return fallbackApi(dataTransfer)
 }

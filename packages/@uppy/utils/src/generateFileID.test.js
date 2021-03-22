@@ -7,8 +7,8 @@ describe('generateFileID', () => {
       type: 'image/jpeg',
       data: {
         lastModified: 1498510508000,
-        size: 2271173
-      }
+        size: 2271173,
+      },
     }
 
     expect(generateFileID(fileObj)).toEqual(
@@ -20,8 +20,8 @@ describe('generateFileID', () => {
       type: 'image/jpeg',
       data: {
         lastModified: 1498510508000,
-        size: 2271173
-      }
+        size: 2271173,
+      },
     })).toEqual(
       'uppy-/////////p/////////jpg-11k-11m-123-11s-11r-11g-1d-11k-11m-123-11s-11r-11g-122-11l-121-122-1e-image/jpeg-2271173-1498510508000'
     )
@@ -31,11 +31,11 @@ describe('generateFileID', () => {
       type: 'image/jpeg',
       data: {
         lastModified: 1498510508000,
-        size: 2271173
+        size: 2271173,
       },
       meta: {
-        relativePath: 'folder/a'
-      }
+        relativePath: 'folder/a',
+      },
     })).toEqual(
       'uppy-hello/jpg-1e-image/jpeg-folder/a-1f-2271173-1498510508000'
     )

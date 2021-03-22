@@ -19,13 +19,14 @@ module.exports = (companionOptions) => {
       throw new Error('Found unsupported `providerOptions.s3.awsClientOptions.accessKeyId` or `providerOptions.s3.awsClientOptions.secretAccessKey` configuration. Please use the `providerOptions.s3.key` and `providerOptions.s3.secret` options instead.')
     }
 
-    const s3ClientOptions = Object.assign({
+    const s3ClientOptions = {
       signatureVersion: 'v4',
       endpoint: s3ProviderOptions.endpoint,
       region: s3ProviderOptions.region,
       // backwards compat
-      useAccelerateEndpoint: s3ProviderOptions.useAccelerateEndpoint
-    }, rawClientOptions)
+      useAccelerateEndpoint: s3ProviderOptions.useAccelerateEndpoint,
+      ...rawClientOptions,
+    }
 
     // Use credentials to allow assumed roles to pass STS sessions in.
     // If the user doesn't specify key and secret, the default credentials (process-env)
@@ -34,7 +35,8 @@ module.exports = (companionOptions) => {
       s3ClientOptions.credentials = new AWS.Credentials(
         s3ProviderOptions.key,
         s3ProviderOptions.secret,
-        s3ProviderOptions.sessionToken)
+        s3ProviderOptions.sessionToken
+      )
     }
     s3Client = new S3(s3ClientOptions)
   }

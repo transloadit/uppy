@@ -8,19 +8,19 @@ nb_NO.strings = {
   orDragDrop: 'eller slipp den her',
   filesChosen: {
     0: '%{smart_count} fil valgt',
-    1: '%{smart_count} filer valgt'
+    1: '%{smart_count} filer valgt',
   },
   filesUploaded: {
     0: '%{smart_count} fil lastet opp',
-    1: '%{smart_count} filer lastet opp'
+    1: '%{smart_count} filer lastet opp',
   },
   files: {
     0: '%{smart_count} fil',
-    1: '%{smart_count} filer'
+    1: '%{smart_count} filer',
   },
   uploadFiles: {
     0: 'Lastet opp %{smart_count} fil',
-    1: 'Lastet opp %{smart_count} filer'
+    1: 'Lastet opp %{smart_count} filer',
   },
   selectToUpload: 'Velg filer å laste opp',
   closeModal: 'Lukk dialogboksen',
@@ -37,7 +37,7 @@ nb_NO.strings = {
   browse: 'velge dem',
   fileProgress: 'Filstatus: Opplastingshastighet og ETA',
   numberOfSelectedFiles: 'Antall valgte filer',
-  uploadAllNewFiles: 'Last opp alle nye filer'
+  uploadAllNewFiles: 'Last opp alle nye filer',
 }
 
 nb_NO.pluralize = function (n) {

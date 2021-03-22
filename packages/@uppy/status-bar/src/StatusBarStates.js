@@ -4,5 +4,5 @@ module.exports = {
   STATE_PREPROCESSING: 'preprocessing',
   STATE_UPLOADING: 'uploading',
   STATE_POSTPROCESSING: 'postprocessing',
-  STATE_COMPLETE: 'complete'
+  STATE_COMPLETE: 'complete',
 }

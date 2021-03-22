@@ -21,8 +21,8 @@ module.exports = class DragDrop extends Plugin {
     this.defaultLocale = {
       strings: {
         dropHereOr: 'Drop files here or %{browse}',
-        browse: 'browse'
-      }
+        browse: 'browse',
+      },
     }
 
     // Default options
@@ -31,7 +31,7 @@ module.exports = class DragDrop extends Plugin {
       inputName: 'files[]',
       width: '100%',
       height: '100%',
-      note: null
+      note: null,
     }
 
     // Merge default options with the ones set by user
@@ -73,8 +73,8 @@ module.exports = class DragDrop extends Plugin {
       meta: {
         // path of the file relative to the ancestor directory the user selected.
         // e.g. 'docs/Old Prague/airbnb.pdf'
-        relativePath: file.relativePath || null
-      }
+        relativePath: file.relativePath || null,
+      },
     }))
 
     try {
@@ -142,31 +142,31 @@ module.exports = class DragDrop extends Plugin {
     const restrictions = this.uppy.opts.restrictions
     return (
       <input
-        class="uppy-DragDrop-input"
+        className="uppy-DragDrop-input"
         type="file"
         hidden
         ref={(ref) => { this.fileInputRef = ref }}
         name={this.opts.inputName}
         multiple={restrictions.maxNumberOfFiles !== 1}
         accept={restrictions.allowedFileTypes}
-        onchange={this.onInputChange}
+        onChange={this.onInputChange}
       />
     )
   }
 
   renderArrowSvg () {
     return (
-      <svg aria-hidden="true" focusable="false" class="uppy-c-icon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16">
-        <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fill-rule="evenodd" />
+      <svg aria-hidden="true" focusable="false" className="uppy-c-icon uppy-DragDrop-arrow" width="16" height="16" viewBox="0 0 16 16">
+        <path d="M11 10V0H5v10H2l6 6 6-6h-3zm0 0" fillRule="evenodd" />
       </svg>
     )
   }
 
   renderLabel () {
     return (
-      <div class="uppy-DragDrop-label">
+      <div className="uppy-DragDrop-label">
         {this.i18nArray('dropHereOr', {
-          browse: <span class="uppy-DragDrop-browse">{this.i18n('browse')}</span>
+          browse: <span className="uppy-DragDrop-browse">{this.i18n('browse')}</span>,
         })}
       </div>
     )
@@ -174,7 +174,7 @@ module.exports = class DragDrop extends Plugin {
 
   renderNote () {
     return (
-      <span class="uppy-DragDrop-note">{this.opts.note}</span>
+      <span className="uppy-DragDrop-note">{this.opts.note}</span>
     )
   }
 
@@ -188,13 +188,13 @@ module.exports = class DragDrop extends Plugin {
 
     const dragDropStyle = {
       width: this.opts.width,
-      height: this.opts.height
+      height: this.opts.height,
     }
 
     return (
       <button
         type="button"
-        class={dragDropClass}
+        className={dragDropClass}
         style={dragDropStyle}
         onClick={() => this.fileInputRef.click()}
         onDragOver={this.handleDragOver}
@@ -202,7 +202,7 @@ module.exports = class DragDrop extends Plugin {
         onDrop={this.handleDrop}
       >
         {this.renderHiddenFileInput()}
-        <div class="uppy-DragDrop-inner">
+        <div className="uppy-DragDrop-inner">
           {this.renderArrowSvg()}
           {this.renderLabel()}
           {this.renderNote()}
@@ -213,7 +213,7 @@ module.exports = class DragDrop extends Plugin {
 
   install () {
     this.setPluginState({
-      isDraggingOver: false
+      isDraggingOver: false,
     })
     const target = this.opts.target
     if (target) {

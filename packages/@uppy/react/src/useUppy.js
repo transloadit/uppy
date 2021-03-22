@@ -11,7 +11,7 @@ module.exports = function useUppy (factory) {
     uppy.current = factory()
 
     if (!(uppy.current instanceof UppyCore)) {
-      throw new TypeError('useUppy: factory function must return an Uppy instance, got ' + typeof uppy.current)
+      throw new TypeError(`useUppy: factory function must return an Uppy instance, got ${typeof uppy.current}`)
     }
   }
 

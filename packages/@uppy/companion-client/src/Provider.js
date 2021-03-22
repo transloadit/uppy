@@ -33,7 +33,7 @@ module.exports = class Provider extends RequestClient {
             JSON.stringify({ params: this.companionKeysParams })
           )
         }
-        return Object.assign({}, headers, authHeaders)
+        return { ...headers, ...authHeaders }
       })
   }
 
@@ -90,7 +90,7 @@ module.exports = class Provider extends RequestClient {
     return this.get(`${this.id}/logout`)
       .then((response) => Promise.all([
         response,
-        this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
+        this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey),
       ])).then(([response]) => response)
   }
 
@@ -98,7 +98,7 @@ module.exports = class Provider extends RequestClient {
     plugin.type = 'acquirer'
     plugin.files = []
     if (defaultOpts) {
-      plugin.opts = Object.assign({}, defaultOpts, opts)
+      plugin.opts = { ...defaultOpts, ...opts }
     }
 
     if (opts.serverUrl || opts.serverPattern) {

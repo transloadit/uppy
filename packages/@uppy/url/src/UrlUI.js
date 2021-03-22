@@ -23,20 +23,20 @@ class UrlUI extends Component {
 
   render () {
     return (
-      <div class="uppy-Url">
+      <div className="uppy-Url">
         <input
-          class="uppy-u-reset uppy-c-textInput uppy-Url-input"
+          className="uppy-u-reset uppy-c-textInput uppy-Url-input"
           type="text"
           aria-label={this.props.i18n('enterUrlToImport')}
           placeholder={this.props.i18n('enterUrlToImport')}
-          onkeyup={this.handleKeyPress}
+          onKeyUp={this.handleKeyPress}
           ref={(input) => { this.input = input }}
           data-uppy-super-focusable
         />
         <button
-          class="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Url-importButton"
+          className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Url-importButton"
           type="button"
-          onclick={this.handleClick}
+          onClick={this.handleClick}
         >
           {this.props.i18n('import')}
         </button>

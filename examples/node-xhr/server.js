@@ -1,12 +1,12 @@
 var formidable = require('formidable')
 var http = require('http')
 
-http.createServer(function (req, res) {
+http.createServer((req, res) => {
   const headers = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
-    'Access-Control-Max-Age': 2592000 // 30 days
+    'Access-Control-Max-Age': 2592000, // 30 days
     /** add other headers as per requirement */
   }
 
@@ -21,7 +21,7 @@ http.createServer(function (req, res) {
     form.uploadDir = './uploads'
     form.keepExtensions = true
 
-    form.parse(req, function (err, fields, files) {
+    form.parse(req, (err, fields, files) => {
       if (err) {
         console.log('some error', err)
         res.writeHead(200, headers)

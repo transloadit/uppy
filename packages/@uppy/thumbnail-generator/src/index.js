@@ -25,15 +25,15 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        generatingThumbnails: 'Generating thumbnails...'
-      }
+        generatingThumbnails: 'Generating thumbnails...',
+      },
     }
 
     const defaultOptions = {
       thumbnailWidth: null,
       thumbnailHeight: null,
       waitForThumbnailsBeforeUpload: false,
-      lazy: false
+      lazy: false,
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -116,21 +116,21 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     if (width != null) {
       return {
-        width: width,
-        height: Math.round(width / aspect)
+        width,
+        height: Math.round(width / aspect),
       }
     }
 
     if (height != null) {
       return {
         width: Math.round(height * aspect),
-        height: height
+        height,
       }
     }
 
     return {
       width: this.defaultThumbnailDimension,
-      height: Math.round(this.defaultThumbnailDimension / aspect)
+      height: Math.round(this.defaultThumbnailDimension / aspect),
     }
   }
 
@@ -284,11 +284,10 @@ module.exports = class ThumbnailGenerator extends Plugin {
       return this.requestThumbnail(current)
         .catch(err => {}) // eslint-disable-line handle-callback-err
         .then(() => this.processQueue())
-    } else {
-      this.queueProcessing = false
-      this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue')
-      this.uppy.emit('thumbnail:all-generated')
     }
+    this.queueProcessing = false
+    this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue')
+    this.uppy.emit('thumbnail:all-generated')
   }
 
   requestThumbnail (file) {
@@ -357,7 +356,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
       const file = this.uppy.getFile(fileID)
       this.uppy.emit('preprocess-progress', file, {
         mode: 'indeterminate',
-        message: this.i18n('generatingThumbnails')
+        message: this.i18n('generatingThumbnails'),
       })
     })
 

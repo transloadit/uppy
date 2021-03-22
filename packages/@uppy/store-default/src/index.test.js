@@ -14,7 +14,7 @@ describe('DefaultStore', () => {
 
     store.setState({
       a: 1,
-      b: 2
+      b: 2,
     })
     expect(store.getState()).toEqual({ a: 1, b: 2 })
 
@@ -36,7 +36,7 @@ describe('DefaultStore', () => {
     expected = [{}, { a: 1, b: 2 }, { a: 1, b: 2 }]
     store.setState({
       a: 1,
-      b: 2
+      b: 2,
     })
 
     expected = [{ a: 1, b: 2 }, { a: 1, b: 3 }, { b: 3 }]

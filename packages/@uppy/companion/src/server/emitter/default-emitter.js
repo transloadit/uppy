@@ -1,4 +1,4 @@
-const EventEmitter = require('events').EventEmitter
+const { EventEmitter } = require('events')
 
 module.exports = () => {
   return new EventEmitter()
