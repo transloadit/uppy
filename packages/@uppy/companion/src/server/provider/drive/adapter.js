@@ -45,7 +45,7 @@ exports.getItemSubList = (item) => {
     'application/vnd.google-apps.drawing',
     'application/vnd.google-apps.script',
     'application/vnd.google-apps.spreadsheet',
-    'application/vnd.google-apps.presentation'
+    'application/vnd.google-apps.presentation',
   ]
 
   return item.files.filter((i) => {
@@ -59,7 +59,7 @@ exports.getItemName = (item) => {
     'application/vnd.google-apps.drawing': '.png',
     'application/vnd.google-apps.script': '.json',
     'application/vnd.google-apps.spreadsheet': '.xlsx',
-    'application/vnd.google-apps.presentation': '.ppt'
+    'application/vnd.google-apps.presentation': '.ppt',
   }
 
   const extension = extensionMaps[item.mimeType]
@@ -101,9 +101,7 @@ exports.getNextPagePath = (data, currentQuery, currentPath) => {
   if (!data.nextPageToken) {
     return null
   }
-  const query = Object.assign({}, currentQuery, {
-    cursor: data.nextPageToken
-  })
+  const query = { ...currentQuery, cursor: data.nextPageToken }
   return `${currentPath}?${querystring.stringify(query)}`
 }
 
@@ -117,7 +115,7 @@ exports.getGsuiteExportType = (mimeType) => {
     'application/vnd.google-apps.drawing': 'image/png',
     'application/vnd.google-apps.script': 'application/vnd.google-apps.script+json',
     'application/vnd.google-apps.spreadsheet': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.google-apps.presentation': 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+    'application/vnd.google-apps.presentation': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   }
 
   return typeMaps[mimeType] || 'application/pdf'

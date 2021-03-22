@@ -3,6 +3,9 @@ const express = require('express')
 const ms = require('ms')
 // @ts-ignore
 const Grant = require('grant').express()
+const merge = require('lodash/merge')
+const cookieParser = require('cookie-parser')
+const interceptor = require('express-interceptor')
 const grantConfig = require('./config/grant')()
 const providerManager = require('./server/provider')
 const controllers = require('./server/controllers')
@@ -10,12 +13,9 @@ const s3 = require('./server/controllers/s3')
 const getS3Client = require('./server/s3-client')
 const url = require('./server/controllers/url')
 const emitter = require('./server/emitter')
-const merge = require('lodash/merge')
 const redis = require('./server/redis')
-const cookieParser = require('cookie-parser')
 const { getURLBuilder } = require('./server/helpers/utils')
 const jobs = require('./server/jobs')
-const interceptor = require('express-interceptor')
 const logger = require('./server/logger')
 const middlewares = require('./server/middlewares')
 const { ProviderApiError, ProviderAuthError } = require('./server/provider/error')
@@ -24,7 +24,7 @@ const { getCredentialsOverrideMiddleware } = require('./server/provider/credenti
 const defaultOptions = {
   server: {
     protocol: 'http',
-    path: ''
+    path: '',
   },
   providerOptions: {
     s3: {
@@ -33,10 +33,10 @@ const defaultOptions = {
       conditions: [],
       useAccelerateEndpoint: false,
       getKey: (req, filename) => filename,
-      expires: ms('5 minutes') / 1000
-    }
+      expires: ms('5 minutes') / 1000,
+    },
   },
-  debug: true
+  debug: true,
 }
 
 // make the errors available publicly for custom providers
@@ -57,7 +57,7 @@ module.exports.app = (options = {}) => {
   const searchProviders = providerManager.getSearchProviders()
   providerManager.addProviderOptions(options, grantConfig)
 
-  const customProviders = options.customProviders
+  const { customProviders } = options
   if (customProviders) {
     providerManager.addCustomProviders(customProviders, providers, grantConfig)
   }
@@ -88,13 +88,13 @@ module.exports.app = (options = {}) => {
         'uppy-auth-token',
         'uppy-versions',
         'uppy-credentials-params',
-        res.get('Access-Control-Allow-Headers')
+        res.get('Access-Control-Allow-Headers'),
       ].join(',')
     )
 
     const exposedHeaders = [
       // exposed so it can be accessed for our custom uppy preflight
-      'Access-Control-Allow-Headers'
+      'Access-Control-Allow-Headers',
     ]
 
     if (options.sendSelfEndpoint) {
@@ -159,12 +159,12 @@ const interceptGrantErrorResponse = interceptor((req, res) => {
         send([
           'Companion was unable to complete the OAuth process :(',
           'Error: User session is missing or the Provider was misconfigured',
-          reqHint
+          reqHint,
         ].join('\n'))
       } else {
         send(body)
       }
-    }
+    },
   }
 })
 
@@ -176,7 +176,7 @@ const getOptionsMiddleware = (options) => {
   /**
    * @param {object} req
    * @param {object} res
-   * @param {function} next
+   * @param {Function} next
    */
   const middleware = (req, res, next) => {
     const versionFromQuery = req.query.uppyVersions ? decodeURIComponent(req.query.uppyVersions) : null
@@ -185,7 +185,7 @@ const getOptionsMiddleware = (options) => {
       s3Client: getS3Client(options),
       authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
       clientVersion: req.header('uppy-versions') || versionFromQuery || '1.0.0',
-      buildURL: getURLBuilder(options)
+      buildURL: getURLBuilder(options),
     }
 
     logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
@@ -198,6 +198,7 @@ const getOptionsMiddleware = (options) => {
 /**
  * Informs the logger about all provider secrets that should be masked
  * if they are found in a log message
+ *
  * @param {object} companionOptions
  */
 const maskLogger = (companionOptions) => {
@@ -233,7 +234,7 @@ const validateConfig = (companionOptions) => {
   const unspecified = []
 
   mandatoryOptions.forEach((i) => {
-    const value = i.split('.').reduce((prev, curr) => prev ? prev[curr] : undefined, companionOptions)
+    const value = i.split('.').reduce((prev, curr) => (prev ? prev[curr] : undefined), companionOptions)
 
     if (!value) unspecified.push(`"${i}"`)
   })

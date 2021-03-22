@@ -16,10 +16,15 @@ In the current stage we aim to release a new version at least every month.
 
 ### next
 
+To be released: 2021-03-30
+
 - [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
-- [ ] plugin: audio/memo recording similar to Webcam #143 #198
+- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
+- [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
 - [ ] integration: Vue 3 (#2755 / @ajkachnic)
+- [ ] robodog: finishing touches on Companion dynamic Oauth #2802 (@goto-bus-stop)
+- [ ] build: Update Linter #2796 (@kvz)
 
 ## 1.26.1
 

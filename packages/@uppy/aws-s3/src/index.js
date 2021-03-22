@@ -298,6 +298,6 @@ module.exports = class AwsS3 extends Plugin {
   }
 
   uninstall () {
-    this.uppy.removePreProcessor(this.handleUpload)
+    this.uppy.removeUploader(this.handleUpload)
   }
 }

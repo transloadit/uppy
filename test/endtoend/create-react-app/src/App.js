@@ -1,13 +1,14 @@
 import React, { Component } from 'react'
+// @uppy/* are available higher up in the dependency tree, but eslint
+// does not know about that.
+/* eslint-disable import/no-extraneous-dependencies */
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import GoogleDrive from '@uppy/google-drive'
 import { Dashboard, DashboardModal } from '@uppy/react'
-// import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/react'
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
-// import '@uppy/drag-drop/dist/style.css'
-// import '@uppy/progress-bar/dist/style.css'
+/* eslint-enable import/no-extraneous-dependencies */
 
 const isOnTravis = process.env.REACT_APP_ON_TRAVIS
 const endpoint = isOnTravis ? 'http://companion.test:1080' : 'http://localhost:1080'
@@ -37,9 +38,9 @@ class App extends Component {
   }
 
   handleModalClick () {
-    this.setState({
-      open: !this.state.open,
-    })
+    this.setState(({ open }) => ({
+      open: !open,
+    }))
   }
 
   render () {
@@ -86,27 +87,6 @@ class App extends Component {
             onRequestClose={() => this.setState({ open: false })}
           />
         </div>
-
-        {/* <h2>Drag Drop Area</h2>
-        <div id="drag-drop">
-          <DragDrop
-            uppy={this.uppy}
-            locale={{
-              strings: {
-                chooseFile: 'Boop a file',
-                orDragDrop: 'or yoink it here'
-              }
-            }}
-          />
-        </div>
-
-        <h2>Progress Bar</h2>
-        <div id="progress-bar">
-          <ProgressBar
-            uppy={this.uppy}
-            hideAfterFinish={false}
-          />
-        </div> */}
       </div>
     )
   }

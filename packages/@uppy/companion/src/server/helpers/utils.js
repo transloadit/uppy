@@ -88,7 +88,7 @@ function createSecret (secret) {
 /**
  * Create an initialization vector for AES256.
  *
- * @return {Buffer}
+ * @returns {Buffer}
  */
 function createIv () {
   return crypto.randomBytes(16)
@@ -108,7 +108,7 @@ function urlDecode (encoded) {
  *
  * @param {string} input
  * @param {string|Buffer} secret
- * @return {string} Ciphertext as a hex string, prefixed with 32 hex characters containing the iv.
+ * @returns {string} Ciphertext as a hex string, prefixed with 32 hex characters containing the iv.
  */
 module.exports.encrypt = (input, secret) => {
   const iv = createIv()
@@ -124,7 +124,7 @@ module.exports.encrypt = (input, secret) => {
  *
  * @param {string} encrypted
  * @param {string|Buffer} secret
- * @return {string} Decrypted value.
+ * @returns {string} Decrypted value.
  */
 module.exports.decrypt = (encrypted, secret) => {
   // Need at least 32 chars for the iv

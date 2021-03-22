@@ -1,4 +1,4 @@
-const findIndex = require('@uppy/utils/lib/findIndex')
+const findIndex = require('./findIndex')
 
 function createCancelError () {
   return new Error('Cancelled')

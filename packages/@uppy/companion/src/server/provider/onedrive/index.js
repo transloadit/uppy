@@ -12,8 +12,11 @@ const { ProviderApiError, ProviderAuthError } = require('../error')
 class OneDrive extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = options.provider = OneDrive.authProvider
-    this.client = purest(options)
+    this.authProvider = OneDrive.authProvider
+    this.client = purest({
+      ...options,
+      provider: OneDrive.authProvider,
+    })
   }
 
   static get authProvider () {
@@ -32,7 +35,7 @@ class OneDrive extends Provider {
    * it then waits till both requests are done before proceeding with the callback
    *
    * @param {object} options
-   * @param {function} done
+   * @param {Function} done
    */
   list ({ directory, query, token }, done) {
     const path = directory ? `items/${directory}` : 'root'
@@ -51,16 +54,15 @@ class OneDrive extends Provider {
           err = this._error(err, resp)
           logger.error(err, 'provider.onedrive.list.error')
           return done(err)
-        } else {
-          this._userInfo({ token }, (err, infoResp) => {
-            if (err || infoResp.statusCode !== 200) {
-              err = this._error(err, infoResp)
-              logger.error(err, 'provider.onedrive.user.error')
-              return done(err)
-            }
-            done(null, this.adaptData(body, infoResp.body.mail || infoResp.body.userPrincipalName))
-          })
         }
+        this._userInfo({ token }, (err, infoResp) => {
+          if (err || infoResp.statusCode !== 200) {
+            err = this._error(err, infoResp)
+            logger.error(err, 'provider.onedrive.user.error')
+            return done(err)
+          }
+          done(null, this.adaptData(body, infoResp.body.mail || infoResp.body.userPrincipalName))
+        })
       })
   }
 
@@ -101,9 +103,8 @@ class OneDrive extends Provider {
           err = this._error(err, resp)
           logger.error(err, 'provider.onedrive.size.error')
           return done(err)
-        } else {
-          done(null, body.size)
         }
+        done(null, body.size)
       })
   }
 
@@ -125,7 +126,7 @@ class OneDrive extends Provider {
         thumbnail: adapter.getItemThumbnailUrl(item),
         requestPath: adapter.getItemRequestPath(item),
         modifiedDate: adapter.getItemModifiedDate(item),
-        size: adapter.getItemSize(item)
+        size: adapter.getItemSize(item),
       })
     })
 

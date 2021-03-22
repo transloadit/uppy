@@ -2,10 +2,13 @@
   "name": "@uppy-example/aws-presigned-url",
   "dependencies": {
     "@babel/core": "^7.4.4",
-    "aliasify": "^2.1.0",
+    "@uppy/aws-s3": "file:../../packages/@uppy/aws-s3",
+    "@uppy/core": "file:../../packages/@uppy/core",
+    "@uppy/dashboard": "file:../../packages/@uppy/dashboard",
     "babelify": "^10.0.0",
-    "browserify": "^16.5.2",
-    "fs-write-stream-atomic": "^1.0.10"
+    "browserify": "^17.0.0",
+    "fs-write-stream-atomic": "^1.0.10",
+    "watchify": "^4.0.0"
   },
   "private": true,
   "scripts": {

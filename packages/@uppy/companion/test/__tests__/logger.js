@@ -1,6 +1,6 @@
 /* global test:false, expect:false, describe:false, beforeAll:false, */
-const logger = require('../../src/server/logger')
 const chalk = require('chalk')
+const logger = require('../../src/server/logger')
 
 describe('Test Logger secret mask', () => {
   beforeAll(() => {

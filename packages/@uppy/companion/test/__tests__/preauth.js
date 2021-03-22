@@ -11,7 +11,7 @@ jest.mock('../../src/server/helpers/jwt', () => {
       return { payload: '' }
     },
     addToCookies: (res, token, companionOptions, authProvider) => {},
-    removeFromCookies: (res, companionOptions, authProvider) => {}
+    removeFromCookies: (res, companionOptions, authProvider) => {},
   }
 })
 
@@ -28,7 +28,7 @@ describe('handle preauth endpoint', () => {
       .post('/dropbox/preauth')
       .set('Content-Type', 'application/json')
       .send({
-        params: 'param value'
+        params: 'param value',
       })
       .expect(200)
       // see jwt.generateEncryptedToken mock above
@@ -40,7 +40,7 @@ describe('handle preauth endpoint', () => {
       .post('/dropbox/preauth')
       .set('Content-Type', 'application/json')
       .send({
-        notParams: 'value'
+        notParams: 'value',
       })
       .expect(400)
   })
@@ -50,7 +50,7 @@ describe('handle preauth endpoint', () => {
       .post('/drive/preauth')
       .set('Content-Type', 'application/json')
       .send({
-        params: 'param value'
+        params: 'param value',
       })
       .expect(501)
   })
@@ -60,7 +60,7 @@ describe('handle preauth endpoint', () => {
       .post('/dropbox/preauth')
       .set('Content-Type', 'application/json')
       .send({
-        params: 'param value'
+        params: 'param value',
       })
       .expect(501)
   })
