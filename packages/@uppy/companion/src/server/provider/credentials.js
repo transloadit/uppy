@@ -4,6 +4,7 @@ const atob = require('atob')
 const logger = require('../logger')
 const oAuthState = require('../helpers/oauth-state')
 const tokenService = require('../helpers/jwt')
+const { sanitizeHtml } = require('../helpers/utils')
 // eslint-disable-next-line
 const Provider = require('./Provider')
 
@@ -60,8 +61,22 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
       next()
     }).catch((err) => {
       // TODO we should return an html page here that can communicate the error
-      // back to the Uppy client
-      next(err)
+      // back to the Uppy client, just like /send-token does
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+        </head>
+        <body>
+          <h1>Could not fetch credentials</h1>
+          <p>
+            This is probably an Uppy configuration issue. Check that your Transloadit key is correct, and that the configured <code>credentialsName</code> for this remote provider matches the name you gave it in the Template Credentials setup on the Transloadit side.
+          </p>
+          <p>Internal error message: ${sanitizeHtml(err.message)}</p>
+        </body>
+        </html>
+      `)
     })
   }
 }
