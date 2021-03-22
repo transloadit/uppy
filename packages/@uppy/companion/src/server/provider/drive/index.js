@@ -31,6 +31,56 @@ function waitForFailedResponse (resp) {
   })
 }
 
+function adaptData (listFilesResp, sharedDrivesResp, directory, query, showSharedWithMe) {
+  const adaptItem = (item) => ({
+    isFolder: adapter.isFolder(item),
+    icon: adapter.getItemIcon(item),
+    name: adapter.getItemName(item),
+    mimeType: adapter.getMimeType(item),
+    id: adapter.getItemId(item),
+    thumbnail: adapter.getItemThumbnailUrl(item),
+    requestPath: adapter.getItemRequestPath(item),
+    modifiedDate: adapter.getItemModifiedDate(item),
+    size: adapter.getItemSize(item),
+    custom: {
+      // @todo isTeamDrive is left for backward compatibility. We should remove it in the next
+      // major release.
+      isTeamDrive: adapter.isSharedDrive(item),
+      isSharedDrive: adapter.isSharedDrive(item),
+      imageHeight: adapter.getImageHeight(item),
+      imageWidth: adapter.getImageWidth(item),
+      imageRotation: adapter.getImageRotation(item),
+      imageDateTime: adapter.getImageDate(item),
+      videoHeight: adapter.getVideoHeight(item),
+      videoWidth: adapter.getVideoWidth(item),
+      videoDurationMillis: adapter.getVideoDurationMillis(item),
+    },
+  })
+
+  const items = adapter.getItemSubList(listFilesResp)
+  const sharedDrives = sharedDrivesResp ? sharedDrivesResp.drives || [] : []
+
+  const virtualItem = showSharedWithMe && ({
+    isFolder: true,
+    icon: 'folder',
+    name: 'Shared with me',
+    mimeType: 'application/vnd.google-apps.folder',
+    id: VIRTUAL_SHARED_DIR,
+    requestPath: VIRTUAL_SHARED_DIR,
+  })
+
+  const adaptedItems = [
+    ...(virtualItem ? [virtualItem] : []), // shared folder first
+    ...([...sharedDrives, ...items].map(adaptItem)),
+  ]
+
+  return {
+    username: adapter.getUsername(listFilesResp),
+    items: adaptedItems,
+    nextPagePath: adapter.getNextPagePath(listFilesResp, query, directory),
+  }
+}
+
 /**
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
@@ -118,7 +168,7 @@ class Drive extends Provider {
     const [sharedDrives, filesResponse] = await Promise.all([fetchSharedDrives(), fetchFiles()])
     // console.log({ directory, sharedDrives, filesResponse })
 
-    return this.adaptData(
+    return adaptData(
       filesResponse,
       sharedDrives,
       directory,
@@ -232,56 +282,6 @@ class Drive extends Provider {
         }
         done(null, { revoked: true })
       })
-  }
-
-  adaptData (listFilesResp, sharedDrivesResp, directory, query, showSharedWithMe) {
-    const adaptItem = (item) => ({
-      isFolder: adapter.isFolder(item),
-      icon: adapter.getItemIcon(item),
-      name: adapter.getItemName(item),
-      mimeType: adapter.getMimeType(item),
-      id: adapter.getItemId(item),
-      thumbnail: adapter.getItemThumbnailUrl(item),
-      requestPath: adapter.getItemRequestPath(item),
-      modifiedDate: adapter.getItemModifiedDate(item),
-      size: adapter.getItemSize(item),
-      custom: {
-        // @todo isTeamDrive is left for backward compatibility. We should remove it in the next
-        // major release.
-        isTeamDrive: adapter.isSharedDrive(item),
-        isSharedDrive: adapter.isSharedDrive(item),
-        imageHeight: adapter.getImageHeight(item),
-        imageWidth: adapter.getImageWidth(item),
-        imageRotation: adapter.getImageRotation(item),
-        imageDateTime: adapter.getImageDate(item),
-        videoHeight: adapter.getVideoHeight(item),
-        videoWidth: adapter.getVideoWidth(item),
-        videoDurationMillis: adapter.getVideoDurationMillis(item),
-      },
-    })
-
-    const items = adapter.getItemSubList(listFilesResp)
-    const sharedDrives = sharedDrivesResp ? sharedDrivesResp.drives || [] : []
-
-    const virtualItem = showSharedWithMe && ({
-      isFolder: true,
-      icon: 'folder',
-      name: 'Shared with me',
-      mimeType: 'application/vnd.google-apps.folder',
-      id: VIRTUAL_SHARED_DIR,
-      requestPath: VIRTUAL_SHARED_DIR,
-    })
-
-    const adaptedItems = [
-      ...(virtualItem ? [virtualItem] : []), // shared folder first
-      ...([...sharedDrives, ...items].map(adaptItem)),
-    ]
-
-    return {
-      username: adapter.getUsername(listFilesResp),
-      items: adaptedItems,
-      nextPagePath: adapter.getNextPagePath(listFilesResp, query, directory),
-    }
   }
 
   _error (err, resp) {
