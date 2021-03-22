@@ -4,7 +4,7 @@ import {
   Modal,
   Text,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native'
 import takePicture from './takePicture'
 import selectImage from './selectImage'

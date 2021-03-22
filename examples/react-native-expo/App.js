@@ -4,7 +4,7 @@ import {
   Text,
   View,
   AsyncStorage,
-  Image
+  Image,
 } from 'react-native'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
