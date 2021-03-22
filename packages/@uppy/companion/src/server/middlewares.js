@@ -97,8 +97,8 @@ exports.cors = (options = {}) => (req, res, next) => {
   }
   methods = uniq([...methods, 'GET', 'POST', 'OPTIONS', 'DELETE'])
 
-  // if endpoint urls are specified, then we only allow those endpoints
-  // otherwise, we allow any client url to access companion.
+  // If endpoint urls are specified, then we only allow those endpoints.
+  // Otherwise, we allow any client url to access companion.
   // Must be set to at least true (origin "*" with "credentials: true" will cause error in many browsers)
   // https://github.com/expressjs/cors/issues/119
   // allowedOrigins can also be any type supported by https://github.com/expressjs/cors#configuration-options
