@@ -5,7 +5,7 @@ module.exports.providers = {
   instagram: require('./instagram'),
   onedrive: require('./onedrive'),
   facebook: require('./facebook'),
-  zoom: require('./zoom')
+  zoom: require('./zoom'),
 }
 
 module.exports.defaults = require('./constants')

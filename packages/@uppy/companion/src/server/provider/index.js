@@ -24,24 +24,24 @@ config.zoom = {
   'https://zoom.us/': {
     __domain: {
       auth: {
-        auth: { bearer: '[0]' }
-      }
+        auth: { bearer: '[0]' },
+      },
     },
     '[version]/{endpoint}': {
       __path: {
         alias: '__default',
-        version: 'v2'
-      }
+        version: 'v2',
+      },
     },
     'oauth/revoke': {
       __path: {
         alias: 'logout',
         auth: {
-          auth: { basic: '[0]' }
-        }
-      }
-    }
-  }
+          auth: { basic: '[0]' },
+        },
+      },
+    },
+  },
 }
 
 /**
@@ -56,7 +56,7 @@ module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => 
    *
    * @param {object} req
    * @param {object} res
-   * @param {function} next
+   * @param {Function} next
    * @param {string} providerName
    */
   const middleware = (req, res, next, providerName) => {
@@ -76,7 +76,7 @@ module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => 
 
 /**
  * @param {{server: object, providerOptions: object}} companionOptions
- * @return {Object.<string, typeof Provider>}
+ * @returns {Object.<string, typeof Provider>}
  */
 module.exports.getDefaultProviders = (companionOptions) => {
   // @todo: we should rename drive to googledrive or google-drive or google
@@ -86,7 +86,7 @@ module.exports.getDefaultProviders = (companionOptions) => {
 }
 
 /**
- * @return {Object.<string, typeof SearchProvider>}
+ * @returns {Object.<string, typeof SearchProvider>}
  */
 module.exports.getSearchProviders = () => {
   return { unsplash }
@@ -103,7 +103,7 @@ module.exports.getSearchProviders = () => {
 module.exports.addCustomProviders = (customProviders, providers, grantConfig) => {
   Object.keys(customProviders).forEach((providerName) => {
     providers[providerName] = customProviders[providerName].module
-    const providerConfig = Object.assign({}, customProviders[providerName].config)
+    const providerConfig = { ...customProviders[providerName].config }
     // todo: consider setting these options from a universal point also used
     // by official providers. It'll prevent these from getting left out if the
     // requirement changes.
@@ -128,7 +128,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
   grantConfig.defaults = {
     host: server.host,
     protocol: server.protocol,
-    path: server.path
+    path: server.path,
   }
 
   const { oauthDomain } = server
@@ -171,7 +171,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
  *
  * @param {string} name of the provider
  * @param {{server: object, providerOptions: object}} options
- * @return {string} the authProvider for this provider
+ * @returns {string} the authProvider for this provider
  */
 const providerNameToAuthName = (name, options) => {
   const providers = exports.getDefaultProviders(options)

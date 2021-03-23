@@ -35,7 +35,7 @@ class MockPurest {
 
   request (done) {
     if (typeof done === 'function') {
-      const responses = fixtures[this.opts.providerName].responses
+      const { responses } = fixtures[this.opts.providerName]
       const url = this._query ? `${this._requestUrl}?${this._query}` : this._requestUrl
       const endpointResponses = responses[url] || responses[this._requestUrl]
       if (endpointResponses == null || !has(endpointResponses, this._method)) {
@@ -44,7 +44,7 @@ class MockPurest {
       }
 
       let statusCode = 200
-      const validators = fixtures[this.opts.providerName].validators
+      const { validators } = fixtures[this.opts.providerName]
       if (validators && validators[this._requestUrl]) {
         statusCode = validators[this._requestUrl](this._requestOptions) ? 200 : 400
       }

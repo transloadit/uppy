@@ -2,6 +2,7 @@
 
 const request = require('supertest')
 const { getServer } = require('../mockserver')
+
 const authServer = getServer()
 
 describe('handle deauthorization callback', () => {
@@ -10,7 +11,7 @@ describe('handle deauthorization callback', () => {
       .post('/dropbox/deauthorization/callback')
       .set('Content-Type', 'application/json')
       .send({
-        foo: 'bar'
+        foo: 'bar',
       })
     // @todo consider receiving 501 instead
       .expect(500)
@@ -29,8 +30,8 @@ describe('handle deauthorization callback', () => {
           user_id: 'z9jkdsfsdfjhdkfjQ',
           signature: '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
           deauthorization_time: '2019-06-17T13:52:28.632Z',
-          client_id: 'ADZ9k9bTWmGUoUbECUKU_a'
-        }
+          client_id: 'ADZ9k9bTWmGUoUbECUKU_a',
+        },
       })
       .expect(400)
   })
@@ -48,8 +49,8 @@ describe('handle deauthorization callback', () => {
           user_id: 'z9jkdsfsdfjhdkfjQ',
           signature: '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
           deauthorization_time: '2019-06-17T13:52:28.632Z',
-          client_id: 'ADZ9k9bTWmGUoUbECUKU_a'
-        }
+          client_id: 'ADZ9k9bTWmGUoUbECUKU_a',
+        },
       })
       .expect(400)
   })
@@ -60,7 +61,7 @@ describe('handle deauthorization callback', () => {
       .set('Content-Type', 'application/json')
       .set('Authorization', 'zoom_verfication_token')
       .send({
-        invalid: 'content'
+        invalid: 'content',
       })
       .expect(400)
   })
@@ -78,8 +79,8 @@ describe('handle deauthorization callback', () => {
           user_id: 'z9jkdsfsdfjhdkfjQ',
           signature: '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
           deauthorization_time: '2019-06-17T13:52:28.632Z',
-          client_id: 'ADZ9k9bTWmGUoUbECUKU_a'
-        }
+          client_id: 'ADZ9k9bTWmGUoUbECUKU_a',
+        },
       })
       .expect(400)
   })
@@ -97,8 +98,8 @@ describe('handle deauthorization callback', () => {
           user_id: 'z9jkdsfsdfjhdkfjQ',
           signature: '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
           deauthorization_time: '2019-06-17T13:52:28.632Z',
-          client_id: 'ADZ9k9bTWmGUoUbECUKU_a'
-        }
+          client_id: 'ADZ9k9bTWmGUoUbECUKU_a',
+        },
       })
       .expect(200)
   })

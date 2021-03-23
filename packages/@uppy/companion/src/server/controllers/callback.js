@@ -8,10 +8,10 @@ const logger = require('../logger')
  *
  * @param {object} req
  * @param {object} res
- * @param {function} next
+ * @param {Function} next
  */
 module.exports = function callback (req, res, next) {
-  const providerName = req.params.providerName
+  const { providerName } = req.params
 
   if (!req.companion.providerTokens) {
     req.companion.providerTokens = {}

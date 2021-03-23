@@ -1,9 +1,10 @@
-const SearchProvider = require('../SearchProvider')
 const request = require('request')
+const SearchProvider = require('../SearchProvider')
 const { getURLMeta } = require('../../helpers/request')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError } = require('../error')
+
 const BASE_URL = 'https://api.unsplash.com'
 
 /**
@@ -17,11 +18,11 @@ class Unsplash extends SearchProvider {
       json: true,
       qs: {
         per_page: 40,
-        query: query.q
+        query: query.q,
       },
       headers: {
-        Authorization: `Client-ID ${token}`
-      }
+        Authorization: `Client-ID ${token}`,
+      },
     }
 
     if (query.cursor) {
@@ -33,9 +34,8 @@ class Unsplash extends SearchProvider {
         err = this._error(err, resp)
         logger.error(err, 'provider.unsplash.list.error')
         return done(err)
-      } else {
-        done(null, this.adaptData(body, query))
       }
+      done(null, this.adaptData(body, query))
     })
   }
 
@@ -45,8 +45,8 @@ class Unsplash extends SearchProvider {
       method: 'GET',
       json: true,
       headers: {
-        Authorization: `Client-ID ${token}`
-      }
+        Authorization: `Client-ID ${token}`,
+      },
     }
 
     request(reqOpts, (err, resp, body) => {
@@ -80,8 +80,8 @@ class Unsplash extends SearchProvider {
       method: 'GET',
       json: true,
       headers: {
-        Authorization: `Client-ID ${token}`
-      }
+        Authorization: `Client-ID ${token}`,
+      },
     }
 
     request(reqOpts, (err, resp, body) => {
@@ -105,7 +105,7 @@ class Unsplash extends SearchProvider {
     const data = {
       searchedFor: currentQuery.q,
       username: null,
-      items: []
+      items: [],
     }
     const items = adapter.getItemSubList(body)
     items.forEach((item) => {
@@ -118,7 +118,7 @@ class Unsplash extends SearchProvider {
         thumbnail: adapter.getItemThumbnailUrl(item),
         requestPath: adapter.getItemRequestPath(item),
         modifiedDate: adapter.getItemModifiedDate(item),
-        size: null
+        size: null,
       })
     })
 

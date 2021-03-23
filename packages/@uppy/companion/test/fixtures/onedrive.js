@@ -4,8 +4,8 @@ module.exports.responses = {
   me: {
     get: {
       userPrincipalName: defaults.USERNAME,
-      mail: defaults.USERNAME
-    }
+      mail: defaults.USERNAME,
+    },
   },
   '/me/drive/root/children': {
     get: {
@@ -19,43 +19,43 @@ module.exports.responses = {
           parentReference: {
             driveId: 'DUMMY-DRIVE-ID',
             driveType: 'personal',
-            path: '/drive/root:'
+            path: '/drive/root:',
           },
           file: {
-            mimeType: defaults.MIME_TYPE
+            mimeType: defaults.MIME_TYPE,
           },
           thumbnails: [{
             id: '0',
             large: {
               height: 452,
               url: defaults.THUMBNAIL_URL,
-              width: 800
+              width: 800,
             },
             medium: {
               height: 100,
               url: defaults.THUMBNAIL_URL,
-              width: 176
+              width: 176,
             },
             small: {
               height: 54,
               url: defaults.THUMBNAIL_URL,
-              width: 96
-            }
-          }]
-        }
-      ]
-    }
+              width: 96,
+            },
+          }],
+        },
+      ],
+    },
   },
   [`/drives/DUMMY-DRIVE-ID/items/${defaults.ITEM_ID}`]: {
     get: {
-      size: defaults.FILE_SIZE
-    }
+      size: defaults.FILE_SIZE,
+    },
   },
   [`/drives/DUMMY-DRIVE-ID/items/${defaults.ITEM_ID}/content`]: {
-    get: {}
-  }
+    get: {},
+  },
 }
 
 module.exports.expects = {
-  itemRequestPath: `${defaults.ITEM_ID}?driveId=DUMMY-DRIVE-ID`
+  itemRequestPath: `${defaults.ITEM_ID}?driveId=DUMMY-DRIVE-ID`,
 }

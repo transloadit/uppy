@@ -6,6 +6,7 @@ const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
+
 const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
@@ -17,11 +18,14 @@ const SHARED_DRIVE_FIELDS = '*'
 class Drive extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = options.provider = Drive.authProvider
-    options.alias = 'drive'
-    options.version = 'v3'
+    this.authProvider = Drive.authProvider
 
-    this.client = purest(options)
+    this.client = purest({
+      ...options,
+      provider: Drive.authProvider,
+      alias: 'drive',
+      version: 'v3',
+    })
   }
 
   static get authProvider () {
@@ -57,7 +61,7 @@ class Drive extends Provider {
       pageToken: query.cursor,
       q: `'${directory}' in parents and trashed=false`,
       includeItemsFromAllDrives: true,
-      supportsAllDrives: true
+      supportsAllDrives: true,
     }
 
     const filesPromise = new Promise((resolve, reject) => {
@@ -232,8 +236,8 @@ class Drive extends Provider {
         imageDateTime: adapter.getImageDate(item),
         videoHeight: adapter.getVideoHeight(item),
         videoWidth: adapter.getVideoWidth(item),
-        videoDurationMillis: adapter.getVideoDurationMillis(item)
-      }
+        videoDurationMillis: adapter.getVideoDurationMillis(item),
+      },
     })
 
     const items = adapter.getItemSubList(res)
@@ -244,7 +248,7 @@ class Drive extends Provider {
     return {
       username: adapter.getUsername(res),
       items: adaptedItems,
-      nextPagePath: adapter.getNextPagePath(res, query, directory)
+      nextPagePath: adapter.getNextPagePath(res, query, directory),
     }
   }
 

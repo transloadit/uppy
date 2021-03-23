@@ -1,3 +1,5 @@
+// The @uppy/ dependencies are resolved using aliasify
+/* eslint-disable import/no-extraneous-dependencies */
 const Uppy = require('@uppy/core/src')
 const Dashboard = require('@uppy/dashboard/src')
 const Instagram = require('@uppy/instagram/src')
@@ -19,6 +21,7 @@ const XHRUpload = require('@uppy/xhr-upload/src')
 const Transloadit = require('@uppy/transloadit/src')
 const Form = require('@uppy/form/src')
 const ImageEditor = require('@uppy/image-editor/src')
+/* eslint-enable import/no-extraneous-dependencies */
 
 // DEV CONFIG: pick an uploader
 

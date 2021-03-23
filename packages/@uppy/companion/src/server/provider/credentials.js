@@ -49,8 +49,8 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
       res.locals.grant = {
         dynamic: {
           key: credentials.key,
-          secret: credentials.secret
-        }
+          secret: credentials.secret,
+        },
       }
 
       if (credentials.redirect_uri) {
@@ -105,9 +105,8 @@ const fetchProviderKeys = (providerName, companionOptions, credentialRequestPara
 
   if (providerConfig && providerConfig.credentialsURL && credentialRequestParams) {
     return fetchKeys(providerConfig.credentialsURL, providerName, credentialRequestParams)
-  } else {
-    return Promise.resolve(providerConfig)
   }
+  return Promise.resolve(providerConfig)
 }
 
 const fetchKeys = (url, providerName, credentialRequestParams) => {
@@ -115,9 +114,9 @@ const fetchKeys = (url, providerName, credentialRequestParams) => {
     const options = {
       body: {
         provider: providerName,
-        parameters: credentialRequestParams
+        parameters: credentialRequestParams,
       },
-      json: true
+      json: true,
     }
     request.post(url, options, (err, resp, body) => {
       if (err) {

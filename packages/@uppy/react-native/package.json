@@ -20,10 +20,16 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "dependencies": {
+    "@uppy/instagram": "file:../instagram",
+    "@uppy/url": "file:../url"
+  },
   "peerDependencies": {
     "expo": ">=33.0.0",
     "expo-document-picker": ">=6.0.0",
     "expo-image-picker": ">=6.0.0",
-    "expo-permissions": ">=6.0.0"
+    "expo-permissions": ">=6.0.0",
+    "react": "^16.0.0 || ^17.0.0",
+    "react-native": "*"
   }
 }

@@ -1,4 +1,4 @@
-const NetworkError = require('@uppy/utils/lib/NetworkError')
+const NetworkError = require('./NetworkError')
 
 /**
  * Wrapper around window.fetch that throws a NetworkError when appropriate

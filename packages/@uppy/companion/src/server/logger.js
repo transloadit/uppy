@@ -5,6 +5,7 @@ const valuesToMask = []
 /**
  * Adds a list of strings that should be masked by the logger.
  * This function can only be called once through out the life of the server.
+ *
  * @param {Array} maskables a list of strings to be masked
  */
 exports.setMaskables = (maskables) => {
@@ -17,6 +18,7 @@ exports.setMaskables = (maskables) => {
 
 /**
  * INFO level log
+ *
  * @param {string} msg the message to log
  * @param {string=} tag a unique tag to easily search for this message
  * @param {string=} traceId a unique id to easily trace logs tied to a request
@@ -27,6 +29,7 @@ exports.info = (msg, tag, traceId) => {
 
 /**
  * WARN level log
+ *
  * @param {string} msg the message to log
  * @param {string=} tag a unique tag to easily search for this message
  * @param {string=} traceId a unique id to easily trace logs tied to a request
@@ -38,6 +41,7 @@ exports.warn = (msg, tag, traceId) => {
 
 /**
  * ERROR level log
+ *
  * @param {string | Error} msg the message to log
  * @param {string=} tag a unique tag to easily search for this message
  * @param {string=} traceId a unique id to easily trace logs tied to a request
@@ -50,6 +54,7 @@ exports.error = (msg, tag, traceId, shouldLogStackTrace) => {
 
 /**
  * DEBUG level log
+ *
  * @param {string} msg the message to log
  * @param {string=} tag a unique tag to easily search for this message
  * @param {string=} traceId a unique id to easily trace logs tied to a request
@@ -64,10 +69,11 @@ exports.debug = (msg, tag, traceId) => {
 
 /**
  * message log
+ *
  * @param {string | Error} msg the message to log
  * @param {string} tag a unique tag to easily search for this message
  * @param {string} level error | info | debug
- * @param {function=} color function to display the log in appropriate color
+ * @param {Function=} color function to display the log in appropriate color
  * @param {string=} id a unique id to easily trace logs tied to a request
  * @param {boolean=} shouldLogStackTrace when set to true, errors will be logged with their stack trace
  */
@@ -98,6 +104,7 @@ const log = (msg, tag, level, id, color, shouldLogStackTrace) => {
 
 /**
  * Mask the secret content of a message
+ *
  * @param {string} msg the message whose content should be masked
  * @returns {string}
  */

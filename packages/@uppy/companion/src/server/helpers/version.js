@@ -2,6 +2,7 @@ const semver = require('semver')
 
 /**
  * checks if a version is greater than or equal to
+ *
  * @param {string} v1 the LHS version
  * @param {string} v2 the RHS version
  * @returns {boolean}
