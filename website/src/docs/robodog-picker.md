@@ -87,7 +87,7 @@ Array of providers to use. Each entry is the name of a provider. The available o
 
 ### `companionUrl: Transloadit.COMPANION`
 
-The URL to a [Uppy Companion][companion] server to use.
+The URL to a [Uppy Companion][companion] server to use. By default, Transloadit's hosted servers are used. These servers are restricted to importing files from remote providers into Transloadit Assemblies.
 
 ### `companionAllowedHosts: Transloadit.COMPANION_PATTERN`
 
@@ -95,7 +95,7 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your [Uppy Companion][companion] running on several hosts. Otherwise, the default value should do fine.
+This is useful when you have your own [Uppy Companion][companion] running on multiple hosts. Otherwise, the default value should do just fine.
 
 ### `companionHeaders: {}`
 
@@ -121,10 +121,27 @@ Specific options for the [URL](/docs/url) provider.
 
 Specific options for the [Webcam](/docs/webcam) provider.
 
+## Using your own OAuth applications when importing files
+
+When importing files from remote providers, Transloadit's OAuth applications are used by default. Your users will be asked to provide Transloadit access to their files. Since your users are probably not aware of Transloadit, this may be confusing or decrease trust.
+
+You can use your own OAuth keys with Transloadit's hosted Companion servers by using Transloadit Template Credentials. [Create a Template Credential][template-credentials] on the Transloadit site. Select "Companion OAuth" for the service, and enter the key and secret for the provider you want to use. Then you can pass the name of the new credentials to the appropriate provider:
+
+```js
+Robodog.pick({
+  providers: ['dropbox'],
+  dropbox: {
+    credentialsName: 'my_companion_dropbox_creds',
+  },
+})
+```
+
+Users will now be asked to allow _your_ application access, and they're probably already familiar with that!
+
 [companion]: /docs/companion
 
 [transloadit]: /docs/transloadit#options
 
 [assembly-status]: https://transloadit.com/docs/api/#assembly-status-response
-
+[template-credentials]: https://transloadit.com/docs/#how-to-create-template-credentials
 [promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise

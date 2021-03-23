@@ -7,7 +7,7 @@ order: 4
 category: "File Processing"
 ---
 
-Add the [Dashboard UI][dashboard] to your page, all wired up and ready to go! This is a basic wrapper around the [Transloadit][transloadit] and [Dashboard][dashboard] plugins. Unlike the [File Picker][file picker] API, this Dashboard is embedded directly into the page. Users can upload many files after another.
+Add the [Dashboard UI][dashboard] to your page, all wired up and ready to go! This is a wrapper around the [Transloadit][transloadit] and [Dashboard][dashboard] plugins. Unlike the [File Picker][file picker] API, this Dashboard is embedded directly into the page. Users can upload multiple files after another.
 
 ```html
 <div id="dashboard"></div>
