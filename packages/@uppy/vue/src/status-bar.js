@@ -2,7 +2,7 @@ import StatusBarPlugin from '@uppy/status-bar'
 import { shallowEqualObjects } from 'shallow-equal'
 
 // Cross compatibility dependencies
-import { h as createElement } from 'vue'
+import * as Vue from 'vue'
 import { isVue2 } from './utils'
 
 export default {
@@ -67,7 +67,7 @@ export default {
     }
 
     // Other wise, we import the `h` function from the Vue package (in Vue 3 fashion)
-    return createElement('div', {
+    return Vue.h('div', {
       ref: 'container',
     })
   },

@@ -1,6 +1,7 @@
 import DashboardPlugin from '@uppy/dashboard'
 import { shallowEqualObjects } from 'shallow-equal'
-import { h as createElement } from 'vue'
+
+import * as Vue from 'vue'
 import { isVue2 } from './utils'
 
 export default {
@@ -83,8 +84,8 @@ export default {
       })
     }
 
-    // Otherwise, we import the `h` function from the Vue package (in Vue 3 fashion)
-    return createElement('div', {
+    // Otherwise, we use the `h` function from the Vue package (in Vue 3 fashion)
+    return Vue.h('div', {
       ref: 'container',
     })
   },
