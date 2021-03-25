@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
+
 // Called by the `version` npm script.
 // This is run _after_ lerna updates the version numbers,
 // but _before_ it commits, so we have time to update the
@@ -44,6 +47,7 @@ async function updateVersions (files, packageName) {
   console.log('replacing', replacements, 'in', files.length, 'files')
 
   for (const f of files) {
+    // eslint-disable-next-line no-await-in-loop
     await replaceInFile(f, replacements)
   }
 }
