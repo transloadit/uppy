@@ -80,7 +80,8 @@
     "automock": false,
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "src/**"
+      "src/**",
+      "!src/**/*.d.ts"
     ]
   },
   "scripts": {
@@ -88,7 +89,7 @@
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "npm run build",
     "start": "node ./lib/standalone/start-server.js",
-    "test": "node test/run",
+    "test": "bash -c 'source env.test.sh && ../../../node_modules/jest/bin/jest.js'",
     "test:watch": "npm test -- --watch"
   },
   "engines": {
