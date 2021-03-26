@@ -61,7 +61,7 @@ module.exports = () => {
   })
     .use(Dashboard, {
       trigger: '#pick-files',
-      inline: true,
+      // inline: true,
       target: '.foo',
       metaFields: [
         { id: 'license', name: 'License', placeholder: 'specify license' },
