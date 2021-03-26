@@ -1,0 +1,14 @@
+@import '@uppy/core/src/_variables.scss';
+
+.uppy-is-drag-over:after {
+  content: '';
+  position: fixed;
+  top: 7px;
+  right: 7px;
+  bottom: 7px;
+  left: 7px;
+  border: 5px dashed $gray-400;
+  // border-radius: 5px;
+  z-index: 10000;
+  background-color: rgba($gray-200, 0.5);
+}
