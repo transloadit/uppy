@@ -294,9 +294,11 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 3. **redisOptions(optional)** - An object of [options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties). This option can be used in place of `redisUrl`.
 
-4. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
+4. **redisPubSubScope(optional)** - Use a scope for the companion events at the Redis server. Setting this option will prefix all events with the name provided and a colon.
 
-5. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set:
+5. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
+
+6. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set:
 
   - protocol - `http | https`
   - host(required) - your server host (e.g localhost:3020, mydomain.com)
@@ -305,15 +307,15 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
   - validHosts - if you are setting a master `oauthDomain`, you need to set a list of valid hosts, so the master oauth handler can validate the host of the Uppy instance requesting the authentication. This is basically a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
   - implicitPath - if the URL path to your Companion server is set in your NGINX server (or any other Http server) instead of your express app, then you need to set this path as `implicitPath`. So if your Companion URL is `mydomain.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`.
 
-6. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
+7. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
 
-7. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
+8. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
 
-8. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Companion will only accept uploads to these URLs (useful when you want to make sure a Companion instance is only allowed to upload to your servers, for example).
+9. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Companion will only accept uploads to these URLs (useful when you want to make sure a Companion instance is only allowed to upload to your servers, for example).
 
-9. **secret(required)** - A secret string which Companion uses to generate authorization tokens.
+10. **secret(required)** - A secret string which Companion uses to generate authorization tokens.
 
-10. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
+11. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
 
 ### Provider Redirect URIs
 
