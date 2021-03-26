@@ -108,6 +108,7 @@
     "react-dom": "16.13.1",
     "redux": "4.0.5",
     "remark-cli": "^8.0.1",
+    "remark-lint-uppy": "file:private/remark-lint-uppy",
     "replace-x": "1.7.2",
     "replacestream": "^4.0.3",
     "resolve": "^1.17.0",
