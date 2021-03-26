@@ -4,26 +4,6 @@
 
 const glob = require('glob')
 
-// Configure import/no-extraneous-dependencies for test files in
-// each package, which are allowed to import dependencies from their
-// own package.json as well as the root package.json.
-const importRules = []
-for (const dir of glob.sync('packages/@uppy/*')) {
-  importRules.push({
-    files: [
-      `${dir}/**/*.test.js`,
-      `${dir}/test/**/*.js`,
-      `${dir}/rollup.config.js`,
-    ],
-    rules: {
-      'import/no-extraneous-dependencies': ['error', {
-        devDependencies: true,
-        packageDir: [dir, '.'],
-      }],
-    },
-  })
-}
-
 module.exports = {
   extends: ['transloadit'],
   env: {
@@ -170,6 +150,7 @@ module.exports = {
     {
       files: [
         'bin/**.js',
+        'postcss.config.js',
         '.eslintrc.js',
       ],
       rules: {
@@ -215,7 +196,5 @@ module.exports = {
         }],
       },
     },
-
-    ...importRules,
   ],
 }
