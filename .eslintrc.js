@@ -2,8 +2,6 @@
 
 'use strict'
 
-const glob = require('glob')
-
 module.exports = {
   extends: ['transloadit'],
   env: {
