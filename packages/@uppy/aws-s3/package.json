@@ -29,6 +29,9 @@
     "qs-stringify": "^1.1.0",
     "url-parse": "^1.4.7"
   },
+  "devDependencies": {
+    "whatwg-fetch": "3.6.2"
+  },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
   }

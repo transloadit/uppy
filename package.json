@@ -125,7 +125,7 @@
     "watchify": "3.11.1",
     "webdriverio": "5.18.6",
     "webpack": "4.44.1",
-    "whatwg-fetch": "3.0.0"
+    "whatwg-fetch": "3.6.2"
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
