@@ -21,6 +21,7 @@ const XHRUpload = require('@uppy/xhr-upload/src')
 const Transloadit = require('@uppy/transloadit/src')
 const Form = require('@uppy/form/src')
 const ImageEditor = require('@uppy/image-editor/src')
+const DomTarget = require('@uppy/dom-target/src')
 /* eslint-enable import/no-extraneous-dependencies */
 
 // DEV CONFIG: pick an uploader
@@ -60,7 +61,7 @@ module.exports = () => {
   })
     .use(Dashboard, {
       trigger: '#pick-files',
-      // inline: true,
+      inline: true,
       target: '.foo',
       metaFields: [
         { id: 'license', name: 'License', placeholder: 'specify license' },
@@ -87,6 +88,9 @@ module.exports = () => {
     .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
     .use(ImageEditor, { target: Dashboard })
+    .use(DomTarget, {
+      target: document.body,
+    })
 
   switch (UPLOADER) {
     case 'tus':
