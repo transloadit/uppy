@@ -10,7 +10,7 @@ describe('Webcam', () => {
 
       const uppy = new Uppy().use(Webcam)
       expect(
-        uppy.getPlugin('Webcam')._getMediaRecorderOptions().mimeType
+        uppy.getPlugin('Webcam').getMediaRecorderOptions().mimeType
       ).not.toBeDefined()
     })
 
@@ -21,7 +21,7 @@ describe('Webcam', () => {
 
       const uppy = new Uppy().use(Webcam, { preferredVideoMimeType: 'video/webm' })
       expect(
-        uppy.getPlugin('Webcam')._getMediaRecorderOptions().mimeType
+        uppy.getPlugin('Webcam').getMediaRecorderOptions().mimeType
       ).toEqual('video/webm')
     })
 
@@ -32,7 +32,7 @@ describe('Webcam', () => {
 
       const uppy = new Uppy().use(Webcam, { preferredVideoMimeType: 'video/mp4' })
       expect(
-        uppy.getPlugin('Webcam')._getMediaRecorderOptions().mimeType
+        uppy.getPlugin('Webcam').getMediaRecorderOptions().mimeType
       ).not.toBeDefined()
     })
 
@@ -45,7 +45,7 @@ describe('Webcam', () => {
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam)
       expect(
-        uppy.getPlugin('Webcam')._getMediaRecorderOptions().mimeType
+        uppy.getPlugin('Webcam').getMediaRecorderOptions().mimeType
       ).toEqual('video/mp4')
     })
 
@@ -58,7 +58,7 @@ describe('Webcam', () => {
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam)
       expect(
-        uppy.getPlugin('Webcam')._getMediaRecorderOptions().mimeType
+        uppy.getPlugin('Webcam').getMediaRecorderOptions().mimeType
       ).toEqual('video/webm')
     })
 
@@ -72,7 +72,7 @@ describe('Webcam', () => {
       })
         .use(Webcam, { preferredVideoMimeType: 'video/webm' })
       expect(
-        uppy.getPlugin('Webcam')._getMediaRecorderOptions().mimeType
+        uppy.getPlugin('Webcam').getMediaRecorderOptions().mimeType
       ).toEqual('video/webm')
     })
 
@@ -85,7 +85,7 @@ describe('Webcam', () => {
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam)
       expect(
-        uppy.getPlugin('Webcam')._getMediaRecorderOptions().mimeType
+        uppy.getPlugin('Webcam').getMediaRecorderOptions().mimeType
       ).toEqual(undefined)
     })
   })
