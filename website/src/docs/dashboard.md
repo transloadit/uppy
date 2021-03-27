@@ -252,6 +252,33 @@ It gets passed `({value, onChange}, h)` where `value` is the current value of th
 })
 ```
 
+You can also specify a function that takes a [File Object](https://uppy.io/docs/uppy/#File-Objects) and returns an array of UI field objects:
+
+```js
+.use(Dashboard, {
+  trigger: '#pick-files',
+  metaFields: (file) => {
+    const fields = [{ id: 'name', name: 'File name' }]
+    if (file.type.startsWith('image/')) {
+      fields.push({ id: 'location', name: 'Photo Location' })
+      fields.push({ id: 'alt', name: 'Alt text' })
+      fields.push({
+        id: 'public',
+        name: 'Public',
+        render: ({ value, onChange }, h) => {
+          return h('input', {
+            type: 'checkbox',
+            onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'),
+            defaultChecked: value === 'on',
+          })
+        },
+      })
+    }
+    return fields
+  },
+})
+```
+
 ![](/images/uppy-dashboard-meta-fields.jpg)
 
 Note that this metadata will only be set on a file object if it is entered by the user. If the user doesn't edit a file's metadata, it will not have default values; instead everything will be `undefined`. If you want to set a certain meta field to each file regardless of user actions, set [`meta` in the Uppy constructor options](/docs/uppy/#meta).
