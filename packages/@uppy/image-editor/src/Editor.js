@@ -7,6 +7,9 @@ module.exports = class Editor extends Component {
       this.imgElement,
       this.props.opts.cropperOptions
     )
+    this.imgElement.addEventListener('crop', (ev) => {
+      this.rotateRange.value = ev.detail.rotate
+    })
   }
 
   componentWillUnmount () {
@@ -58,6 +61,20 @@ module.exports = class Editor extends Component {
           <path d="M7.47 21.49C4.2 19.93 1.86 16.76 1.5 13H0c.51 6.16 5.66 11 11.95 11 .23 0 .44-.02.66-.03L8.8 20.15l-1.33 1.34zM12.05 0c-.23 0-.44.02-.66.04l3.81 3.81 1.33-1.33C19.8 4.07 22.14 7.24 22.5 11H24c-.51-6.16-5.66-11-11.95-11zM16 14h2V8c0-1.11-.9-2-2-2h-6v2h6v6zm-8 2V4H6v2H4v2h2v8c0 1.1.89 2 2 2h8v2h2v-2h2v-2H8z" />
         </svg>
       </button>
+    )
+  }
+
+  renderRotateRange () {
+    return (
+      <input
+        type="range"
+        onInput={(ev) => this.cropper.rotateTo(ev.target.value)}
+        min="0"
+        max="360"
+        value="0"
+        ref={(ref) => { this.rotateRange = ref }}
+        aria-label={this.props.i18n('rotate')}
+      />
     )
   }
 
@@ -172,7 +189,7 @@ module.exports = class Editor extends Component {
 
   render () {
     const { currentImage, i18n, opts } = this.props
-    const actions = opts.actions
+    const { actions } = opts
     // eslint-disable-next-line compat/compat
     const imageURL = URL.createObjectURL(currentImage.data)
 
@@ -204,6 +221,7 @@ module.exports = class Editor extends Component {
 
           {actions.revert && this.renderRevert()}
           {actions.rotate && this.renderRotate()}
+          {actions.rotate && this.renderRotateRange()}
           {actions.flip && this.renderFlip()}
           {actions.zoomIn && this.renderZoomIn()}
           {actions.zoomOut && this.renderZoomOut()}
