@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   Text,
   TextInput,
-  View
+  View,
 } from 'react-native'
 import Url from '@uppy/url'
 
