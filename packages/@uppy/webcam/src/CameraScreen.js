@@ -91,7 +91,7 @@ class CameraScreen extends Component {
 
             {shouldShowRecordButton && (
               <RecordButton
-                recordng={recording}
+                recording={recording}
                 onStartRecording={onStartRecording}
                 onStopRecording={onStopRecording}
                 i18n={i18n}

@@ -300,6 +300,7 @@ module.exports = class Webcam extends Plugin {
   }
 
   startRecording () {
+    console.log('yeahhhh')
     // only used if supportsMediaRecorder() returned true
     // eslint-disable-next-line compat/compat
     this.recorder = new MediaRecorder(this.stream, this.getMediaRecorderOptions())
