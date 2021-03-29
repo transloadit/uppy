@@ -21,7 +21,7 @@ const { version } = require('../../package.json')
  *
  * @returns {object}
  */
-function server (moreCompanionOptions = {}) {
+function server (inputCompanionOptions = {}) {
   const app = express()
 
   // for server metrics tracking.
@@ -108,6 +108,16 @@ function server (moreCompanionOptions = {}) {
   app.use(helmet.ieNoOpen())
   app.disable('x-powered-by')
 
+  let corsOrigins
+  if (process.env.COMPANION_CLIENT_ORIGINS) {
+    corsOrigins = process.env.COMPANION_CLIENT_ORIGINS
+      .split(',')
+      .map((url) => (helper.hasProtocol(url) ? url : `${process.env.COMPANION_PROTOCOL || 'http'}://${url}`))
+  } else if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
+    corsOrigins = new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
+  }
+
+  const moreCompanionOptions = { ...inputCompanionOptions, corsOrigins }
   const companionOptions = helper.getCompanionOptions(moreCompanionOptions)
   const sessionOptions = {
     secret: companionOptions.secret,
@@ -133,30 +143,6 @@ function server (moreCompanionOptions = {}) {
   app.use(session(sessionOptions))
 
   app.use((req, res, next) => {
-    const protocol = process.env.COMPANION_PROTOCOL || 'http'
-
-    // if endpoint urls are specified, then we only allow those endpoints
-    // otherwise, we allow any client url to access companion.
-    // here we also enforce that only the protocol allowed by companion is used.
-    if (process.env.COMPANION_CLIENT_ORIGINS) {
-      const whitelist = process.env.COMPANION_CLIENT_ORIGINS
-        .split(',')
-        .map((url) => (helper.hasProtocol(url) ? url : `${protocol}://${url}`))
-
-      // @ts-ignore
-      if (req.headers.origin && whitelist.indexOf(req.headers.origin) > -1) {
-        res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
-        // only allow credentials when origin is whitelisted
-        res.setHeader('Access-Control-Allow-Credentials', 'true')
-      }
-    } else {
-      res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
-    }
-
-    res.setHeader(
-      'Access-Control-Allow-Methods',
-      'GET, POST, OPTIONS, PUT, PATCH, DELETE'
-    )
     res.setHeader(
       'Access-Control-Allow-Headers',
       'Authorization, Origin, Content-Type, Accept'
