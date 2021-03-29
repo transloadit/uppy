@@ -1,6 +1,7 @@
 'use strict'
 
 const qsStringify = require('qs-stringify')
+const URL = require('url-parse')
 const RequestClient = require('./RequestClient')
 const tokenStorage = require('./tokenStorage')
 
