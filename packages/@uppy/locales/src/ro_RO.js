@@ -3,7 +3,7 @@ const ro_RO = {}
 ro_RO.strings = {
   addBulkFilesFailed: {
     '0': 'Nu s-a adăugat %{smart_count} fișier datorită unei erori interne',
-    '1': 'Nu s-au adăugat %{smart_count} fișiere datorită unei erori interne'
+    '1': 'Nu s-au adăugat %{smart_count} fișiere datorită unei erori interne',
   },
   addMore: 'Adaugă mai multe',
   addMoreFiles: 'Adaugă mai multe fișiere',
@@ -53,13 +53,13 @@ ro_RO.strings = {
   fileSource: 'Sursă fișier: %{name}',
   filesUploadedOfTotal: {
     '0': 'Fișier importat %{complete} din %{smart_count}',
-    '1': 'Fișiere importate %{complete} din %{smart_count}'
+    '1': 'Fișiere importate %{complete} din %{smart_count}',
   },
   filter: 'Filtrează',
   finishEditingFile: 'Finalizează editarea fișierului',
   folderAdded: {
     '0': 'S-a adăugat %{smart_count} fișier din %{folder}',
-    '1': 'S-au adăugat %{smart_count} fișiere din %{folder}'
+    '1': 'S-au adăugat %{smart_count} fișiere din %{folder}',
   },
   generatingThumbnails: 'Se generează pictogramele...',
   import: 'Importă',
@@ -79,7 +79,7 @@ ro_RO.strings = {
   poweredBy2: '%{backwardsCompat} %{uppy}',
   processingXFiles: {
     '0': 'Se procesează %{smart_count} fișier',
-    '1': 'Se procesează %{smart_count} fișiere'
+    '1': 'Se procesează %{smart_count} fișiere',
   },
   recordingLength: 'Durată înregistrare %{recording_length}',
   recordingStoppedMaxSize: 'Înregistrarea a fost oprită pentru că a depășit dimensiunea maximă permisă',
@@ -94,7 +94,7 @@ ro_RO.strings = {
   selectFileNamed: 'Selectează fișier %{name}',
   selectX: {
     '0': 'Selectează %{smart_count}',
-    '1': 'Selectează %{smart_count}'
+    '1': 'Selectează %{smart_count}',
   },
   smile: 'Zâmbește!',
   startRecording: 'Pornește înregistrarea video',
@@ -109,35 +109,35 @@ ro_RO.strings = {
   uploadPaused: 'Încărcare întreruptă',
   uploadXFiles: {
     '0': 'Încarcă %{smart_count} fișier',
-    '1': 'Încarcă %{smart_count} fișiere'
+    '1': 'Încarcă %{smart_count} fișiere',
   },
   uploadXNewFiles: {
     '0': 'Încarcă +%{smart_count} fișier',
-    '1': 'Încarcă +%{smart_count} fișiere'
+    '1': 'Încarcă +%{smart_count} fișiere',
   },
   uploading: 'Încărcare',
   uploadingXFiles: {
     '0': 'Se încarcă %{smart_count} fișier',
-    '1': 'Se încarcă %{smart_count} fișiere'
+    '1': 'Se încarcă %{smart_count} fișiere',
   },
   xFilesSelected: {
     '0': '%{smart_count} fișier selectat',
-    '1': '%{smart_count} fișiere selectate'
+    '1': '%{smart_count} fișiere selectate',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} fișier adăugat',
-    '1': '%{smart_count} fișiere adăugate'
+    '1': '%{smart_count} fișiere adăugate',
   },
   xTimeLeft: '%{time} rămas(e)',
   youCanOnlyUploadFileTypes: 'Poți încărca doar: %{types}',
   youCanOnlyUploadX: {
     '0': 'Poți încărca doar %{smart_count} fișier',
-    '1': 'Poți încărca doar %{smart_count} fișiere'
+    '1': 'Poți încărca doar %{smart_count} fișiere',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Selectează cel puțin %{smart_count} fișier',
-    '1': 'Selectează cel puțin %{smart_count} fișiere'
-  }
+    '1': 'Selectează cel puțin %{smart_count} fișiere',
+  },
 }
 
 ro_RO.pluralize = function (count) {

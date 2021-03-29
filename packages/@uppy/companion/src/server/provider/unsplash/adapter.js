@@ -15,7 +15,7 @@ exports.getItemSubList = (item) => {
 exports.getItemName = (item) => {
   const description = item.description || item.alt_description
   if (description) {
-    return description.replace(/^([\S\s]{27})[\S\s]{3,}/, '$1...') + '.jpg'
+    return `${description.replace(/^([\S\s]{27})[\S\s]{3,}/, '$1...')}.jpg`
   }
 }
 
@@ -43,7 +43,7 @@ exports.getNextPageQuery = (currentQuery) => {
   const newCursor = parseInt(currentQuery.cursor || 1) + 1
   const query = {
     ...currentQuery,
-    cursor: newCursor
+    cursor: newCursor,
   }
 
   delete query.q

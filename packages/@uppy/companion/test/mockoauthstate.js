@@ -20,6 +20,6 @@ module.exports = () => {
       }
 
       return 'http://localhost:3020'
-    }
+    },
   }
 }

@@ -61,5 +61,5 @@ module.exports = {
       // User can close the overlay (click 'Done') if they want to travel away from Uppy.
       trapFocus(event, activeOverlayType, dashboardEl)
     }
-  }
+  },
 }

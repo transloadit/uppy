@@ -1,17 +1,17 @@
 const express = require('express')
 const qs = require('querystring')
-const companion = require('../companion')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
-const redis = require('../server/redis')
-const logger = require('../server/logger')
 const { URL } = require('url')
 const merge = require('lodash/merge')
 // @ts-ignore
 const promBundle = require('express-prom-bundle')
 const session = require('express-session')
 const addRequestId = require('express-request-id')()
+const logger = require('../server/logger')
+const redis = require('../server/redis')
+const companion = require('../companion')
 const helper = require('./helper')
 // @ts-ignore
 const { version } = require('../../package.json')
@@ -21,7 +21,7 @@ const { version } = require('../../package.json')
  *
  * @returns {object}
  */
-function server (moreCompanionOptions = {}) {
+function server (inputCompanionOptions = {}) {
   const app = express()
 
   // for server metrics tracking.
@@ -29,8 +29,8 @@ function server (moreCompanionOptions = {}) {
   if (process.env.COMPANION_HIDE_METRICS !== 'true') {
     metricsMiddleware = promBundle({ includeMethod: true })
     // @ts-ignore Not in the typings, but it does exist
-    const promClient = metricsMiddleware.promClient
-    const collectDefaultMetrics = promClient.collectDefaultMetrics
+    const { promClient } = metricsMiddleware
+    const { collectDefaultMetrics } = promClient
     collectDefaultMetrics({ register: promClient.register })
 
     // Add version as a prometheus gauge
@@ -108,11 +108,21 @@ function server (moreCompanionOptions = {}) {
   app.use(helmet.ieNoOpen())
   app.disable('x-powered-by')
 
+  let corsOrigins
+  if (process.env.COMPANION_CLIENT_ORIGINS) {
+    corsOrigins = process.env.COMPANION_CLIENT_ORIGINS
+      .split(',')
+      .map((url) => (helper.hasProtocol(url) ? url : `${process.env.COMPANION_PROTOCOL || 'http'}://${url}`))
+  } else if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
+    corsOrigins = new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
+  }
+
+  const moreCompanionOptions = { ...inputCompanionOptions, corsOrigins }
   const companionOptions = helper.getCompanionOptions(moreCompanionOptions)
   const sessionOptions = {
     secret: companionOptions.secret,
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
   }
 
   if (companionOptions.redisUrl) {
@@ -126,37 +136,13 @@ function server (moreCompanionOptions = {}) {
   if (process.env.COMPANION_COOKIE_DOMAIN) {
     sessionOptions.cookie = {
       domain: process.env.COMPANION_COOKIE_DOMAIN,
-      maxAge: 24 * 60 * 60 * 1000 // 1 day
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
     }
   }
 
   app.use(session(sessionOptions))
 
   app.use((req, res, next) => {
-    const protocol = process.env.COMPANION_PROTOCOL || 'http'
-
-    // if endpoint urls are specified, then we only allow those endpoints
-    // otherwise, we allow any client url to access companion.
-    // here we also enforce that only the protocol allowed by companion is used.
-    if (process.env.COMPANION_CLIENT_ORIGINS) {
-      const whitelist = process.env.COMPANION_CLIENT_ORIGINS
-        .split(',')
-        .map((url) => helper.hasProtocol(url) ? url : `${protocol}://${url}`)
-
-      // @ts-ignore
-      if (req.headers.origin && whitelist.indexOf(req.headers.origin) > -1) {
-        res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
-        // only allow credentials when origin is whitelisted
-        res.setHeader('Access-Control-Allow-Credentials', 'true')
-      }
-    } else {
-      res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
-    }
-
-    res.setHeader(
-      'Access-Control-Allow-Methods',
-      'GET, POST, OPTIONS, PUT, PATCH, DELETE'
-    )
     res.setHeader(
       'Access-Control-Allow-Headers',
       'Authorization, Origin, Content-Type, Accept'
@@ -197,8 +183,8 @@ function server (moreCompanionOptions = {}) {
     app.get('/.well-known/microsoft-identity-association.json', (req, res) => {
       const content = JSON.stringify({
         associatedApplications: [
-          { applicationId: process.env.COMPANION_ONEDRIVE_KEY }
-        ]
+          { applicationId: process.env.COMPANION_ONEDRIVE_KEY },
+        ],
       })
       res.header('Content-Length', `${Buffer.byteLength(content, 'utf8')}`)
       // use writeHead to prevent 'charset' from being appended

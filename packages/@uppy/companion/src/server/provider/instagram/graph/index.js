@@ -13,14 +13,17 @@ const { ProviderApiError, ProviderAuthError } = require('../../error')
 class Instagram extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = options.provider = Instagram.authProvider
-    this.client = purest(options)
+    this.authProvider = Instagram.authProvider
+    this.client = purest({
+      ...options,
+      provider: Instagram.authProvider,
+    })
   }
 
   static getExtraConfig () {
     return {
       protocol: 'https',
-      scope: ['user_profile', 'user_media']
+      scope: ['user_profile', 'user_media'],
     }
   }
 
@@ -30,7 +33,7 @@ class Instagram extends Provider {
 
   list ({ directory, token, query = { cursor: null } }, done) {
     const qs = {
-      fields: 'id,media_type,thumbnail_url,media_url,timestamp,children{media_type,media_url,thumbnail_url,timestamp}'
+      fields: 'id,media_type,thumbnail_url,media_url,timestamp,children{media_type,media_url,thumbnail_url,timestamp}',
     }
 
     if (query.cursor) {
@@ -46,11 +49,10 @@ class Instagram extends Provider {
           err = this._error(err, resp)
           logger.error(err, 'provider.instagram.list.error')
           return done(err)
-        } else {
-          this._getUsername(token, (err, username) => {
-            err ? done(err) : done(null, this.adaptData(body, username, directory, query))
-          })
         }
+        this._getUsername(token, (err, username) => {
+          err ? done(err) : done(null, this.adaptData(body, username, directory, query))
+        })
       })
   }
 
@@ -64,9 +66,8 @@ class Instagram extends Provider {
           err = this._error(err, resp)
           logger.error(err, 'provider.instagram.user.error')
           return done(err)
-        } else {
-          done(null, body.username)
         }
+        done(null, body.username)
       })
   }
 
@@ -133,7 +134,7 @@ class Instagram extends Provider {
   }
 
   adaptData (res, username, directory, currentQuery) {
-    const data = { username: username, items: [] }
+    const data = { username, items: [] }
     const items = adapter.getItemSubList(res)
     items.forEach((item, i) => {
       data.items.push({
@@ -145,7 +146,7 @@ class Instagram extends Provider {
         size: null,
         thumbnail: adapter.getItemThumbnailUrl(item),
         requestPath: adapter.getItemRequestPath(item),
-        modifiedDate: adapter.getItemModifiedDate(item)
+        modifiedDate: adapter.getItemModifiedDate(item),
       })
     })
 

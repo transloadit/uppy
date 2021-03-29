@@ -51,7 +51,7 @@ class UppyWrapper extends React.Component {
 
 UppyWrapper.propTypes = {
   uppy: uppyPropType,
-  plugin: PropTypes.string.isRequired
+  plugin: PropTypes.string.isRequired,
 }
 
 module.exports = UppyWrapper

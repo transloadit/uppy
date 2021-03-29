@@ -3,7 +3,7 @@ const pl_PL = {}
 pl_PL.strings = {
   addBulkFilesFailed: {
     '0': 'Dodanie %{smart_count} pliku nie powiodło się powodu błędu',
-    '1': 'Dodanie %{smart_count} plików nie powiodło się z powodu błędów'
+    '1': 'Dodanie %{smart_count} plików nie powiodło się z powodu błędów',
   },
   addMore: 'Dodaj więcej',
   addMoreFiles: 'Dodaj więcej plików',
@@ -53,14 +53,14 @@ pl_PL.strings = {
   filesUploadedOfTotal: {
     '0': 'wysłano %{complete} z %{smart_count} pliku',
     '1': 'wysłano %{complete} z %{smart_count} plików',
-    '2': 'wysłano %{complete} z %{smart_count} plików'
+    '2': 'wysłano %{complete} z %{smart_count} plików',
   },
   filter: 'Filtr',
   finishEditingFile: 'Zakończ edycję pliku',
   folderAdded: {
     '0': 'Dodano %{smart_count} plik z %{folder}',
     '1': 'Dodano %{smart_count} plików z %{folder}',
-    '2': 'Dodano %{smart_count} plików z %{folder}'
+    '2': 'Dodano %{smart_count} plików z %{folder}',
   },
   generatingThumbnails: 'Generowanie miniaturek...',
   import: 'Importuj',
@@ -80,7 +80,7 @@ pl_PL.strings = {
   processingXFiles: {
     '0': 'Przetwarzanie %{smart_count} pliku',
     '1': 'Przetwarzanie %{smart_count} plików',
-    '2': 'Przetwarzanie %{smart_count} plików'
+    '2': 'Przetwarzanie %{smart_count} plików',
   },
   recordingLength: 'Długość nagrania %{recording_length}',
   removeFile: 'Usuń filtr',
@@ -95,7 +95,7 @@ pl_PL.strings = {
   selectX: {
     '0': 'Wybierz %{smart_count}',
     '1': 'Wybierz %{smart_count}',
-    '2': 'Wybierz %{smart_count}'
+    '2': 'Wybierz %{smart_count}',
   },
   smile: 'Uśmiech!',
   startRecording: 'Zacznij nagrywanie wideo',
@@ -111,41 +111,41 @@ pl_PL.strings = {
   uploadXFiles: {
     '0': 'Wgraj %{smart_count} plik',
     '1': 'Wgraj %{smart_count} pliki',
-    '2': 'Wgraj %{smart_count} pliki'
+    '2': 'Wgraj %{smart_count} pliki',
   },
   uploadXNewFiles: {
     '0': 'Wgraj +%{smart_count} plik',
     '1': 'Wgraj +%{smart_count} pliki',
-    '2': 'Wgraj +%{smart_count} pliki'
+    '2': 'Wgraj +%{smart_count} pliki',
   },
   uploading: 'Wgrywanie',
   uploadingXFiles: {
     '0': 'Wgrywanie %{smart_count} pliku',
     '1': 'Wgrywanie %{smart_count} plików',
-    '2': 'Wgrywanie %{smart_count} plików'
+    '2': 'Wgrywanie %{smart_count} plików',
   },
   xFilesSelected: {
     '0': '%{smart_count} plik zaznaczony',
     '1': '%{smart_count} plików zaznaczonych',
-    '2': '%{smart_count} plików zaznaczonych'
+    '2': '%{smart_count} plików zaznaczonych',
   },
   xMoreFilesAdded: {
     '0': 'dodano %{smart_count} 1 plik więcej',
     '1': 'dodano %{smart_count} pliki więcej',
-    '2': 'dodano %{smart_count} pliki więcej'
+    '2': 'dodano %{smart_count} pliki więcej',
   },
   xTimeLeft: '%{time} zostało',
   youCanOnlyUploadFileTypes: 'Możesz przesłać tylko: %{types}',
   youCanOnlyUploadX: {
     '0': 'Możesz wgrać tylko %{smart_count} plik',
     '1': 'Możesz wgrać tylko %{smart_count} pliki',
-    '2': 'Możesz wgrać tylko %{smart_count} pliki'
+    '2': 'Możesz wgrać tylko %{smart_count} pliki',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Musisz wybrać przynajmniej %{smart_count} plik',
     '1': 'Musisz wybrać przynajmniej %{smart_count} pliki',
-    '2': 'Musisz wybrać przynajmniej %{smart_count} pliki'
-  }
+    '2': 'Musisz wybrać przynajmniej %{smart_count} pliki',
+  },
 }
 
 pl_PL.pluralize = function (n) {

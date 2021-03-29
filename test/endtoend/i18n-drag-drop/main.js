@@ -10,7 +10,7 @@ const uppyi18n = new Uppy({
   id: 'uppyi18n',
   debug: true,
   autoProceed: true,
-  store: DeepFrozenStore()
+  store: DeepFrozenStore(),
 })
 
 uppyi18n
@@ -19,9 +19,9 @@ uppyi18n
     locale: {
       strings: {
         dropHereOr: 'Перенесите файлы сюда или %{browse}',
-        browse: 'выберите'
-      }
-    }
+        browse: 'выберите',
+      },
+    },
   })
   .use(ProgressBar, { target: '#uppyi18n-progress' })
   .use(XHRUpload, { endpoint: 'https://xhr-server.herokuapp.com/upload' })

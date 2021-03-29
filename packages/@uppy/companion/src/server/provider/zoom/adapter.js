@@ -6,7 +6,7 @@ const MIMETYPES = {
   CHAT: 'text/plain',
   TRANSCRIPT: 'text/vtt',
   CC: 'text/vtt',
-  TIMELINE: 'application/json'
+  TIMELINE: 'application/json',
 }
 const EXT = {
   MP4: 'mp4',
@@ -14,7 +14,7 @@ const EXT = {
   CHAT: 'txt',
   TRANSCRIPT: 'vtt',
   CC: 'vtt',
-  TIMELINE: 'json'
+  TIMELINE: 'json',
 }
 const ICONS = {
   MP4: 'video',
@@ -23,7 +23,7 @@ const ICONS = {
   TRANSCRIPT: 'file',
   CC: 'file',
   FOLDER: 'folder',
-  TIMELINE: 'file'
+  TIMELINE: 'file',
 }
 
 exports.getDateName = (start, end) => {
@@ -95,7 +95,7 @@ exports.getMimeType = (item) => {
 exports.getId = (item) => {
   if (item.file_type && item.file_type === 'CC') {
     return `${encodeURIComponent(item.meeting_id)}__CC__${encodeURIComponent(item.recording_start)}`
-  } else if (item.file_type) {
+  } if (item.file_type) {
     return `${encodeURIComponent(item.meeting_id)}__${encodeURIComponent(item.id)}`
   }
   return `${encodeURIComponent(item.uuid)}`
@@ -104,7 +104,7 @@ exports.getId = (item) => {
 exports.getRequestPath = (item) => {
   if (item.file_type && item.file_type === 'CC') {
     return `${encodeURIComponent(item.meeting_id)}?recordingId=CC&recordingStart=${encodeURIComponent(item.recording_start)}`
-  } else if (item.file_type) {
+  } if (item.file_type) {
     return `${encodeURIComponent(item.meeting_id)}?recordingId=${encodeURIComponent(item.id)}`
   }
   // Zoom meeting ids are reused so we need to use the UUID. Also, these UUIDs can contain `/` characters which require double encoding (see https://devforum.zoom.us/t/double-encode-meeting-uuids/23729)
@@ -122,7 +122,7 @@ exports.getSize = (item) => {
   if (item.file_type && item.file_type === 'CC') {
     const maxExportFileSize = 1024 * 1024
     return maxExportFileSize
-  } else if (item.file_type) {
+  } if (item.file_type) {
     return item.file_size
   }
   return item.total_size

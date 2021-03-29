@@ -27,11 +27,11 @@ class ProgressBar extends React.Component {
 
   installPlugin () {
     const uppy = this.props.uppy
-    const options = Object.assign(
-      { id: 'react:ProgressBar' },
-      this.props,
-      { target: this.container }
-    )
+    const options = {
+      id: 'react:ProgressBar',
+      ...this.props,
+      target: this.container,
+    }
     delete options.uppy
 
     uppy.use(ProgressBarPlugin, options)
@@ -49,7 +49,7 @@ class ProgressBar extends React.Component {
     return h('div', {
       ref: (container) => {
         this.container = container
-      }
+      },
     })
   }
 }
@@ -57,7 +57,7 @@ class ProgressBar extends React.Component {
 ProgressBar.propTypes = {
   uppy: uppyPropType,
   fixed: PropTypes.bool,
-  hideAfterFinish: PropTypes.bool
+  hideAfterFinish: PropTypes.bool,
 }
 ProgressBar.defaultProps = {
 }

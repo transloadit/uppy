@@ -8,7 +8,7 @@ function upload (files, opts = {}) {
   }
 
   const uppy = createUppy(opts, {
-    allowMultipleUploads: false
+    allowMultipleUploads: false,
   })
 
   addTransloaditPlugin(uppy, opts)
@@ -18,7 +18,7 @@ function upload (files, opts = {}) {
       data: file,
       type: file.type,
       name: file.name,
-      meta: file.meta || {}
+      meta: file.meta || {},
     })
   })
 

@@ -8,9 +8,9 @@ const forEachDroppedOrPastedUrl = require('./utils/forEachDroppedOrPastedUrl')
 function UrlIcon () {
   return (
     <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
-      <g fill="none" fill-rule="evenodd">
-        <rect class="uppy-ProviderIconBg" fill="#FF753E" width="32" height="32" rx="16" />
-        <path d="M22.788 15.389l-2.199 2.19a3.184 3.184 0 0 1-.513.437c-.806.584-1.686.876-2.638.876a4.378 4.378 0 0 1-3.519-1.752c-.22-.292-.146-.802.147-1.021.293-.22.806-.146 1.026.146.953 1.313 2.785 1.532 4.105.583a.571.571 0 0 0 .293-.292l2.199-2.189c1.1-1.167 1.1-2.992-.073-4.086a2.976 2.976 0 0 0-4.105 0l-1.246 1.24a.71.71 0 0 1-1.026 0 .703.703 0 0 1 0-1.022l1.246-1.24a4.305 4.305 0 0 1 6.083 0c1.833 1.605 1.906 4.451.22 6.13zm-7.183 5.035l-1.246 1.24a2.976 2.976 0 0 1-4.105 0c-1.172-1.094-1.172-2.991-.073-4.086l2.2-2.19.292-.291c.66-.438 1.393-.657 2.2-.584.805.146 1.465.51 1.905 1.168.22.292.733.365 1.026.146.293-.22.367-.73.147-1.022-.733-.949-1.76-1.532-2.859-1.678-1.1-.22-2.272.073-3.225.802l-.44.438-2.199 2.19c-1.686 1.75-1.612 4.524.074 6.202.88.803 1.979 1.241 3.078 1.241 1.1 0 2.199-.438 3.079-1.24l1.246-1.241a.703.703 0 0 0 0-1.022c-.294-.292-.807-.365-1.1-.073z" fill="#FFF" fill-rule="nonzero" />
+      <g fill="none" fillRule="evenodd">
+        <rect className="uppy-ProviderIconBg" fill="#FF753E" width="32" height="32" rx="16" />
+        <path d="M22.788 15.389l-2.199 2.19a3.184 3.184 0 0 1-.513.437c-.806.584-1.686.876-2.638.876a4.378 4.378 0 0 1-3.519-1.752c-.22-.292-.146-.802.147-1.021.293-.22.806-.146 1.026.146.953 1.313 2.785 1.532 4.105.583a.571.571 0 0 0 .293-.292l2.199-2.189c1.1-1.167 1.1-2.992-.073-4.086a2.976 2.976 0 0 0-4.105 0l-1.246 1.24a.71.71 0 0 1-1.026 0 .703.703 0 0 1 0-1.022l1.246-1.24a4.305 4.305 0 0 1 6.083 0c1.833 1.605 1.906 4.451.22 6.13zm-7.183 5.035l-1.246 1.24a2.976 2.976 0 0 1-4.105 0c-1.172-1.094-1.172-2.991-.073-4.086l2.2-2.19.292-.291c.66-.438 1.393-.657 2.2-.584.805.146 1.465.51 1.905 1.168.22.292.733.365 1.026.146.293-.22.367-.73.147-1.022-.733-.949-1.76-1.532-2.859-1.678-1.1-.22-2.272.073-3.225.802l-.44.438-2.199 2.19c-1.686 1.75-1.612 4.524.074 6.202.88.803 1.979 1.241 3.078 1.241 1.1 0 2.199-.438 3.079-1.24l1.246-1.241a.703.703 0 0 0 0-1.022c-.294-.292-.807-.365-1.1-.073z" fill="#FFF" fillRule="nonzero" />
       </g>
     </svg>
   )
@@ -36,8 +36,8 @@ module.exports = class Url extends Plugin {
         import: 'Import',
         enterUrlToImport: 'Enter URL to import a file',
         failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
-        enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file'
-      }
+        enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
+      },
     }
 
     const defaultOptions = {}
@@ -60,7 +60,7 @@ module.exports = class Url extends Plugin {
 
     this.client = new RequestClient(uppy, {
       companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders
+      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
     })
   }
 
@@ -128,21 +128,21 @@ module.exports = class Url extends Plugin {
           name: this.getFileNameFromUrl(url),
           type: meta.type,
           data: {
-            size: meta.size
+            size: meta.size,
           },
           isRemote: true,
           body: {
-            url: url
+            url,
           },
           remote: {
             companionUrl: this.opts.companionUrl,
             url: `${this.hostname}/url/get`,
             body: {
               fileId: url,
-              url: url
+              url,
             },
-            providerOptions: this.client.opts
-          }
+            providerOptions: this.client.opts,
+          },
         }
         return tagFile
       })
@@ -160,7 +160,7 @@ module.exports = class Url extends Plugin {
         this.uppy.log(err)
         this.uppy.info({
           message: this.i18n('failedToFetch'),
-          details: err
+          details: err,
         }, 'error', 4000)
       })
   }

@@ -5,6 +5,7 @@ const dns = require('dns')
 const ipAddress = require('ip-address')
 const request = require('request')
 const logger = require('../logger')
+
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 
 function isIPAddress (address) {
@@ -79,7 +80,7 @@ function isPrivateIP (ipAddress) {
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
 
 module.exports.getRedirectEvaluator = (requestURL, blockPrivateIPs) => {
-  const protocol = (new URL(requestURL)).protocol
+  const { protocol } = new URL(requestURL)
   return (res) => {
     if (!blockPrivateIPs) {
       return true
@@ -89,7 +90,8 @@ module.exports.getRedirectEvaluator = (requestURL, blockPrivateIPs) => {
     const shouldRedirect = redirectURL ? new URL(redirectURL).protocol === protocol : false
     if (!shouldRedirect) {
       logger.info(
-        `blocking redirect from ${requestURL} to ${redirectURL}`, 'redirect.protection')
+        `blocking redirect from ${requestURL} to ${redirectURL}`, 'redirect.protection'
+      )
     }
 
     return shouldRedirect
@@ -98,6 +100,7 @@ module.exports.getRedirectEvaluator = (requestURL, blockPrivateIPs) => {
 
 /**
  * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
+ *
  * @param {string} protocol http or http: or https: or https protocol needed for the request
  * @param {boolean} blockPrivateIPs if set to false, this protection will be disabled
  */
@@ -157,7 +160,7 @@ class HttpsAgent extends https.Agent {
  *
  * @param {string} url
  * @param {boolean=} blockLocalIPs
- * @return {Promise<{type: string, size: number}>}
+ * @returns {Promise<{type: string, size: number}>}
  */
 exports.getURLMeta = (url, blockLocalIPs = false) => {
   return new Promise((resolve, reject) => {
@@ -165,7 +168,7 @@ exports.getURLMeta = (url, blockLocalIPs = false) => {
       uri: url,
       method: 'HEAD',
       followRedirect: exports.getRedirectEvaluator(url, blockLocalIPs),
-      agentClass: exports.getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs)
+      agentClass: exports.getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
     }
 
     request(opts, (err, response) => {
@@ -177,7 +180,7 @@ exports.getURLMeta = (url, blockLocalIPs = false) => {
       } else {
         resolve({
           type: response.headers['content-type'],
-          size: parseInt(response.headers['content-length'])
+          size: parseInt(response.headers['content-length']),
         })
       }
     })

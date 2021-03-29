@@ -1,23 +1,23 @@
 /* global test:false, expect:false, describe:false, */
 
-const { getProtectedHttpAgent, getRedirectEvaluator, FORBIDDEN_IP_ADDRESS } = require('../../src/server/helpers/request')
 const request = require('request')
 const http = require('http')
 const https = require('https')
+const { getProtectedHttpAgent, getRedirectEvaluator, FORBIDDEN_IP_ADDRESS } = require('../../src/server/helpers/request')
 
 describe('test getRedirectEvaluator', () => {
   const httpURL = 'http://uppy.io'
   const httpsURL = 'https://uppy.io'
   const httpRedirectResp = {
     headers: {
-      location: 'http://transloadit.com'
-    }
+      location: 'http://transloadit.com',
+    },
   }
 
   const httpsRedirectResp = {
     headers: {
-      location: 'https://transloadit.com'
-    }
+      location: 'https://transloadit.com',
+    },
   }
 
   test('when original URL has "https:" as protocol', (done) => {
@@ -64,9 +64,9 @@ describe('test getProtectedHttpAgent', () => {
 describe('test protected request Agent', () => {
   test('allows URLs without IP addresses', (done) => {
     const options = {
-      uri: 'https://www.transloadit.com',
+      uri: 'https://transloadit.com',
       method: 'GET',
-      agentClass: getProtectedHttpAgent('https', true)
+      agentClass: getProtectedHttpAgent('https', true),
     }
 
     request(options, (err) => {
@@ -84,7 +84,7 @@ describe('test protected request Agent', () => {
     const options = {
       uri: 'http://172.20.10.4:8090',
       method: 'GET',
-      agentClass: getProtectedHttpAgent('http', true)
+      agentClass: getProtectedHttpAgent('http', true),
     }
 
     request(options, (err) => {
@@ -98,7 +98,7 @@ describe('test protected request Agent', () => {
     const options = {
       uri: 'https://172.20.10.4:8090',
       method: 'GET',
-      agentClass: getProtectedHttpAgent('https', true)
+      agentClass: getProtectedHttpAgent('https', true),
     }
 
     request(options, (err) => {
@@ -112,7 +112,7 @@ describe('test protected request Agent', () => {
     const options = {
       uri: 'http://127.0.0.1:8090',
       method: 'GET',
-      agentClass: getProtectedHttpAgent('http', true)
+      agentClass: getProtectedHttpAgent('http', true),
     }
 
     request(options, (err) => {

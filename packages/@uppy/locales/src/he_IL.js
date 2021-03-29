@@ -49,14 +49,14 @@ he_IL.strings = {
   filesUploadedOfTotal: {
     '0': 'קובץ %{complete} מתוך %{smart_count} הועלה',
     '1': '%{complete} מתוך %{smart_count} קבצים הועלו',
-    '2': '%{complete} מתוך %{smart_count} קבצים הועלו'
+    '2': '%{complete} מתוך %{smart_count} קבצים הועלו',
   },
   filter: 'סינון',
   finishEditingFile: 'סיים לעדכן את הקובץ',
   folderAdded: {
     '0': 'נוסף קובץ %{smart_count} מ %{folder}',
     '1': 'נוספו %{smart_count} קבצים מ %{folder}',
-    '2': 'נוספו %{smart_count} קבצים מ %{folder}'
+    '2': 'נוספו %{smart_count} קבצים מ %{folder}',
   },
   generatingThumbnails: 'יוצר תמונות ממוזערות...',
   import: 'ייבוא',
@@ -74,7 +74,7 @@ he_IL.strings = {
   processingXFiles: {
     '0': 'מעבד קובץ %{smart_count}',
     '1': 'מעבד %{smart_count} קבצים',
-    '2': 'מעבד %{smart_count} קבצים'
+    '2': 'מעבד %{smart_count} קבצים',
   },
   removeFile: 'מחק קובץ',
   resetFilter: 'אפס סינון',
@@ -88,7 +88,7 @@ he_IL.strings = {
   selectX: {
     '0': 'בחר %{smart_count}',
     '1': 'בחר %{smart_count}',
-    '2': 'בחר %{smart_count}'
+    '2': 'בחר %{smart_count}',
   },
   smile: 'Smile!',
   startRecording: 'מתחיל הסרטת ווידאו',
@@ -104,41 +104,41 @@ he_IL.strings = {
   uploadXFiles: {
     '0': 'העלה קובץ %{smart_count}',
     '1': 'העלה %{smart_count} קבצים',
-    '2': 'העלה %{smart_count} קבצים'
+    '2': 'העלה %{smart_count} קבצים',
   },
   uploadXNewFiles: {
     '0': 'העלה קובץ +%{smart_count}',
     '1': 'העלה +%{smart_count} קבצים',
-    '2': 'העלה +%{smart_count} קבצים'
+    '2': 'העלה +%{smart_count} קבצים',
   },
   uploading: 'Uploading',
   uploadingXFiles: {
     '0': 'מעלה קובץ %{smart_count}',
     '1': 'מעלה %{smart_count} קבצים',
-    '2': 'מעלה %{smart_count} קבצים'
+    '2': 'מעלה %{smart_count} קבצים',
   },
   xFilesSelected: {
     '0': 'קובץ %{smart_count} נבחר',
     '1': '%{smart_count} קבצים נבחרו',
-    '2': '%{smart_count} קבצים נבחרו'
+    '2': '%{smart_count} קבצים נבחרו',
   },
   xMoreFilesAdded: {
     '0': 'עוד %{smart_count} קובץ נוסף',
     '1': 'עוד %{smart_count} קבצים נוספו',
-    '2': 'עוד %{smart_count} קבצים נוספו'
+    '2': 'עוד %{smart_count} קבצים נוספו',
   },
   xTimeLeft: '%{time} left',
   youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
   youCanOnlyUploadX: {
     '0': 'ניתן העלות רק קובץ %{smart_count}',
     '1': 'ניתן להעלות רק %{smart_count} קבצים',
-    '2': 'ניתן להעלות רק %{smart_count} קבצים'
+    '2': 'ניתן להעלות רק %{smart_count} קבצים',
   },
   youHaveToAtLeastSelectX: {
     '0': 'עליך לבחור לפחות בקובץ %{smart_count}',
     '1': 'עליך לבחור לפחות ב %{smart_count} קבצים',
-    '2': 'עליך לבחור לפחות ב %{smart_count} קבצים'
-  }
+    '2': 'עליך לבחור לפחות ב %{smart_count} קבצים',
+  },
 }
 
 he_IL.pluralize = function (n) {

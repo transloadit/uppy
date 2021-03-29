@@ -38,7 +38,7 @@ function selectFakeFile (uppyID, name, type, b64) {
     source: 'test',
     name: name || 'test-file',
     type: blob.type,
-    data: blob
+    data: blob,
   })
 }
 
@@ -55,9 +55,9 @@ function supportsChooseFile () {
   if (process.env.CI) return false
 
   // Webdriver for Safari and Edge doesn’t support .chooseFile
-  return capabilities.browserName !== 'Safari' &&
-         capabilities.browserName !== 'MicrosoftEdge' &&
-         capabilities.platformName !== 'Android'
+  return capabilities.browserName !== 'Safari'
+         && capabilities.browserName !== 'MicrosoftEdge'
+         && capabilities.platformName !== 'Android'
 }
 
 function prematureExit () {
@@ -67,7 +67,7 @@ function prematureExit () {
 class CompanionService {
   onPrepare () {
     this.companion = spawn('node', [
-      path.join(__dirname, '../../packages/@uppy/companion/lib/standalone/start-server')
+      path.join(__dirname, '../../packages/@uppy/companion/lib/standalone/start-server'),
     ], {
       stdio: 'pipe',
       env: {
@@ -80,8 +80,8 @@ class CompanionService {
         COMPANION_DROPBOX_KEY: process.env.TEST_COMPANION_DROPBOX_KEY,
         COMPANION_DROPBOX_SECRET: process.env.TEST_COMPANION_DROPBOX_SECRET,
         COMPANION_GOOGLE_KEY: process.env.TEST_COMPANION_GOOGLE_KEY,
-        COMPANION_GOOGLE_SECRET: process.env.TEST_COMPANION_GOOGLE_SECRET
-      }
+        COMPANION_GOOGLE_SECRET: process.env.TEST_COMPANION_GOOGLE_SECRET,
+      },
     })
     return new Promise((resolve, reject) => {
       this.companion.on('error', reject)
@@ -107,6 +107,7 @@ class CompanionService {
 }
 
 const express = require('express')
+
 class StaticServerService {
   constructor ({ folders, staticServerPort = 4567 }) {
     this.folders = folders
@@ -143,6 +144,7 @@ const { randomBytes } = require('crypto')
 const http = require('http')
 const httpProxy = require('http-proxy')
 const brake = require('brake')
+
 class TusService {
   constructor ({ tusServerPort = 1080 }) {
     this.port = tusServerPort
@@ -153,7 +155,7 @@ class TusService {
     this.tusServer = new tus.Server()
     this.tusServer.datastore = new tus.FileStore({
       path: '/files',
-      directory: this.path
+      directory: this.path,
     })
 
     const proxy = httpProxy.createProxyServer()
@@ -163,8 +165,8 @@ class TusService {
         // 200 kbps max upload, checking the rate limit every 20ms
         buffer: req.pipe(brake({
           period: 20,
-          rate: 200 * 1024 / 50
-        }))
+          rate: 200 * 1024 / 50,
+        })),
       }, (err) => { // eslint-disable-line handle-callback-err
         // ignore, typically a cancelled request
       })
@@ -197,5 +199,5 @@ module.exports = {
   supportsChooseFile,
   CompanionService,
   StaticServerService,
-  TusService
+  TusService,
 }

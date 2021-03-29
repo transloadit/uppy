@@ -48,14 +48,14 @@ uk_UA.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete} із %{smart_count} файл завантажено',
     '1': '%{complete} із %{smart_count} файлів завантажено',
-    '2': '%{complete} із %{smart_count} файлів завантажено'
+    '2': '%{complete} із %{smart_count} файлів завантажено',
   },
   filter: 'Фільтр',
   finishEditingFile: 'Завершити редагування файлу',
   folderAdded: {
     '0': 'Додано %{smart_count} файл із %{folder}',
     '1': 'Додано %{smart_count} файли із %{folder}',
-    '2': 'Додано %{smart_count} файлів із %{folder}'
+    '2': 'Додано %{smart_count} файлів із %{folder}',
   },
   import: 'Імпортувати',
   importFrom: 'Імпортувати з %{name}',
@@ -70,7 +70,7 @@ uk_UA.strings = {
   processingXFiles: {
     '0': 'Обробляється %{smart_count} файл',
     '1': 'Обробляється %{smart_count} файли',
-    '2': 'Обробляється %{smart_count} файлів'
+    '2': 'Обробляється %{smart_count} файлів',
   },
   poweredBy: 'Працює на',
   removeFile: 'Знищити файл',
@@ -83,7 +83,7 @@ uk_UA.strings = {
   selectX: {
     '0': 'Обрати %{smart_count}',
     '1': 'Обрати %{smart_count}',
-    '2': 'Обрати %{smart_count}'
+    '2': 'Обрати %{smart_count}',
   },
   smile: 'Посміхніться!',
   startRecording: 'Почати запис відео',
@@ -97,46 +97,46 @@ uk_UA.strings = {
   uploadXFiles: {
     '0': 'Завантажити %{smart_count} файл',
     '1': 'Завантажити %{smart_count} файли',
-    '2': 'Завантажити %{smart_count} файлів'
+    '2': 'Завантажити %{smart_count} файлів',
   },
   uploadXNewFiles: {
     '0': 'Завантажити +%{smart_count} файл',
     '1': 'Завантажити +%{smart_count} файли',
-    '2': 'ЗЗавантажити +%{smart_count} файлів'
+    '2': 'ЗЗавантажити +%{smart_count} файлів',
   },
   uploading: 'Завантаження',
   uploadingXFiles: {
     '0': 'Завантажується %{smart_count} файл',
     '1': 'Завантажується %{smart_count} файли',
-    '2': 'Завантажується %{smart_count} файлів'
+    '2': 'Завантажується %{smart_count} файлів',
   },
   xFilesSelected: {
     '0': '%{smart_count} файл обрано',
     '1': '%{smart_count} файли обрано',
-    '2': '%{smart_count} файлів обрано'
+    '2': '%{smart_count} файлів обрано',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} додатковий файл додано',
     '1': '%{smart_count} додаткові файли додано',
-    '2': '%{smart_count} додаткових файлів додано'
+    '2': '%{smart_count} додаткових файлів додано',
   },
   xTimeLeft: 'залишилося %{time}',
   youCanOnlyUploadFileTypes: 'Ви можете завантажити тільки: %{types}',
   youCanOnlyUploadX: {
     '0': 'Ви можете завантажити тільки %{smart_count} файл',
     '1': 'Ви можете завантажити тільки %{smart_count} файли',
-    '2': 'Ви можете завантажити тільки %{smart_count} файлів'
+    '2': 'Ви можете завантажити тільки %{smart_count} файлів',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Ви повинні обрати хоча б %{smart_count} файл',
     '1': 'Ви повинні обрати хоча б %{smart_count} файли',
-    '2': 'Ви повинні обрати хоча б %{smart_count} файлів'
+    '2': 'Ви повинні обрати хоча б %{smart_count} файлів',
   },
   selectAllFilesFromFolderNamed: 'Обрати всі файли з теки %{name}',
   unselectAllFilesFromFolderNamed: 'Скасувати вибір усіх файлів з теки %{name}',
   selectFileNamed: 'Обрати файл %{name}',
   unselectFileNamed: 'Скасувати вибір файлу %{name}',
-  openFolderNamed: 'Відкрити теку %{name}'
+  openFolderNamed: 'Відкрити теку %{name}',
 }
 
 uk_UA.pluralize = function (n) {

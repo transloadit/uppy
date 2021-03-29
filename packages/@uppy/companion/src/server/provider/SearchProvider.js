@@ -4,8 +4,9 @@
 class SearchProvider {
   /**
    * list the files available based on the search query
+   *
    * @param {object} options
-   * @param {function} cb
+   * @param {Function} cb
    */
   list (options, cb) {
     throw new Error('method not implemented')
@@ -13,8 +14,9 @@ class SearchProvider {
 
   /**
    * download a certain file from the provider files
+   *
    * @param {object} options
-   * @param {function} cb
+   * @param {Function} cb
    */
   download (options, cb) {
     throw new Error('method not implemented')
@@ -22,8 +24,9 @@ class SearchProvider {
 
   /**
    * get the size of a certain file in the provider files
+   *
    * @param {object} options
-   * @param {function} cb
+   * @param {Function} cb
    */
   size (options, cb) {
     throw new Error('method not implemented')

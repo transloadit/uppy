@@ -8,5 +8,5 @@ module.exports = {
   form,
   pick,
   upload,
-  VERSION: require('../package.json').version
+  VERSION: require('../package.json').version,
 }

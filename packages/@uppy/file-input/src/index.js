@@ -17,15 +17,15 @@ module.exports = class FileInput extends Plugin {
         // The same key is used for the same purpose by @uppy/robodog's `form()` API, but our
         // locale pack scripts can't access it in Robodog. If it is updated here, it should
         // also be updated there!
-        chooseFiles: 'Choose files'
-      }
+        chooseFiles: 'Choose files',
+      },
     }
 
     // Default options
     const defaultOptions = {
       target: null,
       pretty: true,
-      inputName: 'files[]'
+      inputName: 'files[]',
     }
 
     // Merge default options with the ones set by user
@@ -55,7 +55,7 @@ module.exports = class FileInput extends Plugin {
       source: this.id,
       name: file.name,
       type: file.type,
-      data: file
+      data: file,
     }))
 
     try {
@@ -91,32 +91,34 @@ module.exports = class FileInput extends Plugin {
       opacity: 0,
       overflow: 'hidden',
       position: 'absolute',
-      zIndex: -1
+      zIndex: -1,
     }
 
     const restrictions = this.uppy.opts.restrictions
     const accept = restrictions.allowedFileTypes ? restrictions.allowedFileTypes.join(',') : null
 
     return (
-      <div class="uppy-Root uppy-FileInput-container">
+      <div className="uppy-Root uppy-FileInput-container">
         <input
-          class="uppy-FileInput-input"
+          className="uppy-FileInput-input"
           style={this.opts.pretty && hiddenInputStyle}
           type="file"
           name={this.opts.inputName}
-          onchange={this.handleInputChange}
+          onChange={this.handleInputChange}
           multiple={restrictions.maxNumberOfFiles !== 1}
           accept={accept}
           ref={(input) => { this.input = input }}
         />
-        {this.opts.pretty &&
+        {this.opts.pretty
+          && (
           <button
-            class="uppy-FileInput-btn"
+            className="uppy-FileInput-btn"
             type="button"
-            onclick={this.handleClick}
+            onClick={this.handleClick}
           >
             {this.i18n('chooseFiles')}
-          </button>}
+          </button>
+          )}
       </div>
     )
   }

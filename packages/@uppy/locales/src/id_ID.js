@@ -48,14 +48,14 @@ id_ID.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete} dari %{smart_count} berkas terunggah',
     '1': '%{complete} dari %{smart_count} berkas terunggah',
-    '2': '%{complete} dari %{smart_count} berkas terunggah'
+    '2': '%{complete} dari %{smart_count} berkas terunggah',
   },
   filter: 'Penyaring',
   finishEditingFile: 'Selesai mengubah berkas',
   folderAdded: {
     '0': 'Menambahkan %{smart_count} berkas dari %{folder}',
     '1': 'Menambahkan %{smart_count} berkas dari %{folder}',
-    '2': 'Menambahkan %{smart_count} berkas dari %{folder}'
+    '2': 'Menambahkan %{smart_count} berkas dari %{folder}',
   },
   import: 'Impor',
   importFrom: 'Impor dari %{name}',
@@ -72,7 +72,7 @@ id_ID.strings = {
   processingXFiles: {
     '0': 'Pemrosesan %{smart_count} berkas',
     '1': 'Pemrosesan %{smart_count} berkas',
-    '2': 'Pemrosesan %{smart_count} berkas'
+    '2': 'Pemrosesan %{smart_count} berkas',
   },
   removeFile: 'Hapus berkas',
   resetFilter: 'Setel ulang penyaring',
@@ -86,7 +86,7 @@ id_ID.strings = {
   selectX: {
     '0': 'Pilih %{smart_count}',
     '1': 'Pilih %{smart_count}',
-    '2': 'Pilih %{smart_count}'
+    '2': 'Pilih %{smart_count}',
   },
   smile: 'Senyum!',
   startRecording: 'Memulai perekaman video',
@@ -102,41 +102,41 @@ id_ID.strings = {
   uploadXFiles: {
     '0': 'Unggah %{smart_count} berkas',
     '1': 'Unggah %{smart_count} berkas',
-    '2': 'Unggah %{smart_count} berkas'
+    '2': 'Unggah %{smart_count} berkas',
   },
   uploadXNewFiles: {
     '0': 'Mengunggah +%{smart_count} berkas baru',
     '1': 'Mengunggah +%{smart_count} berkas baru',
-    '2': 'Mengunggah +%{smart_count} berkas baru'
+    '2': 'Mengunggah +%{smart_count} berkas baru',
   },
   uploading: 'Mengunggah',
   uploadingXFiles: {
     '0': 'Mengunggah %{smart_count} berkas',
     '1': 'Mengunggah %{smart_count} berkas',
-    '2': 'Mengunggah %{smart_count} berkas'
+    '2': 'Mengunggah %{smart_count} berkas',
   },
   xFilesSelected: {
     '0': '%{smart_count} berkas terpilih',
     '1': '%{smart_count} berkas terpilih',
-    '2': '%{smart_count} berkas terpilih'
+    '2': '%{smart_count} berkas terpilih',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} berkas lagi ditambahkan',
     '1': '%{smart_count} berkas lagi ditambahkan',
-    '2': '%{smart_count} berkas lagi ditambahkan'
+    '2': '%{smart_count} berkas lagi ditambahkan',
   },
   xTimeLeft: 'Tersisa %{time}',
   youCanOnlyUploadFileTypes: 'Anda hanya dapat menggunggah: %{types}',
   youCanOnlyUploadX: {
     '0': 'Anda hanya dapat mengunggah %{smart_count} berkas',
     '1': 'Anda hanya dapat mengunggah %{smart_count} berkas',
-    '2': 'Anda hanya dapat mengunggah %{smart_count} berkas'
+    '2': 'Anda hanya dapat mengunggah %{smart_count} berkas',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Anda harus memilih minimal %{smart_count} berkas',
     '1': 'Anda harus memilih minimal %{smart_count} berkas',
-    '2': 'Anda harus memilih minimal %{smart_count} berkas'
-  }
+    '2': 'Anda harus memilih minimal %{smart_count} berkas',
+  },
 }
 
 id_ID.pluralize = function (n) {

@@ -33,13 +33,11 @@ class DashboardModal extends React.Component {
 
   installPlugin () {
     const uppy = this.props.uppy
-    const options = Object.assign(
-      { id: 'react:DashboardModal' },
-      this.props,
-      {
-        onRequestCloseModal: this.props.onRequestClose
-      }
-    )
+    const options = {
+      id: 'react:DashboardModal',
+      ...this.props,
+      onRequestCloseModal: this.props.onRequestClose,
+    }
 
     if (!options.target) {
       options.target = this.container
@@ -64,19 +62,19 @@ class DashboardModal extends React.Component {
     return h('div', {
       ref: (container) => {
         this.container = container
-      }
+      },
     })
   }
 }
 
-DashboardModal.propTypes = Object.assign({
-  // Only check this prop type in the browser.
+DashboardModal.propTypes = { // Only check this prop type in the browser.
   target: typeof window !== 'undefined' ? PropTypes.instanceOf(window.HTMLElement) : PropTypes.any,
   open: PropTypes.bool,
   onRequestClose: PropTypes.func,
   closeModalOnClickOutside: PropTypes.bool,
-  disablePageScrollWhenModalOpen: PropTypes.bool
-}, basePropTypes)
+  disablePageScrollWhenModalOpen: PropTypes.bool,
+  ...basePropTypes,
+}
 
 DashboardModal.defaultProps = {
 }

@@ -4,18 +4,22 @@ sk_SK.strings = {
   addBulkFilesFailed: {
     '0': 'Súbor %{smart_count} sa nepodarilo pridať z dôvodu vnútornej chyby',
     '1': 'Nepodarilo sa pridať %{smart_count} súbory z dôvodu vnútorných chýb',
-    '2': 'Nepodarilo sa pridať %{smart_count} súborov z dôvodu vnútorných chýb'
+    '2': 'Nepodarilo sa pridať %{smart_count} súborov z dôvodu vnútorných chýb',
   },
   addMore: 'Pridať ďalšie',
   addMoreFiles: 'Pridať ďalšie súbory',
   addingMoreFiles: 'Pridávajú sa ďalšie súbory',
   allowAccessDescription: 'Pokiaľ chcete urobiť fotografiu alebo nahrať video vaším zariadením, povoľte prosím prístup ku kamere.',
   allowAccessTitle: 'Povoľte prístup ku kamere',
+  aspectRatioLandscape: 'Orezať na šírku (16:9)',
+  aspectRatioPortrait: 'Orezať na výšku (9:16)',
+  aspectRatioSquare: 'Orezať do štvorca',
   authenticateWith: 'Pripojiť k %{pluginName}',
   authenticateWithTitle: 'Prosím príhláste sa k %{pluginName} pre výber súborov',
   back: 'Späť',
-  browse: 'prechádzať',
-  browseFiles: 'prechádzať',
+  backToSearch: 'Späť na vyhľadávanie',
+  browse: 'vyberte',
+  browseFiles: 'vyberte',
   cancel: 'Zrušiť',
   cancelUpload: 'Zrušiť nahrávanie',
   chooseFiles: 'Vyberte súbory',
@@ -38,14 +42,15 @@ sk_SK.strings = {
   dropPasteBoth: 'Presuňte sem súbory alebo %{browse}',
   dropPasteFiles: 'Presuňte sem súbory alebo %{browse}',
   dropPasteFolders: 'Presuňte sem súbory alebo %{browse}',
-  dropPasteImportBoth: 'Presuňte sem súbory, vložte ich, %{browse} alebo ich importujte:',
-  dropPasteImportFiles: 'Presuňte sem súbory, vložte ich, %{browse} alebo ich importujte:',
-  dropPasteImportFolders: 'Presuňte sem súbory, vložte ich, %{browse} alebo ich importujte:',
+  dropPasteImportBoth: 'Presuňte sem, %{browse} alebo importujte súbory:',
+  dropPasteImportFiles: 'Presuňte sem, %{browse} alebo importujte súbory:',
+  dropPasteImportFolders: 'Presuňte sem, %{browse} alebo importujte súbory:',
   editFile: 'Upraviť súbor',
   editing: 'Úprava %{file}',
   emptyFolderAdded: 'Neboli pridané žiadne súbory, pretože adresár je prázdny.',
   encoding: 'Konvertovanie...',
   enterCorrectUrl: 'Nesprávna adresa URL: Uistite sa, že zadávate priamy odkaz na súbor',
+  enterTextToSearch: 'Zadajte text pre vyhľadanie obrázkov',
   enterUrlToImport: 'Ak chcete importovať súbor, zadajte adresu URL',
   exceedsSize: 'Tento súbor presahuje maximálnu povolenú veľkosť súboru',
   exceedsSize2: '%{backwardsCompat} %{size}',
@@ -54,22 +59,26 @@ sk_SK.strings = {
   fileSource: 'Zdroj súboru: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} z %{smart_count} nahraných súborov',
-    '1': '%{complete} z %{smart_count} nahraných súborov'
+    '1': '%{complete} z %{smart_count} nahraných súborov',
   },
   filter: 'Filtrovať',
   finishEditingFile: 'Dokončiť úpravu súborov',
+  flipHorizontal: 'Otočiť horizontálne',
   folderAdded: {
     '0': 'Pridaný %{smart_count} súbor zo zložky %{folder}',
     '1': 'Pridané %{smart_count} súbory zo zložky %{folder}',
-    '2': 'Pridaných %{smart_count} súborov zo zložky %{folder}'
+    '2': 'Pridaných %{smart_count} súborov zo zložky %{folder}',
   },
   generatingThumbnails: 'Vytváram miniatury...',
   import: 'Importovať',
   importFrom: 'Import z %{name}',
+  inferiorSize: 'Tento súbor je menší ako povolená veľkosť súboru %{size}',
   loading: 'Nahrávanie...',
   logOut: 'Odhlásiť',
   micDisabled: 'Užívateľ odmietol prístup k mikrofónu',
   myDevice: 'Moje zariadenie',
+  noCameraDescription: 'Ak chcete urobiť fotku alebo nahrať video, zapnite kameru',
+  noCameraTitle: 'Kamera nie je k dispozícii',
   noDuplicates: 'Nemôžete pridať duplikátny súbor \'%{fileName}\', ktorý už existuje',
   noFilesFound: 'Nemáte pridané žiadne súbory ani zložky',
   noInternetConnection: 'Žiadne internetové pripojenie',
@@ -78,11 +87,11 @@ sk_SK.strings = {
   pause: 'Pozastaviť',
   pauseUpload: 'Pozastaviť nahrávanie',
   paused: 'Pozastavené',
-  poweredBy: 'Vytvorení pomocou',
+  poweredBy: 'Vytvorené pomocou',
   poweredBy2: '%{backwardsCompat} %{uppy}',
   processingXFiles: {
     '0': 'Spracovanie %{smart_count} súboru',
-    '1': 'Spracovanie %{smart_count} súborov'
+    '1': 'Spracovanie %{smart_count} súborov',
   },
   recording: 'Nahrávanie',
   recordingLength: 'Dĺžka záznamu %{recording_length}',
@@ -93,12 +102,16 @@ sk_SK.strings = {
   resumeUpload: 'Pokračovať v nahrávaní',
   retry: 'Opakovať',
   retryUpload: 'Opakovať nahrávanie',
+  revert: 'Vrátiť späť',
+  rotate: 'Otočiť',
+  save: 'Uložiť',
   saveChanges: 'Uložiť zmeny',
+  searchImages: 'Vyhľadajte obrázky',
   selectAllFilesFromFolderNamed: 'Vybrať všetky súbory zo zložky %{name}',
   selectFileNamed: 'Vybrať súbor %{name}',
   selectX: {
     '0': 'Vybrať %{smart_count}',
-    '1': 'Vybrať %{smart_count}'
+    '1': 'Vybrať %{smart_count}',
   },
   smile: 'Úsmev prosím!',
   startCapturing: 'Spustiť snímanie obrazovky',
@@ -119,41 +132,43 @@ sk_SK.strings = {
   uploadXFiles: {
     '0': 'Nahrať %{smart_count} súbor',
     '1': 'Nahrať %{smart_count} súbory',
-    '2': 'Nahrať %{smart_count} súborov'
+    '2': 'Nahrať %{smart_count} súborov',
   },
   uploadXNewFiles: {
     '0': 'Nahrať +%{smart_count} súbor',
     '1': 'Nahrať +%{smart_count} súbory',
-    '2': 'Nahrať +%{smart_count} súborov'
+    '2': 'Nahrať +%{smart_count} súborov',
   },
   uploading: 'Nahrávanie',
   uploadingXFiles: {
     '0': 'Nahrávám %{smart_count} súbor',
     '1': 'Nahrávám %{smart_count} súbory',
-    '2': 'Nahrávám %{smart_count} súborov'
+    '2': 'Nahrávám %{smart_count} súborov',
   },
   xFilesSelected: {
     '0': '%{smart_count} vybratý súbor',
     '1': '%{smart_count} vybrané súbory',
-    '2': '%{smart_count} vybraných súborov'
+    '2': '%{smart_count} vybraných súborov',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} ďalší pridaný súbor',
     '1': '%{smart_count} ďalšie pridané súbory',
-    '2': '%{smart_count} ďalších pridaných súborov'
+    '2': '%{smart_count} ďalších pridaných súborov',
   },
   xTimeLeft: '%{time} zostáva',
   youCanOnlyUploadFileTypes: 'Môžete nahrať iba tieto typy súborov: %{types}',
   youCanOnlyUploadX: {
     '0': 'Môžete nahrať iba %{smart_count} súbor',
     '1': 'Môžete nahrať iba %{smart_count} súbory',
-    '2': 'Môžete nahrať iba %{smart_count} súborov'
+    '2': 'Môžete nahrať iba %{smart_count} súborov',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Musíte vybrať aspoň %{smart_count} súbor',
     '1': 'Musíte vybrať aspoň %{smart_count} súbory',
-    '2': 'Musíte vybrať aspoň %{smart_count} súborov'
-  }
+    '2': 'Musíte vybrať aspoň %{smart_count} súborov',
+  },
+  zoomIn: 'Priblížiť',
+  zoomOut: 'Oddialiť',
 }
 
 sk_SK.pluralize = function (count) {

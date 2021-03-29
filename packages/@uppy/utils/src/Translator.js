@@ -18,12 +18,12 @@ module.exports = class Translator {
   constructor (locales) {
     this.locale = {
       strings: {},
-      pluralize: function (n) {
+      pluralize (n) {
         if (n === 1) {
           return 0
         }
         return 1
-      }
+      },
     }
 
     if (Array.isArray(locales)) {
@@ -39,9 +39,7 @@ module.exports = class Translator {
     }
 
     const prevLocale = this.locale
-    this.locale = Object.assign({}, prevLocale, {
-      strings: Object.assign({}, prevLocale.strings, locale.strings)
-    })
+    this.locale = { ...prevLocale, strings: { ...prevLocale.strings, ...locale.strings } }
     this.locale.pluralize = locale.pluralize || prevLocale.pluralize
   }
 
@@ -74,7 +72,7 @@ module.exports = class Translator {
         // We create a new `RegExp` each time instead of using a more-efficient
         // string replace so that the same argument can be replaced multiple times
         // in the same phrase.
-        interpolated = insertReplacement(interpolated, new RegExp('%\\{' + arg + '\\}', 'g'), replacement)
+        interpolated = insertReplacement(interpolated, new RegExp(`%\\{${arg}\\}`, 'g'), replacement)
       }
     }
 
@@ -136,9 +134,8 @@ module.exports = class Translator {
       if (options && typeof options.smart_count !== 'undefined') {
         const plural = this.locale.pluralize(options.smart_count)
         return this.interpolate(string[plural], options)
-      } else {
-        throw new Error('Attempted to use a string with plural forms, but no value was given for %{smart_count}')
       }
+      throw new Error('Attempted to use a string with plural forms, but no value was given for %{smart_count}')
     }
 
     return this.interpolate(string, options)
