@@ -9,6 +9,8 @@ module.exports = class Editor extends Component {
     )
     this.imgElement.addEventListener('crop', (ev) => {
       this.rotateRange.value = ev.detail.rotate
+      this.rotateRange.parentNode
+        .setAttribute('aria-label', `${ev.detail.rotate}º`)
     })
   }
 
@@ -66,15 +68,17 @@ module.exports = class Editor extends Component {
 
   renderRotateRange () {
     return (
-      <input
-        type="range"
-        onInput={(ev) => this.cropper.rotateTo(ev.target.value)}
-        min="0"
-        max="360"
-        value="0"
-        ref={(ref) => { this.rotateRange = ref }}
-        aria-label={this.props.i18n('rotate')}
-      />
+      <label data-microtip-position="top" role="tooltip">
+        <input
+          type="range"
+          onInput={(ev) => this.cropper.rotateTo(ev.target.value)}
+          min="0"
+          max="359"
+          value="0"
+          ref={(ref) => { this.rotateRange = ref }}
+          aria-label={this.props.i18n('rotate')}
+        />
+      </label>
     )
   }
 
