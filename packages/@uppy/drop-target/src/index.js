@@ -3,23 +3,21 @@ const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const toArray = require('@uppy/utils/lib/toArray')
 
 /**
- * DOM Target plugin
+ * Drop Target plugin
  *
  */
-module.exports = class DomTarget extends Plugin {
+module.exports = class DropTarget extends Plugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'
-    this.id = this.opts.id || 'DomTarget'
-    this.title = 'DOM Target'
+    this.id = this.opts.id || 'DropTarget'
+    this.title = 'Drop Target'
 
     // Default options
     const defaultOpts = {
       target: null,
-      disableDrop: false,
-      disablePaste: false,
     }
 
     // Merge default options with the ones set by user
@@ -57,7 +55,7 @@ module.exports = class DomTarget extends Plugin {
     this.setPluginState({ isDraggingOver: false })
 
     // 3. Add all dropped files
-    this.uppy.log('[DomTarget] Files were dropped')
+    this.uppy.log('[DropTarget] Files were dropped')
     const logDropError = (error) => {
       this.uppy.log(error, 'error')
     }
@@ -94,22 +92,6 @@ module.exports = class DomTarget extends Plugin {
     }, 50)
   }
 
-  handlePaste = (event) => {
-    // 1. Let any acquirer plugin (Url/Webcam/etc.) handle pastes to the root
-    this.uppy.iteratePlugins((plugin) => {
-      if (plugin.type === 'acquirer') {
-        // Every Plugin with .type acquirer can define handleRootPaste(event)
-        if (plugin.handleRootPaste) {
-          plugin.handleRootPaste(event)
-        }
-      }
-    })
-
-    // 2. Add all dropped files
-    const files = toArray(event.clipboardData.files)
-    this.addFiles(files)
-  }
-
   addListeners = () => {
     const { target } = this.opts
 
@@ -119,43 +101,29 @@ module.exports = class DomTarget extends Plugin {
       this.nodes = toArray(document.querySelectorAll(target))
     }
 
-    if (!this.nodes) {
+    if (!this.nodes && !this.nodes.length > 0) {
       throw new Error(`"${target}" does not match any HTML elements`)
     }
 
     this.nodes.forEach((node) => {
-      if (!this.opts.disableDrop) {
-        node.addEventListener('dragover', this.handleDragOver, false)
-        node.addEventListener('dragleave', this.handleDragLeave, false)
-        node.addEventListener('drop', this.handleDrop, false)
-      }
-
-      if (!this.opts.disablePaste) {
-        node.addEventListener('paste', this.handlePaste, false)
-      }
+      node.addEventListener('dragover', this.handleDragOver, false)
+      node.addEventListener('dragleave', this.handleDragLeave, false)
+      node.addEventListener('drop', this.handleDrop, false)
     })
   }
 
   removeListeners = () => {
     if (this.nodes) {
       this.nodes.forEach((node) => {
-        if (!this.opts.disableDrop) {
-          node.removeEventListener('dragover', this.handleDragOver, false)
-          node.removeEventListener('dragleave', this.handleDragLeave, false)
-          node.removeEventListener('drop', this.handleDrop, false)
-        }
-
-        if (!this.opts.disablePaste) {
-          node.removeEventListener('paste', this.handlePaste, false)
-        }
+        node.removeEventListener('dragover', this.handleDragOver, false)
+        node.removeEventListener('dragleave', this.handleDragLeave, false)
+        node.removeEventListener('drop', this.handleDrop, false)
       })
     }
   }
 
   install () {
-    this.setPluginState({
-      isDraggingOver: false,
-    })
+    this.setPluginState({ isDraggingOver: false })
     this.addListeners()
   }
 

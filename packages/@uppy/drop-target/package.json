@@ -1,5 +1,5 @@
 {
-  "name": "@uppy/dom-target",
+  "name": "@uppy/drop-target",
   "description": "Lets your users drag and drop and paste files on any of your existing DOM elements. Most likely document.body",
   "version": "0.1.0",
   "license": "MIT",

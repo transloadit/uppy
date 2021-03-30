@@ -62,6 +62,6 @@
     "@uppy/url": "file:../@uppy/url",
     "@uppy/webcam": "file:../@uppy/webcam",
     "@uppy/xhr-upload": "file:../@uppy/xhr-upload",
-    "@uppy/dom-target": "file:../@uppy/dom-target"
+    "@uppy/drop-target": "file:../@uppy/drop-target"
   }
 }
