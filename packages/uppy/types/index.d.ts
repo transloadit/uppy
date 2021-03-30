@@ -17,6 +17,8 @@ import Dashboard = require('@uppy/dashboard');
 export { Dashboard };
 import DragDrop = require('@uppy/drag-drop');
 export { DragDrop };
+import DropTarget = require('@uppy/drop-target');
+export { DropTarget };
 import FileInput = require('@uppy/file-input');
 export { FileInput };
 import Informer = require('@uppy/informer');

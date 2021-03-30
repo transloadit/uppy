@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "main": "lib/index.js",
+  "types": "types/index.d.ts",
   "keywords": [
     "file uploader",
     "uppy",
