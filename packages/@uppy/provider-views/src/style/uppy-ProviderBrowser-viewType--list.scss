@@ -84,6 +84,8 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
+      // focus underline is otherwise invisible
+      line-height: 1.2;
     }
   }
 

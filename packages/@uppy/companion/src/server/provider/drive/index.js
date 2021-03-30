@@ -60,6 +60,8 @@ function adaptData (listFilesResp, sharedDrivesResp, directory, query, showShare
   const items = adapter.getItemSubList(listFilesResp)
   const sharedDrives = sharedDrivesResp ? sharedDrivesResp.drives || [] : []
 
+  // “Shared with me” is a list of shared documents,
+  // not the same as sharedDrives
   const virtualItem = showSharedWithMe && ({
     isFolder: true,
     icon: 'folder',
