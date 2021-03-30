@@ -228,7 +228,7 @@ Optionally, specify a string of text that explains something about the upload fo
 
 ### `metaFields: []`
 
-An array of UI field objects that will be shown when a user clicks the “edit” button on that file. Configuring this enables the “edit” button on file cards. Each object requires:
+An array of UI field objects, or a function that takes a [File Object](https://uppy.io/docs/uppy/#File-Objects) and returns an array of UI field objects, that will be shown when a user clicks the “edit” button on that file. Configuring this enables the “edit” button on file cards. Each object requires:
 
 - `id`, the name of the meta field. Note: this will also be used in CSS/HTML as part of the `id` attribute, so it’s better to [avoid using characters like periods, semicolons, etc](https://stackoverflow.com/a/79022).
 - `name`, the label shown in the interface.
@@ -252,7 +252,7 @@ It gets passed `({value, onChange}, h)` where `value` is the current value of th
 })
 ```
 
-You can also specify a function that takes a [File Object](https://uppy.io/docs/uppy/#File-Objects) and returns an array of UI field objects:
+If you want the meta fields to be dynamically assigned depending on the file type, pass a function:
 
 ```js
 .use(Dashboard, {
