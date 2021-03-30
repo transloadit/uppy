@@ -162,8 +162,12 @@ export COMPANION_HIDE_METRICS="true"
 export COMPANION_IMPLICIT_PATH="/SERVER/PATH/TO/WHERE/UPPY/SERVER/LIVES"
 
 # comma-separated client hosts to whitlelist by the server
-# if not specified, the server would allow any host
+# if neither this or COMPANION_CLIENT_ORIGINS_REGEX specified, the server would allow any host
 export COMPANION_CLIENT_ORIGINS="localhost:3452,uppy.io"
+
+# Like COMPANION_CLIENT_ORIGINS, but allows a single regex instead
+# (COMPANION_CLIENT_ORIGINS will be ignored if this is used and vice versa)
+export COMPANION_CLIENT_ORIGINS_REGEX="https://.*\.example\.(com|eu)$"
 
 # corresponds to the redisUrl option
 # this also enables Redis session storage if set
@@ -303,8 +307,8 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
   - protocol - `http | https`
   - host(required) - your server host (e.g localhost:3020, mydomain.com)
   - path - the server path to where the Uppy app is sitting (e.g if Companion is at `mydomain.com/companion`, then the path would be `/companion`).
-  - oauthDomain - if you have multiple instances of Companion with different (and perhaps dynamic) subdomains, you can set a master domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect to the slave subdomain with the required credentials on completion.
-  - validHosts - if you are setting a master `oauthDomain`, you need to set a list of valid hosts, so the master oauth handler can validate the host of the Uppy instance requesting the authentication. This is basically a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
+  - oauthDomain - if you have multiple instances of Companion with different (and perhaps dynamic) subdomains, you can set a single fixed domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect back to the correct instance with the required credentials on completion. This way you only need to configure a single callback URL for OAuth providers.
+  - validHosts - if you are setting an `oauthDomain`, you need to set a list of valid hosts, so the oauth handler can validate the host of the Uppy instance requesting the authentication. This is basically a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
   - implicitPath - if the URL path to your Companion server is set in your NGINX server (or any other Http server) instead of your express app, then you need to set this path as `implicitPath`. So if your Companion URL is `mydomain.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`.
 
 7. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.

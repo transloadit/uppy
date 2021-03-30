@@ -6,6 +6,7 @@ const Grant = require('grant').express()
 const merge = require('lodash/merge')
 const cookieParser = require('cookie-parser')
 const interceptor = require('express-interceptor')
+
 const grantConfig = require('./config/grant')()
 const providerManager = require('./server/provider')
 const controllers = require('./server/controllers')
@@ -79,40 +80,15 @@ module.exports.app = (options = {}) => {
   app.use('/connect/:authProvider/:override?', getCredentialsOverrideMiddleware(providers, options))
   app.use(Grant(grantConfig))
 
-  app.use(middlewares.mergeAccessControlAllowMethods)
-
   app.use((req, res, next) => {
-    res.header(
-      'Access-Control-Allow-Headers',
-      [
-        'uppy-auth-token',
-        'uppy-versions',
-        'uppy-credentials-params',
-        res.get('Access-Control-Allow-Headers'),
-      ].join(',')
-    )
-
-    const exposedHeaders = [
-      // exposed so it can be accessed for our custom uppy preflight
-      'Access-Control-Allow-Headers',
-    ]
-
     if (options.sendSelfEndpoint) {
-      // add it to the exposed headers.
-      exposedHeaders.push('i-am')
-
       const { protocol } = options.server
       res.header('i-am', `${protocol}://${options.sendSelfEndpoint}`)
     }
-
-    if (res.get('Access-Control-Expose-Headers')) {
-      // if the header had been previously set, the values should be added too
-      exposedHeaders.push(res.get('Access-Control-Expose-Headers'))
-    }
-
-    res.header('Access-Control-Expose-Headers', exposedHeaders.join(','))
     next()
   })
+
+  app.use(middlewares.cors(options))
 
   // add uppy options to the request object so it can be accessed by subsequent handlers.
   app.use('*', getOptionsMiddleware(options))
