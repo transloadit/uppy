@@ -252,7 +252,7 @@ It gets passed `({value, onChange}, h)` where `value` is the current value of th
 })
 ```
 
-If you want the meta fields to be dynamically assigned depending on the file type, pass a function:
+If you’d like the meta fields to be dynamically assigned depending on, for instance, the file type, pass a function:
 
 ```js
 .use(Dashboard, {
