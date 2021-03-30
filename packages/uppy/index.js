@@ -17,6 +17,7 @@ exports.ReduxStore = require('@uppy/store-redux')
 // UI plugins
 exports.Dashboard = require('@uppy/dashboard')
 exports.DragDrop = require('@uppy/drag-drop')
+exports.DropTarget = require('@uppy/drop-target')
 exports.FileInput = require('@uppy/file-input')
 exports.Informer = require('@uppy/informer')
 exports.ProgressBar = require('@uppy/progress-bar')
