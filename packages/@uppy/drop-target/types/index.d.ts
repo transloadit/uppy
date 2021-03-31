@@ -2,7 +2,7 @@ import Uppy = require('@uppy/core')
 
 declare module DropTarget {
   interface DropTargetOptions extends Uppy.PluginOptions {
-    target: Uppy.PluginTarget
+    target: string | Element
   }
 }
 
