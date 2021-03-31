@@ -1,6 +1,6 @@
 {
   "name": "@uppy/drop-target",
-  "description": "Lets your users drag and drop and paste files on any of your existing DOM elements. Most likely document.body",
+  "description": "Lets your users drag and drop files on a DOM element",
   "version": "0.1.0",
   "license": "MIT",
   "main": "lib/index.js",
