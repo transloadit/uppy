@@ -1,6 +1,5 @@
 {
   "name": "@uppy-example/svelte-app",
-  "version": "0.0.0",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
