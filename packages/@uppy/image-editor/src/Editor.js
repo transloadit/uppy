@@ -2,6 +2,11 @@ const Cropper = require('cropperjs')
 const { h, Component } = require('preact')
 
 module.exports = class Editor extends Component {
+  constructor (props) {
+    super(props)
+    this.state = { rotationAngle: 0 }
+  }
+
   componentDidMount () {
     this.cropper = new Cropper(
       this.imgElement,
@@ -9,9 +14,7 @@ module.exports = class Editor extends Component {
     )
     if (this.props.opts.actions.granularRotate) {
       this.imgElement.addEventListener('crop', (ev) => {
-        this.rotateRange.value = ev.detail.rotate
-        this.rotateRange.parentNode
-          .setAttribute('aria-label', `${ev.detail.rotate}º`)
+        this.setState({ rotationAngle: ev.detail.rotate })
       })
     }
   }
@@ -68,16 +71,20 @@ module.exports = class Editor extends Component {
     )
   }
 
-  renderRotateRange () {
+  renderGranularRotate () {
     return (
-      <label data-microtip-position="top" role="tooltip">
+      <label
+        data-microtip-position="top"
+        role="tooltip"
+        aria-label={`${this.state.rotationAngle}º`}
+      >
         <input
           type="range"
           onInput={(ev) => this.cropper.rotateTo(ev.target.value)}
+          onChange={(ev) => this.setState({ rotationAngle: ev.target.value })}
+          value={this.state.rotationAngle}
           min="0"
           max="359"
-          value="0"
-          ref={(ref) => { this.rotateRange = ref }}
           aria-label={this.props.i18n('rotate')}
         />
       </label>
@@ -227,7 +234,7 @@ module.exports = class Editor extends Component {
 
           {actions.revert && this.renderRevert()}
           {actions.rotate && this.renderRotate()}
-          {actions.granularRotate && this.renderRotateRange()}
+          {actions.granularRotate && this.renderGranularRotate()}
           {actions.flip && this.renderFlip()}
           {actions.zoomIn && this.renderZoomIn()}
           {actions.zoomOut && this.renderZoomOut()}
