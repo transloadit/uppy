@@ -5,6 +5,10 @@ const uuid = require('uuid')
 const isObject = require('isobject')
 const validator = require('validator')
 const request = require('request')
+/** @type {any} */
+// @ts-ignore - typescript resolves this this to a hoisted version of
+// serialize-error that ships with a declaration file, we are using a version
+// here that does not have a declaration file
 const serializeError = require('serialize-error')
 const emitter = require('./emitter')
 const { jsonStringify, hasMatch } = require('./helpers/utils')

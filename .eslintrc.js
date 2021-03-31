@@ -181,6 +181,10 @@ module.exports = {
 
     {
       files: ['test/endtoend/*/*.js'],
+      rules: {
+        // we mostly import @uppy stuff in these files.
+        'import/no-extraneous-dependencies': ['off'],
+      },
       env: {
         mocha: true,
       },
