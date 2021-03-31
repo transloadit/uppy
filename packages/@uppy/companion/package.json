@@ -69,7 +69,22 @@
     "ws": "6.2.1"
   },
   "devDependencies": {
+    "@types/compression": "1.7.0",
+    "@types/connect-redis": "0.0.7",
+    "@types/cookie-parser": "1.4.2",
+    "@types/cors": "2.8.6",
+    "@types/express-session": "1.17.3",
+    "@types/helmet": "0.0.37",
+    "@types/jsonwebtoken": "8.3.7",
+    "@types/lodash.merge": "4.6.6",
+    "@types/morgan": "1.7.37",
+    "@types/ms": "0.7.31",
     "@types/node": "12.12.27",
+    "@types/react": "16.9.19",
+    "@types/request": "2.48.4",
+    "@types/uuid": "3.4.7",
+    "@types/ws": "6.0.4",
+    "supertest": "3.4.2",
     "typescript": "3.7.5"
   },
   "files": [

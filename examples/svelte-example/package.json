@@ -1,5 +1,6 @@
 {
   "name": "@uppy-example/svelte-app",
+  "version": "0.0.0",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
@@ -27,10 +28,10 @@
     "typescript": "^3.9.3"
   },
   "dependencies": {
-    "@uppy/core": "^1.14.1",
-    "@uppy/svelte": "../../packages/@uppy/svelte",
-    "@uppy/webcam": "^1.8.1",
-    "@uppy/xhr-upload": "^1.6.7",
+    "@uppy/core": "file:../../packages/@uppy/core",
+    "@uppy/svelte": "file:../../packages/@uppy/svelte",
+    "@uppy/webcam": "file:../../packages/@uppy/webcam",
+    "@uppy/xhr-upload": "file:../../packages/@uppy/xhr-upload",
     "sirv-cli": "^1.0.0"
   },
   "private": true

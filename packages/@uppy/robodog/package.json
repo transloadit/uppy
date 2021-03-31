@@ -42,6 +42,6 @@
     "@uppy/utils": "file:../utils",
     "@uppy/webcam": "file:../webcam",
     "es6-promise": "4.2.5",
-    "whatwg-fetch": "3.0.0"
+    "whatwg-fetch": "3.6.2"
   }
 }

@@ -21,5 +21,8 @@
   },
   "dependencies": {
     "cuid": "^2.1.1"
+  },
+  "devDependencies": {
+    "redux": "4.0.5"
   }
 }
