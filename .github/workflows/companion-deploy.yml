@@ -44,9 +44,8 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
       - name: Deploy to heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
+        uses: akhileshns/heroku-deploy@v3.5.6
         with:
-          appdir: packages/@uppy/companion
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: companion-demo
           heroku_email: ${{secrets.HEROKU_EMAIL}}
