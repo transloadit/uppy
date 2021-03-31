@@ -225,7 +225,7 @@ module.exports = class Editor extends Component {
 
           {actions.revert && this.renderRevert()}
           {actions.rotate && this.renderRotate()}
-          {actions.rotate && this.renderRotateRange()}
+          {actions.granularRotate && this.renderRotateRange()}
           {actions.flip && this.renderFlip()}
           {actions.zoomIn && this.renderZoomIn()}
           {actions.zoomOut && this.renderZoomOut()}
