@@ -61,6 +61,7 @@ const packages = [
   '@uppy/url',
   '@uppy/webcam',
   '@uppy/xhr-upload',
+  '@uppy/drop-target',
   // Stores
   '@uppy/store-default',
   '@uppy/store-redux',
