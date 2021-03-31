@@ -13,8 +13,7 @@
     "drag",
     "drop",
     "dropzone",
-    "upload",
-    "paste"
+    "upload"
   ],
   "homepage": "https://uppy.io",
   "bugs": {
