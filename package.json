@@ -19,6 +19,9 @@
   ],
   "pre-commit": "lint:staged",
   "license": "MIT",
+  "engines": {
+    "npm": "7.x"
+  },
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",

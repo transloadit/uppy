@@ -9,6 +9,7 @@ WORKDIR /app
 ADD package.json package-*.json yarn.* /tmp/
 RUN cd /tmp && apk --update add  --virtual native-dep \
   make gcc g++ python libgcc libstdc++ git && \
+  npm install -g npm@7.7.6 && \
   npm install && \
   npm ls && \
   apk del native-dep
