@@ -50,56 +50,54 @@ Companion may either be used as a pluggable express app, which you plug into you
 
 ### Plugging into an already existing server
 
-To plug Companion into an existing server, call its `.app` method, passing in an [options](#Options) object as a parameter.
+To plug Companion into an existing server, call its `.app` method, passing in an [options](#Options) object as a parameter. This returns a server instance that you can mount on a subpath in your Express or app.
 
-```javascript
+```js
+const express = require('express')
+const bodyParser = require('body-parser')
+const session = require('express-session')
+const companion = require('@uppy/companion')
 
-var express = require('express')
-var bodyParser = require('body-parser')
-var session = require('express-session')
-var companion = require('@uppy/companion')
+const app = express()
 
-var app = express()
+// Companion requires body-parser and express-session middleware.
+// You can add it like this if you use those throughout your app.
+//
+// If you are using something else in your app, you can add these
+// middlewares in the same subpath as Companion instead.
 app.use(bodyParser.json())
 app.use(session({secret: 'some secrety secret'}))
-...
-// be sure to place this anywhere after app.use(bodyParser.json()) and app.use(session({...})
+
 const options = {
   providerOptions: {
     drive: {
       key: 'GOOGLE_DRIVE_KEY',
-      secret: 'GOOGLE_DRIVE_SECRET'
-    }
+      secret: 'GOOGLE_DRIVE_SECRET',
+    },
   },
   server: {
     host: 'localhost:3020',
     protocol: 'http',
+    // This MUST match the path you specify in `app.use()` below:
+    path: '/companion',
   },
-  filePath: '/path/to/folder/'
+  filePath: '/path/to/folder/',
 }
 
-app.use(companion.app(options))
-
-```
-
-please be sure to allow the following HTTP methods in your server like so:
-
-```javascript
-res.header("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PATCH, PUT");
+app.use('/companion', companion.app(options))
 ```
 
 See [Options](#Options) for valid configuration options.
 
-To use WebSockets for realtime upload progress, you can call the `socket` method, like so:
+Then, add the Companion WebSocket server for realtime upload progress, using the `companion.socket` function:
 
-```javascript
-...
-var server = app.listen(PORT)
+```js
+const server = app.listen(PORT)
 
 companion.socket(server, options)
 ```
 
-This takes your `server` instance and your Uppy [Options](#Options) as parameters.
+This takes your `server` instance and [Options](#Options) as parameters.
 
 ### Running as a standalone server
 

@@ -22,19 +22,21 @@ const getAriaLabelOfCheckbox = (props) => {
 module.exports = (props) => {
   return (
     <li className={props.className} title={props.isDisabled ? props.restrictionReason : null}>
-      <button
-        type="button"
-        className={`uppy-u-reset uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`}
-        onClick={props.toggleCheckbox}
-        // for the <label/>
-        id={props.id}
-        role="option"
-        aria-label={getAriaLabelOfCheckbox(props)}
-        aria-selected={props.isChecked}
-        aria-disabled={props.isDisabled}
-        disabled={props.isDisabled}
-        data-uppy-super-focusable
-      />
+      {!props.isCheckboxDisabled ? (
+        <button
+          type="button"
+          className={`uppy-u-reset uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`}
+          onClick={props.toggleCheckbox}
+          // for the <label/>
+          id={props.id}
+          role="option"
+          aria-label={getAriaLabelOfCheckbox(props)}
+          aria-selected={props.isChecked}
+          aria-disabled={props.isDisabled}
+          disabled={props.isDisabled}
+          data-uppy-super-focusable
+        />
+      ) : null}
 
       {props.type === 'file' ? (
         // label for a checkbox
