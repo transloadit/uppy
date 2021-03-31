@@ -7,11 +7,13 @@ module.exports = class Editor extends Component {
       this.imgElement,
       this.props.opts.cropperOptions
     )
-    this.imgElement.addEventListener('crop', (ev) => {
-      this.rotateRange.value = ev.detail.rotate
-      this.rotateRange.parentNode
-        .setAttribute('aria-label', `${ev.detail.rotate}º`)
-    })
+    if (this.props.opts.actions.granularRotate) {
+      this.imgElement.addEventListener('crop', (ev) => {
+        this.rotateRange.value = ev.detail.rotate
+        this.rotateRange.parentNode
+          .setAttribute('aria-label', `${ev.detail.rotate}º`)
+      })
+    }
   }
 
   componentWillUnmount () {
