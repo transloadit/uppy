@@ -21,7 +21,7 @@ const XHRUpload = require('@uppy/xhr-upload/src')
 const Transloadit = require('@uppy/transloadit/src')
 const Form = require('@uppy/form/src')
 const ImageEditor = require('@uppy/image-editor/src')
-const DomTarget = require('@uppy/dom-target/src')
+const DropTarget = require('@uppy/drop-target/src')
 /* eslint-enable import/no-extraneous-dependencies */
 
 // DEV CONFIG: pick an uploader
