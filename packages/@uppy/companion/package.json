@@ -84,6 +84,7 @@
     "@types/request": "2.48.4",
     "@types/uuid": "3.4.7",
     "@types/ws": "6.0.4",
+    "cross-env": "^7.0.3",
     "supertest": "3.4.2",
     "typescript": "3.7.5"
   },
@@ -105,10 +106,12 @@
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "npm run build",
     "start": "node ./lib/standalone/start-server.js",
+    "start-heroku": "cross-env COMPANION_PORT=$PORT npm start",
     "test": "bash -c 'source env.test.sh && ../../../node_modules/jest/bin/jest.js'",
     "test:watch": "npm test -- --watch"
   },
   "engines": {
-    "node": ">=10.20.1"
+    "node": ">=10.20.1",
+    "npm": "7.x"
   }
 }
