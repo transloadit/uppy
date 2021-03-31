@@ -88,7 +88,7 @@ module.exports = () => {
     .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
     .use(ImageEditor, { target: Dashboard })
-    .use(DomTarget, {
+    .use(DropTarget, {
       target: document.body,
     })
 
