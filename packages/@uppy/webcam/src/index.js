@@ -370,6 +370,7 @@ module.exports = class Webcam extends Plugin {
           // eslint-disable-next-line compat/compat
           recordedVideo: URL.createObjectURL(file.data),
         })
+        this.opts.mirror = false
       } catch (err) {
         // Logging the error, exept restrictions, which is handled in Core
         if (!err.isRestriction) {
