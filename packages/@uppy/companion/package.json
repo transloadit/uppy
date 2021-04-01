@@ -109,6 +109,7 @@
     "test:watch": "npm test -- --watch"
   },
   "engines": {
-    "node": ">=10.20.1"
+    "node": ">=10.20.1",
+    "npm": "7.x"
   }
 }
