@@ -44,9 +44,7 @@ exports.getNextPagePath = (data, currentQuery, currentPath) => {
     return null
   }
 
-  const query = Object.assign({}, currentQuery, {
-    cursor: data.paging.cursors.after
-  })
+  const query = { ...currentQuery, cursor: data.paging.cursors.after }
   return `${currentPath || ''}?${querystring.stringify(query)}`
 }
 

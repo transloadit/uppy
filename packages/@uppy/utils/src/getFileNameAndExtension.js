@@ -10,12 +10,11 @@ module.exports = function getFileNameAndExtension (fullFileName) {
   if (lastDot === -1 || lastDot === fullFileName.length - 1) {
     return {
       name: fullFileName,
-      extension: undefined
+      extension: undefined,
     }
-  } else {
-    return {
-      name: fullFileName.slice(0, lastDot),
-      extension: fullFileName.slice(lastDot + 1)
-    }
+  }
+  return {
+    name: fullFileName.slice(0, lastDot),
+    extension: fullFileName.slice(lastDot + 1),
   }
 }

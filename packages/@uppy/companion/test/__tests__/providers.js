@@ -4,7 +4,7 @@ jest.mock('tus-js-client')
 jest.mock('purest')
 jest.mock('../../src/server/helpers/request', () => {
   return {
-    getURLMeta: () => Promise.resolve({ size: 758051 })
+    getURLMeta: () => Promise.resolve({ size: 758051 }),
   }
 })
 jest.mock('../../src/server/helpers/oauth-state', () => require('../mockoauthstate')())
@@ -13,13 +13,15 @@ const request = require('supertest')
 const fixtures = require('../fixtures')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
+
 const authServer = getServer()
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 const providers = require('../../src/server/provider').getDefaultProviders()
+
 const providerNames = Object.keys(providers)
 const AUTH_PROVIDERS = {
   drive: 'google',
-  onedrive: 'microsoft'
+  onedrive: 'microsoft',
 }
 const authData = {}
 providerNames.forEach((provider) => {
@@ -55,7 +57,21 @@ describe('list provider files', () => {
       .expect(200)
       .then((res) => {
         expect(res.body.username).toBe(fixtures.defaults.USERNAME)
-        const item = res.body.items[0]
+
+        const items = [...res.body.items]
+
+        // Drive has a virtual "shared-with-me" folder as the first item
+        if (providerName === 'drive') {
+          const item0 = items.shift()
+          expect(item0.isFolder).toBe(true)
+          expect(item0.name).toBe('Shared with me')
+          expect(item0.mimeType).toBe('application/vnd.google-apps.folder')
+          expect(item0.id).toBe('shared-with-me')
+          expect(item0.requestPath).toBe('shared-with-me')
+          expect(item0.icon).toBe('folder')
+        }
+
+        const item = items[0]
         expect(item.isFolder).toBe(false)
         expect(item.name).toBe(providerFixtures.itemName || fixtures.defaults.ITEM_NAME)
         expect(item.mimeType).toBe(providerFixtures.itemMimeType || fixtures.defaults.MIME_TYPE)
@@ -76,7 +92,7 @@ describe('download provdier file', () => {
       .set('Content-Type', 'application/json')
       .send({
         endpoint: 'http://tusd.tusdemo.net/files',
-        protocol: 'tus'
+        protocol: 'tus',
       })
       .expect(200)
       .then((res) => expect(res.body.token).toBeTruthy())

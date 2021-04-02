@@ -28,11 +28,11 @@ class StatusBar extends React.Component {
 
   installPlugin () {
     const uppy = this.props.uppy
-    const options = Object.assign(
-      { id: 'react:StatusBar' },
-      this.props,
-      { target: this.container }
-    )
+    const options = {
+      id: 'react:StatusBar',
+      ...this.props,
+      target: this.container,
+    }
     delete options.uppy
 
     uppy.use(StatusBarPlugin, options)
@@ -50,7 +50,7 @@ class StatusBar extends React.Component {
     return h('div', {
       ref: (container) => {
         this.container = container
-      }
+      },
     })
   }
 }
@@ -58,7 +58,7 @@ class StatusBar extends React.Component {
 StatusBar.propTypes = {
   uppy: uppyPropType,
   hideAfterFinish: PropTypes.bool,
-  showProgressDetails: PropTypes.bool
+  showProgressDetails: PropTypes.bool,
 }
 StatusBar.defaultProps = {
 }

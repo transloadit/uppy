@@ -31,17 +31,22 @@ module.exports = function s3 (config) {
   function getUploadParameters (req, res, next) {
     // @ts-ignore The `companion` property is added by middleware before reaching here.
     const client = req.companion.s3Client
+
+    if (!client || typeof config.bucket !== 'string') {
+      return res.status(400).json({ error: 'This Companion server does not support uploading to S3' })
+    }
+
     const metadata = removeMetadataProperties(req.query.metadata) || {}
     const key = config.getKey(req, req.query.filename, metadata)
     if (typeof key !== 'string') {
-      return res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
+      return res.status(500).json({ error: 'S3 uploads are misconfigured: filename returned from `getKey` must be a string' })
     }
 
     const fields = {
       acl: config.acl,
-      key: key,
+      key,
       success_action_status: '201',
-      'content-type': req.query.type
+      'content-type': req.query.type,
     }
 
     Object.keys(metadata).forEach((key) => {
@@ -52,7 +57,7 @@ module.exports = function s3 (config) {
       Bucket: config.bucket,
       Expires: config.expires,
       Fields: fields,
-      Conditions: config.conditions
+      Conditions: config.conditions,
     }, (err, data) => {
       if (err) {
         next(err)
@@ -61,7 +66,7 @@ module.exports = function s3 (config) {
       res.json({
         method: 'post',
         url: data.url,
-        fields: data.fields
+        fields: data.fields,
       })
     })
   }
@@ -105,7 +110,7 @@ module.exports = function s3 (config) {
       }
       res.json({
         key: data.Key,
-        uploadId: data.UploadId
+        uploadId: data.UploadId,
       })
     })
   }
@@ -141,7 +146,7 @@ module.exports = function s3 (config) {
         Bucket: config.bucket,
         Key: key,
         UploadId: uploadId,
-        PartNumberMarker: startAt
+        PartNumberMarker: startAt,
       }, (err, data) => {
         if (err) {
           next(err)
@@ -194,7 +199,7 @@ module.exports = function s3 (config) {
       UploadId: uploadId,
       PartNumber: partNumber,
       Body: '',
-      Expires: config.expires
+      Expires: config.expires,
     }, (err, url) => {
       if (err) {
         next(err)
@@ -227,7 +232,7 @@ module.exports = function s3 (config) {
     client.abortMultipartUpload({
       Bucket: config.bucket,
       Key: key,
-      UploadId: uploadId
+      UploadId: uploadId,
     }, (err, data) => {
       if (err) {
         next(err)
@@ -268,15 +273,15 @@ module.exports = function s3 (config) {
       Key: key,
       UploadId: uploadId,
       MultipartUpload: {
-        Parts: parts
-      }
+        Parts: parts,
+      },
     }, (err, data) => {
       if (err) {
         next(err)
         return
       }
       res.json({
-        location: data.Location
+        location: data.Location,
       })
     })
   }

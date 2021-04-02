@@ -13,6 +13,7 @@ export { default as ReduxStore } from '@uppy/store-redux'
 // UI plugins
 export { default as Dashboard } from '@uppy/dashboard'
 export { default as DragDrop } from '@uppy/drag-drop'
+export { default as DropTarget } from '@uppy/drop-target'
 export { default as FileInput } from '@uppy/file-input'
 export { default as Informer } from '@uppy/informer'
 export { default as ProgressBar } from '@uppy/progress-bar'

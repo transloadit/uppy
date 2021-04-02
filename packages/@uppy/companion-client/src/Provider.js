@@ -1,6 +1,7 @@
 'use strict'
 
 const qsStringify = require('qs-stringify')
+const URL = require('url-parse')
 const RequestClient = require('./RequestClient')
 const tokenStorage = require('./tokenStorage')
 
@@ -33,7 +34,7 @@ module.exports = class Provider extends RequestClient {
             JSON.stringify({ params: this.companionKeysParams })
           )
         }
-        return Object.assign({}, headers, authHeaders)
+        return { ...headers, ...authHeaders }
       })
   }
 
@@ -90,7 +91,7 @@ module.exports = class Provider extends RequestClient {
     return this.get(`${this.id}/logout`)
       .then((response) => Promise.all([
         response,
-        this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
+        this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey),
       ])).then(([response]) => response)
   }
 
@@ -98,7 +99,7 @@ module.exports = class Provider extends RequestClient {
     plugin.type = 'acquirer'
     plugin.files = []
     if (defaultOpts) {
-      plugin.opts = Object.assign({}, defaultOpts, opts)
+      plugin.opts = { ...defaultOpts, ...opts }
     }
 
     if (opts.serverUrl || opts.serverPattern) {
@@ -117,7 +118,7 @@ module.exports = class Provider extends RequestClient {
       if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
         plugin.opts.companionAllowedHosts = `https://${opts.companionUrl.replace(/^\/\//, '')}`
       } else {
-        plugin.opts.companionAllowedHosts = opts.companionUrl
+        plugin.opts.companionAllowedHosts = new URL(opts.companionUrl).origin
       }
     }
 

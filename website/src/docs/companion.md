@@ -50,56 +50,54 @@ Companion may either be used as a pluggable express app, which you plug into you
 
 ### Plugging into an already existing server
 
-To plug Companion into an existing server, call its `.app` method, passing in an [options](#Options) object as a parameter.
+To plug Companion into an existing server, call its `.app` method, passing in an [options](#Options) object as a parameter. This returns a server instance that you can mount on a subpath in your Express or app.
 
-```javascript
+```js
+const express = require('express')
+const bodyParser = require('body-parser')
+const session = require('express-session')
+const companion = require('@uppy/companion')
 
-var express = require('express')
-var bodyParser = require('body-parser')
-var session = require('express-session')
-var companion = require('@uppy/companion')
+const app = express()
 
-var app = express()
+// Companion requires body-parser and express-session middleware.
+// You can add it like this if you use those throughout your app.
+//
+// If you are using something else in your app, you can add these
+// middlewares in the same subpath as Companion instead.
 app.use(bodyParser.json())
 app.use(session({secret: 'some secrety secret'}))
-...
-// be sure to place this anywhere after app.use(bodyParser.json()) and app.use(session({...})
+
 const options = {
   providerOptions: {
     drive: {
       key: 'GOOGLE_DRIVE_KEY',
-      secret: 'GOOGLE_DRIVE_SECRET'
-    }
+      secret: 'GOOGLE_DRIVE_SECRET',
+    },
   },
   server: {
     host: 'localhost:3020',
     protocol: 'http',
+    // This MUST match the path you specify in `app.use()` below:
+    path: '/companion',
   },
-  filePath: '/path/to/folder/'
+  filePath: '/path/to/folder/',
 }
 
-app.use(companion.app(options))
-
-```
-
-please be sure to allow the following HTTP methods in your server like so:
-
-```javascript
-res.header("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PATCH, PUT");
+app.use('/companion', companion.app(options))
 ```
 
 See [Options](#Options) for valid configuration options.
 
-To use WebSockets for realtime upload progress, you can call the `socket` method, like so:
+Then, add the Companion WebSocket server for realtime upload progress, using the `companion.socket` function:
 
-```javascript
-...
-var server = app.listen(PORT)
+```js
+const server = app.listen(PORT)
 
 companion.socket(server, options)
 ```
 
-This takes your `server` instance and your Uppy [Options](#Options) as parameters.
+This takes your `server` instance and [Options](#Options) as parameters.
 
 ### Running as a standalone server
 
@@ -162,8 +160,12 @@ export COMPANION_HIDE_METRICS="true"
 export COMPANION_IMPLICIT_PATH="/SERVER/PATH/TO/WHERE/UPPY/SERVER/LIVES"
 
 # comma-separated client hosts to whitlelist by the server
-# if not specified, the server would allow any host
+# if neither this or COMPANION_CLIENT_ORIGINS_REGEX specified, the server would allow any host
 export COMPANION_CLIENT_ORIGINS="localhost:3452,uppy.io"
+
+# Like COMPANION_CLIENT_ORIGINS, but allows a single regex instead
+# (COMPANION_CLIENT_ORIGINS will be ignored if this is used and vice versa)
+export COMPANION_CLIENT_ORIGINS_REGEX="https://.*\.example\.(com|eu)$"
 
 # corresponds to the redisUrl option
 # this also enables Redis session storage if set
@@ -294,26 +296,28 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 3. **redisOptions(optional)** - An object of [options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties). This option can be used in place of `redisUrl`.
 
-4. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
+4. **redisPubSubScope(optional)** - Use a scope for the companion events at the Redis server. Setting this option will prefix all events with the name provided and a colon.
 
-5. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set:
+5. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
+
+6. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set:
 
   - protocol - `http | https`
   - host(required) - your server host (e.g localhost:3020, mydomain.com)
   - path - the server path to where the Uppy app is sitting (e.g if Companion is at `mydomain.com/companion`, then the path would be `/companion`).
-  - oauthDomain - if you have multiple instances of Companion with different (and perhaps dynamic) subdomains, you can set a master domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect to the slave subdomain with the required credentials on completion.
-  - validHosts - if you are setting a master `oauthDomain`, you need to set a list of valid hosts, so the master oauth handler can validate the host of the Uppy instance requesting the authentication. This is basically a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
+  - oauthDomain - if you have multiple instances of Companion with different (and perhaps dynamic) subdomains, you can set a single fixed domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect back to the correct instance with the required credentials on completion. This way you only need to configure a single callback URL for OAuth providers.
+  - validHosts - if you are setting an `oauthDomain`, you need to set a list of valid hosts, so the oauth handler can validate the host of the Uppy instance requesting the authentication. This is basically a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
   - implicitPath - if the URL path to your Companion server is set in your NGINX server (or any other Http server) instead of your express app, then you need to set this path as `implicitPath`. So if your Companion URL is `mydomain.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`.
 
-6. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
+7. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
 
-7. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
+8. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
 
-8. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Companion will only accept uploads to these URLs (useful when you want to make sure a Companion instance is only allowed to upload to your servers, for example).
+9. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Companion will only accept uploads to these URLs (useful when you want to make sure a Companion instance is only allowed to upload to your servers, for example).
 
-9. **secret(required)** - A secret string which Companion uses to generate authorization tokens.
+10. **secret(required)** - A secret string which Companion uses to generate authorization tokens.
 
-10. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
+11. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
 
 ### Provider Redirect URIs
 

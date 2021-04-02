@@ -13,8 +13,11 @@ const { ProviderApiError, ProviderAuthError } = require('../error')
 class Facebook extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = options.provider = Facebook.authProvider
-    this.client = purest(options)
+    this.authProvider = Facebook.authProvider
+    this.client = purest({
+      ...options,
+      provider: Facebook.authProvider,
+    })
   }
 
   static get authProvider () {
@@ -23,7 +26,7 @@ class Facebook extends Provider {
 
   list ({ directory, token, query = { cursor: null } }, done) {
     const qs = {
-      fields: 'name,cover_photo,created_time,type'
+      fields: 'name,cover_photo,created_time,type',
     }
 
     if (query.cursor) {
@@ -45,11 +48,10 @@ class Facebook extends Provider {
           err = this._error(err, resp)
           logger.error(err, 'provider.facebook.list.error')
           return done(err)
-        } else {
-          this._getUsername(token, (err, username) => {
-            err ? done(err) : done(null, this.adaptData(body, username, directory, query))
-          })
         }
+        this._getUsername(token, (err, username) => {
+          err ? done(err) : done(null, this.adaptData(body, username, directory, query))
+        })
       })
   }
 
@@ -63,9 +65,8 @@ class Facebook extends Provider {
           err = this._error(err, resp)
           logger.error(err, 'provider.facebook.user.error')
           return done(err)
-        } else {
-          done(null, body.email)
         }
+        done(null, body.email)
       })
   }
 
@@ -146,7 +147,7 @@ class Facebook extends Provider {
   }
 
   adaptData (res, username, directory, currentQuery) {
-    const data = { username: username, items: [] }
+    const data = { username, items: [] }
     const items = adapter.getItemSubList(res)
     items.forEach((item) => {
       data.items.push({
@@ -158,7 +159,7 @@ class Facebook extends Provider {
         id: adapter.getItemId(item),
         thumbnail: adapter.getItemThumbnailUrl(item),
         requestPath: adapter.getItemRequestPath(item),
-        modifiedDate: adapter.getItemModifiedDate(item)
+        modifiedDate: adapter.getItemModifiedDate(item),
       })
     })
 

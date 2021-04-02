@@ -11,11 +11,11 @@ describe('uploader with tus protocol', () => {
   test('upload functions with tus protocol', () => {
     const fileContent = Buffer.from('Some file content')
     const opts = {
-      companionOptions: companionOptions,
+      companionOptions,
       endpoint: 'http://url.myendpoint.com/files',
       protocol: 'tus',
       size: fileContent.length,
-      pathPrefix: companionOptions.filePath
+      pathPrefix: companionOptions.filePath,
     }
 
     const uploader = new Uploader(opts)

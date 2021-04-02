@@ -3,7 +3,7 @@ const fr_FR = {}
 fr_FR.strings = {
   addBulkFilesFailed: {
     '0': 'L\'ajout de %{smart_count} fichier a échoué',
-    '1': 'L\'ajout de %{smart_count} fichiers a échoué'
+    '1': 'L\'ajout de %{smart_count} fichiers a échoué',
   },
   addMore: 'Ajouter d\'autres',
   addMoreFiles: 'Ajouter d\'autres fichiers',
@@ -53,14 +53,14 @@ fr_FR.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete} sur %{smart_count} fichier téléchargé',
     '1': '%{complete} sur %{smart_count} fichiers téléchargés',
-    '2': '%{complete} sur %{smart_count} fichiers téléchargés'
+    '2': '%{complete} sur %{smart_count} fichiers téléchargés',
   },
   filter: 'Filtrer',
   finishEditingFile: 'Terminer l\'édition du fichier',
   folderAdded: {
     '0': '%{smart_count} fichier ajouté de %{folder}',
     '1': '%{smart_count} fichiers ajoutés de %{folder}',
-    '2': '%{smart_count} fichiers ajoutés de %{folder}'
+    '2': '%{smart_count} fichiers ajoutés de %{folder}',
   },
   generatingThumbnails: 'Generating thumbnails...',
   import: 'Importer',
@@ -81,7 +81,7 @@ fr_FR.strings = {
   processingXFiles: {
     '0': 'Traitement de %{smart_count} fichier',
     '1': 'Traitement de %{smart_count} fichiers',
-    '2': 'Traitement de %{smart_count} fichiers'
+    '2': 'Traitement de %{smart_count} fichiers',
   },
   recording: 'Enregistrement',
   recordingLength: 'Durée d\'enregistrement %{recording_length}',
@@ -98,7 +98,7 @@ fr_FR.strings = {
   selectX: {
     '0': 'Sélectionner %{smart_count}',
     '1': 'Sélectionner %{smart_count}',
-    '2': 'Sélectionner %{smart_count}'
+    '2': 'Sélectionner %{smart_count}',
   },
   smile: 'Souriez !',
   startRecording: 'Commencer l\'enregistrement vidéo',
@@ -117,41 +117,41 @@ fr_FR.strings = {
   uploadXFiles: {
     '0': 'Télécharger %{smart_count} fichier',
     '1': 'Télécharger %{smart_count} fichiers',
-    '2': 'Télécharger %{smart_count} fichiers'
+    '2': 'Télécharger %{smart_count} fichiers',
   },
   uploadXNewFiles: {
     '0': 'Télécharger +%{smart_count} fichier',
     '1': 'Télécharger +%{smart_count} fichiers',
-    '2': 'Télécharger +%{smart_count} fichiers'
+    '2': 'Télécharger +%{smart_count} fichiers',
   },
   uploading: 'Téléchargement en cours',
   uploadingXFiles: {
     '0': 'Téléchargement de %{smart_count} fichier',
     '1': 'Téléchargement de %{smart_count} fichiers',
-    '2': 'Téléchargement de %{smart_count} fichiers'
+    '2': 'Téléchargement de %{smart_count} fichiers',
   },
   xFilesSelected: {
     '0': '%{smart_count} fichier sélectionné',
     '1': '%{smart_count} fichiers sélectionnés',
-    '2': '%{smart_count} fichiers sélectionnés'
+    '2': '%{smart_count} fichiers sélectionnés',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} autre fichier ajouté',
     '1': '%{smart_count} autres fichiers ajoutés',
-    '2': '%{smart_count} autres fichiers ajoutés'
+    '2': '%{smart_count} autres fichiers ajoutés',
   },
   xTimeLeft: '%{time} restantes',
   youCanOnlyUploadFileTypes: 'Vous pouvez seulement télécharger: %{types}',
   youCanOnlyUploadX: {
     '0': 'Vous pouvez seulement télécharger %{smart_count} fichier',
     '1': 'Vous pouvez seulement télécharger %{smart_count} fichiers',
-    '2': 'Vous pouvez seulement télécharger %{smart_count} fichiers'
+    '2': 'Vous pouvez seulement télécharger %{smart_count} fichiers',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Vous devez sélectionner au moins %{smart_count} fichier',
     '1': 'Vous devez sélectionner au moins %{smart_count} fichiers',
-    '2': 'Vous devez sélectionner au moins %{smart_count} fichiers'
-  }
+    '2': 'Vous devez sélectionner au moins %{smart_count} fichiers',
+  },
 }
 
 fr_FR.pluralize = function (n) {

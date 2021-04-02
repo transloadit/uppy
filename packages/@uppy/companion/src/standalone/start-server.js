@@ -3,6 +3,7 @@ const companion = require('../companion')
 // @ts-ignore
 const { version } = require('../../package.json')
 const { app } = require('.')
+
 const port = process.env.COMPANION_PORT || 3020
 
 companion.socket(app.listen(port))

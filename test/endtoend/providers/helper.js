@@ -13,7 +13,8 @@ exports.finishUploadTest = async (browser) => {
 
 exports.startUploadTest = async (browser, providerName, tabMatch) => {
   const providerButton = await browser.$(
-    `.uppy-DashboardTab-btn[aria-controls=uppy-DashboardContent-panel--${providerName}]`)
+    `.uppy-DashboardTab-btn[aria-controls=uppy-DashboardContent-panel--${providerName}]`
+  )
   await providerButton.click()
   await browser.pause(2000)
   const authButton = await browser.$('.uppy-Provider-authBtn')
@@ -25,10 +26,11 @@ exports.startUploadTest = async (browser, providerName, tabMatch) => {
 }
 
 exports.uploadWithRetry = async (browser, providerName, testURL) => {
-  await browser.url(testURL + '?socketerr=true')
+  await browser.url(`${testURL}?socketerr=true`)
 
   const providerButton = await browser.$(
-    `.uppy-DashboardTab-btn[aria-controls=uppy-DashboardContent-panel--${providerName}]`)
+    `.uppy-DashboardTab-btn[aria-controls=uppy-DashboardContent-panel--${providerName}]`
+  )
   await providerButton.click()
   await browser.pause(2000)
 

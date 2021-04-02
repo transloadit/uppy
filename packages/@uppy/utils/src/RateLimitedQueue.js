@@ -1,12 +1,4 @@
-/**
- * Array.prototype.findIndex ponyfill for old browsers.
- */
-function findIndex (array, predicate) {
-  for (let i = 0; i < array.length; i++) {
-    if (predicate(array[i])) return i
-  }
-  return -1
-}
+const findIndex = require('./findIndex')
 
 function createCancelError () {
   return new Error('Cancelled')
@@ -51,7 +43,7 @@ module.exports = class RateLimitedQueue {
         done = true
         this.activeRequests -= 1
         this._queueNext()
-      }
+      },
     }
   }
 
@@ -90,7 +82,7 @@ module.exports = class RateLimitedQueue {
       },
       done: () => {
         throw new Error('Cannot mark a queued request as done: this indicates a bug')
-      }
+      },
     }
 
     const index = findIndex(this.queuedHandlers, (other) => {

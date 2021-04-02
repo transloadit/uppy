@@ -1,6 +1,8 @@
+const uniq = require('lodash/uniq')
+const cors = require('cors')
+
 const tokenService = require('./helpers/jwt')
 const logger = require('./logger')
-const uniq = require('lodash/uniq')
 
 exports.hasSessionAndProvider = (req, res, next) => {
   if (!req.session || !req.body) {
@@ -31,7 +33,7 @@ exports.verifyToken = (req, res, next) => {
     logger.info('cannot auth token', 'token.verify.unset', req.id)
     return res.sendStatus(401)
   }
-  const providerName = req.params.providerName
+  const { providerName } = req.params
   const { err, payload } = tokenService.verifyEncryptedToken(token, req.companion.options.secret)
   if (err || !payload[providerName]) {
     if (err) {
@@ -46,7 +48,7 @@ exports.verifyToken = (req, res, next) => {
 
 // does not fail if token is invalid
 exports.gentleVerifyToken = (req, res, next) => {
-  const providerName = req.params.providerName
+  const { providerName } = req.params
   if (req.companion.authToken) {
     const { err, payload } = tokenService.verifyEncryptedToken(req.companion.authToken, req.companion.options.secret)
     if (!err && payload[providerName]) {
@@ -73,15 +75,41 @@ exports.loadSearchProviderToken = (req, res, next) => {
   next()
 }
 
-exports.mergeAccessControlAllowMethods = (req, res, next) => {
-  const existingHeader = res.get('Access-Control-Allow-Methods')
-  let existingMethods = []
-  if (existingHeader) {
-    existingMethods = existingHeader.replace(/\s/g, '').split(',').map((method) => method.toUpperCase())
+exports.cors = (options = {}) => (req, res, next) => {
+  const exposedHeaders = [
+    // exposed so it can be accessed for our custom uppy client preflight
+    'Access-Control-Allow-Headers',
+  ]
+  if (options.sendSelfEndpoint) exposedHeaders.push('i-am')
+  if (res.get('Access-Control-Expose-Headers')) exposedHeaders.push(res.get('Access-Control-Expose-Headers'))
+
+  const allowedHeaders = [
+    'uppy-auth-token',
+    'uppy-versions',
+    'uppy-credentials-params',
+  ]
+  if (res.get('Access-Control-Allow-Headers')) allowedHeaders.push(res.get('Access-Control-Allow-Headers'))
+
+  const existingAllowMethodsHeader = res.get('Access-Control-Allow-Methods')
+  let methods = []
+  if (existingAllowMethodsHeader) {
+    methods = existingAllowMethodsHeader.replace(/\s/g, '').split(',').map((method) => method.toUpperCase())
   }
+  methods = uniq([...methods, 'GET', 'POST', 'OPTIONS', 'DELETE'])
 
-  const mergedMethods = uniq([...existingMethods, 'GET', 'POST', 'OPTIONS', 'DELETE'])
+  // If endpoint urls are specified, then we only allow those endpoints.
+  // Otherwise, we allow any client url to access companion.
+  // Must be set to at least true (origin "*" with "credentials: true" will cause error in many browsers)
+  // https://github.com/expressjs/cors/issues/119
+  // allowedOrigins can also be any type supported by https://github.com/expressjs/cors#configuration-options
+  const { corsOrigins: origin = true } = options
 
-  res.header('Access-Control-Allow-Methods', mergedMethods.join(','))
-  next()
+  // Because we need to merge with existing headers, we need to call cors inside our own middleware
+  return cors({
+    credentials: true,
+    origin,
+    methods,
+    allowedHeaders: allowedHeaders.join(','),
+    exposedHeaders: exposedHeaders.join(','),
+  })(req, res, next)
 }

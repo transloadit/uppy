@@ -5,7 +5,9 @@ describe('delay', () => {
   it('should wait for the specified time', async () => {
     const start = Date.now()
     await delay(100)
-    expect(Date.now() - start).toBeGreaterThanOrEqual(100)
+    // 100 is less of a rule, more of a guideline
+    // according to CI
+    expect(Date.now() - start).toBeGreaterThanOrEqual(90)
   })
 
   it('should reject if signal is already aborted', async () => {
@@ -22,7 +24,7 @@ describe('delay', () => {
     const testDelay = delay(100, { signal: controller.signal })
     await Promise.all([
       delay(50).then(() => controller.abort()),
-      expect(testDelay).rejects.toHaveProperty('name', 'AbortError')
+      expect(testDelay).rejects.toHaveProperty('name', 'AbortError'),
     ])
 
     // should have rejected before the timer is done

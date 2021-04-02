@@ -49,14 +49,14 @@ vi_VN.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete} trong số %{smart_count} tập tin đã được tải lên',
     '1': '%{complete} trong số %{smart_count} tập tin đã được tải lên',
-    '2': '%{complete} trong số %{smart_count} tập tin đã được tải lên'
+    '2': '%{complete} trong số %{smart_count} tập tin đã được tải lên',
   },
   filter: 'Bộ lọc',
   finishEditingFile: 'Hoàn tất chỉnh sửa tập tin',
   folderAdded: {
     '0': 'Đã thêm %{smart_count} tập tin từ %{folder}',
     '1': 'Đã thêm %{smart_count} tập tin từ %{folder}',
-    '2': 'Đã thêm %{smart_count} tập tin từ %{folder}'
+    '2': 'Đã thêm %{smart_count} tập tin từ %{folder}',
   },
   generatingThumbnails: 'Đang tạo ảnh thu nhỏ...',
   import: 'Nhập',
@@ -74,7 +74,7 @@ vi_VN.strings = {
   processingXFiles: {
     '0': 'Đang xử lí %{smart_count} tập tin',
     '1': 'Đang xử lí %{smart_count} tập tin',
-    '2': 'Đang xử lí %{smart_count} tập tin'
+    '2': 'Đang xử lí %{smart_count} tập tin',
   },
   recordingLength: 'Thời lượng ghi %{recording_length}',
   removeFile: 'Bỏ tập tin',
@@ -89,7 +89,7 @@ vi_VN.strings = {
   selectX: {
     '0': 'Chọn %{smart_count}',
     '1': 'Chọn %{smart_count}',
-    '2': 'Chọn %{smart_count}'
+    '2': 'Chọn %{smart_count}',
   },
   smile: 'Cười lên!',
   startRecording: 'Bắt đầu thu hình',
@@ -105,41 +105,41 @@ vi_VN.strings = {
   uploadXFiles: {
     '0': 'Tải lên %{smart_count} tập tin',
     '1': 'Tải lên %{smart_count} tập tin',
-    '2': 'Tải lên %{smart_count} tập tin'
+    '2': 'Tải lên %{smart_count} tập tin',
   },
   uploadXNewFiles: {
     '0': 'Tải lên +%{smart_count} tập tin',
     '1': 'Tải lên +%{smart_count} tập tin',
-    '2': 'Tải lên +%{smart_count} tập tin'
+    '2': 'Tải lên +%{smart_count} tập tin',
   },
   uploading: 'Uploading',
   uploadingXFiles: {
     '0': 'Đang tải lên %{smart_count} tập tin',
     '1': 'Đang tải lên %{smart_count} tập tin',
-    '2': 'Đang tải lên %{smart_count} tập tin'
+    '2': 'Đang tải lên %{smart_count} tập tin',
   },
   xFilesSelected: {
     '0': 'Đã chọn %{smart_count} tập tin',
     '1': 'Đã chọn %{smart_count} tập tin',
-    '2': 'Đã chọn %{smart_count} tập tin'
+    '2': 'Đã chọn %{smart_count} tập tin',
   },
   xMoreFilesAdded: {
     '0': 'Đã thêm %{smart_count} tập tin',
     '1': 'Đã thêm %{smart_count} tập tin',
-    '2': 'Đã thêm %{smart_count} tập tin'
+    '2': 'Đã thêm %{smart_count} tập tin',
   },
   xTimeLeft: '%{time} left',
   youCanOnlyUploadFileTypes: 'Chỉ có thể tải lên: %{types}',
   youCanOnlyUploadX: {
     '0': 'Chỉ có thể tải lên %{smart_count} tập tin',
     '1': 'Chỉ có thể tải lên %{smart_count} tập tin',
-    '2': 'Chỉ có thể tải lên %{smart_count} tập tin'
+    '2': 'Chỉ có thể tải lên %{smart_count} tập tin',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Chọn ít nhất %{smart_count} tập tin',
     '1': 'Chọn ít nhất %{smart_count} tập tin',
-    '2': 'Chọn ít nhất %{smart_count} tập tin'
-  }
+    '2': 'Chọn ít nhất %{smart_count} tập tin',
+  },
 }
 
 vi_VN.pluralize = function (n) {

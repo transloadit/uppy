@@ -228,7 +228,7 @@ Optionally, specify a string of text that explains something about the upload fo
 
 ### `metaFields: []`
 
-An array of UI field objects that will be shown when a user clicks the “edit” button on that file. Configuring this enables the “edit” button on file cards. Each object requires:
+An array of UI field objects, or a function that takes a [File Object](https://uppy.io/docs/uppy/#File-Objects) and returns an array of UI field objects, that will be shown when a user clicks the “edit” button on that file. Configuring this enables the “edit” button on file cards. Each object requires:
 
 - `id`, the name of the meta field. Note: this will also be used in CSS/HTML as part of the `id` attribute, so it’s better to [avoid using characters like periods, semicolons, etc](https://stackoverflow.com/a/79022).
 - `name`, the label shown in the interface.
@@ -249,6 +249,33 @@ It gets passed `({value, onChange}, h)` where `value` is the current value of th
       return h('input', { type: 'checkbox', onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'on' })
     } }
   ]
+})
+```
+
+If you’d like the meta fields to be dynamically assigned depending on, for instance, the file type, pass a function:
+
+```js
+.use(Dashboard, {
+  trigger: '#pick-files',
+  metaFields: (file) => {
+    const fields = [{ id: 'name', name: 'File name' }]
+    if (file.type.startsWith('image/')) {
+      fields.push({ id: 'location', name: 'Photo Location' })
+      fields.push({ id: 'alt', name: 'Alt text' })
+      fields.push({
+        id: 'public',
+        name: 'Public',
+        render: ({ value, onChange }, h) => {
+          return h('input', {
+            type: 'checkbox',
+            onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'),
+            defaultChecked: value === 'on',
+          })
+        },
+      })
+    }
+    return fields
+  },
 })
 ```
 
@@ -428,7 +455,7 @@ Use case: user adds an image — Uppy opens Image Editor right away — user cro
 
 Enabling this option makes the Dashboard grayed-out and non-interactive. Users won’t be able to click on buttons or drop files.
 
-Useful when you need to confitionally enable/disable file uploading or manipulation, based on a condition in your app. Can be set on init or via API:
+Useful when you need to conditionally enable/disable file uploading or manipulation, based on a condition in your app. Can be set on init or via API:
 
 ```js
 const dashboard = uppy.getPlugin('Dashboard')

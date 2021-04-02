@@ -1,0 +1,19 @@
+{
+  "name": "@uppy-example/vue3",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "vue": "^3.0.4",
+    "core-js": "^3.6.5",
+    "shallow-equal": "^1.2.1",
+    "@uppy/vue": "file:../../packages/@uppy/vue",
+    "@uppy/core": "file:../../packages/@uppy/core"
+  },
+  "devDependencies": {
+    "vite": "^1.0.0-rc.13",
+    "@vue/compiler-sfc": "^3.0.4"
+  }
+}

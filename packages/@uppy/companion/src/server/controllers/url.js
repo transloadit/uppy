@@ -1,8 +1,8 @@
 const router = require('express').Router
 const request = require('request')
 const { URL } = require('url')
-const Uploader = require('../Uploader')
 const validator = require('validator')
+const Uploader = require('../Uploader')
 const reqUtil = require('../helpers/request')
 const logger = require('../logger')
 
@@ -20,7 +20,7 @@ module.exports = () => {
  */
 const meta = (req, res) => {
   logger.debug('URL file import handler running', null, req.id)
-  const debug = req.companion.options.debug
+  const { debug } = req.companion.options
   if (!validateURL(req.body.url, debug)) {
     logger.debug('Invalid request body detected. Exiting url meta handler.', null, req.id)
     return res.status(400).json({ error: 'Invalid request body' })
@@ -44,7 +44,7 @@ const meta = (req, res) => {
  */
 const get = (req, res) => {
   logger.debug('URL file import handler running', null, req.id)
-  const debug = req.companion.options.debug
+  const { debug } = req.companion.options
   if (!validateURL(req.body.url, debug)) {
     logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
     return res.status(400).json({ error: 'Invalid request body' })
@@ -79,6 +79,7 @@ const get = (req, res) => {
 
 /**
  * Validates that the download URL is secure
+ *
  * @param {string} url the url to validate
  * @param {boolean} debug whether the server is running in debug mode
  */
@@ -90,7 +91,7 @@ const validateURL = (url, debug) => {
   const validURLOpts = {
     protocols: ['http', 'https'],
     require_protocol: true,
-    require_tld: !debug
+    require_tld: !debug,
   }
   if (!validator.isURL(url, validURLOpts)) {
     return false
@@ -119,7 +120,7 @@ const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
     uri: url,
     method: 'GET',
     followRedirect: reqUtil.getRedirectEvaluator(url, blockLocalIPs),
-    agentClass: reqUtil.getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs)
+    agentClass: reqUtil.getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
   }
 
   request(opts)

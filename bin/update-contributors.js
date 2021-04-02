@@ -11,7 +11,7 @@ async function updateContributorsListInReadme () {
     '--cols', '6',
     '--format', 'md',
     '--showlogin', 'true',
-    '--sortOrder', 'desc'
+    '--sortOrder', 'desc',
   ]
 
   if (process.env.GITHUB_TOKEN) {

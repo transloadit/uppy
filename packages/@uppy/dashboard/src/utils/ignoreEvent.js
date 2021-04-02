@@ -5,8 +5,8 @@
 
 function ignoreEvent (ev) {
   const tagName = ev.target.tagName
-  if (tagName === 'INPUT' ||
-      tagName === 'TEXTAREA') {
+  if (tagName === 'INPUT'
+      || tagName === 'TEXTAREA') {
     ev.stopPropagation()
     return
   }

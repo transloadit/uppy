@@ -13,7 +13,7 @@ const transloaditOptionNames = [
   'fields',
   'limit',
   'locale',
-  'getAssemblyOptions'
+  'getAssemblyOptions',
 ]
 
 function addTransloaditPlugin (uppy, opts) {

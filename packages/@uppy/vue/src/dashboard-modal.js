@@ -1,26 +1,29 @@
 import DashboardPlugin from '@uppy/dashboard'
 import { shallowEqualObjects } from 'shallow-equal'
 
+import * as Vue from 'vue'
+import { isVue2 } from './utils'
+
 export default {
   data () {
     return {
-      plugin: {}
+      plugin: {},
     }
   },
   props: {
     uppy: {
-      required: true
+      required: true,
     },
     props: {
-      type: Object
+      type: Object,
     },
     plugins: {
-      type: Array
+      type: Array,
     },
     open: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   mounted () {
     this.installPlugin()
@@ -32,7 +35,7 @@ export default {
         id: 'vue:DashboardModal',
         plugins: this.plugins,
         ...this.props,
-        target: this.$refs.container
+        target: this.$refs.container,
       }
       uppy.use(DashboardPlugin, options)
       this.plugin = uppy.getPlugin(options.id)
@@ -42,9 +45,12 @@ export default {
     },
     uninstallPlugin (uppy) {
       uppy.removePlugin(this.plugin)
-    }
+    },
   },
   beforeDestroy () {
+    this.uninstallPlugin(this.uppy)
+  },
+  beforeUnmount () {
     this.uninstallPlugin(this.uppy)
   },
   watch: {
@@ -66,11 +72,21 @@ export default {
       if (!shallowEqualObjects(current, old)) {
         this.plugin.setOptions({ ...current })
       }
-    }
+    },
   },
-  render (createElement) {
-    return createElement('div', {
-      ref: 'container'
+  render (...args) {
+    // Hack to allow support for Vue 2 and 3
+    if (isVue2(...args)) {
+      // If it's first argument is a function, then it's a Vue 2 App
+      const [createElement] = args
+      return createElement('div', {
+        ref: 'container',
+      })
+    }
+
+    // Otherwise, we use the `h` function from the Vue package (in Vue 3 fashion)
+    return Vue.h('div', {
+      ref: 'container',
     })
-  }
+  },
 }

@@ -20,23 +20,24 @@ jest.mock('request', () => {
           credentials: {
             key: remoteZoomKey,
             secret: remoteZoomSecret,
-            verificationToken: remoteZoomVerificationToken
-          }
+            verificationToken: remoteZoomVerificationToken,
+          },
         }
         return done(null, { statusCode: 200, body: respBody }, respBody)
       }
 
       done(new Error('unsupported request with mock function'))
-    }
+    },
   }
 })
 
 const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
+
 const authServer = getServer({ COMPANION_ZOOM_KEYS_ENDPOINT: 'http://localhost:2111/zoom-keys' })
 const authData = {
-  zoom: 'token value'
+  zoom: 'token value',
 }
 const token = tokenService.generateEncryptedToken(authData, process.env.COMPANION_SECRET)
 

@@ -3,7 +3,7 @@
   "svelte": "src/index.js",
   "module": "dist/index.mjs",
   "main": "dist/index.js",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "npm run build",
@@ -14,6 +14,15 @@
     "@uppy/drag-drop": "file:../drag-drop",
     "@uppy/progress-bar": "file:../progress-bar",
     "@uppy/status-bar": "file:../status-bar"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^11.0.1",
+    "@tsconfig/svelte": "^1.0.10",
+    "rollup": "^2.35.1",
+    "rollup-plugin-svelte": "^7.0.0",
+    "svelte": "^3.31.0",
+    "svelte-check": "^1.1.23",
+    "svelte-preprocess": "^4.6.1"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0",

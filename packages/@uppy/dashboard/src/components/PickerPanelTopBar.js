@@ -7,7 +7,7 @@ const uploadStates = {
   STATE_UPLOADING: 'uploading',
   STATE_POSTPROCESSING: 'postprocessing',
   STATE_COMPLETE: 'complete',
-  STATE_PAUSED: 'paused'
+  STATE_PAUSED: 'paused',
 }
 
 function getUploadingState(isAllErrored, isAllComplete, isAllPaused, files = {}) {
@@ -76,12 +76,12 @@ function PanelTopBar(props) {
   }
 
   return (
-    <div class="uppy-DashboardContent-bar">
+    <div className="uppy-DashboardContent-bar">
       {!props.isAllComplete && !props.hideCancelButton ? (
         <button
-          class="uppy-DashboardContent-back"
+          className="uppy-DashboardContent-back"
           type="button"
-          onclick={props.cancelAll}
+          onClick={props.cancelAll}
         >
           {props.i18n('cancel')}
         </button>
@@ -89,7 +89,7 @@ function PanelTopBar(props) {
           <div />
         )}
 
-      <div class="uppy-DashboardContent-title" role="heading" aria-level="1">
+      <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
         <UploadStatus {...props} />
       </div>
       <div className="uppy-topBarRightContainer">

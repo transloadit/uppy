@@ -1,7 +1,7 @@
 const Core = require('@uppy/core')
-const DashboardPlugin = require('./index')
 const StatusBarPlugin = require('@uppy/status-bar')
 const GoogleDrivePlugin = require('@uppy/google-drive')
+const DashboardPlugin = require('./index')
 
 describe('Dashboard', () => {
   it('can safely be added together with the StatusBar without id conflicts', () => {
@@ -21,7 +21,7 @@ describe('Dashboard', () => {
     expect(() => {
       core.use(DashboardPlugin, {
         inline: true,
-        target: 'body'
+        target: 'body',
       })
     }).not.toThrow()
 
@@ -33,7 +33,7 @@ describe('Dashboard', () => {
     expect(() => {
       core.use(DashboardPlugin, {
         inline: true,
-        target: 'body'
+        target: 'body',
       })
       core.use(GoogleDrivePlugin, { target: DashboardPlugin, companionUrl: 'https://fake.uppy.io/' })
     }).not.toThrow()
@@ -49,7 +49,7 @@ describe('Dashboard', () => {
       core.use(DashboardPlugin, {
         inline: true,
         target: 'body',
-        plugins: ['GoogleDrive']
+        plugins: ['GoogleDrive'],
       })
     }).not.toThrow()
 
@@ -60,11 +60,11 @@ describe('Dashboard', () => {
     const core = new Core()
     core.use(DashboardPlugin, {
       inline: true,
-      target: 'body'
+      target: 'body',
     })
 
     core.getPlugin('Dashboard').setOptions({
-      width: 300
+      width: 300,
     })
 
     expect(
@@ -76,19 +76,37 @@ describe('Dashboard', () => {
     const core = new Core()
     core.use(DashboardPlugin, {
       inline: true,
-      target: 'body'
+      target: 'body',
     })
 
     core.setOptions({
       locale: {
         strings: {
-          myDevice: 'Май дивайс'
-        }
-      }
+          myDevice: 'Май дивайс',
+        },
+      },
     })
 
     expect(
       core.getPlugin('Dashboard').i18n('myDevice')
     ).toEqual('Май дивайс')
+  })
+
+  it('should accept a callback as `metaFields` option', () => {
+    const core = new Core()
+    expect(() => {
+      core.use(DashboardPlugin, {
+        metaFields: (file) => {
+          const fields = [{ id: 'name', name: 'File name' }]
+          if (file.type.startsWith('image/')) {
+            fields.push({ id: 'location', name: 'Photo Location' })
+            fields.push({ id: 'alt', name: 'Alt text' })
+          }
+          return fields
+        },
+      })
+    }).not.toThrow()
+
+    core.close()
   })
 })
