@@ -12,19 +12,75 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
-## March 2021
+## April 2021
 
 ### next
 
-To be released: 2021-03-30
-
 - [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
-- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
-- [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
+- [ ] plugin: audio/memo recording similar to Webcam #143 #198
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] integration: Vue 3 (#2755 / @ajkachnic)
 - [ ] robodog: finishing touches on Companion dynamic Oauth #2802 (@goto-bus-stop)
-- [ ] build: Update Linter #2796 (@kvz)
+
+## March 2021
+
+## 1.27.0
+
+Released: 2021-03-31
+
+⚠️ We’ve switched to npm 7 and Workspaces in this one, you need to upgrade to npm 7 to contribute to Uppy, thanks!
+
+This release improves testing DX and CORS handling in Companion, “shared with me” Google Drive, a new @uppy/drop-target plugin.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.15 | @uppy/react-native | 0.1.6 |
+| @uppy/aws-s3 | 1.7.9 | @uppy/react | 1.11.6 |
+| @uppy/box | 0.3.8 | @uppy/redux-dev-tools | 1.3.8 |
+| @uppy/companion-client | 1.9.0 | @uppy/robodog | 1.10.7 |
+| @uppy/companion | 2.7.0 | @uppy/screen-capture | 1.0.17 |
+| @uppy/core | 1.17.0 | @uppy/status-bar | 1.9.3 |
+| @uppy/dashboard | 1.18.0 | @uppy/store-default | 1.2.6 |
+| @uppy/drag-drop | 1.4.27 | @uppy/store-redux | 1.2.6 |
+| @uppy/drop-target | 0.2.0 | @uppy/svelte | 0.1.7 |
+| @uppy/dropbox | 1.4.26 | @uppy/thumbnail-generator | 1.7.8 |
+| @uppy/facebook | 1.1.26 | @uppy/transloadit | 1.6.23 |
+| @uppy/file-input | 1.4.25 | @uppy/tus | 1.8.7 |
+| @uppy/form | 1.3.28 | @uppy/unsplash | 0.1.10 |
+| @uppy/golden-retriever | 1.3.27 | @uppy/url | 1.5.20 |
+| @uppy/google-drive | 1.6.0 | @uppy/utils | 3.5.0 |
+| @uppy/image-editor | 0.2.4 | @uppy/vue | 0.2.0 |
+| @uppy/informer | 1.6.3 | @uppy/webcam | 1.8.8 |
+| @uppy/instagram | 1.4.26 | @uppy/xhr-upload | 1.7.2 |
+| @uppy/locales | 1.18.0 | @uppy/zoom | 0.1.15 |
+| @uppy/onedrive | 1.1.26 | remark-lint-uppy | 0.0.0 |
+| @uppy/progress-bar | 1.3.27 | uppy | 1.27.0 |
+| @uppy/provider-views | 1.12.0 | - | - |
+
+- @uppy/aws-s3-multipart: Aws-s3-multipart sends outdated file info to upload-success event (#2828 / @goto-bus-stop)
+- @uppy/aws-s3: removeUploader triggered on uninstall (#2824 / @slawexxx44)
+- @uppy/companion: Add additional Google Drive Metadata (#2795 / @ajh-sr)
+- @uppy/companion: Feature: add redis pubsub scope setting (#2804 / @coreprocess)
+- @uppy/companion: fix running on a subpath (#2841 / @goto-bus-stop)  
+- @uppy/companion: Fix videoMediaMetadata property name (6cb90c613c5d3b256194e039bfce30d6de6a6dac / @goto-bus-stop)
+- @uppy/companion: Improve companion unit testing DX (#2827 / @mifi)
+- @uppy/companion: Use `cors` module instead of custom cors logic (#2823 / @mifi)
+- @uppy/dashboard: Add dynamic metaFields option (#2834 / @aduh95)
+- @uppy/dashboard: add missing doneButtonHandler type to dashboard (#2821 / @Dogfalo)
+- @uppy/drop-target — drag and drop files on any existing DOM element (#2836 / @arturi)
+- @uppy/google-drive: Google drive shared with me (#2758 / @mifi)
+- @uppy/image-editor: Fix flipHorizontal string (#2815 / @suchoproduction)
+- @uppy/locales: Update sk_SK.js (#2814 / @suchoproduction)
+- @uppy/vue: Vue 3 support (#2755 / @ajkachnic, @arturi)
+- @uppy/webcam: Fix issue where the modes: `['audio-only']` option was ignored when getting tracks from the media stream (#2810 / @dominiceden)
+- @uppy/xhr-upload: Set headers just before the upload in case options changed (#2781 / @rart)
+- docs: uploadStarted should say true (#2829 / @timodwhit)
+- docs: Add a README.md specific to bundles (#2816 / @kvz)
+- docs: Corrected hanging sentence in Svelte documentation, added an example (#2842 / @Abourass)
+- website: Website improvements (#2803 / @nqst)
+- build: Upgrade to eslint-config-transloadit@1.2.0 (#2830 / @kvz)
+- build: Update Linter (#2796 / @kvz)
+- build: error on import lint failure + some misc lint fixes (#2813 / @goto-bus-stop)
+- build: Workspaces and NPM 7 (#2835 / @goto-bus-stop)
 
 ## 1.26.1
 
