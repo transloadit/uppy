@@ -27,9 +27,9 @@ In the current stage we aim to release a new version at least every month.
 
 Released: 2021-03-31
 
-⚠️ We’ve switched to npm 7 and Workspaces in this one, you need to upgrade to npm 7 to contribute to Uppy, thanks!
+⚠️ We’ve switched to npm 7 and Workspaces in this one, you need to upgrade to npm 7 to contribute to Uppy. Thanks!
 
-This release improves testing DX and CORS handling in Companion, “shared with me” Google Drive, a new @uppy/drop-target plugin.
+In this release we’ve improved testing DX and CORS handling in Companion, added “shared with me” documents in Google Drive and a new `@uppy/drop-target` plugin.
 
 | Package | Version | Package | Version |
 |-|-|-|-|
