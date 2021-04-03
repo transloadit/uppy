@@ -1,7 +1,7 @@
 {
   "name": "@uppy/companion-client",
   "description": "Client library for communication with Companion. Intended for use in Uppy plugins.",
-  "version": "1.8.3",
+  "version": "1.9.0",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -23,6 +23,7 @@
   "dependencies": {
     "@uppy/utils": "file:../utils",
     "namespace-emitter": "^2.0.1",
-    "qs-stringify": "^1.1.0"
+    "qs-stringify": "^1.1.0",
+    "url-parse": "^1.4.7"
   }
 }

@@ -21,6 +21,7 @@ const XHRUpload = require('@uppy/xhr-upload/src')
 const Transloadit = require('@uppy/transloadit/src')
 const Form = require('@uppy/form/src')
 const ImageEditor = require('@uppy/image-editor/src')
+const DropTarget = require('@uppy/drop-target/src')
 /* eslint-enable import/no-extraneous-dependencies */
 
 // DEV CONFIG: pick an uploader
@@ -87,6 +88,9 @@ module.exports = () => {
     .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
     .use(ImageEditor, { target: Dashboard })
+    .use(DropTarget, {
+      target: document.body,
+    })
 
   switch (UPLOADER) {
     case 'tus':

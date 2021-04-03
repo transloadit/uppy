@@ -1,6 +1,6 @@
 {
-  "name": "vue3",
-  "version": "0.0.0",
+  "name": "@uppy-example/vue3",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build"

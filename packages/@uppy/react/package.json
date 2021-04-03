@@ -1,7 +1,7 @@
 {
   "name": "@uppy/react",
   "description": "React component wrappers around Uppy's official UI plugins.",
-  "version": "1.11.5",
+  "version": "1.11.6",
   "license": "MIT",
   "main": "index.js",
   "module": "index.mjs",
@@ -29,6 +29,10 @@
     "@uppy/status-bar": "file:../status-bar",
     "@uppy/utils": "file:../utils",
     "prop-types": "^15.6.1"
+  },
+  "devDependencies": {
+    "enzyme": "3.11.0",
+    "enzyme-adapter-react-16": "1.15.2"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0",

@@ -67,6 +67,7 @@ const uppy = new Uppy({
 .use(ScreenCapture, { target: Dashboard })
 .use(ImageEditor, { target: Dashboard })
 .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
+.use(DropTarget, {target: document.body })
 
 uppy.on('complete', result => {
   console.log('successful files:', result.successful)

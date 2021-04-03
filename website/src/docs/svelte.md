@@ -124,7 +124,17 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
   
 #### Props
 
-The `<Dashboard />` component supports all `@uppy/dashboard` options to be passed as an object o
+The `<Dashboard />` component supports all `@uppy/dashboard` options to be passed as an object to the `props` prop:
+
+```html
+<Dashboard
+    uppy={uppy}
+    props={{
+      height: 350,
+      plugins: ['Webcam']
+    }}
+  />
+```
 
 The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
