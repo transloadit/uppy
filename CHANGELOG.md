@@ -60,7 +60,7 @@ In this release we’ve improved testing DX and CORS handling in Companion, adde
 - @uppy/aws-s3: removeUploader triggered on uninstall (#2824 / @slawexxx44)
 - @uppy/companion: Add additional Google Drive Metadata (#2795 / @ajh-sr)
 - @uppy/companion: Feature: add redis pubsub scope setting (#2804 / @coreprocess)
-- @uppy/companion: fix running on a subpath (#2841 / @goto-bus-stop)  
+- @uppy/companion: fix running on a subpath (#2841, #2797 / @coreprocess, @goto-bus-stop) 
 - @uppy/companion: Fix videoMediaMetadata property name (6cb90c613c5d3b256194e039bfce30d6de6a6dac / @goto-bus-stop)
 - @uppy/companion: Improve companion unit testing DX (#2827 / @mifi)
 - @uppy/companion: Use `cors` module instead of custom cors logic (#2823 / @mifi)
