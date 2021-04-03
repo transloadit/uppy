@@ -224,6 +224,7 @@ module.exports = class Webcam extends Plugin {
     }
 
     this.webcamActive = true
+    this.opts.mirror = true
 
     const constraints = this.getConstraints(options && options.deviceId ? options.deviceId : null)
 
