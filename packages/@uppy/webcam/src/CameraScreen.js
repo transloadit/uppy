@@ -5,6 +5,7 @@ const RecordButton = require('./RecordButton')
 const RecordingLength = require('./RecordingLength')
 const VideoSourceSelect = require('./VideoSourceSelect')
 const SubmitButton = require('./SubmitButton')
+const DiscardButton = require('./DiscardButton')
 
 function isModeAvailable (modes, mode) {
   return modes.indexOf(mode) !== -1
@@ -37,16 +38,17 @@ class CameraScreen extends Component {
       onSnapshot,
       onStartRecording,
       onStopRecording,
+      onDiscardRecordedVideo,
       recordingLengthSeconds,
     } = this.props
 
-    const shouldShowRecordButton = supportsRecording && (
+    const hasRecordedVideo = !!recordedVideo
+    const shouldShowRecordButton = !hasRecordedVideo && supportsRecording && (
       isModeAvailable(modes, 'video-only')
       || isModeAvailable(modes, 'audio-only')
       || isModeAvailable(modes, 'video-audio')
     )
-    const shouldShowSnapshotButton = isModeAvailable(modes, 'picture')
-    const shouldShowSubmitButton = !!recordedVideo
+    const shouldShowSnapshotButton = !hasRecordedVideo && isModeAvailable(modes, 'picture')
     const shouldShowRecordingLength = supportsRecording && showRecordingLength
     const shouldShowVideoSourceDropdown = showVideoSourceDropdown && videoSources && videoSources.length > 1
 
@@ -98,9 +100,9 @@ class CameraScreen extends Component {
               />
             )}
 
-            {shouldShowSubmitButton && (
-              <SubmitButton onSubmit={onSubmit} i18n={i18n} />
-            )}
+            {hasRecordedVideo && <SubmitButton onSubmit={onSubmit} i18n={i18n} />}
+
+            {hasRecordedVideo && <DiscardButton onDiscard={onDiscardRecordedVideo} i18n={i18n} />}
           </div>
 
           {shouldShowRecordingLength && (

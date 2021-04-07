@@ -105,6 +105,7 @@ module.exports = class Webcam extends Plugin {
         recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
         recordingLength: 'Recording length %{recording_length}',
         submitRecordedFile: 'Submit recorded file',
+        discardRecordedFile: 'Discard recorded file',
       },
     }
 
@@ -141,6 +142,7 @@ module.exports = class Webcam extends Plugin {
     this.takeSnapshot = this.takeSnapshot.bind(this)
     this.startRecording = this.startRecording.bind(this)
     this.stopRecording = this.stopRecording.bind(this)
+    this.discardRecordedVideo = this.discardRecordedVideo.bind(this)
     this.submit = this.submit.bind(this)
     this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
     this.focus = this.focus.bind(this)
@@ -388,6 +390,10 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
+  discardRecordedVideo () {
+    this.setPluginState({ recordedVideo: null })
+  }
+
   submit () {
     try {
       if (this.capturedMediaFile) {
@@ -447,6 +453,7 @@ module.exports = class Webcam extends Plugin {
 
   takeSnapshot () {
     if (this.captureInProgress) return
+
     this.captureInProgress = true
 
     this.opts.onBeforeSnapshot().catch((err) => {
@@ -573,6 +580,7 @@ module.exports = class Webcam extends Plugin {
         onSnapshot={this.takeSnapshot}
         onStartRecording={this.startRecording}
         onStopRecording={this.stopRecording}
+        onDiscardRecordedVideo={this.discardRecordedVideo}
         onSubmit={this.submit}
         onFocus={this.focus}
         onStop={this.stop}

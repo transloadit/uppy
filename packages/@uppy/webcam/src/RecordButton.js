@@ -4,7 +4,7 @@ module.exports = function RecordButton ({ recording, onStartRecording, onStopRec
   if (recording) {
     return (
       <button
-        className="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--video"
+        className="uppy-u-reset uppy-c-btn uppy-Webcam-button"
         type="button"
         title={i18n('stopRecording')}
         aria-label={i18n('stopRecording')}
@@ -20,7 +20,7 @@ module.exports = function RecordButton ({ recording, onStartRecording, onStopRec
 
   return (
     <button
-      className="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--video"
+      className="uppy-u-reset uppy-c-btn uppy-Webcam-button"
       type="button"
       title={i18n('startRecording')}
       aria-label={i18n('startRecording')}

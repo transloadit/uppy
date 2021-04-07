@@ -3,7 +3,7 @@ const { h } = require('preact')
 function SubmitButton ({ onSubmit, i18n }) {
   return (
     <button
-      className="uppy-u-reset uppy-c-btn uppy-ScreenCapture-button uppy-ScreenCapture-button--submit"
+      className="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--submit"
       type="button"
       title={i18n('submitRecordedFile')}
       aria-label={i18n('submitRecordedFile')}
