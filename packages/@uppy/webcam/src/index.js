@@ -392,6 +392,8 @@ module.exports = class Webcam extends Plugin {
 
   discardRecordedVideo () {
     this.setPluginState({ recordedVideo: null })
+    this.opts.mirror = true
+    this.capturedMediaFile = null
   }
 
   submit () {
