@@ -953,6 +953,14 @@ class Uppy {
     this.cancelAll()
   }
 
+  logout () {
+    this.iteratePlugins(plugin => {
+      if (plugin.provider && plugin.provider.logout) {
+        plugin.provider.logout()
+      }
+    })
+  }
+
   _calculateProgress (file, data) {
     if (!this.getFile(file.id)) {
       this.log(`Not setting progress for a file that has been removed: ${file.id}`)
