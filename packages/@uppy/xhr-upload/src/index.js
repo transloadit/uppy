@@ -54,8 +54,8 @@ module.exports = class XHRUpload extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
-      }
+        timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
+      },
     }
 
     // Default options
@@ -114,7 +114,7 @@ module.exports = class XHRUpload extends Plugin {
        */
       validateStatus (status, responseText, response) {
         return status >= 200 && status < 300
-      }
+      },
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -155,7 +155,7 @@ module.exports = class XHRUpload extends Plugin {
       ...this.opts,
       ...(overrides || {}),
       ...(file.xhrUpload || {}),
-      headers: {}
+      headers: {},
     }
     Object.assign(opts.headers, this.opts.headers)
     if (overrides) {
@@ -257,7 +257,7 @@ module.exports = class XHRUpload extends Plugin {
           this.uppy.emit('upload-progress', file, {
             uploader: this,
             bytesUploaded: ev.loaded,
-            bytesTotal: ev.total
+            bytesTotal: ev.total,
           })
         }
       })
@@ -278,7 +278,7 @@ module.exports = class XHRUpload extends Plugin {
           const uploadResp = {
             status: ev.target.status,
             body,
-            uploadURL
+            uploadURL,
           }
 
           this.uppy.emit('upload-success', file, uploadResp)
@@ -288,18 +288,17 @@ module.exports = class XHRUpload extends Plugin {
           }
 
           return resolve(file)
-        } else {
-          const body = opts.getResponseData(xhr.responseText, xhr)
-          const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
-
-          const response = {
-            status: ev.target.status,
-            body
-          }
-
-          this.uppy.emit('upload-error', file, error, response)
-          return reject(error)
         }
+        const body = opts.getResponseData(xhr.responseText, xhr)
+        const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
+
+        const response = {
+          status: ev.target.status,
+          body,
+        }
+
+        this.uppy.emit('upload-error', file, error, response)
+        return reject(error)
       })
 
       xhr.addEventListener('error', (ev) => {
@@ -373,7 +372,7 @@ module.exports = class XHRUpload extends Plugin {
         metadata: fields,
         httpMethod: opts.method,
         useFormData: opts.formData,
-        headers: opts.headers
+        headers: opts.headers,
       }).then((res) => {
         const token = res.token
         const host = getSocketHost(file.remote.companionUrl)
@@ -411,7 +410,7 @@ module.exports = class XHRUpload extends Plugin {
           const uploadResp = {
             status: data.response.status,
             body,
-            uploadURL
+            uploadURL,
           }
 
           this.uppy.emit('upload-success', file, uploadResp)
@@ -460,7 +459,7 @@ module.exports = class XHRUpload extends Plugin {
       const optsFromState = this.uppy.getState().xhrUpload
       const formData = this.createBundledUpload(files, {
         ...this.opts,
-        ...(optsFromState || {})
+        ...(optsFromState || {}),
       })
 
       const xhr = new XMLHttpRequest()
@@ -492,7 +491,7 @@ module.exports = class XHRUpload extends Plugin {
           this.uppy.emit('upload-progress', file, {
             uploader: this,
             bytesUploaded: ev.loaded / ev.total * file.size,
-            bytesTotal: file.size
+            bytesTotal: file.size,
           })
         })
       })
@@ -504,7 +503,7 @@ module.exports = class XHRUpload extends Plugin {
           const body = this.opts.getResponseData(xhr.responseText, xhr)
           const uploadResp = {
             status: ev.target.status,
-            body
+            body,
           }
           files.forEach((file) => {
             this.uppy.emit('upload-success', file, uploadResp)
@@ -558,11 +557,10 @@ module.exports = class XHRUpload extends Plugin {
 
       if (file.error) {
         return Promise.reject(new Error(file.error))
-      } else if (file.isRemote) {
+      } if (file.isRemote) {
         return this.uploadRemote(file, current, total)
-      } else {
-        return this.upload(file, current, total)
       }
+      return this.upload(file, current, total)
     })
 
     return settle(promises)
@@ -632,8 +630,8 @@ module.exports = class XHRUpload extends Plugin {
       this.uppy.setState({
         capabilities: {
           ...capabilities,
-          individualCancellation: false
-        }
+          individualCancellation: false,
+        },
       })
     }
 
@@ -646,8 +644,8 @@ module.exports = class XHRUpload extends Plugin {
       this.uppy.setState({
         capabilities: {
           ...capabilities,
-          individualCancellation: true
-        }
+          individualCancellation: true,
+        },
       })
     }
 

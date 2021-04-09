@@ -24,8 +24,8 @@ class MockPurest {
             hash: '0a9f95a989dd4b1851f0103c31e304ce',
             user_email: 'foo@bar.com',
             email: 'foo@bar.com',
-            entries: [{ rev: 'f24234cd4' }]
-          }
+            entries: [{ rev: 'f24234cd4' }],
+          },
         },
         drive: {
           'files/README.md': {
@@ -35,7 +35,7 @@ class MockPurest {
             permissions: [{ role: 'owner', emailAddress: 'ife@bala.com' }],
             size: 300,
             kind: 'drive#file',
-            etag: '"bcIyJ9A3gXa8oTYmz6nzAjQd-lY/eQc3WbZHkXpcItNyGKDuKXM_bNY"'
+            etag: '"bcIyJ9A3gXa8oTYmz6nzAjQd-lY/eQc3WbZHkXpcItNyGKDuKXM_bNY"',
           },
           default: {
             kind: 'drive#fileList',
@@ -44,11 +44,11 @@ class MockPurest {
               id: '0B2x-PmqQHSKdT013TE1VVjZ3TWs',
               mimeType: 'image/jpg',
               ownedByMe: true,
-              permissions: [{ role: 'owner', emailAddress: 'ife@bala.com' }]
+              permissions: [{ role: 'owner', emailAddress: 'ife@bala.com' }],
             }],
-            size: 300
-          }
-        }
+            size: 300,
+          },
+        },
       }
       const providerResponses = responses[this.opts.providerName]
       const body = providerResponses[this._requestUrl] || providerResponses.default

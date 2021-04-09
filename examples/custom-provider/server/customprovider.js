@@ -1,4 +1,5 @@
 const request = require('request')
+
 const BASE_URL = 'https://api.unsplash.com'
 
 /**
@@ -16,8 +17,8 @@ class MyCustomProvider {
       method: 'GET',
       json: true,
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     }
 
     request(options, (err, resp, body) => {
@@ -37,8 +38,8 @@ class MyCustomProvider {
       method: 'GET',
       json: true,
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     }
 
     request(options, (err, resp, body) => {
@@ -61,8 +62,8 @@ class MyCustomProvider {
       method: 'GET',
       json: true,
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     }
 
     request(options, (err, resp, body) => {
@@ -80,14 +81,14 @@ class MyCustomProvider {
     const data = {
       username: null,
       items: [],
-      nextPagePath: null
+      nextPagePath: null,
     }
 
     const items = res
     items.forEach((item) => {
       const isFolder = !!item.published_at
       data.items.push({
-        isFolder: isFolder,
+        isFolder,
         icon: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
         name: item.title || item.description,
         mimeType: isFolder ? null : 'image/jpeg',
@@ -95,7 +96,7 @@ class MyCustomProvider {
         thumbnail: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
         requestPath: item.id,
         modifiedDate: item.updated_at,
-        size: null
+        size: null,
       })
     })
 

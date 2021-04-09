@@ -14,11 +14,12 @@ exports.getItemSubList = (item) => {
   item.data.forEach((subItem) => {
     if (subItem.carousel_media) {
       subItem.carousel_media.forEach((i, index) => {
-        const newSubItem = Object.assign({}, i, {
+        const newSubItem = {
+          ...i,
           id: subItem.id,
           created_time: subItem.created_time,
-          carousel_id: index
-        })
+          carousel_id: index,
+        }
         subItems.push(newSubItem)
       })
     } else {
@@ -37,10 +38,10 @@ exports.getItemName = (item) => {
       month: 'short',
       day: 'numeric',
       hour: 'numeric',
-      minute: 'numeric'
+      minute: 'numeric',
     })
     // adding both date and carousel_id, so the name is unique
-    return `Instagram ${name}${item.carousel_id ? ' ' + item.carousel_id : ''}.${ext}`
+    return `Instagram ${name}${item.carousel_id ? ` ${item.carousel_id}` : ''}.${ext}`
   }
   return ''
 }

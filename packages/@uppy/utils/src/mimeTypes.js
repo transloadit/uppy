@@ -46,5 +46,5 @@ module.exports = {
   text: 'text/plain',
   conf: 'text/plain',
   log: 'text/plain',
-  pdf: 'application/pdf'
+  pdf: 'application/pdf',
 }

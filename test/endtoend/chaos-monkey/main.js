@@ -18,10 +18,10 @@ window.setup = function (options) {
   uppy.use(Dashboard, { inline: true, target: '#dash' })
   uppy.use(Tus, {
     endpoint: `${endpoint}/files/`,
-    limit: options.limit
+    limit: options.limit,
   })
   uppy.on('file-added', (file) => {
-    randomColorImage().then(function (blob) {
+    randomColorImage().then((blob) => {
       uppy.setFileState(file.id, { preview: URL.createObjectURL(blob) })
     })
   })

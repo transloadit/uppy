@@ -44,14 +44,14 @@ ko_KR.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete} / %{smart_count} 완료됨',
     '1': '%{complete} / %{smart_count} 완료됨',
-    '2': '%{complete} / %{smart_count} 완료됨'
+    '2': '%{complete} / %{smart_count} 완료됨',
   },
   filter: '필터',
   finishEditingFile: '파일 수정을 완료하세요.',
   folderAdded: {
     '0': '%{folder}에서 파일 %{smart_count}개 추가',
     '1': '%{folder}에서 파일 %{smart_count}개 추가',
-    '2': '%{folder}에서 파일 %{smart_count}개 추가'
+    '2': '%{folder}에서 파일 %{smart_count}개 추가',
   },
   generatingThumbnails: '썸네일 생성 중...',
   import: '가져오기',
@@ -69,7 +69,7 @@ ko_KR.strings = {
   processingXFiles: {
     '0': '%{smart_count}개의 파일 처리 중',
     '1': '%{smart_count}개의 파일 처리 중',
-    '2': '%{smart_count}개의 파일 처리 중'
+    '2': '%{smart_count}개의 파일 처리 중',
   },
   removeFile: '파일 제거',
   resetFilter: '필터 초기화',
@@ -83,7 +83,7 @@ ko_KR.strings = {
   selectX: {
     '0': '%{smart_count}개 선택',
     '1': '%{smart_count}개 선택',
-    '2': '%{smart_count}개 선택'
+    '2': '%{smart_count}개 선택',
   },
   smile: 'Smile!',
   startRecording: '비디오 녹화 시작',
@@ -99,41 +99,41 @@ ko_KR.strings = {
   uploadXFiles: {
     '0': '%{smart_count}개의 파일 업로드',
     '1': '%{smart_count}개의 파일 업로드',
-    '2': '%{smart_count}개의 파일 업로드'
+    '2': '%{smart_count}개의 파일 업로드',
   },
   uploadXNewFiles: {
     '0': '+%{smart_count}개의 파일 업로드',
     '1': '+%{smart_count}개의 파일 업로드',
-    '2': '+%{smart_count}개의 파일 업로드'
+    '2': '+%{smart_count}개의 파일 업로드',
   },
   uploading: '업로드 중',
   uploadingXFiles: {
     '0': '%{smart_count}개의 파일 업로드 중',
     '1': '%{smart_count}개의 파일 업로드 중',
-    '2': '%{smart_count}개의 파일 업로드 중'
+    '2': '%{smart_count}개의 파일 업로드 중',
   },
   xFilesSelected: {
     '0': '%{smart_count}개의 파일 선택됨',
     '1': '%{smart_count}개의 파일 선택됨',
-    '2': '%{smart_count}개의 파일 선택됨'
+    '2': '%{smart_count}개의 파일 선택됨',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count}개의 파일이 더 추가 됨',
     '1': '%{smart_count}개의 파일이 더 추가 됨',
-    '2': '%{smart_count}개의 파일이 더 추가 됨'
+    '2': '%{smart_count}개의 파일이 더 추가 됨',
   },
   xTimeLeft: '%{time} 남음',
   youCanOnlyUploadFileTypes: '업로드 가능 형식: %{types}',
   youCanOnlyUploadX: {
     '0': '%{smart_count}개의 파일만 업로드할 수 있습니다',
     '1': '%{smart_count}개의 파일만 업로드할 수 있습니다',
-    '2': '%{smart_count}개의 파일만 업로드할 수 있습니다'
+    '2': '%{smart_count}개의 파일만 업로드할 수 있습니다',
   },
   youHaveToAtLeastSelectX: {
     '0': '최소 %{smart_count}개의 파일을 선택해야 합니다',
     '1': '최소 %{smart_count}개의 파일을 선택해야 합니다',
-    '2': '최소 %{smart_count}개의 파일을 선택해야 합니다'
-  }
+    '2': '최소 %{smart_count}개의 파일을 선택해야 합니다',
+  },
 }
 
 ko_KR.pluralize = function (n) {

@@ -60,7 +60,7 @@ module.exports = (props) => {
     toggleFileCard: props.toggleFileCard,
     removeFile: props.removeFile,
     handleRequestThumbnail: props.handleRequestThumbnail,
-    handleCancelThumbnail: props.handleCancelThumbnail
+    handleCancelThumbnail: props.handleCancelThumbnail,
   }
 
   const rows = chunks(Object.keys(props.files), props.itemsPerRow)

@@ -6,6 +6,7 @@ const purest = require('purest')({ request })
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
+
 const DRIVE_FILE_FIELDS = 'kind,id,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
@@ -57,7 +58,7 @@ class Drive extends Provider {
       pageToken: query.cursor,
       q: `'${directory}' in parents and trashed=false`,
       includeItemsFromAllDrives: true,
-      supportsAllDrives: true
+      supportsAllDrives: true,
     }
 
     const filesPromise = new Promise((resolve, reject) => {
@@ -225,8 +226,8 @@ class Drive extends Provider {
         // @todo isTeamDrive is left for backward compatibility. We should remove it in the next
         // major release.
         isTeamDrive: adapter.isSharedDrive(item),
-        isSharedDrive: adapter.isSharedDrive(item)
-      }
+        isSharedDrive: adapter.isSharedDrive(item),
+      },
     })
 
     const items = adapter.getItemSubList(res)
@@ -237,7 +238,7 @@ class Drive extends Provider {
     return {
       username: adapter.getUsername(res),
       items: adaptedItems,
-      nextPagePath: adapter.getNextPagePath(res, query, directory)
+      nextPagePath: adapter.getNextPagePath(res, query, directory),
     }
   }
 

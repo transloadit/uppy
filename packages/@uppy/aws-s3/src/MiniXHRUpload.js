@@ -40,7 +40,7 @@ module.exports = class MiniXHRUpload {
       validateStatus (status, responseText, response) {
         return status >= 200 && status < 300
       },
-      ...opts
+      ...opts,
     }
 
     this.requests = opts.__queue
@@ -55,7 +55,7 @@ module.exports = class MiniXHRUpload {
       ...this.opts,
       ...(overrides || {}),
       ...(file.xhrUpload || {}),
-      headers: {}
+      headers: {},
     }
     Object.assign(opts.headers, this.opts.headers)
     if (overrides) {
@@ -175,7 +175,7 @@ module.exports = class MiniXHRUpload {
           this.uppy.emit('upload-progress', file, {
             uploader: this,
             bytesUploaded: ev.loaded,
-            bytesTotal: ev.total
+            bytesTotal: ev.total,
           })
         }
       })
@@ -196,7 +196,7 @@ module.exports = class MiniXHRUpload {
           const uploadResp = {
             status: ev.target.status,
             body,
-            uploadURL
+            uploadURL,
           }
 
           this.uppy.emit('upload-success', file, uploadResp)
@@ -206,18 +206,17 @@ module.exports = class MiniXHRUpload {
           }
 
           return resolve(file)
-        } else {
-          const body = opts.getResponseData(xhr.responseText, xhr)
-          const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
-
-          const response = {
-            status: ev.target.status,
-            body
-          }
-
-          this.uppy.emit('upload-error', file, error, response)
-          return reject(error)
         }
+        const body = opts.getResponseData(xhr.responseText, xhr)
+        const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
+
+        const response = {
+          status: ev.target.status,
+          body,
+        }
+
+        this.uppy.emit('upload-error', file, error, response)
+        return reject(error)
       })
 
       xhr.addEventListener('error', (ev) => {
@@ -292,7 +291,7 @@ module.exports = class MiniXHRUpload {
         metadata: fields,
         httpMethod: opts.method,
         useFormData: opts.formData,
-        headers: opts.headers
+        headers: opts.headers,
       }).then((res) => {
         const token = res.token
         const host = getSocketHost(file.remote.companionUrl)
@@ -330,7 +329,7 @@ module.exports = class MiniXHRUpload {
           const uploadResp = {
             status: data.response.status,
             body,
-            uploadURL
+            uploadURL,
           }
 
           this.uppy.emit('upload-success', file, uploadResp)

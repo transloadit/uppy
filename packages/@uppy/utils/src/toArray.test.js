@@ -8,7 +8,7 @@ describe('toArray', () => {
       2: 'two',
       3: 'three',
       4: 'four',
-      length: 5
+      length: 5,
     }
 
     expect(toArray(obj)).toEqual([
@@ -16,7 +16,7 @@ describe('toArray', () => {
       'one',
       'two',
       'three',
-      'four'
+      'four',
     ])
   })
 })

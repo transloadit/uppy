@@ -6,5 +6,5 @@ module.exports = {
   list: require('./list'),
   logout: require('./logout'),
   connect: require('./connect'),
-  redirect: require('./oauth-redirect')
+  redirect: require('./oauth-redirect'),
 }

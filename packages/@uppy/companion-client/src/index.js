@@ -11,5 +11,5 @@ const Socket = require('./Socket')
 module.exports = {
   RequestClient,
   Provider,
-  Socket
+  Socket,
 }

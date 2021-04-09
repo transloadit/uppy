@@ -23,7 +23,7 @@ module.exports = function copyToClipboard (textToCopy, fallbackString) {
       border: 'none',
       outline: 'none',
       boxShadow: 'none',
-      background: 'transparent'
+      background: 'transparent',
     })
 
     textArea.value = textToCopy

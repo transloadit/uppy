@@ -44,14 +44,14 @@ th_TH.strings = {
   filesUploadedOfTotal: {
     '0': 'อัพโหลดสำเร็จ %{complete} จากทั้งหมด %{smart_count} ไฟล์',
     '1': 'อัพโหลดสำเร็จ %{complete} จากทั้งหมด %{smart_count} ไฟล์',
-    '2': 'อัพโหลดสำเร็จ %{complete} จากทั้งหมด %{smart_count} ไฟล์'
+    '2': 'อัพโหลดสำเร็จ %{complete} จากทั้งหมด %{smart_count} ไฟล์',
   },
   filter: 'ตัวกรอง',
   finishEditingFile: 'แก้ไขไฟล์สำเร็จ',
   folderAdded: {
     '0': 'เพิ่ม %{smart_count} ไฟล์จาก %{folder}',
     '1': 'เพิ่ม %{smart_count} ไฟล์จาก %{folder}',
-    '2': 'เพิ่ม %{smart_count} ไฟล์จาก %{folder}'
+    '2': 'เพิ่ม %{smart_count} ไฟล์จาก %{folder}',
   },
   generatingThumbnails: 'กำลังสร้างภาพขนาดย่อ...',
   import: 'นำเข้า',
@@ -69,7 +69,7 @@ th_TH.strings = {
   processingXFiles: {
     '0': 'กำลังประมวลผล %{smart_count} ไฟล์',
     '1': 'กำลังประมวลผล %{smart_count} ไฟล์',
-    '2': 'กำลังประมวลผล %{smart_count} ไฟล์'
+    '2': 'กำลังประมวลผล %{smart_count} ไฟล์',
   },
   removeFile: 'ลบไฟล์',
   resetFilter: 'รีเซ็ตตัวกรอง',
@@ -83,7 +83,7 @@ th_TH.strings = {
   selectX: {
     '0': 'เลือก %{smart_count}',
     '1': 'เลือก %{smart_count}',
-    '2': 'เลือก %{smart_count}'
+    '2': 'เลือก %{smart_count}',
   },
   smile: 'ยิ้ม!',
   startRecording: 'เริ่มการบันทึกวิดีโอ',
@@ -99,41 +99,41 @@ th_TH.strings = {
   uploadXFiles: {
     '0': 'กำลังอัพโหลด %{smart_count} ไฟล์',
     '1': 'กำลังอัพโหลด %{smart_count} ไฟล์',
-    '2': 'กำลังอัพโหลด %{smart_count} ไฟล์'
+    '2': 'กำลังอัพโหลด %{smart_count} ไฟล์',
   },
   uploadXNewFiles: {
     '0': 'กำลังอัพโหลด +%{smart_count} ไฟล์',
     '1': 'กำลังอัพโหลด +%{smart_count} ไฟล์',
-    '2': 'กำลังอัพโหลด +%{smart_count} ไฟล์'
+    '2': 'กำลังอัพโหลด +%{smart_count} ไฟล์',
   },
   uploading: 'Uploading',
   uploadingXFiles: {
     '0': 'กำลังอัพโหลด %{smart_count} ไฟล์',
     '1': 'กำลังอัพโหลด %{smart_count} ไฟล์',
-    '2': 'กำลังอัพโหลด %{smart_count} ไฟล์'
+    '2': 'กำลังอัพโหลด %{smart_count} ไฟล์',
   },
   xFilesSelected: {
     '0': '%{smart_count} ไฟล์ถูกเลือก',
     '1': '%{smart_count} ไฟล์ถูกเลือก',
-    '2': '%{smart_count} ไฟล์ถูกเลือก'
+    '2': '%{smart_count} ไฟล์ถูกเลือก',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} ไฟล์ที่สามารถเพิ่มได้',
     '1': '%{smart_count} ไฟล์ที่สามารถเพิ่มได้',
-    '2': '%{smart_count} ไฟล์ที่สามารถเพิ่มได้'
+    '2': '%{smart_count} ไฟล์ที่สามารถเพิ่มได้',
   },
   xTimeLeft: 'เหลืออีก %{time}',
   youCanOnlyUploadFileTypes: 'คุณสามารถอัพโหลดได้แค่: %{types}',
   youCanOnlyUploadX: {
     '0': 'คุณสามารถอัพโหลดได้แค่ %{smart_count} ไฟล์',
     '1': 'คุณสามารถอัพโหลดได้แค่ %{smart_count} ไฟล์',
-    '2': 'คุณสามารถอัพโหลดได้แค่ %{smart_count} ไฟล์'
+    '2': 'คุณสามารถอัพโหลดได้แค่ %{smart_count} ไฟล์',
   },
   youHaveToAtLeastSelectX: {
     '0': 'คุณต้องเลือกอย่างน้อย %{smart_count} ไฟล์',
     '1': 'คุณต้องเลือกอย่างน้อย %{smart_count} ไฟล์',
-    '2': 'คุณต้องเลือกอย่างน้อย %{smart_count} ไฟล์'
-  }
+    '2': 'คุณต้องเลือกอย่างน้อย %{smart_count} ไฟล์',
+  },
 }
 
 th_TH.pluralize = function (n) {

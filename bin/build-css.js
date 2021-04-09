@@ -30,7 +30,7 @@ async function compileCSS () {
         resolve(url, {
           basedir: path.dirname(from),
           filename: from,
-          extensions: ['.scss']
+          extensions: ['.scss'],
         }, (err, res) => {
           if (err) return done(err)
 
@@ -41,12 +41,12 @@ async function compileCSS () {
 
           done({ file: res })
         })
-      }
+      },
     })
 
     const postcssResult = await postcss([autoprefixer])
       .process(scssResult.css, { from: file })
-    postcssResult.warnings().forEach(function (warn) {
+    postcssResult.warnings().forEach((warn) => {
       console.warn(warn.toString())
     })
 
@@ -69,9 +69,9 @@ async function compileCSS () {
     )
 
     const minifiedResult = await postcss([
-      cssnano({ safe: true })
+      cssnano({ safe: true }),
     ]).process(postcssResult.css, { from: outfile })
-    minifiedResult.warnings().forEach(function (warn) {
+    minifiedResult.warnings().forEach((warn) => {
       console.warn(warn.toString())
     })
     await writeFile(outfile.replace(/\.css$/, '.min.css'), minifiedResult.css)

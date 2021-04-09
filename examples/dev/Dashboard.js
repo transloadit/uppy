@@ -47,8 +47,8 @@ module.exports = () => {
     logger: Uppy.debugLogger,
     meta: {
       username: 'John',
-      license: 'Creative Commons'
-    }
+      license: 'Creative Commons',
+    },
   })
     .use(Dashboard, {
       trigger: '#pick-files',
@@ -56,11 +56,11 @@ module.exports = () => {
       target: '.foo',
       metaFields: [
         { id: 'license', name: 'License', placeholder: 'specify license' },
-        { id: 'caption', name: 'Caption', placeholder: 'add caption' }
+        { id: 'caption', name: 'Caption', placeholder: 'add caption' },
       ],
       showProgressDetails: true,
       proudlyDisplayPoweredByUppy: true,
-      note: '2 files, images and video only'
+      note: '2 files, images and video only',
     })
     .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL })
@@ -90,8 +90,8 @@ module.exports = () => {
       uppyDashboard.use(Transloadit, {
         params: {
           auth: { key: TRANSLOADIT_KEY },
-          template_id: TRANSLOADIT_TEMPLATE
-        }
+          template_id: TRANSLOADIT_TEMPLATE,
+        },
       })
       break
   }

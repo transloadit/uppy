@@ -11,7 +11,7 @@ const transloaditOptionNames = [
   'signature',
   'params',
   'fields',
-  'getAssemblyOptions'
+  'getAssemblyOptions',
 ]
 
 function addTransloaditPlugin (uppy, opts) {

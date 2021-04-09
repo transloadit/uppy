@@ -7,10 +7,10 @@ const ProgressBar = require('@uppy/progress-bar/src')
 module.exports = () => {
   const uppyDragDrop = Uppy({
     debug: true,
-    autoProceed: true
+    autoProceed: true,
   })
     .use(DragDrop, {
-      target: '#uppyDragDrop'
+      target: '#uppyDragDrop',
     })
     .use(ProgressBar, { target: '#uppyDragDrop-progress', hideAfterFinish: false })
     .use(Tus, { endpoint: 'https://master.tus.io/files/' })

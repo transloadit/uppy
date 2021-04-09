@@ -25,7 +25,7 @@ const ms = require('ms')
 const defaultOptions = {
   server: {
     protocol: 'http',
-    path: ''
+    path: '',
   },
   providerOptions: {
     s3: {
@@ -34,10 +34,10 @@ const defaultOptions = {
       conditions: [],
       useAccelerateEndpoint: false,
       getKey: (req, filename) => filename,
-      expires: ms('5 minutes') / 1000
-    }
+      expires: ms('5 minutes') / 1000,
+    },
   },
-  debug: true
+  debug: true,
 }
 
 // make the errors available publicly for custom providers
@@ -81,13 +81,13 @@ module.exports.app = (options = {}) => {
       [
         'uppy-auth-token',
         'uppy-versions',
-        res.get('Access-Control-Allow-Headers')
+        res.get('Access-Control-Allow-Headers'),
       ].join(',')
     )
 
     const exposedHeaders = [
       // exposed so it can be accessed for our custom uppy preflight
-      'Access-Control-Allow-Headers'
+      'Access-Control-Allow-Headers',
     ]
 
     if (options.sendSelfEndpoint) {
@@ -206,12 +206,12 @@ const interceptGrantErrorResponse = interceptor((req, res) => {
         send([
           'Companion was unable to complete the OAuth process :(',
           'Error: User session is missing or the Provider was misconfigured',
-          reqHint
+          reqHint,
         ].join('\n'))
       } else {
         send(body)
       }
-    }
+    },
   }
 })
 
@@ -235,13 +235,14 @@ const getOptionsMiddleware = (options) => {
       throw new Error('Found unsupported `providerOptions.s3.awsClientOptions.accessKeyId` or `providerOptions.s3.awsClientOptions.secretAccessKey` configuration. Please use the `providerOptions.s3.key` and `providerOptions.s3.secret` options instead.')
     }
 
-    const s3ClientOptions = Object.assign({
+    const s3ClientOptions = {
       signatureVersion: 'v4',
       endpoint: s3ProviderOptions.endpoint,
       region: s3ProviderOptions.region,
       // backwards compat
-      useAccelerateEndpoint: s3ProviderOptions.useAccelerateEndpoint
-    }, rawClientOptions)
+      useAccelerateEndpoint: s3ProviderOptions.useAccelerateEndpoint,
+      ...rawClientOptions,
+    }
 
     // Use credentials to allow assumed roles to pass STS sessions in.
     // If the user doesn't specify key and secret, the default credentials (process-env)
@@ -250,7 +251,8 @@ const getOptionsMiddleware = (options) => {
       s3ClientOptions.credentials = new AWS.Credentials(
         s3ProviderOptions.key,
         s3ProviderOptions.secret,
-        s3ProviderOptions.sessionToken)
+        s3ProviderOptions.sessionToken
+      )
     }
     s3Client = new S3(s3ClientOptions)
   }
@@ -267,7 +269,7 @@ const getOptionsMiddleware = (options) => {
       s3Client,
       authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
       clientVersion: req.header('uppy-versions') || versionFromQuery || '1.0.0',
-      buildURL: getURLBuilder(options)
+      buildURL: getURLBuilder(options),
     }
 
     logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
@@ -315,7 +317,7 @@ const validateConfig = (companionOptions) => {
   const unspecified = []
 
   mandatoryOptions.forEach((i) => {
-    const value = i.split('.').reduce((prev, curr) => prev ? prev[curr] : undefined, companionOptions)
+    const value = i.split('.').reduce((prev, curr) => (prev ? prev[curr] : undefined), companionOptions)
 
     if (!value) unspecified.push(`"${i}"`)
   })

@@ -31,23 +31,23 @@ const getConfigFromEnv = () => {
     providerOptions: {
       drive: {
         key: process.env.COMPANION_GOOGLE_KEY,
-        secret: getSecret('COMPANION_GOOGLE_SECRET')
+        secret: getSecret('COMPANION_GOOGLE_SECRET'),
       },
       dropbox: {
         key: process.env.COMPANION_DROPBOX_KEY,
-        secret: getSecret('COMPANION_DROPBOX_SECRET')
+        secret: getSecret('COMPANION_DROPBOX_SECRET'),
       },
       instagram: {
         key: process.env.COMPANION_INSTAGRAM_KEY,
-        secret: getSecret('COMPANION_INSTAGRAM_SECRET')
+        secret: getSecret('COMPANION_INSTAGRAM_SECRET'),
       },
       facebook: {
         key: process.env.COMPANION_FACEBOOK_KEY,
-        secret: getSecret('COMPANION_FACEBOOK_SECRET')
+        secret: getSecret('COMPANION_FACEBOOK_SECRET'),
       },
       onedrive: {
         key: process.env.COMPANION_ONEDRIVE_KEY,
-        secret: getSecret('COMPANION_ONEDRIVE_SECRET')
+        secret: getSecret('COMPANION_ONEDRIVE_SECRET'),
       },
       s3: {
         key: process.env.COMPANION_AWS_KEY,
@@ -58,8 +58,8 @@ const getConfigFromEnv = () => {
         useAccelerateEndpoint:
           process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
         expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '300', 10),
-        acl: process.env.COMPANION_AWS_ACL || 'public-read'
-      }
+        acl: process.env.COMPANION_AWS_ACL || 'public-read',
+      },
     },
     server: {
       host: process.env.COMPANION_DOMAIN,
@@ -67,7 +67,7 @@ const getConfigFromEnv = () => {
       path: process.env.COMPANION_PATH,
       implicitPath: process.env.COMPANION_IMPLICIT_PATH,
       oauthDomain: process.env.COMPANION_OAUTH_DOMAIN,
-      validHosts: validHosts
+      validHosts,
     },
     filePath: process.env.COMPANION_DATADIR,
     redisUrl: process.env.COMPANION_REDIS_URL,
@@ -81,7 +81,7 @@ const getConfigFromEnv = () => {
     // TODO: this is a temporary hack to support distributed systems.
     // it is not documented, because it should be changed soon.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
-    multipleInstances: true
+    multipleInstances: true,
   }
 }
 

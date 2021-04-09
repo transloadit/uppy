@@ -8,7 +8,7 @@ class Stopwatch extends Component {
     this.wrapperStyle = {
       width: '100%',
       height: '100%',
-      display: 'flex'
+      display: 'flex',
     }
 
     this.overlayStyle = {
@@ -16,7 +16,7 @@ class Stopwatch extends Component {
       width: '100%',
       height: '100%',
       background: 'black',
-      opacity: 0.7
+      opacity: 0.7,
     }
 
     this.infoContainerStyle = {
@@ -25,14 +25,14 @@ class Stopwatch extends Component {
       marginTop: 'auto',
       marginBottom: 'auto',
       zIndex: 1,
-      color: 'white'
+      color: 'white',
     }
 
     this.infotextStyle = {
       marginLeft: 'auto',
       marginRight: 'auto',
       marginBottom: '1rem',
-      fontSize: '1.5rem'
+      fontSize: '1.5rem',
     }
 
     this.timeStyle = {
@@ -41,7 +41,7 @@ class Stopwatch extends Component {
       marginLeft: 'auto',
       marginRight: 'auto',
       fontSize: '3rem',
-      fontFamily: 'Courier New'
+      fontFamily: 'Courier New',
     }
   }
 
@@ -96,9 +96,8 @@ class Stopwatch extends Component {
 
         </div>
       )
-    } else {
-      return null
     }
+    return null
   }
 }
 

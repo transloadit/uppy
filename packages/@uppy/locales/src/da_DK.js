@@ -43,14 +43,14 @@ da_DK.strings = {
   filesUploadedOfTotal: {
     '0': '%{complete} af %{smart_count} filer uploaded',
     '1': '%{complete} af %{smart_count} fil uploaded',
-    '2': '%{complete} af %{smart_count} filer uploaded'
+    '2': '%{complete} af %{smart_count} filer uploaded',
   },
   filter: 'Filter',
   finishEditingFile: 'Færddiggør redigering af fil',
   folderAdded: {
     '0': 'Tilføjet %{smart_count} filer fra %{folder}',
     '1': 'Tilføjet %{smart_count} fil fra %{folder}',
-    '2': 'Tilføjet %{smart_count} filer fra %{folder}'
+    '2': 'Tilføjet %{smart_count} filer fra %{folder}',
   },
   import: 'Importer',
   importFrom: 'Importer fra %{name}',
@@ -67,7 +67,7 @@ da_DK.strings = {
   processingXFiles: {
     '0': 'Behandler %{smart_count} filer',
     '1': 'Behandler %{smart_count} fil',
-    '2': 'Behandler %{smart_count} filer'
+    '2': 'Behandler %{smart_count} filer',
   },
   removeFile: 'Fjern fil',
   resetFilter: 'Nulstil filter',
@@ -81,7 +81,7 @@ da_DK.strings = {
   selectX: {
     '0': 'Vælg %{smart_count}',
     '1': 'Vælg %{smart_count}',
-    '2': 'Vælg %{smart_count}'
+    '2': 'Vælg %{smart_count}',
   },
   smile: 'Smil!',
   startRecording: 'Start video optagelse',
@@ -97,41 +97,41 @@ da_DK.strings = {
   uploadXFiles: {
     '0': 'Upload %{smart_count} fil',
     '1': 'Upload %{smart_count} filer',
-    '2': 'Upload %{smart_count} filer'
+    '2': 'Upload %{smart_count} filer',
   },
   uploadXNewFiles: {
     '0': 'Upload +%{smart_count} fil',
     '1': 'Upload +%{smart_count} filer',
-    '2': 'Upload +%{smart_count} filer'
+    '2': 'Upload +%{smart_count} filer',
   },
   uploading: 'Uploader',
   uploadingXFiles: {
     '0': 'Uploader %{smart_count} fil',
     '1': 'Uploader %{smart_count} filer',
-    '2': 'Uploader %{smart_count} filer'
+    '2': 'Uploader %{smart_count} filer',
   },
   xFilesSelected: {
     '0': '%{smart_count} fil valgt',
     '1': '%{smart_count} filer valgt',
-    '2': '%{smart_count} filer valgt'
+    '2': '%{smart_count} filer valgt',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} flere filer tilføjet',
     '1': '%{smart_count} flere filer tilføjet',
-    '2': '%{smart_count} flere filer tilføjet'
+    '2': '%{smart_count} flere filer tilføjet',
   },
   xTimeLeft: '%{time} tilbage',
   youCanOnlyUploadFileTypes: 'Du kan kun uploade: %{types}',
   youCanOnlyUploadX: {
     '0': 'Du kan kun uploade %{smart_count} fil',
     '1': 'Du kan kun uploade %{smart_count} filer',
-    '2': 'Du kan kun uploade %{smart_count} filer'
+    '2': 'Du kan kun uploade %{smart_count} filer',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Du skal vælge mindst %{smart_count} fil',
     '1': 'Du skal vælge mindst %{smart_count} filer',
-    '2': 'Du skal vælge mindst %{smart_count} filer'
-  }
+    '2': 'Du skal vælge mindst %{smart_count} filer',
+  },
 }
 
 da_DK.pluralize = function (n) {

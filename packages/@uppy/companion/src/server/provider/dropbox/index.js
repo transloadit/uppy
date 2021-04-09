@@ -13,10 +13,9 @@ const { ProviderApiError, ProviderAuthError } = require('../error')
 const charsToEncode = /[\u007f-\uffff]/g
 function httpHeaderSafeJson (v) {
   return JSON.stringify(v).replace(charsToEncode,
-    function (c) {
-      return '\\u' + ('000' + c.charCodeAt(0).toString(16)).slice(-4)
-    }
-  )
+    (c) => {
+      return `\\u${(`000${c.charCodeAt(0).toString(16)}`).slice(-4)}`
+    })
 }
 
 /**
@@ -93,7 +92,7 @@ class DropBox extends Provider {
         .options({ version: '2' })
         .auth(token)
         .json({
-          cursor: query.cursor
+          cursor: query.cursor,
         })
         .request(done)
       return
@@ -105,7 +104,7 @@ class DropBox extends Provider {
       .qs(query)
       .auth(token)
       .json({
-        path: `${directory || ''}`
+        path: `${directory || ''}`,
       })
       .request(done)
   }
@@ -116,8 +115,8 @@ class DropBox extends Provider {
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` })
-        }
+          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` }),
+        },
       })
       .auth(token)
       .request()
@@ -141,8 +140,8 @@ class DropBox extends Provider {
       .options({
         version: '2',
         headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}`, size: 'w256h256' })
-        }
+          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}`, size: 'w256h256' }),
+        },
       })
       .auth(token)
       .request()
@@ -203,7 +202,7 @@ class DropBox extends Provider {
         thumbnail: companion.buildURL(adapter.getItemThumbnailUrl(item), true),
         requestPath: adapter.getItemRequestPath(item),
         modifiedDate: adapter.getItemModifiedDate(item),
-        size: adapter.getItemSize(item)
+        size: adapter.getItemSize(item),
       })
     })
 

@@ -6,7 +6,7 @@ module.exports = function getTimeStamp () {
   var hours = pad(date.getHours().toString())
   var minutes = pad(date.getMinutes().toString())
   var seconds = pad(date.getSeconds().toString())
-  return hours + ':' + minutes + ':' + seconds
+  return `${hours}:${minutes}:${seconds}`
 }
 
 /**

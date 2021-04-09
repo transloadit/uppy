@@ -56,7 +56,7 @@ exports.getURLMeta = (url, blockLocalIPs = false) => {
       uri: url,
       method: 'HEAD',
       followRedirect: getRedirectEvaluator(url, blockLocalIPs),
-      agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs)
+      agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
     }
 
     request(opts, (err, response) => {
@@ -68,7 +68,7 @@ exports.getURLMeta = (url, blockLocalIPs = false) => {
       } else {
         resolve({
           type: response.headers['content-type'],
-          size: parseInt(response.headers['content-length'])
+          size: parseInt(response.headers['content-length']),
         })
       }
     })

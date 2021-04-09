@@ -10,7 +10,7 @@ module.exports = class Client {
     this._reportError = this._reportError.bind(this)
 
     this._headers = {
-      'Transloadit-Client': this.opts.client
+      'Transloadit-Client': this.opts.client,
     }
   }
 
@@ -24,7 +24,7 @@ module.exports = class Client {
     params,
     fields,
     signature,
-    expectedFiles
+    expectedFiles,
   }) {
     const data = new FormData()
     data.append('params', typeof params === 'string'
@@ -43,7 +43,7 @@ module.exports = class Client {
     return fetchWithNetworkError(url, {
       method: 'post',
       headers: this._headers,
-      body: data
+      body: data,
     })
       .then((response) => response.json()).then((assembly) => {
         if (assembly.error) {
@@ -133,8 +133,8 @@ module.exports = class Client {
         assembly_id: assembly,
         agent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
         client: this.opts.client,
-        error: message
-      })
+        error: message,
+      }),
     })
       .then((response) => response.json())
   }
@@ -145,7 +145,7 @@ module.exports = class Client {
     }
 
     const opts = {
-      type: params.type
+      type: params.type,
     }
     if (params.assembly) {
       opts.assembly = params.assembly.assembly_id

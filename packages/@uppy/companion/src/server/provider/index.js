@@ -70,7 +70,7 @@ module.exports.getDefaultProviders = (companionOptions) => {
 module.exports.addCustomProviders = (customProviders, providers, grantConfig) => {
   Object.keys(customProviders).forEach((providerName) => {
     providers[providerName] = customProviders[providerName].module
-    const providerConfig = Object.assign({}, customProviders[providerName].config)
+    const providerConfig = { ...customProviders[providerName].config }
     // todo: consider setting these options from a universal point also used
     // by official providers. It'll prevent these from getting left out if the
     // requirement changes.
@@ -95,7 +95,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
   grantConfig.defaults = {
     host: server.host,
     protocol: server.protocol,
-    path: server.path
+    path: server.path,
   }
 
   const { oauthDomain } = server

@@ -18,7 +18,7 @@ const META_FILES = [
   'babel.config.js',
   'package.json',
   'package-lock.json',
-  'bin/build-lib.js'
+  'bin/build-lib.js',
 ]
 
 function lastModified (file) {
@@ -27,8 +27,7 @@ function lastModified (file) {
 
 async function buildLib () {
   const metaMtimes = await Promise.all(META_FILES.map((filename) =>
-    lastModified(path.join(__dirname, '..', filename))
-  ))
+    lastModified(path.join(__dirname, '..', filename))))
   const metaMtime = Math.max(...metaMtimes)
 
   const files = await glob(SOURCE)
@@ -51,13 +50,14 @@ async function buildLib () {
     await mkdirp(path.dirname(libFile))
     await Promise.all([
       writeFile(libFile, code),
-      writeFile(libFile + '.map', JSON.stringify(map))
+      writeFile(`${libFile}.map`, JSON.stringify(map)),
     ])
     console.log(chalk.green('Compiled lib:'), chalk.magenta(libFile))
   }
 }
 
 console.log('Using Babel version:', require('@babel/core/package.json').version)
+
 buildLib().catch((err) => {
   console.error(err.stack)
   process.exit(1)

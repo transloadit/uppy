@@ -17,17 +17,17 @@ const Browser = (props) => {
   const selected = props.currentSelection.length
 
   return (
-    <div class={classNames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${props.viewType}`)}>
-      <div class="uppy-ProviderBrowser-header">
-        <div class={classNames('uppy-ProviderBrowser-headerBar', !props.showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple')}>
+    <div className={classNames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${props.viewType}`)}>
+      <div className="uppy-ProviderBrowser-header">
+        <div className={classNames('uppy-ProviderBrowser-headerBar', !props.showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple')}>
           {props.showBreadcrumbs && Breadcrumbs({
             getFolder: props.getFolder,
             directories: props.directories,
             breadcrumbsIcon: props.pluginIcon && props.pluginIcon(),
-            title: props.title
+            title: props.title,
           })}
-          <span class="uppy-ProviderBrowser-user">{props.username}</span>
-          <button type="button" onclick={props.logout} class="uppy-u-reset uppy-ProviderBrowser-userLogout">
+          <span className="uppy-ProviderBrowser-user">{props.username}</span>
+          <button type="button" onClick={props.logout} className="uppy-u-reset uppy-ProviderBrowser-userLogout">
             {props.i18n('logOut')}
           </button>
         </div>
@@ -36,7 +36,7 @@ const Browser = (props) => {
       <ItemList
         columns={[{
           name: 'Name',
-          key: 'title'
+          key: 'title',
         }]}
         folders={filteredFolders}
         files={filteredFiles}

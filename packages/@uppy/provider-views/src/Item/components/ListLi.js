@@ -4,16 +4,13 @@ const getAriaLabelOfCheckbox = (props) => {
   if (props.type === 'folder') {
     if (props.isChecked) {
       return props.i18n('unselectAllFilesFromFolderNamed', { name: props.title })
-    } else {
-      return props.i18n('selectAllFilesFromFolderNamed', { name: props.title })
     }
-  } else {
-    if (props.isChecked) {
-      return props.i18n('unselectFileNamed', { name: props.title })
-    } else {
-      return props.i18n('selectFileNamed', { name: props.title })
-    }
+    return props.i18n('selectAllFilesFromFolderNamed', { name: props.title })
   }
+  if (props.isChecked) {
+    return props.i18n('unselectFileNamed', { name: props.title })
+  }
+  return props.i18n('selectFileNamed', { name: props.title })
 }
 
 // if folder:
@@ -24,10 +21,10 @@ const getAriaLabelOfCheckbox = (props) => {
 //   + file name (selects file)
 module.exports = (props) => {
   return (
-    <li class={props.className}>
+    <li className={props.className}>
       <button
         type="button"
-        class={`uppy-u-reset uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`}
+        className={`uppy-u-reset uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`}
         onClick={props.toggleCheckbox}
         // for the <label/>
         id={props.id}
@@ -40,7 +37,7 @@ module.exports = (props) => {
 
       {props.type === 'file' ? (
         // label for a checkbox
-        <label for={props.id} className="uppy-u-reset uppy-ProviderBrowserItem-inner">
+        <label htmlFor={props.id} className="uppy-u-reset uppy-ProviderBrowserItem-inner">
           {props.itemIconEl}
           {props.showTitles && props.title}
         </label>
@@ -48,8 +45,8 @@ module.exports = (props) => {
         // button to open a folder
         <button
           type="button"
-          class="uppy-u-reset uppy-ProviderBrowserItem-inner"
-          onclick={props.handleFolderClick}
+          className="uppy-u-reset uppy-ProviderBrowserItem-inner"
+          onClick={props.handleFolderClick}
           aria-label={props.i18n('openFolderNamed', { name: props.title })}
         >
           {props.itemIconEl}

@@ -17,7 +17,7 @@ const mimeToExtensions = {
   'video/quicktime': 'mov',
   'video/webm': 'webm',
   'video/x-matroska': 'mkv',
-  'video/x-msvideo': 'avi'
+  'video/x-msvideo': 'avi',
 }
 
 module.exports = function getFileTypeExtension (mimeType) {

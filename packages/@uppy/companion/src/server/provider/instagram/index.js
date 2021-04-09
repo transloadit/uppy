@@ -33,11 +33,10 @@ class Instagram extends Provider {
           err = this._error(err, resp)
           logger.error(err, 'provider.instagram.list.error')
           return done(err)
-        } else {
-          this._getUsername(token, (err, username) => {
-            err ? done(err) : done(null, this.adaptData(body, username))
-          })
         }
+        this._getUsername(token, (err, username) => {
+          err ? done(err) : done(null, this.adaptData(body, username))
+        })
       })
   }
 
@@ -50,9 +49,8 @@ class Instagram extends Provider {
           err = this._error(err, resp)
           logger.error(err, 'provider.instagram.user.error')
           return done(err)
-        } else {
-          done(null, body.data.username)
         }
+        done(null, body.data.username)
       })
   }
 
@@ -133,7 +131,7 @@ class Instagram extends Provider {
   }
 
   adaptData (res, username) {
-    const data = { username: username, items: [] }
+    const data = { username, items: [] }
     const items = adapter.getItemSubList(res)
     items.forEach((item) => {
       data.items.push({
@@ -144,7 +142,7 @@ class Instagram extends Provider {
         id: adapter.getItemId(item),
         thumbnail: adapter.getItemThumbnailUrl(item),
         requestPath: adapter.getItemRequestPath(item),
-        modifiedDate: adapter.getItemModifiedDate(item)
+        modifiedDate: adapter.getItemModifiedDate(item),
       })
     })
 

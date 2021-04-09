@@ -14,7 +14,7 @@ beforeAll(() => {
 beforeEach(() => {
   Object.assign(require('@uppy/dashboard').prototype, {
     openModal: jest.fn(),
-    closeModal: jest.fn()
+    closeModal: jest.fn(),
   })
 })
 

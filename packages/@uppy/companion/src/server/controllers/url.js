@@ -87,7 +87,7 @@ const validateURL = (url, debug) => {
   const validURLOpts = {
     protocols: ['http', 'https'],
     require_protocol: true,
-    require_tld: !debug
+    require_tld: !debug,
   }
   if (!validator.isURL(url, validURLOpts)) {
     return false
@@ -116,7 +116,7 @@ const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
     uri: url,
     method: 'GET',
     followRedirect: getRedirectEvaluator(url, blockLocalIPs),
-    agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs)
+    agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
   }
 
   request(opts)

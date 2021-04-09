@@ -34,7 +34,7 @@ module.exports.verifyToken = (token, secret) => {
 module.exports.addToCookies = (res, token, companionOptions, providerName) => {
   const cookieOptions = {
     maxAge: 1000 * 60 * 60 * 24 * 30, // would expire after 30 days
-    httpOnly: true
+    httpOnly: true,
   }
 
   if (companionOptions.cookieDomain) {
@@ -53,7 +53,7 @@ module.exports.addToCookies = (res, token, companionOptions, providerName) => {
 module.exports.removeFromCookies = (res, companionOptions, providerName) => {
   const cookieOptions = {
     maxAge: 1000 * 60 * 60 * 24 * 30, // would expire after 30 days
-    httpOnly: true
+    httpOnly: true,
   }
 
   if (companionOptions.cookieDomain) {

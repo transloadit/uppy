@@ -46,7 +46,7 @@ module.exports = function Dashboard (props) {
     'uppy-size--xl': props.containerWidth > WIDTH_XL,
     'uppy-size--height-md': props.containerHeight > HEIGHT_MD,
     'uppy-Dashboard--isAddFilesPanelVisible': props.showAddFilesPanel,
-    'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible
+    'uppy-Dashboard--isInnerWrapVisible': props.areInsidesReadyToBeVisible,
   })
 
   // Important: keep these in sync with the percent width values in `src/components/FileItem/index.scss`.
@@ -63,47 +63,47 @@ module.exports = function Dashboard (props) {
 
   return (
     <div
-      class={dashboardClassName}
+      className={dashboardClassName}
       data-uppy-theme={props.theme}
       data-uppy-num-acquirers={props.acquirers.length}
       data-uppy-drag-drop-supported={isDragDropSupported()}
       aria-hidden={props.inline ? 'false' : props.isHidden}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
-      onpaste={props.handlePaste}
+      onPaste={props.handlePaste}
       onDragOver={props.handleDragOver}
       onDragLeave={props.handleDragLeave}
       onDrop={props.handleDrop}
     >
       <div
-        class="uppy-Dashboard-overlay"
-        tabindex={-1}
-        onclick={props.handleClickOutside}
+        className="uppy-Dashboard-overlay"
+        tabIndex={-1}
+        onClick={props.handleClickOutside}
       />
 
       <div
-        class="uppy-Dashboard-inner"
+        className="uppy-Dashboard-inner"
         aria-modal={!props.inline && 'true'}
         role={!props.inline && 'dialog'}
         style={{
           width: props.inline && props.width ? props.width : '',
-          height: props.inline && props.height ? props.height : ''
+          height: props.inline && props.height ? props.height : '',
         }}
       >
 
         {!props.inline ? (
           <button
-            class="uppy-u-reset uppy-Dashboard-close"
+            className="uppy-u-reset uppy-Dashboard-close"
             type="button"
             aria-label={props.i18n('closeModal')}
             title={props.i18n('closeModal')}
-            onclick={props.closeModal}
+            onClick={props.closeModal}
           >
             <span aria-hidden="true">&times;</span>
           </button>
         ) : null}
 
-        <div class="uppy-Dashboard-innerWrap">
-          <div class="uppy-Dashboard-dropFilesHereHint">
+        <div className="uppy-Dashboard-innerWrap">
+          <div className="uppy-Dashboard-dropFilesHereHint">
             {props.i18n('dropHint')}
           </div>
 
@@ -134,7 +134,7 @@ module.exports = function Dashboard (props) {
             {props.showFileEditor ? <EditorPanel key="Editor" {...props} /> : null}
           </TransitionWrapper>
 
-          <div class="uppy-Dashboard-progressindicators">
+          <div className="uppy-Dashboard-progressindicators">
             {props.progressindicators.map((target) => {
               return props.getPlugin(target.id).render(props.state)
             })}

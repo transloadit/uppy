@@ -1,5 +1,5 @@
 const Core = require('@uppy/core')
-const AwsS3 = require('./')
+const AwsS3 = require('.')
 
 describe('AwsS3', () => {
   it('Registers AwsS3 upload plugin', () => {
@@ -26,8 +26,8 @@ describe('AwsS3', () => {
       const file = {
         meta: {
           name: 'foo.jpg',
-          type: 'image/jpg'
-        }
+          type: 'image/jpg',
+        },
       }
 
       expect(() => awsS3.opts.getUploadParameters(file)).not.toThrow()

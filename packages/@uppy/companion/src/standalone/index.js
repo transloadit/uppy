@@ -104,7 +104,7 @@ const companionOptions = helper.getCompanionOptions()
 const sessionOptions = {
   secret: companionOptions.secret,
   resave: true,
-  saveUninitialized: true
+  saveUninitialized: true,
 }
 
 if (companionOptions.redisUrl) {
@@ -118,7 +118,7 @@ if (companionOptions.redisUrl) {
 if (process.env.COMPANION_COOKIE_DOMAIN) {
   sessionOptions.cookie = {
     domain: process.env.COMPANION_COOKIE_DOMAIN,
-    maxAge: 24 * 60 * 60 * 1000 // 1 day
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
   }
 }
 
@@ -133,7 +133,7 @@ app.use((req, res, next) => {
   if (process.env.COMPANION_CLIENT_ORIGINS) {
     const whitelist = process.env.COMPANION_CLIENT_ORIGINS
       .split(',')
-      .map((url) => helper.hasProtocol(url) ? url : `${protocol}://${url}`)
+      .map((url) => (helper.hasProtocol(url) ? url : `${protocol}://${url}`))
 
     // @ts-ignore
     if (req.headers.origin && whitelist.indexOf(req.headers.origin) > -1) {
@@ -187,8 +187,8 @@ if (process.env.COMPANION_ONEDRIVE_DOMAIN_VALIDATION === 'true' && process.env.C
   app.get('/.well-known/microsoft-identity-association.json', (req, res) => {
     const content = JSON.stringify({
       associatedApplications: [
-        { applicationId: process.env.COMPANION_ONEDRIVE_KEY }
-      ]
+        { applicationId: process.env.COMPANION_ONEDRIVE_KEY },
+      ],
     })
     res.header('Content-Length', `${Buffer.byteLength(content, 'utf8')}`)
     // use writeHead to prevent 'charset' from being appended

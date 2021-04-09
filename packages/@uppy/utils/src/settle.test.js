@@ -5,11 +5,11 @@ describe('settle', () => {
     await expect(
       settle([
         Promise.reject(new Error('oops')),
-        Promise.reject(new Error('this went wrong'))
+        Promise.reject(new Error('this went wrong')),
       ])
     ).resolves.toMatchObject({
       successful: [],
-      failed: [new Error('oops'), new Error('this went wrong')]
+      failed: [new Error('oops'), new Error('this went wrong')],
     })
   })
 
@@ -18,11 +18,11 @@ describe('settle', () => {
       settle([
         Promise.reject(new Error('rejected')),
         Promise.resolve('resolved'),
-        Promise.resolve('also-resolved')
+        Promise.resolve('also-resolved'),
       ])
     ).resolves.toMatchObject({
       successful: ['resolved', 'also-resolved'],
-      failed: [new Error('rejected')]
+      failed: [new Error('rejected')],
     })
   })
 })

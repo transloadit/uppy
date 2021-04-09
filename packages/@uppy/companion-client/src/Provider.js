@@ -21,7 +21,7 @@ module.exports = class Provider extends RequestClient {
     return new Promise((resolve, reject) => {
       super.headers().then((headers) => {
         this.getAuthToken().then((token) => {
-          resolve(Object.assign({}, headers, { 'uppy-auth-token': token }))
+          resolve({ ...headers, 'uppy-auth-token': token })
         })
       }).catch(reject)
     })
@@ -72,7 +72,7 @@ module.exports = class Provider extends RequestClient {
     plugin.type = 'acquirer'
     plugin.files = []
     if (defaultOpts) {
-      plugin.opts = Object.assign({}, defaultOpts, opts)
+      plugin.opts = { ...defaultOpts, ...opts }
     }
 
     if (opts.serverUrl || opts.serverPattern) {

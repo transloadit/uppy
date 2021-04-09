@@ -51,16 +51,15 @@ class OneDrive extends Provider {
           err = this._error(err, resp)
           logger.error(err, 'provider.onedrive.list.error')
           return done(err)
-        } else {
-          this._userInfo({ token }, (err, infoResp) => {
-            if (err || infoResp.statusCode !== 200) {
-              err = this._error(err, infoResp)
-              logger.error(err, 'provider.onedrive.user.error')
-              return done(err)
-            }
-            done(null, this.adaptData(body, infoResp.body.mail || infoResp.body.userPrincipalName))
-          })
         }
+        this._userInfo({ token }, (err, infoResp) => {
+          if (err || infoResp.statusCode !== 200) {
+            err = this._error(err, infoResp)
+            logger.error(err, 'provider.onedrive.user.error')
+            return done(err)
+          }
+          done(null, this.adaptData(body, infoResp.body.mail || infoResp.body.userPrincipalName))
+        })
       })
   }
 
@@ -101,9 +100,8 @@ class OneDrive extends Provider {
           err = this._error(err, resp)
           logger.error(err, 'provider.onedrive.size.error')
           return done(err)
-        } else {
-          done(null, body.size)
         }
+        done(null, body.size)
       })
   }
 
@@ -125,7 +123,7 @@ class OneDrive extends Provider {
         thumbnail: adapter.getItemThumbnailUrl(item),
         requestPath: adapter.getItemRequestPath(item),
         modifiedDate: adapter.getItemModifiedDate(item),
-        size: adapter.getItemSize(item)
+        size: adapter.getItemSize(item),
       })
     })
 

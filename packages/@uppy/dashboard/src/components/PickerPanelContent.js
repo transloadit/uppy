@@ -4,7 +4,7 @@ const ignoreEvent = require('../utils/ignoreEvent.js')
 function PickerPanelContent (props) {
   return (
     <div
-      class="uppy-DashboardContent-panel"
+      className="uppy-DashboardContent-panel"
       role="tabpanel"
       data-uppy-panelType="PickerPanel"
       id={`uppy-DashboardContent-panel--${props.activePickerPanel.id}`}
@@ -13,18 +13,19 @@ function PickerPanelContent (props) {
       onDrop={ignoreEvent}
       onPaste={ignoreEvent}
     >
-      <div class="uppy-DashboardContent-bar">
-        <div class="uppy-DashboardContent-title" role="heading" aria-level="1">
+      <div className="uppy-DashboardContent-bar">
+        <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
           {props.i18n('importFrom', { name: props.activePickerPanel.name })}
         </div>
         <button
-          class="uppy-DashboardContent-back"
+          className="uppy-DashboardContent-back"
           type="button"
-          onclick={props.hideAllPanels}
-        >{props.i18n('done')}
+          onClick={props.hideAllPanels}
+        >
+          {props.i18n('done')}
         </button>
       </div>
-      <div class="uppy-DashboardContent-panelBody">
+      <div className="uppy-DashboardContent-panelBody">
         {props.getPlugin(props.activePickerPanel.id).render(props.state)}
       </div>
     </div>

@@ -8,7 +8,7 @@ const ProgressBar = require('@uppy/progress-bar')
 const uppyi18n = Uppy({
   id: 'uppyi18n',
   debug: true,
-  autoProceed: true
+  autoProceed: true,
 })
 
 uppyi18n
@@ -17,9 +17,9 @@ uppyi18n
     locale: {
       strings: {
         dropHereOr: 'Перенесите файлы сюда или %{browse}',
-        browse: 'выберите'
-      }
-    }
+        browse: 'выберите',
+      },
+    },
   })
   .use(ProgressBar, { target: '#uppyi18n-progress' })
   .use(XHRUpload, { endpoint: 'https://api2.transloadit.com' })

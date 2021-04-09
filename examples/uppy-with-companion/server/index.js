@@ -9,7 +9,7 @@ app.use(bodyParser.json())
 app.use(session({
   secret: 'some-secret',
   resave: true,
-  saveUninitialized: true
+  saveUninitialized: true,
 }))
 
 app.use((req, res, next) => {
@@ -36,21 +36,21 @@ const uppyOptions = {
   providerOptions: {
     google: {
       key: 'your google key',
-      secret: 'your google secret'
+      secret: 'your google secret',
     },
     instagram: {
       key: 'your instagram key',
-      secret: 'your instagram secret'
-    }
+      secret: 'your instagram secret',
+    },
     // you can also add options for dropbox here
   },
   server: {
     host: 'localhost:3020',
-    protocol: 'http'
+    protocol: 'http',
   },
   filePath: './output',
   secret: 'some-secret',
-  debug: true
+  debug: true,
 }
 
 app.use(companion.app(uppyOptions))

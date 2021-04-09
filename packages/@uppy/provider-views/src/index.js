@@ -53,7 +53,7 @@ module.exports = class ProviderView {
       viewType: 'list',
       showTitles: true,
       showFilter: true,
-      showBreadcrumbs: true
+      showBreadcrumbs: true,
     }
 
     // merge default options with the ones set by user
@@ -94,7 +94,7 @@ module.exports = class ProviderView {
       directories: [],
       activeRow: -1,
       filterInput: '',
-      isSearchVisible: false
+      isSearchVisible: false,
     })
   }
 
@@ -151,7 +151,8 @@ module.exports = class ProviderView {
         this._updateFilesAndFolders(res, files, folders)
         this.plugin.setPluginState({ directories: updatedDirectories })
       },
-      this.handleError)
+      this.handleError
+    )
   }
 
   /**
@@ -174,16 +175,16 @@ module.exports = class ProviderView {
       type: file.mimeType,
       isRemote: true,
       body: {
-        fileId: file.id
+        fileId: file.id,
       },
       remote: {
         companionUrl: this.plugin.opts.companionUrl,
         url: `${this.provider.fileUrl(file.requestPath)}`,
         body: {
-          fileId: file.id
+          fileId: file.id,
         },
-        providerOptions: this.provider.opts
-      }
+        providerOptions: this.provider.opts,
+      },
     }
 
     const fileType = getFileType(tagFile)
@@ -204,7 +205,7 @@ module.exports = class ProviderView {
   removeFile (id) {
     const { currentSelection } = this.plugin.getPluginState()
     this.plugin.setPluginState({
-      currentSelection: currentSelection.filter((file) => file.id !== id)
+      currentSelection: currentSelection.filter((file) => file.id !== id),
     })
   }
 
@@ -218,7 +219,7 @@ module.exports = class ProviderView {
           if (!res.revoked) {
             const message = this.plugin.uppy.i18n('companionUnauthorizeHint', {
               provider: this.plugin.title,
-              url: res.manual_revoke_url
+              url: res.manual_revoke_url,
             })
             this.plugin.uppy.info(message, 'info', 7000)
           }
@@ -227,7 +228,7 @@ module.exports = class ProviderView {
             authenticated: false,
             files: [],
             folders: [],
-            directories: []
+            directories: [],
           }
           this.plugin.setPluginState(newState)
         }
@@ -236,9 +237,7 @@ module.exports = class ProviderView {
 
   filterQuery (e) {
     const state = this.plugin.getPluginState()
-    this.plugin.setPluginState(Object.assign({}, state, {
-      filterInput: e ? e.target.value : ''
-    }))
+    this.plugin.setPluginState({ ...state, filterInput: e ? e.target.value : '' })
   }
 
   toggleSearch (inputEl) {
@@ -246,7 +245,7 @@ module.exports = class ProviderView {
 
     this.plugin.setPluginState({
       isSearchVisible: !state.isSearchVisible,
-      filterInput: ''
+      filterInput: '',
     })
   }
 
@@ -261,7 +260,7 @@ module.exports = class ProviderView {
   }
 
   sortByTitle () {
-    const state = Object.assign({}, this.plugin.getPluginState())
+    const state = { ...this.plugin.getPluginState() }
     const { files, folders, sorting } = state
 
     const sortedFiles = files.sort((fileA, fileB) => {
@@ -278,15 +277,16 @@ module.exports = class ProviderView {
       return folderA.name.localeCompare(folderB.name)
     })
 
-    this.plugin.setPluginState(Object.assign({}, state, {
+    this.plugin.setPluginState({
+      ...state,
       files: sortedFiles,
       folders: sortedFolders,
-      sorting: (sorting === 'titleDescending') ? 'titleAscending' : 'titleDescending'
-    }))
+      sorting: (sorting === 'titleDescending') ? 'titleAscending' : 'titleDescending',
+    })
   }
 
   sortByDate () {
-    const state = Object.assign({}, this.plugin.getPluginState())
+    const state = { ...this.plugin.getPluginState() }
     const { files, folders, sorting } = state
 
     const sortedFiles = files.sort((fileA, fileB) => {
@@ -310,15 +310,16 @@ module.exports = class ProviderView {
       return a > b ? 1 : a < b ? -1 : 0
     })
 
-    this.plugin.setPluginState(Object.assign({}, state, {
+    this.plugin.setPluginState({
+      ...state,
       files: sortedFiles,
       folders: sortedFolders,
-      sorting: (sorting === 'dateDescending') ? 'dateAscending' : 'dateDescending'
-    }))
+      sorting: (sorting === 'dateDescending') ? 'dateAscending' : 'dateDescending',
+    })
   }
 
   sortBySize () {
-    const state = Object.assign({}, this.plugin.getPluginState())
+    const state = { ...this.plugin.getPluginState() }
     const { files, sorting } = state
 
     // check that plugin supports file sizes
@@ -336,10 +337,11 @@ module.exports = class ProviderView {
       return a > b ? 1 : a < b ? -1 : 0
     })
 
-    this.plugin.setPluginState(Object.assign({}, state, {
+    this.plugin.setPluginState({
+      ...state,
       files: sortedFiles,
-      sorting: (sorting === 'sizeDescending') ? 'sizeAscending' : 'sizeDescending'
-    }))
+      sorting: (sorting === 'sizeDescending') ? 'sizeAscending' : 'sizeDescending',
+    })
   }
 
   isActiveRow (file) {
@@ -380,7 +382,7 @@ module.exports = class ProviderView {
       let message
       if (files.length) {
         message = this.plugin.uppy.i18n('folderAdded', {
-          smart_count: files.length, folder: folder.name
+          smart_count: files.length, folder: folder.name,
         })
       } else {
         message = this.plugin.uppy.i18n('emptyFolderAdded')
@@ -427,11 +429,11 @@ module.exports = class ProviderView {
     const { currentSelection } = this.plugin.getPluginState()
     if (this.isChecked(file)) {
       this.plugin.setPluginState({
-        currentSelection: currentSelection.filter((item) => item.id !== file.id)
+        currentSelection: currentSelection.filter((item) => item.id !== file.id),
       })
     } else {
       this.plugin.setPluginState({
-        currentSelection: currentSelection.concat([file])
+        currentSelection: currentSelection.concat([file]),
       })
     }
   }
@@ -440,7 +442,7 @@ module.exports = class ProviderView {
     return generateFileID({
       data: file,
       name: file.name || file.id,
-      type: file.mimeType
+      type: file.mimeType,
     })
   }
 
@@ -477,7 +479,7 @@ module.exports = class ProviderView {
     const getRegex = (value) => {
       if (typeof value === 'string') {
         return new RegExp(`^${value}$`)
-      } else if (value instanceof RegExp) {
+      } if (value instanceof RegExp) {
         return value
       }
     }
@@ -495,7 +497,7 @@ module.exports = class ProviderView {
       return
     }
     const message = uppy.i18n('companionError')
-    uppy.info({ message: message, details: error.toString() }, 'error', 5000)
+    uppy.info({ message, details: error.toString() }, 'error', 5000)
   }
 
   handleScroll (e) {
@@ -528,9 +530,8 @@ module.exports = class ProviderView {
           return this.listAllFiles(moreFiles, files)
             .then((files) => resolve(files))
             .catch(e => reject(e))
-        } else {
-          return resolve(files)
         }
+        return resolve(files)
       }).catch(e => reject(e))
     })
   }
@@ -540,9 +541,8 @@ module.exports = class ProviderView {
     const promises = currentSelection.map((file) => {
       if (file.isFolder) {
         return this.addFolder(file)
-      } else {
-        return this.addFile(file)
       }
+      return this.addFile(file)
     })
 
     this._loaderWrapper(Promise.all(promises), () => {
@@ -605,7 +605,8 @@ module.exports = class ProviderView {
     }
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
-    const browserProps = Object.assign({}, this.plugin.getPluginState(), {
+    const browserProps = {
+      ...this.plugin.getPluginState(),
       username: this.username,
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
@@ -628,8 +629,8 @@ module.exports = class ProviderView {
       showFilter: targetViewOptions.showFilter,
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
       pluginIcon: this.plugin.icon,
-      i18n: this.plugin.uppy.i18n
-    })
+      i18n: this.plugin.uppy.i18n,
+    }
 
     return (
       <CloseWrapper onUnmount={this.clearSelection}>

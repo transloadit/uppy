@@ -16,7 +16,7 @@ const DEFAULT_FIELD_NAME = 'files[]'
 const PROTOCOLS = Object.freeze({
   multipart: 'multipart',
   s3Multipart: 's3-multipart',
-  tus: 'tus'
+  tus: 'tus',
 })
 
 class Uploader {
@@ -118,9 +118,9 @@ class Uploader {
       storage: redis.client(),
       s3: req.companion.s3Client ? {
         client: req.companion.s3Client,
-        options: req.companion.options.providerOptions.s3
+        options: req.companion.options.providerOptions.s3,
       } : null,
-      headers: req.body.headers
+      headers: req.body.headers,
     }
   }
 
@@ -364,7 +364,7 @@ class Uploader {
 
     const dataToEmit = {
       action: 'progress',
-      payload: { progress: formatPercentage, bytesUploaded, bytesTotal }
+      payload: { progress: formatPercentage, bytesUploaded, bytesTotal },
     }
     this.saveState(dataToEmit)
 
@@ -384,7 +384,7 @@ class Uploader {
   emitSuccess (url, extraData = {}) {
     const emitData = {
       action: 'success',
-      payload: Object.assign(extraData, { complete: true, url })
+      payload: Object.assign(extraData, { complete: true, url }),
     }
     this.saveState(emitData)
     emitter().emit(this.token, emitData)
@@ -401,7 +401,7 @@ class Uploader {
     delete serializedErr.stack
     const dataToEmit = {
       action: 'error',
-      payload: Object.assign(extraData, { error: serializedErr })
+      payload: Object.assign(extraData, { error: serializedErr }),
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)
@@ -422,14 +422,13 @@ class Uploader {
       uploadSize: this.bytesWritten,
       headers: headerSanitize(this.options.headers),
       addRequestId: true,
-      metadata: Object.assign(
-        {
-          // file name and type as required by the tusd tus server
-          // https://github.com/tus/tusd/blob/5b376141903c1fd64480c06dde3dfe61d191e53d/unrouted_handler.go#L614-L646
-          filename: this.uploadFileName,
-          filetype: this.options.metadata.type
-        }, this.options.metadata
-      ),
+      metadata: {
+        // file name and type as required by the tusd tus server
+        // https://github.com/tus/tusd/blob/5b376141903c1fd64480c06dde3dfe61d191e53d/unrouted_handler.go#L614-L646
+        filename: this.uploadFileName,
+        filetype: this.options.metadata.type,
+        ...this.options.metadata,
+      },
       /**
        *
        * @param {Error} error
@@ -449,7 +448,7 @@ class Uploader {
       onSuccess () {
         uploader.emitSuccess(uploader.tus.url)
         uploader.cleanUp()
-      }
+      },
     })
 
     if (!this._paused) {
@@ -471,19 +470,17 @@ class Uploader {
     const headers = headerSanitize(this.options.headers)
     const reqOptions = { url: this.options.endpoint, headers, encoding: null }
     if (this.options.useFormData) {
-      reqOptions.formData = Object.assign(
-        {},
-        this.options.metadata,
-        {
-          [this.options.fieldname]: {
-            value: file,
-            options: {
-              filename: this.uploadFileName,
-              contentType: this.options.metadata.type
-            }
-          }
-        }
-      )
+      reqOptions.formData = {
+
+        ...this.options.metadata,
+        [this.options.fieldname]: {
+          value: file,
+          options: {
+            filename: this.uploadFileName,
+            contentType: this.options.metadata.type,
+          },
+        },
+      }
     } else {
       reqOptions.body = file
     }
@@ -503,7 +500,7 @@ class Uploader {
         responseText: body.toString(),
         status: response.statusCode,
         statusText: response.statusMessage,
-        headers
+        headers,
       }
 
       if (response.statusCode >= 400) {
@@ -547,7 +544,7 @@ class Uploader {
       Key: options.getKey(null, filename, this.options.metadata),
       ACL: options.acl,
       ContentType: this.options.metadata.type,
-      Body: stream
+      Body: stream,
     })
 
     this.s3Upload = upload
@@ -566,9 +563,9 @@ class Uploader {
           response: {
             responseText: JSON.stringify(data),
             headers: {
-              'content-type': 'application/json'
-            }
-          }
+              'content-type': 'application/json',
+            },
+          },
         })
       }
       this.cleanUp()

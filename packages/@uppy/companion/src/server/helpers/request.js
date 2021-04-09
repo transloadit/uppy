@@ -4,6 +4,7 @@ const { URL } = require('url')
 const dns = require('dns')
 const ipAddress = require('ip-address')
 const logger = require('../logger')
+
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 
 function isIPAddress (address) {
@@ -88,7 +89,8 @@ module.exports.getRedirectEvaluator = (requestURL, blockPrivateIPs) => {
     const shouldRedirect = redirectURL ? new URL(redirectURL).protocol === protocol : false
     if (!shouldRedirect) {
       logger.info(
-        `blocking redirect from ${requestURL} to ${redirectURL}`, 'redirect.protection')
+        `blocking redirect from ${requestURL} to ${redirectURL}`, 'redirect.protection'
+      )
     }
 
     return shouldRedirect
