@@ -13,7 +13,7 @@ window.setup = function (options) {
   id += 1
 
   // Initialise Uppy with Drag & Drop
-  const uppy = Uppy({ id: `uppy${id}`, debug: true })
+  const uppy = new Uppy({ id: `uppy${id}`, debug: true })
 
   uppy.use(Dashboard, { inline: true, target: '#dash' })
   uppy.use(Tus, {
@@ -22,7 +22,10 @@ window.setup = function (options) {
   })
   uppy.on('file-added', (file) => {
     randomColorImage().then((blob) => {
-      uppy.setFileState(file.id, { preview: URL.createObjectURL(blob) })
+      uppy.setFileState(file.id, {
+        // eslint-disable-next-line compat/compat
+        preview: URL.createObjectURL(blob),
+      })
     })
   })
 

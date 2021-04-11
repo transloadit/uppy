@@ -47,4 +47,10 @@ module.exports = {
   conf: 'text/plain',
   log: 'text/plain',
   pdf: 'application/pdf',
+  zip: 'application/zip',
+  '7z': 'application/x-7z-compressed',
+  rar: 'application/x-rar-compressed',
+  tar: 'application/x-tar',
+  gz: 'application/gzip',
+  dmg: 'application/x-apple-diskimage',
 }

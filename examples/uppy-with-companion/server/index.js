@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
 // initialize uppy
 const uppyOptions = {
   providerOptions: {
-    google: {
+    drive: {
       key: 'your google key',
       secret: 'your google secret',
     },
@@ -42,7 +42,15 @@ const uppyOptions = {
       key: 'your instagram key',
       secret: 'your instagram secret',
     },
-    // you can also add options for dropbox here
+    dropbox: {
+      key: 'your dropbox key',
+      secret: 'your dropbox secret',
+    },
+    box: {
+      key: 'your box key',
+      secret: 'your box secret',
+    },
+    // you can also add options for additional providers here
   },
   server: {
     host: 'localhost:3020',

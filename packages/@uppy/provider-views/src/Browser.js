@@ -1,35 +1,34 @@
 const classNames = require('classnames')
-const Breadcrumbs = require('./Breadcrumbs')
 const Filter = require('./Filter')
 const ItemList = require('./ItemList')
 const FooterActions = require('./FooterActions')
 const { h } = require('preact')
 
 const Browser = (props) => {
-  let filteredFolders = props.folders
-  let filteredFiles = props.files
+  const {
+    currentSelection,
+    folders,
+    files,
+    uppyFiles,
+    filterItems,
+    filterInput,
+  } = props
 
-  if (props.filterInput !== '') {
-    filteredFolders = props.filterItems(props.folders)
-    filteredFiles = props.filterItems(props.files)
+  let filteredFolders = folders
+  let filteredFiles = files
+
+  if (filterInput !== '') {
+    filteredFolders = filterItems(folders)
+    filteredFiles = filterItems(files)
   }
 
-  const selected = props.currentSelection.length
+  const selected = currentSelection.length
 
   return (
     <div className={classNames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${props.viewType}`)}>
       <div className="uppy-ProviderBrowser-header">
         <div className={classNames('uppy-ProviderBrowser-headerBar', !props.showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple')}>
-          {props.showBreadcrumbs && Breadcrumbs({
-            getFolder: props.getFolder,
-            directories: props.directories,
-            breadcrumbsIcon: props.pluginIcon && props.pluginIcon(),
-            title: props.title,
-          })}
-          <span className="uppy-ProviderBrowser-user">{props.username}</span>
-          <button type="button" onClick={props.logout} className="uppy-u-reset uppy-ProviderBrowser-userLogout">
-            {props.i18n('logOut')}
-          </button>
+          {props.headerComponent}
         </div>
       </div>
       {props.showFilter && <Filter {...props} />}
@@ -40,7 +39,6 @@ const Browser = (props) => {
         }]}
         folders={filteredFolders}
         files={filteredFiles}
-        activeRow={props.isActiveRow}
         sortByTitle={props.sortByTitle}
         sortByDate={props.sortByDate}
         isChecked={props.isChecked}
@@ -51,6 +49,9 @@ const Browser = (props) => {
         showTitles={props.showTitles}
         i18n={props.i18n}
         viewType={props.viewType}
+        validateRestrictions={props.validateRestrictions}
+        uppyFiles={uppyFiles}
+        currentSelection={currentSelection}
       />
       {selected > 0 && <FooterActions selected={selected} {...props} />}
     </div>

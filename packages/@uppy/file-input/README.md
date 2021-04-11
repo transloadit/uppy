@@ -3,7 +3,7 @@
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
 <a href="https://www.npmjs.com/package/@uppy/file-input"><img src="https://img.shields.io/npm/v/@uppy/file-input.svg?style=flat-square"></a>
-<a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
+<img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
 
 FileInput is the most barebones UI for selecting files—it shows a single button that, when clicked, opens up the browser’s file selector.
 
@@ -17,7 +17,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const FileInput = require('@uppy/file-input')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(FileInput, {
   // Options
 })
@@ -26,7 +26,7 @@ uppy.use(FileInput, {
 ## Installation
 
 ```bash
-$ npm install @uppy/file-input --save
+$ npm install @uppy/file-input
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

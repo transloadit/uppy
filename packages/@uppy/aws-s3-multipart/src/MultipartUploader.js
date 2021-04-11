@@ -18,6 +18,16 @@ const defaultOptions = {
   },
 }
 
+function ensureInt (value) {
+  if (typeof value === 'string') {
+    return parseInt(value, 10)
+  }
+  if (typeof value === 'number') {
+    return value
+  }
+  throw new TypeError('Expected a number')
+}
+
 class MultipartUploader {
   constructor (file, options) {
     this.options = {
@@ -72,9 +82,14 @@ class MultipartUploader {
     const minChunkSize = Math.max(5 * MB, Math.ceil(this.file.size / 10000))
     const chunkSize = Math.max(desiredChunkSize, minChunkSize)
 
-    for (let i = 0; i < this.file.size; i += chunkSize) {
-      const end = Math.min(this.file.size, i + chunkSize)
-      chunks.push(this.file.slice(i, end))
+    // Upload zero-sized files in one zero-sized chunk
+    if (this.file.size === 0) {
+      chunks.push(this.file)
+    } else {
+      for (let i = 0; i < this.file.size; i += chunkSize) {
+        const end = Math.min(this.file.size, i + chunkSize)
+        chunks.push(this.file.slice(i, end))
+      }
     }
 
     this.chunks = chunks
@@ -118,8 +133,9 @@ class MultipartUploader {
 
       parts.forEach((part) => {
         const i = part.PartNumber - 1
+
         this.chunkState[i] = {
-          uploaded: part.Size,
+          uploaded: ensureInt(part.Size),
           etag: part.ETag,
           done: true,
         }
@@ -162,7 +178,10 @@ class MultipartUploader {
     }
 
     candidates.forEach((index) => {
-      this._uploadPartRetryable(index).catch((err) => {
+      this._uploadPartRetryable(index).then(() => {
+        // Continue uploading parts
+        this._uploadParts()
+      }, (err) => {
         this._onError(err)
       })
     })
@@ -244,7 +263,7 @@ class MultipartUploader {
   }
 
   _onPartProgress (index, sent, total) {
-    this.chunkState[index].uploaded = sent
+    this.chunkState[index].uploaded = ensureInt(sent)
 
     const totalUploaded = this.chunkState.reduce((n, c) => n + c.uploaded, 0)
     this.options.onProgress(totalUploaded, this.file.size)
@@ -261,8 +280,6 @@ class MultipartUploader {
     this.parts.push(part)
 
     this.options.onPartComplete(part)
-
-    this._uploadParts()
   }
 
   _uploadPartBytes (index, url, headers) {
@@ -320,7 +337,7 @@ class MultipartUploader {
       // NOTE This must be allowed by CORS.
       const etag = ev.target.getResponseHeader('ETag')
       if (etag === null) {
-        defer.reject(new Error('AwsS3/Multipart: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. Seee https://uppy.io/docs/aws-s3-multipart#S3-Bucket-Configuration for instructions.'))
+        defer.reject(new Error('AwsS3/Multipart: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3-multipart#S3-Bucket-Configuration for instructions.'))
         return
       }
 

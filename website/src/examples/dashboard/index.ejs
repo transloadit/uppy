@@ -34,7 +34,7 @@ const ScreenCapture = require('@uppy/screen-capture')
 const ImageEditor = require('@uppy/image-editor')
 const Tus = require('@uppy/tus')
 
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   autoProceed: false,
   restrictions: {
@@ -56,7 +56,7 @@ const uppy = Uppy({
     { id: 'name', name: 'Name', placeholder: 'file name' },
     { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
   ],
-  browserBackButtonClose: true
+  browserBackButtonClose: false
 })
 .use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
 .use(Dropbox, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
@@ -66,7 +66,8 @@ const uppy = Uppy({
 .use(Webcam, { target: Dashboard })
 .use(ScreenCapture, { target: Dashboard })
 .use(ImageEditor, { target: Dashboard })
-.use(Tus, { endpoint: 'https://master.tus.io/files/' })
+.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
+.use(DropTarget, {target: document.body })
 
 uppy.on('complete', result => {
   console.log('successful files:', result.successful)

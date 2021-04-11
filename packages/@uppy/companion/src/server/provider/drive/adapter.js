@@ -1,5 +1,7 @@
 const querystring = require('querystring')
 
+// @todo use the "about" endpoint to get the username instead
+// see: https://developers.google.com/drive/api/v2/reference/about/get
 exports.getUsername = (data) => {
   for (const item of data.files) {
     if (item.ownedByMe && item.permissions) {
@@ -118,3 +120,17 @@ exports.getGsuiteExportType = (mimeType) => {
 
   return typeMaps[mimeType] || 'application/pdf'
 }
+
+exports.getImageHeight = (item) => item.imageMediaMetadata && item.imageMediaMetadata.height
+
+exports.getImageWidth = (item) => item.imageMediaMetadata && item.imageMediaMetadata.width
+
+exports.getImageRotation = (item) => item.imageMediaMetadata && item.imageMediaMetadata.rotation
+
+exports.getImageDate = (item) => item.imageMediaMetadata && item.imageMediaMetadata.date
+
+exports.getVideoHeight = (item) => item.videoMediaMetadata && item.videoMediaMetadata.height
+
+exports.getVideoWidth = (item) => item.videoMediaMetadata && item.videoMediaMetadata.width
+
+exports.getVideoDurationMillis = (item) => item.videoMediaMetadata && item.videoMediaMetadata.durationMillis

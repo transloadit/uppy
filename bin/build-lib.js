@@ -12,7 +12,7 @@ const stat = promisify(fs.stat)
 
 const SOURCE = 'packages/{*,@uppy/*}/src/**/*.js'
 // Files not to build (such as tests)
-const IGNORE = /\.test\.js$|__mocks__|companion\/|angular/
+const IGNORE = /\.test\.js$|__mocks__|svelte|companion\/|angular/
 // Files that should trigger a rebuild of everything on change
 const META_FILES = [
   'babel.config.js',
@@ -46,7 +46,7 @@ async function buildLib () {
       }
     }
 
-    const { code, map } = await transformFile(file, {})
+    const { code, map } = await transformFile(file, { sourceMaps: true })
     await mkdirp(path.dirname(libFile))
     await Promise.all([
       writeFile(libFile, code),

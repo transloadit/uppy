@@ -8,10 +8,11 @@ const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
+const findIndex = require('@uppy/utils/lib/findIndex')
 const supportsUploadProgress = require('./supportsUploadProgress')
 const { justErrorsLogger, debugLogger } = require('./loggers')
-const Plugin = require('./Plugin') // Exported from here.
-
+const Plugin = require('./Plugin')
+// Exported from here.
 class RestrictionError extends Error {
   constructor (...args) {
     super(...args)
@@ -54,6 +55,7 @@ class Uppy {
         // TODO: In 2.0 `exceedsSize2` should be removed in and `exceedsSize` updated to use substitution.
         exceedsSize2: '%{backwardsCompat} %{size}',
         exceedsSize: 'This file exceeds maximum allowed size of',
+        inferiorSize: 'This file is smaller than the allowed size of %{size}',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
         noNewAlreadyUploading: 'Cannot add new files: already uploading',
         noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
@@ -80,6 +82,9 @@ class Uppy {
         loading: 'Loading...',
         authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
         authenticateWith: 'Connect to %{pluginName}',
+        searchImages: 'Search for images',
+        enterTextToSearch: 'Enter text to search for images',
+        backToSearch: 'Back to Search',
         emptyFolderAdded: 'No files were added from empty folder',
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',
@@ -95,6 +100,8 @@ class Uppy {
       debug: false,
       restrictions: {
         maxFileSize: null,
+        minFileSize: null,
+        maxTotalFileSize: null,
         maxNumberOfFiles: null,
         minNumberOfFiles: null,
         allowedFileTypes: null,
@@ -104,6 +111,7 @@ class Uppy {
       onBeforeUpload: (files) => files,
       store: DefaultStore(),
       logger: justErrorsLogger,
+      infoTimeout: 5000,
     }
 
     // Merge default options with the ones set by user,
@@ -148,6 +156,7 @@ class Uppy {
     this.addFile = this.addFile.bind(this)
     this.removeFile = this.removeFile.bind(this)
     this.pauseResume = this.pauseResume.bind(this)
+    this.validateRestrictions = this.validateRestrictions.bind(this)
 
     // ___Why throttle at 500ms?
     //    - We must throttle at >250ms for superfocus in Dashboard to work well (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
@@ -416,44 +425,54 @@ class Uppy {
   }
 
   /**
-   * Check if minNumberOfFiles restriction is reached before uploading.
+   * A public wrapper for _checkRestrictions — checks if a file passes a set of restrictions.
+   * For use in UI pluigins (like Providers), to disallow selecting files that won’t pass restrictions.
    *
-   * @private
+   * @param {object} file object to check
+   * @param {Array} [files] array to check maxNumberOfFiles and maxTotalFileSize
+   * @returns {object} { result: true/false, reason: why file didn’t pass restrictions }
    */
-  _checkMinNumberOfFiles (files) {
-    const { minNumberOfFiles } = this.opts.restrictions
-    if (Object.keys(files).length < minNumberOfFiles) {
-      throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
+  validateRestrictions (file, files) {
+    try {
+      this._checkRestrictions(file, files)
+      return {
+        result: true,
+      }
+    } catch (err) {
+      return {
+        result: false,
+        reason: err.message,
+      }
     }
   }
 
   /**
-   * Check if file passes a set of restrictions set in options: maxFileSize,
+   * Check if file passes a set of restrictions set in options: maxFileSize, minFileSize,
    * maxNumberOfFiles and allowedFileTypes.
    *
-   * @param {object} files Object of IDs → files already added
    * @param {object} file object to check
+   * @param {Array} [files] array to check maxNumberOfFiles and maxTotalFileSize
    * @private
    */
-  _checkRestrictions (files, file) {
-    const { maxFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
+  _checkRestrictions (file, files = this.getFiles()) {
+    const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
 
     if (maxNumberOfFiles) {
-      if (Object.keys(files).length + 1 > maxNumberOfFiles) {
+      if (files.length + 1 > maxNumberOfFiles) {
         throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
       }
     }
 
     if (allowedFileTypes) {
       const isCorrectFileType = allowedFileTypes.some((type) => {
-        // is this is a mime-type
+        // check if this is a mime-type
         if (type.indexOf('/') > -1) {
           if (!file.type) return false
           return match(file.type.replace(/;.*?$/, ''), type)
         }
 
         // otherwise this is likely an extension
-        if (type[0] === '.') {
+        if (type[0] === '.' && file.extension) {
           return file.extension.toLowerCase() === type.substr(1).toLowerCase()
         }
         return false
@@ -465,14 +484,50 @@ class Uppy {
       }
     }
 
+    // We can't check maxTotalFileSize if the size is unknown.
+    if (maxTotalFileSize && file.size != null) {
+      let totalFilesSize = 0
+      totalFilesSize += file.size
+      files.forEach((file) => {
+        totalFilesSize += file.size
+      })
+      if (totalFilesSize > maxTotalFileSize) {
+        throw new RestrictionError(this.i18n('exceedsSize2', {
+          backwardsCompat: this.i18n('exceedsSize'),
+          size: prettierBytes(maxTotalFileSize),
+        }))
+      }
+    }
+
     // We can't check maxFileSize if the size is unknown.
-    if (maxFileSize && file.data.size != null) {
-      if (file.data.size > maxFileSize) {
+    if (maxFileSize && file.size != null) {
+      if (file.size > maxFileSize) {
         throw new RestrictionError(this.i18n('exceedsSize2', {
           backwardsCompat: this.i18n('exceedsSize'),
           size: prettierBytes(maxFileSize),
         }))
       }
+    }
+
+    // We can't check minFileSize if the size is unknown.
+    if (minFileSize && file.size != null) {
+      if (file.size < minFileSize) {
+        throw new RestrictionError(this.i18n('inferiorSize', {
+          size: prettierBytes(minFileSize),
+        }))
+      }
+    }
+  }
+
+  /**
+   * Check if minNumberOfFiles restriction is reached before uploading.
+   *
+   * @private
+   */
+  _checkMinNumberOfFiles (files) {
+    const { minNumberOfFiles } = this.opts.restrictions
+    if (Object.keys(files).length < minNumberOfFiles) {
+      throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
     }
   }
 
@@ -507,7 +562,7 @@ class Uppy {
     // Sometimes informer has to be shown manually by the developer,
     // for example, in `onBeforeFileAdded`.
     if (showInformer) {
-      this.info({ message, details }, 'error', 5000)
+      this.info({ message, details }, 'error', this.opts.infoTimeout)
     }
 
     if (throwErr) {
@@ -593,7 +648,8 @@ class Uppy {
     }
 
     try {
-      this._checkRestrictions(files, newFile)
+      const filesArray = Object.keys(files).map(i => files[i])
+      this._checkRestrictions(newFile, filesArray)
     } catch (err) {
       this._showOrLogErrorAndThrow(err, { file: newFile })
     }
@@ -637,6 +693,7 @@ class Uppy {
     })
 
     this.emit('file-added', newFile)
+    this.emit('files-added', [newFile])
     this.log(`Added file: ${newFile.name}, ${newFile.id}, mime type: ${newFile.type}`)
 
     this._startIfAutoProceed()
@@ -676,6 +733,8 @@ class Uppy {
       this.emit('file-added', newFile)
     })
 
+    this.emit('files-added', newFiles)
+
     if (newFiles.length > 5) {
       this.log(`Added batch of ${newFiles.length} files`)
     } else {
@@ -697,7 +756,7 @@ class Uppy {
       this.info({
         message: this.i18n('addBulkFilesFailed', { smart_count: errors.length }),
         details: message,
-      }, 'error', 5000)
+      }, 'error', this.opts.infoTimeout)
 
       const err = new Error(message)
       err.errors = errors
@@ -1060,6 +1119,9 @@ class Uppy {
       this.setFileState(file.id, {
         progress: {
           ...currentProgress,
+          postprocess: this.postProcessors.length > 0 ? {
+            mode: 'indeterminate',
+          } : null,
           uploadComplete: true,
           percentage: 100,
           bytesUploaded: currentProgress.bytesTotal,
@@ -1109,8 +1171,15 @@ class Uppy {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
-      const files = { ...this.getState().files }
-      files[file.id] = { ...files[file.id], progress: { ...files[file.id].progress } }
+      const files = {
+        ...this.getState().files,
+      }
+      files[file.id] = {
+        ...files[file.id],
+        progress: {
+          ...files[file.id].progress,
+        },
+      }
       delete files[file.id].progress.postprocess
       // TODO should we set some kind of `fullyComplete` property on the file object
       // so it's easier to see that the file is upload…fully complete…rather than
@@ -1242,14 +1311,22 @@ class Uppy {
     }
 
     const list = this.plugins[instance.type].slice()
-    const index = list.indexOf(instance)
+    // list.indexOf failed here, because Vue3 converted the plugin instance
+    // to a Proxy object, which failed the strict comparison test:
+    // obj !== objProxy
+    const index = findIndex(list, item => item.id === instance.id)
     if (index !== -1) {
       list.splice(index, 1)
       this.plugins[instance.type] = list
     }
 
-    const updatedState = this.getState()
-    delete updatedState.plugins[instance.id]
+    const state = this.getState()
+    const updatedState = {
+      plugins: {
+        ...state.plugins,
+        [instance.id]: undefined,
+      },
+    }
     this.setState(updatedState)
   }
 
@@ -1452,9 +1529,16 @@ class Uppy {
           return
         }
 
-        const updatedUpload = { ...currentUpload, step }
+        const updatedUpload = {
+          ...currentUpload,
+          step,
+        }
+
         this.setState({
-          currentUploads: { ...currentUploads, [uploadID]: updatedUpload },
+          currentUploads: {
+            ...currentUploads,
+            [uploadID]: updatedUpload,
+          },
         })
 
         // TODO give this the `updatedUpload` object as its only parameter maybe?
@@ -1480,8 +1564,24 @@ class Uppy {
         return
       }
 
-      const files = currentUpload.fileIDs
-        .map((fileID) => this.getFile(fileID))
+      // Mark postprocessing step as complete if necessary; this addresses a case where we might get
+      // stuck in the postprocessing UI while the upload is fully complete.
+      // If the postprocessing steps do not do any work, they may not emit postprocessing events at
+      // all, and never mark the postprocessing as complete. This is fine on its own but we
+      // introduced code in the @uppy/core upload-success handler to prepare postprocessing progress
+      // state if any postprocessors are registered. That is to avoid a "flash of completed state"
+      // before the postprocessing plugins can emit events.
+      //
+      // So, just in case an upload with postprocessing plugins *has* completed *without* emitting
+      // postprocessing completion, we do it instead.
+      currentUpload.fileIDs.forEach((fileID) => {
+        const file = this.getFile(fileID)
+        if (file && file.progress.postprocess) {
+          this.emit('postprocess-complete', file)
+        }
+      })
+
+      const files = currentUpload.fileIDs.map((fileID) => this.getFile(fileID))
       const successful = files.filter((file) => !file.error)
       const failed = files.filter((file) => file.error)
       this.addResultData(uploadID, { successful, failed, uploadID })

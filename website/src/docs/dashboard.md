@@ -80,6 +80,10 @@ uppy.use(Dashboard, {
   hidePauseResumeButton: false,
   hideCancelButton: false,
   hideProgressAfterFinish: false,
+  doneButtonHandler: () => {
+    this.uppy.reset()
+    this.requestCloseModal()
+  },
   note: null,
   closeModalOnClickOutside: false,
   closeAfterFinish: false,
@@ -88,13 +92,15 @@ uppy.use(Dashboard, {
   disableThumbnailGenerator: false,
   disablePageScrollWhenModalOpen: true,
   animateOpenClose: true,
+  fileManagerSelectionType: 'files',
   proudlyDisplayPoweredByUppy: true,
   onRequestCloseModal: () => this.closeModal(),
   showSelectedFiles: true,
   showRemoveButtonAfterComplete: false,
   locale: defaultLocale,
   browserBackButtonClose: false,
-  theme: 'light'
+  theme: 'light',
+  autoOpenFileEditor: false
 })
 ```
 
@@ -183,6 +189,19 @@ Use this if you are providing a custom retry button somewhere, and using the `up
 
 Hide Status Bar after the upload has finished.
 
+### `doneButtonHandler`
+
+This option is passed to the StatusBar, and will render a “Done” button in place of pause/resume/cancel buttons, once the upload/encoding is done. The behaviour of this “Done” button is defined by the handler function — can be used to close file picker modals or clear the upload state. This is what the Dashboard sets by default:
+
+```js
+doneButtonHandler: () => {
+  this.uppy.reset()
+  this.requestCloseModal()
+}
+```
+
+Set to `null` to disable the “Done” button.
+
 ### `showSelectedFiles: true`
 
 Show the list (grid) of selected files with preview and file name. In case you are showing selected files in your own app’s UI and want the Uppy Dashboard to just be a picker, the list can be hidden with this option.
@@ -209,7 +228,7 @@ Optionally, specify a string of text that explains something about the upload fo
 
 ### `metaFields: []`
 
-An array of UI field objects that will be shown when a user clicks the “edit” button on that file. Configuring this enables the “edit” button on file cards. Each object requires:
+An array of UI field objects, or a function that takes a [File Object](https://uppy.io/docs/uppy/#File-Objects) and returns an array of UI field objects, that will be shown when a user clicks the “edit” button on that file. Configuring this enables the “edit” button on file cards. Each object requires:
 
 - `id`, the name of the meta field. Note: this will also be used in CSS/HTML as part of the `id` attribute, so it’s better to [avoid using characters like periods, semicolons, etc](https://stackoverflow.com/a/79022).
 - `name`, the label shown in the interface.
@@ -230,6 +249,33 @@ It gets passed `({value, onChange}, h)` where `value` is the current value of th
       return h('input', { type: 'checkbox', onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'on' })
     } }
   ]
+})
+```
+
+If you’d like the meta fields to be dynamically assigned depending on, for instance, the file type, pass a function:
+
+```js
+.use(Dashboard, {
+  trigger: '#pick-files',
+  metaFields: (file) => {
+    const fields = [{ id: 'name', name: 'File name' }]
+    if (file.type.startsWith('image/')) {
+      fields.push({ id: 'location', name: 'Photo Location' })
+      fields.push({ id: 'alt', name: 'Alt text' })
+      fields.push({
+        id: 'public',
+        name: 'Public',
+        render: ({ value, onChange }, h) => {
+          return h('input', {
+            type: 'checkbox',
+            onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'),
+            defaultChecked: value === 'on',
+          })
+        },
+      })
+    }
+    return fields
+  },
 })
 ```
 
@@ -256,6 +302,10 @@ Page scrolling is disabled by default when the Dashboard modal is open, so when 
 ### `animateOpenClose: true`
 
 Add light animations when the modal dialog is opened or closed, for a more satisfying user experience.
+
+### `fileManagerSelectionType: 'files'`
+
+Configure the type of selections allowed when browsing your file system via the file manager selection window. May be either 'files', 'folders', or 'both'. Selecting entire folders for upload may not be supported on all [browsers](https://caniuse.com/#feat=input-file-directory).
 
 ### `proudlyDisplayPoweredByUppy: true`
 
@@ -385,14 +435,36 @@ Remove all children of the `target` element before mounting the Dashboard. By de
 
 ### `theme: 'light'`
 
-Uppy Dashboard supports “Dark Mode”. You can try it live on [the Dashboard example page](http://localhost:4000/examples/dashboard/).
+Uppy Dashboard supports “Dark Mode”. You can try it live on [the Dashboard example page](https://uppy.io/examples/dashboard/).
 
 There are three options:
+
 - `light` — the default
 - `dark`
 - `auto` — will respect the user’s system settings and switch automatically
 
 ![Uppy dark mode screenshot](/images/uppy-dashboard-dark-mar-2020.png)
+
+### `autoOpenFileEditor: false`
+
+Automatically open file editor (see [`@uppy/image-editor`](/docs/image-editor/)) for the first file in a batch. If one file is added, editor opens for that file, if 10 files are added — editor opens for the first file.
+
+Use case: user adds an image — Uppy opens Image Editor right away — user crops / adjusts the image — upload.
+
+### `disabled: false`
+
+Enabling this option makes the Dashboard grayed-out and non-interactive. Users won’t be able to click on buttons or drop files.
+
+Useful when you need to conditionally enable/disable file uploading or manipulation, based on a condition in your app. Can be set on init or via API:
+
+```js
+const dashboard = uppy.getPlugin('Dashboard')
+dashboard.setOptions({ disabled: true })
+
+userNameInput.addEventListener('change', () => {
+  dashboard.setOptions({ disabled: false })
+})
+```
 
 ## Methods
 
@@ -437,8 +509,16 @@ Fired when the Dashboard modal is closed.
 
 ### `dashboard:file-edit-start`
 
+**Parameters:**
+
+- `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was opened for editing.
+
 Fired when the user clicks “edit” icon next to a file in the Dashboard. The FileCard panel is then open with file metadata available for editing.
 
 ### `dashboard:file-edit-complete`
+
+**Parameters:**
+
+- `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was edited.
 
 Fired when the user finished editing the file metadata.

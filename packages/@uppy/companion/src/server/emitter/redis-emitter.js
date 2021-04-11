@@ -11,15 +11,16 @@ class RedisEmitter extends NRP {
    *
    * @param {string} redisUrl redis URL
    */
-  constructor (redisUrl) {
+  constructor (redisUrl, redisPubSubScope) {
     // @ts-ignore
-    super({ url: redisUrl })
+    super({ url: redisUrl, scope: redisPubSubScope })
   }
 
   /**
    * Add a one-off event listener
+   *
    * @param {string} eventName name of the event
-   * @param {function} handler the handler of the event
+   * @param {Function} handler the handler of the event
    */
   once (eventName, handler) {
     const removeListener = this.on(eventName, (message) => {
@@ -30,6 +31,7 @@ class RedisEmitter extends NRP {
 
   /**
    * Announce the occurence of an event
+   *
    * @param {string} eventName name of the event
    * @param {object} message the message to pass along with the event
    */
@@ -39,8 +41,9 @@ class RedisEmitter extends NRP {
 
   /**
    * Remove an event listener
+   *
    * @param {string} eventName name of the event
-   * @param {function} handler the handler of the event to remove
+   * @param {Function} handler the handler of the event to remove
    */
   removeListener (eventName, handler) {
     this.receiver.removeListener(eventName, handler)
@@ -49,6 +52,7 @@ class RedisEmitter extends NRP {
 
   /**
    * Remove all listeners of an event
+   *
    * @param {string} eventName name of the event
    */
   removeAllListeners (eventName) {
@@ -57,6 +61,6 @@ class RedisEmitter extends NRP {
   }
 }
 
-module.exports = (redisUrl) => {
-  return new RedisEmitter(redisUrl)
+module.exports = (redisUrl, redisPubSubScope) => {
+  return new RedisEmitter(redisUrl, redisPubSubScope)
 }

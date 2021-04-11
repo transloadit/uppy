@@ -24,8 +24,11 @@ function httpHeaderSafeJson (v) {
 class DropBox extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = options.provider = DropBox.authProvider
-    this.client = purest(options)
+    this.authProvider = DropBox.authProvider
+    this.client = purest({
+      ...options,
+      provider: DropBox.authProvider,
+    })
     // needed for the thumbnails fetched via companion
     this.needsCookieAuth = true
   }
@@ -47,7 +50,7 @@ class DropBox extends Provider {
    * it then waits till both requests are done before proceeding with the callback
    *
    * @param {object} options
-   * @param {function} done
+   * @param {Function} done
    */
   list (options, done) {
     let userInfoDone = false
@@ -56,10 +59,9 @@ class DropBox extends Provider {
     let stats
     let reqErr
     const finishReq = () => {
-      if (reqErr || stats.statusCode !== 200) {
-        const err = this._error(reqErr, stats)
-        logger.error(err, 'provider.dropbox.list.error')
-        done(err)
+      if (reqErr) {
+        logger.error(reqErr, 'provider.dropbox.list.error')
+        done(reqErr)
       } else {
         stats.body.user_email = userInfo.body.email
         done(null, this.adaptData(stats.body, options.companion))
@@ -69,6 +71,9 @@ class DropBox extends Provider {
     this.stats(options, (err, resp) => {
       statsDone = true
       stats = resp
+      if (err || resp.statusCode !== 200) {
+        err = this._error(err, resp)
+      }
       reqErr = reqErr || err
       if (userInfoDone) {
         finishReq()
@@ -78,6 +83,10 @@ class DropBox extends Provider {
     this._userInfo(options, (err, resp) => {
       userInfoDone = true
       userInfo = resp
+      if (err || resp.statusCode !== 200) {
+        err = this._error(err, resp)
+      }
+
       reqErr = reqErr || err
       if (statsDone) {
         finishReq()
@@ -105,6 +114,7 @@ class DropBox extends Provider {
       .auth(token)
       .json({
         path: `${directory || ''}`,
+        include_non_downloadable_files: false,
       })
       .request(done)
   }
@@ -181,7 +191,7 @@ class DropBox extends Provider {
       .auth(token)
       .request((err, resp) => {
         if (err || resp.statusCode !== 200) {
-          logger.error(err, 'provider.dropbox.size.error')
+          logger.error(err, 'provider.dropbox.logout.error')
           done(this._error(err, resp))
           return
         }

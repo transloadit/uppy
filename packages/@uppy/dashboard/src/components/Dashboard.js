@@ -5,25 +5,13 @@ const PickerPanelContent = require('./PickerPanelContent')
 const EditorPanel = require('./EditorPanel')
 const PanelTopBar = require('./PickerPanelTopBar')
 const FileCard = require('./FileCard')
+const Slide = require('./Slide')
 const classNames = require('classnames')
 const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 const { h } = require('preact')
-const PreactCSSTransitionGroup = require('preact-css-transition-group')
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
-
-function TransitionWrapper (props) {
-  return (
-    <PreactCSSTransitionGroup
-      transitionName="uppy-transition-slideDownUp"
-      transitionEnterTimeout={250}
-      transitionLeaveTimeout={250}
-    >
-      {props.children}
-    </PreactCSSTransitionGroup>
-  )
-}
 
 const WIDTH_XL = 900
 const WIDTH_LG = 700
@@ -34,9 +22,13 @@ module.exports = function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
   const isSizeMD = props.containerWidth > WIDTH_MD
 
-  const dashboardClassName = classNames({
+  const wrapperClassName = classNames({
     'uppy-Root': props.isTargetDOMEl,
+  })
+
+  const dashboardClassName = classNames({
     'uppy-Dashboard': true,
+    'uppy-Dashboard--isDisabled': props.disabled,
     'uppy-Dashboard--animateOpenClose': props.animateOpenClose,
     'uppy-Dashboard--isClosing': props.isClosing,
     'uppy-Dashboard--isDraggingOver': props.isDraggingOver,
@@ -61,13 +53,14 @@ module.exports = function Dashboard (props) {
 
   const showFileList = props.showSelectedFiles && !noFiles
 
-  return (
+  const dashboard = (
     <div
       className={dashboardClassName}
       data-uppy-theme={props.theme}
       data-uppy-num-acquirers={props.acquirers.length}
       data-uppy-drag-drop-supported={isDragDropSupported()}
       aria-hidden={props.inline ? 'false' : props.isHidden}
+      aria-disabled={props.disabled}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
       onPaste={props.handlePaste}
       onDragOver={props.handleDragOver}
@@ -118,21 +111,21 @@ module.exports = function Dashboard (props) {
             <AddFiles {...props} isSizeMD={isSizeMD} />
           )}
 
-          <TransitionWrapper>
+          <Slide>
             {props.showAddFilesPanel ? <AddFilesPanel key="AddFiles" {...props} isSizeMD={isSizeMD} /> : null}
-          </TransitionWrapper>
+          </Slide>
 
-          <TransitionWrapper>
+          <Slide>
             {props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null}
-          </TransitionWrapper>
+          </Slide>
 
-          <TransitionWrapper>
+          <Slide>
             {props.activePickerPanel ? <PickerPanelContent key="Picker" {...props} /> : null}
-          </TransitionWrapper>
+          </Slide>
 
-          <TransitionWrapper>
+          <Slide>
             {props.showFileEditor ? <EditorPanel key="Editor" {...props} /> : null}
-          </TransitionWrapper>
+          </Slide>
 
           <div className="uppy-Dashboard-progressindicators">
             {props.progressindicators.map((target) => {
@@ -141,6 +134,13 @@ module.exports = function Dashboard (props) {
           </div>
         </div>
       </div>
+    </div>
+  )
+
+  return (
+    // Wrap it for RTL language support
+    <div className={wrapperClassName} dir={props.direction}>
+      {dashboard}
     </div>
   )
 }

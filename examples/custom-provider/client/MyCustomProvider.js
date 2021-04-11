@@ -1,6 +1,6 @@
 const { Plugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
-const ProviderViews = require('@uppy/provider-views')
+const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
 module.exports = class MyCustomProvider extends Plugin {
@@ -35,16 +35,6 @@ module.exports = class MyCustomProvider extends Plugin {
   install () {
     this.view = new ProviderViews(this, {
       provider: this.provider,
-    })
-    // Set default state
-    this.setPluginState({
-      authenticated: false,
-      files: [],
-      folders: [],
-      directories: [],
-      activeRow: -1,
-      filterInput: '',
-      isSearchVisible: false,
     })
 
     const target = this.opts.target

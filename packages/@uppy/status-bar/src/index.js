@@ -4,6 +4,7 @@ const StatusBarUI = require('./StatusBar')
 const statusBarStates = require('./StatusBarStates')
 const getSpeed = require('@uppy/utils/lib/getSpeed')
 const getBytesRemaining = require('@uppy/utils/lib/getBytesRemaining')
+const getTextDirection = require('@uppy/utils/lib/getTextDirection')
 
 /**
  * StatusBar: renders a status bar with upload/pause/resume/cancel/retry buttons,
@@ -26,9 +27,11 @@ module.exports = class StatusBar extends Plugin {
         uploadFailed: 'Upload failed',
         paused: 'Paused',
         retry: 'Retry',
+        retryUpload: 'Retry upload',
         cancel: 'Cancel',
         pause: 'Pause',
         resume: 'Resume',
+        done: 'Done',
         filesUploadedOfTotal: {
           0: '%{complete} of %{smart_count} file uploaded',
           1: '%{complete} of %{smart_count} files uploaded',
@@ -59,6 +62,7 @@ module.exports = class StatusBar extends Plugin {
       hideCancelButton: false,
       showProgressDetails: false,
       hideAfterFinish: true,
+      doneButtonHandler: null,
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -225,6 +229,7 @@ module.exports = class StatusBar extends Plugin {
       retryAll: this.uppy.retryAll,
       cancelAll: this.uppy.cancelAll,
       startUpload: this.startUpload,
+      doneButtonHandler: this.opts.doneButtonHandler,
       resumableUploads,
       supportsUploadProgress,
       showProgressDetails: this.opts.showProgressDetails,
@@ -235,6 +240,15 @@ module.exports = class StatusBar extends Plugin {
       hideAfterFinish: this.opts.hideAfterFinish,
       isTargetDOMEl: this.isTargetDOMEl,
     })
+  }
+
+  onMount () {
+    // Set the text direction if the page has not defined one.
+    const element = this.el
+    const direction = getTextDirection(element)
+    if (!direction) {
+      element.dir = 'ltr'
+    }
   }
 
   install () {

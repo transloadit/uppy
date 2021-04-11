@@ -34,7 +34,7 @@
     right: auto;
     width: 280px;
     padding-top: 30px;
-    padding-left: 60px;
+    padding-left: 20px;
     margin-right: 20px;
     overflow-x: hidden;
     overflow-y: auto;
@@ -52,6 +52,10 @@
     .main-menu { display: none; }
     &::-webkit-scrollbar { width: 0 !important; }
     h2 { margin-top: .2em; }
+  }
+
+  @media #{$screen-large} {
+    padding-left: 60px;
   }
 
   ul {
@@ -141,6 +145,7 @@
   max-width: 600px;
   margin: 0 auto;
   font-size: 18px;
+  word-wrap: break-word; // it prevents long code blocks from breaking the layout
 
   @media #{$screen-medium} {
     padding: 2.2em 0;
@@ -181,19 +186,39 @@
     vertical-align: middle;
   }
 
+  .table-responsive {
+    @media screen and (max-width: 767px) {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
   table {
     width: 100%;
     text-align: left;
-    display: block;
     font-size: 85%;
-    border-spacing: 10px;
-    overflow-x: auto;
+    border-collapse: collapse;
   }
 
-  table td { 
+  table th {
+    padding: 8px 8px 4px;
+  }
+
+  table td {
+    padding: 14px 8px;
     vertical-align: top;
-    padding: 8px;
     border-bottom: 1px solid #eee;
+  }
+
+  // Remove the last row's border-bottom
+table tr:last-child td {
+  border-bottom: 0;
+}
+
+  // Don't set padding for the first column cells
+  table th:first-child,
+  table td:first-child {
+    padding-left: 0;
   }
 
   .light {
@@ -242,7 +267,7 @@
 
   .post h3,
   > h3 {
-    margin: 3em 0 1.2em;
+    margin: 3em 0 1em;
     position: relative;
     &:before {
       content: "#";
@@ -257,7 +282,8 @@
 
   .post h4,
   > h4 {
-    font-size: 0.8em;
+    font-size: 1em;
+    margin-bottom: 0.5em;
   }
 
   .post figure, .post ul, .post ol,
@@ -362,21 +388,9 @@
 
 // Support page table overrides
 
-.page-support table {
-  overflow: visible;
-}
-.page-support .highlight table {
-  overflow: scroll;
-}
 .page-support table tr:first-child td {
   white-space: nowrap;
   font-size: 90%;
-}
-
-// Privacy policy table overrides
-
-.page-privacy table td {
-  padding: 8px 0;
 }
 
 // Plugin list

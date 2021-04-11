@@ -4,33 +4,67 @@
 // @ts-ignore
 const config = require('@purest/providers')
 const dropbox = require('./dropbox')
+const box = require('./box')
 const drive = require('./drive')
-const instagram = require('./instagram')
-const instagramGraph = require('./instagram/graph')
+const instagram = require('./instagram/graph')
 const facebook = require('./facebook')
 const onedrive = require('./onedrive')
+const unsplash = require('./unsplash')
+const zoom = require('./zoom')
 const { getURLBuilder } = require('../helpers/utils')
 const logger = require('../logger')
+const { getCredentialsResolver } = require('./credentials')
 // eslint-disable-next-line
 const Provider = require('./Provider')
+// eslint-disable-next-line
+const SearchProvider = require('./SearchProvider')
+
+// leave here for now until Purest Providers gets updated with Zoom provider
+config.zoom = {
+  'https://zoom.us/': {
+    __domain: {
+      auth: {
+        auth: { bearer: '[0]' },
+      },
+    },
+    '[version]/{endpoint}': {
+      __path: {
+        alias: '__default',
+        version: 'v2',
+      },
+    },
+    'oauth/revoke': {
+      __path: {
+        alias: 'logout',
+        auth: {
+          auth: { basic: '[0]' },
+        },
+      },
+    },
+  },
+}
 
 /**
  * adds the desired provider module to the request object,
  * based on the providerName parameter specified
  *
- * @param {Object.<string, typeof Provider>} providers
+ * @param {Object.<string, (typeof Provider) | typeof SearchProvider>} providers
+ * @param {boolean=} needsProviderCredentials
  */
-module.exports.getProviderMiddleware = (providers) => {
+module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => {
   /**
    *
    * @param {object} req
    * @param {object} res
-   * @param {function} next
+   * @param {Function} next
    * @param {string} providerName
    */
   const middleware = (req, res, next, providerName) => {
     if (providers[providerName] && validOptions(req.companion.options)) {
       req.companion.provider = new providers[providerName]({ providerName, config })
+      if (needsProviderCredentials) {
+        req.companion.getProviderCredentials = getCredentialsResolver(providerName, req.companion.options, req)
+      }
     } else {
       logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid', req.id)
     }
@@ -42,21 +76,20 @@ module.exports.getProviderMiddleware = (providers) => {
 
 /**
  * @param {{server: object, providerOptions: object}} companionOptions
- * @return {Object.<string, typeof Provider>}
+ * @returns {Object.<string, typeof Provider>}
  */
 module.exports.getDefaultProviders = (companionOptions) => {
-  const { providerOptions } = companionOptions || { providerOptions: null }
   // @todo: we should rename drive to googledrive or google-drive or google
-  const providers = { dropbox, drive, facebook, onedrive }
-  // Instagram's Graph API key is just numbers, while the old API key is hex
-  const usesGraphAPI = () => /^\d+$/.test(providerOptions.instagram.key)
-  if (providerOptions && providerOptions.instagram && usesGraphAPI()) {
-    providers.instagram = instagramGraph
-  } else {
-    providers.instagram = instagram
-  }
+  const providers = { dropbox, box, drive, facebook, onedrive, zoom, instagram }
 
   return providers
+}
+
+/**
+ * @returns {Object.<string, typeof SearchProvider>}
+ */
+module.exports.getSearchProviders = () => {
+  return { unsplash }
 }
 
 /**
@@ -106,6 +139,10 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
       // explicitly add providerOptions so users don't override other providerOptions.
       grantConfig[authProvider].key = providerOptions[providerName].key
       grantConfig[authProvider].secret = providerOptions[providerName].secret
+      if (providerOptions[providerName].credentialsURL) {
+        grantConfig[authProvider].dynamic = ['key', 'secret', 'redirect_uri']
+      }
+
       const provider = exports.getDefaultProviders(companionOptions)[providerName]
       Object.assign(grantConfig[authProvider], provider.getExtraConfig())
 
@@ -124,8 +161,8 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
       } else if (server.path) {
         grantConfig[authProvider].callback = `${server.path}${grantConfig[authProvider].callback}`
       }
-    } else if (authProvider !== 's3') {
-      logger.warn(`skipping one found unsupported provider "${authProvider}".`, 'provider.options.skip')
+    } else if (!['s3', 'searchProviders'].includes(providerName)) {
+      logger.warn(`skipping one found unsupported provider "${providerName}".`, 'provider.options.skip')
     }
   })
 }
@@ -134,7 +171,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
  *
  * @param {string} name of the provider
  * @param {{server: object, providerOptions: object}} options
- * @return {string} the authProvider for this provider
+ * @returns {string} the authProvider for this provider
  */
 const providerNameToAuthName = (name, options) => {
   const providers = exports.getDefaultProviders(options)

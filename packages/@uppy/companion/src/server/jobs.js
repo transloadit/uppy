@@ -1,11 +1,12 @@
 const schedule = require('node-schedule')
-const { FILE_NAME_PREFIX } = require('./Uploader')
 const fs = require('fs')
 const path = require('path')
+const { FILE_NAME_PREFIX } = require('./Uploader')
 const logger = require('./logger')
 
 /**
  * Runs a function every 24 hours, to clean up stale, upload related files.
+ *
  * @param {string} dirPath path to the directory which you want to clean
  */
 exports.startCleanUpJob = (dirPath) => {

@@ -15,7 +15,6 @@ app.use(session({
 }))
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
   res.setHeader(
     'Access-Control-Allow-Methods',
     'GET, POST, OPTIONS, PUT, PATCH, DELETE'
@@ -40,9 +39,9 @@ const ACCESS_URL = 'https://unsplash.com/oauth/token'
 // initialize uppy
 const uppyOptions = {
   providerOptions: {
-    google: {
-      key: 'your google key',
-      secret: 'your google secret',
+    drive: {
+      key: 'your google drive key',
+      secret: 'your google drive secret',
     },
   },
   customProviders: {
@@ -54,8 +53,6 @@ const uppyOptions = {
         oauth: 2,
         key: 'your unsplash key here',
         secret: 'your unsplash secret here',
-        callback: '/myunsplash/callback',
-        transport: 'session',
       },
       // you provider module
       module: require('./customprovider'),

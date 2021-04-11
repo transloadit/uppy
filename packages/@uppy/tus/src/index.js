@@ -71,6 +71,7 @@ module.exports = class Tus extends Plugin {
       useFastRemoteRetry: true,
       limit: 0,
       retryDelays: [0, 1000, 3000, 5000],
+      withCredentials: false,
     }
 
     // merge default options with the ones set by user
@@ -198,6 +199,15 @@ module.exports = class Tus extends Plugin {
       // the other in folder b.
       uploadOptions.fingerprint = getFingerprint(file)
 
+      uploadOptions.onBeforeRequest = (req) => {
+        const xhr = req.getUnderlyingObject()
+        xhr.withCredentials = !!opts.withCredentials
+
+        if (typeof opts.onBeforeRequest === 'function') {
+          opts.onBeforeRequest(req)
+        }
+      }
+
       uploadOptions.onError = (err) => {
         this.uppy.log(err)
 
@@ -246,7 +256,7 @@ module.exports = class Tus extends Plugin {
         }
       }
 
-      /** @type {{ [name: string]: string }} */
+      /** @type {Record<string, string>} */
       const meta = {}
       const metaFields = Array.isArray(opts.metaFields)
         ? opts.metaFields

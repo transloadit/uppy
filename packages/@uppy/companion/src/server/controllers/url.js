@@ -1,10 +1,9 @@
 const router = require('express').Router
 const request = require('request')
 const { URL } = require('url')
-const Uploader = require('../Uploader')
 const validator = require('validator')
-const utils = require('../helpers/utils')
-const { getProtectedHttpAgent, getRedirectEvaluator } = require('../helpers/request')
+const Uploader = require('../Uploader')
+const reqUtil = require('../helpers/request')
 const logger = require('../logger')
 
 module.exports = () => {
@@ -21,13 +20,13 @@ module.exports = () => {
  */
 const meta = (req, res) => {
   logger.debug('URL file import handler running', null, req.id)
-  const debug = req.companion.options.debug
+  const { debug } = req.companion.options
   if (!validateURL(req.body.url, debug)) {
     logger.debug('Invalid request body detected. Exiting url meta handler.', null, req.id)
     return res.status(400).json({ error: 'Invalid request body' })
   }
 
-  utils.getURLMeta(req.body.url, !debug)
+  reqUtil.getURLMeta(req.body.url, !debug)
     .then((meta) => res.json(meta))
     .catch((err) => {
       logger.error(err, 'controller.url.meta.error', req.id)
@@ -45,13 +44,13 @@ const meta = (req, res) => {
  */
 const get = (req, res) => {
   logger.debug('URL file import handler running', null, req.id)
-  const debug = req.companion.options.debug
+  const { debug } = req.companion.options
   if (!validateURL(req.body.url, debug)) {
     logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
     return res.status(400).json({ error: 'Invalid request body' })
   }
 
-  utils.getURLMeta(req.body.url, !debug)
+  reqUtil.getURLMeta(req.body.url, !debug)
     .then(({ size }) => {
       // @ts-ignore
       logger.debug('Instantiating uploader.', null, req.id)
@@ -80,10 +79,15 @@ const get = (req, res) => {
 
 /**
  * Validates that the download URL is secure
+ *
  * @param {string} url the url to validate
  * @param {boolean} debug whether the server is running in debug mode
  */
 const validateURL = (url, debug) => {
+  if (!url) {
+    return false
+  }
+
   const validURLOpts = {
     protocols: ['http', 'https'],
     require_protocol: true,
@@ -115,8 +119,8 @@ const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
   const opts = {
     uri: url,
     method: 'GET',
-    followRedirect: getRedirectEvaluator(url, blockLocalIPs),
-    agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
+    followRedirect: reqUtil.getRedirectEvaluator(url, blockLocalIPs),
+    agentClass: reqUtil.getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
   }
 
   request(opts)

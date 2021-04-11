@@ -1,10 +1,15 @@
+// The @uppy/ dependencies are resolved using aliasify
+/* eslint-disable import/no-extraneous-dependencies */
 const Uppy = require('@uppy/core/src')
 const Dashboard = require('@uppy/dashboard/src')
 const Instagram = require('@uppy/instagram/src')
 const Facebook = require('@uppy/facebook/src')
 const OneDrive = require('@uppy/onedrive/src')
 const Dropbox = require('@uppy/dropbox/src')
+const Box = require('@uppy/box/src')
 const GoogleDrive = require('@uppy/google-drive/src')
+const Unsplash = require('@uppy/unsplash/src')
+const Zoom = require('@uppy/zoom/src')
 const Url = require('@uppy/url/src')
 const Webcam = require('@uppy/webcam/src')
 const ScreenCapture = require('@uppy/screen-capture/src')
@@ -16,6 +21,8 @@ const XHRUpload = require('@uppy/xhr-upload/src')
 const Transloadit = require('@uppy/transloadit/src')
 const Form = require('@uppy/form/src')
 const ImageEditor = require('@uppy/image-editor/src')
+const DropTarget = require('@uppy/drop-target/src')
+/* eslint-enable import/no-extraneous-dependencies */
 
 // DEV CONFIG: pick an uploader
 
@@ -24,12 +31,14 @@ const UPLOADER = 'tus'
 // const UPLOADER = 's3-multipart'
 // const UPLOADER = 'xhr'
 // const UPLOADER = 'transloadit'
+// const UPLOADER = 'transloadit-s3'
+// const UPLOADER = 'transloadit-xhr'
 
 // DEV CONFIG: Endpoint URLs
 
 const COMPANION_URL = 'http://localhost:3020'
-const TUS_ENDPOINT = 'https://master.tus.io/files/'
-const XHR_ENDPOINT = 'https://upload-endpoint.uppy.io/upload'
+const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
+const XHR_ENDPOINT = 'https://xhr-server.herokuapp.com/upload'
 
 // DEV CONFIG: Transloadit keys
 
@@ -43,7 +52,7 @@ const RESTORE = false
 // Rest is implementation! Obviously edit as necessary...
 
 module.exports = () => {
-  const uppyDashboard = Uppy({
+  const uppyDashboard = new Uppy({
     logger: Uppy.debugLogger,
     meta: {
       username: 'John',
@@ -65,13 +74,23 @@ module.exports = () => {
     .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL })
+    .use(Box, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Facebook, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL })
+    .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL })
     .use(Url, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Webcam, { target: Dashboard })
+    .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL })
+    .use(Webcam, {
+      target: Dashboard,
+      showVideoSourceDropdown: true,
+      showRecordingLength: true,
+    })
     .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
     .use(ImageEditor, { target: Dashboard })
+    .use(DropTarget, {
+      target: document.body,
+    })
 
   switch (UPLOADER) {
     case 'tus':
@@ -88,10 +107,36 @@ module.exports = () => {
       break
     case 'transloadit':
       uppyDashboard.use(Transloadit, {
+        waitForEncoding: true,
         params: {
           auth: { key: TRANSLOADIT_KEY },
           template_id: TRANSLOADIT_TEMPLATE,
         },
+      })
+      break
+    case 'transloadit-s3':
+      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL })
+      uppyDashboard.use(Transloadit, {
+        waitForEncoding: true,
+        importFromUploadURLs: true,
+        params: {
+          auth: { key: TRANSLOADIT_KEY },
+          template_id: TRANSLOADIT_TEMPLATE,
+        },
+      })
+      break
+    case 'transloadit-xhr':
+      uppyDashboard.setMeta({
+        params: JSON.stringify({
+          auth: { key: TRANSLOADIT_KEY },
+          template_id: TRANSLOADIT_TEMPLATE,
+        }),
+      })
+      uppyDashboard.use(XHRUpload, {
+        method: 'POST',
+        endpoint: 'https://api2.transloadit.com/assemblies',
+        metaFields: ['params'],
+        bundle: true,
       })
       break
   }

@@ -49,6 +49,7 @@ uppy.use(ThumbnailGenerator, {
   id: 'ThumbnailGenerator',
   thumbnailWidth: 200,
   thumbnailHeight: 200,
+  thumbnailType: 'image/jpeg',
   waitForThumbnailsBeforeUpload: false
 })
 ```
@@ -76,6 +77,10 @@ If both width and height are given, only width is taken into account.
 > uppy.use(ThumbnailGenerator, { thumbnailWidth: 300, thumbnailHeight: 300 }) will produce a 300px width thumbnail with calculated height to match ratio (and ignore the given height).
 >
 > See issue [#979](https://github.com/transloadit/uppy/issues/979) and [#1096](https://github.com/transloadit/uppy/pull/1096) for details on this feature.
+
+### `thumbnailtype: 'image/jpeg'`
+
+MIME type of the resulting thumbnail. Default thumbnail MIME type is `image/jpeg`. This is useful if you want to support transparency in your thumbnails by switching to `image/png`.
 
 ### `waitForThumbnailsBeforeUpload: false`
 

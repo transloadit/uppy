@@ -3,7 +3,10 @@ import TransloaditLocale = require('./generatedLocale')
 
 declare module Transloadit {
   interface AssemblyParameters {
-    auth: { key: string }
+    auth: {
+      key: string,
+      expires?: string
+    }
     template_id?: string
     steps?: { [step: string]: object }
     notify_url?: string

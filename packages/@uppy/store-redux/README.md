@@ -3,7 +3,7 @@
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
 <a href="https://www.npmjs.com/package/@uppy/store-redux"><img src="https://img.shields.io/npm/v/@uppy/store-redux.svg?style=flat-square"></a>
-<a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
+<img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
 
 The `ReduxStore` stores Uppy state on a key in an existing Redux store.
 The `ReduxStore` dispatches `uppy/STATE_UPDATE` actions to update state.
@@ -27,7 +27,7 @@ const reducer = combineReducers({
 
 const store = createStore(reducer)
 
-const uppy = Uppy({
+const uppy = new Uppy({
   store: ReduxStore({
     store: store
   })
@@ -37,7 +37,7 @@ const uppy = Uppy({
 ## Installation
 
 ```bash
-$ npm install @uppy/store-redux --save
+$ npm install @uppy/store-redux
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

@@ -4,11 +4,13 @@ const Uppy = require('@uppy/core')
 const DragDrop = require('@uppy/drag-drop')
 const XHRUpload = require('@uppy/xhr-upload')
 const ProgressBar = require('@uppy/progress-bar')
+const DeepFrozenStore = require('../../resources/DeepFrozenStore.js')
 
-const uppyi18n = Uppy({
+const uppyi18n = new Uppy({
   id: 'uppyi18n',
   debug: true,
   autoProceed: true,
+  store: DeepFrozenStore(),
 })
 
 uppyi18n
@@ -22,4 +24,4 @@ uppyi18n
     },
   })
   .use(ProgressBar, { target: '#uppyi18n-progress' })
-  .use(XHRUpload, { endpoint: 'https://api2.transloadit.com' })
+  .use(XHRUpload, { endpoint: 'https://xhr-server.herokuapp.com/upload' })

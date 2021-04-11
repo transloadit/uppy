@@ -1,8 +1,9 @@
-const sass = require('node-sass')
+const sass = require('sass')
 const postcss = require('postcss')
 const autoprefixer = require('autoprefixer')
+const postcssLogical = require('postcss-logical')
+const postcssDirPseudoClass = require('postcss-dir-pseudo-class')
 const cssnano = require('cssnano')
-// const safeImportant = require('postcss-safe-important')
 const chalk = require('chalk')
 const { promisify } = require('util')
 const fs = require('fs')
@@ -23,9 +24,9 @@ function handleErr (err) {
 async function compileCSS () {
   const files = await glob('packages/{,@uppy/}*/src/style.scss')
   for (const file of files) {
+    const importedFiles = new Set()
     const scssResult = await renderScss({
       file,
-      importedFiles: new Set(),
       importer (url, from, done) {
         resolve(url, {
           basedir: path.dirname(from),
@@ -36,15 +37,20 @@ async function compileCSS () {
 
           res = fs.realpathSync(res)
 
-          if (this.options.importedFiles.has(res)) return done({ contents: '' })
-          this.options.importedFiles.add(res)
+          if (importedFiles.has(res)) return done({ contents: '' })
+          importedFiles.add(res)
 
           done({ file: res })
         })
       },
     })
 
-    const postcssResult = await postcss([autoprefixer])
+    const plugins = [
+      autoprefixer,
+      postcssLogical(),
+      postcssDirPseudoClass(),
+    ]
+    const postcssResult = await postcss(plugins)
       .process(scssResult.css, { from: file })
     postcssResult.warnings().forEach((warn) => {
       console.warn(warn.toString())

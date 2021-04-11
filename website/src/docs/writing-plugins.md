@@ -154,7 +154,14 @@ When `mode` is `'determinate'`, also add the `value` property:
 
 ## UI Plugins
 
-UI Plugins can be used to show a user interface. Uppy plugins use [preact](https://preactjs.com) for rendering. preact is a very small React-like library that works really well with Uppy's state architecture. Uppy implements preact rendering in the `mount(target)` and `update()` plugin methods, so if you want to write a custom UI plugin using some other library, you can override those methods.
+UI Plugins can be used to show a user interface. Uppy plugins use [preact](https://preactjs.com) v8.2.9 for rendering. preact is a very small React-like library that works really well with Uppy's state architecture. Uppy implements preact rendering in the `mount(target)` and `update()` plugin methods, so if you want to write a custom UI plugin using some other library, you can override those methods.
+
+> **Only** `preact@8.2.9` can be used for Uppy plugins. In Uppy 2.0, the restriction will be changed to a newer range of preact versions. For now, specify the dependency with a fixed version number:
+> ```json
+> "dependencies": {
+>   "preact": "8.2.9"
+> }
+> ```
 
 Plugins can implement certain methods to do so, that will be called by Uppy when necessary:
 
@@ -327,7 +334,7 @@ class UppyImageCompressor extends Plugin {
   install () {
     this.uppy.addPreProcessor(this.prepareUpload)
   }
-  
+
   uninstall () {
     this.uppy.removePreProcessor(this.prepareUpload)
   }

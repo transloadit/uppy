@@ -12,8 +12,11 @@ const { ProviderApiError, ProviderAuthError } = require('../error')
 class OneDrive extends Provider {
   constructor (options) {
     super(options)
-    this.authProvider = options.provider = OneDrive.authProvider
-    this.client = purest(options)
+    this.authProvider = OneDrive.authProvider
+    this.client = purest({
+      ...options,
+      provider: OneDrive.authProvider,
+    })
   }
 
   static get authProvider () {
@@ -32,11 +35,11 @@ class OneDrive extends Provider {
    * it then waits till both requests are done before proceeding with the callback
    *
    * @param {object} options
-   * @param {function} done
+   * @param {Function} done
    */
   list ({ directory, query, token }, done) {
     const path = directory ? `items/${directory}` : 'root'
-    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/drive'
+    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/me/drive'
     const qs = { $expand: 'thumbnails' }
     if (query.cursor) {
       qs.$skiptoken = query.cursor
@@ -64,7 +67,7 @@ class OneDrive extends Provider {
   }
 
   download ({ id, token, query }, onData) {
-    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/drive'
+    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/me/drive'
     return this.client
       .get(`${rootPath}/items/${id}/content`)
       .auth(token)
@@ -91,7 +94,7 @@ class OneDrive extends Provider {
   }
 
   size ({ id, query, token }, done) {
-    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/drive'
+    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/me/drive'
     return this.client
       .get(`${rootPath}/items/${id}`)
       .auth(token)

@@ -15,7 +15,7 @@ describe('react <ProgressBar />', () => {
   it('can be mounted and unmounted', () => {
     const oninstall = jest.fn()
     const onuninstall = jest.fn()
-    const uppy = Uppy()
+    const uppy = new Uppy()
     const dash = mount((
       <ProgressBar
         uppy={uppy}

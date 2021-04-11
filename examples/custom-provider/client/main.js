@@ -4,7 +4,7 @@ const Tus = require('@uppy/tus')
 const MyCustomProvider = require('./MyCustomProvider')
 const Dashboard = require('@uppy/dashboard')
 
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
 })
 
@@ -22,4 +22,4 @@ uppy.use(Dashboard, {
   plugins: ['GoogleDrive', 'MyCustomProvider'],
 })
 
-uppy.use(Tus, { endpoint: 'https://master.tus.io/files/' })
+uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })

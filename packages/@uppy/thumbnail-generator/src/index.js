@@ -21,6 +21,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
     this.queue = []
     this.queueProcessing = false
     this.defaultThumbnailDimension = 200
+    this.thumbnailType = this.opts.thumbnailType || 'image/jpeg'
 
     this.defaultLocale = {
       strings: {
@@ -64,16 +65,22 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * @returns {Promise}
    */
   createThumbnail (file, targetWidth, targetHeight) {
+    // bug in the compatibility data
+    // eslint-disable-next-line compat/compat
     const originalUrl = URL.createObjectURL(file.data)
 
     const onload = new Promise((resolve, reject) => {
       const image = new Image()
       image.src = originalUrl
       image.addEventListener('load', () => {
+        // bug in the compatibility data
+        // eslint-disable-next-line compat/compat
         URL.revokeObjectURL(originalUrl)
         resolve(image)
       })
       image.addEventListener('error', (event) => {
+        // bug in the compatibility data
+        // eslint-disable-next-line compat/compat
         URL.revokeObjectURL(originalUrl)
         reject(event.error || new Error('Could not create thumbnail'))
       })
@@ -86,9 +93,11 @@ module.exports = class ThumbnailGenerator extends Plugin {
         const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.deg)
         const rotatedImage = this.rotateImage(image, orientation)
         const resizedImage = this.resizeImage(rotatedImage, dimensions.width, dimensions.height)
-        return this.canvasToBlob(resizedImage, 'image/jpeg', 80)
+        return this.canvasToBlob(resizedImage, this.thumbnailType, 80)
       })
       .then(blob => {
+        // bug in the compatibility data
+        // eslint-disable-next-line compat/compat
         return URL.createObjectURL(blob)
       })
   }

@@ -2,12 +2,20 @@
   "name": "@uppy-example/custom-provider",
   "dependencies": {
     "@babel/core": "^7.2.2",
+    "@uppy/companion-client": "file:../../packages/@uppy/companion-client",
+    "@uppy/core": "file:../../packages/@uppy/core",
+    "@uppy/dashboard": "file:../../packages/@uppy/dashboard",
+    "@uppy/google-drive": "file:../../packages/@uppy/google-drive",
+    "@uppy/provider-views": "file:../../packages/@uppy/provider-views",
+    "@uppy/tus": "file:../../packages/@uppy/tus",
     "babelify": "^10.0.0",
     "body-parser": "^1.18.2",
     "budo": "^11.3.2",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
-    "npm-run-all": "^4.1.2"
+    "npm-run-all": "^4.1.2",
+    "preact": "8.2.9",
+    "request": "2.88.2"
   },
   "private": true,
   "scripts": {

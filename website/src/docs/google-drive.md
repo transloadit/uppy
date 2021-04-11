@@ -65,7 +65,7 @@ Create a project for your app if you don't have one yet.
 - On the project's dashboard, [enable the Google Drive API](https://developers.google.com/drive/api/v3/enable-drive-api).
 - [Set up OAuth authorization](https://developers.google.com/drive/api/v3/about-auth). Use this for an authorized redirect URI:
    ```
-   https://$YOUR_COMPANION_HOST_NAME/connect/google/callback
+   https://$YOUR_COMPANION_HOST_NAME/drive/redirect
    ```
 
 Google will give you an OAuth client ID and client secret. Use them to configure Companion as shown above.
@@ -97,7 +97,7 @@ Configures the title / name shown in the UI, for instance, on Dashboard tabs. It
 
 ### `target: null`
 
-DOM element, CSS selector, or plugin to mount the Google Drive provider into. This should normally be the the [`@uppy/dashboard`](/docs/dashboard) plugin.
+DOM element, CSS selector, or plugin to mount the Google Drive provider into. This should normally be the [`@uppy/dashboard`](/docs/dashboard) plugin.
 
 ### `companionUrl: null`
 
@@ -114,6 +114,10 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
 This is useful when you have your [Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should be good enough.
+
+### `companionCookiesRule: 'same-origin'`
+
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
 
 ### `locale: {}`
 

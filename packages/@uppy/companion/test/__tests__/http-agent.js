@@ -1,9 +1,9 @@
 /* global test:false, expect:false, describe:false, */
 
-const { getProtectedHttpAgent, getRedirectEvaluator, FORBIDDEN_IP_ADDRESS } = require('../../src/server/helpers/request')
 const request = require('request')
 const http = require('http')
 const https = require('https')
+const { getProtectedHttpAgent, getRedirectEvaluator, FORBIDDEN_IP_ADDRESS } = require('../../src/server/helpers/request')
 
 describe('test getRedirectEvaluator', () => {
   const httpURL = 'http://uppy.io'
@@ -64,7 +64,7 @@ describe('test getProtectedHttpAgent', () => {
 describe('test protected request Agent', () => {
   test('allows URLs without IP addresses', (done) => {
     const options = {
-      uri: 'https://www.transloadit.com',
+      uri: 'https://transloadit.com',
       method: 'GET',
       agentClass: getProtectedHttpAgent('https', true),
     }

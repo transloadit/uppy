@@ -36,7 +36,7 @@ import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import { DragDrop } from '@uppy/react'
 
-const uppy = Uppy({
+const uppy = new Uppy({
   meta: { type: 'avatar' },
   restrictions: { maxNumberOfFiles: 1 },
   autoProceed: true

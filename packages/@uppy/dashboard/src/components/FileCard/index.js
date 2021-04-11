@@ -1,4 +1,5 @@
 const { h, Component } = require('preact')
+const classNames = require('classnames')
 const getFileTypeIcon = require('../../utils/getFileTypeIcon')
 const ignoreEvent = require('../../utils/ignoreEvent.js')
 const FilePreview = require('../FilePreview')
@@ -8,7 +9,7 @@ class FileCard extends Component {
     super(props)
 
     const file = this.props.files[this.props.fileCardFor]
-    const metaFields = this.props.metaFields || []
+    const metaFields = this.getMetaFields() || []
 
     const storedMetaData = {}
     metaFields.forEach((field) => {
@@ -44,11 +45,11 @@ class FileCard extends Component {
   }
 
   handleCancel = () => {
-    this.props.toggleFileCard()
+    this.props.toggleFileCard(false)
   }
 
   renderMetaFields = () => {
-    const metaFields = this.props.metaFields || []
+    const metaFields = this.getMetaFields() || []
     const fieldCSSClasses = {
       text: 'uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input',
     }
@@ -83,13 +84,19 @@ class FileCard extends Component {
     })
   }
 
+  getMetaFields () {
+    return typeof this.props.metaFields === 'function'
+      ? this.props.metaFields(this.props.files[this.props.fileCardFor])
+      : this.props.metaFields
+  }
+
   render () {
     const file = this.props.files[this.props.fileCardFor]
     const showEditButton = this.props.canEditFile(file)
 
     return (
       <div
-        className="uppy-Dashboard-FileCard"
+        className={classNames('uppy-Dashboard-FileCard', this.props.className)}
         data-uppy-panelType="FileCard"
         onDragOver={ignoreEvent}
         onDragLeave={ignoreEvent}

@@ -18,6 +18,7 @@ declare module Tus {
     autoRetry?: boolean
     limit?: number
     useFastRemoteRetry?: boolean
+    withCredentials?: boolean
   }
 }
 

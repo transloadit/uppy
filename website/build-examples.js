@@ -38,8 +38,8 @@ function useSourcePackages (b) {
   b._bresolve = (id, opts, cb) => {
     bresolve(id, opts, (err, result, pkg) => {
       if (err) return cb(err)
-      if (/packages\/@uppy\/.*?\/lib\//.test(result)) {
-        result = result.replace(/packages\/@uppy\/(.*?)\/lib\//, 'packages/@uppy/$1/src/')
+      if (/packages\/@uppy\/[^/]+?\/lib\//.test(result)) {
+        result = result.replace(/packages\/@uppy\/([^/]+?)\/lib\//, 'packages/@uppy/$1/src/')
       }
       cb(err, result, pkg)
     })
@@ -113,8 +113,7 @@ glob(srcPattern, (err, files) => {
      * Creates bundle and writes it to static and public folders.
      * Changes to
      *
-     * @param  {[type]} ids [description]
-     * @returns {[type]}     [description]
+     * @param  {string[]} ids
      */
     function bundle (ids = []) {
       ids.forEach((id) => {

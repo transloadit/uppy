@@ -159,13 +159,17 @@ module.exports = class AwsS3Multipart extends Plugin {
 
       const onSuccess = (result) => {
         const uploadResp = {
+          body: {
+            ...result,
+          },
           uploadURL: result.location,
         }
 
         queuedRequest.done()
         this.resetUploaderReferences(file.id)
 
-        this.uppy.emit('upload-success', file, uploadResp)
+        const cFile = this.uppy.getFile(file.id)
+        this.uppy.emit('upload-success', cFile || file, uploadResp)
 
         if (result.location) {
           this.uppy.log(`Download ${upload.file.name} from ${result.location}`)

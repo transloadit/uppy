@@ -1,0 +1,23 @@
+name: Companion
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.20.1, 12.x, 14.x]
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: ${{matrix.node-version}}
+      - name: Install npm 7
+        run: npm install --global npm@7
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm run test:companion

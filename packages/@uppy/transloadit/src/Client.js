@@ -1,4 +1,5 @@
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
+const URL = require('url-parse')
 
 /**
  * A Barebones HTTP API client for Transloadit.
@@ -18,9 +19,12 @@ module.exports = class Client {
    * Create a new assembly.
    *
    * @param {object} options
+   * @param {string|object} options.params
+   * @param {object} options.fields
+   * @param {string} options.signature
+   * @param {number} options.expectedFiles
    */
   createAssembly ({
-    templateId,
     params,
     fields,
     signature,
@@ -39,7 +43,7 @@ module.exports = class Client {
     })
     data.append('num_expected_upload_files', expectedFiles)
 
-    const url = `${this.opts.service}/assemblies`
+    const url = new URL('/assemblies', `${this.opts.service}`).href
     return fetchWithNetworkError(url, {
       method: 'post',
       headers: this._headers,
@@ -125,7 +129,7 @@ module.exports = class Client {
       ? `${err.message} (${err.details})`
       : err.message
 
-    return fetchWithNetworkError('https://status.transloadit.com/client_error', {
+    return fetchWithNetworkError('https://transloaditstatus.com/client_error', {
       method: 'post',
       body: JSON.stringify({
         endpoint,

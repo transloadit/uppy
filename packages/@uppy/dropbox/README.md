@@ -3,9 +3,11 @@
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
 <a href="https://www.npmjs.com/package/@uppy/dropbox"><img src="https://img.shields.io/npm/v/@uppy/dropbox.svg?style=flat-square"></a>
-<a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
+<img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
 
-A description of this plugin or module goes here.
+The Dropbox plugin for Uppy lets users import files from their Dropbox account.
+
+A Companion instance is required for the Dropbox plugin to work. Companion handles authentication with Dropbox, downloads files from Dropbox and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
 
@@ -15,7 +17,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Uppy = require('@uppy/core')
 const Dropbox = require('@uppy/dropbox')
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Dropbox, {
   // Options
 })
@@ -24,7 +26,7 @@ uppy.use(Dropbox, {
 ## Installation
 
 ```bash
-$ npm install @uppy/dropbox --save
+$ npm install @uppy/dropbox
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

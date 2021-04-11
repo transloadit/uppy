@@ -7,18 +7,22 @@ const Dropbox = require('@uppy/dropbox')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
+const Zoom = require('@uppy/zoom')
 const ImageEditor = require('@uppy/image-editor')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
 const ScreenCapture = require('@uppy/screen-capture')
 const Tus = require('@uppy/tus')
+const DropTarget = require('@uppy/drop-target')
 const localeList = require('../locale_list.json')
 
 const COMPANION = require('../env')
 
+const RTL_LOCALES = ['ar_SA', 'fa_IR', 'he_IL']
+
 if (typeof window !== 'undefined' && typeof window.Uppy === 'undefined') {
   window.Uppy = {
-    locales: {}
+    locales: {},
   }
 }
 
@@ -29,11 +33,11 @@ function uppyInit () {
 
   const opts = window.uppyOptions
 
-  const uppy = Uppy({
-    logger: Uppy.debugLogger
+  const uppy = new Uppy({
+    logger: Uppy.debugLogger,
   })
 
-  uppy.use(Tus, { endpoint: 'https://master.tus.io/files/', resume: true })
+  uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/', resume: true })
 
   uppy.on('complete', result => {
     console.log('successful files:')
@@ -51,8 +55,8 @@ function uppyInit () {
     showProgressDetails: true,
     metaFields: [
       { id: 'name', name: 'Name', placeholder: 'file name' },
-      { id: 'caption', name: 'Caption', placeholder: 'add description' }
-    ]
+      { id: 'caption', name: 'Caption', placeholder: 'add description' },
+    ],
   })
 
   window.uppy = uppy
@@ -63,26 +67,28 @@ function uppySetOptions () {
 
   const defaultNullRestrictions = {
     maxFileSize: null,
+    minFileSize: null,
     maxNumberOfFiles: null,
     minNumberOfFiles: null,
-    allowedFileTypes: null
+    allowedFileTypes: null,
   }
 
   const restrictions = {
     maxFileSize: 1000000,
     maxNumberOfFiles: 3,
     minNumberOfFiles: 2,
-    allowedFileTypes: ['image/*', 'video/*']
+    allowedFileTypes: ['image/*', 'video/*'],
   }
 
   window.uppy.setOptions({
     autoProceed: opts.autoProceed,
-    restrictions: opts.restrictions ? restrictions : defaultNullRestrictions
+    restrictions: opts.restrictions ? restrictions : defaultNullRestrictions,
   })
 
   window.uppy.getPlugin('Dashboard').setOptions({
     note: opts.restrictions ? 'Images and video only, 2–3 files, up to 1 MB' : '',
-    theme: opts.darkMode ? 'dark' : 'light'
+    theme: opts.darkMode ? 'dark' : 'light',
+    disabled: opts.disabled,
   })
 
   const googleDriveInstance = window.uppy.getPlugin('GoogleDrive')
@@ -133,9 +139,20 @@ function uppySetOptions () {
     window.uppy.removePlugin(oneDriveInstance)
   }
 
+  const zoomInstance = window.uppy.getPlugin('Zoom')
+  if (opts.Zoom && !zoomInstance) {
+    window.uppy.use(Zoom, { target: Dashboard, companionUrl: 'https://intense-meadow-61813.herokuapp.com/' })
+  }
+  if (!opts.Zoom && zoomInstance) {
+    window.uppy.removePlugin(zoomInstance)
+  }
+
   const webcamInstance = window.uppy.getPlugin('Webcam')
   if (opts.Webcam && !webcamInstance) {
-    window.uppy.use(Webcam, { target: Dashboard })
+    window.uppy.use(Webcam, {
+      target: Dashboard,
+      showVideoSourceDropdown: true,
+    })
   }
   if (!opts.Webcam && webcamInstance) {
     window.uppy.removePlugin(webcamInstance)
@@ -156,11 +173,19 @@ function uppySetOptions () {
   if (!opts.imageEditor && imageEditorInstance) {
     window.uppy.removePlugin(imageEditorInstance)
   }
+
+  const dropTargetInstance = window.uppy.getPlugin('DropTarget')
+  if (opts.DropTarget && !dropTargetInstance) {
+    window.uppy.use(DropTarget, { target: document.body })
+  }
+  if (!opts.DropTarget && dropTargetInstance) {
+    window.uppy.removePlugin(dropTargetInstance)
+  }
 }
 
 function whenLocaleAvailable (localeName, callback) {
-  var interval = 100 // ms
-  var loop = setInterval(function () {
+  const interval = 100 // ms
+  const loop = setInterval(() => {
     if (window.Uppy && window.Uppy.locales && window.Uppy.locales[localeName]) {
       clearInterval(loop)
       callback(window.Uppy.locales[localeName])
@@ -169,10 +194,10 @@ function whenLocaleAvailable (localeName, callback) {
 }
 
 function loadLocaleFromCDN (localeName) {
-  var head = document.getElementsByTagName('head')[0]
-  var js = document.createElement('script')
+  const head = document.getElementsByTagName('head')[0]
+  const js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://transloadit.edgly.net/releases/uppy/locales/v1.16.0/${localeName}.min.js`
+  js.src = `https://releases.transloadit.com/uppy/locales/v1.18.0/${localeName}.min.js`
 
   head.appendChild(js)
 }
@@ -182,8 +207,16 @@ function setLocale (localeName) {
     loadLocaleFromCDN(localeName)
   }
   whenLocaleAvailable(localeName, (localeObj) => {
+    const direction = RTL_LOCALES.indexOf(localeName) !== -1
+      ? 'rtl'
+      : 'ltr'
+
     window.uppy.setOptions({
-      locale: localeObj
+      locale: localeObj,
+    })
+
+    window.uppy.getPlugin('Dashboard').setOptions({
+      direction,
     })
   })
 }

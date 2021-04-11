@@ -5,11 +5,11 @@ const DragDrop = require('@uppy/drag-drop')
 const Tus = require('@uppy/tus')
 const ProgressBar = require('@uppy/progress-bar')
 
-const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
-const endpoint = isOnTravis ? 'http://companion.test:1080' : 'http://localhost:1080'
+// const endpoint = 'http://localhost:1080'
+const endpoint = 'https://tusd.tusdemo.net'
 
 // Initialise Uppy with Drag & Drop
-const uppyDragDrop = Uppy({
+const uppyDragDrop = new Uppy({
   id: 'uppyDragDrop',
   debug: true,
   autoProceed: true,

@@ -5,8 +5,12 @@ const uuid = require('uuid')
 const isObject = require('isobject')
 const validator = require('validator')
 const request = require('request')
-const emitter = require('./emitter')
+/** @type {any} */
+// @ts-ignore - typescript resolves this this to a hoisted version of
+// serialize-error that ships with a declaration file, we are using a version
+// here that does not have a declaration file
 const serializeError = require('serialize-error')
+const emitter = require('./emitter')
 const { jsonStringify, hasMatch } = require('./helpers/utils')
 const logger = require('./logger')
 const headerSanitize = require('./header-blacklist')
@@ -93,6 +97,7 @@ class Uploader {
    * returns a substring of the token. Used as traceId for logging
    * we avoid using the entire token because this is meant to be a short term
    * access token between uppy client and companion websocket
+   *
    * @param {string} token the token to Shorten
    * @returns {string}
    */
@@ -221,7 +226,7 @@ class Uploader {
 
   /**
    *
-   * @param {function} callback
+   * @param {Function} callback
    */
   onSocketReady (callback) {
     emitter().once(`connection:${this.token}`, () => callback())
@@ -320,6 +325,7 @@ class Uploader {
    * This method emits upload progress but also creates an "upload progress" illusion
    * for the waiting period while only download is happening. Hence, it combines both
    * download and upload into an upload progress.
+   *
    * @see emitProgress
    * @param {number=} bytesUploaded the bytes actually Uploaded so far
    */
@@ -435,6 +441,14 @@ class Uploader {
        */
       onError (error) {
         logger.error(error, 'uploader.tus.error')
+        // deleting tus originalRequest field because it uses the same http-agent
+        // as companion, and this agent may contain sensitive request details (e.g headers)
+        // previously made to providers. Deleting the field would prevent it from getting leaked
+        // to the frontend etc.
+        // @ts-ignore
+        delete error.originalRequest
+        // @ts-ignore
+        delete error.originalResponse
         uploader.emitError(error)
       },
       /**
@@ -469,6 +483,7 @@ class Uploader {
     const httpMethod = (this.options.httpMethod || '').toLowerCase() === 'put' ? 'put' : 'post'
     const headers = headerSanitize(this.options.headers)
     const reqOptions = { url: this.options.endpoint, headers, encoding: null }
+    const httpRequest = request[httpMethod]
     if (this.options.useFormData) {
       reqOptions.formData = {
 
@@ -481,41 +496,49 @@ class Uploader {
           },
         },
       }
+
+      httpRequest(reqOptions, (error, response, body) => {
+        this._onMultipartComplete(error, response, body, bytesUploaded)
+      })
     } else {
+      reqOptions.headers['content-length'] = this.bytesWritten
       reqOptions.body = file
+      httpRequest(reqOptions, (error, response, body) => {
+        this._onMultipartComplete(error, response, body, bytesUploaded)
+      })
+    }
+  }
+
+  _onMultipartComplete (error, response, body, bytesUploaded) {
+    if (error) {
+      logger.error(error, 'upload.multipart.error')
+      this.emitError(error)
+      return
+    }
+    const { headers } = response
+    // remove browser forbidden headers
+    delete headers['set-cookie']
+    delete headers['set-cookie2']
+
+    const respObj = {
+      responseText: body.toString(),
+      status: response.statusCode,
+      statusText: response.statusMessage,
+      headers,
     }
 
-    request[httpMethod](reqOptions, (error, response, body) => {
-      if (error) {
-        logger.error(error, 'upload.multipart.error')
-        this.emitError(error)
-        return
-      }
-      const headers = response.headers
-      // remove browser forbidden headers
-      delete headers['set-cookie']
-      delete headers['set-cookie2']
+    if (response.statusCode >= 400) {
+      logger.error(`upload failed with status: ${response.statusCode}`, 'upload.multipart.error')
+      this.emitError(new Error(response.statusMessage), respObj)
+    } else if (bytesUploaded !== this.bytesWritten && bytesUploaded !== this.options.size) {
+      const errMsg = `uploaded only ${bytesUploaded} of ${this.bytesWritten} with status: ${response.statusCode}`
+      logger.error(errMsg, 'upload.multipart.mismatch.error')
+      this.emitError(new Error(errMsg))
+    } else {
+      this.emitSuccess(null, { response: respObj })
+    }
 
-      const respObj = {
-        responseText: body.toString(),
-        status: response.statusCode,
-        statusText: response.statusMessage,
-        headers,
-      }
-
-      if (response.statusCode >= 400) {
-        logger.error(`upload failed with status: ${response.statusCode}`, 'upload.multipart.error')
-        this.emitError(new Error(response.statusMessage), respObj)
-      } else if (bytesUploaded !== this.bytesWritten && bytesUploaded !== this.options.size) {
-        const errMsg = `uploaded only ${bytesUploaded} of ${this.bytesWritten} with status: ${response.statusCode}`
-        logger.error(errMsg, 'upload.multipart.mismatch.error')
-        this.emitError(new Error(errMsg))
-      } else {
-        this.emitSuccess(null, { response: respObj })
-      }
-
-      this.cleanUp()
-    })
+    this.cleanUp()
   }
 
   /**
@@ -544,6 +567,7 @@ class Uploader {
       Key: options.getKey(null, filename, this.options.metadata),
       ACL: options.acl,
       ContentType: this.options.metadata.type,
+      Metadata: this.options.metadata,
       Body: stream,
     })
 

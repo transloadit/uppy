@@ -4,7 +4,6 @@ const fs = require('fs')
 const createWriteStream = require('fs-write-stream-atomic')
 const browserify = require('browserify')
 const watchify = require('watchify')
-const aliasify = require('aliasify')
 const babelify = require('babelify')
 
 const port = process.env.PORT || 8080
@@ -17,13 +16,7 @@ const b = browserify({
 })
 
 b.plugin(watchify)
-
 b.transform(babelify)
-b.transform(aliasify, {
-  aliases: {
-    '@uppy': path.join(__dirname, '../../packages/@uppy'),
-  },
-})
 
 function bundle () {
   return b.bundle((err, data) => {

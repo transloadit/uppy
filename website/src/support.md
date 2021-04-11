@@ -10,6 +10,8 @@ body_class: "page-support"
 
 This approach is new, we may make changes as we learn. Here are the current options in detail:
 
+<div class="table-responsive">
+
 |                                               |   🦄<br>Community    |                          🥉<br>Bronze                          |                               🥈<br>Silver and up                                |
 |----------------------------------------------:|:--------------------:|:--------------------------------------------------------------:|:--------------------------------------------------------------------------------:|
 |                                               |    anyone,<br/>$0    | included with all Transloadit Plans,<br/>which start at $49/mo |                   Enterprise addons,<br/>starting at $1499/mo                    |
@@ -26,6 +28,7 @@ This approach is new, we may make changes as we learn. Here are the current opti
 |                               Health & Status |          -           |            Access to Personal Transloadit Dashboard           |  Access to Personal Transloadit Dashboard. Proactive monitoring & notifications |
 |              Support for non-current releases |          -           |                               -                                |                               0 - 10 releases back                              |
 
+</div>
 
 If you want to apply for: 
 

@@ -72,11 +72,15 @@ Configures the title / name shown in the UI, for instance, on Dashboard tabs. It
 
 ### `target: null`
 
-DOM element, CSS selector, or plugin to mount the URL provider into. This should normally be the Dashboard.
+DOM element, CSS selector, or plugin to mount the URL provider into. This should normally be the [`@uppy/dashboard`](/docs/dashboard) plugin.
 
 ### `companionUrl: null`
 
 URL to an Companion instance.
+
+### `companionCookiesRule: 'same-origin'`
+
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
 
 ### `locale: {}`
 

@@ -19,7 +19,7 @@ if [ -z "${CI:-}" ]; then
   echo "Hit Ctrl+C to stop or Enter if you REALLY DO want to run the full thing."
   read
 else
-  echo travis_fold:start:endtoend_build_ci
+  echo ::group::endtoend_build_ci
 fi
 
 set -o xtrace
@@ -34,7 +34,7 @@ cleanup() {
   git checkout $CURRENT_COMMIT
 
   if [ -n "${CI:-}" ]; then
-    echo travis_fold:end:endtoend_build_ci
+    echo ::endgroup::
   fi
 }
 function on_exit() {

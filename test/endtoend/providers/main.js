@@ -10,7 +10,7 @@ const Tus = require('@uppy/tus')
 const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
 const companionUrl = isOnTravis ? 'http://companion.test:3030' : 'http://localhost:3020'
 
-window.uppy = Uppy({
+window.uppy = new Uppy({
   id: 'uppyProvider',
   debug: true,
   autoProceed: true,
@@ -22,7 +22,7 @@ window.uppy = Uppy({
   .use(GoogleDrive, { target: Dashboard, companionUrl })
   .use(Instagram, { target: Dashboard, companionUrl })
   .use(Dropbox, { target: Dashboard, companionUrl })
-  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+  .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 
 if (window.location.search === '?socketerr=true') {
   const emitError = (file, data) => {

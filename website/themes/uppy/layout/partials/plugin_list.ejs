@@ -3,32 +3,35 @@
 <small>
    ⚠️ Note that this includes the dependencies for each package, some of which are shared when you install multiple plugins. For example, the <code>@uppy/dropbox</code> and <code>@uppy/instagram</code> package are both over 11kB including dependencies, but only sum up to about 15kB when they are used together.
 </small>
-<table class="Stats-bundleSizes">
-  <thead>
-    <tr>
-      <th class="Stats-bundleSizeHeader">Package</th>
-      <th class="Stats-bundleSizeHeader">Version</th>
-      <th class="Stats-bundleSizeHeader">Minified</th>
-      <th class="Stats-bundleSizeHeader">Gzip</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% for (const [name, sizes] of Object.entries(theme.uppy_bundle_kb_sizes)) { %>
-      <% const { minified, gzipped, prettyMinified, prettyGzipped, version } = sizes %>
+
+<div class="table-responsive">
+  <table class="Stats-bundleSizes">
+    <thead>
       <tr>
-        <td><a class="Stats-package" target="_blank" href="https://npmjs.com/package/<%= name %>"><%= name %></a></td>
-        <td><%= version %></td>
-        <td><%= prettyMinified %></td>
-        <td class="
-          <% if (gzipped > 30 * 1000) { %>Stats-large<% } %>
-          <% if (gzipped < 10 * 1000) { %>Stats-small<% } %>
-        ">
-          <%= prettyGzipped %>
-        </td>
+        <th class="Stats-bundleSizeHeader">Package</th>
+        <th class="Stats-bundleSizeHeader">Version</th>
+        <th class="Stats-bundleSizeHeader">Minified</th>
+        <th class="Stats-bundleSizeHeader">Gzip</th>
       </tr>
-    <% } %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% for (const [name, sizes] of Object.entries(theme.uppy_bundle_kb_sizes)) { %>
+        <% const { minified, gzipped, prettyMinified, prettyGzipped, version } = sizes %>
+        <tr>
+          <td><a class="Stats-package" target="_blank" href="https://npmjs.com/package/<%= name %>"><%= name %></a></td>
+          <td><%= version %></td>
+          <td class="Stats-size"><%= prettyMinified %></td>
+          <td class="
+            <% if (gzipped > 30 * 1000) { %>Stats-large<% } %>
+            <% if (gzipped < 10 * 1000) { %>Stats-small<% } %>
+           Stats-size">
+            <%= prettyGzipped %>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
 
 <iframe scrolling="no" seamless="seamless" class="Disc" src="/disc.html"></iframe>
 <p>

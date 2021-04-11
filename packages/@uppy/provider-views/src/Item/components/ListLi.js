@@ -21,24 +21,29 @@ const getAriaLabelOfCheckbox = (props) => {
 //   + file name (selects file)
 module.exports = (props) => {
   return (
-    <li className={props.className}>
-      <button
-        type="button"
-        className={`uppy-u-reset uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`}
-        onClick={props.toggleCheckbox}
-        // for the <label/>
-        id={props.id}
-        role="option"
-        aria-label={getAriaLabelOfCheckbox(props)}
-        aria-selected={props.isChecked}
-        aria-disabled={props.isDisabled}
-        data-uppy-super-focusable
-      />
+    <li className={props.className} title={props.isDisabled ? props.restrictionReason : null}>
+      {!props.isCheckboxDisabled ? (
+        <button
+          type="button"
+          className={`uppy-u-reset uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`}
+          onClick={props.toggleCheckbox}
+          // for the <label/>
+          id={props.id}
+          role="option"
+          aria-label={getAriaLabelOfCheckbox(props)}
+          aria-selected={props.isChecked}
+          aria-disabled={props.isDisabled}
+          disabled={props.isDisabled}
+          data-uppy-super-focusable
+        />
+      ) : null}
 
       {props.type === 'file' ? (
         // label for a checkbox
         <label htmlFor={props.id} className="uppy-u-reset uppy-ProviderBrowserItem-inner">
-          {props.itemIconEl}
+          <div className="uppy-ProviderBrowserItem-iconWrap">
+            {props.itemIconEl}
+          </div>
           {props.showTitles && props.title}
         </label>
       ) : (
@@ -49,8 +54,10 @@ module.exports = (props) => {
           onClick={props.handleFolderClick}
           aria-label={props.i18n('openFolderNamed', { name: props.title })}
         >
-          {props.itemIconEl}
-          {props.showTitles && props.title}
+          <div className="uppy-ProviderBrowserItem-iconWrap">
+            {props.itemIconEl}
+          </div>
+          {props.showTitles && <span>{props.title}</span>}
         </button>
       )}
     </li>

@@ -9,7 +9,6 @@ const prettierBytes = require('@transloadit/prettier-bytes')
 const browserify = require('browserify')
 const touch = require('touch')
 const glob = require('glob')
-const LocaleCode = require('locale-code')
 
 const webRoot = __dirname
 const uppyRoot = path.join(__dirname, '../packages/uppy')
@@ -18,6 +17,9 @@ const localesRoot = path.join(__dirname, '../packages/@uppy/locales')
 
 const configPath = path.join(webRoot, '/themes/uppy/_config.yml')
 const { version } = require(path.join(uppyRoot, '/package.json'))
+
+const regionalDisplayNames = new Intl.DisplayNames('en-US', { type: 'region' })
+const languageDisplayNames = new Intl.DisplayNames('en-US', { type: 'language' })
 
 const defaultConfig = {
   comment: 'Auto updated by inject.js',
@@ -59,6 +61,7 @@ const packages = [
   '@uppy/url',
   '@uppy/webcam',
   '@uppy/xhr-upload',
+  '@uppy/drop-target',
   // Stores
   '@uppy/store-default',
   '@uppy/store-redux',
@@ -208,26 +211,17 @@ function injectLocaleList () {
     // we renamed the es_GL → gl_ES locale, and kept the old name
     // for backwards-compat, see https://github.com/transloadit/uppy/pull/1929
     if (localeName === 'es_GL') return
-    let localeNameWithDash = localeName.replace(/_/g, '-')
+    const [languageCode, regionCode, variant] = localeName.split(/[-_]/)
 
-    const parts = localeNameWithDash.split('-')
-    let variant = ''
-    if (parts.length > 2) {
-      const lang = parts.shift()
-      const country = parts.shift()
-      variant = parts.join(', ')
-      localeNameWithDash = `${lang}-${country}`
-    }
-
-    const languageName = LocaleCode.getLanguageName(localeNameWithDash)
-    const countryName = LocaleCode.getCountryName(localeNameWithDash)
+    const languageName = languageDisplayNames.of(languageCode)
+    const regionName = regionalDisplayNames.of(regionCode)
     const npmPath = `<code class="raw"><a href="https://www.npmjs.com/package/@uppy/locales">@uppy/locales</a>/lib/${localeName}</code>`
-    const cdnPath = `[\`${localeName}.min.js\`](https://transloadit.edgly.net/releases/uppy/locales/v${localePackageVersion}/${localeName}.min.js)`
+    const cdnPath = `[\`${localeName}.min.js\`](https://releases.transloadit.com/uppy/locales/v${localePackageVersion}/${localeName}.min.js)`
     const githubSource = `[\`${localeName}.js\`](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/locales/src/${localeName}.js)`
-    const mdTableRow = `| ${languageName}<br/> <small>${countryName}</small>${variant ? `<br /><small>(${variant})</small>` : ''} | ${npmPath} | ${cdnPath} | ✏️ ${githubSource} |`
+    const mdTableRow = `| ${languageName}<br/> <small>${regionName}</small>${variant ? `<br /><small>(${variant})</small>` : ''} | ${npmPath} | ${cdnPath} | ✏️ ${githubSource} |`
     mdRows.push(mdTableRow)
 
-    localeList[localeName] = `${languageName} (${countryName}${variant ? ` ${variant}` : ''})`
+    localeList[localeName] = `${languageName} (${regionName}${variant ? `, ${variant}` : ''})`
   })
 
   const resultingMdTable = mdTable.concat(mdRows.sort()).join('\n').replace('%count%', mdRows.length)

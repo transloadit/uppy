@@ -124,10 +124,12 @@ module.exports = class Transloadit extends Plugin {
     }
 
     addPluginVersion('Dropbox', 'uppy-dropbox')
+    addPluginVersion('Box', 'uppy-box')
     addPluginVersion('Facebook', 'uppy-facebook')
     addPluginVersion('GoogleDrive', 'uppy-google-drive')
     addPluginVersion('Instagram', 'uppy-instagram')
     addPluginVersion('OneDrive', 'uppy-onedrive')
+    addPluginVersion('Zoom', 'uppy-zoom')
     addPluginVersion('Url', 'uppy-url')
 
     return list.join(',')
@@ -295,7 +297,7 @@ module.exports = class Transloadit extends Plugin {
   _reserveFiles (assembly, fileIDs) {
     return Promise.all(fileIDs.map((fileID) => {
       const file = this.uppy.getFile(fileID)
-      return this.client.reserveFile(assembly, file)
+      return this.client.reserveFile(assembly.status, file)
     }))
   }
 
@@ -303,7 +305,8 @@ module.exports = class Transloadit extends Plugin {
    * Used when `importFromUploadURLs` is enabled: adds files to the Assembly
    * once they have been fully uploaded.
    */
-  _onFileUploadURLAvailable (file) {
+  _onFileUploadURLAvailable (rawFile) {
+    const file = this.uppy.getFile(rawFile.id)
     if (!file || !file.transloadit || !file.transloadit.assembly) {
       return
     }
@@ -693,14 +696,18 @@ module.exports = class Transloadit extends Plugin {
 
     const assemblyIDs = state.uploadsAssemblies[uploadID]
 
-    // If we don't have to wait for encoding metadata or results, we can close
-    // the socket immediately and finish the upload.
-    if (!this._shouldWaitAfterUpload()) {
+    const closeSocketConnections = () => {
       assemblyIDs.forEach((assemblyID) => {
         const assembly = this.activeAssemblies[assemblyID]
         assembly.close()
         delete this.activeAssemblies[assemblyID]
       })
+    }
+
+    // If we don't have to wait for encoding metadata or results, we can close
+    // the socket immediately and finish the upload.
+    if (!this._shouldWaitAfterUpload()) {
+      closeSocketConnections()
       const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
       this.uppy.addResultData(uploadID, { transloadit: assemblies })
       return Promise.resolve()
@@ -723,6 +730,8 @@ module.exports = class Transloadit extends Plugin {
 
     const watcher = this.assemblyWatchers[uploadID]
     return watcher.promise.then(() => {
+      closeSocketConnections()
+
       const assemblies = assemblyIDs.map((id) => this.getAssembly(id))
 
       // Remove the Assembly ID list for this upload,
@@ -787,6 +796,7 @@ module.exports = class Transloadit extends Plugin {
         // Golden Retriever. So, Golden Retriever is required to do resumability with the Transloadit plugin,
         // and we disable Tus's default resume implementation to prevent bad behaviours.
         storeFingerprintForResuming: false,
+        resume: false,
         // Disable Companion's retry optimisation; we need to change the endpoint on retry
         // so it can't just reuse the same tus.Upload instance server-side.
         useFastRemoteRetry: false,

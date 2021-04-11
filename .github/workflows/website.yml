@@ -1,0 +1,41 @@
+name: Deploy uppy.io
+
+on:
+  push:
+    branches: master
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: 14.x
+      - name: Install npm 7
+        run: npm install --global npm@7
+      - name: Install dependencies
+        run: npm ci
+      - name: Build Uppy
+        run: npm run build
+      - name: Build website
+        run: npm run web:build
+      - name: Prepare deployment
+        run: npm run web:prepare-deploy --quiet
+        env:
+          DEPLOY_DIR: ${{github.workspace}}/_deploy
+      - name: Push to Github Pages
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: _deploy # relative to `github.workspace`
+          committer: 'Uppy Bot <uppybot@uppy.io>'
+          author: 'Uppy Bot <uppybot@uppy.io>'
+          commit_message: Update transloadit/uppy website
+          fqdn: uppy.io
+          jekyll: false
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

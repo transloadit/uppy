@@ -3,6 +3,7 @@ const https = require('https')
 const { URL } = require('url')
 const dns = require('dns')
 const ipAddress = require('ip-address')
+const request = require('request')
 const logger = require('../logger')
 
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
@@ -79,7 +80,7 @@ function isPrivateIP (ipAddress) {
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
 
 module.exports.getRedirectEvaluator = (requestURL, blockPrivateIPs) => {
-  const protocol = (new URL(requestURL)).protocol
+  const { protocol } = new URL(requestURL)
   return (res) => {
     if (!blockPrivateIPs) {
       return true
@@ -99,6 +100,7 @@ module.exports.getRedirectEvaluator = (requestURL, blockPrivateIPs) => {
 
 /**
  * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
+ *
  * @param {string} protocol http or http: or https: or https protocol needed for the request
  * @param {boolean} blockPrivateIPs if set to false, this protection will be disabled
  */
@@ -151,4 +153,36 @@ class HttpsAgent extends https.Agent {
     // @ts-ignore
     return super.createConnection(options, callback)
   }
+}
+
+/**
+ * Gets the size and content type of a url's content
+ *
+ * @param {string} url
+ * @param {boolean=} blockLocalIPs
+ * @returns {Promise<{type: string, size: number}>}
+ */
+exports.getURLMeta = (url, blockLocalIPs = false) => {
+  return new Promise((resolve, reject) => {
+    const opts = {
+      uri: url,
+      method: 'HEAD',
+      followRedirect: exports.getRedirectEvaluator(url, blockLocalIPs),
+      agentClass: exports.getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
+    }
+
+    request(opts, (err, response) => {
+      if (err || response.statusCode >= 300) {
+        // @todo possibly set a status code in the error object to get a more helpful
+        // hint at what the cause of error is.
+        err = err || new Error(`URL server responded with status: ${response.statusCode}`)
+        reject(err)
+      } else {
+        resolve({
+          type: response.headers['content-type'],
+          size: parseInt(response.headers['content-length']),
+        })
+      }
+    })
+  })
 }

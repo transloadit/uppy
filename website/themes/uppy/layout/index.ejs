@@ -17,23 +17,20 @@
 
 <section class="IndexLogos">
   <div class="IndexLogos-container">
-    <h2 class="IndexLogos-title">Used by:</h2>
+    <h2 class="IndexLogos-title">Integrates well with</h2>
     <div class="IndexLogos-logos">
-      <a href="https://www.coursera.org/" class="IndexLogos-item IndexLogos-item--coursera">
-        <%- inline_svg('/images/featured-customers/coursera.svg') %>
+      <a class="IndexLogos-item IndexLogos-item--js" href="/docs/" title="Vanilla JS">
+        <%- inline_svg('/images/integrations/js.svg') %>
       </a>
-      <a href="https://www.photobox.com/" class="IndexLogos-item IndexLogos-item--photobox">
-        <%- inline_svg('/images/featured-customers/photobox.svg') %>
+      <a class="IndexLogos-item IndexLogos-item--react" href="/docs/react/" title="React">
+        <%- inline_svg('/images/integrations/react.svg') %>
       </a>
-      <a href="https://issuu.com/" class="IndexLogos-item IndexLogos-item--issuu">
-        <%- inline_svg('/images/featured-customers/issuu.svg') %>
+      <a class="IndexLogos-item IndexLogos-item--vue" href="/docs/vue/" title="Vue.js">
+        <%- inline_svg('/images/integrations/vue.svg') %>
       </a>
-      <a href="https://zulipchat.com/" class="IndexLogos-item IndexLogos-item--zulip">
-        <%- inline_svg('/images/featured-customers/zulip.svg') %>
+      <a class="IndexLogos-item IndexLogos-item--svelte" href="/docs/svelte" title="Svelte">
+        <%- inline_svg('/images/integrations/svelte.svg') %>
       </a>
-    </div>
-    <div class="IndexLogos-join">
-      Using Uppy in your project? <a href="https://github.com/transloadit/uppy/issues/769" rel="noreferrer noopener" target="_blank">Let us know ›</a>
     </div>
   </div>
 </section>
@@ -151,6 +148,29 @@
   </ul>
 </section>
 
+<section class="IndexLogos IndexLogos--customers">
+  <div class="IndexLogos-container">
+    <h2 class="IndexLogos-title">Used by</h2>
+    <div class="IndexLogos-logos">
+      <a href="https://www.coursera.org/" class="IndexLogos-item IndexLogos-item--coursera">
+        <%- inline_svg('/images/featured-customers/coursera.svg') %>
+      </a>
+      <a href="https://www.photobox.com/" class="IndexLogos-item IndexLogos-item--photobox">
+        <%- inline_svg('/images/featured-customers/photobox.svg') %>
+      </a>
+      <a href="https://issuu.com/" class="IndexLogos-item IndexLogos-item--issuu">
+        <%- inline_svg('/images/featured-customers/issuu.svg') %>
+      </a>
+      <a href="https://zulipchat.com/" class="IndexLogos-item IndexLogos-item--zulip">
+        <%- inline_svg('/images/featured-customers/zulip.svg') %>
+      </a>
+    </div>
+    <div class="IndexLogos-join">
+      Using Uppy in your project? <a href="https://github.com/transloadit/uppy/issues/769" rel="noreferrer noopener" target="_blank">Let us know ›</a>
+    </div>
+  </div>
+</section>
+
 <section class="IndexActivity">
   <h2>Activity Feed</h2>
 
@@ -167,11 +187,11 @@
   <p>© <%- date(Date.now(), 'YYYY') %> <a href="https://transloadit.com" target="_blank">Transloadit</a></p>
 </footer>
 
-<link href="https://transloadit.edgly.net/releases/uppy/v1.18.0/uppy.min.css" rel="stylesheet">
-<script src="https://transloadit.edgly.net/releases/uppy/v1.18.0/uppy.min.js"></script>
+<link href="https://releases.transloadit.com/uppy/v1.27.0/uppy.min.css" rel="stylesheet">
+<script src="https://releases.transloadit.com/uppy/v1.27.0/uppy.min.js"></script>
 
 <script>
-  var TUS_ENDPOINT = 'https://master.tus.io/files/'
+  var TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
   var COMPANION_ENDPOINT = 'http://localhost:3020'
   if (location.hostname === 'uppy.io') {
     COMPANION_ENDPOINT = '//companion.uppy.io'

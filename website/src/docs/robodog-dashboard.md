@@ -39,7 +39,7 @@ const uppy = Robodog.dashboard(selector, { ...options })
 
 ## Transloadit
 
-All the options to the [Transloadit][transloadit] plugin are supported.
+Most options to the [Transloadit][transloadit] plugin are supported with the exception of `id`.
 
 ## Restrictions
 
@@ -48,6 +48,14 @@ Set rules and conditions to limit the type and/or number of files that can be se
 ### `restrictions.maxFileSize`
 
 Maximum file size in bytes for each individual file.
+
+### `restrictions.minFileSize`
+
+Minimum file size in bytes for each individual file.
+
+### `restrictions.maxTotalFileSize`
+
+Maximum file size in bytes for all the files together.
 
 ### `restrictions.maxNumberOfFiles`
 

@@ -11,9 +11,9 @@ require('@uppy/dashboard/dist/style.css')
 require('@uppy/url/dist/style.css')
 require('@uppy/webcam/dist/style.css')
 
-const TUS_ENDPOINT = 'https://master.tus.io/files/'
+const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
 
-const uppy = Uppy({
+const uppy = new Uppy({
   debug: true,
   meta: {
     username: 'John',

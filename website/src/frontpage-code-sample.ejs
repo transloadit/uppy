@@ -25,7 +25,7 @@ Uppy()
     target: Dashboard,
     companionUrl: 'https://companion.uppy.io'
   })
-  .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+  .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
   .on('complete', (result) => {
     console.log('Upload result:', result)
   })
