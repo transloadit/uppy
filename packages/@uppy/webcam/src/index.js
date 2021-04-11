@@ -8,6 +8,7 @@ const supportsMediaRecorder = require('./supportsMediaRecorder')
 const CameraIcon = require('./CameraIcon')
 const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')
+const packageJsonVersion = require('../package.json').version
 
 /**
  * Normalize a MIME type or file extension into a MIME type.
@@ -70,16 +71,18 @@ function getMediaDevices () {
  * Webcam
  */
 module.exports = class Webcam extends Plugin {
-  static VERSION = require('../package.json').version
+  static VERSION = packageJsonVersion
 
   constructor (uppy, opts) {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
+    // eslint-disable-next-line no-restricted-globals
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Webcam'
     this.title = this.opts.title || 'Camera'
     this.type = 'acquirer'
+    this.capturedMediaFile = null
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
         <g fill="none" fillRule="evenodd">
@@ -101,6 +104,8 @@ module.exports = class Webcam extends Plugin {
         noCameraDescription: 'In order to take pictures or record video, please connect a camera device',
         recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
         recordingLength: 'Recording length %{recording_length}',
+        submitRecordedFile: 'Submit recorded file',
+        discardRecordedFile: 'Discard recorded file',
       },
     }
 
@@ -132,19 +137,21 @@ module.exports = class Webcam extends Plugin {
     this.render = this.render.bind(this)
 
     // Camera controls
-    this._start = this._start.bind(this)
-    this._stop = this._stop.bind(this)
-    this._takeSnapshot = this._takeSnapshot.bind(this)
-    this._startRecording = this._startRecording.bind(this)
-    this._stopRecording = this._stopRecording.bind(this)
-    this._oneTwoThreeSmile = this._oneTwoThreeSmile.bind(this)
-    this._focus = this._focus.bind(this)
-    this._changeVideoSource = this._changeVideoSource.bind(this)
+    this.start = this.start.bind(this)
+    this.stop = this.stop.bind(this)
+    this.takeSnapshot = this.takeSnapshot.bind(this)
+    this.startRecording = this.startRecording.bind(this)
+    this.stopRecording = this.stopRecording.bind(this)
+    this.discardRecordedVideo = this.discardRecordedVideo.bind(this)
+    this.submit = this.submit.bind(this)
+    this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
+    this.focus = this.focus.bind(this)
+    this.changeVideoSource = this.changeVideoSource.bind(this)
 
     this.webcamActive = false
 
     if (this.opts.countdown) {
-      this.opts.onBeforeSnapshot = this._oneTwoThreeSmile
+      this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
     }
 
     this.setPluginState({
@@ -212,12 +219,14 @@ module.exports = class Webcam extends Plugin {
     }
   }
 
-  _start (options = null) {
+  // eslint-disable-next-line consistent-return
+  start (options = null) {
     if (!this.supportsUserMedia) {
       return Promise.reject(new Error('Webcam access not supported'))
     }
 
     this.webcamActive = true
+    this.opts.mirror = true
 
     const constraints = this.getConstraints(options && options.deviceId ? options.deviceId : null)
 
@@ -265,7 +274,7 @@ module.exports = class Webcam extends Plugin {
   /**
    * @returns {object}
    */
-  _getMediaRecorderOptions () {
+  getMediaRecorderOptions () {
     const options = {}
 
     // Try to use the `opts.preferredVideoMimeType` or one of the `allowedFileTypes` for the recording.
@@ -280,9 +289,12 @@ module.exports = class Webcam extends Plugin {
         preferredVideoMimeTypes = restrictions.allowedFileTypes.map(toMimeType).filter(isVideoMimeType)
       }
 
-      const acceptableMimeTypes = preferredVideoMimeTypes.filter((candidateType) => MediaRecorder.isTypeSupported(candidateType)
-          && getFileTypeExtension(candidateType))
+      const filterSupportedTypes = (candidateType) => MediaRecorder.isTypeSupported(candidateType)
+        && getFileTypeExtension(candidateType)
+      const acceptableMimeTypes = preferredVideoMimeTypes.filter(filterSupportedTypes)
+
       if (acceptableMimeTypes.length > 0) {
+        // eslint-disable-next-line prefer-destructuring
         options.mimeType = acceptableMimeTypes[0]
       }
     }
@@ -290,10 +302,10 @@ module.exports = class Webcam extends Plugin {
     return options
   }
 
-  _startRecording () {
+  startRecording () {
     // only used if supportsMediaRecorder() returned true
     // eslint-disable-next-line compat/compat
-    this.recorder = new MediaRecorder(this.stream, this._getMediaRecorderOptions())
+    this.recorder = new MediaRecorder(this.stream, this.getMediaRecorderOptions())
     this.recordingChunks = []
     let stoppingBecauseOfMaxSize = false
     this.recorder.addEventListener('dataavailable', (event) => {
@@ -312,7 +324,7 @@ module.exports = class Webcam extends Plugin {
         if (totalSize > maxSize) {
           stoppingBecauseOfMaxSize = true
           this.uppy.info(this.i18n('recordingStoppedMaxSize'), 'warning', 4000)
-          this._stopRecording()
+          this.stopRecording()
         }
       }
     })
@@ -334,8 +346,8 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  _stopRecording () {
-    const stopped = new Promise((resolve, reject) => {
+  stopRecording () {
+    const stopped = new Promise((resolve) => {
       this.recorder.addEventListener('stop', () => {
         resolve()
       })
@@ -355,7 +367,13 @@ module.exports = class Webcam extends Plugin {
       return this.getVideo()
     }).then((file) => {
       try {
-        this.uppy.addFile(file)
+        this.capturedMediaFile = file
+        // create object url for capture result preview
+        this.setPluginState({
+          // eslint-disable-next-line compat/compat
+          recordedVideo: URL.createObjectURL(file.data),
+        })
+        this.opts.mirror = false
       } catch (err) {
         // Logging the error, exept restrictions, which is handled in Core
         if (!err.isRestriction) {
@@ -372,7 +390,26 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  _stop () {
+  discardRecordedVideo () {
+    this.setPluginState({ recordedVideo: null })
+    this.opts.mirror = true
+    this.capturedMediaFile = null
+  }
+
+  submit () {
+    try {
+      if (this.capturedMediaFile) {
+        this.uppy.addFile(this.capturedMediaFile)
+      }
+    } catch (err) {
+      // Logging the error, exept restrictions, which is handled in Core
+      if (!err.isRestriction) {
+        this.uppy.log(err, 'error')
+      }
+    }
+  }
+
+  stop () {
     if (this.stream) {
       this.stream.getAudioTracks().forEach((track) => {
         track.stop()
@@ -383,16 +420,20 @@ module.exports = class Webcam extends Plugin {
     }
     this.webcamActive = false
     this.stream = null
+    this.setPluginState({
+      recordedVideo: null,
+    })
   }
 
-  _getVideoElement () {
+  getVideoElement () {
     return this.el.querySelector('.uppy-Webcam-video')
   }
 
-  _oneTwoThreeSmile () {
+  oneTwoThreeSmile () {
     return new Promise((resolve, reject) => {
       let count = this.opts.countdown
 
+      // eslint-disable-next-line consistent-return
       const countDown = setInterval(() => {
         if (!this.webcamActive) {
           clearInterval(countDown)
@@ -412,8 +453,9 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  _takeSnapshot () {
+  takeSnapshot () {
     if (this.captureInProgress) return
+
     this.captureInProgress = true
 
     this.opts.onBeforeSnapshot().catch((err) => {
@@ -421,7 +463,7 @@ module.exports = class Webcam extends Plugin {
       this.uppy.info(message, 'error', 5000)
       return Promise.reject(new Error(`onBeforeSnapshot: ${message}`))
     }).then(() => {
-      return this._getImage()
+      return this.getImage()
     }).then((tagFile) => {
       this.captureInProgress = false
       try {
@@ -438,8 +480,8 @@ module.exports = class Webcam extends Plugin {
     })
   }
 
-  _getImage () {
-    const video = this._getVideoElement()
+  getImage () {
+    const video = this.getVideoElement()
     if (!video) {
       return Promise.reject(new Error('No video element found, likely due to the Webcam tab being closed.'))
     }
@@ -495,16 +537,16 @@ module.exports = class Webcam extends Plugin {
     return Promise.resolve(file)
   }
 
-  _focus () {
+  focus () {
     if (!this.opts.countdown) return
     setTimeout(() => {
       this.uppy.info(this.i18n('smile'), 'success', 1500)
     }, 1000)
   }
 
-  _changeVideoSource (deviceId) {
-    this._stop()
-    this._start({ deviceId })
+  changeVideoSource (deviceId) {
+    this.stop()
+    this.start({ deviceId })
   }
 
   updateVideoSources () {
@@ -517,7 +559,7 @@ module.exports = class Webcam extends Plugin {
 
   render () {
     if (!this.webcamActive) {
-      this._start()
+      this.start()
     }
 
     const webcamState = this.getPluginState()
@@ -534,13 +576,16 @@ module.exports = class Webcam extends Plugin {
 
     return (
       <CameraScreen
+        // eslint-disable-next-line react/jsx-props-no-spreading
         {...webcamState}
-        onChangeVideoSource={this._changeVideoSource}
-        onSnapshot={this._takeSnapshot}
-        onStartRecording={this._startRecording}
-        onStopRecording={this._stopRecording}
-        onFocus={this._focus}
-        onStop={this._stop}
+        onChangeVideoSource={this.changeVideoSource}
+        onSnapshot={this.takeSnapshot}
+        onStartRecording={this.startRecording}
+        onStopRecording={this.stopRecording}
+        onDiscardRecordedVideo={this.discardRecordedVideo}
+        onSubmit={this.submit}
+        onFocus={this.focus}
+        onStop={this.stop}
         i18n={this.i18n}
         modes={this.opts.modes}
         showRecordingLength={this.opts.showRecordingLength}
@@ -567,7 +612,7 @@ module.exports = class Webcam extends Plugin {
     if (this.mediaDevices) {
       this.updateVideoSources()
 
-      this.mediaDevices.ondevicechange = (event) => {
+      this.mediaDevices.ondevicechange = () => {
         this.updateVideoSources()
 
         if (this.stream) {
@@ -582,8 +627,8 @@ module.exports = class Webcam extends Plugin {
           })
 
           if (restartStream) {
-            this._stop()
-            this._start()
+            this.stop()
+            this.start()
           }
         }
       }
@@ -592,7 +637,7 @@ module.exports = class Webcam extends Plugin {
 
   uninstall () {
     if (this.stream) {
-      this._stop()
+      this.stop()
     }
 
     this.unmount()
