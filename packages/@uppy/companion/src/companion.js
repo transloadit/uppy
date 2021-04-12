@@ -40,6 +40,8 @@ const defaultOptions = {
   debug: true,
 }
 
+module.exports.metrics = middlewares.metrics
+
 // make the errors available publicly for custom providers
 module.exports.errors = { ProviderApiError, ProviderAuthError }
 module.exports.socket = require('./server/socket')

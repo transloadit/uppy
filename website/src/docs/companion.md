@@ -85,6 +85,9 @@ const options = {
 }
 
 app.use('/companion', companion.app(options))
+
+// Optional: if you want Prometheus metrics:
+app.use(companion.metrics())
 ```
 
 See [Options](#Options) for valid configuration options.
