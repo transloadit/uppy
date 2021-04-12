@@ -76,6 +76,8 @@ function server (inputCompanionOptions = {}) {
 
   // for server metrics tracking.
   // make app metrics available at '/metrics'.
+  // TODO for the next major version: use instead companion option "metrics": true and remove this code
+  // Se discussion: https://github.com/transloadit/uppy/pull/2854/files/64be97205e4012818abfcc8b0b8b7fe09de91729#diff-68f5e3eb307c1c9d1fd02224fd7888e2f74718744e1b6e35d929fcab1cc50ed1
   if (process.env.COMPANION_HIDE_METRICS !== 'true') {
     app.use(middlewares.metrics())
   }
@@ -149,7 +151,7 @@ function server (inputCompanionOptions = {}) {
     process.exit(1)
   }
 
-  // add companion to server middlewear
+  // add companion to server middleware
   if (process.env.COMPANION_PATH) {
     app.use(process.env.COMPANION_PATH, companionApp)
   } else {

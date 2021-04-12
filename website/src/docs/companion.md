@@ -85,9 +85,6 @@ const options = {
 }
 
 app.use('/companion', companion.app(options))
-
-// Optional: if you want Prometheus metrics:
-app.use(companion.metrics())
 ```
 
 See [Options](#Options) for valid configuration options.
@@ -289,7 +286,8 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
   sendSelfEndpoint: "localhost:3020",
   secret: 'mysecret',
   uploadUrls: ['https://myuploadurl.com', 'http://myuploadurl2.com']
-  debug: true
+  debug: true,
+  metrics: false
 }
 ```
 
@@ -321,6 +319,8 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 10. **secret(required)** - A secret string which Companion uses to generate authorization tokens.
 
 11. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
+
+12. **metrics(optional)** - A boolean flag to tell Companion whether or not to provide an endpoint `/metrics` with Prometheus metrics.
 
 ### Provider Redirect URIs
 

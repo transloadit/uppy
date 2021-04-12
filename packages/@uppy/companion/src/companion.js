@@ -40,8 +40,6 @@ const defaultOptions = {
   debug: true,
 }
 
-module.exports.metrics = middlewares.metrics
-
 // make the errors available publicly for custom providers
 module.exports.errors = { ProviderApiError, ProviderAuthError }
 module.exports.socket = require('./server/socket')
@@ -75,6 +73,11 @@ module.exports.app = (options = {}) => {
   emitter(options.multipleInstances && options.redisUrl, options.redisPubSubScope)
 
   const app = express()
+
+  if (options.metrics) {
+    app.use(middlewares.metrics())
+  }
+
   app.use(cookieParser()) // server tokens are added to cookies
 
   app.use(interceptGrantErrorResponse)
