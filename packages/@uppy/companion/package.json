@@ -85,7 +85,7 @@
     "@types/uuid": "3.4.7",
     "@types/ws": "6.0.4",
     "supertest": "3.4.2",
-    "typescript": "3.7.5"
+    "typescript": "~4.1"
   },
   "files": [
     "bin/",
