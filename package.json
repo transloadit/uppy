@@ -163,7 +163,7 @@
     "test:endtoend:registry": "verdaccio --listen 4002 --config test/endtoend/verdaccio.yaml",
     "test:endtoend": "npm run test:endtoend:prepare-ci && wdio test/endtoend/wdio.remote.conf.js",
     "test:locale-packs": "node ./bin/locale-packs.js test",
-    "test:type": "lerna exec --scope '@uppy/*' --ignore '@uppy/{react-native,locales,companion,provider-views,robodog,svelte}' tsd",
+    "test:type": "lerna exec --scope '@uppy/*' --ignore '@uppy/{react-native,locales,companion,provider-views,robodog,svelte,angular}' tsd",
     "test:unit": "npm run build:lib && jest",
     "test:watch": "jest --watch",
     "test:size": "size-limit",
