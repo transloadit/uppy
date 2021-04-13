@@ -164,7 +164,9 @@ const getOptionsMiddleware = (options) => {
       buildURL: getURLBuilder(options),
     }
 
-    logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
+    if (options.debug) {
+      logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
+    }
     next()
   }
 
