@@ -30,7 +30,7 @@ This plugin is published as the `@uppy/drop-target` package.
 Install from NPM:
 
 ```shell
-npm install @uppy/drag-drop
+npm install @uppy/drop-target
 ```
 
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
