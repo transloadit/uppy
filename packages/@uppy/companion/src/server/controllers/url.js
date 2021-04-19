@@ -5,6 +5,7 @@ const validator = require('validator')
 const Uploader = require('../Uploader')
 const reqUtil = require('../helpers/request')
 const logger = require('../logger')
+const ytdl = require('ytdl-core')
 
 module.exports = () => {
   return router()
@@ -18,16 +19,35 @@ module.exports = () => {
  * @param {object} req expressJS request object
  * @param {object} res expressJS response object
  */
-const meta = (req, res) => {
+
+ function matchYoutubeUrl(url) {
+  var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+  if(url.match(p)){
+      return url.match(p)[1];
+  }
+  return false;
+}
+
+const meta = async (req, res) => {
   logger.debug('URL file import handler running', null, req.id)
   const { debug } = req.companion.options
-  if (!validateURL(req.body.url, debug)) {
+  let url = req.body.url
+
+  if (!validateURL(url, debug)) {
     logger.debug('Invalid request body detected. Exiting url meta handler.', null, req.id)
     return res.status(400).json({ error: 'Invalid request body' })
   }
-
+  let thumbnail = false;
+  if (matchYoutubeUrl(url)) {
+    const videoID = ytdl.getURLVideoID(url)
+    // @ts-ignore
+    thumbnail = `https://img.youtube.com/vi/${videoID}/default.jpg`
+    let info = await ytdl.getInfo(videoID);
+    let format = ytdl.chooseFormat(info.formats, { filter: 'audioandvideo' });
+    url = format.url
+  }
   reqUtil.getURLMeta(req.body.url, !debug)
-    .then((meta) => res.json(meta))
+    .then((meta) => (res.json({...meta, thumbnail: thumbnail || false})))
     .catch((err) => {
       logger.error(err, 'controller.url.meta.error', req.id)
       // @todo send more meaningful error message and status code to client if possible
@@ -42,12 +62,19 @@ const meta = (req, res) => {
  * @param {object} req expressJS request object
  * @param {object} res expressJS response object
  */
-const get = (req, res) => {
+const get = async (req, res) => {
   logger.debug('URL file import handler running', null, req.id)
   const { debug } = req.companion.options
-  if (!validateURL(req.body.url, debug)) {
-    logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
-    return res.status(400).json({ error: 'Invalid request body' })
+  let url = req.body.url
+  if (!validateURL(url, debug)) {
+    logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id);
+    return res.status(400).json({ error: 'Invalid request body' });
+  }
+  if (matchYoutubeUrl(url)) {
+    const videoID = ytdl.getURLVideoID(url)
+    let info = await ytdl.getInfo(videoID);
+    let format = ytdl.chooseFormat(info.formats, { filter: 'audioandvideo' });
+    url = format.url
   }
 
   reqUtil.getURLMeta(req.body.url, !debug)
@@ -65,7 +92,7 @@ const get = (req, res) => {
       logger.debug('Waiting for socket connection before beginning remote download.', null, req.id)
       uploader.onSocketReady(() => {
         logger.debug('Socket connection received. Starting remote download.', null, req.id)
-        downloadURL(req.body.url, uploader.handleChunk.bind(uploader), !debug, req.id)
+        downloadURL(url, uploader.handleChunk.bind(uploader), !debug, req.id)
       })
 
       const response = uploader.getResponse()
