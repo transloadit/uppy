@@ -26,6 +26,8 @@ module.exports = class Box extends Plugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionKeysParams: this.opts.companionKeysParams,
+      companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'box',
       pluginId: this.id,
     })
