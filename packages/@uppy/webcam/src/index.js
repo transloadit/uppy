@@ -518,7 +518,11 @@ module.exports = class Webcam extends Plugin {
   }
 
   getVideo () {
-    const mimeType = this.recordingChunks[0].type
+    // Sometimes in iOS Safari, Blobs (especially the first Blob in the recordingChunks Array)
+    // have empty 'type' attributes (e.g. '') so we need to find a Blob that has a defined 'type'
+    // attribute in order to determine the correct MIME type.
+    const mimeType = this.recordingChunks.find(blob => blob.type?.length > 0).type
+
     const fileExtension = getFileTypeExtension(mimeType)
 
     if (!fileExtension) {
