@@ -5,8 +5,7 @@ const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const Uploader = require('./MultipartUploader')
-const firebase = require('firebase/app');
-require('firebase/auth');
+const firebase = require('firebase/app').default
 const auth = firebase.auth()
 
 function assertServerError (res) {
