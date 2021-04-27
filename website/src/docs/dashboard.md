@@ -466,6 +466,10 @@ userNameInput.addEventListener('change', () => {
 })
 ```
 
+### `disableLocalFiles: false`
+
+Enabling this option will disable drag & drop, hide the “browse” and “My Device” button, allowing only uploads from plugins, such as Webcam, Screen Capture, Google Drive, Instagram.
+
 ## Methods
 
 ### `openModal()`

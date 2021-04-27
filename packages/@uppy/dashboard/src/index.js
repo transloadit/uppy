@@ -71,12 +71,13 @@ module.exports = class Dashboard extends Plugin {
         saveChanges: 'Save changes',
         cancel: 'Cancel',
         myDevice: 'My Device',
-        dropPasteFiles: 'Drop files here, paste or %{browseFiles}',
-        dropPasteFolders: 'Drop files here, paste or %{browseFolders}',
-        dropPasteBoth: 'Drop files here, paste, %{browseFiles} or %{browseFolders}',
-        dropPasteImportFiles: 'Drop files here, paste, %{browseFiles} or import from:',
-        dropPasteImportFolders: 'Drop files here, paste, %{browseFolders} or import from:',
-        dropPasteImportBoth: 'Drop files here, paste, %{browseFiles}, %{browseFolders} or import from:',
+        dropPasteFiles: 'Drop files here or %{browseFiles}',
+        dropPasteFolders: 'Drop files here or %{browseFolders}',
+        dropPasteBoth: 'Drop files here, %{browseFiles} or %{browseFolders}',
+        dropPasteImportFiles: 'Drop files here, %{browseFiles} or import from:',
+        dropPasteImportFolders: 'Drop files here, %{browseFolders} or import from:',
+        dropPasteImportBoth: 'Drop files here, %{browseFiles}, %{browseFolders} or import from:',
+        importFiles: 'Import files from:',
         dropHint: 'Drop your files here',
         browseFiles: 'browse files',
         browseFolders: 'browse folders',
@@ -148,6 +149,7 @@ module.exports = class Dashboard extends Plugin {
       theme: 'light',
       autoOpenFileEditor: false,
       disabled: false,
+      disableLocalFiles: false,
     }
 
     // merge default options with the ones set by user
@@ -590,7 +592,7 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
 
-    if (this.opts.disabled) {
+    if (this.opts.disabled || this.opts.disableLocalFiles) {
       return
     }
 
@@ -606,7 +608,7 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
 
-    if (this.opts.disabled) {
+    if (this.opts.disabled || this.opts.disableLocalFiles) {
       return
     }
 
@@ -621,7 +623,7 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
 
-    if (this.opts.disabled) {
+    if (this.opts.disabled || this.opts.disableLocalFiles) {
       return
     }
 
@@ -941,6 +943,7 @@ module.exports = class Dashboard extends Plugin {
       acquirers,
       theme,
       disabled: this.opts.disabled,
+      disableLocalFiles: this.opts.disableLocalFiles,
       direction: this.opts.direction,
       activePickerPanel: pluginState.activePickerPanel,
       showFileEditor: pluginState.showFileEditor,
