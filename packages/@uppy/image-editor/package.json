@@ -28,6 +28,7 @@
   "dependencies": {
     "@uppy/utils": "file:../utils",
     "cropperjs": "1.5.7",
+    "input-range-scss": "1.5.2",
     "preact": "8.2.9"
   },
   "peerDependencies": {
