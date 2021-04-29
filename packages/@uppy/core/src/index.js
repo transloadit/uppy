@@ -1,3 +1,4 @@
+/* global AggregateError */
 const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
@@ -758,9 +759,13 @@ class Uppy {
         details: message,
       }, 'error', this.opts.infoTimeout)
 
-      const err = new Error(message)
-      err.errors = errors
-      throw err
+      if (typeof AggregateError === 'function') {
+        throw new AggregateError(errors, message)
+      } else {
+        const err = new Error(message)
+        err.errors = errors
+        throw err
+      }
     }
   }
 
