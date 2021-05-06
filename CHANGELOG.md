@@ -11,15 +11,45 @@ Please add your entries in this format:
  - `- [ ] (<plugin name>|website|core|meta|build|test): <Present tense verb> <subject> \(<list of associated owners/gh-issues>\)`.
 
 In the current stage we aim to release a new version at least every month.
-
-## April 2021
-
 ### next
 
 - [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
 - [ ] plugin: audio/memo recording similar to Webcam #143 #198
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
 - [ ] robodog: finishing touches on Companion dynamic Oauth #2802 (@goto-bus-stop)
+
+## May 2021
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/box | 0.3.9 | @uppy/robodog | 1.10.8 |
+| @uppy/companion | 2.8.0 | @uppy/screen-capture | 1.0.18 |
+| @uppy/core | 1.18.0 | @uppy/svelte | 0.1.8 |
+| @uppy/dashboard | 1.19.0 | @uppy/vue | 0.2.1 |
+| @uppy/drop-target | 0.2.1 | @uppy/webcam | 1.8.9 |
+| @uppy/locales | 1.19.0 | uppy | 1.28.0 |
+| @uppy/react | 1.11.7 | - | - |
+
+## 1.28.0
+
+Released: 2021-05-05
+
+In this release we’ve added `disableLocalFiles` option to Dashboard, `uppy.logout()` API to log out of all providers at once, upgraded TypeScript and Redis.
+
+- @uppy/companion: Smaller heroku deployment (#2845 / @goto-bus-stop)
+- @uppy/companion: Pull out metric middleware logic (#2854 / @mifi)
+- @uppy/companion: Bump redis from 2.8.0 to 3.1.1 (#2865 / @dependabot, @ kiloreux)
+- @uppy/core: Add uppy.logout() that logs user out of all cloud providers (#2850 / @arturi)
+- @uppy/core: Use AggregateError when available (#2869 / @aduh95)
+- @uppy/dashboard: Implement disableLocalFiles option — disables drag & drop, hides “browse” and “My Device” buttons (#2852 / @arturi)
+- @uppy/webcam: improve MIME type detection to solve issue in iOS Safari (#2851 / @dominiceden)
+- @uppy/box: This PR added companion cookies rule to every provider except Box (#2864 / @mazoruss)
+- @uppy/react: Add function as allowed prop type (#2873 / @GreenJimmy)
+- @uppy/webcam: Add preview for videos made with webcam (#2837 / @Murderlon)
+- @uppy/drop-target: Fix npm package name for drop-target (#2857 / @jszobody)
+- @uppy/core: Remove outdated comment (#2868 / @aduh95)
+- build: Upgrade TypeScript (#2856 / @ajkachnic)
+- docs: Update transloadit.md (#2859 / @JimmyLv)
 
 ## March 2021
 
