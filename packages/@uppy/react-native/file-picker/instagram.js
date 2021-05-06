@@ -4,7 +4,7 @@ import {
   View,
   FlatList,
   Image,
-  WebView
+  WebView,
 } from 'react-native'
 import Instagram from '@uppy/instagram'
 

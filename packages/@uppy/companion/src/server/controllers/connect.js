@@ -1,6 +1,5 @@
 const atob = require('atob')
 const oAuthState = require('../helpers/oauth-state')
-// @ts-ignore
 
 /**
  * initializes the oAuth flow for a provider.

@@ -12,7 +12,7 @@ module.exports = function oauthRedirect (req, res) {
   const params = qs.stringify(req.query)
   const { authProvider } = req.companion.provider
   if (!req.companion.options.server.oauthDomain) {
-    return res.redirect(`/connect/${authProvider}/callback?${params}`)
+    return res.redirect(req.companion.buildURL(`/connect/${authProvider}/callback?${params}`, true))
   }
 
   const dynamic = (req.session.grant || {}).dynamic || {}

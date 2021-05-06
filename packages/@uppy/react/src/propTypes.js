@@ -19,7 +19,10 @@ const metaField = PropTypes.shape({
   name: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
 })
-const metaFields = PropTypes.arrayOf(metaField)
+const metaFields = PropTypes.oneOfType([
+  PropTypes.arrayOf(metaField),
+  PropTypes.func,
+])
 
 // A size in pixels (number) or with some other unit (string).
 const cssSize = PropTypes.oneOfType([

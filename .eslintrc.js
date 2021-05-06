@@ -1,26 +1,6 @@
+/* eslint-disable quote-props */
+
 'use strict'
-
-const glob = require('glob')
-
-// Configure import/no-extraneous-dependencies for test files in
-// each package, which are allowed to import dependencies from their
-// own package.json as well as the root package.json.
-const importRules = []
-for (const dir of glob.sync('packages/@uppy/*')) {
-  importRules.push({
-    files: [
-      `${dir}/**/*.test.js`,
-      `${dir}/test/**/*.js`,
-      `${dir}/rollup.config.js`,
-    ],
-    rules: {
-      'import/no-extraneous-dependencies': ['error', {
-        devDependencies: true,
-        packageDir: [dir, '.'],
-      }],
-    },
-  })
-}
 
 module.exports = {
   extends: ['transloadit'],
@@ -57,7 +37,7 @@ module.exports = {
     // transloadit rules we are actually ok with in the uppy repo
     'guard-for-in': ['off'],
     'import/extensions': ['off'],
-    strict: ['off'],
+    'strict': ['off'],
     'key-spacing': ['off'],
 
     // transloadit rules we would like to enforce in the future
@@ -106,7 +86,7 @@ module.exports = {
     'node/handle-callback-err': ['warn'],
     'prefer-destructuring': ['warn'],
     'prefer-spread': ['warn'],
-    radix: ['warn'],
+    'radix': ['warn'],
     'react/button-has-type': ['warn'],
     'react/destructuring-assignment': ['warn'],
     'react/forbid-prop-types': ['warn'],
@@ -168,9 +148,11 @@ module.exports = {
     {
       files: [
         'bin/**.js',
+        'postcss.config.js',
         '.eslintrc.js',
       ],
       rules: {
+        'no-console': ['off'],
         'import/no-extraneous-dependencies': ['error', {
           devDependencies: true,
         }],
@@ -199,6 +181,10 @@ module.exports = {
 
     {
       files: ['test/endtoend/*/*.js'],
+      rules: {
+        // we mostly import @uppy stuff in these files.
+        'import/no-extraneous-dependencies': ['off'],
+      },
       env: {
         mocha: true,
       },
@@ -212,7 +198,5 @@ module.exports = {
         }],
       },
     },
-
-    ...importRules,
   ],
 }

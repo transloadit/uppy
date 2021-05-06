@@ -1,8 +1,9 @@
-const Provider = require('../Provider')
-
+/* eslint-disable no-underscore-dangle */
+const { callbackify } = require('util')
 const request = require('request')
-// @ts-ignore
 const purest = require('purest')({ request })
+
+const Provider = require('../Provider')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
@@ -11,6 +12,76 @@ const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,pe
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
+
+// Hopefully this name will not be used by Google
+const VIRTUAL_SHARED_DIR = 'shared-with-me'
+
+function waitForFailedResponse (resp) {
+  return new Promise((resolve, reject) => {
+    let data = ''
+    resp.on('data', (chunk) => {
+      data += chunk
+    }).on('end', () => {
+      try {
+        resolve(JSON.parse(data.toString()))
+      } catch (error) {
+        reject(error)
+      }
+    })
+  })
+}
+
+function adaptData (listFilesResp, sharedDrivesResp, directory, query, showSharedWithMe) {
+  const adaptItem = (item) => ({
+    isFolder: adapter.isFolder(item),
+    icon: adapter.getItemIcon(item),
+    name: adapter.getItemName(item),
+    mimeType: adapter.getMimeType(item),
+    id: adapter.getItemId(item),
+    thumbnail: adapter.getItemThumbnailUrl(item),
+    requestPath: adapter.getItemRequestPath(item),
+    modifiedDate: adapter.getItemModifiedDate(item),
+    size: adapter.getItemSize(item),
+    custom: {
+      // @todo isTeamDrive is left for backward compatibility. We should remove it in the next
+      // major release.
+      isTeamDrive: adapter.isSharedDrive(item),
+      isSharedDrive: adapter.isSharedDrive(item),
+      imageHeight: adapter.getImageHeight(item),
+      imageWidth: adapter.getImageWidth(item),
+      imageRotation: adapter.getImageRotation(item),
+      imageDateTime: adapter.getImageDate(item),
+      videoHeight: adapter.getVideoHeight(item),
+      videoWidth: adapter.getVideoWidth(item),
+      videoDurationMillis: adapter.getVideoDurationMillis(item),
+    },
+  })
+
+  const items = adapter.getItemSubList(listFilesResp)
+  const sharedDrives = sharedDrivesResp ? sharedDrivesResp.drives || [] : []
+
+  // “Shared with me” is a list of shared documents,
+  // not the same as sharedDrives
+  const virtualItem = showSharedWithMe && ({
+    isFolder: true,
+    icon: 'folder',
+    name: 'Shared with me',
+    mimeType: 'application/vnd.google-apps.folder',
+    id: VIRTUAL_SHARED_DIR,
+    requestPath: VIRTUAL_SHARED_DIR,
+  })
+
+  const adaptedItems = [
+    ...(virtualItem ? [virtualItem] : []), // shared folder first
+    ...([...sharedDrives, ...items].map(adaptItem)),
+  ]
+
+  return {
+    username: adapter.getUsername(listFilesResp),
+    items: adaptedItems,
+    nextPagePath: adapter.getNextPagePath(listFilesResp, query, directory),
+  }
+}
 
 /**
  * Adapter for API https://developers.google.com/drive/api/v3/
@@ -32,69 +103,85 @@ class Drive extends Provider {
     return 'google'
   }
 
-  list (options, done) {
+  async _list (options) {
     const directory = options.directory || 'root'
     const query = options.query || {}
 
-    let sharedDrivesPromise = Promise.resolve(undefined)
+    const { client } = this
+    const handleErrorResponse = this._error.bind(this)
 
-    const shouldListSharedDrives = directory === 'root' && !query.cursor
-    if (shouldListSharedDrives) {
-      sharedDrivesPromise = new Promise((resolve) => {
-        this.client
-          .query()
+    const isRoot = directory === 'root'
+    const isVirtualSharedDirRoot = directory === VIRTUAL_SHARED_DIR
+
+    async function fetchSharedDrives () {
+      try {
+        const shouldListSharedDrives = isRoot && !query.cursor
+        if (!shouldListSharedDrives) return undefined
+
+        const resp = await new Promise((resolve, reject) => client
           .get('drives')
           .qs({ fields: SHARED_DRIVE_FIELDS })
           .auth(options.token)
-          .request((err, resp) => {
-            if (err) {
-              logger.error(err, 'provider.drive.sharedDrive.error')
-              return
-            }
-            resolve(resp)
-          })
-      })
+          .request((err, resp2) => {
+            if (err || resp2.statusCode !== 200) return reject(handleErrorResponse(err, resp2))
+            return resolve(resp2)
+          }))
+
+        return resp && resp.body
+      } catch (err) {
+        logger.error(err, 'provider.drive.sharedDrive.error')
+        throw err
+      }
     }
 
-    const where = {
-      fields: DRIVE_FILES_FIELDS,
-      pageToken: query.cursor,
-      q: `'${directory}' in parents and trashed=false`,
-      includeItemsFromAllDrives: true,
-      supportsAllDrives: true,
+    async function fetchFiles () {
+      // Shared with me items in root don't have any parents
+      const q = isVirtualSharedDirRoot
+        ? `sharedWithMe and trashed=false`
+        : `('${directory}' in parents) and trashed=false`
+
+      const where = {
+        fields: DRIVE_FILES_FIELDS,
+        pageToken: query.cursor,
+        q,
+        // pageSize: 10, // can be used for testing pagination if you don't have many files
+        includeItemsFromAllDrives: true,
+        supportsAllDrives: true,
+      }
+
+      try {
+        const resp = await new Promise((resolve, reject) => client
+          .query()
+          .get('files')
+          .qs(where)
+          .auth(options.token)
+          .request((err, resp2) => {
+            if (err || resp2.statusCode !== 200) return reject(handleErrorResponse(err, resp2))
+            return resolve(resp2)
+          }))
+
+        return resp && resp.body
+      } catch (err) {
+        logger.error(err, 'provider.drive.list.error')
+        throw err
+      }
     }
 
-    const filesPromise = new Promise((resolve, reject) => {
-      this.client
-        .query()
-        .get('files')
-        .qs(where)
-        .auth(options.token)
-        .request((err, resp) => {
-          if (err || resp.statusCode !== 200) {
-            reject(this._error(err, resp))
-            return
-          }
-          resolve(resp)
-        })
-    })
+    const [sharedDrives, filesResponse] = await Promise.all([fetchSharedDrives(), fetchFiles()])
+    // console.log({ directory, sharedDrives, filesResponse })
 
-    Promise.all([sharedDrivesPromise, filesPromise])
-      .then(
-        ([sharedDrives, filesResponse]) => {
-          const returnData = this.adaptData(
-            filesResponse.body,
-            sharedDrives && sharedDrives.body,
-            directory,
-            query
-          )
-          done(null, returnData)
-        },
-        (reqErr) => {
-          logger.error(reqErr, 'provider.drive.list.error')
-          done(reqErr)
-        }
-      )
+    return adaptData(
+      filesResponse,
+      sharedDrives,
+      directory,
+      query,
+      isRoot && !query.cursor // we can only show it on the first page request, or else we will have duplicates of it
+    )
+  }
+
+  list (options, done) {
+    // @ts-ignore
+    callbackify(this._list.bind(this))(options, done)
   }
 
   stats ({ id, token }, done) {
@@ -114,21 +201,6 @@ class Drive extends Provider {
       .qs({ supportsAllDrives: true, mimeType })
       .auth(token)
       .request()
-  }
-
-  _waitForFailedResponse (resp) {
-    return new Promise((resolve, reject) => {
-      let data = ''
-      resp.on('data', (chunk) => {
-        data += chunk
-      }).on('end', () => {
-        try {
-          resolve(JSON.parse(data.toString()))
-        } catch (error) {
-          reject(error)
-        }
-      })
-    })
   }
 
   download ({ id, token }, onData) {
@@ -154,20 +226,19 @@ class Drive extends Provider {
       requestStream
         .on('response', (resp) => {
           if (resp.statusCode !== 200) {
-            this._waitForFailedResponse(resp)
+            waitForFailedResponse(resp)
               .then((jsonResp) => {
-                resp.body = jsonResp
-                onData(this._error(null, resp))
+                onData(this._error(null, { ...resp, body: jsonResp }))
               })
-              .catch((err) => onData(this._error(err, resp)))
+              .catch((err2) => onData(this._error(err2, resp)))
           } else {
             resp.on('data', (chunk) => onData(null, chunk))
           }
         })
         .on('end', () => onData(null, null))
-        .on('error', (err) => {
-          logger.error(err, 'provider.drive.download.error')
-          onData(err)
+        .on('error', (err2) => {
+          logger.error(err2, 'provider.drive.download.error')
+          onData(err2)
         })
     })
   }
@@ -182,9 +253,10 @@ class Drive extends Provider {
   size ({ id, token }, done) {
     return this.stats({ id, token }, (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
-        err = this._error(err, resp)
-        logger.error(err, 'provider.drive.size.error')
-        return done(err)
+        const err2 = this._error(err, resp)
+        logger.error(err2, 'provider.drive.size.error')
+        done(err2)
+        return
       }
 
       if (adapter.isGsuiteFile(body.mimeType)) {
@@ -195,7 +267,7 @@ class Drive extends Provider {
         const maxExportFileSize = 10 * 1024 * 1024 // 10 MB
         done(null, maxExportFileSize)
       } else {
-        done(null, parseInt(body.size))
+        done(null, parseInt(body.size, 10))
       }
     })
   }
@@ -212,44 +284,6 @@ class Drive extends Provider {
         }
         done(null, { revoked: true })
       })
-  }
-
-  adaptData (res, sharedDrivesResp, directory, query) {
-    const adaptItem = (item) => ({
-      isFolder: adapter.isFolder(item),
-      icon: adapter.getItemIcon(item),
-      name: adapter.getItemName(item),
-      mimeType: adapter.getMimeType(item),
-      id: adapter.getItemId(item),
-      thumbnail: adapter.getItemThumbnailUrl(item),
-      requestPath: adapter.getItemRequestPath(item),
-      modifiedDate: adapter.getItemModifiedDate(item),
-      size: adapter.getItemSize(item),
-      custom: {
-        // @todo isTeamDrive is left for backward compatibility. We should remove it in the next
-        // major release.
-        isTeamDrive: adapter.isSharedDrive(item),
-        isSharedDrive: adapter.isSharedDrive(item),
-        imageHeight: adapter.getImageHeight(item),
-        imageWidth: adapter.getImageWidth(item),
-        imageRotation: adapter.getImageRotation(item),
-        imageDateTime: adapter.getImageDate(item),
-        videoHeight: adapter.getVideoHeight(item),
-        videoWidth: adapter.getVideoWidth(item),
-        videoDurationMillis: adapter.getVideoDurationMillis(item),
-      },
-    })
-
-    const items = adapter.getItemSubList(res)
-    const sharedDrives = sharedDrivesResp ? sharedDrivesResp.drives || [] : []
-
-    const adaptedItems = sharedDrives.concat(items).map(adaptItem)
-
-    return {
-      username: adapter.getUsername(res),
-      items: adaptedItems,
-      nextPagePath: adapter.getNextPagePath(res, query, directory),
-    }
   }
 
   _error (err, resp) {

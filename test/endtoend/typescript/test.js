@@ -8,7 +8,9 @@ describe('Project compiled with Uppy\'s TypeScript typings', () => {
     await root.waitForExist()
     await trigger.click()
 
-    const typeofUppy = await browser.execute(() => {
+    // IE doesn't support arrow functions
+    // eslint-disable-next-line prefer-arrow-callback,func-names
+    const typeofUppy = await browser.execute(function () {
       return typeof window.uppy
     })
     // It was initialized correctly

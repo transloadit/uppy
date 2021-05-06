@@ -57,7 +57,21 @@ describe('list provider files', () => {
       .expect(200)
       .then((res) => {
         expect(res.body.username).toBe(fixtures.defaults.USERNAME)
-        const item = res.body.items[0]
+
+        const items = [...res.body.items]
+
+        // Drive has a virtual "shared-with-me" folder as the first item
+        if (providerName === 'drive') {
+          const item0 = items.shift()
+          expect(item0.isFolder).toBe(true)
+          expect(item0.name).toBe('Shared with me')
+          expect(item0.mimeType).toBe('application/vnd.google-apps.folder')
+          expect(item0.id).toBe('shared-with-me')
+          expect(item0.requestPath).toBe('shared-with-me')
+          expect(item0.icon).toBe('folder')
+        }
+
+        const item = items[0]
         expect(item.isFolder).toBe(false)
         expect(item.name).toBe(providerFixtures.itemName || fixtures.defaults.ITEM_NAME)
         expect(item.mimeType).toBe(providerFixtures.itemMimeType || fixtures.defaults.MIME_TYPE)

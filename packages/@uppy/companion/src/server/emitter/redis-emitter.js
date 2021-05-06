@@ -11,9 +11,9 @@ class RedisEmitter extends NRP {
    *
    * @param {string} redisUrl redis URL
    */
-  constructor (redisUrl) {
+  constructor (redisUrl, redisPubSubScope) {
     // @ts-ignore
-    super({ url: redisUrl })
+    super({ url: redisUrl, scope: redisPubSubScope })
   }
 
   /**
@@ -61,6 +61,6 @@ class RedisEmitter extends NRP {
   }
 }
 
-module.exports = (redisUrl) => {
-  return new RedisEmitter(redisUrl)
+module.exports = (redisUrl, redisPubSubScope) => {
+  return new RedisEmitter(redisUrl, redisPubSubScope)
 }

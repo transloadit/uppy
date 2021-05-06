@@ -1,3 +1,4 @@
+/* global AggregateError */
 const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
@@ -705,8 +706,6 @@ class Uppy {
   /**
    * Add multiple files to `state.files`. See the `addFile()` documentation.
    *
-   * This cuts some corners for performance, so should typically only be used in cases where there may be a lot of files.
-   *
    * If an error occurs while adding a file, it is logged and the user is notified. This is good for UI plugins, but not for programmatic use. Programmatic users should usually still use `addFile()` on individual files.
    */
   addFiles (fileDescriptors) {
@@ -759,9 +758,13 @@ class Uppy {
         details: message,
       }, 'error', this.opts.infoTimeout)
 
-      const err = new Error(message)
-      err.errors = errors
-      throw err
+      if (typeof AggregateError === 'function') {
+        throw new AggregateError(errors, message)
+      } else {
+        const err = new Error(message)
+        err.errors = errors
+        throw err
+      }
     }
   }
 
@@ -951,6 +954,14 @@ class Uppy {
 
   reset () {
     this.cancelAll()
+  }
+
+  logout () {
+    this.iteratePlugins(plugin => {
+      if (plugin.provider && plugin.provider.logout) {
+        plugin.provider.logout()
+      }
+    })
   }
 
   _calculateProgress (file, data) {
