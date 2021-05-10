@@ -13,12 +13,24 @@ Please add your entries in this format:
 In the current stage we aim to release a new version at least every month.
 ### next
 
+## June 2021
+
+- [ ] robodog: finishing touches on Companion dynamic Oauth #2802 (@goto-bus-stop)
+- [ ] unsplash: Unsplash (#2635 / @arturi, @nqst)
+- [ ] box: add to https://uppy.io/examples/dashboard/
+
+## May 2021
+
 - [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
 - [ ] plugin: audio/memo recording similar to Webcam #143 #198
 - [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] robodog: finishing touches on Companion dynamic Oauth #2802 (@goto-bus-stop)
+- [ ] image-editor: add more granular image rotation control (#2838 / @aduh95)
+- [ ] react: Feature/html attributes as react props (#2427 / @ajkachnic)
+- [ ] add chunkSize companion option (#2881 / @mifi)
 
-## May 2021
+## 1.28.0
+
+Released: 2021-05-05
 
 | Package | Version | Package | Version |
 |-|-|-|-|
@@ -29,10 +41,6 @@ In the current stage we aim to release a new version at least every month.
 | @uppy/drop-target | 0.2.1 | @uppy/webcam | 1.8.9 |
 | @uppy/locales | 1.19.0 | uppy | 1.28.0 |
 | @uppy/react | 1.11.7 | - | - |
-
-## 1.28.0
-
-Released: 2021-05-05
 
 In this release we’ve added `disableLocalFiles` option to Dashboard, `uppy.logout()` API to log out of all providers at once, upgraded TypeScript and Redis.
 
