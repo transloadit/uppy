@@ -71,22 +71,31 @@ function ProgressCircle ({ progress }) {
   // circle length equals 2 * PI * R
   const circleLength = 2 * Math.PI * 15
 
+  /* eslint-disable react/no-unknown-property */
   return (
     <g>
-      <circle className="uppy-Dashboard-Item-progressIcon--bg" r="15" cx="18" cy="18" strokeWidth="2" fill="none" />
+      <circle
+        className="uppy-Dashboard-Item-progressIcon--bg"
+        r="15"
+        cx="18"
+        cy="18"
+        stroke-width="2"
+        fill="none"
+      />
       <circle
         className="uppy-Dashboard-Item-progressIcon--progress"
         r="15"
         cx="18"
         cy="18"
         transform="rotate(-90, 18, 18)"
-        strokeWidth="2"
         fill="none"
-        strokeDasharray={circleLength}
-        strokeDashoffset={circleLength - (circleLength / 100 * progress)}
+        stroke-width="2"
+        stroke-dasharray={circleLength}
+        stroke-dashoffset={circleLength - ((circleLength / 100) * progress)}
       />
     </g>
   )
+  /* eslint-enable react/no-unknown-property */
 }
 
 module.exports = function FileProgress (props) {
