@@ -1,8 +1,8 @@
+const throttle = require('lodash.throttle')
 const { Plugin } = require('@uppy/core')
 const ServiceWorkerStore = require('./ServiceWorkerStore')
 const IndexedDBStore = require('./IndexedDBStore')
 const MetaDataStore = require('./MetaDataStore')
-const throttle = require('lodash.throttle')
 
 /**
  * The GoldenRetriever plugin — restores selected files and resumes uploads
@@ -41,7 +41,11 @@ module.exports = class GoldenRetriever extends Plugin {
       storeName: uppy.getID(),
     })
 
-    this.saveFilesStateToLocalStorage = throttle(this.saveFilesStateToLocalStorage.bind(this), 500, { leading: true, trailing: true })
+    this.saveFilesStateToLocalStorage = throttle(
+      this.saveFilesStateToLocalStorage.bind(this),
+      500,
+      { leading: true, trailing: true }
+    )
     this.restoreState = this.restoreState.bind(this)
     this.loadFileBlobsFromServiceWorker = this.loadFileBlobsFromServiceWorker.bind(this)
     this.loadFileBlobsFromIndexedDB = this.loadFileBlobsFromIndexedDB.bind(this)
