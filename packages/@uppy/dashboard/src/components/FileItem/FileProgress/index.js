@@ -71,7 +71,6 @@ function ProgressCircle ({ progress }) {
   // circle length equals 2 * PI * R
   const circleLength = 2 * Math.PI * 15
 
-  /* eslint-disable react/no-unknown-property */
   return (
     <g>
       <circle
@@ -95,7 +94,6 @@ function ProgressCircle ({ progress }) {
       />
     </g>
   )
-  /* eslint-enable react/no-unknown-property */
 }
 
 module.exports = function FileProgress (props) {
