@@ -6,6 +6,7 @@ const NRP = require('node-redis-pubsub')
  * This is useful for when companion is running on multiple instances and events need
  * to be distributed across.
  */
+// @ts-ignore
 class RedisEmitter extends NRP {
   /**
    *
@@ -23,6 +24,7 @@ class RedisEmitter extends NRP {
    * @param {Function} handler the handler of the event
    */
   once (eventName, handler) {
+    // @ts-ignore
     const removeListener = this.on(eventName, (message) => {
       handler(message)
       removeListener()
@@ -46,7 +48,9 @@ class RedisEmitter extends NRP {
    * @param {Function} handler the handler of the event to remove
    */
   removeListener (eventName, handler) {
+    // @ts-ignore
     this.receiver.removeListener(eventName, handler)
+    // @ts-ignore
     this.receiver.punsubscribe(this.prefix + eventName)
   }
 
@@ -56,7 +60,9 @@ class RedisEmitter extends NRP {
    * @param {string} eventName name of the event
    */
   removeAllListeners (eventName) {
+    // @ts-ignore
     this.receiver.removeAllListeners(eventName)
+    // @ts-ignore
     this.receiver.punsubscribe(this.prefix + eventName)
   }
 }
