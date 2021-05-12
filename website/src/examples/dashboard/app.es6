@@ -14,6 +14,7 @@ const Webcam = require('@uppy/webcam')
 const ScreenCapture = require('@uppy/screen-capture')
 const Tus = require('@uppy/tus')
 const DropTarget = require('@uppy/drop-target')
+const GoldenRetriever = require('@uppy/golden-retriever')
 const localeList = require('../locale_list.json')
 
 const COMPANION = require('../env')
@@ -180,6 +181,14 @@ function uppySetOptions () {
   }
   if (!opts.DropTarget && dropTargetInstance) {
     window.uppy.removePlugin(dropTargetInstance)
+  }
+
+  const goldenRetrieverInstance = window.uppy.getPlugin('GoldenRetriever')
+  if (opts.GoldenRetriever && !goldenRetrieverInstance) {
+    window.uppy.use(GoldenRetriever)
+  }
+  if (!opts.GoldenRetriever && goldenRetrieverInstance) {
+    window.uppy.removePlugin(goldenRetrieverInstance)
   }
 }
 

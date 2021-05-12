@@ -33,6 +33,9 @@ const Webcam = require('@uppy/webcam')
 const ScreenCapture = require('@uppy/screen-capture')
 const ImageEditor = require('@uppy/image-editor')
 const Tus = require('@uppy/tus')
+const Url = require('@uppy/url')
+const DropTarget = require('@uppy/drop-target')
+const GoldenRetriever = require('@uppy/golden-retriever')
 
 const uppy = new Uppy({
   debug: true,
@@ -68,6 +71,7 @@ const uppy = new Uppy({
 .use(ImageEditor, { target: Dashboard })
 .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 .use(DropTarget, {target: document.body })
+.use(GoldenRetriever)
 
 uppy.on('complete', result => {
   console.log('successful files:', result.successful)
