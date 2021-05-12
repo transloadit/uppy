@@ -227,6 +227,13 @@
     font-size: 14px;
     line-height: 1.4;
   }
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+    color: $gray-200;
+    border-top: 1px solid $gray-800;
+    border-bottom: 1px solid $gray-800;
+  }
 }
 
 .uppy-Dashboard-serviceMsg-actionBtn {
@@ -234,6 +241,10 @@
   font-weight: inherit;
   vertical-align: initial;
   color: $blue;
+
+  [data-uppy-theme="dark"] & {
+    color: rgba($highlight--dark, 0.9);
+  }
 }
 
 .uppy-Dashboard-serviceMsg-icon {
@@ -712,7 +723,8 @@
   }
   .uppy-DashboardContent-bar,
   .uppy-Dashboard-files,
-  .uppy-Dashboard-progressindicators {
+  .uppy-Dashboard-progressindicators,
+  .uppy-Dashboard-serviceMsg {
     opacity: 0.15;
   }
   .uppy-Dashboard-AddFiles {

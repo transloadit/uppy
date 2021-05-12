@@ -253,6 +253,10 @@
 
   .uppy-StatusBar-actionBtn--disabled {
     opacity: 0.4;
+
+    [data-uppy-theme="dark"] & {
+      opacity: 0.7;
+    }
   }
 
   .uppy-StatusBar-actionBtn--retry {
@@ -308,7 +312,12 @@
   }
 
   .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload.uppy-StatusBar-actionBtn--disabled:hover {
+    cursor: not-allowed;
     background-color: $green;
+  }
+
+  [data-uppy-theme="dark"] .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload.uppy-StatusBar-actionBtn--disabled:hover {
+    background-color: $darkgreen;
   }
 
   .uppy-StatusBar:not(.is-waiting) .uppy-StatusBar-actionBtn--upload {
@@ -353,6 +362,10 @@
   .uppy-size--md & {
     font-size: 14px;
     padding-left: 15px;
+  }
+
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
   }
 }
 
