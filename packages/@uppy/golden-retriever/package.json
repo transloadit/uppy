@@ -24,7 +24,8 @@
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "0.0.7",
-    "@uppy/utils": "file:../utils"
+    "@uppy/utils": "file:../utils",
+    "lodash.throttle": "^4.1.1"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
