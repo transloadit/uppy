@@ -4,7 +4,7 @@ const { h, Component } = require('preact')
 module.exports = class Editor extends Component {
   constructor (props) {
     super(props)
-    this.state = { rotationAngle: 0 }
+    this.state = { rotationAngle: 0, rotationDelta: 0 }
   }
 
   componentDidMount () {
@@ -14,7 +14,12 @@ module.exports = class Editor extends Component {
     )
     if (this.props.opts.actions.granularRotate) {
       this.imgElement.addEventListener('crop', (ev) => {
-        this.setState({ rotationAngle: ev.detail.rotate })
+        const rotationAngle = ev.detail.rotate
+        this.setState({
+          rotationAngle,
+          // 405 == 360 + 45
+          rotationDelta: ((rotationAngle + 405) % 90) - 45,
+        })
       })
     }
   }
@@ -82,11 +87,11 @@ module.exports = class Editor extends Component {
         <input
           className="uppy-ImageCropper-range"
           type="range"
-          onInput={(ev) => this.cropper.rotateTo(ev.target.value)}
-          onChange={(ev) => this.setState({ rotationAngle: ev.target.value })}
-          value={this.state.rotationAngle}
-          min="-180"
-          max="180"
+          onInput={(ev) => this.cropper.rotate(ev.target.value - this.state.rotationDelta)}
+          onChange={(ev) => this.setState({ rotationDelta: ev.target.value })}
+          value={this.state.rotationDelta}
+          min="-45"
+          max="44"
           aria-label={this.props.i18n('rotate')}
         />
       </label>
