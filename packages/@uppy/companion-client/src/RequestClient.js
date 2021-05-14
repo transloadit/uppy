@@ -138,7 +138,9 @@ module.exports = class RequestClient {
       .then(this._getPostResponseFunc(skipPostResponse))
       .then((res) => this._json(res))
       .catch((err) => {
-        err = err.isAuthError ? err : new Error(`Could not get ${this._getUrl(path)}. ${err}`)
+        if (!err.isAuthError) {
+          err.message = `Could not get ${this._getUrl(path)}. ${err.message}`
+        }
         return Promise.reject(err)
       })
   }
@@ -155,7 +157,9 @@ module.exports = class RequestClient {
       .then(this._getPostResponseFunc(skipPostResponse))
       .then((res) => this._json(res))
       .catch((err) => {
-        err = err.isAuthError ? err : new Error(`Could not post ${this._getUrl(path)}. ${err}`)
+        if (!err.isAuthError) {
+          err.message = `Could not post ${this._getUrl(path)}. ${err.message}`
+        }
         return Promise.reject(err)
       })
   }
@@ -172,7 +176,9 @@ module.exports = class RequestClient {
       .then(this._getPostResponseFunc(skipPostResponse))
       .then((res) => this._json(res))
       .catch((err) => {
-        err = err.isAuthError ? err : new Error(`Could not delete ${this._getUrl(path)}. ${err}`)
+        if (!err.isAuthError) {
+          err.message = `Could not delete ${this._getUrl(path)}. ${err.message}`
+        }
         return Promise.reject(err)
       })
   }
