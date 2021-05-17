@@ -167,6 +167,4 @@ const getHTMLProps = (props) => {
   return getEntries(props).reduce(reducer, {})
 }
 
-module.exports = {
-  getHTMLProps,
-}
+module.exports = getHTMLProps
