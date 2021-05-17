@@ -28,6 +28,22 @@ In the current stage we aim to release a new version at least every month.
 - [ ] react: Feature/html attributes as react props (#2427 / @ajkachnic)
 - [ ] add chunkSize companion option (#2881 / @mifi)
 
+## 1.28.1
+
+Released: 2021-05-11
+
+In this release the individual file progress in Dashboard was fixed.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 2.9.0 | @uppy/robodog | 1.10.9 |
+| @uppy/core | 1.18.1 | @uppy/svelte | 0.1.9 |
+| @uppy/dashboard | 1.19.1 | @uppy/vue | 0.2.2 |
+| @uppy/react | 1.11.8 | uppy | 1.28.1 |
+
+- @uppy/companion: add chunkSize companion option (#2881 / @mifi)
+- @uppy/dashboard: fix individual progress by renaming camelCased svg properties (#2882 / @arturi)
+
 ## 1.28.0
 
 Released: 2021-05-05
