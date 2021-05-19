@@ -13,20 +13,20 @@ module.exports = () => {
     .post('/get', get)
 }
 
-/**
- * Fteches the size and content type of a URL
- *
- * @param {object} req expressJS request object
- * @param {object} res expressJS response object
- */
-
- function matchYoutubeUrl(url) {
+function matchYoutubeUrl(url) {
   var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
   if(url.match(p)){
       return url.match(p)[1];
   }
   return false;
 }
+
+/**
+ * Fteches the size and content type of a URL
+ *
+ * @param {object} req expressJS request object
+ * @param {object} res expressJS response object
+ */
 
 const meta = async (req, res) => {
   logger.debug('URL file import handler running', null, req.id)

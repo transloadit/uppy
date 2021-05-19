@@ -5,7 +5,19 @@ const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const Uploader = require('./MultipartUploader')
-const firebase = require('firebase/app').default
+const firebase = require('firebase/app')
+require("firebase/auth");
+
+const config = {
+  apiKey: 'AIzaSyCM3w7SKmg25eRBgh4tmjPpXDWED-iFp9Q',
+  authDomain: 'maestrasuite.com',
+  databaseURL: 'https://maestro-218920.firebaseio.com',
+  projectId: 'maestro-218920',
+  storageBucket: 'maestro-218920.appspot.com',
+  messagingSenderId: '652465950700',
+};
+
+firebase.initializeApp(config);
 const auth = firebase.auth()
 
 function assertServerError (res) {
