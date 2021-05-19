@@ -48,14 +48,6 @@
     opacity: 0.5;
   }
 
-  .uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-fileInfo {
-    opacity: 0.5;
-
-    [data-uppy-theme="dark"] & {
-      opacity: 0.8;
-    }
-  }
-
   .uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-preview:before {
     content: '';
     position: absolute;

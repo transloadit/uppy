@@ -78,6 +78,7 @@ module.exports = (props) => {
             role="listitem"
             openFileEditor={props.openFileEditor}
             canEditFile={props.canEditFile}
+            toggleAddFilesPanel={props.toggleAddFilesPanel}
             file={props.files[fileID]}
           />
         ))}

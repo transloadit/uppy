@@ -156,8 +156,6 @@ module.exports = (props) => {
         {showPauseResumeBtn ? <PauseResumeButton {...props} /> : null}
         {showCancelBtn ? <CancelBtn {...props} /> : null}
         {showDoneBtn ? <DoneBtn {...props} /> : null}
-
-        {props.isSomeGhost ? <RenderReSelectGhosts {...props} /> : null}
       </div>
     </div>
   )

@@ -8,20 +8,6 @@ const renderAcquirerIcon = (acquirer, props) => (
   </span>
 )
 
-const renderFileSource = (props) => (
-  props.file.source
-  && props.file.source !== props.id
-    && (
-    <div className="uppy-Dashboard-Item-sourceIcon">
-      {props.acquirers.map(acquirer => {
-        if (acquirer.id === props.file.source) {
-          return renderAcquirerIcon(acquirer, props)
-        }
-      })}
-    </div>
-    )
-)
-
 const renderFileName = (props) => {
   // Take up at most 2 lines on any screen
   let maxNameLength
@@ -52,6 +38,22 @@ const renderFileSize = (props) => (
     )
 )
 
+const ReSelectButton = (props) => (
+  props.file.isGhost
+    && (
+      <span>
+        {' \u2022 '}
+        <button
+          className="uppy-u-reset uppy-c-btn uppy-Dashboard-Item-reSelect"
+          type="button"
+          onClick={props.toggleAddFilesPanel}
+        >
+          {props.i18n('reSelect')}
+        </button>
+      </span>
+    )
+)
+
 const ErrorButton = ({ file, onClick }) => {
   if (file.error) {
     return (
@@ -76,7 +78,7 @@ module.exports = function FileInfo (props) {
       {renderFileName(props)}
       <div className="uppy-Dashboard-Item-status">
         {renderFileSize(props)}
-        {renderFileSource(props)}
+        {ReSelectButton(props)}
         <ErrorButton
           file={props.file}
           onClick={() => {
