@@ -647,7 +647,17 @@ module.exports = class Tus extends Plugin {
       if ('error' in file && file.error) {
         return Promise.reject(new Error(file.error))
       } if (file.isRemote) {
+        // We emit upload-started here, so that it's also emitted for files
+        // that have to wait due to the `limit` option.
+        // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+        if (!file.progress.uploadStarted || !file.isRestored) {
+          this.uppy.emit('upload-started', file)
+        }
         return this.uploadRemote(file, current, total)
+      }
+      // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+      if (!file.progress.uploadStarted || !file.isRestored) {
+        this.uppy.emit('upload-started', file)
       }
       return this.upload(file, current, total)
     })

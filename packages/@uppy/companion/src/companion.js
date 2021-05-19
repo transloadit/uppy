@@ -73,6 +73,11 @@ module.exports.app = (options = {}) => {
   emitter(options.multipleInstances && options.redisUrl, options.redisPubSubScope)
 
   const app = express()
+
+  if (options.metrics) {
+    app.use(middlewares.metrics())
+  }
+
   app.use(cookieParser()) // server tokens are added to cookies
 
   app.use(interceptGrantErrorResponse)

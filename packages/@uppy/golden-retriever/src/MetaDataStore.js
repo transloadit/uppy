@@ -69,7 +69,12 @@ module.exports = class MetaDataStore {
   /**
    * Remove all expired state.
    */
-  static cleanup () {
+  static cleanup (instanceID) {
+    if (instanceID) {
+      localStorage.removeItem(`uppyState:${instanceID}`)
+      return
+    }
+
     const instanceIDs = findUppyInstances()
     const now = Date.now()
     instanceIDs.forEach((id) => {

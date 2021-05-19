@@ -5,16 +5,13 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const { URL } = require('url')
 const merge = require('lodash/merge')
-// @ts-ignore
-const promBundle = require('express-prom-bundle')
 const session = require('express-session')
 const addRequestId = require('express-request-id')()
 const logger = require('../server/logger')
 const redis = require('../server/redis')
 const companion = require('../companion')
 const helper = require('./helper')
-// @ts-ignore
-const { version } = require('../../package.json')
+const middlewares = require('../server/middlewares')
 
 /**
  * Configures an Express app for running Companion standalone
@@ -23,22 +20,6 @@ const { version } = require('../../package.json')
  */
 function server (inputCompanionOptions = {}) {
   const app = express()
-
-  // for server metrics tracking.
-  let metricsMiddleware
-  if (process.env.COMPANION_HIDE_METRICS !== 'true') {
-    metricsMiddleware = promBundle({ includeMethod: true })
-    // @ts-ignore Not in the typings, but it does exist
-    const { promClient } = metricsMiddleware
-    const { collectDefaultMetrics } = promClient
-    collectDefaultMetrics({ register: promClient.register })
-
-    // Add version as a prometheus gauge
-    const versionGauge = new promClient.Gauge({ name: 'companion_version', help: 'npm version as an integer' })
-    // @ts-ignore
-    const numberVersion = version.replace(/\D/g, '') * 1
-    versionGauge.set(numberVersion)
-  }
 
   // Query string keys whose values should not end up in logging output.
   const sensitiveKeys = new Set(['access_token', 'uppyAuthToken'])
@@ -93,9 +74,12 @@ function server (inputCompanionOptions = {}) {
     }
   })
 
+  // for server metrics tracking.
   // make app metrics available at '/metrics'.
+  // TODO for the next major version: use instead companion option "metrics": true and remove this code
+  // Se discussion: https://github.com/transloadit/uppy/pull/2854/files/64be97205e4012818abfcc8b0b8b7fe09de91729#diff-68f5e3eb307c1c9d1fd02224fd7888e2f74718744e1b6e35d929fcab1cc50ed1
   if (process.env.COMPANION_HIDE_METRICS !== 'true') {
-    app.use(metricsMiddleware)
+    app.use(middlewares.metrics())
   }
 
   app.use(bodyParser.json())
@@ -167,7 +151,7 @@ function server (inputCompanionOptions = {}) {
     process.exit(1)
   }
 
-  // add companion to server middlewear
+  // add companion to server middleware
   if (process.env.COMPANION_PATH) {
     app.use(process.env.COMPANION_PATH, companionApp)
   } else {

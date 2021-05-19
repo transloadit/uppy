@@ -1,3 +1,4 @@
+/* global AggregateError */
 const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
@@ -203,6 +204,7 @@ class Uppy {
         type: 'info',
         message: '',
       },
+      recoveredState: null,
     })
 
     this._storeUnsubscribe = this.store.subscribe((prevState, nextState, patch) => {
@@ -613,7 +615,7 @@ class Uppy {
 
     const fileID = generateFileID(file)
 
-    if (files[fileID]) {
+    if (files[fileID] && !files[fileID].isGhost) {
       this._showOrLogErrorAndThrow(new RestrictionError(this.i18n('noDuplicates', { fileName })), { file })
     }
 
@@ -683,7 +685,18 @@ class Uppy {
     this._assertNewUploadAllowed(file)
 
     const { files } = this.getState()
-    const newFile = this._checkAndCreateFileStateObject(files, file)
+    let newFile = this._checkAndCreateFileStateObject(files, file)
+
+    // Users are asked to re-select recovered files without data,
+    // and to keep the progress, meta and everthing else, we only replace said data
+    if (files[newFile.id] && files[newFile.id].isGhost) {
+      newFile = {
+        ...files[newFile.id],
+        data: file.data,
+        isGhost: false,
+      }
+      this.log(`Replaced the blob in the restored ghost file: ${newFile.name}, ${newFile.id}`)
+    }
 
     this.setState({
       files: {
@@ -704,9 +717,9 @@ class Uppy {
   /**
    * Add multiple files to `state.files`. See the `addFile()` documentation.
    *
-   * This cuts some corners for performance, so should typically only be used in cases where there may be a lot of files.
-   *
-   * If an error occurs while adding a file, it is logged and the user is notified. This is good for UI plugins, but not for programmatic use. Programmatic users should usually still use `addFile()` on individual files.
+   * If an error occurs while adding a file, it is logged and the user is notified.
+   * This is good for UI plugins, but not for programmatic use.
+   * Programmatic users should usually still use `addFile()` on individual files.
    */
   addFiles (fileDescriptors) {
     this._assertNewUploadAllowed()
@@ -717,9 +730,19 @@ class Uppy {
     const errors = []
     for (let i = 0; i < fileDescriptors.length; i++) {
       try {
-        const newFile = this._checkAndCreateFileStateObject(files, fileDescriptors[i])
-        newFiles.push(newFile)
+        let newFile = this._checkAndCreateFileStateObject(files, fileDescriptors[i])
+        // Users are asked to re-select recovered files without data,
+        // and to keep the progress, meta and everthing else, we only replace said data
+        if (files[newFile.id] && files[newFile.id].isGhost) {
+          newFile = {
+            ...files[newFile.id],
+            data: fileDescriptors[i].data,
+            isGhost: false,
+          }
+          this.log(`Replaced blob in a ghost file: ${newFile.name}, ${newFile.id}`)
+        }
         files[newFile.id] = newFile
+        newFiles.push(newFile)
       } catch (err) {
         if (!err.isRestriction) {
           errors.push(err)
@@ -758,9 +781,13 @@ class Uppy {
         details: message,
       }, 'error', this.opts.infoTimeout)
 
-      const err = new Error(message)
-      err.errors = errors
-      throw err
+      if (typeof AggregateError === 'function') {
+        throw new AggregateError(errors, message)
+      } else {
+        const err = new Error(message)
+        err.errors = errors
+        throw err
+      }
     }
   }
 
@@ -781,13 +808,13 @@ class Uppy {
     function fileIsNotRemoved (uploadFileID) {
       return removedFiles[uploadFileID] === undefined
     }
-    const uploadsToRemove = []
+
     Object.keys(updatedUploads).forEach((uploadID) => {
       const newFileIDs = currentUploads[uploadID].fileIDs.filter(fileIsNotRemoved)
 
       // Remove the upload if no files are associated with it anymore.
       if (newFileIDs.length === 0) {
-        uploadsToRemove.push(uploadID)
+        delete updatedUploads[uploadID]
         return
       }
 
@@ -797,19 +824,17 @@ class Uppy {
       }
     })
 
-    uploadsToRemove.forEach((uploadID) => {
-      delete updatedUploads[uploadID]
-    })
-
     const stateUpdate = {
       currentUploads: updatedUploads,
       files: updatedFiles,
     }
 
-    // If all files were removed - allow new uploads!
+    // If all files were removed - allow new uploads,
+    // and clear recoveredState
     if (Object.keys(updatedFiles).length === 0) {
       stateUpdate.allowNewUpload = true
       stateUpdate.error = null
+      stateUpdate.recoveredState = null
     }
 
     this.setState(stateUpdate)
@@ -932,6 +957,7 @@ class Uppy {
     this.setState({
       totalProgress: 0,
       error: null,
+      recoveredState: null,
     })
   }
 
@@ -951,6 +977,14 @@ class Uppy {
 
   reset () {
     this.cancelAll()
+  }
+
+  logout () {
+    this.iteratePlugins(plugin => {
+      if (plugin.provider && plugin.provider.logout) {
+        plugin.provider.logout()
+      }
+    })
   }
 
   _calculateProgress (file, data) {

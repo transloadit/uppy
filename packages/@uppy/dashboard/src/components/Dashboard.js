@@ -52,13 +52,25 @@ module.exports = function Dashboard (props) {
   }
 
   const showFileList = props.showSelectedFiles && !noFiles
+  const numberOfFilesForRecovery = props.recoveredState ? Object.keys(props.recoveredState.files).length : null
+
+  const renderStartOverBtn = () => {
+    return (
+      <button
+        className="uppy-u-reset uppy-c-btn uppy-Dashboard-serviceMsg-actionBtn"
+        onClick={props.handleCancelRestore}
+      >
+        {props.i18n('startOver')}
+      </button>
+    )
+  }
 
   const dashboard = (
     <div
       className={dashboardClassName}
       data-uppy-theme={props.theme}
       data-uppy-num-acquirers={props.acquirers.length}
-      data-uppy-drag-drop-supported={isDragDropSupported()}
+      data-uppy-drag-drop-supported={!props.disableLocalFiles && isDragDropSupported()}
       aria-hidden={props.inline ? 'false' : props.isHidden}
       aria-disabled={props.disabled}
       aria-label={!props.inline ? props.i18n('dashboardWindowTitle') : props.i18n('dashboardTitle')}
@@ -101,6 +113,22 @@ module.exports = function Dashboard (props) {
           </div>
 
           {showFileList && <PanelTopBar {...props} />}
+
+          {numberOfFilesForRecovery ? (
+            <div className="uppy-Dashboard-serviceMsg">
+              <svg className="uppy-Dashboard-serviceMsg-icon" aria-hidden="true" focusable="false" width="24" height="19" viewBox="0 0 24 19">
+                <g transform="translate(0 -1)" fill="none" fillRule="evenodd">
+                  <path d="M12.857 1.43l10.234 17.056A1 1 0 0122.234 20H1.766a1 1 0 01-.857-1.514L11.143 1.429a1 1 0 011.714 0z" fill="#FFD300" />
+                  <path fill="#000" d="M11 6h2l-.3 8h-1.4z" />
+                  <circle fill="#000" cx="12" cy="17" r="1" />
+                </g>
+              </svg>
+              {props.i18nArray('recoveredXFiles', {
+                smart_count: numberOfFilesForRecovery,
+                startOver: renderStartOverBtn(),
+              })}
+            </div>
+          ) : null}
 
           {showFileList ? (
             <FileList

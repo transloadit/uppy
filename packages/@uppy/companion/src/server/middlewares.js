@@ -1,6 +1,10 @@
 const uniq = require('lodash/uniq')
 const cors = require('cors')
+// @ts-ignore
+const promBundle = require('express-prom-bundle')
 
+// @ts-ignore
+const { version } = require('../../package.json')
 const tokenService = require('./helpers/jwt')
 const logger = require('./logger')
 
@@ -112,4 +116,19 @@ exports.cors = (options = {}) => (req, res, next) => {
     allowedHeaders: allowedHeaders.join(','),
     exposedHeaders: exposedHeaders.join(','),
   })(req, res, next)
+}
+
+exports.metrics = () => {
+  const metricsMiddleware = promBundle({ includeMethod: true })
+  // @ts-ignore Not in the typings, but it does exist
+  const { promClient } = metricsMiddleware
+  const { collectDefaultMetrics } = promClient
+  collectDefaultMetrics({ register: promClient.register })
+
+  // Add version as a prometheus gauge
+  const versionGauge = new promClient.Gauge({ name: 'companion_version', help: 'npm version as an integer' })
+  // @ts-ignore
+  const numberVersion = Number(version.replace(/\D/g, ''))
+  versionGauge.set(numberVersion)
+  return metricsMiddleware
 }

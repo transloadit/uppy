@@ -308,7 +308,12 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   onFileAdded = (file) => {
-    if (!file.preview && isPreviewSupported(file.type) && !file.isRemote) {
+    if (
+      !file.preview
+      && file.data
+      && isPreviewSupported(file.type)
+      && !file.isRemote
+    ) {
       this.addToQueue(file.id)
     }
   }
@@ -339,11 +344,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   onRestored = () => {
-    const { files } = this.uppy.getState()
-    const fileIDs = Object.keys(files)
-    fileIDs.forEach((fileID) => {
-      const file = this.uppy.getFile(fileID)
-      if (!file.isRestored) return
+    const restoredFiles = this.uppy.getFiles().filter(file => file.isRestored)
+    restoredFiles.forEach((file) => {
       // Only add blob URLs; they are likely invalid after being restored.
       if (!file.preview || isObjectURL(file.preview)) {
         this.addToQueue(file.id)

@@ -77,6 +77,7 @@ module.exports = class Dashboard extends Plugin {
         dropPasteImportFiles: 'Drop files here, paste, %{browseFiles}',
         dropPasteImportFolders: 'Drop files here, paste, %{browseFolders}',
         dropPasteImportBoth: 'Drop files here, paste, %{browseFiles}, %{browseFolders}',
+        importFiles: 'Import files from:',
         dropHint: 'Drop your files here',
         browseFiles: 'browse files',
         browseFolders: 'browse folders',
@@ -98,6 +99,12 @@ module.exports = class Dashboard extends Plugin {
           0: 'Processing %{smart_count} file',
           1: 'Processing %{smart_count} files',
         },
+        recoveredXFiles: {
+          0: 'We’ve recovered %{smart_count} file you’ve previousely selected. You can keep it or %{startOver}',
+          1: 'We’ve recovered %{smart_count} files you’ve previousely selected. You can keep them or %{startOver}',
+        },
+        reSelectGhosts: 'Please re-select (or remove) files marked with ghosts',
+        startOver: 'start over',
         // The default `poweredBy2` string only combines the `poweredBy` string (%{backwardsCompat}) with the size.
         // Locales can override `poweredBy2` to specify a different word order. This is for backwards compat with
         // Uppy 1.9.x and below which did a naive concatenation of `poweredBy2 + size` instead of using a locale-specific
@@ -148,6 +155,7 @@ module.exports = class Dashboard extends Plugin {
       theme: 'light',
       autoOpenFileEditor: false,
       disabled: false,
+      disableLocalFiles: false,
     }
 
     // merge default options with the ones set by user
@@ -590,7 +598,7 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
 
-    if (this.opts.disabled) {
+    if (this.opts.disabled || this.opts.disableLocalFiles) {
       return
     }
 
@@ -606,7 +614,7 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
 
-    if (this.opts.disabled) {
+    if (this.opts.disabled || this.opts.disableLocalFiles) {
       return
     }
 
@@ -621,7 +629,7 @@ module.exports = class Dashboard extends Plugin {
     event.preventDefault()
     event.stopPropagation()
 
-    if (this.opts.disabled) {
+    if (this.opts.disabled || this.opts.disableLocalFiles) {
       return
     }
 
@@ -699,6 +707,10 @@ module.exports = class Dashboard extends Plugin {
     }
   }
 
+  handleCancelRestore = () => {
+    this.uppy.emit('restore-canceled')
+  }
+
   _openFileEditorWhenFilesAdded = (files) => {
     const firstFile = files[0]
     if (this.canEditFile(firstFile)) {
@@ -753,6 +765,7 @@ module.exports = class Dashboard extends Plugin {
     this.uppy.off('plugin-remove', this.removeTarget)
     this.uppy.off('file-added', this.hideAllPanels)
     this.uppy.off('dashboard:modal-closed', this.hideAllPanels)
+    this.uppy.off('file-editor:complete', this.hideAllPanels)
     this.uppy.off('complete', this.handleComplete)
 
     document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently)
@@ -941,6 +954,7 @@ module.exports = class Dashboard extends Plugin {
       acquirers,
       theme,
       disabled: this.opts.disabled,
+      disableLocalFiles: this.opts.disableLocalFiles,
       direction: this.opts.direction,
       activePickerPanel: pluginState.activePickerPanel,
       showFileEditor: pluginState.showFileEditor,
@@ -966,6 +980,7 @@ module.exports = class Dashboard extends Plugin {
       uppy: this.uppy,
       info: this.uppy.info,
       note: this.opts.note,
+      recoveredState: state.recoveredState,
       metaFields: pluginState.metaFields,
       resumableUploads: capabilities.resumableUploads || false,
       individualCancellation: capabilities.individualCancellation,
@@ -998,6 +1013,7 @@ module.exports = class Dashboard extends Plugin {
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
       showSelectedFiles: this.opts.showSelectedFiles,
+      handleCancelRestore: this.handleCancelRestore,
       handleRequestThumbnail: this.handleRequestThumbnail,
       handleCancelThumbnail: this.handleCancelThumbnail,
       // drag props

@@ -90,6 +90,7 @@ async function main () {
 
   const files = await globby([
     'README.md',
+    'BUNDLE-README.md',
     'examples/**/*.html',
     'packages/*/README.md',
     'packages/@uppy/*/README.md',

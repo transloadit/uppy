@@ -14,6 +14,7 @@ const Webcam = require('@uppy/webcam')
 const ScreenCapture = require('@uppy/screen-capture')
 const Tus = require('@uppy/tus')
 const DropTarget = require('@uppy/drop-target')
+const GoldenRetriever = require('@uppy/golden-retriever')
 const localeList = require('../locale_list.json')
 
 const COMPANION = require('../env')
@@ -181,6 +182,14 @@ function uppySetOptions () {
   if (!opts.DropTarget && dropTargetInstance) {
     window.uppy.removePlugin(dropTargetInstance)
   }
+
+  const goldenRetrieverInstance = window.uppy.getPlugin('GoldenRetriever')
+  if (opts.GoldenRetriever && !goldenRetrieverInstance) {
+    window.uppy.use(GoldenRetriever)
+  }
+  if (!opts.GoldenRetriever && goldenRetrieverInstance) {
+    window.uppy.removePlugin(goldenRetrieverInstance)
+  }
 }
 
 function whenLocaleAvailable (localeName, callback) {
@@ -197,7 +206,7 @@ function loadLocaleFromCDN (localeName) {
   const head = document.getElementsByTagName('head')[0]
   const js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://releases.transloadit.com/uppy/locales/v1.18.0/${localeName}.min.js`
+  js.src = `https://releases.transloadit.com/uppy/locales/v1.19.0/${localeName}.min.js`
 
   head.appendChild(js)
 }
