@@ -70,6 +70,7 @@ class FileCard extends Component {
                 className={fieldCSSClasses.text}
                 id={id}
                 type={field.type || 'text'}
+                required={Boolean(field.required)}
                 value={this.state.formState[field.id]}
                 placeholder={field.placeholder}
                 onKeyUp={this.saveOnEnter}
