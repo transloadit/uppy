@@ -302,6 +302,7 @@ module.exports = class GoldenRetriever extends Plugin {
       Object.keys(currentUploads).forEach((uploadId) => {
         this.uppy.restore(uploadId, currentUploads[uploadId])
       })
+      this.uppy.resumeAll()
     }
     this.uppy.upload()
     this.uppy.setState({ recoveredState: null })
