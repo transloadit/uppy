@@ -44,8 +44,12 @@
   }
 }
 
-  .uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-preview {
-    opacity: 0.5;
+  .uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-previewInnerWrap {
+    opacity: 0.2;
+  }
+
+  .uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-name {
+    opacity: 0.7;
   }
 
   .uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-preview:before {
@@ -60,6 +64,7 @@
     background-position: 50% 10px;
     background-size: 25px;
     z-index: $zIndex-5;
+    opacity: 0.5;
 
     .uppy-size--md & {
       background-size: 40px;
