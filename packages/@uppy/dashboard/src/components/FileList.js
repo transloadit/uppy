@@ -6,6 +6,7 @@ const { h } = require('preact')
 function chunks (list, size) {
   const chunked = []
   let currentChunk = []
+  console.log(list)
   list.forEach((item, i) => {
     if (currentChunk.length < size) {
       currentChunk.push(item)
@@ -64,7 +65,13 @@ module.exports = (props) => {
     handleCancelThumbnail: props.handleCancelThumbnail,
   }
 
-  const rows = chunks(Object.keys(props.files), props.itemsPerRow)
+  const sortByGhostComesFirst = (file1, file2) => {
+    return props.files[file2].isGhost - props.files[file1].isGhost
+  }
+
+  // Sort files by file.isGhost, ghost files first, only if recoveredState is present
+  const files = props.recoveredState ? Object.keys(props.files).sort(sortByGhostComesFirst) : Object.keys(props.files)
+  const rows = chunks(files, props.itemsPerRow)
 
   function renderRow (row) {
     return (
