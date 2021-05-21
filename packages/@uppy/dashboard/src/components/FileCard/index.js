@@ -39,7 +39,8 @@ class FileCard extends Component {
     })
   }
 
-  handleSave = () => {
+  handleSave = (e) => {
+    e.preventDefault()
     const fileID = this.props.fileCardFor
     this.props.saveFileCard(this.state.formState, fileID)
   }
@@ -96,13 +97,14 @@ class FileCard extends Component {
     const showEditButton = this.props.canEditFile(file)
 
     return (
-      <div
+      <form
         className={classNames('uppy-Dashboard-FileCard', this.props.className)}
         data-uppy-panelType="FileCard"
         onDragOver={ignoreEvent}
         onDragLeave={ignoreEvent}
         onDrop={ignoreEvent}
         onPaste={ignoreEvent}
+        onSubmit={this.handleSave}
       >
         <div className="uppy-DashboardContent-bar">
           <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
@@ -112,9 +114,8 @@ class FileCard extends Component {
           </div>
           <button
             className="uppy-DashboardContent-back"
-            type="button"
+            type="submit"
             title={this.props.i18n('finishEditingFile')}
-            onClick={this.handleSave}
           >
             {this.props.i18n('done')}
           </button>
@@ -142,8 +143,7 @@ class FileCard extends Component {
           <div className="uppy-Dashboard-FileCard-actions">
             <button
               className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
-              type="button"
-              onClick={this.handleSave}
+              type="submit"
             >
               {this.props.i18n('saveChanges')}
             </button>
@@ -156,7 +156,7 @@ class FileCard extends Component {
             </button>
           </div>
         </div>
-      </div>
+      </form>
     )
   }
 }
