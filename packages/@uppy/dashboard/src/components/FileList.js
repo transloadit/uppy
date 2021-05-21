@@ -69,7 +69,8 @@ module.exports = (props) => {
   }
 
   // Sort files by file.isGhost, ghost files first, only if recoveredState is present
-  const files = props.recoveredState ? Object.keys(props.files).sort(sortByGhostComesFirst) : Object.keys(props.files)
+  const files = Object.keys(props.files)
+  if (props.recoveredState) files.sort(sortByGhostComesFirst)
   const rows = chunks(files, props.itemsPerRow)
 
   function renderRow (row) {
