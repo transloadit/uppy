@@ -6,7 +6,6 @@ const { h } = require('preact')
 function chunks (list, size) {
   const chunked = []
   let currentChunk = []
-  console.log(list)
   list.forEach((item, i) => {
     if (currentChunk.length < size) {
       currentChunk.push(item)
