@@ -21,15 +21,6 @@ class FileCard extends Component {
     }
   }
 
-  saveOnEnter = (ev) => {
-    if (ev.keyCode === 13) {
-      ev.stopPropagation()
-      ev.preventDefault()
-      const file = this.props.files[this.props.fileCardFor]
-      this.props.saveFileCard(this.state.formState, file.id)
-    }
-  }
-
   updateMeta = (newVal, name) => {
     this.setState({
       formState: {
@@ -74,9 +65,6 @@ class FileCard extends Component {
                 required={Boolean(field.required)}
                 value={this.state.formState[field.id]}
                 placeholder={field.placeholder}
-                onKeyUp={this.saveOnEnter}
-                onKeyDown={this.saveOnEnter}
-                onKeyPress={this.saveOnEnter}
                 onInput={ev => this.updateMeta(ev.target.value, field.id)}
                 data-uppy-super-focusable
               />
