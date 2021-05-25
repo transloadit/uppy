@@ -297,7 +297,6 @@ class Uppy {
     this.translator = new Translator([this.defaultLocale, this.opts.locale])
     this.locale = this.translator.locale
     this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
   }
 
   setOptions (newOpts) {

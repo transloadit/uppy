@@ -220,6 +220,7 @@ declare module Uppy {
     iteratePlugins(callback: (plugin: Plugin) => void): void
     removePlugin(instance: Plugin): void
     close(): void
+    logout(): void
     info(
       message: string | { message: string; details: string },
       type?: LogLevel,
