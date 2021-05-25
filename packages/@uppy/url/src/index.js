@@ -61,6 +61,7 @@ module.exports = class Url extends Plugin {
     this.client = new RequestClient(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionCookiesRule: this.opts.companionCookiesRule,
     })
   }
 
