@@ -11,6 +11,7 @@ declare module '@uppy/utils/lib/Translator' {
   class Translator {
     constructor (opts: Translator.Locale | Translator.Locale[])
     translate (key: string, options: object): string
+    translateArray (key: string, options: object): Array<String>
   }
 
   export = Translator
