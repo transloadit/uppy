@@ -76,6 +76,17 @@ module.exports = class Editor extends Component {
     )
   }
 
+  granularRotateOnChange = (ev) => this.setState((state) => {
+    const value = Number(ev.target.value)
+    if (value !== state.rotationDelta) {
+      cancelAnimationFrame(this.granularRotateOnInputNextframe)
+      this.granularRotateOnInputNextframe = requestAnimationFrame(() => {
+        this.cropper.rotate(value - state.rotationDelta)
+      })
+      return { rotationDelta: ev.target.value }
+    }
+  })
+
   renderGranularRotate () {
     return (
       <label
@@ -87,8 +98,8 @@ module.exports = class Editor extends Component {
         <input
           className="uppy-ImageCropper-range"
           type="range"
-          onInput={(ev) => this.cropper.rotate(ev.target.value - this.state.rotationDelta)}
-          onChange={(ev) => this.setState({ rotationDelta: ev.target.value })}
+          onInput={this.granularRotateOnChange}
+          onChange={this.granularRotateOnChange}
           value={this.state.rotationDelta}
           min="-45"
           max="44"
