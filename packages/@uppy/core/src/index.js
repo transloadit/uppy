@@ -106,6 +106,7 @@ class Uppy {
         maxNumberOfFiles: null,
         minNumberOfFiles: null,
         allowedFileTypes: null,
+        requiredMetaFields: [],
       },
       meta: {},
       onBeforeFileAdded: (currentFile, files) => currentFile,

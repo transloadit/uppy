@@ -48,6 +48,7 @@ class FileCard extends Component {
 
     return metaFields.map((field) => {
       const id = `uppy-Dashboard-FileCard-input-${field.id}`
+      const required = this.props.requiredMetaFields.includes(field.id)
       return (
         <fieldset key={field.id} className="uppy-Dashboard-FileCard-fieldset">
           <label className="uppy-Dashboard-FileCard-label" htmlFor={id}>{field.name}</label>
@@ -56,13 +57,14 @@ class FileCard extends Component {
               value: this.state.formState[field.id],
               onChange: (newVal) => this.updateMeta(newVal, field.id),
               fieldCSSClasses,
+              required,
             }, h)
             : (
               <input
                 className={fieldCSSClasses.text}
                 id={id}
                 type={field.type || 'text'}
-                required={Boolean(field.required)}
+                required={required}
                 value={this.state.formState[field.id]}
                 placeholder={field.placeholder}
                 onInput={ev => this.updateMeta(ev.target.value, field.id)}

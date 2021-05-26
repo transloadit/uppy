@@ -44,7 +44,8 @@ const uppy = new Uppy({
     maxFileSize: 1000000,
     maxNumberOfFiles: 3,
     minNumberOfFiles: 2,
-    allowedFileTypes: ['image/*', 'video/*']
+    allowedFileTypes: ['image/*', 'video/*'],
+    requiredMetaFields: ['caption'],
   }
 })
 .use(Dashboard, {
@@ -57,7 +58,7 @@ const uppy = new Uppy({
   height: 470,
   metaFields: [
     { id: 'name', name: 'Name', placeholder: 'file name' },
-    { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about', required: true }
+    { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' }
   ],
   browserBackButtonClose: false
 })

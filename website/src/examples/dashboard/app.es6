@@ -36,6 +36,7 @@ function uppyInit () {
 
   const uppy = new Uppy({
     logger: Uppy.debugLogger,
+    restrictions: { requiredMetaFields: ['caption'] }
   })
 
   uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/', resume: true })
@@ -56,7 +57,7 @@ function uppyInit () {
     showProgressDetails: true,
     metaFields: [
       { id: 'name', name: 'Name', placeholder: 'file name' },
-      { id: 'caption', name: 'Caption', placeholder: 'add description', required: true },
+      { id: 'caption', name: 'Caption', placeholder: 'add description' },
     ],
   })
 

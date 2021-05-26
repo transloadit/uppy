@@ -233,10 +233,9 @@ An array of UI field objects, or a function that takes a [File Object](https://u
 - `id`, the name of the meta field. Note: this will also be used in CSS/HTML as part of the `id` attribute, so it’s better to [avoid using characters like periods, semicolons, etc](https://stackoverflow.com/a/79022).
 - `name`, the label shown in the interface.
 - `placeholder`, the text shown when no value is set in the field. (Not needed when a custom render function is provided)
-- `required`, indicates that the user must specify a value for the input before the owning form can be submitted. (Not needed when a custom render function is provided)
 
-Optionally, you can specify `render: ({value, onChange}, h) => void`, a function for rendering a custom form element.
-It gets passed `({value, onChange}, h)` where `value` is the current value of the meta field, `onChange: (newVal) => void` is a function saving the new value and `h` is the `createElement` function from [preact](https://preactjs.com/guide/v10/api-reference#h--createelement).
+Optionally, you can specify `render: ({value, onChange, required}, h) => void`, a function for rendering a custom form element.
+It gets passed `({value, onChange, required}, h)` where `value` is the current value of the meta field, `required` is a boolean that's true if the field `id` is in the `restrictedMetaFields` option, and `onChange: (newVal) => void` is a function saving the new value and `h` is the `createElement` function from [preact](https://preactjs.com/guide/v10/api-reference#h--createelement).
 `h` can be useful when using uppy from plain JavaScript, where you cannot write JSX.
 
 ```js
@@ -246,8 +245,8 @@ It gets passed `({value, onChange}, h)` where `value` is the current value of th
     { id: 'name', name: 'Name', placeholder: 'file name' },
     { id: 'license', name: 'License', placeholder: 'specify license' },
     { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about', required: true },
-    { id: 'public', name: 'Public', render: function({value, onChange}, h) {
-      return h('input', { type: 'checkbox', onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'on' })
+    { id: 'public', name: 'Public', render: function({value, onChange, required}, h) {
+      return h('input', { type: 'checkbox', required, onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'on' })
     } }
   ]
 })
