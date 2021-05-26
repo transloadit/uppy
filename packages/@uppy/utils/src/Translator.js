@@ -50,7 +50,7 @@ module.exports = class Translator {
    * @license https://github.com/airbnb/polyglot.js/blob/master/LICENSE
    * taken from https://github.com/airbnb/polyglot.js/blob/master/lib/polyglot.js#L299
    *
-   * @param {any} phrase that needs interpolation, with placeholders
+   * @param {string} phrase that needs interpolation, with placeholders
    * @param {object} options with values that will be used to replace placeholders
    * @returns {any[]} interpolated
    */
