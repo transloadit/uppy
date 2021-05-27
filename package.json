@@ -197,5 +197,8 @@
     "testMatch": [
       "**/packages/**/*.test.js"
     ]
+  },
+  "dependencies": {
+    "rxjs": "6.6"
   }
 }

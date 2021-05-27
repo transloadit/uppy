@@ -6,7 +6,7 @@
   "scripts": {
     "ng": "ng",
     "start": "start-storybook -p 6006",
-    "build": "./node_modules/@angular/cli/bin/ng build",
+    "build": "ng build",
     "release": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
