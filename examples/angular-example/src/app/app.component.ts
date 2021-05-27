@@ -6,9 +6,12 @@ import { Uppy } from '@uppy/core'
   template: `
   <h1>Uppy Angular Example!</h1>
   <!-- <uppy-dashboard [uppy]='uppy' [props]='props'></uppy-dashboard> -->
-  <uppy-status-bar [uppy]='uppy'></uppy-status-bar>
+  <uppy-dashboard [uppy]='uppy'></uppy-dashboard>
   `,
-  styles: []
+  styleUrls: [
+    '../../../../packages/@uppy/core/dist/style.css',
+    '../../../../packages/@uppy/dashboard/dist/style.css',
+  ]
 })
 export class AppComponent {
   title = 'angular-example';
