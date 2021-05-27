@@ -17,9 +17,5 @@ export class AppComponent {
   title = 'angular-example';
   props = {}
 
-  uppy: Uppy
-
-  ngOnInit() {
-    this.uppy = new Uppy()
-  }
+  uppy: Uppy = new Uppy({ debug: true, autoProceed: true })
 }
