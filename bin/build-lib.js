@@ -12,7 +12,7 @@ const stat = promisify(fs.stat)
 
 const SOURCE = 'packages/{*,@uppy/*}/src/**/*.js'
 // Files not to build (such as tests)
-const IGNORE = /\.test\.js$|__mocks__|svelte|companion\//
+const IGNORE = /\.test\.js$|__mocks__|svelte|angular|companion\//
 // Files that should trigger a rebuild of everything on change
 const META_FILES = [
   'babel.config.js',
@@ -26,8 +26,7 @@ function lastModified (file) {
 }
 
 async function buildLib () {
-  const metaMtimes = await Promise.all(META_FILES.map((filename) =>
-    lastModified(path.join(__dirname, '..', filename))))
+  const metaMtimes = await Promise.all(META_FILES.map((filename) => lastModified(path.join(__dirname, '..', filename))))
   const metaMtime = Math.max(...metaMtimes)
 
   const files = await glob(SOURCE)
