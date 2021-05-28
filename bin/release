@@ -62,7 +62,7 @@ echo "Press Enter when ready, or Ctrl+C if you still need to do something."
 read
 
 git commit --allow-empty -m "Release"
-lerna version --amend --no-push --exact
+lerna version --amend --no-push --exact --force-publish=*
 
 lerna publish from-git
 
