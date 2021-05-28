@@ -18,15 +18,60 @@ In the current stage we aim to release a new version at least every month.
 - [ ] robodog: finishing touches on Companion dynamic Oauth #2802 (@goto-bus-stop)
 - [ ] unsplash: Unsplash (#2635 / @arturi, @nqst)
 - [ ] box: add to https://uppy.io/examples/dashboard/
+- [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
+- [ ] plugin: audio/memo recording similar to Webcam #143 #198
+- [ ] image-editor: add more granular image rotation control (#2838 / @aduh95)
+- [ ] react: Feature/html attributes as react props (#2427 / @ajkachnic)
 
 ## May 2021
 
-- [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
-- [ ] plugin: audio/memo recording similar to Webcam #143 #198
-- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
-- [ ] image-editor: add more granular image rotation control (#2838 / @aduh95)
-- [ ] react: Feature/html attributes as react props (#2427 / @ajkachnic)
-- [ ] add chunkSize companion option (#2881 / @mifi)
+## 1.29.1
+
+Released: 2021-05-28
+
+This release features a significant refactor of the Golden Retriever plugin, among with some Companion and Typescript improvements.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.17 | @uppy/react-native | 0.1.8 |
+| @uppy/aws-s3 | 1.7.11 | @uppy/react | 1.11.10 |
+| @uppy/box | 0.3.11 | @uppy/redux-dev-tools | 1.3.9 |
+| @uppy/companion-client | 1.10.1 | @uppy/robodog | 1.10.11 |
+| @uppy/companion | 2.10.1 | @uppy/screen-capture | 1.0.20 |
+| @uppy/core | 1.19.1 | @uppy/status-bar | 1.9.5 |
+| @uppy/dashboard | 1.20.1 | @uppy/store-default | 1.2.7 |
+| @uppy/drag-drop | 1.4.29 | @uppy/store-redux | 1.2.7 |
+| @uppy/drop-target | 0.2.3 | @uppy/svelte | 0.1.11 |
+| @uppy/dropbox | 1.5.1 | @uppy/thumbnail-generator | 1.7.10 |
+| @uppy/facebook | 1.2.1 | @uppy/transloadit | 1.6.25 |
+| @uppy/file-input | 1.5.1 | @uppy/tus | 1.9.1 |
+| @uppy/form | 1.3.30 | @uppy/unsplash | 0.1.12 |
+| @uppy/golden-retriever | 1.4.1 | @uppy/url | 1.5.22 |
+| @uppy/google-drive | 1.7.1 | @uppy/utils | 3.6.1 |
+| @uppy/image-editor | 0.2.6 | @uppy/vue | 0.2.4 |
+| @uppy/informer | 1.6.5 | @uppy/webcam | 1.8.11 |
+| @uppy/instagram | 1.5.1 | @uppy/xhr-upload | 1.7.4 |
+| @uppy/locales | 1.20.1 | @uppy/zoom | 0.1.17 |
+| @uppy/onedrive | 1.2.1 | remark-lint-uppy | 0.0.1 |
+| @uppy/progress-bar | 1.3.29 | uppy | 1.29.1 |
+| @uppy/provider-views | 1.12.2 | - | - |
+
+- @uppy/golden-retriever: Confirmation before restore, add “ghost” files #443 #257 (#2701 / @arturi)
+- @uppy/golden-retriever: Golden retriever 2 fixes (#2895 / @arturi)
+- @uppy/companion-client: rethrow original error objects (#2889 / @goto-bus-stop)
+- @uppy/dashboard: fix individual progress by renaming camelCased svg properties (#2882 / @arturi)
+- @uppy/dashboard: Fix incorrect font in Chrome on the Dashboard (#2887 / @nqst)
+- @uppy/companion: add chunkSize companion option (#2881 / @mifi)
+- @uppy/url: Add missing companionCookiesRule option (#2898 / @jhen0409)
+- @uppy/companion: fix NRP typescript errors (#2884 / @mifi)
+- @uppy/companion: support relative redirect URLs in responses (#2901 / @ goto-bus-stop)
+- @uppy/core: Add logout, Translator.translate and Translator.translateArray (#2899 / @arturi)
+
+## 1.29.0
+
+Released: 2021-05-27
+
+⚠️ This release was deprecated — the `dist` folder with CSS files is missing in most of the released packages, due to a build error. Please upgrade to `1.29.1`.
 
 ## 1.28.1
 
