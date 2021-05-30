@@ -1074,35 +1074,31 @@ class Uppy {
    * `error`, `file-removed`, `upload-progress`
    */
   _addListeners () {
-    this.on('error', (error) => {
-      let errorMsg = 'Unknown error'
-      if (error.message) {
-        errorMsg = error.message
-      }
-
+    /**
+     * @param {Error} error
+     * @param {object} [file]
+     * @param {object} [response]
+     */
+    const errorHandler = (error, file, response) => {
+      let errorMsg = error.message || 'Unknown error'
       if (error.details) {
         errorMsg += ` ${error.details}`
       }
 
       this.setState({ error: errorMsg })
-    })
+
+      if (file != null) {
+        this.setFileState(file.id, {
+          error: errorMsg,
+          response,
+        })
+      }
+    }
+
+    this.on('error', errorHandler)
 
     this.on('upload-error', (file, error, response) => {
-      let errorMsg = 'Unknown error'
-      if (error.message) {
-        errorMsg = error.message
-      }
-
-      if (error.details) {
-        errorMsg += ` ${error.details}`
-      }
-
-      this.setFileState(file.id, {
-        error: errorMsg,
-        response,
-      })
-
-      this.setState({ error: error.message })
+      errorHandler(error, file, response)
 
       if (typeof error === 'object' && error.message) {
         const newError = new Error(error.message)
@@ -1514,7 +1510,7 @@ class Uppy {
       this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
       return
     }
-    const currentUploads = this.getState().currentUploads
+    const { currentUploads } = this.getState()
     const currentUpload = { ...currentUploads[uploadID], result: { ...currentUploads[uploadID].result, ...data } }
     this.setState({
       currentUploads: { ...currentUploads, [uploadID]: currentUpload },
@@ -1629,7 +1625,7 @@ class Uppy {
         return
       }
       const currentUpload = currentUploads[uploadID]
-      const result = currentUpload.result
+      const { result } = currentUpload
       this.emit('complete', result)
 
       this._removeUpload(uploadID)
@@ -1653,7 +1649,7 @@ class Uppy {
       this.log('No uploader type plugins are used', 'warning')
     }
 
-    let files = this.getState().files
+    let { files } = this.getState()
 
     const onBeforeUploadResult = this.opts.onBeforeUpload(files)
 
