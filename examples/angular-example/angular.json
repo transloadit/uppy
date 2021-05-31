@@ -33,7 +33,9 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "../../packages/@uppy/drag-drop/dist/style.css",
+              "../../packages/@uppy/progress-bar/dist/style.css"
             ],
             "scripts": []
           },

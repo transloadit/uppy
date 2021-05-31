@@ -16,8 +16,12 @@ export class DragDropComponent extends UppyAngularWrapper implements OnDestroy, 
     super();
   }
 
+  ngOnInit() {
+    this.onMount({ id: 'angular:DragDrop', target: this.el.nativeElement }, DragDrop)
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
-    this.handleChanges(changes, DragDrop, { id: 'angular:DragDrop', target: this.el.nativeElement });
+    this.handleChanges(changes, DragDrop);
   }
 
   ngOnDestroy(): void {

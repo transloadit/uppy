@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser'
 
 import { AppComponent } from './app.component'
 
-import { UppyAngularDashboardModule, UppyAngularStatusBarModule } from '@uppy/angular'
+import { UppyAngularDashboardModule, UppyAngularStatusBarModule, UppyAngularDragDropModule, UppyAngularProgressBarModule, UppyAngularDashboardModalModule } from '@uppy/angular'
 
 @NgModule({
   declarations: [
@@ -12,7 +12,10 @@ import { UppyAngularDashboardModule, UppyAngularStatusBarModule } from '@uppy/an
   imports: [
     BrowserModule,
     UppyAngularDashboardModule,
-    UppyAngularStatusBarModule
+    UppyAngularStatusBarModule,
+    UppyAngularDashboardModalModule,
+    UppyAngularDragDropModule,
+    UppyAngularProgressBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

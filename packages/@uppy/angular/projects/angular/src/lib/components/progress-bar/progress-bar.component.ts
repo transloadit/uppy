@@ -16,8 +16,12 @@ export class ProgressBarComponent extends UppyAngularWrapper implements OnDestro
     super();
    }
 
+  ngOnInit() {
+    this.onMount({ id: 'angular:ProgressBar', target: this.el.nativeElement }, ProgressBar)
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
-    this.handleChanges(changes, ProgressBar, { id: 'angular:ProgressBar', target: this.el.nativeElement });
+    this.handleChanges(changes, ProgressBar);
   }
 
   ngOnDestroy(): void {

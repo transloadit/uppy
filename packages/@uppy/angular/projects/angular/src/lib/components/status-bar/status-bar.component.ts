@@ -16,8 +16,12 @@ export class StatusBarComponent extends UppyAngularWrapper implements OnDestroy,
     super();
   }
 
+  ngOnInit() {
+    this.onMount({ id: 'angular:StatusBar', target: this.el.nativeElement }, StatusBar)
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
-    this.handleChanges(changes, StatusBar, { id: 'angular:StatusBar', target: this.el.nativeElement });
+    this.handleChanges(changes, StatusBar);
   }
 
   ngOnDestroy(): void {

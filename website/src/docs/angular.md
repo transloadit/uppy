@@ -101,7 +101,7 @@ export class AppComponent {
 
 #### CSS
 
-The `UppyAngularDashboardModule` component requires the following CSS for styling (added to your component decorator). You can also provide your own styles if you prefer:
+The `UppyAngularDashboardModule` component requires the following CSS for styling (added to your component decorator or to your `angular.json`). You can also provide your own styles if you prefer:
 
 ```typescript
 @Component(
@@ -124,6 +124,34 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
 The `<uppy-dashboard />` component supports all `@uppy/dashboard` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `[uppy]=''` prop.
 
 The `<uppy-dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<uppy-dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the options you pass.
+
+### `<uppy-dashboard-modal />`
+
+#### CSS
+
+The `UppyAngularDashboardModalModule` component requires the following CSS for styling (added to your component decorator or to your `angular.json`). You can also provide your own styles if you prefer:
+
+```typescript
+@Component(
+  // Snip
+  styleUrls: [
+    "../node_modules/@uppy/core/dist/style.css",
+    "../node_modules/@uppy/dashboard/dist/style.css"
+  ]
+})
+```
+
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path.
+
+⚠️ The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
+
+Styles for Provider plugins, like Google Drive and Instagram, are also bundled with Dashboard styles. Styles for other plugins, such as `@uppy/url` and `@uppy/webcam`, are not included. If you are using those, please see their docs and make sure to include styles for them as well.
+
+#### Props
+
+The `<uppy-dashboard-modal />` component supports all `@uppy/dashboard` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `[uppy]=''` prop. Additionally, it takes an `[open]=''` prop, telling it which state to display in
+
+The `<uppy-dashboard-modal />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<uppy-dashboard-modal />` component, first add them to the Uppy instance, and then specify their `id` in the options you pass.
 
 ### `<uppy-drag-drop />`
 
