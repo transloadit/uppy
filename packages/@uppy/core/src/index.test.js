@@ -1619,8 +1619,8 @@ describe('src/Core', () => {
         })
         throw new Error('should have thrown')
       } catch (err) {
-        expect(err).toMatchObject(new Error('This file exceeds maximum allowed size of 1.2 KB'))
-        expect(core.getState().info.message).toEqual('This file exceeds maximum allowed size of 1.2 KB')
+        expect(err).toMatchObject(new Error('foo.jpg exceeds maximum allowed size of 1.2 KB'))
+        expect(core.getState().info.message).toEqual('foo.jpg exceeds maximum allowed size of 1.2 KB')
       }
     })
 
@@ -1667,7 +1667,7 @@ describe('src/Core', () => {
           data: new File([sampleImage], { type: 'image/jpeg' }),
         })
       }).toThrowError(
-        new Error('This file exceeds maximum allowed size of 33 KB')
+        new Error('foo1.jpg exceeds maximum allowed size of 33 KB')
       )
     })
 
@@ -1725,7 +1725,7 @@ describe('src/Core', () => {
         name: 'test.jpg',
         data: new Blob([Buffer.alloc(2 * maxFileSize)]),
       }
-      const errorMessage = `${core.i18n('exceedsSize')} ${prettierBytes(maxFileSize)}`
+      const errorMessage = `${core.i18n('exceedsSize', { file: file.name })} ${prettierBytes(maxFileSize)}`
       try {
         core.on('restriction-failed', restrictionsViolatedEventMock)
         core.addFile(file)
@@ -1935,7 +1935,7 @@ describe('src/Core', () => {
         },
       })
 
-      expect(core.i18n('exceedsSize')).toBe('This file exceeds maximum allowed size of')
+      expect(core.i18n('exceedsSize')).toBe('%{file} exceeds maximum allowed size of')
       expect(core.i18n('test')).toBe('beep boop')
     })
   })

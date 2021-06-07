@@ -57,7 +57,7 @@ class Uppy {
         // substitution.
         // TODO: In 2.0 `exceedsSize2` should be removed in and `exceedsSize` updated to use substitution.
         exceedsSize2: '%{backwardsCompat} %{size}',
-        exceedsSize: 'This file exceeds maximum allowed size of',
+        exceedsSize: '%{file} exceeds maximum allowed size of',
         inferiorSize: 'This file is smaller than the allowed size of %{size}',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
         noNewAlreadyUploading: 'Cannot add new files: already uploading',
@@ -501,6 +501,7 @@ class Uppy {
         throw new RestrictionError(this.i18n('exceedsSize2', {
           backwardsCompat: this.i18n('exceedsSize'),
           size: prettierBytes(maxTotalFileSize),
+          file: file.name,
         }))
       }
     }
@@ -511,7 +512,7 @@ class Uppy {
         throw new RestrictionError(this.i18n('exceedsSize2', {
           backwardsCompat: this.i18n('exceedsSize'),
           size: prettierBytes(maxFileSize),
-          file,
+          file: file.name,
         }))
       }
     }
