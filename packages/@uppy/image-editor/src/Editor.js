@@ -76,16 +76,17 @@ module.exports = class Editor extends Component {
     )
   }
 
-  granularRotateOnChange = (ev) => this.setState((state) => {
-    const value = Number(ev.target.value)
-    if (value !== state.rotationDelta) {
-      cancelAnimationFrame(this.granularRotateOnInputNextframe)
-      this.granularRotateOnInputNextframe = requestAnimationFrame(() => {
-        this.cropper.rotate(value - state.rotationDelta)
+  granularRotateOnChange = (ev) => {
+    const { rotationAngle, rotationDelta } = this.state
+    const pendingRotationDelta = Number(ev.target.value) - rotationDelta
+    cancelAnimationFrame(this.granularRotateOnInputNextFrame)
+    if (pendingRotationDelta !== 0) {
+      const pendingRotationAngle = rotationAngle + pendingRotationDelta
+      this.granularRotateOnInputNextFrame = requestAnimationFrame(() => {
+        this.cropper.rotateTo(pendingRotationAngle)
       })
-      return { rotationDelta: ev.target.value }
     }
-  })
+  }
 
   renderGranularRotate () {
     return (
@@ -93,10 +94,10 @@ module.exports = class Editor extends Component {
         data-microtip-position="top"
         role="tooltip"
         aria-label={`${this.state.rotationAngle}º`}
-        className="uppy-ImageCropper-rangeWrapper"
+        className="uppy-ImageCropper-rangeWrapper uppy-u-reset"
       >
         <input
-          className="uppy-ImageCropper-range"
+          className="uppy-ImageCropper-range uppy-u-reset"
           type="range"
           onInput={this.granularRotateOnChange}
           onChange={this.granularRotateOnChange}
