@@ -12,6 +12,7 @@ exports.getUsername = (data) => {
       }
     }
   }
+  return undefined
 }
 
 exports.isFolder = (item) => {
