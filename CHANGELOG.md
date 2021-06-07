@@ -11,15 +11,20 @@ Please add your entries in this format:
  - `- [ ] (<plugin name>|website|core|meta|build|test): <Present tense verb> <subject> \(<list of associated owners/gh-issues>\)`.
 
 In the current stage we aim to release a new version at least every month.
+
 ### next
 
 ## June 2021
 
+To be released: 2021-06-28
+
+- [ ] build: try to upgrade to Preact X, see if it's possible without going full on ESM? (@Murderlon)
 - [ ] robodog: finishing touches on Companion dynamic Oauth #2802 (@goto-bus-stop)
-- [ ] unsplash: Unsplash (#2635 / @arturi, @nqst)
-- [ ] box: add to https://uppy.io/examples/dashboard/
+- [ ] unsplash: Unsplash re-design (#2635 / @arturi, @nqst)
+- [ ] box: add to https://uppy.io/examples/dashboard/ (@mifi)
 - [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
-- [ ] plugin: audio/memo recording similar to Webcam #143 #198
+- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
+- [ ] compressor: add to Uppy repo, add resizing (@arturi)
 - [ ] image-editor: add more granular image rotation control (#2838 / @aduh95)
 - [ ] react: Feature/html attributes as react props (#2427 / @ajkachnic)
 
