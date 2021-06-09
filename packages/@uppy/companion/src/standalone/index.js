@@ -204,5 +204,4 @@ function server (inputCompanionOptions = {}) {
   return { app, companionOptions }
 }
 
-const { app, companionOptions } = server()
-module.exports = { app, companionOptions, server }
+module.exports = { server }
