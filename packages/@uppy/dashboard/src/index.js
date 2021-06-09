@@ -100,11 +100,12 @@ module.exports = class Dashboard extends Plugin {
           1: 'Processing %{smart_count} files',
         },
         recoveredXFiles: {
-          0: 'We’ve recovered %{smart_count} file you’ve previousely selected. You can keep it or %{startOver}',
-          1: 'We’ve recovered %{smart_count} files you’ve previousely selected. You can keep them or %{startOver}',
+          0: 'We could not fully recover 1 file. Please re-select it and resume the upload.',
+          1: 'We could not fully recover %{smart_count} files. Please re-select them and resume the upload.',
         },
-        reSelectGhosts: 'Please re-select (or remove) files marked with ghosts',
-        startOver: 'start over',
+        recoveredAllFiles: 'We restored all files. You can now resume the upload.',
+        sessionRestored: 'Session restored',
+        reSelect: 'Re-select',
         // The default `poweredBy2` string only combines the `poweredBy` string (%{backwardsCompat}) with the size.
         // Locales can override `poweredBy2` to specify a different word order. This is for backwards compat with
         // Uppy 1.9.x and below which did a naive concatenation of `poweredBy2 + size` instead of using a locale-specific

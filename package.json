@@ -62,6 +62,7 @@
     "es6-promise": "4.2.8",
     "eslint": "7.22.0",
     "eslint-config-transloadit": "^1.2.0",
+    "eslint-import-resolver-lerna": "^2.0.0",
     "eslint-plugin-compat": "3.8.0",
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-jest": "23.20.0",

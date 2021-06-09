@@ -63,6 +63,7 @@ module.exports = class Url extends Plugin {
     this.client = new RequestClient(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionCookiesRule: this.opts.companionCookiesRule,
     })
   }
 
@@ -162,11 +163,12 @@ module.exports = class Url extends Plugin {
       .then((tagFile) => {
         this.uppy.log('[Url] Adding remote file')
         try {
-          this.uppy.addFile(tagFile)
+          return this.uppy.addFile(tagFile)
         } catch (err) {
           if (!err.isRestriction) {
             this.uppy.log(err)
           }
+          return err
         }
       })
       .catch((err) => {
@@ -175,6 +177,7 @@ module.exports = class Url extends Plugin {
           message: this.i18n('failedToFetch'),
           details: err,
         }, 'error', 4000)
+        return err
       })
   }
 
