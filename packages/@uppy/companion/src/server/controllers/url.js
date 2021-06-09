@@ -46,7 +46,7 @@ const meta = async (req, res) => {
     let format = ytdl.chooseFormat(info.formats, { filter: 'audioandvideo' });
     url = format.url
   }
-  reqUtil.getURLMeta(req.body.url, !debug)
+  reqUtil.getURLMeta(url, !debug)
     .then((meta) => (res.json({...meta, thumbnail: thumbnail || false})))
     .catch((err) => {
       logger.error(err, 'controller.url.meta.error', req.id)
@@ -77,7 +77,7 @@ const get = async (req, res) => {
     url = format.url
   }
 
-  reqUtil.getURLMeta(req.body.url, !debug)
+  reqUtil.getURLMeta(url, !debug)
     .then(({ size }) => {
       // @ts-ignore
       logger.debug('Instantiating uploader.', null, req.id)
