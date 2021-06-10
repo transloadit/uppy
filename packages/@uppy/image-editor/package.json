@@ -28,7 +28,7 @@
   "dependencies": {
     "@uppy/utils": "file:../utils",
     "cropperjs": "1.5.7",
-    "preact": "8.2.9"
+    "preact": "^10.5.13"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"

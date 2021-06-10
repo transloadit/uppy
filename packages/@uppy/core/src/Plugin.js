@@ -104,6 +104,7 @@ module.exports = class Plugin {
     const callerPluginName = plugin.id
 
     const targetElement = findDOMElement(target)
+    this.el = targetElement
 
     if (targetElement) {
       this.isTargetDOMEl = true
@@ -114,7 +115,7 @@ module.exports = class Plugin {
         // so it could still be called even after uppy.removePlugin or uppy.close
         // hence the check
         if (!this.uppy.getPlugin(this.id)) return
-        this.el = preact.render(this.render(state), targetElement, this.el)
+        preact.render(this.render(state), targetElement)
         this.afterUpdate()
       }
       this._updateUI = debounce(this.rerender)
@@ -126,7 +127,7 @@ module.exports = class Plugin {
         targetElement.innerHTML = ''
       }
 
-      this.el = preact.render(this.render(this.uppy.getState()), targetElement)
+      preact.render(this.render(this.uppy.getState()), targetElement)
 
       this.onMount()
       return this.el

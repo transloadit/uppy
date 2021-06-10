@@ -1074,6 +1074,7 @@ module.exports = class Dashboard extends Plugin {
     }
 
     const plugins = this.opts.plugins || []
+    console.log(plugins)
     plugins.forEach((pluginID) => {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) {
