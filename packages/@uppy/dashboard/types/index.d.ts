@@ -55,6 +55,7 @@ declare module Dashboard {
     width?: string | number
     autoOpenFileEditor?: boolean
     disabled?: boolean
+    disableLocalFiles?: boolean
   }
 }
 

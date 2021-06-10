@@ -79,15 +79,21 @@ function isPrivateIP (ipAddress) {
 
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
 
-module.exports.getRedirectEvaluator = (requestURL, blockPrivateIPs) => {
-  const { protocol } = new URL(requestURL)
+module.exports.getRedirectEvaluator = (rawRequestURL, blockPrivateIPs) => {
+  const requestURL = new URL(rawRequestURL)
   return (res) => {
     if (!blockPrivateIPs) {
       return true
     }
 
-    const redirectURL = res.headers.location
-    const shouldRedirect = redirectURL ? new URL(redirectURL).protocol === protocol : false
+    let redirectURL = null
+    try {
+      redirectURL = new URL(res.headers.location, requestURL)
+    } catch (err) {
+      return false
+    }
+
+    const shouldRedirect = redirectURL.protocol === requestURL.protocol
     if (!shouldRedirect) {
       logger.info(
         `blocking redirect from ${requestURL} to ${redirectURL}`, 'redirect.protection'
