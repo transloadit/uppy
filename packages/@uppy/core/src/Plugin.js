@@ -1,4 +1,4 @@
-const preact = require('preact')
+const { render, h } = require('preact')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 
 /**
@@ -104,6 +104,7 @@ module.exports = class Plugin {
     const callerPluginName = plugin.id
 
     const targetElement = findDOMElement(target)
+    console.log(targetElement)
     this.el = targetElement
 
     if (targetElement) {
@@ -115,19 +116,22 @@ module.exports = class Plugin {
         // so it could still be called even after uppy.removePlugin or uppy.close
         // hence the check
         if (!this.uppy.getPlugin(this.id)) return
-        preact.render(this.render(state), targetElement)
+        render(this.render(state), targetElement)
         this.afterUpdate()
       }
+
       this._updateUI = debounce(this.rerender)
 
       this.uppy.log(`Installing ${callerPluginName} to a DOM element '${target}'`)
 
-      // clear everything inside the target container
       if (this.opts.replaceTargetContent) {
-        targetElement.innerHTML = ''
+        // Although you could remove the child nodes using DOM APIs (container.innerHTML = ''),
+        // this isn't recommended because the component might need to do additional cleanup when it is removed.
+        // To remove the rendered content and run any cleanup processes, render an empty element into the container:
+        render(h(null), targetElement)
       }
 
-      preact.render(this.render(this.uppy.getState()), targetElement)
+      render(this.render(this.uppy.getState()), targetElement)
 
       this.onMount()
       return this.el
