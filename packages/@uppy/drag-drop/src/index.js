@@ -214,7 +214,7 @@ module.exports = class DragDrop extends Plugin {
       >
         {this.renderHiddenFileInput()}
         <div className="uppy-DragDrop-inner">
-          {this.renderArrowSvg()}
+          {DragDrop.renderArrowSvg()}
           {this.renderLabel()}
           {this.renderNote()}
         </div>
