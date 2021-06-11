@@ -6,7 +6,7 @@ const standalone = require('.')
 
 const port = process.env.COMPANION_PORT || 3020
 
-const { app, companionOptions } = standalone.server()
+const { app } = standalone()
 
 companion.socket(app.listen(port))
 
