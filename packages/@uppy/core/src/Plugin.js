@@ -131,7 +131,7 @@ module.exports = class Plugin {
 
       // Since preact X the render function does not return a reference to the created element anymore.
       // This is because it can sometimes return multiple elements now, likely due to fragments.
-      // In order to still get a reference in order to place it in `this.el`, we create a clone with a ref.
+      // To still get a reference in order to place it in `this.el`, we create a clone with a ref.
       const ref = createRef()
       const clone = cloneElement(this.render(this.uppy.getState()), { ref })
 
