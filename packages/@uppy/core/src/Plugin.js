@@ -1,4 +1,4 @@
-const { render, h } = require('preact')
+const { render, h, createRef, cloneElement } = require('preact')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 
 /**
@@ -104,8 +104,6 @@ module.exports = class Plugin {
     const callerPluginName = plugin.id
 
     const targetElement = findDOMElement(target)
-    console.log(targetElement)
-    this.el = targetElement
 
     if (targetElement) {
       this.isTargetDOMEl = true
@@ -131,7 +129,15 @@ module.exports = class Plugin {
         render(h(null), targetElement)
       }
 
-      render(this.render(this.uppy.getState()), targetElement)
+      // Since preact X the render function does not return a reference to the created element anymore.
+      // This is because it can sometimes return multiple elements now, likely due to fragments.
+      // In order to still get a reference in order to place it in `this.el`, we create a clone with a ref.
+      const ref = createRef()
+      const clone = cloneElement(this.render(this.uppy.getState()), { ref })
+
+      render(clone, targetElement)
+
+      this.el = ref.current
 
       this.onMount()
       return this.el
