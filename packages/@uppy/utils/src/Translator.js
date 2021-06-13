@@ -55,6 +55,7 @@ module.exports = class Translator {
    * @returns {any[]} interpolated
    */
   interpolate (phrase, options) {
+    const { split, replace } = String.prototype
     const dollarRegex = /\$/g
     const dollarBillsYall = '$$$$'
     let interpolated = [phrase]
@@ -66,7 +67,7 @@ module.exports = class Translator {
         // be escaped with "$" itself, and we need two in the resulting output.
         var replacement = options[arg]
         if (typeof replacement === 'string') {
-          replacement = dollarRegex[Symbol.replace](replacement, dollarBillsYall)
+          replacement = replace.call(options[arg], dollarRegex, dollarBillsYall)
         }
         // We create a new `RegExp` each time instead of using a more-efficient
         // string replace so that the same argument can be replaced multiple times
@@ -88,7 +89,7 @@ module.exports = class Translator {
           return newParts.push(chunk)
         }
 
-        rx[Symbol.split](chunk).forEach((raw, i, list) => {
+        split.call(chunk, rx).forEach((raw, i, list) => {
           if (raw !== '') {
             newParts.push(raw)
           }
