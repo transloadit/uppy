@@ -1176,7 +1176,7 @@ class Uppy {
         })
       }
 
-      this._calculateTotalProgress()
+      this.calculateTotalProgress()
     })
 
     this.on('preprocess-progress', (file, progress) => {
