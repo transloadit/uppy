@@ -56,7 +56,7 @@
 
 .cropper-modal {
   background-color: #000;
-  opacity: 0.5;
+  opacity: 1;
 }
 
 .cropper-view-box {
@@ -139,6 +139,7 @@
   background-color: #fff;
   left: 0;
   top: 0;
+  opacity: 0;
 }
 
 .cropper-line {
