@@ -77,7 +77,7 @@ class AddFiles extends Component {
       >
         <button
           type="button"
-          className="uppy-DashboardTab-btn"
+          className="uppy-u-reset uppy-c-btn uppy-DashboardTab-btn"
           role="tab"
           tabIndex={0}
           data-uppy-super-focusable
@@ -185,7 +185,7 @@ class AddFiles extends Component {
       >
         <button
           type="button"
-          className="uppy-DashboardTab-btn"
+          className="uppy-u-reset uppy-c-btn uppy-DashboardTab-btn"
           role="tab"
           tabIndex={0}
           aria-controls={`uppy-DashboardContent-panel--${acquirer.id}`}

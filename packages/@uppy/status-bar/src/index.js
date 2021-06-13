@@ -106,18 +106,27 @@ module.exports = class StatusBar extends Plugin {
   }
 
   startUpload = () => {
+    const { recoveredState } = this.uppy.getState()
+    if (recoveredState) {
+      this.uppy.emit('restore-confirmed')
+      return
+    }
     return this.uppy.upload().catch(() => {
       // Error logged in Core
     })
   }
 
-  getUploadingState (isAllErrored, isAllComplete, files) {
+  getUploadingState (isAllErrored, isAllComplete, recoveredState, files) {
     if (isAllErrored) {
       return statusBarStates.STATE_ERROR
     }
 
     if (isAllComplete) {
       return statusBarStates.STATE_COMPLETE
+    }
+
+    if (recoveredState) {
+      return statusBarStates.STATE_WAITING
     }
 
     let state = statusBarStates.STATE_WAITING
@@ -149,6 +158,7 @@ module.exports = class StatusBar extends Plugin {
       allowNewUpload,
       totalProgress,
       error,
+      recoveredState,
     } = state
 
     // TODO: move this to Core, to share between Status Bar and Dashboard
@@ -156,11 +166,18 @@ module.exports = class StatusBar extends Plugin {
 
     const filesArray = Object.keys(files).map(file => files[file])
 
-    const newFiles = filesArray.filter((file) => {
+    let newFiles = filesArray.filter((file) => {
       return !file.progress.uploadStarted
         && !file.progress.preprocess
         && !file.progress.postprocess
     })
+
+    // If some state was recovered, we want to show Upload button/counter
+    // for all the files, because in this case it’s not an Upload button,
+    // but “Confirm Restore Button”
+    if (recoveredState) {
+      newFiles = filesArray
+    }
 
     const uploadStartedFiles = filesArray.filter(file => file.progress.uploadStarted)
     const pausedFiles = uploadStartedFiles.filter(file => file.isPaused)
@@ -205,10 +222,11 @@ module.exports = class StatusBar extends Plugin {
     const isUploadInProgress = inProgressFiles.length > 0
     const resumableUploads = capabilities.resumableUploads || false
     const supportsUploadProgress = capabilities.uploadProgress !== false
+    const isSomeGhost = filesArray.some((file) => file.isGhost)
 
     return StatusBarUI({
       error,
-      uploadState: this.getUploadingState(isAllErrored, isAllComplete, state.files || {}),
+      uploadState: this.getUploadingState(isAllErrored, isAllComplete, recoveredState, state.files || {}),
       allowNewUpload,
       totalProgress,
       totalSize,
@@ -218,6 +236,8 @@ module.exports = class StatusBar extends Plugin {
       isAllErrored,
       isUploadStarted,
       isUploadInProgress,
+      isSomeGhost,
+      recoveredState,
       complete: completeFiles.length,
       newFiles: newFiles.length,
       numUploads: startedFiles.length,
