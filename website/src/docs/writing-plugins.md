@@ -152,6 +152,10 @@ When `mode` is `'determinate'`, also add the `value` property:
 
  - `value` - A progress value between 0 and 1.
 
+ ### `error(err\[, fileID\])
+
+ `err` is an `Error` object. `fileID` can optionally which file fails to inform the user.
+
 ## UI Plugins
 
 UI Plugins can be used to show a user interface. Uppy plugins use [preact](https://preactjs.com) v8.2.9 for rendering. preact is a very small React-like library that works really well with Uppy's state architecture. Uppy implements preact rendering in the `mount(target)` and `update()` plugin methods, so if you want to write a custom UI plugin using some other library, you can override those methods.

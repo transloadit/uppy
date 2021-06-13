@@ -52,7 +52,7 @@ module.exports = class Translator {
    *
    * @param {string} phrase that needs interpolation, with placeholders
    * @param {object} options with values that will be used to replace placeholders
-   * @returns {string} interpolated
+   * @returns {any[]} interpolated
    */
   interpolate (phrase, options) {
     const { split, replace } = String.prototype

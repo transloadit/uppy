@@ -1,3 +1,4 @@
+/* eslint no-console: "off", no-restricted-syntax: "off" */
 const fs = require('fs')
 const path = require('path')
 const prettierBytes = require('@transloadit/prettier-bytes')
@@ -69,15 +70,13 @@ describe('src/Core', () => {
     it('should not be able to add a plugin that has no id', () => {
       const core = Core()
 
-      expect(() =>
-        core.use(InvalidPluginWithoutId)).toThrowErrorMatchingSnapshot()
+      expect(() => core.use(InvalidPluginWithoutId)).toThrowErrorMatchingSnapshot()
     })
 
     it('should not be able to add a plugin that has no type', () => {
       const core = Core()
 
-      expect(() =>
-        core.use(InvalidPluginWithoutType)).toThrowErrorMatchingSnapshot()
+      expect(() => core.use(InvalidPluginWithoutType)).toThrowErrorMatchingSnapshot()
     })
 
     it('should return the plugin that matches the specified name', () => {
@@ -259,7 +258,7 @@ describe('src/Core', () => {
     })
 
     const fileIDs = Object.keys(core.getState().files)
-    const id = core._createUpload(fileIDs)
+    const id = core.createUpload(fileIDs)
 
     expect(core.getState().currentUploads[id]).toBeDefined()
     expect(Object.keys(core.getState().files).length).toEqual(2)
@@ -307,13 +306,13 @@ describe('src/Core', () => {
   describe('upload hooks', () => {
     it('should add data returned from upload hooks to the .upload() result', () => {
       const core = new Core()
-      core.addPreProcessor((fileIDs, uploadID) => {
+      core.addPreProcessor((_, uploadID) => {
         core.addResultData(uploadID, { pre: 'ok' })
       })
-      core.addPostProcessor((fileIDs, uploadID) => {
+      core.addPostProcessor((_, uploadID) => {
         core.addResultData(uploadID, { post: 'ok' })
       })
-      core.addUploader((fileIDs, uploadID) => {
+      core.addUploader((_, uploadID) => {
         core.addResultData(uploadID, { upload: 'ok' })
       })
       return core.upload().then((result) => {
@@ -327,16 +326,16 @@ describe('src/Core', () => {
   describe('preprocessors', () => {
     it('should add a preprocessor', () => {
       const core = new Core()
-      const preprocessor = function () {}
+      const preprocessor = () => {}
       core.addPreProcessor(preprocessor)
       expect(core.preProcessors[0]).toEqual(preprocessor)
     })
 
     it('should remove a preprocessor', () => {
       const core = new Core()
-      const preprocessor1 = function () {}
-      const preprocessor2 = function () {}
-      const preprocessor3 = function () {}
+      const preprocessor1 = () => {}
+      const preprocessor2 = () => {}
+      const preprocessor3 = () => {}
       core.addPreProcessor(preprocessor1)
       core.addPreProcessor(preprocessor2)
       core.addPreProcessor(preprocessor3)
@@ -456,16 +455,16 @@ describe('src/Core', () => {
   describe('postprocessors', () => {
     it('should add a postprocessor', () => {
       const core = new Core()
-      const postprocessor = function () {}
+      const postprocessor = () => {}
       core.addPostProcessor(postprocessor)
       expect(core.postProcessors[0]).toEqual(postprocessor)
     })
 
     it('should remove a postprocessor', () => {
       const core = new Core()
-      const postprocessor1 = function () {}
-      const postprocessor2 = function () {}
-      const postprocessor3 = function () {}
+      const postprocessor1 = () => {}
+      const postprocessor2 = () => {}
+      const postprocessor3 = () => {}
       core.addPostProcessor(postprocessor1)
       core.addPostProcessor(postprocessor2)
       core.addPostProcessor(postprocessor3)
@@ -558,21 +557,44 @@ describe('src/Core', () => {
         uploadStarted: null,
       })
     })
+
+    it('should report an error if post-processing a file fails', () => {
+      const core = new Core()
+
+      core.addFile({
+        source: 'jest',
+        name: 'foo.jpg',
+        type: 'image/jpeg',
+        data: new File([sampleImage], { type: 'image/jpeg' }),
+      })
+
+      const fileId = Object.keys(core.getState().files)[0]
+      const file = core.getFile(fileId)
+      core.emit('error', new Error('foooooo'), file)
+
+      expect(core.getState().error).toEqual('foooooo')
+
+      expect(core.upload()).resolves.toMatchObject({
+        failed: [
+          { name: 'foo.jpg' },
+        ],
+      })
+    })
   })
 
   describe('uploaders', () => {
     it('should add an uploader', () => {
       const core = new Core()
-      const uploader = function () {}
+      const uploader = () => {}
       core.addUploader(uploader)
       expect(core.uploaders[0]).toEqual(uploader)
     })
 
     it('should remove an uploader', () => {
       const core = new Core()
-      const uploader1 = function () {}
-      const uploader2 = function () {}
-      const uploader3 = function () {}
+      const uploader1 = () => {}
+      const uploader2 = () => {}
+      const uploader3 = () => {}
       core.addUploader(uploader1)
       core.addUploader(uploader2)
       core.addUploader(uploader3)
@@ -710,10 +732,11 @@ describe('src/Core', () => {
 
     it('should not allow a file if onBeforeFileAdded returned false', () => {
       const core = new Core({
-        onBeforeFileAdded: (file, files) => {
+        onBeforeFileAdded: (file) => {
           if (file.source === 'jest') {
             return false
           }
+          return true
         },
       })
       expect(() => {
@@ -828,7 +851,7 @@ describe('src/Core', () => {
   describe('uploading a file', () => {
     it('should return a { successful, failed } pair containing file objects', () => {
       const core = new Core()
-      core.addUploader((fileIDs) => Promise.resolve())
+      core.addUploader(() => Promise.resolve())
 
       core.addFile({ source: 'jest', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() })
       core.addFile({ source: 'jest', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
@@ -880,7 +903,7 @@ describe('src/Core', () => {
           fileIDs: ['uppy-file4/jpg-1e-image/jpeg', 'uppy-file5/jpg-1e-image/jpeg', 'uppy-file6/jpg-1e-image/jpeg'],
         },
       }
-      core.addUploader((fileIDs) => Promise.resolve())
+      core.addUploader(() => Promise.resolve())
 
       core.addFile({ source: 'jest', name: 'foo.jpg', type: 'image/jpeg', data: new Uint8Array() })
       core.addFile({ source: 'jest', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
@@ -891,8 +914,9 @@ describe('src/Core', () => {
 
     it('should not upload if onBeforeUpload returned false', () => {
       const core = new Core({
+        // eslint-disable-next-line consistent-return
         onBeforeUpload: (files) => {
-          for (var fileId in files) {
+          for (const fileId in files) {
             if (files[fileId].name === '123.foo') {
               return false
             }
@@ -1273,7 +1297,7 @@ describe('src/Core', () => {
         bytesTotal: 17175,
       })
 
-      core._calculateProgress.flush()
+      core.calculateProgress.flush()
 
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 100,
@@ -1308,7 +1332,7 @@ describe('src/Core', () => {
         data: {},
       })
 
-      core._calculateTotalProgress()
+      core.calculateTotalProgress()
 
       const uploadPromise = core.upload()
       await new Promise((resolve) => core.once('upload-started', resolve))
@@ -1381,7 +1405,7 @@ describe('src/Core', () => {
         data: {},
       })
 
-      core._calculateTotalProgress()
+      core.calculateTotalProgress()
 
       // foo.jpg at 35%, bar.jpg at 0%
       expect(core.getState().totalProgress).toBe(18)
@@ -1422,8 +1446,8 @@ describe('src/Core', () => {
         bytesTotal: 17175,
       })
 
-      core._calculateTotalProgress()
-      core._calculateProgress.flush()
+      core.calculateTotalProgress()
+      core.calculateProgress.flush()
 
       expect(core.getState().totalProgress).toEqual(66)
     })
@@ -1460,8 +1484,8 @@ describe('src/Core', () => {
         bytesTotal: 17175,
       })
 
-      core._calculateTotalProgress()
-      core._calculateProgress.flush()
+      core.calculateTotalProgress()
+      core.calculateProgress.flush()
 
       expect(core.getState().totalProgress).toEqual(66)
 
@@ -1595,8 +1619,8 @@ describe('src/Core', () => {
         })
         throw new Error('should have thrown')
       } catch (err) {
-        expect(err).toMatchObject(new Error('This file exceeds maximum allowed size of 1.2 KB'))
-        expect(core.getState().info.message).toEqual('This file exceeds maximum allowed size of 1.2 KB')
+        expect(err).toMatchObject(new Error('foo.jpg exceeds maximum allowed size of 1.2 KB'))
+        expect(core.getState().info.message).toEqual('foo.jpg exceeds maximum allowed size of 1.2 KB')
       }
     })
 
@@ -1643,7 +1667,7 @@ describe('src/Core', () => {
           data: new File([sampleImage], { type: 'image/jpeg' }),
         })
       }).toThrowError(
-        new Error('This file exceeds maximum allowed size of 33 KB')
+        new Error('foo1.jpg exceeds maximum allowed size of 33 KB')
       )
     })
 
@@ -1701,11 +1725,13 @@ describe('src/Core', () => {
         name: 'test.jpg',
         data: new Blob([Buffer.alloc(2 * maxFileSize)]),
       }
-      const errorMessage = `${core.i18n('exceedsSize')} ${prettierBytes(maxFileSize)}`
+      const errorMessage = `${core.i18n('exceedsSize', { file: file.name })} ${prettierBytes(maxFileSize)}`
       try {
         core.on('restriction-failed', restrictionsViolatedEventMock)
         core.addFile(file)
-      } catch (err) {}
+      } catch (err) {
+        // something
+      }
 
       expect(restrictionsViolatedEventMock.mock.calls.length).toEqual(1)
       expect(restrictionsViolatedEventMock.mock.calls[0][0].name).toEqual(file.name)
@@ -1887,7 +1913,7 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' }),
       })
 
-      core._createUpload(Object.keys(core.getState().files))
+      core.createUpload(Object.keys(core.getState().files))
       const uploadId = Object.keys(core.getState().currentUploads)[0]
       const currentUploadsState = {}
       currentUploadsState[uploadId] = {
@@ -1909,7 +1935,7 @@ describe('src/Core', () => {
         },
       })
 
-      expect(core.i18n('exceedsSize')).toBe('This file exceeds maximum allowed size of')
+      expect(core.i18n('exceedsSize')).toBe('%{file} exceeds maximum allowed size of')
       expect(core.i18n('test')).toBe('beep boop')
     })
   })
