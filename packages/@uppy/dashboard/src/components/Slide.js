@@ -47,12 +47,12 @@ class Slide extends Component {
         // Force it to render before we add the active class
         // this.base.getBoundingClientRect()
 
-        this.setState(() => ({
+        this.setState({
           className: `${transitionName}-enter ${transitionName}-enter-active`,
-        }))
+        })
 
         this.enterTimeout = setTimeout(() => {
-          this.setState(() => ({ className: '' }))
+          this.setState({ className: '' })
         }, duration)
       })
     }
@@ -66,15 +66,15 @@ class Slide extends Component {
       clearTimeout(this.enterTimeout)
       this.enterTimeout = undefined
       this.animationFrame = requestAnimationFrame(() => {
-        this.setState(() => ({
+        this.setState({
           className: `${transitionName}-leave ${transitionName}-leave-active`,
-        }))
+        })
 
         this.leaveTimeout = setTimeout(() => {
-          this.setState(() => ({
+          this.setState({
             cachedChildren: null,
             className: '',
-          }))
+          })
         }, duration)
       })
     }
