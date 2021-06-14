@@ -152,18 +152,12 @@ const possibleStandardNames = [
 // A decent polyfill for Object.entries for good browser support
 const getEntries = (object) => {
   // eslint-disable-next-line compat/compat
-  return Object.entries ? Object.entries : Object.keys(object).map(key => [key, object[key]])
+  return Object.entries ? Object.entries(object) : Object.keys(object).map(key => [key, object[key]])
 }
 
-// A polyfill for Object.values for good browser support
-const getValues = (object) => {
-  // eslint-disable-next-line compat/compat
-  return Object.values ? Object.values : Object.keys(object).map(key => object[key])
-}
 const getHTMLProps = (props) => {
   // Gets all the React props
-  const validReactHTMLAttributes = getValues(possibleStandardNames)
-  const reducer = (acc, [key, value]) => (validReactHTMLAttributes.includes(key) ? { ...acc, [key]: value } : acc)
+  const reducer = (acc, [key, value]) => (possibleStandardNames.includes(key) ? { ...acc, [key]: value } : acc)
   return getEntries(props).reduce(reducer, {})
 }
 
