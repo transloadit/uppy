@@ -88,15 +88,15 @@ Optionally, specify a string of text that explains something about the upload fo
 
 Localize text that is shown to the user.
 
-### `onDragOver: undefined`
+### `onDragOver(event)`
 
 Callback for the [`ondragover`][ondragover] event handler.
 
-### `onDragLeave: undefined`
+### `onDragLeave(event)`
 
 Callback for the [`ondragleave`][ondragleave] event handler.
 
-### `onDrop: undefined`
+### `onDrop(event)`
 
 Callback for the [`ondrop`][ondrop] event handler.
 
