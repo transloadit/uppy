@@ -114,7 +114,7 @@ en_US.strings = {
   save: 'Save',
   saveChanges: 'Save changes',
   searchImages: 'Search for images',
-  selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
+  allFilesFromFolderNamed: 'All files from folder %{name}',
   selectFileNamed: 'Select file %{name}',
   selectX: {
     '0': 'Select %{smart_count}',
