@@ -29,7 +29,7 @@
 const URL_ = typeof URL === 'function' ? URL : require('url-parse')
 const { Plugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
-const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
+const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const settle = require('@uppy/utils/lib/settle')
 const hasProperty = require('@uppy/utils/lib/hasProperty')
 const { RequestClient } = require('@uppy/companion-client')
@@ -283,7 +283,7 @@ module.exports = class AwsS3 extends Plugin {
       responseUrlFieldName: 'location',
       timeout: this.opts.timeout,
       // Share the rate limiting queue with XHRUpload.
-      __queue: this.requests,
+      [internalRateLimitedQueue]: this.requests,
       responseType: 'text',
       getResponseData: this.opts.getResponseData || defaultGetResponseData,
       getResponseError: defaultGetResponseError,
