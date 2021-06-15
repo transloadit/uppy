@@ -39,24 +39,24 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ### 2.0
 
-- [ ] Drop IE10 (officially), drop IE11 polyfills?
+- [ ] Drop IE10 (officially), drop IE11 polyfills? (@aduh95)
 - [ ] *: upgrade to Preact X (@murderlon)
 - [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog (@everyone)
 - [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/ (@murderlon)
-- [ ] core: force the `new` keyword when instantiating Uppy — now we support both `new Uppy()` and `Uppy()` which is harder to maintain and might lead to confusion
-- [ ] core: maybe we remove `file.name` and only keep `file.meta.name`; we can change the file.name here actually because it's just a plain object. we can't change the file.data.name where data is a File instance from an input or something. For XHRUpload, where we put the File instance in a FormData object and it uses the unchangeable .name property.
-- [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
-- [ ] core/dashboard: replace `poweredBy` and `exceedsSize` locale keys by word order aware versions, see PR #2077
-- [ ] dashboard: set default `trigger: null`, see https://github.com/transloadit/uppy/pull/2144#issuecomment-600581690
-- [ ] form: make the `multipleResults` option `true` by default
-- [ ] locales: Remove the old es_GL name alias for gl_ES. Keep gl_ES only.
-- [ ] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861
-- [ ] transloadit: remove `UPPY_SERVER` constant
-- [ ] tus: set the `limit` option to a sensible default, like 5 (10?)
-- [ ] xhr: set the `limit` option to a sensible default, like 5 (10?)
-- [ ] xhr: change default name depending on whether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
-- [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
-- [ ] tus: remove `autoRetry` option (throw error at runtime if it is explicitly given)
+- [ ] core: force the `new` keyword when instantiating Uppy — now we support both `new Uppy()` and `Uppy()` which is harder to maintain and might lead to confusion (@arturi)
+- [ ] core: maybe we remove `file.name` and only keep `file.meta.name`; we can change the file.name here actually because it's just a plain object. we can't change the file.data.name where data is a File instance from an input or something. For XHRUpload, where we put the File instance in a FormData object and it uses the unchangeable .name property (@arturi)
+- [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594 (@arturi)
+- [ ] core/dashboard: replace `poweredBy` and `exceedsSize` locale keys by word order aware versions, see PR #2077 (@goto-bus-stop)
+- [ ] dashboard: set default `trigger: null`, see https://github.com/transloadit/uppy/pull/2144#issuecomment-600581690 (@arturi)
+- [ ] form: make the `multipleResults` option `true` by default (@arturi)
+- [ ] locales: Remove the old es_GL name alias for gl_ES. Keep gl_ES only (@arturi)
+- [ ] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861 (@mifi)
+- [ ] transloadit: remove `UPPY_SERVER` constant (@mifi)
+- [ ] tus: set the `limit` option to a sensible default, like 5 (10?) (@arturi)
+- [ ] xhr: set the `limit` option to a sensible default, like 5 (10?) (@arturi)
+- [ ] xhr: change default name depending on whether `bundle` is set `files[]` (`true`) vs `file` (default) (#782) (@aduh95)
+- [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279 (@goto-bus-stop)
+- [ ] tus: remove `autoRetry` option (throw error at runtime if it is explicitly given) (@aduh95)
 
 ---
 
