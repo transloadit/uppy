@@ -54,7 +54,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] transloadit: remove `UPPY_SERVER` constant (@mifi)
 - [ ] tus: set the `limit` option to a sensible default, like 5 (10?) (@arturi)
 - [ ] xhr: set the `limit` option to a sensible default, like 5 (10?) (@arturi)
-- [ ] xhr: change default name depending on whether `bundle` is set `files[]` (`true`) vs `file` (default) (#782) (@aduh95)
+- [x] xhr: change default name depending on whether `bundle` is set `files[]` (`true`) vs `file` (default) (#782) (@aduh95)
 - [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279 (@goto-bus-stop)
 - [ ] tus: remove `autoRetry` option (throw error at runtime if it is explicitly given) (@aduh95)
 
