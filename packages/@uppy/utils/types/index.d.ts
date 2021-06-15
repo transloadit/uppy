@@ -57,7 +57,7 @@ declare module '@uppy/utils/lib/RateLimitedQueue' {
     }
   }
 
-  class RateLimitedQueue {
+  export class RateLimitedQueue {
     constructor(limit: number)
     run(
       fn: () => RateLimitedQueue.AbortFunction,
@@ -69,7 +69,7 @@ declare module '@uppy/utils/lib/RateLimitedQueue' {
     ): RateLimitedQueue.PromiseFunction
   }
 
-  export = RateLimitedQueue
+  export const internalRateLimitedQueue: symbol
 }
 
 declare module '@uppy/utils/lib/canvasToBlob' {
