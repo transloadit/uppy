@@ -34,8 +34,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "memoize-one": "^5.0.4",
-    "preact": "^10.5.13",
-    "resize-observer-polyfill": "^1.5.0"
+    "preact": "^10.5.13"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
