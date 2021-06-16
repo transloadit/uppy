@@ -31,12 +31,12 @@ class FileCard extends Component {
   }
 
   updateMeta = (newVal, name) => {
-    this.setState({
+    this.setState(({ formState }) => ({
       formState: {
-        ...this.state.formState,
+        ...formState,
         [name]: newVal,
       },
-    })
+    }))
   }
 
   handleSave = () => {

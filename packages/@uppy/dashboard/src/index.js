@@ -1069,11 +1069,13 @@ module.exports = class Dashboard extends Plugin {
     }
 
     const { target } = this.opts
+
     if (target) {
       this.mount(target, this)
     }
 
     const plugins = this.opts.plugins || []
+
     plugins.forEach((pluginID) => {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) {
