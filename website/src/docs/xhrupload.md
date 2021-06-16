@@ -61,9 +61,11 @@ This works similarly to using a `<form>` element with an `<input type="file">` f
 When set to `true`, file metadata is also sent to the endpoint as separate form fields.
 When set to `false`, only the file contents are sent.
 
-### `fieldName: 'files[]'`
+### `fieldName: 'file'`
 
-When [`formData`](#formData-true) is set to true, this is used as the form field name for the file to be uploaded.
+When [`formData`](#formData-true) is set to true, this is used as the form field
+name for the file to be uploaded. It defaults to `'files[]'` if `bundle` option
+is set to `true`, otherwise it defaults to `'file'`.
 
 ### `metaFields: null`
 
