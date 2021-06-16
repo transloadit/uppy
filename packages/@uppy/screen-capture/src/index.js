@@ -8,17 +8,7 @@ const CaptureScreen = require('./CaptureScreen')
 // Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 function getMediaDevices () {
   // check if screen capturing is supported
-  /* eslint-disable */
-  if (navigator &&
-    navigator.mediaDevices &&
-    navigator.mediaDevices.getDisplayMedia &&
-    window &&
-    window.MediaRecorder) {
-    return navigator.mediaDevices
-  }
-  /* eslint-enable */
-
-  return null
+  return window.MediaRecorder && navigator.mediaDevices // eslint-disable-line compat/compat
 }
 
 /**
