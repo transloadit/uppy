@@ -13,7 +13,9 @@ module.exports = class DropTarget extends Plugin {
     super(uppy, opts)
     this.type = 'acquirer'
     this.id = this.opts.id || 'DropTarget'
+    this.activeClass = this.opts.activeClass || 'uppy-is-drag-over'
     this.title = 'Drop Target'
+    this.setMeta = this.opts.setMeta || null
 
     // Default options
     const defaultOpts = {
@@ -25,18 +27,24 @@ module.exports = class DropTarget extends Plugin {
     this.removeDragOverClassTimeout = null
   }
 
-  addFiles = (files) => {
-    const descriptors = files.map((file) => ({
-      source: this.id,
-      name: file.name,
-      type: file.type,
-      data: file,
-      meta: {
+  addFiles = (files, event) => {
+    const descriptors = files.map((file) => {
+      const meta = {
         // path of the file relative to the ancestor directory the user selected.
         // e.g. 'docs/Old Prague/airbnb.pdf'
         relativePath: file.relativePath || null,
-      },
-    }))
+      }
+      if (this.setMeta instanceof Function) {
+        Object.assign(meta, this.setMeta(file, event))
+      }
+      return {
+        source: this.id,
+        name: file.name,
+        type: file.type,
+        data: file,
+        meta,
+      }
+    })
 
     try {
       this.uppy.addFiles(descriptors)
@@ -48,10 +56,11 @@ module.exports = class DropTarget extends Plugin {
   handleDrop = (event) => {
     event.preventDefault()
     event.stopPropagation()
+    this.uppy.emit('droptarget:drop', event, this)
     clearTimeout(this.removeDragOverClassTimeout)
 
     // 2. Remove dragover class
-    event.currentTarget.classList.remove('uppy-is-drag-over')
+    event.currentTarget.classList.remove(this.activeClass)
     this.setPluginState({ isDraggingOver: false })
 
     // 3. Add all dropped files
@@ -60,12 +69,13 @@ module.exports = class DropTarget extends Plugin {
       this.uppy.log(error, 'error')
     }
     getDroppedFiles(event.dataTransfer, { logDropError })
-      .then((files) => this.addFiles(files))
+      .then((files) => this.addFiles(files, event))
   }
 
   handleDragOver = (event) => {
     event.preventDefault()
     event.stopPropagation()
+    this.uppy.emit('droptarget:dragover', event, this)
 
     // 1. Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the browser,
@@ -73,13 +83,14 @@ module.exports = class DropTarget extends Plugin {
     event.dataTransfer.dropEffect = 'copy'
 
     clearTimeout(this.removeDragOverClassTimeout)
-    event.currentTarget.classList.add('uppy-is-drag-over')
+    event.currentTarget.classList.add(this.activeClass)
     this.setPluginState({ isDraggingOver: true })
   }
 
   handleDragLeave = (event) => {
     event.preventDefault()
     event.stopPropagation()
+    this.uppy.emit('droptarget:dragleave', event, this)
 
     const { currentTarget } = event
 
@@ -87,7 +98,7 @@ module.exports = class DropTarget extends Plugin {
     // Timeout against flickering, this solution is taken from drag-drop library.
     // Solution with 'pointer-events: none' didn't work across browsers.
     this.removeDragOverClassTimeout = setTimeout(() => {
-      currentTarget.classList.remove('uppy-is-drag-over')
+      currentTarget.classList.remove(this.activeClass)
       this.setPluginState({ isDraggingOver: false })
     }, 50)
   }
