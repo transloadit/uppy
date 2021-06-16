@@ -81,7 +81,7 @@ describe('React: DashboardModal', () => {
     await browser.pause(50) // wait for the animation to start
 
     // Edge appears to report empty string while others report null
-    expect(await modalWrapper.getAttribute('aria-hidden')).to.be.oneOf([null, ''])
+    expect(await modalWrapper.getAttribute('aria-hidden')).to.be.oneOf([null, 'false'])
 
     await browser.pause(500) // wait for the animation to complete
 
