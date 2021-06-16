@@ -19,7 +19,6 @@ const uppy = new Uppy()
 uppy.use(Tus, {
   endpoint: 'https://tusd.tusdemo.net/files/', // use your tus endpoint here
   resume: true,
-  autoRetry: true,
   retryDelays: [0, 1000, 3000, 5000]
 })
 ```
