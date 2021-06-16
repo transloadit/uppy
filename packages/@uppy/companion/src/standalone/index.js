@@ -18,7 +18,7 @@ const middlewares = require('../server/middlewares')
  *
  * @returns {object}
  */
-function server (inputCompanionOptions = {}) {
+module.exports = function server (inputCompanionOptions = {}) {
   const app = express()
 
   // Query string keys whose values should not end up in logging output.
@@ -203,6 +203,3 @@ function server (inputCompanionOptions = {}) {
 
   return { app, companionOptions }
 }
-
-const { app, companionOptions } = server()
-module.exports = { app, companionOptions, server }

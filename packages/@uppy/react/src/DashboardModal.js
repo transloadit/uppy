@@ -2,6 +2,7 @@ const React = require('react')
 const PropTypes = require('prop-types')
 const DashboardPlugin = require('@uppy/dashboard')
 const basePropTypes = require('./propTypes').dashboard
+const getHTMLProps = require('./getHTMLProps')
 
 const h = React.createElement
 
@@ -11,6 +12,11 @@ const h = React.createElement
  */
 
 class DashboardModal extends React.Component {
+  constructor (props) {
+    super(props)
+    this.validProps = getHTMLProps(props)
+  }
+
   componentDidMount () {
     this.installPlugin()
   }
@@ -32,7 +38,7 @@ class DashboardModal extends React.Component {
   }
 
   installPlugin () {
-    const uppy = this.props.uppy
+    const { uppy } = this.props
     const options = {
       id: 'react:DashboardModal',
       ...this.props,
@@ -53,7 +59,7 @@ class DashboardModal extends React.Component {
   }
 
   uninstallPlugin (props = this.props) {
-    const uppy = props.uppy
+    const { uppy } = props
 
     uppy.removePlugin(this.plugin)
   }
@@ -63,6 +69,7 @@ class DashboardModal extends React.Component {
       ref: (container) => {
         this.container = container
       },
+      ...this.validProps,
     })
   }
 }

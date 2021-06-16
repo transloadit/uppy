@@ -12,10 +12,15 @@ exports.getUsername = (data) => {
       }
     }
   }
+  return undefined
 }
 
 exports.isFolder = (item) => {
   return item.mimeType === 'application/vnd.google-apps.folder' || exports.isSharedDrive(item)
+}
+
+exports.isShortcut = (mimeType) => {
+  return mimeType === 'application/vnd.google-apps.shortcut'
 }
 
 exports.getItemSize = (item) => {
@@ -46,6 +51,7 @@ exports.getItemSubList = (item) => {
     'application/vnd.google-apps.script',
     'application/vnd.google-apps.spreadsheet',
     'application/vnd.google-apps.presentation',
+    'application/vnd.google-apps.shortcut',
   ]
 
   return item.files.filter((i) => {
@@ -70,11 +76,18 @@ exports.getItemName = (item) => {
   return item.name ? item.name : '/'
 }
 
-exports.getMimeType = (item) => {
-  if (exports.isGsuiteFile(item.mimeType)) {
-    return exports.getGsuiteExportType(item.mimeType)
+function getMimeType (mimeType) {
+  if (exports.isGsuiteFile(mimeType)) {
+    return exports.getGsuiteExportType(mimeType)
   }
-  return item.mimeType
+  return mimeType
+}
+
+exports.getMimeType = (item) => {
+  if (exports.isShortcut(item.mimeType)) {
+    return getMimeType(item.shortcutDetails.targetMimeType)
+  }
+  return getMimeType(item.mimeType)
 }
 
 exports.getItemId = (item) => {
