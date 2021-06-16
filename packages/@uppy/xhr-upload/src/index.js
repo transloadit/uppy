@@ -61,7 +61,7 @@ module.exports = class XHRUpload extends Plugin {
     // Default options
     const defaultOptions = {
       formData: true,
-      fieldName: 'files[]',
+      fieldName: opts.bundle ? 'files[]' : 'file',
       method: 'post',
       metaFields: null,
       responseUrlFieldName: 'url',
