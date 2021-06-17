@@ -13,6 +13,7 @@ const findIndex = require('@uppy/utils/lib/findIndex')
 const supportsUploadProgress = require('./supportsUploadProgress')
 const { justErrorsLogger, debugLogger } = require('./loggers')
 const Plugin = require('./Plugin')
+const BasePlugin = require('./BasePlugin')
 const { version } = require('../package.json')
 
 // Exported from here.
@@ -1713,4 +1714,5 @@ module.exports = function core (opts) {
 // Expose class constructor.
 module.exports.Uppy = Uppy
 module.exports.Plugin = Plugin
+module.exports.BasePlugin = BasePlugin
 module.exports.debugLogger = debugLogger

@@ -1,4 +1,4 @@
-const { Plugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 const tus = require('tus-js-client')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
@@ -51,7 +51,7 @@ const tusDefaultOptions = {
 /**
  * Tus resumable file uploader
  */
-module.exports = class Tus extends Plugin {
+module.exports = class Tus extends BasePlugin {
   static VERSION = require('../package.json').version
 
   /**

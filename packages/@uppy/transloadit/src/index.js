@@ -1,6 +1,6 @@
 const Translator = require('@uppy/utils/lib/Translator')
 const hasProperty = require('@uppy/utils/lib/hasProperty')
-const { Plugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 const Tus = require('@uppy/tus')
 const Assembly = require('./Assembly')
 const Client = require('./Client')
@@ -25,7 +25,7 @@ const TL_UPPY_SERVER = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/uppy-server/
 /**
  * Upload files to Transloadit using Tus.
  */
-module.exports = class Transloadit extends Plugin {
+module.exports = class Transloadit extends BasePlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
