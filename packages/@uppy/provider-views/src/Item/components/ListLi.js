@@ -32,7 +32,7 @@ function ListItem (props) {
       {!isCheckboxDisabled ? (
         <input
           type="checkbox"
-          className={`uppy-u-reset uppy-ProviderBrowserItem-fakeCheckbox ${isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`}
+          className={`uppy-u-reset uppy-ProviderBrowserItem-checkbox ${isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''}`}
           onChange={toggleCheckbox}
           // for the <label/>
           name="listitem"
