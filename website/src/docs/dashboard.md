@@ -67,7 +67,7 @@ uppy.use(Dashboard, {
   id: 'Dashboard',
   target: 'body',
   metaFields: [],
-  trigger: '#uppy-select-files',
+  trigger: null,
   inline: false,
   width: 750,
   height: 550,
@@ -117,9 +117,9 @@ Dashboard is rendered into `body`, because it is hidden by default and only open
 
 By default, Dashboard will be rendered as a modal, which is opened by clicking on `trigger`. If `inline: true`, Dashboard will be rendered into `target` and fit right in.
 
-### `trigger: '#uppy-select-files'`
+### `trigger: null`
 
-String with a CSS selector for a button that will trigger opening the Dashboard modal. Multiple buttons or links can be used, as long as it is a class selector (`.uppy-choose`, for example).
+String with a CSS selector for a button that will trigger opening the Dashboard modal. Multiple buttons or links can be used, as long as it is a class selector (`.select-file-button`, for example).
 
 ### `plugins: []`
 
