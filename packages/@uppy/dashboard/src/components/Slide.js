@@ -1,4 +1,4 @@
-const { cloneElement, Component } = require('preact')
+const { cloneElement, Component, toChildArray } = require('preact')
 const classNames = require('classnames')
 
 const transitionName = 'uppy-transition-slideDownUp'
@@ -23,11 +23,13 @@ class Slide extends Component {
     }
   }
 
+  // TODO: refactor this component to not use componentWillUpdate
+  // eslint-disable-next-line
   componentWillUpdate (nextProps) {
     const { cachedChildren } = this.state
-    const child = nextProps.children[0]
+    const child = toChildArray(nextProps.children)[0]
 
-    if (cachedChildren === child) return
+    if (cachedChildren === child) return null
 
     const patch = {
       cachedChildren: child,
@@ -43,7 +45,7 @@ class Slide extends Component {
 
       this.animationFrame = requestAnimationFrame(() => {
         // Force it to render before we add the active class
-        this.base.getBoundingClientRect()
+        // this.base.getBoundingClientRect()
 
         this.setState({
           className: `${transitionName}-enter ${transitionName}-enter-active`,
@@ -77,6 +79,7 @@ class Slide extends Component {
       })
     }
 
+    // eslint-disable-next-line
     this.setState(patch)
   }
 
@@ -88,7 +91,7 @@ class Slide extends Component {
     }
 
     return cloneElement(cachedChildren, {
-      className: classNames(className, cachedChildren.attributes.className),
+      className: classNames(className, cachedChildren.props.className),
     })
   }
 }

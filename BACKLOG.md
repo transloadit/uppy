@@ -35,36 +35,43 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] plugins: a WakeLock based plugin that keeps your phone from going to sleep while an upload is ongoing https://github.com/transloadit/uppy/issues/1725
 - [ ] provider: Image search (via Google or Bing or DuckDuckGo): use duckduckgo-images-api or Google Search API (@arturi)
 - [ ] provider: Google Photos (#2163)
+- [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
 
 ### 2.0
 
+- [ ] Drop IE10 (officially), drop IE11 polyfills? (@aduh95)
+- [ ] *: upgrade to Preact X (@murderlon)
+- [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog (@everyone)
+- [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/ (@murderlon)
+- [ ] core: force the `new` keyword when instantiating Uppy — now we support both `new Uppy()` and `Uppy()` which is harder to maintain and might lead to confusion (@arturi)
+- [ ] core: maybe we remove `file.name` and only keep `file.meta.name`; we can change the file.name here actually because it's just a plain object. we can't change the file.data.name where data is a File instance from an input or something. For XHRUpload, where we put the File instance in a FormData object and it uses the unchangeable .name property (@arturi)
+- [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594 (@arturi)
+- [ ] core/dashboard: replace `poweredBy` and `exceedsSize` locale keys by word order aware versions, see PR #2077 (@goto-bus-stop)
+- [ ] dashboard: set default `trigger: null`, see https://github.com/transloadit/uppy/pull/2144#issuecomment-600581690 (@arturi)
+- [ ] form: make the `multipleResults` option `true` by default (@arturi)
+- [ ] locales: Remove the old es_GL name alias for gl_ES. Keep gl_ES only (@arturi)
+- [ ] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861 (@mifi)
+- [ ] transloadit: remove `UPPY_SERVER` constant (@mifi)
+- [ ] tus: set the `limit` option to a sensible default, like 5 (10?) (@arturi)
+- [ ] xhr: set the `limit` option to a sensible default, like 5 (10?) (@arturi)
+- [x] xhr: change default name depending on whether `bundle` is set `files[]` (`true`) vs `file` (default) (#782) (@aduh95)
+- [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279 (@goto-bus-stop)
+- [x] tus: remove `autoRetry` option (throw error at runtime if it is explicitly given) (@aduh95)
+
+---
+
+- [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type) (?)
+- [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now (?)
+- [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems) (?)
+
+### 3.0
+
 - [ ] build: switch to ES Modules (ESM)
-- [ ] Drop IE
-- [ ] *: upgrade to Preact X
-- [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog
+
+### 4.0
+
 - [ ] core: change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
-- [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/
-- [ ] core: force the `new` keyword when instantiating Uppy — now we support both `mew Uppy()` and `Uppy()` which is harder to maintain and might lead to confusion
-- [ ] core: maybe we remove `file.name` and only keep `file.meta.name`; we can change the file.name here actually because it's just a plain object. we can't change the file.data.name where data is a File instance from an input or something. For XHRUpload, where we put the File instance in a FormData object and it uses the unchangeable .name property.
-- [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594
-- [ ] core: remove `debug`, we have `logger` and `logger: Uppy.debugLogger` for that now
-- [ ] core/dashboard: replace `poweredBy` and `exceedsSize` locale keys by word order aware versions, see PR #2077
-- [ ] dashboard: hiding pause/resume from the UI by default (with option) would be good too probably (we could auto pause and show a resume button when detecting a network change to a metered network using https://devdocs.io/dom/networkinformation/type)
-- [ ] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems)
-- [ ] dashboard: set default `trigger: null`, see https://github.com/transloadit/uppy/pull/2144#issuecomment-600581690
-- [ ] docs: Completely drop soft IE10 (and IE11?) support
-- [ ] form: make the `multipleResults` option `true` by default
-- [ ] locales: Remove the old es_GL name alias for gl_ES. Keep gl_ES only.
-- [ ] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861
-- [ ] redux-store: make action signatures flux-standard-action compatible #1642
-- [ ] tus: set the `limit` option to a sensible default, like 10
-- [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
-- [ ] xhr: change default name depending on wether `bundle` is set `files[]` (`true`) vs `file` (default) (#782)
-- [ ] xhr: set the `limit` option to a sensible default, like 10
 - [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
-- [ ] transloadit: remove `UPPY_SERVER` constant
-- [ ] providers: allow changing provider name title through locale? https://github.com/transloadit/uppy/issues/2279
-- [ ] tus: remove `autoRetry` option (throw error at runtime if it is explicitly given)
 
 ## 1.x
 

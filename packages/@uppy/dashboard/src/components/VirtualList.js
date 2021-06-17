@@ -65,27 +65,13 @@ class VirtualList extends Component {
     }
   }
 
-  resize () {
-    if (this.state.height !== this.base.offsetHeight) {
-      this.setState({
-        height: this.base.offsetHeight,
-      })
-    }
-  }
-
-  handleResize = () => {
+  componentDidMount () {
     this.resize()
+    window.addEventListener('resize', this.handleResize)
   }
 
-  handleScroll = () => {
-    this.setState({
-      offset: this.base.scrollTop,
-    })
-    if (this.props.sync) {
-      this.forceUpdate()
-    }
-  }
-
+  // TODO: can we use a different method here?
+  // eslint-disable-next-line
   componentWillUpdate () {
     if (this.base.contains(document.activeElement)) {
       this.focusElement = document.activeElement
@@ -102,13 +88,32 @@ class VirtualList extends Component {
     this.resize()
   }
 
-  componentDidMount () {
-    this.resize()
-    window.addEventListener('resize', this.handleResize)
-  }
-
   componentWillUnmount () {
     window.removeEventListener('resize', this.handleResize)
+  }
+
+  handleScroll = () => {
+    const { sync } = this.props
+
+    this.setState({ offset: this.base.scrollTop })
+
+    if (sync) {
+      this.forceUpdate()
+    }
+  }
+
+  handleResize = () => {
+    this.resize()
+  }
+
+  resize () {
+    const { height } = this.state
+
+    if (height !== this.base.offsetHeight) {
+      this.setState({
+        height: this.base.offsetHeight,
+      })
+    }
   }
 
   render ({

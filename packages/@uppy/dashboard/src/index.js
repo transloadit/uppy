@@ -120,7 +120,7 @@ module.exports = class Dashboard extends Plugin {
     const defaultOptions = {
       target: 'body',
       metaFields: [],
-      trigger: '#uppy-select-files',
+      trigger: null,
       inline: false,
       width: 750,
       height: 550,
@@ -500,7 +500,8 @@ module.exports = class Dashboard extends Plugin {
     clearTimeout(this.makeDashboardInsidesVisibleAnywayTimeout)
   }
 
-  // Records whether we have been interacting with uppy right now, which is then used to determine whether state updates should trigger a refocusing.
+  // Records whether we have been interacting with uppy right now,
+  // which is then used to determine whether state updates should trigger a refocusing.
   recordIfFocusedOnUppyRecently = (event) => {
     if (this.el.contains(event.target)) {
       this.ifFocusedOnUppyRecently = true
@@ -1069,11 +1070,13 @@ module.exports = class Dashboard extends Plugin {
     }
 
     const { target } = this.opts
+
     if (target) {
       this.mount(target, this)
     }
 
     const plugins = this.opts.plugins || []
+
     plugins.forEach((pluginID) => {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) {
