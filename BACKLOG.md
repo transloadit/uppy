@@ -40,9 +40,9 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 ### 2.0
 
 - [ ] Drop IE10 (officially), drop IE11 polyfills? (@aduh95)
-- [ ] *: upgrade to Preact X (@murderlon)
+- [x] *: upgrade to Preact X (@murderlon)
 - [ ] chore: hunt down all `@TODO`s and either fix, or remove, or move to github issues/changelog backlog (@everyone)
-- [ ] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/ (@murderlon)
+- [x] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/ (@murderlon)
 - [ ] core: force the `new` keyword when instantiating Uppy — now we support both `new Uppy()` and `Uppy()` which is harder to maintain and might lead to confusion (@arturi)
 - [ ] core: maybe we remove `file.name` and only keep `file.meta.name`; we can change the file.name here actually because it's just a plain object. we can't change the file.data.name where data is a File instance from an input or something. For XHRUpload, where we put the File instance in a FormData object and it uses the unchangeable .name property (@arturi)
 - [ ] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594 (@arturi)
