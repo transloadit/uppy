@@ -15,7 +15,6 @@ declare module Tus {
 
   export interface TusOptions extends Uppy.PluginOptions, TusUploadOptions {
     metaFields?: string[] | null
-    autoRetry?: boolean
     limit?: number
     useFastRemoteRetry?: boolean
     withCredentials?: boolean

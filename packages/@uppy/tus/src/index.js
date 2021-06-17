@@ -66,7 +66,6 @@ module.exports = class Tus extends Plugin {
 
     // set default options
     const defaultOptions = {
-      autoRetry: true,
       resume: true,
       useFastRemoteRetry: true,
       limit: 0,
@@ -77,6 +76,10 @@ module.exports = class Tus extends Plugin {
     // merge default options with the ones set by user
     /** @type {import("..").TusOptions} */
     this.opts = { ...defaultOptions, ...opts }
+
+    if ('autoRetry' in opts) {
+      throw new Error('The `autoRetry` option was deprecated and has been removed.')
+    }
 
     /**
      * Simultaneous upload limiting is shared across all uploads with this plugin.
@@ -695,10 +698,6 @@ module.exports = class Tus extends Plugin {
     this.uppy.addUploader(this.handleUpload)
 
     this.uppy.on('reset-progress', this.handleResetProgress)
-
-    if (this.opts.autoRetry) {
-      this.uppy.on('back-online', this.uppy.retryAll)
-    }
   }
 
   uninstall () {
@@ -706,9 +705,5 @@ module.exports = class Tus extends Plugin {
       capabilities: { ...this.uppy.getState().capabilities, resumableUploads: false },
     })
     this.uppy.removeUploader(this.handleUpload)
-
-    if (this.opts.autoRetry) {
-      this.uppy.off('back-online', this.uppy.retryAll)
-    }
   }
 }
