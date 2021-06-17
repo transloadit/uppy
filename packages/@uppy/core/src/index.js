@@ -605,7 +605,7 @@ class Uppy {
       fileName = 'noname'
     }
     const fileExtension = getFileNameAndExtension(fileName).extension
-    const isRemote = fileDescriptor.isRemote || false
+    const isRemote = Boolean(fileDescriptor.isRemote)
     const fileID = generateFileID({
       ...fileDescriptor,
       type: fileType,
