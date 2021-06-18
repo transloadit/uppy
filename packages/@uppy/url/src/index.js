@@ -1,4 +1,4 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
 const { RequestClient } = require('@uppy/companion-client')
@@ -20,7 +20,7 @@ function UrlIcon () {
  * Url
  *
  */
-module.exports = class Url extends Plugin {
+module.exports = class Url extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {

@@ -1,5 +1,5 @@
 const ThumbnailGeneratorPlugin = require('./index')
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const emitter = require('namespace-emitter')
 
 const delay = duration => new Promise(resolve => setTimeout(resolve, duration))
@@ -26,7 +26,7 @@ function MockCore () {
 describe('uploader/ThumbnailGeneratorPlugin', () => {
   it('should initialise successfully', () => {
     const plugin = new ThumbnailGeneratorPlugin(new MockCore(), {})
-    expect(plugin instanceof Plugin).toEqual(true)
+    expect(plugin instanceof UIPlugin).toEqual(true)
   })
 
   it('should accept the thumbnailWidth and thumbnailHeight option and override the default', () => {

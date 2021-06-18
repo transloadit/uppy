@@ -1,4 +1,4 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const StatusBarUI = require('./StatusBar')
 const statusBarStates = require('./StatusBarStates')
@@ -10,7 +10,7 @@ const getTextDirection = require('@uppy/utils/lib/getTextDirection')
  * StatusBar: renders a status bar with upload/pause/resume/cancel/retry buttons,
  * progress percentage and time remaining.
  */
-module.exports = class StatusBar extends Plugin {
+module.exports = class StatusBar extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {

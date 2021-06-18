@@ -1,4 +1,4 @@
-const { Plugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 const cuid = require('cuid')
 const Translator = require('@uppy/utils/lib/Translator')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
@@ -43,7 +43,7 @@ function setTypeInBlob (file) {
   return dataWithUpdatedType
 }
 
-module.exports = class XHRUpload extends Plugin {
+module.exports = class XHRUpload extends BasePlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {

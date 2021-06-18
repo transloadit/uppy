@@ -1,9 +1,9 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
 const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
-module.exports = class Instagram extends Plugin {
+module.exports = class Instagram extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
