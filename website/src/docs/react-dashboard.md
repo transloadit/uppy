@@ -48,7 +48,7 @@ The `<Dashboard />` component supports all [`@uppy/dashboard`][] options as prop
 ```js
 function Uploader () {
   const uppy = React.useMemo(() => {
-    return Uppy()
+    return new Uppy()
       .use(Webcam) // `id` defaults to "Webcam". Note: no `target` option!
       // or
       .use(Webcam, { id: 'MyWebcam' }) // `id` is… "MyWebcam"

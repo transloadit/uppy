@@ -44,7 +44,7 @@ A simple approach is to create an Uppy instance in your React component's `const
 class MyComponent extends React.Component {
   constructor (props) {
     super(props)
-    this.uppy = Uppy()
+    this.uppy = new Uppy()
       .use(Transloadit, {})
   }
 
