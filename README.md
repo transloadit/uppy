@@ -188,6 +188,7 @@ Math.log2 ??= mathLog2;
 window.ResizeObserver ??= ResizeObserver;
 
 export { default } from '@uppy/core';
+export * from '@uppy/core';
 ```
 
 If you're using Uppy from CDN, those polyfills are already included in the
