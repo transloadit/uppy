@@ -1441,14 +1441,6 @@ class Uppy {
   }
 
   /**
-   * Obsolete, event listeners are now added in the constructor.
-   */
-  run () {
-    this.log('Calling run() is no longer necessary.', 'warning')
-    return this
-  }
-
-  /**
    * Restore an upload by its ID.
    */
   restore (uploadID) {
@@ -1706,11 +1698,7 @@ class Uppy {
   }
 }
 
-module.exports = function core (opts) {
-  return new Uppy(opts)
-}
-
 // Expose class constructor.
-module.exports.Uppy = Uppy
+module.exports = Uppy
 module.exports.Plugin = Plugin
 module.exports.debugLogger = debugLogger
