@@ -40,6 +40,8 @@ class UIPlugin extends BasePlugin {
     super(uppy, opts)
 
     this.mount = this.mount.bind(this)
+    this.update = this.update.bind(this)
+    this.unmount = this.unmount.bind(this)
   }
 
   /**
@@ -130,6 +132,22 @@ class UIPlugin extends BasePlugin {
         + 'If you meant to target a plugin, please confirm that your `import` statements or `require` calls are correct.'
     }
     throw new Error(message)
+  }
+
+  update (state) {
+    if (typeof this.el === 'undefined') {
+      return
+    }
+
+    if (this.updateUI) {
+      this.updateUI(state)
+    }
+  }
+
+  unmount () {
+    if (this.isTargetDOMEl && this.el && this.el.parentNode) {
+      this.el.parentNode.removeChild(this.el)
+    }
   }
 }
 

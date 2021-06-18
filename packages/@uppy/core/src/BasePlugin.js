@@ -15,7 +15,9 @@ module.exports = class BasePlugin {
     this.uppy = uppy
     this.opts = opts || {}
 
-    this.update = this.update.bind(this)
+    this.getPluginState = this.getPluginState.bind(this)
+    this.setPluginState = this.setPluginState.bind(this)
+    this.setOptions = this.setOptions.bind(this)
     this.install = this.install.bind(this)
     this.uninstall = this.uninstall.bind(this)
   }
@@ -44,22 +46,6 @@ module.exports = class BasePlugin {
     this.setPluginState() // so that UI re-renders with new options
   }
 
-  update (state) {
-    if (typeof this.el === 'undefined') {
-      return
-    }
-
-    if (this.updateUI) {
-      this.updateUI(state)
-    }
-  }
-
-  unmount () {
-    if (this.isTargetDOMEl && this.el && this.el.parentNode) {
-      this.el.parentNode.removeChild(this.el)
-    }
-  }
-
   /**
    * Extendable methods
    * ==================
@@ -75,9 +61,8 @@ module.exports = class BasePlugin {
   // eslint-disable-next-line class-methods-use-this
   install () {}
 
-  uninstall () {
-    this.unmount()
-  }
+  // eslint-disable-next-line class-methods-use-this
+  uninstall () {}
 
   /**
    * Called when plugin is mounted, whether in DOM or into another plugin.
@@ -91,6 +76,9 @@ module.exports = class BasePlugin {
 
   // eslint-disable-next-line class-methods-use-this
   onMount () {}
+
+  // eslint-disable-next-line class-methods-use-this
+  update () {}
 
   // Called after every state update, after everything's mounted. Debounced.
   // eslint-disable-next-line class-methods-use-this
