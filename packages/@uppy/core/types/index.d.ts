@@ -147,7 +147,7 @@ declare module Uppy {
 
   type UploadHandler = (fileIDs: string[]) => Promise<void>
 
-  class Uppy<TUseStrictTypes extends TypeChecking = TypeChecking> {
+  export class Uppy<TUseStrictTypes extends TypeChecking = TypeChecking> {
     constructor(opts?: UppyOptions)
     on<TMeta extends IndexedObject<any> = {}>(
       event: 'upload-success',
@@ -228,10 +228,6 @@ declare module Uppy {
     ): void
     hideInfo(): void
     log(msg: string, type?: LogLevel): void
-    /**
-     * Obsolete: do not use. This method does nothing and will be removed in a future release.
-     */
-    run(): this
     restore<TMeta extends IndexedObject<any> = {}>(
       uploadID: string
     ): Promise<UploadResult<TMeta>>
@@ -253,6 +249,6 @@ declare module Uppy {
  * private uppy: Uppy<Uppy.StrictTypes>;
  * ```
  */
-declare function Uppy<TUseStrictTypes extends Uppy.TypeChecking = Uppy.TypeChecking>(opts?: Uppy.UppyOptions): Uppy.Uppy<TUseStrictTypes>
+// declare function Uppy<TUseStrictTypes extends Uppy.TypeChecking = Uppy.TypeChecking>(opts?: Uppy.UppyOptions): Uppy.Uppy<TUseStrictTypes>
 
-export = Uppy
+// export = Uppy
