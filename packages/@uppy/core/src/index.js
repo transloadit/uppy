@@ -1552,13 +1552,14 @@ class Uppy {
       ...this.uploaders,
       ...this.postProcessors,
     ]
-    const lastStep = steps.reduce((lastStep, fn, step) => {
+    let lastStep = Promise.resolve()
+    steps.forEach((fn, step) => {
       // Skip this step if we are restoring and have already completed this step before.
       if (step < restoreStep) {
-        return lastStep
+        return
       }
 
-      return lastStep.then(() => {
+      lastStep = lastStep.then(() => {
         const { currentUploads } = this.getState()
         const currentUpload = currentUploads[uploadID]
         if (!currentUpload) {
@@ -1581,11 +1582,16 @@ class Uppy {
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
         // eslint-disable-next-line consistent-return
         return fn(updatedUpload.fileIDs, uploadID)
-      }).then(() => null)
-    }, Promise.resolve()).catch((err) => {
+      }).then(() => {
+        return null
+      })
+    })
+
+    // Not returning the `catch`ed promise, because we still want to return a rejected
+    // promise from this method if the upload failed.
+    lastStep.catch((err) => {
       this.emit('error', err, uploadID)
       this.removeUpload(uploadID)
-      throw err
     })
 
     return lastStep.then(() => {
@@ -1593,7 +1599,6 @@ class Uppy {
       const { currentUploads } = this.getState()
       const currentUpload = currentUploads[uploadID]
       if (!currentUpload) {
-        this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
         return
       }
 
@@ -1618,16 +1623,24 @@ class Uppy {
       const successful = files.filter((file) => !file.error)
       const failed = files.filter((file) => file.error)
       this.addResultData(uploadID, { successful, failed, uploadID })
-
+    }).then(() => {
       // Emit completion events.
       // This is in a separate function so that the `currentUploads` variable
       // always refers to the latest state. In the handler right above it refers
       // to an outdated object without the `.result` property.
+      const { currentUploads } = this.getState()
+      if (!currentUploads[uploadID]) {
+        return
+      }
+      const currentUpload = currentUploads[uploadID]
       const { result } = currentUpload
       this.emit('complete', result)
 
       this.removeUpload(uploadID)
 
+      // eslint-disable-next-line consistent-return
+      return result
+    }).then((result) => {
       if (result == null) {
         this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
       }
