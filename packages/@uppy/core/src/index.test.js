@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const prettierBytes = require('@transloadit/prettier-bytes')
 const Core = require('./index')
-const Plugin = require('./Plugin')
+const UIPlugin = require('./UIPlugin')
 const AcquirerPlugin1 = require('../../../../test/mocks/acquirerPlugin1')
 const AcquirerPlugin2 = require('../../../../test/mocks/acquirerPlugin2')
 const InvalidPlugin = require('../../../../test/mocks/invalidPlugin')
@@ -86,7 +86,7 @@ describe('src/Core', () => {
       core.use(AcquirerPlugin1)
       const plugin = core.getPlugin('TestSelector1')
       expect(plugin.id).toEqual('TestSelector1')
-      expect(plugin instanceof Plugin)
+      expect(plugin instanceof UIPlugin)
     })
 
     it('should call the specified method on all the plugins', () => {

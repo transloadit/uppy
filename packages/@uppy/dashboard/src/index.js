@@ -1,5 +1,5 @@
 const { h } = require('preact')
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const DashboardUI = require('./components/Dashboard')
 const StatusBar = require('@uppy/status-bar')
@@ -39,7 +39,7 @@ function defaultPickerIcon () {
 /**
  * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
-module.exports = class Dashboard extends Plugin {
+module.exports = class Dashboard extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {

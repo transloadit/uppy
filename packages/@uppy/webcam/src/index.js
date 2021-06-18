@@ -1,5 +1,5 @@
 const { h } = require('preact')
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
 const mimeTypes = require('@uppy/utils/lib/mimeTypes')
@@ -70,7 +70,7 @@ function getMediaDevices () {
 /**
  * Webcam
  */
-module.exports = class Webcam extends Plugin {
+module.exports = class Webcam extends UIPlugin {
   static VERSION = packageJsonVersion
 
   constructor (uppy, opts) {

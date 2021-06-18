@@ -1,4 +1,4 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
@@ -10,7 +10,7 @@ const exifr = require('exifr/dist/mini.legacy.umd.js')
  * The Thumbnail Generator plugin
  */
 
-module.exports = class ThumbnailGenerator extends Plugin {
+module.exports = class ThumbnailGenerator extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {

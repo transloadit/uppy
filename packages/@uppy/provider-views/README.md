@@ -15,7 +15,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 const Plugin = require('@uppy/core/lib/plugin')
 const { ProviderViews } = require('@uppy/provider-views')
 
-class GoogleDrive extends Plugin {
+class GoogleDrive extends UIPlugin {
   constructor () { /* snip */ }
   install () {
     this.view = new ProviderViews(this)

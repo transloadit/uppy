@@ -1,6 +1,6 @@
-const { Plugin } = require('../../packages/@uppy/core')
+const { UIPlugin } = require('../../packages/@uppy/core')
 
-module.exports = class TestSelector1 extends Plugin {
+module.exports = class TestSelector1 extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'

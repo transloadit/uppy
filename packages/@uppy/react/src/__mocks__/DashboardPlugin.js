@@ -1,6 +1,6 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 
-module.exports = class Dashboard extends Plugin {
+module.exports = class Dashboard extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
 

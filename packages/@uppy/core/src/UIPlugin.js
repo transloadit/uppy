@@ -26,7 +26,7 @@ function debounce (fn) {
 }
 
 /**
- * Plugin is the extended version of BasePlugin to incorporate rendering with Preact.
+ * UIPlugin is the extended version of BasePlugin to incorporate rendering with Preact.
  * Use this for plugins that need a user interface.
  *
  * For plugins without an user interface, see BasePlugin.
@@ -35,7 +35,7 @@ function debounce (fn) {
  * @param {object} object with plugin options
  * @returns {Array|string} files or success/fail message
  */
-module.exports = class Plugin extends BasePlugin {
+class UIPlugin extends BasePlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
 
@@ -91,7 +91,7 @@ module.exports = class Plugin extends BasePlugin {
     }
 
     let targetPlugin
-    if (typeof target === 'object' && target instanceof Plugin) {
+    if (typeof target === 'object' && target instanceof UIPlugin) {
       // Targeting a plugin *instance*
       targetPlugin = target
     } else if (typeof target === 'function') {
@@ -132,3 +132,5 @@ module.exports = class Plugin extends BasePlugin {
     throw new Error(message)
   }
 }
+
+module.exports = UIPlugin
