@@ -2,13 +2,9 @@
  * Core plugin logic that all plugins share.
  *
  * BasePlugin does not contain DOM rendering so it can be used for plugins
- * without an user interface.
+ * without a user interface.
  *
  * See `Plugin` for the extended version with Preact rendering for interfaces.
- *
- * @param {object} main Uppy core object
- * @param {object} object with plugin options
- * @returns {Array|string} files or success/fail message
  */
 module.exports = class BasePlugin {
   constructor (uppy, opts) {
