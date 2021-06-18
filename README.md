@@ -168,6 +168,7 @@ Here's a list of polyfills you'll need to include to make Uppy work in older bro
 - [math-log2](https://github.com/sindresorhus/math-log2)
 - [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
 - [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
+- [symbol-es6](https://github.com/rousan/symbol-es6)
 - [url-polyfill](https://github.com/lifaon74/url-polyfill)
 - [whatwg-fetch](https://github.com/github/fetch)
 
@@ -182,6 +183,7 @@ import 'abortcontroller-polyfill/dist/polyfill-patch-fetch';
 import mathLog2 from 'math-log2';
 import 'md-gum-polyfill';
 import ResizeObserver from 'resize-observer-polyfill';
+import 'symbol-es6';
 import 'url-polyfill';
 
 Math.log2 ??= mathLog2;
