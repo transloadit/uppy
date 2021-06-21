@@ -77,13 +77,13 @@ import Dashboard from '@uppy/dashboard'
 // With webpack and `style-loader`, you can import them like this:
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
- 
+
 const uppy = new Uppy()
   .use(Dashboard, {
-    trigger: '#select-files'
+    trigger: '#select-files',
   })
   .use(XHRUpload, { endpoint: 'https://api2.transloadit.com' })
- 
+
 uppy.on('complete', (result) => {
   console.log('Upload complete! We’ve uploaded these files:', result.successful)
 })

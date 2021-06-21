@@ -19,6 +19,7 @@ Can be a `string` CSS selector, a DOM element, or a Plugin class. Consider the f
 ```js
 import Uppy from '@uppy/core'
 import DragDrop from '@uppy/drag-drop'
+
 const uppy = new Uppy()
 uppy.use(DragDrop, { target: 'body' })
 // or: uppy.use(DragDrop, { target: document.body })
@@ -30,11 +31,12 @@ While in this one, we are using the `@uppy/dashboard` plugin, which can act as a
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import GoogleDrive from '@uppy/google-drive'
+
 const uppy = new Uppy()
 uppy.use(Dashboard, {
-  trigger: '#uppyModalOpener'
+  trigger: '#uppyModalOpener',
 })
-uppy.use(GoogleDrive, {target: Dashboard})
+uppy.use(GoogleDrive, { target: Dashboard })
 ```
 
 In the example above, the `Dashboard` gets rendered into an element with ID `uppy`, while `GoogleDrive` is rendered into the `Dashboard` itself.
@@ -44,11 +46,11 @@ In the example above, the `Dashboard` gets rendered into an element with ID `upp
 Same as with Uppy.Core’s setting above, this allows you to override plugin’s locale string, so that instead of `Select files` in English, your users will see `Выберите файлы` in Russian. Example:
 
 ```js
-.use(FileInput, {
+uppy.use(FileInput, {
   target: 'body',
   locale: {
-    strings: { selectToUpload: 'Выберите файл для загрузки' }
-  }
+    strings: { selectToUpload: 'Выберите файл для загрузки' },
+  },
 })
 ```
 
@@ -64,7 +66,7 @@ You can change options for a plugin on the fly, like this:
 // First get the plugin by its `id`,
 // then change, for example, `width` on the fly
 uppy.getPlugin('Dashboard').setOptions({
-  width: 300
+  width: 300,
 })
 ```
 

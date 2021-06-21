@@ -44,7 +44,7 @@ import('@uppy/golden-retriever/lib/ServiceWorker')
 // you app.js entry point
 import GoldenRetriever from '@uppy/golden-retriever'
 
-uppy.use(GoldenRetriever, {serviceWorker: true})
+uppy.use(GoldenRetriever, { serviceWorker: true })
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
@@ -53,7 +53,7 @@ if ('serviceWorker' in navigator) {
       console.log('ServiceWorker registration successful with scope: ', registration.scope)
     })
     .catch((error) => {
-      console.log('Registration failed with ' + error)
+      console.log(`Registration failed with ${error}`)
     })
 }
 ```

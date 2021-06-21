@@ -21,7 +21,7 @@ uppy.use(StatusBar, {
   target: 'body',
   hideUploadButton: false,
   showProgressDetails: false,
-  hideAfterFinish: true
+  hideAfterFinish: true,
 })
 ```
 

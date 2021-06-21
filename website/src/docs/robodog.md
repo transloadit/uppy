@@ -57,8 +57,8 @@ const resultPromise = Robodog.pick({
   target: 'body',
   params: {
     auth: { key: '' },
-    template_id: ''
-  }
+    template_id: '',
+  },
 })
 resultPromise.then((bundle) => {
   bundle.transloadit // Array of Assembly statuses
@@ -101,8 +101,8 @@ Upload files straight to Transloadit from your own custom UI. Give us an array o
 const resultPromise = Robodog.upload(files, {
   params: {
     auth: { key: '' },
-    template_id: ''
-  }
+    template_id: '',
+  },
 })
 resultPromise.then((bundle) => {
   bundle.transloadit // Array of Assembly statuses

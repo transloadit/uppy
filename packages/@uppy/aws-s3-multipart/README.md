@@ -18,7 +18,7 @@ import AwsS3Multipart from '@uppy/aws-s3-multipart'
 const uppy = new Uppy()
 uppy.use(AwsS3Multipart, {
   limit: 2,
-  companionUrl: 'https://companion.myapp.com/'
+  companionUrl: 'https://companion.myapp.com/',
 })
 ```
 

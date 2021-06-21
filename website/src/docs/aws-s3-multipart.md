@@ -12,9 +12,10 @@ The `@uppy/aws-s3-multipart` plugin can be used to upload files directly to an S
 
 ```js
 import AwsS3Multipart from '@uppy/aws-s3-multipart'
+
 uppy.use(AwsS3Multipart, {
   limit: 4,
-  companionUrl: 'https://uppy-companion.myapp.net/'
+  companionUrl: 'https://uppy-companion.myapp.net/',
 })
 ```
 

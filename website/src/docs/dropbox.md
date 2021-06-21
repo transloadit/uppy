@@ -53,9 +53,9 @@ companion.app({
   providerOptions: {
     dropbox: {
       key: 'Dropbox API key',
-      secret: 'Dropbox API secret'
-    }
-  }
+      secret: 'Dropbox API secret',
+    },
+  },
 })
 ```
 
@@ -130,7 +130,9 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
-  // TODO
+const locale = {
+  strings: {
+    // TODO
+  },
 }
 ```

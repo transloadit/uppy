@@ -49,7 +49,7 @@ uppy.use(Form, {
   addResultToForm: true,
   multipleResults: false,
   submitOnSuccess: false,
-  triggerUploadOnSubmit: false
+  triggerUploadOnSubmit: false,
 })
 ```
 

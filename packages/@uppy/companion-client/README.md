@@ -22,7 +22,7 @@ client.get('/drive/list').then(() => {})
 
 const provider = new Provider(uppy, {
   companionUrl: 'https://uppy.mywebsite.com/',
-  provider: providerPluginInstance
+  provider: providerPluginInstance,
 })
 provider.checkAuth().then(() => {})
 

@@ -25,7 +25,7 @@ const uppy = new Uppy()
 uppy.use(Dashboard)
 uppy.use(ImageEditor, {
   target: Dashboard,
-  quality: 0.8
+  quality: 0.8,
 })
 ```
 
@@ -63,7 +63,7 @@ uppy.use(ImageEditor, {
     viewMode: 1,
     background: false,
     autoCropArea: 1,
-    responsive: true
+    responsive: true,
   },
   actions: {
     revert: true,
@@ -74,8 +74,8 @@ uppy.use(ImageEditor, {
     zoomOut: true,
     cropSquare: true,
     cropWidescreen: true,
-    cropWidescreenVertical: true
-  }
+    cropWidescreenVertical: true,
+  },
 })
 ```
 

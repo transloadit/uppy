@@ -95,7 +95,7 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
+const strings = {
   // TODO
 }
 ```

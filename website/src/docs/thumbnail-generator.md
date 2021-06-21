@@ -18,7 +18,7 @@ import ThumbnailGenerator from '@uppy/thumbnail-generator'
 uppy.use(ThumbnailGenerator, {
   thumbnailWidth: 200,
   // thumbnailHeight: 200 // optional, use either width or height,
-  waitForThumbnailsBeforeUpload: false
+  waitForThumbnailsBeforeUpload: false,
 })
 ```
 
@@ -50,7 +50,7 @@ uppy.use(ThumbnailGenerator, {
   thumbnailWidth: 200,
   thumbnailHeight: 200,
   thumbnailType: 'image/jpeg',
-  waitForThumbnailsBeforeUpload: false
+  waitForThumbnailsBeforeUpload: false,
 })
 ```
 

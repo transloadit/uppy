@@ -24,6 +24,7 @@ module.exports = {
   plugins: [
     '@babel/eslint-plugin',
     'jest',
+    'markdown',
     'node',
     'prefer-import',
     'promise',
@@ -210,6 +211,52 @@ module.exports = {
         'import/no-extraneous-dependencies': ['error', {
           peerDependencies: true,
         }],
+      },
+    },
+
+    {
+      files: ['**/*.md', '*.md'],
+      processor: 'markdown/markdown',
+    },
+    {
+      files: ['**/*.md/*.js', '**/*.md/*.javascript'],
+      parserOptions: {
+        sourceType: 'module',
+      },
+      rules: {
+        'import/no-extraneous-dependencies': ['off'],
+        'no-console': ['off'],
+        'no-undef': ['off'],
+        'no-unused-vars': ['off'],
+        'no-restricted-globals': [
+          'error',
+          {
+            name: '__filename',
+            message: 'Use import.meta.url instead',
+          },
+          {
+            name: '__dirname',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'exports',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'module',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'require',
+            message: 'Use import instead',
+          },
+        ],
+      },
+    },
+    {
+      files: ['**/react/*.md/*.js', '**/react.md/*.js', '**/react-*.md/*.js'],
+      settings: {
+        react: { pragma: 'React' },
       },
     },
   ],

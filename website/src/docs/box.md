@@ -53,9 +53,9 @@ companion.app({
   providerOptions: {
     box: {
       key: 'Box API key',
-      secret: 'Box API secret'
-    }
-  }
+      secret: 'Box API secret',
+    },
+  },
 })
 ```
 
@@ -129,7 +129,9 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
-  // TODO
+const locales = {
+  strings: {
+    // TODO
+  },
 }
 ```
