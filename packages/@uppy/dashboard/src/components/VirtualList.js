@@ -93,13 +93,7 @@ class VirtualList extends Component {
   }
 
   handleScroll = () => {
-    const { sync } = this.props
-
     this.setState({ offset: this.base.scrollTop })
-
-    if (sync) {
-      this.forceUpdate()
-    }
   }
 
   handleResize = () => {
@@ -121,7 +115,6 @@ class VirtualList extends Component {
     rowHeight,
     renderRow,
     overscanCount = 10,
-    sync,
     ...props
   }) {
     const { offset, height } = this.state
