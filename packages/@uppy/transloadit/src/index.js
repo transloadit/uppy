@@ -659,25 +659,23 @@ module.exports = class Transloadit extends BasePlugin {
     const files = fileIDs.map((id) => this.uppy.getFile(id))
     const assemblyOptions = new AssemblyOptions(files, this.opts)
 
-    return assemblyOptions.build().then(
-      (assemblies) => Promise.all(
-        assemblies.map(createAssembly)
-      ).then((createdAssemblies) => {
+    return assemblyOptions.build()
+      .then((assemblies) => Promise.all(assemblies.map(createAssembly)))
+      .then((createdAssemblies) => {
         const assemblyIDs = createdAssemblies.map(assembly => assembly.status.assembly_id)
         this._createAssemblyWatcher(assemblyIDs, fileIDs, uploadID)
-        createdAssemblies.map(assembly => this._connectAssembly(assembly))
-      }),
+        return Promise.all(createdAssemblies.map(assembly => this._connectAssembly(assembly)))
+      })
       // If something went wrong before any Assemblies could be created,
       // clear all processing state.
-      (err) => {
+      .catch((err) => {
         fileIDs.forEach((fileID) => {
           const file = this.uppy.getFile(fileID)
           this.uppy.emit('preprocess-complete', file)
           this.uppy.emit('upload-error', file, err)
         })
         throw err
-      }
-    )
+      })
   }
 
   _afterUpload (fileIDs, uploadID) {

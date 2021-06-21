@@ -1095,7 +1095,7 @@ class Uppy {
 
       this.setState({ error: errorMsg })
 
-      if (file != null) {
+      if (file != null && file.id in this.getState().files) {
         this.setFileState(file.id, {
           error: errorMsg,
           response,
