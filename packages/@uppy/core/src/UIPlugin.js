@@ -78,17 +78,12 @@ class UIPlugin extends BasePlugin {
         render(h(null), targetElement)
       }
 
-      // Since preact X the render function does not return a reference to the created element anymore.
-      // This is because it can sometimes return multiple elements now, likely due to fragments.
-      // To still get a reference in order to place it in `this.el`, we create a clone with a ref.
-      const ref = createRef()
-      const clone = cloneElement(this.render(this.uppy.getState()), { ref })
+      render(this.render(this.uppy.getState()), targetElement)
 
-      render(clone, targetElement)
-
-      this.el = ref.current
+      this.el = targetElement.firstElementChild
 
       this.onMount()
+
       return this.el
     }
 
