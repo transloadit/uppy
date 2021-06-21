@@ -14,7 +14,7 @@ The `@uppy/drop-target` plugin lets your users drag-and-drop files on any elemen
 Can be used together with Uppy Dashboard or Drag & Drop plugins, or your custom solution, including plain text “please drop files here”.
 
 ```js
-const DropTarget = require('@uppy/drop-target')
+import DropTarget from '@uppy/drop-target'
 
 uppy.use(DragDrop, {
   target: document.body,

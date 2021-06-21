@@ -12,8 +12,8 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
+import Uppy from '@uppy/core'
+import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 
 const uppy = new Uppy()
 

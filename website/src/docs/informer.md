@@ -13,7 +13,7 @@ The `@uppy/informer` plugin is a pop-up bar for showing notifications. When plug
 Informer gets its data from `uppy.state.info`, which is updated by various plugins via [`uppy.info`](https://uppy.io/docs/uppy/#uppy-info) method.
 
 ```js
-const Informer = require('@uppy/informer')
+import Informer from '@uppy/informer'
 
 uppy.use(Informer, {
   // Options

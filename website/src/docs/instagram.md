@@ -14,7 +14,7 @@ The `@uppy/instagram` plugin lets users import files from their Instagram accoun
 A Companion instance is required for the `@uppy/instagram` plugin to work. Companion handles authentication with Instagram, downloads the pictures and videos, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const Instagram = require('@uppy/instagram')
+import Instagram from '@uppy/instagram'
 
 uppy.use(Instagram, {
   // Options

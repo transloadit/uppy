@@ -14,8 +14,8 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const Instagram = require('@uppy/instagram')
+import Uppy from '@uppy/core'
+import Instagram from '@uppy/instagram'
 
 const uppy = new Uppy()
 uppy.use(Instagram, {

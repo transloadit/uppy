@@ -12,8 +12,8 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const Webcam = require('@uppy/webcam')
+import Uppy from '@uppy/core'
+import Webcam from '@uppy/webcam'
 
 const uppy = new Uppy()
 uppy.use(Webcam, {

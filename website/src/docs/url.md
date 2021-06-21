@@ -14,7 +14,7 @@ The `@uppy/url` plugin allows users to import files from the internet. Paste any
 A Companion instance is required for the `@uppy/url` plugin to work. Companion will download the files and upload them to their destination. This saves bandwidth for the user (especially on mobile connections) and helps to avoid CORS restrictions.
 
 ```js
-const Url = require('@uppy/url')
+import Url from '@uppy/url'
 
 uppy.use(Url, {
   // Options

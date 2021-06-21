@@ -11,7 +11,7 @@ tagline: "uploads using the <a href='https://tus.io'>tus</a> resumable upload pr
 The `@uppy/tus` plugin brings resumable file uploading by [tus.io](http://tus.io) to Uppy by wrapping the [tus-js-client][].
 
 ```js
-const Tus = require('@uppy/tus')
+import Tus from '@uppy/tus'
 
 uppy.use(Tus, {
   endpoint: 'https://tusd.tusdemo.net/files/', // use your tus endpoint here

@@ -13,7 +13,7 @@ The `@uppy/status-bar` plugin shows upload progress and speed, ETAs, pre- and po
 It is best used in combination with a simple file source plugin, such as [`@uppy/file-input`][] or [`@uppy/drag-drop`][], or a custom implementation.
 
 ```js
-const StatusBar = require('@uppy/status-bar')
+import StatusBar from '@uppy/status-bar'
 
 uppy.use(StatusBar, {
   // Options

@@ -28,12 +28,12 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 Code used in the above example:
 
 ```js
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const GoogleDrive = require('@uppy/google-drive')
-const Instagram = require('@uppy/instagram')
-const Webcam = require('@uppy/webcam')
-const Tus = require('@uppy/tus')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import GoogleDrive from '@uppy/google-drive'
+import Instagram from '@uppy/instagram'
+import Webcam from '@uppy/webcam'
+import Tus from '@uppy/tus'
 
 const uppy = new Uppy({ autoProceed: false })
   .use(Dashboard, { trigger: '#select-files' })
@@ -171,9 +171,9 @@ With a module bundler, you can use the required polyfills like so:
 npm install es6-promise whatwg-fetch
 ```
 ```js
-require('es6-promise/auto')
-require('whatwg-fetch')
-const Uppy = require('@uppy/core')
+import 'es6-promise/auto'
+import 'whatwg-fetch'
+import Uppy from '@uppy/core'
 ```
 
 If you're using Uppy from CDN, `es6-promise` and `whatwg-fetch` are already included in the bundle, so no need to include anything additionally:
