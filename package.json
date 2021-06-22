@@ -85,7 +85,7 @@
     "eslint-plugin-react": "7.22.0",
     "events.once": "2.0.2",
     "execa": "4.0.0",
-    "exorcist": "1.0.1",
+    "exorcist": "^2.0.0",
     "express": "^4.17.1",
     "fakefile": "0.0.9",
     "github-contributors-list": "1.2.4",
