@@ -139,7 +139,7 @@ class StaticServerService {
 
 const tus = require('tus-node-server')
 const os = require('os')
-const rimraf = promisify(require('rimraf'))
+const fs = require('fs/promises')
 const { randomBytes } = require('crypto')
 const http = require('http')
 const httpProxy = require('http-proxy')
@@ -187,7 +187,7 @@ class TusService {
       const close = promisify(this.server.close.bind(this.server))
       await close()
     }
-    await rimraf(this.path)
+    await fs.rm(this.path, { recursive: true, force: true })
     this.slowServer = null
     this.tusServer = null
   }

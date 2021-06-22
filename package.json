@@ -127,7 +127,6 @@
     "replacestream": "^4.0.3",
     "resize-observer-polyfill": "^1.5.1",
     "resolve": "^1.17.0",
-    "rimraf": "2.7.1",
     "sass": "1.29.0",
     "size-limit": "4.5.6",
     "stringify-object": "3.3.0",
