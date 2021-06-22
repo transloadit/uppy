@@ -90,7 +90,7 @@
     "fakefile": "^1.0.0",
     "github-contributors-list": "1.2.4",
     "glob": "7.1.6",
-    "globby": "9.2.0",
+    "globby": "^11.0.4",
     "http-proxy": "1.18.1",
     "isomorphic-fetch": "2.2.1",
     "jest": "^27.0.6",
