@@ -14,7 +14,7 @@ The `@uppy/form` plugin has several features to integrate with HTML `<form>` ele
 - It can append upload results back to the form as a hidden field. Currently the appended result is a stringified version of a [`result`](/docs/uppy/#uppy-upload) returned from `uppy.upload()` or `complete` event.
 
 ```js
-const Form = require('@uppy/form')
+import Form from '@uppy/form'
 
 uppy.use(Form, {
   // Options

@@ -12,7 +12,7 @@ tagline: "even more plain and simple, just a button"
 `@uppy/file-input` is the most barebones UI for selecting files — it shows a single button that, when clicked, opens up the browser’s file selector.
 
 ```js
-const FileInput = require('@uppy/file-input')
+import FileInput from '@uppy/file-input'
 
 uppy.use(FileInput, {
   // Options

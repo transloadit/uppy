@@ -53,10 +53,10 @@ Companion may either be used as a pluggable express app, which you plug into you
 To plug Companion into an existing server, call its `.app` method, passing in an [options](#Options) object as a parameter. This returns a server instance that you can mount on a subpath in your Express or app.
 
 ```js
-const express = require('express')
-const bodyParser = require('body-parser')
-const session = require('express-session')
-const companion = require('@uppy/companion')
+import express from 'express'
+import bodyParser from 'body-parser'
+import session from 'express-session'
+import companion from '@uppy/companion'
 
 const app = express()
 
@@ -402,6 +402,8 @@ We have [a detailed guide on running Companion in Kubernetes](https://github.com
 As of now, Companion supports the [providers listed here](https://uppy.io/docs/companion/#Supported-providers) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
 
 ```javascript
+import providerModule from '/path/to/provider/module'
+
 let options = {
     customProviders: {
         myprovidername: {
@@ -413,7 +415,7 @@ let options = {
                 secret: "***",
                 scope: ["read", "write"]
             },
-            module: require('/path/to/provider/module')
+            module: providerModule
         }
     }
 }

@@ -13,7 +13,7 @@ The `@uppy/webcam` plugin lets you take photos and record videos with a built-in
 > To use the Webcam plugin in Chrome, [your site must be served over https](https://developers.google.com/web/updates/2015/10/chrome-47-webrtc#public_service_announcements). This restriction does not apply on `localhost`, so you don't have to jump through many hoops during development.
 
 ```js
-const Webcam = require('@uppy/webcam')
+import Webcam from '@uppy/webcam'
 
 uppy.use(Webcam, {
   // Options

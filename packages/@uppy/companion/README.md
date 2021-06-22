@@ -24,11 +24,10 @@ companion may either be used as pluggable express app, which you plug to your al
 ### Plug to already existing server
 
 ```javascript
-
-var express = require('express')
-var bodyParser = require('body-parser')
-var session = require('express-session')
-var companion = require('@uppy/companion')
+import express from 'express'
+import bodyParser from 'body-parser'
+import session from 'express-session'
+import companion from '@uppy/companion'
 
 var app = express()
 app.use(bodyParser.json())

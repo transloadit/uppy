@@ -12,8 +12,8 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const Tus = require('@uppy/tus')
+import Uppy from '@uppy/core'
+import Tus from '@uppy/tus'
 
 const uppy = new Uppy()
 uppy.use(Tus, {

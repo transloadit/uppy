@@ -14,7 +14,7 @@ The `@uppy/facebook` plugin lets users import files from their Facebook account.
 A Companion instance is required for the `@uppy/facebook` plugin to work. Companion handles authentication with Facebook, downloads the pictures and videos, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const Facebook = require('@uppy/facebook')
+import Facebook from '@uppy/facebook'
 
 uppy.use(Facebook, {
   // Options

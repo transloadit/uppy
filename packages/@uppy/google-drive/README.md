@@ -15,8 +15,8 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const GoogleDrive = require('@uppy/google-drive')
+import Uppy from '@uppy/core'
+import GoogleDrive from '@uppy/google-drive'
 
 const uppy = new Uppy()
 uppy.use(GoogleDrive, {
