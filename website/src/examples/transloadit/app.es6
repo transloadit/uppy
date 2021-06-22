@@ -1,5 +1,3 @@
-require('es6-promise/auto')
-require('whatwg-fetch')
 const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const Webcam = require('@uppy/webcam')

@@ -1,6 +1,3 @@
-require('es6-promise/auto')
-require('whatwg-fetch')
-
 const Uppy = require('@uppy/core')
 const FileInput = require('@uppy/file-input')
 const XHRUpload = require('@uppy/xhr-upload')
