@@ -139,7 +139,6 @@
     "verdaccio": "^4.8.0",
     "watchify": "3.11.1",
     "webdriverio": "^7.7.4",
-    "webpack": "4.44.1",
     "whatwg-fetch": "3.6.2"
   },
   "scripts": {
