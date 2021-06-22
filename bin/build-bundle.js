@@ -1,6 +1,5 @@
 const fs = require('fs')
 const chalk = require('chalk')
-const mkdirp = require('mkdirp')
 const babelify = require('babelify')
 const tinyify = require('tinyify')
 const browserify = require('browserify')
@@ -88,9 +87,9 @@ async function transpileDownForIE ([bundleFile, standalone]) {
   })
 }
 
-mkdirp.sync('./packages/uppy/dist')
-mkdirp.sync('./packages/@uppy/robodog/dist')
-mkdirp.sync('./packages/@uppy/locales/dist')
+fs.mkdirSync('./packages/uppy/dist', { recursive: true })
+fs.mkdirSync('./packages/@uppy/robodog/dist', { recursive: true })
+fs.mkdirSync('./packages/@uppy/locales/dist', { recursive: true })
 
 const methods = [
   buildBundle(
