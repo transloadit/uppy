@@ -7,11 +7,13 @@ const browserify = require('browserify')
 const exorcist = require('exorcist')
 const glob = require('glob')
 const path = require('path')
+const { minify } = require('terser')
 
 function handleErr (err) {
   console.error(chalk.red('✗ Error:'), chalk.red(err.message))
 }
 
+// eslint-disable-next-line no-shadow
 function buildBundle (srcFile, bundleFile, { minify = false, standalone = '' } = {}) {
   const b = browserify(srcFile, { debug: true, standalone })
   if (minify) {
@@ -31,9 +33,19 @@ function buildBundle (srcFile, bundleFile, { minify = false, standalone = '' } =
         } else {
           console.info(chalk.green(`✓ Built Bundle [${standalone}]:`), chalk.magenta(bundleFile))
         }
-        resolve()
+        resolve([bundleFile, standalone])
       })
   })
+}
+async function minifyBundle ([bundleFile, standalone]) {
+  const minifiedFilePath = bundleFile.replace(/\.js$/, '.min.js')
+  const js = await fs.promises.readFile(bundleFile, 'utf-8')
+  const { code, map } = await minify(js, { sourceMap: true, toplevel: true  })
+  return Promise.all([
+    fs.promises.writeFile(minifiedFilePath, code),
+    fs.promises.writeFile(`${minifiedFilePath}.map`, map),
+  ])
+    .then(() => console.info(chalk.green(`✓ Built Minified Bundle [${standalone}]:`), chalk.magenta(minifiedFilePath)))
 }
 
 mkdirp.sync('./packages/uppy/dist')
@@ -45,22 +57,12 @@ const methods = [
     './packages/uppy/bundle.js',
     './packages/uppy/dist/uppy.js',
     { standalone: 'Uppy' }
-  ),
-  buildBundle(
-    './packages/uppy/bundle.js',
-    './packages/uppy/dist/uppy.min.js',
-    { standalone: 'Uppy', minify: true }
-  ),
+  ).then(minifyBundle),
   buildBundle(
     './packages/@uppy/robodog/bundle.js',
     './packages/@uppy/robodog/dist/robodog.js',
     { standalone: 'Robodog' }
-  ),
-  buildBundle(
-    './packages/@uppy/robodog/bundle.js',
-    './packages/@uppy/robodog/dist/robodog.min.js',
-    { standalone: 'Robodog', minify: true }
-  ),
+  ).then(minifyBundle),
 ]
 
 // Build minified versions of all the locales
