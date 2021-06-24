@@ -216,7 +216,7 @@ declare module Uppy {
      * This overload will be removed in Uppy 2.0.
      */
     use(pluginClass: TUseStrictTypes extends StrictTypes ? never : new (uppy: this, opts: any) => Plugin<any>, opts?: object): this
-    getPlugin(name: string): Plugin
+    getPlugin<TPlugin = Plugin>(name: string): TPlugin
     iteratePlugins(callback: (plugin: Plugin) => void): void
     removePlugin(instance: Plugin): void
     close(): void
