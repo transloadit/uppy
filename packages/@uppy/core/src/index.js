@@ -223,21 +223,7 @@ class Uppy {
     }
 
     this.addListeners()
-
-    // Re-enable if we’ll need some capabilities on boot, like isMobileDevice
-    // this._setCapabilities()
   }
-
-  // _setCapabilities = () => {
-  //   const capabilities = {
-  //     isMobileDevice: isMobileDevice()
-  //   }
-
-  //   this.setState({
-  //     ...this.getState().capabilities,
-  //     capabilities
-  //   })
-  // }
 
   on (event, callback) {
     this.emitter.on(event, callback)
@@ -428,7 +414,46 @@ class Uppy {
    */
   getFiles () {
     const { files } = this.getState()
-    return Object.keys(files).map((fileID) => files[fileID])
+    return Object.values(files)
+  }
+
+  getObjectOfFilesPerState () {
+    const { files: filesObject, totalProgress, error } = this.getState()
+    const files = Object.values(filesObject)
+    const inProgressFiles = files.filter(
+      (file) => !file.progress.uploadComplete && file.progress.uploadStarted
+    )
+    const newFiles =  files.filter((file) => !file.progress.uploadStarted)
+    const startedFiles = files.filter(
+      file => file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess
+    )
+    const uploadStartedFiles = files.filter((file) => file.progress.uploadStarted)
+    const pausedFiles = files.filter((file) => file.isPaused)
+    const completeFiles = files.filter((file) => file.progress.uploadComplete)
+    const erroredFiles = files.filter((file) => file.error)
+    const inProgressNotPausedFiles = inProgressFiles.filter((file) => !file.isPaused)
+    const processingFiles = files.filter((file) => file.progress.preprocess || file.progress.postprocess)
+
+    return {
+      newFiles,
+      startedFiles,
+      uploadStartedFiles,
+      pausedFiles,
+      completeFiles,
+      erroredFiles,
+      inProgressFiles,
+      inProgressNotPausedFiles,
+      processingFiles,
+
+      isUploadStarted: uploadStartedFiles.length > 0,
+      isAllComplete: totalProgress === 100
+        && completeFiles.length === Object.keys(files).length
+        && processingFiles.length === 0,
+      isAllErrored: !!error && erroredFiles.length === files.length,
+      isAllPaused: inProgressFiles.length !== 0 && pausedFiles.length === inProgressFiles.length,
+      isUploadInProgress: inProgressFiles.length > 0,
+      isSomeGhost: files.some(file => file.isGhost),
+    }
   }
 
   /**
