@@ -447,7 +447,7 @@ class Uppy {
 
       isUploadStarted: uploadStartedFiles.length > 0,
       isAllComplete: totalProgress === 100
-        && completeFiles.length === Object.keys(files).length
+        && completeFiles.length === files.length
         && processingFiles.length === 0,
       isAllErrored: !!error && erroredFiles.length === files.length,
       isAllPaused: inProgressFiles.length !== 0 && pausedFiles.length === inProgressFiles.length,

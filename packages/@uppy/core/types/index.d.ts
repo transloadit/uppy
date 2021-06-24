@@ -191,6 +191,7 @@ declare module Uppy {
     >(): Array<UppyFile<TMeta, TBody>>
     getObjectOfFilesPerState(): {
       newFiles: Array<UppyFile>,
+      startedFiles: Array<UppyFile>,
       uploadStartedFiles: Array<UppyFile>,
       pausedFiles: Array<UppyFile>,
       completeFiles: Array<UppyFile>,
