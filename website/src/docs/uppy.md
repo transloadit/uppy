@@ -713,7 +713,7 @@ Subscribe to an uppy-event. See below for the full list of events.
 
 ### `uppy.once('event', action)`
 
-Subscribe once to an uppy-event. See below for the full list of events.
+Create an event listener that fires once. See below for the full list of events.
 
 ### `uppy.off('event', action)`
 
