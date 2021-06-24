@@ -16,7 +16,6 @@ interface OnFirstRenderer {
 
 declare class ProviderView {
     constructor (plugin: Uppy.Plugin & OnFirstRenderer, opts: ProviderViewOptions)
-    // @todo add other provider view methods
 }
 
 export = ProviderView

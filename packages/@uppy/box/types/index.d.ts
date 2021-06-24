@@ -2,9 +2,7 @@ import Uppy = require('@uppy/core')
 import CompanionClient = require('@uppy/companion-client')
 
 declare module Box {
-  interface BoxOptions
-    extends Uppy.PluginOptions,
-      CompanionClient.PublicProviderOptions {
+  interface BoxOptions extends Uppy.PluginOptions, CompanionClient.PublicProviderOptions {
     replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
     title?: string

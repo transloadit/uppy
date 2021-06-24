@@ -3,9 +3,7 @@ import CompanionClient = require('@uppy/companion-client')
 import UrlLocale = require('./generatedLocale')
 
 declare module Url {
-  export interface UrlOptions
-    extends Uppy.PluginOptions,
-      CompanionClient.RequestClientOptions {
+  export interface UrlOptions extends Uppy.PluginOptions, CompanionClient.RequestClientOptions {
     replaceTargetContent?: boolean
     target?: Uppy.PluginTarget
     title?: string
@@ -13,6 +11,8 @@ declare module Url {
   }
 }
 
-declare class Url extends Uppy.Plugin<Url.UrlOptions> {}
+declare class Url extends Uppy.Plugin<Url.UrlOptions> {
+  public addFile(url: string): undefined | string | never
+}
 
 export = Url

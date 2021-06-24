@@ -1,2 +1,9 @@
 import DropTarget = require('../')
-// TODO implement
+import Uppy = require('@uppy/core')
+
+{
+ const uppy = Uppy()
+ uppy.use(DropTarget, {
+    target: 'body',
+ })
+}

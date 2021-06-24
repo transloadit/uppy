@@ -1,2 +1,22 @@
+import Uppy = require('@uppy/core')
 import Url = require('../')
-// TODO implement
+
+{
+ const uppy = Uppy()
+ uppy.use(Url, {
+    companionUrl: '',
+    companionCookiesRule: 'same-origin',
+    replaceTargetContent: false,
+    target: 'body',
+    title: 'title',
+    locale: {
+      strings: {
+        import: '',
+        enterUrlToImport: '',
+        failedToFetch: '',
+        enterCorrectUrl: '',
+      }
+    }
+ })
+ .getPlugin<Url>('Url').addFile('https://via.placeholder.com/150')
+}
