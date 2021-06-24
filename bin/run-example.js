@@ -22,6 +22,7 @@ if (!exampleName) {
 }
 
 const exampleDir = path.join(__dirname, '../examples', exampleName)
+// eslint-disable-next-line import/no-dynamic-require
 const pkg = require(path.join(exampleDir, 'package.json'))
 if (pkg.scripts && pkg.scripts.build) {
   execSync('npm run build', { cwd: exampleDir, stdio: 'inherit' })
