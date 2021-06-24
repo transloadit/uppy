@@ -180,7 +180,7 @@ module.exports = class StatusBar extends UIPlugin {
     // but “Confirm Restore Button”
     const newFilesOrRecovered = recoveredState ? Object.values(files) : newFiles
     const totalETA = this.getTotalETA(inProgressNotPausedFiles)
-    const resumableUploads = capabilities.resumableUploads || false
+    const resumableUploads = !!capabilities.resumableUploads
     const supportsUploadProgress = capabilities.uploadProgress !== false
 
     let totalSize = 0

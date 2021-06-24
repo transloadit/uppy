@@ -420,9 +420,7 @@ class Uppy {
   getObjectOfFilesPerState () {
     const { files: filesObject, totalProgress, error } = this.getState()
     const files = Object.values(filesObject)
-    const inProgressFiles = files.filter(
-      (file) => !file.progress.uploadComplete && file.progress.uploadStarted
-    )
+    const inProgressFiles = files.filter(({ progress }) => !progress.uploadComplete && progress.uploadStarted)
     const newFiles =  files.filter((file) => !file.progress.uploadStarted)
     const startedFiles = files.filter(
       file => file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess
