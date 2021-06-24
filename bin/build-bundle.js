@@ -8,6 +8,7 @@ const exorcist = require('exorcist')
 const glob = require('glob')
 const path = require('path')
 const { minify } = require('terser')
+const { transformFileAsync } = require('@babel/core')
 
 function handleErr (err) {
   console.error(chalk.red('✗ Error:'), chalk.red(err.message))
@@ -39,13 +40,52 @@ function buildBundle (srcFile, bundleFile, { minify = false, standalone = '' } =
 }
 async function minifyBundle ([bundleFile, standalone]) {
   const minifiedFilePath = bundleFile.replace(/\.js$/, '.min.js')
+  const sourceMapPath = `${minifiedFilePath}.map`
   const js = await fs.promises.readFile(bundleFile, 'utf-8')
-  const { code, map } = await minify(js, { sourceMap: true, toplevel: true  })
+  const { code, map } = await minify(js, {
+    sourceMap: {
+      content: fs.readFileSync(`${bundleFile}.map`, 'utf-8'),
+      url:sourceMapPath,
+    },
+    toplevel: true,
+  })
   return Promise.all([
     fs.promises.writeFile(minifiedFilePath, code),
-    fs.promises.writeFile(`${minifiedFilePath}.map`, map),
+    fs.promises.writeFile(sourceMapPath, map),
   ])
     .then(() => console.info(chalk.green(`✓ Built Minified Bundle [${standalone}]:`), chalk.magenta(minifiedFilePath)))
+}
+async function transpileDownForIE ([bundleFile, standalone]) {
+  const minifiedFilePath = bundleFile.replace(/\.js$/, '.min.js')
+  const sourceMapPath = `${minifiedFilePath}.map`
+  const { code: js, map: inputMap } = await transformFileAsync(bundleFile, {
+    compact: false,
+    highlightCode: false,
+    inputSourceMap: true,
+
+    browserslistEnv: 'legacy',
+    presets: [['@babel/preset-env',  {
+      modules: false,
+      loose: true,
+      targets: { ie:11 },
+    }]],
+  })
+  const { code, map } = await minify(js, {
+    sourceMap: {
+      content: inputMap,
+      url:sourceMapPath,
+    },
+    toplevel: true,
+  })
+  return Promise.all([
+    fs.promises.writeFile(bundleFile, js),
+    fs.promises.writeFile(`${bundleFile}.map`, JSON.stringify(inputMap)),
+    fs.promises.writeFile(minifiedFilePath, code),
+    fs.promises.writeFile(sourceMapPath, map),
+  ]).then(() => {
+    console.info(chalk.green(`✓ Built Bundle [${standalone} (ES5)]:`), chalk.magenta(bundleFile))
+    console.info(chalk.green(`✓ Built Minified Bundle [${standalone} (ES5)]:`), chalk.magenta(minifiedFilePath))
+  })
 }
 
 mkdirp.sync('./packages/uppy/dist')
@@ -54,10 +94,15 @@ mkdirp.sync('./packages/@uppy/locales/dist')
 
 const methods = [
   buildBundle(
-    './packages/uppy/bundle.js',
+    './packages/uppy/index.js',
     './packages/uppy/dist/uppy.js',
     { standalone: 'Uppy' }
   ).then(minifyBundle),
+  buildBundle(
+    './packages/uppy/bundle.js',
+    './packages/uppy/dist/uppy.ie.js',
+    { standalone: 'Uppy (with polyfills)' }
+  ).then(transpileDownForIE),
   buildBundle(
     './packages/@uppy/robodog/bundle.js',
     './packages/@uppy/robodog/dist/robodog.js',
