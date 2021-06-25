@@ -286,7 +286,8 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
   sendSelfEndpoint: "localhost:3020",
   secret: 'mysecret',
   uploadUrls: ['https://myuploadurl.com', 'http://myuploadurl2.com']
-  debug: true
+  debug: true,
+  logClientVersion: true
 }
 ```
 
@@ -318,6 +319,8 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 10. **secret(required)** - A secret string which Companion uses to generate authorization tokens.
 
 11. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
+
+12. **logClientVersion(optional)** - A boolean flag to tell Companion whether or not to log its version upon startup.
 
 ### Provider Redirect URIs
 
