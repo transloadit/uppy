@@ -98,7 +98,7 @@
     "karma-jasmine": "4.0.1",
     "karma-jasmine-html-reporter": "1.6.0",
     "last-commit-message": "1.0.0",
-    "lerna": "^3.22.1",
+    "lerna": "^4.0.0",
     "lint-staged": "^11.0.0",
     "math-log2": "^2.0.0",
     "md-gum-polyfill": "^1.0.0",
