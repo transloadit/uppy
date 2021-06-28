@@ -73,7 +73,7 @@ async function transpileDownForIE ([bundleFile, standalone]) {
   const { code, map } = await minify(js, {
     sourceMap: {
       content: inputMap,
-      url:sourceMapPath,
+      url: sourceMapPath,
     },
     toplevel: true,
   })
