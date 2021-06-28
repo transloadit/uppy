@@ -25,8 +25,6 @@
  * the XHRUpload code, but at least it's not horrifically broken :)
  */
 
-// If global `URL` constructor is available, use it
-const URL_ = typeof URL === 'function' ? URL : require('url-parse')
 const { BasePlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
@@ -38,9 +36,7 @@ const MiniXHRUpload = require('./MiniXHRUpload')
 const isXml = require('./isXml')
 
 function resolveUrl (origin, link) {
-  return origin
-    ? new URL_(link, origin).toString()
-    : new URL_(link).toString()
+  return new URL(link, origin || undefined).toString()
 }
 
 /**
