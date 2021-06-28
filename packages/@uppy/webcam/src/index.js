@@ -207,7 +207,7 @@ module.exports = class Webcam extends UIPlugin {
           || this.opts.modes.indexOf('picture') !== -1)
 
     const videoConstraints = {
-      ...(this.opts.videoConstraints ?? { facingMode: this.opts.facingMode }),
+      ...(this.opts.videoConstraints || { facingMode: this.opts.facingMode }),
       // facingMode takes precedence over deviceId, and not needed
       // when specific device is selected
       ...(deviceId ? { deviceId, facingMode: null } : {}),
