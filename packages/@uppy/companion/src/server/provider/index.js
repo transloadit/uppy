@@ -142,7 +142,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
         grantConfig[authProvider].dynamic = ['key', 'secret', 'redirect_uri']
       }
 
-      const provider = exports.getDefaultProviders(companionOptions)[providerName]
+      const provider = exports.getDefaultProviders()[providerName]
       Object.assign(grantConfig[authProvider], provider.getExtraConfig())
 
       // override grant.js redirect uri with companion's custom redirect url
@@ -173,7 +173,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
  * @returns {string} the authProvider for this provider
  */
 const providerNameToAuthName = (name, options) => {
-  const providers = exports.getDefaultProviders(options)
+  const providers = exports.getDefaultProviders()
   return (providers[name] || {}).authProvider
 }
 
