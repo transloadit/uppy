@@ -12,8 +12,8 @@ The `@uppy/aws-s3` plugin can be used to upload files directly to an S3 bucket.
 Uploads can be signed using either [Companion][companion docs] or a custom signing function.
 
 ```js
-const AwsS3 = require('@uppy/aws-s3')
-const ms = require('ms')
+import AwsS3 from '@uppy/aws-s3'
+import ms from 'ms'
 
 uppy.use(AwsS3, {
   limit: 2,

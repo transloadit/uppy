@@ -17,7 +17,7 @@ The `@uppy/transloadit` plugin can be used to upload files to [Transloadit](http
 <a class="TryButton" href="/examples/transloadit/">Try it live</a>
 
 ```js
-const Transloadit = require('@uppy/transloadit')
+import Transloadit from '@uppy/transloadit'
 
 uppy.use(Transloadit, {
   service: 'https://api2.transloadit.com',
@@ -57,8 +57,8 @@ const Transloadit = Uppy.Transloadit
 The main endpoint for Transloadit's hosted companions. You can use this constant in remote provider options, like so:
 
 ```js
-const Dropbox = require('@uppy/dropbox')
-const Transloadit = require('@uppy/transloadit')
+import Dropbox from '@uppy/dropbox'
+import Transloadit from '@uppy/transloadit'
 
 uppy.use(Dropbox, {
   companionUrl: Transloadit.COMPANION,
@@ -83,8 +83,8 @@ A RegExp pattern matching Transloadit's hosted companion endpoints. The pattern 
 Use it whenever you use `companionUrl: Transloadit.COMPANION`, like so:
 
 ```js
-const Dropbox = require('@uppy/dropbox')
-const Transloadit = require('@uppy/transloadit')
+import Dropbox from '@uppy/dropbox'
+import Transloadit from '@uppy/transloadit'
 
 uppy.use(Dropbox, {
   companionUrl: Transloadit.COMPANION,

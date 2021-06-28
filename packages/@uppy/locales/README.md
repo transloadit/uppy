@@ -20,8 +20,8 @@ $ npm install @uppy/core @uppy/locales
 ```
 
 ```js
-const Uppy = require('@uppy/core')
-const Russian = require('@uppy/locales/lib/ru_RU')
+import Uppy from '@uppy/core'
+import Russian from '@uppy/locales/lib/ru_RU'
 const uppy = new Uppy({
   debug: true,
   meta: {

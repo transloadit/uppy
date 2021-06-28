@@ -69,14 +69,14 @@ npm install @uppy/core @uppy/xhr-upload @uppy/dashboard
 
 ```js
 // Import the plugins
-const Uppy = require('@uppy/core')
-const XHRUpload = require('@uppy/xhr-upload')
-const Dashboard = require('@uppy/dashboard')
+import Uppy from '@uppy/core'
+import XHRUpload from '@uppy/xhr-upload'
+import Dashboard from '@uppy/dashboard'
 
 // And their styles (for UI plugins)
-// With webpack and `style-loader`, you can require them like this:
-require('@uppy/core/dist/style.css')
-require('@uppy/dashboard/dist/style.css')
+// With webpack and `style-loader`, you can import them like this:
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
  
 const uppy = new Uppy()
   .use(Dashboard, {
@@ -166,9 +166,9 @@ With a module bundler, you can use the required polyfills like so:
 npm install es6-promise whatwg-fetch
 ```
 ```js
-require('es6-promise/auto')
-require('whatwg-fetch')
-const Uppy = require('@uppy/core')
+import 'es6-promise/auto'
+import 'whatwg-fetch'
+import Uppy from '@uppy/core'
 ```
 
 If you're using Uppy from CDN, `es6-promise` and  `whatwg-fetch` are already included in the bundle, no need to include anything additionally:

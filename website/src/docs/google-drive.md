@@ -14,7 +14,7 @@ The `@uppy/google-drive` plugin lets users import files from their Google Drive 
 A Companion instance is required for the `@uppy/google-drive` plugin to work. Companion handles authentication with Google, downloads files from the Drive and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const GoogleDrive = require('@uppy/google-drive')
+import GoogleDrive from '@uppy/google-drive'
 
 uppy.use(GoogleDrive, {
   // Options

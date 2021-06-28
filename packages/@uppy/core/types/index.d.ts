@@ -184,6 +184,24 @@ declare module Uppy {
       TMeta extends IndexedObject<any> = {},
       TBody extends IndexedObject<any> = {}
     >(): Array<UppyFile<TMeta, TBody>>
+    getObjectOfFilesPerState(): {
+      newFiles: Array<UppyFile>,
+      startedFiles: Array<UppyFile>,
+      uploadStartedFiles: Array<UppyFile>,
+      pausedFiles: Array<UppyFile>,
+      completeFiles: Array<UppyFile>,
+      erroredFiles: Array<UppyFile>,
+      inProgressFiles: Array<UppyFile>,
+      inProgressNotPausedFiles: Array<UppyFile>,
+      processingFiles: Array<UppyFile>,
+
+      isUploadStarted: boolean,
+      isAllComplete: boolean,
+      isAllErrored: boolean,
+      isAllPaused: boolean,
+      isUploadInProgress: boolean,
+      isSomeGhost: boolean,
+    }
     addFile<TMeta extends IndexedObject<any> = {}>(
       file: AddFileOptions<TMeta>
     ): string

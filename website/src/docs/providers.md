@@ -15,27 +15,27 @@ Usage of the Provider plugins is not that different from any other *acquirer* pl
 Here's a quick example:
 
 ```js
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
 const uppy = new Uppy()
 uppy.use(Dashboard, {
   trigger: '#pick-files'
 })
 
 // for Google Drive
-const GoogleDrive = require('@uppy/google-drive')
+import GoogleDrive from '@uppy/google-drive'
 uppy.use(GoogleDrive, {target: Dashboard, companionUrl: 'http://localhost:3020'})
 
 // for Dropbox
-const Dropbox = require('@uppy/dropbox')
+import Dropbox from '@uppy/dropbox'
 uppy.use(Dropbox, {target: Dashboard, companionUrl: 'http://localhost:3020'})
 
 // for Instagram
-const Instagram = require('@uppy/instagram')
+import Instagram from '@uppy/instagram'
 uppy.use(Instagram, {target: Dashboard, companionUrl: 'http://localhost:3020'})
 
 // for URL
-const Url = require('@uppy/url')
+import Url from '@uppy/url'
 uppy.use(Url, {target: Dashboard, companionUrl: 'http://localhost:3020'})
 ```
 

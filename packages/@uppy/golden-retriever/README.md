@@ -12,8 +12,8 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const GoldenRetriever = require('@uppy/golden-retriever')
+import Uppy from '@uppy/core'
+import GoldenRetriever from '@uppy/golden-retriever'
 
 const uppy = new Uppy()
 uppy.use(GoldenRetriever, {

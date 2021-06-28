@@ -12,8 +12,8 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const XHRUpload = require('@uppy/xhr-upload')
+import Uppy from '@uppy/core'
+import XHRUpload from '@uppy/xhr-upload'
 
 const uppy = new Uppy()
 uppy.use(Uppy, {

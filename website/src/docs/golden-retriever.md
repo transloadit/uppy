@@ -35,14 +35,14 @@ const GoldenRetriever = Uppy.GoldenRetriever
 ```js
 // sw.js
 
-require('@uppy/golden-retriever/lib/ServiceWorker')
+import('@uppy/golden-retriever/lib/ServiceWorker')
 ```
 
 2\. Register it in your app entry point:
 
 ```js
 // you app.js entry point
-const GoldenRetriever = require('@uppy/golden-retriever')
+import GoldenRetriever from '@uppy/golden-retriever'
 
 uppy.use(GoldenRetriever, {serviceWorker: true})
 

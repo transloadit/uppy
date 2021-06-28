@@ -13,7 +13,7 @@ tagline: "classic multipart form uploads or binary uploads using XMLHTTPRequest"
 The `@uppy/xhr-upload` plugin handles classic HTML multipart form uploads, as well as uploads using the HTTP `PUT` method.
 
 ```js
-const XHRUpload = require('@uppy/xhr-upload')
+import XHRUpload from '@uppy/xhr-upload'
 
 uppy.use(XHRUpload, {
   endpoint: 'http://my-website.org/upload'

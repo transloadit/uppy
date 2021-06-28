@@ -11,7 +11,7 @@ tagline: "The core module that orchestrates everything"
 This is the core module that orchestrates everything in Uppy, managing state and events and providing methods.
 
 ```js
-const Uppy = require('@uppy/core')
+import Uppy from '@uppy/core'
 
 const uppy = new Uppy()
 ```
@@ -91,7 +91,7 @@ An object of methods that are called with debug information from [`uppy.log`](/d
 Set `logger: Uppy.debugLogger` to get debug info output to the browser console:
 
 ```js
-const Uppy = require('@uppy/core')
+import Uppy from '@uppy/core'
 const uppy = new Uppy({
   logger: Uppy.debugLogger
 })
@@ -279,7 +279,7 @@ locale: {
 Instead of overriding strings yourself, consider using [one of our language packs](https://github.com/transloadit/uppy/tree/master/packages/%40uppy/locales) (or contributing one!):
 
 ```js
-const russianLocale = require('@uppy/locales/lib/ru_RU')
+import russianLocale from '@uppy/locales/lib/ru_RU'
 // ^-- OR: import russianLocale from '@uppy/locales/lib/ru_RU'
 const uppy = new Uppy({
   locale: russianLocale,
@@ -383,8 +383,8 @@ When an upload is completed, this may contain a URL to the uploaded file. Depend
 Add a plugin to Uppy, with an optional plugin options object.
 
 ```js
-const Uppy = require('@uppy/core')
-const DragDrop = require('@uppy/drag-drop')
+import Uppy from '@uppy/core'
+import DragDrop from '@uppy/drag-drop'
 
 const uppy = new Uppy()
 uppy.use(DragDrop, { target: 'body' })
@@ -463,7 +463,7 @@ file.preview   // value that can be used to populate "src" attribute of an "img"
 Get an array of all [File Objects][] that have been added to Uppy.
 
 ```js
-const prettierBytes = require('@transloadit/prettier-bytes')
+import prettierBytes from '@transloadit/prettier-bytes'
 const items = uppy.getFiles().map(() =>
   `<li>${file.name} - ${prettierBytes(file.size)}</li>`
 ).join('')
