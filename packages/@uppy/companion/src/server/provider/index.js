@@ -75,7 +75,6 @@ module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => 
 }
 
 /**
- * @param {{server: object, providerOptions: object}} companionOptions
  * @returns {Object.<string, typeof Provider>}
  */
 module.exports.getDefaultProviders = () => {
