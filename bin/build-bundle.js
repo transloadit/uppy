@@ -100,7 +100,7 @@ const methods = [
   ).then(minifyBundle),
   buildBundle(
     './packages/uppy/bundle.js',
-    './packages/uppy/dist/uppy.ie.js',
+    './packages/uppy/dist/uppy.legacy.js',
     { standalone: 'Uppy (with polyfills)' }
   ).then(transpileDownForIE),
   buildBundle(

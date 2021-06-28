@@ -193,11 +193,12 @@ export { default } from '@uppy/core';
 export * from '@uppy/core';
 ```
 
-If you're using Uppy from CDN, those polyfills are already included in the
+If you're using Uppy from CDN, those polyfills are already included in the legacy
 bundle, so no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v1.29.1/uppy.min.js"></script>
+<script nomodule src="https://releases.transloadit.com/uppy/v2.0.0/uppy.legacy.min.js"></script>
+<script type="module">import"https://releases.transloadit.com/uppy/v2.0.0/uppy.min.js";</script>
 ```
 
 ## FAQ
