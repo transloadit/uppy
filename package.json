@@ -109,7 +109,6 @@
     "minimist": "^1.2.5",
     "mkdirp": "0.5.1",
     "multi-glob": "1.0.2",
-    "nock": "9.6.1",
     "nodemon": "1.19.4",
     "npm-auth-to-token": "1.0.0",
     "npm-packlist": "1.4.8",
