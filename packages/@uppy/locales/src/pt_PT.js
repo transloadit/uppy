@@ -45,7 +45,7 @@ pt_PT.strings = {
   enterCorrectUrl:
     'URL incorrecto: Por favor garanta que inseriu um link direto para um ficheiro',
   enterUrlToImport: 'Coloque o URL para importar um ficheiro',
-  exceedsSize: 'Este ficheiro excedeu o tamanho máximo permitido',
+  exceedsSize: 'Este ficheiro excedeu o tamanho máximo permitido %{size}',
   failedToFetch:
     'Serviço falhou ao fazer fetch deste URL. Por favor garante que o URL está correto',
   failedToUpload: 'Falha ao enviar %{file}',

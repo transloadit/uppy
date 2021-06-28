@@ -41,7 +41,7 @@ sr_RS_Latin.strings = {
   encoding: 'Šifrovanje...',
   enterCorrectUrl: 'Pogrešan URL: unesite tačnu putanju do datoteke',
   enterUrlToImport: 'Unesite URL (putanju) do datoteke',
-  exceedsSize: 'Ova datoteka premašuje najveću dozvoljenu veličinu od',
+  exceedsSize: 'Ova datoteka premašuje najveću dozvoljenu veličinu od %{size}',
   failedToFetch: 'Companion nije uspeo da dopre do date adrese (URL), proverite ispravnost adrese',
   failedToUpload: 'Broj neuspelo otpremljenih datoteka: %{file}',
   fileSource: 'Datoteka: %{name}',

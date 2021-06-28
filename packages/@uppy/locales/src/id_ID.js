@@ -41,7 +41,7 @@ id_ID.strings = {
   encoding: 'Pengkodean...',
   enterCorrectUrl: 'URL salah: Mohon pastikan Anda memasukkan tautan langsung ke berkas',
   enterUrlToImport: 'Masukkan URL untuk mengimpor berkas',
-  exceedsSize: 'Berkas ini melebihi ukuran maksimum yang dibolehkan',
+  exceedsSize: 'Berkas ini melebihi ukuran maksimum yang dibolehkan %{size}',
   failedToFetch: 'Companion gagal mengambil URL ini, pastikan sudah benar',
   failedToUpload: 'Gagal mengunggah %{file}',
   fileSource: 'Sumber berkas: %{name}',

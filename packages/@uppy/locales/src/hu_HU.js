@@ -43,7 +43,7 @@ hu_HU.strings = {
   encoding: 'Kódolás...',
   enterCorrectUrl: 'Érvénytelen URL: Bizonyosodjon meg róla, hogy egy fájlra mutató közvetlen linket ír be',
   enterUrlToImport: 'Adjon meg egy URL-t a fájl importálásához',
-  exceedsSize: 'Ez a fájl meghaladja a maximális megengedett méretet',
+  exceedsSize: 'Ez a fájl meghaladja a maximális megengedett méretet %{size}',
   failedToFetch: 'A Companion-nak nem sikerült az URL letöltése, győzödjön meg az URL helyességéről',
   failedToUpload: '%{file}-t nem sikerült feltölteni',
   fileSource: 'Fájl forrása: %{name}',

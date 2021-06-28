@@ -41,7 +41,7 @@ gl_ES.strings = {
   encoding: 'Codificando...',
   enterCorrectUrl: 'URL incorrecta: Por favor asegúrate que estás ingresando un enlace a un arquivo',
   enterUrlToImport: 'Ingresa unha URL para importar un arquivo',
-  exceedsSize: 'Este arquivo excede el tamaño máximo de',
+  exceedsSize: 'Este arquivo excede el tamaño máximo de %{size}',
   failedToFetch: 'Companion non puido recuperar esta URL, por favor asegúrate que sexa correcta',
   failedToUpload: 'Error ao subir %{file}',
   fileSource: 'Fonte de arquivo: %{name}',

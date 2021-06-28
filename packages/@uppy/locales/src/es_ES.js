@@ -41,7 +41,7 @@ es_ES.strings = {
   encoding: 'Codificando...',
   enterCorrectUrl: 'URL incorrecta: Por favor asegúrate que estás ingresando un enlace a un archivo',
   enterUrlToImport: 'Ingresa una URL para importar un archivo',
-  exceedsSize: 'Este archivo excede el tamaño máximo de',
+  exceedsSize: 'Este archivo excede el tamaño máximo de %{size}',
   failedToFetch: 'Companion no ha podido recuperar esta URL, por favor asegúrate que sea correcta',
   failedToUpload: 'Error al subir %{file}',
   fileSource: 'Fuente de archivo: %{name}',

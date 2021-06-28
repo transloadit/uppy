@@ -41,7 +41,7 @@ tr_TR.strings = {
   encoding: 'Çözümleniyor...',
   enterCorrectUrl: 'Hatalı URL: Lütfen bir dosyaya doğrudan bağlantı girdiğinizden emin olun.',
   enterUrlToImport: 'Dosya URL’sini buraya yapıştırın',
-  exceedsSize: 'Bu dosya izin verilen maksimum boyutu aşıyor',
+  exceedsSize: 'Bu dosya izin verilen maksimum boyutu aşıyor %{size}',
   failedToFetch: 'Bu URL’den alınamadı, lütfen doğru olduğundan emin olun',
   failedToUpload: '%{file} dosyası yüklenemedi',
   fileSource: 'Dosya kaynağı: %{name}',

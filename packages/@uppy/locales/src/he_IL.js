@@ -42,7 +42,7 @@ he_IL.strings = {
   encoding: 'מקודד...',
   enterCorrectUrl: 'כתובת לא חוקית: אנא וודא שהכתובת ישירה לקובץ',
   enterUrlToImport: 'הזן כתובת לייבוא קבוץ',
-  exceedsSize: 'קובץ זה גדול מהגודל המקסימאלי המותר',
+  exceedsSize: 'קובץ זה גדול מהגודל המקסימאלי המותר %{size}',
   failedToFetch: 'השירות נכשל לטפל בכתובת זו, אנא וודא שהיא נכונה',
   failedToUpload: 'העלאת הקובץ %{file} נכשלה',
   fileSource: 'קובץ מקור: %{name}',

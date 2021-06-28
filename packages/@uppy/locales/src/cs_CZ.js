@@ -41,7 +41,7 @@ cs_CZ.strings = {
   encoding: 'Převádění...',
   enterCorrectUrl: 'Chybná URL: Ujistěte se, že vkládáte přímý odkaz na soubor.',
   enterUrlToImport: 'Vložte URL pro import souboru.',
-  exceedsSize: 'Tento soubor překračuje maximální povolenou velikost: ',
+  exceedsSize: 'Tento soubor překračuje maximální povolenou velikost: %{size}',
   failedToFetch: 'Modulu Companion se nepodařilo stáhnout soubor z této URL, zkontrolujte prosím, jestli je URL správná.',
   failedToUpload: 'Nepodařilo se nahrát soubor %{file}',
   fileSource: 'Zdroj souboru: %{name}',

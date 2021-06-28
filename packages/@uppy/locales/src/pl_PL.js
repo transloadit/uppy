@@ -46,7 +46,7 @@ pl_PL.strings = {
   encoding: 'Transkodowanie...',
   enterCorrectUrl: 'Niepoprawny URL: Upewnij się, że wprowadzasz bezpośredni adres pliku',
   enterUrlToImport: 'Wprowadź URL, aby zaimportować plik',
-  exceedsSize: 'Plik ma rozmiar większy od dozwolonego',
+  exceedsSize: 'Plik ma rozmiar większy od dozwolonego %{size}',
   failedToFetch: 'Serwis nie mógł przetworzyć podanego linku, zweryfikuj jego poprawność',
   failedToUpload: 'Przesyłanie %{file} nie powiodło się',
   fileSource: 'Źródło pliku: %{name}',

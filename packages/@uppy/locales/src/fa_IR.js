@@ -41,7 +41,7 @@ fa_IR.strings = {
   encoding: 'رمزگذاری...',
   enterCorrectUrl: 'آدرس نامعتبر. لطفا مطمئن شوید که آدرس مستقیم به یک فایل را انتخاب کرده‌اید.',
   enterUrlToImport: 'آدرس فایل را برای بارگذاری بنویسید',
-  exceedsSize: 'اندازه‌ی این فایل از حد مجاز بیشتر است!',
+  exceedsSize: 'اندازه‌ی این فایل از حد مجاز بیشتر است! %{size}',
   failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
   failedToUpload: 'شکست در بارگذاری %{file}',
   fileSource: 'منبع فایل: %{name}',

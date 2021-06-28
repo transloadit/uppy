@@ -41,7 +41,7 @@ da_DK.strings = {
   encoding: 'Encoding...',
   enterCorrectUrl: 'Forkert URL: Venligst sørg for at du indtaster et direkte link til en fil',
   enterUrlToImport: 'Indtast URL for at importerer en fil',
-  exceedsSize: 'Denne fil overskrider den maksimale tilladte størrelse af',
+  exceedsSize: 'Denne fil overskrider den maksimale tilladte størrelse af %{size}',
   failedToFetch: 'Companion kunne ikke hente denne URL, venligst undersøg om denne er korrekt',
   failedToUpload: 'Fejlede upload af %{file}',
   fileSource: 'Fil kilde: %{name}',

@@ -42,7 +42,7 @@ vi_VN.strings = {
   encoding: 'Đang encode...',
   enterCorrectUrl: 'URL sai: Đảm bảo rằng bạn đang nhập một liên kết trực tiếp đến một tập tin',
   enterUrlToImport: 'Nhập URL để nhập tập tin',
-  exceedsSize: 'Tập tin này vượt quá kích thước tối đa cho phép của',
+  exceedsSize: 'Tập tin này vượt quá kích thước tối đa cho phép của %{size}',
   failedToFetch: 'Thất bại khi lấy từ URL, hãy sửa lại cho đúng',
   failedToUpload: 'Tải lên %{file} thất bại',
   fileSource: 'Nguồn tập tin: %{name}',

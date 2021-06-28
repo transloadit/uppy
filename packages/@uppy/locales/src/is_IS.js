@@ -46,7 +46,7 @@ is_IS.strings = {
   enterCorrectUrl:
         'Röng slóð: Vinsamlegast passaðu að þú sért að bæta við hlekk sem vísar beint á skrá',
   enterUrlToImport: 'Settu inn hlekk til að bæta við skrá',
-  exceedsSize: 'Þessi skrá er stærri en hún má vera ',
+  exceedsSize: 'Þessi skrá er stærri en hún má vera  %{size}',
   failedToFetch:
         'Það tókst ekki að sækja þennan hlekk, vinsamlegast passaðu að hann sé réttur',
   failedToUpload: 'Mistókst að upphala %{file}',

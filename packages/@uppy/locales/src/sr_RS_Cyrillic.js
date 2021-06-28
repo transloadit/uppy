@@ -41,7 +41,7 @@ sr_RS_Cyrillic.strings = {
   encoding: 'Шифровање...',
   enterCorrectUrl: 'Погрешан URL: унесите тачну путању до датотеке',
   enterUrlToImport: 'Унесите URL (путању) до датотеке',
-  exceedsSize: 'Ова датотека премашује највећу дозвољену величину од',
+  exceedsSize: 'Ова датотека премашује највећу дозвољену величину од %{size}',
   failedToFetch: 'Companion није успео да допре до дате адресе (URL), проверите исправност адресе',
   failedToUpload: 'Број неуспело отпремљених датотека: %{file}',
   fileSource: 'Датотека: %{name}',

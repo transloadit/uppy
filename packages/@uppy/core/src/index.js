@@ -52,13 +52,7 @@ class Uppy {
           0: 'You have to select at least %{smart_count} file',
           1: 'You have to select at least %{smart_count} files',
         },
-        // The default `exceedsSize2` string only combines the `exceedsSize` string (%{backwardsCompat}) with the size.
-        // Locales can override `exceedsSize2` to specify a different word order. This is for backwards compat with
-        // Uppy 1.9.x and below which did a naive concatenation of `exceedsSize2 + size` instead of using a locale-specific
-        // substitution.
-        // TODO: In 2.0 `exceedsSize2` should be removed in and `exceedsSize` updated to use substitution.
-        exceedsSize2: '%{backwardsCompat} %{size}',
-        exceedsSize: '%{file} exceeds maximum allowed size of',
+        exceedsSize: '%{file} exceeds maximum allowed size of %{size}',
         inferiorSize: 'This file is smaller than the allowed size of %{size}',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
         noNewAlreadyUploading: 'Cannot add new files: already uploading',
@@ -522,8 +516,7 @@ class Uppy {
         totalFilesSize += f.size
       })
       if (totalFilesSize > maxTotalFileSize) {
-        throw new RestrictionError(this.i18n('exceedsSize2', {
-          backwardsCompat: this.i18n('exceedsSize'),
+        throw new RestrictionError(this.i18n('exceedsSize', {
           size: prettierBytes(maxTotalFileSize),
           file: file.name,
         }))
@@ -533,8 +526,7 @@ class Uppy {
     // We can't check maxFileSize if the size is unknown.
     if (maxFileSize && file.size != null) {
       if (file.size > maxFileSize) {
-        throw new RestrictionError(this.i18n('exceedsSize2', {
-          backwardsCompat: this.i18n('exceedsSize'),
+        throw new RestrictionError(this.i18n('exceedsSize', {
           size: prettierBytes(maxFileSize),
           file: file.name,
         }))

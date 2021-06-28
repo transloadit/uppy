@@ -41,7 +41,7 @@ hr_HR.strings = {
   encoding: 'Enkodiranje...',
   enterCorrectUrl: 'Pogrešan URL: unesite točnu putanju do datoteke',
   enterUrlToImport: 'Unesite URL do datoteke',
-  exceedsSize: 'Ova datoteka premašuje najveću dozvoljenu veličinu od',
+  exceedsSize: 'Ova datoteka premašuje najveću dozvoljenu veličinu od %{size}',
   failedToFetch: 'Companion nije uspio dohvatiti traženi URL, provjerite ispravnost adrese',
   failedToUpload: 'Broj neuspješno prenesenih datoteka: %{file}',
   fileSource: 'Datoteka: %{name}',

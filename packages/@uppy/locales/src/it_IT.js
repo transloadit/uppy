@@ -41,7 +41,7 @@ it_IT.strings = {
   encoding: 'Encoding...',
   enterCorrectUrl: 'URL non corretta: assicurati che sia un link diretto ad un file',
   enterUrlToImport: 'Immetti l\'URL per importare un file',
-  exceedsSize: 'Questo file supera la dimensione massima di',
+  exceedsSize: 'Questo file supera la dimensione massima di %{size}',
   failedToFetch: 'Impossibile verificare questa URL, assicurati che sia corretta',
   failedToUpload: 'Upload del file %{file} non riuscito',
   fileSource: 'Sorgente file: %{name}',

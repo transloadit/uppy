@@ -41,7 +41,7 @@ sv_SE.strings = {
   encoding: 'Kodar...',
   enterCorrectUrl: 'Ogiltig URL: Kontrollera att adressen du anger är en direktlänk till en fil.',
   enterUrlToImport: 'Ange URL för att importera en fil',
-  exceedsSize: 'Storleken på filen överstiger den tillåtna maxgränsen på',
+  exceedsSize: 'Storleken på filen överstiger den tillåtna maxgränsen på %{size}',
   failedToFetch: 'Companion kunde inte ladda ner filen, kontrollera att adressen är korrekt',
   failedToUpload: 'Kunde inte ladda upp %{file}',
   fileSource: 'Källa: %{name}',

@@ -41,7 +41,7 @@ ja_JP.strings = {
   encoding: 'エンコードしています...',
   enterCorrectUrl: '不正なURL: ファイルへの直接リンクが入力されていることを確認してください',
   enterUrlToImport: 'ファイルをインポートするためのURLを入力してください',
-  exceedsSize: 'ファイルサイズが大きすぎます',
+  exceedsSize: 'ファイルサイズが大きすぎます %{size}',
   failedToFetch: 'CompanionがURLを取得できませんでした。URLが正しいか確認してください',
   failedToUpload: '%{file}のアップロードに失敗しました',
   fileSource: '元ファイル：%{name}',

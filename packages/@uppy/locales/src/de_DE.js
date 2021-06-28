@@ -42,7 +42,7 @@ de_DE.strings = {
   encoding: 'Enkodieren...',
   enterCorrectUrl: 'Falsche URL: Bitte stellen Sie sicher, dass Sie einen direkten Link zu einer Datei eingeben',
   enterUrlToImport: 'URL zum Importieren einer Datei eingeben',
-  exceedsSize: 'Diese Datei ist größer als die maximal erlaubte Dateigröße',
+  exceedsSize: 'Diese Datei ist größer als die maximal erlaubte Dateigröße %{size}',
   failedToFetch: 'Companion konnte diese URL nicht verarbeiten - stellen Sie bitte sicher, dass sie korrekt ist',
   failedToUpload: 'Fehler beim Upload von Datei %{file}',
   fileSource: 'Dateiquelle: %{name}',

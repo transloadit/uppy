@@ -43,7 +43,7 @@ ko_KR.strings = {
   encoding: '인코딩 중...',
   enterCorrectUrl: '옳지 않은 URL: 파일 주소를 확인해 주세요.',
   enterUrlToImport: '파일 URL을 입력해 주세요.',
-  exceedsSize: '업로드 허용 용량 초과',
+  exceedsSize: '업로드 허용 용량 초과 %{size}',
   failedToFetch: 'URL 가져오기 실패. 주소를 확인해 주세요.',
   failedToUpload: '%{file} 업로드 실패',
   fileSource: '파일 소스: %{name}',

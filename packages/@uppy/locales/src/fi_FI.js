@@ -41,7 +41,7 @@ fi_FI.strings = {
   encoding: 'Koodataan...',
   enterCorrectUrl: 'Epäkelpo osoite: Varmista, että osoite osoittaa suoraan tiedostoon',
   enterUrlToImport: 'Anna osoite tuodaksesi tiedoston',
-  exceedsSize: 'Tiedoston koko ylittää sallitun maksimin',
+  exceedsSize: 'Tiedoston koko ylittää sallitun maksimin %{size}',
   failedToFetch: 'Companion ei voinut ladata tiedostoa osoitteesta, onko osoite varmasti oikea?',
   failedToUpload: 'Ei voitu lähettää tiedostoa %{file}',
   fileSource: 'Tiedoston lähde: %{name}',
