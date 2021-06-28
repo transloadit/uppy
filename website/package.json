@@ -10,7 +10,7 @@
     "@octokit/rest": "16.43.1",
     "@transloadit/prettier-bytes": "0.0.7",
     "aliasify": "^2.1.0",
-    "autoprefixer": "^9.5.1",
+    "autoprefixer": "^10.2.6",
     "babelify": "^10.0.0",
     "browser-resolve": "2.0.0",
     "browserify": "^16.5.2",

@@ -54,7 +54,7 @@
     "abortcontroller-polyfill": "^1.7.3",
     "adm-zip": "0.4.14",
     "aliasify": "2.1.0",
-    "autoprefixer": "9.7.4",
+    "autoprefixer": "^10.2.6",
     "aws-sdk": "^2.715.0",
     "babel-jest": "^27.0.6",
     "babel-plugin-inline-package-json": "2.0.0",
