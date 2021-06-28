@@ -72,7 +72,7 @@ de_DE.strings = {
   pause: 'Pausieren',
   pauseUpload: 'Upload pausieren',
   paused: 'Pausiert',
-  poweredBy: 'Angetrieben von',
+  poweredBy: 'Angetrieben von %{uppy}',
   processingXFiles: {
     '0': '%{smart_count} Datei verarbeiten',
     '1': '%{smart_count} Dateien verarbeiten',

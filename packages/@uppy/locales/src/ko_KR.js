@@ -63,7 +63,7 @@ ko_KR.strings = {
   pause: '일시정지',
   pauseUpload: '업로드 일시정지',
   paused: '일시정지 됨',
-  poweredBy: 'Powered by',
+  poweredBy: 'Powered by %{uppy}',
   processingXFiles: '%{smart_count}개의 파일 처리 중',
   removeFile: '파일 제거',
   resetFilter: '필터 초기화',

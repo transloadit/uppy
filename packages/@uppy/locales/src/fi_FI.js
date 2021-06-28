@@ -68,7 +68,7 @@ fi_FI.strings = {
   pause: 'Keskeytä',
   pauseUpload: 'Keskeytä lähetys',
   paused: 'Keskeytetty',
-  poweredBy: 'Powered by',
+  poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': 'Käsitellään %{smart_count} tiedostoa',
     '1': 'Käsitellään %{smart_count} tiedostoa',

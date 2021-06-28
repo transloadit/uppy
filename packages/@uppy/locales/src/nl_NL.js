@@ -66,8 +66,7 @@ nl_NL.strings = {
   pause: 'Pauze',
   pauseUpload: 'Pauzeer upload',
   paused: 'Gepauzeerd',
-  poweredBy2: 'Mogelijk gemaakt door %{uppy}',
-  poweredBy: 'Mogelijk gemaakt door',
+  poweredBy: 'Mogelijk gemaakt door %{uppy}',
   processingXFiles: {
     '0': 'Bezig met %{smart_count} bestand te verwerken',
     '1': 'Bezig met %{smart_count} bestanden te verwerken',

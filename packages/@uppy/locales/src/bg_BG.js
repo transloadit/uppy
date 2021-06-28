@@ -76,8 +76,7 @@ bg_BG.strings = {
   pause: 'Пауза',
   pauseUpload: 'Паузиране на качването',
   paused: 'Паузиран',
-  poweredBy: 'Powered by',
-  poweredBy2: '%{backwardsCompat} %{uppy}',
+  poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': 'Обработване %{smart_count} файл',
     '1': 'Обработване %{smart_count} файлове',

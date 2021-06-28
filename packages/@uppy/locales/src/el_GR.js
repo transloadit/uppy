@@ -68,7 +68,7 @@ el_GR.strings = {
   pause: 'Παύση',
   pauseUpload: 'Παύση μεταφόρτωσης',
   paused: 'Έγινε παύση',
-  poweredBy: 'Με τη δύναμη τού',
+  poweredBy: 'Με τη δύναμη τού %{uppy}',
   processingXFiles: {
     '0': 'Προετοιμασία %{smart_count} αρχείων',
     '1': 'Προετοιμασία %{smart_count} αρχείου',

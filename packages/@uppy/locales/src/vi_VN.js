@@ -70,7 +70,7 @@ vi_VN.strings = {
   pause: 'Tạm dừng',
   pauseUpload: 'Tạm dừng tải lên',
   paused: 'Đã tạm dừng',
-  poweredBy: 'Cung cấp bởi',
+  poweredBy: 'Cung cấp bởi %{uppy}',
   processingXFiles: {
     '0': 'Đang xử lí %{smart_count} tập tin',
     '1': 'Đang xử lí %{smart_count} tập tin',

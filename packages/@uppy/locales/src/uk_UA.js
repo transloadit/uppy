@@ -72,7 +72,7 @@ uk_UA.strings = {
     '1': 'Обробляється %{smart_count} файли',
     '2': 'Обробляється %{smart_count} файлів',
   },
-  poweredBy: 'Працює на',
+  poweredBy: 'Працює на %{uppy}',
   removeFile: 'Знищити файл',
   resetFilter: 'Скинути фільтр',
   resume: 'Продовжити',

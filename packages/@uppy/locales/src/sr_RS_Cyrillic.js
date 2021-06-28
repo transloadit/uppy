@@ -67,7 +67,7 @@ sr_RS_Cyrillic.strings = {
   pause: 'Заустави привремено',
   pauseUpload: 'Привремено заустави отпремање',
   paused: 'Привремено заустављено',
-  poweredBy: 'Отпремање покреће',
+  poweredBy: 'Отпремање покреће %{uppy}',
   processingXFiles: {
     '0': 'Обрада датотеке',
     '1': 'Број датотека које се обрађују: %{smart_count}',

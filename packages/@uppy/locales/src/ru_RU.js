@@ -74,7 +74,7 @@ ru_RU.strings = {
     '1': 'Обрабатываются %{smart_count} файла',
     '2': 'Обрабатываются %{smart_count} файлов',
   },
-  poweredBy: 'Работает на',
+  poweredBy: 'Работает на %{uppy}',
   removeFile: 'Удалить файл',
   resetFilter: 'Сбросить фильтр',
   resume: 'Продолжить',

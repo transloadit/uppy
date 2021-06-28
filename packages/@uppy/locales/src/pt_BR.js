@@ -70,7 +70,7 @@ pt_BR.strings = {
   pause: 'Pausar',
   pauseUpload: 'Pausar envio de arquivos',
   paused: 'Pausado',
-  poweredBy: 'Desenvolvido por',
+  poweredBy: 'Desenvolvido por %{uppy}',
   processingXFiles: {
     0: 'Processando %{smart_count} arquivo',
     1: 'Processando %{smart_count} arquivos',

@@ -67,7 +67,7 @@ hr_HR.strings = {
   pause: 'Zaustavi privremeno',
   pauseUpload: 'Privremeno zaustavi prijenos',
   paused: 'Privremeno zaustavljeno',
-  poweredBy: 'Podržano od strane',
+  poweredBy: 'Podržano od strane %{uppy}',
   processingXFiles: {
     '0': 'Obrada datoteke',
     '1': 'Broj datoteka koje se obrađuju: %{smart_count}',

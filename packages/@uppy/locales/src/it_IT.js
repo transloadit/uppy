@@ -67,7 +67,7 @@ it_IT.strings = {
   pause: 'Pausa',
   pauseUpload: 'Pausa upload',
   paused: 'In pausa',
-  poweredBy: 'Powered by',
+  poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': 'Sto processando %{smart_count} file',
     '1': 'Sto processando %{smart_count} file',

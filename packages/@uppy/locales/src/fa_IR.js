@@ -67,7 +67,7 @@ fa_IR.strings = {
   pause: 'توقف',
   pauseUpload: 'توقف بارگذاری',
   paused: 'متوقف شده',
-  poweredBy: 'قدرت گرفته از',
+  poweredBy: 'قدرت گرفته از %{uppy}',
   processingXFiles: {
     '0': 'درحال پردازش %{smart_count} فایل',
     '1': 'درحال پردازش %{smart_count} فایل',

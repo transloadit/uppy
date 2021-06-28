@@ -87,8 +87,7 @@ sk_SK.strings = {
   pause: 'Pozastaviť',
   pauseUpload: 'Pozastaviť nahrávanie',
   paused: 'Pozastavené',
-  poweredBy: 'Vytvorené pomocou',
-  poweredBy2: '%{backwardsCompat} %{uppy}',
+  poweredBy: 'Vytvorené pomocou %{uppy}',
   processingXFiles: {
     '0': 'Spracovanie %{smart_count} súboru',
     '1': 'Spracovanie %{smart_count} súborov',

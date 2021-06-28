@@ -67,7 +67,7 @@ gl_ES.strings = {
   pause: 'Pausar',
   pauseUpload: 'Pausar subida',
   paused: 'En pausa',
-  poweredBy: 'Soportado por',
+  poweredBy: 'Soportado por %{uppy}',
   processingXFiles: {
     '0': 'Procesando %{smart_count} arquivo',
     '1': 'Procesando %{smart_count} arquivos',

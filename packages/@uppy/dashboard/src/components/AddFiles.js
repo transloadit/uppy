@@ -22,6 +22,8 @@ class AddFiles extends Component {
   }
 
   renderPoweredByUppy () {
+    const { i18nArray } = this.props
+
     const uppyBranding = (
       <span>
         <svg aria-hidden="true" focusable="false" className="uppy-c-icon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11">
@@ -31,11 +33,7 @@ class AddFiles extends Component {
       </span>
     )
 
-    // Support both the old word-order-insensitive string `poweredBy` and the new word-order-sensitive string `poweredBy2`
-    const linkText = this.props.i18nArray('poweredBy2', {
-      backwardsCompat: this.props.i18n('poweredBy'),
-      uppy: uppyBranding,
-    })
+    const linkText = i18nArray('poweredBy', { uppy: uppyBranding })
 
     return (
       <a

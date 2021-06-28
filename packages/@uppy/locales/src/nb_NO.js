@@ -85,8 +85,7 @@ nb_NO.strings = {
   pause: 'Pause',
   pauseUpload: 'Stopp opplasting midlertidig',
   paused: 'Midlertidig stoppet',
-  poweredBy: 'Drevet av',
-  poweredBy2: '%{backwardsCompat} %{uppy}',
+  poweredBy: 'Drevet av %{uppy}',
   processingXFiles: {
     0: 'Prosesserer %{smart_count} fil',
     1: 'Prosesserer %{smart_count} filer',

@@ -84,8 +84,7 @@ th_TH.strings = {
   pause: 'หยุดชั่วคราว',
   pauseUpload: 'หยุดการอัปโหลดชั่วคราว',
   paused: 'หยุดชั่วคราว',
-  poweredBy: 'ขับเคลื่อนโดย',
-  poweredBy2: '%{backwardsCompat} %{uppy}',
+  poweredBy: 'ขับเคลื่อนโดย %{uppy}',
   processingXFiles: {
     '0': 'กำลังประมวลผล %{smart_count} ไฟล์',
     '1': 'กำลังประมวลผล %{smart_count} ไฟล์',

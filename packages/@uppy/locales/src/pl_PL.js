@@ -76,7 +76,7 @@ pl_PL.strings = {
   pause: 'Wstrzymaj',
   pauseUpload: 'Wstrzymaj wysyłkę',
   paused: 'Wstrzymano',
-  poweredBy: 'Dostarczane przez',
+  poweredBy: 'Dostarczane przez %{uppy}',
   processingXFiles: {
     '0': 'Przetwarzanie %{smart_count} pliku',
     '1': 'Przetwarzanie %{smart_count} plików',
