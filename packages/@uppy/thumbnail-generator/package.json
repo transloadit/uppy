@@ -23,8 +23,7 @@
   },
   "dependencies": {
     "@uppy/utils": "file:../utils",
-    "exifr": "^6.0.0",
-    "math-log2": "^1.0.1"
+    "exifr": "^6.0.0"
   },
   "devDependencies": {
     "namespace-emitter": "2.0.1"

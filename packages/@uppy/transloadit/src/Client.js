@@ -1,5 +1,4 @@
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
-const URL = require('url-parse')
 
 /**
  * A Barebones HTTP API client for Transloadit.

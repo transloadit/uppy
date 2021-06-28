@@ -1,9 +1,17 @@
+/* global globalThis */
 const Core = require('@uppy/core')
 const StatusBarPlugin = require('@uppy/status-bar')
 const GoogleDrivePlugin = require('@uppy/google-drive')
 const DashboardPlugin = require('./index')
 
 describe('Dashboard', () => {
+  beforeAll(() => {
+    globalThis.ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
+  })
+  afterAll(() => {
+    delete globalThis.ResizeObserver
+  })
+
   it('can safely be added together with the StatusBar without id conflicts', () => {
     const core = new Core()
     core.use(StatusBarPlugin)
