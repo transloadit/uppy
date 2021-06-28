@@ -15,8 +15,8 @@
  * will expire before some files can be uploaded.
  *
  * The long-term solution to this problem is to change the upload pipeline so that files
- * can be sent to the next step individually. That requires a breakig change, so it is
- * planned for Uppy v2.
+ * can be sent to the next step individually. That requires a breaking change, so it is
+ * planned for some future Uppy version.
  *
  * In the mean time, this plugin is stuck with a hackier approach: the necessary parts
  * of the XHRUpload implementation were copied into this plugin, as the MiniXHRUpload
