@@ -43,9 +43,6 @@ function adaptData (listFilesResp, sharedDrivesResp, directory, query, showShare
     modifiedDate: adapter.getItemModifiedDate(item),
     size: adapter.getItemSize(item),
     custom: {
-      // @todo isTeamDrive is left for backward compatibility. We should remove it in the next
-      // major release.
-      isTeamDrive: adapter.isSharedDrive(item),
       isSharedDrive: adapter.isSharedDrive(item),
       imageHeight: adapter.getImageHeight(item),
       imageWidth: adapter.getImageWidth(item),

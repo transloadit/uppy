@@ -1,7 +1,3 @@
-// TODO Check which types are actually supported in browsers. Chrome likes webm
-// from my testing, but we may need more.
-// We could use a library but they tend to contain dozens of KBs of mappings,
-// most of which will go unused, so not sure if that's worth it.
 const mimeToExtensions = {
   'audio/mp3': 'mp3',
   'audio/mp4': 'mp4',

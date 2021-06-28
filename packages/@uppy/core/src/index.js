@@ -1009,8 +1009,6 @@ class Uppy {
         bytesUploaded: data.bytesUploaded,
         bytesTotal: data.bytesTotal,
         percentage: canHavePercentage
-          // TODO(goto-bus-stop) flooring this should probably be the choice of the UI?
-          // we get more accurate calculations if we don't round this at all.
           ? Math.round((data.bytesUploaded / data.bytesTotal) * 100)
           : 0,
       },
@@ -1219,9 +1217,6 @@ class Uppy {
         },
       }
       delete files[file.id].progress.postprocess
-      // TODO should we set some kind of `fullyComplete` property on the file object
-      // so it's easier to see that the file is upload…fully complete…rather than
-      // what we have to do now (`uploadComplete && !postprocess`)
 
       this.setState({ files })
     })

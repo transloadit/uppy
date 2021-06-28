@@ -78,8 +78,7 @@ module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => 
  * @param {{server: object, providerOptions: object}} companionOptions
  * @returns {Object.<string, typeof Provider>}
  */
-module.exports.getDefaultProviders = (companionOptions) => {
-  // @todo: we should rename drive to googledrive or google-drive or google
+module.exports.getDefaultProviders = () => {
   const providers = { dropbox, box, drive, facebook, onedrive, zoom, instagram }
 
   return providers
