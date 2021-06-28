@@ -548,7 +548,7 @@ module.exports = class Transloadit extends BasePlugin {
     })
   }
 
-  connectAssembly (assembly) {
+  _connectAssembly (assembly) {
     const { status } = assembly
     const id = status.assembly_id
     this.activeAssemblies[id] = assembly
