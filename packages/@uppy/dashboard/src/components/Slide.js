@@ -23,6 +23,7 @@ class Slide extends Component {
     }
   }
 
+  // TODO: refactor to stable lifecycle method
   // eslint-disable-next-line
   componentWillUpdate (nextProps) {
     const { cachedChildren } = this.state
