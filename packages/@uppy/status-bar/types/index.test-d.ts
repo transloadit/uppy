@@ -2,7 +2,7 @@ import StatusBar = require('../')
 import Uppy = require('@uppy/core')
 
 {
- const uppy = Uppy()
+ const uppy = new Uppy()
  uppy.use(StatusBar, {
     replaceTargetContent: false,
     target: 'body',

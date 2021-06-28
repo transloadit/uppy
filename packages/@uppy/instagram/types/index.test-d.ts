@@ -2,7 +2,7 @@ import Instagram = require('../')
 import Uppy = require('@uppy/core')
 
 {
- const uppy = Uppy()
+ const uppy = new Uppy()
  uppy.use(Instagram, {
     companionUrl: '',
     companionCookiesRule: 'same-origin',

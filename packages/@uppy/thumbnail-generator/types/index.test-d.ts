@@ -2,7 +2,7 @@ import ThumbnailGenerator = require('../')
 import Uppy = require('@uppy/core')
 
 {
- const uppy = Uppy()
+ const uppy = new Uppy()
  uppy.use(ThumbnailGenerator, {
    thumbnailWidth: 100,
    thumbnailHeight: 100,

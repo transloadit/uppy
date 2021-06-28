@@ -20,7 +20,7 @@ import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import ImageEditor from '@uppy/image-editor'
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Dashboard)
 uppy.use(ImageEditor, { 
   target: Dashboard,

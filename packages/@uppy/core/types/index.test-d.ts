@@ -72,7 +72,7 @@ import DefaultStore = require('@uppy/store-default')
 }
 
 {
-  const uppy = Uppy()
+  const uppy = new Uppy()
   // can emit events with internal event types
   uppy.emit('upload')
   uppy.emit('complete', () => {})
@@ -91,7 +91,7 @@ import DefaultStore = require('@uppy/store-default')
 }
 
 {
-  const uppy = Uppy()
+  const uppy = new Uppy()
   uppy.setOptions({
     restrictions: {
       allowedFileTypes: ['.png']

@@ -2,7 +2,7 @@ import Uppy = require('@uppy/core')
 import Url = require('../')
 
 {
- const uppy = Uppy()
+ const uppy = new Uppy()
  uppy.use(Url, {
     companionUrl: '',
     companionCookiesRule: 'same-origin',
