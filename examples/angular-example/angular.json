@@ -35,7 +35,8 @@
             "styles": [
               "src/styles.css",
               "../../packages/@uppy/drag-drop/dist/style.css",
-              "../../packages/@uppy/progress-bar/dist/style.css"
+              "../../packages/@uppy/progress-bar/dist/style.css",
+              "../../packages/@uppy/webcam/dist/style.css"
             ],
             "scripts": []
           },
