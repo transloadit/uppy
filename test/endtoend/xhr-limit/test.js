@@ -1,8 +1,18 @@
 /* global browser, expect, capabilities  */
 const http = require('http')
-const tempWrite = require('temp-write')
 const { Writable } = require('stream')
 const { supportsChooseFile } = require('../utils')
+
+const tempWrite = import('temp-write')
+async function make1kBFile () {
+  const size = 1024
+  const content = Buffer.allocUnsafe(size)
+  for (let i = 0; i < size; i++) {
+    content[i] = Math.floor(Math.random() * 255)
+  }
+
+  return { path: await (await tempWrite).default(content), content }
+}
 
 const devNull = () => Writable({
   write (chunk, enc, cb) {
@@ -38,18 +48,7 @@ describe.skip('XHRUpload with `limit`', () => {
   })
 
   it('should start counting progress for all files', async () => {
-    const files = [
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-    ]
+    const files = await Promise.all(Array.from({ length: 10 }, make1kBFile))
 
     const endpoint = `http://localhost:${server.address().port}`
     await browser.execute((endpoint) => {
@@ -87,12 +86,3 @@ describe.skip('XHRUpload with `limit`', () => {
     expect(status.complete).to.be.equal(2)
   })
 })
-
-function makeFile (size) {
-  const content = Buffer.allocUnsafe(size)
-  for (let i = 0; i < size; i++) {
-    content[i] = Math.floor(Math.random() * 255)
-  }
-
-  return { path: tempWrite.sync(content), content }
-}
