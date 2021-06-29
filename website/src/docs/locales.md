@@ -20,8 +20,8 @@ npm i @uppy/core @uppy/locales
 ```
 
 ```js
-const Uppy = require('@uppy/core')
-const German = require('@uppy/locales/lib/de_DE') // see below for the full list of locales
+import Uppy from '@uppy/core'
+import German from '@uppy/locales/lib/de_DE' // see below for the full list of locales
 const uppy = new Uppy({
   debug: true,
   locale: German
@@ -49,9 +49,9 @@ var uppy = Uppy.Core({
 Many plugins come with their own locale strings, and the packs we provide consist of most of those strings. You can, however, override a locale string for a specific plugin, regardless of whether you are using locale pack or not. See the plugin documentation for the list of locale strings it uses (for example, [here’s how to use it with the Dashboard UI](https://uppy.io/docs/dashboard/#locale)).
 
 ```js
-const Uppy = require('@uppy/core')
-const DragDrop = require('@uppy/drag-drop')
-const Russian = require('@uppy/locales/lib/ru_RU')
+import Uppy from '@uppy/core'
+import DragDrop from '@uppy/drag-drop'
+import Russian from '@uppy/locales/lib/ru_RU'
 const uppy = new Uppy({
   debug: true,
   autoProceed: true,

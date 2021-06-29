@@ -22,8 +22,8 @@ Plugins are classes that extend from Uppy's `Plugin` class. Each plugin has an `
 The plugin constructor receives the Uppy instance in the first parameter, and any options passed to `uppy.use()` in the second parameter.
 
 ```js
-const { Plugin } = require('@uppy/core')
-module.exports = class MyPlugin extends Plugin {
+import { UIPlugin } from '@uppy/core'
+export default class MyPlugin extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = opts.id || 'MyPlugin'
@@ -75,7 +75,7 @@ Additionally, upload hooks can fire events to signal progress.
 When adding hooks, make sure to bind the hook `fn` beforehand! Otherwise, it will be impossible to remove. For example:
 
 ```js
-class MyPlugin extends Plugin {
+class MyPlugin extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = opts.id || 'MyPlugin'
@@ -190,10 +190,10 @@ See the Preact [Getting Started Guide](https://preactjs.com/guide/getting-starte
 
 ```js
 /** @jsx h */
-const { Plugin } = require('@uppy/core')
-const { h } = require('preact')
+import { UIPlugin } from '@uppy/core'
+import { h } from 'preact'
 
-class NumFiles extends Plugin {
+class NumFiles extends UIPlugin {
   render () {
     const numFiles = Object.keys(this.uppy.state.files).length
 
@@ -238,11 +238,11 @@ this.i18nArray = this.translator.translateArray.bind(this.translator)
 Below is a full example of a [simple plugin](https://github.com/arturi/uppy-plugin-image-compressor) that compresses images before uploading them. You can replace `compressorjs` method with any other work you need to do. This works especially well for async stuff, like calling an external API.
 
 ```js
-const { Plugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
-const Compressor = require('compressorjs/dist/compressor.common.js')
+import { UIPlugin } from '@uppy/core'
+import Translator from '@uppy/utils/lib/Translator'
+import Compressor from 'compressorjs/dist/compressor.esm.js'
 
-class UppyImageCompressor extends Plugin {
+class UppyImageCompressor extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'ImageCompressor'
@@ -344,7 +344,7 @@ class UppyImageCompressor extends Plugin {
   }
 }
 
-module.exports = UppyImageCompressor
+export default UppyImageCompressor
 ```
 
 [core.setfilestate]: /docs/uppy#uppy-setFileState-fileID-state

@@ -12,8 +12,8 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const { DashboardModal } = require('@uppy/react')
+import Uppy from '@uppy/core'
+import { DashboardModal } from '@uppy/react'
 
 const uppy = new Uppy()
 

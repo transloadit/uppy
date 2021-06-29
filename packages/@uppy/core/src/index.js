@@ -12,7 +12,8 @@ const generateFileID = require('@uppy/utils/lib/generateFileID')
 const findIndex = require('@uppy/utils/lib/findIndex')
 const supportsUploadProgress = require('./supportsUploadProgress')
 const { justErrorsLogger, debugLogger } = require('./loggers')
-const Plugin = require('./Plugin')
+const UIPlugin = require('./UIPlugin')
+const BasePlugin = require('./BasePlugin')
 const { version } = require('../package.json')
 
 // Exported from here.
@@ -222,21 +223,7 @@ class Uppy {
     }
 
     this.addListeners()
-
-    // Re-enable if we’ll need some capabilities on boot, like isMobileDevice
-    // this._setCapabilities()
   }
-
-  // _setCapabilities = () => {
-  //   const capabilities = {
-  //     isMobileDevice: isMobileDevice()
-  //   }
-
-  //   this.setState({
-  //     ...this.getState().capabilities,
-  //     capabilities
-  //   })
-  // }
 
   on (event, callback) {
     this.emitter.on(event, callback)
@@ -427,7 +414,44 @@ class Uppy {
    */
   getFiles () {
     const { files } = this.getState()
-    return Object.keys(files).map((fileID) => files[fileID])
+    return Object.values(files)
+  }
+
+  getObjectOfFilesPerState () {
+    const { files: filesObject, totalProgress, error } = this.getState()
+    const files = Object.values(filesObject)
+    const inProgressFiles = files.filter(({ progress }) => !progress.uploadComplete && progress.uploadStarted)
+    const newFiles =  files.filter((file) => !file.progress.uploadStarted)
+    const startedFiles = files.filter(
+      file => file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess
+    )
+    const uploadStartedFiles = files.filter((file) => file.progress.uploadStarted)
+    const pausedFiles = files.filter((file) => file.isPaused)
+    const completeFiles = files.filter((file) => file.progress.uploadComplete)
+    const erroredFiles = files.filter((file) => file.error)
+    const inProgressNotPausedFiles = inProgressFiles.filter((file) => !file.isPaused)
+    const processingFiles = files.filter((file) => file.progress.preprocess || file.progress.postprocess)
+
+    return {
+      newFiles,
+      startedFiles,
+      uploadStartedFiles,
+      pausedFiles,
+      completeFiles,
+      erroredFiles,
+      inProgressFiles,
+      inProgressNotPausedFiles,
+      processingFiles,
+
+      isUploadStarted: uploadStartedFiles.length > 0,
+      isAllComplete: totalProgress === 100
+        && completeFiles.length === files.length
+        && processingFiles.length === 0,
+      isAllErrored: !!error && erroredFiles.length === files.length,
+      isAllPaused: inProgressFiles.length !== 0 && pausedFiles.length === inProgressFiles.length,
+      isUploadInProgress: inProgressFiles.length > 0,
+      isSomeGhost: files.some(file => file.isGhost),
+    }
   }
 
   /**
@@ -1008,8 +1032,6 @@ class Uppy {
         bytesUploaded: data.bytesUploaded,
         bytesTotal: data.bytesTotal,
         percentage: canHavePercentage
-          // TODO(goto-bus-stop) flooring this should probably be the choice of the UI?
-          // we get more accurate calculations if we don't round this at all.
           ? Math.round((data.bytesUploaded / data.bytesTotal) * 100)
           : 0,
       },
@@ -1094,7 +1116,7 @@ class Uppy {
 
       this.setState({ error: errorMsg })
 
-      if (file != null) {
+      if (file != null && file.id in this.getState().files) {
         this.setFileState(file.id, {
           error: errorMsg,
           response,
@@ -1218,9 +1240,6 @@ class Uppy {
         },
       }
       delete files[file.id].progress.postprocess
-      // TODO should we set some kind of `fullyComplete` property on the file object
-      // so it's easier to see that the file is upload…fully complete…rather than
-      // what we have to do now (`uploadComplete && !postprocess`)
 
       this.setState({ files })
     })
@@ -1701,5 +1720,6 @@ class Uppy {
 // Expose class constructor.
 module.exports = Uppy
 module.exports.Uppy = Uppy
-module.exports.Plugin = Plugin
+module.exports.UIPlugin = UIPlugin
+module.exports.BasePlugin = BasePlugin
 module.exports.debugLogger = debugLogger

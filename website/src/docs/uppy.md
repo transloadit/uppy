@@ -11,7 +11,7 @@ tagline: "The core module that orchestrates everything"
 This is the core module that orchestrates everything in Uppy, managing state and events and providing methods.
 
 ```js
-const Uppy = require('@uppy/core')
+import Uppy from '@uppy/core'
 
 const uppy = new Uppy()
 ```
@@ -34,8 +34,8 @@ const Core = Uppy.Core
 
 When using TypeScript, Uppy has weak type checking by default. That means that the options to plugins are not type-checked. For example, this is allowed:
 ```ts
-import Uppy = require('@uppy/core')
-import Tus = require('@uppy/tus')
+import Uppy from '@uppy/core'
+import Tus from '@uppy/tus'
 const uppy = new Uppy()
 uppy.use(Tus, {
   invalidOption: null,
@@ -46,8 +46,8 @@ uppy.use(Tus, {
 As of Uppy 1.10, Uppy supports a strict typechecking mode. This mode typechecks the options passed in to plugins. This will be the only mode in Uppy 2.0, but is currently optional to preserve backwards compatibility. The strict mode can be enabled by passing a special generic type parameter to the Uppy constructor:
 
 ```ts
-import Uppy = require('@uppy/core')
-import Tus = require('@uppy/tus')
+import Uppy from '@uppy/core'
+import Tus from '@uppy/tus'
 const uppy = Uppy<Uppy.StrictTypes>()
 uppy.use(Tus, {
   invalidOption: null // this will now make the compilation fail!
@@ -124,7 +124,7 @@ An object of methods that are called with debug information from [`uppy.log`](/d
 Set `logger: Uppy.debugLogger` to get debug info output to the browser console:
 
 ```js
-const Uppy = require('@uppy/core')
+import Uppy from '@uppy/core'
 const uppy = new Uppy({
   logger: Uppy.debugLogger
 })
@@ -146,11 +146,7 @@ const nullLogger = {
 
 ```js
 const debugLogger = {
-  debug: (...args) => {
-    // IE 10 doesn’t support console.debug
-    const debug = console.debug || console.log
-    debug.call(console, `[Uppy] [${getTimeStamp()}]`, ...args)
-  },
+  debug: (...args) => console.debug(`[Uppy] [${getTimeStamp()}]`, ...args),
   warn: (...args) => console.warn(`[Uppy] [${getTimeStamp()}]`, ...args),
   error: (...args) => console.error(`[Uppy] [${getTimeStamp()}]`, ...args)
 }
@@ -312,7 +308,7 @@ locale: {
 Instead of overriding strings yourself, consider using [one of our language packs](https://github.com/transloadit/uppy/tree/master/packages/%40uppy/locales) (or contributing one!):
 
 ```js
-const russianLocale = require('@uppy/locales/lib/ru_RU')
+import russianLocale from '@uppy/locales/lib/ru_RU'
 // ^-- OR: import russianLocale from '@uppy/locales/lib/ru_RU'
 const uppy = new Uppy({
   locale: russianLocale,
@@ -416,8 +412,8 @@ When an upload is completed, this may contain a URL to the uploaded file. Depend
 Add a plugin to Uppy, with an optional plugin options object.
 
 ```js
-const Uppy = require('@uppy/core')
-const DragDrop = require('@uppy/drag-drop')
+import Uppy from '@uppy/core'
+import DragDrop from '@uppy/drag-drop'
 
 const uppy = new Uppy()
 uppy.use(DragDrop, { target: 'body' })
@@ -496,7 +492,7 @@ file.preview   // value that can be used to populate "src" attribute of an "img"
 Get an array of all [File Objects][] that have been added to Uppy.
 
 ```js
-const prettierBytes = require('@transloadit/prettier-bytes')
+import prettierBytes from '@transloadit/prettier-bytes'
 const items = uppy.getFiles().map(() =>
   `<li>${file.name} - ${prettierBytes(file.size)}</li>`
 ).join('')

@@ -14,7 +14,7 @@ The `@uppy/box` plugin lets users import files from their Box account.
 A Companion instance is required for the Box plugin to work. Companion handles authentication with Box, downloads the files, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const Box = require('@uppy/box')
+import Box from '@uppy/box'
 
 uppy.use(Box, {
   // Options

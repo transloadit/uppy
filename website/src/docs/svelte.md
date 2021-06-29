@@ -36,9 +36,11 @@ yarn add -D postcss postcss-import postcss-load-config
 Then create a `postcss.config.js` like so:
 
 ```js
-module.exports = {
+import postcss from 'postcss-import'
+
+export default {
   plugins: [
-    require('postcss-import')()
+    postcss
   ]
 }
 ```

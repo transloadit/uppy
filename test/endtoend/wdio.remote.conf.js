@@ -15,15 +15,12 @@ exports.config = {
   logLevel: 'warn',
 
   capabilities: [
-    // Previous ESR
-    // { browserName: 'firefox', version: '52.0', platform: 'Windows 7' },
-    // Current ESR
-    { browserName: 'firefox', version: '80.0', platform: 'Windows 10' },
-    { browserName: 'internet explorer', version: '10.0', platform: 'Windows 8' },
-    { browserName: 'internet explorer', version: '11.0', platform: 'Windows 10' },
-    { browserName: 'chrome', version: '80.0', platform: 'Windows 10' },
-    { browserName: 'MicrosoftEdge', version: '85', platform: 'Windows 10' },
-    { browserName: 'safari', version: '11.1', platform: 'macOS 10.13' },
+    { browserName: 'firefox', version: 'latest', platform: 'Windows 10' },
+    { browserName: 'firefox', version: 'latest-1', platform: 'Windows 10' },
+    { browserName: 'chrome', version: 'latest', platform: 'Windows 10' },
+    { browserName: 'chrome', version: 'latest-1', platform: 'Windows 10' },
+    // { browserName: 'safari', version: 'latest', platform: 'macOS 11' },
+    // { browserName: 'safari', version: '13.1', platform: 'macOS 10.15' },
     // { browserName: 'Safari', platformName: 'iOS', platformVersion: '12.2', deviceOrientation: 'portrait', deviceName: 'iPhone 8 Simulator' },
     { browserName: 'chrome', platformName: 'Android', platformVersion: '6.0', deviceOrientation: 'portrait', deviceName: 'Android Emulator' },
   ].map(createCapability),

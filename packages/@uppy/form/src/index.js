@@ -1,4 +1,4 @@
-const { Plugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 const toArray = require('@uppy/utils/lib/toArray')
 // Rollup uses get-form-data's ES modules build, and rollup-plugin-commonjs automatically resolves `.default`.
@@ -8,7 +8,7 @@ const getFormData = require('get-form-data').default || require('get-form-data')
 /**
  * Form
  */
-module.exports = class Form extends Plugin {
+module.exports = class Form extends BasePlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {

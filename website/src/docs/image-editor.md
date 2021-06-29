@@ -17,9 +17,9 @@ Designed to be used with the Dashboard UI (can in theory work without it).
 ![Screenshor of the Image Editor plugin UI in Dashboard](https://user-images.githubusercontent.com/1199054/87208710-654db400-c307-11ea-9471-6e3c6582d2a5.png)
 
 ```js
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const ImageEditor = require('@uppy/image-editor')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import ImageEditor from '@uppy/image-editor'
 
 const uppy = new Uppy()
 uppy.use(Dashboard)

@@ -69,14 +69,14 @@ npm install @uppy/core @uppy/xhr-upload @uppy/dashboard
 
 ```js
 // Import the plugins
-const Uppy = require('@uppy/core')
-const XHRUpload = require('@uppy/xhr-upload')
-const Dashboard = require('@uppy/dashboard')
+import Uppy from '@uppy/core'
+import XHRUpload from '@uppy/xhr-upload'
+import Dashboard from '@uppy/dashboard'
 
 // And their styles (for UI plugins)
-// With webpack and `style-loader`, you can require them like this:
-require('@uppy/core/dist/style.css')
-require('@uppy/dashboard/dist/style.css')
+// With webpack and `style-loader`, you can import them like this:
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
  
 const uppy = new Uppy()
   .use(Dashboard, {
@@ -163,15 +163,28 @@ When using remote providers like Google Drive or Dropbox, the Fetch API is used.
 With a module bundler, you can use the required polyfills like so:
 
 ```shell
-npm install es6-promise whatwg-fetch
+npm install es6-promise whatwg-fetch abortcontroller-polyfill math-log2 md-gum-polyfill resize-observer-polyfill symbol-es6 url-polyfill
 ```
 ```js
-require('es6-promise/auto')
-require('whatwg-fetch')
-const Uppy = require('@uppy/core')
+import 'es6-promise/auto';
+import 'whatwg-fetch';
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch';
+// Order matters: AbortController needs fetch which needs Promise.
+
+import mathLog2 from 'math-log2';
+import 'md-gum-polyfill';
+import ResizeObserver from 'resize-observer-polyfill';
+import 'symbol-es6';
+import 'url-polyfill';
+
+Math.log2 ??= mathLog2;
+window.ResizeObserver ??= ResizeObserver;
+
+export { default } from '@uppy/core';
+export * from '@uppy/core'
 ```
 
-If you're using Uppy from CDN, `es6-promise` and  `whatwg-fetch` are already included in the bundle, no need to include anything additionally:
+If you're using Uppy from CDN, those polyfills are already included in the bundle, no need to include anything additionally:
 
 ```html
 <script src="https://releases.transloadit.com/uppy/v1.29.1/uppy.min.js"></script>

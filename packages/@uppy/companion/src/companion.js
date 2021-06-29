@@ -54,7 +54,7 @@ module.exports.app = (options = {}) => {
   validateConfig(options)
 
   options = merge({}, defaultOptions, options)
-  const providers = providerManager.getDefaultProviders(options)
+  const providers = providerManager.getDefaultProviders()
   const searchProviders = providerManager.getSearchProviders()
   providerManager.addProviderOptions(options, grantConfig)
 

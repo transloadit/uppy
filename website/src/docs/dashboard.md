@@ -18,7 +18,7 @@ tagline: "full-featured sleek UI with file previews, metadata editing, upload/pa
 - Ability to pause or cancel (depending on the uploader plugin) uploads
 
 ```js
-const Dashboard = require('@uppy/dashboard')
+import Dashboard from '@uppy/dashboard'
 
 uppy.use(Dashboard, {
   // Options

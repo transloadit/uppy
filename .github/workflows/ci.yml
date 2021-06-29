@@ -65,13 +65,11 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Install npm 7
         run: npm install --global npm@7
       - name: Install dependencies
         run: npm ci
-      - name: Run type tests
-        run: npm run lint:markdown
         # Need to do a bunch of work to generate the locale typings 🙃
       - name: Prepare type declarations
         run: |

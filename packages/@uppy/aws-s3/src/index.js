@@ -25,9 +25,7 @@
  * the XHRUpload code, but at least it's not horrifically broken :)
  */
 
-// If global `URL` constructor is available, use it
-const URL_ = typeof URL === 'function' ? URL : require('url-parse')
-const { Plugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const settle = require('@uppy/utils/lib/settle')
@@ -38,9 +36,7 @@ const MiniXHRUpload = require('./MiniXHRUpload')
 const isXml = require('./isXml')
 
 function resolveUrl (origin, link) {
-  return origin
-    ? new URL_(link, origin).toString()
-    : new URL_(link).toString()
+  return new URL(link, origin || undefined).toString()
 }
 
 /**
@@ -70,7 +66,7 @@ function assertServerError (res) {
 // warning deduplication flag: see `getResponseData()` XHRUpload option definition
 let warnedSuccessActionStatus = false
 
-module.exports = class AwsS3 extends Plugin {
+module.exports = class AwsS3 extends BasePlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
