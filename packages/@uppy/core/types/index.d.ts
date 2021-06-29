@@ -251,4 +251,4 @@ declare module Uppy {
  */
 // declare function Uppy<TUseStrictTypes extends Uppy.TypeChecking = Uppy.TypeChecking>(opts?: Uppy.UppyOptions): Uppy.Uppy<TUseStrictTypes>
 
-// export = Uppy
+export default Uppy
