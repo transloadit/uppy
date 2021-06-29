@@ -31,27 +31,27 @@ describe('src/Core', () => {
   })
 
   it('should expose a class', () => {
-    const core = Core()
+    const core = new Core()
     expect(core.constructor.name).toEqual('Uppy')
   })
 
   it('should have a string `id` option that defaults to "uppy"', () => {
-    const core = Core()
+    const core = new Core()
     expect(core.getID()).toEqual('uppy')
 
-    const core2 = Core({ id: 'profile' })
+    const core2 = new Core({ id: 'profile' })
     expect(core2.getID()).toEqual('profile')
   })
 
   describe('plugins', () => {
     it('should add a plugin to the plugin stack', () => {
-      const core = Core()
+      const core = new Core()
       core.use(AcquirerPlugin1)
       expect(Object.keys(core.plugins.acquirer).length).toEqual(1)
     })
 
     it('should prevent the same plugin from being added more than once', () => {
-      const core = Core()
+      const core = new Core()
       core.use(AcquirerPlugin1)
 
       expect(() => {
@@ -60,7 +60,7 @@ describe('src/Core', () => {
     })
 
     it('should not be able to add an invalid plugin', () => {
-      const core = Core()
+      const core = new Core()
 
       expect(() => {
         core.use(InvalidPlugin)
@@ -68,13 +68,13 @@ describe('src/Core', () => {
     })
 
     it('should not be able to add a plugin that has no id', () => {
-      const core = Core()
+      const core = new Core()
 
       expect(() => core.use(InvalidPluginWithoutId)).toThrowErrorMatchingSnapshot()
     })
 
     it('should not be able to add a plugin that has no type', () => {
-      const core = Core()
+      const core = new Core()
 
       expect(() => core.use(InvalidPluginWithoutType)).toThrowErrorMatchingSnapshot()
     })
@@ -1564,7 +1564,7 @@ describe('src/Core', () => {
 
     it('should throw if allowedFileTypes is not an array', () => {
       try {
-        const core = Core({
+        const core = new Core({
           restrictions: {
             allowedFileTypes: 'image/gif',
           },
