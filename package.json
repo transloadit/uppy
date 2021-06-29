@@ -135,7 +135,7 @@
     "tus-node-server": "0.3.2",
     "typescript": "~4.1",
     "url-polyfill": "^1.1.12",
-    "verdaccio": "^4.8.0",
+    "verdaccio": "^5.1.1",
     "watchify": "3.11.1",
     "webdriverio": "^7.7.4",
     "whatwg-fetch": "3.6.2"
