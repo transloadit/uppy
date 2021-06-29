@@ -130,7 +130,7 @@
     "temp-write": "^5.0.0",
     "terser": "^5.7.0",
     "tinyify": "3.0.0",
-    "tsd": "^0.11.0",
+    "tsd": "^0.17.0",
     "tsify": "5.0.1",
     "tus-node-server": "0.3.2",
     "typescript": "~4.1",
