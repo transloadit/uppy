@@ -133,7 +133,7 @@
     "tsd": "^0.17.0",
     "tsify": "5.0.1",
     "tus-node-server": "0.3.2",
-    "typescript": "~4.1",
+    "typescript": "~4.3",
     "url-polyfill": "^1.1.12",
     "verdaccio": "^5.1.1",
     "watchify": "3.11.1",
