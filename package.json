@@ -61,7 +61,7 @@
     "babelify": "10.0.0",
     "brake": "1.0.1",
     "browser-sync": "2.26.7",
-    "browserify": "16.5.2",
+    "browserify": "^17.0.0",
     "chai": "4.2.0",
     "chalk": "^4.1.1",
     "cheerio-select-tmp": "^0.1.1",
@@ -136,7 +136,7 @@
     "typescript": "~4.3",
     "url-polyfill": "^1.1.12",
     "verdaccio": "^5.1.1",
-    "watchify": "3.11.1",
+    "watchify": "^4.0.0",
     "webdriverio": "^7.7.4",
     "whatwg-fetch": "3.6.2"
   },
