@@ -222,7 +222,7 @@ Limit the amount of uploads going on at the same time. Setting this to `0` means
 
 ### `responseType: ''`
 
-The response type expected from the server, determining how the `xhr.response` property should be filled. The `xhr.response` property can be accessed in a custom [`getResponseData()`](#getResponseData-responseText-response) callback. This option sets the [`XMLHttpRequest.responseType][XHR.responseType] property. Only '', 'text', 'arraybuffer', 'blob' and 'document' are widely supported by browsers, so it's recommended to use one of those. The default is the empty string, which is equivalent to 'text' for the `xhr.response` property.
+The response type expected from the server, determining how the `xhr.response` property should be filled. The `xhr.response` property can be accessed in a custom [`getResponseData()`](#getResponseData-responseText-response) callback. This option sets the [`XMLHttpRequest.responseType`][XHR.responseType] property. Only '', 'text', 'arraybuffer', 'blob' and 'document' are widely supported by browsers, so it's recommended to use one of those. The default is the empty string, which is equivalent to 'text' for the `xhr.response` property.
 
 ### `withCredentials: false`
 
