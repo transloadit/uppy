@@ -30,6 +30,7 @@
     "website"
   ],
   "devDependencies": {
+    "@angular-devkit/build-angular": "0.1102.14",
     "@babel/cli": "7.10.5",
     "@babel/core": "7.11.1",
     "@babel/eslint-parser": "7.11.3",
@@ -88,6 +89,10 @@
     "isomorphic-fetch": "2.2.1",
     "jest": "26.4.0",
     "json3": "3.3.3",
+    "karma-chrome-launcher": "3.1.0",
+    "karma-coverage-istanbul-reporter": "3.0.3",
+    "karma-jasmine": "4.0.1",
+    "karma-jasmine-html-reporter": "1.6.0",
     "last-commit-message": "1.0.0",
     "lerna": "^3.22.1",
     "lint-staged": "9.5.0",
