@@ -8,7 +8,7 @@ const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
 
-const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata'
+const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
@@ -184,65 +184,78 @@ class Drive extends Provider {
     callbackify(this._list.bind(this))(options, done)
   }
 
-  stats ({ id, token }, done) {
-    return this.client
-      .query()
-      .get(`files/${id}`)
-      .qs({ fields: DRIVE_FILE_FIELDS, supportsAllDrives: true })
-      .auth(token)
-      .request(done)
+  async stats ({ id, token }) {
+    const getStats = async (statsOfId) => new Promise((resolve, reject) => {
+      this.client
+        .query()
+        .get(`files/${encodeURIComponent(statsOfId)}`)
+        .qs({ fields: DRIVE_FILE_FIELDS, supportsAllDrives: true })
+        .auth(token)
+        .request((err, resp) => {
+          if (err || resp.statusCode !== 200) return reject(this._error.bind(this)(err, resp))
+          return resolve(resp.body)
+        })
+    })
+
+    let stats = await getStats(id)
+
+    // If it is a shortcut, we need to get stats again on the target
+    if (adapter.isShortcut(stats.mimeType)) {
+      stats = await getStats(stats.shortcutDetails.targetId)
+    }
+    return stats
   }
 
   _exportGsuiteFile (id, token, mimeType) {
     logger.info(`calling google file export for ${id} to ${mimeType}`, 'provider.drive.export')
     return this.client
       .query()
-      .get(`files/${id}/export`)
+      .get(`files/${encodeURIComponent(id)}/export`)
       .qs({ supportsAllDrives: true, mimeType })
       .auth(token)
       .request()
   }
 
-  download ({ id, token }, onData) {
-    this.stats({ id, token }, (err, _, body) => {
-      if (err) {
+  download ({ id: idIn, token }, onData) {
+    this.stats({ id: idIn, token })
+      .then(({ mimeType, id }) => {
+        let requestStream
+        if (adapter.isGsuiteFile(mimeType)) {
+          requestStream = this._exportGsuiteFile(id, token, adapter.getGsuiteExportType(mimeType))
+        } else {
+          requestStream = this.client
+            .query()
+            .get(`files/${encodeURIComponent(id)}`)
+            .qs({ alt: 'media', supportsAllDrives: true })
+            .auth(token)
+            .request()
+        }
+
+        requestStream
+          .on('response', (resp) => {
+            if (resp.statusCode !== 200) {
+              waitForFailedResponse(resp)
+                .then((jsonResp) => {
+                  onData(this._error(null, { ...resp, body: jsonResp }))
+                })
+                .catch((err2) => onData(this._error(err2, resp)))
+            } else {
+              resp.on('data', (chunk) => onData(null, chunk))
+            }
+          })
+          .on('end', () => onData(null, null))
+          .on('error', (err2) => {
+            logger.error(err2, 'provider.drive.download.error')
+            onData(err2)
+          })
+      })
+      .catch((err) => {
         logger.error(err, 'provider.drive.download.stats.error')
         onData(err)
-        return
-      }
-
-      let requestStream
-      if (adapter.isGsuiteFile(body.mimeType)) {
-        requestStream = this._exportGsuiteFile(id, token, adapter.getGsuiteExportType(body.mimeType))
-      } else {
-        requestStream = this.client
-          .query()
-          .get(`files/${id}`)
-          .qs({ alt: 'media', supportsAllDrives: true })
-          .auth(token)
-          .request()
-      }
-
-      requestStream
-        .on('response', (resp) => {
-          if (resp.statusCode !== 200) {
-            waitForFailedResponse(resp)
-              .then((jsonResp) => {
-                onData(this._error(null, { ...resp, body: jsonResp }))
-              })
-              .catch((err2) => onData(this._error(err2, resp)))
-          } else {
-            resp.on('data', (chunk) => onData(null, chunk))
-          }
-        })
-        .on('end', () => onData(null, null))
-        .on('error', (err2) => {
-          logger.error(err2, 'provider.drive.download.error')
-          onData(err2)
-        })
-    })
+      })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   thumbnail (_, done) {
     // not implementing this because a public thumbnail from googledrive will be used instead
     const err = new Error('call to thumbnail is not implemented')
@@ -250,14 +263,9 @@ class Drive extends Provider {
     return done(err)
   }
 
-  size ({ id, token }, done) {
-    return this.stats({ id, token }, (err, resp, body) => {
-      if (err || resp.statusCode !== 200) {
-        const err2 = this._error(err, resp)
-        logger.error(err2, 'provider.drive.size.error')
-        done(err2)
-        return
-      }
+  async _size ({ id, token }) {
+    try {
+      const body = await this.stats({ id, token })
 
       if (adapter.isGsuiteFile(body.mimeType)) {
         // Not all GSuite file sizes can be predetermined
@@ -265,11 +273,18 @@ class Drive extends Provider {
         // the request to get it can be sometimes expesnive, depending
         // on the file size. So we default the size to the size export limit
         const maxExportFileSize = 10 * 1024 * 1024 // 10 MB
-        done(null, maxExportFileSize)
-      } else {
-        done(null, parseInt(body.size, 10))
+        return maxExportFileSize
       }
-    })
+      return parseInt(body.size, 10)
+    } catch (err) {
+      logger.error(err, 'provider.drive.size.error')
+      throw err
+    }
+  }
+
+  size (options, done) {
+    // @ts-ignore
+    callbackify(this._size.bind(this))(options, done)
   }
 
   logout ({ token }, done) {

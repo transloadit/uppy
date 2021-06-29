@@ -11,6 +11,9 @@ declare module DragDrop {
     height?: string | number
     note?: string
     locale?: DragDropLocale
+    onDragOver?: (event: MouseEvent) => void
+    onDragLeave?: (event: MouseEvent) => void
+    onDrop?: (event: MouseEvent) => void
   }
 }
 

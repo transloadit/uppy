@@ -49,6 +49,17 @@ function togglePauseResume (props) {
   return props.pauseAll()
 }
 
+function RenderReSelectGhosts ({ i18n }) {
+  return (
+    <div className="uppy-StatusBar-serviceMsg">
+      {i18n('reSelectGhosts')}
+      <svg className="uppy-c-icon uppy-StatusBar-serviceMsg-ghostsIcon" aria-hidden="true" width="15" height="19" viewBox="0 0 35 39">
+        <path d="M1.708 38.66c1.709 0 3.417-3.417 6.834-3.417 3.416 0 5.125 3.417 8.61 3.417 3.348 0 5.056-3.417 8.473-3.417 4.305 0 5.125 3.417 6.833 3.417.889 0 1.709-.889 1.709-1.709v-19.68C34.167-5.757 0-5.757 0 17.271v19.68c0 .82.888 1.709 1.708 1.709zm8.542-17.084a3.383 3.383 0 01-3.417-3.416 3.383 3.383 0 013.417-3.417 3.383 3.383 0 013.417 3.417 3.383 3.383 0 01-3.417 3.416zm13.667 0A3.383 3.383 0 0120.5 18.16a3.383 3.383 0 013.417-3.417 3.383 3.383 0 013.416 3.417 3.383 3.383 0 01-3.416 3.416z" fillRule="nonzero" />
+      </svg>
+    </div>
+  )
+}
+
 module.exports = (props) => {
   props = props || {}
 
@@ -63,6 +74,7 @@ module.exports = (props) => {
     hidePauseResumeButton,
     hideCancelButton,
     hideRetryButton,
+    recoveredState,
   } = props
 
   const uploadState = props.uploadState
@@ -94,13 +106,19 @@ module.exports = (props) => {
   }
 
   const width = typeof progressValue === 'number' ? progressValue : 100
-  const isHidden = (uploadState === statusBarStates.STATE_WAITING && props.hideUploadButton)
+  let isHidden = (uploadState === statusBarStates.STATE_WAITING && props.hideUploadButton)
     || (uploadState === statusBarStates.STATE_WAITING && !props.newFiles > 0)
     || (uploadState === statusBarStates.STATE_COMPLETE && props.hideAfterFinish)
 
-  const showUploadBtn = !error && newFiles
+  let showUploadBtn = !error && newFiles
     && !isUploadInProgress && !isAllPaused
     && allowNewUpload && !hideUploadButton
+
+  if (recoveredState) {
+    isHidden = false
+    showUploadBtn = true
+  }
+
   const showCancelBtn = !hideCancelButton
     && uploadState !== statusBarStates.STATE_WAITING
     && uploadState !== statusBarStates.STATE_COMPLETE
@@ -117,7 +135,8 @@ module.exports = (props) => {
   const statusBarClassNames = classNames(
     { 'uppy-Root': props.isTargetDOMEl },
     'uppy-StatusBar',
-    `is-${uploadState}`
+    `is-${uploadState}`,
+    { 'has-ghosts': props.isSomeGhost }
   )
 
   return (
@@ -148,8 +167,13 @@ const UploadBtn = (props) => {
     'uppy-c-btn',
     'uppy-StatusBar-actionBtn',
     'uppy-StatusBar-actionBtn--upload',
-    { 'uppy-c-btn-primary': props.uploadState === statusBarStates.STATE_WAITING }
+    { 'uppy-c-btn-primary': props.uploadState === statusBarStates.STATE_WAITING },
+    { 'uppy-StatusBar-actionBtn--disabled': props.isSomeGhost }
   )
+
+  const uploadBtnText = props.newFiles && props.isUploadStarted && !props.recoveredState
+    ? props.i18n('uploadXNewFiles', { smart_count: props.newFiles })
+    : props.i18n('uploadXFiles', { smart_count: props.newFiles })
 
   return (
     <button
@@ -157,11 +181,10 @@ const UploadBtn = (props) => {
       className={uploadBtnClassNames}
       aria-label={props.i18n('uploadXFiles', { smart_count: props.newFiles })}
       onClick={props.startUpload}
+      disabled={props.isSomeGhost}
       data-uppy-super-focusable
     >
-      {props.newFiles && props.isUploadStarted
-        ? props.i18n('uploadXNewFiles', { smart_count: props.newFiles })
-        : props.i18n('uploadXFiles', { smart_count: props.newFiles })}
+      {uploadBtnText}
     </button>
   )
 }

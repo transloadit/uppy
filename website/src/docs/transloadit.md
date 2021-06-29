@@ -171,7 +171,7 @@ uppy.use(Transloadit, {
 })
 ```
 
-In order for this to work, the upload plugin must assign a publically accessible `uploadURL` property to the uploaded file object. The Tus and S3 plugins both do this automatically. For the XHRUpload plugin, you may have to specify a custom `getUploadResponse` function.
+In order for this to work, the upload plugin must assign a publically accessible `uploadURL` property to the uploaded file object. The Tus and S3 plugins both do this automatically. For the XHRUpload plugin, you may have to specify a custom `getResponseData` function.
 
 ### `alwaysRunAssembly`
 

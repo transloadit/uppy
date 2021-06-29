@@ -1,5 +1,6 @@
 @import '@uppy/core/src/_utils.scss';
 @import '@uppy/core/src/_variables.scss';
+@import './inputrange.scss';
 @import './cropper.scss';
 
 .uppy-ImageCropper {
@@ -28,6 +29,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 38px;
+
+  @media screen and (min-width: 768px) {
+    padding-top: 0;
+  }
 }
 
 .uppy-ImageCropper-controls button {
@@ -54,6 +60,27 @@
   &:focus {
     outline: none;
     background-color: rgba($blue, 0.8);
+  }
+}
+
+.uppy-ImageCropper-rangeWrapper {
+  position: absolute !important;
+  height: 38px;
+  top: 0;
+  right: 10px;
+  left: 10px;
+
+  @media screen and (min-width: 768px) {
+    position: static !important;
+    height: auto;
+  }
+}
+
+.uppy-ImageCropper-range {
+  @media screen and (min-width: 768px) {
+    margin-right: 15px;
+    margin-left: 5px;
+    width: 180px;
   }
 }
 

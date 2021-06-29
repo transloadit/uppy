@@ -2,6 +2,12 @@
 
 'use strict'
 
+const path = require('path')
+
+const svgPresentationAttributes = [
+  'alignment-baseline', 'baseline-shift', 'clip', 'clip-path', 'clip-rule', 'color', 'color-interpolatio', 'color-interpolatio-filters', 'color-profile', 'color-rendering', 'cursor', 'direction', 'display', 'dominant-baseline', 'enable-background', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'glyph-orientation-horizontal', 'glyph-orientation-vertical', 'image-rendering', 'kerning', 'letter-spacing', 'lighting-color', 'marker-end', 'marker-mid', 'marker-start', 'mask', 'opacity', 'overflow', 'pointer-events', 'shape-rendering', 'stop-color', 'stop-opacity', 'stroke', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke-width', 'text-anchor', 'text-decoration', 'text-rendering', 'transform', 'transform-origin', 'unicode-bidi', 'vector-effect', 'visibility', 'word-spacing', 'writing-mod',
+]
+
 module.exports = {
   extends: ['transloadit'],
   env: {
@@ -99,6 +105,9 @@ module.exports = {
     'react/prefer-stateless-function': ['warn'],
     'react/sort-comp': ['warn'],
     'react/style-prop-object': ['warn'],
+    'react/no-unknown-property': ['warn', {
+      ignore: svgPresentationAttributes,
+    }],
     'vars-on-top': ['warn'],
     'import/no-extraneous-dependencies': ['error'],
 
@@ -118,6 +127,11 @@ module.exports = {
   },
 
   settings: {
+    'import/resolver': {
+      'eslint-import-resolver-lerna': {
+        packages: path.resolve(__dirname, 'packages'),
+      },
+    },
     react: {
       pragma: 'h',
     },

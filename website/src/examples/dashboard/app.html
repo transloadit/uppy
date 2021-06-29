@@ -9,6 +9,7 @@
     <li><label for="opts-imageEditor"><input type="checkbox" id="opts-imageEditor" checked/> Image Editor</label></li>
     <li><label for="opts-darkMode"><input type="checkbox" id="opts-darkMode" /> Dark Mode</label></li>
     <li><label for="opts-disabled"><input type="checkbox" id="opts-disabled" checked/> Disabled</label></li>
+    <li><label for="opts-GoldenRetriever"><input type="checkbox" id="opts-GoldenRetriever" checked/> Recover incomplete uploads</label></li>
   </ul>
   <ul>
     <li><label for="opts-Webcam"><input type="checkbox" id="opts-Webcam" checked/> Webcam</label></li>
@@ -55,7 +56,8 @@
     darkMode: document.querySelector('#opts-darkMode'),
     imageEditor: document.querySelector('#opts-imageEditor'),
     disabled: document.querySelector('#opts-disabled'),
-    DropTarget: document.querySelector('#opts-DropTarget')
+    DropTarget: document.querySelector('#opts-DropTarget'),
+    GoldenRetriever: document.querySelector('#opts-GoldenRetriever')
   }
 
   var defaultOpts = {
@@ -74,6 +76,7 @@
     imageEditor: true,
     disabled: false,
     DropTarget: true,
+    GoldenRetriever: false,
   }
 
   // try to get options from localStorage, if its empty, set to defaultOpts

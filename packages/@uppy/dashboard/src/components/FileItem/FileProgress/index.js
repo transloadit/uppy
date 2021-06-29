@@ -73,17 +73,24 @@ function ProgressCircle ({ progress }) {
 
   return (
     <g>
-      <circle className="uppy-Dashboard-Item-progressIcon--bg" r="15" cx="18" cy="18" strokeWidth="2" fill="none" />
+      <circle
+        className="uppy-Dashboard-Item-progressIcon--bg"
+        r="15"
+        cx="18"
+        cy="18"
+        stroke-width="2"
+        fill="none"
+      />
       <circle
         className="uppy-Dashboard-Item-progressIcon--progress"
         r="15"
         cx="18"
         cy="18"
         transform="rotate(-90, 18, 18)"
-        strokeWidth="2"
         fill="none"
-        strokeDasharray={circleLength}
-        strokeDashoffset={circleLength - (circleLength / 100 * progress)}
+        stroke-width="2"
+        stroke-dasharray={circleLength}
+        stroke-dashoffset={circleLength - ((circleLength / 100) * progress)}
       />
     </g>
   )
@@ -107,6 +114,10 @@ module.exports = function FileProgress (props) {
         </div>
       </div>
     )
+  }
+
+  if (props.recoveredState) {
+    return
   }
 
   // Retry button for error

@@ -2,11 +2,26 @@ const Cropper = require('cropperjs')
 const { h, Component } = require('preact')
 
 module.exports = class Editor extends Component {
+  constructor (props) {
+    super(props)
+    this.state = { rotationAngle: 0, rotationDelta: 0 }
+  }
+
   componentDidMount () {
     this.cropper = new Cropper(
       this.imgElement,
       this.props.opts.cropperOptions
     )
+    if (this.props.opts.actions.granularRotate) {
+      this.imgElement.addEventListener('crop', (ev) => {
+        const rotationAngle = ev.detail.rotate
+        this.setState({
+          rotationAngle,
+          // 405 == 360 + 45
+          rotationDelta: ((rotationAngle + 405) % 90) - 45,
+        })
+      })
+    }
   }
 
   componentWillUnmount () {
@@ -48,16 +63,50 @@ module.exports = class Editor extends Component {
       <button
         type="button"
         className="uppy-u-reset uppy-c-btn"
-        onClick={() => this.cropper.rotate(90)}
+        onClick={() => this.cropper.rotate(-90)}
         aria-label={this.props.i18n('rotate')}
         data-microtip-position="top"
         role="tooltip"
       >
         <svg aria-hidden="true" className="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
           <path d="M0 0h24v24H0V0zm0 0h24v24H0V0z" fill="none" />
-          <path d="M7.47 21.49C4.2 19.93 1.86 16.76 1.5 13H0c.51 6.16 5.66 11 11.95 11 .23 0 .44-.02.66-.03L8.8 20.15l-1.33 1.34zM12.05 0c-.23 0-.44.02-.66.04l3.81 3.81 1.33-1.33C19.8 4.07 22.14 7.24 22.5 11H24c-.51-6.16-5.66-11-11.95-11zM16 14h2V8c0-1.11-.9-2-2-2h-6v2h6v6zm-8 2V4H6v2H4v2h2v8c0 1.1.89 2 2 2h8v2h2v-2h2v-2H8z" />
+          <path d="M14 10a2 2 0 012 2v7a2 2 0 01-2 2H6a2 2 0 01-2-2v-7a2 2 0 012-2h8zm0 1.75H6a.25.25 0 00-.243.193L5.75 12v7a.25.25 0 00.193.243L6 19.25h8a.25.25 0 00.243-.193L14.25 19v-7a.25.25 0 00-.193-.243L14 11.75zM12 .76V4c2.3 0 4.61.88 6.36 2.64a8.95 8.95 0 012.634 6.025L21 13a1 1 0 01-1.993.117L19 13h-.003a6.979 6.979 0 00-2.047-4.95 6.97 6.97 0 00-4.652-2.044L12 6v3.24L7.76 5 12 .76z" />
         </svg>
       </button>
+    )
+  }
+
+  granularRotateOnChange = (ev) => {
+    const { rotationAngle, rotationDelta } = this.state
+    const pendingRotationDelta = Number(ev.target.value) - rotationDelta
+    cancelAnimationFrame(this.granularRotateOnInputNextFrame)
+    if (pendingRotationDelta !== 0) {
+      const pendingRotationAngle = rotationAngle + pendingRotationDelta
+      this.granularRotateOnInputNextFrame = requestAnimationFrame(() => {
+        this.cropper.rotateTo(pendingRotationAngle)
+      })
+    }
+  }
+
+  renderGranularRotate () {
+    return (
+      <label
+        data-microtip-position="top"
+        role="tooltip"
+        aria-label={`${this.state.rotationAngle}º`}
+        className="uppy-ImageCropper-rangeWrapper uppy-u-reset"
+      >
+        <input
+          className="uppy-ImageCropper-range uppy-u-reset"
+          type="range"
+          onInput={this.granularRotateOnChange}
+          onChange={this.granularRotateOnChange}
+          value={this.state.rotationDelta}
+          min="-45"
+          max="44"
+          aria-label={this.props.i18n('rotate')}
+        />
+      </label>
     )
   }
 
@@ -172,7 +221,7 @@ module.exports = class Editor extends Component {
 
   render () {
     const { currentImage, i18n, opts } = this.props
-    const actions = opts.actions
+    const { actions } = opts
     // eslint-disable-next-line compat/compat
     const imageURL = URL.createObjectURL(currentImage.data)
 
@@ -204,6 +253,7 @@ module.exports = class Editor extends Component {
 
           {actions.revert && this.renderRevert()}
           {actions.rotate && this.renderRotate()}
+          {actions.granularRotate && this.renderGranularRotate()}
           {actions.flip && this.renderFlip()}
           {actions.zoomIn && this.renderZoomIn()}
           {actions.zoomOut && this.renderZoomOut()}

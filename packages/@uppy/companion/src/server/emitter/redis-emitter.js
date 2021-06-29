@@ -1,19 +1,15 @@
-// @ts-ignore
 const NRP = require('node-redis-pubsub')
 
 /**
- * This class simulates the builtin events.EventEmitter but with the use of redis.
+ * This module simulates the builtin events.EventEmitter but with the use of redis.
  * This is useful for when companion is running on multiple instances and events need
  * to be distributed across.
  */
-class RedisEmitter extends NRP {
-  /**
-   *
-   * @param {string} redisUrl redis URL
-   */
-  constructor (redisUrl, redisPubSubScope) {
-    // @ts-ignore
-    super({ url: redisUrl, scope: redisPubSubScope })
+module.exports = (redisUrl, redisPubSubScope) => {
+  const nrp = new NRP({ url: redisUrl, scope: redisPubSubScope })
+
+  function on (eventName, handler) {
+    nrp.on(eventName, handler)
   }
 
   /**
@@ -22,10 +18,10 @@ class RedisEmitter extends NRP {
    * @param {string} eventName name of the event
    * @param {Function} handler the handler of the event
    */
-  once (eventName, handler) {
-    const removeListener = this.on(eventName, (message) => {
+  function once (eventName, handler) {
+    const off = nrp.on(eventName, (message) => {
       handler(message)
-      removeListener()
+      off()
     })
   }
 
@@ -35,8 +31,8 @@ class RedisEmitter extends NRP {
    * @param {string} eventName name of the event
    * @param {object} message the message to pass along with the event
    */
-  emit (eventName, message) {
-    return super.emit(eventName, message || {})
+  function emit (eventName, message) {
+    return nrp.emit(eventName, message || {})
   }
 
   /**
@@ -45,9 +41,9 @@ class RedisEmitter extends NRP {
    * @param {string} eventName name of the event
    * @param {Function} handler the handler of the event to remove
    */
-  removeListener (eventName, handler) {
-    this.receiver.removeListener(eventName, handler)
-    this.receiver.punsubscribe(this.prefix + eventName)
+  function removeListener (eventName, handler) {
+    nrp.receiver.removeListener(eventName, handler)
+    nrp.receiver.punsubscribe(`${nrp.prefix}${eventName}`)
   }
 
   /**
@@ -55,12 +51,16 @@ class RedisEmitter extends NRP {
    *
    * @param {string} eventName name of the event
    */
-  removeAllListeners (eventName) {
-    this.receiver.removeAllListeners(eventName)
-    this.receiver.punsubscribe(this.prefix + eventName)
+  function removeAllListeners (eventName) {
+    nrp.receiver.removeAllListeners(eventName)
+    nrp.receiver.punsubscribe(`${nrp.prefix}${eventName}`)
   }
-}
 
-module.exports = (redisUrl, redisPubSubScope) => {
-  return new RedisEmitter(redisUrl, redisPubSubScope)
+  return {
+    on,
+    once,
+    emit,
+    removeListener,
+    removeAllListeners,
+  }
 }

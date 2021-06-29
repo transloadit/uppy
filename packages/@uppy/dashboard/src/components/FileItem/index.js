@@ -18,6 +18,15 @@ module.exports = class FileItem extends Component {
     }
   }
 
+  // VirtualList mounts FileItems again and they emit `thumbnail:request`
+  // Otherwise thumbnails are broken or missing after Golden Retriever restores files
+  componentDidUpdate () {
+    const file = this.props.file
+    if (!file.preview) {
+      this.props.handleRequestThumbnail(file)
+    }
+  }
+
   componentWillUnmount () {
     const file = this.props.file
     if (!file.preview) {
@@ -34,6 +43,10 @@ module.exports = class FileItem extends Component {
     const uploadInProgress = (file.progress.uploadStarted && !file.progress.uploadComplete) || isProcessing
     const error = file.error || false
 
+    // File that Golden Retriever was able to partly restore (only meta, not blob),
+    // users still need to re-add it, so it’s a ghost
+    const isGhost = file.isGhost
+
     let showRemoveButton = this.props.individualCancellation
       ? !isUploaded
       : !uploadInProgress && !isUploaded
@@ -44,12 +57,13 @@ module.exports = class FileItem extends Component {
 
     const dashboardItemClass = classNames({
       'uppy-Dashboard-Item': true,
-      'is-inprogress': uploadInProgress,
+      'is-inprogress': uploadInProgress && !this.props.recoveredState,
       'is-processing': isProcessing,
       'is-complete': isUploaded,
       'is-error': !!error,
       'is-resumable': this.props.resumableUploads,
       'is-noIndividualCancellation': !this.props.individualCancellation,
+      'is-ghost': isGhost,
     })
 
     return (
@@ -70,6 +84,7 @@ module.exports = class FileItem extends Component {
             hideRetryButton={this.props.hideRetryButton}
             hideCancelButton={this.props.hideCancelButton}
             hidePauseResumeButton={this.props.hidePauseResumeButton}
+            recoveredState={this.props.recoveredState}
             showRemoveButtonAfterComplete={this.props.showRemoveButtonAfterComplete}
             resumableUploads={this.props.resumableUploads}
             individualCancellation={this.props.individualCancellation}
@@ -87,6 +102,7 @@ module.exports = class FileItem extends Component {
             acquirers={this.props.acquirers}
             containerWidth={this.props.containerWidth}
             i18n={this.props.i18n}
+            toggleAddFilesPanel={this.props.toggleAddFilesPanel}
           />
           <Buttons
             file={file}

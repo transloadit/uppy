@@ -12,14 +12,116 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
-## April 2021
-
 ### next
 
-- [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
-- [ ] plugin: audio/memo recording similar to Webcam #143 #198
-- [ ] goldenretriever: confirmation before restore, add “ghost” files #443 #257 (@arturi)
+## June 2021
+
+To be released: 2021-06-28
+
+- [ ] build: try to upgrade to Preact X, see if it's possible without going full on ESM? (@Murderlon)
 - [ ] robodog: finishing touches on Companion dynamic Oauth #2802 (@goto-bus-stop)
+- [ ] unsplash: Unsplash re-design (#2635 / @arturi, @nqst)
+- [ ] box: add to https://uppy.io/examples/dashboard/ (@mifi)
+- [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
+- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
+- [ ] compressor: add to Uppy repo, add resizing (@arturi)
+- [ ] image-editor: add more granular image rotation control (#2838 / @aduh95)
+- [ ] react: Feature/html attributes as react props (#2427 / @ajkachnic)
+
+## May 2021
+
+## 1.29.1
+
+Released: 2021-05-28
+
+This release features a significant refactor of the Golden Retriever plugin, among with some Companion and Typescript improvements.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/aws-s3-multipart | 1.8.17 | @uppy/react-native | 0.1.8 |
+| @uppy/aws-s3 | 1.7.11 | @uppy/react | 1.11.10 |
+| @uppy/box | 0.3.11 | @uppy/redux-dev-tools | 1.3.9 |
+| @uppy/companion-client | 1.10.1 | @uppy/robodog | 1.10.11 |
+| @uppy/companion | 2.10.1 | @uppy/screen-capture | 1.0.20 |
+| @uppy/core | 1.19.1 | @uppy/status-bar | 1.9.5 |
+| @uppy/dashboard | 1.20.1 | @uppy/store-default | 1.2.7 |
+| @uppy/drag-drop | 1.4.29 | @uppy/store-redux | 1.2.7 |
+| @uppy/drop-target | 0.2.3 | @uppy/svelte | 0.1.11 |
+| @uppy/dropbox | 1.5.1 | @uppy/thumbnail-generator | 1.7.10 |
+| @uppy/facebook | 1.2.1 | @uppy/transloadit | 1.6.25 |
+| @uppy/file-input | 1.5.1 | @uppy/tus | 1.9.1 |
+| @uppy/form | 1.3.30 | @uppy/unsplash | 0.1.12 |
+| @uppy/golden-retriever | 1.4.1 | @uppy/url | 1.5.22 |
+| @uppy/google-drive | 1.7.1 | @uppy/utils | 3.6.1 |
+| @uppy/image-editor | 0.2.6 | @uppy/vue | 0.2.4 |
+| @uppy/informer | 1.6.5 | @uppy/webcam | 1.8.11 |
+| @uppy/instagram | 1.5.1 | @uppy/xhr-upload | 1.7.4 |
+| @uppy/locales | 1.20.1 | @uppy/zoom | 0.1.17 |
+| @uppy/onedrive | 1.2.1 | remark-lint-uppy | 0.0.1 |
+| @uppy/progress-bar | 1.3.29 | uppy | 1.29.1 |
+| @uppy/provider-views | 1.12.2 | - | - |
+
+- @uppy/golden-retriever: Confirmation before restore, add “ghost” files #443 #257 (#2701 / @arturi)
+- @uppy/golden-retriever: Golden retriever 2 fixes (#2895 / @arturi)
+- @uppy/companion-client: rethrow original error objects (#2889 / @goto-bus-stop)
+- @uppy/dashboard: Fix incorrect font in Chrome on the Dashboard (#2887 / @nqst)
+- @uppy/url: Add missing companionCookiesRule option (#2898 / @jhen0409)
+- @uppy/companion: fix NRP typescript errors (#2884 / @mifi)
+- @uppy/companion: support relative redirect URLs in responses (#2901 / @ goto-bus-stop)
+- @uppy/core: Add logout, Translator.translate and Translator.translateArray (#2899 / @arturi)
+
+## 1.29.0
+
+Released: 2021-05-27
+
+⚠️ This release was deprecated — the `dist` folder with CSS files is missing in most of the released packages, due to a build error. Please upgrade to `1.29.1`.
+
+## 1.28.1
+
+Released: 2021-05-11
+
+In this release the individual file progress in Dashboard was fixed.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/companion | 2.9.0 | @uppy/robodog | 1.10.9 |
+| @uppy/core | 1.18.1 | @uppy/svelte | 0.1.9 |
+| @uppy/dashboard | 1.19.1 | @uppy/vue | 0.2.2 |
+| @uppy/react | 1.11.8 | uppy | 1.28.1 |
+
+- @uppy/companion: add chunkSize companion option (#2881 / @mifi)
+- @uppy/dashboard: fix individual progress by renaming camelCased svg properties (#2882 / @arturi)
+
+## 1.28.0
+
+Released: 2021-05-05
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/box | 0.3.9 | @uppy/robodog | 1.10.8 |
+| @uppy/companion | 2.8.0 | @uppy/screen-capture | 1.0.18 |
+| @uppy/core | 1.18.0 | @uppy/svelte | 0.1.8 |
+| @uppy/dashboard | 1.19.0 | @uppy/vue | 0.2.1 |
+| @uppy/drop-target | 0.2.1 | @uppy/webcam | 1.8.9 |
+| @uppy/locales | 1.19.0 | uppy | 1.28.0 |
+| @uppy/react | 1.11.7 | - | - |
+
+In this release we’ve added `disableLocalFiles` option to Dashboard, `uppy.logout()` API to log out of all providers at once, upgraded TypeScript and Redis.
+
+- @uppy/companion: Smaller heroku deployment (#2845 / @goto-bus-stop)
+- @uppy/companion: Pull out metric middleware logic (#2854 / @mifi)
+- @uppy/companion: Bump redis from 2.8.0 to 3.1.1 (#2865 / @dependabot, @ kiloreux)
+- @uppy/core: Add uppy.logout() that logs user out of all cloud providers (#2850 / @arturi)
+- @uppy/core: Use AggregateError when available (#2869 / @aduh95)
+- @uppy/dashboard: Implement disableLocalFiles option — disables drag & drop, hides “browse” and “My Device” buttons (#2852 / @arturi)
+- @uppy/webcam: improve MIME type detection to solve issue in iOS Safari (#2851 / @dominiceden)
+- @uppy/box: This PR added companion cookies rule to every provider except Box (#2864 / @mazoruss)
+- @uppy/react: Add function as allowed prop type (#2873 / @GreenJimmy)
+- @uppy/webcam: Add preview for videos made with webcam (#2837 / @Murderlon)
+- @uppy/drop-target: Fix npm package name for drop-target (#2857 / @jszobody)
+- @uppy/core: Remove outdated comment (#2868 / @aduh95)
+- build: Upgrade TypeScript (#2856 / @ajkachnic)
+- docs: Update transloadit.md (#2859 / @JimmyLv)
 
 ## March 2021
 
