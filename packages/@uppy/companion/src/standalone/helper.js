@@ -99,8 +99,7 @@ const getConfigFromEnv = () => {
     secret: getSecret('COMPANION_SECRET') || generateSecret(),
     preAuthSecret: getSecret('COMPANION_PREAUTH_SECRET') || generateSecret(),
     debug: process.env.NODE_ENV && process.env.NODE_ENV !== 'production',
-    // TODO: this is a temporary hack to support distributed systems.
-    // it is not documented, because it should be changed soon.
+    // cookieDomain is kind of a hack to support distributed systems. This should be improved but we never got so far.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
     multipleInstances: true,
   }

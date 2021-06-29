@@ -46,7 +46,6 @@ module.exports = class Provider extends RequestClient {
     return response
   }
 
-  // @todo(i.olarewaju) consider whether or not this method should be exposed
   setAuthToken (token) {
     return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token)
   }

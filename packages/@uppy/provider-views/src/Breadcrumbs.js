@@ -1,9 +1,8 @@
-const { h } = require('preact')
+const { h, Fragment } = require('preact')
 
-// TODO use Fragment when upgrading to preact X
 const Breadcrumb = (props) => {
   return (
-    <span>
+    <Fragment>
       <button
         type="button"
         className="uppy-u-reset"
@@ -12,7 +11,7 @@ const Breadcrumb = (props) => {
         {props.title}
       </button>
       {!props.isLast ? ' / ' : ''}
-    </span>
+    </Fragment>
   )
 }
 
