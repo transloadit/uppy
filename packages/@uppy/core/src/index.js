@@ -1700,5 +1700,6 @@ class Uppy {
 
 // Expose class constructor.
 module.exports = Uppy
+module.exports.Uppy = Uppy
 module.exports.Plugin = Plugin
 module.exports.debugLogger = debugLogger
