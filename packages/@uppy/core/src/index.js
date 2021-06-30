@@ -617,47 +617,40 @@ class Uppy {
    *
    * The `files` value is passed in because it may be updated by the caller without updating the store.
    */
-  checkAndCreateFileStateObject (files, f) {
-    const fileType = getFileType(f)
-    let file = f
-    file.type = fileType
-
-    const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(file, files)
-
-    if (onBeforeFileAddedResult === false) {
-      // Don’t show UI info for this error, as it should be done by the developer
-      this.showOrLogErrorAndThrow(new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.'), { showInformer: false, file })
-    }
-
-    if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
-      file = onBeforeFileAddedResult
-    }
+  checkAndCreateFileStateObject (files, fileDescriptor) {
+    const fileType = getFileType(fileDescriptor)
 
     let fileName
-    if (file.name) {
-      fileName = file.name
+    if (fileDescriptor.name) {
+      fileName = fileDescriptor.name
     } else if (fileType.split('/')[0] === 'image') {
       fileName = `${fileType.split('/')[0]}.${fileType.split('/')[1]}`
     } else {
       fileName = 'noname'
     }
     const fileExtension = getFileNameAndExtension(fileName).extension
-    const isRemote = file.isRemote || false
-
-    const fileID = generateFileID(file)
+    const isRemote = Boolean(fileDescriptor.isRemote)
+    const fileID = generateFileID({
+      ...fileDescriptor,
+      type: fileType,
+    })
 
     if (files[fileID] && !files[fileID].isGhost) {
-      this.showOrLogErrorAndThrow(new RestrictionError(this.i18n('noDuplicates', { fileName })), { file })
+      this.showOrLogErrorAndThrow(
+        new RestrictionError(this.i18n('noDuplicates', { fileName })),
+        { fileDescriptor }
+      )
     }
 
-    const meta = file.meta || {}
+    const meta = fileDescriptor.meta || {}
     meta.name = fileName
     meta.type = fileType
 
     // `null` means the size is unknown.
-    const size = Number.isFinite(file.data.size) ? file.data.size : null
-    const newFile = {
-      source: file.source || '',
+    const size = Number.isFinite(fileDescriptor.data.size) ? fileDescriptor.data.size : null
+
+    let newFile = {
+      source: fileDescriptor.source || '',
       id: fileID,
       name: fileName,
       extension: fileExtension || '',
@@ -666,7 +659,7 @@ class Uppy {
         ...meta,
       },
       type: fileType,
-      data: file.data,
+      data: fileDescriptor.data,
       progress: {
         percentage: 0,
         bytesUploaded: 0,
@@ -676,8 +669,17 @@ class Uppy {
       },
       size,
       isRemote,
-      remote: file.remote || '',
-      preview: file.preview,
+      remote: fileDescriptor.remote || '',
+      preview: fileDescriptor.preview,
+    }
+
+    const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, files)
+
+    if (onBeforeFileAddedResult === false) {
+      // Don’t show UI info for this error, as it should be done by the developer
+      this.showOrLogErrorAndThrow(new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.'), { showInformer: false, fileDescriptor })
+    } else if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult !== null) {
+      newFile = onBeforeFileAddedResult
     }
 
     try {
