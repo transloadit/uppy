@@ -3,7 +3,7 @@ import Uppy = require('../')
 import DefaultStore = require('@uppy/store-default')
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = Uppy()
   uppy.addFile({
     data: new Blob([new ArrayBuffer(1024)], {
       type: 'application/octet-stream'
@@ -18,11 +18,11 @@ import DefaultStore = require('@uppy/store-default')
 
 {
   const store = DefaultStore()
-  const uppy = Uppy<Uppy.StrictTypes>({ store })
+  const uppy = Uppy({ store })
 }
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = Uppy()
   // this doesn't exist but type checking works anyway :)
   const f = uppy.getFile('virtual')
   if (f && f.progress && f.progress.uploadStarted === null) {
@@ -40,13 +40,13 @@ import DefaultStore = require('@uppy/store-default')
   type ResponseBody = {
     averageColor: string
   }
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = Uppy()
   const f = uppy.getFile<Meta, ResponseBody>('virtual')!
   expectType<ResponseBody>(f.response!.body)
 }
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = Uppy()
   uppy.addFile({
     name: 'empty.json',
     data: new Blob(['null'], { type: 'application/json' }),
@@ -59,16 +59,11 @@ import DefaultStore = require('@uppy/store-default')
     types: 'are checked'
   }
   class SomePlugin extends Uppy.Plugin<SomeOptions> {}
-  const untypedUppy = Uppy()
-  untypedUppy.use(SomePlugin, { types: 'are unchecked' })
-  const typedUppy = Uppy<Uppy.StrictTypes>()
-  expectError(typedUppy.use(SomePlugin, { types: 'are unchecked' }))
-  typedUppy.use(SomePlugin, { types: 'are checked' })
+  const typedUppy = Uppy()
 
-  // strictly-typed instance can be cast to a loosely-typed instance
-  const widenUppy: Uppy.Uppy = Uppy<Uppy.StrictTypes>()
-  // and disables the type checking
-  widenUppy.use(SomePlugin, { random: 'nonsense' })
+  expectError(typedUppy.use(SomePlugin, { types: 'error' }))
+
+  typedUppy.use(SomePlugin, { types: 'are checked' })
 }
 
 {
@@ -107,7 +102,7 @@ import DefaultStore = require('@uppy/store-default')
   }
   class TestPlugin extends Uppy.Plugin<TestOptions> {}
 
-  const strict = Uppy<Uppy.StrictTypes>().use(TestPlugin, { testOption: 'hello' })
+  const strict = Uppy().use(TestPlugin, { testOption: 'hello' })
   ;(strict.getPlugin('TestPlugin') as TestPlugin).setOptions({ testOption: 'world' })
   expectError((strict.getPlugin('TestPlugin') as TestPlugin).setOptions({ testOption: 0 }))
   expectError((strict.getPlugin('TestPlugin') as TestPlugin).setOptions({ unknownKey: false }))

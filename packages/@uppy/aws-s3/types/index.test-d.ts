@@ -3,7 +3,7 @@ import Uppy = require('@uppy/core')
 import AwsS3 = require('../')
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = Uppy()
   uppy.use(AwsS3, {
     getUploadParameters (file) {
       expectType<Uppy.UppyFile>(file)

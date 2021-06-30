@@ -70,7 +70,7 @@ class VirtualList extends Component {
     window.addEventListener('resize', this.handleResize)
   }
 
-  // TODO: can we use a different method here?
+  // TODO: refactor to stable lifecycle method
   // eslint-disable-next-line
   componentWillUpdate () {
     if (this.base.contains(document.activeElement)) {

@@ -43,29 +43,10 @@ function isImageMimeType (mimeType) {
   return /^image\/[^*]+$/.test(mimeType)
 }
 
-/**
- * Setup getUserMedia, with polyfill for older browsers
- * Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
- */
 function getMediaDevices () {
+  // bug in the compatibility data
   // eslint-disable-next-line compat/compat
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    // eslint-disable-next-line compat/compat
-    return navigator.mediaDevices
-  }
-
-  const getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia
-  if (!getUserMedia) {
-    return null
-  }
-
-  return {
-    getUserMedia (opts) {
-      return new Promise((resolve, reject) => {
-        getUserMedia.call(navigator, opts, resolve, reject)
-      })
-    },
-  }
+  return navigator.mediaDevices
 }
 /**
  * Webcam

@@ -7,7 +7,7 @@ const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
 const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
-const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
+const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/src/RateLimitedQueue')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
 
@@ -124,9 +124,8 @@ module.exports = class XHRUpload extends BasePlugin {
     this.handleUpload = this.handleUpload.bind(this)
 
     // Simultaneous upload limiting is shared across all uploads with this plugin.
-    // __queue is for internal Uppy use only!
-    if (this.opts.__queue instanceof RateLimitedQueue) {
-      this.requests = this.opts.__queue
+    if (internalRateLimitedQueue in this.opts) {
+      this.requests = this.opts[internalRateLimitedQueue]
     } else {
       this.requests = new RateLimitedQueue(this.opts.limit)
     }
@@ -617,8 +616,8 @@ module.exports = class XHRUpload extends BasePlugin {
       return Promise.resolve()
     }
 
-    // no limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin (basically just AwsS3) using the top secret `__queue` option
-    if (this.opts.limit === 0 && !this.opts.__queue) {
+    // no limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin (basically just AwsS3) using the internal symbol
+    if (this.opts.limit === 0 && !this.opts[internalRateLimitedQueue]) {
       this.uppy.log(
         '[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0',
         'warning'

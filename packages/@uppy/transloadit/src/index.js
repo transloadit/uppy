@@ -597,16 +597,6 @@ module.exports = class Transloadit extends BasePlugin {
       return assembly
     }
 
-    // TODO Do we still need this for anything…?
-    // eslint-disable-next-line no-unused-vars
-    const connected = new Promise((resolve, reject) => {
-      assembly.once('connect', resolve)
-      assembly.once('status', resolve)
-      assembly.once('error', reject)
-    }).then(() => {
-      this.uppy.log('[Transloadit] Socket is ready')
-    })
-
     assembly.connect()
     return assembly
   }
