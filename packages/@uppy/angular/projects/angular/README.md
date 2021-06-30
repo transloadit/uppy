@@ -1,3 +1,5 @@
+# Uppy Angular Integration
+
 ## Build
 
 Run `ng build @uppy/angular` to build the project. The build artifacts will be stored in the `dist/` directory.
