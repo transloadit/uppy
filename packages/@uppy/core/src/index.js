@@ -1460,14 +1460,6 @@ class Uppy {
   }
 
   /**
-   * Obsolete, event listeners are now added in the constructor.
-   */
-  run () {
-    this.log('Calling run() is no longer necessary.', 'warning')
-    return this
-  }
-
-  /**
    * Restore an upload by its ID.
    */
   restore (uploadID) {
