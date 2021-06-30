@@ -35,7 +35,7 @@ npm install @uppy/xhr-upload
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const XHRUpload = Uppy.XHRUpload
+const { XHRUpload } = Uppy
 ```
 
 ## Options
@@ -144,13 +144,13 @@ The `responseText` is the XHR endpoint response as a string.
 When an upload has completed, Uppy will extract response data from the upload endpoint. This response data will be available on the file's `.response` property, and be emitted in the [`upload-success`][uppy.upload-success] event:
 
 ```js
-uppy.getFile(fileID).response
+const responseData = uppy.getFile(fileID).response
 // { status: HTTP status code,
 //   body: extracted response data }
 
 uppy.on('upload-success', (file, response) => {
-  response.status // HTTP status code
-  response.body   // extracted response data
+  const httpStatus = response.status // HTTP status code
+  const httpBody = response.body   // extracted response data
 
   // do something with file and response
 })

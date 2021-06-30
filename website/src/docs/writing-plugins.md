@@ -91,6 +91,7 @@ class MyPlugin extends UIPlugin {
   }
 
   prepareUpload (fileIDs) {
+    console.log(this) // `this` refers to the `MyPlugin` instance.
     return Promise.resolve()
   }
 
@@ -195,6 +196,7 @@ Since Uppy uses Preact and not React, the default Babel configuration for JSX el
 
 See the Preact [Getting Started Guide](https://preactjs.com/guide/getting-started) for more on Babel and JSX.
 
+<!-- eslint-disable jsdoc/check-tag-names -->
 ```js
 /** @jsx h */
 import { UIPlugin } from '@uppy/core'
@@ -246,6 +248,7 @@ this.i18nArray = this.translator.translateArray.bind(this.translator)
 
 Below is a full example of a [simple plugin](https://github.com/arturi/uppy-plugin-image-compressor) that compresses images before uploading them. You can replace `compressorjs` method with any other work you need to do. This works especially well for async stuff, like calling an external API.
 
+<!-- eslint-disable consistent-return -->
 ```js
 import { UIPlugin } from '@uppy/core'
 import Translator from '@uppy/utils/lib/Translator'
@@ -292,17 +295,16 @@ class UppyImageCompressor extends UIPlugin {
   }
 
   compress (blob) {
-    return new Promise((resolve, reject) =>
-      new Compressor(blob, ({
+    return new Promise((resolve, reject) => new Compressor(blob, ({
 
-        ...this.opts,
-        success: (result) => {
-          return resolve(result)
-        },
-        error: (err) => {
-          return reject(err)
-        },
-      })))
+      ...this.opts,
+      success: (result) => {
+        return resolve(result)
+      },
+      error: (err) => {
+        return reject(err)
+      },
+    })))
   }
 
   prepareUpload (fileIDs) {

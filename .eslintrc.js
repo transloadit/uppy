@@ -225,6 +225,8 @@ module.exports = {
       },
       rules: {
         'import/no-extraneous-dependencies': ['off'],
+        'import/no-unresolved': ['off'],
+        'react/destructuring-assignment': ['off'],
         'no-console': ['off'],
         'no-undef': ['off'],
         'no-unused-vars': ['off'],

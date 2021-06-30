@@ -104,7 +104,7 @@ class MusicUploadButton extends React.Component {
   render () {
     return (
       <div>
-        <button onClick={this.handleOpen}>Upload some music</button>
+        <button type="button" onClick={this.handleOpen}>Upload some music</button>
         <DashboardModal
           uppy={this.uppy}
           closeModalOnClickOutside

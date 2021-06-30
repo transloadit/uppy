@@ -39,7 +39,7 @@ npm install @uppy/aws-s3
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const AwsS3 = Uppy.AwsS3
+const { AwsS3 } = Uppy
 ```
 
 ## Options
@@ -354,7 +354,7 @@ generated in `getUploadParameters(file)` via the `file.meta` field:
 
 ```js
 uppy.on('upload-success', (file, data) => {
-  file.meta['key'] // the S3 object key of the uploaded file
+  const s3Key = file.meta['key'] // the S3 object key of the uploaded file
 })
 ```
 

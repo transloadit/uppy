@@ -61,8 +61,8 @@ const resultPromise = Robodog.pick({
   },
 })
 resultPromise.then((bundle) => {
-  bundle.transloadit // Array of Assembly statuses
-  bundle.results // Array of all Assembly results
+  const statuses = bundle.transloadit // Array of Assembly statuses
+  const assemblyResults = bundle.results // Array of all Assembly results
 })
 ```
 
@@ -105,8 +105,8 @@ const resultPromise = Robodog.upload(files, {
   },
 })
 resultPromise.then((bundle) => {
-  bundle.transloadit // Array of Assembly statuses
-  bundle.results // Array of all Assembly results
+  const statuses = bundle.transloadit // Array of Assembly statuses
+  const assemblyResults = bundle.results // Array of all Assembly results
 })
 ```
 

@@ -29,7 +29,7 @@ import bodyParser from 'body-parser'
 import session from 'express-session'
 import companion from '@uppy/companion'
 
-var app = express()
+const app = express()
 app.use(bodyParser.json())
 app.use(session({ secret: 'some secrety secret' }))
 // ...

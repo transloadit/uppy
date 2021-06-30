@@ -36,7 +36,7 @@ npm install @uppy/progress-bar
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const ProgressBar = Uppy.ProgressBar
+const { ProgressBar } = Uppy
 ```
 
 ## CSS

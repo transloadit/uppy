@@ -388,9 +388,13 @@ app.use(uppy.app({
 
 The default implementation returns the `filename`, so all files will be uploaded to the root of the bucket as their original file name.
 ```js
-({
-  getKey: (req, filename, metadata) => filename,
-})
+app.use(uppy.app({
+  providerOptions: {
+    s3: {
+      getKey: (req, filename, metadata) => filename,
+    },
+  },
+}))
 ```
 
 ### Running in Kubernetes

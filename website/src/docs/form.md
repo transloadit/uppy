@@ -34,7 +34,7 @@ npm install @uppy/form
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Form = Uppy.Form
+const { Form } = Uppy
 ```
 
 ## Options

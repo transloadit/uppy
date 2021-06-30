@@ -37,7 +37,7 @@ npm install @uppy/thumbnail-generator
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const ThumbnailGenerator = Uppy.ThumbnailGenerator
+const { ThumbnailGenerator } = Uppy
 ```
 
 ## Options

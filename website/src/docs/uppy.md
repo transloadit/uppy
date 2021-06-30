@@ -27,7 +27,7 @@ npm install @uppy/core
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Core = Uppy.Core
+const { Core } = Uppy
 ```
 
 ## Options
@@ -177,6 +177,7 @@ Use this function to run any number of custom checks on the selected file, or ma
 Return true/nothing or a modified file object to proceed with adding the file:
 
 <!-- eslint-disable no-dupe-keys -->
+<!-- eslint-disable consistent-return -->
 ```js
 const uppy = new Uppy({
   // ...
@@ -200,6 +201,7 @@ const uppy = new Uppy({
 
 Return false to abort adding the file:
 
+<!-- eslint-disable consistent-return -->
 ```js
 const uppy = new Uppy({
   // ...
@@ -238,7 +240,7 @@ const uppy = new Uppy({
     Object.keys(files).forEach(fileID => {
       updatedFiles[fileID] = {
         ...files[fileID],
-        name: `${'myCustomPrefix' + '__'}${files[fileID].name}`,
+        name: `${myCustomPrefix}__${files[fileID].name}`,
       }
     })
     return updatedFiles
@@ -248,6 +250,7 @@ const uppy = new Uppy({
 
 Return false to abort:
 
+<!-- eslint-disable consistent-return -->
 ```js
 const uppy = new Uppy({
   // ...
@@ -430,11 +433,12 @@ uppy.addFile({
   type: 'image/jpeg', // file type
   data: blob, // file blob
   meta: {
-    // optional, store the directory path of a file so Uppy can tell identical files in different directories apart
+    // optional, store the directory path of a file so Uppy can tell identical files in different directories apart.
     relativePath: webkitFileSystemEntry.relativePath,
   },
-  source: 'Local', // optional, determines the source of the file, for example, Instagram
-  isRemote: false, // optional, set to true if actual file is not in the browser, but on some remote server, for example, when using companion in combination with Instagram
+  source: 'Local', // optional, determines the source of the file, for example, Instagram.
+  isRemote: false, // optional, set to true if actual file is not in the browser, but on some remote server, for example,
+  // when using companion in combination with Instagram.
 })
 ```
 
@@ -467,13 +471,15 @@ Get a specific [File Object][File Objects] by its ID.
 ```js
 const file = uppy.getFile('uppyteamkongjpg1501851828779')
 
-file.id        // 'uppyteamkongjpg1501851828779'
-file.name      // 'nature.jpg'
-file.extension // '.jpg'
-file.type      // 'image/jpeg'
-file.data      // the Blob object
-file.size      // 3947642 (returns 'N/A' if size cannot be determined)
-file.preview   // value that can be used to populate "src" attribute of an "img" tag
+const {
+  id,        // 'uppyteamkongjpg1501851828779'
+  name,      // 'nature.jpg'
+  extension, // '.jpg'
+  type,      // 'image/jpeg'
+  data,      // the Blob object
+  size,      // 3947642 (returns 'N/A' if size cannot be determined)
+  preview,   // value that can be used to populate "src" attribute of an "img" tag
+} = file
 ```
 
 ### `uppy.getFiles()`
@@ -483,8 +489,7 @@ Get an array of all [File Objects][] that have been added to Uppy.
 ```js
 import prettierBytes from '@transloadit/prettier-bytes'
 
-const items = uppy.getFiles().map(() =>
-  `<li>${file.name} - ${prettierBytes(file.size)}</li>`).join('')
+const items = uppy.getFiles().map(() => `<li>${file.name} - ${prettierBytes(file.size)}</li>`).join('')
 document.querySelector('.file-list').innerHTML = `<ul>${items}</ul>`
 ```
 
@@ -541,7 +546,7 @@ Update Uppy's internal state. Usually, this method is called internally, but in 
 Uppy’s default state on initialization:
 
 ```js
-({
+const state = {
   plugins: {},
   files: {},
   currentUploads: {},
@@ -555,7 +560,7 @@ Uppy’s default state on initialization:
     type: 'info',
     message: '',
   },
-})
+}
 ```
 
 Updating state:
@@ -578,7 +583,7 @@ const updatedFile = {
     ...updatedFiles[fileID].progress,
     bytesUploaded: data.bytesUploaded,
     bytesTotal: data.bytesTotal,
-    percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2)),
+    percentage: Math.floor(100 * (data.bytesUploaded / data.bytesTotal)),
   },
 }
 updatedFiles[data.id] = updatedFile
@@ -822,7 +827,7 @@ Fired each time a single upload is completed.
 ```js
 uppy.on('upload-success', (file, response) => {
   console.log(file.name, response.uploadURL)
-  var img = new Image()
+  const img = new Image()
   img.width = 300
   img.alt = file.id
   img.src = response.uploadURL
@@ -915,14 +920,14 @@ Fired when “info” message should be visible in the UI. By default, `Informer
 
 ``` javascript
 uppy.on('info-visible', () => {
-  const info = uppy.getState().info
+  const { info } = uppy.getState()
   // info: {
   //  isHidden: false,
   //  type: 'error',
   //  message: 'Failed to upload',
   //  details: 'Error description'
   // }
-  alert(`${info.message} ${info.details}`)
+  console.log(`${info.message} ${info.details}`)
 })
 ```
 

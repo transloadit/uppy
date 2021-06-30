@@ -165,22 +165,23 @@ With a module bundler, you can use the required polyfills like so:
 ```shell
 npm install es6-promise whatwg-fetch abortcontroller-polyfill math-log2 md-gum-polyfill resize-observer-polyfill symbol-es6 url-polyfill
 ```
+
 ```js
-import 'es6-promise/auto';
-import 'whatwg-fetch';
-import 'abortcontroller-polyfill/dist/polyfill-patch-fetch';
+import 'es6-promise/auto'
+import 'whatwg-fetch'
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 // Order matters: AbortController needs fetch which needs Promise.
 
-import mathLog2 from 'math-log2';
-import 'md-gum-polyfill';
-import ResizeObserver from 'resize-observer-polyfill';
-import 'symbol-es6';
-import 'url-polyfill';
+import mathLog2 from 'math-log2'
+import 'md-gum-polyfill'
+import ResizeObserver from 'resize-observer-polyfill'
+import 'symbol-es6'
+import 'url-polyfill'
 
-Math.log2 ??= mathLog2;
-window.ResizeObserver ??= ResizeObserver;
+Math.log2 ??= mathLog2
+window.ResizeObserver ??= ResizeObserver
 
-export { default } from '@uppy/core';
+export { default } from '@uppy/core'
 export * from '@uppy/core'
 ```
 
