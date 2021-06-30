@@ -1,7 +1,7 @@
 {
   "name": "@uppy/zoom",
   "description": "Import files from zoom, into Uppy.",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",

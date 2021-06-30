@@ -1,7 +1,7 @@
 {
   "name": "@uppy/drop-target",
   "description": "Lets your users drag and drop files on a DOM element",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
