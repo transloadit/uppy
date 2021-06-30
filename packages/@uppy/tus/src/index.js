@@ -7,7 +7,7 @@ const settle = require('@uppy/utils/lib/settle')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
-const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
+const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const hasProperty = require('@uppy/utils/lib/hasProperty')
 const getFingerprint = require('./getFingerprint')
 

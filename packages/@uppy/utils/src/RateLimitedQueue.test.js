@@ -1,4 +1,4 @@
-const RateLimitedQueue = require('./RateLimitedQueue')
+const { RateLimitedQueue } = require('./RateLimitedQueue')
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
