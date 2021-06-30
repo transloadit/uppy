@@ -3,7 +3,7 @@ import Uppy = require('@uppy/core')
 import AwsS3Multipart = require('../')
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = Uppy()
   uppy.use(AwsS3Multipart, {
     createMultipartUpload (file) {
       expectType<Uppy.UppyFile>(file)
@@ -39,7 +39,7 @@ import AwsS3Multipart = require('../')
 }
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = Uppy()
   expectError(uppy.use(AwsS3Multipart, { getChunkSize: 100 }))
   expectError(uppy.use(AwsS3Multipart, { getChunkSize: () => 'not a number' }))
   uppy.use(AwsS3Multipart, { getChunkSize: () => 100 })

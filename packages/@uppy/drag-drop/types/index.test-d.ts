@@ -3,7 +3,7 @@ import Uppy = require("@uppy/core");
 import DragDrop = require("../");
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>();
+  const uppy = Uppy();
 
   uppy.use(DragDrop, {
     replaceTargetContent: true,
