@@ -23,6 +23,8 @@ function handleErr (err) {
 
 async function compileCSS () {
   const files = await glob('packages/{,@uppy/}*/src/style.scss')
+
+  /* eslint-disable no-await-in-loop */
   for (const file of files) {
     const importedFiles = new Set()
     const scssResult = await renderScss({
@@ -32,15 +34,21 @@ async function compileCSS () {
           basedir: path.dirname(from),
           filename: from,
           extensions: ['.scss'],
-        }, (err, res) => {
-          if (err) return done(err)
+        }, (err, resolved) => {
+          if (err) {
+            done(err)
+            return
+          }
 
-          res = fs.realpathSync(res)
+          const realpath = fs.realpathSync(resolved)
 
-          if (importedFiles.has(res)) return done({ contents: '' })
-          importedFiles.add(res)
+          if (importedFiles.has(realpath)) {
+            done({ contents: '' })
+            return
+          }
+          importedFiles.add(realpath)
 
-          done({ file: res })
+          done({ file: realpath })
         })
       },
     })
@@ -86,6 +94,7 @@ async function compileCSS () {
       chalk.magenta(path.relative(cwd, outfile).replace(/\.css$/, '.min.css'))
     )
   }
+  /* eslint-enable no-await-in-loop */
 }
 
 compileCSS().then(() => {

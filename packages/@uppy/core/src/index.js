@@ -326,6 +326,7 @@ class Uppy {
       })
     }
 
+    // Note: this is not the preact `setState`, it's an internal function that has the same name.
     this.setState() // so that UI re-renders with new options
   }
 

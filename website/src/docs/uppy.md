@@ -711,6 +711,10 @@ this.info({
 
 Subscribe to an uppy-event. See below for the full list of events.
 
+### `uppy.once('event', action)`
+
+Create an event listener that fires once. See below for the full list of events.
+
 ### `uppy.off('event', action)`
 
 Unsubscribe to an uppy-event. See below for the full list of events.

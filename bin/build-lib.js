@@ -26,13 +26,17 @@ function lastModified (file) {
 }
 
 async function buildLib () {
-  const metaMtimes = await Promise.all(META_FILES.map((filename) =>
-    lastModified(path.join(__dirname, '..', filename))))
+  const metaMtimes = await Promise.all(META_FILES.map((filename) => (
+    lastModified(path.join(__dirname, '..', filename))
+  )))
   const metaMtime = Math.max(...metaMtimes)
 
   const files = await glob(SOURCE)
+  /* eslint-disable no-await-in-loop, no-continue */
   for (const file of files) {
-    if (IGNORE.test(file)) continue
+    if (IGNORE.test(file)) {
+      continue
+    }
     const libFile = file.replace('/src/', '/lib/')
 
     // on a fresh build, rebuild everything.
@@ -54,6 +58,7 @@ async function buildLib () {
     ])
     console.log(chalk.green('Compiled lib:'), chalk.magenta(libFile))
   }
+  /* eslint-enable no-await-in-loop, no-continue */
 }
 
 console.log('Using Babel version:', require('@babel/core/package.json').version)
