@@ -654,9 +654,7 @@ class Uppy {
     if (onBeforeFileAddedResult === false) {
       // Don’t show UI info for this error, as it should be done by the developer
       this.showOrLogErrorAndThrow(new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.'), { showInformer: false, fileDescriptor })
-    }
-
-    if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
+    } else if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult !== null) {
       newFile = onBeforeFileAddedResult
     }
 
