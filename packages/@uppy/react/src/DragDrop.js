@@ -1,6 +1,7 @@
 const React = require('react')
 const DragDropPlugin = require('@uppy/drag-drop')
 const propTypes = require('./propTypes')
+const getHTMLProps = require('./getHTMLProps')
 
 const h = React.createElement
 
@@ -10,6 +11,11 @@ const h = React.createElement
  */
 
 class DragDrop extends React.Component {
+  constructor (props) {
+    super(props)
+    this.validProps = getHTMLProps(props)
+  }
+
   componentDidMount () {
     this.installPlugin()
   }
@@ -26,7 +32,7 @@ class DragDrop extends React.Component {
   }
 
   installPlugin () {
-    const uppy = this.props.uppy
+    const { uppy } = this.props
     const options = {
       id: 'react:DragDrop',
       ...this.props,
@@ -40,7 +46,7 @@ class DragDrop extends React.Component {
   }
 
   uninstallPlugin (props = this.props) {
-    const uppy = props.uppy
+    const { uppy } = props
 
     uppy.removePlugin(this.plugin)
   }
@@ -50,6 +56,7 @@ class DragDrop extends React.Component {
       ref: (container) => {
         this.container = container
       },
+      ...this.validProps,
     })
   }
 }

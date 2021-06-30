@@ -1,3 +1,4 @@
+/* global AggregateError */
 const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
 const cuid = require('cuid')
@@ -12,6 +13,8 @@ const findIndex = require('@uppy/utils/lib/findIndex')
 const supportsUploadProgress = require('./supportsUploadProgress')
 const { justErrorsLogger, debugLogger } = require('./loggers')
 const Plugin = require('./Plugin')
+const { version } = require('../package.json')
+
 // Exported from here.
 class RestrictionError extends Error {
   constructor (...args) {
@@ -26,7 +29,7 @@ class RestrictionError extends Error {
  * adds/removes files and metadata.
  */
 class Uppy {
-  static VERSION = require('../package.json').version
+  static VERSION = version
 
   /**
    * Instantiate Uppy
@@ -54,7 +57,7 @@ class Uppy {
         // substitution.
         // TODO: In 2.0 `exceedsSize2` should be removed in and `exceedsSize` updated to use substitution.
         exceedsSize2: '%{backwardsCompat} %{size}',
-        exceedsSize: 'This file exceeds maximum allowed size of',
+        exceedsSize: '%{file} exceeds maximum allowed size of',
         inferiorSize: 'This file is smaller than the allowed size of %{size}',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
         noNewAlreadyUploading: 'Cannot add new files: already uploading',
@@ -107,7 +110,7 @@ class Uppy {
         allowedFileTypes: null,
       },
       meta: {},
-      onBeforeFileAdded: (currentFile, files) => currentFile,
+      onBeforeFileAdded: (currentFile) => currentFile,
       onBeforeUpload: (files) => files,
       store: DefaultStore(),
       logger: justErrorsLogger,
@@ -159,11 +162,13 @@ class Uppy {
     this.validateRestrictions = this.validateRestrictions.bind(this)
 
     // ___Why throttle at 500ms?
-    //    - We must throttle at >250ms for superfocus in Dashboard to work well (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
-    //    [Practical Check]: if thottle is at 100ms, then if you are uploading a file, and click 'ADD MORE FILES', - focus won't activate in Firefox.
+    //    - We must throttle at >250ms for superfocus in Dashboard to work well
+    //    (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
+    //    [Practical Check]: if thottle is at 100ms, then if you are uploading a file,
+    //    and click 'ADD MORE FILES', - focus won't activate in Firefox.
     //    - We must throttle at around >500ms to avoid performance lags.
     //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
-    this._calculateProgress = throttle(this._calculateProgress.bind(this), 500, { leading: true, trailing: true })
+    this.calculateProgress = throttle(this.calculateProgress.bind(this), 500, { leading: true, trailing: true })
 
     this.updateOnlineStatus = this.updateOnlineStatus.bind(this)
     this.resetProgress = this.resetProgress.bind(this)
@@ -203,9 +208,10 @@ class Uppy {
         type: 'info',
         message: '',
       },
+      recoveredState: null,
     })
 
-    this._storeUnsubscribe = this.store.subscribe((prevState, nextState, patch) => {
+    this.storeUnsubscribe = this.store.subscribe((prevState, nextState, patch) => {
       this.emit('state-update', prevState, nextState, patch)
       this.updateAll(nextState)
     })
@@ -215,7 +221,7 @@ class Uppy {
       window[this.opts.id] = this
     }
 
-    this._addListeners()
+    this.addListeners()
 
     // Re-enable if we’ll need some capabilities on boot, like isMobileDevice
     // this._setCapabilities()
@@ -320,6 +326,7 @@ class Uppy {
       })
     }
 
+    // Note: this is not the preact `setState`, it's an internal function that has the same name.
     this.setState() // so that UI re-renders with new options
   }
 
@@ -434,7 +441,7 @@ class Uppy {
    */
   validateRestrictions (file, files) {
     try {
-      this._checkRestrictions(file, files)
+      this.checkRestrictions(file, files)
       return {
         result: true,
       }
@@ -454,7 +461,7 @@ class Uppy {
    * @param {Array} [files] array to check maxNumberOfFiles and maxTotalFileSize
    * @private
    */
-  _checkRestrictions (file, files = this.getFiles()) {
+  checkRestrictions (file, files = this.getFiles()) {
     const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
 
     if (maxNumberOfFiles) {
@@ -488,13 +495,14 @@ class Uppy {
     if (maxTotalFileSize && file.size != null) {
       let totalFilesSize = 0
       totalFilesSize += file.size
-      files.forEach((file) => {
-        totalFilesSize += file.size
+      files.forEach((f) => {
+        totalFilesSize += f.size
       })
       if (totalFilesSize > maxTotalFileSize) {
         throw new RestrictionError(this.i18n('exceedsSize2', {
           backwardsCompat: this.i18n('exceedsSize'),
           size: prettierBytes(maxTotalFileSize),
+          file: file.name,
         }))
       }
     }
@@ -505,6 +513,7 @@ class Uppy {
         throw new RestrictionError(this.i18n('exceedsSize2', {
           backwardsCompat: this.i18n('exceedsSize'),
           size: prettierBytes(maxFileSize),
+          file: file.name,
         }))
       }
     }
@@ -524,7 +533,7 @@ class Uppy {
    *
    * @private
    */
-  _checkMinNumberOfFiles (files) {
+  checkMinNumberOfFiles (files) {
     const { minNumberOfFiles } = this.opts.restrictions
     if (Object.keys(files).length < minNumberOfFiles) {
       throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
@@ -542,7 +551,7 @@ class Uppy {
    * @param {boolean} [options.throwErr=true] — Errors shouldn’t be thrown, for example, in `upload-error` event
    * @private
    */
-  _showOrLogErrorAndThrow (err, { showInformer = true, file = null, throwErr = true } = {}) {
+  showOrLogErrorAndThrow (err, { showInformer = true, file = null, throwErr = true } = {}) {
     const message = typeof err === 'object' ? err.message : err
     const details = (typeof err === 'object' && err.details) ? err.details : ''
 
@@ -570,11 +579,11 @@ class Uppy {
     }
   }
 
-  _assertNewUploadAllowed (file) {
+  assertNewUploadAllowed (file) {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      this._showOrLogErrorAndThrow(new RestrictionError(this.i18n('noNewAlreadyUploading')), { file })
+      this.showOrLogErrorAndThrow(new RestrictionError(this.i18n('noNewAlreadyUploading')), { file })
     }
   }
 
@@ -585,15 +594,16 @@ class Uppy {
    *
    * The `files` value is passed in because it may be updated by the caller without updating the store.
    */
-  _checkAndCreateFileStateObject (files, file) {
-    const fileType = getFileType(file)
+  checkAndCreateFileStateObject (files, f) {
+    const fileType = getFileType(f)
+    let file = f
     file.type = fileType
 
     const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(file, files)
 
     if (onBeforeFileAddedResult === false) {
       // Don’t show UI info for this error, as it should be done by the developer
-      this._showOrLogErrorAndThrow(new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.'), { showInformer: false, file })
+      this.showOrLogErrorAndThrow(new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.'), { showInformer: false, file })
     }
 
     if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
@@ -613,8 +623,8 @@ class Uppy {
 
     const fileID = generateFileID(file)
 
-    if (files[fileID]) {
-      this._showOrLogErrorAndThrow(new RestrictionError(this.i18n('noDuplicates', { fileName })), { file })
+    if (files[fileID] && !files[fileID].isGhost) {
+      this.showOrLogErrorAndThrow(new RestrictionError(this.i18n('noDuplicates', { fileName })), { file })
     }
 
     const meta = file.meta || {}
@@ -622,7 +632,7 @@ class Uppy {
     meta.type = fileType
 
     // `null` means the size is unknown.
-    const size = isFinite(file.data.size) ? file.data.size : null
+    const size = Number.isFinite(file.data.size) ? file.data.size : null
     const newFile = {
       source: file.source || '',
       id: fileID,
@@ -649,16 +659,16 @@ class Uppy {
 
     try {
       const filesArray = Object.keys(files).map(i => files[i])
-      this._checkRestrictions(newFile, filesArray)
+      this.checkRestrictions(newFile, filesArray)
     } catch (err) {
-      this._showOrLogErrorAndThrow(err, { file: newFile })
+      this.showOrLogErrorAndThrow(err, { file: newFile })
     }
 
     return newFile
   }
 
   // Schedule an upload if `autoProceed` is enabled.
-  _startIfAutoProceed () {
+  startIfAutoProceed () {
     if (this.opts.autoProceed && !this.scheduledAutoProceed) {
       this.scheduledAutoProceed = setTimeout(() => {
         this.scheduledAutoProceed = null
@@ -680,10 +690,21 @@ class Uppy {
    * @returns {string} id for the added file
    */
   addFile (file) {
-    this._assertNewUploadAllowed(file)
+    this.assertNewUploadAllowed(file)
 
     const { files } = this.getState()
-    const newFile = this._checkAndCreateFileStateObject(files, file)
+    let newFile = this.checkAndCreateFileStateObject(files, file)
+
+    // Users are asked to re-select recovered files without data,
+    // and to keep the progress, meta and everthing else, we only replace said data
+    if (files[newFile.id] && files[newFile.id].isGhost) {
+      newFile = {
+        ...files[newFile.id],
+        data: file.data,
+        isGhost: false,
+      }
+      this.log(`Replaced the blob in the restored ghost file: ${newFile.name}, ${newFile.id}`)
+    }
 
     this.setState({
       files: {
@@ -696,7 +717,7 @@ class Uppy {
     this.emit('files-added', [newFile])
     this.log(`Added file: ${newFile.name}, ${newFile.id}, mime type: ${newFile.type}`)
 
-    this._startIfAutoProceed()
+    this.startIfAutoProceed()
 
     return newFile.id
   }
@@ -704,12 +725,12 @@ class Uppy {
   /**
    * Add multiple files to `state.files`. See the `addFile()` documentation.
    *
-   * This cuts some corners for performance, so should typically only be used in cases where there may be a lot of files.
-   *
-   * If an error occurs while adding a file, it is logged and the user is notified. This is good for UI plugins, but not for programmatic use. Programmatic users should usually still use `addFile()` on individual files.
+   * If an error occurs while adding a file, it is logged and the user is notified.
+   * This is good for UI plugins, but not for programmatic use.
+   * Programmatic users should usually still use `addFile()` on individual files.
    */
   addFiles (fileDescriptors) {
-    this._assertNewUploadAllowed()
+    this.assertNewUploadAllowed()
 
     // create a copy of the files object only once
     const files = { ...this.getState().files }
@@ -717,9 +738,19 @@ class Uppy {
     const errors = []
     for (let i = 0; i < fileDescriptors.length; i++) {
       try {
-        const newFile = this._checkAndCreateFileStateObject(files, fileDescriptors[i])
-        newFiles.push(newFile)
+        let newFile = this.checkAndCreateFileStateObject(files, fileDescriptors[i])
+        // Users are asked to re-select recovered files without data,
+        // and to keep the progress, meta and everthing else, we only replace said data
+        if (files[newFile.id] && files[newFile.id].isGhost) {
+          newFile = {
+            ...files[newFile.id],
+            data: fileDescriptors[i].data,
+            isGhost: false,
+          }
+          this.log(`Replaced blob in a ghost file: ${newFile.name}, ${newFile.id}`)
+        }
         files[newFile.id] = newFile
+        newFiles.push(newFile)
       } catch (err) {
         if (!err.isRestriction) {
           errors.push(err)
@@ -744,7 +775,7 @@ class Uppy {
     }
 
     if (newFiles.length > 0) {
-      this._startIfAutoProceed()
+      this.startIfAutoProceed()
     }
 
     if (errors.length > 0) {
@@ -758,9 +789,13 @@ class Uppy {
         details: message,
       }, 'error', this.opts.infoTimeout)
 
-      const err = new Error(message)
-      err.errors = errors
-      throw err
+      if (typeof AggregateError === 'function') {
+        throw new AggregateError(errors, message)
+      } else {
+        const err = new Error(message)
+        err.errors = errors
+        throw err
+      }
     }
   }
 
@@ -781,13 +816,13 @@ class Uppy {
     function fileIsNotRemoved (uploadFileID) {
       return removedFiles[uploadFileID] === undefined
     }
-    const uploadsToRemove = []
+
     Object.keys(updatedUploads).forEach((uploadID) => {
       const newFileIDs = currentUploads[uploadID].fileIDs.filter(fileIsNotRemoved)
 
       // Remove the upload if no files are associated with it anymore.
       if (newFileIDs.length === 0) {
-        uploadsToRemove.push(uploadID)
+        delete updatedUploads[uploadID]
         return
       }
 
@@ -797,23 +832,21 @@ class Uppy {
       }
     })
 
-    uploadsToRemove.forEach((uploadID) => {
-      delete updatedUploads[uploadID]
-    })
-
     const stateUpdate = {
       currentUploads: updatedUploads,
       files: updatedFiles,
     }
 
-    // If all files were removed - allow new uploads!
+    // If all files were removed - allow new uploads,
+    // and clear recoveredState
     if (Object.keys(updatedFiles).length === 0) {
       stateUpdate.allowNewUpload = true
       stateUpdate.error = null
+      stateUpdate.recoveredState = null
     }
 
     this.setState(stateUpdate)
-    this._calculateTotalProgress()
+    this.calculateTotalProgress()
 
     const removedFileIDs = Object.keys(removedFiles)
     removedFileIDs.forEach((fileID) => {
@@ -834,7 +867,7 @@ class Uppy {
   pauseResume (fileID) {
     if (!this.getState().capabilities.resumableUploads
          || this.getFile(fileID).uploadComplete) {
-      return
+      return undefined
     }
 
     const wasPaused = this.getFile(fileID).isPaused || false
@@ -913,10 +946,10 @@ class Uppy {
       })
     }
 
-    const uploadID = this._createUpload(filesToRetry, {
+    const uploadID = this.createUpload(filesToRetry, {
       forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
     })
-    return this._runUpload(uploadID)
+    return this.runUpload(uploadID)
   }
 
   cancelAll () {
@@ -932,6 +965,7 @@ class Uppy {
     this.setState({
       totalProgress: 0,
       error: null,
+      recoveredState: null,
     })
   }
 
@@ -943,24 +977,32 @@ class Uppy {
 
     this.emit('upload-retry', fileID)
 
-    const uploadID = this._createUpload([fileID], {
+    const uploadID = this.createUpload([fileID], {
       forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
     })
-    return this._runUpload(uploadID)
+    return this.runUpload(uploadID)
   }
 
   reset () {
     this.cancelAll()
   }
 
-  _calculateProgress (file, data) {
+  logout () {
+    this.iteratePlugins(plugin => {
+      if (plugin.provider && plugin.provider.logout) {
+        plugin.provider.logout()
+      }
+    })
+  }
+
+  calculateProgress (file, data) {
     if (!this.getFile(file.id)) {
       this.log(`Not setting progress for a file that has been removed: ${file.id}`)
       return
     }
 
     // bytesTotal may be null or zero; in that case we can't divide by it
-    const canHavePercentage = isFinite(data.bytesTotal) && data.bytesTotal > 0
+    const canHavePercentage = Number.isFinite(data.bytesTotal) && data.bytesTotal > 0
     this.setFileState(file.id, {
       progress: {
         ...this.getFile(file.id).progress,
@@ -969,15 +1011,15 @@ class Uppy {
         percentage: canHavePercentage
           // TODO(goto-bus-stop) flooring this should probably be the choice of the UI?
           // we get more accurate calculations if we don't round this at all.
-          ? Math.round(data.bytesUploaded / data.bytesTotal * 100)
+          ? Math.round((data.bytesUploaded / data.bytesTotal) * 100)
           : 0,
       },
     })
 
-    this._calculateTotalProgress()
+    this.calculateTotalProgress()
   }
 
-  _calculateTotalProgress () {
+  calculateTotalProgress () {
     // calculate total progress, using the number of files currently uploading,
     // multiplied by 100 and the summ of individual progress of each file
     const files = this.getFiles()
@@ -1002,7 +1044,7 @@ class Uppy {
       const currentProgress = unsizedFiles.reduce((acc, file) => {
         return acc + file.progress.percentage
       }, 0)
-      const totalProgress = Math.round(currentProgress / progressMax * 100)
+      const totalProgress = Math.round((currentProgress / progressMax) * 100)
       this.setState({ totalProgress })
       return
     }
@@ -1018,12 +1060,12 @@ class Uppy {
       uploadedSize += file.progress.bytesUploaded
     })
     unsizedFiles.forEach((file) => {
-      uploadedSize += averageSize * (file.progress.percentage || 0) / 100
+      uploadedSize += (averageSize * (file.progress.percentage || 0)) / 100
     })
 
     let totalProgress = totalSize === 0
       ? 0
-      : Math.round(uploadedSize / totalSize * 100)
+      : Math.round((uploadedSize / totalSize) * 100)
 
     // hot fix, because:
     // uploadedSize ended up larger than totalSize, resulting in 1325% total
@@ -1039,36 +1081,32 @@ class Uppy {
    * Registers listeners for all global actions, like:
    * `error`, `file-removed`, `upload-progress`
    */
-  _addListeners () {
-    this.on('error', (error) => {
-      let errorMsg = 'Unknown error'
-      if (error.message) {
-        errorMsg = error.message
-      }
-
+  addListeners () {
+    /**
+     * @param {Error} error
+     * @param {object} [file]
+     * @param {object} [response]
+     */
+    const errorHandler = (error, file, response) => {
+      let errorMsg = error.message || 'Unknown error'
       if (error.details) {
         errorMsg += ` ${error.details}`
       }
 
       this.setState({ error: errorMsg })
-    })
+
+      if (file != null) {
+        this.setFileState(file.id, {
+          error: errorMsg,
+          response,
+        })
+      }
+    }
+
+    this.on('error', errorHandler)
 
     this.on('upload-error', (file, error, response) => {
-      let errorMsg = 'Unknown error'
-      if (error.message) {
-        errorMsg = error.message
-      }
-
-      if (error.details) {
-        errorMsg += ` ${error.details}`
-      }
-
-      this.setFileState(file.id, {
-        error: errorMsg,
-        response,
-      })
-
-      this.setState({ error: error.message })
+      errorHandler(error, file, response)
 
       if (typeof error === 'object' && error.message) {
         const newError = new Error(error.message)
@@ -1077,11 +1115,11 @@ class Uppy {
           newError.details += ` ${error.details}`
         }
         newError.message = this.i18n('failedToUpload', { file: file.name })
-        this._showOrLogErrorAndThrow(newError, {
+        this.showOrLogErrorAndThrow(newError, {
           throwErr: false,
         })
       } else {
-        this._showOrLogErrorAndThrow(error, {
+        this.showOrLogErrorAndThrow(error, {
           throwErr: false,
         })
       }
@@ -1091,7 +1129,7 @@ class Uppy {
       this.setState({ error: null })
     })
 
-    this.on('upload-started', (file, upload) => {
+    this.on('upload-started', (file) => {
       if (!this.getFile(file.id)) {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
@@ -1107,7 +1145,7 @@ class Uppy {
       })
     })
 
-    this.on('upload-progress', this._calculateProgress)
+    this.on('upload-progress', this.calculateProgress)
 
     this.on('upload-success', (file, uploadResp) => {
       if (!this.getFile(file.id)) {
@@ -1131,7 +1169,7 @@ class Uppy {
         isPaused: false,
       })
 
-      this._calculateTotalProgress()
+      this.calculateTotalProgress()
     })
 
     this.on('preprocess-progress', (file, progress) => {
@@ -1190,7 +1228,7 @@ class Uppy {
 
     this.on('restored', () => {
       // Files may have changed--ensure progress is still accurate.
-      this._calculateTotalProgress()
+      this.calculateTotalProgress()
     })
 
     // show informer if offline
@@ -1231,6 +1269,7 @@ class Uppy {
    * @param {object} [opts] object with options to be passed to Plugin
    * @returns {object} self for chaining
    */
+  // eslint-disable-next-line no-shadow
   use (Plugin, opts) {
     if (typeof Plugin !== 'function') {
       const msg = `Expected a plugin class, but got ${Plugin === null ? 'null' : typeof Plugin}.`
@@ -1338,7 +1377,7 @@ class Uppy {
 
     this.reset()
 
-    this._storeUnsubscribe()
+    this.storeUnsubscribe()
 
     this.iteratePlugins((plugin) => {
       this.removePlugin(plugin)
@@ -1417,11 +1456,11 @@ class Uppy {
     this.log(`Core: attempting to restore upload "${uploadID}"`)
 
     if (!this.getState().currentUploads[uploadID]) {
-      this._removeUpload(uploadID)
+      this.removeUpload(uploadID)
       return Promise.reject(new Error('Nonexistent upload'))
     }
 
-    return this._runUpload(uploadID)
+    return this.runUpload(uploadID)
   }
 
   /**
@@ -1430,10 +1469,9 @@ class Uppy {
    * @param {Array<string>} fileIDs File IDs to include in this upload.
    * @returns {string} ID of this upload.
    */
-  _createUpload (fileIDs, opts = {}) {
-    const {
-      forceAllowNewUpload = false, // uppy.retryAll sets this to true — when retrying we want to ignore `allowNewUpload: false`
-    } = opts
+  createUpload (fileIDs, opts = {}) {
+    // uppy.retryAll sets this to true — when retrying we want to ignore `allowNewUpload: false`
+    const { forceAllowNewUpload = false } = opts
 
     const { allowNewUpload, currentUploads } = this.getState()
     if (!allowNewUpload && !forceAllowNewUpload) {
@@ -1463,7 +1501,7 @@ class Uppy {
     return uploadID
   }
 
-  _getUpload (uploadID) {
+  getUpload (uploadID) {
     const { currentUploads } = this.getState()
 
     return currentUploads[uploadID]
@@ -1476,11 +1514,11 @@ class Uppy {
    * @param {object} data Data properties to add to the result object.
    */
   addResultData (uploadID, data) {
-    if (!this._getUpload(uploadID)) {
+    if (!this.getUpload(uploadID)) {
       this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
       return
     }
-    const currentUploads = this.getState().currentUploads
+    const { currentUploads } = this.getState()
     const currentUpload = { ...currentUploads[uploadID], result: { ...currentUploads[uploadID].result, ...data } }
     this.setState({
       currentUploads: { ...currentUploads, [uploadID]: currentUpload },
@@ -1492,7 +1530,7 @@ class Uppy {
    *
    * @param {string} uploadID The ID of the upload.
    */
-  _removeUpload (uploadID) {
+  removeUpload (uploadID) {
     const currentUploads = { ...this.getState().currentUploads }
     delete currentUploads[uploadID]
 
@@ -1506,7 +1544,7 @@ class Uppy {
    *
    * @private
    */
-  _runUpload (uploadID) {
+  runUpload (uploadID) {
     const uploadData = this.getState().currentUploads[uploadID]
     const restoreStep = uploadData.step
 
@@ -1543,8 +1581,9 @@ class Uppy {
 
         // TODO give this the `updatedUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
+        // eslint-disable-next-line consistent-return
         return fn(updatedUpload.fileIDs, uploadID)
-      }).then((result) => {
+      }).then(() => {
         return null
       })
     })
@@ -1553,7 +1592,7 @@ class Uppy {
     // promise from this method if the upload failed.
     lastStep.catch((err) => {
       this.emit('error', err, uploadID)
-      this._removeUpload(uploadID)
+      this.removeUpload(uploadID)
     })
 
     return lastStep.then(() => {
@@ -1595,11 +1634,12 @@ class Uppy {
         return
       }
       const currentUpload = currentUploads[uploadID]
-      const result = currentUpload.result
+      const { result } = currentUpload
       this.emit('complete', result)
 
-      this._removeUpload(uploadID)
+      this.removeUpload(uploadID)
 
+      // eslint-disable-next-line consistent-return
       return result
     }).then((result) => {
       if (result == null) {
@@ -1619,7 +1659,7 @@ class Uppy {
       this.log('No uploader type plugins are used', 'warning')
     }
 
-    let files = this.getState().files
+    let { files } = this.getState()
 
     const onBeforeUploadResult = this.opts.onBeforeUpload(files)
 
@@ -1637,14 +1677,15 @@ class Uppy {
     }
 
     return Promise.resolve()
-      .then(() => this._checkMinNumberOfFiles(files))
+      .then(() => this.checkMinNumberOfFiles(files))
       .catch((err) => {
-        this._showOrLogErrorAndThrow(err)
+        this.showOrLogErrorAndThrow(err)
       })
       .then(() => {
         const { currentUploads } = this.getState()
         // get a list of files that are currently assigned to uploads
-        const currentlyUploadingFiles = Object.keys(currentUploads).reduce((prev, curr) => prev.concat(currentUploads[curr].fileIDs), [])
+        const currentlyUploadingFiles = Object.keys(currentUploads)
+          .reduce((prev, curr) => prev.concat(currentUploads[curr].fileIDs), [])
 
         const waitingFileIDs = []
         Object.keys(files).forEach((fileID) => {
@@ -1655,18 +1696,18 @@ class Uppy {
           }
         })
 
-        const uploadID = this._createUpload(waitingFileIDs)
-        return this._runUpload(uploadID)
+        const uploadID = this.createUpload(waitingFileIDs)
+        return this.runUpload(uploadID)
       })
       .catch((err) => {
-        this._showOrLogErrorAndThrow(err, {
+        this.showOrLogErrorAndThrow(err, {
           showInformer: false,
         })
       })
   }
 }
 
-module.exports = function (opts) {
+module.exports = function core (opts) {
   return new Uppy(opts)
 }
 

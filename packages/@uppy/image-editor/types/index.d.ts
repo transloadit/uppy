@@ -5,6 +5,7 @@ declare module ImageEditor {
   type Actions = {
     revert: boolean
     rotate: boolean
+    granularRotate: boolean
     flip: boolean
     zoomIn: boolean
     zoomOut: boolean

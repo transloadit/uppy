@@ -665,6 +665,10 @@ Stop all uploads in progress and clear file selection, set progress to 0. Basica
 
 Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()` before uninstalling.
 
+### `uppy.logout()`
+
+Calls `provider.logout()` on each remote provider plugin (Google Drive, Instagram, etc). Useful, for example, after your users log out of their account in your app — this will clean things up with Uppy cloud providers as well, for extra security.
+
 ### `uppy.log()`
 
 #### Parameters
@@ -706,6 +710,10 @@ this.info({
 ### `uppy.on('event', action)`
 
 Subscribe to an uppy-event. See below for the full list of events.
+
+### `uppy.once('event', action)`
+
+Create an event listener that fires once. See below for the full list of events.
 
 ### `uppy.off('event', action)`
 

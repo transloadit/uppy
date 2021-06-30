@@ -43,6 +43,7 @@ class Uploader {
    * @property {any=} headers
    * @property {string=} httpMethod
    * @property {boolean=} useFormData
+   * @property {number=} chunkSize
    *
    * @param {UploaderOptions} options
    */
@@ -126,6 +127,7 @@ class Uploader {
         options: req.companion.options.providerOptions.s3,
       } : null,
       headers: req.body.headers,
+      chunkSize: req.companion.options.chunkSize,
     }
   }
 
@@ -191,6 +193,11 @@ class Uploader {
 
     if (!options.endpoint && !options.uploadUrl) {
       this._errRespMessage = 'no destination specified'
+      return false
+    }
+
+    if (options.chunkSize != null && typeof options.chunkSize !== 'number') {
+      this._errRespMessage = 'incorrect chunkSize'
       return false
     }
 
@@ -426,6 +433,7 @@ class Uploader {
       uploadLengthDeferred: false,
       retryDelays: [0, 1000, 3000, 5000],
       uploadSize: this.bytesWritten,
+      chunkSize: this.options.chunkSize || Infinity,
       headers: headerSanitize(this.options.headers),
       addRequestId: true,
       metadata: {

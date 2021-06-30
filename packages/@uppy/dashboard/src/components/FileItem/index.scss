@@ -44,6 +44,34 @@
   }
 }
 
+  .uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-previewInnerWrap {
+    opacity: 0.2;
+  }
+
+  .uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-name {
+    opacity: 0.7;
+  }
+
+  .uppy-Dashboard-Item.is-ghost .uppy-Dashboard-Item-preview:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='35' height='39' viewBox='0 0 35 39'%3E%3Cpath d='M1.708 38.66c1.709 0 3.417-3.417 6.834-3.417 3.416 0 5.125 3.417 8.61 3.417 3.348 0 5.056-3.417 8.473-3.417 4.305 0 5.125 3.417 6.833 3.417.889 0 1.709-.889 1.709-1.709v-19.68C34.167-5.757 0-5.757 0 17.271v19.68c0 .82.888 1.709 1.708 1.709zm8.542-17.084a3.383 3.383 0 01-3.417-3.416 3.383 3.383 0 013.417-3.417 3.383 3.383 0 013.417 3.417 3.383 3.383 0 01-3.417 3.416zm13.667 0A3.383 3.383 0 0120.5 18.16a3.383 3.383 0 013.417-3.417 3.383 3.383 0 013.416 3.417 3.383 3.383 0 01-3.416 3.416z' fill='%2523000' fill-rule='nonzero'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 50% 10px;
+    background-size: 25px;
+    z-index: $zIndex-5;
+    opacity: 0.5;
+
+    .uppy-size--md & {
+      background-size: 40px;
+      background-position: 50% 50%;
+    }
+  }
+
   .uppy-Dashboard-Item-preview {
     // for the FileProgress.js icons
     position: relative;

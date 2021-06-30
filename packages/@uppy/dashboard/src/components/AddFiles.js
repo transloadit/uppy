@@ -77,7 +77,7 @@ class AddFiles extends Component {
       >
         <button
           type="button"
-          className="uppy-DashboardTab-btn"
+          className="uppy-u-reset uppy-c-btn uppy-DashboardTab-btn"
           role="tab"
           tabIndex={0}
           data-uppy-super-focusable
@@ -165,6 +165,10 @@ class AddFiles extends Component {
       }
     }
 
+    if (this.props.disableLocalFiles) {
+      titleText = this.props.i18n('importFiles')
+    }
+
     return (
       <div className="uppy-Dashboard-AddFiles-title">
         {titleText}
@@ -181,7 +185,7 @@ class AddFiles extends Component {
       >
         <button
           type="button"
-          className="uppy-DashboardTab-btn"
+          className="uppy-u-reset uppy-c-btn uppy-DashboardTab-btn"
           role="tab"
           tabIndex={0}
           aria-controls={`uppy-DashboardContent-panel--${acquirer.id}`}
@@ -196,7 +200,7 @@ class AddFiles extends Component {
     )
   }
 
-  renderAcquirers = (acquirers) => {
+  renderAcquirers = (acquirers, disableLocalFiles) => {
     // Group last two buttons, so we don’t end up with
     // just one button on a new line
     const acquirersWithoutLastTwo = [...acquirers]
@@ -204,7 +208,7 @@ class AddFiles extends Component {
 
     return (
       <div className="uppy-Dashboard-AddFiles-list" role="tablist">
-        {this.renderMyDeviceAcquirer()}
+        {!disableLocalFiles && this.renderMyDeviceAcquirer()}
         {acquirersWithoutLastTwo.map((acquirer) => this.renderAcquirer(acquirer))}
         <span role="presentation" style="white-space: nowrap;">
           {lastTwoAcquirers.map((acquirer) => this.renderAcquirer(acquirer))}
@@ -219,7 +223,7 @@ class AddFiles extends Component {
         {this.renderHiddenInput(false, (ref) => { this.fileInput = ref })}
         {this.renderHiddenInput(true, (ref) => { this.folderInput = ref })}
         {this.renderDropPasteBrowseTagline()}
-        {this.props.acquirers.length > 0 && this.renderAcquirers(this.props.acquirers)}
+        {this.props.acquirers.length > 0 && this.renderAcquirers(this.props.acquirers, this.props.disableLocalFiles)}
         <div className="uppy-Dashboard-AddFiles-info">
           {this.props.note && <div className="uppy-Dashboard-note">{this.props.note}</div>}
           {this.props.proudlyDisplayPoweredByUppy && this.renderPoweredByUppy(this.props)}
