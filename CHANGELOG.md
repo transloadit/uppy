@@ -14,6 +14,8 @@ In the current stage we aim to release a new version at least every month.
 
 ### next
 
+- **BREAKING CHANGE**: Remove built-in polyfills for Internet Explorer and Safari ≤13.0.
+
 ## June 2021
 
 To be released: 2021-06-28

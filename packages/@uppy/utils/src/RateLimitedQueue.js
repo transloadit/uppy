@@ -4,7 +4,7 @@ function createCancelError () {
   return new Error('Cancelled')
 }
 
-module.exports = class RateLimitedQueue {
+class RateLimitedQueue {
   constructor (limit) {
     if (typeof limit !== 'number' || limit === 0) {
       this.limit = Infinity
@@ -152,4 +152,9 @@ module.exports = class RateLimitedQueue {
       return outerPromise
     }
   }
+}
+
+module.exports = {
+  RateLimitedQueue,
+  internalRateLimitedQueue: Symbol('__queue'),
 }

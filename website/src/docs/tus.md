@@ -15,8 +15,7 @@ import Tus from '@uppy/tus'
 
 uppy.use(Tus, {
   endpoint: 'https://tusd.tusdemo.net/files/', // use your tus endpoint here
-  resume: true,
-  retryDelays: [0, 1000, 3000, 5000],
+  retryDelays: [0, 1000, 3000, 5000]
 })
 ```
 
@@ -41,18 +40,6 @@ const Tus = Uppy.Tus
 ### `id: 'Tus'`
 
 A unique identifier for this plugin. It defaults to `'Tus'`.
-
-### `resume: true`
-
-A boolean indicating whether Tus should attempt to resume the upload if the upload has been started in the past. This includes storing the file’s upload URL. Set to false to force an entire reupload.
-
-Note that this option is about resuming when you start an upload again with the same file, or when using the [GoldenRetriever](/docs/golden-retriever/) plugin, which will attempt to restore upload state to what it was before page refresh / browser crash. Even if you set `resume: false` when using the Tus uploader, users will still be able to pause/resume an ongoing upload.
-
-In most cases you should leave this option as is, relax, and enjoy resumable uploads.
-
-### `removeFingerprintOnSuccess: false`
-
-If the `resume` option is enabled, it will store some data in localStorage for each upload. With `removeFingerprintOnSuccess`, this data is removed once an upload has completed. The effect is that if the same file is uploaded again, it will create an entirely new upload.
 
 ### `endpoint: ''`
 

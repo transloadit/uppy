@@ -43,29 +43,10 @@ function isImageMimeType (mimeType) {
   return /^image\/[^*]+$/.test(mimeType)
 }
 
-/**
- * Setup getUserMedia, with polyfill for older browsers
- * Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
- */
 function getMediaDevices () {
+  // bug in the compatibility data
   // eslint-disable-next-line compat/compat
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    // eslint-disable-next-line compat/compat
-    return navigator.mediaDevices
-  }
-
-  const getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia
-  if (!getUserMedia) {
-    return null
-  }
-
-  return {
-    getUserMedia (opts) {
-      return new Promise((resolve, reject) => {
-        getUserMedia.call(navigator, opts, resolve, reject)
-      })
-    },
-  }
+  return navigator.mediaDevices
 }
 /**
  * Webcam
@@ -207,7 +188,7 @@ module.exports = class Webcam extends UIPlugin {
           || this.opts.modes.indexOf('picture') !== -1)
 
     const videoConstraints = {
-      ...(this.opts.videoConstraints ?? { facingMode: this.opts.facingMode }),
+      ...(this.opts.videoConstraints || { facingMode: this.opts.facingMode }),
       // facingMode takes precedence over deviceId, and not needed
       // when specific device is selected
       ...(deviceId ? { deviceId, facingMode: null } : {}),

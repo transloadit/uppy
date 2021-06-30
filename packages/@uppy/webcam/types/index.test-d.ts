@@ -3,13 +3,13 @@ import Uppy = require('@uppy/core')
 import Webcam = require('../')
 
 {
-  Uppy<Uppy.StrictTypes>().use(Webcam, {
+  Uppy().use(Webcam, {
     modes: ['video-only']
   })
 }
 
 {
-  Uppy<Uppy.StrictTypes>().use(Webcam, {
+  Uppy().use(Webcam, {
     modes: ['video-only'],
     videoConstraints: {
       width: { min: 420, ideal: 420, max: 1920 },
@@ -19,7 +19,7 @@ import Webcam = require('../')
 }
 
 {
-  expectError(Uppy<Uppy.StrictTypes>().use(Webcam, {
+  expectError(Uppy().use(Webcam, {
     modes: ['video-only'],
     videoConstraints: {
       width: 'not a number har har'

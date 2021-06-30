@@ -5,7 +5,7 @@ import * as components from '../'
 
 const { useUppy } = components
 
-const uppy = Uppy<Uppy.StrictTypes>()
+const uppy = Uppy()
 
 function TestComponent() {
     return (
@@ -60,7 +60,7 @@ expectError(<components.DashboardModal replaceTargetContent />)
 }
 
 function TestHook () {
-  expectType<Uppy.Uppy<Uppy.StrictTypes>>(useUppy(() => uppy))
-  expectType<Uppy.Uppy<Uppy.LooseTypes>>(useUppy(() => Uppy()))
+  expectType<Uppy.Uppy>(useUppy(() => uppy))
+  expectType<Uppy.Uppy>(useUppy(() => Uppy()))
   expectError(useUppy(uppy))
 }

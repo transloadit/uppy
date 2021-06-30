@@ -1,5 +1,3 @@
-require('es6-promise/auto')
-require('whatwg-fetch')
 const Uppy = require('@uppy/core')
 const DragDrop = require('@uppy/drag-drop')
 const XHRUpload = require('@uppy/xhr-upload')

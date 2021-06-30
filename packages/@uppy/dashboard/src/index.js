@@ -11,7 +11,6 @@ const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const getTextDirection = require('@uppy/utils/lib/getTextDirection')
 const trapFocus = require('./utils/trapFocus')
 const cuid = require('cuid')
-const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const createSuperFocus = require('./utils/createSuperFocus')
 const memoize = require('memoize-one').default || require('memoize-one')
 const FOCUSABLE_ELEMENTS = require('@uppy/utils/lib/FOCUSABLE_ELEMENTS')
@@ -871,53 +870,20 @@ module.exports = class Dashboard extends UIPlugin {
   render = (state) => {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
+    const {
+      newFiles,
+      uploadStartedFiles,
+      completeFiles,
+      erroredFiles,
+      inProgressFiles,
+      inProgressNotPausedFiles,
+      processingFiles,
 
-    // TODO: move this to Core, to share between Status Bar and Dashboard
-    // (and any other plugin that might need it, too)
-    const newFiles = Object.keys(files).filter((file) => {
-      return !files[file].progress.uploadStarted
-    })
-
-    const uploadStartedFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadStarted
-    })
-
-    const pausedFiles = Object.keys(files).filter((file) => {
-      return files[file].isPaused
-    })
-
-    const completeFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadComplete
-    })
-
-    const erroredFiles = Object.keys(files).filter((file) => {
-      return files[file].error
-    })
-
-    const inProgressFiles = Object.keys(files).filter((file) => {
-      return !files[file].progress.uploadComplete
-             && files[file].progress.uploadStarted
-    })
-
-    const inProgressNotPausedFiles = inProgressFiles.filter((file) => {
-      return !files[file].isPaused
-    })
-
-    const processingFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.preprocess || files[file].progress.postprocess
-    })
-
-    const isUploadStarted = uploadStartedFiles.length > 0
-
-    const isAllComplete = state.totalProgress === 100
-      && completeFiles.length === Object.keys(files).length
-      && processingFiles.length === 0
-
-    const isAllErrored = isUploadStarted
-      && erroredFiles.length === uploadStartedFiles.length
-
-    const isAllPaused = inProgressFiles.length !== 0
-      && pausedFiles.length === inProgressFiles.length
+      isUploadStarted,
+      isAllComplete,
+      isAllErrored,
+      isAllPaused,
+    } = this.uppy.getObjectOfFilesPerState()
 
     const acquirers = this._getAcquirers(pluginState.targets)
     const progressindicators = this._getProgressIndicators(pluginState.targets)
