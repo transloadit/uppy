@@ -30,6 +30,7 @@
     "website"
   ],
   "devDependencies": {
+    "@angular-devkit/build-angular": "0.1102.14",
     "@babel/cli": "7.10.5",
     "@babel/core": "7.11.1",
     "@babel/eslint-parser": "7.11.3",
@@ -88,6 +89,10 @@
     "isomorphic-fetch": "2.2.1",
     "jest": "26.4.0",
     "json3": "3.3.3",
+    "karma-chrome-launcher": "3.1.0",
+    "karma-coverage-istanbul-reporter": "3.0.3",
+    "karma-jasmine": "4.0.1",
+    "karma-jasmine-html-reporter": "1.6.0",
     "last-commit-message": "1.0.0",
     "lerna": "^3.22.1",
     "lint-staged": "9.5.0",
@@ -138,7 +143,8 @@
     "build:companion": "npm run --prefix ./packages/@uppy/companion build",
     "build:css": "node ./bin/build-css.js",
     "build:svelte": "npm run --prefix ./packages/@uppy/svelte build",
-    "build:js": "npm-run-all build:lib build:svelte build:companion build:locale-pack build:bundle",
+    "build:angular": "npm run --prefix ./packages/@uppy/angular build",
+    "build:js": "npm-run-all build:lib build:svelte build:angular build:companion build:locale-pack build:bundle",
     "build:lib": "node ./bin/build-lib.js",
     "build:locale-pack": "node ./bin/locale-packs.js build",
     "build": "npm-run-all --parallel build:js build:css --serial size",
@@ -165,7 +171,7 @@
     "test:endtoend:registry": "verdaccio --listen 4002 --config test/endtoend/verdaccio.yaml",
     "test:endtoend": "npm run test:endtoend:prepare-ci && wdio test/endtoend/wdio.remote.conf.js",
     "test:locale-packs": "node ./bin/locale-packs.js test",
-    "test:type": "lerna exec --scope '@uppy/*' --ignore '@uppy/{react-native,locales,companion,provider-views,robodog,svelte}' tsd",
+    "test:type": "lerna exec --scope '@uppy/*' --ignore '@uppy/{react-native,locales,companion,provider-views,robodog,svelte,angular}' tsd",
     "test:unit": "npm run build:lib && jest",
     "test:watch": "jest --watch",
     "test:size": "size-limit",
@@ -198,5 +204,8 @@
     "testMatch": [
       "**/packages/**/*.test.js"
     ]
+  },
+  "dependencies": {
+    "rxjs": "6.6"
   }
 }
