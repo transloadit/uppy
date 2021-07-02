@@ -78,7 +78,7 @@ Released: 2021-07-01
 - @uppy/core: add types for uppy.once method (#2965 / @a-kriya)
 - @uppy/core: enrich error event for use from postproocessor (#2909 / @aduh95)
 - @uppy/react-native: refactor takePictureWithExpo (#2946 / @aduh95)
-- @uppy: fixed standalone server to initiate itself on explicit function (#2920 / @Cruaier)
+- @uppy/companion: fixed standalone server to initiate itself on explicit function (#2920 / @Cruaier)
 - @uppy/google-drive: Google drive shortcuts (#2917 / @mifi)
 - @uppy/react: allowed HTML Attributes to be passed via props (#2891 / @ajkachnic)
 - @uppy/drag-drop: Expose drag-drop events (#2914 / @Murderlon)
