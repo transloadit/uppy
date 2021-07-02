@@ -144,7 +144,7 @@
     "build:css": "node ./bin/build-css.js",
     "build:svelte": "npm run --prefix ./packages/@uppy/svelte build",
     "build:angular": "npm run --prefix ./packages/@uppy/angular build",
-    "build:js": "npm-run-all build:lib build:locale-pack build:svelte build:angular build:companion build:bundle",
+    "build:js": "npm-run-all build:lib build:companion build:locale-pack build:svelte build:angular build:bundle",
     "build:lib": "node ./bin/build-lib.js",
     "build:locale-pack": "node ./bin/locale-packs.js build",
     "build": "npm-run-all --parallel build:js build:css --serial size",
