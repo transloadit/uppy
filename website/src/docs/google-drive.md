@@ -36,7 +36,7 @@ npm install @uppy/google-drive
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const GoogleDrive = Uppy.GoogleDrive
+const { GoogleDrive } = Uppy
 ```
 
 ## Setting  Up
@@ -53,9 +53,9 @@ companion.app({
   providerOptions: {
     drive: {
       key: 'Google Drive OAuth client ID',
-      secret: 'Google Drive OAuth client secret'
-    }
-  }
+      secret: 'Google Drive OAuth client secret',
+    },
+  },
 })
 ```
 
@@ -126,7 +126,9 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
-  // TODO
+const locale = {
+  strings:{
+    // TODO
+  },
 }
 ```

@@ -36,7 +36,7 @@ npm install @uppy/progress-bar
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const ProgressBar = Uppy.ProgressBar
+const { ProgressBar } = Uppy
 ```
 
 ## CSS
@@ -60,7 +60,7 @@ The `@uppy/progress-bar` plugin has the following configurable options:
 uppy.use(ProgressBar, {
   target: '.UploadForm',
   fixed: false,
-  hideAfterFinish: true
+  hideAfterFinish: true,
 })
 ```
 
@@ -79,7 +79,7 @@ When set to true, show the progress bar at the top of the page with `position: f
 ```js
 uppy.use(ProgressBar, {
   target: 'body',
-  fixed: true
+  fixed: true,
 })
 ```
 

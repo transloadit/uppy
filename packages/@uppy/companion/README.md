@@ -29,37 +29,35 @@ import bodyParser from 'body-parser'
 import session from 'express-session'
 import companion from '@uppy/companion'
 
-var app = express()
+const app = express()
 app.use(bodyParser.json())
-app.use(session({secret: 'some secrety secret'}))
-...
+app.use(session({ secret: 'some secrety secret' }))
+// ...
 // be sure to place this anywhere after app.use(bodyParser.json()) and app.use(session({...})
 const options = {
   providerOptions: {
     google: {
       key: 'GOOGLE_KEY',
-      secret: 'GOOGLE_SECRET'
-    }
+      secret: 'GOOGLE_SECRET',
+    },
   },
   server: {
     host: 'localhost:3020',
     protocol: 'http',
   },
-  filePath: '/path/to/folder/'
+  filePath: '/path/to/folder/',
 }
 
 app.use(companion.app(options))
-
 ```
 
 To enable companion socket for realtime feed to the client while upload is going on, you call the `socket` method like so.
 
 ```javascript
-...
-var server = app.listen(PORT)
+// ...
+const server = app.listen(PORT)
 
 companion.socket(server, options)
-
 ```
 
 ### Run as standalone server
@@ -79,7 +77,8 @@ npm start
 ### Deploy to heroku
 
 Companion can also be deployed to [Heroku](https://www.heroku.com)
-```
+
+```sh
 mkdir uppy-companion && cd uppy-companion
 
 git init
@@ -105,7 +104,7 @@ heroku create
 
 git push heroku master
 ```
-Make sure you set the required [environment variables](https://uppy.io/docs/companion/#Configure-Standalone).
 
+Make sure you set the required [environment variables](https://uppy.io/docs/companion/#Configure-Standalone).
 
 See [full documentation](https://uppy.io/docs/companion/)

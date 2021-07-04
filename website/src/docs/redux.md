@@ -20,13 +20,13 @@ import createReduxStore from '@uppy/store-redux'
 
 const reducer = combineReducers({
   ...reducers,
-  uppy: ReduxStore.reducer
+  uppy: ReduxStore.reducer,
 })
 
 const uppy = new Uppy({
   store: createReduxStore({
-    store: createStore(reducer) // That’s a lot of stores!
-  })
+    store: createStore(reducer), // That’s a lot of stores!
+  }),
 })
 ```
 
@@ -46,8 +46,8 @@ const uppy = new Uppy({
   debug: true,
   meta: {
     username: 'John',
-    license: 'Creative Commons'
-  }
+    license: 'Creative Commons',
+  },
 })
   .use(XHRUpload, { endpoint: 'https://example.com' })
   .use(ReduxDevTools)

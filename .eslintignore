@@ -12,3 +12,4 @@ website/themes/uppy/source/uppy/**
 test/endtoend/*/build
 examples/dev/output
 bundle.js
+website/src/_posts/*.md

@@ -40,8 +40,8 @@ import postcss from 'postcss-import'
 
 export default {
   plugins: [
-    postcss
-  ]
+    postcss,
+  ],
 }
 ```
 
@@ -52,8 +52,8 @@ import preprocess from 'svelte-preprocess'
 // ...
 svelte({
   preprocess: preprocess({
-    postcss: true
-  })
+    postcss: true,
+  }),
 })
 // ...
 ```
@@ -78,7 +78,7 @@ import { Dashboard } from '@uppy/svelte'
 import Uppy from '@uppy/core'
 import Webcam from '@uppy/webcam'
 
-let uppy = new Uppy().use(Webcam);
+const uppy = new Uppy().use(Webcam);
 </script>
 ```
 
@@ -100,7 +100,7 @@ Due to the way Svelte handles reactivity, you can simply initialize Uppy the sam
 import Uppy from '@uppy/core'
 import Webcam from '@uppy/webcam'
 
-let uppy = new Uppy().use(Webcam)
+const uppy = new Uppy().use(Webcam)
 ```
 
 ## Components

@@ -36,7 +36,7 @@ npm install @uppy/box
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Box = Uppy.Box
+const { Box } = Uppy
 ```
 
 ## Setting Up
@@ -53,9 +53,9 @@ companion.app({
   providerOptions: {
     box: {
       key: 'Box API key',
-      secret: 'Box API secret'
-    }
-  }
+      secret: 'Box API secret',
+    },
+  },
 })
 ```
 
@@ -129,7 +129,9 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
-  // TODO
+const locales = {
+  strings: {
+    // TODO
+  },
 }
 ```

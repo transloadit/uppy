@@ -19,7 +19,7 @@ const uppy = new Uppy()
 uppy.use(Webcam, {
   mirror: true,
   facingMode: 'user',
-  showRecordingLength: true
+  showRecordingLength: true,
 })
 ```
 

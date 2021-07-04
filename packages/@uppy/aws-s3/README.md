@@ -19,7 +19,7 @@ const uppy = new Uppy()
 uppy.use(AwsS3, {
   limit: 2,
   timeout: ms('1 minute'),
-  companionUrl: 'https://companion.myapp.com/'
+  companionUrl: 'https://companion.myapp.com/',
 })
 ```
 

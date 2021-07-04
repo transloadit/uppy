@@ -16,7 +16,6 @@ import Plugin from '@uppy/core/lib/plugin'
 import { ProviderViews } from '@uppy/provider-views'
 
 class GoogleDrive extends UIPlugin {
-  constructor () { /* snip */ }
   install () {
     this.view = new ProviderViews(this)
     // snip
@@ -25,7 +24,7 @@ class GoogleDrive extends UIPlugin {
   onFirstRender () {
     return Promise.all([
       this.provider.fetchPreAuthToken(),
-      this.view.getFolder('root', '/')
+      this.view.getFolder('root', '/'),
     ])
   }
 

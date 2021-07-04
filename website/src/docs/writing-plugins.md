@@ -23,6 +23,7 @@ The plugin constructor receives the Uppy instance in the first parameter, and an
 
 ```js
 import { UIPlugin } from '@uppy/core'
+
 export default class MyPlugin extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -43,9 +44,12 @@ All of the below methods are optional! Only implement the methods you need.
 Called when the plugin is `.use`d. Do any setup work here, like attaching events or adding [upload hooks](#Upload-Hooks).
 
 ```js
-install () {
-  this.uppy.on('upload-progress', this.onProgress)
-  this.uppy.addPostProcessor(this.afterUpload)
+export default class MyPlugin extends UIPlugin {
+  // ...
+  install () {
+    this.uppy.on('upload-progress', this.onProgress)
+    this.uppy.addPostProcessor(this.afterUpload)
+  }
 }
 ```
 
@@ -54,9 +58,12 @@ install () {
 Called when the plugin is removed, or the Uppy instance is closed. This should undo all of the work done in the `install()` method.
 
 ```js
-uninstall () {
-  this.uppy.off('upload-progress', this.onProgress)
-  this.uppy.removePostProcessor(this.afterUpload)
+export default class MyPlugin extends UIPlugin {
+  // ...
+  uninstall () {
+    this.uppy.off('upload-progress', this.onProgress)
+    this.uppy.removePostProcessor(this.afterUpload)
+  }
 }
 ```
 
@@ -84,6 +91,7 @@ class MyPlugin extends UIPlugin {
   }
 
   prepareUpload (fileIDs) {
+    console.log(this) // `this` refers to the `MyPlugin` instance.
     return Promise.resolve()
   }
 
@@ -188,6 +196,7 @@ Since Uppy uses Preact and not React, the default Babel configuration for JSX el
 
 See the Preact [Getting Started Guide](https://preactjs.com/guide/getting-started) for more on Babel and JSX.
 
+<!-- eslint-disable jsdoc/check-tag-names -->
 ```js
 /** @jsx h */
 import { UIPlugin } from '@uppy/core'
@@ -199,7 +208,9 @@ class NumFiles extends UIPlugin {
 
     return (
       <div>
-        Number of files: {numFiles}
+        Number of files:
+        {' '}
+        {numFiles}
       </div>
     )
   }
@@ -217,9 +228,9 @@ this.defaultLocale = {
     youCanOnlyUploadX: {
       0: 'You can only upload %{smart_count} file',
       1: 'You can only upload %{smart_count} files',
-      2: 'You can only upload %{smart_count} files'
-    }
-  }
+      2: 'You can only upload %{smart_count} files',
+    },
+  },
 }
 ```
 
@@ -227,7 +238,7 @@ This allows them to be overridden by Locale Packs, or directly when users pass `
 
 ```js
 // i18n
-this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
+this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
 this.i18n = this.translator.translate.bind(this.translator)
 this.i18nArray = this.translator.translateArray.bind(this.translator)
 // ^-- Only if you're using i18nArray, which allows you to pass in JSX Components as well.
@@ -237,6 +248,7 @@ this.i18nArray = this.translator.translateArray.bind(this.translator)
 
 Below is a full example of a [simple plugin](https://github.com/arturi/uppy-plugin-image-compressor) that compresses images before uploading them. You can replace `compressorjs` method with any other work you need to do. This works especially well for async stuff, like calling an external API.
 
+<!-- eslint-disable consistent-return -->
 ```js
 import { UIPlugin } from '@uppy/core'
 import Translator from '@uppy/utils/lib/Translator'
@@ -250,15 +262,15 @@ class UppyImageCompressor extends UIPlugin {
 
     this.defaultLocale = {
       strings: {
-        compressingImages: 'Compressing images...'
-      }
+        compressingImages: 'Compressing images...',
+      },
     }
 
     const defaultOptions = {
-      quality: 0.6
+      quality: 0.6,
     }
 
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
     // we use those internally in `this.compress`, so they
     // should not be overriden
@@ -283,20 +295,16 @@ class UppyImageCompressor extends UIPlugin {
   }
 
   compress (blob) {
-    return new Promise((resolve, reject) => {
-      new Compressor(blob, Object.assign(
-        {},
-        this.opts,
-        {
-          success: (result) => {
-            return resolve(result)
-          },
-          error: (err) => {
-            return reject(err)
-          }
-        }
-      ))
-    })
+    return new Promise((resolve, reject) => new Compressor(blob, ({
+
+      ...this.opts,
+      success: (result) => {
+        return resolve(result)
+      },
+      error: (err) => {
+        return reject(err)
+      },
+    })))
   }
 
   prepareUpload (fileIDs) {
@@ -304,7 +312,7 @@ class UppyImageCompressor extends UIPlugin {
       const file = this.uppy.getFile(fileID)
       this.uppy.emit('preprocess-progress', file, {
         mode: 'indeterminate',
-        message: this.i18n('compressingImages')
+        message: this.i18n('compressingImages'),
       })
 
       if (file.type.split('/')[0] !== 'image') {
