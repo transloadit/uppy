@@ -18,7 +18,7 @@ const middlewares = require('../server/middlewares')
  *
  * @returns {object}
  */
-module.exports = function server (inputCompanionOptions = {}) {
+module.exports = function server (inputCompanionOptions = {}, inputMiddlewares = []) {
   const app = express()
 
   // Query string keys whose values should not end up in logging output.
@@ -161,6 +161,16 @@ module.exports = function server (inputCompanionOptions = {}) {
     app.use(process.env.COMPANION_PATH, companionApp)
   } else {
     app.use(companionApp)
+  }
+
+  // add additional middlewares if configured
+  if (inputMiddlewares.length > 0) {
+    try {
+      inputMiddlewares.forEach((middleware) => app.use(middleware))
+    } catch (error) {
+      console.error('\x1b[31m', error.message, '\x1b[0m')
+      process.exit(1)
+    }
   }
 
   // WARNING: This route is added in order to validate your app with OneDrive.
