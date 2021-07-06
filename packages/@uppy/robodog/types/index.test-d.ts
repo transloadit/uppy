@@ -38,7 +38,8 @@ const instance = Robodog.form('string', {
         template_id: ''
     },
     modal: true,
-    closeAfterFinish: true
+    closeAfterFinish: true,
+    statusbar: "target"
 })
 
 const files: File[] = []

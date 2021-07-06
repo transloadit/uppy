@@ -42,7 +42,10 @@ declare module Robodog {
 
     function pick(opts: RobodogPickOptions): Promise<RobodogResult>;
 
-    type RobodogFormOptions = RobodogOptions & Pick<Form.FormOptions, 'submitOnSuccess' | 'triggerUploadOnSubmit'> & { modal: boolean }
+    type RobodogFormOptions = RobodogOptions
+        & Pick<Form.FormOptions, 'submitOnSuccess' | 'triggerUploadOnSubmit'>
+        & { modal?: boolean, statusbar?: string }
+
 
     function form(target: string, opts: RobodogFormOptions): Uppy.Uppy
 
