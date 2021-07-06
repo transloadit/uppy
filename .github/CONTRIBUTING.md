@@ -285,7 +285,7 @@ The most important part about this is that `@uppy/core` is a peer dependency. If
 
 ### Adding TypeScript Support
 
-This section won't be too in-depth, because TypeScript depends on your framework. As general advice, prefer using `d.ts` files and vanilla JavaScript over TypeScript files. This is of course circumstantial, but it makes handling the build system a lot easier when TypeScript doesn't have to transpiled. The version of typescript in the monorepo is `3.7.5`, so features like `import type` will not work at build time. For upcoming integrations, like Angular, this may be updated.
+This section won't be too in-depth, because TypeScript depends on your framework. As general advice, prefer using `d.ts` files and vanilla JavaScript over TypeScript files. This is of course circumstantial, but it makes handling the build system a lot easier when TypeScript doesn't have to transpiled. The version of typescript in the monorepo is `4.1`.
 
 ### Writing docs
 
