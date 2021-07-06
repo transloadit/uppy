@@ -1,4 +1,5 @@
 import { Transloadit } from 'uppy'
+import {expectError} from 'tsd'
 import Robodog from '.'
 async function performPick() {
     const { successful, failed, transloadit, results } = await Robodog.pick({
@@ -30,6 +31,8 @@ async function performPick() {
 }
 
 
+
+
 const instance = Robodog.form('string', {
     submitOnSuccess: true,
     triggerUploadOnSubmit: false,
@@ -42,6 +45,16 @@ const instance = Robodog.form('string', {
     statusbar: "target"
 })
 
+//should not have access to omitted form settings
+expectError(Robodog.form('string', {
+    addResultToForm: false
+}))
+
+// target is required
+expectError(Robodog.form({
+    addResultToForm: false
+}))
+
 const files: File[] = []
 
 const upload = Robodog.upload(files, {
@@ -52,6 +65,9 @@ const upload = Robodog.upload(files, {
         template_id: ''
     }
 })
+
+// Files array is required
+expectError(Robodog.upload({debug: true}))
 
 const dashboard = Robodog.dashboard("selector", {
     debug: true,
@@ -65,4 +81,5 @@ const dashboard = Robodog.dashboard("selector", {
         console.log(result)
     })
 
-
+// selector is required
+expectError(Robodog.dashboard({ }))
