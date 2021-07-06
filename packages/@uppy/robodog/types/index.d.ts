@@ -38,14 +38,12 @@ declare module Robodog {
         transloadit: Transloadit.Assembly[],
         results?: RobodogTransloaditResult[]
     }
-    type RobodogPickOptions = RobodogOptions & { target?: string }
 
-    function pick(opts: RobodogPickOptions): Promise<RobodogResult>;
+    function pick(opts: RobodogOptions): Promise<RobodogResult>;
 
     type RobodogFormOptions = RobodogOptions
         & Pick<Form.FormOptions, 'submitOnSuccess' | 'triggerUploadOnSubmit'>
         & { modal?: boolean, statusbar?: string }
-
 
     function form(target: string, opts: RobodogFormOptions): Uppy.Uppy
 
