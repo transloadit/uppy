@@ -68,7 +68,7 @@ module.exports = class XHRUpload extends BasePlugin {
       bundle: false,
       headers: {},
       timeout: 30 * 1000,
-      limit: 0,
+      limit: 5,
       withCredentials: false,
       responseType: '',
       /**
