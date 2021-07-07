@@ -73,7 +73,7 @@ app.use(bodyParser.json())
 app.use(session({
   secret: 'some-secret',
   resave: true,
-  saveUninitialized: true
+  saveUninitialized: true,
 }))
 
 app.use((req, res, next) => {
@@ -94,16 +94,16 @@ const companionOptions = {
   providerOptions: {
     dropbox: {
       key: 'your Dropbox key',
-      secret: 'your Dropbox secret'
-    }
+      secret: 'your Dropbox secret',
+    },
   },
   server: {
     host: 'localhost:3020',
-    protocol: 'http'
+    protocol: 'http',
   },
   filePath: './output',
   secret: 'some-secret',
-  debug: true
+  debug: true,
 }
 
 app.use(companion.app(companionOptions))
@@ -117,7 +117,6 @@ companion.socket(app.listen(3020), companionOptions)
 
 console.log('Welcome to Companion!')
 console.log(`Listening on http://0.0.0.0:3020`)
-
 ```
 
 The code snippet above sets up an express server and plugs Companion into it. However, the Companion setup doesn't include a custom provider yet. It only includes the Dropbox provider.
@@ -156,7 +155,7 @@ class MyCustomProvider {
   constructor (options) {
     this.authProvider = 'myunsplash' // the name of our provider (lowercased)
   }
-  ...
+  // ...
 }
 ```
 
@@ -272,6 +271,7 @@ With all of this put together the entire file would look something like this:
 
 ```js
 const request = require('request')
+
 const BASE_URL = 'https://api.unsplash.com'
 
 class MyCustomProvider {
@@ -286,8 +286,8 @@ class MyCustomProvider {
       method: 'GET',
       json: true,
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     }
 
     request(options, (err, resp, body) => {
@@ -307,8 +307,8 @@ class MyCustomProvider {
       method: 'GET',
       json: true,
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     }
 
     request(options, (err, resp, body) => {
@@ -331,8 +331,8 @@ class MyCustomProvider {
       method: 'GET',
       json: true,
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     }
 
     request(options, (err, resp, body) => {
@@ -350,14 +350,14 @@ class MyCustomProvider {
     const data = {
       username: null,
       items: [],
-      nextPagePath: null
+      nextPagePath: null,
     }
 
     const items = res
     items.forEach((item) => {
       const isFolder = !!item.published_at
       data.items.push({
-        isFolder: isFolder,
+        isFolder,
         icon: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
         name: item.title || item.description,
         mimeType: isFolder ? null : 'image/jpeg',
@@ -365,7 +365,7 @@ class MyCustomProvider {
         thumbnail: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
         requestPath: item.id,
         modifiedDate: item.updated_at,
-        size: null
+        size: null,
       })
     })
 
@@ -384,8 +384,8 @@ const uppyOptions = {
   providerOptions: {
     dropbox: {
       key: 'your Dropbox key',
-      secret: 'your Dropbox secret'
-    }
+      secret: 'your Dropbox secret',
+    },
   },
   customProviders: {
     myunsplash: {
@@ -398,16 +398,16 @@ const uppyOptions = {
         secret: 'YOUR UNSPLASH API SECRET',
       },
       // you provider module
-      module: require('./customprovider')
-    }
+      module: require('./customprovider'),
+    },
   },
   server: {
     host: 'localhost:3020',
-    protocol: 'http'
+    protocol: 'http',
   },
   filePath: './output',
   secret: 'some-secret',
-  debug: true
+  debug: true,
 }
 ```
 
@@ -443,7 +443,7 @@ module.exports = class MyCustomProvider extends Plugin {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
       provider: 'myunsplash',
-      pluginId: this.id
+      pluginId: this.id,
     })
 
     this.files = []
@@ -451,15 +451,15 @@ module.exports = class MyCustomProvider extends Plugin {
     this.render = this.render.bind(this)
 
     // merge default options with the ones set by user
-    this.opts = Object.assign({}, opts)
+    this.opts = { ...opts }
   }
 
   install () {
     this.view = new ProviderViews(this, {
-      provider: this.provider
+      provider: this.provider,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
@@ -490,25 +490,25 @@ With that done, we can now use our new plugin with Uppy. Create a file `client/m
 const Uppy = require('@uppy/core')
 const Dropbox = require('@uppy/dropbox')
 const Tus = require('@uppy/tus')
-const MyCustomProvider = require('./MyCustomProvider')
 const Dashboard = require('@uppy/dashboard')
+const MyCustomProvider = require('./MyCustomProvider')
 
 const uppy = Uppy({
-  debug: true
+  debug: true,
 })
 
 uppy.use(Dropbox, {
-  companionUrl: 'http://localhost:3020'
+  companionUrl: 'http://localhost:3020',
 })
 
 uppy.use(MyCustomProvider, {
-  companionUrl: 'http://localhost:3020'
+  companionUrl: 'http://localhost:3020',
 })
 
 uppy.use(Dashboard, {
   inline: true,
   target: 'body',
-  plugins: ['Dropbox', 'MyCustomProvider']
+  plugins: ['Dropbox', 'MyCustomProvider'],
 })
 
 uppy.use(Tus, { endpoint: 'https://master.tus.io/files/' })
@@ -526,12 +526,12 @@ module.exports = (api) => {
     presets: [
       ['@babel/preset-env', {
         modules: false,
-        loose: true
-      }]
+        loose: true,
+      }],
     ],
     plugins: [
       ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
-    ].filter(Boolean)
+    ].filter(Boolean),
   }
 }
 ```
