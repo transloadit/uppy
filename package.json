@@ -64,7 +64,6 @@
     "browserify": "^17.0.0",
     "chai": "4.2.0",
     "chalk": "^4.1.1",
-    "cheerio-select-tmp": "^0.1.1",
     "concat-stream": "^2.0.0",
     "cssnano": "^5.0.6",
     "deep-freeze": "^0.0.1",
