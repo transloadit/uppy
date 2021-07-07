@@ -10,10 +10,10 @@
     "@octokit/rest": "16.43.1",
     "@transloadit/prettier-bytes": "0.0.7",
     "aliasify": "^2.1.0",
-    "autoprefixer": "^9.5.1",
+    "autoprefixer": "^10.2.6",
     "babelify": "^10.0.0",
-    "browserify": "^16.5.2",
     "browser-resolve": "2.0.0",
+    "browserify": "^17.0.0",
     "chalk": "2.4.2",
     "cssnano": "^4.1.10",
     "drag-drop": "^4.2.0",
@@ -39,14 +39,13 @@
     "js-yaml": "^3.13.1",
     "marked": "^0.7.0",
     "mdast-util-inject": "1.1.0",
-    "mkdirp": "0.5.1",
     "multi-glob": "^1.0.2",
     "node-notifier": "^8.0.1",
     "postcss-inline-svg": "^3.1.1",
     "prismjs": "^1.17.1",
     "sass": "^1.29.0",
     "touch": "3.1.0",
-    "watchify": "^3.11.0"
+    "watchify": "^4.0.0"
   },
   "scripts": {
     "hexo": "hexo"

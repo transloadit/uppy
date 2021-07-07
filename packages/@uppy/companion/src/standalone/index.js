@@ -67,7 +67,12 @@ module.exports = function server (inputCompanionOptions = {}) {
   morgan.token('referrer', (req, res) => {
     const ref = req.headers.referer || req.headers.referrer
     if (typeof ref === 'string') {
-      const parsed = new URL(ref)
+      let parsed
+      try {
+        parsed = new URL(ref)
+      } catch (_) {
+        return ref
+      }
       const rawQuery = qs.parse(parsed.search.replace('?', ''))
       const { query, censored } = censorQuery(rawQuery)
       return censored ? `${parsed.href.split('?')[0]}?${qs.stringify(query)}` : parsed.href

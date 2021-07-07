@@ -1,7 +1,7 @@
 /* global globalThis */
 const Core = require('@uppy/core')
 const StatusBarPlugin = require('@uppy/status-bar')
-const GoogleDrivePlugin = require('@uppy/google-drive')
+const GoogleDrivePlugin = require('@uppy/google-drive') // eslint-disable-line
 const DashboardPlugin = require('./index')
 
 describe('Dashboard', () => {

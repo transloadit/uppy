@@ -38,6 +38,7 @@ const defaultOptions = {
     },
   },
   debug: true,
+  logClientVersion: true,
 }
 
 // make the errors available publicly for custom providers
@@ -170,7 +171,9 @@ const getOptionsMiddleware = (options) => {
       buildURL: getURLBuilder(options),
     }
 
-    logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
+    if (options.logClientVersion) {
+      logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
+    }
     next()
   }
 

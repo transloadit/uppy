@@ -75,21 +75,7 @@ Pass an array of field names to limit the metadata fields that will be added to 
 * Set this to `null` (the default) to send *all* metadata fields.
 * Set this to an empty array `[]` to not send any fields.
 
-### `autoRetry: true`
-
-> This option may be removed in Uppy 2.0. Consider implementing the feature manually:
->
-> ```js
-> uppy.on('back-online', () => {
->   uppy.retryAll()
-> })
-> ```
-
-Configures whether or not to auto-retry the upload when the user's internet connection is back online after an outage.
-
-Note that this is unrelated to the `retryDelays` option. The `retryDelays` option specifies how often to retry an upload that failed. The `autoRetry` option attempts to retry uploads that failed in the past, once the network has changed.
-
-### `limit: 0`
+### `limit: 5`
 
 Limit the amount of uploads going on at the same time. Setting this to `0` means there is no limit on concurrent uploads.
 

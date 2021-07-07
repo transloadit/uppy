@@ -60,7 +60,8 @@ function buildPluginsList () {
     if (pluginName === 'locales'
         || pluginName === 'react-native'
         || pluginName === 'vue'
-        || pluginName === 'svelte') {
+        || pluginName === 'svelte'
+        || pluginName === 'angular') {
       continue
     }
     const Plugin = require(dirName)
