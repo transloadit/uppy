@@ -718,16 +718,6 @@ uppy.on('file-removed', (file, reason) => {
 })
 ```
 
-```js
-uppy.on('file-removed', (file, reason) => {
-  removeFileFromUploadingCounterUI(file)
-
-  if (reason === 'removed-by-user') {
-    sendDeleteRequestForFile(file)
-  }
-})
-```
-
 ### `upload`
 
 Fired when upload starts.

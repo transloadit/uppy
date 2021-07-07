@@ -1,5 +1,5 @@
-import UppyUtils = require('@uppy/utils')
-import { Reducer, Middleware, Store as Redux } from 'redux'
+import type { Store } from '@uppy/utils'
+import type { Reducer, Middleware, Store as Redux } from 'redux'
 
 declare namespace ReduxStore {
   interface ReduxStoreOptions {
@@ -8,7 +8,7 @@ declare namespace ReduxStore {
     selector?: (state: any) => object
   }
 
-  interface ReduxStore extends UppyUtils.Store {
+  interface ReduxStore extends Store {
     constructor (opts: ReduxStoreOptions): ReduxStore
     getState (): object
     setState (patch: object): void
@@ -19,8 +19,9 @@ declare namespace ReduxStore {
   const middleware: Middleware
   const STATE_UPDATE: string
 }
+
 declare function ReduxStore (
   opts: ReduxStore.ReduxStoreOptions
 ): ReduxStore.ReduxStore
 
-export = ReduxStore
+export default ReduxStore

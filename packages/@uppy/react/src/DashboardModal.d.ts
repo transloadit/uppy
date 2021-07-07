@@ -1,5 +1,5 @@
 import { Omit, ToUppyProps } from './CommonTypes'
-import Dashboard = require('@uppy/dashboard')
+import Dashboard from '@uppy/dashboard'
 
 // This type is mapped into `DashboardModalProps` below so IntelliSense doesn't display this big mess of nested types
 type DashboardModalPropsInner = {

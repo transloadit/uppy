@@ -1,22 +1,23 @@
 import { expectError, expectType } from 'tsd'
-import Uppy = require('@uppy/core')
-import AwsS3Multipart = require('../')
+import Uppy from '@uppy/core'
+import type { UppyFile } from '@uppy/core'
+import AwsS3Multipart from '../'
 
 {
-  const uppy = Uppy()
+  const uppy = new Uppy()
   uppy.use(AwsS3Multipart, {
     createMultipartUpload (file) {
-      expectType<Uppy.UppyFile>(file)
+      expectType<UppyFile>(file)
       return { uploadId: '', key: '' }
     },
     listParts (file, opts) {
-      expectType<Uppy.UppyFile>(file)
+      expectType<UppyFile>(file)
       expectType<string>(opts.uploadId)
       expectType<string>(opts.key)
       return []
     },
     prepareUploadPart (file, part) {
-      expectType<Uppy.UppyFile>(file)
+      expectType<UppyFile>(file)
       expectType<string>(part.uploadId)
       expectType<string>(part.key)
       expectType<Blob>(part.body)
@@ -24,12 +25,12 @@ import AwsS3Multipart = require('../')
       return { url: '' }
     },
     abortMultipartUpload (file, opts) {
-      expectType<Uppy.UppyFile>(file)
+      expectType<UppyFile>(file)
       expectType<string>(opts.uploadId)
       expectType<string>(opts.key)
     },
     completeMultipartUpload (file, opts) {
-      expectType<Uppy.UppyFile>(file)
+      expectType<UppyFile>(file)
       expectType<string>(opts.uploadId)
       expectType<string>(opts.key)
       expectType<AwsS3Multipart.AwsS3Part>(opts.parts[0])
@@ -39,7 +40,7 @@ import AwsS3Multipart = require('../')
 }
 
 {
-  const uppy = Uppy()
+  const uppy = new Uppy()
   expectError(uppy.use(AwsS3Multipart, { getChunkSize: 100 }))
   expectError(uppy.use(AwsS3Multipart, { getChunkSize: () => 'not a number' }))
   uppy.use(AwsS3Multipart, { getChunkSize: () => 100 })

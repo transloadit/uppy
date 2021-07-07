@@ -1,4 +1,4 @@
-import Uppy = require('@uppy/core')
+import type { PluginOptions, BasePlugin, UppyFile } from '@uppy/core'
 
 type MaybePromise<T> = T | Promise<T>
 
@@ -10,17 +10,15 @@ declare module AwsS3 {
     headers?: { [type: string]: string }
   }
 
-  interface AwsS3Options extends Uppy.PluginOptions {
+  interface AwsS3Options extends PluginOptions {
     companionUrl?: string
-    getUploadParameters?: (
-      file: Uppy.UppyFile
-    ) => MaybePromise<AwsS3UploadParameters>
+    getUploadParameters?: (file: UppyFile) => MaybePromise<AwsS3UploadParameters>
     metaFields?: string[]
     timeout?: number
     limit?: number
   }
 }
 
-declare class AwsS3 extends Uppy.Plugin<AwsS3.AwsS3Options> {}
+declare class AwsS3 extends BasePlugin<AwsS3.AwsS3Options> {}
 
-export = AwsS3
+export default AwsS3

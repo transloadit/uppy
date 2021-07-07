@@ -1,21 +1,21 @@
 import { expectError } from 'tsd'
-import Uppy = require('@uppy/core')
-import ScreenCapture = require('../')
+import Uppy from '@uppy/core'
+import ScreenCapture from '../'
 
 {
-  Uppy().use(ScreenCapture)
-  Uppy().use(ScreenCapture, {})
-  Uppy().use(ScreenCapture, { preferredVideoMimeType: 'video/mp4' })
-  expectError(Uppy().use(ScreenCapture, { preferredVideoMimeType: 10 }))
+  new Uppy().use(ScreenCapture)
+  new Uppy().use(ScreenCapture, {})
+  new Uppy().use(ScreenCapture, { preferredVideoMimeType: 'video/mp4' })
+  expectError(new Uppy().use(ScreenCapture, { preferredVideoMimeType: 10 }))
 }
 
 {
-  Uppy().use(ScreenCapture, {
+  new Uppy().use(ScreenCapture, {
     displayMediaConstraints: {
       video: { displaySurface: 'window' }
     }
   })
-  expectError(Uppy().use(ScreenCapture, {
+  expectError(new Uppy().use(ScreenCapture, {
     displayMediaConstraints: {
       video: { displaySurface: 'some nonsense' }
     }

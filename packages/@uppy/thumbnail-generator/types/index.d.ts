@@ -1,8 +1,9 @@
-import Uppy = require('@uppy/core')
-import ThumbnailGeneratorLocale = require('./generatedLocale')
+import type { PluginOptions, UIPlugin } from '@uppy/core'
+
+import ThumbnailGeneratorLocale from './generatedLocale'
 
 declare module ThumbnailGenerator {
-  interface ThumbnailGeneratorOptions extends Uppy.PluginOptions {
+  interface ThumbnailGeneratorOptions extends PluginOptions {
     thumbnailWidth?: number,
     thumbnailHeight?: number,
     thumbnailType?: string, 
@@ -12,8 +13,8 @@ declare module ThumbnailGenerator {
   }
 }
 
-declare class ThumbnailGenerator extends Uppy.Plugin<
+declare class ThumbnailGenerator extends UIPlugin<
   ThumbnailGenerator.ThumbnailGeneratorOptions
 > {}
 
-export = ThumbnailGenerator
+export default ThumbnailGenerator

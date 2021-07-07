@@ -1,5 +1,5 @@
 import { ToUppyProps } from './CommonTypes'
-import FileInput = require('@uppy/file-input')
+import FileInput from '@uppy/file-input'
 
 export type FileInputProps = ToUppyProps<FileInput.FileInputOptions>
 

@@ -1,6 +1,7 @@
 import { expectError, expectType } from 'tsd'
-import Uppy = require('../')
-import DefaultStore = require('@uppy/store-default')
+import Uppy, { UIPlugin } from '../'
+import type { UploadedUppyFile, FailedUppyFile, PluginOptions } from '../'
+import DefaultStore from '@uppy/store-default'
 
 {
   const uppy = new Uppy()
@@ -10,15 +11,15 @@ import DefaultStore = require('@uppy/store-default')
     })
   })
 
-  uppy.upload().then(result => {
-    expectType<Uppy.UploadedUppyFile<{}, {}>>(result.successful[0])
-    expectType<Uppy.FailedUppyFile<{}, {}>>(result.failed[0])
+  uppy.upload().then((result) => {
+    expectType<UploadedUppyFile<{}, {}>>(result.successful[0])
+    expectType<FailedUppyFile<{}, {}>>(result.failed[0])
   })
 }
 
 {
   const store = DefaultStore()
-  const uppy = new Uppy({ store })
+  new Uppy({ store })
 }
 
 {
@@ -55,10 +56,10 @@ import DefaultStore = require('@uppy/store-default')
 }
 
 {
-  interface SomeOptions extends Uppy.PluginOptions {
+  interface SomeOptions extends PluginOptions {
     types: 'are checked'
   }
-  class SomePlugin extends Uppy.Plugin<SomeOptions> {}
+  class SomePlugin extends UIPlugin<SomeOptions> {}
   const typedUppy = new Uppy()
 
   expectError(typedUppy.use(SomePlugin, { types: 'error' }))
@@ -97,13 +98,17 @@ import DefaultStore = require('@uppy/store-default')
 }
 
 {
-  interface TestOptions extends Uppy.PluginOptions {
+  interface TestOptions extends PluginOptions {
     testOption: string
   }
-  class TestPlugin extends Uppy.Plugin<TestOptions> {}
+  class TestPlugin extends UIPlugin<TestOptions> {
+  }
 
   const strict = new Uppy().use(TestPlugin, { testOption: 'hello' })
-  ;(strict.getPlugin('TestPlugin') as TestPlugin).setOptions({ testOption: 'world' })
-  expectError((strict.getPlugin('TestPlugin') as TestPlugin).setOptions({ testOption: 0 }))
-  expectError((strict.getPlugin('TestPlugin') as TestPlugin).setOptions({ unknownKey: false }))
+
+  strict.getPlugin<TestPlugin>('TestPlugin').setOptions({ testOption: 'world' })
+
+  expectError(strict.getPlugin<TestPlugin>('TestPlugin').setOptions({ testOption: 0 }))
+
+  expectError(strict.getPlugin<TestPlugin>('TestPlugin').setOptions({ unknownKey: false }))
 }

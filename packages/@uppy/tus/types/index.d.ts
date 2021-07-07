@@ -1,5 +1,5 @@
-import Uppy = require('@uppy/core')
-import { UploadOptions } from 'tus-js-client'
+import type { PluginOptions, BasePlugin } from '@uppy/core'
+import type { UploadOptions } from 'tus-js-client'
 
 declare module Tus {
   type TusUploadOptions = Pick<UploadOptions, Exclude<keyof UploadOptions,
@@ -13,7 +13,7 @@ declare module Tus {
     | 'uploadSize'
   >>
 
-  export interface TusOptions extends Uppy.PluginOptions, TusUploadOptions {
+  export interface TusOptions extends PluginOptions, TusUploadOptions {
     metaFields?: string[] | null
     limit?: number
     useFastRemoteRetry?: boolean
@@ -21,6 +21,6 @@ declare module Tus {
   }
 }
 
-declare class Tus extends Uppy.Plugin<Tus.TusOptions> {}
+declare class Tus extends BasePlugin<Tus.TusOptions> {}
 
-export = Tus
+export default Tus

@@ -1,11 +1,11 @@
-import Uppy = require('@uppy/core')
+import type { PluginOptions, UIPlugin } from '@uppy/core'
 
 declare module ReduxDevTools {
-  interface ReduxDevToolsOptions extends Uppy.PluginOptions {}
+  interface ReduxDevToolsOptions extends PluginOptions {}
 }
 
-declare class ReduxDevTools extends Uppy.Plugin<
+declare class ReduxDevTools extends UIPlugin<
   ReduxDevTools.ReduxDevToolsOptions
 > {}
 
-export = ReduxDevTools
+export default ReduxDevTools

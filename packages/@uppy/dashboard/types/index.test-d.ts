@@ -1,21 +1,21 @@
 import { expectType, expectError } from 'tsd'
-import Uppy = require('@uppy/core')
-import Dashboard = require('../')
+import Uppy from '@uppy/core'
+import Dashboard from '../'
 
 {
-  const uppy = Uppy()
+  const uppy = new Uppy()
   uppy.use(Dashboard, {
     target: 'body'
   })
 
-  const plugin = uppy.getPlugin('Dashboard') as Dashboard
+  const plugin = uppy.getPlugin<Dashboard>('Dashboard')
   plugin.openModal()
   expectType<boolean>(plugin.isModalOpen())
   plugin.closeModal()
 }
 
 {
-  const uppy = Uppy()
+  const uppy = new Uppy()
   uppy.use(Dashboard, {
     width: '100%',
     height: 700,
@@ -51,7 +51,7 @@ import Dashboard = require('../')
 }
 
 {
-  const uppy = Uppy()
+  const uppy = new Uppy()
   uppy.use(Dashboard, {
     locale: {
       strings: {
@@ -79,6 +79,6 @@ import Dashboard = require('../')
   }))
 }
 {
-  const uppy = Uppy()
+  const uppy = new Uppy()
   expectError(uppy.use(Dashboard, { height: {} }))
 }

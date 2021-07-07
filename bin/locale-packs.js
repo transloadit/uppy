@@ -168,13 +168,13 @@ function createTypeScriptLocale (plugin, pluginName) {
   const localePath = path.join(__dirname, '..', 'packages', '@uppy', pluginName, 'types', 'generatedLocale.d.ts')
 
   const localeTypes
-    = `${'import Uppy = require(\'@uppy/core\')\n'
+    = `${'import type { Locale } from \'@uppy/core\'\n'
     + '\n'
-    + `type ${pluginClassName}Locale = Uppy.Locale` + '<\n'}${
+    + `type ${pluginClassName}Locale = Locale` + '<\n'}${
       allowedStringTypes}\n`
     + `>\n`
     + `\n`
-    + `export = ${pluginClassName}Locale\n`
+    + `export default ${pluginClassName}Locale\n`
 
   fs.writeFileSync(localePath, localeTypes)
 }

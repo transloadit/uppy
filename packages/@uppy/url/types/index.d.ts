@@ -1,18 +1,16 @@
-import Uppy = require('@uppy/core')
-import CompanionClient = require('@uppy/companion-client')
-import UrlLocale = require('./generatedLocale')
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type { RequestClientOptions } from '@uppy/companion-client'
+import UrlLocale from './generatedLocale'
 
 declare module Url {
-  export interface UrlOptions
-    extends Uppy.PluginOptions,
-      CompanionClient.RequestClientOptions {
+  export interface UrlOptions extends PluginOptions, RequestClientOptions {
     replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
+    target?: PluginTarget
     title?: string
     locale?: UrlLocale
   }
 }
 
-declare class Url extends Uppy.Plugin<Url.UrlOptions> {}
+declare class Url extends UIPlugin<Url.UrlOptions> {}
 
-export = Url
+export default Url

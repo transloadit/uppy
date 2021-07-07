@@ -1,9 +1,9 @@
-import Uppy = require("@uppy/core");
+import Uppy from "@uppy/core"
 
-import DragDrop = require("../");
+import DragDrop from "../"
 
 {
-  const uppy = Uppy();
+  const uppy = new Uppy();
 
   uppy.use(DragDrop, {
     replaceTargetContent: true,
@@ -16,11 +16,11 @@ import DragDrop = require("../");
     locale: {
       strings: {
         dropHereOr: "test",
-        browse: "test"
-      }
+        browse: "test",
+      },
     },
-    onDragOver: event => event.clientX,
-    onDragLeave: event => event.clientY,
-    onDrop: event => event
+    onDragOver: (event) => event.clientX,
+    onDragLeave: (event) => event.clientY,
+    onDrop: (event) => event,
   });
 }

@@ -1,9 +1,9 @@
-import Uppy = require('@uppy/core')
+import type { PluginOptions, PluginTarget, BasePlugin } from '@uppy/core'
 
 declare module Form {
-  interface FormOptions extends Uppy.PluginOptions {
+  interface FormOptions extends PluginOptions {
     replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
+    target?: PluginTarget
     resultName?: string
     getMetaFromForm?: boolean
     addResultToForm?: boolean
@@ -13,6 +13,6 @@ declare module Form {
   }
 }
 
-declare class Form extends Uppy.Plugin<Form.FormOptions> {}
+declare class Form extends BasePlugin<Form.FormOptions> {}
 
-export = Form
+export default Form

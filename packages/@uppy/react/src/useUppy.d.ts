@@ -1,5 +1,5 @@
-import Uppy = require("@uppy/core")
+import type Uppy from "@uppy/core"
 
-declare function useUppy(factory: () => Uppy.Uppy): Uppy.Uppy
+declare function useUppy(factory: () => Uppy): Uppy
 
 export = useUppy

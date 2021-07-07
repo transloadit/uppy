@@ -1,5 +1,6 @@
+import * as React from 'react'
 import { Omit, ToUppyProps } from './CommonTypes'
-import Dashboard = require('@uppy/dashboard')
+import Dashboard from '@uppy/dashboard'
 
 // This type is mapped into `DashboardProps` below so IntelliSense doesn't display this big mess of nested types
 type DashboardPropsInner = Omit<
