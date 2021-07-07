@@ -19,7 +19,7 @@ module.exports = class MyCustomProvider extends UIPlugin {
 
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionHeaders: this.opts.companionHeaders,
       provider: 'myunsplash',
       pluginId: this.id,
     })

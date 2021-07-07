@@ -60,7 +60,7 @@ module.exports = class Url extends UIPlugin {
 
     this.client = new RequestClient(uppy, {
       companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionHeaders: this.opts.companionHeaders,
       companionCookiesRule: this.opts.companionCookiesRule,
     })
   }
