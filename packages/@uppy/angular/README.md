@@ -12,7 +12,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```ts
-// TODO 
+// TODO
 ```
 
 ## Installation

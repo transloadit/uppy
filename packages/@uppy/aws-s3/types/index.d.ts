@@ -2,7 +2,7 @@ import type { PluginOptions, BasePlugin, UppyFile } from '@uppy/core'
 
 type MaybePromise<T> = T | Promise<T>
 
-declare module AwsS3 {
+declare namespace AwsS3 {
   interface AwsS3UploadParameters {
     method?: string
     url: string

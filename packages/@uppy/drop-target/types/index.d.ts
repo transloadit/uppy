@@ -1,6 +1,6 @@
-import type { PluginOptions, BasePlugin} from '@uppy/core'
+import type { PluginOptions, BasePlugin } from '@uppy/core'
 
-declare module DropTarget {
+declare namespace DropTarget {
   interface DropTargetOptions extends PluginOptions {
     target: string | Element
   }

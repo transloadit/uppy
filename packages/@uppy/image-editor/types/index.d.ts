@@ -1,7 +1,7 @@
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 import ImageEditorLocale from './generatedLocale'
 
-declare module ImageEditor {
+declare namespace ImageEditor {
   type Actions = {
     revert: boolean
     rotate: boolean
@@ -15,7 +15,7 @@ declare module ImageEditor {
   }
 
   export interface ImageEditorOptions extends PluginOptions {
-    cropperOptions?: object
+    cropperOptions?: Record<string, unknown>
     actions?: Actions
     quality?: number
     target?: PluginTarget

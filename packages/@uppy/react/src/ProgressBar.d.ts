@@ -1,5 +1,5 @@
-import { ToUppyProps } from './CommonTypes'
 import type { ProgressBarOptions } from '@uppy/progress-bar'
+import { ToUppyProps } from './CommonTypes'
 
 export type ProgressBarProps = ToUppyProps<ProgressBarOptions> & React.BaseHTMLAttributes<HTMLDivElement>
 

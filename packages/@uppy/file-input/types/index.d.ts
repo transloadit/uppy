@@ -1,7 +1,7 @@
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 import FileInputLocale from './generatedLocale'
 
-declare module FileInput {
+declare namespace FileInput {
   export interface FileInputOptions extends PluginOptions {
     replaceTargetContent?: boolean
     target?: PluginTarget

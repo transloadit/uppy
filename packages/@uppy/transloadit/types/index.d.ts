@@ -1,14 +1,14 @@
 import type { PluginOptions, UppyFile, BasePlugin } from '@uppy/core'
 import TransloaditLocale from './generatedLocale'
 
-declare module Transloadit {
+declare namespace Transloadit {
   interface AssemblyParameters {
     auth: {
       key: string,
       expires?: string
     }
     template_id?: string
-    steps?: { [step: string]: object }
+    steps?: { [step: string]: Record<string, unknown> }
     notify_url?: string
     fields?: { [name: string]: number | string }
   }
@@ -41,6 +41,7 @@ declare module Transloadit {
 
 declare class Transloadit extends BasePlugin<Transloadit.TransloaditOptions> {
   static COMPANION: string
+
   static COMPANION_PATTERN: RegExp
 }
 

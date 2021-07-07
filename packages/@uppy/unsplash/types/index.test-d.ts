@@ -1,2 +1,2 @@
-import Unsplash = require('../')
+// import Unsplash from '../'
 // TODO implement

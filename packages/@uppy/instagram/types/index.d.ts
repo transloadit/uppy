@@ -1,7 +1,7 @@
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 import type { PublicProviderOptions, TokenStorage } from '@uppy/companion-client'
 
-declare module Instagram {
+declare namespace Instagram {
   interface InstagramOptions extends PluginOptions, PublicProviderOptions {
     replaceTargetContent?: boolean
     target?: PluginTarget

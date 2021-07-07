@@ -1,1 +1,2 @@
-import FileInput = require('../')
+// import FileInput from '..'
+// TODO implement

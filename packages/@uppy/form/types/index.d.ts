@@ -1,6 +1,6 @@
 import type { PluginOptions, PluginTarget, BasePlugin } from '@uppy/core'
 
-declare module Form {
+declare namespace Form {
   interface FormOptions extends PluginOptions {
     replaceTargetContent?: boolean
     target?: PluginTarget

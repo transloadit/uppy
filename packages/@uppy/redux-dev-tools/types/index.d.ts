@@ -1,7 +1,7 @@
 import type { PluginOptions, UIPlugin } from '@uppy/core'
 
-declare module ReduxDevTools {
-  interface ReduxDevToolsOptions extends PluginOptions {}
+declare namespace ReduxDevTools {
+  type ReduxDevToolsOptions = PluginOptions
 }
 
 declare class ReduxDevTools extends UIPlugin<

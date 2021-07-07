@@ -1,11 +1,11 @@
 import { expectType, expectError } from 'tsd'
 import Uppy from '@uppy/core'
-import Dashboard from '../'
+import Dashboard from '..'
 
 {
   const uppy = new Uppy()
   uppy.use(Dashboard, {
-    target: 'body'
+    target: 'body',
   })
 
   const plugin = uppy.getPlugin<Dashboard>('Dashboard')
@@ -24,7 +24,7 @@ import Dashboard from '../'
       {
         id: 'license',
         name: 'License',
-        placeholder: 'Creative Commons, Apache 2.0, ...'
+        placeholder: 'Creative Commons, Apache 2.0, ...',
       },
       {
         id: 'public',
@@ -44,9 +44,9 @@ import Dashboard from '../'
             }
           })
           */
-        }
-      }
-    ]
+        },
+      },
+    ],
   })
 }
 
@@ -58,24 +58,24 @@ import Dashboard from '../'
         // Dashboard string
         addMoreFiles: 'yaddayadda',
         // StatusBar string
-        uploading: '^^^^'
-      }
-    }
+        uploading: '^^^^',
+      },
+    },
   })
   expectError(uppy.use(Dashboard, {
     locale: {
       strings: {
-        somethingThatDoesNotExist: 'wrong'
-      }
-    }
+        somethingThatDoesNotExist: 'wrong',
+      },
+    },
   }))
   const wrongType = 1234
   expectError(uppy.use(Dashboard, {
     locale: {
       strings: {
-        addMoreFiles: wrongType
-      }
-    }
+        addMoreFiles: wrongType,
+      },
+    },
   }))
 }
 {

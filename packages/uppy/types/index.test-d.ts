@@ -1,17 +1,17 @@
-import * as Uppy from '../';
+import * as Uppy from '..';
 
 (() => {
-  const uppy = new Uppy.Core({ autoProceed: false });
-  uppy.use(Uppy.Dashboard, { trigger: '#up_load_file_01' });
-  uppy.use(Uppy.DragDrop, { target: '#ttt' });
+  const uppy = new Uppy.Core({ autoProceed: false })
+  uppy.use(Uppy.Dashboard, { trigger: '#up_load_file_01' })
+  uppy.use(Uppy.DragDrop, { target: '#ttt' })
   uppy.use(Uppy.XHRUpload, {
     bundle: true,
     endpoint: 'xxx',
-    fieldName: 'up_load_file'
-  });
+    fieldName: 'up_load_file',
+  })
   uppy.on('upload-success', (fileCount, body, uploadurl) => {
-    console.log(fileCount, body, uploadurl, ` files uploaded`);
-  });
+    console.log(fileCount, body, uploadurl, ` files uploaded`)
+  })
 })();
 
 (() => {
@@ -22,13 +22,14 @@ import * as Uppy from '../';
     .use(Uppy.Webcam, { target: Uppy.Dashboard })
     .use(Uppy.ScreenCapture)
     .use(Uppy.Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
-    .on('complete', (result) => {
-      console.log('Upload result:', result);
-    });
+
+  uppy.on('complete', (result) => {
+    console.log('Upload result:', result)
+  })
 })();
 
 (() => {
-  const uppy = new Uppy.Core();
-  uppy.use(Uppy.DragDrop, { target: '.UppyDragDrop' });
-  uppy.use(Uppy.Tus, { endpoint: '//tusd.tusdemo.net/files/' });
-})();
+  const uppy = new Uppy.Core()
+  uppy.use(Uppy.DragDrop, { target: '.UppyDragDrop' })
+  uppy.use(Uppy.Tus, { endpoint: '//tusd.tusdemo.net/files/' })
+})()

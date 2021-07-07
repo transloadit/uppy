@@ -1,1 +1,1 @@
-import ReduxDevTools = require('../')
+// import ReduxDevTools from '..'

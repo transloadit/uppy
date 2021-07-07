@@ -1,2 +1,2 @@
-import Url = require('../')
+// import Url from '../'
 // TODO implement

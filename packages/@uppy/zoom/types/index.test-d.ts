@@ -1,2 +1,2 @@
-import Zoom = require('../')
+// import Zoom from '../'
 // TODO implement

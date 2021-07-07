@@ -1,7 +1,7 @@
 import type { PluginOptions, PluginTarget, UIPlugin } from '@uppy/core'
 import type { PublicProviderOptions, TokenStorage } from '@uppy/companion-client'
 
-declare module Box {
+declare namespace Box {
   interface BoxOptions extends PluginOptions, PublicProviderOptions {
     replaceTargetContent?: boolean
     target?: PluginTarget

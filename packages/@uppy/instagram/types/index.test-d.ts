@@ -1,2 +1,2 @@
-import Instagram = require('../')
+// import Instagram from '..'
 // TODO implement

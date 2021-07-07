@@ -2,11 +2,11 @@ import type { PluginOptions, UIPlugin } from '@uppy/core'
 
 import ThumbnailGeneratorLocale from './generatedLocale'
 
-declare module ThumbnailGenerator {
+declare namespace ThumbnailGenerator {
   interface ThumbnailGeneratorOptions extends PluginOptions {
     thumbnailWidth?: number,
     thumbnailHeight?: number,
-    thumbnailType?: string, 
+    thumbnailType?: string,
     waitForThumbnailsBeforeUpload?: boolean,
     lazy?: boolean,
     locale?: ThumbnailGeneratorLocale,

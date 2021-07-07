@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { createStore, combineReducers } from 'redux'
 import ReduxStore, { reducer as uppy } from '..'
 

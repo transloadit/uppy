@@ -1,17 +1,23 @@
 import type { Store } from '@uppy/utils'
 import type { Reducer, Middleware, Store as Redux } from 'redux'
 
+type State = Record<string, unknown>
+type StateChangeListener = (prevState: State, nextState: State, patch: State) => void
+
 interface ReduxStoreOptions {
-  store: Redux<object>
+  store: Redux<State>
   id?: string
-  selector?: (state: any) => object
+  selector?: (state: any) => State
 }
 
 export class ReduxStore implements Store {
   constructor (opts: ReduxStoreOptions)
-  getState (): object
-  setState (patch: object): void
-  subscribe (listener: any): () => void
+
+  getState (): State
+
+  setState (patch: State): void
+
+  subscribe (listener: StateChangeListener): () => void
 }
 
 export const reducer: Reducer<any>

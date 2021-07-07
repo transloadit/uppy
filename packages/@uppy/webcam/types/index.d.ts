@@ -1,14 +1,13 @@
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 import WebcamLocale from './generatedLocale'
 
-declare module Webcam {
-  export type WebcamMode =
+export type WebcamMode =
     | 'video-audio'
     | 'video-only'
     | 'audio-only'
     | 'picture'
 
-  export interface WebcamOptions extends PluginOptions {
+export interface WebcamOptions extends PluginOptions {
     replaceTargetContent?: boolean
     target?: PluginTarget
     onBeforeSnapshot?: () => Promise<void>
@@ -20,9 +19,8 @@ declare module Webcam {
     locale?: WebcamLocale
     title?: string
     videoConstraints?: MediaTrackConstraints
-  }
 }
 
-declare class Webcam extends UIPlugin<Webcam.WebcamOptions> {}
+declare class Webcam extends UIPlugin<WebcamOptions> {}
 
 export default Webcam

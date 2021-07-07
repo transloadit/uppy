@@ -1,7 +1,7 @@
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 import type { TokenStorage, PublicProviderOptions } from '@uppy/companion-client'
 
-declare module Zoom {
+declare namespace Zoom {
   interface ZoomOptions extends PluginOptions, PublicProviderOptions {
     replaceTargetContent?: boolean
     target?: PluginTarget

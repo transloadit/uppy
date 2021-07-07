@@ -1,6 +1,6 @@
 import type { PluginOptions, BasePlugin } from '@uppy/core'
 
-declare module GoldenRetriever {
+declare namespace GoldenRetriever {
   interface GoldenRetrieverOptions extends PluginOptions {
     expires?: number
     serviceWorker?: boolean

@@ -2,7 +2,7 @@ import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 import type { RequestClientOptions } from '@uppy/companion-client'
 import UrlLocale from './generatedLocale'
 
-declare module Url {
+declare namespace Url {
   export interface UrlOptions extends PluginOptions, RequestClientOptions {
     replaceTargetContent?: boolean
     target?: PluginTarget
