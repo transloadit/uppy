@@ -164,13 +164,11 @@ module.exports = function server (inputCompanionOptions = {}, inputMiddlewares =
   }
 
   // add additional middlewares if configured
-  if (inputMiddlewares.length > 0) {
-    try {
-      inputMiddlewares.forEach((middleware) => app.use(middleware))
-    } catch (error) {
-      console.error('\x1b[31m', error.message, '\x1b[0m')
-      process.exit(1)
-    }
+  try {
+    inputMiddlewares.forEach((middleware) => app.use(middleware))
+  } catch (error) {
+    console.error('\x1b[31m', error.message, '\x1b[0m')
+    process.exit(1)
   }
 
   // WARNING: This route is added in order to validate your app with OneDrive.
