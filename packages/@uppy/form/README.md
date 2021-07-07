@@ -21,7 +21,7 @@ uppy.use(Form, {
   getMetaFromForm: true,
   addResultToForm: true,
   resultName: 'uppyResult',
-  submitOnSuccess: true
+  submitOnSuccess: true,
 })
 ```
 

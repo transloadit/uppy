@@ -19,7 +19,7 @@ import DragDrop from '@uppy/drag-drop'
 
 const uppy = new Uppy()
 uppy.use(DragDrop, {
-  target: '#upload'
+  target: '#upload',
 })
 ```
 

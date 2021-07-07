@@ -14,29 +14,30 @@ Usage of the Provider plugins is not that different from any other *acquirer* pl
 
 Here's a quick example:
 
+<!-- eslint-disable import/first, import/newline-after-import -->
 ```js
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 const uppy = new Uppy()
 uppy.use(Dashboard, {
-  trigger: '#pick-files'
+  trigger: '#pick-files',
 })
 
 // for Google Drive
 import GoogleDrive from '@uppy/google-drive'
-uppy.use(GoogleDrive, {target: Dashboard, companionUrl: 'http://localhost:3020'})
+uppy.use(GoogleDrive, { target: Dashboard, companionUrl: 'http://localhost:3020' })
 
 // for Dropbox
 import Dropbox from '@uppy/dropbox'
-uppy.use(Dropbox, {target: Dashboard, companionUrl: 'http://localhost:3020'})
+uppy.use(Dropbox, { target: Dashboard, companionUrl: 'http://localhost:3020' })
 
 // for Instagram
 import Instagram from '@uppy/instagram'
-uppy.use(Instagram, {target: Dashboard, companionUrl: 'http://localhost:3020'})
+uppy.use(Instagram, { target: Dashboard, companionUrl: 'http://localhost:3020' })
 
 // for URL
 import Url from '@uppy/url'
-uppy.use(Url, {target: Dashboard, companionUrl: 'http://localhost:3020'})
+uppy.use(Url, { target: Dashboard, companionUrl: 'http://localhost:3020' })
 ```
 
 ⚠️ The [Dashboard](/docs/dashboard) plugin is recommended as a universal container to all Provider plugins. It also comes with file previews, progress reporting and more. If you are using the Dashboard, it already [comes with all the nessesary styles](/docs/dashboard/#CSS) and functionality for Providers to work well.

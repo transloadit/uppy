@@ -21,10 +21,11 @@ npm i @uppy/core @uppy/locales
 
 ```js
 import Uppy from '@uppy/core'
-import German from '@uppy/locales/lib/de_DE' // see below for the full list of locales
+import German from '@uppy/locales/lib/de_DE'
+// see below for the full list of locales
 const uppy = new Uppy({
   debug: true,
-  locale: German
+  locale: German,
 })
 ```
 
@@ -52,10 +53,11 @@ Many plugins come with their own locale strings, and the packs we provide consis
 import Uppy from '@uppy/core'
 import DragDrop from '@uppy/drag-drop'
 import Russian from '@uppy/locales/lib/ru_RU'
+
 const uppy = new Uppy({
   debug: true,
   autoProceed: true,
-  locale: Russian
+  locale: Russian,
 })
 uppy.use(DragDrop, {
   target: '.UppyDragDrop',
@@ -63,9 +65,9 @@ uppy.use(DragDrop, {
   // but you can also override specific strings like so:
   locale: {
     strings: {
-      browse: 'выберите ;-)'
-    }
-  }
+      browse: 'выберите ;-)',
+    },
+  },
 })
 ```
 

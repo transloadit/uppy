@@ -27,7 +27,7 @@ npm install @uppy/core
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Core = Uppy.Core
+const { Core } = Uppy
 ```
 
 ## Options
@@ -46,7 +46,7 @@ const uppy = new Uppy({
     maxTotalFileSize: null,
     maxNumberOfFiles: null,
     minNumberOfFiles: null,
-    allowedFileTypes: null
+    allowedFileTypes: null,
   },
   meta: {},
   onBeforeFileAdded: (currentFile, files) => currentFile,
@@ -54,7 +54,7 @@ const uppy = new Uppy({
   locale: {},
   store: new DefaultStore(),
   logger: justErrorsLogger,
-  infoTimeout: 5000
+  infoTimeout: 5000,
 })
 ```
 
@@ -92,8 +92,9 @@ Set `logger: Uppy.debugLogger` to get debug info output to the browser console:
 
 ```js
 import Uppy from '@uppy/core'
+
 const uppy = new Uppy({
-  logger: Uppy.debugLogger
+  logger: Uppy.debugLogger,
 })
 ```
 
@@ -105,7 +106,7 @@ Here’s an example of a `logger` that does nothing:
 const nullLogger = {
   debug: (...args) => {},
   warn: (...args) => {},
-  error: (...args) => {}
+  error: (...args) => {},
 }
 ```
 
@@ -115,7 +116,7 @@ const nullLogger = {
 const debugLogger = {
   debug: (...args) => console.debug(`[Uppy] [${getTimeStamp()}]`, ...args),
   warn: (...args) => console.warn(`[Uppy] [${getTimeStamp()}]`, ...args),
-  error: (...args) => console.error(`[Uppy] [${getTimeStamp()}]`, ...args)
+  error: (...args) => console.error(`[Uppy] [${getTimeStamp()}]`, ...args),
 }
 ```
 
@@ -147,9 +148,12 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 Metadata object, used for passing things like public keys, usernames, tags and so on:
 
 ```js
-meta: {
-  username: 'John'
-}
+const uppy = new Uppy({
+  // ...
+  meta: {
+    username: 'John',
+  },
+})
 ```
 
 This global metadata is added to each file in Uppy. It can be modified by two methods:
@@ -172,36 +176,45 @@ Use this function to run any number of custom checks on the selected file, or ma
 
 Return true/nothing or a modified file object to proceed with adding the file:
 
+<!-- eslint-disable no-dupe-keys -->
+<!-- eslint-disable consistent-return -->
 ```js
-onBeforeFileAdded: (currentFile, files) => {
-  if (currentFile.name === 'forest-IMG_0616.jpg') {
-    return true
-  }
-}
+const uppy = new Uppy({
+  // ...
+  onBeforeFileAdded: (currentFile, files) => {
+    if (currentFile.name === 'forest-IMG_0616.jpg') {
+      return true
+    }
+  },
 
-// or
+  // or
 
-onBeforeFileAdded: (currentFile, files) => {
-  const modifiedFile = {
-    ...currentFile,
-    name: currentFile.name + '__' + Date.now()
-  }
-  return modifiedFile
-}
+  onBeforeFileAdded: (currentFile, files) => {
+    const modifiedFile = {
+      ...currentFile,
+      name: `${currentFile.name}__${Date.now()}`,
+    }
+    return modifiedFile
+  },
+})
 ```
 
 Return false to abort adding the file:
 
+<!-- eslint-disable consistent-return -->
 ```js
-onBeforeFileAdded: (currentFile, files) => {
-  if (!currentFile.type) {
-    // log to console
-    uppy.log(`Skipping file because it has no type`)
-    // show error message to the user
-    uppy.info(`Skipping file because it has no type`, 'error', 500)
-    return false
-  }
-}
+const uppy = new Uppy({
+  // ...
+  onBeforeFileAdded: (currentFile, files) => {
+    if (!currentFile.type) {
+      // log to console
+      uppy.log(`Skipping file because it has no type`)
+      // show error message to the user
+      uppy.info(`Skipping file because it has no type`, 'error', 500)
+      return false
+    }
+  },
+})
 ```
 
 **Note:** it is up to you to show a notification to the user about a file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging purposes via [uppy.log()](#uppy-log).
@@ -219,31 +232,38 @@ Use this to check if all files or their total number match your requirements, or
 Return true or modified `files` object to proceed:
 
 ```js
-onBeforeUpload: (files) => {
-  // We’ll be careful to return a new object, not mutating the original `files`
-  const updatedFiles = {}
-  Object.keys(files).forEach(fileID => {
-    updatedFiles[fileID] = {
-      ...files[fileID],
-      name: 'myCustomPrefix' + '__' + files[fileID].name
-    }
-  })
-  return updatedFiles
-}
+const uppy = new Uppy({
+  // ...
+  onBeforeUpload: (files) => {
+    // We’ll be careful to return a new object, not mutating the original `files`
+    const updatedFiles = {}
+    Object.keys(files).forEach(fileID => {
+      updatedFiles[fileID] = {
+        ...files[fileID],
+        name: `${myCustomPrefix}__${files[fileID].name}`,
+      }
+    })
+    return updatedFiles
+  },
+})
 ```
 
 Return false to abort:
 
+<!-- eslint-disable consistent-return -->
 ```js
-onBeforeUpload: (files) => {
-  if (Object.keys(files).length < 2) {
-    // log to console
-    uppy.log(`Aborting upload because only ${Object.keys(files).length} files were selected`)
-    // show error message to the user
-    uppy.info(`You have to select at least 2 files`, 'error', 500)
-    return false
-  }
-}
+const uppy = new Uppy({
+  // ...
+  onBeforeUpload: (files) => {
+    if (Object.keys(files).length < 2) {
+      // log to console
+      uppy.log(`Aborting upload because only ${Object.keys(files).length} files were selected`)
+      // show error message to the user
+      uppy.info(`You have to select at least 2 files`, 'error', 500)
+      return false
+    }
+  },
+})
 ```
 
 **Note:** it is up to you to show a notification to the user about a file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging purposes via [uppy.log()](#uppy-log).
@@ -253,23 +273,26 @@ onBeforeUpload: (files) => {
 This allows you to override language strings:
 
 ```js
-locale: {
-  strings: {
-    youCanOnlyUploadX: {
-      0: 'You can only upload %{smart_count} file',
-      1: 'You can only upload %{smart_count} files'
+const uppy = new Uppy({
+  // ...
+  locale: {
+    strings: {
+      youCanOnlyUploadX: {
+        0: 'You can only upload %{smart_count} file',
+        1: 'You can only upload %{smart_count} files',
+      },
+      youHaveToAtLeastSelectX: {
+        0: 'You have to select at least %{smart_count} file',
+        1: 'You have to select at least %{smart_count} files',
+      },
+      // **NOTE**: This string is called `exceedsSize2` for backwards compatibility reasons.
+      // See https://github.com/transloadit/uppy/pull/2077
+      exceedsSize2: 'This file exceeds maximum allowed size of %{size}',
+      youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
+      companionError: 'Connection with Companion failed',
     },
-    youHaveToAtLeastSelectX: {
-      0: 'You have to select at least %{smart_count} file',
-      1: 'You have to select at least %{smart_count} files'
-    },
-    // **NOTE**: This string is called `exceedsSize2` for backwards compatibility reasons.
-    // See https://github.com/transloadit/uppy/pull/2077
-    exceedsSize2: 'This file exceeds maximum allowed size of %{size}',
-    youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
-    companionError: 'Connection with Companion failed'
-  }
-}
+  },
+})
 ```
 
 Instead of overriding strings yourself, consider using [one of our language packs](https://github.com/transloadit/uppy/tree/master/packages/%40uppy/locales) (or contributing one!):
@@ -291,9 +314,11 @@ It also offers the pluralization function, which is used to determine which stri
 For example, for the Icelandic language, the pluralization function would be:
 
 ``` js
-locale: {
-  pluralize: (n) => (n % 10 !== 1 || n % 100 === 11) ? 1 : 0
-}
+const uppy = new Uppy({
+  locale: {
+    pluralize: (n) => ((n % 10 !== 1 || n % 100 === 11) ? 1 : 0),
+  },
+})
 ```
 
 We are using a forked [Polyglot.js](https://github.com/airbnb/polyglot.js/blob/master/index.js#L37-L60).
@@ -408,11 +433,12 @@ uppy.addFile({
   type: 'image/jpeg', // file type
   data: blob, // file blob
   meta: {
-    // optional, store the directory path of a file so Uppy can tell identical files in different directories apart
+    // optional, store the directory path of a file so Uppy can tell identical files in different directories apart.
     relativePath: webkitFileSystemEntry.relativePath,
   },
-  source: 'Local', // optional, determines the source of the file, for example, Instagram
-  isRemote: false // optional, set to true if actual file is not in the browser, but on some remote server, for example, when using companion in combination with Instagram
+  source: 'Local', // optional, determines the source of the file, for example, Instagram.
+  isRemote: false, // optional, set to true if actual file is not in the browser, but on some remote server, for example,
+  // when using companion in combination with Instagram.
 })
 ```
 
@@ -445,13 +471,15 @@ Get a specific [File Object][File Objects] by its ID.
 ```js
 const file = uppy.getFile('uppyteamkongjpg1501851828779')
 
-file.id        // 'uppyteamkongjpg1501851828779'
-file.name      // 'nature.jpg'
-file.extension // '.jpg'
-file.type      // 'image/jpeg'
-file.data      // the Blob object
-file.size      // 3947642 (returns 'N/A' if size cannot be determined)
-file.preview   // value that can be used to populate "src" attribute of an "img" tag
+const {
+  id,        // 'uppyteamkongjpg1501851828779'
+  name,      // 'nature.jpg'
+  extension, // '.jpg'
+  type,      // 'image/jpeg'
+  data,      // the Blob object
+  size,      // 3947642 (returns 'N/A' if size cannot be determined)
+  preview,   // value that can be used to populate "src" attribute of an "img" tag
+} = file
 ```
 
 ### `uppy.getFiles()`
@@ -460,9 +488,8 @@ Get an array of all [File Objects][] that have been added to Uppy.
 
 ```js
 import prettierBytes from '@transloadit/prettier-bytes'
-const items = uppy.getFiles().map(() =>
-  `<li>${file.name} - ${prettierBytes(file.size)}</li>`
-).join('')
+
+const items = uppy.getFiles().map(() => `<li>${file.name} - ${prettierBytes(file.size)}</li>`).join('')
 document.querySelector('.file-list').innerHTML = `<ul>${items}</ul>`
 ```
 
@@ -519,20 +546,20 @@ Update Uppy's internal state. Usually, this method is called internally, but in 
 Uppy’s default state on initialization:
 
 ```js
-{
+const state = {
   plugins: {},
   files: {},
   currentUploads: {},
   capabilities: {
-    resumableUploads: false
+    resumableUploads: false,
   },
   totalProgress: 0,
-  meta: Object.assign({}, this.opts.meta),
+  meta: { ...this.opts.meta },
   info: {
     isHidden: true,
     type: 'info',
-    message: ''
-  }
+    message: '',
+  },
 }
 ```
 
@@ -540,7 +567,7 @@ Updating state:
 
 ```js
 uppy.setState({
-  smth: true
+  smth: true,
 })
 ```
 
@@ -548,17 +575,19 @@ State in Uppy is considered to be immutable. When updating values, it is your re
 
 ```js
 // We use Object.assign({}, obj) to create a copy of `obj`.
-const updatedFiles = Object.assign({}, uppy.getState().files)
+const updatedFiles = { ...uppy.getState().files }
 // We use Object.assign({}, obj, update) to create an altered copy of `obj`.
-const updatedFile = Object.assign({}, updatedFiles[fileID], {
-  progress: Object.assign({}, updatedFiles[fileID].progress, {
+const updatedFile = {
+  ...updatedFiles[fileID],
+  progress: {
+    ...updatedFiles[fileID].progress,
     bytesUploaded: data.bytesUploaded,
     bytesTotal: data.bytesTotal,
-    percentage: Math.floor((data.bytesUploaded / data.bytesTotal * 100).toFixed(2))
-  })
-})
+    percentage: Math.floor(100 * (data.bytesUploaded / data.bytesTotal)),
+  },
+}
 updatedFiles[data.id] = updatedFile
-uppy.setState({files: updatedFiles})
+uppy.setState({ files: updatedFiles })
 ```
 
 ### `uppy.getState()`
@@ -599,15 +628,15 @@ Change Uppy options on the fly. For example, to conditionally change `restrictio
 const uppy = new Uppy()
 uppy.setOptions({
   restrictions: { maxNumberOfFiles: 3 },
-  autoProceed: true
+  autoProceed: true,
 })
 
 uppy.setOptions({
   locale: {
     strings: {
-      'cancel': 'Отмена'
-    }
-  }
+      cancel: 'Отмена',
+    },
+  },
 })
 ```
 
@@ -616,7 +645,7 @@ You can also change options for plugin on the fly, like this:
 ```js
 // Change width of the Dashboard drag-and-drop aread on the fly
 uppy.getPlugin('Dashboard').setOptions({
-  width: 300
+  width: 300,
 })
 ```
 
@@ -775,20 +804,20 @@ Fired each time a single upload is completed.
 
   For `@uppy/xhr-upload`, the shape is:
 
-  ```js
+  ```json
   {
-    status, // HTTP status code (0, 200, 300)
-    body, // response body
-    uploadURL // the file url, if it was returned
+    "status": 200, // HTTP status code (0, 200, 300)
+    "body": "…", // response body
+    "uploadURL": "…" // the file url, if it was returned
   }
   ```
 
 **Example**
 
-``` javascript
+```js
 uppy.on('upload-success', (file, response) => {
   console.log(file.name, response.uploadURL)
-  var img = new Image()
+  const img = new Image()
   img.width = 300
   img.alt = file.id
   img.src = response.uploadURL
@@ -802,7 +831,7 @@ Fired when all uploads are complete.
 
 The `result` parameter is an object with arrays of `successful` and `failed` files, just like in [`uppy.upload()`](#uppy-upload)’s return value.
 
-``` javascript
+```js
 uppy.on('complete', (result) => {
   console.log('successful files:', result.successful)
   console.log('failed files:', result.failed)
@@ -834,10 +863,10 @@ Fired each time a single upload has errored.
 
   For `@uppy/xhr-upload`, the shape is:
 
-  ```js
+  ```json
   {
-    status, // HTTP status code (0, 200, 300)
-    body // response body
+    "status": 200, // HTTP status code (0, 200, 300)
+    "body": "…" // response body
   }
   ```
 
@@ -881,14 +910,14 @@ Fired when “info” message should be visible in the UI. By default, `Informer
 
 ``` javascript
 uppy.on('info-visible', () => {
-  const info = uppy.getState().info
+  const { info } = uppy.getState()
   // info: {
   //  isHidden: false,
   //  type: 'error',
   //  message: 'Failed to upload',
   //  details: 'Error description'
   // }
-  alert(`${info.message} ${info.details}`)
+  console.log(`${info.message} ${info.details}`)
 })
 ```
 

@@ -17,7 +17,7 @@ import ThumbnailGenerator from '@uppy/thumbnail-generator'
 
 const uppy = new Uppy()
 uppy.use(ThumbnailGenerator, {
-  thumbnailWidth: 200
+  thumbnailWidth: 200,
 })
 ```
 

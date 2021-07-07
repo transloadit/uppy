@@ -5,7 +5,10 @@
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
     "*.js": "eslint",
-    "*.md": "remark -f -q -i .gitignore"
+    "*.md": [
+      "remark -f -q -i .gitignore",
+      "eslint --fix"
+    ]
   },
   "remarkConfig": {
     "plugins": [
@@ -74,6 +77,7 @@
     "eslint-plugin-jest": "23.20.0",
     "eslint-plugin-jsdoc": "30.2.2",
     "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-markdown": "^2.2.0",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prefer-import": "0.0.1",
     "eslint-plugin-promise": "4.2.1",
@@ -92,7 +96,7 @@
     "json3": "3.3.3",
     "last-commit-message": "1.0.0",
     "lerna": "^3.22.1",
-    "lint-staged": "9.5.0",
+    "lint-staged": "^11.0.0",
     "math-log2": "^2.0.0",
     "md-gum-polyfill": "^1.0.0",
     "mime-types": "2.1.26",

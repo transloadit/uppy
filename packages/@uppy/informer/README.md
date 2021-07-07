@@ -17,7 +17,7 @@ import Informer from '@uppy/informer'
 
 const uppy = new Uppy()
 uppy.use(Informer, {
-  target: '#mount-point'
+  target: '#mount-point',
 })
 ```
 

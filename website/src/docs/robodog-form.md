@@ -42,10 +42,10 @@ All the options to the [Transloadit][transloadit plugin] plugin are supported.
 You can localize the “Choose files” button that is injected into the form, by setting the `locale.strings` option:
 
 ```js
-locale: {
+const locale = {
   strings: {
-    chooseFiles: 'Choose files'
-  }
+    chooseFiles: 'Choose files',
+  },
 }
 ```
 
@@ -113,7 +113,7 @@ The `triggerUploadOnSubmit: false` option is available for this purpose. We reco
 window.Robodog.form('form#upload-form', {
   modal: true,
   closeAfterFinish: true,
-  triggerUploadOnSubmit: false
+  triggerUploadOnSubmit: false,
 })
 ```
 
@@ -156,7 +156,7 @@ Here is a full copy-pasteable code sample with all updated options and event nam
 Notice how the form is submitted to the inexistant `/uploads` route once all transcoding is finished. Please do not forget to add your Transloadit auth key to
 `window.YOUR_TRANSLOADIT_AUTH_KEY`.
 
-```js
+```html
 <html>
   <head>
     <title>Testing Robodog</title>

@@ -22,9 +22,9 @@ import ImageEditor from '@uppy/image-editor'
 
 const uppy = new Uppy()
 uppy.use(Dashboard)
-uppy.use(ImageEditor, { 
+uppy.use(ImageEditor, {
   target: Dashboard,
-  quality: 0.7
+  quality: 0.7,
 })
 ```
 

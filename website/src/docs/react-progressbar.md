@@ -19,10 +19,10 @@ npm install @uppy/react
 ```
 
 ```js
-// Either:
-import ProgressBar from '@uppy/react/lib/ProgressBar'
-// Or:
 import { ProgressBar } from '@uppy/react'
+
+// Alternatively, you can also use a default import:
+// import ProgressBar from '@uppy/react/lib/ProgressBar'
 ```
 
 ## CSS
@@ -41,11 +41,14 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 The `<ProgressBar />` component supports all [`@uppy/progress-bar`][] options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
 ```js
-<ProgressBar
-  uppy={uppy}
-  fixed
-  hideAfterFinish
-/>
+import React from 'react'
+import { ProgressBar } from '@uppy/react'
+
+  <ProgressBar
+    uppy={uppy}
+    fixed
+    hideAfterFinish
+  />
 ```
 
 [`@uppy/progress-bar`]: /docs/progress-bar/

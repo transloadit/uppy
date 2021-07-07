@@ -36,7 +36,7 @@ npm install @uppy/file-input
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const FileInput = Uppy.FileInput
+const { FileInput } = Uppy
 ```
 
 ## CSS
@@ -60,7 +60,7 @@ uppy.use(FileInput, {
   pretty: true,
   inputName: 'files[]',
   locale: {
-  }
+  },
 })
 ```
 
@@ -87,8 +87,10 @@ The `name` attribute for the `<input type="file">` element.
 When `pretty` is set, specify a custom label for the button.
 
 ```js
-strings: {
-  chooseFiles: 'Choose files'
+const locale = {
+  strings: {
+    chooseFiles: 'Choose files',
+  },
 }
 ```
 
@@ -103,7 +105,7 @@ If you don’t like the look/feel of the button rendered by `@uppy/file-input`, 
 Then add this JS to attach it to Uppy:
 
 ```js
-const uppy = new Uppy(...)
+const uppy = new Uppy(/* ... */)
 const fileInput = document.querySelector('#my-file-input')
 
 fileInput.addEventListener('change', (event) => {
@@ -115,7 +117,7 @@ fileInput.addEventListener('change', (event) => {
         source: 'file input',
         name: file.name,
         type: file.type,
-        data: file
+        data: file,
       })
     } catch (err) {
       if (err.isRestriction) {

@@ -39,7 +39,7 @@ npm install @uppy/informer
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Informer = Uppy.Informer
+const { Informer } = Uppy
 ```
 
 ## CSS

@@ -29,7 +29,7 @@ To use a store, pass an instance to the [`store` option](/docs/uppy#store-defaul
 import defaultStore from '@uppy/store-default'
 
 const uppy = new Uppy({
-  store: defaultStore()
+  store: defaultStore(),
 })
 ```
 
@@ -49,9 +49,10 @@ To use the `ReduxStore`, add its reducer to the `uppy` key:
 
 ```js
 import ReduxStore from '@uppy/store-redux'
+
 const reducer = combineReducers({
   ...reducers,
-  uppy: ReduxStore.reducer
+  uppy: ReduxStore.reducer,
 })
 ```
 
@@ -64,8 +65,8 @@ import ReduxStore from '@uppy/store-redux'
 const store = createStore(reducer)
 const uppy = new Uppy({
   store: ReduxStore({
-    store: store // That's a lot of stores!
-  })
+    store, // That's a lot of stores!
+  }),
 })
 ```
 
@@ -81,8 +82,8 @@ By default, the `ReduxStore` assumes Uppy state is stored on a `state.uppy[id]` 
 
 ```js
 ReduxStore({
-  store: store,
-  id: 'avatarUpload'
+  store,
+  id: 'avatarUpload',
 })
 ```
 
@@ -93,10 +94,10 @@ If you'd rather not store the Uppy state under the `state.uppy` key at all, use 
 ```js
 const uppy = new Uppy({
   store: ReduxStore({
-    store: store,
+    store,
     id: 'avatarUpload',
-    selector: state => state.pages.profile.uppy.avatarUpload
-  })
+    selector: state => state.pages.profile.uppy.avatarUpload,
+  }),
 })
 ```
 
@@ -127,7 +128,7 @@ function defaultStore () {
     getState: () => state,
     setState: (patch) => {
       const prevState = state
-      const nextState = Object.assign({}, prevState, patch)
+      const nextState = { ...prevState, ...patch }
 
       state = nextState
 
@@ -138,7 +139,7 @@ function defaultStore () {
     subscribe: (listener) => {
       listeners.add(listener)
       return () => listeners.remove(listener)
-    }
+    },
   }
 }
 ```
