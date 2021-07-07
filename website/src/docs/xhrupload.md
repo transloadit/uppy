@@ -216,7 +216,7 @@ Set to `0` to disable this check.
 
 The default for the timeout is 30 seconds.
 
-### `limit: 0`
+### `limit: 5`
 
 Limit the amount of uploads going on at the same time. Setting this to `0` means there is no limit on concurrent uploads.
 
