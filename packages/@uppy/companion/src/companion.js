@@ -38,6 +38,7 @@ const defaultOptions = {
     },
   },
   debug: true,
+  logClientVersion: true,
 }
 
 // make the errors available publicly for custom providers
@@ -110,6 +111,7 @@ module.exports.app = (options = {}) => {
   app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
   app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
   app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
+  // @ts-ignore
   app.get('/search/:searchProviderName/list', middlewares.hasSearchQuery, middlewares.loadSearchProviderToken, controllers.list)
   app.post('/search/:searchProviderName/get/:id', middlewares.loadSearchProviderToken, controllers.get)
 
@@ -169,7 +171,9 @@ const getOptionsMiddleware = (options) => {
       buildURL: getURLBuilder(options),
     }
 
-    logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
+    if (options.logClientVersion) {
+      logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
+    }
     next()
   }
 

@@ -320,7 +320,9 @@ const options = {
 
 11. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
 
-12. **metrics(optional)** - A boolean flag to tell Companion whether or not to provide an endpoint `/metrics` with Prometheus metrics.
+12. **logClientVersion(optional)** - A boolean flag to tell Companion whether or not to log its version upon startup.
+
+13. **metrics(optional)** - A boolean flag to tell Companion whether or not to provide an endpoint `/metrics` with Prometheus metrics.
 
 ### Provider Redirect URIs
 
