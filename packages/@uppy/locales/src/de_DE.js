@@ -138,8 +138,6 @@ de_DE.strings = {
     '1': 'Sie müssen mindestens %{smart_count} Dateien auswählen',
     '2': 'Sie müssen mindestens %{smart_count} Dateien auswählen',
   },
-  selectAllFilesFromFolderNamed: 'Wählen Sie alle Dateien aus dem Ordner %{name}',
-  unselectAllFilesFromFolderNamed: 'Heben Sie die Auswahl aller Dateien aus dem Ordner auf %{name}',
   selectFileNamed: 'Datei aussuchen %{name}',
   unselectFileNamed: 'Datei abwählen %{name}',
   openFolderNamed: 'Ordner öffnen %{name}',

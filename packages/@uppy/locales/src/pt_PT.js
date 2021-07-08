@@ -126,10 +126,6 @@ pt_PT.strings = {
     0: 'Precisa de selecionar pelo menos %{smart_count} ficheiro',
     1: 'Precisa de selecionar pelo menos %{smart_count} ficheiros',
   },
-  selectAllFilesFromFolderNamed:
-    'Selecione todos os ficheiros da pasta %{name}',
-  unselectAllFilesFromFolderNamed:
-    'Desmarque todos os ficheiros da pasta %{name}',
   selectFileNamed: 'Selecione o ficheiro %{name}',
   unselectFileNamed: 'Deselecionar ficheiro %{name}',
   openFolderNamed: 'Pasta aberta %{name}',

@@ -132,8 +132,6 @@ ar_SA.strings = {
     '1': 'يجب ان تختار على الاقل  %{smart_count} ملفات',
     '2': 'يجب ان تختار على الاقل  %{smart_count} ملفات',
   },
-  selectAllFilesFromFolderNamed: 'حدد جميع الملفات من المجلد %{name}',
-  unselectAllFilesFromFolderNamed: 'قم بإلغاء تحديد جميع الملفات من المجلد %{name}',
   selectFileNamed: 'اختر الملف %{name}',
   unselectFileNamed: 'إلغاء تحديد الملف %{name}',
   openFolderNamed: 'افتح المجلد %{name}',

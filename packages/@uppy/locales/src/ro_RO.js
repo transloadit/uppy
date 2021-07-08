@@ -90,7 +90,6 @@ ro_RO.strings = {
   retry: 'Reîncercare',
   retryUpload: 'Reîncearcă încărcarea',
   saveChanges: 'Salvează modificări',
-  selectAllFilesFromFolderNamed: 'Selectează toate fișierele din %{name}',
   selectFileNamed: 'Selectează fișier %{name}',
   selectX: {
     '0': 'Selectează %{smart_count}',
@@ -101,7 +100,6 @@ ro_RO.strings = {
   stopRecording: 'Oprește înregistrarea video',
   takePicture: 'Fă o poză',
   timedOut: 'Încărcarea blocată pentru %{seconds} secunde, se anulează.',
-  unselectAllFilesFromFolderNamed: 'Deselectează toate fișierele în directorul %{name}',
   unselectFileNamed: 'Deselectează fișier %{name}',
   upload: 'Încarcă',
   uploadComplete: 'Încărcare finalizată',

@@ -132,8 +132,6 @@ uk_UA.strings = {
     '1': 'Ви повинні обрати хоча б %{smart_count} файли',
     '2': 'Ви повинні обрати хоча б %{smart_count} файлів',
   },
-  selectAllFilesFromFolderNamed: 'Обрати всі файли з теки %{name}',
-  unselectAllFilesFromFolderNamed: 'Скасувати вибір усіх файлів з теки %{name}',
   selectFileNamed: 'Обрати файл %{name}',
   unselectFileNamed: 'Скасувати вибір файлу %{name}',
   openFolderNamed: 'Відкрити теку %{name}',
