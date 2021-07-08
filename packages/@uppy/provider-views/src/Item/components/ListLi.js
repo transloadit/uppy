@@ -39,8 +39,6 @@ function ListItem (props) {
           id={id}
           checked={isChecked}
           aria-label={type === 'file' ? null : i18n('allFilesFromFolderNamed', { name: title })}
-          aria-checked={isChecked}
-          aria-disabled={isDisabled}
           disabled={isDisabled}
           data-uppy-super-focusable
         />
