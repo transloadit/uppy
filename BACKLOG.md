@@ -1,6 +1,6 @@
 # Backlog
 
-<!--lint disable no-literal-urls-->
+<!--lint disable no-literal-urls no-undefined-references-->
 
 This is our roadmap which contains a list of todos.
 

@@ -1,6 +1,6 @@
-import Uppy = require('@uppy/core')
-import StatusBar = require('@uppy/status-bar')
-import DashboardLocale = require('./generatedLocale')
+import type { PluginOptions, UIPlugin, PluginTarget, UppyFile } from '@uppy/core'
+import type StatusBar from '@uppy/status-bar'
+import DashboardLocale from './generatedLocale'
 
 type FieldRenderOptions = {
   value: string,
@@ -17,7 +17,7 @@ interface MetaField {
 }
 
 declare module Dashboard {
-  interface DashboardOptions extends Uppy.PluginOptions {
+  interface DashboardOptions extends PluginOptions {
     animateOpenClose?: boolean
     browserBackButtonClose?: boolean
     closeAfterFinish?: boolean
@@ -35,7 +35,7 @@ declare module Dashboard {
     hideUploadButton?: boolean
     inline?: boolean
     locale?: DashboardLocale & StatusBar.StatusBarLocale
-    metaFields?: MetaField[] | ((file: Uppy.UppyFile) => MetaField[])
+    metaFields?: MetaField[] | ((file: UppyFile) => MetaField[])
     note?: string | null
     onRequestCloseModal?: () => void
     plugins?: string[]
@@ -46,7 +46,7 @@ declare module Dashboard {
     showSelectedFiles?: boolean
     showRemoveButtonAfterComplete?: boolean
     replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
+    target?: PluginTarget
     theme?: 'auto' | 'dark' | 'light'
     thumbnailWidth?: number
     trigger?: string
@@ -57,8 +57,8 @@ declare module Dashboard {
   }
 }
 
-declare class Dashboard extends Uppy.Plugin<Dashboard.DashboardOptions> {
-  addTarget (plugin: Uppy.Plugin): HTMLElement
+declare class Dashboard extends UIPlugin<Dashboard.DashboardOptions> {
+  addTarget (plugin: UIPlugin): HTMLElement
   hideAllPanels (): void
   openModal (): void
   closeModal (): void
@@ -68,4 +68,4 @@ declare class Dashboard extends Uppy.Plugin<Dashboard.DashboardOptions> {
   uninstall (): void
 }
 
-export = Dashboard
+export default Dashboard

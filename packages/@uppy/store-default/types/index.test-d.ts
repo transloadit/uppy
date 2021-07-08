@@ -1,4 +1,4 @@
-import DefaultStore = require('../')
+import DefaultStore from '../'
 
 const store = DefaultStore()
 

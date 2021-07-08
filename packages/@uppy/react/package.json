@@ -31,6 +31,7 @@
     "prop-types": "^15.6.1"
   },
   "devDependencies": {
+    "@types/react": "^17.0.13",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.2",
     "react": "^16.8.6",

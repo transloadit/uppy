@@ -1,13 +1,14 @@
 import Vue from 'vue';
-import { Uppy, Plugin } from '@uppy/core';
-import * as DashboardPlugin from '@uppy/dashboard';
+import type { Uppy, UIPlugin, BasePlugin } from '@uppy/core';
+import type DashboardPlugin from '@uppy/dashboard';
+
 interface Data {
     plugin: DashboardPlugin;
 }
 interface Props {
     uppy: Uppy;
     props: Object;
-    plugins: Plugin[];
+    plugins: Array<UIPlugin | BasePlugin>
 }
 interface Methods {
     installPlugin(): void;

@@ -1,17 +1,15 @@
-import Uppy = require('@uppy/core')
-import CompanionClient = require('@uppy/companion-client')
+import type { PluginOptions, PluginTarget, UIPlugin } from '@uppy/core'
+import type { PublicProviderOptions, TokenStorage } from '@uppy/companion-client'
 
 declare module Box {
-  interface BoxOptions
-    extends Uppy.PluginOptions,
-      CompanionClient.PublicProviderOptions {
+  interface BoxOptions extends PluginOptions, PublicProviderOptions {
     replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
+    target?: PluginTarget
     title?: string
-    storage?: CompanionClient.TokenStorage
+    storage?: TokenStorage
   }
 }
 
-declare class Box extends Uppy.Plugin<Box.BoxOptions> {}
+declare class Box extends UIPlugin<Box.BoxOptions> {}
 
-export = Box
+export default Box

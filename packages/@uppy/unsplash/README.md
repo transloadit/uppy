@@ -17,7 +17,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 import Uppy from '@uppy/core'
 import Unsplash from '@uppy/unsplash'
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Unsplash, {
   // Options
 })

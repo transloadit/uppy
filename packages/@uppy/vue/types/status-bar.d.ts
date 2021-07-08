@@ -1,7 +1,8 @@
 import Vue from 'vue';
-import { Uppy, Plugin } from '@uppy/core';
+import type { Uppy, UIPlugin, BasePlugin } from '@uppy/core';
+
 interface Data {
-    plugin: Plugin;
+    plugin: UIPlugin | BasePlugin;
 }
 interface Props {
     uppy: Uppy;
