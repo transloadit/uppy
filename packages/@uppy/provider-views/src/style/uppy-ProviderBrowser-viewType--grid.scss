@@ -65,7 +65,7 @@
   }
 
   // button with a large picture
-  button.uppy-ProviderBrowserItem-inner {
+  .uppy-ProviderBrowserItem-inner {
     border-radius: 4px;
     overflow: hidden;
     position: absolute;
@@ -114,4 +114,9 @@
   .uppy-ProviderBrowserItem-checkbox--is-checked {
     opacity: 1;
   }
+}
+
+.grid-checkbox:focus + label {
+  @include clear-focus();
+  box-shadow: $focus-shadow;
 }
