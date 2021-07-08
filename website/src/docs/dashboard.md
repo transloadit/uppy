@@ -73,7 +73,7 @@ uppy.use(Dashboard, {
   height: 550,
   thumbnailWidth: 280,
   defaultTabIcon,
-  showLinkToFileUploadResult: true,
+  showLinkToFileUploadResult: false,
   showProgressDetails: false,
   hideUploadButton: false,
   hideRetryButton: false,
@@ -148,9 +148,9 @@ Whether to wait for all thumbnails from `@uppy/thumbnail-generator` to be ready 
 
 This is useful because Thumbnail Generator also adds EXIF data to images, and if we wait until it’s done processing, this data will be avilable on the server after the upload.
 
-### `showLinkToFileUploadResult: true`
+### `showLinkToFileUploadResult: false`
 
-By default, when a file upload has completed, the file icon in the Dashboard turns into a link to the uploaded file. If your app does not publicly store uploaded files or if it's otherwise unwanted, pass `showLinkToFileUploadResult: false`.
+Turn the file icon and thumbnail in the Dashboard into a link to the uploaded file. Please make sure to return the `url` key (or the one set via `responseUrlFieldName`) from your server.
 
 ### `showProgressDetails: false`
 
