@@ -18,7 +18,6 @@ const remoteProviderOptionNames = [
   'companionUrl',
   'companionAllowedHosts',
   'companionHeaders',
-  'serverHeaders',
   'target',
 ]
 
