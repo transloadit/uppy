@@ -1,4 +1,4 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const toArray = require('@uppy/utils/lib/toArray')
 const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
@@ -11,7 +11,7 @@ const { version } = require('../package.json')
  * Drag & Drop plugin
  *
  */
-module.exports = class DragDrop extends Plugin {
+module.exports = class DragDrop extends UIPlugin {
   static VERSION = version
 
   constructor (uppy, opts) {

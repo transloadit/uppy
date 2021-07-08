@@ -1,9 +1,9 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const toArray = require('@uppy/utils/lib/toArray')
 const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
 
-module.exports = class FileInput extends Plugin {
+module.exports = class FileInput extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {

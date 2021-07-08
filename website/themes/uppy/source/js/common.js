@@ -289,26 +289,4 @@
     loopTaglines()
     setInterval(loopTaglines, 4000)
   }
-
-  // Search with SwiftType
-  // @todo get our own swifttype
-
-  // (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
-  // (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
-  // e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
-  // })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
-
-  // _st('install','HgpxvBc7pUaPUWmG9sgv','2.0.0');
-
-  // version select
-  // document.querySelector('.version-select').addEventListener('change', function (e) {
-  //   var version = e.target.value
-  //   if (version.indexOf('1.') !== 0) {
-  //     version = version.replace('.', '')
-  //     var section = window.location.pathname.match(/\/(\w+?)\//)[1]
-  //     window.location.assign('http://' + version + '.uppy.io/' + section + '/')
-  //   } else {
-  //     // TODO when 1.x is out
-  //   }
-  // })
 }())

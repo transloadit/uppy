@@ -17,9 +17,10 @@ Functional components are re-run on every render. This makes it very easy to acc
 The `@uppy/react` package provides a hook `useUppy()` that can manage an Uppy instance's lifetime for you. It will be created when your component is first rendered, and destroyed when your component unmounts.
 
 ```js
-const Uppy = require('@uppy/core')
-const Tus = require('@uppy/tus')
-const { DashboardModal, useUppy } = require('@uppy/react')
+import Uppy from '@uppy/core'
+import React from 'react'
+import Tus from '@uppy/tus'
+import { DashboardModal, useUppy } from '@uppy/react'
 
 function MyComponent () {
   const uppy = useUppy(() => {
@@ -41,6 +42,9 @@ A simple approach is to create an Uppy instance in your React component's `const
 > Do **NOT** initialize Uppy in a `render()` method!
 
 ```js
+import React from 'react'
+import { DashboardModal } from '@uppy/react'
+
 class MyComponent extends React.Component {
   constructor (props) {
     super(props)

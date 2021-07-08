@@ -1,16 +1,15 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
-const MathLog2 = require('math-log2') // Polyfill for IE.
 const exifr = require('exifr/dist/mini.legacy.umd.js')
 
 /**
  * The Thumbnail Generator plugin
  */
 
-module.exports = class ThumbnailGenerator extends Plugin {
+module.exports = class ThumbnailGenerator extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -65,22 +64,16 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * @returns {Promise}
    */
   createThumbnail (file, targetWidth, targetHeight) {
-    // bug in the compatibility data
-    // eslint-disable-next-line compat/compat
     const originalUrl = URL.createObjectURL(file.data)
 
     const onload = new Promise((resolve, reject) => {
       const image = new Image()
       image.src = originalUrl
       image.addEventListener('load', () => {
-        // bug in the compatibility data
-        // eslint-disable-next-line compat/compat
         URL.revokeObjectURL(originalUrl)
         resolve(image)
       })
       image.addEventListener('error', (event) => {
-        // bug in the compatibility data
-        // eslint-disable-next-line compat/compat
         URL.revokeObjectURL(originalUrl)
         reject(event.error || new Error('Could not create thumbnail'))
       })
@@ -96,8 +89,6 @@ module.exports = class ThumbnailGenerator extends Plugin {
         return this.canvasToBlob(resizedImage, this.thumbnailType, 80)
       })
       .then(blob => {
-        // bug in the compatibility data
-        // eslint-disable-next-line compat/compat
         return URL.createObjectURL(blob)
       })
   }
@@ -178,7 +169,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     image = this.protect(image)
 
-    var steps = Math.ceil(MathLog2(image.width / targetWidth))
+    var steps = Math.ceil(Math.log2(image.width / targetWidth))
     if (steps < 1) {
       steps = 1
     }

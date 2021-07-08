@@ -66,6 +66,54 @@ npm run test:endtoend:local -- -b chrome --suite thumbnails
 
 These tests are also run automatically on Travis builds with [SauceLabs](https://saucelabs.com/) cloud service using different OSes.
 
+## Development
+
+### Instagram integration
+
+Even though facebook [allows using](https://developers.facebook.com/blog/post/2018/06/08/enforce-https-facebook-login/) http://localhost in dev mode, Instagram doesn't seem to support that, and seems to need a publically available domain name with HTTPS.
+
+Make sure that you are using a development facebook app at <https://developers.facebook.com/apps>
+
+Go to "Instagram Basic Display" and find `Instagram App ID` and `Instagram App Secret`. Put them in a file called `env.sh` in the repo root:
+```bash
+export COMPANION_INSTAGRAM_KEY="Instagram App ID"
+export COMPANION_INSTAGRAM_SECRET="Instagram App Secret"
+```
+
+Run
+```bash
+ngrok http 3020
+```
+Note the ngrok https base URL, e.g. `https://e0c7de09808d.ngrok.io` and
+append `/instagram/redirect` to it, e.g.:
+
+```
+https://e0c7de09808d.ngrok.io/instagram/redirect
+```
+
+Add this full ngrok URL to `Valid OAuth Redirect URIs` under `Instagram Basic Display`.
+
+Edit `bin/companion` and change to your ngrok URI:
+
+```bash
+COMPANION_DOMAIN="e0c7de09808d.ngrok.io"
+COMPANION_PROTOCOL="https"
+```
+
+Edit `examples/dev/Dashboard.js`:
+
+```
+const COMPANION_URL = 'https://e0c7de09808d.ngrok.io'
+```
+
+Go to: Roles -> Roles -> Add Instagram testers -> Add your instagram account
+
+Go to your instagram account at <https://www.instagram.com/accounts/manage_access/>
+
+Tester invites -> Accept
+
+Now you should be able to test the Instagram integration.
+
 ## Releases
 
 Before doing a release, check that the examples on the website work:

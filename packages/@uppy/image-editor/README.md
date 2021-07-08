@@ -16,15 +16,15 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const ImageEditor = require('@uppy/image-editor')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import ImageEditor from '@uppy/image-editor'
 
 const uppy = Uppy()
 uppy.use(Dashboard)
-uppy.use(ImageEditor, { 
+uppy.use(ImageEditor, {
   target: Dashboard,
-  quality: 0.7
+  quality: 0.7,
 })
 ```
 

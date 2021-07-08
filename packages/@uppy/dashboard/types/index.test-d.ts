@@ -3,7 +3,7 @@ import Uppy = require('@uppy/core')
 import Dashboard = require('../')
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = Uppy()
   uppy.use(Dashboard, {
     target: 'body'
   })
@@ -15,7 +15,7 @@ import Dashboard = require('../')
 }
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = Uppy()
   uppy.use(Dashboard, {
     width: '100%',
     height: 700,
@@ -51,7 +51,7 @@ import Dashboard = require('../')
 }
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = Uppy()
   uppy.use(Dashboard, {
     locale: {
       strings: {
@@ -79,6 +79,6 @@ import Dashboard = require('../')
   }))
 }
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = Uppy()
   expectError(uppy.use(Dashboard, { height: {} }))
 }

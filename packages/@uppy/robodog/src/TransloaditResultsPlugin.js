@@ -1,9 +1,9 @@
-const { Plugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 
 /**
  * Add a `results` key to the upload result data, containing all Transloadit Assembly results.
  */
-class TransloaditResultsPlugin extends Plugin {
+class TransloaditResultsPlugin extends BasePlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
 

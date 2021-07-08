@@ -133,31 +133,26 @@ declare module Uppy {
 
   type LogLevel = 'info' | 'warning' | 'error'
 
-  /** Enable the old, untyped `uppy.use()` signature. */
-  type LooseTypes = 'loose'
-  /** Disable the old, untyped `uppy.use()` signature. */
-  type StrictTypes = 'strict'
-  type TypeChecking = LooseTypes | StrictTypes
-
   // This hack accepts _any_ string for `Event`, but also tricks VSCode and friends into providing autocompletions
   // for the names listed. https://github.com/microsoft/TypeScript/issues/29729#issuecomment-505826972
-  type LiteralUnion<T extends U, U = string> = T | (U & { });
+  type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
+
   type Event = LiteralUnion<'file-added' | 'file-removed' | 'upload' | 'upload-progress' | 'upload-success' | 'complete' | 'error' | 'upload-error' |
                'upload-retry' | 'info-visible' | 'info-hidden' | 'cancel-all' | 'restriction-failed' | 'reset-progress'>;
 
   type UploadHandler = (fileIDs: string[]) => Promise<void>
 
-  class Uppy<TUseStrictTypes extends TypeChecking = TypeChecking> {
+  type UploadSuccessCallback<T> = (file: UppyFile<T>, body: any, uploadURL: string) => void
+  type UploadCompleteCallback<T> = (result: UploadResult<T>) => void
+
+  class Uppy {
     constructor(opts?: UppyOptions)
-    on<TMeta extends IndexedObject<any> = {}>(
-      event: 'upload-success',
-      callback: (file: UppyFile<TMeta>, body: any, uploadURL: string) => void
-    ): this
-    on<TMeta extends IndexedObject<any> = {}>(
-      event: 'complete',
-      callback: (result: UploadResult<TMeta>) => void
-    ): this
+    on<TMeta extends IndexedObject<any> = {}>(event: 'upload-success', callback: UploadSuccessCallback<TMeta>): this
+    on<TMeta extends IndexedObject<any> = {}>(event: 'complete', callback: UploadCompleteCallback<TMeta>): this
     on(event: Event, callback: (...args: any[]) => void): this
+    once<TMeta extends IndexedObject<any> = {}>(event: 'upload-success', callback: UploadSuccessCallback<TMeta>): this
+    once<TMeta extends IndexedObject<any> = {}>(event: 'complete', callback: UploadCompleteCallback<TMeta>): this
+    once(event: Event, callback: (...args: any[]) => void): this
     off(event: Event, callback: (...args: any[]) => void): this
     /**
      * For use by plugins only.
@@ -189,6 +184,24 @@ declare module Uppy {
       TMeta extends IndexedObject<any> = {},
       TBody extends IndexedObject<any> = {}
     >(): Array<UppyFile<TMeta, TBody>>
+    getObjectOfFilesPerState(): {
+      newFiles: Array<UppyFile>,
+      startedFiles: Array<UppyFile>,
+      uploadStartedFiles: Array<UppyFile>,
+      pausedFiles: Array<UppyFile>,
+      completeFiles: Array<UppyFile>,
+      erroredFiles: Array<UppyFile>,
+      inProgressFiles: Array<UppyFile>,
+      inProgressNotPausedFiles: Array<UppyFile>,
+      processingFiles: Array<UppyFile>,
+
+      isUploadStarted: boolean,
+      isAllComplete: boolean,
+      isAllErrored: boolean,
+      isAllPaused: boolean,
+      isUploadInProgress: boolean,
+      isSomeGhost: boolean,
+    }
     addFile<TMeta extends IndexedObject<any> = {}>(
       file: AddFileOptions<TMeta>
     ): string
@@ -201,21 +214,10 @@ declare module Uppy {
     retryUpload<TMeta extends IndexedObject<any> = {}>(fileID: string): Promise<UploadResult<TMeta>>
     reset(): void
     getID(): string
-    /**
-     * Add a plugin to this Uppy instance.
-     */
     use<TOptions, TInstance extends Plugin<TOptions>>(
       pluginClass: new (uppy: this, opts: TOptions) => TInstance,
       opts?: TOptions
     ): this
-    /**
-     * Fallback `.use()` overload with unchecked plugin options.
-     *
-     * This does not validate that the options you pass in are correct.
-     * We recommend disabling this overload by using the `Uppy<Uppy.StrictTypes>` type, instead of the plain `Uppy` type, to enforce strict typechecking.
-     * This overload will be removed in Uppy 2.0.
-     */
-    use(pluginClass: TUseStrictTypes extends StrictTypes ? never : new (uppy: this, opts: any) => Plugin<any>, opts?: object): this
     getPlugin(name: string): Plugin
     iteratePlugins(callback: (plugin: Plugin) => void): void
     removePlugin(instance: Plugin): void
@@ -228,10 +230,6 @@ declare module Uppy {
     ): void
     hideInfo(): void
     log(msg: string, type?: LogLevel): void
-    /**
-     * Obsolete: do not use. This method does nothing and will be removed in a future release.
-     */
-    run(): this
     restore<TMeta extends IndexedObject<any> = {}>(
       uploadID: string
     ): Promise<UploadResult<TMeta>>
@@ -240,19 +238,6 @@ declare module Uppy {
   }
 }
 
-/**
- * Create an uppy instance.
- *
- * By default, Uppy's `.use(Plugin, options)` method uses loose type checking.
- * In Uppy 2.0, the `.use()` method will get a stricter type signature. You can enable strict type checking of plugin classes and their options today by using:
- * ```ts
- * const uppy = Uppy<Uppy.StrictTypes>()
- * ```
- * Make sure to also declare any variables and class properties with the `StrictTypes` parameter:
- * ```ts
- * private uppy: Uppy<Uppy.StrictTypes>;
- * ```
- */
-declare function Uppy<TUseStrictTypes extends Uppy.TypeChecking = Uppy.TypeChecking>(opts?: Uppy.UppyOptions): Uppy.Uppy<TUseStrictTypes>
+declare function Uppy(opts?: Uppy.UppyOptions): Uppy.Uppy
 
 export = Uppy

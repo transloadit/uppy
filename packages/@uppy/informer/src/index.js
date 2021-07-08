@@ -1,4 +1,4 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const { h } = require('preact')
 
 /**
@@ -8,7 +8,7 @@ const { h } = require('preact')
  * or for errors: `uppy.info('Error uploading img.jpg', 'error', 5000)`
  *
  */
-module.exports = class Informer extends Plugin {
+module.exports = class Informer extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {

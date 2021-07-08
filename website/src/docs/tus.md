@@ -11,12 +11,11 @@ tagline: "uploads using the <a href='https://tus.io'>tus</a> resumable upload pr
 The `@uppy/tus` plugin brings resumable file uploading by [tus.io](http://tus.io) to Uppy by wrapping the [tus-js-client][].
 
 ```js
-const Tus = require('@uppy/tus')
+import Tus from '@uppy/tus'
 
 uppy.use(Tus, {
   endpoint: 'https://tusd.tusdemo.net/files/', // use your tus endpoint here
-  resume: true,
-  retryDelays: [0, 1000, 3000, 5000]
+  retryDelays: [0, 1000, 3000, 5000],
 })
 ```
 
@@ -33,7 +32,7 @@ npm install @uppy/tus
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Tus = Uppy.Tus
+const { Tus } = Uppy
 ```
 
 ## Options
@@ -41,18 +40,6 @@ const Tus = Uppy.Tus
 ### `id: 'Tus'`
 
 A unique identifier for this plugin. It defaults to `'Tus'`.
-
-### `resume: true`
-
-A boolean indicating whether Tus should attempt to resume the upload if the upload has been started in the past. This includes storing the file’s upload URL. Set to false to force an entire reupload.
-
-Note that this option is about resuming when you start an upload again with the same file, or when using the [GoldenRetriever](/docs/golden-retriever/) plugin, which will attempt to restore upload state to what it was before page refresh / browser crash. Even if you set `resume: false` when using the Tus uploader, users will still be able to pause/resume an ongoing upload.
-
-In most cases you should leave this option as is, relax, and enjoy resumable uploads.
-
-### `removeFingerprintOnSuccess: false`
-
-If the `resume` option is enabled, it will store some data in localStorage for each upload. With `removeFingerprintOnSuccess`, this data is removed once an upload has completed. The effect is that if the same file is uploaded again, it will create an entirely new upload.
 
 ### `endpoint: ''`
 
@@ -88,21 +75,7 @@ Pass an array of field names to limit the metadata fields that will be added to 
 * Set this to `null` (the default) to send *all* metadata fields.
 * Set this to an empty array `[]` to not send any fields.
 
-### `autoRetry: true`
-
-> This option may be removed in Uppy 2.0. Consider implementing the feature manually:
->
-> ```js
-> uppy.on('back-online', () => {
->   uppy.retryAll()
-> })
-> ```
-
-Configures whether or not to auto-retry the upload when the user's internet connection is back online after an outage.
-
-Note that this is unrelated to the `retryDelays` option. The `retryDelays` option specifies how often to retry an upload that failed. The `autoRetry` option attempts to retry uploads that failed in the past, once the network has changed.
-
-### `limit: 0`
+### `limit: 5`
 
 Limit the amount of uploads going on at the same time. Setting this to `0` means there is no limit on concurrent uploads.
 

@@ -18,7 +18,7 @@ tagline: "full-featured sleek UI with file previews, metadata editing, upload/pa
 - Ability to pause or cancel (depending on the uploader plugin) uploads
 
 ```js
-const Dashboard = require('@uppy/dashboard')
+import Dashboard from '@uppy/dashboard'
 
 uppy.use(Dashboard, {
   // Options
@@ -40,7 +40,7 @@ npm install @uppy/dashboard
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Dashboard = Uppy.Dashboard
+const { Dashboard } = Uppy
 ```
 
 ## CSS
@@ -72,7 +72,7 @@ uppy.use(Dashboard, {
   width: 750,
   height: 550,
   thumbnailWidth: 280,
-  defaultTabIcon: defaultTabIcon,
+  defaultTabIcon,
   showLinkToFileUploadResult: true,
   showProgressDetails: false,
   hideUploadButton: false,
@@ -100,7 +100,7 @@ uppy.use(Dashboard, {
   locale: defaultLocale,
   browserBackButtonClose: false,
   theme: 'light',
-  autoOpenFileEditor: false
+  autoOpenFileEditor: false,
 })
 ```
 
@@ -128,7 +128,7 @@ List of plugin IDs that should be shown in the Dashboard's top bar. For example,
 ```js
 uppy.use(Webcam)
 uppy.use(Dashboard, {
-  plugins: ['Webcam']
+  plugins: ['Webcam'],
 })
 ```
 
@@ -194,7 +194,7 @@ Hide Status Bar after the upload has finished.
 This option is passed to the StatusBar, and will render a “Done” button in place of pause/resume/cancel buttons, once the upload/encoding is done. The behaviour of this “Done” button is defined by the handler function — can be used to close file picker modals or clear the upload state. This is what the Dashboard sets by default:
 
 ```js
-doneButtonHandler: () => {
+const doneButtonHandler = () => {
   this.uppy.reset()
   this.requestCloseModal()
 }
@@ -239,23 +239,27 @@ It gets passed `({value, onChange}, h)` where `value` is the current value of th
 `h` can be useful when using uppy from plain JavaScript, where you cannot write JSX.
 
 ```js
-.use(Dashboard, {
+uppy.use(Dashboard, {
   trigger: '#pick-files',
   metaFields: [
     { id: 'name', name: 'Name', placeholder: 'file name' },
     { id: 'license', name: 'License', placeholder: 'specify license' },
     { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' },
-    { id: 'public', name: 'Public', render: function({value, onChange}, h) {
-      return h('input', { type: 'checkbox', onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'on' })
-    } }
-  ]
+    {
+      id: 'public',
+      name: 'Public',
+      render ({ value, onChange }, h) {
+        return h('input', { type: 'checkbox', onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'on' })
+      },
+    },
+  ],
 })
 ```
 
 If you’d like the meta fields to be dynamically assigned depending on, for instance, the file type, pass a function:
 
 ```js
-.use(Dashboard, {
+uppy.use(Dashboard, {
   trigger: '#pick-files',
   metaFields: (file) => {
     const fields = [{ id: 'name', name: 'File name' }]
@@ -334,7 +338,7 @@ The Dashboard also contains the [`@uppy/status-bar`](/docs/status-bar) plugin by
 The default English strings are:
 
 ```js
-strings: {
+const strings = {
   // When `inline: false`, used as the screen reader label for the button that closes the modal.
   closeModal: 'Close Modal',
   // Used as the screen reader label for the plus (+) button that shows the “Add more files” screen
@@ -404,17 +408,17 @@ strings: {
   // Used in a title, how many files are currently selected
   xFilesSelected: {
     0: '%{smart_count} file selected',
-    1: '%{smart_count} files selected'
+    1: '%{smart_count} files selected',
   },
   // TODO
   uploadingXFiles: {
     0: 'Uploading %{smart_count} file',
-    1: 'Uploading %{smart_count} files'
+    1: 'Uploading %{smart_count} files',
   },
   // TODO
   processingXFiles: {
     0: 'Processing %{smart_count} file',
-    1: 'Processing %{smart_count} files'
+    1: 'Processing %{smart_count} files',
   },
 
   // The "powered by Uppy" link at the bottom of the Dashboard.
@@ -424,7 +428,7 @@ strings: {
 
   // @uppy/status-bar strings:
   uploading: 'Uploading',
-  complete: 'Complete'
+  complete: 'Complete',
   // ...etc
 }
 ```
@@ -490,7 +494,7 @@ Returns `true` if the Dashboard modal is open, `false` otherwise.
 
 ```js
 const dashboard = uppy.getPlugin('Dashboard')
-if ( dashboard.isModalOpen() ) {
+if (dashboard.isModalOpen()) {
   dashboard.closeModal()
 }
 ```

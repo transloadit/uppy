@@ -1,4 +1,4 @@
-const { Plugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 const tus = require('tus-js-client')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
@@ -7,7 +7,7 @@ const settle = require('@uppy/utils/lib/settle')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
-const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
+const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const hasProperty = require('@uppy/utils/lib/hasProperty')
 const getFingerprint = require('./getFingerprint')
 
@@ -42,7 +42,6 @@ const tusDefaultOptions = {
   chunkSize: Infinity,
   retryDelays: [0, 1000, 3000, 5000],
   parallelUploads: 1,
-  storeFingerprintForResuming: true,
   removeFingerprintOnSuccess: false,
   uploadLengthDeferred: false,
   uploadDataDuringCreation: false,
@@ -51,7 +50,7 @@ const tusDefaultOptions = {
 /**
  * Tus resumable file uploader
  */
-module.exports = class Tus extends Plugin {
+module.exports = class Tus extends BasePlugin {
   static VERSION = require('../package.json').version
 
   /**
@@ -66,9 +65,8 @@ module.exports = class Tus extends Plugin {
 
     // set default options
     const defaultOptions = {
-      resume: true,
       useFastRemoteRetry: true,
-      limit: 0,
+      limit: 5,
       retryDelays: [0, 1000, 3000, 5000],
       withCredentials: false,
     }
@@ -119,13 +117,13 @@ module.exports = class Tus extends Plugin {
   resetUploaderReferences (fileID, opts = {}) {
     if (this.uploaders[fileID]) {
       const uploader = this.uploaders[fileID]
+
       uploader.abort()
+
       if (opts.abort) {
-        // to avoid 423 error from tus server, we wait
-        // to be sure the previous request has been aborted before terminating the upload
-        // @todo remove the timeout when this "wait" is handled in tus-js-client internally
-        setTimeout(() => uploader.abort(true), 1000)
+        uploader.abort(true)
       }
+
       this.uploaders[fileID] = null
     }
     if (this.uploaderEvents[fileID]) {
@@ -184,16 +182,7 @@ module.exports = class Tus extends Plugin {
       /** @type {RawTusOptions} */
       const uploadOptions = {
         ...tusDefaultOptions,
-        // TODO only put tus-specific options in?
         ...opts,
-      }
-
-      delete uploadOptions.resume
-
-      // Make `resume: true` work like it did in tus-js-client v1.
-      // TODO: Remove in @uppy/tus v2
-      if (opts.resume) {
-        uploadOptions.storeFingerprintForResuming = true
       }
 
       // We override tus fingerprint to uppy’s `file.id`, since the `file.id`
@@ -279,25 +268,17 @@ module.exports = class Tus extends Plugin {
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      // Make `resume: true` work like it did in tus-js-client v1.
-      // TODO: Remove in @uppy/tus v2.
-      if (opts.resume) {
-        upload.findPreviousUploads().then((previousUploads) => {
-          const previousUpload = previousUploads[0]
-          if (previousUpload) {
-            this.uppy.log(`[Tus] Resuming upload of ${file.id} started at ${previousUpload.creationTime}`)
-            upload.resumeFromPreviousUpload(previousUpload)
-          }
-        })
-      }
+      upload.findPreviousUploads().then((previousUploads) => {
+        const previousUpload = previousUploads[0]
+        if (previousUpload) {
+          this.uppy.log(`[Tus] Resuming upload of ${file.id} started at ${previousUpload.creationTime}`)
+          upload.resumeFromPreviousUpload(previousUpload)
+        }
+      })
 
       let queuedRequest = this.requests.run(() => {
         if (!file.isPaused) {
-          // Ensure this gets scheduled to run _after_ `findPreviousUploads()` returns.
-          // TODO: Remove in @uppy/tus v2.
-          Promise.resolve().then(() => {
-            upload.start()
-          })
+          upload.start()
         }
         // Don't do anything here, the caller will take care of cancelling the upload itself
         // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
@@ -362,7 +343,7 @@ module.exports = class Tus extends Plugin {
    * @param {number} total number of files in a queue
    * @returns {Promise<void>}
    */
-  uploadRemote (file, current, total) {
+  uploadRemote (file) {
     this.resetUploaderReferences(file.id)
 
     const opts = { ...this.opts }
@@ -421,9 +402,6 @@ module.exports = class Tus extends Plugin {
 
       this.onFileRemove(file.id, () => {
         queuedRequest.abort()
-        // still send pause event in case we are dealing with older version of companion
-        // @todo don't send pause event in the next major release.
-        socket.send('pause', {})
         socket.send('cancel', {})
         this.resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was removed`)
@@ -451,9 +429,6 @@ module.exports = class Tus extends Plugin {
 
       this.onCancelAll(file.id, () => {
         queuedRequest.abort()
-        // still send pause event in case we are dealing with older version of companion
-        // @todo don't send pause event in the next major release.
-        socket.send('pause', {})
         socket.send('cancel', {})
         this.resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was canceled`)

@@ -15,8 +15,8 @@
  * will expire before some files can be uploaded.
  *
  * The long-term solution to this problem is to change the upload pipeline so that files
- * can be sent to the next step individually. That requires a breakig change, so it is
- * planned for Uppy v2.
+ * can be sent to the next step individually. That requires a breaking change, so it is
+ * planned for some future Uppy version.
  *
  * In the mean time, this plugin is stuck with a hackier approach: the necessary parts
  * of the XHRUpload implementation were copied into this plugin, as the MiniXHRUpload
@@ -25,11 +25,9 @@
  * the XHRUpload code, but at least it's not horrifically broken :)
  */
 
-// If global `URL` constructor is available, use it
-const URL_ = typeof URL === 'function' ? URL : require('url-parse')
-const { Plugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
-const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
+const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const settle = require('@uppy/utils/lib/settle')
 const hasProperty = require('@uppy/utils/lib/hasProperty')
 const { RequestClient } = require('@uppy/companion-client')
@@ -38,9 +36,7 @@ const MiniXHRUpload = require('./MiniXHRUpload')
 const isXml = require('./isXml')
 
 function resolveUrl (origin, link) {
-  return origin
-    ? new URL_(link, origin).toString()
-    : new URL_(link).toString()
+  return new URL(link, origin || undefined).toString()
 }
 
 /**
@@ -70,7 +66,7 @@ function assertServerError (res) {
 // warning deduplication flag: see `getResponseData()` XHRUpload option definition
 let warnedSuccessActionStatus = false
 
-module.exports = class AwsS3 extends Plugin {
+module.exports = class AwsS3 extends BasePlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -283,7 +279,7 @@ module.exports = class AwsS3 extends Plugin {
       responseUrlFieldName: 'location',
       timeout: this.opts.timeout,
       // Share the rate limiting queue with XHRUpload.
-      __queue: this.requests,
+      [internalRateLimitedQueue]: this.requests,
       responseType: 'text',
       getResponseData: this.opts.getResponseData || defaultGetResponseData,
       getResponseError: defaultGetResponseError,

@@ -1,6 +1,8 @@
 const { render, h, createRef, cloneElement } = require('preact')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 
+const BasePlugin = require('./BasePlugin')
+
 /**
  * Defer a frequent call to the microtask queue.
  */
@@ -24,81 +26,28 @@ function debounce (fn) {
 }
 
 /**
- * Boilerplate that all Plugins share - and should not be used
- * directly. It also shows which methods final plugins should implement/override,
- * this deciding on structure.
+ * UIPlugin is the extended version of BasePlugin to incorporate rendering with Preact.
+ * Use this for plugins that need a user interface.
+ *
+ * For plugins without an user interface, see BasePlugin.
  *
  * @param {object} main Uppy core object
  * @param {object} object with plugin options
  * @returns {Array|string} files or success/fail message
  */
-module.exports = class Plugin {
+class UIPlugin extends BasePlugin {
   constructor (uppy, opts) {
-    this.uppy = uppy
-    this.opts = opts || {}
+    super(uppy, opts)
 
-    this.update = this.update.bind(this)
     this.mount = this.mount.bind(this)
-    this.install = this.install.bind(this)
-    this.uninstall = this.uninstall.bind(this)
-  }
-
-  getPluginState () {
-    const { plugins } = this.uppy.getState()
-    return plugins[this.id] || {}
-  }
-
-  setPluginState (update) {
-    const { plugins } = this.uppy.getState()
-
-    this.uppy.setState({
-      plugins: {
-        ...plugins,
-        [this.id]: {
-          ...plugins[this.id],
-          ...update,
-        },
-      },
-    })
-  }
-
-  setOptions (newOpts) {
-    this.opts = { ...this.opts, ...newOpts }
-    this.setPluginState() // so that UI re-renders with new options
-  }
-
-  update (state) {
-    if (typeof this.el === 'undefined') {
-      return
-    }
-
-    if (this._updateUI) {
-      this._updateUI(state)
-    }
-  }
-
-  // Called after every state update, after everything's mounted. Debounced.
-  afterUpdate () {
-
-  }
-
-  /**
-   * Called when plugin is mounted, whether in DOM or into another plugin.
-   * Needed because sometimes plugins are mounted separately/after `install`,
-   * so this.el and this.parent might not be available in `install`.
-   * This is the case with @uppy/react plugins, for example.
-   */
-  onMount () {
-
+    this.update = this.update.bind(this)
+    this.unmount = this.unmount.bind(this)
   }
 
   /**
    * Check if supplied `target` is a DOM element or an `object`.
    * If it’s an object — target is a plugin, and we search `plugins`
    * for a plugin with same name and return its target.
-   *
-   * @param {string|object} target
-   *
    */
   mount (target, plugin) {
     const callerPluginName = plugin.id
@@ -118,7 +67,7 @@ module.exports = class Plugin {
         this.afterUpdate()
       }
 
-      this._updateUI = debounce(this.rerender)
+      this.updateUI = debounce(this.rerender)
 
       this.uppy.log(`Installing ${callerPluginName} to a DOM element '${target}'`)
 
@@ -129,31 +78,26 @@ module.exports = class Plugin {
         render(h(null), targetElement)
       }
 
-      // Since preact X the render function does not return a reference to the created element anymore.
-      // This is because it can sometimes return multiple elements now, likely due to fragments.
-      // To still get a reference in order to place it in `this.el`, we create a clone with a ref.
-      const ref = createRef()
-      const clone = cloneElement(this.render(this.uppy.getState()), { ref })
+      render(this.render(this.uppy.getState()), targetElement)
 
-      render(clone, targetElement)
-
-      this.el = ref.current
+      this.el = targetElement.firstElementChild
 
       this.onMount()
+
       return this.el
     }
 
     let targetPlugin
-    if (typeof target === 'object' && target instanceof Plugin) {
+    if (typeof target === 'object' && target instanceof UIPlugin) {
       // Targeting a plugin *instance*
       targetPlugin = target
     } else if (typeof target === 'function') {
       // Targeting a plugin type
       const Target = target
       // Find the target plugin instance.
-      this.uppy.iteratePlugins((plugin) => {
-        if (plugin instanceof Target) {
-          targetPlugin = plugin
+      this.uppy.iteratePlugins(p => {
+        if (p instanceof Target) {
+          targetPlugin = p
           return false
         }
       })
@@ -185,12 +129,14 @@ module.exports = class Plugin {
     throw new Error(message)
   }
 
-  render (state) {
-    throw (new Error('Extend the render method to add your plugin to a DOM element'))
-  }
+  update (state) {
+    if (typeof this.el === 'undefined') {
+      return
+    }
 
-  addTarget (plugin) {
-    throw (new Error('Extend the addTarget method to add your plugin to another plugin\'s target'))
+    if (this.updateUI) {
+      this.updateUI(state)
+    }
   }
 
   unmount () {
@@ -198,12 +144,6 @@ module.exports = class Plugin {
       this.el.parentNode.removeChild(this.el)
     }
   }
-
-  install () {
-
-  }
-
-  uninstall () {
-    this.unmount()
-  }
 }
+
+module.exports = UIPlugin

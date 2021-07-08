@@ -1,9 +1,9 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
 const DriveProviderViews = require('./DriveProviderViews')
 const { h } = require('preact')
 
-module.exports = class GoogleDrive extends Plugin {
+module.exports = class GoogleDrive extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {

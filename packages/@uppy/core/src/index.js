@@ -12,7 +12,8 @@ const generateFileID = require('@uppy/utils/lib/generateFileID')
 const findIndex = require('@uppy/utils/lib/findIndex')
 const supportsUploadProgress = require('./supportsUploadProgress')
 const { justErrorsLogger, debugLogger } = require('./loggers')
-const Plugin = require('./Plugin')
+const UIPlugin = require('./UIPlugin')
+const BasePlugin = require('./BasePlugin')
 const { version } = require('../package.json')
 
 // Exported from here.
@@ -221,21 +222,7 @@ class Uppy {
     }
 
     this.addListeners()
-
-    // Re-enable if we’ll need some capabilities on boot, like isMobileDevice
-    // this._setCapabilities()
   }
-
-  // _setCapabilities = () => {
-  //   const capabilities = {
-  //     isMobileDevice: isMobileDevice()
-  //   }
-
-  //   this.setState({
-  //     ...this.getState().capabilities,
-  //     capabilities
-  //   })
-  // }
 
   on (event, callback) {
     this.emitter.on(event, callback)
@@ -325,6 +312,7 @@ class Uppy {
       })
     }
 
+    // Note: this is not the preact `setState`, it's an internal function that has the same name.
     this.setState() // so that UI re-renders with new options
   }
 
@@ -426,7 +414,44 @@ class Uppy {
    */
   getFiles () {
     const { files } = this.getState()
-    return Object.keys(files).map((fileID) => files[fileID])
+    return Object.values(files)
+  }
+
+  getObjectOfFilesPerState () {
+    const { files: filesObject, totalProgress, error } = this.getState()
+    const files = Object.values(filesObject)
+    const inProgressFiles = files.filter(({ progress }) => !progress.uploadComplete && progress.uploadStarted)
+    const newFiles =  files.filter((file) => !file.progress.uploadStarted)
+    const startedFiles = files.filter(
+      file => file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess
+    )
+    const uploadStartedFiles = files.filter((file) => file.progress.uploadStarted)
+    const pausedFiles = files.filter((file) => file.isPaused)
+    const completeFiles = files.filter((file) => file.progress.uploadComplete)
+    const erroredFiles = files.filter((file) => file.error)
+    const inProgressNotPausedFiles = inProgressFiles.filter((file) => !file.isPaused)
+    const processingFiles = files.filter((file) => file.progress.preprocess || file.progress.postprocess)
+
+    return {
+      newFiles,
+      startedFiles,
+      uploadStartedFiles,
+      pausedFiles,
+      completeFiles,
+      erroredFiles,
+      inProgressFiles,
+      inProgressNotPausedFiles,
+      processingFiles,
+
+      isUploadStarted: uploadStartedFiles.length > 0,
+      isAllComplete: totalProgress === 100
+        && completeFiles.length === files.length
+        && processingFiles.length === 0,
+      isAllErrored: !!error && erroredFiles.length === files.length,
+      isAllPaused: inProgressFiles.length !== 0 && pausedFiles.length === inProgressFiles.length,
+      isUploadInProgress: inProgressFiles.length > 0,
+      isSomeGhost: files.some(file => file.isGhost),
+    }
   }
 
   /**
@@ -592,47 +617,40 @@ class Uppy {
    *
    * The `files` value is passed in because it may be updated by the caller without updating the store.
    */
-  checkAndCreateFileStateObject (files, f) {
-    const fileType = getFileType(f)
-    let file = f
-    file.type = fileType
-
-    const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(file, files)
-
-    if (onBeforeFileAddedResult === false) {
-      // Don’t show UI info for this error, as it should be done by the developer
-      this.showOrLogErrorAndThrow(new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.'), { showInformer: false, file })
-    }
-
-    if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult) {
-      file = onBeforeFileAddedResult
-    }
+  checkAndCreateFileStateObject (files, fileDescriptor) {
+    const fileType = getFileType(fileDescriptor)
 
     let fileName
-    if (file.name) {
-      fileName = file.name
+    if (fileDescriptor.name) {
+      fileName = fileDescriptor.name
     } else if (fileType.split('/')[0] === 'image') {
       fileName = `${fileType.split('/')[0]}.${fileType.split('/')[1]}`
     } else {
       fileName = 'noname'
     }
     const fileExtension = getFileNameAndExtension(fileName).extension
-    const isRemote = file.isRemote || false
-
-    const fileID = generateFileID(file)
+    const isRemote = Boolean(fileDescriptor.isRemote)
+    const fileID = generateFileID({
+      ...fileDescriptor,
+      type: fileType,
+    })
 
     if (files[fileID] && !files[fileID].isGhost) {
-      this.showOrLogErrorAndThrow(new RestrictionError(this.i18n('noDuplicates', { fileName })), { file })
+      this.showOrLogErrorAndThrow(
+        new RestrictionError(this.i18n('noDuplicates', { fileName })),
+        { fileDescriptor }
+      )
     }
 
-    const meta = file.meta || {}
+    const meta = fileDescriptor.meta || {}
     meta.name = fileName
     meta.type = fileType
 
     // `null` means the size is unknown.
-    const size = Number.isFinite(file.data.size) ? file.data.size : null
-    const newFile = {
-      source: file.source || '',
+    const size = Number.isFinite(fileDescriptor.data.size) ? fileDescriptor.data.size : null
+
+    let newFile = {
+      source: fileDescriptor.source || '',
       id: fileID,
       name: fileName,
       extension: fileExtension || '',
@@ -641,7 +659,7 @@ class Uppy {
         ...meta,
       },
       type: fileType,
-      data: file.data,
+      data: fileDescriptor.data,
       progress: {
         percentage: 0,
         bytesUploaded: 0,
@@ -651,8 +669,17 @@ class Uppy {
       },
       size,
       isRemote,
-      remote: file.remote || '',
-      preview: file.preview,
+      remote: fileDescriptor.remote || '',
+      preview: fileDescriptor.preview,
+    }
+
+    const onBeforeFileAddedResult = this.opts.onBeforeFileAdded(newFile, files)
+
+    if (onBeforeFileAddedResult === false) {
+      // Don’t show UI info for this error, as it should be done by the developer
+      this.showOrLogErrorAndThrow(new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.'), { showInformer: false, fileDescriptor })
+    } else if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult !== null) {
+      newFile = onBeforeFileAddedResult
     }
 
     try {
@@ -1007,8 +1034,6 @@ class Uppy {
         bytesUploaded: data.bytesUploaded,
         bytesTotal: data.bytesTotal,
         percentage: canHavePercentage
-          // TODO(goto-bus-stop) flooring this should probably be the choice of the UI?
-          // we get more accurate calculations if we don't round this at all.
           ? Math.round((data.bytesUploaded / data.bytesTotal) * 100)
           : 0,
       },
@@ -1093,7 +1118,7 @@ class Uppy {
 
       this.setState({ error: errorMsg })
 
-      if (file != null) {
+      if (file != null && file.id in this.getState().files) {
         this.setFileState(file.id, {
           error: errorMsg,
           response,
@@ -1217,9 +1242,6 @@ class Uppy {
         },
       }
       delete files[file.id].progress.postprocess
-      // TODO should we set some kind of `fullyComplete` property on the file object
-      // so it's easier to see that the file is upload…fully complete…rather than
-      // what we have to do now (`uploadComplete && !postprocess`)
 
       this.setState({ files })
     })
@@ -1437,14 +1459,6 @@ class Uppy {
       case 'warning': logger.warn(message); break
       default: logger.debug(message); break
     }
-  }
-
-  /**
-   * Obsolete, event listeners are now added in the constructor.
-   */
-  run () {
-    this.log('Calling run() is no longer necessary.', 'warning')
-    return this
   }
 
   /**
@@ -1711,5 +1725,6 @@ module.exports = function core (opts) {
 
 // Expose class constructor.
 module.exports.Uppy = Uppy
-module.exports.Plugin = Plugin
+module.exports.UIPlugin = UIPlugin
+module.exports.BasePlugin = BasePlugin
 module.exports.debugLogger = debugLogger

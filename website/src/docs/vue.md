@@ -35,7 +35,7 @@ Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instan
 ```html
 <template>
   <div id="app">
-    <dashboard :uppy="uppy" :plugins="['Webcam']"/>
+    <dashboard :uppy="uppy" :plugins="['Webcam']" :props="{theme: 'light'}" />
   </div>
 </template>
 
@@ -88,11 +88,11 @@ export default {
   computed: {
     uppy: () => new Uppy().use(Webcam, {
     // Config
-    })
+    }),
   },
   beforeDestroy () {
     this.uppy.close()
-  }
+  },
 }
 ```
 

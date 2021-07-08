@@ -19,10 +19,10 @@ npm install @uppy/react
 ```
 
 ```js
-// Either:
-import StatusBar from '@uppy/react/lib/StatusBar'
-// Or:
 import { StatusBar } from '@uppy/react'
+
+// Alternatively, you can also use a default import:
+// import StatusBar from '@uppy/react/lib/StatusBar'
 ```
 
 ## CSS
@@ -41,12 +41,15 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 The `<StatusBar />` component supports all [`@uppy/status-bar`][] options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
 ```js
-<StatusBar
-  uppy={uppy}
-  hideUploadButton
-  hideAfterFinish={false}
-  showProgressDetails
-/>
+import React from 'react'
+import { StatusBar } from '@uppy/react'
+
+  <StatusBar
+    uppy={uppy}
+    hideUploadButton
+    hideAfterFinish={false}
+    showProgressDetails
+  />
 ```
 
 [`@uppy/status-bar`]: /docs/status-bar/

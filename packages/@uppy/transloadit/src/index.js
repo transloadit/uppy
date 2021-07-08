@@ -1,6 +1,6 @@
 const Translator = require('@uppy/utils/lib/Translator')
 const hasProperty = require('@uppy/utils/lib/hasProperty')
-const { Plugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 const Tus = require('@uppy/tus')
 const Assembly = require('./Assembly')
 const Client = require('./Client')
@@ -25,7 +25,7 @@ const TL_UPPY_SERVER = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/uppy-server/
 /**
  * Upload files to Transloadit using Tus.
  */
-module.exports = class Transloadit extends Plugin {
+module.exports = class Transloadit extends BasePlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -597,16 +597,6 @@ module.exports = class Transloadit extends Plugin {
       return assembly
     }
 
-    // TODO Do we still need this for anything…?
-    // eslint-disable-next-line no-unused-vars
-    const connected = new Promise((resolve, reject) => {
-      assembly.once('connect', resolve)
-      assembly.once('status', resolve)
-      assembly.once('error', reject)
-    }).then(() => {
-      this.uppy.log('[Transloadit] Socket is ready')
-    })
-
     assembly.connect()
     return assembly
   }
@@ -659,25 +649,23 @@ module.exports = class Transloadit extends Plugin {
     const files = fileIDs.map((id) => this.uppy.getFile(id))
     const assemblyOptions = new AssemblyOptions(files, this.opts)
 
-    return assemblyOptions.build().then(
-      (assemblies) => Promise.all(
-        assemblies.map(createAssembly)
-      ).then((createdAssemblies) => {
+    return assemblyOptions.build()
+      .then((assemblies) => Promise.all(assemblies.map(createAssembly)))
+      .then((createdAssemblies) => {
         const assemblyIDs = createdAssemblies.map(assembly => assembly.status.assembly_id)
         this._createAssemblyWatcher(assemblyIDs, fileIDs, uploadID)
-        createdAssemblies.map(assembly => this._connectAssembly(assembly))
-      }),
+        return Promise.all(createdAssemblies.map(assembly => this._connectAssembly(assembly)))
+      })
       // If something went wrong before any Assemblies could be created,
       // clear all processing state.
-      (err) => {
+      .catch((err) => {
         fileIDs.forEach((fileID) => {
           const file = this.uppy.getFile(fileID)
           this.uppy.emit('preprocess-complete', file)
           this.uppy.emit('upload-error', file, err)
         })
         throw err
-      }
-    )
+      })
   }
 
   _afterUpload (fileIDs, uploadID) {
