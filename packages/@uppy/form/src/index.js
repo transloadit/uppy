@@ -23,7 +23,6 @@ module.exports = class Form extends BasePlugin {
       resultName: 'uppyResult',
       getMetaFromForm: true,
       addResultToForm: true,
-      multipleResults: false,
       submitOnSuccess: false,
       triggerUploadOnSubmit: false,
     }
@@ -87,42 +86,28 @@ module.exports = class Form extends BasePlugin {
 
     let resultInput = this.form.querySelector(`[name="${this.opts.resultName}"]`)
     if (resultInput) {
-      if (this.opts.multipleResults) {
-        // Append new result to the previous result array.
-        // If the previous result is empty, or not an array,
-        // set it to an empty array.
-        let updatedResult
-        try {
-          updatedResult = JSON.parse(resultInput.value)
-        } catch (err) {
-          // Nothing, since we check for array below anyway
-        }
-
-        if (!Array.isArray(updatedResult)) {
-          updatedResult = []
-        }
-        updatedResult.push(result)
-        resultInput.value = JSON.stringify(updatedResult)
-      } else {
-        // Replace existing result with the newer result on `complete` event.
-        // This behavior is not ideal, since you most likely want to always keep
-        // all results in the input. This is kept for backwards compatability until 2.0.
-        resultInput.value = JSON.stringify(result)
+      // Append new result to the previous result array.
+      // If the previous result is empty, or not an array,
+      // set it to an empty array.
+      let updatedResult
+      try {
+        updatedResult = JSON.parse(resultInput.value)
+      } catch (err) {
+        // Nothing, since we check for array below anyway
       }
+
+      if (!Array.isArray(updatedResult)) {
+        updatedResult = []
+      }
+      updatedResult.push(result)
+      resultInput.value = JSON.stringify(updatedResult)
       return
     }
 
     resultInput = document.createElement('input')
     resultInput.name = this.opts.resultName
     resultInput.type = 'hidden'
-
-    if (this.opts.multipleResults) {
-      // Wrap result in an array so we can have multiple results
-      resultInput.value = JSON.stringify([result])
-    } else {
-      // Result is an object, kept for backwards compatability until 2.0
-      resultInput.value = JSON.stringify(result)
-    }
+    resultInput.value = JSON.stringify([result])
 
     this.form.appendChild(resultInput)
   }

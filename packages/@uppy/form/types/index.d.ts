@@ -7,7 +7,6 @@ declare module Form {
     resultName?: string
     getMetaFromForm?: boolean
     addResultToForm?: boolean
-    multipleResults?: boolean
     submitOnSuccess?: boolean
     triggerUploadOnSubmit?: boolean
   }
