@@ -1,14 +1,13 @@
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 
-declare module ProgressBar {
-  interface ProgressBarOptions extends PluginOptions {
-    replaceTargetContent?: boolean
-    target?: PluginTarget
-    hideAfterFinish?: boolean
-    fixed?: boolean
-  }
+export interface ProgressBarOptions extends PluginOptions {
+  replaceTargetContent?: boolean
+  target?: PluginTarget
+  hideAfterFinish?: boolean
+  fixed?: boolean
 }
 
-declare class ProgressBar extends UIPlugin<ProgressBar.ProgressBarOptions> {}
+
+declare class ProgressBar extends UIPlugin<ProgressBarOptions> {}
 
 export default ProgressBar
