@@ -1,5 +1,5 @@
-import OneDrive = require('../')
-import Uppy = require('@uppy/core')
+import OneDrive from '../'
+import Uppy from '@uppy/core'
 
 {
  const uppy = new Uppy()

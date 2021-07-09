@@ -1,5 +1,5 @@
-import StatusBar = require('../')
-import Uppy = require('@uppy/core')
+import StatusBar from '../'
+import Uppy from '@uppy/core'
 
 {
  const uppy = new Uppy()

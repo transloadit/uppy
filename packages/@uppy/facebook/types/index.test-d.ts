@@ -1,5 +1,5 @@
-import Facebook = require('../')
-import Uppy = require('@uppy/core')
+import Facebook from '../'
+import Uppy from '@uppy/core'
 
 {
  const uppy = new Uppy()

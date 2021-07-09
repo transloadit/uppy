@@ -1,5 +1,5 @@
-import Instagram = require('../')
-import Uppy = require('@uppy/core')
+import Instagram from '../'
+import Uppy from '@uppy/core'
 
 {
  const uppy = new Uppy()

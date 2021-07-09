@@ -1,5 +1,5 @@
-import Uppy = require('@uppy/core')
-import Url = require('../')
+import Uppy from '@uppy/core'
+import Url from '../'
 
 {
  const uppy = new Uppy()

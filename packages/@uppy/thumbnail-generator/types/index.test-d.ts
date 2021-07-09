@@ -1,5 +1,5 @@
-import ThumbnailGenerator = require('../')
-import Uppy = require('@uppy/core')
+import ThumbnailGenerator from '../'
+import Uppy from '@uppy/core'
 
 {
  const uppy = new Uppy()

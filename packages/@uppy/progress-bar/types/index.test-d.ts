@@ -1,5 +1,5 @@
-import ProgressBar = require('../')
-import Uppy = require('@uppy/core')
+import ProgressBar from '../'
+import Uppy from '@uppy/core'
 
 {
  const uppy = new Uppy()

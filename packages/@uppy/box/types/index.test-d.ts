@@ -1,5 +1,5 @@
-import Box = require('../')
-import Uppy = require('@uppy/core')
+import Box from '../'
+import Uppy from '@uppy/core'
 
 {
  const uppy = new Uppy()

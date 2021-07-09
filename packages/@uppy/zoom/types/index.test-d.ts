@@ -1,5 +1,5 @@
-import Zoom = require('../')
-import Uppy = require('@uppy/core')
+import Zoom from '../'
+import Uppy from '@uppy/core'
 
 {
  const uppy = new Uppy()

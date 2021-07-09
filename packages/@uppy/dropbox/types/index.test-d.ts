@@ -1,5 +1,5 @@
-import Dropbox = require('../')
-import Uppy = require('@uppy/core')
+import Dropbox from '../'
+import Uppy from '@uppy/core'
 
 {
  const uppy = new Uppy()
