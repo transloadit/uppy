@@ -1,7 +1,6 @@
 import type { PluginOptions, PluginTarget, BasePlugin } from '@uppy/core'
 
-declare namespace Form {
-  interface FormOptions extends PluginOptions {
+interface FormOptions extends PluginOptions {
     replaceTargetContent?: boolean
     target?: PluginTarget
     resultName?: string
@@ -9,9 +8,8 @@ declare namespace Form {
     addResultToForm?: boolean
     submitOnSuccess?: boolean
     triggerUploadOnSubmit?: boolean
-  }
 }
 
-declare class Form extends BasePlugin<Form.FormOptions> {}
+declare class Form extends BasePlugin<FormOptions> {}
 
 export default Form

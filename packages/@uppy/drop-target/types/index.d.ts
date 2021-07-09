@@ -1,11 +1,9 @@
 import type { PluginOptions, BasePlugin } from '@uppy/core'
 
-declare namespace DropTarget {
-  interface DropTargetOptions extends PluginOptions {
+interface DropTargetOptions extends PluginOptions {
     target: string | Element
-  }
 }
 
-declare class DropTarget extends BasePlugin<DropTarget.DropTargetOptions> {}
+declare class DropTarget extends BasePlugin<DropTargetOptions> {}
 
 export default DropTarget
