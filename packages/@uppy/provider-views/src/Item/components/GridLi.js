@@ -17,13 +17,12 @@ function GridListItem (props) {
     <li
       className={className}
       title={isDisabled ? restrictionReason : null}
-      style={{ position: 'relative' }}
     >
       <input
         type="checkbox"
         className={`uppy-u-reset uppy-ProviderBrowserItem-checkbox ${
           isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''
-        } grid-checkbox`}
+        } uppy-ProviderBrowserItem-checkbox--grid`}
         onChange={toggleCheckbox}
         name="listitem"
         id={id}
