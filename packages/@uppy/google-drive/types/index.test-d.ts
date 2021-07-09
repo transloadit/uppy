@@ -1,9 +1,9 @@
-import Uppy = require('@uppy/core')
-import GoogleDrive = require('../')
+import Uppy, { UIPlugin } from '@uppy/core'
+import GoogleDrive from '../'
 
-class SomePlugin extends Uppy.Plugin<{}> {}
+class SomePlugin extends UIPlugin<{}> {}
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(GoogleDrive, { companionUrl: '' })
 uppy.use(GoogleDrive, { target: SomePlugin, companionUrl: '' })
 uppy.use(GoogleDrive, { target: document.querySelector('#gdrive')!, companionUrl: '' })

@@ -66,7 +66,7 @@ const app = express()
 // If you are using something else in your app, you can add these
 // middlewares in the same subpath as Companion instead.
 app.use(bodyParser.json())
-app.use(session({secret: 'some secrety secret'}))
+app.use(session({ secret: 'some secrety secret' }))
 
 const options = {
   providerOptions: {
@@ -245,49 +245,49 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 ### Options
 
 ```javascript
-{
+const options = {
   providerOptions: {
     drive: {
-      key: "***",
-      secret: "***"
+      key: '***',
+      secret: '***',
     },
     dropbox: {
-      key: "***",
-      secret: "***"
+      key: '***',
+      secret: '***',
     },
     instagram: {
-      key: "***",
-      secret: "***"
+      key: '***',
+      secret: '***',
     },
     facebook: {
-      key: "***",
-      secret: "***"
+      key: '***',
+      secret: '***',
     },
     onedrive: {
-      key: "***",
-      secret: "***"
+      key: '***',
+      secret: '***',
     },
     s3: {
       getKey: (req, filename, metadata) => filename,
-      key: "***",
-      secret: "***",
-      bucket: "bucket-name",
-      region: "us-east-1",
+      key: '***',
+      secret: '***',
+      bucket: 'bucket-name',
+      region: 'us-east-1',
       useAccelerateEndpoint: false, // default: false,
       expires: 3600, // default: 300 (5 minutes)
-      acl: "private" // default: public-read
-    }
+      acl: 'private', // default: public-read
+    },
   },
   server: {
-    host: "localhost:3020", // or yourdomain.com
-    protocol: "http"
+    host: 'localhost:3020', // or yourdomain.com
+    protocol: 'http',
   },
-  filePath: "path/to/download/folder",
-  sendSelfEndpoint: "localhost:3020",
+  filePath: 'path/to/download/folder',
+  sendSelfEndpoint: 'localhost:3020',
   secret: 'mysecret',
-  uploadUrls: ['https://myuploadurl.com', 'http://myuploadurl2.com']
+  uploadUrls: ['https://myuploadurl.com', 'http://myuploadurl2.com'],
   debug: true,
-  metrics: false
+  metrics: false,
 }
 ```
 
@@ -320,7 +320,9 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 
 11. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
 
-12. **metrics(optional)** - A boolean flag to tell Companion whether or not to provide an endpoint `/metrics` with Prometheus metrics.
+12. **logClientVersion(optional)** - A boolean flag to tell Companion whether or not to log its version upon startup.
+
+13. **metrics(optional)** - A boolean flag to tell Companion whether or not to provide an endpoint `/metrics` with Prometheus metrics.
 
 ### Provider Redirect URIs
 
@@ -381,16 +383,20 @@ app.use(uppy.app({
     s3: {
       getKey: (req, filename, metadata) => `${req.user.id}/${filename}`,
       /* auth options */
-    }
-  }
+    },
+  },
 }))
 ```
 
 The default implementation returns the `filename`, so all files will be uploaded to the root of the bucket as their original file name.
 ```js
-({
-  getKey: (req, filename, metadata) => filename
-})
+app.use(uppy.app({
+  providerOptions: {
+    s3: {
+      getKey: (req, filename, metadata) => filename,
+    },
+  },
+}))
 ```
 
 ### Running in Kubernetes
@@ -402,22 +408,22 @@ We have [a detailed guide on running Companion in Kubernetes](https://github.com
 As of now, Companion supports the [providers listed here](https://uppy.io/docs/companion/#Supported-providers) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
 
 ```javascript
-import providerModule from '/path/to/provider/module'
+import providerModule from './path/to/provider/module'
 
-let options = {
-    customProviders: {
-        myprovidername: {
-            config: {
-                authorize_url: "https://mywebsite.com/authorize",
-                access_url: "https://mywebsite.com/token",
-                oauth: 2,
-                key: "***",
-                secret: "***",
-                scope: ["read", "write"]
-            },
-            module: providerModule
-        }
-    }
+const options = {
+  customProviders: {
+    myprovidername: {
+      config: {
+        authorize_url: 'https://mywebsite.com/authorize',
+        access_url: 'https://mywebsite.com/token',
+        oauth: 2,
+        key: '***',
+        secret: '***',
+        scope: ['read', 'write'],
+      },
+      module: providerModule,
+    },
+  },
 }
 
 uppy.app(options)
@@ -449,43 +455,43 @@ The class must also have an `authProvider` string (lowercased) field which typic
 
 #### list data
 
-```js
+```json
 {
   // username or email of the user whose provider account is being accessed
-  username: 'johndoe',
+  "username": "johndoe",
   // list of files and folders in the directory. An item is considered a folder
   //  if it mainly exists as a collection to contain sub-items
-  items: [
+  "items": [
     {
       // boolean value of whether or NOT it's a folder
-      isFolder: false,
+      "isFolder": false,
       // icon image URL
-      icon: 'https://random-api.url.com/fileicon.jpg',
+      "icon": "https://random-api.url.com/fileicon.jpg",
       // name of the item
-      name: 'myfile.jpg',
+      "name": "myfile.jpg",
       // the mime type of the item. Only relevant if the item is NOT a folder
-      mimeType: 'image/jpg',
+      "mimeType": "image/jpg",
       // the id (in string) of the item
-      id: 'uniqueitemid',
+      "id": "uniqueitemid",
       // thumbnail image URL. Only relevant if the item is NOT a folder
-      thumbnail: 'https://random-api.url.com/filethumbnail.jpg',
+      "thumbnail": "https://random-api.url.com/filethumbnail.jpg",
       // for folders this is typically the value that will be passed as "directory" in the list(...) method.
       // For files, this is the value that will be passed as id in the download(...) method.
-      requestPath: 'file-or-folder-requestpath',
+      "requestPath": "file-or-folder-requestpath",
       // datetime string (in ISO 8601 format) of when this item was last modified
-      modifiedDate: '2020-06-29T19:59:58Z',
+      "modifiedDate": "2020-06-29T19:59:58Z",
       // the size in bytes of the item. Only relevent if the item is NOT a folder
-      size: 278940,
-      custom: {
+      "size": 278940,
+      "custom": {
         // an object that may contain some more custom fields that you may need to send to the client. Only add this object if you have a need for it.
-        customData1: 'the value',
-        customData2: 'the value',
-      },
+        "customData1": "the value",
+        "customData2": "the value"
+      }
       // more items here
     }
-  ]
+  ],
   // if the "items" list is paginated, this is the request path needed to fetch the next page.
-  nextPagePath: 'directory-name?cursor=cursor-to-next-page'
+  "nextPagePath": "directory-name?cursor=cursor-to-next-page"
 }
 ```
 

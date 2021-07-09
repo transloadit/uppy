@@ -11,7 +11,9 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 
 ## Example
 
+<!-- eslint-disable react/state-in-constructor -->
 ```js
+import React from 'react'
 import Uppy from '@uppy/core'
 import { DashboardModal } from '@uppy/react'
 
@@ -19,6 +21,7 @@ const uppy = new Uppy()
 
 class Example extends React.Component {
   state = { open: false }
+
   render () {
     return (
       <DashboardModal

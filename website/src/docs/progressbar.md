@@ -36,7 +36,7 @@ npm install @uppy/progress-bar
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const ProgressBar = Uppy.ProgressBar
+const { ProgressBar } = Uppy
 ```
 
 ## CSS
@@ -48,7 +48,7 @@ import '@uppy/core/dist/style.css'
 import '@uppy/progress-bar/dist/style.css'
 ```
 
-Import general Core styles from `@uppy/core/dist/style.css` first, then add the Informer styles from `@uppy/progress-bar/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Progress Bar styles from `@uppy/progress-bar/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
 
 ⚠️ If you use the [`@uppy/dashboard`](/docs/dashboard) plugin, you do not need to include the styles for the Progress Bar, because the Dashboard already includes it.
 
@@ -60,7 +60,7 @@ The `@uppy/progress-bar` plugin has the following configurable options:
 uppy.use(ProgressBar, {
   target: '.UploadForm',
   fixed: false,
-  hideAfterFinish: true
+  hideAfterFinish: true,
 })
 ```
 
@@ -79,7 +79,7 @@ When set to true, show the progress bar at the top of the page with `position: f
 ```js
 uppy.use(ProgressBar, {
   target: 'body',
-  fixed: true
+  fixed: true,
 })
 ```
 

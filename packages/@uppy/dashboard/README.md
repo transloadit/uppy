@@ -27,7 +27,7 @@ import Dashboard from '@uppy/dashboard'
 const uppy = new Uppy()
 uppy.use(Dashboard, {
   target: 'body',
-  inline: true
+  inline: true,
 })
 ```
 

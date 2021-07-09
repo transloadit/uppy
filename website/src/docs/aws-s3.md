@@ -18,7 +18,7 @@ import ms from 'ms'
 uppy.use(AwsS3, {
   limit: 2,
   timeout: ms('1 minute'),
-  companionUrl: 'https://uppy-companion.myapp.com/'
+  companionUrl: 'https://uppy-companion.myapp.com/',
 })
 ```
 
@@ -39,7 +39,7 @@ npm install @uppy/aws-s3
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const AwsS3 = Uppy.AwsS3
+const { AwsS3 } = Uppy
 ```
 
 ## Options
@@ -56,7 +56,7 @@ When using [Companion][companion docs] to sign S3 uploads, set this option to th
 
 ```js
 uppy.use(AwsS3, {
-  companionUrl: 'https://uppy-companion.my-app.com/'
+  companionUrl: 'https://uppy-companion.my-app.com/',
 })
 ```
 
@@ -120,9 +120,11 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
-  // Shown in the StatusBar while the upload is being signed.
-  preparingUpload: 'Preparing upload...'
+const locales = {
+  strings: {
+    // Shown in the StatusBar while the upload is being signed.
+    preparingUpload: 'Preparing upload...',
+  },
 }
 ```
 
@@ -216,11 +218,11 @@ Companion uses POST uploads by default, but you can also use them with your own 
    ```js
    // `s3` is an instance of the AWS JavaScript SDK's S3 client
    s3.createPresignedPost({
-     ...,
+     // ...
      Fields: {
-       ...,
-       success_action_status: '201'
-     }
+       // ...
+       success_action_status: '201',
+     },
    })
    ```
 
@@ -318,12 +320,12 @@ uppy.use(AwsS3, {
       // Send and receive JSON.
       headers: {
         accept: 'application/json',
-        'content-type': 'application/json'
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
         filename: file.name,
-        contentType: file.type
-      })
+        contentType: file.type,
+      }),
     }).then((response) => {
       // Parse the JSON response.
       return response.json()
@@ -335,11 +337,11 @@ uppy.use(AwsS3, {
         fields: data.fields,
         // Provide content type header required by S3
         headers: {
-          'Content-Type': file.type
-        }
+          'Content-Type': file.type,
+        },
       }
     })
-  }
+  },
 })
 ```
 
@@ -352,7 +354,7 @@ generated in `getUploadParameters(file)` via the `file.meta` field:
 
 ```js
 uppy.on('upload-success', (file, data) => {
-  file.meta['key'] // the S3 object key of the uploaded file
+  const s3Key = file.meta['key'] // the S3 object key of the uploaded file
 })
 ```
 

@@ -1,5 +1,5 @@
-import Uppy = require('@uppy/core')
-import ImageEditorLocale = require('./generatedLocale')
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import ImageEditorLocale from './generatedLocale'
 
 declare module ImageEditor {
   type Actions = {
@@ -14,15 +14,15 @@ declare module ImageEditor {
     cropWidescreenVertical: boolean
   }
 
-  export interface ImageEditorOptions extends Uppy.PluginOptions {
+  export interface ImageEditorOptions extends PluginOptions {
     cropperOptions?: object
     actions?: Actions
     quality?: number
-    target?: Uppy.PluginTarget
+    target?: PluginTarget
     locale?: ImageEditorLocale
   }
 }
 
-declare class ImageEditor extends Uppy.Plugin<ImageEditor.ImageEditorOptions> {}
+declare class ImageEditor extends UIPlugin<ImageEditor.ImageEditorOptions> {}
 
-export = ImageEditor
+export default ImageEditor

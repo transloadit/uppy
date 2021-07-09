@@ -1,6 +1,6 @@
-import UppyUtils = require('@uppy/utils')
+import type { Store } from '@uppy/utils'
 
-declare class DefaultStore implements UppyUtils.Store {
+declare class DefaultStore implements Store {
   constructor ()
   getState (): object
   setState (patch: object): void
@@ -8,4 +8,5 @@ declare class DefaultStore implements UppyUtils.Store {
 }
 
 declare function createDefaultStore (): DefaultStore
-export = createDefaultStore
+
+export default createDefaultStore

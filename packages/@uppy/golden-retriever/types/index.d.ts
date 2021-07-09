@@ -1,15 +1,15 @@
-import Uppy = require('@uppy/core')
+import type { PluginOptions, BasePlugin } from '@uppy/core'
 
 declare module GoldenRetriever {
-  interface GoldenRetrieverOptions extends Uppy.PluginOptions {
+  interface GoldenRetrieverOptions extends PluginOptions {
     expires?: number
     serviceWorker?: boolean
     indexedDB?: any
   }
 }
 
-declare class GoldenRetriever extends Uppy.Plugin<
+declare class GoldenRetriever extends BasePlugin<
   GoldenRetriever.GoldenRetrieverOptions
 > {}
 
-export = GoldenRetriever
+export default GoldenRetriever

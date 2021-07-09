@@ -1,6 +1,6 @@
 # Changelog
 
-<!--lint disable no-literal-urls-->
+<!--lint disable no-literal-urls no-undefined-references-->
 
 This is our changelog which contains planned todos and past dones.
 
@@ -14,21 +14,81 @@ In the current stage we aim to release a new version at least every month.
 
 ### next
 
-- **BREAKING CHANGE**: Remove built-in polyfills for Internet Explorer and Safari ≤13.0.
+## July 2021
 
-## June 2021
-
-To be released: 2021-06-28
-
-- [ ] build: try to upgrade to Preact X, see if it's possible without going full on ESM? (@Murderlon)
 - [ ] robodog: finishing touches on Companion dynamic Oauth #2802 (@goto-bus-stop)
 - [ ] unsplash: Unsplash re-design (#2635 / @arturi, @nqst)
 - [ ] box: add to https://uppy.io/examples/dashboard/ (@mifi)
-- [ ] integration: add Angular integration - also see #1613: it’s incredibly slow presumably because of ResizeObserver? (@ajkachnic)
 - [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
 - [ ] compressor: add to Uppy repo, add resizing (@arturi)
-- [ ] image-editor: add more granular image rotation control (#2838 / @aduh95)
-- [ ] react: Feature/html attributes as react props (#2427 / @ajkachnic)
+
+## June 2021
+
+## 1.30.0
+
+Released: 2021-07-01
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/angular | 0.1.1 | @uppy/progress-bar | 1.3.30 |
+| @uppy/aws-s3-multipart | 1.8.17 | @uppy/provider-views | 1.12.2 |
+| @uppy/aws-s3-multipart | 1.8.18 | @uppy/provider-views | 1.12.3 |
+| @uppy/aws-s3 | 1.7.11 | @uppy/react-native | 0.1.8 |
+| @uppy/aws-s3 | 1.7.12 | @uppy/react-native | 0.1.9 |
+| @uppy/box | 0.3.11 | @uppy/react | 1.11.10 |
+| @uppy/box | 0.3.12 | @uppy/react | 1.12.0 |
+| @uppy/companion-client | 1.10.1 | @uppy/redux-dev-tools | 1.3.9 |
+| @uppy/companion-client | 1.10.2 | @uppy/robodog | 1.10.11 |
+| @uppy/companion | 2.10.1 | @uppy/robodog | 1.10.12 |
+| @uppy/companion | 2.11.0 | @uppy/screen-capture | 1.0.20 |
+| @uppy/core | 1.19.1 | @uppy/screen-capture | 1.0.21 |
+| @uppy/core | 1.19.2 | @uppy/status-bar | 1.9.5 |
+| @uppy/dashboard | 1.20.1 | @uppy/status-bar | 1.9.6 |
+| @uppy/dashboard | 1.20.2 | @uppy/store-default | 1.2.7 |
+| @uppy/drag-drop | 1.4.29 | @uppy/store-redux | 1.2.7 |
+| @uppy/drag-drop | 1.4.30 | @uppy/store-redux | 1.2.8 |
+| @uppy/drop-target | 0.2.3 | @uppy/svelte | 0.1.11 |
+| @uppy/drop-target | 0.2.4 | @uppy/svelte | 0.1.12 |
+| @uppy/dropbox | 1.5.1 | @uppy/thumbnail-generator | 1.7.10 |
+| @uppy/dropbox | 1.5.2 | @uppy/thumbnail-generator | 1.7.11 |
+| @uppy/facebook | 1.2.1 | @uppy/transloadit | 1.6.25 |
+| @uppy/facebook | 1.2.2 | @uppy/transloadit | 1.6.26 |
+| @uppy/file-input | 1.5.1 | @uppy/tus | 1.9.1 |
+| @uppy/file-input | 1.5.2 | @uppy/tus | 1.9.2 |
+| @uppy/form | 1.3.30 | @uppy/unsplash | 0.1.12 |
+| @uppy/form | 1.3.31 | @uppy/unsplash | 0.1.13 |
+| @uppy/golden-retriever | 1.4.1 | @uppy/url | 1.5.22 |
+| @uppy/golden-retriever | 1.4.2 | @uppy/url | 1.5.23 |
+| @uppy/google-drive | 1.7.1 | @uppy/utils | 3.6.1 |
+| @uppy/google-drive | 1.7.2 | @uppy/utils | 3.6.2 |
+| @uppy/image-editor | 0.2.6 | @uppy/vue | 0.2.4 |
+| @uppy/image-editor | 0.3.0 | @uppy/vue | 0.2.5 |
+| @uppy/informer | 1.6.5 | @uppy/webcam | 1.8.11 |
+| @uppy/informer | 1.6.6 | @uppy/webcam | 1.8.12 |
+| @uppy/instagram | 1.5.1 | @uppy/xhr-upload | 1.7.4 |
+| @uppy/instagram | 1.5.2 | @uppy/xhr-upload | 1.7.5 |
+| @uppy/locales | 1.20.1 | @uppy/zoom | 0.1.17 |
+| @uppy/locales | 1.21.0 | @uppy/zoom | 0.1.18 |
+| @uppy/onedrive | 1.2.1 | remark-lint-uppy | 0.0.1 |
+| @uppy/onedrive | 1.2.2 | uppy | 1.29.1 |
+| @uppy/progress-bar | 1.3.29 | uppy | 1.30.0 |
+
+- @uppy/companion: add `logClientVersion` option (#2855 / @mifi)
+- @uppy/angular: add Angular integration (#2871 / @ajkachnic)
+- @uppy/core: add types for uppy.once method (#2965 / @a-kriya)
+- @uppy/core: enrich error event for use from postproocessor (#2909 / @aduh95)
+- @uppy/react-native: refactor takePictureWithExpo (#2946 / @aduh95)
+- @uppy/companion: fixed standalone server to initiate itself on explicit function (#2920 / @Cruaier)
+- @uppy/google-drive: Google drive shortcuts (#2917 / @mifi)
+- @uppy/react: allowed HTML Attributes to be passed via props (#2891 / @ajkachnic)
+- @uppy/drag-drop: Expose drag-drop events (#2914 / @Murderlon)
+- @uppy/image-editor: Add more granular image rotation control (#2838 / @aduh95)
+- @uppy/utils: Translator: refactor interpolate (#2903 / @aduh95)
+- @uppy/url: return fileId or error in plugin.addFile (#2919 / @nil1511)
+- @uppy/locales: Mention the file name in exceedsSize error message (#2918 / @Murderlon)
+- build: Fix eslint uppy package imports (#2915 / @Murderlon)
+- docs: fix typo in docs/progressbar.md (#2962 / @a-kriya)
+- docs: add props example (#2959 / @jmontoyaa)
 
 ## May 2021
 

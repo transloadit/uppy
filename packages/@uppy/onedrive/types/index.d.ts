@@ -1,17 +1,15 @@
-import Uppy = require('@uppy/core')
-import CompanionClient = require('@uppy/companion-client')
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type { PublicProviderOptions, TokenStorage } from '@uppy/companion-client'
 
 declare module OneDrive {
-  interface OneDriveOptions
-    extends Uppy.PluginOptions,
-      CompanionClient.PublicProviderOptions {
+  interface OneDriveOptions extends PluginOptions, PublicProviderOptions {
     replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
+    target?: PluginTarget
     title?: string
-    storage?: CompanionClient.TokenStorage
+    storage?: TokenStorage
   }
 }
 
-declare class OneDrive extends Uppy.Plugin<OneDrive.OneDriveOptions> {}
+declare class OneDrive extends UIPlugin<OneDrive.OneDriveOptions> {}
 
-export = OneDrive
+export default OneDrive

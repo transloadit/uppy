@@ -21,10 +21,11 @@ npm i @uppy/core @uppy/locales
 
 ```js
 import Uppy from '@uppy/core'
-import German from '@uppy/locales/lib/de_DE' // see below for the full list of locales
+import German from '@uppy/locales/lib/de_DE'
+// see below for the full list of locales
 const uppy = new Uppy({
   debug: true,
-  locale: German
+  locale: German,
 })
 ```
 
@@ -33,8 +34,8 @@ const uppy = new Uppy({
 Add a `<script>` tag with Uppy bundle and the locale pack you’d like to use. You can copy/paste the link from the CDN column in the [locales table](#List-of-locale-packs). The locale will attach itself to the `Uppy.locales` object.
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v1.29.1/uppy.min.js"></script>
-<script src="https://releases.transloadit.com/uppy/locales/v1.20.1/de_DE.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v1.30.0/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/locales/v1.21.0/de_DE.min.js"></script>
 
 <script>
 var uppy = Uppy.Core({
@@ -52,10 +53,11 @@ Many plugins come with their own locale strings, and the packs we provide consis
 import Uppy from '@uppy/core'
 import DragDrop from '@uppy/drag-drop'
 import Russian from '@uppy/locales/lib/ru_RU'
+
 const uppy = new Uppy({
   debug: true,
   autoProceed: true,
-  locale: Russian
+  locale: Russian,
 })
 uppy.use(DragDrop, {
   target: '.UppyDragDrop',
@@ -63,9 +65,9 @@ uppy.use(DragDrop, {
   // but you can also override specific strings like so:
   locale: {
     strings: {
-      browse: 'выберите ;-)'
-    }
-  }
+      browse: 'выберите ;-)',
+    },
+  },
 })
 ```
 

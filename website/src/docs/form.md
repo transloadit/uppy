@@ -34,7 +34,7 @@ npm install @uppy/form
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Form = Uppy.Form
+const { Form } = Uppy
 ```
 
 ## Options
@@ -47,9 +47,8 @@ uppy.use(Form, {
   resultName: 'uppyResult',
   getMetaFromForm: true,
   addResultToForm: true,
-  multipleResults: false,
   submitOnSuccess: false,
-  triggerUploadOnSubmit: false
+  triggerUploadOnSubmit: false,
 })
 ```
 
@@ -72,12 +71,6 @@ Configures whether or not to extract metadata from the form. When set to true, t
 ### `addResultToForm: true`
 
 Configures whether or not to add upload/encoding results back to the form in an `<input name="uppyResult" type="hidden">` element.
-
-### `multipleResults: false`
-
-By default, the Form plugin will _replace_ the `value` of `<input type="hidden">` it adds with the result (if `addResultToForm` is enabled) on each upload / `complete` event. This behavior can be confusing, because if a user uploads a file and then adds another, only the last result will end up in the hidden input and submitted to your server.
-
-Setting `multipleResults: true` turns the value of `<input type="hidden">` into an array and _appends_ each result from `complete` event to it. Since this is likely the desired default behavior in most cases, it will be made default in the next major release of Uppy, the option is kept for backwards compatability.
 
 ### `triggerUploadOnSubmit: false`
 

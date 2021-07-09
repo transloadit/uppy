@@ -42,10 +42,10 @@ All the options to the [Transloadit][transloadit plugin] plugin are supported.
 You can localize the “Choose files” button that is injected into the form, by setting the `locale.strings` option:
 
 ```js
-locale: {
+const locale = {
   strings: {
-    chooseFiles: 'Choose files'
-  }
+    chooseFiles: 'Choose files',
+  },
 }
 ```
 
@@ -113,7 +113,7 @@ The `triggerUploadOnSubmit: false` option is available for this purpose. We reco
 window.Robodog.form('form#upload-form', {
   modal: true,
   closeAfterFinish: true,
-  triggerUploadOnSubmit: false
+  triggerUploadOnSubmit: false,
 })
 ```
 
@@ -136,7 +136,7 @@ $(selector).transloadit({
 ```
 ```html
 <!-- The new Robodog way! -->
-<script src="//releases.transloadit.com/uppy/robodog/v1.10.11/robodog.min.js"></script>
+<script src="//releases.transloadit.com/uppy/robodog/v1.10.12/robodog.min.js"></script>
 
 <script>
 window.Robodog.form(selector, {
@@ -148,7 +148,7 @@ window.Robodog.form(selector, {
 Make sure to also include the Uppy css file in your `<head>` tag in case you want to use the `modal: true` option:
 ```html
 <head>
-  <link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v1.10.11/robodog.min.css">
+  <link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v1.10.12/robodog.min.css">
 </head>
 ```
 
@@ -156,11 +156,11 @@ Here is a full copy-pasteable code sample with all updated options and event nam
 Notice how the form is submitted to the inexistant `/uploads` route once all transcoding is finished. Please do not forget to add your Transloadit auth key to
 `window.YOUR_TRANSLOADIT_AUTH_KEY`.
 
-```js
+```html
 <html>
   <head>
     <title>Testing Robodog</title>
-    <link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v1.10.11/robodog.min.css">
+    <link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v1.10.12/robodog.min.css">
   </head>
   <body>
     <form id="upload-form" action="/uploads" enctype="multipart/form-data" method="POST">
@@ -170,7 +170,7 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
       <button type="submit">Upload</button>
     </form>
 
-    <script src="https://releases.transloadit.com/uppy/robodog/v1.10.11/robodog.min.js"></script>
+    <script src="https://releases.transloadit.com/uppy/robodog/v1.10.12/robodog.min.js"></script>
     <script type="text/javascript">
     window.Robodog.form('#upload-form', {
       waitForEncoding: true,

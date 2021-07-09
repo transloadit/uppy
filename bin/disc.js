@@ -20,6 +20,12 @@ function minifyify (filename) {
   return new PassThrough()
 }
 
+function prepend (text) {
+  const stream = new PassThrough()
+  stream.write(text)
+  return stream
+}
+
 const bundler = browserify(path.join(__dirname, '../packages/uppy/index.js'), {
   fullPaths: true,
   standalone: 'Uppy',
@@ -36,9 +42,3 @@ bundler.bundle()
   .on('error', (err) => {
     throw err
   })
-
-function prepend (text) {
-  const stream = new PassThrough()
-  stream.write(text)
-  return stream
-}

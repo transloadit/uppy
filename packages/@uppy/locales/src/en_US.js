@@ -8,7 +8,6 @@ en_US.strings = {
   addMore: 'Add more',
   addMoreFiles: 'Add more files',
   addingMoreFiles: 'Adding more files',
-  allFilesFromFolderNamed: 'All files from folder %{name}',
   allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
   allowAccessTitle: 'Please allow access to your camera',
   aspectRatioLandscape: 'Crop landscape (16:9)',
@@ -115,6 +114,7 @@ en_US.strings = {
   save: 'Save',
   saveChanges: 'Save changes',
   searchImages: 'Search for images',
+  selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
   selectFileNamed: 'Select file %{name}',
   selectX: {
     '0': 'Select %{smart_count}',
@@ -131,6 +131,7 @@ en_US.strings = {
   submitRecordedFile: 'Submit recorded file',
   takePicture: 'Take a picture',
   timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
+  unselectAllFilesFromFolderNamed: 'Unselect all files from folder %{name}',
   unselectFileNamed: 'Unselect file %{name}',
   upload: 'Upload',
   uploadComplete: 'Upload complete',

@@ -1,11 +1,11 @@
-import Uppy = require('@uppy/core')
+import type { PluginOptions, BasePlugin} from '@uppy/core'
 
 declare module DropTarget {
-  interface DropTargetOptions extends Uppy.PluginOptions {
+  interface DropTargetOptions extends PluginOptions {
     target: string | Element
   }
 }
 
-declare class DropTarget extends Uppy.Plugin<DropTarget.DropTargetOptions> {}
+declare class DropTarget extends BasePlugin<DropTarget.DropTargetOptions> {}
 
-export = DropTarget
+export default DropTarget

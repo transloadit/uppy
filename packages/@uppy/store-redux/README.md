@@ -22,15 +22,15 @@ import reducers from './reducers'
 
 const reducer = combineReducers({
   ...reducers,
-  uppy: ReduxStore.reducer
+  uppy: ReduxStore.reducer,
 })
 
 const store = createStore(reducer)
 
 const uppy = new Uppy({
   store: ReduxStore({
-    store: store
-  })
+    store,
+  }),
 })
 ```
 

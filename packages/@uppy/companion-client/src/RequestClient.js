@@ -34,7 +34,7 @@ module.exports = class RequestClient {
   }
 
   headers () {
-    const userHeaders = this.opts.companionHeaders || this.opts.serverHeaders || {}
+    const userHeaders = this.opts.companionHeaders || {}
     return Promise.resolve({
       ...this.defaultHeaders,
       ...userHeaders,

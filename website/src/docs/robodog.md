@@ -31,8 +31,8 @@ import '@uppy/robodog/dist/robodog.css'
 If you are not using a bundler, you can also import Robodog using an HTML script tag.
 
 ```html
-<link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v1.10.11/robodog.min.css">
-<script src="https://releases.transloadit.com/uppy/robodog/v1.10.11/robodog.min.js"></script>
+<link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v1.10.12/robodog.min.css">
+<script src="https://releases.transloadit.com/uppy/robodog/v1.10.12/robodog.min.js"></script>
 <!-- you can now use: window.Robodog.pick() -->
 ```
 
@@ -57,12 +57,12 @@ const resultPromise = Robodog.pick({
   target: 'body',
   params: {
     auth: { key: '' },
-    template_id: ''
-  }
+    template_id: '',
+  },
 })
 resultPromise.then((bundle) => {
-  bundle.transloadit // Array of Assembly statuses
-  bundle.results // Array of all Assembly results
+  const statuses = bundle.transloadit // Array of Assembly statuses
+  const assemblyResults = bundle.results // Array of all Assembly results
 })
 ```
 
@@ -101,12 +101,12 @@ Upload files straight to Transloadit from your own custom UI. Give us an array o
 const resultPromise = Robodog.upload(files, {
   params: {
     auth: { key: '' },
-    template_id: ''
-  }
+    template_id: '',
+  },
 })
 resultPromise.then((bundle) => {
-  bundle.transloadit // Array of Assembly statuses
-  bundle.results // Array of all Assembly results
+  const statuses = bundle.transloadit // Array of Assembly statuses
+  const assemblyResults = bundle.results // Array of all Assembly results
 })
 ```
 

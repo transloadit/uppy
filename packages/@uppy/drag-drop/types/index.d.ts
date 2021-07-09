@@ -1,10 +1,10 @@
-import Uppy = require('@uppy/core')
-import DragDropLocale = require('./generatedLocale')
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import DragDropLocale from './generatedLocale'
 
 declare module DragDrop {
-  interface DragDropOptions extends Uppy.PluginOptions {
+  interface DragDropOptions extends PluginOptions {
     replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
+    target?: PluginTarget
     inputName?: string
     allowMultipleFiles?: boolean
     width?: string | number
@@ -17,6 +17,6 @@ declare module DragDrop {
   }
 }
 
-declare class DragDrop extends Uppy.Plugin<DragDrop.DragDropOptions> {}
+declare class DragDrop extends UIPlugin<DragDrop.DragDropOptions> {}
 
-export = DragDrop
+export default DragDrop

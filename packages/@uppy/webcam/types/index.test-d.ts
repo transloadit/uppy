@@ -1,15 +1,15 @@
 import { expectError } from 'tsd'
-import Uppy = require('@uppy/core')
-import Webcam = require('../')
+import Uppy from '@uppy/core'
+import Webcam from '../'
 
 {
-  Uppy().use(Webcam, {
+  new Uppy().use(Webcam, {
     modes: ['video-only']
   })
 }
 
 {
-  Uppy().use(Webcam, {
+ new Uppy().use(Webcam, {
     modes: ['video-only'],
     videoConstraints: {
       width: { min: 420, ideal: 420, max: 1920 },
@@ -19,7 +19,7 @@ import Webcam = require('../')
 }
 
 {
-  expectError(Uppy().use(Webcam, {
+  expectError(new Uppy().use(Webcam, {
     modes: ['video-only'],
     videoConstraints: {
       width: 'not a number har har'

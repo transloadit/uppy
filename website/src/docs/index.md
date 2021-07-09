@@ -19,12 +19,12 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
   <head>
     <meta charset="utf-8">
     <title>Uppy</title>
-    <link href="https://releases.transloadit.com/uppy/v1.29.1/uppy.min.css" rel="stylesheet">
+    <link href="https://releases.transloadit.com/uppy/v1.30.0/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <div id="drag-drop-area"></div>
 
-    <script src="https://releases.transloadit.com/uppy/v1.29.1/uppy.min.js"></script>
+    <script src="https://releases.transloadit.com/uppy/v1.30.0/uppy.min.js"></script>
     <script>
       var uppy = Uppy.Core()
         .use(Uppy.Dashboard, {
@@ -77,13 +77,13 @@ import Dashboard from '@uppy/dashboard'
 // With webpack and `style-loader`, you can import them like this:
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
- 
+
 const uppy = new Uppy()
   .use(Dashboard, {
-    trigger: '#select-files'
+    trigger: '#select-files',
   })
   .use(XHRUpload, { endpoint: 'https://api2.transloadit.com' })
- 
+
 uppy.on('complete', (result) => {
   console.log('Upload complete! We’ve uploaded these files:', result.successful)
 })
@@ -118,12 +118,12 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
 1\. Add a script at the bottom of the closing `</body>` tag:
 
 ``` html
-<script src="https://releases.transloadit.com/uppy/v1.29.1/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v1.30.0/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 ``` html
-<link href="https://releases.transloadit.com/uppy/v1.29.1/uppy.min.css" rel="stylesheet">
+<link href="https://releases.transloadit.com/uppy/v1.30.0/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize at the bottom of the closing `</body>` tag:
@@ -165,27 +165,28 @@ With a module bundler, you can use the required polyfills like so:
 ```shell
 npm install es6-promise whatwg-fetch abortcontroller-polyfill math-log2 md-gum-polyfill resize-observer-polyfill symbol-es6 url-polyfill
 ```
+
 ```js
-import 'es6-promise/auto';
-import 'whatwg-fetch';
-import 'abortcontroller-polyfill/dist/polyfill-patch-fetch';
+import 'es6-promise/auto'
+import 'whatwg-fetch'
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 // Order matters: AbortController needs fetch which needs Promise.
 
-import mathLog2 from 'math-log2';
-import 'md-gum-polyfill';
-import ResizeObserver from 'resize-observer-polyfill';
-import 'symbol-es6';
-import 'url-polyfill';
+import mathLog2 from 'math-log2'
+import 'md-gum-polyfill'
+import ResizeObserver from 'resize-observer-polyfill'
+import 'symbol-es6'
+import 'url-polyfill'
 
-Math.log2 ??= mathLog2;
-window.ResizeObserver ??= ResizeObserver;
+Math.log2 ??= mathLog2
+window.ResizeObserver ??= ResizeObserver
 
-export { default } from '@uppy/core';
+export { default } from '@uppy/core'
 export * from '@uppy/core'
 ```
 
 If you're using Uppy from CDN, those polyfills are already included in the bundle, no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v1.29.1/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v1.30.0/uppy.min.js"></script>
 ```

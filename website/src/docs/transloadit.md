@@ -28,7 +28,7 @@ uppy.use(Transloadit, {
   alwaysRunAssembly: false,
   signature: null,
   fields: {},
-  limit: 0
+  limit: 0,
 })
 ```
 
@@ -47,7 +47,7 @@ npm install @uppy/transloadit
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Transloadit = Uppy.Transloadit
+const { Transloadit } = Uppy
 ```
 
 ## Properties
@@ -62,7 +62,7 @@ import Transloadit from '@uppy/transloadit'
 
 uppy.use(Dropbox, {
   companionUrl: Transloadit.COMPANION,
-  companionAllowedHosts: Transloadit.COMPANION_PATTERN
+  companionAllowedHosts: Transloadit.COMPANION_PATTERN,
 })
 ```
 
@@ -72,7 +72,7 @@ The value of this constant is `https://api2.transloadit.com/companion`. If you a
 
 ```js
 uppy.use(Dropbox, {
-  companionUrl: 'https://api2-us-east-1.transloadit.com/companion'
+  companionUrl: 'https://api2-us-east-1.transloadit.com/companion',
 })
 ```
 
@@ -88,7 +88,7 @@ import Transloadit from '@uppy/transloadit'
 
 uppy.use(Dropbox, {
   companionUrl: Transloadit.COMPANION,
-  companionAllowedHosts: Transloadit.COMPANION_PATTERN
+  companionAllowedHosts: Transloadit.COMPANION_PATTERN,
 })
 ```
 
@@ -121,12 +121,12 @@ uppy.use(Transloadit, {
         robot: '/video/encode',
         use: {
           steps: [':original'],
-          fields: ['file_input_field2']
+          fields: ['file_input_field2'],
         },
-        preset: 'iphone'
-      }
-    }
-  }
+        preset: 'iphone',
+      },
+    },
+  },
 })
 ```
 
@@ -160,14 +160,14 @@ For example, to upload files to an S3 bucket and then transcode them:
 uppy.use(AwsS3, {
   getUploadParameters (file) {
     return { /* upload parameters */ }
-  }
+  },
 })
 uppy.use(Transloadit, {
   importFromUploadURLs: true,
   params: {
     auth: { key: 'YOUR_API_KEY' },
-    template_id: 'YOUR_TEMPLATE_ID'
-  }
+    template_id: 'YOUR_TEMPLATE_ID',
+  },
 })
 ```
 
@@ -189,10 +189,10 @@ An object of form fields to send along to the Assembly. Keys are field names, an
 
 ```js
 uppy.use(Transloadit, {
-  ...,
+  // ...
   fields: {
-    message: 'This is a form field'
-  }
+    message: 'This is a form field',
+  },
 })
 ```
 
@@ -202,7 +202,7 @@ You can also pass an array of field names to send global or file metadata along 
 uppy.use(Form, { target: 'form#upload-form', getMetaFromForm: true })
 uppy.use(Transloadit, {
   fields: ['field_name', 'other_field_name'],
-  params: { ... }
+  params: { /* ... */ },
 })
 ```
 
@@ -217,21 +217,21 @@ A custom `getAssemblyOptions()` option should return an object or a Promise for 
 ```js
 uppy.use(MetaData, {
   fields: [
-    { id: 'caption' }
-  ]
+    { id: 'caption' },
+  ],
 })
 uppy.use(Transloadit, {
   getAssemblyOptions (file) {
     return {
       params: {
         auth: { key: 'TRANSLOADIT_AUTH_KEY_HERE' },
-        template_id: 'xyz'
+        template_id: 'xyz',
       },
       fields: {
-        caption: file.meta.caption
-      }
+        caption: file.meta.caption,
+      },
     }
-  }
+  },
 })
 ```
 
@@ -245,13 +245,13 @@ uppy.use(Form, { getMetaFromForm: true })
 uppy.use(Transloadit, {
   getAssemblyOptions (file) {
     return {
-      params: { ... },
+      params: { /* ... */ },
       // Pass through the fields you need:
       fields: {
-        message: file.meta.message
-      }
+        message: file.meta.message,
+      },
     }
-  }
+  },
 })
 ```
 
@@ -263,7 +263,7 @@ uppy.use(Transloadit, {
     return fetch('/transloadit-params').then((response) => {
       return response.json()
     })
-  }
+  },
 })
 ```
 
@@ -278,14 +278,14 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
+const strings = {
   // Shown while Assemblies are being created for an upload.
-  creatingAssembly: 'Preparing upload...'
+  creatingAssembly: 'Preparing upload...',
   // Shown if an Assembly could not be created.
   creatingAssemblyFailed: 'Transloadit: Could not create Assembly',
   // Shown after uploads have succeeded, but when the Assembly is still executing.
   // This only shows if `waitForMetadata` or `waitForEncoding` was enabled.
-  encoding: 'Encoding...'
+  encoding: 'Encoding...',
 }
 ```
 

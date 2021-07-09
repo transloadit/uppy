@@ -74,7 +74,8 @@ class Uppy {
           0: 'Select %{smart_count}',
           1: 'Select %{smart_count}',
         },
-        allFilesFromFolderNamed: 'All files from folder %{name}',
+        selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
+        unselectAllFilesFromFolderNamed: 'Unselect all files from folder %{name}',
         selectFileNamed: 'Select file %{name}',
         unselectFileNamed: 'Unselect file %{name}',
         openFolderNamed: 'Open folder %{name}',
@@ -312,6 +313,7 @@ class Uppy {
       })
     }
 
+    // Note: this is not the preact `setState`, it's an internal function that has the same name.
     this.setState() // so that UI re-renders with new options
   }
 
@@ -1718,11 +1720,8 @@ class Uppy {
   }
 }
 
-module.exports = function core (opts) {
-  return new Uppy(opts)
-}
-
 // Expose class constructor.
+module.exports = Uppy
 module.exports.Uppy = Uppy
 module.exports.UIPlugin = UIPlugin
 module.exports.BasePlugin = BasePlugin

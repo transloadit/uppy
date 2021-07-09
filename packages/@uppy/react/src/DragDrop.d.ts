@@ -1,5 +1,5 @@
 import { ToUppyProps } from './CommonTypes'
-import DragDrop = require('@uppy/drag-drop')
+import DragDrop from '@uppy/drag-drop'
 
 export type DragDropProps = ToUppyProps<DragDrop.DragDropOptions>  & React.BaseHTMLAttributes<HTMLDivElement>
 

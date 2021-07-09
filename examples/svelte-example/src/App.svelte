@@ -1,15 +1,17 @@
 <script lang="ts">
-	import { Dashboard, DashboardModal, DragDrop, ProgressBar } from "@uppy/svelte"
-	import Uppy from "@uppy/core"
+	import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/svelte'
+	import Uppy from '@uppy/core'
 	import Webcam from '@uppy/webcam'
 	import XHRUpload from '@uppy/xhr-upload'
 
-	let createUppy = () => Uppy().use(Webcam).use(XHRUpload, {
-		bundle: true,
-		endpoint: 'http://localhost:9967/upload',
-		metaFields: ['something'],
-		fieldName: 'files'
-	})
+	const createUppy = () => {
+		return new Uppy().use(Webcam).use(XHRUpload, {
+			bundle: true,
+			endpoint: 'http://localhost:9967/upload',
+			metaFields: ['something'],
+			fieldName: 'files',
+		})
+	}
 
 	let uppy1 = createUppy()
 	let uppy2 = createUppy() 

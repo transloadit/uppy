@@ -36,7 +36,7 @@ npm install @uppy/url
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Url = Uppy.Url
+const { Url } = Uppy
 ```
 
 ## CSS
@@ -58,7 +58,7 @@ The `@uppy/url` plugin has the following configurable options:
 uppy.use(Url, {
   target: Dashboard,
   companionUrl: 'https://companion.uppy.io/',
-  locale: {}
+  locale: {},
 })
 ```
 
@@ -89,7 +89,7 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
+const strings = {
   // Label for the "Import" button.
   import: 'Import',
   // Placeholder text for the URL input.
@@ -97,7 +97,7 @@ strings: {
   // Error message shown if Companion could not load a URL.
   failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
   // Error message shown if the input does not look like a URL.
-  enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file'
+  enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
 }
 ```
 
