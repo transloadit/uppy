@@ -52,6 +52,7 @@
     "jsonwebtoken": "8.5.1",
     "lodash": "^4.17.20",
     "mime-types": "2.1.25",
+    "moment": "^2.29.1",
     "moment-timezone": "^0.5.31",
     "morgan": "1.10.0",
     "ms": "2.1.2",

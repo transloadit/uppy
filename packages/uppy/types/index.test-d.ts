@@ -1,7 +1,7 @@
 import * as Uppy from '../';
 
 (() => {
-  const uppy = Uppy.Core({ autoProceed: false });
+  const uppy = new Uppy.Core({ autoProceed: false });
   uppy.use(Uppy.Dashboard, { trigger: '#up_load_file_01' });
   uppy.use(Uppy.DragDrop, { target: '#ttt' });
   uppy.use(Uppy.XHRUpload, {
@@ -15,13 +15,12 @@ import * as Uppy from '../';
 })();
 
 (() => {
-  const uppy = Uppy.Core({ autoProceed: false })
+  new Uppy.Core({ autoProceed: false })
     .use(Uppy.Dashboard, { trigger: '#select-files' })
     .use(Uppy.GoogleDrive, { target: Uppy.Dashboard, companionUrl: 'https://companion.uppy.io' })
     .use(Uppy.Instagram, { target: Uppy.Dashboard, companionUrl: 'https://companion.uppy.io' })
     .use(Uppy.Webcam, { target: Uppy.Dashboard })
-    .use(Uppy.ScreenCapture, { target: Uppy.Dashboard })
-    .use(Uppy.Zoom, { target: Uppy.Dashboard })
+    .use(Uppy.ScreenCapture)
     .use(Uppy.Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
     .on('complete', (result) => {
       console.log('Upload result:', result);
@@ -29,7 +28,7 @@ import * as Uppy from '../';
 })();
 
 (() => {
-  const uppy = Uppy.Core();
+  const uppy = new Uppy.Core();
   uppy.use(Uppy.DragDrop, { target: '.UppyDragDrop' });
   uppy.use(Uppy.Tus, { endpoint: '//tusd.tusdemo.net/files/' });
 })();

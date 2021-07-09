@@ -1,5 +1,5 @@
 import { createStore, combineReducers } from 'redux'
-import ReduxStore = require('../')
+import ReduxStore from '../'
 
 const reducer = combineReducers({
   uppy: ReduxStore.reducer

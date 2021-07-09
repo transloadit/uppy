@@ -12,10 +12,6 @@ export interface RequestClientOptions {
   companionUrl: string
   companionHeaders?: object
   companionCookiesRule?: RequestCredentials
-  /**
-   * Deprecated, use `companionHeaders` instead.
-   */
-  serverHeaders?: object
 }
 
 export class RequestClient {

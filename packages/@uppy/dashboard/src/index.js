@@ -127,7 +127,7 @@ module.exports = class Dashboard extends UIPlugin {
       thumbnailType: 'image/jpeg',
       waitForThumbnailsBeforeUpload: false,
       defaultPickerIcon,
-      showLinkToFileUploadResult: true,
+      showLinkToFileUploadResult: false,
       showProgressDetails: false,
       hideUploadButton: false,
       hideCancelButton: false,

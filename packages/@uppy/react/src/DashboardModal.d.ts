@@ -1,12 +1,12 @@
 import { Omit, ToUppyProps } from './CommonTypes'
-import Dashboard = require('@uppy/dashboard')
+import type { DashboardOptions } from '@uppy/dashboard'
 
 // This type is mapped into `DashboardModalProps` below so IntelliSense doesn't display this big mess of nested types
 type DashboardModalPropsInner = {
   open?: boolean
   onRequestClose?: VoidFunction
 } & Omit<
-  ToUppyProps<Dashboard.DashboardOptions>,
+  ToUppyProps<DashboardOptions>,
   // Remove the inline-only and force-overridden props
   'inline' | 'onRequestCloseModal'
 > & React.BaseHTMLAttributes<HTMLDivElement>

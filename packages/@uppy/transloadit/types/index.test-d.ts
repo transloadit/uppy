@@ -1,6 +1,7 @@
 import { expectError, expectType } from 'tsd'
-import Uppy = require('@uppy/core')
-import Transloadit = require('../')
+import Uppy from '@uppy/core'
+import type { UppyFile } from '@uppy/core'
+import Transloadit from '../'
 
 expectType<string>(Transloadit.COMPANION)
 expectType<RegExp>(Transloadit.COMPANION_PATTERN)
@@ -10,10 +11,10 @@ const validParams = {
 }
 
 {
-  const uppy = Uppy()
+  const uppy = new Uppy()
   uppy.use(Transloadit, {
     getAssemblyOptions (file) {
-      expectType<Uppy.UppyFile>(file)
+      expectType<UppyFile>(file)
       return { params: validParams }
     },
     waitForEncoding: false,
@@ -27,7 +28,7 @@ const validParams = {
 }
 
 {
-  const uppy = Uppy()
+  const uppy = new Uppy()
   // must be bools
   expectError(
     uppy.use(Transloadit, { waitForEncoding: null, params: validParams })
@@ -38,7 +39,7 @@ const validParams = {
 }
 
 {
-  const uppy = Uppy()
+  const uppy = new Uppy()
   // params.auth.key must be string
   expectError(uppy.use(Transloadit, { params: {} }))
   expectError(uppy.use(Transloadit, { params: { auth: {} } }))

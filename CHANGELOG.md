@@ -1,6 +1,6 @@
 # Changelog
 
-<!--lint disable no-literal-urls-->
+<!--lint disable no-literal-urls no-undefined-references-->
 
 This is our changelog which contains planned todos and past dones.
 

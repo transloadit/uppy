@@ -1719,11 +1719,8 @@ class Uppy {
   }
 }
 
-module.exports = function core (opts) {
-  return new Uppy(opts)
-}
-
 // Expose class constructor.
+module.exports = Uppy
 module.exports.Uppy = Uppy
 module.exports.UIPlugin = UIPlugin
 module.exports.BasePlugin = BasePlugin

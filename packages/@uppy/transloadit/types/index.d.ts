@@ -1,5 +1,5 @@
-import Uppy = require('@uppy/core')
-import TransloaditLocale = require('./generatedLocale')
+import type { PluginOptions, UppyFile, BasePlugin } from '@uppy/core'
+import TransloaditLocale from './generatedLocale'
 
 declare module Transloadit {
   interface AssemblyParameters {
@@ -19,7 +19,7 @@ declare module Transloadit {
     signature?: string
   }
 
-  interface TransloaditOptionsBase extends Uppy.PluginOptions {
+  interface TransloaditOptionsBase extends PluginOptions {
     service?: string
     errorReporting?: boolean
     waitForEncoding?: boolean
@@ -34,16 +34,14 @@ declare module Transloadit {
   type TransloaditOptions = TransloaditOptionsBase &
     (
       | {
-          getAssemblyOptions?: (
-            file: Uppy.UppyFile
-          ) => AssemblyOptions | Promise<AssemblyOptions>
+          getAssemblyOptions?: (file: UppyFile) => AssemblyOptions | Promise<AssemblyOptions>
         }
       | AssemblyOptions)
 }
 
-declare class Transloadit extends Uppy.Plugin<Transloadit.TransloaditOptions> {
+declare class Transloadit extends BasePlugin<Transloadit.TransloaditOptions> {
   static COMPANION: string
   static COMPANION_PATTERN: RegExp
 }
 
-export = Transloadit
+export default Transloadit

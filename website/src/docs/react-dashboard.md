@@ -52,7 +52,7 @@ import { Dashboard } from '@uppy/react'
 
 function Uploader () {
   const uppy = React.useMemo(() => {
-    return Uppy()
+    return new Uppy()
       .use(Webcam) // `id` defaults to "Webcam". Note: no `target` option!
       // or
       .use(Webcam, { id: 'MyWebcam' }) // `id` is… "MyWebcam"

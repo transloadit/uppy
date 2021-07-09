@@ -1,17 +1,15 @@
-import Uppy = require('@uppy/core')
-import CompanionClient = require('@uppy/companion-client')
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type { PublicProviderOptions, TokenStorage } from '@uppy/companion-client'
 
 declare module Dropbox {
-  interface DropboxOptions
-    extends Uppy.PluginOptions,
-      CompanionClient.PublicProviderOptions {
+  interface DropboxOptions extends PluginOptions, PublicProviderOptions {
     replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
+    target?: PluginTarget
     title?: string
-    storage?: CompanionClient.TokenStorage
+    storage?: TokenStorage
   }
 }
 
-declare class Dropbox extends Uppy.Plugin<Dropbox.DropboxOptions> {}
+declare class Dropbox extends UIPlugin<Dropbox.DropboxOptions> {}
 
-export = Dropbox
+export default Dropbox

@@ -48,7 +48,7 @@ import { DashboardModal } from '@uppy/react'
 class MyComponent extends React.Component {
   constructor (props) {
     super(props)
-    this.uppy = Uppy()
+    this.uppy = new Uppy()
       .use(Transloadit, {})
   }
 

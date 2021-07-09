@@ -1,17 +1,15 @@
-import Uppy = require('@uppy/core')
-import CompanionClient = require('@uppy/companion-client')
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type { PublicProviderOptions, TokenStorage } from '@uppy/companion-client'
 
 declare module Instagram {
-  interface InstagramOptions
-    extends Uppy.PluginOptions,
-      CompanionClient.PublicProviderOptions {
+  interface InstagramOptions extends PluginOptions, PublicProviderOptions {
     replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
+    target?: PluginTarget
     title?: string
-    storage?: CompanionClient.TokenStorage
+    storage?: TokenStorage
   }
 }
 
-declare class Instagram extends Uppy.Plugin<Instagram.InstagramOptions> {}
+declare class Instagram extends UIPlugin<Instagram.InstagramOptions> {}
 
-export = Instagram
+export default Instagram
