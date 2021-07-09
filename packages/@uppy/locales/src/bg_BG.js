@@ -92,7 +92,6 @@ bg_BG.strings = {
   retry: 'Нов опит',
   retryUpload: 'Нов опит за качване',
   saveChanges: 'Запис на промените',
-  selectAllFilesFromFolderNamed: 'Изберете всички файлове от директория %{name}',
   selectFileNamed: 'Изберете файл %{name}',
   selectX: {
     '0': 'Избран %{smart_count}',
@@ -108,7 +107,6 @@ bg_BG.strings = {
   submitRecordedFile: 'Подаване на записаното видео',
   takePicture: 'Направа на снимка',
   timedOut: 'Качването е в застой за %{seconds} секунди, прекъсване.',
-  unselectAllFilesFromFolderNamed: 'Размаркиране на всички файлове от директория %{name}',
   unselectFileNamed: 'Размаркиране файл %{name}',
   upload: 'Качване',
   uploadComplete: 'Качването е успешно',

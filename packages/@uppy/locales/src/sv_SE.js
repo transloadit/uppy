@@ -81,7 +81,6 @@ sv_SE.strings = {
   retry: 'Försök igen',
   retryUpload: 'Försök igen',
   saveChanges: 'Spara ändringar',
-  selectAllFilesFromFolderNamed: 'Välj alla filer i mappen %{name}',
   selectFileNamed: 'Välj fil %{name}',
   selectX: {
     '0': 'Välj %{smart_count}',
@@ -93,7 +92,6 @@ sv_SE.strings = {
   stopRecording: 'Avbryt inspelning',
   takePicture: 'Ta bild',
   timedOut: 'Uppladdningen har stått stilla i %{seconds} sekunder; avbryter.',
-  unselectAllFilesFromFolderNamed: 'Avmarkera alla filer i mappen %{name}',
   unselectFileNamed: 'Avmarkera filen %{name}',
   upload: 'Ladda upp',
   uploadComplete: 'Uppladdning slutförd',

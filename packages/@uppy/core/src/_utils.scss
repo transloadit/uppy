@@ -1,4 +1,6 @@
-// Utility Mixins
+@import '@uppy/core/src/_variables.scss';
+
+$focus-shadow: 0 0 0 3px rgba($blue, 0.5);
 
 @mixin clearfix() {
   &:after {
@@ -44,7 +46,7 @@
   @include clear-focus();
 
   &:focus {
-    box-shadow: 0 0 0 3px rgba($blue, 0.5);
+    box-shadow: $focus-shadow;
   }
 }
 

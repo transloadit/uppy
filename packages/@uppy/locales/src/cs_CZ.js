@@ -82,7 +82,6 @@ cs_CZ.strings = {
   retry: 'Opakovat',
   retryUpload: 'Opakovat nahrávání',
   saveChanges: 'Uložit změny',
-  selectAllFilesFromFolderNamed: 'Vybrat vše z adresáře %{name}',
   selectFileNamed: 'Vybrat soubor %{name}',
   selectX: {
     '0': 'Vybrat %{smart_count}',
@@ -94,7 +93,6 @@ cs_CZ.strings = {
   stopRecording: 'Zastavit nahrávání videa',
   takePicture: 'Pořídit fotografii',
   timedOut: 'Stav nahrávání se nezměnil %{seconds} sekund, ruším nahrávání.',
-  unselectAllFilesFromFolderNamed: 'Zrušit výběr všech souborů z adresáře %{name}',
   unselectFileNamed: 'Zrušit výběr souboru %{name}',
   upload: 'Nahrát',
   uploadComplete: 'Nahrání dokončeno',
