@@ -7,7 +7,7 @@
     "ng": "ng",
     "start": "start-storybook -p 6006",
     "build": "ng build",
-    "release": "ng build --prod",
+    "build:release": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
@@ -66,5 +66,8 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "files": [
+    "/dist"
+  ]
 }
