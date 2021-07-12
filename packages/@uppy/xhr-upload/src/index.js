@@ -111,8 +111,6 @@ module.exports = class XHRUpload extends Plugin {
        * Check if the response from the upload endpoint indicates that the upload was successful.
        *
        * @param {number} status the response status code
-       * @param {string} responseText the response body string
-       * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
        */
       validateStatus (status) {
         return status >= 200 && status < 300
@@ -183,6 +181,7 @@ module.exports = class XHRUpload extends Plugin {
     return opts
   }
 
+  // eslint-disable-next-line class-methods-use-this
   addMetadata (formData, meta, opts) {
     const metaFields = Array.isArray(opts.metaFields)
       ? opts.metaFields
@@ -618,7 +617,8 @@ module.exports = class XHRUpload extends Plugin {
       return Promise.resolve()
     }
 
-    // no limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin (basically just AwsS3) using the top secret `__queue` option
+    // no limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin
+    // (basically just AwsS3) using the top secret `__queue` option
     if (this.opts.limit === 0 && !this.opts.__queue) {
       this.uppy.log(
         '[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0',
