@@ -26,7 +26,8 @@
     "@uppy/utils": "file:../utils",
     "get-youtube-id": "^1.0.1",
     "get-youtube-title": "^1.0.1",
-    "preact": "8.2.9"
+    "preact": "8.2.9",
+    "ytdl-core": "^4.8.3"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
