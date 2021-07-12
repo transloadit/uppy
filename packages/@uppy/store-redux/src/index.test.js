@@ -7,9 +7,9 @@ describe('ReduxStore', () => {
     return Redux.createStore(reducer)
   }
 
-  it('can be created with or without new', () => {
+  it('can be created with named or default import', () => {
     const r = createStore()
-    let store = ReduxStore({ store: r })
+    let store = new ReduxStore.ReduxStore({ store: r })
     expect(typeof store).toBe('object')
     store = new ReduxStore({ store: r })
     expect(typeof store).toBe('object')
@@ -17,7 +17,7 @@ describe('ReduxStore', () => {
 
   it('merges in state using `setState`', () => {
     const r = createStore()
-    const store = ReduxStore({ store: r })
+    const store = new ReduxStore({ store: r })
     expect(store.getState()).toEqual({})
 
     store.setState({
@@ -39,7 +39,7 @@ describe('ReduxStore', () => {
     }
 
     const r = createStore()
-    const store = ReduxStore({ store: r })
+    const store = new ReduxStore({ store: r })
     store.subscribe(listener)
 
     expected = [{}, { a: 1, b: 2 }, { a: 1, b: 2 }]
@@ -70,7 +70,7 @@ describe('ReduxStore', () => {
       expect([prevState, nextState, patch]).toEqual(expected)
     }
 
-    const store = ReduxStore({ store: r })
+    const store = new ReduxStore({ store: r })
     store.subscribe(listener)
 
     expected = [{}, { a: 1 }, { a: 1 }]
@@ -95,7 +95,7 @@ describe('ReduxStore', () => {
       hello: ReduxStore.reducer,
     })
     const r = Redux.createStore(reducer)
-    const store = ReduxStore({
+    const store = new ReduxStore({
       store: r,
       id: 'world',
       selector: state => state.hello.world,

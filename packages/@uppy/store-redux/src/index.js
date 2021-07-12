@@ -77,10 +77,8 @@ function middleware () {
   }
 }
 
-module.exports = function createReduxStore (opts) {
-  return new ReduxStore(opts)
-}
-
+module.exports = ReduxStore
+module.exports.ReduxStore = ReduxStore
 module.exports.STATE_UPDATE = STATE_UPDATE
 module.exports.reducer = reducer
 module.exports.middleware = middleware
