@@ -10,7 +10,6 @@ const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
 const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
-const { version } = require('../package.json')
 
 function buildResponseError (xhr, err) {
   let error = err
@@ -46,7 +45,8 @@ function setTypeInBlob (file) {
 }
 
 module.exports = class XHRUpload extends Plugin {
-  static VERSION = version
+  // eslint-disable-next-line global-require
+  static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -183,7 +183,7 @@ module.exports = class XHRUpload extends Plugin {
     return opts
   }
 
-  static addMetadata (formData, meta, opts) {
+  addMetadata (formData, meta, opts) {
     const metaFields = Array.isArray(opts.metaFields)
       ? opts.metaFields
       : Object.keys(meta) // Send along all fields by default.
@@ -230,10 +230,6 @@ module.exports = class XHRUpload extends Plugin {
     return formPost
   }
 
-  static createBareUpload (file) {
-    return file.data
-  }
-
   upload (file, current, total) {
     const opts = this.getOptions(file)
 
@@ -243,7 +239,7 @@ module.exports = class XHRUpload extends Plugin {
 
       const data = opts.formData
         ? this.createFormDataUpload(file, opts)
-        : this.createBareUpload(file, opts)
+        : file.data
 
       const xhr = new XMLHttpRequest()
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
@@ -499,7 +495,7 @@ module.exports = class XHRUpload extends Plugin {
         })
       }
 
-      xhr.upload.addEventListener('loadstart', (ev) => {
+      xhr.upload.addEventListener('loadstart', () => {
         this.uppy.log('[XHRUpload] started uploading bundle')
         timer.progress()
       })
@@ -539,7 +535,7 @@ module.exports = class XHRUpload extends Plugin {
         return reject(error)
       })
 
-      xhr.addEventListener('error', (ev) => {
+      xhr.addEventListener('error', () => {
         timer.done()
 
         const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
@@ -603,7 +599,7 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   onRetryAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('retry-all', (filesToRetry) => {
+    this.uploaderEvents[fileID].on('retry-all', () => {
       if (!this.uppy.getFile(fileID)) return
       cb()
     })
