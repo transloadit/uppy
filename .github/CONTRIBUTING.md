@@ -10,7 +10,7 @@ cd uppy
 npm install
 ```
 
-Our website’s examples section is also our playground, please read the [Local Previews](#Local-previews) section to get up and running.
+Our website's examples section is also our playground, please read the [Local Previews](#Local-previews) section to get up and running.
 
 ### Requiring files
 
@@ -75,15 +75,18 @@ Even though facebook [allows using](https://developers.facebook.com/blog/post/20
 Make sure that you are using a development facebook app at <https://developers.facebook.com/apps>
 
 Go to "Instagram Basic Display" and find `Instagram App ID` and `Instagram App Secret`. Put them in a file called `env.sh` in the repo root:
+
 ```bash
 export COMPANION_INSTAGRAM_KEY="Instagram App ID"
 export COMPANION_INSTAGRAM_SECRET="Instagram App Secret"
 ```
 
 Run
+
 ```bash
 ngrok http 3020
 ```
+
 Note the ngrok https base URL, e.g. `https://e0c7de09808d.ngrok.io` and
 append `/instagram/redirect` to it, e.g.:
 
@@ -141,8 +144,8 @@ If you have two-factor authentication enabled on your account, Lerna will ask fo
 
 Other things to keep in mind during release:
 
-* When doing a major release >= 1.0, of the `@uppy/core` package, the `peerDependency` of the plugin packages needs to be updated first. Eg when updating from 1.y.z to 2.0.0, the peerDependency of each should be `"@uppy/core": "^2.0.0"` before doing `npm run release`.
-* When adding a new package, add the following key to its package.json:
+- When doing a major release >= 1.0, of the `@uppy/core` package, the `peerDependency` of the plugin packages needs to be updated first. Eg when updating from 1.y.z to 2.0.0, the peerDependency of each should be `"@uppy/core": "^2.0.0"` before doing `npm run release`.
+- When adding a new package, add the following key to its package.json:
   ```json
   "publishConfig": { "access": "public" }
   ```
@@ -150,14 +153,14 @@ Other things to keep in mind during release:
 
 After a release, the demos on transloadit.com should also be updated. After updating, check that some things work locally:
 
- - the demos in the demo section work (try one that uses an import robot, and one that you need to upload to)
- - the demos on the homepage work and can import from Google Drive, Instagram, Dropbox, etc.
+- the demos in the demo section work (try one that uses an import robot, and one that you need to upload to)
+- the demos on the homepage work and can import from Google Drive, Instagram, Dropbox, etc.
 
 If you don't have access to the transloadit.com source code ping @arturi or @goto-bus-stop and we'll pick it up. :sparkles:
 
 ## Website development
 
-We keep the [uppy.io](http://uppy.io) website in `./website`, so it’s easy to keep docs and code in sync as we are still iterating at high velocity.
+We keep the [uppy.io](http://uppy.io) website in `./website`, so it's easy to keep docs and code in sync as we are still iterating at high velocity.
 
 The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the `gh-pages` branch with Hexo's build at every change to `master`). The content is written in Markdown and located in `./website/src`. Feel free to fork & hack!
 
@@ -221,7 +224,7 @@ Syntax: `[<namespace>-]<ComponentName>[-descendentName][--modifierName]`
 
 ### SASS
 
-This project uses SASS, with some limitations on nesting.  One-level-deep nesting is allowed, but nesting may not extend a selector by using the `&` operator.  For example:
+This project uses SASS, with some limitations on nesting. One-level-deep nesting is allowed, but nesting may not extend a selector by using the `&` operator. For example:
 
 ```sass
 /* BAD */
@@ -251,7 +254,7 @@ Style to the mobile breakpoint with your selectors, then use `min-width` media q
 - HTML elements go above classes and IDs in a file.
 - Rules are sorted alphabetically.
 
-```sass
+```scss
 /* BAD */
 .wrapper {
   width: 940px;
@@ -309,6 +312,7 @@ Before going into these tasks, there are a few common gotchas that you should be
 #### Dependencies
 
 Your `package.json` should resemble something like this:
+
 ```json
 {
   "name": "@uppy/framework",
@@ -342,11 +346,12 @@ Generally, documentation for integrations can be broken down into a few pieces t
 - Installation
 - Initializing Uppy (may vary depending on how the framework handles reactivity)
 - Usage
-- *For each component*
+- _For each component_
   - Loading CSS
   - Props
 
 It may be easier to copy the documentation of earlier integrations and change the parts that need to be changed rather than writing this from scratch. Preferably, keep the documentation to one page. For the front-matter, write something like:
+
 ```markdown
 title: Framework Name
 type: docs
@@ -363,7 +368,7 @@ This is pretty simple to do, as you can likely use whatever code generation tool
 
 ### Integrating the build system
 
-The biggest part of this is understanding Uppy's build system. The high level description is basically `babel` goes through almost all of the packages and transpiles all the Javascript files in the `src` directory to more compatible JavaScript in the `lib` folder. If you're using vanilla JavaScript for your integration (like React and Vue do), then you can just use this build system and use the files generated as your entry points. 
+The biggest part of this is understanding Uppy's build system. The high level description is basically `babel` goes through almost all of the packages and transpiles all the Javascript files in the `src` directory to more compatible JavaScript in the `lib` folder. If you're using vanilla JavaScript for your integration (like React and Vue do), then you can just use this build system and use the files generated as your entry points.
 
 If you're using some kind of more abstract file format (like Svelte), then you probably want do to a few things: add the directory name to [this `IGNORE` regex](https://github.com/transloadit/uppy/blob/425f9ecfbc8bc48ce6b734e4fc14fa60d25daa97/bin/build-lib.js#L15); add all of your build dependencies to the root `package.json` (try to keep this small); add a new `build:framework` script to the root `package.json`. This script usually looks something like this:
 
