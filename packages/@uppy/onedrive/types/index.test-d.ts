@@ -1,2 +1,2 @@
-import OneDrive = require('../')
+// import OneDrive from '..'
 // TODO implement

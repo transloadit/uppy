@@ -7,7 +7,7 @@ type FieldRenderOptions = {
   onChange: (newVal: string) => void
 }
 
-type PreactRender = (node: any, params: object | null, ...children: any[]) => any
+type PreactRender = (node: any, params: Record<string, unknown> | null, ...children: any[]) => any
 
 interface MetaField {
   id: string
@@ -57,12 +57,19 @@ export interface DashboardOptions extends PluginOptions {
 
 declare class Dashboard extends UIPlugin<DashboardOptions> {
   addTarget (plugin: UIPlugin): HTMLElement
+
   hideAllPanels (): void
+
   openModal (): void
+
   closeModal (): void
+
   isModalOpen (): boolean
-  render (state: object): void
+
+  render (state: Record<string, unknown>): void
+
   install (): void
+
   uninstall (): void
 }
 

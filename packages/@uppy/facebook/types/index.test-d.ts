@@ -1,2 +1,2 @@
-import Facebook = require('../')
+// import Facebook from '..'
 // TODO implement

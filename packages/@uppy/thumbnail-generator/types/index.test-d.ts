@@ -1,2 +1,2 @@
-import ThumbnailGenerator = require('../')
+// import ThumbnailGenerator from '..'
 // TODO implement

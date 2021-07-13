@@ -2,14 +2,13 @@ import type { PluginOptions, BasePlugin, UppyFile } from '@uppy/core'
 
 type MaybePromise<T> = T | Promise<T>
 
-declare module AwsS3Multipart {
-  interface AwsS3Part {
-    PartNumber?: number
-    Size?: number
-    ETag?: string
-  }
+export interface AwsS3Part {
+  PartNumber?: number
+  Size?: number
+  ETag?: string
+}
 
-  interface AwsS3MultipartOptions extends PluginOptions {
+interface AwsS3MultipartOptions extends PluginOptions {
     companionHeaders?: { [type: string]: string }
     companionUrl?: string
     getChunkSize?: (file: UppyFile) => number
@@ -35,11 +34,10 @@ declare module AwsS3Multipart {
     timeout?: number
     limit?: number
     retryDelays?: number[] | null
-  }
 }
 
 declare class AwsS3Multipart extends BasePlugin<
-  AwsS3Multipart.AwsS3MultipartOptions
+  AwsS3MultipartOptions
 > {}
 
 export default AwsS3Multipart

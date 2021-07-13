@@ -9,6 +9,7 @@ const svgPresentationAttributes = [
 ]
 
 module.exports = {
+  root: true,
   extends: ['transloadit'],
   env: {
     es6: true,
@@ -133,6 +134,7 @@ module.exports = {
         packages: path.resolve(__dirname, 'packages'),
       },
     },
+    'import/core-modules': ['tsd'],
     react: {
       pragma: 'h',
     },
@@ -224,12 +226,7 @@ module.exports = {
         sourceType: 'module',
       },
       rules: {
-        'import/no-extraneous-dependencies': ['off'],
-        'import/no-unresolved': ['off'],
-        'react/destructuring-assignment': ['off'],
-        'no-console': ['off'],
-        'no-undef': ['off'],
-        'no-unused-vars': ['off'],
+        'react/destructuring-assignment': 'off',
         'no-restricted-globals': [
           'error',
           {
@@ -253,6 +250,33 @@ module.exports = {
             message: 'Use import instead',
           },
         ],
+      },
+    },
+    {
+      files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript'],
+      excludedFiles: ['examples/angular-example/**/*.ts', 'packages/@uppy/angular/**/*.ts'],
+      parser: '@typescript-eslint/parser',
+      plugins: [
+        '@typescript-eslint',
+      ],
+      extends: [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/eslint-recommended',
+        'plugin:@typescript-eslint/recommended',
+      ],
+      rules: {
+        'import/prefer-default-export': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
+    {
+      files: ['**/*.md/*.*'],
+      rules: {
+        'import/no-extraneous-dependencies': 'off',
+        'import/no-unresolved': 'off',
+        'no-console': 'off',
+        'no-undef': 'off',
+        'no-unused-vars': 'off',
       },
     },
     {

@@ -10,8 +10,10 @@ declare module '@uppy/utils/lib/Translator' {
 
   class Translator {
     constructor (opts: Translator.Locale | Translator.Locale[])
-    translate (key: string, options: object): string
-    translateArray (key: string, options: object): any[]
+
+    translate (key: string, options: Record<string, unknown>): string
+
+    translateArray (key: string, options: Record<string, unknown>): any[]
   }
 
   export = Translator
@@ -28,7 +30,9 @@ declare module '@uppy/utils/lib/EventTracker' {
 
   class EventTracker {
     constructor (emitter: EventTracker.Emitter)
+
     on (event: string, handler: EventTracker.EventHandler): void
+
     remove (): void
   }
 
@@ -38,7 +42,9 @@ declare module '@uppy/utils/lib/EventTracker' {
 declare module '@uppy/utils/lib/ProgressTimeout' {
   class ProgressTimeout {
     constructor (timeout: number, timeoutHandler: () => void)
+
     progress (): void
+
     done (): void
   }
   export = ProgressTimeout
@@ -59,10 +65,12 @@ declare module '@uppy/utils/lib/RateLimitedQueue' {
 
   export class RateLimitedQueue {
     constructor(limit: number)
+
     run(
       fn: () => RateLimitedQueue.AbortFunction,
       queueOptions?: RateLimitedQueue.QueueOptions
     ): RateLimitedQueue.QueueEntry
+
     wrapPromiseFunction(
       fn: () => RateLimitedQueue.PromiseFunction,
       queueOptions?: RateLimitedQueue.QueueOptions
@@ -107,7 +115,7 @@ declare module '@uppy/utils/lib/emitSocketProgress' {
   }
 
   function emitSocketProgress (
-    uploader: object,
+    uploader: unknown,
     progressData: ProgressData,
     file: UppyUtils.UppyFile
   ): void
@@ -140,7 +148,7 @@ declare module '@uppy/utils/lib/getBytesRemaining' {
 }
 
 declare module '@uppy/utils/lib/getETA' {
-  function getETA (progress: object): number
+  function getETA (progress: unknown): number
   export = getETA
 }
 
@@ -231,7 +239,7 @@ declare module '@uppy/utils/lib/toArray' {
 declare module '@uppy/utils/lib/getDroppedFiles' {
   function getDroppedFiles (
     dataTransfer: DataTransfer,
-    options?: object
+    options?: Record<string, unknown>
   ): Promise<File[]>
   export = getDroppedFiles
 }
@@ -264,7 +272,7 @@ declare module '@uppy/utils' {
     remote?: {
       host: string
       url: string
-      body?: object
+      body?: Record<string, unknown>
     }
     size: number
     source?: string
@@ -276,8 +284,8 @@ declare module '@uppy/utils' {
     }
   }
   export interface Store {
-    getState (): object
-    setState (patch: object): void
+    getState (): Record<string, unknown>
+    setState (patch: Record<string, unknown>): void
     subscribe (listener: any): () => void
   }
 }

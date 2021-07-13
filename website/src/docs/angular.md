@@ -34,23 +34,24 @@ Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instan
 ```typescript
 // app.module.ts
 
-import { NgModule } from '@angular/core';
-import { UppyAngularDashboardModule } from '@uppy/angular';
+import { NgModule } from '@angular/core'
+import { UppyAngularDashboardModule } from '@uppy/angular'
 
-import { AppComponent } from './app.component';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser'
+import { AppComponent } from './app.component'
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
-    UppyAngularDashboardModule
+    UppyAngularDashboardModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
+class {}
 ```
 
 ```html
@@ -63,11 +64,11 @@ import { BrowserModule } from '@angular/platform-browser';
 ```typescript
 // app.component.ts
 
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
 import { Uppy } from '@uppy/core'
 
 @Component({
-  selector: 'app-root'
+  selector: 'app-root',
 })
 export class AppComponent {
   uppy: Uppy = new Uppy({ debug: true, autoProceed: true })
@@ -104,13 +105,14 @@ export class AppComponent {
 The `UppyAngularDashboardModule` component requires the following CSS for styling (added to your component decorator or to your `angular.json`). You can also provide your own styles if you prefer:
 
 ```typescript
-@Component(
+@Component({
   // Snip
   styleUrls: [
-    "../node_modules/@uppy/core/dist/style.css",
-    "../node_modules/@uppy/dashboard/dist/style.css"
-  ]
+    '../node_modules/@uppy/core/dist/style.css',
+    '../node_modules/@uppy/dashboard/dist/style.css',
+  ],
 })
+class {}
 ```
 
 Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path.
@@ -132,13 +134,14 @@ The `<uppy-dashboard />` cannot be passed to a `target:` option of a remote prov
 The `UppyAngularDashboardModalModule` component requires the following CSS for styling (added to your component decorator or to your `angular.json`). You can also provide your own styles if you prefer:
 
 ```typescript
-@Component(
+@Component({
   // Snip
   styleUrls: [
-    "../node_modules/@uppy/core/dist/style.css",
-    "../node_modules/@uppy/dashboard/dist/style.css"
-  ]
+    '../node_modules/@uppy/core/dist/style.css',
+    '../node_modules/@uppy/dashboard/dist/style.css',
+  ],
 })
+class{}
 ```
 
 Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path.
@@ -160,13 +163,14 @@ The `<uppy-dashboard-modal />` cannot be passed to a `target:` option of a remot
 The `UppyAngularDragDropModule` component includes some simple styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead:
 
 ```typescript
-@Component(
+@Component({
   // Snip
   styleUrls: [
-    "../node_modules/@uppy/core/dist/style.css",
-    "../node_modules/@uppy/drag-drop/dist/style.css"
-  ]
+    '../node_modules/@uppy/core/dist/style.css',
+    '../node_modules/@uppy/drag-drop/dist/style.css',
+  ],
 })
+class{}
 ```
 
 Import general Core styles from `@uppy/core/dist/style.css` first, then add the Drag & Drop styles from `@uppy/drag-drop/dist/style.css`. A minified version is also available as `style.min.css` at the same path.
@@ -182,13 +186,14 @@ The `<uppy-drag-drop />` component supports all `@uppy/drag-drop` options to be 
 The `UppyAngularProgressBarModule` plugin requires the following CSS for styling:
 
 ```typescript
-@Component(
+@Component({
   // Snip
   styleUrls: [
-    "../node_modules/@uppy/core/dist/style.css",
-    "../node_modules/@uppy/progress-bar/dist/style.css"
-  ]
+    '../node_modules/@uppy/core/dist/style.css',
+    '../node_modules/@uppy/progress-bar/dist/style.css',
+  ],
 })
+class {}
 ```
 
 Import general Core styles from `@uppy/core/dist/style.css` first, then add the Progress Bar styles from `@uppy/progress-bar/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
@@ -204,13 +209,14 @@ The `<uppy-progress-bar />` component supports all `@uppy/progress-bar` options 
 The `UppyAngularStatusBar` plugin requires the following CSS for styling:
 
 ```typescript
-@Component(
+@Component({
   // Snip
   styleUrls: [
-    "../node_modules/@uppy/core/dist/style.css",
-    "../node_modules/@uppy/status-bar/dist/style.css"
-  ]
+    '../node_modules/@uppy/core/dist/style.css',
+    '../node_modules/@uppy/status-bar/dist/style.css',
+  ],
 })
+class {}
 ```
 
 Import general Core styles from `@uppy/core/dist/style.css` first, then add the Status Bar styles from `@uppy/status-bar/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.

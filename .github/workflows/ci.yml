@@ -23,7 +23,7 @@ jobs:
         run: npm run test:unit
 
   lint_js:
-    name: Lint JavaScript
+    name: Lint JavaScript/TypeScript
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources

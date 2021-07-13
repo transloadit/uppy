@@ -1,2 +1,2 @@
-import StatusBar = require('../')
+// import StatusBar from '..'
 // TODO implement

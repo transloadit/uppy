@@ -1,25 +1,27 @@
 import { expectError, expectType } from 'tsd'
-import Uppy, { UIPlugin } from '../'
-import type { UploadedUppyFile, FailedUppyFile, PluginOptions } from '../'
 import DefaultStore from '@uppy/store-default'
+import Uppy, { UIPlugin } from '..'
+import type { UploadedUppyFile, FailedUppyFile, PluginOptions } from '..'
+
+type anyObject = Record<string, unknown>
 
 {
   const uppy = new Uppy()
   uppy.addFile({
     data: new Blob([new ArrayBuffer(1024)], {
-      type: 'application/octet-stream'
-    })
+      type: 'application/octet-stream',
+    }),
   })
 
   uppy.upload().then((result) => {
-    expectType<UploadedUppyFile<{}, {}>>(result.successful[0])
-    expectType<FailedUppyFile<{}, {}>>(result.failed[0])
+    expectType<UploadedUppyFile<anyObject, anyObject>>(result.successful[0])
+    expectType<FailedUppyFile<anyObject, anyObject>>(result.failed[0])
   })
 }
 
 {
   const store = DefaultStore()
-  new Uppy({ store })
+  new Uppy({ store }) // eslint-disable-line no-new
 }
 
 {
@@ -33,17 +35,17 @@ import DefaultStore from '@uppy/store-default'
   if (f && f.response && f.response.status === 200) {
     expectType(f.response.body)
   }
-  expectType<number>(f.response!.status)
+  expectType<number>(f.response!.status) // eslint-disable-line @typescript-eslint/no-non-null-assertion
 }
 
 {
-  type Meta = {}
+  type Meta = Record<string, never>
   type ResponseBody = {
     averageColor: string
   }
   const uppy = new Uppy()
-  const f = uppy.getFile<Meta, ResponseBody>('virtual')!
-  expectType<ResponseBody>(f.response!.body)
+  const f = uppy.getFile<Meta, ResponseBody>('virtual')
+  expectType<ResponseBody>(f.response!.body) // eslint-disable-line @typescript-eslint/no-non-null-assertion
 }
 
 {
@@ -51,7 +53,7 @@ import DefaultStore from '@uppy/store-default'
   uppy.addFile({
     name: 'empty.json',
     data: new Blob(['null'], { type: 'application/json' }),
-    meta: { path: 'path/to/file' }
+    meta: { path: 'path/to/file' },
   })
 }
 
@@ -68,6 +70,7 @@ import DefaultStore from '@uppy/store-default'
 }
 
 {
+  /* eslint-disable @typescript-eslint/no-empty-function */
   const uppy = new Uppy()
   // can emit events with internal event types
   uppy.emit('upload')
@@ -88,14 +91,15 @@ import DefaultStore from '@uppy/store-default'
   // can register listeners on custom events
   uppy.on('dashboard:modal-closed', () => {})
   uppy.once('dashboard:modal-closed', () => {})
+  /* eslint-enable @typescript-eslint/no-empty-function */
 }
 
 {
   const uppy = new Uppy()
   uppy.setOptions({
     restrictions: {
-      allowedFileTypes: ['.png']
-    }
+      allowedFileTypes: ['.png'],
+    },
   })
   expectError(uppy.setOptions({ restrictions: false }))
   expectError(uppy.setOptions({ unknownKey: false }))

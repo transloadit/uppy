@@ -1,1 +1,2 @@
-import ImageEditor = require('../')
+// import ImageEditor from '..'
+// TODO implement

@@ -1,5 +1,5 @@
-import type Uppy from "@uppy/core"
+import type Uppy from '@uppy/core'
 
 declare function useUppy(factory: () => Uppy): Uppy
 
-export = useUppy
+export default useUppy

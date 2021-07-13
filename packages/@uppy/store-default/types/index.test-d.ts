@@ -1,4 +1,4 @@
-import DefaultStore from '../'
+import DefaultStore from '..'
 
 const store = DefaultStore()
 

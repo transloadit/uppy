@@ -1,2 +1,2 @@
-import Box = require('../')
+// import Box from '..'
 // TODO implement

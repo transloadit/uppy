@@ -1,2 +1,2 @@
-import DropTarget = require('../')
+// import DropTarget from '..'
 // TODO implement

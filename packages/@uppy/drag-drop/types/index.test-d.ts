@@ -1,26 +1,26 @@
-import Uppy from "@uppy/core"
+import Uppy from '@uppy/core'
 
-import DragDrop from "../"
+import DragDrop from '..'
 
 {
-  const uppy = new Uppy();
+  const uppy = new Uppy()
 
   uppy.use(DragDrop, {
     replaceTargetContent: true,
-    target: "body",
-    inputName: "test",
+    target: 'body',
+    inputName: 'test',
     allowMultipleFiles: true,
     width: 100,
-    height: "100",
-    note: "note",
+    height: '100',
+    note: 'note',
     locale: {
       strings: {
-        dropHereOr: "test",
-        browse: "test",
+        dropHereOr: 'test',
+        browse: 'test',
       },
     },
     onDragOver: (event) => event.clientX,
     onDragLeave: (event) => event.clientY,
     onDrop: (event) => event,
-  });
+  })
 }
