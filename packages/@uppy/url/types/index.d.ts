@@ -9,7 +9,7 @@ export interface UrlOptions extends PluginOptions, RequestClientOptions {
     locale?: UrlLocale
 }
 
-declare class Url extends UIPlugin<Url.UrlOptions> {
+declare class Url extends UIPlugin<UrlOptions> {
   public addFile(url: string): undefined | string | never
 }
 
