@@ -268,11 +268,6 @@ module.exports = {
         'import/prefer-default-export': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
       },
-      parserOptions: {
-        babelOptions: {
-          plugins: [['@babel/plugin-proposal-decorators', { decoratorsBeforeExport : true }]],
-        },
-      },
     },
     {
       files: ['**/*.md/*.*'],
