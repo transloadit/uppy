@@ -65,7 +65,7 @@
   }
 
   // button with a large picture
-  button.uppy-ProviderBrowserItem-inner {
+  .uppy-ProviderBrowserItem-inner {
     border-radius: 4px;
     overflow: hidden;
     position: absolute;
@@ -95,7 +95,7 @@
   }
 
   // Checkbox
-  .uppy-ProviderBrowserItem-fakeCheckbox {
+  .uppy-ProviderBrowserItem-checkbox {
     position: absolute;
     top: 16px; right: 16px;
     width: 26px; height: 26px;
@@ -111,7 +111,13 @@
     }
   }
   // Checked: show the checkmark
-  .uppy-ProviderBrowserItem-fakeCheckbox--is-checked {
+  .uppy-ProviderBrowserItem-checkbox--is-checked {
     opacity: 1;
   }
+
+  .uppy-ProviderBrowserItem-checkbox--grid:focus + label {
+    @include clear-focus();
+    box-shadow: $focus-shadow;
+  }
 }
+

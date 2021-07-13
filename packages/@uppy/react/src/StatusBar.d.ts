@@ -1,5 +1,5 @@
-import { ToUppyProps } from './CommonTypes'
 import type { StatusBarOptions } from '@uppy/status-bar'
+import { ToUppyProps } from './CommonTypes'
 
 export type StatusBarProps = ToUppyProps<StatusBarOptions>  & React.BaseHTMLAttributes<HTMLDivElement>
 

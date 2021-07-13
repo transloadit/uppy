@@ -1,7 +1,8 @@
 import { expectError, expectType } from 'tsd'
 import Uppy from '@uppy/core'
 import type { UppyFile } from '@uppy/core'
-import AwsS3Multipart from '../'
+import AwsS3Multipart from '..'
+import type { AwsS3Part } from '..'
 
 {
   const uppy = new Uppy()
@@ -33,9 +34,9 @@ import AwsS3Multipart from '../'
       expectType<UppyFile>(file)
       expectType<string>(opts.uploadId)
       expectType<string>(opts.key)
-      expectType<AwsS3Multipart.AwsS3Part>(opts.parts[0])
+      expectType<AwsS3Part>(opts.parts[0])
       return {}
-    }
+    },
   })
 }
 

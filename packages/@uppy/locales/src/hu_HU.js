@@ -134,8 +134,6 @@ hu_HU.strings = {
     '1': 'Legalább %{smart_count} fájlt ki kell választania',
     '2': 'Legalább %{smart_count} fájlt ki kell választania',
   },
-  selectAllFilesFromFolderNamed: 'Válassza ki az összes fájlt a mappából %{name}',
-  unselectAllFilesFromFolderNamed: 'Az összes fájl törlése a mappából %{name}',
   selectFileNamed: 'Válaszd ki a fájlt %{name}',
   unselectFileNamed: 'A fájl törlése %{name}',
   openFolderNamed: 'Nyitott mappa %{name}',

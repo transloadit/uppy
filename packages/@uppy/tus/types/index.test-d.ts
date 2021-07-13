@@ -1,1 +1,1 @@
-import Tus = require('../')
+// import Tus from '../'

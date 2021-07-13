@@ -132,8 +132,6 @@ hr_HR.strings = {
     '1': 'Izaberite datoteke. Najmanje: %{smart_count}',
     '2': 'Izaberite datoteke. Najmanje: %{smart_count}',
   },
-  selectAllFilesFromFolderNamed: 'Izaberite sve datoteke iz mape %{name}',
-  unselectAllFilesFromFolderNamed: 'Isključite sve datoteke iz mape %{name}',
   selectFileNamed: 'Izaberite datoteku %{name}',
   unselectFileNamed: 'Isključite datoteku %{name}',
   openFolderNamed: 'Otvori mapu %{name}',

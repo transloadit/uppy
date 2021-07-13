@@ -1,13 +1,13 @@
 import { expectError, expectType } from 'tsd'
 import Uppy from '@uppy/core'
 import type { UppyFile } from '@uppy/core'
-import Transloadit from '../'
+import Transloadit from '..'
 
 expectType<string>(Transloadit.COMPANION)
 expectType<RegExp>(Transloadit.COMPANION_PATTERN)
 
 const validParams = {
-  auth: { key: 'not so secret key' }
+  auth: { key: 'not so secret key' },
 }
 
 {
@@ -22,8 +22,8 @@ const validParams = {
     importFromUploadURLs: false,
     params: {
       auth: { key: 'abc' },
-      steps: {}
-    }
+      steps: {},
+    },
   })
 }
 
@@ -46,22 +46,22 @@ const validParams = {
   expectError(
     uppy.use(Transloadit, {
       params: {
-        auth: { key: null }
-      }
+        auth: { key: null },
+      },
     })
   )
   expectError(
     uppy.use(Transloadit, {
       params: {
         auth: { key: 'abc' },
-        steps: 'test'
-      }
+        steps: 'test',
+      },
     })
   )
   uppy.use(Transloadit, {
     params: {
       auth: { key: 'abc' },
-      steps: { name: {} }
-    }
+      steps: { name: {} },
+    },
   })
 }

@@ -1,14 +1,12 @@
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 import type { RequestClientOptions } from '@uppy/companion-client'
 
-declare module Unsplash {
-  interface UnsplashOptions extends PluginOptions, RequestClientOptions {
+interface UnsplashOptions extends PluginOptions, RequestClientOptions {
     replaceTargetContent?: boolean
     target?: PluginTarget
     title?: string
-  }
 }
 
-declare class Unsplash extends UIPlugin<Unsplash.UnsplashOptions> {}
+declare class Unsplash extends UIPlugin<UnsplashOptions> {}
 
 export default Unsplash

@@ -81,7 +81,6 @@ id_ID.strings = {
   retry: 'Ulangi',
   retryUpload: 'Ulangi pengungahan',
   saveChanges: 'Simpan perubahan',
-  selectAllFilesFromFolderNamed: 'Pilih semua berkas dari folder %{name}',
   selectFileNamed: 'Pilih berkas %{name}',
   selectX: {
     '0': 'Pilih %{smart_count}',
@@ -93,7 +92,6 @@ id_ID.strings = {
   stopRecording: 'Menghentikan perekaman video',
   takePicture: 'Mengambil gambar',
   timedOut: 'Pengunggahan terhenti untuk %{seconds} detik, membatalkan.',
-  unselectAllFilesFromFolderNamed: 'Batalkan pemilihan semua berkas dari folder %{name}',
   unselectFileNamed: 'Batalkan pemilihan berkas %{name}',
   upload: 'Unggah',
   uploadComplete: 'Pengunggahan selesai',

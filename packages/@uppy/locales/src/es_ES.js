@@ -133,8 +133,6 @@ es_ES.strings = {
     '1': 'Tienes que seleccionar al menos %{smart_count} archivos',
     '2': 'Tienes que seleccionar al menos %{smart_count} archivos',
   },
-  selectAllFilesFromFolderNamed: 'Seleccionar todos los archivos de la carpeta %{name}',
-  unselectAllFilesFromFolderNamed: 'Deselecciona todos los archivos de la carpeta %{name}',
   selectFileNamed: 'Seleccione archivo %{name}',
   unselectFileNamed: 'Deseleccionar archivo %{name}',
   openFolderNamed: 'Carpeta abierta %{name}',

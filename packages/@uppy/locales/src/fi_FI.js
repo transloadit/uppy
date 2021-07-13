@@ -81,7 +81,6 @@ fi_FI.strings = {
   retry: 'Yritä uudelleen',
   retryUpload: 'Yritä lähetystä uudelleen',
   saveChanges: 'Tallenna muutokset',
-  selectAllFilesFromFolderNamed: 'Valitse kaikki tiedostot kansiosta %{name}',
   selectFileNamed: 'Valitse tiedosto %{name}',
   selectX: {
     '0': 'Valitse %{smart_count}',
@@ -93,7 +92,6 @@ fi_FI.strings = {
   stopRecording: 'Lopeta videon tallennus',
   takePicture: 'Ota kuva',
   timedOut: 'Lähetys jumittunut %{seconds} sekunniksi, keskeytetään.',
-  unselectAllFilesFromFolderNamed: 'Poista tiedostojen valinta kansiossa %{name}',
   unselectFileNamed: 'Poista valinta tiedostosta %{name}',
   upload: 'Lähetä',
   uploadComplete: 'Lähetys valmis',

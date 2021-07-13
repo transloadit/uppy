@@ -7,7 +7,6 @@ export interface ProgressBarOptions extends PluginOptions {
   fixed?: boolean
 }
 
-
 declare class ProgressBar extends UIPlugin<ProgressBarOptions> {}
 
 export default ProgressBar

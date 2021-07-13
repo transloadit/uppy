@@ -132,8 +132,6 @@ sr_RS_Latin.strings = {
     '1': 'Izaberite datoteke. Najmanje: %{smart_count}',
     '2': 'Izaberite datoteke. Najmanje: %{smart_count}',
   },
-  selectAllFilesFromFolderNamed: 'Izaberite sve datoteke iz foldera %{name}',
-  unselectAllFilesFromFolderNamed: 'Isključite sve datoteke iz foldera %{name}',
   selectFileNamed: 'Izaberite fajl %{name}',
   unselectFileNamed: 'Isključite fajl %{name}',
   openFolderNamed: 'Otvori folder %{name}',

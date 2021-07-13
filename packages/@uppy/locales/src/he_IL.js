@@ -83,7 +83,6 @@ he_IL.strings = {
   retry: 'נסה שוב',
   retryUpload: 'נסה להעלות שוב',
   saveChanges: 'שמור שינויים',
-  selectAllFilesFromFolderNamed: 'בחר את כל הקבצים בתיקייה %{name}',
   selectFileNamed: 'בחר את הקובץ %{name}',
   selectX: {
     '0': 'בחר %{smart_count}',
@@ -95,7 +94,6 @@ he_IL.strings = {
   stopRecording: 'עצור הסרטת ווידאו',
   takePicture: 'צלם תמונה',
   timedOut: 'העלאה נתקעה %{seconds} שניות, מבטל.',
-  unselectAllFilesFromFolderNamed: 'בטל בחירת כל הקבצים בתיקייה %{name}',
   unselectFileNamed: 'בטל בחירת הקובץ %{name}',
   upload: 'מעלה',
   uploadComplete: 'העלאה הסתיימה',

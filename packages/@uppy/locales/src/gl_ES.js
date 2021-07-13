@@ -132,8 +132,6 @@ gl_ES.strings = {
     '1': 'Tes que seleccionar polo menos %{smart_count} arquivos',
     '2': 'Tes que seleccionar polo menos %{smart_count} arquivos',
   },
-  selectAllFilesFromFolderNamed: 'Seleccionar todos os arquivos do cartafol %{name}',
-  unselectAllFilesFromFolderNamed: 'Deselecciona todos os arquivos do cartafol %{name}',
   selectFileNamed: 'Seleccione arquivo %{name}',
   unselectFileNamed: 'Deseleccionar arquivo %{name}',
   openFolderNamed: 'Cartafol aberto %{name}',

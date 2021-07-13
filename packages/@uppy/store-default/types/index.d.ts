@@ -1,10 +1,16 @@
 import type { Store } from '@uppy/utils'
 
+type State = Record<string, unknown>
+type StateChangeListener = (prevState: State, nextState: State, patch: State) => void
+
 declare class DefaultStore implements Store {
   constructor ()
-  getState (): object
-  setState (patch: object): void
-  subscribe (listener: any): () => void
+
+  getState (): State
+
+  setState (patch: State): void
+
+  subscribe (listener: StateChangeListener): () => void
 }
 
 declare function createDefaultStore (): DefaultStore

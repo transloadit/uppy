@@ -81,7 +81,6 @@ el_GR.strings = {
   retry: 'Προσπάθεια ξανά',
   retryUpload: 'Προσπάθεια μεταφόρτωσης ξανά',
   saveChanges: 'Αποθήκευση αλλαγών',
-  selectAllFilesFromFolderNamed: 'Επιλογή όλων των αρχείων από τον φάκελο %{name}',
   selectFileNamed: 'Επιλογή αρχείου %{name}',
   selectX: {
     '0': 'Επιλογή %{smart_count}',
@@ -93,7 +92,6 @@ el_GR.strings = {
   stopRecording: 'Σταμάτημα εγγραφής βίντεο',
   takePicture: 'Βγάλτε μια φωτογραφία',
   timedOut: 'Η μεταφόρτωση σταμάτησε για %{seconds} δευτερόλεπτα, γίνεται ακύρωση.',
-  unselectAllFilesFromFolderNamed: 'Αποεπιλογή όλων των αρχείων από τον φάκελο %{name}',
   unselectFileNamed: 'Αποεπιλογή αρχείου %{name}',
   upload: 'Μεταφόρτωση',
   uploadComplete: 'Μεταφόρτωση ολοκληρώθηκε',
