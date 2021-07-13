@@ -10,6 +10,7 @@ const prettierBytes = require('@transloadit/prettier-bytes')
 const browserify = require('browserify')
 const touch = require('touch')
 const glob = require('glob')
+const { minify } = require('terser')
 
 const webRoot = __dirname
 const uppyRoot = path.join(__dirname, '../packages/uppy')
@@ -91,9 +92,8 @@ async function getMinifiedSize (pkg, name) {
   if (excludes[name]) {
     b.exclude(excludes[name])
   }
-  b.plugin('tinyify')
 
-  const bundle = await promisify(b.bundle).call(b)
+  const { code:bundle } = await promisify(b.bundle).call(b).then(buf => minify(buf.toString(), { toplevel: true }))
   const gzipped = await gzipSize(bundle)
 
   return {
@@ -105,7 +105,7 @@ async function getMinifiedSize (pkg, name) {
 
 async function injectSizes (config) {
   console.info(chalk.grey('Generating bundle sizes…'))
-  const padTarget = packages.reduce((max, cur) => Math.max(max, cur.length), 0) + 2
+  const padTarget = Math.max(...packages.map((cur) => cur.length)) + 2
 
   const sizesPromise = Promise.all(
     packages.map(async (pkg) => {
@@ -116,38 +116,43 @@ async function injectSizes (config) {
           `${prettierBytes(result.minified)} min`.padEnd(10)
         } / ${prettierBytes(result.gzipped)} gz`
       ))
-      return Object.assign(result, {
+      return [pkg, {
+        ...result,
         prettyMinified: prettierBytes(result.minified),
         prettyGzipped: prettierBytes(result.gzipped),
-      })
+      }]
     })
-  ).then((list) => {
-    const map = {}
-    list.forEach((size, i) => {
-      map[packages[i]] = size
-    })
-    return map
-  })
+  ).then(Object.fromEntries)
 
   config.uppy_bundle_kb_sizes = await sizesPromise
 }
 
+const sourceUppy = path.join(webRoot, '/themes/uppy/source/uppy/')
+const sourceUppyLocales = path.join(sourceUppy, 'locales')
 async function injectBundles () {
+  await Promise.all([
+    fs.promises.mkdir(sourceUppy, { recursive:true }),
+    fs.promises.mkdir(sourceUppyLocales, { recursive:true }),
+  ])
   const cmds = [
-    `mkdir -p ${path.join(webRoot, '/themes/uppy/source/uppy')}`,
-    `mkdir -p ${path.join(webRoot, '/themes/uppy/source/uppy/locales')}`,
-    `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`,
-    `cp -vfR ${path.join(robodogRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`,
-    `cp -vfR ${path.join(localesRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/locales')}`,
+    `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${sourceUppy}`,
+    `cp -vfR ${path.join(robodogRoot, '/dist/*')} ${sourceUppy}`,
+    `cp -vfR ${path.join(localesRoot, '/dist/*')} ${sourceUppyLocales}`,
   ].join(' && ')
 
-  const stdout = readline.createInterface({
-    input: spawn(cmds, { stdio:['ignore', 'pipe', 'inherit'] }).stdout,
-  })
+  const cp = spawn(cmds, { stdio:['ignore', 'pipe', 'inherit'], shell: true })
+  await Promise.race([
+    new Promise((resolve, reject) => cp.on('error', reject)),
+    (async () => {
+      const stdout = readline.createInterface({
+        input: cp.stdout,
+      })
 
-  for await (const line of stdout) {
-    console.info(chalk.green('✓ injected: '), chalk.grey(line))
-  }
+      for await (const line of stdout) {
+        console.info(chalk.green('✓ injected: '), chalk.grey(line))
+      }
+    })(),
+  ])
 }
 
 // re-enable after rate limiter issue is fixed
