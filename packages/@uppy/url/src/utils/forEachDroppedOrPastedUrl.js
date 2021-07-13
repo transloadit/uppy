@@ -67,15 +67,13 @@ module.exports = function forEachDroppedOrPastedUrl (dataTransfer, isDropOrPaste
       if (atLeastOneFileIsDragged) {
         return
       }
-      urlItems = items.filter((item) =>
-        item.kind === 'string'
+      urlItems = items.filter((item) => item.kind === 'string'
           && item.type === 'text/plain')
 
       break
     }
     case 'drop': {
-      urlItems = items.filter((item) =>
-        item.kind === 'string'
+      urlItems = items.filter((item) => item.kind === 'string'
         && item.type === 'text/uri-list')
       break
     }
@@ -85,7 +83,6 @@ module.exports = function forEachDroppedOrPastedUrl (dataTransfer, isDropOrPaste
   }
 
   urlItems.forEach((item) => {
-    item.getAsString((urlString) =>
-      callback(urlString))
+    item.getAsString((urlString) => callback(urlString))
   })
 }

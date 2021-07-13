@@ -1,9 +1,9 @@
-import StatusBar from '../'
 import Uppy from '@uppy/core'
+import StatusBar from '..'
 
 {
- const uppy = new Uppy()
- uppy.use(StatusBar, {
+  const uppy = new Uppy()
+  uppy.use(StatusBar, {
     replaceTargetContent: false,
     target: 'body',
     showProgressDetails: true,
@@ -12,7 +12,9 @@ import Uppy from '@uppy/core'
     hideRetryButton: false,
     hidePauseResumeButton: false,
     hideCancelButton: false,
-    doneButtonHandler: () => {},
+    doneButtonHandler: () => {
+      // something
+    },
     locale: {
       strings: {
         uploading: '',
@@ -25,14 +27,14 @@ import Uppy from '@uppy/core'
         cancel: '',
         pause: '',
         resume: '',
-        done:'' ,
+        done: '',
         filesUploadedOfTotal: '',
         dataUploadedOfTotal: '',
         xTimeLeft: '',
         uploadXFiles: '',
         uploadXNewFiles: '',
         xMoreFilesAdded: '',
-      }
-    }
- })
+      },
+    },
+  })
 }

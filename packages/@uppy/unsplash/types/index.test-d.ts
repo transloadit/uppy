@@ -1,13 +1,13 @@
-import Unsplash from '../'
 import Uppy from '@uppy/core'
+import Unsplash from '..'
 
 {
- const uppy = new Uppy()
- uppy.use(Unsplash, {
+  const uppy = new Uppy()
+  uppy.use(Unsplash, {
     companionUrl: '',
     companionCookiesRule: 'same-origin',
     replaceTargetContent: false,
     target: 'body',
     title: 'title',
- })
+  })
 }

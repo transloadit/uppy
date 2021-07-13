@@ -47,7 +47,7 @@ module.exports = class SharedHandler {
       // Check restrictions on each file in currentSelection,
       // reduce it to only contain files that pass restrictions
       currentSelection = currentSelection.reduce((reducedCurrentSelection, item) => {
-        const uppy = this.plugin.uppy
+        const { uppy } = this.plugin
         const validatedRestrictions = uppy.validateRestrictions(
           remoteFileObjToLocal(item),
           [...uppy.getFiles(), ...reducedCurrentSelection]

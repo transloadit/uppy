@@ -150,7 +150,7 @@ module.exports = class XHRUpload extends BasePlugin {
 
   getOptions (file) {
     const overrides = this.uppy.getState().xhrUpload
-    const headers = this.opts.headers
+    const { headers } = this.opts
 
     const opts = {
       ...this.opts,
@@ -390,7 +390,7 @@ module.exports = class XHRUpload extends BasePlugin {
         useFormData: opts.formData,
         headers: opts.headers,
       }).then((res) => {
-        const token = res.token
+        const { token } = res
         const host = getSocketHost(file.remote.companionUrl)
         const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
         this.uploaderEvents[file.id] = new EventTracker(this.uppy)
@@ -469,8 +469,8 @@ module.exports = class XHRUpload extends BasePlugin {
 
   uploadBundle (files) {
     return new Promise((resolve, reject) => {
-      const endpoint = this.opts.endpoint
-      const method = this.opts.method
+      const { endpoint } = this.opts
+      const { method } = this.opts
 
       const optsFromState = this.uppy.getState().xhrUpload
       const formData = this.createBundledUpload(files, {

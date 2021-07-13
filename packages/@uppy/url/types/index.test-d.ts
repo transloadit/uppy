@@ -1,9 +1,9 @@
 import Uppy from '@uppy/core'
-import Url from '../'
+import Url from '..'
 
 {
- const uppy = new Uppy()
- uppy.use(Url, {
+  const uppy = new Uppy()
+  uppy.use(Url, {
     companionUrl: '',
     companionCookiesRule: 'same-origin',
     replaceTargetContent: false,
@@ -15,8 +15,8 @@ import Url from '../'
         enterUrlToImport: '',
         failedToFetch: '',
         enterCorrectUrl: '',
-      }
-    }
- })
- .getPlugin<Url>('Url').addFile('https://via.placeholder.com/150')
+      },
+    },
+  })
+    .getPlugin<Url>('Url').addFile('https://via.placeholder.com/150')
 }

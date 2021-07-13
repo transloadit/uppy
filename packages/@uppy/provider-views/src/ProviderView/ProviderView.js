@@ -1,12 +1,12 @@
 const { h } = require('preact')
-const AuthView = require('./AuthView')
-const Header = require('./Header')
-const Browser = require('../Browser')
-const LoaderView = require('../Loader')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const findIndex = require('@uppy/utils/lib/findIndex')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
+const AuthView = require('./AuthView')
+const Header = require('./Header')
+const Browser = require('../Browser')
+const LoaderView = require('../Loader')
 const SharedHandler = require('../SharedHandler')
 const CloseWrapper = require('../CloseWrapper')
 
@@ -393,7 +393,7 @@ module.exports = class ProviderView {
   }
 
   handleError (error) {
-    const uppy = this.plugin.uppy
+    const { uppy } = this.plugin
     uppy.log(error.toString())
     if (error.isAuthError) {
       return

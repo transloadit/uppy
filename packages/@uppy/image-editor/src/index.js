@@ -1,7 +1,7 @@
 const { UIPlugin } = require('@uppy/core')
-const Editor = require('./Editor')
 const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
+const Editor = require('./Editor')
 
 module.exports = class ImageEditor extends UIPlugin {
   static VERSION = require('../package.json').version
@@ -120,7 +120,7 @@ module.exports = class ImageEditor extends UIPlugin {
       currentImage: null,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

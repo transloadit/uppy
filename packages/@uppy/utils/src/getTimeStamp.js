@@ -2,10 +2,10 @@
  * Returns a timestamp in the format of `hours:minutes:seconds`
  */
 module.exports = function getTimeStamp () {
-  var date = new Date()
-  var hours = pad(date.getHours().toString())
-  var minutes = pad(date.getMinutes().toString())
-  var seconds = pad(date.getSeconds().toString())
+  const date = new Date()
+  const hours = pad(date.getHours().toString())
+  const minutes = pad(date.getMinutes().toString())
+  const seconds = pad(date.getSeconds().toString())
   return `${hours}:${minutes}:${seconds}`
 }
 
