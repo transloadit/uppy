@@ -62,7 +62,6 @@
     "babel-plugin-inline-package-json": "^2.0.0",
     "babelify": "^10.0.0",
     "brake": "^1.0.1",
-    "browser-sync": "^2.26.7",
     "browserify": "^17.0.0",
     "chai": "^4.2.0",
     "chalk": "^4.1.1",

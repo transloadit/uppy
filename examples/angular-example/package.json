@@ -25,7 +25,7 @@
     "@uppy/progress-bar": "file:../../packages/@uppy/progress-bar",
     "@uppy/tus": "file:../../packages/@uppy/tus",
     "@uppy/webcam": "file:../../packages/@uppy/webcam",
-    "rxjs": "^7.2.0",
+    "rxjs": "^6.5.3",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.3"
   },
