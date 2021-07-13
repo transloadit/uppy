@@ -11,8 +11,6 @@ global.Prism = Prism
 // the / is needed to force it to resolve to the directory
 require('prismjs/components/')()
 
-delete global.Prism
-
 const unhighlightedCodeRx = /<pre><code class="([^"]*)?">([\s\S]*?)<\/code><\/pre>/igm
 
 function highlight (lang, code) {
