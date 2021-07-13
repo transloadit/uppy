@@ -1,7 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
-const { exec } = require('child_process')
+const { spawn } = require('child_process')
+const readline = require('readline')
 const YAML = require('js-yaml')
 const { promisify } = require('util')
 const gzipSize = require('gzip-size')
@@ -80,7 +81,7 @@ async function getMinifiedSize (pkg, name) {
   const b = browserify(pkg)
 
   const packageJSON = fs.readFileSync(path.join(pkg, 'package.json'))
-  const version = JSON.parse(packageJSON).version
+  const { version } = JSON.parse(packageJSON)
 
   if (name !== '@uppy/core' && name !== 'uppy') {
     b.exclude('@uppy/core')
@@ -140,10 +141,13 @@ async function injectBundles () {
     `cp -vfR ${path.join(localesRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/locales')}`,
   ].join(' && ')
 
-  const { stdout } = await promisify(exec)(cmds)
-  stdout.trim().split('\n').forEach((line) => {
-    console.info(chalk.green('✓ injected: '), chalk.grey(line))
+  const stdout = readline.createInterface({
+    input: spawn(cmds, { stdio:['ignore', 'pipe', 'inherit'] }).stdout,
   })
+
+  for await (const line of stdout) {
+    console.info(chalk.green('✓ injected: '), chalk.grey(line))
+  }
 }
 
 // re-enable after rate limiter issue is fixed
@@ -233,7 +237,7 @@ function injectLocaleList () {
 
 async function readConfig () {
   try {
-    const buf = await promisify(fs.readFile)(configPath, 'utf8')
+    const buf = await fs.promises.readFile(configPath, 'utf8')
     return YAML.safeLoad(buf)
   } catch (err) {
     return {}
@@ -254,7 +258,7 @@ async function inject () {
   await injectSizes(config)
 
   const saveConfig = { ...defaultConfig, ...config }
-  await promisify(fs.writeFile)(configPath, YAML.safeDump(saveConfig), 'utf-8')
+  await fs.promises.writeFile(configPath, YAML.safeDump(saveConfig), 'utf-8')
   console.info(chalk.green('✓ rewritten: '), chalk.grey(configPath))
 
   try {
