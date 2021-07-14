@@ -1096,7 +1096,7 @@ class Uppy {
       this.setState({ error: errorMsg })
 
       // When a file is also given, we store the error on the file object.
-      if (file != null && typeof file === 'object' && typeof file.id === 'string') {
+      if (file != null && typeof file.id === 'string') {
         this.setFileState(file.id, {
           error: errorMsg,
           response,
