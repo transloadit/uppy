@@ -3,6 +3,8 @@ import Uppy = require('@uppy/core')
 declare module DropTarget {
   interface DropTargetOptions extends Uppy.PluginOptions {
     target: string | Element
+    activeClass?: string
+    setMeta: (file: File, event: DragEvent) => Object
   }
 }
 
