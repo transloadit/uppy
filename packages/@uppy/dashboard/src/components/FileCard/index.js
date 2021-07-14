@@ -21,15 +21,6 @@ class FileCard extends Component {
     }
   }
 
-  saveOnEnter = (ev) => {
-    if (ev.keyCode === 13) {
-      ev.stopPropagation()
-      ev.preventDefault()
-      const file = this.props.files[this.props.fileCardFor]
-      this.props.saveFileCard(this.state.formState, file.id)
-    }
-  }
-
   updateMeta = (newVal, name) => {
     this.setState({
       formState: {
@@ -39,7 +30,8 @@ class FileCard extends Component {
     })
   }
 
-  handleSave = () => {
+  handleSave = (e) => {
+    e.preventDefault()
     const fileID = this.props.fileCardFor
     this.props.saveFileCard(this.state.formState, fileID)
   }
@@ -56,6 +48,7 @@ class FileCard extends Component {
 
     return metaFields.map((field) => {
       const id = `uppy-Dashboard-FileCard-input-${field.id}`
+      const required = this.props.requiredMetaFields.includes(field.id)
       return (
         <fieldset key={field.id} className="uppy-Dashboard-FileCard-fieldset">
           <label className="uppy-Dashboard-FileCard-label" htmlFor={id}>{field.name}</label>
@@ -64,17 +57,16 @@ class FileCard extends Component {
               value: this.state.formState[field.id],
               onChange: (newVal) => this.updateMeta(newVal, field.id),
               fieldCSSClasses,
+              required,
             }, h)
             : (
               <input
                 className={fieldCSSClasses.text}
                 id={id}
                 type={field.type || 'text'}
+                required={required}
                 value={this.state.formState[field.id]}
                 placeholder={field.placeholder}
-                onKeyUp={this.saveOnEnter}
-                onKeyDown={this.saveOnEnter}
-                onKeyPress={this.saveOnEnter}
                 onInput={ev => this.updateMeta(ev.target.value, field.id)}
                 data-uppy-super-focusable
               />
@@ -95,13 +87,14 @@ class FileCard extends Component {
     const showEditButton = this.props.canEditFile(file)
 
     return (
-      <div
+      <form
         className={classNames('uppy-Dashboard-FileCard', this.props.className)}
         data-uppy-panelType="FileCard"
         onDragOver={ignoreEvent}
         onDragLeave={ignoreEvent}
         onDrop={ignoreEvent}
         onPaste={ignoreEvent}
+        onSubmit={this.handleSave}
       >
         <div className="uppy-DashboardContent-bar">
           <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
@@ -111,9 +104,8 @@ class FileCard extends Component {
           </div>
           <button
             className="uppy-DashboardContent-back"
-            type="button"
+            type="submit"
             title={this.props.i18n('finishEditingFile')}
-            onClick={this.handleSave}
           >
             {this.props.i18n('done')}
           </button>
@@ -141,8 +133,7 @@ class FileCard extends Component {
           <div className="uppy-Dashboard-FileCard-actions">
             <button
               className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
-              type="button"
-              onClick={this.handleSave}
+              type="submit"
             >
               {this.props.i18n('saveChanges')}
             </button>
@@ -155,7 +146,7 @@ class FileCard extends Component {
             </button>
           </div>
         </div>
-      </div>
+      </form>
     )
   }
 }

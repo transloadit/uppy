@@ -36,6 +36,7 @@ function uppyInit () {
 
   const uppy = new Uppy({
     logger: Uppy.debugLogger,
+    restrictions: { requiredMetaFields: ['caption'] }
   })
 
   uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/', resume: true })
