@@ -22,16 +22,14 @@
 //  - Kevin van Zonneveld <kevin@transloadit.com>
 
 const path = require('path')
-const { pipeline } = require('stream/promises')
+const { pipeline, finished } = require('stream/promises')
+const { readFile } = require('fs/promises')
 const AWS = require('aws-sdk')
 const packlist = require('npm-packlist')
 const tar = require('tar')
 const pacote = require('pacote')
 const concat = require('concat-stream')
 const mime = require('mime-types')
-const { promisify } = require('util')
-const readFile = promisify(require('fs').readFile)
-const finished = promisify(require('stream').finished)
 const AdmZip = require('adm-zip')
 
 function delay (ms) {
