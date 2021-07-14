@@ -1095,7 +1095,8 @@ class Uppy {
 
       this.setState({ error: errorMsg })
 
-      if (file != null) {
+      // When a file is also given, we store the error on the file object.
+      if (file != null && typeof file.id === 'string') {
         this.setFileState(file.id, {
           error: errorMsg,
           response,
@@ -1591,7 +1592,7 @@ class Uppy {
     // Not returning the `catch`ed promise, because we still want to return a rejected
     // promise from this method if the upload failed.
     lastStep.catch((err) => {
-      this.emit('error', err, uploadID)
+      this.emit('error', err)
       this.removeUpload(uploadID)
     })
 
