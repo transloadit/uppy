@@ -45,7 +45,7 @@ module.exports = class ProgressBar extends UIPlugin {
   }
 
   install () {
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

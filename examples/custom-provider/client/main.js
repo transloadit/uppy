@@ -1,8 +1,8 @@
 const Uppy = require('@uppy/core')
 const GoogleDrive = require('@uppy/google-drive')
 const Tus = require('@uppy/tus')
-const MyCustomProvider = require('./MyCustomProvider')
 const Dashboard = require('@uppy/dashboard')
+const MyCustomProvider = require('./MyCustomProvider')
 
 const uppy = new Uppy({
   debug: true,

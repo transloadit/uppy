@@ -22,8 +22,7 @@ const options = {
       secret: process.env.COMPANION_GOOGLE_SECRET,
     },
     s3: {
-      getKey: (req, filename) =>
-        `whatever/${Math.random().toString(32).slice(2)}/${filename}`,
+      getKey: (req, filename) => `whatever/${Math.random().toString(32).slice(2)}/${filename}`,
       key: process.env.COMPANION_AWS_KEY,
       secret: process.env.COMPANION_AWS_SECRET,
       bucket: process.env.COMPANION_AWS_BUCKET,

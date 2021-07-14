@@ -29,7 +29,7 @@ function connect (dbName) {
   return new Promise((resolve, reject) => {
     request.onupgradeneeded = (event) => {
       const db = event.target.result
-      const transaction = event.currentTarget.transaction
+      const { transaction } = event.currentTarget
 
       if (event.oldVersion < 2) {
         // Added in v2: DB structure changed to a single shared object store

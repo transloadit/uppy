@@ -70,7 +70,7 @@ export default class App extends React.Component {
     })
 
     this.uppy.on('info-visible', () => {
-      const info = this.uppy.getState().info
+      const { info } = this.uppy.getState()
       this.setState({
         info,
       })

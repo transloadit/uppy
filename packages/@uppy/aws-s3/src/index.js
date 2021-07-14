@@ -114,7 +114,7 @@ module.exports = class AwsS3 extends BasePlugin {
     }
 
     const filename = file.meta.name
-    const type = file.meta.type
+    const { type } = file.meta
     const metadata = {}
     this.opts.metaFields.forEach((key) => {
       if (file.meta[key] != null) {
@@ -220,7 +220,7 @@ module.exports = class AwsS3 extends BasePlugin {
   }
 
   install () {
-    const uppy = this.uppy
+    const { uppy } = this
     this.uppy.addUploader(this.handleUpload)
 
     // Get the response data from a successful XMLHttpRequest instance.

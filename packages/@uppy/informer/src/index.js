@@ -66,7 +66,7 @@ module.exports = class Informer extends UIPlugin {
   }
 
   install () {
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

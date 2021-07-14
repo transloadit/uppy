@@ -1,9 +1,9 @@
 const io = requireSocketIo
 const Emitter = require('component-emitter')
 const has = require('@uppy/utils/lib/hasProperty')
-const parseUrl = require('./parseUrl')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
+const parseUrl = require('./parseUrl')
 
 // Lazy load socket.io to avoid a console error
 // in IE 10 when the Transloadit plugin is not used.

@@ -1,7 +1,7 @@
-const FileItem = require('./FileItem/index.js')
-const VirtualList = require('./VirtualList')
 const classNames = require('classnames')
 const { h } = require('preact')
+const FileItem = require('./FileItem/index.js')
+const VirtualList = require('./VirtualList')
 
 function chunks (list, size) {
   const chunked = []

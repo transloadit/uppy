@@ -1,7 +1,6 @@
 const { h } = require('preact')
 const { UIPlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
-const DashboardUI = require('./components/Dashboard')
 const StatusBar = require('@uppy/status-bar')
 const Informer = require('@uppy/informer')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
@@ -9,11 +8,12 @@ const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const getTextDirection = require('@uppy/utils/lib/getTextDirection')
-const trapFocus = require('./utils/trapFocus')
 const cuid = require('cuid')
+const trapFocus = require('./utils/trapFocus')
 const createSuperFocus = require('./utils/createSuperFocus')
 const memoize = require('memoize-one').default || require('memoize-one')
 const FOCUSABLE_ELEMENTS = require('@uppy/utils/lib/FOCUSABLE_ELEMENTS')
+const DashboardUI = require('./components/Dashboard')
 
 const TAB_KEY = 9
 const ESC_KEY = 27

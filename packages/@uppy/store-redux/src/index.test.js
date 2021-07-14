@@ -1,5 +1,5 @@
-const ReduxStore = require('./index')
 const Redux = require('redux')
+const ReduxStore = require('./index')
 
 describe('ReduxStore', () => {
   function createStore (reducers = {}) {

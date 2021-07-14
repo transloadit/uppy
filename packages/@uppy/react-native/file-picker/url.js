@@ -21,7 +21,7 @@ export default class UppyRNUrl extends React.Component {
   }
 
   componentDidMount () {
-    const uppy = this.props.uppy
+    const { uppy } = this.props
     const options = {
       id: 'uppyRN:Url',
       ...this.props,
@@ -34,7 +34,7 @@ export default class UppyRNUrl extends React.Component {
   }
 
   componentWillUnmount () {
-    const uppy = this.props.uppy
+    const { uppy } = this.props
     uppy.removePlugin(this.plugin)
   }
 

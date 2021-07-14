@@ -31,7 +31,7 @@ function UppyDashboardFileIcon (props) {
   if (!icon) {
     return <FileIcon />
   }
-  const color = getFileTypeIcon(props.type).color
+  const { color } = getFileTypeIcon(props.type)
   return (
     <View
       style={{

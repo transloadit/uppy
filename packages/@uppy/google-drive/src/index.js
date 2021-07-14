@@ -1,7 +1,7 @@
 const { UIPlugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
-const DriveProviderViews = require('./DriveProviderViews')
 const { h } = require('preact')
+const DriveProviderViews = require('./DriveProviderViews')
 
 module.exports = class GoogleDrive extends UIPlugin {
   static VERSION = require('../package.json').version
@@ -39,7 +39,7 @@ module.exports = class GoogleDrive extends UIPlugin {
       provider: this.provider,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
