@@ -11,7 +11,8 @@ const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
 
-function buildResponseError (xhr, error) {
+function buildResponseError (xhr, err) {
+  let error = err
   // No error message
   if (!error) error = new Error('Upload error')
   // Got an error message string
@@ -44,6 +45,7 @@ function setTypeInBlob (file) {
 }
 
 module.exports = class XHRUpload extends Plugin {
+  // eslint-disable-next-line global-require
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -81,12 +83,12 @@ module.exports = class XHRUpload extends Plugin {
        * @param {string} responseText the response body string
        * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
        */
-      getResponseData (responseText, response) {
+      getResponseData (responseText) {
         let parsedResponse = {}
         try {
           parsedResponse = JSON.parse(responseText)
         } catch (err) {
-          console.log(err)
+          this.uppy.log(err)
         }
 
         return parsedResponse
@@ -96,7 +98,7 @@ module.exports = class XHRUpload extends Plugin {
        * @param {string} responseText the response body string
        * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
        */
-      getResponseError (responseText, response) {
+      getResponseError (_, response) {
         let error = new Error('Upload error')
 
         if (isNetworkError(response)) {
@@ -109,10 +111,8 @@ module.exports = class XHRUpload extends Plugin {
        * Check if the response from the upload endpoint indicates that the upload was successful.
        *
        * @param {number} status the response status code
-       * @param {string} responseText the response body string
-       * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
        */
-      validateStatus (status, responseText, response) {
+      validateStatus (status) {
         return status >= 200 && status < 300
       },
     }
@@ -151,7 +151,7 @@ module.exports = class XHRUpload extends Plugin {
 
   getOptions (file) {
     const overrides = this.uppy.getState().xhrUpload
-    const headers = this.opts.headers
+    const { headers } = this.opts
 
     const opts = {
       ...this.opts,
@@ -181,11 +181,12 @@ module.exports = class XHRUpload extends Plugin {
     return opts
   }
 
+  // eslint-disable-next-line class-methods-use-this
   addMetadata (formData, meta, opts) {
     const metaFields = Array.isArray(opts.metaFields)
       ? opts.metaFields
-      // Send along all fields by default.
-      : Object.keys(meta)
+      : Object.keys(meta) // Send along all fields by default.
+
     metaFields.forEach((item) => {
       formData.append(item, meta[item])
     })
@@ -214,22 +215,18 @@ module.exports = class XHRUpload extends Plugin {
     this.addMetadata(formPost, meta, opts)
 
     files.forEach((file) => {
-      const opts = this.getOptions(file)
+      const options = this.getOptions(file)
 
       const dataWithUpdatedType = setTypeInBlob(file)
 
       if (file.name) {
-        formPost.append(opts.fieldName, dataWithUpdatedType, file.name)
+        formPost.append(options.fieldName, dataWithUpdatedType, file.name)
       } else {
-        formPost.append(opts.fieldName, dataWithUpdatedType)
+        formPost.append(options.fieldName, dataWithUpdatedType)
       }
     })
 
     return formPost
-  }
-
-  createBareUpload (file, opts) {
-    return file.data
   }
 
   upload (file, current, total) {
@@ -241,7 +238,7 @@ module.exports = class XHRUpload extends Plugin {
 
       const data = opts.formData
         ? this.createFormDataUpload(file, opts)
-        : this.createBareUpload(file, opts)
+        : file.data
 
       const xhr = new XMLHttpRequest()
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
@@ -256,7 +253,7 @@ module.exports = class XHRUpload extends Plugin {
 
       const id = cuid()
 
-      xhr.upload.addEventListener('loadstart', (ev) => {
+      xhr.upload.addEventListener('loadstart', () => {
         this.uppy.log(`[XHRUpload] ${id} started`)
       })
 
@@ -314,7 +311,7 @@ module.exports = class XHRUpload extends Plugin {
         return reject(error)
       })
 
-      xhr.addEventListener('error', (ev) => {
+      xhr.addEventListener('error', () => {
         this.uppy.log(`[XHRUpload] ${id} errored`)
         timer.done()
         queuedRequest.done()
@@ -337,15 +334,20 @@ module.exports = class XHRUpload extends Plugin {
       }
 
       const queuedRequest = this.requests.run(() => {
+        this.uppy.emit('upload-started', file)
+
         // When using an authentication system like JWT, the bearer token goes as a header. This
         // header needs to be fresh each time the token is refreshed so computing and setting the
         // headers just before the upload starts enables this kind of authentication to work properly.
         // Otherwise, half-way through the list of uploads the token could be stale and the upload would fail.
         const currentOpts = this.getOptions(file)
+
         Object.keys(currentOpts.headers).forEach((header) => {
           xhr.setRequestHeader(header, currentOpts.headers[header])
         })
+
         xhr.send(data)
+
         return () => {
           timer.done()
           xhr.abort()
@@ -364,11 +366,9 @@ module.exports = class XHRUpload extends Plugin {
     })
   }
 
-  uploadRemote (file, current, total) {
+  uploadRemote (file) {
     const opts = this.getOptions(file)
     return new Promise((resolve, reject) => {
-      this.uppy.emit('upload-started', file)
-
       const fields = {}
       const metaFields = Array.isArray(opts.metaFields)
         ? opts.metaFields
@@ -391,7 +391,7 @@ module.exports = class XHRUpload extends Plugin {
         useFormData: opts.formData,
         headers: opts.headers,
       }).then((res) => {
-        const token = res.token
+        const { token } = res
         const host = getSocketHost(file.remote.companionUrl)
         const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
         this.uploaderEvents[file.id] = new EventTracker(this.uppy)
@@ -470,8 +470,8 @@ module.exports = class XHRUpload extends Plugin {
 
   uploadBundle (files) {
     return new Promise((resolve, reject) => {
-      const endpoint = this.opts.endpoint
-      const method = this.opts.method
+      const { endpoint } = this.opts
+      const { method } = this.opts
 
       const optsFromState = this.uppy.getState().xhrUpload
       const formData = this.createBundledUpload(files, {
@@ -494,7 +494,7 @@ module.exports = class XHRUpload extends Plugin {
         })
       }
 
-      xhr.upload.addEventListener('loadstart', (ev) => {
+      xhr.upload.addEventListener('loadstart', () => {
         this.uppy.log('[XHRUpload] started uploading bundle')
         timer.progress()
       })
@@ -534,7 +534,7 @@ module.exports = class XHRUpload extends Plugin {
         return reject(error)
       })
 
-      xhr.addEventListener('error', (ev) => {
+      xhr.addEventListener('error', () => {
         timer.done()
 
         const error = this.opts.getResponseError(xhr.responseText, xhr) || new Error('Upload error')
@@ -598,7 +598,7 @@ module.exports = class XHRUpload extends Plugin {
   }
 
   onRetryAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('retry-all', (filesToRetry) => {
+    this.uploaderEvents[fileID].on('retry-all', () => {
       if (!this.uppy.getFile(fileID)) return
       cb()
     })
@@ -617,7 +617,8 @@ module.exports = class XHRUpload extends Plugin {
       return Promise.resolve()
     }
 
-    // no limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin (basically just AwsS3) using the top secret `__queue` option
+    // no limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin
+    // (basically just AwsS3) using the top secret `__queue` option
     if (this.opts.limit === 0 && !this.opts.__queue) {
       this.uppy.log(
         '[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0',
