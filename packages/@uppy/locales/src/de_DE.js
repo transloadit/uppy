@@ -110,7 +110,7 @@ de_DE.strings = {
     '1': '+%{smart_count} Dateien hochladen',
     '2': '+%{smart_count} Dateien hochladen',
   },
-  uploading: 'Uploading',
+  uploading: 'Lade hoch',
   uploadingXFiles: {
     '0': '%{smart_count} Datei wird hochgeladen',
     '1': '%{smart_count} Dateien werden hochgeladen',
