@@ -4,6 +4,7 @@ const atob = require('atob')
 const logger = require('../logger')
 const oAuthState = require('../helpers/oauth-state')
 const tokenService = require('../helpers/jwt')
+const { sanitizeHtml } = require('../helpers/utils')
 // eslint-disable-next-line
 const Provider = require('./Provider')
 
@@ -11,9 +12,9 @@ const Provider = require('./Provider')
  * Returns a request middleware function that can be used to pre-fetch a provider's
  * Oauth credentials before the request is passed to the Oauth handler (https://github.com/simov/grant in this case).
  *
- * @param {Object.<string, (typeof Provider)>} providers provider classes enabled for this server
+ * @param {Record<string, typeof Provider>} providers provider classes enabled for this server
  * @param {object} companionOptions companion options object
- * @returns {(req: object, res: object, next: function()) => void}
+ * @returns {import('express').RequestHandler}
  */
 exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
   return (req, res, next) => {
@@ -56,7 +57,27 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
       if (credentials.redirect_uri) {
         res.locals.grant.dynamic.redirect_uri = credentials.redirect_uri
       }
-    }).finally(() => next())
+
+      next()
+    }).catch((err) => {
+      // TODO we should return an html page here that can communicate the error
+      // back to the Uppy client, just like /send-token does
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+        </head>
+        <body>
+          <h1>Could not fetch credentials</h1>
+          <p>
+            This is probably an Uppy configuration issue. Check that your Transloadit key is correct, and that the configured <code>credentialsName</code> for this remote provider matches the name you gave it in the Template Credentials setup on the Transloadit side.
+          </p>
+          <p>Internal error message: ${sanitizeHtml(err.message)}</p>
+        </body>
+        </html>
+      `)
+    })
   }
 }
 
