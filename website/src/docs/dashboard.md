@@ -422,9 +422,7 @@ const strings = {
   },
 
   // The "powered by Uppy" link at the bottom of the Dashboard.
-  // **NOTE**: This string is called `poweredBy2` for backwards compatibility reasons.
-  // See https://github.com/transloadit/uppy/pull/2077
-  poweredBy2: 'Powered by %{uppy}',
+  poweredBy: 'Powered by %{uppy}',
 
   // @uppy/status-bar strings:
   uploading: 'Uploading',

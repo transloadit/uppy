@@ -41,7 +41,7 @@ ar_SA.strings = {
   encoding: 'التشفير...',
   enterCorrectUrl: 'خطأ في الرابط: ارجو التأكد من ادخال رابط مباشر للملف',
   enterUrlToImport: 'ادخل الرابط لاستيراد الملفات',
-  exceedsSize: 'الملف اكبر من الحجم المسموح',
+  exceedsSize: 'الملف اكبر من الحجم المسموح %{size}',
   failedToFetch: 'Companion فشل في جلب الرابط, ارجو التأكد من الرابط',
   failedToUpload: 'فشل الرفع %{file}',
   fileSource: 'مصدر الملف: %{name}',

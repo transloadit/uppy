@@ -46,7 +46,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [x] core: force the `new` keyword when instantiating Uppy — now we support both `new Uppy()` and `Uppy()` which is harder to maintain and might lead to confusion (@arturi)
 - [ ] core: maybe we remove `file.name` and only keep `file.meta.name`; we can change the file.name here actually because it's just a plain object. we can't change the file.data.name where data is a File instance from an input or something. For XHRUpload, where we put the File instance in a FormData object and it uses the unchangeable .name property (@arturi)
 - [x] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594 (@arturi)
-- [ ] core/dashboard: replace `poweredBy` and `exceedsSize` locale keys by word order aware versions, see PR #2077 (@goto-bus-stop)
+- [x] core/dashboard: replace `poweredBy` and `exceedsSize` locale keys by word order aware versions, see PR #2077 (@goto-bus-stop)
 - [x] dashboard: set default `trigger: null`, see https://github.com/transloadit/uppy/pull/2144#issuecomment-600581690 (@arturi)
 - [ ] form: make the `multipleResults` option `true` by default (@arturi)
 - [x] locales: Remove the old es_GL name alias for gl_ES. Keep gl_ES only (@arturi)
