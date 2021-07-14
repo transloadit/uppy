@@ -543,7 +543,7 @@ class Uploader {
       logger.error(errMsg, 'upload.multipart.mismatch.error')
       this.emitError(new Error(errMsg))
     } else {
-      this.emitSuccess(null, { response: respObj })
+      this.emitSuccess(null, { response: respObj, bytesUploaded })
     }
 
     this.cleanUp()
