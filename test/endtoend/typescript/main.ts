@@ -10,6 +10,8 @@ import {
   Form,
 } from 'uppy'
 
+declare let process: { env: Record<string, string> }
+
 const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
 const TUS_ENDPOINT = `http://${isOnTravis ? 'companion.test' : 'localhost'}:1080/files/`
 

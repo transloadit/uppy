@@ -3,7 +3,7 @@
 // Definitions by: taoqf <https://github.com/taoqf>
 
 // Core
-export * as Core from '@uppy/core'
+export { default as Core } from '@uppy/core'
 
 // Stores
 export { default as DefaultStore } from '@uppy/store-default'
