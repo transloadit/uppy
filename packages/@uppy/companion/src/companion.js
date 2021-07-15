@@ -216,7 +216,13 @@ const maskLogger = (companionOptions) => {
 const validateConfig = (companionOptions) => {
   const mandatoryOptions = ['secret', 'filePath', 'server.host']
   /** @type {string[]} */
-  const unspecified = mandatoryOptions.filter((i) => i.split('.').reduce((prev, curr) => prev?.[curr], companionOptions) == null).map((i) => JSON.stringify(i))
+  const unspecified = []
+
+  mandatoryOptions.forEach((i) => {
+    const value = i.split('.').reduce((prev, curr) => (prev ? prev[curr] : undefined), companionOptions)
+
+    if (!value) unspecified.push(`"${i}"`)
+  })
 
   // vaidate that all required config is specified
   if (unspecified.length) {
