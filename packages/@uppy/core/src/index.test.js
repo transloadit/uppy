@@ -258,7 +258,7 @@ describe('src/Core', () => {
     })
 
     const fileIDs = Object.keys(core.getState().files)
-    const id = core.createUpload(fileIDs)
+    const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
 
     expect(core.getState().currentUploads[id]).toBeDefined()
     expect(Object.keys(core.getState().files).length).toEqual(2)
@@ -736,7 +736,7 @@ describe('src/Core', () => {
           if (file.source === 'jest') {
             return false
           }
-          return true
+          return undefined
         },
       })
       expect(() => {
@@ -914,13 +914,13 @@ describe('src/Core', () => {
 
     it('should not upload if onBeforeUpload returned false', () => {
       const core = new Core({
-        // eslint-disable-next-line consistent-return
         onBeforeUpload: (files) => {
           for (const fileId in files) {
             if (files[fileId].name === '123.foo') {
               return false
             }
           }
+          return undefined
         },
       })
       core.addFile({
@@ -1729,8 +1729,8 @@ describe('src/Core', () => {
       try {
         core.on('restriction-failed', restrictionsViolatedEventMock)
         core.addFile(file)
-      } catch (err) {
-        // something
+      } catch {
+        // Ignore errors
       }
 
       expect(restrictionsViolatedEventMock.mock.calls.length).toEqual(1)
@@ -1913,7 +1913,7 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' }),
       })
 
-      core.createUpload(Object.keys(core.getState().files))
+      core[Symbol.for('uppy test: createUpload')](Object.keys(core.getState().files))
       const uploadId = Object.keys(core.getState().currentUploads)[0]
       const currentUploadsState = {}
       currentUploadsState[uploadId] = {
