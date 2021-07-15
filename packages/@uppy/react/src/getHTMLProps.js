@@ -149,16 +149,9 @@ const possibleStandardNames = [
   'wrap',
 ]
 
-// A decent polyfill for Object.entries for good browser support
-const getEntries = (object) => {
-  // eslint-disable-next-line compat/compat
-  return Object.entries ? Object.entries(object) : Object.keys(object).map(key => [key, object[key]])
-}
-
 const getHTMLProps = (props) => {
   // Gets all the React props
-  const reducer = (acc, [key, value]) => (possibleStandardNames.includes(key) ? { ...acc, [key]: value } : acc)
-  return getEntries(props).reduce(reducer, {})
+  return Object.fromEntries(Object.entries(props).filter(([key]) => possibleStandardNames.includes(key)))
 }
 
 module.exports = getHTMLProps

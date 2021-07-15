@@ -407,10 +407,7 @@ module.exports = class Transloadit extends BasePlugin {
   _onCancelAll () {
     const { uploadsAssemblies } = this.getPluginState()
 
-    const assemblyIDs = Object.keys(uploadsAssemblies).reduce((acc, uploadID) => {
-      acc.push(...uploadsAssemblies[uploadID])
-      return acc
-    }, [])
+    const assemblyIDs = Object.values(uploadsAssemblies)
 
     const cancelPromises = assemblyIDs.map((assemblyID) => {
       const assembly = this.getAssembly(assemblyID)
