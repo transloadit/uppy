@@ -89,6 +89,7 @@ class Uppy {
         enterTextToSearch: 'Enter text to search for images',
         backToSearch: 'Back to Search',
         emptyFolderAdded: 'No files were added from empty folder',
+        folderAlreadyAdded: 'The folder was already added',
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',
           1: 'Added %{smart_count} files from %{folder}',
@@ -203,11 +204,7 @@ class Uppy {
       },
       totalProgress: 0,
       meta: { ...this.opts.meta },
-      info: {
-        isHidden: true,
-        type: 'info',
-        message: '',
-      },
+      info: [],
       recoveredState: null,
     })
 
@@ -1417,31 +1414,26 @@ class Uppy {
     const isComplexMessage = typeof message === 'object'
 
     this.setState({
-      info: {
-        isHidden: false,
-        type,
-        message: isComplexMessage ? message.message : message,
-        details: isComplexMessage ? message.details : null,
-      },
+      info: [
+        ...this.getState().info,
+        {
+          type,
+          message: isComplexMessage ? message.message : message,
+          details: isComplexMessage ? message.details : null,
+        },
+      ],
     })
 
+    setTimeout(this.hideInfo, duration)
+
     this.emit('info-visible')
-
-    clearTimeout(this.infoTimeoutID)
-    if (duration === 0) {
-      this.infoTimeoutID = undefined
-      return
-    }
-
-    // hide the informer after `duration` milliseconds
-    this.infoTimeoutID = setTimeout(this.hideInfo, duration)
   }
 
   hideInfo () {
-    const newInfo = { ...this.getState().info, isHidden: true }
-    this.setState({
-      info: newInfo,
-    })
+    const { info } = this.getState()
+
+    this.setState({ info: info.slice(1) })
+
     this.emit('info-hidden')
   }
 

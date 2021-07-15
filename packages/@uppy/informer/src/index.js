@@ -1,5 +1,9 @@
-const { UIPlugin } = require('@uppy/core')
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions  */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 const { h } = require('preact')
+const TransitionGroup = require('preact-transition-group')
+const { UIPlugin } = require('@uppy/core')
+const FadeIn = require('./FadeIn')
 
 /**
  * Informer
@@ -9,6 +13,7 @@ const { h } = require('preact')
  *
  */
 module.exports = class Informer extends UIPlugin {
+  // eslint-disable-next-line global-require
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -24,49 +29,36 @@ module.exports = class Informer extends UIPlugin {
   }
 
   render = (state) => {
-    const { isHidden, message, details } = state.info
-
-    function displayErrorAlert () {
-      const errorMessage = `${message} \n\n ${details}`
-      alert(errorMessage)
-    }
-
-    const handleMouseOver = () => {
-      clearTimeout(this.uppy.infoTimeoutID)
-    }
-
-    const handleMouseLeave = () => {
-      this.uppy.infoTimeoutID = setTimeout(this.uppy.hideInfo, 2000)
-    }
-
     return (
-      <div
-        className="uppy uppy-Informer"
-        aria-hidden={isHidden}
-      >
-        <p role="alert">
-          {message}
-          {' '}
-          {details && (
-            <span
-              aria-label={details}
-              data-microtip-position="top-left"
-              data-microtip-size="medium"
-              role="tooltip"
-              onClick={displayErrorAlert}
-              onMouseOver={handleMouseOver}
-              onMouseLeave={handleMouseLeave}
-            >
-              ?
-            </span>
-          )}
-        </p>
+      <div className="uppy uppy-Informer">
+        <TransitionGroup>
+          {state.info.map((info) => (
+            <FadeIn key={info.message}>
+              <p role="alert">
+                {info.message}
+                {' '}
+                {info.details && (
+                  <span
+                    aria-label={info.details}
+                    data-microtip-position="top-left"
+                    data-microtip-size="medium"
+                    role="tooltip"
+                    // eslint-disable-next-line no-alert
+                    onClick={() => alert(`${info.message} \n\n ${info.details}`)}
+                  >
+                    ?
+                  </span>
+                )}
+              </p>
+            </FadeIn>
+          ))}
+        </TransitionGroup>
       </div>
     )
   }
 
   install () {
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

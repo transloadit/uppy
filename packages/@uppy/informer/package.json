@@ -24,7 +24,8 @@
   },
   "dependencies": {
     "@uppy/utils": "file:../utils",
-    "preact": "^10.5.13"
+    "preact": "^10.5.13",
+    "preact-transition-group": "^2.0.0"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
