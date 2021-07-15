@@ -304,18 +304,25 @@ module.exports = class ProviderView {
     const folderId = this.providerFileToId(folder)
     const state = this.plugin.getPluginState()
     const folders = { ...state.selectedFolders }
+
     if (folderId in folders && folders[folderId].loading) {
       return
     }
+
     folders[folderId] = { loading: true, files: [] }
+
     this.plugin.setPluginState({ selectedFolders: { ...folders } })
+
     return this.listAllFiles(folder.requestPath).then((files) => {
       let count = 0
+
       files.forEach((file) => {
         const success = this.addFile(file)
         if (success) count++
       })
+
       const ids = files.map(this.providerFileToId)
+
       folders[folderId] = {
         loading: false,
         files: ids,
@@ -323,13 +330,17 @@ module.exports = class ProviderView {
       this.plugin.setPluginState({ selectedFolders: folders })
 
       let message
-      if (files.length) {
+
+      if (count === 0) {
+        message = this.plugin.uppy.i18n('folderAlreadyAdded')
+      } else if (files.length) {
         message = this.plugin.uppy.i18n('folderAdded', {
           smart_count: count, folder: folder.name,
         })
       } else {
         message = this.plugin.uppy.i18n('emptyFolderAdded')
       }
+
       this.plugin.uppy.info(message)
     }).catch((e) => {
       const state = this.plugin.getPluginState()
