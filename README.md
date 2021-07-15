@@ -175,18 +175,14 @@ Here's a list of polyfills you'll need to include to make Uppy work in older bro
 If you're using a bundler, you need import them before Uppy:
 
 ```js
-import 'es6-promise/auto'
+import 'core-js'
 import 'whatwg-fetch'
 import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
-// Order matters: AbortController needs fetch which needs Promise.
+// Order matters: AbortController needs fetch which needs Promise (provided by core-js).
 
-import mathLog2 from 'math-log2'
 import 'md-gum-polyfill'
 import ResizeObserver from 'resize-observer-polyfill'
-import 'symbol-es6'
-import 'url-polyfill'
 
-Math.log2 ??= mathLog2
 window.ResizeObserver ??= ResizeObserver
 
 export { default } from '@uppy/core'
