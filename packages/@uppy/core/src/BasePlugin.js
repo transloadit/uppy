@@ -6,6 +6,9 @@
  *
  * See `Plugin` for the extended version with Preact rendering for interfaces.
  */
+
+const Translator = require('@uppy/utils/lib/Translator')
+
 module.exports = class BasePlugin {
   constructor (uppy, opts) {
     this.uppy = uppy
@@ -40,6 +43,13 @@ module.exports = class BasePlugin {
   setOptions (newOpts) {
     this.opts = { ...this.opts, ...newOpts }
     this.setPluginState() // so that UI re-renders with new options
+  }
+
+  i18nInit () {
+    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = this.translator.translate.bind(this.translator)
+    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   /**
