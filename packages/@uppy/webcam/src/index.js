@@ -61,7 +61,6 @@ module.exports = class Webcam extends UIPlugin {
     // eslint-disable-next-line no-restricted-globals
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Webcam'
-    this.title = this.opts.title || 'Camera'
     this.type = 'acquirer'
     this.capturedMediaFile = null
     this.icon = () => (
@@ -75,6 +74,7 @@ module.exports = class Webcam extends UIPlugin {
 
     this.defaultLocale = {
       strings: {
+        pluginNameCamera: 'Camera',
         smile: 'Smile!',
         takePicture: 'Take a picture',
         startRecording: 'Begin video recording',
@@ -109,12 +109,11 @@ module.exports = class Webcam extends UIPlugin {
     }
 
     this.opts = { ...defaultOptions, ...opts }
-
     this.i18nInit()
+    this.title = this.i18n('pluginNameCamera')
 
     this.install = this.install.bind(this)
     this.setPluginState = this.setPluginState.bind(this)
-
     this.render = this.render.bind(this)
 
     // Camera controls
