@@ -1696,8 +1696,7 @@ class Uppy {
       .then(() => {
         const { currentUploads } = this.getState()
         // get a list of files that are currently assigned to uploads
-        const currentlyUploadingFiles = Object.keys(currentUploads)
-          .reduce((prev, curr) => prev.concat(currentUploads[curr].fileIDs), [])
+        const currentlyUploadingFiles = Object.values(currentUploads).flatMap(curr => curr.fileIDs)
 
         const waitingFileIDs = []
         Object.keys(files).forEach((fileID) => {

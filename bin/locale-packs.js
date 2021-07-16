@@ -154,10 +154,7 @@ function checkForUnused (fileContents, pluginName, localePack) {
 }
 
 function sortObjectAlphabetically (obj, sortFunc) {
-  return Object.keys(obj).sort(sortFunc).reduce((result, key) => {
-    result[key] = obj[key]
-    return result
-  }, {})
+  return Object.fromEntries(Object.keys(obj).sort(sortFunc).map((key) => [key, obj[key]]))
 }
 
 function createTypeScriptLocale (plugin, pluginName) {
