@@ -6,7 +6,7 @@
   "lint-staged": {
     "*.js": "eslint",
     "*.md": [
-      "remark -f -q -i .gitignore",
+      "remark -i .gitignore -foq",
       "eslint --fix"
     ],
     "*.ts": "eslint --fix"

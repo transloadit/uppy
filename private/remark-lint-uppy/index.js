@@ -1,23 +1,27 @@
-'use strict'
+const importDefault = (specifier) =>
+  import(specifier).then((module) => module.default)
 
-exports.plugins = [
-  require('remark-frontmatter'),
-  // Do a lint.
-  require('remark-lint'),
-  // Unix compatibility.
-  require('remark-lint-final-newline'),
-  // Differs or unsupported across vendors.
-  require('remark-lint-no-auto-link-without-protocol'),
-  require('remark-lint-no-blockquote-without-marker'),
-  require('remark-lint-no-literal-urls'),
-  [require('remark-lint-ordered-list-marker-style'), '.'],
-  // Mistakes.
-  require('remark-lint-hard-break-spaces'),
-  require('remark-lint-no-duplicate-definitions'),
-  require('remark-lint-no-heading-content-indent'),
-  require('remark-lint-no-inline-padding'),
-  require('remark-lint-no-shortcut-reference-image'),
-  require('remark-lint-no-shortcut-reference-link'),
-  require('remark-lint-no-undefined-references'),
-  require('remark-lint-no-unused-definitions'),
-]
+export default {
+  plugins: [
+    await importDefault("remark-frontmatter"),
+    // Do a lint.
+    await importDefault("remark-lint"),
+    // Unix compatibility.
+    await importDefault("remark-lint-final-newline"),
+    // Differs or unsupported across vendors.
+    await importDefault("remark-lint-no-auto-link-without-protocol"),
+    await importDefault("remark-lint-no-blockquote-without-marker"),
+    await importDefault("remark-lint-no-literal-urls"),
+    [await importDefault("remark-lint-ordered-list-marker-style"), "."],
+    // Mistakes.
+    await importDefault("remark-lint-hard-break-spaces"),
+    await importDefault("remark-lint-no-duplicate-definitions"),
+    await importDefault("remark-lint-no-heading-content-indent"),
+    await importDefault("remark-lint-no-inline-padding"),
+    await importDefault("remark-lint-no-shortcut-reference-image"),
+    await importDefault("remark-lint-no-shortcut-reference-link"),
+    await importDefault("remark-lint-no-undefined-references"),
+    await importDefault("remark-lint-no-unused-definitions"),
+    await importDefault("./retext-preset.js"),
+  ],
+}

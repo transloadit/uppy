@@ -16,7 +16,19 @@
     "remark-lint-no-shortcut-reference-link": "^2.0.1",
     "remark-lint-no-undefined-references": "^3.0.0",
     "remark-lint-no-unused-definitions": "^2.0.1",
-    "remark-lint-ordered-list-marker-style": "^2.0.1"
+    "remark-lint-ordered-list-marker-style": "^2.0.1",
+    "remark-retext": "^4.0.0",
+    "retext-english": "^4.0.0",
+    "retext-equality": "^5.7.0",
+    "retext-passive": "^3.0.0",
+    "retext-profanities": "^6.1.0",
+    "retext-quotes": "^4.0.0",
+    "retext-readability": "^6.0.0",
+    "retext-simplify": "^6.0.0",
+    "retext-syntax-mentions": "^2.1.1",
+    "retext-syntax-urls": "^2.0.0",
+    "unified": "^10.0.0"
   },
+  "type": "module",
   "private": true
 }
