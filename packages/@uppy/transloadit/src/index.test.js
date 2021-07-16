@@ -1,5 +1,6 @@
 const Core = require('@uppy/core')
 const Transloadit = require('.')
+require('whatwg-fetch')
 
 describe('Transloadit', () => {
   it('Throws errors if options are missing', () => {
