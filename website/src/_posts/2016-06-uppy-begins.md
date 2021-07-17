@@ -20,13 +20,13 @@ We are therefore excited to tell you about Uppy: the file uploader that will cer
 
 It is true, there are indeed already a good few file uploading solutions out there ([Dropzone](http://www.dropzonejs.com/), for instance, is quite good). And – for the most part – they do their job. Nevertheless, they are quite limited in their functionality:
 
-* You can drag and drop files from local disk, but uploaders that supports Instagram, Dropbox or Google Drive are scarce. The ones out there lock you in with vendors and are hard to customize for own use.
+*   You can drag and drop files from local disk, but uploaders that supports Instagram, Dropbox or Google Drive are scarce. The ones out there lock you in with vendors and are hard to customize for own use.
 
-* File uploaders are seldom mindful of the existence of encoding and processing backends, while the reality is that files often require some form of processing and that the end user would like to receive progress updates with regard to that.
+*   File uploaders are seldom mindful of the existence of encoding and processing backends, while the reality is that files often require some form of processing and that the end user would like to receive progress updates with regard to that.
 
-* None of the currently available file uploaders make use of the standardized resumability that ‘tus’ provides, which makes them less than ideal for handling larger files.
+*   None of the currently available file uploaders make use of the standardized resumability that ‘tus’ provides, which makes them less than ideal for handling larger files.
 
-* Lastly, we feel that the current solutions are sometimes dropping the ball when it comes to a polished user experience. We aim to fix that.
+*   Lastly, we feel that the current solutions are sometimes dropping the ball when it comes to a polished user experience. We aim to fix that.
 
 All in all, we think there is definitely some ‘trouble at the old mill’ here and it’s time to let Uppy take care of that!
 

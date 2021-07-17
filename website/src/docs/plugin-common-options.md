@@ -73,7 +73,9 @@ uppy.getPlugin('Dashboard').setOptions({
 > ⚠️ This should work for most options, except for `limit` and some others related to an upload. This is because some objects/instances are created immediately upon initialization, and not updated later.
 
 <!-- Keep this heading, it is here to avoid breaking existing URLs -->
+
 <!-- Previously the content that is now at /docs/providers was here -->
+
 ## Provider Plugins
 
 See the [Provider Plugins](/docs/providers) documentation page for information on provider plugins.

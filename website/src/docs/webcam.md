@@ -100,10 +100,10 @@ A hook function to call before a snapshot is taken. The Webcam plugin will wait 
 
 The types of recording modes to allow.
 
- - `video-audio` - Record a video file, capturing both audio and video.
- - `video-only` - Record a video file with the webcam, but don't record audio.
- - `audio-only` - Record an audio file with the user's microphone.
- - `picture` - Take a picture with the webcam.
+*   `video-audio` - Record a video file, capturing both audio and video.
+*   `video-only` - Record a video file with the webcam, but don't record audio.
+*   `audio-only` - Record an audio file with the user's microphone.
+*   `picture` - Take a picture with the webcam.
 
 By default, all modes are allowed, and the Webcam plugin will show controls for recording video as well as taking pictures.
 
@@ -115,21 +115,25 @@ Configures whether or not to mirror preview image from the camera. This option i
 
 Configure the kind of video stream you would like to record. Takes an object with properties from the [MediaTrackConstraints][] interface.
 
-You can specify acceptable ranges for the resolution of the video stream using the [`aspectRatio`][], [`width`][], and [`height`][] properties. Each property takes an object with `{ min, ideal, max }` properties. For example, use `width: { min: 720, max: 1920, ideal: 1920 }` to allow any width between 720 and 1920 pixels wide, while preferring the highest resolution.
+You can specify acceptable ranges for the resolution of the video stream using the \[`aspectRatio`]\[aspectRatio], \[`width`]\[width], and \[`height`]\[height] properties. Each property takes an object with `{ min, ideal, max }` properties. For example, use `width: { min: 720, max: 1920, ideal: 1920 }` to allow any width between 720 and 1920 pixels wide, while preferring the highest resolution.
 
-Devices sometimes have multiple cameras, front and back, for example. [`facingMode`][] lets you specify which should be used:
+Devices sometimes have multiple cameras, front and back, for example. \[`facingMode`]\[facingMode] lets you specify which should be used:
 
-- `user`: The video source is facing toward the user; this includes, for example, the front-facing camera on a smartphone.
-- `environment`:  The video source is facing away from the user, thereby viewing their environment. This is the back camera on a smartphone.
-- `left`: The video source is facing toward the user but to their left, such as a camera aimed toward the user but over their left shoulder.
-- `right`: The video source is facing toward the user but to their right, such as a camera aimed toward the user but over their right shoulder.
+*   `user`: The video source is facing toward the user; this includes, for example, the front-facing camera on a smartphone.
+*   `environment`:  The video source is facing away from the user, thereby viewing their environment. This is the back camera on a smartphone.
+*   `left`: The video source is facing toward the user but to their left, such as a camera aimed toward the user but over their left shoulder.
+*   `right`: The video source is facing toward the user but to their right, such as a camera aimed toward the user but over their right shoulder.
 
 For a full list of available properties, see MDN's [MediaTrackConstraints][] documentation.
 
 [MediaTrackConstraints]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints#Properties_of_video_tracks
+
 [`aspectRatio`]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/aspectRatio
+
 [`width`]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/width
+
 [`height`]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/height
+
 [`facingMode`]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/facingMode
 
 ### `showVideoSourceDropdown: false`

@@ -10,12 +10,12 @@ tagline: "full-featured sleek UI with file previews, metadata editing, upload/pa
 
 `@uppy/dashboard` is a universal UI plugin for Uppy, offering several useful features:
 
-- Drag and drop, paste, select from local disk / my device
-- UI for the Webcam plugin and remote sources, such as Google Drive, Dropbox, Instagram, Facebook and OneDrive (all optional, added via plugins)
-- Image previews
-- Metadata editor
-- Upload progress
-- Ability to pause or cancel (depending on the uploader plugin) uploads
+*   Drag and drop, paste, select from local disk / my device
+*   UI for the Webcam plugin and remote sources, such as Google Drive, Dropbox, Instagram, Facebook and OneDrive (all optional, added via plugins)
+*   Image previews
+*   Metadata editor
+*   Upload progress
+*   Ability to pause or cancel (depending on the uploader plugin) uploads
 
 ```js
 import Dashboard from '@uppy/dashboard'
@@ -230,9 +230,9 @@ Optionally, specify a string of text that explains something about the upload fo
 
 An array of UI field objects, or a function that takes a [File Object](https://uppy.io/docs/uppy/#File-Objects) and returns an array of UI field objects, that will be shown when a user clicks the “edit” button on that file. Configuring this enables the “edit” button on file cards. Each object requires:
 
-- `id`, the name of the meta field. Note: this will also be used in CSS/HTML as part of the `id` attribute, so it’s better to [avoid using characters like periods, semicolons, etc](https://stackoverflow.com/a/79022).
-- `name`, the label shown in the interface.
-- `placeholder`, the text shown when no value is set in the field. (Not needed when a custom render function is provided)
+*   `id`, the name of the meta field. Note: this will also be used in CSS/HTML as part of the `id` attribute, so it’s better to [avoid using characters like periods, semicolons, etc](https://stackoverflow.com/a/79022).
+*   `name`, the label shown in the interface.
+*   `placeholder`, the text shown when no value is set in the field. (Not needed when a custom render function is provided)
 
 Optionally, you can specify `render: ({value, onChange, required, form}, h) => void`, a function for rendering a custom form element.
 It gets passed `({value, onChange, required, form}, h)` where `value` is the current value of the meta field, `required` is a boolean that's true if the field `id` is in the `restrictedMetaFields` restriction, `form` is the `id` of the associated `<form>` element, and `onChange: (newVal) => void` is a function saving the new value and `h` is the `createElement` function from [preact](https://preactjs.com/guide/v10/api-reference#h--createelement).
@@ -297,7 +297,7 @@ Set to true to automatically close the modal when the user clicks outside of it.
 
 Set to true to automatically close the modal when all current uploads are complete. You can use this together with the [`allowMultipleUploads: false`](/docs/uppy#allowMultipleUploads-true) option in Uppy Core to create a smooth experience when uploading a single (batch of) file(s).
 
-With this option, the modal is only automatically closed when uploads are complete _and successful_. If some uploads failed, the modal stays open so the user can retry failed uploads or cancel the current batch and upload an entirely different set of files instead.
+With this option, the modal is only automatically closed when uploads are complete *and successful*. If some uploads failed, the modal stays open so the user can retry failed uploads or cancel the current batch and upload an entirely different set of files instead.
 
 > Setting [`allowMultipleUploads: false`](/docs/uppy#allowMultipleUploads-true) is **strongly** recommended when using this option. With multiple upload batches, the auto-closing behavior can be very confusing for users.
 
@@ -439,9 +439,9 @@ Uppy Dashboard supports “Dark Mode”. You can try it live on [the Dashboard e
 
 There are three options:
 
-- `light` — the default
-- `dark`
-- `auto` — will respect the user’s system settings and switch automatically
+*   `light` — the default
+*   `dark`
+*   `auto` — will respect the user’s system settings and switch automatically
 
 ![Uppy dark mode screenshot](/images/uppy-dashboard-dark-mar-2020.png)
 
@@ -515,7 +515,7 @@ Fired when the Dashboard modal is closed.
 
 **Parameters:**
 
-- `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was opened for editing.
+*   `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was opened for editing.
 
 Fired when the user clicks “edit” icon next to a file in the Dashboard. The FileCard panel is then open with file metadata available for editing.
 
@@ -523,6 +523,6 @@ Fired when the user clicks “edit” icon next to a file in the Dashboard. The 
 
 **Parameters:**
 
-- `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was edited.
+*   `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was edited.
 
 Fired when the user finished editing the file metadata.

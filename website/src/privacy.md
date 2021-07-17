@@ -18,12 +18,12 @@ Since we are operating with a staff of less than ten people, we do not have an e
 
 We receive the following **data** from you:
 
-1. IP addresses
-2. Request headers
-3. Data entered on our website
-4. The browser session (identified through a cookie)
-5. Information used to analyze usage of our platform (through cookies from Google Analytics. More on cookies is explained below)
-6. Files you can optionally upload in example demos. Those files are stored temporarily for 24–72 hours, on uppy.io, tus.io or transloadit.com servers, and then deleted. See also Transloadit’s Privacy Policy: <https://transloadit.com/legal/privacy/>.
+1.  IP addresses
+2.  Request headers
+3.  Data entered on our website
+4.  The browser session (identified through a cookie)
+5.  Information used to analyze usage of our platform (through cookies from Google Analytics. More on cookies is explained below)
+6.  Files you can optionally upload in example demos. Those files are stored temporarily for 24–72 hours, on uppy.io, tus.io or transloadit.com servers, and then deleted. See also Transloadit’s Privacy Policy: <https://transloadit.com/legal/privacy/>.
 
 All data that passes through demos is only used for demo purposes, and never sold or otherwise given away.
 
@@ -44,20 +44,20 @@ We use the following third-party services which also store data about you:
 
 </div>
 
-- **anonymized**: Any data that can be used to identify the 'data subject' is scrubbed
-- **discarded**: Data is destroyed
+*   **anonymized**: Any data that can be used to identify the 'data subject' is scrubbed
+*   **discarded**: Data is destroyed
 
 ## Your information and your rights
 
 If you are based within the EEA (European Economic Area) or within another jurisdiction that has similar data protection laws, under certain circumstances, you have the following rights:
 
-1. the right to be told how we use your information and obtain access to your information;
-1. the right to have your information rectified or erased, or to place restrictions on processing your information;
-1. the right to object to the processing of your information, e.g., for direct marketing purposes or where the processing is based on our legitimate interests;
-1. the right to have any information you provided to us on an automated basis returned to you in a structured, commonly-used and machine-readable format, or sent directly to another company, where technically feasible (“data portability”);
-1. where the processing of your information is based on your consent, the right to withdraw that consent is subject to legal or contractual restrictions;
-1. the right to object to any decisions based on the automated processing of your personal data, including profiling; and
-1. the right to lodge a complaint with the supervisory authority responsible for data protection matters (e.g., in the UK, the Information Commissioner’s Office).
+1.  the right to be told how we use your information and obtain access to your information;
+2.  the right to have your information rectified or erased, or to place restrictions on processing your information;
+3.  the right to object to the processing of your information, e.g., for direct marketing purposes or where the processing is based on our legitimate interests;
+4.  the right to have any information you provided to us on an automated basis returned to you in a structured, commonly-used and machine-readable format, or sent directly to another company, where technically feasible (“data portability”);
+5.  where the processing of your information is based on your consent, the right to withdraw that consent is subject to legal or contractual restrictions;
+6.  the right to object to any decisions based on the automated processing of your personal data, including profiling; and
+7.  the right to lodge a complaint with the supervisory authority responsible for data protection matters (e.g., in the UK, the Information Commissioner’s Office).
 
 If you request a copy of your information, you may be required to pay a statutory fee.
 
@@ -83,7 +83,7 @@ Performance cookies collect information about how visitors and users use our web
 
 Functionality cookies allow our website to remember the choices you make (such as your user name, language or the region you are in) and provide enhanced and more personal features. These cookies can also be used to remember changes you have made to text size, fonts and other parts of web pages that you can customize. They may also be used to provide services you have asked for. The information collected by these cookies may be anonymized. They cannot track your browsing activity on other websites.
 
-### IP Address and traffic data
+### IP address and traffic data
 
 We keep a record of the traffic data that is logged automatically by our servers, such as your Internet Protocol (IP) address, device information, the website that you visited before ours and the website you visit after leaving our site. We also collect some site, application and service statistics, such as access rates, page hits and page views. We are not able to identify any individual from traffic data or site statistics.
 
@@ -93,7 +93,7 @@ Our platform uses Google Analytics, which uses cookies. The information created 
 
 Google will use this information to analyze your usage of our platform and to create reports about the activities on our platform. The IP address that will be sent to Google as a result of Google Analytics will not be connected to any other data on Google.
 
-You can avoid any cookies being saved by changing the settings in your browser accordingly. Please be aware that if you choose to do so, you might not be able to make full use of our website and all of its features. You can also prevent the analysis of your browsing behavior on our platform through Google Analytics by installing the following browser plugin: <http://tools.google.com/dlpage/gaoptout>.
+You can avoid any cookies being saved by changing the settings in your browser accordingly. Please be aware that if you choose to do so, you might not be able to make full use of our website and all its features. You can also prevent the analysis of your browsing behavior on our platform through Google Analytics by installing the following browser plugin: <http://tools.google.com/dlpage/gaoptout>.
 
 Google, Inc. (“Google”) head quarters are located at "1600 Amphitheatre Parkway Mountain View, California 94043, USA".
 Their privacy policy is located here: <https://policies.google.com/privacy>.

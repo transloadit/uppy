@@ -2,17 +2,16 @@
 
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
-<a href="https://www.npmjs.com/package/@uppy/dashboard"><img src="https://img.shields.io/npm/v/@uppy/dashboard.svg?style=flat-square"></a>
-<img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
+<a href="https://www.npmjs.com/package/@uppy/dashboard"><img src="https://img.shields.io/npm/v/@uppy/dashboard.svg?style=flat-square"></a> <img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
 
 Dashboard is a universal UI plugin for Uppy:
 
- * Drag and Drop, paste, select from local disk / my device
- * UI for Webcam and remote sources: Google Drive, Dropbox, Instagram (all optional, added via plugins)
- * File previews and info
- * Metadata editor
- * Progress: total and for individual files
- * Ability to pause/resume or cancel (depending on uploader plugin) individual or all files
+*   Drag and Drop, paste, select from local disk / my device
+*   UI for Webcam and remote sources: Google Drive, Dropbox, Instagram (all optional, added via plugins)
+*   File previews and info
+*   Metadata editor
+*   Progress: total and for individual files
+*   Ability to pause/resume or cancel (depending on uploader plugin) individual or all files
 
 **[Read the docs](https://uppy.io/docs/dashboard/)** | **[Try it](https://uppy.io/examples/dashboard/)**
 

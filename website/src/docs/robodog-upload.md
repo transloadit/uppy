@@ -20,9 +20,9 @@ const resultPromise = Robodog.upload(files, {
 
 `resultPromise` is a [Promise][promise] that resolves with an object:
 
- - `successful` - An array containing data about files that were uploaded successfully
- - `failed` - An array containing data about files that failed to upload
- - `transloadit` - An array of Assembly statuses
+*   `successful` - An array containing data about files that were uploaded successfully
+*   `failed` - An array containing data about files that failed to upload
+*   `transloadit` - An array of Assembly statuses
 
 ## `files`
 
@@ -35,6 +35,9 @@ These can also be [Blob][blob]s with a `.name` property. That way you can upload
 All the options to the [Transloadit][tl-options] plugin are supported.
 
 [file]: https://developer.mozilla.org/en-US/docs/Web/API/File
+
 [blob]: https://developer.mozilla.org/en-US/docs/Web/API/Blob
+
 [promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
 [tl-options]: /docs/transloadit#options

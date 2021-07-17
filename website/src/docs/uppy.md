@@ -81,7 +81,7 @@ By default Uppy will wait for an upload button to be pressed in the UI, or an `.
 
 Whether to allow multiple upload batches. This means multiple calls to `.upload()`, or a user adding more files after already uploading some. An upload batch is made up of the files that were added since the previous `.upload()` call.
 
-With this option set to `true`, users can upload some files, and then add _more_ files and upload those as well. A model use case for this is uploading images to a gallery or adding attachments to an email.
+With this option set to `true`, users can upload some files, and then add *more* files and upload those as well. A model use case for this is uploading images to a gallery or adding attachments to an email.
 
 With this option set to `false`, users can upload some files, and you can listen for the ['complete'](/docs/uppy/#complete) event to continue to the next step in your app's upload flow. A typical use case for this is uploading a new profile picture. If you are integrating with an existing HTML form, this option gives the closest behaviour to a bare `<input type="file">`.
 
@@ -160,14 +160,15 @@ const uppy = new Uppy({
 
 This global metadata is added to each file in Uppy. It can be modified by two methods:
 
-1. [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setMeta-data) — set or update meta for all files.
-2. [`uppy.setFileMeta('myfileID', { resize: 1500 })`](/docs/uppy/#uppy-setFileMeta-fileID-data) — set or update meta for specific file.
+1.  [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setMeta-data) — set or update meta for all files.
+2.  [`uppy.setFileMeta('myfileID', { resize: 1500 })`](/docs/uppy/#uppy-setFileMeta-fileID-data) — set or update meta for specific file.
 
 Metadata from each file is then attached to uploads in [Tus](/docs/tus/) and [XHRUpload](/docs/xhrupload/) plugins.
 
 Metadata can also be added from a `<form>` element on your page, through the [Form](/docs/form/) plugin or through the UI if you are using Dashboard with the [`metaFields`](/docs/dashboard/#metaFields) option.
 
 <a id="onBeforeFileAdded"></a>
+
 ### `onBeforeFileAdded: (currentFile, files) => currentFile`
 
 A function run before a file is added to Uppy. It gets passed `(currentFile, files)` where `currentFile` is a file that is about to be added, and `files` is an object with all files that already are in Uppy.
@@ -179,7 +180,9 @@ Use this function to run any number of custom checks on the selected file, or ma
 Return true/nothing or a modified file object to proceed with adding the file:
 
 <!-- eslint-disable no-dupe-keys -->
+
 <!-- eslint-disable consistent-return -->
+
 ```js
 const uppy = new Uppy({
   // ...
@@ -204,6 +207,7 @@ const uppy = new Uppy({
 Return false to abort adding the file:
 
 <!-- eslint-disable consistent-return -->
+
 ```js
 const uppy = new Uppy({
   // ...
@@ -221,8 +225,8 @@ const uppy = new Uppy({
 
 **Note:** it is up to you to show a notification to the user about a file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging purposes via [uppy.log()](#uppy-log).
 
-
 <a id="onBeforeUpload"></a>
+
 ### `onBeforeUpload: (files) => files`
 
 A function run before an upload begins. Gets passed `files` object with all the files that are already in Uppy.
@@ -253,6 +257,7 @@ const uppy = new Uppy({
 Return false to abort:
 
 <!-- eslint-disable consistent-return -->
+
 ```js
 const uppy = new Uppy({
   // ...
@@ -313,7 +318,7 @@ It also offers the pluralization function, which is used to determine which stri
 
 For example, for the Icelandic language, the pluralization function would be:
 
-``` js
+```js
 const uppy = new Uppy({
   locale: {
     pluralize: (n) => ((n % 10 !== 1 || n % 100 === 11) ? 1 : 0),
@@ -359,11 +364,12 @@ MIME type of the file. This may actually be guessed if a file type was not provi
 
 ### `file.data`
 
-For local files, this is the actual [`File`][] or [`Blob`][] object representing the file contents.
+For local files, this is the actual \[`File`]\[File] or \[`Blob`]\[Blob] object representing the file contents.
 
 For files that are imported from remote providers, the file data is not available in the browser.
 
 [`File`]: https://developer.mozilla.org/en-US/docs/Web/API/File
+
 [`Blob`]: https://developer.mozilla.org/en-US/docs/Web/API/Blob
 
 ### `file.progress`
@@ -371,11 +377,12 @@ For files that are imported from remote providers, the file data is not availabl
 An object with upload progress data.
 
 **Properties**
-- `bytesUploaded` - Number of bytes uploaded so far.
-- `bytesTotal` - Number of bytes that must be uploaded in total.
-- `uploadStarted` - Null if the upload has not started yet. Once started, this property contains a UNIX timestamp. Note that this is only set _after_ preprocessing.
-- `uploadComplete` - Boolean indicating if the upload has completed. Note this does _not_ mean that postprocessing has completed, too.
-- `percentage` - Integer percentage between 0 and 100.
+
+*   `bytesUploaded` - Number of bytes uploaded so far.
+*   `bytesTotal` - Number of bytes that must be uploaded in total.
+*   `uploadStarted` - Null if the upload has not started yet. Once started, this property contains a UNIX timestamp. Note that this is only set *after* preprocessing.
+*   `uploadComplete` - Boolean indicating if the upload has completed. Note this does *not* mean that postprocessing has completed, too.
+*   `percentage` - Integer percentage between 0 and 100.
 
 ### `file.size`
 
@@ -499,8 +506,8 @@ Start uploading selected files.
 
 Returns a Promise `result` that resolves with an object containing two arrays of uploaded files:
 
-- `result.successful` - Files that were uploaded successfully.
-- `result.failed` - Files that did not upload successfully. These [File Objects][] will have a `.error` property describing what went wrong.
+*   `result.successful` - Files that were uploaded successfully.
+*   `result.failed` - Files that did not upload successfully. These [File Objects][] will have a `.error` property describing what went wrong.
 
 ```js
 uppy.upload().then((result) => {
@@ -665,8 +672,8 @@ Calls `provider.logout()` on each remote provider plugin (Google Drive, Instagra
 
 #### Parameters
 
-- **message** *{string}*
-- **type** *{string=}* `error` or `warning`
+*   **message** *{string}*
+*   **type** *{string=}* `error` or `warning`
 
 Logs stuff to [`logger`](/docs/uppy/#logger) methods.
 
@@ -680,9 +687,9 @@ uppy.log('[Dashboard] adding files...')
 
 #### Parameters
 
-- **message** *{(string|object)}* — `'info message'` or `{ message: 'Oh no!', details: 'File couldn’t be uploaded' }`
-- **type** *{string} \[type='info']* — `info`, `warning`, `success` or `error`
-- **duration** *{number} \[duration = 3000]* — in milliseconds
+*   **message** *{(string|object)}* — `'info message'` or `{ message: 'Oh no!', details: 'File couldn’t be uploaded' }`
+*   **type** *{string} \[type='info']* — `info`, `warning`, `success` or `error`
+*   **duration** *{number} \[duration = 3000]* — in milliseconds
 
 Sets a message in state, with optional details, that can be shown by notification UI plugins. Currently, that means just the [Informer](/docs/informer/) plugin, included by default in Dashboard.
 
@@ -720,7 +727,8 @@ Uppy exposes events that you can subscribe to in your app:
 Fired each time a file is added.
 
 **Parameters**
-- `file` - The [File Object][File Objects] representing the file that was added.
+
+*   `file` - The [File Object][File Objects] representing the file that was added.
 
 ```javascript
 uppy.on('file-added', (file) => {
@@ -731,7 +739,8 @@ uppy.on('file-added', (file) => {
 ### `files-added`
 
 **Parameters**
-- `files` - An array of [File Objects][File Objects] representing all files that were added at once, in a batch.
+
+*   `files` - An array of [File Objects][File Objects] representing all files that were added at once, in a batch.
 
 Fired each time when one or multiple files are added — one event, for all files
 
@@ -740,8 +749,9 @@ Fired each time when one or multiple files are added — one event, for all file
 Fired each time a file is removed.
 
 **Parameters**
-- `file` - The [File Object][File Objects] representing the file that was removed.
-- `reason` - A string explaining why the file was removed. See [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176) for details. Current reasons are: `removed-by-user` and `cancel-all`.
+
+*   `file` - The [File Object][File Objects] representing the file that was removed.
+*   `reason` - A string explaining why the file was removed. See [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176) for details. Current reasons are: `removed-by-user` and `cancel-all`.
 
 **Example**
 
@@ -779,7 +789,8 @@ uppy.on('upload', (data) => {
 Fired each time the total upload progress is updated:
 
 **Parameters**
-- `progress` - An integer (0-100) representing the total upload progress.
+
+*   `progress` - An integer (0-100) representing the total upload progress.
 
 **Example**
 
@@ -795,8 +806,9 @@ uppy.on('progress', (progress) => {
 Fired each time an individual file upload progress is available:
 
 **Parameters**
-- `file` - The [File Object][File Objects] for the file whose upload has progressed.
-- `progress` - [Progress object](#file-progress).
+
+*   `file` - The [File Object][File Objects] for the file whose upload has progressed.
+*   `progress` - [Progress object](#file-progress).
 
 **Example**
 
@@ -813,18 +825,19 @@ uppy.on('upload-progress', (file, progress) => {
 Fired each time a single upload is completed.
 
 **Parameters**
-- `file` - The [File Object][File Objects] that has just been fully uploaded.
-- `response` - An object with response data from the remote endpoint. The actual contents depend on the uploader plugin that is used.
 
-  For `@uppy/xhr-upload`, the shape is:
+*   `file` - The [File Object][File Objects] that has just been fully uploaded.
+*   `response` - An object with response data from the remote endpoint. The actual contents depend on the uploader plugin that is used.
 
-  ```json
-  {
-    "status": 200, // HTTP status code (0, 200, 300)
-    "body": "…", // response body
-    "uploadURL": "…" // the file url, if it was returned
-  }
-  ```
+    For `@uppy/xhr-upload`, the shape is:
+
+    ```json
+    {
+      "status": 200, // HTTP status code (0, 200, 300)
+      "body": "…", // response body
+      "uploadURL": "…" // the file url, if it was returned
+    }
+    ```
 
 **Example**
 
@@ -857,9 +870,11 @@ uppy.on('complete', (result) => {
 Fired when Uppy fails to upload/encode the entire upload. That error is then set to `uppy.getState().error`.
 
 **Parameters**
-- `error` - The error object.
+
+*   `error` - The error object.
 
 **Example**
+
 ```js
 uppy.on('error', (error) => {
   console.error(error.stack)
@@ -871,21 +886,23 @@ uppy.on('error', (error) => {
 Fired each time a single upload has errored.
 
 **Parameters**
-- `file` - The [File Object][File Objects] for the file whose upload has just errored.
-- `error` - The error object.
-- `response` - an optional parameter with response data from the upload endpoint. It may be undefined or contain different data depending on the uploader plugin in use.
 
-  For `@uppy/xhr-upload`, the shape is:
+*   `file` - The [File Object][File Objects] for the file whose upload has just errored.
+*   `error` - The error object.
+*   `response` - an optional parameter with response data from the upload endpoint. It may be undefined or contain different data depending on the uploader plugin in use.
 
-  ```json
-  {
-    "status": 200, // HTTP status code (0, 200, 300)
-    "body": "…" // response body
-  }
-  ```
+    For `@uppy/xhr-upload`, the shape is:
+
+    ```json
+    {
+      "status": 200, // HTTP status code (0, 200, 300)
+      "body": "…" // response body
+    }
+    ```
 
 **Example**
-``` javascript
+
+```javascript
 uppy.on('upload-error', (file, error, response) => {
   console.log('error with file:', file.id)
   console.log('error message:', error)
@@ -894,7 +911,7 @@ uppy.on('upload-error', (file, error, response) => {
 
 If the error is related to network conditions — endpoint unreachable due to firewall or ISP blockage, for instance — the error will have `error.isNetworkError` property set to `true`. Here’s how you can check for network errors:
 
-``` javascript
+```javascript
 uppy.on('upload-error', (file, error, response) => {
   if (error.isNetworkError) {
     // Let your users know that file upload could have failed
@@ -909,9 +926,11 @@ uppy.on('upload-error', (file, error, response) => {
 Fired when an upload has been retried (after an error, for example).
 
 **Parameters**
-- `fileID` - ID of the file that is being retried.
+
+*   `fileID` - ID of the file that is being retried.
 
 **Example**
+
 ```js
 uppy.on('upload-retry', (fileID) => {
   console.log('upload retried:', fileID)
@@ -922,7 +941,7 @@ uppy.on('upload-retry', (fileID) => {
 
 Fired when “info” message should be visible in the UI. By default, `Informer` plugin is displaying these messages (enabled by default in `Dashboard` plugin). You can use this event to show messages in your custom UI:
 
-``` javascript
+```javascript
 uppy.on('info-visible', () => {
   const { info } = uppy.getState()
   // info: {

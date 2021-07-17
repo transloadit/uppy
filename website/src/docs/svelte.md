@@ -84,11 +84,11 @@ const uppy = new Uppy().use(Webcam);
 
 The following plugins are available as Svelte component wrappers:
 
-- `<Dashboard />` - renders an inline `@uppy/dashboard`
-- `<DashboardModal />` - renders a `@uppy/dashboard` modal
-- `<DragDrop />` - renders a `@uppy/drag-drop` area
-- `<ProgressBar />` - renders a `@uppy/progress-bar`
-- `<StatusBar />` - renders a `@uppy/status-bar`
+*   `<Dashboard />` - renders an inline `@uppy/dashboard`
+*   `<DashboardModal />` - renders a `@uppy/dashboard` modal
+*   `<DragDrop />` - renders a `@uppy/drag-drop` area
+*   `<ProgressBar />` - renders a `@uppy/progress-bar`
+*   `<StatusBar />` - renders a `@uppy/status-bar`
 
 Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, make it easy to add your plugins.
 
@@ -118,12 +118,12 @@ The `Dashboard` component requires the following CSS for styling:
 </style>
 ```
 
-Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system. 
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
 
 ⚠️ The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
 
 Styles for Provider plugins, like Google Drive and Instagram, are also bundled with Dashboard styles. Styles for other plugins, such as `@uppy/url` and `@uppy/webcam`, are not included. If you are using those, please see their docs and make sure to include styles for them as well.
-  
+
 #### Props
 
 The `<Dashboard />` component supports all `@uppy/dashboard` options to be passed as an object to the `props` prop:
@@ -138,7 +138,7 @@ The `<Dashboard />` component supports all `@uppy/dashboard` options to be passe
   />
 ```
 
-The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
+The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as \[`@uppy/webcam`]\[@uppy/webcam]. To use other plugins like \[`@uppy/webcam`]\[@uppy/webcam] with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
 ### `<DashboardModal />`
 
@@ -163,7 +163,7 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
 
 The `<DashboardModal />` component supports all `@uppy/dashboard` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `uppy={}` prop.
 
-The `<DashboardModal />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<DashboardModal />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
+The `<DashboardModal />` cannot be passed to a `target:` option of a remote provider or plugins such as \[`@uppy/webcam`]\[@uppy/webcam]. To use other plugins like \[`@uppy/webcam`]\[@uppy/webcam] with the `<DashboardModal />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
 ### `<DragDrop />`
 
@@ -223,6 +223,7 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 The `<StatusBar />` component supports all `@uppy/status-bar` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `uppy={}` prop.
 
 [Svelte]: https://svelte.dev
+
 [Sapper]: https://sapper.svelte.dev
 
 [`@uppy/webcam`]: /docs/webcam/

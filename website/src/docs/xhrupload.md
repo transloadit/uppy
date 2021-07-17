@@ -71,9 +71,9 @@ is set to `true`, otherwise it defaults to `'file'`.
 
 Pass an array of field names to limit the metadata fields that will be sent to the endpoint as form fields.
 
-* Set this to `['name']` to only send the `name` field.
-* Set this to `null` (the default) to send *all* metadata fields.
-* Set this to an empty array `[]` to not send any fields.
+*   Set this to `['name']` to only send the `name` field.
+*   Set this to `null` (the default) to send *all* metadata fields.
+*   Set this to an empty array `[]` to not send any fields.
 
 If the [`formData`](#formData-true) option is set to false, `metaFields` has no effect.
 
@@ -89,6 +89,7 @@ const headers = {
 ```
 
 Header values can also be derived from file data by providing a function. The function receives a [File Object][File Objects] and must return an object where the keys are header names, and values are header values.
+
 ```js
 const headers = (file) => {
   return {
@@ -185,10 +186,10 @@ For uploads from the user's device, `response` is the [XMLHttpRequest][] object.
 
 When uploading files from remote providers such as Dropbox or Instagram, Companion sends upload response data to the client. This is made available in the `getResponseData()` function as well. The `response` object from Companion contains some properties named after their [XMLHttpRequest][] counterparts:
 
- - `response.responseText` - the XHR endpoint response as a string;
- - `response.status` - the HTTP status code;
- - `response.statusText` - the HTTP status text;
- - `response.headers` - an object mapping lowercase header names to their values.
+*   `response.responseText` - the XHR endpoint response as a string;
+*   `response.status` - the HTTP status code;
+*   `response.statusText` - the HTTP status text;
+*   `response.headers` - an object mapping lowercase header names to their values.
 
 ### `getResponseError(responseText, response)`
 
@@ -303,10 +304,17 @@ move_uploaded_file($file_path, $_SERVER['DOCUMENT_ROOT'] . '/img/' . basename($f
 ```
 
 [FormData]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
+
 [XMLHttpRequest]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
+
 [XHR.timeout]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/timeout
+
 [XHR.responseType]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType
+
 [uppy.upload-success]: /docs/uppy/#upload-success
+
 [File Objects]: /docs/uppy/#File-Objects
+
 [PHP.file-upload]: https://secure.php.net/manual/en/features.file-upload.php
+
 [PHP.multiple]: https://secure.php.net/manual/en/features.file-upload.multiple.php

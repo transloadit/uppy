@@ -7,7 +7,7 @@ order: 5
 category: "React"
 ---
 
-The `<Dashboard />` component wraps the [`@uppy/dashboard`][] plugin. It only renders the Dashboard inline. To use the Dashboard modal (`inline: false`), use the [`<DashboardModal />`](/docs/react/dashboard-modal) component.
+The `<Dashboard />` component wraps the \[`@uppy/dashboard`]\[@uppy/dashboard] plugin. It only renders the Dashboard inline. To use the Dashboard modal (`inline: false`), use the [`<DashboardModal />`](/docs/react/dashboard-modal) component.
 
 ## Installation
 
@@ -41,11 +41,12 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
 
 ## Props
 
-The `<Dashboard />` component supports all [`@uppy/dashboard`][] options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
+The `<Dashboard />` component supports all \[`@uppy/dashboard`]\[@uppy/dashboard] options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
-> The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] (Image Editor, Google Drive, etc) with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
+> The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as \[`@uppy/webcam`]\[@uppy/webcam]. To use other plugins like \[`@uppy/webcam`]\[@uppy/webcam] (Image Editor, Google Drive, etc) with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
 <!-- eslint-disable react/jsx-props-no-spreading -->
+
 ```js
 import React from 'react'
 import { Dashboard } from '@uppy/react'
@@ -72,4 +73,5 @@ function Uploader () {
 ```
 
 [`@uppy/dashboard`]: /docs/dashboard/
+
 [`@uppy/webcam`]: /docs/webcam/

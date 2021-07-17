@@ -20,10 +20,10 @@ const resultPromise = Robodog.pick({
 
 `resultPromise` is a [Promise][promise] that resolves with an object:
 
- - `successful` - An array containing data about files that were uploaded successfully
- - `failed` - An array containing data about files that failed to upload
- - `transloadit` - An array of Assembly statuses
- - `results` - An array of results produced by the assembly, if `waitForEncoding` was used
+*   `successful` - An array containing data about files that were uploaded successfully
+*   `failed` - An array containing data about files that failed to upload
+*   `transloadit` - An array of Assembly statuses
+*   `results` - An array of results produced by the assembly, if `waitForEncoding` was used
 
 ## `options.target`
 
@@ -79,11 +79,11 @@ By default, the Picker will use Transloadit's [Uppy Companion][companion] server
 
 Array of providers to use. Each entry is the name of a provider. The available ones are:
 
-- `'dropbox'` – Import files from Dropbox using [Uppy Companion][companion].
-- `'google-drive'` – Import files from Google Drive using [Uppy Companion][companion].
-- `'instagram'` – Import files from Instagram using [Uppy Companion][companion].
-- `'url'` – Import files from public Web URLs using [Uppy Companion][companion].
-- `'webcam'` – Take photos and record videos using thee user's device camera.
+*   `'dropbox'` – Import files from Dropbox using [Uppy Companion][companion].
+*   `'google-drive'` – Import files from Google Drive using [Uppy Companion][companion].
+*   `'instagram'` – Import files from Instagram using [Uppy Companion][companion].
+*   `'url'` – Import files from public Web URLs using [Uppy Companion][companion].
+*   `'webcam'` – Take photos and record videos using thee user's device camera.
 
 ### `companionUrl: Transloadit.COMPANION`
 
@@ -122,6 +122,9 @@ Specific options for the [URL](/docs/url) provider.
 Specific options for the [Webcam](/docs/webcam) provider.
 
 [companion]: /docs/companion
+
 [transloadit]: /docs/transloadit#options
+
 [assembly-status]: https://transloadit.com/docs/api/#assembly-status-response
+
 [promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise

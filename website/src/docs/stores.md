@@ -14,12 +14,12 @@ If your app uses a state management library such as [Redux](https://redux.js.org
 
 Uppy comes with two state management solutions (stores):
 
- - `@uppy/store-default`, a simple object-based store.
- - `@uppy/store-redux`, a store that uses a key in a Redux store.
+*   `@uppy/store-default`, a simple object-based store.
+*   `@uppy/store-redux`, a store that uses a key in a Redux store.
 
 There are also some third-party stores:
 
- - [uppy-store-ngrx](https://github.com/rimlin/uppy-store-ngrx/), keeping Uppy state in a key in an [Ngrx](https://github.com/ngrx/platform) store for use with Angular.
+*   [uppy-store-ngrx](https://github.com/rimlin/uppy-store-ngrx/), keeping Uppy state in a key in an [Ngrx](https://github.com/ngrx/platform) store for use with Angular.
 
 ## Using stores
 
@@ -100,13 +100,13 @@ If your app uses [`reselect`](https://npmjs.com/package/reselect), its selectors
 
 An Uppy store is an object with three methods.
 
- - `getState()` - Return the current state object.
- - `setState(patch)` - Merge the object `patch` into the current state.
- - `subscribe(listener)` - Call `listener` whenever the state changes.
-   `listener` is a function that should receive three parameters:
-   `(prevState, nextState, patch)`
+*   `getState()` - Return the current state object.
+*   `setState(patch)` - Merge the object `patch` into the current state.
+*   `subscribe(listener)` - Call `listener` whenever the state changes.
+    `listener` is a function that should receive three parameters:
+    `(prevState, nextState, patch)`
 
-   The `subscribe()` method should return a function that 'unsubscribes' (removes) the `listener`.
+    The `subscribe()` method should return a function that 'unsubscribes' (removes) the `listener`.
 
 The default store implementation, for example, looks a bit like this:
 

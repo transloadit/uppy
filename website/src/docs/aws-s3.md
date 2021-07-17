@@ -70,8 +70,8 @@ Custom headers that should be sent along to [Companion][companion docs] on every
 
 Pass an array of field names to specify the metadata fields that should be stored in S3 as Object Metadata. This takes values from each file's `file.meta` property.
 
-- Set this to `['name']` to only send the name field.
-- Set this to an empty array `[]` (the default) to not send any fields.
+*   Set this to `['name']` to only send the name field.
+*   Set this to an empty array `[]` (the default) to not send any fields.
 
 ### `getUploadParameters(file)`
 
@@ -107,7 +107,7 @@ Set to `0` to disable limiting.
 
 ### `getResponseData(responseText, response)`
 
-> This is an advanced option intended for use with _almost_ S3-compatible storage solutions.
+> This is an advanced option intended for use with *almost* S3-compatible storage solutions.
 
 Customize response handling once an upload is completed. This passes the function through to @uppy/xhr-upload, see its [documentation](https://uppy.io/docs/xhr-upload/#getResponseData-responseText-response) for API details.
 
@@ -222,17 +222,17 @@ In-depth documentation about CORS rules is available on the [AWS documentation s
 
 Companion uses POST uploads by default, but you can also use them with your own endpoints. There are a few things to be aware of when doing so:
 
- - The `@uppy/aws-s3` plugin attempts to read the `<Location>` XML tag from POST upload responses. S3 does not respond with an XML document by default. When generating the form data for POST uploads, you must set the `success_action_status` field to `201`.
-   ```js
-   // `s3` is an instance of the AWS JavaScript SDK's S3 client
-   s3.createPresignedPost({
-     // ...
-     Fields: {
-       // ...
-       success_action_status: '201',
-     },
-   })
-   ```
+*   The `@uppy/aws-s3` plugin attempts to read the `<Location>` XML tag from POST upload responses. S3 does not respond with an XML document by default. When generating the form data for POST uploads, you must set the `success_action_status` field to `201`.
+    ```js
+    // `s3` is an instance of the AWS JavaScript SDK's S3 client
+    s3.createPresignedPost({
+      // ...
+      Fields: {
+        // ...
+        success_action_status: '201',
+      },
+    })
+    ```
 
 ## S3 alternatives
 
@@ -299,20 +299,23 @@ gsutil cors set THAT-FILE.json gs://BUCKET-NAME
 
 Otherwise, you can manually apply it through the OAuth playground:
 
- 1. Get a temporary API token from the [Google OAuth2.0 playground](https://developers.google.com/oauthplayground/)
-   1. Select the "Cloud Storage JSON API v1" » "devstorage.full_control" scope
-   1. Press "Authorize APIs" and allow access
- 1. Click "Step 3 - Configure request to API"
- 1. Configure it as follows:
-   - HTTP Method: PATCH
-   - Request URI: `https://www.googleapis.com/storage/v1/b/YOUR_BUCKET_NAME`
-   - Content-Type: application/json (should be the default)
-   - Press "Enter request body" and input your CORS configuration
- 1. Then, finally, press "Send the request".
+1.  Get a temporary API token from the [Google OAuth2.0 playground](https://developers.google.com/oauthplayground/)
+2.  Select the "Cloud Storage JSON API v1" » "devstorage.full_control" scope
+3.  Press "Authorize APIs" and allow access
+4.  Click "Step 3 - Configure request to API"
+5.  Configure it as follows:
+
+*   HTTP Method: PATCH
+*   Request URI: `https://www.googleapis.com/storage/v1/b/YOUR_BUCKET_NAME`
+*   Content-Type: application/json (should be the default)
+*   Press "Enter request body" and input your CORS configuration
+
+1.  Then, finally, press "Send the request".
 
 ## Examples
 
 <a id="example-presigned-url"></a>
+
 ### Generating a presigned upload URL server-side
 
 The `getUploadParameters` function can return a Promise, so upload parameters can be prepared server-side.

@@ -8,7 +8,7 @@ order: 4
 category: "React"
 ---
 
-The `<ProgressBar />` component wraps the [`@uppy/progress-bar`][] plugin.
+The `<ProgressBar />` component wraps the \[`@uppy/progress-bar`]\[@uppy/progress-bar] plugin.
 
 ## Installation
 
@@ -38,7 +38,7 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 ## Props
 
-The `<ProgressBar />` component supports all [`@uppy/progress-bar`][] options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
+The `<ProgressBar />` component supports all \[`@uppy/progress-bar`]\[@uppy/progress-bar] options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
 ```js
 import React from 'react'

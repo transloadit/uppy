@@ -19,14 +19,14 @@ Companion handles the server-to-server communication between your server and fil
 
 As of now, Companion is integrated to work with:
 
-- Google Drive (name `drive`) - [Set up instructions](/docs/google-drive/#Setting-Up)
-- Dropbox (name `dropbox`) - [Set up instructions](/docs/dropbox/#Setting-Up)
-- Box (name `box`) - [Set up instructions](/docs/box/#Setting-Up)
-- Instagram (name `instagram`)
-- Facebook (name `facebook`)
-- OneDrive (name `onedrive`)
-- Remote URLs (name `url`)
-- Amazon S3 (name `s3`)
+*   Google Drive (name `drive`) - [Set up instructions](/docs/google-drive/#Setting-Up)
+*   Dropbox (name `dropbox`) - [Set up instructions](/docs/dropbox/#Setting-Up)
+*   Box (name `box`) - [Set up instructions](/docs/box/#Setting-Up)
+*   Instagram (name `instagram`)
+*   Facebook (name `facebook`)
+*   OneDrive (name `onedrive`)
+*   Remote URLs (name `url`)
+*   Amazon S3 (name `s3`)
 
 ## Installation
 
@@ -291,7 +291,7 @@ const options = {
 }
 ```
 
-1. **filePath(required)** - Full path to the directory to which provider files would be downloaded temporarily.
+1.  **filePath(required)** - Full path to the directory to which provider files would be downloaded temporarily.
 
 2. **secret(recommended)** - A secret string which Companion uses to generate authorization tokens.
 
@@ -360,19 +360,20 @@ The datacenter region where the target bucket is located. The standalone Compani
 
 #### `providerOptions.s3.awsClientOptions`
 
-You can supply any [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property) in the `providerOptions.s3.awsClientOptions` object, _except for_ the below:
+You can supply any [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property) in the `providerOptions.s3.awsClientOptions` object, *except for* the below:
 
-- `accessKeyId`. Instead, use the `providerOptions.s3.key` property. This is to make configuration names consistent between different Companion features.
-- `secretAccessKey`. Instead, use the `providerOptions.s3.secret` property. This is to make configuration names consistent between different Companion features.
+*   `accessKeyId`. Instead, use the `providerOptions.s3.key` property. This is to make configuration names consistent between different Companion features.
+*   `secretAccessKey`. Instead, use the `providerOptions.s3.secret` property. This is to make configuration names consistent between different Companion features.
 
 Be aware that some options may cause wrong behaviour if they conflict with Companion's assumptions. If you find that a particular option does not work as expected, please [open an issue on the Uppy repository](https://github.com/transloadit/uppy/issues/new) so we can document it here.
 
 #### `providerOptions.s3.getKey(req, filename, metadata)`
 
 Get the key name for a file. The key is the file path to which the file will be uploaded in your bucket. This option should be a function receiving three arguments:
-- `req`, the HTTP request, for _regular_ S3 uploads using the `@uppy/aws-s3` plugin. This parameter is _not_ available for multipart uploads using the `@uppy/aws-s3-multipart` plugin;
-- `filename`, the original name of the uploaded file;
-- `metadata`, user-provided metadata for the file. See the [`@uppy/aws-s3`](https://uppy.io/docs/aws-s3/#metaFields) docs. Currently, the `@uppy/aws-s3-multipart` plugin unconditionally sends all metadata fields, so all of them are available here.
+
+*   `req`, the HTTP request, for *regular* S3 uploads using the `@uppy/aws-s3` plugin. This parameter is *not* available for multipart uploads using the `@uppy/aws-s3-multipart` plugin;
+*   `filename`, the original name of the uploaded file;
+*   `metadata`, user-provided metadata for the file. See the [`@uppy/aws-s3`](https://uppy.io/docs/aws-s3/#metaFields) docs. Currently, the `@uppy/aws-s3-multipart` plugin unconditionally sends all metadata fields, so all of them are available here.
 
 This function should return a string `key`. The `req` parameter can be used to upload to a user-specific folder in your bucket, for example:
 
@@ -389,6 +390,7 @@ app.use(uppy.app({
 ```
 
 The default implementation returns the `filename`, so all files will be uploaded to the root of the bucket as their original file name.
+
 ```js
 app.use(uppy.app({
   providerOptions: {
@@ -433,23 +435,28 @@ The `customProviders` option should be an object containing each custom provider
 
 To work well with Companion, the **Module** must be a class with the following methods.
 
-1. `list (options, done)` - lists JSON data of user files (e.g. list of all the files in a particular directory).
-  - `options` - is an object containing the following attributes
-    - token - authorization token (retrieved from oauth process) to send along with your request
-    - directory - the `id/name` of the directory from which data is to be retrieved. This may be ignored if it doesn't apply to your provider
-    - query - expressjs query params object received by the server (just in case there is some data you need in there).
-  - `done (err, data)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, and [`data`](#list-data).
-2. `download (options, onData)` - downloads a particular file from the provider.
-  - `options` - is an object containing the following attributes:
-    - token - authorization token (retrieved from oauth process) to send along with your request.
-    - id - ID of the file being downloaded.
-    - query - expressjs query params object received by the server (just in case there is some data you need in there).
-  - `onData (err, chunk)` - a callback that should be called with each data chunk received as download is happening. The `err` argument is an error that should be passed if an error occurs during download. It should be `null` if there's no error. Once the download is completed and there are no more chunks to receive, `onData` should be called with `null` values like so `onData(null, null)`
-3. `size (options, done)` - returns the byte size of the file that needs to be downloaded.
-  - `options` - is an object containing the following attributes:
-    - token - authorization token (retrieved from oauth process) to send along with your request.
-    - id - ID of the file being downloaded.
-  - `done (err, size)` - the callback that should be called after the request to your provider is completed. As the signature indicates, the following data should be passed along to the callback `err`, and `size` (number).
+1.  `list (options, done)` - lists JSON data of user files (e.g. list of all the files in a particular directory).
+
+*   `options` - is an object containing the following attributes
+    *   token - authorization token (retrieved from oauth process) to send along with your request
+    *   directory - the `id/name` of the directory from which data is to be retrieved. This may be ignored if it doesn't apply to your provider
+    *   query - expressjs query params object received by the server (just in case there is some data you need in there).
+*   `done (err, data)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, and [`data`](#list-data).
+
+2.  `download (options, onData)` - downloads a particular file from the provider.
+
+*   `options` - is an object containing the following attributes:
+    *   token - authorization token (retrieved from oauth process) to send along with your request.
+    *   id - ID of the file being downloaded.
+    *   query - expressjs query params object received by the server (just in case there is some data you need in there).
+*   `onData (err, chunk)` - a callback that should be called with each data chunk received as download is happening. The `err` argument is an error that should be passed if an error occurs during download. It should be `null` if there's no error. Once the download is completed and there are no more chunks to receive, `onData` should be called with `null` values like so `onData(null, null)`
+
+3.  `size (options, done)` - returns the byte size of the file that needs to be downloaded.
+
+*   `options` - is an object containing the following attributes:
+    *   token - authorization token (retrieved from oauth process) to send along with your request.
+    *   id - ID of the file being downloaded.
+*   `done (err, size)` - the callback that should be called after the request to your provider is completed. As the signature indicates, the following data should be passed along to the callback `err`, and `size` (number).
 
 The class must also have an `authProvider` string (lowercased) field which typically indicates the name of the provider (e.g "dropbox").
 
@@ -557,21 +564,20 @@ This would get the Companion instance running on `http://localhost:3020`. It use
 
 An example server is running at <https://companion.uppy.io>, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md)
 
-
 ## How the Authentication and Token mechanism works
 
 This section describes how Authentication works between Companion and Providers. While this behaviour is the same for all Providers (Dropbox, Instagram, Google Drive, etc.), we are going to be referring to Dropbox in place of any Provider throughout this section.
 
 The following steps describe the actions that take place when a user Authenticates and Uploads from Dropbox through Companion:
 
-- The visitor to a website with Uppy clicks "Connect to Dropbox".
-- Uppy sends a request to Companion, which in turn sends an OAuth request to Dropbox (Requires that OAuth credentials from Dropbox have been added to Companion).
-- Dropbox asks the visitor to log in, and whether the Website should be allowed to access your files
-- If the visitor agrees, Companion will receive a token from Dropbox, with which we can temporarily download files.
-- Companion encrypts the token with a secret key and sends the encrypted token to Uppy (client)
-- Every time the visitor clicks on a folder in Uppy, it asks Companion for the new list of files, with this question, the token (still encrypted by Companion) is sent along.
-- Companion decrypts the token, requests the list of files from Dropbox and sends it to Uppy.
-- When a file is selected for upload, Companion receives the token again according to this procedure, decrypts it again, and thereby downloads the file from Dropbox.
-- As the bytes arrive, Companion uploads the bytes to the final destination (depending on the configuration: Apache, a Tus server, S3 bucket, etc).
-- Companion reports progress to Uppy, as if it were a local upload.
-- Completed!
+*   The visitor to a website with Uppy clicks "Connect to Dropbox".
+*   Uppy sends a request to Companion, which in turn sends an OAuth request to Dropbox (Requires that OAuth credentials from Dropbox have been added to Companion).
+*   Dropbox asks the visitor to log in, and whether the Website should be allowed to access your files
+*   If the visitor agrees, Companion will receive a token from Dropbox, with which we can temporarily download files.
+*   Companion encrypts the token with a secret key and sends the encrypted token to Uppy (client)
+*   Every time the visitor clicks on a folder in Uppy, it asks Companion for the new list of files, with this question, the token (still encrypted by Companion) is sent along.
+*   Companion decrypts the token, requests the list of files from Dropbox and sends it to Uppy.
+*   When a file is selected for upload, Companion receives the token again according to this procedure, decrypts it again, and thereby downloads the file from Dropbox.
+*   As the bytes arrive, Companion uploads the bytes to the final destination (depending on the configuration: Apache, a Tus server, S3 bucket, etc).
+*   Companion reports progress to Uppy, as if it were a local upload.
+*   Completed!

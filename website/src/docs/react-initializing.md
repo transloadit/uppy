@@ -32,7 +32,7 @@ function MyComponent () {
 }
 ```
 
-Importantly, the `useUppy()` hook takes a _function_ that returns an Uppy instance. This way, the `useUppy()` hook can decide when to create it. Otherwise you would still be creating an unused Uppy instance on every render.
+Importantly, the `useUppy()` hook takes a *function* that returns an Uppy instance. This way, the `useUppy()` hook can decide when to create it. Otherwise you would still be creating an unused Uppy instance on every render.
 
 ## Class Components
 

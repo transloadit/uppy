@@ -92,7 +92,7 @@ uppy.use(Dropbox, {
 })
 ```
 
-The value of this constant covers _all_ Transloadit's Companion servers, so it does not need to be changed if you are using a custom [`service`](#service) option. However, if you are not using the Transloadit Companion servers at `*.transloadit.com`, make sure to set the `companionAllowedHosts` option to something that matches what you do use.
+The value of this constant covers *all* Transloadit's Companion servers, so it does not need to be changed if you are using a custom [`service`](#service) option. However, if you are not using the Transloadit Companion servers at `*.transloadit.com`, make sure to set the `companionAllowedHosts` option to something that matches what you do use.
 
 ## Options
 
@@ -131,6 +131,7 @@ uppy.use(Transloadit, {
 ```
 
 <a id="waitForEncoding"></a>
+
 ### `waitForEncoding: false`
 
 By default, the Transloadit plugin uploads files to Assemblies and then marks the files as complete in Uppy. The Assemblies will complete (or error) in the background but Uppy won't know or care about it.
@@ -140,6 +141,7 @@ When `waitForEncoding` is set to true, the Transloadit plugin waits for Assembli
 When this is enabled, you can listen for the [`transloadit:result`](#transloadit-result) and [`transloadit:complete`](#transloadit-complete) events.
 
 <a id="waitForMetadata"></a>
+
 ### `waitForMetadata: false`
 
 By default, the Transloadit plugin uploads files to Assemblies and then marks the files as complete in Uppy. The Assemblies will complete (or error) in the background but Uppy won't know or care about it.
@@ -310,8 +312,8 @@ Fired when an Assembly is created.
 
 **Parameters**
 
-  - `assembly` - The initial [Assembly Status][assembly-status].
-  - `fileIDs` - The IDs of the files that will be uploaded to this Assembly.
+*   `assembly` - The initial [Assembly Status][assembly-status].
+*   `fileIDs` - The IDs of the files that will be uploaded to this Assembly.
 
 ```js
 uppy.on('transloadit:assembly-created', (assembly, fileIDs) => {
@@ -329,8 +331,8 @@ Fired when Transloadit has received an upload.
 
 **Parameters**
 
-  - `file` - The Transloadit file object that was uploaded.
-  - `assembly` - The [Assembly Status][assembly-status] of the Assembly to which the file was uploaded.
+*   `file` - The Transloadit file object that was uploaded.
+*   `assembly` - The [Assembly Status][assembly-status] of the Assembly to which the file was uploaded.
 
 ### `transloadit:assembly-executing`
 
@@ -338,7 +340,7 @@ Fired when Transloadit has received all uploads, and is currently executing the 
 
 **Parameters**
 
- - `assembly` - The [Assembly Status](https://transloadit.com/docs/api/#assembly-status-response) of the Assembly that is currently executing.
+*   `assembly` - The [Assembly Status](https://transloadit.com/docs/api/#assembly-status-response) of the Assembly that is currently executing.
 
 ### `transloadit:result`
 
@@ -346,11 +348,11 @@ Fired when a result came in from an Assembly.
 
 **Parameters**
 
-  - `stepName` - The name of the Assembly step that generated this result.
-  - `result` - The result object from Transloadit.
+*   `stepName` - The name of the Assembly step that generated this result.
+*   `result` - The result object from Transloadit.
     This result object contains one additional property, namely `localId`.
     This is the ID of the file in Uppy's local state, and can be used with `uppy.getFile(id)`.
-  - `assembly` - The [Assembly Status][assembly-status] of the Assembly that generated this result.
+*   `assembly` - The [Assembly Status][assembly-status] of the Assembly that generated this result.
 
 ```js
 uppy.on('transloadit:result', (stepName, result) => {
@@ -370,7 +372,7 @@ Fired when an Assembly completed.
 
 **Parameters**
 
-  - `assembly` - The final [Assembly Status][assembly-status] of the completed Assembly.
+*   `assembly` - The final [Assembly Status][assembly-status] of the completed Assembly.
 
 ```js
 uppy.on('transloadit:complete', (assembly) => {

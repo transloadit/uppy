@@ -42,12 +42,14 @@ const { Box } = Uppy
 ## Setting Up
 
 To use the Box provider, you need to configure the Box keys that Companion should use. With the standalone Companion server, specify environment variables:
+
 ```shell
 export COMPANION_BOX_KEY="Box API key"
 export COMPANION_BOX_SECRET="Box API secret"
 ```
 
 When using the Companion Node.js API, configure these options:
+
 ```js
 companion.app({
   providerOptions: {
@@ -68,9 +70,8 @@ Things to note:
 You'll be redirected to the app page. This page lists the client ID (app key) and client secret (app secret), which you should use to configure Companion as shown above.
 
 The app page has a "Redirect URIs" field. Here, add:
-```
-https://$YOUR_COMPANION_HOST_NAME/box/redirect
-```
+
+    https://$YOUR_COMPANION_HOST_NAME/box/redirect
 
 You can only use the integration with your own account initially—make sure to apply for production status on the app page before you publish your app, or your users will not be able to sign in!
 

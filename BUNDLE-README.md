@@ -3,7 +3,7 @@
 Hi, thanks for trying out the bundled version of the Uppy File Uploader. You can use
 this from a CDN (e.g. `<script src="https://releases.transloadit.com/uppy/v2.2.0/uppy.min.js"></script>`) or bundle it with your webapp. 
 
-Note that the recommended way to use Uppy is to install it with yarn/npm and use a 
+Note that the recommended way to use Uppy is to install it with yarn/npm and use a
 bundler like Webpack so that you can create a smaller custom build with just the
 things that you need. More info on <https://uppy.io/docs/#With-a-module-bundler>.
 

@@ -15,6 +15,7 @@ Usage of the Provider plugins is not that different from any other *acquirer* pl
 Here's a quick example:
 
 <!-- eslint-disable import/first, import/newline-after-import -->
+
 ```js
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'

@@ -8,7 +8,7 @@ order: 2
 category: "React"
 ---
 
-The `<StatusBar />` component wraps the [`@uppy/status-bar`][] plugin.
+The `<StatusBar />` component wraps the \[`@uppy/status-bar`]\[@uppy/status-bar] plugin.
 
 ## Installation
 
@@ -38,7 +38,7 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 ## Props
 
-The `<StatusBar />` component supports all [`@uppy/status-bar`][] options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
+The `<StatusBar />` component supports all \[`@uppy/status-bar`]\[@uppy/status-bar] options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
 ```js
 import React from 'react'

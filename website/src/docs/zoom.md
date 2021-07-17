@@ -110,6 +110,6 @@ To enable the Transloadit Add-on on your Zoom account please visit the Transload
 
 ### Uninstall via Marketplace
 
-1. Go to the Transloadit App on the [Zoom Marketplace](https://marketplace.zoom.us/apps/oBMBQjN6SSakyh7OiLZMdA)
-2. Click the “Manage” tab
-3. Scroll to the bottom of the page and click the “Uninstall” button
+1.  Go to the Transloadit App on the [Zoom Marketplace](https://marketplace.zoom.us/apps/oBMBQjN6SSakyh7OiLZMdA)
+2.  Click the “Manage” tab
+3.  Scroll to the bottom of the page and click the “Uninstall” button

@@ -77,10 +77,10 @@ export class AppComponent {
 
 The following plugins are available as Angular component wrappers:
 
-- `<uppy-dashboard />` - renders a `@uppy/dashboard`
-- `<uppy-drag-drop />` - renders a `@uppy/drag-drop` area
-- `<uppy-progress-bar />` - renders a `@uppy/progress-bar`
-- `<uppy-status-bar />` - renders a `@uppy/status-bar`
+*   `<uppy-dashboard />` - renders a `@uppy/dashboard`
+*   `<uppy-drag-drop />` - renders a `@uppy/drag-drop` area
+*   `<uppy-progress-bar />` - renders a `@uppy/progress-bar`
+*   `<uppy-status-bar />` - renders a `@uppy/status-bar`
 
 Each component takes a `props` prop that will be passed to the UI Plugin.
 
@@ -125,7 +125,7 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
 
 The `<uppy-dashboard />` component supports all `@uppy/dashboard` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `[uppy]=''` prop.
 
-The `<uppy-dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<uppy-dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the options you pass.
+The `<uppy-dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as \[`@uppy/webcam`]\[@uppy/webcam]. To use other plugins like \[`@uppy/webcam`]\[@uppy/webcam] with the `<uppy-dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the options you pass.
 
 ### `<uppy-dashboard-modal />`
 
@@ -154,7 +154,7 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
 
 The `<uppy-dashboard-modal />` component supports all `@uppy/dashboard` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `[uppy]=''` prop. Additionally, it takes an `[open]=''` prop, telling it which state to display in
 
-The `<uppy-dashboard-modal />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<uppy-dashboard-modal />` component, first add them to the Uppy instance, and then specify their `id` in the options you pass.
+The `<uppy-dashboard-modal />` cannot be passed to a `target:` option of a remote provider or plugins such as \[`@uppy/webcam`]\[@uppy/webcam]. To use other plugins like \[`@uppy/webcam`]\[@uppy/webcam] with the `<uppy-dashboard-modal />` component, first add them to the Uppy instance, and then specify their `id` in the options you pass.
 
 ### `<uppy-drag-drop />`
 

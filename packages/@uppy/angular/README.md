@@ -2,8 +2,7 @@
 
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
-<a href="https://www.npmjs.com/package/@uppy/angular"><img src="https://img.shields.io/npm/v/@uppy/angular.svg?style=flat-square"></a>
-<a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
+<a href="https://www.npmjs.com/package/@uppy/angular"><img src="https://img.shields.io/npm/v/@uppy/angular.svg?style=flat-square"></a> <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
 
 Angular component wrappers around Uppy's officially maintained UI plugins.
 

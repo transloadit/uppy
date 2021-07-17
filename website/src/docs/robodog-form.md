@@ -31,7 +31,7 @@ When the user submits the form, we intercept it and send the files to Transloadi
 <input type="hidden" name="transloadit" value='[{"ok": "ASSEMBLY_EXECUTING",...}]'>
 ```
 
-Finally, we _really_ submit the form—without files, but with those Assembly status objects. You can then handle that in your backend.
+Finally, we *really* submit the form—without files, but with those Assembly status objects. You can then handle that in your backend.
 
 ## Transloadit
 
@@ -97,11 +97,11 @@ window.Robodog.form('form#upload-form', {
 </script>
 ```
 
-The progress bar will be inserted _into_ that element (thus _not_ replace it).
+The progress bar will be inserted *into* that element (thus *not* replace it).
 
 ## Separating Uploads from Form Submission
 
-By default, `Robodog.form` starts uploads when the user submits the form. There can be a use case for _not_ doing this, and instead uploading files in response to some user action, _before_ the form is submitted. For example, when using a Dashboard modal, the user can upload their files first and then return to the form to submit it. When they submit the form, it should not start uploading again.
+By default, `Robodog.form` starts uploads when the user submits the form. There can be a use case for *not* doing this, and instead uploading files in response to some user action, *before* the form is submitted. For example, when using a Dashboard modal, the user can upload their files first and then return to the form to submit it. When they submit the form, it should not start uploading again.
 
 The `triggerUploadOnSubmit: false` option is available for this purpose. We recommend using it together with the `modal: true` and `closeAfterFinish: true` options:
 
@@ -134,6 +134,7 @@ $(selector).transloadit({
 })
 </script>
 ```
+
 ```html
 <!-- The new Robodog way! -->
 <script src="//releases.transloadit.com/uppy/robodog/v2.0.0-alpha.0/robodog.min.js"></script>
@@ -146,6 +147,7 @@ window.Robodog.form(selector, {
 ```
 
 Make sure to also include the Uppy css file in your `<head>` tag in case you want to use the `modal: true` option:
+
 ```html
 <head>
   <link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v2.0.0-alpha.0/robodog.min.css">
@@ -250,12 +252,12 @@ The equivalent options are listed below.
 
 As for the options that are unavailable:
 
-- `exclude` is intended to exclude certain `<input type="file">` inputs from Transloadit processing. It will likely not be added, but we'll perhaps have a `include` CSS selector option instead.
-- `debug` will not be added.
+*   `exclude` is intended to exclude certain `<input type="file">` inputs from Transloadit processing. It will likely not be added, but we'll perhaps have a `include` CSS selector option instead.
+*   `debug` will not be added.
 
 ### Events
 
-There are no `on*()` _options_ anymore, but `.on('...')` methods are provided instead on the Uppy object that is returned by `window.Robodog.form()`.
+There are no `on*()` *options* anymore, but `.on('...')` methods are provided instead on the Uppy object that is returned by `window.Robodog.form()`.
 
 | jQuery SDK option | Robodog Event |
 |---------------|--------------------------|

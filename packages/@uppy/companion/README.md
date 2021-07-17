@@ -61,6 +61,7 @@ companion.socket(server, options)
 ```
 
 ### Run as standalone server
+
 Please ensure that the required env variables are set before runnning/using companion as a standalone server. [See](https://uppy.io/docs/companion/#Configure-Standalone).
 
 ```bash

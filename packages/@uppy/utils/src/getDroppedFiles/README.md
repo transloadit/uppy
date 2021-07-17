@@ -1,7 +1,8 @@
 Influenced by:
-  - <https://github.com/leonadler/drag-and-drop-across-browsers>
-  - <https://github.com/silverwind/uppie/blob/master/uppie.js>
-  - <https://stackoverflow.com/a/50030399/3192470>
+
+*   <https://github.com/leonadler/drag-and-drop-across-browsers>
+*   <https://github.com/silverwind/uppie/blob/master/uppie.js>
+*   <https://stackoverflow.com/a/50030399/3192470>
 
 ### Why do we not use `getFilesAndDirectories()` api?
 

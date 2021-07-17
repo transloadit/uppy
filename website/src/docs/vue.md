@@ -22,6 +22,7 @@ npm install @uppy/vue
 # Or with yarn
 yarn add @uppy/vue
 ```
+
 ## CSS
 
 Make sure to also include the necessary CSS files for each Uppy Vue component you are using.
@@ -30,7 +31,7 @@ Make sure to also include the necessary CSS files for each Uppy Vue component yo
 
 The components can be used with [Vue][] and frameworks that use it, like [Nuxt][].
 
-Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instance can be passed into components as an `uppy` prop. 
+Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy instance can be passed into components as an `uppy` prop.
 
 ```html
 <template>
@@ -65,13 +66,13 @@ export default {
 
 The following plugins are available as Vue component wrappers:
 
- - `<dashboard />` - renders an inline `@uppy/dashboard`
- - `<dashboard-modal />` - renders a `@uppy/dashboard` modal
- - `<drag-drop />` - renders a `@uppy/drag-drop` area
- - `<progress-bar />` - renders a `@uppy/progress-bar`
- - `<status-bar />` - renders a `@uppy/status-bar`
+*   `<dashboard />` - renders an inline `@uppy/dashboard`
+*   `<dashboard-modal />` - renders a `@uppy/dashboard` modal
+*   `<drag-drop />` - renders a `@uppy/drag-drop` area
+*   `<progress-bar />` - renders a `@uppy/progress-bar`
+*   `<status-bar />` - renders a `@uppy/status-bar`
 
-Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, make it easy to add your plugins. 
+Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, make it easy to add your plugins.
 
 ### Initializing Uppy
 
@@ -98,8 +99,8 @@ export default {
 
 ## Components
 
-### `<dashboard />` 
-  
+### `<dashboard />`
+
 #### CSS
 
 The `Dashboard` component requires the following CSS for styling:
@@ -117,12 +118,12 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
 
 #### Props
 
-The `<dashboard />` component supports all `@uppy/dashboard` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop. 
+The `<dashboard />` component supports all `@uppy/dashboard` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop.
 
-The `<dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
+The `<dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as \[`@uppy/webcam`]\[@uppy/webcam]. To use other plugins like \[`@uppy/webcam`]\[@uppy/webcam] with the `<dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
-### `<dashboard-modal />` 
-  
+### `<dashboard-modal />`
+
 #### CSS
 
 The `DashboardModal` component requires the following CSS for styling:
@@ -140,9 +141,9 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
 
 #### Props
 
-The `<dashboard-modal />` component supports all `@uppy/dashboard` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop. 
+The `<dashboard-modal />` component supports all `@uppy/dashboard` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop.
 
-The `<dashboard-modal />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<dashboard-modal />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
+The `<dashboard-modal />` cannot be passed to a `target:` option of a remote provider or plugins such as \[`@uppy/webcam`]\[@uppy/webcam]. To use other plugins like \[`@uppy/webcam`]\[@uppy/webcam] with the `<dashboard-modal />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
 ### `<drag-drop />`
 
@@ -159,7 +160,7 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 #### Props
 
-The `<drag-drop />` component supports all `@uppy/drag-drop` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop. 
+The `<drag-drop />` component supports all `@uppy/drag-drop` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop.
 
 ### `<progress-bar />`
 
@@ -176,7 +177,7 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 #### Props
 
-The `<progress-bar />` component supports all `@uppy/progress-bar` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop. 
+The `<progress-bar />` component supports all `@uppy/progress-bar` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop.
 
 ### `<status-bar />`
 
@@ -193,9 +194,10 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 #### Props
 
-The `<status-bar />` component supports all `@uppy/status-bar` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop. 
+The `<status-bar />` component supports all `@uppy/status-bar` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop.
 
 [Vue]: https://vuejs.org
+
 [Nuxt]: https://nuxtjs.org
 
 [`@uppy/webcam`]: /docs/webcam/

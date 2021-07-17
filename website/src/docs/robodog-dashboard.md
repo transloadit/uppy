@@ -72,5 +72,7 @@ Array of mime type wildcards `image/*`, exact mime types `image/jpeg`, or file e
 If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types) attribute will be added to `<input type="file">` fields, so only acceptable files can be selected in the system file dialog.
 
 [dashboard]: /docs/dashboard
+
 [transloadit]: /docs/transloadit
+
 [file picker]: /docs/robodog/picker

@@ -40,7 +40,7 @@ If you are not using a bundler, you can also import Robodog using an HTML script
 
 Robodog has several methods for different use cases.
 
-If you want to have a modal UI that users can use to select files from their local device or from third party sources like Instagram, use the [File Picker API](#File-Picker). This can be used for one-off uploads _outside_ an HTML form, like profile avatars or images to embed in a blog post.
+If you want to have a modal UI that users can use to select files from their local device or from third party sources like Instagram, use the [File Picker API](#File-Picker). This can be used for one-off uploads *outside* an HTML form, like profile avatars or images to embed in a blog post.
 
 If you already have an HTML form, you can use the [Form API](#Form) to add Transloadit's encoding capabilities to it. Files will be uploaded to Transloadit, and the form will submit JSON information about the files and encoding results. You can also optionally show upload progress using Uppy's Status Bar UI, or even use the advanced Dashboard UI so users can import files from third party sources as well.
 
@@ -113,5 +113,7 @@ resultPromise.then((bundle) => {
 <a class="MoreButton" href="/docs/robodog/upload">View Documentation</a>
 
 [transloadit]: https://transloadit.com/
+
 [browserify]: https://browserify.org
+
 [webpack]: https://webpack.js.org

@@ -2,8 +2,7 @@
 
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
-<a href="https://www.npmjs.com/package/@uppy/url"><img src="https://img.shields.io/npm/v/@uppy/url.svg?style=flat-square"></a>
-<img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
+<a href="https://www.npmjs.com/package/@uppy/url"><img src="https://img.shields.io/npm/v/@uppy/url.svg?style=flat-square"></a> <img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
 
 The Url plugin lets users import files from the Internet. Paste any URL and it’ll be added!
 

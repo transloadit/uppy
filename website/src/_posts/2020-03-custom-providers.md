@@ -17,7 +17,6 @@ In this post we will be going through a step by step tutorial on how to develop,
 
 Read more on [Provider Plugins](https://uppy.io/docs/providers/).
 
-
 Creating a custom provider composes of two parts; **Custom Companion Provider** and **Custom Uppy Plugin**
 
 ## Creating a Custom Companion Provider
@@ -28,14 +27,15 @@ On the Companion side, we need to create a Provider that receives the provider r
 
 We'll start off by setting up a minimal express server.
 
-1. Create a folder named "custom-provider" and navigate into it
+1.  Create a folder named "custom-provider" and navigate into it
 
 ```sh
 mkdir custom-provider
 cd custom-provider
 ```
-2. Run `npm init` to setup your `package.json` file
-3. install express, express-session, body-parser, request, uppy and @uppy/companion
+
+2.  Run `npm init` to setup your `package.json` file
+3.  install express, express-session, body-parser, request, uppy and @uppy/companion
 
 ```sh
 npm i -S express express-session body-parser request @uppy/companion uppy
@@ -59,7 +59,7 @@ with all that done, my package.json file looks something like this:
 }
 ```
 
-4. Create a `server/index.js` file within the project and add initiate your express server
+4.  Create a `server/index.js` file within the project and add initiate your express server
 
 ```js
 const express = require('express')
@@ -267,6 +267,7 @@ download ({ id, token }, onData) {
   })
 }
 ```
+
 With all of this put together the entire file would look something like this:
 
 ```js
@@ -516,8 +517,8 @@ uppy.use(Tus, { endpoint: 'https://master.tus.io/files/' })
 
 Now we need to bundle the file so it can be loaded on the browser. To do this, we'd install [budo](https://www.npmjs.com/package/budo):
 
-1. In the root project directory, run `npm install budo -g`.
-2. Create a `babel.config.js` file looking like so:
+1.  In the root project directory, run `npm install budo -g`.
+2.  Create a `babel.config.js` file looking like so:
 
 ```js
 module.exports = (api) => {
@@ -535,7 +536,8 @@ module.exports = (api) => {
   }
 }
 ```
-3. Add an `index.html` file (in the root of the project) that uses a bundle file like so:
+
+3.  Add an `index.html` file (in the root of the project) that uses a bundle file like so:
 
 ```html
 <!DOCTYPE html>
@@ -552,7 +554,7 @@ module.exports = (api) => {
 </html>
 ```
 
-4. Create the bundle file by running `budo client/main.js:bundle.js -- -t babelify`. This will bundle your `client` side work and have it running on a local server. Please check the console log to see on what port the server is running. As at the time of this writing, it defaults to `9966` (URL will be http://localhost:9966/).
+4.  Create the bundle file by running `budo client/main.js:bundle.js -- -t babelify`. This will bundle your `client` side work and have it running on a local server. Please check the console log to see on what port the server is running. As at the time of this writing, it defaults to `9966` (URL will be http://localhost:9966/).
 
 You can now load the URL of your client on your browser to see it running. When I run mine, it looks something like this:
 

@@ -7,7 +7,7 @@ order: 6
 category: "React"
 ---
 
-The `<DashboardModal />` component wraps the [`@uppy/dashboard`][] plugin, allowing control over the modal `open` state using a prop.
+The `<DashboardModal />` component wraps the \[`@uppy/dashboard`]\[@uppy/dashboard] plugin, allowing control over the modal `open` state using a prop.
 
 ## Installation
 
@@ -40,19 +40,21 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 Styles for Provider plugins, like Google Drive and Instagram, are also bundled with Dashboard styles. Styles for other plugins, such as `@uppy/url` and `@uppy/webcam`, are not included. If you are using those, please see their docs and make sure to include styles for them as well.
 
 <!-- Make sure the old name of this section still works -->
+
 <a id="Options"></a>
+
 ## Props
 
-The `<DashboardModal />` component supports most [`@uppy/dashboard`][] options as props. It adds two more:
+The `<DashboardModal />` component supports most \[`@uppy/dashboard`]\[@uppy/dashboard] options as props. It adds two more:
 
- - `open` - Boolean true or false, setting this to `true` opens the modal and setting it to `false` closes it.
- - `onRequestClose` - Callback called when the user attempts to close the modal, either by clicking the close button or by clicking outside the modal (if the `closeModalOnClickOutside` prop is set).
+*   `open` - Boolean true or false, setting this to `true` opens the modal and setting it to `false` closes it.
+*   `onRequestClose` - Callback called when the user attempts to close the modal, either by clicking the close button or by clicking outside the modal (if the `closeModalOnClickOutside` prop is set).
 
 An Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
-The `target={}` prop can be used to mount the Dashboard modal elsewhere in the DOM. If not given, the modal will be mounted at where the component is used. Unlike the raw [`@uppy/dashboard`][] plugin, the `<DashboardModal />` component can _only_ take DOM element objects, not CSS selectors.
+The `target={}` prop can be used to mount the Dashboard modal elsewhere in the DOM. If not given, the modal will be mounted at where the component is used. Unlike the raw \[`@uppy/dashboard`]\[@uppy/dashboard] plugin, the `<DashboardModal />` component can *only* take DOM element objects, not CSS selectors.
 
-To use other plugins like [`@uppy/webcam`][] with the `<DashboardModal />` component, add them to the Uppy instance and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
+To use other plugins like \[`@uppy/webcam`]\[@uppy/webcam] with the `<DashboardModal />` component, add them to the Uppy instance and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
 ```js
 // Do this wherever you initialize Uppy, e.g., in a React component's constructor method.
@@ -119,4 +121,5 @@ class MusicUploadButton extends React.Component {
 ```
 
 [`@uppy/dashboard`]: /docs/dashboard/
+
 [`@uppy/webcam`]: /docs/webcam/
