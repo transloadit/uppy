@@ -10,11 +10,11 @@ cd uppy
 npm install
 ```
 
-Our website's examples section is also our playground, please read the [Local Previews](#Local-previews) section to get up and running.
+Our website’s examples section is also our playground, please read the [Local Previews](#Local-previews) section to get up and running.
 
 ### Requiring files
 
-*   If we are `require()`ing a file from the same subpackage, we can freely use relative imports as long as the required file is under the `src` directory (e.g. to import `@uppy/dashboard/src/utils/hi.js` from `@uppy/dashboard/src/index.js`, use `require('./utils/hi.js')`).
+*   If we are `require()`ing a file from the same subpackage, we can freely use relative imports as long as the required file is under the `src` directory (for example to import `@uppy/dashboard/src/utils/hi.js` from `@uppy/dashboard/src/index.js`, use `require('./utils/hi.js')`).
 *   But if we want to `require()` some file from another subpackage - we should use global @uppy requires, and they should always be in the form of `@uppy/:packageName/(lib instead of src)/(same path).js`
 
 ## Tests
@@ -58,7 +58,7 @@ You can run in several browsers by passing several `-b` flags:
 npm run test:endtoend:local -- -b chrome -b firefox
 ```
 
-When trying to get a specific integration test to pass, it’s not that helpful to continuously run _all_ tests. You can use the `--suite` flag to run tests from a single `./test/endtoend` folder. For example, `--suite thumbnails` will only run the tests from `./test/endtoend/thumbnails`. It can also be joint with one or more `-b` flags.
+When trying to get a specific integration test to pass, it’s not that helpful to continuously run _all_ tests. You can use the `--suite` flag to run tests from a single `./test/endtoend` folder. For example, `--suite thumbnails` will only run the tests from `./test/endtoend/thumbnails`. It can also be used in conjunction with one or more `-b` flags.
 
 ```bash
 npm run test:endtoend:local -- -b chrome --suite thumbnails
@@ -87,8 +87,8 @@ Run
 ngrok http 3020
 ```
 
-Note the ngrok https base URL, e.g. `https://e0c7de09808d.ngrok.io` and
-append `/instagram/redirect` to it, e.g.:
+Note the ngrok https base URL, for example `https://e0c7de09808d.ngrok.io` and
+append `/instagram/redirect` to it, such as:
 
     https://e0c7de09808d.ngrok.io/instagram/redirect
 
