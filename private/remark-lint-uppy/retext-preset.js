@@ -6,7 +6,6 @@ import retextProfanities from 'retext-profanities'
 import retextQuotes from 'retext-quotes'
 import retextSimplify from 'retext-simplify'
 import retextSyntaxMentions from 'retext-syntax-mentions'
-import retextSyntaxUrls from 'retext-syntax-urls'
 
 export default [
   remarkRetext,
@@ -18,6 +17,5 @@ export default [
     .use(retextSimplify, {
       ignore: ['address', 'component', 'function', 'interface', 'maintain', 'request', 'type'],
     })
-    .use(retextSyntaxMentions)
-    .use(retextSyntaxUrls),
+    .use(retextSyntaxMentions),
 ]

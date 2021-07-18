@@ -22,6 +22,8 @@ export default {
     await importDefault("remark-lint-no-shortcut-reference-link"),
     await importDefault("remark-lint-no-undefined-references"),
     await importDefault("remark-lint-no-unused-definitions"),
+    [await importDefault("remark-lint-emphasis-marker"), '_'],
+    await importDefault("remark-lint-strong-marker"),
     await importDefault("./retext-preset.js"),
   ],
 }
