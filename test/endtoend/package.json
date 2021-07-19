@@ -1,0 +1,29 @@
+{
+  "private": true,
+  "devDependencies": {
+    "@wdio/cli": "^7.7.7",
+    "@wdio/local-runner": "^7.7.7",
+    "@wdio/mocha-framework": "^7.7.7",
+    "@wdio/sauce-service": "^7.7.7",
+    "brake": "^1.0.1",
+    "chai": "^4.2.0",
+    "express": "^4.17.1",
+    "glob": "^7.1.6",
+    "http-proxy": "^1.18.1",
+    "minimist": "^1.2.5",
+    "tus-node-server": "^0.3.2",
+    "webdriverio": "^7.7.7"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "scripts": {
+    "test:endtoend:build-ci": "cd ../.. && bash ./bin/endtoend-build-ci",
+    "test:endtoend:build": "cd ../.. && bash ./bin/endtoend-build",
+    "test:endtoend:local": "npm run test:endtoend:build && wdio wdio.local.conf.js",
+    "test:endtoend:providers": "npm run test:endtoend:build && . ./providers/env.sh && wdio wdio.local.conf.js --spec providers/provider.*.test.js",
+    "test:endtoend:prepare-ci": "npm-run-all --parallel --race test:endtoend:registry test:endtoend:build-ci",
+    "test:endtoend:registry": "verdaccio --listen 4002 --config verdaccio.yaml",
+    "test:endtoend": "npm run test:endtoend:prepare-ci && wdio wdio.remote.conf.js"
+  }
+}
