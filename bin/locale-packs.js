@@ -142,11 +142,8 @@ function checkForUnused (fileContents, pluginName, localePack) {
   }
 }
 
-function sortObjectAlphabetically (obj, sortFunc) {
-  return Object.keys(obj).sort(sortFunc).reduce((result, key) => {
-    result[key] = obj[key] // eslint-disable-line no-param-reassign
-    return result
-  }, {})
+function sortObjectAlphabetically (obj) {
+  return Object.fromEntries(Object.entries(obj).sort(([keyA], [keyB]) => keyA.localeCompare(keyB)))
 }
 
 function createTypeScriptLocale (plugin, pluginName) {
