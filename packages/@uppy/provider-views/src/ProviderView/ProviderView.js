@@ -1,12 +1,12 @@
 const { h } = require('preact')
-const AuthView = require('./AuthView')
-const Header = require('./Header')
-const Browser = require('../Browser')
-const LoaderView = require('../Loader')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const findIndex = require('@uppy/utils/lib/findIndex')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
+const AuthView = require('./AuthView')
+const Header = require('./Header')
+const Browser = require('../Browser')
+const LoaderView = require('../Loader')
 const SharedHandler = require('../SharedHandler')
 const CloseWrapper = require('../CloseWrapper')
 
@@ -313,13 +313,24 @@ module.exports = class ProviderView {
 
     this.plugin.setPluginState({ selectedFolders: { ...folders } })
 
+    // eslint-disable-next-line consistent-return
     return this.listAllFiles(folder.requestPath).then((files) => {
       let count = 0
 
-      files.forEach((file) => {
-        const success = this.addFile(file)
-        if (success) count++
+      // If the same folder is added again, we don't want to send
+      // X amount of duplicate file notifications, we want to say
+      // the folder was already added. This checks if all files are duplicate,
+      // if that's the case, we don't add the files.
+      files.forEach(file => {
+        const id = this.providerFileToId(file)
+        if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
+          count++
+        }
       })
+
+      if (count > 0) {
+        files.forEach((file) => this.addFile(file))
+      }
 
       const ids = files.map(this.providerFileToId)
 
@@ -332,7 +343,9 @@ module.exports = class ProviderView {
       let message
 
       if (count === 0) {
-        message = this.plugin.uppy.i18n('folderAlreadyAdded')
+        message = this.plugin.uppy.i18n('folderAlreadyAdded', {
+          folder: folder.name,
+        })
       } else if (files.length) {
         message = this.plugin.uppy.i18n('folderAdded', {
           smart_count: count, folder: folder.name,
@@ -404,7 +417,7 @@ module.exports = class ProviderView {
   }
 
   handleError (error) {
-    const uppy = this.plugin.uppy
+    const { uppy } = this.plugin
     uppy.log(error.toString())
     if (error.isAuthError) {
       return
