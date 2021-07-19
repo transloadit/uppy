@@ -7,14 +7,14 @@ module.exports = (api) => {
   return {
     presets: [
       ['@babel/preset-env', {
-        modules: false,
         loose: true,
         targets,
+        useBuiltIns: false, // Don't add polyfills automatically.
+        // We can uncomment the following line if we start adding polyfills to the non-legacy dist files.
+        // corejs: { version: '3.15', proposals: true },
       }],
     ],
     plugins: [
-      ['@babel/plugin-proposal-class-properties', { loose: true }],
-      '@babel/plugin-transform-object-assign',
       ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
       process.env.IS_RELEASE_BUILD && 'babel-plugin-inline-package-json',
     ].filter(Boolean),
