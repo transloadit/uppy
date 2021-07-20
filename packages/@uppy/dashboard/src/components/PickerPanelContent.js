@@ -23,7 +23,7 @@ function PickerPanelContent (props) {
           type="button"
           onClick={props.hideAllPanels}
         >
-          {props.i18n('done')}
+          {props.i18n('cancel')}
         </button>
       </div>
       <div className="uppy-DashboardContent-panelBody">

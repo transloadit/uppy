@@ -113,9 +113,9 @@ class FileCard extends Component {
             className="uppy-DashboardContent-back"
             type="button"
             title={this.props.i18n('finishEditingFile')}
-            onClick={this.handleSave}
+            onClick={this.handleCancel}
           >
-            {this.props.i18n('done')}
+            {this.props.i18n('cancel')}
           </button>
         </div>
 

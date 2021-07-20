@@ -22,7 +22,14 @@ function EditorPanel (props) {
           type="button"
           onClick={props.hideAllPanels}
         >
-          {props.i18n('done')}
+          {props.i18n('cancel')}
+        </button>
+        <button
+          className="uppy-DashboardContent-save"
+          type="button"
+          onClick={props.saveFileEditor}
+        >
+          {props.i18n('save')}
         </button>
       </div>
       <div className="uppy-DashboardContent-panelBody">
