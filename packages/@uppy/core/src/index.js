@@ -14,7 +14,6 @@ const supportsUploadProgress = require('./supportsUploadProgress')
 const { justErrorsLogger, debugLogger } = require('./loggers')
 const UIPlugin = require('./UIPlugin')
 const BasePlugin = require('./BasePlugin')
-const { version } = require('../package.json')
 
 // Exported from here.
 class RestrictionError extends Error {
@@ -30,7 +29,8 @@ class RestrictionError extends Error {
  * adds/removes files and metadata.
  */
 class Uppy {
-  static VERSION = version
+  // eslint-disable-next-line global-require
+  static VERSION = require('../package.json').version
 
   /**
    * Instantiate Uppy
