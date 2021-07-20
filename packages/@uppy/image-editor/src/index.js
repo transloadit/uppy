@@ -91,21 +91,35 @@ module.exports = class ImageEditor extends Plugin {
     return false
   }
 
-  save = (blob) => {
+  save = () => {
+    const saveBlobCallback = (blob) => {
+      const { currentImage } = this.getPluginState()
+
+      this.uppy.setFileState(currentImage.id, {
+        data: blob,
+        size: blob.size,
+        preview: null,
+      })
+
+      const updatedFile = this.uppy.getFile(currentImage.id)
+      this.uppy.emit('thumbnail:request', updatedFile)
+      this.setPluginState({
+        currentImage: updatedFile,
+      })
+      this.uppy.emit('file-editor:complete', updatedFile)
+    }
+
     const { currentImage } = this.getPluginState()
 
-    this.uppy.setFileState(currentImage.id, {
-      data: blob,
-      size: blob.size,
-      preview: null,
-    })
+    this.cropper.getCroppedCanvas().toBlob(
+      saveBlobCallback,
+      currentImage.type,
+      this.opts.quality
+    )
+  }
 
-    const updatedFile = this.uppy.getFile(currentImage.id)
-    this.uppy.emit('thumbnail:request', updatedFile)
-    this.setPluginState({
-      currentImage: updatedFile,
-    })
-    this.uppy.emit('file-editor:complete', updatedFile)
+  storeCropperInstance = (cropper) => {
+    this.cropper = cropper
   }
 
   selectFile = (file) => {
@@ -139,6 +153,7 @@ module.exports = class ImageEditor extends Plugin {
     return (
       <Editor
         currentImage={currentImage}
+        storeCropperInstance={this.storeCropperInstance}
         save={this.save}
         opts={this.opts}
         i18n={this.i18n}
