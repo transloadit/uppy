@@ -8,6 +8,7 @@ fr_FR.strings = {
   addMore: 'Ajouter d\'autres',
   addMoreFiles: 'Ajouter d\'autres fichiers',
   addingMoreFiles: 'En train d\'ajouter des fichiers',
+  allFilesFromFolderNamed: 'Tous les fichiers du dossier %{name}',
   allowAccessDescription: 'Pour prendre des photos ou enregistrer une vidéo avec votre caméra, veuillez autoriser l\'accès à votre caméra pour ce site.',
   allowAccessTitle: 'Veuillez autoriser l\'accès à votre caméra',
   authenticateWith: 'Se connecter à %{pluginName}',
@@ -93,7 +94,6 @@ fr_FR.strings = {
   retry: 'Réessayer',
   retryUpload: 'Réessayer le téléchargement',
   saveChanges: 'Sauvegarder les modifications',
-  selectAllFilesFromFolderNamed: 'Sélectionner tous les fichiers du dossier %{name}',
   selectFileNamed: 'Sélectionner le fichier %{name}',
   selectX: {
     '0': 'Sélectionner %{smart_count}',
@@ -108,7 +108,6 @@ fr_FR.strings = {
   submitRecordedFile: 'Envoyer la vidéo enregistrée',
   takePicture: 'Prendre une photo',
   timedOut: 'Téléchargement bloqué durant %{seconds} secondes, annulation.',
-  unselectAllFilesFromFolderNamed: 'Désélectionner tous les fichiers du dossier %{name}',
   unselectFileNamed: 'Désélectionner le fichier %{name}',
   upload: 'Télécharger',
   uploadComplete: 'Téléchargement terminé',

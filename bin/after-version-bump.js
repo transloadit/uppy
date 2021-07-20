@@ -15,13 +15,9 @@
 
 const lastCommitMessage = require('last-commit-message')
 const { spawn } = require('child_process')
-const { promisify } = require('util')
+const { readFile, writeFile } = require('fs/promises')
 const once = require('events.once')
 const globby = require('globby')
-const fs = require('fs')
-
-const readFile = promisify(fs.readFile)
-const writeFile = promisify(fs.writeFile)
 
 async function replaceInFile (filename, replacements) {
   let content = await readFile(filename, 'utf8')

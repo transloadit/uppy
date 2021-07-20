@@ -1,10 +1,10 @@
-const Plugin = require('./Plugin')
+const UIPlugin = require('./UIPlugin')
 const Core = require('./index')
 
-describe('Plugin', () => {
+describe('UIPlugin', () => {
   describe('getPluginState', () => {
     it('returns an empty object if no state is available', () => {
-      class Example extends Plugin {}
+      class Example extends UIPlugin {}
       const inst = new Example(new Core(), {})
 
       expect(inst.getPluginState()).toEqual({})
@@ -13,7 +13,7 @@ describe('Plugin', () => {
 
   describe('setPluginState', () => {
     it('applies patches', () => {
-      class Example extends Plugin {}
+      class Example extends UIPlugin {}
       const inst = new Example(new Core(), {})
 
       inst.setPluginState({ a: 1 })

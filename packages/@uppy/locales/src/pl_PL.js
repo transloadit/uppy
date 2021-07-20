@@ -90,7 +90,6 @@ pl_PL.strings = {
   retry: 'Ponów próbę',
   retryUpload: 'Ponów próbę wysyłki',
   saveChanges: 'Zapisz zmiany',
-  selectAllFilesFromFolderNamed: 'Wybierz wszystkie pliki z folderu %{name}',
   selectFileNamed: 'Wybierz plik %{name}',
   selectX: {
     '0': 'Wybierz %{smart_count}',
@@ -102,7 +101,6 @@ pl_PL.strings = {
   stopRecording: 'Zatrzymaj nagrywanie wideo',
   takePicture: 'Zrób zdjęcie',
   timedOut: 'Wysyłka wstrzymana przez %{seconds} sekund, przerywanie.',
-  unselectAllFilesFromFolderNamed: 'Odznacz wszystkie pliki z folderu %{name}',
   unselectFileNamed: 'Odznacz plik %{name}',
   upload: 'Wgrywanie',
   uploadComplete: 'Wgrywanie ukończone',

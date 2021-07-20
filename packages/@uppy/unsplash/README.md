@@ -14,10 +14,10 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const Unsplash = require('@uppy/unsplash')
+import Uppy from '@uppy/core'
+import Unsplash from '@uppy/unsplash'
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Unsplash, {
   // Options
 })

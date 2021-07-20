@@ -105,7 +105,6 @@ nb_NO.strings = {
   save: 'Lagre',
   saveChanges: 'Lagre endringer',
   searchImages: 'Søk etter bilder',
-  selectAllFilesFromFolderNamed: 'Velg alle filer fra mappen %{name}',
   selectFileNamed: 'Velg fil %{name}',
   selectX: {
     0: 'Velg %{smart_count}',
@@ -121,7 +120,6 @@ nb_NO.strings = {
   submitRecordedFile: 'Send inn opptak',
   takePicture: 'Ta bilde',
   timedOut: 'Opplasting stoppet for %{seconds} sekunder, avbryter.',
-  unselectAllFilesFromFolderNamed: 'Fjern markering for alle filer i mappen %{name}',
   unselectFileNamed: 'Fjern markering for %{name}',
   upload: 'Last opp',
   uploadComplete: 'Opplasting ferdig',

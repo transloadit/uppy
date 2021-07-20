@@ -10,12 +10,8 @@ const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 const SharedHandler = require('../SharedHandler')
 const CloseWrapper = require('../CloseWrapper')
 
-// location.origin does not exist in IE
 function getOrigin () {
-  if ('origin' in location) {
-    return location.origin // eslint-disable-line compat/compat
-  }
-  return `${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}`
+  return location.origin
 }
 
 /**

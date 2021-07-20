@@ -1,2 +1,2 @@
-import ProgressBar = require('../')
+// import ProgressBar from '..'
 // TODO implement

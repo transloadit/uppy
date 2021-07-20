@@ -90,7 +90,6 @@ zh_TW.strings = {
   retry: '重試',
   retryUpload: '重試上傳',
   saveChanges: '儲存變更',
-  selectAllFilesFromFolderNamed: '選擇資料夾 %{name} 中的所有檔案',
   selectFileNamed: '選擇檔案 %{name}',
   selectX: {
     '0': '選擇%{smart_count}',
@@ -102,7 +101,6 @@ zh_TW.strings = {
   stopRecording: '停止錄影',
   takePicture: '拍照',
   timedOut: '上傳已經停滯%{seconds}秒，中止上傳',
-  unselectAllFilesFromFolderNamed: '取消選擇資料夾 %{name} 中的所有檔案',
   unselectFileNamed: '取消選擇檔案 %{name}',
   upload: '上傳',
   uploadComplete: '上傳完成',

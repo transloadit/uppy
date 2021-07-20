@@ -84,7 +84,6 @@ vi_VN.strings = {
   retry: 'Thử lại',
   retryUpload: 'Tải lên lại',
   saveChanges: 'Lưu các thay đổi',
-  selectAllFilesFromFolderNamed: 'Chọn mọi tập tin từ thư mục %{name}',
   selectFileNamed: 'Chọn tập tin %{name}',
   selectX: {
     '0': 'Chọn %{smart_count}',
@@ -96,7 +95,6 @@ vi_VN.strings = {
   stopRecording: 'Dừng thu hình',
   takePicture: 'Chụp ảnh',
   timedOut: 'Tải lên bị đình trệ %{seconds} giây, đang huỷ.',
-  unselectAllFilesFromFolderNamed: ' Bỏ chọn mọi tập tin từ thư mục %{name}',
   unselectFileNamed: 'Bỏ chọn tập tin %{name}',
   upload: 'Tải lên',
   uploadComplete: 'Tải lên hoàn tất',

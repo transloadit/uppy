@@ -13,15 +13,15 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const StatusBar = require('@uppy/status-bar')
+import Uppy from '@uppy/core'
+import StatusBar from '@uppy/status-bar'
 
 const uppy = new Uppy()
 uppy.use(StatusBar, {
   target: 'body',
   hideUploadButton: false,
   showProgressDetails: false,
-  hideAfterFinish: true
+  hideAfterFinish: true,
 })
 ```
 

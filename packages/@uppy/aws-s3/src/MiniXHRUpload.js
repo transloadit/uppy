@@ -6,6 +6,7 @@ const EventTracker = require('@uppy/utils/lib/EventTracker')
 const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
+const { internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 
 // See XHRUpload
 function buildResponseError (xhr, error) {
@@ -43,7 +44,7 @@ module.exports = class MiniXHRUpload {
       ...opts,
     }
 
-    this.requests = opts.__queue
+    this.requests = opts[internalRateLimitedQueue]
     this.uploaderEvents = Object.create(null)
     this.i18n = opts.i18n
   }

@@ -9,6 +9,7 @@ const svgPresentationAttributes = [
 ]
 
 module.exports = {
+  root: true,
   extends: ['transloadit'],
   env: {
     es6: true,
@@ -24,6 +25,7 @@ module.exports = {
   plugins: [
     '@babel/eslint-plugin',
     'jest',
+    'markdown',
     'node',
     'prefer-import',
     'promise',
@@ -132,6 +134,7 @@ module.exports = {
         packages: path.resolve(__dirname, 'packages'),
       },
     },
+    'import/core-modules': ['tsd'],
     react: {
       pragma: 'h',
     },
@@ -210,6 +213,76 @@ module.exports = {
         'import/no-extraneous-dependencies': ['error', {
           peerDependencies: true,
         }],
+      },
+    },
+
+    {
+      files: ['**/*.md', '*.md'],
+      processor: 'markdown/markdown',
+    },
+    {
+      files: ['**/*.md/*.js', '**/*.md/*.javascript'],
+      parserOptions: {
+        sourceType: 'module',
+      },
+      rules: {
+        'react/destructuring-assignment': 'off',
+        'no-restricted-globals': [
+          'error',
+          {
+            name: '__filename',
+            message: 'Use import.meta.url instead',
+          },
+          {
+            name: '__dirname',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'exports',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'module',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'require',
+            message: 'Use import instead',
+          },
+        ],
+      },
+    },
+    {
+      files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript'],
+      excludedFiles: ['examples/angular-example/**/*.ts', 'packages/@uppy/angular/**/*.ts'],
+      parser: '@typescript-eslint/parser',
+      plugins: [
+        '@typescript-eslint',
+      ],
+      extends: [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/eslint-recommended',
+        'plugin:@typescript-eslint/recommended',
+      ],
+      rules: {
+        'import/prefer-default-export': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
+    {
+      files: ['**/*.md/*.*'],
+      rules: {
+        'import/no-extraneous-dependencies': 'off',
+        'import/no-unresolved': 'off',
+        'no-console': 'off',
+        'no-undef': 'off',
+        'no-unused-vars': 'off',
+      },
+    },
+    {
+      files: ['**/react/*.md/*.js', '**/react.md/*.js', '**/react-*.md/*.js'],
+      settings: {
+        react: { pragma: 'React' },
       },
     },
   ],

@@ -103,7 +103,6 @@ th_TH.strings = {
   rotate: 'หมุน',
   save: 'บันทึก',
   saveChanges: 'บันทึกการแก้ไข',
-  selectAllFilesFromFolderNamed: 'เลือกไฟล์ทั้งหมดจากโฟลเดอร์ %{name}',
   selectFileNamed: 'เลือกไฟล์ %{name}',
   selectX: {
     '0': 'เลือก %{smart_count}',
@@ -119,7 +118,6 @@ th_TH.strings = {
   submitRecordedFile: 'ส่งวิดีโอที่ถ่าย',
   takePicture: 'ถ่ายภาพ',
   timedOut: 'ยกเลิก, ไม่สามารถอัพโหลดไฟล์ได้เป็นเวลา %{seconds} วินาที',
-  unselectAllFilesFromFolderNamed: 'ยกเลิกการเลือกไฟล์ทั้งหมดจากโฟลเดอร์ %{name}',
   unselectFileNamed: 'ยกเลิกการเลือกไฟล์ %{name}',
   upload: 'อัพโหลด',
   uploadComplete: 'อัพโหลดไฟล์สำเร็จ',

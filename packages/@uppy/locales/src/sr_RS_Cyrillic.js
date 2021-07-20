@@ -132,8 +132,6 @@ sr_RS_Cyrillic.strings = {
     '1': 'Изаберите датотеке. Најмање: %{smart_count}',
     '2': 'Изаберите датотеке. Најмање: %{smart_count}',
   },
-  selectAllFilesFromFolderNamed: 'Изаберите све датотеке из фолдера %{name}',
-  unselectAllFilesFromFolderNamed: 'Искључите све датотеке из фолдера %{name}',
   selectFileNamed: 'Изаберите фајл %{name}',
   unselectFileNamed: 'Искључите фајл %{name}',
   openFolderNamed: 'Отвори фолдер %{name}',

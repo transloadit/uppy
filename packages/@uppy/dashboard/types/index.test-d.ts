@@ -1,21 +1,21 @@
 import { expectType, expectError } from 'tsd'
-import Uppy = require('@uppy/core')
-import Dashboard = require('../')
+import Uppy from '@uppy/core'
+import Dashboard from '..'
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = new Uppy()
   uppy.use(Dashboard, {
-    target: 'body'
+    target: 'body',
   })
 
-  const plugin = uppy.getPlugin('Dashboard') as Dashboard
+  const plugin = uppy.getPlugin<Dashboard>('Dashboard')
   plugin.openModal()
   expectType<boolean>(plugin.isModalOpen())
   plugin.closeModal()
 }
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = new Uppy()
   uppy.use(Dashboard, {
     width: '100%',
     height: 700,
@@ -24,7 +24,7 @@ import Dashboard = require('../')
       {
         id: 'license',
         name: 'License',
-        placeholder: 'Creative Commons, Apache 2.0, ...'
+        placeholder: 'Creative Commons, Apache 2.0, ...',
       },
       {
         id: 'public',
@@ -44,41 +44,41 @@ import Dashboard = require('../')
             }
           })
           */
-        }
-      }
-    ]
+        },
+      },
+    ],
   })
 }
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = new Uppy()
   uppy.use(Dashboard, {
     locale: {
       strings: {
         // Dashboard string
         addMoreFiles: 'yaddayadda',
         // StatusBar string
-        uploading: '^^^^'
-      }
-    }
+        uploading: '^^^^',
+      },
+    },
   })
   expectError(uppy.use(Dashboard, {
     locale: {
       strings: {
-        somethingThatDoesNotExist: 'wrong'
-      }
-    }
+        somethingThatDoesNotExist: 'wrong',
+      },
+    },
   }))
   const wrongType = 1234
   expectError(uppy.use(Dashboard, {
     locale: {
       strings: {
-        addMoreFiles: wrongType
-      }
-    }
+        addMoreFiles: wrongType,
+      },
+    },
   }))
 }
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = new Uppy()
   expectError(uppy.use(Dashboard, { height: {} }))
 }

@@ -1,6 +1,6 @@
 const Translator = require('@uppy/utils/lib/Translator')
 const hasProperty = require('@uppy/utils/lib/hasProperty')
-const { Plugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 const Tus = require('@uppy/tus')
 const Assembly = require('./Assembly')
 const Client = require('./Client')
@@ -20,12 +20,11 @@ const COMPANION = 'https://api2.transloadit.com/companion'
 const ALLOWED_COMPANION_PATTERN = /\.transloadit\.com$/
 // Regex used to check if a Companion address is run by Transloadit.
 const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
-const TL_UPPY_SERVER = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/uppy-server/
 
 /**
  * Upload files to Transloadit using Tus.
  */
-module.exports = class Transloadit extends Plugin {
+module.exports = class Transloadit extends BasePlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -165,19 +164,6 @@ module.exports = class Transloadit extends Plugin {
     // We only replace the hostname for Transloadit's companions, so that
     // people can also self-host them while still using Transloadit for encoding.
     let remote = file.remote
-    if (file.remote && TL_UPPY_SERVER.test(file.remote.companionUrl)) {
-      const err = new Error(
-        'The https://api2.transloadit.com/uppy-server endpoint was renamed to '
-        + 'https://api2.transloadit.com/companion, please update your `companionUrl` '
-        + 'options accordingly.'
-      )
-      // Explicitly log this error here because it is caught by the `createAssembly`
-      // Promise further along.
-      // That's fine, but createAssembly only shows the informer, we need something a
-      // little more noisy.
-      this.uppy.log(err)
-      throw err
-    }
 
     if (file.remote && TL_COMPANION.test(file.remote.companionUrl)) {
       const newHost = status.companion_url
@@ -421,10 +407,7 @@ module.exports = class Transloadit extends Plugin {
   _onCancelAll () {
     const { uploadsAssemblies } = this.getPluginState()
 
-    const assemblyIDs = Object.keys(uploadsAssemblies).reduce((acc, uploadID) => {
-      acc.push(...uploadsAssemblies[uploadID])
-      return acc
-    }, [])
+    const assemblyIDs = Object.values(uploadsAssemblies)
 
     const cancelPromises = assemblyIDs.map((assemblyID) => {
       const assembly = this.getAssembly(assemblyID)
@@ -597,16 +580,6 @@ module.exports = class Transloadit extends Plugin {
       return assembly
     }
 
-    // TODO Do we still need this for anything…?
-    // eslint-disable-next-line no-unused-vars
-    const connected = new Promise((resolve, reject) => {
-      assembly.once('connect', resolve)
-      assembly.once('status', resolve)
-      assembly.once('error', reject)
-    }).then(() => {
-      this.uppy.log('[Transloadit] Socket is ready')
-    })
-
     assembly.connect()
     return assembly
   }
@@ -659,25 +632,23 @@ module.exports = class Transloadit extends Plugin {
     const files = fileIDs.map((id) => this.uppy.getFile(id))
     const assemblyOptions = new AssemblyOptions(files, this.opts)
 
-    return assemblyOptions.build().then(
-      (assemblies) => Promise.all(
-        assemblies.map(createAssembly)
-      ).then((createdAssemblies) => {
+    return assemblyOptions.build()
+      .then((assemblies) => Promise.all(assemblies.map(createAssembly)))
+      .then((createdAssemblies) => {
         const assemblyIDs = createdAssemblies.map(assembly => assembly.status.assembly_id)
         this._createAssemblyWatcher(assemblyIDs, fileIDs, uploadID)
-        createdAssemblies.map(assembly => this._connectAssembly(assembly))
-      }),
+        return Promise.all(createdAssemblies.map(assembly => this._connectAssembly(assembly)))
+      })
       // If something went wrong before any Assemblies could be created,
       // clear all processing state.
-      (err) => {
+      .catch((err) => {
         fileIDs.forEach((fileID) => {
           const file = this.uppy.getFile(fileID)
           this.uppy.emit('preprocess-complete', file)
           this.uppy.emit('upload-error', file, err)
         })
         throw err
-      }
-    )
+      })
   }
 
   _afterUpload (fileIDs, uploadID) {
@@ -862,5 +833,4 @@ module.exports = class Transloadit extends Plugin {
 }
 
 module.exports.COMPANION = COMPANION
-module.exports.UPPY_SERVER = COMPANION
 module.exports.COMPANION_PATTERN = ALLOWED_COMPANION_PATTERN

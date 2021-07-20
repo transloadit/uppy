@@ -14,8 +14,8 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const Dropbox = require('@uppy/dropbox')
+import Uppy from '@uppy/core'
+import Dropbox from '@uppy/dropbox'
 
 const uppy = new Uppy()
 uppy.use(Dropbox, {

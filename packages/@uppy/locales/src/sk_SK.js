@@ -107,7 +107,6 @@ sk_SK.strings = {
   save: 'Uložiť',
   saveChanges: 'Uložiť zmeny',
   searchImages: 'Vyhľadajte obrázky',
-  selectAllFilesFromFolderNamed: 'Vybrať všetky súbory zo zložky %{name}',
   selectFileNamed: 'Vybrať súbor %{name}',
   selectX: {
     '0': 'Vybrať %{smart_count}',
@@ -123,7 +122,6 @@ sk_SK.strings = {
   submitRecordedFile: 'Odoslať nahraté video',
   takePicture: 'Urobiť fotku',
   timedOut: 'Nahrávanie bolo prerušené na %{seconds}, prerušuje sa.',
-  unselectAllFilesFromFolderNamed: 'Zrušiť výber všetkých súborov zo zložky %{name}',
   unselectFileNamed: 'Zrušiť výber súboru %{name}',
   upload: 'Nahrať',
   uploadComplete: 'Nahrávanie dokončené',

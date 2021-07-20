@@ -23,7 +23,6 @@
   "dependencies": {
     "@uppy/utils": "file:../utils",
     "namespace-emitter": "^2.0.1",
-    "qs-stringify": "^1.1.0",
-    "url-parse": "^1.4.7"
+    "qs-stringify": "^1.1.0"
   }
 }

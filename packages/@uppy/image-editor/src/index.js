@@ -1,9 +1,9 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const Editor = require('./Editor')
 const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
 
-module.exports = class ImageEditor extends Plugin {
+module.exports = class ImageEditor extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {

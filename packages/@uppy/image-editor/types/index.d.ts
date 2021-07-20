@@ -1,28 +1,26 @@
-import Uppy = require('@uppy/core')
-import ImageEditorLocale = require('./generatedLocale')
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import ImageEditorLocale from './generatedLocale'
 
-declare module ImageEditor {
-  type Actions = {
-    revert: boolean
-    rotate: boolean
-    granularRotate: boolean
-    flip: boolean
-    zoomIn: boolean
-    zoomOut: boolean
-    cropSquare: boolean
-    cropWidescreen: boolean
-    cropWidescreenVertical: boolean
-  }
-
-  export interface ImageEditorOptions extends Uppy.PluginOptions {
-    cropperOptions?: object
-    actions?: Actions
-    quality?: number
-    target?: Uppy.PluginTarget
-    locale?: ImageEditorLocale
-  }
+type Actions = {
+  revert: boolean
+  rotate: boolean
+  granularRotate: boolean
+  flip: boolean
+  zoomIn: boolean
+  zoomOut: boolean
+  cropSquare: boolean
+  cropWidescreen: boolean
+  cropWidescreenVertical: boolean
 }
 
-declare class ImageEditor extends Uppy.Plugin<ImageEditor.ImageEditorOptions> {}
+export interface ImageEditorOptions extends PluginOptions {
+  cropperOptions?: Record<string, unknown>
+  actions?: Actions
+  quality?: number
+  target?: PluginTarget
+  locale?: ImageEditorLocale
+}
 
-export = ImageEditor
+declare class ImageEditor extends UIPlugin<ImageEditorOptions> {}
+
+export default ImageEditor

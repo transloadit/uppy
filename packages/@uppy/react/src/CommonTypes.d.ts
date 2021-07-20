@@ -1,7 +1,4 @@
-import UppyCore = require('@uppy/core');
-
-export type Uppy = UppyCore.Uppy
-export type Locale = UppyCore.Locale
+import type { Uppy } from '@uppy/core'
 
 // Helper to exclude a key
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>

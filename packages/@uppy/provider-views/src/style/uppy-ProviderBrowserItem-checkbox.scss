@@ -1,4 +1,4 @@
-.uppy-ProviderBrowserItem-fakeCheckbox {
+.uppy-ProviderBrowserItem-checkbox {
   position: relative;
   cursor: pointer;
   flex-shrink: 0;
@@ -29,7 +29,7 @@
   }
 }
 
-.uppy-ProviderBrowserItem-fakeCheckbox--is-checked {
+.uppy-ProviderBrowserItem-checkbox--is-checked {
   [data-uppy-theme="dark"] & {
     background-color: $gray-800;
   }

@@ -132,8 +132,6 @@ tr_TR.strings = {
     '1': 'En az %{smart_count} dosya seçmelisin',
     '2': 'En az %{smart_count} dosya seçmelisin',
   },
-  selectAllFilesFromFolderNamed: 'Klasördeki tüm dosyaları seç %{name}',
-  unselectAllFilesFromFolderNamed: 'Klasördeki tüm dosyaların seçimini kaldır %{name}',
   selectFileNamed: 'Dosya Seç %{name}',
   unselectFileNamed: 'Dosya seçimini kaldır %{name}',
   openFolderNamed: 'Açık dosya %{name}',

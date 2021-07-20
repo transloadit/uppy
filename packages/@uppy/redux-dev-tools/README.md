@@ -12,8 +12,8 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const ReduxDevTools = require('uppy/redux-dev-tools')
+import Uppy from '@uppy/core'
+import ReduxDevTools from 'uppy/redux-dev-tools'
 
 const uppy = new Uppy()
 uppy.use(ReduxDevTools)

@@ -81,7 +81,6 @@ da_DK.strings = {
   retry: 'Forsøg igen',
   retryUpload: 'Forsøg upload igen',
   saveChanges: 'Gem ændringer',
-  selectAllFilesFromFolderNamed: 'Vælg alle filer fra mappen %{name}',
   selectFileNamed: 'Vælg fil %{name}',
   selectX: {
     '0': 'Vælg %{smart_count}',
@@ -93,7 +92,6 @@ da_DK.strings = {
   stopRecording: 'Stop video optagelse',
   takePicture: 'Tag et billede',
   timedOut: 'Upload gået i stå for %{seconds} sekunder, afbryder.',
-  unselectAllFilesFromFolderNamed: 'Afmarker alle filer fra mappen %{name}',
   unselectFileNamed: 'Afmarker filen %{name}',
   upload: 'Upload',
   uploadComplete: 'Upload færdig',

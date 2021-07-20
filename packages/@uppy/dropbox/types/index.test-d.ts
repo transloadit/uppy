@@ -1,2 +1,2 @@
-import Dropbox = require('../')
+// import Dropbox from '..'
 // TODO implement

@@ -88,7 +88,6 @@ is_IS.strings = {
   retry: 'Reyna aftur',
   retryUpload: 'Reyna upphölun aftur',
   saveChanges: 'Vista breytingar',
-  selectAllFilesFromFolderNamed: 'Velja allar skrár í möppu %{name}',
   selectFileNamed: 'Velja skrá %{name}',
   selectX: {
     '0': 'Velja %{smart_count}',
@@ -100,7 +99,6 @@ is_IS.strings = {
   stopRecording: 'Stöðva myndbandsupptöku',
   takePicture: 'Taka mynd',
   timedOut: 'Upphölun tafin um %{seconds} sekúndur, hætti við.',
-  unselectAllFilesFromFolderNamed: 'Afvelja allar skrár í möppu %{name}',
   unselectFileNamed: 'Afvelja skrá %{name}',
   upload: 'Upphala',
   uploadComplete: 'Upphölun lokið',

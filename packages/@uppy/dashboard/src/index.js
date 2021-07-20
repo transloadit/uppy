@@ -1,5 +1,5 @@
 const { h } = require('preact')
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const DashboardUI = require('./components/Dashboard')
 const StatusBar = require('@uppy/status-bar')
@@ -11,7 +11,6 @@ const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const getTextDirection = require('@uppy/utils/lib/getTextDirection')
 const trapFocus = require('./utils/trapFocus')
 const cuid = require('cuid')
-const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const createSuperFocus = require('./utils/createSuperFocus')
 const memoize = require('memoize-one').default || require('memoize-one')
 const FOCUSABLE_ELEMENTS = require('@uppy/utils/lib/FOCUSABLE_ELEMENTS')
@@ -39,7 +38,7 @@ function defaultPickerIcon () {
 /**
  * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
-module.exports = class Dashboard extends Plugin {
+module.exports = class Dashboard extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -120,7 +119,7 @@ module.exports = class Dashboard extends Plugin {
     const defaultOptions = {
       target: 'body',
       metaFields: [],
-      trigger: '#uppy-select-files',
+      trigger: null,
       inline: false,
       width: 750,
       height: 550,
@@ -128,7 +127,7 @@ module.exports = class Dashboard extends Plugin {
       thumbnailType: 'image/jpeg',
       waitForThumbnailsBeforeUpload: false,
       defaultPickerIcon,
-      showLinkToFileUploadResult: true,
+      showLinkToFileUploadResult: false,
       showProgressDetails: false,
       hideUploadButton: false,
       hideCancelButton: false,
@@ -500,7 +499,8 @@ module.exports = class Dashboard extends Plugin {
     clearTimeout(this.makeDashboardInsidesVisibleAnywayTimeout)
   }
 
-  // Records whether we have been interacting with uppy right now, which is then used to determine whether state updates should trigger a refocusing.
+  // Records whether we have been interacting with uppy right now,
+  // which is then used to determine whether state updates should trigger a refocusing.
   recordIfFocusedOnUppyRecently = (event) => {
     if (this.el.contains(event.target)) {
       this.ifFocusedOnUppyRecently = true
@@ -870,53 +870,20 @@ module.exports = class Dashboard extends Plugin {
   render = (state) => {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
+    const {
+      newFiles,
+      uploadStartedFiles,
+      completeFiles,
+      erroredFiles,
+      inProgressFiles,
+      inProgressNotPausedFiles,
+      processingFiles,
 
-    // TODO: move this to Core, to share between Status Bar and Dashboard
-    // (and any other plugin that might need it, too)
-    const newFiles = Object.keys(files).filter((file) => {
-      return !files[file].progress.uploadStarted
-    })
-
-    const uploadStartedFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadStarted
-    })
-
-    const pausedFiles = Object.keys(files).filter((file) => {
-      return files[file].isPaused
-    })
-
-    const completeFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadComplete
-    })
-
-    const erroredFiles = Object.keys(files).filter((file) => {
-      return files[file].error
-    })
-
-    const inProgressFiles = Object.keys(files).filter((file) => {
-      return !files[file].progress.uploadComplete
-             && files[file].progress.uploadStarted
-    })
-
-    const inProgressNotPausedFiles = inProgressFiles.filter((file) => {
-      return !files[file].isPaused
-    })
-
-    const processingFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.preprocess || files[file].progress.postprocess
-    })
-
-    const isUploadStarted = uploadStartedFiles.length > 0
-
-    const isAllComplete = state.totalProgress === 100
-      && completeFiles.length === Object.keys(files).length
-      && processingFiles.length === 0
-
-    const isAllErrored = isUploadStarted
-      && erroredFiles.length === uploadStartedFiles.length
-
-    const isAllPaused = inProgressFiles.length !== 0
-      && pausedFiles.length === inProgressFiles.length
+      isUploadStarted,
+      isAllComplete,
+      isAllErrored,
+      isAllPaused,
+    } = this.uppy.getObjectOfFilesPerState()
 
     const acquirers = this._getAcquirers(pluginState.targets)
     const progressindicators = this._getProgressIndicators(pluginState.targets)
@@ -1069,11 +1036,13 @@ module.exports = class Dashboard extends Plugin {
     }
 
     const { target } = this.opts
+
     if (target) {
       this.mount(target, this)
     }
 
     const plugins = this.opts.plugins || []
+
     plugins.forEach((pluginID) => {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) {

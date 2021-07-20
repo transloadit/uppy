@@ -132,8 +132,6 @@ fa_IR.strings = {
     '1': 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید',
     '2': 'می‌بایست حداقل %{smart_count} فایل انتخاب کنید',
   },
-  selectAllFilesFromFolderNamed: 'همه فایل ها را از پوشه انتخاب کنید %{name}',
-  unselectAllFilesFromFolderNamed: 'همه فایل ها را از پوشه حذف کنید %{name}',
   selectFileNamed: 'فایل را انتخاب کنید %{name}',
   unselectFileNamed: 'لغو انتخاب پرونده %{name}',
   openFolderNamed: 'پوشه باز کنید %{name}',

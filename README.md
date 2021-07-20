@@ -28,12 +28,12 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 Code used in the above example:
 
 ```js
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const GoogleDrive = require('@uppy/google-drive')
-const Instagram = require('@uppy/instagram')
-const Webcam = require('@uppy/webcam')
-const Tus = require('@uppy/tus')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import GoogleDrive from '@uppy/google-drive'
+import Instagram from '@uppy/instagram'
+import Webcam from '@uppy/webcam'
+import Tus from '@uppy/tus'
 
 const uppy = new Uppy({ autoProceed: false })
   .use(Dashboard, { trigger: '#select-files' })
@@ -155,31 +155,43 @@ The ⓒ mark means that [`@uppy/companion`](https://uppy.io/docs/companion), a s
   <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
 </a>
 
-We aim to support IE11 and recent versions of Safari, Edge, Chrome, Firefox and Opera.
+We aim to support recent versions of Safari, Edge, Chrome, Firefox and Opera.
 
-We still run end-to-end tests with IE10, but we are not actively supporting it or fixing visual / minor issues.
+We still provide a bundle which should work on IE11, but we are not running tests on it.
 
 ### Polyfills
 
-Uppy heavily uses Promises. If your target environment [does not support Promises](https://caniuse.com/#feat=promises), use a polyfill like `es6-promise` before initializing Uppy.
+Here's a list of polyfills you'll need to include to make Uppy work in older browsers, such as IE11:
 
-When using remote providers like Google Drive or Dropbox, the Fetch API is used. If your target environment does not support the [Fetch API](https://caniuse.com/#feat=fetch), use a polyfill like `whatwg-fetch` before initializing Uppy. The Fetch API polyfill must be loaded _after_ the Promises polyfill, because Fetch uses Promises.
+- [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
+- [core-js](https://github.com/zloirock/core-js)
+- [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
+- [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
+- [whatwg-fetch](https://github.com/github/fetch)
 
-With a module bundler, you can use the required polyfills like so:
+If you're using a bundler, you need import them before Uppy:
 
-```shell
-npm install es6-promise whatwg-fetch
-```
 ```js
-require('es6-promise/auto')
-require('whatwg-fetch')
-const Uppy = require('@uppy/core')
+import 'core-js'
+import 'whatwg-fetch'
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
+// Order matters: AbortController needs fetch which needs Promise (provided by core-js).
+
+import 'md-gum-polyfill'
+import ResizeObserver from 'resize-observer-polyfill'
+
+window.ResizeObserver ??= ResizeObserver
+
+export { default } from '@uppy/core'
+export * from '@uppy/core'
 ```
 
-If you're using Uppy from CDN, `es6-promise` and `whatwg-fetch` are already included in the bundle, so no need to include anything additionally:
+If you're using Uppy from CDN, those polyfills are already included in the legacy
+bundle, so no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v1.30.0/uppy.min.js"></script>
+<script nomodule src="https://releases.transloadit.com/uppy/v2.0.0/uppy.legacy.min.js"></script>
+<script type="module">import"https://releases.transloadit.com/uppy/v2.0.0/uppy.min.js";</script>
 ```
 
 ## FAQ

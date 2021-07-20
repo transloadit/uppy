@@ -1,7 +1,7 @@
-import { Uppy, Plugin } from '@uppy/core';
+import { Uppy, UIPlugin } from '@uppy/core';
 import { ElementRef, SimpleChanges } from '@angular/core';
 
-export abstract class UppyAngularWrapper<PluginType extends Plugin  = Plugin> {
+export abstract class UppyAngularWrapper<PluginType extends UIPlugin  = UIPlugin> {
     abstract props;
     abstract el: ElementRef
     abstract uppy: Uppy;
