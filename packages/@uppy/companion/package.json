@@ -104,7 +104,7 @@
     ]
   },
   "scripts": {
-    "build": "tsc --skipLibCheck -p .",
+    "build": "tsc -p .",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "npm run build",
     "start": "node ./lib/standalone/start-server.js",

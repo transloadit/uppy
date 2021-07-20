@@ -156,29 +156,25 @@ We still run end to end tests with IE10, but we are not actively supporting it o
 
 ### Polyfills
 
-Uppy heavily uses Promises. If your target environment [does not support Promises](https://caniuse.com/#feat=promises), use a polyfill like `es6-promise` before initialising Uppy.
+Uppy heavily uses Promises. If your target environment [does not support Promises](https://caniuse.com/#feat=promises), use a polyfill like `core-js` before initialising Uppy.
 
 When using remote providers like Google Drive or Dropbox, the Fetch API is used. If your target environment does not support the [Fetch API](https://caniuse.com/#feat=fetch), use a polyfill like `whatwg-fetch` before initialising Uppy. The Fetch API polyfill must be loaded _after_ the Promises polyfill, because Fetch uses Promises.
 
 With a module bundler, you can use the required polyfills like so:
 
 ```shell
-npm install es6-promise whatwg-fetch abortcontroller-polyfill math-log2 md-gum-polyfill resize-observer-polyfill symbol-es6 url-polyfill
+npm install core-js whatwg-fetch abortcontroller-polyfill md-gum-polyfill resize-observer-polyfill
 ```
 
 ```js
-import 'es6-promise/auto'
+import 'core-js'
 import 'whatwg-fetch'
 import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
-// Order matters: AbortController needs fetch which needs Promise.
+// Order matters: AbortController needs fetch which needs Promise (provided by core-js).
 
-import mathLog2 from 'math-log2'
 import 'md-gum-polyfill'
 import ResizeObserver from 'resize-observer-polyfill'
-import 'symbol-es6'
-import 'url-polyfill'
 
-Math.log2 ??= mathLog2
 window.ResizeObserver ??= ResizeObserver
 
 export { default } from '@uppy/core'
@@ -188,5 +184,5 @@ export * from '@uppy/core'
 If you're using Uppy from CDN, those polyfills are already included in the bundle, no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v1.30.0/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v1.30.0/uppy.legacy.min.js"></script>
 ```

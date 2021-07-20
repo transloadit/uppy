@@ -164,29 +164,22 @@ We still provide a bundle which should work on IE11, but we are not running test
 Here's a list of polyfills you'll need to include to make Uppy work in older browsers, such as IE11:
 
 - [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
-- [es6-promise](https://github.com/stefanpenner/es6-promise)
-- [math-log2](https://github.com/sindresorhus/math-log2)
+- [core-js](https://github.com/zloirock/core-js)
 - [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
 - [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
-- [symbol-es6](https://github.com/rousan/symbol-es6)
-- [url-polyfill](https://github.com/lifaon74/url-polyfill)
 - [whatwg-fetch](https://github.com/github/fetch)
 
 If you're using a bundler, you need import them before Uppy:
 
 ```js
-import 'es6-promise/auto'
+import 'core-js'
 import 'whatwg-fetch'
 import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
-// Order matters: AbortController needs fetch which needs Promise.
+// Order matters: AbortController needs fetch which needs Promise (provided by core-js).
 
-import mathLog2 from 'math-log2'
 import 'md-gum-polyfill'
 import ResizeObserver from 'resize-observer-polyfill'
-import 'symbol-es6'
-import 'url-polyfill'
 
-Math.log2 ??= mathLog2
 window.ResizeObserver ??= ResizeObserver
 
 export { default } from '@uppy/core'
