@@ -40,7 +40,7 @@ module.exports = class ScreenCapture extends Plugin {
       strings: {
         startCapturing: 'Begin screen capturing',
         stopCapturing: 'Stop screen capturing',
-        submitRecordedFile: 'Submit captured video',
+        submitRecordedFile: 'Submit recorded file',
         streamActive: 'Stream active',
         streamPassive: 'Stream passive',
         micDisabled: 'Microphone access denied by user',

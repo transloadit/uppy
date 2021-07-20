@@ -14,7 +14,6 @@ module.exports = class ImageEditor extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        save: 'Save',
         revert: 'Revert',
         rotate: 'Rotate',
         zoomIn: 'Zoom in',
