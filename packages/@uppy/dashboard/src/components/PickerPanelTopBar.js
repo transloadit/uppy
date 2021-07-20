@@ -26,7 +26,7 @@ function getUploadingState (isAllErrored, isAllComplete, isAllPaused, files = {}
   let state = uploadStates.STATE_WAITING
   const fileIDs = Object.keys(files)
   for (let i = 0; i < fileIDs.length; i++) {
-    const progress = files[fileIDs[i]].progress
+    const { progress } = files[fileIDs[i]]
     // If ANY files are being uploaded right now, show the uploading state.
     if (progress.uploadStarted && !progress.uploadComplete) {
       return uploadStates.STATE_UPLOADING
@@ -69,7 +69,7 @@ function UploadStatus (props) {
 }
 
 function PanelTopBar (props) {
-  let allowNewUpload = props.allowNewUpload
+  let { allowNewUpload } = props
   // TODO maybe this should be done in ../index.js, then just pass that down as `allowNewUpload`
   if (allowNewUpload && props.maxNumberOfFiles) {
     allowNewUpload = props.totalFileCount < props.maxNumberOfFiles

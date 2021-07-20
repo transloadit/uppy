@@ -163,7 +163,7 @@ module.exports = class Transloadit extends BasePlugin {
     // remote, because this is the criteria to identify remote files.
     // We only replace the hostname for Transloadit's companions, so that
     // people can also self-host them while still using Transloadit for encoding.
-    let remote = file.remote
+    let { remote } = file
 
     if (file.remote && TL_COMPANION.test(file.remote.companionUrl)) {
       const newHost = status.companion_url
@@ -203,7 +203,7 @@ module.exports = class Transloadit extends BasePlugin {
       signature: options.signature,
     }).then((newAssembly) => {
       const assembly = new Assembly(newAssembly)
-      const status = assembly.status
+      const { status } = assembly
       const assemblyID = status.assembly_id
 
       const { assemblies, uploadsAssemblies } = this.getPluginState()
@@ -427,8 +427,8 @@ module.exports = class Transloadit extends BasePlugin {
    */
   _getPersistentData (setData) {
     const state = this.getPluginState()
-    const assemblies = state.assemblies
-    const uploadsAssemblies = state.uploadsAssemblies
+    const { assemblies } = state
+    const { uploadsAssemblies } = state
 
     setData({
       [this.id]: {
