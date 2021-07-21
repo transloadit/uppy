@@ -1,31 +1,35 @@
 const { h, Fragment } = require('preact')
 
 const Breadcrumb = (props) => {
+  const { getFolder, title, isLast } = props
+
   return (
     <Fragment>
       <button
         type="button"
         className="uppy-u-reset"
-        onClick={props.getFolder}
+        onClick={getFolder}
       >
-        {props.title}
+        {title}
       </button>
-      {!props.isLast ? ' / ' : ''}
+      {!isLast ? ' / ' : ''}
     </Fragment>
   )
 }
 
 module.exports = (props) => {
+  const { getFolder, title, breadcrumbsIcon, directories } = props
+
   return (
     <div className="uppy-Provider-breadcrumbs">
-      <div className="uppy-Provider-breadcrumbsIcon">{props.breadcrumbsIcon}</div>
+      <div className="uppy-Provider-breadcrumbsIcon">{breadcrumbsIcon}</div>
       {
-        props.directories.map((directory, i) => (
+        directories.map((directory, i) => (
           <Breadcrumb
             key={directory.id}
-            getFolder={() => props.getFolder(directory.id)}
-            title={i === 0 ? props.title : directory.title}
-            isLast={i + 1 === props.directories.length}
+            getFolder={() => getFolder(directory.id)}
+            title={i === 0 ? title : directory.title}
+            isLast={i + 1 === directories.length}
           />
         ))
       }
