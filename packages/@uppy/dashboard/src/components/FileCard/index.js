@@ -19,6 +19,12 @@ class FileCard extends Component {
     this.state = {
       formState: storedMetaData,
     }
+
+    let randomId
+    do {
+      randomId = `FileCard-form-${Math.random().toString(16)}${Date.now()}`
+    } while (document.getElementById(randomId) != null)
+    this.form.id = randomId
   }
 
   updateMeta = (newVal, name) => {
@@ -30,6 +36,8 @@ class FileCard extends Component {
     })
   }
 
+  form = document.createElement('form');
+
   handleSave = (e) => {
     e.preventDefault()
     const fileID = this.props.fileCardFor
@@ -38,6 +46,16 @@ class FileCard extends Component {
 
   handleCancel = () => {
     this.props.toggleFileCard(false)
+  }
+
+  UNSAFE_componentWillMount () {
+    this.form.addEventListener('submit', this.handleSave)
+    document.body.appendChild(this.form)
+  }
+
+  componentWillUnmount () {
+    this.form.removeEventListener('submit', this.handleSave)
+    document.body.removeChild(this.form)
   }
 
   renderMetaFields = () => {
@@ -58,11 +76,13 @@ class FileCard extends Component {
               onChange: (newVal) => this.updateMeta(newVal, field.id),
               fieldCSSClasses,
               required,
+              form: this.form.id,
             }, h)
             : (
               <input
                 className={fieldCSSClasses.text}
                 id={id}
+                form={this.form.id}
                 type={field.type || 'text'}
                 required={required}
                 value={this.state.formState[field.id]}
@@ -87,14 +107,13 @@ class FileCard extends Component {
     const showEditButton = this.props.canEditFile(file)
 
     return (
-      <form
+      <div
         className={classNames('uppy-Dashboard-FileCard', this.props.className)}
         data-uppy-panelType="FileCard"
         onDragOver={ignoreEvent}
         onDragLeave={ignoreEvent}
         onDrop={ignoreEvent}
         onPaste={ignoreEvent}
-        onSubmit={this.handleSave}
       >
         <div className="uppy-DashboardContent-bar">
           <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
@@ -105,6 +124,7 @@ class FileCard extends Component {
           <button
             className="uppy-DashboardContent-back"
             type="submit"
+            form={this.form.id}
             title={this.props.i18n('finishEditingFile')}
           >
             {this.props.i18n('done')}
@@ -134,6 +154,7 @@ class FileCard extends Component {
             <button
               className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
               type="submit"
+              form={this.form.id}
             >
               {this.props.i18n('saveChanges')}
             </button>
@@ -146,7 +167,7 @@ class FileCard extends Component {
             </button>
           </div>
         </div>
-      </form>
+      </div>
     )
   }
 }
