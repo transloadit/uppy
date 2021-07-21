@@ -8,11 +8,14 @@ module.exports = class Editor extends Component {
   }
 
   componentDidMount () {
+    const { opts, storeCropperInstance } = this.props
     this.cropper = new Cropper(
       this.imgElement,
-      this.props.opts.cropperOptions
+      opts.cropperOptions
     )
-    if (this.props.opts.actions.granularRotate) {
+    storeCropperInstance(this.cropper)
+
+    if (opts.actions.granularRotate) {
       this.imgElement.addEventListener('crop', (ev) => {
         const rotationAngle = ev.detail.rotate
         this.setState({
@@ -26,15 +29,6 @@ module.exports = class Editor extends Component {
 
   componentWillUnmount () {
     this.cropper.destroy()
-  }
-
-  save = () => {
-    this.cropper.getCroppedCanvas()
-      .toBlob(
-        (blob) => this.props.save(blob),
-        this.props.currentImage.type,
-        this.props.opts.quality
-      )
   }
 
   renderRevert () {
@@ -237,20 +231,6 @@ module.exports = class Editor extends Component {
         </div>
 
         <div className="uppy-ImageCropper-controls">
-          <button
-            type="button"
-            className="uppy-u-reset uppy-c-btn"
-            aria-label={i18n('save')}
-            data-microtip-position="top"
-            role="tooltip"
-            onClick={() => this.save()}
-          >
-            <svg aria-hidden="true" className="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
-              <path d="M0 0h24v24H0z" fill="none" />
-              <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-            </svg>
-          </button>
-
           {actions.revert && this.renderRevert()}
           {actions.rotate && this.renderRotate()}
           {actions.granularRotate && this.renderGranularRotate()}

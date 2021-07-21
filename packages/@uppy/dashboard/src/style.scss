@@ -549,7 +549,8 @@
     }
   }
 
-  .uppy-DashboardContent-back {
+  .uppy-DashboardContent-back,
+  .uppy-DashboardContent-save {
     @include reset-button;
     @include highlight-focus;
     border-radius: 3px;

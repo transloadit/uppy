@@ -61,13 +61,13 @@ module.exports = class Dashboard extends Plugin {
         copyLinkToClipboardFallback: 'Copy the URL below',
         copyLink: 'Copy link',
         fileSource: 'File source: %{name}',
-        done: 'Done',
         back: 'Back',
         addMore: 'Add more',
         removeFile: 'Remove file',
         editFile: 'Edit file',
         editing: 'Editing %{file}',
         finishEditingFile: 'Finish editing file',
+        save: 'Save',
         saveChanges: 'Save changes',
         cancel: 'Cancel',
         myDevice: 'My Device',
@@ -280,6 +280,17 @@ module.exports = class Dashboard extends Plugin {
     editors.forEach((editor) => {
       this.uppy.getPlugin(editor.id).selectFile(file)
     })
+  }
+
+  saveFileEditor = () => {
+    const { targets } = this.getPluginState()
+    const editors = this._getEditors(targets)
+
+    editors.forEach((editor) => {
+      this.uppy.getPlugin(editor.id).save()
+    })
+
+    this.hideAllPanels()
   }
 
   openModal = () => {
@@ -959,6 +970,7 @@ module.exports = class Dashboard extends Plugin {
       direction: this.opts.direction,
       activePickerPanel: pluginState.activePickerPanel,
       showFileEditor: pluginState.showFileEditor,
+      saveFileEditor: this.saveFileEditor,
       disableAllFocusableElements: this.disableAllFocusableElements,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
