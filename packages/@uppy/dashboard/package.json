@@ -32,7 +32,6 @@
     "cuid": "^2.1.1",
     "is-shallow-equal": "^1.0.1",
     "lodash.debounce": "^4.0.8",
-    "lodash.throttle": "^4.1.1",
     "memoize-one": "^5.0.4",
     "preact": "^10.5.13"
   },

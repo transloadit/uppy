@@ -1,4 +1,3 @@
-const uniq = require('lodash/uniq')
 const cors = require('cors')
 // @ts-ignore
 const promBundle = require('express-prom-bundle')
@@ -94,12 +93,9 @@ exports.cors = (options = {}) => (req, res, next) => {
   ]
   if (res.get('Access-Control-Allow-Headers')) allowedHeaders.push(res.get('Access-Control-Allow-Headers'))
 
-  const existingAllowMethodsHeader = res.get('Access-Control-Allow-Methods')
-  let methods = []
-  if (existingAllowMethodsHeader) {
-    methods = existingAllowMethodsHeader.replace(/\s/g, '').split(',').map((method) => method.toUpperCase())
-  }
-  methods = uniq([...methods, 'GET', 'POST', 'OPTIONS', 'DELETE'])
+  const existingAllowMethodsHeader = new Set(res.get('Access-Control-Allow-Methods')?.split(',').map(method => method.trim().toUpperCase()))
+  existingAllowMethodsHeader.add('GET').add('POST').add('OPTIONS').add('DELETE')
+  const methods = Array.from(existingAllowMethodsHeader)
 
   // If endpoint urls are specified, then we only allow those endpoints.
   // Otherwise, we allow any client url to access companion.
