@@ -48,7 +48,8 @@ class FileCard extends Component {
     this.props.toggleFileCard(false)
   }
 
-  UNSAFE_componentWillMount () {
+  // TODO(aduh95): move this to `UNSAFE_componentWillMount` when updating to Preact X+.
+  componentWillMount () {
     this.form.addEventListener('submit', this.handleSave)
     document.body.appendChild(this.form)
   }
