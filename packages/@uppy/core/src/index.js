@@ -34,6 +34,8 @@ class Uppy {
 
   #storeUnsubscribe
 
+  #emitter = ee()
+
   /**
    * Instantiate Uppy
    *
@@ -182,12 +184,6 @@ class Uppy {
     this.retryUpload = this.retryUpload.bind(this)
     this.upload = this.upload.bind(this)
 
-    this.emitter = ee()
-    this.on = this.on.bind(this)
-    this.off = this.off.bind(this)
-    this.once = this.emitter.once.bind(this.emitter)
-    this.emit = this.emitter.emit.bind(this.emitter)
-
     this.preProcessors = []
     this.uploaders = []
     this.postProcessors = []
@@ -226,13 +222,22 @@ class Uppy {
     this.#addListeners()
   }
 
+  emit (event, ...args) {
+    this.#emitter.emit(event, ...args)
+  }
+
   on (event, callback) {
-    this.emitter.on(event, callback)
+    this.#emitter.on(event, callback)
+    return this
+  }
+
+  once (event, callback) {
+    this.#emitter.once(event, callback)
     return this
   }
 
   off (event, callback) {
-    this.emitter.off(event, callback)
+    this.#emitter.off(event, callback)
     return this
   }
 
