@@ -154,18 +154,6 @@ class Uppy {
 
     this.i18nInit()
 
-    this.getState = this.getState.bind(this)
-    this.getPlugin = this.getPlugin.bind(this)
-    this.setFileMeta = this.setFileMeta.bind(this)
-    this.setFileState = this.setFileState.bind(this)
-    this.log = this.log.bind(this)
-    this.info = this.info.bind(this)
-    this.hideInfo = this.hideInfo.bind(this)
-    this.addFile = this.addFile.bind(this)
-    this.removeFile = this.removeFile.bind(this)
-    this.pauseResume = this.pauseResume.bind(this)
-    this.validateRestrictions = this.validateRestrictions.bind(this)
-
     // ___Why throttle at 500ms?
     //    - We must throttle at >250ms for superfocus in Dashboard to work well
     //    (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
@@ -174,13 +162,6 @@ class Uppy {
     //    - We must throttle at around >500ms to avoid performance lags.
     //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
     this.calculateProgress = throttle(this.calculateProgress.bind(this), 500, { leading: true, trailing: true })
-
-    this.pauseAll = this.pauseAll.bind(this)
-    this.resumeAll = this.resumeAll.bind(this)
-    this.retryAll = this.retryAll.bind(this)
-    this.cancelAll = this.cancelAll.bind(this)
-    this.retryUpload = this.retryUpload.bind(this)
-    this.upload = this.upload.bind(this)
 
     this.preProcessors = []
     this.uploaders = []
@@ -1413,6 +1394,14 @@ class Uppy {
     }
   }
 
+  hideInfo () {
+    const { info } = this.getState()
+
+    this.setState({ info: info.slice(1) })
+
+    this.emit('info-hidden')
+  }
+
   /**
    * Set info message in `state.info`, so that UI plugins like `Informer`
    * can display the message.
@@ -1421,7 +1410,6 @@ class Uppy {
    * @param {string} [type]
    * @param {number} [duration]
    */
-
   info (message, type = 'info', duration = 3000) {
     const isComplexMessage = typeof message === 'object'
 
@@ -1436,17 +1424,9 @@ class Uppy {
       ],
     })
 
-    setTimeout(this.hideInfo, duration)
+    setTimeout(() => this.hideInfo(), duration)
 
     this.emit('info-visible')
-  }
-
-  hideInfo () {
-    const { info } = this.getState()
-
-    this.setState({ info: info.slice(1) })
-
-    this.emit('info-hidden')
   }
 
   /**
