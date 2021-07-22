@@ -1,0 +1,15 @@
+{
+  "name": "@uppy/cuid",
+  "description": "Collision-resistant ids optimized for horizontal scaling and performance. For node and browsers.",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "types/index.d.ts",
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  }
+}

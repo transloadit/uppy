@@ -1,5 +1,5 @@
 const { BasePlugin } = require('@uppy/core')
-const cuid = require('cuid')
+const cuid = require('@uppy/cuid')
 const Translator = require('@uppy/utils/lib/Translator')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')

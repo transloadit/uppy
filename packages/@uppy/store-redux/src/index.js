@@ -1,4 +1,4 @@
-const cuid = require('cuid')
+const cuid = require('@uppy/cuid')
 
 // Redux action name.
 const STATE_UPDATE = 'uppy/STATE_UPDATE'

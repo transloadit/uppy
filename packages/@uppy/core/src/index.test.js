@@ -11,7 +11,7 @@ const InvalidPluginWithoutId = require('../../../../test/mocks/invalidPluginWith
 const InvalidPluginWithoutType = require('../../../../test/mocks/invalidPluginWithoutType')
 const DeepFrozenStore = require('../../../../test/resources/DeepFrozenStore.js')
 
-jest.mock('cuid', () => {
+jest.mock('@uppy/cuid', () => {
   return () => 'cjd09qwxb000dlql4tp4doz8h'
 })
 jest.mock('@uppy/utils/lib/findDOMElement', () => {

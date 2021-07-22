@@ -20,7 +20,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "cuid": "^2.1.1"
+    "@uppy/cuid": "file:../cuid"
   },
   "devDependencies": {
     "redux": "4.0.5"

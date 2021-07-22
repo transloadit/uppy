@@ -1,4 +1,4 @@
-const cuid = require('cuid')
+const cuid = require('@uppy/cuid')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
