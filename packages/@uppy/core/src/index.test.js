@@ -327,24 +327,13 @@ describe('src/Core', () => {
   })
 
   describe('preprocessors', () => {
-    it('should add a preprocessor', () => {
+    it('should add and remove preprocessor', () => {
       const core = new Core()
       const preprocessor = () => { }
+      expect(core.removePreProcessor(preprocessor)).toBe(false)
       core.addPreProcessor(preprocessor)
-      expect(core.preProcessors[0]).toEqual(preprocessor)
-    })
-
-    it('should remove a preprocessor', () => {
-      const core = new Core()
-      const preprocessor1 = () => { }
-      const preprocessor2 = () => { }
-      const preprocessor3 = () => { }
-      core.addPreProcessor(preprocessor1)
-      core.addPreProcessor(preprocessor2)
-      core.addPreProcessor(preprocessor3)
-      expect(core.preProcessors.length).toEqual(3)
-      core.removePreProcessor(preprocessor2)
-      expect(core.preProcessors.length).toEqual(2)
+      expect(core.removePreProcessor(preprocessor)).toBe(true)
+      expect(core.removePreProcessor(preprocessor)).toBe(false)
     })
 
     it('should execute all the preprocessors when uploading a file', () => {
@@ -456,24 +445,13 @@ describe('src/Core', () => {
   })
 
   describe('postprocessors', () => {
-    it('should add a postprocessor', () => {
+    it('should add and remove postprocessor', () => {
       const core = new Core()
       const postprocessor = () => { }
+      expect(core.removePostProcessor(postprocessor)).toBe(false)
       core.addPostProcessor(postprocessor)
-      expect(core.postProcessors[0]).toEqual(postprocessor)
-    })
-
-    it('should remove a postprocessor', () => {
-      const core = new Core()
-      const postprocessor1 = () => { }
-      const postprocessor2 = () => { }
-      const postprocessor3 = () => { }
-      core.addPostProcessor(postprocessor1)
-      core.addPostProcessor(postprocessor2)
-      core.addPostProcessor(postprocessor3)
-      expect(core.postProcessors.length).toEqual(3)
-      core.removePostProcessor(postprocessor2)
-      expect(core.postProcessors.length).toEqual(2)
+      expect(core.removePostProcessor(postprocessor)).toBe(true)
+      expect(core.removePostProcessor(postprocessor)).toBe(false)
     })
 
     it('should execute all the postprocessors when uploading a file', () => {
@@ -586,24 +564,13 @@ describe('src/Core', () => {
   })
 
   describe('uploaders', () => {
-    it('should add an uploader', () => {
+    it('should add and remove uploader', () => {
       const core = new Core()
       const uploader = () => { }
+      expect(core.removeUploader(uploader)).toBe(false)
       core.addUploader(uploader)
-      expect(core.uploaders[0]).toEqual(uploader)
-    })
-
-    it('should remove an uploader', () => {
-      const core = new Core()
-      const uploader1 = () => { }
-      const uploader2 = () => { }
-      const uploader3 = () => { }
-      core.addUploader(uploader1)
-      core.addUploader(uploader2)
-      core.addUploader(uploader3)
-      expect(core.uploaders.length).toEqual(3)
-      core.removeUploader(uploader2)
-      expect(core.uploaders.length).toEqual(2)
+      expect(core.removeUploader(uploader)).toBe(true)
+      expect(core.removeUploader(uploader)).toBe(false)
     })
   })
 

@@ -41,6 +41,12 @@ class Uppy {
 
   #translator
 
+  #preProcessors = new Set()
+
+  #uploaders = new Set()
+
+  #postProcessors = new Set()
+
   /**
    * Instantiate Uppy
    *
@@ -156,10 +162,6 @@ class Uppy {
     //    - We must throttle at around >500ms to avoid performance lags.
     //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
     this.calculateProgress = throttle(this.calculateProgress.bind(this), 500, { leading: true, trailing: true })
-
-    this.preProcessors = []
-    this.uploaders = []
-    this.postProcessors = []
 
     this.store = this.opts.store
     this.setState({
@@ -322,36 +324,27 @@ class Uppy {
   }
 
   addPreProcessor (fn) {
-    this.preProcessors.push(fn)
+    this.#preProcessors.add(fn)
   }
 
   removePreProcessor (fn) {
-    const i = this.preProcessors.indexOf(fn)
-    if (i !== -1) {
-      this.preProcessors.splice(i, 1)
-    }
+    return this.#preProcessors.delete(fn)
   }
 
   addPostProcessor (fn) {
-    this.postProcessors.push(fn)
+    this.#postProcessors.add(fn)
   }
 
   removePostProcessor (fn) {
-    const i = this.postProcessors.indexOf(fn)
-    if (i !== -1) {
-      this.postProcessors.splice(i, 1)
-    }
+    return this.#postProcessors.delete(fn)
   }
 
   addUploader (fn) {
-    this.uploaders.push(fn)
+    this.#uploaders.add(fn)
   }
 
   removeUploader (fn) {
-    const i = this.uploaders.indexOf(fn)
-    if (i !== -1) {
-      this.uploaders.splice(i, 1)
-    }
+    return this.#uploaders.delete(fn)
   }
 
   setMeta (data) {
@@ -1160,7 +1153,7 @@ class Uppy {
       this.setFileState(file.id, {
         progress: {
           ...currentProgress,
-          postprocess: this.postProcessors.length > 0 ? {
+          postprocess: this.#postProcessors.size > 0 ? {
             mode: 'indeterminate',
           } : null,
           uploadComplete: true,
@@ -1545,9 +1538,9 @@ class Uppy {
     const restoreStep = uploadData.step
 
     const steps = [
-      ...this.preProcessors,
-      ...this.uploaders,
-      ...this.postProcessors,
+      ...this.#preProcessors,
+      ...this.#uploaders,
+      ...this.#postProcessors,
     ]
     let lastStep = Promise.resolve()
     steps.forEach((fn, step) => {
