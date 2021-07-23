@@ -6,6 +6,7 @@ import { terser } from 'rollup-plugin-terser'
 import sveltePreprocess from 'svelte-preprocess'
 import typescript from '@rollup/plugin-typescript'
 import css from 'rollup-plugin-css-only'
+import json from '@rollup/plugin-json'
 
 const production = !process.env.ROLLUP_WATCH
 
@@ -19,10 +20,14 @@ function serve () {
   return {
     writeBundle () {
       if (server) return
-      server = require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
-        stdio: ['ignore', 'inherit', 'inherit'],
-        shell: true,
-      })
+      server = require('child_process').spawn(
+        'npm',
+        ['run', 'start', '--', '--dev'],
+        {
+          stdio: ['ignore', 'inherit', 'inherit'],
+          shell: true,
+        }
+      )
 
       process.on('SIGTERM', toExit)
       process.on('exit', toExit)
@@ -62,6 +67,7 @@ export default {
       dedupe: ['svelte', '@uppy/core'],
     }),
     commonjs(),
+    json(),
     typescript({
       sourceMap: !production,
       inlineSources: !production,
