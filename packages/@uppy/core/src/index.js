@@ -13,7 +13,6 @@ const findIndex = require('@uppy/utils/lib/findIndex')
 const supportsUploadProgress = require('./supportsUploadProgress')
 const { justErrorsLogger, debugLogger } = require('./loggers')
 const Plugin = require('./Plugin')
-const { version } = require('../package.json')
 
 // Exported from here.
 class RestrictionError extends Error {
@@ -29,7 +28,8 @@ class RestrictionError extends Error {
  * adds/removes files and metadata.
  */
 class Uppy {
-  static VERSION = version
+  // eslint-disable-next-line global-require
+  static VERSION = require('../package.json').version
 
   /**
    * Instantiate Uppy

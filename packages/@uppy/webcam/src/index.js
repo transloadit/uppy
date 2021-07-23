@@ -8,7 +8,6 @@ const supportsMediaRecorder = require('./supportsMediaRecorder')
 const CameraIcon = require('./CameraIcon')
 const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')
-const packageJsonVersion = require('../package.json').version
 
 /**
  * Normalize a MIME type or file extension into a MIME type.
@@ -71,7 +70,8 @@ function getMediaDevices () {
  * Webcam
  */
 module.exports = class Webcam extends Plugin {
-  static VERSION = packageJsonVersion
+  // eslint-disable-next-line global-require
+  static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
     super(uppy, opts)
