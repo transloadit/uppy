@@ -26,6 +26,9 @@
     "@uppy/companion-client": "file:../companion-client",
     "@uppy/utils": "file:../utils"
   },
+  "devDependencies": {
+    "whatwg-fetch": "3.6.2"
+  },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
   }
