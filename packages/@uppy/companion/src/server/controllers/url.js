@@ -43,15 +43,18 @@ const meta = (req, res) => {
  * @param {object} res expressJS response object
  */
 const get = (req, res) => {
-  logger.debug('URL file import handler running', null, req.id)
-  const { debug } = req.companion.options
-  if (!validateURL(req.body.url, debug)) {
-    logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
-    return res.status(400).json({ error: 'Invalid request body' })
-  }
+  (async () => {
+    try {
+      logger.debug('URL file import handler running', null, req.id)
+      const { debug } = req.companion.options
+      if (!validateURL(req.body.url, debug)) {
+        logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
+        res.status(400).json({ error: 'Invalid request body' })
+        return
+      }
 
-  reqUtil.getURLMeta(req.body.url, !debug)
-    .then(({ size }) => {
+      const { size } = await reqUtil.getURLMeta(req.body.url, !debug)
+
       // @ts-ignore
       logger.debug('Instantiating uploader.', null, req.id)
       const uploader = new Uploader(Uploader.reqToOptions(req, size))
@@ -70,11 +73,12 @@ const get = (req, res) => {
 
       const response = uploader.getResponse()
       res.status(response.status).json(response.body)
-    }).catch((err) => {
+    } catch (err) {
       logger.error(err, 'controller.url.get.error', req.id)
       // @todo send more meaningful error message and status code to client if possible
-      return res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
-    })
+      res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
+    }
+  })()
 }
 
 /**
