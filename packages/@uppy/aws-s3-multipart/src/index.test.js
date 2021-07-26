@@ -11,13 +11,21 @@ describe('AwsS3Multipart', () => {
     expect(pluginNames).toContain('AwsS3Multipart')
   })
 
-  describe('prepareUploadPart', () => {
-    it('Throws an error if configured without companionUrl', () => {
+  describe('companionUrl assertion', () => {
+    it('Throws an error for main functions if configured without companionUrl', () => {
       const core = new Core()
       core.use(AwsS3Multipart)
       const awsS3Multipart = core.getPlugin('AwsS3Multipart')
 
-      expect(awsS3Multipart.opts.prepareUploadPart).toThrow()
+      const err = 'Expected a `companionUrl` option'
+      const file = {}
+      const opts = {}
+
+      expect(() => awsS3Multipart.opts.createMultipartUpload(file)).toThrow(err)
+      expect(() => awsS3Multipart.opts.listParts(file, opts)).toThrow(err)
+      expect(() => awsS3Multipart.opts.prepareUploadPart(file, opts)).toThrow(err)
+      expect(() => awsS3Multipart.opts.completeMultipartUpload(file, opts)).toThrow(err)
+      expect(() => awsS3Multipart.opts.abortMultipartUpload(file, opts)).toThrow(err)
     })
   })
 })
