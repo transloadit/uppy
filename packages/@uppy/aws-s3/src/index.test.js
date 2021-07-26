@@ -20,7 +20,7 @@ describe('AwsS3', () => {
       expect(awsS3.opts.getUploadParameters).toThrow()
     })
 
-    it('Does not throw an error with campanionUrl configured', () => {
+    it('Does not throw an error with companionUrl configured', () => {
       const core = new Core()
       core.use(AwsS3, { companionUrl: 'https://uppy-companion.myapp.com/' })
       const awsS3 = core.getPlugin('AwsS3')
