@@ -53,7 +53,13 @@ const get = (req, res) => {
         return
       }
 
-      const { size } = await reqUtil.getURLMeta(req.body.url, !debug)
+      // If we already have size, no need to get it again.
+      // See https://github.com/transloadit/uppy/issues/3034
+      let size = req.body && req.body.size
+      if (!size) {
+        const urlMeta = await reqUtil.getURLMeta(req.body.url, !debug)
+        size = urlMeta.size
+      }
 
       // @ts-ignore
       logger.debug('Instantiating uploader.', null, req.id)
