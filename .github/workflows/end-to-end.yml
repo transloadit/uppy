@@ -1,0 +1,37 @@
+name: End-to-end tests
+on: push
+
+env:
+  GIT_AUTHOR_NAME: Uppy Bot
+  GIT_COMMITTER_NAME: Uppy Bot
+  GIT_AUTHOR_EMAIL: uppybot@uppy.io
+  GIT_COMMITTER_EMAIL: uppybot@uppy.io
+
+jobs:
+  e2e:
+    name: Browser tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: 14.x
+      - name: Install npm 7
+        run: npm install --global npm@7
+      - name: Install dependencies
+        run: npm ci
+      - name: Start Sauce Connect
+        uses: saucelabs/sauce-connect-action@v1.1.1
+        with:
+          username: ${{secrets.SAUCE_USERNAME}}
+          accessKey: ${{secrets.SAUCE_ACCESS_KEY}}
+          tunnelIdentifier: ${{github.run_id}}.${{github.run_number}}
+      - name: Run end-to-end browser tests
+        run: npm run test:endtoend
+        env:
+          SAUCE_TUNNEL_IDENTIFIER: ${{github.run_id}}.${{github.run_number}}
+          SAUCE_BUILD: ${{github.run_id}}
+          SAUCE_USERNAME: ${{secrets.SAUCE_USERNAME}}
+          SAUCE_ACCESS_KEY: ${{secrets.SAUCE_ACCESS_KEY}}

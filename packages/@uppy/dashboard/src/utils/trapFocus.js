@@ -1,6 +1,6 @@
 const toArray = require('@uppy/utils/lib/toArray')
 const getActiveOverlayEl = require('./getActiveOverlayEl')
-const FOCUSABLE_ELEMENTS = require('@uppy/utils/lib//FOCUSABLE_ELEMENTS')
+const FOCUSABLE_ELEMENTS = require('@uppy/utils/lib/FOCUSABLE_ELEMENTS')
 
 function focusOnFirstNode (event, nodes) {
   const node = nodes[0]
@@ -61,5 +61,5 @@ module.exports = {
       // User can close the overlay (click 'Done') if they want to travel away from Uppy.
       trapFocus(event, activeOverlayType, dashboardEl)
     }
-  }
+  },
 }

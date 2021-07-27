@@ -1,7 +1,7 @@
-const { encrypt, decrypt } = require('./utils')
 const crypto = require('crypto')
 // @ts-ignore
 const atob = require('atob')
+const { encrypt, decrypt } = require('./utils')
 
 module.exports.generateState = (secret) => {
   const state = {}

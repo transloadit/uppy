@@ -25,7 +25,7 @@ module.exports = class Form extends Plugin {
       addResultToForm: true,
       multipleResults: false,
       submitOnSuccess: false,
-      triggerUploadOnSubmit: false
+      triggerUploadOnSubmit: false,
     }
 
     // merge default options with the ones set by user

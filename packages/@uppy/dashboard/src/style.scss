@@ -139,6 +139,10 @@
   [data-uppy-theme="dark"] & {
     background-color: $gray-900;
   }
+
+  .uppy-Dashboard--isDisabled & {
+    cursor: not-allowed;
+  }
 }
 
 .uppy-Dashboard-innerWrap {
@@ -149,11 +153,22 @@
   position: relative;
   border-radius: 5px;
   opacity: 0;
-}
 
-  .uppy-Dashboard--isInnerWrapVisible .uppy-Dashboard-innerWrap {
+  .uppy-Dashboard--isInnerWrapVisible & {
     opacity: 1;
   }
+
+  .uppy-Dashboard--isDisabled & {
+    pointer-events: none;
+    opacity: 0.6;
+    filter: grayscale(100%);
+    user-select: none;
+  }
+}
+
+.uppy-Dashboard--isDisabled .uppy-ProviderIconBg {
+  fill: #9f9f9f;
+}
 
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
   position: fixed;
@@ -166,6 +181,7 @@
   @media #{$screen-medium} {
     top: 50%;
     left: 50%;
+    right: auto; // else the 15px from above may override the positioning
     transform: translate(-50%, -50%);
     box-shadow: 0 5px 15px 4px rgba($black, 0.15);
   }
@@ -176,7 +192,7 @@
   display: block;
   position: absolute;
   top: -33px;
-  right: -2px;
+  inset-inline-end: -2px;
   cursor: pointer;
   color: rgba($white, 0.9);
   font-size: 27px;
@@ -189,8 +205,63 @@
   @media #{$screen-medium} {
     font-size: 35px;
     top: -10px;
-    right: -35px;
+    inset-inline-end: -35px;
   }
+}
+
+// Service Message
+
+.uppy-Dashboard-serviceMsg {
+  background-color: $white-50;
+  border-top: 1px solid $beige;
+  border-bottom: 1px solid $beige;
+  font-size: 12px;
+  line-height: 1.3;
+  font-weight: 500;
+  padding: 12px 0;
+  position: relative;
+  top: -1px;
+  z-index: $zIndex-4;
+
+  .uppy-size--md & {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+    color: $gray-200;
+    border-top: 1px solid $gray-800;
+    border-bottom: 1px solid $gray-800;
+  }
+}
+
+.uppy-Dashboard-serviceMsg-title {
+  display: block;
+  margin-bottom: 4px;
+  padding-left: 42px;
+  line-height: 1;
+}
+
+.uppy-Dashboard-serviceMsg-text {
+  padding: 0 15px;
+}
+
+.uppy-Dashboard-serviceMsg-actionBtn {
+  font-size: inherit;
+  font-weight: inherit;
+  vertical-align: initial;
+  color: $blue;
+
+  [data-uppy-theme="dark"] & {
+    color: rgba($highlight--dark, 0.9);
+  }
+}
+
+.uppy-Dashboard-serviceMsg-icon {
+  position: absolute;
+  top: 10px;
+  left: 15px;
 }
 
 .uppy-Dashboard-AddFiles {
@@ -227,7 +298,7 @@
   padding-top: 15px;
   padding-bottom: 15px;
   margin-top: auto;
-  
+
   // hide on short note and “powered by” on short screens
   // such as CodePen, or inline dashboard with height < 400px
   display: none;
@@ -331,7 +402,6 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
-  border: 0;
   background-color: transparent;
   -webkit-appearance: none;
   appearance: none;
@@ -340,12 +410,10 @@
   flex-direction: row;
   align-items: center;
   padding: 12px 15px;
-  line-height: 1;
-  text-align: center;
 
   .uppy-size--md & {
     width: 86px;
-    margin-right: 1px;
+    margin-inline-end: 1px;
     flex-direction: column;
     padding: 10px 3px;
     border-radius: 5px;
@@ -385,10 +453,10 @@
     vertical-align: text-top;
     overflow: hidden;
     transition: transform ease-in-out .15s;
-    margin-right: 10px;
+    margin-inline-end: 10px;
 
     .uppy-size--md & {
-      margin-right: 0;
+      margin-inline-end: 0;
     }
   }
 
@@ -481,7 +549,8 @@
     }
   }
 
-  .uppy-DashboardContent-back {
+  .uppy-DashboardContent-back,
+  .uppy-DashboardContent-save {
     @include reset-button;
     @include highlight-focus;
     border-radius: 3px;
@@ -490,7 +559,7 @@
     cursor: pointer;
     color: $blue;
     padding: 7px 6px;
-    margin-left: -6px;
+    margin-inline-start: -6px;
 
     .uppy-size--md & {
       font-size: 14px;
@@ -511,13 +580,13 @@
     width: 29px;
     height: 29px;
     padding: 7px 8px;
-    margin-right: -5px;
+    margin-inline-end: -5px;
 
     .uppy-size--md & {
       font-size: 14px;
       width: auto;
       height: auto;
-      margin-right: -8px;
+      margin-inline-end: -8px;
     }
 
     [data-uppy-theme="dark"] & {
@@ -527,7 +596,7 @@
 
     .uppy-DashboardContent-addMore svg {
       vertical-align: baseline;
-      margin-right: 4px;
+      margin-inline-end: 4px;
 
       .uppy-size--md & {
         width: 11px;
@@ -604,6 +673,11 @@
   height: 100%;
 }
 
+// Do not show progress details in the StatusBar if we do not have space.
+.uppy-Dashboard:not(.uppy-size--md) .uppy-StatusBar-additionalInfo {
+  display: none;
+}
+
 .uppy-Dashboard-filesContainer {
   @include clearfix;
   position: relative;
@@ -658,20 +732,12 @@
   }
   .uppy-DashboardContent-bar,
   .uppy-Dashboard-files,
-  .uppy-Dashboard-progressindicators {
+  .uppy-Dashboard-progressindicators,
+  .uppy-Dashboard-serviceMsg {
     opacity: 0.15;
   }
   .uppy-Dashboard-AddFiles {
     opacity: 0.03;
-  }
-}
-
-.uppy-Dashboard-dropFilesIcon {
-  display: none;
-  margin-bottom: 15px;
-
-  .uppy-size--md.uppy-size--height-md & {
-    display: block;
   }
 }
 
@@ -682,7 +748,7 @@
   color: $black;
   margin-top: 15px;
   margin-bottom: 5px;
-  text-align: left;
+  text-align: inline-start;
   padding: 0 15px;
   width: 100%;
 
@@ -803,7 +869,7 @@ a.uppy-Dashboard-poweredBy {
 .uppy-Dashboard-uploadCount {
   position: absolute;
   top: -12px;
-  right: -12px;
+  inset-inline-end: -12px;
   background-color: $green;
   color: $white;
   border-radius: 50%;

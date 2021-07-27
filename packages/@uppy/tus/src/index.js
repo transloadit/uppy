@@ -45,7 +45,7 @@ const tusDefaultOptions = {
   storeFingerprintForResuming: true,
   removeFingerprintOnSuccess: false,
   uploadLengthDeferred: false,
-  uploadDataDuringCreation: false
+  uploadDataDuringCreation: false,
 }
 
 /**
@@ -70,12 +70,13 @@ module.exports = class Tus extends Plugin {
       resume: true,
       useFastRemoteRetry: true,
       limit: 0,
-      retryDelays: [0, 1000, 3000, 5000]
+      retryDelays: [0, 1000, 3000, 5000],
+      withCredentials: false,
     }
 
     // merge default options with the ones set by user
     /** @type {import("..").TusOptions} */
-    this.opts = Object.assign({}, defaultOptions, opts)
+    this.opts = { ...defaultOptions, ...opts }
 
     /**
      * Simultaneous upload limiting is shared across all uploads with this plugin.
@@ -93,13 +94,13 @@ module.exports = class Tus extends Plugin {
   }
 
   handleResetProgress () {
-    const files = Object.assign({}, this.uppy.getState().files)
+    const files = { ...this.uppy.getState().files }
     Object.keys(files).forEach((fileID) => {
       // Only clone the file object if it has a Tus `uploadUrl` attached.
       if (files[fileID].tus && files[fileID].tus.uploadUrl) {
-        const tusState = Object.assign({}, files[fileID].tus)
+        const tusState = { ...files[fileID].tus }
         delete tusState.uploadUrl
-        files[fileID] = Object.assign({}, files[fileID], { tus: tusState })
+        files[fileID] = { ...files[fileID], tus: tusState }
       }
     })
 
@@ -174,14 +175,14 @@ module.exports = class Tus extends Plugin {
 
       const opts = {
         ...this.opts,
-        ...(file.tus || {})
+        ...(file.tus || {}),
       }
 
       /** @type {RawTusOptions} */
       const uploadOptions = {
         ...tusDefaultOptions,
         // TODO only put tus-specific options in?
-        ...opts
+        ...opts,
       }
 
       delete uploadOptions.resume
@@ -197,6 +198,15 @@ module.exports = class Tus extends Plugin {
       // This means you can add 2 identical files, if one is in folder a,
       // the other in folder b.
       uploadOptions.fingerprint = getFingerprint(file)
+
+      uploadOptions.onBeforeRequest = (req) => {
+        const xhr = req.getUnderlyingObject()
+        xhr.withCredentials = !!opts.withCredentials
+
+        if (typeof opts.onBeforeRequest === 'function') {
+          opts.onBeforeRequest(req)
+        }
+      }
 
       uploadOptions.onError = (err) => {
         this.uppy.log(err)
@@ -218,14 +228,14 @@ module.exports = class Tus extends Plugin {
         this.onReceiveUploadUrl(file, upload.url)
         this.uppy.emit('upload-progress', file, {
           uploader: this,
-          bytesUploaded: bytesUploaded,
-          bytesTotal: bytesTotal
+          bytesUploaded,
+          bytesTotal,
         })
       }
 
       uploadOptions.onSuccess = () => {
         const uploadResp = {
-          uploadURL: upload.url
+          uploadURL: upload.url,
         }
 
         this.resetUploaderReferences(file.id)
@@ -234,7 +244,7 @@ module.exports = class Tus extends Plugin {
         this.uppy.emit('upload-success', file, uploadResp)
 
         if (upload.url) {
-          this.uppy.log('Download ' + upload.file.name + ' from ' + upload.url)
+          this.uppy.log(`Download ${upload.file.name} from ${upload.url}`)
         }
 
         resolve(upload)
@@ -246,7 +256,7 @@ module.exports = class Tus extends Plugin {
         }
       }
 
-      /** @type {{ [name: string]: string }} */
+      /** @type {Record<string, string>} */
       const meta = {}
       const metaFields = Array.isArray(opts.metaFields)
         ? opts.metaFields
@@ -377,7 +387,7 @@ module.exports = class Tus extends Plugin {
         protocol: 'tus',
         size: file.data.size,
         headers: opts.headers,
-        metadata: file.meta
+        metadata: file.meta,
       }).then((res) => {
         this.uppy.setFileState(file.id, { serverToken: res.token })
         file = this.uppy.getFile(file.id)
@@ -488,7 +498,7 @@ module.exports = class Tus extends Plugin {
           this.resetUploaderReferences(file.id)
           // Remove the serverToken so that a new one will be created for the retry.
           this.uppy.setFileState(file.id, {
-            serverToken: null
+            serverToken: null,
           })
         } else {
           socket.close()
@@ -501,7 +511,7 @@ module.exports = class Tus extends Plugin {
 
       socket.on('success', (data) => {
         const uploadResp = {
-          uploadURL: data.url
+          uploadURL: data.url,
         }
 
         this.uppy.emit('upload-success', file, uploadResp)
@@ -542,9 +552,7 @@ module.exports = class Tus extends Plugin {
     if (!currentFile.tus || currentFile.tus.uploadUrl !== uploadURL) {
       this.uppy.log('[Tus] Storing upload url')
       this.uppy.setFileState(currentFile.id, {
-        tus: Object.assign({}, currentFile.tus, {
-          uploadUrl: uploadURL
-        })
+        tus: { ...currentFile.tus, uploadUrl: uploadURL },
       })
     }
   }
@@ -638,11 +646,20 @@ module.exports = class Tus extends Plugin {
 
       if ('error' in file && file.error) {
         return Promise.reject(new Error(file.error))
-      } else if (file.isRemote) {
+      } if (file.isRemote) {
+        // We emit upload-started here, so that it's also emitted for files
+        // that have to wait due to the `limit` option.
+        // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+        if (!file.progress.uploadStarted || !file.isRestored) {
+          this.uppy.emit('upload-started', file)
+        }
         return this.uploadRemote(file, current, total)
-      } else {
-        return this.upload(file, current, total)
       }
+      // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+      if (!file.progress.uploadStarted || !file.isRestored) {
+        this.uppy.emit('upload-started', file)
+      }
+      return this.upload(file, current, total)
     })
 
     return settle(promises)
@@ -673,9 +690,7 @@ module.exports = class Tus extends Plugin {
 
   install () {
     this.uppy.setState({
-      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
-        resumableUploads: true
-      })
+      capabilities: { ...this.uppy.getState().capabilities, resumableUploads: true },
     })
     this.uppy.addUploader(this.handleUpload)
 
@@ -688,9 +703,7 @@ module.exports = class Tus extends Plugin {
 
   uninstall () {
     this.uppy.setState({
-      capabilities: Object.assign({}, this.uppy.getState().capabilities, {
-        resumableUploads: false
-      })
+      capabilities: { ...this.uppy.getState().capabilities, resumableUploads: false },
     })
     this.uppy.removeUploader(this.handleUpload)
 

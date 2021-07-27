@@ -3,7 +3,7 @@ const en_US = {}
 en_US.strings = {
   addBulkFilesFailed: {
     '0': 'Failed to add %{smart_count} file due to an internal error',
-    '1': 'Failed to add %{smart_count} files due to internal errors'
+    '1': 'Failed to add %{smart_count} files due to internal errors',
   },
   addMore: 'Add more',
   addMoreFiles: 'Add more files',
@@ -16,6 +16,7 @@ en_US.strings = {
   authenticateWith: 'Connect to %{pluginName}',
   authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
   back: 'Back',
+  backToSearch: 'Back to Search',
   browse: 'browse',
   browseFiles: 'browse files',
   browseFolders: 'browse folders',
@@ -35,39 +36,42 @@ en_US.strings = {
   dashboardTitle: 'File Uploader',
   dashboardWindowTitle: 'File Uploader Window (Press escape to close)',
   dataUploadedOfTotal: '%{complete} of %{total}',
+  discardRecordedFile: 'Discard recorded file',
   done: 'Done',
   dropHereOr: 'Drop files here or %{browse}',
   dropHint: 'Drop your files here',
-  dropPasteBoth: 'Drop files here, paste, %{browseFiles} or %{browseFolders}',
-  dropPasteFiles: 'Drop files here, paste or %{browseFiles}',
-  dropPasteFolders: 'Drop files here, paste or %{browseFolders}',
-  dropPasteImportBoth: 'Drop files here, paste, %{browseFiles}, %{browseFolders} or import from:',
-  dropPasteImportFiles: 'Drop files here, paste, %{browseFiles} or import from:',
-  dropPasteImportFolders: 'Drop files here, paste, %{browseFolders} or import from:',
+  dropPasteBoth: 'Drop files here, %{browseFiles} or %{browseFolders}',
+  dropPasteFiles: 'Drop files here or %{browseFiles}',
+  dropPasteFolders: 'Drop files here or %{browseFolders}',
+  dropPasteImportBoth: 'Drop files here, %{browseFiles}, %{browseFolders} or import from:',
+  dropPasteImportFiles: 'Drop files here, %{browseFiles} or import from:',
+  dropPasteImportFolders: 'Drop files here, %{browseFolders} or import from:',
   editFile: 'Edit file',
   editing: 'Editing %{file}',
   emptyFolderAdded: 'No files were added from empty folder',
   encoding: 'Encoding...',
   enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
+  enterTextToSearch: 'Enter text to search for images',
   enterUrlToImport: 'Enter URL to import a file',
-  exceedsSize: 'This file exceeds maximum allowed size of',
+  exceedsSize: '%{file} exceeds maximum allowed size of',
   exceedsSize2: '%{backwardsCompat} %{size}',
   failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
   failedToUpload: 'Failed to upload %{file}',
   fileSource: 'File source: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} of %{smart_count} file uploaded',
-    '1': '%{complete} of %{smart_count} files uploaded'
+    '1': '%{complete} of %{smart_count} files uploaded',
   },
   filter: 'Filter',
   finishEditingFile: 'Finish editing file',
-  flipHorizontal: 'Flip horizonal',
+  flipHorizontal: 'Flip horizontal',
   folderAdded: {
     '0': 'Added %{smart_count} file from %{folder}',
-    '1': 'Added %{smart_count} files from %{folder}'
+    '1': 'Added %{smart_count} files from %{folder}',
   },
   generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',
+  importFiles: 'Import files from:',
   importFrom: 'Import from %{name}',
   inferiorSize: 'This file is smaller than the allowed size of %{size}',
   loading: 'Loading...',
@@ -88,11 +92,17 @@ en_US.strings = {
   poweredBy2: '%{backwardsCompat} %{uppy}',
   processingXFiles: {
     '0': 'Processing %{smart_count} file',
-    '1': 'Processing %{smart_count} files'
+    '1': 'Processing %{smart_count} files',
   },
+  reSelect: 'Re-select',
   recording: 'Recording',
   recordingLength: 'Recording length %{recording_length}',
   recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
+  recoveredAllFiles: 'We restored all files. You can now resume the upload.',
+  recoveredXFiles: {
+    '0': 'We could not fully recover 1 file. Please re-select it and resume the upload.',
+    '1': 'We could not fully recover %{smart_count} files. Please re-select them and resume the upload.',
+  },
   removeFile: 'Remove file',
   resetFilter: 'Reset filter',
   resume: 'Resume',
@@ -103,12 +113,14 @@ en_US.strings = {
   rotate: 'Rotate',
   save: 'Save',
   saveChanges: 'Save changes',
+  searchImages: 'Search for images',
   selectAllFilesFromFolderNamed: 'Select all files from folder %{name}',
   selectFileNamed: 'Select file %{name}',
   selectX: {
     '0': 'Select %{smart_count}',
-    '1': 'Select %{smart_count}'
+    '1': 'Select %{smart_count}',
   },
+  sessionRestored: 'Session restored',
   smile: 'Smile!',
   startCapturing: 'Begin screen capturing',
   startRecording: 'Begin video recording',
@@ -116,7 +128,7 @@ en_US.strings = {
   stopRecording: 'Stop video recording',
   streamActive: 'Stream active',
   streamPassive: 'Stream passive',
-  submitRecordedFile: 'Submit captured video',
+  submitRecordedFile: 'Submit recorded file',
   takePicture: 'Take a picture',
   timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   unselectAllFilesFromFolderNamed: 'Unselect all files from folder %{name}',
@@ -127,37 +139,37 @@ en_US.strings = {
   uploadPaused: 'Upload paused',
   uploadXFiles: {
     '0': 'Upload %{smart_count} file',
-    '1': 'Upload %{smart_count} files'
+    '1': 'Upload %{smart_count} files',
   },
   uploadXNewFiles: {
     '0': 'Upload +%{smart_count} file',
-    '1': 'Upload +%{smart_count} files'
+    '1': 'Upload +%{smart_count} files',
   },
   uploading: 'Uploading',
   uploadingXFiles: {
     '0': 'Uploading %{smart_count} file',
-    '1': 'Uploading %{smart_count} files'
+    '1': 'Uploading %{smart_count} files',
   },
   xFilesSelected: {
     '0': '%{smart_count} file selected',
-    '1': '%{smart_count} files selected'
+    '1': '%{smart_count} files selected',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} more file added',
-    '1': '%{smart_count} more files added'
+    '1': '%{smart_count} more files added',
   },
   xTimeLeft: '%{time} left',
   youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
   youCanOnlyUploadX: {
     '0': 'You can only upload %{smart_count} file',
-    '1': 'You can only upload %{smart_count} files'
+    '1': 'You can only upload %{smart_count} files',
   },
   youHaveToAtLeastSelectX: {
     '0': 'You have to select at least %{smart_count} file',
-    '1': 'You have to select at least %{smart_count} files'
+    '1': 'You have to select at least %{smart_count} files',
   },
   zoomIn: 'Zoom in',
-  zoomOut: 'Zoom out'
+  zoomOut: 'Zoom out',
 }
 
 en_US.pluralize = function (count) {

@@ -7,7 +7,7 @@ describe('getETA', () => {
     const fileProgress = {
       bytesUploaded: 1024,
       bytesTotal: 3096,
-      uploadStarted: date5SecondsAgo
+      uploadStarted: date5SecondsAgo,
     }
     expect(getETA(fileProgress)).toEqual(10.1)
   })

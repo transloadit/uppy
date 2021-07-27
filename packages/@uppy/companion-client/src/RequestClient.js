@@ -29,7 +29,7 @@ module.exports = class RequestClient {
     return {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`
+      'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`,
     }
   }
 
@@ -37,7 +37,7 @@ module.exports = class RequestClient {
     const userHeaders = this.opts.companionHeaders || this.opts.serverHeaders || {}
     return Promise.resolve({
       ...this.defaultHeaders,
-      ...userHeaders
+      ...userHeaders,
     })
   }
 
@@ -59,9 +59,7 @@ module.exports = class RequestClient {
     // Store the self-identified domain name for the Companion instance we just hit.
     if (headers.has('i-am') && headers.get('i-am') !== companion[host]) {
       this.uppy.setState({
-        companion: Object.assign({}, companion, {
-          [host]: headers.get('i-am')
-        })
+        companion: { ...companion, [host]: headers.get('i-am') },
       })
     }
     return response
@@ -97,7 +95,7 @@ module.exports = class RequestClient {
     }
 
     return fetch(this._getUrl(path), {
-      method: 'OPTIONS'
+      method: 'OPTIONS',
     })
       .then((response) => {
         if (response.headers.has('access-control-allow-headers')) {
@@ -134,13 +132,15 @@ module.exports = class RequestClient {
       .then((headers) =>
         fetchWithNetworkError(this._getUrl(path), {
           method: 'get',
-          headers: headers,
-          credentials: 'same-origin'
+          headers,
+          credentials: this.opts.companionCookiesRule || 'same-origin',
         }))
       .then(this._getPostResponseFunc(skipPostResponse))
       .then((res) => this._json(res))
       .catch((err) => {
-        err = err.isAuthError ? err : new Error(`Could not get ${this._getUrl(path)}. ${err}`)
+        if (!err.isAuthError) {
+          err.message = `Could not get ${this._getUrl(path)}. ${err.message}`
+        }
         return Promise.reject(err)
       })
   }
@@ -150,14 +150,16 @@ module.exports = class RequestClient {
       .then((headers) =>
         fetchWithNetworkError(this._getUrl(path), {
           method: 'post',
-          headers: headers,
-          credentials: 'same-origin',
-          body: JSON.stringify(data)
+          headers,
+          credentials: this.opts.companionCookiesRule || 'same-origin',
+          body: JSON.stringify(data),
         }))
       .then(this._getPostResponseFunc(skipPostResponse))
       .then((res) => this._json(res))
       .catch((err) => {
-        err = err.isAuthError ? err : new Error(`Could not post ${this._getUrl(path)}. ${err}`)
+        if (!err.isAuthError) {
+          err.message = `Could not post ${this._getUrl(path)}. ${err.message}`
+        }
         return Promise.reject(err)
       })
   }
@@ -167,14 +169,16 @@ module.exports = class RequestClient {
       .then((headers) =>
         fetchWithNetworkError(`${this.hostname}/${path}`, {
           method: 'delete',
-          headers: headers,
-          credentials: 'same-origin',
-          body: data ? JSON.stringify(data) : null
+          headers,
+          credentials: this.opts.companionCookiesRule || 'same-origin',
+          body: data ? JSON.stringify(data) : null,
         }))
       .then(this._getPostResponseFunc(skipPostResponse))
       .then((res) => this._json(res))
       .catch((err) => {
-        err = err.isAuthError ? err : new Error(`Could not delete ${this._getUrl(path)}. ${err}`)
+        if (!err.isAuthError) {
+          err.message = `Could not delete ${this._getUrl(path)}. ${err.message}`
+        }
         return Promise.reject(err)
       })
   }

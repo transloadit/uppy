@@ -11,14 +11,14 @@ require('@uppy/dashboard/dist/style.css')
 require('@uppy/url/dist/style.css')
 require('@uppy/webcam/dist/style.css')
 
-const TUS_ENDPOINT = 'https://master.tus.io/files/'
+const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
 
 const uppy = new Uppy({
   debug: true,
   meta: {
     username: 'John',
-    license: 'Creative Commons'
-  }
+    license: 'Creative Commons',
+  },
 })
   .use(Dashboard, {
     trigger: '#pick-files',
@@ -27,11 +27,11 @@ const uppy = new Uppy({
     replaceTargetContent: true,
     metaFields: [
       { id: 'license', name: 'License', placeholder: 'specify license' },
-      { id: 'caption', name: 'Caption', placeholder: 'add caption' }
+      { id: 'caption', name: 'Caption', placeholder: 'add caption' },
     ],
     showProgressDetails: true,
     proudlyDisplayPoweredByUppy: true,
-    note: '2 files, images and video only'
+    note: '2 files, images and video only',
   })
   .use(GoogleDrive, { target: Dashboard, companionUrl: 'http://localhost:3020' })
   .use(Instagram, { target: Dashboard, companionUrl: 'http://localhost:3020' })

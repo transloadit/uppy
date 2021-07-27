@@ -4,6 +4,7 @@ const StatusBarUI = require('./StatusBar')
 const statusBarStates = require('./StatusBarStates')
 const getSpeed = require('@uppy/utils/lib/getSpeed')
 const getBytesRemaining = require('@uppy/utils/lib/getBytesRemaining')
+const getTextDirection = require('@uppy/utils/lib/getTextDirection')
 
 /**
  * StatusBar: renders a status bar with upload/pause/resume/cancel/retry buttons,
@@ -30,25 +31,26 @@ module.exports = class StatusBar extends Plugin {
         cancel: 'Cancel',
         pause: 'Pause',
         resume: 'Resume',
+        done: 'Done',
         filesUploadedOfTotal: {
           0: '%{complete} of %{smart_count} file uploaded',
-          1: '%{complete} of %{smart_count} files uploaded'
+          1: '%{complete} of %{smart_count} files uploaded',
         },
         dataUploadedOfTotal: '%{complete} of %{total}',
         xTimeLeft: '%{time} left',
         uploadXFiles: {
           0: 'Upload %{smart_count} file',
-          1: 'Upload %{smart_count} files'
+          1: 'Upload %{smart_count} files',
         },
         uploadXNewFiles: {
           0: 'Upload +%{smart_count} file',
-          1: 'Upload +%{smart_count} files'
+          1: 'Upload +%{smart_count} files',
         },
         xMoreFilesAdded: {
           0: '%{smart_count} more file added',
-          1: '%{smart_count} more files added'
-        }
-      }
+          1: '%{smart_count} more files added',
+        },
+      },
     }
 
     // set default options
@@ -59,7 +61,8 @@ module.exports = class StatusBar extends Plugin {
       hidePauseResumeButton: false,
       hideCancelButton: false,
       showProgressDetails: false,
-      hideAfterFinish: true
+      hideAfterFinish: true,
+      doneButtonHandler: null,
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -84,7 +87,7 @@ module.exports = class StatusBar extends Plugin {
   getTotalSpeed (files) {
     let totalSpeed = 0
     files.forEach((file) => {
-      totalSpeed = totalSpeed + getSpeed(file.progress)
+      totalSpeed += getSpeed(file.progress)
     })
     return totalSpeed
   }
@@ -103,18 +106,27 @@ module.exports = class StatusBar extends Plugin {
   }
 
   startUpload = () => {
+    const { recoveredState } = this.uppy.getState()
+    if (recoveredState) {
+      this.uppy.emit('restore-confirmed')
+      return
+    }
     return this.uppy.upload().catch(() => {
       // Error logged in Core
     })
   }
 
-  getUploadingState (isAllErrored, isAllComplete, files) {
+  getUploadingState (isAllErrored, isAllComplete, recoveredState, files) {
     if (isAllErrored) {
       return statusBarStates.STATE_ERROR
     }
 
     if (isAllComplete) {
       return statusBarStates.STATE_COMPLETE
+    }
+
+    if (recoveredState) {
+      return statusBarStates.STATE_WAITING
     }
 
     let state = statusBarStates.STATE_WAITING
@@ -145,7 +157,8 @@ module.exports = class StatusBar extends Plugin {
       files,
       allowNewUpload,
       totalProgress,
-      error
+      error,
+      recoveredState,
     } = state
 
     // TODO: move this to Core, to share between Status Bar and Dashboard
@@ -153,11 +166,18 @@ module.exports = class StatusBar extends Plugin {
 
     const filesArray = Object.keys(files).map(file => files[file])
 
-    const newFiles = filesArray.filter((file) => {
-      return !file.progress.uploadStarted &&
-        !file.progress.preprocess &&
-        !file.progress.postprocess
+    let newFiles = filesArray.filter((file) => {
+      return !file.progress.uploadStarted
+        && !file.progress.preprocess
+        && !file.progress.postprocess
     })
+
+    // If some state was recovered, we want to show Upload button/counter
+    // for all the files, because in this case it’s not an Upload button,
+    // but “Confirm Restore Button”
+    if (recoveredState) {
+      newFiles = filesArray
+    }
 
     const uploadStartedFiles = filesArray.filter(file => file.progress.uploadStarted)
     const pausedFiles = uploadStartedFiles.filter(file => file.isPaused)
@@ -165,16 +185,16 @@ module.exports = class StatusBar extends Plugin {
     const erroredFiles = filesArray.filter(file => file.error)
 
     const inProgressFiles = filesArray.filter((file) => {
-      return !file.progress.uploadComplete &&
-             file.progress.uploadStarted
+      return !file.progress.uploadComplete
+             && file.progress.uploadStarted
     })
 
     const inProgressNotPausedFiles = inProgressFiles.filter(file => !file.isPaused)
 
     const startedFiles = filesArray.filter((file) => {
-      return file.progress.uploadStarted ||
-        file.progress.preprocess ||
-        file.progress.postprocess
+      return file.progress.uploadStarted
+        || file.progress.preprocess
+        || file.progress.postprocess
     })
 
     const processingFiles = filesArray.filter(file => file.progress.preprocess || file.progress.postprocess)
@@ -184,28 +204,29 @@ module.exports = class StatusBar extends Plugin {
     let totalSize = 0
     let totalUploadedSize = 0
     startedFiles.forEach((file) => {
-      totalSize = totalSize + (file.progress.bytesTotal || 0)
-      totalUploadedSize = totalUploadedSize + (file.progress.bytesUploaded || 0)
+      totalSize += (file.progress.bytesTotal || 0)
+      totalUploadedSize += (file.progress.bytesUploaded || 0)
     })
 
     const isUploadStarted = startedFiles.length > 0
 
-    const isAllComplete = totalProgress === 100 &&
-      completeFiles.length === Object.keys(files).length &&
-      processingFiles.length === 0
+    const isAllComplete = totalProgress === 100
+      && completeFiles.length === Object.keys(files).length
+      && processingFiles.length === 0
 
     const isAllErrored = error && erroredFiles.length === filesArray.length
 
-    const isAllPaused = inProgressFiles.length !== 0 &&
-      pausedFiles.length === inProgressFiles.length
+    const isAllPaused = inProgressFiles.length !== 0
+      && pausedFiles.length === inProgressFiles.length
 
     const isUploadInProgress = inProgressFiles.length > 0
     const resumableUploads = capabilities.resumableUploads || false
     const supportsUploadProgress = capabilities.uploadProgress !== false
+    const isSomeGhost = filesArray.some((file) => file.isGhost)
 
     return StatusBarUI({
       error,
-      uploadState: this.getUploadingState(isAllErrored, isAllComplete, state.files || {}),
+      uploadState: this.getUploadingState(isAllErrored, isAllComplete, recoveredState, state.files || {}),
       allowNewUpload,
       totalProgress,
       totalSize,
@@ -215,6 +236,8 @@ module.exports = class StatusBar extends Plugin {
       isAllErrored,
       isUploadStarted,
       isUploadInProgress,
+      isSomeGhost,
+      recoveredState,
       complete: completeFiles.length,
       newFiles: newFiles.length,
       numUploads: startedFiles.length,
@@ -226,6 +249,7 @@ module.exports = class StatusBar extends Plugin {
       retryAll: this.uppy.retryAll,
       cancelAll: this.uppy.cancelAll,
       startUpload: this.startUpload,
+      doneButtonHandler: this.opts.doneButtonHandler,
       resumableUploads,
       supportsUploadProgress,
       showProgressDetails: this.opts.showProgressDetails,
@@ -234,8 +258,17 @@ module.exports = class StatusBar extends Plugin {
       hidePauseResumeButton: this.opts.hidePauseResumeButton,
       hideCancelButton: this.opts.hideCancelButton,
       hideAfterFinish: this.opts.hideAfterFinish,
-      isTargetDOMEl: this.isTargetDOMEl
+      isTargetDOMEl: this.isTargetDOMEl,
     })
+  }
+
+  onMount () {
+    // Set the text direction if the page has not defined one.
+    const element = this.el
+    const direction = getTextDirection(element)
+    if (!direction) {
+      element.dir = 'ltr'
+    }
   }
 
   install () {

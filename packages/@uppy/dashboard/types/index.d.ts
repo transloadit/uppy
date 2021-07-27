@@ -26,6 +26,7 @@ declare module Dashboard {
     disablePageScrollWhenModalOpen?: boolean
     disableStatusBar?: boolean
     disableThumbnailGenerator?: boolean
+    doneButtonHandler?: () => void
     height?: string | number
     hideCancelButton?: boolean
     hidePauseResumeButton?: boolean
@@ -34,7 +35,7 @@ declare module Dashboard {
     hideUploadButton?: boolean
     inline?: boolean
     locale?: DashboardLocale & StatusBar.StatusBarLocale
-    metaFields?: MetaField[]
+    metaFields?: MetaField[] | ((file: Uppy.UppyFile) => MetaField[])
     note?: string | null
     onRequestCloseModal?: () => void
     plugins?: string[]
@@ -50,6 +51,9 @@ declare module Dashboard {
     thumbnailWidth?: number
     trigger?: string
     width?: string | number
+    autoOpenFileEditor?: boolean
+    disabled?: boolean
+    disableLocalFiles?: boolean
   }
 }
 

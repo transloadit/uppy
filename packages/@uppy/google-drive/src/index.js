@@ -14,8 +14,8 @@ module.exports = class GoogleDrive extends Plugin {
     this.title = this.opts.title || 'Google Drive'
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
-        <g fill="none" fill-rule="evenodd">
-          <rect fill="#4285F4" width="32" height="32" rx="16" />
+        <g fill="none" fillRule="evenodd">
+          <rect className="uppy-ProviderIconBg" fill="#4285F4" width="32" height="32" rx="16" />
           <path d="M10.324 23.3l3-5.1H25l-3 5.1H10.324zM13 18.2l-3 5.1-3-5.1 5.839-9.924 2.999 5.1L13 18.2zm11.838-.276h-6L13 8h6l5.84 9.924h-.002z" fill="#FFF" />
         </g>
       </svg>
@@ -24,8 +24,10 @@ module.exports = class GoogleDrive extends Plugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionKeysParams: this.opts.companionKeysParams,
+      companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'drive',
-      pluginId: this.id
+      pluginId: this.id,
     })
 
     this.onFirstRender = this.onFirstRender.bind(this)
@@ -34,7 +36,7 @@ module.exports = class GoogleDrive extends Plugin {
 
   install () {
     this.view = new DriveProviderViews(this, {
-      provider: this.provider
+      provider: this.provider,
     })
 
     const target = this.opts.target
@@ -49,7 +51,10 @@ module.exports = class GoogleDrive extends Plugin {
   }
 
   onFirstRender () {
-    return this.view.getFolder('root', '/')
+    return Promise.all([
+      this.provider.fetchPreAuthToken(),
+      this.view.getFolder('root', '/'),
+    ])
   }
 
   render (state) {

@@ -6,8 +6,10 @@
     <li><label for="opts-DashboardInline"><input type="checkbox" id="opts-DashboardInline" checked/> Display inline</label></li>
     <li><label for="opts-autoProceed"><input type="checkbox" id="opts-autoProceed" checked/> Autoproceed</label></li>
     <li><label for="opts-restrictions"><input type="checkbox" id="opts-restrictions" checked/> Restrictions</label></li>
-    <li><label for="opts-darkMode"><input type="checkbox" id="opts-darkMode" /> Dark Mode</label></li>
     <li><label for="opts-imageEditor"><input type="checkbox" id="opts-imageEditor" checked/> Image Editor</label></li>
+    <li><label for="opts-darkMode"><input type="checkbox" id="opts-darkMode" /> Dark Mode</label></li>
+    <li><label for="opts-disabled"><input type="checkbox" id="opts-disabled" checked/> Disabled</label></li>
+    <li><label for="opts-GoldenRetriever"><input type="checkbox" id="opts-GoldenRetriever" checked/> Recover incomplete uploads</label></li>
   </ul>
   <ul>
     <li><label for="opts-Webcam"><input type="checkbox" id="opts-Webcam" checked/> Webcam</label></li>
@@ -19,6 +21,7 @@
     <li><label for="opts-OneDrive"><input type="checkbox" id="opts-OneDrive" checked/> OneDrive</label></li>
     <li id="zoom-checkbox"><label for="opts-Zoom"><input type="checkbox" id="opts-Zoom" checked/> Zoom</label></li>
     <li><label for="opts-Url"><input type="checkbox" id="opts-Url" checked/> Url</label></li>
+    <li><label for="opts-DropTarget"><input type="checkbox" id="opts-DropTarget" checked/> Drag & Drop anywhere</label></li>
   </ul>
 
   <label for="localeList">Change locale:</label>
@@ -51,7 +54,10 @@
     autoProceed: document.querySelector('#opts-autoProceed'),
     restrictions: document.querySelector('#opts-restrictions'),
     darkMode: document.querySelector('#opts-darkMode'),
-    imageEditor: document.querySelector('#opts-imageEditor')
+    imageEditor: document.querySelector('#opts-imageEditor'),
+    disabled: document.querySelector('#opts-disabled'),
+    DropTarget: document.querySelector('#opts-DropTarget'),
+    GoldenRetriever: document.querySelector('#opts-GoldenRetriever')
   }
 
   var defaultOpts = {
@@ -67,7 +73,10 @@
     autoProceed: false,
     restrictions: false,
     darkMode: false,
-    imageEditor: true
+    imageEditor: true,
+    disabled: false,
+    DropTarget: true,
+    GoldenRetriever: false,
   }
 
   // try to get options from localStorage, if its empty, set to defaultOpts

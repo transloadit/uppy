@@ -33,7 +33,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       listParts: this.listParts.bind(this),
       prepareUploadPart: this.prepareUploadPart.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
-      completeMultipartUpload: this.completeMultipartUpload.bind(this)
+      completeMultipartUpload: this.completeMultipartUpload.bind(this),
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -89,7 +89,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     return this.client.post('s3/multipart', {
       filename: file.name,
       type: file.type,
-      metadata
+      metadata,
     }).then(assertServerError)
   }
 
@@ -135,16 +135,16 @@ module.exports = class AwsS3Multipart extends Plugin {
           s3Multipart: {
             ...cFile.s3Multipart,
             key: data.key,
-            uploadId: data.uploadId
-          }
+            uploadId: data.uploadId,
+          },
         })
       }
 
       const onProgress = (bytesUploaded, bytesTotal) => {
         this.uppy.emit('upload-progress', file, {
           uploader: this,
-          bytesUploaded: bytesUploaded,
-          bytesTotal: bytesTotal
+          bytesUploaded,
+          bytesTotal,
         })
       }
 
@@ -159,16 +159,20 @@ module.exports = class AwsS3Multipart extends Plugin {
 
       const onSuccess = (result) => {
         const uploadResp = {
-          uploadURL: result.location
+          body: {
+            ...result,
+          },
+          uploadURL: result.location,
         }
 
         queuedRequest.done()
         this.resetUploaderReferences(file.id)
 
-        this.uppy.emit('upload-success', file, uploadResp)
+        const cFile = this.uppy.getFile(file.id)
+        this.uppy.emit('upload-success', cFile || file, uploadResp)
 
         if (result.location) {
-          this.uppy.log('Download ' + upload.file.name + ' from ' + result.location)
+          this.uppy.log(`Download ${upload.file.name} from ${result.location}`)
         }
 
         resolve(upload)
@@ -200,7 +204,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
         limit: this.opts.limit || 5,
         retryDelays: this.opts.retryDelays || [],
-        ...file.s3Multipart
+        ...file.s3Multipart,
       })
 
       this.uploaders[file.id] = upload
@@ -260,8 +264,9 @@ module.exports = class AwsS3Multipart extends Plugin {
         })
       })
 
-      if (!file.isRestored) {
-        this.uppy.emit('upload-started', file, upload)
+      // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+      if (!file.progress.uploadStarted || !file.isRestored) {
+        this.uppy.emit('upload-started', file)
       }
     })
   }
@@ -269,7 +274,11 @@ module.exports = class AwsS3Multipart extends Plugin {
   uploadRemote (file) {
     this.resetUploaderReferences(file.id)
 
-    this.uppy.emit('upload-started', file)
+    // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+    if (!file.progress.uploadStarted || !file.isRestored) {
+      this.uppy.emit('upload-started', file)
+    }
+
     if (file.serverToken) {
       return this.connectToServerSocket(file)
     }
@@ -283,7 +292,7 @@ module.exports = class AwsS3Multipart extends Plugin {
           ...file.remote.body,
           protocol: 's3-multipart',
           size: file.data.size,
-          metadata: file.meta
+          metadata: file.meta,
         }
       ).then((res) => {
         this.uppy.setFileState(file.id, { serverToken: res.token })
@@ -381,7 +390,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
       socket.on('success', (data) => {
         const uploadResp = {
-          uploadURL: data.url
+          uploadURL: data.url,
         }
 
         this.uppy.emit('upload-success', file, uploadResp)
@@ -471,8 +480,8 @@ module.exports = class AwsS3Multipart extends Plugin {
     this.uppy.setState({
       capabilities: {
         ...capabilities,
-        resumableUploads: true
-      }
+        resumableUploads: true,
+      },
     })
     this.uppy.addUploader(this.upload)
   }
@@ -482,8 +491,8 @@ module.exports = class AwsS3Multipart extends Plugin {
     this.uppy.setState({
       capabilities: {
         ...capabilities,
-        resumableUploads: false
-      }
+        resumableUploads: false,
+      },
     })
     this.uppy.removeUploader(this.upload)
   }

@@ -69,7 +69,7 @@ You'll be redirected to the app page. This page lists the app key and app secret
 
 The app page has a "Redirect URIs" field. Here, add:
 ```
-https://$YOUR_COMPANION_HOST_NAME/connect/dropbox/callback
+https://$YOUR_COMPANION_HOST_NAME/dropbox/redirect
 ```
 
 You can only use the integration with your own account initially—make sure to apply for production status on the app page before you publish your app, or your users will not be able to sign in!
@@ -118,6 +118,10 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
 This is useful when you have your [Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should do just fine.
+
+### `companionCookiesRule: 'same-origin'`
+
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
 
 ### `locale: {}`
 

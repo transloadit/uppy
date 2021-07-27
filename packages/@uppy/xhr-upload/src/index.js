@@ -54,8 +54,8 @@ module.exports = class XHRUpload extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
-      }
+        timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
+      },
     }
 
     // Default options
@@ -114,7 +114,7 @@ module.exports = class XHRUpload extends Plugin {
        */
       validateStatus (status, responseText, response) {
         return status >= 200 && status < 300
-      }
+      },
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -151,13 +151,26 @@ module.exports = class XHRUpload extends Plugin {
 
   getOptions (file) {
     const overrides = this.uppy.getState().xhrUpload
+    const headers = this.opts.headers
+
     const opts = {
       ...this.opts,
       ...(overrides || {}),
       ...(file.xhrUpload || {}),
-      headers: {}
+      headers: {},
     }
-    Object.assign(opts.headers, this.opts.headers)
+    // Support for `headers` as a function, only in the XHRUpload settings.
+    // Options set by other plugins in Uppy state or on the files themselves are still merged in afterward.
+    //
+    // ```js
+    // headers: (file) => ({ expires: file.meta.expires })
+    // ```
+    if (typeof headers === 'function') {
+      opts.headers = headers(file)
+    } else {
+      Object.assign(opts.headers, this.opts.headers)
+    }
+
     if (overrides) {
       Object.assign(opts.headers, overrides.headers)
     }
@@ -257,7 +270,7 @@ module.exports = class XHRUpload extends Plugin {
           this.uppy.emit('upload-progress', file, {
             uploader: this,
             bytesUploaded: ev.loaded,
-            bytesTotal: ev.total
+            bytesTotal: ev.total,
           })
         }
       })
@@ -278,7 +291,7 @@ module.exports = class XHRUpload extends Plugin {
           const uploadResp = {
             status: ev.target.status,
             body,
-            uploadURL
+            uploadURL,
           }
 
           this.uppy.emit('upload-success', file, uploadResp)
@@ -288,18 +301,17 @@ module.exports = class XHRUpload extends Plugin {
           }
 
           return resolve(file)
-        } else {
-          const body = opts.getResponseData(xhr.responseText, xhr)
-          const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
-
-          const response = {
-            status: ev.target.status,
-            body
-          }
-
-          this.uppy.emit('upload-error', file, error, response)
-          return reject(error)
         }
+        const body = opts.getResponseData(xhr.responseText, xhr)
+        const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
+
+        const response = {
+          status: ev.target.status,
+          body,
+        }
+
+        this.uppy.emit('upload-error', file, error, response)
+        return reject(error)
       })
 
       xhr.addEventListener('error', (ev) => {
@@ -324,11 +336,15 @@ module.exports = class XHRUpload extends Plugin {
         xhr.responseType = opts.responseType
       }
 
-      Object.keys(opts.headers).forEach((header) => {
-        xhr.setRequestHeader(header, opts.headers[header])
-      })
-
       const queuedRequest = this.requests.run(() => {
+        // When using an authentication system like JWT, the bearer token goes as a header. This
+        // header needs to be fresh each time the token is refreshed so computing and setting the
+        // headers just before the upload starts enables this kind of authentication to work properly.
+        // Otherwise, half-way through the list of uploads the token could be stale and the upload would fail.
+        const currentOpts = this.getOptions(file)
+        Object.keys(currentOpts.headers).forEach((header) => {
+          xhr.setRequestHeader(header, currentOpts.headers[header])
+        })
         xhr.send(data)
         return () => {
           timer.done()
@@ -373,7 +389,7 @@ module.exports = class XHRUpload extends Plugin {
         metadata: fields,
         httpMethod: opts.method,
         useFormData: opts.formData,
-        headers: opts.headers
+        headers: opts.headers,
       }).then((res) => {
         const token = res.token
         const host = getSocketHost(file.remote.companionUrl)
@@ -411,7 +427,7 @@ module.exports = class XHRUpload extends Plugin {
           const uploadResp = {
             status: data.response.status,
             body,
-            uploadURL
+            uploadURL,
           }
 
           this.uppy.emit('upload-success', file, uploadResp)
@@ -460,7 +476,7 @@ module.exports = class XHRUpload extends Plugin {
       const optsFromState = this.uppy.getState().xhrUpload
       const formData = this.createBundledUpload(files, {
         ...this.opts,
-        ...(optsFromState || {})
+        ...(optsFromState || {}),
       })
 
       const xhr = new XMLHttpRequest()
@@ -492,7 +508,7 @@ module.exports = class XHRUpload extends Plugin {
           this.uppy.emit('upload-progress', file, {
             uploader: this,
             bytesUploaded: ev.loaded / ev.total * file.size,
-            bytesTotal: file.size
+            bytesTotal: file.size,
           })
         })
       })
@@ -504,7 +520,7 @@ module.exports = class XHRUpload extends Plugin {
           const body = this.opts.getResponseData(xhr.responseText, xhr)
           const uploadResp = {
             status: ev.target.status,
-            body
+            body,
           }
           files.forEach((file) => {
             this.uppy.emit('upload-success', file, uploadResp)
@@ -558,11 +574,10 @@ module.exports = class XHRUpload extends Plugin {
 
       if (file.error) {
         return Promise.reject(new Error(file.error))
-      } else if (file.isRemote) {
+      } if (file.isRemote) {
         return this.uploadRemote(file, current, total)
-      } else {
-        return this.upload(file, current, total)
       }
+      return this.upload(file, current, total)
     })
 
     return settle(promises)
@@ -617,7 +632,11 @@ module.exports = class XHRUpload extends Plugin {
       // if bundle: true, we don’t support remote uploads
       const isSomeFileRemote = files.some(file => file.isRemote)
       if (isSomeFileRemote) {
-        throw new Error('Can’t upload remote files when bundle: true option is set')
+        throw new Error('Can’t upload remote files when the `bundle: true` option is set')
+      }
+
+      if (typeof this.opts.headers === 'function') {
+        throw new TypeError('`headers` may not be a function when the `bundle: true` option is set')
       }
 
       return this.uploadBundle(files)
@@ -632,8 +651,8 @@ module.exports = class XHRUpload extends Plugin {
       this.uppy.setState({
         capabilities: {
           ...capabilities,
-          individualCancellation: false
-        }
+          individualCancellation: false,
+        },
       })
     }
 
@@ -646,8 +665,8 @@ module.exports = class XHRUpload extends Plugin {
       this.uppy.setState({
         capabilities: {
           ...capabilities,
-          individualCancellation: true
-        }
+          individualCancellation: true,
+        },
       })
     }
 

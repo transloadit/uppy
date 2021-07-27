@@ -37,18 +37,20 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 ⚠️ The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
 
-Styles for Provider plugins, like Google Drive and Instagram, are also bundled with Dashboard styles. Styles for other plugins, such as `@uppy/url` and `@uppy/webcam`, are not inluded. If you are using those, please see their docs and make sure to include styles for them as well.
+Styles for Provider plugins, like Google Drive and Instagram, are also bundled with Dashboard styles. Styles for other plugins, such as `@uppy/url` and `@uppy/webcam`, are not included. If you are using those, please see their docs and make sure to include styles for them as well.
 
 <!-- Make sure the old name of this section still works -->
 <a id="Options"></a>
 ## Props
 
-On top of all the [`@uppy/dashboard`][] options, the `<DashboardModal />` plugin adds two additional props:
+The `<DashboardModal />` component supports most [`@uppy/dashboard`][] options as props. It adds two more:
 
  - `open` - Boolean true or false, setting this to `true` opens the modal and setting it to `false` closes it.
  - `onRequestClose` - Callback called when the user attempts to close the modal, either by clicking the close button or by clicking outside the modal (if the `closeModalOnClickOutside` prop is set).
 
 An Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
+
+The `target={}` prop can be used to mount the Dashboard modal elsewhere in the DOM. If not given, the modal will be mounted at where the component is used. Unlike the raw [`@uppy/dashboard`][] plugin, the `<DashboardModal />` component can _only_ take DOM element objects, not CSS selectors.
 
 To use other plugins like [`@uppy/webcam`][] with the `<DashboardModal />` component, add them to the Uppy instance and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 

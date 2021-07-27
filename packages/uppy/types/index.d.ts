@@ -17,6 +17,8 @@ import Dashboard = require('@uppy/dashboard');
 export { Dashboard };
 import DragDrop = require('@uppy/drag-drop');
 export { DragDrop };
+import DropTarget = require('@uppy/drop-target');
+export { DropTarget };
 import FileInput = require('@uppy/file-input');
 export { FileInput };
 import Informer = require('@uppy/informer');
@@ -29,6 +31,8 @@ export { StatusBar };
 // Acquirers
 import Dropbox = require('@uppy/dropbox');
 export { Dropbox };
+import Box = require('@uppy/box');
+export { Box };
 import GoogleDrive = require('@uppy/google-drive');
 export { GoogleDrive };
 import Instagram = require('@uppy/instagram');

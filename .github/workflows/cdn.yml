@@ -1,0 +1,38 @@
+name: CDN
+on:
+  push:
+    branches: master
+
+jobs:
+  release:
+    if: ${{startsWith(github.event.head_commit.message, 'Release')}}
+    name: Publish releases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: 14.x
+      - name: Install npm 7
+        run: npm install --global npm@7
+      - name: Install dependencies
+        run: npm ci
+      - name: Build bundles
+        run: npm run build
+      - name: Upload `uppy` to CDN
+        run: npm run uploadcdn uppy
+        env:
+          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
+          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+      - name: Upload `@uppy/robodog` to CDN
+        run: npm run uploadcdn @uppy/robodog
+        env:
+          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
+          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+      - name: Upload `@uppy/locales` to CDN
+        run: npm run uploadcdn @uppy/locales
+        env:
+          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
+          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}

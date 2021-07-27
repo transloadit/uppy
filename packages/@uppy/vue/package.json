@@ -1,0 +1,24 @@
+{
+  "name": "@uppy/vue",
+  "version": "0.2.5",
+  "private": false,
+  "main": "lib/index.js",
+  "types": "types/index.d.ts",
+  "dependencies": {
+    "@uppy/dashboard": "file:../dashboard",
+    "@uppy/drag-drop": "file:../drag-drop",
+    "@uppy/progress-bar": "file:../progress-bar",
+    "@uppy/status-bar": "file:../status-bar",
+    "shallow-equal": "^1.2.1"
+  },
+  "devDependencies": {
+    "vue": "^2.6.12"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^1.0.0",
+    "vue": ">=2.6.11"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -76,6 +76,7 @@ const uppy = new Uppy({
   restrictions: {
     maxFileSize: null,
     minFileSize: null,
+    maxTotalFileSize: null,
     maxNumberOfFiles: null,
     minNumberOfFiles: null,
     allowedFileTypes: null
@@ -85,7 +86,8 @@ const uppy = new Uppy({
   onBeforeUpload: (files) => {},
   locale: {},
   store: new DefaultStore(),
-  logger: justErrorsLogger
+  logger: justErrorsLogger,
+  infoTimeout: 5000
 })
 ```
 
@@ -162,8 +164,9 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 
 **Parameters**
 
-- `maxFileSize` *null | number* — maximum file size in bytes for each individual file (total max size [has been requested, and is planned](https://github.com/transloadit/uppy/issues/514))
+- `maxFileSize` *null | number* — maximum file size in bytes for each individual file
 - `minFileSize` *null | number* — minimum file size in bytes for each individual file
+- `maxTotalFileSize` *null | number* — maximum file size in bytes for all the files that can be selected for upload
 - `maxNumberOfFiles` *null | number* — total number of files that can be selected
 - `minNumberOfFiles` *null | number* — minimum number of files that must be selected before the upload
 - `allowedFileTypes` *null | array* of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
@@ -332,7 +335,6 @@ locale: {
 
 We are using a forked [Polyglot.js](https://github.com/airbnb/polyglot.js/blob/master/index.js#L37-L60).
 
-
 ### `store: defaultStore()`
 
 The Store that is used to keep track of internal state. By [default](/docs/stores/#DefaultStore), a simple object is used.
@@ -340,6 +342,12 @@ The Store that is used to keep track of internal state. By [default](/docs/store
 This option can be used to plug Uppy state into an external state management library, such as [Redux](/docs/stores/#ReduxStore). You can then write custom views with the library that is also used by the rest of the application.
 
 <!-- TODO document store API -->
+
+### `infoTimeout`
+
+**default:** 5000
+
+Set the time during which the Informer message will be visible with messages about errors, restrictions, etc.
 
 ## File Objects
 
@@ -455,7 +463,7 @@ If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically whe
 
 > Sometimes you might need to add a remote file to Uppy. This can be achieved by [fetching the file, then creating a Blob object, or using the Url plugin with Companion](https://github.com/transloadit/uppy/issues/1006#issuecomment-413495493).
 >
-> Sometimes you might need to mark some files as “already uploaded”, so that the user sees them, but they won’t actually be uploaded by Uppy. This can be achieved by [looping through files and setting `uploadComplete: true, uploadStarted: false` on them](https://github.com/transloadit/uppy/issues/1112#issuecomment-432339569)
+> Sometimes you might need to mark some files as “already uploaded”, so that the user sees them, but they won’t actually be uploaded by Uppy. This can be achieved by [looping through files and setting `uploadComplete: true, uploadStarted: true` on them](https://github.com/transloadit/uppy/issues/1112#issuecomment-432339569)
 
 ### `uppy.removeFile(fileID)`
 
@@ -657,6 +665,10 @@ Stop all uploads in progress and clear file selection, set progress to 0. Basica
 
 Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()` before uninstalling.
 
+### `uppy.logout()`
+
+Calls `provider.logout()` on each remote provider plugin (Google Drive, Instagram, etc). Useful, for example, after your users log out of their account in your app — this will clean things up with Uppy cloud providers as well, for extra security.
+
 ### `uppy.log()`
 
 #### Parameters
@@ -688,9 +700,9 @@ this.info('Oh my, something good happened!', 'success', 3000)
 
 ```js
 this.info({
-    message: 'Oh no, something bad happened!',
-    details: 'File couldn’t be uploaded because there is no internet connection',
-  }, 'error', 5000)
+  message: 'Oh no, something bad happened!',
+  details: 'File couldn’t be uploaded because there is no internet connection',
+}, 'error', 5000)
 ```
 
 `info-visible` and `info-hidden` events are emitted when this info message should be visible or hidden.
@@ -698,6 +710,10 @@ this.info({
 ### `uppy.on('event', action)`
 
 Subscribe to an uppy-event. See below for the full list of events.
+
+### `uppy.once('event', action)`
+
+Create an event listener that fires once. See below for the full list of events.
 
 ### `uppy.off('event', action)`
 
@@ -719,6 +735,13 @@ uppy.on('file-added', (file) => {
   console.log('Added file', file)
 })
 ```
+
+### `files-added`
+
+**Parameters**
+- `files` - An array of [File Objects][File Objects] representing all files that were added at once, in a batch.
+
+Fired each time when one or multiple files are added — one event, for all files
 
 ### `file-removed`
 
@@ -759,9 +782,25 @@ uppy.on('upload', (data) => {
 })
 ```
 
+### `progress`
+
+Fired each time the total upload progress is updated:
+
+**Parameters**
+- `progress` - An integer (0-100) representing the total upload progress.
+
+**Example**
+
+```javascript
+uppy.on('progress', (progress) => {
+  // progress: integer (total progress percentage)
+  console.log(progress)
+})
+```
+
 ### `upload-progress`
 
-Fired each time file upload progress is available:
+Fired each time an individual file upload progress is available:
 
 **Parameters**
 - `file` - The [File Object][File Objects] for the file whose upload has progressed.

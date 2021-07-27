@@ -5,9 +5,9 @@ const headerSanitize = require('../../src/server/header-blacklist')
 describe('Header black-list testing', () => {
   test('All headers invalid by name', () => {
     const headers = headerSanitize({
-      origin: 'http://www.transloadit.com',
+      origin: 'http://transloadit.com',
       'Accept-Charset': '...',
-      'content-Length': 1234
+      'content-Length': 1234,
     })
 
     expect(headers).toEqual({})
@@ -21,7 +21,7 @@ describe('Header black-list testing', () => {
       'Sec-': 'sec-header-empty',
       'sec-': 'sec-lower-header-empty',
       'Sec-header-fake': 'sec-header-fake',
-      'sec-header-fake': 'sec-header-fake'
+      'sec-header-fake': 'sec-header-fake',
     })
     expect(headers).toEqual({})
   })
@@ -29,7 +29,7 @@ describe('Header black-list testing', () => {
   test('All headers invalid by name and regex', () => {
     const headers = headerSanitize({
       'Proxy-header-fake': 'proxy-header-fake',
-      'Sec-header-fake': 'sec-header-fake'
+      'Sec-header-fake': 'sec-header-fake',
     })
     expect(headers).toEqual({})
   })
@@ -40,7 +40,7 @@ describe('Header black-list testing', () => {
       'Content-Type': 'application/json',
       'Content-Length': 1234,
       Expires: 'Wed, 21 Oct 2015 07:28:00 GMT',
-      Origin: 'http://www.transloadit.com'
+      Origin: 'http://transloadit.com',
     })
     expect(Object.keys(headers)).toHaveLength(3)
     expect(headers).toHaveProperty('Authorization')

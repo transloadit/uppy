@@ -1,0 +1,35 @@
+{
+  "name": "@uppy/drop-target",
+  "description": "Lets your users drag and drop files on a DOM element",
+  "version": "0.2.4",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "uppy",
+    "uppy-plugin",
+    "drag-drop",
+    "drag",
+    "drop",
+    "dropzone",
+    "upload"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "@uppy/utils": "file:../utils"
+  },
+  "peerDependencies": {
+    "@uppy/core": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

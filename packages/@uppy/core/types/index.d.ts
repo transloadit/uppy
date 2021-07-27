@@ -76,6 +76,7 @@ declare module Uppy {
   interface Restrictions {
     maxFileSize?: number | null
     minFileSize?: number | null
+    maxTotalFileSize?: number | null
     maxNumberOfFiles?: number | null
     minNumberOfFiles?: number | null
     allowedFileTypes?: string[] | null
@@ -97,6 +98,7 @@ declare module Uppy {
     }) => { [key: string]: UppyFile<TMeta> } | boolean
     locale?: Locale
     store?: Store
+    infoTimeout?: number
   }
 
   interface UploadResult<
@@ -145,17 +147,17 @@ declare module Uppy {
 
   type UploadHandler = (fileIDs: string[]) => Promise<void>
 
+  type UploadSuccessCallback<T> = (file: UppyFile<T>, body: any, uploadURL: string) => void
+  type UploadCompleteCallback<T> = (result: UploadResult<T>) => void
+
   class Uppy<TUseStrictTypes extends TypeChecking = TypeChecking> {
     constructor(opts?: UppyOptions)
-    on<TMeta extends IndexedObject<any> = {}>(
-      event: 'upload-success',
-      callback: (file: UppyFile<TMeta>, body: any, uploadURL: string) => void
-    ): this
-    on<TMeta extends IndexedObject<any> = {}>(
-      event: 'complete',
-      callback: (result: UploadResult<TMeta>) => void
-    ): this
+    on<TMeta extends IndexedObject<any> = {}>(event: 'upload-success', callback: UploadSuccessCallback<TMeta>): this
+    on<TMeta extends IndexedObject<any> = {}>(event: 'complete', callback: UploadCompleteCallback<TMeta>): this
     on(event: Event, callback: (...args: any[]) => void): this
+    once<TMeta extends IndexedObject<any> = {}>(event: 'upload-success', callback: UploadSuccessCallback<TMeta>): this
+    once<TMeta extends IndexedObject<any> = {}>(event: 'complete', callback: UploadCompleteCallback<TMeta>): this
+    once(event: Event, callback: (...args: any[]) => void): this
     off(event: Event, callback: (...args: any[]) => void): this
     /**
      * For use by plugins only.
@@ -189,7 +191,7 @@ declare module Uppy {
     >(): Array<UppyFile<TMeta, TBody>>
     addFile<TMeta extends IndexedObject<any> = {}>(
       file: AddFileOptions<TMeta>
-    ): void
+    ): string
     removeFile(fileID: string): void
     pauseResume(fileID: string): boolean
     pauseAll(): void
@@ -218,6 +220,7 @@ declare module Uppy {
     iteratePlugins(callback: (plugin: Plugin) => void): void
     removePlugin(instance: Plugin): void
     close(): void
+    logout(): void
     info(
       message: string | { message: string; details: string },
       type?: LogLevel,

@@ -15,8 +15,8 @@
  * will expire before some files can be uploaded.
  *
  * The long-term solution to this problem is to change the upload pipeline so that files
- * can be sent to the next step individually. That requires a breakig change, so it is
- * planned for Uppy v2.
+ * can be sent to the next step individually. That requires a breaking change, so it is
+ * planned for some future Uppy version.
  *
  * In the mean time, this plugin is stuck with a hackier approach: the necessary parts
  * of the XHRUpload implementation were copied into this plugin, as the MiniXHRUpload
@@ -81,15 +81,15 @@ module.exports = class AwsS3 extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
-      }
+        timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
+      },
     }
 
     const defaultOptions = {
       timeout: 30 * 1000,
       limit: 0,
       metaFields: [], // have to opt in
-      getUploadParameters: this.getUploadParameters.bind(this)
+      getUploadParameters: this.getUploadParameters.bind(this),
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -132,13 +132,20 @@ module.exports = class AwsS3 extends Plugin {
   }
 
   validateParameters (file, params) {
-    const valid = typeof params === 'object' && params &&
-      typeof params.url === 'string' &&
-      (typeof params.fields === 'object' || params.fields == null) &&
-      (params.method == null || /^(put|post)$/i.test(params.method))
+    const valid = typeof params === 'object' && params
+      && typeof params.url === 'string'
+      && (typeof params.fields === 'object' || params.fields == null)
 
     if (!valid) {
-      const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields, headers }'.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
+      const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields, headers }' but got '${JSON.stringify(params)}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
+      console.error(err)
+      throw err
+    }
+
+    const methodIsValid = params.method == null || /^(put|post)$/i.test(params.method)
+
+    if (!methodIsValid) {
+      const err = new TypeError(`AwsS3: got incorrect method from 'getUploadParameters()' for file '${file.name}', expected  'put' or 'post' but got '${params.method}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
       console.error(err)
       throw err
     }
@@ -184,13 +191,13 @@ module.exports = class AwsS3 extends Plugin {
           method = 'post',
           url,
           fields,
-          headers
+          headers,
         } = params
         const xhrOpts = {
           method,
           formData: method.toLowerCase() === 'post',
           endpoint: url,
-          metaFields: fields ? Object.keys(fields) : []
+          metaFields: fields ? Object.keys(fields) : [],
         }
 
         if (headers) {
@@ -199,7 +206,7 @@ module.exports = class AwsS3 extends Plugin {
 
         this.uppy.setFileState(file.id, {
           meta: { ...file.meta, ...fields },
-          xhrUpload: xhrOpts
+          xhrUpload: xhrOpts,
         })
 
         return this._uploader.uploadFile(file.id, index, numberOfFiles)
@@ -255,7 +262,7 @@ module.exports = class AwsS3 extends Plugin {
         location: resolveUrl(xhr.responseURL, getXmlValue(content, 'Location')),
         bucket: getXmlValue(content, 'Bucket'),
         key: getXmlValue(content, 'Key'),
-        etag: getXmlValue(content, 'ETag')
+        etag: getXmlValue(content, 'ETag'),
       }
     }
 
@@ -279,7 +286,7 @@ module.exports = class AwsS3 extends Plugin {
       __queue: this.requests,
       responseType: 'text',
       getResponseData: this.opts.getResponseData || defaultGetResponseData,
-      getResponseError: defaultGetResponseError
+      getResponseError: defaultGetResponseError,
     }
 
     // Only for MiniXHRUpload, remove once we can depend on XHRUpload directly again
@@ -291,6 +298,6 @@ module.exports = class AwsS3 extends Plugin {
   }
 
   uninstall () {
-    this.uppy.removePreProcessor(this.handleUpload)
+    this.uppy.removeUploader(this.handleUpload)
   }
 }

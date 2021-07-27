@@ -24,7 +24,7 @@ const eventNames = {
   onFileProgress: 'upload-progress',
   onFileError: 'upload-error',
   onUploaded: 'transloadit:upload',
-  onComplete: 'complete' // mostly akin to promise resolution
+  onComplete: 'complete', // mostly akin to promise resolution
 }
 
 const uppyOptionNames = [
@@ -33,7 +33,7 @@ const uppyOptionNames = [
   'meta',
   'onBeforeFileAdded',
   'onBeforeUpload',
-  'debug'
+  'debug',
 ]
 function createUppy (opts, overrides = {}) {
   const uppyOptions = {}

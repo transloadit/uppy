@@ -7,5 +7,6 @@ module.exports = {
   list: require('./list'),
   logout: require('./logout'),
   connect: require('./connect'),
-  redirect: require('./oauth-redirect')
+  preauth: require('./preauth'),
+  redirect: require('./oauth-redirect'),
 }

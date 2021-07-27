@@ -81,13 +81,17 @@ import DefaultStore = require('@uppy/store-default')
   // can emit events with custom event types
   uppy.emit('dashboard:modal-closed', () => {})
 
-  // can register listners for internal events
+  // can register listeners for internal events
   uppy.on('upload', () => {})
   uppy.on('complete', () => {})
   uppy.on('error', () => {})
+  uppy.once('upload', () => {})
+  uppy.once('complete', () => {})
+  uppy.once('error', () => {})
 
-  // can register listners on custom events
+  // can register listeners on custom events
   uppy.on('dashboard:modal-closed', () => {})
+  uppy.once('dashboard:modal-closed', () => {})
 }
 
 {

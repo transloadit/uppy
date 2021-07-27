@@ -3,10 +3,9 @@ const logger = require('../logger')
 const { errorToResponse } = require('../provider/error')
 
 function get (req, res, next) {
-  const providerName = req.params.providerName
-  const id = req.params.id
-  const token = req.companion.providerTokens[providerName]
-  const provider = req.companion.provider
+  const { id } = req.params
+  const token = req.companion.providerToken
+  const { provider } = req.companion
 
   // get the file size before proceeding
   provider.size({ id, token, query: req.query }, (err, size) => {

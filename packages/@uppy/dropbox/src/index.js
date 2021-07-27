@@ -1,6 +1,6 @@
 const { Plugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
-const ProviderViews = require('@uppy/provider-views')
+const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
 module.exports = class Dropbox extends Plugin {
@@ -13,9 +13,9 @@ module.exports = class Dropbox extends Plugin {
     this.title = this.opts.title || 'Dropbox'
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
-        <g fill="none" fill-rule="evenodd">
-          <rect fill="#0D2481" width="32" height="32" rx="16" />
-          <path d="M11 8l5 3.185-5 3.186-5-3.186L11 8zm10 0l5 3.185-5 3.186-5-3.186L21 8zM6 17.556l5-3.185 5 3.185-5 3.186-5-3.186zm15-3.185l5 3.185-5 3.186-5-3.186 5-3.185zm-10 7.432l5-3.185 5 3.185-5 3.186-5-3.186z" fill="#FFF" fill-rule="nonzero" />
+        <g fill="none" fillRule="evenodd">
+          <rect className="uppy-ProviderIconBg" fill="#0D2481" width="32" height="32" rx="16" />
+          <path d="M11 8l5 3.185-5 3.186-5-3.186L11 8zm10 0l5 3.185-5 3.186-5-3.186L21 8zM6 17.556l5-3.185 5 3.185-5 3.186-5-3.186zm15-3.185l5 3.185-5 3.186-5-3.186 5-3.185zm-10 7.432l5-3.185 5 3.185-5 3.186-5-3.186z" fill="#FFF" fillRule="nonzero" />
         </g>
       </svg>
     )
@@ -23,8 +23,10 @@ module.exports = class Dropbox extends Plugin {
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionKeysParams: this.opts.companionKeysParams,
+      companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'dropbox',
-      pluginId: this.id
+      pluginId: this.id,
     })
 
     this.onFirstRender = this.onFirstRender.bind(this)
@@ -33,7 +35,7 @@ module.exports = class Dropbox extends Plugin {
 
   install () {
     this.view = new ProviderViews(this, {
-      provider: this.provider
+      provider: this.provider,
     })
 
     const target = this.opts.target
@@ -48,7 +50,10 @@ module.exports = class Dropbox extends Plugin {
   }
 
   onFirstRender () {
-    return this.view.getFolder()
+    return Promise.all([
+      this.provider.fetchPreAuthToken(),
+      this.view.getFolder(),
+    ])
   }
 
   render (state) {

@@ -21,18 +21,19 @@ module.exports = class ThumbnailGenerator extends Plugin {
     this.queue = []
     this.queueProcessing = false
     this.defaultThumbnailDimension = 200
+    this.thumbnailType = this.opts.thumbnailType || 'image/jpeg'
 
     this.defaultLocale = {
       strings: {
-        generatingThumbnails: 'Generating thumbnails...'
-      }
+        generatingThumbnails: 'Generating thumbnails...',
+      },
     }
 
     const defaultOptions = {
       thumbnailWidth: null,
       thumbnailHeight: null,
       waitForThumbnailsBeforeUpload: false,
-      lazy: false
+      lazy: false,
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -92,7 +93,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
         const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.deg)
         const rotatedImage = this.rotateImage(image, orientation)
         const resizedImage = this.resizeImage(rotatedImage, dimensions.width, dimensions.height)
-        return this.canvasToBlob(resizedImage, 'image/jpeg', 80)
+        return this.canvasToBlob(resizedImage, this.thumbnailType, 80)
       })
       .then(blob => {
         // bug in the compatibility data
@@ -115,21 +116,21 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     if (width != null) {
       return {
-        width: width,
-        height: Math.round(width / aspect)
+        width,
+        height: Math.round(width / aspect),
       }
     }
 
     if (height != null) {
       return {
         width: Math.round(height * aspect),
-        height: height
+        height,
       }
     }
 
     return {
       width: this.defaultThumbnailDimension,
-      height: Math.round(this.defaultThumbnailDimension / aspect)
+      height: Math.round(this.defaultThumbnailDimension / aspect),
     }
   }
 
@@ -283,11 +284,10 @@ module.exports = class ThumbnailGenerator extends Plugin {
       return this.requestThumbnail(current)
         .catch(err => {}) // eslint-disable-line handle-callback-err
         .then(() => this.processQueue())
-    } else {
-      this.queueProcessing = false
-      this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue')
-      this.uppy.emit('thumbnail:all-generated')
     }
+    this.queueProcessing = false
+    this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue')
+    this.uppy.emit('thumbnail:all-generated')
   }
 
   requestThumbnail (file) {
@@ -308,7 +308,12 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   onFileAdded = (file) => {
-    if (!file.preview && isPreviewSupported(file.type) && !file.isRemote) {
+    if (
+      !file.preview
+      && file.data
+      && isPreviewSupported(file.type)
+      && !file.isRemote
+    ) {
       this.addToQueue(file.id)
     }
   }
@@ -339,11 +344,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   onRestored = () => {
-    const { files } = this.uppy.getState()
-    const fileIDs = Object.keys(files)
-    fileIDs.forEach((fileID) => {
-      const file = this.uppy.getFile(fileID)
-      if (!file.isRestored) return
+    const restoredFiles = this.uppy.getFiles().filter(file => file.isRestored)
+    restoredFiles.forEach((file) => {
       // Only add blob URLs; they are likely invalid after being restored.
       if (!file.preview || isObjectURL(file.preview)) {
         this.addToQueue(file.id)
@@ -356,7 +358,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
       const file = this.uppy.getFile(fileID)
       this.uppy.emit('preprocess-progress', file, {
         mode: 'indeterminate',
-        message: this.i18n('generatingThumbnails')
+        message: this.i18n('generatingThumbnails'),
       })
     })
 

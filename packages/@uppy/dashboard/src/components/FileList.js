@@ -53,6 +53,7 @@ module.exports = (props) => {
     showRemoveButtonAfterComplete: props.showRemoveButtonAfterComplete,
     isWide: props.isWide,
     metaFields: props.metaFields,
+    recoveredState: props.recoveredState,
     // callbacks
     retryUpload: props.retryUpload,
     pauseUpload: props.pauseUpload,
@@ -60,10 +61,17 @@ module.exports = (props) => {
     toggleFileCard: props.toggleFileCard,
     removeFile: props.removeFile,
     handleRequestThumbnail: props.handleRequestThumbnail,
-    handleCancelThumbnail: props.handleCancelThumbnail
+    handleCancelThumbnail: props.handleCancelThumbnail,
   }
 
-  const rows = chunks(Object.keys(props.files), props.itemsPerRow)
+  const sortByGhostComesFirst = (file1, file2) => {
+    return props.files[file2].isGhost - props.files[file1].isGhost
+  }
+
+  // Sort files by file.isGhost, ghost files first, only if recoveredState is present
+  const files = Object.keys(props.files)
+  if (props.recoveredState) files.sort(sortByGhostComesFirst)
+  const rows = chunks(files, props.itemsPerRow)
 
   function renderRow (row) {
     return (
@@ -75,6 +83,9 @@ module.exports = (props) => {
             key={fileID}
             {...fileProps}
             role="listitem"
+            openFileEditor={props.openFileEditor}
+            canEditFile={props.canEditFile}
+            toggleAddFilesPanel={props.toggleAddFilesPanel}
             file={props.files[fileID]}
           />
         ))}

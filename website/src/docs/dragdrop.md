@@ -88,6 +88,18 @@ Optionally, specify a string of text that explains something about the upload fo
 
 Localize text that is shown to the user.
 
+### `onDragOver(event)`
+
+Callback for the [`ondragover`][ondragover] event handler.
+
+### `onDragLeave(event)`
+
+Callback for the [`ondragleave`][ondragleave] event handler.
+
+### `onDrop(event)`
+
+Callback for the [`ondrop`][ondrop] event handler.
+
 The default English strings are:
 
 ```js
@@ -99,3 +111,9 @@ strings: {
   browse: 'browse'
 }
 ```
+
+<!-- definitions -->
+
+[ondragover]: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragover
+[ondragleave]: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragleave
+[ondrop]: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondrop

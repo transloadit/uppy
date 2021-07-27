@@ -8,13 +8,13 @@ function initUppyTransloadit (transloaditKey) {
   var uppyTransloadit = new Uppy({
     id: 'uppyTransloadit',
     debug: true,
-    autoProceed: true
+    autoProceed: true,
   })
 
   uppyTransloadit
     .use(Dashboard, {
       target: '#uppy-transloadit',
-      inline: true
+      inline: true,
     })
     .use(Transloadit, {
       service: 'https://api2-ap-southeast-1.transloadit.com',
@@ -26,11 +26,11 @@ function initUppyTransloadit (transloaditKey) {
             robot: '/image/resize',
             height: 100,
             resize_strategy: 'crop',
-            width: 100
-          }
-        }
+            width: 100,
+          },
+        },
       },
-      waitForEncoding: true
+      waitForEncoding: true,
     })
 
   uppyTransloadit.on('transloadit:result', (stepName, result) => {

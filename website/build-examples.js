@@ -33,12 +33,13 @@ const browserify = require('browserify')
 const watchify = require('watchify')
 
 const bresolve = require('browser-resolve')
+
 function useSourcePackages (b) {
   b._bresolve = (id, opts, cb) => {
     bresolve(id, opts, (err, result, pkg) => {
       if (err) return cb(err)
-      if (/packages\/@uppy\/.*?\/lib\//.test(result)) {
-        result = result.replace(/packages\/@uppy\/(.*?)\/lib\//, 'packages/@uppy/$1/src/')
+      if (/packages\/@uppy\/[^/]+?\/lib\//.test(result)) {
+        result = result.replace(/packages\/@uppy\/([^/]+?)\/lib\//, 'packages/@uppy/$1/src/')
       }
       cb(err, result, pkg)
     })
@@ -82,18 +83,18 @@ glob(srcPattern, (err, files) => {
       cache: {},
       packageCache: {},
       debug: true,
-      plugin: browserifyPlugins
+      plugin: browserifyPlugins,
     })
 
     // Aliasing for using `require('uppy')`, etc.
     b
       .transform(babelify, {
-        root: path.join(__dirname, '..')
+        root: path.join(__dirname, '..'),
       })
       .transform(aliasify, {
         aliases: {
-          '@uppy': `./${path.relative(process.cwd(), path.join(__dirname, '../packages/@uppy'))}`
-        }
+          '@uppy': `./${path.relative(process.cwd(), path.join(__dirname, '../packages/@uppy'))}`,
+        },
       })
 
     // Listeners for changes, errors, and completion.
@@ -112,8 +113,7 @@ glob(srcPattern, (err, files) => {
      * Creates bundle and writes it to static and public folders.
      * Changes to
      *
-     * @param  {[type]} ids [description]
-     * @returns {[type]}     [description]
+     * @param  {string[]} ids
      */
     function bundle (ids = []) {
       ids.forEach((id) => {
@@ -152,7 +152,7 @@ function onError (err) {
   console.error(chalk.red('✗ error:'), chalk.red(err.message))
   notifier.notify({
     title: 'Build failed:',
-    message: err.message
+    message: err.message,
   })
   this.emit('end')
 

@@ -1,5 +1,9 @@
 const { h } = require('preact')
+const remoteFileObjToLocal = require('@uppy/utils/lib/remoteFileObjToLocal')
 const Item = require('./Item/index')
+
+// Hopefully this name will not be used by Google
+const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
 const getSharedProps = (fileOrFolder, props) => ({
   id: fileOrFolder.id,
@@ -10,38 +14,49 @@ const getSharedProps = (fileOrFolder, props) => ({
   columns: props.columns,
   showTitles: props.showTitles,
   viewType: props.viewType,
-  i18n: props.i18n
+  i18n: props.i18n,
 })
 
 module.exports = (props) => {
-  if (!props.folders.length && !props.files.length) {
-    return <div class="uppy-Provider-empty">{props.i18n('noFilesFound')}</div>
+  const { folders, files, handleScroll, isChecked } = props
+
+  if (!folders.length && !files.length) {
+    return <div className="uppy-Provider-empty">{props.i18n('noFilesFound')}</div>
   }
 
   return (
-    <div class="uppy-ProviderBrowser-body">
+    <div className="uppy-ProviderBrowser-body">
       <ul
-        class="uppy-ProviderBrowser-list"
-        onscroll={props.handleScroll}
+        className="uppy-ProviderBrowser-list"
+        onScroll={handleScroll}
         role="listbox"
         // making <ul> not focusable for firefox
-        tabindex="-1"
+        tabIndex="-1"
       >
-        {props.folders.map(folder =>
-          Item({
+        {folders.map(folder => {
+          return Item({
             ...getSharedProps(folder, props),
             type: 'folder',
-            isDisabled: props.isChecked(folder) ? props.isChecked(folder).loading : false,
-            handleFolderClick: () => props.handleFolderClick(folder)
+            isDisabled: isChecked(folder) ? isChecked(folder).loading : false,
+            isCheckboxDisabled: folder.id === VIRTUAL_SHARED_DIR,
+            handleFolderClick: () => props.handleFolderClick(folder),
           })
-        )}
-        {props.files.map(file =>
-          Item({
-            ...getSharedProps(file, props),
+        })}
+        {files.map(file => {
+          const validateRestrictions = props.validateRestrictions(
+            remoteFileObjToLocal(file),
+            [...props.uppyFiles, ...props.currentSelection]
+          )
+          const sharedProps = getSharedProps(file, props)
+          const restrictionReason = validateRestrictions.reason
+
+          return Item({
+            ...sharedProps,
             type: 'file',
-            isDisabled: false
+            isDisabled: !validateRestrictions.result && !sharedProps.isChecked,
+            restrictionReason,
           })
-        )}
+        })}
       </ul>
     </div>
   )

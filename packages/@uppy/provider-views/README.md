@@ -3,7 +3,7 @@
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
 <a href="https://www.npmjs.com/package/@uppy/provider-views"><img src="https://img.shields.io/npm/v/@uppy/provider-views.svg?style=flat-square"></a>
-<a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
+<img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
 
 View library for Uppy remote provider plugins.
 
@@ -13,7 +13,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 
 ```js
 const Plugin = require('@uppy/core/lib/plugin')
-const ProviderViews = require('@uppy/provider-views')
+const { ProviderViews } = require('@uppy/provider-views')
 
 class GoogleDrive extends Plugin {
   constructor () { /* snip */ }
@@ -23,7 +23,10 @@ class GoogleDrive extends Plugin {
   }
 
   onFirstRender () {
-    return this.view.getFolder('root', '/')
+    return Promise.all([
+      this.provider.fetchPreAuthToken(),
+      this.view.getFolder('root', '/')
+    ])
   }
 
   render (state) {
@@ -37,7 +40,7 @@ class GoogleDrive extends Plugin {
 > Unless you are creating a custom provider plugin, you do not need to install this.
 
 ```bash
-$ npm install @uppy/provider-views --save
+$ npm install @uppy/provider-views
 ```
 
 <!-- Undocumented currently

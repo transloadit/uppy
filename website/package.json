@@ -2,21 +2,25 @@
   "name": "uppy.io",
   "private": true,
   "hexo": {
-    "version": "4.0.0"
+    "version": "4.2.1"
   },
   "dependencies": {
     "@babel/core": "^7.4.4",
     "@goto-bus-stop/hexo-renderer-postcss": "^2.0.0",
+    "@octokit/rest": "16.43.1",
+    "@transloadit/prettier-bytes": "0.0.7",
     "aliasify": "^2.1.0",
     "autoprefixer": "^9.5.1",
     "babelify": "^10.0.0",
     "browserify": "^16.5.2",
+    "browser-resolve": "2.0.0",
     "chalk": "2.4.2",
     "cssnano": "^4.1.10",
     "drag-drop": "^4.2.0",
     "glob": "^7.1.2",
+    "gzip-size": "5.1.1",
     "he": "^1.2.0",
-    "hexo": "4.0.0",
+    "hexo": "4.2.1",
     "hexo-browsersync": "^0.3.0",
     "hexo-cli": "3.1.0",
     "hexo-filter-github-emojis": "arturi/hexo-filter-github-emojis",
@@ -30,18 +34,21 @@
     "hexo-include-markdown": "^1.0.2",
     "hexo-renderer-ejs": "^1.0.0",
     "hexo-renderer-marked": "2.0.0",
-    "hexo-renderer-scss": "^1.2.0",
     "hexo-server": "^1.0.0",
-    "hexo-util": "^1.5.0",
+    "hexo-util": "^1.9.1",
     "js-yaml": "^3.13.1",
-    "locale-code": "^2.0.2",
     "marked": "^0.7.0",
     "mdast-util-inject": "1.1.0",
     "mkdirp": "0.5.1",
     "multi-glob": "^1.0.2",
-    "node-notifier": "^5.2.1",
+    "node-notifier": "^8.0.1",
     "postcss-inline-svg": "^3.1.1",
     "prismjs": "^1.17.1",
+    "sass": "^1.29.0",
+    "touch": "3.1.0",
     "watchify": "^3.11.0"
+  },
+  "scripts": {
+    "hexo": "hexo"
   }
 }

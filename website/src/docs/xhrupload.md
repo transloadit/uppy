@@ -86,6 +86,18 @@ headers: {
 }
 ```
 
+Header values can also be derived from file data by providing a function. The function receives a [File Object][File Objects] and must return an object where the keys are header names, and values are header values.
+```js
+headers: (file) => {
+  return {
+    'authorization': `Bearer ${window.getCurrentUserToken()}`,
+    'expires': file.meta.expires
+  }
+}
+```
+
+> ⚠️ The function syntax is not available when the [`bundle: true`](#bundle-false) option is set. `bundle` is disabled by default.
+
 ### `bundle: false`
 
 Send all files in a single multipart request. When `bundle` is set to `true`, [`formData`](#formData-true) must also be set to `true`.
@@ -285,7 +297,7 @@ uppy.use(XHRUpload, {
 $my_file = $_FILES['my_file'];
 $file_path = $my_file['tmp_name']; // temporary upload path of the file
 $file_name = $_POST['name']; // desired name of the file
-move_uploaded_file($file_path, './img/' . basename($file_name)); // save the file at `img/FILE_NAME`
+move_uploaded_file($file_path, $_SERVER['DOCUMENT_ROOT'] . '/img/' . basename($file_name)); // save the file at `img/FILE_NAME`
 ```
 
 [FormData]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
@@ -293,5 +305,6 @@ move_uploaded_file($file_path, './img/' . basename($file_name)); // save the fil
 [XHR.timeout]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/timeout
 [XHR.responseType]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType
 [uppy.upload-success]: /docs/uppy/#upload-success
+[File Objects]: /docs/uppy/#File-Objects
 [PHP.file-upload]: https://secure.php.net/manual/en/features.file-upload.php
 [PHP.multiple]: https://secure.php.net/manual/en/features.file-upload.multiple.php

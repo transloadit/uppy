@@ -26,9 +26,10 @@ function maybeParse (str) {
 let cleanedUp = false
 module.exports = class MetaDataStore {
   constructor (opts) {
-    this.opts = Object.assign({
-      expires: 24 * 60 * 60 * 1000 // 24 hours
-    }, opts)
+    this.opts = {
+      expires: 24 * 60 * 60 * 1000, // 24 hours
+      ...opts,
+    }
     this.name = `uppyState:${opts.storeName}`
 
     if (!cleanedUp) {
@@ -60,7 +61,7 @@ module.exports = class MetaDataStore {
     const expires = Date.now() + this.opts.expires
     const state = JSON.stringify({
       metadata,
-      expires
+      expires,
     })
     localStorage.setItem(this.name, state)
   }
@@ -68,7 +69,12 @@ module.exports = class MetaDataStore {
   /**
    * Remove all expired state.
    */
-  static cleanup () {
+  static cleanup (instanceID) {
+    if (instanceID) {
+      localStorage.removeItem(`uppyState:${instanceID}`)
+      return
+    }
+
     const instanceIDs = findUppyInstances()
     const now = Date.now()
     instanceIDs.forEach((id) => {

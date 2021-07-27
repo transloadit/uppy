@@ -9,7 +9,6 @@ const prettierBytes = require('@transloadit/prettier-bytes')
 const browserify = require('browserify')
 const touch = require('touch')
 const glob = require('glob')
-const LocaleCode = require('locale-code')
 
 const webRoot = __dirname
 const uppyRoot = path.join(__dirname, '../packages/uppy')
@@ -19,12 +18,15 @@ const localesRoot = path.join(__dirname, '../packages/@uppy/locales')
 const configPath = path.join(webRoot, '/themes/uppy/_config.yml')
 const { version } = require(path.join(uppyRoot, '/package.json'))
 
+const regionalDisplayNames = new Intl.DisplayNames('en-US', { type: 'region' })
+const languageDisplayNames = new Intl.DisplayNames('en-US', { type: 'language' })
+
 const defaultConfig = {
   comment: 'Auto updated by inject.js',
   uppy_version_anchor: '001',
   uppy_version: '0.0.1',
   uppy_bundle_kb_sizes: {},
-  config: {}
+  config: {},
 }
 
 // Keeping a whitelist so utils etc are excluded
@@ -59,13 +61,14 @@ const packages = [
   '@uppy/url',
   '@uppy/webcam',
   '@uppy/xhr-upload',
+  '@uppy/drop-target',
   // Stores
   '@uppy/store-default',
-  '@uppy/store-redux'
+  '@uppy/store-redux',
 ]
 
 const excludes = {
-  '@uppy/react': ['react']
+  '@uppy/react': ['react'],
 }
 
 inject().catch((err) => {
@@ -95,7 +98,7 @@ async function getMinifiedSize (pkg, name) {
   return {
     minified: bundle.length,
     gzipped,
-    version
+    version,
   }
 }
 
@@ -108,13 +111,13 @@ async function injectSizes (config) {
       const result = await getMinifiedSize(path.join(__dirname, '../packages', pkg), pkg)
       console.info(chalk.green(
         // ✓ @uppy/pkgname:     10.0 kB min  / 2.0 kB gz
-        `  ✓ ${pkg}: ${' '.repeat(padTarget - pkg.length)}` +
-        `${prettierBytes(result.minified)} min`.padEnd(10) +
-        ` / ${prettierBytes(result.gzipped)} gz`
+        `  ✓ ${pkg}: ${' '.repeat(padTarget - pkg.length)}${
+          `${prettierBytes(result.minified)} min`.padEnd(10)
+        } / ${prettierBytes(result.gzipped)} gz`
       ))
       return Object.assign(result, {
         prettyMinified: prettierBytes(result.minified),
-        prettyGzipped: prettierBytes(result.gzipped)
+        prettyGzipped: prettierBytes(result.gzipped),
       })
     })
   ).then((list) => {
@@ -134,11 +137,11 @@ async function injectBundles () {
     `mkdir -p ${path.join(webRoot, '/themes/uppy/source/uppy/locales')}`,
     `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`,
     `cp -vfR ${path.join(robodogRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`,
-    `cp -vfR ${path.join(localesRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/locales')}`
+    `cp -vfR ${path.join(localesRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/locales')}`,
   ].join(' && ')
 
   const { stdout } = await promisify(exec)(cmds)
-  stdout.trim().split('\n').forEach(function (line) {
+  stdout.trim().split('\n').forEach((line) => {
     console.info(chalk.green('✓ injected: '), chalk.grey(line))
   })
 }
@@ -156,7 +159,7 @@ async function injectGhStars () {
 
   const { headers, data } = await octokit.repos.get({
     owner: 'transloadit',
-    repo: 'uppy'
+    repo: 'uppy',
   })
 
   console.log(`${headers['x-ratelimit-remaining']} requests remaining until we hit GitHub ratelimiter`)
@@ -170,7 +173,7 @@ async function injectGhStars () {
 async function injectMarkdown () {
   const sources = {
     '.github/ISSUE_TEMPLATE/integration_help.md': 'src/_template/integration_help.md',
-    '.github/CONTRIBUTING.md': 'src/_template/contributing.md'
+    '.github/CONTRIBUTING.md': 'src/_template/contributing.md',
   }
 
   for (const src in sources) {
@@ -195,7 +198,7 @@ function injectLocaleList () {
   const mdTable = [
     `<!-- WARNING! This file was automatically injected. Please run "${path.basename(__filename)}" to re-generate -->\n\n`,
     '| %count% Locales | NPM                | CDN                 | Source on GitHub |',
-    '| --------------- | ------------------ | ------------------- | ---------------- |'
+    '| --------------- | ------------------ | ------------------- | ---------------- |',
   ]
   const mdRows = []
   const localeList = {}
@@ -208,26 +211,17 @@ function injectLocaleList () {
     // we renamed the es_GL → gl_ES locale, and kept the old name
     // for backwards-compat, see https://github.com/transloadit/uppy/pull/1929
     if (localeName === 'es_GL') return
-    let localeNameWithDash = localeName.replace(/_/g, '-')
+    const [languageCode, regionCode, variant] = localeName.split(/[-_]/)
 
-    const parts = localeNameWithDash.split('-')
-    let variant = ''
-    if (parts.length > 2) {
-      const lang = parts.shift()
-      const country = parts.shift()
-      variant = parts.join(', ')
-      localeNameWithDash = `${lang}-${country}`
-    }
-
-    const languageName = LocaleCode.getLanguageName(localeNameWithDash)
-    const countryName = LocaleCode.getCountryName(localeNameWithDash)
+    const languageName = languageDisplayNames.of(languageCode)
+    const regionName = regionalDisplayNames.of(regionCode)
     const npmPath = `<code class="raw"><a href="https://www.npmjs.com/package/@uppy/locales">@uppy/locales</a>/lib/${localeName}</code>`
-    const cdnPath = `[\`${localeName}.min.js\`](https://transloadit.edgly.net/releases/uppy/locales/v${localePackageVersion}/${localeName}.min.js)`
+    const cdnPath = `[\`${localeName}.min.js\`](https://releases.transloadit.com/uppy/locales/v${localePackageVersion}/${localeName}.min.js)`
     const githubSource = `[\`${localeName}.js\`](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/locales/src/${localeName}.js)`
-    const mdTableRow = `| ${languageName}<br/> <small>${countryName}</small>${variant ? `<br /><small>(${variant})</small>` : ''} | ${npmPath} | ${cdnPath} | ✏️ ${githubSource} |`
+    const mdTableRow = `| ${languageName}<br/> <small>${regionName}</small>${variant ? `<br /><small>(${variant})</small>` : ''} | ${npmPath} | ${cdnPath} | ✏️ ${githubSource} |`
     mdRows.push(mdTableRow)
 
-    localeList[localeName] = `${languageName} (${countryName}${variant ? ` ${variant}` : ''})`
+    localeList[localeName] = `${languageName} (${regionName}${variant ? `, ${variant}` : ''})`
   })
 
   const resultingMdTable = mdTable.concat(mdRows.sort()).join('\n').replace('%count%', mdRows.length)
@@ -262,7 +256,7 @@ async function inject () {
   config.uppy_version_anchor = version.replace(/[^\d]+/g, '')
   await injectSizes(config)
 
-  const saveConfig = Object.assign({}, defaultConfig, config)
+  const saveConfig = { ...defaultConfig, ...config }
   await promisify(fs.writeFile)(configPath, YAML.safeDump(saveConfig), 'utf-8')
   console.info(chalk.green('✓ rewritten: '), chalk.grey(configPath))
 
@@ -271,7 +265,7 @@ async function inject () {
   } catch (error) {
     console.error(
       chalk.red('x failed to inject: '),
-      chalk.grey('uppy bundle into site, because: ' + error)
+      chalk.grey(`uppy bundle into site, because: ${error}`)
     )
     process.exit(1)
   }
