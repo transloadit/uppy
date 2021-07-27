@@ -167,6 +167,7 @@ declare module Uppy {
     setOptions(update: Partial<UppyOptions>): void
     setState(patch: object): void
     getState<TMeta extends IndexedObject<any> = {}>(): State<TMeta>
+    /** @deprecated use `getState()` instead. */
     readonly state: State
     setFileState(fileID: string, state: object): void
     resetProgress(): void

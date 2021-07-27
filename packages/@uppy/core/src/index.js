@@ -279,8 +279,10 @@ class Uppy {
 
   /**
    * Back compat for when uppy.state is used instead of uppy.getState().
+   * @deprecated
    */
   get state () {
+    // Here, state is a non-enumerable property.
     return this.getState()
   }
 
