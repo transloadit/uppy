@@ -62,6 +62,7 @@ fa_IR.strings = {
   loading: 'درحال بارگذاری',
   logOut: 'خروج',
   myDevice: 'دستگاه من',
+  noDuplicates: 'نمی‌توان فایل تکراری بارگذاری کرد،\'%{fileName}\' قبلا بارگذاری شده است.',
   noFilesFound: 'هیچ فایل یا پوشه‌ای اینجا ندارید',
   noInternetConnection: 'عدم اتصال به اینترنت',
   pause: 'توقف',
