@@ -172,9 +172,6 @@ class Uppy {
     //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
     this.calculateProgress = throttle(this.calculateProgress.bind(this), 500, { leading: true, trailing: true })
 
-    this.updateOnlineStatus = this.updateOnlineStatus.bind(this)
-    this.resetProgress = this.resetProgress.bind(this)
-
     this.pauseAll = this.pauseAll.bind(this)
     this.resumeAll = this.resumeAll.bind(this)
     this.retryAll = this.retryAll.bind(this)
@@ -1256,9 +1253,9 @@ class Uppy {
 
     // show informer if offline
     if (typeof window !== 'undefined' && window.addEventListener) {
-      window.addEventListener('online', () => this.updateOnlineStatus())
-      window.addEventListener('offline', () => this.updateOnlineStatus())
-      setTimeout(() => this.updateOnlineStatus(), 3000)
+      window.addEventListener('online', this.#updateOnlineStatus)
+      window.addEventListener('offline', this.#updateOnlineStatus)
+      setTimeout(this.#updateOnlineStatus, 3000)
     }
   }
 
@@ -1280,6 +1277,8 @@ class Uppy {
       }
     }
   }
+
+  #updateOnlineStatus = this.updateOnlineStatus.bind(this)
 
   getID () {
     return this.opts.id
@@ -1406,6 +1405,11 @@ class Uppy {
     this.iteratePlugins((plugin) => {
       this.removePlugin(plugin)
     })
+
+    if (typeof window !== 'undefined' && window.removeEventListener) {
+      window.removeEventListener('online', this.#updateOnlineStatus)
+      window.removeEventListener('offline', this.#updateOnlineStatus)
+    }
   }
 
   /**
