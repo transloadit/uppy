@@ -8,6 +8,7 @@ const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
 const Zoom = require('@uppy/zoom')
+const Box = require('@uppy/box')
 const ImageEditor = require('@uppy/image-editor')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
@@ -146,6 +147,14 @@ function uppySetOptions () {
   }
   if (!opts.Zoom && zoomInstance) {
     window.uppy.removePlugin(zoomInstance)
+  }
+
+  const boxInstance = window.uppy.getPlugin('Box')
+  if (opts.Box && !boxInstance) {
+    window.uppy.use(Box, { target: Dashboard, companionUrl: COMPANION })
+  }
+  if (!opts.Box && boxInstance) {
+    window.uppy.removePlugin(boxInstance)
   }
 
   const webcamInstance = window.uppy.getPlugin('Webcam')
