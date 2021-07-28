@@ -4,6 +4,7 @@ const helmet = require('helmet')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const { URL } = require('url')
+const merge = require('lodash.merge')
 const session = require('express-session')
 const addRequestId = require('express-request-id')()
 const logger = require('../server/logger')
@@ -116,7 +117,7 @@ module.exports = function server (inputCompanionOptions = {}) {
   if (companionOptions.redisUrl) {
     const RedisStore = require('connect-redis')(session)
     const redisClient = redis.client(
-      { url: companionOptions.redisUrl, ...companionOptions.redisOptions }
+      merge({ url: companionOptions.redisUrl }, companionOptions.redisOptions)
     )
     sessionOptions.store = new RedisStore({ client: redisClient })
   }

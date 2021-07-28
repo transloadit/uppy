@@ -3,6 +3,7 @@ const express = require('express')
 const ms = require('ms')
 // @ts-ignore
 const Grant = require('grant').express()
+const merge = require('lodash.merge')
 const cookieParser = require('cookie-parser')
 const interceptor = require('express-interceptor')
 
@@ -53,7 +54,7 @@ module.exports.socket = require('./server/socket')
 module.exports.app = (options = {}) => {
   validateConfig(options)
 
-  options = { ...defaultOptions, ...options }
+  options = merge({}, defaultOptions, options)
   const providers = providerManager.getDefaultProviders()
   const searchProviders = providerManager.getSearchProviders()
   providerManager.addProviderOptions(options, grantConfig)
@@ -68,7 +69,7 @@ module.exports.app = (options = {}) => {
 
   // create singleton redis client
   if (options.redisUrl) {
-    redis.client({ url: options.redisUrl, ...options.redisOptions })
+    redis.client(merge({ url: options.redisUrl }, options.redisOptions || {}))
   }
   emitter(options.multipleInstances && options.redisUrl, options.redisPubSubScope)
 

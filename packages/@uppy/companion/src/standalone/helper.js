@@ -1,4 +1,5 @@
 const fs = require('fs')
+const merge = require('lodash.merge')
 const stripIndent = require('common-tags/lib/stripIndent')
 const crypto = require('crypto')
 const utils = require('../server/helpers/utils')
@@ -13,7 +14,7 @@ const { version } = require('../../package.json')
  * @returns {object}
  */
 exports.getCompanionOptions = (options = {}) => {
-  return { ...getConfigFromEnv(), ...getConfigFromFile(), ...options }
+  return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
 }
 
 /**
