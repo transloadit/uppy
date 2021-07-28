@@ -1,5 +1,6 @@
 const Core = require('@uppy/core')
 const Transloadit = require('.')
+require('whatwg-fetch')
 
 describe('Transloadit', () => {
   it('Throws errors if options are missing', () => {
@@ -64,8 +65,7 @@ describe('Transloadit', () => {
       },
     })
 
-    uppy.getPlugin('Transloadit').client.createAssembly = () =>
-      Promise.reject(new Error('VIDEO_ENCODE_VALIDATION'))
+    uppy.getPlugin('Transloadit').client.createAssembly = () => Promise.reject(new Error('VIDEO_ENCODE_VALIDATION'))
 
     uppy.addFile({
       source: 'jest',

@@ -99,7 +99,7 @@ module.exports = class ScreenCapture extends UIPlugin {
       audioStreamActive: false,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
@@ -205,7 +205,7 @@ module.exports = class ScreenCapture extends UIPlugin {
     const options = {}
     this.capturedMediaFile = null
     this.recordingChunks = []
-    const preferredVideoMimeType = this.opts.preferredVideoMimeType
+    const { preferredVideoMimeType } = this.opts
 
     this.selectVideoStreamSource()
       .then((videoStream) => {

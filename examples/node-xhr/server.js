@@ -1,5 +1,5 @@
-var formidable = require('formidable')
-var http = require('http')
+const formidable = require('formidable')
+const http = require('http')
 
 http.createServer((req, res) => {
   const headers = {
@@ -17,7 +17,7 @@ http.createServer((req, res) => {
   }
   if (req.url === '/upload' && req.method.toLowerCase() === 'post') {
     // parse a file upload
-    var form = new formidable.IncomingForm()
+    const form = new formidable.IncomingForm()
     form.uploadDir = './uploads'
     form.keepExtensions = true
 
@@ -28,7 +28,7 @@ http.createServer((req, res) => {
         res.write(JSON.stringify(err))
         return res.end()
       }
-      var file = files['files[]']
+      const file = files['files[]']
       console.log('saved file to', file.path)
       console.log('original name', file.name)
       console.log('type', file.type)

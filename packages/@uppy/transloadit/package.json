@@ -36,5 +36,8 @@
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"
+  },
+  "devDependencies": {
+    "whatwg-fetch": "^3.6.2"
   }
 }

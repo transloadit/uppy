@@ -47,7 +47,7 @@ describe('src/Core', () => {
     it('should add a plugin to the plugin stack', () => {
       const core = new Core()
       core.use(AcquirerPlugin1)
-      expect(Object.keys(core.plugins.acquirer).length).toEqual(1)
+      expect(Object.keys(core[Symbol.for('uppy test: getPlugins')]('acquirer')).length).toEqual(1)
     })
 
     it('should prevent the same plugin from being added more than once', () => {
@@ -81,7 +81,7 @@ describe('src/Core', () => {
 
     it('should return the plugin that matches the specified name', () => {
       const core = new Core()
-      expect(core.getPlugin('foo')).toEqual(null)
+      expect(core.getPlugin('foo')).toEqual(undefined)
 
       core.use(AcquirerPlugin1)
       const plugin = core.getPlugin('TestSelector1')
@@ -96,12 +96,12 @@ describe('src/Core', () => {
       core.iteratePlugins(plugin => {
         plugin.run('hello')
       })
-      expect(core.plugins.acquirer[0].mocks.run.mock.calls.length).toEqual(1)
-      expect(core.plugins.acquirer[0].mocks.run.mock.calls[0]).toEqual([
+      expect(core[Symbol.for('uppy test: getPlugins')]('acquirer')[0].mocks.run.mock.calls.length).toEqual(1)
+      expect(core[Symbol.for('uppy test: getPlugins')]('acquirer')[0].mocks.run.mock.calls[0]).toEqual([
         'hello',
       ])
-      expect(core.plugins.acquirer[1].mocks.run.mock.calls.length).toEqual(1)
-      expect(core.plugins.acquirer[1].mocks.run.mock.calls[0]).toEqual([
+      expect(core[Symbol.for('uppy test: getPlugins')]('acquirer')[1].mocks.run.mock.calls.length).toEqual(1)
+      expect(core[Symbol.for('uppy test: getPlugins')]('acquirer')[1].mocks.run.mock.calls[0]).toEqual([
         'hello',
       ])
     })
@@ -110,13 +110,13 @@ describe('src/Core', () => {
       const core = new Core()
       core.use(AcquirerPlugin1)
       core.use(AcquirerPlugin2)
-      expect(Object.keys(core.plugins.acquirer).length).toEqual(2)
+      expect(Object.keys(core[Symbol.for('uppy test: getPlugins')]('acquirer')).length).toEqual(2)
 
       const plugin = core.getPlugin('TestSelector1')
       core.removePlugin(plugin)
-      expect(Object.keys(core.plugins.acquirer).length).toEqual(1)
+      expect(Object.keys(core[Symbol.for('uppy test: getPlugins')]('acquirer')).length).toEqual(1)
       expect(plugin.mocks.uninstall.mock.calls.length).toEqual(1)
-      expect(core.plugins.acquirer[0].mocks.run.mock.calls.length).toEqual(0)
+      expect(core[Symbol.for('uppy test: getPlugins')]('acquirer')[0].mocks.run.mock.calls.length).toEqual(0)
     })
   })
 
@@ -126,12 +126,12 @@ describe('src/Core', () => {
       core.use(AcquirerPlugin1)
       core.use(AcquirerPlugin2)
       core.updateAll({ foo: 'bar' })
-      expect(core.plugins.acquirer[0].mocks.update.mock.calls.length).toEqual(1)
-      expect(core.plugins.acquirer[0].mocks.update.mock.calls[0]).toEqual([
+      expect(core[Symbol.for('uppy test: getPlugins')]('acquirer')[0].mocks.update.mock.calls.length).toEqual(1)
+      expect(core[Symbol.for('uppy test: getPlugins')]('acquirer')[0].mocks.update.mock.calls[0]).toEqual([
         { foo: 'bar' },
       ])
-      expect(core.plugins.acquirer[1].mocks.update.mock.calls.length).toEqual(1)
-      expect(core.plugins.acquirer[1].mocks.update.mock.calls[0]).toEqual([
+      expect(core[Symbol.for('uppy test: getPlugins')]('acquirer')[1].mocks.update.mock.calls.length).toEqual(1)
+      expect(core[Symbol.for('uppy test: getPlugins')]('acquirer')[1].mocks.update.mock.calls[0]).toEqual([
         { foo: 'bar' },
       ])
     })
@@ -162,10 +162,10 @@ describe('src/Core', () => {
 
       expect(core.getState()).toEqual(newState)
 
-      expect(core.plugins.acquirer[0].mocks.update.mock.calls[1]).toEqual([
+      expect(core[Symbol.for('uppy test: getPlugins')]('acquirer')[0].mocks.update.mock.calls[1]).toEqual([
         newState,
       ])
-      expect(core.plugins.acquirer[1].mocks.update.mock.calls[1]).toEqual([
+      expect(core[Symbol.for('uppy test: getPlugins')]('acquirer')[1].mocks.update.mock.calls[1]).toEqual([
         newState,
       ])
 
@@ -258,7 +258,7 @@ describe('src/Core', () => {
     })
 
     const fileIDs = Object.keys(core.getState().files)
-    const id = core.createUpload(fileIDs)
+    const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
 
     expect(core.getState().currentUploads[id]).toBeDefined()
     expect(Object.keys(core.getState().files).length).toEqual(2)
@@ -278,7 +278,7 @@ describe('src/Core', () => {
 
     const coreCancelEventMock = jest.fn()
     const coreStateUpdateEventMock = jest.fn()
-    const plugin = core.plugins.acquirer[0]
+    const plugin = core[Symbol.for('uppy test: getPlugins')]('acquirer')[0]
 
     core.on('cancel-all', coreCancelEventMock)
     core.on('state-update', coreStateUpdateEventMock)
@@ -300,7 +300,10 @@ describe('src/Core', () => {
       recoveredState: null,
     })
     expect(plugin.mocks.uninstall.mock.calls.length).toEqual(1)
-    expect(core.plugins[Object.keys(core.plugins)[0]].length).toEqual(0)
+
+    const pluginIteration = jest.fn()
+    core.iteratePlugins(pluginIteration)
+    expect(pluginIteration.mock.calls.length).toEqual(0)
   })
 
   describe('upload hooks', () => {
@@ -736,7 +739,7 @@ describe('src/Core', () => {
           if (file.source === 'jest') {
             return false
           }
-          return true
+          return undefined
         },
       })
       expect(() => {
@@ -914,13 +917,13 @@ describe('src/Core', () => {
 
     it('should not upload if onBeforeUpload returned false', () => {
       const core = new Core({
-        // eslint-disable-next-line consistent-return
         onBeforeUpload: (files) => {
           for (const fileId in files) {
             if (files[fileId].name === '123.foo') {
               return false
             }
           }
+          return undefined
         },
       })
       core.addFile({
@@ -1729,8 +1732,8 @@ describe('src/Core', () => {
       try {
         core.on('restriction-failed', restrictionsViolatedEventMock)
         core.addFile(file)
-      } catch (err) {
-        // something
+      } catch {
+        // Ignore errors
       }
 
       expect(restrictionsViolatedEventMock.mock.calls.length).toEqual(1)
@@ -1936,7 +1939,7 @@ describe('src/Core', () => {
         data: new File([sampleImage], { type: 'image/jpeg' }),
       })
 
-      core.createUpload(Object.keys(core.getState().files))
+      core[Symbol.for('uppy test: createUpload')](Object.keys(core.getState().files))
       const uploadId = Object.keys(core.getState().currentUploads)[0]
       const currentUploadsState = {}
       currentUploadsState[uploadId] = {

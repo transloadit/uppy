@@ -1,9 +1,9 @@
 const throttle = require('lodash.throttle')
 const classNames = require('classnames')
-const statusBarStates = require('./StatusBarStates')
 const prettierBytes = require('@transloadit/prettier-bytes')
 const prettyETA = require('@uppy/utils/lib/prettyETA')
 const { h } = require('preact')
+const statusBarStates = require('./StatusBarStates')
 
 function calculateProcessingProgress (files) {
   // Collect pre or postprocessing progress states.
@@ -77,7 +77,7 @@ module.exports = (props) => {
     recoveredState,
   } = props
 
-  const uploadState = props.uploadState
+  const { uploadState } = props
 
   let progressValue = props.totalProgress
   let progressMode
@@ -292,8 +292,7 @@ const ProgressBarProcessing = (props) => {
   )
 }
 
-const renderDot = () =>
-  ' \u00B7 '
+const renderDot = () => ' \u00B7 '
 
 const ProgressDetails = (props) => {
   const ifShowFilesUploadedOfTotal = props.numUploads > 1

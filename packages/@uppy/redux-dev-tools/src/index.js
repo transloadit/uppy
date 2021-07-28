@@ -39,7 +39,7 @@ module.exports = class ReduxDevTools extends UIPlugin {
             this.uppy.reset()
             return
           case 'IMPORT_STATE': {
-            const computedStates = message.payload.nextLiftedState.computedStates
+            const { computedStates } = message.payload.nextLiftedState
             this.uppy.store.state = { ...this.uppy.getState(), ...computedStates[computedStates.length - 1].state }
             this.uppy.updateAll(this.uppy.getState())
             return

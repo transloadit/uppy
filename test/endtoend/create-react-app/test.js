@@ -1,4 +1,4 @@
-/* global browser, expect, $, $$ */
+/* global capabilities, browser, expect, $, $$ */
 const testURL = 'http://localhost:4567/create-react-app'
 
 describe('webpack build', () => {
@@ -68,7 +68,13 @@ describe('React: DashboardModal', () => {
     await browser.url(testURL)
   })
 
-  it('should have controlled open and close', async () => {
+  it('should have controlled open and close', async function test () {
+    // Does not work on Safari 13.1 right now
+    if (capabilities.browserName === 'safari' && capabilities.browserVersion === '13.1') {
+      this.skip()
+      return
+    }
+
     const modalToggle = await $('#modal-dashboard-toggle')
     const modalWrapper = await $('#modal-dashboard .uppy-Dashboard--modal')
     const modalClose = await $('#modal-dashboard .uppy-Dashboard-close')

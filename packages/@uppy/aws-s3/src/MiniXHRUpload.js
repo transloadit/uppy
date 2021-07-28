@@ -50,7 +50,7 @@ module.exports = class MiniXHRUpload {
   }
 
   _getOptions (file) {
-    const uppy = this.uppy
+    const { uppy } = this
 
     const overrides = uppy.getState().xhrUpload
     const opts = {
@@ -295,7 +295,7 @@ module.exports = class MiniXHRUpload {
         useFormData: opts.formData,
         headers: opts.headers,
       }).then((res) => {
-        const token = res.token
+        const { token } = res
         const host = getSocketHost(file.remote.companionUrl)
         const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
         this.uploaderEvents[file.id] = new EventTracker(this.uppy)
