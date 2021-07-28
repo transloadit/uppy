@@ -239,12 +239,15 @@ class MultipartUploader {
     this.chunkState[index].busy = true
 
     return Promise.resolve().then(() =>
-      this.options.prepareUploadPart({
-        key: this.key,
-        uploadId: this.uploadId,
-        body,
-        number: index + 1,
-      })).then((result) => {
+      this.options.prepareUploadPart(
+        {
+          key: this.key,
+          uploadId: this.uploadId,
+          body,
+          number: index + 1,
+        }
+      )
+    ).then((result) => {
       const valid = typeof result === 'object' && result
         && typeof result.url === 'string'
       if (!valid) {
