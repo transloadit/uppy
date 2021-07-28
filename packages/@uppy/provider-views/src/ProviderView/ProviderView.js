@@ -304,18 +304,36 @@ module.exports = class ProviderView {
     const folderId = this.providerFileToId(folder)
     const state = this.plugin.getPluginState()
     const folders = { ...state.selectedFolders }
+
     if (folderId in folders && folders[folderId].loading) {
       return
     }
+
     folders[folderId] = { loading: true, files: [] }
+
     this.plugin.setPluginState({ selectedFolders: { ...folders } })
+
+    // eslint-disable-next-line consistent-return
     return this.listAllFiles(folder.requestPath).then((files) => {
       let count = 0
-      files.forEach((file) => {
-        const success = this.addFile(file)
-        if (success) count++
+
+      // If the same folder is added again, we don't want to send
+      // X amount of duplicate file notifications, we want to say
+      // the folder was already added. This checks if all files are duplicate,
+      // if that's the case, we don't add the files.
+      files.forEach(file => {
+        const id = this.providerFileToId(file)
+        if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
+          count++
+        }
       })
+
+      if (count > 0) {
+        files.forEach((file) => this.addFile(file))
+      }
+
       const ids = files.map(this.providerFileToId)
+
       folders[folderId] = {
         loading: false,
         files: ids,
@@ -323,13 +341,19 @@ module.exports = class ProviderView {
       this.plugin.setPluginState({ selectedFolders: folders })
 
       let message
-      if (files.length) {
+
+      if (count === 0) {
+        message = this.plugin.uppy.i18n('folderAlreadyAdded', {
+          folder: folder.name,
+        })
+      } else if (files.length) {
         message = this.plugin.uppy.i18n('folderAdded', {
           smart_count: count, folder: folder.name,
         })
       } else {
         message = this.plugin.uppy.i18n('emptyFolderAdded')
       }
+
       this.plugin.uppy.info(message)
     }).catch((e) => {
       const state = this.plugin.getPluginState()

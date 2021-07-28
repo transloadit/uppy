@@ -10,6 +10,7 @@ const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
 const supportsUploadProgress = require('./supportsUploadProgress')
+const getFileName = require('./getFileName')
 const { justErrorsLogger, debugLogger } = require('./loggers')
 const UIPlugin = require('./UIPlugin')
 const BasePlugin = require('./BasePlugin')
@@ -95,6 +96,7 @@ class Uppy {
         enterTextToSearch: 'Enter text to search for images',
         backToSearch: 'Back to Search',
         emptyFolderAdded: 'No files were added from empty folder',
+        folderAlreadyAdded: 'The folder "%{folder}" was already added',
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',
           1: 'Added %{smart_count} files from %{folder}',
@@ -197,11 +199,7 @@ class Uppy {
       },
       totalProgress: 0,
       meta: { ...this.opts.meta },
-      info: {
-        isHidden: true,
-        type: 'info',
-        message: '',
-      },
+      info: [],
       recoveredState: null,
     })
 
@@ -613,25 +611,26 @@ class Uppy {
     }
   }
 
+  checkIfFileAlreadyExists (fileID) {
+    const { files } = this.getState()
+
+    if (files[fileID] && !files[fileID].isGhost) {
+      return true
+    }
+    return false
+  }
+
   /**
    * Create a file state object based on user-provided `addFile()` options.
    *
-   * Note this is extremely side-effectful and should only be done when a file state object will be added to state
-   * immediately afterward!
+   * Note this is extremely side-effectful and should only be done when a file state object
+   * will be added to state immediately afterward!
    *
    * The `files` value is passed in because it may be updated by the caller without updating the store.
    */
   #checkAndCreateFileStateObject (files, fileDescriptor) {
     const fileType = getFileType(fileDescriptor)
-
-    let fileName
-    if (fileDescriptor.name) {
-      fileName = fileDescriptor.name
-    } else if (fileType.split('/')[0] === 'image') {
-      fileName = `${fileType.split('/')[0]}.${fileType.split('/')[1]}`
-    } else {
-      fileName = 'noname'
-    }
+    const fileName = getFileName(fileType, fileDescriptor)
     const fileExtension = getFileNameAndExtension(fileName).extension
     const isRemote = Boolean(fileDescriptor.isRemote)
     const fileID = generateFileID({
@@ -639,11 +638,9 @@ class Uppy {
       type: fileType,
     })
 
-    if (files[fileID] && !files[fileID].isGhost) {
-      this.#showOrLogErrorAndThrow(
-        new RestrictionError(this.i18n('noDuplicates', { fileName })),
-        { fileDescriptor }
-      )
+    if (this.checkIfFileAlreadyExists(fileID)) {
+      const error = new RestrictionError(this.i18n('noDuplicates', { fileName }))
+      this.showOrLogErrorAndThrow(error, { file: fileDescriptor })
     }
 
     const meta = fileDescriptor.meta || {}
@@ -1429,31 +1426,26 @@ class Uppy {
     const isComplexMessage = typeof message === 'object'
 
     this.setState({
-      info: {
-        isHidden: false,
-        type,
-        message: isComplexMessage ? message.message : message,
-        details: isComplexMessage ? message.details : null,
-      },
+      info: [
+        ...this.getState().info,
+        {
+          type,
+          message: isComplexMessage ? message.message : message,
+          details: isComplexMessage ? message.details : null,
+        },
+      ],
     })
 
+    setTimeout(this.hideInfo, duration)
+
     this.emit('info-visible')
-
-    clearTimeout(this.infoTimeoutID)
-    if (duration === 0) {
-      this.infoTimeoutID = undefined
-      return
-    }
-
-    // hide the informer after `duration` milliseconds
-    this.infoTimeoutID = setTimeout(this.hideInfo, duration)
   }
 
   hideInfo () {
-    const newInfo = { ...this.getState().info, isHidden: true }
-    this.setState({
-      info: newInfo,
-    })
+    const { info } = this.getState()
+
+    this.setState({ info: info.slice(1) })
+
     this.emit('info-hidden')
   }
 
