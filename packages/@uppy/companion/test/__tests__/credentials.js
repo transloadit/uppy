@@ -32,7 +32,7 @@ jest.mock('request', () => {
 })
 
 const request = require('supertest')
-const tokenService = require('../../lib/server/helpers/jwt')
+const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
 
 const authServer = getServer({ COMPANION_ZOOM_KEYS_ENDPOINT: 'http://localhost:2111/zoom-keys' })

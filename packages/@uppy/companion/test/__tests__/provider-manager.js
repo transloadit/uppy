@@ -1,14 +1,14 @@
 /* global jest:false, test:false, expect:false, describe:false, beforeEach:false */
 
-const providerManager = require('../../lib/server/provider')
-const { getCompanionOptions } = require('../../lib/standalone/helper')
+const providerManager = require('../../src/server/provider')
+const { getCompanionOptions } = require('../../src/standalone/helper')
 
 let grantConfig
 let companionOptions
 
 describe('Test Provider options', () => {
   beforeEach(() => {
-    grantConfig = require('../../lib/config/grant')()
+    grantConfig = require('../../src/config/grant')()
     companionOptions = getCompanionOptions()
   })
 

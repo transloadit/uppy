@@ -19,7 +19,5 @@ jobs:
         run: npm install --global npm@7
       - name: Install dependencies
         run: npm ci
-      - name: Build Companion
-        run: npm run build:companion
       - name: Run tests
         run: npm run test:companion

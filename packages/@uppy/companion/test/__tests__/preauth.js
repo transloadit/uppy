@@ -1,6 +1,6 @@
 /* global jest:false, test:false, expect:false, describe:false */
 
-jest.mock('../../lib/server/helpers/jwt', () => {
+jest.mock('../../src/server/helpers/jwt', () => {
   return {
     generateToken: (payload, secret) => {},
     verifyToken: (token, secret) => {},

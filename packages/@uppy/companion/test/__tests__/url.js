@@ -1,7 +1,7 @@
 /* global jest:false, test:false, expect:false, describe:false */
 
 jest.mock('tus-js-client')
-jest.mock('../../lib/server/helpers/request', () => {
+jest.mock('../../src/server/helpers/request', () => {
   return {
     getURLMeta: (url) => {
       return Promise.resolve({ size: 7580, type: 'image/jpg' })

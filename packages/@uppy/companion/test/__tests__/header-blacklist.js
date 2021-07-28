@@ -1,6 +1,6 @@
 /* global test:false, expect:false, describe:false, */
 
-const headerSanitize = require('../../lib/server/header-blacklist')
+const headerSanitize = require('../../src/server/header-blacklist')
 
 describe('Header black-list testing', () => {
   test('All headers invalid by name', () => {
