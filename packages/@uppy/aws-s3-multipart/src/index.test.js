@@ -3,6 +3,9 @@ const nock = require('nock')
 const Core = require('@uppy/core')
 const AwsS3Multipart = require('.')
 
+const KB = 1024
+const MB = KB * KB
+
 describe('AwsS3Multipart', () => {
   beforeEach(() => nock.disableNetConnect())
 
@@ -38,14 +41,15 @@ describe('AwsS3Multipart', () => {
       createMultipartUpload: jest.fn(() => {
         return {
           uploadId: '6aeb1980f3fc7ce0b5454d25b71992',
-          key: 'test/upload/file3.jpg',
+          key: 'test/upload/multitest.bat',
         }
       }),
       completeMultipartUpload: jest.fn(() => Promise.resolve({ location: 'test' })),
       abortMultipartUpload: jest.fn(),
-      prepareUploadPart: jest.fn((file, { key, uploadId, number }) => {
+      // TOOD (martin) Use a proper presigned URL for a part number here
+      prepareUploadPart: jest.fn(() => {
         return {
-          url: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/file3.jpg',
+          url: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat',
         }
       }),
     })
@@ -56,25 +60,27 @@ describe('AwsS3Multipart', () => {
     })
 
     it('Calls prepareUploadPart N times, where N is fileSize / getChunkSize()', (done) => {
-      const scope = nock('https://bucket.s3.us-east-2.amazonaws.com')
-        .defaultReplyHeaders({
-          'access-control-allow-method': 'PUT',
-          'access-control-allow-origin': '*',
-          'access-control-expose-headers': 'ETag'
-        })
-      scope.options(uri => uri.includes('test'))
-        .reply(200, "", { ETag: "test" })
-      scope.put(uri => uri.includes('test/upload/file3.jpg'))
-        .reply(200, "", { ETag: "test" })
+      const scope = nock('https://bucket.s3.us-east-2.amazonaws.com').defaultReplyHeaders({
+        'access-control-allow-method': 'PUT',
+        'access-control-allow-origin': '*',
+        'access-control-expose-headers': 'ETag',
+      })
+      scope.options((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '')
+      scope.options((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '')
+      scope.put((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '', { ETag: 'test1' })
+      scope.put((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '', { ETag: 'test2' })
 
+      // 6MB file will give us 2 chunks, so there will be 2 PUT and 2 OPTIONS
+      // calls to the presigned URL from 2 prepareUploadPart calls
+      const fileSize = 5 * MB + 1 * MB
       core.addFile({
         source: 'jest',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(20971520)], { type: 'application/octet-stream' }),
+        data: new File([Buffer.alloc(fileSize)], { type: 'application/octet-stream' }),
       })
       core.upload().then(() => {
-        expect(awsS3Multipart.opts.prepareUploadPart.mock.calls.length).toEqual(4)
+        expect(awsS3Multipart.opts.prepareUploadPart.mock.calls.length).toEqual(2)
         done()
       })
     })
@@ -85,13 +91,15 @@ describe('AwsS3Multipart', () => {
         source: 'jest',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(5242880)], { type: 'application/octet-stream' }),
+        data: new File([Buffer.alloc(2 * KB)], { type: 'application/octet-stream' }),
       })
       core
         .upload()
         .then(() => {})
         .catch((err) => {
-          expect(err.message).toEqual("AwsS3/Multipart: Got incorrect result from `prepareUploadPart()`, expected an object `{ url }`.")
+          expect(err.message).toEqual(
+            'AwsS3/Multipart: Got incorrect result from `prepareUploadPart()`, expected an object `{ url }`.'
+          )
           done()
         })
     })
