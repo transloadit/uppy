@@ -640,7 +640,7 @@ class Uppy {
 
     if (this.checkIfFileAlreadyExists(fileID)) {
       const error = new RestrictionError(this.i18n('noDuplicates', { fileName }))
-      this.showOrLogErrorAndThrow(error, { file: fileDescriptor })
+      this.#showOrLogErrorAndThrow(error, { file: fileDescriptor })
     }
 
     const meta = fileDescriptor.meta || {}
