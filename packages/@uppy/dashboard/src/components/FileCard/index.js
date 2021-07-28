@@ -1,5 +1,6 @@
 const { h, Component } = require('preact')
 const classNames = require('classnames')
+const cuid = require('cuid')
 const getFileTypeIcon = require('../../utils/getFileTypeIcon')
 const ignoreEvent = require('../../utils/ignoreEvent.js')
 const FilePreview = require('../FilePreview')
@@ -20,11 +21,7 @@ class FileCard extends Component {
       formState: storedMetaData,
     }
 
-    let randomId
-    do {
-      randomId = `FileCard-form-${Math.random().toString(16)}${Date.now()}`
-    } while (document.getElementById(randomId) != null)
-    this.form.id = randomId
+    this.form.id = cuid()
   }
 
   updateMeta = (newVal, name) => {
@@ -124,9 +121,10 @@ class FileCard extends Component {
           </div>
           <button
             className="uppy-DashboardContent-back"
-            type="submit"
+            type="button"
             form={this.form.id}
             title={this.props.i18n('finishEditingFile')}
+            onClick={this.handleSave}
           >
             {this.props.i18n('done')}
           </button>
@@ -141,6 +139,7 @@ class FileCard extends Component {
                 type="button"
                 className="uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit"
                 onClick={() => this.props.openFileEditor(file)}
+                form={this.form.id}
               >
                 {this.props.i18n('editFile')}
               </button>
@@ -163,6 +162,7 @@ class FileCard extends Component {
               className="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn"
               type="button"
               onClick={this.handleCancel}
+              form={this.form.id}
             >
               {this.props.i18n('cancel')}
             </button>
