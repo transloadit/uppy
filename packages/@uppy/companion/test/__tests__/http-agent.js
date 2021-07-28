@@ -3,7 +3,7 @@
 const request = require('request')
 const http = require('http')
 const https = require('https')
-const { getProtectedHttpAgent, getRedirectEvaluator, FORBIDDEN_IP_ADDRESS } = require('../../src/server/helpers/request')
+const { getProtectedHttpAgent, getRedirectEvaluator, FORBIDDEN_IP_ADDRESS } = require('../../lib/server/helpers/request')
 
 describe('test getRedirectEvaluator', () => {
   const httpURL = 'http://uppy.io'

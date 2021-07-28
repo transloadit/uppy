@@ -3,9 +3,9 @@
 jest.mock('tus-js-client')
 
 const fs = require('fs')
-const Uploader = require('../../src/server/Uploader')
+const Uploader = require('../../lib/server/Uploader')
 const socketClient = require('../mocksocket')
-const standalone = require('../../src/standalone')
+const standalone = require('../../lib/standalone')
 
 describe('uploader with tus protocol', () => {
   test('upload functions with tus protocol', () => {

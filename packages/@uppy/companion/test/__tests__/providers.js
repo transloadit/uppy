@@ -2,21 +2,21 @@
 
 jest.mock('tus-js-client')
 jest.mock('purest')
-jest.mock('../../src/server/helpers/request', () => {
+jest.mock('../../lib/server/helpers/request', () => {
   return {
     getURLMeta: () => Promise.resolve({ size: 758051 }),
   }
 })
-jest.mock('../../src/server/helpers/oauth-state', () => require('../mockoauthstate')())
+jest.mock('../../lib/server/helpers/oauth-state', () => require('../mockoauthstate')())
 
 const request = require('supertest')
 const fixtures = require('../fixtures')
-const tokenService = require('../../src/server/helpers/jwt')
+const tokenService = require('../../lib/server/helpers/jwt')
 const { getServer } = require('../mockserver')
 
 const authServer = getServer()
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
-const providers = require('../../src/server/provider').getDefaultProviders()
+const providers = require('../../lib/server/provider').getDefaultProviders()
 
 const providerNames = Object.keys(providers)
 const AUTH_PROVIDERS = {

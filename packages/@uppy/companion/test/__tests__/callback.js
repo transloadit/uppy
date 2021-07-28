@@ -1,9 +1,9 @@
 /* global jest:false, test:false, expect:false, describe:false */
 
-jest.mock('../../src/server/helpers/oauth-state', () => require('../mockoauthstate')())
+jest.mock('../../lib/server/helpers/oauth-state', () => require('../mockoauthstate')())
 
 const request = require('supertest')
-const tokenService = require('../../src/server/helpers/jwt')
+const tokenService = require('../../lib/server/helpers/jwt')
 const { getServer } = require('../mockserver')
 
 const authServer = getServer()
