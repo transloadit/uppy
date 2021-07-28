@@ -36,14 +36,6 @@ function debounce (fn) {
  * @returns {Array|string} files or success/fail message
  */
 class UIPlugin extends BasePlugin {
-  constructor (uppy, opts) {
-    super(uppy, opts)
-
-    this.mount = this.mount.bind(this)
-    this.update = this.update.bind(this)
-    this.unmount = this.unmount.bind(this)
-  }
-
   /**
    * Check if supplied `target` is a DOM element or an `object`.
    * If it’s an object — target is a plugin, and we search `plugins`
