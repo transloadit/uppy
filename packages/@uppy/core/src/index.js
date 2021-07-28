@@ -1170,6 +1170,14 @@ class Uppy {
         isPaused: false,
       })
 
+      // Remote providers sometimes don't tell us the file size,
+      // but we can know how many bytes we uploaded once the upload is complete.
+      if (file.size == null) {
+        this.setFileState(file.id, {
+          size: uploadResp.bytesUploaded || currentProgress.bytesTotal,
+        })
+      }
+
       this.calculateTotalProgress()
     })
 
