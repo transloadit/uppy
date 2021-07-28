@@ -114,9 +114,11 @@ type anyObject = Record<string, unknown>
 
   const strict = new Uppy().use(TestPlugin, { testOption: 'hello' })
 
-  strict.getPlugin<TestPlugin>('TestPlugin').setOptions({ testOption: 'world' })
+  /* eslint-disable @typescript-eslint/no-non-null-assertion */
+  strict.getPlugin<TestPlugin>('TestPlugin')!.setOptions({ testOption: 'world' })
 
-  expectError(strict.getPlugin<TestPlugin>('TestPlugin').setOptions({ testOption: 0 }))
+  expectError(strict.getPlugin<TestPlugin>('TestPlugin')!.setOptions({ testOption: 0 }))
 
-  expectError(strict.getPlugin<TestPlugin>('TestPlugin').setOptions({ unknownKey: false }))
+  expectError(strict.getPlugin<TestPlugin>('TestPlugin')!.setOptions({ unknownKey: false }))
+  /* eslint-enable @typescript-eslint/no-non-null-assertion */
 }

@@ -8,7 +8,7 @@ import Dashboard from '..'
     target: 'body',
   })
 
-  const plugin = uppy.getPlugin<Dashboard>('Dashboard')
+  const plugin = uppy.getPlugin<Dashboard>('Dashboard') ?? ({} as never)
   plugin.openModal()
   expectType<boolean>(plugin.isModalOpen())
   plugin.closeModal()

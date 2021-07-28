@@ -9,7 +9,6 @@ const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
-const findIndex = require('@uppy/utils/lib/findIndex')
 const supportsUploadProgress = require('./supportsUploadProgress')
 const { justErrorsLogger, debugLogger } = require('./loggers')
 const UIPlugin = require('./UIPlugin')
@@ -31,6 +30,9 @@ class RestrictionError extends Error {
 class Uppy {
   // eslint-disable-next-line global-require
   static VERSION = require('../package.json').version
+
+  /** @type {Record<string, BasePlugin[]>} */
+  #plugins = Object.create(null)
 
   #storeUnsubscribe
 
@@ -147,9 +149,6 @@ class Uppy {
     }
 
     this.i18nInit()
-
-    // Container for different types of plugins
-    this.plugins = {}
 
     this.getState = this.getState.bind(this)
     this.getPlugin = this.getPlugin.bind(this)
@@ -1302,7 +1301,6 @@ class Uppy {
     // Instantiate
     const plugin = new Plugin(this, opts)
     const pluginId = plugin.id
-    this.plugins[plugin.type] = this.plugins[plugin.type] || []
 
     if (!pluginId) {
       throw new Error('Your plugin must have an id')
@@ -1324,7 +1322,11 @@ class Uppy {
       this.log(`Using ${pluginId} v${Plugin.VERSION}`)
     }
 
-    this.plugins[plugin.type].push(plugin)
+    if (plugin.type in this.#plugins) {
+      this.#plugins[plugin.type].push(plugin)
+    } else {
+      this.#plugins[plugin.type] = [plugin]
+    }
     plugin.install()
 
     return this
@@ -1334,18 +1336,18 @@ class Uppy {
    * Find one Plugin by name.
    *
    * @param {string} id plugin id
-   * @returns {object|boolean}
+   * @returns {BasePlugin|undefined}
    */
   getPlugin (id) {
-    let foundPlugin = null
-    this.iteratePlugins((plugin) => {
-      if (plugin.id === id) {
-        foundPlugin = plugin
-        return false
-      }
-      return undefined
-    })
-    return foundPlugin
+    for (const plugins of Object.values(this.#plugins)) {
+      const foundPlugin = plugins.find(plugin => plugin.id === id)
+      if (foundPlugin != null) return foundPlugin
+    }
+    return undefined
+  }
+
+  [Symbol.for('uppy test: getPlugins')] (type) {
+    return this.#plugins[type]
   }
 
   /**
@@ -1354,9 +1356,7 @@ class Uppy {
    * @param {Function} method that will be run on each plugin
    */
   iteratePlugins (method) {
-    Object.keys(this.plugins).forEach(pluginType => {
-      this.plugins[pluginType].forEach(method)
-    })
+    Object.values(this.#plugins).flat(1).forEach(method)
   }
 
   /**
@@ -1372,14 +1372,13 @@ class Uppy {
       instance.uninstall()
     }
 
-    const list = this.plugins[instance.type].slice()
+    const list = this.#plugins[instance.type]
     // list.indexOf failed here, because Vue3 converted the plugin instance
     // to a Proxy object, which failed the strict comparison test:
     // obj !== objProxy
-    const index = findIndex(list, item => item.id === instance.id)
+    const index = list.findIndex(item => item.id === instance.id)
     if (index !== -1) {
       list.splice(index, 1)
-      this.plugins[instance.type] = list
     }
 
     const state = this.getState()
@@ -1674,7 +1673,7 @@ class Uppy {
    * @returns {Promise}
    */
   upload () {
-    if (!this.plugins.uploader) {
+    if (!this.#plugins.uploader?.length) {
       this.log('No uploader type plugins are used', 'warning')
     }
 

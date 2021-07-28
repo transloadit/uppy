@@ -312,7 +312,7 @@ export class Uppy {
     opts?: TOptions
   ): this
 
-  getPlugin<TPlugin extends UIPlugin | BasePlugin>(name: string): TPlugin
+  getPlugin<TPlugin extends UIPlugin | BasePlugin>(name: string): TPlugin | undefined
 
   iteratePlugins(callback: (plugin: UIPlugin | BasePlugin) => void): void
 
