@@ -49,7 +49,7 @@ module.exports = class Instagram extends UIPlugin {
       showBreadcrumbs: false,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

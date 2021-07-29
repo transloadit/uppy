@@ -64,9 +64,10 @@ async function transpileDownForIE ([bundleFile, standalone]) {
 
     browserslistEnv: 'legacy',
     presets: [['@babel/preset-env',  {
-      modules: false,
       loose: true,
       targets: { ie:11 },
+      useBuiltIns: 'entry',
+      corejs: { version: '3.15', proposals: true },
     }]],
   })
   const { code, map } = await minify(js, {

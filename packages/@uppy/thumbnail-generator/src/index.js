@@ -87,7 +87,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
    * is used.
    */
   getProportionalDimensions (img, width, height, rotation) {
-    var aspect = img.width / img.height
+    let aspect = img.width / img.height
     if (rotation === 90 || rotation === 270) {
       aspect = img.height / img.width
     }
@@ -119,13 +119,13 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
   protect (image) {
     // https://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element
 
-    var ratio = image.width / image.height
+    const ratio = image.width / image.height
 
-    var maxSquare = 5000000 // ios max canvas square
-    var maxSize = 4096 // ie max canvas dimensions
+    const maxSquare = 5000000 // ios max canvas square
+    const maxSize = 4096 // ie max canvas dimensions
 
-    var maxW = Math.floor(Math.sqrt(maxSquare * ratio))
-    var maxH = Math.floor(maxSquare / Math.sqrt(maxSquare * ratio))
+    let maxW = Math.floor(Math.sqrt(maxSquare * ratio))
+    let maxH = Math.floor(maxSquare / Math.sqrt(maxSquare * ratio))
     if (maxW > maxSize) {
       maxW = maxSize
       maxH = Math.round(maxW / ratio)
@@ -135,7 +135,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
       maxW = Math.round(ratio * maxH)
     }
     if (image.width > maxW) {
-      var canvas = document.createElement('canvas')
+      const canvas = document.createElement('canvas')
       canvas.width = maxW
       canvas.height = maxH
       canvas.getContext('2d').drawImage(image, 0, 0, maxW, maxH)
@@ -156,16 +156,16 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
 
     image = this.protect(image)
 
-    var steps = Math.ceil(Math.log2(image.width / targetWidth))
+    let steps = Math.ceil(Math.log2(image.width / targetWidth))
     if (steps < 1) {
       steps = 1
     }
-    var sW = targetWidth * Math.pow(2, steps - 1)
-    var sH = targetHeight * Math.pow(2, steps - 1)
-    var x = 2
+    let sW = targetWidth * Math.pow(2, steps - 1)
+    let sH = targetHeight * Math.pow(2, steps - 1)
+    const x = 2
 
     while (steps--) {
-      var canvas = document.createElement('canvas')
+      const canvas = document.createElement('canvas')
       canvas.width = sW
       canvas.height = sH
       canvas.getContext('2d').drawImage(image, 0, 0, sW, sH)
@@ -179,19 +179,19 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
   }
 
   rotateImage (image, translate) {
-    var w = image.width
-    var h = image.height
+    let w = image.width
+    let h = image.height
 
     if (translate.deg === 90 || translate.deg === 270) {
       w = image.height
       h = image.width
     }
 
-    var canvas = document.createElement('canvas')
+    const canvas = document.createElement('canvas')
     canvas.width = w
     canvas.height = h
 
-    var context = canvas.getContext('2d')
+    const context = canvas.getContext('2d')
     context.translate(w / 2, h / 2)
     if (translate.canvas) {
       context.rotate(translate.rad)

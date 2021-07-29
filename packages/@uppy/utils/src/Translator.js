@@ -64,7 +64,7 @@ module.exports = class Translator {
         // Ensure replacement value is escaped to prevent special $-prefixed
         // regex replace tokens. the "$$$$" is needed because each "$" needs to
         // be escaped with "$" itself, and we need two in the resulting output.
-        var replacement = options[arg]
+        let replacement = options[arg]
         if (typeof replacement === 'string') {
           replacement = dollarRegex[Symbol.replace](replacement, dollarBillsYall)
         }

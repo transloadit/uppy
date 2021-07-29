@@ -82,7 +82,7 @@ module.exports = class FileInput extends UIPlugin {
       zIndex: -1,
     }
 
-    const restrictions = this.uppy.opts.restrictions
+    const { restrictions } = this.uppy.opts
     const accept = restrictions.allowedFileTypes ? restrictions.allowedFileTypes.join(',') : null
 
     return (
@@ -112,7 +112,7 @@ module.exports = class FileInput extends UIPlugin {
   }
 
   install () {
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

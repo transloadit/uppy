@@ -1,9 +1,9 @@
 const express = require('express')
 // the ../../../packages is just to use the local version
 // instead of the npm version—in a real app use `require('@uppy/companion')`
-const uppy = require('../../../packages/@uppy/companion')
 const bodyParser = require('body-parser')
 const session = require('express-session')
+const uppy = require('../../../packages/@uppy/companion')
 
 const app = express()
 

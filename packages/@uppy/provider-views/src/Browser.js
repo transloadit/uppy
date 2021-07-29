@@ -1,8 +1,8 @@
 const classNames = require('classnames')
+const { h } = require('preact')
 const Filter = require('./Filter')
 const ItemList = require('./ItemList')
 const FooterActions = require('./FooterActions')
-const { h } = require('preact')
 
 const Browser = (props) => {
   const {

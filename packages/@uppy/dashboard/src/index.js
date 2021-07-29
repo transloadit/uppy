@@ -1,7 +1,6 @@
 const { h } = require('preact')
 const { UIPlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
-const DashboardUI = require('./components/Dashboard')
 const StatusBar = require('@uppy/status-bar')
 const Informer = require('@uppy/informer')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
@@ -9,11 +8,12 @@ const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const getTextDirection = require('@uppy/utils/lib/getTextDirection')
-const trapFocus = require('./utils/trapFocus')
 const cuid = require('cuid')
+const trapFocus = require('./utils/trapFocus')
 const createSuperFocus = require('./utils/createSuperFocus')
 const memoize = require('memoize-one').default || require('memoize-one')
 const FOCUSABLE_ELEMENTS = require('@uppy/utils/lib/FOCUSABLE_ELEMENTS')
+const DashboardUI = require('./components/Dashboard')
 
 const TAB_KEY = 9
 const ESC_KEY = 27
@@ -105,13 +105,7 @@ module.exports = class Dashboard extends UIPlugin {
         recoveredAllFiles: 'We restored all files. You can now resume the upload.',
         sessionRestored: 'Session restored',
         reSelect: 'Re-select',
-        // The default `poweredBy2` string only combines the `poweredBy` string (%{backwardsCompat}) with the size.
-        // Locales can override `poweredBy2` to specify a different word order. This is for backwards compat with
-        // Uppy 1.9.x and below which did a naive concatenation of `poweredBy2 + size` instead of using a locale-specific
-        // substitution.
-        // TODO: In 2.0 `poweredBy2` should be removed in and `poweredBy` updated to use substitution.
-        poweredBy2: '%{backwardsCompat} %{uppy}',
-        poweredBy: 'Powered by',
+        poweredBy: 'Powered by %{uppy}',
       },
     }
 

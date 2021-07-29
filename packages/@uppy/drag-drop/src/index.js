@@ -5,14 +5,13 @@ const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const { h } = require('preact')
 
-const { version } = require('../package.json')
-
 /**
  * Drag & Drop plugin
  *
  */
 module.exports = class DragDrop extends UIPlugin {
-  static VERSION = version
+  // eslint-disable-next-line global-require
+  static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
     super(uppy, opts)

@@ -46,7 +46,7 @@ module.exports = class Facebook extends UIPlugin {
       provider: this.provider,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

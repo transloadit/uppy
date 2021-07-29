@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     installPlugin () {
-      const uppy = this.uppy
+      const { uppy } = this
       const options = {
         id: 'vue:StatusBar',
         ...this.props,
