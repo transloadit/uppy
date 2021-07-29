@@ -177,14 +177,27 @@ class MultipartUploader {
       }
     }
 
-    candidates.forEach((index) => {
-      this._uploadPartRetryable(index).then(() => {
-        // Continue uploading parts
-        this._uploadParts()
-      }, (err) => {
-        this._onError(err)
+    if (this.options.batchPartPresign) {
+      this._batchPrepareUploadParts(candidates).then((result) => {
+        candidates.forEach((index) => {
+          this._uploadPartRetryable(index, result.presignedUrls[index + 1]).then(() => {
+            // Continue uploading parts
+            this._uploadParts()
+          }, (err) => {
+            this._onError(err)
+          })
+        })
       })
-    })
+    } else {
+      candidates.forEach((index) => {
+        this._uploadPartRetryable(index).then(() => {
+          // Continue uploading parts
+          this._uploadParts()
+        }, (err) => {
+          this._onError(err)
+        })
+      })
+    }
   }
 
   _retryable ({ before, attempt, after }) {
@@ -222,24 +235,46 @@ class MultipartUploader {
     })
   }
 
-  _uploadPartRetryable (index) {
+  _batchPrepareUploadParts (candidates) {
+    return Promise.resolve().then(() =>
+      this.options.batchPrepareUploadParts(
+        {
+          key: this.key,
+          uploadId: this.uploadId,
+          partNumbers: candidates.map((candidateIndex) => candidateIndex + 1)
+        }
+      )
+    ).then((result) => {
+      const valid = typeof result === 'object' && result
+        && typeof result.presignedUrls === 'object'
+      if (!valid) {
+        throw new TypeError('AwsS3/Multipart: Got incorrect result from `batchPrepareUploadParts()`, expected an object `{ presignedUrls }`.')
+      }
+
+      return result
+    })
+  }
+
+  _uploadPartRetryable (index, presignedUrl) {
     return this._retryable({
       before: () => {
         this.partsInProgress += 1
       },
-      attempt: () => this._uploadPart(index),
+      attempt: () => this._uploadPart(index, presignedUrl),
       after: () => {
         this.partsInProgress -= 1
       },
     })
   }
 
-  _uploadPart (index) {
+  _uploadPart (index, presignedUrl) {
     const body = this.chunks[index]
     this.chunkState[index].busy = true
 
-    return Promise.resolve().then(() =>
-      this.options.prepareUploadPart(
+    return Promise.resolve().then(() => {
+      if (presignedUrl) { return { url: presignedUrl } }
+
+      return this.options.prepareUploadPart(
         {
           key: this.key,
           uploadId: this.uploadId,
@@ -247,7 +282,7 @@ class MultipartUploader {
           number: index + 1,
         }
       )
-    ).then((result) => {
+    }).then((result) => {
       const valid = typeof result === 'object' && result
         && typeof result.url === 'string'
       if (!valid) {

@@ -51,9 +51,17 @@ describe('AwsS3Multipart', () => {
         completeMultipartUpload: jest.fn(() => Promise.resolve({ location: 'test' })),
         abortMultipartUpload: jest.fn(),
         // TOOD (martin) Use a proper presigned URL for a part number here
-        prepareUploadPart: jest.fn(() => {
+        prepareUploadPart: jest.fn((file, { number }) => {
           return {
-            url: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat',
+            url: `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=${number}`,
+          }
+        }),
+        batchPrepareUploadParts: jest.fn(() => {
+          return {
+            presignedUrls: {
+              1: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=1',
+              2: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=2',
+            },
           }
         }),
       })
@@ -87,8 +95,7 @@ describe('AwsS3Multipart', () => {
     })
 
     it('Throws an error if prepareUploadPart does not return an object with a url', (done) => {
-      const originalPrepareFn = awsS3Multipart.opts.prepareUploadPart
-      awsS3Multipart.opts.prepareUploadPart = jest.fn(() => null)
+      awsS3Multipart.opts.prepareUploadPart = jest.fn(() => { return {} })
       core.addFile({
         source: 'jest',
         name: 'multitest.dat',
@@ -102,9 +109,45 @@ describe('AwsS3Multipart', () => {
           expect(err.message).toEqual(
             'AwsS3/Multipart: Got incorrect result from `prepareUploadPart()`, expected an object `{ url }`.'
           )
-          awsS3Multipart.opts.prepareUploadPart = originalPrepareFn
           done()
         })
+    })
+
+    describe('with batchPartPresign enabled', () => {
+      beforeEach(() => {
+        awsS3Multipart.opts.batchPartPresign = true
+      })
+
+      afterEach(() => {
+        awsS3Multipart.opts.batchPartPresign = false
+      })
+
+      it('Calls the batchPrepareUploadParts function totalChunks / limit times', done => {
+        const scope = nock('https://bucket.s3.us-east-2.amazonaws.com').defaultReplyHeaders({
+          'access-control-allow-method': 'PUT',
+          'access-control-allow-origin': '*',
+          'access-control-expose-headers': 'ETag',
+        })
+        scope.options((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '')
+        scope.options((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '')
+        scope.put((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '', { ETag: 'test1' })
+        scope.put((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '', { ETag: 'test2' })
+
+        // 6MB file will give us 2 chunks, so there will be 2 PUT and 2 OPTIONS
+        // calls to the presigned URL from 1 batchPrepareUploadParts calls
+        const fileSize = 5 * MB + 1 * MB
+        core.addFile({
+          source: 'jest',
+          name: 'multitest.dat',
+          type: 'application/octet-stream',
+          data: new File([Buffer.alloc(fileSize)], { type: 'application/octet-stream' }),
+        })
+        core.upload().then(() => {
+          expect(awsS3Multipart.opts.batchPrepareUploadParts.mock.calls.length).toEqual(1)
+          expect(awsS3Multipart.opts.prepareUploadPart.mock.calls.length).toEqual(0)
+          done()
+        })
+      })
     })
   })
 })
