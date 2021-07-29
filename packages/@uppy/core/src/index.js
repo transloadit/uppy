@@ -82,8 +82,6 @@ class Uppy {
           1: 'Select %{smart_count}',
         },
         allFilesFromFolderNamed: 'All files from folder %{name}',
-        selectFileNamed: 'Select file %{name}',
-        unselectFileNamed: 'Unselect file %{name}',
         openFolderNamed: 'Open folder %{name}',
         cancel: 'Cancel',
         logOut: 'Log out',

@@ -70,6 +70,7 @@ en_US.strings = {
     '0': 'Added %{smart_count} file from %{folder}',
     '1': 'Added %{smart_count} files from %{folder}',
   },
+  folderAlreadyAdded: 'The folder "%{folder}" was already added',
   generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',
   importFiles: 'Import files from:',
@@ -115,7 +116,6 @@ en_US.strings = {
   save: 'Save',
   saveChanges: 'Save changes',
   searchImages: 'Search for images',
-  selectFileNamed: 'Select file %{name}',
   selectX: {
     '0': 'Select %{smart_count}',
     '1': 'Select %{smart_count}',
@@ -131,7 +131,6 @@ en_US.strings = {
   submitRecordedFile: 'Submit recorded file',
   takePicture: 'Take a picture',
   timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
-  unselectFileNamed: 'Unselect file %{name}',
   upload: 'Upload',
   uploadComplete: 'Upload complete',
   uploadFailed: 'Upload failed',
