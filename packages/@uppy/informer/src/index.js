@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions  */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 const { h } = require('preact')
-const TransitionGroup = require('preact-transition-group')
 const { UIPlugin } = require('@uppy/core')
 const FadeIn = require('./FadeIn')
+const TransitionGroup = require('./TransitionGroup')
 
 /**
  * Informer
