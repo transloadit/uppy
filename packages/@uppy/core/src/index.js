@@ -32,6 +32,8 @@ class RestrictionError extends Error {
 class Uppy {
   static VERSION = version
 
+  #translator
+
   /**
    * Instantiate Uppy
    *
@@ -284,10 +286,10 @@ class Uppy {
   }
 
   i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.opts.locale])
-    this.locale = this.translator.locale
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.#translator = new Translator([this.defaultLocale, this.opts.locale])
+    this.locale = this.#translator.locale
+    this.i18n = this.#translator.translate.bind(this.#translator)
+    this.i18nArray = this.#translator.translateArray.bind(this.#translator)
   }
 
   setOptions (newOpts) {
