@@ -60,6 +60,13 @@ class MultipartUploader {
     this.chunkState = null
     this.lockedCandidatesForBatch = []
 
+    // this will cause an infinite loop if it occurs because we will end up
+    // with a case where the minimum will never be reached because we determine
+    // candidates based on the limit
+    if (this.options.minNeededForPresignBatch > this.options.limit) {
+      this.options.minNeededForPresignBatch = this.options.limit
+    }
+
     this._initChunks()
 
     this.createdPromise.catch(() => {}) // silence uncaught rejection warning
@@ -159,8 +166,13 @@ class MultipartUploader {
     if (this.isPaused) return
 
     const need = this.options.limit - this.partsInProgress
+
+    // e.g. limit of 10, min batch size of 5, 20 parts
+    // need 1 is 10
+    // need 2 is 5-10
+    // need 3 is 5-10
     if (this.options.batchPartPresign) {
-      if (need < this.options.limit) return
+      if (need < this.options.minNeededForPresignBatch) return
     } else {
       if (need === 0) return
     }
@@ -185,7 +197,7 @@ class MultipartUploader {
     if (candidates.length === 0) return
 
     if (this.options.batchPartPresign) {
-      this._batchPrepareUploadPartsRetryable(candidates).then((result) => {
+      this._batchPrepareUploadParts(candidates).then((result) => {
         candidates.forEach((index) => {
           this._uploadPartRetryable(index, result.presignedUrls[index + 1]).then(() => {
             this._uploadParts()
@@ -250,6 +262,7 @@ class MultipartUploader {
   }
 
   _batchPrepareUploadParts (candidates) {
+    this.lockedCandidatesForBatch.push(...candidates)
     return Promise.resolve().then(() =>
       this.options.batchPrepareUploadParts(
         {
@@ -266,18 +279,6 @@ class MultipartUploader {
       }
 
       return result
-    })
-  }
-
-  _batchPrepareUploadPartsRetryable (candidates) {
-    return this._retryable({
-      before: () => {
-        this.lockedCandidatesForBatch.push(...candidates)
-      },
-      attempt: () => this._batchPrepareUploadParts(candidates),
-      after: () => {
-        this.lockedCandidatesForBatch = this.lockedCandidatesForBatch.filter((index) => candidates.includes(index))
-      },
     })
   }
 
