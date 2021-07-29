@@ -41,7 +41,7 @@ ja_JP.strings = {
   encoding: 'エンコードしています...',
   enterCorrectUrl: '不正なURL: ファイルへの直接リンクが入力されていることを確認してください',
   enterUrlToImport: 'ファイルをインポートするためのURLを入力してください',
-  exceedsSize: 'ファイルサイズが大きすぎます',
+  exceedsSize: 'ファイルサイズが大きすぎます %{size}',
   failedToFetch: 'CompanionがURLを取得できませんでした。URLが正しいか確認してください',
   failedToUpload: '%{file}のアップロードに失敗しました',
   fileSource: '元ファイル：%{name}',
@@ -67,7 +67,7 @@ ja_JP.strings = {
   pause: '一時停止',
   pauseUpload: 'アップロードを一時停止',
   paused: '停止中',
-  poweredBy: 'Powered by',
+  poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': '%{smart_count} ファイル処理中',
     '1': '%{smart_count} ファイル処理中',

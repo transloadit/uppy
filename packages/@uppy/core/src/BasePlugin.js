@@ -12,15 +12,9 @@ const Translator = require('@uppy/utils/lib/Translator')
 module.exports = class BasePlugin {
   #translator
 
-  constructor (uppy, opts) {
+  constructor (uppy, opts = {}) {
     this.uppy = uppy
-    this.opts = opts || {}
-
-    this.getPluginState = this.getPluginState.bind(this)
-    this.setPluginState = this.setPluginState.bind(this)
-    this.setOptions = this.setOptions.bind(this)
-    this.install = this.install.bind(this)
-    this.uninstall = this.uninstall.bind(this)
+    this.opts = opts
   }
 
   getPluginState () {

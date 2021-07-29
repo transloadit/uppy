@@ -41,7 +41,7 @@ cs_CZ.strings = {
   encoding: 'Převádění...',
   enterCorrectUrl: 'Chybná URL: Ujistěte se, že vkládáte přímý odkaz na soubor.',
   enterUrlToImport: 'Vložte URL pro import souboru.',
-  exceedsSize: 'Tento soubor překračuje maximální povolenou velikost: ',
+  exceedsSize: 'Tento soubor překračuje maximální povolenou velikost: %{size}',
   failedToFetch: 'Modulu Companion se nepodařilo stáhnout soubor z této URL, zkontrolujte prosím, jestli je URL správná.',
   failedToUpload: 'Nepodařilo se nahrát soubor %{file}',
   fileSource: 'Zdroj souboru: %{name}',
@@ -69,7 +69,7 @@ cs_CZ.strings = {
   pause: 'Pozastavit',
   pauseUpload: 'Pozastavit nahrávání',
   paused: 'Pozastaveno',
-  poweredBy: 'Vytvořeno pomocí ',
+  poweredBy: 'Vytvořeno pomocí %{uppy}',
   processingXFiles: {
     '0': 'Zpracování %{smart_count} souborů',
     '1': 'Zpracování %{smart_count} souborů',

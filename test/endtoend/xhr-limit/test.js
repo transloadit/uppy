@@ -3,7 +3,7 @@ const http = require('http')
 const { Writable } = require('stream')
 const { supportsChooseFile } = require('../utils')
 
-const tempWrite = import('temp-write')
+const tempWrite = Function(`return import('temp-write')`)() // eslint-disable-line no-new-func
 async function make1kBFile () {
   const size = 1024
   const content = Buffer.allocUnsafe(size)

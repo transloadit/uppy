@@ -27,7 +27,7 @@ class FileInput extends React.Component {
   }
 
   installPlugin () {
-    const uppy = this.props.uppy
+    const { uppy } = this.props
     const options = {
       id: 'react:FileInput',
       ...this.props,
@@ -41,7 +41,7 @@ class FileInput extends React.Component {
   }
 
   uninstallPlugin (props = this.props) {
-    const uppy = props.uppy
+    const { uppy } = props
 
     uppy.removePlugin(this.plugin)
   }

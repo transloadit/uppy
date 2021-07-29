@@ -9,6 +9,8 @@ export interface UrlOptions extends PluginOptions, RequestClientOptions {
     locale?: UrlLocale
 }
 
-declare class Url extends UIPlugin<UrlOptions> {}
+declare class Url extends UIPlugin<UrlOptions> {
+  public addFile(url: string): undefined | string | never
+}
 
 export default Url
