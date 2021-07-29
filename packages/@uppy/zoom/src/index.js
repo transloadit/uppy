@@ -30,6 +30,14 @@ module.exports = class Zoom extends UIPlugin {
       pluginId: this.id,
     })
 
+    this.defaultLocale = {
+      strings: {
+        pluginNameZoom: 'Zoom',
+      },
+    }
+    this.i18nInit()
+    this.title = this.i18n('pluginNameZoom')
+
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }

@@ -31,6 +31,14 @@ module.exports = class OneDrive extends UIPlugin {
       pluginId: this.id,
     })
 
+    this.defaultLocale = {
+      strings: {
+        pluginNameOneDrive: 'OneDrive',
+      },
+    }
+    this.i18nInit()
+    this.title = this.i18n('pluginNameOneDrive')
+
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }

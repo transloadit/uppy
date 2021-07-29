@@ -32,6 +32,14 @@ module.exports = class Box extends UIPlugin {
       pluginId: this.id,
     })
 
+    this.defaultLocale = {
+      strings: {
+        pluginNameBox: 'Box',
+      },
+    }
+    this.i18nInit()
+    this.title = this.i18n('pluginNameBox')
+
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }

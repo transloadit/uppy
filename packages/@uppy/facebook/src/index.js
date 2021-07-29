@@ -29,6 +29,14 @@ module.exports = class Facebook extends UIPlugin {
       pluginId: this.id,
     })
 
+    this.defaultLocale = {
+      strings: {
+        pluginNameFacebook: 'Facebook',
+      },
+    }
+    this.i18nInit()
+    this.title = this.i18n('pluginNameFacebook')
+
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }
