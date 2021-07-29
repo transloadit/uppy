@@ -21,6 +21,21 @@ class RestrictionError extends Error {
     this.isRestriction = true
   }
 }
+if (typeof window.AggregateError === 'undefined') {
+  // eslint-disable-next-line no-global-assign
+  AggregateError = class AggregateError extends Error {
+    constructor (message, errors) {
+      super(message)
+      this.errors = errors
+    }
+  }
+}
+class AggregateRestrictionError extends AggregateError {
+  constructor (...args) {
+    super(...args)
+    this.isRestriction = true
+  }
+}
 
 /**
  * Uppy Core module.
@@ -51,6 +66,8 @@ class Uppy {
           0: 'You have to select at least %{smart_count} file',
           1: 'You have to select at least %{smart_count} files',
         },
+        missingRequiredMetaField: 'Missing required meta fields',
+        missingRequiredMetaFieldOnFile: 'Missing required meta fields in %{fileName}',
         // The default `exceedsSize2` string only combines the `exceedsSize` string (%{backwardsCompat}) with the size.
         // Locales can override `exceedsSize2` to specify a different word order. This is for backwards compat with
         // Uppy 1.9.x and below which did a naive concatenation of `exceedsSize2 + size` instead of using a locale-specific
@@ -108,6 +125,7 @@ class Uppy {
         maxNumberOfFiles: null,
         minNumberOfFiles: null,
         allowedFileTypes: null,
+        requiredMetaFields: [],
       },
       meta: {},
       onBeforeFileAdded: (currentFile) => currentFile,
@@ -539,6 +557,33 @@ class Uppy {
     const { minNumberOfFiles } = this.opts.restrictions
     if (Object.keys(files).length < minNumberOfFiles) {
       throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
+    }
+  }
+
+  /**
+   * Check if requiredMetaField restriction is met before uploading.
+   *
+   * @private
+   */
+  checkRequiredMetaFields (files) {
+    const { requiredMetaFields } = this.opts.restrictions
+    const { hasOwnProperty } = Object.prototype.hasOwnProperty
+
+    const errors = []
+    const fileIDs = Object.keys(files)
+    for (let i = 0; i < fileIDs.length; i++) {
+      const file = this.getFile(fileIDs[i])
+      for (let i = 0; i < requiredMetaFields.length; i++) {
+        if (!hasOwnProperty.call(file.meta, requiredMetaFields[i])) {
+          const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
+          errors.push(err)
+          this.showOrLogErrorAndThrow(err, { file, throwErr: false })
+        }
+      }
+    }
+
+    if (errors.length) {
+      throw new AggregateRestrictionError(`${this.i18n('missingRequiredMetaField')}`, errors)
     }
   }
 
@@ -1688,7 +1733,10 @@ class Uppy {
     }
 
     return Promise.resolve()
-      .then(() => this.checkMinNumberOfFiles(files))
+      .then(() => {
+        this.checkMinNumberOfFiles(files)
+        this.checkRequiredMetaFields(files)
+      })
       .catch((err) => {
         this.showOrLogErrorAndThrow(err)
       })

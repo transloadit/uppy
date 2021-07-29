@@ -1025,6 +1025,7 @@ module.exports = class Dashboard extends Plugin {
       parentElement: this.el,
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
+      requiredMetaFields: this.uppy.opts.restrictions.requiredMetaFields,
       showSelectedFiles: this.opts.showSelectedFiles,
       handleCancelRestore: this.handleCancelRestore,
       handleRequestThumbnail: this.handleRequestThumbnail,
