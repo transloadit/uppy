@@ -21,7 +21,7 @@ class RestrictionError extends Error {
     this.isRestriction = true
   }
 }
-if (typeof window.AggregateError === 'undefined') {
+if (typeof AggregateError === 'undefined') {
   // eslint-disable-next-line no-global-assign
   AggregateError = class AggregateError extends Error {
     constructor (message, errors) {
