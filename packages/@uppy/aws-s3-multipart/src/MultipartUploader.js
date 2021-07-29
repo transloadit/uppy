@@ -205,15 +205,7 @@ class MultipartUploader {
             this._onError(err)
           })
         })
-      });
-      // this._batchPrepareUploadParts(candidates).then((result) => {
-      //   let partPromises = candidates.map((index) => this._uploadPartRetryable(index, result.presignedUrls[index + 1]))
-      //   Promise.all(partPromises).then(() => {
-      //     this._uploadParts()
-      //   }).catch((err) => {
-      //     this._onError(err)
-      //   })
-      // })
+      })
     } else {
       candidates.forEach((index) => {
         this._uploadPartRetryable(index).then(() => {
@@ -263,15 +255,13 @@ class MultipartUploader {
 
   _batchPrepareUploadParts (candidates) {
     this.lockedCandidatesForBatch.push(...candidates)
-    return Promise.resolve().then(() =>
-      this.options.batchPrepareUploadParts(
-        {
-          key: this.key,
-          uploadId: this.uploadId,
-          partNumbers: candidates.map((index) => index + 1)
-        }
-      )
-    ).then((result) => {
+    return Promise.resolve().then(() => {
+      return this.options.batchPrepareUploadParts({
+        key: this.key,
+        uploadId: this.uploadId,
+        partNumbers: candidates.map((index) => index + 1),
+      })
+    }).then((result) => {
       const valid = typeof result === 'object' && result
         && typeof result.presignedUrls === 'object'
       if (!valid) {
