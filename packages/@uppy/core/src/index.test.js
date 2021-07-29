@@ -1728,7 +1728,7 @@ describe('src/Core', () => {
         name: 'test.jpg',
         data: new Blob([Buffer.alloc(2 * maxFileSize)]),
       }
-      const errorMessage = `${core.i18n('exceedsSize', { file: file.name })} ${prettierBytes(maxFileSize)}`
+      const errorMessage = core.i18n('exceedsSize', { file: file.name, size: prettierBytes(maxFileSize) })
       try {
         core.on('restriction-failed', restrictionsViolatedEventMock)
         core.addFile(file)
@@ -1961,7 +1961,7 @@ describe('src/Core', () => {
         },
       })
 
-      expect(core.i18n('exceedsSize')).toBe('%{file} exceeds maximum allowed size of')
+      expect(core.i18n('exceedsSize')).toBe('%{file} exceeds maximum allowed size of %{size}')
       expect(core.i18n('test')).toBe('beep boop')
     })
   })

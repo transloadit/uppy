@@ -47,7 +47,7 @@ fr_FR.strings = {
   encoding: 'Traitement...',
   enterCorrectUrl: 'Lien incorrect: Assurez-vous que vous entrez un lien direct vers le fichier',
   enterUrlToImport: 'Entrez le lien pour importer un fichier',
-  exceedsSize: 'Ce fichier dépasse la taille maximale autorisée de',
+  exceedsSize: 'Ce fichier dépasse la taille maximale autorisée de %{size}',
   failedToFetch: 'Companion a échoué à récupérer ce lien, assurez-vous qu\'il est correct',
   failedToUpload: 'Le téléchargement de %{file} a échoué',
   fileSource: 'Fichier source: %{name}',
@@ -78,7 +78,7 @@ fr_FR.strings = {
   pause: 'Pause',
   pauseUpload: 'Mettre en pause le téléchargement',
   paused: 'En pause',
-  poweredBy: 'Propulsé par',
+  poweredBy: 'Propulsé par %{uppy}',
   processingXFiles: {
     '0': 'Traitement de %{smart_count} fichier',
     '1': 'Traitement de %{smart_count} fichiers',
