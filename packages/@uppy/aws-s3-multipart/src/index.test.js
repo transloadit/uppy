@@ -61,6 +61,11 @@ describe('AwsS3Multipart', () => {
             presignedUrls: {
               1: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=1',
               2: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=2',
+              3: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=3',
+              4: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=4',
+              5: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=5',
+              6: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=6',
+              7: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=7',
             },
           }
         }),
@@ -144,6 +149,32 @@ describe('AwsS3Multipart', () => {
         })
         core.upload().then(() => {
           expect(awsS3Multipart.opts.batchPrepareUploadParts.mock.calls.length).toEqual(1)
+          expect(awsS3Multipart.opts.prepareUploadPart.mock.calls.length).toEqual(0)
+          done()
+        })
+      })
+
+      it('Does not call batchPrepareUploadParts one at a time for the remaining chunks after the first limit batch', done => {
+        const scope = nock('https://bucket.s3.us-east-2.amazonaws.com').defaultReplyHeaders({
+          'access-control-allow-method': 'PUT',
+          'access-control-allow-origin': '*',
+          'access-control-expose-headers': 'ETag',
+        })
+        scope.options((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '')
+        scope.put((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '', { ETag: 'test' })
+        scope.persist()
+
+        // 32MB file will give us 7 chunks, so there will be 7 PUT and 7 OPTIONS
+        // calls to the presigned URL from 2 batchPrepareUploadParts calls
+        const fileSize = 30 * MB + 2 * MB
+        core.addFile({
+          source: 'jest',
+          name: 'multitest.dat',
+          type: 'application/octet-stream',
+          data: new File([Buffer.alloc(fileSize)], { type: 'application/octet-stream' }),
+        })
+        core.upload().then(() => {
+          expect(awsS3Multipart.opts.batchPrepareUploadParts.mock.calls.length).toEqual(2)
           expect(awsS3Multipart.opts.prepareUploadPart.mock.calls.length).toEqual(0)
           done()
         })

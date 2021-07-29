@@ -205,6 +205,23 @@ module.exports = function s3 (config) {
   }
 
   /**
+   * Get parameters for uploading a batch of parts.
+   *
+   * Expected URL parameters:
+   *  - uploadId - The uploadId returned from `createMultipartUpload`.
+   *  - partNumbers - A comma separated list of part numbers representing
+   *                  indecies in the file (1-10000).
+   * Expected query parameters:
+   *  - key - The object key in the S3 bucket.
+   * Response JSON:
+   *  - presignedUrls - The URLs to upload to, including signed query parameters,
+   *                    in an object mapped to part numbers.
+   */
+  batchSignPartsUpload (req, res, next) {
+
+  }
+ 
+  /**
    * Abort a multipart upload, deleting already uploaded parts.
    *
    * Expected URL parameters:
@@ -287,6 +304,7 @@ module.exports = function s3 (config) {
     .get('/multipart/:uploadId', getUploadedParts)
     .get('/multipart/:uploadId/:partNumber', signPartUpload)
     .post('/multipart/:uploadId/complete', completeMultipartUpload)
+    .get(`/multipart/:uploadId/batch`, batchSignPartsUpload)
     .delete('/multipart/:uploadId', abortMultipartUpload)
 }
 

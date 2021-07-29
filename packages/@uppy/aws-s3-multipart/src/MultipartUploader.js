@@ -58,6 +58,7 @@ class MultipartUploader {
     this.partsInProgress = 0
     this.chunks = null
     this.chunkState = null
+    this.lockedCandidatesForBatch = []
 
     this._initChunks()
 
@@ -158,7 +159,11 @@ class MultipartUploader {
     if (this.isPaused) return
 
     const need = this.options.limit - this.partsInProgress
-    if (need === 0) return
+    if (this.options.batchPartPresign) {
+      if (need < this.options.limit) return
+    } else {
+      if (need === 0) return
+    }
 
     // All parts are uploaded.
     if (this.chunkState.every((state) => state.done)) {
@@ -168,6 +173,7 @@ class MultipartUploader {
 
     const candidates = []
     for (let i = 0; i < this.chunkState.length; i++) {
+      if (this.lockedCandidatesForBatch.includes(i)) continue
       const state = this.chunkState[i]
       if (state.done || state.busy) continue
 
@@ -176,18 +182,26 @@ class MultipartUploader {
         break
       }
     }
+    if (candidates.length === 0) return
 
     if (this.options.batchPartPresign) {
-      this._batchPrepareUploadParts(candidates).then((result) => {
+      this._batchPrepareUploadPartsRetryable(candidates).then((result) => {
         candidates.forEach((index) => {
           this._uploadPartRetryable(index, result.presignedUrls[index + 1]).then(() => {
-            // Continue uploading parts
             this._uploadParts()
           }, (err) => {
             this._onError(err)
           })
         })
-      })
+      });
+      // this._batchPrepareUploadParts(candidates).then((result) => {
+      //   let partPromises = candidates.map((index) => this._uploadPartRetryable(index, result.presignedUrls[index + 1]))
+      //   Promise.all(partPromises).then(() => {
+      //     this._uploadParts()
+      //   }).catch((err) => {
+      //     this._onError(err)
+      //   })
+      // })
     } else {
       candidates.forEach((index) => {
         this._uploadPartRetryable(index).then(() => {
@@ -241,7 +255,7 @@ class MultipartUploader {
         {
           key: this.key,
           uploadId: this.uploadId,
-          partNumbers: candidates.map((candidateIndex) => candidateIndex + 1)
+          partNumbers: candidates.map((index) => index + 1)
         }
       )
     ).then((result) => {
@@ -252,6 +266,18 @@ class MultipartUploader {
       }
 
       return result
+    })
+  }
+
+  _batchPrepareUploadPartsRetryable (candidates) {
+    return this._retryable({
+      before: () => {
+        this.lockedCandidatesForBatch.push(...candidates)
+      },
+      attempt: () => this._batchPrepareUploadParts(candidates),
+      after: () => {
+        this.lockedCandidatesForBatch = this.lockedCandidatesForBatch.filter((index) => candidates.includes(index))
+      },
     })
   }
 
