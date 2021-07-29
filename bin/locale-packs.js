@@ -155,6 +155,7 @@ function createTypeScriptLocale (plugin, pluginName) {
   const localePath = path.join(__dirname, '..', 'packages', '@uppy', pluginName, 'types', 'generatedLocale.d.ts')
 
   const localeTypes = dedent`
+    /* eslint-disable */
     import type { Locale } from '@uppy/core'
 
     type ${pluginClassName}Locale = Locale<
