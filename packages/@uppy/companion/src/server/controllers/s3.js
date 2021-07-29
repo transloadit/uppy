@@ -217,10 +217,10 @@ module.exports = function s3 (config) {
    *  - presignedUrls - The URLs to upload to, including signed query parameters,
    *                    in an object mapped to part numbers.
    */
-  batchSignPartsUpload (req, res, next) {
+  function batchSignPartsUpload (req, res, next) {
 
   }
- 
+
   /**
    * Abort a multipart upload, deleting already uploaded parts.
    *
