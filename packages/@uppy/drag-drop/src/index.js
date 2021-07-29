@@ -39,11 +39,11 @@ module.exports = class DragDrop extends UIPlugin {
     // Merge default options with the ones set by user
     this.opts = { ...defaultOpts, ...opts }
 
+    this.i18nInit()
+
     // Check for browser dragDrop support
     this.isDragDropSupported = isDragDropSupported()
     this.removeDragOverClassTimeout = null
-
-    this.i18nInit()
 
     // Bind `this` to class methods
     this.onInputChange = this.onInputChange.bind(this)
@@ -52,18 +52,6 @@ module.exports = class DragDrop extends UIPlugin {
     this.handleDrop = this.handleDrop.bind(this)
     this.addFiles = this.addFiles.bind(this)
     this.render = this.render.bind(this)
-  }
-
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   addFiles (files) {
