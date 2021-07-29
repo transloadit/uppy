@@ -45,6 +45,7 @@ module.exports = class BasePlugin {
   setOptions (newOpts) {
     this.opts = { ...this.opts, ...newOpts }
     this.setPluginState() // so that UI re-renders with new options
+    this.i18nInit()
   }
 
   i18nInit () {
