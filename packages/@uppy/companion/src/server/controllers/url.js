@@ -55,7 +55,7 @@ const get = (req, res) => {
 
       // If we already have size, no need to get it again.
       // See https://github.com/transloadit/uppy/issues/3034
-      let size = req.body && req.body.size
+      let { size } = req.body
       if (!size) {
         const urlMeta = await reqUtil.getURLMeta(req.body.url, !debug)
         size = urlMeta.size
