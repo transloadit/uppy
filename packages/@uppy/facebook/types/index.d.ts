@@ -1,7 +1,7 @@
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 import type { PublicProviderOptions, TokenStorage } from '@uppy/companion-client'
 
-interface FacebookOptions extends PluginOptions, PublicProviderOptions {
+export interface FacebookOptions extends PluginOptions, PublicProviderOptions {
     replaceTargetContent?: boolean
     target?: PluginTarget
     title?: string
