@@ -37,7 +37,6 @@ function uppyInit () {
 
   const uppy = new Uppy({
     logger: Uppy.debugLogger,
-    restrictions: { requiredMetaFields: ['caption'] }
   })
 
   uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/', resume: true })
@@ -81,6 +80,7 @@ function uppySetOptions () {
     maxNumberOfFiles: 3,
     minNumberOfFiles: 2,
     allowedFileTypes: ['image/*', 'video/*'],
+    requiredMetaFields: ['caption'],
   }
 
   window.uppy.setOptions({
