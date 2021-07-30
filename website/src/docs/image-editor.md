@@ -64,6 +64,7 @@ uppy.use(ImageEditor, {
     background: false,
     autoCropArea: 1,
     responsive: true,
+    croppedCanvasOptions: {},
   },
   actions: {
     revert: true,
@@ -89,7 +90,10 @@ Quality of the resulting blob that will be saved in Uppy after editing/cropping.
 
 ### `cropperOptions`
 
-Image Editor is using the excellent [Cropper.js](https://fengyuanchen.github.io/cropperjs/), and if you’d like to fine tune the Cropper.js instance, you can pass options to it.
+Image Editor is using the excellent [Cropper.js](https://fengyuanchen.github.io/cropperjs/).
+`cropperOptions` will be directly passed to `Cropper` and therefor can expect the same values as documented
+in their [README](https://github.com/fengyuanchen/cropperjs/blob/HEAD/README.md#options),
+with the addition of `croppedCanvasOptions`, which will be passed to [`getCroppedCanvas`](https://github.com/fengyuanchen/cropperjs/blob/HEAD/README.md#getcroppedcanvasoptions).
 
 ### `actions`
 

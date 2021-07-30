@@ -1,4 +1,5 @@
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type Cropper from 'cropperjs'
 import ImageEditorLocale from './generatedLocale'
 
 type Actions = {
@@ -13,8 +14,12 @@ type Actions = {
   cropWidescreenVertical: boolean
 }
 
+interface UppyCropperOptions extends Cropper.Options {
+  croppedCanvasOptions: Cropper.GetCroppedCanvasOptions
+}
+
 export interface ImageEditorOptions extends PluginOptions {
-  cropperOptions?: Record<string, unknown>
+  cropperOptions?: UppyCropperOptions
   actions?: Actions
   quality?: number
   target?: PluginTarget
