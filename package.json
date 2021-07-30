@@ -24,7 +24,8 @@
   "pre-commit": "lint:staged",
   "license": "MIT",
   "engines": {
-    "npm": "7.x"
+    "npm": "7.x",
+    "node": "^v14.17.0 || >=v16.0.0"
   },
   "workspaces": [
     "examples/*",
@@ -133,7 +134,7 @@
     "build:angular": "npm run --prefix ./packages/@uppy/angular build:release",
     "build:js": "npm-run-all build:lib build:companion build:locale-pack build:svelte build:angular build:bundle",
     "build:lib": "node ./bin/build-lib.js",
-    "build:locale-pack": "node ./bin/locale-packs.js build",
+    "build:locale-pack": "node --experimental-abortcontroller ./bin/locale-packs.js build",
     "build": "npm-run-all --parallel build:js build:css --serial size",
     "contributors:save": "node ./bin/update-contributors.mjs",
     "dev:browsersync": "npm run --prefix examples/dev start",
