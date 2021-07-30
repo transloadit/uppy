@@ -30,6 +30,14 @@ module.exports = class GoogleDrive extends UIPlugin {
       pluginId: this.id,
     })
 
+    this.defaultLocale = {
+      strings: {
+        pluginNameGoogleDrive: 'Google Drive',
+      },
+    }
+    this.i18nInit()
+    this.title = this.i18n('pluginNameGoogleDrive')
+
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }

@@ -54,6 +54,14 @@ class Uppy {
 
   #emitter = ee()
 
+  #translator
+
+  #preProcessors = new Set()
+
+  #uploaders = new Set()
+
+  #postProcessors = new Set()
+
   /**
    * Instantiate Uppy
    *
@@ -173,10 +181,6 @@ class Uppy {
     //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
     this.calculateProgress = throttle(this.calculateProgress.bind(this), 500, { leading: true, trailing: true })
 
-    this.preProcessors = []
-    this.uploaders = []
-    this.postProcessors = []
-
     this.store = this.opts.store
     this.setState({
       plugins: {},
@@ -279,10 +283,16 @@ class Uppy {
   }
 
   i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.opts.locale])
-    this.locale = this.translator.locale
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.#translator = new Translator([this.defaultLocale, this.opts.locale])
+    this.locale = this.#translator.locale
+  }
+
+  i18n (...args) {
+    return this.#translator.translate(...args)
+  }
+
+  i18nArray (...args) {
+    return this.#translator.translateArray(...args)
   }
 
   setOptions (newOpts) {
@@ -335,36 +345,27 @@ class Uppy {
   }
 
   addPreProcessor (fn) {
-    this.preProcessors.push(fn)
+    this.#preProcessors.add(fn)
   }
 
   removePreProcessor (fn) {
-    const i = this.preProcessors.indexOf(fn)
-    if (i !== -1) {
-      this.preProcessors.splice(i, 1)
-    }
+    return this.#preProcessors.delete(fn)
   }
 
   addPostProcessor (fn) {
-    this.postProcessors.push(fn)
+    this.#postProcessors.add(fn)
   }
 
   removePostProcessor (fn) {
-    const i = this.postProcessors.indexOf(fn)
-    if (i !== -1) {
-      this.postProcessors.splice(i, 1)
-    }
+    return this.#postProcessors.delete(fn)
   }
 
   addUploader (fn) {
-    this.uploaders.push(fn)
+    this.#uploaders.add(fn)
   }
 
   removeUploader (fn) {
-    const i = this.uploaders.indexOf(fn)
-    if (i !== -1) {
-      this.uploaders.splice(i, 1)
-    }
+    return this.#uploaders.delete(fn)
   }
 
   setMeta (data) {
@@ -1199,7 +1200,7 @@ class Uppy {
       this.setFileState(file.id, {
         progress: {
           ...currentProgress,
-          postprocess: this.postProcessors.length > 0 ? {
+          postprocess: this.#postProcessors.size > 0 ? {
             mode: 'indeterminate',
           } : null,
           uploadComplete: true,
@@ -1592,9 +1593,9 @@ class Uppy {
     const restoreStep = uploadData.step
 
     const steps = [
-      ...this.preProcessors,
-      ...this.uploaders,
-      ...this.postProcessors,
+      ...this.#preProcessors,
+      ...this.#uploaders,
+      ...this.#postProcessors,
     ]
     let lastStep = Promise.resolve()
     steps.forEach((fn, step) => {
