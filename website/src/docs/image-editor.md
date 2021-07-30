@@ -92,7 +92,7 @@ Quality of the resulting blob that will be saved in Uppy after editing/cropping.
 
 Image Editor is using the excellent [Cropper.js](https://fengyuanchen.github.io/cropperjs/).
 `cropperOptions` will be directly passed to `Cropper` and therefor can expect the same values as documented
-in their [README](https://github.com/fengyuanchen/cropperjs/blob/master/README.md#options),
+in their [README](https://github.com/fengyuanchen/cropperjs/blob/HEAD/README.md#options),
 with the exception of `croppedCanvasOptions`, which will be passed to [`getCroppedCanvas`](https://github.com/fengyuanchen/cropperjs/blob/master/README.md#getcroppedcanvasoptions).
 
 ### `actions`
