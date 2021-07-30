@@ -263,8 +263,14 @@ class Uppy {
     this.#translator = new Translator([this.defaultLocale, this.opts.locale])
     this.locale = this.#translator.locale
   }
-  i18n(...args) { return this.#translator.translate(...args) }
-  i18nArray(...args) { return this.#translator.translateArray(...args) }
+
+  i18n (...args) {
+    return this.#translator.translate(...args)
+  }
+
+  i18nArray (...args) {
+    return this.#translator.translateArray(...args)
+  }
 
   setOptions (newOpts) {
     this.opts = {
