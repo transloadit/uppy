@@ -32,6 +32,7 @@ describe('AwsS3Multipart', () => {
       expect(() => awsS3Multipart.opts.prepareUploadPart(file, opts)).toThrow(err)
       expect(() => awsS3Multipart.opts.completeMultipartUpload(file, opts)).toThrow(err)
       expect(() => awsS3Multipart.opts.abortMultipartUpload(file, opts)).toThrow(err)
+      expect(() => awsS3Multipart.opts.batchPrepareUploadParts(file, opts)).toThrow(err)
     })
   })
 
@@ -50,24 +51,18 @@ describe('AwsS3Multipart', () => {
         }),
         completeMultipartUpload: jest.fn(() => Promise.resolve({ location: 'test' })),
         abortMultipartUpload: jest.fn(),
-        // TOOD (martin) Use a proper presigned URL for a part number here
         prepareUploadPart: jest.fn((file, { number }) => {
           return {
-            url: `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=${number}`,
+            url: `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?partNumber=${number}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`,
           }
         }),
         batchPrepareUploadParts: jest.fn(() => {
-          return {
-            presignedUrls: {
-              1: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=1',
-              2: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=2',
-              3: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=3',
-              4: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=4',
-              5: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=5',
-              6: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=6',
-              7: 'https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?num=7',
-            },
-          }
+          const presignedUrls = {}
+          const possiblePartNumbers = [1, 2, 3, 4, 5, 6, 7]
+          possiblePartNumbers.forEach((partNumber) => {
+            presignedUrls[partNumber] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
+          })
+          return { presignedUrls }
         }),
       })
       awsS3Multipart = core.getPlugin('AwsS3Multipart')
@@ -95,6 +90,7 @@ describe('AwsS3Multipart', () => {
       })
       core.upload().then(() => {
         expect(awsS3Multipart.opts.prepareUploadPart.mock.calls.length).toEqual(2)
+        scope.done()
         done()
       })
     })
@@ -123,10 +119,6 @@ describe('AwsS3Multipart', () => {
         awsS3Multipart.opts.batchPartPresign = true
       })
 
-      afterEach(() => {
-        awsS3Multipart.opts.batchPartPresign = false
-      })
-
       it('Calls the batchPrepareUploadParts function totalChunks / limit times', done => {
         const scope = nock('https://bucket.s3.us-east-2.amazonaws.com').defaultReplyHeaders({
           'access-control-allow-method': 'PUT',
@@ -150,6 +142,7 @@ describe('AwsS3Multipart', () => {
         core.upload().then(() => {
           expect(awsS3Multipart.opts.batchPrepareUploadParts.mock.calls.length).toEqual(1)
           expect(awsS3Multipart.opts.prepareUploadPart.mock.calls.length).toEqual(0)
+          scope.done()
           done()
         })
       })
@@ -180,8 +173,9 @@ describe('AwsS3Multipart', () => {
         })
       })
 
-      it('Does not allow for a minNeededForPresignBatch to be > limit', done => {
+      it('Does not allow for a minNeededForPresignBatch to be > limit, which would cause an infinite loop', done => {
         awsS3Multipart.opts.minNeededForPresignBatch = 200
+
         const scope = nock('https://bucket.s3.us-east-2.amazonaws.com').defaultReplyHeaders({
           'access-control-allow-method': 'PUT',
           'access-control-allow-origin': '*',
