@@ -1,95 +1,48 @@
-/*
-BSD 3-Clause License
-
-Copyright (c) 2018, React Community
-Forked from React (https://github.com/facebook/react) Copyright 2013-present, Facebook, Inc.
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-* Neither the name of the copyright holder nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-Source: https://github.com/reactjs/react-transition-group
-*/
+/**
+ * @source https://github.com/developit/preact-transition-group
+ */
 /* eslint-disable */
 'use strict'
 
-const { Component, cloneElement, createContext, h, isValidElement, toChildArray } = require('preact')
+const { Component, cloneElement, h, toChildArray } = require('preact')
 
-const TransitionGroupContext = createContext(null)
-
-/**
- * Given `this.props.children`, return an object mapping key to child.
- *
- * @param {*} children `this.props.children`
- * @returns {object} Mapping of key to child
- */
-function getChildMapping (children, mapFn) {
-  const mapper = (child) => (mapFn && isValidElement(child) ? mapFn(child) : child)
-
-  const result = Object.create(null)
-  if (children) {
-    toChildArray(children).forEach((child) => {
-    // run the map function here instead so that the key is the computed one
-      result[child.key] = mapper(child)
-    })
-  }
-  return result
+function assign (obj, props) {
+  return Object.assign(obj, props)
+}
+function getKey (vnode, fallback) {
+  return vnode?.key ?? fallback
+}
+function linkRef (component, name) {
+  const cache = component._ptgLinkedRefs || (component._ptgLinkedRefs = {})
+  return cache[name] || (cache[name] = c => {
+    component.refs[name] = c
+  })
 }
 
-/**
- * When you're adding or removing children some may be added or removed in the
- * same render pass. We want to show *both* since we want to simultaneously
- * animate elements in and out. This function takes a previous set of keys
- * and a new set of keys and merges them with its best guess of the correct
- * ordering. In the future we may expose some of the utilities in
- * ReactMultiChild to make this easy, but for now React itself does not
- * directly have this concept of the union of prevChildren and nextChildren
- * so we implement it here.
- *
- * @param {object} prev prev children as returned from
- * `ReactTransitionChildMapping.getChildMapping()`.
- * @param {object} next next children as returned from
- * `ReactTransitionChildMapping.getChildMapping()`.
- * @returns {object} a key set that contains all keys in `prev` and all keys
- * in `next` in a reasonable order.
- */
+function getChildMapping (children) {
+  const out = {}
+  for (let i = 0; i < children.length; i++) {
+    if (children[i] != null) {
+      const key = getKey(children[i], i.toString(36))
+      out[key] = children[i]
+    }
+  }
+  return out
+}
+
 function mergeChildMappings (prev, next) {
   prev = prev || {}
   next = next || {}
 
-  function getValueForKey (key) {
-    return key in next ? next[key] : prev[key]
-  }
+  const getValueForKey = key => (next.hasOwnProperty(key) ? next[key] : prev[key])
 
   // For each key of `next`, the list of keys to insert before that key in
   // the combined list
-  const nextKeysPending = Object.create(null)
+  const nextKeysPending = {}
 
   let pendingKeys = []
   for (const prevKey in prev) {
-    if (prevKey in next) {
+    if (next.hasOwnProperty(prevKey)) {
       if (pendingKeys.length) {
         nextKeysPending[prevKey] = pendingKeys
         pendingKeys = []
@@ -99,189 +52,238 @@ function mergeChildMappings (prev, next) {
     }
   }
 
-  let i
   const childMapping = {}
   for (const nextKey in next) {
-    if (nextKeysPending[nextKey]) {
-      for (i = 0; i < nextKeysPending[nextKey].length; i++) {
+    if (nextKeysPending.hasOwnProperty(nextKey)) {
+      for (let i = 0; i < nextKeysPending[nextKey].length; i++) {
         const pendingNextKey = nextKeysPending[nextKey][i]
-        childMapping[nextKeysPending[nextKey][i]]
-          = getValueForKey(pendingNextKey)
+        childMapping[nextKeysPending[nextKey][i]] = getValueForKey(pendingNextKey)
       }
     }
     childMapping[nextKey] = getValueForKey(nextKey)
   }
 
   // Finally, add the keys which didn't appear before any key in `next`
-  for (i = 0; i < pendingKeys.length; i++) {
+  for (let i = 0; i < pendingKeys.length; i++) {
     childMapping[pendingKeys[i]] = getValueForKey(pendingKeys[i])
   }
 
   return childMapping
 }
 
-function getProp (child, prop, props) {
-  return props[prop] != null ? props[prop] : child.props[prop]
-}
+const identity = i => i
 
-function getInitialChildMapping (props, onExited) {
-  return getChildMapping(props.children, (child) => {
-    return cloneElement(child, {
-      onExited: onExited.bind(null, child),
-      in: true,
-      appear: getProp(child, 'appear', props),
-      enter: getProp(child, 'enter', props),
-      exit: getProp(child, 'exit', props),
-    })
-  })
-}
-
-function getNextChildMapping (nextProps, prevChildMapping, onExited) {
-  const nextChildMapping = getChildMapping(nextProps.children)
-  const children = mergeChildMappings(prevChildMapping, nextChildMapping)
-
-  Object.keys(children).forEach((key) => {
-    const child = children[key]
-
-    if (!isValidElement(child)) return
-
-    const hasPrev = key in prevChildMapping
-    const hasNext = key in nextChildMapping
-
-    const prevChild = prevChildMapping[key]
-    const isLeaving = isValidElement(prevChild) && !prevChild.props.in
-
-    // item is new (entering)
-    if (hasNext && (!hasPrev || isLeaving)) {
-      // console.log('entering', key)
-      children[key] = cloneElement(child, {
-        onExited: onExited.bind(null, child),
-        in: true,
-        exit: getProp(child, 'exit', nextProps),
-        enter: getProp(child, 'enter', nextProps),
-      })
-    } else if (!hasNext && hasPrev && !isLeaving) {
-      // item is old (exiting)
-      // console.log('leaving', key)
-      children[key] = cloneElement(child, { in: false })
-    } else if (hasNext && hasPrev && isValidElement(prevChild)) {
-      // item hasn't changed transition states
-      // copy over the last transition props;
-      // console.log('unchanged', key)
-      children[key] = cloneElement(child, {
-        onExited: onExited.bind(null, child),
-        in: prevChild.props.in,
-        exit: getProp(child, 'exit', nextProps),
-        enter: getProp(child, 'enter', nextProps),
-      })
-    }
-  })
-
-  return children
-}
-
-const values = Object.values || ((obj) => Object.keys(obj).map((k) => obj[k]))
-
-const defaultProps = {
-  component: 'div',
-  childFactory: (child) => child,
-}
-
-/**
- * The `<TransitionGroup>` component manages a set of transition components
- * (`<Transition>` and `<CSSTransition>`) in a list. Like with the transition
- * components, `<TransitionGroup>` is a state machine for managing the mounting
- * and unmounting of components over time.
- *
- * Consider the example below. As items are removed or added to the TodoList the
- * `in` prop is toggled automatically by the `<TransitionGroup>`.
- *
- * Note that `<TransitionGroup>`  does not define any animation behavior!
- * Exactly _how_ a list item animates is up to the individual transition
- * component. This means you can mix and match animations across different list
- * items.
- */
 class TransitionGroup extends Component {
   constructor (props, context) {
     super(props, context)
 
-    const handleExited = this.handleExited.bind(this)
+    this.refs = {}
 
-    // Initial children should all be entering, dependent on appear
     this.state = {
-      contextValue: { isMounting: true },
-      handleExited,
-      firstRender: true,
+      children: getChildMapping(toChildArray(toChildArray(this.props.children)) || []),
     }
+
+    this.performAppear = this.performAppear.bind(this)
+    this.performEnter = this.performEnter.bind(this)
+    this.performLeave = this.performLeave.bind(this)
+  }
+
+  componentWillMount () {
+    this.currentlyTransitioningKeys = {}
+    this.keysToAbortLeave = []
+    this.keysToEnter = []
+    this.keysToLeave = []
   }
 
   componentDidMount () {
-    this.mounted = true
-    this.setState({
-      contextValue: { isMounting: false },
-    })
-  }
-
-  componentWillUnmount () {
-    this.mounted = false
-  }
-
-  static getDerivedStateFromProps (
-    nextProps,
-    { children: prevChildMapping, handleExited, firstRender }
-  ) {
-    return {
-      children: firstRender
-        ? getInitialChildMapping(nextProps, handleExited)
-        : getNextChildMapping(nextProps, prevChildMapping, handleExited),
-      firstRender: false,
+    const initialChildMapping = this.state.children
+    for (const key in initialChildMapping) {
+      if (initialChildMapping[key]) {
+        // this.performAppear(getKey(initialChildMapping[key], key));
+        this.performAppear(key)
+      }
     }
   }
 
-  // node is `undefined` when user provided `nodeRef` prop
-  handleExited (child, node) {
-    const currentChildMapping = getChildMapping(this.props.children)
+  componentWillReceiveProps (nextProps) {
+    const nextChildMapping = getChildMapping(toChildArray(nextProps.children) || [])
+    const prevChildMapping = this.state.children
 
-    if (child.key in currentChildMapping) return
+    this.setState(prevState => ({
+      children: mergeChildMappings(prevState.children, nextChildMapping),
+    }))
 
-    if (child.props.onExited) {
-      child.props.onExited(node)
+    let key
+
+    for (key in nextChildMapping) {
+      if (nextChildMapping.hasOwnProperty(key)) {
+        const hasPrev = prevChildMapping && prevChildMapping.hasOwnProperty(key)
+        // We should re-enter the component and abort its leave function
+        if (nextChildMapping[key] && hasPrev && this.currentlyTransitioningKeys[key]) {
+          this.keysToEnter.push(key)
+          this.keysToAbortLeave.push(key)
+        } else if (nextChildMapping[key] && !hasPrev && !this.currentlyTransitioningKeys[key]) {
+          this.keysToEnter.push(key)
+        }
+      }
     }
 
-    if (this.mounted) {
-      this.setState((state) => {
-        const children = { ...state.children }
-
-        delete children[child.key]
-        return { children }
-      })
+    for (key in prevChildMapping) {
+      if (prevChildMapping.hasOwnProperty(key)) {
+        const hasNext = nextChildMapping && nextChildMapping.hasOwnProperty(key)
+        if (prevChildMapping[key] && !hasNext && !this.currentlyTransitioningKeys[key]) {
+          this.keysToLeave.push(key)
+        }
+      }
     }
   }
 
-  render () {
-    const { component: Component, childFactory, ...props } = this.props
-    const { contextValue } = this.state
-    const children = values(this.state.children).map(childFactory)
+  componentDidUpdate () {
+    const { keysToEnter } = this
+    this.keysToEnter = []
+    keysToEnter.forEach(this.performEnter)
 
-    delete props.appear
-    delete props.enter
-    delete props.exit
+    const { keysToLeave } = this
+    this.keysToLeave = []
+    keysToLeave.forEach(this.performLeave)
+  }
 
-    if (Component === null) {
-      return (
-        <TransitionGroupContext.Provider value={contextValue}>
-          {children}
-        </TransitionGroupContext.Provider>
-      )
+  _finishAbort (key) {
+    const idx = this.keysToAbortLeave.indexOf(key)
+    if (idx !== -1) {
+      this.keysToAbortLeave.splice(idx, 1)
     }
-    return (
-      <TransitionGroupContext.Provider value={contextValue}>
-        <Component {...props}>{children}</Component>
-      </TransitionGroupContext.Provider>
-    )
+  }
+
+  performAppear (key) {
+    this.currentlyTransitioningKeys[key] = true
+
+    const component = this.refs[key]
+
+    if (component.componentWillAppear) {
+      component.componentWillAppear(this._handleDoneAppearing.bind(this, key))
+    } else {
+      this._handleDoneAppearing(key)
+    }
+  }
+
+  _handleDoneAppearing (key) {
+    const component = this.refs[key]
+    if (component.componentDidAppear) {
+      component.componentDidAppear()
+    }
+
+    delete this.currentlyTransitioningKeys[key]
+    this._finishAbort(key)
+
+    const currentChildMapping = getChildMapping(toChildArray(this.props.children) || [])
+
+    if (!currentChildMapping || !currentChildMapping.hasOwnProperty(key)) {
+      // This was removed before it had fully appeared. Remove it.
+      this.performLeave(key)
+    }
+  }
+
+  performEnter (key) {
+    this.currentlyTransitioningKeys[key] = true
+
+    const component = this.refs[key]
+
+    if (component.componentWillEnter) {
+      component.componentWillEnter(this._handleDoneEntering.bind(this, key))
+    } else {
+      this._handleDoneEntering(key)
+    }
+  }
+
+  _handleDoneEntering (key) {
+    const component = this.refs[key]
+    if (component.componentDidEnter) {
+      component.componentDidEnter()
+    }
+
+    delete this.currentlyTransitioningKeys[key]
+    this._finishAbort(key)
+
+    const currentChildMapping = getChildMapping(toChildArray(this.props.children) || [])
+
+    if (!currentChildMapping || !currentChildMapping.hasOwnProperty(key)) {
+      // This was removed before it had fully entered. Remove it.
+      this.performLeave(key)
+    }
+  }
+
+  performLeave (key) {
+    // If we should immediately abort this leave function,
+    // don't run the leave transition at all.
+    const idx = this.keysToAbortLeave.indexOf(key)
+    if (idx !== -1) {
+      return
+    }
+
+    this.currentlyTransitioningKeys[key] = true
+
+    const component = this.refs[key]
+    if (component.componentWillLeave) {
+      component.componentWillLeave(this._handleDoneLeaving.bind(this, key))
+    } else {
+      // Note that this is somewhat dangerous b/c it calls setState()
+      // again, effectively mutating the component before all the work
+      // is done.
+      this._handleDoneLeaving(key)
+    }
+  }
+
+  _handleDoneLeaving (key) {
+    // If we should immediately abort the leave,
+    // then skip this altogether
+    const idx = this.keysToAbortLeave.indexOf(key)
+    if (idx !== -1) {
+      return
+    }
+
+    const component = this.refs[key]
+
+    if (component.componentDidLeave) {
+      component.componentDidLeave()
+    }
+
+    delete this.currentlyTransitioningKeys[key]
+
+    const currentChildMapping = getChildMapping(toChildArray(this.props.children) || [])
+
+    if (currentChildMapping && currentChildMapping.hasOwnProperty(key)) {
+      // This entered again before it fully left. Add it again.
+      this.performEnter(key)
+    } else {
+      const children = assign({}, this.state.children)
+      delete children[key]
+      this.setState({ children })
+    }
+  }
+
+  render ({ childFactory, transitionLeave, transitionName, transitionAppear, transitionEnter, transitionLeaveTimeout, transitionEnterTimeout, transitionAppearTimeout, component, ...props }, { children }) {
+    // TODO: we could get rid of the need for the wrapper node
+    // by cloning a single child
+    const childrenToRender = []
+    for (const key in children) {
+      if (children.hasOwnProperty(key)) {
+        const child = children[key]
+        if (child) {
+          const ref = linkRef(this, key),
+            el = cloneElement(childFactory(child), { ref, key })
+          childrenToRender.push(el)
+        }
+      }
+    }
+
+    return h(component, props, childrenToRender)
   }
 }
 
-TransitionGroup.defaultProps = defaultProps
+TransitionGroup.defaultProps = {
+  component: 'span',
+  childFactory: identity,
+}
 
 module.exports = TransitionGroup
