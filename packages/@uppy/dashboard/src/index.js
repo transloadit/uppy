@@ -923,7 +923,7 @@ module.exports = class Dashboard extends UIPlugin {
       disableAllFocusableElements: this.disableAllFocusableElements,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
-      getPlugin: this.uppy.getPlugin,
+      getPlugin: (id) => this.uppy.getPlugin(id),
       progressindicators,
       editors,
       autoProceed: this.uppy.opts.autoProceed,
