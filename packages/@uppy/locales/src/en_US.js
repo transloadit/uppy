@@ -93,7 +93,7 @@ en_US.strings = {
   pluginNameCamera: 'Camera',
   pluginNameDropbox: 'Dropbox',
   pluginNameFacebook: 'Facebook',
-  pluginNameGoogleDrive: 'GoogleDrive',
+  pluginNameGoogleDrive: 'Google Drive',
   pluginNameInstagram: 'Instagram',
   pluginNameOneDrive: 'OneDrive',
   pluginNameZoom: 'Zoom',
