@@ -10,8 +10,6 @@
 const Translator = require('@uppy/utils/lib/Translator')
 
 module.exports = class BasePlugin {
-  #translator
-
   constructor (uppy, opts = {}) {
     this.uppy = uppy
     this.opts = opts
@@ -43,12 +41,11 @@ module.exports = class BasePlugin {
   }
 
   i18nInit () {
-    this.#translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    const translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
+    this.i18n = translator.translate.bind(translator)
+    this.i18nArray = translator.translateArray.bind(translator)
     this.setPluginState() // so that UI re-renders and we see the updated locale
   }
-  
-  i18n(...args) { return this.#translator.translate(...args) }
-  i18nArray(...args) { return this.#translator.translateArray(...args) }
 
   /**
    * Extendable methods
