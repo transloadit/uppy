@@ -34,7 +34,7 @@ function EditorPanel (props) {
       </div>
       <div className="uppy-DashboardContent-panelBody">
         {props.editors.map((target) => {
-          return props.getPlugin(target.id).render(props.state)
+          return props.uppy.getPlugin(target.id).render(props.state)
         })}
       </div>
     </div>
