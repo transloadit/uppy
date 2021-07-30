@@ -78,6 +78,7 @@ module.exports = class FileItem extends Component {
             showLinkToFileUploadResult={this.props.showLinkToFileUploadResult}
           />
           <FileProgress
+            uppy={this.props.uppy}
             file={file}
             error={error}
             isUploaded={isUploaded}
@@ -88,9 +89,6 @@ module.exports = class FileItem extends Component {
             showRemoveButtonAfterComplete={this.props.showRemoveButtonAfterComplete}
             resumableUploads={this.props.resumableUploads}
             individualCancellation={this.props.individualCancellation}
-            pauseUpload={this.props.pauseUpload}
-            cancelUpload={this.props.cancelUpload}
-            retryUpload={this.props.retryUpload}
             i18n={this.props.i18n}
           />
         </div>
@@ -111,12 +109,10 @@ module.exports = class FileItem extends Component {
             showRemoveButton={showRemoveButton}
             canEditFile={this.props.canEditFile}
             uploadInProgressOrComplete={uploadInProgressOrComplete}
-            removeFile={this.props.removeFile}
             toggleFileCard={this.props.toggleFileCard}
             openFileEditor={this.props.openFileEditor}
+            uppy={this.props.uppy}
             i18n={this.props.i18n}
-            log={this.props.log}
-            info={this.props.info}
           />
         </div>
       </div>

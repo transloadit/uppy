@@ -815,10 +815,6 @@ module.exports = class Dashboard extends UIPlugin {
     this.superFocusOnEachUpdate()
   }
 
-  cancelUpload = (fileID) => {
-    this.uppy.removeFile(fileID)
-  }
-
   saveFileCard = (meta, fileID) => {
     this.uppy.setFileMeta(fileID, meta)
     this.toggleFileCard(false, fileID)
@@ -923,7 +919,6 @@ module.exports = class Dashboard extends UIPlugin {
       disableAllFocusableElements: this.disableAllFocusableElements,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
-      getPlugin: this.uppy.getPlugin,
       progressindicators,
       editors,
       autoProceed: this.uppy.opts.autoProceed,
@@ -935,22 +930,15 @@ module.exports = class Dashboard extends UIPlugin {
       inline: this.opts.inline,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
-      log: this.uppy.log,
       i18n: this.i18n,
       i18nArray: this.i18nArray,
-      removeFile: this.uppy.removeFile,
       uppy: this.uppy,
-      info: this.uppy.info,
       note: this.opts.note,
       recoveredState: state.recoveredState,
       metaFields: pluginState.metaFields,
       resumableUploads: capabilities.resumableUploads || false,
       individualCancellation: capabilities.individualCancellation,
       isMobileDevice: capabilities.isMobileDevice,
-      pauseUpload: this.uppy.pauseResume,
-      retryUpload: this.uppy.retryUpload,
-      cancelUpload: this.cancelUpload,
-      cancelAll: this.uppy.cancelAll,
       fileCardFor: pluginState.fileCardFor,
       toggleFileCard: this.toggleFileCard,
       toggleAddFilesPanel: this.toggleAddFilesPanel,
