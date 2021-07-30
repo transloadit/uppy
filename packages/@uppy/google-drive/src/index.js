@@ -32,7 +32,7 @@ module.exports = class GoogleDrive extends UIPlugin {
 
     this.defaultLocale = {
       strings: {
-        pluginNameGoogleDrive: 'GoogleDrive',
+        pluginNameGoogleDrive: 'Google Drive',
       },
     }
     this.i18nInit()
