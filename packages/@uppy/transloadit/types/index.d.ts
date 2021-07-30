@@ -23,7 +23,7 @@ import TransloaditLocale from './generatedLocale'
     meta: Record<string, any>
   }
 
-  interface Result extends FileInfo {
+export interface Result extends FileInfo {
     cost: number,
     execTime: number,
     queue: string,
@@ -113,7 +113,7 @@ interface TransloaditOptionsBase extends PluginOptions {
 }
 
 // Either have a getAssemblyOptions() that returns an AssemblyOptions, *or* have them embedded in the options
-type TransloaditOptions = TransloaditOptionsBase &
+export type TransloaditOptions = TransloaditOptionsBase &
     (
       | {
           getAssemblyOptions?: (file: UppyFile) => AssemblyOptions | Promise<AssemblyOptions>
