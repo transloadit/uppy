@@ -565,7 +565,7 @@ class Uppy {
         if (!hasOwnProperty.call(file.meta, requiredMetaFields[i])) {
           const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
           errors.push(err)
-          this.showOrLogErrorAndThrow(err, { file, throwErr: false })
+          this.#showOrLogErrorAndThrow(err, { file, throwErr: false })
         }
       }
     }
