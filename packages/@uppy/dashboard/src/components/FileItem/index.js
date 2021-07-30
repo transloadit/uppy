@@ -111,7 +111,7 @@ module.exports = class FileItem extends Component {
             showRemoveButton={showRemoveButton}
             canEditFile={this.props.canEditFile}
             uploadInProgressOrComplete={uploadInProgressOrComplete}
-            removeFile={this.props.removeFile}
+            removeFile={(fileId, action) => this.props.uppy.removeFile(fileId, action)}
             toggleFileCard={this.props.toggleFileCard}
             openFileEditor={this.props.openFileEditor}
             i18n={this.props.i18n}

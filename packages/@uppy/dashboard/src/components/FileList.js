@@ -59,7 +59,7 @@ module.exports = (props) => {
     pauseUpload: props.pauseUpload,
     cancelUpload: props.cancelUpload,
     toggleFileCard: props.toggleFileCard,
-    removeFile: props.removeFile,
+    uppy: props.uppy,
     handleRequestThumbnail: props.handleRequestThumbnail,
     handleCancelThumbnail: props.handleCancelThumbnail,
   }
