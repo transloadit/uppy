@@ -44,10 +44,11 @@ module.exports = class BasePlugin {
 
   i18nInit () {
     this.#translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.#translator.translate.bind(this.#translator)
-    this.i18nArray = this.#translator.translateArray.bind(this.#translator)
     this.setPluginState() // so that UI re-renders and we see the updated locale
   }
+  
+  i18n(...args) { return this.#translator.translate(...args) }
+  i18nArray(...args) { return this.#translator.translateArray(...args) }
 
   /**
    * Extendable methods
