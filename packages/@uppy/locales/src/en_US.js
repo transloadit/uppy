@@ -78,6 +78,8 @@ en_US.strings = {
   loading: 'Loading...',
   logOut: 'Log out',
   micDisabled: 'Microphone access denied by user',
+  missingRequiredMetaField: 'Missing required meta fields',
+  missingRequiredMetaFieldOnFile: 'Missing required meta fields in %{fileName}',
   myDevice: 'My Device',
   noCameraDescription: 'In order to take pictures or record video, please connect a camera device',
   noCameraTitle: 'Camera Not Available',

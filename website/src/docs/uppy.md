@@ -47,6 +47,7 @@ const uppy = new Uppy({
     maxNumberOfFiles: null,
     minNumberOfFiles: null,
     allowedFileTypes: null,
+    requiredMetaFields: [],
   },
   meta: {},
   onBeforeFileAdded: (currentFile, files) => currentFile,
@@ -134,6 +135,7 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 - `maxNumberOfFiles` *null | number* — total number of files that can be selected
 - `minNumberOfFiles` *null | number* — minimum number of files that must be selected before the upload
 - `allowedFileTypes` *null | array* of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
+- `requiredMetaFields` *array* of strings
 
 `maxNumberOfFiles` also affects the number of files a user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1`, they will only be able to select a single file. When `null` or another number is provided, they will be able to select multiple files.
 

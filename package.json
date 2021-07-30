@@ -130,7 +130,7 @@
     "build:companion": "npm run --prefix ./packages/@uppy/companion build",
     "build:css": "node ./bin/build-css.js",
     "build:svelte": "npm run --prefix ./packages/@uppy/svelte build",
-    "build:angular": "npm run --prefix ./packages/@uppy/angular build",
+    "build:angular": "npm run --prefix ./packages/@uppy/angular build:release",
     "build:js": "npm-run-all build:lib build:companion build:locale-pack build:svelte build:angular build:bundle",
     "build:lib": "node ./bin/build-lib.js",
     "build:locale-pack": "node ./bin/locale-packs.js build",

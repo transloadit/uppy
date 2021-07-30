@@ -1365,7 +1365,7 @@ describe('src/Core', () => {
       // wait for success event
       await finishPromise
 
-      expect(core.getFiles()[0].size).toBeNull()
+      expect(core.getFiles()[0].size).toBe(3456)
       expect(core.getFiles()[0].progress).toMatchObject({
         bytesUploaded: 3456,
         bytesTotal: 3456,

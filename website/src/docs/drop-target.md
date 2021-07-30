@@ -16,7 +16,7 @@ Can be used together with Uppy Dashboard or Drag & Drop plugins, or your custom 
 ```js
 import DropTarget from '@uppy/drop-target'
 
-uppy.use(DragDrop, {
+uppy.use(DropTarget, {
   target: document.body,
 })
 ```

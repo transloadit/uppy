@@ -1,13 +1,13 @@
 {
   "name": "@uppy/angular",
-  "version": "0.2.0",
+  "version": "0.1.3",
   "module": "dist/angular/esm2015/public-api.js",
   "types": "dist/angular/uppy-angular.d.ts",
   "scripts": {
     "ng": "ng",
     "start": "start-storybook -p 6006",
     "build": "ng build",
-    "release": "ng build --prod",
+    "build:release": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
@@ -75,5 +75,8 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "files": [
+    "/dist"
+  ]
 }
