@@ -48,7 +48,7 @@ describe('Transloadit', () => {
 
     return uppy.upload().then(() => {
       throw new Error('Should not have succeeded')
-    }, (err) => {
+    }).catch((err) => {
       const fileID = Object.keys(uppy.getState().files)[0]
 
       expect(err.message).toBe('Failure!')

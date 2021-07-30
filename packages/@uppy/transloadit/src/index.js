@@ -699,7 +699,7 @@ module.exports = class Transloadit extends BasePlugin {
     const state = this.getPluginState()
     const assemblyIDs = state.uploadsAssemblies[uploadID]
 
-    assemblyIDs.forEach((assemblyID) => {
+    assemblyIDs?.forEach((assemblyID) => {
       if (this.activeAssemblies[assemblyID]) {
         this.activeAssemblies[assemblyID].close()
       }
