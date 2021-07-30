@@ -65,7 +65,7 @@ export interface SocketOptions {
 }
 
 export class Socket {
-  isOpen: boolean
+  readonly isOpen: boolean
 
   constructor (opts: SocketOptions)
 
