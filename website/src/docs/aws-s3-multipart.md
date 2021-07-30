@@ -40,11 +40,19 @@ The `@uppy/aws-s3-multipart` plugin has the following configurable options:
 
 ### `limit: 0`
 
-The maximum amount of chunks to upload simultaneously. Set to `0` to disable limiting.
+The maximum amount of chunks to upload simultaneously.
+
+### `minNeededForPresignBatch: defaults to limit`
+
+The minimum number of part candidates required before attemtping to batch presign some chunk URLs. This is used so that after the initial batch of `limit` presigned URLs are requested, smaller requests for one or two URLs at a time are not done. Cannot be greater than `limit`. Only relevant if `batchPartPresign` is true.
+
+## `batchPartPresign: false`
+
+Whether or not to presign the S3 PUT URLs in batches or one at a time when uploading chunks. By default a request is made to the [Companion](/docs/companion) instance, or your own endpoint, via `prepareUploadPart` for every chunk to get the presigned URL for that chunk.
 
 ### `retryDelays: [0, 1000, 3000, 5000]`
 
-When uploading a chunk fails, automatically try again after the millisecond intervals specified in this array. By default, we first retry instantly; if that fails, we retry after 1 second; if that fails, we retry after 3 seconds, etc.
+When uploading a chunk to S3 using a presigned URL fails, automatically try again after the millisecond intervals specified in this array. By default, we first retry instantly; if that fails, we retry after 1 second; if that fails, we retry after 3 seconds, etc.
 
 Set to `null` to disable automatic retries, and fail instantly if any chunk fails to upload.
 
@@ -100,7 +108,7 @@ The default implementation calls out to Companion's S3 signing endpoints.
 
 ### `prepareUploadPart(file, partData)`
 
-A function that generates a signed URL to upload a single part. Receives the `file` object from Uppy's state. The `partData` argument is an object with keys:
+This will be used if `batchPartPresign` is false (default). A function that generates a signed URL to upload a single part. Receives the `file` object from Uppy's state. The `partData` argument is an object with keys:
 
  - `uploadId` - The UploadID of this Multipart upload.
  - `key` - The object key in the S3 bucket.
@@ -120,6 +128,29 @@ Return a Promise for an object with keys:
      Body: '', // Empty, because it is uploaded later
      Expires: 5 * 60,
    }, (err, url) => { /* there's the url! */ })
+   ```
+ - `headers` - **(Optional)** Custom headers that should be sent to the S3 presigned URL.
+
+### `batchPrepareUploadParts(file, partData)`
+
+This will be used if `batchPartPresign` is true. A function that generates a batch of signed URLs for the specified part numbers. Receives the `file` object from Uppy's state. The `partData` argument is an object with keys:
+
+ - `uploadId` - The UploadID of this Multipart upload.
+ - `key` - The object key in the S3 bucket.
+ - `body` - A [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) of this part's contents.
+ - `partNumbers` - An array of indecies of this part in the file (`PartNumber` in S3 terminology).
+
+Return a Promise for an object with keys:
+
+ - `presignedUrls` - A JavaScript object with the part numbers as keys and the presigned URL for each part as the value. An example of what the return value should look like:
+
+   ```js
+   // for partNumbers [1, 2, 3]
+   return {
+     1: "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=1&...",
+     2: "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=2&...",
+     3: "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=3&..."
+   }
    ```
  - `headers` - **(Optional)** Custom headers that should be sent to the S3 presigned URL.
 

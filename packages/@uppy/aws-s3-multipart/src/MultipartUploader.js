@@ -199,7 +199,8 @@ class MultipartUploader {
     if (this.options.batchPartPresign) {
       this._batchPrepareUploadParts(candidates).then((result) => {
         candidates.forEach((index) => {
-          this._uploadPartRetryable(index, result.presignedUrls[index + 1]).then(() => {
+          const prePreparedPart = { url: result.presignedUrls[index + 1], headers: result.headers }
+          this._uploadPartRetryable(index, prePreparedPart).then(() => {
             this._uploadParts()
           }, (err) => {
             this._onError(err)
@@ -272,24 +273,24 @@ class MultipartUploader {
     })
   }
 
-  _uploadPartRetryable (index, presignedUrl) {
+  _uploadPartRetryable (index, prePreparedPart) {
     return this._retryable({
       before: () => {
         this.partsInProgress += 1
       },
-      attempt: () => this._uploadPart(index, presignedUrl),
+      attempt: () => this._uploadPart(index, prePreparedPart),
       after: () => {
         this.partsInProgress -= 1
       },
     })
   }
 
-  _uploadPart (index, presignedUrl) {
+  _uploadPart (index, prePreparedPart) {
     const body = this.chunks[index]
     this.chunkState[index].busy = true
 
     return Promise.resolve().then(() => {
-      if (presignedUrl) { return { url: presignedUrl } }
+      if (prePreparedPart) { return prePreparedPart }
 
       return this.options.prepareUploadPart(
         {
