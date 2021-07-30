@@ -93,7 +93,9 @@ exports.cors = (options = {}) => (req, res, next) => {
   ]
   if (res.get('Access-Control-Allow-Headers')) allowedHeaders.push(res.get('Access-Control-Allow-Headers'))
 
-  const existingAllowMethodsHeader = new Set(res.get('Access-Control-Allow-Methods')?.split(',').map(method => method.trim().toUpperCase()))
+  // TODO: Move to optional chaining when we drop Node.js v12.x support
+  const ACAMHeader = res.get('Access-Control-Allow-Methods')
+  const existingAllowMethodsHeader = new Set(ACAMHeader && ACAMHeader.split(',').map(method => method.trim().toUpperCase()))
   existingAllowMethodsHeader.add('GET').add('POST').add('OPTIONS').add('DELETE')
   const methods = Array.from(existingAllowMethodsHeader)
 
