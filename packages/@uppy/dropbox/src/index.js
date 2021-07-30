@@ -29,6 +29,14 @@ module.exports = class Dropbox extends UIPlugin {
       pluginId: this.id,
     })
 
+    this.defaultLocale = {
+      strings: {
+        pluginNameDropbox: 'Dropbox',
+      },
+    }
+    this.i18nInit()
+    this.title = this.i18n('pluginNameDropbox')
+
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
   }

@@ -90,22 +90,9 @@ module.exports = class AwsS3 extends BasePlugin {
 
     this.opts = { ...defaultOptions, ...opts }
 
-    this.i18nInit()
-
     this.client = new RequestClient(uppy, opts)
     this.handleUpload = this.handleUpload.bind(this)
     this.requests = new RateLimitedQueue(this.opts.limit)
-  }
-
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   getUploadParameters (file) {
