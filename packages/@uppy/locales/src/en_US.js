@@ -88,6 +88,7 @@ en_US.strings = {
   openFolderNamed: 'Open folder %{name}',
   pause: 'Pause',
   paused: 'Paused',
+  pauseUpload: 'Pause upload',
   pluginNameBox: 'Box',
   pluginNameCamera: 'Camera',
   pluginNameDropbox: 'Dropbox',
@@ -96,7 +97,6 @@ en_US.strings = {
   pluginNameInstagram: 'Instagram',
   pluginNameOneDrive: 'OneDrive',
   pluginNameZoom: 'Zoom',
-  pauseUpload: 'Pause upload',
   poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': 'Processing %{smart_count} file',
