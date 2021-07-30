@@ -54,8 +54,6 @@ class Uppy {
 
   #emitter = ee()
 
-  #translator
-
   #preProcessors = new Set()
 
   #uploaders = new Set()
@@ -283,16 +281,10 @@ class Uppy {
   }
 
   i18nInit () {
-    this.#translator = new Translator([this.defaultLocale, this.opts.locale])
-    this.locale = this.#translator.locale
-  }
-
-  i18n (...args) {
-    return this.#translator.translate(...args)
-  }
-
-  i18nArray (...args) {
-    return this.#translator.translateArray(...args)
+    const translator = new Translator([this.defaultLocale, this.opts.locale])
+    this.i18n = translator.translate.bind(translator)
+    this.i18nArray = translator.translateArray.bind(translator)
+    this.locale = translator.locale
   }
 
   setOptions (newOpts) {
