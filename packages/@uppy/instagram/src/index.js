@@ -10,7 +10,6 @@ module.exports = class Instagram extends UIPlugin {
     super(uppy, opts)
     this.id = this.opts.id || 'Instagram'
     Provider.initPlugin(this, opts)
-    this.title = this.opts.title || 'Instagram'
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
         <g fill="none" fillRule="evenodd">
@@ -19,6 +18,14 @@ module.exports = class Instagram extends UIPlugin {
         </g>
       </svg>
     )
+
+    this.defaultLocale = {
+      strings: {
+        pluginNameInstagram: 'Instagram',
+      },
+    }
+    this.i18nInit()
+    this.title = this.i18n('pluginNameInstagram')
 
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,

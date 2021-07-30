@@ -1,5 +1,5 @@
 const { BasePlugin } = require('@uppy/core')
-const cuid = require('cuid')
+const { nanoid } = require('nanoid')
 const Translator = require('@uppy/utils/lib/Translator')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
@@ -119,8 +119,6 @@ module.exports = class XHRUpload extends BasePlugin {
 
     this.opts = { ...defaultOptions, ...opts }
 
-    this.i18nInit()
-
     this.handleUpload = this.handleUpload.bind(this)
 
     // Simultaneous upload limiting is shared across all uploads with this plugin.
@@ -135,17 +133,6 @@ module.exports = class XHRUpload extends BasePlugin {
     }
 
     this.uploaderEvents = Object.create(null)
-  }
-
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   getOptions (file) {
@@ -250,7 +237,7 @@ module.exports = class XHRUpload extends BasePlugin {
         reject(error)
       })
 
-      const id = cuid()
+      const id = nanoid()
 
       xhr.upload.addEventListener('loadstart', () => {
         this.uppy.log(`[XHRUpload] ${id} started`)

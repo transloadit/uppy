@@ -8,7 +8,7 @@ const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const getTextDirection = require('@uppy/utils/lib/getTextDirection')
-const cuid = require('cuid')
+const { nanoid } = require('nanoid')
 const trapFocus = require('./utils/trapFocus')
 const createSuperFocus = require('./utils/createSuperFocus')
 const memoize = require('memoize-one').default || require('memoize-one')
@@ -46,7 +46,7 @@ module.exports = class Dashboard extends UIPlugin {
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
-    this.modalName = `uppy-Dashboard-${cuid()}`
+    this.modalName = `uppy-Dashboard-${nanoid()}`
 
     this.defaultLocale = {
       strings: {
@@ -105,13 +105,7 @@ module.exports = class Dashboard extends UIPlugin {
         recoveredAllFiles: 'We restored all files. You can now resume the upload.',
         sessionRestored: 'Session restored',
         reSelect: 'Re-select',
-        // The default `poweredBy2` string only combines the `poweredBy` string (%{backwardsCompat}) with the size.
-        // Locales can override `poweredBy2` to specify a different word order. This is for backwards compat with
-        // Uppy 1.9.x and below which did a naive concatenation of `poweredBy2 + size` instead of using a locale-specific
-        // substitution.
-        // TODO: In 2.0 `poweredBy2` should be removed in and `poweredBy` updated to use substitution.
-        poweredBy2: '%{backwardsCompat} %{uppy}',
-        poweredBy: 'Powered by',
+        poweredBy: 'Powered by %{uppy}',
       },
     }
 
@@ -169,18 +163,6 @@ module.exports = class Dashboard extends UIPlugin {
     // Timeouts
     this.makeDashboardInsidesVisibleAnywayTimeout = null
     this.removeDragOverClassTimeout = null
-  }
-
-  setOptions = (newOpts) => {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit = () => {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   removeTarget = (plugin) => {

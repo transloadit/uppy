@@ -30,7 +30,7 @@ module.exports = class ScreenCapture extends UIPlugin {
       strings: {
         startCapturing: 'Begin screen capturing',
         stopCapturing: 'Stop screen capturing',
-        submitRecordedFile: 'Submit captured video',
+        submitRecordedFile: 'Submit recorded file',
         streamActive: 'Stream active',
         streamPassive: 'Stream passive',
         micDisabled: 'Microphone access denied by user',
@@ -65,9 +65,7 @@ module.exports = class ScreenCapture extends UIPlugin {
     this.opts = { ...defaultOptions, ...opts }
 
     // i18n
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     // uppy plugin class related
     this.install = this.install.bind(this)
