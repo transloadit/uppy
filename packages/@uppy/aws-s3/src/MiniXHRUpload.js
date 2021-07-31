@@ -237,7 +237,7 @@ module.exports = class MiniXHRUpload {
       xhr.open(opts.method.toUpperCase(), opts.endpoint, true)
       // IE10 does not allow setting `withCredentials` and `responseType`
       // before `open()` is called.
-      xhr.withCredentials = opts.withCredentials
+      xhr.withCredentials = opts.withCredentials || false
       if (opts.responseType !== '') {
         xhr.responseType = opts.responseType
       }
