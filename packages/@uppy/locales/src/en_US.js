@@ -57,7 +57,6 @@ en_US.strings = {
   exceedsSize: '%{file} exceeds maximum allowed size of %{size}',
   failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
   failedToUpload: 'Failed to upload %{file}',
-  fileSource: 'File source: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} of %{smart_count} file uploaded',
     '1': '%{complete} of %{smart_count} files uploaded',

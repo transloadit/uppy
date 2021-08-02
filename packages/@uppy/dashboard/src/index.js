@@ -59,7 +59,6 @@ module.exports = class Dashboard extends UIPlugin {
         copyLinkToClipboardSuccess: 'Link copied to clipboard',
         copyLinkToClipboardFallback: 'Copy the URL below',
         copyLink: 'Copy link',
-        fileSource: 'File source: %{name}',
         back: 'Back',
         addMore: 'Add more',
         removeFile: 'Remove file',
