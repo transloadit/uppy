@@ -150,13 +150,13 @@ function uppySetOptions () {
     window.uppy.removePlugin(zoomInstance)
   }
 
-  const boxInstance = window.uppy.getPlugin('Box')
-  if (opts.Box && !boxInstance) {
-    window.uppy.use(Box, { target: Dashboard, companionUrl: COMPANION })
-  }
-  if (!opts.Box && boxInstance) {
-    window.uppy.removePlugin(boxInstance)
-  }
+//   const boxInstance = window.uppy.getPlugin('Box')
+//   if (opts.Box && !boxInstance) {
+//     window.uppy.use(Box, { target: Dashboard, companionUrl: COMPANION })
+//   }
+//   if (!opts.Box && boxInstance) {
+//     window.uppy.removePlugin(boxInstance)
+//   }
 
   const webcamInstance = window.uppy.getPlugin('Webcam')
   if (opts.Webcam && !webcamInstance) {
