@@ -19,8 +19,9 @@ module.exports = {
     browser: true,
   },
   globals: {
-    window: true,
+    globalThis: true,
     hexo: true,
+    window: true,
   },
   plugins: [
     '@babel/eslint-plugin',
