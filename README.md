@@ -69,7 +69,7 @@ $ npm install @uppy/core @uppy/dashboard @uppy/tus
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v1.31.0/uppy.min.css), either to your HTML page's `<head>` or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
+Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v2.0.0-alpha.0/uppy.min.css), either to your HTML page's `<head>` or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
 
 Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
@@ -77,10 +77,10 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 
 ```html
 <!-- 1. Add CSS to `<head>` -->
-<link href="https://releases.transloadit.com/uppy/v1.31.0/uppy.min.css" rel="stylesheet">
+<link href="https://releases.transloadit.com/uppy/v2.0.0-alpha.0/uppy.min.css" rel="stylesheet">
 
 <!-- 2. Add JS before the closing `</body>` -->
-<script src="https://releases.transloadit.com/uppy/v1.31.0/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.0.0-alpha.0/uppy.min.js"></script>
 
 <!-- 3. Initialize -->
 <div class="UppyDragDrop"></div>
@@ -190,7 +190,7 @@ If you're using Uppy from CDN, those polyfills are already included in the legac
 bundle, so no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v1.31.0/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.0.0-alpha.0/uppy.min.js"></script>
 ```
 
 ## FAQ
@@ -251,21 +251,21 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 :---: |:---: |:---: |:---: |:---: |:---: |
 [arturi](https://github.com/arturi) |[goto-bus-stop](https://github.com/goto-bus-stop) |[kvz](https://github.com/kvz) |[ifedapoolarewaju](https://github.com/ifedapoolarewaju) |[hedgerh](https://github.com/hedgerh) |[AJvanLoon](https://github.com/AJvanLoon) |
 
-[<img alt="nqst" src="https://avatars.githubusercontent.com/u/375537?v=4&s=117" width="117">](https://github.com/nqst) |[<img alt="lakesare" src="https://avatars.githubusercontent.com/u/7578559?v=4&s=117" width="117">](https://github.com/lakesare) |[<img alt="kiloreux" src="https://avatars.githubusercontent.com/u/6282557?v=4&s=117" width="117">](https://github.com/kiloreux) |[<img alt="sadovnychyi" src="https://avatars.githubusercontent.com/u/193864?v=4&s=117" width="117">](https://github.com/sadovnychyi) |[<img alt="samuelayo" src="https://avatars.githubusercontent.com/u/14964486?v=4&s=117" width="117">](https://github.com/samuelayo) |[<img alt="richardwillars" src="https://avatars.githubusercontent.com/u/291004?v=4&s=117" width="117">](https://github.com/richardwillars) |
+[<img alt="nqst" src="https://avatars.githubusercontent.com/u/375537?v=4&s=117" width="117">](https://github.com/nqst) |[<img alt="aduh95" src="https://avatars.githubusercontent.com/u/14309773?v=4&s=117" width="117">](https://github.com/aduh95) |[<img alt="lakesare" src="https://avatars.githubusercontent.com/u/7578559?v=4&s=117" width="117">](https://github.com/lakesare) |[<img alt="kiloreux" src="https://avatars.githubusercontent.com/u/6282557?v=4&s=117" width="117">](https://github.com/kiloreux) |[<img alt="sadovnychyi" src="https://avatars.githubusercontent.com/u/193864?v=4&s=117" width="117">](https://github.com/sadovnychyi) |[<img alt="samuelayo" src="https://avatars.githubusercontent.com/u/14964486?v=4&s=117" width="117">](https://github.com/samuelayo) |
 :---: |:---: |:---: |:---: |:---: |:---: |
-[nqst](https://github.com/nqst) |[lakesare](https://github.com/lakesare) |[kiloreux](https://github.com/kiloreux) |[sadovnychyi](https://github.com/sadovnychyi) |[samuelayo](https://github.com/samuelayo) |[richardwillars](https://github.com/richardwillars) |
+[nqst](https://github.com/nqst) |[aduh95](https://github.com/aduh95) |[lakesare](https://github.com/lakesare) |[kiloreux](https://github.com/kiloreux) |[sadovnychyi](https://github.com/sadovnychyi) |[samuelayo](https://github.com/samuelayo) |
 
-[<img alt="ajkachnic" src="https://avatars.githubusercontent.com/u/44317699?v=4&s=117" width="117">](https://github.com/ajkachnic) |[<img alt="dependabot[bot]" src="https://avatars.githubusercontent.com/in/29110?v=4&s=117" width="117">](https://github.com/apps/dependabot) |[<img alt="zcallan" src="https://avatars.githubusercontent.com/u/13760738?v=4&s=117" width="117">](https://github.com/zcallan) |[<img alt="aduh95" src="https://avatars.githubusercontent.com/u/14309773?v=4&s=117" width="117">](https://github.com/aduh95) |[<img alt="tim-kos" src="https://avatars.githubusercontent.com/u/15005?v=4&s=117" width="117">](https://github.com/tim-kos) |[<img alt="janko" src="https://avatars.githubusercontent.com/u/795488?v=4&s=117" width="117">](https://github.com/janko) |
+[<img alt="richardwillars" src="https://avatars.githubusercontent.com/u/291004?v=4&s=117" width="117">](https://github.com/richardwillars) |[<img alt="Murderlon" src="https://avatars.githubusercontent.com/u/9060226?v=4&s=117" width="117">](https://github.com/Murderlon) |[<img alt="ajkachnic" src="https://avatars.githubusercontent.com/u/44317699?v=4&s=117" width="117">](https://github.com/ajkachnic) |[<img alt="dependabot[bot]" src="https://avatars.githubusercontent.com/in/29110?v=4&s=117" width="117">](https://github.com/apps/dependabot) |[<img alt="zcallan" src="https://avatars.githubusercontent.com/u/13760738?v=4&s=117" width="117">](https://github.com/zcallan) |[<img alt="tim-kos" src="https://avatars.githubusercontent.com/u/15005?v=4&s=117" width="117">](https://github.com/tim-kos) |
 :---: |:---: |:---: |:---: |:---: |:---: |
-[ajkachnic](https://github.com/ajkachnic) |[dependabot[bot]](https://github.com/apps/dependabot) |[zcallan](https://github.com/zcallan) |[aduh95](https://github.com/aduh95) |[tim-kos](https://github.com/tim-kos) |[janko](https://github.com/janko) |
+[richardwillars](https://github.com/richardwillars) |[Murderlon](https://github.com/Murderlon) |[ajkachnic](https://github.com/ajkachnic) |[dependabot[bot]](https://github.com/apps/dependabot) |[zcallan](https://github.com/zcallan) |[tim-kos](https://github.com/tim-kos) |
 
-[<img alt="mifi" src="https://avatars.githubusercontent.com/u/402547?v=4&s=117" width="117">](https://github.com/mifi) |[<img alt="wilkoklak" src="https://avatars.githubusercontent.com/u/17553085?v=4&s=117" width="117">](https://github.com/wilkoklak) |[<img alt="oliverpool" src="https://avatars.githubusercontent.com/u/3864879?v=4&s=117" width="117">](https://github.com/oliverpool) |[<img alt="Botz" src="https://avatars.githubusercontent.com/u/2706678?v=4&s=117" width="117">](https://github.com/Botz) |[<img alt="mcallistertyler" src="https://avatars.githubusercontent.com/u/14939210?v=4&s=117" width="117">](https://github.com/mcallistertyler) |[<img alt="mokutsu-coursera" src="https://avatars.githubusercontent.com/u/65177495?v=4&s=117" width="117">](https://github.com/mokutsu-coursera) |
+[<img alt="janko" src="https://avatars.githubusercontent.com/u/795488?v=4&s=117" width="117">](https://github.com/janko) |[<img alt="mifi" src="https://avatars.githubusercontent.com/u/402547?v=4&s=117" width="117">](https://github.com/mifi) |[<img alt="wilkoklak" src="https://avatars.githubusercontent.com/u/17553085?v=4&s=117" width="117">](https://github.com/wilkoklak) |[<img alt="oliverpool" src="https://avatars.githubusercontent.com/u/3864879?v=4&s=117" width="117">](https://github.com/oliverpool) |[<img alt="Botz" src="https://avatars.githubusercontent.com/u/2706678?v=4&s=117" width="117">](https://github.com/Botz) |[<img alt="mcallistertyler" src="https://avatars.githubusercontent.com/u/14939210?v=4&s=117" width="117">](https://github.com/mcallistertyler) |
 :---: |:---: |:---: |:---: |:---: |:---: |
-[mifi](https://github.com/mifi) |[wilkoklak](https://github.com/wilkoklak) |[oliverpool](https://github.com/oliverpool) |[Botz](https://github.com/Botz) |[mcallistertyler](https://github.com/mcallistertyler) |[mokutsu-coursera](https://github.com/mokutsu-coursera) |
+[janko](https://github.com/janko) |[mifi](https://github.com/mifi) |[wilkoklak](https://github.com/wilkoklak) |[oliverpool](https://github.com/oliverpool) |[Botz](https://github.com/Botz) |[mcallistertyler](https://github.com/mcallistertyler) |
 
-[<img alt="DJWassink" src="https://avatars.githubusercontent.com/u/1822404?v=4&s=117" width="117">](https://github.com/DJWassink) |[<img alt="taoqf" src="https://avatars.githubusercontent.com/u/15901911?v=4&s=117" width="117">](https://github.com/taoqf) |[<img alt="Murderlon" src="https://avatars.githubusercontent.com/u/9060226?v=4&s=117" width="117">](https://github.com/Murderlon) |[<img alt="tuoxiansp" src="https://avatars.githubusercontent.com/u/3960056?v=4&s=117" width="117">](https://github.com/tuoxiansp) |[<img alt="dominiceden" src="https://avatars.githubusercontent.com/u/6367692?v=4&s=117" width="117">](https://github.com/dominiceden) |[<img alt="elenalape" src="https://avatars.githubusercontent.com/u/22844059?v=4&s=117" width="117">](https://github.com/elenalape) |
+[<img alt="mokutsu-coursera" src="https://avatars.githubusercontent.com/u/65177495?v=4&s=117" width="117">](https://github.com/mokutsu-coursera) |[<img alt="DJWassink" src="https://avatars.githubusercontent.com/u/1822404?v=4&s=117" width="117">](https://github.com/DJWassink) |[<img alt="taoqf" src="https://avatars.githubusercontent.com/u/15901911?v=4&s=117" width="117">](https://github.com/taoqf) |[<img alt="tuoxiansp" src="https://avatars.githubusercontent.com/u/3960056?v=4&s=117" width="117">](https://github.com/tuoxiansp) |[<img alt="dominiceden" src="https://avatars.githubusercontent.com/u/6367692?v=4&s=117" width="117">](https://github.com/dominiceden) |[<img alt="elenalape" src="https://avatars.githubusercontent.com/u/22844059?v=4&s=117" width="117">](https://github.com/elenalape) |
 :---: |:---: |:---: |:---: |:---: |:---: |
-[DJWassink](https://github.com/DJWassink) |[taoqf](https://github.com/taoqf) |[Murderlon](https://github.com/Murderlon) |[tuoxiansp](https://github.com/tuoxiansp) |[dominiceden](https://github.com/dominiceden) |[elenalape](https://github.com/elenalape) |
+[mokutsu-coursera](https://github.com/mokutsu-coursera) |[DJWassink](https://github.com/DJWassink) |[taoqf](https://github.com/taoqf) |[tuoxiansp](https://github.com/tuoxiansp) |[dominiceden](https://github.com/dominiceden) |[elenalape](https://github.com/elenalape) |
 
 [<img alt="mejiaej" src="https://avatars.githubusercontent.com/u/4699893?v=4&s=117" width="117">](https://github.com/mejiaej) |[<img alt="gavboulton" src="https://avatars.githubusercontent.com/u/3900826?v=4&s=117" width="117">](https://github.com/gavboulton) |[<img alt="bertho-zero" src="https://avatars.githubusercontent.com/u/8525267?v=4&s=117" width="117">](https://github.com/bertho-zero) |[<img alt="tranvansang" src="https://avatars.githubusercontent.com/u/13043196?v=4&s=117" width="117">](https://github.com/tranvansang) |[<img alt="ap--" src="https://avatars.githubusercontent.com/u/1463443?v=4&s=117" width="117">](https://github.com/ap--) |[<img alt="mrbatista" src="https://avatars.githubusercontent.com/u/6544817?v=4&s=117" width="117">](https://github.com/mrbatista) |
 :---: |:---: |:---: |:---: |:---: |:---: |

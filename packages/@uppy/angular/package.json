@@ -1,6 +1,6 @@
 {
   "name": "@uppy/angular",
-  "version": "0.1.3",
+  "version": "0.2.0-alpha.0",
   "module": "dist/angular/esm2015/public-api.js",
   "types": "dist/angular/uppy-angular.d.ts",
   "scripts": {
