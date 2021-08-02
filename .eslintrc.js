@@ -167,6 +167,7 @@ module.exports = {
       files: [
         'test/endtoend/**/*.js',
         'website/*.js',
+        'website/**/*.js',
       ],
       rules: {
         'import/no-extraneous-dependencies': 'off',
