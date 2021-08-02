@@ -6,7 +6,7 @@ const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
 const Zoom = require('@uppy/zoom')
-const Box = require('@uppy/box')
+// const Box = require('@uppy/box')
 const ImageEditor = require('@uppy/image-editor')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
@@ -35,7 +35,6 @@ function uppyInit () {
 
   const uppy = new Uppy({
     logger: Uppy.debugLogger,
-    restrictions: { requiredMetaFields: ['caption'] }
   })
 
   uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/', resume: true })
@@ -79,6 +78,7 @@ function uppySetOptions () {
     maxNumberOfFiles: 3,
     minNumberOfFiles: 2,
     allowedFileTypes: ['image/*', 'video/*'],
+    requiredMetaFields: ['caption'],
   }
 
   window.uppy.setOptions({
@@ -148,13 +148,13 @@ function uppySetOptions () {
     window.uppy.removePlugin(zoomInstance)
   }
 
-  const boxInstance = window.uppy.getPlugin('Box')
-  if (opts.Box && !boxInstance) {
-    window.uppy.use(Box, { target: Dashboard, companionUrl: COMPANION })
-  }
-  if (!opts.Box && boxInstance) {
-    window.uppy.removePlugin(boxInstance)
-  }
+  //   const boxInstance = window.uppy.getPlugin('Box')
+  //   if (opts.Box && !boxInstance) {
+  //     window.uppy.use(Box, { target: Dashboard, companionUrl: COMPANION })
+  //   }
+  //   if (!opts.Box && boxInstance) {
+  //     window.uppy.removePlugin(boxInstance)
+  //   }
 
   const webcamInstance = window.uppy.getPlugin('Webcam')
   if (opts.Webcam && !webcamInstance) {
