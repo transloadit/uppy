@@ -4,7 +4,7 @@
   "hexo": {
     "version": "4.2.1"
   },
-  "dependencies": {
+  "devDependencies": {
     "@babel/core": "^7.4.4",
     "@goto-bus-stop/hexo-renderer-postcss": "^2.0.0",
     "@octokit/rest": "16.43.1",
