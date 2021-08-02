@@ -1,14 +1,10 @@
 import React, { Component } from 'react'
-// @uppy/* are available higher up in the dependency tree, but eslint
-// does not know about that.
-/* eslint-disable import/no-extraneous-dependencies */
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import GoogleDrive from '@uppy/google-drive'
 import { Dashboard, DashboardModal } from '@uppy/react'
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
-/* eslint-enable import/no-extraneous-dependencies */
 
 const isOnTravis = process.env.REACT_APP_ON_TRAVIS
 const endpoint = isOnTravis ? 'http://companion.test:1080' : 'http://localhost:1080'

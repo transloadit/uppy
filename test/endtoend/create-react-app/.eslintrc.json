@@ -1,7 +1,7 @@
 {
-  "settings": {
-    "react": {
-      "pragma": "React"
-    }
-  }
+  "root": true,
+  "extends": [
+    "react-app",
+    "react-app/jest"
+  ]
 }
