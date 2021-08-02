@@ -165,20 +165,11 @@ module.exports = {
 
     {
       files: [
-        'test/endtoend/**/*.js',
-        'website/*.js',
-        'website/**/*.js',
-      ],
-      rules: {
-        'import/no-extraneous-dependencies': 'off',
-      },
-    },
-
-    {
-      files: [
         'bin/**.js',
         'postcss.config.js',
         '.eslintrc.js',
+        'website/*.js',
+        'website/**/*.js',
       ],
       rules: {
         'no-console': ['off'],
