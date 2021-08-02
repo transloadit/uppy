@@ -168,6 +168,8 @@ module.exports = {
         'bin/**.js',
         'postcss.config.js',
         '.eslintrc.js',
+        'website/*.js',
+        'website/**/*.js',
       ],
       rules: {
         'no-console': ['off'],

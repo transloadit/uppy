@@ -83,7 +83,7 @@ class TransloaditAssembly extends Emitter {
       this.socket = null
     })
 
-    socket.on('error', () => {
+    socket.on('connect_error', () => {
       socket.disconnect()
       this.socket = null
     })
