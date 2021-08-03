@@ -238,7 +238,7 @@ module.exports = class MiniXHRUpload {
       // IE10 does not allow setting `withCredentials` and `responseType`
 // before `open()` is called.
 // it’s important to set withCredentials to true or false, not undefinied, otherwise React Native crashes
-      xhr.withCredentials = opts.withCredentials || false
+      xhr.withCredentials = Boolean(opts.withCredentials)
       if (opts.responseType !== '') {
         xhr.responseType = opts.responseType
       }
