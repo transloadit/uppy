@@ -1,7 +1,7 @@
 name: CDN
 on:
   push:
-    branches: master
+    branches: main
 
 jobs:
   release:
