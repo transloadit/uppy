@@ -15,11 +15,11 @@ Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly wit
 - **Preview** and edit metadata with a nice interface
 - **Upload** to the final destination, optionally process/encode
 
-<img src="https://github.com/transloadit/uppy/raw/master/assets/uppy-demo-oct-2018.gif">
+<img src="https://github.com/transloadit/uppy/raw/main/assets/uppy-demo-oct-2018.gif">
 
 **[Read the docs](https://uppy.io/docs)** | **[Try Uppy](https://uppy.io/examples/dashboard/)**
 
-<a href="https://transloadit.com" target="_blank"><img width="185" src="https://github.com/transloadit/uppy/raw/master/assets/developed-by-transloadit.png"></a>
+<a href="https://transloadit.com" target="_blank"><img width="185" src="https://github.com/transloadit/uppy/raw/main/assets/developed-by-transloadit.png"></a>
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
 
