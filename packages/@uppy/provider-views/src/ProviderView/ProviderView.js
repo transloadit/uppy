@@ -48,8 +48,6 @@ module.exports = class ProviderView {
     this.logout = this.logout.bind(this)
     this.preFirstRender = this.preFirstRender.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
-    this.sortByTitle = this.sortByTitle.bind(this)
-    this.sortByDate = this.sortByDate.bind(this)
     this.handleError = this.handleError.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.listAllFiles = this.listAllFiles.bind(this)
@@ -207,91 +205,6 @@ module.exports = class ProviderView {
   filterQuery (e) {
     const state = this.plugin.getPluginState()
     this.plugin.setPluginState({ ...state, filterInput: e ? e.target.value : '' })
-  }
-
-  sortByTitle () {
-    const state = { ...this.plugin.getPluginState() }
-    const { files, folders, sorting } = state
-
-    const sortedFiles = files.sort((fileA, fileB) => {
-      if (sorting === 'titleDescending') {
-        return fileB.name.localeCompare(fileA.name)
-      }
-      return fileA.name.localeCompare(fileB.name)
-    })
-
-    const sortedFolders = folders.sort((folderA, folderB) => {
-      if (sorting === 'titleDescending') {
-        return folderB.name.localeCompare(folderA.name)
-      }
-      return folderA.name.localeCompare(folderB.name)
-    })
-
-    this.plugin.setPluginState({
-      ...state,
-      files: sortedFiles,
-      folders: sortedFolders,
-      sorting: (sorting === 'titleDescending') ? 'titleAscending' : 'titleDescending',
-    })
-  }
-
-  sortByDate () {
-    const state = { ...this.plugin.getPluginState() }
-    const { files, folders, sorting } = state
-
-    const sortedFiles = files.sort((fileA, fileB) => {
-      const a = new Date(fileA.modifiedDate)
-      const b = new Date(fileB.modifiedDate)
-
-      if (sorting === 'dateDescending') {
-        return a > b ? -1 : a < b ? 1 : 0
-      }
-      return a > b ? 1 : a < b ? -1 : 0
-    })
-
-    const sortedFolders = folders.sort((folderA, folderB) => {
-      const a = new Date(folderA.modifiedDate)
-      const b = new Date(folderB.modifiedDate)
-
-      if (sorting === 'dateDescending') {
-        return a > b ? -1 : a < b ? 1 : 0
-      }
-
-      return a > b ? 1 : a < b ? -1 : 0
-    })
-
-    this.plugin.setPluginState({
-      ...state,
-      files: sortedFiles,
-      folders: sortedFolders,
-      sorting: (sorting === 'dateDescending') ? 'dateAscending' : 'dateDescending',
-    })
-  }
-
-  sortBySize () {
-    const state = { ...this.plugin.getPluginState() }
-    const { files, sorting } = state
-
-    // check that plugin supports file sizes
-    if (!files.length || !this.plugin.getItemData(files[0]).size) {
-      return
-    }
-
-    const sortedFiles = files.sort((fileA, fileB) => {
-      const a = fileA.size
-      const b = fileB.size
-
-      if (sorting === 'sizeDescending') {
-        return a > b ? -1 : a < b ? 1 : 0
-      }
-      return a > b ? 1 : a < b ? -1 : 0
-    })
-
-    this.plugin.setPluginState({
-      ...state,
-      files: sortedFiles,
-      sorting: (sorting === 'sizeDescending') ? 'sizeAscending' : 'sizeDescending',
-    })
   }
 
   /**
@@ -538,8 +451,6 @@ module.exports = class ProviderView {
       getFolder: this.getFolder,
       filterItems: this._sharedHandler.filterItems,
       filterQuery: this.filterQuery,
-      sortByTitle: this.sortByTitle,
-      sortByDate: this.sortByDate,
       logout: this.logout,
       isChecked: this._sharedHandler.isChecked,
       toggleCheckbox: this._sharedHandler.toggleCheckbox,
