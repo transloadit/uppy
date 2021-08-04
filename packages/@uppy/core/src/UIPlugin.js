@@ -1,4 +1,4 @@
-const { render, h, createRef, cloneElement } = require('preact')
+const { render, h } = require('preact')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 
 const BasePlugin = require('./BasePlugin')
@@ -48,6 +48,10 @@ class UIPlugin extends BasePlugin {
 
     if (targetElement) {
       this.isTargetDOMEl = true
+      // When target is <body> with a single <div> element,
+      // Preact thinks it’s the Uppy root element in there when doing a diff,
+      // and destroys it. So we are creating a fragment (could be empty div)
+      const uppyRootElement = document.createDocumentFragment()
 
       // API for plugins that require a synchronous rerender.
       this.rerender = (state) => {
@@ -55,7 +59,7 @@ class UIPlugin extends BasePlugin {
         // so it could still be called even after uppy.removePlugin or uppy.close
         // hence the check
         if (!this.uppy.getPlugin(this.id)) return
-        render(this.render(state), targetElement)
+        render(this.render(state), uppyRootElement)
         this.afterUpdate()
       }
 
@@ -64,15 +68,15 @@ class UIPlugin extends BasePlugin {
       this.uppy.log(`Installing ${callerPluginName} to a DOM element '${target}'`)
 
       if (this.opts.replaceTargetContent) {
-        // Although you could remove the child nodes using DOM APIs (container.innerHTML = ''),
-        // this isn't recommended because the component might need to do additional cleanup when it is removed.
-        // To remove the rendered content and run any cleanup processes, render an empty element into the container:
-        render(h(null), targetElement)
+        // Doing render(h(null), targetElement), which should have been
+        // a better way, since because the component might need to do additional cleanup when it is removed,
+        // stopped working — Preact just adds null into target, not replacing
+        targetElement.innerHTML = ''
       }
 
-      render(this.render(this.uppy.getState()), targetElement)
-
-      this.el = targetElement.firstElementChild
+      render(this.render(this.uppy.getState()), uppyRootElement)
+      this.el = uppyRootElement.firstElementChild
+      targetElement.appendChild(uppyRootElement)
 
       this.onMount()
 
