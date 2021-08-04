@@ -65,7 +65,7 @@ module.exports = class Webcam extends UIPlugin {
     this.capturedMediaFile = null
     // enableMirror is used to toggle mirroring, for instance when discarding the video,
     // while `opts.mirror` is used to remember the initial user setting
-    this.enableMirror = 'mirror' in opts ? opts.mirror : true
+    this.enableMirror = opts?.mirror ?? true
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
         <g fill="none" fillRule="evenodd">
