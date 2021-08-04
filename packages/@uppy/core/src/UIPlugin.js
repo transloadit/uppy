@@ -5,6 +5,9 @@ const BasePlugin = require('./BasePlugin')
 
 /**
  * Defer a frequent call to the microtask queue.
+ *
+ * @param {() => T} fn
+ * @returns {Promise<T>}
  */
 function debounce (fn) {
   let calling = null
@@ -30,12 +33,10 @@ function debounce (fn) {
  * Use this for plugins that need a user interface.
  *
  * For plugins without an user interface, see BasePlugin.
- *
- * @param {object} main Uppy core object
- * @param {object} object with plugin options
- * @returns {Array|string} files or success/fail message
  */
 class UIPlugin extends BasePlugin {
+  #updateUI
+
   /**
    * Check if supplied `target` is a DOM element or an `object`.
    * If it’s an object — target is a plugin, and we search `plugins`
@@ -50,16 +51,14 @@ class UIPlugin extends BasePlugin {
       this.isTargetDOMEl = true
 
       // API for plugins that require a synchronous rerender.
-      this.rerender = (state) => {
+      this.#updateUI = debounce((state) => {
         // plugin could be removed, but this.rerender is debounced below,
         // so it could still be called even after uppy.removePlugin or uppy.close
         // hence the check
         if (!this.uppy.getPlugin(this.id)) return
         render(this.render(state), targetElement)
         this.afterUpdate()
-      }
-
-      this.updateUI = debounce(this.rerender)
+      })
 
       this.uppy.log(`Installing ${callerPluginName} to a DOM element '${target}'`)
 
@@ -122,18 +121,14 @@ class UIPlugin extends BasePlugin {
   }
 
   update (state) {
-    if (typeof this.el === 'undefined') {
-      return
-    }
-
-    if (this.updateUI) {
-      this.updateUI(state)
+    if (this.el != null) {
+      this.#updateUI?.(state)
     }
   }
 
   unmount () {
-    if (this.isTargetDOMEl && this.el && this.el.parentNode) {
-      this.el.parentNode.removeChild(this.el)
+    if (this.isTargetDOMEl) {
+      this.el?.remove()
     }
   }
 }
