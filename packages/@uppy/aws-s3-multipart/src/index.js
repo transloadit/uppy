@@ -1,9 +1,9 @@
-const { Plugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 const { Socket, Provider, RequestClient } = require('@uppy/companion-client')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
-const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
+const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const Uploader = require('./MultipartUploader')
 
 function assertServerError (res) {
@@ -15,7 +15,7 @@ function assertServerError (res) {
   return res
 }
 
-module.exports = class AwsS3Multipart extends Plugin {
+module.exports = class AwsS3Multipart extends BasePlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {

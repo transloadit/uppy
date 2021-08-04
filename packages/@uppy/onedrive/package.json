@@ -1,7 +1,7 @@
 {
   "name": "@uppy/onedrive",
   "description": "Import files from OneDrive, into Uppy.",
-  "version": "1.2.2",
+  "version": "2.0.0-alpha.0",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -23,7 +23,7 @@
     "@uppy/companion-client": "file:../companion-client",
     "@uppy/provider-views": "file:../provider-views",
     "@uppy/utils": "file:../utils",
-    "preact": "8.2.9"
+    "preact": "^10.5.13"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"

@@ -1,11 +1,11 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const { h } = require('preact')
 
 /**
  * Progress bar
  *
  */
-module.exports = class ProgressBar extends Plugin {
+module.exports = class ProgressBar extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -45,7 +45,7 @@ module.exports = class ProgressBar extends Plugin {
   }
 
   install () {
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

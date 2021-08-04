@@ -1,4 +1,4 @@
-var deepFreeze = require('deep-freeze')
+const deepFreeze = require('deep-freeze')
 
 /**
  * Default store + deepFreeze on setState to make sure nothing is mutated accidentally

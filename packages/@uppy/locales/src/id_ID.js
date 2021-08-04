@@ -41,7 +41,7 @@ id_ID.strings = {
   encoding: 'Pengkodean...',
   enterCorrectUrl: 'URL salah: Mohon pastikan Anda memasukkan tautan langsung ke berkas',
   enterUrlToImport: 'Masukkan URL untuk mengimpor berkas',
-  exceedsSize: 'Berkas ini melebihi ukuran maksimum yang dibolehkan',
+  exceedsSize: 'Berkas ini melebihi ukuran maksimum yang dibolehkan %{size}',
   failedToFetch: 'Companion gagal mengambil URL ini, pastikan sudah benar',
   failedToUpload: 'Gagal mengunggah %{file}',
   fileSource: 'Sumber berkas: %{name}',
@@ -68,7 +68,7 @@ id_ID.strings = {
   pause: 'Tunda',
   pauseUpload: 'Tunda pengungahan',
   paused: 'Ditunda',
-  poweredBy: 'Didukung oleh',
+  poweredBy: 'Didukung oleh %{uppy}',
   processingXFiles: {
     '0': 'Pemrosesan %{smart_count} berkas',
     '1': 'Pemrosesan %{smart_count} berkas',
@@ -81,7 +81,6 @@ id_ID.strings = {
   retry: 'Ulangi',
   retryUpload: 'Ulangi pengungahan',
   saveChanges: 'Simpan perubahan',
-  selectAllFilesFromFolderNamed: 'Pilih semua berkas dari folder %{name}',
   selectFileNamed: 'Pilih berkas %{name}',
   selectX: {
     '0': 'Pilih %{smart_count}',
@@ -93,7 +92,6 @@ id_ID.strings = {
   stopRecording: 'Menghentikan perekaman video',
   takePicture: 'Mengambil gambar',
   timedOut: 'Pengunggahan terhenti untuk %{seconds} detik, membatalkan.',
-  unselectAllFilesFromFolderNamed: 'Batalkan pemilihan semua berkas dari folder %{name}',
   unselectFileNamed: 'Batalkan pemilihan berkas %{name}',
   upload: 'Unggah',
   uploadComplete: 'Pengunggahan selesai',

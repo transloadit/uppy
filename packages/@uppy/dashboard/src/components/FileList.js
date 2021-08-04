@@ -1,7 +1,7 @@
-const FileItem = require('./FileItem/index.js')
-const VirtualList = require('./VirtualList')
 const classNames = require('classnames')
 const { h } = require('preact')
+const FileItem = require('./FileItem/index.js')
+const VirtualList = require('./VirtualList')
 
 function chunks (list, size) {
   const chunked = []
@@ -39,8 +39,7 @@ module.exports = (props) => {
     error: props.error,
     // TODO move this to context
     i18n: props.i18n,
-    log: props.log,
-    info: props.info,
+    uppy: props.uppy,
     // features
     acquirers: props.acquirers,
     resumableUploads: props.resumableUploads,
@@ -55,11 +54,7 @@ module.exports = (props) => {
     metaFields: props.metaFields,
     recoveredState: props.recoveredState,
     // callbacks
-    retryUpload: props.retryUpload,
-    pauseUpload: props.pauseUpload,
-    cancelUpload: props.cancelUpload,
     toggleFileCard: props.toggleFileCard,
-    removeFile: props.removeFile,
     handleRequestThumbnail: props.handleRequestThumbnail,
     handleCancelThumbnail: props.handleCancelThumbnail,
   }
@@ -81,6 +76,7 @@ module.exports = (props) => {
         {row.map((fileID) => (
           <FileItem
             key={fileID}
+            uppy={props.uppy}
             {...fileProps}
             role="listitem"
             openFileEditor={props.openFileEditor}

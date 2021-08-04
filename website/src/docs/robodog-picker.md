@@ -13,8 +13,8 @@ Show a modal UI that allows users to pick files from their device and from the w
 const resultPromise = Robodog.pick({
   params: {
     auth: { key: '' },
-    template_id: ''
-  }
+    template_id: '',
+  },
 })
 ```
 

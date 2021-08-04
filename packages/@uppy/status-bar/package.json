@@ -1,7 +1,7 @@
 {
   "name": "@uppy/status-bar",
   "description": "A progress bar for Uppy, with many bells and whistles.",
-  "version": "1.9.6",
+  "version": "2.0.0-alpha.0",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -30,7 +30,7 @@
     "@uppy/utils": "file:../utils",
     "classnames": "^2.2.6",
     "lodash.throttle": "^4.1.1",
-    "preact": "8.2.9"
+    "preact": "^10.5.13"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"

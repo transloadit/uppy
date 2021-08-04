@@ -12,3 +12,11 @@ website/themes/uppy/source/uppy/**
 test/endtoend/*/build
 examples/dev/output
 bundle.js
+website/src/_posts/201*.md
+website/src/_posts/2020-*.md
+website/src/_posts/2021-01-*.md
+website/src/_posts/2021-02-*.md
+website/src/_posts/2021-03-*.md
+website/src/_posts/2021-04-*.md
+website/src/_posts/2021-05-*.md
+website/src/_posts/2021-06-*.md

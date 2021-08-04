@@ -14,7 +14,7 @@ The `@uppy/box` plugin lets users import files from their Box account.
 A Companion instance is required for the Box plugin to work. Companion handles authentication with Box, downloads the files, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const Box = require('@uppy/box')
+import Box from '@uppy/box'
 
 uppy.use(Box, {
   // Options
@@ -36,7 +36,7 @@ npm install @uppy/box
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Box = Uppy.Box
+const { Box } = Uppy
 ```
 
 ## Setting Up
@@ -53,9 +53,9 @@ companion.app({
   providerOptions: {
     box: {
       key: 'Box API key',
-      secret: 'Box API secret'
-    }
-  }
+      secret: 'Box API secret',
+    },
+  },
 })
 ```
 
@@ -63,6 +63,7 @@ You can create a Box App on the [Box Developers site](https://app.box.com/develo
 
 Things to note:
 - Choose "Custom App" and select the "Standard OAuth 2.0 (User Authentication)" app type.
+- Oddly you must enable full write access, or you will get [403 when downloading files](https://support.box.com/hc/en-us/community/posts/360049195613-403-error-while-file-download-API-Call)
 
 You'll be redirected to the app page. This page lists the client ID (app key) and client secret (app secret), which you should use to configure Companion as shown above.
 
@@ -129,7 +130,9 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
-  // TODO
+const locales = {
+  strings: {
+    // TODO
+  },
 }
 ```

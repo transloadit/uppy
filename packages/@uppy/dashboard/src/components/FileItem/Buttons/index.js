@@ -54,10 +54,10 @@ function RemoveButton ({ i18n, onClick }) {
 const copyLinkToClipboard = (event, props) => {
   copyToClipboard(props.file.uploadURL, props.i18n('copyLinkToClipboardFallback'))
     .then(() => {
-      props.log('Link copied to clipboard.')
-      props.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
+      props.uppy.log('Link copied to clipboard.')
+      props.uppy.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
     })
-    .catch(props.log)
+    .catch(props.uppy.log)
     // avoid losing focus
     .then(() => event.target.focus({ preventScroll: true }))
 }
@@ -80,6 +80,7 @@ function CopyLinkButton (props) {
 
 module.exports = function Buttons (props) {
   const {
+    uppy,
     file,
     uploadInProgressOrComplete,
     canEditFile,
@@ -87,11 +88,8 @@ module.exports = function Buttons (props) {
     showLinkToFileUploadResult,
     showRemoveButton,
     i18n,
-    removeFile,
     toggleFileCard,
     openFileEditor,
-    log,
-    info,
   } = props
 
   const editAction = () => {
@@ -115,17 +113,14 @@ module.exports = function Buttons (props) {
       {showLinkToFileUploadResult && file.uploadURL ? (
         <CopyLinkButton
           file={file}
-          i18n={i18n}
-          info={info}
-          log={log}
+          uppy={uppy}
         />
       ) : null}
       {showRemoveButton ? (
         <RemoveButton
           i18n={i18n}
-          info={props.info}
-          log={props.log}
-          onClick={() => removeFile(file.id, 'removed-by-user')}
+          uppy={uppy}
+          onClick={() => props.uppy.removeFile(file.id, 'removed-by-user')}
         />
       ) : null}
     </div>

@@ -187,8 +187,8 @@
   <p>© <%- date(Date.now(), 'YYYY') %> <a href="https://transloadit.com" target="_blank">Transloadit</a></p>
 </footer>
 
-<link href="https://releases.transloadit.com/uppy/v1.30.0/uppy.min.css" rel="stylesheet">
-<script src="https://releases.transloadit.com/uppy/v1.30.0/uppy.min.js"></script>
+<link href="https://releases.transloadit.com/uppy/v1.31.0/uppy.min.css" rel="stylesheet">
+<script src="https://releases.transloadit.com/uppy/v1.31.0/uppy.min.js"></script>
 
 <script>
   var TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
@@ -210,6 +210,7 @@
     .use(Uppy.GoogleDrive, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
     .use(Uppy.Instagram, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
     .use(Uppy.Dropbox, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
+    .use(Uppy.Box, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
     .use(Uppy.Facebook, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
     .use(Uppy.OneDrive, { target: Uppy.Dashboard, companionUrl: COMPANION_ENDPOINT })
     .use(Uppy.Webcam, { target: Uppy.Dashboard })

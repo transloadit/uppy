@@ -14,7 +14,7 @@
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "npm-run-all": "^4.1.2",
-    "preact": "8.2.9",
+    "preact": "^10.5.13",
     "request": "2.88.2"
   },
   "private": true,

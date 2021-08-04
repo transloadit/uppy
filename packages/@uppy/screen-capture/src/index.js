@@ -1,5 +1,5 @@
 const { h } = require('preact')
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
 const ScreenRecIcon = require('./ScreenRecIcon')
@@ -8,23 +8,13 @@ const CaptureScreen = require('./CaptureScreen')
 // Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 function getMediaDevices () {
   // check if screen capturing is supported
-  /* eslint-disable */
-  if (navigator &&
-    navigator.mediaDevices &&
-    navigator.mediaDevices.getDisplayMedia &&
-    window &&
-    window.MediaRecorder) {
-    return navigator.mediaDevices
-  }
-  /* eslint-enable */
-
-  return null
+  return window.MediaRecorder && navigator.mediaDevices // eslint-disable-line compat/compat
 }
 
 /**
  * Screen capture
  */
-module.exports = class ScreenCapture extends Plugin {
+module.exports = class ScreenCapture extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -75,9 +65,7 @@ module.exports = class ScreenCapture extends Plugin {
     this.opts = { ...defaultOptions, ...opts }
 
     // i18n
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     // uppy plugin class related
     this.install = this.install.bind(this)
@@ -109,7 +97,7 @@ module.exports = class ScreenCapture extends Plugin {
       audioStreamActive: false,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
@@ -215,7 +203,7 @@ module.exports = class ScreenCapture extends Plugin {
     const options = {}
     this.capturedMediaFile = null
     this.recordingChunks = []
-    const preferredVideoMimeType = this.opts.preferredVideoMimeType
+    const { preferredVideoMimeType } = this.opts
 
     this.selectVideoStreamSource()
       .then((videoStream) => {

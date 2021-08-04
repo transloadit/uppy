@@ -46,7 +46,7 @@ zh_TW.strings = {
   encoding: '編碼中...',
   enterCorrectUrl: '錯誤連結： 請確認您輸入的是檔案連結',
   enterUrlToImport: '輸入連結或者匯入文件',
-  exceedsSize: '此檔案大小超出允許的最大值',
+  exceedsSize: '此檔案大小超出允許的最大值 %{size}',
   failedToFetch: 'Companion無法抓取此連結，請確認它是正確的',
   failedToUpload: '上傳%{file}失敗',
   fileSource: '檔案來源：%{name}',
@@ -76,7 +76,7 @@ zh_TW.strings = {
   pause: '暫停',
   pauseUpload: '暫停上傳',
   paused: '已暫停',
-  poweredBy: '技術提供者',
+  poweredBy: '技術提供者 %{uppy}',
   processingXFiles: {
     '0': '%{smart_count}個檔案處理中',
     '1': '%{smart_count}個檔案處理中',
@@ -90,7 +90,6 @@ zh_TW.strings = {
   retry: '重試',
   retryUpload: '重試上傳',
   saveChanges: '儲存變更',
-  selectAllFilesFromFolderNamed: '選擇資料夾 %{name} 中的所有檔案',
   selectFileNamed: '選擇檔案 %{name}',
   selectX: {
     '0': '選擇%{smart_count}',
@@ -102,7 +101,6 @@ zh_TW.strings = {
   stopRecording: '停止錄影',
   takePicture: '拍照',
   timedOut: '上傳已經停滯%{seconds}秒，中止上傳',
-  unselectAllFilesFromFolderNamed: '取消選擇資料夾 %{name} 中的所有檔案',
   unselectFileNamed: '取消選擇檔案 %{name}',
   upload: '上傳',
   uploadComplete: '上傳完成',

@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, ElementRef, Input, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
-import * as Dashboard from '@uppy/dashboard';
+import Dashboard from '@uppy/dashboard';
+import type { DashboardOptions } from '@uppy/dashboard';
 import { Uppy } from '@uppy/core';
 import { UppyAngularWrapper } from '../../utils/wrapper';
 
@@ -10,7 +11,7 @@ import { UppyAngularWrapper } from '../../utils/wrapper';
 })
 export class DashboardModalComponent extends UppyAngularWrapper<Dashboard> implements OnDestroy, OnChanges {
   @Input() uppy: Uppy;
-  @Input() props: Dashboard.DashboardOptions;
+  @Input() props: DashboardOptions;
   @Input() open: boolean;
 
   constructor(public el: ElementRef) {

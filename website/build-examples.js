@@ -21,11 +21,10 @@
  * the Set when it has been bundled.
  */
 
-const createStream = require('fs').createWriteStream
-const glob = require('multi-glob').glob
+const { createWriteStream, mkdirSync } = require('fs')
+const { glob } = require('multi-glob')
 const chalk = require('chalk')
 const path = require('path')
-const mkdirp = require('mkdirp')
 const notifier = require('node-notifier')
 const babelify = require('babelify')
 const aliasify = require('aliasify')
@@ -127,14 +126,14 @@ glob(srcPattern, (err, files) => {
       const output = dstPattern.replace('**', exampleName)
       const parentDir = path.dirname(output)
 
-      mkdirp.sync(parentDir)
+      mkdirSync(parentDir, { recursive: true })
 
       console.info(chalk.grey(`⏳ building: ${path.relative(process.cwd(), file)}`))
 
       b
         .bundle()
         .on('error', onError)
-        .pipe(createStream(output))
+        .pipe(createWriteStream(output))
         .on('finish', () => {
           console.info(chalk.green(`✓ built: ${path.relative(process.cwd(), file)}`))
         })

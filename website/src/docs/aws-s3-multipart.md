@@ -11,10 +11,11 @@ tagline: "uploader for AWS S3 using its resumable Multipart protocol"
 The `@uppy/aws-s3-multipart` plugin can be used to upload files directly to an S3 bucket using S3's Multipart upload strategy. With this strategy, files are chopped up in parts of 5MB+ each, so they can be uploaded concurrently. It is also very reliable: if a single part fails to upload, only that 5MB chunk has to be retried.
 
 ```js
-const AwsS3Multipart = require('@uppy/aws-s3-multipart')
+import AwsS3Multipart from '@uppy/aws-s3-multipart'
+
 uppy.use(AwsS3Multipart, {
   limit: 4,
-  companionUrl: 'https://uppy-companion.myapp.net/'
+  companionUrl: 'https://uppy-companion.myapp.net/',
 })
 ```
 
@@ -31,7 +32,7 @@ npm install @uppy/aws-s3-multipart
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const AwsS3Multipart = Uppy.AwsS3Multipart
+const { AwsS3Multipart } = Uppy
 ```
 
 ## Options
@@ -119,6 +120,7 @@ Return a Promise for an object with keys:
 
  - `url` - The presigned URL to upload a part. This can be generated on the server using the S3 SDK like so:
 
+   <!-- eslint-disable node/handle-callback-err -->
    ```js
    sdkInstance.getSignedUrl('uploadPart', {
      Bucket: 'target',

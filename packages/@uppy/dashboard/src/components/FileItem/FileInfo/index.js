@@ -2,12 +2,6 @@ const { h } = require('preact')
 const prettierBytes = require('@transloadit/prettier-bytes')
 const truncateString = require('@uppy/utils/lib/truncateString')
 
-const renderAcquirerIcon = (acquirer, props) => (
-  <span title={props.i18n('fileSource', { name: acquirer.name })}>
-    {acquirer.icon()}
-  </span>
-)
-
 const renderFileName = (props) => {
   // Take up at most 2 lines on any screen
   let maxNameLength
@@ -81,9 +75,7 @@ module.exports = function FileInfo (props) {
         {ReSelectButton(props)}
         <ErrorButton
           file={props.file}
-          onClick={() => {
-            alert(props.file.error)
-          }}
+          onClick={() => alert(props.file.error)}
         />
       </div>
     </div>

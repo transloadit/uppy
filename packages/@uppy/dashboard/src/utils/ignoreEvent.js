@@ -4,7 +4,7 @@
 // Url treats them as URLs that need to be imported
 
 function ignoreEvent (ev) {
-  const tagName = ev.target.tagName
+  const { tagName } = ev.target
   if (tagName === 'INPUT'
       || tagName === 'TEXTAREA') {
     ev.stopPropagation()

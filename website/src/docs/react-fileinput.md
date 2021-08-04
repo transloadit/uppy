@@ -19,10 +19,10 @@ npm install @uppy/react
 ```
 
 ```js
-// Either:
-import FileInput from '@uppy/react/lib/FileInput';
-// Or:
-import { FileInput } from '@uppy/react';
+import { FileInput } from '@uppy/react'
+
+// Alternatively, you can also use a default import:
+// import FileInput from '@uppy/react/lib/FileInput';
 ```
 
 ## CSS
@@ -41,11 +41,13 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 The `<FileInput />` component supports all [FileInput](/docs/file-input/) options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
 ```js
-// assuming `this.uppy` contains an Uppy instance:
+import React from 'react'
+import { FileInput } from '@uppy/react'
 
-<FileInput
-  uppy={this.uppy}
-  pretty={true}
-  inputName='files[]'
-/>
+  <FileInput
+    // assuming `this.uppy` contains an Uppy instance:
+    uppy={this.uppy}
+    pretty
+    inputName="files[]"
+  />
 ```

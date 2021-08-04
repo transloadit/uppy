@@ -26,6 +26,7 @@ const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const GoogleDrive = require('@uppy/google-drive')
 const Dropbox = require('@uppy/dropbox')
+const Box = require('@uppy/box')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
@@ -44,7 +45,8 @@ const uppy = new Uppy({
     maxFileSize: 1000000,
     maxNumberOfFiles: 3,
     minNumberOfFiles: 2,
-    allowedFileTypes: ['image/*', 'video/*']
+    allowedFileTypes: ['image/*', 'video/*'],
+    requiredMetaFields: ['caption'],
   }
 })
 .use(Dashboard, {
@@ -63,6 +65,7 @@ const uppy = new Uppy({
 })
 .use(GoogleDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
 .use(Dropbox, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
+.use(Box, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
 .use(Instagram, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
 .use(Facebook, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
 .use(OneDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })

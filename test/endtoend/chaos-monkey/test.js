@@ -47,11 +47,11 @@ describe('Chaos monkey', function () {
       return browser.execute(() => {
         window.addLogMessage('Cancelling a file')
         // prefer deleting a file that is uploading right now
-        var selector = Math.random() <= 0.7
+        const selector = Math.random() <= 0.7
           ? '.is-inprogress .uppy-Dashboard-Item-action--remove'
           : '.uppy-Dashboard-Item-action--remove'
-        var buttons = document.querySelectorAll(selector)
-        var del = buttons[Math.floor(Math.random() * buttons.length)]
+        const buttons = document.querySelectorAll(selector)
+        const del = buttons[Math.floor(Math.random() * buttons.length)]
         if (del) del.click()
       })
     }
@@ -59,7 +59,7 @@ describe('Chaos monkey', function () {
     function startUploadIfAnyWaitingFiles () {
       return browser.execute(() => {
         window.addLogMessage('Starting upload')
-        var start = document.querySelector('.uppy-StatusBar-actionBtn--upload')
+        const start = document.querySelector('.uppy-StatusBar-actionBtn--upload')
         if (start) start.click()
       })
     }
@@ -67,7 +67,7 @@ describe('Chaos monkey', function () {
     function cancelAll () {
       return browser.execute(() => {
         window.addLogMessage('Cancelling everything')
-        var button = document.querySelector('.uppy-DashboardContent-back')
+        const button = document.querySelector('.uppy-DashboardContent-back')
         if (button) button.click()
       })
     }

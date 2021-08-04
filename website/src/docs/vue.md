@@ -88,11 +88,11 @@ export default {
   computed: {
     uppy: () => new Uppy().use(Webcam, {
     // Config
-    })
+    }),
   },
   beforeDestroy () {
     this.uppy.close()
-  }
+  },
 }
 ```
 

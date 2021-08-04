@@ -7,7 +7,7 @@ describe('AwsS3', () => {
     const core = new Core()
     core.use(AwsS3)
 
-    const pluginNames = core.plugins.uploader.map((plugin) => plugin.constructor.name)
+    const pluginNames = core[Symbol.for('uppy test: getPlugins')]('uploader').map((plugin) => plugin.constructor.name)
     expect(pluginNames).toContain('AwsS3')
   })
 

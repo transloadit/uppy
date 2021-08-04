@@ -42,7 +42,7 @@ he_IL.strings = {
   encoding: 'מקודד...',
   enterCorrectUrl: 'כתובת לא חוקית: אנא וודא שהכתובת ישירה לקובץ',
   enterUrlToImport: 'הזן כתובת לייבוא קבוץ',
-  exceedsSize: 'קובץ זה גדול מהגודל המקסימאלי המותר',
+  exceedsSize: 'קובץ זה גדול מהגודל המקסימאלי המותר %{size}',
   failedToFetch: 'השירות נכשל לטפל בכתובת זו, אנא וודא שהיא נכונה',
   failedToUpload: 'העלאת הקובץ %{file} נכשלה',
   fileSource: 'קובץ מקור: %{name}',
@@ -70,7 +70,7 @@ he_IL.strings = {
   pause: 'השהה',
   pauseUpload: 'השהה העלאה',
   paused: 'מושהה',
-  poweredBy: 'בחסות',
+  poweredBy: 'בחסות %{uppy}',
   processingXFiles: {
     '0': 'מעבד קובץ %{smart_count}',
     '1': 'מעבד %{smart_count} קבצים',
@@ -83,7 +83,6 @@ he_IL.strings = {
   retry: 'נסה שוב',
   retryUpload: 'נסה להעלות שוב',
   saveChanges: 'שמור שינויים',
-  selectAllFilesFromFolderNamed: 'בחר את כל הקבצים בתיקייה %{name}',
   selectFileNamed: 'בחר את הקובץ %{name}',
   selectX: {
     '0': 'בחר %{smart_count}',
@@ -95,7 +94,6 @@ he_IL.strings = {
   stopRecording: 'עצור הסרטת ווידאו',
   takePicture: 'צלם תמונה',
   timedOut: 'העלאה נתקעה %{seconds} שניות, מבטל.',
-  unselectAllFilesFromFolderNamed: 'בטל בחירת כל הקבצים בתיקייה %{name}',
   unselectFileNamed: 'בטל בחירת הקובץ %{name}',
   upload: 'מעלה',
   uploadComplete: 'העלאה הסתיימה',

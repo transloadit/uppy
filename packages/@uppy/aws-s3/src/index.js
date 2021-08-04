@@ -25,11 +25,9 @@
  * the XHRUpload code, but at least it's not horrifically broken :)
  */
 
-// If global `URL` constructor is available, use it
-const URL_ = typeof URL === 'function' ? URL : require('url-parse')
-const { Plugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
-const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
+const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const settle = require('@uppy/utils/lib/settle')
 const hasProperty = require('@uppy/utils/lib/hasProperty')
 const { RequestClient } = require('@uppy/companion-client')
@@ -38,9 +36,7 @@ const MiniXHRUpload = require('./MiniXHRUpload')
 const isXml = require('./isXml')
 
 function resolveUrl (origin, link) {
-  return origin
-    ? new URL_(link, origin).toString()
-    : new URL_(link).toString()
+  return new URL(link, origin || undefined).toString()
 }
 
 /**
@@ -70,7 +66,7 @@ function assertServerError (res) {
 // warning deduplication flag: see `getResponseData()` XHRUpload option definition
 let warnedSuccessActionStatus = false
 
-module.exports = class AwsS3 extends Plugin {
+module.exports = class AwsS3 extends BasePlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -94,22 +90,9 @@ module.exports = class AwsS3 extends Plugin {
 
     this.opts = { ...defaultOptions, ...opts }
 
-    this.i18nInit()
-
     this.client = new RequestClient(uppy, opts)
     this.handleUpload = this.handleUpload.bind(this)
     this.requests = new RateLimitedQueue(this.opts.limit)
-  }
-
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   getUploadParameters (file) {
@@ -118,7 +101,7 @@ module.exports = class AwsS3 extends Plugin {
     }
 
     const filename = file.meta.name
-    const type = file.meta.type
+    const { type } = file.meta
     const metadata = {}
     this.opts.metaFields.forEach((key) => {
       if (file.meta[key] != null) {
@@ -224,7 +207,7 @@ module.exports = class AwsS3 extends Plugin {
   }
 
   install () {
-    const uppy = this.uppy
+    const { uppy } = this
     this.uppy.addUploader(this.handleUpload)
 
     // Get the response data from a successful XMLHttpRequest instance.
@@ -283,7 +266,7 @@ module.exports = class AwsS3 extends Plugin {
       responseUrlFieldName: 'location',
       timeout: this.opts.timeout,
       // Share the rate limiting queue with XHRUpload.
-      __queue: this.requests,
+      [internalRateLimitedQueue]: this.requests,
       responseType: 'text',
       getResponseData: this.opts.getResponseData || defaultGetResponseData,
       getResponseError: defaultGetResponseError,

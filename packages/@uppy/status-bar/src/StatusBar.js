@@ -1,9 +1,9 @@
 const throttle = require('lodash.throttle')
 const classNames = require('classnames')
-const statusBarStates = require('./StatusBarStates')
 const prettierBytes = require('@transloadit/prettier-bytes')
 const prettyETA = require('@uppy/utils/lib/prettyETA')
 const { h } = require('preact')
+const statusBarStates = require('./StatusBarStates')
 
 function calculateProcessingProgress (files) {
   // Collect pre or postprocessing progress states.
@@ -39,25 +39,14 @@ function togglePauseResume (props) {
   if (props.isAllComplete) return
 
   if (!props.resumableUploads) {
-    return props.cancelAll()
+    return props.uppy.cancelAll()
   }
 
   if (props.isAllPaused) {
-    return props.resumeAll()
+    return props.uppy.resumeAll()
   }
 
-  return props.pauseAll()
-}
-
-function RenderReSelectGhosts ({ i18n }) {
-  return (
-    <div className="uppy-StatusBar-serviceMsg">
-      {i18n('reSelectGhosts')}
-      <svg className="uppy-c-icon uppy-StatusBar-serviceMsg-ghostsIcon" aria-hidden="true" width="15" height="19" viewBox="0 0 35 39">
-        <path d="M1.708 38.66c1.709 0 3.417-3.417 6.834-3.417 3.416 0 5.125 3.417 8.61 3.417 3.348 0 5.056-3.417 8.473-3.417 4.305 0 5.125 3.417 6.833 3.417.889 0 1.709-.889 1.709-1.709v-19.68C34.167-5.757 0-5.757 0 17.271v19.68c0 .82.888 1.709 1.708 1.709zm8.542-17.084a3.383 3.383 0 01-3.417-3.416 3.383 3.383 0 013.417-3.417 3.383 3.383 0 013.417 3.417 3.383 3.383 0 01-3.417 3.416zm13.667 0A3.383 3.383 0 0120.5 18.16a3.383 3.383 0 013.417-3.417 3.383 3.383 0 013.416 3.417 3.383 3.383 0 01-3.416 3.416z" fillRule="nonzero" />
-      </svg>
-    </div>
-  )
+  return props.uppy.pauseAll()
 }
 
 module.exports = (props) => {
@@ -77,7 +66,7 @@ module.exports = (props) => {
     recoveredState,
   } = props
 
-  const uploadState = props.uploadState
+  const { uploadState } = props
 
   let progressValue = props.totalProgress
   let progressMode
@@ -195,7 +184,7 @@ const RetryBtn = (props) => {
       type="button"
       className="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
       aria-label={props.i18n('retryUpload')}
-      onClick={props.retryAll}
+      onClick={() => props.uppy.retryAll()}
       data-uppy-super-focusable
     >
       <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="8" height="10" viewBox="0 0 8 10">
@@ -213,7 +202,7 @@ const CancelBtn = (props) => {
       className="uppy-u-reset uppy-StatusBar-actionCircleBtn"
       title={props.i18n('cancel')}
       aria-label={props.i18n('cancel')}
-      onClick={props.cancelAll}
+      onClick={() => props.uppy.cancelAll()}
       data-uppy-super-focusable
     >
       <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="16" height="16" viewBox="0 0 16 16">
@@ -292,8 +281,7 @@ const ProgressBarProcessing = (props) => {
   )
 }
 
-const renderDot = () =>
-  ' \u00B7 '
+const renderDot = () => ' \u00B7 '
 
 const ProgressDetails = (props) => {
   const ifShowFilesUploadedOfTotal = props.numUploads > 1

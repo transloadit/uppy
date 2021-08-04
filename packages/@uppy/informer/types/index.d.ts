@@ -1,12 +1,10 @@
-import Uppy = require('@uppy/core')
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 
-declare module Informer {
-  interface InformerOptions extends Uppy.PluginOptions {
-    replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
-  }
+interface InformerOptions extends PluginOptions {
+  replaceTargetContent?: boolean
+  target?: PluginTarget
 }
 
-declare class Informer extends Uppy.Plugin<Informer.InformerOptions> {}
+declare class Informer extends UIPlugin<InformerOptions> {}
 
-export = Informer
+export default Informer
