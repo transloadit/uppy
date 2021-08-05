@@ -26,10 +26,8 @@
  */
 
 const { BasePlugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
 const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const settle = require('@uppy/utils/lib/settle')
-const hasProperty = require('@uppy/utils/lib/hasProperty')
 const { RequestClient } = require('@uppy/companion-client')
 const qsStringify = require('qs-stringify')
 const MiniXHRUpload = require('./MiniXHRUpload')
@@ -63,11 +61,48 @@ function assertServerError (res) {
   return res
 }
 
+function validateParameters (file, params) {
+  const valid = params != null
+    && typeof params.url === 'string'
+    && (typeof params.fields === 'object' || params.fields == null)
+
+  if (!valid) {
+    const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields, headers }' but got '${JSON.stringify(params)}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
+    throw err
+  }
+
+  const methodIsValid = params.method == null || /^p(u|os)t$/i.test(params.method)
+
+  if (!methodIsValid) {
+    const err = new TypeError(`AwsS3: got incorrect method from 'getUploadParameters()' for file '${file.name}', expected  'put' or 'post' but got '${params.method}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
+    throw err
+  }
+}
+
+// Get the error data from a failed XMLHttpRequest instance.
+// `content` is the S3 response as a string.
+// `xhr` is the XMLHttpRequest instance.
+function defaultGetResponseError (content, xhr) {
+  // If no response, we don't have a specific error message, use the default.
+  if (!isXml(content, xhr)) {
+    return undefined
+  }
+  const error = getXmlValue(content, 'Message')
+  return new Error(error)
+}
+
 // warning deduplication flag: see `getResponseData()` XHRUpload option definition
 let warnedSuccessActionStatus = false
 
 module.exports = class AwsS3 extends BasePlugin {
+  // eslint-disable-next-line global-require
   static VERSION = require('../package.json').version
+
+  #client
+
+  #requests
+
+  #uploader
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -90,9 +125,8 @@ module.exports = class AwsS3 extends BasePlugin {
 
     this.opts = { ...defaultOptions, ...opts }
 
-    this.client = new RequestClient(uppy, opts)
-    this.handleUpload = this.handleUpload.bind(this)
-    this.requests = new RateLimitedQueue(this.opts.limit)
+    this.#client = new RequestClient(uppy, opts)
+    this.#requests = new RateLimitedQueue(this.opts.limit)
   }
 
   getUploadParameters (file) {
@@ -110,31 +144,11 @@ module.exports = class AwsS3 extends BasePlugin {
     })
 
     const query = qsStringify({ filename, type, metadata })
-    return this.client.get(`s3/params?${query}`)
+    return this.#client.get(`s3/params?${query}`)
       .then(assertServerError)
   }
 
-  validateParameters (file, params) {
-    const valid = typeof params === 'object' && params
-      && typeof params.url === 'string'
-      && (typeof params.fields === 'object' || params.fields == null)
-
-    if (!valid) {
-      const err = new TypeError(`AwsS3: got incorrect result from 'getUploadParameters()' for file '${file.name}', expected an object '{ url, method, fields, headers }' but got '${JSON.stringify(params)}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
-      console.error(err)
-      throw err
-    }
-
-    const methodIsValid = params.method == null || /^(put|post)$/i.test(params.method)
-
-    if (!methodIsValid) {
-      const err = new TypeError(`AwsS3: got incorrect method from 'getUploadParameters()' for file '${file.name}', expected  'put' or 'post' but got '${params.method}' instead.\nSee https://uppy.io/docs/aws-s3/#getUploadParameters-file for more on the expected format.`)
-      console.error(err)
-      throw err
-    }
-  }
-
-  handleUpload (fileIDs) {
+  #handleUpload = (fileIDs) => {
     /**
      * keep track of `getUploadParameters()` responses
      * so we can cancel the calls individually using just a file ID
@@ -145,9 +159,7 @@ module.exports = class AwsS3 extends BasePlugin {
 
     function onremove (file) {
       const { id } = file
-      if (hasProperty(paramsPromises, id)) {
-        paramsPromises[id].abort()
-      }
+      paramsPromises[id]?.abort()
     }
     this.uppy.on('file-removed', onremove)
 
@@ -156,7 +168,7 @@ module.exports = class AwsS3 extends BasePlugin {
       this.uppy.emit('upload-started', file)
     })
 
-    const getUploadParameters = this.requests.wrapPromiseFunction((file) => {
+    const getUploadParameters = this.#requests.wrapPromiseFunction((file) => {
       return this.opts.getUploadParameters(file)
     })
 
@@ -168,7 +180,7 @@ module.exports = class AwsS3 extends BasePlugin {
         delete paramsPromises[id]
 
         const file = this.uppy.getFile(id)
-        this.validateParameters(file, params)
+        validateParameters(file, params)
 
         const {
           method = 'post',
@@ -192,23 +204,22 @@ module.exports = class AwsS3 extends BasePlugin {
           xhrUpload: xhrOpts,
         })
 
-        return this._uploader.uploadFile(file.id, index, numberOfFiles)
+        return this.#uploader.uploadFile(file.id, index, numberOfFiles)
       }).catch((error) => {
         delete paramsPromises[id]
 
         const file = this.uppy.getFile(id)
         this.uppy.emit('upload-error', file, error)
       })
-    })).then((settled) => {
+    })).finally(() => {
       // cleanup.
       this.uppy.off('file-removed', onremove)
-      return settled
     })
   }
 
   install () {
     const { uppy } = this
-    this.uppy.addUploader(this.handleUpload)
+    uppy.addUploader(this.#handleUpload)
 
     // Get the response data from a successful XMLHttpRequest instance.
     // `content` is the S3 response as a string.
@@ -249,24 +260,12 @@ module.exports = class AwsS3 extends BasePlugin {
       }
     }
 
-    // Get the error data from a failed XMLHttpRequest instance.
-    // `content` is the S3 response as a string.
-    // `xhr` is the XMLHttpRequest instance.
-    function defaultGetResponseError (content, xhr) {
-      // If no response, we don't have a specific error message, use the default.
-      if (!isXml(content, xhr)) {
-        return
-      }
-      const error = getXmlValue(content, 'Message')
-      return new Error(error)
-    }
-
     const xhrOptions = {
       fieldName: 'file',
       responseUrlFieldName: 'location',
       timeout: this.opts.timeout,
       // Share the rate limiting queue with XHRUpload.
-      [internalRateLimitedQueue]: this.requests,
+      [internalRateLimitedQueue]: this.#requests,
       responseType: 'text',
       getResponseData: this.opts.getResponseData || defaultGetResponseData,
       getResponseError: defaultGetResponseError,
@@ -275,12 +274,12 @@ module.exports = class AwsS3 extends BasePlugin {
     // Only for MiniXHRUpload, remove once we can depend on XHRUpload directly again
     xhrOptions.i18n = this.i18n
 
-    // Revert to `this.uppy.use(XHRUpload)` once the big comment block at the top of
+    // Revert to `uppy.use(XHRUpload)` once the big comment block at the top of
     // this file is solved
-    this._uploader = new MiniXHRUpload(this.uppy, xhrOptions)
+    this.#uploader = new MiniXHRUpload(uppy, xhrOptions)
   }
 
   uninstall () {
-    this.uppy.removeUploader(this.handleUpload)
+    this.uppy.removeUploader(this.#handleUpload)
   }
 }
