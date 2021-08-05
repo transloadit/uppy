@@ -25,8 +25,7 @@
     "@uppy/companion-client": "file:../companion-client",
     "@uppy/utils": "file:../utils",
     "@uppy/xhr-upload": "file:../xhr-upload",
-    "nanoid": "^3.1.23",
-    "qs-stringify": "^1.1.0"
+    "nanoid": "^3.1.23"
   },
   "devDependencies": {
     "whatwg-fetch": "3.6.2"
