@@ -54,6 +54,10 @@ module.exports = class Webcam extends UIPlugin {
   // eslint-disable-next-line global-require
   static VERSION = require('../package.json').version
 
+  // enableMirror is used to toggle mirroring, for instance when discarding the video,
+  // while `opts.mirror` is used to remember the initial user setting
+  #enableMirror = this.opts?.mirror ?? true
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
@@ -63,9 +67,6 @@ module.exports = class Webcam extends UIPlugin {
     this.id = this.opts.id || 'Webcam'
     this.type = 'acquirer'
     this.capturedMediaFile = null
-    // enableMirror is used to toggle mirroring, for instance when discarding the video,
-    // while `opts.mirror` is used to remember the initial user setting
-    this.enableMirror = opts?.mirror ?? true
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
         <g fill="none" fillRule="evenodd">
@@ -202,7 +203,7 @@ module.exports = class Webcam extends UIPlugin {
     this.webcamActive = true
 
     if (this.opts.mirror) {
-      this.enableMirror = true
+      this.#enableMirror = true
     }
 
     const constraints = this.getConstraints(options && options.deviceId ? options.deviceId : null)
@@ -350,7 +351,7 @@ module.exports = class Webcam extends UIPlugin {
           // eslint-disable-next-line compat/compat
           recordedVideo: URL.createObjectURL(file.data),
         })
-        this.enableMirror = false
+        this.#enableMirror = false
       } catch (err) {
         // Logging the error, exept restrictions, which is handled in Core
         if (!err.isRestriction) {
@@ -371,7 +372,7 @@ module.exports = class Webcam extends UIPlugin {
     this.setPluginState({ recordedVideo: null })
 
     if (this.opts.mirror) {
-      this.enableMirror = true
+      this.#enableMirror = true
     }
 
     this.capturedMediaFile = null
@@ -577,7 +578,7 @@ module.exports = class Webcam extends UIPlugin {
         showVideoSourceDropdown={this.opts.showVideoSourceDropdown}
         supportsRecording={supportsMediaRecorder()}
         recording={webcamState.isRecording}
-        mirror={this.enableMirror}
+        mirror={this.#enableMirror}
         src={this.stream}
       />
     )
