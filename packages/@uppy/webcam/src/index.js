@@ -56,7 +56,7 @@ module.exports = class Webcam extends UIPlugin {
 
   // enableMirror is used to toggle mirroring, for instance when discarding the video,
   // while `opts.mirror` is used to remember the initial user setting
-  #enableMirror = this.opts?.mirror ?? true
+  #enableMirror
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -75,6 +75,8 @@ module.exports = class Webcam extends UIPlugin {
         </g>
       </svg>
     )
+
+    this.#enableMirror = opts?.mirror ?? true
 
     this.defaultLocale = {
       strings: {
