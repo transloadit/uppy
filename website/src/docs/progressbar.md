@@ -86,7 +86,3 @@ uppy.use(ProgressBar, {
 ### `hideAfterFinish: true`
 
 When set to true, hides the progress bar after the upload has finished. If set to false, it remains visible.
-
-### `replaceTargetContent: false`
-
-Remove all children of the `target` element before mounting the Progress Bar. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case, you can set `replaceTargetContent: true` to clear the `target` before appending.

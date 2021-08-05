@@ -50,7 +50,6 @@ function uppyInit () {
     trigger: '.UppyModalOpenerBtn',
     target: opts.DashboardInline ? '.DashboardContainer' : 'body',
     inline: opts.DashboardInline,
-    replaceTargetContent: opts.DashboardInline,
     height: 470,
     showProgressDetails: true,
     metaFields: [
