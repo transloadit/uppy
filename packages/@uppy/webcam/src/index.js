@@ -76,8 +76,6 @@ module.exports = class Webcam extends UIPlugin {
       </svg>
     )
 
-    this.#enableMirror = opts?.mirror ?? true
-
     this.defaultLocale = {
       strings: {
         pluginNameCamera: 'Camera',
@@ -117,6 +115,8 @@ module.exports = class Webcam extends UIPlugin {
     this.opts = { ...defaultOptions, ...opts }
     this.i18nInit()
     this.title = this.i18n('pluginNameCamera')
+
+    this.#enableMirror = this.opts.mirror
 
     this.install = this.install.bind(this)
     this.setPluginState = this.setPluginState.bind(this)
