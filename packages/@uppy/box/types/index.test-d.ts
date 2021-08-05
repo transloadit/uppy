@@ -6,7 +6,6 @@ import Box from '..'
   uppy.use(Box, {
     companionUrl: '',
     companionCookiesRule: 'same-origin',
-    replaceTargetContent: false,
     target: 'body',
     title: 'title',
   })

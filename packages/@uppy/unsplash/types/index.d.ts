@@ -2,7 +2,6 @@ import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 import type { RequestClientOptions } from '@uppy/companion-client'
 
 interface UnsplashOptions extends PluginOptions, RequestClientOptions {
-    replaceTargetContent?: boolean
     target?: PluginTarget
     title?: string
 }

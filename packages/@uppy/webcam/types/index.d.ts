@@ -8,7 +8,6 @@ export type WebcamMode =
     | 'picture'
 
 export interface WebcamOptions extends PluginOptions {
-    replaceTargetContent?: boolean
     target?: PluginTarget
     onBeforeSnapshot?: () => Promise<void>
     countdown?: number | boolean
