@@ -1,5 +1,3 @@
-const findIndex = require('./findIndex')
-
 function createCancelError () {
   return new Error('Cancelled')
 }
@@ -84,7 +82,7 @@ class RateLimitedQueue {
       },
     }
 
-    const index = findIndex(this.#queuedHandlers, (other) => {
+    const index = this.#queuedHandlers.findIndex((other) => {
       return handler.priority > other.priority
     })
     if (index === -1) {

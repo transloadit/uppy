@@ -112,7 +112,7 @@ module.exports = class ProviderView {
         let updatedDirectories
 
         const state = this.plugin.getPluginState()
-        const index = findIndex(state.directories, (dir) => id === dir.id)
+        const index = state.directories.findIndex((dir) => id === dir.id)
 
         if (index !== -1) {
           updatedDirectories = state.directories.slice(0, index + 1)
