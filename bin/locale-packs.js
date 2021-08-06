@@ -73,6 +73,7 @@ function buildPluginsList () {
       createElement: () => {
         return { style: {} }
       },
+      get body () { return this.createElement() },
     }
 
     try {
