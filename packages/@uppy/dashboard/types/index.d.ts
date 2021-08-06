@@ -46,7 +46,6 @@ export interface DashboardOptions extends PluginOptions {
   showProgressDetails?: boolean
   showSelectedFiles?: boolean
   showRemoveButtonAfterComplete?: boolean
-  replaceTargetContent?: boolean
   target?: PluginTarget
   theme?: 'auto' | 'dark' | 'light'
   thumbnailWidth?: number

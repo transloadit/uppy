@@ -20,7 +20,6 @@ const uppy = new Uppy()
 {
   expectError(<components.Dashboard inline />)
   expectError(<components.DashboardModal inline />)
-  expectError(<components.DashboardModal replaceTargetContent />)
 }
 
 {

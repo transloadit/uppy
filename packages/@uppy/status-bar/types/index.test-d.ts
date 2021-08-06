@@ -4,7 +4,6 @@ import StatusBar from '..'
 {
   const uppy = new Uppy()
   uppy.use(StatusBar, {
-    replaceTargetContent: false,
     target: 'body',
     showProgressDetails: true,
     hideUploadButton: false,

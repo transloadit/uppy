@@ -1,7 +1,6 @@
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 
 interface InformerOptions extends PluginOptions {
-  replaceTargetContent?: boolean
   target?: PluginTarget
 }
 

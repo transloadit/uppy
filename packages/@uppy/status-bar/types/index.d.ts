@@ -4,7 +4,6 @@ import GeneratedLocale from './generatedLocale'
 export type StatusBarLocale = GeneratedLocale
 
 export interface StatusBarOptions extends PluginOptions {
-  replaceTargetContent?: boolean
   target?: PluginTarget
   showProgressDetails?: boolean
   hideUploadButton?: boolean

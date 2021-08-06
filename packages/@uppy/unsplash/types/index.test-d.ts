@@ -6,7 +6,6 @@ import Unsplash from '..'
   uppy.use(Unsplash, {
     companionUrl: '',
     companionCookiesRule: 'same-origin',
-    replaceTargetContent: false,
     target: 'body',
     title: 'title',
   })
