@@ -54,6 +54,10 @@ module.exports = class Webcam extends UIPlugin {
   // eslint-disable-next-line global-require
   static VERSION = require('../package.json').version
 
+  // enableMirror is used to toggle mirroring, for instance when discarding the video,
+  // while `opts.mirror` is used to remember the initial user setting
+  #enableMirror
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
@@ -111,6 +115,8 @@ module.exports = class Webcam extends UIPlugin {
     this.opts = { ...defaultOptions, ...opts }
     this.i18nInit()
     this.title = this.i18n('pluginNameCamera')
+
+    this.#enableMirror = this.opts.mirror
 
     this.install = this.install.bind(this)
     this.setPluginState = this.setPluginState.bind(this)
@@ -197,7 +203,10 @@ module.exports = class Webcam extends UIPlugin {
     }
 
     this.webcamActive = true
-    this.opts.mirror = true
+
+    if (this.opts.mirror) {
+      this.#enableMirror = true
+    }
 
     const constraints = this.getConstraints(options && options.deviceId ? options.deviceId : null)
 
@@ -344,7 +353,7 @@ module.exports = class Webcam extends UIPlugin {
           // eslint-disable-next-line compat/compat
           recordedVideo: URL.createObjectURL(file.data),
         })
-        this.opts.mirror = false
+        this.#enableMirror = false
       } catch (err) {
         // Logging the error, exept restrictions, which is handled in Core
         if (!err.isRestriction) {
@@ -363,7 +372,11 @@ module.exports = class Webcam extends UIPlugin {
 
   discardRecordedVideo () {
     this.setPluginState({ recordedVideo: null })
-    this.opts.mirror = true
+
+    if (this.opts.mirror) {
+      this.#enableMirror = true
+    }
+
     this.capturedMediaFile = null
   }
 
@@ -567,7 +580,7 @@ module.exports = class Webcam extends UIPlugin {
         showVideoSourceDropdown={this.opts.showVideoSourceDropdown}
         supportsRecording={supportsMediaRecorder()}
         recording={webcamState.isRecording}
-        mirror={this.opts.mirror}
+        mirror={this.#enableMirror}
         src={this.stream}
       />
     )
