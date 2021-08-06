@@ -3,15 +3,17 @@
  */
 module.exports = function getTimeStamp () {
   const date = new Date()
-  const hours = pad(date.getHours().toString())
-  const minutes = pad(date.getMinutes().toString())
-  const seconds = pad(date.getSeconds().toString())
+  const hours = pad(date.getHours())
+  const minutes = pad(date.getMinutes())
+  const seconds = pad(date.getSeconds())
   return `${hours}:${minutes}:${seconds}`
 }
 
 /**
  * Adds zero to strings shorter than two characters
+ * @param {number}
+ * @returns {string}
  */
-function pad (str) {
-  return str.length !== 2 ? 0 + str : str
+function pad (number) {
+  return number < 10 ? `0${number}` : number.toString()
 }
