@@ -28,7 +28,6 @@
 const { BasePlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
 const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const settle = require('@uppy/utils/lib/settle')
 const hasProperty = require('@uppy/utils/lib/hasProperty')
 const { RequestClient } = require('@uppy/companion-client')
 const MiniXHRUpload = require('./MiniXHRUpload')
@@ -160,7 +159,7 @@ module.exports = class AwsS3 extends BasePlugin {
 
     const numberOfFiles = fileIDs.length
 
-    return settle(fileIDs.map((id, index) => {
+    return Promise.allSettled(fileIDs.map((id, index) => {
       paramsPromises[id] = getUploadParameters(this.uppy.getFile(id))
       return paramsPromises[id].then((params) => {
         delete paramsPromises[id]
@@ -196,6 +195,7 @@ module.exports = class AwsS3 extends BasePlugin {
 
         const file = this.uppy.getFile(id)
         this.uppy.emit('upload-error', file, error)
+        return Promise.reject(error)
       })
     })).then((settled) => {
       // cleanup.
