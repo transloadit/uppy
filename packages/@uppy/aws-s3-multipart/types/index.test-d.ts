@@ -17,13 +17,12 @@ import type { AwsS3Part } from '..'
       expectType<string>(opts.key)
       return []
     },
-    prepareUploadPart (file, part) {
+    prepareUploadParts (file, partData) {
       expectType<UppyFile>(file)
-      expectType<string>(part.uploadId)
-      expectType<string>(part.key)
-      expectType<Blob>(part.body)
-      expectType<number>(part.number)
-      return { url: '' }
+      expectType<string>(partData.uploadId)
+      expectType<string>(partData.key)
+      expectType<Array<number>>(part.partNumbers)
+      return { presignedUrls: {} }
     },
     abortMultipartUpload (file, opts) {
       expectType<UppyFile>(file)

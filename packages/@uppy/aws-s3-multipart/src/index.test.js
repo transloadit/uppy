@@ -13,7 +13,7 @@ describe('AwsS3Multipart', () => {
     const core = new Core()
     core.use(AwsS3Multipart)
 
-    const pluginNames = core.plugins.uploader.map((plugin) => plugin.constructor.name)
+    const pluginNames = core[Symbol.for('uppy test: getPlugins')]('uploader').map((plugin) => plugin.constructor.name)
     expect(pluginNames).toContain('AwsS3Multipart')
   })
 
@@ -27,12 +27,13 @@ describe('AwsS3Multipart', () => {
       const file = {}
       const opts = {}
 
-      expect(() => awsS3Multipart.opts.createMultipartUpload(file)).toThrow(err)
+      expect(() => awsS3Multipart.opts.createMultipartUpload(file)).toThrow(
+        err
+      )
       expect(() => awsS3Multipart.opts.listParts(file, opts)).toThrow(err)
-      expect(() => awsS3Multipart.opts.prepareUploadPart(file, opts)).toThrow(err)
       expect(() => awsS3Multipart.opts.completeMultipartUpload(file, opts)).toThrow(err)
       expect(() => awsS3Multipart.opts.abortMultipartUpload(file, opts)).toThrow(err)
-      expect(() => awsS3Multipart.opts.batchPrepareUploadParts(file, opts)).toThrow(err)
+      expect(() => awsS3Multipart.opts.prepareUploadParts(file, opts)).toThrow(err)
     })
   })
 
@@ -46,21 +47,18 @@ describe('AwsS3Multipart', () => {
         createMultipartUpload: jest.fn(() => {
           return {
             uploadId: '6aeb1980f3fc7ce0b5454d25b71992',
-            key: 'test/upload/multitest.bat',
+            key: 'test/upload/multitest.dat',
           }
         }),
         completeMultipartUpload: jest.fn(() => Promise.resolve({ location: 'test' })),
         abortMultipartUpload: jest.fn(),
-        prepareUploadPart: jest.fn((file, { number }) => {
-          return {
-            url: `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?partNumber=${number}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`,
-          }
-        }),
-        batchPrepareUploadParts: jest.fn(() => {
+        prepareUploadParts: jest.fn(() => {
           const presignedUrls = {}
-          const possiblePartNumbers = [1, 2, 3, 4, 5, 6, 7]
+          const possiblePartNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
           possiblePartNumbers.forEach((partNumber) => {
-            presignedUrls[partNumber] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.bat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
+            presignedUrls[
+              partNumber
+            ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
           })
           return { presignedUrls }
         }),
@@ -68,139 +66,98 @@ describe('AwsS3Multipart', () => {
       awsS3Multipart = core.getPlugin('AwsS3Multipart')
     })
 
-    it('Calls prepareUploadPart N times, where N is fileSize / getChunkSize()', (done) => {
-      const scope = nock('https://bucket.s3.us-east-2.amazonaws.com').defaultReplyHeaders({
+    it('Calls the prepareUploadParts function totalChunks / limit times', (done) => {
+      const scope = nock(
+        'https://bucket.s3.us-east-2.amazonaws.com'
+      ).defaultReplyHeaders({
         'access-control-allow-method': 'PUT',
         'access-control-allow-origin': '*',
         'access-control-expose-headers': 'ETag',
       })
-      scope.options((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '')
-      scope.options((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '')
-      scope.put((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '', { ETag: 'test1' })
-      scope.put((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '', { ETag: 'test2' })
+      scope
+        .options((uri) => uri.includes('test/upload/multitest.dat'))
+        .reply(200, '')
+      scope
+        .options((uri) => uri.includes('test/upload/multitest.dat'))
+        .reply(200, '')
+      scope
+        .put((uri) => uri.includes('test/upload/multitest.dat'))
+        .reply(200, '', { ETag: 'test1' })
+      scope
+        .put((uri) => uri.includes('test/upload/multitest.dat'))
+        .reply(200, '', { ETag: 'test2' })
 
       // 6MB file will give us 2 chunks, so there will be 2 PUT and 2 OPTIONS
-      // calls to the presigned URL from 2 prepareUploadPart calls
+      // calls to the presigned URL from 1 prepareUploadParts calls
       const fileSize = 5 * MB + 1 * MB
       core.addFile({
         source: 'jest',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(fileSize)], { type: 'application/octet-stream' }),
+        data: new File([Buffer.alloc(fileSize)], {
+          type: 'application/octet-stream',
+        }),
       })
       core.upload().then(() => {
-        expect(awsS3Multipart.opts.prepareUploadPart.mock.calls.length).toEqual(2)
+        expect(
+          awsS3Multipart.opts.prepareUploadParts.mock.calls.length
+        ).toEqual(1)
         scope.done()
         done()
       })
     })
 
-    it('Throws an error if prepareUploadPart does not return an object with a url', (done) => {
-      awsS3Multipart.opts.prepareUploadPart = jest.fn(() => { return {} })
+    it('Calls prepareUploadParts with a Math.ceil(limit / 2) minimum, instead of one at a time for the remaining chunks after the first limit batch', (done) => {
+      const scope = nock(
+        'https://bucket.s3.us-east-2.amazonaws.com'
+      ).defaultReplyHeaders({
+        'access-control-allow-method': 'PUT',
+        'access-control-allow-origin': '*',
+        'access-control-expose-headers': 'ETag',
+      })
+      scope
+        .options((uri) => uri.includes('test/upload/multitest.dat'))
+        .reply(200, '')
+      scope
+        .put((uri) => uri.includes('test/upload/multitest.dat'))
+        .reply(200, '', { ETag: 'test' })
+      scope.persist()
+
+      // 50MB file will give us 10 chunks, so there will be 10 PUT and 10 OPTIONS
+      // calls to the presigned URL from 3 prepareUploadParts calls
+      //
+      // The first prepareUploadParts call will be for 5 parts, the second
+      // will be for 3 parts, the third will be for 2 parts.
+      const fileSize = 50 * MB
       core.addFile({
         source: 'jest',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(2 * KB)], { type: 'application/octet-stream' }),
-      })
-      core
-        .upload()
-        .then(() => {})
-        .catch((err) => {
-          expect(err.message).toEqual(
-            'AwsS3/Multipart: Got incorrect result from `prepareUploadPart()`, expected an object `{ url }`.'
-          )
-          done()
-        })
-    })
-
-    describe('with batchPartPresign enabled', () => {
-      beforeEach(() => {
-        awsS3Multipart.opts.batchPartPresign = true
-      })
-
-      it('Calls the batchPrepareUploadParts function totalChunks / limit times', done => {
-        const scope = nock('https://bucket.s3.us-east-2.amazonaws.com').defaultReplyHeaders({
-          'access-control-allow-method': 'PUT',
-          'access-control-allow-origin': '*',
-          'access-control-expose-headers': 'ETag',
-        })
-        scope.options((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '')
-        scope.options((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '')
-        scope.put((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '', { ETag: 'test1' })
-        scope.put((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '', { ETag: 'test2' })
-
-        // 6MB file will give us 2 chunks, so there will be 2 PUT and 2 OPTIONS
-        // calls to the presigned URL from 1 batchPrepareUploadParts calls
-        const fileSize = 5 * MB + 1 * MB
-        core.addFile({
-          source: 'jest',
-          name: 'multitest.dat',
+        data: new File([Buffer.alloc(fileSize)], {
           type: 'application/octet-stream',
-          data: new File([Buffer.alloc(fileSize)], { type: 'application/octet-stream' }),
-        })
-        core.upload().then(() => {
-          expect(awsS3Multipart.opts.batchPrepareUploadParts.mock.calls.length).toEqual(1)
-          expect(awsS3Multipart.opts.prepareUploadPart.mock.calls.length).toEqual(0)
-          scope.done()
-          done()
-        })
+        }),
       })
-
-      it('Does not call batchPrepareUploadParts one at a time for the remaining chunks after the first limit batch', done => {
-        const scope = nock('https://bucket.s3.us-east-2.amazonaws.com').defaultReplyHeaders({
-          'access-control-allow-method': 'PUT',
-          'access-control-allow-origin': '*',
-          'access-control-expose-headers': 'ETag',
-        })
-        scope.options((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '')
-        scope.put((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '', { ETag: 'test' })
-        scope.persist()
-
-        // 32MB file will give us 7 chunks, so there will be 7 PUT and 7 OPTIONS
-        // calls to the presigned URL from 2 batchPrepareUploadParts calls
-        const fileSize = 30 * MB + 2 * MB
-        core.addFile({
-          source: 'jest',
-          name: 'multitest.dat',
-          type: 'application/octet-stream',
-          data: new File([Buffer.alloc(fileSize)], { type: 'application/octet-stream' }),
-        })
-        core.upload().then(() => {
-          expect(awsS3Multipart.opts.batchPrepareUploadParts.mock.calls.length).toEqual(2)
-          expect(awsS3Multipart.opts.prepareUploadPart.mock.calls.length).toEqual(0)
-          done()
-        })
-      })
-
-      it('Does not allow for a minNeededForPresignBatch to be > limit, which would cause an infinite loop', done => {
-        awsS3Multipart.opts.minNeededForPresignBatch = 200
-
-        const scope = nock('https://bucket.s3.us-east-2.amazonaws.com').defaultReplyHeaders({
-          'access-control-allow-method': 'PUT',
-          'access-control-allow-origin': '*',
-          'access-control-expose-headers': 'ETag',
-        })
-        scope.options((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '')
-        scope.put((uri) => uri.includes('test/upload/multitest.bat')).reply(200, '', { ETag: 'test' })
-        scope.persist()
-
-        // 32MB file will give us 7 chunks, so there will be 7 PUT and 7 OPTIONS
-        // calls to the presigned URL from 2 batchPrepareUploadParts calls (need 5
-        // based on limit then need 5 again based on limit but only actually doing 2,
-        // because we are not using minNeededForPresignBatch if it exceeds limit)
-        const fileSize = 30 * MB + 2 * MB
-        core.addFile({
-          source: 'jest',
-          name: 'multitest.dat',
-          type: 'application/octet-stream',
-          data: new File([Buffer.alloc(fileSize)], { type: 'application/octet-stream' }),
-        })
-        core.upload().then(() => {
-          expect(awsS3Multipart.opts.batchPrepareUploadParts.mock.calls.length).toEqual(2)
-          expect(awsS3Multipart.opts.prepareUploadPart.mock.calls.length).toEqual(0)
-          done()
-        })
+      core.upload().then(() => {
+        expect(
+          awsS3Multipart.opts.prepareUploadParts.mock.calls.length
+        ).toEqual(3)
+        expect(awsS3Multipart.opts.prepareUploadParts.mock.calls[0][1].partNumbers).toEqual([1, 2, 3, 4, 5])
+        expect(awsS3Multipart.opts.prepareUploadParts.mock.calls[1][1].partNumbers).toEqual([6, 7, 8])
+        expect(awsS3Multipart.opts.prepareUploadParts.mock.calls[2][1].partNumbers).toEqual([9, 10])
+        const completeCall = awsS3Multipart.opts.completeMultipartUpload.mock.calls[0][1]
+        expect(completeCall.parts).toEqual([
+          { ETag: 'test', PartNumber: 1 },
+          { ETag: 'test', PartNumber: 2 },
+          { ETag: 'test', PartNumber: 3 },
+          { ETag: 'test', PartNumber: 4 },
+          { ETag: 'test', PartNumber: 5 },
+          { ETag: 'test', PartNumber: 6 },
+          { ETag: 'test', PartNumber: 7 },
+          { ETag: 'test', PartNumber: 8 },
+          { ETag: 'test', PartNumber: 9 },
+          { ETag: 'test', PartNumber: 10 },
+        ])
+        done()
       })
     })
   })

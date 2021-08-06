@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "whatwg-fetch": "3.6.2",
-    "nock": "9.6.1"
+    "nock": "^13.1.0"
   },
   "peerDependencies": {
     "@uppy/core": "^1.0.0"

@@ -60,13 +60,6 @@ class MultipartUploader {
     this.chunkState = null
     this.lockedCandidatesForBatch = []
 
-    // this will cause an infinite loop if it occurs because we will end up
-    // with a case where the minimum will never be reached because we determine
-    // candidates based on the limit
-    if (this.options.minNeededForPresignBatch > this.options.limit) {
-      this.options.minNeededForPresignBatch = this.options.limit
-    }
-
     this._initChunks()
 
     this.createdPromise.catch(() => {}) // silence uncaught rejection warning
@@ -163,23 +156,27 @@ class MultipartUploader {
   _uploadParts () {
     if (this.isPaused) return
 
-    const need = this.options.limit - this.partsInProgress
-
-    // e.g. limit of 10, min batch size of 5, 20 parts
-    // need 1 is 10
-    // need 2 is 5-10
-    // need 3 is 5-10
-    if (this.options.batchPartPresign) {
-      if (need < this.options.minNeededForPresignBatch) return
-    } else {
-      if (need === 0) return
-    }
-
     // All parts are uploaded.
     if (this.chunkState.every((state) => state.done)) {
       this._completeUpload()
       return
     }
+
+    // For a 100MB file, with the default min chunk size of 5MB and a limit of 10:
+    //
+    // Total 20 parts
+    // ---------
+    // Need 1 is 10
+    // Need 2 is 5
+    // Need 3 is 5
+    const need = this.options.limit - this.partsInProgress
+    const completeChunks = this.chunkState.filter((state) => state.done).length
+    const remainingChunks = this.chunks.length - completeChunks
+    let minNeeded = Math.ceil(this.options.limit / 2)
+    if (minNeeded > remainingChunks) {
+      minNeeded = remainingChunks
+    }
+    if (need < minNeeded) return
 
     const candidates = []
     for (let i = 0; i < this.chunkState.length; i++) {
@@ -194,27 +191,17 @@ class MultipartUploader {
     }
     if (candidates.length === 0) return
 
-    if (this.options.batchPartPresign) {
-      this._batchPrepareUploadParts(candidates).then((result) => {
-        candidates.forEach((index) => {
-          const prePreparedPart = { url: result.presignedUrls[index + 1], headers: result.headers }
-          this._uploadPartRetryable(index, prePreparedPart).then(() => {
-            this._uploadParts()
-          }, (err) => {
-            this._onError(err)
-          })
-        })
-      })
-    } else {
+    this._prepareUploadParts(candidates).then((result) => {
       candidates.forEach((index) => {
-        this._uploadPartRetryable(index).then(() => {
-          // Continue uploading parts
+        const partNumber = index + 1
+        const prePreparedPart = { url: result.presignedUrls[partNumber], headers: result.headers }
+        this._uploadPartRetryable(index, prePreparedPart).then(() => {
           this._uploadParts()
         }, (err) => {
           this._onError(err)
         })
       })
-    }
+    })
   }
 
   _retryable ({ before, attempt, after }) {
@@ -251,10 +238,10 @@ class MultipartUploader {
     })
   }
 
-  _batchPrepareUploadParts (candidates) {
+  _prepareUploadParts (candidates) {
     this.lockedCandidatesForBatch.push(...candidates)
     return Promise.resolve().then(() => {
-      return this.options.batchPrepareUploadParts({
+      return this.options.prepareUploadParts({
         key: this.key,
         uploadId: this.uploadId,
         partNumbers: candidates.map((index) => index + 1),
@@ -263,7 +250,7 @@ class MultipartUploader {
       const valid = typeof result === 'object' && result
         && typeof result.presignedUrls === 'object'
       if (!valid) {
-        throw new TypeError('AwsS3/Multipart: Got incorrect result from `batchPrepareUploadParts()`, expected an object `{ presignedUrls }`.')
+        throw new TypeError('AwsS3/Multipart: Got incorrect result from `prepareUploadParts()`, expected an object `{ presignedUrls }`.')
       }
 
       return result
@@ -286,22 +273,11 @@ class MultipartUploader {
     const body = this.chunks[index]
     this.chunkState[index].busy = true
 
-    return Promise.resolve().then(() => {
-      if (prePreparedPart) { return prePreparedPart }
-
-      return this.options.prepareUploadPart(
-        {
-          key: this.key,
-          uploadId: this.uploadId,
-          body,
-          number: index + 1,
-        }
-      )
-    }).then((result) => {
+    return Promise.resolve().then(() => prePreparedPart).then((result) => {
       const valid = typeof result === 'object' && result
         && typeof result.url === 'string'
       if (!valid) {
-        throw new TypeError('AwsS3/Multipart: Got incorrect result from `prepareUploadPart()`, expected an object `{ url }`.')
+        throw new TypeError('AwsS3/Multipart: Got incorrect result for `prePreparedPart`, expected an object `{ url }`.')
       }
 
       return result

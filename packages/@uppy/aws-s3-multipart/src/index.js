@@ -29,11 +29,9 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       timeout: 30 * 1000,
       limit: 0,
       retryDelays: [0, 1000, 3000, 5000],
-      batchPartPresign: false,
       createMultipartUpload: this.createMultipartUpload.bind(this),
       listParts: this.listParts.bind(this),
-      prepareUploadPart: this.prepareUploadPart.bind(this),
-      batchPrepareUploadParts: this.batchPrepareUploadParts.bind(this),
+      prepareUploadParts: this.prepareUploadParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
     }
@@ -103,16 +101,8 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       .then(assertServerError)
   }
 
-  prepareUploadPart (file, { key, uploadId, number }) {
-    this.assertHost('prepareUploadPart')
-
-    const filename = encodeURIComponent(key)
-    return this.client.get(`s3/multipart/${uploadId}/${number}?key=${filename}`)
-      .then(assertServerError)
-  }
-
-  batchPrepareUploadParts (file, { key, uploadId, partNumbers }) {
-    this.assertHost('batchPrepareUploadParts')
+  prepareUploadParts (file, { key, uploadId, partNumbers }) {
+    this.assertHost('prepareUploadParts')
 
     const filename = encodeURIComponent(key)
     return this.client.get(`s3/multipart/${uploadId}/batch?key=${filename}?partNumbers=${partNumbers.join(',')}`)
@@ -201,13 +191,10 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         // .bind to pass the file object to each handler.
         createMultipartUpload: this.opts.createMultipartUpload.bind(this, file),
         listParts: this.opts.listParts.bind(this, file),
-        prepareUploadPart: this.opts.prepareUploadPart.bind(this, file),
-        batchPrepareUploadParts: this.opts.batchPrepareUploadParts.bind(this, file),
+        prepareUploadParts: this.opts.prepareUploadParts.bind(this, file),
         completeMultipartUpload: this.opts.completeMultipartUpload.bind(this, file),
         abortMultipartUpload: this.opts.abortMultipartUpload.bind(this, file),
         getChunkSize: this.opts.getChunkSize ? this.opts.getChunkSize.bind(this) : null,
-        batchPartPresign: this.opts.batchPartPresign,
-        minNeededForPresignBatch: this.opts.minNeededForPresignBatch || this.opts.limit || 5,
 
         onStart,
         onProgress,
