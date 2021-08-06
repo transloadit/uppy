@@ -13,9 +13,10 @@ function getTextDirection (element) {
   // If no text direction is declared, we have to provide our own explicit text direction so our
   // bidirectional CSS style sheets work.
   while (element && !element.dir) {
+    // eslint-disable-next-line no-param-reassign
     element = element.parentNode
   }
-  return element ? element.dir : undefined
+  return element?.dir
 }
 
 module.exports = getTextDirection
