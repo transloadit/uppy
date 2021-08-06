@@ -174,6 +174,16 @@ class AddFiles extends Component {
     )
   }
 
+  [Symbol.for('uppy test: disable unused locale key warning')] () {
+    // Those are actually used in `renderDropPasteBrowseTagline` method.
+    this.props.i18nArray('dropPasteBoth')
+    this.props.i18nArray('dropPasteFiles')
+    this.props.i18nArray('dropPasteFolders')
+    this.props.i18nArray('dropPasteImportBoth')
+    this.props.i18nArray('dropPasteImportFiles')
+    this.props.i18nArray('dropPasteImportFolders')
+  }
+
   renderAcquirer = (acquirer) => {
     return (
       <div
