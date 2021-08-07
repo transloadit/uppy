@@ -1,6 +1,6 @@
 import { expectError, expectType } from 'tsd'
 import DefaultStore from '@uppy/store-default'
-import Uppy, { UIPlugin } from '..'
+import Uppy, { UIPlugin, UploadCompleteCallback } from '..'
 import type { UploadedUppyFile, FailedUppyFile, PluginOptions } from '..'
 
 type anyObject = Record<string, unknown>
@@ -92,6 +92,25 @@ type anyObject = Record<string, unknown>
   uppy.on('dashboard:modal-closed', () => {})
   uppy.once('dashboard:modal-closed', () => {})
   /* eslint-enable @typescript-eslint/no-empty-function */
+
+  // Normal event signature
+  uppy.on('complete', (result) => {
+    const success = result.successful
+  })
+
+  // Meta signature
+  type Meta = Record<string, string>
+  uppy.on<Meta, 'complete'>('complete', (result) => {
+    const success = result.successful
+  })
+
+  // Alternative: Users that wish to have custom meta can split out the callback
+  // This could be made the recommended method of passing metadata into the file type within events
+  // and expanded to support the body generic
+  const completeHandler: UploadCompleteCallback<Meta> = (result) => {
+    const success = result.successful
+  }
+  uppy.on('complete', completeHandler)
 }
 
 {
