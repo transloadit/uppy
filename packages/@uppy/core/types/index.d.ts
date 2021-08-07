@@ -209,10 +209,10 @@ export type FileRemovedCallback<TMeta> = (file: UppyFile<TMeta>, reason: 'remove
 export type UploadCallback = (data: {id: string, fileIDs: string[]}) => void;
 export type ProgressCallback = (progress: number) => void;
 export type UploadProgressCallback<TMeta> = (file: UppyFile<TMeta>, progress: FileProgress) => void;
-export type UploadSuccessCallback<TMeta> = (file: UppyFile<TMeta>, body: any, uploadURL: string) => void
+export type UploadSuccessCallback<TMeta> = (file: UploadedUppyFile<TMeta, unknown>, body: unknown, uploadURL: string) => void
 export type UploadCompleteCallback<TMeta> = (result: UploadResult<TMeta>) => void
 export type ErrorCallback = (error: Error) => void;
-export type UploadErrorCallback<TMeta> = (file: UppyFile<TMeta>, error: Error, response: unknown) => void;
+export type UploadErrorCallback<TMeta> = (file: FailedUppyFile<TMeta, unknown>, error: Error, response: unknown) => void;
 export type UploadRetryCallback = (fileID: string) => void;
 export type RestrictionFailedCallback<TMeta> = (file: UppyFile<TMeta>, error: Error) => void;
 
