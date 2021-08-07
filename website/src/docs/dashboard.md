@@ -18,7 +18,7 @@ tagline: "full-featured sleek UI with file previews, metadata editing, upload/pa
 - Ability to pause or cancel (depending on the uploader plugin) uploads
 
 ```js
-const Dashboard = require('@uppy/dashboard')
+import Dashboard from '@uppy/dashboard'
 
 uppy.use(Dashboard, {
   // Options
@@ -40,7 +40,7 @@ npm install @uppy/dashboard
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Dashboard = Uppy.Dashboard
+const { Dashboard } = Uppy
 ```
 
 ## CSS
@@ -67,13 +67,13 @@ uppy.use(Dashboard, {
   id: 'Dashboard',
   target: 'body',
   metaFields: [],
-  trigger: '#uppy-select-files',
+  trigger: null,
   inline: false,
   width: 750,
   height: 550,
   thumbnailWidth: 280,
-  defaultTabIcon: defaultTabIcon,
-  showLinkToFileUploadResult: true,
+  defaultTabIcon,
+  showLinkToFileUploadResult: false,
   showProgressDetails: false,
   hideUploadButton: false,
   hideRetryButton: false,
@@ -100,7 +100,7 @@ uppy.use(Dashboard, {
   locale: defaultLocale,
   browserBackButtonClose: false,
   theme: 'light',
-  autoOpenFileEditor: false
+  autoOpenFileEditor: false,
 })
 ```
 
@@ -117,9 +117,9 @@ Dashboard is rendered into `body`, because it is hidden by default and only open
 
 By default, Dashboard will be rendered as a modal, which is opened by clicking on `trigger`. If `inline: true`, Dashboard will be rendered into `target` and fit right in.
 
-### `trigger: '#uppy-select-files'`
+### `trigger: null`
 
-String with a CSS selector for a button that will trigger opening the Dashboard modal. Multiple buttons or links can be used, as long as it is a class selector (`.uppy-choose`, for example).
+String with a CSS selector for a button that will trigger opening the Dashboard modal. Multiple buttons or links can be used, as long as it is a class selector (`.select-file-button`, for example).
 
 ### `plugins: []`
 
@@ -128,7 +128,7 @@ List of plugin IDs that should be shown in the Dashboard's top bar. For example,
 ```js
 uppy.use(Webcam)
 uppy.use(Dashboard, {
-  plugins: ['Webcam']
+  plugins: ['Webcam'],
 })
 ```
 
@@ -148,9 +148,9 @@ Whether to wait for all thumbnails from `@uppy/thumbnail-generator` to be ready 
 
 This is useful because Thumbnail Generator also adds EXIF data to images, and if we wait until it’s done processing, this data will be avilable on the server after the upload.
 
-### `showLinkToFileUploadResult: true`
+### `showLinkToFileUploadResult: false`
 
-By default, when a file upload has completed, the file icon in the Dashboard turns into a link to the uploaded file. If your app does not publicly store uploaded files or if it's otherwise unwanted, pass `showLinkToFileUploadResult: false`.
+Turn the file icon and thumbnail in the Dashboard into a link to the uploaded file. Please make sure to return the `url` key (or the one set via `responseUrlFieldName`) from your server.
 
 ### `showProgressDetails: false`
 
@@ -194,7 +194,7 @@ Hide Status Bar after the upload has finished.
 This option is passed to the StatusBar, and will render a “Done” button in place of pause/resume/cancel buttons, once the upload/encoding is done. The behaviour of this “Done” button is defined by the handler function — can be used to close file picker modals or clear the upload state. This is what the Dashboard sets by default:
 
 ```js
-doneButtonHandler: () => {
+const doneButtonHandler = () => {
   this.uppy.reset()
   this.requestCloseModal()
 }
@@ -234,28 +234,32 @@ An array of UI field objects, or a function that takes a [File Object](https://u
 - `name`, the label shown in the interface.
 - `placeholder`, the text shown when no value is set in the field. (Not needed when a custom render function is provided)
 
-Optionally, you can specify `render: ({value, onChange}, h) => void`, a function for rendering a custom form element.
-It gets passed `({value, onChange}, h)` where `value` is the current value of the meta field, `onChange: (newVal) => void` is a function saving the new value and `h` is the `createElement` function from [preact](https://preactjs.com/guide/v10/api-reference#h--createelement).
+Optionally, you can specify `render: ({value, onChange, required}, h) => void`, a function for rendering a custom form element.
+It gets passed `({value, onChange, required}, h)` where `value` is the current value of the meta field, `required` is a boolean that's true if the field `id` is in the `restrictedMetaFields` restriction, and `onChange: (newVal) => void` is a function saving the new value and `h` is the `createElement` function from [preact](https://preactjs.com/guide/v10/api-reference#h--createelement).
 `h` can be useful when using uppy from plain JavaScript, where you cannot write JSX.
 
 ```js
-.use(Dashboard, {
+uppy.use(Dashboard, {
   trigger: '#pick-files',
   metaFields: [
     { id: 'name', name: 'Name', placeholder: 'file name' },
     { id: 'license', name: 'License', placeholder: 'specify license' },
     { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' },
-    { id: 'public', name: 'Public', render: function({value, onChange}, h) {
-      return h('input', { type: 'checkbox', onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'on' })
-    } }
-  ]
+    {
+      id: 'public',
+      name: 'Public',
+      render ({ value, onChange, required }, h) {
+        return h('input', { type: 'checkbox', required, onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'on' })
+      },
+    },
+  ],
 })
 ```
 
 If you’d like the meta fields to be dynamically assigned depending on, for instance, the file type, pass a function:
 
 ```js
-.use(Dashboard, {
+uppy.use(Dashboard, {
   trigger: '#pick-files',
   metaFields: (file) => {
     const fields = [{ id: 'name', name: 'File name' }]
@@ -265,11 +269,12 @@ If you’d like the meta fields to be dynamically assigned depending on, for ins
       fields.push({
         id: 'public',
         name: 'Public',
-        render: ({ value, onChange }, h) => {
+        render: ({ value, onChange, required }, h) => {
           return h('input', {
             type: 'checkbox',
             onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'),
             defaultChecked: value === 'on',
+            required,
           })
         },
       })
@@ -334,7 +339,7 @@ The Dashboard also contains the [`@uppy/status-bar`](/docs/status-bar) plugin by
 The default English strings are:
 
 ```js
-strings: {
+const strings = {
   // When `inline: false`, used as the screen reader label for the button that closes the modal.
   closeModal: 'Close Modal',
   // Used as the screen reader label for the plus (+) button that shows the “Add more files” screen
@@ -404,34 +409,28 @@ strings: {
   // Used in a title, how many files are currently selected
   xFilesSelected: {
     0: '%{smart_count} file selected',
-    1: '%{smart_count} files selected'
+    1: '%{smart_count} files selected',
   },
   // TODO
   uploadingXFiles: {
     0: 'Uploading %{smart_count} file',
-    1: 'Uploading %{smart_count} files'
+    1: 'Uploading %{smart_count} files',
   },
   // TODO
   processingXFiles: {
     0: 'Processing %{smart_count} file',
-    1: 'Processing %{smart_count} files'
+    1: 'Processing %{smart_count} files',
   },
 
   // The "powered by Uppy" link at the bottom of the Dashboard.
-  // **NOTE**: This string is called `poweredBy2` for backwards compatibility reasons.
-  // See https://github.com/transloadit/uppy/pull/2077
-  poweredBy2: 'Powered by %{uppy}',
+  poweredBy: 'Powered by %{uppy}',
 
   // @uppy/status-bar strings:
   uploading: 'Uploading',
-  complete: 'Complete'
+  complete: 'Complete',
   // ...etc
 }
 ```
-
-### `replaceTargetContent: false`
-
-Remove all children of the `target` element before mounting the Dashboard. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, there might be cases when you would want to clear the container element before placing Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not available). Set `replaceTargetContent: true` to clear the `target` before appending.
 
 ### `theme: 'light'`
 
@@ -490,7 +489,7 @@ Returns `true` if the Dashboard modal is open, `false` otherwise.
 
 ```js
 const dashboard = uppy.getPlugin('Dashboard')
-if ( dashboard.isModalOpen() ) {
+if (dashboard.isModalOpen()) {
   dashboard.closeModal()
 }
 ```

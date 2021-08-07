@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, ElementRef, Input, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { Uppy } from '@uppy/core';
-import * as ProgressBar from '@uppy/progress-bar';
+import ProgressBar from '@uppy/progress-bar';
+import type { ProgressBarOptions } from '@uppy/progress-bar';
 import { UppyAngularWrapper } from '../../utils/wrapper';
 
 @Component({
@@ -10,7 +11,7 @@ import { UppyAngularWrapper } from '../../utils/wrapper';
 })
 export class ProgressBarComponent extends UppyAngularWrapper implements OnDestroy, OnChanges {
   @Input() uppy: Uppy;
-  @Input() props: ProgressBar.ProgressBarOptions;
+  @Input() props: ProgressBarOptions;
 
   constructor(public el: ElementRef) {
     super();

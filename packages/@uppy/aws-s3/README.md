@@ -12,14 +12,14 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const AwsS3 = require('@uppy/aws-s3')
+import Uppy from '@uppy/core'
+import AwsS3 from '@uppy/aws-s3'
 
 const uppy = new Uppy()
 uppy.use(AwsS3, {
   limit: 2,
   timeout: ms('1 minute'),
-  companionUrl: 'https://companion.myapp.com/'
+  companionUrl: 'https://companion.myapp.com/',
 })
 ```
 

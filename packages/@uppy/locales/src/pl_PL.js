@@ -46,7 +46,7 @@ pl_PL.strings = {
   encoding: 'Transkodowanie...',
   enterCorrectUrl: 'Niepoprawny URL: Upewnij się, że wprowadzasz bezpośredni adres pliku',
   enterUrlToImport: 'Wprowadź URL, aby zaimportować plik',
-  exceedsSize: 'Plik ma rozmiar większy od dozwolonego',
+  exceedsSize: 'Plik ma rozmiar większy od dozwolonego %{size}',
   failedToFetch: 'Serwis nie mógł przetworzyć podanego linku, zweryfikuj jego poprawność',
   failedToUpload: 'Przesyłanie %{file} nie powiodło się',
   fileSource: 'Źródło pliku: %{name}',
@@ -76,7 +76,7 @@ pl_PL.strings = {
   pause: 'Wstrzymaj',
   pauseUpload: 'Wstrzymaj wysyłkę',
   paused: 'Wstrzymano',
-  poweredBy: 'Dostarczane przez',
+  poweredBy: 'Dostarczane przez %{uppy}',
   processingXFiles: {
     '0': 'Przetwarzanie %{smart_count} pliku',
     '1': 'Przetwarzanie %{smart_count} plików',
@@ -90,7 +90,6 @@ pl_PL.strings = {
   retry: 'Ponów próbę',
   retryUpload: 'Ponów próbę wysyłki',
   saveChanges: 'Zapisz zmiany',
-  selectAllFilesFromFolderNamed: 'Wybierz wszystkie pliki z folderu %{name}',
   selectFileNamed: 'Wybierz plik %{name}',
   selectX: {
     '0': 'Wybierz %{smart_count}',
@@ -102,7 +101,6 @@ pl_PL.strings = {
   stopRecording: 'Zatrzymaj nagrywanie wideo',
   takePicture: 'Zrób zdjęcie',
   timedOut: 'Wysyłka wstrzymana przez %{seconds} sekund, przerywanie.',
-  unselectAllFilesFromFolderNamed: 'Odznacz wszystkie pliki z folderu %{name}',
   unselectFileNamed: 'Odznacz plik %{name}',
   upload: 'Wgrywanie',
   uploadComplete: 'Wgrywanie ukończone',

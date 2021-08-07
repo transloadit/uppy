@@ -1,26 +1,27 @@
-import UppyUtils = require('@uppy/utils')
-import { Reducer, Middleware, Store as Redux } from 'redux'
+import type { Store } from '@uppy/utils'
+import type { Reducer, Middleware, Store as Redux } from 'redux'
 
-declare namespace ReduxStore {
-  interface ReduxStoreOptions {
-    store: Redux<object>
-    id?: string
-    selector?: (state: any) => object
-  }
+type State = Record<string, unknown>
+type StateChangeListener = (prevState: State, nextState: State, patch: State) => void
 
-  interface ReduxStore extends UppyUtils.Store {
-    constructor (opts: ReduxStoreOptions): ReduxStore
-    getState (): object
-    setState (patch: object): void
-    subscribe (listener: any): () => void
-  }
-
-  const reducer: Reducer<object>
-  const middleware: Middleware
-  const STATE_UPDATE: string
+interface ReduxStoreOptions {
+  store: Redux<State>
+  id?: string
+  selector?: (state: any) => State
 }
-declare function ReduxStore (
-  opts: ReduxStore.ReduxStoreOptions
-): ReduxStore.ReduxStore
 
-export = ReduxStore
+export class ReduxStore implements Store {
+  constructor (opts: ReduxStoreOptions)
+
+  getState (): State
+
+  setState (patch: State): void
+
+  subscribe (listener: StateChangeListener): () => void
+}
+
+export const reducer: Reducer<any>
+export const middleware: Middleware
+export const STATE_UPDATE: string
+
+export default ReduxStore

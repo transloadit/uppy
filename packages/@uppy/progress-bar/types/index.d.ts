@@ -1,14 +1,11 @@
-import Uppy = require('@uppy/core')
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 
-declare module ProgressBar {
-  interface ProgressBarOptions extends Uppy.PluginOptions {
-    replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
-    hideAfterFinish?: boolean
-    fixed?: boolean
-  }
+export interface ProgressBarOptions extends PluginOptions {
+  target?: PluginTarget
+  hideAfterFinish?: boolean
+  fixed?: boolean
 }
 
-declare class ProgressBar extends Uppy.Plugin<ProgressBar.ProgressBarOptions> {}
+declare class ProgressBar extends UIPlugin<ProgressBarOptions> {}
 
-export = ProgressBar
+export default ProgressBar

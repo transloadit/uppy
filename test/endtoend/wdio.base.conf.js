@@ -3,7 +3,7 @@ const path = require('path')
 const { CompanionService, StaticServerService, TusService } = require('./utils')
 
 const suites = {}
-glob('test/endtoend/*/test.js').forEach((file) => {
+glob('./*/test.js').forEach((file) => {
   const name = path.basename(path.dirname(file))
   suites[name] = [file]
 })
@@ -18,7 +18,7 @@ exports.config = {
   // directory is where your package.json resides, so `wdio` will be called from there.
   //
   specs: [
-    'test/endtoend/*/test.js',
+    './*/test.js',
   ],
 
   // Patterns to exclude.
@@ -89,16 +89,16 @@ exports.config = {
     [CompanionService],
     [StaticServerService, {
       folders: [
-        { mount: '/chaos-monkey', path: './test/endtoend/chaos-monkey/dist' },
-        { mount: '/create-react-app', path: './test/endtoend/create-react-app/build' },
-        { mount: '/i18n-drag-drop', path: './test/endtoend/i18n-drag-drop/dist' },
-        { mount: '/providers', path: './test/endtoend/providers/dist' },
-        { mount: '/thumbnails', path: './test/endtoend/thumbnails/dist' },
-        { mount: '/transloadit', path: './test/endtoend/transloadit/dist' },
-        { mount: '/tus-drag-drop', path: './test/endtoend/tus-drag-drop/dist' },
-        { mount: '/typescript', path: './test/endtoend/typescript/dist' },
-        { mount: '/url-plugin', path: './test/endtoend/url-plugin/dist' },
-        { mount: '/xhr-limit', path: './test/endtoend/xhr-limit/dist' },
+        { mount: '/chaos-monkey', path: './chaos-monkey/dist' },
+        { mount: '/create-react-app', path: './create-react-app/build' },
+        { mount: '/i18n-drag-drop', path: './i18n-drag-drop/dist' },
+        { mount: '/providers', path: './providers/dist' },
+        { mount: '/thumbnails', path: './thumbnails/dist' },
+        { mount: '/transloadit', path: './transloadit/dist' },
+        { mount: '/tus-drag-drop', path: './tus-drag-drop/dist' },
+        { mount: '/typescript', path: './typescript/dist' },
+        { mount: '/url-plugin', path: './url-plugin/dist' },
+        { mount: '/xhr-limit', path: './xhr-limit/dist' },
       ],
     }],
     [TusService],
@@ -128,7 +128,7 @@ exports.config = {
    * @param {Array<string>} specs List of spec file paths that are to be run
    */
   before (capabilities, specs) {
-    var chai = require('chai')
+    const chai = require('chai')
     global.expect = chai.expect
     global.capabilities = capabilities
     chai.Should()

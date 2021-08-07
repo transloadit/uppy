@@ -3,7 +3,7 @@ const marked = require('marked')
 const dragdrop = require('drag-drop')
 // Add Robodog JS. It is advisable to install Robodog from npm/yarn.
 // But for experimenting, you can use also Transloadit’s CDN, Edgly:
-// <script src="https://releases.transloadit.com/uppy/robodog/v1.10.12/robodog.min.js"></script>
+// <script src="https://releases.transloadit.com/uppy/robodog/v2.0.0-alpha.0/robodog.min.js"></script>
 const robodog = require('@uppy/robodog')
 
 const TRANSLOADIT_EXAMPLE_KEY = '35c1aed03f5011e982b6afe82599b6a0'
@@ -98,12 +98,10 @@ class MarkdownTextarea {
       }
     })
 
-    return Object.keys(filesById).reduce((acc, key) => {
-      const file = filesById[key]
-      const thumb = thumbsById[key]
-      acc.push({ file, thumb })
-      return acc
-    }, [])
+    return Object.keys(filesById).map((key) => ({
+      file : filesById[key],
+      thumb : thumbsById[key],
+    }))
   }
 
   uploadFiles (files) {

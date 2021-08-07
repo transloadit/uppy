@@ -1,8 +1,13 @@
-const preact = require('preact')
+const { render, h } = require('preact')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
+
+const BasePlugin = require('./BasePlugin')
 
 /**
  * Defer a frequent call to the microtask queue.
+ *
+ * @param {() => T} fn
+ * @returns {Promise<T>}
  */
 function debounce (fn) {
   let calling = null
@@ -24,81 +29,18 @@ function debounce (fn) {
 }
 
 /**
- * Boilerplate that all Plugins share - and should not be used
- * directly. It also shows which methods final plugins should implement/override,
- * this deciding on structure.
+ * UIPlugin is the extended version of BasePlugin to incorporate rendering with Preact.
+ * Use this for plugins that need a user interface.
  *
- * @param {object} main Uppy core object
- * @param {object} object with plugin options
- * @returns {Array|string} files or success/fail message
+ * For plugins without an user interface, see BasePlugin.
  */
-module.exports = class Plugin {
-  constructor (uppy, opts) {
-    this.uppy = uppy
-    this.opts = opts || {}
-
-    this.update = this.update.bind(this)
-    this.mount = this.mount.bind(this)
-    this.install = this.install.bind(this)
-    this.uninstall = this.uninstall.bind(this)
-  }
-
-  getPluginState () {
-    const { plugins } = this.uppy.getState()
-    return plugins[this.id] || {}
-  }
-
-  setPluginState (update) {
-    const { plugins } = this.uppy.getState()
-
-    this.uppy.setState({
-      plugins: {
-        ...plugins,
-        [this.id]: {
-          ...plugins[this.id],
-          ...update,
-        },
-      },
-    })
-  }
-
-  setOptions (newOpts) {
-    this.opts = { ...this.opts, ...newOpts }
-    this.setPluginState() // so that UI re-renders with new options
-  }
-
-  update (state) {
-    if (typeof this.el === 'undefined') {
-      return
-    }
-
-    if (this._updateUI) {
-      this._updateUI(state)
-    }
-  }
-
-  // Called after every state update, after everything's mounted. Debounced.
-  afterUpdate () {
-
-  }
-
-  /**
-   * Called when plugin is mounted, whether in DOM or into another plugin.
-   * Needed because sometimes plugins are mounted separately/after `install`,
-   * so this.el and this.parent might not be available in `install`.
-   * This is the case with @uppy/react plugins, for example.
-   */
-  onMount () {
-
-  }
+class UIPlugin extends BasePlugin {
+  #updateUI
 
   /**
    * Check if supplied `target` is a DOM element or an `object`.
    * If it’s an object — target is a plugin, and we search `plugins`
    * for a plugin with same name and return its target.
-   *
-   * @param {string|object} target
-   *
    */
   mount (target, plugin) {
     const callerPluginName = plugin.id
@@ -107,42 +49,50 @@ module.exports = class Plugin {
 
     if (targetElement) {
       this.isTargetDOMEl = true
+      // When target is <body> with a single <div> element,
+      // Preact thinks it’s the Uppy root element in there when doing a diff,
+      // and destroys it. So we are creating a fragment (could be empty div)
+      const uppyRootElement = document.createDocumentFragment()
 
       // API for plugins that require a synchronous rerender.
-      this.rerender = (state) => {
+      this.#updateUI = debounce((state) => {
         // plugin could be removed, but this.rerender is debounced below,
         // so it could still be called even after uppy.removePlugin or uppy.close
         // hence the check
         if (!this.uppy.getPlugin(this.id)) return
-        this.el = preact.render(this.render(state), targetElement, this.el)
+        render(this.render(state), uppyRootElement)
         this.afterUpdate()
-      }
-      this._updateUI = debounce(this.rerender)
+      })
 
       this.uppy.log(`Installing ${callerPluginName} to a DOM element '${target}'`)
 
-      // clear everything inside the target container
       if (this.opts.replaceTargetContent) {
+        // Doing render(h(null), targetElement), which should have been
+        // a better way, since because the component might need to do additional cleanup when it is removed,
+        // stopped working — Preact just adds null into target, not replacing
         targetElement.innerHTML = ''
       }
 
-      this.el = preact.render(this.render(this.uppy.getState()), targetElement)
+      render(this.render(this.uppy.getState()), uppyRootElement)
+      this.el = uppyRootElement.firstElementChild
+      targetElement.appendChild(uppyRootElement)
 
       this.onMount()
+
       return this.el
     }
 
     let targetPlugin
-    if (typeof target === 'object' && target instanceof Plugin) {
+    if (typeof target === 'object' && target instanceof UIPlugin) {
       // Targeting a plugin *instance*
       targetPlugin = target
     } else if (typeof target === 'function') {
       // Targeting a plugin type
       const Target = target
       // Find the target plugin instance.
-      this.uppy.iteratePlugins((plugin) => {
-        if (plugin instanceof Target) {
-          targetPlugin = plugin
+      this.uppy.iteratePlugins(p => {
+        if (p instanceof Target) {
+          targetPlugin = p
           return false
         }
       })
@@ -174,25 +124,17 @@ module.exports = class Plugin {
     throw new Error(message)
   }
 
-  render (state) {
-    throw (new Error('Extend the render method to add your plugin to a DOM element'))
-  }
-
-  addTarget (plugin) {
-    throw (new Error('Extend the addTarget method to add your plugin to another plugin\'s target'))
-  }
-
-  unmount () {
-    if (this.isTargetDOMEl && this.el && this.el.parentNode) {
-      this.el.parentNode.removeChild(this.el)
+  update (state) {
+    if (this.el != null) {
+      this.#updateUI?.(state)
     }
   }
 
-  install () {
-
-  }
-
-  uninstall () {
-    this.unmount()
+  unmount () {
+    if (this.isTargetDOMEl) {
+      this.el?.remove()
+    }
   }
 }
+
+module.exports = UIPlugin

@@ -41,7 +41,7 @@ da_DK.strings = {
   encoding: 'Encoding...',
   enterCorrectUrl: 'Forkert URL: Venligst sørg for at du indtaster et direkte link til en fil',
   enterUrlToImport: 'Indtast URL for at importerer en fil',
-  exceedsSize: 'Denne fil overskrider den maksimale tilladte størrelse af',
+  exceedsSize: 'Denne fil overskrider den maksimale tilladte størrelse af %{size}',
   failedToFetch: 'Companion kunne ikke hente denne URL, venligst undersøg om denne er korrekt',
   failedToUpload: 'Fejlede upload af %{file}',
   fileSource: 'Fil kilde: %{name}',
@@ -68,7 +68,7 @@ da_DK.strings = {
   pause: 'Pause',
   pauseUpload: 'Pause upload',
   paused: 'Sat på pause',
-  poweredBy: 'Drevet af',
+  poweredBy: 'Drevet af %{uppy}',
   processingXFiles: {
     '0': 'Behandler %{smart_count} filer',
     '1': 'Behandler %{smart_count} fil',
@@ -81,7 +81,6 @@ da_DK.strings = {
   retry: 'Forsøg igen',
   retryUpload: 'Forsøg upload igen',
   saveChanges: 'Gem ændringer',
-  selectAllFilesFromFolderNamed: 'Vælg alle filer fra mappen %{name}',
   selectFileNamed: 'Vælg fil %{name}',
   selectX: {
     '0': 'Vælg %{smart_count}',
@@ -93,7 +92,6 @@ da_DK.strings = {
   stopRecording: 'Stop video optagelse',
   takePicture: 'Tag et billede',
   timedOut: 'Upload gået i stå for %{seconds} sekunder, afbryder.',
-  unselectAllFilesFromFolderNamed: 'Afmarker alle filer fra mappen %{name}',
   unselectFileNamed: 'Afmarker filen %{name}',
   upload: 'Upload',
   uploadComplete: 'Upload færdig',

@@ -1,12 +1,11 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { createStore, combineReducers } from 'redux'
-import ReduxStore = require('../')
+import ReduxStore, { reducer as uppy } from '..'
 
-const reducer = combineReducers({
-  uppy: ReduxStore.reducer
-})
+const reducer = combineReducers({ uppy })
 
-const store = ReduxStore({
-  store: createStore(reducer)
+const store = new ReduxStore({
+  store: createStore(reducer),
 })
 
 store.setState({ a: 1 })

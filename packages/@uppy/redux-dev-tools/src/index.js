@@ -1,4 +1,4 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 
 /**
  * Add Redux DevTools support to Uppy
@@ -6,7 +6,7 @@ const { Plugin } = require('@uppy/core')
  * See https://medium.com/@zalmoxis/redux-devtools-without-redux-or-how-to-have-a-predictable-state-with-any-architecture-61c5f5a7716f
  * and https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
  */
-module.exports = class ReduxDevTools extends Plugin {
+module.exports = class ReduxDevTools extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -39,7 +39,7 @@ module.exports = class ReduxDevTools extends Plugin {
             this.uppy.reset()
             return
           case 'IMPORT_STATE': {
-            const computedStates = message.payload.nextLiftedState.computedStates
+            const { computedStates } = message.payload.nextLiftedState
             this.uppy.store.state = { ...this.uppy.getState(), ...computedStates[computedStates.length - 1].state }
             this.uppy.updateAll(this.uppy.getState())
             return

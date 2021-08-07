@@ -1,21 +1,17 @@
 const { h } = require('preact')
-const AuthView = require('./AuthView')
-const Header = require('./Header')
-const Browser = require('../Browser')
-const LoaderView = require('../Loader')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const findIndex = require('@uppy/utils/lib/findIndex')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
+const AuthView = require('./AuthView')
+const Header = require('./Header')
+const Browser = require('../Browser')
+const LoaderView = require('../Loader')
 const SharedHandler = require('../SharedHandler')
 const CloseWrapper = require('../CloseWrapper')
 
-// location.origin does not exist in IE
 function getOrigin () {
-  if ('origin' in location) {
-    return location.origin // eslint-disable-line compat/compat
-  }
-  return `${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}`
+  return location.origin
 }
 
 /**
@@ -52,8 +48,6 @@ module.exports = class ProviderView {
     this.logout = this.logout.bind(this)
     this.preFirstRender = this.preFirstRender.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
-    this.sortByTitle = this.sortByTitle.bind(this)
-    this.sortByDate = this.sortByDate.bind(this)
     this.handleError = this.handleError.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.listAllFiles = this.listAllFiles.bind(this)
@@ -213,91 +207,6 @@ module.exports = class ProviderView {
     this.plugin.setPluginState({ ...state, filterInput: e ? e.target.value : '' })
   }
 
-  sortByTitle () {
-    const state = { ...this.plugin.getPluginState() }
-    const { files, folders, sorting } = state
-
-    const sortedFiles = files.sort((fileA, fileB) => {
-      if (sorting === 'titleDescending') {
-        return fileB.name.localeCompare(fileA.name)
-      }
-      return fileA.name.localeCompare(fileB.name)
-    })
-
-    const sortedFolders = folders.sort((folderA, folderB) => {
-      if (sorting === 'titleDescending') {
-        return folderB.name.localeCompare(folderA.name)
-      }
-      return folderA.name.localeCompare(folderB.name)
-    })
-
-    this.plugin.setPluginState({
-      ...state,
-      files: sortedFiles,
-      folders: sortedFolders,
-      sorting: (sorting === 'titleDescending') ? 'titleAscending' : 'titleDescending',
-    })
-  }
-
-  sortByDate () {
-    const state = { ...this.plugin.getPluginState() }
-    const { files, folders, sorting } = state
-
-    const sortedFiles = files.sort((fileA, fileB) => {
-      const a = new Date(fileA.modifiedDate)
-      const b = new Date(fileB.modifiedDate)
-
-      if (sorting === 'dateDescending') {
-        return a > b ? -1 : a < b ? 1 : 0
-      }
-      return a > b ? 1 : a < b ? -1 : 0
-    })
-
-    const sortedFolders = folders.sort((folderA, folderB) => {
-      const a = new Date(folderA.modifiedDate)
-      const b = new Date(folderB.modifiedDate)
-
-      if (sorting === 'dateDescending') {
-        return a > b ? -1 : a < b ? 1 : 0
-      }
-
-      return a > b ? 1 : a < b ? -1 : 0
-    })
-
-    this.plugin.setPluginState({
-      ...state,
-      files: sortedFiles,
-      folders: sortedFolders,
-      sorting: (sorting === 'dateDescending') ? 'dateAscending' : 'dateDescending',
-    })
-  }
-
-  sortBySize () {
-    const state = { ...this.plugin.getPluginState() }
-    const { files, sorting } = state
-
-    // check that plugin supports file sizes
-    if (!files.length || !this.plugin.getItemData(files[0]).size) {
-      return
-    }
-
-    const sortedFiles = files.sort((fileA, fileB) => {
-      const a = fileA.size
-      const b = fileB.size
-
-      if (sorting === 'sizeDescending') {
-        return a > b ? -1 : a < b ? 1 : 0
-      }
-      return a > b ? 1 : a < b ? -1 : 0
-    })
-
-    this.plugin.setPluginState({
-      ...state,
-      files: sortedFiles,
-      sorting: (sorting === 'sizeDescending') ? 'sizeAscending' : 'sizeDescending',
-    })
-  }
-
   /**
    * Adds all files found inside of specified folder.
    *
@@ -308,18 +217,36 @@ module.exports = class ProviderView {
     const folderId = this.providerFileToId(folder)
     const state = this.plugin.getPluginState()
     const folders = { ...state.selectedFolders }
+
     if (folderId in folders && folders[folderId].loading) {
       return
     }
+
     folders[folderId] = { loading: true, files: [] }
+
     this.plugin.setPluginState({ selectedFolders: { ...folders } })
+
+    // eslint-disable-next-line consistent-return
     return this.listAllFiles(folder.requestPath).then((files) => {
       let count = 0
-      files.forEach((file) => {
-        const success = this.addFile(file)
-        if (success) count++
+
+      // If the same folder is added again, we don't want to send
+      // X amount of duplicate file notifications, we want to say
+      // the folder was already added. This checks if all files are duplicate,
+      // if that's the case, we don't add the files.
+      files.forEach(file => {
+        const id = this.providerFileToId(file)
+        if (!this.plugin.uppy.checkIfFileAlreadyExists(id)) {
+          count++
+        }
       })
+
+      if (count > 0) {
+        files.forEach((file) => this.addFile(file))
+      }
+
       const ids = files.map(this.providerFileToId)
+
       folders[folderId] = {
         loading: false,
         files: ids,
@@ -327,13 +254,19 @@ module.exports = class ProviderView {
       this.plugin.setPluginState({ selectedFolders: folders })
 
       let message
-      if (files.length) {
+
+      if (count === 0) {
+        message = this.plugin.uppy.i18n('folderAlreadyAdded', {
+          folder: folder.name,
+        })
+      } else if (files.length) {
         message = this.plugin.uppy.i18n('folderAdded', {
           smart_count: count, folder: folder.name,
         })
       } else {
         message = this.plugin.uppy.i18n('emptyFolderAdded')
       }
+
       this.plugin.uppy.info(message)
     }).catch((e) => {
       const state = this.plugin.getPluginState()
@@ -397,7 +330,7 @@ module.exports = class ProviderView {
   }
 
   handleError (error) {
-    const uppy = this.plugin.uppy
+    const { uppy } = this.plugin
     uppy.log(error.toString())
     if (error.isAuthError) {
       return
@@ -518,8 +451,6 @@ module.exports = class ProviderView {
       getFolder: this.getFolder,
       filterItems: this._sharedHandler.filterItems,
       filterQuery: this.filterQuery,
-      sortByTitle: this.sortByTitle,
-      sortByDate: this.sortByDate,
       logout: this.logout,
       isChecked: this._sharedHandler.isChecked,
       toggleCheckbox: this._sharedHandler.toggleCheckbox,
@@ -536,7 +467,7 @@ module.exports = class ProviderView {
       pluginIcon: this.plugin.icon,
       i18n: this.plugin.uppy.i18n,
       uppyFiles: this.plugin.uppy.getFiles(),
-      validateRestrictions: this.plugin.uppy.validateRestrictions,
+      validateRestrictions: (...args) => this.plugin.uppy.validateRestrictions(...args),
     }
 
     return (

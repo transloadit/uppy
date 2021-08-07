@@ -42,7 +42,7 @@ vi_VN.strings = {
   encoding: 'Đang encode...',
   enterCorrectUrl: 'URL sai: Đảm bảo rằng bạn đang nhập một liên kết trực tiếp đến một tập tin',
   enterUrlToImport: 'Nhập URL để nhập tập tin',
-  exceedsSize: 'Tập tin này vượt quá kích thước tối đa cho phép của',
+  exceedsSize: 'Tập tin này vượt quá kích thước tối đa cho phép của %{size}',
   failedToFetch: 'Thất bại khi lấy từ URL, hãy sửa lại cho đúng',
   failedToUpload: 'Tải lên %{file} thất bại',
   fileSource: 'Nguồn tập tin: %{name}',
@@ -70,7 +70,7 @@ vi_VN.strings = {
   pause: 'Tạm dừng',
   pauseUpload: 'Tạm dừng tải lên',
   paused: 'Đã tạm dừng',
-  poweredBy: 'Cung cấp bởi',
+  poweredBy: 'Cung cấp bởi %{uppy}',
   processingXFiles: {
     '0': 'Đang xử lí %{smart_count} tập tin',
     '1': 'Đang xử lí %{smart_count} tập tin',
@@ -84,7 +84,6 @@ vi_VN.strings = {
   retry: 'Thử lại',
   retryUpload: 'Tải lên lại',
   saveChanges: 'Lưu các thay đổi',
-  selectAllFilesFromFolderNamed: 'Chọn mọi tập tin từ thư mục %{name}',
   selectFileNamed: 'Chọn tập tin %{name}',
   selectX: {
     '0': 'Chọn %{smart_count}',
@@ -96,7 +95,6 @@ vi_VN.strings = {
   stopRecording: 'Dừng thu hình',
   takePicture: 'Chụp ảnh',
   timedOut: 'Tải lên bị đình trệ %{seconds} giây, đang huỷ.',
-  unselectAllFilesFromFolderNamed: ' Bỏ chọn mọi tập tin từ thư mục %{name}',
   unselectFileNamed: 'Bỏ chọn tập tin %{name}',
   upload: 'Tải lên',
   uploadComplete: 'Tải lên hoàn tất',

@@ -12,12 +12,12 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const ThumbnailGenerator = require('@uppy/thumbnail-generator')
+import Uppy from '@uppy/core'
+import ThumbnailGenerator from '@uppy/thumbnail-generator'
 
 const uppy = new Uppy()
 uppy.use(ThumbnailGenerator, {
-  thumbnailWidth: 200
+  thumbnailWidth: 200,
 })
 ```
 

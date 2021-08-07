@@ -3,7 +3,7 @@ const express = require('express')
 const ms = require('ms')
 // @ts-ignore
 const Grant = require('grant').express()
-const merge = require('lodash/merge')
+const merge = require('lodash.merge')
 const cookieParser = require('cookie-parser')
 const interceptor = require('express-interceptor')
 
@@ -55,7 +55,7 @@ module.exports.app = (options = {}) => {
   validateConfig(options)
 
   options = merge({}, defaultOptions, options)
-  const providers = providerManager.getDefaultProviders(options)
+  const providers = providerManager.getDefaultProviders()
   const searchProviders = providerManager.getSearchProviders()
   providerManager.addProviderOptions(options, grantConfig)
 
@@ -111,7 +111,7 @@ module.exports.app = (options = {}) => {
   app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
   app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
   app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
-  // @ts-ignore
+  // @ts-ignore Type instantiation is excessively deep and possibly infinite.
   app.get('/search/:searchProviderName/list', middlewares.hasSearchQuery, middlewares.loadSearchProviderToken, controllers.list)
   app.post('/search/:searchProviderName/get/:id', middlewares.loadSearchProviderToken, controllers.get)
 

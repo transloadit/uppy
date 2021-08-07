@@ -41,7 +41,7 @@ sv_SE.strings = {
   encoding: 'Kodar...',
   enterCorrectUrl: 'Ogiltig URL: Kontrollera att adressen du anger är en direktlänk till en fil.',
   enterUrlToImport: 'Ange URL för att importera en fil',
-  exceedsSize: 'Storleken på filen överstiger den tillåtna maxgränsen på',
+  exceedsSize: 'Storleken på filen överstiger den tillåtna maxgränsen på %{size}',
   failedToFetch: 'Companion kunde inte ladda ner filen, kontrollera att adressen är korrekt',
   failedToUpload: 'Kunde inte ladda upp %{file}',
   fileSource: 'Källa: %{name}',
@@ -68,7 +68,7 @@ sv_SE.strings = {
   pause: 'Pausa',
   pauseUpload: 'Pausa uppladdning',
   paused: 'Pausad',
-  poweredBy: 'Drivs av',
+  poweredBy: 'Drivs av %{uppy}',
   processingXFiles: {
     '0': 'Processerar %{smart_count} fil',
     '1': 'Processerar %{smart_count} filer',
@@ -81,7 +81,6 @@ sv_SE.strings = {
   retry: 'Försök igen',
   retryUpload: 'Försök igen',
   saveChanges: 'Spara ändringar',
-  selectAllFilesFromFolderNamed: 'Välj alla filer i mappen %{name}',
   selectFileNamed: 'Välj fil %{name}',
   selectX: {
     '0': 'Välj %{smart_count}',
@@ -93,7 +92,6 @@ sv_SE.strings = {
   stopRecording: 'Avbryt inspelning',
   takePicture: 'Ta bild',
   timedOut: 'Uppladdningen har stått stilla i %{seconds} sekunder; avbryter.',
-  unselectAllFilesFromFolderNamed: 'Avmarkera alla filer i mappen %{name}',
   unselectFileNamed: 'Avmarkera filen %{name}',
   upload: 'Ladda upp',
   uploadComplete: 'Uppladdning slutförd',

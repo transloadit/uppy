@@ -58,7 +58,7 @@ class Stopwatch extends Component {
 
   timerTick () {
     this.timer = setTimeout(() => {
-      this.setState({ elapsedTime: this.state.elapsedTime + 1 })
+      this.setState(state => ({ elapsedTime: state.elapsedTime + 1 }))
       this.timerTick()
     }, 1000)
   }

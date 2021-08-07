@@ -12,7 +12,7 @@ tagline: "plain and simple drag-and-drop area"
 The `@uppy/drag-drop` plugin renders a simple drag and drop area for file selection. it can be useful when you only want the local device as a file source, don’t need file previews and a UI for metadata editing, and the [Dashboard](/docs/dashboard/) feels like overkill.
 
 ```js
-const DragDrop = require('@uppy/drag-drop')
+import DragDrop from '@uppy/drag-drop'
 
 uppy.use(DragDrop, {
   // Options
@@ -34,7 +34,7 @@ npm install @uppy/drag-drop
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const DragDrop = Uppy.DragDrop
+const { DragDrop } = Uppy
 ```
 
 ## CSS
@@ -58,7 +58,7 @@ uppy.use(DragDrop, {
   width: '100%',
   height: '100%',
   note: null,
-  locale: {}
+  locale: {},
 })
 ```
 
@@ -103,12 +103,12 @@ Callback for the [`ondrop`][ondrop] event handler.
 The default English strings are:
 
 ```js
-strings: {
+const strings = {
   // Text to show on the droppable area.
   // `%{browse}` is replaced with a link that opens the system file selection dialog.
   dropHereOr: 'Drop here or %{browse}',
   // Used as the label for the link that opens the system file selection dialog.
-  browse: 'browse'
+  browse: 'browse',
 }
 ```
 

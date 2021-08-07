@@ -1,7 +1,5 @@
-import Uppy = require('@uppy/core')
-import TransloaditLocale = require('./generatedLocale')
-
-declare module Transloadit { 
+import type { PluginOptions, UppyFile, BasePlugin } from '@uppy/core'
+import TransloaditLocale from './generatedLocale'
 
   interface FileInfo {
     id: string,
@@ -11,7 +9,7 @@ declare module Transloadit {
     size: number,
     mime: string,
     type: string,
-    field: string, 
+    field: string,
     md5hash: string,
     is_tus_file: boolean,
     original_md5hash: string,
@@ -25,14 +23,14 @@ declare module Transloadit {
     meta: Record<string, any>
   }
 
-  interface Result extends FileInfo {
+export interface Result extends FileInfo {
     cost: number,
     execTime: number,
     queue: string,
     queueTime: number
   }
 
-  interface Assembly {
+export interface Assembly {
     ok?: string,
     message?: string,
     assembly_id: string,
@@ -92,18 +90,18 @@ declare module Transloadit {
       expires?: string
     }
     template_id?: string
-    steps?: { [step: string]: object }
+    steps?: { [step: string]: Record<string, unknown> }
     notify_url?: string
     fields?: { [name: string]: number | string }
   }
 
-  interface AssemblyOptions {
+interface AssemblyOptions {
     params: AssemblyParameters
     fields?: { [name: string]: number | string }
     signature?: string
   }
 
-  interface TransloaditOptionsBase extends Uppy.PluginOptions {
+interface TransloaditOptionsBase extends PluginOptions {
     service?: string
     errorReporting?: boolean
     waitForEncoding?: boolean
@@ -112,22 +110,20 @@ declare module Transloadit {
     alwaysRunAssembly?: boolean
     locale?: TransloaditLocale
     limit?: number
-  }
-
-  // Either have a getAssemblyOptions() that returns an AssemblyOptions, *or* have them embedded in the options
-  type TransloaditOptions = TransloaditOptionsBase &
-    (
-      | {
-          getAssemblyOptions?: (
-            file: Uppy.UppyFile
-          ) => AssemblyOptions | Promise<AssemblyOptions>
-        }
-      | AssemblyOptions)
 }
 
-declare class Transloadit extends Uppy.Plugin<Transloadit.TransloaditOptions> {
+// Either have a getAssemblyOptions() that returns an AssemblyOptions, *or* have them embedded in the options
+export type TransloaditOptions = TransloaditOptionsBase &
+    (
+      | {
+          getAssemblyOptions?: (file: UppyFile) => AssemblyOptions | Promise<AssemblyOptions>
+        }
+      | AssemblyOptions)
+
+declare class Transloadit extends BasePlugin<TransloaditOptions> {
   static COMPANION: string
+
   static COMPANION_PATTERN: RegExp
 }
 
-export = Transloadit
+export default Transloadit

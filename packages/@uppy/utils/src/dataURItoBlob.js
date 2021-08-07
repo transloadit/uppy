@@ -18,7 +18,7 @@ module.exports = function dataURItoBlob (dataURI, opts, toFile) {
 
   let bytes
   try {
-    bytes = new Uint8Array(array) // eslint-disable-line compat/compat
+    bytes = new Uint8Array(array)
   } catch (err) {
     return null
   }

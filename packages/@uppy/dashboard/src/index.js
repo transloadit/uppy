@@ -1,7 +1,6 @@
 const { h } = require('preact')
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const Translator = require('@uppy/utils/lib/Translator')
-const DashboardUI = require('./components/Dashboard')
 const StatusBar = require('@uppy/status-bar')
 const Informer = require('@uppy/informer')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
@@ -9,12 +8,12 @@ const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const getTextDirection = require('@uppy/utils/lib/getTextDirection')
+const { nanoid } = require('nanoid')
 const trapFocus = require('./utils/trapFocus')
-const cuid = require('cuid')
-const ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
 const createSuperFocus = require('./utils/createSuperFocus')
 const memoize = require('memoize-one').default || require('memoize-one')
 const FOCUSABLE_ELEMENTS = require('@uppy/utils/lib/FOCUSABLE_ELEMENTS')
+const DashboardUI = require('./components/Dashboard')
 
 const TAB_KEY = 9
 const ESC_KEY = 27
@@ -39,7 +38,7 @@ function defaultPickerIcon () {
 /**
  * Dashboard UI with previews, metadata editing, tabs for various services and more
  */
-module.exports = class Dashboard extends Plugin {
+module.exports = class Dashboard extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -47,7 +46,7 @@ module.exports = class Dashboard extends Plugin {
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
-    this.modalName = `uppy-Dashboard-${cuid()}`
+    this.modalName = `uppy-Dashboard-${nanoid()}`
 
     this.defaultLocale = {
       strings: {
@@ -60,7 +59,6 @@ module.exports = class Dashboard extends Plugin {
         copyLinkToClipboardSuccess: 'Link copied to clipboard',
         copyLinkToClipboardFallback: 'Copy the URL below',
         copyLink: 'Copy link',
-        fileSource: 'File source: %{name}',
         back: 'Back',
         addMore: 'Add more',
         removeFile: 'Remove file',
@@ -106,13 +104,7 @@ module.exports = class Dashboard extends Plugin {
         recoveredAllFiles: 'We restored all files. You can now resume the upload.',
         sessionRestored: 'Session restored',
         reSelect: 'Re-select',
-        // The default `poweredBy2` string only combines the `poweredBy` string (%{backwardsCompat}) with the size.
-        // Locales can override `poweredBy2` to specify a different word order. This is for backwards compat with
-        // Uppy 1.9.x and below which did a naive concatenation of `poweredBy2 + size` instead of using a locale-specific
-        // substitution.
-        // TODO: In 2.0 `poweredBy2` should be removed in and `poweredBy` updated to use substitution.
-        poweredBy2: '%{backwardsCompat} %{uppy}',
-        poweredBy: 'Powered by',
+        poweredBy: 'Powered by %{uppy}',
       },
     }
 
@@ -120,7 +112,7 @@ module.exports = class Dashboard extends Plugin {
     const defaultOptions = {
       target: 'body',
       metaFields: [],
-      trigger: '#uppy-select-files',
+      trigger: null,
       inline: false,
       width: 750,
       height: 550,
@@ -128,7 +120,7 @@ module.exports = class Dashboard extends Plugin {
       thumbnailType: 'image/jpeg',
       waitForThumbnailsBeforeUpload: false,
       defaultPickerIcon,
-      showLinkToFileUploadResult: true,
+      showLinkToFileUploadResult: false,
       showProgressDetails: false,
       hideUploadButton: false,
       hideCancelButton: false,
@@ -170,18 +162,6 @@ module.exports = class Dashboard extends Plugin {
     // Timeouts
     this.makeDashboardInsidesVisibleAnywayTimeout = null
     this.removeDragOverClassTimeout = null
-  }
-
-  setOptions = (newOpts) => {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit = () => {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   removeTarget = (plugin) => {
@@ -511,7 +491,8 @@ module.exports = class Dashboard extends Plugin {
     clearTimeout(this.makeDashboardInsidesVisibleAnywayTimeout)
   }
 
-  // Records whether we have been interacting with uppy right now, which is then used to determine whether state updates should trigger a refocusing.
+  // Records whether we have been interacting with uppy right now,
+  // which is then used to determine whether state updates should trigger a refocusing.
   recordIfFocusedOnUppyRecently = (event) => {
     if (this.el.contains(event.target)) {
       this.ifFocusedOnUppyRecently = true
@@ -833,10 +814,6 @@ module.exports = class Dashboard extends Plugin {
     this.superFocusOnEachUpdate()
   }
 
-  cancelUpload = (fileID) => {
-    this.uppy.removeFile(fileID)
-  }
-
   saveFileCard = (meta, fileID) => {
     this.uppy.setFileMeta(fileID, meta)
     this.toggleFileCard(false, fileID)
@@ -881,53 +858,20 @@ module.exports = class Dashboard extends Plugin {
   render = (state) => {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
+    const {
+      newFiles,
+      uploadStartedFiles,
+      completeFiles,
+      erroredFiles,
+      inProgressFiles,
+      inProgressNotPausedFiles,
+      processingFiles,
 
-    // TODO: move this to Core, to share between Status Bar and Dashboard
-    // (and any other plugin that might need it, too)
-    const newFiles = Object.keys(files).filter((file) => {
-      return !files[file].progress.uploadStarted
-    })
-
-    const uploadStartedFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadStarted
-    })
-
-    const pausedFiles = Object.keys(files).filter((file) => {
-      return files[file].isPaused
-    })
-
-    const completeFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.uploadComplete
-    })
-
-    const erroredFiles = Object.keys(files).filter((file) => {
-      return files[file].error
-    })
-
-    const inProgressFiles = Object.keys(files).filter((file) => {
-      return !files[file].progress.uploadComplete
-             && files[file].progress.uploadStarted
-    })
-
-    const inProgressNotPausedFiles = inProgressFiles.filter((file) => {
-      return !files[file].isPaused
-    })
-
-    const processingFiles = Object.keys(files).filter((file) => {
-      return files[file].progress.preprocess || files[file].progress.postprocess
-    })
-
-    const isUploadStarted = uploadStartedFiles.length > 0
-
-    const isAllComplete = state.totalProgress === 100
-      && completeFiles.length === Object.keys(files).length
-      && processingFiles.length === 0
-
-    const isAllErrored = isUploadStarted
-      && erroredFiles.length === uploadStartedFiles.length
-
-    const isAllPaused = inProgressFiles.length !== 0
-      && pausedFiles.length === inProgressFiles.length
+      isUploadStarted,
+      isAllComplete,
+      isAllErrored,
+      isAllPaused,
+    } = this.uppy.getObjectOfFilesPerState()
 
     const acquirers = this._getAcquirers(pluginState.targets)
     const progressindicators = this._getProgressIndicators(pluginState.targets)
@@ -974,7 +918,6 @@ module.exports = class Dashboard extends Plugin {
       disableAllFocusableElements: this.disableAllFocusableElements,
       animateOpenClose: this.opts.animateOpenClose,
       isClosing: pluginState.isClosing,
-      getPlugin: this.uppy.getPlugin,
       progressindicators,
       editors,
       autoProceed: this.uppy.opts.autoProceed,
@@ -986,22 +929,15 @@ module.exports = class Dashboard extends Plugin {
       inline: this.opts.inline,
       showPanel: this.showPanel,
       hideAllPanels: this.hideAllPanels,
-      log: this.uppy.log,
       i18n: this.i18n,
       i18nArray: this.i18nArray,
-      removeFile: this.uppy.removeFile,
       uppy: this.uppy,
-      info: this.uppy.info,
       note: this.opts.note,
       recoveredState: state.recoveredState,
       metaFields: pluginState.metaFields,
       resumableUploads: capabilities.resumableUploads || false,
       individualCancellation: capabilities.individualCancellation,
       isMobileDevice: capabilities.isMobileDevice,
-      pauseUpload: this.uppy.pauseResume,
-      retryUpload: this.uppy.retryUpload,
-      cancelUpload: this.cancelUpload,
-      cancelAll: this.uppy.cancelAll,
       fileCardFor: pluginState.fileCardFor,
       toggleFileCard: this.toggleFileCard,
       toggleAddFilesPanel: this.toggleAddFilesPanel,
@@ -1025,6 +961,7 @@ module.exports = class Dashboard extends Plugin {
       parentElement: this.el,
       allowedFileTypes: this.uppy.opts.restrictions.allowedFileTypes,
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
+      requiredMetaFields: this.uppy.opts.restrictions.requiredMetaFields,
       showSelectedFiles: this.opts.showSelectedFiles,
       handleCancelRestore: this.handleCancelRestore,
       handleRequestThumbnail: this.handleRequestThumbnail,
@@ -1081,11 +1018,13 @@ module.exports = class Dashboard extends Plugin {
     }
 
     const { target } = this.opts
+
     if (target) {
       this.mount(target, this)
     }
 
     const plugins = this.opts.plugins || []
+
     plugins.forEach((pluginID) => {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) {

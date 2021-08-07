@@ -1,1 +1,2 @@
-import GoldenRetriever = require('../')
+// import GoldenRetriever from '..'
+// TODO implements

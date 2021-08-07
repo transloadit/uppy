@@ -14,7 +14,7 @@ The `@uppy/onedrive` plugin lets users import files from their OneDrive account.
 A Companion instance is required for the `@uppy/onedrive` plugin to work. Companion handles authentication with OneDrive, downloads the pictures and videos, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const OneDrive = require('@uppy/onedrive')
+import OneDrive from '@uppy/onedrive'
 
 uppy.use(OneDrive, {
   // Options
@@ -91,7 +91,9 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
-  // TODO
+const locale = {
+  strings: {
+    // TODO
+  },
 }
 ```

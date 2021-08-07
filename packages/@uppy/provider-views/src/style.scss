@@ -3,7 +3,7 @@
 
 @import './style/uppy-ProviderBrowser-viewType--grid';
 @import './style/uppy-ProviderBrowser-viewType--list';
-@import './style/uppy-ProviderBrowserItem-fakeCheckbox';
+@import './style/uppy-ProviderBrowserItem-checkbox';
 @import './style/uppy-SearchProvider-input.scss';
 
 .uppy-DashboardContent-panelBody {
@@ -94,8 +94,18 @@
     padding: 4px;
     border-radius: 3px;
 
-    &:hover {
+    &:not(:last-of-type) {
       text-decoration: underline;
+    }
+
+    &:last-of-type {
+      color: $gray-800;
+      font-weight: 500;
+      pointer-events: none;
+      cursor: normal;
+    }
+
+    &:hover {
       cursor: pointer;
     }
 

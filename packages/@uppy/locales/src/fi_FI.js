@@ -41,7 +41,7 @@ fi_FI.strings = {
   encoding: 'Koodataan...',
   enterCorrectUrl: 'Epäkelpo osoite: Varmista, että osoite osoittaa suoraan tiedostoon',
   enterUrlToImport: 'Anna osoite tuodaksesi tiedoston',
-  exceedsSize: 'Tiedoston koko ylittää sallitun maksimin',
+  exceedsSize: 'Tiedoston koko ylittää sallitun maksimin %{size}',
   failedToFetch: 'Companion ei voinut ladata tiedostoa osoitteesta, onko osoite varmasti oikea?',
   failedToUpload: 'Ei voitu lähettää tiedostoa %{file}',
   fileSource: 'Tiedoston lähde: %{name}',
@@ -68,7 +68,7 @@ fi_FI.strings = {
   pause: 'Keskeytä',
   pauseUpload: 'Keskeytä lähetys',
   paused: 'Keskeytetty',
-  poweredBy: 'Powered by',
+  poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': 'Käsitellään %{smart_count} tiedostoa',
     '1': 'Käsitellään %{smart_count} tiedostoa',
@@ -81,7 +81,6 @@ fi_FI.strings = {
   retry: 'Yritä uudelleen',
   retryUpload: 'Yritä lähetystä uudelleen',
   saveChanges: 'Tallenna muutokset',
-  selectAllFilesFromFolderNamed: 'Valitse kaikki tiedostot kansiosta %{name}',
   selectFileNamed: 'Valitse tiedosto %{name}',
   selectX: {
     '0': 'Valitse %{smart_count}',
@@ -93,7 +92,6 @@ fi_FI.strings = {
   stopRecording: 'Lopeta videon tallennus',
   takePicture: 'Ota kuva',
   timedOut: 'Lähetys jumittunut %{seconds} sekunniksi, keskeytetään.',
-  unselectAllFilesFromFolderNamed: 'Poista tiedostojen valinta kansiossa %{name}',
   unselectFileNamed: 'Poista valinta tiedostosta %{name}',
   upload: 'Lähetä',
   uploadComplete: 'Lähetys valmis',

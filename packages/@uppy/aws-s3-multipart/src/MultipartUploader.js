@@ -101,8 +101,7 @@ class MultipartUploader {
   }
 
   _createUpload () {
-    this.createdPromise = Promise.resolve().then(() =>
-      this.options.createMultipartUpload())
+    this.createdPromise = Promise.resolve().then(() => this.options.createMultipartUpload())
     return this.createdPromise.then((result) => {
       if (this._aborted()) throw createAbortError()
 
@@ -124,11 +123,10 @@ class MultipartUploader {
   }
 
   _resumeUpload () {
-    return Promise.resolve().then(() =>
-      this.options.listParts({
-        uploadId: this.uploadId,
-        key: this.key,
-      })).then((parts) => {
+    return Promise.resolve().then(() => this.options.listParts({
+      uploadId: this.uploadId,
+      key: this.key,
+    })).then((parts) => {
       if (this._aborted()) throw createAbortError()
 
       parts.forEach((part) => {
@@ -202,16 +200,15 @@ class MultipartUploader {
       return false
     }
 
-    const doAttempt = (retryAttempt) =>
-      attempt().catch((err) => {
-        if (this._aborted()) throw createAbortError()
+    const doAttempt = (retryAttempt) => attempt().catch((err) => {
+      if (this._aborted()) throw createAbortError()
 
-        if (shouldRetry(err) && retryAttempt < retryDelays.length) {
-          return delay(retryDelays[retryAttempt], { signal })
-            .then(() => doAttempt(retryAttempt + 1))
-        }
-        throw err
-      })
+      if (shouldRetry(err) && retryAttempt < retryDelays.length) {
+        return delay(retryDelays[retryAttempt], { signal })
+          .then(() => doAttempt(retryAttempt + 1))
+      }
+      throw err
+    })
 
     return doAttempt(0).then((result) => {
       if (after) after()
@@ -238,13 +235,12 @@ class MultipartUploader {
     const body = this.chunks[index]
     this.chunkState[index].busy = true
 
-    return Promise.resolve().then(() =>
-      this.options.prepareUploadPart({
-        key: this.key,
-        uploadId: this.uploadId,
-        body,
-        number: index + 1,
-      })).then((result) => {
+    return Promise.resolve().then(() => this.options.prepareUploadPart({
+      key: this.key,
+      uploadId: this.uploadId,
+      body,
+      number: index + 1,
+    })).then((result) => {
       const valid = typeof result === 'object' && result
         && typeof result.url === 'string'
       if (!valid) {
@@ -363,12 +359,11 @@ class MultipartUploader {
     // Parts may not have completed uploading in sorted order, if limit > 1.
     this.parts.sort((a, b) => a.PartNumber - b.PartNumber)
 
-    return Promise.resolve().then(() =>
-      this.options.completeMultipartUpload({
-        key: this.key,
-        uploadId: this.uploadId,
-        parts: this.parts,
-      })).then((result) => {
+    return Promise.resolve().then(() => this.options.completeMultipartUpload({
+      key: this.key,
+      uploadId: this.uploadId,
+      parts: this.parts,
+    })).then((result) => {
       this.options.onSuccess(result)
     }, (err) => {
       this._onError(err)

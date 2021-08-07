@@ -1,10 +1,9 @@
-require('es6-promise/auto')
-require('whatwg-fetch')
 const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const GoogleDrive = require('@uppy/google-drive')
 const Instagram = require('@uppy/instagram')
 const Dropbox = require('@uppy/dropbox')
+const Box = require('@uppy/box')
 const Tus = require('@uppy/tus')
 
 const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
@@ -22,6 +21,7 @@ window.uppy = new Uppy({
   .use(GoogleDrive, { target: Dashboard, companionUrl })
   .use(Instagram, { target: Dashboard, companionUrl })
   .use(Dropbox, { target: Dashboard, companionUrl })
+  .use(Box, { target: Dashboard, companionUrl })
   .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 
 if (window.location.search === '?socketerr=true') {

@@ -1,5 +1,3 @@
-require('es6-promise/auto')
-require('whatwg-fetch')
 const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const GoogleDrive = require('@uppy/google-drive')
@@ -8,6 +6,7 @@ const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
 const Zoom = require('@uppy/zoom')
+// const Box = require('@uppy/box')
 const ImageEditor = require('@uppy/image-editor')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
@@ -51,7 +50,6 @@ function uppyInit () {
     trigger: '.UppyModalOpenerBtn',
     target: opts.DashboardInline ? '.DashboardContainer' : 'body',
     inline: opts.DashboardInline,
-    replaceTargetContent: opts.DashboardInline,
     height: 470,
     showProgressDetails: true,
     metaFields: [
@@ -79,6 +77,7 @@ function uppySetOptions () {
     maxNumberOfFiles: 3,
     minNumberOfFiles: 2,
     allowedFileTypes: ['image/*', 'video/*'],
+    requiredMetaFields: ['caption'],
   }
 
   window.uppy.setOptions({
@@ -148,6 +147,14 @@ function uppySetOptions () {
     window.uppy.removePlugin(zoomInstance)
   }
 
+  //   const boxInstance = window.uppy.getPlugin('Box')
+  //   if (opts.Box && !boxInstance) {
+  //     window.uppy.use(Box, { target: Dashboard, companionUrl: COMPANION })
+  //   }
+  //   if (!opts.Box && boxInstance) {
+  //     window.uppy.removePlugin(boxInstance)
+  //   }
+
   const webcamInstance = window.uppy.getPlugin('Webcam')
   if (opts.Webcam && !webcamInstance) {
     window.uppy.use(Webcam, {
@@ -206,7 +213,7 @@ function loadLocaleFromCDN (localeName) {
   const head = document.getElementsByTagName('head')[0]
   const js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://releases.transloadit.com/uppy/locales/v1.21.0/${localeName}.min.js`
+  js.src = `https://releases.transloadit.com/uppy/locales/v2.0.0-alpha.0/${localeName}.min.js`
 
   head.appendChild(js)
 }

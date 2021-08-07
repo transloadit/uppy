@@ -1,4 +1,4 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const { h } = require('preact')
 const { SearchProvider } = require('@uppy/companion-client')
 const { SearchProviderViews } = require('@uppy/provider-views')
@@ -7,7 +7,7 @@ const { SearchProviderViews } = require('@uppy/provider-views')
  * Unsplash
  *
  */
-module.exports = class Unsplash extends Plugin {
+module.exports = class Unsplash extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -45,7 +45,7 @@ module.exports = class Unsplash extends Plugin {
       provider: this.provider,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

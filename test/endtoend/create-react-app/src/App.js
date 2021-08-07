@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-// @uppy/* are available higher up in the dependency tree, but eslint
-// does not know about that.
+// These are resolved from the root instead of from the local package.json in
+// the create-react-app e2e test code.
 /* eslint-disable import/no-extraneous-dependencies */
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'

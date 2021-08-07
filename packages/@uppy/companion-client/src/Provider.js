@@ -1,7 +1,5 @@
 'use strict'
 
-const qsStringify = require('qs-stringify')
-const URL = require('url-parse')
 const RequestClient = require('./RequestClient')
 const tokenStorage = require('./tokenStorage')
 
@@ -47,7 +45,6 @@ module.exports = class Provider extends RequestClient {
     return response
   }
 
-  // @todo(i.olarewaju) consider whether or not this method should be exposed
   setAuthToken (token) {
     return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token)
   }
@@ -61,9 +58,7 @@ module.exports = class Provider extends RequestClient {
       queries.uppyPreAuthToken = this.preAuthToken
     }
 
-    let strigifiedQueries = qsStringify(queries)
-    strigifiedQueries = strigifiedQueries ? `?${strigifiedQueries}` : strigifiedQueries
-    return `${this.hostname}/${this.id}/connect${strigifiedQueries}`
+    return `${this.hostname}/${this.id}/connect?${new URLSearchParams(queries)}`
   }
 
   fileUrl (id) {

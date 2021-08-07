@@ -2,13 +2,13 @@
 // We fire our own build-examples.js and tell it which example to build -
 // that script then writes temporary js files
 // which we return via the callback.
-var exec = require('child_process').exec
-var path = require('path')
-var fs = require('fs')
-var uuid = require('uuid')
+const { exec } = require('child_process')
+const path = require('path')
+const fs = require('fs')
+const uuid = require('uuid')
 
-var webRoot = path.dirname(path.dirname(__dirname))
-var browserifyScript = `${webRoot}/build-examples.js`
+const webRoot = path.dirname(path.dirname(__dirname))
+const browserifyScript = `${webRoot}/build-examples.js`
 
 function parseExamplesBrowserify (data, options, callback) {
   if (!data || !data.path) {
@@ -20,9 +20,9 @@ function parseExamplesBrowserify (data, options, callback) {
   }
 
   // var slug    = data.path.replace(/[^a-zA-Z0-9\_\.]/g, '-')
-  var slug = uuid.v4()
-  var tmpFile = `/tmp/${slug}.js`
-  var cmd = `node ${browserifyScript} ${data.path} ${tmpFile} --colors`
+  const slug = uuid.v4()
+  const tmpFile = `/tmp/${slug}.js`
+  const cmd = `node ${browserifyScript} ${data.path} ${tmpFile} --colors`
   // hexo.log.i('hexo-renderer-uppyexamples: change detected in examples. running: ' + cmd);
   exec(cmd, (err, stdout, stderr) => {
     if (err) {

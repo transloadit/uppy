@@ -24,14 +24,18 @@ npm install @uppy/react-native
 ```
 
 ```js
+import React from 'react'
 import UppyFilePicker from '@uppy/react-native'
 
-render () {
-  <UppyFilePicker
-    uppy={this.uppy}
-    show={this.state.isFilePickerVisible}
-    onRequestClose={this.hideFilePicker}
-    companionUrl="https://server.uppy.io" />
+export default function MyComponent (props) {
+  return (
+    <UppyFilePicker
+      uppy={props.uppy}
+      show={props.isFilePickerVisible}
+      onRequestClose={props.hideFilePicker}
+      companionUrl="https://server.uppy.io"
+    />
+  )
 }
 ```
 

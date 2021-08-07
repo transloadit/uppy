@@ -1,9 +1,9 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
 const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
-module.exports = class Zoom extends Plugin {
+module.exports = class Zoom extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -23,12 +23,20 @@ module.exports = class Zoom extends Plugin {
 
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionHeaders: this.opts.companionHeaders,
       companionKeysParams: this.opts.companionKeysParams,
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'zoom',
       pluginId: this.id,
     })
+
+    this.defaultLocale = {
+      strings: {
+        pluginNameZoom: 'Zoom',
+      },
+    }
+    this.i18nInit()
+    this.title = this.i18n('pluginNameZoom')
 
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
@@ -39,7 +47,7 @@ module.exports = class Zoom extends Plugin {
       provider: this.provider,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

@@ -1,4 +1,4 @@
-const cuid = require('cuid')
+const { nanoid } = require('nanoid')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
@@ -6,6 +6,7 @@ const EventTracker = require('@uppy/utils/lib/EventTracker')
 const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
+const { internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 
 // See XHRUpload
 function buildResponseError (xhr, error) {
@@ -43,13 +44,13 @@ module.exports = class MiniXHRUpload {
       ...opts,
     }
 
-    this.requests = opts.__queue
+    this.requests = opts[internalRateLimitedQueue]
     this.uploaderEvents = Object.create(null)
     this.i18n = opts.i18n
   }
 
   _getOptions (file) {
-    const uppy = this.uppy
+    const { uppy } = this
 
     const overrides = uppy.getState().xhrUpload
     const opts = {
@@ -160,7 +161,7 @@ module.exports = class MiniXHRUpload {
         reject(error)
       })
 
-      const id = cuid()
+      const id = nanoid()
 
       xhr.upload.addEventListener('loadstart', (ev) => {
         this.uppy.log(`[AwsS3/XHRUpload] ${id} started`)
@@ -294,7 +295,7 @@ module.exports = class MiniXHRUpload {
         useFormData: opts.formData,
         headers: opts.headers,
       }).then((res) => {
-        const token = res.token
+        const { token } = res
         const host = getSocketHost(file.remote.companionUrl)
         const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
         this.uploaderEvents[file.id] = new EventTracker(this.uppy)
@@ -331,6 +332,7 @@ module.exports = class MiniXHRUpload {
             status: data.response.status,
             body,
             uploadURL,
+            bytesUploaded: data.bytesUploaded,
           }
 
           this.uppy.emit('upload-success', file, uploadResp)

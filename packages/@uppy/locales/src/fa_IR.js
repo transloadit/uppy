@@ -53,9 +53,8 @@ fa_IR.strings = {
   enterCorrectUrl: 'آدرس نامعتبر. لطفا مطمئن شوید که آدرس مستقیم به یک فایل را انتخاب کرده‌اید.',
   enterTextToSearch: 'متن را جهت جستجوی تصویر وارد کنید',
   enterUrlToImport: 'آدرس فایل را برای بارگذاری بنویسید',
-  exceedsSize: 'اندازه‌ی این فایل از حد مجاز بیشتر است!',
-  exceedsSize2: '%{backwardsCompat} %{size}',
-  failedToFetch: 'واکشی فایل شکست خورد, لطفا مطمئن شوید که درست است',
+  exceedsSize: 'اندازه‌ی این فایل از حد مجاز بیشتر است! %{size}',
+  failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
   failedToUpload: 'شکست در بارگذاری %{file}',
   fileSource: 'منبع فایل: %{name}',
   filesUploadedOfTotal: {
@@ -88,8 +87,7 @@ fa_IR.strings = {
   pause: 'توقف',
   pauseUpload: 'توقف بارگذاری',
   paused: 'متوقف شده',
-  poweredBy: 'قدرت گرفته از',
-  poweredBy2: '%{backwardsCompat} %{uppy}',
+  poweredBy: 'قدرت گرفته از %{uppy}',
   processingXFiles: {
     '0': 'درحال پردازش %{smart_count} فایل',
     '1': 'درحال پردازش %{smart_count} فایل',
@@ -170,6 +168,7 @@ fa_IR.strings = {
   },
   zoomIn: 'بزرگ‌نمایی',
   zoomOut: 'کوچک‌نمایی',
+
 }
 
 fa_IR.pluralize = function (n) {

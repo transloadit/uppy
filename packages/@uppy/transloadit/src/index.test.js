@@ -1,5 +1,6 @@
 const Core = require('@uppy/core')
 const Transloadit = require('.')
+require('whatwg-fetch')
 
 describe('Transloadit', () => {
   it('Throws errors if options are missing', () => {
@@ -47,7 +48,7 @@ describe('Transloadit', () => {
 
     return uppy.upload().then(() => {
       throw new Error('Should not have succeeded')
-    }, (err) => {
+    }).catch((err) => {
       const fileID = Object.keys(uppy.getState().files)[0]
 
       expect(err.message).toBe('Failure!')
@@ -64,8 +65,7 @@ describe('Transloadit', () => {
       },
     })
 
-    uppy.getPlugin('Transloadit').client.createAssembly = () =>
-      Promise.reject(new Error('VIDEO_ENCODE_VALIDATION'))
+    uppy.getPlugin('Transloadit').client.createAssembly = () => Promise.reject(new Error('VIDEO_ENCODE_VALIDATION'))
 
     uppy.addFile({
       source: 'jest',
