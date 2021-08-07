@@ -95,20 +95,20 @@ type anyObject = Record<string, unknown>
 
   // Normal event signature
   uppy.on('complete', (result) => {
-    const success = result.successful
+    const successResults = result.successful
   })
 
   // Meta signature
-  type Meta = Record<string, string>
+  type Meta = {myCustomMetadata: string}
   uppy.on<Meta, 'complete'>('complete', (result) => {
-    const success = result.successful
+    const meta = result.successful[0].meta.myCustomMetadata
   })
 
   // Alternative: Users that wish to have custom meta can split out the callback
   // This could be made the recommended method of passing metadata into the file type within events
   // and expanded to support the body generic
   const completeHandler: UploadCompleteCallback<Meta> = (result) => {
-    const success = result.successful
+    const meta = result.successful[0].meta.myCustomMetadata
   }
   uppy.on('complete', completeHandler)
 }

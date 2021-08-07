@@ -202,7 +202,7 @@ export interface State<
   totalProgress: number
 }
 
-export type GenericEventHandler = () => void;
+export type GenericEventCallback = () => void;
 export type FileAddedCallback<TMeta> = (file: UppyFile<TMeta>) => void;
 export type FilesAddedCallback<TMeta> = (files: UppyFile<TMeta>[]) => void;
 export type FileRemovedCallback<TMeta> = (file: UppyFile<TMeta>, reason: 'removed-by-user' | 'cancel-all') => void;
@@ -228,11 +228,11 @@ export interface UppyEventMap<TMeta = Record<string, unknown>> {
   'error': ErrorCallback
   'upload-error': UploadErrorCallback<TMeta>
   'upload-retry': UploadRetryCallback
-  'info-visible': GenericEventHandler
-  'info-hidden': GenericEventHandler
-  'cancel-all': GenericEventHandler
+  'info-visible': GenericEventCallback
+  'info-hidden': GenericEventCallback
+  'cancel-all': GenericEventCallback
   'restriction-failed': RestrictionFailedCallback<TMeta>
-  'reset-progress': GenericEventHandler
+  'reset-progress': GenericEventCallback
 }
 
 export class Uppy {
