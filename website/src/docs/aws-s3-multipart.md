@@ -41,7 +41,7 @@ The `@uppy/aws-s3-multipart` plugin has the following configurable options:
 
 ### `limit: 5`
 
-The maximum amount of chunks to upload simultaneously. This affects [`prepareUploadParts()`](#prepareUploadParts-file-partData) as well; after the initial batch of `limit` parts is presigned, a minimum of `limit / 2` rounded up will be presigned at a time. You should set the limit carefully. Setting it to a value too high could cause issues where the presigned URLs begin to expire before the chunks they are for start uploading. Too low and you will end up with a lot of extra round trips to your server (or Companion) than necessary to presign URLs. If the default chunk size of 5MB is used, a `limit` between 5 and 15 should be fairly safe.
+The maximum amount of chunks to upload simultaneously. This affects [`prepareUploadParts()`](#prepareUploadParts-file-partData) as well; after the initial batch of `limit` parts is presigned, a minimum of `limit / 2` rounded up will be presigned at a time. You should set the limit carefully. Setting it to a value too high could cause issues where the presigned URLs begin to expire before the chunks they are for start uploading. Too low and you will end up with a lot of extra round trips to your server (or Companion) than necessary to presign URLs. If the default chunk size of 5MB is used, a `limit` between 5 and 15 is recommended.
 
 For example, with a 50MB file and a `limit` of 5 we end up with 10 chunks. 5 of these are presigned in one batch, then 3, then 2, for a total of 3 round trips to the server via [`prepareUploadParts()`](#prepareUploadParts-file-partData) and 10 requests sent to AWS via the presigned URLs generated.
 

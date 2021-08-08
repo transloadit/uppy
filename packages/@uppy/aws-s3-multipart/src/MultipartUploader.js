@@ -50,7 +50,7 @@ class MultipartUploader {
     // upload was created already. That also ensures that the sequencing is right
     // (so the `OP` definitely happens if the upload is created).
     //
-    // This mostly exists to make `_abortUpload` work well: only sending the abort request if
+    // This mostly exists to make `#abortUpload` work well: only sending the abort request if
     // the upload was already created, and if the createMultipartUpload request is still in flight,
     // aborting it immediately after it finishes.
     this.createdPromise = Promise.reject() // eslint-disable-line prefer-promise-reject-errors
@@ -60,7 +60,7 @@ class MultipartUploader {
     this.chunkState = null
     this.lockedCandidatesForBatch = []
 
-    this._initChunks()
+    this.#initChunks()
 
     this.createdPromise.catch(() => {}) // silence uncaught rejection warning
   }
@@ -72,11 +72,11 @@ class MultipartUploader {
    *
    * @returns {boolean}
    */
-  _aborted () {
+  #aborted () {
     return this.abortController.signal.aborted
   }
 
-  _initChunks () {
+  #initChunks () {
     const chunks = []
     const desiredChunkSize = this.options.getChunkSize(this.file)
     // at least 5MB per request, at most 10k requests
@@ -101,10 +101,10 @@ class MultipartUploader {
     }))
   }
 
-  _createUpload () {
+  #createUpload () {
     this.createdPromise = Promise.resolve().then(() => this.options.createMultipartUpload())
     return this.createdPromise.then((result) => {
-      if (this._aborted()) throw createAbortError()
+      if (this.#aborted()) throw createAbortError()
 
       const valid = typeof result === 'object' && result
         && typeof result.uploadId === 'string'
@@ -117,18 +117,18 @@ class MultipartUploader {
       this.uploadId = result.uploadId
 
       this.options.onStart(result)
-      this._uploadParts()
+      this.#uploadParts()
     }).catch((err) => {
-      this._onError(err)
+      this.#onError(err)
     })
   }
 
-  _resumeUpload () {
+  #resumeUpload () {
     return Promise.resolve().then(() => this.options.listParts({
       uploadId: this.uploadId,
       key: this.key,
     })).then((parts) => {
-      if (this._aborted()) throw createAbortError()
+      if (this.#aborted()) throw createAbortError()
 
       parts.forEach((part) => {
         const i = part.PartNumber - 1
@@ -147,18 +147,18 @@ class MultipartUploader {
           })
         }
       })
-      this._uploadParts()
+      this.#uploadParts()
     }).catch((err) => {
-      this._onError(err)
+      this.#onError(err)
     })
   }
 
-  _uploadParts () {
+  #uploadParts () {
     if (this.isPaused) return
 
     // All parts are uploaded.
     if (this.chunkState.every((state) => state.done)) {
-      this._completeUpload()
+      this.#completeUpload()
       return
     }
 
@@ -191,20 +191,20 @@ class MultipartUploader {
     }
     if (candidates.length === 0) return
 
-    this._prepareUploadParts(candidates).then((result) => {
+    this.#prepareUploadParts(candidates).then((result) => {
       candidates.forEach((index) => {
         const partNumber = index + 1
         const prePreparedPart = { url: result.presignedUrls[partNumber], headers: result.headers }
-        this._uploadPartRetryable(index, prePreparedPart).then(() => {
-          this._uploadParts()
+        this.#uploadPartRetryable(index, prePreparedPart).then(() => {
+          this.#uploadParts()
         }, (err) => {
-          this._onError(err)
+          this.#onError(err)
         })
       })
     })
   }
 
-  _retryable ({ before, attempt, after }) {
+  #retryable ({ before, attempt, after }) {
     const { retryDelays } = this.options
     const { signal } = this.abortController
 
@@ -220,7 +220,7 @@ class MultipartUploader {
     }
 
     const doAttempt = (retryAttempt) => attempt().catch((err) => {
-      if (this._aborted()) throw createAbortError()
+      if (this.#aborted()) throw createAbortError()
 
       if (shouldRetry(err) && retryAttempt < retryDelays.length) {
         return delay(retryDelays[retryAttempt], { signal })
@@ -238,7 +238,7 @@ class MultipartUploader {
     })
   }
 
-  _prepareUploadParts (candidates) {
+  #prepareUploadParts (candidates) {
     this.lockedCandidatesForBatch.push(...candidates)
     return Promise.resolve().then(() => {
       return this.options.prepareUploadParts({
@@ -247,8 +247,7 @@ class MultipartUploader {
         partNumbers: candidates.map((index) => index + 1),
       })
     }).then((result) => {
-      const valid = typeof result === 'object' && result
-        && typeof result.presignedUrls === 'object'
+      const valid = typeof result?.presignedUrls === 'object'
       if (!valid) {
         throw new TypeError('AwsS3/Multipart: Got incorrect result from `prepareUploadParts()`, expected an object `{ presignedUrls }`.')
       }
@@ -257,48 +256,47 @@ class MultipartUploader {
     })
   }
 
-  _uploadPartRetryable (index, prePreparedPart) {
-    return this._retryable({
+  #uploadPartRetryable (index, prePreparedPart) {
+    return this.#retryable({
       before: () => {
         this.partsInProgress += 1
       },
-      attempt: () => this._uploadPart(index, prePreparedPart),
+      attempt: () => this.#uploadPart(index, prePreparedPart),
       after: () => {
         this.partsInProgress -= 1
       },
     })
   }
 
-  _uploadPart (index, prePreparedPart) {
+  #uploadPart (index, prePreparedPart) {
     const body = this.chunks[index]
     this.chunkState[index].busy = true
 
     return Promise.resolve().then(() => prePreparedPart).then((result) => {
-      const valid = typeof result === 'object' && result
-        && typeof result.url === 'string'
+      const valid = typeof prePreparedPart?.url === 'string'
       if (!valid) {
         throw new TypeError('AwsS3/Multipart: Got incorrect result for `prePreparedPart`, expected an object `{ url }`.')
       }
 
       return result
     }).then(({ url, headers }) => {
-      if (this._aborted()) {
+      if (this.#aborted()) {
         this.chunkState[index].busy = false
         throw createAbortError()
       }
 
-      return this._uploadPartBytes(index, url, headers)
+      return this.#uploadPartBytes(index, url, headers)
     })
   }
 
-  _onPartProgress (index, sent, total) {
+  #onPartProgress (index, sent, total) {
     this.chunkState[index].uploaded = ensureInt(sent)
 
     const totalUploaded = this.chunkState.reduce((n, c) => n + c.uploaded, 0)
     this.options.onProgress(totalUploaded, this.file.size)
   }
 
-  _onPartComplete (index, etag) {
+  #onPartComplete (index, etag) {
     this.chunkState[index].etag = etag
     this.chunkState[index].done = true
 
@@ -311,7 +309,7 @@ class MultipartUploader {
     this.options.onPartComplete(part)
   }
 
-  _uploadPartBytes (index, url, headers) {
+  #uploadPartBytes (index, url, headers) {
     const body = this.chunks[index]
     const { signal } = this.abortController
 
@@ -340,7 +338,7 @@ class MultipartUploader {
     xhr.upload.addEventListener('progress', (ev) => {
       if (!ev.lengthComputable) return
 
-      this._onPartProgress(index, ev.loaded, ev.total)
+      this.#onPartProgress(index, ev.loaded, ev.total)
     })
 
     xhr.addEventListener('abort', (ev) => {
@@ -361,7 +359,7 @@ class MultipartUploader {
         return
       }
 
-      this._onPartProgress(index, body.size, body.size)
+      this.#onPartProgress(index, body.size, body.size)
 
       // NOTE This must be allowed by CORS.
       const etag = ev.target.getResponseHeader('ETag')
@@ -370,7 +368,7 @@ class MultipartUploader {
         return
       }
 
-      this._onPartComplete(index, etag)
+      this.#onPartComplete(index, etag)
       defer.resolve()
     })
 
@@ -388,7 +386,7 @@ class MultipartUploader {
     return promise
   }
 
-  _completeUpload () {
+  #completeUpload () {
     // Parts may not have completed uploading in sorted order, if limit > 1.
     this.parts.sort((a, b) => a.PartNumber - b.PartNumber)
 
@@ -399,11 +397,11 @@ class MultipartUploader {
     })).then((result) => {
       this.options.onSuccess(result)
     }, (err) => {
-      this._onError(err)
+      this.#onError(err)
     })
   }
 
-  _abortUpload () {
+  #abortUpload () {
     this.abortController.abort()
 
     this.createdPromise.then(() => {
@@ -416,7 +414,7 @@ class MultipartUploader {
     })
   }
 
-  _onError (err) {
+  #onError (err) {
     if (err && err.name === 'AbortError') {
       return
     }
@@ -427,9 +425,9 @@ class MultipartUploader {
   start () {
     this.isPaused = false
     if (this.uploadId) {
-      this._resumeUpload()
+      this.#resumeUpload()
     } else {
-      this._createUpload()
+      this.#createUpload()
     }
   }
 
@@ -446,7 +444,7 @@ class MultipartUploader {
 
     if (!really) return this.pause()
 
-    this._abortUpload()
+    this.#abortUpload()
   }
 }
 
