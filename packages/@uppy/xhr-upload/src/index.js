@@ -7,7 +7,7 @@ const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
 const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
-const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/src/RateLimitedQueue')
+const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
 
