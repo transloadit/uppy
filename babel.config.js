@@ -17,7 +17,7 @@ module.exports = (api) => {
     ],
     plugins: [
       ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
-      process.env.IS_RELEASE_BUILD && 'babel-plugin-inline-package-json',
+      'babel-plugin-inline-package-json',
     ].filter(Boolean),
   }
 }
