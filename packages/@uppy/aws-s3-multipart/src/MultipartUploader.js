@@ -123,11 +123,12 @@ class MultipartUploader {
     })
   }
 
-  #resumeUpload () {
-    return Promise.resolve().then(() => this.options.listParts({
-      uploadId: this.uploadId,
-      key: this.key,
-    })).then((parts) => {
+  async #resumeUpload () {
+    try {
+      const parts = await this.options.listParts({
+        uploadId: this.uploadId,
+        key: this.key,
+      })
       if (this.#aborted()) throw createAbortError()
 
       parts.forEach((part) => {
@@ -148,9 +149,9 @@ class MultipartUploader {
         }
       })
       this.#uploadParts()
-    }).catch((err) => {
+    } catch (err) {
       this.#onError(err)
-    })
+    }
   }
 
   #uploadParts () {
@@ -238,22 +239,22 @@ class MultipartUploader {
     })
   }
 
-  #prepareUploadParts (candidates) {
+  async #prepareUploadParts (candidates) {
     this.lockedCandidatesForBatch.push(...candidates)
-    return Promise.resolve().then(() => {
-      return this.options.prepareUploadParts({
-        key: this.key,
-        uploadId: this.uploadId,
-        partNumbers: candidates.map((index) => index + 1),
-      })
-    }).then((result) => {
-      const valid = typeof result?.presignedUrls === 'object'
-      if (!valid) {
-        throw new TypeError('AwsS3/Multipart: Got incorrect result from `prepareUploadParts()`, expected an object `{ presignedUrls }`.')
-      }
 
-      return result
+    const result = await this.options.prepareUploadParts({
+      key: this.key,
+      uploadId: this.uploadId,
+      partNumbers: candidates.map((index) => index + 1),
     })
+
+    const valid = typeof result?.presignedUrls === 'object'
+    if (!valid) {
+      throw new TypeError(
+        'AwsS3/Multipart: Got incorrect result from `prepareUploadParts()`, expected an object `{ presignedUrls }`.'
+      )
+    }
+    return result
   }
 
   #uploadPartRetryable (index, prePreparedPart) {
@@ -272,21 +273,18 @@ class MultipartUploader {
     const body = this.chunks[index]
     this.chunkState[index].busy = true
 
-    return Promise.resolve().then(() => prePreparedPart).then((result) => {
-      const valid = typeof prePreparedPart?.url === 'string'
-      if (!valid) {
-        throw new TypeError('AwsS3/Multipart: Got incorrect result for `prePreparedPart`, expected an object `{ url }`.')
-      }
+    const valid = typeof prePreparedPart?.url === 'string'
+    if (!valid) {
+      throw new TypeError('AwsS3/Multipart: Got incorrect result for `prePreparedPart`, expected an object `{ url }`.')
+    }
 
-      return result
-    }).then(({ url, headers }) => {
-      if (this.#aborted()) {
-        this.chunkState[index].busy = false
-        throw createAbortError()
-      }
+    const { url, headers } = prePreparedPart
+    if (this.#aborted()) {
+      this.chunkState[index].busy = false
+      throw createAbortError()
+    }
 
-      return this.#uploadPartBytes(index, url, headers)
-    })
+    return this.#uploadPartBytes(index, url, headers)
   }
 
   #onPartProgress (index, sent, total) {
@@ -386,19 +384,20 @@ class MultipartUploader {
     return promise
   }
 
-  #completeUpload () {
+  async #completeUpload () {
     // Parts may not have completed uploading in sorted order, if limit > 1.
     this.parts.sort((a, b) => a.PartNumber - b.PartNumber)
 
-    return Promise.resolve().then(() => this.options.completeMultipartUpload({
-      key: this.key,
-      uploadId: this.uploadId,
-      parts: this.parts,
-    })).then((result) => {
+    try {
+      const result = await this.options.completeMultipartUpload({
+        key: this.key,
+        uploadId: this.uploadId,
+        parts: this.parts,
+      })
       this.options.onSuccess(result)
-    }, (err) => {
+    } catch (err) {
       this.#onError(err)
-    })
+    }
   }
 
   #abortUpload () {
