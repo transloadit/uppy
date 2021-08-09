@@ -135,6 +135,12 @@ export interface Locale<TNames extends string = string> {
   pluralize?: (n: number) => number
 }
 
+export interface Logger {
+  debug: (...args: any[]) => void;
+  warn: (...args: any[]) => void;
+  error: (...args: any[]) => void;
+}
+
 export interface Restrictions {
   maxFileSize?: number | null
   minFileSize?: number | null
@@ -148,6 +154,7 @@ export interface UppyOptions<TMeta extends IndexedObject<any> = Record<string, u
   id?: string
   autoProceed?: boolean
   allowMultipleUploads?: boolean
+  logger?: Logger
   debug?: boolean
   restrictions?: Restrictions
   meta?: TMeta
