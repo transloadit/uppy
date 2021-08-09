@@ -24,7 +24,6 @@ const uppy = new Uppy({
     trigger: '#pick-files',
     target: '#upload-form',
     inline: true,
-    replaceTargetContent: true,
     metaFields: [
       { id: 'license', name: 'License', placeholder: 'specify license' },
       { id: 'caption', name: 'Caption', placeholder: 'add caption' },

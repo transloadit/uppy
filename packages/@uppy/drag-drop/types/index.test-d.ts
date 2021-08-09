@@ -6,7 +6,6 @@ import DragDrop from '..'
   const uppy = new Uppy()
 
   uppy.use(DragDrop, {
-    replaceTargetContent: true,
     target: 'body',
     inputName: 'test',
     allowMultipleFiles: true,

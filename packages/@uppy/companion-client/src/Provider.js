@@ -1,6 +1,5 @@
 'use strict'
 
-const qsStringify = require('qs-stringify')
 const RequestClient = require('./RequestClient')
 const tokenStorage = require('./tokenStorage')
 
@@ -59,9 +58,7 @@ module.exports = class Provider extends RequestClient {
       queries.uppyPreAuthToken = this.preAuthToken
     }
 
-    let strigifiedQueries = qsStringify(queries)
-    strigifiedQueries = strigifiedQueries ? `?${strigifiedQueries}` : strigifiedQueries
-    return `${this.hostname}/${this.id}/connect${strigifiedQueries}`
+    return `${this.hostname}/${this.id}/connect?${new URLSearchParams(queries)}`
   }
 
   fileUrl (id) {

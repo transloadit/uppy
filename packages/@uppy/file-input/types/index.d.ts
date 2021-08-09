@@ -2,7 +2,6 @@ import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 import FileInputLocale from './generatedLocale'
 
 export interface FileInputOptions extends PluginOptions {
-    replaceTargetContent?: boolean
     target?: PluginTarget
     pretty?: boolean
     inputName?: string

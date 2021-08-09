@@ -432,10 +432,6 @@ const strings = {
 }
 ```
 
-### `replaceTargetContent: false`
-
-Remove all children of the `target` element before mounting the Dashboard. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, there might be cases when you would want to clear the container element before placing Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not available). Set `replaceTargetContent: true` to clear the `target` before appending.
-
 ### `theme: 'light'`
 
 Uppy Dashboard supports “Dark Mode”. You can try it live on [the Dashboard example page](https://uppy.io/examples/dashboard/).

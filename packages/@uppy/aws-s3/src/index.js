@@ -29,7 +29,6 @@ const { BasePlugin } = require('@uppy/core')
 const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const settle = require('@uppy/utils/lib/settle')
 const { RequestClient } = require('@uppy/companion-client')
-const qsStringify = require('qs-stringify')
 const MiniXHRUpload = require('./MiniXHRUpload')
 const isXml = require('./isXml')
 
@@ -136,14 +135,13 @@ module.exports = class AwsS3 extends BasePlugin {
 
     const filename = file.meta.name
     const { type } = file.meta
-    const metadata = {}
-    this.opts.metaFields.forEach((key) => {
-      if (file.meta[key] != null) {
-        metadata[key] = file.meta[key].toString()
-      }
-    })
+    const metadata = Object.fromEntries(
+      this.opts.metaFields
+        .filter(key => file.meta[key] != null)
+        .map(key => [`metadata[${key}]`, file.meta[key].toString()])
+    )
 
-    const query = qsStringify({ filename, type, metadata })
+    const query = new URLSearchParams({ filename, type, ...metadata })
     return this.#client.get(`s3/params?${query}`)
       .then(assertServerError)
   }

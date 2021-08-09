@@ -6,7 +6,6 @@ const ProgressBar = require('@uppy/progress-bar')
 const uppy = new Uppy({ debug: true, autoProceed: true })
 uppy.use(FileInput, {
   target: '.UppyForm',
-  replaceTargetContent: true
 })
 uppy.use(ProgressBar, {
   target: '.UppyProgressBar',

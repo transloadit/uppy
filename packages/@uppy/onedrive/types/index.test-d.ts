@@ -6,7 +6,6 @@ import OneDrive from '..'
   uppy.use(OneDrive, {
     companionUrl: '',
     companionCookiesRule: 'same-origin',
-    replaceTargetContent: false,
     target: 'body',
     title: 'title',
   })

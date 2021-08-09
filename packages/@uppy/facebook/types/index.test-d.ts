@@ -6,7 +6,6 @@ import Facebook from '..'
   uppy.use(Facebook, {
     companionUrl: '',
     companionCookiesRule: 'same-origin',
-    replaceTargetContent: false,
     target: 'body',
     title: 'title',
   })

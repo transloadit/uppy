@@ -7,7 +7,6 @@ import Url from '..'
   uppy.use(Url, {
     companionUrl: '',
     companionCookiesRule: 'same-origin',
-    replaceTargetContent: false,
     target: 'body',
     title: 'title',
     locale: {

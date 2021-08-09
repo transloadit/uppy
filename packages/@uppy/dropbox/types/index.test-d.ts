@@ -6,7 +6,6 @@ import Dropbox from '..'
   uppy.use(Dropbox, {
     companionUrl: '',
     companionCookiesRule: 'same-origin',
-    replaceTargetContent: false,
     target: 'body',
     title: 'title',
   })
