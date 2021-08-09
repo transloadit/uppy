@@ -14,7 +14,8 @@ describe('delay', () => {
     const signal = { aborted: true }
     const start = Date.now()
     await expect(delay(100, { signal })).rejects.toHaveProperty('name', 'AbortError')
-    // should really be instant but using a very large range in case CI decides to be super busy and block the event loop for a while
+    // should really be instant but using a very large range in case CI decides
+    // to be super busy and block the event loop for a while.
     expect(Date.now() - start).toBeLessThan(50)
   })
 

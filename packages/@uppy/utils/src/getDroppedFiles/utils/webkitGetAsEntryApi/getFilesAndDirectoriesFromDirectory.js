@@ -10,7 +10,8 @@ module.exports = function getFilesAndDirectoriesFromDirectory (directoryReader, 
   directoryReader.readEntries(
     (entries) => {
       const newEntries = [...oldEntries, ...entries]
-      // According to the FileSystem API spec, getFilesAndDirectoriesFromDirectory() must be called until it calls the onSuccess with an empty array.
+      // According to the FileSystem API spec, getFilesAndDirectoriesFromDirectory()
+      // must be called until it calls the onSuccess with an empty array.
       if (entries.length) {
         setTimeout(() => {
           getFilesAndDirectoriesFromDirectory(directoryReader, newEntries, logDropError, { onSuccess })
