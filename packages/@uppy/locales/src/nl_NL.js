@@ -72,7 +72,7 @@ nl_NL.strings = {
   },
   recordingLength: 'Opnameduur %{recording_length}',
   recordingStoppedMaxSize: 'Opname gestopt omdat de bestandsgrootte de limiet bijna overschrijdt',
-  removeFile: 'Bestand verwijderen',
+  removeFile: 'Bestand %{file} verwijderen',
   resetFilter: 'Filter resetten',
   resume: 'Hervatten',
   resumeUpload: 'Upload hervatten',
