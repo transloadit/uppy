@@ -128,6 +128,7 @@ function addLocaleToPack (localePack, plugin, pluginName) {
       console.error(`  Value in plugin: ${chalk.cyan(valueInPlugin)}`)
       console.error(`  Value in pack  : ${chalk.yellow(valueInPack)}`)
       console.error()
+      throw new Error(`Duplicate locale key: '${key}'`)
     }
     localePack[key] = localeStrings[key] // eslint-disable-line no-param-reassign
   }
@@ -139,6 +140,7 @@ function checkForUnused (fileContents, pluginName, localePack) {
     const regPat = new RegExp(`(i18n|i18nArray)\\([^\\)]*['\`"]${key}['\`"]`, 'g')
     if (!buff.match(regPat)) {
       console.error(`⚠ defaultLocale key: ${chalk.magenta(key)} not used in plugin: ${chalk.cyan(pluginName)}`)
+      throw new Error(`Unused locale key: '${key}'`)
     }
   }
 }
