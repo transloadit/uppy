@@ -46,6 +46,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
       })
       this.props.onRequestClose()
     }).catch((err) => {
+      // eslint-disable-next-line no-console
       console.log(err)
     })
   }
@@ -60,6 +61,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
       })
       this.props.onRequestClose()
     }).catch((err) => {
+      // eslint-disable-next-line no-console
       console.log(err)
     })
   }
@@ -73,20 +75,18 @@ export default class UppyReactNativeFilePicker extends React.Component {
       })
       this.props.onRequestClose()
     }).catch((err) => {
+      // eslint-disable-next-line no-console
       console.log(err)
     })
   }
 
   openProvider (id) {
-    console.log('Open provider:', id)
     this.setState({
       openProvider: id,
     })
   }
 
   chooseProvider (id) {
-    console.log('Provider selected:', id)
-
     switch (id) {
       case 'LocalImages':
         this.selectImage()

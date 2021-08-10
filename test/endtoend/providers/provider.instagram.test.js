@@ -19,7 +19,7 @@ describe('File upload with Instagram Provider', () => {
   })
 
   // not using arrow functions as cb so to keep mocha in the 'this' context
-  it('should upload a file completely with Instagram', async function () {
+  it('should upload a file completely with Instagram', async () => {
     if (!process.env.UPPY_INSTAGRAM_USERNAME) {
       console.log('skipping Instagram integration test')
       return this.skip()
@@ -68,7 +68,7 @@ describe('File upload with Instagram Provider', () => {
   })
 
   // not using arrow functions as cb so to keep mocha in the 'this' context
-  it('should resume uploads when retry is triggered Instagram', async function () {
+  it('should resume uploads when retry is triggered Instagram', async () => {
     if (!process.env.UPPY_INSTAGRAM_USERNAME) {
       console.log('skipping Instagram integration test')
       return this.skip()

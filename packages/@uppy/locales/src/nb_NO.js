@@ -158,7 +158,7 @@ nb_NO.strings = {
   zoomOut: 'Zoom ut',
 }
 
-nb_NO.pluralize = function (count) {
+nb_NO.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

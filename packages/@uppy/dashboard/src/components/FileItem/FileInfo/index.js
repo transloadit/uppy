@@ -75,7 +75,8 @@ module.exports = function FileInfo (props) {
         {ReSelectButton(props)}
         <ErrorButton
           file={props.file}
-          onClick={() => alert(props.file.error)}
+          // eslint-disable-next-line no-alert
+          onClick={() => alert(props.file.error)} // TODO: move to a custom alert implementation
         />
       </div>
     </div>

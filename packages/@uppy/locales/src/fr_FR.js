@@ -154,7 +154,7 @@ fr_FR.strings = {
   },
 }
 
-fr_FR.pluralize = function (n) {
+fr_FR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

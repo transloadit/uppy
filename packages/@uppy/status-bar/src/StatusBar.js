@@ -398,7 +398,8 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
 const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
   function displayErrorAlert () {
     const errorMessage = `${i18n('uploadFailed')} \n\n ${error}`
-    alert(errorMessage)
+    // eslint-disable-next-line no-alert
+    alert(errorMessage) // TODO: move to custom alert implementation
   }
 
   return (

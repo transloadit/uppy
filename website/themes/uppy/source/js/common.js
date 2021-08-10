@@ -1,3 +1,4 @@
+// eslint-disable-next-line func-names
 (function () {
   let each = [].forEach
   let doc = document.documentElement
@@ -227,7 +228,7 @@
       let tabs = document.querySelectorAll('.Tabs-link')
 
       function myTabClicks (tabClickEvent) {
-        for (var i = 0; i < tabs.length; i++) {
+        for (let i = 0; i < tabs.length; i++) {
           tabs[i].classList.remove('Tabs-link--active')
         }
 
@@ -238,7 +239,7 @@
 
         let myContentPanes = document.querySelectorAll('.TabPane')
 
-        for (i = 0; i < myContentPanes.length; i++) {
+        for (let i = 0; i < myContentPanes.length; i++) {
           myContentPanes[i].classList.remove('TabPane--active')
         }
 

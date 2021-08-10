@@ -20,7 +20,7 @@ describe('ThumbnailGenerator', () => {
     await browser.url(testURL)
   })
 
-  it('should generate thumbnails for images', async function () {
+  it('should generate thumbnails for images', async () => {
     // Does not work on IE right now
     if (capabilities.browserName === 'internet explorer') {
       this.skip()

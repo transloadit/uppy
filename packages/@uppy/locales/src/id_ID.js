@@ -137,7 +137,7 @@ id_ID.strings = {
   },
 }
 
-id_ID.pluralize = function (n) {
+id_ID.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

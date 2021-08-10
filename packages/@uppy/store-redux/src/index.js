@@ -18,10 +18,16 @@ const defaultSelector = (id) => (state) => state.uppy[id]
 class ReduxStore {
   static VERSION = require('../package.json').version
 
+  #id
+
+  #selector
+
+  #store
+
   constructor (opts) {
-    this._store = opts.store
-    this._id = opts.id || nanoid()
-    this._selector = opts.selector || defaultSelector(this._id)
+    this.#store = opts.store
+    this.#id = opts.id || nanoid()
+    this.#selector = opts.selector || defaultSelector(this.#id)
 
     // Calling `setState` to dispatch an action to the Redux store.
     // The intent is to make sure that the reducer has run once.
@@ -29,20 +35,20 @@ class ReduxStore {
   }
 
   setState (patch) {
-    this._store.dispatch({
+    this.#store.dispatch({
       type: STATE_UPDATE,
-      id: this._id,
+      id: this.#id,
       payload: patch,
     })
   }
 
   getState () {
-    return this._selector(this._store.getState())
+    return this.#selector(this.#store.getState())
   }
 
   subscribe (cb) {
     let prevState = this.getState()
-    return this._store.subscribe(() => {
+    return this.#store.subscribe(() => {
       const nextState = this.getState()
       if (prevState !== nextState) {
         const patch = getPatch(prevState, nextState)
@@ -50,6 +56,10 @@ class ReduxStore {
         prevState = nextState
       }
     })
+  }
+
+  [Symbol.for('uppy test: get id')] () {
+    return this.#id
   }
 }
 

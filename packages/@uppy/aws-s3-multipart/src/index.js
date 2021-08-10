@@ -239,7 +239,8 @@ module.exports = class AwsS3Multipart extends BasePlugin {
           queuedRequest.abort()
           upload.pause()
         } else {
-          // Resuming an upload should be queued, else you could pause and then resume a queued upload to make it skip the queue.
+          // Resuming an upload should be queued, else you could pause and then
+          // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
           queuedRequest = this.requests.run(() => {
             upload.start()
@@ -330,7 +331,8 @@ module.exports = class AwsS3Multipart extends BasePlugin {
           queuedRequest.abort()
           socket.send('pause', {})
         } else {
-          // Resuming an upload should be queued, else you could pause and then resume a queued upload to make it skip the queue.
+          // Resuming an upload should be queued, else you could pause and then
+          // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
           queuedRequest = this.requests.run(() => {
             socket.send('resume', {})

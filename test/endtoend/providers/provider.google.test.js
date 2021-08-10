@@ -19,7 +19,7 @@ describe('File upload with Google Drive Provider', () => {
   })
 
   // not using arrow functions as cb so to keep mocha in the 'this' context
-  it('should upload a file completely with Google Drive', async function () {
+  it('should upload a file completely with Google Drive', async () => {
     if (!process.env.UPPY_GOOGLE_EMAIL) {
       console.log('skipping Google Drive integration test')
       return this.skip()
@@ -32,7 +32,7 @@ describe('File upload with Google Drive Provider', () => {
   })
 
   // not using arrow functions as cb so to keep mocha in the 'this' context
-  it('should resume uploads when retry is triggered with Google Drive', async function () {
+  it('should resume uploads when retry is triggered with Google Drive', async () => {
     if (!process.env.UPPY_GOOGLE_EMAIL) {
       console.log('skipping Google Drive integration test')
       return this.skip()

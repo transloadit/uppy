@@ -185,7 +185,7 @@ async function injectMarkdown () {
     '.github/CONTRIBUTING.md': 'src/_template/contributing.md',
   }
 
-  for (const src in sources) {
+  for (const src of Object.keys(sources)) {
     const dst = sources[src]
     // strip yaml frontmatter:
     const srcpath = path.join(uppyRoot, `/../../${src}`)

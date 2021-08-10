@@ -2,6 +2,32 @@ const request = require('request')
 
 const BASE_URL = 'https://api.unsplash.com'
 
+function adaptData (res) {
+  const data = {
+    username: null,
+    items: [],
+    nextPagePath: null,
+  }
+
+  const items = res
+  items.forEach((item) => {
+    const isFolder = !!item.published_at
+    data.items.push({
+      isFolder,
+      icon: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
+      name: item.title || item.description,
+      mimeType: isFolder ? null : 'image/jpeg',
+      id: item.id,
+      thumbnail: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
+      requestPath: item.id,
+      modifiedDate: item.updated_at,
+      size: null,
+    })
+  })
+
+  return data
+}
+
 /**
  * an example of a custom provider module. It implements @uppy/companion's Provider interface
  */
@@ -28,7 +54,7 @@ class MyCustomProvider {
         return
       }
 
-      done(null, this._adaptData(body))
+      done(null, adaptData(body))
     })
   }
 
@@ -75,32 +101,6 @@ class MyCustomProvider {
 
       done(null, body.width * body.height)
     })
-  }
-
-  _adaptData (res) {
-    const data = {
-      username: null,
-      items: [],
-      nextPagePath: null,
-    }
-
-    const items = res
-    items.forEach((item) => {
-      const isFolder = !!item.published_at
-      data.items.push({
-        isFolder,
-        icon: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
-        name: item.title || item.description,
-        mimeType: isFolder ? null : 'image/jpeg',
-        id: item.id,
-        thumbnail: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
-        requestPath: item.id,
-        modifiedDate: item.updated_at,
-        size: null,
-      })
-    })
-
-    return data
   }
 }
 

@@ -34,6 +34,7 @@ const watchify = require('watchify')
 const bresolve = require('browser-resolve')
 
 function useSourcePackages (b) {
+  // eslint-disable-next-line no-underscore-dangle
   b._bresolve = (id, opts, cb) => {
     bresolve(id, opts, (err, result, pkg) => {
       if (err) return cb(err)

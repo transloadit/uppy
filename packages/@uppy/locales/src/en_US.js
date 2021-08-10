@@ -178,7 +178,7 @@ en_US.strings = {
   zoomOut: 'Zoom out',
 }
 
-en_US.pluralize = function (count) {
+en_US.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

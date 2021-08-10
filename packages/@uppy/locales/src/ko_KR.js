@@ -96,7 +96,7 @@ ko_KR.strings = {
   youHaveToAtLeastSelectX: '최소 %{smart_count}개의 파일을 선택해야 합니다',
 }
 
-ko_KR.pluralize = function (n) {
+ko_KR.pluralize = function pluralize (n) {
   return 0
 }
 

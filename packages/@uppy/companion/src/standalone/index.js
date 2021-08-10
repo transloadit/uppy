@@ -29,7 +29,8 @@ module.exports = function server (inputCompanionOptions = {}) {
    *
    * Returns a copy of the object with unknown types removed and sensitive values replaced by ***.
    *
-   * The input type is more broad that it needs to be, this way typescript can help us guarantee that we're dealing with all possible inputs :)
+   * The input type is more broad that it needs to be, this way typescript can help us guarantee that we're dealing with all
+   * possible inputs :)
    *
    * @param {{ [key: string]: any }} rawQuery
    * @returns {{
@@ -82,7 +83,8 @@ module.exports = function server (inputCompanionOptions = {}) {
   // for server metrics tracking.
   // make app metrics available at '/metrics'.
   // TODO for the next major version: use instead companion option "metrics": true and remove this code
-  // Se discussion: https://github.com/transloadit/uppy/pull/2854/files/64be97205e4012818abfcc8b0b8b7fe09de91729#diff-68f5e3eb307c1c9d1fd02224fd7888e2f74718744e1b6e35d929fcab1cc50ed1
+  // eslint-disable-next-line max-len
+  // See discussion: https://github.com/transloadit/uppy/pull/2854/files/64be97205e4012818abfcc8b0b8b7fe09de91729#diff-68f5e3eb307c1c9d1fd02224fd7888e2f74718744e1b6e35d929fcab1cc50ed1
   if (process.env.COMPANION_HIDE_METRICS !== 'true') {
     app.use(middlewares.metrics())
   }
@@ -152,6 +154,7 @@ module.exports = function server (inputCompanionOptions = {}) {
     // initialize companion
     companionApp = companion.app(companionOptions)
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('\x1b[31m', error.message, '\x1b[0m')
     process.exit(1)
   }
@@ -177,6 +180,7 @@ module.exports = function server (inputCompanionOptions = {}) {
       })
       res.header('Content-Length', `${Buffer.byteLength(content, 'utf8')}`)
       // use writeHead to prevent 'charset' from being appended
+      // eslint-disable-next-line max-len
       // https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-configure-publisher-domain#to-select-a-verified-domain
       res.writeHead(200, { 'Content-Type': 'application/json' })
       res.write(content)
