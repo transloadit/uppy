@@ -222,6 +222,8 @@ module.exports = class Dashboard extends UIPlugin {
       return
     }
 
+    this.uppy.getPlugin(current.activePickerPanel.id).uninstall()
+
     this.setPluginState(update)
   }
 

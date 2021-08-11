@@ -393,19 +393,32 @@ module.exports = class Webcam extends UIPlugin {
     }
   }
 
-  stop () {
+  async stop () {
     if (this.stream) {
-      this.stream.getAudioTracks().forEach((track) => {
-        track.stop()
-      })
-      this.stream.getVideoTracks().forEach((track) => {
-        track.stop()
+      this.stream.getAudioTracks().forEach((track) => track.stop())
+      this.stream.getVideoTracks().forEach((track) => track.stop())
+    }
+
+    if (this.recorder) {
+      await new Promise((resolve) => {
+        this.recorder.addEventListener('stop', () => resolve())
+        this.recorder.stop()
+
+        if (this.opts.showRecordingLength) {
+          clearInterval(this.recordingLengthTimer)
+        }
       })
     }
+
+    this.recordingChunks = null
+    this.recorder = null
     this.webcamActive = false
     this.stream = null
+
     this.setPluginState({
       recordedVideo: null,
+      isRecording: false,
+      recordingLengthSeconds: 0,
     })
   }
 
@@ -624,10 +637,7 @@ module.exports = class Webcam extends UIPlugin {
   }
 
   uninstall () {
-    if (this.stream) {
-      this.stop()
-    }
-
+    this.stop()
     this.unmount()
   }
 }
