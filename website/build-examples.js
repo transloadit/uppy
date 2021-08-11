@@ -60,11 +60,8 @@ if (watchifyEnabled) {
 
 // Instead of 'watch', build-examples.js can also take a path as cli argument.
 // In this case we'll only bundle the specified path/pattern
-if (!watchifyEnabled && process.argv[2]) {
-  srcPattern = process.argv[2]
-  if (process.argv[3]) {
-    dstPattern = process.argv[3]
-  }
+if (!watchifyEnabled && process.argv.length > 2) {
+  [, , srcPattern, dstPattern] = process.argv
 }
 
 // Find each app.es6 file with glob.

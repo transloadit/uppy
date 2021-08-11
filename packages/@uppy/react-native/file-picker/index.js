@@ -107,11 +107,11 @@ export default class UppyReactNativeFilePicker extends React.Component {
       <ScrollView
         contentContainerStyle={styles.providerList}
       >
-        {this.state.providers.map((item, index) => {
+        {this.state.providers.map((item) => {
           return (
             <TouchableOpacity
               style={styles.providerButton}
-              key={index}
+              key={item.title}
               onPress={ev => this.chooseProvider(item.id)}
             >
               <Text style={styles.providerButtonText}>{item.title}</Text>

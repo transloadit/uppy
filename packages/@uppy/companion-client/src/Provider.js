@@ -108,13 +108,11 @@ module.exports = class Provider extends RequestClient {
         throw new TypeError(`${plugin.id}: the option "companionAllowedHosts" must be one of string, Array, RegExp`)
       }
       plugin.opts.companionAllowedHosts = pattern
-    } else {
+    } else if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
       // does not start with https://
-      if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
-        plugin.opts.companionAllowedHosts = `https://${opts.companionUrl.replace(/^\/\//, '')}`
-      } else {
-        plugin.opts.companionAllowedHosts = new URL(opts.companionUrl).origin
-      }
+      plugin.opts.companionAllowedHosts = `https://${opts.companionUrl.replace(/^\/\//, '')}`
+    } else {
+      plugin.opts.companionAllowedHosts = new URL(opts.companionUrl).origin
     }
 
     plugin.storage = plugin.opts.storage || tokenStorage

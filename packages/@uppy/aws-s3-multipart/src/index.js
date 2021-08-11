@@ -80,7 +80,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
 
     const metadata = {}
 
-    Object.keys(file.meta).map(key => {
+    Object.keys(file.meta).forEach(key => {
       if (file.meta[key] != null) {
         metadata[key] = file.meta[key].toString()
       }

@@ -174,6 +174,7 @@
             sectionContainer.appendChild(makeLink(h))
             let h3s = collectH3s(h)
             allLinks.push(h)
+            // eslint-disable-next-line prefer-spread
             allLinks.push.apply(allLinks, h3s)
             if (h3s.length) {
               sectionContainer.appendChild(makeSubLinks(h3s, isDocs))
@@ -263,7 +264,7 @@
 
     function shuffleTaglines () {
       for (let i = taglineList.children.length; i >= 0; i--) {
-        taglineList.appendChild(taglineList.children[Math.random() * i | 0])
+        taglineList.appendChild(taglineList.children[Math.random() * i])
       }
     }
 

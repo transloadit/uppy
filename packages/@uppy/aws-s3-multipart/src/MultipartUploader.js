@@ -181,8 +181,10 @@ class MultipartUploader {
 
     const candidates = []
     for (let i = 0; i < this.chunkState.length; i++) {
+      // eslint-disable-next-line no-continue
       if (this.lockedCandidatesForBatch.includes(i)) continue
       const state = this.chunkState[i]
+      // eslint-disable-next-line no-continue
       if (state.done || state.busy) continue
 
       candidates.push(i)
@@ -319,7 +321,7 @@ class MultipartUploader {
     const xhr = new XMLHttpRequest()
     xhr.open('PUT', url, true)
     if (headers) {
-      Object.keys(headers).map((key) => {
+      Object.keys(headers).forEach((key) => {
         xhr.setRequestHeader(key, headers[key])
       })
     }

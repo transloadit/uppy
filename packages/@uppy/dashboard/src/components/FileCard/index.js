@@ -46,7 +46,7 @@ class FileCard extends Component {
   }
 
   // TODO(aduh95): move this to `UNSAFE_componentWillMount` when updating to Preact X+.
-  componentWillMount () {
+  componentWillMount () { // eslint-disable-line react/no-deprecated
     this.form.addEventListener('submit', this.handleSave)
     document.body.appendChild(this.form)
   }
