@@ -39,13 +39,15 @@ const { AwsS3Multipart } = Uppy
 
 The `@uppy/aws-s3-multipart` plugin has the following configurable options:
 
-### `limit: 0`
+### `limit: 5`
 
-The maximum amount of chunks to upload simultaneously. Set to `0` to disable limiting.
+The maximum amount of chunks to upload simultaneously. This affects [`prepareUploadParts()`](#prepareUploadParts-file-partData) as well; after the initial batch of `limit` parts is presigned, a minimum of `limit / 2` rounded up will be presigned at a time. You should set the limit carefully. Setting it to a value too high could cause issues where the presigned URLs begin to expire before the chunks they are for start uploading. Too low and you will end up with a lot of extra round trips to your server (or Companion) than necessary to presign URLs. If the default chunk size of 5MB is used, a `limit` between 5 and 15 is recommended.
+
+For example, with a 50MB file and a `limit` of 5 we end up with 10 chunks. 5 of these are presigned in one batch, then 3, then 2, for a total of 3 round trips to the server via [`prepareUploadParts()`](#prepareUploadParts-file-partData) and 10 requests sent to AWS via the presigned URLs generated.
 
 ### `retryDelays: [0, 1000, 3000, 5000]`
 
-When uploading a chunk fails, automatically try again after the millisecond intervals specified in this array. By default, we first retry instantly; if that fails, we retry after 1 second; if that fails, we retry after 3 seconds, etc.
+When uploading a chunk to S3 using a presigned URL fails, automatically try again after the millisecond intervals specified in this array. By default, we first retry instantly; if that fails, we retry after 1 second; if that fails, we retry after 3 seconds, etc.
 
 Set to `null` to disable automatic retries, and fail instantly if any chunk fails to upload.
 
@@ -69,7 +71,7 @@ This option correlates to the [RequestCredentials value](https://developer.mozil
 
 A function that returns the minimum chunk size to use when uploading the given file.
 
-The S3 Multipart plugin uploads files in chunks. Each chunk requires a signing request ([`prepareUploadPart()`](#prepareUploadPart-file-partData)). To reduce the amount of requests for large files, you can choose a larger chunk size, at the cost of having to re-upload more data if one chunk fails to upload.
+The S3 Multipart plugin uploads files in chunks. Chunks are sent in batches to have presigned URLs generated via ([`prepareUploadParts()`](#prepareUploadParts-file-partData)). To reduce the amount of requests for large files, you can choose a larger chunk size, at the cost of having to re-upload more data if one chunk fails to upload.
 
 S3 requires a minimum chunk size of 5MB, and supports at most 10,000 chunks per multipart upload. If `getChunkSize()` returns a size that's too small, Uppy will increase it to S3's minimum requirements.
 
@@ -99,29 +101,25 @@ Return a Promise for an array of S3 Part objects, as returned by the S3 Multipar
 
 The default implementation calls out to Companion's S3 signing endpoints.
 
-### `prepareUploadPart(file, partData)`
+### `prepareUploadParts(file, partData)`
 
-A function that generates a signed URL to upload a single part. Receives the `file` object from Uppy's state. The `partData` argument is an object with keys:
+A function that generates a batch of signed URLs for the specified part numbers. Receives the `file` object from Uppy's state. The `partData` argument is an object with keys:
 
  - `uploadId` - The UploadID of this Multipart upload.
  - `key` - The object key in the S3 bucket.
- - `body` - A [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) of this part's contents.
- - `number` - The index of this part in the file (`PartNumber` in S3 terminology).
+ - `partNumbers` - An array of indecies of this part in the file (`PartNumber` in S3 terminology). Note that part numbers are _not_ zero-based.
 
 Return a Promise for an object with keys:
 
- - `url` - The presigned URL to upload a part. This can be generated on the server using the S3 SDK like so:
+ - `presignedUrls` - A JavaScript object with the part numbers as keys and the presigned URL for each part as the value. An example of what the return value should look like:
 
-   <!-- eslint-disable node/handle-callback-err -->
    ```js
-   sdkInstance.getSignedUrl('uploadPart', {
-     Bucket: 'target',
-     Key: partData.key,
-     UploadId: partData.uploadId,
-     PartNumber: partData.number,
-     Body: '', // Empty, because it is uploaded later
-     Expires: 5 * 60,
-   }, (err, url) => { /* there's the url! */ })
+   // for partNumbers [1, 2, 3]
+   return {
+     1: 'https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=1&...',
+     2: 'https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=2&...',
+     3: 'https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=3&...',
+   }
    ```
  - `headers` - **(Optional)** Custom headers that should be sent to the S3 presigned URL.
 
