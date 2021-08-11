@@ -14,7 +14,7 @@ describe('Transloadit file processing', () => {
     await browser.url(testURL)
   })
 
-  it('should upload a file to Transloadit and crop it', async () => {
+  it('should upload a file to Transloadit and crop it', async function test () {
     const transloaditKey = process.env.TRANSLOADIT_KEY
     if (transloaditKey === undefined) {
       console.log('skipping Transloadit integration test')

@@ -4,7 +4,7 @@ const { selectFakeFile, supportsChooseFile, ensureInputVisible } = require('../u
 
 const testURL = 'http://localhost:4567/tus-drag-drop'
 
-describe('File upload with DragDrop + Tus', () => {
+describe('File upload with DragDrop + Tus', function test () {
   this.retries(2)
 
   beforeEach(async () => {
