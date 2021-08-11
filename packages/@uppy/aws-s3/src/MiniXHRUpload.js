@@ -10,22 +10,12 @@ const { internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 
 // See XHRUpload
 function buildResponseError (xhr, error) {
-  // No error message
-  if (!error) error = new Error('Upload error')
-  // Got an error message string
-  if (typeof error === 'string') error = new Error(error)
-  // Got something else
-  if (!(error instanceof Error)) {
-    error = Object.assign(new Error('Upload error'), { data: error })
-  }
+  if (isNetworkError(xhr)) return new NetworkError(error, xhr)
 
-  if (isNetworkError(xhr)) {
-    error = new NetworkError(error, xhr)
-    return error
-  }
-
-  error.request = xhr
-  return error
+  const err = new Error('Upload error')
+  err.cause = error
+  err.request = xhr
+  return err
 }
 
 // See XHRUpload
@@ -34,11 +24,39 @@ function setTypeInBlob (file) {
   return dataWithUpdatedType
 }
 
+function addMetadata (formData, meta, opts) {
+  const metaFields = Array.isArray(opts.metaFields)
+    ? opts.metaFields
+    // Send along all fields by default.
+    : Object.keys(meta)
+  metaFields.forEach((item) => {
+    formData.append(item, meta[item])
+  })
+}
+
+function createFormDataUpload (file, opts) {
+  const formPost = new FormData()
+
+  addMetadata(formPost, file.meta, opts)
+
+  const dataWithUpdatedType = setTypeInBlob(file)
+
+  if (file.name) {
+    formPost.append(opts.fieldName, dataWithUpdatedType, file.meta.name)
+  } else {
+    formPost.append(opts.fieldName, dataWithUpdatedType)
+  }
+
+  return formPost
+}
+
+const createBareUpload = file => file.data
+
 module.exports = class MiniXHRUpload {
   constructor (uppy, opts) {
     this.uppy = uppy
     this.opts = {
-      validateStatus (status, responseText, response) {
+      validateStatus (status) {
         return status >= 200 && status < 300
       },
       ...opts,
@@ -49,7 +67,7 @@ module.exports = class MiniXHRUpload {
     this.i18n = opts.i18n
   }
 
-  _getOptions (file) {
+  #getOptions (file) {
     const { uppy } = this
 
     const overrides = uppy.getState().xhrUpload
@@ -57,14 +75,11 @@ module.exports = class MiniXHRUpload {
       ...this.opts,
       ...(overrides || {}),
       ...(file.xhrUpload || {}),
-      headers: {},
-    }
-    Object.assign(opts.headers, this.opts.headers)
-    if (overrides) {
-      Object.assign(opts.headers, overrides.headers)
-    }
-    if (file.xhrUpload) {
-      Object.assign(opts.headers, file.xhrUpload.headers)
+      headers: {
+        ...this.opts.headers,
+        ...overrides?.headers,
+        ...file.xhrUpload?.headers,
+      },
     }
 
     return opts
@@ -75,71 +90,25 @@ module.exports = class MiniXHRUpload {
     if (file.error) {
       throw new Error(file.error)
     } else if (file.isRemote) {
-      return this._uploadRemoteFile(file, current, total)
+      return this.#uploadRemoteFile(file, current, total)
     }
-    return this._uploadLocalFile(file, current, total)
+    return this.#uploadLocalFile(file, current, total)
   }
 
-  _addMetadata (formData, meta, opts) {
-    const metaFields = Array.isArray(opts.metaFields)
-      ? opts.metaFields
-      // Send along all fields by default.
-      : Object.keys(meta)
-    metaFields.forEach((item) => {
-      formData.append(item, meta[item])
+  #addEventHandlerForFile (eventName, fileID, eventHandler) {
+    this.uploaderEvents[fileID].on(eventName, (targetFileID) => {
+      if (fileID === targetFileID) eventHandler()
     })
   }
 
-  _createFormDataUpload (file, opts) {
-    const formPost = new FormData()
-
-    this._addMetadata(formPost, file.meta, opts)
-
-    const dataWithUpdatedType = setTypeInBlob(file)
-
-    if (file.name) {
-      formPost.append(opts.fieldName, dataWithUpdatedType, file.meta.name)
-    } else {
-      formPost.append(opts.fieldName, dataWithUpdatedType)
-    }
-
-    return formPost
-  }
-
-  _createBareUpload (file, opts) {
-    return file.data
-  }
-
-  _onFileRemoved (fileID, cb) {
-    this.uploaderEvents[fileID].on('file-removed', (file) => {
-      if (fileID === file.id) cb(file.id)
+  #addEventHandlerIfFileStillExists (eventName, fileID, eventHandler) {
+    this.uploaderEvents[fileID].on(eventName, () => {
+      if (this.uppy.getFile(fileID)) eventHandler()
     })
   }
 
-  _onRetry (fileID, cb) {
-    this.uploaderEvents[fileID].on('upload-retry', (targetFileID) => {
-      if (fileID === targetFileID) {
-        cb()
-      }
-    })
-  }
-
-  _onRetryAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('retry-all', (filesToRetry) => {
-      if (!this.uppy.getFile(fileID)) return
-      cb()
-    })
-  }
-
-  _onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('cancel-all', () => {
-      if (!this.uppy.getFile(fileID)) return
-      cb()
-    })
-  }
-
-  _uploadLocalFile (file, current, total) {
-    const opts = this._getOptions(file)
+  #uploadLocalFile (file, current, total) {
+    const opts = this.#getOptions(file)
 
     this.uppy.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
@@ -147,11 +116,20 @@ module.exports = class MiniXHRUpload {
       // this.uppy.emit('upload-started', file)
 
       const data = opts.formData
-        ? this._createFormDataUpload(file, opts)
-        : this._createBareUpload(file, opts)
+        ? createFormDataUpload(file, opts)
+        : createBareUpload(file, opts)
 
       const xhr = new XMLHttpRequest()
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+
+      const queuedRequest = this.requests.run(() => {
+        xhr.send(data)
+        return () => {
+          // eslint-disable-next-line no-use-before-define
+          timer.done()
+          xhr.abort()
+        }
+      }, { priority: 1 })
 
       const timer = new ProgressTimeout(opts.timeout, () => {
         xhr.abort()
@@ -163,7 +141,7 @@ module.exports = class MiniXHRUpload {
 
       const id = nanoid()
 
-      xhr.upload.addEventListener('loadstart', (ev) => {
+      xhr.upload.addEventListener('loadstart', () => {
         this.uppy.log(`[AwsS3/XHRUpload] ${id} started`)
       })
 
@@ -221,7 +199,7 @@ module.exports = class MiniXHRUpload {
         return reject(error)
       })
 
-      xhr.addEventListener('error', (ev) => {
+      xhr.addEventListener('error', () => {
         this.uppy.log(`[AwsS3/XHRUpload] ${id} errored`)
         timer.done()
         queuedRequest.done()
@@ -247,129 +225,114 @@ module.exports = class MiniXHRUpload {
         xhr.setRequestHeader(header, opts.headers[header])
       })
 
-      const queuedRequest = this.requests.run(() => {
-        xhr.send(data)
-        return () => {
-          timer.done()
-          xhr.abort()
-        }
-      }, { priority: 1 })
-
-      this._onFileRemoved(file.id, () => {
+      this.#addEventHandlerForFile('file-removed', file.id, () => {
         queuedRequest.abort()
         reject(new Error('File removed'))
       })
 
-      this._onCancelAll(file.id, () => {
+      this.#addEventHandlerIfFileStillExists('cancel-all', file.id, () => {
         queuedRequest.abort()
         reject(new Error('Upload cancelled'))
       })
     })
   }
 
-  _uploadRemoteFile (file, current, total) {
-    const opts = this._getOptions(file)
-    return new Promise((resolve, reject) => {
-      // This is done in index.js in the S3 plugin.
-      // this.uppy.emit('upload-started', file)
+  #uploadRemoteFile (file) {
+    const opts = this.#getOptions(file)
+    // This is done in index.js in the S3 plugin.
+    // this.uppy.emit('upload-started', file)
 
-      const fields = {}
-      const metaFields = Array.isArray(opts.metaFields)
-        ? opts.metaFields
-        // Send along all fields by default.
-        : Object.keys(file.meta)
+    const metaFields = Array.isArray(opts.metaFields)
+      ? opts.metaFields
+    // Send along all fields by default.
+      : Object.keys(file.meta)
 
-      metaFields.forEach((name) => {
-        fields[name] = file.meta[name]
+    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+    const client = new Client(this.uppy, file.remote.providerOptions)
+    return client.post(file.remote.url, {
+      ...file.remote.body,
+      endpoint: opts.endpoint,
+      size: file.data.size,
+      fieldname: opts.fieldName,
+      metadata: Object.fromEntries(metaFields.map(name => [name, file.meta[name]])),
+      httpMethod: opts.method,
+      useFormData: opts.formData,
+      headers: opts.headers,
+    }).then(res => new Promise((resolve, reject) => {
+      const { token } = res
+      const host = getSocketHost(file.remote.companionUrl)
+      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
+      this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+
+      const queuedRequest = this.requests.run(() => {
+        socket.open()
+        if (file.isPaused) {
+          socket.send('pause', {})
+        }
+
+        return () => socket.close()
       })
 
-      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-      const client = new Client(this.uppy, file.remote.providerOptions)
-      client.post(file.remote.url, {
-        ...file.remote.body,
-        endpoint: opts.endpoint,
-        size: file.data.size,
-        fieldname: opts.fieldName,
-        metadata: fields,
-        httpMethod: opts.method,
-        useFormData: opts.formData,
-        headers: opts.headers,
-      }).then((res) => {
-        const { token } = res
-        const host = getSocketHost(file.remote.companionUrl)
-        const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
-        this.uploaderEvents[file.id] = new EventTracker(this.uppy)
-
-        this._onFileRemoved(file.id, () => {
-          socket.send('pause', {})
-          queuedRequest.abort()
-          resolve(`upload ${file.id} was removed`)
-        })
-
-        this._onCancelAll(file.id, () => {
-          socket.send('pause', {})
-          queuedRequest.abort()
-          resolve(`upload ${file.id} was canceled`)
-        })
-
-        this._onRetry(file.id, () => {
-          socket.send('pause', {})
-          socket.send('resume', {})
-        })
-
-        this._onRetryAll(file.id, () => {
-          socket.send('pause', {})
-          socket.send('resume', {})
-        })
-
-        socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
-
-        socket.on('success', (data) => {
-          const body = opts.getResponseData(data.response.responseText, data.response)
-          const uploadURL = body[opts.responseUrlFieldName]
-
-          const uploadResp = {
-            status: data.response.status,
-            body,
-            uploadURL,
-            bytesUploaded: data.bytesUploaded,
-          }
-
-          this.uppy.emit('upload-success', file, uploadResp)
-          queuedRequest.done()
-          if (this.uploaderEvents[file.id]) {
-            this.uploaderEvents[file.id].remove()
-            this.uploaderEvents[file.id] = null
-          }
-          return resolve()
-        })
-
-        socket.on('error', (errData) => {
-          const resp = errData.response
-          const error = resp
-            ? opts.getResponseError(resp.responseText, resp)
-            : Object.assign(new Error(errData.error.message), { cause: errData.error })
-          this.uppy.emit('upload-error', file, error)
-          queuedRequest.done()
-          if (this.uploaderEvents[file.id]) {
-            this.uploaderEvents[file.id].remove()
-            this.uploaderEvents[file.id] = null
-          }
-          reject(error)
-        })
-
-        const queuedRequest = this.requests.run(() => {
-          socket.open()
-          if (file.isPaused) {
-            socket.send('pause', {})
-          }
-
-          return () => socket.close()
-        })
-      }).catch((err) => {
-        this.uppy.emit('upload-error', file, err)
-        reject(err)
+      this.#addEventHandlerForFile('file-removed', file.id, () => {
+        socket.send('pause', {})
+        queuedRequest.abort()
+        resolve(`upload ${file.id} was removed`)
       })
-    })
+
+      this.#addEventHandlerIfFileStillExists('cancel-all', file.id, () => {
+        socket.send('pause', {})
+        queuedRequest.abort()
+        resolve(`upload ${file.id} was canceled`)
+      })
+
+      this.#addEventHandlerForFile('upload-retry', file.id, () => {
+        socket.send('pause', {})
+        socket.send('resume', {})
+      })
+
+      this.#addEventHandlerIfFileStillExists('retry-all', file.id, () => {
+        socket.send('pause', {})
+        socket.send('resume', {})
+      })
+
+      socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
+
+      socket.on('success', (data) => {
+        const body = opts.getResponseData(data.response.responseText, data.response)
+        const uploadURL = body[opts.responseUrlFieldName]
+
+        const uploadResp = {
+          status: data.response.status,
+          body,
+          uploadURL,
+          bytesUploaded: data.bytesUploaded,
+        }
+
+        this.uppy.emit('upload-success', file, uploadResp)
+        queuedRequest.done()
+        if (this.uploaderEvents[file.id]) {
+          this.uploaderEvents[file.id].remove()
+          this.uploaderEvents[file.id] = null
+        }
+        return resolve()
+      })
+
+      socket.on('error', (errData) => {
+        const resp = errData.response
+        const error = resp
+          ? opts.getResponseError(resp.responseText, resp)
+          : Object.assign(new Error(errData.error.message), { cause: errData.error })
+        this.uppy.emit('upload-error', file, error)
+        queuedRequest.done()
+        if (this.uploaderEvents[file.id]) {
+          this.uploaderEvents[file.id].remove()
+          this.uploaderEvents[file.id] = null
+        }
+        reject(error)
+      })
+    }).catch((err) => {
+      this.uppy.emit('upload-error', file, err)
+      return Promise.reject(err)
+    }))
   }
 }
