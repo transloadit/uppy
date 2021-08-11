@@ -1,6 +1,5 @@
 const { h } = require('preact')
 const { UIPlugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
 const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
 const mimeTypes = require('@uppy/utils/lib/mimeTypes')
 const canvasToBlob = require('@uppy/utils/lib/canvasToBlob')
@@ -136,6 +135,8 @@ module.exports = class Webcam extends UIPlugin {
 
     this.webcamActive = false
 
+    this.onClose = this.stop
+
     if (this.opts.countdown) {
       this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
     }
@@ -147,6 +148,7 @@ module.exports = class Webcam extends UIPlugin {
       recordingLengthSeconds: 0,
       videoSources: [],
       currentDeviceId: null,
+      onClose: this.stop,
     })
   }
 
