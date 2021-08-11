@@ -120,6 +120,7 @@ class AddFiles extends Component {
     return (
       <div class="uppy-Dashboard-AddFiles-title">
         {
+          // eslint-disable-next-line no-nested-ternary
           this.props.disableLocalFiles ? this.props.i18n('importFiles')
             : numberOfAcquirers > 0
               ? this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })

@@ -373,6 +373,7 @@ const ProgressBarUploading = (props) => {
         <div className="uppy-StatusBar-statusPrimary">
           {props.supportsUploadProgress ? `${title}: ${props.totalProgress}%` : title}
         </div>
+        {/* eslint-disable-next-line no-nested-ternary */}
         {!props.isAllPaused && !showUploadNewlyAddedFiles && props.showProgressDetails
           ? (props.supportsUploadProgress ? <ThrottledProgressDetails {...props} /> : <UnknownProgressDetails {...props} />)
           : null}
