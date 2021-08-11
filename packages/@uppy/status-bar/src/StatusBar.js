@@ -134,6 +134,8 @@ module.exports = (props) => {
         className={progressClassNames}
         style={{ width: `${width}%` }}
         role="progressbar"
+        aria-label={`${width}%`}
+        aria-valuetext={`${width}%`}
         aria-valuemin="0"
         aria-valuemax="100"
         aria-valuenow={progressValue}
@@ -412,16 +414,15 @@ const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
           {i18n('uploadFailed')}
         </div>
       </div>
-      <span
+      <button
         className="uppy-StatusBar-details"
         aria-label={error}
         data-microtip-position="top-right"
         data-microtip-size="medium"
-        role="tooltip"
         onClick={displayErrorAlert}
       >
         ?
-      </span>
+      </button>
     </div>
   )
 }

@@ -104,16 +104,16 @@ module.exports = {
     }],
 
     // accessibility
-    'jsx-a11y/alt-text': ['warn'],
-    'jsx-a11y/anchor-has-content': ['warn'],
-    'jsx-a11y/click-events-have-key-events': ['warn'],
-    'jsx-a11y/control-has-associated-label': ['warn'],
-    'jsx-a11y/label-has-associated-control': ['warn'],
-    'jsx-a11y/media-has-caption': ['warn'],
-    'jsx-a11y/mouse-events-have-key-events': ['warn'],
-    'jsx-a11y/no-interactive-element-to-noninteractive-role': ['warn'],
-    'jsx-a11y/no-noninteractive-element-interactions': ['warn'],
-    'jsx-a11y/no-static-element-interactions': ['warn'],
+    'jsx-a11y/alt-text': 'error',
+    'jsx-a11y/anchor-has-content': 'error',
+    'jsx-a11y/click-events-have-key-events': 'error',
+    'jsx-a11y/control-has-associated-label': 'error',
+    'jsx-a11y/label-has-associated-control': 'error',
+    'jsx-a11y/media-has-caption': 'error',
+    'jsx-a11y/mouse-events-have-key-events': 'error',
+    'jsx-a11y/no-interactive-element-to-noninteractive-role': 'error',
+    'jsx-a11y/no-noninteractive-element-interactions': 'error',
+    'jsx-a11y/no-static-element-interactions': 'error',
 
     // compat
     'compat/compat': ['error'],

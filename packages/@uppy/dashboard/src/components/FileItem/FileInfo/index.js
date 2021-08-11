@@ -51,16 +51,15 @@ const ReSelectButton = (props) => (
 const ErrorButton = ({ file, onClick }) => {
   if (file.error) {
     return (
-      <span
+      <button
         className="uppy-Dashboard-Item-errorDetails"
         aria-label={file.error}
         data-microtip-position="bottom"
         data-microtip-size="medium"
-        role="tooltip"
         onClick={onClick}
       >
         ?
-      </span>
+      </button>
     )
   }
   return null

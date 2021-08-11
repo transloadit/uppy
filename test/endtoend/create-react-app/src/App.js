@@ -51,7 +51,7 @@ class App extends Component {
 
         <h2>Inline Dashboard</h2>
         <div id="inline-dashboard">
-          <label>
+          <label htmlFor="inline-dashboard-toggle">
             <input
               id="inline-dashboard-toggle"
               type="checkbox"
