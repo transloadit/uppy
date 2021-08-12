@@ -264,7 +264,8 @@
 
     function shuffleTaglines () {
       for (let i = taglineList.children.length; i >= 0; i--) {
-        taglineList.appendChild(taglineList.children[Math.random() * i])
+        // eslint-disable-next-line no-bitwise
+        taglineList.appendChild(taglineList.children[Math.random() * i | 0])
       }
     }
 
