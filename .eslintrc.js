@@ -53,6 +53,7 @@ module.exports = {
     // rules we want to enforce
     'array-callback-return': 'error',
     'implicit-arrow-linebreak': 'error',
+    'import/no-dynamic-require': 'error',
     'import/no-extraneous-dependencies': 'error',
     'max-len': 'error',
     'no-empty': 'error',
@@ -75,7 +76,6 @@ module.exports = {
     'consistent-return': ['warn'],
     'default-case': ['warn'],
     'global-require': ['warn'],
-    'import/no-dynamic-require': ['warn'],
     'import/no-unresolved': ['warn'],
     'import/order': ['warn'],
     'no-mixed-operators': ['warn'],
@@ -98,7 +98,7 @@ module.exports = {
     'react/no-will-update-set-state': 'error',
     'react/prefer-stateless-function': 'error',
     'react/sort-comp': ['warn'],
-    'react/style-prop-object': ['warn'],
+    'react/style-prop-object': 'error',
     'react/no-unknown-property': ['error', {
       ignore: svgPresentationAttributes,
     }],

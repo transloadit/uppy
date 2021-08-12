@@ -174,7 +174,7 @@ class AddFiles extends Component {
       <div className="uppy-Dashboard-AddFiles-list" role="tablist">
         {!disableLocalFiles && this.renderMyDeviceAcquirer()}
         {acquirersWithoutLastTwo.map((acquirer) => this.renderAcquirer(acquirer))}
-        <span role="presentation" style="white-space: nowrap;">
+        <span role="presentation" style={{ 'white-space': 'nowrap' }}>
           {lastTwoAcquirers.map((acquirer) => this.renderAcquirer(acquirer))}
         </span>
       </div>

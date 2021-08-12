@@ -18,6 +18,7 @@ const robodogRoot = path.join(__dirname, '../packages/@uppy/robodog')
 const localesRoot = path.join(__dirname, '../packages/@uppy/locales')
 
 const configPath = path.join(webRoot, '/themes/uppy/_config.yml')
+// eslint-disable-next-line import/no-dynamic-require
 const { version } = require(path.join(uppyRoot, '/package.json'))
 
 const regionalDisplayNames = new Intl.DisplayNames('en-US', { type: 'region' })
@@ -213,6 +214,7 @@ function injectLocaleList () {
   const localeList = {}
 
   const localePackagePath = path.join(localesRoot, 'src', '*.js')
+  // eslint-disable-next-line import/no-dynamic-require
   const localePackageVersion = require(path.join(localesRoot, 'package.json')).version
 
   glob.sync(localePackagePath).forEach((localePath) => {
