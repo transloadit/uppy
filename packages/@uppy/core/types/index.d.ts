@@ -99,6 +99,10 @@ export class BasePlugin<TOptions extends PluginOptions = DefaultPluginOptions> {
   install(): void
 
   uninstall(): void
+
+  onMount(): void
+
+  onUnmount(): void
 }
 
 export class UIPlugin<TOptions extends PluginOptions = DefaultPluginOptions> extends BasePlugin<TOptions> {
