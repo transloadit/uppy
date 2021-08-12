@@ -57,6 +57,7 @@ const ErrorButton = ({ file, onClick }) => {
         data-microtip-position="bottom"
         data-microtip-size="medium"
         onClick={onClick}
+        type="button"
       >
         ?
       </button>

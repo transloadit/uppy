@@ -77,7 +77,7 @@ class App extends Component {
 
         <h2>Modal Dashboard</h2>
         <div id="modal-dashboard">
-          <button onClick={this.handleModalClick} id="modal-dashboard-toggle">
+          <button onClick={this.handleModalClick} id="modal-dashboard-toggle" type="button">
             {this.state.open ? 'Close dashboard' : 'Open dashboard'}
           </button>
           <DashboardModal

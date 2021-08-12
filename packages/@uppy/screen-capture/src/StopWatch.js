@@ -64,6 +64,7 @@ class Stopwatch extends Component {
   }
 
   fmtMSS (s) {
+    // eslint-disable-next-line no-return-assign
     return (s - (s %= 60)) / 60 + (s > 9 ? ':' : ':0') + s
   }
 

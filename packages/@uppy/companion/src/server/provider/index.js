@@ -48,8 +48,8 @@ config.zoom = {
  * adds the desired provider module to the request object,
  * based on the providerName parameter specified
  *
- * @param {Object.<string, (typeof Provider) | typeof SearchProvider>} providers
- * @param {boolean=} needsProviderCredentials
+ * @param {Record<string, (typeof Provider) | typeof SearchProvider>} providers
+ * @param {boolean} needsProviderCredentials
  */
 module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => {
   /**
@@ -75,7 +75,7 @@ module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => 
 }
 
 /**
- * @returns {Object.<string, typeof Provider>}
+ * @returns {Record<string, typeof Provider>}
  */
 module.exports.getDefaultProviders = () => {
   const providers = { dropbox, box, drive, facebook, onedrive, zoom, instagram }
@@ -84,7 +84,7 @@ module.exports.getDefaultProviders = () => {
 }
 
 /**
- * @returns {Object.<string, typeof SearchProvider>}
+ * @returns {Record<string, typeof SearchProvider>}
  */
 module.exports.getSearchProviders = () => {
   return { unsplash }
@@ -92,10 +92,10 @@ module.exports.getSearchProviders = () => {
 
 /**
  *
- * @typedef {{module: typeof Provider, config: object}} CustomProvider
+ * @typedef {{'module': typeof Provider, config: Record<string,unknown>}} CustomProvider
  *
- * @param {Object.<string, CustomProvider>} customProviders
- * @param {Object.<string, typeof Provider>} providers
+ * @param {Record<string, CustomProvider>} customProviders
+ * @param {Record<string, typeof Provider>} providers
  * @param {object} grantConfig
  */
 module.exports.addCustomProviders = (customProviders, providers, grantConfig) => {

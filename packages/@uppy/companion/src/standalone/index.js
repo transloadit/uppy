@@ -32,14 +32,14 @@ module.exports = function server (inputCompanionOptions = {}) {
    * The input type is more broad that it needs to be, this way typescript can help us guarantee that we're dealing with all
    * possible inputs :)
    *
-   * @param {{ [key: string]: any }} rawQuery
+   * @param {Record<string, any>} rawQuery
    * @returns {{
-   *   query: { [key: string]: string },
+   *   query: Record<string, any>,
    *   censored: boolean
    * }}
    */
   function censorQuery (rawQuery) {
-    /** @type {{ [key: string]: string }} */
+    /** @type {Record<string, any>} */
     const query = {}
     let censored = false
     Object.keys(rawQuery).forEach((key) => {

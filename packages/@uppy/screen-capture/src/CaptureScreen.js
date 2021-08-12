@@ -40,7 +40,7 @@ class RecorderScreen extends Component {
         <div className="uppy-ScreenCapture-videoContainer">
           <StreamStatus {...this.props} />
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <video ref={videoElement => (this.videoElement = videoElement)} className="uppy-ScreenCapture-video" {...videoProps} />
+          <video ref={videoElement => { this.videoElement = videoElement }} className="uppy-ScreenCapture-video" {...videoProps} />
           <StopWatch {...this.props} />
         </div>
 

@@ -421,6 +421,7 @@ const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
         data-microtip-position="top-right"
         data-microtip-size="medium"
         onClick={displayErrorAlert}
+        type="button"
       >
         ?
       </button>
