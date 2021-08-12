@@ -1,5 +1,5 @@
 const { BasePlugin } = require('@uppy/core')
-const { nanoid } = require('nanoid')
+const cuid = require('cuid')
 const Translator = require('@uppy/utils/lib/Translator')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
@@ -237,7 +237,7 @@ module.exports = class XHRUpload extends BasePlugin {
         reject(error)
       })
 
-      const id = nanoid()
+      const id = cuid()
 
       xhr.upload.addEventListener('loadstart', () => {
         this.uppy.log(`[XHRUpload] ${id} started`)

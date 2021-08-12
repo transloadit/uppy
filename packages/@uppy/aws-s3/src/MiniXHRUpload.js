@@ -1,4 +1,4 @@
-const { nanoid } = require('nanoid')
+const cuid = require('cuid')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
@@ -161,7 +161,7 @@ module.exports = class MiniXHRUpload {
         reject(error)
       })
 
-      const id = nanoid()
+      const id = cuid()
 
       xhr.upload.addEventListener('loadstart', (ev) => {
         this.uppy.log(`[AwsS3/XHRUpload] ${id} started`)

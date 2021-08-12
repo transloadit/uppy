@@ -11,8 +11,8 @@ const InvalidPluginWithoutId = require('../../../../test/mocks/invalidPluginWith
 const InvalidPluginWithoutType = require('../../../../test/mocks/invalidPluginWithoutType')
 const DeepFrozenStore = require('../../../../test/resources/DeepFrozenStore.js')
 
-jest.mock('nanoid', () => {
-  return { nanoid: () => 'cjd09qwxb000dlql4tp4doz8h' }
+jest.mock('cuid', () => {
+  return () => 'cjd09qwxb000dlql4tp4doz8h'
 })
 jest.mock('@uppy/utils/lib/findDOMElement', () => {
   return () => null

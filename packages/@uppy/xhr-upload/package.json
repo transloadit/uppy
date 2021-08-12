@@ -26,7 +26,7 @@
   "dependencies": {
     "@uppy/companion-client": "file:../companion-client",
     "@uppy/utils": "file:../utils",
-    "nanoid": "^3.1.23"
+    "cuid": "^2.1.1"
   },
   "devDependencies": {
     "nock": "^13.1.0"

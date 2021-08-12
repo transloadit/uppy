@@ -8,7 +8,7 @@ const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const getTextDirection = require('@uppy/utils/lib/getTextDirection')
-const { nanoid } = require('nanoid')
+const cuid = require('cuid')
 const trapFocus = require('./utils/trapFocus')
 const createSuperFocus = require('./utils/createSuperFocus')
 const memoize = require('memoize-one').default || require('memoize-one')
@@ -46,7 +46,7 @@ module.exports = class Dashboard extends UIPlugin {
     this.id = this.opts.id || 'Dashboard'
     this.title = 'Dashboard'
     this.type = 'orchestrator'
-    this.modalName = `uppy-Dashboard-${nanoid()}`
+    this.modalName = `uppy-Dashboard-${cuid()}`
 
     this.defaultLocale = {
       strings: {

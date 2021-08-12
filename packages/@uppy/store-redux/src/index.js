@@ -1,4 +1,4 @@
-const { nanoid } = require('nanoid')
+const cuid = require('cuid')
 
 // Redux action name.
 const STATE_UPDATE = 'uppy/STATE_UPDATE'
@@ -20,7 +20,7 @@ class ReduxStore {
 
   constructor (opts) {
     this._store = opts.store
-    this._id = opts.id || nanoid()
+    this._id = opts.id || cuid()
     this._selector = opts.selector || defaultSelector(this._id)
 
     // Calling `setState` to dispatch an action to the Redux store.

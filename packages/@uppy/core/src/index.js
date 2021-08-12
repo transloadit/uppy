@@ -1,7 +1,7 @@
 /* global AggregateError */
 const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
-const { nanoid } = require('nanoid')
+const cuid = require('cuid')
 const throttle = require('lodash.throttle')
 const prettierBytes = require('@transloadit/prettier-bytes')
 const match = require('mime-match')
@@ -1512,7 +1512,7 @@ class Uppy {
       throw new Error('Cannot create a new upload: already uploading.')
     }
 
-    const uploadID = nanoid()
+    const uploadID = cuid()
 
     this.emit('upload', {
       id: uploadID,
