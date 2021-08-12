@@ -49,7 +49,7 @@ config.zoom = {
  * based on the providerName parameter specified
  *
  * @param {Record<string, (typeof Provider) | typeof SearchProvider>} providers
- * @param {boolean} needsProviderCredentials
+ * @param {boolean} [needsProviderCredentials]
  */
 module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => {
   /**
