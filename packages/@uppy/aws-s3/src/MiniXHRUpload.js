@@ -12,6 +12,8 @@ const { internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 function buildResponseError (xhr, error) {
   if (isNetworkError(xhr)) return new NetworkError(error, xhr)
 
+  // TODO: when we drop support for browsers that do not support this syntax, use:
+  // return new Error('Upload error', { cause: error, request: xhr })
   const err = new Error('Upload error')
   err.cause = error
   err.request = xhr
