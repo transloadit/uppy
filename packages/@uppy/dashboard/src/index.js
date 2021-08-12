@@ -223,9 +223,9 @@ module.exports = class Dashboard extends UIPlugin {
       return
     }
 
-    // Dashboard plugins can define a `onClose` method to perform
+    // Dashboard plugins can define a `onUnmount` method to perform
     // any clean up that may be required when the user clicked cancel.
-    activePlugin?.onClose()
+    activePlugin?.onUnmount()
 
     this.setPluginState(update)
   }

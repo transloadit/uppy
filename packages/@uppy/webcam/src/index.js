@@ -135,8 +135,6 @@ module.exports = class Webcam extends UIPlugin {
 
     this.webcamActive = false
 
-    this.onClose = this.stop
-
     if (this.opts.countdown) {
       this.opts.onBeforeSnapshot = this.oneTwoThreeSmile
     }
@@ -148,7 +146,6 @@ module.exports = class Webcam extends UIPlugin {
       recordingLengthSeconds: 0,
       videoSources: [],
       currentDeviceId: null,
-      onClose: this.stop,
     })
   }
 
@@ -641,5 +638,9 @@ module.exports = class Webcam extends UIPlugin {
   uninstall () {
     this.stop()
     this.unmount()
+  }
+
+  onUnmount () {
+    this.stop()
   }
 }

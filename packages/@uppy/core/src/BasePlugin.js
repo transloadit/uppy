@@ -79,6 +79,9 @@ module.exports = class BasePlugin {
   onMount () {}
 
   // eslint-disable-next-line class-methods-use-this
+  onUnmount () {}
+
+  // eslint-disable-next-line class-methods-use-this
   update () {}
 
   // Called after every state update, after everything's mounted. Debounced.
