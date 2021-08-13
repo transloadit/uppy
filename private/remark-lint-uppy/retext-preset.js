@@ -15,7 +15,16 @@ export default [
     .use(retextProfanities, { sureness: 1 })
     .use(retextQuotes)
     .use(retextSimplify, {
-      ignore: ['address', 'component', 'function', 'interface', 'maintain', 'request', 'type'],
+      ignore: [
+        'address',
+        'component',
+        'function',
+        'interface',
+        'maintain',
+        'option',
+        'request',
+        'type',
+      ],
     })
     .use(retextSyntaxMentions),
 ]
