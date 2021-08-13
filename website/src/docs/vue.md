@@ -72,11 +72,11 @@ The following plugins are available as Vue component wrappers:
 *   `<progress-bar />` - renders a `@uppy/progress-bar`
 *   `<status-bar />` - renders a `@uppy/status-bar`
 
-Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, make it easy to add your plugins.
+Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, making it easier to add your plugins.
 
 ### Initializing Uppy
 
-The easiest way to initialize Uppy is creating a new instance in your `data` or `computed` and to run `uppy.close()` in the `beforeDestroy` method. You can do additional configuration with plugins where-ever you're initializing Uppy
+The easiest way to initialize Uppy is creating a new instance in your `data` or `computed` and to run `uppy.close()` in the `beforeDestroy` method. You can do extra configuration with plugins where-ever you are initializing Uppy
 
 ```js
 import Uppy from '@uppy/core'
@@ -110,7 +110,7 @@ The `Dashboard` component requires the following CSS for styling:
 <style src='@uppy/dashboard/dist/style.css'></style> 
 ```
 
-Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system. With default Vue, you can just add a `style` tag and make the `src` attribute the file you need.
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system. With default Vue, you can add a `style` tag and make the `src` attribute the file you need.
 
 ⚠️ The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
 
@@ -133,7 +133,7 @@ The `DashboardModal` component requires the following CSS for styling:
 <style src='@uppy/dashboard/dist/style.css'></style> 
 ```
 
-Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system. With default Vue, you can just add a `style` tag and make the `src` attribute the file you need.
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Dashboard styles from `@uppy/dashboard/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system. With default Vue, you can add a `style` tag and make the `src` attribute the file you need.
 
 ⚠️ The `@uppy/dashboard` plugin includes CSS for the Dashboard itself, and the various plugins used by the Dashboard, such as ([`@uppy/status-bar`](/docs/status-bar) and [`@uppy/informer`](/docs/informer)). If you also use the `@uppy/status-bar` or `@uppy/informer` plugin directly, you should not include their CSS files, but instead only use the one from the `@uppy/dashboard` plugin.
 
@@ -149,7 +149,7 @@ The `<dashboard-modal />` cannot be passed to a `target:` option of a remote pro
 
 #### CSS
 
-The `DragDrop` component includes some simple styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead:
+The `DragDrop` component includes some basic styles, like shown in the [example](/examples/dragdrop). You can also choose not to include those and use your own styles instead:
 
 ```html
 <style src='@uppy/core/dist/style.css'></style> 
@@ -196,8 +196,6 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 The `<status-bar />` component supports all `@uppy/status-bar` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `:uppy=''` prop.
 
-[Vue]: https://vuejs.org
-
 [Nuxt]: https://nuxtjs.org
 
-[`@uppy/webcam`]: /docs/webcam/
+[Vue]: https://vuejs.org
