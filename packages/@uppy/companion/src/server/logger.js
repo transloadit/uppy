@@ -35,31 +35,36 @@ function maskMessage (msg) {
 /**
  * message log
  *
- * @param {string | Error} msgIn the message to log
+ * @param {string | Error} msg the message to log
  * @param {string} tag a unique tag to easily search for this message
  * @param {string} level error | info | debug
  * @param {string=} id a unique id to easily trace logs tied to a request
  * @param {Function=} color function to display the log in appropriate color
  * @param {boolean=} shouldLogStackTrace when set to true, errors will be logged with their stack trace
  */
-const log = (msgIn, tag = '', level, id = '', color = (message) => message, shouldLogStackTrace) => {
+const log = (msg, tag = '', level, id = '', color = (message) => message, shouldLogStackTrace) => {
   const time = new Date().toISOString()
   const whitespace = tag && id ? ' ' : ''
-  let msg = msgIn
-  if (typeof msg === 'string') {
-    msg = maskMessage(msg)
-  } else if (msg && typeof msg.message === 'string') {
-    msg.message = maskMessage(msg.message)
+
+  function logMsg (msg2) {
+    let msgString = typeof msg2 === 'string' ? msg2 : util.inspect(msg2)
+    msgString = maskMessage(msgString)
+    // eslint-disable-next-line no-console
+    console.log(color(`companion: ${time} [${level}] ${id}${whitespace}${tag}`), color(msgString))
   }
 
-  // eslint-disable-next-line no-console
-  const logMsg = (msg2) => console.log(color(`companion: ${time} [${level}] ${id}${whitespace}${tag}`), color(util.inspect(msg2)))
+  if (msg instanceof Error) {
+    // Not sure why it only logs the stack without the message, but this is how the code was originally
+    if (shouldLogStackTrace && typeof msg.stack === 'string') {
+      logMsg(msg.stack)
+      return
+    }
 
-  if (shouldLogStackTrace && msg instanceof Error && typeof msg.stack === 'string') {
-    msg.stack = maskMessage(msg.stack)
-    logMsg(msg.stack)
+    // We don't want to log stack trace (this is how the code was originally)
+    logMsg(String(msg))
     return
   }
+
   logMsg(msg)
 }
 
