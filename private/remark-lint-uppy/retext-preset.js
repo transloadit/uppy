@@ -21,6 +21,8 @@ export default [
         'function',
         'interface',
         'maintain',
+        'maximum',
+        'minimum',
         'option',
         'request',
         'type',
