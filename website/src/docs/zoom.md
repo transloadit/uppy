@@ -33,7 +33,7 @@ Install from NPM:
 npm install @uppy/zoom
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
 const { Zoom } = Uppy
@@ -82,11 +82,11 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your [Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should be good enough.
+This is useful when you have your [Companion](/docs/companion) running on more than one server. Otherwise, the default value should be good enough.
 
 ### `companionCookiesRule: 'same-origin'`
 
-This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether to send cookies to [Companion](/docs/companion).
 
 ### `locale: {}`
 
@@ -106,7 +106,7 @@ If you are a Zoom account owner and you are looking to enable the Transloadit Ad
 
 ### Install Transloadit Zoom Add-on
 
-To enable the Transloadit Add-on on your Zoom account please visit the Transloadit App on the [Zoom Marketplace](https://marketplace.zoom.us/apps/oBMBQjN6SSakyh7OiLZMdA) and click the "Install" button.
+To enable the Transloadit Add-on on your Zoom account please visit the Transloadit App on the [Zoom Marketplace](https://marketplace.zoom.us/apps/oBMBQjN6SSakyh7OiLZMdA) and click the “Install” button.
 
 ### Uninstall via Marketplace
 
