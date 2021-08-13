@@ -37,7 +37,7 @@ describe('test authentication callback', () => {
     <head>
         <meta charset="utf-8" />
         <script>
-          window.opener.postMessage({"token":"${token}"}, "http://localhost:3020")
+          window.opener.postMessage({"token":"${token}"}, "http:\\u002F\\u002Flocalhost:3020")
           window.close()
         </script>
     </head>
