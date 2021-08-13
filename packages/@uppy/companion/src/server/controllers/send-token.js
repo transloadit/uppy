@@ -2,7 +2,7 @@ const { URL } = require('url')
 const serialize = require('serialize-javascript')
 
 const tokenService = require('../helpers/jwt')
-const { hasMatch, sanitizeHtml } = require('../helpers/utils')
+const { hasMatch } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
 
 /**
