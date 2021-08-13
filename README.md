@@ -163,11 +163,11 @@ We still provide a bundle which should work on IE11, but we are not running test
 
 Here's a list of polyfills you'll need to include to make Uppy work in older browsers, such as IE11:
 
-- [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
-- [core-js](https://github.com/zloirock/core-js)
-- [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
-- [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
-- [whatwg-fetch](https://github.com/github/fetch)
+*   [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
+*   [core-js](https://github.com/zloirock/core-js)
+*   [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
+*   [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
+*   [whatwg-fetch](https://github.com/github/fetch)
 
 If you're using a bundler, you need import them before Uppy:
 

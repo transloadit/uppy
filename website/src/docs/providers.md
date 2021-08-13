@@ -10,7 +10,7 @@ The Provider plugins help you connect to your accounts with remote file provider
 
 As of now, the supported providers are [**Dropbox**](/docs/dropbox), [**Google Drive**](/docs/google-drive), [**OneDrive**](/docs/onedrive/), [**Box**](/docs/box/), [**Instagram**](/docs/instagram), [**Facebook**](/docs/facebook/), [**Zoom**](/docs/zoom/) and [**URL**](/docs/url).
 
-Usage of the Provider plugins is not that different from any other *acquirer* plugin, except that it takes an extra option `companionUrl`, which specifies the URL to the Companion that you are running. This allows Uppy to know what server to connect to when datacenter operations are required by the provider plugin.
+Usage of the Provider plugins is not that different from any other _acquirer_ plugin, except that it takes an extra option `companionUrl`, which specifies the URL to the Companion that you are running. This allows Uppy to know what server to connect to when datacenter operations are required by the provider plugin.
 
 Here's a quick example:
 

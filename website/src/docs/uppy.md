@@ -81,7 +81,7 @@ By default Uppy will wait for an upload button to be pressed in the UI, or an `.
 
 Whether to allow multiple upload batches. This means multiple calls to `.upload()`, or a user adding more files after already uploading some. An upload batch is made up of the files that were added since the previous `.upload()` call.
 
-With this option set to `true`, users can upload some files, and then add *more* files and upload those as well. A model use case for this is uploading images to a gallery or adding attachments to an email.
+With this option set to `true`, users can upload some files, and then add _more_ files and upload those as well. A model use case for this is uploading images to a gallery or adding attachments to an email.
 
 With this option set to `false`, users can upload some files, and you can listen for the ['complete'](/docs/uppy/#complete) event to continue to the next step in your app's upload flow. A typical use case for this is uploading a new profile picture. If you are integrating with an existing HTML form, this option gives the closest behaviour to a bare `<input type="file">`.
 
@@ -129,13 +129,13 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 
 **Parameters**
 
-- `maxFileSize` *null | number* — maximum file size in bytes for each individual file
-- `minFileSize` *null | number* — minimum file size in bytes for each individual file
-- `maxTotalFileSize` *null | number* — maximum file size in bytes for all the files that can be selected for upload
-- `maxNumberOfFiles` *null | number* — total number of files that can be selected
-- `minNumberOfFiles` *null | number* — minimum number of files that must be selected before the upload
-- `allowedFileTypes` *null | array* of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
-- `requiredMetaFields` *array* of strings
+*   `maxFileSize` _null | number_ — maximum file size in bytes for each individual file
+*   `minFileSize` _null | number_ — minimum file size in bytes for each individual file
+*   `maxTotalFileSize` _null | number_ — maximum file size in bytes for all the files that can be selected for upload
+*   `maxNumberOfFiles` _null | number_ — total number of files that can be selected
+*   `minNumberOfFiles` _null | number_ — minimum number of files that must be selected before the upload
+*   `allowedFileTypes` _null | array_ of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
+*   `requiredMetaFields` _array_ of strings
 
 `maxNumberOfFiles` also affects the number of files a user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1`, they will only be able to select a single file. When `null` or another number is provided, they will be able to select multiple files.
 
@@ -380,8 +380,8 @@ An object with upload progress data.
 
 *   `bytesUploaded` - Number of bytes uploaded so far.
 *   `bytesTotal` - Number of bytes that must be uploaded in total.
-*   `uploadStarted` - Null if the upload has not started yet. Once started, this property contains a UNIX timestamp. Note that this is only set *after* preprocessing.
-*   `uploadComplete` - Boolean indicating if the upload has completed. Note this does *not* mean that postprocessing has completed, too.
+*   `uploadStarted` - Null if the upload has not started yet. Once started, this property contains a UNIX timestamp. Note that this is only set _after_ preprocessing.
+*   `uploadComplete` - Boolean indicating if the upload has completed. Note this does _not_ mean that postprocessing has completed, too.
 *   `percentage` - Integer percentage between 0 and 100.
 
 ### `file.size`
@@ -672,8 +672,8 @@ Calls `provider.logout()` on each remote provider plugin (Google Drive, Instagra
 
 #### Parameters
 
-*   **message** *{string}*
-*   **type** *{string=}* `error` or `warning`
+*   **message** _{string}_
+*   **type** _{string=}_ `error` or `warning`
 
 Logs stuff to [`logger`](/docs/uppy/#logger) methods.
 
@@ -687,9 +687,9 @@ uppy.log('[Dashboard] adding files...')
 
 #### Parameters
 
-*   **message** *{(string|object)}* — `'info message'` or `{ message: 'Oh no!', details: 'File couldn’t be uploaded' }`
-*   **type** *{string} \[type='info']* — `info`, `warning`, `success` or `error`
-*   **duration** *{number} \[duration = 3000]* — in milliseconds
+*   **message** _{(string|object)}_ — `'info message'` or `{ message: 'Oh no!', details: 'File couldn’t be uploaded' }`
+*   **type** _{string} \[type='info']_ — `info`, `warning`, `success` or `error`
+*   **duration** _{number} \[duration = 3000]_ — in milliseconds
 
 Sets a message in state, with optional details, that can be shown by notification UI plugins. Currently, that means just the [Informer](/docs/informer/) plugin, included by default in Dashboard.
 

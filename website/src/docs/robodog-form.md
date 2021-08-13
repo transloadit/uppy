@@ -31,7 +31,7 @@ When the user submits the form, we intercept it and send the files to Transloadi
 <input type="hidden" name="transloadit" value='[{"ok": "ASSEMBLY_EXECUTING",...}]'>
 ```
 
-Finally, we *really* submit the form—without files, but with those Assembly status objects. You can then handle that in your backend.
+Finally, we _really_ submit the form—without files, but with those Assembly status objects. You can then handle that in your backend.
 
 ## Transloadit
 
@@ -97,11 +97,11 @@ window.Robodog.form('form#upload-form', {
 </script>
 ```
 
-The progress bar will be inserted *into* that element (thus *not* replace it).
+The progress bar will be inserted _into_ that element (thus _not_ replace it).
 
 ## Separating Uploads from Form Submission
 
-By default, `Robodog.form` starts uploads when the user submits the form. There can be a use case for *not* doing this, and instead uploading files in response to some user action, *before* the form is submitted. For example, when using a Dashboard modal, the user can upload their files first and then return to the form to submit it. When they submit the form, it should not start uploading again.
+By default, `Robodog.form` starts uploads when the user submits the form. There can be a use case for _not_ doing this, and instead uploading files in response to some user action, _before_ the form is submitted. For example, when using a Dashboard modal, the user can upload their files first and then return to the form to submit it. When they submit the form, it should not start uploading again.
 
 The `triggerUploadOnSubmit: false` option is available for this purpose. We recommend using it together with the `modal: true` and `closeAfterFinish: true` options:
 
@@ -257,7 +257,7 @@ As for the options that are unavailable:
 
 ### Events
 
-There are no `on*()` *options* anymore, but `.on('...')` methods are provided instead on the Uppy object that is returned by `window.Robodog.form()`.
+There are no `on*()` _options_ anymore, but `.on('...')` methods are provided instead on the Uppy object that is returned by `window.Robodog.form()`.
 
 | jQuery SDK option | Robodog Event |
 |---------------|--------------------------|

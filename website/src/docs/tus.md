@@ -90,7 +90,7 @@ Set to `null` to disable automatic retries, and fail instantly if any chunk fail
 Pass an array of field names to limit the metadata fields that will be added to uploads as [Tus Metadata](https://tus.io/protocols/resumable-upload.html#upload-metadata).
 
 *   Set this to `['name']` to only send the `name` field.
-*   Set this to `null` (the default) to send *all* metadata fields.
+*   Set this to `null` (the default) to send _all_ metadata fields.
 *   Set this to an empty array `[]` to not send any fields.
 
 ### `limit: 5`

@@ -360,7 +360,7 @@ The datacenter region where the target bucket is located. The standalone Compani
 
 #### `providerOptions.s3.awsClientOptions`
 
-You can supply any [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property) in the `providerOptions.s3.awsClientOptions` object, *except for* the below:
+You can supply any [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property) in the `providerOptions.s3.awsClientOptions` object, _except for_ the below:
 
 *   `accessKeyId`. Instead, use the `providerOptions.s3.key` property. This is to make configuration names consistent between different Companion features.
 *   `secretAccessKey`. Instead, use the `providerOptions.s3.secret` property. This is to make configuration names consistent between different Companion features.
@@ -371,7 +371,7 @@ Be aware that some options may cause wrong behaviour if they conflict with Compa
 
 Get the key name for a file. The key is the file path to which the file will be uploaded in your bucket. This option should be a function receiving three arguments:
 
-*   `req`, the HTTP request, for *regular* S3 uploads using the `@uppy/aws-s3` plugin. This parameter is *not* available for multipart uploads using the `@uppy/aws-s3-multipart` plugin;
+*   `req`, the HTTP request, for _regular_ S3 uploads using the `@uppy/aws-s3` plugin. This parameter is _not_ available for multipart uploads using the `@uppy/aws-s3-multipart` plugin;
 *   `filename`, the original name of the uploaded file;
 *   `metadata`, user-provided metadata for the file. See the [`@uppy/aws-s3`](https://uppy.io/docs/aws-s3/#metaFields) docs. Currently, the `@uppy/aws-s3-multipart` plugin unconditionally sends all metadata fields, so all of them are available here.
 

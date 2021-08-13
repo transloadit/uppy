@@ -64,8 +64,9 @@ companion.app({
 You can create a Box App on the [Box Developers site](https://app.box.com/developers/console).
 
 Things to note:
-- Choose "Custom App" and select the "Standard OAuth 2.0 (User Authentication)" app type.
-- Oddly you must enable full write access, or you will get [403 when downloading files](https://support.box.com/hc/en-us/community/posts/360049195613-403-error-while-file-download-API-Call)
+
+*   Choose "Custom App" and select the "Standard OAuth 2.0 (User Authentication)" app type.
+*   Oddly you must enable full write access, or you will get [403 when downloading files](https://support.box.com/hc/en-us/community/posts/360049195613-403-error-while-file-download-API-Call)
 
 You'll be redirected to the app page. This page lists the client ID (app key) and client secret (app secret), which you should use to configure Companion as shown above.
 

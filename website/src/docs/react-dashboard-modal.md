@@ -52,7 +52,7 @@ The `<DashboardModal />` component supports most \[`@uppy/dashboard`]\[@uppy/das
 
 An Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
-The `target={}` prop can be used to mount the Dashboard modal elsewhere in the DOM. If not given, the modal will be mounted at where the component is used. Unlike the raw \[`@uppy/dashboard`]\[@uppy/dashboard] plugin, the `<DashboardModal />` component can *only* take DOM element objects, not CSS selectors.
+The `target={}` prop can be used to mount the Dashboard modal elsewhere in the DOM. If not given, the modal will be mounted at where the component is used. Unlike the raw \[`@uppy/dashboard`]\[@uppy/dashboard] plugin, the `<DashboardModal />` component can _only_ take DOM element objects, not CSS selectors.
 
 To use other plugins like \[`@uppy/webcam`]\[@uppy/webcam] with the `<DashboardModal />` component, add them to the Uppy instance and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 

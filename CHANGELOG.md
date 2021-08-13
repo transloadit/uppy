@@ -651,7 +651,7 @@ In this release we’ve improved testing DX and CORS handling in Companion, adde
 
 Released: 2021-03-10
 
-⚠️ This release fixes a DOS vulnerability in Companion if you were *not* using S3 uploads.
+⚠️ This release fixes a DOS vulnerability in Companion if you were _not_ using S3 uploads.
 We recommend updating ASAP if you run your own Companion instance.
 
 It also adds typescript typings for Companion.

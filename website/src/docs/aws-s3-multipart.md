@@ -107,14 +107,14 @@ The default implementation calls out to Companion's S3 signing endpoints.
 
 A function that generates a batch of signed URLs for the specified part numbers. Receives the `file` object from Uppy's state. The `partData` argument is an object with keys:
 
- - `uploadId` - The UploadID of this Multipart upload.
- - `key` - The object key in the S3 bucket.
- - `partNumbers` - An array of indecies of this part in the file (`PartNumber` in S3 terminology). Note that part numbers are _not_ zero-based.
+*   `uploadId` - The UploadID of this Multipart upload.
+*   `key` - The object key in the S3 bucket.
+*   `partNumbers` - An array of indecies of this part in the file (`PartNumber` in S3 terminology). Note that part numbers are _not_ zero-based.
 
 `prepareUploadParts` should return a `Promise` with an `Object` with keys:
 
- - `presignedUrls` - A JavaScript object with the part numbers as keys and the presigned URL for each part as the value.
- - `headers` - **(Optional)** Custom headers that should be sent to the S3 presigned URL.
+ * `presignedUrls` - A JavaScript object with the part numbers as keys and the presigned URL for each part as the value.
+ * `headers` - **(Optional)** Custom headers that should be sent to the S3 presigned URL.
 
 An example of what the return value should look like:
 ```json

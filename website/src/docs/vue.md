@@ -9,7 +9,7 @@ category: "Other Integrations"
 
 Uppy provides [Vue][] components for the included UI plugins.
 
-Note: *All plugin names are in kebab-case for the HTML element, and in CamelCase for the JavaScript imports, following Vue conventions*
+Note: _All plugin names are in kebab-case for the HTML element, and in CamelCase for the JavaScript imports, following Vue conventions_
 
 ## Installation
 

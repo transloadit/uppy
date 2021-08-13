@@ -17,7 +17,7 @@ Node.js 8.x has reached end-of-life. Consequently, Companion 2.0 has dropped sup
 
 ## Renamed provider options
 
-Pre 2.0, there were inconsistencies in relation to the provider names. In some places, the Google Drive provider was referred to as *google* (e.g., in `providerOptions`) while in some other places, it was referred to as *drive* (e.g., the server endpoints `/drive/list`). Companion 2.0 now consistently uses the name *drive* everywhere. Similarly, the OneDrive provider was made to have the consistent name *onedrive*.
+Pre 2.0, there were inconsistencies in relation to the provider names. In some places, the Google Drive provider was referred to as _google_ (e.g., in `providerOptions`) while in some other places, it was referred to as _drive_ (e.g., the server endpoints `/drive/list`). Companion 2.0 now consistently uses the name _drive_ everywhere. Similarly, the OneDrive provider was made to have the consistent name _onedrive_.
 
 ## Changed Redirect URIs
 

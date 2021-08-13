@@ -107,7 +107,7 @@ Set to `0` to disable limiting.
 
 ### `getResponseData(responseText, response)`
 
-> This is an advanced option intended for use with *almost* S3-compatible storage solutions.
+> This is an advanced option intended for use with _almost_ S3-compatible storage solutions.
 
 Customize response handling once an upload is completed. This passes the function through to @uppy/xhr-upload, see its [documentation](https://uppy.io/docs/xhr-upload/#getResponseData-responseText-response) for API details.
 
@@ -131,7 +131,7 @@ const locales = {
 ## S3 Bucket configuration
 
 S3 buckets do not allow public uploads by default.
-In order to allow Uppy to upload directly to a bucket, at least its CORS permissions need to be configured, and you potentially need to change some of the *Public access settings* that provide an extra layer of public access protection even if the correct CORS permissions are in place.
+In order to allow Uppy to upload directly to a bucket, at least its CORS permissions need to be configured, and you potentially need to change some of the _Public access settings_ that provide an extra layer of public access protection even if the correct CORS permissions are in place.
 
 CORS permissions can be found in the [S3 Management Console](https://console.aws.amazon.com/s3/home).
 Click the bucket that will receive the uploads, then go into the "Permissions" tab and select the "CORS configuration" button.
@@ -212,7 +212,7 @@ The final configuration should look something like this (note that it contains t
 
 Even with these CORS rules in place, you browser might still encounter HTTP status 403 responses with `AccessDenied` in the response body when it tries to `POST` to your bucket. In this case, within the "Permissions" tab of the [S3 Management Console](https://console.aws.amazon.com/s3/home), choose "Public access settings".
 
-It will list general *Public access settings for this bucket*, which can override the rules imposed by your CORS settings. Click on *edit* to manage these settings. Under *Manage public access control lists (ACLs) for this bucket*, make sure that *Block new public ACLs and uploading public objects (Recommended)* is unchecked, and *Save* these settings.
+It will list general _Public access settings for this bucket_, which can override the rules imposed by your CORS settings. Click on _edit_ to manage these settings. Under _Manage public access control lists (ACLs) for this bucket_, make sure that _Block new public ACLs and uploading public objects (Recommended)_ is unchecked, and _Save_ these settings.
 
 If you are using an IAM policy to allow access to the S3 bucket, the policy must have at least the `s3:PutObject` and `s3:PutObjectAcl` permissions scoped to the bucket in question.
 

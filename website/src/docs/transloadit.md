@@ -92,7 +92,7 @@ uppy.use(Dropbox, {
 })
 ```
 
-The value of this constant covers *all* Transloadit's Companion servers, so it does not need to be changed if you are using a custom [`service`](#service) option. However, if you are not using the Transloadit Companion servers at `*.transloadit.com`, make sure to set the `companionAllowedHosts` option to something that matches what you do use.
+The value of this constant covers _all_ Transloadit's Companion servers, so it does not need to be changed if you are using a custom [`service`](#service) option. However, if you are not using the Transloadit Companion servers at `*.transloadit.com`, make sure to set the `companionAllowedHosts` option to something that matches what you do use.
 
 ## Options
 
@@ -154,7 +154,7 @@ When this is enabled, you can listen for the [`transloadit:upload`](#transloadit
 
 Instead of uploading to Transloadit's servers directly, allow another plugin to upload files, and then import those files into the Transloadit Assembly. This is set to `false` by default.
 
-When enabling this option, Transloadit will *not* configure the Tus plugin to upload to Transloadit. Instead, a separate upload plugin must be used. Once the upload completes, the Transloadit plugin adds the uploaded file to the Assembly.
+When enabling this option, Transloadit will _not_ configure the Tus plugin to upload to Transloadit. Instead, a separate upload plugin must be used. Once the upload completes, the Transloadit plugin adds the uploaded file to the Assembly.
 
 For example, to upload files to an S3 bucket and then transcode them:
 
