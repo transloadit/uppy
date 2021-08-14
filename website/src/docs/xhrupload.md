@@ -32,7 +32,7 @@ Install from NPM:
 npm install @uppy/xhr-upload
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
 const { XHRUpload } = Uppy
@@ -56,7 +56,7 @@ Configures which HTTP method to use for the upload.
 
 ### `formData: true`
 
-Configures whether or not to use a multipart form upload, using [FormData][].
+Configures whether to use a multipart form upload, using [FormData][].
 This works similarly to using a `<form>` element with an `<input type="file">` for uploads.
 When set to `true`, file metadata is also sent to the endpoint as separate form fields.
 When set to `false`, only the file contents are sent.
@@ -99,7 +99,7 @@ const headers = (file) => {
 }
 ```
 
-> ⚠️ The function syntax is not available when the [`bundle: true`](#bundle-false) option is set. `bundle` is disabled by default.
+> ⚠️ The function syntax is not available when the [`bundle: true`](#bundle-false) option is set.
 
 ### `bundle: false`
 
@@ -122,7 +122,7 @@ uppy.setFileState(otherFileID, {
 
 ### `validateStatus(statusCode, responseText, response)`
 
-> This option is only used for **local** uploads at this time. Uploads from remote providers like Google Drive or Instagram do not support this and will always use the default.
+> This option is only used for **local** uploads. Uploads from remote providers like Google Drive or Instagram do not support this and will always use the default.
 
 Check if the response from the upload endpoint indicates that the upload was successful. By default, responses with a 2xx HTTP status code are considered successful.
 
@@ -142,7 +142,7 @@ The `responseText` is the XHR endpoint response as a string.
 
 ### `getResponseData(responseText, response)`
 
-When an upload has completed, Uppy will extract response data from the upload endpoint. This response data will be available on the file's `.response` property, and be emitted in the [`upload-success`][uppy.upload-success] event:
+When an upload has completed, Uppy will extract response data from the upload endpoint. This response data will be available on the file’s `.response` property, and be emitted in the [`upload-success`][uppy.upload-success] event:
 
 ```js
 const responseData = uppy.getFile(fileID).response
@@ -182,9 +182,9 @@ function getResponseData (responseText, response) {
 
 The `responseText` is the XHR endpoint response as a string.
 
-For uploads from the user's device, `response` is the [XMLHttpRequest][] object.
+For uploads from the user’s device, `response` is the [XMLHttpRequest][] object.
 
-When uploading files from remote providers such as Dropbox or Instagram, Companion sends upload response data to the client. This is made available in the `getResponseData()` function as well. The `response` object from Companion contains some properties named after their [XMLHttpRequest][] counterparts:
+When uploading files from remote providers such as Dropbox or Instagram, Companion sends upload response data to the client. This is made available in the `getResponseData()` function as well. The `response` object from Companion has some properties named after their [XMLHttpRequest][] counterparts:
 
 *   `response.responseText` - the XHR endpoint response as a string;
 *   `response.status` - the HTTP status code;
@@ -219,15 +219,15 @@ The default for the timeout is 30 seconds.
 
 ### `limit: 5`
 
-Limit the amount of uploads going on at the same time. Setting this to `0` means there is no limit on concurrent uploads.
+Limit the amount of uploads going on at the same time. Setting this option to `0` means no limit on concurrent uploads.
 
 ### `responseType: ''`
 
-The response type expected from the server, determining how the `xhr.response` property should be filled. The `xhr.response` property can be accessed in a custom [`getResponseData()`](#getResponseData-responseText-response) callback. This option sets the [`XMLHttpRequest.responseType`][XHR.responseType] property. Only '', 'text', 'arraybuffer', 'blob' and 'document' are widely supported by browsers, so it's recommended to use one of those. The default is the empty string, which is equivalent to 'text' for the `xhr.response` property.
+The response type expected from the server, determining how the `xhr.response` property should be filled. The `xhr.response` property can be accessed in a custom [`getResponseData()`](#getResponseData-responseText-response) callback. This option sets the [`XMLHttpRequest.responseType`][XHR.responseType] property. Only `''`, `'text'`, `'arraybuffer'`, `'blob'` and `'document'` are widely supported by browsers, so it’s recommended to use one of those. The default is the empty string, which is equivalent to `'text'` for the `xhr.response` property.
 
 ### `withCredentials: false`
 
-Indicates whether or not cross-site Access-Control requests should be made using credentials.
+Indicates whether cross-site Access-Control requests should be made using credentials.
 
 ### `locale: {}`
 
@@ -258,7 +258,7 @@ uppy.on('file-added', (file) => {
 
 Now, a form field named `size` will be sent along to the [`endpoint`](#endpoint-39-39) once the upload starts.
 
-By default, all metadata is sent, including Uppy's default `name` and `type` metadata. If you do not want the `name` and `type` metadata properties to be sent to your upload endpoint, you can use the [`metaFields`](#metaFields-null) option to restrict the field names that should be sent.
+By default, all metadata is sent, including Uppy’s default `name` and `type` metadata. If you do not want the `name` and `type` metadata properties to be sent to your upload endpoint, you can use the [`metaFields`](#metaFields-null) option to restrict the field names that should be sent.
 
 ```js
 uppy.use(XHRUpload, {
@@ -282,7 +282,7 @@ $file_name = $_POST['name']; // desired name of the file
 move_uploaded_file($file_path, './img/' . basename($file_name)); // save the file in `img/`
 ```
 
-Note how we are using `$_POST['name']` instead of `$my_file['name']`. `$my_file['name']` contains the original name of the file on the user's device. `$_POST['name']` contains the `name` metadata value for the uploaded file, which can be edited by the user using the [Dashboard](/docs/dashboard).
+Note how we are using `$_POST['name']` instead of `$my_file['name']`. `$my_file['name']` has the original name of the file on the user’s device. `$_POST['name']` has the `name` metadata value for the uploaded file, which can be edited by the user using the [Dashboard](/docs/dashboard).
 
 Set a custom `fieldName` to make working with the `$_FILES` array a bit less convoluted:
 
