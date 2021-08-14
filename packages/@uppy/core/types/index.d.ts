@@ -30,28 +30,6 @@ type LocaleStrings<TNames extends string> = {
 
 type LogLevel = 'info' | 'warning' | 'error'
 
-// This hack accepts _any_ string for `Event`, but also tricks VSCode and friends into providing autocompletions
-// for the names listed. https://github.com/microsoft/TypeScript/issues/29729#issuecomment-505826972
-// eslint-disable-next-line no-use-before-define
-type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>)
-
-type Event = LiteralUnion<
-  | 'file-added'
-  | 'file-removed'
-  | 'upload'
-  | 'upload-progress'
-  | 'upload-success'
-  | 'complete'
-  | 'error'
-  | 'upload-error'
-  | 'upload-retry'
-  | 'info-visible'
-  | 'info-hidden'
-  | 'cancel-all'
-  | 'restriction-failed'
-  | 'reset-progress'
->
-
 export type Store = UppyUtils.Store
 
 export type InternalMetadata = UppyUtils.InternalMetadata
@@ -242,22 +220,16 @@ export class Uppy {
 
   on<TMeta extends IndexedObject<any>, K extends keyof UppyEventMap>(event: K, callback: UppyEventMap<TMeta>[K]): this
 
-  on(event: Event, callback: (...args: any[]) => void): this
-
   once<K extends keyof UppyEventMap>(event: K, callback: UppyEventMap[K]): this
 
   once<TMeta extends IndexedObject<any>, K extends keyof UppyEventMap>(event: K, callback: UppyEventMap<TMeta>[K]): this
 
-  once(event: Event, callback: (...args: any[]) => void): this
-
   off<K extends keyof UppyEventMap>(event: K, callback: UppyEventMap[K]): this
-
-  off(event: Event, callback: (...args: any[]) => void): this
 
   /**
    * For use by plugins only.
    */
-  emit(event: Event, ...args: any[]): void
+  emit(event: string, ...args: any[]): void
 
   updateAll(state: Record<string, unknown>): void
 

@@ -1,4 +1,4 @@
-import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type { PluginOptions, UIPlugin, PluginTarget, UppyFile } from '@uppy/core'
 import type Cropper from 'cropperjs'
 import ImageEditorLocale from './generatedLocale'
 
@@ -29,3 +29,15 @@ export interface ImageEditorOptions extends PluginOptions {
 declare class ImageEditor extends UIPlugin<ImageEditorOptions> {}
 
 export default ImageEditor
+
+// Events
+
+export type FileEditorStartCallback<TMeta> = (file: UppyFile<TMeta>) => void;
+export type FileEditorCompleteCallback<TMeta> = (updatedFile: UppyFile<TMeta>) => void;
+
+declare module '@uppy/core' {
+  export interface UppyEventMap<TMeta> {
+    'file-editor:start' : FileEditorStartCallback<TMeta>
+    'file-editor:complete': FileEditorCompleteCallback<TMeta>
+  }
+}

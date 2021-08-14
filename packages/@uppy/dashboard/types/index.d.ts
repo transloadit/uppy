@@ -1,4 +1,4 @@
-import type { PluginOptions, UIPlugin, PluginTarget, UppyFile } from '@uppy/core'
+import type { PluginOptions, UIPlugin, PluginTarget, UppyFile, GenericEventCallback } from '@uppy/core'
 import type { StatusBarLocale } from '@uppy/status-bar'
 import DashboardLocale from './generatedLocale'
 
@@ -75,3 +75,16 @@ declare class Dashboard extends UIPlugin<DashboardOptions> {
 }
 
 export default Dashboard
+
+// Events
+
+export type DashboardFileEditStartCallback<TMeta> = (file: UppyFile<TMeta>) => void;
+export type DashboardFileEditCompleteCallback<TMeta> = (file: UppyFile<TMeta>) => void;
+declare module '@uppy/core' {
+  export interface UppyEventMap<TMeta> {
+    'dashboard:modal-open': GenericEventCallback
+    'dashboard:modal-closed': GenericEventCallback
+    'dashboard:file-edit-state': DashboardFileEditStartCallback<TMeta>
+    'dashboard:file-edit-complete': DashboardFileEditCompleteCallback<TMeta>
+  }
+}
