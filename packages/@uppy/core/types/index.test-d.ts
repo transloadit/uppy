@@ -100,7 +100,7 @@ type anyObject = Record<string, unknown>
 
   // Meta signature
   type Meta = {myCustomMetadata: string}
-  uppy.on<Meta, 'complete'>('complete', (result) => {
+  uppy.on<'complete', Meta>('complete', (result) => {
     const meta = result.successful[0].meta.myCustomMetadata
   })
 }
