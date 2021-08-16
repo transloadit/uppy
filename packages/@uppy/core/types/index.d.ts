@@ -99,10 +99,6 @@ export class BasePlugin<TOptions extends PluginOptions = DefaultPluginOptions> {
   install(): void
 
   uninstall(): void
-
-  onMount(): void
-
-  onUnmount(): void
 }
 
 export class UIPlugin<TOptions extends PluginOptions = DefaultPluginOptions> extends BasePlugin<TOptions> {
@@ -126,6 +122,10 @@ export class UIPlugin<TOptions extends PluginOptions = DefaultPluginOptions> ext
   addTarget<TPlugin extends UIPlugin>(plugin: TPlugin): void
 
   unmount(): void
+
+  onMount(): void
+
+  onUnmount(): void
 }
 
 export type PluginTarget =

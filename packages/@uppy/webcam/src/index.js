@@ -394,13 +394,15 @@ module.exports = class Webcam extends UIPlugin {
 
   async stop () {
     if (this.stream) {
-      this.stream.getAudioTracks().forEach((track) => track.stop())
-      this.stream.getVideoTracks().forEach((track) => track.stop())
+      const audioTracks = this.stream.getAudioTracks()
+      const videoTracks = this.stream.getVideoTracks()
+
+      audioTracks.concat(videoTracks).forEach((track) => track.stop())
     }
 
     if (this.recorder) {
       await new Promise((resolve) => {
-        this.recorder.addEventListener('stop', () => resolve())
+        this.recorder.addEventListener('stop', resolve, { once: true })
         this.recorder.stop()
 
         if (this.opts.showRecordingLength) {

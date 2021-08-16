@@ -205,8 +205,7 @@ module.exports = class Dashboard extends UIPlugin {
   }
 
   hideAllPanels = () => {
-    const dashboardState = this.getPluginState()
-    const activePlugin = this.uppy.getPlugin(dashboardState.activePickerPanel.id)
+    const state = this.getPluginState()
     const update = {
       activePickerPanel: false,
       showAddFilesPanel: false,
@@ -215,17 +214,13 @@ module.exports = class Dashboard extends UIPlugin {
       showFileEditor: false,
     }
 
-    if (dashboardState.activePickerPanel === update.activePickerPanel
-        && dashboardState.showAddFilesPanel === update.showAddFilesPanel
-        && dashboardState.showFileEditor === update.showFileEditor
-        && dashboardState.activeOverlayType === update.activeOverlayType) {
+    if (state.activePickerPanel === update.activePickerPanel
+        && state.showAddFilesPanel === update.showAddFilesPanel
+        && state.showFileEditor === update.showFileEditor
+        && state.activeOverlayType === update.activeOverlayType) {
       // avoid doing a state update if nothing changed
       return
     }
-
-    // Dashboard plugins can define a `onUnmount` method to perform
-    // any clean up that may be required when the user clicked cancel.
-    activePlugin?.onUnmount()
 
     this.setPluginState(update)
   }
