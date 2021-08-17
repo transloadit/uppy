@@ -1013,9 +1013,9 @@ module.exports = class Dashboard extends UIPlugin {
       throw new Error('[Dashboard] `closeAfterFinish: true` cannot be used on an inline Dashboard, because an inline Dashboard cannot be closed at all. Either set `inline: false`, or disable the `closeAfterFinish` option.')
     }
 
-    const { allowMultipleUploads } = this.uppy.opts
-    if (allowMultipleUploads && closeAfterFinish) {
-      this.uppy.log('[Dashboard] When using `closeAfterFinish`, we recommended setting the `allowMultipleUploads` option to `false` in the Uppy constructor. See https://uppy.io/docs/uppy/#allowMultipleUploads-true', 'warning')
+    const { allowMultipleUploads, allowMultipleUploadBatches } = this.uppy.opts
+    if ((allowMultipleUploads || allowMultipleUploadBatches) && closeAfterFinish) {
+      this.uppy.log('[Dashboard] When using `closeAfterFinish`, we recommended setting the `allowMultipleUploadBatches` option to `false` in the Uppy constructor. See https://uppy.io/docs/uppy/#allowMultipleUploads-true', 'warning')
     }
 
     const { target } = this.opts

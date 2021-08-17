@@ -138,6 +138,7 @@ export interface UppyOptions<TMeta extends IndexedObject<any> = Record<string, u
   id?: string
   autoProceed?: boolean
   allowMultipleUploads?: boolean
+  allowMultipleUploadBatches?: boolean
   logger?: Logger
   debug?: boolean
   restrictions?: Restrictions

@@ -122,7 +122,11 @@ class Uppy {
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
+      /**
+       * @deprecated The method should not be used
+       */
       allowMultipleUploads: true,
+      allowMultipleUploadBatches: true,
       debug: false,
       restrictions: {
         maxFileSize: null,
@@ -1520,7 +1524,7 @@ class Uppy {
     })
 
     this.setState({
-      allowNewUpload: this.opts.allowMultipleUploads !== false,
+      allowNewUpload: this.opts.allowMultipleUploadBatches !== false && this.opts.allowMultipleUploads !== false,
 
       currentUploads: {
         ...currentUploads,

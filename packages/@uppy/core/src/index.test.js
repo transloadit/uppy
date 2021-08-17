@@ -722,8 +722,31 @@ describe('src/Core', () => {
       expect(core.getFiles().length).toEqual(0)
     })
 
-    describe('with allowMultipleUploads: false', () => {
+    describe('with allowMultipleUploadBatches: false', () => {
       it('allows no new files after upload', async () => {
+        const core = new Core({ allowMultipleUploadBatches: false })
+        core.addFile({
+          source: 'jest',
+          name: 'foo.jpg',
+          type: 'image/jpeg',
+          data: new File([sampleImage], { type: 'image/jpeg' }),
+        })
+
+        await core.upload()
+
+        expect(() => {
+          core.addFile({
+            source: 'jest',
+            name: '123.foo',
+            type: 'image/jpeg',
+            data: new File([sampleImage], { type: 'image/jpeg' }),
+          })
+        }).toThrow(
+          /Cannot add new files: already uploading/
+        )
+      })
+
+      it('allows no new files after upload with legacy allowMultipleUploads option', async () => {
         const core = new Core({ allowMultipleUploads: false })
         core.addFile({
           source: 'jest',
@@ -747,7 +770,7 @@ describe('src/Core', () => {
       })
 
       it('does not allow new files after the removeFile() if some file is still present', async () => {
-        const core = new Core({ allowMultipleUploads: false })
+        const core = new Core({ allowMultipleUploadBatches: false })
 
         // adding 2 files
         const fileId1 = core.addFile({
@@ -770,7 +793,7 @@ describe('src/Core', () => {
       })
 
       it('allows new files after the last removeFile()', async () => {
-        const core = new Core({ allowMultipleUploads: false })
+        const core = new Core({ allowMultipleUploadBatches: false })
 
         // adding 2 files
         const fileId1 = core.addFile({
@@ -916,8 +939,8 @@ describe('src/Core', () => {
       })
     })
 
-    it('only allows a single upload() batch when allowMultipleUploads: false', async () => {
-      const core = new Core({ allowMultipleUploads: false })
+    it('only allows a single upload() batch when allowMultipleUploadBatches: false', async () => {
+      const core = new Core({ allowMultipleUploadBatches: false })
       core.addFile({
         source: 'jest',
         name: 'foo.jpg',
@@ -937,8 +960,8 @@ describe('src/Core', () => {
       )
     })
 
-    it('allows new files again with allowMultipleUploads: false after reset() was called', async () => {
-      const core = new Core({ allowMultipleUploads: false })
+    it('allows new files again with allowMultipleUploadBatches: false after reset() was called', async () => {
+      const core = new Core({ allowMultipleUploadBatches: false })
 
       core.addFile({
         source: 'jest',
@@ -1089,12 +1112,12 @@ describe('src/Core', () => {
       core.setOptions({
         id: 'lolUppy',
         autoProceed: true,
-        allowMultipleUploads: true,
+        allowMultipleUploadBatches: true,
       })
 
       expect(core.opts.id).toEqual('lolUppy')
       expect(core.opts.autoProceed).toEqual(true)
-      expect(core.opts.allowMultipleUploads).toEqual(true)
+      expect(core.opts.allowMultipleUploadBatches).toEqual(true)
     })
 
     it('should change locale on the fly', () => {
