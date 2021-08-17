@@ -592,7 +592,9 @@ module.exports = class Dashboard extends UIPlugin {
     event.preventDefault()
     event.stopPropagation()
 
-    if (this.opts.disabled || this.opts.disableLocalFiles) {
+    if (this.opts.disabled
+      || this.opts.disableLocalFiles
+      || !this.uppy.getState().allowNewUpload) {
       return
     }
 
@@ -608,7 +610,9 @@ module.exports = class Dashboard extends UIPlugin {
     event.preventDefault()
     event.stopPropagation()
 
-    if (this.opts.disabled || this.opts.disableLocalFiles) {
+    if (this.opts.disabled
+      || this.opts.disableLocalFiles
+      || !this.uppy.getState().allowNewUpload) {
       return
     }
 
@@ -623,7 +627,9 @@ module.exports = class Dashboard extends UIPlugin {
     event.preventDefault()
     event.stopPropagation()
 
-    if (this.opts.disabled || this.opts.disableLocalFiles) {
+    if (this.opts.disabled
+        || this.opts.disableLocalFiles
+        || !this.uppy.getState().allowNewUpload) {
       return
     }
 
