@@ -742,7 +742,7 @@ describe('src/Core', () => {
             data: new File([sampleImage], { type: 'image/jpeg' }),
           })
         }).toThrow(
-          /Cannot add new files: already uploading/
+          /Cannot add more files/
         )
       })
 
@@ -765,7 +765,7 @@ describe('src/Core', () => {
             data: new File([sampleImage], { type: 'image/jpeg' }),
           })
         }).toThrow(
-          /Cannot add new files: already uploading/
+          /Cannot add more files/
         )
       })
 
