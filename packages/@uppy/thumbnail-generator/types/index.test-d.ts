@@ -15,4 +15,11 @@ import ThumbnailGenerator from '..'
       },
     },
   })
+
+  uppy.on('thumbnail:generated', (file, preview) => {
+    const img = document.createElement('img')
+    img.src = preview
+    img.width = 100
+    document.body.appendChild(img)
+  })
 }

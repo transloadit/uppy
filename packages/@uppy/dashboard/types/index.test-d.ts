@@ -48,6 +48,10 @@ import Dashboard from '..'
       },
     ],
   })
+
+  uppy.on('dashboard:file-edit-state', (file) => {
+    const fileName = file.name
+  })
 }
 
 {

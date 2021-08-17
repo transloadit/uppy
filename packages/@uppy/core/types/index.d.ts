@@ -14,7 +14,9 @@ export interface IndexedObject<T> {
 export type UppyFile<
   TMeta extends IndexedObject<any> = Record<string, unknown>,
   TBody extends IndexedObject<any> = Record<string, unknown>
-> = UppyUtils.UppyFile<TMeta, TBody>
+  > = UppyUtils.UppyFile<TMeta, TBody>
+
+export type FileProgress = UppyUtils.FileProgress;
 
 // Replace the `meta` property type with one that allows omitting internal metadata addFile() will add that
 type UppyFileWithoutMeta<TMeta, TBody> = OmitKey<
@@ -27,28 +29,6 @@ type LocaleStrings<TNames extends string> = {
 }
 
 type LogLevel = 'info' | 'warning' | 'error'
-
-// This hack accepts _any_ string for `Event`, but also tricks VSCode and friends into providing autocompletions
-// for the names listed. https://github.com/microsoft/TypeScript/issues/29729#issuecomment-505826972
-// eslint-disable-next-line no-use-before-define
-type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>)
-
-type Event = LiteralUnion<
-  | 'file-added'
-  | 'file-removed'
-  | 'upload'
-  | 'upload-progress'
-  | 'upload-success'
-  | 'complete'
-  | 'error'
-  | 'upload-error'
-  | 'upload-retry'
-  | 'info-visible'
-  | 'info-hidden'
-  | 'cancel-all'
-  | 'restriction-failed'
-  | 'reset-progress'
->
 
 export type Store = UppyUtils.Store
 
@@ -65,7 +45,7 @@ export interface FailedUppyFile<TMeta, TBody> extends UppyFile<TMeta, TBody> {
 export interface AddFileOptions<
   TMeta = IndexedObject<any>,
   TBody = IndexedObject<any>
-> extends Partial<UppyFileWithoutMeta<TMeta, TBody>> {
+  > extends Partial<UppyFileWithoutMeta<TMeta, TBody>> {
   // `.data` is the only required property here.
   data: Blob | File
   meta?: Partial<InternalMetadata> & TMeta
@@ -177,7 +157,7 @@ export interface UppyOptions<TMeta extends IndexedObject<any> = Record<string, u
 export interface UploadResult<
   TMeta extends IndexedObject<any> = Record<string, unknown>,
   TBody extends IndexedObject<any> = Record<string, unknown>
-> {
+  > {
   successful: UploadedUppyFile<TMeta, TBody>[]
   failed: FailedUppyFile<TMeta, TBody>[]
 }
@@ -185,14 +165,14 @@ export interface UploadResult<
 export interface State<
   TMeta extends IndexedObject<any> = Record<string, unknown>,
   TBody extends IndexedObject<any> = Record<string, unknown>
-> extends IndexedObject<any> {
+  > extends IndexedObject<any> {
   capabilities?: { resumableUploads?: boolean }
   currentUploads: Record<string, unknown>
   error?: string
   files: {
     [key: string]:
-      | UploadedUppyFile<TMeta, TBody>
-      | FailedUppyFile<TMeta, TBody>
+    | UploadedUppyFile<TMeta, TBody>
+    | FailedUppyFile<TMeta, TBody>
   }
   info?: {
     isHidden: boolean
@@ -204,32 +184,56 @@ export interface State<
   totalProgress: number
 }
 
-type UploadSuccessCallback<T> = (file: UppyFile<T>, body: any, uploadURL: string) => void
-type UploadCompleteCallback<T> = (result: UploadResult<T>) => void
+export type GenericEventCallback = () => void;
+export type FileAddedCallback<TMeta> = (file: UppyFile<TMeta>) => void;
+export type FilesAddedCallback<TMeta> = (files: UppyFile<TMeta>[]) => void;
+export type FileRemovedCallback<TMeta> = (file: UppyFile<TMeta>, reason: 'removed-by-user' | 'cancel-all') => void;
+export type UploadCallback = (data: {id: string, fileIDs: string[]}) => void;
+export type ProgressCallback = (progress: number) => void;
+export type UploadProgressCallback<TMeta> = (file: UppyFile<TMeta>, progress: FileProgress) => void;
+export type UploadSuccessCallback<TMeta> = (file: UploadedUppyFile<TMeta, unknown>, body: unknown, uploadURL: string) => void
+export type UploadCompleteCallback<TMeta> = (result: UploadResult<TMeta>) => void
+export type ErrorCallback = (error: Error) => void;
+export type UploadErrorCallback<TMeta> = (file: FailedUppyFile<TMeta, unknown>, error: Error, response: unknown) => void;
+export type UploadRetryCallback = (fileID: string) => void;
+export type RestrictionFailedCallback<TMeta> = (file: UppyFile<TMeta>, error: Error) => void;
+
+export interface UppyEventMap<TMeta = Record<string, unknown>> {
+  'file-added': FileAddedCallback<TMeta>
+  'files-added': FilesAddedCallback<TMeta>
+  'file-removed': FileRemovedCallback<TMeta>
+  'upload': UploadCallback
+  'progress': ProgressCallback
+  'upload-progress': UploadProgressCallback<TMeta>
+  'upload-success': UploadSuccessCallback<TMeta>
+  'complete': UploadCompleteCallback<TMeta>
+  'error': ErrorCallback
+  'upload-error': UploadErrorCallback<TMeta>
+  'upload-retry': UploadRetryCallback
+  'info-visible': GenericEventCallback
+  'info-hidden': GenericEventCallback
+  'cancel-all': GenericEventCallback
+  'restriction-failed': RestrictionFailedCallback<TMeta>
+  'reset-progress': GenericEventCallback
+}
 
 export class Uppy {
   constructor(opts?: UppyOptions)
 
-  on<TMeta extends IndexedObject<any> = Record<string, unknown>>(event: 'upload-success', callback: UploadSuccessCallback<TMeta>): this
+  on<K extends keyof UppyEventMap>(event: K, callback: UppyEventMap[K]): this
 
-  on<TMeta extends IndexedObject<any> = Record<string, unknown>>(event: 'complete', callback: UploadCompleteCallback<TMeta>): this
+  on<K extends keyof UppyEventMap, TMeta extends IndexedObject<any>>(event: K, callback: UppyEventMap<TMeta>[K]): this
 
-  on(event: Event, callback: (...args: any[]) => void): this
+  once<K extends keyof UppyEventMap>(event: K, callback: UppyEventMap[K]): this
 
-  once<TMeta extends IndexedObject<any> = Record<string, unknown>>(event: 'upload-success', callback: UploadSuccessCallback<TMeta>): this
+  once<K extends keyof UppyEventMap, TMeta extends IndexedObject<any>>(event: K, callback: UppyEventMap<TMeta>[K]): this
 
-  once<TMeta extends IndexedObject<any> = Record<string, unknown>>(event: 'complete', callback: UploadCompleteCallback<TMeta>): this
-
-  once(event: Event, callback: (...args: any[]) => void): this
-
-  off(event: Event, callback: (...args: any[]) => void): this
-
-  off(event: Event, callback: (...args: any[]) => void): this
+  off<K extends keyof UppyEventMap>(event: K, callback: UppyEventMap[K]): this
 
   /**
    * For use by plugins only.
    */
-  emit(event: Event, ...args: any[]): void
+  emit(event: string, ...args: any[]): void
 
   updateAll(state: Record<string, unknown>): void
 
