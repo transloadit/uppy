@@ -75,15 +75,12 @@ class DashboardModal extends React.Component {
 }
 
 DashboardModal.propTypes = {
-  target: PropTypes.instanceOf(HTMLElement),
+  target: PropTypes.oneOf([PropTypes.elementType, PropTypes.string]),
   open: PropTypes.bool,
   onRequestClose: PropTypes.func,
   closeModalOnClickOutside: PropTypes.bool,
   disablePageScrollWhenModalOpen: PropTypes.bool,
   ...basePropTypes,
-}
-
-DashboardModal.defaultProps = {
 }
 
 module.exports = DashboardModal
