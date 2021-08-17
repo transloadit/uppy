@@ -1,7 +1,7 @@
 import type { PluginOptions, UppyFile, BasePlugin } from '@uppy/core'
 import TransloaditLocale from './generatedLocale'
 
-  interface FileInfo {
+export interface FileInfo {
     id: string,
     name: string,
     basename: string,
@@ -27,7 +27,8 @@ export interface Result extends FileInfo {
     cost: number,
     execTime: number,
     queue: string,
-    queueTime: number
+    queueTime: number,
+    localId: string | null
   }
 
 export interface Assembly {
@@ -127,3 +128,21 @@ declare class Transloadit extends BasePlugin<TransloaditOptions> {
 }
 
 export default Transloadit
+
+// Events
+
+export type TransloaditAssemblyCreatedCallback = (assembly: Assembly, fileIDs: string[]) => void;
+export type TransloaditUploadedCallback = (file: FileInfo, assembly: Assembly) => void;
+export type TransloaditAssemblyExecutingCallback = (assembly: Assembly) => void;
+export type TransloaditResultCallback = (stepName: string, result: Result, assembly: Assembly) => void;
+export type TransloaditCompleteCallback = (assembly: Assembly) => void;
+
+declare module '@uppy/core' {
+  export interface UppyEventMap {
+    'transloadit:assembly-created': TransloaditAssemblyCreatedCallback
+    'transloadit:upload': TransloaditUploadedCallback
+    'transloadit:assembly-executing': TransloaditAssemblyExecutingCallback
+    'transloadit:result': TransloaditResultCallback
+    'transloadit:complete': TransloaditCompleteCallback
+  }
+}

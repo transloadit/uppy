@@ -25,6 +25,14 @@ const validParams = {
       steps: {},
     },
   })
+  // Access to both transloadit events and core events
+  uppy.on('transloadit:assembly-created', (assembly, fileIDs) => {
+    const status = assembly.ok
+  })
+
+  uppy.on('complete', (result) => {
+    const success = result.successful
+  })
 }
 
 {

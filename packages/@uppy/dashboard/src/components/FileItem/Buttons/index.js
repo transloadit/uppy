@@ -17,8 +17,8 @@ function EditButton ({
       <button
         className="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit"
         type="button"
-        aria-label={i18n('editFile', { file: file.meta.name })}
-        title={i18n('editFile', { file: file.meta.name })}
+        aria-label={i18n('editFileWithFilename', { file: file.meta.name })}
+        title={i18n('editFileWithFilename', { file: file.meta.name })}
         onClick={() => onClick()}
       >
         <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="14" height="14" viewBox="0 0 14 14">

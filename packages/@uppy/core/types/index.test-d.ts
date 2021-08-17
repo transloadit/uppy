@@ -87,11 +87,18 @@ type anyObject = Record<string, unknown>
   uppy.once('upload', () => {})
   uppy.once('complete', () => {})
   uppy.once('error', () => {})
-
-  // can register listeners on custom events
-  uppy.on('dashboard:modal-closed', () => {})
-  uppy.once('dashboard:modal-closed', () => {})
   /* eslint-enable @typescript-eslint/no-empty-function */
+
+  // Normal event signature
+  uppy.on('complete', (result) => {
+    const successResults = result.successful
+  })
+
+  // Meta signature
+  type Meta = {myCustomMetadata: string}
+  uppy.on<'complete', Meta>('complete', (result) => {
+    const meta = result.successful[0].meta.myCustomMetadata
+  })
 }
 
 {
