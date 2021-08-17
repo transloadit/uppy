@@ -75,7 +75,7 @@ class DashboardModal extends React.Component {
 }
 
 DashboardModal.propTypes = {
-  target: PropTypes.oneOf([PropTypes.elementType, PropTypes.string]),
+  target: typeof window !== 'undefined' ? PropTypes.instanceOf(window.HTMLElement) : PropTypes.any,
   open: PropTypes.bool,
   onRequestClose: PropTypes.func,
   closeModalOnClickOutside: PropTypes.bool,

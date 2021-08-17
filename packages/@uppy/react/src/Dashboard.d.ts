@@ -1,17 +1,22 @@
 import * as React from 'react'
 import type { DashboardOptions } from '@uppy/dashboard'
-import { Omit, ToUppyProps } from './CommonTypes'
+import { Omit, WithBaseUppyProps } from './CommonTypes'
 
 // This type is mapped into `DashboardProps` below so IntelliSense doesn't display this big mess of nested types
 type DashboardPropsInner = Omit<
-  ToUppyProps<DashboardOptions>,
+  WithBaseUppyProps<DashboardOptions>,
   // Remove the modal-only props
-  'animateOpenClose' | 'browserBackButtonClose' | 'inline' | 'onRequestCloseModal' | 'trigger'
-> & React.BaseHTMLAttributes<HTMLDivElement>
+  | 'animateOpenClose'
+  | 'browserBackButtonClose'
+  | 'inline'
+  | 'onRequestCloseModal'
+  | 'trigger'
+> &
+  React.BaseHTMLAttributes<HTMLDivElement>;
 
 export type DashboardProps = {
-   [K in keyof DashboardPropsInner]: DashboardPropsInner[K]
-}
+  [K in keyof DashboardPropsInner]: DashboardPropsInner[K];
+};
 
 /**
  * React Component that renders a Dashboard for an Uppy instance. This component
