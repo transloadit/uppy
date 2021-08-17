@@ -45,6 +45,15 @@ class FileCard extends Component {
     this.props.toggleFileCard(false)
   }
 
+  saveOnEnter = (ev) => {
+    if (ev.keyCode === 13) {
+      ev.stopPropagation()
+      ev.preventDefault()
+      const file = this.props.files[this.props.fileCardFor]
+      this.props.saveFileCard(this.state.formState, file.id)
+    }
+  }
+
   // TODO(aduh95): move this to `UNSAFE_componentWillMount` when updating to Preact X+.
   componentWillMount () {
     this.form.addEventListener('submit', this.handleSave)
@@ -85,6 +94,9 @@ class FileCard extends Component {
                 required={required}
                 value={this.state.formState[field.id]}
                 placeholder={field.placeholder}
+                onKeyUp={'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter}
+                onKeyDown={'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter}
+                onKeyPress={'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter}
                 onInput={ev => this.updateMeta(ev.target.value, field.id)}
                 data-uppy-super-focusable
               />
@@ -154,6 +166,7 @@ class FileCard extends Component {
             <button
               className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
               type="submit"
+              onClick={'form' in HTMLButtonElement.prototype ? undefined : this.handleSave}
               form={this.form.id}
             >
               {this.props.i18n('saveChanges')}
