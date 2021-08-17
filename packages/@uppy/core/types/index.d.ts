@@ -122,6 +122,10 @@ export class UIPlugin<TOptions extends PluginOptions = DefaultPluginOptions> ext
   addTarget<TPlugin extends UIPlugin>(plugin: TPlugin): void
 
   unmount(): void
+
+  onMount(): void
+
+  onUnmount(): void
 }
 
 export type PluginTarget =

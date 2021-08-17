@@ -206,6 +206,7 @@ module.exports = class Dashboard extends UIPlugin {
   }
 
   hideAllPanels = () => {
+    const state = this.getPluginState()
     const update = {
       activePickerPanel: false,
       showAddFilesPanel: false,
@@ -214,11 +215,10 @@ module.exports = class Dashboard extends UIPlugin {
       showFileEditor: false,
     }
 
-    const current = this.getPluginState()
-    if (current.activePickerPanel === update.activePickerPanel
-        && current.showAddFilesPanel === update.showAddFilesPanel
-        && current.showFileEditor === update.showFileEditor
-        && current.activeOverlayType === update.activeOverlayType) {
+    if (state.activePickerPanel === update.activePickerPanel
+        && state.showAddFilesPanel === update.showAddFilesPanel
+        && state.showFileEditor === update.showFileEditor
+        && state.activeOverlayType === update.activeOverlayType) {
       // avoid doing a state update if nothing changed
       return
     }
