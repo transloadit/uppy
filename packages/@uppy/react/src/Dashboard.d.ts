@@ -12,11 +12,11 @@ type DashboardPropsInner = Omit<
   | 'onRequestCloseModal'
   | 'trigger'
 > &
-  React.BaseHTMLAttributes<HTMLDivElement>;
+  React.BaseHTMLAttributes<HTMLDivElement>
 
 export type DashboardProps = {
-  [K in keyof DashboardPropsInner]: DashboardPropsInner[K];
-};
+  [K in keyof DashboardPropsInner]: DashboardPropsInner[K]
+}
 
 /**
  * React Component that renders a Dashboard for an Uppy instance. This component
