@@ -85,7 +85,7 @@ class Uppy {
         missingRequiredMetaFieldOnFile: 'Missing required meta fields in %{fileName}',
         inferiorSize: 'This file is smaller than the allowed size of %{size}',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
-        noNewAlreadyUploading: 'Cannot add new files: already uploading',
+        noMoreFilesAllowed: 'Cannot add more files',
         noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
         companionError: 'Connection with Companion failed',
         companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
@@ -622,7 +622,7 @@ class Uppy {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      this.#showOrLogErrorAndThrow(new RestrictionError(this.i18n('noNewAlreadyUploading')), { file })
+      this.#showOrLogErrorAndThrow(new RestrictionError(this.i18n('noMoreFilesAllowed')), { file })
     }
   }
 

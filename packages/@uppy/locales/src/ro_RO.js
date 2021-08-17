@@ -69,7 +69,7 @@ ro_RO.strings = {
   noDuplicates: 'Nu se poate adăuga fișierul \'%{fileName}\', acesta există deja',
   noFilesFound: 'Nu sunt fișiere sau directoare aici',
   noInternetConnection: 'Fără conexiune la internet',
-  noNewAlreadyUploading: 'Nu se pot adăuga fișiere noi: încărcare în curs',
+  noMoreFilesAllowed: 'Nu se pot adăuga fișiere noi: încărcare în curs',
   openFolderNamed: 'Deschide director %{name}',
   pause: 'Întrerupe',
   pauseUpload: 'Întrerupe încărcarea',
@@ -136,7 +136,7 @@ ro_RO.strings = {
   },
 }
 
-ro_RO.pluralize = function (count) {
+ro_RO.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

@@ -74,7 +74,7 @@ fr_FR.strings = {
   noDuplicates: 'Impossible d\'ajouter le fichier "%{fileName}", il existe déjà',
   noFilesFound: 'Vous n\'avez aucun fichier ou dossier ici',
   noInternetConnection: 'Pas de connexion à Internet',
-  noNewAlreadyUploading: 'Impossible d\'ajouter de nouveaux fichiers: en cours de chargement ',
+  noMoreFilesAllowed: 'Impossible d\'ajouter de nouveaux fichiers: en cours de chargement ',
   openFolderNamed: 'Ouvrir %{name}',
   pause: 'Pause',
   pauseUpload: 'Mettre en pause le téléchargement',

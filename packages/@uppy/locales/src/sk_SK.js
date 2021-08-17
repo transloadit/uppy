@@ -81,7 +81,7 @@ sk_SK.strings = {
   noDuplicates: 'Nemôžete pridať duplikátny súbor \'%{fileName}\', ktorý už existuje',
   noFilesFound: 'Nemáte pridané žiadne súbory ani zložky',
   noInternetConnection: 'Žiadne internetové pripojenie',
-  noNewAlreadyUploading: 'Počas nahrávania nemôžete pridať ďalšie súbory',
+  noMoreFilesAllowed: 'Počas nahrávania nemôžete pridať ďalšie súbory',
   openFolderNamed: 'Otvoriť zložku %{name}',
   pause: 'Pozastaviť',
   pauseUpload: 'Pozastaviť nahrávanie',
@@ -167,7 +167,7 @@ sk_SK.strings = {
   zoomOut: 'Oddialiť',
 }
 
-sk_SK.pluralize = function (count) {
+sk_SK.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

@@ -86,7 +86,7 @@ en_US.strings = {
   noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
   noFilesFound: 'You have no files or folders here',
   noInternetConnection: 'No Internet connection',
-  noNewAlreadyUploading: 'Cannot add new files: already uploading',
+  noMoreFilesAllowed: 'Cannot add new files: already uploading',
   openFolderNamed: 'Open folder %{name}',
   pause: 'Pause',
   paused: 'Paused',
@@ -178,7 +178,7 @@ en_US.strings = {
   zoomOut: 'Zoom out',
 }
 
-en_US.pluralize = function (count) {
+en_US.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }
