@@ -146,7 +146,7 @@ pl_PL.strings = {
   },
 }
 
-pl_PL.pluralize = function (n) {
+pl_PL.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

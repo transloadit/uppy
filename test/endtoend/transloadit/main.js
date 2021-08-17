@@ -37,7 +37,7 @@ function initUppyTransloadit (transloaditKey) {
     console.log('Cropped image url is here ====>', result.url)
 
     const img = new Image()
-    img.onload = function () {
+    img.onload = function onload () {
       const result = document.createElement('div')
       result.setAttribute('id', 'uppy-result')
       result.textContent = 'ok'

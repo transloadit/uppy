@@ -167,7 +167,7 @@ sk_SK.strings = {
   zoomOut: 'Oddialiť',
 }
 
-sk_SK.pluralize = function (count) {
+sk_SK.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

@@ -136,7 +136,7 @@ ro_RO.strings = {
   },
 }
 
-ro_RO.pluralize = function (count) {
+ro_RO.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

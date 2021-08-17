@@ -7,15 +7,15 @@ const FileInfo = require('./FileInfo')
 const Buttons = require('./Buttons')
 
 module.exports = class FileItem extends Component {
-  shouldComponentUpdate (nextProps) {
-    return !shallowEqual(this.props, nextProps)
-  }
-
   componentDidMount () {
     const { file } = this.props
     if (!file.preview) {
       this.props.handleRequestThumbnail(file)
     }
+  }
+
+  shouldComponentUpdate (nextProps) {
+    return !shallowEqual(this.props, nextProps)
   }
 
   // VirtualList mounts FileItems again and they emit `thumbnail:request`

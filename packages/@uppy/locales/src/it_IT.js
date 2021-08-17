@@ -137,7 +137,7 @@ it_IT.strings = {
   openFolderNamed: 'Cartella aperta %{name}',
 }
 
-it_IT.pluralize = function (n) {
+it_IT.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

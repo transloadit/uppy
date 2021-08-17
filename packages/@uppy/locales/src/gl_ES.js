@@ -137,7 +137,7 @@ gl_ES.strings = {
   openFolderNamed: 'Cartafol aberto %{name}',
 }
 
-gl_ES.pluralize = function (n) {
+gl_ES.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

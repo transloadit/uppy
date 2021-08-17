@@ -14,7 +14,7 @@ describe('XHRUpload', () => {
         .post('/').reply(200, {})
 
       const core = new Core()
-      const getResponseData = jest.fn(function () {
+      const getResponseData = jest.fn(function getResponseData () {
         expect(this.some).toEqual('option')
         return {}
       })

@@ -137,7 +137,7 @@ uk_UA.strings = {
   openFolderNamed: 'Відкрити теку %{name}',
 }
 
-uk_UA.pluralize = function (n) {
+uk_UA.pluralize = function pluralize (n) {
   if (n % 10 === 1 && n % 100 !== 11) {
     return 0
   }

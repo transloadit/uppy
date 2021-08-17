@@ -130,7 +130,7 @@ nl_NL.strings = {
   openFolderNamed: 'Open map %{name}',
 }
 
-nl_NL.pluralize = function (n) {
+nl_NL.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

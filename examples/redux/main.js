@@ -27,8 +27,9 @@ let enhancer = applyMiddleware(
   uppyReduxStore.middleware(),
   logger
 )
-if (window.__REDUX_DEVTOOLS_EXTENSION__) {
-  enhancer = compose(enhancer, window.__REDUX_DEVTOOLS_EXTENSION__())
+if (typeof __REDUX_DEVTOOLS_EXTENSION__ !== 'undefined') {
+  // eslint-disable-next-line no-undef
+  enhancer = compose(enhancer, __REDUX_DEVTOOLS_EXTENSION__())
 }
 
 const store = createStore(reducer, enhancer)

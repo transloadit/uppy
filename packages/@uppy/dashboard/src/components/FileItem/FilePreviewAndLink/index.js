@@ -18,7 +18,9 @@ module.exports = function FilePreviewAndLink (props) {
             rel="noreferrer noopener"
             target="_blank"
             aria-label={props.file.meta.name}
-          />
+          >
+            <span hidden>props.file.meta.name</span>
+          </a>
           )
       }
       <FilePreview file={props.file} />

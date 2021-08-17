@@ -110,7 +110,7 @@ zh_CN.strings = {
 }
 
 // There is just one form.
-zh_CN.pluralize = function (n) { return 0 }
+zh_CN.pluralize = function pluralize (n) { return 0 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locales.zh_CN = zh_CN

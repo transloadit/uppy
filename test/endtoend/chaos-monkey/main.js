@@ -7,7 +7,7 @@ const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
 const endpoint = isOnTravis ? 'http://companion.test:1081' : 'http://localhost:1081'
 
 let id = 0
-window.setup = function (options) {
+window.setup = function setup (options) {
   id += 1
 
   // Initialise Uppy with Drag & Drop

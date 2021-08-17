@@ -167,7 +167,7 @@ class TusService {
           period: 20,
           rate: 200 * 1024 / 50,
         })),
-      }, (err) => { // eslint-disable-line handle-callback-err
+      }, (err) => { // eslint-disable-line node/handle-callback-err
         // ignore, typically a cancelled request
       })
     })
