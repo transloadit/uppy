@@ -8,4 +8,7 @@ const ResizeObserver = require('resize-observer-polyfill')
 
 if (typeof window.ResizeObserver !== 'function') window.ResizeObserver = ResizeObserver
 
-module.exports = require('.')
+// Needed for Babel
+require("regenerator-runtime/runtime");
+
+globalThis.Uppy = module.exports = require('.')
