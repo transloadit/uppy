@@ -143,7 +143,7 @@ bg_BG.strings = {
   },
 }
 
-bg_BG.pluralize = function (count) {
+bg_BG.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

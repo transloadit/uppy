@@ -1,6 +1,5 @@
 const { h } = require('preact')
 const { UIPlugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
 const StatusBar = require('@uppy/status-bar')
 const Informer = require('@uppy/informer')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
@@ -41,6 +40,8 @@ function defaultPickerIcon () {
 module.exports = class Dashboard extends UIPlugin {
   static VERSION = require('../package.json').version
 
+  #openFileEditorWhenFilesAdded
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Dashboard'
@@ -61,8 +62,9 @@ module.exports = class Dashboard extends UIPlugin {
         copyLink: 'Copy link',
         back: 'Back',
         addMore: 'Add more',
-        removeFile: 'Remove file',
+        removeFile: 'Remove file %{file}',
         editFile: 'Edit file',
+        editFileWithFilename: 'Edit file %{file}',
         editing: 'Editing %{file}',
         finishEditingFile: 'Finish editing file',
         save: 'Save',
@@ -205,6 +207,7 @@ module.exports = class Dashboard extends UIPlugin {
   }
 
   hideAllPanels = () => {
+    const state = this.getPluginState()
     const update = {
       activePickerPanel: false,
       showAddFilesPanel: false,
@@ -213,11 +216,10 @@ module.exports = class Dashboard extends UIPlugin {
       showFileEditor: false,
     }
 
-    const current = this.getPluginState()
-    if (current.activePickerPanel === update.activePickerPanel
-        && current.showAddFilesPanel === update.showAddFilesPanel
-        && current.showFileEditor === update.showFileEditor
-        && current.activeOverlayType === update.activeOverlayType) {
+    if (state.activePickerPanel === update.activePickerPanel
+        && state.showAddFilesPanel === update.showAddFilesPanel
+        && state.showFileEditor === update.showFileEditor
+        && state.activeOverlayType === update.activeOverlayType) {
       // avoid doing a state update if nothing changed
       return
     }
@@ -240,7 +242,7 @@ module.exports = class Dashboard extends UIPlugin {
 
   canEditFile = (file) => {
     const { targets } = this.getPluginState()
-    const editors = this._getEditors(targets)
+    const editors = this.#getEditors(targets)
 
     return editors.some((target) => (
       this.uppy.getPlugin(target.id).canEditFile(file)
@@ -249,7 +251,7 @@ module.exports = class Dashboard extends UIPlugin {
 
   openFileEditor = (file) => {
     const { targets } = this.getPluginState()
-    const editors = this._getEditors(targets)
+    const editors = this.#getEditors(targets)
 
     this.setPluginState({
       showFileEditor: true,
@@ -264,7 +266,7 @@ module.exports = class Dashboard extends UIPlugin {
 
   saveFileEditor = () => {
     const { targets } = this.getPluginState()
-    const editors = this._getEditors(targets)
+    const editors = this.#getEditors(targets)
 
     editors.forEach((editor) => {
       this.uppy.getPlugin(editor.id).save()
@@ -314,7 +316,8 @@ module.exports = class Dashboard extends UIPlugin {
 
   closeModal = (opts = {}) => {
     const {
-      manualClose = true, // Whether the modal is being closed by the user (`true`) or by other means (e.g. browser back button)
+      // Whether the modal is being closed by the user (`true`) or by other means (e.g. browser back button)
+      manualClose = true,
     } = opts
 
     const { isHidden, isClosing } = this.getPluginState()
@@ -363,9 +366,11 @@ module.exports = class Dashboard extends UIPlugin {
     if (manualClose) {
       if (this.opts.browserBackButtonClose) {
         // Make sure that the latest entry in the history state is our modal name
-        if (history.state && history.state[this.modalName]) {
+        // eslint-disable-next-line no-restricted-globals
+        if (history.state?.[this.modalName]) {
           // Go back in history to clear out the entry we created (ultimately closing the modal)
-          history.go(-1)
+          // eslint-disable-next-line no-restricted-globals
+          history.back()
         }
       }
     }
@@ -444,9 +449,11 @@ module.exports = class Dashboard extends UIPlugin {
   }
 
   // ___Why make insides of Dashboard invisible until first ResizeObserver event is emitted?
-  //    ResizeOberserver doesn't emit the first resize event fast enough, users can see the jump from one .uppy-size-- to another (e.g. in Safari)
+  //    ResizeOberserver doesn't emit the first resize event fast enough, users can see the jump from one .uppy-size-- to
+  //    another (e.g. in Safari)
   // ___Why not apply visibility property to .uppy-Dashboard-inner?
-  //    Because ideally, acc to specs, ResizeObserver should see invisible elements as of width 0. So even though applying invisibility to .uppy-Dashboard-inner works now, it may not work in the future.
+  //    Because ideally, acc to specs, ResizeObserver should see invisible elements as of width 0. So even though applying
+  //    invisibility to .uppy-Dashboard-inner works now, it may not work in the future.
   startListeningToResize = () => {
     // Watch for Dashboard container (`.uppy-Dashboard-inner`) resize
     // and update containerWidth/containerHeight in plugin state accordingly.
@@ -530,9 +537,12 @@ module.exports = class Dashboard extends UIPlugin {
 
   updateBrowserHistory = () => {
     // Ensure history state does not already contain our modal name to avoid double-pushing
-    if (!history.state || !history.state[this.modalName]) {
+    // eslint-disable-next-line no-restricted-globals
+    if (!history.state?.[this.modalName]) {
       // Push to history so that the page is not lost on browser back button press
+      // eslint-disable-next-line no-restricted-globals
       history.pushState({
+        // eslint-disable-next-line no-restricted-globals
         ...history.state,
         [this.modalName]: true,
       }, '')
@@ -548,11 +558,15 @@ module.exports = class Dashboard extends UIPlugin {
       this.closeModal({ manualClose: false })
     }
 
-    // When the browser back button is pressed and uppy is now the latest entry in the history but the modal is closed, fix the history by removing the uppy history entry
-    // This occurs when another entry is added into the history state while the modal is open, and then the modal gets manually closed
+    // When the browser back button is pressed and uppy is now the latest entry
+    // in the history but the modal is closed, fix the history by removing the
+    // uppy history entry.
+    // This occurs when another entry is added into the history state while the
+    // modal is open, and then the modal gets manually closed.
     // Solves PR #575 (https://github.com/transloadit/uppy/pull/575)
-    if (!this.isModalOpen() && event.state && event.state[this.modalName]) {
-      history.go(-1)
+    if (!this.isModalOpen() && event.state?.[this.modalName]) {
+      // eslint-disable-next-line no-restricted-globals
+      history.back()
     }
   }
 
@@ -596,7 +610,8 @@ module.exports = class Dashboard extends UIPlugin {
     }
 
     // 1. Add a small (+) icon on drop
-    // (and prevent browsers from interpreting this as files being _moved_ into the browser, https://github.com/transloadit/uppy/issues/1978)
+    // (and prevent browsers from interpreting this as files being _moved_ into the
+    // browser, https://github.com/transloadit/uppy/issues/1978).
     event.dataTransfer.dropEffect = 'copy'
 
     clearTimeout(this.removeDragOverClassTimeout)
@@ -612,7 +627,8 @@ module.exports = class Dashboard extends UIPlugin {
     }
 
     clearTimeout(this.removeDragOverClassTimeout)
-    // Timeout against flickering, this solution is taken from drag-drop library. Solution with 'pointer-events: none' didn't work across browsers.
+    // Timeout against flickering, this solution is taken from drag-drop library.
+    // Solution with 'pointer-events: none' didn't work across browsers.
     this.removeDragOverClassTimeout = setTimeout(() => {
       this.setPluginState({ isDraggingOver: false })
     }, 50)
@@ -667,7 +683,8 @@ module.exports = class Dashboard extends UIPlugin {
   }
 
   /**
-   * We cancel thumbnail requests when a file item component unmounts to avoid clogging up the queue when the user scrolls past many elements.
+   * We cancel thumbnail requests when a file item component unmounts to avoid
+   * clogging up the queue when the user scrolls past many elements.
    */
   handleCancelThumbnail = (file) => {
     if (!this.opts.waitForThumbnailsBeforeUpload) {
@@ -680,11 +697,14 @@ module.exports = class Dashboard extends UIPlugin {
     if (event.keyCode === TAB_KEY) trapFocus.forInline(event, this.getPluginState().activeOverlayType, this.el)
   }
 
-  // ___Why do we listen to the 'paste' event on a document instead of onPaste={props.handlePaste} prop, or this.el.addEventListener('paste')?
+  // ___Why do we listen to the 'paste' event on a document instead of onPaste={props.handlePaste} prop,
+  //    or this.el.addEventListener('paste')?
   //    Because (at least) Chrome doesn't handle paste if focus is on some button, e.g. 'My Device'.
-  //    => Therefore, the best option is to listen to all 'paste' events, and only react to them when we are focused on our particular Uppy instance.
+  //    => Therefore, the best option is to listen to all 'paste' events, and only react to them when we are focused on our
+  //       particular Uppy instance.
   // ___Why do we still need onPaste={props.handlePaste} for the DashboardUi?
-  //    Because if we click on the 'Drop files here' caption e.g., `document.activeElement` will be 'body'. Which means our standard determination of whether we're pasting into our Uppy instance won't work.
+  //    Because if we click on the 'Drop files here' caption e.g., `document.activeElement` will be 'body'. Which means our
+  //    standard determination of whether we're pasting into our Uppy instance won't work.
   //    => Therefore, we need a traditional onPaste={props.handlePaste} handler too.
   handlePasteOnBody = (event) => {
     const isFocusInOverlay = this.el.contains(document.activeElement)
@@ -741,7 +761,7 @@ module.exports = class Dashboard extends UIPlugin {
     }
 
     if (this.opts.autoOpenFileEditor) {
-      this.uppy.on('files-added', this._openFileEditorWhenFilesAdded)
+      this.uppy.on('files-added', this.#openFileEditorWhenFilesAdded)
     }
   }
 
@@ -769,7 +789,7 @@ module.exports = class Dashboard extends UIPlugin {
     }
 
     if (this.opts.autoOpenFileEditor) {
-      this.uppy.off('files-added', this._openFileEditorWhenFilesAdded)
+      this.uppy.off('files-added', this.#openFileEditorWhenFilesAdded)
     }
   }
 
@@ -784,14 +804,20 @@ module.exports = class Dashboard extends UIPlugin {
       // If update is connected to showing the Informer - let the screen reader calmly read it.
       isInformerHidden
       && (
-        // If we are in a modal - always superfocus without concern for other elements on the page (user is unlikely to want to interact with the rest of the page)
+        // If we are in a modal - always superfocus without concern for other elements
+        // on the page (user is unlikely to want to interact with the rest of the page)
         isModal
         // If we are already inside of Uppy, or
         || isFocusInUppy
         // If we are not focused on anything BUT we have already, at least once, focused on uppy
-        //   1. We focus when isFocusNowhere, because when the element we were focused on disappears (e.g. an overlay), - focus gets lost. If user is typing something somewhere else on the page, - focus won't be 'nowhere'.
-        //   2. We only focus when focus is nowhere AND this.ifFocusedOnUppyRecently, to avoid focus jumps if we do something else on the page.
-        //   [Practical check] Without '&& this.ifFocusedOnUppyRecently', in Safari, in inline mode, when file is uploading, - navigate via tab to the checkbox, try to press space multiple times. Focus will jump to Uppy.
+        //   1. We focus when isFocusNowhere, because when the element we were focused
+        //      on disappears (e.g. an overlay), - focus gets lost. If user is typing
+        //      something somewhere else on the page, - focus won't be 'nowhere'.
+        //   2. We only focus when focus is nowhere AND this.ifFocusedOnUppyRecently,
+        //      to avoid focus jumps if we do something else on the page.
+        //   [Practical check] Without '&& this.ifFocusedOnUppyRecently', in Safari, in inline mode,
+        //                     when file is uploading, - navigate via tab to the checkbox,
+        //                     try to press space multiple times. Focus will jump to Uppy.
         || (isFocusNowhere && this.ifFocusedOnUppyRecently)
       )
     ) {
@@ -819,7 +845,7 @@ module.exports = class Dashboard extends UIPlugin {
     this.toggleFileCard(false, fileID)
   }
 
-  _attachRenderFunctionToTarget = (target) => {
+  #attachRenderFunctionToTarget = (target) => {
     const plugin = this.uppy.getPlugin(target.id)
     return {
       ...target,
@@ -828,7 +854,7 @@ module.exports = class Dashboard extends UIPlugin {
     }
   }
 
-  _isTargetSupported = (target) => {
+  #isTargetSupported = (target) => {
     const plugin = this.uppy.getPlugin(target.id)
     // If the plugin does not provide a `supported` check, assume the plugin works everywhere.
     if (typeof plugin.isSupported !== 'function') {
@@ -837,22 +863,22 @@ module.exports = class Dashboard extends UIPlugin {
     return plugin.isSupported()
   }
 
-  _getAcquirers = memoize((targets) => {
+  #getAcquirers = memoize((targets) => {
     return targets
-      .filter(target => target.type === 'acquirer' && this._isTargetSupported(target))
-      .map(this._attachRenderFunctionToTarget)
+      .filter(target => target.type === 'acquirer' && this.#isTargetSupported(target))
+      .map(this.#attachRenderFunctionToTarget)
   })
 
-  _getProgressIndicators = memoize((targets) => {
+  #getProgressIndicators = memoize((targets) => {
     return targets
       .filter(target => target.type === 'progressindicator')
-      .map(this._attachRenderFunctionToTarget)
+      .map(this.#attachRenderFunctionToTarget)
   })
 
-  _getEditors = memoize((targets) => {
+  #getEditors = memoize((targets) => {
     return targets
       .filter(target => target.type === 'editor')
-      .map(this._attachRenderFunctionToTarget)
+      .map(this.#attachRenderFunctionToTarget)
   })
 
   render = (state) => {
@@ -873,9 +899,9 @@ module.exports = class Dashboard extends UIPlugin {
       isAllPaused,
     } = this.uppy.getObjectOfFilesPerState()
 
-    const acquirers = this._getAcquirers(pluginState.targets)
-    const progressindicators = this._getProgressIndicators(pluginState.targets)
-    const editors = this._getEditors(pluginState.targets)
+    const acquirers = this.#getAcquirers(pluginState.targets)
+    const progressindicators = this.#getProgressIndicators(pluginState.targets)
+    const editors = this.#getEditors(pluginState.targets)
 
     let theme
     if (this.opts.theme === 'auto') {
@@ -886,7 +912,8 @@ module.exports = class Dashboard extends UIPlugin {
 
     if (['files', 'folders', 'both'].indexOf(this.opts.fileManagerSelectionType) < 0) {
       this.opts.fileManagerSelectionType = 'files'
-      console.error(`Unsupported option for "fileManagerSelectionType". Using default of "${this.opts.fileManagerSelectionType}".`)
+      // eslint-disable-next-line no-console
+      console.warn(`Unsupported option for "fileManagerSelectionType". Using default of "${this.opts.fileManagerSelectionType}".`)
     }
 
     return DashboardUI({

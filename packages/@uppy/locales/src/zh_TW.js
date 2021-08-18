@@ -146,7 +146,7 @@ zh_TW.strings = {
   },
 }
 
-zh_TW.pluralize = function (n) {
+zh_TW.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

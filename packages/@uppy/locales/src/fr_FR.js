@@ -41,7 +41,8 @@ fr_FR.strings = {
   dropPasteImportBoth: 'Déposer les fichiers ici, coller, %{browse} ou importer de',
   dropPasteImportFiles: 'Déposer les fichiers ici, coller, %{browse} ou importer de',
   dropPasteImportFolders: 'Déposer les fichiers ici, coller, %{browse} ou importer de',
-  editFile: 'Modifier fichier',
+  editFile: 'Modifier le fichier',
+  editFileWithFilename: 'Modifier le fichier %{file}',
   editing: 'Modification en cours de %{file}',
   emptyFolderAdded: 'Aucun fichier n\'a été ajouté depuis un dossier vide',
   encoding: 'Traitement...',
@@ -87,7 +88,7 @@ fr_FR.strings = {
   recording: 'Enregistrement',
   recordingLength: 'Durée d\'enregistrement %{recording_length}',
   recordingStoppedMaxSize: 'L\'enregistrement s\'est arrété car la taille du fichier dépasse la limite',
-  removeFile: 'Effacer le fichier',
+  removeFile: 'Effacer le fichier %{file}',
   resetFilter: 'Réinitialiser filtre',
   resume: 'Reprendre',
   resumeUpload: 'Reprendre le téléchargement',
@@ -153,7 +154,7 @@ fr_FR.strings = {
   },
 }
 
-fr_FR.pluralize = function (n) {
+fr_FR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

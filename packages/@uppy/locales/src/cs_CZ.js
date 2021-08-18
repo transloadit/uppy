@@ -138,7 +138,7 @@ cs_CZ.strings = {
   },
 }
 
-cs_CZ.pluralize = function (n) {
+cs_CZ.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

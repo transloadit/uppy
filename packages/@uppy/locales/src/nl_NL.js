@@ -36,6 +36,7 @@ nl_NL.strings = {
   dropPasteImportFiles: 'Sleep hier je bestanden naartoe, plak, %{browse} of importeer vanuit',
   dropPasteImportFolders: 'Sleep hier je bestanden naartoe, plak, %{browse} of importeer vanuit',
   editFile: 'Bestand aanpassen',
+  editFileWithFilename: 'Bestand aanpassen %{file}',
   editing: 'Bezig %{file} aan te passen',
   emptyFolderAdded: 'Er werden geen bestanden toegevoegd uit de lege map',
   encoding: 'Coderen...',
@@ -72,7 +73,7 @@ nl_NL.strings = {
   },
   recordingLength: 'Opnameduur %{recording_length}',
   recordingStoppedMaxSize: 'Opname gestopt omdat de bestandsgrootte de limiet bijna overschrijdt',
-  removeFile: 'Bestand verwijderen',
+  removeFile: 'Verwijder bestand %{file}',
   resetFilter: 'Filter resetten',
   resume: 'Hervatten',
   resumeUpload: 'Upload hervatten',
@@ -129,7 +130,7 @@ nl_NL.strings = {
   openFolderNamed: 'Open map %{name}',
 }
 
-nl_NL.pluralize = function (n) {
+nl_NL.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

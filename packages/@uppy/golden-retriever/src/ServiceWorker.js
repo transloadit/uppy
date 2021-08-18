@@ -1,4 +1,5 @@
 /* globals clients */
+/* eslint-disable no-restricted-globals */
 
 const fileCache = Object.create(null)
 
@@ -10,8 +11,6 @@ function getCache (name) {
 }
 
 self.addEventListener('install', (event) => {
-  console.log('Installing Uppy Service Worker...')
-
   event.waitUntil(Promise.resolve()
     .then(() => self.skipWaiting()))
 })
@@ -30,12 +29,10 @@ function sendMessageToAllClients (msg) {
 
 function addFile (store, file) {
   getCache(store)[file.id] = file.data
-  console.log('Added file blob to service worker cache:', file.data)
 }
 
 function removeFile (store, fileID) {
   delete getCache(store)[fileID]
-  console.log('Removed file blob from service worker cache:', fileID)
 }
 
 function getFiles (store) {

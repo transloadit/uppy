@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const getTimeStamp = require('@uppy/utils/lib/getTimeStamp')
 
 // Swallow all logs, except errors.

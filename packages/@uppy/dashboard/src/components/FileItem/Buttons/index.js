@@ -17,8 +17,8 @@ function EditButton ({
       <button
         className="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit"
         type="button"
-        aria-label={`${i18n('editFile')} ${file.meta.name}`}
-        title={i18n('editFile')}
+        aria-label={i18n('editFileWithFilename', { file: file.meta.name })}
+        title={i18n('editFileWithFilename', { file: file.meta.name })}
         onClick={() => onClick()}
       >
         <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="14" height="14" viewBox="0 0 14 14">
@@ -34,13 +34,13 @@ function EditButton ({
   return null
 }
 
-function RemoveButton ({ i18n, onClick }) {
+function RemoveButton ({ i18n, onClick, file }) {
   return (
     <button
       className="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--remove"
       type="button"
-      aria-label={i18n('removeFile')}
-      title={i18n('removeFile')}
+      aria-label={i18n('removeFile', { file: file.meta.name })}
+      title={i18n('removeFile', { file: file.meta.name })}
       onClick={() => onClick()}
     >
       <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="18" height="18" viewBox="0 0 18 18">
@@ -119,6 +119,7 @@ module.exports = function Buttons (props) {
       {showRemoveButton ? (
         <RemoveButton
           i18n={i18n}
+          file={file}
           uppy={uppy}
           onClick={() => props.uppy.removeFile(file.id, 'removed-by-user')}
         />

@@ -32,7 +32,7 @@
     "is-shallow-equal": "^1.0.1",
     "lodash.debounce": "^4.0.8",
     "memoize-one": "^5.0.4",
-    "nanoid": "^3.1.23",
+    "nanoid": "^3.1.25",
     "preact": "^10.5.13"
   },
   "devDependencies": {

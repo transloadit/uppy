@@ -138,7 +138,7 @@ es_ES.strings = {
   openFolderNamed: 'Carpeta abierta %{name}',
 }
 
-es_ES.pluralize = function (n) {
+es_ES.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

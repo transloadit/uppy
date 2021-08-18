@@ -205,6 +205,61 @@ module.exports = function s3 (config) {
   }
 
   /**
+   * Get parameters for uploading a batch of parts.
+   *
+   * Expected URL parameters:
+   *  - uploadId - The uploadId returned from `createMultipartUpload`.
+   * Expected query parameters:
+   *  - key - The object key in the S3 bucket.
+   *  - partNumbers - A comma separated list of part numbers representing
+   *                  indecies in the file (1-10000).
+   * Response JSON:
+   *  - presignedUrls - The URLs to upload to, including signed query parameters,
+   *                    in an object mapped to part numbers.
+   */
+  function batchSignPartsUpload (req, res, next) {
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
+    const { uploadId } = req.params
+    const { key, partNumbers } = req.query
+
+    if (typeof key !== 'string') {
+      return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+    }
+
+    if (typeof partNumbers !== 'string') {
+      return res.status(400).json({ error: 's3: the part numbers must be passed as a comma separated query parameter. For example: "?partNumbers=4,6,7,21"' })
+    }
+
+    const partNumbersArray = partNumbers.split(',')
+    partNumbersArray.forEach((partNumber) => {
+      if (!parseInt(partNumber, 10)) {
+        return res.status(400).json({ error: 's3: the part numbers must be a number between 1 and 10000.' })
+      }
+    })
+
+    Promise.all(
+      partNumbersArray.map((partNumber) => {
+        return client.getSignedUrlPromise('uploadPart', {
+          Bucket: config.bucket,
+          Key: key,
+          UploadId: uploadId,
+          PartNumber: partNumber,
+          Body: '',
+          Expires: config.expires,
+        })
+      })
+    ).then((urls) => {
+      const presignedUrls = Object.fromEntries(
+        partNumbersArray.map((partNumber, index) => [partNumber, urls[index]])
+      )
+      res.json({ presignedUrls })
+    }).catch((err) => {
+      next(err)
+    })
+  }
+
+  /**
    * Abort a multipart upload, deleting already uploaded parts.
    *
    * Expected URL parameters:
@@ -287,6 +342,7 @@ module.exports = function s3 (config) {
     .get('/multipart/:uploadId', getUploadedParts)
     .get('/multipart/:uploadId/:partNumber', signPartUpload)
     .post('/multipart/:uploadId/complete', completeMultipartUpload)
+    .get(`/multipart/:uploadId/batch`, batchSignPartsUpload)
     .delete('/multipart/:uploadId', abortMultipartUpload)
 }
 

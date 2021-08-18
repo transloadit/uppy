@@ -1,6 +1,6 @@
 const throttle = require('lodash.throttle')
 
-function _emitSocketProgress (uploader, progressData, file) {
+function emitSocketProgress (uploader, progressData, file) {
   const { progress, bytesUploaded, bytesTotal } = progressData
   if (progress) {
     uploader.uppy.log(`Upload progress: ${progress}`)
@@ -12,7 +12,7 @@ function _emitSocketProgress (uploader, progressData, file) {
   }
 }
 
-module.exports = throttle(_emitSocketProgress, 300, {
+module.exports = throttle(emitSocketProgress, 300, {
   leading: true,
   trailing: true,
 })

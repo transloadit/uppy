@@ -31,7 +31,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       retryDelays: [0, 1000, 3000, 5000],
       createMultipartUpload: this.createMultipartUpload.bind(this),
       listParts: this.listParts.bind(this),
-      prepareUploadPart: this.prepareUploadPart.bind(this),
+      prepareUploadParts: this.prepareUploadParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
     }
@@ -80,7 +80,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
 
     const metadata = {}
 
-    Object.keys(file.meta).map(key => {
+    Object.keys(file.meta).forEach(key => {
       if (file.meta[key] != null) {
         metadata[key] = file.meta[key].toString()
       }
@@ -101,11 +101,11 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       .then(assertServerError)
   }
 
-  prepareUploadPart (file, { key, uploadId, number }) {
-    this.assertHost('prepareUploadPart')
+  prepareUploadParts (file, { key, uploadId, partNumbers }) {
+    this.assertHost('prepareUploadParts')
 
     const filename = encodeURIComponent(key)
-    return this.client.get(`s3/multipart/${uploadId}/${number}?key=${filename}`)
+    return this.client.get(`s3/multipart/${uploadId}/batch?key=${filename}?partNumbers=${partNumbers.join(',')}`)
       .then(assertServerError)
   }
 
@@ -191,7 +191,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         // .bind to pass the file object to each handler.
         createMultipartUpload: this.opts.createMultipartUpload.bind(this, file),
         listParts: this.opts.listParts.bind(this, file),
-        prepareUploadPart: this.opts.prepareUploadPart.bind(this, file),
+        prepareUploadParts: this.opts.prepareUploadParts.bind(this, file),
         completeMultipartUpload: this.opts.completeMultipartUpload.bind(this, file),
         abortMultipartUpload: this.opts.abortMultipartUpload.bind(this, file),
         getChunkSize: this.opts.getChunkSize ? this.opts.getChunkSize.bind(this) : null,
@@ -239,7 +239,8 @@ module.exports = class AwsS3Multipart extends BasePlugin {
           queuedRequest.abort()
           upload.pause()
         } else {
-          // Resuming an upload should be queued, else you could pause and then resume a queued upload to make it skip the queue.
+          // Resuming an upload should be queued, else you could pause and then
+          // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
           queuedRequest = this.requests.run(() => {
             upload.start()
@@ -330,7 +331,8 @@ module.exports = class AwsS3Multipart extends BasePlugin {
           queuedRequest.abort()
           socket.send('pause', {})
         } else {
-          // Resuming an upload should be queued, else you could pause and then resume a queued upload to make it skip the queue.
+          // Resuming an upload should be queued, else you could pause and then
+          // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
           queuedRequest = this.requests.run(() => {
             socket.send('resume', {})

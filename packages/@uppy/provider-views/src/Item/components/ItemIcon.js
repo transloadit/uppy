@@ -36,6 +36,6 @@ module.exports = (props) => {
     case 'video':
       return <VideoIcon />
     default:
-      return <img src={props.itemIconString} />
+      return <img src={props.itemIconString} alt={props.alt} />
   }
 }

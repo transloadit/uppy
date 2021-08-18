@@ -1,6 +1,5 @@
 const { h } = require('preact')
 const { UIPlugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
 const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
 const mimeTypes = require('@uppy/utils/lib/mimeTypes')
 const canvasToBlob = require('@uppy/utils/lib/canvasToBlob')
@@ -393,19 +392,34 @@ module.exports = class Webcam extends UIPlugin {
     }
   }
 
-  stop () {
+  async stop () {
     if (this.stream) {
-      this.stream.getAudioTracks().forEach((track) => {
-        track.stop()
-      })
-      this.stream.getVideoTracks().forEach((track) => {
-        track.stop()
+      const audioTracks = this.stream.getAudioTracks()
+      const videoTracks = this.stream.getVideoTracks()
+
+      audioTracks.concat(videoTracks).forEach((track) => track.stop())
+    }
+
+    if (this.recorder) {
+      await new Promise((resolve) => {
+        this.recorder.addEventListener('stop', resolve, { once: true })
+        this.recorder.stop()
+
+        if (this.opts.showRecordingLength) {
+          clearInterval(this.recordingLengthTimer)
+        }
       })
     }
+
+    this.recordingChunks = null
+    this.recorder = null
     this.webcamActive = false
     this.stream = null
+
     this.setPluginState({
       recordedVideo: null,
+      isRecording: false,
+      recordingLengthSeconds: 0,
     })
   }
 
@@ -624,10 +638,11 @@ module.exports = class Webcam extends UIPlugin {
   }
 
   uninstall () {
-    if (this.stream) {
-      this.stop()
-    }
-
+    this.stop()
     this.unmount()
+  }
+
+  onUnmount () {
+    this.stop()
   }
 }

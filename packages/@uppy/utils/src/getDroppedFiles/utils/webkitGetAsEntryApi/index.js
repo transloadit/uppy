@@ -19,6 +19,7 @@ module.exports = function webkitGetAsEntryApi (dataTransfer, logDropError) {
       // Creates a new File object which can be used to read the file.
       entry.file(
         (file) => {
+          // eslint-disable-next-line no-param-reassign
           file.relativePath = getRelativePath(entry)
           files.push(file)
           resolve()
@@ -33,10 +34,9 @@ module.exports = function webkitGetAsEntryApi (dataTransfer, logDropError) {
     } else if (entry.isDirectory) {
       const directoryReader = entry.createReader()
       getFilesAndDirectoriesFromDirectory(directoryReader, [], logDropError, {
-        onSuccess: (entries) => {
-          const promises = entries.map((entry) => createPromiseToAddFileOrParseDirectory(entry))
-          Promise.all(promises).then(() => resolve())
-        },
+        onSuccess: (entries) => resolve(Promise.all(
+          entries.map(createPromiseToAddFileOrParseDirectory)
+        )),
       })
     }
   })

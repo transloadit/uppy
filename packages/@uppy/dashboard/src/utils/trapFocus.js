@@ -19,8 +19,11 @@ function focusOnLastNode (event, nodes) {
 }
 
 // ___Why not just use (focusedItemIndex === -1)?
-//    Firefox thinks <ul> is focusable, but we don't have <ul>s in our FOCUSABLE_ELEMENTS. Which means that if we tab into the <ul>, code will think that we are not in the active overlay, and we should focusOnFirstNode() of the currently active overlay!
-//    [Practical check] if we use (focusedItemIndex === -1), instagram provider in firefox will never get focus on its pics in the <ul>.
+//    Firefox thinks <ul> is focusable, but we don't have <ul>s in our FOCUSABLE_ELEMENTS. Which means that if we tab into
+//    the <ul>, code will think that we are not in the active overlay, and we should focusOnFirstNode() of the currently
+//    active overlay!
+//    [Practical check] if we use (focusedItemIndex === -1), instagram provider in firefox will never get focus on its pics
+//    in the <ul>.
 function isFocusInOverlay (activeOverlayEl) {
   return activeOverlayEl.contains(document.activeElement)
 }
@@ -31,8 +34,10 @@ function trapFocus (event, activeOverlayType, dashboardEl) {
 
   const focusedItemIndex = focusableNodes.indexOf(document.activeElement)
 
-  // If we pressed tab, and focus is not yet within the current overlay - focus on the first element within the current overlay.
-  // This is a safety measure (for when user returns from another tab e.g.), most plugins will try to focus on some important element as it loads.
+  // If we pressed tab, and focus is not yet within the current overlay - focus on
+  // the first element within the current overlay.
+  // This is a safety measure (for when user returns from another tab e.g.), most
+  // plugins will try to focus on some important element as it loads.
   if (!isFocusInOverlay(activeOverlayEl)) {
     focusOnFirstNode(event, focusableNodes)
   // If we pressed shift + tab, and we're on the first element of a modal
@@ -45,7 +50,8 @@ function trapFocus (event, activeOverlayType, dashboardEl) {
 }
 
 module.exports = {
-  // Traps focus inside of the currently open overlay (e.g. Dashboard, or e.g. Instagram), never lets focus disappear from the modal.
+  // Traps focus inside of the currently open overlay (e.g. Dashboard, or e.g. Instagram),
+  // never lets focus disappear from the modal.
   forModal: (event, activeOverlayType, dashboardEl) => {
     trapFocus(event, activeOverlayType, dashboardEl)
   },

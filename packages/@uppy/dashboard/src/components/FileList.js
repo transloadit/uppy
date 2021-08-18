@@ -70,7 +70,8 @@ module.exports = (props) => {
 
   function renderRow (row) {
     return (
-      // The `role="presentation` attribute ensures that the list items are properly associated with the `VirtualList` element
+      // The `role="presentation` attribute ensures that the list items are properly
+      // associated with the `VirtualList` element.
       // We use the first file ID as the key—this should not change across scroll rerenders
       <div role="presentation" key={row[0]}>
         {row.map((fileID) => (

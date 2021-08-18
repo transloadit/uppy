@@ -137,7 +137,7 @@ sv_SE.strings = {
   },
 }
 
-sv_SE.pluralize = function (n) {
+sv_SE.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

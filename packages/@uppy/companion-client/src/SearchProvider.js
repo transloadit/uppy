@@ -2,7 +2,7 @@
 
 const RequestClient = require('./RequestClient')
 
-const _getName = (id) => {
+const getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
@@ -11,7 +11,7 @@ module.exports = class SearchProvider extends RequestClient {
     super(uppy, opts)
     this.provider = opts.provider
     this.id = this.provider
-    this.name = this.opts.name || _getName(this.id)
+    this.name = this.opts.name || getName(this.id)
     this.pluginId = this.opts.pluginId
   }
 

@@ -133,7 +133,9 @@ module.exports = class StatusBar extends UIPlugin {
       }
       // If NO files are being preprocessed or uploaded right now, but some files are
       // being postprocessed, show the postprocess state.
-      if (progress.postprocess && state !== statusBarStates.STATE_UPLOADING && state !== statusBarStates.STATE_PREPROCESSING) {
+      if (progress.postprocess
+          && state !== statusBarStates.STATE_UPLOADING
+          && state !== statusBarStates.STATE_PREPROCESSING) {
         state = statusBarStates.STATE_POSTPROCESSING
       }
     }

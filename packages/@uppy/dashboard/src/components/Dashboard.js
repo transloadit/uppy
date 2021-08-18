@@ -81,6 +81,7 @@ module.exports = function Dashboard (props) {
       onDrop={props.handleDrop}
     >
       <div
+        aria-hidden="true"
         className="uppy-Dashboard-overlay"
         tabIndex={-1}
         onClick={props.handleClickOutside}

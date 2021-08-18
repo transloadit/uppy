@@ -48,6 +48,7 @@ en_US.strings = {
   dropPasteImportFiles: 'Drop files here, %{browseFiles} or import from:',
   dropPasteImportFolders: 'Drop files here, %{browseFolders} or import from:',
   editFile: 'Edit file',
+  editFileWithFilename: 'Edit file %{file}',
   editing: 'Editing %{file}',
   emptyFolderAdded: 'No files were added from empty folder',
   encoding: 'Encoding...',
@@ -111,7 +112,7 @@ en_US.strings = {
     '0': 'We could not fully recover 1 file. Please re-select it and resume the upload.',
     '1': 'We could not fully recover %{smart_count} files. Please re-select them and resume the upload.',
   },
-  removeFile: 'Remove file',
+  removeFile: 'Remove file %{file}',
   reSelect: 'Re-select',
   resetFilter: 'Reset filter',
   resume: 'Resume',
@@ -177,7 +178,7 @@ en_US.strings = {
   zoomOut: 'Zoom out',
 }
 
-en_US.pluralize = function (count) {
+en_US.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

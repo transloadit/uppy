@@ -4,7 +4,7 @@
  * @returns {boolean}
  */
 module.exports = function isDragDropSupported () {
-  const div = document.createElement('div')
+  const div = document.body
 
   if (!('draggable' in div) || !('ondragstart' in div && 'ondrop' in div)) {
     return false

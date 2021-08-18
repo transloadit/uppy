@@ -42,6 +42,7 @@ export default class UppyRNUrl extends React.Component {
     this.plugin.addFile(this.state.url)
       .then(this.props.onDone)
       .catch((err) => {
+        // eslint-disable-next-line no-console
         console.log(err)
       })
   }
