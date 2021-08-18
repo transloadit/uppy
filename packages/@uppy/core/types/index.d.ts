@@ -137,6 +137,9 @@ export interface Restrictions {
 export interface UppyOptions<TMeta extends IndexedObject<any> = Record<string, unknown>> {
   id?: string
   autoProceed?: boolean
+  /**
+   * @deprecated Use allowMultipleUploadBatches
+   */
   allowMultipleUploads?: boolean
   allowMultipleUploadBatches?: boolean
   logger?: Logger
