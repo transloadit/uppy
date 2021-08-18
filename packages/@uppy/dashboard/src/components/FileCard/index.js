@@ -6,6 +6,8 @@ const ignoreEvent = require('../../utils/ignoreEvent.js')
 const FilePreview = require('../FilePreview')
 
 class FileCard extends Component {
+  form = document.createElement('form');
+
   constructor (props) {
     super(props)
 
@@ -24,6 +26,23 @@ class FileCard extends Component {
     this.form.id = nanoid()
   }
 
+  // TODO(aduh95): move this to `UNSAFE_componentWillMount` when updating to Preact X+.
+  componentWillMount () { // eslint-disable-line react/no-deprecated
+    this.form.addEventListener('submit', this.handleSave)
+    document.body.appendChild(this.form)
+  }
+
+  componentWillUnmount () {
+    this.form.removeEventListener('submit', this.handleSave)
+    document.body.removeChild(this.form)
+  }
+
+  getMetaFields () {
+    return typeof this.props.metaFields === 'function'
+      ? this.props.metaFields(this.props.files[this.props.fileCardFor])
+      : this.props.metaFields
+  }
+
   updateMeta = (newVal, name) => {
     this.setState(({ formState }) => ({
       formState: {
@@ -32,8 +51,6 @@ class FileCard extends Component {
       },
     }))
   }
-
-  form = document.createElement('form');
 
   handleSave = (e) => {
     e.preventDefault()
@@ -52,17 +69,6 @@ class FileCard extends Component {
       const file = this.props.files[this.props.fileCardFor]
       this.props.saveFileCard(this.state.formState, file.id)
     }
-  }
-
-  // TODO(aduh95): move this to `UNSAFE_componentWillMount` when updating to Preact X+.
-  componentWillMount () {
-    this.form.addEventListener('submit', this.handleSave)
-    document.body.appendChild(this.form)
-  }
-
-  componentWillUnmount () {
-    this.form.removeEventListener('submit', this.handleSave)
-    document.body.removeChild(this.form)
   }
 
   renderMetaFields = () => {
@@ -106,12 +112,6 @@ class FileCard extends Component {
         </fieldset>
       )
     })
-  }
-
-  getMetaFields () {
-    return typeof this.props.metaFields === 'function'
-      ? this.props.metaFields(this.props.files[this.props.fileCardFor])
-      : this.props.metaFields
   }
 
   render () {

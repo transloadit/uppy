@@ -137,7 +137,7 @@ hr_HR.strings = {
   openFolderNamed: 'Otvori mapu %{name}',
 }
 
-hr_HR.pluralize = function (n) {
+hr_HR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

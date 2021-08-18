@@ -213,7 +213,8 @@ class Zoom extends Provider {
       return { items: [] }
     }
 
-    // we query the zoom api by date (from 00:00 - 23:59 UTC) which may include extra results for 00:00 - 23:59 local time that we want to filter out
+    // we query the zoom api by date (from 00:00 - 23:59 UTC) which may include
+    // extra results for 00:00 - 23:59 local time that we want to filter out.
     const utcFrom = moment.tz(query.from, userResponse.timezone || 'UTC').startOf('day').tz('UTC')
     const utcTo = moment.tz(query.to, userResponse.timezone || 'UTC').endOf('day').tz('UTC')
 
@@ -320,7 +321,9 @@ class Zoom extends Provider {
     if (resp) {
       const fallbackMsg = `request to ${this.authProvider} returned ${resp.statusCode}`
       const errMsg = (resp.body || {}).message ? resp.body.message : fallbackMsg
-      return authErrorCodes.indexOf(resp.statusCode) > -1 ? new ProviderAuthError() : new ProviderApiError(errMsg, resp.statusCode)
+      return authErrorCodes.indexOf(resp.statusCode) > -1
+        ? new ProviderAuthError()
+        : new ProviderApiError(errMsg, resp.statusCode)
     }
     return err
   }

@@ -51,16 +51,16 @@ const ReSelectButton = (props) => (
 const ErrorButton = ({ file, onClick }) => {
   if (file.error) {
     return (
-      <span
+      <button
         className="uppy-Dashboard-Item-errorDetails"
         aria-label={file.error}
         data-microtip-position="bottom"
         data-microtip-size="medium"
-        role="tooltip"
         onClick={onClick}
+        type="button"
       >
         ?
-      </span>
+      </button>
     )
   }
   return null
@@ -75,7 +75,8 @@ module.exports = function FileInfo (props) {
         {ReSelectButton(props)}
         <ErrorButton
           file={props.file}
-          onClick={() => alert(props.file.error)}
+          // eslint-disable-next-line no-alert
+          onClick={() => alert(props.file.error)} // TODO: move to a custom alert implementation
         />
       </div>
     </div>

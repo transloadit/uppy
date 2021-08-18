@@ -1,11 +1,13 @@
 const { UIPlugin } = require('@uppy/core')
 
+/* eslint-disable max-len */
 /**
  * Add Redux DevTools support to Uppy
  *
  * See https://medium.com/@zalmoxis/redux-devtools-without-redux-or-how-to-have-a-predictable-state-with-any-architecture-61c5f5a7716f
  * and https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
  */
+/* eslint-enable max-len */
 module.exports = class ReduxDevTools extends UIPlugin {
   static VERSION = require('../package.json').version
 
@@ -54,6 +56,7 @@ module.exports = class ReduxDevTools extends UIPlugin {
   }
 
   install () {
+    // eslint-disable-next-line no-underscore-dangle
     this.withDevTools = typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
     if (this.withDevTools) {
       this.initDevTools()

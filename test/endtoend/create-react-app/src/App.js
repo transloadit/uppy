@@ -51,7 +51,7 @@ class App extends Component {
 
         <h2>Inline Dashboard</h2>
         <div id="inline-dashboard">
-          <label>
+          <label htmlFor="inline-dashboard-toggle">
             <input
               id="inline-dashboard-toggle"
               type="checkbox"
@@ -77,7 +77,7 @@ class App extends Component {
 
         <h2>Modal Dashboard</h2>
         <div id="modal-dashboard">
-          <button onClick={this.handleModalClick} id="modal-dashboard-toggle">
+          <button onClick={this.handleModalClick} id="modal-dashboard-toggle" type="button">
             {this.state.open ? 'Close dashboard' : 'Open dashboard'}
           </button>
           <DashboardModal

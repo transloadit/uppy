@@ -137,7 +137,7 @@ sr_RS_Latin.strings = {
   openFolderNamed: 'Otvori folder %{name}',
 }
 
-sr_RS_Latin.pluralize = function (n) {
+sr_RS_Latin.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

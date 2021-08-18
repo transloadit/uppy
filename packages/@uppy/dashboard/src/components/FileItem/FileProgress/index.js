@@ -1,7 +1,6 @@
 const { h } = require('preact')
 
 function onPauseResumeCancelRetry (props) {
-  console.log(props.uppy)
   if (props.isUploaded) return
 
   if (props.error && !props.hideRetryButton) {

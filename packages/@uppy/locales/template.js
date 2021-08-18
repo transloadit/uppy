@@ -2,7 +2,7 @@ const en_US = {}
 
 en_US.strings = {}
 
-en_US.pluralize = function (count) {
+en_US.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

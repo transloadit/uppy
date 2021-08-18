@@ -1,7 +1,7 @@
+/* eslint-disable */
 /**
  * @source https://github.com/developit/preact-transition-group
  */
-/* eslint-disable */
 'use strict'
 
 const { Component, cloneElement, h, toChildArray } = require('preact')

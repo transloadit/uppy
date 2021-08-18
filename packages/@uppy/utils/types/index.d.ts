@@ -250,6 +250,13 @@ declare module '@uppy/utils' {
     [key: number]: T
   }
   export type InternalMetadata = { name: string; type?: string }
+  export interface FileProgress  {
+    uploadStarted: number | null
+    uploadComplete: boolean
+    percentage: number
+    bytesUploaded: number
+    bytesTotal: number
+  }
   export interface UppyFile<
     TMeta = IndexedObject<any>,
     TBody = IndexedObject<any>
@@ -262,13 +269,7 @@ declare module '@uppy/utils' {
     meta: InternalMetadata & TMeta
     name: string
     preview?: string
-    progress?: {
-      uploadStarted: number | null
-      uploadComplete: boolean
-      percentage: number
-      bytesUploaded: number
-      bytesTotal: number
-    }
+    progress?: FileProgress
     remote?: {
       host: string
       url: string

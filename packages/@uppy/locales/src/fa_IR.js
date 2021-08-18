@@ -171,7 +171,7 @@ fa_IR.strings = {
 
 }
 
-fa_IR.pluralize = function (n) {
+fa_IR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

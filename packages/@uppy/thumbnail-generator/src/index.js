@@ -160,8 +160,8 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
     if (steps < 1) {
       steps = 1
     }
-    let sW = targetWidth * Math.pow(2, steps - 1)
-    let sH = targetHeight * Math.pow(2, steps - 1)
+    let sW = targetWidth * 2 ** (steps - 1)
+    let sH = targetHeight * 2 ** (steps - 1)
     const x = 2
 
     while (steps--) {
@@ -260,7 +260,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
         return
       }
       return this.requestThumbnail(current)
-        .catch(err => {}) // eslint-disable-line handle-callback-err
+        .catch(() => {}) // eslint-disable-line node/handle-callback-err
         .then(() => this.processQueue())
     }
     this.queueProcessing = false

@@ -177,7 +177,7 @@ de_DE.strings = {
   zoomOut: 'Verkleinern',
 }
 
-de_DE.pluralize = function (count) {
+de_DE.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

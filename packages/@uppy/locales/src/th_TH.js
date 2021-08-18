@@ -156,7 +156,7 @@ th_TH.strings = {
   zoomOut: 'ซูมออก',
 }
 
-th_TH.pluralize = function (n) {
+th_TH.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

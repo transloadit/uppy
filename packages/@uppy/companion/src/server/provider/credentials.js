@@ -13,7 +13,7 @@ const Provider = require('./Provider')
  *
  * @param {Object.<string, (typeof Provider)>} providers provider classes enabled for this server
  * @param {object} companionOptions companion options object
- * @returns {(req: object, res: object, next: function()) => void}
+ * @returns {(req: object, res: object, next: Function) => void}
  */
 exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
   return (req, res, next) => {

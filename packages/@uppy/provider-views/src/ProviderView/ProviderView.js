@@ -11,6 +11,7 @@ const SharedHandler = require('../SharedHandler')
 const CloseWrapper = require('../CloseWrapper')
 
 function getOrigin () {
+  // eslint-disable-next-line no-restricted-globals
   return location.origin
 }
 
@@ -20,6 +21,10 @@ function getOrigin () {
 module.exports = class ProviderView {
   static VERSION = require('../../package.json').version
 
+  #isHandlingScroll
+
+  #sharedHandler
+
   /**
    * @param {object} plugin instance of the plugin
    * @param {object} opts
@@ -27,7 +32,7 @@ module.exports = class ProviderView {
   constructor (plugin, opts) {
     this.plugin = plugin
     this.provider = opts.provider
-    this._sharedHandler = new SharedHandler(plugin)
+    this.#sharedHandler = new SharedHandler(plugin)
 
     // set default options
     const defaultOptions = {
@@ -75,7 +80,7 @@ module.exports = class ProviderView {
     // Nothing.
   }
 
-  _updateFilesAndFolders (res, files, folders) {
+  #updateFilesAndFolders (res, files, folders) {
     this.nextPagePath = res.nextPagePath
     res.items.forEach((item) => {
       if (item.isFolder) {
@@ -104,7 +109,7 @@ module.exports = class ProviderView {
    * @returns {Promise}   Folders/files in folder
    */
   getFolder (id, name) {
-    return this._sharedHandler.loaderWrapper(
+    return this.#sharedHandler.loaderWrapper(
       this.provider.list(id),
       (res) => {
         const folders = []
@@ -121,7 +126,7 @@ module.exports = class ProviderView {
         }
 
         this.username = res.username || this.username
-        this._updateFilesAndFolders(res, files, folders)
+        this.#updateFilesAndFolders(res, files, folders)
         this.plugin.setPluginState({ directories: updatedDirectories })
       },
       this.handleError
@@ -292,7 +297,7 @@ module.exports = class ProviderView {
 
     const authWindow = window.open(link, '_blank')
     const handleToken = (e) => {
-      if (!this._isOriginAllowed(e.origin, this.plugin.opts.companionAllowedHosts) || e.source !== authWindow) {
+      if (!this.#isOriginAllowed(e.origin, this.plugin.opts.companionAllowedHosts) || e.source !== authWindow) {
         this.plugin.uppy.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.companionAllowedHosts}`)
         return
       }
@@ -314,7 +319,7 @@ module.exports = class ProviderView {
     window.addEventListener('message', handleToken)
   }
 
-  _isOriginAllowed (origin, allowedOrigin) {
+  #isOriginAllowed (origin, allowedOrigin) {
     const getRegex = (value) => {
       if (typeof value === 'string') {
         return new RegExp(`^${value}$`)
@@ -343,15 +348,15 @@ module.exports = class ProviderView {
     const scrollPos = e.target.scrollHeight - (e.target.scrollTop + e.target.offsetHeight)
     const path = this.nextPagePath || null
 
-    if (scrollPos < 50 && path && !this._isHandlingScroll) {
+    if (scrollPos < 50 && path && !this.#isHandlingScroll) {
       this.provider.list(path)
         .then((res) => {
           const { files, folders } = this.plugin.getPluginState()
-          this._updateFilesAndFolders(res, files, folders)
+          this.#updateFilesAndFolders(res, files, folders)
         }).catch(this.handleError)
-        .then(() => { this._isHandlingScroll = false }) // always called
+        .then(() => { this.#isHandlingScroll = false }) // always called
 
-      this._isHandlingScroll = true
+      this.#isHandlingScroll = true
     }
   }
 
@@ -386,7 +391,7 @@ module.exports = class ProviderView {
       return this.addFile(file)
     })
 
-    this._sharedHandler.loaderWrapper(Promise.all(promises), () => {
+    this.#sharedHandler.loaderWrapper(Promise.all(promises), () => {
       this.clearSelection()
     }, () => {})
   }
@@ -449,11 +454,11 @@ module.exports = class ProviderView {
       username: this.username,
       getNextFolder: this.getNextFolder,
       getFolder: this.getFolder,
-      filterItems: this._sharedHandler.filterItems,
+      filterItems: this.#sharedHandler.filterItems,
       filterQuery: this.filterQuery,
       logout: this.logout,
-      isChecked: this._sharedHandler.isChecked,
-      toggleCheckbox: this._sharedHandler.toggleCheckbox,
+      isChecked: this.#sharedHandler.isChecked,
+      toggleCheckbox: this.#sharedHandler.toggleCheckbox,
       handleScroll: this.handleScroll,
       listAllFiles: this.listAllFiles,
       done: this.donePicking,

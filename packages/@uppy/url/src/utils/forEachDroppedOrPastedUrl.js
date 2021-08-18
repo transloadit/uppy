@@ -37,7 +37,7 @@ const toArray = require('@uppy/utils/lib/toArray')
       1: {kind: "string", type: "text/x-moz-url"}
       2: {kind: "string", type: "text/plain"}
 
-    2. We can determine if it's a 'copypaste' or a 'drop', but we can't discern between [Copy Image] and [Copy Image Address].
+    2. We can determine if it's a 'copypaste' or a 'drop', but we can't discern between [Copy Image] and [Copy Image Address]
 
   CONCLUSION
 
@@ -46,7 +46,9 @@ const toArray = require('@uppy/utils/lib/toArray')
       If there are no 'file' items - handle 'text/plain' items.
 
     2. 'drop'
-      Take 'text/uri-list' items. Safari has an additional item of .kind === 'file', and you may worry about the item being duplicated (first by DashboardPlugin, and then by UrlPlugin, now), but don't. Directory handling code won't pay attention to this particular item of kind 'file'.
+      Take 'text/uri-list' items. Safari has an additional item of .kind === 'file', and you may worry about the item being
+      duplicated (first by DashboardPlugin, and then by UrlPlugin, now), but don't. Directory handling code won't pay
+      attention to this particular item of kind 'file'.
 */
 
 /**

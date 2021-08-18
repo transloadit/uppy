@@ -137,7 +137,7 @@ sr_RS_Cyrillic.strings = {
   openFolderNamed: 'Отвори фолдер %{name}',
 }
 
-sr_RS_Cyrillic.pluralize = function (n) {
+sr_RS_Cyrillic.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

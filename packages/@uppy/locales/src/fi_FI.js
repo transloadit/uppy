@@ -144,7 +144,7 @@ fi_FI.strings = {
   recording: 'Tallennetaan',
 }
 
-fi_FI.pluralize = function (n) {
+fi_FI.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

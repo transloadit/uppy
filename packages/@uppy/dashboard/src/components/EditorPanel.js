@@ -2,7 +2,7 @@ const { h } = require('preact')
 const classNames = require('classnames')
 
 function EditorPanel (props) {
-  const file = this.props.files[this.props.fileCardFor]
+  const file = props.files[props.fileCardFor]
 
   return (
     <div
