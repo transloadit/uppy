@@ -91,12 +91,14 @@ type anyObject = Record<string, unknown>
 
   // Normal event signature
   uppy.on('complete', (result) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const successResults = result.successful
   })
 
   // Meta signature
   type Meta = {myCustomMetadata: string}
   uppy.on<'complete', Meta>('complete', (result) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const meta = result.successful[0].meta.myCustomMetadata
   })
 }

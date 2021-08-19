@@ -50,6 +50,7 @@ import Dashboard from '..'
   })
 
   uppy.on('dashboard:file-edit-state', (file) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const fileName = file.name
   })
 }
