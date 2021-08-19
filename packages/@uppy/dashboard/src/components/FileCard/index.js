@@ -1,6 +1,5 @@
 const { h, Component } = require('preact')
 const classNames = require('classnames')
-const cuid = require('cuid')
 const getFileTypeIcon = require('../../utils/getFileTypeIcon')
 const ignoreEvent = require('../../utils/ignoreEvent.js')
 const FilePreview = require('../FilePreview')
@@ -20,8 +19,6 @@ class FileCard extends Component {
     this.state = {
       formState: storedMetaData,
     }
-
-    this.form.id = cuid()
   }
 
   updateMeta = (newVal, name) => {
@@ -33,8 +30,6 @@ class FileCard extends Component {
     })
   }
 
-  form = document.createElement('form');
-
   handleSave = (e) => {
     e.preventDefault()
     const fileID = this.props.fileCardFor
@@ -43,17 +38,6 @@ class FileCard extends Component {
 
   handleCancel = () => {
     this.props.toggleFileCard(false)
-  }
-
-  // TODO(aduh95): move this to `UNSAFE_componentWillMount` when updating to Preact X+.
-  componentWillMount () {
-    this.form.addEventListener('submit', this.handleSave)
-    document.body.appendChild(this.form)
-  }
-
-  componentWillUnmount () {
-    this.form.removeEventListener('submit', this.handleSave)
-    document.body.removeChild(this.form)
   }
 
   saveOnEnter = (ev) => {
@@ -83,22 +67,18 @@ class FileCard extends Component {
               onChange: (newVal) => this.updateMeta(newVal, field.id),
               fieldCSSClasses,
               required,
-              form: this.form.id,
             }, h)
             : (
               <input
                 className={fieldCSSClasses.text}
                 id={id}
-                form={this.form.id}
                 type={field.type || 'text'}
                 required={required}
                 value={this.state.formState[field.id]}
                 placeholder={field.placeholder}
-                // If `form` attribute is not supported, we need to capture pressing Enter to avoid bubbling in case Uppy is
-                // embedded inside a <form>.
-                onKeyUp={'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter}
-                onKeyDown={'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter}
-                onKeyPress={'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter}
+                onKeyUp={this.saveOnEnter}
+                onKeyDown={this.saveOnEnter}
+                onKeyPress={this.saveOnEnter}
                 onInput={ev => this.updateMeta(ev.target.value, field.id)}
                 data-uppy-super-focusable
               />
@@ -136,7 +116,6 @@ class FileCard extends Component {
           <button
             className="uppy-DashboardContent-back"
             type="button"
-            form={this.form.id}
             title={this.props.i18n('finishEditingFile')}
             onClick={this.handleCancel}
           >
@@ -153,7 +132,6 @@ class FileCard extends Component {
                 type="button"
                 className="uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit"
                 onClick={() => this.props.openFileEditor(file)}
-                form={this.form.id}
               >
                 {this.props.i18n('editFile')}
               </button>
@@ -167,11 +145,10 @@ class FileCard extends Component {
           <div className="uppy-Dashboard-FileCard-actions">
             <button
               className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
-              // If `form` attribute is supported, we want a submit button to trigger the form validation.
-              // Otherwise, fallback to a classic button with a onClick event handler.
-              type={'form' in HTMLButtonElement.prototype ? 'submit' : 'button'}
-              onClick={'form' in HTMLButtonElement.prototype ? undefined : this.handleSave}
-              form={this.form.id}
+              // If `form` attribute is not in Preact 8, we can’t trigger the form validation.
+              // We use a classic button with a onClick event handler.
+              type="button"
+              onClick={this.handleSave}
             >
               {this.props.i18n('saveChanges')}
             </button>
@@ -179,7 +156,6 @@ class FileCard extends Component {
               className="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Dashboard-FileCard-actionsBtn"
               type="button"
               onClick={this.handleCancel}
-              form={this.form.id}
             >
               {this.props.i18n('cancel')}
             </button>
