@@ -1,6 +1,8 @@
 const { URL } = require('url')
+const serialize = require('serialize-javascript')
+
 const tokenService = require('../helpers/jwt')
-const { hasMatch, sanitizeHtml } = require('../helpers/utils')
+const { hasMatch } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
 
 /**
@@ -15,7 +17,7 @@ const htmlContent = (token, origin) => {
     <head>
         <meta charset="utf-8" />
         <script>
-          window.opener.postMessage(${sanitizeHtml(JSON.stringify({ token }))}, ${sanitizeHtml(JSON.stringify(origin))})
+          window.opener.postMessage(${serialize({ token })}, ${serialize(origin)})
           window.close()
         </script>
     </head>
