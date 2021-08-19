@@ -137,7 +137,7 @@ ja_JP.strings = {
   openFolderNamed: '開いたフォルダ %{name}',
 }
 
-ja_JP.pluralize = function (n) {
+ja_JP.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

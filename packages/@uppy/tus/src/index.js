@@ -147,20 +147,26 @@ module.exports = class Tus extends BasePlugin {
    * - While the upload is in progress, it may be paused or cancelled.
    *   Pausing aborts the underlying tus.Upload, and removes the upload from the `this.requests` queue. All other state is
    *   maintained.
-   *   Cancelling removes the upload from the `this.requests` queue, and completely aborts the upload--the tus.Upload instance
-   *   is aborted and discarded, the EventTracker instance is destroyed (removing all listeners).
+   *   Cancelling removes the upload from the `this.requests` queue, and completely aborts the upload-- the `tus.Upload`
+   *   instance is aborted and discarded, the EventTracker instance is destroyed (removing all listeners).
    *   Resuming the upload uses the `this.requests` queue as well, to prevent selectively pausing and resuming uploads from
    *   bypassing the limit.
    * - After completing an upload, the tus.Upload and EventTracker instances are cleaned up, and the upload is marked as done
    *   in the `this.requests` queue.
-   * - When an upload completed with an error, the same happens as on successful completion, but the `upload()` promise is rejected.
+   * - When an upload completed with an error, the same happens as on successful completion, but the `upload()` promise is
+   *   rejected.
    *
    * When working on this function, keep in mind:
-   *  - When an upload is completed or cancelled for any reason, the tus.Upload and EventTracker instances need to be cleaned up using this.resetUploaderReferences().
-   *  - When an upload is cancelled or paused, for any reason, it needs to be removed from the `this.requests` queue using `queuedRequest.abort()`.
-   *  - When an upload is completed for any reason, including errors, it needs to be marked as such using `queuedRequest.done()`.
-   *  - When an upload is started or resumed, it needs to go through the `this.requests` queue. The `queuedRequest` variable must be updated so the other uses of it are valid.
-   *  - Before replacing the `queuedRequest` variable, the previous `queuedRequest` must be aborted, else it will keep taking up a spot in the queue.
+   *  - When an upload is completed or cancelled for any reason, the tus.Upload and EventTracker instances need to be cleaned
+   *    up using this.resetUploaderReferences().
+   *  - When an upload is cancelled or paused, for any reason, it needs to be removed from the `this.requests` queue using
+   *    `queuedRequest.abort()`.
+   *  - When an upload is completed for any reason, including errors, it needs to be marked as such using
+   *    `queuedRequest.done()`.
+   *  - When an upload is started or resumed, it needs to go through the `this.requests` queue. The `queuedRequest` variable
+   *    must be updated so the other uses of it are valid.
+   *  - Before replacing the `queuedRequest` variable, the previous `queuedRequest` must be aborted, else it will keep taking
+   *    up a spot in the queue.
    *
    * @param {UppyFile} file for use with upload
    * @param {number} current file in a queue
@@ -301,7 +307,8 @@ module.exports = class Tus extends BasePlugin {
           queuedRequest.abort()
           upload.abort()
         } else {
-          // Resuming an upload should be queued, else you could pause and then resume a queued upload to make it skip the queue.
+          // Resuming an upload should be queued, else you could pause and then
+          // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
           queuedRequest = this.requests.run(() => {
             upload.start()
@@ -388,7 +395,8 @@ module.exports = class Tus extends BasePlugin {
   /**
    * See the comment on the upload() method.
    *
-   * Additionally, when an upload is removed, completed, or cancelled, we need to close the WebSocket connection. This is handled by the resetUploaderReferences() function, so the same guidelines apply as in upload().
+   * Additionally, when an upload is removed, completed, or cancelled, we need to close the WebSocket connection. This is
+   * handled by the resetUploaderReferences() function, so the same guidelines apply as in upload().
    *
    * @param {UppyFile} file
    */
@@ -413,7 +421,8 @@ module.exports = class Tus extends BasePlugin {
           queuedRequest.abort()
           socket.send('pause', {})
         } else {
-          // Resuming an upload should be queued, else you could pause and then resume a queued upload to make it skip the queue.
+          // Resuming an upload should be queued, else you could pause and then
+          // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
           queuedRequest = this.requests.run(() => {
             socket.send('resume', {})

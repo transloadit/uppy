@@ -118,6 +118,7 @@ async function main (packageName, version) {
 
   const remote = !!version
   if (!remote) {
+    // eslint-disable-next-line import/no-dynamic-require
     version = require(`../packages/${packageName}/package.json`).version
   }
 

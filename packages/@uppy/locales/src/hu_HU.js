@@ -139,7 +139,7 @@ hu_HU.strings = {
   openFolderNamed: 'Nyitott mappa %{name}',
 }
 
-hu_HU.pluralize = function (n) {
+hu_HU.pluralize = function pluralize (n) {
   return 0
 }
 

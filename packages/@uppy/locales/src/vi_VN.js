@@ -140,7 +140,7 @@ vi_VN.strings = {
   },
 }
 
-vi_VN.pluralize = function (n) {
+vi_VN.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

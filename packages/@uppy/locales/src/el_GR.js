@@ -137,7 +137,7 @@ el_GR.strings = {
   },
 }
 
-el_GR.pluralize = function (n) {
+el_GR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 1
   }

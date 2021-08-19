@@ -131,7 +131,7 @@ pt_BR.strings = {
   openFolderNamed: 'Pasta aberta %{name}',
 }
 
-pt_BR.pluralize = function (n) {
+pt_BR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

@@ -139,7 +139,7 @@ ru_RU.strings = {
   openFolderNamed: 'Открыть папку %{name}',
 }
 
-ru_RU.pluralize = function (n) {
+ru_RU.pluralize = function pluralize (n) {
   if (n % 10 === 1 && n % 100 !== 11) {
     return 0
   }

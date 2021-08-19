@@ -139,7 +139,7 @@ he_IL.strings = {
   },
 }
 
-he_IL.pluralize = function (n) {
+he_IL.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

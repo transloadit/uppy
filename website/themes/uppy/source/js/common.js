@@ -1,3 +1,4 @@
+// eslint-disable-next-line func-names
 (function () {
   let each = [].forEach
   let doc = document.documentElement
@@ -173,6 +174,7 @@
             sectionContainer.appendChild(makeLink(h))
             let h3s = collectH3s(h)
             allLinks.push(h)
+            // eslint-disable-next-line prefer-spread
             allLinks.push.apply(allLinks, h3s)
             if (h3s.length) {
               sectionContainer.appendChild(makeSubLinks(h3s, isDocs))
@@ -227,7 +229,7 @@
       let tabs = document.querySelectorAll('.Tabs-link')
 
       function myTabClicks (tabClickEvent) {
-        for (var i = 0; i < tabs.length; i++) {
+        for (let i = 0; i < tabs.length; i++) {
           tabs[i].classList.remove('Tabs-link--active')
         }
 
@@ -238,7 +240,7 @@
 
         let myContentPanes = document.querySelectorAll('.TabPane')
 
-        for (i = 0; i < myContentPanes.length; i++) {
+        for (let i = 0; i < myContentPanes.length; i++) {
           myContentPanes[i].classList.remove('TabPane--active')
         }
 
@@ -262,6 +264,7 @@
 
     function shuffleTaglines () {
       for (let i = taglineList.children.length; i >= 0; i--) {
+        // eslint-disable-next-line no-bitwise
         taglineList.appendChild(taglineList.children[Math.random() * i | 0])
       }
     }

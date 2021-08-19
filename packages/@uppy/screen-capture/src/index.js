@@ -20,7 +20,8 @@ module.exports = class ScreenCapture extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
-    this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
+    // eslint-disable-next-line no-restricted-globals
+    this.protocol = location.protocol === 'https:' ? 'https' : 'http'
     this.id = this.opts.id || 'ScreenCapture'
     this.title = this.opts.title || 'Screencast'
     this.type = 'acquirer'
@@ -209,7 +210,9 @@ module.exports = class ScreenCapture extends UIPlugin {
       .then((videoStream) => {
         // Attempt to use the passed preferredVideoMimeType (if any) during recording.
         // If the browser doesn't support it, we'll fall back to the browser default instead
-        if (preferredVideoMimeType && MediaRecorder.isTypeSupported(preferredVideoMimeType) && getFileTypeExtension(preferredVideoMimeType)) {
+        if (preferredVideoMimeType
+            && MediaRecorder.isTypeSupported(preferredVideoMimeType)
+            && getFileTypeExtension(preferredVideoMimeType)) {
           options.mimeType = preferredVideoMimeType
         }
 

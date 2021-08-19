@@ -144,7 +144,7 @@ is_IS.strings = {
   },
 }
 
-is_IS.pluralize = function (n) {
+is_IS.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

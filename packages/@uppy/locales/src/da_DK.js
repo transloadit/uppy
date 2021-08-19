@@ -137,7 +137,7 @@ da_DK.strings = {
   },
 }
 
-da_DK.pluralize = function (n) {
+da_DK.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

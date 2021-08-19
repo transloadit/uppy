@@ -78,7 +78,6 @@ export default class UppyRNInstagram extends React.Component {
   }
 
   renderInstagram () {
-    console.log(this.state.authUrl)
     return (
       <WebView
         source={{ uri: this.state.authUrl }}
@@ -86,9 +85,7 @@ export default class UppyRNInstagram extends React.Component {
         onNavigationStateChange={(ev) => {
           const { url } = ev
           const token = getQueryParamValueFromUrl('uppyAuthToken', url)
-          console.log(token)
           this.plugin.provider.setAuthToken(token)
-          console.log(this.plugin.provider.list('recent'))
           // return this.renderGrid(this.state.instagram.items)
         }}
       />
