@@ -25,7 +25,7 @@ class RestrictionError extends Error {
 if (typeof AggregateError === 'undefined') {
   // eslint-disable-next-line no-global-assign
   globalThis.AggregateError = class AggregateError extends Error {
-    constructor (message, errors) {
+    constructor (errors, message) {
       super(message)
       this.errors = errors
     }
@@ -571,7 +571,7 @@ class Uppy {
     }
 
     if (errors.length) {
-      throw new AggregateRestrictionError(`${this.i18n('missingRequiredMetaField')}`, errors)
+      throw new AggregateRestrictionError(errors, `${this.i18n('missingRequiredMetaField')}`)
     }
   }
 
