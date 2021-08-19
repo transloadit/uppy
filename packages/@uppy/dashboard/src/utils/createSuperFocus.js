@@ -35,7 +35,7 @@ module.exports = function createSuperFocus () {
       lastFocusWasOnSuperFocusableEl = true
     } else {
       const firstEl = overlayEl.querySelector(FOCUSABLE_ELEMENTS)
-      firstEl && firstEl.focus({ preventScroll: true })
+      firstEl?.focus({ preventScroll: true })
       lastFocusWasOnSuperFocusableEl = false
     }
   }

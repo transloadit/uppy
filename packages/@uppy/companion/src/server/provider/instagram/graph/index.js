@@ -51,7 +51,8 @@ class Instagram extends Provider {
           return done(err)
         }
         this._getUsername(token, (err, username) => {
-          err ? done(err) : done(null, this.adaptData(body, username, directory, query))
+          if (err) done(err)
+          else done(null, this.adaptData(body, username, directory, query))
         })
       })
   }

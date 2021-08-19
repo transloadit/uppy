@@ -586,7 +586,7 @@ module.exports = class Dashboard extends UIPlugin {
     this.uppy.iteratePlugins((plugin) => {
       if (plugin.type === 'acquirer') {
         // Every Plugin with .type acquirer can define handleRootPaste(event)
-        plugin.handleRootPaste && plugin.handleRootPaste(event)
+        plugin.handleRootPaste?.(event)
       }
     })
 
@@ -651,7 +651,7 @@ module.exports = class Dashboard extends UIPlugin {
     this.uppy.iteratePlugins((plugin) => {
       if (plugin.type === 'acquirer') {
         // Every Plugin with .type acquirer can define handleRootDrop(event)
-        plugin.handleRootDrop && plugin.handleRootDrop(event)
+        plugin.handleRootDrop?.(event)
       }
     })
 
