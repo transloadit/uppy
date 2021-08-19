@@ -567,14 +567,14 @@ class Uppy {
    */
   checkRequiredMetaFields (files) {
     const { requiredMetaFields } = this.opts.restrictions
-    const { hasOwnProperty } = Object.prototype.hasOwnProperty
+    const { hasOwnProperty } = Object.prototype
 
     const errors = []
     const fileIDs = Object.keys(files)
     for (let i = 0; i < fileIDs.length; i++) {
       const file = this.getFile(fileIDs[i])
       for (let i = 0; i < requiredMetaFields.length; i++) {
-        if (!hasOwnProperty.call(file.meta, requiredMetaFields[i])) {
+        if (!hasOwnProperty.call(file.meta, requiredMetaFields[i]) || file.meta[requiredMetaFields[i]] === '') {
           const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
           errors.push(err)
           this.showOrLogErrorAndThrow(err, { file, throwErr: false })

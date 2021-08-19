@@ -249,7 +249,7 @@ It gets passed `({value, onChange, required, form}, h)` where `value` is the cur
       id: 'public',
       name: 'Public',
       render ({ value, onChange, required, form }, h) {
-        return h('input', { type: 'checkbox', required, form, onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'on' })
+        return h('input', { type: 'checkbox', required, form, onChange: (ev) => onChange(ev.target.checked ? 'on' : ''), defaultChecked: value === 'on' })
       },
     },
   ],
@@ -272,7 +272,7 @@ If you’d like the meta fields to be dynamically assigned depending on, for ins
         render: ({ value, onChange, required, form }, h) => {
           return h('input', {
             type: 'checkbox',
-            onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'),
+            onChange: (ev) => onChange(ev.target.checked ? 'on' : ''),
             defaultChecked: value === 'on',
             required,
             form,
