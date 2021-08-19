@@ -679,7 +679,7 @@ class Uppy {
     meta.type = fileType
 
     // `null` means the size is unknown.
-    const size = Number.isFinite(file.data.size) ? file.data.size : null
+    const size = isFinite(file.data.size) ? file.data.size : null
     const newFile = {
       source: file.source || '',
       id: fileID,
@@ -1049,7 +1049,7 @@ class Uppy {
     }
 
     // bytesTotal may be null or zero; in that case we can't divide by it
-    const canHavePercentage = Number.isFinite(data.bytesTotal) && data.bytesTotal > 0
+    const canHavePercentage = isFinite(data.bytesTotal) && data.bytesTotal > 0
     this.setFileState(file.id, {
       progress: {
         ...this.getFile(file.id).progress,
