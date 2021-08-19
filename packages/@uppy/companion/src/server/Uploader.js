@@ -462,8 +462,9 @@ class Uploader {
       /**
        *
        * @param {number} bytesUploaded
+       * @param {number} bytesTotal
        */
-      onProgress (bytesUploaded) {
+      onProgress (bytesUploaded, bytesTotal) { // eslint-disable-line no-unused-vars
         uploader.emitIllusiveProgress(bytesUploaded)
       },
       onSuccess () {

@@ -193,7 +193,7 @@ module.exports = function server (inputCompanionOptions = {}) {
   })
 
   // @ts-ignore
-  app.use((err, req, res) => {
+  app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     const logStackTrace = true
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message
