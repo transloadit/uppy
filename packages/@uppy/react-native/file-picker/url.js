@@ -66,7 +66,7 @@ export default class UppyRNUrl extends React.Component {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonCancel}
-          onPress={ev => this.props.onDone()}
+          onPress={() => this.props.onDone()}
         >
           <Text style={styles.buttonCancelText}>Cancel</Text>
         </TouchableOpacity>

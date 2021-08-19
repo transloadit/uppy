@@ -27,7 +27,7 @@ module.exports = class ReduxDevTools extends UIPlugin {
     this.initDevTools = this.initDevTools.bind(this)
   }
 
-  handleStateChange (prevState, nextState, patch) {
+  handleStateChange (prevState, nextState) {
     this.devTools.send('UPPY_STATE_UPDATE', nextState)
   }
 

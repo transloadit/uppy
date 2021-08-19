@@ -8,7 +8,7 @@ const MEDIA_TYPES = Object.freeze({
 
 const isVideo = (item) => item.media_type === MEDIA_TYPES.video
 
-exports.isFolder = (_) => {
+exports.isFolder = () => {
   return false
 }
 

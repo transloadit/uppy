@@ -171,7 +171,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
  * @param {{server: object, providerOptions: object}} options
  * @returns {string} the authProvider for this provider
  */
-const providerNameToAuthName = (name, options) => {
+const providerNameToAuthName = (name, options) => { // eslint-disable-line no-unused-vars
   const providers = exports.getDefaultProviders()
   return (providers[name] || {}).authProvider
 }

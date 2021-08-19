@@ -237,7 +237,7 @@ module.exports = class Editor extends Component {
   }
 
   render () {
-    const { currentImage, i18n, opts } = this.props
+    const { currentImage, opts } = this.props
     const { actions } = opts
     const imageURL = URL.createObjectURL(currentImage.data)
 

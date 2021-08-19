@@ -462,9 +462,8 @@ class Uploader {
       /**
        *
        * @param {number} bytesUploaded
-       * @param {number} bytesTotal
        */
-      onProgress (bytesUploaded, bytesTotal) {
+      onProgress (bytesUploaded) {
         uploader.emitIllusiveProgress(bytesUploaded)
       },
       onSuccess () {

@@ -458,7 +458,7 @@ module.exports = class Dashboard extends UIPlugin {
     // Watch for Dashboard container (`.uppy-Dashboard-inner`) resize
     // and update containerWidth/containerHeight in plugin state accordingly.
     // Emits first event on initialization.
-    this.resizeObserver = new ResizeObserver((entries, observer) => {
+    this.resizeObserver = new ResizeObserver((entries) => {
       const uppyDashboardInnerEl = entries[0]
 
       const { width, height } = uppyDashboardInnerEl.contentRect
@@ -634,7 +634,7 @@ module.exports = class Dashboard extends UIPlugin {
     }, 50)
   }
 
-  handleDrop = (event, dropCategory) => {
+  handleDrop = (event) => {
     event.preventDefault()
     event.stopPropagation()
 

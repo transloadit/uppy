@@ -24,7 +24,7 @@ function parseExamplesBrowserify (data, options, callback) {
   const tmpFile = `/tmp/${slug}.js`
   const cmd = `node ${browserifyScript} ${data.path} ${tmpFile} --colors`
   // hexo.log.i('hexo-renderer-uppyexamples: change detected in examples. running: ' + cmd);
-  exec(cmd, (err, stdout, stderr) => {
+  exec(cmd, (err, stdout) => {
     if (err) {
       return callback(err)
     }

@@ -1,6 +1,5 @@
 const { h } = require('preact')
 const { UIPlugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
 const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
 const ScreenRecIcon = require('./ScreenRecIcon')
 const CaptureScreen = require('./CaptureScreen')
@@ -148,7 +147,7 @@ module.exports = class ScreenCapture extends UIPlugin {
         this.videoStream = videoStream
 
         // add event listener to stop recording if stream is interrupted
-        this.videoStream.addEventListener('inactive', (event) => {
+        this.videoStream.addEventListener('inactive', () => {
           this.streamInactivated()
         })
 
@@ -275,7 +274,7 @@ module.exports = class ScreenCapture extends UIPlugin {
   }
 
   stopRecording () {
-    const stopped = new Promise((resolve, reject) => {
+    const stopped = new Promise((resolve) => {
       this.recorder.addEventListener('stop', () => {
         resolve()
       })
@@ -385,7 +384,7 @@ module.exports = class ScreenCapture extends UIPlugin {
     return Promise.resolve(file)
   }
 
-  render (state) {
+  render () {
     // get screen recorder state
     const recorderState = this.getPluginState()
 

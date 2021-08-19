@@ -112,7 +112,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
             <TouchableOpacity
               style={styles.providerButton}
               key={item.title}
-              onPress={ev => this.chooseProvider(item.id)}
+              onPress={() => this.chooseProvider(item.id)}
             >
               <Text style={styles.providerButtonText}>{item.title}</Text>
             </TouchableOpacity>
@@ -120,7 +120,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
         })}
         <TouchableOpacity
           style={styles.cancelButton}
-          onPress={ev => this.props.onRequestClose()}
+          onPress={() => this.props.onRequestClose()}
         >
           <Text style={styles.cancelButtonText}>Cancel</Text>
         </TouchableOpacity>

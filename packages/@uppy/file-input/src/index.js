@@ -1,6 +1,5 @@
 const { UIPlugin } = require('@uppy/core')
 const toArray = require('@uppy/utils/lib/toArray')
-const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
 
 module.exports = class FileInput extends UIPlugin {
@@ -67,11 +66,11 @@ module.exports = class FileInput extends UIPlugin {
     event.target.value = null
   }
 
-  handleClick (ev) {
+  handleClick () {
     this.input.click()
   }
 
-  render (state) {
+  render () {
     /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
     const hiddenInputStyle = {
       width: '0.1px',

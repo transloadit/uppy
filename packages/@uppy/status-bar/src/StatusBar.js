@@ -383,7 +383,7 @@ const ProgressBarUploading = (props) => {
   )
 }
 
-const ProgressBarComplete = ({ totalProgress, i18n }) => {
+const ProgressBarComplete = ({ i18n }) => {
   return (
     <div className="uppy-StatusBar-content" role="status" title={i18n('complete')}>
       <div className="uppy-StatusBar-status">
@@ -398,7 +398,7 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
   )
 }
 
-const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
+const ProgressBarError = ({ error, i18n }) => {
   function displayErrorAlert () {
     const errorMessage = `${i18n('uploadFailed')} \n\n ${error}`
     // eslint-disable-next-line no-alert

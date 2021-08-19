@@ -1,4 +1,4 @@
-const { render, h } = require('preact')
+const { render } = require('preact')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 
 const BasePlugin = require('./BasePlugin')

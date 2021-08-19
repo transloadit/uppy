@@ -1,6 +1,6 @@
 const querystring = require('querystring')
 
-exports.isFolder = (item) => {
+exports.isFolder = () => {
   return false
 }
 
@@ -19,7 +19,7 @@ exports.getItemName = (item) => {
   }
 }
 
-exports.getMimeType = (item) => {
+exports.getMimeType = () => {
   return 'image/jpeg'
 }
 

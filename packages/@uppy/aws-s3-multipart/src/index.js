@@ -318,7 +318,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      this.onFileRemove(file.id, (removed) => {
+      this.onFileRemove(file.id, () => {
         queuedRequest.abort()
         socket.send('pause', {})
         this.resetUploaderReferences(file.id, { abort: true })
@@ -450,7 +450,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
   }
 
   onRetryAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('retry-all', (filesToRetry) => {
+    this.uploaderEvents[fileID].on('retry-all', () => {
       if (!this.uppy.getFile(fileID)) return
       cb()
     })

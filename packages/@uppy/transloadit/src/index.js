@@ -1,4 +1,3 @@
-const Translator = require('@uppy/utils/lib/Translator')
 const hasProperty = require('@uppy/utils/lib/hasProperty')
 const { BasePlugin } = require('@uppy/core')
 const Tus = require('@uppy/tus')

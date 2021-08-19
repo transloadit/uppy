@@ -158,7 +158,7 @@ class Zoom extends Provider {
     return this.client
       .get(`${BASE_URL}${GET_MEETING_FILES}`)
       .auth(token)
-      .request((err, resp, body) => {
+      .request((err, resp) => {
         if (err || resp.statusCode !== 200) {
           return this._downloadError(resp, done)
         }

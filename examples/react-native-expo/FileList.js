@@ -59,7 +59,7 @@ export default function FileList (props) {
     <View style={styles.container}>
       <FlatList
         data={uppyFilesArray}
-        keyExtractor={(item, index) => item.id}
+        keyExtractor={(item) => item.id}
         numColumns={2}
         renderItem={({ item }) => {
           return (

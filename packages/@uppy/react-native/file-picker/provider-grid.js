@@ -26,7 +26,7 @@ export default class Example extends React.Component {
         // staticDimension={300}
         // fixed
         // spacing={20}
-        renderItem={({ item, index }) => (
+        renderItem={({ item }) => (
           <View style={[styles.itemContainer, { backgroundColor: item.code }]}>
             <Text style={styles.itemName}>{item.name}</Text>
             <Text style={styles.itemCode}>{item.code}</Text>
