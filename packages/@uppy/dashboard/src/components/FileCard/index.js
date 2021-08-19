@@ -62,6 +62,15 @@ class FileCard extends Component {
     this.props.toggleFileCard(false)
   }
 
+  saveOnEnter = (ev) => {
+    if (ev.keyCode === 13) {
+      ev.stopPropagation()
+      ev.preventDefault()
+      const file = this.props.files[this.props.fileCardFor]
+      this.props.saveFileCard(this.state.formState, file.id)
+    }
+  }
+
   renderMetaFields = () => {
     const metaFields = this.getMetaFields() || []
     const fieldCSSClasses = {
@@ -91,6 +100,11 @@ class FileCard extends Component {
                 required={required}
                 value={this.state.formState[field.id]}
                 placeholder={field.placeholder}
+                // If `form` attribute is not supported, we need to capture pressing Enter to avoid bubbling in case Uppy is
+                // embedded inside a <form>.
+                onKeyUp={'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter}
+                onKeyDown={'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter}
+                onKeyPress={'form' in HTMLInputElement.prototype ? undefined : this.saveOnEnter}
                 onInput={ev => this.updateMeta(ev.target.value, field.id)}
                 data-uppy-super-focusable
               />
@@ -153,7 +167,10 @@ class FileCard extends Component {
           <div className="uppy-Dashboard-FileCard-actions">
             <button
               className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
-              type="submit"
+              // If `form` attribute is supported, we want a submit button to trigger the form validation.
+              // Otherwise, fallback to a classic button with a onClick event handler.
+              type={'form' in HTMLButtonElement.prototype ? 'submit' : 'button'}
+              onClick={'form' in HTMLButtonElement.prototype ? undefined : this.handleSave}
               form={this.form.id}
             >
               {this.props.i18n('saveChanges')}
