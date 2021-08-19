@@ -6,7 +6,8 @@ type FieldRenderOptions = {
   value: string,
   onChange: (newVal: string) => void
   fieldCSSClasses: { text: string }
-  required?: boolean
+  required: boolean
+  form: string
 }
 
 type PreactRender = (node: any, params: object | null, ...children: any[]) => any
