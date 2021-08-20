@@ -14,10 +14,10 @@ If your app uses a state management library such as [Redux](https://redux.js.org
 
 Uppy comes with two state management solutions (stores):
 
-*   `@uppy/store-default`, a simple object-based store.
+*   `@uppy/store-default`, a basic object-based store.
 *   `@uppy/store-redux`, a store that uses a key in a Redux store.
 
-There are also some third-party stores:
+You can also use a third-party store:
 
 *   [uppy-store-ngrx](https://github.com/rimlin/uppy-store-ngrx/), keeping Uppy state in a key in an [Ngrx](https://github.com/ngrx/platform) store for use with Angular.
 
@@ -80,7 +80,7 @@ ReduxStore({
 
 #### `opts.selector`
 
-If you'd rather not store the Uppy state under the `state.uppy` key at all, use the `selector` option to the `ReduxStore` constructor to tell it where to find state instead:
+If you’d rather not store the Uppy state under the `state.uppy` key at all, use the `selector` option to the `ReduxStore` constructor to tell it where to find state instead:
 
 ```js
 const uppy = new Uppy({
@@ -92,9 +92,9 @@ const uppy = new Uppy({
 })
 ```
 
-Note that when specifying a custom selector, you **must** also specify a custom store ID. The store `id` tells the reducer in which property it should put Uppy's state. The selector must then take the state from that property. In the example, we set the ID to `avatarUpload` and take the state from the `[reducer mount path].avatarUpload`.
+Note that when specifying a custom selector, you **must** also specify a custom store ID. The store `id` tells the reducer in which property it should put Uppy’s state. The selector must then take the state from that property. In the example, we set the ID to `avatarUpload` and take the state from the `[reducer mount path].avatarUpload`.
 
-If your app uses [`reselect`](https://npmjs.com/package/reselect), its selectors work very well with this!
+If your app uses [`reselect`](https://npmjs.com/package/reselect), its selectors work well with this!
 
 ## Implementing Stores
 
@@ -106,7 +106,7 @@ An Uppy store is an object with three methods.
     `listener` is a function that should receive three parameters:
     `(prevState, nextState, patch)`
 
-    The `subscribe()` method should return a function that 'unsubscribes' (removes) the `listener`.
+    The `subscribe()` method should return a function that “unsubscribes” (removes) the `listener`.
 
 The default store implementation, for example, looks a bit like this:
 
