@@ -11,7 +11,7 @@ tagline: "user friendly abstraction to do file processing with Transloadit"
 
 [Transloadit][transloadit] is a service that helps you handle file uploads, resize, crop and watermark your images, make GIFs, transcode your videos, extract thumbnails, generate audio waveforms, and so much more. In short, [Transloadit][transloadit] is the Swiss Army Knife for your files.
 
-Robodog is an Uppy-based library that helps you talk to the Transloadit API. It includes a modal UI file picker with support for imports from third-party services, integration with HTML forms, and more. Because it's based on Uppy, you can add any existing Uppy plugin to add more functionality.
+Robodog is an Uppy-based library that helps you talk to the Transloadit API. It includes a modal UI file picker with support for imports from third-party services, integration with HTML forms, and more. Because it’s based on Uppy, you can add any existing Uppy plugin to add more functionality.
 
 ## Install
 
@@ -42,7 +42,7 @@ Robodog has several methods for different use cases.
 
 If you want to have a modal UI that users can use to select files from their local device or from third party sources like Instagram, use the [File Picker API](#File-Picker). This can be used for one-off uploads _outside_ an HTML form, like profile avatars or images to embed in a blog post.
 
-If you already have an HTML form, you can use the [Form API](#Form) to add Transloadit's encoding capabilities to it. Files will be uploaded to Transloadit, and the form will submit JSON information about the files and encoding results. You can also optionally show upload progress using Uppy's Status Bar UI, or even use the advanced Dashboard UI so users can import files from third party sources as well.
+If you already have an HTML form, you can use the [Form API](#Form) to add Transloadit’s encoding capabilities to it. Files will be uploaded to Transloadit, and the form will submit JSON information about the files and encoding results. You can also optionally show upload progress using Uppy’s Status Bar UI, or even use the advanced Dashboard UI so users can import files from third party sources as well.
 
 Finally, you can use the [Programmatic Upload API](#Programmatic-Uploads) with your custom UI implementation.
 
@@ -72,7 +72,7 @@ resultPromise.then((bundle) => {
 
 ## Form
 
-Add resumable uploads and Transloadit's processing to your existing HTML upload forms. Selected files will be uploaded to Transloadit, and the Assembly information will be submitted to your form endpoint.
+Add resumable uploads and Transloadit’s processing to your existing HTML upload forms. Selected files will be uploaded to Transloadit, and the Assembly information will be submitted to your form endpoint.
 
 ```html
 <form id="upload-form" method="POST" action="/upload">
@@ -95,7 +95,7 @@ Robodog.form('form#upload-form', {
 
 ## Programmatic Uploads
 
-Upload files straight to Transloadit from your own custom UI. Give us an array of files, and we'll give you an array of results!
+Upload files straight to Transloadit from your own custom UI. Give us an array of files, and we’ll give you an array of results!
 
 ```js
 const resultPromise = Robodog.upload(files, {
