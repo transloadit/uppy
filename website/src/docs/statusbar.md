@@ -10,7 +10,7 @@ tagline: "advanced upload progress status bar"
 ---
 
 The `@uppy/status-bar` plugin shows upload progress and speed, ETAs, pre- and post-processing information, and allows users to control (pause/resume/cancel) the upload.
-It is best used in combination with a simple file source plugin, such as \[`@uppy/file-input`]\[@uppy/file-input] or \[`@uppy/drag-drop`]\[@uppy/drag-drop], or a custom implementation.
+This plugin is best used in combination with a basic file source plugin, such as [`@uppy/file-input`][] or [`@uppy/drag-drop`][], or a custom implementation.
 
 ```js
 import StatusBar from '@uppy/status-bar'
@@ -34,7 +34,7 @@ Install from NPM:
 npm install @uppy/status-bar
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
 const { StatusBar } = Uppy
@@ -74,7 +74,7 @@ uppy.use(StatusBar, {
 
 ### `id: 'StatusBar'`
 
-A unique identifier for this Status Bar. It defaults to `'StatusBar'`. Use this if you need to add multiple StatusBar instances.
+A unique identifier for this Status Bar. It defaults to `'StatusBar'`. Use this if you need to add several StatusBar instances.
 
 ### `target: body`
 
@@ -86,7 +86,7 @@ Hide the Status Bar after the upload is complete.
 
 ### `showProgressDetails: false`
 
-By default, progress in the Status Bar is shown as simple percentage. If you would like to also display remaining upload size and time, set this to `true`.
+By default, progress in the Status Bar is shown as percentage only. If you would like to also display remaining upload size and time, set this to `true`.
 
 `showProgressDetails: false`: Uploading: 45%
 `showProgressDetails: true`: Uploading: 45%・43 MB of 101 MB・8s left
