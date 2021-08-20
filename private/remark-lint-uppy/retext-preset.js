@@ -18,6 +18,7 @@ export default [
       ignore: [
         'address',
         'component',
+        'equivalent',
         'function',
         'identify',
         'interface',
@@ -25,6 +26,7 @@ export default [
         'maximum',
         'minimum',
         'option',
+        'parameters',
         'provide',
         'render',
         'request',
