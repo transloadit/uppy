@@ -90,11 +90,11 @@ The following plugins are available as Svelte component wrappers:
 *   `<ProgressBar />` - renders a `@uppy/progress-bar`
 *   `<StatusBar />` - renders a `@uppy/status-bar`
 
-Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, make it easy to add your plugins.
+Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, making it easier to add your plugins.
 
 ### Initializing Uppy
 
-Due to the way Svelte handles reactivity, you can simply initialize Uppy the same way you would with vanilla JavaScript
+Due to the way Svelte handles reactivity, you can initialize Uppy the same way you would with vanilla JavaScript
 
 ```js
 import Uppy from '@uppy/core'
@@ -169,7 +169,7 @@ The `<DashboardModal />` cannot be passed to a `target:` option of a remote prov
 
 #### CSS
 
-The `DragDrop` component includes some simple styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead:
+The `DragDrop` component includes some basic styles, like shown in the [example](/examples/dragdrop). You can also choose not to include those and use your own styles instead:
 
 ```html
 <style global>
@@ -225,5 +225,3 @@ The `<StatusBar />` component supports all `@uppy/status-bar` options to be pass
 [Svelte]: https://svelte.dev
 
 [Sapper]: https://sapper.svelte.dev
-
-[`@uppy/webcam`]: /docs/webcam/
