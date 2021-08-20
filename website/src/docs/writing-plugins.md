@@ -247,19 +247,11 @@ this.defaultLocale = {
 }
 ```
 
-This allows them to be overridden by Locale Packs, or directly when users pass `locale: { strings: youCanOnlyUploadFileTypes: 'Something else completely about %{types}'} }`. For this to work, it's currently also required that you add:
-
-```js
-// i18n
-this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-this.i18n = this.translator.translate.bind(this.translator)
-this.i18nArray = this.translator.translateArray.bind(this.translator)
-// ^-- Only if you're using i18nArray, which allows you to pass in JSX Components as well.
-```
+This allows them to be overridden by Locale Packs, or directly when users pass `locale: { strings: youCanOnlyUploadFileTypes: 'Something else completely about %{types}'} }`. For this to work, it’s also required that you call `this.i18nInit()` in the plugin constructor.
 
 ## Example of a custom plugin
 
-Below is a full example of a [simple plugin](https://github.com/arturi/uppy-plugin-image-compressor) that compresses images before uploading them. You can replace `compressorjs` method with any other work you need to do. This works especially well for async stuff, like calling an external API.
+Below is a full example of a [small plugin](https://github.com/arturi/uppy-plugin-image-compressor) that compresses images before uploading them. You can replace `compressorjs` method with any other work you need to do. This works especially well for async stuff, like calling an external API.
 
 <!-- eslint-disable consistent-return -->
 ```js
@@ -269,7 +261,11 @@ import Compressor from 'compressorjs/dist/compressor.esm.js'
 
 class UppyImageCompressor extends UIPlugin {
   constructor (uppy, opts) {
-    super(uppy, opts)
+    const defaultOptions = {
+      quality: 0.6,
+    }
+    super(uppy, { ...defaultOptions, ...opts })
+
     this.id = this.opts.id || 'ImageCompressor'
     this.type = 'modifier'
 
@@ -279,48 +275,27 @@ class UppyImageCompressor extends UIPlugin {
       },
     }
 
-    const defaultOptions = {
-      quality: 0.6,
-    }
-
-    this.opts = { ...defaultOptions, ...opts }
-
     // we use those internally in `this.compress`, so they
     // should not be overriden
     delete this.opts.success
     delete this.opts.error
 
     this.i18nInit()
-
-    this.prepareUpload = this.prepareUpload.bind(this)
-    this.compress = this.compress.bind(this)
-  }
-
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   compress (blob) {
     return new Promise((resolve, reject) => new Compressor(blob, ({
-
       ...this.opts,
-      success: (result) => {
+      success (result) {
         return resolve(result)
       },
-      error: (err) => {
+      error (err) {
         return reject(err)
       },
     })))
   }
 
-  prepareUpload (fileIDs) {
+  prepareUpload = (fileIDs) => {
     const promises = fileIDs.map((fileID) => {
       const file = this.uppy.getFile(fileID)
       this.uppy.emit('preprocess-progress', file, {
@@ -328,7 +303,7 @@ class UppyImageCompressor extends UIPlugin {
         message: this.i18n('compressingImages'),
       })
 
-      if (file.type.split('/')[0] !== 'image') {
+      if (!file.type.startsWith('image/')) {
         return
       }
 
