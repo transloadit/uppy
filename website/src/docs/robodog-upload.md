@@ -7,7 +7,7 @@ order: 3
 category: "File Processing"
 ---
 
-Upload files straight to Transloadit from your own custom UI. Give us an array of files, and we'll give you an array of results!
+Upload files straight to Transloadit from your own custom UI. Give us an array of files, and we’ll give you an array of results!
 
 ```js
 const resultPromise = Robodog.upload(files, {
@@ -21,7 +21,7 @@ const resultPromise = Robodog.upload(files, {
 `resultPromise` is a [Promise][promise] that resolves with an object:
 
 *   `successful` - An array containing data about files that were uploaded successfully
-*   `failed` - An array containing data about files that failed to upload
+*   `failed` - An array containing data about files that didn’t upload
 *   `transloadit` - An array of Assembly statuses
 
 ## `files`
