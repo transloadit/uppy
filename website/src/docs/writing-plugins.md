@@ -6,7 +6,7 @@ order: 8
 category: "Contributing"
 ---
 
-There are already a few useful Uppy plugins out there, but there might come a time when you will want to build your own. Plugins can hook into the upload process or render a custom UI, typically to:
+You can find already a few useful Uppy plugins out there, but there might come a time when you will want to build your own. Plugins can hook into the upload process or render a custom UI, typically to:
 
 *   Render some custom UI element, e.g., [StatusBar](/docs/statusbar) or [Dashboard](/docs/dashboard).
 *   Do the actual uploading, e.g., [XHRUpload](/docs/xhrupload) or [Tus](/docs/tus).
@@ -39,9 +39,9 @@ export default class MyPlugin extends BasePlugin {
 
 ## Methods
 
-Plugins can implement methods in order to execute certain tasks. The most important method is `install()`, which is called when a plugin is `.use`d.
+Plugins can define methods to execute certain tasks. The most important method is `install()`, which is called when a plugin is `.use`d.
 
-All of the below methods are optional! Only implement the methods you need.
+All the below methods are optional! Only define the methods you need.
 
 ### `BasePlugin`
 
@@ -61,7 +61,7 @@ export default class MyPlugin extends UIPlugin {
 
 #### `uninstall()`
 
-Called when the plugin is removed, or the Uppy instance is closed. This should undo all of the work done in the `install()` method.
+Called when the plugin is removed, or the Uppy instance is closed. This should undo all the work done in the `install()` method.
 
 ```js
 export default class MyPlugin extends UIPlugin {
@@ -102,7 +102,7 @@ Called after Preact has rendered the components of the plugin. Can be used to pe
 
 #### `update(state)`
 
-Called on each state update. You will rarely need to use this, it is mostly handy if you want to build a UI plugin using something other than Preact.
+Called on each state update. You will rarely need to use this, unless if you want to build a UI plugin using something other than Preact.
 
 #### `onUnmount()`
 
@@ -112,7 +112,7 @@ Called after the elements have been removed from the DOM. Can be used to perform
 
 When creating an upload, Uppy runs files through an upload pipeline. The pipeline consists of three parts, each of which can be hooked into: Preprocessing, Uploading, and Postprocessing. Preprocessors can be used to configure uploader plugins, encrypt files, resize images, etc., before uploading them. Uploaders do the actual uploading work, such as creating an XMLHttpRequest object and sending the file. Postprocessors do their work after files have been uploaded completely. This could be anything from waiting for a file to propagate across a CDN, to sending another request to relate some metadata to the file.
 
-Each hook is a function that receives an array containing the file IDs that are being uploaded, and returns a Promise to signal completion. Hooks are added and removed through `Uppy` methods: `addPreProcessor`, `addUploader`, `addPostProcessor`, and their `remove*` counterparts. Normally, hooks should be added during the plugin's `install()` method, and removed during the `uninstall()` method.
+Each hook is a function that receives an array containing the file IDs that are being uploaded, and returns a Promise to signal completion. Hooks are added and removed through `Uppy` methods: `addPreProcessor`, `addUploader`, `addPostProcessor`, and their `remove*` counterparts. Normally, hooks should be added during the plugin `install()` method, and removed during the `uninstall()` method.
 
 Additionally, upload hooks can fire events to signal progress.
 
@@ -142,29 +142,54 @@ class MyPlugin extends BasePlugin {
 }
 ```
 
+Or you can define the method as a class field:
+
+```js
+class MyPlugin extends UIPlugin {
+  constructor (uppy, opts) {
+    super(uppy, opts)
+    this.id = opts.id || 'MyPlugin'
+    this.type = 'example'
+  }
+
+  prepareUpload = (fileIDs) => { // ← this!
+    console.log(this) // `this` refers to the `MyPlugin` instance.
+    return Promise.resolve()
+  }
+
+  install () {
+    this.uppy.addPreProcessor(this.prepareUpload)
+  }
+
+  uninstall () {
+    this.uppy.removePreProcessor(this.prepareUpload)
+  }
+}
+```
+
 ### `addPreProcessor(fn)`
 
 Add a preprocessing function. `fn` gets called with a list of file IDs before an upload starts. `fn` should return a Promise. Its resolution value is ignored. To change file data and such, use Uppy state updates, for example using [`setFileState`][core.setfilestate].
 
 ### `addUploader(fn)`
 
-Add an uploader function. `fn` gets called with a list of file IDs when an upload should start. Uploader functions should do the actual uploading work, such as creating and sending an XMLHttpRequest or calling into some upload service's SDK. `fn` should return a Promise that resolves once all files have been uploaded.
+Add an uploader function. `fn` gets called with a list of file IDs when an upload should start. Uploader functions should do the actual uploading work, such as creating and sending an XMLHttpRequest or calling into some upload service SDK. `fn` should return a Promise that resolves once all files have been uploaded.
 
 You may choose to still resolve the Promise if some file uploads fail. This way, any postprocessing will still run on the files that were uploaded successfully, while uploads that failed will be retried when `uppy.retryAll` is called.
 
 ### `addPostProcessor(fn)`
 
-Add a postprocessing function. `fn` is called with a list of file IDs when an upload has finished. `fn` should return a Promise that resolves when the processing work is complete. Again, the resolution value of the Promise is ignored. This hook can be used to do any finishing work. For example, you could wait for file encoding or CDN propagation to complete, or you could do an HTTP API call to create an album containing all images that were just uploaded.
+Add a postprocessing function. `fn` is called with a list of file IDs when an upload has finished. `fn` should return a Promise that resolves when the processing work is complete. Again, the resolution value of the Promise is ignored. This hook can be used to do any finishing work. For example, you could wait for file encoding or CDN propagation to complete, or you could do an HTTP API call to create an album containing all images that were uploaded.
 
 ### `removePreProcessor/removeUploader/removePostProcessor(fn)`
 
-Remove a processor or uploader function that was added previously. Normally, this should be done in the `uninstall()` method.
+Remove a processor or uploader function that was added before. Normally, this should be done in the `uninstall()` method.
 
 ## Progress events
 
 Progress events can be fired for individual files to show feedback to the user. For upload progress events, only emitting how many bytes are expected and how many have been uploaded is enough. Uppy will handle calculating progress percentages, upload speed, etc.
 
-Preprocessing and postprocessing progress events are plugin-dependent and can refer to anything, so Uppy doesn't try to be smart about them. There are two types of processing progress events: determinate and indeterminate. Some processing does not have meaningful progress beyond "not done" and "done". For example, sending a request to initialize a server-side resource that will serve as the upload destination. In those situations, indeterminate progress is suitable. Other processing does have meaningful progress. For example, encrypting a large file. In those situations, determinate progress is suitable.
+Preprocessing and postprocessing progress events are plugin-dependent and can refer to anything, so Uppy doesn’t try to be smart about them. Processing progress events can be of two types: determinate or indeterminate. Some processing does not have meaningful progress beyond “not done” and “done”. For example, sending a request to initialize a server-side resource that will serve as the upload destination. In those situations, indeterminate progress is suitable. Other processing does have meaningful progress. For example, encrypting a large file. In those situations, determinate progress is suitable.
 
 ### `preprocess-progress(fileID, progress)`
 
@@ -197,10 +222,9 @@ When `mode` is `'determinate'`, also add the `value` property:
 
 *   `value` - A progress value between 0 and 1.
 
-### \`error(err\[, fileID])
+### `error(err[, fileID])`
 
 `err` is an `Error` object. `fileID` can optionally which file fails to inform the user.
-
 
 ### JSX
 
