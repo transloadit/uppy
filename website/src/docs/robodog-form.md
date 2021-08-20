@@ -7,7 +7,7 @@ order: 2
 category: "File Processing"
 ---
 
-Add resumable uploads and Transloadit's processing to your existing HTML upload forms. Selected files will be uploaded to Transloadit, and the Assembly information will be submitted to your form endpoint.
+Add resumable uploads and Transloadit’s processing to your existing HTML upload forms. Selected files will be uploaded to Transloadit, and the Assembly information will be submitted to your form endpoint.
 
 ```html
 <form id="upload-form" method="POST" action="/upload">
@@ -121,7 +121,7 @@ window.Robodog.form('form#upload-form', {
 
 We now recommend using Uppy over the jQuery SDK. Uppy is framework- and library-agnostic, and much more extensible.
 
-Like the Transloadit jQuery SDK, this API enhances an existing form. That makes this a good candidate for migration. Most of the jQuery SDK options have a direct equivalent in Robodog.
+Like the Transloadit jQuery SDK, this API enhances an existing form. That makes this a good candidate for migration. Most of the jQuery SDK options have a direct replacement in Robodog.
 
 First, change your import URLs and initialization code:
 
@@ -227,8 +227,6 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
 </html>
 ```
 
-The equivalent options are listed below.
-
 ### Options
 
 | jQuery SDK option | Robodog option |
@@ -244,20 +242,18 @@ The equivalent options are listed below.
 | `triggerUploadOnFileSelection` | `autoProceed: true` |
 | `processZeroFiles` | `alwaysRunAssembly` |
 | `maxNumberOfUploadedFiles` | Use [restrictions](#Restrictions) instead. `restrictions.maxNumberOfFiles`. |
-| `locale` | No longer supported, this will be addressed by the equivalent to the `translations` option instead. |
-| `translations` | Currently unavailable |
-| `exclude` | Currently unavailable |
+| `locale` | No longer supported, this will be addressed by the `translations` option instead. |
+| `translations` | Not available |
+| `exclude` | Not available |
 | `fields` | `fields`. The CSS selector format is no longer supported. Instead, specify an array of form field names. `['field1']` instead of `'input[name=field1]`. |
-| `debug` | Obsolete, as Transloadit's backend has improved error reporting. |
+| `debug` | Obsolete, as Transloadit’s backend has improved error reporting. |
 
 As for the options that are unavailable:
 
-*   `exclude` is intended to exclude certain `<input type="file">` inputs from Transloadit processing. It will likely not be added, but we'll perhaps have a `include` CSS selector option instead.
+*   `exclude` is intended to exclude certain `<input type="file">` inputs from Transloadit processing. It will likely not be added, but we’ll perhaps have a `include` CSS selector option instead.
 *   `debug` will not be added.
 
 ### Events
-
-There are no `on*()` _options_ anymore, but `.on('...')` methods are provided instead on the Uppy object that is returned by `window.Robodog.form()`.
 
 | jQuery SDK option | Robodog Event |
 |---------------|--------------------------|
@@ -270,7 +266,7 @@ There are no `on*()` _options_ anymore, but `.on('...')` methods are provided in
 | `onCancel` | `.on('transloadit:cancel', (assembly) => {}))`<br />or `.on('file-removed', (file) => {})` for individual files |
 | `onError` | `.on('error', (error) => {})` <br /><br />The error object might contain an `.assembly` property with an Assembly status for errors that happened during the execution of the Assembly. |
 | `onSuccess` | `.on('transloadit:complete', (assembly) => {})` |
-| `onDisconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
-| `onReconnect` | Currently unavailable, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
+| `onDisconnect` | Not available, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
+| `onReconnect` | Not available, use something like [`is-offline`](https://www.npmjs.com/package/is-offline) |
 
 [transloadit plugin]: https://uppy.io/docs/transloadit/
