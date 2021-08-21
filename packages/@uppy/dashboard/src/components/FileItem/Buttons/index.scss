@@ -2,12 +2,12 @@
 .uppy-Dashboard-Item-action {
   @include blue-border-focus;
 
-  cursor: pointer;
   color: $gray-500;
+  cursor: pointer;
 
   &:hover {
-    opacity: 1;
     color: $gray-900;
+    opacity: 1;
   }
 
   [data-uppy-theme="dark"] & {
@@ -26,8 +26,8 @@
   opacity: 0.95;
 
   &:hover {
-    opacity: 1;
     color: $black;
+    opacity: 1;
   }
 
   [data-uppy-theme="dark"] & {
@@ -50,8 +50,8 @@
   .uppy-Dashboard-Item-action {
     width: 22px;
     height: 22px;
-    padding: 3px;
     margin-left: 3px;
+    padding: 3px;
 
     &:focus {
       border-radius: 3px;
@@ -73,13 +73,13 @@
   }
   // Remove button is in the top right corner
   .uppy-Dashboard-Item-action--remove {
-    z-index: $zIndex-3;
     position: absolute;
     top: -8px;
-    inset-inline-end: -8px;
+    z-index: $zIndex-3;
     width: 18px;
     height: 18px;
     padding: 0;
+    inset-inline-end: -8px;
 
     &:focus {
       border-radius: 50%;

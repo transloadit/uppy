@@ -7,9 +7,9 @@
 
 .uppy-DashboardContent-panelBody {
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
-  flex: 1;
 
   [data-uppy-theme="dark"] & {
     background-color: $gray-900;
@@ -21,10 +21,10 @@
 .uppy-Provider-loading,
 .uppy-Provider-empty {
   display: flex;
+  flex: 1;
+  flex-flow: column wrap;
   align-items: center;
   justify-content: center;
-  flex-flow: column wrap;
-  flex: 1;
   color: $gray-500;
 }
 
@@ -39,14 +39,14 @@
 }
 
 .uppy-Provider-authTitle {
-  font-size: 17px;
-  line-height: 1.4;
-  font-weight: 400;
+  max-width: 500px;
   margin-bottom: 30px;
   padding: 0 15px;
-  max-width: 500px;
-  text-align: center;
   color: $gray-600;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.4;
+  text-align: center;
 
   .uppy-size--md & {
     font-size: 20px;
@@ -59,9 +59,9 @@
 
 .uppy-Provider-breadcrumbs {
   flex: 1;
+  margin-bottom: 10px;
   color: $gray-700;
   font-size: 12px;
-  margin-bottom: 10px;
   text-align: start;
 
   .uppy-size--md & {
@@ -76,9 +76,9 @@
 .uppy-Provider-breadcrumbsIcon {
   display: inline-block;
   color: $gray-700;
+  line-height: 1;
   vertical-align: middle;
   margin-inline-end: 4px;
-  line-height: 1;
 }
 
 .uppy-Provider-breadcrumbsIcon svg {
@@ -91,9 +91,9 @@
   @include highlight-focus;
 
   display: inline-block;
-  line-height: inherit;
   // for focus
   padding: 4px;
+  line-height: inherit;
   border-radius: 3px;
 
   &:not(:last-of-type) {
@@ -103,8 +103,8 @@
   &:last-of-type {
     color: $gray-800;
     font-weight: 500;
-    pointer-events: none;
     cursor: normal;
+    pointer-events: none;
   }
 
   &:hover {
@@ -119,17 +119,17 @@
 
 .uppy-ProviderBrowser {
   display: flex;
-  flex-direction: column;
   flex: 1;
-  font-size: 14px;
-  font-weight: 400;
+  flex-direction: column;
   height: 100%;
+  font-weight: 400;
+  font-size: 14px;
 }
 
 .uppy-ProviderBrowser-user {
   margin: 0 8px 0 0;
-  font-weight: 500;
   color: $gray-800;
+  font-weight: 500;
 
   [data-uppy-theme="dark"] & {
     color: $gray-200;
@@ -137,17 +137,17 @@
 }
 
 .uppy-ProviderBrowser-user::after {
-  content: '\00B7';
   position: relative;
-  inset-inline-start: 4px;
   color: $gray-500;
   font-weight: normal;
+  content: '\00B7';
+  inset-inline-start: 4px;
 }
 
 .uppy-ProviderBrowser-header {
+  position: relative;
   z-index: $zIndex-2;
   border-bottom: 1px solid $gray-200;
-  position: relative;
 
   [data-uppy-theme="dark"] & {
     border-bottom: 1px solid $gray-800;
@@ -155,12 +155,12 @@
 }
 
 .uppy-ProviderBrowser-headerBar {
-  padding: 7px 15px;
-  background-color: $gray-50;
   z-index: $zIndex-2;
+  padding: 7px 15px;
   color: $gray-600;
-  line-height: 1.4;
   font-size: 12px;
+  line-height: 1.4;
+  background-color: $gray-50;
 
   .uppy-size--md & {
     display: flex;
@@ -173,26 +173,26 @@
 }
 
 .uppy-ProviderBrowser-headerBar--simple {
-  text-align: center;
   display: block;
   justify-content: center;
+  text-align: center;
 }
 
 .uppy-ProviderBrowser-headerBar--simple .uppy-Provider-breadcrumbsWrap {
-  flex: none;
   display: inline-block;
+  flex: none;
   vertical-align: middle;
 }
 
 .uppy-ProviderBrowser-search {
-  width: 100%;
-  background-color: $white;
   position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
   height: 30px;
   margin-top: 10px;
   margin-bottom: 5px;
-  display: flex;
-  align-items: center;
+  background-color: $white;
 
   [data-uppy-theme="dark"] & {
     background-color: $gray-900;
@@ -201,36 +201,36 @@
 
 .uppy-ProviderBrowser-searchIcon {
   position: absolute;
+  z-index: $zIndex-3;
   width: 12px;
   height: 12px;
-  inset-inline-start: 16px;
-  z-index: $zIndex-3;
   color: $gray-400;
+  inset-inline-start: 16px;
 }
 
 .uppy-ProviderBrowser-searchInput {
+  z-index: $zIndex-2;
   width: 100%;
   height: 30px;
-  background-color: transparent;
-  outline: 0;
-  font-family: $font-family-base;
-  font-size: 12px;
-  line-height: 1.4;
-  border: 0;
   margin: 0 8px;
-  padding-inline-start: 27px;
-  z-index: $zIndex-2;
+  font-size: 12px;
+  font-family: $font-family-base;
+  line-height: 1.4;
+  background-color: transparent;
+  border: 0;
   border-radius: 4px;
+  outline: 0;
+  padding-inline-start: 27px;
 
   [data-uppy-theme="dark"] & {
-    background-color: $gray-900;
     color: $gray-200;
+    background-color: $gray-900;
   }
 }
 
 .uppy-ProviderBrowser-searchInput:focus {
-  outline: 0;
   background-color: $gray-100;
+  outline: 0;
 
   [data-uppy-theme="dark"] & {
     background-color: $gray-800;
@@ -239,14 +239,14 @@
 
 .uppy-ProviderBrowser-searchClose {
   position: absolute;
+  top: 4px;
+  z-index: $zIndex-3;
   width: 22px;
   height: 22px;
   padding: 6px;
-  inset-inline-end: 12px;
-  top: 4px;
-  z-index: $zIndex-3;
   color: $gray-500;
   cursor: pointer;
+  inset-inline-end: 12px;
 
   &:hover {
     color: $gray-600;
@@ -264,13 +264,12 @@
 
 .uppy-ProviderBrowser-userLogout {
   @include highlight-focus;
-
-  cursor: pointer;
-  line-height: inherit;
-  color: $blue;
   // for focus
   padding: 4px;
+  color: $blue;
+  line-height: inherit;
   border-radius: 3px;
+  cursor: pointer;
 
   &:hover {
     text-decoration: underline;
@@ -282,28 +281,28 @@
 }
 
 .uppy-ProviderBrowser-body {
-  flex: 1;
   position: relative;
+  flex: 1;
 }
 
 .uppy-ProviderBrowser-list {
-  flex: 1;
-  display: block;
-  width: 100%;
-  height: 100%;
-  background-color: $white;
-  border-spacing: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
   position: absolute;
   top: 0;
+  right: 0;
   bottom: 0;
   left: 0;
-  right: 0;
-  list-style: none;
+  display: block;
+  flex: 1;
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  list-style: none;
+  background-color: $white;
+  border-spacing: 0;
+  -webkit-overflow-scrolling: touch;
 
   [data-uppy-theme="dark"] & {
     background-color: $gray-900;
@@ -315,18 +314,18 @@
 }
 
 .uppy-ProviderBrowserItem-inner {
-  cursor: pointer;
   font-weight: 500;
   font-size: 13px;
+  cursor: pointer;
 }
 
 .uppy-ProviderBrowser-footer {
   display: flex;
   align-items: center;
-  background-color: $white;
   height: 65px;
-  border-top: 1px solid $gray-200;
   padding: 0 15px;
+  background-color: $white;
+  border-top: 1px solid $gray-200;
 
   & button {
     margin-inline-end: 8px;

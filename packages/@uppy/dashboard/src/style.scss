@@ -11,25 +11,25 @@
 // Transitions //
 
 .uppy-transition-slideDownUp-enter {
-  opacity: 0.01;
   transform: translate3d(0, -105%, 0);
+  opacity: 0.01;
   transition: transform 0.25s ease-in-out, opacity 0.25s ease-in-out;
 }
 
 .uppy-transition-slideDownUp-enter.uppy-transition-slideDownUp-enter-active {
-  opacity: 1;
   transform: translate3d(0, 0, 0);
+  opacity: 1;
 }
 
 .uppy-transition-slideDownUp-leave {
-  opacity: 1;
   transform: translate3d(0, 0, 0);
+  opacity: 1;
   transition: transform 0.25s ease-in-out, opacity 0.25s ease-in-out;
 }
 
 .uppy-transition-slideDownUp-leave.uppy-transition-slideDownUp-leave-active {
-  opacity: 0.01;
   transform: translate3d(0, -105%, 0);
+  opacity: 0.01;
 }
 
 // Modal open/close animations
@@ -128,28 +128,28 @@
 
 // Added to body to prevent the page from scrolling when Modal is open
 .uppy-Dashboard-isFixed {
-  overflow: hidden;
   height: 100vh;
+  overflow: hidden;
 }
 
 .uppy-Dashboard--modal .uppy-Dashboard-overlay {
   position: fixed;
   top: 0;
-  left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba($black, 0.5);
+  left: 0;
   z-index: $zIndex-2;
+  background-color: rgba($black, 0.5);
 }
 
 .uppy-Dashboard-inner {
   position: relative;
-  background-color: $gray-50;
   max-width: 100%;
   max-height: 100%;
-  outline: none;
+  background-color: $gray-50;
   border: 1px solid $gray-200;
   border-radius: 5px;
+  outline: none;
 
   .uppy-size--md & {
     min-height: auto;
@@ -174,11 +174,11 @@
 }
 
 .uppy-Dashboard-innerWrap {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  position: relative;
   border-radius: 5px;
   opacity: 0;
 
@@ -187,10 +187,10 @@
   }
 
   .uppy-Dashboard--isDisabled & {
-    pointer-events: none;
     opacity: 0.6;
     filter: grayscale(100%);
     user-select: none;
+    pointer-events: none;
   }
 }
 
@@ -201,39 +201,39 @@
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
   position: fixed;
   top: 35px;
-  left: 15px;
   right: 15px;
   bottom: 15px;
+  left: 15px;
   border: none;
 
   @media #{$screen-medium} {
     top: 50%;
-    left: 50%;
     right: auto; // else the 15px from above may override the positioning
-    transform: translate(-50%, -50%);
+    left: 50%;
     box-shadow: 0 5px 15px 4px rgba($black, 0.15);
+    transform: translate(-50%, -50%);
   }
 }
 
 .uppy-Dashboard-close {
   @include clear-focus;
 
-  display: block;
   position: absolute;
   top: -33px;
-  inset-inline-end: -2px;
-  cursor: pointer;
+  z-index: $zIndex-5;
+  display: block;
   color: rgba($white, 0.9);
   font-size: 27px;
-  z-index: $zIndex-5;
+  cursor: pointer;
+  inset-inline-end: -2px;
 
   &:focus {
     color: lighten($blue, 25%);
   }
 
   @media #{$screen-medium} {
-    font-size: 35px;
     top: -10px;
+    font-size: 35px;
     inset-inline-end: -35px;
   }
 }
@@ -241,16 +241,16 @@
 // Service Message
 
 .uppy-Dashboard-serviceMsg {
-  background-color: $white-50;
-  border-top: 1px solid $beige;
-  border-bottom: 1px solid $beige;
-  font-size: 12px;
-  line-height: 1.3;
-  font-weight: 500;
-  padding: 12px 0;
   position: relative;
   top: -1px;
   z-index: $zIndex-4;
+  padding: 12px 0;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.3;
+  background-color: $white-50;
+  border-top: 1px solid $beige;
+  border-bottom: 1px solid $beige;
 
   .uppy-size--md & {
     font-size: 14px;
@@ -258,8 +258,8 @@
   }
 
   [data-uppy-theme="dark"] & {
-    background-color: $gray-900;
     color: $gray-200;
+    background-color: $gray-900;
     border-top: 1px solid $gray-800;
     border-bottom: 1px solid $gray-800;
   }
@@ -277,10 +277,10 @@
 }
 
 .uppy-Dashboard-serviceMsg-actionBtn {
-  font-size: inherit;
-  font-weight: inherit;
-  vertical-align: initial;
   color: $blue;
+  font-weight: inherit;
+  font-size: inherit;
+  vertical-align: initial;
 
   [data-uppy-theme="dark"] & {
     color: rgba($highlight--dark, 0.9);
@@ -294,24 +294,24 @@
 }
 
 .uppy-Dashboard-AddFiles {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  height: 100%;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   text-align: center;
 
   [data-uppy-drag-drop-supported="true"] & {
-    margin: 7px;
     height: calc(100% - 14px); // to accomodate for the 7px margin
-    border-radius: 3px;
+    margin: 7px;
     border: 1px dashed $gray-250;
+    border-radius: 3px;
   }
 
   .uppy-Dashboard-AddFilesPanel & {
-    border: none;
     height: calc(100% - 14px - 40px); // to accomodate for the 7px margin and 40px topbar height
+    border: none;
   }
 
   .uppy-Dashboard--modal & {
@@ -324,13 +324,13 @@
 }
 
 .uppy-Dashboard-AddFiles-info {
-  padding-top: 15px;
-  padding-bottom: 15px;
-  margin-top: auto;
 
   // hide on short note and “powered by” on short screens
   // such as CodePen, or inline dashboard with height < 400px
   display: none;
+  margin-top: auto;
+  padding-top: 15px;
+  padding-bottom: 15px;
 
   .uppy-size--height-md & {
     display: block;
@@ -338,9 +338,9 @@
 
   .uppy-size--md & {
     position: absolute;
+    right: 0;
     bottom: 25px;
     left: 0;
-    right: 0;
     padding-top: 30px;
     padding-bottom: 0;
   }
@@ -353,8 +353,8 @@
 .uppy-Dashboard-browse {
   @include clear-focus;
 
-  cursor: pointer;
   color: rgba($blue, 0.9);
+  cursor: pointer;
 
   &:hover,
   &:focus {
@@ -373,41 +373,41 @@
 
 .uppy-Dashboard-browseBtn {
   display: block;
-  font-size: 14px;
-  font-weight: 500;
+  width: 100%;
   margin-top: 8px;
   margin-bottom: 5px;
-  width: 100%;
+  font-weight: 500;
+  font-size: 14px;
 
   .uppy-size--md & {
-    font-size: 15px;
     width: auto;
     margin: auto;
     margin-top: 15px;
     margin-bottom: 15px;
     padding: 13px 44px;
+    font-size: 15px;
   }
 }
 
 .uppy-Dashboard-AddFiles-list {
   display: flex;
-  flex-direction: column;
   flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  flex-direction: column;
+  width: 100%;
   margin-top: 2px;
   padding: 2px 0;
-  width: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 
   .uppy-size--md & {
+    flex: none;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
     max-width: 600px;
-    overflow-y: visible;
     margin-top: 15px;
     padding-top: 0;
-    flex: none;
+    overflow-y: visible;
   }
 }
 
@@ -431,24 +431,24 @@
 .uppy-DashboardTab-btn {
   @include clear-focus;
 
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-  background-color: transparent;
-  -webkit-appearance: none;
-  appearance: none;
-  color: $gray-700;
   display: flex;
   flex-direction: row;
   align-items: center;
+  width: 100%;
+  height: 100%;
   padding: 12px 15px;
+  color: $gray-700;
+  background-color: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
 
   .uppy-size--md & {
-    width: 86px;
-    margin-inline-end: 1px;
     flex-direction: column;
+    width: 86px;
     padding: 10px 3px;
     border-radius: 5px;
+    margin-inline-end: 1px;
   }
 
   [data-uppy-theme="dark"] & {
@@ -478,11 +478,11 @@
 }
 
 .uppy-DashboardTab-btn svg {
+  display: inline-block;
   max-width: 100%;
   max-height: 100%;
-  display: inline-block;
-  vertical-align: text-top;
   overflow: hidden;
+  vertical-align: text-top;
   transition: transform ease-in-out 0.15s;
   margin-inline-end: 10px;
 
@@ -492,14 +492,14 @@
 }
 
 .uppy-DashboardTab-name {
-  font-size: 14px;
   font-weight: 500;
+  font-size: 14px;
 
   .uppy-size--md & {
-    font-size: 11px;
-    line-height: 15px;
     margin-top: 8px;
     margin-bottom: 0;
+    font-size: 11px;
+    line-height: 15px;
   }
 }
 
@@ -516,29 +516,29 @@
 }
 
 .uppy-Dashboard-input {
-  width: 0.1px;
-  height: 0.1px;
-  opacity: 0;
-  overflow: hidden;
   position: absolute;
   z-index: -1;
+  width: 0.1px;
+  height: 0.1px;
+  overflow: hidden;
+  opacity: 0;
 }
 
 .uppy-DashboardContent-bar {
-  flex-shrink: 0;
-  height: 40px;
-  width: 100%;
-  padding: 0 10px;
-  z-index: $zIndex-4;
-  // For when both 'Cancel' and '+ Add more' buttons are present
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 
   // For .uppy-DashboardContent-title's position: absolute
   position: relative;
-  border-bottom: 1px solid $gray-200;
+  z-index: $zIndex-4;
+  // For when both 'Cancel' and '+ Add more' buttons are present
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 40px;
+  padding: 0 10px;
   background-color: $gray-50;
+  border-bottom: 1px solid $gray-200;
 
   .uppy-size--md & {
     height: 50px;
@@ -554,24 +554,24 @@
 .uppy-DashboardContent-title {
   position: absolute;
   top: 0;
-  left: 0;
   right: 0;
-  text-align: center;
-  font-size: 12px;
-  line-height: 40px;
-  font-weight: 500;
+  left: 0;
   // MUST be present for title to be visible in IE11
   width: 100%;
   max-width: 170px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow-x: hidden;
   margin: auto;
+  overflow-x: hidden;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 40px;
+  white-space: nowrap;
+  text-align: center;
+  text-overflow: ellipsis;
 
   .uppy-size--md & {
+    max-width: 300px;
     font-size: 14px;
     line-height: 50px;
-    max-width: 300px;
   }
 
   [data-uppy-theme="dark"] & {
@@ -584,12 +584,12 @@
   @include reset-button;
   @include highlight-focus;
 
-  border-radius: 3px;
-  font-size: 12px;
-  font-weight: 400;
-  cursor: pointer;
-  color: $blue;
   padding: 7px 6px;
+  color: $blue;
+  font-weight: 400;
+  font-size: 12px;
+  border-radius: 3px;
+  cursor: pointer;
   margin-inline-start: -6px;
 
   .uppy-size--md & {
@@ -605,19 +605,19 @@
   @include reset-button;
   @include highlight-focus;
 
-  border-radius: 3px;
-  font-weight: 500;
-  cursor: pointer;
-  color: $blue;
   width: 29px;
   height: 29px;
   padding: 7px 8px;
+  color: $blue;
+  font-weight: 500;
+  border-radius: 3px;
+  cursor: pointer;
   margin-inline-end: -5px;
 
   .uppy-size--md & {
-    font-size: 14px;
     width: auto;
     height: auto;
+    font-size: 14px;
     margin-inline-end: -8px;
   }
 
@@ -649,32 +649,32 @@
 .uppy-DashboardContent-panel {
   position: absolute;
   top: 0;
+  right: 0;
   bottom: 0;
   left: 0;
-  right: 0;
-  background-color: darken($white, 4%);
-  overflow: hidden;
   z-index: $zIndex-5;
-  border-radius: 5px;
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: darken($white, 4%);
+  border-radius: 5px;
 }
 
 .uppy-Dashboard-AddFilesPanel {
   position: absolute;
   top: 0;
+  right: 0;
   bottom: 0;
   left: 0;
-  right: 0;
-  background: $gray-50;
-  background: linear-gradient(0deg, $gray-50 35%, rgba($gray-50, 0.85) 100%);
-  box-shadow: 0 0 10px 5px rgba($black, 0.15);
-  overflow: hidden;
   z-index: $zIndex-5;
-  border-radius: 5px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  background: $gray-50;
+  background: linear-gradient(0deg, $gray-50 35%, rgba($gray-50, 0.85) 100%);
+  border-radius: 5px;
+  box-shadow: 0 0 10px 5px rgba($black, 0.15);
 
   [data-uppy-theme="dark"] & {
     background-color: $gray-800;
@@ -697,10 +697,10 @@
 }
 
 .uppy-Dashboard-progressBarContainer.is-active {
-  z-index: $zIndex-4;
   position: absolute;
   top: 0;
   left: 0;
+  z-index: $zIndex-4;
   width: 100%;
   height: 100%;
 }
@@ -714,17 +714,17 @@
   @include clearfix;
 
   position: relative;
-  overflow-y: hidden;
-  margin: 0;
   flex: 1;
+  margin: 0;
+  overflow-y: hidden;
 }
 
 .uppy-Dashboard-files {
+  flex: 1;
   margin: 0;
   padding: 0 0 10px 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  flex: 1;
 
   .uppy-size--md & {
     padding-top: 10px;
@@ -732,30 +732,30 @@
 }
 
 .uppy-Dashboard-dropFilesHereHint {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  visibility: hidden;
   position: absolute;
   top: 7px;
   right: 7px;
   bottom: 7px;
   left: 7px;
-  padding-top: 90px;
-  border: 1px dashed $blue;
-  border-radius: 3px;
   z-index: 2000;
-  text-align: center;
-  background-image: url("data:image/svg+xml,%3Csvg width='48' height='48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 1v1C11.85 2 2 11.85 2 24s9.85 22 22 22 22-9.85 22-22S36.15 2 24 2V1zm0 0V0c13.254 0 24 10.746 24 24S37.254 48 24 48 0 37.254 0 24 10.746 0 24 0v1zm7.707 19.293a.999.999 0 1 1-1.414 1.414L25 16.414V34a1 1 0 1 1-2 0V16.414l-5.293 5.293a.999.999 0 1 1-1.414-1.414l7-7a.999.999 0 0 1 1.414 0l7 7z' fill='%232275D7' fill-rule='nonzero'/%3E%3C/svg%3E");
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 90px;
   color: $gray-600;
   font-size: 16px;
+  text-align: center;
+  background-image: url("data:image/svg+xml,%3Csvg width='48' height='48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 1v1C11.85 2 2 11.85 2 24s9.85 22 22 22 22-9.85 22-22S36.15 2 24 2V1zm0 0V0c13.254 0 24 10.746 24 24S37.254 48 24 48 0 37.254 0 24 10.746 0 24 0v1zm7.707 19.293a.999.999 0 1 1-1.414 1.414L25 16.414V34a1 1 0 1 1-2 0V16.414l-5.293 5.293a.999.999 0 1 1-1.414-1.414l7-7a.999.999 0 0 1 1.414 0l7 7z' fill='%232275D7' fill-rule='nonzero'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  border: 1px dashed $blue;
+  border-radius: 3px;
+  visibility: hidden;
 
   [data-uppy-theme="dark"] & {
     color: $gray-400;
-    border-color: $highlight--dark;
     background-image: url("data:image/svg+xml,%3Csvg width='48' height='48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 1v1C11.85 2 2 11.85 2 24s9.85 22 22 22 22-9.85 22-22S36.15 2 24 2V1zm0 0V0c13.254 0 24 10.746 24 24S37.254 48 24 48 0 37.254 0 24 10.746 0 24 0v1zm7.707 19.293a.999.999 0 1 1-1.414 1.414L25 16.414V34a1 1 0 1 1-2 0V16.414l-5.293 5.293a.999.999 0 1 1-1.414-1.414l7-7a.999.999 0 0 1 1.414 0l7 7z' fill='%2302BAF2' fill-rule='nonzero'/%3E%3C/svg%3E");
+    border-color: $highlight--dark;
   }
 }
 
@@ -777,22 +777,22 @@
 }
 
 .uppy-Dashboard-AddFiles-title {
-  font-size: 17px;
-  line-height: 1.35;
-  font-weight: 500;
-  color: $black;
+  width: 100%;
   margin-top: 15px;
   margin-bottom: 5px;
-  text-align: inline-start;
   padding: 0 15px;
-  width: 100%;
+  color: $black;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 1.35;
+  text-align: inline-start;
 
   .uppy-size--md & {
-    font-size: 25px;
+    max-width: 480px;
     margin-top: 5px;
     font-weight: 400;
+    font-size: 25px;
     text-align: center;
-    max-width: 480px;
   }
 
   [data-uppy-num-acquirers="0"] & {
@@ -813,18 +813,18 @@
 }
 
 .uppy-Dashboard-note {
-  font-size: 14px;
-  line-height: 1.25;
-  text-align: center;
-  color: $gray-600;
   max-width: 350px;
   margin: auto;
   padding: 0 15px;
+  color: $gray-600;
+  font-size: 14px;
+  line-height: 1.25;
+  text-align: center;
 
   .uppy-size--md & {
+    max-width: 600px;
     font-size: 15px;
     line-height: 1.35;
-    max-width: 600px;
   }
 
   [data-uppy-theme="dark"] & {
@@ -834,31 +834,31 @@
 
 a.uppy-Dashboard-poweredBy {
   display: inline-block;
-  text-align: center;
-  font-size: 11px;
-  color: $gray-500;
-  text-decoration: none;
   margin-top: 8px;
+  color: $gray-500;
+  font-size: 11px;
+  text-align: center;
+  text-decoration: none;
 }
 
 .uppy-Dashboard-poweredByIcon {
-  stroke: $gray-500;
-  fill: none;
-  margin-left: 1px;
-  margin-right: 1px;
   position: relative;
   top: 1px;
-  opacity: 0.9;
+  margin-right: 1px;
+  margin-left: 1px;
   vertical-align: text-top;
+  opacity: 0.9;
+  fill: none;
+  stroke: $gray-500;
 }
 
 .uppy-Dashboard-Item-previewIcon {
-  width: 25px;
-  height: 25px;
-  z-index: $zIndex-1;
   position: absolute;
   top: 50%;
   left: 50%;
+  z-index: $zIndex-1;
+  width: 25px;
+  height: 25px;
   transform: translate(-50%, -50%);
 
   .uppy-size--md & {
@@ -873,9 +873,9 @@ a.uppy-Dashboard-poweredBy {
 }
 
 .uppy-Dashboard-Item-previewIconWrap {
+  position: relative;
   height: 76px;
   max-height: 75%;
-  position: relative;
 }
 
 .uppy-Dashboard-Item-previewIconBg {
@@ -904,19 +904,19 @@ a.uppy-Dashboard-poweredBy {
 .uppy-Dashboard-uploadCount {
   position: absolute;
   top: -12px;
-  inset-inline-end: -12px;
-  background-color: $green;
-  color: $white;
-  border-radius: 50%;
   width: 16px;
   height: 16px;
-  line-height: 16px;
+  color: $white;
   font-size: 8px;
+  line-height: 16px;
+  background-color: $green;
+  border-radius: 50%;
+  inset-inline-end: -12px;
 
   .uppy-size--md & {
     width: 18px;
     height: 18px;
-    line-height: 18px;
     font-size: 9px;
+    line-height: 18px;
   }
 }

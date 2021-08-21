@@ -36,29 +36,29 @@ $ie-bottom-track-color: darken($track-color, $contrast);
 }
 
 @mixin track {
-  cursor: default;
-  height: $track-height;
-  transition: all 0.2s ease;
   width: $track-width;
+  height: $track-height;
+  cursor: default;
+  transition: all 0.2s ease;
 }
 
 @mixin thumb {
   @include shadow($thumb-shadow-size, $thumb-shadow-blur, $thumb-shadow-color);
 
+  box-sizing: border-box;
+  width: $thumb-width;
+  height: $thumb-height;
   background: $thumb-color;
   border: $thumb-border-width solid $thumb-border-color;
   border-radius: $thumb-radius;
-  box-sizing: border-box;
   cursor: default;
-  height: $thumb-height;
-  width: $thumb-width;
 }
 
 [type='range'] {
-  -webkit-appearance: none;
-  background: transparent;
-  margin: math.div($thumb-height, 2) 0;
   width: $track-width;
+  margin: math.div($thumb-height, 2) 0;
+  background: transparent;
+  -webkit-appearance: none;
 
   &::-moz-focus-outer {
     border: 0;
@@ -92,18 +92,18 @@ $ie-bottom-track-color: darken($track-color, $contrast);
   &::-webkit-slider-thumb {
     @include thumb;
 
-    -webkit-appearance: none;
     margin-top: (math.div((-$track-border-width * 2 + $track-height), 2) - math.div($thumb-height, 2));
+    -webkit-appearance: none;
   }
 
   &::-moz-range-track {
     @include shadow($track-shadow-size, $track-shadow-blur, $track-shadow-color);
     @include track;
 
+    height: $track-height;
     background: $track-color;
     border: $track-border-width solid $track-border-color;
     border-radius: $track-radius;
-    height: $track-height;
   }
 
   &::-moz-range-thumb {
@@ -113,10 +113,10 @@ $ie-bottom-track-color: darken($track-color, $contrast);
   &::-ms-track {
     @include track;
 
+    color: transparent;
     background: transparent;
     border-color: transparent;
     border-width: math.div($thumb-height, 2) 0;
-    color: transparent;
   }
 
   &::-ms-fill-lower {

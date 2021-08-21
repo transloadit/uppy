@@ -4,9 +4,9 @@ $focus-shadow: 0 0 0 3px rgba($blue, 0.5);
 
 @mixin clearfix() {
   &::after {
-    content: '';
     display: table;
     clear: both;
+    content: '';
   }
 }
 
@@ -15,15 +15,15 @@ $focus-shadow: 0 0 0 3px rgba($blue, 0.5);
 }
 
 @mixin reset-button() {
-  background: none;
-  -webkit-appearance: none;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: 1;
-  padding: 0;
   margin: 0;
-  border: 0;
+  padding: 0;
   color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  line-height: 1;
+  background: none;
+  border: 0;
+  -webkit-appearance: none;
 }
 
 @mixin highlight-focus() {
