@@ -11,14 +11,14 @@
   font-family: $font-family-base;
   max-width: 100%;
 
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba($blue, 0.4);
-  }
-
   // firefox fix: removes thin dotted outline
   &::-moz-focus-inner {
     border: 0;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($blue, 0.4);
   }
 }
 

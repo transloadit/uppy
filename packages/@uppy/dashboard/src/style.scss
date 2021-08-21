@@ -45,23 +45,51 @@
 }
 
 @keyframes uppy-Dashboard-slideDownAndFadeIn {
-  from { transform: translate3d(-50%, -70%, 0); opacity: 0; }
-  to { transform: translate3d(-50%, -50%, 0); opacity: 1; }
+  from {
+    transform: translate3d(-50%, -70%, 0);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate3d(-50%, -50%, 0);
+    opacity: 1;
+  }
 }
 
 @keyframes uppy-Dashboard-slideDownAndFadeIn--small {
-  from { transform: translate3d(0, -20%, 0); opacity: 0; }
-  to { transform: translate3d(0, 0, 0); opacity: 1; }
+  from {
+    transform: translate3d(0, -20%, 0);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
 }
 
 @keyframes uppy-Dashboard-slideUpFadeOut {
-  from { transform: translate3d(-50%, -50%, 0); opacity: 1; }
-  to { transform: translate3d(-50%, -70%, 0); opacity: 0; }
+  from {
+    transform: translate3d(-50%, -50%, 0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translate3d(-50%, -70%, 0);
+    opacity: 0;
+  }
 }
 
 @keyframes uppy-Dashboard-slideUpFadeOut--small {
-  from { transform: translate3d(0, 0, 0); opacity: 1; }
-  to { transform: translate3d(0, -20%, 0); opacity: 0; }
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translate3d(0, -20%, 0);
+    opacity: 0;
+  }
 }
 
 // End Transitions //
