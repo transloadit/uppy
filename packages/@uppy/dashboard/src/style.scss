@@ -678,7 +678,7 @@
 
   [data-uppy-theme="dark"] & {
     background-color: $gray-800;
-    background: linear-gradient(0deg, $gray-900 35%, rgba($gray-900, 0.85) 100%);
+    background-image: linear-gradient(0deg, $gray-900 35%, rgba($gray-900, 0.85) 100%);
   }
 }
 
