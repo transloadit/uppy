@@ -1,6 +1,6 @@
 @import '@uppy/core/src/_variables.scss';
 
-.uppy-is-drag-over:after {
+.uppy-is-drag-over::after {
   content: '';
   position: fixed;
   top: 7px;

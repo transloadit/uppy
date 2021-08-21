@@ -35,13 +35,13 @@
 // Modal open/close animations
 
 @keyframes uppy-Dashboard-fadeIn {
-  from { opacity: 0;  }
-  to { opacity: 1;  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes uppy-Dashboard-fadeOut {
-  from { opacity: 1;  }
-  to { opacity: 0;  }
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 @keyframes uppy-Dashboard-slideDownAndFadeIn {
@@ -49,20 +49,20 @@
   to { transform: translate3d(-50%, -50%, 0); opacity: 1; }
 }
 
-  @keyframes uppy-Dashboard-slideDownAndFadeIn--small {
-    from { transform: translate3d(0, -20%, 0); opacity: 0; }
-    to { transform: translate3d(0, 0, 0); opacity: 1; }
-  }
+@keyframes uppy-Dashboard-slideDownAndFadeIn--small {
+  from { transform: translate3d(0, -20%, 0); opacity: 0; }
+  to { transform: translate3d(0, 0, 0); opacity: 1; }
+}
 
 @keyframes uppy-Dashboard-slideUpFadeOut {
   from { transform: translate3d(-50%, -50%, 0); opacity: 1; }
   to { transform: translate3d(-50%, -70%, 0); opacity: 0; }
 }
 
-  @keyframes uppy-Dashboard-slideUpFadeOut--small {
-    from { transform: translate3d(0, 0, 0); opacity: 1; }
-    to { transform: translate3d(0, -20%, 0); opacity: 0; }
-  }
+@keyframes uppy-Dashboard-slideUpFadeOut--small {
+  from { transform: translate3d(0, 0, 0); opacity: 1; }
+  to { transform: translate3d(0, -20%, 0); opacity: 0; }
+}
 
 // End Transitions //
 
@@ -70,33 +70,33 @@
   z-index: $zIndex-2;
 }
 
-  .uppy-Dashboard--modal[aria-hidden=true] {
-    display: none;
+.uppy-Dashboard--modal[aria-hidden=true] {
+  display: none;
+}
+
+.uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose > .uppy-Dashboard-inner {
+  animation: uppy-Dashboard-slideDownAndFadeIn--small 0.3s cubic-bezier(0, 0, 0.2, 1);
+
+  @media #{$screen-medium} {
+    animation: uppy-Dashboard-slideDownAndFadeIn 0.3s cubic-bezier(0, 0, 0.2, 1);
   }
+}
 
-  .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose > .uppy-Dashboard-inner {
-    animation: uppy-Dashboard-slideDownAndFadeIn--small 0.3s cubic-bezier(0, 0, .2, 1);
+.uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose > .uppy-Dashboard-overlay {
+  animation: uppy-Dashboard-fadeIn 0.3s cubic-bezier(0, 0, 0.2, 1);
+}
 
-    @media #{$screen-medium} {
-      animation: uppy-Dashboard-slideDownAndFadeIn 0.3s cubic-bezier(0, 0, .2, 1);
-    }
+.uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose.uppy-Dashboard--isClosing > .uppy-Dashboard-inner {
+  animation: uppy-Dashboard-slideUpFadeOut--small 0.3s cubic-bezier(0, 0, 0.2, 1);
+
+  @media #{$screen-medium} {
+    animation: uppy-Dashboard-slideUpFadeOut 0.3s cubic-bezier(0, 0, 0.2, 1);
   }
+}
 
-  .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose > .uppy-Dashboard-overlay {
-    animation: uppy-Dashboard-fadeIn 0.3s cubic-bezier(0, 0, .2, 1);
-  }
-
-  .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose.uppy-Dashboard--isClosing > .uppy-Dashboard-inner {
-    animation: uppy-Dashboard-slideUpFadeOut--small 0.3s cubic-bezier(0, 0, .2, 1);
-
-    @media #{$screen-medium} {
-      animation: uppy-Dashboard-slideUpFadeOut 0.3s cubic-bezier(0, 0, .2, 1);
-    }
-  }
-
-  .uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose.uppy-Dashboard--isClosing > .uppy-Dashboard-overlay {
-    animation: uppy-Dashboard-fadeOut 0.3s cubic-bezier(0, 0, .2, 1);
-  }
+.uppy-Dashboard--modal.uppy-Dashboard--animateOpenClose.uppy-Dashboard--isClosing > .uppy-Dashboard-overlay {
+  animation: uppy-Dashboard-fadeOut 0.3s cubic-bezier(0, 0, 0.2, 1);
+}
 
 // Added to body to prevent the page from scrolling when Modal is open
 .uppy-Dashboard-isFixed {
@@ -189,6 +189,7 @@
 
 .uppy-Dashboard-close {
   @include clear-focus;
+
   display: block;
   position: absolute;
   top: -33px;
@@ -198,7 +199,7 @@
   font-size: 27px;
   z-index: $zIndex-5;
 
-  &:focus{
+  &:focus {
     color: lighten($blue, 25%);
   }
 
@@ -323,10 +324,12 @@
 
 .uppy-Dashboard-browse {
   @include clear-focus;
+
   cursor: pointer;
   color: rgba($blue, 0.9);
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     border-bottom: 1px solid $blue;
   }
 
@@ -399,6 +402,7 @@
 
 .uppy-DashboardTab-btn {
   @include clear-focus;
+
   width: 100%;
   height: 100%;
   cursor: pointer;
@@ -424,41 +428,40 @@
   }
 }
 
-  .uppy-DashboardTab-btn::-moz-focus-inner {
-    border: 0;
+.uppy-DashboardTab-btn::-moz-focus-inner {
+  border: 0;
+}
+
+.uppy-DashboardTab-btn:hover {
+  background-color: $gray-100--highlighted;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-800;
   }
+}
 
-  .uppy-DashboardTab-btn:hover {
-    background-color: $gray-100--highlighted;
+.uppy-DashboardTab-btn:active,
+.uppy-DashboardTab-btn:focus {
+  background-color: $highlight;
 
-    [data-uppy-theme="dark"] & {
-      background-color: $gray-800;
-    }
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-700;
   }
+}
 
-  .uppy-DashboardTab-btn:active,
-  .uppy-DashboardTab-btn:focus {
-    background-color: $highlight;
+.uppy-DashboardTab-btn svg {
+  max-width: 100%;
+  max-height: 100%;
+  display: inline-block;
+  vertical-align: text-top;
+  overflow: hidden;
+  transition: transform ease-in-out 0.15s;
+  margin-inline-end: 10px;
 
-    [data-uppy-theme="dark"] & {
-      background-color: $gray-700;
-    }
+  .uppy-size--md & {
+    margin-inline-end: 0;
   }
-
-
-  .uppy-DashboardTab-btn svg {
-    max-width: 100%;
-    max-height: 100%;
-    display: inline-block;
-    vertical-align: text-top;
-    overflow: hidden;
-    transition: transform ease-in-out .15s;
-    margin-inline-end: 10px;
-
-    .uppy-size--md & {
-      margin-inline-end: 0;
-    }
-  }
+}
 
 .uppy-DashboardTab-name {
   font-size: 14px;
@@ -506,7 +509,6 @@
 
   // For .uppy-DashboardContent-title's position: absolute
   position: relative;
-
   border-bottom: 1px solid $gray-200;
   background-color: $gray-50;
 
@@ -521,97 +523,99 @@
   }
 }
 
-  .uppy-DashboardContent-title {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 12px;
-    line-height: 40px;
-    font-weight: 500;
-    // MUST be present for title to be visible in IE11
-    width: 100%;
-    max-width: 170px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow-x: hidden;
-    margin: auto;
+.uppy-DashboardContent-title {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  line-height: 40px;
+  font-weight: 500;
+  // MUST be present for title to be visible in IE11
+  width: 100%;
+  max-width: 170px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow-x: hidden;
+  margin: auto;
 
-    .uppy-size--md & {
-      font-size: 14px;
-      line-height: 50px;
-      max-width: 300px;
-    }
-
-    [data-uppy-theme="dark"] & {
-      color: $gray-200;
-    }
+  .uppy-size--md & {
+    font-size: 14px;
+    line-height: 50px;
+    max-width: 300px;
   }
 
-  .uppy-DashboardContent-back,
-  .uppy-DashboardContent-save {
-    @include reset-button;
-    @include highlight-focus;
-    border-radius: 3px;
-    font-size: 12px;
-    font-weight: 400;
-    cursor: pointer;
-    color: $blue;
-    padding: 7px 6px;
-    margin-inline-start: -6px;
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
+}
 
-    .uppy-size--md & {
-      font-size: 14px;
-    }
+.uppy-DashboardContent-back,
+.uppy-DashboardContent-save {
+  @include reset-button;
+  @include highlight-focus;
 
-    [data-uppy-theme="dark"] & {
-      color: $highlight--dark;
-    }
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+  color: $blue;
+  padding: 7px 6px;
+  margin-inline-start: -6px;
+
+  .uppy-size--md & {
+    font-size: 14px;
   }
 
-  .uppy-DashboardContent-addMore {
-    @include reset-button;
-    @include highlight-focus;
-    border-radius: 3px;
-    font-weight: 500;
-    cursor: pointer;
-    color: $blue;
-    width: 29px;
-    height: 29px;
-    padding: 7px 8px;
-    margin-inline-end: -5px;
+  [data-uppy-theme="dark"] & {
+    color: $highlight--dark;
+  }
+}
 
-    .uppy-size--md & {
-      font-size: 14px;
-      width: auto;
-      height: auto;
-      margin-inline-end: -8px;
-    }
+.uppy-DashboardContent-addMore {
+  @include reset-button;
+  @include highlight-focus;
 
-    [data-uppy-theme="dark"] & {
-      color: $highlight--dark;
-    }
+  border-radius: 3px;
+  font-weight: 500;
+  cursor: pointer;
+  color: $blue;
+  width: 29px;
+  height: 29px;
+  padding: 7px 8px;
+  margin-inline-end: -5px;
+
+  .uppy-size--md & {
+    font-size: 14px;
+    width: auto;
+    height: auto;
+    margin-inline-end: -8px;
   }
 
-    .uppy-DashboardContent-addMore svg {
-      vertical-align: baseline;
-      margin-inline-end: 4px;
+  [data-uppy-theme="dark"] & {
+    color: $highlight--dark;
+  }
+}
 
-      .uppy-size--md & {
-        width: 11px;
-        height: 11px;
-      }
-    }
+.uppy-DashboardContent-addMore svg {
+  vertical-align: baseline;
+  margin-inline-end: 4px;
 
-    .uppy-DashboardContent-addMoreCaption {
-      display: none;
+  .uppy-size--md & {
+    width: 11px;
+    height: 11px;
+  }
+}
 
-      .uppy-size--md & {
-        display: inline;
-      }
-    }
-  // ...uppy-DashboardContent-addMore|
+.uppy-DashboardContent-addMoreCaption {
+  display: none;
+
+  .uppy-size--md & {
+    display: inline;
+  }
+}
+// ...uppy-DashboardContent-addMore|
 // ...uppy-DashboardContent-bar|
 
 .uppy-DashboardContent-panel {
@@ -650,9 +654,9 @@
   }
 }
 
-  .uppy-Dashboard--isAddFilesPanelVisible .uppy-Dashboard-files {
-    filter: blur(2px);
-  }
+.uppy-Dashboard--isAddFilesPanelVisible .uppy-Dashboard-files {
+  filter: blur(2px);
+}
 
 // Progress bar placeholder
 
@@ -680,6 +684,7 @@
 
 .uppy-Dashboard-filesContainer {
   @include clearfix;
+
   position: relative;
   overflow-y: hidden;
   margin: 0;
@@ -730,12 +735,14 @@
   .uppy-Dashboard-dropFilesHereHint {
     visibility: visible;
   }
+
   .uppy-DashboardContent-bar,
   .uppy-Dashboard-files,
   .uppy-Dashboard-progressindicators,
   .uppy-Dashboard-serviceMsg {
     opacity: 0.15;
   }
+
   .uppy-Dashboard-AddFiles {
     opacity: 0.03;
   }
@@ -846,7 +853,7 @@ a.uppy-Dashboard-poweredBy {
 .uppy-Dashboard-Item-previewIconBg {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(rgba($black, 0.1) 0px 1px 1px);
+  filter: drop-shadow(rgba($black, 0.1) 0 1px 1px);
 }
 
 .uppy-Dashboard-upload {

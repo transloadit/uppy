@@ -11,12 +11,12 @@
   1. Base Styles
   2. Direction Modifiers
   3. Position Modifiers
---------------------------------------------------------------------*/
+-------------------------------------------------------------------- */
 
 
 /* ------------------------------------------------
   [1] Base Styles
--------------------------------------------------*/
+------------------------------------------------- */
 
 .uppy-Root [aria-label][role~="tooltip"] {
   /* no important */
@@ -32,7 +32,7 @@
   will-change: transform;
   opacity: 0;
   pointer-events: none;
-  transition: all var(--microtip-transition-duration, .18s) var(--microtip-transition-easing, ease-in-out) var(--microtip-transition-delay, 0s);
+  transition: all var(--microtip-transition-duration, 0.18s) var(--microtip-transition-easing, ease-in-out) var(--microtip-transition-delay, 0s);
   position: absolute;
   box-sizing: border-box;
   z-index: 10;
@@ -47,14 +47,14 @@
 
 .uppy-Root [aria-label][role~="tooltip"]::after {
   /* no important */
-  background: rgba(17, 17, 17, .9);
+  background: rgba(17, 17, 17, 0.9);
   border-radius: 4px;
-  color: #ffffff;
+  color: #fff;
   content: attr(aria-label);
   font-size: var(--microtip-font-size, 13px);
   font-weight: var(--microtip-font-weight, normal);
   text-transform: var(--microtip-text-transform, none);
-  padding: .5em 1em;
+  padding: 0.5em 1em;
   white-space: nowrap;
   box-sizing: content-box;
 }
@@ -72,7 +72,7 @@
 
 /* ------------------------------------------------
   [2] Position Modifiers
--------------------------------------------------*/
+------------------------------------------------- */
 
 .uppy-Root [role~="tooltip"][data-microtip-position|="top"]::before {
   /* no important */
@@ -113,7 +113,7 @@
 
 /* ------------------------------------------------
   [2.1] Top Left
--------------------------------------------------*/
+------------------------------------------------- */
 .uppy-Root [role~="tooltip"][data-microtip-position="top-left"]::after {
   /* no important */
   transform: translate3d(calc(-100% + 16px), 0, 0);
@@ -128,7 +128,7 @@
 
 /* ------------------------------------------------
   [2.2] Top Right
--------------------------------------------------*/
+------------------------------------------------- */
 .uppy-Root [role~="tooltip"][data-microtip-position="top-right"]::after {
   /* no important */
   transform: translate3d(calc(0% + -16px), 0, 0);
@@ -143,7 +143,7 @@
 
 /* ------------------------------------------------
   [2.3] Bottom
--------------------------------------------------*/
+------------------------------------------------- */
 .uppy-Root [role~="tooltip"][data-microtip-position|="bottom"]::before {
   /* no important */
   background: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2236px%22%20height%3D%2212px%22%3E%3Cpath%20fill%3D%22rgba%2817,%2017,%2017,%200.9%29%22%20transform%3D%22rotate%28180%2018%206%29%22%20d%3D%22M2.658,0.000%20C-13.615,0.000%2050.938,0.000%2034.662,0.000%20C28.662,0.000%2023.035,12.002%2018.660,12.002%20C14.285,12.002%208.594,0.000%202.658,0.000%20Z%22/%3E%3C/svg%3E") no-repeat;
@@ -186,7 +186,7 @@
 
 /* ------------------------------------------------
   [2.4] Bottom Left
--------------------------------------------------*/
+------------------------------------------------- */
 .uppy-Root [role~="tooltip"][data-microtip-position="bottom-left"]::after {
   /* no important */
   transform: translate3d(calc(-100% + 16px), -10px, 0);
@@ -201,7 +201,7 @@
 
 /* ------------------------------------------------
   [2.5] Bottom Right
--------------------------------------------------*/
+------------------------------------------------- */
 .uppy-Root [role~="tooltip"][data-microtip-position="bottom-right"]::after {
   /* no important */
   transform: translate3d(calc(0% + -16px), -10px, 0);
@@ -216,7 +216,7 @@
 
 /* ------------------------------------------------
   [2.6] Left
--------------------------------------------------*/
+------------------------------------------------- */
 .uppy-Root [role~="tooltip"][data-microtip-position="left"]::before,
 .uppy-Root [role~="tooltip"][data-microtip-position="left"]::after {
   /* no important */
@@ -250,7 +250,7 @@
 
 /* ------------------------------------------------
   [2.7] Right
--------------------------------------------------*/
+------------------------------------------------- */
 .uppy-Root [role~="tooltip"][data-microtip-position="right"]::before,
 .uppy-Root [role~="tooltip"][data-microtip-position="right"]::after {
   /* no important */
@@ -282,7 +282,7 @@
 
 /* ------------------------------------------------
   [3] Size
--------------------------------------------------*/
+------------------------------------------------- */
 .uppy-Root [role~="tooltip"][data-microtip-size="small"]::after {
   /* no important */
   white-space: initial;

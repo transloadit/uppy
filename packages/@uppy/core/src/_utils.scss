@@ -3,7 +3,7 @@
 $focus-shadow: 0 0 0 3px rgba($blue, 0.5);
 
 @mixin clearfix() {
-  &:after {
+  &::after {
     content: '';
     display: table;
     clear: both;
@@ -62,6 +62,7 @@ $focus-shadow: 0 0 0 3px rgba($blue, 0.5);
   &:focus {
     outline: none;
   }
+
   &::-moz-focus-inner {
     border: 0;
   }

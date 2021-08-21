@@ -36,9 +36,9 @@
   margin-bottom: 17px;
 }
 
-  .uppy-DragDrop--isDragDropSupported {
-    border: 2px dashed lighten($gray-500, 10%);
-  }
+.uppy-DragDrop--isDragDropSupported {
+  border: 2px dashed lighten($gray-500, 10%);
+}
 
 .uppy-DragDrop--isDraggingOver {
   border: 2px dashed $blue;

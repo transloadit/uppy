@@ -7,7 +7,7 @@
   color: $white;
   text-align: center;
   width: 120px;
-  transition: all .35 ease;
+  transition: all 0.35 ease;
 }
 
 .uppy-Dashboard-Item-progressIndicator {
@@ -22,17 +22,18 @@
   }
 }
 
-  button.uppy-Dashboard-Item-progressIndicator {
-    @include clear-focus;
-    cursor: pointer;
+button.uppy-Dashboard-Item-progressIndicator {
+  @include clear-focus;
 
-    &:focus {
-      .uppy-Dashboard-Item-progressIcon--bg,
-      .uppy-Dashboard-Item-progressIcon--retry {
-        fill: lighten($blue, 20%);
-      }
+  cursor: pointer;
+
+  &:focus {
+    .uppy-Dashboard-Item-progressIcon--bg,
+    .uppy-Dashboard-Item-progressIcon--retry {
+      fill: lighten($blue, 20%);
     }
   }
+}
 
 // ProgressCircle svg styles
 
@@ -47,7 +48,7 @@
 
 .uppy-Dashboard-Item-progressIcon--progress {
   stroke: $white;
-  transition: stroke-dashoffset .5s ease-out;
+  transition: stroke-dashoffset 0.5s ease-out;
 }
 
 .uppy-Dashboard-Item-progressIcon--play {

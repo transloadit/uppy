@@ -1,6 +1,7 @@
 // On both mobile and .md+ screens
 .uppy-Dashboard-Item-action {
   @include blue-border-focus;
+
   cursor: pointer;
   color: $gray-500;
 
@@ -11,6 +12,7 @@
 
   [data-uppy-theme="dark"] & {
     @include blue-border-focus--dark;
+
     color: $gray-300;
   }
 
@@ -51,7 +53,7 @@
     padding: 3px;
     margin-left: 3px;
 
-    &:focus{
+    &:focus {
       border-radius: 3px;
     }
   }
@@ -64,6 +66,7 @@
     width: 16px;
     height: 16px;
     padding: 0;
+
     &:focus {
       border-radius: 3px;
     }
@@ -77,6 +80,7 @@
     width: 18px;
     height: 18px;
     padding: 0;
+
     &:focus {
       border-radius: 50%;
     }

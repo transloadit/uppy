@@ -15,11 +15,14 @@
 
 // One selector uses the dir attribute declared by the page. If that does not exist, Uppy adds a
 // fallback dir attribute on the root element itself, and we need a second selector to match that.
-[dir="rtl"] .uppy-Root, .uppy-Root[dir="rtl"] {
+[dir="rtl"] .uppy-Root,
+.uppy-Root[dir="rtl"] {
   text-align: right;
 }
 
-.uppy-Root *, .uppy-Root *:before, .uppy-Root *:after {
+.uppy-Root *,
+.uppy-Root *::before,
+.uppy-Root *::after {
   box-sizing: inherit;
 }
 
@@ -85,10 +88,10 @@
   white-space: normal;
   z-index: auto;
 }
+
 [dir="rtl"] .uppy-u-reset {
   text-align: right;
 }
-
 
 // Inputs
 
@@ -152,13 +155,13 @@
   [dir="rtl"] & { text-align: center; }
 }
 
-  .uppy-c-btn:not(:disabled):not(.disabled) {
-    cursor: pointer;
-  }
+.uppy-c-btn:not(:disabled):not(.disabled) {
+  cursor: pointer;
+}
 
-  .uppy-c-btn::-moz-focus-inner {
-    border: 0;
-  }
+.uppy-c-btn::-moz-focus-inner {
+  border: 0;
+}
 
 .uppy-c-btn-primary {
   font-size: 14px;
@@ -182,6 +185,7 @@
 
   [data-uppy-theme="dark"] & {
     color: $gray-200;
+
     @include blue-border-focus--dark;
   }
 }
@@ -209,6 +213,7 @@
 
   [data-uppy-theme="dark"] & {
     color: $gray-200;
+
     @include blue-border-focus--dark;
   }
 
