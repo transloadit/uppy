@@ -86,7 +86,7 @@ en_US.strings = {
   noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
   noFilesFound: 'You have no files or folders here',
   noInternetConnection: 'No Internet connection',
-  noNewAlreadyUploading: 'Cannot add new files: already uploading',
+  noMoreFilesAllowed: 'Cannot add more files',
   openFolderNamed: 'Open folder %{name}',
   pause: 'Pause',
   paused: 'Paused',

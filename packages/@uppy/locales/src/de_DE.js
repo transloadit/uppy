@@ -85,7 +85,7 @@ de_DE.strings = {
   noDuplicates: 'Datei \'%{fileName}\' existiert bereits und kann nicht erneut hinzugefügt werden',
   noFilesFound: 'Sie haben hier keine Dateien oder Ordner',
   noInternetConnection: 'Keine Internetverbindung',
-  noNewAlreadyUploading: 'Während der Upload läuft, können keine weiteren Dateien hinzugefügt werden',
+  noMoreFilesAllowed: 'Während der Upload läuft, können keine weiteren Dateien hinzugefügt werden',
   openFolderNamed: 'Ordner %{name} öffnen',
   pause: 'Pausieren',
   paused: 'Pausiert',

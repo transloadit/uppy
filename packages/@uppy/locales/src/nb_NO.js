@@ -79,7 +79,7 @@ nb_NO.strings = {
   noDuplicates: 'Kan ikke legge til \'%{fileName}\', da den allerede eksisterer',
   noFilesFound: 'Du har ingen filer eller mapper her',
   noInternetConnection: 'Ingen internettilgang',
-  noNewAlreadyUploading: 'Kan ikke legge til nye filer mens opplasting pågår',
+  noMoreFilesAllowed: 'Kan ikke legge til nye filer mens opplasting pågår',
   openFolderNamed: 'Åpne mappe %{name}',
   pause: 'Pause',
   pauseUpload: 'Stopp opplasting midlertidig',

@@ -71,7 +71,7 @@ zh_TW.strings = {
   noDuplicates: '無法新增重複檔案 \'%{fileName}\' 已存在',
   noFilesFound: '這裡空空如也',
   noInternetConnection: '無法連線到網絡',
-  noNewAlreadyUploading: '無法新增檔案: 已在上傳中',
+  noMoreFilesAllowed: '無法新增檔案: 已在上傳中',
   openFolderNamed: '開啟資料夾 %{name}',
   pause: '暫停',
   pauseUpload: '暫停上傳',
