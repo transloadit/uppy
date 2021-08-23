@@ -9,9 +9,11 @@ import ImageEditor from '..'
   uppy.use(ImageEditor)
 
   uppy.on('file-editor:start', (file) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const fileName = file.name
   })
   uppy.on('file-editor:complete', (file) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const fileName = file.name
   })
 }

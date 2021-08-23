@@ -4,8 +4,8 @@ const getTimeStamp = require('@uppy/utils/lib/getTimeStamp')
 // Swallow all logs, except errors.
 // default if logger is not set or debug: false
 const justErrorsLogger = {
-  debug: (...args) => {},
-  warn: (...args) => {},
+  debug: () => {},
+  warn: () => {},
   error: (...args) => console.error(`[Uppy] [${getTimeStamp()}]`, ...args),
 }
 

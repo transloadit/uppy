@@ -60,12 +60,12 @@ module.exports = function server (inputCompanionOptions = {}) {
   app.use(addRequestId)
   // log server requests.
   app.use(morgan('combined'))
-  morgan.token('url', (req, res) => {
+  morgan.token('url', (req) => {
     const { query, censored } = censorQuery(req.query)
     return censored ? `${req.path}?${qs.stringify(query)}` : req.originalUrl || req.url
   })
 
-  morgan.token('referrer', (req, res) => {
+  morgan.token('referrer', (req) => {
     const ref = req.headers.referer || req.headers.referrer
     if (typeof ref === 'string') {
       let parsed
@@ -188,12 +188,12 @@ module.exports = function server (inputCompanionOptions = {}) {
     })
   }
 
-  app.use((req, res, next) => {
+  app.use((req, res) => {
     return res.status(404).json({ message: 'Not Found' })
   })
 
   // @ts-ignore
-  app.use((err, req, res, next) => {
+  app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     const logStackTrace = true
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message

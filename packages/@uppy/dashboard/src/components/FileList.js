@@ -6,7 +6,7 @@ const VirtualList = require('./VirtualList')
 function chunks (list, size) {
   const chunked = []
   let currentChunk = []
-  list.forEach((item, i) => {
+  list.forEach((item) => {
     if (currentChunk.length < size) {
       currentChunk.push(item)
     } else {

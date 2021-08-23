@@ -283,7 +283,7 @@ module.exports = function s3 (config) {
       Bucket: config.bucket,
       Key: key,
       UploadId: uploadId,
-    }, (err, data) => {
+    }, (err) => {
       if (err) {
         next(err)
         return

@@ -1,5 +1,4 @@
 const { UIPlugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
 const getSpeed = require('@uppy/utils/lib/getSpeed')
 const getBytesRemaining = require('@uppy/utils/lib/getBytesRemaining')
 const getTextDirection = require('@uppy/utils/lib/getTextDirection')

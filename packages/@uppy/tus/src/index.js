@@ -173,7 +173,7 @@ module.exports = class Tus extends BasePlugin {
    * @param {number} total number of files in a queue
    * @returns {Promise<void>}
    */
-  upload (file, current, total) {
+  upload (file) {
     this.resetUploaderReferences(file.id)
 
     // Create a new tus upload
@@ -584,7 +584,7 @@ module.exports = class Tus extends BasePlugin {
    * @param {function(): void} cb
    */
   onRetryAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('retry-all', (filesToRetry) => {
+    this.uploaderEvents[fileID].on('retry-all', () => {
       if (!this.uppy.getFile(fileID)) return
       cb()
     })

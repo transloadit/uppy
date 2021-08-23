@@ -10,7 +10,7 @@ const logger = require('../logger')
  * @param {object} res
  * @param {Function} next
  */
-module.exports = function callback (req, res, next) {
+module.exports = function callback (req, res, next) { // eslint-disable-line no-unused-vars
   const { providerName } = req.params
 
   if (!req.companion.providerTokens) {

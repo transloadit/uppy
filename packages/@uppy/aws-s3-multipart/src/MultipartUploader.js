@@ -272,7 +272,6 @@ class MultipartUploader {
   }
 
   #uploadPart (index, prePreparedPart) {
-    const body = this.chunks[index]
     this.chunkState[index].busy = true
 
     const valid = typeof prePreparedPart?.url === 'string'
@@ -289,7 +288,7 @@ class MultipartUploader {
     return this.#uploadPartBytes(index, url, headers)
   }
 
-  #onPartProgress (index, sent, total) {
+  #onPartProgress (index, sent) {
     this.chunkState[index].uploaded = ensureInt(sent)
 
     const totalUploaded = this.chunkState.reduce((n, c) => n + c.uploaded, 0)
@@ -341,7 +340,7 @@ class MultipartUploader {
       this.#onPartProgress(index, ev.loaded, ev.total)
     })
 
-    xhr.addEventListener('abort', (ev) => {
+    xhr.addEventListener('abort', () => {
       cleanup()
       this.chunkState[index].busy = false
 

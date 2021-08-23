@@ -49,7 +49,7 @@ describe('XHRUpload', () => {
         })
 
       const core = new Core()
-      const validateStatus = jest.fn((status, responseText, response) => {
+      const validateStatus = jest.fn((status, responseText) => {
         return JSON.parse(responseText).code !== 40000
       })
 
@@ -58,7 +58,7 @@ describe('XHRUpload', () => {
         endpoint: 'https://fake-endpoint.uppy.io',
         some: 'option',
         validateStatus,
-        getResponseError (responseText, xhr) {
+        getResponseError (responseText) {
           return JSON.parse(responseText).message
         },
       })

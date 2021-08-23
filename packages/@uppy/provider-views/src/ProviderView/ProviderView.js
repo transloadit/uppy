@@ -1,7 +1,6 @@
 const { h } = require('preact')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
 const getFileType = require('@uppy/utils/lib/getFileType')
-const findIndex = require('@uppy/utils/lib/findIndex')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 const AuthView = require('./AuthView')
 const Header = require('./Header')

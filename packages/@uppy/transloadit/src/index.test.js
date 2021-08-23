@@ -35,7 +35,7 @@ describe('Transloadit', () => {
   it('Does not leave lingering progress if getAssemblyOptions fails', () => {
     const uppy = new Core()
     uppy.use(Transloadit, {
-      getAssemblyOptions (file) {
+      getAssemblyOptions () {
         return Promise.reject(new Error('Failure!'))
       },
     })

@@ -56,7 +56,7 @@ export default class App extends React.Component {
         uploadStarted: true,
       })
     })
-    this.uppy.on('upload-success', (file, response) => {
+    this.uppy.on('upload-success', () => {
       // console.log(file.name, response)
     })
     this.uppy.on('complete', (result) => {

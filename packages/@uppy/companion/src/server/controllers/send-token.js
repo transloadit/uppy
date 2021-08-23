@@ -42,11 +42,6 @@ module.exports = function sendToken (req, res, next) {
   const { state } = dynamic
   if (state) {
     const origin = oAuthState.getFromState(state, 'origin', req.companion.options.secret)
-    const clientVersion = oAuthState.getFromState(
-      state,
-      'clientVersion',
-      req.companion.options.secret
-    )
     const allowedClients = req.companion.options.clients
     // if no preset clients then allow any client
     if (!allowedClients || hasMatch(origin, allowedClients) || hasMatch((new URL(origin)).host, allowedClients)) {
