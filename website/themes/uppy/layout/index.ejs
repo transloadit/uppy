@@ -197,7 +197,7 @@
     COMPANION_ENDPOINT = '//companion.uppy.io'
   }
 
-  var uppy = Uppy.Core({ debug: true })
+  var uppy = new Uppy.Core({ debug: true })
     .use(Uppy.Dashboard, {
       target: '#demo',
       inline: true,
