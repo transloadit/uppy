@@ -323,7 +323,7 @@ Your `package.json` should resemble something like this:
     "prop-types": "^15.6.1"
   },
   "peerDependencies": {
-    "@uppy/core": "^1.0.0"
+    "@uppy/core": "^2.0.0"
   },
   "publishConfig": {
     "access": "public"

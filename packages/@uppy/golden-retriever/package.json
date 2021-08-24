@@ -28,6 +28,6 @@
     "lodash.throttle": "^4.1.1"
   },
   "peerDependencies": {
-    "@uppy/core": "^1.0.0"
+    "@uppy/core": "^2.0.0"
   }
 }

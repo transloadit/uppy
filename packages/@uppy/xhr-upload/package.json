@@ -32,6 +32,6 @@
     "nock": "^13.1.0"
   },
   "peerDependencies": {
-    "@uppy/core": "^1.0.0"
+    "@uppy/core": "^2.0.0"
   }
 }
