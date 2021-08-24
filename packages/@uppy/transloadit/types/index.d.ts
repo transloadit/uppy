@@ -93,7 +93,7 @@ export interface Assembly {
     template_id?: string
     steps?: { [step: string]: Record<string, unknown> }
     notify_url?: string
-    fields?: { [name: string]: number | string }
+    fields?: { [name: string]: number | string | object | [object] }
   }
 
 interface AssemblyOptions {
