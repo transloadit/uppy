@@ -2,12 +2,12 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   z-index: $zIndex-3;
+  width: 120px;
   color: $white;
   text-align: center;
-  width: 120px;
-  transition: all .35 ease;
+  transform: translate(-50%, -50%);
+  transition: all 0.35 ease;
 }
 
 .uppy-Dashboard-Item-progressIndicator {
@@ -22,17 +22,18 @@
   }
 }
 
-  button.uppy-Dashboard-Item-progressIndicator {
-    @include clear-focus;
-    cursor: pointer;
+button.uppy-Dashboard-Item-progressIndicator {
+  @include clear-focus;
 
-    &:focus {
-      .uppy-Dashboard-Item-progressIcon--bg,
-      .uppy-Dashboard-Item-progressIcon--retry {
-        fill: lighten($blue, 20%);
-      }
+  cursor: pointer;
+
+  &:focus {
+    .uppy-Dashboard-Item-progressIcon--bg,
+    .uppy-Dashboard-Item-progressIcon--retry {
+      fill: lighten($blue, 20%);
     }
   }
+}
 
 // ProgressCircle svg styles
 
@@ -46,30 +47,30 @@
 }
 
 .uppy-Dashboard-Item-progressIcon--progress {
+  transition: stroke-dashoffset 0.5s ease-out;
   stroke: $white;
-  transition: stroke-dashoffset .5s ease-out;
 }
 
 .uppy-Dashboard-Item-progressIcon--play {
-  stroke: $white;
-  fill: $white;
   transition: all 0.2s;
+  fill: $white;
+  stroke: $white;
 }
 
 .uppy-Dashboard-Item-progressIcon--cancel {
-  fill: $white;
   transition: all 0.2s;
+  fill: $white;
 }
 
 .uppy-Dashboard-Item-progressIcon--pause {
-  stroke: $white;
-  fill: $white;
   transition: all 0.2s;
+  fill: $white;
+  stroke: $white;
 }
 
 .uppy-Dashboard-Item-progressIcon--check {
-  fill: $white;
   transition: all 0.2s;
+  fill: $white;
 }
 
 .uppy-Dashboard-Item-progressIcon--retry {
@@ -79,11 +80,11 @@
 // Svg styles that depend on the state of the file.
 
 .uppy-Dashboard-Item.is-complete .uppy-Dashboard-Item-progress {
-  transform: initial;
   top: -9px;
+  width: auto;
+  transform: initial;
   inset-inline-end: -8px;
   inset-inline-start: initial;
-  width: auto;
 }
 
 .uppy-Dashboard-Item.is-error .uppy-Dashboard-Item-progressIndicator {
