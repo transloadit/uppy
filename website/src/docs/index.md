@@ -26,7 +26,7 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
 
     <script src="https://releases.transloadit.com/uppy/v2.0.0/uppy.min.js"></script>
     <script>
-      var uppy = Uppy.Core()
+      var uppy = new Uppy.Core()
         .use(Uppy.Dashboard, {
           inline: true,
           target: '#drag-drop-area'
@@ -130,7 +130,7 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
 
 ``` html
 <script>
-  var uppy = Uppy.Core()
+  var uppy = new Uppy.Core()
   uppy.use(Uppy.DragDrop, { target: '#drag-drop-area' })
   uppy.use(Uppy.Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 </script>

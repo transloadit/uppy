@@ -30,7 +30,7 @@ Now you can create an HTML file, e.g.: `./upload.html` with the following conten
 
 <script src="./js/uppy/uppy.min.js"></script>
 <script>
-  var uppy = Uppy.Core({
+  var uppy = new Uppy.Core({
     debug      : true,
     autoProceed: false,
   })

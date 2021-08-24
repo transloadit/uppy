@@ -38,7 +38,7 @@ Add a `<script>` tag with Uppy bundle and the locale pack you’d like to use. Y
 <script src="https://releases.transloadit.com/uppy/locales/v2.0.0/de_DE.min.js"></script>
 
 <script>
-var uppy = Uppy.Core({
+var uppy = new Uppy.Core({
   debug: true,
   locale: Uppy.locales.de_DE
 })
