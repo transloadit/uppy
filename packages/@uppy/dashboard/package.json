@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "2.0.0-alpha.0",
+  "version": "2.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -36,7 +36,7 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
-    "@uppy/google-drive": "2.0.0-alpha.0",
+    "@uppy/google-drive": "2.0.0",
     "@uppy/status-bar": "*",
     "resize-observer-polyfill": "^1.5.0"
   },
