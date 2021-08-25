@@ -54,5 +54,7 @@ self.addEventListener('message', (event) => {
     case 'uppy/GET_FILES':
       getFiles(event.data.store)
       break
+    default:
+      throw new Error(`[ServiceWorker] Unsupported event.data.type. Got: ${event?.data?.type}`)
   }
 })
