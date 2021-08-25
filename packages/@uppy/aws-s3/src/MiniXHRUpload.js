@@ -124,15 +124,6 @@ module.exports = class MiniXHRUpload {
       const xhr = new XMLHttpRequest()
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      const queuedRequest = this.requests.run(() => {
-        xhr.send(data)
-        return () => {
-          // eslint-disable-next-line no-use-before-define
-          timer.done()
-          xhr.abort()
-        }
-      }, { priority: 1 })
-
       const timer = new ProgressTimeout(opts.timeout, () => {
         xhr.abort()
         queuedRequest.done()
@@ -226,6 +217,15 @@ module.exports = class MiniXHRUpload {
       Object.keys(opts.headers).forEach((header) => {
         xhr.setRequestHeader(header, opts.headers[header])
       })
+
+      const queuedRequest = this.requests.run(() => {
+        xhr.send(data)
+        return () => {
+          // eslint-disable-next-line no-use-before-define
+          timer.done()
+          xhr.abort()
+        }
+      }, { priority: 1 })
 
       this.#addEventHandlerForFile('file-removed', file.id, () => {
         queuedRequest.abort()
