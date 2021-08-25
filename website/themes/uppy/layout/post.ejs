@@ -49,7 +49,8 @@
     </center>
     <%
         var authors = page.author
-        if (authors === (authors + '')) {
+
+        if (typeof authors === 'string') {
             authors = [ page.author ]
         }
 
