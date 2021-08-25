@@ -2,6 +2,8 @@ import { Transloadit } from 'uppy' // eslint-disable-line import/no-extraneous-d
 import { expectError } from 'tsd'
 import Robodog from '.'
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 async function performPick () {
   const { successful, failed, transloadit, results } = await Robodog.pick({
     target: 'test',

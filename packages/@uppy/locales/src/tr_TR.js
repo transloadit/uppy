@@ -137,7 +137,7 @@ tr_TR.strings = {
   openFolderNamed: 'Açık dosya %{name}',
 }
 
-tr_TR.pluralize = function (n) {
+tr_TR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

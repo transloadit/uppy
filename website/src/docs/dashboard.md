@@ -234,8 +234,8 @@ An array of UI field objects, or a function that takes a [File Object](https://u
 - `name`, the label shown in the interface.
 - `placeholder`, the text shown when no value is set in the field. (Not needed when a custom render function is provided)
 
-Optionally, you can specify `render: ({value, onChange, required}, h) => void`, a function for rendering a custom form element.
-It gets passed `({value, onChange, required}, h)` where `value` is the current value of the meta field, `required` is a boolean that's true if the field `id` is in the `restrictedMetaFields` restriction, and `onChange: (newVal) => void` is a function saving the new value and `h` is the `createElement` function from [preact](https://preactjs.com/guide/v10/api-reference#h--createelement).
+Optionally, you can specify `render: ({value, onChange, required, form}, h) => void`, a function for rendering a custom form element.
+It gets passed `({value, onChange, required, form}, h)` where `value` is the current value of the meta field, `required` is a boolean that's true if the field `id` is in the `restrictedMetaFields` restriction, `form` is the `id` of the associated `<form>` element, and `onChange: (newVal) => void` is a function saving the new value and `h` is the `createElement` function from [preact](https://preactjs.com/guide/v10/api-reference#h--createelement).
 `h` can be useful when using uppy from plain JavaScript, where you cannot write JSX.
 
 ```js
@@ -248,8 +248,8 @@ uppy.use(Dashboard, {
     {
       id: 'public',
       name: 'Public',
-      render ({ value, onChange, required }, h) {
-        return h('input', { type: 'checkbox', required, onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'on' })
+      render ({ value, onChange, required, form }, h) {
+        return h('input', { type: 'checkbox', required, form, onChange: (ev) => onChange(ev.target.checked ? 'on' : ''), defaultChecked: value === 'on' })
       },
     },
   ],
@@ -269,12 +269,13 @@ uppy.use(Dashboard, {
       fields.push({
         id: 'public',
         name: 'Public',
-        render: ({ value, onChange, required }, h) => {
+        render: ({ value, onChange, required, form }, h) => {
           return h('input', {
             type: 'checkbox',
-            onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'),
+            onChange: (ev) => onChange(ev.target.checked ? 'on' : ''),
             defaultChecked: value === 'on',
             required,
+            form,
           })
         },
       })

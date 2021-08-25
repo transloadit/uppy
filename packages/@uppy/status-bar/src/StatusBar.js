@@ -134,6 +134,8 @@ module.exports = (props) => {
         className={progressClassNames}
         style={{ width: `${width}%` }}
         role="progressbar"
+        aria-label={`${width}%`}
+        aria-valuetext={`${width}%`}
         aria-valuemin="0"
         aria-valuemax="100"
         aria-valuenow={progressValue}
@@ -371,6 +373,7 @@ const ProgressBarUploading = (props) => {
         <div className="uppy-StatusBar-statusPrimary">
           {props.supportsUploadProgress ? `${title}: ${props.totalProgress}%` : title}
         </div>
+        {/* eslint-disable-next-line no-nested-ternary */}
         {!props.isAllPaused && !showUploadNewlyAddedFiles && props.showProgressDetails
           ? (props.supportsUploadProgress ? <ThrottledProgressDetails {...props} /> : <UnknownProgressDetails {...props} />)
           : null}
@@ -380,7 +383,7 @@ const ProgressBarUploading = (props) => {
   )
 }
 
-const ProgressBarComplete = ({ totalProgress, i18n }) => {
+const ProgressBarComplete = ({ i18n }) => {
   return (
     <div className="uppy-StatusBar-content" role="status" title={i18n('complete')}>
       <div className="uppy-StatusBar-status">
@@ -395,10 +398,11 @@ const ProgressBarComplete = ({ totalProgress, i18n }) => {
   )
 }
 
-const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
+const ProgressBarError = ({ error, i18n }) => {
   function displayErrorAlert () {
     const errorMessage = `${i18n('uploadFailed')} \n\n ${error}`
-    alert(errorMessage)
+    // eslint-disable-next-line no-alert
+    alert(errorMessage) // TODO: move to custom alert implementation
   }
 
   return (
@@ -411,16 +415,16 @@ const ProgressBarError = ({ error, retryAll, hideRetryButton, i18n }) => {
           {i18n('uploadFailed')}
         </div>
       </div>
-      <span
+      <button
         className="uppy-StatusBar-details"
         aria-label={error}
         data-microtip-position="top-right"
         data-microtip-size="medium"
-        role="tooltip"
         onClick={displayErrorAlert}
+        type="button"
       >
         ?
-      </span>
+      </button>
     </div>
   )
 }

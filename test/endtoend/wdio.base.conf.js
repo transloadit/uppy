@@ -127,7 +127,7 @@ exports.config = {
    * @param {Array.<object>} capabilities list of capabilities details
    * @param {Array<string>} specs List of spec file paths that are to be run
    */
-  before (capabilities, specs) {
+  before (capabilities) {
     const chai = require('chai')
     global.expect = chai.expect
     global.capabilities = capabilities

@@ -71,7 +71,7 @@ pl_PL.strings = {
   noDuplicates: 'Nie można dodać i zduplikować pliku \'%{fileName}\', już istnieje',
   noFilesFound: 'W tym miejscu brakuje plików lub katalogów',
   noInternetConnection: 'Brak połączenia z Internetem',
-  noNewAlreadyUploading: 'Nie można dodać nowych plików: trwa wysyłka',
+  noMoreFilesAllowed: 'Nie można dodać nowych plików: trwa wysyłka',
   openFolderNamed: 'Otwórz folder %{name}',
   pause: 'Wstrzymaj',
   pauseUpload: 'Wstrzymaj wysyłkę',
@@ -146,7 +146,7 @@ pl_PL.strings = {
   },
 }
 
-pl_PL.pluralize = function (n) {
+pl_PL.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

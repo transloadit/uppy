@@ -9,9 +9,9 @@ export interface DragDropOptions extends PluginOptions {
   height?: string | number
   note?: string
   locale?: DragDropLocale
-  onDragOver?: (event: MouseEvent) => void
-  onDragLeave?: (event: MouseEvent) => void
-  onDrop?: (event: MouseEvent) => void
+  onDragOver?: (event: DragEvent) => void
+  onDragLeave?: (event: DragEvent) => void
+  onDrop?: (event: DragEvent) => void
 }
 
 declare class DragDrop extends UIPlugin<DragDropOptions> {}

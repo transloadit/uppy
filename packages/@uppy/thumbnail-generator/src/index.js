@@ -1,5 +1,4 @@
 const { UIPlugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
@@ -66,7 +65,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
       })
     })
 
-    const orientationPromise = exifr.rotation(file.data).catch(_err => 1)
+    const orientationPromise = exifr.rotation(file.data).catch(() => 1)
 
     return Promise.all([onload, orientationPromise])
       .then(([image, orientation]) => {
@@ -160,8 +159,8 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
     if (steps < 1) {
       steps = 1
     }
-    let sW = targetWidth * Math.pow(2, steps - 1)
-    let sH = targetHeight * Math.pow(2, steps - 1)
+    let sW = targetWidth * 2 ** (steps - 1)
+    let sH = targetHeight * 2 ** (steps - 1)
     const x = 2
 
     while (steps--) {
@@ -260,7 +259,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
         return
       }
       return this.requestThumbnail(current)
-        .catch(err => {}) // eslint-disable-line handle-callback-err
+        .catch(() => {}) // eslint-disable-line node/handle-callback-err
         .then(() => this.processQueue())
     }
     this.queueProcessing = false
@@ -347,7 +346,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
       })
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.queueProcessing) {
         this.uppy.once('thumbnail:all-generated', () => {
           emitPreprocessCompleteForAll()

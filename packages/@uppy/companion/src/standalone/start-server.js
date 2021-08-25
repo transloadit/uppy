@@ -10,5 +10,6 @@ const { app } = standalone()
 
 companion.socket(app.listen(port))
 
+/* eslint-disable no-console */
 console.log(`Welcome to Companion! v${version}`)
 console.log(`Listening on http://0.0.0.0:${port}`)

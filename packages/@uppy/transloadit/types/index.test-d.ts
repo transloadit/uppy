@@ -25,6 +25,16 @@ const validParams = {
       steps: {},
     },
   })
+  // Access to both transloadit events and core events
+  uppy.on('transloadit:assembly-created', (assembly) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const status = assembly.ok
+  })
+
+  uppy.on('complete', (result) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const success = result.successful
+  })
 }
 
 {

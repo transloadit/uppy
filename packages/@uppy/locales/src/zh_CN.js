@@ -63,7 +63,7 @@ zh_CN.strings = {
   noDuplicates: '无法添加重复文件 %{fileName}，该文件已存在',
   noFilesFound: '这里空空如也',
   noInternetConnection: '无法连接到网络',
-  noNewAlreadyUploading: '无法添加新文件：已正在上传文件',
+  noMoreFilesAllowed: '无法添加新文件：已正在上传文件',
   openFolderNamed: '打开文件夹 %{name}',
   pause: '暂停',
   pauseUpload: '暂停上传',
@@ -110,7 +110,7 @@ zh_CN.strings = {
 }
 
 // There is just one form.
-zh_CN.pluralize = function (n) { return 0 }
+zh_CN.pluralize = function pluralize () { return 0 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locales.zh_CN = zh_CN

@@ -41,7 +41,8 @@ fr_FR.strings = {
   dropPasteImportBoth: 'Déposer les fichiers ici, coller, %{browse} ou importer de',
   dropPasteImportFiles: 'Déposer les fichiers ici, coller, %{browse} ou importer de',
   dropPasteImportFolders: 'Déposer les fichiers ici, coller, %{browse} ou importer de',
-  editFile: 'Modifier le fichier %{file}',
+  editFile: 'Modifier le fichier',
+  editFileWithFilename: 'Modifier le fichier %{file}',
   editing: 'Modification en cours de %{file}',
   emptyFolderAdded: 'Aucun fichier n\'a été ajouté depuis un dossier vide',
   encoding: 'Traitement...',
@@ -73,7 +74,7 @@ fr_FR.strings = {
   noDuplicates: 'Impossible d\'ajouter le fichier "%{fileName}", il existe déjà',
   noFilesFound: 'Vous n\'avez aucun fichier ou dossier ici',
   noInternetConnection: 'Pas de connexion à Internet',
-  noNewAlreadyUploading: 'Impossible d\'ajouter de nouveaux fichiers: en cours de chargement ',
+  noMoreFilesAllowed: 'Impossible d\'ajouter de nouveaux fichiers: en cours de chargement ',
   openFolderNamed: 'Ouvrir %{name}',
   pause: 'Pause',
   pauseUpload: 'Mettre en pause le téléchargement',
@@ -153,7 +154,7 @@ fr_FR.strings = {
   },
 }
 
-fr_FR.pluralize = function (n) {
+fr_FR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

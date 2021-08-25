@@ -2,42 +2,10 @@
 
 <!--lint disable no-literal-urls no-undefined-references-->
 
-This is our roadmap which contains a list of todos.
-
-These are ideas that are planned and find their way into a release at one point.
+These are ideas that are planned for specific versions or act as a backlog without a clear date.
 PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
-- [ ] core: Add an option to force metafield data when uploading a file. Mark files with restriction errors in the UI. Having an icon showing close to the file to inform if it passed any rule would provide an awesome user experience. The user would be able to edit the file name or any meta tags necessary to pass validation via uppy dashboard, and anytime the user updates the file info, the validation runs again and the icon is updated. #1703
-- [ ] core: Make sure Uppy works well in VR
-- [ ] core: normalize file names when uploading from iOS? Can we do it with meta data? date? `image-${index}`? #678
-- [ ] dashboard: add option to disable uploading from local disk #657
-- [ ] dashboard: allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
-- [ ] dashboard: display data like image resolution on file cards. should be done by thumbnail generator maybe #783
-- [ ] dashboard: possibility to edit/delete more than one file at once. example: add copyrigh info to 1000 files #118, #97
-- [ ] dashboard: possibility to work on already uploaded / in progress files. We'll just provide the `fileId` to the `file-edit-complete` event so that folks can more easily roll out custom code for this themselves #112, #113, #2063
-- [ ] dashboard: Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
-- [ ] goldenretriever: make it work with aws multipart https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888 (@goto-bus-stop)
-- [ ] plugins: WordPress Front-end Gravity Forms Uppy plugin so one form field could be an Uppy-powered file input
-- [ ] provider: add sorting (by date) #254
-- [ ] qa: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
-- [ ] react: Add a React Hook to manage an Uppy instance https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951 (@goto-bus-stop)
-- [ ] rn: Uppy React Native works with Expo, now let's make it work without
-- [ ] rn: Uppy React Native works with Url Plugin, now let's make it work with Instagram
-- [ ] security: consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe
-- [ ] statusbar: Add a confirmation of the cancel action (https://github.com/transloadit/uppy/issues/1418) as well as ask the user if they really want to navigate away while an upload is in progress via `onbeforeunload` (@arturi)
-- [ ] test: Add a prepublish test that checks if `npm pack` is not massive (@goto-bus-stop)
-- [ ] test: add https://github.com/pa11y/pa11y for automated accessibility testing?
-- [ ] test: add lighthouse for automated performance testing?
-- [ ] test: Switch one existing e2e test to use Parcel (create-react-app already using webpack) (@arturi)
-- [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused. Perhaps the button can be disabled and say `Pausing..` until Companion has actually stopped transmitting updates (@arturi, @ifedapoolarewaju)
-- [ ] xhr: allow sending custom headers per file (as proposed in #785)
-- [ ] dashboard: focus jumps weirdly if you remove a file https://github.com/transloadit/uppy/pull/2161#issuecomment-613565486
-- [ ] plugins: a WakeLock based plugin that keeps your phone from going to sleep while an upload is ongoing https://github.com/transloadit/uppy/issues/1725
-- [ ] provider: Image search (via Google or Bing or DuckDuckGo): use duckduckgo-images-api or Google Search API (@arturi)
-- [ ] provider: Google Photos (#2163)
-- [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
-
-### 2.0
+## `2.0.0`
 
 - [x] Drop IE10 (officially), drop IE11 polyfills? (@aduh95)
 - [x] *: upgrade to Preact X (@murderlon)
@@ -59,22 +27,69 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [x] tus: remove `autoRetry` option (throw error at runtime if it is explicitly given) (@aduh95)
 - [x] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems) (@arturi)
 
-### 3.0
+## `3.0.0`
 
-- [ ] build: switch to ES Modules (ESM)
+- [ ] Switch to ES Modules (ESM)
 
-### 4.0
+## `4.0.0`
 
 - [ ] core: change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
 - [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
 
-## 1.x
+## Unplanned
 
-- [ ] dashboard: a mini UI that features drop & progress (may involve a `mini: true` options for dashboard, may involve drop+progress or new plugin) (@arturi)
-- [ ] dashboard: Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
-- [ ] dashboard: add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
-- [ ] plugin: WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
-- [ ] provider: Giphy image search (on top of Unsplash plugin) ()
-- [ ] test: add typescript with JSDoc for @uppy/core https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files (@arturi)
+### Core
+
+- [ ] Add an option to force metafield data when uploading a file. Mark files with restriction errors in the UI. Having an icon showing close to the file to inform if it passed any rule would provide an awesome user experience. The user would be able to edit the file name or any meta tags necessary to pass validation via uppy dashboard, and anytime the user updates the file info, the validation runs again and the icon is updated. #1703
+- [ ] Make sure Uppy works well in VR
+- [ ] normalize file names when uploading from iOS? Can we do it with meta data? date? `image-${index}`? #678
+
+### Dashboard
+
+- [ ] Add option to disable uploading from local disk #657
+- [ ] Allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
+- [ ] Display data like image resolution on file cards. should be done by thumbnail generator maybe #783
+- [ ] Possibility to edit/delete more than one file at once. example: add copyrigh info to 1000 files #118, #97
+- [ ] Possibility to work on already uploaded / in progress files. We'll just provide the `fileId` to the `file-edit-complete` event so that folks can more easily roll out custom code for this themselves #112, #113, #2063
+- [ ] Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
+- [ ] Focus jumps weirdly if you remove a file https://github.com/transloadit/uppy/pull/2161#issuecomment-613565486
+- [ ] A mini UI that features drop & progress (may involve a `mini: true` options for dashboard, may involve drop+progress or new plugin) (@arturi)
+- [ ] Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
+- [ ] Add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
+
+### New plugins
+
+- [ ] WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
+- [ ] WordPress Front-end Gravity Forms Uppy plugin so one form field could be an Uppy-powered file input
+- [ ] A WakeLock based plugin that keeps your phone from going to sleep while an upload is ongoing https://github.com/transloadit/uppy/issues/1725
+
+### New providers
+
+- [ ] Google Photos (#2163)
+- [ ] MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112 #362
+- [ ] Giphy image search (on top of Unsplash plugin) ()
+- [ ] Image search (via Google or Bing or DuckDuckGo): use duckduckgo-images-api or Google Search API (@arturi)
+- [ ] Vimeo #2872
+
+### Miscellaneous
+
+- [ ] goldenretriever: make it work with aws multipart https://community.transloadit.com/t/resumable-aws-s3-multipart-integration/14888 (@goto-bus-stop)
+- [ ] provider: add sorting (by date) #254
+- [ ] qa: add one integration test (or add to existing test) that uses more exotic (tus) options such as `useFastRemoteRetry` or `removeFingerprintOnSuccess` https://github.com/transloadit/uppy/issues/1327 (@arturi, @ifedapoolarewaju)
+- [ ] react: Add a React Hook to manage an Uppy instance https://github.com/transloadit/uppy/pull/1247#issuecomment-458063951 (@goto-bus-stop)
+- [ ] rn: Uppy React Native works with Expo, now let's make it work without
+- [ ] rn: Uppy React Native works with Url Plugin, now let's make it work with Instagram
+- [ ] security: consider iframe / more security for Transloadit/Uppy integration widget and Uppy itself. Page can’t get files from Google Drive if its an iframe
+- [ ] statusbar: Add a confirmation of the cancel action (https://github.com/transloadit/uppy/issues/1418) as well as ask the user if they really want to navigate away while an upload is in progress via `onbeforeunload` (@arturi)
+- [ ] uploaders: consider not showing progress updates from the server after an upload’s been paused. Perhaps the button can be disabled and say `Pausing..` until Companion has actually stopped transmitting updates (@arturi, @ifedapoolarewaju)
+- [ ] xhr: allow sending custom headers per file (as proposed in #785)
+- [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
-- [ ] provider: MediaLibrary provider which shows you files that have already been uploaded #450, #1121, #1112 #362
+
+### Needs research
+
+- [ ] Add a prepublish test that checks if `npm pack` is not massive (@goto-bus-stop)
+- [ ] Add https://github.com/pa11y/pa11y for automated accessibility testing?
+- [ ] Add lighthouse for automated performance testing?
+- [ ] Switch one existing e2e test to use Parcel (create-react-app already using webpack) (@arturi)
+- [ ] Add typescript with JSDoc for @uppy/core https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files (@arturi)

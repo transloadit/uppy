@@ -35,7 +35,8 @@ nl_NL.strings = {
   dropPasteImportBoth: 'Sleep hier je bestanden naartoe, plak, %{browse} of importeer vanuit',
   dropPasteImportFiles: 'Sleep hier je bestanden naartoe, plak, %{browse} of importeer vanuit',
   dropPasteImportFolders: 'Sleep hier je bestanden naartoe, plak, %{browse} of importeer vanuit',
-  editFile: 'Bestand aanpassen %{file}',
+  editFile: 'Bestand aanpassen',
+  editFileWithFilename: 'Bestand aanpassen %{file}',
   editing: 'Bezig %{file} aan te passen',
   emptyFolderAdded: 'Er werden geen bestanden toegevoegd uit de lege map',
   encoding: 'Coderen...',
@@ -129,7 +130,7 @@ nl_NL.strings = {
   openFolderNamed: 'Open map %{name}',
 }
 
-nl_NL.pluralize = function (n) {
+nl_NL.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

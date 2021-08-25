@@ -21,33 +21,6 @@ class AddFiles extends Component {
     event.target.value = null
   }
 
-  renderPoweredByUppy () {
-    const { i18nArray } = this.props
-
-    const uppyBranding = (
-      <span>
-        <svg aria-hidden="true" focusable="false" className="uppy-c-icon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11">
-          <path d="M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z" fillRule="evenodd" />
-        </svg>
-        <span className="uppy-Dashboard-poweredByUppy">Uppy</span>
-      </span>
-    )
-
-    const linkText = i18nArray('poweredBy', { uppy: uppyBranding })
-
-    return (
-      <a
-        tabIndex="-1"
-        href="https://uppy.io"
-        rel="noreferrer noopener"
-        target="_blank"
-        className="uppy-Dashboard-poweredBy"
-      >
-        {linkText}
-      </a>
-    )
-  }
-
   renderHiddenInput = (isFolder, refCallback) => {
     return (
       <input
@@ -120,6 +93,7 @@ class AddFiles extends Component {
     return (
       <div class="uppy-Dashboard-AddFiles-title">
         {
+          // eslint-disable-next-line no-nested-ternary
           this.props.disableLocalFiles ? this.props.i18n('importFiles')
             : numberOfAcquirers > 0
               ? this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })
@@ -173,10 +147,37 @@ class AddFiles extends Component {
       <div className="uppy-Dashboard-AddFiles-list" role="tablist">
         {!disableLocalFiles && this.renderMyDeviceAcquirer()}
         {acquirersWithoutLastTwo.map((acquirer) => this.renderAcquirer(acquirer))}
-        <span role="presentation" style="white-space: nowrap;">
+        <span role="presentation" style={{ 'white-space': 'nowrap' }}>
           {lastTwoAcquirers.map((acquirer) => this.renderAcquirer(acquirer))}
         </span>
       </div>
+    )
+  }
+
+  renderPoweredByUppy () {
+    const { i18nArray } = this.props
+
+    const uppyBranding = (
+      <span>
+        <svg aria-hidden="true" focusable="false" className="uppy-c-icon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11">
+          <path d="M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z" fillRule="evenodd" />
+        </svg>
+        <span className="uppy-Dashboard-poweredByUppy">Uppy</span>
+      </span>
+    )
+
+    const linkText = i18nArray('poweredBy', { uppy: uppyBranding })
+
+    return (
+      <a
+        tabIndex="-1"
+        href="https://uppy.io"
+        rel="noreferrer noopener"
+        target="_blank"
+        className="uppy-Dashboard-poweredBy"
+      >
+        {linkText}
+      </a>
     )
   }
 

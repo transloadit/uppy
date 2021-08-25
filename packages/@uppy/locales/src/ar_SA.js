@@ -137,7 +137,7 @@ ar_SA.strings = {
   openFolderNamed: 'افتح المجلد %{name}',
 }
 
-ar_SA.pluralize = function (n) {
+ar_SA.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

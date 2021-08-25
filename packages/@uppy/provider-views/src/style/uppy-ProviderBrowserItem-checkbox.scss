@@ -1,7 +1,7 @@
 .uppy-ProviderBrowserItem-checkbox {
   position: relative;
-  cursor: pointer;
   flex-shrink: 0;
+  cursor: pointer;
 
   &:disabled {
     cursor: default;
@@ -9,14 +9,14 @@
 
   // Checkmark icon
   &::after {
-    content: '';
     position: absolute;
-    cursor: pointer;
+    border-bottom: 2px solid $gray-200;
     // Not using border-inline-start here: this is part of a CSS trick to get
     // a check mark icon that only works in one direction
     border-left: 2px solid $gray-200;
-    border-bottom: 2px solid $gray-200;
     transform: rotate(-45deg);
+    cursor: pointer;
+    content: '';
   }
 
   &:disabled::after {

@@ -1,5 +1,4 @@
 const { UIPlugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
 const { RequestClient } = require('@uppy/companion-client')
 const UrlUI = require('./UrlUI.js')
@@ -170,7 +169,7 @@ module.exports = class Url extends UIPlugin {
     })
   }
 
-  render (state) {
+  render () {
     return <UrlUI i18n={this.i18n} addFile={this.addFile} />
   }
 

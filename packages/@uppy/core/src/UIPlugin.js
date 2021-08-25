@@ -1,4 +1,4 @@
-const { render, h } = require('preact')
+const { render } = require('preact')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 
 const BasePlugin = require('./BasePlugin')
@@ -134,7 +134,14 @@ class UIPlugin extends BasePlugin {
     if (this.isTargetDOMEl) {
       this.el?.remove()
     }
+    this.onUnmount()
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  onMount () {}
+
+  // eslint-disable-next-line class-methods-use-this
+  onUnmount () {}
 }
 
 module.exports = UIPlugin

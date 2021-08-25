@@ -47,7 +47,8 @@ en_US.strings = {
   dropPasteImportBoth: 'Drop files here, %{browseFiles}, %{browseFolders} or import from:',
   dropPasteImportFiles: 'Drop files here, %{browseFiles} or import from:',
   dropPasteImportFolders: 'Drop files here, %{browseFolders} or import from:',
-  editFile: 'Edit file %{file}',
+  editFile: 'Edit file',
+  editFileWithFilename: 'Edit file %{file}',
   editing: 'Editing %{file}',
   emptyFolderAdded: 'No files were added from empty folder',
   encoding: 'Encoding...',
@@ -85,7 +86,7 @@ en_US.strings = {
   noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
   noFilesFound: 'You have no files or folders here',
   noInternetConnection: 'No Internet connection',
-  noNewAlreadyUploading: 'Cannot add new files: already uploading',
+  noMoreFilesAllowed: 'Cannot add more files',
   openFolderNamed: 'Open folder %{name}',
   pause: 'Pause',
   paused: 'Paused',
@@ -177,7 +178,7 @@ en_US.strings = {
   zoomOut: 'Zoom out',
 }
 
-en_US.pluralize = function (count) {
+en_US.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

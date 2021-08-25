@@ -1,5 +1,7 @@
 const deepFreeze = require('deep-freeze')
 
+/* eslint-disable no-underscore-dangle */
+
 /**
  * Default store + deepFreeze on setState to make sure nothing is mutated accidentally
  */

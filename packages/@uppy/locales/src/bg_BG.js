@@ -70,7 +70,7 @@ bg_BG.strings = {
   noDuplicates: 'Файлът \'%{fileName}\' съществува. Не може да добавите дублиращи файлове',
   noFilesFound: 'Тук нямате файлове или директории',
   noInternetConnection: 'Няма връзка с интернет',
-  noNewAlreadyUploading: 'Не може да се добавят нови файлове: в процес на качване',
+  noMoreFilesAllowed: 'Не може да се добавят нови файлове: в процес на качване',
   openFolderNamed: 'Отваряне на директория %{name}',
   pause: 'Пауза',
   pauseUpload: 'Паузиране на качването',
@@ -143,7 +143,7 @@ bg_BG.strings = {
   },
 }
 
-bg_BG.pluralize = function (count) {
+bg_BG.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

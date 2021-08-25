@@ -1,7 +1,7 @@
 {
   "name": "@uppy/robodog",
   "description": "Transloadit SDK for browsers based on Uppy",
-  "version": "2.0.0-alpha.0",
+  "version": "2.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -43,7 +43,10 @@
     "@uppy/webcam": "file:../webcam"
   },
   "devDependencies": {
-    "core-js": "^3.15.2",
+    "abortcontroller-polyfill": "^1.7.3",
+    "core-js": "~3.15.2",
+    "md-gum-polyfill": "^1.0.0",
+    "resize-observer-polyfill": "^1.5.1",
     "whatwg-fetch": "^3.6.2"
   }
 }

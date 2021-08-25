@@ -15,6 +15,12 @@ const CloseWrapper = require('../CloseWrapper')
 module.exports = class ProviderView {
   static VERSION = require('../../package.json').version
 
+  #isHandlingScroll
+
+  #searchTerm
+
+  #sharedHandler
+
   /**
    * @param {object} plugin instance of the plugin
    * @param {object} opts
@@ -22,7 +28,7 @@ module.exports = class ProviderView {
   constructor (plugin, opts) {
     this.plugin = plugin
     this.provider = opts.provider
-    this._sharedHandler = new SharedHandler(plugin)
+    this.#sharedHandler = new SharedHandler(plugin)
 
     // set default options
     const defaultOptions = {
@@ -66,9 +72,9 @@ module.exports = class ProviderView {
     // Nothing.
   }
 
-  _updateFilesAndInputMode (res, files) {
+  #updateFilesAndInputMode (res, files) {
     this.nextPageQuery = res.nextPageQuery
-    this._searchTerm = res.searchedFor
+    this.#searchTerm = res.searchedFor
     res.items.forEach((item) => { files.push(item) })
     this.plugin.setPluginState({ isInputMode: false, files })
   }
@@ -83,16 +89,16 @@ module.exports = class ProviderView {
   }
 
   search (query) {
-    if (query && query === this._searchTerm) {
+    if (query && query === this.#searchTerm) {
       // no need to search again as this is the same as the previous search
       this.plugin.setPluginState({ isInputMode: false })
       return
     }
 
-    return this._sharedHandler.loaderWrapper(
+    return this.#sharedHandler.loaderWrapper(
       this.provider.search(query),
       (res) => {
-        this._updateFilesAndInputMode(res, [])
+        this.#updateFilesAndInputMode(res, [])
       },
       this.handleError
     )
@@ -159,15 +165,15 @@ module.exports = class ProviderView {
     const scrollPos = e.target.scrollHeight - (e.target.scrollTop + e.target.offsetHeight)
     const query = this.nextPageQuery || null
 
-    if (scrollPos < 50 && query && !this._isHandlingScroll) {
-      this.provider.search(this._searchTerm, query)
+    if (scrollPos < 50 && query && !this.#isHandlingScroll) {
+      this.provider.search(this.#searchTerm, query)
         .then((res) => {
           const { files } = this.plugin.getPluginState()
-          this._updateFilesAndInputMode(res, files)
+          this.#updateFilesAndInputMode(res, files)
         }).catch(this.handleError)
-        .then(() => { this._isHandlingScroll = false }) // always called
+        .then(() => { this.#isHandlingScroll = false }) // always called
 
-      this._isHandlingScroll = true
+      this.#isHandlingScroll = true
     }
   }
 
@@ -175,7 +181,7 @@ module.exports = class ProviderView {
     const { currentSelection } = this.plugin.getPluginState()
     const promises = currentSelection.map((file) => this.addFile(file))
 
-    this._sharedHandler.loaderWrapper(Promise.all(promises), () => {
+    this.#sharedHandler.loaderWrapper(Promise.all(promises), () => {
       this.clearSelection()
     }, () => {})
   }
@@ -221,8 +227,8 @@ module.exports = class ProviderView {
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const browserProps = {
       ...this.plugin.getPluginState(),
-      isChecked: this._sharedHandler.isChecked,
-      toggleCheckbox: this._sharedHandler.toggleCheckbox,
+      isChecked: this.#sharedHandler.isChecked,
+      toggleCheckbox: this.#sharedHandler.toggleCheckbox,
       handleScroll: this.handleScroll,
       done: this.donePicking,
       cancel: this.cancelPicking,

@@ -5,7 +5,7 @@ const { selectFakeFile } = require('../utils')
 
 const testURL = 'http://localhost:4567/chaos-monkey'
 
-describe('Chaos monkey', function () {
+describe('Chaos monkey', function test () {
   this.timeout(5 * 60 * 1000) // 5 minutes
 
   beforeEach(async () => {
@@ -15,18 +15,18 @@ describe('Chaos monkey', function () {
   it('Add and cancel a bunch', async () => {
     await browser.execute(() => {
       window.currentUppy = window.setup({ limit: 3 })
-      window.onerror = function (message) {
+      window.onerror = (message) => {
         window.anyError = message
       }
     })
 
     const types = ['application/octet-stream', 'text/plain']
     const generate = {
-      'application/octet-stream': function () {
+      'application/octet-stream' () {
         const len = Math.round(Math.random() * 5000000)
         return crypto.randomBytes(len)
       },
-      'text/plain': function () {
+      'text/plain' () {
         const len = Math.round(Math.random() * 5000000)
         return Buffer.from(lorem(len))
       },

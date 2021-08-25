@@ -1,6 +1,8 @@
 const { URL } = require('url')
+const serialize = require('serialize-javascript')
+
 const tokenService = require('../helpers/jwt')
-const { hasMatch, sanitizeHtml } = require('../helpers/utils')
+const { hasMatch } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
 
 /**
@@ -15,7 +17,7 @@ const htmlContent = (token, origin) => {
     <head>
         <meta charset="utf-8" />
         <script>
-          window.opener.postMessage(${sanitizeHtml(JSON.stringify({ token }))}, ${sanitizeHtml(JSON.stringify(origin))})
+          window.opener.postMessage(${serialize({ token })}, ${serialize(origin)})
           window.close()
         </script>
     </head>
@@ -40,11 +42,6 @@ module.exports = function sendToken (req, res, next) {
   const { state } = dynamic
   if (state) {
     const origin = oAuthState.getFromState(state, 'origin', req.companion.options.secret)
-    const clientVersion = oAuthState.getFromState(
-      state,
-      'clientVersion',
-      req.companion.options.secret
-    )
     const allowedClients = req.companion.options.clients
     // if no preset clients then allow any client
     if (!allowedClients || hasMatch(origin, allowedClients) || hasMatch((new URL(origin)).host, allowedClients)) {

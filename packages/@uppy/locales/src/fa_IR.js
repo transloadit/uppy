@@ -82,7 +82,7 @@ fa_IR.strings = {
   noDuplicates: 'نمی‌توان فایل تکراری بارگذاری کرد،\'%{fileName}\' قبلا بارگذاری شده است.',
   noFilesFound: 'هیچ فایل یا پوشه‌ای اینجا ندارید',
   noInternetConnection: 'عدم اتصال به اینترنت',
-  noNewAlreadyUploading: 'نمی توان فایل جدید بارگذاری کرد: درحال بارگذاری است',
+  noMoreFilesAllowed: 'نمی توان فایل جدید بارگذاری کرد: درحال بارگذاری است',
   openFolderNamed: 'پوشه باز کنید %{name}',
   pause: 'توقف',
   pauseUpload: 'توقف بارگذاری',
@@ -171,7 +171,7 @@ fa_IR.strings = {
 
 }
 
-fa_IR.pluralize = function (n) {
+fa_IR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

@@ -10,7 +10,7 @@ function pick (opts = {}) {
 
   const pluginId = 'pick'
   const uppy = createUppy(opts, {
-    allowMultipleUploads: false,
+    allowMultipleUploadBatches: false,
   })
   addTransloaditPlugin(uppy, opts)
   addDashboardPlugin(uppy, opts, {

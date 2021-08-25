@@ -78,7 +78,7 @@ th_TH.strings = {
   noDuplicates: 'ไม่สามารถเพิ่มไฟล์ซ้ำได้ ไฟล์ \'%{fileName}\', มีอยู่แล้ว',
   noFilesFound: 'คุณไม่มีไฟล์หรือโฟลเดอร์ที่นี่',
   noInternetConnection: 'ไม่มีการเชื่อมต่ออินเทอร์เน็ต',
-  noNewAlreadyUploading: 'ไม่สามารถเพิ่มไฟล์ใหม่: กำลังอยู่ระหว่างอัพโหลด',
+  noMoreFilesAllowed: 'ไม่สามารถเพิ่มไฟล์ใหม่: กำลังอยู่ระหว่างอัพโหลด',
   openFolderNamed: 'เปิดโฟลเดอร์ %{name}',
   pause: 'หยุดชั่วคราว',
   pauseUpload: 'หยุดการอัปโหลดชั่วคราว',
@@ -156,7 +156,7 @@ th_TH.strings = {
   zoomOut: 'ซูมออก',
 }
 
-th_TH.pluralize = function (n) {
+th_TH.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

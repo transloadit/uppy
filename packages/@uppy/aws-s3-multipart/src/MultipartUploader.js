@@ -181,8 +181,10 @@ class MultipartUploader {
 
     const candidates = []
     for (let i = 0; i < this.chunkState.length; i++) {
+      // eslint-disable-next-line no-continue
       if (this.lockedCandidatesForBatch.includes(i)) continue
       const state = this.chunkState[i]
+      // eslint-disable-next-line no-continue
       if (state.done || state.busy) continue
 
       candidates.push(i)
@@ -270,7 +272,6 @@ class MultipartUploader {
   }
 
   #uploadPart (index, prePreparedPart) {
-    const body = this.chunks[index]
     this.chunkState[index].busy = true
 
     const valid = typeof prePreparedPart?.url === 'string'
@@ -287,7 +288,7 @@ class MultipartUploader {
     return this.#uploadPartBytes(index, url, headers)
   }
 
-  #onPartProgress (index, sent, total) {
+  #onPartProgress (index, sent) {
     this.chunkState[index].uploaded = ensureInt(sent)
 
     const totalUploaded = this.chunkState.reduce((n, c) => n + c.uploaded, 0)
@@ -319,7 +320,7 @@ class MultipartUploader {
     const xhr = new XMLHttpRequest()
     xhr.open('PUT', url, true)
     if (headers) {
-      Object.keys(headers).map((key) => {
+      Object.keys(headers).forEach((key) => {
         xhr.setRequestHeader(key, headers[key])
       })
     }
@@ -339,7 +340,7 @@ class MultipartUploader {
       this.#onPartProgress(index, ev.loaded, ev.total)
     })
 
-    xhr.addEventListener('abort', (ev) => {
+    xhr.addEventListener('abort', () => {
       cleanup()
       this.chunkState[index].busy = false
 

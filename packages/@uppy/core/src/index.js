@@ -85,7 +85,7 @@ class Uppy {
         missingRequiredMetaFieldOnFile: 'Missing required meta fields in %{fileName}',
         inferiorSize: 'This file is smaller than the allowed size of %{size}',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
-        noNewAlreadyUploading: 'Cannot add new files: already uploading',
+        noMoreFilesAllowed: 'Cannot add more files',
         noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
         companionError: 'Connection with Companion failed',
         companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
@@ -122,7 +122,11 @@ class Uppy {
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
+      /**
+       * @deprecated The method should not be used
+       */
       allowMultipleUploads: true,
+      allowMultipleUploadBatches: true,
       debug: false,
       restrictions: {
         maxFileSize: null,
@@ -555,14 +559,14 @@ class Uppy {
    */
   #checkRequiredMetaFields (files) {
     const { requiredMetaFields } = this.opts.restrictions
-    const { hasOwnProperty } = Object.prototype.hasOwnProperty
+    const { hasOwnProperty } = Object.prototype
 
     const errors = []
     const fileIDs = Object.keys(files)
     for (let i = 0; i < fileIDs.length; i++) {
       const file = this.getFile(fileIDs[i])
       for (let i = 0; i < requiredMetaFields.length; i++) {
-        if (!hasOwnProperty.call(file.meta, requiredMetaFields[i])) {
+        if (!hasOwnProperty.call(file.meta, requiredMetaFields[i]) || file.meta[requiredMetaFields[i]] === '') {
           const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
           errors.push(err)
           this.#showOrLogErrorAndThrow(err, { file, showInformer: false, throwErr: false })
@@ -618,7 +622,7 @@ class Uppy {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      this.#showOrLogErrorAndThrow(new RestrictionError(this.i18n('noNewAlreadyUploading')), { file })
+      this.#showOrLogErrorAndThrow(new RestrictionError(this.i18n('noMoreFilesAllowed')), { file })
     }
   }
 
@@ -1520,7 +1524,7 @@ class Uppy {
     })
 
     this.setState({
-      allowNewUpload: this.opts.allowMultipleUploads !== false,
+      allowNewUpload: this.opts.allowMultipleUploadBatches !== false && this.opts.allowMultipleUploads !== false,
 
       currentUploads: {
         ...currentUploads,
