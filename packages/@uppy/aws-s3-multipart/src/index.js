@@ -105,7 +105,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
     this.assertHost('prepareUploadParts')
 
     const filename = encodeURIComponent(key)
-    return this.client.get(`s3/multipart/${uploadId}/batch?key=${filename}?partNumbers=${partNumbers.join(',')}`)
+    return this.client.get(`s3/multipart/${uploadId}/batch?key=${filename}&partNumbers=${partNumbers.join(',')}`)
       .then(assertServerError)
   }
 
