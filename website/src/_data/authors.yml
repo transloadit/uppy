@@ -53,5 +53,10 @@ mifi:
   name: 'Mikael Finstad'
   id: 'mikael'
   tagline: 'Developer'
+andrew:
+  email: 'andrew@transloadit.com'
+  name: 'Andrew Kachnic'
+  id: 'andrew'
+  tagline: 'Developer'
 
 
