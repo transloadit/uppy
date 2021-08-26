@@ -101,6 +101,13 @@ type anyObject = Record<string, unknown>
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const meta = result.successful[0].meta.myCustomMetadata
   })
+
+  // Separate event handlers
+  const handleUpload = (file: UploadedUppyFile<Meta, unknown>) => {
+    const meta = file.meta.myCustomMetadata
+  }
+
+  uppy.off<'upload-success', Meta>('upload-success', handleUpload)
 }
 
 {
