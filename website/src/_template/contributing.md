@@ -190,7 +190,7 @@ The CSS standards followed in this project closely resemble those from [Mediumâ€
 ### Naming conventions
 
 This project uses naming conventions adopted from the SUIT CSS framework.
-[Read about them here](https://github.com/suitcss/suit/blob/main/doc/naming-conventions.md).
+[Read about them here](https://github.com/suitcss/suit/blob/master/doc/naming-conventions.md).
 
 To quickly summarize:
 
