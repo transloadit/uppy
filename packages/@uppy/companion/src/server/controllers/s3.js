@@ -340,9 +340,9 @@ module.exports = function s3 (config) {
     .get('/params', getUploadParameters)
     .post('/multipart', createMultipartUpload)
     .get('/multipart/:uploadId', getUploadedParts)
+    .get('/multipart/:uploadId/batch', batchSignPartsUpload)
     .get('/multipart/:uploadId/:partNumber', signPartUpload)
     .post('/multipart/:uploadId/complete', completeMultipartUpload)
-    .get(`/multipart/:uploadId/batch`, batchSignPartsUpload)
     .delete('/multipart/:uploadId', abortMultipartUpload)
 }
 
