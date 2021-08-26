@@ -9,6 +9,8 @@
 | Tests | <img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> | <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> | <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests"> |
 | Deploys | <img src="https://github.com/transloadit/uppy/workflows/CDN/badge.svg" alt="CI status for CDN deployment"> | <img src="https://github.com/transloadit/uppy/workflows/Companion%20Deploy/badge.svg" alt="CI status for Companion deployment"> | <img src="https://github.com/transloadit/uppy/workflows/Deploy%20uppy.io/badge.svg" alt="CI status for website deployment"> |
 
+📣 **News: Uppy 2.0 is out! We’ll announce it officially on Monday. You can either use the `1.31.1` or refer to this [draft 2.0 blog post](https://github.com/transloadit/uppy/blob/5b53034a84d899a6c9f8e5a41d57c5d59816ddde/website/src/_posts/2021-XX-XX.md) for the most notable and breaking changes.**
+
 Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly with any application. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
 
 - **Fetch** files from local disk, remote URLs, Google Drive, Dropbox, Box, Instagram or snap and record selfies with a camera
