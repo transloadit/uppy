@@ -103,7 +103,7 @@ type anyObject = Record<string, unknown>
   })
 
   // Separate event handlers
-  const handleUpload = (file: UppyFile<Meta, unknown>) => {
+  const handleUpload = (file: UppyFile<Meta>) => {
     const meta = file.meta.myCustomMetadata
   }
 
@@ -114,7 +114,7 @@ type anyObject = Record<string, unknown>
   }
 
   const onUploadSuccess = async (file: UppyFile<Meta, any>, response: CustomResponse) => {
-    const res = response.body.someValue
+    const res = response.body?.someValue
   }
   uppy.on<'upload-success', Meta>('upload-success', onUploadSuccess)
 }
