@@ -47,24 +47,27 @@
         <a class="github-button" href="https://github.com/transloadit/uppy" data-icon="octicon-star" data-size="large"
         data-show-count="true" aria-label="Star transloadit/uppy on GitHub">Star</a>
     </center>
-    <%
-        var authors = page.author
 
-        if (typeof authors === 'string') {
-            authors = [ page.author ]
-        }
+    <div class="PostAuthors">
+        <%
+            var authors = page.author
 
-        for (var i in authors) {
-            var author = authors[i]
-    %>
-        <div class="PostAuthor">
-            <a href="https://transloadit.com/about/#<%- site.data.authors[author].id %>">
-                <img class="PostAuthor-img" src="<%- gravatar(site.data.authors[author].email, 200) %>">
-                <h4 class="PostAuthor-name"><%- site.data.authors[author].name %></h4>
-                <h5 class="PostAuthor-tagline"><%- site.data.authors[author].tagline %></h5>
-            </a>
-        </div>
-    <% } %>
+            if (typeof authors === 'string') {
+                authors = [ page.author ]
+            }
+
+            for (var i in authors) {
+                var author = authors[i]
+        %>
+            <div class="PostAuthor">
+                <a href="https://transloadit.com/about/#<%- site.data.authors[author].id %>">
+                    <img class="PostAuthor-img" src="<%- gravatar(site.data.authors[author].email, 200) %>">
+                    <h4 class="PostAuthor-name"><%- site.data.authors[author].name %></h4>
+                    <h5 class="PostAuthor-tagline"><%- site.data.authors[author].tagline %></h5>
+                </a>
+            </div>
+        <% } %>
+    </div>
   <br />
     <!-- <ul class="Social">
         <li><iframe src="https://ghbtns.com/github-btn.html?user=transloadit&repo=uppy&type=watch&count=true"
