@@ -188,17 +188,29 @@ export interface State<
   totalProgress: number
 }
 
+export interface ErrorResponse {
+  status: number
+  body: any
+}
+
+export interface SuccessResponse {
+  uploadUrl?: string
+  status?: number
+  body?: any,
+  bytesUploaded?: number
+}
+
 export type GenericEventCallback = () => void;
 export type FileAddedCallback<TMeta> = (file: UppyFile<TMeta>) => void;
 export type FilesAddedCallback<TMeta> = (files: UppyFile<TMeta>[]) => void;
 export type FileRemovedCallback<TMeta> = (file: UppyFile<TMeta>, reason: 'removed-by-user' | 'cancel-all') => void;
-export type UploadCallback = (data: {id: string, fileIDs: string[]}) => void;
+export type UploadCallback = (data: { id: string, fileIDs: string[] }) => void;
 export type ProgressCallback = (progress: number) => void;
 export type UploadProgressCallback<TMeta> = (file: UppyFile<TMeta>, progress: FileProgress) => void;
-export type UploadSuccessCallback<TMeta> = (file: UploadedUppyFile<TMeta, unknown>, body: unknown, uploadURL: string) => void
+export type UploadSuccessCallback<TMeta> = (file: UppyFile<TMeta>, response: SuccessResponse) => void
 export type UploadCompleteCallback<TMeta> = (result: UploadResult<TMeta>) => void
 export type ErrorCallback = (error: Error) => void;
-export type UploadErrorCallback<TMeta> = (file: FailedUppyFile<TMeta, unknown>, error: Error, response: unknown) => void;
+export type UploadErrorCallback<TMeta> = (file: UppyFile<TMeta>, error: Error, response?: ErrorResponse) => void;
 export type UploadRetryCallback = (fileID: string) => void;
 export type RestrictionFailedCallback<TMeta> = (file: UppyFile<TMeta>, error: Error) => void;
 
