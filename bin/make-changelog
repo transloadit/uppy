@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Make a draft changelog. Expects two tags to compate: previous release and current.
+# `./bin/make-changelog uppy@1.31.1 uppy@2.0.1`
+
+git_log=$(git log $1..$2 --pretty=format:"- %s %aE (%h)")
+echo "$git_log"
+exit;
