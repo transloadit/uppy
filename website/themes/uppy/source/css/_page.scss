@@ -366,6 +366,17 @@ table tr:last-child td {
   }
 }
 
+.post-date {
+  margin: 0.5em 0 1em;
+  color: $color-light;
+  font-size: 0.8em;
+}
+
+.continue-reading {
+  margin-top: 1em;
+  font-weight: bold;
+}
+
 // Locale page table overrides
 
 .page-docs-locales table {

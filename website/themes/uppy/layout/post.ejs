@@ -24,7 +24,7 @@
         }
     %>
   <h1><%- title %></h1>
-  <h4><%- page.date.format('dddd MMM D[,] YYYY') %></h4>
+  <div class="post-date"><%- page.date.format('dddd MMM D[,] YYYY') %></div>
     <%
         if (page.series) {
             var seriesList = []
