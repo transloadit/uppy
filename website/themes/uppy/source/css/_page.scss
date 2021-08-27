@@ -442,6 +442,10 @@ body.page-docs-locales table code {
   font-size: 1;
   padding-left: 60px;
   padding-top: 3px;
+
+  .PostAuthor-link:hover & {
+    text-decoration: underline;
+  }
 }
 
 .PostAuthor-tagline {
