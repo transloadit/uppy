@@ -414,38 +414,40 @@ body.page-docs-locales table code {
   font-size: 75%;
 }
 
-.PostAuthor {
-  margin-bottom: 30px;
-}
-
-.PostAuthor:first-of-type {
-  position: relative;
+.PostAuthors {
   margin-top: 40px;
 }
 
-.PostAuthor:not(:first-of-type) {
+.PostAuthor {
+  margin-bottom: 10px;
   position: relative;
-  margin-top: 10px;
+  margin-bottom: 24px;
+}
+
+.PostAuthor-link {
+  display: inline-block;
 }
 
 .PostAuthor-img {
   border-radius: 50%;
-  max-width: 50px;
+  max-width: 48px;
+  width: auto;
+  height: auto;
   position: absolute;
 }
 
 .PostAuthor-name {
   margin: 0;
   padding: 0;
-  font-size: 1.2em;
-  padding-left: 70px;
+  font-size: 1;
+  padding-left: 60px;
   padding-top: 3px;
 }
 
 .PostAuthor-tagline {
   margin: 0;
   padding: 0;
-  padding-left: 70px;
+  padding-left: 60px;
   font-size: 0.85em;
   color: darken($color-gray, 10%);
 }

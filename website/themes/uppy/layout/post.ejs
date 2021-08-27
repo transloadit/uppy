@@ -60,10 +60,10 @@
                 var author = authors[i]
         %>
             <div class="PostAuthor">
-                <a href="https://transloadit.com/about/#<%- site.data.authors[author].id %>">
+                <a class="PostAuthor-link" href="https://transloadit.com/about/#<%- site.data.authors[author].id %>">
                     <img class="PostAuthor-img" src="<%- gravatar(site.data.authors[author].email, 200) %>">
                     <h4 class="PostAuthor-name"><%- site.data.authors[author].name %></h4>
-                    <h5 class="PostAuthor-tagline"><%- site.data.authors[author].tagline %></h5>
+                    <div class="PostAuthor-tagline"><%- site.data.authors[author].tagline %></div>
                 </a>
             </div>
         <% } %>
