@@ -14,6 +14,7 @@ function isIPAddress (address) {
   return addressAsV6.isValid() || addressAsV4.isValid()
 }
 
+/* eslint-disable max-len */
 /**
  * Determine if a IP address provided is a private one.
  * Return TRUE if it's the case, FALSE otherwise.
@@ -23,6 +24,7 @@ function isIPAddress (address) {
  * @param {string} ipAddress the ip address to validate
  * @returns {boolean}
  */
+/* eslint-enable max-len */
 function isPrivateIP (ipAddress) {
   let isPrivate = false
   // Build the list of IP prefix for V4 and V6 addresses

@@ -21,35 +21,6 @@ class AddFiles extends Component {
     event.target.value = null
   }
 
-  renderPoweredByUppy () {
-    const uppyBranding = (
-      <span>
-        <svg aria-hidden="true" focusable="false" className="uppy-c-icon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11">
-          <path d="M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z" fillRule="evenodd" />
-        </svg>
-        <span className="uppy-Dashboard-poweredByUppy">Uppy</span>
-      </span>
-    )
-
-    // Support both the old word-order-insensitive string `poweredBy` and the new word-order-sensitive string `poweredBy2`
-    const linkText = this.props.i18nArray('poweredBy2', {
-      backwardsCompat: this.props.i18n('poweredBy'),
-      uppy: uppyBranding,
-    })
-
-    return (
-      <a
-        tabIndex="-1"
-        href="https://uppy.io"
-        rel="noreferrer noopener"
-        target="_blank"
-        className="uppy-Dashboard-poweredBy"
-      >
-        {linkText}
-      </a>
-    )
-  }
-
   renderHiddenInput = (isFolder, refCallback) => {
     return (
       <input
@@ -109,71 +80,37 @@ class AddFiles extends Component {
     )
   }
 
-  // TODO(2.x) remove all the backwards compatibility garbage here
   renderDropPasteBrowseTagline = () => {
     const numberOfAcquirers = this.props.acquirers.length
+    const browseFiles = this.renderBrowseButton(this.props.i18n('browseFiles'), this.triggerFileInputClick)
+    const browseFolders = this.renderBrowseButton(this.props.i18n('browseFolders'), this.triggerFolderInputClick)
+
     // in order to keep the i18n CamelCase and options lower (as are defaults) we will want to transform a lower
     // to Camel
     const lowerFMSelectionType = this.props.fileManagerSelectionType
     const camelFMSelectionType = lowerFMSelectionType.charAt(0).toUpperCase() + lowerFMSelectionType.slice(1)
 
-    // For backwards compatibility, we need to support both 'browse' and 'browseFiles'/'browseFolders' as strings here.
-    let browseText = 'browse'
-    let browseFilesText = 'browse'
-    let browseFoldersText = 'browse'
-    if (lowerFMSelectionType === 'files') {
-      try {
-        browseText = this.props.i18n('browse')
-        browseFilesText = this.props.i18n('browse')
-        browseFoldersText = this.props.i18n('browse')
-      } catch {
-        // Ignore, hopefully we can use the 'browseFiles' / 'browseFolders' strings
-      }
-    }
-    try {
-      browseFilesText = this.props.i18n('browseFiles')
-      browseFoldersText = this.props.i18n('browseFolders')
-    } catch {
-      // Ignore, use the 'browse' string
-    }
-
-    const browse = this.renderBrowseButton(browseText, this.triggerFileInputClick)
-    const browseFiles = this.renderBrowseButton(browseFilesText, this.triggerFileInputClick)
-    const browseFolders = this.renderBrowseButton(browseFoldersText, this.triggerFolderInputClick)
-
-    // Before the `fileManagerSelectionType` feature existed, we had two possible
-    // strings here, but now we have six. We use the new-style strings by default:
-    let titleText
-    if (numberOfAcquirers > 0) {
-      titleText = this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse })
-    } else {
-      titleText = this.props.i18nArray(`dropPaste${camelFMSelectionType}`, { browseFiles, browseFolders, browse })
-    }
-
-    // We use the old-style strings if available: this implies that the user has
-    // manually specified them, so they should take precedence over the new-style
-    // defaults.
-    if (lowerFMSelectionType === 'files') {
-      try {
-        if (numberOfAcquirers > 0) {
-          titleText = this.props.i18nArray('dropPasteImport', { browse })
-        } else {
-          titleText = this.props.i18nArray('dropPaste', { browse })
-        }
-      } catch {
-        // Ignore, the new-style strings will be used.
-      }
-    }
-
-    if (this.props.disableLocalFiles) {
-      titleText = this.props.i18n('importFiles')
-    }
-
     return (
-      <div className="uppy-Dashboard-AddFiles-title">
-        {titleText}
+      <div class="uppy-Dashboard-AddFiles-title">
+        {
+          // eslint-disable-next-line no-nested-ternary
+          this.props.disableLocalFiles ? this.props.i18n('importFiles')
+            : numberOfAcquirers > 0
+              ? this.props.i18nArray(`dropPasteImport${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })
+              : this.props.i18nArray(`dropPaste${camelFMSelectionType}`, { browseFiles, browseFolders, browse: browseFiles })
+        }
       </div>
     )
+  }
+
+  [Symbol.for('uppy test: disable unused locale key warning')] () {
+    // Those are actually used in `renderDropPasteBrowseTagline` method.
+    this.props.i18nArray('dropPasteBoth')
+    this.props.i18nArray('dropPasteFiles')
+    this.props.i18nArray('dropPasteFolders')
+    this.props.i18nArray('dropPasteImportBoth')
+    this.props.i18nArray('dropPasteImportFiles')
+    this.props.i18nArray('dropPasteImportFolders')
   }
 
   renderAcquirer = (acquirer) => {
@@ -210,10 +147,37 @@ class AddFiles extends Component {
       <div className="uppy-Dashboard-AddFiles-list" role="tablist">
         {!disableLocalFiles && this.renderMyDeviceAcquirer()}
         {acquirersWithoutLastTwo.map((acquirer) => this.renderAcquirer(acquirer))}
-        <span role="presentation" style="white-space: nowrap;">
+        <span role="presentation" style={{ 'white-space': 'nowrap' }}>
           {lastTwoAcquirers.map((acquirer) => this.renderAcquirer(acquirer))}
         </span>
       </div>
+    )
+  }
+
+  renderPoweredByUppy () {
+    const { i18nArray } = this.props
+
+    const uppyBranding = (
+      <span>
+        <svg aria-hidden="true" focusable="false" className="uppy-c-icon uppy-Dashboard-poweredByIcon" width="11" height="11" viewBox="0 0 11 11">
+          <path d="M7.365 10.5l-.01-4.045h2.612L5.5.806l-4.467 5.65h2.604l.01 4.044h3.718z" fillRule="evenodd" />
+        </svg>
+        <span className="uppy-Dashboard-poweredByUppy">Uppy</span>
+      </span>
+    )
+
+    const linkText = i18nArray('poweredBy', { uppy: uppyBranding })
+
+    return (
+      <a
+        tabIndex="-1"
+        href="https://uppy.io"
+        rel="noreferrer noopener"
+        target="_blank"
+        className="uppy-Dashboard-poweredBy"
+      >
+        {linkText}
+      </a>
     )
   }
 

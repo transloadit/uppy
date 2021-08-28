@@ -94,15 +94,13 @@ class MarkdownTextarea {
       }
     })
 
-    return Object.keys(filesById).reduce((acc, key) => {
-      const file = filesById[key]
-      const thumb = thumbsById[key]
-      acc.push({ file, thumb })
-      return acc
-    }, [])
+    return Object.keys(filesById).map((key) => ({
+      file : filesById[key],
+      thumb : thumbsById[key],
+    }))
   }
 
-  uploadFiles (files) {
+  uploadFiles () {
     robodog.upload({
       waitForEncoding: true,
       params: {

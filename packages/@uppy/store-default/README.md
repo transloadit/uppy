@@ -12,11 +12,11 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const DefaultStore = require('@uppy/store-default')
+import Uppy from '@uppy/core'
+import DefaultStore from '@uppy/store-default'
 
 const uppy = new Uppy({
-  store: DefaultStore()
+  store: DefaultStore(),
 })
 ```
 

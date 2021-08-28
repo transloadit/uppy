@@ -1,0 +1,36 @@
+.uppy-ProviderBrowserItem-checkbox {
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+
+  // Checkmark icon
+  &::after {
+    position: absolute;
+    border-bottom: 2px solid $gray-200;
+    // Not using border-inline-start here: this is part of a CSS trick to get
+    // a check mark icon that only works in one direction
+    border-left: 2px solid $gray-200;
+    transform: rotate(-45deg);
+    cursor: pointer;
+    content: '';
+  }
+
+  &:disabled::after {
+    cursor: default;
+  }
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+    border-color: $gray-500;
+  }
+}
+
+.uppy-ProviderBrowserItem-checkbox--is-checked {
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-800;
+  }
+}

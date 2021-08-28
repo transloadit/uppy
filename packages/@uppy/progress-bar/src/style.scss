@@ -6,10 +6,10 @@
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 10000;
   width: 100%;
   height: 3px;
-  z-index: 10000;
-  transition: height .2s;
+  transition: height 0.2s;
 }
 
 .uppy-ProgressBar[aria-hidden=true] {
@@ -18,21 +18,23 @@
 }
 
 .uppy-ProgressBar-inner {
+  width: 0;
+  height: 100%;
+
   /* no important */
   background-color: $blue;
   box-shadow: 0 0 10px rgba($blue, 0.7);
-  height: 100%;
-  width: 0;
   transition: width 0.4s ease;
 }
 
 .uppy-ProgressBar-percentage {
-  /* no important */
-  display: none;
-  text-align: center;
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+
+  /* no important */
+  display: none;
   color: $white;
+  text-align: center;
+  transform: translate(-50%, -50%);
 }

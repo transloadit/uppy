@@ -14,8 +14,8 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const FileInput = require('@uppy/file-input')
+import Uppy from '@uppy/core'
+import FileInput from '@uppy/file-input'
 
 const uppy = new Uppy()
 uppy.use(FileInput, {

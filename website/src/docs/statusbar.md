@@ -13,7 +13,7 @@ The `@uppy/status-bar` plugin shows upload progress and speed, ETAs, pre- and po
 It is best used in combination with a simple file source plugin, such as [`@uppy/file-input`][] or [`@uppy/drag-drop`][], or a custom implementation.
 
 ```js
-const StatusBar = require('@uppy/status-bar')
+import StatusBar from '@uppy/status-bar'
 
 uppy.use(StatusBar, {
   // Options
@@ -35,7 +35,7 @@ npm install @uppy/status-bar
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const StatusBar = Uppy.StatusBar
+const { StatusBar } = Uppy
 ```
 
 ## CSS
@@ -66,7 +66,7 @@ uppy.use(StatusBar, {
   hidePauseResumeButton: false,
   hideCancelButton: false,
   doneButtonHandler: null,
-  locale: {}
+  locale: {},
 })
 ```
 
@@ -110,7 +110,7 @@ Hide the cancel button. Use this if you are providing a custom retry button some
 If passed a function, Status Bar will render a “Done” button in place of pause/resume/cancel buttons, once the upload/encoding is done. The behaviour of this “Done” button is defined by the handler function — can be used to close file picker modals or clear the upload state. This is what the Dashboard plugin, which uses Status Bar internally, sets:
 
 ```js
-doneButtonHandler: () => {
+const doneButtonHandler = () => {
   this.uppy.reset()
   this.requestCloseModal()
 }
@@ -123,7 +123,7 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
+const strings = {
   // Shown in the status bar while files are being uploaded.
   uploading: 'Uploading',
   // Shown in the status bar once all files have been uploaded.
@@ -145,7 +145,7 @@ strings: {
   // When `showProgressDetails` is set, shows the number of files that have been fully uploaded so far.
   filesUploadedOfTotal: {
     0: '%{complete} of %{smart_count} file uploaded',
-    1: '%{complete} of %{smart_count} files uploaded'
+    1: '%{complete} of %{smart_count} files uploaded',
   },
   // When `showProgressDetails` is set, shows the amount of bytes that have been uploaded so far.
   dataUploadedOfTotal: '%{complete} of %{total}',
@@ -154,20 +154,16 @@ strings: {
   // Used as the label for the button that starts an upload.
   uploadXFiles: {
     0: 'Upload %{smart_count} file',
-    1: 'Upload %{smart_count} files'
+    1: 'Upload %{smart_count} files',
   },
   // Used as the label for the button that starts an upload, if another upload has been started in the past
   // and new files were added later.
   uploadXNewFiles: {
     0: 'Upload +%{smart_count} file',
-    1: 'Upload +%{smart_count} files'
-  }
+    1: 'Upload +%{smart_count} files',
+  },
 }
 ```
-
-### `replaceTargetContent: false`
-
-Remove all children of the `target` element before mounting the Status Bar. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case, you can set `replaceTargetContent: true` to clear the `target` before appending.
 
 [`@uppy/file-input`]: /docs/file-input
 [`@uppy/drag-drop`]: /docs/drag-drop

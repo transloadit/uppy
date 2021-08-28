@@ -12,11 +12,10 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Plugin = require('@uppy/core/lib/plugin')
-const { ProviderViews } = require('@uppy/provider-views')
+import Plugin from '@uppy/core/lib/plugin'
+import { ProviderViews } from '@uppy/provider-views'
 
-class GoogleDrive extends Plugin {
-  constructor () { /* snip */ }
+class GoogleDrive extends UIPlugin {
   install () {
     this.view = new ProviderViews(this)
     // snip
@@ -25,7 +24,7 @@ class GoogleDrive extends Plugin {
   onFirstRender () {
     return Promise.all([
       this.provider.fetchPreAuthToken(),
-      this.view.getFolder('root', '/')
+      this.view.getFolder('root', '/'),
     ])
   }
 

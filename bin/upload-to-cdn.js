@@ -22,15 +22,14 @@
 //  - Kevin van Zonneveld <kevin@transloadit.com>
 
 const path = require('path')
+const { pipeline, finished } = require('stream/promises')
+const { readFile } = require('fs/promises')
 const AWS = require('aws-sdk')
 const packlist = require('npm-packlist')
 const tar = require('tar')
 const pacote = require('pacote')
 const concat = require('concat-stream')
 const mime = require('mime-types')
-const { promisify } = require('util')
-const readFile = promisify(require('fs').readFile)
-const finished = promisify(require('stream').finished)
 const AdmZip = require('adm-zip')
 
 function delay (ms) {
@@ -50,8 +49,7 @@ from npm and filtering it down to package/dist/ files.
  */
 async function getRemoteDistFiles (packageName, version) {
   const files = new Map()
-  const tarball = pacote.tarball.stream(`${packageName}@${version}`)
-    .pipe(new tar.Parse())
+  const tarball = await pacote.tarball.stream(`${packageName}@${version}`, stream => pipeline(stream, new tar.Parse()))
 
   tarball.on('entry', (readEntry) => {
     if (readEntry.path.startsWith('package/dist/')) {
@@ -120,6 +118,7 @@ async function main (packageName, version) {
 
   const remote = !!version
   if (!remote) {
+    // eslint-disable-next-line import/no-dynamic-require
     version = require(`../packages/${packageName}/package.json`).version
   }
 

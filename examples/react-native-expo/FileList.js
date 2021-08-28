@@ -31,7 +31,7 @@ function UppyDashboardFileIcon (props) {
   if (!icon) {
     return <FileIcon />
   }
-  const color = getFileTypeIcon(props.type).color
+  const { color } = getFileTypeIcon(props.type)
   return (
     <View
       style={{
@@ -59,7 +59,7 @@ export default function FileList (props) {
     <View style={styles.container}>
       <FlatList
         data={uppyFilesArray}
-        keyExtractor={(item, index) => item.id}
+        keyExtractor={(item) => item.id}
         numColumns={2}
         renderItem={({ item }) => {
           return (

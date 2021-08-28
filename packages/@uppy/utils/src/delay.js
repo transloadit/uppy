@@ -9,28 +9,24 @@ const { createAbortError } = require('./AbortController')
  */
 module.exports = function delay (ms, opts) {
   return new Promise((resolve, reject) => {
-    if (opts && opts.signal && opts.signal.aborted) {
+    if (opts?.signal?.aborted) {
       return reject(createAbortError())
     }
 
-    function onabort () {
-      clearTimeout(timeout)
-      cleanup()
-      reject(createAbortError())
-    }
-
     const timeout = setTimeout(() => {
-      cleanup()
+      cleanup() // eslint-disable-line no-use-before-define
       resolve()
     }, ms)
 
-    if (opts && opts.signal) {
-      opts.signal.addEventListener('abort', onabort)
+    function onabort () {
+      clearTimeout(timeout)
+      cleanup() // eslint-disable-line no-use-before-define
+      reject(createAbortError())
     }
+    opts?.signal?.addEventListener('abort', onabort)
     function cleanup () {
-      if (opts && opts.signal) {
-        opts.signal.removeEventListener('abort', onabort)
-      }
+      opts?.signal?.removeEventListener('abort', onabort)
     }
+    return undefined
   })
 }

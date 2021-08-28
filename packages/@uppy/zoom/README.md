@@ -14,10 +14,10 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const Zoom = require('@uppy/zoom')
+import Uppy from '@uppy/core'
+import Zoom from '@uppy/zoom'
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Zoom, {
   // Options
 })

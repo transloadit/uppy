@@ -25,15 +25,19 @@ module.exports = function FilePreviewAndLink(props) {
       style={{ background: thumbnail ? `url(${thumbnail})` : getFileTypeIcon(props.file.type).color, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}
     >
       {
-        props.showLinkToFileUploadResult &&
-        props.file.uploadURL &&
-        <a
-          class="uppy-Dashboard-Item-previewLink"
-          href={props.file.uploadURL}
-          rel="noreferrer noopener"
-          target="_blank"
-          aria-label={props.file.meta.name}
-        />
+        props.showLinkToFileUploadResult
+        && props.file.uploadURL
+          && (
+          <a
+            className="uppy-Dashboard-Item-previewLink"
+            href={props.file.uploadURL}
+            rel="noreferrer noopener"
+            target="_blank"
+            aria-label={props.file.meta.name}
+          >
+            <span hidden>props.file.meta.name</span>
+          </a>
+          )
       }
       {
         !thumbnail &&

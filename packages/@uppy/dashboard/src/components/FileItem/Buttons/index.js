@@ -17,8 +17,8 @@ function EditButton ({
       <button
         className="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--edit"
         type="button"
-        aria-label={`${i18n('editFile')} ${file.meta.name}`}
-        title={i18n('editFile')}
+        aria-label={i18n('editFileWithFilename', { file: file.meta.name })}
+        title={i18n('editFileWithFilename', { file: file.meta.name })}
         onClick={() => onClick()}
       >
         <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="14" height="14" viewBox="0 0 14 14">
@@ -34,13 +34,13 @@ function EditButton ({
   return null
 }
 
-function RemoveButton ({ i18n, onClick }) {
+function RemoveButton ({ i18n, onClick, file }) {
   return (
     <button
       className="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--remove"
       type="button"
-      aria-label={i18n('removeFile')}
-      title={i18n('removeFile')}
+      aria-label={i18n('removeFile', { file: file.meta.name })}
+      title={i18n('removeFile', { file: file.meta.name })}
       onClick={() => onClick()}
     >
       <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="18" height="18" viewBox="0 0 18 18">
@@ -54,10 +54,10 @@ function RemoveButton ({ i18n, onClick }) {
 const copyLinkToClipboard = (event, props) => {
   copyToClipboard(props.file.uploadURL, props.i18n('copyLinkToClipboardFallback'))
     .then(() => {
-      props.log('Link copied to clipboard.')
-      props.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
+      props.uppy.log('Link copied to clipboard.')
+      props.uppy.info(props.i18n('copyLinkToClipboardSuccess'), 'info', 3000)
     })
-    .catch(props.log)
+    .catch(props.uppy.log)
     // avoid losing focus
     .then(() => event.target.focus({ preventScroll: true }))
 }
@@ -80,6 +80,7 @@ function CopyLinkButton (props) {
 
 module.exports = function Buttons (props) {
   const {
+    uppy,
     file,
     uploadInProgressOrComplete,
     canEditFile,
@@ -87,11 +88,8 @@ module.exports = function Buttons (props) {
     showLinkToFileUploadResult,
     showRemoveButton,
     i18n,
-    removeFile,
     toggleFileCard,
     openFileEditor,
-    log,
-    info,
   } = props
 
   const editAction = () => {
@@ -115,17 +113,15 @@ module.exports = function Buttons (props) {
       {showLinkToFileUploadResult && file.uploadURL ? (
         <CopyLinkButton
           file={file}
-          i18n={i18n}
-          info={info}
-          log={log}
+          uppy={uppy}
         />
       ) : null}
       {showRemoveButton ? (
         <RemoveButton
           i18n={i18n}
-          info={props.info}
-          log={props.log}
-          onClick={() => removeFile(file.id, 'removed-by-user')}
+          file={file}
+          uppy={uppy}
+          onClick={() => props.uppy.removeFile(file.id, 'removed-by-user')}
         />
       ) : null}
     </div>

@@ -5,5 +5,5 @@
  * @returns {boolean}
  */
 module.exports = function isObjectURL (url) {
-  return url.indexOf('blob:') === 0
+  return url.startsWith('blob:')
 }

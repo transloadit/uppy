@@ -41,7 +41,7 @@ uk_UA.strings = {
   encoding: 'Обробка...',
   enterCorrectUrl: 'Невірна адреса: будь ласка, переконайтеся що ви використовуєте пряме посилання на файл',
   enterUrlToImport: 'Введіть адресу, щоб імпортувати файл',
-  exceedsSize: 'Цей файл більше максимально дозволеного розміру в',
+  exceedsSize: 'Цей файл більше максимально дозволеного розміру в %{size}',
   failedToFetch: 'Companion не зміг завантажити файл за посиланням, будь ласка, переконайтеся, що адреса вірна',
   failedToUpload: 'Помилка завантаження %{file}',
   fileSource: 'Джерело файлу: %{name}',
@@ -72,7 +72,7 @@ uk_UA.strings = {
     '1': 'Обробляється %{smart_count} файли',
     '2': 'Обробляється %{smart_count} файлів',
   },
-  poweredBy: 'Працює на',
+  poweredBy: 'Працює на %{uppy}',
   removeFile: 'Знищити файл',
   resetFilter: 'Скинути фільтр',
   resume: 'Продовжити',
@@ -132,14 +132,12 @@ uk_UA.strings = {
     '1': 'Ви повинні обрати хоча б %{smart_count} файли',
     '2': 'Ви повинні обрати хоча б %{smart_count} файлів',
   },
-  selectAllFilesFromFolderNamed: 'Обрати всі файли з теки %{name}',
-  unselectAllFilesFromFolderNamed: 'Скасувати вибір усіх файлів з теки %{name}',
   selectFileNamed: 'Обрати файл %{name}',
   unselectFileNamed: 'Скасувати вибір файлу %{name}',
   openFolderNamed: 'Відкрити теку %{name}',
 }
 
-uk_UA.pluralize = function (n) {
+uk_UA.pluralize = function pluralize (n) {
   if (n % 10 === 1 && n % 100 !== 11) {
     return 0
   }

@@ -1,17 +1,12 @@
-import Uppy = require('@uppy/core')
-import CompanionClient = require('@uppy/companion-client')
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type { PublicProviderOptions, TokenStorage } from '@uppy/companion-client'
 
-declare module Facebook {
-  interface FacebookOptions
-    extends Uppy.PluginOptions,
-      CompanionClient.PublicProviderOptions {
-    replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
+export interface FacebookOptions extends PluginOptions, PublicProviderOptions {
+    target?: PluginTarget
     title?: string
-    storage?: CompanionClient.TokenStorage
-  }
+    storage?: TokenStorage
 }
 
-declare class Facebook extends Uppy.Plugin<Facebook.FacebookOptions> {}
+declare class Facebook extends UIPlugin<FacebookOptions> {}
 
-export = Facebook
+export default Facebook

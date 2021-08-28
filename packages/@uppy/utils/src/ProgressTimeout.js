@@ -5,32 +5,37 @@
  * Call `timer.done()` when the upload has completed.
  */
 class ProgressTimeout {
+  #aliveTimer;
+
+  #isDone = false;
+
+  #onTimedOut;
+
+  #timeout;
+
   constructor (timeout, timeoutHandler) {
-    this._timeout = timeout
-    this._onTimedOut = timeoutHandler
-    this._isDone = false
-    this._aliveTimer = null
-    this._onTimedOut = this._onTimedOut.bind(this)
+    this.#timeout = timeout
+    this.#onTimedOut = timeoutHandler
   }
 
   progress () {
     // Some browsers fire another progress event when the upload is
     // cancelled, so we have to ignore progress after the timer was
     // told to stop.
-    if (this._isDone) return
+    if (this.#isDone) return
 
-    if (this._timeout > 0) {
-      if (this._aliveTimer) clearTimeout(this._aliveTimer)
-      this._aliveTimer = setTimeout(this._onTimedOut, this._timeout)
+    if (this.#timeout > 0) {
+      clearTimeout(this.#aliveTimer)
+      this.#aliveTimer = setTimeout(this.#onTimedOut, this.#timeout)
     }
   }
 
   done () {
-    if (this._aliveTimer) {
-      clearTimeout(this._aliveTimer)
-      this._aliveTimer = null
+    if (!this.#isDone) {
+      clearTimeout(this.#aliveTimer)
+      this.#aliveTimer = null
+      this.#isDone = true
     }
-    this._isDone = true
   }
 }
 

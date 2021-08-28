@@ -1,24 +1,45 @@
 const { h } = require('preact')
 
-// it could be a <li><button class="fake-checkbox"/> <button/></li>
-module.exports = (props) => {
+function GridListItem (props) {
+  const {
+    className,
+    isDisabled,
+    restrictionReason,
+    isChecked,
+    title,
+    itemIconEl,
+    showTitles,
+    toggleCheckbox,
+    id,
+  } = props
+
   return (
-    <li className={props.className} title={props.isDisabled ? props.restrictionReason : null}>
-      <div aria-hidden className={`uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`} />
-      <button
-        type="button"
-        className="uppy-u-reset uppy-ProviderBrowserItem-inner"
-        onClick={props.toggleCheckbox}
-        role="option"
-        aria-label={props.isChecked ? props.i18n('unselectFileNamed', { name: props.title }) : props.i18n('selectFileNamed', { name: props.title })}
-        aria-selected={props.isChecked}
-        aria-disabled={props.isDisabled}
-        disabled={props.isDisabled}
+    <li
+      className={className}
+      title={isDisabled ? restrictionReason : null}
+    >
+      <input
+        type="checkbox"
+        className={`uppy-u-reset uppy-ProviderBrowserItem-checkbox ${
+          isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''
+        } uppy-ProviderBrowserItem-checkbox--grid`}
+        onChange={toggleCheckbox}
+        name="listitem"
+        id={id}
+        checked={isChecked}
+        disabled={isDisabled}
         data-uppy-super-focusable
+      />
+      <label
+        htmlFor={id}
+        aria-label={title}
+        className="uppy-u-reset uppy-ProviderBrowserItem-inner"
       >
-        {props.itemIconEl}
-        {props.showTitles && props.title}
-      </button>
+        {itemIconEl}
+        {showTitles && title}
+      </label>
     </li>
   )
 }
+
+module.exports = GridListItem

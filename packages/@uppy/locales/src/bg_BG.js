@@ -46,8 +46,7 @@ bg_BG.strings = {
   encoding: 'Кодиране...',
   enterCorrectUrl: 'Неправилен адрес: Моля, уверете се, че въвеждате директна връзка към файл',
   enterUrlToImport: 'Въведете адрес за да импортиране файл',
-  exceedsSize: 'Размерът на файла надвишава максимално разрешения размер от',
-  exceedsSize2: '%{backwardsCompat} %{size}',
+  exceedsSize: 'Размерът на файла надвишава максимално разрешения размер от %{size}',
   failedToFetch: 'Companion не успя да достъпи този адрес, уверете се че е правилен',
   failedToUpload: 'Грешка при качване на %{file}',
   fileSource: 'Име на сорс файл: %{name}',
@@ -71,13 +70,12 @@ bg_BG.strings = {
   noDuplicates: 'Файлът \'%{fileName}\' съществува. Не може да добавите дублиращи файлове',
   noFilesFound: 'Тук нямате файлове или директории',
   noInternetConnection: 'Няма връзка с интернет',
-  noNewAlreadyUploading: 'Не може да се добавят нови файлове: в процес на качване',
+  noMoreFilesAllowed: 'Не може да се добавят нови файлове: в процес на качване',
   openFolderNamed: 'Отваряне на директория %{name}',
   pause: 'Пауза',
   pauseUpload: 'Паузиране на качването',
   paused: 'Паузиран',
-  poweredBy: 'Powered by',
-  poweredBy2: '%{backwardsCompat} %{uppy}',
+  poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': 'Обработване %{smart_count} файл',
     '1': 'Обработване %{smart_count} файлове',
@@ -92,7 +90,6 @@ bg_BG.strings = {
   retry: 'Нов опит',
   retryUpload: 'Нов опит за качване',
   saveChanges: 'Запис на промените',
-  selectAllFilesFromFolderNamed: 'Изберете всички файлове от директория %{name}',
   selectFileNamed: 'Изберете файл %{name}',
   selectX: {
     '0': 'Избран %{smart_count}',
@@ -108,7 +105,6 @@ bg_BG.strings = {
   submitRecordedFile: 'Подаване на записаното видео',
   takePicture: 'Направа на снимка',
   timedOut: 'Качването е в застой за %{seconds} секунди, прекъсване.',
-  unselectAllFilesFromFolderNamed: 'Размаркиране на всички файлове от директория %{name}',
   unselectFileNamed: 'Размаркиране файл %{name}',
   upload: 'Качване',
   uploadComplete: 'Качването е успешно',
@@ -147,7 +143,7 @@ bg_BG.strings = {
   },
 }
 
-bg_BG.pluralize = function (count) {
+bg_BG.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

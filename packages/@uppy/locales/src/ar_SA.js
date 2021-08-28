@@ -41,7 +41,7 @@ ar_SA.strings = {
   encoding: 'التشفير...',
   enterCorrectUrl: 'خطأ في الرابط: ارجو التأكد من ادخال رابط مباشر للملف',
   enterUrlToImport: 'ادخل الرابط لاستيراد الملفات',
-  exceedsSize: 'الملف اكبر من الحجم المسموح',
+  exceedsSize: 'الملف اكبر من الحجم المسموح %{size}',
   failedToFetch: 'Companion فشل في جلب الرابط, ارجو التأكد من الرابط',
   failedToUpload: 'فشل الرفع %{file}',
   fileSource: 'مصدر الملف: %{name}',
@@ -132,14 +132,12 @@ ar_SA.strings = {
     '1': 'يجب ان تختار على الاقل  %{smart_count} ملفات',
     '2': 'يجب ان تختار على الاقل  %{smart_count} ملفات',
   },
-  selectAllFilesFromFolderNamed: 'حدد جميع الملفات من المجلد %{name}',
-  unselectAllFilesFromFolderNamed: 'قم بإلغاء تحديد جميع الملفات من المجلد %{name}',
   selectFileNamed: 'اختر الملف %{name}',
   unselectFileNamed: 'إلغاء تحديد الملف %{name}',
   openFolderNamed: 'افتح المجلد %{name}',
 }
 
-ar_SA.pluralize = function (n) {
+ar_SA.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }
