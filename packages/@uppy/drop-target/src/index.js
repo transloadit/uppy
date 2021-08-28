@@ -33,9 +33,7 @@ module.exports = class DropTarget extends BasePlugin {
         // path of the file relative to the ancestor directory the user selected.
         // e.g. 'docs/Old Prague/airbnb.pdf'
         relativePath: file.relativePath || null,
-      }
-      if (this.setMeta instanceof Function) {
-        Object.assign(meta, this.setMeta(file, event))
+        ...this.setMeta?.(file, event),
       }
       return {
         source: this.id,
