@@ -18,10 +18,10 @@ npm install @uppy/react
 ```
 
 ```js
-// Either:
-import DashboardModal from '@uppy/react/lib/DashboardModal'
-// Or:
 import { DashboardModal } from '@uppy/react'
+
+// Alternatively, you can also use a default import:
+// import DashboardModal from '@uppy/react/lib/DashboardModal'
 ```
 
 ## CSS
@@ -66,12 +66,15 @@ Then do `plugins={['Webcam']}`.
 Here is a full example that uses a button to open the modal:
 
 ```js
+import React from 'react'
+import { DashboardModal } from '@uppy/react'
+
 class MusicUploadButton extends React.Component {
   constructor (props) {
     super(props)
 
     this.state = {
-      modalOpen: false
+      modalOpen: false,
     }
 
     this.uppy = new Uppy()
@@ -88,20 +91,20 @@ class MusicUploadButton extends React.Component {
 
   handleOpen () {
     this.setState({
-      modalOpen: true
+      modalOpen: true,
     })
   }
 
   handleClose () {
     this.setState({
-      modalOpen: false
+      modalOpen: false,
     })
   }
 
   render () {
     return (
       <div>
-        <button onClick={this.handleOpen}>Upload some music</button>
+        <button type="button" onClick={this.handleOpen}>Upload some music</button>
         <DashboardModal
           uppy={this.uppy}
           closeModalOnClickOutside
@@ -110,7 +113,7 @@ class MusicUploadButton extends React.Component {
           plugins={['Webcam']}
         />
       </div>
-    );
+    )
   }
 }
 ```

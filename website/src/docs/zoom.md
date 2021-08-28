@@ -14,7 +14,7 @@ The `@uppy/zoom` plugin lets users import files from their Zoom account.
 A Companion instance is required for the `@uppy/zoom` plugin to work. Companion handles authentication with Zoom, downloads the pictures and videos, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const Zoom = require('@uppy/zoom')
+import Zoom from '@uppy/zoom'
 
 uppy.use(Zoom, {
   // Options
@@ -36,7 +36,7 @@ npm install @uppy/zoom
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Zoom = Uppy.Zoom
+const { Zoom } = Uppy
 ```
 
 ## CSS
@@ -95,7 +95,7 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
+const strings = {
   // TODO
 }
 ```

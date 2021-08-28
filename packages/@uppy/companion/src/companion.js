@@ -3,7 +3,7 @@ const express = require('express')
 const ms = require('ms')
 // @ts-ignore
 const Grant = require('grant').express()
-const merge = require('lodash/merge')
+const merge = require('lodash.merge')
 const cookieParser = require('cookie-parser')
 const interceptor = require('express-interceptor')
 
@@ -38,6 +38,7 @@ const defaultOptions = {
     },
   },
   debug: true,
+  logClientVersion: true,
 }
 
 // make the errors available publicly for custom providers
@@ -54,7 +55,7 @@ module.exports.app = (options = {}) => {
   validateConfig(options)
 
   options = merge({}, defaultOptions, options)
-  const providers = providerManager.getDefaultProviders(options)
+  const providers = providerManager.getDefaultProviders()
   const searchProviders = providerManager.getSearchProviders()
   providerManager.addProviderOptions(options, grantConfig)
 
@@ -110,6 +111,7 @@ module.exports.app = (options = {}) => {
   app.get('/:providerName/list/:id?', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.list)
   app.post('/:providerName/get/:id', middlewares.hasSessionAndProvider, middlewares.verifyToken, controllers.get)
   app.get('/:providerName/thumbnail/:id', middlewares.hasSessionAndProvider, middlewares.cookieAuthToken, middlewares.verifyToken, controllers.thumbnail)
+  // @ts-ignore Type instantiation is excessively deep and possibly infinite.
   app.get('/search/:searchProviderName/list', middlewares.hasSearchQuery, middlewares.loadSearchProviderToken, controllers.list)
   app.post('/search/:searchProviderName/get/:id', middlewares.loadSearchProviderToken, controllers.get)
 
@@ -169,7 +171,9 @@ const getOptionsMiddleware = (options) => {
       buildURL: getURLBuilder(options),
     }
 
-    logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
+    if (options.logClientVersion) {
+      logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
+    }
     next()
   }
 
@@ -229,7 +233,7 @@ const validateConfig = (companionOptions) => {
   // validate that specified filePath is writeable/readable.
   try {
     // @ts-ignore
-    fs.accessSync(`${companionOptions.filePath}`, fs.R_OK | fs.W_OK)
+    fs.accessSync(`${companionOptions.filePath}`, fs.R_OK | fs.W_OK) // eslint-disable-line no-bitwise
   } catch (err) {
     throw new Error(
       `No access to "${companionOptions.filePath}". Please ensure the directory exists and with read/write permissions.`

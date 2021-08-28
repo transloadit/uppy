@@ -58,6 +58,8 @@ module.exports = () => {
       username: 'John',
       license: 'Creative Commons',
     },
+    allowMultipleUploadBatches: false,
+    // restrictions: { requiredMetaFields: ['caption'] },
   })
     .use(Dashboard, {
       trigger: '#pick-files',

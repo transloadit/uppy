@@ -1,7 +1,3 @@
-// Polyfills, primarily for testing in IE11
-require('es6-promise/auto')
-require('whatwg-fetch')
-
 const DragDrop = require('./DragDrop.js')
 const Dashboard = require('./Dashboard.js')
 

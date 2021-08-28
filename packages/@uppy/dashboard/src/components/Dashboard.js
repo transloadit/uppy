@@ -1,5 +1,6 @@
 const { h } = require('preact')
 const classNames = require('classnames')
+const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 const FileList = require('./FileList')
 const AddFiles = require('./AddFiles')
 const AddFilesPanel = require('./AddFilesPanel')
@@ -8,7 +9,6 @@ const EditorPanel = require('./EditorPanel')
 const PanelTopBar = require('./PickerPanelTopBar')
 const FileCard = require('./FileCard')
 const Slide = require('./Slide')
-const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
@@ -81,6 +81,7 @@ module.exports = function Dashboard (props) {
       onDrop={props.handleDrop}
     >
       <div
+        aria-hidden="true"
         className="uppy-Dashboard-overlay"
         tabIndex={-1}
         onClick={props.handleClickOutside}
@@ -127,7 +128,7 @@ module.exports = function Dashboard (props) {
               <strong className="uppy-Dashboard-serviceMsg-title">
                 {props.i18n('sessionRestored')}
               </strong>
-              <div class="uppy-Dashboard-serviceMsg-text">
+              <div className="uppy-Dashboard-serviceMsg-text">
                 {renderRestoredText()}
               </div>
             </div>
@@ -160,7 +161,7 @@ module.exports = function Dashboard (props) {
 
           <div className="uppy-Dashboard-progressindicators">
             {props.progressindicators.map((target) => {
-              return props.getPlugin(target.id).render(props.state)
+              return props.uppy.getPlugin(target.id).render(props.state)
             })}
           </div>
         </div>

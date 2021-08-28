@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [12.x, 14.x, 16.x]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -23,7 +23,7 @@ jobs:
         run: npm run test:unit
 
   lint_js:
-    name: Lint JavaScript
+    name: Lint JavaScript/TypeScript
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -65,13 +65,11 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Install npm 7
         run: npm install --global npm@7
       - name: Install dependencies
         run: npm ci
-      - name: Run type tests
-        run: npm run lint:markdown
         # Need to do a bunch of work to generate the locale typings 🙃
       - name: Prepare type declarations
         run: |

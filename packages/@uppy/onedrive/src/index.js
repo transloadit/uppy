@@ -1,9 +1,9 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
 const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
-module.exports = class OneDrive extends Plugin {
+module.exports = class OneDrive extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -25,11 +25,19 @@ module.exports = class OneDrive extends Plugin {
 
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionHeaders: this.opts.companionHeaders,
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'onedrive',
       pluginId: this.id,
     })
+
+    this.defaultLocale = {
+      strings: {
+        pluginNameOneDrive: 'OneDrive',
+      },
+    }
+    this.i18nInit()
+    this.title = this.i18n('pluginNameOneDrive')
 
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
@@ -40,7 +48,7 @@ module.exports = class OneDrive extends Plugin {
       provider: this.provider,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

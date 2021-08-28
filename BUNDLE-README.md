@@ -1,7 +1,7 @@
 # Uppy
 
 Hi, thanks for trying out the bundled version of the Uppy File Uploader. You can use
-this from a CDN (e.g. `<script src="https://releases.transloadit.com/uppy/v1.29.1/uppy.min.js"></script>`) or bundle it with your webapp. 
+this from a CDN (e.g. `<script src="https://releases.transloadit.com/uppy/v2.0.2/uppy.min.js"></script>`) or bundle it with your webapp. 
 
 Note that the recommended way to use Uppy is to install it with yarn/npm and use a 
 bundler like Webpack so that you can create a smaller custom build with just the
@@ -30,7 +30,7 @@ Now you can create an HTML file, e.g.: `./upload.html` with the following conten
 
 <script src="./js/uppy/uppy.min.js"></script>
 <script>
-  var uppy = Uppy.Core({
+  var uppy = new Uppy.Core({
     debug      : true,
     autoProceed: false,
   })

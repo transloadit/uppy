@@ -12,8 +12,8 @@
   li.uppy-ProviderBrowserItem {
     display: flex;
     align-items: center;
-    padding: 7px 15px;
     margin: 0;
+    padding: 7px 15px;
 
     [data-uppy-theme="dark"] & {
       color: $gray-200;
@@ -25,25 +25,28 @@
   }
 
   // Checkbox
-  .uppy-ProviderBrowserItem-fakeCheckbox {
-    margin-inline-end: 15px;
-    height: 17px; width: 17px;
-    border-radius: 3px;
+  .uppy-ProviderBrowserItem-checkbox {
+    width: 17px;
+    height: 17px;
     background-color: $white;
     border: 1px solid $gray-300;
+    border-radius: 3px;
+    margin-inline-end: 15px;
 
     // Focus: show blue outline
     &:focus {
       border: 1px solid $blue;
-      box-shadow: 0 0 0 3px rgba($blue, 0.25);
       outline: none;
+      box-shadow: 0 0 0 3px rgba($blue, 0.25);
     }
 
     // Checkmark icon
     &::after {
+      top: 4px;
+      width: 9px;
+      height: 5px;
       opacity: 0;
-      height: 5px; width: 9px;
-      inset-inline-start: 3px; top: 4px;
+      inset-inline-start: 3px;
     }
 
     [data-uppy-theme="dark"] &:focus {
@@ -52,9 +55,10 @@
     }
   }
   // Checked: color the background, show the checkmark
-  .uppy-ProviderBrowserItem-fakeCheckbox--is-checked {
+  .uppy-ProviderBrowserItem-checkbox--is-checked {
     background-color: $blue;
     border-color: $blue;
+
     &::after {
       opacity: 1;
     }
@@ -63,33 +67,37 @@
   // Either a <label/> for a file,
   // or a <button/> we can click on for a folder
   .uppy-ProviderBrowserItem-inner {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
     display: flex;
     align-items: center;
 
     // For better outline
     padding: 2px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
     &:focus {
-      outline: none;
       text-decoration: underline;
+      outline: none;
     }
-    img, svg {
-      margin-inline-end: 8px;
+
+    img,
+    svg {
       max-width: 20px;
       max-height: 20px;
+      margin-inline-end: 8px;
     }
+
     span {
-      text-overflow: ellipsis;
-      white-space: nowrap;
       overflow: hidden;
       // focus underline is otherwise invisible
       line-height: 1.2;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   }
 
-  .uppy-ProviderBrowserItem--disabled .uppy-ProviderBrowserItem-inner  {
+  .uppy-ProviderBrowserItem--disabled .uppy-ProviderBrowserItem-inner {
     cursor: default;
   }
 

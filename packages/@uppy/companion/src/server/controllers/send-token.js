@@ -1,12 +1,29 @@
+const { URL } = require('url')
+const serialize = require('serialize-javascript')
+
+const tokenService = require('../helpers/jwt')
+const { hasMatch } = require('../helpers/utils')
+const oAuthState = require('../helpers/oauth-state')
+
 /**
  *
- * sends auth token to uppy client
+ * @param {string} token uppy auth token
+ * @param {string} origin url string
  */
-const { URL } = require('url')
-const tokenService = require('../helpers/jwt')
-const { hasMatch, sanitizeHtml } = require('../helpers/utils')
-const oAuthState = require('../helpers/oauth-state')
-const versionCmp = require('../helpers/version')
+const htmlContent = (token, origin) => {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <script>
+          window.opener.postMessage(${serialize({ token })}, ${serialize(origin)})
+          window.close()
+        </script>
+    </head>
+    <body></body>
+    </html>`
+}
 
 /**
  *
@@ -25,57 +42,11 @@ module.exports = function sendToken (req, res, next) {
   const { state } = dynamic
   if (state) {
     const origin = oAuthState.getFromState(state, 'origin', req.companion.options.secret)
-    const clientVersion = oAuthState.getFromState(
-      state,
-      'clientVersion',
-      req.companion.options.secret
-    )
     const allowedClients = req.companion.options.clients
     // if no preset clients then allow any client
     if (!allowedClients || hasMatch(origin, allowedClients) || hasMatch((new URL(origin)).host, allowedClients)) {
-      const allowsStringMessage = versionCmp.gte(clientVersion, '1.0.2')
-      return res.send(allowsStringMessage ? htmlContent(uppyAuthToken, origin) : oldHtmlContent(uppyAuthToken, origin))
+      return res.send(htmlContent(uppyAuthToken, origin))
     }
   }
   next()
-}
-
-/**
- *
- * @param {string} token uppy auth token
- * @param {string} origin url string
- */
-const htmlContent = (token, origin) => {
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8" />
-        <script>
-          window.opener.postMessage(JSON.stringify({token: "${token}"}), "${sanitizeHtml(origin)}")
-          window.close()
-        </script>
-    </head>
-    <body></body>
-    </html>`
-}
-
-/**
- * @todo remove this function in next major release
- * @param {string} token uppy auth token
- * @param {string} origin url string
- */
-const oldHtmlContent = (token, origin) => {
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8" />
-        <script>
-          window.opener.postMessage({token: "${token}"}, "${sanitizeHtml(origin)}")
-          window.close()
-        </script>
-    </head>
-    <body></body>
-    </html>`
 }

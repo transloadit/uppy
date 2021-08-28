@@ -1,9 +1,9 @@
 const express = require('express')
 // the ../../../packages is just to use the local version
 // instead of the npm version—in a real app use `require('@uppy/companion')`
-const uppy = require('../../../packages/@uppy/companion')
 const bodyParser = require('body-parser')
 const session = require('express-session')
+const uppy = require('../../../packages/@uppy/companion')
 
 const app = express()
 
@@ -70,12 +70,12 @@ const uppyOptions = {
 app.use(uppy.app(uppyOptions))
 
 // handle 404
-app.use((req, res, next) => {
+app.use((req, res) => {
   return res.status(404).json({ message: 'Not Found' })
 })
 
 // handle server errors
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   console.error('\x1b[31m', err.stack, '\x1b[0m')
   res.status(err.status || 500).json({ message: err.message, error: err })
 })

@@ -21,7 +21,7 @@ export default class UppyRNUrl extends React.Component {
   }
 
   componentDidMount () {
-    const uppy = this.props.uppy
+    const { uppy } = this.props
     const options = {
       id: 'uppyRN:Url',
       ...this.props,
@@ -34,7 +34,7 @@ export default class UppyRNUrl extends React.Component {
   }
 
   componentWillUnmount () {
-    const uppy = this.props.uppy
+    const { uppy } = this.props
     uppy.removePlugin(this.plugin)
   }
 
@@ -42,6 +42,7 @@ export default class UppyRNUrl extends React.Component {
     this.plugin.addFile(this.state.url)
       .then(this.props.onDone)
       .catch((err) => {
+        // eslint-disable-next-line no-console
         console.log(err)
       })
   }
@@ -65,7 +66,7 @@ export default class UppyRNUrl extends React.Component {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonCancel}
-          onPress={ev => this.props.onDone()}
+          onPress={() => this.props.onDone()}
         >
           <Text style={styles.buttonCancelText}>Cancel</Text>
         </TouchableOpacity>

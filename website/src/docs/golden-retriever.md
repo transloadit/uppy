@@ -25,7 +25,7 @@ npm install @uppy/golden-retriever
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const GoldenRetriever = Uppy.GoldenRetriever
+const { GoldenRetriever } = Uppy
 ```
 
 ## Usage
@@ -35,16 +35,16 @@ const GoldenRetriever = Uppy.GoldenRetriever
 ```js
 // sw.js
 
-require('@uppy/golden-retriever/lib/ServiceWorker')
+import('@uppy/golden-retriever/lib/ServiceWorker')
 ```
 
 2\. Register it in your app entry point:
 
 ```js
 // you app.js entry point
-const GoldenRetriever = require('@uppy/golden-retriever')
+import GoldenRetriever from '@uppy/golden-retriever'
 
-uppy.use(GoldenRetriever, {serviceWorker: true})
+uppy.use(GoldenRetriever, { serviceWorker: true })
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
@@ -53,7 +53,7 @@ if ('serviceWorker' in navigator) {
       console.log('ServiceWorker registration successful with scope: ', registration.scope)
     })
     .catch((error) => {
-      console.log('Registration failed with ' + error)
+      console.log(`Registration failed with ${error}`)
     })
 }
 ```

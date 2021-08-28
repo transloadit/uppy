@@ -24,7 +24,6 @@ const uppy = new Uppy({
     trigger: '#pick-files',
     target: '#upload-form',
     inline: true,
-    replaceTargetContent: true,
     metaFields: [
       { id: 'license', name: 'License', placeholder: 'specify license' },
       { id: 'caption', name: 'Caption', placeholder: 'add caption' },
@@ -32,6 +31,7 @@ const uppy = new Uppy({
     showProgressDetails: true,
     proudlyDisplayPoweredByUppy: true,
     note: '2 files, images and video only',
+    restrictions: { requiredMetaFields: ['caption'] },
   })
   .use(GoogleDrive, { target: Dashboard, companionUrl: 'http://localhost:3020' })
   .use(Instagram, { target: Dashboard, companionUrl: 'http://localhost:3020' })

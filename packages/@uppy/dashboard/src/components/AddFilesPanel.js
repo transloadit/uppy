@@ -16,7 +16,7 @@ const AddFilesPanel = (props) => {
         <button
           className="uppy-DashboardContent-back"
           type="button"
-          onClick={(ev) => props.toggleAddFilesPanel(false)}
+          onClick={() => props.toggleAddFilesPanel(false)}
         >
           {props.i18n('back')}
         </button>

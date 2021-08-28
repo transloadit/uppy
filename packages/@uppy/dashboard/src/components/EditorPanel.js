@@ -2,7 +2,7 @@ const { h } = require('preact')
 const classNames = require('classnames')
 
 function EditorPanel (props) {
-  const file = this.props.files[this.props.fileCardFor]
+  const file = props.files[props.fileCardFor]
 
   return (
     <div
@@ -22,12 +22,19 @@ function EditorPanel (props) {
           type="button"
           onClick={props.hideAllPanels}
         >
-          {props.i18n('done')}
+          {props.i18n('cancel')}
+        </button>
+        <button
+          className="uppy-DashboardContent-save"
+          type="button"
+          onClick={props.saveFileEditor}
+        >
+          {props.i18n('save')}
         </button>
       </div>
       <div className="uppy-DashboardContent-panelBody">
         {props.editors.map((target) => {
-          return props.getPlugin(target.id).render(props.state)
+          return props.uppy.getPlugin(target.id).render(props.state)
         })}
       </div>
     </div>

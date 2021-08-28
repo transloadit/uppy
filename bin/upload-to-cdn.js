@@ -5,7 +5,8 @@
 //
 //  - Assumes EDGLY_KEY and EDGLY_SECRET are available (e.g. set via Travis secrets)
 //  - Assumes a fully built uppy is in root dir (unless a specific tag was specified, then it's fetched from npm)
-//  - Collects dist/ files that would be in an npm package release, and uploads to eg. https://releases.transloadit.com/uppy/v1.0.1/uppy.css
+//  - Collects dist/ files that would be in an npm package release, and uploads to
+//    eg. https://releases.transloadit.com/uppy/v1.0.1/uppy.css
 //  - Uses local package by default, if [version] argument was specified, takes package from npm
 //
 // Run as:
@@ -21,15 +22,14 @@
 //  - Kevin van Zonneveld <kevin@transloadit.com>
 
 const path = require('path')
+const { pipeline, finished } = require('stream/promises')
+const { readFile } = require('fs/promises')
 const AWS = require('aws-sdk')
 const packlist = require('npm-packlist')
 const tar = require('tar')
 const pacote = require('pacote')
 const concat = require('concat-stream')
 const mime = require('mime-types')
-const { promisify } = require('util')
-const readFile = promisify(require('fs').readFile)
-const finished = promisify(require('stream').finished)
 const AdmZip = require('adm-zip')
 
 function delay (ms) {
@@ -49,8 +49,7 @@ from npm and filtering it down to package/dist/ files.
  */
 async function getRemoteDistFiles (packageName, version) {
   const files = new Map()
-  const tarball = pacote.tarball.stream(`${packageName}@${version}`)
-    .pipe(new tar.Parse())
+  const tarball = await pacote.tarball.stream(`${packageName}@${version}`, stream => pipeline(stream, new tar.Parse()))
 
   tarball.on('entry', (readEntry) => {
     if (readEntry.path.startsWith('package/dist/')) {
@@ -119,6 +118,7 @@ async function main (packageName, version) {
 
   const remote = !!version
   if (!remote) {
+    // eslint-disable-next-line import/no-dynamic-require
     version = require(`../packages/${packageName}/package.json`).version
   }
 

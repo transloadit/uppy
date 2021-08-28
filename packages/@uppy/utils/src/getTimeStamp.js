@@ -1,17 +1,20 @@
 /**
- * Returns a timestamp in the format of `hours:minutes:seconds`
+ * Adds zero to strings shorter than two characters.
+ *
+ * @param {number} number
+ * @returns {string}
  */
-module.exports = function getTimeStamp () {
-  var date = new Date()
-  var hours = pad(date.getHours().toString())
-  var minutes = pad(date.getMinutes().toString())
-  var seconds = pad(date.getSeconds().toString())
-  return `${hours}:${minutes}:${seconds}`
+function pad (number) {
+  return number < 10 ? `0${number}` : number.toString()
 }
 
 /**
- * Adds zero to strings shorter than two characters
+ * Returns a timestamp in the format of `hours:minutes:seconds`
  */
-function pad (str) {
-  return str.length !== 2 ? 0 + str : str
+module.exports = function getTimeStamp () {
+  const date = new Date()
+  const hours = pad(date.getHours())
+  const minutes = pad(date.getMinutes())
+  const seconds = pad(date.getSeconds())
+  return `${hours}:${minutes}:${seconds}`
 }

@@ -1,5 +1,3 @@
-require('es6-promise/auto')
-require('whatwg-fetch')
 const Uppy = require('@uppy/core')
 const FileInput = require('@uppy/file-input')
 const XHRUpload = require('@uppy/xhr-upload')
@@ -8,7 +6,6 @@ const ProgressBar = require('@uppy/progress-bar')
 const uppy = new Uppy({ debug: true, autoProceed: true })
 uppy.use(FileInput, {
   target: '.UppyForm',
-  replaceTargetContent: true
 })
 uppy.use(ProgressBar, {
   target: '.UppyProgressBar',

@@ -36,13 +36,13 @@ nl_NL.strings = {
   dropPasteImportFiles: 'Sleep hier je bestanden naartoe, plak, %{browse} of importeer vanuit',
   dropPasteImportFolders: 'Sleep hier je bestanden naartoe, plak, %{browse} of importeer vanuit',
   editFile: 'Bestand aanpassen',
+  editFileWithFilename: 'Bestand aanpassen %{file}',
   editing: 'Bezig %{file} aan te passen',
   emptyFolderAdded: 'Er werden geen bestanden toegevoegd uit de lege map',
   encoding: 'Coderen...',
   enterCorrectUrl: 'Ongeldige URL: Zorg dat je een directe link naar een bestand invoert',
   enterUrlToImport: 'Voeg URL toe om een bestand te importeren',
-  exceedsSize2: '%{file} overschrijdt de maximaal toegelaten bestandsgrootte van %{size}',
-  exceedsSize: '%{file} overschrijdt de maximaal toegelaten bestandsgrootte van',
+  exceedsSize: '%{file} overschrijdt de maximaal toegelaten bestandsgrootte van %{size}',
   failedToFetch: 'Companion kan deze URL niet laden, controleer of de URL correct is',
   failedToUpload: 'Kon %{file} niet uploaden',
   fileSource: 'Bronbestand: %{name}',
@@ -66,15 +66,14 @@ nl_NL.strings = {
   pause: 'Pauze',
   pauseUpload: 'Pauzeer upload',
   paused: 'Gepauzeerd',
-  poweredBy2: 'Mogelijk gemaakt door %{uppy}',
-  poweredBy: 'Mogelijk gemaakt door',
+  poweredBy: 'Mogelijk gemaakt door %{uppy}',
   processingXFiles: {
     '0': 'Bezig met %{smart_count} bestand te verwerken',
     '1': 'Bezig met %{smart_count} bestanden te verwerken',
   },
   recordingLength: 'Opnameduur %{recording_length}',
   recordingStoppedMaxSize: 'Opname gestopt omdat de bestandsgrootte de limiet bijna overschrijdt',
-  removeFile: 'Bestand verwijderen',
+  removeFile: 'Verwijder bestand %{file}',
   resetFilter: 'Filter resetten',
   resume: 'Hervatten',
   resumeUpload: 'Upload hervatten',
@@ -125,14 +124,13 @@ nl_NL.strings = {
     '0': 'Je moet minstens %{smart_count} bestand selecteren',
     '1': 'Je moet minstens %{smart_count} bestanden selecteren',
   },
-  selectAllFilesFromFolderNamed: 'Selecteer alle bestanden uit de map %{name}',
-  unselectAllFilesFromFolderNamed: 'Deselecteer alle bestanden uit de map %{name}',
+  allFilesFromFolderNamed: 'Alle bestanden uit de map %{name}',
   selectFileNamed: 'Selecteer bestand %{name}',
   unselectFileNamed: 'Deselecteer bestand %{name}',
   openFolderNamed: 'Open map %{name}',
 }
 
-nl_NL.pluralize = function (n) {
+nl_NL.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

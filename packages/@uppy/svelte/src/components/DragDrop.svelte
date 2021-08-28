@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
-  import type { Uppy, Plugin } from '@uppy/core';
+  import type { Uppy } from '@uppy/core';
   import DragDropPlugin from '@uppy/drag-drop'
 
   let container: HTMLElement;

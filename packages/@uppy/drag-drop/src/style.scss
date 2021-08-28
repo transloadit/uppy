@@ -5,44 +5,44 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 7px;
-  background-color: $white;
-  cursor: pointer;
-  font-family: $font-family-base;
   max-width: 100%;
-
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba($blue, 0.4);
-  }
+  font-family: $font-family-base;
+  background-color: $white;
+  border-radius: 7px;
+  cursor: pointer;
 
   // firefox fix: removes thin dotted outline
   &::-moz-focus-inner {
     border: 0;
   }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($blue, 0.4);
+  }
 }
 
 .uppy-DragDrop-inner {
   margin: 0;
-  text-align: center;
   padding: 80px 20px;
   line-height: 1.4;
+  text-align: center;
 }
 
 .uppy-DragDrop-arrow {
   width: 60px;
   height: 60px;
-  fill: lighten($gray-500, 30%);
   margin-bottom: 17px;
+  fill: lighten($gray-500, 30%);
 }
 
-  .uppy-DragDrop--isDragDropSupported {
-    border: 2px dashed lighten($gray-500, 10%);
-  }
+.uppy-DragDrop--isDragDropSupported {
+  border: 2px dashed lighten($gray-500, 10%);
+}
 
 .uppy-DragDrop--isDraggingOver {
-  border: 2px dashed $blue;
   background: $gray-200;
+  border: 2px dashed $blue;
 
   .uppy-DragDrop-arrow {
     fill: $gray-500;
@@ -51,8 +51,8 @@
 
 .uppy-DragDrop-label {
   display: block;
-  font-size: 1.15em;
   margin-bottom: 5px;
+  font-size: 1.15em;
 }
 
 .uppy-DragDrop-browse {
@@ -61,6 +61,6 @@
 }
 
 .uppy-DragDrop-note {
-  font-size: 1em;
   color: lighten($gray-500, 10%);
+  font-size: 1em;
 }

@@ -1,6 +1,5 @@
 const { h } = require('preact')
-const { Plugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
+const { UIPlugin } = require('@uppy/core')
 const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
 const mimeTypes = require('@uppy/utils/lib/mimeTypes')
 const canvasToBlob = require('@uppy/utils/lib/canvasToBlob')
@@ -8,7 +7,6 @@ const supportsMediaRecorder = require('./supportsMediaRecorder')
 const CameraIcon = require('./CameraIcon')
 const CameraScreen = require('./CameraScreen')
 const PermissionsScreen = require('./PermissionsScreen')
-const packageJsonVersion = require('../package.json').version
 
 /**
  * Normalize a MIME type or file extension into a MIME type.
@@ -43,35 +41,21 @@ function isImageMimeType (mimeType) {
   return /^image\/[^*]+$/.test(mimeType)
 }
 
-/**
- * Setup getUserMedia, with polyfill for older browsers
- * Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
- */
 function getMediaDevices () {
+  // bug in the compatibility data
   // eslint-disable-next-line compat/compat
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    // eslint-disable-next-line compat/compat
-    return navigator.mediaDevices
-  }
-
-  const getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia
-  if (!getUserMedia) {
-    return null
-  }
-
-  return {
-    getUserMedia (opts) {
-      return new Promise((resolve, reject) => {
-        getUserMedia.call(navigator, opts, resolve, reject)
-      })
-    },
-  }
+  return navigator.mediaDevices
 }
 /**
  * Webcam
  */
-module.exports = class Webcam extends Plugin {
-  static VERSION = packageJsonVersion
+module.exports = class Webcam extends UIPlugin {
+  // eslint-disable-next-line global-require
+  static VERSION = require('../package.json').version
+
+  // enableMirror is used to toggle mirroring, for instance when discarding the video,
+  // while `opts.mirror` is used to remember the initial user setting
+  #enableMirror
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -80,7 +64,6 @@ module.exports = class Webcam extends Plugin {
     // eslint-disable-next-line no-restricted-globals
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Webcam'
-    this.title = this.opts.title || 'Camera'
     this.type = 'acquirer'
     this.capturedMediaFile = null
     this.icon = () => (
@@ -94,6 +77,7 @@ module.exports = class Webcam extends Plugin {
 
     this.defaultLocale = {
       strings: {
+        pluginNameCamera: 'Camera',
         smile: 'Smile!',
         takePicture: 'Take a picture',
         startRecording: 'Begin video recording',
@@ -128,12 +112,13 @@ module.exports = class Webcam extends Plugin {
     }
 
     this.opts = { ...defaultOptions, ...opts }
-
     this.i18nInit()
+    this.title = this.i18n('pluginNameCamera')
+
+    this.#enableMirror = this.opts.mirror
 
     this.install = this.install.bind(this)
     this.setPluginState = this.setPluginState.bind(this)
-
     this.render = this.render.bind(this)
 
     // Camera controls
@@ -173,15 +158,6 @@ module.exports = class Webcam extends Plugin {
         ...newOpts?.videoConstraints,
       },
     })
-
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   hasCameraCheck () {
@@ -207,7 +183,7 @@ module.exports = class Webcam extends Plugin {
           || this.opts.modes.indexOf('picture') !== -1)
 
     const videoConstraints = {
-      ...(this.opts.videoConstraints ?? { facingMode: this.opts.facingMode }),
+      ...(this.opts.videoConstraints || { facingMode: this.opts.facingMode }),
       // facingMode takes precedence over deviceId, and not needed
       // when specific device is selected
       ...(deviceId ? { deviceId, facingMode: null } : {}),
@@ -226,7 +202,10 @@ module.exports = class Webcam extends Plugin {
     }
 
     this.webcamActive = true
-    this.opts.mirror = true
+
+    if (this.opts.mirror) {
+      this.#enableMirror = true
+    }
 
     const constraints = this.getConstraints(options && options.deviceId ? options.deviceId : null)
 
@@ -373,7 +352,7 @@ module.exports = class Webcam extends Plugin {
           // eslint-disable-next-line compat/compat
           recordedVideo: URL.createObjectURL(file.data),
         })
-        this.opts.mirror = false
+        this.#enableMirror = false
       } catch (err) {
         // Logging the error, exept restrictions, which is handled in Core
         if (!err.isRestriction) {
@@ -392,7 +371,11 @@ module.exports = class Webcam extends Plugin {
 
   discardRecordedVideo () {
     this.setPluginState({ recordedVideo: null })
-    this.opts.mirror = true
+
+    if (this.opts.mirror) {
+      this.#enableMirror = true
+    }
+
     this.capturedMediaFile = null
   }
 
@@ -409,19 +392,34 @@ module.exports = class Webcam extends Plugin {
     }
   }
 
-  stop () {
+  async stop () {
     if (this.stream) {
-      this.stream.getAudioTracks().forEach((track) => {
-        track.stop()
-      })
-      this.stream.getVideoTracks().forEach((track) => {
-        track.stop()
+      const audioTracks = this.stream.getAudioTracks()
+      const videoTracks = this.stream.getVideoTracks()
+
+      audioTracks.concat(videoTracks).forEach((track) => track.stop())
+    }
+
+    if (this.recorder) {
+      await new Promise((resolve) => {
+        this.recorder.addEventListener('stop', resolve, { once: true })
+        this.recorder.stop()
+
+        if (this.opts.showRecordingLength) {
+          clearInterval(this.recordingLengthTimer)
+        }
       })
     }
+
+    this.recordingChunks = null
+    this.recorder = null
     this.webcamActive = false
     this.stream = null
+
     this.setPluginState({
       recordedVideo: null,
+      isRecording: false,
+      recordingLengthSeconds: 0,
     })
   }
 
@@ -596,7 +594,7 @@ module.exports = class Webcam extends Plugin {
         showVideoSourceDropdown={this.opts.showVideoSourceDropdown}
         supportsRecording={supportsMediaRecorder()}
         recording={webcamState.isRecording}
-        mirror={this.opts.mirror}
+        mirror={this.#enableMirror}
         src={this.stream}
       />
     )
@@ -640,10 +638,11 @@ module.exports = class Webcam extends Plugin {
   }
 
   uninstall () {
-    if (this.stream) {
-      this.stop()
-    }
-
+    this.stop()
     this.unmount()
+  }
+
+  onUnmount () {
+    this.stop()
   }
 }

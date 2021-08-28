@@ -297,13 +297,6 @@ table tr:last-child td {
     margin-bottom: 0.8em;
   }
 
-  .post li,
-  > ul li,
-  > li {
-    // @TODO can this safely be removed artur?
-    // margin-bottom: 0.5em;
-  }
-
   .post p, .post ul, .post ol,
   > p, > ul, > ol {
     line-height: 1.5em;

@@ -48,8 +48,8 @@ config.zoom = {
  * adds the desired provider module to the request object,
  * based on the providerName parameter specified
  *
- * @param {Object.<string, (typeof Provider) | typeof SearchProvider>} providers
- * @param {boolean=} needsProviderCredentials
+ * @param {Record<string, (typeof Provider) | typeof SearchProvider>} providers
+ * @param {boolean} [needsProviderCredentials]
  */
 module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => {
   /**
@@ -75,18 +75,16 @@ module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => 
 }
 
 /**
- * @param {{server: object, providerOptions: object}} companionOptions
- * @returns {Object.<string, typeof Provider>}
+ * @returns {Record<string, typeof Provider>}
  */
-module.exports.getDefaultProviders = (companionOptions) => {
-  // @todo: we should rename drive to googledrive or google-drive or google
+module.exports.getDefaultProviders = () => {
   const providers = { dropbox, box, drive, facebook, onedrive, zoom, instagram }
 
   return providers
 }
 
 /**
- * @returns {Object.<string, typeof SearchProvider>}
+ * @returns {Record<string, typeof SearchProvider>}
  */
 module.exports.getSearchProviders = () => {
   return { unsplash }
@@ -94,10 +92,10 @@ module.exports.getSearchProviders = () => {
 
 /**
  *
- * @typedef {{module: typeof Provider, config: object}} CustomProvider
+ * @typedef {{'module': typeof Provider, config: Record<string,unknown>}} CustomProvider
  *
- * @param {Object.<string, CustomProvider>} customProviders
- * @param {Object.<string, typeof Provider>} providers
+ * @param {Record<string, CustomProvider>} customProviders
+ * @param {Record<string, typeof Provider>} providers
  * @param {object} grantConfig
  */
 module.exports.addCustomProviders = (customProviders, providers, grantConfig) => {
@@ -143,7 +141,7 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
         grantConfig[authProvider].dynamic = ['key', 'secret', 'redirect_uri']
       }
 
-      const provider = exports.getDefaultProviders(companionOptions)[providerName]
+      const provider = exports.getDefaultProviders()[providerName]
       Object.assign(grantConfig[authProvider], provider.getExtraConfig())
 
       // override grant.js redirect uri with companion's custom redirect url
@@ -173,8 +171,8 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
  * @param {{server: object, providerOptions: object}} options
  * @returns {string} the authProvider for this provider
  */
-const providerNameToAuthName = (name, options) => {
-  const providers = exports.getDefaultProviders(options)
+const providerNameToAuthName = (name, options) => { // eslint-disable-line no-unused-vars
+  const providers = exports.getDefaultProviders()
   return (providers[name] || {}).authProvider
 }
 

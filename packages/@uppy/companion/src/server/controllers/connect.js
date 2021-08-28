@@ -11,7 +11,6 @@ module.exports = function connect (req, res) {
   const { secret } = req.companion.options
   let state = oAuthState.generateState(secret)
   if (req.query.state) {
-    // todo change this query from state to "origin"
     const origin = JSON.parse(atob(req.query.state))
     state = oAuthState.addToState(state, origin, secret)
   }

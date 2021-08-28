@@ -1,4 +1,4 @@
-const cuid = require('cuid')
+const { nanoid } = require('nanoid')
 
 // Redux action name.
 const STATE_UPDATE = 'uppy/STATE_UPDATE'
@@ -18,30 +18,37 @@ const defaultSelector = (id) => (state) => state.uppy[id]
 class ReduxStore {
   static VERSION = require('../package.json').version
 
-  constructor (opts) {
-    this._store = opts.store
-    this._id = opts.id || cuid()
-    this._selector = opts.selector || defaultSelector(this._id)
+  #id
 
-    // Initialise the `uppy[id]` state key.
+  #selector
+
+  #store
+
+  constructor (opts) {
+    this.#store = opts.store
+    this.#id = opts.id || nanoid()
+    this.#selector = opts.selector || defaultSelector(this.#id)
+
+    // Calling `setState` to dispatch an action to the Redux store.
+    // The intent is to make sure that the reducer has run once.
     this.setState({})
   }
 
   setState (patch) {
-    this._store.dispatch({
+    this.#store.dispatch({
       type: STATE_UPDATE,
-      id: this._id,
+      id: this.#id,
       payload: patch,
     })
   }
 
   getState () {
-    return this._selector(this._store.getState())
+    return this.#selector(this.#store.getState())
   }
 
   subscribe (cb) {
     let prevState = this.getState()
-    return this._store.subscribe(() => {
+    return this.#store.subscribe(() => {
       const nextState = this.getState()
       if (prevState !== nextState) {
         const patch = getPatch(prevState, nextState)
@@ -49,6 +56,10 @@ class ReduxStore {
         prevState = nextState
       }
     })
+  }
+
+  [Symbol.for('uppy test: get id')] () {
+    return this.#id
   }
 }
 
@@ -76,10 +87,8 @@ function middleware () {
   }
 }
 
-module.exports = function createReduxStore (opts) {
-  return new ReduxStore(opts)
-}
-
+module.exports = ReduxStore
+module.exports.ReduxStore = ReduxStore
 module.exports.STATE_UPDATE = STATE_UPDATE
 module.exports.reducer = reducer
 module.exports.middleware = middleware

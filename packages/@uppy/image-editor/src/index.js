@@ -1,9 +1,9 @@
-const { Plugin } = require('@uppy/core')
-const Editor = require('./Editor')
-const Translator = require('@uppy/utils/lib/Translator')
+const { UIPlugin } = require('@uppy/core')
 const { h } = require('preact')
+const Editor = require('./Editor')
 
-module.exports = class ImageEditor extends Plugin {
+module.exports = class ImageEditor extends UIPlugin {
+  // eslint-disable-next-line global-require
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -14,7 +14,6 @@ module.exports = class ImageEditor extends Plugin {
 
     this.defaultLocale = {
       strings: {
-        save: 'Save',
         revert: 'Revert',
         rotate: 'Rotate',
         zoomIn: 'Zoom in',
@@ -31,6 +30,7 @@ module.exports = class ImageEditor extends Plugin {
       background: false,
       autoCropArea: 1,
       responsive: true,
+      croppedCanvasOptions: {},
     }
 
     const defaultActions = {
@@ -65,18 +65,7 @@ module.exports = class ImageEditor extends Plugin {
     this.i18nInit()
   }
 
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    // this.i18nArray = this.translator.translateArray.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
-  }
-
+  // eslint-disable-next-line class-methods-use-this
   canEditFile (file) {
     if (!file.type || file.isRemote) {
       return false
@@ -91,21 +80,35 @@ module.exports = class ImageEditor extends Plugin {
     return false
   }
 
-  save = (blob) => {
+  save = () => {
+    const saveBlobCallback = (blob) => {
+      const { currentImage } = this.getPluginState()
+
+      this.uppy.setFileState(currentImage.id, {
+        data: blob,
+        size: blob.size,
+        preview: null,
+      })
+
+      const updatedFile = this.uppy.getFile(currentImage.id)
+      this.uppy.emit('thumbnail:request', updatedFile)
+      this.setPluginState({
+        currentImage: updatedFile,
+      })
+      this.uppy.emit('file-editor:complete', updatedFile)
+    }
+
     const { currentImage } = this.getPluginState()
 
-    this.uppy.setFileState(currentImage.id, {
-      data: blob,
-      size: blob.size,
-      preview: null,
-    })
+    this.cropper.getCroppedCanvas().toBlob(
+      saveBlobCallback,
+      currentImage.type,
+      this.opts.quality
+    )
+  }
 
-    const updatedFile = this.uppy.getFile(currentImage.id)
-    this.uppy.emit('thumbnail:request', updatedFile)
-    this.setPluginState({
-      currentImage: updatedFile,
-    })
-    this.uppy.emit('file-editor:complete', updatedFile)
+  storeCropperInstance = (cropper) => {
+    this.cropper = cropper
   }
 
   selectFile = (file) => {
@@ -120,7 +123,7 @@ module.exports = class ImageEditor extends Plugin {
       currentImage: null,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
@@ -132,13 +135,15 @@ module.exports = class ImageEditor extends Plugin {
 
   render () {
     const { currentImage } = this.getPluginState()
+
     if (currentImage === null || currentImage.isRemote) {
-      return
+      return null
     }
 
     return (
       <Editor
         currentImage={currentImage}
+        storeCropperInstance={this.storeCropperInstance}
         save={this.save}
         opts={this.opts}
         i18n={this.i18n}

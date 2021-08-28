@@ -1,4 +1,4 @@
-const { Plugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const toArray = require('@uppy/utils/lib/toArray')
 
@@ -6,7 +6,7 @@ const toArray = require('@uppy/utils/lib/toArray')
  * Drop Target plugin
  *
  */
-module.exports = class DropTarget extends Plugin {
+module.exports = class DropTarget extends BasePlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {

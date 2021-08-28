@@ -12,8 +12,8 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const ScreenCapture = require('@uppy/screen-capture')
+import Uppy from '@uppy/core'
+import ScreenCapture from '@uppy/screen-capture'
 
 const uppy = new Uppy()
 uppy.use(ScreenCapture)

@@ -3,7 +3,7 @@
 jest.mock('tus-js-client')
 jest.mock('../../src/server/helpers/request', () => {
   return {
-    getURLMeta: (url) => {
+    getURLMeta: () => {
       return Promise.resolve({ size: 7580, type: 'image/jpg' })
     },
   }

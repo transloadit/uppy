@@ -15,18 +15,18 @@ Uppy supports the popular [Redux](https://redux.js.org/) state management librar
 You can tell Uppy to use your app’s Redux store for its files and UI state. Please check out [Custom Stores](/docs/stores/) for more information on that. Here’s an example to give you a sense of how this works:
 
 ```js
-const { createStore } = require('redux')
-const createReduxStore = require('@uppy/store-redux')
+import { createStore } from 'redux'
+import createReduxStore from '@uppy/store-redux'
 
 const reducer = combineReducers({
   ...reducers,
-  uppy: ReduxStore.reducer
+  uppy: ReduxStore.reducer,
 })
 
 const uppy = new Uppy({
   store: createReduxStore({
-    store: createStore(reducer) // That’s a lot of stores!
-  })
+    store: createStore(reducer), // That’s a lot of stores!
+  }),
 })
 ```
 
@@ -39,15 +39,15 @@ If you’d like to persist your Uppy state — please look into [@uppy/golden-re
 This is a `ReduxDevTools` plugin that simply syncs with the [redux-devtools](https://github.com/gaearon/redux-devtools) browser or JS extensions, and allows for basic time travel:
 
 ```js
-const Uppy = require('@uppy/core')
-const ReduxDevTools = require('@uppy/redux-dev-tools')
+import Uppy from '@uppy/core'
+import ReduxDevTools from '@uppy/redux-dev-tools'
 
 const uppy = new Uppy({
   debug: true,
   meta: {
     username: 'John',
-    license: 'Creative Commons'
-  }
+    license: 'Creative Commons',
+  },
 })
   .use(XHRUpload, { endpoint: 'https://example.com' })
   .use(ReduxDevTools)

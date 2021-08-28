@@ -1,17 +1,16 @@
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
-const URL = require('url-parse')
 
 /**
  * A Barebones HTTP API client for Transloadit.
  */
 module.exports = class Client {
+  #headers = {}
+
   constructor (opts = {}) {
     this.opts = opts
 
-    this._reportError = this._reportError.bind(this)
-
-    this._headers = {
-      'Transloadit-Client': this.opts.client,
+    if (this.opts.client != null) {
+      this.#headers['Transloadit-Client'] = this.opts.client
     }
   }
 
@@ -46,7 +45,7 @@ module.exports = class Client {
     const url = new URL('/assemblies', `${this.opts.service}`).href
     return fetchWithNetworkError(url, {
       method: 'post',
-      headers: this._headers,
+      headers: this.#headers,
       body: data,
     })
       .then((response) => response.json()).then((assembly) => {
@@ -55,14 +54,14 @@ module.exports = class Client {
           error.details = assembly.message
           error.assembly = assembly
           if (assembly.assembly_id) {
-            error.details += ' ' + `Assembly ID: ${assembly.assembly_id}`
+            error.details += ` Assembly ID: ${assembly.assembly_id}`
           }
           throw error
         }
 
         return assembly
       })
-      .catch((err) => this._reportError(err, { url, type: 'API_ERROR' }))
+      .catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
   }
 
   /**
@@ -74,9 +73,9 @@ module.exports = class Client {
   reserveFile (assembly, file) {
     const size = encodeURIComponent(file.size)
     const url = `${assembly.assembly_ssl_url}/reserve_file?size=${size}`
-    return fetchWithNetworkError(url, { method: 'post', headers: this._headers })
+    return fetchWithNetworkError(url, { method: 'post', headers: this.#headers })
       .then((response) => response.json())
-      .catch((err) => this._reportError(err, { assembly, file, url, type: 'API_ERROR' }))
+      .catch((err) => this.#reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
 
   /**
@@ -96,9 +95,9 @@ module.exports = class Client {
 
     const qs = `size=${size}&filename=${filename}&fieldname=${fieldname}&s3Url=${uploadUrl}`
     const url = `${assembly.assembly_ssl_url}/add_file?${qs}`
-    return fetchWithNetworkError(url, { method: 'post', headers: this._headers })
+    return fetchWithNetworkError(url, { method: 'post', headers: this.#headers })
       .then((response) => response.json())
-      .catch((err) => this._reportError(err, { assembly, file, url, type: 'API_ERROR' }))
+      .catch((err) => this.#reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
 
   /**
@@ -108,9 +107,9 @@ module.exports = class Client {
    */
   cancelAssembly (assembly) {
     const url = assembly.assembly_ssl_url
-    return fetchWithNetworkError(url, { method: 'delete', headers: this._headers })
+    return fetchWithNetworkError(url, { method: 'delete', headers: this.#headers })
       .then((response) => response.json())
-      .catch((err) => this._reportError(err, { url, type: 'API_ERROR' }))
+      .catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
   }
 
   /**
@@ -119,12 +118,12 @@ module.exports = class Client {
    * @param {string} url The status endpoint of the assembly.
    */
   getAssemblyStatus (url) {
-    return fetchWithNetworkError(url, { headers: this._headers })
+    return fetchWithNetworkError(url, { headers: this.#headers })
       .then((response) => response.json())
-      .catch((err) => this._reportError(err, { url, type: 'STATUS_ERROR' }))
+      .catch((err) => this.#reportError(err, { url, type: 'STATUS_ERROR' }))
   }
 
-  submitError (err, { endpoint, instance, assembly }) {
+  submitError (err, { endpoint, instance, assembly } = {}) {
     const message = err.details
       ? `${err.message} (${err.details})`
       : err.message
@@ -143,7 +142,7 @@ module.exports = class Client {
       .then((response) => response.json())
   }
 
-  _reportError (err, params) {
+  #reportError = (err, params) => {
     if (this.opts.errorReporting === false) {
       throw err
     }
@@ -159,7 +158,7 @@ module.exports = class Client {
       opts.endpoint = params.url
     }
 
-    this.submitError(err, opts).catch((_) => {
+    this.submitError(err, opts).catch(() => {
       // not much we can do then is there
     })
 

@@ -464,7 +464,7 @@ class Uploader {
        * @param {number} bytesUploaded
        * @param {number} bytesTotal
        */
-      onProgress (bytesUploaded, bytesTotal) {
+      onProgress (bytesUploaded, bytesTotal) { // eslint-disable-line no-unused-vars
         uploader.emitIllusiveProgress(bytesUploaded)
       },
       onSuccess () {
@@ -543,7 +543,7 @@ class Uploader {
       logger.error(errMsg, 'upload.multipart.mismatch.error')
       this.emitError(new Error(errMsg))
     } else {
-      this.emitSuccess(null, { response: respObj })
+      this.emitSuccess(null, { response: respObj, bytesUploaded })
     }
 
     this.cleanUp()

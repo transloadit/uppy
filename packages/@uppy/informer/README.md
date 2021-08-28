@@ -12,12 +12,12 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const Informer = require('@uppy/informer')
+import Uppy from '@uppy/core'
+import Informer from '@uppy/informer'
 
 const uppy = new Uppy()
 uppy.use(Informer, {
-  target: '#mount-point'
+  target: '#mount-point',
 })
 ```
 
