@@ -122,7 +122,7 @@ module.exports = class AwsS3 extends BasePlugin {
       getUploadParameters: this.getUploadParameters.bind(this),
     }
 
-    this.opts = { ...defaultOptions, ...opts }
+    this.setOptions({ ...defaultOptions, ...opts })
 
     this.#client = new RequestClient(uppy, opts)
     this.#requests = new RateLimitedQueue(this.opts.limit)
