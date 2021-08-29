@@ -46,7 +46,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ### Dashboard
 
-- [ ] Add option to disable uploading from local disk #657
 - [ ] Allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] Display data like image resolution on file cards. should be done by thumbnail generator maybe #783
 - [ ] Possibility to edit/delete more than one file at once. example: add copyrigh info to 1000 files #118, #97
@@ -55,13 +54,14 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] Focus jumps weirdly if you remove a file https://github.com/transloadit/uppy/pull/2161#issuecomment-613565486
 - [ ] A mini UI that features drop & progress (may involve a `mini: true` options for dashboard, may involve drop+progress or new plugin) (@arturi)
 - [ ] Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)
-- [ ] Add option to use `body` or `window` or CSS selector as drop zone / paste zone as well, `DropPasteTarget` #1593 (@arturi)
 
 ### New plugins
 
 - [ ] WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] WordPress Front-end Gravity Forms Uppy plugin so one form field could be an Uppy-powered file input
 - [ ] A WakeLock based plugin that keeps your phone from going to sleep while an upload is ongoing https://github.com/transloadit/uppy/issues/1725
+- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
+- [ ] compressor: add to Uppy repo, add resizing (@arturi)
 
 ### New providers
 
@@ -70,6 +70,8 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] Giphy image search (on top of Unsplash plugin) ()
 - [ ] Image search (via Google or Bing or DuckDuckGo): use duckduckgo-images-api or Google Search API (@arturi)
 - [ ] Vimeo #2872
+- [ ] unsplash: Unsplash re-design (#2635 / @arturi, @nqst)
+- [ ] box: add to https://uppy.io/examples/dashboard/ (@mifi)
 
 ### Miscellaneous
 
@@ -85,6 +87,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] xhr: allow sending custom headers per file (as proposed in #785)
 - [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
+- [ ] robodog: finishing touches on Companion dynamic Oauth #2802 (@goto-bus-stop)
 
 ### Needs research
 
