@@ -4,6 +4,7 @@
     "module": "commonjs",
     "declaration": true,
     "target": "es6",
+    "lib": ["es2019", "dom"],
     "noImplicitAny": false,
     "sourceMap": false,
     "allowJs": true,
