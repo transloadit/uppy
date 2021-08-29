@@ -1,9 +1,10 @@
+// eslint-disable-next-line func-names
 (function () {
-  var each = [].forEach
-  var doc = document.documentElement
-  var body = document.body
+  let each = [].forEach
+  let doc = document.documentElement
+  let { body } = document
 
-  var isIndex = body.classList.contains('page-index')
+  let isIndex = body.classList.contains('page-index')
 
   // On index page
   if (isIndex) {
@@ -15,29 +16,29 @@
 
   function InnerPage () {
     // var main = document.querySelector('.js-MainContent')
-    var menuButton = document.querySelector('.js-MenuBtn')
-    var header = document.querySelector('.js-MainHeader')
-    var menu = document.querySelector('.js-Sidebar')
-    var content = document.querySelector('.js-Content')
-    var transloaditBar = document.querySelector('.js-TransloaditBar')
+    let menuButton = document.querySelector('.js-MenuBtn')
+    let header = document.querySelector('.js-MainHeader')
+    let menu = document.querySelector('.js-Sidebar')
+    let content = document.querySelector('.js-Content')
+    let transloaditBar = document.querySelector('.js-TransloaditBar')
 
-    var animating = false
-    var allLinks = []
+    let animating = false
+    let allLinks = []
 
     // // listen for scroll event to do positioning & highlights
     // window.addEventListener('scroll', updateSidebar)
     // window.addEventListener('resize', updateSidebar)
 
     function makeSidebarTop () {
-      var headerHeight = header.offsetHeight
-      var transloaditBarHeight = 0
+      let headerHeight = header.offsetHeight
+      let transloaditBarHeight = 0
 
       if (transloaditBar) {
         transloaditBarHeight = transloaditBar.offsetHeight
       }
 
       if (window.matchMedia('(min-width: 1024px)').matches) {
-        var headerTopOffset = header.getBoundingClientRect().top
+        let headerTopOffset = header.getBoundingClientRect().top
         menu.style.top = `${headerHeight + headerTopOffset}px`
       } else {
         menu.style.paddingTop = `${headerHeight + transloaditBarHeight + 20}px`
@@ -50,8 +51,8 @@
     window.addEventListener('resize', makeSidebarTop)
 
     function updateSidebar () {
-      var top = (doc && doc.scrollTop) || body.scrollTop
-      var headerHeight = header.offsetHeight
+      let top = (doc && doc.scrollTop) || body.scrollTop
+      let headerHeight = header.offsetHeight
       if (top > (headerHeight - 25)) {
         // main.classList.add('fix-sidebar')
         header.classList.add('fix-header')
@@ -60,9 +61,9 @@
         header.classList.remove('fix-header')
       }
       if (animating || !allLinks) return
-      var last
-      for (var i = 0; i < allLinks.length; i++) {
-        var link = allLinks[i]
+      let last
+      for (let i = 0; i < allLinks.length; i++) {
+        let link = allLinks[i]
         if (link.offsetTop > top) {
           if (!last) last = link
           break
@@ -76,8 +77,8 @@
     }
 
     function makeLink (h) {
-      var link = document.createElement('li')
-      var text = h.textContent.replace(/\(.*\)$/, '')
+      let link = document.createElement('li')
+      let text = h.textContent.replace(/\(.*\)$/, '')
       // make sure the ids are link-able...
       h.id = h.id
         .replace(/\(.*\)$/, '')
@@ -90,8 +91,8 @@
     }
 
     function collectH3s (h) {
-      var h3s = []
-      var next = h.nextSibling
+      let h3s = []
+      let next = h.nextSibling
       while (next && next.tagName !== 'H2') {
         if (next.tagName === 'H3') {
           h3s.push(next)
@@ -102,7 +103,7 @@
     }
 
     function makeSubLinks (h3s, small) {
-      var container = document.createElement('ul')
+      let container = document.createElement('ul')
       if (small) {
         container.className = 'menu-sub'
       }
@@ -113,8 +114,8 @@
     }
 
     function setActive (id) {
-      var previousActive = menu.querySelector('.section-link.active')
-      var currentActive = typeof id === 'string'
+      let previousActive = menu.querySelector('.section-link.active')
+      let currentActive = typeof id === 'string'
         ? menu.querySelector(`.section-link[href="#${id}"]`)
         : id
       if (currentActive !== previousActive) {
@@ -127,7 +128,7 @@
       if (link.getAttribute('data-scroll') === 'no') {
         return
       }
-      var wrapper = document.createElement('a')
+      let wrapper = document.createElement('a')
       wrapper.href = `#${link.id}`
       wrapper.setAttribute('data-scroll', '')
       link.parentNode.insertBefore(wrapper, link)
@@ -146,13 +147,13 @@
 
     function initSubHeaders () {
       // build sidebar
-      var currentPageAnchor = menu.querySelector('.sidebar-link.current')
-      var isDocs = content.classList.contains('docs')
+      let currentPageAnchor = menu.querySelector('.sidebar-link.current')
+      let isDocs = content.classList.contains('docs')
 
       if (!isDocs) return
 
       if (currentPageAnchor) {
-        var sectionContainer
+        let sectionContainer
 
         // if (false && isAPI) {
         //   sectionContainer = document.querySelector('.menu-root')
@@ -166,20 +167,21 @@
         sectionContainer.className = 'menu-sub'
         currentPageAnchor.parentNode.appendChild(sectionContainer)
 
-        var h2s = content.querySelectorAll('h2')
+        let h2s = content.querySelectorAll('h2')
 
         if (h2s.length) {
           each.call(h2s, (h) => {
             sectionContainer.appendChild(makeLink(h))
-            var h3s = collectH3s(h)
+            let h3s = collectH3s(h)
             allLinks.push(h)
+            // eslint-disable-next-line prefer-spread
             allLinks.push.apply(allLinks, h3s)
             if (h3s.length) {
               sectionContainer.appendChild(makeSubLinks(h3s, isDocs))
             }
           })
         } else {
-          var h3s = content.querySelectorAll('h3')
+          let h3s = content.querySelectorAll('h3')
           each.call(h3s, (h) => {
             sectionContainer.appendChild(makeLink(h))
             allLinks.push(h)
@@ -215,7 +217,7 @@
       window.addEventListener('resize', updateSidebar)
     }
 
-    var isBlog = menu.classList.contains('is-blog')
+    let isBlog = menu.classList.contains('is-blog')
     if (!isBlog) {
       initSubHeaders()
     }
@@ -224,44 +226,45 @@
   function IndexPage () {
     // Tabs
     window.addEventListener('load', () => {
-      var tabs = document.querySelectorAll('.Tabs-link')
+      let tabs = document.querySelectorAll('.Tabs-link')
 
       function myTabClicks (tabClickEvent) {
-        for (var i = 0; i < tabs.length; i++) {
+        for (let i = 0; i < tabs.length; i++) {
           tabs[i].classList.remove('Tabs-link--active')
         }
 
-        var clickedTab = tabClickEvent.currentTarget
+        let clickedTab = tabClickEvent.currentTarget
         clickedTab.classList.add('Tabs-link--active')
         tabClickEvent.preventDefault()
         tabClickEvent.stopPropagation()
 
-        var myContentPanes = document.querySelectorAll('.TabPane')
+        let myContentPanes = document.querySelectorAll('.TabPane')
 
-        for (i = 0; i < myContentPanes.length; i++) {
+        for (let i = 0; i < myContentPanes.length; i++) {
           myContentPanes[i].classList.remove('TabPane--active')
         }
 
         // storing reference to event.currentTarget, otherwise we get
         // all the children like SVGs, instead of our target — the link element
-        var anchorReference = tabClickEvent.currentTarget
-        var activePaneId = anchorReference.getAttribute('href')
-        var activePane = document.querySelector(activePaneId)
+        let anchorReference = tabClickEvent.currentTarget
+        let activePaneId = anchorReference.getAttribute('href')
+        let activePane = document.querySelector(activePaneId)
         activePane.classList.add('TabPane--active')
       }
 
-      for (var i = 0; i < tabs.length; i++) {
+      for (let i = 0; i < tabs.length; i++) {
         tabs[i].addEventListener('click', myTabClicks)
       }
     })
 
-    var tagline = document.querySelector('.MainHeader-tagline')
-    var taglinePart = document.querySelector('.MainHeader-taglinePart')
-    var taglineList = document.querySelector('.MainHeader-taglineList')
-    var taglineCounter = taglineList.children.length
+    let tagline = document.querySelector('.MainHeader-tagline')
+    let taglinePart = document.querySelector('.MainHeader-taglinePart')
+    let taglineList = document.querySelector('.MainHeader-taglineList')
+    let taglineCounter = taglineList.children.length
 
     function shuffleTaglines () {
-      for (var i = taglineList.children.length; i >= 0; i--) {
+      for (let i = taglineList.children.length; i >= 0; i--) {
+        // eslint-disable-next-line no-bitwise
         taglineList.appendChild(taglineList.children[Math.random() * i | 0])
       }
     }
@@ -269,7 +272,7 @@
     function loopTaglines () {
       taglineCounter--
       if (taglineCounter >= 0) {
-        var taglineText = taglineList.children[taglineCounter].textContent
+        let taglineText = taglineList.children[taglineCounter].textContent
         showTagline(taglineText)
         return
       }
@@ -289,26 +292,4 @@
     loopTaglines()
     setInterval(loopTaglines, 4000)
   }
-
-  // Search with SwiftType
-  // @todo get our own swifttype
-
-  // (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
-  // (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
-  // e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
-  // })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
-
-  // _st('install','HgpxvBc7pUaPUWmG9sgv','2.0.0');
-
-  // version select
-  // document.querySelector('.version-select').addEventListener('change', function (e) {
-  //   var version = e.target.value
-  //   if (version.indexOf('1.') !== 0) {
-  //     version = version.replace('.', '')
-  //     var section = window.location.pathname.match(/\/(\w+?)\//)[1]
-  //     window.location.assign('http://' + version + '.uppy.io/' + section + '/')
-  //   } else {
-  //     // TODO when 1.x is out
-  //   }
-  // })
 }())

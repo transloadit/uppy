@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core'
 import { Uppy } from '@uppy/core'
 import Webcam from '@uppy/webcam'
 import Tus from '@uppy/tus'
@@ -6,17 +6,17 @@ import GoogleDrive from '@uppy/google-drive'
 
 @Component({
   selector: 'app-root',
-  template: /*html*/`
+  template: /* html */`
   <h1>Uppy Angular Example!</h1>
   <h2>Inline dashboard</h2>
   <label>
-		<input
+    <input
       type="checkbox"
       (change)="showInline = $event.target.checked"
       [checked]="showInline"
     />
-		Show Dashboard
-	</label>
+    Show Dashboard
+  </label>
 
   <uppy-dashboard [uppy]='uppy' [props]='dashboardProps' *ngIf="showInline"></uppy-dashboard>
 
@@ -42,24 +42,27 @@ import GoogleDrive from '@uppy/google-drive'
     '../../../../packages/@uppy/drag-drop/dist/style.min.css',
     '../../../../packages/@uppy/progress-bar/dist/style.min.css',
     '../../../../packages/@uppy/dashboard/dist/style.min.css',
-  ]
+  ],
 })
-export class AppComponent {
-  title = 'angular-example';
+export class AppComponent implements OnInit {
+  title = 'angular-example'
+
   showInline = false
+
   showModal = false
 
   dashboardProps = {
-    plugins: ['Webcam']
+    plugins: ['Webcam'],
   }
+
   dashboardModalProps = {
     target: document.body,
-    onRequestCloseModal: () => this.showModal = false
+    onRequestCloseModal: (): void => { this.showModal = false },
   }
 
-
   uppy: Uppy = new Uppy({ debug: true, autoProceed: true })
-  ngOnInit() {
+
+  ngOnInit(): void {
     this.uppy
       .use(Webcam)
       .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })

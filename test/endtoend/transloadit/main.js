@@ -1,11 +1,9 @@
-require('es6-promise/auto')
-require('whatwg-fetch')
 const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const Transloadit = require('@uppy/transloadit')
 
 function initUppyTransloadit (transloaditKey) {
-  var uppyTransloadit = new Uppy({
+  const uppyTransloadit = new Uppy({
     id: 'uppyTransloadit',
     debug: true,
     autoProceed: true,
@@ -38,9 +36,9 @@ function initUppyTransloadit (transloaditKey) {
     console.log('Result here ====>', stepName, result)
     console.log('Cropped image url is here ====>', result.url)
 
-    var img = new Image()
-    img.onload = function () {
-      var result = document.createElement('div')
+    const img = new Image()
+    img.onload = function onload () {
+      const result = document.createElement('div')
       result.setAttribute('id', 'uppy-result')
       result.textContent = 'ok'
       document.body.appendChild(result)

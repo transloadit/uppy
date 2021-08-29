@@ -1,8 +1,8 @@
-var app = require('express')()
-var cors = require('cors')
-var multer = require('multer')
+const app = require('express')()
+const cors = require('cors')
+const multer = require('multer')
 
-var upload = multer({
+const upload = multer({
   storage: multer.memoryStorage(),
 })
 

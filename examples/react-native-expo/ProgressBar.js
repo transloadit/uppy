@@ -2,7 +2,7 @@ import React from 'react' // eslint-disable-line no-unused-vars
 import { View, Text } from 'react-native'
 
 export default function ProgressBar (props) {
-  const progress = props.progress
+  const { progress } = props
 
   const colorGreen = '#0b8600'
   const colorBlue = '#006bb7'

@@ -9,11 +9,10 @@ const { promisify } = require('util')
 const fs = require('fs')
 const path = require('path')
 const resolve = require('resolve')
-const mkdirp = promisify(require('mkdirp'))
 const glob = promisify(require('glob'))
 
 const renderScss = promisify(sass.render)
-const writeFile = promisify(fs.writeFile)
+const { mkdir, writeFile } = fs.promises
 
 const cwd = process.cwd()
 
@@ -75,7 +74,7 @@ async function compileCSS () {
     } else if (outdir.includes(path.normalize('packages/@uppy/robodog/'))) {
       outfile = path.join(outdir, 'robodog.css')
     }
-    await mkdirp(outdir)
+    await mkdir(outdir, { recursive: true })
     await writeFile(outfile, postcssResult.css)
     console.info(
       chalk.green('✓ Built Uppy CSS:'),

@@ -46,6 +46,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
       })
       this.props.onRequestClose()
     }).catch((err) => {
+      // eslint-disable-next-line no-console
       console.log(err)
     })
   }
@@ -60,6 +61,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
       })
       this.props.onRequestClose()
     }).catch((err) => {
+      // eslint-disable-next-line no-console
       console.log(err)
     })
   }
@@ -73,20 +75,18 @@ export default class UppyReactNativeFilePicker extends React.Component {
       })
       this.props.onRequestClose()
     }).catch((err) => {
+      // eslint-disable-next-line no-console
       console.log(err)
     })
   }
 
   openProvider (id) {
-    console.log('Open provider:', id)
     this.setState({
       openProvider: id,
     })
   }
 
   chooseProvider (id) {
-    console.log('Provider selected:', id)
-
     switch (id) {
       case 'LocalImages':
         this.selectImage()
@@ -107,12 +107,12 @@ export default class UppyReactNativeFilePicker extends React.Component {
       <ScrollView
         contentContainerStyle={styles.providerList}
       >
-        {this.state.providers.map((item, index) => {
+        {this.state.providers.map((item) => {
           return (
             <TouchableOpacity
               style={styles.providerButton}
-              key={index}
-              onPress={ev => this.chooseProvider(item.id)}
+              key={item.title}
+              onPress={() => this.chooseProvider(item.id)}
             >
               <Text style={styles.providerButtonText}>{item.title}</Text>
             </TouchableOpacity>
@@ -120,7 +120,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
         })}
         <TouchableOpacity
           style={styles.cancelButton}
-          onPress={ev => this.props.onRequestClose()}
+          onPress={() => this.props.onRequestClose()}
         >
           <Text style={styles.cancelButtonText}>Cancel</Text>
         </TouchableOpacity>

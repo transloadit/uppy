@@ -8,7 +8,7 @@ const MEDIA_TYPES = Object.freeze({
 
 const isVideo = (item) => item.media_type === MEDIA_TYPES.video
 
-exports.isFolder = (_) => {
+exports.isFolder = (item) => { // eslint-disable-line no-unused-vars
   return false
 }
 

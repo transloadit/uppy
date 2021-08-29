@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-// @uppy/* are available higher up in the dependency tree, but eslint
-// does not know about that.
+// These are resolved from the root instead of from the local package.json in
+// the create-react-app e2e test code.
 /* eslint-disable import/no-extraneous-dependencies */
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
@@ -51,7 +51,7 @@ class App extends Component {
 
         <h2>Inline Dashboard</h2>
         <div id="inline-dashboard">
-          <label>
+          <label htmlFor="inline-dashboard-toggle">
             <input
               id="inline-dashboard-toggle"
               type="checkbox"
@@ -77,7 +77,7 @@ class App extends Component {
 
         <h2>Modal Dashboard</h2>
         <div id="modal-dashboard">
-          <button onClick={this.handleModalClick} id="modal-dashboard-toggle">
+          <button onClick={this.handleModalClick} id="modal-dashboard-toggle" type="button">
             {this.state.open ? 'Close dashboard' : 'Open dashboard'}
           </button>
           <DashboardModal

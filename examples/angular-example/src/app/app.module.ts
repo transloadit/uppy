@@ -1,25 +1,28 @@
 import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 
+import {
+  UppyAngularDashboardModule,
+  UppyAngularStatusBarModule,
+  UppyAngularDragDropModule,
+  UppyAngularProgressBarModule,
+  UppyAngularDashboardModalModule
+} from '@uppy/angular'
 import { AppComponent } from './app.component'
 
-import { UppyAngularDashboardModule, UppyAngularStatusBarModule, UppyAngularDragDropModule, UppyAngularProgressBarModule, UppyAngularDashboardModalModule } from '@uppy/angular'
-
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     UppyAngularDashboardModule,
     UppyAngularStatusBarModule,
     UppyAngularDashboardModalModule,
     UppyAngularDragDropModule,
-    UppyAngularProgressBarModule
+    UppyAngularProgressBarModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-class AppModule { }
+class AppModule {}
 
 export { AppModule }

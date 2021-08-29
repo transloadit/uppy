@@ -16,6 +16,10 @@ const SHARED_DRIVE_FIELDS = '*'
 // Hopefully this name will not be used by Google
 const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
+function sortByName (first, second) {
+  return first.name.localeCompare(second.name)
+}
+
 function waitForFailedResponse (resp) {
   return new Promise((resolve, reject) => {
     let data = ''
@@ -43,9 +47,6 @@ function adaptData (listFilesResp, sharedDrivesResp, directory, query, showShare
     modifiedDate: adapter.getItemModifiedDate(item),
     size: adapter.getItemSize(item),
     custom: {
-      // @todo isTeamDrive is left for backward compatibility. We should remove it in the next
-      // major release.
-      isTeamDrive: adapter.isSharedDrive(item),
       isSharedDrive: adapter.isSharedDrive(item),
       imageHeight: adapter.getImageHeight(item),
       imageWidth: adapter.getImageWidth(item),
@@ -73,7 +74,7 @@ function adaptData (listFilesResp, sharedDrivesResp, directory, query, showShare
 
   const adaptedItems = [
     ...(virtualItem ? [virtualItem] : []), // shared folder first
-    ...([...sharedDrives, ...items].map(adaptItem)),
+    ...([...sharedDrives, ...items].map(adaptItem).sort(sortByName)),
   ]
 
   return {

@@ -31,15 +31,6 @@ exports.jsonStringify = (data) => {
   })
 }
 
-/**
- * Does a simple html sanitization on the passed value
- *
- * @param {string} text
- */
-exports.sanitizeHtml = (text) => {
-  return text ? text.replace(/<\/?[^>]+(>|$)/g, '') : text
-}
-
 // all paths are assumed to be '/' prepended
 /**
  * Returns a url builder

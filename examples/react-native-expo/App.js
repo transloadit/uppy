@@ -56,7 +56,7 @@ export default class App extends React.Component {
         uploadStarted: true,
       })
     })
-    this.uppy.on('upload-success', (file, response) => {
+    this.uppy.on('upload-success', () => {
       // console.log(file.name, response)
     })
     this.uppy.on('complete', (result) => {
@@ -70,7 +70,7 @@ export default class App extends React.Component {
     })
 
     this.uppy.on('info-visible', () => {
-      const info = this.uppy.getState().info
+      const { info } = this.uppy.getState()
       this.setState({
         info,
       })

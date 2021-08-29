@@ -12,8 +12,8 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const ProgressBar = require('@uppy/progress-bar')
+import Uppy from '@uppy/core'
+import ProgressBar from '@uppy/progress-bar'
 
 const uppy = new Uppy()
 uppy.use(ProgressBar, {

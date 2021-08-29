@@ -4,7 +4,7 @@ const helmet = require('helmet')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const { URL } = require('url')
-const merge = require('lodash/merge')
+const merge = require('lodash.merge')
 const session = require('express-session')
 const addRequestId = require('express-request-id')()
 const logger = require('../server/logger')
@@ -29,16 +29,17 @@ module.exports = function server (inputCompanionOptions = {}) {
    *
    * Returns a copy of the object with unknown types removed and sensitive values replaced by ***.
    *
-   * The input type is more broad that it needs to be, this way typescript can help us guarantee that we're dealing with all possible inputs :)
+   * The input type is more broad that it needs to be, this way typescript can help us guarantee that we're dealing with all
+   * possible inputs :)
    *
-   * @param {{ [key: string]: any }} rawQuery
+   * @param {Record<string, any>} rawQuery
    * @returns {{
-   *   query: { [key: string]: string },
+   *   query: Record<string, any>,
    *   censored: boolean
    * }}
    */
   function censorQuery (rawQuery) {
-    /** @type {{ [key: string]: string }} */
+    /** @type {Record<string, any>} */
     const query = {}
     let censored = false
     Object.keys(rawQuery).forEach((key) => {
@@ -59,12 +60,12 @@ module.exports = function server (inputCompanionOptions = {}) {
   app.use(addRequestId)
   // log server requests.
   app.use(morgan('combined'))
-  morgan.token('url', (req, res) => {
+  morgan.token('url', (req) => {
     const { query, censored } = censorQuery(req.query)
     return censored ? `${req.path}?${qs.stringify(query)}` : req.originalUrl || req.url
   })
 
-  morgan.token('referrer', (req, res) => {
+  morgan.token('referrer', (req) => {
     const ref = req.headers.referer || req.headers.referrer
     if (typeof ref === 'string') {
       let parsed
@@ -82,7 +83,8 @@ module.exports = function server (inputCompanionOptions = {}) {
   // for server metrics tracking.
   // make app metrics available at '/metrics'.
   // TODO for the next major version: use instead companion option "metrics": true and remove this code
-  // Se discussion: https://github.com/transloadit/uppy/pull/2854/files/64be97205e4012818abfcc8b0b8b7fe09de91729#diff-68f5e3eb307c1c9d1fd02224fd7888e2f74718744e1b6e35d929fcab1cc50ed1
+  // eslint-disable-next-line max-len
+  // See discussion: https://github.com/transloadit/uppy/pull/2854/files/64be97205e4012818abfcc8b0b8b7fe09de91729#diff-68f5e3eb307c1c9d1fd02224fd7888e2f74718744e1b6e35d929fcab1cc50ed1
   if (process.env.COMPANION_HIDE_METRICS !== 'true') {
     app.use(middlewares.metrics())
   }
@@ -152,6 +154,7 @@ module.exports = function server (inputCompanionOptions = {}) {
     // initialize companion
     companionApp = companion.app(companionOptions)
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('\x1b[31m', error.message, '\x1b[0m')
     process.exit(1)
   }
@@ -177,6 +180,7 @@ module.exports = function server (inputCompanionOptions = {}) {
       })
       res.header('Content-Length', `${Buffer.byteLength(content, 'utf8')}`)
       // use writeHead to prevent 'charset' from being appended
+      // eslint-disable-next-line max-len
       // https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-configure-publisher-domain#to-select-a-verified-domain
       res.writeHead(200, { 'Content-Type': 'application/json' })
       res.write(content)
@@ -184,12 +188,12 @@ module.exports = function server (inputCompanionOptions = {}) {
     })
   }
 
-  app.use((req, res, next) => {
+  app.use((req, res) => {
     return res.status(404).json({ message: 'Not Found' })
   })
 
   // @ts-ignore
-  app.use((err, req, res, next) => {
+  app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     const logStackTrace = true
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message

@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const rimraf = require('rimraf')
 const companion = require('../../packages/@uppy/companion')
 const app = require('express')()
 
@@ -23,8 +22,7 @@ const options = {
       secret: process.env.COMPANION_GOOGLE_SECRET,
     },
     s3: {
-      getKey: (req, filename) =>
-        `whatever/${Math.random().toString(32).slice(2)}/${filename}`,
+      getKey: (req, filename) => `whatever/${Math.random().toString(32).slice(2)}/${filename}`,
       key: process.env.COMPANION_AWS_KEY,
       secret: process.env.COMPANION_AWS_SECRET,
       bucket: process.env.COMPANION_AWS_BUCKET,
@@ -45,7 +43,7 @@ try {
   fs.mkdirSync(DATA_DIR)
 }
 process.on('exit', () => {
-  rimraf.sync(DATA_DIR)
+  fs.rmSync(DATA_DIR, { recursive: true, force: true })
 })
 
 app.use(companion.app(options))

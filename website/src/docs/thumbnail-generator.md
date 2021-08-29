@@ -13,12 +13,12 @@ tagline: "generate preview thumbnails for images to be uploaded"
 This plugin is included by default with the [Dashboard](/docs/dashboard), so you don’t have to include it manually. But it is useful if you are not using the Dashboard and want to display image previews in your custom UI.
 
 ```js
-const ThumbnailGenerator = require('@uppy/thumbnail-generator')
+import ThumbnailGenerator from '@uppy/thumbnail-generator'
 
 uppy.use(ThumbnailGenerator, {
   thumbnailWidth: 200,
   // thumbnailHeight: 200 // optional, use either width or height,
-  waitForThumbnailsBeforeUpload: false
+  waitForThumbnailsBeforeUpload: false,
 })
 ```
 
@@ -37,7 +37,7 @@ npm install @uppy/thumbnail-generator
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const ThumbnailGenerator = Uppy.ThumbnailGenerator
+const { ThumbnailGenerator } = Uppy
 ```
 
 ## Options
@@ -50,7 +50,7 @@ uppy.use(ThumbnailGenerator, {
   thumbnailWidth: 200,
   thumbnailHeight: 200,
   thumbnailType: 'image/jpeg',
-  waitForThumbnailsBeforeUpload: false
+  waitForThumbnailsBeforeUpload: false,
 })
 ```
 

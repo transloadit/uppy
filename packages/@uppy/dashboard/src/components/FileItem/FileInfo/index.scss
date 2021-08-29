@@ -1,43 +1,44 @@
 .uppy-Dashboard-Item-fileInfo {
   padding-inline-end: 5px;
 }
-  .uppy-Dashboard-Item-name {
-    font-size: 12px;
-    line-height: 1.3;
-    font-weight: 500;
-    margin-bottom: 5px;
 
-    word-break: break-all;
-    // Must be present
-    // [Practical check] Firefox, '384048411015659...2309520384n.png' filename
-    word-wrap: anywhere;
+.uppy-Dashboard-Item-name {
+  margin-bottom: 5px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.3;
+  // Must be present
+  // [Practical check] Firefox, '384048411015659...2309520384n.png' filename
+  word-wrap: anywhere;
+  word-break: break-all;
 
-    [data-uppy-theme="dark"] & {
-      color: $gray-200;
-    }
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
   }
+}
 
-  .uppy-Dashboard-Item-status {
-    font-size: 11px;
-    line-height: 1;
-    font-weight: normal;
-    color: $gray-600;
+.uppy-Dashboard-Item-status {
+  color: $gray-600;
+  font-weight: normal;
+  font-size: 11px;
+  line-height: 1;
 
-    [data-uppy-theme="dark"] & {
-      color: $gray-400;
-    }
+  [data-uppy-theme="dark"] & {
+    color: $gray-400;
   }
-    .uppy-Dashboard-Item-statusSize {
-      display: inline-block;
-      vertical-align: bottom;
-      text-transform: uppercase;
-    }
+}
 
-  .uppy-Dashboard-Item-reSelect {
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: 600;
-    color: $blue;
-  }
-  // ...uppy-Dashboard-Item-status|
+.uppy-Dashboard-Item-statusSize {
+  display: inline-block;
+  text-transform: uppercase;
+  vertical-align: bottom;
+}
+
+.uppy-Dashboard-Item-reSelect {
+  color: $blue;
+  font-weight: 600;
+  font-size: inherit;
+  font-family: inherit;
+}
+// ...uppy-Dashboard-Item-status|
 // ...uppy-Dashboard-Item-fileInfo|

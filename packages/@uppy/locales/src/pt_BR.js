@@ -45,7 +45,7 @@ pt_BR.strings = {
   enterCorrectUrl:
     'URL incorreta: Por favor tenha certeza que inseriu um link direto para um arquivo',
   enterUrlToImport: 'Coloque a URL para importar um arquivo',
-  exceedsSize: 'Esse arquivo excedeu o tamanho máximo permitido',
+  exceedsSize: 'Esse arquivo excedeu o tamanho máximo permitido %{size}',
   failedToFetch:
     'Serviço falhou para buscar essa URL, por favor tenha certeza que a URL está correta',
   failedToUpload: 'Falha para enviar %{file}',
@@ -70,7 +70,7 @@ pt_BR.strings = {
   pause: 'Pausar',
   pauseUpload: 'Pausar envio de arquivos',
   paused: 'Pausado',
-  poweredBy: 'Desenvolvido por',
+  poweredBy: 'Desenvolvido por %{uppy}',
   processingXFiles: {
     0: 'Processando %{smart_count} arquivo',
     1: 'Processando %{smart_count} arquivos',
@@ -126,15 +126,12 @@ pt_BR.strings = {
     0: 'Você precisa selecionar pelo menos %{smart_count} arquivo',
     1: 'Você precisa selecionar pelo menos %{smart_count} arquivos',
   },
-  selectAllFilesFromFolderNamed: 'Selecione todos os arquivos da pasta %{name}',
-  unselectAllFilesFromFolderNamed:
-    'Desmarque todos os arquivos da pasta %{name}',
   selectFileNamed: 'Selecione o arquivo %{name}',
   unselectFileNamed: 'Deselecionar arquivo %{name}',
   openFolderNamed: 'Pasta aberta %{name}',
 }
 
-pt_BR.pluralize = function (n) {
+pt_BR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

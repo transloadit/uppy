@@ -2,7 +2,7 @@ const { h } = require('preact')
 const classNames = require('classnames')
 
 function EditorPanel (props) {
-  const file = this.props.files[this.props.fileCardFor]
+  const file = props.files[props.fileCardFor]
 
   return (
     <div
@@ -34,7 +34,7 @@ function EditorPanel (props) {
       </div>
       <div className="uppy-DashboardContent-panelBody">
         {props.editors.map((target) => {
-          return props.getPlugin(target.id).render(props.state)
+          return props.uppy.getPlugin(target.id).render(props.state)
         })}
       </div>
     </div>

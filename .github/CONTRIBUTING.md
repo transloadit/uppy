@@ -160,7 +160,7 @@ If you don’t have access to the transloadit.com source code ping @arturi or @g
 
 We keep the [uppy.io](http://uppy.io) website in `./website` to keep docs and code in sync as we are still iterating at high velocity.
 
-The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the `gh-pages` branch with Hexo’s build at every change to `master`). The content is written in Markdown and located in `./website/src`. Feel free to fork & hack!
+The site is built with [Hexo](http://hexo.io/), and Travis automatically deploys this onto GitHub Pages (it overwrites the `gh-pages` branch with Hexo’s build at every change to `main`). The content is written in Markdown and located in `./website/src`. Feel free to fork & hack!
 
 Even though bundled in this repo, the website is regarded as a separate project. As such, it has its own `package.json` and we aim to keep the surface where the two projects interface as small as possible. `./website/update.js` is called during website builds to inject the Uppy knowledge into the site.
 
@@ -188,7 +188,7 @@ The CSS standards followed in this project closely resemble those from [Medium�
 ### Naming conventions
 
 This project uses naming conventions adopted from the SUIT CSS framework.
-[Read about them here](https://github.com/suitcss/suit/blob/master/doc/naming-conventions.md).
+[Read about them here](https://github.com/suitcss/suit/blob/main/doc/naming-conventions.md).
 
 To quickly summarize:
 
@@ -323,7 +323,7 @@ Your `package.json` should resemble something like this:
     "prop-types": "^15.6.1"
   },
   "peerDependencies": {
-    "@uppy/core": "^1.0.0"
+    "@uppy/core": "^2.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -362,7 +362,7 @@ This data is used to generate Uppy’s website. Refer to [the section about runn
 
 ### Adding an example
 
-You can likely use whatever code generation tool for your framework (ex. `create-react-app`) to create this example. Make sure you add the same version of `@uppy/core` to this as your peer dependency required, or you may run into strange issues. Try to include all the components are some of their functionality. [The React example](https://github.com/transloadit/uppy/blob/master/examples/react-example/App.js) is a great... well example of how to do this well.
+You can likely use whatever code generation tool for your framework (ex. `create-react-app`) to create this example. Make sure you add the same version of `@uppy/core` to this as your peer dependency required, or you may run into strange issues. Try to include all the components are some of their functionality. [The React example](https://github.com/transloadit/uppy/blob/main/examples/react-example/App.js) is a great... well example of how to do this well.
 
 ### Integrating the build system
 

@@ -41,7 +41,7 @@ el_GR.strings = {
   encoding: 'Γίνεται κωδικοποίηση...',
   enterCorrectUrl: 'Λανθασμένο URL: Παρακαλούμε βεβαιωθείτε ότι εισάγετε έναν άμεσο σύνδεσμο προς κάποιο αρχείο',
   enterUrlToImport: 'Εισάγετε URL για να γίνει εισαγωγή του αρχείου',
-  exceedsSize: 'Το αρχείο υπερβαίνει το μέγιστο επιτρεπτό όριο που είναι',
+  exceedsSize: 'Το αρχείο υπερβαίνει το μέγιστο επιτρεπτό όριο που είναι %{size}',
   failedToFetch: 'Δεν ήταν δυνατή η λήψη από το URL, παρακαλούμε βεβαιωθείτε ότι είναι σωστό',
   failedToUpload: 'Δεν ήταν δυνατή η μεταφόρτωση %{file}',
   fileSource: 'Πηγή αρχείου: %{name}',
@@ -68,7 +68,7 @@ el_GR.strings = {
   pause: 'Παύση',
   pauseUpload: 'Παύση μεταφόρτωσης',
   paused: 'Έγινε παύση',
-  poweredBy: 'Με τη δύναμη τού',
+  poweredBy: 'Με τη δύναμη τού %{uppy}',
   processingXFiles: {
     '0': 'Προετοιμασία %{smart_count} αρχείων',
     '1': 'Προετοιμασία %{smart_count} αρχείου',
@@ -81,7 +81,6 @@ el_GR.strings = {
   retry: 'Προσπάθεια ξανά',
   retryUpload: 'Προσπάθεια μεταφόρτωσης ξανά',
   saveChanges: 'Αποθήκευση αλλαγών',
-  selectAllFilesFromFolderNamed: 'Επιλογή όλων των αρχείων από τον φάκελο %{name}',
   selectFileNamed: 'Επιλογή αρχείου %{name}',
   selectX: {
     '0': 'Επιλογή %{smart_count}',
@@ -93,7 +92,6 @@ el_GR.strings = {
   stopRecording: 'Σταμάτημα εγγραφής βίντεο',
   takePicture: 'Βγάλτε μια φωτογραφία',
   timedOut: 'Η μεταφόρτωση σταμάτησε για %{seconds} δευτερόλεπτα, γίνεται ακύρωση.',
-  unselectAllFilesFromFolderNamed: 'Αποεπιλογή όλων των αρχείων από τον φάκελο %{name}',
   unselectFileNamed: 'Αποεπιλογή αρχείου %{name}',
   upload: 'Μεταφόρτωση',
   uploadComplete: 'Μεταφόρτωση ολοκληρώθηκε',
@@ -139,7 +137,7 @@ el_GR.strings = {
   },
 }
 
-el_GR.pluralize = function (n) {
+el_GR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 1
   }

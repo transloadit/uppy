@@ -1,7 +1,10 @@
 html { box-sizing: border-box; }
 *, *:after, *:before { box-sizing: inherit; }
 
-html, body { height: 100%; }
+html, body {
+  height: 100%;
+  background-color: $color-primary;
+}
 
 body {
   font-family: $fontFamily-body;
@@ -10,7 +13,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: $color-dark;
   margin: 0;
-  background-color: $color-primary;
 
   @media #{$screen-medium} {
     font-size: $fontSize-body;

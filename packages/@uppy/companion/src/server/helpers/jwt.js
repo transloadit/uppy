@@ -55,6 +55,13 @@ const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
     httpOnly: true,
   }
 
+  // Fix to show thumbnails on Chrome
+  // https://community.transloadit.com/t/dropbox-and-box-thumbnails-returning-401-unauthorized/15781/2
+  if (companionOptions.server && companionOptions.server.protocol === 'https') {
+    cookieOptions.sameSite = 'none'
+    cookieOptions.secure = true
+  }
+
   if (companionOptions.cookieDomain) {
     cookieOptions.domain = companionOptions.cookieDomain
   }

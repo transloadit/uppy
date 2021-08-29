@@ -6,5 +6,10 @@
     "packages/*",
     "packages/@uppy/*",
     "private/*"
-  ]
+  ],
+  "command": {
+    "bootstrap": {
+      "npmClientArgs": ["--no-package-lock"]
+    }
+  }
 }

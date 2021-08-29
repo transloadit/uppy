@@ -2,9 +2,11 @@ const base = require('./wdio.base.conf')
 
 function createCapability (capability) {
   return {
-    'tunnel-identifier': process.env.SAUCE_TUNNEL_IDENTIFIER,
-    build: process.env.SAUCE_BUILD,
-    extendedDebugging: true,
+    'sauce:options': {
+      tunnelIdentifier: process.env.SAUCE_TUNNEL_IDENTIFIER,
+      build: process.env.SAUCE_BUILD,
+      extendedDebugging: true,
+    },
     ...capability,
   }
 }
@@ -15,24 +17,22 @@ exports.config = {
   logLevel: 'warn',
 
   capabilities: [
-    // Previous ESR
-    // { browserName: 'firefox', version: '52.0', platform: 'Windows 7' },
-    // Current ESR
-    { browserName: 'firefox', version: '80.0', platform: 'Windows 10' },
-    { browserName: 'internet explorer', version: '10.0', platform: 'Windows 8' },
-    { browserName: 'internet explorer', version: '11.0', platform: 'Windows 10' },
-    { browserName: 'chrome', version: '80.0', platform: 'Windows 10' },
-    { browserName: 'MicrosoftEdge', version: '85', platform: 'Windows 10' },
-    { browserName: 'safari', version: '11.1', platform: 'macOS 10.13' },
-    // { browserName: 'Safari', platformName: 'iOS', platformVersion: '12.2', deviceOrientation: 'portrait', deviceName: 'iPhone 8 Simulator' },
-    { browserName: 'chrome', platformName: 'Android', platformVersion: '6.0', deviceOrientation: 'portrait', deviceName: 'Android Emulator' },
+    { browserName: 'firefox', browserVersion: 'latest', platformName: 'Windows 10' },
+    { browserName: 'firefox', browserVersion: 'latest-1', platformName: 'Windows 10' },
+    { browserName: 'chrome', browserVersion: 'latest', platformName: 'Windows 10' },
+    { browserName: 'chrome', browserVersion: 'latest-1', platformName: 'Windows 10' },
+    { browserName: 'safari', browserVersion: 'latest', platformName: 'macOS 11' },
+    { browserName: 'safari', browserVersion: '13.1', platformName: 'macOS 10.15' },
+    { browserName: 'Safari', 'appium:deviceName': 'iPhone 12 Simulator', 'appium:deviceOrientation': 'portrait', 'appium:platformVersion': '14.3', platformName:'iOS' },
+    // { browserName: 'Chrome', 'appium:deviceName': 'Android GoogleAPI Emulator', 'appium:deviceOrientation': 'portrait', 'a
+    // ppium:platformVersion': '11.0', platformName: 'Android' },
   ].map(createCapability),
 
   // Patterns to exclude.
   exclude: [
-    'test/endtoend/chaos-monkey/*',
-    'test/endtoend/url-plugin/*',
-    'test/endtoend/transloadit/*',
+    './chaos-monkey/*',
+    './url-plugin/*',
+    './transloadit/*',
   ],
 
   // If you only want to run your tests until a specific amount of tests have failed use

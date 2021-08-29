@@ -2,28 +2,12 @@ const glob = require('glob')
 const { ESLint } = require('eslint')
 const chalk = require('chalk')
 const path = require('path')
+const dedent = require('dedent')
 const stringifyObject = require('stringify-object')
 const fs = require('fs')
 const Uppy = require('../packages/@uppy/core')
 
 const uppy = new Uppy()
-let localePack = {}
-const plugins = {}
-const sources = {}
-
-console.warn('\n--> Make sure to run `npm run build:lib` for this locale script to work properly. ')
-
-const mode = process.argv[2]
-if (mode === 'build') {
-  build().catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
-} else if (mode === 'test') {
-  test()
-} else {
-  throw new Error("First argument must be either 'build' or 'test'")
-}
 
 function getSources (pluginName) {
   const dependencies = {
@@ -46,6 +30,9 @@ function getSources (pluginName) {
 }
 
 function buildPluginsList () {
+  const plugins = {}
+  const sources = {}
+
   // Go over all uppy plugins, check if they are constructors
   // and instanciate them, check for defaultLocale property,
   // then add to plugins object
@@ -62,15 +49,15 @@ function buildPluginsList () {
         || pluginName === 'vue'
         || pluginName === 'svelte'
         || pluginName === 'angular') {
-      continue
+      continue // eslint-disable-line no-continue
     }
-    const Plugin = require(dirName)
+    const Plugin = require(dirName) // eslint-disable-line global-require, import/no-dynamic-require
     let plugin
 
     // A few hacks to emulate browser environment because e.g.:
     // GoldenRetrieves calls upon MetaDataStore in the constructor, which uses localStorage
-    // @TODO Consider rewriting constructors so they don't make imperative calls that rely on
-    // browser environment (OR: just keep this browser mocking, if it's only causing issues for this script, it doesn't matter)
+    // @TODO Consider rewriting constructors so they don't make imperative calls that rely on browser environment
+    // (OR: just keep this browser mocking, if it's only causing issues for this script, it doesn't matter)
     global.location = { protocol: 'https' }
     global.navigator = { userAgent: '' }
     global.localStorage = {
@@ -86,6 +73,7 @@ function buildPluginsList () {
       createElement: () => {
         return { style: {} }
       },
+      get body () { return this.createElement() },
     }
 
     try {
@@ -128,10 +116,10 @@ function buildPluginsList () {
   return { plugins, sources }
 }
 
-function addLocaleToPack (plugin, pluginName) {
+function addLocaleToPack (localePack, plugin, pluginName) {
   const localeStrings = plugin.defaultLocale.strings
 
-  for (const key in localeStrings) {
+  for (const key of Object.keys(localeStrings)) {
     const valueInPlugin = JSON.stringify(localeStrings[key])
     const valueInPack = JSON.stringify(localePack[key])
 
@@ -140,26 +128,25 @@ function addLocaleToPack (plugin, pluginName) {
       console.error(`  Value in plugin: ${chalk.cyan(valueInPlugin)}`)
       console.error(`  Value in pack  : ${chalk.yellow(valueInPack)}`)
       console.error()
+      throw new Error(`Duplicate locale key: '${key}'`)
     }
-    localePack[key] = localeStrings[key]
+    localePack[key] = localeStrings[key] // eslint-disable-line no-param-reassign
   }
 }
 
 function checkForUnused (fileContents, pluginName, localePack) {
   const buff = fileContents.join('\n')
-  for (const key in localePack) {
+  for (const key of Object.keys(localePack)) {
     const regPat = new RegExp(`(i18n|i18nArray)\\([^\\)]*['\`"]${key}['\`"]`, 'g')
     if (!buff.match(regPat)) {
       console.error(`⚠ defaultLocale key: ${chalk.magenta(key)} not used in plugin: ${chalk.cyan(pluginName)}`)
+      throw new Error(`Unused locale key: '${key}'`)
     }
   }
 }
 
-function sortObjectAlphabetically (obj, sortFunc) {
-  return Object.keys(obj).sort(sortFunc).reduce((result, key) => {
-    result[key] = obj[key]
-    return result
-  }, {})
+function sortObjectAlphabetically (obj) {
+  return Object.fromEntries(Object.entries(obj).sort(([keyA], [keyB]) => keyA.localeCompare(keyB)))
 }
 
 function createTypeScriptLocale (plugin, pluginName) {
@@ -170,33 +157,36 @@ function createTypeScriptLocale (plugin, pluginName) {
   const pluginClassName = pluginName === 'core' ? 'Core' : plugin.id
   const localePath = path.join(__dirname, '..', 'packages', '@uppy', pluginName, 'types', 'generatedLocale.d.ts')
 
-  const localeTypes
-    = `${'import Uppy = require(\'@uppy/core\')\n'
-    + '\n'
-    + `type ${pluginClassName}Locale = Uppy.Locale` + '<\n'}${
-      allowedStringTypes}\n`
-    + `>\n`
-    + `\n`
-    + `export = ${pluginClassName}Locale\n`
+  const localeTypes = dedent`
+    /* eslint-disable */
+    import type { Locale } from '@uppy/core'
+
+    type ${pluginClassName}Locale = Locale<
+      ${allowedStringTypes}
+    >
+
+    export default ${pluginClassName}Locale
+  `
 
   fs.writeFileSync(localePath, localeTypes)
 }
 
 async function build () {
+  let localePack = {}
   const { plugins, sources } = buildPluginsList()
 
-  for (const pluginName in plugins) {
-    addLocaleToPack(plugins[pluginName], pluginName)
+  for (const [pluginName, plugin] of Object.entries(plugins)) {
+    addLocaleToPack(localePack, plugin, pluginName)
   }
 
-  for (const pluginName in plugins) {
-    createTypeScriptLocale(plugins[pluginName], pluginName)
+  for (const [pluginName, plugin] of Object.entries(plugins)) {
+    createTypeScriptLocale(plugin, pluginName)
   }
 
   localePack = sortObjectAlphabetically(localePack)
 
-  for (const pluginName in sources) {
-    checkForUnused(sources[pluginName], pluginName, sortObjectAlphabetically(plugins[pluginName].defaultLocale.strings))
+  for (const [pluginName, source] of Object.entries(sources)) {
+    checkForUnused(source, pluginName, sortObjectAlphabetically(plugins[pluginName].defaultLocale.strings))
   }
 
   const prettyLocale = stringifyObject(localePack, {
@@ -232,12 +222,10 @@ function test () {
   const localePackagePath = path.join(__dirname, '..', 'packages', '@uppy', 'locales', 'src', '*.js')
   glob.sync(localePackagePath).forEach((localePath) => {
     const localeName = path.basename(localePath, '.js')
-    // we renamed the es_GL → gl_ES locale, and kept the old name
-    // for backwards-compat, see https://github.com/transloadit/uppy/pull/1929
-    if (localeName === 'es_GL') return
 
     // Builds array with items like: 'uploadingXFiles'
     // We do not check nested items because different languages may have different amounts of plural forms.
+    // eslint-disable-next-line global-require, import/no-dynamic-require
     followerValues[localeName] = require(localePath).strings
     followerLocales[localeName] = Object.keys(followerValues[localeName])
   })
@@ -250,8 +238,7 @@ function test () {
   // Compare all follower Locales (RU, DE, etc) with our leader en_US
   const warnings = []
   const fatals = []
-  for (const followerName in followerLocales) {
-    const followerLocale = followerLocales[followerName]
+  for (const [followerName, followerLocale] of Object.entries(followerLocales)) {
     const missing = leadingLocale.filter((key) => !followerLocale.includes(key))
     const excess = followerLocale.filter((key) => !leadingLocale.includes(key))
 
@@ -288,3 +275,21 @@ function test () {
     console.log('')
   }
 }
+
+async function main () {
+  console.warn('\n--> Make sure to run `npm run build:lib` for this locale script to work properly. ')
+
+  const mode = process.argv[2]
+  if (mode === 'build') {
+    await build()
+  } else if (mode === 'test') {
+    test()
+  } else {
+    throw new Error("First argument must be either 'build' or 'test'")
+  }
+}
+
+main().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})

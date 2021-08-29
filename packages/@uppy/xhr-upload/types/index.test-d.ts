@@ -1,19 +1,18 @@
-import Uppy = require('@uppy/core')
-import XHRUpload = require('../')
+import Uppy from '@uppy/core'
+import XHRUpload from '..'
 
-Uppy<Uppy.StrictTypes>().use(XHRUpload, {
+new Uppy().use(XHRUpload, {
   bundle: false,
   formData: true,
-  endpoint: 'xyz'
+  endpoint: 'xyz',
 })
 
-function methodMayBeUpperOrLowerCase () {
-  Uppy<Uppy.StrictTypes>().use(XHRUpload, {
-    endpoint: '/upload',
-    method: 'post'
-  })
-  Uppy<Uppy.StrictTypes>().use(XHRUpload, {
-    endpoint: '/upload',
-    method: 'PUT'
-  })
-}
+new Uppy().use(XHRUpload, {
+  endpoint: '/upload',
+  method: 'post',
+})
+
+new Uppy().use(XHRUpload, {
+  endpoint: '/upload',
+  method: 'PUT',
+})

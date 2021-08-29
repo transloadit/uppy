@@ -1,6 +1,6 @@
 # Changelog
 
-<!--lint disable no-literal-urls-->
+<!--lint disable no-literal-urls no-undefined-references-->
 
 This is our changelog which contains planned todos and past dones.
 
@@ -14,13 +14,86 @@ In the current stage we aim to release a new version at least every month.
 
 ### next
 
-## July 2021
+## August 2021
 
 - [ ] robodog: finishing touches on Companion dynamic Oauth #2802 (@goto-bus-stop)
 - [ ] unsplash: Unsplash re-design (#2635 / @arturi, @nqst)
 - [ ] box: add to https://uppy.io/examples/dashboard/ (@mifi)
 - [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
 - [ ] compressor: add to Uppy repo, add resizing (@arturi)
+
+## Companion Patch 2.12.2
+
+| Package | Version |
+|-|-|
+| @uppy/companion@2.12.2 | 2.12.2 |
+
+- @uppy/companion: Improve logging (#3103 / @mifi) 
+
+## 2.0.0-alpha.0
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/angular | 0.2.0-alpha.0 | @uppy/provider-views | 2.0.0-alpha.0 |
+| @uppy/aws-s3-multipart | 2.0.0-alpha.0 | @uppy/react-native | 0.2.0-alpha.0 |
+| @uppy/aws-s3 | 2.0.0-alpha.0 | @uppy/react | 2.0.0-alpha.0 |
+| @uppy/box | 0.4.0-alpha.0 | @uppy/redux-dev-tools | 2.0.0-alpha.0 |
+| @uppy/companion-client | 2.0.0-alpha.0 | @uppy/robodog | 2.0.0-alpha.0 |
+| @uppy/companion | 2.13.0-alpha.0 | @uppy/screen-capture | 2.0.0-alpha.0 |
+| @uppy/core | 2.0.0-alpha.0 | @uppy/status-bar | 2.0.0-alpha.0 |
+| @uppy/dashboard | 2.0.0-alpha.0 | @uppy/store-default | 2.0.0-alpha.0 |
+| @uppy/drag-drop | 2.0.0-alpha.0 | @uppy/store-redux | 2.0.0-alpha.0 |
+| @uppy/drop-target | 1.0.0-alpha.0 | @uppy/svelte | 1.0.0-alpha.0 |
+| @uppy/dropbox | 2.0.0-alpha.0 | @uppy/thumbnail-generator | 2.0.0-alpha.0 |
+| @uppy/facebook | 2.0.0-alpha.0 | @uppy/transloadit | 2.0.0-alpha.0 |
+| @uppy/file-input | 2.0.0-alpha.0 | @uppy/tus | 2.0.0-alpha.0 |
+| @uppy/form | 2.0.0-alpha.0 | @uppy/unsplash | 0.2.0-alpha.0 |
+| @uppy/golden-retriever | 2.0.0-alpha.0 | @uppy/url | 2.0.0-alpha.0 |
+| @uppy/google-drive | 2.0.0-alpha.0 | @uppy/utils | 4.0.0-alpha.0 |
+| @uppy/image-editor | 1.0.0-alpha.0 | @uppy/vue | 0.3.0-alpha.0 |
+| @uppy/informer | 2.0.0-alpha.0 | @uppy/webcam | 2.0.0-alpha.0 |
+| @uppy/instagram | 2.0.0-alpha.0 | @uppy/xhr-upload | 2.0.0-alpha.0 |
+| @uppy/locales | 2.0.0-alpha.0 | @uppy/zoom | 0.2.0-alpha.0 |
+| @uppy/onedrive | 2.0.0-alpha.0 | remark-lint-uppy | 0.0.2 |
+| @uppy/progress-bar | 2.0.0-alpha.0 | uppy | 2.0.0-alpha.0 |
+
+## 1.31.0
+
+Released: 2021-07-29
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/angular | 0.1.3 | @uppy/react | 1.12.1 |
+| @uppy/aws-s3 | 1.8.0 | @uppy/robodog | 1.11.0 |
+| @uppy/companion | 2.12.0 | @uppy/screen-capture | 1.1.0 |
+| @uppy/core | 1.20.0 | @uppy/svelte | 0.1.13 |
+| @uppy/dashboard | 1.21.0 | @uppy/transloadit | 1.7.0 |
+| @uppy/drag-drop | 1.4.31 | @uppy/vue | 0.2.6 |
+| @uppy/image-editor | 0.4.0 | @uppy/webcam | 1.8.13 |
+| @uppy/locales | 1.22.0 | uppy | 1.31.0 |
+
+- @uppy/companion: Fix invalid referrer crashing the process (a785f7deebe5ad75bb2e7ea0874198784c19fea1 / @juliangruber)
+- @uppy/companion: Fix typescript error (6dbaddc09d36308821b842ed13a847f5d655cbf4 / @juliangruber)
+- @uppy/angular: Fix broken packaging (#3007 / @ajkachnic)
+- @uppy/robodog: Add Robodog Types (#2989 / @Hawxy)
+- @uppy/core: Tighten duck type check for file objects (#3006 / @goto-bus-stop)
+- @uppy/core: tighten duck type check for file objects (#3006 / @goto-bus-stop)
+- @uppy/core: Set file size from progress data when null (#2778 / @mejiaej)
+- @uppy/core: Mark state as deprecated (#3044 / @aduh95)
+- @uppy/locales: Update de_DE.js (#3012 / @paescuj)
+- @uppy/dashboard: Rename Done to Cancel, add Save to Image Editor (#3033 / @arturi)
+- @uppy/box: Add Box (#3004 / @mifi)
+- @uppy/dashboard: Add required option to metaFields (#2896 / @aduh95)
+- build: Fix package.json imports to be inlined by Babel (#3047 / @aduh95)
+- docs: Add instagram development notes (#2984 / @mifi)
+- docs: Update CONTRIBUTING.md (#3011 / @aduh95)
+- website: fix linter errors in JS code snippets inside blog posts (#2991 / @aduh95)
+
+### Patch release
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/angular | 0.1.2 | @uppy/companion | 2.11.1 |
 
 ## June 2021
 

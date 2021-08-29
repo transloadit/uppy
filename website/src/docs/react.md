@@ -39,7 +39,7 @@ import { DragDrop } from '@uppy/react'
 const uppy = new Uppy({
   meta: { type: 'avatar' },
   restrictions: { maxNumberOfFiles: 1 },
-  autoProceed: true
+  autoProceed: true,
 })
 
 uppy.use(Tus, { endpoint: '/upload' })
@@ -48,7 +48,7 @@ uppy.on('complete', (result) => {
   const url = result.successful[0].uploadURL
   store.dispatch({
     type: 'SET_USER_AVATAR_URL',
-    payload: { url: url }
+    payload: { url },
   })
 })
 
@@ -64,8 +64,8 @@ const AvatarPicker = ({ currentAvatar }) => {
             // `%{browse}` is replaced with a link that opens the system file selection dialog.
             dropHereOr: 'Drop here or %{browse}',
             // Used as the label for the link that opens the system file selection dialog.
-            browse: 'browse'
-          }
+            browse: 'browse',
+          },
         }}
       />
     </div>

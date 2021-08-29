@@ -1,6 +1,5 @@
 const { h } = require('preact')
-const { Plugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
+const { UIPlugin } = require('@uppy/core')
 const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
 const ScreenRecIcon = require('./ScreenRecIcon')
 const CaptureScreen = require('./CaptureScreen')
@@ -8,29 +7,20 @@ const CaptureScreen = require('./CaptureScreen')
 // Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 function getMediaDevices () {
   // check if screen capturing is supported
-  /* eslint-disable */
-  if (navigator &&
-    navigator.mediaDevices &&
-    navigator.mediaDevices.getDisplayMedia &&
-    window &&
-    window.MediaRecorder) {
-    return navigator.mediaDevices
-  }
-  /* eslint-enable */
-
-  return null
+  return window.MediaRecorder && navigator.mediaDevices // eslint-disable-line compat/compat
 }
 
 /**
  * Screen capture
  */
-module.exports = class ScreenCapture extends Plugin {
+module.exports = class ScreenCapture extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
-    this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
+    // eslint-disable-next-line no-restricted-globals
+    this.protocol = location.protocol === 'https:' ? 'https' : 'http'
     this.id = this.opts.id || 'ScreenCapture'
     this.title = this.opts.title || 'Screencast'
     this.type = 'acquirer'
@@ -75,9 +65,7 @@ module.exports = class ScreenCapture extends Plugin {
     this.opts = { ...defaultOptions, ...opts }
 
     // i18n
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     // uppy plugin class related
     this.install = this.install.bind(this)
@@ -109,7 +97,7 @@ module.exports = class ScreenCapture extends Plugin {
       audioStreamActive: false,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
@@ -159,7 +147,7 @@ module.exports = class ScreenCapture extends Plugin {
         this.videoStream = videoStream
 
         // add event listener to stop recording if stream is interrupted
-        this.videoStream.addEventListener('inactive', (event) => {
+        this.videoStream.addEventListener('inactive', () => {
           this.streamInactivated()
         })
 
@@ -215,13 +203,15 @@ module.exports = class ScreenCapture extends Plugin {
     const options = {}
     this.capturedMediaFile = null
     this.recordingChunks = []
-    const preferredVideoMimeType = this.opts.preferredVideoMimeType
+    const { preferredVideoMimeType } = this.opts
 
     this.selectVideoStreamSource()
       .then((videoStream) => {
         // Attempt to use the passed preferredVideoMimeType (if any) during recording.
         // If the browser doesn't support it, we'll fall back to the browser default instead
-        if (preferredVideoMimeType && MediaRecorder.isTypeSupported(preferredVideoMimeType) && getFileTypeExtension(preferredVideoMimeType)) {
+        if (preferredVideoMimeType
+            && MediaRecorder.isTypeSupported(preferredVideoMimeType)
+            && getFileTypeExtension(preferredVideoMimeType)) {
           options.mimeType = preferredVideoMimeType
         }
 
@@ -284,7 +274,7 @@ module.exports = class ScreenCapture extends Plugin {
   }
 
   stopRecording () {
-    const stopped = new Promise((resolve, reject) => {
+    const stopped = new Promise((resolve) => {
       this.recorder.addEventListener('stop', () => {
         resolve()
       })
@@ -394,7 +384,7 @@ module.exports = class ScreenCapture extends Plugin {
     return Promise.resolve(file)
   }
 
-  render (state) {
+  render () {
     // get screen recorder state
     const recorderState = this.getPluginState()
 

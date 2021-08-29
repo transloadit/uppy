@@ -1,12 +1,12 @@
-const FileItem = require('./FileItem/index.js')
-const VirtualList = require('./VirtualList')
 const classNames = require('classnames')
 const { h } = require('preact')
+const FileItem = require('./FileItem/index.js')
+const VirtualList = require('./VirtualList')
 
 function chunks (list, size) {
   const chunked = []
   let currentChunk = []
-  list.forEach((item, i) => {
+  list.forEach((item) => {
     if (currentChunk.length < size) {
       currentChunk.push(item)
     } else {
@@ -39,8 +39,7 @@ module.exports = (props) => {
     error: props.error,
     // TODO move this to context
     i18n: props.i18n,
-    log: props.log,
-    info: props.info,
+    uppy: props.uppy,
     // features
     acquirers: props.acquirers,
     resumableUploads: props.resumableUploads,
@@ -55,11 +54,7 @@ module.exports = (props) => {
     metaFields: props.metaFields,
     recoveredState: props.recoveredState,
     // callbacks
-    retryUpload: props.retryUpload,
-    pauseUpload: props.pauseUpload,
-    cancelUpload: props.cancelUpload,
     toggleFileCard: props.toggleFileCard,
-    removeFile: props.removeFile,
     handleRequestThumbnail: props.handleRequestThumbnail,
     handleCancelThumbnail: props.handleCancelThumbnail,
   }
@@ -75,12 +70,14 @@ module.exports = (props) => {
 
   function renderRow (row) {
     return (
-      // The `role="presentation` attribute ensures that the list items are properly associated with the `VirtualList` element
+      // The `role="presentation` attribute ensures that the list items are properly
+      // associated with the `VirtualList` element.
       // We use the first file ID as the key—this should not change across scroll rerenders
       <div role="presentation" key={row[0]}>
         {row.map((fileID) => (
           <FileItem
             key={fileID}
+            uppy={props.uppy}
             {...fileProps}
             role="listitem"
             openFileEditor={props.openFileEditor}

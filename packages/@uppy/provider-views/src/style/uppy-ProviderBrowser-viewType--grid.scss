@@ -6,18 +6,19 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-between;
     align-items: flex-start;
+    justify-content: space-between;
     padding: 6px;
+
     &::after {
-      content: '';
       flex: auto;
+      content: '';
     }
   }
 
   li.uppy-ProviderBrowserItem {
-    width: 50%;
     position: relative;
+    width: 50%;
     margin: 0;
 
     .uppy-size--md & {
@@ -29,14 +30,15 @@
     }
 
     &::before {
-      content: '';
-      padding-top: 100%;
       display: block;
+      padding-top: 100%;
+      content: '';
     }
   }
 
   li.uppy-ProviderBrowserItem--selected {
-    img, svg {
+    img,
+    svg {
       opacity: 0.85;
     }
   }
@@ -53,10 +55,11 @@
         background-color: rgba($gray-200, 0.2);
       }
     }
+
     svg {
-      fill: rgba($black, 0.7);
       width: 30%;
       height: 30%;
+      fill: rgba($black, 0.7);
 
       [data-uppy-theme="dark"] & {
         fill: rgba($white, 0.8);
@@ -65,17 +68,17 @@
   }
 
   // button with a large picture
-  button.uppy-ProviderBrowserItem-inner {
-    border-radius: 4px;
-    overflow: hidden;
+  .uppy-ProviderBrowserItem-inner {
     position: absolute;
     top: 7px;
-    left: 7px;
     right: 7px;
     bottom: 7px;
-    text-align: center;
+    left: 7px;
     width: calc(100% - 14px);
     height: calc(100% - 14px);
+    overflow: hidden;
+    text-align: center;
+    border-radius: 4px;
 
     &:focus {
       outline: none;
@@ -95,23 +98,33 @@
   }
 
   // Checkbox
-  .uppy-ProviderBrowserItem-fakeCheckbox {
+  .uppy-ProviderBrowserItem-checkbox {
     position: absolute;
-    top: 16px; right: 16px;
-    width: 26px; height: 26px;
+    top: 16px;
+    right: 16px;
+    z-index: $zIndex-3;
+    width: 26px;
+    height: 26px;
     background-color: $blue;
     border-radius: 50%;
-    z-index: $zIndex-3;
     opacity: 0;
 
     // Checkmark icon
-    &:after {
-      width: 12px; height: 7px;
-      inset-inline-start: 7px; top: 8px;
+    &::after {
+      top: 8px;
+      width: 12px;
+      height: 7px;
+      inset-inline-start: 7px;
     }
   }
   // Checked: show the checkmark
-  .uppy-ProviderBrowserItem-fakeCheckbox--is-checked {
+  .uppy-ProviderBrowserItem-checkbox--is-checked {
     opacity: 1;
+  }
+
+  .uppy-ProviderBrowserItem-checkbox--grid:focus + label {
+    @include clear-focus();
+
+    box-shadow: $focus-shadow;
   }
 }

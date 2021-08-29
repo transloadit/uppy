@@ -14,7 +14,7 @@ The `@uppy/google-drive` plugin lets users import files from their Google Drive 
 A Companion instance is required for the `@uppy/google-drive` plugin to work. Companion handles authentication with Google, downloads files from the Drive and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const GoogleDrive = require('@uppy/google-drive')
+import GoogleDrive from '@uppy/google-drive'
 
 uppy.use(GoogleDrive, {
   // Options
@@ -36,7 +36,7 @@ npm install @uppy/google-drive
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const GoogleDrive = Uppy.GoogleDrive
+const { GoogleDrive } = Uppy
 ```
 
 ## Setting  Up
@@ -53,9 +53,9 @@ companion.app({
   providerOptions: {
     drive: {
       key: 'Google Drive OAuth client ID',
-      secret: 'Google Drive OAuth client secret'
-    }
-  }
+      secret: 'Google Drive OAuth client secret',
+    },
+  },
 })
 ```
 
@@ -126,7 +126,9 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
-  // TODO
+const locale = {
+  strings:{
+    // TODO
+  },
 }
 ```

@@ -1,9 +1,5 @@
-import Uppy = require('@uppy/core')
+import type Uppy from '@uppy/core'
 
-declare function useUppy<
-  Types extends Uppy.TypeChecking = Uppy.LooseTypes
->(
-  factory: () => Uppy.Uppy<Types>
-): Uppy.Uppy<Types>
+declare function useUppy(factory: () => Uppy): Uppy
 
-export = useUppy
+export default useUppy

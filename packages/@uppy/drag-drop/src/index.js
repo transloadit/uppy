@@ -1,5 +1,4 @@
-const { Plugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
+const { UIPlugin } = require('@uppy/core')
 const toArray = require('@uppy/utils/lib/toArray')
 const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
@@ -9,7 +8,7 @@ const { h } = require('preact')
  * Drag & Drop plugin
  *
  */
-module.exports = class DragDrop extends Plugin {
+module.exports = class DragDrop extends UIPlugin {
   // eslint-disable-next-line global-require
   static VERSION = require('../package.json').version
 
@@ -38,11 +37,11 @@ module.exports = class DragDrop extends Plugin {
     // Merge default options with the ones set by user
     this.opts = { ...defaultOpts, ...opts }
 
+    this.i18nInit()
+
     // Check for browser dragDrop support
     this.isDragDropSupported = isDragDropSupported()
     this.removeDragOverClassTimeout = null
-
-    this.i18nInit()
 
     // Bind `this` to class methods
     this.onInputChange = this.onInputChange.bind(this)
@@ -51,18 +50,6 @@ module.exports = class DragDrop extends Plugin {
     this.handleDrop = this.handleDrop.bind(this)
     this.addFiles = this.addFiles.bind(this)
     this.render = this.render.bind(this)
-  }
-
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   addFiles (files) {

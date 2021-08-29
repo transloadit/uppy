@@ -13,18 +13,18 @@ function selectFakeFile (uppyID, name, type, b64) {
   // https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
   function base64toBlob (base64Data, contentType) {
     contentType = contentType || ''
-    var sliceSize = 1024
-    var byteCharacters = atob(base64Data)
-    var bytesLength = byteCharacters.length
-    var slicesCount = Math.ceil(bytesLength / sliceSize)
-    var byteArrays = new Array(slicesCount)
+    const sliceSize = 1024
+    const byteCharacters = atob(base64Data)
+    const bytesLength = byteCharacters.length
+    const slicesCount = Math.ceil(bytesLength / sliceSize)
+    const byteArrays = new Array(slicesCount)
 
-    for (var sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
-      var begin = sliceIndex * sliceSize
-      var end = Math.min(begin + sliceSize, bytesLength)
+    for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
+      const begin = sliceIndex * sliceSize
+      const end = Math.min(begin + sliceSize, bytesLength)
 
-      var bytes = new Array(end - begin)
-      for (var offset = begin, i = 0; offset < end; ++i, ++offset) {
+      const bytes = new Array(end - begin)
+      for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
         bytes[i] = byteCharacters[offset].charCodeAt(0)
       }
       byteArrays[sliceIndex] = new Uint8Array(bytes)
@@ -32,7 +32,7 @@ function selectFakeFile (uppyID, name, type, b64) {
     return new Blob(byteArrays, { type: contentType })
   }
 
-  var blob = base64toBlob(b64, type)
+  const blob = base64toBlob(b64, type)
 
   window[uppyID].addFile({
     source: 'test',
@@ -43,7 +43,7 @@ function selectFakeFile (uppyID, name, type, b64) {
 }
 
 function ensureInputVisible (selector) {
-  var input = document.querySelector(selector)
+  const input = document.querySelector(selector)
   input.style = 'width: auto; height: auto; opacity: 1; z-index: 199'
   input.removeAttribute('hidden')
   input.removeAttribute('aria-hidden')
@@ -139,7 +139,7 @@ class StaticServerService {
 
 const tus = require('tus-node-server')
 const os = require('os')
-const rimraf = promisify(require('rimraf'))
+const fs = require('fs/promises')
 const { randomBytes } = require('crypto')
 const http = require('http')
 const httpProxy = require('http-proxy')
@@ -167,7 +167,7 @@ class TusService {
           period: 20,
           rate: 200 * 1024 / 50,
         })),
-      }, (err) => { // eslint-disable-line handle-callback-err
+      }, (err) => { // eslint-disable-line node/handle-callback-err,no-unused-vars
         // ignore, typically a cancelled request
       })
     })
@@ -187,7 +187,7 @@ class TusService {
       const close = promisify(this.server.close.bind(this.server))
       await close()
     }
-    await rimraf(this.path)
+    await fs.rm(this.path, { recursive: true, force: true })
     this.slowServer = null
     this.tusServer = null
   }
