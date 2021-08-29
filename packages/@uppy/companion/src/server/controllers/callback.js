@@ -4,6 +4,18 @@
 const tokenService = require('../helpers/jwt')
 const logger = require('../logger')
 
+const closePageHtml = `
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8" />
+      <script>
+        window.close()
+      </script>
+  </head>
+  <body></body>
+  </html>`
+
 /**
  *
  * @param {object} req
@@ -27,5 +39,6 @@ module.exports = function callback (req, res, next) { // eslint-disable-line no-
 
   logger.debug(`Did not receive access token for provider ${providerName}`, null, req.id)
   logger.debug(grant.response, 'callback.oauth.resp', req.id)
-  return res.sendStatus(400)
+
+  return res.send(closePageHtml)
 }
