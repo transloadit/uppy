@@ -2,7 +2,7 @@ arturi:
   email: 'artur@transloadit.com'
   name: 'Artur Paikin'
   id: 'artur'
-  tagline: 'Frontend developer and interface designer'
+  tagline: 'Developer'
 ife:
   email: 'ifedapo@transloadit.com'
   name: 'Ifedapo Olarewaju'
@@ -38,3 +38,25 @@ hedgerh:
   name: 'Harry Hedger'
   id: 'harry'
   tagline: 'Frontend developer'
+aduh95:
+  email: 'antonie@transloadit.com'
+  name: 'Antoine du Hamel'
+  id: 'aduh95'
+  tagline: 'Developer'
+murderlon:
+  email: 'merlijn@transloadit.com'
+  name: 'Merlijn Vos'
+  id: 'merlijn'
+  tagline: 'Developer'
+mifi:
+  email: 'mikael@transloadit.com'
+  name: 'Mikael Finstad'
+  id: 'mikael'
+  tagline: 'Developer'
+andrew:
+  email: 'andrew@transloadit.com'
+  name: 'Andrew Kachnic'
+  id: 'andrew'
+  tagline: 'Developer'
+
+
