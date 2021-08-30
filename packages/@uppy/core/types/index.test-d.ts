@@ -1,7 +1,7 @@
 import { expectError, expectType } from 'tsd'
 import DefaultStore from '@uppy/store-default'
-import Uppy, { SuccessResponse, UIPlugin, UppyFile } from '..'
-import type { UploadedUppyFile, FailedUppyFile, PluginOptions } from '..'
+import Uppy, { UIPlugin } from '..'
+import type { UploadedUppyFile, FailedUppyFile, PluginOptions, UppyFile, SuccessResponse } from '..'
 
 type anyObject = Record<string, unknown>
 
