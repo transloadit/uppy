@@ -27,3 +27,9 @@ const getState = (state, secret) => {
   const encodedState = decrypt(state, secret)
   return JSON.parse(atob(encodedState))
 }
+
+module.exports.getDynamicStateFromRequest = (req) => {
+  const dynamic = (req.session.grant || {}).dynamic || {}
+  const { state } = dynamic
+  return state
+}
