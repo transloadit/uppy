@@ -13,7 +13,7 @@ const closePageHtml = `
         window.close()
       </script>
   </head>
-  <body></body>
+  <body>Authentication failed.</body>
   </html>`
 
 /**
