@@ -50,16 +50,24 @@ Released: 2021-09-24
 | @uppy/locales | 2.0.0 | @uppy/zoom | 1.0.0 |
 | @uppy/onedrive | 2.0.0 | uppy | 2.0.0 |
 | @uppy/progress-bar | 2.0.0 | - | - |
-### ⚠️ Most notable / breaking changes
+### ⚠️ Breaking changes
 
-- build: Remove IE polyfills and special casing — Uppy officially drops IE 11 support, you can manually include the polyfills, and we have an `uppy.legacy.js` bundle, but we are not (#2947 / @aduh95)
+- build: Remove IE polyfills and special casing — Uppy officially drops IE 11 support. You can manually include the polyfills, and we have an `uppy.legacy.js` bundle, but we are not (#2947 / @aduh95)
 - @uppy/core: Upgraded Preact to latest Preact 10 — all custom Uppy plugins should now use new version too (#2926 / @Murderlon)
-- @uppy/core: force `new` keyword — always `const uppy = new Uppy()` (#2949 / @arturi)
+- @uppy/core: force `new` keyword — please 1always use `const uppy = new Uppy()` now (#2949 / @arturi)
 - @uppy/core: renamed `allowMultipleUploads` to `allowMultipleUploadBatches` (#3115 / @arturi)
 - @uppy/core: Split `Plugin` into `BasePlugin` and extended `UIPlugin` (#2944 / @Murderlon)
 - @uppy/core: Set plugin titles from locale packs (#3023 / @arturi)
 - @uppy/informer: Support multiple messages in informer (#3017 / @Murderlon)
 - @uppy/xhr-upload, @uppy/tus: Set default concurrent file upload limit to 5 (#2993 / @arturi)
+- @uppy/core: Strictly type uppy events (#3085 / @Hawxy)
+- @uppy/core: always enable strict types and remove `.run` method (#2957 / @Murderlon)
+- @uppy/dashboard: Removed backwards compatibility hacks in locales (#2969 / @goto-bus-stop)
+- @uppy/companion Removed `oldHtmlContent` from Companion’s `send-token` option (#2967 / @Murderlon)
+- @uppy/provider-views: Removed `isTeamDrive` from `@uppy/google-drive` option (#2967 / @Murderlon)
+- @uppy/tus: Removed timeout for `resetUploaderReferences` option (#2967 / @Murderlon)
+- @uppy/tus: Removed `resume` option (#2967 / @Murderlon)
+
 
 ### Misc
 
@@ -74,7 +82,7 @@ Released: 2021-09-24
 - @uppy/companion: remove `lodash` dependency (#3036 / @aduh95)
 - @uppy/companion: Remove deprecated `serverHeaders` in favour of `companionHeaders` (#2995 / @arturi)
 - @uppy/core: add types for `logger` (#3090 / @bencergazda)
-- @uppy/core: always enable strict types and remove `.run` method (#2957 / @Murderlon)
+
 - @uppy/core: avoid binding methods to instance in constructor (#3043 / @aduh95)
 - @uppy/core: Create `getObjectOfFilesPerState` in core for plugins (#2961 / @Murderlon)
 - @uppy/core: Create `onUnmount` in `UIPlugin` for plugins that require clean up (#3093 / @Murderlon)
@@ -90,7 +98,7 @@ Released: 2021-09-24
 - @uppy/core: remove more IE hacks (#3015 / @aduh95)
 - @uppy/core: remove use of `Array.prototype.reduce` where possible (#3016 / @aduh95)
 - @uppy/core: Resolve all type `TODO`'s (#2963 / @Murderlon)
-- @uppy/core: Strictly type uppy events (#3085 / @Hawxy)
+
 - @uppy/core: UIPlugin fix: prevent Preact replacing contents of body element by using `createDocumentFragment` (#3072 / @arturi)
 - @uppy/core: use private fields (#3013 / @aduh95)
 - @uppy/core: use privater properties in `UIPlugin` (#3073 / @aduh95)
@@ -100,7 +108,6 @@ Released: 2021-09-24
 - @uppy/dashboard: fileSource string is unused (2b52d9f9a / @arturi)
 - @uppy/dashboard: Fix `editFile` locale usage (#3108 / @Murderlon)
 - @uppy/dashboard: fix metafield form validation (#3113 / @aduh95)
-- @uppy/dashboard: Remove backwards compatibility hacks in locales (#2969 / @goto-bus-stop)
 - @uppy/dashboard: set default trigger: null (#2942 / @arturi)
 - @uppy/dashboard: `showLinkToFileUploadResult: false` by default (#2994 / @arturi)
 - @uppy/form: deprecate multipleResults option (#2996 / @arturi)
