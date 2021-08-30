@@ -141,25 +141,23 @@ function dnsLookup (hostname, options, callback) {
 
 class HttpAgent extends http.Agent {
   createConnection (options, callback) {
-    options.lookup = dnsLookup
     if (isIPAddress(options.host) && isPrivateIP(options.host)) {
       callback(new Error(FORBIDDEN_IP_ADDRESS))
-      return
+      return undefined
     }
     // @ts-ignore
-    return super.createConnection(options, callback)
+    return super.createConnection({ ...options, lookup: dnsLookup }, callback)
   }
 }
 
 class HttpsAgent extends https.Agent {
   createConnection (options, callback) {
-    options.lookup = dnsLookup
     if (isIPAddress(options.host) && isPrivateIP(options.host)) {
       callback(new Error(FORBIDDEN_IP_ADDRESS))
-      return
+      return undefined
     }
     // @ts-ignore
-    return super.createConnection(options, callback)
+    return super.createConnection({ ...options, lookup: dnsLookup }, callback)
   }
 }
 
@@ -167,7 +165,7 @@ class HttpsAgent extends https.Agent {
  * Gets the size and content type of a url's content
  *
  * @param {string} url
- * @param {boolean=} blockLocalIPs
+ * @param {boolean} blockLocalIPs
  * @returns {Promise<{type: string, size: number}>}
  */
 exports.getURLMeta = (url, blockLocalIPs = false) => {
@@ -191,7 +189,7 @@ exports.getURLMeta = (url, blockLocalIPs = false) => {
         req.abort() // No need to get the rest of the response, as we only want header
         resolve({
           type: response.headers['content-type'],
-          size: parseInt(response.headers['content-length']),
+          size: parseInt(response.headers['content-length'], 10),
         })
       }
     })
