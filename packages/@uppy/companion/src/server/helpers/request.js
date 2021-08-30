@@ -106,20 +106,6 @@ module.exports.getRedirectEvaluator = (rawRequestURL, blockPrivateIPs) => {
   }
 }
 
-/**
- * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
- *
- * @param {string} protocol http or http: or https: or https protocol needed for the request
- * @param {boolean} blockPrivateIPs if set to false, this protection will be disabled
- */
-module.exports.getProtectedHttpAgent = (protocol, blockPrivateIPs) => {
-  if (blockPrivateIPs) {
-    return protocol.startsWith('https') ? HttpsAgent : HttpAgent
-  }
-
-  return protocol.startsWith('https') ? https.Agent : http.Agent
-}
-
 function dnsLookup (hostname, options, callback) {
   dns.lookup(hostname, options, (err, addresses, maybeFamily) => {
     if (err) {
@@ -159,6 +145,20 @@ class HttpsAgent extends https.Agent {
     // @ts-ignore
     return super.createConnection({ ...options, lookup: dnsLookup }, callback)
   }
+}
+
+/**
+ * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
+ *
+ * @param {string} protocol http or http: or https: or https protocol needed for the request
+ * @param {boolean} blockPrivateIPs if set to false, this protection will be disabled
+ */
+module.exports.getProtectedHttpAgent = (protocol, blockPrivateIPs) => {
+  if (blockPrivateIPs) {
+    return protocol.startsWith('https') ? HttpsAgent : HttpAgent
+  }
+
+  return protocol.startsWith('https') ? https.Agent : http.Agent
 }
 
 /**
