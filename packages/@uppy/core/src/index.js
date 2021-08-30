@@ -88,6 +88,7 @@ class Uppy {
         noMoreFilesAllowed: 'Cannot add more files',
         noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
         companionError: 'Connection with Companion failed',
+        authAborted: 'Authentication aborted',
         companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
         failedToUpload: 'Failed to upload %{file}',
         noInternetConnection: 'No Internet connection',
