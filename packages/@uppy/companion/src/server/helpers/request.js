@@ -174,18 +174,21 @@ exports.getURLMeta = (url, blockLocalIPs = false) => {
   return new Promise((resolve, reject) => {
     const opts = {
       uri: url,
-      method: 'HEAD',
+      method: 'GET',
       followRedirect: exports.getRedirectEvaluator(url, blockLocalIPs),
       agentClass: exports.getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
     }
 
-    request(opts, (err, response) => {
-      if (err || response.statusCode >= 300) {
+    const req = request(opts, (err) => {
+      if (err) reject(err)
+    })
+    req.on('response', (response) => {
+      if (response.statusCode >= 300) {
         // @todo possibly set a status code in the error object to get a more helpful
         // hint at what the cause of error is.
-        err = err || new Error(`URL server responded with status: ${response.statusCode}`)
-        reject(err)
+        reject(new Error(`URL server responded with status: ${response.statusCode}`))
       } else {
+        req.abort() // No need to get the rest of the response, as we only want header
         resolve({
           type: response.headers['content-type'],
           size: parseInt(response.headers['content-length']),
