@@ -1,8 +1,13 @@
 /* global jest:false, test:false, expect:false, describe:false */
 
+const mockOauthState = require('../mockoauthstate')()
+
 jest.mock('tus-js-client')
 jest.mock('purest')
-jest.mock('../../src/server/helpers/oauth-state', () => require('../mockoauthstate')())
+jest.mock('../../src/server/helpers/oauth-state', () => ({
+  ...jest.requireActual('../../src/server/helpers/oauth-state'),
+  ...mockOauthState,
+}))
 
 const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
