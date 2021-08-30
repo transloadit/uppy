@@ -7,6 +7,7 @@
   "dependencies": {
     "@uppy/dashboard": "file:../dashboard",
     "@uppy/drag-drop": "file:../drag-drop",
+    "@uppy/file-input": "file:../file-input",
     "@uppy/progress-bar": "file:../progress-bar",
     "@uppy/status-bar": "file:../status-bar",
     "shallow-equal": "^1.2.1"
