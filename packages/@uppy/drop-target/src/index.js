@@ -29,18 +29,17 @@ module.exports = class DropTarget extends BasePlugin {
 
   addFiles = (files, event) => {
     const descriptors = files.map((file) => {
-      const meta = {
-        // path of the file relative to the ancestor directory the user selected.
-        // e.g. 'docs/Old Prague/airbnb.pdf'
-        relativePath: file.relativePath || null,
-        ...this.setMeta?.(file, event),
-      }
       return {
         source: this.id,
         name: file.name,
         type: file.type,
         data: file,
-        meta,
+        meta: {
+          // path of the file relative to the ancestor directory the user selected.
+          // e.g. 'docs/Old Prague/airbnb.pdf'
+          relativePath: file.relativePath || null,
+          ...this.setMeta?.(file, event),
+        },
       }
     })
 
