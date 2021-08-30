@@ -39,6 +39,6 @@ module.exports = function callback (req, res, next) { // eslint-disable-line no-
 
   logger.debug(`Did not receive access token for provider ${providerName}`, null, req.id)
   logger.debug(grant.response, 'callback.oauth.resp', req.id)
-
+res.statusCode = 400
   return res.send(closePageHtml)
 }
