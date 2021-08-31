@@ -4,7 +4,7 @@ const EventTracker = require('@uppy/utils/lib/EventTracker')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const Uploader = require('./MultipartUploader')
+const MultipartUploader = require('./MultipartUploader')
 
 function assertServerError (res) {
   if (res && res.error) {
@@ -187,7 +187,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         this.uppy.emit('s3-multipart:part-uploaded', cFile, part)
       }
 
-      const upload = new Uploader(file.data, {
+      const upload = new MultipartUploader(file.data, {
         // .bind to pass the file object to each handler.
         createMultipartUpload: this.opts.createMultipartUpload.bind(this, file),
         listParts: this.opts.listParts.bind(this, file),
