@@ -13,10 +13,9 @@ const closePageHtml = (origin) => `
   <head>
       <meta charset="utf-8" />
       <script>
-      ` +
       // if window.opener is nullish, we want the following line to throw to avoid
       // the window closing without informing the user.
-      `window.opener.postMessage(${serialize({ error: true })}, ${serialize(origin)})
+      window.opener.postMessage(${serialize({ error: true })}, ${serialize(origin)})
       window.close()
       </script>
   </head>
