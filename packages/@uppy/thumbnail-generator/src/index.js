@@ -35,6 +35,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
     }
 
     this.opts = { ...defaultOptions, ...opts }
+    this.i18nInit()
 
     if (this.opts.lazy && this.opts.waitForThumbnailsBeforeUpload) {
       throw new Error('ThumbnailGenerator: The `lazy` and `waitForThumbnailsBeforeUpload` options are mutually exclusive. Please ensure at most one of them is set to `true`.')
