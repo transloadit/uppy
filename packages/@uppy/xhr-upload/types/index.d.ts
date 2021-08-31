@@ -19,6 +19,9 @@ export interface XHRUploadOptions extends PluginOptions {
     locale?: XHRUploadLocale
     responseType?: string
     withCredentials?: boolean
+    validateStatus?: (statusCode: number, responseText: string, response: unknown) => boolean
+    getResponseData?: (responseText: string, response: unknown) => any
+    getResponseError?: (responseText: string, xhr: unknown) => Error
 }
 
 declare class XHRUpload extends BasePlugin<XHRUploadOptions> {}
