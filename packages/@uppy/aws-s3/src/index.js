@@ -122,7 +122,7 @@ module.exports = class AwsS3 extends BasePlugin {
       getUploadParameters: this.getUploadParameters.bind(this),
     }
 
-    this.setOptions({ ...defaultOptions, ...opts })
+    this.opts = { ...defaultOptions, ...opts }
 
     // TODO: remove i18n once we can depend on XHRUpload instead of MiniXHRUpload
     this.i18nInit()
