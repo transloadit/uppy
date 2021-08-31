@@ -134,7 +134,7 @@ module.exports = class XHRUpload extends BasePlugin {
     this.uploaderEvents = Object.create(null)
   }
 
-  #getOptions (file) {
+  getOptions (file) {
     const overrides = this.uppy.getState().xhrUpload
     const { headers } = this.opts
 
@@ -167,7 +167,7 @@ module.exports = class XHRUpload extends BasePlugin {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  #addMetadata (formData, meta, opts) {
+  addMetadata (formData, meta, opts) {
     const metaFields = Array.isArray(opts.metaFields)
       ? opts.metaFields
       : Object.keys(meta) // Send along all fields by default.
@@ -177,10 +177,10 @@ module.exports = class XHRUpload extends BasePlugin {
     })
   }
 
-  #createFormDataUpload (file, opts) {
+  createFormDataUpload (file, opts) {
     const formPost = new FormData()
 
-    this.#addMetadata(formPost, file.meta, opts)
+    this.addMetadata(formPost, file.meta, opts)
 
     const dataWithUpdatedType = setTypeInBlob(file)
 
@@ -193,14 +193,14 @@ module.exports = class XHRUpload extends BasePlugin {
     return formPost
   }
 
-  #createBundledUpload (files, opts) {
+  createBundledUpload (files, opts) {
     const formPost = new FormData()
 
     const { meta } = this.uppy.getState()
-    this.#addMetadata(formPost, meta, opts)
+    this.addMetadata(formPost, meta, opts)
 
     files.forEach((file) => {
-      const options = this.#getOptions(file)
+      const options = this.getOptions(file)
 
       const dataWithUpdatedType = setTypeInBlob(file)
 
@@ -215,14 +215,14 @@ module.exports = class XHRUpload extends BasePlugin {
   }
 
   upload (file, current, total) {
-    const opts = this.#getOptions(file)
+    const opts = this.getOptions(file)
 
     this.uppy.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
       this.uppy.emit('upload-started', file)
 
       const data = opts.formData
-        ? this.#createFormDataUpload(file, opts)
+        ? this.createFormDataUpload(file, opts)
         : file.data
 
       const xhr = new XMLHttpRequest()
@@ -325,7 +325,7 @@ module.exports = class XHRUpload extends BasePlugin {
         // header needs to be fresh each time the token is refreshed so computing and setting the
         // headers just before the upload starts enables this kind of authentication to work properly.
         // Otherwise, half-way through the list of uploads the token could be stale and the upload would fail.
-        const currentOpts = this.#getOptions(file)
+        const currentOpts = this.getOptions(file)
 
         Object.keys(currentOpts.headers).forEach((header) => {
           xhr.setRequestHeader(header, currentOpts.headers[header])
@@ -339,20 +339,20 @@ module.exports = class XHRUpload extends BasePlugin {
         }
       })
 
-      this.#onFileRemove(file.id, () => {
+      this.onFileRemove(file.id, () => {
         queuedRequest.abort()
         reject(new Error('File removed'))
       })
 
-      this.#onCancelAll(file.id, () => {
+      this.onCancelAll(file.id, () => {
         queuedRequest.abort()
         reject(new Error('Upload cancelled'))
       })
     })
   }
 
-  #uploadRemote (file) {
-    const opts = this.#getOptions(file)
+  uploadRemote (file) {
+    const opts = this.getOptions(file)
     return new Promise((resolve, reject) => {
       const fields = {}
       const metaFields = Array.isArray(opts.metaFields)
@@ -381,24 +381,24 @@ module.exports = class XHRUpload extends BasePlugin {
         const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
         this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-        this.#onFileRemove(file.id, () => {
+        this.onFileRemove(file.id, () => {
           socket.send('pause', {})
           queuedRequest.abort()
           resolve(`upload ${file.id} was removed`)
         })
 
-        this.#onCancelAll(file.id, () => {
+        this.onCancelAll(file.id, () => {
           socket.send('pause', {})
           queuedRequest.abort()
           resolve(`upload ${file.id} was canceled`)
         })
 
-        this.#onRetry(file.id, () => {
+        this.onRetry(file.id, () => {
           socket.send('pause', {})
           socket.send('resume', {})
         })
 
-        this.#onRetryAll(file.id, () => {
+        this.onRetryAll(file.id, () => {
           socket.send('pause', {})
           socket.send('resume', {})
         })
@@ -453,13 +453,13 @@ module.exports = class XHRUpload extends BasePlugin {
     })
   }
 
-  #uploadBundle (files) {
+  uploadBundle (files) {
     return new Promise((resolve, reject) => {
       const { endpoint } = this.opts
       const { method } = this.opts
 
       const optsFromState = this.uppy.getState().xhrUpload
-      const formData = this.#createBundledUpload(files, {
+      const formData = this.createBundledUpload(files, {
         ...this.opts,
         ...(optsFromState || {}),
       })
@@ -552,7 +552,7 @@ module.exports = class XHRUpload extends BasePlugin {
     })
   }
 
-  #uploadFiles (files) {
+  uploadFiles (files) {
     const promises = files.map((file, i) => {
       const current = parseInt(i, 10) + 1
       const total = files.length
@@ -560,7 +560,7 @@ module.exports = class XHRUpload extends BasePlugin {
       if (file.error) {
         return Promise.reject(new Error(file.error))
       } if (file.isRemote) {
-        return this.#uploadRemote(file, current, total)
+        return this.uploadRemote(file, current, total)
       }
       return this.upload(file, current, total)
     })
@@ -568,13 +568,13 @@ module.exports = class XHRUpload extends BasePlugin {
     return settle(promises)
   }
 
-  #onFileRemove (fileID, cb) {
+  onFileRemove (fileID, cb) {
     this.uploaderEvents[fileID].on('file-removed', (file) => {
       if (fileID === file.id) cb(file.id)
     })
   }
 
-  #onRetry (fileID, cb) {
+  onRetry (fileID, cb) {
     this.uploaderEvents[fileID].on('upload-retry', (targetFileID) => {
       if (fileID === targetFileID) {
         cb()
@@ -582,14 +582,14 @@ module.exports = class XHRUpload extends BasePlugin {
     })
   }
 
-  #onRetryAll (fileID, cb) {
+  onRetryAll (fileID, cb) {
     this.uploaderEvents[fileID].on('retry-all', () => {
       if (!this.uppy.getFile(fileID)) return
       cb()
     })
   }
 
-  #onCancelAll (fileID, cb) {
+  onCancelAll (fileID, cb) {
     this.uploaderEvents[fileID].on('cancel-all', () => {
       if (!this.uppy.getFile(fileID)) return
       cb()
@@ -625,10 +625,10 @@ module.exports = class XHRUpload extends BasePlugin {
         throw new TypeError('`headers` may not be a function when the `bundle: true` option is set')
       }
 
-      return this.#uploadBundle(files)
+      return this.uploadBundle(files)
     }
 
-    return this.#uploadFiles(files).then(() => null)
+    return this.uploadFiles(files).then(() => null)
   }
 
   install () {
