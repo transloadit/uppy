@@ -12,9 +12,20 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
-### next
+## 2.1.0
 
-Will be planned after 2.0 is announced and settled.
+- @uppy/aws-s3: fix 'send' XMLHttpRequest (#3130 / @jhen0409)
+- @uppy/aws-s3, @uppy/thumbnail-generator, @uppy/xhr-upload: fix `i18n` (#3142 / @jhen0409 / @aduh95)
+- @uppy/react: fix `DashboardModal`'s `target` type (#3110 / @Murderlon)
+- @uppy/xhr-upload: add types for methods (#3154 / @BePo65)
+- @uppy/core: improve accuracy/compatibility of success/error callback types (#3141 / @Hawxy)
+- @uppy/vue: add Vue FileInput component (#3125 / @valentinoli)
+
+## 2.0.2
+
+- @uppy/aws-s3-multipart: fix route ordering and query parameters (#3132 / @rossng)
+- @uppy/core: add types overload for `off` method (#3137 / @Hawxy)
+- @uppy/golden-retriever: handle promise rejections (#3131 / @Murderlon)
 
 ## 2.0.1
 
@@ -22,7 +33,7 @@ Released: 2021-09-25
 
 - Update peerDependencies to ^2.0.0 in all uppy packages @arturi (b39824819)
 
-## 2.0
+## 2.0.0
 
 Released: 2021-09-24
 
