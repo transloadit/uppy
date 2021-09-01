@@ -14,6 +14,8 @@ In the current stage we aim to release a new version at least every month.
 
 ## 2.1.0
 
+Released: 2021-09-1
+
 - @uppy/aws-s3: fix 'send' XMLHttpRequest (#3130 / @jhen0409)
 - @uppy/aws-s3, @uppy/thumbnail-generator, @uppy/xhr-upload: fix `i18n` (#3142 / @jhen0409 / @aduh95)
 - @uppy/react: fix `DashboardModal`'s `target` type (#3110 / @Murderlon)
@@ -23,19 +25,21 @@ In the current stage we aim to release a new version at least every month.
 
 ## 2.0.2
 
+Released: 2021-08-26
+
 - @uppy/aws-s3-multipart: fix route ordering and query parameters (#3132 / @rossng)
 - @uppy/core: add types overload for `off` method (#3137 / @Hawxy)
 - @uppy/golden-retriever: handle promise rejections (#3131 / @Murderlon)
 
 ## 2.0.1
 
-Released: 2021-09-25
+Released: 2021-08-25
 
 - Update peerDependencies to ^2.0.0 in all uppy packages @arturi (b39824819)
 
 ## 2.0.0
 
-Released: 2021-09-24
+Released: 2021-08-24
 
 | Package | Version | Package | Version |
 |-|-|-|-|
