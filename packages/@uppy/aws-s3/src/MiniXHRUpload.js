@@ -124,17 +124,9 @@ module.exports = class MiniXHRUpload {
       const xhr = new XMLHttpRequest()
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      const queuedRequest = this.requests.run(() => {
-        xhr.send(data)
-        return () => {
-          // eslint-disable-next-line no-use-before-define
-          timer.done()
-          xhr.abort()
-        }
-      }, { priority: 1 })
-
       const timer = new ProgressTimeout(opts.timeout, () => {
         xhr.abort()
+        // eslint-disable-next-line no-use-before-define
         queuedRequest.done()
         const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
         this.uppy.emit('upload-error', file, error)
@@ -165,6 +157,7 @@ module.exports = class MiniXHRUpload {
       xhr.addEventListener('load', (ev) => {
         this.uppy.log(`[AwsS3/XHRUpload] ${id} finished`)
         timer.done()
+        // eslint-disable-next-line no-use-before-define
         queuedRequest.done()
         if (this.uploaderEvents[file.id]) {
           this.uploaderEvents[file.id].remove()
@@ -204,6 +197,7 @@ module.exports = class MiniXHRUpload {
       xhr.addEventListener('error', () => {
         this.uppy.log(`[AwsS3/XHRUpload] ${id} errored`)
         timer.done()
+        // eslint-disable-next-line no-use-before-define
         queuedRequest.done()
         if (this.uploaderEvents[file.id]) {
           this.uploaderEvents[file.id].remove()
@@ -226,6 +220,15 @@ module.exports = class MiniXHRUpload {
       Object.keys(opts.headers).forEach((header) => {
         xhr.setRequestHeader(header, opts.headers[header])
       })
+
+      const queuedRequest = this.requests.run(() => {
+        xhr.send(data)
+        return () => {
+          // eslint-disable-next-line no-use-before-define
+          timer.done()
+          xhr.abort()
+        }
+      }, { priority: 1 })
 
       this.#addEventHandlerForFile('file-removed', file.id, () => {
         queuedRequest.abort()
