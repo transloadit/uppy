@@ -126,6 +126,7 @@ module.exports = class MiniXHRUpload {
 
       const timer = new ProgressTimeout(opts.timeout, () => {
         xhr.abort()
+        // eslint-disable-next-line no-use-before-define
         queuedRequest.done()
         const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
         this.uppy.emit('upload-error', file, error)
@@ -156,6 +157,7 @@ module.exports = class MiniXHRUpload {
       xhr.addEventListener('load', (ev) => {
         this.uppy.log(`[AwsS3/XHRUpload] ${id} finished`)
         timer.done()
+        // eslint-disable-next-line no-use-before-define
         queuedRequest.done()
         if (this.uploaderEvents[file.id]) {
           this.uploaderEvents[file.id].remove()
@@ -195,6 +197,7 @@ module.exports = class MiniXHRUpload {
       xhr.addEventListener('error', () => {
         this.uppy.log(`[AwsS3/XHRUpload] ${id} errored`)
         timer.done()
+        // eslint-disable-next-line no-use-before-define
         queuedRequest.done()
         if (this.uploaderEvents[file.id]) {
           this.uploaderEvents[file.id].remove()
