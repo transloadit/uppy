@@ -107,7 +107,6 @@ Released: 2021-08-24
 - @uppy/companion: remove `lodash` dependency (#3036 / @aduh95)
 - @uppy/companion: Remove deprecated `serverHeaders` in favour of `companionHeaders` (#2995 / @arturi)
 - @uppy/core: add types for `logger` (#3090 / @bencergazda)
-
 - @uppy/core: avoid binding methods to instance in constructor (#3043 / @aduh95)
 - @uppy/core: Create `getObjectOfFilesPerState` in core for plugins (#2961 / @Murderlon)
 - @uppy/core: Create `onUnmount` in `UIPlugin` for plugins that require clean up (#3093 / @Murderlon)
@@ -123,7 +122,6 @@ Released: 2021-08-24
 - @uppy/core: remove more IE hacks (#3015 / @aduh95)
 - @uppy/core: remove use of `Array.prototype.reduce` where possible (#3016 / @aduh95)
 - @uppy/core: Resolve all type `TODO`'s (#2963 / @Murderlon)
-
 - @uppy/core: UIPlugin fix: prevent Preact replacing contents of body element by using `createDocumentFragment` (#3072 / @arturi)
 - @uppy/core: use private fields (#3013 / @aduh95)
 - @uppy/core: use privater properties in `UIPlugin` (#3073 / @aduh95)
