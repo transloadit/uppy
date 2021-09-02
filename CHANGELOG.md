@@ -14,7 +14,7 @@ In the current stage we aim to release a new version at least every month.
 
 ## 2.1.0
 
-Released: 2021-09-1
+Released: 2021-09-01
 
 | Package | Version | Package | Version |
 |-|-|-|-|
