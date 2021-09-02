@@ -36,11 +36,45 @@ Released: 2021-09-01
 
 Released: 2021-08-26
 
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/angular | 0.2.2 | @uppy/robodog | 2.0.2 |
+| @uppy/aws-s3-multipart | 2.0.2 | @uppy/robodog | 2.0.3 |
+| @uppy/aws-s3 | 2.0.2 | @uppy/svelte | 1.0.2 |
+| @uppy/companion | 3.0.1 | @uppy/thumbnail-generator | 2.0.2 |
+| @uppy/vue | 0.4.0 | @uppy/core | 2.0.2 |
+| @uppy/dashboard | 2.0.2 | uppy | 2.0.2 |
+| @uppy/golden-retriever | 2.0.2 | @uppy/xhr-upload | 2.0.2 |
+| @uppy/react | 2.0.2 | - | - |
+
 - @uppy/aws-s3-multipart: fix route ordering and query parameters (#3132 / @rossng)
 - @uppy/core: add types overload for `off` method (#3137 / @Hawxy)
 - @uppy/golden-retriever: handle promise rejections (#3131 / @Murderlon)
 
 ## 2.0.1
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/angular | 0.2.1 | @uppy/react-native | 0.2.1 |
+| @uppy/react | 2.0.1 | @uppy/provider-views | 2.0.1 |
+| @uppy/aws-s3-multipart | 2.0.1 | @uppy/redux-dev-tools | 2.0.1 |
+| @uppy/aws-s3 | 2.0.1 | @uppy/robodog | 2.0.1 |
+| @uppy/box | 1.0.1 | @uppy/svelte | 1.0.1 |
+| @uppy/companion | 3.0.1 | @uppy/screen-capture | 2.0.1 |
+| @uppy/core | 2.0.1 | @uppy/status-bar | 2.0.1 |
+| @uppy/dashboard | 2.0.1 | @uppy/svelte | 1.0.2 |
+| @uppy/thumbnail-generator | 2.0.1 | @uppy/drag-drop | 2.0.1 |
+| @uppy/drop-target | 1.0.1 | @uppy/transloadit | 2.0.1 |
+| @uppy/dropbox | 2.0.1 | @uppy/tus | 2.0.1 |
+| @uppy/facebook | 2.0.1 | @uppy/unsplash | 1.0.1 |
+| @uppy/file-input | 2.0.1 | @uppy/url | 2.0.1 |
+| @uppy/form | 2.0.1 | @uppy/vue | 0.3.1 |
+| @uppy/golden-retriever | 2.0.1 | @uppy/vue | 0.4.0 | @uppy/webcam | 2.0.1 |
+| @uppy/google-drive | 2.0.1 | @uppy/xhr-upload | 2.0.1 |
+| @uppy/image-editor | 1.0.1 | @uppy/onedrive | 2.0.1 |
+| @uppy/informer | 2.0.1 | @uppy/zoom | 1.0.1 |
+| @uppy/instagram | 2.0.1 | uppy | 2.0.1 |
+| @uppy/progress-bar | 2.0.1 | - | - |
 
 Released: 2021-08-25
 
