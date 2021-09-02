@@ -16,6 +16,15 @@ In the current stage we aim to release a new version at least every month.
 
 Released: 2021-09-1
 
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/angular | 0.2.2 | @uppy/svelte | 1.0.2 |
+| @uppy/aws-s3 | 2.0.2 | @uppy/thumbnail-generator | 2.0.2 |
+| @uppy/core | 2.0.2 | @uppy/vue | 0.4.0 |
+| @uppy/dashboard | 2.0.2 | @uppy/xhr-upload | 2.0.2 |
+| @uppy/react | 2.0.2 | uppy | 2.1.0 |
+| @uppy/robodog | 2.0.3 | - | - |
+
 - @uppy/aws-s3: fix 'send' XMLHttpRequest (#3130 / @jhen0409)
 - @uppy/aws-s3, @uppy/thumbnail-generator, @uppy/xhr-upload: fix `i18n` (#3142 / @jhen0409 / @aduh95)
 - @uppy/react: fix `DashboardModal`'s `target` type (#3110 / @Murderlon)
@@ -65,6 +74,7 @@ Released: 2021-08-24
 | @uppy/locales | 2.0.0 | @uppy/zoom | 1.0.0 |
 | @uppy/onedrive | 2.0.0 | uppy | 2.0.0 |
 | @uppy/progress-bar | 2.0.0 | - | - |
+
 ### ⚠️ Breaking changes
 
 - build: Remove IE polyfills and special casing — Uppy officially drops IE 11 support. You can manually include the polyfills, and we have an `uppy.legacy.js` bundle, but we are not (#2947 / @aduh95)
