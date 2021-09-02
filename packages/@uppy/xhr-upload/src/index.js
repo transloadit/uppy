@@ -384,13 +384,13 @@ module.exports = class XHRUpload extends BasePlugin {
         this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
         this.onFileRemove(file.id, () => {
-          socket.send('pause', {})
+          socket.send('cancel', {})
           queuedRequest.abort()
           resolve(`upload ${file.id} was removed`)
         })
 
         this.onCancelAll(file.id, () => {
-          socket.send('pause', {})
+          socket.send('cancel', {})
           queuedRequest.abort()
           resolve(`upload ${file.id} was canceled`)
         })
