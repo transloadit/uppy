@@ -211,6 +211,12 @@ uppy.on('dashboard:file-edit-state', (file) => {
 })
 ```
 
+### Changes to pre-signing URLs for [`@uppy/aws-s3-multipart`][aws-s3-multipart]
+
+See the Uppy 2.0.0 announcement post about the batch [pre-signing URLs change](blog/2021/08/2.0/#Batch-pre-signing-URLs-for-AWS-S3-Multipart).
+
+`prepareUploadPart` has been renamed to [`prepareUploadParts`](https://uppy.io/docs/aws-s3-multipart/#prepareUploadParts-file-partData) (plural). See the documentation link on how to use this function.
+
 ### Removed the `.run` method from [`@uppy/core`][core]
 
 The `.run` method on the `Uppy` instance has been removed. This method was already obsolete and only logged a warning. As of this major version, it no longer exists.
@@ -230,6 +236,5 @@ We hope you'll waste no time in taking Uppy 2.0 out for a walk. When you do, ple
 [core]: /docs/uppy/
 [xhr]: /docs/xhr-upload/
 [dashboard]: /docs/dashboard/
-[informer]: /docs/informer/
 [aws-s3-multipart]: /docs/aws-s3-multipart/
 [tus]: /docs/tus/
