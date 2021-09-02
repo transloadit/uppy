@@ -354,6 +354,8 @@ module.exports = class XHRUpload extends BasePlugin {
   uploadRemote (file) {
     const opts = this.getOptions(file)
     return new Promise((resolve, reject) => {
+      this.uppy.emit('upload-started', file)
+
       const fields = {}
       const metaFields = Array.isArray(opts.metaFields)
         ? opts.metaFields
