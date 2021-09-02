@@ -320,7 +320,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
 
       this.onFileRemove(file.id, () => {
         queuedRequest.abort()
-        socket.send('pause', {})
+        socket.send('cancel', {})
         this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${file.id} was removed`)
       })
@@ -348,7 +348,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
 
       this.onCancelAll(file.id, () => {
         queuedRequest.abort()
-        socket.send('pause', {})
+        socket.send('cancel', {})
         this.resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was canceled`)
       })
