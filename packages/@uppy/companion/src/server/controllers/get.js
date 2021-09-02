@@ -34,11 +34,11 @@ function get (req, res, next) {
     // wait till the client has connected to the socket, before starting
     // the download, so that the client can receive all download/upload progress.
     logger.debug('Waiting for socket connection before beginning remote download.', null, req.id)
-    // waiting for socketReady.
-    uploader.onSocketReady(() => {
+    uploader.awaitReady().then(() => {
       logger.debug('Socket connection received. Starting remote download.', null, req.id)
       provider.download({ id, token, query: req.query }, uploader.handleChunk.bind(uploader))
-    })
+    }).catch((err2) => logger.error(err2, req.id))
+
     const response = uploader.getResponse()
     res.status(response.status).json(response.body)
   })

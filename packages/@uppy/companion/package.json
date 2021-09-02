@@ -45,6 +45,7 @@
     "express-prom-bundle": "6.3.0",
     "express-request-id": "1.4.1",
     "express-session": "1.17.1",
+    "fs-capacitor": "^7.0.1",
     "grant": "4.7.0",
     "helmet": "^4.6.0",
     "ip-address": "6.2.0",

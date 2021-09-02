@@ -53,6 +53,8 @@ const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
     agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
   }
 
+  // return onDataChunk(new Error('test error'))
+
   request(opts)
     .on('response', (resp) => {
       if (resp.statusCode >= 300) {
@@ -123,10 +125,10 @@ const get = async (req, res) => {
     }
 
     logger.debug('Waiting for socket connection before beginning remote download.', null, req.id)
-    uploader.onSocketReady(() => {
+    uploader.awaitReady().then(() => {
       logger.debug('Socket connection received. Starting remote download.', null, req.id)
       downloadURL(req.body.url, uploader.handleChunk.bind(uploader), !debug, req.id)
-    })
+    }).catch((err2) => logger.error(err2, req.id))
 
     const response = uploader.getResponse()
 

@@ -9,6 +9,9 @@ const standalone = require('../../src/standalone')
 
 describe('uploader with tus protocol', () => {
   test('upload functions with tus protocol', () => {
+    if (true) {
+      throw new Error('TODO this test hangs')
+    }
     const fileContent = Buffer.from('Some file content')
     const { companionOptions } = standalone()
     const opts = {
@@ -26,13 +29,13 @@ describe('uploader with tus protocol', () => {
 
     return new Promise((resolve) => {
       // validate that the test is resolved on socket connection
-      uploader.onSocketReady(() => {
+      uploader.awaitReady().then(() => {
         const fileInfo = fs.statSync(uploader.path)
         expect(fileInfo.isFile()).toBe(true)
         expect(fileInfo.size).toBe(0)
         uploader.handleChunk(null, fileContent)
         uploader.handleChunk(null, null)
-      })
+      }).catch((err2) => console.error(err2))
 
       let progressReceived = 0
       // emulate socket connection
