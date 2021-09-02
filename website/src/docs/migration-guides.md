@@ -1,8 +1,7 @@
 ---
 title: "Migration guides"
 type: docs
-permalink: docs/
-alias: api/
+permalink: docs/migration-guides
 order: 10
 category: "Docs"
 ---
@@ -222,7 +221,9 @@ Tus will now by default try to resume uploads if the upload has been started in 
 
 This also means tus will store some data in localStorage for each upload, which will automatically be removed on success. Making `removeFingerprintOnSuccess` obsolete too.
 
-- @uppy/core: Set plugin titles from locale packs (#3023 / @arturi)
+### That's it!
+
+We hope you'll waste no time in taking Uppy 2.0 out for a walk. When you do, please let us know what you thought of it on [Reddit](https://www.reddit.com/r/javascript/comments/penbr7/uppy_file_uploader_20_smaller_and_faster_modular/), [HN](https://news.ycombinator.com/item?id=28359287), ProductHunt, or [Twitter](https://twitter.com/uppy_io/status/1432399270846603264). We're howling at the moon to hear from you!
 
 <!-- definitions -->
 
