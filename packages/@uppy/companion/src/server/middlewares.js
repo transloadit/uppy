@@ -88,8 +88,8 @@ exports.cors = (options = {}) => (req, res, next) => {
 
   const existingAllowHeaders = res.get('Access-Control-Allow-Headers')
   const allowHeadersMap = new Set(existingAllowHeaders && existingAllowHeaders.split(',').map(method => method.trim().toLowerCase()))
-  // Needed for basic operation:
-  allowHeadersMap.add('uppy-auth-token').add('uppy-versions').add('uppy-credentials-params')
+  // Needed for basic operation: https://github.com/transloadit/uppy/issues/3021
+  allowHeadersMap.add('uppy-auth-token').add('uppy-versions').add('uppy-credentials-params').add('authorization').add('origin').add('content-type').add('accept')
 
   const existingAllowMethods = res.get('Access-Control-Allow-Methods')
   const allowMethodsMap = new Set(existingAllowMethods && existingAllowMethods.split(',').map(method => method.trim().toUpperCase()))
