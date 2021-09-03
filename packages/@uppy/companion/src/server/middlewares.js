@@ -79,25 +79,22 @@ exports.loadSearchProviderToken = (req, res, next) => {
 }
 
 exports.cors = (options = {}) => (req, res, next) => {
-  const exposedHeaders = [
-    // exposed so it can be accessed for our custom uppy client preflight
-    'Access-Control-Allow-Headers',
-  ]
-  if (options.sendSelfEndpoint) exposedHeaders.push('i-am')
-  if (res.get('Access-Control-Expose-Headers')) exposedHeaders.push(res.get('Access-Control-Expose-Headers'))
-
-  const allowedHeaders = [
-    'uppy-auth-token',
-    'uppy-versions',
-    'uppy-credentials-params',
-  ]
-  if (res.get('Access-Control-Allow-Headers')) allowedHeaders.push(res.get('Access-Control-Allow-Headers'))
-
   // TODO: Move to optional chaining when we drop Node.js v12.x support
-  const ACAMHeader = res.get('Access-Control-Allow-Methods')
-  const existingAllowMethodsHeader = new Set(ACAMHeader && ACAMHeader.split(',').map(method => method.trim().toUpperCase()))
-  existingAllowMethodsHeader.add('GET').add('POST').add('OPTIONS').add('DELETE')
-  const methods = Array.from(existingAllowMethodsHeader)
+  const existingExposeHeaders = res.get('Access-Control-Expose-Headers')
+  const exposeHeadersMap = new Set(existingExposeHeaders && existingExposeHeaders.split(',').map(method => method.trim().toLowerCase()))
+  // exposed so it can be accessed for our custom uppy client preflight
+  exposeHeadersMap.add('access-control-allow-headers')
+  if (options.sendSelfEndpoint) exposeHeadersMap.add('i-am')
+
+  const existingAllowHeaders = res.get('Access-Control-Allow-Headers')
+  const allowHeadersMap = new Set(existingAllowHeaders && existingAllowHeaders.split(',').map(method => method.trim().toLowerCase()))
+  // Needed for basic operation:
+  allowHeadersMap.add('uppy-auth-token').add('uppy-versions').add('uppy-credentials-params')
+
+  const existingAllowMethods = res.get('Access-Control-Allow-Methods')
+  const allowMethodsMap = new Set(existingAllowMethods && existingAllowMethods.split(',').map(method => method.trim().toUpperCase()))
+  // Needed for basic operation:
+  allowMethodsMap.add('GET').add('POST').add('OPTIONS').add('DELETE')
 
   // If endpoint urls are specified, then we only allow those endpoints.
   // Otherwise, we allow any client url to access companion.
@@ -110,9 +107,9 @@ exports.cors = (options = {}) => (req, res, next) => {
   return cors({
     credentials: true,
     origin,
-    methods,
-    allowedHeaders: allowedHeaders.join(','),
-    exposedHeaders: exposedHeaders.join(','),
+    methods: Array.from(allowMethodsMap),
+    allowedHeaders: Array.from(allowHeadersMap).join(','),
+    exposedHeaders: Array.from(exposeHeadersMap).join(','),
   })(req, res, next)
 }
 
