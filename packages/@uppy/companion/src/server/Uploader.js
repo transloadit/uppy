@@ -4,6 +4,16 @@ const isObject = require('isobject')
 // @ts-ignore
 const validator = require('validator')
 const request = require('request')
+// eslint-disable-next-line no-unused-vars
+const { Readable, pipeline: pipelineCb } = require('stream')
+const { join } = require('path')
+const fs = require('fs')
+const { promisify } = require('util')
+
+const pipeline = promisify(pipelineCb)
+
+const { createReadStream, createWriteStream } = fs
+const { stat, unlink } = fs.promises
 
 /** @type {any} */
 // @ts-ignore - typescript resolves this this to a hoisted version of
@@ -62,16 +72,19 @@ class Uploader {
     this.token = uuid.v4()
     this.options.metadata = this.options.metadata || {}
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
+    this.uploadSize = options.size
     this.uploadFileName = this.options.metadata.name
       ? this.options.metadata.name.substring(0, MAX_FILENAME_LENGTH)
       : `${Uploader.FILE_NAME_PREFIX}-${this.token}`
+
     this.uploadStopped = false
-    this.bytesWritten = 0
 
     /** @type {number} */
     this.emittedProgress = 0
     this.storage = options.storage
     this._paused = false
+
+    this.readStream = null
 
     if (this.options.protocol === PROTOCOLS.tus) {
       emitter().on(`pause:${this.token}`, () => {
@@ -83,7 +96,7 @@ class Uploader {
       })
 
       emitter().on(`resume:${this.token}`, () => {
-        logger.debug('Received from client: cancel', 'uploader', this.shortToken)
+        logger.debug('Received from client: resume', 'uploader', this.shortToken)
         this._paused = false
         if (this.tus) {
           this.tus.start()
@@ -98,55 +111,79 @@ class Uploader {
         const shouldTerminate = !!this.tus.url
         this.tus.abort(shouldTerminate).catch(() => {})
       }
-      this.capacitor.destroy(new AbortError())
+      this.uploadStopped = true
+      if (this.readStream) this.readStream.destroy(new AbortError())
     })
   }
 
-  async _uploadByProtocol (readStream) {
+  async _uploadByProtocol () {
     // @todo a default protocol should not be set. We should ensure that the user specifies their protocol.
     const protocol = this.options.protocol || PROTOCOLS.multipart
 
     switch (protocol) {
       case PROTOCOLS.multipart:
-        return this.uploadMultipart(readStream)
+        return this.uploadMultipart(this.readStream)
       case PROTOCOLS.s3Multipart:
-        return this.uploadS3Multipart(readStream)
+        return this.uploadS3Multipart(this.readStream)
       case PROTOCOLS.tus:
-        return this.uploadTus(readStream)
+        return this.uploadTus(this.readStream)
       default:
         throw new Error('Invalid protocol')
     }
   }
 
-  async _startUpload (readStream) {
+  // Some streams need to be downloaded entirely first, because we don't know their size from the provider
+  // This is true for zoom and drive (exported files) or some URL downloads.
+  // The stream will then typically come from a "Transfer-Encoding: chunked" response
+  async _prepareUnknownLengthStream (stream) {
+    this.tmpPath = join(this.options.pathPrefix, this.uploadFileName)
+
+    logger.debug('fully downloading file', 'uploader.download', this.shortToken)
+    // TODO limit to 10MB? (which is max for google drive and zoom export)
+    // TODO progress? Maybe OK with no progress because files are small
+    const writeStream = createWriteStream(this.tmpPath)
+    await pipeline(stream, writeStream)
+    logger.debug('fully downloaded file', 'uploader.download', this.shortToken)
+    const { size } = await stat(this.tmpPath)
+    this.uploadSize = size
+
+    const readStream = createReadStream(this.tmpPath)
+    this.readStream = readStream
+  }
+
+  /**
+   *
+   * @param {Readable} stream
+   */
+  async uploadStream (stream) {
     try {
+      if (this.uploadStopped) throw new Error('Cannot upload stream after upload stopped')
+      if (this.readStream) throw new Error('Already uploading')
+
+      this.readStream = stream
+      if (!this.uploadSize) {
+        logger.debug('unable to determine file size, need to download the whole file first', 'controller.get.provider.size', this.shortToken)
+        await this._prepareUnknownLengthStream(this.readStream)
+      }
+      if (this.uploadStopped) return
+
       const { url, extraData } = await Promise.race([
-        this._uploadByProtocol(readStream),
+        this._uploadByProtocol(),
         // If we don't handle stream errors, we get unhandled error in node.
-        new Promise((resolve, reject) => this.capacitor.on('error', reject)),
-        new Promise((resolve, reject) => readStream.on('error', reject)),
+        new Promise((resolve, reject) => this.readStream.on('error', reject)),
       ])
       this.emitSuccess(url, extraData)
     } catch (err) {
-      if (!(err instanceof AbortError)) {
-        // console.log(err)
-        logger.error(err, 'uploader.error', this.shortToken)
-        this.emitError(err, err.extraData)
+      if (err instanceof AbortError) {
+        logger.error('Aborted upload', 'uploader.aborted', this.shortToken)
+        return
       }
+      // console.log(err)
+      logger.error(err, 'uploader.error', this.shortToken)
+      this.emitError(err)
     } finally {
       this.cleanUp()
     }
-  }
-
-  async initCapacitor () {
-    if (this.capacitor) throw new Error('Already initialized capacitor')
-    // Because it's an ESM so we cannot require
-    const { WriteStream } = await import('fs-capacitor')
-
-    this.capacitor = new WriteStream({ tmpdir: () => this.options.pathPrefix })
-    const readStream = this.capacitor.createReadStream()
-
-    this._startUpload(readStream)
   }
 
   /**
@@ -280,49 +317,21 @@ class Uploader {
   }
 
   async awaitReady () {
-    logger.debug('waiting for connection', 'uploader.socket.wait', this.shortToken)
+    // TODO timeout after a while? Else we could leak emitters
+    logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
     await new Promise((resolve) => emitter().once(`connection:${this.token}`, resolve))
-    await this.initCapacitor()
+    logger.debug('socket connection received', 'uploader.socket.wait', this.shortToken)
   }
 
   cleanUp () {
-    if (this.uploadStopped) return
     logger.debug('cleanup', this.shortToken)
-    this.capacitor.destroy()
+    if (this.readStream && !this.readStream.destroyed) this.readStream.destroy()
+
+    if (this.tmpPath) unlink(this.tmpPath).catch(() => {})
 
     emitter().removeAllListeners(`pause:${this.token}`)
     emitter().removeAllListeners(`resume:${this.token}`)
     emitter().removeAllListeners(`cancel:${this.token}`)
-    this.uploadStopped = true
-  }
-
-  /**
-   *
-   * @param {Error} err
-   * @param {string | Buffer | Buffer[]} chunk
-   */
-  handleChunk (err, chunk) {
-    if (this.uploadStopped) {
-      logger.debug('Received chunk after upload stopped', 'uploader.download', this.shortToken)
-      return
-    }
-
-    if (err) {
-      logger.error(err, 'uploader.download.error', this.shortToken)
-      this.capacitor.destroy(err)
-      return
-    }
-
-    if (chunk === null) {
-      // Finished! End the write stream so that the read streams will also finish.
-      this.capacitor.end()
-      return
-    }
-
-    this.capacitor.write(chunk, () => {
-      this.bytesWritten += chunk.length
-      logger.debug(`${this.bytesWritten} bytes`, 'uploader.download.progress', this.shortToken)
-    })
   }
 
   getResponse () {
@@ -347,7 +356,7 @@ class Uploader {
    * @param {number | null} bytesTotalIn
    */
   onProgress (bytesUploaded, bytesTotalIn) {
-    const bytesTotal = bytesTotalIn || this.options.size
+    const bytesTotal = bytesTotalIn || this.uploadSize
 
     const percentage = Math.min(Math.max(0, ((bytesUploaded / bytesTotal) * 100)), 100)
     const formatPercentage = percentage.toFixed(2)
@@ -392,15 +401,15 @@ class Uploader {
   /**
    *
    * @param {Error} err
-   * @param {object} extraData
    */
-  emitError (err, extraData = {}) {
+  emitError (err) {
     const serializedErr = serializeError(err)
     // delete stack to avoid sending server info to client
     delete serializedErr.stack
     const dataToEmit = {
       action: 'error',
-      payload: Object.assign(extraData, { error: serializedErr }),
+      // @ts-ignore
+      payload: Object.assign(err.extraData || {}, { error: serializedErr }),
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)
@@ -418,7 +427,7 @@ class Uploader {
         uploadUrl: this.options.uploadUrl,
         uploadLengthDeferred: false,
         retryDelays: [0, 1000, 3000, 5000],
-        uploadSize: this.options.size,
+        uploadSize: this.uploadSize,
         chunkSize: this.options.chunkSize || 50e6,
         headers: headerSanitize(this.options.headers),
         addRequestId: true,
@@ -490,12 +499,12 @@ class Uploader {
           options: {
             filename: this.uploadFileName,
             contentType: this.options.metadata.type,
-            knownLength: this.options.size,
+            knownLength: this.uploadSize,
           },
         },
       }
     } else {
-      reqOptions.headers['content-length'] = this.options.size
+      reqOptions.headers['content-length'] = this.uploadSize
       reqOptions.body = stream
     }
 
@@ -530,8 +539,8 @@ class Uploader {
       throw err
     }
 
-    if (bytesUploaded !== this.options.size) {
-      const errMsg = `uploaded only ${bytesUploaded} of ${this.options.size} with status: ${response.statusCode}`
+    if (bytesUploaded !== this.uploadSize) {
+      const errMsg = `uploaded only ${bytesUploaded} of ${this.uploadSize} with status: ${response.statusCode}`
       logger.error(errMsg, 'upload.multipart.mismatch.error')
       throw new Error(errMsg)
     }

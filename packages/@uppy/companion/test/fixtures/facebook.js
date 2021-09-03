@@ -43,9 +43,6 @@ module.exports.responses = {
       id: defaults.ITEM_ID,
     },
   },
-  [defaults.THUMBNAIL_URL]: {
-    get: {},
-  },
 }
 
 module.exports.expects = {

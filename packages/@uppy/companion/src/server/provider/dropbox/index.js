@@ -2,9 +2,12 @@ const Provider = require('../Provider')
 
 const request = require('request')
 const purest = require('purest')({ request })
+const { promisify } = require('util')
+
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
+const { requestStream } = require('../../helpers/utils')
 
 // From https://www.dropbox.com/developers/reference/json-encoding:
 //
@@ -45,6 +48,10 @@ class DropBox extends Provider {
       .request(done)
   }
 
+  async list (options) {
+    return promisify(this._list.bind(this))(options)
+  }
+
   /**
    * Makes 2 requests in parallel - 1. to get files, 2. to get user email
    * it then waits till both requests are done before proceeding with the callback
@@ -52,7 +59,7 @@ class DropBox extends Provider {
    * @param {object} options
    * @param {Function} done
    */
-  list (options, done) {
+  _list (options, done) {
     let userInfoDone = false
     let statsDone = false
     let userInfo
@@ -119,32 +126,30 @@ class DropBox extends Provider {
       .request(done)
   }
 
-  download ({ id, token }, onData) {
-    return this.client
-      .post('https://content.dropboxapi.com/2/files/download')
-      .options({
-        version: '2',
-        headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` }),
-        },
-      })
-      .auth(token)
-      .request()
-      .on('response', (resp) => {
-        if (resp.statusCode !== 200) {
-          onData(this._error(null, resp))
-        } else {
-          resp.on('data', (chunk) => onData(null, chunk))
-        }
-      })
-      .on('end', () => onData(null, null))
-      .on('error', (err) => {
-        logger.error(err, 'provider.dropbox.download.error')
-        onData(err)
-      })
+  async download ({ id, token }) {
+    try {
+      const req = this.client
+        .post('https://content.dropboxapi.com/2/files/download')
+        .options({
+          version: '2',
+          headers: {
+            'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` }),
+          },
+        })
+        .auth(token)
+
+      return await requestStream(req, async (res) => this._error(null, res))
+    } catch (err) {
+      logger.error(err, 'provider.dropbox.download.error')
+      throw err
+    }
   }
 
-  thumbnail ({ id, token }, done) {
+  async thumbnail (options) {
+    return promisify(this._thumbnail.bind(this))(options)
+  }
+
+  _thumbnail ({ id, token }, done) {
     return this.client
       .post('https://content.dropboxapi.com/2/files/get_thumbnail')
       .options({
@@ -168,7 +173,11 @@ class DropBox extends Provider {
       })
   }
 
-  size ({ id, token }, done) {
+  async size (options) {
+    return promisify(this._size.bind(this))(options)
+  }
+
+  _size ({ id, token }, done) {
     return this.client
       .post('files/get_metadata')
       .options({ version: '2' })
@@ -180,11 +189,15 @@ class DropBox extends Provider {
           logger.error(err, 'provider.dropbox.size.error')
           return done(err)
         }
-        done(null, parseInt(body.size))
+        done(null, parseInt(body.size, 10))
       })
   }
 
-  logout ({ token }, done) {
+  async logout (options) {
+    return promisify(this._logout.bind(this))(options)
+  }
+
+  _logout ({ token }, done) {
     return this.client
       .post('auth/token/revoke')
       .options({ version: '2' })

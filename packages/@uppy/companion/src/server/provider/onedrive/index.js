@@ -2,9 +2,12 @@ const Provider = require('../Provider')
 
 const request = require('request')
 const purest = require('purest')({ request })
+const { promisify } = require('util')
+
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
+const { requestStream } = require('../../helpers/utils')
 
 /**
  * Adapter for API https://docs.microsoft.com/en-us/onedrive/developer/rest-api/
@@ -30,6 +33,10 @@ class OneDrive extends Provider {
       .request(done)
   }
 
+  async list (options) {
+    return promisify(this._list.bind(this))(options)
+  }
+
   /**
    * Makes 2 requests in parallel - 1. to get files, 2. to get user email
    * it then waits till both requests are done before proceeding with the callback
@@ -37,7 +44,7 @@ class OneDrive extends Provider {
    * @param {object} options
    * @param {Function} done
    */
-  list ({ directory, query, token }, done) {
+  _list ({ directory, query, token }, done) {
     const path = directory ? `items/${directory}` : 'root'
     const rootPath = query.driveId ? `/drives/${query.driveId}` : '/me/drive'
     const qs = { $expand: 'thumbnails' }
@@ -66,34 +73,33 @@ class OneDrive extends Provider {
       })
   }
 
-  download ({ id, token, query }, onData) {
-    const rootPath = query.driveId ? `/drives/${query.driveId}` : '/me/drive'
-    return this.client
-      .get(`${rootPath}/items/${id}/content`)
-      .auth(token)
-      .request()
-      .on('response', (resp) => {
-        if (resp.statusCode !== 200) {
-          onData(this._error(null, resp))
-        } else {
-          resp.on('data', (chunk) => onData(null, chunk))
-        }
-      })
-      .on('end', () => onData(null, null))
-      .on('error', (err) => {
-        logger.error(err, 'provider.onedrive.download.error')
-        onData(err)
-      })
+  async download ({ id, token, query }) {
+    try {
+      const rootPath = query.driveId ? `/drives/${query.driveId}` : '/me/drive'
+
+      const req = this.client
+        .get(`${rootPath}/items/${id}/content`)
+        .auth(token)
+        .request()
+
+      return await requestStream(req, async (res) => this._error(null, res))
+    } catch (err) {
+      logger.error(err, 'provider.onedrive.download.error')
+      throw err
+    }
   }
 
-  thumbnail (_, done) {
+  async thumbnail () {
     // not implementing this because a public thumbnail from onedrive will be used instead
-    const err = new Error('call to thumbnail is not implemented')
-    logger.error(err, 'provider.onedrive.thumbnail.error')
-    return done(err)
+    logger.error('call to thumbnail is not implemented', 'provider.onedrive.thumbnail.error')
+    throw new Error('call to thumbnail is not implemented')
   }
 
-  size ({ id, query, token }, done) {
+  async size (options) {
+    return promisify(this._size.bind(this))(options)
+  }
+
+  _size ({ id, query, token }, done) {
     const rootPath = query.driveId ? `/drives/${query.driveId}` : '/me/drive'
     return this.client
       .get(`${rootPath}/items/${id}`)
@@ -108,9 +114,8 @@ class OneDrive extends Provider {
       })
   }
 
-  logout (_, done) {
-    // access revoke is not supported by Microsoft/OneDrive's API
-    done(null, { revoked: false, manual_revoke_url: 'https://account.live.com/consent/Manage' })
+  async logout () {
+    return { revoked: false, manual_revoke_url: 'https://account.live.com/consent/Manage' }
   }
 
   adaptData (res, username) {

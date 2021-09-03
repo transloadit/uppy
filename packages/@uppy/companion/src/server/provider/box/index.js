@@ -2,9 +2,12 @@ const Provider = require('../Provider')
 
 const request = require('request')
 const purest = require('purest')({ request })
+const { promisify } = require('util')
+
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
+const { requestStream } = require('../../helpers/utils')
 
 const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
 const BOX_THUMBNAIL_SIZE = 256
@@ -35,13 +38,17 @@ class Box extends Provider {
       .request(done)
   }
 
+  async list (options) {
+    return promisify(this._list.bind(this))(options)
+  }
+
   /**
    * Lists files and folders from Box API
    *
    * @param {object} options
    * @param {Function} done
    */
-  list ({ directory, token, query, companion }, done) {
+  _list ({ directory, token, query, companion }, done) {
     const rootFolderID = '0'
     const path = `folders/${directory || rootFolderID}/items`
 
@@ -66,26 +73,24 @@ class Box extends Provider {
       })
   }
 
-  download ({ id, token }, onData) {
-    return this.client
-      .get(`files/${id}/content`)
-      .auth(token)
-      .request()
-      .on('response', (resp) => {
-        if (resp.statusCode !== 200) {
-          onData(this._error(null, resp))
-        } else {
-          resp.on('data', (chunk) => onData(null, chunk))
-        }
-      })
-      .on('end', () => onData(null, null))
-      .on('error', (err) => {
-        logger.error(err, 'provider.box.download.error')
-        onData(err)
-      })
+  async download ({ id, token }) {
+    try {
+      const req = this.client
+        .get(`files/${id}/content`)
+        .auth(token)
+        .request()
+      return await requestStream(req, async (res) => this._error(null, res))
+    } catch (err) {
+      logger.error(err, 'provider.box.download.error')
+      throw err
+    }
   }
 
-  thumbnail ({ id, token }, done) {
+  async thumbnail (options) {
+    return promisify(this._thumbnail.bind(this))(options)
+  }
+
+  _thumbnail ({ id, token }, done) {
     return this.client
       .get(`files/${id}/thumbnail.png`)
       .qs({ max_height: BOX_THUMBNAIL_SIZE, max_width: BOX_THUMBNAIL_SIZE })
@@ -120,7 +125,11 @@ class Box extends Provider {
       })
   }
 
-  size ({ id, token }, done) {
+  async size (options) {
+    return promisify(this._size.bind(this))(options)
+  }
+
+  _size ({ id, token }, done) {
     return this.client
       .get(`files/${id}`)
       .auth(token)
@@ -130,11 +139,15 @@ class Box extends Provider {
           logger.error(err, 'provider.box.size.error')
           return done(err)
         }
-        done(null, parseInt(body.size))
+        done(null, parseInt(body.size, 10))
       })
   }
 
-  logout ({ companion, token }, done) {
+  async logout (options) {
+    return promisify(this._logout.bind(this))(options)
+  }
+
+  _logout ({ companion, token }, done) {
     const { key, secret } = companion.options.providerOptions.box
 
     return this.client

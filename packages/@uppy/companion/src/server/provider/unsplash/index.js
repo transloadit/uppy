@@ -1,9 +1,12 @@
 const request = require('request')
+const { promisify } = require('util')
+
 const SearchProvider = require('../SearchProvider')
 const { getURLMeta } = require('../../helpers/request')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError } = require('../error')
+const { requestStream } = require('../../helpers/utils')
 
 const BASE_URL = 'https://api.unsplash.com'
 
@@ -11,7 +14,11 @@ const BASE_URL = 'https://api.unsplash.com'
  * Adapter for API https://api.unsplash.com
  */
 class Unsplash extends SearchProvider {
-  list ({ token, query = { cursor: null, q: null } }, done) {
+  async list (options) {
+    return promisify(this._list.bind(this))(options)
+  }
+
+  _list ({ token, query = { cursor: null, q: null } }, done) {
     const reqOpts = {
       url: `${BASE_URL}/search/photos`,
       method: 'GET',
@@ -39,42 +46,42 @@ class Unsplash extends SearchProvider {
     })
   }
 
-  download ({ id, token }, onData) {
-    const reqOpts = {
-      url: `${BASE_URL}/photos/${id}`,
-      method: 'GET',
-      json: true,
-      headers: {
-        Authorization: `Client-ID ${token}`,
-      },
-    }
-
-    request(reqOpts, (err, resp, body) => {
-      if (err || resp.statusCode !== 200) {
-        err = this._error(err, resp)
-        logger.error(err, 'provider.unsplash.download.error')
-        onData(err)
-        return
+  async download ({ id, token }) {
+    try {
+      const reqOpts = {
+        url: `${BASE_URL}/photos/${id}`,
+        method: 'GET',
+        json: true,
+        headers: {
+          Authorization: `Client-ID ${token}`,
+        },
       }
 
-      const url = body.links.download
-      request.get(url)
-        .on('response', (resp) => {
-          if (resp.statusCode !== 200) {
-            onData(this._error(null, resp))
-          } else {
-            resp.on('data', (chunk) => onData(null, chunk))
+      const url = await new Promise((resolve, reject) => (
+        request(reqOpts, (err, resp, body) => {
+          if (err || resp.statusCode !== 200) {
+            err = this._error(err, resp)
+            logger.error(err, 'provider.unsplash.download.error')
+            reject(err)
+            return
           }
+          resolve(body.links.download)
         })
-        .on('end', () => onData(null, null))
-        .on('error', (err) => {
-          logger.error(err, 'provider.unsplash.download.url.error')
-          onData(err)
-        })
-    })
+      ))
+
+      const req = request.get(url)
+      return await requestStream(req, async (res) => this._error(null, res))
+    } catch (err) {
+      logger.error(err, 'provider.unsplash.download.url.error')
+      throw err
+    }
   }
 
-  size ({ id, token }, done) {
+  async size (options) {
+    return promisify(this._size.bind(this))(options)
+  }
+
+  _size ({ id, token }, done) {
     const reqOpts = {
       url: `${BASE_URL}/photos/${id}`,
       method: 'GET',
@@ -94,9 +101,9 @@ class Unsplash extends SearchProvider {
 
       getURLMeta(body.links.download)
         .then(({ size }) => done(null, size))
-        .catch((err) => {
-          logger.error(err, 'provider.unsplash.size.error')
-          done()
+        .catch((err2) => {
+          logger.error(err2, 'provider.unsplash.size.error')
+          done(err2)
         })
     })
   }

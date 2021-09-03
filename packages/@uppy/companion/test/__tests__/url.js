@@ -1,8 +1,12 @@
 /* global jest:false, test:false, expect:false, describe:false */
 
+const nock = require('nock')
+const request = require('supertest')
+
 jest.mock('tus-js-client')
 jest.mock('../../src/server/helpers/request', () => {
   return {
+    ...jest.requireActual('../../src/server/helpers/request'),
     getURLMeta: () => {
       return Promise.resolve({ size: 7580, type: 'image/jpg' })
     },
@@ -11,7 +15,15 @@ jest.mock('../../src/server/helpers/request', () => {
 const { getServer } = require('../mockserver')
 
 const mockServer = getServer()
-const request = require('supertest')
+
+beforeAll(() => {
+  nock('http://url.myendpoint.com').get('/files').reply(200, () => '')
+})
+
+afterAll(() => {
+  nock.cleanAll()
+  nock.restore()
+})
 
 const invalids = [
   // no url at all or unsupported protocol

@@ -6,6 +6,7 @@ const validator = require('validator')
 const Uploader = require('../Uploader')
 const { getURLMeta, getRedirectEvaluator, getProtectedHttpAgent } = require('../helpers/request')
 const logger = require('../logger')
+const { errorToResponse } = require('../provider/error')
 
 /**
  * Validates that the download URL is secure
@@ -41,11 +42,11 @@ const validateURL = (url, debug) => {
  * to the callback chunk by chunk.
  *
  * @param {string} url
- * @param {downloadCallback} onDataChunk
  * @param {boolean} blockLocalIPs
  * @param {string} traceId
+ * @returns {Promise}
  */
-const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
+const downloadURL = async (url, blockLocalIPs, traceId) => {
   const opts = {
     uri: url,
     method: 'GET',
@@ -55,20 +56,24 @@ const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
 
   // return onDataChunk(new Error('test error'))
 
-  request(opts)
-    .on('response', (resp) => {
-      if (resp.statusCode >= 300) {
-        const err = new Error(`URL server responded with status: ${resp.statusCode}`)
-        onDataChunk(err, null)
-      } else {
-        resp.on('data', (chunk) => onDataChunk(null, chunk))
-      }
-    })
-    .on('end', () => onDataChunk(null, null))
-    .on('error', (err) => {
-      logger.error(err, 'controller.url.download.error', traceId)
-      onDataChunk(err, null)
-    })
+  return new Promise((resolve, reject) => {
+    request(opts)
+      .on('response', (resp) => {
+        if (resp.statusCode >= 300) {
+          reject(new Error(`URL server responded with status: ${resp.statusCode}`))
+          return
+        }
+
+        // Don't allow any more data to flow yet.
+        // https://github.com/request/request/issues/1990#issuecomment-184712275
+        resp.pause()
+        resolve(resp)
+      })
+      .on('error', (err) => {
+        logger.error(err, 'controller.url.download.error', traceId)
+        reject(err)
+      })
+  })
 }
 
 /**
@@ -114,7 +119,6 @@ const get = async (req, res) => {
 
     const { size } = await getURLMeta(req.body.url, !debug)
 
-    // @ts-ignore
     logger.debug('Instantiating uploader.', null, req.id)
     const uploader = new Uploader(Uploader.reqToOptions(req, size))
 
@@ -124,18 +128,31 @@ const get = async (req, res) => {
       return
     }
 
-    logger.debug('Waiting for socket connection before beginning remote download.', null, req.id)
-    uploader.awaitReady().then(() => {
-      logger.debug('Socket connection received. Starting remote download.', null, req.id)
-      downloadURL(req.body.url, uploader.handleChunk.bind(uploader), !debug, req.id)
-    }).catch((err2) => logger.error(err2, req.id))
+    const stream = await downloadURL(req.body.url, !debug, req.id)
 
-    const response = uploader.getResponse()
+    // "Forking" off the upload operation to background, so we can return the http request:
+    ;(async () => {
+      // wait till the client has connected to the socket, before starting
+      // the download, so that the client can receive all download/upload progress.
+      logger.debug('Waiting for socket connection before beginning remote download/upload.', null, req.id)
+      await uploader.awaitReady()
+      logger.debug('Socket connection received. Starting remote download/upload.', null, req.id)
 
+      uploader.uploadStream(stream)
+    })()
+
+    // Respond the request
     // NOTE: Uploader will continue running after the http request is responded
+    const response = uploader.getResponse()
     res.status(response.status).json(response.body)
   } catch (err) {
-    logger.error(err, 'controller.url.get.error', req.id)
+    const errResp = errorToResponse(err)
+    if (errResp) {
+      res.status(errResp.code).json({ message: errResp.message })
+      return
+    }
+
+    logger.error(err, 'controller.url.error', req.id)
     // @todo send more meaningful error message and status code to client if possible
     res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
   }
