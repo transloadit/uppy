@@ -8,54 +8,279 @@ Items can be optionally tagged by the GitHub issue's owner, if a discussion happ
 
 Please add your entries in this format:
 
- - `- [ ] (<plugin name>|website|core|meta|build|test): <Present tense verb> <subject> \(<list of associated owners/gh-issues>\)`.
+- `- [ ] (<plugin name>|website|core|meta|build|test): <Present tense verb> <subject> \(<list of associated owners/gh-issues>\)`.
 
 In the current stage we aim to release a new version at least every month.
 
-### next
+## 2.1.0
 
-## August 2021
-
-- [ ] robodog: finishing touches on Companion dynamic Oauth #2802 (@goto-bus-stop)
-- [ ] unsplash: Unsplash re-design (#2635 / @arturi, @nqst)
-- [ ] box: add to https://uppy.io/examples/dashboard/ (@mifi)
-- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
-- [ ] compressor: add to Uppy repo, add resizing (@arturi)
-
-## Companion Patch 2.12.2
-
-| Package | Version |
-|-|-|
-| @uppy/companion@2.12.2 | 2.12.2 |
-
-- @uppy/companion: Improve logging (#3103 / @mifi) 
-
-## 2.0.0-alpha.0
+Released: 2021-09-01
 
 | Package | Version | Package | Version |
 |-|-|-|-|
-| @uppy/angular | 0.2.0-alpha.0 | @uppy/provider-views | 2.0.0-alpha.0 |
-| @uppy/aws-s3-multipart | 2.0.0-alpha.0 | @uppy/react-native | 0.2.0-alpha.0 |
-| @uppy/aws-s3 | 2.0.0-alpha.0 | @uppy/react | 2.0.0-alpha.0 |
-| @uppy/box | 0.4.0-alpha.0 | @uppy/redux-dev-tools | 2.0.0-alpha.0 |
-| @uppy/companion-client | 2.0.0-alpha.0 | @uppy/robodog | 2.0.0-alpha.0 |
-| @uppy/companion | 2.13.0-alpha.0 | @uppy/screen-capture | 2.0.0-alpha.0 |
-| @uppy/core | 2.0.0-alpha.0 | @uppy/status-bar | 2.0.0-alpha.0 |
-| @uppy/dashboard | 2.0.0-alpha.0 | @uppy/store-default | 2.0.0-alpha.0 |
-| @uppy/drag-drop | 2.0.0-alpha.0 | @uppy/store-redux | 2.0.0-alpha.0 |
-| @uppy/drop-target | 1.0.0-alpha.0 | @uppy/svelte | 1.0.0-alpha.0 |
-| @uppy/dropbox | 2.0.0-alpha.0 | @uppy/thumbnail-generator | 2.0.0-alpha.0 |
-| @uppy/facebook | 2.0.0-alpha.0 | @uppy/transloadit | 2.0.0-alpha.0 |
-| @uppy/file-input | 2.0.0-alpha.0 | @uppy/tus | 2.0.0-alpha.0 |
-| @uppy/form | 2.0.0-alpha.0 | @uppy/unsplash | 0.2.0-alpha.0 |
-| @uppy/golden-retriever | 2.0.0-alpha.0 | @uppy/url | 2.0.0-alpha.0 |
-| @uppy/google-drive | 2.0.0-alpha.0 | @uppy/utils | 4.0.0-alpha.0 |
-| @uppy/image-editor | 1.0.0-alpha.0 | @uppy/vue | 0.3.0-alpha.0 |
-| @uppy/informer | 2.0.0-alpha.0 | @uppy/webcam | 2.0.0-alpha.0 |
-| @uppy/instagram | 2.0.0-alpha.0 | @uppy/xhr-upload | 2.0.0-alpha.0 |
-| @uppy/locales | 2.0.0-alpha.0 | @uppy/zoom | 0.2.0-alpha.0 |
-| @uppy/onedrive | 2.0.0-alpha.0 | remark-lint-uppy | 0.0.2 |
-| @uppy/progress-bar | 2.0.0-alpha.0 | uppy | 2.0.0-alpha.0 |
+| @uppy/angular | 0.2.2 | @uppy/svelte | 1.0.2 |
+| @uppy/aws-s3 | 2.0.2 | @uppy/thumbnail-generator | 2.0.2 |
+| @uppy/core | 2.0.2 | @uppy/vue | 0.4.0 |
+| @uppy/dashboard | 2.0.2 | @uppy/xhr-upload | 2.0.2 |
+| @uppy/react | 2.0.2 | uppy | 2.1.0 |
+| @uppy/robodog | 2.0.3 | - | - |
+
+- @uppy/aws-s3: fix 'send' XMLHttpRequest (#3130 / @jhen0409)
+- @uppy/aws-s3, @uppy/thumbnail-generator, @uppy/xhr-upload: fix `i18n` (#3142 / @jhen0409 / @aduh95)
+- @uppy/react: fix `DashboardModal`'s `target` type (#3110 / @Murderlon)
+- @uppy/xhr-upload: add types for methods (#3154 / @BePo65)
+- @uppy/core: improve accuracy/compatibility of success/error callback types (#3141 / @Hawxy)
+- @uppy/vue: add Vue FileInput component (#3125 / @valentinoli)
+
+## 2.0.2
+
+Released: 2021-08-26
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/angular | 0.2.2 | @uppy/robodog | 2.0.2 |
+| @uppy/aws-s3-multipart | 2.0.2 | @uppy/robodog | 2.0.3 |
+| @uppy/aws-s3 | 2.0.2 | @uppy/svelte | 1.0.2 |
+| @uppy/companion | 3.0.1 | @uppy/thumbnail-generator | 2.0.2 |
+| @uppy/vue | 0.4.0 | @uppy/core | 2.0.2 |
+| @uppy/dashboard | 2.0.2 | uppy | 2.0.2 |
+| @uppy/golden-retriever | 2.0.2 | @uppy/xhr-upload | 2.0.2 |
+| @uppy/react | 2.0.2 | - | - |
+
+- @uppy/aws-s3-multipart: fix route ordering and query parameters (#3132 / @rossng)
+- @uppy/core: add types overload for `off` method (#3137 / @Hawxy)
+- @uppy/golden-retriever: handle promise rejections (#3131 / @Murderlon)
+
+## 2.0.1
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/angular | 0.2.1 | @uppy/react-native | 0.2.1 |
+| @uppy/react | 2.0.1 | @uppy/provider-views | 2.0.1 |
+| @uppy/aws-s3-multipart | 2.0.1 | @uppy/redux-dev-tools | 2.0.1 |
+| @uppy/aws-s3 | 2.0.1 | @uppy/robodog | 2.0.1 |
+| @uppy/box | 1.0.1 | @uppy/svelte | 1.0.1 |
+| @uppy/companion | 3.0.1 | @uppy/screen-capture | 2.0.1 |
+| @uppy/core | 2.0.1 | @uppy/status-bar | 2.0.1 |
+| @uppy/dashboard | 2.0.1 | @uppy/svelte | 1.0.2 |
+| @uppy/thumbnail-generator | 2.0.1 | @uppy/drag-drop | 2.0.1 |
+| @uppy/drop-target | 1.0.1 | @uppy/transloadit | 2.0.1 |
+| @uppy/dropbox | 2.0.1 | @uppy/tus | 2.0.1 |
+| @uppy/facebook | 2.0.1 | @uppy/unsplash | 1.0.1 |
+| @uppy/file-input | 2.0.1 | @uppy/url | 2.0.1 |
+| @uppy/form | 2.0.1 | @uppy/vue | 0.3.1 |
+| @uppy/golden-retriever | 2.0.1 | @uppy/vue | 0.4.0 | @uppy/webcam | 2.0.1 |
+| @uppy/google-drive | 2.0.1 | @uppy/xhr-upload | 2.0.1 |
+| @uppy/image-editor | 1.0.1 | @uppy/onedrive | 2.0.1 |
+| @uppy/informer | 2.0.1 | @uppy/zoom | 1.0.1 |
+| @uppy/instagram | 2.0.1 | uppy | 2.0.1 |
+| @uppy/progress-bar | 2.0.1 | - | - |
+
+Released: 2021-08-25
+
+- Update peerDependencies to ^2.0.0 in all uppy packages @arturi (b39824819)
+
+## 2.0.0
+
+Released: 2021-08-24
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/angular | 0.2.0 | @uppy/provider-views | 2.0.0 |
+| @uppy/aws-s3-multipart | 2.0.0 | @uppy/react-native | 0.2.0 |
+| @uppy/aws-s3 | 2.0.0 | @uppy/react | 2.0.0 |
+| @uppy/box | 1.0.0 | @uppy/redux-dev-tools | 2.0.0 |
+| @uppy/companion-client | 2.0.0 | @uppy/robodog | 2.0.0 |
+| @uppy/companion | 3.0.0 | @uppy/screen-capture | 2.0.0 |
+| @uppy/core | 2.0.0 | @uppy/status-bar | 2.0.0 |
+| @uppy/dashboard | 2.0.0 | @uppy/store-default | 2.0.0 |
+| @uppy/drag-drop | 2.0.0 | @uppy/store-redux | 2.0.0 |
+| @uppy/drop-target | 1.0.0 | @uppy/svelte | 1.0.0 |
+| @uppy/dropbox | 2.0.0 | @uppy/thumbnail-generator | 2.0.0 |
+| @uppy/facebook | 2.0.0 | @uppy/transloadit | 2.0.0 |
+| @uppy/file-input | 2.0.0 | @uppy/tus | 2.0.0 |
+| @uppy/form | 2.0.0 | @uppy/unsplash | 1.0.0 |
+| @uppy/golden-retriever | 2.0.0 | @uppy/url | 2.0.0 |
+| @uppy/google-drive | 2.0.0 | @uppy/utils | 4.0.0 |
+| @uppy/image-editor | 1.0.0 | @uppy/vue | 0.3.0 |
+| @uppy/informer | 2.0.0 | @uppy/webcam | 2.0.0 |
+| @uppy/instagram | 2.0.0 | @uppy/xhr-upload | 2.0.0 |
+| @uppy/locales | 2.0.0 | @uppy/zoom | 1.0.0 |
+| @uppy/onedrive | 2.0.0 | uppy | 2.0.0 |
+| @uppy/progress-bar | 2.0.0 | - | - |
+
+### ⚠️ Breaking changes
+
+- build: Remove IE polyfills and special casing — Uppy officially drops IE 11 support. You can manually include the polyfills, and we have an `uppy.legacy.js` bundle, but we are not (#2947 / @aduh95)
+- @uppy/core: Upgraded Preact to latest Preact 10 — all custom Uppy plugins should now use new version too (#2926 / @Murderlon)
+- @uppy/core: force `new` keyword — please 1always use `const uppy = new Uppy()` now (#2949 / @arturi)
+- @uppy/core: renamed `allowMultipleUploads` to `allowMultipleUploadBatches` (#3115 / @arturi)
+- @uppy/core: Split `Plugin` into `BasePlugin` and extended `UIPlugin` (#2944 / @Murderlon)
+- @uppy/core: Set plugin titles from locale packs (#3023 / @arturi)
+- @uppy/informer: Support multiple messages in informer (#3017 / @Murderlon)
+- @uppy/xhr-upload, @uppy/tus: Set default concurrent file upload limit to 5 (#2993 / @arturi)
+- @uppy/core: Strictly type uppy events (#3085 / @Hawxy)
+- @uppy/core: always enable strict types and remove `.run` method (#2957 / @Murderlon)
+- @uppy/dashboard: Removed backwards compatibility hacks in locales (#2969 / @goto-bus-stop)
+- @uppy/companion Removed `oldHtmlContent` from Companion’s `send-token` option (#2967 / @Murderlon)
+- @uppy/provider-views: Removed `isTeamDrive` from `@uppy/google-drive` option (#2967 / @Murderlon)
+- @uppy/tus: Removed timeout for `resetUploaderReferences` option (#2967 / @Murderlon)
+- @uppy/tus: Removed `resume` option (#2967 / @Murderlon)
+
+
+### Misc
+
+- @uppy/angular: fix uppy dependencies @aduh95
+- @uppy/angular: upgrade to Angular 12.1 (d61113979 / @aduh95 )
+- @uppy/aws-s3-multipart: add support for presigned URL batching (#3056 / @martin-brennan)
+- @uppy/aws-s3: refactor to private fields (#3076 / @aduh95)
+- @uppy/aws-s3: refactor to use private fields (#3094 / @aduh95)
+- @uppy/companion-client: migrate to private properties (#3057 / @aduh95)
+- @uppy/companion: Companion improve logging (#3103 / @mifi)
+- @uppy/companion: fix build (960cfa5ba / @aduh95)
+- @uppy/companion: remove `lodash` dependency (#3036 / @aduh95)
+- @uppy/companion: Remove deprecated `serverHeaders` in favour of `companionHeaders` (#2995 / @arturi)
+- @uppy/core: add types for `logger` (#3090 / @bencergazda)
+- @uppy/core: avoid binding methods to instance in constructor (#3043 / @aduh95)
+- @uppy/core: Create `getObjectOfFilesPerState` in core for plugins (#2961 / @Murderlon)
+- @uppy/core: Create `onUnmount` in `UIPlugin` for plugins that require clean up (#3093 / @Murderlon)
+- @uppy/core: detach event listeners on close (#3035 / @aduh95)
+- @uppy/core: do not expose `plugins` property (#3045 / @aduh95)
+- @uppy/core: fix i18n binding (4ab06907c / @aduh95)
+- @uppy/core: fix types (dcaef3173 / @aduh95)
+- @uppy/core: move event emitter to private properties (#3042 / @aduh95)
+- @uppy/core: move more internals to private properties (#3041 / @aduh95)
+- @uppy/core: `onBeforeFileAdded` — pass full file object with extension, detected type, meta, size, etc (#2941 / @arturi)
+- @uppy/core: reject empty string as valid value for required meta fields (#3119 / @aduh95) (0b801ccba)
+- @uppy/core: Remove `sync` option from `VirtualList` & update `UIPlugin` render @Murderlon
+- @uppy/core: remove more IE hacks (#3015 / @aduh95)
+- @uppy/core: remove use of `Array.prototype.reduce` where possible (#3016 / @aduh95)
+- @uppy/core: Resolve all type `TODO`'s (#2963 / @Murderlon)
+- @uppy/core: UIPlugin fix: prevent Preact replacing contents of body element by using `createDocumentFragment` (#3072 / @arturi)
+- @uppy/core: use private fields (#3013 / @aduh95)
+- @uppy/core: use privater properties in `UIPlugin` (#3073 / @aduh95)
+- @uppy/core: validateRestrictions was failing due to being unbound, fixed with arrow function (1c7ac56d8 / @arturi)
+- @uppy/dashboard, @uppy/status-bar: call core methods directly (#3062 / @arturi)
+- @uppy/dashboard: don’t show informer for individual required meta fields errors (#3060 / @arturi)
+- @uppy/dashboard: fileSource string is unused (2b52d9f9a / @arturi)
+- @uppy/dashboard: Fix `editFile` locale usage (#3108 / @Murderlon)
+- @uppy/dashboard: fix metafield form validation (#3113 / @aduh95)
+- @uppy/dashboard: set default trigger: null (#2942 / @arturi)
+- @uppy/dashboard: `showLinkToFileUploadResult: false` by default (#2994 / @arturi)
+- @uppy/form: deprecate multipleResults option (#2996 / @arturi)
+- @uppy/image-editor: Add `croppedCanvasOptions` to image editor `opts` (#3037 / @Murderlon)
+- @uppy/image-editor: fix SASS deprecation warning (#3009 / @aduh95)
+- @uppy/informer: remove dependency to `preact-transition-group` (#3055 / @aduh95)
+- @uppy/locales: Fix locales — point to CDN v1.31.0 (198f23649 / @arturi)
+- @uppy/locales: remove es_GL that was kept for backwards-compat (#2943 / @arturi)
+- @uppy/locales: remove unused strings (@arturi)
+- @uppy/locales: Sync and enhance locale de_DE (#3071 / @paescuj)
+- @uppy/provider-views: Improve checkbox for screenreaders 2 (#2980 / @Murderlon)
+- @uppy/provider-views: Sort Google Drive list by name (#3069 / @Murderlon)
+- @uppy/provider-views: Tweak breadcrump styling (#3030 / @Murderlon)
+- @uppy/robodog: fix types @aduh95 (d9ff0030a)
+- @uppy/store-redux: force `new` keyword (17f71da67 / @aduh95)
+- @uppy/transloadit: fix tests on v16.x (@aduh95)
+- @uppy/transloadit: fix unhandled promise rejections (#2948 / @aduh95)
+- @uppy/transloadit: refactor to use private properties (#3019 / @aduh95)
+- @uppy/transloadit: upgrade `socket.io-client` version (#3065 / @aduh95)
+- @uppy/tus: remove `autoRetry` option (#2938 / @aduh95)
+- @uppy/utils: avoid creating throw-away `<div>` in `isDragDropSupported` (#3080 / @aduh95)
+- @uppy/utils: improve support of data URI in `dataURItoBlob` (#3080 / @aduh95) (0cccb686f)
+- @uppy/utils: refactor `prettyETA` (#3080 / @aduh95)
+- @uppy/utils: refactor `truncateString` (#3080 / @aduh95)
+- @uppy/utils: remove ponyfill for `Array#findIndex` (#3080 / @aduh95)
+- @uppy/utils: resolve remaining linter errors (#3091 / @aduh95)
+- @uppy/utils: simplify `canvasToBlob` (#3080 / @aduh95)
+- @uppy/utils: simplify `getTimeStamp` (#3080 / @aduh95)
+- @uppy/utils: simplify code using optional chaining (#3080 / @aduh95)
+- @uppy/utils: use `Array.from` insterad of custom utils (#3080 / @aduh95)
+- @uppy/utils: use private fields in `EventTracker` (#3080 / @aduh95)
+- @uppy/utils: use private fields in `ProgressTimeout` (#3080 / @aduh95)
+- @uppy/utils: use private fields in `RateLimitedQueue` (#3080 / @aduh95)
+- @uppy/webcam, @uppy/screen-capture: expect built-in support for `MediaDevices` API (#2945 / @aduh95)
+- @uppy/webcam: Fix webcam mirror option (#3074 / @Murderlon) (b7210b137)
+- @uppy/xhr-upload: Call `upload-started` for every file instead of all at once in `xhr-upload` (#3005 / @Murderlon)
+- @uppy/xhr-upload: change default name depending on whether `bundle` is set (#2933 / @aduh95)
+- @uppy/xhr-upload: fix import path (#3080 / @aduh95)
+- @uppy/xhr-upload: use symbol for internal options (#2934 / @aduh95)
+- @uppy/locales: Add new added phrases and some improvment to fa_IR translation file (#3050 / @ghasrfakhri)
+- build: Add `@babel/plugin-proposal-nullish-coalescing-operator` babel plugin (4bbd3b97b / @aduh95)
+- build: add stylelint (#3124 / @arturi) (dbe3ed25b)
+- build: Bootstrap without package-lock files (#3029 / @Murderlon)
+- build: don't run markdown tests in type tests (a4e2da159 / @aduh95)
+- build: don’t run IE tests for 2.0 (e4eb502f2 / @arturi)
+- build: enable linter for TypeScript (#2997 / @aduh95) (5630f7dc0)
+- build: enforce `no-unused-vars` linter rule (#3118 / @aduh95) (ec87b232e)
+- build: fix `package.json` imports to be inlined by Babel (#3047 / @aduh95)
+- build: fix building on Node.js v14.x LTS (#3061 / @aduh95)
+- build: fix legacy bundle (#3112 / @aduh95)
+- build: Fix lint warnings in bin/locale-packs.js (#3028 / @goto-bus-stop)
+- build: harden locale pack check for unused or duplicate key (#3081 / @aduh95)
+- build: lint JS code snippets inside blog posts (#2992 / @aduh95)
+- build: remove `@babel/polyfill` in favor of `core-js@3` (#3025 / @aduh95)
+- build: remove Node.js v10.x, add v16.x (#2932 / @aduh95)
+- build: remove use of `promisify` where possible (#3010 / @aduh95)
+- build: Set node version in `workflows/cdn.yml` to 16.x @Murderlon (35697d18d)
+- build: Stricter linter (#3095 / @aduh95)
+- doc, deps: clean up polyfill inconsistencies (#3020 / @aduh95)
+- doc: lint JS code snippets (#2954 / @aduh95)
+- docs: Fix typo in `docs/companion.md` (3632a55c6 / @Murderlon)
+- docs: use ESM syntax in code snippets (#2953 / @aduh95)
+- Improve a11y of remove button in dashboard (#3088 / @Murderlon)
+- meta: rename master branch to main (08cac3beb / @arturi)
+- meta: Resolve or remove miscellaneous todos (#2967 / @Murderlon)
+- @uppy/companion: Safely escape `<script>` injected code in companion `send-token.js` (#3101 / @mifi) (3059d733f)
+- test: fix end2end test suite (#3008 / @aduh95)
+- test: remove npm warning on Node.js v14.x (1666f8918 / @aduh95)
+- website: Disable box (#3087 / @mifi)
+- website: hide Box from examples for now (0b9092527 / @arturi)
+- website: set background color on root element (#3078 / @aduh95)
+- website: update jquery to latest (c70b9d71b / @arturi)
+- docs: update example to use `i18nInit` (#3122 / @aduh95) (2a93874e3)
+
+### Dependency upgrades
+
+- deps: remove unused `cheerio-select-tmp` @aduh95 (367ec5099 / @aduh95)
+- deps: remove unused `karma-*` @aduh95 (d2a4c9e84 / @aduh95)
+- deps: update `browserify` to v17 @aduh95 (79611cc8d / @aduh95)
+- deps: upgrade eslint plugins @aduh95 (ce5414d3b / @aduh95)
+- deps: upgrade `adm-zip` to v0.5 @aduh95 (0e8ab0d6d / @aduh95)
+- deps: upgrade `typescript` version @aduh95 (d6fb14dfb)
+- deps: upgrade `verdaccio` to v5 @aduh95 (135c64a26)
+- deps: upgrade `tsd` to v0.17 @aduh95 (7f6c3fcc4)
+- deps: update `temp-write` to v5 @aduh95 (d01422937)
+- deps: upgrade `tar` to v6 @aduh95 (2a1512288)
+- deps: upgrade `remark-cli` to v9 @aduh95 (def967d5e)
+- deps: upgrade `pacote` to v11 @aduh95 (431f437d1)
+- deps: upgrade `onchange` to v7 @aduh95 (91f056e9e)
+- deps: upgrade `npm-packlist` to v2 @aduh95 (047261ca8)
+- deps: upgrade `nodemon`to v2 @aduh95 (115fa101f)
+- @uppy/companion: upgrade `helmet` to v4 @aduh95 (7330d21b8)
+- deps: update `lerna` to v4 @aduh95 (469e2e5df)
+- deps: remove `execa` and refactor `update-contributors` script @aduh95 (95a8d871e)
+- deps: update `cssname` to v5 @aduh95 (51af8668f)
+- deps: upgrade `chalk` to v4 @aduh95 (8e2833546)
+- deps: update `autoprefixer` to v10 @aduh95 (0481f5d9b)
+- deps: remove unused `webpack` deps @aduh95 (f251c5705)
+- deps: upgrade `webdriverio` to v7 @aduh95 (96b9e74f7)
+- deps: re-organize React dependencies @aduh95 (f3b90b072)
+- deps: remove `mkdirp` in favor of the built-in `fs.mkdir` @aduh95 (06d5b3e25)
+- deps: remove unused `json3` @aduh95 (811acddfa)
+- deps: upgrade `isomorphic-fetch` @aduh95 (d5d34fd12)
+- deps: upgrade `globby` @aduh95 (0964e9a16)
+- deps: upgrade `fakefile` @aduh95 (b7e939d1d)
+- deps: upgrade `exircist` @aduh95 (51f28ab95)
+- deps: remove `rimraf` in favor of built-in `fs.rm` @aduh95 (e4c53bdad)
+- test: update `jest` to v27 @aduh95 (bbf04e4bd)
+- deps: upgrade `nock` to v13 @aduh95 (38388b175)
+- deps: replace `cuid` with `nanoid` (#3053 / @aduh95)
+- deps: nanoid to 3.1.25 to fix missing commonjs issue (6e8b1d50d / @arturi)
+- deps: Bump tar from 6.1.0 to 6.1.2 (#3070)
+- deps: remove `qs-stringify` from dependencies (#3077 / @aduh95)
+- deps: upgrade create-react-app to 4.0.3 (0760be8cc / @arturi)
+- deps: update Webdriverio packages (#3027 / @aduh95)
+- deps: update `package-lock.json` (4497557a3 / @aduh95)
 
 ## 1.31.0
 
@@ -88,6 +313,14 @@ Released: 2021-07-29
 - docs: Add instagram development notes (#2984 / @mifi)
 - docs: Update CONTRIBUTING.md (#3011 / @aduh95)
 - website: fix linter errors in JS code snippets inside blog posts (#2991 / @aduh95)
+
+## Companion Patch 2.12.2
+
+| Package | Version |
+|-|-|
+| @uppy/companion@2.12.2 | 2.12.2 |
+
+- @uppy/companion: Improve logging (#3103 / @mifi)
 
 ### Patch release
 

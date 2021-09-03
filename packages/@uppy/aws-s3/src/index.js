@@ -124,6 +124,9 @@ module.exports = class AwsS3 extends BasePlugin {
 
     this.opts = { ...defaultOptions, ...opts }
 
+    // TODO: remove i18n once we can depend on XHRUpload instead of MiniXHRUpload
+    this.i18nInit()
+
     this.#client = new RequestClient(uppy, opts)
     this.#requests = new RateLimitedQueue(this.opts.limit)
   }
@@ -269,7 +272,7 @@ module.exports = class AwsS3 extends BasePlugin {
       getResponseError: defaultGetResponseError,
     }
 
-    // Only for MiniXHRUpload, remove once we can depend on XHRUpload directly again
+    // TODO: remove i18n once we can depend on XHRUpload instead of MiniXHRUpload
     xhrOptions.i18n = this.i18n
 
     // Revert to `uppy.use(XHRUpload)` once the big comment block at the top of

@@ -3,18 +3,20 @@ const FileInput = require('@uppy/file-input')
 const XHRUpload = require('@uppy/xhr-upload')
 const ProgressBar = require('@uppy/progress-bar')
 
+document.querySelector('.Uppy').innerHTML = ''
+
 const uppy = new Uppy({ debug: true, autoProceed: true })
 uppy.use(FileInput, {
-  target: '.UppyForm',
+  target: '.Uppy',
 })
 uppy.use(ProgressBar, {
   target: '.UppyProgressBar',
-  hideAfterFinish: false
+  hideAfterFinish: false,
 })
 uppy.use(XHRUpload, {
   endpoint: 'https://xhr-server.herokuapp.com/upload',
   formData: true,
-  fieldName: 'files[]'
+  fieldName: 'files[]',
 })
 
 // And display uploaded files

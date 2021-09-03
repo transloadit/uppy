@@ -117,6 +117,7 @@ module.exports = class XHRUpload extends BasePlugin {
     }
 
     this.opts = { ...defaultOptions, ...opts }
+    this.i18nInit()
 
     this.handleUpload = this.handleUpload.bind(this)
 
