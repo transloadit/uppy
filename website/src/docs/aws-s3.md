@@ -135,71 +135,79 @@ In order to allow Uppy to upload directly to a bucket, at least its CORS permiss
 
 CORS permissions can be found in the [S3 Management Console](https://console.aws.amazon.com/s3/home).
 Click the bucket that will receive the uploads, then go into the "Permissions" tab and select the "CORS configuration" button.
-An XML document will be shown that contains the CORS configuration.
+A JSON document will be shown that contains the CORS configuration. (AWS used to use XML but now only allow JSON). More information about the [S3 CORS format here](https://docs.amazonaws.cn/en_us/AmazonS3/latest/userguide/ManageCorsUsing.html).
 
 It is good practice to use two CORS rules: one for viewing the uploaded files, and one for uploading files.
 
 Depending on which settings were enabled during bucket creation, AWS S3 may have defined a CORS rule that allows public reading already.
 This rule looks like:
 
-```xml
-<CORSRule>
-  <AllowedOrigin>*</AllowedOrigin>
-  <AllowedMethod>GET</AllowedMethod>
-  <MaxAgeSeconds>3000</MaxAgeSeconds>
-</CORSRule>
+```json
+{
+  "AllowedOrigins": ["*"],
+  "AllowedMethods": ["GET"],
+  "MaxAgeSeconds": 3000
+}
 ```
 
 If uploaded files should be publically viewable, but a rule like this is not present, add it.
 
-A different `<CORSRule>` is necessary to allow uploading.
+A different rule is necessary to allow uploading.
 This rule should come _before_ the existing rule, because S3 only uses the first rule that matches the origin of the request.
 
 At minimum, the domain from which the uploads will happen must be whitelisted, and the definitions from the previous rule must be added:
 
-```xml
-<AllowedOrigin>https://my-app.com</AllowedOrigin>
-<AllowedMethod>GET</AllowedMethod>
-<MaxAgeSeconds>3000</MaxAgeSeconds>
+```json
+{
+  "AllowedOrigins": ["https://my-app.com"],
+  "AllowedMethods": ["GET"],
+  "MaxAgeSeconds": 3000
+}
 ```
 
 When using Companion, which generates a POST policy document, the following permissions must be granted:
 
-```xml
-<AllowedMethod>POST</AllowedMethod>
-<AllowedHeader>Authorization</AllowedHeader>
-<AllowedHeader>x-amz-date</AllowedHeader>
-<AllowedHeader>x-amz-content-sha256</AllowedHeader>
-<AllowedHeader>content-type</AllowedHeader>
+```json
+{
+  "AllowedMethods": ["POST"],
+  "AllowedHeaders": [
+    "Authorization",
+    "x-amz-date",
+    "x-amz-content-sha256",
+    "content-type"
+  ]
+}
 ```
 
 When using a presigned upload URL, the following permissions must be granted:
 
-```xml
-<AllowedMethod>PUT</AllowedMethod>
+```json
+{
+  "AllowedMethods": ["PUT"],
+}
 ```
 
-The final configuration should look something like this:
+The final configuration should look something like this (note that it contains two rules in an array `[]`):
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-  <CORSRule>
-    <AllowedOrigin>https://my-app.com</AllowedOrigin>
-    <AllowedMethod>GET</AllowedMethod>
-    <AllowedMethod>POST</AllowedMethod>
-    <MaxAgeSeconds>3000</MaxAgeSeconds>
-    <AllowedHeader>Authorization</AllowedHeader>
-    <AllowedHeader>x-amz-date</AllowedHeader>
-    <AllowedHeader>x-amz-content-sha256</AllowedHeader>
-    <AllowedHeader>content-type</AllowedHeader>
-  </CORSRule>
-  <CORSRule>
-    <AllowedOrigin>*</AllowedOrigin>
-    <AllowedMethod>GET</AllowedMethod>
-    <MaxAgeSeconds>3000</MaxAgeSeconds>
-  </CORSRule>
-</CORSConfiguration>
+```json
+[
+  {
+    "AllowedOrigins": ["https://my-app.com"],
+    "AllowedMethods": ["GET", "POST"],
+    "MaxAgeSeconds": 3000,
+    "AllowedHeaders": [
+      "Authorization",
+      "x-amz-date",
+      "x-amz-content-sha256",
+      "content-type"
+    ]
+  },
+  {
+    "AllowedOrigins": ["*"],
+    "AllowedMethods": ["GET"],
+    "MaxAgeSeconds": 3000
+  }
+]
 ```
 
 Even with these CORS rules in place, you browser might still encounter HTTP status 403 responses with `AccessDenied` in the response body when it tries to `POST` to your bucket. In this case, within the "Permissions" tab of the [S3 Management Console](https://console.aws.amazon.com/s3/home), choose "Public access settings".
@@ -258,7 +266,7 @@ You do not need to configure the region with GCS.
 
 You also need to configure CORS differently. Unlike Amazon, Google does not offer a UI for CORS configurations. Instead, an HTTP API must be used. If you haven't done this already, see [Configuring CORS on a Bucket](https://cloud.google.com/storage/docs/configuring-cors#Configuring-CORS-on-a-Bucket) in the GCS documentation, or follow the steps below to do it using Google's API playground.
 
-GCS has multiple CORS formats, both XML and JSON. Unfortunately, their XML format is different from Amazon's, so we can't simply use the one from the [S3 Bucket configuration](#S3-Bucket-configuration) section. Google appears to favour the JSON format, so we will use that.
+GCS has multiple CORS formats, both XML and JSON. Unfortunately, their formats are different from Amazon's, so we can't simply use the one from the [S3 Bucket configuration](#S3-Bucket-configuration) section. Google appears to favour the JSON format, so we will use that.
 
 #### JSON CORS configuration
 
