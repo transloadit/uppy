@@ -86,10 +86,24 @@ exports.cors = (options = {}) => (req, res, next) => {
   exposeHeadersMap.add('access-control-allow-headers')
   if (options.sendSelfEndpoint) exposeHeadersMap.add('i-am')
 
-  const existingAllowHeaders = res.get('Access-Control-Allow-Headers')
-  const allowHeadersMap = new Set(existingAllowHeaders && existingAllowHeaders.split(',').map(method => method.trim().toLowerCase()))
   // Needed for basic operation: https://github.com/transloadit/uppy/issues/3021
-  allowHeadersMap.add('uppy-auth-token').add('uppy-versions').add('uppy-credentials-params').add('authorization').add('origin').add('content-type').add('accept')
+  const allowedHeaders = [
+    'uppy-auth-token',
+    'uppy-versions',
+    'uppy-credentials-params',
+    'authorization',
+    'origin',
+    'content-type',
+    'accept',
+  ];
+  const existingAllowHeaders = res.get('Access-Control-Allow-Headers');
+  const allowHeadersMap = new Set(existingAllowHeaders ?
+    existingAllowHeaders
+      .split(',')
+      .map((method) => method.trim().toLowerCase())
+      .concat(allowedHeaders)
+    : allowedHeaders
+  );
 
   const existingAllowMethods = res.get('Access-Control-Allow-Methods')
   const allowMethodsMap = new Set(existingAllowMethods && existingAllowMethods.split(',').map(method => method.trim().toUpperCase()))
