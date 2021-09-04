@@ -79,12 +79,16 @@ exports.loadSearchProviderToken = (req, res, next) => {
 }
 
 exports.cors = (options = {}) => (req, res, next) => {
+  // HTTP headers are not case sensitive, and express always handles them in lower case, so that's why we lower case them.
+  // I believe that HTTP verbs are case sensitive, and should be uppercase.
+
   // TODO: Move to optional chaining when we drop Node.js v12.x support
   const existingExposeHeaders = res.get('Access-Control-Expose-Headers')
   const exposeHeadersSet = new Set(existingExposeHeaders && existingExposeHeaders.split(',').map(method => method.trim().toLowerCase()))
+
   // exposed so it can be accessed for our custom uppy client preflight
-  exposeHeadersMap.add('access-control-allow-headers')
-  if (options.sendSelfEndpoint) exposeHeadersMap.add('i-am')
+  exposeHeadersSet.add('access-control-allow-headers')
+  if (options.sendSelfEndpoint) exposeHeadersSet.add('i-am')
 
   // Needed for basic operation: https://github.com/transloadit/uppy/issues/3021
   const allowedHeaders = [
@@ -95,20 +99,19 @@ exports.cors = (options = {}) => (req, res, next) => {
     'origin',
     'content-type',
     'accept',
-  ];
-  const existingAllowHeaders = res.get('Access-Control-Allow-Headers');
-  const allowHeadersMap = new Set(existingAllowHeaders ?
-    existingAllowHeaders
+  ]
+  const existingAllowHeaders = res.get('Access-Control-Allow-Headers')
+  const allowHeadersSet = new Set(existingAllowHeaders
+    ? existingAllowHeaders
       .split(',')
       .map((method) => method.trim().toLowerCase())
       .concat(allowedHeaders)
-    : allowedHeaders
-  );
+    : allowedHeaders)
 
   const existingAllowMethods = res.get('Access-Control-Allow-Methods')
-  const allowMethodsMap = new Set(existingAllowMethods && existingAllowMethods.split(',').map(method => method.trim().toUpperCase()))
+  const allowMethodsSet = new Set(existingAllowMethods && existingAllowMethods.split(',').map(method => method.trim().toUpperCase()))
   // Needed for basic operation:
-  allowMethodsMap.add('GET').add('POST').add('OPTIONS').add('DELETE')
+  allowMethodsSet.add('GET').add('POST').add('OPTIONS').add('DELETE')
 
   // If endpoint urls are specified, then we only allow those endpoints.
   // Otherwise, we allow any client url to access companion.
@@ -121,9 +124,9 @@ exports.cors = (options = {}) => (req, res, next) => {
   return cors({
     credentials: true,
     origin,
-    methods: Array.from(allowMethodsMap),
-    allowedHeaders: Array.from(allowHeadersMap).join(','),
-    exposedHeaders: Array.from(exposeHeadersMap).join(','),
+    methods: Array.from(allowMethodsSet),
+    allowedHeaders: Array.from(allowHeadersSet).join(','),
+    exposedHeaders: Array.from(exposeHeadersSet).join(','),
   })(req, res, next)
 }
 
