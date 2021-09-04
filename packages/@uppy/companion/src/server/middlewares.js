@@ -81,7 +81,7 @@ exports.loadSearchProviderToken = (req, res, next) => {
 exports.cors = (options = {}) => (req, res, next) => {
   // TODO: Move to optional chaining when we drop Node.js v12.x support
   const existingExposeHeaders = res.get('Access-Control-Expose-Headers')
-  const exposeHeadersMap = new Set(existingExposeHeaders && existingExposeHeaders.split(',').map(method => method.trim().toLowerCase()))
+  const exposeHeadersSet = new Set(existingExposeHeaders && existingExposeHeaders.split(',').map(method => method.trim().toLowerCase()))
   // exposed so it can be accessed for our custom uppy client preflight
   exposeHeadersMap.add('access-control-allow-headers')
   if (options.sendSelfEndpoint) exposeHeadersMap.add('i-am')
