@@ -115,4 +115,56 @@ describe('uploader with tus protocol', () => {
       })
     })
   })
+
+  test('uploader respects maxFileSize', async () => {
+    const opts = {
+      endpoint: 'http://url.myendpoint.com/files',
+      companionOptions: { ...companionOptions, maxFileSize: 100 },
+      size: 101,
+    }
+
+    const uploader = new Uploader(opts)
+    expect(uploader.hasError()).toBe(true)
+  })
+
+  test('uploader respects maxFileSize correctly', async () => {
+    const opts = {
+      endpoint: 'http://url.myendpoint.com/files',
+      companionOptions: { ...companionOptions, maxFileSize: 100 },
+      size: 99,
+    }
+
+    const uploader = new Uploader(opts)
+    expect(uploader.hasError()).toBe(false)
+  })
+
+  test('uploader respects maxFileSize with unknown size', async () => {
+    const fileContent = Buffer.alloc(10000)
+    const stream = intoStream(fileContent)
+    const opts = {
+      companionOptions: { ...companionOptions, maxFileSize: 1000 },
+      endpoint: 'http://url.myendpoint.com/files',
+      protocol: 'tus',
+      size: null,
+      pathPrefix: companionOptions.filePath,
+    }
+
+    const uploader = new Uploader(opts)
+    const uploadToken = uploader.token
+    expect(uploader.hasError()).toBe(false)
+
+    return new Promise((resolve, reject) => {
+      // validate that the test is resolved on socket connection
+      uploader.awaitReady().then(uploader.uploadStream(stream))
+      socketClient.connect(uploadToken)
+      socketClient.onUploadError(uploadToken, (message) => {
+        try {
+          expect(message).toMatchObject({ payload: { error: { message: 'maxFileSize exceeded' } } })
+          resolve()
+        } catch (err) {
+          reject(err)
+        }
+      })
+    })
+  })
 })

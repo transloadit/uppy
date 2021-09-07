@@ -36,6 +36,10 @@ const PROTOCOLS = Object.freeze({
   tus: 'tus',
 })
 
+function exceedsMaxFileSize (maxFileSize, size) {
+  return maxFileSize && size && size > maxFileSize
+}
+
 class AbortError extends Error {}
 
 class Uploader {
@@ -112,9 +116,13 @@ class Uploader {
         const shouldTerminate = !!this.tus.url
         this.tus.abort(shouldTerminate).catch(() => {})
       }
-      this.uploadStopped = true
-      if (this.readStream) this.readStream.destroy(new AbortError())
+      this.abortReadStream(new AbortError())
     })
+  }
+
+  abortReadStream (err) {
+    this.uploadStopped = true
+    if (this.readStream) this.readStream.destroy(err)
   }
 
   async _uploadByProtocol () {
@@ -137,11 +145,11 @@ class Uploader {
     this.tmpPath = join(this.options.pathPrefix, this.uploadFileName)
 
     logger.debug('fully downloading file', 'uploader.download', this.shortToken)
-    // TODO limit to 10MB? (which is max for google drive and zoom export)
     const writeStream = createWriteStream(this.tmpPath)
 
     const onData = (chunk) => {
       this.downloadedBytes += chunk.length
+      if (exceedsMaxFileSize(this.options.companionOptions.maxFileSize, this.downloadedBytes)) this.abortReadStream(new Error('maxFileSize exceeded'))
       this.onProgress(0, undefined)
     }
 
@@ -256,6 +264,11 @@ class Uploader {
         this._errRespMessage = 'unsupported HTTP METHOD specified'
         return false
       }
+    }
+
+    if (exceedsMaxFileSize(options.companionOptions.maxFileSize, options.size)) {
+      this._errRespMessage = 'maxFileSize exceeded'
+      return false
     }
 
     // validate fieldname

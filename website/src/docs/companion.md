@@ -241,6 +241,9 @@ export COMPANION_UPLOAD_URLS="http://tusd.tusdemo.net/files/,https://tusd.tusdem
 
 # corresponds to the streamingUpload option
 export COMPANION_STREAMING_UPLOAD=true
+
+# corresponds to the maxFileSize option
+export COMPANION_MAX_FILE_SIZE="100000000"
 ```
 
 See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example.sh) for an example configuration script.
@@ -292,6 +295,7 @@ const options = {
   debug: true,
   metrics: false,
   streamingUpload: true,
+  maxFileSize: 100000000,
 }
 ```
 
@@ -329,6 +333,8 @@ const options = {
 13. **metrics(optional)** - A boolean flag to tell Companion whether or not to provide an endpoint `/metrics` with Prometheus metrics.
 
 14. **streamingUpload(optional)** - A boolean flag to tell Companion whether or not to enable streaming uploads. If enabled, it will lead to **faster uploads* because companion will start uploading at the same time as downloading using `stream.pipe`. If `false`, files will be fully downloaded first, then uploaded. Defaults to `false`.
+
+15. **maxFileSize(optional)** - If this value is set, companion will limit the maximum file size to process. If unset, it will process files without any size limit (this is the default).
 
 ### Provider Redirect URIs
 
