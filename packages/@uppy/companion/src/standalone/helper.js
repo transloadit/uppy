@@ -102,6 +102,7 @@ const getConfigFromEnv = () => {
     // cookieDomain is kind of a hack to support distributed systems. This should be improved but we never got so far.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
     multipleInstances: true,
+    streamingUpload: process.env.COMPANION_STREAMING_UPLOAD === 'true',
   }
 }
 

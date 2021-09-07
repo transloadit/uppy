@@ -36,7 +36,7 @@ Install from NPM:
 npm install @uppy/companion
 ```
 
-If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@2.x`.
+If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `npm install -g @uppy/companion`.
 
 ### Prerequisite
 
@@ -48,7 +48,7 @@ Unfortunately, Windows is not a supported platform right now. It may work, and w
 
 Companion may either be used as a pluggable express app, which you plug into your already existing server, or it may simply be run as a standalone server:
 
-### Plugging into an already existing server
+### Plugging into an existing express server
 
 To plug Companion into an existing server, call its `.app` method, passing in an [options](#Options) object as a parameter. This returns a server instance that you can mount on a subpath in your Express or app.
 
@@ -238,6 +238,9 @@ export COMPANION_SELF_ENDPOINT="THIS SHOULD BE SAME AS YOUR DOMAIN + PATH"
 # comma-separated URLs
 # corresponds to the uploadUrls option
 export COMPANION_UPLOAD_URLS="http://tusd.tusdemo.net/files/,https://tusd.tusdemo.net/files/"
+
+# corresponds to the streamingUpload option
+export COMPANION_STREAMING_UPLOAD=true
 ```
 
 See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example.sh) for an example configuration script.
@@ -288,6 +291,7 @@ const options = {
   uploadUrls: ['https://myuploadurl.com', 'http://myuploadurl2.com'],
   debug: true,
   metrics: false,
+  streamingUpload: true,
 }
 ```
 
@@ -323,6 +327,8 @@ const options = {
 12. **logClientVersion(optional)** - A boolean flag to tell Companion whether or not to log its version upon startup.
 
 13. **metrics(optional)** - A boolean flag to tell Companion whether or not to provide an endpoint `/metrics` with Prometheus metrics.
+
+14. **streamingUpload(optional)** - A boolean flag to tell Companion whether or not to enable streaming uploads. If enabled, it will lead to **faster uploads* because companion will start uploading at the same time as downloading using `stream.pipe`. If `false`, files will be fully downloaded first, then uploaded. Defaults to `false`.
 
 ### Provider Redirect URIs
 

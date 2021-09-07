@@ -72,17 +72,18 @@ class Uploader {
     this.token = uuid.v4()
     this.options.metadata = this.options.metadata || {}
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
-    this.uploadSize = options.size
+    this.size = options.size
     this.uploadFileName = this.options.metadata.name
       ? this.options.metadata.name.substring(0, MAX_FILENAME_LENGTH)
       : `${Uploader.FILE_NAME_PREFIX}-${this.token}`
 
     this.uploadStopped = false
 
-    /** @type {number} */
-    this.emittedProgress = 0
+    this.emittedProgress = {}
     this.storage = options.storage
     this._paused = false
+
+    this.downloadedBytes = 0
 
     this.readStream = null
 
@@ -132,23 +133,33 @@ class Uploader {
     }
   }
 
-  // Some streams need to be downloaded entirely first, because we don't know their size from the provider
-  // This is true for zoom and drive (exported files) or some URL downloads.
-  // The stream will then typically come from a "Transfer-Encoding: chunked" response
-  async _prepareUnknownLengthStream (stream) {
+  async _downloadStreamAsFile (stream) {
     this.tmpPath = join(this.options.pathPrefix, this.uploadFileName)
 
     logger.debug('fully downloading file', 'uploader.download', this.shortToken)
     // TODO limit to 10MB? (which is max for google drive and zoom export)
-    // TODO progress? Maybe OK with no progress because files are small
     const writeStream = createWriteStream(this.tmpPath)
-    await pipeline(stream, writeStream)
-    logger.debug('fully downloaded file', 'uploader.download', this.shortToken)
-    const { size } = await stat(this.tmpPath)
-    this.uploadSize = size
 
-    const readStream = createReadStream(this.tmpPath)
-    this.readStream = readStream
+    const onData = (chunk) => {
+      this.downloadedBytes += chunk.length
+      this.onProgress(0, undefined)
+    }
+
+    stream.on('data', onData)
+
+    await pipeline(stream, writeStream)
+    logger.debug('finished fully downloading file', 'uploader.download', this.shortToken)
+
+    const { size } = await stat(this.tmpPath)
+
+    this.size = size
+
+    const fileStream = createReadStream(this.tmpPath)
+    this.readStream = fileStream
+  }
+
+  _needDownloadFirst () {
+    return !this.options.size || !this.options.companionOptions.streamingUpload
   }
 
   /**
@@ -161,9 +172,12 @@ class Uploader {
       if (this.readStream) throw new Error('Already uploading')
 
       this.readStream = stream
-      if (!this.uploadSize) {
-        logger.debug('unable to determine file size, need to download the whole file first', 'controller.get.provider.size', this.shortToken)
-        await this._prepareUnknownLengthStream(this.readStream)
+      if (this._needDownloadFirst()) {
+        logger.debug('need to download the whole file first', 'controller.get.provider.size', this.shortToken)
+        // Some streams need to be downloaded entirely first, because we don't know their size from the provider
+        // This is true for zoom and drive (exported files) or some URL downloads.
+        // The stream will then typically come from a "Transfer-Encoding: chunked" response
+        await this._downloadStreamAsFile(this.readStream)
       }
       if (this.uploadStopped) return
 
@@ -356,13 +370,23 @@ class Uploader {
    * @param {number | null} bytesTotalIn
    */
   onProgress (bytesUploaded, bytesTotalIn) {
-    const bytesTotal = bytesTotalIn || this.uploadSize
+    const bytesTotal = bytesTotalIn || this.size || 0
 
-    const percentage = Math.min(Math.max(0, ((bytesUploaded / bytesTotal) * 100)), 100)
-    const formatPercentage = percentage.toFixed(2)
+    // If fully downloading before uploading, combine downloaded and uploaded bytes
+    // This will make sure that the user sees half of the progress before upload starts (while downloading)
+    let combinedBytes = bytesUploaded
+    if (this._needDownloadFirst()) {
+      combinedBytes = Math.floor((combinedBytes + (this.downloadedBytes || 0)) / 2)
+    }
+
+    // Prevent divide by zero
+    let percentage = 0
+    if (bytesTotal > 0) percentage = Math.min(Math.max(0, ((combinedBytes / bytesTotal) * 100)), 100)
+
+    const formattedPercentage = percentage.toFixed(2)
     logger.debug(
-      `${bytesUploaded} ${bytesTotal} ${formatPercentage}%`,
-      'uploader.upload.progress',
+      `${combinedBytes} ${bytesTotal} ${formattedPercentage}%`,
+      'uploader.total.progress',
       this.shortToken
     )
 
@@ -370,16 +394,20 @@ class Uploader {
       return
     }
 
+    const payload = { progress: formattedPercentage, bytesUploaded: combinedBytes, bytesTotal }
     const dataToEmit = {
       action: 'progress',
-      payload: { progress: formatPercentage, bytesUploaded, bytesTotal },
+      payload,
     }
     this.saveState(dataToEmit)
 
+    const isEqual = (p1, p2) => (p1.progress === p2.progress
+      && p1.bytesUploaded === p2.bytesUploaded
+      && p1.bytesTotal === p2.bytesTotal)
+
     // avoid flooding the client with progress events.
-    const roundedPercentage = Math.floor(percentage)
-    if (this.emittedProgress !== roundedPercentage) {
-      this.emittedProgress = roundedPercentage
+    if (!isEqual(this.emittedProgress, payload)) {
+      this.emittedProgress = payload
       emitter().emit(this.token, dataToEmit)
     }
   }
@@ -427,7 +455,7 @@ class Uploader {
         uploadUrl: this.options.uploadUrl,
         uploadLengthDeferred: false,
         retryDelays: [0, 1000, 3000, 5000],
-        uploadSize: this.uploadSize,
+        uploadSize: this.size,
         chunkSize: this.options.chunkSize || 50e6,
         headers: headerSanitize(this.options.headers),
         addRequestId: true,
@@ -499,12 +527,12 @@ class Uploader {
           options: {
             filename: this.uploadFileName,
             contentType: this.options.metadata.type,
-            knownLength: this.uploadSize,
+            knownLength: this.size,
           },
         },
       }
     } else {
-      reqOptions.headers['content-length'] = this.uploadSize
+      reqOptions.headers['content-length'] = this.size
       reqOptions.body = stream
     }
 
@@ -539,8 +567,8 @@ class Uploader {
       throw err
     }
 
-    if (bytesUploaded !== this.uploadSize) {
-      const errMsg = `uploaded only ${bytesUploaded} of ${this.uploadSize} with status: ${response.statusCode}`
+    if (bytesUploaded !== this.size) {
+      const errMsg = `uploaded only ${bytesUploaded} of ${this.size} with status: ${response.statusCode}`
       logger.error(errMsg, 'upload.multipart.mismatch.error')
       throw new Error(errMsg)
     }

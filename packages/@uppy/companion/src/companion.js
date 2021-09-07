@@ -39,6 +39,7 @@ const defaultOptions = {
   },
   debug: true,
   logClientVersion: true,
+  streamingUpload: false,
 }
 
 // make the errors available publicly for custom providers

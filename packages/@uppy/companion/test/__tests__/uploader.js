@@ -92,12 +92,14 @@ describe('uploader with tus protocol', () => {
       socketClient.onProgress(uploadToken, (message) => {
         // validate that the file has been downloaded and saved into the file path
         try {
-          const fileInfo = fs.statSync(uploader.tmpPath)
-          expect(fileInfo.isFile()).toBe(true)
-          expect(fileInfo.size).toBe(fileContent.length)
-
           progressReceived = message.payload.bytesUploaded
-          expect(message.payload.bytesTotal).toBe(fileContent.length)
+
+          if (progressReceived === fileContent.length) {
+            const fileInfo = fs.statSync(uploader.tmpPath)
+            expect(fileInfo.isFile()).toBe(true)
+            expect(fileInfo.size).toBe(fileContent.length)
+            expect(message.payload.bytesTotal).toBe(fileContent.length)
+          }
         } catch (err) {
           reject(err)
         }
