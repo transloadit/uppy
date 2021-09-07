@@ -60,34 +60,80 @@ function StatusBar (props) {
     totalUploadedSize,
   } = props
 
-  let progressValue = totalProgress
-  let progressMode
+  function getProgressValue () {
+    switch (uploadState) {
+      case STATE_POSTPROCESSING:
+      case STATE_PREPROCESSING: {
+        const progress = calculateProcessingProgress(files)
 
-  if (
-    uploadState === STATE_PREPROCESSING
-    || uploadState === STATE_POSTPROCESSING
-  ) {
-    const progress = calculateProcessingProgress(files)
-    progressMode = progress.mode
-    if (progressMode === 'determinate') {
-      progressValue = progress.value * 100
+        if (progress.mode === 'determinate') {
+          return progress.value * 100
+        }
+        return totalProgress
+      }
+      case STATE_ERROR: {
+        return null
+      }
+      case STATE_UPLOADING: {
+        if (!supportsUploadProgress) {
+          return null
+        }
+        return totalProgress
+      }
+      default:
+        return totalProgress
     }
-  } else if (uploadState === STATE_UPLOADING) {
-    if (!supportsUploadProgress) {
-      progressMode = 'indeterminate'
-      progressValue = null
-    }
-  } else if (uploadState === STATE_ERROR) {
-    progressValue = undefined
   }
 
-  const width = typeof progressValue === 'number' ? progressValue : 100
-  let isHidden
-    = (uploadState === STATE_WAITING && hideUploadButton)
-    || (uploadState === STATE_WAITING && !newFiles > 0)
-    || (uploadState === STATE_COMPLETE && hideAfterFinish)
+  function getIsIndeterminate () {
+    switch (uploadState) {
+      case STATE_POSTPROCESSING:
+      case STATE_PREPROCESSING: {
+        const { mode } = calculateProcessingProgress(files)
+        return mode === 'indeterminate'
+      }
+      case STATE_UPLOADING: {
+        if (!supportsUploadProgress) {
+          return true
+        }
+        return false
+      }
+      default:
+        return false
+    }
+  }
 
-  let showUploadBtn
+  function getIsHidden () {
+    if (recoveredState) {
+      return false
+    }
+
+    switch (uploadState) {
+      case STATE_WAITING:
+        if (hideUploadButton) {
+          return true
+        }
+        if (!newFiles > 0) {
+          return true
+        }
+        return false
+      case STATE_COMPLETE:
+        if (hideAfterFinish) {
+          return true
+        }
+        return false
+      default:
+        return false
+    }
+  }
+
+  const progressValue = getProgressValue()
+
+  const isHidden = getIsHidden()
+
+  const width = progressValue || 100
+
+  const showUploadBtn
     = !error
     && newFiles
     && !isUploadInProgress
@@ -95,15 +141,11 @@ function StatusBar (props) {
     && allowNewUpload
     && !hideUploadButton
 
-  if (recoveredState) {
-    isHidden = false
-    showUploadBtn = true
-  }
-
   const showCancelBtn
     = !hideCancelButton
     && uploadState !== STATE_WAITING
     && uploadState !== STATE_COMPLETE
+
   const showPauseResumeBtn
     = resumableUploads
     && !hidePauseResumeButton
@@ -111,11 +153,11 @@ function StatusBar (props) {
 
   const showRetryBtn = error && !hideRetryButton
 
-  const showDoneBtn
-    = doneButtonHandler && uploadState === STATE_COMPLETE
+  const showDoneBtn = doneButtonHandler && uploadState === STATE_COMPLETE
 
-  const progressClassNames = `uppy-StatusBar-progress
-                           ${progressMode ? `is-${progressMode}` : ''}`
+  const progressClassNames = classNames('uppy-StatusBar-progress', {
+    'is-indeterminate': getIsIndeterminate(),
+  })
 
   const statusBarClassNames = classNames(
     { 'uppy-Root': isTargetDOMEl },
@@ -141,7 +183,11 @@ function StatusBar (props) {
         switch (uploadState) {
           case STATE_PREPROCESSING:
           case STATE_POSTPROCESSING:
-            return <ProgressBarProcessing progress={calculateProcessingProgress(files)} />
+            return (
+              <ProgressBarProcessing
+                progress={calculateProcessingProgress(files)}
+              />
+            )
           case STATE_COMPLETE:
             return <ProgressBarComplete i18n={i18n} />
           case STATE_ERROR:
@@ -171,7 +217,7 @@ function StatusBar (props) {
       })()}
 
       <div className="uppy-StatusBar-actions">
-        {showUploadBtn ? (
+        {(recoveredState || showUploadBtn) ? (
           <UploadBtn
             newFiles={newFiles}
             isUploadStarted={isUploadStarted}
