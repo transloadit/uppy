@@ -188,7 +188,7 @@ module.exports = class StatusBar extends UIPlugin {
       totalProgress,
       totalSize,
       totalUploadedSize,
-      isAllComplete,
+      isAllComplete: false,
       isAllPaused,
       isAllErrored,
       isUploadStarted,
