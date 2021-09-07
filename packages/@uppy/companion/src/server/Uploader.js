@@ -286,13 +286,29 @@ class Uploader {
     // s3 uploads don't require upload destination
     // validation, because the destination is determined
     // by the server's s3 config
-    if (options.protocol === PROTOCOLS.s3Multipart) {
-      return true
-    }
+    if (options.protocol !== PROTOCOLS.s3Multipart) {
+      if (!options.endpoint && !options.uploadUrl) {
+        this._errRespMessage = 'no destination specified'
+        return false
+      }
 
-    if (!options.endpoint && !options.uploadUrl) {
-      this._errRespMessage = 'no destination specified'
-      return false
+      const validateUrl = (url) => {
+        const validatorOpts = { require_protocol: true, require_tld: !options.companionOptions.debug }
+        if (url && !validator.isURL(url, validatorOpts)) {
+          this._errRespMessage = 'invalid destination url'
+          return false
+        }
+
+        const allowedUrls = options.companionOptions.uploadUrls
+        if (allowedUrls && url && !hasMatch(url, allowedUrls)) {
+          this._errRespMessage = 'upload destination does not match any allowed destinations'
+          return false
+        }
+
+        return true
+      }
+
+      if (![options.endpoint, options.uploadUrl].every(validateUrl)) return false
     }
 
     if (options.chunkSize != null && typeof options.chunkSize !== 'number') {
@@ -300,21 +316,7 @@ class Uploader {
       return false
     }
 
-    const validatorOpts = { require_protocol: true, require_tld: !options.companionOptions.debug }
-    return [options.endpoint, options.uploadUrl].every((url) => {
-      if (url && !validator.isURL(url, validatorOpts)) {
-        this._errRespMessage = 'invalid destination url'
-        return false
-      }
-
-      const allowedUrls = options.companionOptions.uploadUrls
-      if (allowedUrls && url && !hasMatch(url, allowedUrls)) {
-        this._errRespMessage = 'upload destination does not match any allowed destinations'
-        return false
-      }
-
-      return true
-    })
+    return true
   }
 
   hasError () {
