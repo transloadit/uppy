@@ -15,6 +15,15 @@ const {
   ProgressBarComplete,
 } = require('./Components')
 
+const {
+  STATE_ERROR,
+  STATE_WAITING,
+  STATE_PREPROCESSING,
+  STATE_UPLOADING,
+  STATE_POSTPROCESSING,
+  STATE_COMPLETE,
+} = statusBarStates
+
 module.exports = StatusBar
 
 function StatusBar (props) {
@@ -43,42 +52,40 @@ function StatusBar (props) {
     startUpload,
     uppy,
     isAllComplete,
+    showProgressDetails,
+    numUploads,
+    complete,
+    totalSize,
+    totalETA,
+    totalUploadedSize,
   } = props
 
   let progressValue = totalProgress
   let progressMode
-  let progressBarContent
 
   if (
-    uploadState === statusBarStates.STATE_PREPROCESSING
-    || uploadState === statusBarStates.STATE_POSTPROCESSING
+    uploadState === STATE_PREPROCESSING
+    || uploadState === STATE_POSTPROCESSING
   ) {
     const progress = calculateProcessingProgress(files)
     progressMode = progress.mode
     if (progressMode === 'determinate') {
       progressValue = progress.value * 100
     }
-
-    progressBarContent = ProgressBarProcessing(progress)
-  } else if (uploadState === statusBarStates.STATE_COMPLETE) {
-    progressBarContent = ProgressBarComplete(props)
-  } else if (uploadState === statusBarStates.STATE_UPLOADING) {
+  } else if (uploadState === STATE_UPLOADING) {
     if (!supportsUploadProgress) {
       progressMode = 'indeterminate'
       progressValue = null
     }
-
-    progressBarContent = ProgressBarUploading(props)
-  } else if (uploadState === statusBarStates.STATE_ERROR) {
+  } else if (uploadState === STATE_ERROR) {
     progressValue = undefined
-    progressBarContent = ProgressBarError(props)
   }
 
   const width = typeof progressValue === 'number' ? progressValue : 100
   let isHidden
-    = (uploadState === statusBarStates.STATE_WAITING && hideUploadButton)
-    || (uploadState === statusBarStates.STATE_WAITING && !newFiles > 0)
-    || (uploadState === statusBarStates.STATE_COMPLETE && hideAfterFinish)
+    = (uploadState === STATE_WAITING && hideUploadButton)
+    || (uploadState === STATE_WAITING && !newFiles > 0)
+    || (uploadState === STATE_COMPLETE && hideAfterFinish)
 
   let showUploadBtn
     = !error
@@ -95,17 +102,17 @@ function StatusBar (props) {
 
   const showCancelBtn
     = !hideCancelButton
-    && uploadState !== statusBarStates.STATE_WAITING
-    && uploadState !== statusBarStates.STATE_COMPLETE
+    && uploadState !== STATE_WAITING
+    && uploadState !== STATE_COMPLETE
   const showPauseResumeBtn
     = resumableUploads
     && !hidePauseResumeButton
-    && uploadState === statusBarStates.STATE_UPLOADING
+    && uploadState === STATE_UPLOADING
 
   const showRetryBtn = error && !hideRetryButton
 
   const showDoneBtn
-    = doneButtonHandler && uploadState === statusBarStates.STATE_COMPLETE
+    = doneButtonHandler && uploadState === STATE_COMPLETE
 
   const progressClassNames = `uppy-StatusBar-progress
                            ${progressMode ? `is-${progressMode}` : ''}`
@@ -130,7 +137,38 @@ function StatusBar (props) {
         aria-valuenow={progressValue}
       />
 
-      {progressBarContent}
+      {(() => {
+        switch (uploadState) {
+          case STATE_PREPROCESSING:
+          case STATE_POSTPROCESSING:
+            return <ProgressBarProcessing progress={calculateProcessingProgress(files)} />
+          case STATE_COMPLETE:
+            return <ProgressBarComplete i18n={i18n} />
+          case STATE_ERROR:
+            return <ProgressBarError error={error} i18n={i18n} />
+          case STATE_UPLOADING:
+            return (
+              <ProgressBarUploading
+                i18n={i18n}
+                supportsUploadProgress={supportsUploadProgress}
+                totalProgress={totalProgress}
+                showProgressDetails={showProgressDetails}
+                isUploadStarted={isUploadStarted}
+                isAllComplete={isAllComplete}
+                isAllPaused={isAllPaused}
+                newFiles={newFiles}
+                numUploads={numUploads}
+                complete={complete}
+                totalUploadedSize={totalUploadedSize}
+                totalSize={totalSize}
+                totalETA={totalETA}
+                startUpload={startUpload}
+              />
+            )
+          default:
+            return null
+        }
+      })()}
 
       <div className="uppy-StatusBar-actions">
         {showUploadBtn ? (
@@ -159,7 +197,9 @@ function StatusBar (props) {
 
         {showCancelBtn ? <CancelBtn i18n={i18n} uppy={uppy} /> : null}
 
-        {showDoneBtn ? <DoneBtn i18n={i18n} doneButtonHandler={doneButtonHandler} /> : null}
+        {showDoneBtn ? (
+          <DoneBtn i18n={i18n} doneButtonHandler={doneButtonHandler} />
+        ) : null}
       </div>
     </div>
   )
