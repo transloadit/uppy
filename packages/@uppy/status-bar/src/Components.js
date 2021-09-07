@@ -23,29 +23,39 @@ module.exports = {
 }
 
 function UploadBtn (props) {
+  const {
+    newFiles,
+    isUploadStarted,
+    recoveredState,
+    i18n,
+    uploadState,
+    isSomeGhost,
+    startUpload,
+  } = props
+
   const uploadBtnClassNames = classNames(
     'uppy-u-reset',
     'uppy-c-btn',
     'uppy-StatusBar-actionBtn',
     'uppy-StatusBar-actionBtn--upload',
     {
-      'uppy-c-btn-primary': props.uploadState === statusBarStates.STATE_WAITING,
+      'uppy-c-btn-primary': uploadState === statusBarStates.STATE_WAITING,
     },
-    { 'uppy-StatusBar-actionBtn--disabled': props.isSomeGhost }
+    { 'uppy-StatusBar-actionBtn--disabled': isSomeGhost }
   )
 
   const uploadBtnText
-    = props.newFiles && props.isUploadStarted && !props.recoveredState
-      ? props.i18n('uploadXNewFiles', { smart_count: props.newFiles })
-      : props.i18n('uploadXFiles', { smart_count: props.newFiles })
+    = newFiles && isUploadStarted && !recoveredState
+      ? i18n('uploadXNewFiles', { smart_count: newFiles })
+      : i18n('uploadXFiles', { smart_count: newFiles })
 
   return (
     <button
       type="button"
       className={uploadBtnClassNames}
-      aria-label={props.i18n('uploadXFiles', { smart_count: props.newFiles })}
-      onClick={props.startUpload}
-      disabled={props.isSomeGhost}
+      aria-label={i18n('uploadXFiles', { smart_count: newFiles })}
+      onClick={startUpload}
+      disabled={isSomeGhost}
       data-uppy-super-focusable
     >
       {uploadBtnText}
@@ -54,12 +64,14 @@ function UploadBtn (props) {
 }
 
 function RetryBtn (props) {
+  const { i18n, uppy } = props
+
   return (
     <button
       type="button"
       className="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--retry"
-      aria-label={props.i18n('retryUpload')}
-      onClick={() => props.uppy.retryAll()}
+      aria-label={i18n('retryUpload')}
+      onClick={() => uppy.retryAll()}
       data-uppy-super-focusable
     >
       <svg
@@ -72,19 +84,21 @@ function RetryBtn (props) {
       >
         <path d="M4 2.408a2.75 2.75 0 1 0 2.75 2.75.626.626 0 0 1 1.25.018v.023a4 4 0 1 1-4-4.041V.25a.25.25 0 0 1 .389-.208l2.299 1.533a.25.25 0 0 1 0 .416l-2.3 1.533A.25.25 0 0 1 4 3.316v-.908z" />
       </svg>
-      {props.i18n('retry')}
+      {i18n('retry')}
     </button>
   )
 }
 
 function CancelBtn (props) {
+  const { i18n, uppy } = props
+
   return (
     <button
       type="button"
       className="uppy-u-reset uppy-StatusBar-actionCircleBtn"
-      title={props.i18n('cancel')}
-      aria-label={props.i18n('cancel')}
-      onClick={() => props.uppy.cancelAll()}
+      title={i18n('cancel')}
+      aria-label={i18n('cancel')}
+      onClick={() => uppy.cancelAll()}
       data-uppy-super-focusable
     >
       <svg
@@ -108,21 +122,21 @@ function CancelBtn (props) {
 }
 
 function PauseResumeButton (props) {
-  const { isAllPaused, i18n } = props
+  const { isAllPaused, i18n, isAllComplete, resumableUploads, uppy } = props
   const title = isAllPaused ? i18n('resume') : i18n('pause')
 
   function togglePauseResume () {
-    if (props.isAllComplete) return null
+    if (isAllComplete) return null
 
-    if (!props.resumableUploads) {
-      return props.uppy.cancelAll()
+    if (!resumableUploads) {
+      return uppy.cancelAll()
     }
 
-    if (props.isAllPaused) {
-      return props.uppy.resumeAll()
+    if (isAllPaused) {
+      return uppy.resumeAll()
     }
 
-    return props.uppy.pauseAll()
+    return uppy.pauseAll()
   }
 
   return (
@@ -131,7 +145,7 @@ function PauseResumeButton (props) {
       aria-label={title}
       className="uppy-u-reset uppy-StatusBar-actionCircleBtn"
       type="button"
-      onClick={() => togglePauseResume(props)}
+      onClick={togglePauseResume}
       data-uppy-super-focusable
     >
       {isAllPaused ? (
@@ -168,12 +182,13 @@ function PauseResumeButton (props) {
 }
 
 function DoneBtn (props) {
-  const { i18n } = props
+  const { i18n, doneButtonHandler } = props
+
   return (
     <button
       type="button"
       className="uppy-u-reset uppy-c-btn uppy-StatusBar-actionBtn uppy-StatusBar-actionBtn--done"
-      onClick={props.doneButtonHandler}
+      onClick={doneButtonHandler}
       data-uppy-super-focusable
     >
       {i18n('done')}
@@ -199,26 +214,36 @@ function LoadingSpinner () {
 }
 
 function ProgressBarProcessing (props) {
-  const value = Math.round(props.value * 100)
+  const { value, mode, message } = props
+  const roundedValue = Math.round(value * 100)
 
   return (
     <div className="uppy-StatusBar-content">
       <LoadingSpinner />
-      {props.mode === 'determinate' ? `${value}% \u00B7 ` : ''}
-      {props.message}
+      {mode === 'determinate' ? `${roundedValue}% \u00B7 ` : ''}
+      {message}
     </div>
   )
 }
 
 function ProgressDetails (props) {
-  const ifShowFilesUploadedOfTotal = props.numUploads > 1
+  const {
+    numUploads,
+    complete,
+    totalUploadedSize,
+    totalSize,
+    totalETA,
+    i18n,
+  } = props
+
+  const ifShowFilesUploadedOfTotal = numUploads > 1
 
   return (
     <div className="uppy-StatusBar-statusSecondary">
       {ifShowFilesUploadedOfTotal
-        && props.i18n('filesUploadedOfTotal', {
-          complete: props.complete,
-          smart_count: props.numUploads,
+        && i18n('filesUploadedOfTotal', {
+          complete,
+          smart_count: numUploads,
         })}
       <span className="uppy-StatusBar-additionalInfo">
         {/* When should we render this dot?
@@ -227,15 +252,15 @@ function ProgressDetails (props) {
         */}
         {ifShowFilesUploadedOfTotal && renderDot()}
 
-        {props.i18n('dataUploadedOfTotal', {
-          complete: prettierBytes(props.totalUploadedSize),
-          total: prettierBytes(props.totalSize),
+        {i18n('dataUploadedOfTotal', {
+          complete: prettierBytes(totalUploadedSize),
+          total: prettierBytes(totalSize),
         })}
 
         {renderDot()}
 
-        {props.i18n('xTimeLeft', {
-          time: prettyETA(props.totalETA),
+        {i18n('xTimeLeft', {
+          time: prettyETA(totalETA),
         })}
       </span>
     </div>
@@ -243,17 +268,17 @@ function ProgressDetails (props) {
 }
 
 function UnknownProgressDetails (props) {
+  const { i18n, complete, numUploads } = props
+
   return (
     <div className="uppy-StatusBar-statusSecondary">
-      {props.i18n('filesUploadedOfTotal', {
-        complete: props.complete,
-        smart_count: props.numUploads,
-      })}
+      {i18n('filesUploadedOfTotal', { complete, smart_count: numUploads })}
     </div>
   )
 }
 
 function UploadNewlyAddedFiles (props) {
+  const { i18n, newFiles, startUpload } = props
   const uploadBtnClassNames = classNames(
     'uppy-u-reset',
     'uppy-c-btn',
@@ -264,15 +289,15 @@ function UploadNewlyAddedFiles (props) {
   return (
     <div className="uppy-StatusBar-statusSecondary">
       <div className="uppy-StatusBar-statusSecondaryHint">
-        {props.i18n('xMoreFilesAdded', { smart_count: props.newFiles })}
+        {i18n('xMoreFilesAdded', { smart_count: newFiles })}
       </div>
       <button
         type="button"
         className={uploadBtnClassNames}
-        aria-label={props.i18n('uploadXFiles', { smart_count: props.newFiles })}
-        onClick={props.startUpload}
+        aria-label={i18n('uploadXFiles', { smart_count: newFiles })}
+        onClick={startUpload}
       >
-        {props.i18n('upload')}
+        {i18n('upload')}
       </button>
     </div>
   )
@@ -284,36 +309,61 @@ const ThrottledProgressDetails = throttle(ProgressDetails, 500, {
 })
 
 function ProgressBarUploading (props) {
-  if (!props.isUploadStarted || props.isAllComplete) {
+  const {
+    i18n,
+    supportsUploadProgress,
+    totalProgress,
+    showProgressDetails,
+    isUploadStarted,
+    isAllComplete,
+    isAllPaused,
+    newFiles,
+    numUploads,
+    complete,
+    totalUploadedSize,
+    totalSize,
+    totalETA,
+    startUpload,
+  } = props
+  const showUploadNewlyAddedFiles = newFiles && isUploadStarted
+
+  if (!isUploadStarted || isAllComplete) {
     return null
   }
 
-  const title = props.isAllPaused
-    ? props.i18n('paused')
-    : props.i18n('uploading')
-  const showUploadNewlyAddedFiles = props.newFiles && props.isUploadStarted
+  const title = isAllPaused ? i18n('paused') : i18n('uploading')
+
+  function renderProgressDetails () {
+    if (!isAllPaused && !showUploadNewlyAddedFiles && showProgressDetails) {
+      if (supportsUploadProgress) {
+        return (
+          <ThrottledProgressDetails
+            numUploads={numUploads}
+            complete={complete}
+            totalUploadedSize={totalUploadedSize}
+            totalSize={totalSize}
+            totalETA={totalETA}
+            i18n={i18n}
+          />
+        )
+      }
+      return <UnknownProgressDetails i18n={i18n} complete={complete} numUploads={numUploads} />
+    }
+    return null
+  }
 
   return (
     <div className="uppy-StatusBar-content" aria-label={title} title={title}>
-      {!props.isAllPaused ? <LoadingSpinner /> : null}
+      {!isAllPaused ? <LoadingSpinner /> : null}
       <div className="uppy-StatusBar-status">
         <div className="uppy-StatusBar-statusPrimary">
-          {props.supportsUploadProgress
-            ? `${title}: ${props.totalProgress}%`
-            : title}
+          {supportsUploadProgress ? `${title}: ${totalProgress}%` : title}
         </div>
-        {/* eslint-disable-next-line no-nested-ternary */}
-        {!props.isAllPaused
-        && !showUploadNewlyAddedFiles
-        && props.showProgressDetails ? (
-            props.supportsUploadProgress ? (
-              <ThrottledProgressDetails {...props} />
-            ) : (
-              <UnknownProgressDetails {...props} />
-            )
-          ) : null}
+
+        {renderProgressDetails()}
+
         {showUploadNewlyAddedFiles ? (
-          <UploadNewlyAddedFiles {...props} />
+          <UploadNewlyAddedFiles i18n={i18n} newFiles={newFiles} startUpload={startUpload} />
         ) : null}
       </div>
     </div>
