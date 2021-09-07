@@ -10,7 +10,8 @@ const StatusBarUI = require('./StatusBar')
  * progress percentage and time remaining.
  */
 module.exports = class StatusBar extends UIPlugin {
-  static VERSION = require('../package.json').version
+  // eslint-disable-next-line global-require
+  static VERSION = require('../package.json').version;
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -72,74 +73,18 @@ module.exports = class StatusBar extends UIPlugin {
     this.install = this.install.bind(this)
   }
 
-  getTotalSpeed (files) {
-    let totalSpeed = 0
-    files.forEach((file) => {
-      totalSpeed += getSpeed(file.progress)
-    })
-    return totalSpeed
-  }
-
-  getTotalETA (files) {
-    const totalSpeed = this.getTotalSpeed(files)
-    if (totalSpeed === 0) {
-      return 0
-    }
-
-    const totalBytesRemaining = files.reduce((total, file) => {
-      return total + getBytesRemaining(file.progress)
-    }, 0)
-
-    return Math.round(totalBytesRemaining / totalSpeed * 10) / 10
-  }
-
   startUpload = () => {
     const { recoveredState } = this.uppy.getState()
+
     if (recoveredState) {
       this.uppy.emit('restore-confirmed')
-      return
+      return undefined
     }
+
     return this.uppy.upload().catch(() => {
       // Error logged in Core
     })
-  }
-
-  getUploadingState (isAllErrored, isAllComplete, recoveredState, files) {
-    if (isAllErrored) {
-      return statusBarStates.STATE_ERROR
-    }
-
-    if (isAllComplete) {
-      return statusBarStates.STATE_COMPLETE
-    }
-
-    if (recoveredState) {
-      return statusBarStates.STATE_WAITING
-    }
-
-    let state = statusBarStates.STATE_WAITING
-    const fileIDs = Object.keys(files)
-    for (let i = 0; i < fileIDs.length; i++) {
-      const { progress } = files[fileIDs[i]]
-      // If ANY files are being uploaded right now, show the uploading state.
-      if (progress.uploadStarted && !progress.uploadComplete) {
-        return statusBarStates.STATE_UPLOADING
-      }
-      // If files are being preprocessed AND postprocessed at this time, we show the
-      // preprocess state. If any files are being uploaded we show uploading.
-      if (progress.preprocess && state !== statusBarStates.STATE_UPLOADING) {
-        state = statusBarStates.STATE_PREPROCESSING
-      }
-      // If NO files are being preprocessed or uploaded right now, but some files are
-      // being postprocessed, show the postprocess state.
-      if (progress.postprocess
-          && state !== statusBarStates.STATE_UPLOADING
-          && state !== statusBarStates.STATE_PREPROCESSING) {
-        state = statusBarStates.STATE_POSTPROCESSING
-      }
-    }
-    return state
-  }
+  };
 
   render (state) {
     const {
@@ -168,8 +113,10 @@ module.exports = class StatusBar extends UIPlugin {
     // If some state was recovered, we want to show Upload button/counter
     // for all the files, because in this case it’s not an Upload button,
     // but “Confirm Restore Button”
-    const newFilesOrRecovered = recoveredState ? Object.values(files) : newFiles
-    const totalETA = this.getTotalETA(inProgressNotPausedFiles)
+    const newFilesOrRecovered = recoveredState
+      ? Object.values(files)
+      : newFiles
+    const totalETA = getTotalETA(inProgressNotPausedFiles)
     const resumableUploads = !!capabilities.resumableUploads
     const supportsUploadProgress = capabilities.uploadProgress !== false
 
@@ -177,13 +124,18 @@ module.exports = class StatusBar extends UIPlugin {
     let totalUploadedSize = 0
 
     startedFiles.forEach((file) => {
-      totalSize += (file.progress.bytesTotal || 0)
-      totalUploadedSize += (file.progress.bytesUploaded || 0)
+      totalSize += file.progress.bytesTotal || 0
+      totalUploadedSize += file.progress.bytesUploaded || 0
     })
 
     return StatusBarUI({
       error,
-      uploadState: this.getUploadingState(isAllErrored, isAllComplete, recoveredState, state.files || {}),
+      uploadState: getUploadingState(
+        isAllErrored,
+        isAllComplete,
+        recoveredState,
+        state.files || {}
+      ),
       allowNewUpload,
       totalProgress,
       totalSize,
@@ -235,4 +187,64 @@ module.exports = class StatusBar extends UIPlugin {
   uninstall () {
     this.unmount()
   }
+}
+
+function getTotalSpeed (files) {
+  let totalSpeed = 0
+  files.forEach((file) => {
+    totalSpeed += getSpeed(file.progress)
+  })
+  return totalSpeed
+}
+
+function getTotalETA (files) {
+  const totalSpeed = getTotalSpeed(files)
+  if (totalSpeed === 0) {
+    return 0
+  }
+
+  const totalBytesRemaining = files.reduce((total, file) => {
+    return total + getBytesRemaining(file.progress)
+  }, 0)
+
+  return Math.round((totalBytesRemaining / totalSpeed) * 10) / 10
+}
+
+function getUploadingState (isAllErrored, isAllComplete, recoveredState, files) {
+  if (isAllErrored) {
+    return statusBarStates.STATE_ERROR
+  }
+
+  if (isAllComplete) {
+    return statusBarStates.STATE_COMPLETE
+  }
+
+  if (recoveredState) {
+    return statusBarStates.STATE_WAITING
+  }
+
+  let state = statusBarStates.STATE_WAITING
+  const fileIDs = Object.keys(files)
+  for (let i = 0; i < fileIDs.length; i++) {
+    const { progress } = files[fileIDs[i]]
+    // If ANY files are being uploaded right now, show the uploading state.
+    if (progress.uploadStarted && !progress.uploadComplete) {
+      return statusBarStates.STATE_UPLOADING
+    }
+    // If files are being preprocessed AND postprocessed at this time, we show the
+    // preprocess state. If any files are being uploaded we show uploading.
+    if (progress.preprocess && state !== statusBarStates.STATE_UPLOADING) {
+      state = statusBarStates.STATE_PREPROCESSING
+    }
+    // If NO files are being preprocessed or uploaded right now, but some files are
+    // being postprocessed, show the postprocess state.
+    if (
+      progress.postprocess
+      && state !== statusBarStates.STATE_UPLOADING
+      && state !== statusBarStates.STATE_PREPROCESSING
+    ) {
+      state = statusBarStates.STATE_POSTPROCESSING
+    }
+  }
+  return state
 }
