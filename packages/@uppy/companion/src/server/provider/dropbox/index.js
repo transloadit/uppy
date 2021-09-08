@@ -25,8 +25,6 @@ function httpHeaderSafeJson (v) {
  * Adapter for API https://www.dropbox.com/developers/documentation/http/documentation
  */
 class DropBox extends Provider {
-  static version = 2
-
   constructor (options) {
     super(options)
     this.authProvider = DropBox.authProvider
@@ -246,5 +244,7 @@ class DropBox extends Provider {
     return err
   }
 }
+
+DropBox.version = 2
 
 module.exports = DropBox

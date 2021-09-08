@@ -13,8 +13,6 @@ const { requestStream } = require('../../helpers/utils')
  * Adapter for API https://docs.microsoft.com/en-us/onedrive/developer/rest-api/
  */
 class OneDrive extends Provider {
-  static version = 2
-
   constructor (options) {
     super(options)
     this.authProvider = OneDrive.authProvider
@@ -152,5 +150,7 @@ class OneDrive extends Provider {
     return err
   }
 }
+
+OneDrive.version = 2
 
 module.exports = OneDrive

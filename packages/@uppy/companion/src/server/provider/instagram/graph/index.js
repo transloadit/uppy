@@ -14,8 +14,6 @@ const { requestStream } = require('../../../helpers/utils')
  * Adapter for API https://developers.facebook.com/docs/instagram-api/overview
  */
 class Instagram extends Provider {
-  static version = 2
-
   constructor (options) {
     super(options)
     this.authProvider = Instagram.authProvider
@@ -179,5 +177,7 @@ class Instagram extends Provider {
     return err
   }
 }
+
+Instagram.version = 2
 
 module.exports = Instagram

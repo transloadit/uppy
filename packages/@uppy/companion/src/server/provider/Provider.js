@@ -2,8 +2,6 @@
  * Provider interface defines the specifications of any provider implementation
  */
 class Provider {
-  static version = 1
-
   /**
    *
    * @param {object} options
@@ -78,5 +76,7 @@ class Provider {
     return ''
   }
 }
+
+Provider.version = 1
 
 module.exports = Provider

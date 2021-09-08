@@ -20,8 +20,6 @@ const DEAUTH_EVENT_NAME = 'app_deauthorized'
  * Adapter for API https://marketplace.zoom.us/docs/api-reference/zoom-api
  */
 class Zoom extends Provider {
-  static version = 2
-
   constructor (options) {
     super(options)
     this.authProvider = Zoom.authProvider
@@ -356,5 +354,7 @@ class Zoom extends Provider {
     return done(error)
   }
 }
+
+Zoom.version = 2
 
 module.exports = Zoom

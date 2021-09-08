@@ -2,8 +2,6 @@
  * SearchProvider interface defines the specifications of any Search provider implementation
  */
 class SearchProvider {
-  static version = 1
-
   /**
    * list the files available based on the search query
    *
@@ -34,5 +32,7 @@ class SearchProvider {
     throw new Error('method not implemented')
   }
 }
+
+SearchProvider.version = 1
 
 module.exports = SearchProvider
