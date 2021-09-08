@@ -332,7 +332,7 @@ const options = {
 
 13. **metrics(optional)** - A boolean flag to tell Companion whether or not to provide an endpoint `/metrics` with Prometheus metrics.
 
-14. **streamingUpload(optional)** - A boolean flag to tell Companion whether or not to enable streaming uploads. If enabled, it will lead to **faster uploads* because companion will start uploading at the same time as downloading using `stream.pipe`. If `false`, files will be fully downloaded first, then uploaded. Defaults to `false`.
+14. **streamingUpload(optional)** - A boolean flag to tell Companion whether or not to enable streaming uploads. If enabled, it will lead to **faster uploads* because companion will start uploading at the same time as downloading using `stream.pipe`. If `false`, files will be fully downloaded first, then uploaded. Defaults to `false`. Do not set to `true` if you have any custom Companion providers that do not use the new async/stream API.
 
 15. **maxFileSize(optional)** - If this value is set, companion will limit the maximum file size to process. If unset, it will process files without any size limit (this is the default).
 
@@ -443,27 +443,26 @@ uppy.app(options)
 
 The `customProviders` option should be an object containing each custom provider. Each custom provider would, in turn, be an object with two keys, `config` and `module`. The `config` option would contain Oauth API settings, while the `module` would point to the provider module.
 
-To work well with Companion, the **Module** must be a class with the following methods.
+To work well with Companion, the `module` must be a `class` with the following methods. Note that the methods must be `async`, return a `Promise` or reject with an `Error`):
 
-1. `list (options, done)` - lists JSON data of user files (e.g. list of all the files in a particular directory).
-  - `options` - is an object containing the following attributes
-    - token - authorization token (retrieved from oauth process) to send along with your request
-    - directory - the `id/name` of the directory from which data is to be retrieved. This may be ignored if it doesn't apply to your provider
-    - query - expressjs query params object received by the server (just in case there is some data you need in there).
-  - `done (err, data)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, and [`data`](#list-data).
-2. `download (options, onData)` - downloads a particular file from the provider.
-  - `options` - is an object containing the following attributes:
-    - token - authorization token (retrieved from oauth process) to send along with your request.
-    - id - ID of the file being downloaded.
-    - query - expressjs query params object received by the server (just in case there is some data you need in there).
-  - `onData (err, chunk)` - a callback that should be called with each data chunk received as download is happening. The `err` argument is an error that should be passed if an error occurs during download. It should be `null` if there's no error. Once the download is completed and there are no more chunks to receive, `onData` should be called with `null` values like so `onData(null, null)`
-3. `size (options, done)` - returns the byte size of the file that needs to be downloaded.
-  - `options` - is an object containing the following attributes:
-    - token - authorization token (retrieved from oauth process) to send along with your request.
-    - id - ID of the file being downloaded.
-  - `done (err, size)` - the callback that should be called after the request to your provider is completed. As the signature indicates, the following data should be passed along to the callback `err`, and `size` (number).
+1. `async list ({ token, directory, query })` - Returns a object containing a list of user files (e.g. list of all the files in a particular directory). See [example returned list data structure](#list-data).
+    - `token` - authorization token (retrieved from oauth process) to send along with your request
+    - `directory` - the id/name of the directory from which data is to be retrieved. This may be ignored if it doesn't apply to your provider
+    - `query` - expressjs query params object received by the server (just in case there is some data you need in there).
+2. `async download ({ token, id, query })` - Downloads a particular file from the provider. Returns an object with a single property `{ stream }` - a [`stream.Readable`](https://nodejs.org/api/stream.html#stream_class_stream_readable), which will be read from and uploaded to the destination. To prevent memory leaks, make sure you release your stream if you reject this method with an error.
+    - `token` - authorization token (retrieved from oauth process) to send along with your request.
+    - `id` - ID of the file being downloaded.
+    - `query` - expressjs query params object received by the server (just in case there is some data you need in there).
+3. `async size ({ token, id, query })` - Returns the byte size of the file that needs to be downloaded as a `Number`. If the size of the object is not known, `null` may be returned.
+    - `token` - authorization token (retrieved from oauth process) to send along with your request.
+    - `id` - ID of the file being downloaded.
+    - `query` - expressjs query params object received by the server (just in case there is some data you need in there).
 
-The class must also have an `authProvider` string (lowercased) field which typically indicates the name of the provider (e.g "dropbox").
+The class must also have:
+- A unique `authProvider` string property - a lowercased value which typically indicates the name of the provider (e.g "dropbox").
+- A `static` property `static version = 2`, which is the current version of the Companion Provider API.
+
+See also [example code with a custom provider](https://github.com/transloadit/uppy/blob/main/examples/custom-provider/server).
 
 #### list data
 
