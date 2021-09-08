@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [12.x, 14.x]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -65,7 +65,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 16.x
+          node-version: 14.x
       - name: Install npm 7
         run: npm install --global npm@7
       - name: Install dependencies
