@@ -74,12 +74,13 @@ class Uploader {
 
     this.options = options
     this.token = uuid.v4()
+    this.fileName = `${Uploader.FILE_NAME_PREFIX}-${this.token}`
     this.options.metadata = this.options.metadata || {}
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
     this.size = options.size
     this.uploadFileName = this.options.metadata.name
       ? this.options.metadata.name.substring(0, MAX_FILENAME_LENGTH)
-      : `${Uploader.FILE_NAME_PREFIX}-${this.token}`
+      : this.fileName
 
     this.uploadStopped = false
 
@@ -142,7 +143,7 @@ class Uploader {
   }
 
   async _downloadStreamAsFile (stream) {
-    this.tmpPath = join(this.options.pathPrefix, this.uploadFileName)
+    this.tmpPath = join(this.options.pathPrefix, this.fileName)
 
     logger.debug('fully downloading file', 'uploader.download', this.shortToken)
     const writeStream = createWriteStream(this.tmpPath)
