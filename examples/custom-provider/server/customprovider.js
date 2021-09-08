@@ -32,6 +32,8 @@ function adaptData (res) {
  * an example of a custom provider module. It implements @uppy/companion's Provider interface
  */
 class MyCustomProvider {
+  static version = 2
+
   constructor () {
     this.authProvider = 'myunsplash'
   }

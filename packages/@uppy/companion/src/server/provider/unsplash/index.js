@@ -14,6 +14,8 @@ const BASE_URL = 'https://api.unsplash.com'
  * Adapter for API https://api.unsplash.com
  */
 class Unsplash extends SearchProvider {
+  static version = 2
+
   async list (options) {
     return promisify(this._list.bind(this))(options)
   }

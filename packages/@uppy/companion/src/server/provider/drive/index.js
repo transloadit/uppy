@@ -85,6 +85,8 @@ function adaptData (listFilesResp, sharedDrivesResp, directory, query, showShare
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
 class Drive extends Provider {
+  static version = 2
+
   constructor (options) {
     super(options)
     this.authProvider = Drive.authProvider

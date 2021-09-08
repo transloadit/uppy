@@ -16,6 +16,8 @@ const BOX_THUMBNAIL_SIZE = 256
  * Adapter for API https://developer.box.com/reference/
  */
 class Box extends Provider {
+  static version = 2
+
   constructor (options) {
     super(options)
     this.authProvider = Box.authProvider

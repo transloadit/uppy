@@ -14,6 +14,8 @@ const { requestStream } = require('../../helpers/utils')
  * Adapter for API https://developers.facebook.com/docs/graph-api/using-graph-api/
  */
 class Facebook extends Provider {
+  static version = 2
+
   constructor (options) {
     super(options)
     this.authProvider = Facebook.authProvider

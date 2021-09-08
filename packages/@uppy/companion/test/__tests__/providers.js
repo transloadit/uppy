@@ -96,7 +96,7 @@ describe('list provider files', () => {
   })
 })
 
-describe('download provdier file', () => {
+describe('download provider file', () => {
   test.each(providerNames)('specified file gets downloaded from %s', (providerName) => {
     const providerFixtures = fixtures.providers[providerName].expects
     return request(authServer)

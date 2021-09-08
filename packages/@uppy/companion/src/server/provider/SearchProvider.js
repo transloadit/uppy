@@ -2,6 +2,8 @@
  * SearchProvider interface defines the specifications of any Search provider implementation
  */
 class SearchProvider {
+  static version = 1
+
   /**
    * list the files available based on the search query
    *
