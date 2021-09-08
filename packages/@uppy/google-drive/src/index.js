@@ -4,7 +4,7 @@ const { h } = require('preact')
 const DriveProviderViews = require('./DriveProviderViews')
 
 module.exports = class GoogleDrive extends UIPlugin {
-  static VERSION = require('../package.json').version;
+  static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
     super(uppy, opts)
