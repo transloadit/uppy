@@ -18,11 +18,13 @@ const wrapLegacyProvider = (legacyProvider) => {
       this.deauthorizationCallback = promisify((options, cb) => super.deauthorizationCallback(options, cb))
       this.logout = promisify((options, cb) => super.logout(options, cb))
 
+      const superDownload = super.download
+
       this.download = async (options) => {
         let stream
 
         return new Promise((resolve, reject) => {
-          super.download(options, (err, chunk) => {
+          superDownload(options, (err, chunk) => {
             if (err) {
               if (stream && !stream.destroyed) stream.destroy(err)
               reject(err)
