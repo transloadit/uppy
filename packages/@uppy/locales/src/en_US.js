@@ -129,6 +129,7 @@ en_US.strings = {
     '1': 'Select %{smart_count}',
   },
   sessionRestored: 'Session restored',
+  signInWithGoogle: 'Sign in with Google',
   smile: 'Smile!',
   startCapturing: 'Begin screen capturing',
   startRecording: 'Begin video recording',
