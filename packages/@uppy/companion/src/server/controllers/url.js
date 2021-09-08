@@ -3,10 +3,9 @@ const request = require('request')
 const { URL } = require('url')
 const validator = require('validator')
 
-const Uploader = require('../Uploader')
+const { startDownUpload } = require('../helpers/upload')
 const { getURLMeta, getRedirectEvaluator, getProtectedHttpAgent } = require('../helpers/request')
 const logger = require('../logger')
-const { errorToResponse } = require('../provider/error')
 
 /**
  * Validates that the download URL is secure
@@ -109,54 +108,30 @@ const meta = async (req, res) => {
  * @param {object} res expressJS response object
  */
 const get = async (req, res) => {
-  try {
-    logger.debug('URL file import handler running', null, req.id)
-    const { debug } = req.companion.options
-    if (!validateURL(req.body.url, debug)) {
-      logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
-      res.status(400).json({ error: 'Invalid request body' })
-      return
-    }
+  logger.debug('URL file import handler running', null, req.id)
+  const { debug } = req.companion.options
+  if (!validateURL(req.body.url, debug)) {
+    logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
+    res.status(400).json({ error: 'Invalid request body' })
+    return
+  }
 
+  async function getSize () {
     const { size } = await getURLMeta(req.body.url, !debug)
+    return size
+  }
 
-    logger.debug('Instantiating uploader.', null, req.id)
-    const uploader = new Uploader(Uploader.reqToOptions(req, size))
+  async function download () {
+    return downloadURL(req.body.url, !debug, req.id)
+  }
 
-    if (uploader.hasError()) {
-      const response = uploader.getResponse()
-      res.status(response.status).json(response.body)
-      return
-    }
-
-    const stream = await downloadURL(req.body.url, !debug, req.id)
-
-    // "Forking" off the upload operation to background, so we can return the http request:
-    ;(async () => {
-      // wait till the client has connected to the socket, before starting
-      // the download, so that the client can receive all download/upload progress.
-      logger.debug('Waiting for socket connection before beginning remote download/upload.', null, req.id)
-      await uploader.awaitReady()
-      logger.debug('Socket connection received. Starting remote download/upload.', null, req.id)
-
-      uploader.uploadStream(stream)
-    })()
-
-    // Respond the request
-    // NOTE: Uploader will continue running after the http request is responded
-    const response = uploader.getResponse()
-    res.status(response.status).json(response.body)
-  } catch (err) {
-    const errResp = errorToResponse(err)
-    if (errResp) {
-      res.status(errResp.code).json({ message: errResp.message })
-      return
-    }
-
+  function onUnhandledError (err) {
     logger.error(err, 'controller.url.error', req.id)
     // @todo send more meaningful error message and status code to client if possible
     res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
   }
+
+  startDownUpload({ req, res, getSize, download, onUnhandledError })
 }
 
 module.exports = () => router()
