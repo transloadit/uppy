@@ -147,6 +147,7 @@ module.exports.requestStream = async (req, convertResponseToError) => {
   ))
 
   if (resp.statusCode !== 200) {
+    req.abort() // Or we will leak memory (the stream is paused)
     throw await convertResponseToError(resp)
   }
 

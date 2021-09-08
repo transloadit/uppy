@@ -71,20 +71,23 @@ class MyCustomProvider {
       },
     }
 
-    const resp = await new Promise((resolve, reject) => (
-      request(options)
+    const resp = await new Promise((resolve, reject) => {
+      const req = request(options)
         .on('response', (response) => {
           // Don't allow any more data to flow yet.
           // https://github.com/request/request/issues/1990#issuecomment-184712275
           response.pause()
+
+          if (resp.statusCode !== 200) {
+            req.abort() // Or we will leak memory
+            reject(new Error(`HTTP response ${resp.statusCode}`))
+            return
+          }
+
           resolve(response)
         })
         .on('error', reject)
-    ))
-
-    if (resp.statusCode !== 200) {
-      throw new Error(`HTTP response ${resp.statusCode}`)
-    }
+    })
 
     // The returned stream will be consumed and uploaded from the current position
     return { stream: resp }

@@ -57,9 +57,10 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
   // return onDataChunk(new Error('test error'))
 
   return new Promise((resolve, reject) => {
-    request(opts)
+    const req = request(opts)
       .on('response', (resp) => {
         if (resp.statusCode >= 300) {
+          req.abort() // No need to keep request
           reject(new Error(`URL server responded with status: ${resp.statusCode}`))
           return
         }
