@@ -145,6 +145,7 @@ module.exports = () => {
         bundle: true,
       })
       break
+    default:
   }
 
   if (RESTORE) {
