@@ -10,7 +10,7 @@ const standalone = require('../../src/standalone')
 const { companionOptions } = standalone()
 
 describe('uploader with tus protocol', () => {
-  test('uploader respects uploadUrls whitelist', async () => {
+  test('uploader respects uploadUrls', async () => {
     const opts = {
       endpoint: 'http://localhost/files',
       companionOptions: { ...companionOptions, uploadUrls: [/^http:\/\/url.myendpoint.com\//] },
@@ -19,7 +19,7 @@ describe('uploader with tus protocol', () => {
     expect(new Uploader(opts).hasError()).toBe(true)
   })
 
-  test('uploader respects uploadUrls whitelist, valid', async () => {
+  test('uploader respects uploadUrls, valid', async () => {
     const opts = {
       endpoint: 'http://url.myendpoint.com/files',
       companionOptions: { ...companionOptions, uploadUrls: [/^http:\/\/url.myendpoint.com\//] },
@@ -28,7 +28,7 @@ describe('uploader with tus protocol', () => {
     expect(new Uploader(opts).hasError()).toBe(false)
   })
 
-  test('uploader respects uploadUrls whitelist, localhost', async () => {
+  test('uploader respects uploadUrls, localhost', async () => {
     const opts = {
       endpoint: 'http://localhost:1337/',
       companionOptions: { ...companionOptions, uploadUrls: [/^http:\/\/localhost:1337\//] },
