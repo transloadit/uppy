@@ -201,7 +201,7 @@ class Uploader {
       return false
     }
 
-    const validatorOpts = { require_protocol: true, require_tld: !options.companionOptions.debug }
+    const validatorOpts = { require_protocol: true, require_tld: false }
     return [options.endpoint, options.uploadUrl].every((url) => {
       if (url && !validator.isURL(url, validatorOpts)) {
         this._errRespMessage = 'invalid destination url'
