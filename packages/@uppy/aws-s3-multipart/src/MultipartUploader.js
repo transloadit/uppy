@@ -358,12 +358,15 @@ class MultipartUploader {
         defer.reject(error)
         return
       }
-      this.chunks[index] = null // This avoids the net::ERR_OUT_OF_MEMORY in Chromium Browsers.
+
+      // This avoids the net::ERR_OUT_OF_MEMORY in Chromium Browsers.
+      this.chunks[index] = null
 
       this.#onPartProgress(index, body.size, body.size)
 
       // NOTE This must be allowed by CORS.
       const etag = ev.target.getResponseHeader('ETag')
+
       if (etag === null) {
         defer.reject(new Error('AwsS3/Multipart: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3-multipart#S3-Bucket-Configuration for instructions.'))
         return
