@@ -327,6 +327,7 @@ class MultipartUploader {
     xhr.responseType = 'text'
 
     function cleanup () {
+      // eslint-disable-next-line no-use-before-define
       signal.removeEventListener('abort', onabort)
     }
     function onabort () {
@@ -357,6 +358,7 @@ class MultipartUploader {
         defer.reject(error)
         return
       }
+
       // This avoids the net::ERR_OUT_OF_MEMORY in Chromium Browsers.
       this.chunks[index] = null
 
@@ -442,12 +444,9 @@ class MultipartUploader {
     this.isPaused = true
   }
 
-  abort (opts = {}) {
-    const really = opts.really || false
-
-    if (!really) return this.pause()
-
-    this.#abortUpload()
+  abort (opts = undefined) {
+    if (opts?.really) this.#abortUpload()
+    else this.pause()
   }
 }
 
