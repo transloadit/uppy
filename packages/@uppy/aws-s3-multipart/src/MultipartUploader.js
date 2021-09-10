@@ -357,7 +357,7 @@ class MultipartUploader {
         defer.reject(error)
         return
       }
-      this.chunks[index] = null;  // Note: by uploading thousands of files with a total of many GB, this avoids the net::ERR_OUT_OF_MEMORY in CHromium Browsers
+      this.chunks[index] = null;  // This avoids the net::ERR_OUT_OF_MEMORY in Chromium Browsers.
 
       this.#onPartProgress(index, body.size, body.size)
 
