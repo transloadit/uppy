@@ -44,9 +44,8 @@ const uppy = new Uppy({
   restrictions: {
     maxFileSize: 1000000,
     maxNumberOfFiles: 3,
-    minNumberOfFiles: 2,
+    minNumberOfFiles: 1,
     allowedFileTypes: ['image/*', 'video/*'],
-    requiredMetaFields: ['caption'],
   }
 })
 .use(Dashboard, {
