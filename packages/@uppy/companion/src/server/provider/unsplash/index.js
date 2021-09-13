@@ -57,7 +57,7 @@ class Unsplash extends SearchProvider {
 
     request(reqOpts, (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
-        const error = this.#error(err, resp)
+        const error = this.error(err, resp)
         logger.error(error, 'provider.unsplash.list.error')
         return done(error)
       }
@@ -76,7 +76,7 @@ class Unsplash extends SearchProvider {
     }
     request(reqOpts, (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
-        const error = this.#error(err, resp)
+        const error = this.error(err, resp)
         logger.error(error, 'provider.unsplash.download.error')
         onData(error)
         return
@@ -88,7 +88,7 @@ class Unsplash extends SearchProvider {
         .get(url)
         .on('response', (response) => {
           if (response.statusCode !== 200) {
-            onData(this.#error(null, response))
+            onData(this.error(null, response))
           } else {
             response.on('data', (chunk) => onData(null, chunk))
           }
@@ -117,7 +117,7 @@ class Unsplash extends SearchProvider {
 
     request(reqOpts, (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
-        const error = this.#error(err, resp)
+        const error = this.error(err, resp)
         logger.error(error, 'provider.unsplash.size.error')
         done(error)
         return
@@ -133,7 +133,7 @@ class Unsplash extends SearchProvider {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  #error (err, resp) {
+  error (err, resp) {
     if (resp) {
       const fallbackMessage = `request to Unsplash returned ${resp.statusCode}`
       const msg
