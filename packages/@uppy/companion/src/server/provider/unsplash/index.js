@@ -11,7 +11,7 @@ function adaptData (body, currentQuery) {
   const pagesCount = body.total_pages
   const currentPage = Number(currentQuery.cursor || 1)
   const hasNextPage = currentPage < pagesCount
-  const subList = adapter.getItemSubList(body) ?? []
+  const subList = adapter.getItemSubList(body) || []
 
   return {
     searchedFor: currentQuery.q,
