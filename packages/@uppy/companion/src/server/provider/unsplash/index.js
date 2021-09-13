@@ -74,7 +74,6 @@ class Unsplash extends SearchProvider {
         Authorization: `Client-ID ${token}`,
       },
     }
-
     request(reqOpts, (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
         const error = this.#error(err, resp)
@@ -84,6 +83,7 @@ class Unsplash extends SearchProvider {
       }
 
       const url = body.links.download
+
       request
         .get(url)
         .on('response', (response) => {
@@ -94,6 +94,10 @@ class Unsplash extends SearchProvider {
           }
         })
         .on('end', () => onData(null, null))
+        // To attribute the author of the image, we call the `download_location`
+        // endpoint to increment the download count on Unsplash.
+        // https://help.unsplash.com/en/articles/2511258-guideline-triggering-a-download
+        .on('complete', () => request({ ...reqOpts, url: body.links.download_location }))
         .on('error', (error) => {
           logger.error(error, 'provider.unsplash.download.url.error')
           onData(error)
