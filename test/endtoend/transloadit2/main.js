@@ -27,7 +27,7 @@ function initUppyTransloadit (transloaditKey) {
           },
         },
       },
-      getAssemblyOptions (file) {
+      getAssemblyOptions () {
         return {
           params: {
             auth: { key: transloaditKey },
