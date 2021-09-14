@@ -12,7 +12,7 @@ const CloseWrapper = require('../CloseWrapper')
 /**
  * Class to easily generate generic views for Provider plugins
  */
-module.exports = class ProviderView {
+module.exports = class SearchProviderView {
   static VERSION = require('../../package.json').version
 
   #isHandlingScroll
@@ -199,36 +199,22 @@ module.exports = class ProviderView {
 
   render (state, viewOptions = {}) {
     const { didFirstRender, isInputMode } = this.plugin.getPluginState()
+
     if (!didFirstRender) {
       this.preFirstRender()
     }
 
-    // reload pluginState for "loading" attribute because it might
-    // have changed above.
-    if (this.plugin.getPluginState().loading) {
-      return (
-        <CloseWrapper onUnmount={this.clearSelection}>
-          <LoaderView i18n={this.plugin.uppy.i18n} />
-        </CloseWrapper>
-      )
-    }
-
-    if (isInputMode) {
-      return (
-        <CloseWrapper onUnmount={this.clearSelection}>
-          <SearchInput
-            search={this.search}
-            i18n={this.plugin.uppy.i18n}
-          />
-        </CloseWrapper>
-      )
-    }
-
     const targetViewOptions = { ...this.opts, ...viewOptions }
+    const { files, folders, filterInput, loading, currentSelection } = this.plugin.getPluginState()
+    const { isChecked, toggleCheckbox, filterItems } = this.#sharedHandler
+    const hasInput = filterInput !== ''
+
     const browserProps = {
-      ...this.plugin.getPluginState(),
-      isChecked: this.#sharedHandler.isChecked,
-      toggleCheckbox: this.#sharedHandler.toggleCheckbox,
+      isChecked,
+      toggleCheckbox,
+      currentSelection,
+      files: hasInput ? filterItems(files) : files,
+      folders: hasInput ? filterItems(folders) : folders,
       handleScroll: this.handleScroll,
       done: this.donePicking,
       cancel: this.cancelPicking,
@@ -245,6 +231,25 @@ module.exports = class ProviderView {
       i18n: this.plugin.uppy.i18n,
       uppyFiles: this.plugin.uppy.getFiles(),
       validateRestrictions: this.plugin.uppy.validateRestrictions,
+    }
+
+    if (loading) {
+      return (
+        <CloseWrapper onUnmount={this.clearSelection}>
+          <LoaderView i18n={this.plugin.uppy.i18n} />
+        </CloseWrapper>
+      )
+    }
+
+    if (isInputMode) {
+      return (
+        <CloseWrapper onUnmount={this.clearSelection}>
+          <SearchInput
+            search={this.search}
+            i18n={this.plugin.uppy.i18n}
+          />
+        </CloseWrapper>
+      )
     }
 
     return (

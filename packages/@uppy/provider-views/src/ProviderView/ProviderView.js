@@ -408,13 +408,55 @@ module.exports = class ProviderView {
 
   render (state, viewOptions = {}) {
     const { authenticated, didFirstRender } = this.plugin.getPluginState()
+
     if (!didFirstRender) {
       this.preFirstRender()
     }
 
-    // reload pluginState for "loading" attribute because it might
-    // have changed above.
-    if (this.plugin.getPluginState().loading) {
+    const targetViewOptions = { ...this.opts, ...viewOptions }
+    const { files, folders, filterInput, loading, currentSelection } = this.plugin.getPluginState()
+    const { isChecked, toggleCheckbox, filterItems } = this.#sharedHandler
+    const hasInput = filterInput !== ''
+    const headerProps = {
+      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
+      getFolder: this.getFolder,
+      directories: this.plugin.getPluginState().directories,
+      pluginIcon: this.plugin.icon,
+      title: this.plugin.title,
+      logout: this.logout,
+      username: this.username,
+      i18n: this.plugin.uppy.i18n,
+    }
+
+    const browserProps = {
+      isChecked,
+      toggleCheckbox,
+      currentSelection,
+      files: hasInput ? filterItems(files) : files,
+      folders: hasInput ? filterItems(folders) : folders,
+      username: this.username,
+      getNextFolder: this.getNextFolder,
+      getFolder: this.getFolder,
+      filterItems: this.#sharedHandler.filterItems,
+      filterQuery: this.filterQuery,
+      logout: this.logout,
+      handleScroll: this.handleScroll,
+      listAllFiles: this.listAllFiles,
+      done: this.donePicking,
+      cancel: this.cancelPicking,
+      headerComponent: Header(headerProps),
+      title: this.plugin.title,
+      viewType: targetViewOptions.viewType,
+      showTitles: targetViewOptions.showTitles,
+      showFilter: targetViewOptions.showFilter,
+      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
+      pluginIcon: this.plugin.icon,
+      i18n: this.plugin.uppy.i18n,
+      uppyFiles: this.plugin.uppy.getFiles(),
+      validateRestrictions: (...args) => this.plugin.uppy.validateRestrictions(...args),
+    }
+
+    if (loading) {
       return (
         <CloseWrapper onUnmount={this.clearSelection}>
           <LoaderView i18n={this.plugin.uppy.i18n} />
@@ -434,44 +476,6 @@ module.exports = class ProviderView {
           />
         </CloseWrapper>
       )
-    }
-
-    const targetViewOptions = { ...this.opts, ...viewOptions }
-    const headerProps = {
-      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      getFolder: this.getFolder,
-      directories: this.plugin.getPluginState().directories,
-      pluginIcon: this.plugin.icon,
-      title: this.plugin.title,
-      logout: this.logout,
-      username: this.username,
-      i18n: this.plugin.uppy.i18n,
-    }
-
-    const browserProps = {
-      ...this.plugin.getPluginState(),
-      username: this.username,
-      getNextFolder: this.getNextFolder,
-      getFolder: this.getFolder,
-      filterItems: this.#sharedHandler.filterItems,
-      filterQuery: this.filterQuery,
-      logout: this.logout,
-      isChecked: this.#sharedHandler.isChecked,
-      toggleCheckbox: this.#sharedHandler.toggleCheckbox,
-      handleScroll: this.handleScroll,
-      listAllFiles: this.listAllFiles,
-      done: this.donePicking,
-      cancel: this.cancelPicking,
-      headerComponent: Header(headerProps),
-      title: this.plugin.title,
-      viewType: targetViewOptions.viewType,
-      showTitles: targetViewOptions.showTitles,
-      showFilter: targetViewOptions.showFilter,
-      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      pluginIcon: this.plugin.icon,
-      i18n: this.plugin.uppy.i18n,
-      uppyFiles: this.plugin.uppy.getFiles(),
-      validateRestrictions: (...args) => this.plugin.uppy.validateRestrictions(...args),
     }
 
     return (
