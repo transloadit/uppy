@@ -25,6 +25,7 @@ function adaptData (body, currentQuery) {
       thumbnail: adapter.getItemThumbnailUrl(item),
       requestPath: adapter.getItemRequestPath(item),
       modifiedDate: adapter.getItemModifiedDate(item),
+      author: adapter.getAuthor(item),
       size: null,
     })),
     nextPageQuery: hasNextPage

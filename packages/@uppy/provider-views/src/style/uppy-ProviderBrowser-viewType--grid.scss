@@ -1,7 +1,8 @@
 // ***
-// View type: grid
+// View type: grid and unsplash
 // ***
-.uppy-ProviderBrowser-viewType--grid {
+.uppy-ProviderBrowser-viewType--grid,
+.uppy-ProviderBrowser-viewType--unsplash {
   ul.uppy-ProviderBrowser-list {
     display: flex;
     flex-direction: row;
@@ -80,9 +81,35 @@
     text-align: center;
     border-radius: 4px;
 
-    &:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba($blue, 0.9);
+    .uppy.uppy-ProviderBrowserItem-inner-relative {
+      position: relative;
+    }
+
+    .uppy-ProviderBrowserItem-author {
+      position: absolute;
+      display: none;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(black, 0.4);
+      color: white;
+      font-weight: 600;
+      margin: 0;
+      padding: 6px;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+        background: rgba(black, 0.5);
+      }
+    }
+
+    // Always show the author on touch devices
+    // https://www.w3.org/TR/mediaqueries-4/#hover
+    @media (hover: none) {
+      .uppy-ProviderBrowserItem-author {
+        display: block;
+      }
     }
 
     [data-uppy-theme="dark"] & {
@@ -120,6 +147,13 @@
   // Checked: show the checkmark
   .uppy-ProviderBrowserItem-checkbox--is-checked {
     opacity: 1;
+  }
+
+  .uppy-ProviderBrowserItem-checkbox--grid:hover,
+  .uppy-ProviderBrowserItem-checkbox--grid:focus {
+    + label .uppy-ProviderBrowserItem-author {
+      display: block;
+    }
   }
 
   .uppy-ProviderBrowserItem-checkbox--grid:focus + label {
