@@ -563,9 +563,8 @@ class Uppy {
     const { hasOwnProperty } = Object.prototype
 
     const errors = []
-    const fileIDs = Object.keys(files)
-    for (let i = 0; i < fileIDs.length; i++) {
-      const file = this.getFile(fileIDs[i])
+    for (const fileID of Object.keys(files)) {
+      const file = this.getFile(fileID)
       for (let i = 0; i < requiredMetaFields.length; i++) {
         if (!hasOwnProperty.call(file.meta, requiredMetaFields[i]) || file.meta[requiredMetaFields[i]] === '') {
           const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
@@ -1585,8 +1584,9 @@ class Uppy {
    *
    * @private
    */
-  #runUpload (uploadID) {
-    const uploadData = this.getState().currentUploads[uploadID]
+  async #runUpload (uploadID) {
+    let { currentUploads } = this.getState()
+    const uploadData = currentUploads[uploadID]
     const restoreStep = uploadData.step
 
     const steps = [
@@ -1594,53 +1594,41 @@ class Uppy {
       ...this.#uploaders,
       ...this.#postProcessors,
     ]
-    let lastStep = Promise.resolve()
-    steps.forEach((fn, step) => {
-      // Skip this step if we are restoring and have already completed this step before.
-      if (step < restoreStep) {
-        return
+    let currentUpload = uploadData
+    try {
+      for (let step = restoreStep; step < steps.length; step++) {
+        const fn = steps[step]
+
+        if (currentUpload) {
+          const updatedUpload = {
+            ...currentUpload,
+            step,
+          }
+
+          this.setState({
+            currentUploads: {
+              ...currentUploads,
+              [uploadID]: updatedUpload,
+            },
+          })
+
+          // TODO give this the `updatedUpload` object as its only parameter maybe?
+          // Otherwise when more metadata may be added to the upload this would keep getting more parameters
+          await fn(updatedUpload.fileIDs, uploadID)
+
+          // Update currentUpload value in case it was modified asynchronously.
+          ;({ currentUploads } = this.getState())
+          currentUpload = currentUploads[uploadID]
+        }
       }
-
-      lastStep = lastStep.then(() => {
-        const { currentUploads } = this.getState()
-        const currentUpload = currentUploads[uploadID]
-        if (!currentUpload) {
-          return
-        }
-
-        const updatedUpload = {
-          ...currentUpload,
-          step,
-        }
-
-        this.setState({
-          currentUploads: {
-            ...currentUploads,
-            [uploadID]: updatedUpload,
-          },
-        })
-
-        // TODO give this the `updatedUpload` object as its only parameter maybe?
-        // Otherwise when more metadata may be added to the upload this would keep getting more parameters
-        return fn(updatedUpload.fileIDs, uploadID) // eslint-disable-line consistent-return
-      }).then(() => null)
-    })
-
-    // Not returning the `catch`ed promise, because we still want to return a rejected
-    // promise from this method if the upload failed.
-    lastStep.catch((err) => {
+    } catch (err) {
       this.emit('error', err)
       this.#removeUpload(uploadID)
-    })
+      throw err
+    }
 
-    return lastStep.then(() => {
-      // Set result data.
-      const { currentUploads } = this.getState()
-      const currentUpload = currentUploads[uploadID]
-      if (!currentUpload) {
-        return
-      }
-
+    // Set result data.
+    if (currentUpload) {
       // Mark postprocessing step as complete if necessary; this addresses a case where we might get
       // stuck in the postprocessing UI while the upload is fully complete.
       // If the postprocessing steps do not do any work, they may not emit postprocessing events at
@@ -1661,30 +1649,27 @@ class Uppy {
       const files = currentUpload.fileIDs.map((fileID) => this.getFile(fileID))
       const successful = files.filter((file) => !file.error)
       const failed = files.filter((file) => file.error)
-      this.addResultData(uploadID, { successful, failed, uploadID })
-    }).then(() => {
-      // Emit completion events.
-      // This is in a separate function so that the `currentUploads` variable
-      // always refers to the latest state. In the handler right above it refers
-      // to an outdated object without the `.result` property.
-      const { currentUploads } = this.getState()
-      if (!currentUploads[uploadID]) {
-        return
-      }
-      const currentUpload = currentUploads[uploadID]
-      const { result } = currentUpload
+      await this.addResultData(uploadID, { successful, failed, uploadID })
+
+      // Update currentUpload value in case it was modified asynchronously.
+      ;({ currentUploads } = this.getState())
+      currentUpload = currentUploads[uploadID]
+    }
+    // Emit completion events.
+    // This is in a separate function so that the `currentUploads` variable
+    // always refers to the latest state. In the handler right above it refers
+    // to an outdated object without the `.result` property.
+    let result
+    if (currentUpload) {
+      ({ result } = currentUpload)
       this.emit('complete', result)
 
       this.#removeUpload(uploadID)
-
-      // eslint-disable-next-line consistent-return
-      return result
-    }).then((result) => {
-      if (result == null) {
-        this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
-      }
-      return result
-    })
+    }
+    if (result == null) {
+      this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
+    }
+    return result
   }
 
   /**
