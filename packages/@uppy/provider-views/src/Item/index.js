@@ -34,7 +34,7 @@ module.exports = (props) => {
       return (
         <GridListItem {...props} className={className} itemIconEl={itemIconEl}>
           <a
-            href={author.url}
+            href={`${author.url}?utm_source=uppy&utm_medium=referral`}
             target="_blank"
             rel="noreferrer"
             className="uppy-ProviderBrowserItem-author"
