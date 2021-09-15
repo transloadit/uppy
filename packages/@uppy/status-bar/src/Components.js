@@ -6,21 +6,8 @@ const { h } = require('preact')
 
 const statusBarStates = require('./StatusBarStates')
 
-const renderDot = () => ' \u00B7 '
-
-module.exports = {
-  UploadBtn,
-  RetryBtn,
-  CancelBtn,
-  PauseResumeButton,
-  DoneBtn,
-  LoadingSpinner,
-  ProgressDetails,
-  ProgressBarProcessing,
-  ProgressBarError,
-  ProgressBarUploading,
-  ProgressBarComplete,
-}
+const DOT = `\u00B7`
+const renderDot = () => ` ${DOT} `
 
 function UploadBtn (props) {
   const {
@@ -148,35 +135,26 @@ function PauseResumeButton (props) {
       onClick={togglePauseResume}
       data-uppy-super-focusable
     >
-      {isAllPaused ? (
-        <svg
-          aria-hidden="true"
-          focusable="false"
-          className="uppy-c-icon"
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-        >
-          <g fill="none" fillRule="evenodd">
-            <circle fill="#888" cx="8" cy="8" r="8" />
-            <path fill="#FFF" d="M6 4.25L11.5 8 6 11.75z" />
-          </g>
-        </svg>
-      ) : (
-        <svg
-          aria-hidden="true"
-          focusable="false"
-          className="uppy-c-icon"
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-        >
-          <g fill="none" fillRule="evenodd">
-            <circle fill="#888" cx="8" cy="8" r="8" />
-            <path d="M5 4.5h2v7H5v-7zm4 0h2v7H9v-7z" fill="#FFF" />
-          </g>
-        </svg>
-      )}
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        className="uppy-c-icon"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+      >
+        <g fill="none" fillRule="evenodd">
+          <circle fill="#888" cx="8" cy="8" r="8" />
+          <path
+            fill="#FFF"
+            d={
+              isAllPaused
+                ? 'M6 4.25L11.5 8 6 11.75z'
+                : 'M5 4.5h2v7H5v-7zm4 0h2v7H9v-7z'
+            }
+          />
+        </g>
+      </svg>
     </button>
   )
 }
@@ -216,11 +194,12 @@ function LoadingSpinner () {
 function ProgressBarProcessing (props) {
   const { value, mode, message } = props
   const roundedValue = Math.round(value * 100)
+  const dot = `\u00B7`
 
   return (
     <div className="uppy-StatusBar-content">
       <LoadingSpinner />
-      {mode === 'determinate' ? `${roundedValue}% \u00B7 ` : ''}
+      {mode === 'determinate' ? `${roundedValue}% ${dot} ` : ''}
       {message}
     </div>
   )
@@ -347,7 +326,13 @@ function ProgressBarUploading (props) {
           />
         )
       }
-      return <UnknownProgressDetails i18n={i18n} complete={complete} numUploads={numUploads} />
+      return (
+        <UnknownProgressDetails
+          i18n={i18n}
+          complete={complete}
+          numUploads={numUploads}
+        />
+      )
     }
     return null
   }
@@ -363,7 +348,11 @@ function ProgressBarUploading (props) {
         {renderProgressDetails()}
 
         {showUploadNewlyAddedFiles ? (
-          <UploadNewlyAddedFiles i18n={i18n} newFiles={newFiles} startUpload={startUpload} />
+          <UploadNewlyAddedFiles
+            i18n={i18n}
+            newFiles={newFiles}
+            startUpload={startUpload}
+          />
         ) : null}
       </div>
     </div>
@@ -440,4 +429,18 @@ function ProgressBarError (props) {
       </button>
     </div>
   )
+}
+
+module.exports = {
+  UploadBtn,
+  RetryBtn,
+  CancelBtn,
+  PauseResumeButton,
+  DoneBtn,
+  LoadingSpinner,
+  ProgressDetails,
+  ProgressBarProcessing,
+  ProgressBarError,
+  ProgressBarUploading,
+  ProgressBarComplete,
 }
