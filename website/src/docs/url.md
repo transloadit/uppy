@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 14
+order: 15
 title: "Import From URL"
 menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/url"
