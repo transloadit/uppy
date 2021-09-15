@@ -184,8 +184,6 @@ class Uppy {
     //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
     this.calculateProgress = throttle(this.calculateProgress.bind(this), 500, { leading: true, trailing: true })
 
-    this.validateRestrictions = this.validateRestrictions.bind(this)
-
     this.store = this.opts.store
     this.setState({
       plugins: {},
