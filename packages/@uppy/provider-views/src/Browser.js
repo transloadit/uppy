@@ -9,8 +9,6 @@ const Item = require('./Item/index')
 
 const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
-module.exports = Browser
-
 function Browser (props) {
   const {
     currentSelection,
@@ -63,56 +61,70 @@ function Browser (props) {
         />
       )}
 
-      <div className="uppy-ProviderBrowser-body">
-        <ul
-          className="uppy-ProviderBrowser-list"
-          onScroll={handleScroll}
-          role="listbox"
-          // making <ul> not focusable for firefox
-          tabIndex="-1"
-        >
-          {folders.map((folder) => {
-            return Item({
-              columns,
-              showTitles,
-              viewType,
-              i18n,
-              id: folder.id,
-              title: folder.name,
-              getItemIcon: () => folder.icon,
-              isChecked: isChecked(folder),
-              toggleCheckbox: (event) => toggleCheckbox(event, folder),
-              type: 'folder',
-              isDisabled: isChecked(folder) ? isChecked(folder).loading : false,
-              isCheckboxDisabled: folder.id === VIRTUAL_SHARED_DIR,
-              handleFolderClick: () => getNextFolder(folder),
-            })
-          })}
+      {(() => {
+        if (!folders.length && !files.length) {
+          return (
+            <div className="uppy-Provider-empty">
+              {props.i18n('noFilesFound')}
+            </div>
+          )
+        }
 
-          {files.map((file) => {
-            const validated = validateRestrictions(remoteFileObjToLocal(file), [
-              ...uppyFiles,
-              ...currentSelection,
-            ])
+        return (
+          <div className="uppy-ProviderBrowser-body">
+            <ul
+              className="uppy-ProviderBrowser-list"
+              onScroll={handleScroll}
+              role="listbox"
+              // making <ul> not focusable for firefox
+              tabIndex="-1"
+            >
+              {folders.map((folder) => {
+                return Item({
+                  columns,
+                  showTitles,
+                  viewType,
+                  i18n,
+                  id: folder.id,
+                  title: folder.name,
+                  getItemIcon: () => folder.icon,
+                  isChecked: isChecked(folder),
+                  toggleCheckbox: (event) => toggleCheckbox(event, folder),
+                  type: 'folder',
+                  isDisabled: isChecked(folder)
+                    ? isChecked(folder).loading
+                    : false,
+                  isCheckboxDisabled: folder.id === VIRTUAL_SHARED_DIR,
+                  handleFolderClick: () => getNextFolder(folder),
+                })
+              })}
 
-            return Item({
-              id: file.id,
-              title: file.name,
-              author: file.author,
-              getItemIcon: () => file.icon,
-              isChecked: isChecked(file),
-              toggleCheckbox: (event) => toggleCheckbox(event, file),
-              columns,
-              showTitles,
-              viewType,
-              i18n,
-              type: 'file',
-              isDisabled: !validated.result && isChecked(file),
-              restrictionReason: validated.reason,
-            })
-          })}
-        </ul>
-      </div>
+              {files.map((file) => {
+                const validated = validateRestrictions(
+                  remoteFileObjToLocal(file),
+                  [...uppyFiles, ...currentSelection]
+                )
+
+                return Item({
+                  id: file.id,
+                  title: file.name,
+                  author: file.author,
+                  getItemIcon: () => file.icon,
+                  isChecked: isChecked(file),
+                  toggleCheckbox: (event) => toggleCheckbox(event, file),
+                  columns,
+                  showTitles,
+                  viewType,
+                  i18n,
+                  type: 'file',
+                  isDisabled: !validated.result && isChecked(file),
+                  restrictionReason: validated.reason,
+                })
+              })}
+            </ul>
+          </div>
+        )
+      })()}
 
       {selected > 0 && (
         <FooterActions
@@ -125,3 +137,5 @@ function Browser (props) {
     </div>
   )
 }
+
+module.exports = Browser
