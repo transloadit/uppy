@@ -110,18 +110,9 @@ function StatusBar (props) {
 
     switch (uploadState) {
       case STATE_WAITING:
-        if (hideUploadButton) {
-          return true
-        }
-        if (!newFiles > 0) {
-          return true
-        }
-        return false
+        return hideUploadButton || newFiles > 0
       case STATE_COMPLETE:
-        if (hideAfterFinish) {
-          return true
-        }
-        return false
+        return hideAfterFinish
       default:
         return false
     }
@@ -131,7 +122,7 @@ function StatusBar (props) {
 
   const isHidden = getIsHidden()
 
-  const width = progressValue || 100
+  const width = progressValue ?? 100
 
   const showUploadBtn
     = !error

@@ -6,7 +6,8 @@ const { h } = require('preact')
 
 const statusBarStates = require('./StatusBarStates')
 
-const renderDot = () => ' \u00B7 '
+const DOT = `\u00B7`
+const renderDot = () => ` ${DOT} `
 
 module.exports = {
   UploadBtn,
@@ -148,8 +149,7 @@ function PauseResumeButton (props) {
       onClick={togglePauseResume}
       data-uppy-super-focusable
     >
-      {isAllPaused ? (
-        <svg
+      <svg
           aria-hidden="true"
           focusable="false"
           className="uppy-c-icon"
@@ -159,24 +159,9 @@ function PauseResumeButton (props) {
         >
           <g fill="none" fillRule="evenodd">
             <circle fill="#888" cx="8" cy="8" r="8" />
-            <path fill="#FFF" d="M6 4.25L11.5 8 6 11.75z" />
+            <path fill="#FFF" d={isAllPaused ? "M6 4.25L11.5 8 6 11.75z" : "M5 4.5h2v7H5v-7zm4 0h2v7H9v-7z"} />
           </g>
-        </svg>
-      ) : (
-        <svg
-          aria-hidden="true"
-          focusable="false"
-          className="uppy-c-icon"
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-        >
-          <g fill="none" fillRule="evenodd">
-            <circle fill="#888" cx="8" cy="8" r="8" />
-            <path d="M5 4.5h2v7H5v-7zm4 0h2v7H9v-7z" fill="#FFF" />
-          </g>
-        </svg>
-      )}
+      </svg>
     </button>
   )
 }

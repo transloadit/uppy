@@ -1,27 +1,19 @@
 module.expost = function calculateProcessingProgress (files) {
-  // Collect pre or postprocessing progress states.
-  const progresses = []
-
-  Object.keys(files).forEach((fileID) => {
-    const { progress } = files[fileID]
-    if (progress.preprocess) {
-      progresses.push(progress.preprocess)
+  let values = []
+  let mode, message
+  for (const { progress } of Object.values(files)) {
+    const { preprocess, postprocess } = progress
+    // In the future we should probably do this differently. For now we'll take the
+    // mode and message from the first file…
+    if (message == null && (preprocess || postprocess)) {
+      ({ mode, message } = preprocess || postprocess)
     }
-    if (progress.postprocess) {
-      progresses.push(progress.postprocess)
-    }
-  })
-
-  // In the future we should probably do this differently. For now we'll take the
-  // mode and message from the first file…
-  const { mode, message } = progresses[0]
-  const value = progresses.filter(isDeterminate).reduce((total, progress, index, all) => {
-    return total + progress.value / all.length
-  }, 0)
-  function isDeterminate (progress) {
-    return progress.mode === 'determinate'
+    if (preprocess?.mode === "determinate") values.push(preprocess.value)
+    if (postprocess?.mode === "determinate") values.push(postprocess.value)
   }
-
+  const value = progresses.reduce((total, progress) => {
+    return total + progress.value / values.length
+  }, 0)
   return {
     mode,
     message,
