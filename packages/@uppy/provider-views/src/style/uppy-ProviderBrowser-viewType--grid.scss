@@ -91,14 +91,15 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      background: rgba(black, 0.4);
+      background: rgba(black, 0.3);
       color: white;
-      font-weight: 600;
+      font-weight: 500;
+      font-size: 12px;
       margin: 0;
-      padding: 6px;
+      padding: 5px;
 
       &:hover {
-        background: rgba(black, 0.5);
+        background: rgba(black, 0.4);
       }
     }
 
