@@ -1587,7 +1587,7 @@ class Uppy {
   async #runUpload (uploadID) {
     let { currentUploads } = this.getState()
     const uploadData = currentUploads[uploadID]
-    const restoreStep = uploadData.step
+    const restoreStep = uploadData.step || 0
 
     const steps = [
       ...this.#preProcessors,
