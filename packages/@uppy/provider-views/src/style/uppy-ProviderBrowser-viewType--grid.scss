@@ -97,9 +97,11 @@
       font-size: 12px;
       margin: 0;
       padding: 5px;
+      text-decoration: none;
 
       &:hover {
         background: rgba(black, 0.4);
+        text-decoration: underline;
       }
     }
 
