@@ -26,7 +26,7 @@ nb_NO.strings = {
   closeModal: 'Lukk vindu',
   companionError: 'Kobling til Companion feilet',
   companionUnauthorizeHint: 'For å logge ut av din %{provider}-konto, gå til %{url}',
-  complete: 'Ferdig',
+  complete: 'Fullført',
   connectedToInternet: 'Koblet til internett',
   copyLink: 'Kopier lenke',
   copyLinkToClipboardFallback: 'Kopier URL under',
