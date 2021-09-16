@@ -33,10 +33,11 @@ describe('Transloadit', () => {
   })
 
   it('Does not leave lingering progress if getAssemblyOptions fails', () => {
+    const error = new Error('expected failure')
     const uppy = new Core()
     uppy.use(Transloadit, {
       getAssemblyOptions () {
-        return Promise.reject(new Error('Failure!'))
+        return Promise.reject(error)
       },
     })
 
@@ -51,7 +52,7 @@ describe('Transloadit', () => {
     }).catch((err) => {
       const fileID = Object.keys(uppy.getState().files)[0]
 
-      expect(err.message).toBe('Failure!')
+      expect(err).toBe(error)
       expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
     })
   })
