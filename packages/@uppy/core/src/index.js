@@ -1586,40 +1586,40 @@ class Uppy {
    */
   async #runUpload (uploadID) {
     let { currentUploads } = this.getState()
-    const uploadData = currentUploads[uploadID]
-    const restoreStep = uploadData.step || 0
+    let currentUpload = currentUploads[uploadID]
+    const restoreStep = currentUpload.step || 0
 
     const steps = [
       ...this.#preProcessors,
       ...this.#uploaders,
       ...this.#postProcessors,
     ]
-    let currentUpload = uploadData
     try {
       for (let step = restoreStep; step < steps.length; step++) {
+        if (!currentUpload) {
+          break
+        }
         const fn = steps[step]
 
-        if (currentUpload) {
-          const updatedUpload = {
-            ...currentUpload,
-            step,
-          }
-
-          this.setState({
-            currentUploads: {
-              ...currentUploads,
-              [uploadID]: updatedUpload,
-            },
-          })
-
-          // TODO give this the `updatedUpload` object as its only parameter maybe?
-          // Otherwise when more metadata may be added to the upload this would keep getting more parameters
-          await fn(updatedUpload.fileIDs, uploadID)
-
-          // Update currentUpload value in case it was modified asynchronously.
-          currentUploads = this.getState().currentUploads
-          currentUpload = currentUploads[uploadID]
+        const updatedUpload = {
+          ...currentUpload,
+          step,
         }
+
+        this.setState({
+          currentUploads: {
+            ...currentUploads,
+            [uploadID]: updatedUpload,
+          },
+        })
+
+        // TODO give this the `updatedUpload` object as its only parameter maybe?
+        // Otherwise when more metadata may be added to the upload this would keep getting more parameters
+        await fn(updatedUpload.fileIDs, uploadID)
+
+        // Update currentUpload value in case it was modified asynchronously.
+        currentUploads = this.getState().currentUploads
+        currentUpload = currentUploads[uploadID]
       }
     } catch (err) {
       this.emit('error', err)
