@@ -1617,7 +1617,7 @@ class Uppy {
           await fn(updatedUpload.fileIDs, uploadID)
 
           // Update currentUpload value in case it was modified asynchronously.
-          ;({ currentUploads } = this.getState())
+          currentUploads = this.getState().currentUploads
           currentUpload = currentUploads[uploadID]
         }
       }
@@ -1652,7 +1652,7 @@ class Uppy {
       await this.addResultData(uploadID, { successful, failed, uploadID })
 
       // Update currentUpload value in case it was modified asynchronously.
-      ;({ currentUploads } = this.getState())
+      currentUploads = this.getState().currentUploads
       currentUpload = currentUploads[uploadID]
     }
     // Emit completion events.
@@ -1661,7 +1661,7 @@ class Uppy {
     // to an outdated object without the `.result` property.
     let result
     if (currentUpload) {
-      ({ result } = currentUpload)
+      result = currentUpload.result
       this.emit('complete', result)
 
       this.#removeUpload(uploadID)
