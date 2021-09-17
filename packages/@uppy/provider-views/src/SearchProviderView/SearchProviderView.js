@@ -244,7 +244,7 @@ module.exports = class ProviderView {
       pluginIcon: this.plugin.icon,
       i18n: this.plugin.uppy.i18n,
       uppyFiles: this.plugin.uppy.getFiles(),
-      validateRestrictions: this.plugin.uppy.validateRestrictions,
+      validateRestrictions: (...args) => this.plugin.uppy.validateRestrictions(...args)
     }
 
     return (
