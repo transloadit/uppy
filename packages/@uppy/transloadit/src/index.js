@@ -1,4 +1,3 @@
-const Translator = require('@uppy/utils/lib/Translator')
 const hasProperty = require('@uppy/utils/lib/hasProperty')
 const { BasePlugin } = require('@uppy/core')
 const Tus = require('@uppy/tus')
@@ -13,6 +12,12 @@ function defaultGetAssemblyOptions (file, options) {
     signature: options.signature,
     fields: options.fields,
   }
+}
+
+const sendErrorToConsole = originalErr => err => {
+  const error = new Error('Failed to send error to the client')
+  error.cause = err
+  console.error(error, originalErr)
 }
 
 const COMPANION = 'https://api2.transloadit.com/companion'
@@ -80,18 +85,6 @@ module.exports = class Transloadit extends BasePlugin {
     // Contains a file IDs that have completed postprocessing before the upload
     // they belong to has entered the postprocess stage.
     this.completedFiles = Object.create(null)
-  }
-
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   #getClientVersion () {
@@ -400,7 +393,7 @@ module.exports = class Transloadit extends BasePlugin {
   #onCancelAll =() => {
     const { uploadsAssemblies } = this.getPluginState()
 
-    const assemblyIDs = Object.values(uploadsAssemblies)
+    const assemblyIDs = Object.values(uploadsAssemblies).flat(1)
 
     const cancelPromises = assemblyIDs.map((assemblyID) => {
       const assembly = this.getAssembly(assemblyID)
@@ -418,10 +411,8 @@ module.exports = class Transloadit extends BasePlugin {
    *
    * @param {Function} setData
    */
-  #getPersistentData =(setData) => {
-    const state = this.getPluginState()
-    const { assemblies } = state
-    const { uploadsAssemblies } = state
+  #getPersistentData = (setData) => {
+    const { assemblies, uploadsAssemblies } = this.getPluginState()
 
     setData({
       [this.id]: {
@@ -486,11 +477,9 @@ module.exports = class Transloadit extends BasePlugin {
       // Set up the assembly watchers again for all the ongoing uploads.
       Object.keys(uploadsAssemblies).forEach((uploadID) => {
         const assemblyIDs = uploadsAssemblies[uploadID]
-        const fileIDsInUpload = assemblyIDs.reduce((acc, assemblyID) => {
-          const fileIDsInAssembly = this.getAssemblyFiles(assemblyID).map((file) => file.id)
-          acc.push(...fileIDsInAssembly)
-          return acc
-        }, [])
+        const fileIDsInUpload = assemblyIDs.flatMap((assemblyID) => {
+          return this.getAssemblyFiles(assemblyID).map((file) => file.id)
+        })
         this.#createAssemblyWatcher(assemblyIDs, fileIDsInUpload, uploadID)
       })
 
@@ -711,21 +700,23 @@ module.exports = class Transloadit extends BasePlugin {
     const state = this.getPluginState()
     const assemblyIDs = state.uploadsAssemblies[uploadID]
 
-    assemblyIDs.forEach((assemblyID) => {
+    assemblyIDs?.forEach((assemblyID) => {
       if (this.activeAssemblies[assemblyID]) {
         this.activeAssemblies[assemblyID].close()
       }
     })
     this.client.submitError(err)
+      // if we can't report the error that sucks
+      .catch(sendErrorToConsole(err))
   }
 
   #onTusError =(err) => {
     if (err && /^tus: /.test(err.message)) {
       const xhr = err.originalRequest ? err.originalRequest.getUnderlyingObject() : null
       const url = xhr && xhr.responseURL ? xhr.responseURL : null
-      this.client.submitError(err, { url, type: 'TUS_ERROR' }).then(() => {
+      this.client.submitError(err, { url, type: 'TUS_ERROR' })
         // if we can't report the error that sucks
-      })
+        .catch(sendErrorToConsole(err))
     }
   }
 
@@ -757,7 +748,6 @@ module.exports = class Transloadit extends BasePlugin {
         // Golden Retriever. So, Golden Retriever is required to do resumability with the Transloadit plugin,
         // and we disable Tus's default resume implementation to prevent bad behaviours.
         storeFingerprintForResuming: false,
-        resume: false,
         // Disable Companion's retry optimisation; we need to change the endpoint on retry
         // so it can't just reuse the same tus.Upload instance server-side.
         useFastRemoteRetry: false,

@@ -1,8 +1,7 @@
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 import type { PublicProviderOptions, TokenStorage } from '@uppy/companion-client'
 
-  interface GoogleDriveOptions extends PluginOptions, PublicProviderOptions {
-    replaceTargetContent?: boolean
+export interface GoogleDriveOptions extends PluginOptions, PublicProviderOptions {
     target?: PluginTarget
     title?: string
     storage?: TokenStorage

@@ -19,7 +19,7 @@ b.plugin(watchify)
 b.transform(babelify)
 
 function bundle () {
-  return b.bundle((err, data) => {
+  return b.bundle((err) => {
     if (err) console.error(err.stack)
     else console.log('bundle complete')
   }).pipe(createWriteStream(path.join(__dirname, './bundle.js')))

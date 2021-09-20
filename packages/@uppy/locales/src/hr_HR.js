@@ -41,7 +41,7 @@ hr_HR.strings = {
   encoding: 'Enkodiranje...',
   enterCorrectUrl: 'Pogrešan URL: unesite točnu putanju do datoteke',
   enterUrlToImport: 'Unesite URL do datoteke',
-  exceedsSize: 'Ova datoteka premašuje najveću dozvoljenu veličinu od',
+  exceedsSize: 'Ova datoteka premašuje najveću dozvoljenu veličinu od %{size}',
   failedToFetch: 'Companion nije uspio dohvatiti traženi URL, provjerite ispravnost adrese',
   failedToUpload: 'Broj neuspješno prenesenih datoteka: %{file}',
   fileSource: 'Datoteka: %{name}',
@@ -67,7 +67,7 @@ hr_HR.strings = {
   pause: 'Zaustavi privremeno',
   pauseUpload: 'Privremeno zaustavi prijenos',
   paused: 'Privremeno zaustavljeno',
-  poweredBy: 'Podržano od strane',
+  poweredBy: 'Podržano od strane %{uppy}',
   processingXFiles: {
     '0': 'Obrada datoteke',
     '1': 'Broj datoteka koje se obrađuju: %{smart_count}',
@@ -137,7 +137,7 @@ hr_HR.strings = {
   openFolderNamed: 'Otvori mapu %{name}',
 }
 
-hr_HR.pluralize = function (n) {
+hr_HR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

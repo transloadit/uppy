@@ -12,7 +12,8 @@ const parseUrl = require('./parseUrl')
 let socketIo
 function requireSocketIo () {
   // eslint-disable-next-line global-require
-  return socketIo ??= require('socket.io-client')
+  socketIo ??= require('socket.io-client')
+  return socketIo
 }
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
@@ -83,7 +84,7 @@ class TransloaditAssembly extends Emitter {
       this.socket = null
     })
 
-    socket.on('error', () => {
+    socket.on('connect_error', () => {
       socket.disconnect()
       this.socket = null
     })

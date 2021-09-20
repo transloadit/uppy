@@ -3,7 +3,7 @@ const marked = require('marked')
 const dragdrop = require('drag-drop')
 // Add Robodog JS. It is advisable to install Robodog from npm/yarn.
 // But for experimenting, you can use also Transloadit’s CDN, Edgly:
-// <script src="https://releases.transloadit.com/uppy/robodog/v1.10.12/robodog.min.js"></script>
+// <script src="https://releases.transloadit.com/uppy/robodog/v2.0.0-alpha.0/robodog.min.js"></script>
 const robodog = require('@uppy/robodog')
 
 const TRANSLOADIT_EXAMPLE_KEY = '35c1aed03f5011e982b6afe82599b6a0'
@@ -109,8 +109,8 @@ class MarkdownTextarea {
       waitForEncoding: true,
       params: {
         auth: { key: TRANSLOADIT_EXAMPLE_KEY },
-        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE
-      }
+        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE,
+      },
     }).then((result) => {
       if (result === null) return
       this.insertAttachments(
@@ -127,15 +127,15 @@ class MarkdownTextarea {
       waitForEncoding: true,
       params: {
         auth: { key: TRANSLOADIT_EXAMPLE_KEY },
-        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE
+        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE,
       },
       providers: [
         'webcam',
         'url',
         'instagram',
         'google-drive',
-        'dropbox'
-      ]
+        'dropbox',
+      ],
     }).then((result) => {
       if (result === null) return
       this.insertAttachments(
@@ -148,8 +148,7 @@ class MarkdownTextarea {
   }
 }
 
-const textarea = new MarkdownTextarea(
-  document.querySelector('#new textarea'))
+const textarea = new MarkdownTextarea(document.querySelector('#new textarea'))
 textarea.install()
 
 function renderSnippet (title, text) {

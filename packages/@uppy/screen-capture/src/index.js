@@ -1,6 +1,5 @@
 const { h } = require('preact')
 const { UIPlugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
 const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
 const ScreenRecIcon = require('./ScreenRecIcon')
 const CaptureScreen = require('./CaptureScreen')
@@ -20,7 +19,8 @@ module.exports = class ScreenCapture extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
-    this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
+    // eslint-disable-next-line no-restricted-globals
+    this.protocol = location.protocol === 'https:' ? 'https' : 'http'
     this.id = this.opts.id || 'ScreenCapture'
     this.title = this.opts.title || 'Screencast'
     this.type = 'acquirer'
@@ -30,7 +30,7 @@ module.exports = class ScreenCapture extends UIPlugin {
       strings: {
         startCapturing: 'Begin screen capturing',
         stopCapturing: 'Stop screen capturing',
-        submitRecordedFile: 'Submit captured video',
+        submitRecordedFile: 'Submit recorded file',
         streamActive: 'Stream active',
         streamPassive: 'Stream passive',
         micDisabled: 'Microphone access denied by user',
@@ -65,9 +65,7 @@ module.exports = class ScreenCapture extends UIPlugin {
     this.opts = { ...defaultOptions, ...opts }
 
     // i18n
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    this.i18nInit()
 
     // uppy plugin class related
     this.install = this.install.bind(this)
@@ -149,7 +147,7 @@ module.exports = class ScreenCapture extends UIPlugin {
         this.videoStream = videoStream
 
         // add event listener to stop recording if stream is interrupted
-        this.videoStream.addEventListener('inactive', (event) => {
+        this.videoStream.addEventListener('inactive', () => {
           this.streamInactivated()
         })
 
@@ -211,7 +209,9 @@ module.exports = class ScreenCapture extends UIPlugin {
       .then((videoStream) => {
         // Attempt to use the passed preferredVideoMimeType (if any) during recording.
         // If the browser doesn't support it, we'll fall back to the browser default instead
-        if (preferredVideoMimeType && MediaRecorder.isTypeSupported(preferredVideoMimeType) && getFileTypeExtension(preferredVideoMimeType)) {
+        if (preferredVideoMimeType
+            && MediaRecorder.isTypeSupported(preferredVideoMimeType)
+            && getFileTypeExtension(preferredVideoMimeType)) {
           options.mimeType = preferredVideoMimeType
         }
 
@@ -274,7 +274,7 @@ module.exports = class ScreenCapture extends UIPlugin {
   }
 
   stopRecording () {
-    const stopped = new Promise((resolve, reject) => {
+    const stopped = new Promise((resolve) => {
       this.recorder.addEventListener('stop', () => {
         resolve()
       })
@@ -384,7 +384,7 @@ module.exports = class ScreenCapture extends UIPlugin {
     return Promise.resolve(file)
   }
 
-  render (state) {
+  render () {
     // get screen recorder state
     const recorderState = this.getPluginState()
 

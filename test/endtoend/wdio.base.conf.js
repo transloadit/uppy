@@ -95,6 +95,7 @@ exports.config = {
         { mount: '/providers', path: './providers/dist' },
         { mount: '/thumbnails', path: './thumbnails/dist' },
         { mount: '/transloadit', path: './transloadit/dist' },
+        { mount: '/transloadit2', path: './transloadit2/dist' },
         { mount: '/tus-drag-drop', path: './tus-drag-drop/dist' },
         { mount: '/typescript', path: './typescript/dist' },
         { mount: '/url-plugin', path: './url-plugin/dist' },
@@ -127,8 +128,8 @@ exports.config = {
    * @param {Array.<object>} capabilities list of capabilities details
    * @param {Array<string>} specs List of spec file paths that are to be run
    */
-  before (capabilities, specs) {
-    var chai = require('chai')
+  before (capabilities) {
+    const chai = require('chai')
     global.expect = chai.expect
     global.capabilities = capabilities
     chai.Should()

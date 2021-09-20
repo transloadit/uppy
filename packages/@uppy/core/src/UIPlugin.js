@@ -1,10 +1,13 @@
-const { render, h, createRef, cloneElement } = require('preact')
+const { render } = require('preact')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 
 const BasePlugin = require('./BasePlugin')
 
 /**
  * Defer a frequent call to the microtask queue.
+ *
+ * @param {() => T} fn
+ * @returns {Promise<T>}
  */
 function debounce (fn) {
   let calling = null
@@ -30,19 +33,9 @@ function debounce (fn) {
  * Use this for plugins that need a user interface.
  *
  * For plugins without an user interface, see BasePlugin.
- *
- * @param {object} main Uppy core object
- * @param {object} object with plugin options
- * @returns {Array|string} files or success/fail message
  */
 class UIPlugin extends BasePlugin {
-  constructor (uppy, opts) {
-    super(uppy, opts)
-
-    this.mount = this.mount.bind(this)
-    this.update = this.update.bind(this)
-    this.unmount = this.unmount.bind(this)
-  }
+  #updateUI
 
   /**
    * Check if supplied `target` is a DOM element or an `object`.
@@ -56,31 +49,33 @@ class UIPlugin extends BasePlugin {
 
     if (targetElement) {
       this.isTargetDOMEl = true
+      // When target is <body> with a single <div> element,
+      // Preact thinks it’s the Uppy root element in there when doing a diff,
+      // and destroys it. So we are creating a fragment (could be empty div)
+      const uppyRootElement = document.createDocumentFragment()
 
       // API for plugins that require a synchronous rerender.
-      this.rerender = (state) => {
+      this.#updateUI = debounce((state) => {
         // plugin could be removed, but this.rerender is debounced below,
         // so it could still be called even after uppy.removePlugin or uppy.close
         // hence the check
         if (!this.uppy.getPlugin(this.id)) return
-        render(this.render(state), targetElement)
+        render(this.render(state), uppyRootElement)
         this.afterUpdate()
-      }
-
-      this.updateUI = debounce(this.rerender)
+      })
 
       this.uppy.log(`Installing ${callerPluginName} to a DOM element '${target}'`)
 
       if (this.opts.replaceTargetContent) {
-        // Although you could remove the child nodes using DOM APIs (container.innerHTML = ''),
-        // this isn't recommended because the component might need to do additional cleanup when it is removed.
-        // To remove the rendered content and run any cleanup processes, render an empty element into the container:
-        render(h(null), targetElement)
+        // Doing render(h(null), targetElement), which should have been
+        // a better way, since because the component might need to do additional cleanup when it is removed,
+        // stopped working — Preact just adds null into target, not replacing
+        targetElement.innerHTML = ''
       }
 
-      render(this.render(this.uppy.getState()), targetElement)
-
-      this.el = targetElement.firstElementChild
+      render(this.render(this.uppy.getState()), uppyRootElement)
+      this.el = uppyRootElement.firstElementChild
+      targetElement.appendChild(uppyRootElement)
 
       this.onMount()
 
@@ -130,20 +125,23 @@ class UIPlugin extends BasePlugin {
   }
 
   update (state) {
-    if (typeof this.el === 'undefined') {
-      return
-    }
-
-    if (this.updateUI) {
-      this.updateUI(state)
+    if (this.el != null) {
+      this.#updateUI?.(state)
     }
   }
 
   unmount () {
-    if (this.isTargetDOMEl && this.el && this.el.parentNode) {
-      this.el.parentNode.removeChild(this.el)
+    if (this.isTargetDOMEl) {
+      this.el?.remove()
     }
+    this.onUnmount()
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  onMount () {}
+
+  // eslint-disable-next-line class-methods-use-this
+  onUnmount () {}
 }
 
 module.exports = UIPlugin

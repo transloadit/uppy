@@ -7,6 +7,7 @@ module.exports = (api) => {
   return {
     presets: [
       ['@babel/preset-env', {
+        include: ['@babel/plugin-proposal-nullish-coalescing-operator'],
         loose: true,
         targets,
         useBuiltIns: false, // Don't add polyfills automatically.
@@ -16,7 +17,7 @@ module.exports = (api) => {
     ],
     plugins: [
       ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
-      process.env.IS_RELEASE_BUILD && 'babel-plugin-inline-package-json',
+      'babel-plugin-inline-package-json',
     ].filter(Boolean),
   }
 }

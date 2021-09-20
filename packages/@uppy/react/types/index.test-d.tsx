@@ -15,12 +15,15 @@ const uppy = new Uppy()
   }
 }
 
+{
+  expectError(<components.Dashboard target="body"/>)
+}
+
 // inline option should be removed from proptypes because it is always overridden
 // by the component
 {
   expectError(<components.Dashboard inline />)
   expectError(<components.DashboardModal inline />)
-  expectError(<components.DashboardModal replaceTargetContent />)
 }
 
 {
@@ -46,6 +49,7 @@ const uppy = new Uppy()
 {
   const el = (
     <components.DashboardModal
+      target="body"
       uppy={uppy}
       open
       animateOpenClose

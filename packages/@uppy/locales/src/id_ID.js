@@ -41,7 +41,7 @@ id_ID.strings = {
   encoding: 'Pengkodean...',
   enterCorrectUrl: 'URL salah: Mohon pastikan Anda memasukkan tautan langsung ke berkas',
   enterUrlToImport: 'Masukkan URL untuk mengimpor berkas',
-  exceedsSize: 'Berkas ini melebihi ukuran maksimum yang dibolehkan',
+  exceedsSize: 'Berkas ini melebihi ukuran maksimum yang dibolehkan %{size}',
   failedToFetch: 'Companion gagal mengambil URL ini, pastikan sudah benar',
   failedToUpload: 'Gagal mengunggah %{file}',
   fileSource: 'Sumber berkas: %{name}',
@@ -68,7 +68,7 @@ id_ID.strings = {
   pause: 'Tunda',
   pauseUpload: 'Tunda pengungahan',
   paused: 'Ditunda',
-  poweredBy: 'Didukung oleh',
+  poweredBy: 'Didukung oleh %{uppy}',
   processingXFiles: {
     '0': 'Pemrosesan %{smart_count} berkas',
     '1': 'Pemrosesan %{smart_count} berkas',
@@ -137,7 +137,7 @@ id_ID.strings = {
   },
 }
 
-id_ID.pluralize = function (n) {
+id_ID.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

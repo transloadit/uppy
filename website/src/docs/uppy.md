@@ -38,7 +38,7 @@ The Uppy core module has the following configurable options:
 const uppy = new Uppy({
   id: 'uppy',
   autoProceed: false,
-  allowMultipleUploads: true,
+  allowMultipleUploadBatches: true,
   debug: false,
   restrictions: {
     maxFileSize: null,
@@ -47,6 +47,7 @@ const uppy = new Uppy({
     maxNumberOfFiles: null,
     minNumberOfFiles: null,
     allowedFileTypes: null,
+    requiredMetaFields: [],
   },
   meta: {},
   onBeforeFileAdded: (currentFile, files) => currentFile,
@@ -76,7 +77,7 @@ const photoUploader = new Uppy({ id: 'post' })
 
 By default Uppy will wait for an upload button to be pressed in the UI, or an `.upload()` method to be called, before starting an upload. Setting this to `autoProceed: true` will start uploading automatically after the first file is selected.
 
-### `allowMultipleUploads: true`
+### `allowMultipleUploadBatches: true`
 
 Whether to allow multiple upload batches. This means multiple calls to `.upload()`, or a user adding more files after already uploading some. An upload batch is made up of the files that were added since the previous `.upload()` call.
 
@@ -134,6 +135,7 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 - `maxNumberOfFiles` *null | number* — total number of files that can be selected
 - `minNumberOfFiles` *null | number* — minimum number of files that must be selected before the upload
 - `allowedFileTypes` *null | array* of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
+- `requiredMetaFields` *array* of strings
 
 `maxNumberOfFiles` also affects the number of files a user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1`, they will only be able to select a single file. When `null` or another number is provided, they will be able to select multiple files.
 
@@ -285,9 +287,7 @@ const uppy = new Uppy({
         0: 'You have to select at least %{smart_count} file',
         1: 'You have to select at least %{smart_count} files',
       },
-      // **NOTE**: This string is called `exceedsSize2` for backwards compatibility reasons.
-      // See https://github.com/transloadit/uppy/pull/2077
-      exceedsSize2: 'This file exceeds maximum allowed size of %{size}',
+      exceedsSize: 'This file exceeds maximum allowed size of %{size}',
       youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
       companionError: 'Connection with Companion failed',
     },

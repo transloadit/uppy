@@ -16,6 +16,10 @@ const SHARED_DRIVE_FIELDS = '*'
 // Hopefully this name will not be used by Google
 const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
+function sortByName (first, second) {
+  return first.name.localeCompare(second.name)
+}
+
 function waitForFailedResponse (resp) {
   return new Promise((resolve, reject) => {
     let data = ''
@@ -70,7 +74,7 @@ function adaptData (listFilesResp, sharedDrivesResp, directory, query, showShare
 
   const adaptedItems = [
     ...(virtualItem ? [virtualItem] : []), // shared folder first
-    ...([...sharedDrives, ...items].map(adaptItem)),
+    ...([...sharedDrives, ...items].map(adaptItem).sort(sortByName)),
   ]
 
   return {

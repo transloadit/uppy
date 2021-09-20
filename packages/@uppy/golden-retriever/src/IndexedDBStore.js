@@ -1,5 +1,3 @@
-const prettierBytes = require('@transloadit/prettier-bytes')
-
 const indexedDB = typeof window !== 'undefined'
   && (window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB)
 
@@ -210,12 +208,6 @@ class IndexedDBStore {
         request.onsuccess = (event) => {
           const cursor = event.target.result
           if (cursor) {
-            const entry = cursor.value
-            console.log(
-              '[IndexedDBStore] Deleting record', entry.fileID,
-              'of size', prettierBytes(entry.data.size),
-              '- expired on', new Date(entry.expires)
-            )
             cursor.delete() // Ignoring return value … it's not terrible if this goes wrong.
             cursor.continue()
           } else {

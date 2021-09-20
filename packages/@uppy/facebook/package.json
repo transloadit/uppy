@@ -1,7 +1,7 @@
 {
   "name": "@uppy/facebook",
   "description": "Import files from Facebook, into Uppy.",
-  "version": "1.2.2",
+  "version": "2.0.2",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -26,6 +26,6 @@
     "preact": "^10.5.13"
   },
   "peerDependencies": {
-    "@uppy/core": "^1.0.0"
+    "@uppy/core": "^2.0.0"
   }
 }

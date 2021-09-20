@@ -41,13 +41,14 @@ fr_FR.strings = {
   dropPasteImportBoth: 'Déposer les fichiers ici, coller, %{browse} ou importer de',
   dropPasteImportFiles: 'Déposer les fichiers ici, coller, %{browse} ou importer de',
   dropPasteImportFolders: 'Déposer les fichiers ici, coller, %{browse} ou importer de',
-  editFile: 'Modifier fichier',
+  editFile: 'Modifier le fichier',
+  editFileWithFilename: 'Modifier le fichier %{file}',
   editing: 'Modification en cours de %{file}',
   emptyFolderAdded: 'Aucun fichier n\'a été ajouté depuis un dossier vide',
   encoding: 'Traitement...',
   enterCorrectUrl: 'Lien incorrect: Assurez-vous que vous entrez un lien direct vers le fichier',
   enterUrlToImport: 'Entrez le lien pour importer un fichier',
-  exceedsSize: 'Ce fichier dépasse la taille maximale autorisée de',
+  exceedsSize: 'Ce fichier dépasse la taille maximale autorisée de %{size}',
   failedToFetch: 'Companion a échoué à récupérer ce lien, assurez-vous qu\'il est correct',
   failedToUpload: 'Le téléchargement de %{file} a échoué',
   fileSource: 'Fichier source: %{name}',
@@ -73,12 +74,12 @@ fr_FR.strings = {
   noDuplicates: 'Impossible d\'ajouter le fichier "%{fileName}", il existe déjà',
   noFilesFound: 'Vous n\'avez aucun fichier ou dossier ici',
   noInternetConnection: 'Pas de connexion à Internet',
-  noNewAlreadyUploading: 'Impossible d\'ajouter de nouveaux fichiers: en cours de chargement ',
+  noMoreFilesAllowed: 'Impossible d\'ajouter de nouveaux fichiers: en cours de chargement ',
   openFolderNamed: 'Ouvrir %{name}',
   pause: 'Pause',
   pauseUpload: 'Mettre en pause le téléchargement',
   paused: 'En pause',
-  poweredBy: 'Propulsé par',
+  poweredBy: 'Propulsé par %{uppy}',
   processingXFiles: {
     '0': 'Traitement de %{smart_count} fichier',
     '1': 'Traitement de %{smart_count} fichiers',
@@ -87,7 +88,7 @@ fr_FR.strings = {
   recording: 'Enregistrement',
   recordingLength: 'Durée d\'enregistrement %{recording_length}',
   recordingStoppedMaxSize: 'L\'enregistrement s\'est arrété car la taille du fichier dépasse la limite',
-  removeFile: 'Effacer le fichier',
+  removeFile: 'Effacer le fichier %{file}',
   resetFilter: 'Réinitialiser filtre',
   resume: 'Reprendre',
   resumeUpload: 'Reprendre le téléchargement',
@@ -153,7 +154,7 @@ fr_FR.strings = {
   },
 }
 
-fr_FR.pluralize = function (n) {
+fr_FR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

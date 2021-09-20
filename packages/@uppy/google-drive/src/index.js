@@ -13,10 +13,25 @@ module.exports = class GoogleDrive extends UIPlugin {
     Provider.initPlugin(this, opts)
     this.title = this.opts.title || 'Google Drive'
     this.icon = () => (
-      <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        width="32"
+        height="32"
+        viewBox="0 0 32 32"
+      >
         <g fill="none" fillRule="evenodd">
-          <rect className="uppy-ProviderIconBg" fill="#4285F4" width="32" height="32" rx="16" />
-          <path d="M10.324 23.3l3-5.1H25l-3 5.1H10.324zM13 18.2l-3 5.1-3-5.1 5.839-9.924 2.999 5.1L13 18.2zm11.838-.276h-6L13 8h6l5.84 9.924h-.002z" fill="#FFF" />
+          <rect
+            className="uppy-ProviderIconBg"
+            fill="#4285F4"
+            width="32"
+            height="32"
+            rx="16"
+          />
+          <path
+            d="M25.216 17.736L19.043 7h-6.086l6.175 10.736h6.084zm-11.275.896L10.9 24h11.723l3.04-5.368H13.942zm-1.789-10.29l-5.816 10.29L9.38 24l5.905-10.29-3.132-5.369z"
+            fill="#FFF"
+          />
         </g>
       </svg>
     )
@@ -29,6 +44,14 @@ module.exports = class GoogleDrive extends UIPlugin {
       provider: 'drive',
       pluginId: this.id,
     })
+
+    this.defaultLocale = {
+      strings: {
+        pluginNameGoogleDrive: 'Google Drive',
+      },
+    }
+    this.i18nInit()
+    this.title = this.i18n('pluginNameGoogleDrive')
 
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)

@@ -3,19 +3,22 @@
  * all events that were added using the wrapped emitter.
  */
 module.exports = class EventTracker {
+  #emitter
+
+  #events = []
+
   constructor (emitter) {
-    this._events = []
-    this._emitter = emitter
+    this.#emitter = emitter
   }
 
   on (event, fn) {
-    this._events.push([event, fn])
-    return this._emitter.on(event, fn)
+    this.#events.push([event, fn])
+    return this.#emitter.on(event, fn)
   }
 
   remove () {
-    this._events.forEach(([event, fn]) => {
-      this._emitter.off(event, fn)
-    })
+    for (const [event, fn] of this.#events.splice(0)) {
+      this.#emitter.off(event, fn)
+    }
   }
 }

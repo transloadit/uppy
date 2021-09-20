@@ -6,20 +6,18 @@
  * @param {number} maxLength - maximum size of the resulting string
  * @returns {string}
  */
+const separator = '...'
 module.exports = function truncateString (string, maxLength) {
-  const separator = '...'
-
+  // Return the empty string if maxLength is zero
+  if (maxLength === 0) return ''
   // Return original string if it's already shorter than maxLength
-  if (string.length <= maxLength) {
-    return string
-  // Return truncated substring without '...' if string can't be meaningfully truncated
-  } if (maxLength <= separator.length) {
-    return string.substr(0, maxLength)
-  // Return truncated string divided in half by '...'
-  }
+  if (string.length <= maxLength) return string
+  // Return truncated substring appended of the ellipsis char if string can't be meaningfully truncated
+  if (maxLength <= separator.length + 1) return `${string.slice(0, maxLength - 1)}…`
+
   const charsToShow = maxLength - separator.length
   const frontChars = Math.ceil(charsToShow / 2)
   const backChars = Math.floor(charsToShow / 2)
 
-  return string.substr(0, frontChars) + separator + string.substr(string.length - backChars)
+  return string.slice(0, frontChars) + separator + string.slice(-backChars)
 }

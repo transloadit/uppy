@@ -1,6 +1,5 @@
 const { UIPlugin } = require('@uppy/core')
 const toArray = require('@uppy/utils/lib/toArray')
-const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
 
 module.exports = class FileInput extends UIPlugin {
@@ -38,18 +37,6 @@ module.exports = class FileInput extends UIPlugin {
     this.handleClick = this.handleClick.bind(this)
   }
 
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
-  }
-
   addFiles (files) {
     const descriptors = files.map((file) => ({
       source: this.id,
@@ -79,11 +66,11 @@ module.exports = class FileInput extends UIPlugin {
     event.target.value = null
   }
 
-  handleClick (ev) {
+  handleClick () {
     this.input.click()
   }
 
-  render (state) {
+  render () {
     /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
     const hiddenInputStyle = {
       width: '0.1px',

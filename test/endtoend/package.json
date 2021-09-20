@@ -1,4 +1,5 @@
 {
+  "name": "@uppy/end2end-tests",
   "private": true,
   "devDependencies": {
     "@wdio/cli": "^7.7.7",
@@ -15,7 +16,7 @@
     "webdriverio": "^7.7.7"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": "^14.17.0 || >=16.0.0"
   },
   "scripts": {
     "test:endtoend:build-ci": "cd ../.. && bash ./bin/endtoend-build-ci",

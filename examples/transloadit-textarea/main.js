@@ -100,7 +100,7 @@ class MarkdownTextarea {
     }))
   }
 
-  uploadFiles (files) {
+  uploadFiles () {
     robodog.upload({
       waitForEncoding: true,
       params: {

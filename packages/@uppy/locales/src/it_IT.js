@@ -41,7 +41,7 @@ it_IT.strings = {
   encoding: 'Encoding...',
   enterCorrectUrl: 'URL non corretta: assicurati che sia un link diretto ad un file',
   enterUrlToImport: 'Immetti l\'URL per importare un file',
-  exceedsSize: 'Questo file supera la dimensione massima di',
+  exceedsSize: 'Questo file supera la dimensione massima di %{size}',
   failedToFetch: 'Impossibile verificare questa URL, assicurati che sia corretta',
   failedToUpload: 'Upload del file %{file} non riuscito',
   fileSource: 'Sorgente file: %{name}',
@@ -67,7 +67,7 @@ it_IT.strings = {
   pause: 'Pausa',
   pauseUpload: 'Pausa upload',
   paused: 'In pausa',
-  poweredBy: 'Powered by',
+  poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': 'Sto processando %{smart_count} file',
     '1': 'Sto processando %{smart_count} file',
@@ -137,7 +137,7 @@ it_IT.strings = {
   openFolderNamed: 'Cartella aperta %{name}',
 }
 
-it_IT.pluralize = function (n) {
+it_IT.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

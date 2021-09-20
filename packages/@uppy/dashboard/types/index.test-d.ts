@@ -8,7 +8,7 @@ import Dashboard from '..'
     target: 'body',
   })
 
-  const plugin = uppy.getPlugin<Dashboard>('Dashboard')
+  const plugin = uppy.getPlugin<Dashboard>('Dashboard') ?? ({} as never)
   plugin.openModal()
   expectType<boolean>(plugin.isModalOpen())
   plugin.closeModal()
@@ -47,6 +47,11 @@ import Dashboard from '..'
         },
       },
     ],
+  })
+
+  uppy.on('dashboard:file-edit-state', (file) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const fileName = file.name
   })
 }
 

@@ -34,6 +34,7 @@ const watchify = require('watchify')
 const bresolve = require('browser-resolve')
 
 function useSourcePackages (b) {
+  // eslint-disable-next-line no-underscore-dangle
   b._bresolve = (id, opts, cb) => {
     bresolve(id, opts, (err, result, pkg) => {
       if (err) return cb(err)
@@ -59,11 +60,8 @@ if (watchifyEnabled) {
 
 // Instead of 'watch', build-examples.js can also take a path as cli argument.
 // In this case we'll only bundle the specified path/pattern
-if (!watchifyEnabled && process.argv[2]) {
-  srcPattern = process.argv[2]
-  if (process.argv[3]) {
-    dstPattern = process.argv[3]
-  }
+if (!watchifyEnabled && process.argv.length > 2) {
+  [, , srcPattern, dstPattern] = process.argv
 }
 
 // Find each app.es6 file with glob.

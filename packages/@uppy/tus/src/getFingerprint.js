@@ -23,7 +23,7 @@ function isReactNative () {
 // For React Native and Cordova, we let tus-js-client’s default
 // fingerprint handling take charge.
 module.exports = function getFingerprint (uppyFileObj) {
-  return function (file, options) {
+  return (file, options) => {
     if (isCordova() || isReactNative()) {
       return tus.defaultOptions.fingerprint(file, options)
     }

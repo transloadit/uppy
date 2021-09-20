@@ -9,17 +9,16 @@ class TransloaditResultsPlugin extends BasePlugin {
 
     this.type = 'modifier'
     this.id = this.opts.id || 'TransloaditResultsPlugin'
-    this._afterUpload = this._afterUpload.bind(this)
   }
 
   install () {
-    this.uppy.addPostProcessor(this._afterUpload)
+    this.uppy.addPostProcessor(this.#afterUpload)
   }
 
-  _afterUpload (fileIDs, uploadID) {
+  #afterUpload = (fileIDs, uploadID) => {
     const { currentUploads } = this.uppy.getState()
     const { result } = currentUploads[uploadID]
-    const assemblies = result && Array.isArray(result.transloadit) ? result.transloadit : []
+    const assemblies = Array.isArray(result?.transloadit) ? result.transloadit : []
 
     // Merge the assembly.results[*] arrays and add `stepName` and
     // `assemblyId` properties.

@@ -81,7 +81,7 @@ function PanelTopBar (props) {
         <button
           className="uppy-DashboardContent-back"
           type="button"
-          onClick={props.cancelAll}
+          onClick={() => props.uppy.cancelAll()}
         >
           {props.i18n('cancel')}
         </button>

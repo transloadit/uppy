@@ -14,4 +14,6 @@ module.exports = function findDOMElement (element, context = document) {
   if (isDOMElement(element)) {
     return element
   }
+
+  return null
 }

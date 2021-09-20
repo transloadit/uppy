@@ -24,7 +24,8 @@ exports.config = {
     { browserName: 'safari', browserVersion: 'latest', platformName: 'macOS 11' },
     { browserName: 'safari', browserVersion: '13.1', platformName: 'macOS 10.15' },
     { browserName: 'Safari', 'appium:deviceName': 'iPhone 12 Simulator', 'appium:deviceOrientation': 'portrait', 'appium:platformVersion': '14.3', platformName:'iOS' },
-    // { browserName: 'Chrome', 'appium:deviceName': 'Android GoogleAPI Emulator', 'appium:deviceOrientation': 'portrait', 'appium:platformVersion': '11.0', platformName: 'Android' },
+    // { browserName: 'Chrome', 'appium:deviceName': 'Android GoogleAPI Emulator', 'appium:deviceOrientation': 'portrait', 'a
+    // ppium:platformVersion': '11.0', platformName: 'Android' },
   ].map(createCapability),
 
   // Patterns to exclude.

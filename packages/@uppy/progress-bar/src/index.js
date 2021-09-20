@@ -17,7 +17,6 @@ module.exports = class ProgressBar extends UIPlugin {
     // set default options
     const defaultOptions = {
       target: 'body',
-      replaceTargetContent: false,
       fixed: false,
       hideAfterFinish: true,
     }

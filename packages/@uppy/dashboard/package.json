@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "1.20.2",
+  "version": "2.0.3",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -29,19 +29,18 @@
     "@uppy/thumbnail-generator": "file:../thumbnail-generator",
     "@uppy/utils": "file:../utils",
     "classnames": "^2.2.6",
-    "cuid": "^2.1.1",
     "is-shallow-equal": "^1.0.1",
     "lodash.debounce": "^4.0.8",
-    "lodash.throttle": "^4.1.1",
     "memoize-one": "^5.0.4",
+    "nanoid": "^3.1.25",
     "preact": "^10.5.13"
   },
   "devDependencies": {
-    "@uppy/google-drive": "*",
+    "@uppy/google-drive": "2.0.2",
     "@uppy/status-bar": "*",
     "resize-observer-polyfill": "^1.5.0"
   },
   "peerDependencies": {
-    "@uppy/core": "^1.0.0"
+    "@uppy/core": "^2.0.0"
   }
 }

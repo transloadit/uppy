@@ -10,10 +10,10 @@
           </a>
       </h2>
       <ul>
-        <% 
+        <%
         var seriesTracker = {}
         var totalCnt = 0
-        site.posts.sort('date', -1).each(function (post) { 
+        site.posts.sort('date', -1).each(function (post) {
           var title = post.title
           if (post.series) {
             var title = post.series
@@ -22,7 +22,7 @@
             }
             seriesTracker[post.series]++
           }
-          
+
           if (totalCnt > 10 || seriesTracker[post.series] > 1) {
             return false
           }
@@ -39,7 +39,7 @@
 
 <div class="Content js-Content with-sidebar">
   <h1>The <%- config.title %> Blog</h1>
-  <% site.posts.sort('date', -1).each(function (post) { 
+  <% site.posts.sort('date', -1).each(function (post) {
     var title = post.title
 
     if (post.series) {
@@ -48,9 +48,9 @@
   %>
     <div class="post">
       <h2><a href="/<%- post.path %>"><%- title %></a></h2>
-      <h4><%- post.date.format('dddd MMM D[,] YYYY') %></h4>
+      <div class="post-date"><%- post.date.format('dddd MMM D[,] YYYY') %></div>
       <div><%- post.excerpt %></div>
-      <a href="/<%- post.path %>">Continue reading ...</a>
+      <div class="continue-reading"><a href="/<%- post.path %>">Continue reading ›</a></div>
     </div>
   <% }) %>
 </div>

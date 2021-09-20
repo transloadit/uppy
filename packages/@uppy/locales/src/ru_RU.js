@@ -43,7 +43,7 @@ ru_RU.strings = {
   encoding: 'Обработка...',
   enterCorrectUrl: 'Неправильный адрес: пожалуйста, убедитесь что вы используете прямую ссылку на файл',
   enterUrlToImport: 'Введите адрес, чтобы импортировать файл',
-  exceedsSize: 'Этот файл больше максимально разрешенного размера в',
+  exceedsSize: 'Этот файл больше максимально разрешенного размера в %{size}',
   failedToFetch: 'Companion не смог загрузить файл по ссылке, пожалуйста, убедитесь, что адрес верный',
   failedToUpload: 'Ошибка загрузки %{file}',
   fileSource: 'Источник файла: %{name}',
@@ -74,7 +74,7 @@ ru_RU.strings = {
     '1': 'Обрабатываются %{smart_count} файла',
     '2': 'Обрабатываются %{smart_count} файлов',
   },
-  poweredBy: 'Работает на',
+  poweredBy: 'Работает на %{uppy}',
   removeFile: 'Удалить файл',
   resetFilter: 'Сбросить фильтр',
   resume: 'Продолжить',
@@ -139,7 +139,7 @@ ru_RU.strings = {
   openFolderNamed: 'Открыть папку %{name}',
 }
 
-ru_RU.pluralize = function (n) {
+ru_RU.pluralize = function pluralize (n) {
   if (n % 10 === 1 && n % 100 !== 11) {
     return 0
   }

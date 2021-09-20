@@ -82,7 +82,7 @@ describe('ReduxStore', () => {
       type: 'SET',
       payload: {
         uppy: {
-          [store._id]: { b: 2 },
+          [store[Symbol.for('uppy test: get id')]()]: { b: 2 },
         },
       },
     })

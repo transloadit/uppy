@@ -6,7 +6,7 @@ class Provider {
    *
    * @param {object} options
    */
-  constructor (options) {
+  constructor (options) { // eslint-disable-line no-unused-vars
     this.needsCookieAuth = false
     return this
   }
@@ -24,7 +24,7 @@ class Provider {
    * @param {object} options
    * @param {Function} cb
    */
-  list (options, cb) {
+  list (options, cb) { // eslint-disable-line no-unused-vars
     throw new Error('method not implemented')
   }
 
@@ -34,7 +34,7 @@ class Provider {
    * @param {object} options
    * @param {Function} cb
    */
-  download (options, cb) {
+  download (options, cb) { // eslint-disable-line no-unused-vars
     throw new Error('method not implemented')
   }
 
@@ -44,7 +44,7 @@ class Provider {
    * @param {object} options
    * @param {Function} cb
    */
-  thumbnail (options, cb) {
+  thumbnail (options, cb) { // eslint-disable-line no-unused-vars
     throw new Error('method not implemented')
   }
 
@@ -54,7 +54,7 @@ class Provider {
    * @param {object} options
    * @param {Function} cb
    */
-  size (options, cb) {
+  size (options, cb) { // eslint-disable-line no-unused-vars
     throw new Error('method not implemented')
   }
 
@@ -64,7 +64,7 @@ class Provider {
    * @param {object} options
    * @param {Function} cb
    */
-  deauthorizationCallback (options, cb) {
+  deauthorizationCallback (options, cb) { // eslint-disable-line no-unused-vars
     // @todo consider doing something like cb(new NotImplementedError()) instead
     throw new Error('method not implemented')
   }

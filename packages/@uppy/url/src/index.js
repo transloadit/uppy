@@ -1,5 +1,4 @@
 const { UIPlugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
 const { RequestClient } = require('@uppy/companion-client')
 const UrlUI = require('./UrlUI.js')
@@ -63,18 +62,6 @@ module.exports = class Url extends UIPlugin {
       companionHeaders: this.opts.companionHeaders,
       companionCookiesRule: this.opts.companionCookiesRule,
     })
-  }
-
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   getFileNameFromUrl (url) {
@@ -182,7 +169,7 @@ module.exports = class Url extends UIPlugin {
     })
   }
 
-  render (state) {
+  render () {
     return <UrlUI i18n={this.i18n} addFile={this.addFile} />
   }
 

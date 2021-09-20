@@ -41,7 +41,7 @@ fi_FI.strings = {
   encoding: 'Koodataan...',
   enterCorrectUrl: 'Epäkelpo osoite: Varmista, että osoite osoittaa suoraan tiedostoon',
   enterUrlToImport: 'Anna osoite tuodaksesi tiedoston',
-  exceedsSize: 'Tiedoston koko ylittää sallitun maksimin',
+  exceedsSize: 'Tiedoston koko ylittää sallitun maksimin %{size}',
   failedToFetch: 'Companion ei voinut ladata tiedostoa osoitteesta, onko osoite varmasti oikea?',
   failedToUpload: 'Ei voitu lähettää tiedostoa %{file}',
   fileSource: 'Tiedoston lähde: %{name}',
@@ -68,7 +68,7 @@ fi_FI.strings = {
   pause: 'Keskeytä',
   pauseUpload: 'Keskeytä lähetys',
   paused: 'Keskeytetty',
-  poweredBy: 'Powered by',
+  poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': 'Käsitellään %{smart_count} tiedostoa',
     '1': 'Käsitellään %{smart_count} tiedostoa',
@@ -144,7 +144,7 @@ fi_FI.strings = {
   recording: 'Tallennetaan',
 }
 
-fi_FI.pluralize = function (n) {
+fi_FI.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

@@ -41,7 +41,7 @@ sv_SE.strings = {
   encoding: 'Kodar...',
   enterCorrectUrl: 'Ogiltig URL: Kontrollera att adressen du anger är en direktlänk till en fil.',
   enterUrlToImport: 'Ange URL för att importera en fil',
-  exceedsSize: 'Storleken på filen överstiger den tillåtna maxgränsen på',
+  exceedsSize: 'Storleken på filen överstiger den tillåtna maxgränsen på %{size}',
   failedToFetch: 'Companion kunde inte ladda ner filen, kontrollera att adressen är korrekt',
   failedToUpload: 'Kunde inte ladda upp %{file}',
   fileSource: 'Källa: %{name}',
@@ -68,7 +68,7 @@ sv_SE.strings = {
   pause: 'Pausa',
   pauseUpload: 'Pausa uppladdning',
   paused: 'Pausad',
-  poweredBy: 'Drivs av',
+  poweredBy: 'Drivs av %{uppy}',
   processingXFiles: {
     '0': 'Processerar %{smart_count} fil',
     '1': 'Processerar %{smart_count} filer',
@@ -137,7 +137,7 @@ sv_SE.strings = {
   },
 }
 
-sv_SE.pluralize = function (n) {
+sv_SE.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

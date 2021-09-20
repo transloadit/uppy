@@ -1,7 +1,7 @@
 /* global AggregateError */
 const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
-const cuid = require('cuid')
+const { nanoid } = require('nanoid')
 const throttle = require('lodash.throttle')
 const prettierBytes = require('@transloadit/prettier-bytes')
 const match = require('mime-match')
@@ -9,14 +9,29 @@ const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
 const generateFileID = require('@uppy/utils/lib/generateFileID')
-const findIndex = require('@uppy/utils/lib/findIndex')
 const supportsUploadProgress = require('./supportsUploadProgress')
+const getFileName = require('./getFileName')
 const { justErrorsLogger, debugLogger } = require('./loggers')
 const UIPlugin = require('./UIPlugin')
 const BasePlugin = require('./BasePlugin')
 
 // Exported from here.
 class RestrictionError extends Error {
+  constructor (...args) {
+    super(...args)
+    this.isRestriction = true
+  }
+}
+if (typeof AggregateError === 'undefined') {
+  // eslint-disable-next-line no-global-assign
+  globalThis.AggregateError = class AggregateError extends Error {
+    constructor (message, errors) {
+      super(message)
+      this.errors = errors
+    }
+  }
+}
+class AggregateRestrictionError extends AggregateError {
   constructor (...args) {
     super(...args)
     this.isRestriction = true
@@ -32,7 +47,18 @@ class Uppy {
   // eslint-disable-next-line global-require
   static VERSION = require('../package.json').version
 
+  /** @type {Record<string, BasePlugin[]>} */
+  #plugins = Object.create(null)
+
   #storeUnsubscribe
+
+  #emitter = ee()
+
+  #preProcessors = new Set()
+
+  #uploaders = new Set()
+
+  #postProcessors = new Set()
 
   /**
    * Instantiate Uppy
@@ -54,16 +80,12 @@ class Uppy {
           0: 'You have to select at least %{smart_count} file',
           1: 'You have to select at least %{smart_count} files',
         },
-        // The default `exceedsSize2` string only combines the `exceedsSize` string (%{backwardsCompat}) with the size.
-        // Locales can override `exceedsSize2` to specify a different word order. This is for backwards compat with
-        // Uppy 1.9.x and below which did a naive concatenation of `exceedsSize2 + size` instead of using a locale-specific
-        // substitution.
-        // TODO: In 2.0 `exceedsSize2` should be removed in and `exceedsSize` updated to use substitution.
-        exceedsSize2: '%{backwardsCompat} %{size}',
-        exceedsSize: '%{file} exceeds maximum allowed size of',
+        exceedsSize: '%{file} exceeds maximum allowed size of %{size}',
+        missingRequiredMetaField: 'Missing required meta fields',
+        missingRequiredMetaFieldOnFile: 'Missing required meta fields in %{fileName}',
         inferiorSize: 'This file is smaller than the allowed size of %{size}',
         youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
-        noNewAlreadyUploading: 'Cannot add new files: already uploading',
+        noMoreFilesAllowed: 'Cannot add more files',
         noDuplicates: 'Cannot add the duplicate file \'%{fileName}\', it already exists',
         companionError: 'Connection with Companion failed',
         companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
@@ -77,8 +99,6 @@ class Uppy {
           1: 'Select %{smart_count}',
         },
         allFilesFromFolderNamed: 'All files from folder %{name}',
-        selectFileNamed: 'Select file %{name}',
-        unselectFileNamed: 'Unselect file %{name}',
         openFolderNamed: 'Open folder %{name}',
         cancel: 'Cancel',
         logOut: 'Log out',
@@ -87,10 +107,12 @@ class Uppy {
         loading: 'Loading...',
         authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
         authenticateWith: 'Connect to %{pluginName}',
+        signInWithGoogle: 'Sign in with Google',
         searchImages: 'Search for images',
         enterTextToSearch: 'Enter text to search for images',
         backToSearch: 'Back to Search',
         emptyFolderAdded: 'No files were added from empty folder',
+        folderAlreadyAdded: 'The folder "%{folder}" was already added',
         folderAdded: {
           0: 'Added %{smart_count} file from %{folder}',
           1: 'Added %{smart_count} files from %{folder}',
@@ -101,7 +123,11 @@ class Uppy {
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
+      /**
+       * @deprecated The method should not be used
+       */
       allowMultipleUploads: true,
+      allowMultipleUploadBatches: true,
       debug: false,
       restrictions: {
         maxFileSize: null,
@@ -110,6 +136,7 @@ class Uppy {
         maxNumberOfFiles: null,
         minNumberOfFiles: null,
         allowedFileTypes: null,
+        requiredMetaFields: [],
       },
       meta: {},
       onBeforeFileAdded: (currentFile) => currentFile,
@@ -148,21 +175,6 @@ class Uppy {
 
     this.i18nInit()
 
-    // Container for different types of plugins
-    this.plugins = {}
-
-    this.getState = this.getState.bind(this)
-    this.getPlugin = this.getPlugin.bind(this)
-    this.setFileMeta = this.setFileMeta.bind(this)
-    this.setFileState = this.setFileState.bind(this)
-    this.log = this.log.bind(this)
-    this.info = this.info.bind(this)
-    this.hideInfo = this.hideInfo.bind(this)
-    this.addFile = this.addFile.bind(this)
-    this.removeFile = this.removeFile.bind(this)
-    this.pauseResume = this.pauseResume.bind(this)
-    this.validateRestrictions = this.validateRestrictions.bind(this)
-
     // ___Why throttle at 500ms?
     //    - We must throttle at >250ms for superfocus in Dashboard to work well
     //    (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
@@ -171,26 +183,6 @@ class Uppy {
     //    - We must throttle at around >500ms to avoid performance lags.
     //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
     this.calculateProgress = throttle(this.calculateProgress.bind(this), 500, { leading: true, trailing: true })
-
-    this.updateOnlineStatus = this.updateOnlineStatus.bind(this)
-    this.resetProgress = this.resetProgress.bind(this)
-
-    this.pauseAll = this.pauseAll.bind(this)
-    this.resumeAll = this.resumeAll.bind(this)
-    this.retryAll = this.retryAll.bind(this)
-    this.cancelAll = this.cancelAll.bind(this)
-    this.retryUpload = this.retryUpload.bind(this)
-    this.upload = this.upload.bind(this)
-
-    this.emitter = ee()
-    this.on = this.on.bind(this)
-    this.off = this.off.bind(this)
-    this.once = this.emitter.once.bind(this.emitter)
-    this.emit = this.emitter.emit.bind(this.emitter)
-
-    this.preProcessors = []
-    this.uploaders = []
-    this.postProcessors = []
 
     this.store = this.opts.store
     this.setState({
@@ -205,11 +197,7 @@ class Uppy {
       },
       totalProgress: 0,
       meta: { ...this.opts.meta },
-      info: {
-        isHidden: true,
-        type: 'info',
-        message: '',
-      },
+      info: [],
       recoveredState: null,
     })
 
@@ -226,13 +214,22 @@ class Uppy {
     this.#addListeners()
   }
 
+  emit (event, ...args) {
+    this.#emitter.emit(event, ...args)
+  }
+
   on (event, callback) {
-    this.emitter.on(event, callback)
+    this.#emitter.on(event, callback)
+    return this
+  }
+
+  once (event, callback) {
+    this.#emitter.once(event, callback)
     return this
   }
 
   off (event, callback) {
-    this.emitter.off(event, callback)
+    this.#emitter.off(event, callback)
     return this
   }
 
@@ -267,8 +264,11 @@ class Uppy {
 
   /**
    * Back compat for when uppy.state is used instead of uppy.getState().
+   *
+   * @deprecated
    */
   get state () {
+    // Here, state is a non-enumerable property.
     return this.getState()
   }
 
@@ -286,10 +286,10 @@ class Uppy {
   }
 
   i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.opts.locale])
-    this.locale = this.translator.locale
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
+    const translator = new Translator([this.defaultLocale, this.opts.locale])
+    this.i18n = translator.translate.bind(translator)
+    this.i18nArray = translator.translateArray.bind(translator)
+    this.locale = translator.locale
   }
 
   setOptions (newOpts) {
@@ -342,36 +342,27 @@ class Uppy {
   }
 
   addPreProcessor (fn) {
-    this.preProcessors.push(fn)
+    this.#preProcessors.add(fn)
   }
 
   removePreProcessor (fn) {
-    const i = this.preProcessors.indexOf(fn)
-    if (i !== -1) {
-      this.preProcessors.splice(i, 1)
-    }
+    return this.#preProcessors.delete(fn)
   }
 
   addPostProcessor (fn) {
-    this.postProcessors.push(fn)
+    this.#postProcessors.add(fn)
   }
 
   removePostProcessor (fn) {
-    const i = this.postProcessors.indexOf(fn)
-    if (i !== -1) {
-      this.postProcessors.splice(i, 1)
-    }
+    return this.#postProcessors.delete(fn)
   }
 
   addUploader (fn) {
-    this.uploaders.push(fn)
+    this.#uploaders.add(fn)
   }
 
   removeUploader (fn) {
-    const i = this.uploaders.indexOf(fn)
-    if (i !== -1) {
-      this.uploaders.splice(i, 1)
-    }
+    return this.#uploaders.delete(fn)
   }
 
   setMeta (data) {
@@ -524,8 +515,7 @@ class Uppy {
         totalFilesSize += f.size
       })
       if (totalFilesSize > maxTotalFileSize) {
-        throw new RestrictionError(this.i18n('exceedsSize2', {
-          backwardsCompat: this.i18n('exceedsSize'),
+        throw new RestrictionError(this.i18n('exceedsSize', {
           size: prettierBytes(maxTotalFileSize),
           file: file.name,
         }))
@@ -535,8 +525,7 @@ class Uppy {
     // We can't check maxFileSize if the size is unknown.
     if (maxFileSize && file.size != null) {
       if (file.size > maxFileSize) {
-        throw new RestrictionError(this.i18n('exceedsSize2', {
-          backwardsCompat: this.i18n('exceedsSize'),
+        throw new RestrictionError(this.i18n('exceedsSize', {
           size: prettierBytes(maxFileSize),
           file: file.name,
         }))
@@ -562,6 +551,31 @@ class Uppy {
     const { minNumberOfFiles } = this.opts.restrictions
     if (Object.keys(files).length < minNumberOfFiles) {
       throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
+    }
+  }
+
+  /**
+   * Check if requiredMetaField restriction is met before uploading.
+   *
+   */
+  #checkRequiredMetaFields (files) {
+    const { requiredMetaFields } = this.opts.restrictions
+    const { hasOwnProperty } = Object.prototype
+
+    const errors = []
+    for (const fileID of Object.keys(files)) {
+      const file = this.getFile(fileID)
+      for (let i = 0; i < requiredMetaFields.length; i++) {
+        if (!hasOwnProperty.call(file.meta, requiredMetaFields[i]) || file.meta[requiredMetaFields[i]] === '') {
+          const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
+          errors.push(err)
+          this.#showOrLogErrorAndThrow(err, { file, showInformer: false, throwErr: false })
+        }
+      }
+    }
+
+    if (errors.length) {
+      throw new AggregateRestrictionError(`${this.i18n('missingRequiredMetaField')}`, errors)
     }
   }
 
@@ -608,29 +622,30 @@ class Uppy {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      this.#showOrLogErrorAndThrow(new RestrictionError(this.i18n('noNewAlreadyUploading')), { file })
+      this.#showOrLogErrorAndThrow(new RestrictionError(this.i18n('noMoreFilesAllowed')), { file })
     }
+  }
+
+  checkIfFileAlreadyExists (fileID) {
+    const { files } = this.getState()
+
+    if (files[fileID] && !files[fileID].isGhost) {
+      return true
+    }
+    return false
   }
 
   /**
    * Create a file state object based on user-provided `addFile()` options.
    *
-   * Note this is extremely side-effectful and should only be done when a file state object will be added to state
-   * immediately afterward!
+   * Note this is extremely side-effectful and should only be done when a file state object
+   * will be added to state immediately afterward!
    *
    * The `files` value is passed in because it may be updated by the caller without updating the store.
    */
   #checkAndCreateFileStateObject (files, fileDescriptor) {
     const fileType = getFileType(fileDescriptor)
-
-    let fileName
-    if (fileDescriptor.name) {
-      fileName = fileDescriptor.name
-    } else if (fileType.split('/')[0] === 'image') {
-      fileName = `${fileType.split('/')[0]}.${fileType.split('/')[1]}`
-    } else {
-      fileName = 'noname'
-    }
+    const fileName = getFileName(fileType, fileDescriptor)
     const fileExtension = getFileNameAndExtension(fileName).extension
     const isRemote = Boolean(fileDescriptor.isRemote)
     const fileID = generateFileID({
@@ -638,11 +653,9 @@ class Uppy {
       type: fileType,
     })
 
-    if (files[fileID] && !files[fileID].isGhost) {
-      this.#showOrLogErrorAndThrow(
-        new RestrictionError(this.i18n('noDuplicates', { fileName })),
-        { fileDescriptor }
-      )
+    if (this.checkIfFileAlreadyExists(fileID)) {
+      const error = new RestrictionError(this.i18n('noDuplicates', { fileName }))
+      this.#showOrLogErrorAndThrow(error, { file: fileDescriptor })
     }
 
     const meta = fileDescriptor.meta || {}
@@ -1183,7 +1196,7 @@ class Uppy {
       this.setFileState(file.id, {
         progress: {
           ...currentProgress,
-          postprocess: this.postProcessors.length > 0 ? {
+          postprocess: this.#postProcessors.size > 0 ? {
             mode: 'indeterminate',
           } : null,
           uploadComplete: true,
@@ -1194,6 +1207,14 @@ class Uppy {
         uploadURL: uploadResp.uploadURL,
         isPaused: false,
       })
+
+      // Remote providers sometimes don't tell us the file size,
+      // but we can know how many bytes we uploaded once the upload is complete.
+      if (file.size == null) {
+        this.setFileState(file.id, {
+          size: uploadResp.bytesUploaded || currentProgress.bytesTotal,
+        })
+      }
 
       this.calculateTotalProgress()
     })
@@ -1256,9 +1277,9 @@ class Uppy {
 
     // show informer if offline
     if (typeof window !== 'undefined' && window.addEventListener) {
-      window.addEventListener('online', () => this.updateOnlineStatus())
-      window.addEventListener('offline', () => this.updateOnlineStatus())
-      setTimeout(() => this.updateOnlineStatus(), 3000)
+      window.addEventListener('online', this.#updateOnlineStatus)
+      window.addEventListener('offline', this.#updateOnlineStatus)
+      setTimeout(this.#updateOnlineStatus, 3000)
     }
   }
 
@@ -1280,6 +1301,8 @@ class Uppy {
       }
     }
   }
+
+  #updateOnlineStatus = this.updateOnlineStatus.bind(this)
 
   getID () {
     return this.opts.id
@@ -1303,7 +1326,6 @@ class Uppy {
     // Instantiate
     const plugin = new Plugin(this, opts)
     const pluginId = plugin.id
-    this.plugins[plugin.type] = this.plugins[plugin.type] || []
 
     if (!pluginId) {
       throw new Error('Your plugin must have an id')
@@ -1325,7 +1347,11 @@ class Uppy {
       this.log(`Using ${pluginId} v${Plugin.VERSION}`)
     }
 
-    this.plugins[plugin.type].push(plugin)
+    if (plugin.type in this.#plugins) {
+      this.#plugins[plugin.type].push(plugin)
+    } else {
+      this.#plugins[plugin.type] = [plugin]
+    }
     plugin.install()
 
     return this
@@ -1335,18 +1361,18 @@ class Uppy {
    * Find one Plugin by name.
    *
    * @param {string} id plugin id
-   * @returns {object|boolean}
+   * @returns {BasePlugin|undefined}
    */
   getPlugin (id) {
-    let foundPlugin = null
-    this.iteratePlugins((plugin) => {
-      if (plugin.id === id) {
-        foundPlugin = plugin
-        return false
-      }
-      return undefined
-    })
-    return foundPlugin
+    for (const plugins of Object.values(this.#plugins)) {
+      const foundPlugin = plugins.find(plugin => plugin.id === id)
+      if (foundPlugin != null) return foundPlugin
+    }
+    return undefined
+  }
+
+  [Symbol.for('uppy test: getPlugins')] (type) {
+    return this.#plugins[type]
   }
 
   /**
@@ -1355,9 +1381,7 @@ class Uppy {
    * @param {Function} method that will be run on each plugin
    */
   iteratePlugins (method) {
-    Object.keys(this.plugins).forEach(pluginType => {
-      this.plugins[pluginType].forEach(method)
-    })
+    Object.values(this.#plugins).flat(1).forEach(method)
   }
 
   /**
@@ -1373,14 +1397,13 @@ class Uppy {
       instance.uninstall()
     }
 
-    const list = this.plugins[instance.type].slice()
+    const list = this.#plugins[instance.type]
     // list.indexOf failed here, because Vue3 converted the plugin instance
     // to a Proxy object, which failed the strict comparison test:
     // obj !== objProxy
-    const index = findIndex(list, item => item.id === instance.id)
+    const index = list.findIndex(item => item.id === instance.id)
     if (index !== -1) {
       list.splice(index, 1)
-      this.plugins[instance.type] = list
     }
 
     const state = this.getState()
@@ -1406,6 +1429,19 @@ class Uppy {
     this.iteratePlugins((plugin) => {
       this.removePlugin(plugin)
     })
+
+    if (typeof window !== 'undefined' && window.removeEventListener) {
+      window.removeEventListener('online', this.#updateOnlineStatus)
+      window.removeEventListener('offline', this.#updateOnlineStatus)
+    }
+  }
+
+  hideInfo () {
+    const { info } = this.getState()
+
+    this.setState({ info: info.slice(1) })
+
+    this.emit('info-hidden')
   }
 
   /**
@@ -1416,37 +1452,23 @@ class Uppy {
    * @param {string} [type]
    * @param {number} [duration]
    */
-
   info (message, type = 'info', duration = 3000) {
     const isComplexMessage = typeof message === 'object'
 
     this.setState({
-      info: {
-        isHidden: false,
-        type,
-        message: isComplexMessage ? message.message : message,
-        details: isComplexMessage ? message.details : null,
-      },
+      info: [
+        ...this.getState().info,
+        {
+          type,
+          message: isComplexMessage ? message.message : message,
+          details: isComplexMessage ? message.details : null,
+        },
+      ],
     })
+
+    setTimeout(() => this.hideInfo(), duration)
 
     this.emit('info-visible')
-
-    clearTimeout(this.infoTimeoutID)
-    if (duration === 0) {
-      this.infoTimeoutID = undefined
-      return
-    }
-
-    // hide the informer after `duration` milliseconds
-    this.infoTimeoutID = setTimeout(this.hideInfo, duration)
-  }
-
-  hideInfo () {
-    const newInfo = { ...this.getState().info, isHidden: true }
-    this.setState({
-      info: newInfo,
-    })
-    this.emit('info-hidden')
   }
 
   /**
@@ -1494,7 +1516,7 @@ class Uppy {
       throw new Error('Cannot create a new upload: already uploading.')
     }
 
-    const uploadID = cuid()
+    const uploadID = nanoid()
 
     this.emit('upload', {
       id: uploadID,
@@ -1502,7 +1524,7 @@ class Uppy {
     })
 
     this.setState({
-      allowNewUpload: this.opts.allowMultipleUploads !== false,
+      allowNewUpload: this.opts.allowMultipleUploadBatches !== false && this.opts.allowMultipleUploads !== false,
 
       currentUploads: {
         ...currentUploads,
@@ -1562,28 +1584,22 @@ class Uppy {
    *
    * @private
    */
-  #runUpload (uploadID) {
-    const uploadData = this.getState().currentUploads[uploadID]
-    const restoreStep = uploadData.step
+  async #runUpload (uploadID) {
+    let { currentUploads } = this.getState()
+    let currentUpload = currentUploads[uploadID]
+    const restoreStep = currentUpload.step || 0
 
     const steps = [
-      ...this.preProcessors,
-      ...this.uploaders,
-      ...this.postProcessors,
+      ...this.#preProcessors,
+      ...this.#uploaders,
+      ...this.#postProcessors,
     ]
-    let lastStep = Promise.resolve()
-    steps.forEach((fn, step) => {
-      // Skip this step if we are restoring and have already completed this step before.
-      if (step < restoreStep) {
-        return
-      }
-
-      lastStep = lastStep.then(() => {
-        const { currentUploads } = this.getState()
-        const currentUpload = currentUploads[uploadID]
+    try {
+      for (let step = restoreStep; step < steps.length; step++) {
         if (!currentUpload) {
-          return
+          break
         }
+        const fn = steps[step]
 
         const updatedUpload = {
           ...currentUpload,
@@ -1599,25 +1615,20 @@ class Uppy {
 
         // TODO give this the `updatedUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
-        return fn(updatedUpload.fileIDs, uploadID) // eslint-disable-line consistent-return
-      }).then(() => null)
-    })
+        await fn(updatedUpload.fileIDs, uploadID)
 
-    // Not returning the `catch`ed promise, because we still want to return a rejected
-    // promise from this method if the upload failed.
-    lastStep.catch((err) => {
-      this.emit('error', err, uploadID)
-      this.#removeUpload(uploadID)
-    })
-
-    return lastStep.then(() => {
-      // Set result data.
-      const { currentUploads } = this.getState()
-      const currentUpload = currentUploads[uploadID]
-      if (!currentUpload) {
-        return
+        // Update currentUpload value in case it was modified asynchronously.
+        currentUploads = this.getState().currentUploads
+        currentUpload = currentUploads[uploadID]
       }
+    } catch (err) {
+      this.emit('error', err)
+      this.#removeUpload(uploadID)
+      throw err
+    }
 
+    // Set result data.
+    if (currentUpload) {
       // Mark postprocessing step as complete if necessary; this addresses a case where we might get
       // stuck in the postprocessing UI while the upload is fully complete.
       // If the postprocessing steps do not do any work, they may not emit postprocessing events at
@@ -1638,30 +1649,27 @@ class Uppy {
       const files = currentUpload.fileIDs.map((fileID) => this.getFile(fileID))
       const successful = files.filter((file) => !file.error)
       const failed = files.filter((file) => file.error)
-      this.addResultData(uploadID, { successful, failed, uploadID })
-    }).then(() => {
-      // Emit completion events.
-      // This is in a separate function so that the `currentUploads` variable
-      // always refers to the latest state. In the handler right above it refers
-      // to an outdated object without the `.result` property.
-      const { currentUploads } = this.getState()
-      if (!currentUploads[uploadID]) {
-        return
-      }
-      const currentUpload = currentUploads[uploadID]
-      const { result } = currentUpload
+      await this.addResultData(uploadID, { successful, failed, uploadID })
+
+      // Update currentUpload value in case it was modified asynchronously.
+      currentUploads = this.getState().currentUploads
+      currentUpload = currentUploads[uploadID]
+    }
+    // Emit completion events.
+    // This is in a separate function so that the `currentUploads` variable
+    // always refers to the latest state. In the handler right above it refers
+    // to an outdated object without the `.result` property.
+    let result
+    if (currentUpload) {
+      result = currentUpload.result
       this.emit('complete', result)
 
       this.#removeUpload(uploadID)
-
-      // eslint-disable-next-line consistent-return
-      return result
-    }).then((result) => {
-      if (result == null) {
-        this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
-      }
-      return result
-    })
+    }
+    if (result == null) {
+      this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
+    }
+    return result
   }
 
   /**
@@ -1670,7 +1678,7 @@ class Uppy {
    * @returns {Promise}
    */
   upload () {
-    if (!this.plugins.uploader) {
+    if (!this.#plugins.uploader?.length) {
       this.log('No uploader type plugins are used', 'warning')
     }
 
@@ -1692,7 +1700,10 @@ class Uppy {
     }
 
     return Promise.resolve()
-      .then(() => this.#checkMinNumberOfFiles(files))
+      .then(() => {
+        this.#checkMinNumberOfFiles(files)
+        this.#checkRequiredMetaFields(files)
+      })
       .catch((err) => {
         this.#showOrLogErrorAndThrow(err)
       })

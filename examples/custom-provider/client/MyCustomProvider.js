@@ -10,7 +10,6 @@ module.exports = class MyCustomProvider extends UIPlugin {
     this.id = this.opts.id || 'MyCustomProvider'
     Provider.initPlugin(this, opts)
 
-    this.title = 'MyUnsplash'
     this.icon = () => (
       <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
         <path d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z" fill="#000000" fillRule="nonzero" />
@@ -23,6 +22,14 @@ module.exports = class MyCustomProvider extends UIPlugin {
       provider: 'myunsplash',
       pluginId: this.id,
     })
+
+    this.defaultLocale = {
+      strings: {
+        pluginNameMyUnsplash: 'MyUnsplash',
+      },
+    }
+    this.i18nInit()
+    this.title = this.i18n('MyUnsplash')
 
     this.files = []
     this.onFirstRender = this.onFirstRender.bind(this)

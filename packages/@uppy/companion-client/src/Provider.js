@@ -1,10 +1,9 @@
 'use strict'
 
-const qsStringify = require('qs-stringify')
 const RequestClient = require('./RequestClient')
 const tokenStorage = require('./tokenStorage')
 
-const _getName = (id) => {
+const getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
@@ -13,7 +12,7 @@ module.exports = class Provider extends RequestClient {
     super(uppy, opts)
     this.provider = opts.provider
     this.id = this.provider
-    this.name = this.opts.name || _getName(this.id)
+    this.name = this.opts.name || getName(this.id)
     this.pluginId = this.opts.pluginId
     this.tokenKey = `companion-${this.pluginId}-auth-token`
     this.companionKeysParams = this.opts.companionKeysParams
@@ -59,9 +58,7 @@ module.exports = class Provider extends RequestClient {
       queries.uppyPreAuthToken = this.preAuthToken
     }
 
-    let strigifiedQueries = qsStringify(queries)
-    strigifiedQueries = strigifiedQueries ? `?${strigifiedQueries}` : strigifiedQueries
-    return `${this.hostname}/${this.id}/connect${strigifiedQueries}`
+    return `${this.hostname}/${this.id}/connect?${new URLSearchParams(queries)}`
   }
 
   fileUrl (id) {
@@ -111,13 +108,11 @@ module.exports = class Provider extends RequestClient {
         throw new TypeError(`${plugin.id}: the option "companionAllowedHosts" must be one of string, Array, RegExp`)
       }
       plugin.opts.companionAllowedHosts = pattern
-    } else {
+    } else if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
       // does not start with https://
-      if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
-        plugin.opts.companionAllowedHosts = `https://${opts.companionUrl.replace(/^\/\//, '')}`
-      } else {
-        plugin.opts.companionAllowedHosts = new URL(opts.companionUrl).origin
-      }
+      plugin.opts.companionAllowedHosts = `https://${opts.companionUrl.replace(/^\/\//, '')}`
+    } else {
+      plugin.opts.companionAllowedHosts = new URL(opts.companionUrl).origin
     }
 
     plugin.storage = plugin.opts.storage || tokenStorage

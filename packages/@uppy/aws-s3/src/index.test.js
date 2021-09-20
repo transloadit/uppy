@@ -7,7 +7,7 @@ describe('AwsS3', () => {
     const core = new Core()
     core.use(AwsS3)
 
-    const pluginNames = core.plugins.uploader.map((plugin) => plugin.constructor.name)
+    const pluginNames = core[Symbol.for('uppy test: getPlugins')]('uploader').map((plugin) => plugin.constructor.name)
     expect(pluginNames).toContain('AwsS3')
   })
 
@@ -20,7 +20,7 @@ describe('AwsS3', () => {
       expect(awsS3.opts.getUploadParameters).toThrow()
     })
 
-    it('Does not throw an error with campanionUrl configured', () => {
+    it('Does not throw an error with companionUrl configured', () => {
       const core = new Core()
       core.use(AwsS3, { companionUrl: 'https://uppy-companion.myapp.com/' })
       const awsS3 = core.getPlugin('AwsS3')

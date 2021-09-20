@@ -3,7 +3,7 @@ const express = require('express')
 const ms = require('ms')
 // @ts-ignore
 const Grant = require('grant').express()
-const merge = require('lodash/merge')
+const merge = require('lodash.merge')
 const cookieParser = require('cookie-parser')
 const interceptor = require('express-interceptor')
 
@@ -233,7 +233,7 @@ const validateConfig = (companionOptions) => {
   // validate that specified filePath is writeable/readable.
   try {
     // @ts-ignore
-    fs.accessSync(`${companionOptions.filePath}`, fs.R_OK | fs.W_OK)
+    fs.accessSync(`${companionOptions.filePath}`, fs.R_OK | fs.W_OK) // eslint-disable-line no-bitwise
   } catch (err) {
     throw new Error(
       `No access to "${companionOptions.filePath}". Please ensure the directory exists and with read/write permissions.`

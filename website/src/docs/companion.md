@@ -6,7 +6,7 @@ module: "@uppy/companion"
 permalink: docs/companion/
 alias: docs/server/
 category: "Docs"
-tagline: "Server-side proxy that enables remote sources like Instagram, Google Drive, S3"
+tagline: "Server-side proxy that enables remote sources like Instagram, Google Drive, and Dropbox"
 ---
 
 Drag and drop, webcam, basic file manipulation (adding metadata, for example) and uploading via tus-resumable uploads or XHR/Multipart are all possible using just the Uppy client module.

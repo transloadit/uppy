@@ -81,6 +81,7 @@ module.exports = function Dashboard (props) {
       onDrop={props.handleDrop}
     >
       <div
+        aria-hidden="true"
         className="uppy-Dashboard-overlay"
         tabIndex={-1}
         onClick={props.handleClickOutside}
@@ -160,7 +161,7 @@ module.exports = function Dashboard (props) {
 
           <div className="uppy-Dashboard-progressindicators">
             {props.progressindicators.map((target) => {
-              return props.getPlugin(target.id).render(props.state)
+              return props.uppy.getPlugin(target.id).render(props.state)
             })}
           </div>
         </div>

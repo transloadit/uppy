@@ -15,8 +15,8 @@ module.exports = class Zoom extends UIPlugin {
       <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
         <rect className="uppy-ProviderIconBg" width="32" height="32" rx="16" fill="#0E71EB" />
         <g fill="none" fillRule="evenodd">
-          <path fill="#fff" d="M29,31H14c-1.657,0-3-1.343-3-3V17h15c1.657,0,3,1.343,3,3V31z" style="transform: translate(-5px, -5px) scale(0.9);" />
-          <polygon fill="#fff" points="37,31 31,27 31,21 37,17" style="transform: translate(-5px, -5px) scale(0.9);" />
+          <path fill="#fff" d="M29,31H14c-1.657,0-3-1.343-3-3V17h15c1.657,0,3,1.343,3,3V31z" style={{ transform: 'translate(-5px, -5px) scale(0.9)' }} />
+          <polygon fill="#fff" points="37,31 31,27 31,21 37,17" style={{ transform: 'translate(-5px, -5px) scale(0.9)' }} />
         </g>
       </svg>
     )
@@ -29,6 +29,14 @@ module.exports = class Zoom extends UIPlugin {
       provider: 'zoom',
       pluginId: this.id,
     })
+
+    this.defaultLocale = {
+      strings: {
+        pluginNameZoom: 'Zoom',
+      },
+    }
+    this.i18nInit()
+    this.title = this.i18n('pluginNameZoom')
 
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)

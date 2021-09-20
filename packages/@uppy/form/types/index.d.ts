@@ -1,7 +1,6 @@
 import type { PluginOptions, PluginTarget, BasePlugin } from '@uppy/core'
 
-interface FormOptions extends PluginOptions {
-    replaceTargetContent?: boolean
+export interface FormOptions extends PluginOptions {
     target?: PluginTarget
     resultName?: string
     getMetaFromForm?: boolean

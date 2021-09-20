@@ -19,6 +19,7 @@ const mimeToExtensions = {
 
 module.exports = function getFileTypeExtension (mimeType) {
   // Remove the ; bit in 'video/x-matroska;codecs=avc1'
-  mimeType = mimeType.replace(/;.*$/, '')
+  // eslint-disable-next-line no-param-reassign
+  [mimeType] = mimeType.split(';', 1)
   return mimeToExtensions[mimeType] || null
 }

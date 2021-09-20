@@ -31,6 +31,7 @@ class ServiceWorkerStore {
     })
 
     console.log('Loading stored blobs from Service Worker')
+
     const onMessage = (event) => {
       if (event.data.store !== this.name) {
         return
@@ -40,6 +41,8 @@ class ServiceWorkerStore {
           defer.resolve(event.data.files)
           navigator.serviceWorker.removeEventListener('message', onMessage)
           break
+        default:
+          defer.reject()
       }
     }
 

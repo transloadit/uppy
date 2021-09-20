@@ -1,13 +1,12 @@
 const { BasePlugin } = require('@uppy/core')
-const cuid = require('cuid')
-const Translator = require('@uppy/utils/lib/Translator')
+const { nanoid } = require('nanoid')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const settle = require('@uppy/utils/lib/settle')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
 const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
-const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/src/RateLimitedQueue')
+const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
 
@@ -88,7 +87,7 @@ module.exports = class XHRUpload extends BasePlugin {
         try {
           parsedResponse = JSON.parse(responseText)
         } catch (err) {
-          this.uppy.log(err)
+          uppy.log(err)
         }
 
         return parsedResponse
@@ -118,7 +117,6 @@ module.exports = class XHRUpload extends BasePlugin {
     }
 
     this.opts = { ...defaultOptions, ...opts }
-
     this.i18nInit()
 
     this.handleUpload = this.handleUpload.bind(this)
@@ -135,17 +133,6 @@ module.exports = class XHRUpload extends BasePlugin {
     }
 
     this.uploaderEvents = Object.create(null)
-  }
-
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   getOptions (file) {
@@ -250,7 +237,7 @@ module.exports = class XHRUpload extends BasePlugin {
         reject(error)
       })
 
-      const id = cuid()
+      const id = nanoid()
 
       xhr.upload.addEventListener('loadstart', () => {
         this.uppy.log(`[XHRUpload] ${id} started`)

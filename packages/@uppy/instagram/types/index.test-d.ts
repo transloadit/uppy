@@ -6,7 +6,6 @@ import Instagram from '..'
   uppy.use(Instagram, {
     companionUrl: '',
     companionCookiesRule: 'same-origin',
-    replaceTargetContent: false,
     target: 'body',
     title: 'title',
   })
