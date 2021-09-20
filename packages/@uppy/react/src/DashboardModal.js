@@ -31,6 +31,12 @@ class DashboardModal extends React.Component {
     } else if (!prevProps.open && this.props.open) {
       this.plugin.openModal()
     }
+
+    for (const key of Object.keys(this.props)) {
+      if (this.props[key] !== prevProps[key] && key in this.plugin.opts) {
+        this.plugin[key] = this.props[key]
+      }
+    }
   }
 
   componentWillUnmount () {

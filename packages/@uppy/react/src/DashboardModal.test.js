@@ -78,4 +78,22 @@ describe('react <DashboardModal />', () => {
 
     dash.unmount()
   })
+
+  it('react on Dashboard props update', async () => {
+    const uppy = new Uppy()
+    const dash = mount((
+      <DashboardModal
+        uppy={uppy}
+        theme="dark"
+      />
+    ))
+
+    expect(dash.getDOMNode().querySelector('[data-uppy-theme="dark"]')).toBeTruthy()
+
+    dash.setProps({ theme: 'light' })
+
+    expect(dash.getDOMNode().querySelector('[data-uppy-theme="dark"]')).toBeFalsy()
+
+    dash.unmount()
+  })
 })
