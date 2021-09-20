@@ -250,9 +250,10 @@ module.exports = function s3 (config) {
         })
       })
     ).then((urls) => {
-      const presignedUrls = Object.fromEntries(
-        partNumbersArray.map((partNumber, index) => [partNumber, urls[index]])
-      )
+      const presignedUrls = Object.create(null)
+      for (let index = 0; index < partNumbersArray.length; index++) {
+        presignedUrls[partNumbersArray[index]] = urls[index]
+      }
       res.json({ presignedUrls })
     }).catch((err) => {
       next(err)
