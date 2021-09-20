@@ -87,7 +87,7 @@ module.exports = class XHRUpload extends BasePlugin {
         try {
           parsedResponse = JSON.parse(responseText)
         } catch (err) {
-          this.uppy.log(err)
+          uppy.log(err)
         }
 
         return parsedResponse
