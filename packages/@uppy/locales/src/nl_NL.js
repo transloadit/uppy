@@ -128,6 +128,7 @@ nl_NL.strings = {
   selectFileNamed: 'Selecteer bestand %{name}',
   unselectFileNamed: 'Deselecteer bestand %{name}',
   openFolderNamed: 'Open map %{name}',
+  by: 'Door',
 }
 
 nl_NL.pluralize = function pluralize (n) {

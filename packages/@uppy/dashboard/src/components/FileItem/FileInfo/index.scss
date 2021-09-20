@@ -17,6 +17,19 @@
   }
 }
 
+.uppy-Dashboard-Item-author {
+  color: $gray-600;
+  vertical-align: bottom;
+  font-size: 11px;
+  font-weight: normal;
+  display: inline-block;
+  line-height: 1;
+
+  a {
+    color: $gray-600;
+  }
+}
+
 .uppy-Dashboard-Item-status {
   color: $gray-600;
   font-weight: normal;

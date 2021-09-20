@@ -86,6 +86,7 @@ module.exports = class View {
       name: file.name || file.id,
       type: file.mimeType,
       isRemote: true,
+      meta: {},
       body: {
         fileId: file.id,
       },
@@ -100,11 +101,18 @@ module.exports = class View {
     }
 
     const fileType = getFileType(tagFile)
+
     // TODO Should we just always use the thumbnail URL if it exists?
     if (fileType && isPreviewSupported(fileType)) {
       tagFile.preview = file.thumbnail
     }
+
+    if (file.author) {
+      tagFile.meta.author = file.author
+    }
+
     this.plugin.uppy.log('Adding remote file')
+
     try {
       this.plugin.uppy.addFile(tagFile)
       return true
