@@ -12,6 +12,41 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.1.1
+
+Released: 2021-09-20
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/angular | 0.2.3 | @uppy/progress-bar | 2.0.2 |
+| @uppy/aws-s3-multipart | 2.0.3 | @uppy/provider-views | 2.0.2 |
+| @uppy/aws-s3 | 2.0.3 | @uppy/react-native | 0.2.2 |
+| @uppy/box | 1.0.2 | @uppy/react | 2.0.3 |
+| @uppy/companion-client | 2.0.1 | @uppy/robodog | 2.0.4 |
+| @uppy/core | 2.0.3 | @uppy/screen-capture | 2.0.2 |
+| @uppy/dashboard | 2.0.3 | @uppy/status-bar | 2.0.2 |
+| @uppy/drag-drop | 2.0.2 | @uppy/svelte | 1.0.3 |
+| @uppy/drop-target | 1.0.2 | @uppy/thumbnail-generator | 2.0.3 |
+| @uppy/dropbox | 2.0.2 | @uppy/transloadit | 2.0.2 |
+| @uppy/facebook | 2.0.2 | @uppy/tus | 2.0.2 |
+| @uppy/file-input | 2.0.2 | @uppy/unsplash | 1.0.2 |
+| @uppy/form | 2.0.2 | @uppy/url | 2.0.2 |
+| @uppy/golden-retriever | 2.0.3 | @uppy/utils | 4.0.1 |
+| @uppy/google-drive | 2.0.2 | @uppy/vue | 0.4.1 |
+| @uppy/image-editor | 1.0.2 | @uppy/webcam | 2.0.2 |
+| @uppy/informer | 2.0.2 | @uppy/xhr-upload | 2.0.3 |
+| @uppy/instagram | 2.0.2 | @uppy/zoom | 1.0.2 |
+| @uppy/locales | 2.0.1 | uppy | 2.1.1 |
+| @uppy/onedrive | 2.0.2 | - | - |
+
+- @uppy/unsplash: Fix "attempted to use private field on non-instance" in `SearchProvider` (#3201)
+- @uppy/locales: Add 'done' to `nb_NO.js` (#3200)
+- @uppy/transloadit: Fix unhandledPromiseRejection failures (#3197)
+- @uppy/aws-s3-multipart: Fix AbortController is not defined on Node.js (Server Side Render) (#3169)
+- @uppy/aws-s3-multipart: Fix `net::ERR_OUT_OF_MEMORY` (#3183)
+- @uppy/dashboard: Fix `autoOpenFileEditor` (#3186)
+- @uppy/dashboard: Update Google Drive for brand compliance (#3178)
+
 ## 2.1.0
 
 Released: 2021-09-01
