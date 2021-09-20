@@ -1,5 +1,6 @@
 {
-  "name": "@uppy/end2end-tests",
+  "name": "@uppy-tests/end2end",
+  "version": "0.0.0",
   "private": true,
   "devDependencies": {
     "@wdio/cli": "^7.7.7",

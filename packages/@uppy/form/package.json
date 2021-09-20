@@ -20,7 +20,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "file:../utils",
+    "@uppy/utils": "workspace:*",
     "get-form-data": "^2.0.0"
   },
   "peerDependencies": {

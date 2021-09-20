@@ -1,5 +1,6 @@
 {
   "name": "@uppy-example/react-example",
+  "version": "0.0.0",
   "dependencies": {
     "@babel/core": "^7.4.5",
     "@babel/preset-react": "^7.0.0",

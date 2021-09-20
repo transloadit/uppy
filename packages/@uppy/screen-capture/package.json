@@ -24,7 +24,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "file:../utils",
+    "@uppy/utils": "workspace:*",
     "preact": "^10.5.13"
   },
   "peerDependencies": {

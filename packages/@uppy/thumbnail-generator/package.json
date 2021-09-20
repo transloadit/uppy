@@ -22,7 +22,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "file:../utils",
+    "@uppy/utils": "workspace:*",
     "exifr": "^6.0.0"
   },
   "devDependencies": {

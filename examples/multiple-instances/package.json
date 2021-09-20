@@ -1,10 +1,11 @@
 {
   "name": "@uppy-example/multiple-instances",
+  "version": "0.0.0",
   "dependencies": {
     "@babel/core": "^7.4.4",
-    "@uppy/core": "file:../../packages/@uppy/core",
-    "@uppy/dashboard": "file:../../packages/@uppy/dashboard",
-    "@uppy/golden-retriever": "file:../../packages/@uppy/golden-retriever",
+    "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/golden-retriever": "workspace:*",
     "babelify": "^10.0.0",
     "budo": "^11.6.1"
   },

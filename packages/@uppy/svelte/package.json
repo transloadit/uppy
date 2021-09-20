@@ -10,10 +10,10 @@
     "validate": "svelte-check"
   },
   "dependencies": {
-    "@uppy/dashboard": "file:../dashboard",
-    "@uppy/drag-drop": "file:../drag-drop",
-    "@uppy/progress-bar": "file:../progress-bar",
-    "@uppy/status-bar": "file:../status-bar"
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/drag-drop": "workspace:*",
+    "@uppy/progress-bar": "workspace:*",
+    "@uppy/status-bar": "workspace:*"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^11.0.1",

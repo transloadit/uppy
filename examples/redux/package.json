@@ -1,11 +1,12 @@
 {
   "name": "@uppy-example/redux",
+  "version": "0.0.0",
   "dependencies": {
     "@babel/core": "^7.4.4",
-    "@uppy/core": "file:../../packages/@uppy/core",
-    "@uppy/store-redux": "file:../../packages/@uppy/store-redux",
-    "@uppy/dashboard": "file:../../packages/@uppy/dashboard",
-    "@uppy/tus": "file:../../packages/@uppy/tus",
+    "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/store-redux": "workspace:*",
+    "@uppy/tus": "workspace:*",
     "babelify": "^10.0.0",
     "budo": "^11.6.1",
     "redux": "^4.0.1",

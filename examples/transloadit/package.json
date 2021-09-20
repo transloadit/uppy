@@ -1,8 +1,9 @@
 {
   "name": "@uppy-example/transloadit",
+  "version": "0.0.0",
   "dependencies": {
     "@babel/core": "^7.4.4",
-    "@uppy/robodog": "file:../../packages/@uppy/robodog",
+    "@uppy/robodog": "workspace:*",
     "babelify": "^10.0.0",
     "budo": "^11.3.2",
     "express": "^4.16.4",

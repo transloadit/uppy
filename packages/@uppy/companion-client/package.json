@@ -21,7 +21,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "file:../utils",
+    "@uppy/utils": "workspace:*",
     "namespace-emitter": "^2.0.1"
   }
 }

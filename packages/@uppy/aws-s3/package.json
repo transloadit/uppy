@@ -22,9 +22,9 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/companion-client": "file:../companion-client",
-    "@uppy/utils": "file:../utils",
-    "@uppy/xhr-upload": "file:../xhr-upload",
+    "@uppy/companion-client": "workspace:*",
+    "@uppy/utils": "workspace:*",
+    "@uppy/xhr-upload": "workspace:*",
     "nanoid": "^3.1.25"
   },
   "devDependencies": {

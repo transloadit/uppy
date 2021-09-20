@@ -1,15 +1,14 @@
 {
   "name": "@uppy/vue",
   "version": "0.4.3",
-  "private": false,
   "main": "lib/index.js",
   "types": "types/index.d.ts",
   "dependencies": {
-    "@uppy/dashboard": "file:../dashboard",
-    "@uppy/drag-drop": "file:../drag-drop",
-    "@uppy/file-input": "file:../file-input",
-    "@uppy/progress-bar": "file:../progress-bar",
-    "@uppy/status-bar": "file:../status-bar",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/drag-drop": "workspace:*",
+    "@uppy/file-input": "workspace:*",
+    "@uppy/progress-bar": "workspace:*",
+    "@uppy/status-bar": "workspace:*",
     "shallow-equal": "^1.2.1"
   },
   "devDependencies": {

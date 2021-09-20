@@ -26,9 +26,7 @@
     "express",
     "realtime"
   ],
-  "bin": {
-    "companion": "./bin/companion"
-  },
+  "bin": "./bin/companion",
   "dependencies": {
     "@purest/providers": "1.0.1",
     "atob": "2.1.2",

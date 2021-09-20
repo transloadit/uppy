@@ -1,15 +1,16 @@
 {
   "name": "@uppy-example/bundled",
+  "version": "0.0.0",
   "dependencies": {
     "@babel/core": "^7.4.4",
-    "@uppy/core": "file:../../packages/@uppy/core",
-    "@uppy/dashboard": "file:../../packages/@uppy/dashboard",
-    "@uppy/google-drive": "file:../../packages/@uppy/google-drive",
-    "@uppy/instagram": "file:../../packages/@uppy/instagram",
-    "@uppy/tus": "file:../../packages/@uppy/tus",
-    "@uppy/url": "file:../../packages/@uppy/url",
-    "@uppy/webcam": "file:../../packages/@uppy/webcam",
-    "parcel": "^2.0.0"
+    "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/google-drive": "workspace:*",
+    "@uppy/instagram": "workspace:*",
+    "@uppy/tus": "workspace:*",
+    "@uppy/url": "workspace:*",
+    "@uppy/webcam": "workspace:*",
+    "parcel-bundler": "^2.0.0"
   },
   "private": true,
   "type": "module",

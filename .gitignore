@@ -7,6 +7,9 @@ node_modules
 .cache
 .parcel-cache
 .eslintcache
+.yarn/cache
+.yarn/install-state.gz
+yarn-error.log
 
 env.sh
 
