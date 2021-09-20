@@ -85,7 +85,7 @@ module.exports = {
     'no-param-reassign': ['warn'],
     'no-redeclare': ['warn'],
     'no-shadow': ['warn'],
-    'no-use-before-define': ['warn'],
+    'no-use-before-define': ['warn', { 'functions': false }],
     'radix': ['warn'],
     'react/button-has-type': 'error',
     'react/destructuring-assignment': ['warn'],
