@@ -14,7 +14,7 @@ const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key)
  */
 
 class DashboardModal extends React.Component {
-  #nonHtmlPropsHasChanged = (prevProps) => Object.keys(this.props)
+  #nonHtmlPropsHaveChanged = (prevProps) => Object.keys(this.props)
     .some(key => !hasOwn(this.validProps, key) && this.props[key] !== prevProps[key])
 
   componentDidMount () {
@@ -25,7 +25,7 @@ class DashboardModal extends React.Component {
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
-    } else if (this.#nonHtmlPropsHasChanged(prevProps)) {
+    } else if (this.#nonHtmlPropsHaveChanged(prevProps)) {
       const options = { ...this.props, onRequestCloseModal: this.props.onRequestClose }
       delete options.uppy
       this.plugin.setOptions(options)
