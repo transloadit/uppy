@@ -97,7 +97,7 @@ describe('react <DashboardModal />', () => {
     dash.unmount()
   })
 
-  it('react on HTMLDivElement props update', async () => {
+  it('react on @uppy/dashboard props update', async () => {
     const uppy = new Uppy()
     const dash = mount((
       <DashboardModal

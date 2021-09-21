@@ -3,10 +3,9 @@ const PropTypes = require('prop-types')
 const DashboardPlugin = require('@uppy/dashboard')
 const basePropTypes = require('./propTypes').dashboard
 const getHTMLProps = require('./getHTMLProps')
+const nonHtmlPropsHaveChanged = require('./nonHtmlPropsHaveChanged')
 
 const h = React.createElement
-
-const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key)
 
 /**
  * React Component that renders a Dashboard for an Uppy instance in a Modal
@@ -14,9 +13,6 @@ const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key)
  */
 
 class DashboardModal extends React.Component {
-  #nonHtmlPropsHaveChanged = (prevProps) => Object.keys(this.props)
-    .some(key => !hasOwn(this.validProps, key) && this.props[key] !== prevProps[key])
-
   componentDidMount () {
     this.installPlugin()
   }
@@ -25,7 +21,7 @@ class DashboardModal extends React.Component {
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
-    } else if (this.#nonHtmlPropsHaveChanged(prevProps)) {
+    } else if (nonHtmlPropsHaveChanged(this, prevProps)) {
       const options = { ...this.props, onRequestCloseModal: this.props.onRequestClose }
       delete options.uppy
       this.plugin.setOptions(options)

@@ -2,6 +2,7 @@ const React = require('react')
 const DashboardPlugin = require('@uppy/dashboard')
 const basePropTypes = require('./propTypes').dashboard
 const getHTMLProps = require('./getHTMLProps')
+const nonHtmlPropsHaveChanged = require('./nonHtmlPropsHaveChanged')
 
 const h = React.createElement
 
@@ -11,11 +12,6 @@ const h = React.createElement
  */
 
 class Dashboard extends React.Component {
-  constructor (props) {
-    super(props)
-    this.validProps = getHTMLProps(props)
-  }
-
   componentDidMount () {
     this.installPlugin()
   }
@@ -24,6 +20,10 @@ class Dashboard extends React.Component {
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
+    } else if (nonHtmlPropsHaveChanged(this, prevProps)) {
+      const options = { ...this.props, target: this.container }
+      delete options.uppy
+      this.plugin.setOptions(options)
     }
   }
 
@@ -51,6 +51,8 @@ class Dashboard extends React.Component {
   }
 
   render () {
+    // TODO: rename this.validProps to this.#htmlProps
+    this.validProps = getHTMLProps(this.props)
     return h('div', {
       ref: (container) => {
         this.container = container

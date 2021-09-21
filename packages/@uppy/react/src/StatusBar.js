@@ -3,6 +3,7 @@ const PropTypes = require('prop-types')
 const StatusBarPlugin = require('@uppy/status-bar')
 const uppyPropType = require('./propTypes').uppy
 const getHTMLProps = require('./getHTMLProps')
+const nonHtmlPropsHaveChanged = require('./nonHtmlPropsHaveChanged')
 
 const h = React.createElement
 
@@ -12,11 +13,6 @@ const h = React.createElement
  */
 
 class StatusBar extends React.Component {
-  constructor (props) {
-    super(props)
-    this.validProps = getHTMLProps(props)
-  }
-
   componentDidMount () {
     this.installPlugin()
   }
@@ -25,6 +21,10 @@ class StatusBar extends React.Component {
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
+    } else if (nonHtmlPropsHaveChanged(this, prevProps)) {
+      const options = { ...this.props, target: this.container }
+      delete options.uppy
+      this.plugin.setOptions(options)
     }
   }
 
@@ -53,6 +53,8 @@ class StatusBar extends React.Component {
   }
 
   render () {
+    // TODO: rename this.validProps to this.#htmlProps
+    this.validProps = getHTMLProps(this.props)
     return h('div', {
       ref: (container) => {
         this.container = container
