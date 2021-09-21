@@ -1,5 +1,8 @@
-const Cropper = require('cropperjs')
+const CropperImport = require('cropperjs')
 const { h, Component } = require('preact')
+
+// eslint-disable-next-line no-underscore-dangle
+const Cropper = CropperImport.__esModule ? CropperImport.default : CropperImport
 
 module.exports = class Editor extends Component {
   constructor (props) {
