@@ -51,7 +51,7 @@ class Dashboard extends React.Component {
   }
 
   render () {
-    // TODO: rename this.validProps to this.#htmlProps
+    // TODO: stop exposing `validProps` as a public property and rename it to `htmlProps`
     this.validProps = getHTMLProps(this.props)
     return h('div', {
       ref: (container) => {
