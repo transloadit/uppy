@@ -6,16 +6,16 @@ const getHTMLProps = require('./getHTMLProps')
 
 const h = React.createElement
 
+const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key)
+
 /**
  * React Component that renders a Dashboard for an Uppy instance in a Modal
  * dialog. Visibility of the Modal is toggled using the `open` prop.
  */
 
 class DashboardModal extends React.Component {
-  constructor (props) {
-    super(props)
-    this.validProps = getHTMLProps(props)
-  }
+  #nonHtmlPropsHasChanged = (prevProps) => Object.keys(this.props)
+    .some(key => !hasOwn(this.validProps, key) && this.props[key] !== prevProps[key])
 
   componentDidMount () {
     this.installPlugin()
@@ -25,17 +25,15 @@ class DashboardModal extends React.Component {
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
+    } else if (this.#nonHtmlPropsHasChanged(prevProps)) {
+      const options = { ...this.props, onRequestCloseModal: this.props.onRequestClose }
+      delete options.uppy
+      this.plugin.setOptions(options)
     }
     if (prevProps.open && !this.props.open) {
       this.plugin.closeModal()
     } else if (!prevProps.open && this.props.open) {
       this.plugin.openModal()
-    }
-
-    for (const key of Object.keys(this.props)) {
-      if (this.props[key] !== prevProps[key] && key in this.plugin.opts) {
-        this.plugin[key] = this.props[key]
-      }
     }
   }
 
@@ -71,6 +69,8 @@ class DashboardModal extends React.Component {
   }
 
   render () {
+    // TODO: rename this.validProps to this.#htmlProps
+    this.validProps = getHTMLProps(this.props)
     return h('div', {
       ref: (container) => {
         this.container = container

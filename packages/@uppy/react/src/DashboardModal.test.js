@@ -79,7 +79,25 @@ describe('react <DashboardModal />', () => {
     dash.unmount()
   })
 
-  it('react on Dashboard props update', async () => {
+  it('react on HTMLDivElement props update', async () => {
+    const uppy = new Uppy()
+    const dash = mount((
+      <DashboardModal
+        uppy={uppy}
+        hidden
+      />
+    ))
+
+    expect(dash.getDOMNode().hidden).toBeTruthy()
+
+    dash.setProps({ hidden: false })
+
+    expect(dash.getDOMNode().hidden).toBeFalsy()
+
+    dash.unmount()
+  })
+
+  it('react on HTMLDivElement props update', async () => {
     const uppy = new Uppy()
     const dash = mount((
       <DashboardModal
@@ -88,11 +106,12 @@ describe('react <DashboardModal />', () => {
       />
     ))
 
-    expect(dash.getDOMNode().querySelector('[data-uppy-theme="dark"]')).toBeTruthy()
+    const { plugin } = dash.instance()
+
+    expect(plugin.opts.theme).toBe('dark')
 
     dash.setProps({ theme: 'light' })
-
-    expect(dash.getDOMNode().querySelector('[data-uppy-theme="dark"]')).toBeFalsy()
+    expect(plugin.opts.theme).toBe('light')
 
     dash.unmount()
   })
