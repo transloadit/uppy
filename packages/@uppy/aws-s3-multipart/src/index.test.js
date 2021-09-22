@@ -52,7 +52,7 @@ describe('AwsS3Multipart', () => {
         }),
         completeMultipartUpload: jest.fn(() => Promise.resolve({ location: 'test' })),
         abortMultipartUpload: jest.fn(),
-        prepareUploadParts: jest.fn(() => {
+        prepareUploadParts: jest.fn(() => new Promise((resolve) => {
           const presignedUrls = {}
           const possiblePartNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
           possiblePartNumbers.forEach((partNumber) => {
@@ -60,8 +60,8 @@ describe('AwsS3Multipart', () => {
               partNumber
             ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
           })
-          return { presignedUrls }
-        }),
+          return resolve({ presignedUrls })
+        })),
       })
       awsS3Multipart = core.getPlugin('AwsS3Multipart')
     })
@@ -157,6 +157,60 @@ describe('AwsS3Multipart', () => {
           { ETag: 'test', PartNumber: 9 },
           { ETag: 'test', PartNumber: 10 },
         ])
+        done()
+      })
+    })
+  })
+
+  describe('MultipartUploader', () => {
+    let core
+    let awsS3Multipart
+
+    beforeEach(() => {
+      core = new Core()
+      core.use(AwsS3Multipart, {
+        createMultipartUpload: jest.fn(() => {
+          return {
+            uploadId: '6aeb1980f3fc7ce0b5454d25b71992',
+            key: 'test/upload/multitest.dat',
+          }
+        }),
+        completeMultipartUpload: jest.fn(() => Promise.resolve({ location: 'test' })),
+        abortMultipartUpload: jest.fn(),
+        prepareUploadParts: jest
+          .fn(() => new Promise((resolve) => {
+            const presignedUrls = {}
+            const possiblePartNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+            possiblePartNumbers.forEach((partNumber) => {
+              presignedUrls[
+                partNumber
+              ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
+            })
+
+            return resolve({ presignedUrls })
+          }))
+          // This runs first and only once
+          // eslint-disable-next-line prefer-promise-reject-errors
+          .mockImplementationOnce(() => Promise.reject({ source: { status: 500 } })),
+      })
+      awsS3Multipart = core.getPlugin('AwsS3Multipart')
+    })
+
+    it('retries prepareUploadParts when it fails once', (done) => {
+      const fileSize = 5 * MB + 1 * MB
+      core.addFile({
+        source: 'jest',
+        name: 'multitest.dat',
+        type: 'application/octet-stream',
+        data: new File([Buffer.alloc(fileSize)], {
+          type: 'application/octet-stream',
+        }),
+      })
+      core.upload().then(() => {
+        expect(
+          awsS3Multipart.opts.prepareUploadParts.mock.calls.length
+        ).toEqual(2)
         done()
       })
     })
