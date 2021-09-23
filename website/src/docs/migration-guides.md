@@ -62,6 +62,13 @@ You can import them from [`@uppy/core`][core]:
 import { BasePlugin, UIPlugin } from '@uppy/core'
 ```
 
+**Note:** some bundlers will include `UIPlugin` (and therefore Preact) if you import from `@uppy/core`. To make sure this does not happen, you can import `Uppy` and `BasePlugin` directly: 
+
+```js
+import Uppy from '@uppy/core/lib/Uppy.js'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+```
+
 ### Use the latest Preact for your Uppy plugins
 
 Official plugins have already been upgraded. If you are using any custom plugins, upgrade Preact to the latest version. At the time of writing this is `10.5.13`.
