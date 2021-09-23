@@ -254,7 +254,7 @@ class MultipartUploader {
         }),
       })
     } catch (error) {
-      this.#onError(error)
+      throw new Error(error)
     }
 
     const valid = typeof result?.presignedUrls === 'object'
