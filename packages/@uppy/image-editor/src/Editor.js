@@ -1,6 +1,7 @@
 const CropperImport = require('cropperjs')
 const { h, Component } = require('preact')
 
+// @TODO A silly hack that we can get rid of when moving to ESM.
 // eslint-disable-next-line no-underscore-dangle
 const Cropper = CropperImport.__esModule ? CropperImport.default : CropperImport
 
