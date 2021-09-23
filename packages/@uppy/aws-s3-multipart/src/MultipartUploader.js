@@ -243,26 +243,28 @@ class MultipartUploader {
 
   async #prepareUploadParts (candidates) {
     this.lockedCandidatesForBatch.push(...candidates)
+    let result
 
     try {
-      const result = await this.#retryable({
+      result = await this.#retryable({
         attempt: () => this.options.prepareUploadParts({
           key: this.key,
           uploadId: this.uploadId,
           partNumbers: candidates.map((index) => index + 1),
         }),
       })
-      const valid = typeof result?.presignedUrls === 'object'
-
-      if (!valid) {
-        throw new TypeError(
-          'AwsS3/Multipart: Got incorrect result from `prepareUploadParts()`, expected an object `{ presignedUrls }`.'
-        )
-      }
-      return result
     } catch (error) {
-      throw new Error(error)
+      this.#onError(error)
     }
+
+    const valid = typeof result?.presignedUrls === 'object'
+
+    if (!valid) {
+      throw new TypeError(
+        'AwsS3/Multipart: Got incorrect result from `prepareUploadParts()`, expected an object `{ presignedUrls }`.'
+      )
+    }
+    return result
   }
 
   #uploadPartRetryable (index, prePreparedPart) {
