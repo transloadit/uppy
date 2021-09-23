@@ -30,6 +30,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 ## `3.0.0`
 
 - [ ] Switch to ES Modules (ESM)
+- [ ] @uppy/image-editor: Remove silly hack to work around non-ESM.
 
 ## `4.0.0`
 
