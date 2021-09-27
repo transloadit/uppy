@@ -15,19 +15,17 @@ Uppy supports the popular [Redux](https://redux.js.org/) state management librar
 You can tell Uppy to use your app’s Redux store for its files and UI state. Please check out [Custom Stores](/docs/stores/) for more information on that. Here’s an example to give you a sense of how this works:
 
 ```js
-import { createStore } from 'redux'
-import createReduxStore from '@uppy/store-redux'
+import Uppy from '@uppy/core'
+import ReduxStore from '@uppy/redux-store'
+import Redux from 'redux'
 
-const reducer = combineReducers({
-  ...reducers,
-  uppy: ReduxStore.reducer,
-})
+function createStore (reducers = {}) {
+  const reducer = Redux.combineReducers({ ...reducers, uppy: ReduxStore.reducer })
+  return Redux.createStore(reducer)
+}
 
-const uppy = new Uppy({
-  store: createReduxStore({
-    store: createStore(reducer), // That’s a lot of stores!
-  }),
-})
+const store = new ReduxStore.ReduxStore({ store: createStore() })
+const uppy = new Uppy({ store })
 ```
 
 Keep in mind that Uppy state is not serializable (because we have to keep track of files with data blobs). So, if you persist your Redux state, you should exclude Uppy state from persistence.
