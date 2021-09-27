@@ -50,9 +50,9 @@ describe('AwsS3Multipart', () => {
             key: 'test/upload/multitest.dat',
           }
         }),
-        completeMultipartUpload: jest.fn(() => Promise.resolve({ location: 'test' })),
+        completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
         abortMultipartUpload: jest.fn(),
-        prepareUploadParts: jest.fn(() => new Promise((resolve) => {
+        prepareUploadParts: jest.fn(async () => {
           const presignedUrls = {}
           const possiblePartNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
           possiblePartNumbers.forEach((partNumber) => {
@@ -60,8 +60,8 @@ describe('AwsS3Multipart', () => {
               partNumber
             ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
           })
-          return resolve({ presignedUrls })
-        })),
+          return { presignedUrls }
+        }),
       })
       awsS3Multipart = core.getPlugin('AwsS3Multipart')
     })
@@ -178,10 +178,10 @@ describe('AwsS3Multipart', () => {
             key: 'test/upload/multitest.dat',
           }
         }),
-        completeMultipartUpload: jest.fn(() => Promise.resolve({ location: 'test' })),
+        completeMultipartUpload: jest.fn(async () => ({ location: 'test' })),
         abortMultipartUpload: jest.fn(),
         prepareUploadParts: jest
-          .fn(() => new Promise((resolve) => {
+          .fn(async () => {
             const presignedUrls = {}
             const possiblePartNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -191,8 +191,8 @@ describe('AwsS3Multipart', () => {
               ] = `https://bucket.s3.us-east-2.amazonaws.com/test/upload/multitest.dat?partNumber=${partNumber}&uploadId=6aeb1980f3fc7ce0b5454d25b71992&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATEST%2F20210729%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210729T014044Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=test`
             })
 
-            return resolve({ presignedUrls })
-          }))
+            return { presignedUrls }
+          })
           // This runs first and only once
           // eslint-disable-next-line prefer-promise-reject-errors
           .mockImplementationOnce(() => Promise.reject({ source: { status: 500 } })),
