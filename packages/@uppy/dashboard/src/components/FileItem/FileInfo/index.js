@@ -1,4 +1,4 @@
-const { h } = require('preact')
+const { h, Fragment } = require('preact')
 const prettierBytes = require('@transloadit/prettier-bytes')
 const truncateString = require('@uppy/utils/lib/truncateString')
 
@@ -27,6 +27,8 @@ const renderFileName = (props) => {
 
 const renderAuthor = (props) => {
   const { author } = props.file.meta
+  const { providerName } = props.file.remote
+  const dot = `\u00B7`
 
   if (!author) {
     return null
@@ -34,15 +36,19 @@ const renderAuthor = (props) => {
 
   return (
     <div className="uppy-Dashboard-Item-author">
-      {props.i18n('by')}
-      {' '}
       <a
         href={`${author.url}?utm_source=Companion&utm_medium=referral`}
         target="_blank"
         rel="noreferrer"
       >
-        {truncateString(author.name, 20)}
+        {truncateString(author.name, 13)}
       </a>
+      {providerName ? (
+        <Fragment>
+          {` ${dot} `}
+          {providerName}
+        </Fragment>
+      ) : null}
     </div>
   )
 }

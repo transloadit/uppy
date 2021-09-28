@@ -152,7 +152,6 @@ fr_FR.strings = {
     '1': 'Vous devez sélectionner au moins %{smart_count} fichiers',
     '2': 'Vous devez sélectionner au moins %{smart_count} fichiers',
   },
-  by: 'Par',
 }
 
 fr_FR.pluralize = function pluralize (n) {

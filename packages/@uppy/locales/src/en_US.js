@@ -21,7 +21,6 @@ en_US.strings = {
   browse: 'browse',
   browseFiles: 'browse files',
   browseFolders: 'browse folders',
-  by: 'By',
   cancel: 'Cancel',
   cancelUpload: 'Cancel upload',
   chooseFiles: 'Choose files',

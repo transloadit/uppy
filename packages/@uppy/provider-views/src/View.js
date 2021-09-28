@@ -89,6 +89,7 @@ module.exports = class View {
           fileId: file.id,
         },
         providerOptions: this.provider.opts,
+        providerName: this.provider.name,
       },
     }
 
