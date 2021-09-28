@@ -7,12 +7,12 @@ const generateFileID = require('@uppy/utils/lib/generateFileID')
 const SharedHandler = require('./SharedHandler')
 
 module.exports = class View {
-  #isHandlingScroll
-
   constructor (plugin, opts) {
     this.plugin = plugin
     this.provider = opts.provider
     this.sharedHandler = new SharedHandler(plugin)
+
+    this.isHandlingScroll = false
 
     this.preFirstRender = this.preFirstRender.bind(this)
     this.handleError = this.handleError.bind(this)
@@ -40,15 +40,7 @@ module.exports = class View {
     const { scrollHeight, scrollTop, offsetHeight } = event.target
     const scrollPosition = scrollHeight - (scrollTop + offsetHeight)
 
-    return scrollPosition < 50 && !this.#isHandlingScroll
-  }
-
-  get isHandlingScroll () {
-    return this.#isHandlingScroll
-  }
-
-  set isHandlingScroll (bool) {
-    this.#isHandlingScroll = bool
+    return scrollPosition < 50 && !this.isHandlingScroll
   }
 
   clearSelection () {
