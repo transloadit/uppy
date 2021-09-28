@@ -105,7 +105,6 @@ module.exports = class Dashboard extends UIPlugin {
         sessionRestored: 'Session restored',
         reSelect: 'Re-select',
         poweredBy: 'Powered by %{uppy}',
-        by: 'By',
       },
     }
 
