@@ -36,7 +36,7 @@ module.exports = (props) => {
           <a
             href={`${author.url}?utm_source=Companion&utm_medium=referral`}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="uppy-ProviderBrowserItem-author"
           >
             {author.name}
