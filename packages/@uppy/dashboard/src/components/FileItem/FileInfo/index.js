@@ -39,7 +39,7 @@ const renderAuthor = (props) => {
       <a
         href={`${author.url}?utm_source=Companion&utm_medium=referral`}
         target="_blank"
-        rel="noreferrer"
+        rel="noopener noreferrer"
       >
         {truncateString(author.name, 13)}
       </a>

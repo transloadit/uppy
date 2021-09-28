@@ -91,9 +91,7 @@ function Browser (props) {
                   isChecked: isChecked(folder),
                   toggleCheckbox: (event) => toggleCheckbox(event, folder),
                   type: 'folder',
-                  isDisabled: isChecked(folder)
-                    ? isChecked(folder).loading
-                    : false,
+                  isDisabled: isChecked(folder)?.loading,
                   isCheckboxDisabled: folder.id === VIRTUAL_SHARED_DIR,
                   handleFolderClick: () => getNextFolder(folder),
                 })
