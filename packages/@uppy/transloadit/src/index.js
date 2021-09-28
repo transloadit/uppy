@@ -1,5 +1,5 @@
 const hasProperty = require('@uppy/utils/lib/hasProperty')
-const { BasePlugin } = require('@uppy/core')
+const BasePlugin = require('@uppy/core/lib/BasePlugin')
 const Tus = require('@uppy/tus')
 const Assembly = require('./Assembly')
 const Client = require('./Client')
