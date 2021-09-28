@@ -25,7 +25,7 @@
  * the XHRUpload code, but at least it's not horrifically broken :)
  */
 
-const { BasePlugin } = require('@uppy/core')
+const BasePlugin = require('@uppy/core/lib/BasePlugin')
 const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const settle = require('@uppy/utils/lib/settle')
 const { RequestClient } = require('@uppy/companion-client')
