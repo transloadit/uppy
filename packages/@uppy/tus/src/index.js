@@ -185,6 +185,10 @@ module.exports = class Tus extends BasePlugin {
         ...(file.tus || {}),
       }
 
+      if (typeof opts.headers === 'function') {
+        opts.headers = opts.headers(file)
+      }
+
       /** @type {RawTusOptions} */
       const uploadOptions = {
         ...tusDefaultOptions,

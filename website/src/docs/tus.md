@@ -47,7 +47,25 @@ Destination URL for your uploads. This should be where your tus.io server is run
 
 ### `headers: {}`
 
-Additional request headers to send to the Tus endpoint when making requests.
+An object containing additional HTTP headers to send to the Tus endpoint when making requests.
+Keys are header names, values are header values.
+
+```js
+const headers = {
+  authorization: `Bearer ${window.getCurrentUserToken()}`,
+}
+```
+
+Header values can also be derived from file data by providing a function. The function receives a [File Object][File Objects] and must return an object where the keys are header names, and values are header values.
+
+```js
+const headers = (file) => {
+  return {
+    authorization: `Bearer ${window.getCurrentUserToken()}`,
+    expires: file.meta.expires,
+  }
+}
+```
 
 ### `chunkSize: Infinity`
 
@@ -80,3 +98,5 @@ Pass an array of field names to limit the metadata fields that will be added to 
 Limit the amount of uploads going on at the same time. Setting this to `0` means there is no limit on concurrent uploads.
 
 [tus-js-client]: https://github.com/tus/tus-js-client
+
+[File Objects]: /docs/uppy/#File-Objects
