@@ -305,6 +305,14 @@ module.exports = class ProviderView {
       // for older Companion versions that used object references
       const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
 
+      if (data.error) {
+        this.plugin.uppy.log('auth aborted')
+        const { uppy } = this.plugin
+        const message = uppy.i18n('authAborted')
+        uppy.info({ message }, 'warning', 5000)
+        return
+      }
+
       if (!data.token) {
         this.plugin.uppy.log('did not receive token from auth window')
         return

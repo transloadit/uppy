@@ -14,6 +14,7 @@ en_US.strings = {
   aspectRatioLandscape: 'Crop landscape (16:9)',
   aspectRatioPortrait: 'Crop portrait (9:16)',
   aspectRatioSquare: 'Crop square',
+  authAborted: 'Authentication aborted',
   authenticateWith: 'Connect to %{pluginName}',
   authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
   back: 'Back',
