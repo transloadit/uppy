@@ -30,7 +30,7 @@ describe('delay', () => {
 
     // should have rejected before the timer is done
     const time = Date.now() - start
-    expect(time).toBeGreaterThanOrEqual(50)
-    expect(time).toBeLessThan(100)
+    expect(time).toBeGreaterThanOrEqual(30)
+    expect(time).toBeLessThan(70)
   })
 })
