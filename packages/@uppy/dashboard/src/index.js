@@ -40,8 +40,6 @@ function defaultPickerIcon () {
 module.exports = class Dashboard extends UIPlugin {
   static VERSION = require('../package.json').version
 
-  #openFileEditorWhenFilesAdded
-
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Dashboard'
@@ -730,7 +728,7 @@ module.exports = class Dashboard extends UIPlugin {
     this.uppy.emit('restore-canceled')
   }
 
-  _openFileEditorWhenFilesAdded = (files) => {
+  #openFileEditorWhenFilesAdded = (files) => {
     const firstFile = files[0]
     if (this.canEditFile(firstFile)) {
       this.openFileEditor(firstFile)

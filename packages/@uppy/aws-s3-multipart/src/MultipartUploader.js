@@ -327,6 +327,7 @@ class MultipartUploader {
     xhr.responseType = 'text'
 
     function cleanup () {
+      // eslint-disable-next-line no-use-before-define
       signal.removeEventListener('abort', onabort)
     }
     function onabort () {
@@ -358,10 +359,14 @@ class MultipartUploader {
         return
       }
 
+      // This avoids the net::ERR_OUT_OF_MEMORY in Chromium Browsers.
+      this.chunks[index] = null
+
       this.#onPartProgress(index, body.size, body.size)
 
       // NOTE This must be allowed by CORS.
       const etag = ev.target.getResponseHeader('ETag')
+
       if (etag === null) {
         defer.reject(new Error('AwsS3/Multipart: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3-multipart#S3-Bucket-Configuration for instructions.'))
         return
@@ -439,12 +444,9 @@ class MultipartUploader {
     this.isPaused = true
   }
 
-  abort (opts = {}) {
-    const really = opts.really || false
-
-    if (!really) return this.pause()
-
-    this.#abortUpload()
+  abort (opts = undefined) {
+    if (opts?.really) this.#abortUpload()
+    else this.pause()
   }
 }
 

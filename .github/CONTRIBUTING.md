@@ -25,7 +25,7 @@ Unit tests are using Jest and can be run with:
 npm run test:unit
 ```
 
-For end-to-end tests, we use [Webdriverio](http://webdriver.io). For it to run locally, you need to install a Selenium standalone server. Follow [the Webdriverio guide](http://webdriver.io/guide.html) to do so. You can also install a Selenium standalone server from NPM:
+For end-to-end tests, we use [Webdriverio](http://webdriver.io). For it to run locally, you need to install a Selenium standalone server. Follow [the Webdriverio guide](https://webdriver.io/docs/selenium-standalone-service) to do so. You can also install a Selenium standalone server from NPM:
 
 ```bash
 npm install selenium-standalone -g
@@ -188,7 +188,7 @@ The CSS standards followed in this project closely resemble those from [Mediumâ€
 ### Naming conventions
 
 This project uses naming conventions adopted from the SUIT CSS framework.
-[Read about them here](https://github.com/suitcss/suit/blob/main/doc/naming-conventions.md).
+[Read about them here](https://github.com/suitcss/suit/blob/master/doc/naming-conventions.md).
 
 To quickly summarize:
 

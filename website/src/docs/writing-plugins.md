@@ -26,7 +26,7 @@ For example, when targeting plugins at the built-in `Dashboard` plugin, the Dash
 The plugin constructor receives the Uppy instance in the first parameter, and any options passed to `uppy.use()` in the second parameter.
 
 ```js
-import { BasePlugin } from '@uppy/core'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 
 export default class MyPlugin extends BasePlugin {
   constructor (uppy, opts) {

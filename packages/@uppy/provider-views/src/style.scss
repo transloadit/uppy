@@ -57,6 +57,26 @@
   }
 }
 
+.uppy-Provider-btn-google {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px !important;
+  background: #4285F4;
+
+  &:hover {
+    background-color: darken(#4285F4, 10%);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(#4285F4, 0.4);
+  }
+
+  svg {
+    margin-right: 8px;
+  }
+}
+
 .uppy-Provider-breadcrumbs {
   flex: 1;
   margin-bottom: 10px;

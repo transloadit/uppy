@@ -1,4 +1,4 @@
-const { BasePlugin } = require('@uppy/core')
+const BasePlugin = require('@uppy/core/lib/BasePlugin')
 const { nanoid } = require('nanoid')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
@@ -87,7 +87,7 @@ module.exports = class XHRUpload extends BasePlugin {
         try {
           parsedResponse = JSON.parse(responseText)
         } catch (err) {
-          this.uppy.log(err)
+          uppy.log(err)
         }
 
         return parsedResponse
@@ -117,6 +117,7 @@ module.exports = class XHRUpload extends BasePlugin {
     }
 
     this.opts = { ...defaultOptions, ...opts }
+    this.i18nInit()
 
     this.handleUpload = this.handleUpload.bind(this)
 

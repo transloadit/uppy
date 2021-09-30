@@ -249,4 +249,8 @@ const validateConfig = (companionOptions) => {
       }
     })
   }
+
+  if (companionOptions.uploadUrls == null || companionOptions.uploadUrls.length === 0) {
+    logger.warn('Running without uploadUrls specified is a security risk if running in production', 'startup.uploadUrls')
+  }
 }

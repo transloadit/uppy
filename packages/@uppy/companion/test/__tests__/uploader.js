@@ -7,10 +7,38 @@ const Uploader = require('../../src/server/Uploader')
 const socketClient = require('../mocksocket')
 const standalone = require('../../src/standalone')
 
+const { companionOptions } = standalone()
+
 describe('uploader with tus protocol', () => {
+  test('uploader respects uploadUrls', async () => {
+    const opts = {
+      endpoint: 'http://localhost/files',
+      companionOptions: { ...companionOptions, uploadUrls: [/^http:\/\/url.myendpoint.com\//] },
+    }
+
+    expect(new Uploader(opts).hasError()).toBe(true)
+  })
+
+  test('uploader respects uploadUrls, valid', async () => {
+    const opts = {
+      endpoint: 'http://url.myendpoint.com/files',
+      companionOptions: { ...companionOptions, uploadUrls: [/^http:\/\/url.myendpoint.com\//] },
+    }
+
+    expect(new Uploader(opts).hasError()).toBe(false)
+  })
+
+  test('uploader respects uploadUrls, localhost', async () => {
+    const opts = {
+      endpoint: 'http://localhost:1337/',
+      companionOptions: { ...companionOptions, uploadUrls: [/^http:\/\/localhost:1337\//] },
+    }
+
+    expect(new Uploader(opts).hasError()).toBe(false)
+  })
+
   test('upload functions with tus protocol', () => {
     const fileContent = Buffer.from('Some file content')
-    const { companionOptions } = standalone()
     const opts = {
       companionOptions,
       endpoint: 'http://url.myendpoint.com/files',

@@ -109,8 +109,8 @@ class MarkdownTextarea {
       waitForEncoding: true,
       params: {
         auth: { key: TRANSLOADIT_EXAMPLE_KEY },
-        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE
-      }
+        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE,
+      },
     }).then((result) => {
       if (result === null) return
       this.insertAttachments(
@@ -127,15 +127,15 @@ class MarkdownTextarea {
       waitForEncoding: true,
       params: {
         auth: { key: TRANSLOADIT_EXAMPLE_KEY },
-        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE
+        template_id: TRANSLOADIT_EXAMPLE_TEMPLATE,
       },
       providers: [
         'webcam',
         'url',
         'instagram',
         'google-drive',
-        'dropbox'
-      ]
+        'dropbox',
+      ],
     }).then((result) => {
       if (result === null) return
       this.insertAttachments(
@@ -148,8 +148,7 @@ class MarkdownTextarea {
   }
 }
 
-const textarea = new MarkdownTextarea(
-  document.querySelector('#new textarea'))
+const textarea = new MarkdownTextarea(document.querySelector('#new textarea'))
 textarea.install()
 
 function renderSnippet (title, text) {

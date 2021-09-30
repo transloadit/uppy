@@ -150,20 +150,28 @@ The default implementation calls out to Companion's S3 signing endpoints.
 
 ## S3 Bucket Configuration
 
-S3 buckets do not allow public uploads by default.  In order to allow Uppy to upload to a bucket directly, its CORS permissions need to be configured.
+S3 buckets do not allow public uploads by default.  In order to allow Uppy to upload to a bucket directly, its CORS permissions need to be configured. This process is described in the [AwsS3 documentation](/docs/aws-s3/#S3-Bucket-configuration).
 
-This process is described in the [AwsS3 documentation](/docs/aws-s3/#S3-Bucket-configuration).
+While the Uppy AWS S3 plugin uses `POST` requests when uploading files to an S3 bucket, the AWS S3 Multipart plugin uses `PUT` requests when uploading file parts. Additionally, the `ETag` header must also be exposed (in the response):
 
-While the Uppy AWS S3 plugin uses `POST` requests while uploading files to an S3 bucket, the AWS S3 Multipart plugin uses `PUT` requests when uploading file parts. Additionally, the `ETag` header must also be whitelisted:
-
-```xml
-<CORSRule>
-  <!-- Change from POST to PUT if you followed the docs for the AWS S3 plugin ... -->
-  <AllowedMethod>PUT</AllowedMethod>
-
-  <!-- ... keep the existing MaxAgeSeconds and AllowedHeader lines and your other stuff ... -->
-
-  <!-- ... and don't forget to add this tag. -->
-  <ExposeHeader>ETag</ExposeHeader>
-</CORSRule>
+```json
+[
+  {
+    "AllowedOrigins": ["https://my-app.com"],
+    "AllowedMethods": ["GET", "PUT"],
+    "MaxAgeSeconds": 3000,
+    "AllowedHeaders": [
+      "Authorization",
+      "x-amz-date",
+      "x-amz-content-sha256",
+      "content-type"
+    ]
+    "ExposedHeaders": ["ETag"]
+  },
+  {
+    "AllowedOrigins": ["*"],
+    "AllowedMethods": ["GET"],
+    "MaxAgeSeconds": 3000
+  }
+]
 ```

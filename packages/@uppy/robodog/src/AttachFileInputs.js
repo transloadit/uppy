@@ -1,4 +1,4 @@
-const { BasePlugin } = require('@uppy/core')
+const BasePlugin = require('@uppy/core/lib/BasePlugin')
 const toArray = require('@uppy/utils/lib/toArray')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 

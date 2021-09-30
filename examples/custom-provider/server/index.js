@@ -14,18 +14,6 @@ app.use(session({
   saveUninitialized: true,
 }))
 
-app.use((req, res, next) => {
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET, POST, OPTIONS, PUT, PATCH, DELETE'
-  )
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Authorization, Origin, Content-Type, Accept'
-  )
-  next()
-})
-
 // Routes
 app.get('/', (req, res) => {
   res.setHeader('Content-Type', 'text/plain')

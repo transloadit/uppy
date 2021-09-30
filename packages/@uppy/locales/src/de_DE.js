@@ -48,6 +48,7 @@ de_DE.strings = {
   dropPasteImportFiles: 'Dateien hier ablegen/einfügen, %{browseFiles} oder von folgenden Quellen importieren:',
   dropPasteImportFolders: 'Dateien hier ablegen/einfügen, %{browseFolders} oder von folgenden Quellen importieren:',
   editFile: 'Datei bearbeiten',
+  editFileWithFilename: 'Datei %{file} bearbeiten',
   editing: '%{file} bearbeiten',
   emptyFolderAdded: 'Keine Dateien hinzugefügt, da der Ordner leer war',
   encoding: 'Kodieren...',

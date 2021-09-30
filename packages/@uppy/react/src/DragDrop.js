@@ -2,6 +2,7 @@ const React = require('react')
 const DragDropPlugin = require('@uppy/drag-drop')
 const propTypes = require('./propTypes')
 const getHTMLProps = require('./getHTMLProps')
+const nonHtmlPropsHaveChanged = require('./nonHtmlPropsHaveChanged')
 
 const h = React.createElement
 
@@ -11,11 +12,6 @@ const h = React.createElement
  */
 
 class DragDrop extends React.Component {
-  constructor (props) {
-    super(props)
-    this.validProps = getHTMLProps(props)
-  }
-
   componentDidMount () {
     this.installPlugin()
   }
@@ -24,6 +20,10 @@ class DragDrop extends React.Component {
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
+    } else if (nonHtmlPropsHaveChanged(this, prevProps)) {
+      const options = { ...this.props, target: this.container }
+      delete options.uppy
+      this.plugin.setOptions(options)
     }
   }
 
@@ -52,6 +52,8 @@ class DragDrop extends React.Component {
   }
 
   render () {
+    // TODO: stop exposing `validProps` as a public property and rename it to `htmlProps`
+    this.validProps = getHTMLProps(this.props)
     return h('div', {
       ref: (container) => {
         this.container = container
