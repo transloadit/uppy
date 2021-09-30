@@ -10,6 +10,7 @@ nb_NO.strings = {
   addingMoreFiles: 'Legger til flere filer',
   allowAccessDescription: 'For å kunne ta bilder eller spille inn video må du gi siden tilgang til å bruke ditt kamera.',
   allowAccessTitle: 'Vennligst gi tilgang til ditt kamera',
+  authAborted: 'Autentisering avbrutt',
   aspectRatioLandscape: 'Beskjær landskap (16:9)',
   aspectRatioPortrait: 'Beskjær portrett (9:16)',
   aspectRatioSquare: 'Beskjær kvadrat',
