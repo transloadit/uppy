@@ -11,6 +11,7 @@ fr_FR.strings = {
   allFilesFromFolderNamed: 'Tous les fichiers du dossier %{name}',
   allowAccessDescription: 'Pour prendre des photos ou enregistrer une vidéo avec votre caméra, veuillez autoriser l\'accès à votre caméra pour ce site.',
   allowAccessTitle: 'Veuillez autoriser l\'accès à votre caméra',
+  authAborted: 'Authentification interrompue',
   authenticateWith: 'Se connecter à %{pluginName}',
   authenticateWithTitle: 'Veuillez vous authentifier avec %{pluginName} pour sélectionner les fichiers',
   back: 'Retour',
