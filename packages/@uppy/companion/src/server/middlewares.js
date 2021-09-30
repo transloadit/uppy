@@ -79,25 +79,39 @@ exports.loadSearchProviderToken = (req, res, next) => {
 }
 
 exports.cors = (options = {}) => (req, res, next) => {
-  const exposedHeaders = [
-    // exposed so it can be accessed for our custom uppy client preflight
-    'Access-Control-Allow-Headers',
-  ]
-  if (options.sendSelfEndpoint) exposedHeaders.push('i-am')
-  if (res.get('Access-Control-Expose-Headers')) exposedHeaders.push(res.get('Access-Control-Expose-Headers'))
+  // HTTP headers are not case sensitive, and express always handles them in lower case, so that's why we lower case them.
+  // I believe that HTTP verbs are case sensitive, and should be uppercase.
 
+  // TODO: Move to optional chaining when we drop Node.js v12.x support
+  const existingExposeHeaders = res.get('Access-Control-Expose-Headers')
+  const exposeHeadersSet = new Set(existingExposeHeaders && existingExposeHeaders.split(',').map(method => method.trim().toLowerCase()))
+
+  // exposed so it can be accessed for our custom uppy client preflight
+  exposeHeadersSet.add('access-control-allow-headers')
+  if (options.sendSelfEndpoint) exposeHeadersSet.add('i-am')
+
+  // Needed for basic operation: https://github.com/transloadit/uppy/issues/3021
   const allowedHeaders = [
     'uppy-auth-token',
     'uppy-versions',
     'uppy-credentials-params',
+    'authorization',
+    'origin',
+    'content-type',
+    'accept',
   ]
-  if (res.get('Access-Control-Allow-Headers')) allowedHeaders.push(res.get('Access-Control-Allow-Headers'))
+  const existingAllowHeaders = res.get('Access-Control-Allow-Headers')
+  const allowHeadersSet = new Set(existingAllowHeaders
+    ? existingAllowHeaders
+      .split(',')
+      .map((method) => method.trim().toLowerCase())
+      .concat(allowedHeaders)
+    : allowedHeaders)
 
-  // TODO: Move to optional chaining when we drop Node.js v12.x support
-  const ACAMHeader = res.get('Access-Control-Allow-Methods')
-  const existingAllowMethodsHeader = new Set(ACAMHeader && ACAMHeader.split(',').map(method => method.trim().toUpperCase()))
-  existingAllowMethodsHeader.add('GET').add('POST').add('OPTIONS').add('DELETE')
-  const methods = Array.from(existingAllowMethodsHeader)
+  const existingAllowMethods = res.get('Access-Control-Allow-Methods')
+  const allowMethodsSet = new Set(existingAllowMethods && existingAllowMethods.split(',').map(method => method.trim().toUpperCase()))
+  // Needed for basic operation:
+  allowMethodsSet.add('GET').add('POST').add('OPTIONS').add('DELETE')
 
   // If endpoint urls are specified, then we only allow those endpoints.
   // Otherwise, we allow any client url to access companion.
@@ -110,9 +124,9 @@ exports.cors = (options = {}) => (req, res, next) => {
   return cors({
     credentials: true,
     origin,
-    methods,
-    allowedHeaders: allowedHeaders.join(','),
-    exposedHeaders: exposedHeaders.join(','),
+    methods: Array.from(allowMethodsSet),
+    allowedHeaders: Array.from(allowHeadersSet).join(','),
+    exposedHeaders: Array.from(exposeHeadersSet).join(','),
   })(req, res, next)
 }
 
