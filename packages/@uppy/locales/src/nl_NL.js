@@ -7,6 +7,7 @@ nl_NL.strings = {
   allowAccessTitle: 'Geef toestemming om je camera te gebruiken',
   authenticateWith: 'Verbinden met %{pluginName}',
   authenticateWithTitle: 'Verbind met %{pluginName} om bestanden te selecteren',
+  authAborted: 'Authenticatie geannuleerd',
   back: 'Terug',
   addMore: 'Meer toevoegen',
   browse: 'blader',
