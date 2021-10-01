@@ -113,9 +113,10 @@ A function that generates a batch of signed URLs for the specified part numbers.
 
 `prepareUploadParts` should return a `Promise` with an `Object` with keys:
 
- - `presignedUrls` - A JavaScript object with the part numbers as keys and the presigned URL for each part as the value. An example of what the return value should look like:
+ - `presignedUrls` - A JavaScript object with the part numbers as keys and the presigned URL for each part as the value.
  - `headers` - **(Optional)** Custom headers that should be sent to the S3 presigned URL.
 
+An example of what the return value should look like:
 ```json
 {
   "presignedUrls": {
