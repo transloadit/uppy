@@ -47,7 +47,9 @@ For example, with a 50MB file and a `limit` of 5 we end up with 10 chunks. 5 of 
 
 ### `retryDelays: [0, 1000, 3000, 5000]`
 
-When uploading a chunk to S3 using a presigned URL fails, automatically try again after the millisecond intervals specified in this array. By default, we first retry instantly; if that fails, we retry after 1 second; if that fails, we retry after 3 seconds, etc.
+`retryDelays` are the intervals in milliseconds used to retry a failed chunk as well as [`prepareUploadParts`](#prepareUploadParts-file-partData).
+
+By default, we first retry instantly; if that fails, we retry after 1 second; if that fails, we retry after 3 seconds, etc.
 
 Set to `null` to disable automatic retries, and fail instantly if any chunk fails to upload.
 
@@ -109,19 +111,31 @@ A function that generates a batch of signed URLs for the specified part numbers.
  - `key` - The object key in the S3 bucket.
  - `partNumbers` - An array of indecies of this part in the file (`PartNumber` in S3 terminology). Note that part numbers are _not_ zero-based.
 
-Return a Promise for an object with keys:
+`prepareUploadParts` should return a `Promise` with an `Object` with keys:
 
- - `presignedUrls` - A JavaScript object with the part numbers as keys and the presigned URL for each part as the value. An example of what the return value should look like:
-
-   ```js
-   // for partNumbers [1, 2, 3]
-   return {
-     1: 'https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=1&...',
-     2: 'https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=2&...',
-     3: 'https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=3&...',
-   }
-   ```
+ - `presignedUrls` - A JavaScript object with the part numbers as keys and the presigned URL for each part as the value.
  - `headers` - **(Optional)** Custom headers that should be sent to the S3 presigned URL.
+
+An example of what the return value should look like:
+```json
+{
+  "presignedUrls": {
+    "1": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=1&...",
+    "2": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=2&...",
+    "3": "https://bucket.region.amazonaws.com/path/to/file.jpg?partNumber=3&..."
+  },
+  "headers": { "some-header": "value" }
+}
+```
+
+If an error occured, reject the `Promise` with an `Object` with the following keys:
+
+<!-- eslint-disable -->
+```json
+{ "source": { "status": 500 } }
+```
+
+`status` is the HTTP code and is required for determining whether to retry the request. `prepareUploadParts` will be retried if the code is `0`, `409`, `423`, or between `500` and `600`.
 
 ### `abortMultipartUpload(file, { uploadId, key })`
 
