@@ -22,6 +22,8 @@ uppy.use(StatusBar, {
 
 <a class="TryButton" href="/examples/statusbar/">Try it live</a>
 
+The StatusBar plugin is included in the Dashboard by default.
+
 ## Installation
 
 This plugin is published as the `@uppy/status-bar` package.
