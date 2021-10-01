@@ -16,7 +16,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 
 ```js
 import Uppy from '@uppy/core'
-import * as ReduxStore from '@uppy/store/redux'
+import * as ReduxStore from '@uppy/store-redux'
 import * as Redux from 'redux'
 
 function createStore (reducers = {}) {

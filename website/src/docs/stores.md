@@ -49,7 +49,7 @@ Here is how you can integrate Uppy's `ReduxStore`:
 
 ```js
 import Uppy from '@uppy/core'
-import * as ReduxStore from '@uppy/store/redux'
+import * as ReduxStore from '@uppy/store-redux'
 import * as Redux from 'redux'
 
 function createStore (reducers = {}) {
