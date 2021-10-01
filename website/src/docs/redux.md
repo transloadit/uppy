@@ -16,8 +16,8 @@ You can tell Uppy to use your app’s Redux store for its files and UI state. Pl
 
 ```js
 import Uppy from '@uppy/core'
-import ReduxStore from '@uppy/redux-store'
-import Redux from 'redux'
+import * as ReduxStore from '@uppy/store/redux'
+import * as Redux from 'redux'
 
 function createStore (reducers = {}) {
   const reducer = Redux.combineReducers({ ...reducers, uppy: ReduxStore.reducer })

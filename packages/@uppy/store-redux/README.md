@@ -15,23 +15,17 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-import { combineReducers, createStore } from 'redux'
 import Uppy from '@uppy/core'
-import ReduxStore from '@uppy/store-redux'
-import reducers from './reducers'
+import * as ReduxStore from '@uppy/store/redux'
+import * as Redux from 'redux'
 
-const reducer = combineReducers({
-  ...reducers,
-  uppy: ReduxStore.reducer,
-})
+function createStore (reducers = {}) {
+  const reducer = Redux.combineReducers({ ...reducers, uppy: ReduxStore.reducer })
+  return Redux.createStore(reducer)
+}
 
-const store = createStore(reducer)
-
-const uppy = new Uppy({
-  store: ReduxStore({
-    store,
-  }),
-})
+const store = new ReduxStore.ReduxStore({ store: createStore() })
+const uppy = new Uppy({ store })
 ```
 
 ## Installation
