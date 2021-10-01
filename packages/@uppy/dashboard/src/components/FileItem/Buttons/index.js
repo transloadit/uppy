@@ -63,14 +63,12 @@ const copyLinkToClipboard = (event, props) => {
 }
 
 function CopyLinkButton (props) {
-  const { i18n } = props
-
   return (
     <button
       className="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--copyLink"
       type="button"
-      aria-label={i18n('copyLink')}
-      title={i18n('copyLink')}
+      aria-label={props.i18n('copyLink')}
+      title={props.i18n('copyLink')}
       onClick={(event) => copyLinkToClipboard(event, props)}
     >
       <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="14" height="14" viewBox="0 0 14 12">
@@ -116,7 +114,6 @@ module.exports = function Buttons (props) {
         <CopyLinkButton
           file={file}
           uppy={uppy}
-          i18n={i18n}
         />
       ) : null}
       {showRemoveButton ? (
