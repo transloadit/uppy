@@ -43,6 +43,7 @@ module.exports = class Unsplash extends UIPlugin {
   install () {
     this.view = new SearchProviderViews(this, {
       provider: this.provider,
+      viewType: 'unsplash',
     })
 
     const { target } = this.opts
