@@ -10,7 +10,7 @@ tagline: "manipulate and transcode uploaded files using the <a href='https://tra
 
 The `@uppy/transloadit` plugin can be used to upload files to [Transloadit](https://transloadit.com/) for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, [and much more](https://transloadit.com/services/).
 
-> If you're okay to trade some flexibility for ergonomics, consider using
+> If you’re okay to trade some flexibility for ergonomics, consider using
 > the [Robodog](/docs/robodog/) Plugin instead, which is a higher-level abstraction for
 > encoding files with Uppy and Transloadit.
 
@@ -44,7 +44,7 @@ Install from NPM:
 npm install @uppy/transloadit
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
 const { Transloadit } = Uppy
@@ -54,7 +54,7 @@ const { Transloadit } = Uppy
 
 ### `Transloadit.COMPANION`
 
-The main endpoint for Transloadit's hosted companions. You can use this constant in remote provider options, like so:
+The main endpoint for Transloadit’s hosted companions. You can use this constant in remote provider options, like so:
 
 ```js
 import Dropbox from '@uppy/dropbox'
@@ -78,7 +78,7 @@ uppy.use(Dropbox, {
 
 ### `Transloadit.COMPANION_PATTERN`
 
-A RegExp pattern matching Transloadit's hosted companion endpoints. The pattern is used in remote provider `companionAllowedHosts` options, to ensure that third party authentication messages cannot be faked by an attacker's page, but can only originate from Transloadit's servers.
+A RegExp pattern matching Transloadit’s hosted companion endpoints. The pattern is used in remote provider `companionAllowedHosts` options, to make sure that third party authentication messages cannot be faked by an attacker’s page, but can only originate from Transloadit’s servers.
 
 Use it whenever you use `companionUrl: Transloadit.COMPANION`, like so:
 
@@ -92,7 +92,7 @@ uppy.use(Dropbox, {
 })
 ```
 
-The value of this constant covers _all_ Transloadit's Companion servers, so it does not need to be changed if you are using a custom [`service`](#service) option. However, if you are not using the Transloadit Companion servers at `*.transloadit.com`, make sure to set the `companionAllowedHosts` option to something that matches what you do use.
+The value of this constant covers _all_ Transloadit’s Companion servers, so it does not need to be changed if you are using a custom [`service`](#service) option. But, if you are not using the Transloadit Companion servers at `*.transloadit.com`, make sure to set the `companionAllowedHosts` option to something that matches what you do use.
 
 ## Options
 
@@ -104,7 +104,7 @@ A unique identifier for this plugin. It defaults to `'Transloadit'`.
 
 ### `service`
 
-The Transloadit API URL to use. It defaults to `https://api2.transloadit.com`, which will attempt to route traffic efficiently based on the location of your users. You can set this to something like `https://api2-us-east-1.transloadit.com` if you want to use a particular region.
+The Transloadit API URL to use. It defaults to `https://api2.transloadit.com`, which will try to route traffic efficiently based on the location of your users. You can set this to something like `https://api2-us-east-1.transloadit.com` if you want to use a particular region.
 
 ### `params`
 
@@ -134,7 +134,7 @@ uppy.use(Transloadit, {
 
 ### `waitForEncoding: false`
 
-By default, the Transloadit plugin uploads files to Assemblies and then marks the files as complete in Uppy. The Assemblies will complete (or error) in the background but Uppy won't know or care about it.
+By default, the Transloadit plugin uploads files to Assemblies and then marks the files as complete in Uppy. The Assemblies will complete (or error) in the background but Uppy won’t know or care about it.
 
 When `waitForEncoding` is set to true, the Transloadit plugin waits for Assemblies to complete before the files are marked as completed. This means users have to wait for a potentially long time, depending on how complicated your Assembly instructions are. But, you can receive transcoding results on the client side, and have a fully client-side experience this way.
 
@@ -144,15 +144,15 @@ When this is enabled, you can listen for the [`transloadit:result`](#transloadit
 
 ### `waitForMetadata: false`
 
-By default, the Transloadit plugin uploads files to Assemblies and then marks the files as complete in Uppy. The Assemblies will complete (or error) in the background but Uppy won't know or care about it.
+By default, the Transloadit plugin uploads files to Assemblies and then marks the files as complete in Uppy. The Assemblies will complete (or error) in the background but Uppy won’t know or care about it.
 
-When `waitForMetadata` is set to true, the Transloadit plugin waits for Transloadit's backend to extract metadata from all the uploaded files. This is mostly handy if you want to have a quick user experience (so your users don't necessarily need to wait for all the encoding to complete), but you do want to let users know about some types of errors that can be caught early on, like file format issues.
+When `waitForMetadata` is set to true, the Transloadit plugin waits for Transloadit’s backend to extract metadata from all the uploaded files. This is mostly handy if you want to have a quick user experience (so your users don’t necessarily need to wait for all the encoding to complete), but you do want to let users know about some types of errors that can be caught early on, like file format issues.
 
 When this is enabled, you can listen for the [`transloadit:upload`](#transloadit-upload) event.
 
 ### `importFromUploadURLs`
 
-Instead of uploading to Transloadit's servers directly, allow another plugin to upload files, and then import those files into the Transloadit Assembly. This is set to `false` by default.
+Instead of uploading to Transloadit’s servers directly, allow another plugin to upload files, and then import those files into the Transloadit Assembly. This is set to `false` by default.
 
 When enabling this option, Transloadit will _not_ configure the Tus plugin to upload to Transloadit. Instead, a separate upload plugin must be used. Once the upload completes, the Transloadit plugin adds the uploaded file to the Assembly.
 
@@ -173,7 +173,7 @@ uppy.use(Transloadit, {
 })
 ```
 
-In order for this to work, the upload plugin must assign a publically accessible `uploadURL` property to the uploaded file object. The Tus and S3 plugins both do this automatically. For the XHRUpload plugin, you may have to specify a custom `getResponseData` function.
+For this to work, the upload plugin must assign a publically accessible `uploadURL` property to the uploaded file object. The Tus and S3 plugins both do this automatically. For the XHRUpload plugin, you may have to specify a custom `getResponseData` function.
 
 ### `alwaysRunAssembly`
 
@@ -212,7 +212,7 @@ Form fields can also be computed dynamically using custom logic, by using the [`
 
 ### `getAssemblyOptions(file)`
 
-While `params`, `signature`, and `fields` must be determined ahead of time, the `getAssemblyOptions` allows using dynamically generated values for these options. This way, it is possible to use different Assembly parameters for different files, or to use some user input in an Assembly.
+While `params`, `signature`, and `fields` must be determined ahead of time, the `getAssemblyOptions` allows using dynamically generated values for these options. This way, it’s possible to use different Assembly parameters for different files, or to use some user input in an Assembly.
 
 A custom `getAssemblyOptions()` option should return an object or a Promise for an object with properties `{ params, signature, fields }`. For example, to add a field with some user-provided data from the `MetaData` plugin:
 
@@ -271,7 +271,7 @@ uppy.use(Transloadit, {
 
 ### `limit: 0`
 
-Limit the amount of uploads going on at the same time. Setting this to `0` means there is no limit on concurrent uploads. This option is passed through to the [`@uppy/tus`](/docs/tus) plugin that Transloadit plugin uses internally.
+Limit the amount of uploads going on at the same time. Setting this to `0` means no limit on concurrent uploads. This option is passed through to the [`@uppy/tus`](/docs/tus) plugin that Transloadit plugin uses internally.
 
 ### `locale: {}`
 
@@ -293,7 +293,7 @@ const strings = {
 
 ## Errors
 
-If an error occurs when an Assembly has already started, you can find the Assembly Status on the error object's `assembly` property.
+If an error occurs when an Assembly has already started, you can find the Assembly Status on the error object’s `assembly` property.
 
 ```js
 uppy.on('error', (error) => {
@@ -336,11 +336,11 @@ Fired when Transloadit has received an upload.
 
 ### `transloadit:assembly-executing`
 
-Fired when Transloadit has received all uploads, and is currently executing the Assembly.
+Fired when Transloadit has received all uploads, and is executing the Assembly.
 
 **Parameters**
 
-*   `assembly` - The [Assembly Status](https://transloadit.com/docs/api/#assembly-status-response) of the Assembly that is currently executing.
+*   `assembly` - The [Assembly Status](https://transloadit.com/docs/api/#assembly-status-response) of the Assembly that is executing.
 
 ### `transloadit:result`
 
@@ -350,8 +350,8 @@ Fired when a result came in from an Assembly.
 
 *   `stepName` - The name of the Assembly step that generated this result.
 *   `result` - The result object from Transloadit.
-    This result object contains one additional property, namely `localId`.
-    This is the ID of the file in Uppy's local state, and can be used with `uppy.getFile(id)`.
+    This result object has one more property, namely `localId`.
+    This is the ID of the file in Uppy’s local state, and can be used with `uppy.getFile(id)`.
 *   `assembly` - The [Assembly Status][assembly-status] of the Assembly that generated this result.
 
 ```js
