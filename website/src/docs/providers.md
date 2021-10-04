@@ -6,13 +6,13 @@ order: 10
 category: "Sources"
 ---
 
-The Provider plugins help you connect to your accounts with remote file providers such as [Dropbox](https://dropbox.com), [Google Drive](https://drive.google.com), [Instagram](https://instagram.com) and remote URLs (importing a file by pasting a direct link to it). Because this requires server-to-server communication, they work tightly with [Companion](https://github.com/transloadit/uppy/tree/master/packages/%40uppy/companion) to manage the server-to-server authorization for your account. Almost all of the communication (file download/upload) is done on the server-to-server end, so this saves you the stress and bills of data consumption on the client.
+The Provider plugins help you connect to your accounts with remote file providers such as [Dropbox](https://dropbox.com), [Google Drive](https://drive.google.com), [Instagram](https://instagram.com) and remote URLs (importing a file by pasting a direct link to it). Because this requires server-to-server communication, they work tightly with [Companion](https://github.com/transloadit/uppy/tree/master/packages/%40uppy/companion) to manage the server-to-server authorization for your account. Almost all the communication (file download/upload) is done on the server-to-server end, so this saves you the stress and bills of data consumption on the client.
 
 As of now, the supported providers are [**Dropbox**](/docs/dropbox), [**Google Drive**](/docs/google-drive), [**OneDrive**](/docs/onedrive/), [**Box**](/docs/box/), [**Instagram**](/docs/instagram), [**Facebook**](/docs/facebook/), [**Zoom**](/docs/zoom/) and [**URL**](/docs/url).
 
 Usage of the Provider plugins is not that different from any other _acquirer_ plugin, except that it takes an extra option `companionUrl`, which specifies the URL to the Companion that you are running. This allows Uppy to know what server to connect to when datacenter operations are required by the provider plugin.
 
-Here's a quick example:
+Here’s a quick example:
 
 <!-- eslint-disable import/first, import/newline-after-import -->
 
