@@ -10,7 +10,7 @@ Each plugin can have any number of options (please see specific plugins for deta
 
 ### `id`
 
-A unique string identifying the plugin. By default, the plugin's name is used, so usually it does not need to be configured manually. Use this if you need to add multiple plugins of the same type.
+A unique string identifying the plugin. By default, the plugin’s name is used, so usually it does not need to be configured manually. Use this if you need to add several plugins of the same type.
 
 ### `target`
 
@@ -70,7 +70,7 @@ uppy.getPlugin('Dashboard').setOptions({
 })
 ```
 
-> ⚠️ This should work for most options, except for `limit` and some others related to an upload. This is because some objects/instances are created immediately upon initialization, and not updated later.
+> ⚠️ This should work for most options, except for `limit` and some others related to an upload. This is because some objects/instances are created at once upon initialization, and not updated later.
 
 <!-- Keep this heading, it is here to avoid breaking existing URLs -->
 
