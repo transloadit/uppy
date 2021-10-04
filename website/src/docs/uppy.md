@@ -24,7 +24,7 @@ Install from NPM:
 npm install @uppy/core
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the `Core` class is available on the `Uppy` global object:
 
 ```js
 const { Core } = Uppy
@@ -63,9 +63,9 @@ const uppy = new Uppy({
 
 A site-wide unique ID for the instance.
 
-If multiple Uppy instances are being used, for instance, on two different pages, an `id` should be specified. This allows Uppy to store information in `localStorage` without colliding with other Uppy instances.
+If several Uppy instances are being used, for instance, on two different pages, an `id` should be specified. This allows Uppy to store information in `localStorage` without colliding with other Uppy instances.
 
-Note that this ID should be persistent across page reloads and navigation—it shouldn't be a random number that is different every time Uppy is loaded.
+Note that this ID should be persistent across page reloads and navigation—it shouldn’t be a random number that is different every time Uppy is loaded.
 For example, if one Uppy instance is used to upload user avatars, and another to add photos to a blog post, you might use:
 
 ```js
@@ -79,11 +79,11 @@ By default Uppy will wait for an upload button to be pressed in the UI, or an `.
 
 ### `allowMultipleUploadBatches: true`
 
-Whether to allow multiple upload batches. This means multiple calls to `.upload()`, or a user adding more files after already uploading some. An upload batch is made up of the files that were added since the previous `.upload()` call.
+Whether to allow several upload batches. This means several calls to `.upload()`, or a user adding more files after already uploading some. An upload batch is made up of the files that were added since the earlier `.upload()` call.
 
 With this option set to `true`, users can upload some files, and then add _more_ files and upload those as well. A model use case for this is uploading images to a gallery or adding attachments to an email.
 
-With this option set to `false`, users can upload some files, and you can listen for the ['complete'](/docs/uppy/#complete) event to continue to the next step in your app's upload flow. A typical use case for this is uploading a new profile picture. If you are integrating with an existing HTML form, this option gives the closest behaviour to a bare `<input type="file">`.
+With this option set to `false`, users can upload some files, and you can listen for the [`'complete'`](/docs/uppy/#complete) event to continue to the next step in your app’s upload flow. A typical use case for this is uploading a new profile picture. If you are integrating with an existing HTML form, this option gives the closest behaviour to a bare `<input type="file">`.
 
 ### `logger`
 
@@ -137,13 +137,13 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 *   `allowedFileTypes` _null | array_ of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
 *   `requiredMetaFields` _array_ of strings
 
-`maxNumberOfFiles` also affects the number of files a user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1`, they will only be able to select a single file. When `null` or another number is provided, they will be able to select multiple files.
+`maxNumberOfFiles` also affects the number of files a user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1`, they will only be able to select a single file. When `null` or another number is provided, they will be able to select several files.
 
 `allowedFileTypes` gets passed to the system file dialog via [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types)’s accept attribute, so only files matching these types will be selectable.
 
 > If you’d like to force a certain meta field data to be entered before the upload, you can [do so using `onBeforeUpload`](https://github.com/transloadit/uppy/issues/1703#issuecomment-507202561).
 
-> If you need to restrict `allowedFileTypes` to a file extension with double dots, like `.nii.gz`, you can do so by [setting `allowedFileTypes` to just the last part of the extension, `allowedFileTypes: ['.gz']`, and then using `onBeforeFileAdded` to filter for `.nii.gz`](https://github.com/transloadit/uppy/issues/1822#issuecomment-526801208).
+> If you need to restrict `allowedFileTypes` to a file extension with double dots, like `.nii.gz`, you can do so by [setting `allowedFileTypes` to the last part of the extension, `allowedFileTypes: ['.gz']`, and then using `onBeforeFileAdded` to filter for `.nii.gz`](https://github.com/transloadit/uppy/issues/1822#issuecomment-526801208).
 
 ### `meta: {}`
 
@@ -175,9 +175,9 @@ A function run before a file is added to Uppy. It gets passed `(currentFile, fil
 
 Use this function to run any number of custom checks on the selected file, or manipulate it, for instance, by optimizing a file name.
 
-> ⚠️ Note that this method is intended for quick synchronous checks/modifications only. If you need to do an async API call, or heavy work on a file (like compression or encryption), you should utilize a [custom plugin](/docs/writing-plugins/#Example-of-a-custom-plugin) instead.
+> ⚠️ Note that this method is intended for quick synchronous checks/modifications only. If you need to do an async API call, or heavy work on a file (like compression or encryption), you should use a [custom plugin](/docs/writing-plugins/#Example-of-a-custom-plugin) instead.
 
-Return true/nothing or a modified file object to proceed with adding the file:
+Return `true`/nothing or a modified file object to go ahead with adding the file:
 
 <!-- eslint-disable no-dupe-keys -->
 
@@ -223,7 +223,7 @@ const uppy = new Uppy({
 })
 ```
 
-**Note:** it is up to you to show a notification to the user about a file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging purposes via [uppy.log()](#uppy-log).
+**Note:** no notification will be shown to the user about a file not passing validation by default. We recommend showing a message using [`uppy.info()`](#uppy-info) and logging to console for debugging purposes via [`uppy.log()`](#uppy-log).
 
 <a id="onBeforeUpload"></a>
 
@@ -233,9 +233,9 @@ A function run before an upload begins. Gets passed `files` object with all the 
 
 Use this to check if all files or their total number match your requirements, or manipulate all the files at once before upload.
 
-> ⚠️ Note that this method is intended for quick synchronous checks/modifications only. If you need to do an async API call, or heavy work on a file (like compression or encryption), you should utilize a [custom plugin](/docs/writing-plugins/#Example-of-a-custom-plugin) instead.
+> ⚠️ Note that this method is intended for quick synchronous checks/modifications only. If you need to do an async API call, or heavy work on a file (like compression or encryption), you should use a [custom plugin](/docs/writing-plugins/#Example-of-a-custom-plugin) instead.
 
-Return true or modified `files` object to proceed:
+Return true or modified `files` object to go ahead:
 
 ```js
 const uppy = new Uppy({
@@ -273,7 +273,7 @@ const uppy = new Uppy({
 })
 ```
 
-**Note:** it is up to you to show a notification to the user about a file not passing validation. We recommend showing a message using [uppy.info()](#uppy-info) and logging to console for debugging purposes via [uppy.log()](#uppy-log).
+**Note:** no notification will be shown to the user about a file not passing validation by default. We recommend showing a message using [`uppy.info()`](#uppy-info) and logging to console for debugging purposes via [`uppy.log()`](#uppy-log).
 
 ### `locale: {}`
 
@@ -310,11 +310,11 @@ const uppy = new Uppy({
 })
 ```
 
-If you use Uppy from a CDN, [there's an example](/examples/i18n/) showcasing how to change languages.
+If you use Uppy from a CDN, [there’s an example](/examples/i18n/) showcasing how to change languages.
 
 For flexibility, you can pass a `locale` at the `Uppy`/core level, or to Plugins individually. The locale strings that you set in core take precedence.
 
-It also offers the pluralization function, which is used to determine which string will be used for the provided `smart_count` number.
+It also offers the pluralization function, which is used to figure which string will be used for the provided `smart_count` number.
 
 For example, for the Icelandic language, the pluralization function would be:
 
@@ -330,7 +330,7 @@ We are using a forked [Polyglot.js](https://github.com/airbnb/polyglot.js/blob/m
 
 ### `store: defaultStore()`
 
-The Store that is used to keep track of internal state. By [default](/docs/stores/#DefaultStore), a simple object is used.
+The Store that is used to keep track of internal state. By [default](/docs/stores/#DefaultStore), a plain object is used.
 
 This option can be used to plug Uppy state into an external state management library, such as [Redux](/docs/stores/#ReduxStore). You can then write custom views with the library that is also used by the rest of the application.
 
@@ -344,7 +344,7 @@ Set the time during which the Informer message will be visible with messages abo
 
 ## File Objects
 
-Uppy internally uses file objects that abstract over local files and files from remote providers, and that contain additional data like user-specified metadata and upload progress information.
+Uppy internally uses file objects that abstract over local files and files from remote providers, and that contain extra data like user-specified metadata and upload progress information.
 
 ### `file.source`
 
@@ -360,11 +360,11 @@ Object containing file metadata. Any file metadata should be JSON-serializable.
 
 ### `file.type`
 
-MIME type of the file. This may actually be guessed if a file type was not provided by the user's browser, so this is a best-effort value and not guaranteed to be accurate.
+MIME type of the file. This may actually be guessed if a file type was not provided by the user’s browser, so this is a best-effort value and not guaranteed to be correct.
 
 ### `file.data`
 
-For local files, this is the actual \[`File`]\[File] or \[`Blob`]\[Blob] object representing the file contents.
+For local files, this is the actual [`File`][] or [`Blob`][] object representing the file contents.
 
 For files that are imported from remote providers, the file data is not available in the browser.
 
@@ -380,7 +380,7 @@ An object with upload progress data.
 
 *   `bytesUploaded` - Number of bytes uploaded so far.
 *   `bytesTotal` - Number of bytes that must be uploaded in total.
-*   `uploadStarted` - Null if the upload has not started yet. Once started, this property contains a UNIX timestamp. Note that this is only set _after_ preprocessing.
+*   `uploadStarted` - Null if the upload has not started yet. Once started, this property stores a UNIX timestamp. Note that this is only set _after_ preprocessing.
 *   `uploadComplete` - Boolean indicating if the upload has completed. Note this does _not_ mean that postprocessing has completed, too.
 *   `percentage` - Integer percentage between 0 and 100.
 
@@ -402,7 +402,7 @@ An optional URL to a visual thumbnail for the file.
 
 ### `file.uploadURL`
 
-When an upload is completed, this may contain a URL to the uploaded file. Depending on server configuration it may not be accessible or accurate.
+When an upload is completed, this may contain a URL to the uploaded file. Depending on server configuration it may not be accessible or correct.
 
 ## Methods
 
@@ -548,7 +548,7 @@ Cancel all uploads, reset progress and remove all files.
 
 ### `uppy.setState(patch)`
 
-Update Uppy's internal state. Usually, this method is called internally, but in some cases it might be useful to alter something directly, especially when implementing your own plugins.
+Update Uppy’s internal state. Usually, this method is called internally, but in some cases it might be useful to alter something directly, especially when implementing your own plugins.
 
 Uppy’s default state on initialization:
 
@@ -578,7 +578,7 @@ uppy.setState({
 })
 ```
 
-State in Uppy is considered to be immutable. When updating values, it is your responsibility to not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here is an example from Uppy.Core that updates progress for a particular file in state:
+State in Uppy is considered to be immutable. When updating values, make sure not mutate them, but instead create copies. See [Redux docs](http://redux.js.org/docs/recipes/UsingObjectSpreadOperator.html) for more info on this. Here is an example from Uppy.Core that updates progress for a particular file in state:
 
 ```js
 // We use Object.assign({}, obj) to create a copy of `obj`.
@@ -605,7 +605,7 @@ Returns the current state from the [Store](#store-defaultStore).
 
 Update the state for a single file. This is mostly useful for plugins that may want to store data on [File Objects][], or that need to pass file-specific configurations to other plugins that support it.
 
-`fileID` is the string file ID. `state` is an object that will be merged into the file's state object.
+`fileID` is the string file ID. `state` is an object that will be merged into the file’s state object.
 
 ```js
 uppy.getPlugin('Url').addFile('path/to/remote-file.jpg')
@@ -613,7 +613,7 @@ uppy.getPlugin('Url').addFile('path/to/remote-file.jpg')
 
 ### `uppy.setMeta(data)`
 
-Alters global `meta` object in state, the one that can be set in Uppy options and gets merged with all newly added files. Calling `setMeta` will also merge newly added meta data with previously selected files.
+Alters global `meta` object in state, the one that can be set in Uppy options and gets merged with all newly added files. Calling `setMeta` will also merge newly added meta data with files that had been selected before.
 
 ```js
 uppy.setMeta({ resize: 1500, token: 'ab5kjfg' })
@@ -658,7 +658,7 @@ uppy.getPlugin('Dashboard').setOptions({
 
 ### `uppy.reset()`
 
-Stop all uploads in progress and clear file selection, set progress to 0. Basically, return things to the way they were before any user input.
+Stop all uploads in progress and clear file selection, set progress to 0. More or less, it returns things to the way they were before any user input.
 
 ### `uppy.close()`
 
@@ -688,10 +688,10 @@ uppy.log('[Dashboard] adding files...')
 #### Parameters
 
 *   **message** _{(string|object)}_ — `'info message'` or `{ message: 'Oh no!', details: 'File couldn’t be uploaded' }`
-*   **type** _{string} \[type='info']_ — `info`, `warning`, `success` or `error`
+*   **type** _{string} \[type=`'info'`]_ — `'info'`, `'warning'`, `'success'` or `'error'`
 *   **duration** _{number} \[duration = 3000]_ — in milliseconds
 
-Sets a message in state, with optional details, that can be shown by notification UI plugins. Currently, that means just the [Informer](/docs/informer/) plugin, included by default in Dashboard.
+Sets a message in state, with optional details, that can be shown by notification UI plugins. It’s using the [Informer](/docs/informer/) plugin, included by default in Dashboard.
 
 ```js
 this.info('Oh my, something good happened!', 'success', 3000)
@@ -742,7 +742,7 @@ uppy.on('file-added', (file) => {
 
 *   `files` - An array of [File Objects][File Objects] representing all files that were added at once, in a batch.
 
-Fired each time when one or multiple files are added — one event, for all files
+Fired each time when one or more files are added — one event, for all files
 
 ### `file-removed`
 
@@ -826,7 +826,7 @@ Fired each time a single upload is completed.
 
 **Parameters**
 
-*   `file` - The [File Object][File Objects] that has just been fully uploaded.
+*   `file` - The [File Object][File Objects] that has been fully uploaded.
 *   `response` - An object with response data from the remote endpoint. The actual contents depend on the uploader plugin that is used.
 
     For `@uppy/xhr-upload`, the shape is:
@@ -856,7 +856,7 @@ uppy.on('upload-success', (file, response) => {
 
 Fired when all uploads are complete.
 
-The `result` parameter is an object with arrays of `successful` and `failed` files, just like in [`uppy.upload()`](#uppy-upload)’s return value.
+The `result` parameter is an object with arrays of `successful` and `failed` files, as in [`uppy.upload()`](#uppy-upload)’s return value.
 
 ```js
 uppy.on('complete', (result) => {
@@ -887,7 +887,7 @@ Fired each time a single upload has errored.
 
 **Parameters**
 
-*   `file` - The [File Object][File Objects] for the file whose upload has just errored.
+*   `file` - The [File Object][File Objects] for the file whose upload has failed.
 *   `error` - The error object.
 *   `response` - an optional parameter with response data from the upload endpoint. It may be undefined or contain different data depending on the uploader plugin in use.
 
@@ -964,7 +964,7 @@ Fired when [`uppy.cancelAll()`]() is called, all uploads are canceled, files rem
 
 ### `restriction-failed`
 
-Fired when a file violates certain restrictions when added. This event is just providing another choice for those who want to customize the behavior of file upload restrictions.
+Fired when a file violates certain restrictions when added. This event is providing another choice for those who want to customize the behavior of file upload restrictions.
 
 ```javascript
 uppy.on('restriction-failed', (file, error) => {

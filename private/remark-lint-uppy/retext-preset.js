@@ -30,6 +30,7 @@ export default [
         'provide',
         'render',
         'request',
+        'selection',
         'submit',
         'type',
       ],
