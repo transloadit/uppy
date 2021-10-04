@@ -45,7 +45,7 @@ module.exports = class DropTarget extends BasePlugin {
     }
   }
 
-  handleDrop = (event) => {
+  handleDrop = async (event) => {
     event.preventDefault()
     event.stopPropagation()
     clearTimeout(this.removeDragOverClassTimeout)
@@ -56,11 +56,14 @@ module.exports = class DropTarget extends BasePlugin {
 
     // 3. Add all dropped files
     this.uppy.log('[DropTarget] Files were dropped')
+
     const logDropError = (error) => {
       this.uppy.log(error, 'error')
     }
-    getDroppedFiles(event.dataTransfer, { logDropError })
-      .then((files) => this.addFiles(files))
+
+    const files = await getDroppedFiles(event.dataTransfer, { logDropError })
+    this.addFiles(files)
+    this.opts.onDrop?.(event)
   }
 
   handleDragOver = (event) => {
@@ -75,6 +78,7 @@ module.exports = class DropTarget extends BasePlugin {
     clearTimeout(this.removeDragOverClassTimeout)
     event.currentTarget.classList.add('uppy-is-drag-over')
     this.setPluginState({ isDraggingOver: true })
+    this.opts.onDragOver?.(event)
   }
 
   handleDragLeave = (event) => {
@@ -90,6 +94,7 @@ module.exports = class DropTarget extends BasePlugin {
       currentTarget.classList.remove('uppy-is-drag-over')
       this.setPluginState({ isDraggingOver: false })
     }, 50)
+    this.opts.onDragLeave?.(event)
   }
 
   addListeners = () => {
