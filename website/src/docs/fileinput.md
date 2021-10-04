@@ -33,7 +33,7 @@ Install from NPM:
 npm install @uppy/file-input
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
 const { FileInput } = Uppy
@@ -41,7 +41,7 @@ const { FileInput } = Uppy
 
 ## CSS
 
-The `@uppy/file-input` plugin includes some simple styles for use with the [`pretty`](#pretty-true) option, like shown in the [example](/examples/xhrupload). You can also choose not to use it and provide your own styles instead.
+The `@uppy/file-input` plugin includes some basic styles for use with the [`pretty`](#pretty-true) option, like shown in the [example](/examples/xhrupload). You can also choose not to use it and provide your own styles instead.
 
 ```js
 import '@uppy/core/dist/style.css'
@@ -68,7 +68,7 @@ uppy.use(FileInput, {
 
 ### `id: 'FileInput'`
 
-A unique identifier for this plugin. It defaults to `'FileInput'`. Use this if you need to add multiple FileInput instances.
+A unique identifier for this plugin. It defaults to `'FileInput'`. Use this if you need to add several `FileInput` instances.
 
 ### `target: null`
 
