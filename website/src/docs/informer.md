@@ -36,7 +36,7 @@ Install from NPM:
 npm install @uppy/informer
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
 const { Informer } = Uppy
@@ -61,7 +61,7 @@ The `@uppy/informer` plugin has the following configurable options:
 
 ### `id: 'Informer'`
 
-A unique identifier for this plugin. It defaults to `'Informer'`. Use this if you need multiple Informer instances.
+A unique identifier for this plugin. It defaults to `'Informer'`. Use this if you need several `Informer` instances.
 
 ### `target: null`
 
