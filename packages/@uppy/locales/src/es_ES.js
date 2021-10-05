@@ -61,6 +61,8 @@ es_ES.strings = {
   importFrom: 'Importar desde %{name}',
   loading: 'Cargando...',
   logOut: 'Cerrar sesión',
+  missingRequiredMetaField: 'Faltan metacampos obligatorios',
+  missingRequiredMetaFieldOnFile: 'Faltan metacampos obligatorios en %{fileName}',
   myDevice: 'Mi Dispositivo',
   noFilesFound: 'No existen archivos o carpetas aquí',
   noInternetConnection: 'Sin conexión a Internet',
