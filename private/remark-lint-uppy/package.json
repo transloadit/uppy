@@ -2,6 +2,7 @@
   "name": "remark-lint-uppy",
   "version": "0.0.0",
   "dependencies": {
+    "mdast-comment-marker": "^2.1.0",
     "remark-frontmatter": "^3.0.0",
     "remark-lint": "^8.0.0",
     "remark-lint-emphasis-marker": "^2.0.1",
@@ -27,7 +28,8 @@
     "retext-quotes": "^4.0.0",
     "retext-simplify": "^6.0.0",
     "retext-syntax-mentions": "^2.1.1",
-    "unified": "^10.0.0"
+    "unified": "^10.0.0",
+    "unified-message-control": "^4.0.0"
   },
   "type": "module",
   "private": true
