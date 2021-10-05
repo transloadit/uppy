@@ -16,6 +16,7 @@
     "remark-lint-no-shortcut-reference-image": "^2.0.1",
     "remark-lint-no-shortcut-reference-link": "^2.0.1",
     "remark-lint-no-undefined-references": "^3.0.0",
+    "remark-lint-no-unneeded-full-reference-link": "^3.1.0",
     "remark-lint-no-unused-definitions": "^2.0.1",
     "remark-lint-ordered-list-marker-style": "^2.0.1",
     "remark-lint-strong-marker": "^2.0.1",
