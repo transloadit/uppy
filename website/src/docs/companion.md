@@ -480,7 +480,7 @@ The class must also have an `authProvider` string (lowercased) field which typic
       "requestPath": "file-or-folder-requestpath",
       // datetime string (in ISO 8601 format) of when this item was last modified
       "modifiedDate": "2020-06-29T19:59:58Z",
-      // the size in bytes of the item. Only relevent if the item is NOT a folder
+      // the size in bytes of the item. Only relevant if the item is NOT a folder
       "size": 278940,
       "custom": {
         // an object that may contain some more custom fields that you may need to send to the client. Only add this object if you have a need for it.
