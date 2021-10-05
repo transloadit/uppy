@@ -57,9 +57,30 @@ The `@uppy/drop-target` plugin has the following configurable options:
 ```js
 uppy.use(DropTarget, {
   target: null,
+  onDragOver: (event) => {},
+  onDrop: (event) => {},
+  onDragLeave: (event) => {},
 })
 ```
 
 ### `target: null`
 
 DOM element or CSS selector to attach the drag and drop listeners to.
+
+### `onDragOver(event)`
+
+Callback for the [`ondragover`][ondragover] event handler.
+
+### `onDrop(event)`
+
+Callback for the [`ondrop`][ondrop] event handler.
+
+### `onDragLeave(event)`
+
+Callback for the [`ondragleave`][ondragleave] event handler.
+
+<!-- definitions -->
+
+[ondragover]: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragover
+[ondragleave]: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragleave
+[ondrop]: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondrop
