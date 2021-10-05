@@ -21,8 +21,8 @@ This approach is new, we may make changes as we learn. Here are the current opti
 |                        Support on Uppy client |     best effort      |                        General Guidance                       |  Guidance based on your use case and circumstances, code & operational reviews  |
 | Support on Transloadit-hosted Companion & Tus |     best effort      |                        General Guidance                       |  Guidance based on your use case and circumstances, code & operational reviews  |
 |        Support on self-hosted Companion & Tus |     best effort      |                               -                                |                                        yes                                                                        |
-|  Access to Transloadit-hosted Companion & Tus |          -           |                              yes                               |                                        yes                                       |
-|     Access to Transloadit's encoding features |          -           |                         10GB included                         |                                 0GB - unlimited                                 |
+|  Access to Transloadit-hosted Companion & Tus |          yes (with a free Transloadit Community plan)           |                              yes                               |                                        yes                                       |
+|     Access to Transloadit's encoding features |          yes           |                         10GB included                         |                                 0GB - unlimited                                 |
 | Guaranteed response times within office hours |          -           |                           <= 3 days                            |                                   <= 8h - 32h                                    |
 |              1-on-1 access to core developers |          -           |                               1h                               |                                     1h - 20h                                     |
 |                               Health & Status |          -           |            Access to Personal Transloadit Dashboard           |  Access to Personal Transloadit Dashboard. Proactive monitoring & notifications |
@@ -30,7 +30,7 @@ This approach is new, we may make changes as we learn. Here are the current opti
 
 </div>
 
-If you want to apply for: 
+If you want to apply for:
 
 - 🥉 Bronze support, [sign up for the Startup plan][pricing].
 - 🥈 Silver (or 🥇 higher), [reach out](mailto:support@transloadit.com?subject=Uppy+Enterprise+Support).
