@@ -1,6 +1,6 @@
 {
   "name": "remark-lint-uppy",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "dependencies": {
     "remark-frontmatter": "^3.0.0",
     "remark-lint": "^8.0.0",
