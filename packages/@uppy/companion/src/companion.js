@@ -262,5 +262,5 @@ const validateConfig = (companionOptions) => {
   }
 
   const periodicPingUrlsValid = Array.isArray(periodicPingUrls) && periodicPingUrls.every((url2) => isURL(url2, { protocols: ['http', 'https'], require_protocol: true, require_tld: false }))
-  if (!periodicPingUrlsValid) throw new Error('Invlaid periodicPingUrls')
+  if (!periodicPingUrlsValid) throw new TypeError('Invalid periodicPingUrls')
 }
