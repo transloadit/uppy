@@ -45,29 +45,20 @@ The `ReduxStore` dispatches `uppy/STATE_UPDATE` actions to update state.
 When the state in Redux changes, it notifies Uppy.
 This way, you get most of the benefits of Redux, including support for the Redux Devtools and time traveling!
 
-To use the `ReduxStore`, add its reducer to the `uppy` key:
+Here is how you can integrate Uppy's `ReduxStore`:
 
 ```js
-import ReduxStore from '@uppy/store-redux'
+import Uppy from '@uppy/core'
+import * as ReduxStore from '@uppy/store-redux'
+import * as Redux from 'redux'
 
-const reducer = combineReducers({
-  ...reducers,
-  uppy: ReduxStore.reducer,
-})
-```
+function createStore (reducers = {}) {
+  const reducer = Redux.combineReducers({ ...reducers, uppy: ReduxStore.reducer })
+  return Redux.createStore(reducer)
+}
 
-Then pass a Redux store instance to the Uppy constructor:
-
-```js
-import { createStore } from 'redux'
-import ReduxStore from '@uppy/store-redux'
-
-const store = createStore(reducer)
-const uppy = new Uppy({
-  store: ReduxStore({
-    store, // That's a lot of stores!
-  }),
-})
+const store = new ReduxStore.ReduxStore({ store: createStore() })
+const uppy = new Uppy({ store })
 ```
 
 #### `opts.store`
