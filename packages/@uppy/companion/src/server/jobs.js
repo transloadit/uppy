@@ -73,6 +73,8 @@ async function runPeriodicPing ({ urls, requestTimeout }) {
   }))
 }
 
+// This function is used to start a periodic POST request against a user-defined URL
+// or set of URLs, for example as a watch dog health check.
 exports.startPeriodicPingJob = async ({ urls, interval = 60000, count }) => {
   logger.info('Starting periodic ping job', 'jobs.periodic.ping.start')
 
