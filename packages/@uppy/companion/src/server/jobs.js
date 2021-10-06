@@ -60,12 +60,17 @@ const cleanUpFinishedUploads = (dirPath) => {
   })
 }
 
-async function runPeriodicPing ({ urls, requestTimeout }) {
+async function runPeriodicPing ({ urls, staticPayload, requestTimeout }) {
   // Run requests in parallel
   await Promise.all(urls.map(async (url) => {
     try {
       // TODO rewrite to use a non-deprecated request library
-      const response = await promisify(request.post)({ url, timeout: requestTimeout })
+      const opts = { url, timeout: requestTimeout }
+      if (staticPayload) {
+        opts.body = staticPayload
+        opts.json = true
+      }
+      const response = await promisify(request.post)(opts)
       if (response.statusCode !== 200) throw new Error(`Status code was ${response.statusCode}`)
     } catch (err) {
       logger.warn(err, 'jobs.periodic.ping')
@@ -75,7 +80,7 @@ async function runPeriodicPing ({ urls, requestTimeout }) {
 
 // This function is used to start a periodic POST request against a user-defined URL
 // or set of URLs, for example as a watch dog health check.
-exports.startPeriodicPingJob = async ({ urls, interval = 60000, count }) => {
+exports.startPeriodicPingJob = async ({ urls, interval = 60000, count, staticPayload }) => {
   logger.info('Starting periodic ping job', 'jobs.periodic.ping.start')
 
   if (urls.length === 0) return
@@ -106,7 +111,7 @@ exports.startPeriodicPingJob = async ({ urls, interval = 60000, count }) => {
 
     try {
       requesting = true
-      await runPeriodicPing({ urls, requestTimeout })
+      await runPeriodicPing({ urls, staticPayload, requestTimeout })
     } finally {
       requesting = false
     }

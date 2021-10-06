@@ -156,10 +156,11 @@ describe('handle master oauth redirect', () => {
 })
 
 it('periodically pings', (done) => {
-  nock('http://localhost').post('/ping').reply(200, () => done())
+  nock('http://localhost').post('/ping', (body) => body.some === 'value').reply(200, () => done())
 
   getServer({
     COMPANION_PERIODIC_PING_URLS: 'http://localhost/ping',
+    COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD: '{"some": "value"}',
     COMPANION_PERIODIC_PING_INTERVAL: '10',
     COMPANION_PERIODIC_PING_COUNT: '1',
   })

@@ -125,7 +125,10 @@ module.exports.app = (options = {}) => {
   }
 
   jobs.startPeriodicPingJob({
-    urls: options.periodicPingUrls, interval: options.periodicPingInterval, count: options.periodicPingCount,
+    urls: options.periodicPingUrls,
+    interval: options.periodicPingInterval,
+    count: options.periodicPingCount,
+    staticPayload: options.periodicPingStaticPayload,
   })
 
   return app
