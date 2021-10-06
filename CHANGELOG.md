@@ -12,6 +12,66 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.2.0
+
+Released: 2021-10-06
+
+This release marks a major version for `@uppy/unsplash` plugin which is now production-ready. It also includes various fixes and improvements such as fix to `@uppy/transloadit` plugin and adds `onDrop` event to `@uppy/drop-target`.
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/angular | 0.2.4 | @uppy/provider-views | 2.0.3 |
+| @uppy/aws-s3-multipart | 2.1.0 | @uppy/react-native | 0.2.3 |
+| @uppy/aws-s3 | 2.0.4 | @uppy/react | 2.1.0 |
+| @uppy/box | 1.0.3 | @uppy/redux-dev-tools | 2.0.2 |
+| @uppy/companion-client | 2.0.2 | @uppy/robodog | 2.1.0 |
+| @uppy/companion | 3.1.0 | @uppy/screen-capture | 2.0.3 |
+| @uppy/core | 2.1.0 | @uppy/status-bar | 2.1.0 |
+| @uppy/dashboard | 2.1.0 | @uppy/store-default | 2.0.1 |
+| @uppy/drag-drop | 2.0.3 | @uppy/store-redux | 2.0.1 |
+| @uppy/drop-target | 1.1.0 | @uppy/svelte | 1.0.4 |
+| @uppy/dropbox | 2.0.3 | @uppy/thumbnail-generator | 2.0.4 |
+| @uppy/facebook | 2.0.3 | @uppy/transloadit | 2.0.3 |
+| @uppy/file-input | 2.0.3 | @uppy/tus | 2.1.0 |
+| @uppy/form | 2.0.3 | @uppy/unsplash | 2.0.0 |
+| @uppy/golden-retriever | 2.0.4 | @uppy/url | 2.0.3 |
+| @uppy/google-drive | 2.0.3 | @uppy/utils | 4.0.2 |
+| @uppy/image-editor | 1.0.3 | @uppy/vue | 0.4.2 |
+| @uppy/informer | 2.0.3 | @uppy/webcam | 2.0.3 |
+| @uppy/instagram | 2.0.3 | @uppy/xhr-upload | 2.0.4 |
+| @uppy/locales | 2.0.2 | @uppy/zoom | 1.0.3 |
+| @uppy/onedrive | 2.0.3 | remark-lint-uppy | 0.0.3 |
+| @uppy/progress-bar | 2.0.3 | uppy | 2.2.0 |
+
+- @uppy/angular: fix component crash by loosening `package.json` version constraints (#3210 / @ajkachnic)
+- @uppy/aws-s3-multipart: Retry `prepareUploadParts` on fail for `@uppy/aws-s3-multipart` (#3224 / @Murderlon)
+- @uppy/aws-s3: Fix AWS S3 upload on React Native (#3064 / @Cretezy)
+- @uppy/companion: `Object.fromEntries` is not available on Node.js v10.x (#3209 / @aduh95)
+- @uppy/companion: Close window on auth callback error and show error to user (#3143 / @mifi)
+- @uppy/companion: Default allow headers (#3167 / @mifi)
+- @uppy/companion: docs: fix typo in companion.md (#3240 / @eltociear)
+- @uppy/companion: Include status code in HTTP error message (#3212 / @mifi)
+- @uppy/companion: Make uploadUrls recommended (#3182 / @mifi)
+- @uppy/companion: Use GET instead of HEAD for getURLMeta + Cut off length of file names (#3048 / @mifi)
+- @uppy/core: Fix typo in `@uppy/core` types (#3230 / @lucax88x)
+- @uppy/core: move `Uppy` class to its own module (#3225 / @aduh95)
+- @uppy/dashboard: Add info about include in the Dashboard (#3236 / @epexa)
+- @uppy/dashboard: Fix i18n error in `CopyLinkButton` (#3235 / @Murderlon)
+- @uppy/dashboard: fix linter (#3206 / @aduh95)
+- @uppy/drop-target: expose `onDrop` events (#3238 / @Murderlon)
+- @uppy/image-editor: add workaround for when `Cropper` is loaded as ESM (#3218 / @aduh95)
+- @uppy/locales: added translate for missingRequiredMetafield es_ES (#3242 / @sebasegovia01)
+- @uppy/react: propagate prop mutation (#3208 / @aduh95)
+- @uppy/react: update HTMLAttributes filter (#3215 / @aduh95)
+- @uppy/status-bar: Show all details on mobile when `showProgressDetails` is `true` (#3174 / @Murderlon)
+- @uppy/store-redux: Improve docs on redux store integration (#3227 / @Murderlon)
+- @uppy/transloadit: pass fields to transloadit (#3228 / @aduh95)
+- @uppy/tus: Add support for `opts.headers` as a function in `@uppy/tus` (#3221 / @danilat)
+- @uppy/unsplash: Make `@uppy/unsplash` production ready (#3196 / @Murderlon)
+- @uppy/xhr-upload: fix `this.uppy is undefined` error (#3207 / @aduh95)
+- ci: test on Node.js v16.x (#3205 / @aduh95)
+- website: Remove broken link in `plugin_list.ejs` (#3166 / @YukeshShr)
+
 ## 2.1.1
 
 Released: 2021-09-20
