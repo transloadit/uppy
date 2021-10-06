@@ -25,19 +25,6 @@ function validateParams (params) {
 }
 
 /**
- * Normalize Uppy-specific Assembly option features to a Transloadit-
- * compatible object.
- */
-function normalizeAssemblyOptions (file, assemblyOptions) {
-  // eslint-disable-next-line no-param-reassign
-  assemblyOptions.fields = Array.isArray(assemblyOptions.fields)
-    ? Object.fromEntries(assemblyOptions.fields.map((fieldName) => [fieldName, file.meta[fieldName]]))
-    : {}
-
-  return assemblyOptions
-}
-
-/**
  * Combine Assemblies with the same options into a single Assembly for all the
  * relevant files.
  */
@@ -78,9 +65,15 @@ class AssemblyOptions {
     const options = this.opts
 
     const assemblyOptions = await options.getAssemblyOptions(file, options)
+    if (Array.isArray(assemblyOptions.fields)) {
+      assemblyOptions.fields = Object.fromEntries(
+        assemblyOptions.fields.map((fieldName) => [fieldName, file.meta[fieldName]])
+      )
+    } else if (assemblyOptions.fields == null) {
+      assemblyOptions.fields = {}
+    }
 
     validateParams(assemblyOptions.params)
-    normalizeAssemblyOptions(file, assemblyOptions)
 
     return {
       fileIDs: [file.id],

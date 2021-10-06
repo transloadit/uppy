@@ -33,24 +33,20 @@ function initUppyTransloadit (transloaditKey) {
             auth: { key: transloaditKey },
             template_id: 'uppyTransloadit',
           },
+          fields: {
+            message: 'test',
+          },
         }
       },
       waitForEncoding: true,
     })
 
-  uppyTransloadit.on('transloadit:result', (stepName, result) => {
+  uppyTransloadit.on('transloadit:result', (_, __, assembly) => {
     // use transloadit encoding result here.
-    console.log('Result here ====>', stepName, result)
-    console.log('Cropped image url is here ====>', result.url)
-
-    const img = new Image()
-    img.onload = function onload () {
-      const result = document.createElement('div')
-      result.setAttribute('id', 'uppy-result')
-      result.textContent = 'ok'
-      document.body.appendChild(result)
-    }
-    img.src = result.url
+    const result = document.createElement('div')
+    result.setAttribute('id', 'uppy-result')
+    result.textContent = assembly.fields.message === 'test' ? 'ok' : 'fail'
+    document.body.appendChild(result)
   })
 }
 
