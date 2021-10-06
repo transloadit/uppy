@@ -9,6 +9,7 @@ jest.mock('../../src/server/helpers/oauth-state', () => ({
   ...mockOauthState,
 }))
 
+const nock = require('nock')
 const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
@@ -152,4 +153,19 @@ describe('handle master oauth redirect', () => {
       .set('uppy-auth-token', token)
       .expect(400)
   })
+})
+
+it('periodically pings', (done) => {
+  nock('http://localhost').post('/ping').reply(200, () => done())
+
+  getServer({
+    COMPANION_PERIODIC_PING_URLS: 'http://localhost/ping',
+    COMPANION_PERIODIC_PING_INTERVAL: '10',
+    COMPANION_PERIODIC_PING_COUNT: '1',
+  })
+}, 1000)
+
+afterAll(() => {
+  nock.cleanAll()
+  nock.restore()
 })

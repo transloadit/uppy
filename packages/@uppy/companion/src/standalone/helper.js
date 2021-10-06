@@ -89,6 +89,11 @@ const getConfigFromEnv = () => {
       oauthDomain: process.env.COMPANION_OAUTH_DOMAIN,
       validHosts,
     },
+    periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS ? process.env.COMPANION_PERIODIC_PING_URLS.split(',') : [],
+    periodicPingInterval: process.env.COMPANION_PERIODIC_PING_INTERVAL
+      ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10) : undefined,
+    periodicPingCount: process.env.COMPANION_PERIODIC_PING_COUNT
+      ? parseInt(process.env.COMPANION_PERIODIC_PING_COUNT, 10) : undefined,
     filePath: process.env.COMPANION_DATADIR,
     redisUrl: process.env.COMPANION_REDIS_URL,
     // adding redisOptions to keep all companion options easily visible

@@ -1,8 +1,13 @@
 const schedule = require('node-schedule')
 const fs = require('fs')
 const path = require('path')
+const { promisify } = require('util')
+const request = require('request')
+
 const { FILE_NAME_PREFIX } = require('./Uploader')
 const logger = require('./logger')
+
+const sleep = promisify(setTimeout)
 
 /**
  * Runs a function every 24 hours, to clean up stale, upload related files.
@@ -53,4 +58,55 @@ const cleanUpFinishedUploads = (dirPath) => {
       })
     })
   })
+}
+
+async function runPeriodicPing ({ urls, requestTimeout }) {
+  // Run requests in parallel
+  await Promise.all(urls.map(async (url) => {
+    try {
+      // TODO rewrite to use a non-deprecated request library
+      const response = await promisify(request.post)({ url, timeout: requestTimeout })
+      if (response.statusCode !== 200) throw new Error(`Status code was ${response.statusCode}`)
+    } catch (err) {
+      logger.warn(err, 'jobs.periodic.ping')
+    }
+  }))
+}
+
+exports.startPeriodicPingJob = async ({ urls, interval = 60000, count }) => {
+  logger.info('Starting periodic ping job', 'jobs.periodic.ping.start')
+
+  if (urls.length === 0) return
+
+  let requesting = false
+
+  const requestTimeout = interval / 2
+
+  // Offset by a random value, so that we don't flood recipient if running many instances in a cluster
+  const delayBySec = Math.random() * interval
+  logger.info(`Delaying periodic ping by ${delayBySec}ms`, 'jobs.periodic.ping.start')
+  await sleep(delayBySec)
+
+  let i = 0
+  const intervalRef = setInterval(async () => {
+    // Used for testing:
+    // TODO implement a stop method instead, but this needs to be propagated all the way out, so it's a big rewrite
+    if (count != null && i >= count) {
+      clearInterval(intervalRef)
+      return
+    }
+    i++
+
+    if (requesting) {
+      logger.warn('Periodic ping request already in progress', 'jobs.periodic.ping')
+      return
+    }
+
+    try {
+      requesting = true
+      await runPeriodicPing({ urls, requestTimeout })
+    } finally {
+      requesting = false
+    }
+  }, interval)
 }
