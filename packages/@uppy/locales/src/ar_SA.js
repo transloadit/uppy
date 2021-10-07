@@ -7,7 +7,7 @@ ar_SA.strings = {
   allowAccessDescription: 'ارجو السماح للموقع بالتقاط الصور والفديوهات.',
   allowAccessTitle: 'ارجو السماح للكاميرا بالتقاط صورك',
   authenticateWith: '%{pluginName} الربط مع',
-  authenticateWithTitle: 'من اجل اختيار الملفات %{pluginName} ارجو الربط مع ',
+  authenticateWithTitle: 'من اجل اختيار الملفات %{pluginName} الرجاء الربط مع ',
   back: 'رجوع',
   browse: 'تصفح',
   browseFiles: 'تصفح',
