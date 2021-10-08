@@ -1,6 +1,5 @@
-const prettierBytes = require('@transloadit/prettier-bytes')
-const indexedDB = typeof window !== 'undefined' &&
-  (window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB)
+const indexedDB = typeof window !== 'undefined'
+  && (window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB)
 
 const isSupported = !!indexedDB
 
@@ -28,7 +27,7 @@ function connect (dbName) {
   return new Promise((resolve, reject) => {
     request.onupgradeneeded = (event) => {
       const db = event.target.result
-      const transaction = event.currentTarget.transaction
+      const { transaction } = event.currentTarget
 
       if (event.oldVersion < 2) {
         // Added in v2: DB structure changed to a single shared object store
@@ -67,13 +66,14 @@ function waitForRequest (request) {
 let cleanedUp = false
 class IndexedDBStore {
   constructor (opts) {
-    this.opts = Object.assign({
+    this.opts = {
       dbName: DB_NAME,
       storeName: 'default',
       expires: DEFAULT_EXPIRY, // 24 hours
       maxFileSize: 10 * 1024 * 1024, // 10 MB
-      maxTotalSize: 300 * 1024 * 1024 // 300 MB
-    }, opts)
+      maxTotalSize: 300 * 1024 * 1024, // 300 MB
+      ...opts,
+    }
 
     this.name = this.opts.storeName
 
@@ -124,7 +124,7 @@ class IndexedDBStore {
       return waitForRequest(request)
     }).then((result) => ({
       id: result.data.fileID,
-      data: result.data.data
+      data: result.data.data,
     }))
   }
 
@@ -176,7 +176,7 @@ class IndexedDBStore {
         fileID: file.id,
         store: this.name,
         expires: Date.now() + this.opts.expires,
-        data: file.data
+        data: file.data,
       })
       return waitForRequest(request)
     })
@@ -208,11 +208,6 @@ class IndexedDBStore {
         request.onsuccess = (event) => {
           const cursor = event.target.result
           if (cursor) {
-            const entry = cursor.value
-            console.log(
-              '[IndexedDBStore] Deleting record', entry.fileID,
-              'of size', prettierBytes(entry.data.size),
-              '- expired on', new Date(entry.expires))
             cursor.delete() // Ignoring return value … it's not terrible if this goes wrong.
             cursor.continue()
           } else {

@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 14
+order: 15
 title: "Import From URL"
 menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/url"
@@ -14,7 +14,7 @@ The `@uppy/url` plugin allows users to import files from the internet. Paste any
 A Companion instance is required for the `@uppy/url` plugin to work. Companion will download the files and upload them to their destination. This saves bandwidth for the user (especially on mobile connections) and helps to avoid CORS restrictions.
 
 ```js
-const Url = require('@uppy/url')
+import Url from '@uppy/url'
 
 uppy.use(Url, {
   // Options
@@ -36,7 +36,7 @@ npm install @uppy/url
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Url = Uppy.Url
+const { Url } = Uppy
 ```
 
 ## CSS
@@ -58,7 +58,7 @@ The `@uppy/url` plugin has the following configurable options:
 uppy.use(Url, {
   target: Dashboard,
   companionUrl: 'https://companion.uppy.io/',
-  locale: {}
+  locale: {},
 })
 ```
 
@@ -78,6 +78,10 @@ DOM element, CSS selector, or plugin to mount the URL provider into. This should
 
 URL to an Companion instance.
 
+### `companionCookiesRule: 'same-origin'`
+
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
+
 ### `locale: {}`
 
 Localize text that is shown to the user.
@@ -85,7 +89,7 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
+const strings = {
   // Label for the "Import" button.
   import: 'Import',
   // Placeholder text for the URL input.
@@ -93,7 +97,7 @@ strings: {
   // Error message shown if Companion could not load a URL.
   failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
   // Error message shown if the input does not look like a URL.
-  enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file'
+  enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
 }
 ```
 

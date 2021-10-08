@@ -4,5 +4,5 @@
  * @param {*} obj
  */
 module.exports = function isDOMElement (obj) {
-  return obj && typeof obj === 'object' && obj.nodeType === Node.ELEMENT_NODE
+  return obj?.nodeType === Node.ELEMENT_NODE
 }

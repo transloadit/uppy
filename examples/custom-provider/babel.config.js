@@ -4,11 +4,11 @@ module.exports = (api) => {
     presets: [
       ['@babel/preset-env', {
         modules: false,
-        loose: true
-      }]
+        loose: true,
+      }],
     ],
     plugins: [
-      ['@babel/plugin-transform-react-jsx', { pragma: 'h' }]
-    ].filter(Boolean)
+      ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
+    ].filter(Boolean),
   }
 }

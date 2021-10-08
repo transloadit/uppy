@@ -17,13 +17,18 @@ See a [full example of a plugin](#Example-of-a-custom-plugin) below.
 
 ## Creating A Plugin
 
-Plugins are classes that extend from Uppy's `Plugin` class. Each plugin has an `id` and a `type`. `id`s are used to uniquely identify plugins. A `type` can be anything—some plugins use `type`s to determine whether to do something to some other plugin. For example, when targeting plugins at the built-in `Dashboard` plugin, the Dashboard uses the `type` to figure out where to mount different UI elements. `'acquirer'`-type plugins are mounted into the tab bar, while `'progressindicator'`-type plugins are mounted into the progress bar area.
+Uppy has two classes to create plugins with. `BasePlugin` for plugins that don't require an user interface, and `UIPlugin` for onces that do.
+Each plugin has an `id` and a `type`. `id`s are used to uniquely identify plugins.
+A `type` can be anything—some plugins use `type`s to determine whether to do something to some other plugin.
+For example, when targeting plugins at the built-in `Dashboard` plugin, the Dashboard uses the `type` to figure out where to mount different UI elements.
+`'acquirer'`-type plugins are mounted into the tab bar, while `'progressindicator'`-type plugins are mounted into the progress bar area.
 
 The plugin constructor receives the Uppy instance in the first parameter, and any options passed to `uppy.use()` in the second parameter.
 
 ```js
-const { Plugin } = require('@uppy/core')
-module.exports = class MyPlugin extends Plugin {
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
+
+export default class MyPlugin extends BasePlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = opts.id || 'MyPlugin'
@@ -38,31 +43,70 @@ Plugins can implement methods in order to execute certain tasks. The most import
 
 All of the below methods are optional! Only implement the methods you need.
 
-### `install()`
+### `BasePlugin`
+
+#### `install()`
 
 Called when the plugin is `.use`d. Do any setup work here, like attaching events or adding [upload hooks](#Upload-Hooks).
 
 ```js
-install () {
-  this.uppy.on('upload-progress', this.onProgress)
-  this.uppy.addPostProcessor(this.afterUpload)
+export default class MyPlugin extends UIPlugin {
+  // ...
+  install () {
+    this.uppy.on('upload-progress', this.onProgress)
+    this.uppy.addPostProcessor(this.afterUpload)
+  }
 }
 ```
 
-### `uninstall()`
+#### `uninstall()`
 
 Called when the plugin is removed, or the Uppy instance is closed. This should undo all of the work done in the `install()` method.
 
 ```js
-uninstall () {
-  this.uppy.off('upload-progress', this.onProgress)
-  this.uppy.removePostProcessor(this.afterUpload)
+export default class MyPlugin extends UIPlugin {
+  // ...
+  uninstall () {
+    this.uppy.off('upload-progress', this.onProgress)
+    this.uppy.removePostProcessor(this.afterUpload)
+  }
 }
 ```
 
-### `update(state)`
+#### `afterUpdate()`
+
+Called after every state update with a debounce, after everything has mounted.
+
+#### `addTarget()`
+
+Use this to add your plugin to another plugin's target. This is what `@uppy/dashboard` uses to add other plugins to its UI.
+
+### `UIPlugin`
+
+`UIPlugin` extends the `BasePlugin` class so it will also contain all the above methods.
+
+#### `mount(target)`
+
+Mount this plugin to the `target` element. `target` can be a CSS query selector, a DOM element, or another Plugin. If `target` is a Plugin, the source (current) plugin will register with the target plugin, and the latter can decide how and where to render the source plugin.
+
+This method can be overridden to support for different render engines.
+
+#### `render()`
+
+Render this plugin's UI. Uppy uses [Preact](https://preactjs.com) as its view engine, so `render()` should return a Preact element.
+`render` is automatically called by Uppy on each state change.
+
+#### `onMount()`
+
+Called after Preact has rendered the components of the plugin. Can be used to perform additional side-effects.
+
+#### `update(state)`
 
 Called on each state update. You will rarely need to use this, it is mostly handy if you want to build a UI plugin using something other than Preact.
+
+#### `onUnmount()`
+
+Called after the elements have been removed from the DOM. Can be used to perform additional (clean up) side-effects.
 
 ## Upload Hooks
 
@@ -75,7 +119,7 @@ Additionally, upload hooks can fire events to signal progress.
 When adding hooks, make sure to bind the hook `fn` beforehand! Otherwise, it will be impossible to remove. For example:
 
 ```js
-class MyPlugin extends Plugin {
+class MyPlugin extends BasePlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = opts.id || 'MyPlugin'
@@ -84,6 +128,7 @@ class MyPlugin extends Plugin {
   }
 
   prepareUpload (fileIDs) {
+    console.log(this) // `this` refers to the `MyPlugin` instance.
     return Promise.resolve()
   }
 
@@ -152,50 +197,33 @@ When `mode` is `'determinate'`, also add the `value` property:
 
  - `value` - A progress value between 0 and 1.
 
-## UI Plugins
+ ### `error(err\[, fileID\])
 
-UI Plugins can be used to show a user interface. Uppy plugins use [preact](https://preactjs.com) v8.2.9 for rendering. preact is a very small React-like library that works really well with Uppy's state architecture. Uppy implements preact rendering in the `mount(target)` and `update()` plugin methods, so if you want to write a custom UI plugin using some other library, you can override those methods.
+ `err` is an `Error` object. `fileID` can optionally which file fails to inform the user.
 
-> **Only** `preact@8.2.9` can be used for Uppy plugins. In Uppy 2.0, the restriction will be changed to a newer range of preact versions. For now, specify the dependency with a fixed version number:
-> ```json
-> "dependencies": {
->   "preact": "8.2.9"
-> }
-> ```
-
-Plugins can implement certain methods to do so, that will be called by Uppy when necessary:
-
-### `mount(target)`
-
-Mount this plugin to the `target` element. `target` can be a CSS query selector, a DOM element, or another Plugin. If `target` is a Plugin, the source (current) plugin will register with the target plugin, and the latter can decide how and where to render the source plugin.
-
-This method can be overridden to support for different render engines.
-
-### `render()`
-
-Render this plugin's UI. Uppy uses [Preact](https://preactjs.com) as its view engine, so `render()` should return a Preact element.
-`render` is automatically called by Uppy on each state change.
-
-Note that we are looking into ways to make Uppy's render engine agnostic, so that plugins can choose their own favourite library—whether it's Preact, Choo, jQuery, or anything else. This means that the `render()` API may change in the future, but we will detail exactly what you need to do on the [blog](https://uppy.io/blog) if and when that happens.
 
 ### JSX
 
-Since Uppy uses Preact and not React, the default Babel configuration for JSX elements does not work. You have to import the Preact `h` function and tell Babel to use it by adding a `/** @jsx h */` comment at the top of the file.
+Since Uppy uses Preact and not React, the default Babel configuration for JSX elements does not work.
+You have to import the Preact `h` function and tell Babel to use it by adding a `/** @jsx h */` comment at the top of the file.
 
 See the Preact [Getting Started Guide](https://preactjs.com/guide/getting-started) for more on Babel and JSX.
 
+<!-- eslint-disable jsdoc/check-tag-names -->
 ```js
 /** @jsx h */
-const { Plugin } = require('@uppy/core')
-const { h } = require('preact')
+import { UIPlugin } from '@uppy/core'
+import { h } from 'preact'
 
-class NumFiles extends Plugin {
+class NumFiles extends UIPlugin {
   render () {
     const numFiles = Object.keys(this.uppy.state.files).length
 
     return (
       <div>
-        Number of files: {numFiles}
+        Number of files:
+        {' '}
+        {numFiles}
       </div>
     )
   }
@@ -213,48 +241,39 @@ this.defaultLocale = {
     youCanOnlyUploadX: {
       0: 'You can only upload %{smart_count} file',
       1: 'You can only upload %{smart_count} files',
-      2: 'You can only upload %{smart_count} files'
-    }
-  }
+      2: 'You can only upload %{smart_count} files',
+    },
+  },
 }
 ```
 
-This allows them to be overridden by Locale Packs, or directly when users pass `locale: { strings: youCanOnlyUploadFileTypes: 'Something else completely about %{types}'} }`. For this to work, it's currently also required that you add:
-
-```js
-// i18n
-this.translator = new Translator([ this.defaultLocale, this.uppy.locale, this.opts.locale ])
-this.i18n = this.translator.translate.bind(this.translator)
-this.i18nArray = this.translator.translateArray.bind(this.translator)
-// ^-- Only if you're using i18nArray, which allows you to pass in JSX Components as well.
-```
+This allows them to be overridden by Locale Packs, or directly when users pass `locale: { strings: youCanOnlyUploadFileTypes: 'Something else completely about %{types}'} }`. For this to work, it’s also required that you call `this.i18nInit()` in the plugin constructor.
 
 ## Example of a custom plugin
 
-Below is a full example of a [simple plugin](https://github.com/arturi/uppy-plugin-image-compressor) that compresses images before uploading them. You can replace `compressorjs` method with any other work you need to do. This works especially well for async stuff, like calling an external API.
+Below is a full example of a [small plugin](https://github.com/arturi/uppy-plugin-image-compressor) that compresses images before uploading them. You can replace `compressorjs` method with any other work you need to do. This works especially well for async stuff, like calling an external API.
 
+<!-- eslint-disable consistent-return -->
 ```js
-const { Plugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
-const Compressor = require('compressorjs/dist/compressor.common.js')
+import { UIPlugin } from '@uppy/core'
+import Translator from '@uppy/utils/lib/Translator'
+import Compressor from 'compressorjs/dist/compressor.esm.js'
 
-class UppyImageCompressor extends Plugin {
+class UppyImageCompressor extends UIPlugin {
   constructor (uppy, opts) {
-    super(uppy, opts)
+    const defaultOptions = {
+      quality: 0.6,
+    }
+    super(uppy, { ...defaultOptions, ...opts })
+
     this.id = this.opts.id || 'ImageCompressor'
     this.type = 'modifier'
 
     this.defaultLocale = {
       strings: {
-        compressingImages: 'Compressing images...'
-      }
+        compressingImages: 'Compressing images...',
+      },
     }
-
-    const defaultOptions = {
-      quality: 0.6
-    }
-
-    this.opts = Object.assign({}, defaultOptions, opts)
 
     // we use those internally in `this.compress`, so they
     // should not be overriden
@@ -262,48 +281,29 @@ class UppyImageCompressor extends Plugin {
     delete this.opts.error
 
     this.i18nInit()
-
-    this.prepareUpload = this.prepareUpload.bind(this)
-    this.compress = this.compress.bind(this)
-  }
-
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   compress (blob) {
-    return new Promise((resolve, reject) => {
-      new Compressor(blob, Object.assign(
-        {},
-        this.opts,
-        {
-          success: (result) => {
-            return resolve(result)
-          },
-          error: (err) => {
-            return reject(err)
-          }
-        }
-      ))
-    })
+    return new Promise((resolve, reject) => new Compressor(blob, ({
+      ...this.opts,
+      success (result) {
+        return resolve(result)
+      },
+      error (err) {
+        return reject(err)
+      },
+    })))
   }
 
-  prepareUpload (fileIDs) {
+  prepareUpload = (fileIDs) => {
     const promises = fileIDs.map((fileID) => {
       const file = this.uppy.getFile(fileID)
       this.uppy.emit('preprocess-progress', file, {
         mode: 'indeterminate',
-        message: this.i18n('compressingImages')
+        message: this.i18n('compressingImages'),
       })
 
-      if (file.type.split('/')[0] !== 'image') {
+      if (!file.type.startsWith('image/')) {
         return
       }
 
@@ -340,7 +340,7 @@ class UppyImageCompressor extends Plugin {
   }
 }
 
-module.exports = UppyImageCompressor
+export default UppyImageCompressor
 ```
 
 [core.setfilestate]: /docs/uppy#uppy-setFileState-fileID-state

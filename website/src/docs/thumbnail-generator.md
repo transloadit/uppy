@@ -13,12 +13,12 @@ tagline: "generate preview thumbnails for images to be uploaded"
 This plugin is included by default with the [Dashboard](/docs/dashboard), so you don’t have to include it manually. But it is useful if you are not using the Dashboard and want to display image previews in your custom UI.
 
 ```js
-const ThumbnailGenerator = require('@uppy/thumbnail-generator')
+import ThumbnailGenerator from '@uppy/thumbnail-generator'
 
 uppy.use(ThumbnailGenerator, {
   thumbnailWidth: 200,
   // thumbnailHeight: 200 // optional, use either width or height,
-  waitForThumbnailsBeforeUpload: false
+  waitForThumbnailsBeforeUpload: false,
 })
 ```
 
@@ -37,7 +37,7 @@ npm install @uppy/thumbnail-generator
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const ThumbnailGenerator = Uppy.ThumbnailGenerator
+const { ThumbnailGenerator } = Uppy
 ```
 
 ## Options
@@ -49,7 +49,8 @@ uppy.use(ThumbnailGenerator, {
   id: 'ThumbnailGenerator',
   thumbnailWidth: 200,
   thumbnailHeight: 200,
-  waitForThumbnailsBeforeUpload: false
+  thumbnailType: 'image/jpeg',
+  waitForThumbnailsBeforeUpload: false,
 })
 ```
 
@@ -76,6 +77,10 @@ If both width and height are given, only width is taken into account.
 > uppy.use(ThumbnailGenerator, { thumbnailWidth: 300, thumbnailHeight: 300 }) will produce a 300px width thumbnail with calculated height to match ratio (and ignore the given height).
 >
 > See issue [#979](https://github.com/transloadit/uppy/issues/979) and [#1096](https://github.com/transloadit/uppy/pull/1096) for details on this feature.
+
+### `thumbnailtype: 'image/jpeg'`
+
+MIME type of the resulting thumbnail. Default thumbnail MIME type is `image/jpeg`. This is useful if you want to support transparency in your thumbnails by switching to `image/png`.
 
 ### `waitForThumbnailsBeforeUpload: false`
 

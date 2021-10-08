@@ -14,7 +14,7 @@ The `@uppy/dropbox` plugin lets users import files from their Dropbox account.
 A Companion instance is required for the Dropbox plugin to work. Companion handles authentication with Dropbox, downloads the files, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const Dropbox = require('@uppy/dropbox')
+import Dropbox from '@uppy/dropbox'
 
 uppy.use(Dropbox, {
   // Options
@@ -36,7 +36,7 @@ npm install @uppy/dropbox
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Dropbox = Uppy.Dropbox
+const { Dropbox } = Uppy
 ```
 
 ## Setting Up
@@ -53,9 +53,9 @@ companion.app({
   providerOptions: {
     dropbox: {
       key: 'Dropbox API key',
-      secret: 'Dropbox API secret'
-    }
-  }
+      secret: 'Dropbox API secret',
+    },
+  },
 })
 ```
 
@@ -119,6 +119,10 @@ This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
 This is useful when you have your [Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should do just fine.
 
+### `companionCookiesRule: 'same-origin'`
+
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
+
 ### `locale: {}`
 
 Localize text that is shown to the user.
@@ -126,7 +130,9 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
-  // TODO
+const locale = {
+  strings: {
+    // TODO
+  },
 }
 ```

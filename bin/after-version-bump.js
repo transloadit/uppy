@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
+
 // Called by the `version` npm script.
 // This is run _after_ lerna updates the version numbers,
 // but _before_ it commits, so we have time to update the
@@ -12,12 +15,9 @@
 
 const lastCommitMessage = require('last-commit-message')
 const { spawn } = require('child_process')
-const { promisify } = require('util')
+const { readFile, writeFile } = require('fs/promises')
 const once = require('events.once')
 const globby = require('globby')
-const fs = require('fs')
-const readFile = promisify(fs.readFile)
-const writeFile = promisify(fs.writeFile)
 
 async function replaceInFile (filename, replacements) {
   let content = await readFile(filename, 'utf8')
@@ -36,13 +36,14 @@ async function updateVersions (files, packageName) {
   const urlPart = packageName === 'uppy' ? packageName : packageName.slice(1)
 
   const replacements = new Map([
-    [RegExp(`${urlPart}/v\\d+\\.\\d+\\.\\d+\\/`, 'g'), `${urlPart}/v${version}/`]
+    [RegExp(`${urlPart}/v\\d+\\.\\d+\\.\\d+\\/`, 'g'), `${urlPart}/v${version}/`],
     // maybe more later
   ])
 
   console.log('replacing', replacements, 'in', files.length, 'files')
 
   for (const f of files) {
+    // eslint-disable-next-line no-await-in-loop
     await replaceInFile(f, replacements)
   }
 }
@@ -62,8 +63,8 @@ async function npmRunBuild () {
     env: {
       ...process.env,
       FRESH: true, // force rebuild everything
-      IS_RELEASE_BUILD: true
-    }
+      IS_RELEASE_BUILD: true,
+    },
   })
   const [exitCode] = await once(npmRun, 'exit')
   if (exitCode !== 0) {
@@ -85,13 +86,14 @@ async function main () {
 
   const files = await globby([
     'README.md',
+    'BUNDLE-README.md',
     'examples/**/*.html',
     'packages/*/README.md',
     'packages/@uppy/*/README.md',
     'website/src/docs/**',
     'website/src/examples/**',
     'website/themes/uppy/layout/**',
-    '!**/node_modules/**'
+    '!**/node_modules/**',
   ])
 
   await updateVersions(files, 'uppy')
@@ -106,7 +108,7 @@ async function main () {
   await npmRunBuild()
 }
 
-main().catch(function (err) {
+main().catch((err) => {
   console.error(err.stack)
   process.exit(1)
 })

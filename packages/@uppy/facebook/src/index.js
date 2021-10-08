@@ -1,9 +1,9 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
-const ProviderViews = require('@uppy/provider-views')
+const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
-module.exports = class Facebook extends Plugin {
+module.exports = class Facebook extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -13,19 +13,29 @@ module.exports = class Facebook extends Plugin {
     this.title = this.opts.title || 'Facebook'
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
-        <g fill="none" fill-rule="evenodd">
-          <rect width="32" height="32" rx="16" fill="#3C5A99" />
-          <path d="M17.842 26v-8.667h2.653l.398-3.377h-3.051v-2.157c0-.978.248-1.644 1.527-1.644H21V7.132A19.914 19.914 0 0 0 18.623 7c-2.352 0-3.963 1.574-3.963 4.465v2.49H12v3.378h2.66V26h3.182z" fill="#FFF" fill-rule="nonzero" />
+        <g fill="none" fillRule="evenodd">
+          <rect className="uppy-ProviderIconBg" width="32" height="32" rx="16" fill="#3C5A99" />
+          <path d="M17.842 26v-8.667h2.653l.398-3.377h-3.051v-2.157c0-.978.248-1.644 1.527-1.644H21V7.132A19.914 19.914 0 0 0 18.623 7c-2.352 0-3.963 1.574-3.963 4.465v2.49H12v3.378h2.66V26h3.182z" fill="#FFF" fillRule="nonzero" />
         </g>
       </svg>
     )
 
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionHeaders: this.opts.companionHeaders,
+      companionKeysParams: this.opts.companionKeysParams,
+      companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'facebook',
-      pluginId: this.id
+      pluginId: this.id,
     })
+
+    this.defaultLocale = {
+      strings: {
+        pluginNameFacebook: 'Facebook',
+      },
+    }
+    this.i18nInit()
+    this.title = this.i18n('pluginNameFacebook')
 
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
@@ -33,10 +43,10 @@ module.exports = class Facebook extends Plugin {
 
   install () {
     this.view = new ProviderViews(this, {
-      provider: this.provider
+      provider: this.provider,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
@@ -48,7 +58,10 @@ module.exports = class Facebook extends Plugin {
   }
 
   onFirstRender () {
-    return this.view.getFolder()
+    return Promise.all([
+      this.provider.fetchPreAuthToken(),
+      this.view.getFolder(),
+    ])
   }
 
   render (state) {

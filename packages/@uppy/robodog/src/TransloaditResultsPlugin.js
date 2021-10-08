@@ -1,25 +1,24 @@
-const { Plugin } = require('@uppy/core')
+const BasePlugin = require('@uppy/core/lib/BasePlugin')
 
 /**
  * Add a `results` key to the upload result data, containing all Transloadit Assembly results.
  */
-class TransloaditResultsPlugin extends Plugin {
+class TransloaditResultsPlugin extends BasePlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
 
     this.type = 'modifier'
     this.id = this.opts.id || 'TransloaditResultsPlugin'
-    this._afterUpload = this._afterUpload.bind(this)
   }
 
   install () {
-    this.uppy.addPostProcessor(this._afterUpload)
+    this.uppy.addPostProcessor(this.#afterUpload)
   }
 
-  _afterUpload (fileIDs, uploadID) {
+  #afterUpload = (fileIDs, uploadID) => {
     const { currentUploads } = this.uppy.getState()
     const { result } = currentUploads[uploadID]
-    const assemblies = result && Array.isArray(result.transloadit) ? result.transloadit : []
+    const assemblies = Array.isArray(result?.transloadit) ? result.transloadit : []
 
     // Merge the assembly.results[*] arrays and add `stepName` and
     // `assemblyId` properties.
@@ -31,14 +30,14 @@ class TransloaditResultsPlugin extends Plugin {
           assemblyResults.push({
             ...result,
             assemblyId: assembly.assembly_id,
-            stepName
+            stepName,
           })
         })
       })
     })
 
     this.uppy.addResultData(uploadID, {
-      results: assemblyResults
+      results: assemblyResults,
     })
   }
 }

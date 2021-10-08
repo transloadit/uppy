@@ -1,44 +1,43 @@
-import Uppy = require('@uppy/core')
+import type { PluginOptions, BasePlugin, UppyFile } from '@uppy/core'
 
 type MaybePromise<T> = T | Promise<T>
 
-declare module AwsS3Multipart {
-  interface AwsS3Part {
-    PartNumber?: number
-    Size?: number
-    ETag?: string
-  }
+export interface AwsS3Part {
+  PartNumber?: number
+  Size?: number
+  ETag?: string
+}
 
-  interface AwsS3MultipartOptions extends Uppy.PluginOptions {
+interface AwsS3MultipartOptions extends PluginOptions {
+    companionHeaders?: { [type: string]: string }
     companionUrl?: string
-    getChunkSize?: (file: Uppy.UppyFile) => number
+    getChunkSize?: (file: UppyFile) => number
     createMultipartUpload?: (
-      file: Uppy.UppyFile
+      file: UppyFile
     ) => MaybePromise<{ uploadId: string; key: string }>
     listParts?: (
-      file: Uppy.UppyFile,
+      file: UppyFile,
       opts: { uploadId: string; key: string }
     ) => MaybePromise<AwsS3Part[]>
-    prepareUploadPart?: (
-      file: Uppy.UppyFile,
-      partData: { uploadId: string; key: string; body: Blob; number: number }
-    ) => MaybePromise<{ url: string, headers?: { [k: string]: string } }>
+    prepareUploadParts?: (
+      file: UppyFile,
+      partData: { uploadId: string; key: string; partNumbers: Array<number> }
+    ) => MaybePromise<{ presignedUrls: { [k: number]: string }, headers?: { [k: string]: string } }>
     abortMultipartUpload?: (
-      file: Uppy.UppyFile,
+      file: UppyFile,
       opts: { uploadId: string; key: string }
     ) => MaybePromise<void>
     completeMultipartUpload?: (
-      file: Uppy.UppyFile,
+      file: UppyFile,
       opts: { uploadId: string; key: string; parts: AwsS3Part[] }
     ) => MaybePromise<{ location?: string }>
     timeout?: number
     limit?: number
     retryDelays?: number[] | null
-  }
 }
 
-declare class AwsS3Multipart extends Uppy.Plugin<
-  AwsS3Multipart.AwsS3MultipartOptions
+declare class AwsS3Multipart extends BasePlugin<
+  AwsS3MultipartOptions
 > {}
 
-export = AwsS3Multipart
+export default AwsS3Multipart

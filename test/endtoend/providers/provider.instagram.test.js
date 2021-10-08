@@ -10,6 +10,7 @@
   Hence, provider tokens (Google, Instagram, Dropbox) may be at risk of getting hijacked.
 */
 const { finishUploadTest, startUploadTest, uploadWithRetry } = require('./helper')
+
 const testURL = 'http://localhost:4567/providers'
 
 describe('File upload with Instagram Provider', () => {
@@ -18,7 +19,7 @@ describe('File upload with Instagram Provider', () => {
   })
 
   // not using arrow functions as cb so to keep mocha in the 'this' context
-  it('should upload a file completely with Instagram', async function () {
+  it('should upload a file completely with Instagram', async function test () {
     if (!process.env.UPPY_INSTAGRAM_USERNAME) {
       console.log('skipping Instagram integration test')
       return this.skip()
@@ -49,10 +50,10 @@ describe('File upload with Instagram Provider', () => {
         // we can't automate the submission of security code
         // because it is sent to the email. So we wait till it is filled manually
         await securityCodeInput.waitUntil(
-          async () => {
-            await securityCodeInput.getValue()
-          },
-          30000, 'expected security code to be manually entered')
+          () => securityCodeInput.getValue(),
+          30_000,
+          'expected security code to be manually entered'
+        )
       }
 
       // instagram may ask for auth confirmation to allow companion
@@ -66,7 +67,7 @@ describe('File upload with Instagram Provider', () => {
   })
 
   // not using arrow functions as cb so to keep mocha in the 'this' context
-  it('should resume uploads when retry is triggered Instagram', async function () {
+  it('should resume uploads when retry is triggered Instagram', async function test () {
     if (!process.env.UPPY_INSTAGRAM_USERNAME) {
       console.log('skipping Instagram integration test')
       return this.skip()

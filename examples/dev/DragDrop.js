@@ -1,19 +1,21 @@
+// The @uppy/ dependencies are resolved using aliasify
+/* eslint-disable import/no-extraneous-dependencies */
 const Uppy = require('@uppy/core/src')
 const Tus = require('@uppy/tus/src')
-
 const DragDrop = require('@uppy/drag-drop/src')
 const ProgressBar = require('@uppy/progress-bar/src')
+/* eslint-enable import/no-extraneous-dependencies */
 
 module.exports = () => {
   const uppyDragDrop = new Uppy({
     debug: true,
-    autoProceed: true
+    autoProceed: true,
   })
     .use(DragDrop, {
-      target: '#uppyDragDrop'
+      target: '#uppyDragDrop',
     })
     .use(ProgressBar, { target: '#uppyDragDrop-progress', hideAfterFinish: false })
-    .use(Tus, { endpoint: 'https://master.tus.io/files/' })
+    .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 
   window.uppy = uppyDragDrop
 

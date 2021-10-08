@@ -1,6 +1,4 @@
 /* eslint-disable */
-require('es6-promise/auto')
-require('whatwg-fetch')
 const Uppy = require('@uppy/core')
 const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const FileInput = require('@uppy/file-input')

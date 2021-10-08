@@ -1,25 +1,30 @@
-import React = require('react')
-import Uppy = require('@uppy/core')
-import { expectError } from 'tsd'
-import * as components from '../'
+import * as React from "react"
+import Uppy from "@uppy/core"
+import { expectType, expectError } from "tsd"
+import * as components from "../"
 
-const uppy = Uppy<Uppy.StrictTypes>()
+const { useUppy } = components
 
-function TestComponent() {
+const uppy = new Uppy()
+
+{
+  function TestComponent() {
     return (
-        <components.Dashboard
-            uppy={uppy}
-            closeAfterFinish
-            hideCancelButton
-        />
+      <components.Dashboard uppy={uppy} closeAfterFinish hideCancelButton />
     )
+  }
+}
+
+{
+  expectError(<components.Dashboard target="body"/>)
 }
 
 // inline option should be removed from proptypes because it is always overridden
 // by the component
-expectError(<components.Dashboard inline />)
-expectError(<components.DashboardModal inline />)
-expectError(<components.DashboardModal replaceTargetContent />)
+{
+  expectError(<components.Dashboard inline />)
+  expectError(<components.DashboardModal inline />)
+}
 
 {
   const el = (
@@ -34,8 +39,8 @@ expectError(<components.DashboardModal replaceTargetContent />)
           // `%{browse}` is replaced with a link that opens the system file selection dialog.
           dropHereOr: "Drop here or %{browse}",
           // Used as the label for the link that opens the system file selection dialog.
-          browse: "browse"
-        }
+          browse: "browse",
+        },
       }}
     />
   )
@@ -44,15 +49,24 @@ expectError(<components.DashboardModal replaceTargetContent />)
 {
   const el = (
     <components.DashboardModal
+      target="body"
       uppy={uppy}
       open
       animateOpenClose
       onRequestClose={() => {
-        alert('no')
+        alert("no")
       }}
     />
   )
 
   // use onRequestClose instead.
   expectError(<components.DashboardModal onRequestCloseModal />)
+}
+
+{
+  function TestHook() {
+    expectType<Uppy>(useUppy(() => uppy))
+    expectType<Uppy>(useUppy(() => new Uppy()))
+    expectError(useUppy(uppy))
+  }
 }

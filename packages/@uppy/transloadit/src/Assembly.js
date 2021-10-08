@@ -1,9 +1,8 @@
-const io = requireSocketIo
 const Emitter = require('component-emitter')
 const has = require('@uppy/utils/lib/hasProperty')
-const parseUrl = require('./parseUrl')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
+const parseUrl = require('./parseUrl')
 
 // Lazy load socket.io to avoid a console error
 // in IE 10 when the Transloadit plugin is not used.
@@ -12,9 +11,8 @@ const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
 // at all…)
 let socketIo
 function requireSocketIo () {
-  if (!socketIo) {
-    socketIo = require('socket.io-client')
-  }
+  // eslint-disable-next-line global-require
+  socketIo ??= require('socket.io-client')
   return socketIo
 }
 
@@ -25,7 +23,7 @@ const ASSEMBLY_COMPLETED = 'ASSEMBLY_COMPLETED'
 const statusOrder = [
   ASSEMBLY_UPLOADING,
   ASSEMBLY_EXECUTING,
-  ASSEMBLY_COMPLETED
+  ASSEMBLY_COMPLETED,
 ]
 
 /**
@@ -57,42 +55,42 @@ class TransloaditAssembly extends Emitter {
   }
 
   connect () {
-    this._connectSocket()
-    this._beginPolling()
+    this.#connectSocket()
+    this.#beginPolling()
   }
 
-  _onFinished () {
+  #onFinished () {
     this.emit('finished')
     this.close()
   }
 
-  _connectSocket () {
+  #connectSocket () {
     const parsed = parseUrl(this.status.websocket_url)
-    const socket = io().connect(parsed.origin, {
+    const socket = requireSocketIo().connect(parsed.origin, {
       transports: ['websocket'],
-      path: parsed.pathname
+      path: parsed.pathname,
     })
 
     socket.on('connect', () => {
       socket.emit('assembly_connect', {
-        id: this.status.assembly_id
+        id: this.status.assembly_id,
       })
 
       this.emit('connect')
     })
 
     socket.on('connect_failed', () => {
-      this._onError(new NetworkError('Transloadit Socket.io connection error'))
+      this.#onError(new NetworkError('Transloadit Socket.io connection error'))
       this.socket = null
     })
 
-    socket.on('error', () => {
+    socket.on('connect_error', () => {
       socket.disconnect()
       this.socket = null
     })
 
     socket.on('assembly_finished', () => {
-      this._onFinished()
+      this.#onFinished()
     })
 
     socket.on('assembly_upload_finished', (file) => {
@@ -106,7 +104,7 @@ class TransloaditAssembly extends Emitter {
 
     socket.on('assembly_upload_meta_data_extracted', () => {
       this.emit('metadata')
-      this._fetchStatus({ diff: false })
+      this.#fetchStatus({ diff: false })
     })
 
     socket.on('assembly_result_finished', (stepName, result) => {
@@ -118,15 +116,15 @@ class TransloaditAssembly extends Emitter {
     })
 
     socket.on('assembly_error', (err) => {
-      this._onError(err)
+      this.#onError(err)
       // Refetch for updated status code
-      this._fetchStatus({ diff: false })
+      this.#fetchStatus({ diff: false })
     })
 
     this.socket = socket
   }
 
-  _onError (err) {
+  #onError (err) {
     this.emit('error', Object.assign(new Error(err.message), err))
   }
 
@@ -136,10 +134,10 @@ class TransloaditAssembly extends Emitter {
    * If the socket connection fails or takes a long time, we won't miss any
    * events.
    */
-  _beginPolling () {
+  #beginPolling () {
     this.pollInterval = setInterval(() => {
       if (!this.socket || !this.socket.connected) {
-        this._fetchStatus()
+        this.#fetchStatus()
       }
     }, 2000)
   }
@@ -150,7 +148,7 @@ class TransloaditAssembly extends Emitter {
    * Pass `diff: false` to avoid emitting diff events, instead only emitting
    * 'status'.
    */
-  _fetchStatus ({ diff = true } = {}) {
+  #fetchStatus ({ diff = true } = {}) {
     return fetchWithNetworkError(this.status.assembly_ssl_url)
       .then((response) => response.json())
       .then((status) => {
@@ -164,11 +162,11 @@ class TransloaditAssembly extends Emitter {
           this.status = status
         }
       })
-      .catch((err) => this._onError(err))
+      .catch((err) => this.#onError(err))
   }
 
   update () {
-    return this._fetchStatus({ diff: true })
+    return this.#fetchStatus({ diff: true })
   }
 
   /**
@@ -178,7 +176,7 @@ class TransloaditAssembly extends Emitter {
    * @param {object} next The new assembly status object.
    */
   updateStatus (next) {
-    this._diffStatus(this.status, next)
+    this.#diffStatus(this.status, next)
     this.status = next
   }
 
@@ -189,12 +187,12 @@ class TransloaditAssembly extends Emitter {
    * @param {object} prev The previous assembly status.
    * @param {object} next The new assembly status.
    */
-  _diffStatus (prev, next) {
+  #diffStatus (prev, next) {
     const prevStatus = prev.ok
     const nextStatus = next.ok
 
     if (next.error && !prev.error) {
-      return this._onError(next)
+      return this.#onError(next)
     }
 
     // Desired emit order:
@@ -206,9 +204,9 @@ class TransloaditAssembly extends Emitter {
     // The below checks run in this order, that way even if we jump from
     // UPLOADING straight to FINISHED all the events are emitted as expected.
 
-    const nowExecuting =
-      isStatus(nextStatus, ASSEMBLY_EXECUTING) &&
-      !isStatus(prevStatus, ASSEMBLY_EXECUTING)
+    const nowExecuting
+      = isStatus(nextStatus, ASSEMBLY_EXECUTING)
+      && !isStatus(prevStatus, ASSEMBLY_EXECUTING)
     if (nowExecuting) {
       // Without WebSockets, this is our only way to tell if uploading finished.
       // Hence, we emit this just before the 'upload's and before the 'metadata'
@@ -220,9 +218,8 @@ class TransloaditAssembly extends Emitter {
     // Find new uploaded files.
     Object.keys(next.uploads)
       .filter((upload) => !has(prev.uploads, upload))
-      .map((upload) => next.uploads[upload])
       .forEach((upload) => {
-        this.emit('upload', upload)
+        this.emit('upload', next.uploads[upload])
       })
 
     if (nowExecuting) {
@@ -241,10 +238,12 @@ class TransloaditAssembly extends Emitter {
         })
     })
 
-    if (isStatus(nextStatus, ASSEMBLY_COMPLETED) &&
-        !isStatus(prevStatus, ASSEMBLY_COMPLETED)) {
+    if (isStatus(nextStatus, ASSEMBLY_COMPLETED)
+        && !isStatus(prevStatus, ASSEMBLY_COMPLETED)) {
       this.emit('finished')
     }
+
+    return undefined
   }
 
   /**

@@ -13,7 +13,7 @@ The `@uppy/webcam` plugin lets you take photos and record videos with a built-in
 > To use the Webcam plugin in Chrome, [your site must be served over https](https://developers.google.com/web/updates/2015/10/chrome-47-webrtc#public_service_announcements). This restriction does not apply on `localhost`, so you don't have to jump through many hoops during development.
 
 ```js
-const Webcam = require('@uppy/webcam')
+import Webcam from '@uppy/webcam'
 
 uppy.use(Webcam, {
   // Options
@@ -35,7 +35,7 @@ npm install @uppy/webcam
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Webcam = Uppy.Webcam
+const { Webcam } = Uppy
 ```
 
 ## CSS
@@ -61,7 +61,7 @@ uppy.use(Webcam, {
     'video-audio',
     'video-only',
     'audio-only',
-    'picture'
+    'picture',
   ],
   mirror: true,
   videoConstraints: {
@@ -72,7 +72,7 @@ uppy.use(Webcam, {
   showRecordingLength: false,
   preferredVideoMimeType: null,
   preferredImageMimeType: null,
-  locale: {}
+  locale: {},
 })
 ```
 
@@ -132,6 +132,10 @@ For a full list of available properties, see MDN's [MediaTrackConstraints][] doc
 [`height`]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/height
 [`facingMode`]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/facingMode
 
+### `showVideoSourceDropdown: false`
+
+Configures whether or not to show a dropdown which enables to choose the video device to use. This option will have priority over `facingMode` if enabled. The default is `false`.
+
 ### `showRecordingLength: false`
 
 Configures whether or not to show the length of the recording while the recording is in progress. The default is `false`.
@@ -155,7 +159,7 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
+const strings = {
   // Shown before a picture is taken when the `countdown` option is set.
   smile: 'Smile!',
   // Used as the label for the button that takes a picture.
@@ -173,6 +177,6 @@ strings: {
   // Title on the “allow access” screen
   allowAccessTitle: 'Please allow access to your camera',
   // Description on the “allow access” screen
-  allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.'
+  allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
 }
 ```

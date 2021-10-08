@@ -1,58 +1,137 @@
-const classNames = require('classnames')
-const Breadcrumbs = require('./Breadcrumbs')
-const Filter = require('./Filter')
-const ItemList = require('./ItemList')
-const FooterActions = require('./FooterActions')
 const { h } = require('preact')
+const classNames = require('classnames')
 
-const Browser = (props) => {
-  let filteredFolders = props.folders
-  let filteredFiles = props.files
+const remoteFileObjToLocal = require('@uppy/utils/lib/remoteFileObjToLocal')
 
-  if (props.filterInput !== '') {
-    filteredFolders = props.filterItems(props.folders)
-    filteredFiles = props.filterItems(props.files)
-  }
+const Filter = require('./Filter')
+const FooterActions = require('./FooterActions')
+const Item = require('./Item/index')
 
-  const selected = props.currentSelection.length
+const VIRTUAL_SHARED_DIR = 'shared-with-me'
+
+function Browser (props) {
+  const {
+    currentSelection,
+    folders,
+    files,
+    uppyFiles,
+    viewType,
+    headerComponent,
+    showBreadcrumbs,
+    isChecked,
+    toggleCheckbox,
+    handleScroll,
+    showTitles,
+    i18n,
+    validateRestrictions,
+    showFilter,
+    filterQuery,
+    filterInput,
+    getNextFolder,
+    cancel,
+    done,
+    columns,
+  } = props
+
+  const selected = currentSelection.length
 
   return (
-    <div class={classNames('uppy-ProviderBrowser', `uppy-ProviderBrowser-viewType--${props.viewType}`)}>
-      <div class="uppy-ProviderBrowser-header">
-        <div class={classNames('uppy-ProviderBrowser-headerBar', !props.showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple')}>
-          {props.showBreadcrumbs && Breadcrumbs({
-            getFolder: props.getFolder,
-            directories: props.directories,
-            breadcrumbsIcon: props.pluginIcon && props.pluginIcon(),
-            title: props.title
-          })}
-          <span class="uppy-ProviderBrowser-user">{props.username}</span>
-          <button type="button" onclick={props.logout} class="uppy-u-reset uppy-ProviderBrowser-userLogout">
-            {props.i18n('logOut')}
-          </button>
+    <div
+      className={classNames(
+        'uppy-ProviderBrowser',
+        `uppy-ProviderBrowser-viewType--${viewType}`
+      )}
+    >
+      <div className="uppy-ProviderBrowser-header">
+        <div
+          className={classNames(
+            'uppy-ProviderBrowser-headerBar',
+            !showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple'
+          )}
+        >
+          {headerComponent}
         </div>
       </div>
-      {props.showFilter && <Filter {...props} />}
-      <ItemList
-        columns={[{
-          name: 'Name',
-          key: 'title'
-        }]}
-        folders={filteredFolders}
-        files={filteredFiles}
-        activeRow={props.isActiveRow}
-        sortByTitle={props.sortByTitle}
-        sortByDate={props.sortByDate}
-        isChecked={props.isChecked}
-        handleFolderClick={props.getNextFolder}
-        toggleCheckbox={props.toggleCheckbox}
-        handleScroll={props.handleScroll}
-        title={props.title}
-        showTitles={props.showTitles}
-        i18n={props.i18n}
-        viewType={props.viewType}
-      />
-      {selected > 0 && <FooterActions selected={selected} {...props} />}
+
+      {showFilter && (
+        <Filter
+          i18n={i18n}
+          filterQuery={filterQuery}
+          filterInput={filterInput}
+        />
+      )}
+
+      {(() => {
+        if (!folders.length && !files.length) {
+          return (
+            <div className="uppy-Provider-empty">
+              {props.i18n('noFilesFound')}
+            </div>
+          )
+        }
+
+        return (
+          <div className="uppy-ProviderBrowser-body">
+            <ul
+              className="uppy-ProviderBrowser-list"
+              onScroll={handleScroll}
+              role="listbox"
+              // making <ul> not focusable for firefox
+              tabIndex="-1"
+            >
+              {folders.map((folder) => {
+                return Item({
+                  columns,
+                  showTitles,
+                  viewType,
+                  i18n,
+                  id: folder.id,
+                  title: folder.name,
+                  getItemIcon: () => folder.icon,
+                  isChecked: isChecked(folder),
+                  toggleCheckbox: (event) => toggleCheckbox(event, folder),
+                  type: 'folder',
+                  isDisabled: isChecked(folder)?.loading,
+                  isCheckboxDisabled: folder.id === VIRTUAL_SHARED_DIR,
+                  handleFolderClick: () => getNextFolder(folder),
+                })
+              })}
+
+              {files.map((file) => {
+                const validated = validateRestrictions(
+                  remoteFileObjToLocal(file),
+                  [...uppyFiles, ...currentSelection]
+                )
+
+                return Item({
+                  id: file.id,
+                  title: file.name,
+                  author: file.author,
+                  getItemIcon: () => file.icon,
+                  isChecked: isChecked(file),
+                  toggleCheckbox: (event) => toggleCheckbox(event, file),
+                  columns,
+                  showTitles,
+                  viewType,
+                  i18n,
+                  type: 'file',
+                  isDisabled: !validated.result && isChecked(file),
+                  restrictionReason: validated.reason,
+                })
+              })}
+            </ul>
+          </div>
+        )
+      })()}
+
+      {selected > 0 && (
+        <FooterActions
+          selected={selected}
+          done={done}
+          cancel={cancel}
+          i18n={i18n}
+        />
+      )}
     </div>
   )
 }

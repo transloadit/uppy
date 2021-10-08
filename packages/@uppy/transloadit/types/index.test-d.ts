@@ -1,19 +1,20 @@
 import { expectError, expectType } from 'tsd'
-import Uppy = require('@uppy/core')
-import Transloadit = require('../')
+import Uppy from '@uppy/core'
+import type { UppyFile } from '@uppy/core'
+import Transloadit from '..'
 
 expectType<string>(Transloadit.COMPANION)
 expectType<RegExp>(Transloadit.COMPANION_PATTERN)
 
 const validParams = {
-  auth: { key: 'not so secret key' }
+  auth: { key: 'not so secret key' },
 }
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = new Uppy()
   uppy.use(Transloadit, {
     getAssemblyOptions (file) {
-      expectType<Uppy.UppyFile>(file)
+      expectType<UppyFile>(file)
       return { params: validParams }
     },
     waitForEncoding: false,
@@ -21,13 +22,23 @@ const validParams = {
     importFromUploadURLs: false,
     params: {
       auth: { key: 'abc' },
-      steps: {}
-    }
+      steps: {},
+    },
+  })
+  // Access to both transloadit events and core events
+  uppy.on('transloadit:assembly-created', (assembly) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const status = assembly.ok
+  })
+
+  uppy.on('complete', (result) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const success = result.successful
   })
 }
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = new Uppy()
   // must be bools
   expectError(
     uppy.use(Transloadit, { waitForEncoding: null, params: validParams })
@@ -38,29 +49,29 @@ const validParams = {
 }
 
 {
-  const uppy = Uppy<Uppy.StrictTypes>()
+  const uppy = new Uppy()
   // params.auth.key must be string
   expectError(uppy.use(Transloadit, { params: {} }))
   expectError(uppy.use(Transloadit, { params: { auth: {} } }))
   expectError(
     uppy.use(Transloadit, {
       params: {
-        auth: { key: null }
-      }
+        auth: { key: null },
+      },
     })
   )
   expectError(
     uppy.use(Transloadit, {
       params: {
         auth: { key: 'abc' },
-        steps: 'test'
-      }
+        steps: 'test',
+      },
     })
   )
   uppy.use(Transloadit, {
     params: {
       auth: { key: 'abc' },
-      steps: { name: {} }
-    }
+      steps: { name: {} },
+    },
   })
 }

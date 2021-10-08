@@ -43,7 +43,7 @@ ko_KR.strings = {
   encoding: '인코딩 중...',
   enterCorrectUrl: '옳지 않은 URL: 파일 주소를 확인해 주세요.',
   enterUrlToImport: '파일 URL을 입력해 주세요.',
-  exceedsSize: '업로드 허용 용량 초과',
+  exceedsSize: '업로드 허용 용량 초과 %{size}',
   failedToFetch: 'URL 가져오기 실패. 주소를 확인해 주세요.',
   failedToUpload: '%{file} 업로드 실패',
   fileSource: '파일 소스: %{name}',
@@ -63,7 +63,7 @@ ko_KR.strings = {
   pause: '일시정지',
   pauseUpload: '업로드 일시정지',
   paused: '일시정지 됨',
-  poweredBy: 'Powered by',
+  poweredBy: 'Powered by %{uppy}',
   processingXFiles: '%{smart_count}개의 파일 처리 중',
   removeFile: '파일 제거',
   resetFilter: '필터 초기화',
@@ -72,7 +72,6 @@ ko_KR.strings = {
   retry: '재시도',
   retryUpload: '업로드 재시도',
   saveChanges: '변경사항 저장',
-  selectAllFilesFromFolderNamed: '%{name} 폴더의 모든 파일 선택',
   selectFileNamed: '%{name} 파일 선택',
   selectX: '%{smart_count}개 선택',
   smile: 'Smile!',
@@ -80,7 +79,6 @@ ko_KR.strings = {
   stopRecording: '비디오 녹화 정지',
   takePicture: '사진 촬영',
   timedOut: '%{seconds}초 동안 업로드 정지되어 업로드를 취소합니다.',
-  unselectAllFilesFromFolderNamed: '%{name} 폴더의 모든 파일 선택 해제',
   unselectFileNamed: '%{name} 파일 선택 해제',
   upload: '업로드',
   uploadComplete: '업로드 완료',
@@ -95,10 +93,10 @@ ko_KR.strings = {
   xTimeLeft: '%{time} 남음',
   youCanOnlyUploadFileTypes: '업로드 가능 형식: %{types}',
   youCanOnlyUploadX: '%{smart_count}개의 파일만 업로드할 수 있습니다',
-  youHaveToAtLeastSelectX: '최소 %{smart_count}개의 파일을 선택해야 합니다'
+  youHaveToAtLeastSelectX: '최소 %{smart_count}개의 파일을 선택해야 합니다',
 }
 
-ko_KR.pluralize = function (n) {
+ko_KR.pluralize = function pluralize () {
   return 0
 }
 

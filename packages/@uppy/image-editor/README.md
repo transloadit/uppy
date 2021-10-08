@@ -3,7 +3,7 @@
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
 <a href="https://www.npmjs.com/package/@uppy/image-editor"><img src="https://img.shields.io/npm/v/@uppy/image-editor.svg?style=flat-square"></a>
-<a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
+<img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
 
 Image Editor is an image cropping and editing plugin for Uppy. Designed to be used with the Dashboard UI (can in theory work without it).
 
@@ -16,15 +16,15 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const ImageEditor = require('@uppy/image-editor')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import ImageEditor from '@uppy/image-editor'
 
-const uppy = Uppy()
+const uppy = new Uppy()
 uppy.use(Dashboard)
-uppy.use(ImageEditor, { 
+uppy.use(ImageEditor, {
   target: Dashboard,
-  quality: 0.7
+  quality: 0.7,
 })
 ```
 

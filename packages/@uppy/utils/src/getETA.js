@@ -6,7 +6,7 @@ module.exports = function getETA (fileProgress) {
 
   const uploadSpeed = getSpeed(fileProgress)
   const bytesRemaining = getBytesRemaining(fileProgress)
-  const secondsRemaining = Math.round(bytesRemaining / uploadSpeed * 10) / 10
+  const secondsRemaining = Math.round((bytesRemaining / uploadSpeed) * 10) / 10
 
   return secondsRemaining
 }

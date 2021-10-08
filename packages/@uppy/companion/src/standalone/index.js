@@ -1,44 +1,25 @@
 const express = require('express')
 const qs = require('querystring')
-const companion = require('../companion')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
-const redis = require('../server/redis')
-const logger = require('../server/logger')
 const { URL } = require('url')
 const merge = require('lodash.merge')
-// @ts-ignore
-const promBundle = require('express-prom-bundle')
 const session = require('express-session')
 const addRequestId = require('express-request-id')()
+const logger = require('../server/logger')
+const redis = require('../server/redis')
+const companion = require('../companion')
 const helper = require('./helper')
-// @ts-ignore
-const { version } = require('../../package.json')
+const middlewares = require('../server/middlewares')
 
 /**
  * Configures an Express app for running Companion standalone
  *
  * @returns {object}
  */
-function server (moreCompanionOptions = {}) {
+module.exports = function server (inputCompanionOptions = {}) {
   const app = express()
-
-  // for server metrics tracking.
-  const metricsMiddleware = promBundle({ includeMethod: true })
-  const promClient = metricsMiddleware.promClient
-  const collectDefaultMetrics = promClient.collectDefaultMetrics
-  const promInterval = collectDefaultMetrics({ register: promClient.register, timeout: 5000 })
-
-  // Add version as a prometheus gauge
-  const versionGauge = new promClient.Gauge({ name: 'companion_version', help: 'npm version as an integer' })
-  // @ts-ignore
-  const numberVersion = version.replace(/\D/g, '') * 1
-  versionGauge.set(numberVersion)
-
-  if (app.get('env') !== 'test') {
-    clearInterval(promInterval)
-  }
 
   // Query string keys whose values should not end up in logging output.
   const sensitiveKeys = new Set(['access_token', 'uppyAuthToken'])
@@ -48,16 +29,17 @@ function server (moreCompanionOptions = {}) {
    *
    * Returns a copy of the object with unknown types removed and sensitive values replaced by ***.
    *
-   * The input type is more broad that it needs to be, this way typescript can help us guarantee that we're dealing with all possible inputs :)
+   * The input type is more broad that it needs to be, this way typescript can help us guarantee that we're dealing with all
+   * possible inputs :)
    *
-   * @param {{ [key: string]: any }} rawQuery
+   * @param {Record<string, any>} rawQuery
    * @returns {{
-   *   query: { [key: string]: string },
+   *   query: Record<string, any>,
    *   censored: boolean
    * }}
    */
   function censorQuery (rawQuery) {
-    /** @type {{ [key: string]: string }} */
+    /** @type {Record<string, any>} */
     const query = {}
     let censored = false
     Object.keys(rawQuery).forEach((key) => {
@@ -78,23 +60,34 @@ function server (moreCompanionOptions = {}) {
   app.use(addRequestId)
   // log server requests.
   app.use(morgan('combined'))
-  morgan.token('url', (req, res) => {
+  morgan.token('url', (req) => {
     const { query, censored } = censorQuery(req.query)
     return censored ? `${req.path}?${qs.stringify(query)}` : req.originalUrl || req.url
   })
 
-  morgan.token('referrer', (req, res) => {
+  morgan.token('referrer', (req) => {
     const ref = req.headers.referer || req.headers.referrer
     if (typeof ref === 'string') {
-      const parsed = new URL(ref)
+      let parsed
+      try {
+        parsed = new URL(ref)
+      } catch (_) {
+        return ref
+      }
       const rawQuery = qs.parse(parsed.search.replace('?', ''))
       const { query, censored } = censorQuery(rawQuery)
       return censored ? `${parsed.href.split('?')[0]}?${qs.stringify(query)}` : parsed.href
     }
   })
 
+  // for server metrics tracking.
   // make app metrics available at '/metrics'.
-  app.use(metricsMiddleware)
+  // TODO for the next major version: use instead companion option "metrics": true and remove this code
+  // eslint-disable-next-line max-len
+  // See discussion: https://github.com/transloadit/uppy/pull/2854/files/64be97205e4012818abfcc8b0b8b7fe09de91729#diff-68f5e3eb307c1c9d1fd02224fd7888e2f74718744e1b6e35d929fcab1cc50ed1
+  if (process.env.COMPANION_HIDE_METRICS !== 'true') {
+    app.use(middlewares.metrics())
+  }
 
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: false }))
@@ -106,11 +99,21 @@ function server (moreCompanionOptions = {}) {
   app.use(helmet.ieNoOpen())
   app.disable('x-powered-by')
 
+  let corsOrigins
+  if (process.env.COMPANION_CLIENT_ORIGINS) {
+    corsOrigins = process.env.COMPANION_CLIENT_ORIGINS
+      .split(',')
+      .map((url) => (helper.hasProtocol(url) ? url : `${process.env.COMPANION_PROTOCOL || 'http'}://${url}`))
+  } else if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
+    corsOrigins = new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
+  }
+
+  const moreCompanionOptions = { ...inputCompanionOptions, corsOrigins }
   const companionOptions = helper.getCompanionOptions(moreCompanionOptions)
   const sessionOptions = {
     secret: companionOptions.secret,
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
   }
 
   if (companionOptions.redisUrl) {
@@ -124,60 +127,31 @@ function server (moreCompanionOptions = {}) {
   if (process.env.COMPANION_COOKIE_DOMAIN) {
     sessionOptions.cookie = {
       domain: process.env.COMPANION_COOKIE_DOMAIN,
-      maxAge: 24 * 60 * 60 * 1000 // 1 day
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
     }
   }
 
   app.use(session(sessionOptions))
 
-  app.use((req, res, next) => {
-    const protocol = process.env.COMPANION_PROTOCOL || 'http'
-
-    // if endpoint urls are specified, then we only allow those endpoints
-    // otherwise, we allow any client url to access companion.
-    // here we also enforce that only the protocol allowed by companion is used.
-    if (process.env.COMPANION_CLIENT_ORIGINS) {
-      const whitelist = process.env.COMPANION_CLIENT_ORIGINS
-        .split(',')
-        .map((url) => helper.hasProtocol(url) ? url : `${protocol}://${url}`)
-
-      // @ts-ignore
-      if (req.headers.origin && whitelist.indexOf(req.headers.origin) > -1) {
-        res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
-        // only allow credentials when origin is whitelisted
-        res.setHeader('Access-Control-Allow-Credentials', 'true')
-      }
-    } else {
-      res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
-    }
-
-    res.setHeader(
-      'Access-Control-Allow-Methods',
-      'GET, POST, OPTIONS, PUT, PATCH, DELETE'
-    )
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      'Authorization, Origin, Content-Type, Accept'
-    )
-    next()
-  })
-
   // Routes
-  app.get('/', (req, res) => {
-    res.setHeader('Content-Type', 'text/plain')
-    res.send(helper.buildHelpfulStartupMessage(companionOptions))
-  })
+  if (process.env.COMPANION_HIDE_WELCOME !== 'true') {
+    app.get('/', (req, res) => {
+      res.setHeader('Content-Type', 'text/plain')
+      res.send(helper.buildHelpfulStartupMessage(companionOptions))
+    })
+  }
 
   let companionApp
   try {
     // initialize companion
     companionApp = companion.app(companionOptions)
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('\x1b[31m', error.message, '\x1b[0m')
     process.exit(1)
   }
 
-  // add companion to server middlewear
+  // add companion to server middleware
   if (process.env.COMPANION_PATH) {
     app.use(process.env.COMPANION_PATH, companionApp)
   } else {
@@ -193,11 +167,12 @@ function server (moreCompanionOptions = {}) {
     app.get('/.well-known/microsoft-identity-association.json', (req, res) => {
       const content = JSON.stringify({
         associatedApplications: [
-          { applicationId: process.env.COMPANION_ONEDRIVE_KEY }
-        ]
+          { applicationId: process.env.COMPANION_ONEDRIVE_KEY },
+        ],
       })
       res.header('Content-Length', `${Buffer.byteLength(content, 'utf8')}`)
       // use writeHead to prevent 'charset' from being appended
+      // eslint-disable-next-line max-len
       // https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-configure-publisher-domain#to-select-a-verified-domain
       res.writeHead(200, { 'Content-Type': 'application/json' })
       res.write(content)
@@ -205,12 +180,12 @@ function server (moreCompanionOptions = {}) {
     })
   }
 
-  app.use((req, res, next) => {
+  app.use((req, res) => {
     return res.status(404).json({ message: 'Not Found' })
   })
 
   // @ts-ignore
-  app.use((err, req, res, next) => {
+  app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     const logStackTrace = true
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message
@@ -229,6 +204,3 @@ function server (moreCompanionOptions = {}) {
 
   return { app, companionOptions }
 }
-
-const { app, companionOptions } = server()
-module.exports = { app, companionOptions, server }

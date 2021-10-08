@@ -1,8 +1,8 @@
 import * as DocumentPicker from 'expo-document-picker'
 
-function selectDocumentWithExpo (options) {
+function selectDocumentWithExpo () {
   return DocumentPicker.getDocumentAsync({
-    copyToCacheDirectory: false
+    copyToCacheDirectory: false,
   }).then((result) => {
     if (!result.cancelled && result.type !== 'cancel') {
       return result

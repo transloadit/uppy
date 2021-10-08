@@ -6,7 +6,7 @@ module: "@uppy/companion"
 permalink: docs/companion/
 alias: docs/server/
 category: "Docs"
-tagline: "Server-side proxy that enables remote sources like Instagram, Google Drive, S3"
+tagline: "Server-side proxy that enables remote sources like Instagram, Google Drive, and Dropbox"
 ---
 
 Drag and drop, webcam, basic file manipulation (adding metadata, for example) and uploading via tus-resumable uploads or XHR/Multipart are all possible using just the Uppy client module.
@@ -21,6 +21,7 @@ As of now, Companion is integrated to work with:
 
 - Google Drive (name `drive`) - [Set up instructions](/docs/google-drive/#Setting-Up)
 - Dropbox (name `dropbox`) - [Set up instructions](/docs/dropbox/#Setting-Up)
+- Box (name `box`) - [Set up instructions](/docs/box/#Setting-Up)
 - Instagram (name `instagram`)
 - Facebook (name `facebook`)
 - OneDrive (name `onedrive`)
@@ -35,7 +36,7 @@ Install from NPM:
 npm install @uppy/companion
 ```
 
-If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@1.x`.
+If you don't have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@2.x`.
 
 ### Prerequisite
 
@@ -49,56 +50,54 @@ Companion may either be used as a pluggable express app, which you plug into you
 
 ### Plugging into an already existing server
 
-To plug Companion into an existing server, call its `.app` method, passing in an [options](#Options) object as a parameter.
+To plug Companion into an existing server, call its `.app` method, passing in an [options](#Options) object as a parameter. This returns a server instance that you can mount on a subpath in your Express or app.
 
-```javascript
+```js
+import express from 'express'
+import bodyParser from 'body-parser'
+import session from 'express-session'
+import companion from '@uppy/companion'
 
-var express = require('express')
-var bodyParser = require('body-parser')
-var session = require('express-session')
-var companion = require('@uppy/companion')
+const app = express()
 
-var app = express()
+// Companion requires body-parser and express-session middleware.
+// You can add it like this if you use those throughout your app.
+//
+// If you are using something else in your app, you can add these
+// middlewares in the same subpath as Companion instead.
 app.use(bodyParser.json())
-app.use(session({secret: 'some secrety secret'}))
-...
-// be sure to place this anywhere after app.use(bodyParser.json()) and app.use(session({...})
+app.use(session({ secret: 'some secrety secret' }))
+
 const options = {
   providerOptions: {
     drive: {
       key: 'GOOGLE_DRIVE_KEY',
-      secret: 'GOOGLE_DRIVE_SECRET'
-    }
+      secret: 'GOOGLE_DRIVE_SECRET',
+    },
   },
   server: {
     host: 'localhost:3020',
     protocol: 'http',
+    // This MUST match the path you specify in `app.use()` below:
+    path: '/companion',
   },
-  filePath: '/path/to/folder/'
+  filePath: '/path/to/folder/',
 }
 
-app.use(companion.app(options))
-
-```
-
-please be sure to allow the following HTTP methods in your server like so:
-
-```javascript
-res.header("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PATCH, PUT");
+app.use('/companion', companion.app(options))
 ```
 
 See [Options](#Options) for valid configuration options.
 
-To use WebSockets for realtime upload progress, you can call the `socket` method, like so:
+Then, add the Companion WebSocket server for realtime upload progress, using the `companion.socket` function:
 
-```javascript
-...
-var server = app.listen(PORT)
+```js
+const server = app.listen(PORT)
 
 companion.socket(server, options)
 ```
 
-This takes your `server` instance and your Uppy [Options](#Options) as parameters.
+This takes your `server` instance and [Options](#Options) as parameters.
 
 ### Running as a standalone server
 
@@ -150,6 +149,10 @@ export COMPANION_PROTOCOL="YOUR SERVER PROTOCOL"
 export COMPANION_PORT="YOUR SERVER PORT"
 # corresponds to the server.port option, defaults to ''
 export COMPANION_PATH="/SERVER/PATH/TO/WHERE/COMPANION/LIVES"
+# disables the welcome page, defaults to false
+export COMPANION_HIDE_WELCOME="true"
+# disables the metrics page, defaults to false
+export COMPANION_HIDE_METRICS="true"
 
 # use this in place of COMPANION_PATH if the server path should not be
 # handled by the express.js app, but maybe by an external server configuration
@@ -157,8 +160,12 @@ export COMPANION_PATH="/SERVER/PATH/TO/WHERE/COMPANION/LIVES"
 export COMPANION_IMPLICIT_PATH="/SERVER/PATH/TO/WHERE/UPPY/SERVER/LIVES"
 
 # comma-separated client hosts to whitlelist by the server
-# if not specified, the server would allow any host
+# if neither this or COMPANION_CLIENT_ORIGINS_REGEX specified, the server would allow any host
 export COMPANION_CLIENT_ORIGINS="localhost:3452,uppy.io"
+
+# Like COMPANION_CLIENT_ORIGINS, but allows a single regex instead
+# (COMPANION_CLIENT_ORIGINS will be ignored if this is used and vice versa)
+export COMPANION_CLIENT_ORIGINS_REGEX="https://.*\.example\.(com|eu)$"
 
 # corresponds to the redisUrl option
 # this also enables Redis session storage if set
@@ -169,6 +176,12 @@ export COMPANION_DROPBOX_KEY="YOUR DROPBOX KEY"
 export COMPANION_DROPBOX_SECRET="YOUR DROPBOX SECRET"
 # specifying a secret file will override a directly set secret
 export COMPANION_DROPBOX_SECRET_FILE="PATH/TO/DROPBOX/SECRET/FILE"
+
+# to enable Box
+export COMPANION_BOX_KEY="YOUR BOX KEY"
+export COMPANION_BOX_SECRET="YOUR BOX SECRET"
+# specifying a secret file will override a directly set secret
+export COMPANION_BOX_SECRET_FILE="PATH/TO/BOX/SECRET/FILE"
 
 # to enable Google Drive
 export COMPANION_GOOGLE_KEY="YOUR GOOGLE DRIVE KEY"
@@ -223,8 +236,8 @@ export COMPANION_DOMAINS="sub1.domain.com,sub2.domain.com,sub3.domain.com"
 export COMPANION_SELF_ENDPOINT="THIS SHOULD BE SAME AS YOUR DOMAIN + PATH"
 
 # comma-separated URLs
-# corresponds to the uploadUrls option
-export COMPANION_UPLOAD_URLS="http://master.tus.io/files/,https://master.tus.io/files/"
+# corresponds to the uploadUrls option (comma-separated)
+export COMPANION_UPLOAD_URLS="http://tusd.tusdemo.net/files/,https://tusd.tusdemo.net/files/"
 ```
 
 See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example.sh) for an example configuration script.
@@ -232,77 +245,84 @@ See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example
 ### Options
 
 ```javascript
-{
+const options = {
   providerOptions: {
     drive: {
-      key: "***",
-      secret: "***"
+      key: '***',
+      secret: '***',
     },
     dropbox: {
-      key: "***",
-      secret: "***"
+      key: '***',
+      secret: '***',
     },
     instagram: {
-      key: "***",
-      secret: "***"
+      key: '***',
+      secret: '***',
     },
     facebook: {
-      key: "***",
-      secret: "***"
+      key: '***',
+      secret: '***',
     },
     onedrive: {
-      key: "***",
-      secret: "***"
+      key: '***',
+      secret: '***',
     },
     s3: {
       getKey: (req, filename, metadata) => filename,
-      key: "***",
-      secret: "***",
-      bucket: "bucket-name",
-      region: "us-east-1",
+      key: '***',
+      secret: '***',
+      bucket: 'bucket-name',
+      region: 'us-east-1',
       useAccelerateEndpoint: false, // default: false,
       expires: 3600, // default: 300 (5 minutes)
-      acl: "private" // default: public-read
-    }
+      acl: 'private', // default: public-read
+    },
   },
   server: {
-    host: "localhost:3020", // or yourdomain.com
-    protocol: "http"
+    host: 'localhost:3020', // or yourdomain.com
+    protocol: 'http',
   },
-  filePath: "path/to/download/folder",
-  sendSelfEndpoint: "localhost:3020",
+  filePath: 'path/to/download/folder',
+  sendSelfEndpoint: 'localhost:3020',
   secret: 'mysecret',
-  uploadUrls: ['https://myuploadurl.com', 'http://myuploadurl2.com']
-  debug: true
+  uploadUrls: ['https://myuploadurl.com', /^http:\/\/myuploadurl2.com\//],
+  debug: true,
+  metrics: false,
 }
 ```
 
 1. **filePath(required)** - Full path to the directory to which provider files would be downloaded temporarily.
 
-2. **redisUrl(optional)** - URL to running Redis server. If this is set, the state of uploads would be stored temporarily. This helps for resumed uploads after a browser crash from the client. The stored upload would be sent back to the client on reconnection.
+2. **secret(recommended)** - A secret string which Companion uses to generate authorization tokens.
 
-3. **redisOptions(optional)** - An object of [options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties). This option can be used in place of `redisUrl`.
+3. **uploadUrls(recommended)** - An allowlist (array) of strings (exact URLs) or regular expressions. If specified, Companion will only accept uploads to these URLs. This is needed to make sure a Companion instance is only allowed to upload to your servers. **Omitting this leaves your system open to potential [SSRF](https://en.wikipedia.org/wiki/Server-side_request_forgery) attacks, and may throw an error in future `@uppy/companion` releases.**
 
-4. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
+4. **redisUrl(optional)** - URL to running Redis server. If this is set, the state of uploads would be stored temporarily. This helps for resumed uploads after a browser crash from the client. The stored upload would be sent back to the client on reconnection.
 
-5. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set:
+5. **redisOptions(optional)** - An object of [options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties). This option can be used in place of `redisUrl`.
 
-  - protocol - `http | https`
-  - host(required) - your server host (e.g localhost:3020, mydomain.com)
-  - path - the server path to where the Uppy app is sitting (e.g if Companion is at `mydomain.com/companion`, then the path would be `/companion`).
-  - oauthDomain - if you have multiple instances of Companion with different (and perhaps dynamic) subdomains, you can set a master domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect to the slave subdomain with the required credentials on completion.
-  - validHosts - if you are setting a master `oauthDomain`, you need to set a list of valid hosts, so the master oauth handler can validate the host of the Uppy instance requesting the authentication. This is basically a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
-  - implicitPath - if the URL path to your Companion server is set in your NGINX server (or any other Http server) instead of your express app, then you need to set this path as `implicitPath`. So if your Companion URL is `mydomain.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`.
+6. **redisPubSubScope(optional)** - Use a scope for the companion events at the Redis server. Setting this option will prefix all events with the name provided and a colon.
 
-6. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
+7. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it is optional, it is required if you would be enabling any of the supported providers. The following are the server options you may set:
 
-7. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
+  - `protocol` - `http | https`
+  - `host` (required) - your server host (e.g localhost:3020, mydomain.com)
+  - `path` - the server path to where the Uppy app is sitting (e.g if Companion is at `mydomain.com/companion`, then the path would be `/companion`).
+  - `oauthDomain` - if you have multiple instances of Companion with different (and perhaps dynamic) subdomains, you can set a single fixed domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect back to the correct instance with the required credentials on completion. This way you only need to configure a single callback URL for OAuth providers.
+  - `validHosts` - if you are setting an `oauthDomain`, you need to set a list of valid hosts, so the oauth handler can validate the host of the Uppy instance requesting the authentication. This is basically a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
+  - `implicitPath` - if the URL path to your Companion server is set in your NGINX server (or any other Http server) instead of your express app, then you need to set this path as `implicitPath`. So if your Companion URL is `mydomain.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`.
 
-8. **uploadUrls(optional)** - An array of URLs (full paths). If specified, Companion will only accept uploads to these URLs (useful when you want to make sure a Companion instance is only allowed to upload to your servers, for example).
+8. **sendSelfEndpoint(optional)** - This is basically the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
 
-9. **secret(required)** - A secret string which Companion uses to generate authorization tokens.
+9. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
 
-10. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
+10. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
+
+11. **debug(optional)** - A boolean flag to tell Companion whether or not to log useful debug information while running.
+
+12. **logClientVersion(optional)** - A boolean flag to tell Companion whether or not to log its version upon startup.
+
+13. **metrics(optional)** - A boolean flag to tell Companion whether or not to provide an endpoint `/metrics` with Prometheus metrics.
 
 ### Provider Redirect URIs
 
@@ -363,16 +383,20 @@ app.use(uppy.app({
     s3: {
       getKey: (req, filename, metadata) => `${req.user.id}/${filename}`,
       /* auth options */
-    }
-  }
+    },
+  },
 }))
 ```
 
 The default implementation returns the `filename`, so all files will be uploaded to the root of the bucket as their original file name.
 ```js
-({
-  getKey: (req, filename, metadata) => filename
-})
+app.use(uppy.app({
+  providerOptions: {
+    s3: {
+      getKey: (req, filename, metadata) => filename,
+    },
+  },
+}))
 ```
 
 ### Running in Kubernetes
@@ -384,20 +408,22 @@ We have [a detailed guide on running Companion in Kubernetes](https://github.com
 As of now, Companion supports the [providers listed here](https://uppy.io/docs/companion/#Supported-providers) out of the box, but you may also choose to add your own custom providers. You can do this by passing the `customProviders` option when calling the Uppy `app` method. The custom provider is expected to support Oauth 1 or 2 for authentication/authorization.
 
 ```javascript
-let options = {
-    customProviders: {
-        myprovidername: {
-            config: {
-                authorize_url: "https://mywebsite.com/authorize",
-                access_url: "https://mywebsite.com/token",
-                oauth: 2,
-                key: "***",
-                secret: "***",
-                scope: ["read", "write"]
-            },
-            module: require('/path/to/provider/module')
-        }
-    }
+import providerModule from './path/to/provider/module'
+
+const options = {
+  customProviders: {
+    myprovidername: {
+      config: {
+        authorize_url: 'https://mywebsite.com/authorize',
+        access_url: 'https://mywebsite.com/token',
+        oauth: 2,
+        key: '***',
+        secret: '***',
+        scope: ['read', 'write'],
+      },
+      module: providerModule,
+    },
+  },
 }
 
 uppy.app(options)
@@ -429,43 +455,43 @@ The class must also have an `authProvider` string (lowercased) field which typic
 
 #### list data
 
-```js
+```json
 {
   // username or email of the user whose provider account is being accessed
-  username: 'johndoe',
+  "username": "johndoe",
   // list of files and folders in the directory. An item is considered a folder
   //  if it mainly exists as a collection to contain sub-items
-  items: [
+  "items": [
     {
       // boolean value of whether or NOT it's a folder
-      isFolder: false,
+      "isFolder": false,
       // icon image URL
-      icon: 'https://random-api.url.com/fileicon.jpg',
+      "icon": "https://random-api.url.com/fileicon.jpg",
       // name of the item
-      name: 'myfile.jpg',
+      "name": "myfile.jpg",
       // the mime type of the item. Only relevant if the item is NOT a folder
-      mimeType: 'image/jpg',
+      "mimeType": "image/jpg",
       // the id (in string) of the item
-      id: 'uniqueitemid',
+      "id": "uniqueitemid",
       // thumbnail image URL. Only relevant if the item is NOT a folder
-      thumbnail: 'https://random-api.url.com/filethumbnail.jpg',
+      "thumbnail": "https://random-api.url.com/filethumbnail.jpg",
       // for folders this is typically the value that will be passed as "directory" in the list(...) method.
       // For files, this is the value that will be passed as id in the download(...) method.
-      requestPath: 'file-or-folder-requestpath',
+      "requestPath": "file-or-folder-requestpath",
       // datetime string (in ISO 8601 format) of when this item was last modified
-      modifiedDate: '2020-06-29T19:59:58Z',
-      // the size in bytes of the item. Only relevent if the item is NOT a folder
-      size: 278940,
-      custom: {
+      "modifiedDate": "2020-06-29T19:59:58Z",
+      // the size in bytes of the item. Only relevant if the item is NOT a folder
+      "size": 278940,
+      "custom": {
         // an object that may contain some more custom fields that you may need to send to the client. Only add this object if you have a need for it.
-        customData1: 'the value',
-        customData2: 'the value',
-      },
+        "customData1": "the value",
+        "customData2": "the value"
+      }
       // more items here
     }
-  ]
+  ],
   // if the "items" list is paginated, this is the request path needed to fetch the next page.
-  nextPagePath: 'directory-name?cursor=cursor-to-next-page'
+  "nextPagePath": "directory-name?cursor=cursor-to-next-page"
 }
 ```
 
@@ -483,21 +509,26 @@ In v2 the `google` and `microsoft` [providerOptions](https://uppy.io/docs/compan
 
 On your Providers' respective developer platforms, the OAuth redirect URIs that you should supply has now changed from:
 
-`http(s)://$YOUR_COMPANION_HOST_NAME/connect/$AUTH_PROVIDER/callback` in v1
+`http(s)://$COMPANION_HOST_NAME/connect/$AUTH_PROVIDER/callback` in v1
 
 to:
 
-`http(s)://$YOUR_COMPANION_HOST_NAME/$PROVIDER_NAME/redirect` in v2
+`http(s)://$COMPANION_HOST_NAME/$PROVIDER_NAME/redirect` in v2
 
-Old Redirect URIs vs New Redirect URIs
+#### New Redirect URIs
 
-| Provider | v1 Redirect URI | v2 Redirect URI |
-|-|-|-|
-| Dropbox | https://$YOUR_COMPANION_HOST_NAME/connect/dropbox/callback | https://$YOUR_COMPANION_HOST_NAME/dropbox/redirect |
-| Google drive | https://$YOUR_COMPANION_HOST_NAME/connect/google/callback | https://$YOUR_COMPANION_HOST_NAME/drive/redirect |
-| OneDrive | https://$YOUR_COMPANION_HOST_NAME/connect/microsoft/callback | https://$YOUR_COMPANION_HOST_NAME/onedrive/redirect |
-| Facebook | https://$YOUR_COMPANION_HOST_NAME/connect/facebook/callback | https://$YOUR_COMPANION_HOST_NAME/facebook/redirect |
-| Instagram | https://$YOUR_COMPANION_HOST_NAME/connect/instagram/callback | https://$YOUR_COMPANION_HOST_NAME/instagram/redirect |
+<div class="table-responsive">
+
+| Provider | New Redirect URI
+|-|-|
+| Dropbox | `https://$COMPANION_HOST_NAME/dropbox/redirect` |
+| Google Drive | `https://$COMPANION_HOST_NAME/drive/redirect` |
+| OneDrive | `https://$COMPANION_HOST_NAME/onedrive/redirect` |
+| Box | `https://$YOUR_COMPANION_HOST_NAME/box/redirect` |
+| Facebook | `https://$COMPANION_HOST_NAME/facebook/redirect` |
+| Instagram | `https://$COMPANION_HOST_NAME/instagram/redirect` |
+
+</div>
 
 ## Development
 
@@ -529,7 +560,7 @@ An example server is running at <https://companion.uppy.io>, which is deployed w
 
 ## How the Authentication and Token mechanism works
 
-This section describes how Authentication works between Companion and Providers. While this behaviour is the same for all Providers (Dropbox, Instagram, Google Drive), we are going to be referring to Dropbox in place of any Provider throughout this section.
+This section describes how Authentication works between Companion and Providers. While this behaviour is the same for all Providers (Dropbox, Instagram, Google Drive, etc.), we are going to be referring to Dropbox in place of any Provider throughout this section.
 
 The following steps describe the actions that take place when a user Authenticates and Uploads from Dropbox through Companion:
 

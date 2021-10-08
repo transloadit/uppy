@@ -1,12 +1,12 @@
-var formidable = require('formidable')
-var http = require('http')
+const formidable = require('formidable')
+const http = require('http')
 
-http.createServer(function (req, res) {
+http.createServer((req, res) => {
   const headers = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
-    'Access-Control-Max-Age': 2592000 // 30 days
+    'Access-Control-Max-Age': 2592000, // 30 days
     /** add other headers as per requirement */
   }
 
@@ -17,18 +17,18 @@ http.createServer(function (req, res) {
   }
   if (req.url === '/upload' && req.method.toLowerCase() === 'post') {
     // parse a file upload
-    var form = new formidable.IncomingForm()
+    const form = new formidable.IncomingForm()
     form.uploadDir = './uploads'
     form.keepExtensions = true
 
-    form.parse(req, function (err, fields, files) {
+    form.parse(req, (err, fields, files) => {
       if (err) {
         console.log('some error', err)
         res.writeHead(200, headers)
         res.write(JSON.stringify(err))
         return res.end()
       }
-      var file = files['files[]']
+      const file = files['files[]']
       console.log('saved file to', file.path)
       console.log('original name', file.name)
       console.log('type', file.type)

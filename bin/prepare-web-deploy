@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -o pipefail
+set -o errexit
+set -o nounset
+# set -o xtrace
+
+ghpages_repo=${GHPAGES_REPO:-"transloadit/uppy"}
+ghpages_branch=${GHPAGES_BRANCH:-"gh-pages"}
+ghpages_url=${GHPAGES_URL:-"git@github.com:${ghpages_repo}.git"}
+
+localDir="${DEPLOY_DIR:-${HOME:-/home/${USER:-travis}}/.${ghpages_repo}/deploy}"
+echo "--> Preparing deployment in '${localDir}'.."
+mkdir -p "${localDir}"
+
+# Custom steps
+rsync \
+  --archive \
+  --delete \
+  --exclude=.git* \
+  --exclude=node_modules \
+  --exclude=lib \
+  --checksum \
+  --no-times \
+  --no-group \
+  --no-motd \
+  --no-owner \
+./website/public/ "${localDir}" > /dev/null
+
+echo 'This branch is just a deploy target. Do not edit. You changes will be lost.' \
+  |tee "${localDir}/README.md" > /dev/null

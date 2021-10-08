@@ -3,7 +3,7 @@
 const RequestClient = require('./RequestClient')
 const tokenStorage = require('./tokenStorage')
 
-const _getName = (id) => {
+const getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
@@ -12,16 +12,28 @@ module.exports = class Provider extends RequestClient {
     super(uppy, opts)
     this.provider = opts.provider
     this.id = this.provider
-    this.name = this.opts.name || _getName(this.id)
+    this.name = this.opts.name || getName(this.id)
     this.pluginId = this.opts.pluginId
     this.tokenKey = `companion-${this.pluginId}-auth-token`
+    this.companionKeysParams = this.opts.companionKeysParams
+    this.preAuthToken = null
   }
 
   headers () {
     return Promise.all([super.headers(), this.getAuthToken()])
-      .then(([headers, token]) =>
-        Object.assign({}, headers, { 'uppy-auth-token': token })
-      )
+      .then(([headers, token]) => {
+        const authHeaders = {}
+        if (token) {
+          authHeaders['uppy-auth-token'] = token
+        }
+
+        if (this.companionKeysParams) {
+          authHeaders['uppy-credentials-params'] = btoa(
+            JSON.stringify({ params: this.companionKeysParams })
+          )
+        }
+        return { ...headers, ...authHeaders }
+      })
   }
 
   onReceiveResponse (response) {
@@ -33,7 +45,6 @@ module.exports = class Provider extends RequestClient {
     return response
   }
 
-  // @todo(i.olarewaju) consider whether or not this method should be exposed
   setAuthToken (token) {
     return this.uppy.getPlugin(this.pluginId).storage.setItem(this.tokenKey, token)
   }
@@ -42,12 +53,29 @@ module.exports = class Provider extends RequestClient {
     return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
   }
 
-  authUrl () {
-    return `${this.hostname}/${this.id}/connect`
+  authUrl (queries = {}) {
+    if (this.preAuthToken) {
+      queries.uppyPreAuthToken = this.preAuthToken
+    }
+
+    return `${this.hostname}/${this.id}/connect?${new URLSearchParams(queries)}`
   }
 
   fileUrl (id) {
     return `${this.hostname}/${this.id}/get/${id}`
+  }
+
+  fetchPreAuthToken () {
+    if (!this.companionKeysParams) {
+      return Promise.resolve()
+    }
+
+    return this.post(`${this.id}/preauth/`, { params: this.companionKeysParams })
+      .then((res) => {
+        this.preAuthToken = res.token
+      }).catch((err) => {
+        this.uppy.log(`[CompanionClient] unable to fetch preAuthToken ${err}`, 'warning')
+      })
   }
 
   list (directory) {
@@ -58,7 +86,7 @@ module.exports = class Provider extends RequestClient {
     return this.get(`${this.id}/logout`)
       .then((response) => Promise.all([
         response,
-        this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey)
+        this.uppy.getPlugin(this.pluginId).storage.removeItem(this.tokenKey),
       ])).then(([response]) => response)
   }
 
@@ -66,7 +94,7 @@ module.exports = class Provider extends RequestClient {
     plugin.type = 'acquirer'
     plugin.files = []
     if (defaultOpts) {
-      plugin.opts = Object.assign({}, defaultOpts, opts)
+      plugin.opts = { ...defaultOpts, ...opts }
     }
 
     if (opts.serverUrl || opts.serverPattern) {
@@ -80,13 +108,11 @@ module.exports = class Provider extends RequestClient {
         throw new TypeError(`${plugin.id}: the option "companionAllowedHosts" must be one of string, Array, RegExp`)
       }
       plugin.opts.companionAllowedHosts = pattern
-    } else {
+    } else if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
       // does not start with https://
-      if (/^(?!https?:\/\/).*$/i.test(opts.companionUrl)) {
-        plugin.opts.companionAllowedHosts = `https://${opts.companionUrl.replace(/^\/\//, '')}`
-      } else {
-        plugin.opts.companionAllowedHosts = opts.companionUrl
-      }
+      plugin.opts.companionAllowedHosts = `https://${opts.companionUrl.replace(/^\/\//, '')}`
+    } else {
+      plugin.opts.companionAllowedHosts = new URL(opts.companionUrl).origin
     }
 
     plugin.storage = plugin.opts.storage || tokenStorage

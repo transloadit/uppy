@@ -1,0 +1,3 @@
+/* You can add global styles to this file, and also import other style files */
+@import '../../../packages/@uppy/core/dist/style.css';
+@import '../../../packages/@uppy/dashboard/dist/style.css';

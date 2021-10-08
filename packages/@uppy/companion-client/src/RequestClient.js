@@ -1,15 +1,39 @@
 'use strict'
 
-const AuthError = require('./AuthError')
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
+const AuthError = require('./AuthError')
 
 // Remove the trailing slash so we can always safely append /xyz.
 function stripSlash (url) {
   return url.replace(/\/$/, '')
 }
 
+async function handleJSONResponse (res) {
+  if (res.status === 401) {
+    throw new AuthError()
+  }
+
+  const jsonPromise = res.json()
+
+  if (res.status < 200 || res.status > 300) {
+    let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`
+    try {
+      const errData = await jsonPromise
+      errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg
+      errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg
+    } finally {
+      // eslint-disable-next-line no-unsafe-finally
+      throw new Error(errMsg)
+    }
+  }
+  return jsonPromise
+}
+
 module.exports = class RequestClient {
+  // eslint-disable-next-line global-require
   static VERSION = require('../package.json').version
+
+  #getPostResponseFunc = skip => response => (skip ? response : this.onReceiveResponse(response))
 
   constructor (uppy, opts) {
     this.uppy = uppy
@@ -25,70 +49,50 @@ module.exports = class RequestClient {
     return stripSlash(companion && companion[host] ? companion[host] : host)
   }
 
-  get defaultHeaders () {
-    return {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`
-    }
+  static defaultHeaders ={
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`,
   }
 
   headers () {
-    const userHeaders = this.opts.companionHeaders || this.opts.serverHeaders || {}
+    const userHeaders = this.opts.companionHeaders || {}
     return Promise.resolve({
-      ...this.defaultHeaders,
-      ...userHeaders
+      ...RequestClient.defaultHeaders,
+      ...userHeaders,
     })
-  }
-
-  _getPostResponseFunc (skip) {
-    return (response) => {
-      if (!skip) {
-        return this.onReceiveResponse(response)
-      }
-
-      return response
-    }
   }
 
   onReceiveResponse (response) {
     const state = this.uppy.getState()
     const companion = state.companion || {}
     const host = this.opts.companionUrl
-    const headers = response.headers
+    const { headers } = response
     // Store the self-identified domain name for the Companion instance we just hit.
     if (headers.has('i-am') && headers.get('i-am') !== companion[host]) {
       this.uppy.setState({
-        companion: Object.assign({}, companion, {
-          [host]: headers.get('i-am')
-        })
+        companion: { ...companion, [host]: headers.get('i-am') },
       })
     }
     return response
   }
 
-  _getUrl (url) {
+  #getUrl (url) {
     if (/^(https?:|)\/\//.test(url)) {
       return url
     }
     return `${this.hostname}/${url}`
   }
 
-  _json (res) {
-    if (res.status === 401) {
-      throw new AuthError()
+  #errorHandler (method, path) {
+    return (err) => {
+      if (!err?.isAuthError) {
+        const error = new Error(`Could not ${method} ${this.#getUrl(path)}`)
+        error.cause = err
+        err = error // eslint-disable-line no-param-reassign
+      }
+      return Promise.reject(err)
     }
-
-    if (res.status < 200 || res.status > 300) {
-      let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`
-      return res.json()
-        .then((errData) => {
-          errMsg = errData.message ? `${errMsg} message: ${errData.message}` : errMsg
-          errMsg = errData.requestId ? `${errMsg} request-Id: ${errData.requestId}` : errMsg
-          throw new Error(errMsg)
-        }).catch(() => { throw new Error(errMsg) })
-    }
-    return res.json()
   }
 
   preflight (path) {
@@ -96,8 +100,8 @@ module.exports = class RequestClient {
       return Promise.resolve(this.allowedHeaders.slice())
     }
 
-    return fetch(this._getUrl(path), {
-      method: 'OPTIONS'
+    return fetch(this.#getUrl(path), {
+      method: 'OPTIONS',
     })
       .then((response) => {
         if (response.headers.has('access-control-allow-headers')) {
@@ -119,9 +123,9 @@ module.exports = class RequestClient {
       .then(([allowedHeaders, headers]) => {
         // filter to keep only allowed Headers
         Object.keys(headers).forEach((header) => {
-          if (allowedHeaders.indexOf(header.toLowerCase()) === -1) {
-            this.uppy.log(`[CompanionClient] excluding unallowed header ${header}`)
-            delete headers[header]
+          if (!allowedHeaders.includes(header.toLowerCase())) {
+            this.uppy.log(`[CompanionClient] excluding disallowed header ${header}`)
+            delete headers[header] // eslint-disable-line no-param-reassign
           }
         })
 
@@ -130,52 +134,43 @@ module.exports = class RequestClient {
   }
 
   get (path, skipPostResponse) {
+    const method = 'get'
     return this.preflightAndHeaders(path)
-      .then((headers) =>
-        fetchWithNetworkError(this._getUrl(path), {
-          method: 'get',
-          headers: headers,
-          credentials: 'same-origin'
-        }))
-      .then(this._getPostResponseFunc(skipPostResponse))
-      .then((res) => this._json(res))
-      .catch((err) => {
-        err = err.isAuthError ? err : new Error(`Could not get ${this._getUrl(path)}. ${err}`)
-        return Promise.reject(err)
-      })
+      .then((headers) => fetchWithNetworkError(this.#getUrl(path), {
+        method,
+        headers,
+        credentials: this.opts.companionCookiesRule || 'same-origin',
+      }))
+      .then(this.#getPostResponseFunc(skipPostResponse))
+      .then(handleJSONResponse)
+      .catch(this.#errorHandler(method, path))
   }
 
   post (path, data, skipPostResponse) {
+    const method = 'post'
     return this.preflightAndHeaders(path)
-      .then((headers) =>
-        fetchWithNetworkError(this._getUrl(path), {
-          method: 'post',
-          headers: headers,
-          credentials: 'same-origin',
-          body: JSON.stringify(data)
-        }))
-      .then(this._getPostResponseFunc(skipPostResponse))
-      .then((res) => this._json(res))
-      .catch((err) => {
-        err = err.isAuthError ? err : new Error(`Could not post ${this._getUrl(path)}. ${err}`)
-        return Promise.reject(err)
-      })
+      .then((headers) => fetchWithNetworkError(this.#getUrl(path), {
+        method,
+        headers,
+        credentials: this.opts.companionCookiesRule || 'same-origin',
+        body: JSON.stringify(data),
+      }))
+      .then(this.#getPostResponseFunc(skipPostResponse))
+      .then(handleJSONResponse)
+      .catch(this.#errorHandler(method, path))
   }
 
   delete (path, data, skipPostResponse) {
+    const method = 'delete'
     return this.preflightAndHeaders(path)
-      .then((headers) =>
-        fetchWithNetworkError(`${this.hostname}/${path}`, {
-          method: 'delete',
-          headers: headers,
-          credentials: 'same-origin',
-          body: data ? JSON.stringify(data) : null
-        }))
-      .then(this._getPostResponseFunc(skipPostResponse))
-      .then((res) => this._json(res))
-      .catch((err) => {
-        err = err.isAuthError ? err : new Error(`Could not delete ${this._getUrl(path)}. ${err}`)
-        return Promise.reject(err)
-      })
+      .then((headers) => fetchWithNetworkError(`${this.hostname}/${path}`, {
+        method,
+        headers,
+        credentials: this.opts.companionCookiesRule || 'same-origin',
+        body: data ? JSON.stringify(data) : null,
+      }))
+      .then(this.#getPostResponseFunc(skipPostResponse))
+      .then(handleJSONResponse)
+      .catch(this.#errorHandler(method, path))
   }
 }

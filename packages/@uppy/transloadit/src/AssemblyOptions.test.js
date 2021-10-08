@@ -3,14 +3,14 @@ const AssemblyOptions = require('./AssemblyOptions')
 describe('Transloadit/AssemblyOptions', () => {
   it('Validates response from getAssemblyOptions()', async () => {
     const options = new AssemblyOptions([
-      { name: 'testfile' }
+      { name: 'testfile' },
     ], {
       getAssemblyOptions: (file) => {
         expect(file.name).toBe('testfile')
         return {
-          params: '{"some":"json"}'
+          params: '{"some":"json"}',
         }
-      }
+      },
     })
 
     await expect(options.build()).rejects.toThrow(
@@ -26,16 +26,16 @@ describe('Transloadit/AssemblyOptions', () => {
       { name: 'a.png', data },
       { name: 'b.png', data },
       { name: 'c.png', data },
-      { name: 'd.png', data }
+      { name: 'd.png', data },
     ], {
       getAssemblyOptions: (file) => ({
         params: {
           auth: { key: 'fake key' },
           steps: {
-            fake_step: { data: file.name }
-          }
-        }
-      })
+            fake_step: { data: file.name },
+          },
+        },
+      }),
     })
 
     const assemblies = await options.build()
@@ -54,16 +54,16 @@ describe('Transloadit/AssemblyOptions', () => {
       { name: 'a.png', data, size: data.byteLength },
       { name: 'b.png', data, size: data.byteLength },
       { name: 'c.png', data, size: data.byteLength },
-      { name: 'd.png', data: data2, size: data2.byteLength }
+      { name: 'd.png', data: data2, size: data2.byteLength },
     ], {
       getAssemblyOptions: (file) => ({
         params: {
           auth: { key: 'fake key' },
           steps: {
-            fake_step: { data: file.size }
-          }
-        }
-      })
+            fake_step: { data: file.size },
+          },
+        },
+      }),
     })
 
     const assemblies = await options.build()
@@ -78,7 +78,7 @@ describe('Transloadit/AssemblyOptions', () => {
     const options = new AssemblyOptions([], {
       getAssemblyOptions () {
         throw new Error('should not create Assembly')
-      }
+      },
     })
 
     await expect(options.build()).resolves.toEqual([])
@@ -92,10 +92,10 @@ describe('Transloadit/AssemblyOptions', () => {
         return {
           params: {
             auth: { key: 'fake key' },
-            template_id: 'example'
-          }
+            template_id: 'example',
+          },
         }
-      }
+      },
     })
 
     await expect(options.build()).resolves.toHaveLength(1)
@@ -106,31 +106,31 @@ describe('Transloadit/AssemblyOptions', () => {
       return {
         params: options.params,
         signature: options.signature,
-        fields: options.fields
+        fields: options.fields,
       }
     }
 
     const options = new AssemblyOptions([{
       id: 1,
-      meta: { watermark: 'Some text' }
+      meta: { watermark: 'Some text' },
     }, {
       id: 2,
-      meta: { watermark: 'ⓒ Transloadit GmbH' }
+      meta: { watermark: 'ⓒ Transloadit GmbH' },
     }], {
       fields: ['watermark'],
       params: {
-        auth: { key: 'fake key' }
+        auth: { key: 'fake key' },
       },
-      getAssemblyOptions: defaultGetAssemblyOptions
+      getAssemblyOptions: defaultGetAssemblyOptions,
     })
 
     const assemblies = await options.build()
     expect(assemblies).toHaveLength(2)
     expect(assemblies[0].options.fields).toMatchObject({
-      watermark: 'Some text'
+      watermark: 'Some text',
     })
     expect(assemblies[1].options.fields).toMatchObject({
-      watermark: 'ⓒ Transloadit GmbH'
+      watermark: 'ⓒ Transloadit GmbH',
     })
   })
 })

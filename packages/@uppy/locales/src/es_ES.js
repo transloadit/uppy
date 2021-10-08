@@ -41,37 +41,39 @@ es_ES.strings = {
   encoding: 'Codificando...',
   enterCorrectUrl: 'URL incorrecta: Por favor asegúrate que estás ingresando un enlace a un archivo',
   enterUrlToImport: 'Ingresa una URL para importar un archivo',
-  exceedsSize: 'Este archivo excede el tamaño máximo de',
+  exceedsSize: 'Este archivo excede el tamaño máximo de %{size}',
   failedToFetch: 'Companion no ha podido recuperar esta URL, por favor asegúrate que sea correcta',
   failedToUpload: 'Error al subir %{file}',
   fileSource: 'Fuente de archivo: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} de %{smart_count} archivo subido',
     '1': '%{complete} de %{smart_count} archivos subidos',
-    '2': '%{complete} de %{smart_count} archivos subidos'
+    '2': '%{complete} de %{smart_count} archivos subidos',
   },
   filter: 'Filtrar',
   finishEditingFile: 'Terminar edición de archivo',
   folderAdded: {
     '0': 'Agregado %{smart_count} archivo desde %{folder}',
     '1': 'Agregados %{smart_count} archivos desde %{folder}',
-    '2': 'Agregados %{smart_count} archivos desde %{folder}'
+    '2': 'Agregados %{smart_count} archivos desde %{folder}',
   },
   import: 'Importar',
   importFrom: 'Importar desde %{name}',
   loading: 'Cargando...',
   logOut: 'Cerrar sesión',
+  missingRequiredMetaField: 'Faltan metacampos obligatorios',
+  missingRequiredMetaFieldOnFile: 'Faltan metacampos obligatorios en %{fileName}',
   myDevice: 'Mi Dispositivo',
   noFilesFound: 'No existen archivos o carpetas aquí',
   noInternetConnection: 'Sin conexión a Internet',
   pause: 'Pausar',
   pauseUpload: 'Pausar subida',
   paused: 'En pausa',
-  poweredBy: 'Soportado por',
+  poweredBy: 'Soportado por %{uppy}',
   processingXFiles: {
     '0': 'Procesando %{smart_count} archivo',
     '1': 'Procesando %{smart_count} archivos',
-    '2': 'Procesando %{smart_count} archivos'
+    '2': 'Procesando %{smart_count} archivos',
   },
   recordingLength: 'Duración de grabación %{recording_length}',
   removeFile: 'Eliminar archivo',
@@ -84,7 +86,7 @@ es_ES.strings = {
   selectX: {
     '0': 'Seleccionar %{smart_count}',
     '1': 'Seleccionar %{smart_count}',
-    '2': 'Seleccionar %{smart_count}'
+    '2': 'Seleccionar %{smart_count}',
   },
   smile: 'Sonríe!',
   startRecording: 'Comenzar la grabación de video',
@@ -98,49 +100,47 @@ es_ES.strings = {
   uploadXFiles: {
     '0': 'Subir %{smart_count} archivo',
     '1': 'Subir %{smart_count} archivos',
-    '2': 'Subir %{smart_count} archivos'
+    '2': 'Subir %{smart_count} archivos',
   },
   uploadXNewFiles: {
     '0': 'Subir +%{smart_count} archivo',
     '1': 'Subir +%{smart_count} archivos',
-    '2': 'Subir +%{smart_count} archivos'
+    '2': 'Subir +%{smart_count} archivos',
   },
   uploading: 'Subiendo',
   uploadingXFiles: {
     '0': 'Subiendo %{smart_count} archivo',
     '1': 'Subiendo %{smart_count} archivos',
-    '2': 'Subiendo %{smart_count} archivos'
+    '2': 'Subiendo %{smart_count} archivos',
   },
   xFilesSelected: {
     '0': '%{smart_count} archivo seleccionado',
     '1': '%{smart_count} archivos seleccionados',
-    '2': '%{smart_count} archivos seleccionados'
+    '2': '%{smart_count} archivos seleccionados',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} archivo más agregado',
     '1': '%{smart_count} archivos más agregados',
-    '2': '%{smart_count} archivos más agregados'
+    '2': '%{smart_count} archivos más agregados',
   },
   xTimeLeft: '%{time} restantes',
   youCanOnlyUploadFileTypes: 'Solo puedes subir: %{types}',
   youCanOnlyUploadX: {
     '0': 'Solo puedes subir %{smart_count} archivo',
     '1': 'Solo puedes subir %{smart_count} archivos',
-    '2': 'Solo puedes subir %{smart_count} archivos'
+    '2': 'Solo puedes subir %{smart_count} archivos',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Tienes que seleccionar al menos %{smart_count} archivo',
     '1': 'Tienes que seleccionar al menos %{smart_count} archivos',
-    '2': 'Tienes que seleccionar al menos %{smart_count} archivos'
+    '2': 'Tienes que seleccionar al menos %{smart_count} archivos',
   },
-  selectAllFilesFromFolderNamed: 'Seleccionar todos los archivos de la carpeta %{name}',
-  unselectAllFilesFromFolderNamed: 'Deselecciona todos los archivos de la carpeta %{name}',
   selectFileNamed: 'Seleccione archivo %{name}',
   unselectFileNamed: 'Deseleccionar archivo %{name}',
-  openFolderNamed: 'Carpeta abierta %{name}'
+  openFolderNamed: 'Carpeta abierta %{name}',
 }
 
-es_ES.pluralize = function (n) {
+es_ES.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

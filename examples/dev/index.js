@@ -1,7 +1,3 @@
-// Polyfills, primarily for testing in IE11
-require('es6-promise/auto')
-require('whatwg-fetch')
-
 const DragDrop = require('./DragDrop.js')
 const Dashboard = require('./Dashboard.js')
 
@@ -19,6 +15,6 @@ if ('serviceWorker' in navigator) {
       console.log('ServiceWorker registration successful with scope: ', registration.scope)
     })
     .catch((error) => {
-      console.log('Registration failed with ' + error)
+      console.log(`Registration failed with ${error}`)
     })
 }

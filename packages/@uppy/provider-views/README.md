@@ -3,7 +3,7 @@
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
 <a href="https://www.npmjs.com/package/@uppy/provider-views"><img src="https://img.shields.io/npm/v/@uppy/provider-views.svg?style=flat-square"></a>
-<a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
+<img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
 
 View library for Uppy remote provider plugins.
 
@@ -12,18 +12,20 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Plugin = require('@uppy/core/lib/plugin')
-const ProviderViews = require('@uppy/provider-views')
+import Plugin from '@uppy/core/lib/plugin'
+import { ProviderViews } from '@uppy/provider-views'
 
-class GoogleDrive extends Plugin {
-  constructor () { /* snip */ }
+class GoogleDrive extends UIPlugin {
   install () {
     this.view = new ProviderViews(this)
     // snip
   }
 
   onFirstRender () {
-    return this.view.getFolder('root', '/')
+    return Promise.all([
+      this.provider.fetchPreAuthToken(),
+      this.view.getFolder('root', '/'),
+    ])
   }
 
   render (state) {

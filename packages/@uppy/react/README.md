@@ -3,7 +3,7 @@
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
 <a href="https://www.npmjs.com/package/@uppy/react"><img src="https://img.shields.io/npm/v/@uppy/react.svg?style=flat-square"></a>
-<a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
+<img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
 
 React component wrappers around Uppy's officially maintained UI plugins.
 
@@ -11,14 +11,17 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 
 ## Example
 
+<!-- eslint-disable react/state-in-constructor -->
 ```js
-const Uppy = require('@uppy/core')
-const { DashboardModal } = require('@uppy/react')
+import React from 'react'
+import Uppy from '@uppy/core'
+import { DashboardModal } from '@uppy/react'
 
 const uppy = new Uppy()
 
 class Example extends React.Component {
   state = { open: false }
+
   render () {
     return (
       <DashboardModal

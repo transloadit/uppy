@@ -31,12 +31,12 @@ function UppyDashboardFileIcon (props) {
   if (!icon) {
     return <FileIcon />
   }
-  const color = getFileTypeIcon(props.type).color
+  const { color } = getFileTypeIcon(props.type)
   return (
     <View
       style={{
         ...styles.itemIconContainer,
-        backgroundColor: color
+        backgroundColor: color,
       }}
     >
       <SvgUri
@@ -59,7 +59,7 @@ export default function FileList (props) {
     <View style={styles.container}>
       <FlatList
         data={uppyFilesArray}
-        keyExtractor={(item, index) => item.id}
+        keyExtractor={(item) => item.id}
         numColumns={2}
         renderItem={({ item }) => {
           return (
@@ -87,19 +87,19 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   item: {
     width: 100,
     marginTop: 5,
     marginBottom: 15,
-    marginRight: 25
+    marginRight: 25,
   },
   itemImage: {
     width: 100,
     height: 100,
     borderRadius: 5,
-    marginBottom: 5
+    marginBottom: 5,
   },
   itemIconContainer: {
     width: 100,
@@ -108,24 +108,24 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     backgroundColor: '#cfd3d6',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   itemIcon: {
     width: 42,
-    height: 56
+    height: 56,
   },
   itemIconSVG: {
     width: 50,
-    height: 50
+    height: 50,
   },
   itemName: {
     fontSize: 13,
     color: '#2c3e50',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   itemType: {
     fontWeight: '600',
     fontSize: 12,
-    color: '#95a5a6'
-  }
+    color: '#95a5a6',
+  },
 })

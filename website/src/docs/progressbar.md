@@ -12,7 +12,7 @@ tagline: "add a small YouTube-style progress bar at the top of the page"
 `@uppy/progress-bar` is a minimalist plugin that shows the current upload progress in a thin bar element, similar to the ones used by YouTube and GitHub when navigating between pages.
 
 ```js
-const ProgressBar = require('@uppy/progress-bar')
+import ProgressBar from '@uppy/progress-bar'
 
 uppy.use(ProgressBar, {
   // Options
@@ -36,7 +36,7 @@ npm install @uppy/progress-bar
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const ProgressBar = Uppy.ProgressBar
+const { ProgressBar } = Uppy
 ```
 
 ## CSS
@@ -48,7 +48,7 @@ import '@uppy/core/dist/style.css'
 import '@uppy/progress-bar/dist/style.css'
 ```
 
-Import general Core styles from `@uppy/core/dist/style.css` first, then add the Informer styles from `@uppy/progress-bar/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
+Import general Core styles from `@uppy/core/dist/style.css` first, then add the Progress Bar styles from `@uppy/progress-bar/dist/style.css`. A minified version is also available as `style.min.css` at the same path. The way to do import depends on your build system.
 
 ⚠️ If you use the [`@uppy/dashboard`](/docs/dashboard) plugin, you do not need to include the styles for the Progress Bar, because the Dashboard already includes it.
 
@@ -60,7 +60,7 @@ The `@uppy/progress-bar` plugin has the following configurable options:
 uppy.use(ProgressBar, {
   target: '.UploadForm',
   fixed: false,
-  hideAfterFinish: true
+  hideAfterFinish: true,
 })
 ```
 
@@ -79,14 +79,10 @@ When set to true, show the progress bar at the top of the page with `position: f
 ```js
 uppy.use(ProgressBar, {
   target: 'body',
-  fixed: true
+  fixed: true,
 })
 ```
 
 ### `hideAfterFinish: true`
 
 When set to true, hides the progress bar after the upload has finished. If set to false, it remains visible.
-
-### `replaceTargetContent: false`
-
-Remove all children of the `target` element before mounting the Progress Bar. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case, you can set `replaceTargetContent: true` to clear the `target` before appending.

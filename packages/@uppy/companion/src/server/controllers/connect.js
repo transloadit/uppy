@@ -1,6 +1,5 @@
-const oAuthState = require('../helpers/oauth-state')
-// @ts-ignore
 const atob = require('atob')
+const oAuthState = require('../helpers/oauth-state')
 
 /**
  * initializes the oAuth flow for a provider.
@@ -9,10 +8,9 @@ const atob = require('atob')
  * @param {object} res
  */
 module.exports = function connect (req, res) {
-  const secret = req.companion.options.secret
+  const { secret } = req.companion.options
   let state = oAuthState.generateState(secret)
   if (req.query.state) {
-    // todo change this query from state to "origin"
     const origin = JSON.parse(atob(req.query.state))
     state = oAuthState.addToState(state, origin, secret)
   }
@@ -23,6 +21,10 @@ module.exports = function connect (req, res) {
 
   if (req.companion.clientVersion) {
     state = oAuthState.addToState(state, { clientVersion: req.companion.clientVersion }, secret)
+  }
+
+  if (req.query.uppyPreAuthToken) {
+    state = oAuthState.addToState(state, { preAuthToken: req.query.uppyPreAuthToken }, secret)
   }
 
   res.redirect(req.companion.buildURL(`/connect/${req.companion.provider.authProvider}?state=${state}`, true))

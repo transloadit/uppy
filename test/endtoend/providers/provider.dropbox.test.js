@@ -10,6 +10,7 @@
   Hence, provider tokens (Google, Instagram, Dropbox) may be at risk of getting hijacked.
 */
 const { finishUploadTest, startUploadTest, uploadWithRetry } = require('./helper')
+
 const testURL = 'http://localhost:4567/providers'
 
 describe('File upload with Dropbox Provider', () => {
@@ -18,7 +19,7 @@ describe('File upload with Dropbox Provider', () => {
   })
 
   // not using arrow functions as cb so to keep mocha in the 'this' context
-  it('should upload a file completely with Dropbox', async function () {
+  it('should upload a file completely with Dropbox', async function test () {
     if (!process.env.UPPY_GOOGLE_EMAIL) {
       console.log('skipping Dropbox integration test')
       return this.skip()
@@ -51,7 +52,7 @@ describe('File upload with Dropbox Provider', () => {
   })
 
   // not using arrow functions as cb so to keep mocha in the 'this' context
-  it('should resume uploads when retry is triggered with Dropbox', async function () {
+  it('should resume uploads when retry is triggered with Dropbox', async function test () {
     if (!process.env.UPPY_GOOGLE_EMAIL) {
       console.log('skipping Dropbox integration test')
       return this.skip()

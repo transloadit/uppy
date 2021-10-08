@@ -1,7 +1,7 @@
 {
   "name": "uppy",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
-  "version": "1.21.0",
+  "version": "2.2.0",
   "license": "MIT",
   "main": "index.js",
   "module": "index.mjs",
@@ -19,6 +19,7 @@
     "s3",
     "google drive",
     "dropbox",
+    "box",
     "webcam"
   ],
   "homepage": "https://uppy.io",
@@ -32,16 +33,19 @@
   "dependencies": {
     "@uppy/aws-s3": "file:../@uppy/aws-s3",
     "@uppy/aws-s3-multipart": "file:../@uppy/aws-s3-multipart",
+    "@uppy/box": "file:../@uppy/box",
     "@uppy/companion-client": "file:../@uppy/companion-client",
     "@uppy/core": "file:../@uppy/core",
     "@uppy/dashboard": "file:../@uppy/dashboard",
     "@uppy/drag-drop": "file:../@uppy/drag-drop",
+    "@uppy/drop-target": "file:../@uppy/drop-target",
     "@uppy/dropbox": "file:../@uppy/dropbox",
     "@uppy/facebook": "file:../@uppy/facebook",
     "@uppy/file-input": "file:../@uppy/file-input",
     "@uppy/form": "file:../@uppy/form",
     "@uppy/golden-retriever": "file:../@uppy/golden-retriever",
     "@uppy/google-drive": "file:../@uppy/google-drive",
+    "@uppy/image-editor": "file:../@uppy/image-editor",
     "@uppy/informer": "file:../@uppy/informer",
     "@uppy/instagram": "file:../@uppy/instagram",
     "@uppy/onedrive": "file:../@uppy/onedrive",
@@ -55,8 +59,17 @@
     "@uppy/thumbnail-generator": "file:../@uppy/thumbnail-generator",
     "@uppy/transloadit": "file:../@uppy/transloadit",
     "@uppy/tus": "file:../@uppy/tus",
+    "@uppy/unsplash": "file:../@uppy/unsplash",
     "@uppy/url": "file:../@uppy/url",
     "@uppy/webcam": "file:../@uppy/webcam",
     "@uppy/xhr-upload": "file:../@uppy/xhr-upload"
+  },
+  "devDependencies": {
+    "abortcontroller-polyfill": "^1.7.3",
+    "core-js": "~3.15.2",
+    "md-gum-polyfill": "^1.0.0",
+    "regenerator-runtime": "0.13.9",
+    "resize-observer-polyfill": "^1.5.1",
+    "whatwg-fetch": "^3.6.2"
   }
 }

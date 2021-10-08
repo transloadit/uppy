@@ -1,31 +1,22 @@
-/**
- * Array.prototype.findIndex ponyfill for old browsers.
- */
-function findIndex (array, predicate) {
-  for (let i = 0; i < array.length; i++) {
-    if (predicate(array[i])) return i
-  }
-  return -1
-}
-
 function createCancelError () {
   return new Error('Cancelled')
 }
 
-module.exports = class RateLimitedQueue {
+class RateLimitedQueue {
+  #activeRequests = 0
+
+  #queuedHandlers = []
+
   constructor (limit) {
     if (typeof limit !== 'number' || limit === 0) {
       this.limit = Infinity
     } else {
       this.limit = limit
     }
-
-    this.activeRequests = 0
-    this.queuedHandlers = []
   }
 
-  _call (fn) {
-    this.activeRequests += 1
+  #call (fn) {
+    this.#activeRequests += 1
 
     let done = false
 
@@ -33,7 +24,7 @@ module.exports = class RateLimitedQueue {
     try {
       cancelActive = fn()
     } catch (err) {
-      this.activeRequests -= 1
+      this.#activeRequests -= 1
       throw err
     }
 
@@ -41,81 +32,79 @@ module.exports = class RateLimitedQueue {
       abort: () => {
         if (done) return
         done = true
-        this.activeRequests -= 1
+        this.#activeRequests -= 1
         cancelActive()
-        this._queueNext()
+        this.#queueNext()
       },
 
       done: () => {
         if (done) return
         done = true
-        this.activeRequests -= 1
-        this._queueNext()
-      }
+        this.#activeRequests -= 1
+        this.#queueNext()
+      },
     }
   }
 
-  _queueNext () {
+  #queueNext () {
     // Do it soon but not immediately, this allows clearing out the entire queue synchronously
     // one by one without continuously _advancing_ it (and starting new tasks before immediately
     // aborting them)
-    Promise.resolve().then(() => {
-      this._next()
-    })
+    queueMicrotask(() => this.#next())
   }
 
-  _next () {
-    if (this.activeRequests >= this.limit) {
+  #next () {
+    if (this.#activeRequests >= this.limit) {
       return
     }
-    if (this.queuedHandlers.length === 0) {
+    if (this.#queuedHandlers.length === 0) {
       return
     }
 
     // Dispatch the next request, and update the abort/done handlers
     // so that cancelling it does the Right Thing (and doesn't just try
     // to dequeue an already-running request).
-    const next = this.queuedHandlers.shift()
-    const handler = this._call(next.fn)
+    const next = this.#queuedHandlers.shift()
+    const handler = this.#call(next.fn)
     next.abort = handler.abort
     next.done = handler.done
   }
 
-  _queue (fn, options = {}) {
+  #queue (fn, options = {}) {
     const handler = {
       fn,
       priority: options.priority || 0,
       abort: () => {
-        this._dequeue(handler)
+        this.#dequeue(handler)
       },
       done: () => {
         throw new Error('Cannot mark a queued request as done: this indicates a bug')
-      }
+      },
     }
 
-    const index = findIndex(this.queuedHandlers, (other) => {
+    const index = this.#queuedHandlers.findIndex((other) => {
       return handler.priority > other.priority
     })
     if (index === -1) {
-      this.queuedHandlers.push(handler)
+      this.#queuedHandlers.push(handler)
     } else {
-      this.queuedHandlers.splice(index, 0, handler)
+      this.#queuedHandlers.splice(index, 0, handler)
     }
     return handler
   }
 
-  _dequeue (handler) {
-    const index = this.queuedHandlers.indexOf(handler)
+  #dequeue (handler) {
+    const index = this.#queuedHandlers.indexOf(handler)
     if (index !== -1) {
-      this.queuedHandlers.splice(index, 1)
+      this.#queuedHandlers.splice(index, 1)
     }
   }
 
   run (fn, queueOptions) {
-    if (this.activeRequests < this.limit) {
-      return this._call(fn)
+    if (this.#activeRequests < this.limit) {
+      return this.#call(fn)
     }
-    return this._queue(fn, queueOptions)
+    return this.#queue(fn, queueOptions)
   }
 
   wrapPromiseFunction (fn, queueOptions) {
@@ -160,4 +149,9 @@ module.exports = class RateLimitedQueue {
       return outerPromise
     }
   }
+}
+
+module.exports = {
+  RateLimitedQueue,
+  internalRateLimitedQueue: Symbol('__queue'),
 }

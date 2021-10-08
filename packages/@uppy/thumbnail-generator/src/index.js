@@ -1,16 +1,14 @@
-const { Plugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
+const { UIPlugin } = require('@uppy/core')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
-const MathLog2 = require('math-log2') // Polyfill for IE.
 const exifr = require('exifr/dist/mini.legacy.umd.js')
 
 /**
  * The Thumbnail Generator plugin
  */
 
-module.exports = class ThumbnailGenerator extends Plugin {
+module.exports = class ThumbnailGenerator extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -21,38 +19,27 @@ module.exports = class ThumbnailGenerator extends Plugin {
     this.queue = []
     this.queueProcessing = false
     this.defaultThumbnailDimension = 200
+    this.thumbnailType = this.opts.thumbnailType || 'image/jpeg'
 
     this.defaultLocale = {
       strings: {
-        generatingThumbnails: 'Generating thumbnails...'
-      }
+        generatingThumbnails: 'Generating thumbnails...',
+      },
     }
 
     const defaultOptions = {
       thumbnailWidth: null,
       thumbnailHeight: null,
       waitForThumbnailsBeforeUpload: false,
-      lazy: false
+      lazy: false,
     }
 
     this.opts = { ...defaultOptions, ...opts }
+    this.i18nInit()
 
     if (this.opts.lazy && this.opts.waitForThumbnailsBeforeUpload) {
       throw new Error('ThumbnailGenerator: The `lazy` and `waitForThumbnailsBeforeUpload` options are mutually exclusive. Please ensure at most one of them is set to `true`.')
     }
-
-    this.i18nInit()
-  }
-
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   /**
@@ -64,39 +51,31 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * @returns {Promise}
    */
   createThumbnail (file, targetWidth, targetHeight) {
-    // bug in the compatibility data
-    // eslint-disable-next-line compat/compat
     const originalUrl = URL.createObjectURL(file.data)
 
     const onload = new Promise((resolve, reject) => {
       const image = new Image()
       image.src = originalUrl
       image.addEventListener('load', () => {
-        // bug in the compatibility data
-        // eslint-disable-next-line compat/compat
         URL.revokeObjectURL(originalUrl)
         resolve(image)
       })
       image.addEventListener('error', (event) => {
-        // bug in the compatibility data
-        // eslint-disable-next-line compat/compat
         URL.revokeObjectURL(originalUrl)
         reject(event.error || new Error('Could not create thumbnail'))
       })
     })
 
-    const orientationPromise = exifr.rotation(file.data).catch(_err => 1)
+    const orientationPromise = exifr.rotation(file.data).catch(() => 1)
 
     return Promise.all([onload, orientationPromise])
       .then(([image, orientation]) => {
         const dimensions = this.getProportionalDimensions(image, targetWidth, targetHeight, orientation.deg)
         const rotatedImage = this.rotateImage(image, orientation)
         const resizedImage = this.resizeImage(rotatedImage, dimensions.width, dimensions.height)
-        return this.canvasToBlob(resizedImage, 'image/jpeg', 80)
+        return this.canvasToBlob(resizedImage, this.thumbnailType, 80)
       })
       .then(blob => {
-        // bug in the compatibility data
-        // eslint-disable-next-line compat/compat
         return URL.createObjectURL(blob)
       })
   }
@@ -108,28 +87,28 @@ module.exports = class ThumbnailGenerator extends Plugin {
    * is used.
    */
   getProportionalDimensions (img, width, height, rotation) {
-    var aspect = img.width / img.height
+    let aspect = img.width / img.height
     if (rotation === 90 || rotation === 270) {
       aspect = img.height / img.width
     }
 
     if (width != null) {
       return {
-        width: width,
-        height: Math.round(width / aspect)
+        width,
+        height: Math.round(width / aspect),
       }
     }
 
     if (height != null) {
       return {
         width: Math.round(height * aspect),
-        height: height
+        height,
       }
     }
 
     return {
       width: this.defaultThumbnailDimension,
-      height: Math.round(this.defaultThumbnailDimension / aspect)
+      height: Math.round(this.defaultThumbnailDimension / aspect),
     }
   }
 
@@ -140,13 +119,13 @@ module.exports = class ThumbnailGenerator extends Plugin {
   protect (image) {
     // https://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element
 
-    var ratio = image.width / image.height
+    const ratio = image.width / image.height
 
-    var maxSquare = 5000000 // ios max canvas square
-    var maxSize = 4096 // ie max canvas dimensions
+    const maxSquare = 5000000 // ios max canvas square
+    const maxSize = 4096 // ie max canvas dimensions
 
-    var maxW = Math.floor(Math.sqrt(maxSquare * ratio))
-    var maxH = Math.floor(maxSquare / Math.sqrt(maxSquare * ratio))
+    let maxW = Math.floor(Math.sqrt(maxSquare * ratio))
+    let maxH = Math.floor(maxSquare / Math.sqrt(maxSquare * ratio))
     if (maxW > maxSize) {
       maxW = maxSize
       maxH = Math.round(maxW / ratio)
@@ -156,7 +135,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
       maxW = Math.round(ratio * maxH)
     }
     if (image.width > maxW) {
-      var canvas = document.createElement('canvas')
+      const canvas = document.createElement('canvas')
       canvas.width = maxW
       canvas.height = maxH
       canvas.getContext('2d').drawImage(image, 0, 0, maxW, maxH)
@@ -177,16 +156,16 @@ module.exports = class ThumbnailGenerator extends Plugin {
 
     image = this.protect(image)
 
-    var steps = Math.ceil(MathLog2(image.width / targetWidth))
+    let steps = Math.ceil(Math.log2(image.width / targetWidth))
     if (steps < 1) {
       steps = 1
     }
-    var sW = targetWidth * Math.pow(2, steps - 1)
-    var sH = targetHeight * Math.pow(2, steps - 1)
-    var x = 2
+    let sW = targetWidth * 2 ** (steps - 1)
+    let sH = targetHeight * 2 ** (steps - 1)
+    const x = 2
 
     while (steps--) {
-      var canvas = document.createElement('canvas')
+      const canvas = document.createElement('canvas')
       canvas.width = sW
       canvas.height = sH
       canvas.getContext('2d').drawImage(image, 0, 0, sW, sH)
@@ -200,19 +179,19 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   rotateImage (image, translate) {
-    var w = image.width
-    var h = image.height
+    let w = image.width
+    let h = image.height
 
     if (translate.deg === 90 || translate.deg === 270) {
       w = image.height
       h = image.width
     }
 
-    var canvas = document.createElement('canvas')
+    const canvas = document.createElement('canvas')
     canvas.width = w
     canvas.height = h
 
-    var context = canvas.getContext('2d')
+    const context = canvas.getContext('2d')
     context.translate(w / 2, h / 2)
     if (translate.canvas) {
       context.rotate(translate.rad)
@@ -281,13 +260,12 @@ module.exports = class ThumbnailGenerator extends Plugin {
         return
       }
       return this.requestThumbnail(current)
-        .catch(err => {}) // eslint-disable-line handle-callback-err
+        .catch(() => {}) // eslint-disable-line node/handle-callback-err
         .then(() => this.processQueue())
-    } else {
-      this.queueProcessing = false
-      this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue')
-      this.uppy.emit('thumbnail:all-generated')
     }
+    this.queueProcessing = false
+    this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue')
+    this.uppy.emit('thumbnail:all-generated')
   }
 
   requestThumbnail (file) {
@@ -308,7 +286,12 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   onFileAdded = (file) => {
-    if (!file.preview && isPreviewSupported(file.type) && !file.isRemote) {
+    if (
+      !file.preview
+      && file.data
+      && isPreviewSupported(file.type)
+      && !file.isRemote
+    ) {
       this.addToQueue(file.id)
     }
   }
@@ -339,11 +322,8 @@ module.exports = class ThumbnailGenerator extends Plugin {
   }
 
   onRestored = () => {
-    const { files } = this.uppy.getState()
-    const fileIDs = Object.keys(files)
-    fileIDs.forEach((fileID) => {
-      const file = this.uppy.getFile(fileID)
-      if (!file.isRestored) return
+    const restoredFiles = this.uppy.getFiles().filter(file => file.isRestored)
+    restoredFiles.forEach((file) => {
       // Only add blob URLs; they are likely invalid after being restored.
       if (!file.preview || isObjectURL(file.preview)) {
         this.addToQueue(file.id)
@@ -356,7 +336,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
       const file = this.uppy.getFile(fileID)
       this.uppy.emit('preprocess-progress', file, {
         mode: 'indeterminate',
-        message: this.i18n('generatingThumbnails')
+        message: this.i18n('generatingThumbnails'),
       })
     })
 
@@ -367,7 +347,7 @@ module.exports = class ThumbnailGenerator extends Plugin {
       })
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.queueProcessing) {
         this.uppy.once('thumbnail:all-generated', () => {
           emitPreprocessCompleteForAll()

@@ -41,21 +41,21 @@ fi_FI.strings = {
   encoding: 'Koodataan...',
   enterCorrectUrl: 'Epäkelpo osoite: Varmista, että osoite osoittaa suoraan tiedostoon',
   enterUrlToImport: 'Anna osoite tuodaksesi tiedoston',
-  exceedsSize: 'Tiedoston koko ylittää sallitun maksimin',
+  exceedsSize: 'Tiedoston koko ylittää sallitun maksimin %{size}',
   failedToFetch: 'Companion ei voinut ladata tiedostoa osoitteesta, onko osoite varmasti oikea?',
   failedToUpload: 'Ei voitu lähettää tiedostoa %{file}',
   fileSource: 'Tiedoston lähde: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} / %{smart_count} tiedostosta lähetetty',
     '1': '%{complete} / %{smart_count} tiedostoa lähetetty',
-    '2': '%{complete} / %{smart_count} tiedostoa lähetetty'
+    '2': '%{complete} / %{smart_count} tiedostoa lähetetty',
   },
   filter: 'Suodata',
   finishEditingFile: 'Lopeta tiedoston muokkaus',
   folderAdded: {
     '0': 'Lisätty %{smart_count} tiedosto kansiosta %{folder}',
     '1': 'Lisätty %{smart_count} tiedostoa kansiosta %{folder}',
-    '2': 'Lisätty %{smart_count} tiedostoa kansiosta %{folder}'
+    '2': 'Lisätty %{smart_count} tiedostoa kansiosta %{folder}',
   },
   import: 'Tuo',
   importFrom: 'Tuo %{name}',
@@ -68,11 +68,11 @@ fi_FI.strings = {
   pause: 'Keskeytä',
   pauseUpload: 'Keskeytä lähetys',
   paused: 'Keskeytetty',
-  poweredBy: 'Powered by',
+  poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': 'Käsitellään %{smart_count} tiedostoa',
     '1': 'Käsitellään %{smart_count} tiedostoa',
-    '2': 'Käsitellään %{smart_count} tiedostoa'
+    '2': 'Käsitellään %{smart_count} tiedostoa',
   },
   removeFile: 'Poista tiedosto',
   resetFilter: 'Resetoi suodatin',
@@ -81,19 +81,17 @@ fi_FI.strings = {
   retry: 'Yritä uudelleen',
   retryUpload: 'Yritä lähetystä uudelleen',
   saveChanges: 'Tallenna muutokset',
-  selectAllFilesFromFolderNamed: 'Valitse kaikki tiedostot kansiosta %{name}',
   selectFileNamed: 'Valitse tiedosto %{name}',
   selectX: {
     '0': 'Valitse %{smart_count}',
     '1': 'Valitse %{smart_count}',
-    '2': 'Valitse %{smart_count}'
+    '2': 'Valitse %{smart_count}',
   },
   smile: 'Hymyile!',
   startRecording: 'Aloita videon tallennus',
   stopRecording: 'Lopeta videon tallennus',
   takePicture: 'Ota kuva',
   timedOut: 'Lähetys jumittunut %{seconds} sekunniksi, keskeytetään.',
-  unselectAllFilesFromFolderNamed: 'Poista tiedostojen valinta kansiossa %{name}',
   unselectFileNamed: 'Poista valinta tiedostosta %{name}',
   upload: 'Lähetä',
   uploadComplete: 'Lähetys valmis',
@@ -102,40 +100,40 @@ fi_FI.strings = {
   uploadXFiles: {
     '0': 'Lähetä %{smart_count} tiedosto',
     '1': 'Lähetä %{smart_count} tiedostoa',
-    '2': 'Lähetä %{smart_count} tiedostoa'
+    '2': 'Lähetä %{smart_count} tiedostoa',
   },
   uploadXNewFiles: {
     '0': 'Lähetä +%{smart_count} tiedosto',
     '1': 'Lähetä +%{smart_count} tiedostoa',
-    '2': 'Lähetä +%{smart_count} tiedostoa'
+    '2': 'Lähetä +%{smart_count} tiedostoa',
   },
   uploading: 'Lähetetään',
   uploadingXFiles: {
     '0': 'Lähetetään %{smart_count} tiedosto',
     '1': 'Lähetetään %{smart_count} tiedostoa',
-    '2': 'Lähetetään %{smart_count} tiedostoa'
+    '2': 'Lähetetään %{smart_count} tiedostoa',
   },
   xFilesSelected: {
     '0': '%{smart_count} tiedosto valittu',
     '1': '%{smart_count} tiedostoa valittu',
-    '2': '%{smart_count} tiedostoa valittu'
+    '2': '%{smart_count} tiedostoa valittu',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} tiedosto added',
     '1': '%{smart_count} tiedostoa added',
-    '2': '%{smart_count} tiedostoa added'
+    '2': '%{smart_count} tiedostoa added',
   },
   xTimeLeft: '%{time} jäljellä',
   youCanOnlyUploadFileTypes: 'Sallitut tiedostomuodot: %{types}',
   youCanOnlyUploadX: {
     '0': 'Voit lähettää vain %{smart_count} tiedosto',
     '1': 'Voit lähettää vain %{smart_count} tiedostoa',
-    '2': 'Voit lähettää vain %{smart_count} tiedostoa'
+    '2': 'Voit lähettää vain %{smart_count} tiedostoa',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Sinun pitää valita vähintään %{smart_count} tiedosto',
     '1': 'Sinun pitää valita vähintään %{smart_count} tiedostoa',
-    '2': 'Sinun pitää valita vähintään %{smart_count} tiedostoa'
+    '2': 'Sinun pitää valita vähintään %{smart_count} tiedostoa',
   },
   startCapturing: 'Aloita tallennus',
   stopCapturing: 'Lopeta tallennus',
@@ -143,10 +141,10 @@ fi_FI.strings = {
   streamActive: 'Jako aktiivinen',
   streamPassive: 'Jako passiivinen',
   micDisabled: 'Käyttäjä on estänyt mikrofonin',
-  recording: 'Tallennetaan'
+  recording: 'Tallennetaan',
 }
 
-fi_FI.pluralize = function (n) {
+fi_FI.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

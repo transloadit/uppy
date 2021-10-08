@@ -5,7 +5,8 @@
 //
 //  - Assumes EDGLY_KEY and EDGLY_SECRET are available (e.g. set via Travis secrets)
 //  - Assumes a fully built uppy is in root dir (unless a specific tag was specified, then it's fetched from npm)
-//  - Collects dist/ files that would be in an npm package release, and uploads to eg. https://transloadit.edgly.net/releases/uppy/v1.0.1/uppy.css
+//  - Collects dist/ files that would be in an npm package release, and uploads to
+//    eg. https://releases.transloadit.com/uppy/v1.0.1/uppy.css
 //  - Uses local package by default, if [version] argument was specified, takes package from npm
 //
 // Run as:
@@ -21,15 +22,14 @@
 //  - Kevin van Zonneveld <kevin@transloadit.com>
 
 const path = require('path')
+const { pipeline, finished } = require('stream/promises')
+const { readFile } = require('fs/promises')
 const AWS = require('aws-sdk')
 const packlist = require('npm-packlist')
 const tar = require('tar')
 const pacote = require('pacote')
 const concat = require('concat-stream')
 const mime = require('mime-types')
-const { promisify } = require('util')
-const readFile = promisify(require('fs').readFile)
-const finished = promisify(require('stream').finished)
 const AdmZip = require('adm-zip')
 
 function delay (ms) {
@@ -37,8 +37,7 @@ function delay (ms) {
 }
 
 const AWS_REGION = 'us-east-1'
-const AWS_BUCKET = 'crates.edgly.net'
-const AWS_DIRECTORY = '756b8efaed084669b02cb99d4540d81f/default'
+const AWS_BUCKET = 'releases.transloadit.com'
 
 /**
  * Get remote dist/ files by fetching the tarball for the given version
@@ -50,8 +49,7 @@ from npm and filtering it down to package/dist/ files.
  */
 async function getRemoteDistFiles (packageName, version) {
   const files = new Map()
-  const tarball = pacote.tarball.stream(`${packageName}@${version}`)
-    .pipe(new tar.Parse())
+  const tarball = await pacote.tarball.stream(`${packageName}@${version}`, stream => pipeline(stream, new tar.Parse()))
 
   tarball.on('entry', (readEntry) => {
     if (readEntry.path.startsWith('package/dist/')) {
@@ -86,7 +84,7 @@ async function getLocalDistFiles (packagePath) {
   const entries = await Promise.all(
     files.map(async (f) => [
       f,
-      await readFile(path.join(packagePath, 'dist', f))
+      await readFile(path.join(packagePath, 'dist', f)),
     ])
   )
 
@@ -113,13 +111,14 @@ async function main (packageName, version) {
   const s3 = new AWS.S3({
     credentials: new AWS.Credentials({
       accessKeyId: process.env.EDGLY_KEY,
-      secretAccessKey: process.env.EDGLY_SECRET
+      secretAccessKey: process.env.EDGLY_SECRET,
     }),
-    region: AWS_REGION
+    region: AWS_REGION,
   })
 
   const remote = !!version
   if (!remote) {
+    // eslint-disable-next-line import/no-dynamic-require
     version = require(`../packages/${packageName}/package.json`).version
   }
 
@@ -142,11 +141,11 @@ async function main (packageName, version) {
     ? packageName.replace(/^@/, '')
     : 'uppy'
 
-  const outputPath = path.posix.join('releases', dirName, `v${version}`)
+  const outputPath = path.posix.join(dirName, `v${version}`)
 
   const { Contents: existing } = await s3.listObjects({
     Bucket: AWS_BUCKET,
-    Prefix: `${AWS_DIRECTORY}/${outputPath}/`
+    Prefix: outputPath,
   }).promise()
   if (existing.length > 0) {
     if (process.argv.includes('--force')) {
@@ -172,13 +171,13 @@ async function main (packageName, version) {
   }
 
   for (const [filename, buffer] of files.entries()) {
-    const key = path.posix.join(AWS_DIRECTORY, outputPath, filename)
+    const key = path.posix.join(outputPath, filename)
     console.log(`pushing s3://${AWS_BUCKET}/${key}`)
     await s3.putObject({
       Bucket: AWS_BUCKET,
       Key: key,
       ContentType: mime.lookup(filename),
-      Body: buffer
+      Body: buffer,
     }).promise()
   }
 }

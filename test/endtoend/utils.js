@@ -13,18 +13,18 @@ function selectFakeFile (uppyID, name, type, b64) {
   // https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
   function base64toBlob (base64Data, contentType) {
     contentType = contentType || ''
-    var sliceSize = 1024
-    var byteCharacters = atob(base64Data)
-    var bytesLength = byteCharacters.length
-    var slicesCount = Math.ceil(bytesLength / sliceSize)
-    var byteArrays = new Array(slicesCount)
+    const sliceSize = 1024
+    const byteCharacters = atob(base64Data)
+    const bytesLength = byteCharacters.length
+    const slicesCount = Math.ceil(bytesLength / sliceSize)
+    const byteArrays = new Array(slicesCount)
 
-    for (var sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
-      var begin = sliceIndex * sliceSize
-      var end = Math.min(begin + sliceSize, bytesLength)
+    for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
+      const begin = sliceIndex * sliceSize
+      const end = Math.min(begin + sliceSize, bytesLength)
 
-      var bytes = new Array(end - begin)
-      for (var offset = begin, i = 0; offset < end; ++i, ++offset) {
+      const bytes = new Array(end - begin)
+      for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
         bytes[i] = byteCharacters[offset].charCodeAt(0)
       }
       byteArrays[sliceIndex] = new Uint8Array(bytes)
@@ -32,18 +32,18 @@ function selectFakeFile (uppyID, name, type, b64) {
     return new Blob(byteArrays, { type: contentType })
   }
 
-  var blob = base64toBlob(b64, type)
+  const blob = base64toBlob(b64, type)
 
   window[uppyID].addFile({
     source: 'test',
     name: name || 'test-file',
     type: blob.type,
-    data: blob
+    data: blob,
   })
 }
 
 function ensureInputVisible (selector) {
-  var input = document.querySelector(selector)
+  const input = document.querySelector(selector)
   input.style = 'width: auto; height: auto; opacity: 1; z-index: 199'
   input.removeAttribute('hidden')
   input.removeAttribute('aria-hidden')
@@ -55,9 +55,9 @@ function supportsChooseFile () {
   if (process.env.CI) return false
 
   // Webdriver for Safari and Edge doesn’t support .chooseFile
-  return capabilities.browserName !== 'Safari' &&
-         capabilities.browserName !== 'MicrosoftEdge' &&
-         capabilities.platformName !== 'Android'
+  return capabilities.browserName !== 'Safari'
+         && capabilities.browserName !== 'MicrosoftEdge'
+         && capabilities.platformName !== 'Android'
 }
 
 function prematureExit () {
@@ -67,7 +67,7 @@ function prematureExit () {
 class CompanionService {
   onPrepare () {
     this.companion = spawn('node', [
-      path.join(__dirname, '../../packages/@uppy/companion/lib/standalone/start-server')
+      path.join(__dirname, '../../packages/@uppy/companion/lib/standalone/start-server'),
     ], {
       stdio: 'pipe',
       env: {
@@ -80,8 +80,8 @@ class CompanionService {
         COMPANION_DROPBOX_KEY: process.env.TEST_COMPANION_DROPBOX_KEY,
         COMPANION_DROPBOX_SECRET: process.env.TEST_COMPANION_DROPBOX_SECRET,
         COMPANION_GOOGLE_KEY: process.env.TEST_COMPANION_GOOGLE_KEY,
-        COMPANION_GOOGLE_SECRET: process.env.TEST_COMPANION_GOOGLE_SECRET
-      }
+        COMPANION_GOOGLE_SECRET: process.env.TEST_COMPANION_GOOGLE_SECRET,
+      },
     })
     return new Promise((resolve, reject) => {
       this.companion.on('error', reject)
@@ -107,6 +107,7 @@ class CompanionService {
 }
 
 const express = require('express')
+
 class StaticServerService {
   constructor ({ folders, staticServerPort = 4567 }) {
     this.folders = folders
@@ -138,11 +139,12 @@ class StaticServerService {
 
 const tus = require('tus-node-server')
 const os = require('os')
-const rimraf = promisify(require('rimraf'))
+const fs = require('fs/promises')
 const { randomBytes } = require('crypto')
 const http = require('http')
 const httpProxy = require('http-proxy')
 const brake = require('brake')
+
 class TusService {
   constructor ({ tusServerPort = 1080 }) {
     this.port = tusServerPort
@@ -153,7 +155,7 @@ class TusService {
     this.tusServer = new tus.Server()
     this.tusServer.datastore = new tus.FileStore({
       path: '/files',
-      directory: this.path
+      directory: this.path,
     })
 
     const proxy = httpProxy.createProxyServer()
@@ -163,9 +165,9 @@ class TusService {
         // 200 kbps max upload, checking the rate limit every 20ms
         buffer: req.pipe(brake({
           period: 20,
-          rate: 200 * 1024 / 50
-        }))
-      }, (err) => { // eslint-disable-line handle-callback-err
+          rate: 200 * 1024 / 50,
+        })),
+      }, (err) => { // eslint-disable-line node/handle-callback-err,no-unused-vars
         // ignore, typically a cancelled request
       })
     })
@@ -185,7 +187,7 @@ class TusService {
       const close = promisify(this.server.close.bind(this.server))
       await close()
     }
-    await rimraf(this.path)
+    await fs.rm(this.path, { recursive: true, force: true })
     this.slowServer = null
     this.tusServer = null
   }
@@ -197,5 +199,5 @@ module.exports = {
   supportsChooseFile,
   CompanionService,
   StaticServerService,
-  TusService
+  TusService,
 }

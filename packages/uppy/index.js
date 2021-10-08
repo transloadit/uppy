@@ -1,11 +1,13 @@
 // Core
 exports.Core = require('@uppy/core')
+
 exports.debugLogger = exports.Core.debugLogger
 
 // Utilities
 exports.server = require('@uppy/companion-client')
+
 exports.views = {
-  ProviderView: require('@uppy/provider-views')
+  ProviderView: require('@uppy/provider-views'),
 }
 
 // Stores
@@ -15,17 +17,21 @@ exports.ReduxStore = require('@uppy/store-redux')
 // UI plugins
 exports.Dashboard = require('@uppy/dashboard')
 exports.DragDrop = require('@uppy/drag-drop')
+exports.DropTarget = require('@uppy/drop-target')
 exports.FileInput = require('@uppy/file-input')
 exports.Informer = require('@uppy/informer')
 exports.ProgressBar = require('@uppy/progress-bar')
 exports.StatusBar = require('@uppy/status-bar')
+exports.ImageEditor = require('@uppy/image-editor')
 
 // Acquirers
 exports.Dropbox = require('@uppy/dropbox')
 exports.GoogleDrive = require('@uppy/google-drive')
 exports.Instagram = require('@uppy/instagram')
 exports.OneDrive = require('@uppy/onedrive')
+exports.Box = require('@uppy/box')
 exports.Facebook = require('@uppy/facebook')
+exports.Unsplash = require('@uppy/unsplash')
 exports.Url = require('@uppy/url')
 exports.Webcam = require('@uppy/webcam')
 exports.ScreenCapture = require('@uppy/screen-capture')

@@ -18,10 +18,10 @@ npm install @uppy/react
 ```
 
 ```js
-// Either:
-import Dashboard from '@uppy/react/lib/Dashboard'
-// Or:
 import { Dashboard } from '@uppy/react'
+
+// Alternatively, you can also use a default import:
+// import Dashboard from '@uppy/react/lib/Dashboard'
 ```
 
 ## CSS
@@ -43,13 +43,17 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
 
 The `<Dashboard />` component supports all [`@uppy/dashboard`][] options as props. Additionally, an Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
-The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
+> The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] (Image Editor, Google Drive, etc) with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
+<!-- eslint-disable react/jsx-props-no-spreading -->
 ```js
+import React from 'react'
+import { Dashboard } from '@uppy/react'
+
 function Uploader () {
   const uppy = React.useMemo(() => {
-    return Uppy()
-      .use(Webcam) // `id` defaults to "Webcam"
+    return new Uppy()
+      .use(Webcam) // `id` defaults to "Webcam". Note: no `target` option!
       // or
       .use(Webcam, { id: 'MyWebcam' }) // `id` is… "MyWebcam"
   }, [])

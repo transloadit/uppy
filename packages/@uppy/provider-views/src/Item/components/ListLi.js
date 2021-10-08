@@ -1,61 +1,76 @@
 const { h } = require('preact')
 
-const getAriaLabelOfCheckbox = (props) => {
-  if (props.type === 'folder') {
-    if (props.isChecked) {
-      return props.i18n('unselectAllFilesFromFolderNamed', { name: props.title })
-    } else {
-      return props.i18n('selectAllFilesFromFolderNamed', { name: props.title })
-    }
-  } else {
-    if (props.isChecked) {
-      return props.i18n('unselectFileNamed', { name: props.title })
-    } else {
-      return props.i18n('selectFileNamed', { name: props.title })
-    }
-  }
-}
-
 // if folder:
 //   + checkbox (selects all files from folder)
 //   + folder name (opens folder)
 // if file:
 //   + checkbox (selects file)
 //   + file name (selects file)
-module.exports = (props) => {
-  return (
-    <li class={props.className}>
-      <button
-        type="button"
-        class={`uppy-u-reset uppy-ProviderBrowserItem-fakeCheckbox ${props.isChecked ? 'uppy-ProviderBrowserItem-fakeCheckbox--is-checked' : ''}`}
-        onClick={props.toggleCheckbox}
-        // for the <label/>
-        id={props.id}
-        role="option"
-        aria-label={getAriaLabelOfCheckbox(props)}
-        aria-selected={props.isChecked}
-        aria-disabled={props.isDisabled}
-        data-uppy-super-focusable
-      />
 
-      {props.type === 'file' ? (
+function ListItem (props) {
+  const {
+    className,
+    isDisabled,
+    restrictionReason,
+    isCheckboxDisabled,
+    isChecked,
+    toggleCheckbox,
+    type,
+    id,
+    itemIconEl,
+    title,
+    handleFolderClick,
+    showTitles,
+    i18n,
+  } = props
+
+  return (
+    <li
+      className={className}
+      title={isDisabled ? restrictionReason : null}
+    >
+      {!isCheckboxDisabled ? (
+        <input
+          type="checkbox"
+          className={`uppy-u-reset uppy-ProviderBrowserItem-checkbox ${isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''}`}
+          onChange={toggleCheckbox}
+          // for the <label/>
+          name="listitem"
+          id={id}
+          checked={isChecked}
+          aria-label={type === 'file' ? null : i18n('allFilesFromFolderNamed', { name: title })}
+          disabled={isDisabled}
+          data-uppy-super-focusable
+        />
+      ) : null}
+
+      {type === 'file' ? (
         // label for a checkbox
-        <label for={props.id} className="uppy-u-reset uppy-ProviderBrowserItem-inner">
-          {props.itemIconEl}
-          {props.showTitles && props.title}
+        <label
+          htmlFor={id}
+          className="uppy-u-reset uppy-ProviderBrowserItem-inner"
+        >
+          <div className="uppy-ProviderBrowserItem-iconWrap">
+            {itemIconEl}
+          </div>
+          {showTitles && title}
         </label>
       ) : (
         // button to open a folder
         <button
           type="button"
-          class="uppy-u-reset uppy-ProviderBrowserItem-inner"
-          onclick={props.handleFolderClick}
-          aria-label={props.i18n('openFolderNamed', { name: props.title })}
+          className="uppy-u-reset uppy-ProviderBrowserItem-inner"
+          onClick={handleFolderClick}
+          aria-label={i18n('openFolderNamed', { name: title })}
         >
-          {props.itemIconEl}
-          {props.showTitles && props.title}
+          <div className="uppy-ProviderBrowserItem-iconWrap">
+            {itemIconEl}
+          </div>
+          {showTitles && <span>{title}</span>}
         </button>
       )}
     </li>
   )
 }
+
+module.exports = ListItem

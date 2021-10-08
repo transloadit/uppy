@@ -26,17 +26,22 @@ module.exports = function s3 (config) {
   function getUploadParameters (req, res, next) {
     // @ts-ignore The `companion` property is added by middleware before reaching here.
     const client = req.companion.s3Client
+
+    if (!client || typeof config.bucket !== 'string') {
+      return res.status(400).json({ error: 'This Companion server does not support uploading to S3' })
+    }
+
     const metadata = req.query.metadata || {}
     const key = config.getKey(req, req.query.filename, metadata)
     if (typeof key !== 'string') {
-      return res.status(500).json({ error: 's3: filename returned from `getKey` must be a string' })
+      return res.status(500).json({ error: 'S3 uploads are misconfigured: filename returned from `getKey` must be a string' })
     }
 
     const fields = {
       acl: config.acl,
-      key: key,
+      key,
       success_action_status: '201',
-      'content-type': req.query.type
+      'content-type': req.query.type,
     }
 
     Object.keys(metadata).forEach((key) => {
@@ -47,7 +52,7 @@ module.exports = function s3 (config) {
       Bucket: config.bucket,
       Expires: config.expires,
       Fields: fields,
-      Conditions: config.conditions
+      Conditions: config.conditions,
     }, (err, data) => {
       if (err) {
         next(err)
@@ -56,7 +61,7 @@ module.exports = function s3 (config) {
       res.json({
         method: 'post',
         url: data.url,
-        fields: data.fields
+        fields: data.fields,
       })
     })
   }
@@ -93,7 +98,6 @@ module.exports = function s3 (config) {
       ACL: config.acl,
       ContentType: type,
       Metadata: metadata,
-      Expires: config.expires
     }, (err, data) => {
       if (err) {
         next(err)
@@ -101,7 +105,7 @@ module.exports = function s3 (config) {
       }
       res.json({
         key: data.Key,
-        uploadId: data.UploadId
+        uploadId: data.UploadId,
       })
     })
   }
@@ -137,7 +141,7 @@ module.exports = function s3 (config) {
         Bucket: config.bucket,
         Key: key,
         UploadId: uploadId,
-        PartNumberMarker: startAt
+        PartNumberMarker: startAt,
       }, (err, data) => {
         if (err) {
           next(err)
@@ -190,13 +194,69 @@ module.exports = function s3 (config) {
       UploadId: uploadId,
       PartNumber: partNumber,
       Body: '',
-      Expires: config.expires
+      Expires: config.expires,
     }, (err, url) => {
       if (err) {
         next(err)
         return
       }
       res.json({ url })
+    })
+  }
+
+  /**
+   * Get parameters for uploading a batch of parts.
+   *
+   * Expected URL parameters:
+   *  - uploadId - The uploadId returned from `createMultipartUpload`.
+   * Expected query parameters:
+   *  - key - The object key in the S3 bucket.
+   *  - partNumbers - A comma separated list of part numbers representing
+   *                  indecies in the file (1-10000).
+   * Response JSON:
+   *  - presignedUrls - The URLs to upload to, including signed query parameters,
+   *                    in an object mapped to part numbers.
+   */
+  function batchSignPartsUpload (req, res, next) {
+    // @ts-ignore The `companion` property is added by middleware before reaching here.
+    const client = req.companion.s3Client
+    const { uploadId } = req.params
+    const { key, partNumbers } = req.query
+
+    if (typeof key !== 'string') {
+      return res.status(400).json({ error: 's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"' })
+    }
+
+    if (typeof partNumbers !== 'string') {
+      return res.status(400).json({ error: 's3: the part numbers must be passed as a comma separated query parameter. For example: "?partNumbers=4,6,7,21"' })
+    }
+
+    const partNumbersArray = partNumbers.split(',')
+    partNumbersArray.forEach((partNumber) => {
+      if (!parseInt(partNumber, 10)) {
+        return res.status(400).json({ error: 's3: the part numbers must be a number between 1 and 10000.' })
+      }
+    })
+
+    Promise.all(
+      partNumbersArray.map((partNumber) => {
+        return client.getSignedUrlPromise('uploadPart', {
+          Bucket: config.bucket,
+          Key: key,
+          UploadId: uploadId,
+          PartNumber: partNumber,
+          Body: '',
+          Expires: config.expires,
+        })
+      })
+    ).then((urls) => {
+      const presignedUrls = Object.create(null)
+      for (let index = 0; index < partNumbersArray.length; index++) {
+        presignedUrls[partNumbersArray[index]] = urls[index]
+      }
+      res.json({ presignedUrls })
+    }).catch((err) => {
+      next(err)
     })
   }
 
@@ -223,8 +283,8 @@ module.exports = function s3 (config) {
     client.abortMultipartUpload({
       Bucket: config.bucket,
       Key: key,
-      UploadId: uploadId
-    }, (err, data) => {
+      UploadId: uploadId,
+    }, (err) => {
       if (err) {
         next(err)
         return
@@ -264,15 +324,15 @@ module.exports = function s3 (config) {
       Key: key,
       UploadId: uploadId,
       MultipartUpload: {
-        Parts: parts
-      }
+        Parts: parts,
+      },
     }, (err, data) => {
       if (err) {
         next(err)
         return
       }
       res.json({
-        location: data.Location
+        location: data.Location,
       })
     })
   }
@@ -281,6 +341,7 @@ module.exports = function s3 (config) {
     .get('/params', getUploadParameters)
     .post('/multipart', createMultipartUpload)
     .get('/multipart/:uploadId', getUploadedParts)
+    .get('/multipart/:uploadId/batch', batchSignPartsUpload)
     .get('/multipart/:uploadId/:partNumber', signPartUpload)
     .post('/multipart/:uploadId/complete', completeMultipartUpload)
     .delete('/multipart/:uploadId', abortMultipartUpload)

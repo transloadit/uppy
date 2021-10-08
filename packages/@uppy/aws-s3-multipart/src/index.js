@@ -1,9 +1,9 @@
-const { Plugin } = require('@uppy/core')
+const BasePlugin = require('@uppy/core/lib/BasePlugin')
 const { Socket, Provider, RequestClient } = require('@uppy/companion-client')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
-const RateLimitedQueue = require('@uppy/utils/lib/RateLimitedQueue')
+const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const Uploader = require('./MultipartUploader')
 
 function assertServerError (res) {
@@ -15,7 +15,7 @@ function assertServerError (res) {
   return res
 }
 
-module.exports = class AwsS3Multipart extends Plugin {
+module.exports = class AwsS3Multipart extends BasePlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -31,9 +31,9 @@ module.exports = class AwsS3Multipart extends Plugin {
       retryDelays: [0, 1000, 3000, 5000],
       createMultipartUpload: this.createMultipartUpload.bind(this),
       listParts: this.listParts.bind(this),
-      prepareUploadPart: this.prepareUploadPart.bind(this),
+      prepareUploadParts: this.prepareUploadParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
-      completeMultipartUpload: this.completeMultipartUpload.bind(this)
+      completeMultipartUpload: this.completeMultipartUpload.bind(this),
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -80,7 +80,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
     const metadata = {}
 
-    Object.keys(file.meta).map(key => {
+    Object.keys(file.meta).forEach(key => {
       if (file.meta[key] != null) {
         metadata[key] = file.meta[key].toString()
       }
@@ -89,7 +89,7 @@ module.exports = class AwsS3Multipart extends Plugin {
     return this.client.post('s3/multipart', {
       filename: file.name,
       type: file.type,
-      metadata
+      metadata,
     }).then(assertServerError)
   }
 
@@ -101,11 +101,11 @@ module.exports = class AwsS3Multipart extends Plugin {
       .then(assertServerError)
   }
 
-  prepareUploadPart (file, { key, uploadId, number }) {
-    this.assertHost('prepareUploadPart')
+  prepareUploadParts (file, { key, uploadId, partNumbers }) {
+    this.assertHost('prepareUploadParts')
 
     const filename = encodeURIComponent(key)
-    return this.client.get(`s3/multipart/${uploadId}/${number}?key=${filename}`)
+    return this.client.get(`s3/multipart/${uploadId}/batch?key=${filename}&partNumbers=${partNumbers.join(',')}`)
       .then(assertServerError)
   }
 
@@ -135,16 +135,16 @@ module.exports = class AwsS3Multipart extends Plugin {
           s3Multipart: {
             ...cFile.s3Multipart,
             key: data.key,
-            uploadId: data.uploadId
-          }
+            uploadId: data.uploadId,
+          },
         })
       }
 
       const onProgress = (bytesUploaded, bytesTotal) => {
         this.uppy.emit('upload-progress', file, {
           uploader: this,
-          bytesUploaded: bytesUploaded,
-          bytesTotal: bytesTotal
+          bytesUploaded,
+          bytesTotal,
         })
       }
 
@@ -159,16 +159,20 @@ module.exports = class AwsS3Multipart extends Plugin {
 
       const onSuccess = (result) => {
         const uploadResp = {
-          uploadURL: result.location
+          body: {
+            ...result,
+          },
+          uploadURL: result.location,
         }
 
         queuedRequest.done()
         this.resetUploaderReferences(file.id)
 
-        this.uppy.emit('upload-success', file, uploadResp)
+        const cFile = this.uppy.getFile(file.id)
+        this.uppy.emit('upload-success', cFile || file, uploadResp)
 
         if (result.location) {
-          this.uppy.log('Download ' + upload.file.name + ' from ' + result.location)
+          this.uppy.log(`Download ${upload.file.name} from ${result.location}`)
         }
 
         resolve(upload)
@@ -187,7 +191,7 @@ module.exports = class AwsS3Multipart extends Plugin {
         // .bind to pass the file object to each handler.
         createMultipartUpload: this.opts.createMultipartUpload.bind(this, file),
         listParts: this.opts.listParts.bind(this, file),
-        prepareUploadPart: this.opts.prepareUploadPart.bind(this, file),
+        prepareUploadParts: this.opts.prepareUploadParts.bind(this, file),
         completeMultipartUpload: this.opts.completeMultipartUpload.bind(this, file),
         abortMultipartUpload: this.opts.abortMultipartUpload.bind(this, file),
         getChunkSize: this.opts.getChunkSize ? this.opts.getChunkSize.bind(this) : null,
@@ -200,7 +204,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
         limit: this.opts.limit || 5,
         retryDelays: this.opts.retryDelays || [],
-        ...file.s3Multipart
+        ...file.s3Multipart,
       })
 
       this.uploaders[file.id] = upload
@@ -235,7 +239,8 @@ module.exports = class AwsS3Multipart extends Plugin {
           queuedRequest.abort()
           upload.pause()
         } else {
-          // Resuming an upload should be queued, else you could pause and then resume a queued upload to make it skip the queue.
+          // Resuming an upload should be queued, else you could pause and then
+          // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
           queuedRequest = this.requests.run(() => {
             upload.start()
@@ -260,8 +265,9 @@ module.exports = class AwsS3Multipart extends Plugin {
         })
       })
 
-      if (!file.isRestored) {
-        this.uppy.emit('upload-started', file, upload)
+      // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+      if (!file.progress.uploadStarted || !file.isRestored) {
+        this.uppy.emit('upload-started', file)
       }
     })
   }
@@ -269,7 +275,11 @@ module.exports = class AwsS3Multipart extends Plugin {
   uploadRemote (file) {
     this.resetUploaderReferences(file.id)
 
-    this.uppy.emit('upload-started', file)
+    // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+    if (!file.progress.uploadStarted || !file.isRestored) {
+      this.uppy.emit('upload-started', file)
+    }
+
     if (file.serverToken) {
       return this.connectToServerSocket(file)
     }
@@ -283,7 +293,7 @@ module.exports = class AwsS3Multipart extends Plugin {
           ...file.remote.body,
           protocol: 's3-multipart',
           size: file.data.size,
-          metadata: file.meta
+          metadata: file.meta,
         }
       ).then((res) => {
         this.uppy.setFileState(file.id, { serverToken: res.token })
@@ -308,7 +318,7 @@ module.exports = class AwsS3Multipart extends Plugin {
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      this.onFileRemove(file.id, (removed) => {
+      this.onFileRemove(file.id, () => {
         queuedRequest.abort()
         socket.send('pause', {})
         this.resetUploaderReferences(file.id, { abort: true })
@@ -321,7 +331,8 @@ module.exports = class AwsS3Multipart extends Plugin {
           queuedRequest.abort()
           socket.send('pause', {})
         } else {
-          // Resuming an upload should be queued, else you could pause and then resume a queued upload to make it skip the queue.
+          // Resuming an upload should be queued, else you could pause and then
+          // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
           queuedRequest = this.requests.run(() => {
             socket.send('resume', {})
@@ -381,7 +392,7 @@ module.exports = class AwsS3Multipart extends Plugin {
 
       socket.on('success', (data) => {
         const uploadResp = {
-          uploadURL: data.url
+          uploadURL: data.url,
         }
 
         this.uppy.emit('upload-success', file, uploadResp)
@@ -439,7 +450,7 @@ module.exports = class AwsS3Multipart extends Plugin {
   }
 
   onRetryAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('retry-all', (filesToRetry) => {
+    this.uploaderEvents[fileID].on('retry-all', () => {
       if (!this.uppy.getFile(fileID)) return
       cb()
     })
@@ -471,8 +482,8 @@ module.exports = class AwsS3Multipart extends Plugin {
     this.uppy.setState({
       capabilities: {
         ...capabilities,
-        resumableUploads: true
-      }
+        resumableUploads: true,
+      },
     })
     this.uppy.addUploader(this.upload)
   }
@@ -482,8 +493,8 @@ module.exports = class AwsS3Multipart extends Plugin {
     this.uppy.setState({
       capabilities: {
         ...capabilities,
-        resumableUploads: false
-      }
+        resumableUploads: false,
+      },
     })
     this.uppy.removeUploader(this.upload)
   }

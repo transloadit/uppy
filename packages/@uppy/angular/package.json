@@ -1,0 +1,82 @@
+{
+  "name": "@uppy/angular",
+  "version": "0.2.4",
+  "module": "dist/angular/esm2015/public-api.js",
+  "types": "dist/angular/uppy-angular.d.ts",
+  "scripts": {
+    "ng": "ng",
+    "start": "start-storybook -p 6006",
+    "build": "ng build",
+    "build:release": "ng build --prod",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "build-storybook": "build-storybook"
+  },
+  "private": false,
+  "dependencies": {
+    "@angular/animations": ">= 11",
+    "@angular/common": ">= 11",
+    "@angular/compiler": ">= 11",
+    "@angular/core": ">= 11",
+    "@angular/forms": ">= 11",
+    "@angular/platform-browser": ">= 11",
+    "@angular/platform-browser-dynamic": ">= 11",
+    "@angular/router": ">= 11",
+    "@uppy/dashboard": "file:../dashboard",
+    "@uppy/drag-drop": "file:../drag-drop",
+    "@uppy/progress-bar": "file:../progress-bar",
+    "@uppy/status-bar": "file:../status-bar",
+    "prop-types": "^15.7.2",
+    "rxjs": "^6.5.3",
+    "tslib": "^2.0.0",
+    "zone.js": "~0.11.3"
+  },
+  "peerDependencies": {
+    "@uppy/core": ">=1"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": ">= 11",
+    "@angular-eslint/builder": ">= 11",
+    "@angular-eslint/eslint-plugin": ">= 11",
+    "@angular-eslint/eslint-plugin-template": ">= 11",
+    "@angular-eslint/schematics": ">= 11",
+    "@angular-eslint/template-parser": ">= 11",
+    "@angular/cli": ">= 11",
+    "@angular/compiler-cli": ">= 11",
+    "@babel/core": "^7.10.5",
+    "@storybook/addon-actions": "^6.2.7",
+    "@storybook/addon-links": "^6.2.7",
+    "@storybook/addon-notes": "^5.3.19",
+    "@storybook/addons": "^5.3.21",
+    "@storybook/angular": "^6.2.7",
+    "@types/jasmine": "~3.6.0",
+    "@types/jasminewd2": "~2.0.3",
+    "@types/node": "^12.11.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "babel-loader": "^8.1.0",
+    "eslint": "^7.22.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsdoc": "^35.4.1",
+    "eslint-plugin-prefer-arrow": "latest",
+    "jasmine-core": "~3.6.0",
+    "jasmine-spec-reporter": "~5.0.0",
+    "karma": "~6.1.0",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage-istanbul-reporter": "~3.0.2",
+    "karma-jasmine": "~4.0.0",
+    "karma-jasmine-html-reporter": "^1.5.0",
+    "ng-packagr": "^12.1.0",
+    "protractor": "~7.0.0",
+    "redux": "^4.0.5",
+    "ts-node": "~8.3.0",
+    "typescript": "~4.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "/dist"
+  ]
+}

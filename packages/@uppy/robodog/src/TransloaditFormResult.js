@@ -1,4 +1,4 @@
-const { Plugin } = require('@uppy/core')
+const BasePlugin = require('@uppy/core/lib/BasePlugin')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 
 /**
@@ -6,7 +6,7 @@ const findDOMElement = require('@uppy/utils/lib/findDOMElement')
  *
  * Must be added _after_ the Transloadit plugin.
  */
-class TransloaditFormResult extends Plugin {
+class TransloaditFormResult extends BasePlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
 

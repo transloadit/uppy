@@ -41,21 +41,21 @@ sr_RS_Cyrillic.strings = {
   encoding: 'Шифровање...',
   enterCorrectUrl: 'Погрешан URL: унесите тачну путању до датотеке',
   enterUrlToImport: 'Унесите URL (путању) до датотеке',
-  exceedsSize: 'Ова датотека премашује највећу дозвољену величину од',
+  exceedsSize: 'Ова датотека премашује највећу дозвољену величину од %{size}',
   failedToFetch: 'Companion није успео да допре до дате адресе (URL), проверите исправност адресе',
   failedToUpload: 'Број неуспело отпремљених датотека: %{file}',
   fileSource: 'Датотека: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete}. Укупно отремљених датотека: %{smart_count}',
     '1': '%{complete}. Укупно отремљених датотека: %{smart_count}',
-    '2': '%{complete}. Укупно отремљених датотека: %{smart_count}'
+    '2': '%{complete}. Укупно отремљених датотека: %{smart_count}',
   },
   filter: 'Филтер',
   finishEditingFile: 'Заврши мењање фајла',
   folderAdded: {
     '0': 'Број датотека преузетих из %{folder}: %{smart_count}',
     '1': 'Број датотека преузетих из %{folder}: %{smart_count}',
-    '2': 'Број датотека преузетих из %{folder}: %{smart_count}'
+    '2': 'Број датотека преузетих из %{folder}: %{smart_count}',
   },
   import: 'Преузми',
   importFrom: 'Преузми са %{name}',
@@ -67,11 +67,11 @@ sr_RS_Cyrillic.strings = {
   pause: 'Заустави привремено',
   pauseUpload: 'Привремено заустави отпремање',
   paused: 'Привремено заустављено',
-  poweredBy: 'Отпремање покреће',
+  poweredBy: 'Отпремање покреће %{uppy}',
   processingXFiles: {
     '0': 'Обрада датотеке',
     '1': 'Број датотека које се обрађују: %{smart_count}',
-    '2': 'Број датотека које се обрађују: %{smart_count}'
+    '2': 'Број датотека које се обрађују: %{smart_count}',
   },
   removeFile: 'Уклони дадотеку',
   resetFilter: 'Избриши филтер',
@@ -83,7 +83,7 @@ sr_RS_Cyrillic.strings = {
   selectX: {
     '0': 'Изабери датотеку',
     '1': 'Изабери %{smart_count}',
-    '2': 'Изабери %{smart_count}'
+    '2': 'Изабери %{smart_count}',
   },
   smile: 'Осмех!',
   startRecording: 'Започни снимање видео записа',
@@ -97,49 +97,47 @@ sr_RS_Cyrillic.strings = {
   uploadXFiles: {
     '0': 'Отпреми датотеку',
     '1': 'Отпреми датотеке. Укупно: %{smart_count}',
-    '2': 'Отпреми датотеке. Укупно: %{smart_count}'
+    '2': 'Отпреми датотеке. Укупно: %{smart_count}',
   },
   uploadXNewFiles: {
     '0': 'Отпреми +%{smart_count} datoteku',
     '1': 'Отпреми датотеке. Укупно: +%{smart_count}',
-    '2': 'Отпреми датотеке. Укупно: +%{smart_count}'
+    '2': 'Отпреми датотеке. Укупно: +%{smart_count}',
   },
   uploading: 'Отпремање',
   uploadingXFiles: {
     '0': 'Број датотека које се тренутно отпремају: %{smart_count}',
     '1': 'Број датотека које се тренутно отпремају: %{smart_count}',
-    '2': 'Број датотека које се тренутно отпремају: %{smart_count}'
+    '2': 'Број датотека које се тренутно отпремају: %{smart_count}',
   },
   xFilesSelected: {
     '0': 'Број датотека за отпремање: %{smart_count}',
     '1': 'Број датотека за отпремање: %{smart_count}',
-    '2': 'Број датотека за отпремање: %{smart_count}'
+    '2': 'Број датотека за отпремање: %{smart_count}',
   },
   xMoreFilesAdded: {
     '0': 'Број додатих датотека: %{smart_count}',
     '1': 'Број додатих датотека: %{smart_count}',
-    '2': 'Број додатих датотека: %{smart_count}'
+    '2': 'Број додатих датотека: %{smart_count}',
   },
   xTimeLeft: 'Преостало време %{time} ',
   youCanOnlyUploadFileTypes: 'Можете да отпремите само: %{types}',
   youCanOnlyUploadX: {
     '0': 'Дозвољени број датотека за отпремање: %{smart_count}',
     '1': 'Дозвољени број датотека за отпремање: %{smart_count}',
-    '2': 'Дозвољени број датотека за отпремање: %{smart_count}'
+    '2': 'Дозвољени број датотека за отпремање: %{smart_count}',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Изаберите бар једну датотеку',
     '1': 'Изаберите датотеке. Најмање: %{smart_count}',
-    '2': 'Изаберите датотеке. Најмање: %{smart_count}'
+    '2': 'Изаберите датотеке. Најмање: %{smart_count}',
   },
-  selectAllFilesFromFolderNamed: 'Изаберите све датотеке из фолдера %{name}',
-  unselectAllFilesFromFolderNamed: 'Искључите све датотеке из фолдера %{name}',
   selectFileNamed: 'Изаберите фајл %{name}',
   unselectFileNamed: 'Искључите фајл %{name}',
-  openFolderNamed: 'Отвори фолдер %{name}'
+  openFolderNamed: 'Отвори фолдер %{name}',
 }
 
-sr_RS_Cyrillic.pluralize = function (n) {
+sr_RS_Cyrillic.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

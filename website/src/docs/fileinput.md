@@ -12,7 +12,7 @@ tagline: "even more plain and simple, just a button"
 `@uppy/file-input` is the most barebones UI for selecting files — it shows a single button that, when clicked, opens up the browser’s file selector.
 
 ```js
-const FileInput = require('@uppy/file-input')
+import FileInput from '@uppy/file-input'
 
 uppy.use(FileInput, {
   // Options
@@ -36,7 +36,7 @@ npm install @uppy/file-input
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const FileInput = Uppy.FileInput
+const { FileInput } = Uppy
 ```
 
 ## CSS
@@ -60,7 +60,7 @@ uppy.use(FileInput, {
   pretty: true,
   inputName: 'files[]',
   locale: {
-  }
+  },
 })
 ```
 
@@ -87,8 +87,10 @@ The `name` attribute for the `<input type="file">` element.
 When `pretty` is set, specify a custom label for the button.
 
 ```js
-strings: {
-  chooseFiles: 'Choose files'
+const locale = {
+  strings: {
+    chooseFiles: 'Choose files',
+  },
 }
 ```
 
@@ -103,7 +105,7 @@ If you don’t like the look/feel of the button rendered by `@uppy/file-input`, 
 Then add this JS to attach it to Uppy:
 
 ```js
-const uppy = new Uppy(...)
+const uppy = new Uppy(/* ... */)
 const fileInput = document.querySelector('#my-file-input')
 
 fileInput.addEventListener('change', (event) => {
@@ -115,7 +117,7 @@ fileInput.addEventListener('change', (event) => {
         source: 'file input',
         name: file.name,
         type: file.type,
-        data: file
+        data: file,
       })
     } catch (err) {
       if (err.isRestriction) {
@@ -127,5 +129,16 @@ fileInput.addEventListener('change', (event) => {
       }
     }
   })
+})
+
+// it’s probably a good idea to clear the `<input>`
+// after the upload or when the file was removed
+// (see https://github.com/transloadit/uppy/issues/2640#issuecomment-731034781)
+uppy.on('file-removed', () => {
+  fileInput.value = null
+})
+
+uppy.on('complete', () => {
+  fileInput.value = null
 })
 ```

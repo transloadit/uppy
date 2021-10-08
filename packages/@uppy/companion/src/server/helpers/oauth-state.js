@@ -1,7 +1,7 @@
-const { encrypt, decrypt } = require('./utils')
 const crypto = require('crypto')
 // @ts-ignore
 const atob = require('atob')
+const { encrypt, decrypt } = require('./utils')
 
 module.exports.generateState = (secret) => {
   const state = {}
@@ -26,4 +26,10 @@ const setState = (state, secret) => {
 const getState = (state, secret) => {
   const encodedState = decrypt(state, secret)
   return JSON.parse(atob(encodedState))
+}
+
+module.exports.getDynamicStateFromRequest = (req) => {
+  const dynamic = (req.session.grant || {}).dynamic || {}
+  const { state } = dynamic
+  return state
 }

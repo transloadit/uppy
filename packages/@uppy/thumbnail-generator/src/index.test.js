@@ -1,6 +1,6 @@
-const ThumbnailGeneratorPlugin = require('./index')
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const emitter = require('namespace-emitter')
+const ThumbnailGeneratorPlugin = require('./index')
 
 const delay = duration => new Promise(resolve => setTimeout(resolve, duration))
 
@@ -9,7 +9,7 @@ function MockCore () {
   const files = {}
   core.state = {
     files,
-    plugins: {}
+    plugins: {},
   }
   core.mockFile = (id, f) => { files[id] = f }
   core.getFile = (id) => files[id]
@@ -26,7 +26,7 @@ function MockCore () {
 describe('uploader/ThumbnailGeneratorPlugin', () => {
   it('should initialise successfully', () => {
     const plugin = new ThumbnailGeneratorPlugin(new MockCore(), {})
-    expect(plugin instanceof Plugin).toEqual(true)
+    expect(plugin instanceof UIPlugin).toEqual(true)
   })
 
   it('should accept the thumbnailWidth and thumbnailHeight option and override the default', () => {
@@ -44,7 +44,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
   describe('install', () => {
     it('should subscribe to uppy file-added event', () => {
       const core = Object.assign(new MockCore(), {
-        on: jest.fn()
+        on: jest.fn(),
       })
 
       const plugin = new ThumbnailGeneratorPlugin(core)
@@ -60,7 +60,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
     it('should unsubscribe from uppy file-added event', () => {
       const core = Object.assign(new MockCore(), {
         on: jest.fn(),
-        off: jest.fn()
+        off: jest.fn(),
       })
 
       const plugin = new ThumbnailGeneratorPlugin(core)
@@ -101,9 +101,9 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.requestThumbnail = jest.fn(() => delay(100))
       plugin.install()
 
-      const file1 = { id: 'bar', type: 'image/jpeg' }
-      const file2 = { id: 'bar2', type: 'image/jpeg' }
-      const file3 = { id: 'bar3', type: 'image/jpeg' }
+      const file1 = { id: 'bar', type: 'image/jpeg', data: new Blob() }
+      const file2 = { id: 'bar2', type: 'image/jpeg', data: new Blob() }
+      const file3 = { id: 'bar3', type: 'image/jpeg', data: new Blob() }
       core.mockFile(file1.id, file1)
       core.emit('file-added', file1)
       core.mockFile(file2.id, file2)
@@ -148,8 +148,8 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
           if (id === 2) file2.preview = preview
         })
 
-        const file1 = { id: 1, name: 'bar.jpg', type: 'image/jpeg' }
-        const file2 = { id: 2, name: 'bar2.jpg', type: 'image/jpeg' }
+        const file1 = { id: 1, name: 'bar.jpg', type: 'image/jpeg', data: new Blob() }
+        const file2 = { id: 2, name: 'bar2.jpg', type: 'image/jpeg', data: new Blob() }
         core.mockFile(file1.id, file1)
         core.emit('file-added', file1)
         core.mockFile(file2.id, file2)
@@ -195,16 +195,16 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         }
         if (expected.length === 0) resolve()
       })
-      add({ id: 'bar', type: 'image/png' })
-      add({ id: 'bar2', type: 'image/png' })
-      add({ id: 'bar3', type: 'image/png' })
+      add({ id: 'bar', type: 'image/png', data: new Blob() })
+      add({ id: 'bar2', type: 'image/png', data: new Blob() })
+      add({ id: 'bar3', type: 'image/png', data: new Blob() })
     }))
 
     it('should emit thumbnail:all-generated when all thumbnails were generated', () => {
       return new Promise((resolve) => {
         core.on('thumbnail:all-generated', resolve)
-        add({ id: 'bar4', type: 'image/png' })
-        add({ id: 'bar5', type: 'image/png' })
+        add({ id: 'bar4', type: 'image/png', data: new Blob() })
+        add({ id: 'bar5', type: 'image/png', data: new Blob() })
       }).then(() => {
         expect(plugin.queue).toHaveLength(0)
       })
@@ -285,18 +285,18 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         state: {
           files: {
             file1: {
-              preview: 'foo'
+              preview: 'foo',
             },
             file2: {
-              preview: 'boo'
-            }
-          }
+              preview: 'boo',
+            },
+          },
         },
         setFileState: jest.fn(),
-        plugins: {}
+        plugins: {},
       }
       core.state = {
-        plugins: {}
+        plugins: {},
       }
       core.setState = () => null
       core.getState = () => core.state
@@ -305,7 +305,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.setPreviewURL('file1', 'moo')
       expect(core.setFileState).toHaveBeenCalledTimes(1)
       expect(core.setFileState).toHaveBeenCalledWith('file1', {
-        preview: 'moo'
+        preview: 'moo',
       })
     })
   })
@@ -350,7 +350,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
       const canvas = {
-        toBlob: jest.fn()
+        toBlob: jest.fn(),
       }
       plugin.canvasToBlob(canvas, 'type', 90)
       expect(canvas.toBlob).toHaveBeenCalledTimes(1)
@@ -378,27 +378,27 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       const plugin = new ThumbnailGeneratorPlugin(core)
       const image = {
         width: 1000,
-        height: 800
+        height: 800,
       }
       const context = {
-        drawImage: jest.fn()
+        drawImage: jest.fn(),
       }
       const canvas = {
         width: 0,
         height: 0,
-        getContext: jest.fn().mockReturnValue(context)
+        getContext: jest.fn().mockReturnValue(context),
       }
       document.createElement = jest.fn().mockReturnValue(canvas)
       const result = plugin.downScaleInSteps(image, 3)
       const newImage = {
         getContext: canvas.getContext,
         height: 100,
-        width: 125
+        width: 125,
       }
       expect(result).toEqual({
         image: newImage,
         sourceWidth: 125,
-        sourceHeight: 100
+        sourceHeight: 100,
       })
       expect(context.drawImage).toHaveBeenCalledTimes(3)
       expect(context.drawImage.mock.calls).toEqual([
@@ -412,7 +412,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
           0,
           0,
           250,
-          200
+          200,
         ],
         [
           { width: 125, height: 100, getContext: canvas.getContext },
@@ -423,8 +423,8 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
           0,
           0,
           125,
-          100
-        ]
+          100,
+        ],
       ])
     })
   })
@@ -435,15 +435,15 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       const plugin = new ThumbnailGeneratorPlugin(core)
       const image = {
         width: 1000,
-        height: 800
+        height: 800,
       }
       const context = {
-        drawImage: jest.fn()
+        drawImage: jest.fn(),
       }
       const canvas = {
         width: 0,
         height: 0,
-        getContext: jest.fn().mockReturnValue(context)
+        getContext: jest.fn().mockReturnValue(context),
       }
       document.createElement = jest.fn().mockReturnValue(canvas)
 
@@ -451,7 +451,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       expect(result).toEqual({
         width: 200,
         height: 160,
-        getContext: canvas.getContext
+        getContext: canvas.getContext,
       })
     })
 
@@ -460,15 +460,15 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       const plugin = new ThumbnailGeneratorPlugin(core)
       const image = {
         width: 100,
-        height: 80
+        height: 80,
       }
       const context = {
-        drawImage: jest.fn()
+        drawImage: jest.fn(),
       }
       const canvas = {
         width: 0,
         height: 0,
-        getContext: jest.fn().mockReturnValue(context)
+        getContext: jest.fn().mockReturnValue(context),
       }
       document.createElement = jest.fn().mockReturnValue(canvas)
 
@@ -476,7 +476,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       expect(result).toEqual({
         width: 200,
         height: 160,
-        getContext: canvas.getContext
+        getContext: canvas.getContext,
       })
     })
   })
@@ -484,9 +484,9 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
   describe('onRestored', () => {
     it('should enqueue restored files', () => {
       const files = {
-        a: { id: 'a', type: 'image/jpeg', preview: 'blob:abc', isRestored: true },
-        b: { id: 'b', type: 'image/jpeg', preview: 'blob:def' },
-        c: { id: 'c', type: 'image/jpeg', preview: 'blob:xyz', isRestored: true }
+        a: { id: 'a', type: 'image/jpeg', isRestored: true, data: new Blob() },
+        b: { id: 'b', type: 'image/jpeg', data: new Blob() },
+        c: { id: 'c', type: 'image/jpeg', isRestored: true, data: new Blob() },
       }
       const core = Object.assign(new MockCore(), {
         getState () {
@@ -494,7 +494,10 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         },
         getFile (id) {
           return files[id]
-        }
+        },
+        getFiles () {
+          return Object.values(files)
+        },
       })
 
       const plugin = new ThumbnailGeneratorPlugin(core)
@@ -510,7 +513,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
 
     it('should not regenerate thumbnail for remote files', () => {
       const files = {
-        a: { preview: 'http://abc', isRestored: true }
+        a: { preview: 'http://abc', isRestored: true },
       }
       const core = Object.assign(new MockCore(), {
         getState () {
@@ -518,7 +521,10 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         },
         getFile (id) {
           return files[id]
-        }
+        },
+        getFiles () {
+          return Object.values(files)
+        },
       })
 
       const plugin = new ThumbnailGeneratorPlugin(core)

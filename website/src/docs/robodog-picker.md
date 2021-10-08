@@ -13,8 +13,8 @@ Show a modal UI that allows users to pick files from their device and from the w
 const resultPromise = Robodog.pick({
   params: {
     auth: { key: '' },
-    template_id: ''
-  }
+    template_id: '',
+  },
 })
 ```
 
@@ -50,6 +50,10 @@ Maximum file size in bytes for each individual file.
 ### `restrictions.minFileSize`
 
 Minimum file size in bytes for each individual file.
+
+### `restrictions.maxTotalFileSize`
+
+Maximum file size in bytes for all the files together.
 
 ### `restrictions.maxNumberOfFiles`
 

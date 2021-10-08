@@ -1,6 +1,6 @@
-const { Plugin } = require('../../packages/@uppy/core')
+const { UIPlugin } = require('../../packages/@uppy/core')
 
-module.exports = class InvalidPluginWithoutName extends Plugin {
+module.exports = class InvalidPluginWithoutName extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'
@@ -11,7 +11,7 @@ module.exports = class InvalidPluginWithoutName extends Plugin {
     this.uppy.log({
       class: this.constructor.name,
       method: 'run',
-      results: results
+      results,
     })
 
     return Promise.resolve('success')

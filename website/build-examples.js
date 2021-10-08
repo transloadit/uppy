@@ -21,11 +21,10 @@
  * the Set when it has been bundled.
  */
 
-const createStream = require('fs').createWriteStream
-const glob = require('multi-glob').glob
+const { createWriteStream, mkdirSync } = require('fs')
+const { glob } = require('multi-glob')
 const chalk = require('chalk')
 const path = require('path')
-const mkdirp = require('mkdirp')
 const notifier = require('node-notifier')
 const babelify = require('babelify')
 const aliasify = require('aliasify')
@@ -33,7 +32,9 @@ const browserify = require('browserify')
 const watchify = require('watchify')
 
 const bresolve = require('browser-resolve')
+
 function useSourcePackages (b) {
+  // eslint-disable-next-line no-underscore-dangle
   b._bresolve = (id, opts, cb) => {
     bresolve(id, opts, (err, result, pkg) => {
       if (err) return cb(err)
@@ -59,11 +60,8 @@ if (watchifyEnabled) {
 
 // Instead of 'watch', build-examples.js can also take a path as cli argument.
 // In this case we'll only bundle the specified path/pattern
-if (!watchifyEnabled && process.argv[2]) {
-  srcPattern = process.argv[2]
-  if (process.argv[3]) {
-    dstPattern = process.argv[3]
-  }
+if (!watchifyEnabled && process.argv.length > 2) {
+  [, , srcPattern, dstPattern] = process.argv
 }
 
 // Find each app.es6 file with glob.
@@ -82,18 +80,18 @@ glob(srcPattern, (err, files) => {
       cache: {},
       packageCache: {},
       debug: true,
-      plugin: browserifyPlugins
+      plugin: browserifyPlugins,
     })
 
     // Aliasing for using `require('uppy')`, etc.
     b
       .transform(babelify, {
-        root: path.join(__dirname, '..')
+        root: path.join(__dirname, '..'),
       })
       .transform(aliasify, {
         aliases: {
-          '@uppy': `./${path.relative(process.cwd(), path.join(__dirname, '../packages/@uppy'))}`
-        }
+          '@uppy': `./${path.relative(process.cwd(), path.join(__dirname, '../packages/@uppy'))}`,
+        },
       })
 
     // Listeners for changes, errors, and completion.
@@ -112,8 +110,7 @@ glob(srcPattern, (err, files) => {
      * Creates bundle and writes it to static and public folders.
      * Changes to
      *
-     * @param  {[type]} ids [description]
-     * @returns {[type]}     [description]
+     * @param  {string[]} ids
      */
     function bundle (ids = []) {
       ids.forEach((id) => {
@@ -127,14 +124,14 @@ glob(srcPattern, (err, files) => {
       const output = dstPattern.replace('**', exampleName)
       const parentDir = path.dirname(output)
 
-      mkdirp.sync(parentDir)
+      mkdirSync(parentDir, { recursive: true })
 
       console.info(chalk.grey(`⏳ building: ${path.relative(process.cwd(), file)}`))
 
       b
         .bundle()
         .on('error', onError)
-        .pipe(createStream(output))
+        .pipe(createWriteStream(output))
         .on('finish', () => {
           console.info(chalk.green(`✓ built: ${path.relative(process.cwd(), file)}`))
         })
@@ -152,7 +149,7 @@ function onError (err) {
   console.error(chalk.red('✗ error:'), chalk.red(err.message))
   notifier.notify({
     title: 'Build failed:',
-    message: err.message
+    message: err.message,
   })
   this.emit('end')
 

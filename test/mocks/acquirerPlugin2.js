@@ -1,6 +1,6 @@
-const { Plugin } = require('../../packages/@uppy/core')
+const { UIPlugin } = require('../../packages/@uppy/core')
 
-module.exports = class TestSelector2 extends Plugin {
+module.exports = class TestSelector2 extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'
@@ -10,7 +10,7 @@ module.exports = class TestSelector2 extends Plugin {
     this.mocks = {
       run: jest.fn(),
       update: jest.fn(),
-      uninstall: jest.fn()
+      uninstall: jest.fn(),
     }
   }
 
@@ -18,7 +18,7 @@ module.exports = class TestSelector2 extends Plugin {
     this.uppy.log({
       class: this.constructor.name,
       method: 'run',
-      results: results
+      results,
     })
     this.mocks.run(results)
     return Promise.resolve('success')

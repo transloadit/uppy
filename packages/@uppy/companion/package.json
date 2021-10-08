@@ -1,9 +1,9 @@
 {
   "name": "@uppy/companion",
-  "version": "2.0.0",
+  "version": "3.1.0",
   "description": "OAuth helper and remote fetcher for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
   "main": "lib/companion.js",
-  "types": "types/index.d.ts",
+  "types": "lib/companion.d.ts",
   "author": "Transloadit.com",
   "license": "ISC",
   "homepage": "https://github.com/transloadit/uppy#readme",
@@ -20,6 +20,7 @@
     "s3",
     "google drive",
     "dropbox",
+    "box",
     "backend",
     "websocket",
     "express",
@@ -37,37 +38,57 @@
     "common-tags": "1.8.0",
     "connect-redis": "4.0.3",
     "cookie-parser": "1.4.5",
+    "cors": "^2.8.5",
     "escape-string-regexp": "2.0.0",
     "express": "4.17.1",
     "express-interceptor": "1.2.0",
-    "express-prom-bundle": "3.3.0",
+    "express-prom-bundle": "6.3.0",
     "express-request-id": "1.4.1",
     "express-session": "1.17.1",
-    "grant": "4.6.5",
-    "helmet": "3.23.1",
+    "grant": "4.7.0",
+    "helmet": "^4.6.0",
     "ip-address": "6.2.0",
     "isobject": "3.0.1",
     "jsonwebtoken": "8.5.1",
-    "lodash.merge": "4.6.2",
+    "lodash.merge": "^4.6.2",
     "mime-types": "2.1.25",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.31",
     "morgan": "1.10.0",
     "ms": "2.1.2",
     "node-redis-pubsub": "4.0.0",
     "node-schedule": "1.3.2",
-    "prom-client": "11.5.3",
+    "prom-client": "12.0.0",
     "purest": "3.1.0",
-    "redis": "3.0.2",
+    "redis": "3.1.1",
     "request": "2.88.2",
     "semver": "6.3.0",
     "serialize-error": "^2.1.0",
+    "serialize-javascript": "^6.0.0",
     "tus-js-client": "2.1.1",
     "uuid": "8.1.0",
     "validator": "^12.1.0",
     "ws": "6.2.1"
   },
   "devDependencies": {
+    "@types/compression": "1.7.0",
+    "@types/connect-redis": "0.0.7",
+    "@types/cookie-parser": "1.4.2",
+    "@types/cors": "2.8.6",
+    "@types/eslint": "^7.2.14",
+    "@types/express-session": "1.17.3",
+    "@types/jsonwebtoken": "8.3.7",
+    "@types/lodash.merge": "4.6.6",
+    "@types/morgan": "1.7.37",
+    "@types/ms": "0.7.31",
     "@types/node": "12.12.27",
-    "typescript": "3.7.5"
+    "@types/react": "^17.0.13",
+    "@types/request": "2.48.4",
+    "@types/uuid": "3.4.7",
+    "@types/webpack": "^5.28.0",
+    "@types/ws": "6.0.4",
+    "supertest": "3.4.2",
+    "typescript": "~4.3"
   },
   "files": [
     "bin/",
@@ -75,10 +96,12 @@
   ],
   "jest": {
     "testEnvironment": "node",
+    "testTimeout": 10000,
     "automock": false,
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "src/**"
+      "src/**",
+      "!src/**/*.d.ts"
     ]
   },
   "scripts": {
@@ -86,10 +109,11 @@
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "npm run build",
     "start": "node ./lib/standalone/start-server.js",
-    "test": "node test/run",
+    "test": "bash -c 'source env.test.sh && ../../../node_modules/jest/bin/jest.js'",
     "test:watch": "npm test -- --watch"
   },
   "engines": {
-    "node": ">=10.20.1"
+    "node": ">=10.20.1",
+    "npm": "7.x"
   }
 }

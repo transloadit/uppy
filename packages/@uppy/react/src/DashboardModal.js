@@ -2,6 +2,8 @@ const React = require('react')
 const PropTypes = require('prop-types')
 const DashboardPlugin = require('@uppy/dashboard')
 const basePropTypes = require('./propTypes').dashboard
+const getHTMLProps = require('./getHTMLProps')
+const nonHtmlPropsHaveChanged = require('./nonHtmlPropsHaveChanged')
 
 const h = React.createElement
 
@@ -19,6 +21,10 @@ class DashboardModal extends React.Component {
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
+    } else if (nonHtmlPropsHaveChanged(this, prevProps)) {
+      const options = { ...this.props, onRequestCloseModal: this.props.onRequestClose }
+      delete options.uppy
+      this.plugin.setOptions(options)
     }
     if (prevProps.open && !this.props.open) {
       this.plugin.closeModal()
@@ -32,14 +38,12 @@ class DashboardModal extends React.Component {
   }
 
   installPlugin () {
-    const uppy = this.props.uppy
-    const options = Object.assign(
-      { id: 'react:DashboardModal' },
-      this.props,
-      {
-        onRequestCloseModal: this.props.onRequestClose
-      }
-    )
+    const { uppy } = this.props
+    const options = {
+      id: 'react:DashboardModal',
+      ...this.props,
+      onRequestCloseModal: this.props.onRequestClose,
+    }
 
     if (!options.target) {
       options.target = this.container
@@ -55,30 +59,30 @@ class DashboardModal extends React.Component {
   }
 
   uninstallPlugin (props = this.props) {
-    const uppy = props.uppy
+    const { uppy } = props
 
     uppy.removePlugin(this.plugin)
   }
 
   render () {
+    // TODO: stop exposing `validProps` as a public property and rename it to `htmlProps`
+    this.validProps = getHTMLProps(this.props)
     return h('div', {
       ref: (container) => {
         this.container = container
-      }
+      },
+      ...this.validProps,
     })
   }
 }
 
-DashboardModal.propTypes = Object.assign({
-  // Only check this prop type in the browser.
+DashboardModal.propTypes = {
   target: typeof window !== 'undefined' ? PropTypes.instanceOf(window.HTMLElement) : PropTypes.any,
   open: PropTypes.bool,
   onRequestClose: PropTypes.func,
   closeModalOnClickOutside: PropTypes.bool,
-  disablePageScrollWhenModalOpen: PropTypes.bool
-}, basePropTypes)
-
-DashboardModal.defaultProps = {
+  disablePageScrollWhenModalOpen: PropTypes.bool,
+  ...basePropTypes,
 }
 
 module.exports = DashboardModal

@@ -3,61 +3,39 @@
 // Definitions by: taoqf <https://github.com/taoqf>
 
 // Core
-import Core = require('@uppy/core');
-export { Core };
+export { default as Core } from '@uppy/core'
 
 // Stores
-import DefaultStore = require('@uppy/store-default');
-export { DefaultStore };
-import ReduxStore = require('@uppy/store-redux');
-export { ReduxStore };
+export { default as DefaultStore } from '@uppy/store-default'
+export { default as ReduxStore } from '@uppy/store-redux'
 
 // UI plugins
-import Dashboard = require('@uppy/dashboard');
-export { Dashboard };
-import DragDrop = require('@uppy/drag-drop');
-export { DragDrop };
-import FileInput = require('@uppy/file-input');
-export { FileInput };
-import Informer = require('@uppy/informer');
-export { Informer };
-import ProgressBar = require('@uppy/progress-bar');
-export { ProgressBar };
-import StatusBar = require('@uppy/status-bar');
-export { StatusBar };
+export { default as Dashboard } from '@uppy/dashboard'
+export { default as DragDrop } from '@uppy/drag-drop'
+export { default as DropTarget } from '@uppy/drop-target'
+export { default as FileInput } from '@uppy/file-input'
+export { default as Informer } from '@uppy/informer'
+export { default as ProgressBar } from '@uppy/progress-bar'
+export { default as StatusBar } from '@uppy/status-bar'
 
 // Acquirers
-import Dropbox = require('@uppy/dropbox');
-export { Dropbox };
-import GoogleDrive = require('@uppy/google-drive');
-export { GoogleDrive };
-import Instagram = require('@uppy/instagram');
-export { Instagram };
-import Url = require('@uppy/url');
-export { Url };
-import Webcam = require('@uppy/webcam');
-export { Webcam };
-import ScreenCapture = require('@uppy/screen-capture');
-export { ScreenCapture };
+export { default as Dropbox } from '@uppy/dropbox'
+export { default as Box } from '@uppy/box'
+export { default as GoogleDrive } from '@uppy/google-drive'
+export { default as Instagram } from '@uppy/instagram'
+export { default as Url } from '@uppy/url'
+export { default as Webcam } from '@uppy/webcam'
+export { default as ScreenCapture } from '@uppy/screen-capture'
 
 // Uploaders
-import AwsS3 = require('@uppy/aws-s3');
-export { AwsS3 };
-import AwsS3Multipart = require('@uppy/aws-s3-multipart');
-export { AwsS3Multipart };
-import Transloadit = require('@uppy/transloadit');
-export { Transloadit };
-import Tus = require('@uppy/tus');
-export { Tus };
-import XHRUpload = require('@uppy/xhr-upload');
-export { XHRUpload };
+export { default as AwsS3 } from '@uppy/aws-s3'
+export { default as AwsS3Multipart } from '@uppy/aws-s3-multipart'
+export { default as Transloadit } from '@uppy/transloadit'
+export { default as Tus } from '@uppy/tus'
+export { default as XHRUpload } from '@uppy/xhr-upload'
 
 // Miscellaneous
-import Form = require('@uppy/form');
-export { Form };
-import GoldenRetriever = require('@uppy/golden-retriever');
-export { GoldenRetriever };
-import ReduxDevTools = require('@uppy/redux-dev-tools');
-export { ReduxDevTools };
-import ThumbnailGenerator = require('@uppy/thumbnail-generator');
-export { ThumbnailGenerator };
+export { default as Form } from '@uppy/form'
+export { default as GoldenRetriever } from '@uppy/golden-retriever'
+export { default as ReduxDevTools } from '@uppy/redux-dev-tools'
+export { default as ThumbnailGenerator } from '@uppy/thumbnail-generator'

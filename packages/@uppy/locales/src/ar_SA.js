@@ -6,8 +6,8 @@ ar_SA.strings = {
   addingMoreFiles: ' اضافة المزيد من الملفات',
   allowAccessDescription: 'ارجو السماح للموقع بالتقاط الصور والفديوهات.',
   allowAccessTitle: 'ارجو السماح للكاميرا بالتقاط صورك',
-  authenticateWith: 'الربط مع %{pluginName}',
-  authenticateWithTitle: 'ارجو الربط مع %{pluginName} من اجل اختيار الملفات',
+  authenticateWith: '%{pluginName} الربط مع',
+  authenticateWithTitle: 'من اجل اختيار الملفات %{pluginName} الرجاء الربط مع ',
   back: 'رجوع',
   browse: 'تصفح',
   browseFiles: 'تصفح',
@@ -27,35 +27,35 @@ ar_SA.strings = {
   dashboardWindowTitle: 'نافذة رفع الملفات (ارجع للاغلاق)',
   dataUploadedOfTotal: '%{complete} من اصل %{total}',
   done: 'انتهى',
-  dropHereOr: '%{browse} او  اسحب الملفات هنا',
-  dropHint: '%{browse} او  اسحب الملفات هنا',
-  dropPasteBoth: '%{browse} او  اسحب الملفات هنا',
-  dropPasteFiles: '%{browse} او  اسحب الملفات هنا',
-  dropPasteFolders: '%{browse} او  اسحب الملفات هنا',
-  dropPasteImportBoth: '%{browse} او  اسحب الملفات هنا',
-  dropPasteImportFiles: '%{browse} او  اسحب الملفات هنا',
-  dropPasteImportFolders: '%{browse} او  اسحب الملفات هنا',
+  dropHereOr: 'او  اسحب الملفات هنا %{browse}',
+  dropHint: 'او  اسحب الملفات هنا %{browse}',
+  dropPasteBoth: 'او  اسحب الملفات هنا %{browse}',
+  dropPasteFiles: 'او  اسحب الملفات هنا %{browse}',
+  dropPasteFolders: 'او  اسحب الملفات هنا %{browse}',
+  dropPasteImportBoth: 'او  اسحب الملفات هنا %{browse}',
+  dropPasteImportFiles: 'او  اسحب الملفات هنا %{browse}',
+  dropPasteImportFolders: 'او  اسحب الملفات هنا %{browse}',
   editFile: 'تعديل الملف',
   editing: 'جاري تعديل %{file}',
   emptyFolderAdded: 'لا يوجد ملفات او مجلدات هنا',
   encoding: 'التشفير...',
   enterCorrectUrl: 'خطأ في الرابط: ارجو التأكد من ادخال رابط مباشر للملف',
   enterUrlToImport: 'ادخل الرابط لاستيراد الملفات',
-  exceedsSize: 'الملف اكبر من الحجم المسموح',
+  exceedsSize: 'الملف اكبر من الحجم المسموح %{size}',
   failedToFetch: 'Companion فشل في جلب الرابط, ارجو التأكد من الرابط',
   failedToUpload: 'فشل الرفع %{file}',
   fileSource: 'مصدر الملف: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} من %{smart_count} تم رفع ملف',
     '1': '%{complete} من %{smart_count} تم رفع ملفات',
-    '2': '%{complete} من %{smart_count} تم رفع ملفات'
+    '2': '%{complete} من %{smart_count} تم رفع ملفات',
   },
   filter: 'تصفيه',
   finishEditingFile: 'انهاء تعديل الملف',
   folderAdded: {
-    '0': 'تم اضافة %{smart_count} ملف من %{folder}',
-    '1': 'تم اضافة %{smart_count} ملفات من %{folder}',
-    '2': 'تم اضافة %{smart_count} ملفات من %{folder}'
+    '0': '%{folder} ملف من %{smart_count} تم اضافة',
+    '1': '%{folder} ملفات من %{smart_count} تم اضافة',
+    '2': '%{folder} ملفات من %{smart_count} تم اضافة',
   },
   import: 'استيراد',
   importFrom: 'استيراد من %{name}',
@@ -69,9 +69,9 @@ ar_SA.strings = {
   paused: 'موقف',
   poweredBy: 'مشغل ب',
   processingXFiles: {
-    '0': 'جاري معالجة %{smart_count} ملف',
-    '1': 'جاري معالجة %{smart_count} ملفات',
-    '2': 'جاري معالجة %{smart_count} ملفات'
+    '0': 'ملف %{smart_count} جاري معالجة',
+    '1': 'ملفات %{smart_count}  جاري معالجة',
+    '2': 'ملفات %{smart_count} جاري معالجة ',
   },
   removeFile: 'امسح الملف',
   resetFilter: 'اعادة ضبط التصفيه',
@@ -83,7 +83,7 @@ ar_SA.strings = {
   selectX: {
     '0': '%{smart_count} اختر',
     '1': '%{smart_count} اختر',
-    '2': '%{smart_count} اختر'
+    '2': '%{smart_count} اختر',
   },
   smile: 'ابتسم!',
   startRecording: 'بدء تسجيل الفيديو',
@@ -97,49 +97,47 @@ ar_SA.strings = {
   uploadXFiles: {
     '0': 'رفع %{smart_count} ملف',
     '1': 'رفع %{smart_count} ملفات',
-    '2': 'رفع %{smart_count} ملفات'
+    '2': 'رفع %{smart_count} ملفات',
   },
   uploadXNewFiles: {
     '0': 'رفع +%{smart_count} ملف',
     '1': 'رفع +%{smart_count} ملفات',
-    '2': 'رفع +%{smart_count} ملفات'
+    '2': 'رفع +%{smart_count} ملفات',
   },
   uploading: 'يتم الرفع',
   uploadingXFiles: {
     '0': 'يتم رفع %{smart_count} ملف',
     '1': 'يتم رفع %{smart_count} ملفات',
-    '2': 'يتم رفع %{smart_count} ملفات'
+    '2': 'يتم رفع %{smart_count} ملفات',
   },
   xFilesSelected: {
     '0': '%{smart_count} ملف محددة',
     '1': '%{smart_count} ملفات محددة',
-    '2': '%{smart_count} ملفات محددة'
+    '2': '%{smart_count} ملفات محددة',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} ملف اضافي جديد',
     '1': '%{smart_count} ملفات اضافيه جديده',
-    '2': '%{smart_count} ملفات اضافيه جديده'
+    '2': '%{smart_count} ملفات اضافيه جديده',
   },
   xTimeLeft: '%{time} متبقي',
   youCanOnlyUploadFileTypes: 'تستطيع فقط رفع : %{types}',
   youCanOnlyUploadX: {
     '0': 'تستطيع فقط رفع %{smart_count} الملف',
     '1': 'تستطيع فقط رفع %{smart_count} ملفات',
-    '2': 'تستطيع فقط رفع %{smart_count} ملفات'
+    '2': 'تستطيع فقط رفع %{smart_count} ملفات',
   },
   youHaveToAtLeastSelectX: {
     '0': 'يجب ان تختار على الاقل  %{smart_count} ملف',
     '1': 'يجب ان تختار على الاقل  %{smart_count} ملفات',
-    '2': 'يجب ان تختار على الاقل  %{smart_count} ملفات'
+    '2': 'يجب ان تختار على الاقل  %{smart_count} ملفات',
   },
-  selectAllFilesFromFolderNamed: 'حدد جميع الملفات من المجلد %{name}',
-  unselectAllFilesFromFolderNamed: 'قم بإلغاء تحديد جميع الملفات من المجلد %{name}',
-  selectFileNamed: 'اختر الملف %{name}',
-  unselectFileNamed: 'إلغاء تحديد الملف %{name}',
-  openFolderNamed: 'افتح المجلد %{name}'
+  selectFileNamed: '%{name} اختر الملف',
+  unselectFileNamed: '%{name} إلغاء تحديد الملف',
+  openFolderNamed: '%{name} افتح المجلد',
 }
 
-ar_SA.pluralize = function (n) {
+ar_SA.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

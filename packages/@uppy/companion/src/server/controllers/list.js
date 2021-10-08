@@ -1,8 +1,7 @@
 const { errorToResponse } = require('../provider/error')
 
 function list ({ query, params, companion }, res, next) {
-  const providerName = params.providerName
-  const token = companion.providerTokens[providerName]
+  const token = companion.providerToken
 
   companion.provider.list({ companion, token, directory: params.id, query }, (err, data) => {
     if (err) {

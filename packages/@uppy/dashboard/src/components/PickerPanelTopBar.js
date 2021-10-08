@@ -7,7 +7,7 @@ const uploadStates = {
   STATE_UPLOADING: 'uploading',
   STATE_POSTPROCESSING: 'postprocessing',
   STATE_COMPLETE: 'complete',
-  STATE_PAUSED: 'paused'
+  STATE_PAUSED: 'paused',
 }
 
 function getUploadingState (isAllErrored, isAllComplete, isAllPaused, files = {}) {
@@ -26,7 +26,7 @@ function getUploadingState (isAllErrored, isAllComplete, isAllPaused, files = {}
   let state = uploadStates.STATE_WAITING
   const fileIDs = Object.keys(files)
   for (let i = 0; i < fileIDs.length; i++) {
-    const progress = files[fileIDs[i]].progress
+    const { progress } = files[fileIDs[i]]
     // If ANY files are being uploaded right now, show the uploading state.
     if (progress.uploadStarted && !progress.uploadComplete) {
       return uploadStates.STATE_UPLOADING
@@ -69,19 +69,19 @@ function UploadStatus (props) {
 }
 
 function PanelTopBar (props) {
-  let allowNewUpload = props.allowNewUpload
+  let { allowNewUpload } = props
   // TODO maybe this should be done in ../index.js, then just pass that down as `allowNewUpload`
   if (allowNewUpload && props.maxNumberOfFiles) {
     allowNewUpload = props.totalFileCount < props.maxNumberOfFiles
   }
 
   return (
-    <div class="uppy-DashboardContent-bar">
+    <div className="uppy-DashboardContent-bar">
       {!props.isAllComplete && !props.hideCancelButton ? (
         <button
-          class="uppy-DashboardContent-back"
+          className="uppy-DashboardContent-back"
           type="button"
-          onclick={props.cancelAll}
+          onClick={() => props.uppy.cancelAll()}
         >
           {props.i18n('cancel')}
         </button>
@@ -89,22 +89,22 @@ function PanelTopBar (props) {
         <div />
       )}
 
-      <div class="uppy-DashboardContent-title" role="heading" aria-level="1">
+      <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
         <UploadStatus {...props} />
       </div>
 
       {allowNewUpload ? (
         <button
-          class="uppy-DashboardContent-addMore"
+          className="uppy-DashboardContent-addMore"
           type="button"
           aria-label={props.i18n('addMoreFiles')}
           title={props.i18n('addMoreFiles')}
-          onclick={() => props.toggleAddFilesPanel(true)}
+          onClick={() => props.toggleAddFilesPanel(true)}
         >
-          <svg aria-hidden="true" focusable="false" class="uppy-c-icon" width="15" height="15" viewBox="0 0 15 15">
+          <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="15" height="15" viewBox="0 0 15 15">
             <path d="M8 6.5h6a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5H8v6a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V8h-6a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5h6v-6A.5.5 0 0 1 7 0h.5a.5.5 0 0 1 .5.5v6z" />
           </svg>
-          <span class="uppy-DashboardContent-addMoreCaption">{props.i18n('addMore')}</span>
+          <span className="uppy-DashboardContent-addMoreCaption">{props.i18n('addMore')}</span>
         </button>
       ) : (
         <div />

@@ -19,19 +19,19 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
   <head>
     <meta charset="utf-8">
     <title>Uppy</title>
-    <link href="https://transloadit.edgly.net/releases/uppy/v1.21.0/uppy.min.css" rel="stylesheet">
+    <link href="https://releases.transloadit.com/uppy/v2.2.0/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <div id="drag-drop-area"></div>
 
-    <script src="https://transloadit.edgly.net/releases/uppy/v1.21.0/uppy.min.js"></script>
+    <script src="https://releases.transloadit.com/uppy/v2.2.0/uppy.min.js"></script>
     <script>
-      var uppy = Uppy.Core()
+      var uppy = new Uppy.Core()
         .use(Uppy.Dashboard, {
           inline: true,
           target: '#drag-drop-area'
         })
-        .use(Uppy.Tus, {endpoint: 'https://master.tus.io/files/'})
+        .use(Uppy.Tus, {endpoint: 'https://tusd.tusdemo.net/files/'})
 
       uppy.on('complete', (result) => {
         console.log('Upload complete! We’ve uploaded these files:', result.successful)
@@ -69,21 +69,21 @@ npm install @uppy/core @uppy/xhr-upload @uppy/dashboard
 
 ```js
 // Import the plugins
-const Uppy = require('@uppy/core')
-const XHRUpload = require('@uppy/xhr-upload')
-const Dashboard = require('@uppy/dashboard')
+import Uppy from '@uppy/core'
+import XHRUpload from '@uppy/xhr-upload'
+import Dashboard from '@uppy/dashboard'
 
 // And their styles (for UI plugins)
-// With webpack and `style-loader`, you can require them like this:
-require('@uppy/core/dist/style.css')
-require('@uppy/dashboard/dist/style.css')
- 
+// With webpack and `style-loader`, you can import them like this:
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
+
 const uppy = new Uppy()
   .use(Dashboard, {
-    trigger: '#select-files'
+    trigger: '#select-files',
   })
   .use(XHRUpload, { endpoint: 'https://api2.transloadit.com' })
- 
+
 uppy.on('complete', (result) => {
   console.log('Upload complete! We’ve uploaded these files:', result.successful)
 })
@@ -118,21 +118,21 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
 1\. Add a script at the bottom of the closing `</body>` tag:
 
 ``` html
-<script src="https://transloadit.edgly.net/releases/uppy/v1.21.0/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.2.0/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 ``` html
-<link href="https://transloadit.edgly.net/releases/uppy/v1.21.0/uppy.min.css" rel="stylesheet">
+<link href="https://releases.transloadit.com/uppy/v2.2.0/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize at the bottom of the closing `</body>` tag:
 
 ``` html
 <script>
-  var uppy = Uppy.Core()
+  var uppy = new Uppy.Core()
   uppy.use(Uppy.DragDrop, { target: '#drag-drop-area' })
-  uppy.use(Uppy.Tus, { endpoint: 'https://master.tus.io/files/' })
+  uppy.use(Uppy.Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 </script>
 ```
 
@@ -156,23 +156,33 @@ We still run end to end tests with IE10, but we are not actively supporting it o
 
 ### Polyfills
 
-Uppy heavily uses Promises. If your target environment [does not support Promises](https://caniuse.com/#feat=promises), use a polyfill like `es6-promise` before initialising Uppy.
+Uppy heavily uses Promises. If your target environment [does not support Promises](https://caniuse.com/#feat=promises), use a polyfill like `core-js` before initialising Uppy.
 
 When using remote providers like Google Drive or Dropbox, the Fetch API is used. If your target environment does not support the [Fetch API](https://caniuse.com/#feat=fetch), use a polyfill like `whatwg-fetch` before initialising Uppy. The Fetch API polyfill must be loaded _after_ the Promises polyfill, because Fetch uses Promises.
 
 With a module bundler, you can use the required polyfills like so:
 
 ```shell
-npm install es6-promise whatwg-fetch
-```
-```js
-require('es6-promise/auto')
-require('whatwg-fetch')
-const Uppy = require('@uppy/core')
+npm install core-js whatwg-fetch abortcontroller-polyfill md-gum-polyfill resize-observer-polyfill
 ```
 
-If you're using Uppy from CDN, `es6-promise` and  `whatwg-fetch` are already included in the bundle, no need to include anything additionally:
+```js
+import 'core-js'
+import 'whatwg-fetch'
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
+// Order matters: AbortController needs fetch which needs Promise (provided by core-js).
+
+import 'md-gum-polyfill'
+import ResizeObserver from 'resize-observer-polyfill'
+
+window.ResizeObserver ??= ResizeObserver
+
+export { default } from '@uppy/core'
+export * from '@uppy/core'
+```
+
+If you're using Uppy from CDN, those polyfills are already included in the bundle, no need to include anything additionally:
 
 ```html
-<script src="https://transloadit.edgly.net/releases/uppy/v1.21.0/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.2.0/uppy.min.js"></script>
 ```

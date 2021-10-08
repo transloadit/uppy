@@ -3,12 +3,12 @@ const querystring = require('querystring')
 const MEDIA_TYPES = Object.freeze({
   video: 'VIDEO',
   carousel: 'CAROUSEL_ALBUM',
-  image: 'IMAGE'
+  image: 'IMAGE',
 })
 
 const isVideo = (item) => item.media_type === MEDIA_TYPES.video
 
-exports.isFolder = (_) => {
+exports.isFolder = (item) => { // eslint-disable-line no-unused-vars
   return false
 }
 
@@ -51,8 +51,6 @@ exports.getNextPagePath = (data, currentQuery, currentPath) => {
     return null
   }
 
-  const query = Object.assign({}, currentQuery, {
-    cursor: data.paging.cursors.after
-  })
+  const query = { ...currentQuery, cursor: data.paging.cursors.after }
   return `${currentPath || ''}?${querystring.stringify(query)}`
 }

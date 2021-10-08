@@ -1,5 +1,6 @@
 const Core = require('@uppy/core')
-const Transloadit = require('./')
+const Transloadit = require('.')
+require('whatwg-fetch')
 
 describe('Transloadit', () => {
   it('Throws errors if options are missing', () => {
@@ -15,42 +16,43 @@ describe('Transloadit', () => {
 
     expect(() => {
       uppy.use(Transloadit, {
-        params: 'not json'
+        params: 'not json',
       })
     }).toThrowError(/The `params` option is a malformed JSON string/)
 
     expect(() => {
       uppy.use(Transloadit, {
-        params: '{"template_id":"some template id string"}'
+        params: '{"template_id":"some template id string"}',
       })
     }).toThrowError(/The `params\.auth\.key` option is required/)
     expect(() => {
       uppy.use(Transloadit, {
-        params: '{"auth":{"key":"some auth key string"},"template_id":"some template id string"}'
+        params: '{"auth":{"key":"some auth key string"},"template_id":"some template id string"}',
       })
     }).not.toThrowError(/The `params\.auth\.key` option is required/)
   })
 
   it('Does not leave lingering progress if getAssemblyOptions fails', () => {
+    const error = new Error('expected failure')
     const uppy = new Core()
     uppy.use(Transloadit, {
-      getAssemblyOptions (file) {
-        return Promise.reject(new Error('Failure!'))
-      }
+      getAssemblyOptions () {
+        return Promise.reject(error)
+      },
     })
 
     uppy.addFile({
       source: 'jest',
       name: 'abc',
-      data: new Uint8Array(100)
+      data: new Uint8Array(100),
     })
 
     return uppy.upload().then(() => {
       throw new Error('Should not have succeeded')
-    }, (err) => {
+    }).catch((err) => {
       const fileID = Object.keys(uppy.getState().files)[0]
 
-      expect(err.message).toBe('Failure!')
+      expect(err).toBe(error)
       expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
     })
   })
@@ -60,17 +62,16 @@ describe('Transloadit', () => {
     uppy.use(Transloadit, {
       params: {
         auth: { key: 'some auth key string' },
-        template_id: 'some template id string'
-      }
+        template_id: 'some template id string',
+      },
     })
 
-    uppy.getPlugin('Transloadit').client.createAssembly = () =>
-      Promise.reject(new Error('VIDEO_ENCODE_VALIDATION'))
+    uppy.getPlugin('Transloadit').client.createAssembly = () => Promise.reject(new Error('VIDEO_ENCODE_VALIDATION'))
 
     uppy.addFile({
       source: 'jest',
       name: 'abc',
-      data: new Uint8Array(100)
+      data: new Uint8Array(100),
     })
 
     return uppy.upload().then(() => {

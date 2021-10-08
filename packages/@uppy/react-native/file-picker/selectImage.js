@@ -1,25 +1,13 @@
-import * as Permissions from 'expo-permissions'
+// Using leading underscore so eslint compat plugin doesn't yell at us.
+import * as _Permissions from 'expo-permissions'
 import * as ImagePicker from 'expo-image-picker'
 
 function selectImageWithExpo (options) {
-  return new Promise((resolve, reject) => {
-    // This is a different `Permissions` object than eslint-plugin-compat thinks it is
-    // eslint-disable-next-line compat/compat
-    return Permissions.askAsync(Permissions.CAMERA_ROLL)
-      .then((isAllowed) => {
-        if (!isAllowed) {
-          return reject(new Error('Permissions denied'))
-        }
-
-        return ImagePicker.launchImageLibraryAsync(options)
-          .then((result) => {
-            console.log(result)
-            if (!result.cancelled) {
-              return resolve(result)
-            }
-          })
-      })
-  })
+  return _Permissions.askAsync(_Permissions.CAMERA_ROLL)
+    .then((isAllowed) => (isAllowed ? ImagePicker.launchImageLibraryAsync(options)
+      : Promise.reject(new Error('Permissions denied'))))
+    .then((result) => (!result.cancelled ? result
+      : Promise.reject(new Error('Operation cancelled'))))
 }
 
 export default selectImageWithExpo

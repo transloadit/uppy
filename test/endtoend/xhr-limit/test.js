@@ -1,13 +1,23 @@
 /* global browser, expect, capabilities  */
 const http = require('http')
-const tempWrite = require('temp-write')
 const { Writable } = require('stream')
 const { supportsChooseFile } = require('../utils')
+
+const tempWrite = Function(`return import('temp-write')`)() // eslint-disable-line no-new-func
+async function make1kBFile () {
+  const size = 1024
+  const content = Buffer.allocUnsafe(size)
+  for (let i = 0; i < size; i++) {
+    content[i] = Math.floor(Math.random() * 255)
+  }
+
+  return { path: await (await tempWrite).default(content), content }
+}
 
 const devNull = () => Writable({
   write (chunk, enc, cb) {
     cb()
-  }
+  },
 })
 
 const testURL = 'http://localhost:4567/xhr-limit'
@@ -18,7 +28,7 @@ describe.skip('XHRUpload with `limit`', () => {
     server = http.createServer((req, res) => {
       res.writeHead(200, {
         'content-type': 'application/json',
-        'access-control-allow-origin': '*'
+        'access-control-allow-origin': '*',
       })
       req.pipe(devNull())
       req.on('end', () => {
@@ -38,18 +48,7 @@ describe.skip('XHRUpload with `limit`', () => {
   })
 
   it('should start counting progress for all files', async () => {
-    const files = [
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000),
-      makeFile(1000)
-    ]
+    const files = await Promise.all(Array.from({ length: 10 }, make1kBFile))
 
     const endpoint = `http://localhost:${server.address().port}`
     await browser.execute((endpoint) => {
@@ -68,7 +67,7 @@ describe.skip('XHRUpload with `limit`', () => {
             source: 'test',
             name: `testfile${i}`,
             type: 'text/plain',
-            data: new Blob([data], { type: 'text/plain' })
+            data: new Blob([data], { type: 'text/plain' }),
           })
         })
       }, files.map((file) => file.content.toString('hex')))
@@ -80,19 +79,10 @@ describe.skip('XHRUpload with `limit`', () => {
     await browser.pause(5000)
     const status = await browser.execute(() => ({
       started: window.uppyXhrLimit.uploadsStarted,
-      complete: window.uppyXhrLimit.uploadsComplete
+      complete: window.uppyXhrLimit.uploadsComplete,
     }))
     console.log(status)
     expect(status.started).to.be.equal(files.length)
     expect(status.complete).to.be.equal(2)
   })
 })
-
-function makeFile (size) {
-  const content = Buffer.allocUnsafe(size)
-  for (let i = 0; i < size; i++) {
-    content[i] = Math.floor(Math.random() * 255)
-  }
-
-  return { path: tempWrite.sync(content), content }
-}

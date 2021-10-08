@@ -2,7 +2,9 @@
   "name": "@uppy-example/digitalocean-spaces",
   "dependencies": {
     "@babel/core": "^7.2.2",
-    "aliasify": "^2.1.0",
+    "@uppy/aws-s3": "file:../../packages/@uppy/aws-s3",
+    "@uppy/core": "file:../../packages/@uppy/core",
+    "@uppy/dashboard": "file:../../packages/@uppy/dashboard",
     "babelify": "^10.0.0",
     "body-parser": "^1.18.3",
     "budo": "^11.6.1",

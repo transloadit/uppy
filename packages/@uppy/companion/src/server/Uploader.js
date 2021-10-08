@@ -5,18 +5,25 @@ const uuid = require('uuid')
 const isObject = require('isobject')
 const validator = require('validator')
 const request = require('request')
-const emitter = require('./emitter')
+/** @type {any} */
+// @ts-ignore - typescript resolves this this to a hoisted version of
+// serialize-error that ships with a declaration file, we are using a version
+// here that does not have a declaration file
 const serializeError = require('serialize-error')
+const emitter = require('./emitter')
 const { jsonStringify, hasMatch } = require('./helpers/utils')
 const logger = require('./logger')
 const headerSanitize = require('./header-blacklist')
 const redis = require('./redis')
 
+// Need to limit length or we can get
+// "MetadataTooLarge: Your metadata headers exceed the maximum allowed metadata size" in tus / S3
+const MAX_FILENAME_LENGTH = 500
 const DEFAULT_FIELD_NAME = 'files[]'
 const PROTOCOLS = Object.freeze({
   multipart: 'multipart',
   s3Multipart: 's3-multipart',
-  tus: 'tus'
+  tus: 'tus',
 })
 
 class Uploader {
@@ -39,6 +46,7 @@ class Uploader {
    * @property {any=} headers
    * @property {string=} httpMethod
    * @property {boolean=} useFormData
+   * @property {number=} chunkSize
    *
    * @param {UploaderOptions} options
    */
@@ -53,7 +61,9 @@ class Uploader {
     this.path = `${this.options.pathPrefix}/${Uploader.FILE_NAME_PREFIX}-${this.token}`
     this.options.metadata = this.options.metadata || {}
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
-    this.uploadFileName = this.options.metadata.name || path.basename(this.path)
+    this.uploadFileName = this.options.metadata.name
+      ? this.options.metadata.name.substring(0, MAX_FILENAME_LENGTH)
+      : path.basename(this.path)
     this.streamsEnded = false
     this.uploadStopped = false
     this.writeStream = fs.createWriteStream(this.path, { mode: 0o666 }) // no executable files
@@ -93,6 +103,7 @@ class Uploader {
    * returns a substring of the token. Used as traceId for logging
    * we avoid using the entire token because this is meant to be a short term
    * access token between uppy client and companion websocket
+   *
    * @param {string} token the token to Shorten
    * @returns {string}
    */
@@ -118,9 +129,10 @@ class Uploader {
       storage: redis.client(),
       s3: req.companion.s3Client ? {
         client: req.companion.s3Client,
-        options: req.companion.options.providerOptions.s3
+        options: req.companion.options.providerOptions.s3,
       } : null,
-      headers: req.body.headers
+      headers: req.body.headers,
+      chunkSize: req.companion.options.chunkSize,
     }
   }
 
@@ -189,7 +201,12 @@ class Uploader {
       return false
     }
 
-    const validatorOpts = { require_protocol: true, require_tld: !options.companionOptions.debug }
+    if (options.chunkSize != null && typeof options.chunkSize !== 'number') {
+      this._errRespMessage = 'incorrect chunkSize'
+      return false
+    }
+
+    const validatorOpts = { require_protocol: true, require_tld: false }
     return [options.endpoint, options.uploadUrl].every((url) => {
       if (url && !validator.isURL(url, validatorOpts)) {
         this._errRespMessage = 'invalid destination url'
@@ -221,7 +238,7 @@ class Uploader {
 
   /**
    *
-   * @param {function} callback
+   * @param {Function} callback
    */
   onSocketReady (callback) {
     emitter().once(`connection:${this.token}`, () => callback())
@@ -320,6 +337,7 @@ class Uploader {
    * This method emits upload progress but also creates an "upload progress" illusion
    * for the waiting period while only download is happening. Hence, it combines both
    * download and upload into an upload progress.
+   *
    * @see emitProgress
    * @param {number=} bytesUploaded the bytes actually Uploaded so far
    */
@@ -364,7 +382,7 @@ class Uploader {
 
     const dataToEmit = {
       action: 'progress',
-      payload: { progress: formatPercentage, bytesUploaded, bytesTotal }
+      payload: { progress: formatPercentage, bytesUploaded, bytesTotal },
     }
     this.saveState(dataToEmit)
 
@@ -384,7 +402,7 @@ class Uploader {
   emitSuccess (url, extraData = {}) {
     const emitData = {
       action: 'success',
-      payload: Object.assign(extraData, { complete: true, url })
+      payload: Object.assign(extraData, { complete: true, url }),
     }
     this.saveState(emitData)
     emitter().emit(this.token, emitData)
@@ -401,7 +419,7 @@ class Uploader {
     delete serializedErr.stack
     const dataToEmit = {
       action: 'error',
-      payload: Object.assign(extraData, { error: serializedErr })
+      payload: Object.assign(extraData, { error: serializedErr }),
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)
@@ -420,22 +438,30 @@ class Uploader {
       uploadLengthDeferred: false,
       retryDelays: [0, 1000, 3000, 5000],
       uploadSize: this.bytesWritten,
+      chunkSize: this.options.chunkSize || Infinity,
       headers: headerSanitize(this.options.headers),
       addRequestId: true,
-      metadata: Object.assign(
-        {
-          // file name and type as required by the tusd tus server
-          // https://github.com/tus/tusd/blob/5b376141903c1fd64480c06dde3dfe61d191e53d/unrouted_handler.go#L614-L646
-          filename: this.uploadFileName,
-          filetype: this.options.metadata.type
-        }, this.options.metadata
-      ),
+      metadata: {
+        // file name and type as required by the tusd tus server
+        // https://github.com/tus/tusd/blob/5b376141903c1fd64480c06dde3dfe61d191e53d/unrouted_handler.go#L614-L646
+        filename: this.uploadFileName,
+        filetype: this.options.metadata.type,
+        ...this.options.metadata,
+      },
       /**
        *
        * @param {Error} error
        */
       onError (error) {
         logger.error(error, 'uploader.tus.error')
+        // deleting tus originalRequest field because it uses the same http-agent
+        // as companion, and this agent may contain sensitive request details (e.g headers)
+        // previously made to providers. Deleting the field would prevent it from getting leaked
+        // to the frontend etc.
+        // @ts-ignore
+        delete error.originalRequest
+        // @ts-ignore
+        delete error.originalResponse
         uploader.emitError(error)
       },
       /**
@@ -443,13 +469,13 @@ class Uploader {
        * @param {number} bytesUploaded
        * @param {number} bytesTotal
        */
-      onProgress (bytesUploaded, bytesTotal) {
+      onProgress (bytesUploaded, bytesTotal) { // eslint-disable-line no-unused-vars
         uploader.emitIllusiveProgress(bytesUploaded)
       },
       onSuccess () {
         uploader.emitSuccess(uploader.tus.url)
         uploader.cleanUp()
-      }
+      },
     })
 
     if (!this._paused) {
@@ -472,37 +498,26 @@ class Uploader {
     const reqOptions = { url: this.options.endpoint, headers, encoding: null }
     const httpRequest = request[httpMethod]
     if (this.options.useFormData) {
-      reqOptions.formData = Object.assign(
-        {},
-        this.options.metadata,
-        {
-          [this.options.fieldname]: {
-            value: file,
-            options: {
-              filename: this.uploadFileName,
-              contentType: this.options.metadata.type
-            }
-          }
-        }
-      )
+      reqOptions.formData = {
+
+        ...this.options.metadata,
+        [this.options.fieldname]: {
+          value: file,
+          options: {
+            filename: this.uploadFileName,
+            contentType: this.options.metadata.type,
+          },
+        },
+      }
 
       httpRequest(reqOptions, (error, response, body) => {
         this._onMultipartComplete(error, response, body, bytesUploaded)
       })
     } else {
-      fs.stat(this.path, (err, stats) => {
-        if (err) {
-          logger.error(err, 'upload.multipart.size.error')
-          this.emitError(err)
-          return
-        }
-
-        const fileSizeInBytes = stats.size
-        reqOptions.headers['content-length'] = fileSizeInBytes
-        reqOptions.body = file
-        httpRequest(reqOptions, (error, response, body) => {
-          this._onMultipartComplete(error, response, body, bytesUploaded)
-        })
+      reqOptions.headers['content-length'] = this.bytesWritten
+      reqOptions.body = file
+      httpRequest(reqOptions, (error, response, body) => {
+        this._onMultipartComplete(error, response, body, bytesUploaded)
       })
     }
   }
@@ -513,7 +528,7 @@ class Uploader {
       this.emitError(error)
       return
     }
-    const headers = response.headers
+    const { headers } = response
     // remove browser forbidden headers
     delete headers['set-cookie']
     delete headers['set-cookie2']
@@ -522,7 +537,7 @@ class Uploader {
       responseText: body.toString(),
       status: response.statusCode,
       statusText: response.statusMessage,
-      headers
+      headers,
     }
 
     if (response.statusCode >= 400) {
@@ -533,7 +548,7 @@ class Uploader {
       logger.error(errMsg, 'upload.multipart.mismatch.error')
       this.emitError(new Error(errMsg))
     } else {
-      this.emitSuccess(null, { response: respObj })
+      this.emitSuccess(null, { response: respObj, bytesUploaded })
     }
 
     this.cleanUp()
@@ -565,7 +580,8 @@ class Uploader {
       Key: options.getKey(null, filename, this.options.metadata),
       ACL: options.acl,
       ContentType: this.options.metadata.type,
-      Body: stream
+      Metadata: this.options.metadata,
+      Body: stream,
     })
 
     this.s3Upload = upload
@@ -584,9 +600,9 @@ class Uploader {
           response: {
             responseText: JSON.stringify(data),
             headers: {
-              'content-type': 'application/json'
-            }
-          }
+              'content-type': 'application/json',
+            },
+          },
         })
       }
       this.cleanUp()

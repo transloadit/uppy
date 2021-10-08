@@ -1,10 +1,7 @@
 const zh_CN = {}
 
 zh_CN.strings = {
-  addBulkFilesFailed: {
-    '0': '内部错误导致添加 %{smart_count} 个文件失败',
-    '1': '内部错误导致添加 %{smart_count} 个文件失败'
-  },
+  addBulkFilesFailed: '内部错误导致添加 %{smart_count} 个文件失败',
   addMore: '添加更多文件',
   addMoreFiles: '添加更多文件',
   addingMoreFiles: '添加更多文件',
@@ -46,21 +43,14 @@ zh_CN.strings = {
   encoding: '正在编码…',
   enterCorrectUrl: '错误链接： 请确认您输入的是文件的链接',
   enterUrlToImport: '输入链接或者导入文件',
-  exceedsSize: '文件超过了最大尺寸限制',
-  exceedsSize2: '%{backwardsCompat} %{size}',
+  exceedsSize: '文件超过了最大尺寸限制 %{size}',
   failedToFetch: 'Companion 无法抓取此链接，请确保它是正确的',
   failedToUpload: '上传 %{file} 失败',
   fileSource: '文件源：%{name}',
-  filesUploadedOfTotal: {
-    '0': '已上传 %{smart_count} 个文件中的 %{complete} 个',
-    '1': '已上传 %{smart_count} 个文件中的 %{complete} 个'
-  },
+  filesUploadedOfTotal: '已上传 %{smart_count} 个文件中的 %{complete} 个',
   filter: '筛选器',
   finishEditingFile: '完成文件编辑',
-  folderAdded: {
-    '0': '从 %{folder} 添加了 %{smart_count} 个文件',
-    '1': '从 %{folder} 添加了 %{smart_count} 个文件'
-  },
+  folderAdded: '从 %{folder} 添加了 %{smart_count} 个文件',
   generatingThumbnails: '正在生成缩略图…',
   import: '导入',
   importFrom: '从 %{name} 导入',
@@ -73,17 +63,13 @@ zh_CN.strings = {
   noDuplicates: '无法添加重复文件 %{fileName}，该文件已存在',
   noFilesFound: '这里空空如也',
   noInternetConnection: '无法连接到网络',
-  noNewAlreadyUploading: '无法添加新文件：已正在上传文件',
+  noMoreFilesAllowed: '无法添加新文件：已正在上传文件',
   openFolderNamed: '打开文件夹 %{name}',
   pause: '暂停',
   pauseUpload: '暂停上传',
   paused: '已暂停',
-  poweredBy: '强力驱动于',
-  poweredBy2: '%{backwardsCompat} %{uppy}',
-  processingXFiles: {
-    '0': '正在处理 %{smart_count} 个文件',
-    '1': '正在处理 %{smart_count} 个文件'
-  },
+  poweredBy: '强力驱动于 %{uppy}',
+  processingXFiles: '正在处理 %{smart_count} 个文件',
   recording: '正在录制',
   recordingLength: '录制长度 %{recording_length}',
   recordingStoppedMaxSize: '录像已停止，文件大小即将超过限制',
@@ -94,12 +80,8 @@ zh_CN.strings = {
   retry: '重试',
   retryUpload: '重试',
   saveChanges: '保存变更',
-  selectAllFilesFromFolderNamed: '从文件夹中选择所有文件 %{name}',
   selectFileNamed: '选择文件 %{name}',
-  selectX: {
-    '0': '选择 %{smart_count}',
-    '1': '选择 %{smart_count}'
-  },
+  selectX: '选择 %{smart_count}',
   smile: '笑一笑！',
   startCapturing: '开始屏幕录制',
   startRecording: '开始视频录制',
@@ -110,51 +92,25 @@ zh_CN.strings = {
   submitRecordedFile: '提交已录制视频',
   takePicture: '拍照',
   timedOut: '上传已超时 %{seconds} 秒，中止上传',
-  unselectAllFilesFromFolderNamed: '取消选择文件夹中的所有文件 %{name}',
   unselectFileNamed: '取消选择文件 %{name}',
   upload: '上传',
   uploadComplete: '上传完成',
   uploadFailed: '上传失败',
   uploadPaused: '上传暂停',
-  uploadXFiles: {
-    '0': '上传 %{smart_count} 个文件',
-    '1': '上传 %{smart_count} 个文件'
-  },
-  uploadXNewFiles: {
-    '0': '新上传了 %{smart_count} 个文件',
-    '1': '新上传了 %{smart_count} 个文件'
-  },
+  uploadXFiles: '上传 %{smart_count} 个文件',
+  uploadXNewFiles: '新上传了 %{smart_count} 个文件',
   uploading: '正在上传',
-  uploadingXFiles: {
-    '0': '正在上传 %{smart_count} 个文件',
-    '1': '正在上传 %{smart_count} 个文件'
-  },
-  xFilesSelected: {
-    '0': '%{smart_count} 个文件待上传',
-    '1': '%{smart_count} 个文件待上传'
-  },
-  xMoreFilesAdded: {
-    '0': '又有 %{smart_count} 个文件被添加',
-    '1': '又有 %{smart_count} 个文件被添加'
-  },
+  uploadingXFiles: '正在上传 %{smart_count} 个文件',
+  xFilesSelected: '%{smart_count} 个文件待上传',
+  xMoreFilesAdded: '又有 %{smart_count} 个文件被添加',
   xTimeLeft: '剩余 %{time}',
   youCanOnlyUploadFileTypes: '您只能上传这些文件类型：%{types}',
-  youCanOnlyUploadX: {
-    '0': '您只能上传 %{smart_count} 个文件',
-    '1': '您只能上传 %{smart_count} 个文件'
-  },
-  youHaveToAtLeastSelectX: {
-    '0': '您至少要选择 %{smart_count} 个文件',
-    '1': '您至少要选择 %{smart_count} 个文件'
-  }
+  youCanOnlyUploadX: '您只能上传 %{smart_count} 个文件',
+  youHaveToAtLeastSelectX: '您至少要选择 %{smart_count} 个文件',
 }
 
-zh_CN.pluralize = function (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
-}
+// There is just one form.
+zh_CN.pluralize = function pluralize () { return 0 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locales.zh_CN = zh_CN

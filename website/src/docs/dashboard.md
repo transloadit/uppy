@@ -18,7 +18,7 @@ tagline: "full-featured sleek UI with file previews, metadata editing, upload/pa
 - Ability to pause or cancel (depending on the uploader plugin) uploads
 
 ```js
-const Dashboard = require('@uppy/dashboard')
+import Dashboard from '@uppy/dashboard'
 
 uppy.use(Dashboard, {
   // Options
@@ -40,7 +40,7 @@ npm install @uppy/dashboard
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const Dashboard = Uppy.Dashboard
+const { Dashboard } = Uppy
 ```
 
 ## CSS
@@ -67,19 +67,23 @@ uppy.use(Dashboard, {
   id: 'Dashboard',
   target: 'body',
   metaFields: [],
-  trigger: '#uppy-select-files',
+  trigger: null,
   inline: false,
   width: 750,
   height: 550,
   thumbnailWidth: 280,
-  defaultTabIcon: defaultTabIcon,
-  showLinkToFileUploadResult: true,
+  defaultTabIcon,
+  showLinkToFileUploadResult: false,
   showProgressDetails: false,
   hideUploadButton: false,
   hideRetryButton: false,
   hidePauseResumeButton: false,
   hideCancelButton: false,
   hideProgressAfterFinish: false,
+  doneButtonHandler: () => {
+    this.uppy.reset()
+    this.requestCloseModal()
+  },
   note: null,
   closeModalOnClickOutside: false,
   closeAfterFinish: false,
@@ -95,7 +99,8 @@ uppy.use(Dashboard, {
   showRemoveButtonAfterComplete: false,
   locale: defaultLocale,
   browserBackButtonClose: false,
-  theme: 'light'
+  theme: 'light',
+  autoOpenFileEditor: false,
 })
 ```
 
@@ -112,9 +117,9 @@ Dashboard is rendered into `body`, because it is hidden by default and only open
 
 By default, Dashboard will be rendered as a modal, which is opened by clicking on `trigger`. If `inline: true`, Dashboard will be rendered into `target` and fit right in.
 
-### `trigger: '#uppy-select-files'`
+### `trigger: null`
 
-String with a CSS selector for a button that will trigger opening the Dashboard modal. Multiple buttons or links can be used, as long as it is a class selector (`.uppy-choose`, for example).
+String with a CSS selector for a button that will trigger opening the Dashboard modal. Multiple buttons or links can be used, as long as it is a class selector (`.select-file-button`, for example).
 
 ### `plugins: []`
 
@@ -123,7 +128,7 @@ List of plugin IDs that should be shown in the Dashboard's top bar. For example,
 ```js
 uppy.use(Webcam)
 uppy.use(Dashboard, {
-  plugins: ['Webcam']
+  plugins: ['Webcam'],
 })
 ```
 
@@ -143,9 +148,9 @@ Whether to wait for all thumbnails from `@uppy/thumbnail-generator` to be ready 
 
 This is useful because Thumbnail Generator also adds EXIF data to images, and if we wait until it’s done processing, this data will be avilable on the server after the upload.
 
-### `showLinkToFileUploadResult: true`
+### `showLinkToFileUploadResult: false`
 
-By default, when a file upload has completed, the file icon in the Dashboard turns into a link to the uploaded file. If your app does not publicly store uploaded files or if it's otherwise unwanted, pass `showLinkToFileUploadResult: false`.
+Turn the file icon and thumbnail in the Dashboard into a link to the uploaded file. Please make sure to return the `url` key (or the one set via `responseUrlFieldName`) from your server.
 
 ### `showProgressDetails: false`
 
@@ -184,6 +189,19 @@ Use this if you are providing a custom retry button somewhere, and using the `up
 
 Hide Status Bar after the upload has finished.
 
+### `doneButtonHandler`
+
+This option is passed to the StatusBar, and will render a “Done” button in place of pause/resume/cancel buttons, once the upload/encoding is done. The behaviour of this “Done” button is defined by the handler function — can be used to close file picker modals or clear the upload state. This is what the Dashboard sets by default:
+
+```js
+const doneButtonHandler = () => {
+  this.uppy.reset()
+  this.requestCloseModal()
+}
+```
+
+Set to `null` to disable the “Done” button.
+
 ### `showSelectedFiles: true`
 
 Show the list (grid) of selected files with preview and file name. In case you are showing selected files in your own app’s UI and want the Uppy Dashboard to just be a picker, the list can be hidden with this option.
@@ -210,27 +228,60 @@ Optionally, specify a string of text that explains something about the upload fo
 
 ### `metaFields: []`
 
-An array of UI field objects that will be shown when a user clicks the “edit” button on that file. Configuring this enables the “edit” button on file cards. Each object requires:
+An array of UI field objects, or a function that takes a [File Object](https://uppy.io/docs/uppy/#File-Objects) and returns an array of UI field objects, that will be shown when a user clicks the “edit” button on that file. Configuring this enables the “edit” button on file cards. Each object requires:
 
 - `id`, the name of the meta field. Note: this will also be used in CSS/HTML as part of the `id` attribute, so it’s better to [avoid using characters like periods, semicolons, etc](https://stackoverflow.com/a/79022).
 - `name`, the label shown in the interface.
 - `placeholder`, the text shown when no value is set in the field. (Not needed when a custom render function is provided)
 
-Optionally, you can specify `render: ({value, onChange}, h) => void`, a function for rendering a custom form element.
-It gets passed `({value, onChange}, h)` where `value` is the current value of the meta field, `onChange: (newVal) => void` is a function saving the new value and `h` is the `createElement` function from [preact](https://preactjs.com/guide/v10/api-reference#h--createelement).
+Optionally, you can specify `render: ({value, onChange, required, form}, h) => void`, a function for rendering a custom form element.
+It gets passed `({value, onChange, required, form}, h)` where `value` is the current value of the meta field, `required` is a boolean that's true if the field `id` is in the `restrictedMetaFields` restriction, `form` is the `id` of the associated `<form>` element, and `onChange: (newVal) => void` is a function saving the new value and `h` is the `createElement` function from [preact](https://preactjs.com/guide/v10/api-reference#h--createelement).
 `h` can be useful when using uppy from plain JavaScript, where you cannot write JSX.
 
 ```js
-.use(Dashboard, {
+uppy.use(Dashboard, {
   trigger: '#pick-files',
   metaFields: [
     { id: 'name', name: 'Name', placeholder: 'file name' },
     { id: 'license', name: 'License', placeholder: 'specify license' },
     { id: 'caption', name: 'Caption', placeholder: 'describe what the image is about' },
-    { id: 'public', name: 'Public', render: function({value, onChange}, h) {
-      return h('input', { type: 'checkbox', onChange: (ev) => onChange(ev.target.checked ? 'on' : 'off'), defaultChecked: value === 'on' })
-    } }
-  ]
+    {
+      id: 'public',
+      name: 'Public',
+      render ({ value, onChange, required, form }, h) {
+        return h('input', { type: 'checkbox', required, form, onChange: (ev) => onChange(ev.target.checked ? 'on' : ''), defaultChecked: value === 'on' })
+      },
+    },
+  ],
+})
+```
+
+If you’d like the meta fields to be dynamically assigned depending on, for instance, the file type, pass a function:
+
+```js
+uppy.use(Dashboard, {
+  trigger: '#pick-files',
+  metaFields: (file) => {
+    const fields = [{ id: 'name', name: 'File name' }]
+    if (file.type.startsWith('image/')) {
+      fields.push({ id: 'location', name: 'Photo Location' })
+      fields.push({ id: 'alt', name: 'Alt text' })
+      fields.push({
+        id: 'public',
+        name: 'Public',
+        render: ({ value, onChange, required, form }, h) => {
+          return h('input', {
+            type: 'checkbox',
+            onChange: (ev) => onChange(ev.target.checked ? 'on' : ''),
+            defaultChecked: value === 'on',
+            required,
+            form,
+          })
+        },
+      })
+    }
+    return fields
+  },
 })
 ```
 
@@ -289,7 +340,7 @@ The Dashboard also contains the [`@uppy/status-bar`](/docs/status-bar) plugin by
 The default English strings are:
 
 ```js
-strings: {
+const strings = {
   // When `inline: false`, used as the screen reader label for the button that closes the modal.
   closeModal: 'Close Modal',
   // Used as the screen reader label for the plus (+) button that shows the “Add more files” screen
@@ -359,45 +410,65 @@ strings: {
   // Used in a title, how many files are currently selected
   xFilesSelected: {
     0: '%{smart_count} file selected',
-    1: '%{smart_count} files selected'
+    1: '%{smart_count} files selected',
   },
   // TODO
   uploadingXFiles: {
     0: 'Uploading %{smart_count} file',
-    1: 'Uploading %{smart_count} files'
+    1: 'Uploading %{smart_count} files',
   },
   // TODO
   processingXFiles: {
     0: 'Processing %{smart_count} file',
-    1: 'Processing %{smart_count} files'
+    1: 'Processing %{smart_count} files',
   },
 
   // The "powered by Uppy" link at the bottom of the Dashboard.
-  // **NOTE**: This string is called `poweredBy2` for backwards compatibility reasons.
-  // See https://github.com/transloadit/uppy/pull/2077
-  poweredBy2: 'Powered by %{uppy}',
+  poweredBy: 'Powered by %{uppy}',
 
   // @uppy/status-bar strings:
   uploading: 'Uploading',
-  complete: 'Complete'
+  complete: 'Complete',
   // ...etc
 }
 ```
 
-### `replaceTargetContent: false`
-
-Remove all children of the `target` element before mounting the Dashboard. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, there might be cases when you would want to clear the container element before placing Uppy UI in there (for example, to provide a fallback `<form>` that will be shown if Uppy or JavaScript is not available). Set `replaceTargetContent: true` to clear the `target` before appending.
-
 ### `theme: 'light'`
 
-Uppy Dashboard supports “Dark Mode”. You can try it live on [the Dashboard example page](http://localhost:4000/examples/dashboard/).
+Uppy Dashboard supports “Dark Mode”. You can try it live on [the Dashboard example page](https://uppy.io/examples/dashboard/).
 
 There are three options:
+
 - `light` — the default
 - `dark`
 - `auto` — will respect the user’s system settings and switch automatically
 
 ![Uppy dark mode screenshot](/images/uppy-dashboard-dark-mar-2020.png)
+
+### `autoOpenFileEditor: false`
+
+Automatically open file editor (see [`@uppy/image-editor`](/docs/image-editor/)) for the first file in a batch. If one file is added, editor opens for that file, if 10 files are added — editor opens for the first file.
+
+Use case: user adds an image — Uppy opens Image Editor right away — user crops / adjusts the image — upload.
+
+### `disabled: false`
+
+Enabling this option makes the Dashboard grayed-out and non-interactive. Users won’t be able to click on buttons or drop files.
+
+Useful when you need to conditionally enable/disable file uploading or manipulation, based on a condition in your app. Can be set on init or via API:
+
+```js
+const dashboard = uppy.getPlugin('Dashboard')
+dashboard.setOptions({ disabled: true })
+
+userNameInput.addEventListener('change', () => {
+  dashboard.setOptions({ disabled: false })
+})
+```
+
+### `disableLocalFiles: false`
+
+Enabling this option will disable drag & drop, hide the “browse” and “My Device” button, allowing only uploads from plugins, such as Webcam, Screen Capture, Google Drive, Instagram.
 
 ## Methods
 
@@ -419,7 +490,7 @@ Returns `true` if the Dashboard modal is open, `false` otherwise.
 
 ```js
 const dashboard = uppy.getPlugin('Dashboard')
-if ( dashboard.isModalOpen() ) {
+if (dashboard.isModalOpen()) {
   dashboard.closeModal()
 }
 ```
@@ -442,8 +513,16 @@ Fired when the Dashboard modal is closed.
 
 ### `dashboard:file-edit-start`
 
+**Parameters:**
+
+- `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was opened for editing.
+
 Fired when the user clicks “edit” icon next to a file in the Dashboard. The FileCard panel is then open with file metadata available for editing.
 
 ### `dashboard:file-edit-complete`
+
+**Parameters:**
+
+- `file` — The [File Object](https://uppy.io/docs/uppy/#File-Objects) representing the file that was edited.
 
 Fired when the user finished editing the file metadata.

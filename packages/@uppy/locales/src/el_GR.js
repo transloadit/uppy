@@ -27,35 +27,35 @@ el_GR.strings = {
   dashboardWindowTitle: 'Παράθυρο μεταφόρτωσης αρχείων (Πατήστε escape για να κλείσει)',
   dataUploadedOfTotal: '%{complete} από %{total}',
   done: 'Τέλος',
-  dropHereOr: 'Ρίξτε τα αρχεία εδώ ή %{browse}',
-  dropHint: 'Ρίξτε τα αρχεία σας εδώ',
-  dropPasteBoth: 'Ρίξτε τα αρχεία εδώ, κάντε επικόλληση ή %{browse}',
-  dropPasteFiles: 'Ρίξτε τα αρχεία εδώ, κάντε επικόλληση ή %{browse}',
-  dropPasteFolders: 'Ρίξτε τα αρχεία εδώ, κάντε επικόλληση ή %{browse}',
-  dropPasteImportBoth: 'Ρίξτε αρχεία εδώ, κάντε επικόλληση, %{browse} ή εισαγωγή από',
-  dropPasteImportFiles: 'Ρίξτε αρχεία εδώ, κάντε επικόλληση, %{browse} ή εισαγωγή από',
-  dropPasteImportFolders: 'Ρίξτε αρχεία εδώ, κάντε επικόλληση, %{browse} ή εισαγωγή από',
+  dropHereOr: 'Σύρετε τα αρχεία εδώ ή %{browse}',
+  dropHint: 'Σύρετε τα αρχεία σας εδώ',
+  dropPasteBoth: 'Σύρετε τα αρχεία εδώ, κάντε επικόλληση ή %{browse}',
+  dropPasteFiles: 'Σύρετε τα αρχεία εδώ, κάντε επικόλληση ή %{browse}',
+  dropPasteFolders: 'Σύρετε τα αρχεία εδώ, κάντε επικόλληση ή %{browse}',
+  dropPasteImportBoth: 'Σύρετε αρχεία εδώ, κάντε επικόλληση, %{browse} ή εισαγωγή από',
+  dropPasteImportFiles: 'Σύρετε αρχεία εδώ, κάντε επικόλληση, %{browse} ή εισαγωγή από',
+  dropPasteImportFolders: 'Σύρετε αρχεία εδώ, κάντε επικόλληση, %{browse} ή εισαγωγή από',
   editFile: 'Επεξεργασία αρχείου',
   editing: 'Γίνεται επεξεργασία %{file}',
   emptyFolderAdded: 'Δεν προστέθηκαν αρχεία από τον άδειο φάκελο',
   encoding: 'Γίνεται κωδικοποίηση...',
   enterCorrectUrl: 'Λανθασμένο URL: Παρακαλούμε βεβαιωθείτε ότι εισάγετε έναν άμεσο σύνδεσμο προς κάποιο αρχείο',
   enterUrlToImport: 'Εισάγετε URL για να γίνει εισαγωγή του αρχείου',
-  exceedsSize: 'Το αρχείο υπερβαίνει το μέγιστο επιτρεπτό όριο που είναι',
+  exceedsSize: 'Το αρχείο υπερβαίνει το μέγιστο επιτρεπτό όριο που είναι %{size}',
   failedToFetch: 'Δεν ήταν δυνατή η λήψη από το URL, παρακαλούμε βεβαιωθείτε ότι είναι σωστό',
   failedToUpload: 'Δεν ήταν δυνατή η μεταφόρτωση %{file}',
   fileSource: 'Πηγή αρχείου: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} από %{smart_count} αρχεία ανέβηκαν',
     '1': '%{complete} από %{smart_count} αρχείο ανέβηκε',
-    '2': '%{complete} από %{smart_count} αρχεία ανέβηκαν'
+    '2': '%{complete} από %{smart_count} αρχεία ανέβηκαν',
   },
   filter: 'Φιλτράρισμα',
   finishEditingFile: 'Ολοκλήρωση επεξεργασίας αρχείου',
   folderAdded: {
     '0': 'Προστέθηκαν %{smart_count} αρχεία από %{folder}',
     '1': 'Προστέθηκε %{smart_count} αρχείο από %{folder}',
-    '2': 'Προστέθηκαν %{smart_count} αρχεία από %{folder}'
+    '2': 'Προστέθηκαν %{smart_count} αρχεία από %{folder}',
   },
   import: 'Εισαγωγή',
   importFrom: 'Εισαγωγή από %{name}',
@@ -68,11 +68,11 @@ el_GR.strings = {
   pause: 'Παύση',
   pauseUpload: 'Παύση μεταφόρτωσης',
   paused: 'Έγινε παύση',
-  poweredBy: 'Με τη δύναμη τού',
+  poweredBy: 'Με τη δύναμη τού %{uppy}',
   processingXFiles: {
     '0': 'Προετοιμασία %{smart_count} αρχείων',
     '1': 'Προετοιμασία %{smart_count} αρχείου',
-    '2': 'Προετοιμασία %{smart_count} αρχείων'
+    '2': 'Προετοιμασία %{smart_count} αρχείων',
   },
   removeFile: 'Αφαίρεση αρχείου',
   resetFilter: 'Επαναφορά φίλτρου',
@@ -81,19 +81,17 @@ el_GR.strings = {
   retry: 'Προσπάθεια ξανά',
   retryUpload: 'Προσπάθεια μεταφόρτωσης ξανά',
   saveChanges: 'Αποθήκευση αλλαγών',
-  selectAllFilesFromFolderNamed: 'Επιλογή όλων των αρχείων από τον φάκελο %{name}',
   selectFileNamed: 'Επιλογή αρχείου %{name}',
   selectX: {
     '0': 'Επιλογή %{smart_count}',
     '1': 'Επιλογή %{smart_count}',
-    '2': 'Επιλογή %{smart_count}'
+    '2': 'Επιλογή %{smart_count}',
   },
   smile: 'Χαμογελάστε!',
   startRecording: 'Ξεκίνημα εγγραφής βίντεο',
   stopRecording: 'Σταμάτημα εγγραφής βίντεο',
   takePicture: 'Βγάλτε μια φωτογραφία',
   timedOut: 'Η μεταφόρτωση σταμάτησε για %{seconds} δευτερόλεπτα, γίνεται ακύρωση.',
-  unselectAllFilesFromFolderNamed: 'Αποεπιλογή όλων των αρχείων από τον φάκελο %{name}',
   unselectFileNamed: 'Αποεπιλογή αρχείου %{name}',
   upload: 'Μεταφόρτωση',
   uploadComplete: 'Μεταφόρτωση ολοκληρώθηκε',
@@ -102,44 +100,44 @@ el_GR.strings = {
   uploadXFiles: {
     '0': 'Μεταφόρτωση %{smart_count} αρχείων',
     '1': 'Μεταφόρτωση %{smart_count} αρχείου',
-    '2': 'Μεταφόρτωση %{smart_count} αρχείων'
+    '2': 'Μεταφόρτωση %{smart_count} αρχείων',
   },
   uploadXNewFiles: {
     '0': 'Μεταφόρτωση +%{smart_count} αρχείων',
     '1': 'Μεταφόρτωση +%{smart_count} αρχείου',
-    '2': 'Μεταφόρτωση +%{smart_count} αρχείων'
+    '2': 'Μεταφόρτωση +%{smart_count} αρχείων',
   },
   uploading: 'Γίνεται μεταφόρτωση',
   uploadingXFiles: {
     '0': 'Μεταφορτώνονται %{smart_count} αρχεία',
     '1': 'Μεταφορτώνεται %{smart_count} αρχείο',
-    '2': 'Μεταφορτώνονται %{smart_count} αρχεία'
+    '2': 'Μεταφορτώνονται %{smart_count} αρχεία',
   },
   xFilesSelected: {
     '0': '%{smart_count} επιλεγμένα αρχεία',
     '1': '%{smart_count} επιλεγμένο αρχείο',
-    '2': '%{smart_count} επιλεγμένα αρχεία'
+    '2': '%{smart_count} επιλεγμένα αρχεία',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} ακόμα αρχεία προστέθηκαν',
     '1': '%{smart_count} ακόμα αρχείο προστέθηκε',
-    '2': '%{smart_count} ακόμα αρχεία προστέθηκαν'
+    '2': '%{smart_count} ακόμα αρχεία προστέθηκαν',
   },
   xTimeLeft: '%{time} απομένουν',
   youCanOnlyUploadFileTypes: 'Μπορείτε να ανεβάσετε μόνο: %{types}',
   youCanOnlyUploadX: {
     '0': 'Μπορείτε να ανεβάσετε μόνο %{smart_count} αρχεία',
     '1': 'Μπορείτε να ανεβάσετε μόνο %{smart_count} αρχείο',
-    '2': 'Μπορείτε να ανεβάσετε μόνο %{smart_count} αρχεία'
+    '2': 'Μπορείτε να ανεβάσετε μόνο %{smart_count} αρχεία',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχεία',
     '1': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχείο',
-    '2': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχεία'
-  }
+    '2': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχεία',
+  },
 }
 
-el_GR.pluralize = function (n) {
+el_GR.pluralize = function pluralize (n) {
   if (n === 1) {
     return 1
   }

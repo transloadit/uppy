@@ -9,10 +9,10 @@ const images = [
   path.join(__dirname, '../../resources/image.jpg'),
   path.join(__dirname, '../../resources/baboon.png'),
   path.join(__dirname, '../../resources/kodim23.png'),
-  path.join(__dirname, '../../resources/invalid.png')
+  path.join(__dirname, '../../resources/invalid.png'),
 ]
 const notImages = [
-  { type: 'text/javascript', file: __filename }
+  { type: 'text/javascript', file: __filename },
 ]
 
 describe('ThumbnailGenerator', () => {
@@ -20,7 +20,7 @@ describe('ThumbnailGenerator', () => {
     await browser.url(testURL)
   })
 
-  it('should generate thumbnails for images', async function () {
+  it('should generate thumbnails for images', async function test () {
     // Does not work on IE right now
     if (capabilities.browserName === 'internet explorer') {
       this.skip()
@@ -30,8 +30,8 @@ describe('ThumbnailGenerator', () => {
     const input = await $('#uppyThumbnails .uppy-FileInput-input')
     await input.waitForExist()
 
-    await browser.execute(/* must be valid ES5 for IE */ function () {
-      window.thumbnailsReady = new Promise(function (resolve) {
+    await browser.execute(/* must be valid ES5 for IE */ () => {
+      window.thumbnailsReady = new Promise((resolve) => {
         window.uppyThumbnails.on('thumbnail:all-generated', resolve)
       })
     })
@@ -64,7 +64,7 @@ describe('ThumbnailGenerator', () => {
       }
     }
 
-    await browser.executeAsync(/* must be valid ES5 for IE */ function (done) {
+    await browser.executeAsync(/* must be valid ES5 for IE */ (done) => {
       window.thumbnailsReady.then(done)
     })
 
@@ -86,10 +86,7 @@ describe('ThumbnailGenerator', () => {
     expect(previews).to.have.lengthOf(3) // ex. the invalid image
     for (const p of previews) {
       expect(await p.getAttribute('src')).to.match(/^blob:/)
-      // Doesn't appear to work in Chrome 67 on Android 6.0
-      if (capabilities.platformName !== 'Android') {
-        expect(await getWidth(p)).to.equal(200)
-      }
+      expect(await getWidth(p)).to.equal(200)
     }
   })
 })
@@ -98,7 +95,7 @@ async function getWidth (ref) {
   try {
     return await ref.getSize('width')
   } catch (err) {
-    return browser.execute(function (el) {
+    return browser.execute((el) => {
       return el.getBoundingClientRect().width
     }, ref)
   }

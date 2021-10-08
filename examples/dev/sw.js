@@ -1,4 +1,5 @@
 /* globals clients */
+/* eslint-disable no-restricted-globals */
 
 const fileCache = Object.create(null)
 
@@ -41,8 +42,8 @@ function removeFile (store, fileID) {
 function getFiles (store) {
   sendMessageToAllClients({
     type: 'uppy/ALL_FILES',
-    store: store,
-    files: getCache(store)
+    store,
+    files: getCache(store),
   })
 }
 

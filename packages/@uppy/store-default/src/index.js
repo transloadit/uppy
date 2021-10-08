@@ -14,11 +14,11 @@ class DefaultStore {
   }
 
   setState (patch) {
-    const prevState = Object.assign({}, this.state)
-    const nextState = Object.assign({}, this.state, patch)
+    const prevState = { ...this.state }
+    const nextState = { ...this.state, ...patch }
 
     this.state = nextState
-    this._publish(prevState, nextState, patch)
+    this.#publish(prevState, nextState, patch)
   }
 
   subscribe (listener) {
@@ -32,7 +32,7 @@ class DefaultStore {
     }
   }
 
-  _publish (...args) {
+  #publish (...args) {
     this.callbacks.forEach((listener) => {
       listener(...args)
     })

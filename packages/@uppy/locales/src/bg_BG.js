@@ -3,7 +3,7 @@ const bg_BG = {}
 bg_BG.strings = {
   addBulkFilesFailed: {
     '0': 'Файлът %{smart_count} не може да бъде добавен поради вътрешна грешка',
-    '1': 'Не могат да се добавят %{smart_count} файла поради вътрешни грешки'
+    '1': 'Не могат да се добавят %{smart_count} файла поради вътрешни грешки',
   },
   addMore: 'Добави повече',
   addMoreFiles: 'Добави повече файлове',
@@ -46,20 +46,19 @@ bg_BG.strings = {
   encoding: 'Кодиране...',
   enterCorrectUrl: 'Неправилен адрес: Моля, уверете се, че въвеждате директна връзка към файл',
   enterUrlToImport: 'Въведете адрес за да импортиране файл',
-  exceedsSize: 'Размерът на файла надвишава максимално разрешения размер от',
-  exceedsSize2: '%{backwardsCompat} %{size}',
+  exceedsSize: 'Размерът на файла надвишава максимално разрешения размер от %{size}',
   failedToFetch: 'Companion не успя да достъпи този адрес, уверете се че е правилен',
   failedToUpload: 'Грешка при качване на %{file}',
   fileSource: 'Име на сорс файл: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} от %{smart_count} файл качен',
-    '1': '%{complete} от %{smart_count} файлове качени'
+    '1': '%{complete} от %{smart_count} файлове качени',
   },
   filter: 'Филтър',
   finishEditingFile: 'Край на редакцията на файла',
   folderAdded: {
     '0': 'Добавен %{smart_count} файл от %{folder}',
-    '1': 'Добавени %{smart_count} файлове от %{folder}'
+    '1': 'Добавени %{smart_count} файлове от %{folder}',
   },
   generatingThumbnails: 'Генериране на миниатюри...',
   import: 'Импортиране',
@@ -71,16 +70,15 @@ bg_BG.strings = {
   noDuplicates: 'Файлът \'%{fileName}\' съществува. Не може да добавите дублиращи файлове',
   noFilesFound: 'Тук нямате файлове или директории',
   noInternetConnection: 'Няма връзка с интернет',
-  noNewAlreadyUploading: 'Не може да се добавят нови файлове: в процес на качване',
+  noMoreFilesAllowed: 'Не може да се добавят нови файлове: в процес на качване',
   openFolderNamed: 'Отваряне на директория %{name}',
   pause: 'Пауза',
   pauseUpload: 'Паузиране на качването',
   paused: 'Паузиран',
-  poweredBy: 'Powered by',
-  poweredBy2: '%{backwardsCompat} %{uppy}',
+  poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': 'Обработване %{smart_count} файл',
-    '1': 'Обработване %{smart_count} файлове'
+    '1': 'Обработване %{smart_count} файлове',
   },
   recording: 'Записване',
   recordingLength: 'Дължина на записа %{recording_length}',
@@ -92,11 +90,10 @@ bg_BG.strings = {
   retry: 'Нов опит',
   retryUpload: 'Нов опит за качване',
   saveChanges: 'Запис на промените',
-  selectAllFilesFromFolderNamed: 'Изберете всички файлове от директория %{name}',
   selectFileNamed: 'Изберете файл %{name}',
   selectX: {
     '0': 'Избран %{smart_count}',
-    '1': 'Избрани %{smart_count}'
+    '1': 'Избрани %{smart_count}',
   },
   smile: 'Усмивка! ;)',
   startCapturing: 'Започване запис на екрана',
@@ -108,7 +105,6 @@ bg_BG.strings = {
   submitRecordedFile: 'Подаване на записаното видео',
   takePicture: 'Направа на снимка',
   timedOut: 'Качването е в застой за %{seconds} секунди, прекъсване.',
-  unselectAllFilesFromFolderNamed: 'Размаркиране на всички файлове от директория %{name}',
   unselectFileNamed: 'Размаркиране файл %{name}',
   upload: 'Качване',
   uploadComplete: 'Качването е успешно',
@@ -116,38 +112,38 @@ bg_BG.strings = {
   uploadPaused: 'Качването е паузирано',
   uploadXFiles: {
     '0': 'Качване %{smart_count} файл',
-    '1': 'качване %{smart_count} файлове'
+    '1': 'качване %{smart_count} файлове',
   },
   uploadXNewFiles: {
     '0': 'Качване +%{smart_count} файл',
-    '1': 'Качване +%{smart_count} файлове'
+    '1': 'Качване +%{smart_count} файлове',
   },
   uploading: 'Качване',
   uploadingXFiles: {
     '0': 'Качване %{smart_count} файл',
-    '1': 'Качване %{smart_count} файлове'
+    '1': 'Качване %{smart_count} файлове',
   },
   xFilesSelected: {
     '0': '%{smart_count} файл е избран',
-    '1': '%{smart_count} файлове са избрани'
+    '1': '%{smart_count} файлове са избрани',
   },
   xMoreFilesAdded: {
     '0': 'Още %{smart_count} файл е добавен',
-    '1': 'Оше %{smart_count} файла са добавени'
+    '1': 'Оше %{smart_count} файла са добавени',
   },
   xTimeLeft: 'Остават %{time}',
   youCanOnlyUploadFileTypes: 'Можете да качване само файлове: %{types}',
   youCanOnlyUploadX: {
     '0': 'Може да качвате само %{smart_count} файл',
-    '1': 'Може да качвате само %{smart_count} файлове'
+    '1': 'Може да качвате само %{smart_count} файлове',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Трябва да изберете поне %{smart_count} файл',
-    '1': 'Трябва да изберете поне %{smart_count} файла'
-  }
+    '1': 'Трябва да изберете поне %{smart_count} файла',
+  },
 }
 
-bg_BG.pluralize = function (count) {
+bg_BG.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

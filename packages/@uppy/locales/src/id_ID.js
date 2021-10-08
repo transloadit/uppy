@@ -41,21 +41,21 @@ id_ID.strings = {
   encoding: 'Pengkodean...',
   enterCorrectUrl: 'URL salah: Mohon pastikan Anda memasukkan tautan langsung ke berkas',
   enterUrlToImport: 'Masukkan URL untuk mengimpor berkas',
-  exceedsSize: 'Berkas ini melebihi ukuran maksimum yang dibolehkan',
+  exceedsSize: 'Berkas ini melebihi ukuran maksimum yang dibolehkan %{size}',
   failedToFetch: 'Companion gagal mengambil URL ini, pastikan sudah benar',
   failedToUpload: 'Gagal mengunggah %{file}',
   fileSource: 'Sumber berkas: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} dari %{smart_count} berkas terunggah',
     '1': '%{complete} dari %{smart_count} berkas terunggah',
-    '2': '%{complete} dari %{smart_count} berkas terunggah'
+    '2': '%{complete} dari %{smart_count} berkas terunggah',
   },
   filter: 'Penyaring',
   finishEditingFile: 'Selesai mengubah berkas',
   folderAdded: {
     '0': 'Menambahkan %{smart_count} berkas dari %{folder}',
     '1': 'Menambahkan %{smart_count} berkas dari %{folder}',
-    '2': 'Menambahkan %{smart_count} berkas dari %{folder}'
+    '2': 'Menambahkan %{smart_count} berkas dari %{folder}',
   },
   import: 'Impor',
   importFrom: 'Impor dari %{name}',
@@ -68,11 +68,11 @@ id_ID.strings = {
   pause: 'Tunda',
   pauseUpload: 'Tunda pengungahan',
   paused: 'Ditunda',
-  poweredBy: 'Didukung oleh',
+  poweredBy: 'Didukung oleh %{uppy}',
   processingXFiles: {
     '0': 'Pemrosesan %{smart_count} berkas',
     '1': 'Pemrosesan %{smart_count} berkas',
-    '2': 'Pemrosesan %{smart_count} berkas'
+    '2': 'Pemrosesan %{smart_count} berkas',
   },
   removeFile: 'Hapus berkas',
   resetFilter: 'Setel ulang penyaring',
@@ -81,19 +81,17 @@ id_ID.strings = {
   retry: 'Ulangi',
   retryUpload: 'Ulangi pengungahan',
   saveChanges: 'Simpan perubahan',
-  selectAllFilesFromFolderNamed: 'Pilih semua berkas dari folder %{name}',
   selectFileNamed: 'Pilih berkas %{name}',
   selectX: {
     '0': 'Pilih %{smart_count}',
     '1': 'Pilih %{smart_count}',
-    '2': 'Pilih %{smart_count}'
+    '2': 'Pilih %{smart_count}',
   },
   smile: 'Senyum!',
   startRecording: 'Memulai perekaman video',
   stopRecording: 'Menghentikan perekaman video',
   takePicture: 'Mengambil gambar',
   timedOut: 'Pengunggahan terhenti untuk %{seconds} detik, membatalkan.',
-  unselectAllFilesFromFolderNamed: 'Batalkan pemilihan semua berkas dari folder %{name}',
   unselectFileNamed: 'Batalkan pemilihan berkas %{name}',
   upload: 'Unggah',
   uploadComplete: 'Pengunggahan selesai',
@@ -102,44 +100,44 @@ id_ID.strings = {
   uploadXFiles: {
     '0': 'Unggah %{smart_count} berkas',
     '1': 'Unggah %{smart_count} berkas',
-    '2': 'Unggah %{smart_count} berkas'
+    '2': 'Unggah %{smart_count} berkas',
   },
   uploadXNewFiles: {
     '0': 'Mengunggah +%{smart_count} berkas baru',
     '1': 'Mengunggah +%{smart_count} berkas baru',
-    '2': 'Mengunggah +%{smart_count} berkas baru'
+    '2': 'Mengunggah +%{smart_count} berkas baru',
   },
   uploading: 'Mengunggah',
   uploadingXFiles: {
     '0': 'Mengunggah %{smart_count} berkas',
     '1': 'Mengunggah %{smart_count} berkas',
-    '2': 'Mengunggah %{smart_count} berkas'
+    '2': 'Mengunggah %{smart_count} berkas',
   },
   xFilesSelected: {
     '0': '%{smart_count} berkas terpilih',
     '1': '%{smart_count} berkas terpilih',
-    '2': '%{smart_count} berkas terpilih'
+    '2': '%{smart_count} berkas terpilih',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} berkas lagi ditambahkan',
     '1': '%{smart_count} berkas lagi ditambahkan',
-    '2': '%{smart_count} berkas lagi ditambahkan'
+    '2': '%{smart_count} berkas lagi ditambahkan',
   },
   xTimeLeft: 'Tersisa %{time}',
   youCanOnlyUploadFileTypes: 'Anda hanya dapat menggunggah: %{types}',
   youCanOnlyUploadX: {
     '0': 'Anda hanya dapat mengunggah %{smart_count} berkas',
     '1': 'Anda hanya dapat mengunggah %{smart_count} berkas',
-    '2': 'Anda hanya dapat mengunggah %{smart_count} berkas'
+    '2': 'Anda hanya dapat mengunggah %{smart_count} berkas',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Anda harus memilih minimal %{smart_count} berkas',
     '1': 'Anda harus memilih minimal %{smart_count} berkas',
-    '2': 'Anda harus memilih minimal %{smart_count} berkas'
-  }
+    '2': 'Anda harus memilih minimal %{smart_count} berkas',
+  },
 }
 
-id_ID.pluralize = function (n) {
+id_ID.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

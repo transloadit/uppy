@@ -4,7 +4,7 @@ import {
   Modal,
   Text,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native'
 import takePicture from './takePicture'
 import selectImage from './selectImage'
@@ -20,11 +20,11 @@ export default class UppyReactNativeFilePicker extends React.Component {
         { id: 'LocalImages', title: 'Pick Local Images/Videos' },
         { id: 'LocalDocuments', title: 'Pick Documents' },
         { id: 'LocalCamera', title: 'Take a Picture' },
-        { id: 'Url', title: 'Url' }
+        { id: 'Url', title: 'Url' },
         // { id: 'GoogleDrive', title: 'Google Drive' },
         // { id: 'Instagram', title: 'Instagram' }
       ],
-      openProvider: null
+      openProvider: null,
     }
 
     this.takePicture = this.takePicture.bind(this)
@@ -42,10 +42,11 @@ export default class UppyReactNativeFilePicker extends React.Component {
         source: 'React Native',
         name: `media_${Date.now()}.jpg`,
         type: file.type,
-        data: file
+        data: file,
       })
       this.props.onRequestClose()
     }).catch((err) => {
+      // eslint-disable-next-line no-console
       console.log(err)
     })
   }
@@ -56,10 +57,11 @@ export default class UppyReactNativeFilePicker extends React.Component {
         source: 'React Native',
         name: `media_${Date.now()}.jpg`,
         type: file.type,
-        data: file
+        data: file,
       })
       this.props.onRequestClose()
     }).catch((err) => {
+      // eslint-disable-next-line no-console
       console.log(err)
     })
   }
@@ -69,24 +71,22 @@ export default class UppyReactNativeFilePicker extends React.Component {
       this.uppy.addFile({
         source: 'React Native',
         name: file.name,
-        data: file
+        data: file,
       })
       this.props.onRequestClose()
     }).catch((err) => {
+      // eslint-disable-next-line no-console
       console.log(err)
     })
   }
 
   openProvider (id) {
-    console.log('Open provider:', id)
     this.setState({
-      openProvider: id
+      openProvider: id,
     })
   }
 
   chooseProvider (id) {
-    console.log('Provider selected:', id)
-
     switch (id) {
       case 'LocalImages':
         this.selectImage()
@@ -107,12 +107,12 @@ export default class UppyReactNativeFilePicker extends React.Component {
       <ScrollView
         contentContainerStyle={styles.providerList}
       >
-        {this.state.providers.map((item, index) => {
+        {this.state.providers.map((item) => {
           return (
             <TouchableOpacity
               style={styles.providerButton}
-              key={index}
-              onPress={ev => this.chooseProvider(item.id)}
+              key={item.title}
+              onPress={() => this.chooseProvider(item.id)}
             >
               <Text style={styles.providerButtonText}>{item.title}</Text>
             </TouchableOpacity>
@@ -120,7 +120,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
         })}
         <TouchableOpacity
           style={styles.cancelButton}
-          onPress={ev => this.props.onRequestClose()}
+          onPress={() => this.props.onRequestClose()}
         >
           <Text style={styles.cancelButtonText}>Cancel</Text>
         </TouchableOpacity>
@@ -143,7 +143,7 @@ export default class UppyReactNativeFilePicker extends React.Component {
             uppy={this.uppy}
             onDone={() => {
               this.setState({
-                openProvider: null
+                openProvider: null,
               })
               this.props.onRequestClose()
             }}
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   providerList: {
     flex: 1,
     marginTop: 22,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   providerButton: {
     alignItems: 'center',
@@ -170,10 +170,10 @@ const styles = StyleSheet.create({
     marginLeft: 50,
     marginRight: 50,
     padding: 10,
-    borderRadius: 5
+    borderRadius: 5,
   },
   providerButtonText: {
-    color: '#fff'
+    color: '#fff',
   },
   cancelButton: {
     alignItems: 'center',
@@ -183,9 +183,9 @@ const styles = StyleSheet.create({
     marginLeft: 50,
     marginRight: 50,
     padding: 10,
-    borderRadius: 5
+    borderRadius: 5,
   },
   cancelButtonText: {
-    color: '#0077cc'
-  }
+    color: '#0077cc',
+  },
 })

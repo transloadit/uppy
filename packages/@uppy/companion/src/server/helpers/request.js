@@ -3,7 +3,9 @@ const https = require('https')
 const { URL } = require('url')
 const dns = require('dns')
 const ipAddress = require('ip-address')
+const request = require('request')
 const logger = require('../logger')
+
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 
 function isIPAddress (address) {
@@ -12,6 +14,7 @@ function isIPAddress (address) {
   return addressAsV6.isValid() || addressAsV4.isValid()
 }
 
+/* eslint-disable max-len */
 /**
  * Determine if a IP address provided is a private one.
  * Return TRUE if it's the case, FALSE otherwise.
@@ -21,6 +24,7 @@ function isIPAddress (address) {
  * @param {string} ipAddress the ip address to validate
  * @returns {boolean}
  */
+/* eslint-enable max-len */
 function isPrivateIP (ipAddress) {
   let isPrivate = false
   // Build the list of IP prefix for V4 and V6 addresses
@@ -77,35 +81,29 @@ function isPrivateIP (ipAddress) {
 
 module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
 
-module.exports.getRedirectEvaluator = (requestURL, blockPrivateIPs) => {
-  const protocol = (new URL(requestURL)).protocol
+module.exports.getRedirectEvaluator = (rawRequestURL, blockPrivateIPs) => {
+  const requestURL = new URL(rawRequestURL)
   return (res) => {
     if (!blockPrivateIPs) {
       return true
     }
 
-    const redirectURL = res.headers.location
-    const shouldRedirect = redirectURL ? new URL(redirectURL).protocol === protocol : false
+    let redirectURL = null
+    try {
+      redirectURL = new URL(res.headers.location, requestURL)
+    } catch (err) {
+      return false
+    }
+
+    const shouldRedirect = redirectURL.protocol === requestURL.protocol
     if (!shouldRedirect) {
       logger.info(
-        `blocking redirect from ${requestURL} to ${redirectURL}`, 'redirect.protection')
+        `blocking redirect from ${requestURL} to ${redirectURL}`, 'redirect.protection'
+      )
     }
 
     return shouldRedirect
   }
-}
-
-/**
- * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
- * @param {string} protocol http or http: or https: or https protocol needed for the request
- * @param {boolean} blockPrivateIPs if set to false, this protection will be disabled
- */
-module.exports.getProtectedHttpAgent = (protocol, blockPrivateIPs) => {
-  if (blockPrivateIPs) {
-    return protocol.startsWith('https') ? HttpsAgent : HttpAgent
-  }
-
-  return protocol.startsWith('https') ? https.Agent : http.Agent
 }
 
 function dnsLookup (hostname, options, callback) {
@@ -129,24 +127,71 @@ function dnsLookup (hostname, options, callback) {
 
 class HttpAgent extends http.Agent {
   createConnection (options, callback) {
-    options.lookup = dnsLookup
     if (isIPAddress(options.host) && isPrivateIP(options.host)) {
       callback(new Error(FORBIDDEN_IP_ADDRESS))
-      return
+      return undefined
     }
     // @ts-ignore
-    return super.createConnection(options, callback)
+    return super.createConnection({ ...options, lookup: dnsLookup }, callback)
   }
 }
 
 class HttpsAgent extends https.Agent {
   createConnection (options, callback) {
-    options.lookup = dnsLookup
     if (isIPAddress(options.host) && isPrivateIP(options.host)) {
       callback(new Error(FORBIDDEN_IP_ADDRESS))
-      return
+      return undefined
     }
     // @ts-ignore
-    return super.createConnection(options, callback)
+    return super.createConnection({ ...options, lookup: dnsLookup }, callback)
   }
+}
+
+/**
+ * Returns http Agent that will prevent requests to private IPs (to preven SSRF)
+ *
+ * @param {string} protocol http or http: or https: or https protocol needed for the request
+ * @param {boolean} blockPrivateIPs if set to false, this protection will be disabled
+ */
+module.exports.getProtectedHttpAgent = (protocol, blockPrivateIPs) => {
+  if (blockPrivateIPs) {
+    return protocol.startsWith('https') ? HttpsAgent : HttpAgent
+  }
+
+  return protocol.startsWith('https') ? https.Agent : http.Agent
+}
+
+/**
+ * Gets the size and content type of a url's content
+ *
+ * @param {string} url
+ * @param {boolean} blockLocalIPs
+ * @returns {Promise<{type: string, size: number}>}
+ */
+exports.getURLMeta = (url, blockLocalIPs = false) => {
+  return new Promise((resolve, reject) => {
+    const opts = {
+      uri: url,
+      method: 'GET',
+      followRedirect: exports.getRedirectEvaluator(url, blockLocalIPs),
+      agentClass: exports.getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
+    }
+
+    const req = request(opts, (err) => {
+      if (err) reject(err)
+    })
+    req.on('response', (response) => {
+      if (response.statusCode >= 300) {
+        // @todo possibly set a status code in the error object to get a more helpful
+        // hint at what the cause of error is.
+        reject(new Error(`URL server responded with status: ${response.statusCode}`))
+      } else {
+        req.abort() // No need to get the rest of the response, as we only want header
+        resolve({
+          type: response.headers['content-type'],
+          size: parseInt(response.headers['content-length'], 10),
+        })
+      }
+    })
+  })
 }

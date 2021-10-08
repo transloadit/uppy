@@ -1,5 +1,3 @@
-require('es6-promise/auto')
-require('whatwg-fetch')
 const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const Url = require('@uppy/url')
@@ -11,14 +9,14 @@ const endpoint = isOnTravis ? 'http://companion.test:1080' : 'http://localhost:1
 
 window.uppy = new Uppy({
   id: 'uppyProvider',
-  debug: true
+  debug: true,
 })
   .use(Dashboard, {
     target: '#uppyDashboard',
-    inline: true
+    inline: true,
   })
   .use(Url, {
     target: Dashboard,
-    companionUrl: companionUrl
+    companionUrl,
   })
   .use(Tus, { endpoint: `${endpoint}/files/` })

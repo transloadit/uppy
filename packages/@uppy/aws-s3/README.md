@@ -3,7 +3,7 @@
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
 <a href="https://www.npmjs.com/package/@uppy/aws-s3"><img src="https://img.shields.io/npm/v/@uppy/aws-s3.svg?style=flat-square"></a>
-<a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/master.svg?style=flat-square" alt="Build Status"></a>
+<img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
 
 The AwsS3 plugin can be used to upload files directly to an S3 bucket. Uploads can be signed using Companion or a custom signing function.
 
@@ -12,14 +12,14 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const Uppy = require('@uppy/core')
-const AwsS3 = require('@uppy/aws-s3')
+import Uppy from '@uppy/core'
+import AwsS3 from '@uppy/aws-s3'
 
 const uppy = new Uppy()
 uppy.use(AwsS3, {
   limit: 2,
   timeout: ms('1 minute'),
-  companionUrl: 'https://companion.myapp.com/'
+  companionUrl: 'https://companion.myapp.com/',
 })
 ```
 

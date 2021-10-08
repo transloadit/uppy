@@ -13,10 +13,10 @@ tagline: "classic multipart form uploads or binary uploads using XMLHTTPRequest"
 The `@uppy/xhr-upload` plugin handles classic HTML multipart form uploads, as well as uploads using the HTTP `PUT` method.
 
 ```js
-const XHRUpload = require('@uppy/xhr-upload')
+import XHRUpload from '@uppy/xhr-upload'
 
 uppy.use(XHRUpload, {
-  endpoint: 'http://my-website.org/upload'
+  endpoint: 'http://my-website.org/upload',
 })
 ```
 
@@ -35,7 +35,7 @@ npm install @uppy/xhr-upload
 In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
 
 ```js
-const XHRUpload = Uppy.XHRUpload
+const { XHRUpload } = Uppy
 ```
 
 ## Options
@@ -61,9 +61,11 @@ This works similarly to using a `<form>` element with an `<input type="file">` f
 When set to `true`, file metadata is also sent to the endpoint as separate form fields.
 When set to `false`, only the file contents are sent.
 
-### `fieldName: 'files[]'`
+### `fieldName: 'file'`
 
-When [`formData`](#formData-true) is set to true, this is used as the form field name for the file to be uploaded.
+When [`formData`](#formData-true) is set to true, this is used as the form field
+name for the file to be uploaded. It defaults to `'files[]'` if `bundle` option
+is set to `true`, otherwise it defaults to `'file'`.
 
 ### `metaFields: null`
 
@@ -81,10 +83,22 @@ An object containing HTTP headers to use for the upload request.
 Keys are header names, values are header values.
 
 ```js
-headers: {
-  'authorization': `Bearer ${window.getCurrentUserToken()}`
+const headers = {
+  authorization: `Bearer ${window.getCurrentUserToken()}`,
 }
 ```
+
+Header values can also be derived from file data by providing a function. The function receives a [File Object][File Objects] and must return an object where the keys are header names, and values are header values.
+```js
+const headers = (file) => {
+  return {
+    authorization: `Bearer ${window.getCurrentUserToken()}`,
+    expires: file.meta.expires,
+  }
+}
+```
+
+> ⚠️ The function syntax is not available when the [`bundle: true`](#bundle-false) option is set. `bundle` is disabled by default.
 
 ### `bundle: false`
 
@@ -98,10 +112,10 @@ All files will be appended to the provided `fieldName` field in the request. To 
 
 ```js
 uppy.setFileState(fileID, {
-  xhrUpload: { fieldName: 'pic0' }
+  xhrUpload: { fieldName: 'pic0' },
 })
 uppy.setFileState(otherFileID, {
-  xhrUpload: { fieldName: 'pic1' }
+  xhrUpload: { fieldName: 'pic1' },
 })
 ```
 
@@ -130,13 +144,13 @@ The `responseText` is the XHR endpoint response as a string.
 When an upload has completed, Uppy will extract response data from the upload endpoint. This response data will be available on the file's `.response` property, and be emitted in the [`upload-success`][uppy.upload-success] event:
 
 ```js
-uppy.getFile(fileID).response
+const responseData = uppy.getFile(fileID).response
 // { status: HTTP status code,
 //   body: extracted response data }
 
 uppy.on('upload-success', (file, response) => {
-  response.status // HTTP status code
-  response.body   // extracted response data
+  const httpStatus = response.status // HTTP status code
+  const httpBody = response.body   // extracted response data
 
   // do something with file and response
 })
@@ -156,9 +170,9 @@ That object will be the value of `response.body`. Not all endpoints respond with
 For example, an endpoint that responds with an XML document:
 
 ```js
-getResponseData (responseText, response) {
+function getResponseData (responseText, response) {
   return {
-    url: responseText.match(/<Location>(.*?)<\/Location>/)[1]
+    url: responseText.match(/<Location>(.*?)<\/Location>/)[1],
   }
 }
 ```
@@ -185,7 +199,7 @@ Pass in a `getResponseError` function to extract error data from the [`XMLHttpRe
 For example, if the endpoint responds with a JSON object containing a `{ message }` property, this would show that message to the user:
 
 ```js
-getResponseError (responseText, response) {
+function getResponseError (responseText, response) {
   return new Error(JSON.parse(responseText).message)
 }
 ```
@@ -202,13 +216,13 @@ Set to `0` to disable this check.
 
 The default for the timeout is 30 seconds.
 
-### `limit: 0`
+### `limit: 5`
 
 Limit the amount of uploads going on at the same time. Setting this to `0` means there is no limit on concurrent uploads.
 
 ### `responseType: ''`
 
-The response type expected from the server, determining how the `xhr.response` property should be filled. The `xhr.response` property can be accessed in a custom [`getResponseData()`](#getResponseData-responseText-response) callback. This option sets the [`XMLHttpRequest.responseType][XHR.responseType] property. Only '', 'text', 'arraybuffer', 'blob' and 'document' are widely supported by browsers, so it's recommended to use one of those. The default is the empty string, which is equivalent to 'text' for the `xhr.response` property.
+The response type expected from the server, determining how the `xhr.response` property should be filled. The `xhr.response` property can be accessed in a custom [`getResponseData()`](#getResponseData-responseText-response) callback. This option sets the [`XMLHttpRequest.responseType`][XHR.responseType] property. Only '', 'text', 'arraybuffer', 'blob' and 'document' are widely supported by browsers, so it's recommended to use one of those. The default is the empty string, which is equivalent to 'text' for the `xhr.response` property.
 
 ### `withCredentials: false`
 
@@ -221,9 +235,9 @@ Localize text that is shown to the user.
 The default English strings are:
 
 ```js
-strings: {
+const strings = {
   // Shown in the Informer if an upload is being canceled because it stalled for too long.
-  timedOut: 'Upload stalled for %{seconds} seconds, aborting.'
+  timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
 }
 ```
 
@@ -236,7 +250,7 @@ It may be useful to set metadata depending on some file properties, such as the 
 ```js
 uppy.on('file-added', (file) => {
   uppy.setFileMeta(file.id, {
-    size: file.size
+    size: file.size,
   })
 })
 ```
@@ -248,7 +262,7 @@ By default, all metadata is sent, including Uppy's default `name` and `type` met
 ```js
 uppy.use(XHRUpload, {
   // Only send our own `size` metadata field.
-  metaFields: ['size']
+  metaFields: ['size'],
 })
 ```
 
@@ -275,7 +289,7 @@ Set a custom `fieldName` to make working with the `$_FILES` array a bit less con
 // app.js
 uppy.use(XHRUpload, {
   endpoint: '/upload.php',
-  fieldName: 'my_file'
+  fieldName: 'my_file',
 })
 ```
 
@@ -285,7 +299,7 @@ uppy.use(XHRUpload, {
 $my_file = $_FILES['my_file'];
 $file_path = $my_file['tmp_name']; // temporary upload path of the file
 $file_name = $_POST['name']; // desired name of the file
-move_uploaded_file($file_path, './img/' . basename($file_name)); // save the file at `img/FILE_NAME`
+move_uploaded_file($file_path, $_SERVER['DOCUMENT_ROOT'] . '/img/' . basename($file_name)); // save the file at `img/FILE_NAME`
 ```
 
 [FormData]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
@@ -293,5 +307,6 @@ move_uploaded_file($file_path, './img/' . basename($file_name)); // save the fil
 [XHR.timeout]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/timeout
 [XHR.responseType]: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType
 [uppy.upload-success]: /docs/uppy/#upload-success
+[File Objects]: /docs/uppy/#File-Objects
 [PHP.file-upload]: https://secure.php.net/manual/en/features.file-upload.php
 [PHP.multiple]: https://secure.php.net/manual/en/features.file-upload.multiple.php
