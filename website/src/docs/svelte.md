@@ -90,7 +90,7 @@ The following plugins are available as Svelte component wrappers:
 *   `<ProgressBar />` - renders a `@uppy/progress-bar`
 *   `<StatusBar />` - renders a `@uppy/status-bar`
 
-Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, making it easier to add your plugins.
+Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, make it easier to add your plugins.
 
 ### Initializing Uppy
 
@@ -138,7 +138,7 @@ The `<Dashboard />` component supports all `@uppy/dashboard` options to be passe
   />
 ```
 
-The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as \[`@uppy/webcam`]\[@uppy/webcam]. To use other plugins like \[`@uppy/webcam`]\[@uppy/webcam] with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
+The `<Dashboard />` cannot be passed to a `target:` option of a remote provider or plugins such as [`@uppy/webcam`][]. To use other plugins like [`@uppy/webcam`][] with the `<Dashboard />` component, first add them to the Uppy instance, and then specify their `id` in the [`plugins`](/docs/dashboard/#plugins) prop:
 
 ### `<DashboardModal />`
 
@@ -169,7 +169,7 @@ The `<DashboardModal />` cannot be passed to a `target:` option of a remote prov
 
 #### CSS
 
-The `DragDrop` component includes some basic styles, like shown in the [example](/examples/dragdrop). You can also choose not to include those and use your own styles instead:
+The `DragDrop` component includes some basic styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead:
 
 ```html
 <style global>
@@ -221,6 +221,8 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 #### Props
 
 The `<StatusBar />` component supports all `@uppy/status-bar` options to be passed as an object on the `props` prop. An Uppy instance must be provided in the `uppy={}` prop.
+
+[`@uppy/webcam`]: /docs/webcam/
 
 [Svelte]: https://svelte.dev
 
