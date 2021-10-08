@@ -108,7 +108,7 @@
     "postcss-logical": "^4.0.2",
     "postcss-safe-important": "^1.2.0",
     "pre-commit": "^1.2.2",
-    "remark-cli": "^9.0.0",
+    "remark-cli": "^10.0.0",
     "remark-lint-uppy": "file:private/remark-lint-uppy",
     "replacestream": "^4.0.3",
     "resolve": "^1.17.0",
