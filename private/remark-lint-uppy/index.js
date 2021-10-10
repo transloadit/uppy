@@ -25,5 +25,6 @@ export default {
     [await importDefault("remark-lint-emphasis-marker"), '_'],
     await importDefault("remark-lint-strong-marker"),
     await importDefault("./retext-preset.js"),
+    await importDefault("./message-control.js"),
   ],
 }

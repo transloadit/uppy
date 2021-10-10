@@ -6,7 +6,7 @@ permalink: /privacy-policy/
 body_class: "page-privacy"
 ---
 
-<!--lint disable retext-simplify-->
+<!--retext-simplify disable-->
 
 Uppy is an open source file uploader, developed by the team at [Transloadit Ltd.](https://transloadit.com) and [open source contributors on GitHub](https://github.com/transloadit/uppy/graphs/contributors).
 
