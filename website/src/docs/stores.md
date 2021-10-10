@@ -45,7 +45,7 @@ The `ReduxStore` dispatches `uppy/STATE_UPDATE` actions to update state.
 When the state in Redux changes, it notifies Uppy.
 This way, you get most of the benefits of Redux, including support for the Redux Devtools and time traveling!
 
-Here is how you can integrate Uppy's `ReduxStore`:
+Here is how you can integrate Uppy’s `ReduxStore`:
 
 ```js
 import Uppy from '@uppy/core'
