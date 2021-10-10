@@ -75,7 +75,7 @@ Pass an array of field names to limit the metadata fields that will be sent to t
 *   Set this to `null` (the default) to send _all_ metadata fields.
 *   Set this to an empty array `[]` to not send any fields.
 
-If the [`formData`](#formData-true) option is set to false, `metaFields` has no effect.
+If the [`formData`](#formData-true) option is set to false, `metaFields` is ignored.
 
 ### `headers: {}`
 
@@ -270,6 +270,8 @@ uppy.use(XHRUpload, {
 ## Uploading to a PHP Server
 
 The XHRUpload plugin works similarly to a `<form>` upload. You can use the `$_FILES` variable on the server to work with uploaded files. See the PHP documentation on [Handling file uploads][PHP.file-upload].
+
+<!--retext-simplify ignore multiple-->
 
 The default form field for file uploads is `files[]`, which means you have to access the `$_FILES` array as described in [Uploading multiple files][PHP.multiple]:
 
