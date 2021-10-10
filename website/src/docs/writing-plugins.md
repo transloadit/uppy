@@ -17,9 +17,9 @@ See a [full example of a plugin](#Example-of-a-custom-plugin) below.
 
 ## Creating A Plugin
 
-Uppy has two classes to create plugins with. `BasePlugin` for plugins that don't require an user interface, and `UIPlugin` for onces that do.
+Uppy has two classes to create plugins with. `BasePlugin` for plugins that don’t need a user interface, and `UIPlugin` for onces that do.
 Each plugin has an `id` and a `type`. `id`s are used to uniquely identify plugins.
-A `type` can be anything—some plugins use `type`s to determine whether to do something to some other plugin.
+A `type` can be anything—some plugins use `type`s to decide whether to do something to some other plugin.
 For example, when targeting plugins at the built-in `Dashboard` plugin, the Dashboard uses the `type` to figure out where to mount different UI elements.
 `'acquirer'`-type plugins are mounted into the tab bar, while `'progressindicator'`-type plugins are mounted into the progress bar area.
 
@@ -79,7 +79,7 @@ Called after every state update with a debounce, after everything has mounted.
 
 #### `addTarget()`
 
-Use this to add your plugin to another plugin's target. This is what `@uppy/dashboard` uses to add other plugins to its UI.
+Use this to add your plugin to another plugin’s target. This is what `@uppy/dashboard` uses to add other plugins to its UI.
 
 ### `UIPlugin`
 
@@ -93,12 +93,12 @@ This method can be overridden to support for different render engines.
 
 #### `render()`
 
-Render this plugin's UI. Uppy uses [Preact](https://preactjs.com) as its view engine, so `render()` should return a Preact element.
+Render this plugin’s UI. Uppy uses [Preact](https://preactjs.com) as its view engine, so `render()` should return a Preact element.
 `render` is automatically called by Uppy on each state change.
 
 #### `onMount()`
 
-Called after Preact has rendered the components of the plugin. Can be used to perform additional side-effects.
+Called after Preact has rendered the components of the plugin.
 
 #### `update(state)`
 
@@ -106,7 +106,7 @@ Called on each state update. You will rarely need to use this, unless if you wan
 
 #### `onUnmount()`
 
-Called after the elements have been removed from the DOM. Can be used to perform additional (clean up) side-effects.
+Called after the elements have been removed from the DOM. Can be used to do some clean up or other side-effects.
 
 ## Upload Hooks
 
