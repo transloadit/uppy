@@ -47,6 +47,8 @@ Destination URL for your uploads. This should be where your tus.io server is run
 
 ### `headers: {}`
 
+<!--retext-simplify ignore additional-->
+
 An object containing additional HTTP headers to send to the Tus endpoint when making requests.
 Keys are header names, values are header values.
 
