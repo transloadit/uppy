@@ -54,15 +54,35 @@ module.exports = class DropTarget extends BasePlugin {
     event.currentTarget.classList.remove('uppy-is-drag-over')
     this.setPluginState({ isDraggingOver: false })
 
-    // 3. Add all dropped files
-    this.uppy.log('[DropTarget] Files were dropped')
+    // 3. Let any acquirer plugin (Url/Webcam/etc.) handle drops to the root
+    this.uppy.iteratePlugins((plugin) => {
+      if (plugin.type === 'acquirer') {
+        // Every Plugin with .type acquirer can define handleRootDrop(event)
+        plugin.handleRootDrop?.(event)
+      }
+    })
 
+    // 4. Add all dropped files, handle errors
+    let executedDropErrorOnce = false
     const logDropError = (error) => {
       this.uppy.log(error, 'error')
+
+      // In practice all drop errors are most likely the same,
+      // so let's just show one to avoid overwhelming the user
+      if (!executedDropErrorOnce) {
+        this.uppy.info(error.message, 'error')
+        executedDropErrorOnce = true
+      }
     }
 
-    const files = await getDroppedFiles(event.dataTransfer, { logDropError })
-    this.addFiles(files)
+    getDroppedFiles(event.dataTransfer, { logDropError })
+      .then((files) => {
+        if (files.length > 0) {
+          this.uppy.log('[DropTarget] Files were dropped')
+          this.addFiles(files)
+        }
+      })
+
     this.opts.onDrop?.(event)
   }
 
