@@ -34,6 +34,7 @@ export default [
         'selection',
         'submit',
         'type',
+        'validate',
       ],
     })
     .use(retextSyntaxMentions),
