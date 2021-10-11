@@ -17,6 +17,7 @@ export default [
     .use(retextSimplify, {
       ignore: [
         'address',
+        'alternatively',
         'component',
         'equivalent',
         'function',
