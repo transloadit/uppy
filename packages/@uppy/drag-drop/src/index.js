@@ -107,15 +107,15 @@ module.exports = class DragDrop extends UIPlugin {
   }
 
   handleDragOver (event) {
-    if (this.opts.onDragOver) this.opts.onDragOver(event)
+    this.opts?.onDragOver(event)
     event.preventDefault()
     event.stopPropagation()
 
     // 1. Check if the "type" of the datatransfer object includes files. If not, deny drop.
-    // Use `[...]` to turn this into a real array in IE10
-    const types = [...event.dataTransfer.types]
+    const { types } = event.dataTransfer
     const hasFiles = types.some(type => type === 'Files')
-    if (!hasFiles) {
+    const { allowNewUpload } = this.uppy.getState()
+    if (!hasFiles || !allowNewUpload) {
       event.dataTransfer.dropEffect = 'none'
       clearTimeout(this.removeDragOverClassTimeout)
       return
