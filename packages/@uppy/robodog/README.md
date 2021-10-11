@@ -14,7 +14,7 @@ $ npm install @uppy/robodog
 
 We recommend installing from npm and then using a module bundler such as [Webpack](http://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-Alternatively, you can also use this package in a pre-built bundle from Transloadit's CDN: Edgly.
+Alternatively, you can also use this package in a pre-built bundle from Transloadit’s CDN: Edgly.
 
 ```html
 <link rel="stylesheet" href="https://releases.transloadit.com/uppy/v2.2.0/robodog.min.css">

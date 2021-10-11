@@ -16,6 +16,7 @@ export default [
     .use(retextQuotes)
     .use(retextSimplify, {
       ignore: [
+        'accurate',
         'address',
         'alternatively',
         'component',

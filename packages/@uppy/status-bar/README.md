@@ -5,7 +5,7 @@
 <a href="https://www.npmjs.com/package/@uppy/status-bar"><img src="https://img.shields.io/npm/v/@uppy/status-bar.svg?style=flat-square"></a> <img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
 
 The status-bar shows upload progress and speed, ETAs, pre- and post-processing information, and allows users to control (pause/resume/cancel) the upload.
-Best used together with a simple file source plugin, such as [@uppy/file-input](https://uppy.io/docs/file-input) or [@uppy/drag-drop](https://uppy.io/docs/drag-drop), or a custom implementation. It is also included in the [@uppy/dashboard](https://uppy.io/docs/dashboard) plugin.
+Best used together with a basic file source plugin, such as [@uppy/file-input](https://uppy.io/docs/file-input) or [@uppy/drag-drop](https://uppy.io/docs/drag-drop), or a custom implementation. It’s also included in the [@uppy/dashboard](https://uppy.io/docs/dashboard) plugin.
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
 
@@ -32,7 +32,7 @@ $ npm install @uppy/status-bar
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-Alternatively, you can also use this plugin in a pre-built bundle from Transloadit's CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
+Alternatively, you can also use this plugin in a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
 
 ## Documentation
 

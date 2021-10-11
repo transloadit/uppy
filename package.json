@@ -148,7 +148,7 @@
     "dev": "npm-run-all --parallel dev:watch-sandbox watch:js:lib watch:css dev:browsersync",
     "example": "node bin/run-example",
     "lint:fix": "npm run lint -- --fix",
-    "lint:markdown": "remark -f -q . -i .gitignore",
+    "lint:markdown": "remark -f -q . -i .remarkignore",
     "lint:staged": "lint-staged",
     "lint:css": "stylelint ./packages/**/*.scss",
     "lint:css:fix": "stylelint ./packages/**/*.scss --fix",

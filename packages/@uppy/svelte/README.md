@@ -22,7 +22,7 @@ yarn add @uppy/svelte
 
 ## Documentation
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/svelte). At the moment, there is no documentation yet, so this link won't work. Stay tuned for more info
+Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/svelte). At the moment, there’s no documentation yet, so this link won’t work. Stay tuned for more info
 
 ## License
 
