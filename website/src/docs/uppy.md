@@ -129,17 +129,17 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 
 **Parameters**
 
-*   `maxFileSize` _null | number_ — maximum file size in bytes for each individual file
-*   `minFileSize` _null | number_ — minimum file size in bytes for each individual file
-*   `maxTotalFileSize` _null | number_ — maximum file size in bytes for all the files that can be selected for upload
-*   `maxNumberOfFiles` _null | number_ — total number of files that can be selected
-*   `minNumberOfFiles` _null | number_ — minimum number of files that must be selected before the upload
-*   `allowedFileTypes` _null | array_ of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
-*   `requiredMetaFields` _array_ of strings
+* `maxFileSize` _null | number_ — maximum file size in bytes for each individual file
+* `minFileSize` _null | number_ — minimum file size in bytes for each individual file
+* `maxTotalFileSize` _null | number_ — maximum file size in bytes for all the files that can be selected for upload
+* `maxNumberOfFiles` _null | number_ — total number of files that can be selected
+* `minNumberOfFiles` _null | number_ — minimum number of files that must be selected before the upload
+* `allowedFileTypes` _null | array_ of wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`
+* `requiredMetaFields` _array_ of strings
 
 `maxNumberOfFiles` also affects the number of files a user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1`, they will only be able to select a single file. When `null` or another number is provided, they will be able to select several files.
 
-`allowedFileTypes` gets passed to the system file dialog via [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types)’s accept attribute, so only files matching these types will be selectable.
+`allowedFileTypes` gets passed to the system file dialog via [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting\_accepted\_file\_types)’s accept attribute, so only files matching these types will be selectable.
 
 > If you’d like to force a certain meta field data to be entered before the upload, you can [do so using `onBeforeUpload`](https://github.com/transloadit/uppy/issues/1703#issuecomment-507202561).
 
@@ -160,8 +160,8 @@ const uppy = new Uppy({
 
 This global metadata is added to each file in Uppy. It can be modified by two methods:
 
-1.  [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setMeta-data) — set or update meta for all files.
-2.  [`uppy.setFileMeta('myfileID', { resize: 1500 })`](/docs/uppy/#uppy-setFileMeta-fileID-data) — set or update meta for specific file.
+1. [`uppy.setMeta({ username: 'Peter' })`](/docs/uppy/#uppy-setMeta-data) — set or update meta for all files.
+2. [`uppy.setFileMeta('myfileID', { resize: 1500 })`](/docs/uppy/#uppy-setFileMeta-fileID-data) — set or update meta for specific file.
 
 Metadata from each file is then attached to uploads in [Tus](/docs/tus/) and [XHRUpload](/docs/xhrupload/) plugins.
 
@@ -378,11 +378,11 @@ An object with upload progress data.
 
 **Properties**
 
-*   `bytesUploaded` - Number of bytes uploaded so far.
-*   `bytesTotal` - Number of bytes that must be uploaded in total.
-*   `uploadStarted` - Null if the upload has not started yet. Once started, this property stores a UNIX timestamp. Note that this is only set _after_ preprocessing.
-*   `uploadComplete` - Boolean indicating if the upload has completed. Note this does _not_ mean that postprocessing has completed, too.
-*   `percentage` - Integer percentage between 0 and 100.
+* `bytesUploaded` - Number of bytes uploaded so far.
+* `bytesTotal` - Number of bytes that must be uploaded in total.
+* `uploadStarted` - Null if the upload has not started yet. Once started, this property stores a UNIX timestamp. Note that this is only set _after_ preprocessing.
+* `uploadComplete` - Boolean indicating if the upload has completed. Note this does _not_ mean that postprocessing has completed, too.
+* `percentage` - Integer percentage between 0 and 100.
 
 ### `file.size`
 
@@ -506,8 +506,8 @@ Start uploading selected files.
 
 Returns a Promise `result` that resolves with an object containing two arrays of uploaded files:
 
-*   `result.successful` - Files that were uploaded successfully.
-*   `result.failed` - Files that did not upload successfully. These [File Objects][] will have a `.error` property describing what went wrong.
+* `result.successful` - Files that were uploaded successfully.
+* `result.failed` - Files that did not upload successfully. These [File Objects][] will have a `.error` property describing what went wrong.
 
 ```js
 uppy.upload().then((result) => {
@@ -672,8 +672,8 @@ Calls `provider.logout()` on each remote provider plugin (Google Drive, Instagra
 
 #### Parameters
 
-*   **message** _{string}_
-*   **type** _{string=}_ `error` or `warning`
+* **message** _{string}_
+* **type** _{string=}_ `error` or `warning`
 
 Logs stuff to [`logger`](/docs/uppy/#logger) methods.
 
@@ -687,9 +687,9 @@ uppy.log('[Dashboard] adding files...')
 
 #### Parameters
 
-*   **message** _{(string|object)}_ — `'info message'` or `{ message: 'Oh no!', details: 'File couldn’t be uploaded' }`
-*   **type** _{string} \[type=`'info'`]_ — `'info'`, `'warning'`, `'success'` or `'error'`
-*   **duration** _{number} \[duration = 3000]_ — in milliseconds
+* **message** _{(string|object)}_ — `'info message'` or `{ message: 'Oh no!', details: 'File couldn’t be uploaded' }`
+* **type** _{string} \[type=`'info'`]_ — `'info'`, `'warning'`, `'success'` or `'error'`
+* **duration** _{number} \[duration = 3000]_ — in milliseconds
 
 Sets a message in state, with optional details, that can be shown by notification UI plugins. It’s using the [Informer](/docs/informer/) plugin, included by default in Dashboard.
 
@@ -728,7 +728,7 @@ Fired each time a file is added.
 
 **Parameters**
 
-*   `file` - The [File Object][File Objects] representing the file that was added.
+* `file` - The [File Object][File Objects] representing the file that was added.
 
 ```javascript
 uppy.on('file-added', (file) => {
@@ -740,7 +740,7 @@ uppy.on('file-added', (file) => {
 
 **Parameters**
 
-*   `files` - An array of [File Objects][File Objects] representing all files that were added at once, in a batch.
+* `files` - An array of [File Objects][File Objects] representing all files that were added at once, in a batch.
 
 Fired each time when one or more files are added — one event, for all files
 
@@ -750,8 +750,8 @@ Fired each time a file is removed.
 
 **Parameters**
 
-*   `file` - The [File Object][File Objects] representing the file that was removed.
-*   `reason` - A string explaining why the file was removed. See [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176) for details. Current reasons are: `removed-by-user` and `cancel-all`.
+* `file` - The [File Object][File Objects] representing the file that was removed.
+* `reason` - A string explaining why the file was removed. See [#2301](https://github.com/transloadit/uppy/issues/2301#issue-628931176) for details. Current reasons are: `removed-by-user` and `cancel-all`.
 
 **Example**
 
@@ -790,7 +790,7 @@ Fired each time the total upload progress is updated:
 
 **Parameters**
 
-*   `progress` - An integer (0-100) representing the total upload progress.
+* `progress` - An integer (0-100) representing the total upload progress.
 
 **Example**
 
@@ -807,8 +807,8 @@ Fired each time an individual file upload progress is available:
 
 **Parameters**
 
-*   `file` - The [File Object][File Objects] for the file whose upload has progressed.
-*   `progress` - [Progress object](#file-progress).
+* `file` - The [File Object][File Objects] for the file whose upload has progressed.
+* `progress` - [Progress object](#file-progress).
 
 **Example**
 
@@ -826,18 +826,18 @@ Fired each time a single upload is completed.
 
 **Parameters**
 
-*   `file` - The [File Object][File Objects] that has been fully uploaded.
-*   `response` - An object with response data from the remote endpoint. The actual contents depend on the uploader plugin that is used.
+* `file` - The [File Object][File Objects] that has been fully uploaded.
+* `response` - An object with response data from the remote endpoint. The actual contents depend on the uploader plugin that is used.
 
-    For `@uppy/xhr-upload`, the shape is:
+  For `@uppy/xhr-upload`, the shape is:
 
-    ```json
-    {
-      "status": 200, // HTTP status code (0, 200, 300)
-      "body": "…", // response body
-      "uploadURL": "…" // the file url, if it was returned
-    }
-    ```
+  ```json
+  {
+    "status": 200, // HTTP status code (0, 200, 300)
+    "body": "…", // response body
+    "uploadURL": "…" // the file url, if it was returned
+  }
+  ```
 
 **Example**
 
@@ -871,7 +871,7 @@ Fired when Uppy fails to upload/encode the entire upload. That error is then set
 
 **Parameters**
 
-*   `error` - The error object.
+* `error` - The error object.
 
 **Example**
 
@@ -887,18 +887,18 @@ Fired each time a single upload has errored.
 
 **Parameters**
 
-*   `file` - The [File Object][File Objects] for the file whose upload has failed.
-*   `error` - The error object.
-*   `response` - an optional parameter with response data from the upload endpoint. It may be undefined or contain different data depending on the uploader plugin in use.
+* `file` - The [File Object][File Objects] for the file whose upload has failed.
+* `error` - The error object.
+* `response` - an optional parameter with response data from the upload endpoint. It may be undefined or contain different data depending on the uploader plugin in use.
 
-    For `@uppy/xhr-upload`, the shape is:
+  For `@uppy/xhr-upload`, the shape is:
 
-    ```json
-    {
-      "status": 200, // HTTP status code (0, 200, 300)
-      "body": "…" // response body
-    }
-    ```
+  ```json
+  {
+    "status": 200, // HTTP status code (0, 200, 300)
+    "body": "…" // response body
+  }
+  ```
 
 **Example**
 
@@ -927,7 +927,7 @@ Fired when an upload has been retried (after an error, for example).
 
 **Parameters**
 
-*   `fileID` - ID of the file that is being retried.
+* `fileID` - ID of the file that is being retried.
 
 **Example**
 

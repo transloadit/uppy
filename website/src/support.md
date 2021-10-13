@@ -32,8 +32,8 @@ This approach is new, we may make changes as we learn. Here are the current opti
 
 If you want to apply for:
 
-*   🥉 Bronze support, [sign up for the Startup plan][pricing].
-*   🥈 Silver (or 🥇 higher), [reach out](mailto:support@transloadit.com?subject=Uppy+Enterprise+Support).
+* 🥉 Bronze support, [sign up for the Startup plan][pricing].
+* 🥈 Silver (or 🥇 higher), [reach out](mailto:support@transloadit.com?subject=Uppy+Enterprise+Support).
 
 Afterwards, you can contact [Support][support], announcing your account’s email address.
 

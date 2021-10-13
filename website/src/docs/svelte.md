@@ -84,11 +84,11 @@ const uppy = new Uppy().use(Webcam);
 
 The following plugins are available as Svelte component wrappers:
 
-*   `<Dashboard />` - renders an inline `@uppy/dashboard`
-*   `<DashboardModal />` - renders a `@uppy/dashboard` modal
-*   `<DragDrop />` - renders a `@uppy/drag-drop` area
-*   `<ProgressBar />` - renders a `@uppy/progress-bar`
-*   `<StatusBar />` - renders a `@uppy/status-bar`
+* `<Dashboard />` - renders an inline `@uppy/dashboard`
+* `<DashboardModal />` - renders a `@uppy/dashboard` modal
+* `<DragDrop />` - renders a `@uppy/drag-drop` area
+* `<ProgressBar />` - renders a `@uppy/progress-bar`
+* `<StatusBar />` - renders a `@uppy/status-bar`
 
 Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, make it easier to add your plugins.
 

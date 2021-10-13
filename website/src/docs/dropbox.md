@@ -65,8 +65,8 @@ You can create a Dropbox App on the [Dropbox Developers site](https://www.dropbo
 
 Things to note:
 
-*   Choose the “Dropbox API”, not the business variant.
-*   Typically you’ll want “Full Dropbox” access, unless you are absolutely certain that you need the other one.
+* Choose the “Dropbox API”, not the business variant.
+* Typically you’ll want “Full Dropbox” access, unless you are absolutely certain that you need the other one.
 
 You’ll be redirected to the app page. This page lists the app key and app secret, which you should use to configure Companion as shown above.
 

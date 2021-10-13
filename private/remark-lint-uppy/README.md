@@ -4,8 +4,8 @@ remark-lint preset derived from [`remark-preset-lint-recommended`][remark-preset
 
 Differences:
 
-*   The `list-item-bullet-indent` rule is disabled.
-*   The `list-item-indent` rule is disabled.
+* The `list-item-bullet-indent` rule is disabled.
+* The `list-item-indent` rule is disabled.
 
 The reason for the differences is that these “wrong” patterns are ubiquitous in our markdown files and we don’t want to do these huge changes after adding the linter.
 

@@ -6,12 +6,12 @@
 
 Dashboard is a universal UI plugin for Uppy:
 
-*   Drag and Drop, paste, select from local disk / my device
-*   UI for Webcam and remote sources: Google Drive, Dropbox, Instagram (all optional, added via plugins)
-*   File previews and info
-*   Metadata editor
-*   Progress: total and for individual files
-*   Ability to pause/resume or cancel (depending on uploader plugin) individual or all files
+* Drag and Drop, paste, select from local disk / my device
+* UI for Webcam and remote sources: Google Drive, Dropbox, Instagram (all optional, added via plugins)
+* File previews and info
+* Metadata editor
+* Progress: total and for individual files
+* Ability to pause/resume or cancel (depending on uploader plugin) individual or all files
 
 **[Read the docs](https://uppy.io/docs/dashboard/)** | **[Try it](https://uppy.io/examples/dashboard/)**
 

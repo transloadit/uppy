@@ -77,10 +77,10 @@ export class AppComponent {
 
 The following plugins are available as Angular component wrappers:
 
-*   `<uppy-dashboard />` - renders a `@uppy/dashboard`
-*   `<uppy-drag-drop />` - renders a `@uppy/drag-drop` area
-*   `<uppy-progress-bar />` - renders a `@uppy/progress-bar`
-*   `<uppy-status-bar />` - renders a `@uppy/status-bar`
+* `<uppy-dashboard />` - renders a `@uppy/dashboard`
+* `<uppy-drag-drop />` - renders a `@uppy/drag-drop` area
+* `<uppy-progress-bar />` - renders a `@uppy/progress-bar`
+* `<uppy-status-bar />` - renders a `@uppy/status-bar`
 
 Each component takes a `props` prop that will be passed to the UI Plugin.
 

@@ -21,14 +21,14 @@ Companion handles the server-to-server communication between your server and fil
 
 As of now, Companion is integrated to work with:
 
-*   Google Drive (name `drive`) - [Set up instructions](/docs/google-drive/#Setting-Up)
-*   Dropbox (name `dropbox`) - [Set up instructions](/docs/dropbox/#Setting-Up)
-*   Box (name `box`) - [Set up instructions](/docs/box/#Setting-Up)
-*   Instagram (name `instagram`)
-*   Facebook (name `facebook`)
-*   OneDrive (name `onedrive`)
-*   Remote URLs (name `url`)
-*   Amazon S3 (name `s3`)
+* Google Drive (name `drive`) - [Set up instructions](/docs/google-drive/#Setting-Up)
+* Dropbox (name `dropbox`) - [Set up instructions](/docs/dropbox/#Setting-Up)
+* Box (name `box`) - [Set up instructions](/docs/box/#Setting-Up)
+* Instagram (name `instagram`)
+* Facebook (name `facebook`)
+* OneDrive (name `onedrive`)
+* Remote URLs (name `url`)
+* Amazon S3 (name `s3`)
 
 ## Installation
 
@@ -295,30 +295,30 @@ const options = {
 }
 ```
 
-1.  **filePath(required)** - Full path to the directory to which provider files would be downloaded temporarily.
+1. **filePath(required)** - Full path to the directory to which provider files would be downloaded temporarily.
 
-2.  **secret(recommended)** - A secret string which Companion uses to generate authorization tokens.
+2. **secret(recommended)** - A secret string which Companion uses to generate authorization tokens.
 
-3.  **uploadUrls(recommended)** - An allowlist (array) of strings (exact URLs) or regular expressions. If specified, Companion will only accept uploads to these URLs. This is needed to make sure a Companion instance is only allowed to upload to your servers. **Omitting this leaves your system open to potential [SSRF](https://en.wikipedia.org/wiki/Server-side\_request\_forgery) attacks, and may throw an error in future `@uppy/companion` releases.**
+3. **uploadUrls(recommended)** - An allowlist (array) of strings (exact URLs) or regular expressions. If specified, Companion will only accept uploads to these URLs. This is needed to make sure a Companion instance is only allowed to upload to your servers. **Omitting this leaves your system open to potential [SSRF](https://en.wikipedia.org/wiki/Server-side\_request\_forgery) attacks, and may throw an error in future `@uppy/companion` releases.**
 
-4.  **redisUrl(optional)** - URL to running Redis server. If this is set, the state of uploads would be stored temporarily. This helps for resumed uploads after a browser crash from the client. The stored upload would be sent back to the client on reconnection.
+4. **redisUrl(optional)** - URL to running Redis server. If this is set, the state of uploads would be stored temporarily. This helps for resumed uploads after a browser crash from the client. The stored upload would be sent back to the client on reconnection.
 
-5.  **redisOptions(optional)** - An object of [options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties). This option can be used in place of `redisUrl`.
+5. **redisOptions(optional)** - An object of [options supported by redis client](https://www.npmjs.com/package/redis#options-object-properties). This option can be used in place of `redisUrl`.
 
-6.  **redisPubSubScope(optional)** - Use a scope for the companion events at the Redis server. Setting this option will prefix all events with the name provided and a colon.
+6. **redisPubSubScope(optional)** - Use a scope for the companion events at the Redis server. Setting this option will prefix all events with the name provided and a colon.
 
-7.  **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it’s optional, it’s required if you would be enabling any of the supported providers. The following are the server options you may set:
+7. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it’s optional, it’s required if you would be enabling any of the supported providers. The following are the server options you may set:
 
-*   `protocol` - `http | https`
-*   `host` (required) - your server host (e.g localhost:3020, mydomain.com)
-*   `path` - the server path to where the Uppy app is sitting (e.g if Companion is at `mydomain.com/companion`, then the path would be `/companion`).
-*   `oauthDomain` - if you have several instances of Companion with different (and perhaps dynamic) subdomains, you can set a single fixed domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect back to the correct instance with the required credentials on completion. This way you only need to configure a single callback URL for OAuth providers.
-*   `validHosts` - if you are setting an `oauthDomain`, you need to set a list of valid hosts, so the oauth handler can validate the host of the Uppy instance requesting the authentication. This is essentially a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
-*   `implicitPath` - if the URL path to your Companion server is set in your NGINX server (or any other Http server) instead of your express app, then you need to set this path as `implicitPath`. So if your Companion URL is `mydomain.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`.
+* `protocol` - `http | https`
+* `host` (required) - your server host (e.g localhost:3020, mydomain.com)
+* `path` - the server path to where the Uppy app is sitting (e.g if Companion is at `mydomain.com/companion`, then the path would be `/companion`).
+* `oauthDomain` - if you have several instances of Companion with different (and perhaps dynamic) subdomains, you can set a single fixed domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect back to the correct instance with the required credentials on completion. This way you only need to configure a single callback URL for OAuth providers.
+* `validHosts` - if you are setting an `oauthDomain`, you need to set a list of valid hosts, so the oauth handler can validate the host of the Uppy instance requesting the authentication. This is essentially a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
+* `implicitPath` - if the URL path to your Companion server is set in your NGINX server (or any other Http server) instead of your express app, then you need to set this path as `implicitPath`. So if your Companion URL is `mydomain.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`.
 
-8.  **sendSelfEndpoint(optional)** - This is essentially the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
+8. **sendSelfEndpoint(optional)** - This is essentially the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
 
-9.  **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
+9. **providerOptions(optional)** - An object containing credentials (`key` and `secret`) for each provider you would like to enable. Please see [the list of supported providers](#Supported-providers).
 
 10. **customProviders(optional)** - This option enables you to add custom providers along with the already supported providers. See [Adding Custom Providers](#Adding-custom-providers) for more information.
 
@@ -366,8 +366,8 @@ The datacenter region where the target bucket is located. The standalone Compani
 
 You can supply any [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property) in the `providerOptions.s3.awsClientOptions` object, _except for_ the below:
 
-*   `accessKeyId`. Instead, use the `providerOptions.s3.key` property. This is to make configuration names consistent between different Companion features.
-*   `secretAccessKey`. Instead, use the `providerOptions.s3.secret` property. This is to make configuration names consistent between different Companion features.
+* `accessKeyId`. Instead, use the `providerOptions.s3.key` property. This is to make configuration names consistent between different Companion features.
+* `secretAccessKey`. Instead, use the `providerOptions.s3.secret` property. This is to make configuration names consistent between different Companion features.
 
 Be aware that some options may cause wrong behaviour if they conflict with Companion’s assumptions. If you find that a particular option does not work as expected, please [open an issue on the Uppy repository](https://github.com/transloadit/uppy/issues/new) so we can document it here.
 
@@ -375,9 +375,9 @@ Be aware that some options may cause wrong behaviour if they conflict with Compa
 
 Get the key name for a file. The key is the file path to which the file will be uploaded in your bucket. This option should be a function receiving three arguments:
 
-*   `req`, the HTTP request, for _regular_ S3 uploads using the `@uppy/aws-s3` plugin. This parameter is _not_ available for multipart uploads using the `@uppy/aws-s3-multipart` plugin;
-*   `filename`, the original name of the uploaded file;
-*   `metadata`, user-provided metadata for the file. See the [`@uppy/aws-s3`](https://uppy.io/docs/aws-s3/#metaFields) docs. The `@uppy/aws-s3-multipart` plugin unconditionally sends all metadata fields, so they all are available here.
+* `req`, the HTTP request, for _regular_ S3 uploads using the `@uppy/aws-s3` plugin. This parameter is _not_ available for multipart uploads using the `@uppy/aws-s3-multipart` plugin;
+* `filename`, the original name of the uploaded file;
+* `metadata`, user-provided metadata for the file. See the [`@uppy/aws-s3`](https://uppy.io/docs/aws-s3/#metaFields) docs. The `@uppy/aws-s3-multipart` plugin unconditionally sends all metadata fields, so they all are available here.
 
 This function should return a string `key`. The `req` parameter can be used to upload to a user-specific folder in your bucket, for example:
 
@@ -439,28 +439,28 @@ The `customProviders` option should be an object containing each custom provider
 
 To work well with Companion, the **Module** must be a class with the following methods.
 
-1.  `list (options, done)` - lists JSON data of user files (for example list of all the files in a particular directory).
+1. `list (options, done)` - lists JSON data of user files (for example list of all the files in a particular directory).
 
-*   `options` - is an object containing the following attributes
-    \*   token - authorization token (retrieved from oauth process) to send along with your request
-    \*   directory - the `id/name` of the directory from which data is to be retrieved. This may be ignored if it doesn’t apply to your provider
-    \*   query - expressjs query params object received by the server (in case there’s some data you need in there).
-*   `done (err, data)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, and [`data`](#list-data).
+* `options` - is an object containing the following attributes
+  \*   token - authorization token (retrieved from oauth process) to send along with your request
+  \*   directory - the `id/name` of the directory from which data is to be retrieved. This may be ignored if it doesn’t apply to your provider
+  \*   query - expressjs query params object received by the server (in case there’s some data you need in there).
+* `done (err, data)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, and [`data`](#list-data).
 
-2.  `download (options, onData)` - downloads a particular file from the provider.
+2. `download (options, onData)` - downloads a particular file from the provider.
 
-*   `options` - is an object containing the following attributes:
-    \*   token - authorization token (retrieved from oauth process) to send along with your request.
-    \*   id - ID of the file being downloaded.
-    \*   query - expressjs query params object received by the server (in case there’s some data you need in there).
-*   `onData (err, chunk)` - a callback that should be called with each data chunk received as download is happening. The `err` argument is an error that should be passed if an error occurs during download. It should be `null` if there’s no error. Once the download is completed and no more chunks are to be received, `onData` should be called with `null` values like so `onData(null, null)`
+* `options` - is an object containing the following attributes:
+  \*   token - authorization token (retrieved from oauth process) to send along with your request.
+  \*   id - ID of the file being downloaded.
+  \*   query - expressjs query params object received by the server (in case there’s some data you need in there).
+* `onData (err, chunk)` - a callback that should be called with each data chunk received as download is happening. The `err` argument is an error that should be passed if an error occurs during download. It should be `null` if there’s no error. Once the download is completed and no more chunks are to be received, `onData` should be called with `null` values like so `onData(null, null)`
 
-3.  `size (options, done)` - returns the byte size of the file that needs to be downloaded.
+3. `size (options, done)` - returns the byte size of the file that needs to be downloaded.
 
-*   `options` - is an object containing the following attributes:
-    \*   token - authorization token (retrieved from oauth process) to send along with your request.
-    \*   id - ID of the file being downloaded.
-*   `done (err, size)` - the callback that should be called after the request to your provider is completed. As the signature indicates, the following data should be passed along to the callback `err`, and `size` (number).
+* `options` - is an object containing the following attributes:
+  \*   token - authorization token (retrieved from oauth process) to send along with your request.
+  \*   id - ID of the file being downloaded.
+* `done (err, size)` - the callback that should be called after the request to your provider is completed. As the signature indicates, the following data should be passed along to the callback `err`, and `size` (number).
 
 The class must also have an `authProvider` string (lowercased) field which typically indicates the name of the provider (e.g `"dropbox"`).
 
@@ -574,14 +574,14 @@ This section describes how Authentication works between Companion and Providers.
 
 The following steps describe the actions that take place when a user Authenticates and Uploads from Dropbox through Companion:
 
-*   The visitor to a website with Uppy clicks `Connect to Dropbox`.
-*   Uppy sends a request to Companion, which in turn sends an OAuth request to Dropbox (Requires that OAuth credentials from Dropbox have been added to Companion).
-*   Dropbox asks the visitor to log in, and whether the Website should be allowed to access your files
-*   If the visitor agrees, Companion will receive a token from Dropbox, with which we can temporarily download files.
-*   Companion encrypts the token with a secret key and sends the encrypted token to Uppy (client)
-*   Every time the visitor clicks on a folder in Uppy, it asks Companion for the new list of files, with this question, the token (still encrypted by Companion) is sent along.
-*   Companion decrypts the token, requests the list of files from Dropbox and sends it to Uppy.
-*   When a file is selected for upload, Companion receives the token again according to this procedure, decrypts it again, and thereby downloads the file from Dropbox.
-*   As the bytes arrive, Companion uploads the bytes to the final destination (depending on the configuration: Apache, a Tus server, S3 bucket, etc).
-*   Companion reports progress to Uppy, as if it were a local upload.
-*   Completed!
+* The visitor to a website with Uppy clicks `Connect to Dropbox`.
+* Uppy sends a request to Companion, which in turn sends an OAuth request to Dropbox (Requires that OAuth credentials from Dropbox have been added to Companion).
+* Dropbox asks the visitor to log in, and whether the Website should be allowed to access your files
+* If the visitor agrees, Companion will receive a token from Dropbox, with which we can temporarily download files.
+* Companion encrypts the token with a secret key and sends the encrypted token to Uppy (client)
+* Every time the visitor clicks on a folder in Uppy, it asks Companion for the new list of files, with this question, the token (still encrypted by Companion) is sent along.
+* Companion decrypts the token, requests the list of files from Dropbox and sends it to Uppy.
+* When a file is selected for upload, Companion receives the token again according to this procedure, decrypts it again, and thereby downloads the file from Dropbox.
+* As the bytes arrive, Companion uploads the bytes to the final destination (depending on the configuration: Apache, a Tus server, S3 bucket, etc).
+* Companion reports progress to Uppy, as if it were a local upload.
+* Completed!

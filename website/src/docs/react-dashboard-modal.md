@@ -47,8 +47,8 @@ Styles for Provider plugins, like Google Drive and Instagram, are also bundled w
 
 The `<DashboardModal />` component supports most [`@uppy/dashboard`][] options as props. It adds two more:
 
-*   `open` - Boolean true or false, setting this to `true` opens the modal and setting it to `false` closes it.
-*   `onRequestClose` - Callback called when the user attempts to close the modal, either by clicking the close button or by clicking outside the modal (if the `closeModalOnClickOutside` prop is set).
+* `open` - Boolean true or false, setting this to `true` opens the modal and setting it to `false` closes it.
+* `onRequestClose` - Callback called when the user attempts to close the modal, either by clicking the close button or by clicking outside the modal (if the `closeModalOnClickOutside` prop is set).
 
 An Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 

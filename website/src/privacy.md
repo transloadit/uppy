@@ -20,12 +20,12 @@ Since we are operating with a staff of less than ten people, we do not have an e
 
 We receive the following **data** from you:
 
-1.  IP addresses
-2.  Request headers
-3.  Data entered on our website
-4.  The browser session (identified through a cookie)
-5.  Information used to analyze usage of our platform (through cookies from Google Analytics. More on cookies is explained below)
-6.  Files you can optionally upload in example demos. Those files are stored temporarily for 24–72 hours, on uppy.io, tus.io or transloadit.com servers, and then deleted. See also Transloadit’s Privacy Policy: <https://transloadit.com/legal/privacy/>.
+1. IP addresses
+2. Request headers
+3. Data entered on our website
+4. The browser session (identified through a cookie)
+5. Information used to analyze usage of our platform (through cookies from Google Analytics. More on cookies is explained below)
+6. Files you can optionally upload in example demos. Those files are stored temporarily for 24–72 hours, on uppy.io, tus.io or transloadit.com servers, and then deleted. See also Transloadit’s Privacy Policy: <https://transloadit.com/legal/privacy/>.
 
 All data that passes through demos is only used for demo purposes, and never sold or otherwise given away.
 
@@ -46,20 +46,20 @@ We use the following third-party services which also store data about you:
 
 </div>
 
-*   **anonymized**: Any data that can be used to identify the “data subject” is scrubbed
-*   **discarded**: Data is destroyed
+* **anonymized**: Any data that can be used to identify the “data subject” is scrubbed
+* **discarded**: Data is destroyed
 
 ## Your information and your rights
 
 If you are based within the EEA (European Economic Area) or within another jurisdiction that has similar data protection laws, under certain circumstances, you have the following rights:
 
-1.  the right to be told how we use your information and obtain access to your information;
-2.  the right to have your information rectified or erased, or to place restrictions on processing your information;
-3.  the right to object to the processing of your information, e.g., for direct marketing purposes or where the processing is based on our legitimate interests;
-4.  the right to have any information you provided to us on an automated basis returned to you in a structured, commonly-used and machine-readable format, or sent directly to another company, where technically feasible (“data portability”);
-5.  where the processing of your information is based on your consent, the right to withdraw that consent is subject to legal or contractual restrictions;
-6.  the right to object to any decisions based on the automated processing of your personal data, including profiling; and
-7.  the right to lodge a complaint with the supervisory authority responsible for data protection matters (such as, in the UK, the Information Commissioner’s Office).
+1. the right to be told how we use your information and obtain access to your information;
+2. the right to have your information rectified or erased, or to place restrictions on processing your information;
+3. the right to object to the processing of your information, e.g., for direct marketing purposes or where the processing is based on our legitimate interests;
+4. the right to have any information you provided to us on an automated basis returned to you in a structured, commonly-used and machine-readable format, or sent directly to another company, where technically feasible (“data portability”);
+5. where the processing of your information is based on your consent, the right to withdraw that consent is subject to legal or contractual restrictions;
+6. the right to object to any decisions based on the automated processing of your personal data, including profiling; and
+7. the right to lodge a complaint with the supervisory authority responsible for data protection matters (such as, in the UK, the Information Commissioner’s Office).
 
 If you request a copy of your information, you may be required to pay a statutory fee.
 

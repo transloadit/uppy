@@ -10,7 +10,7 @@ tagline: "upload selfies or audio / video recordings"
 
 The `@uppy/webcam` plugin lets you take photos and record videos with a built-in camera on desktop and mobile devices.
 
-> To use the Webcam plugin in Chrome, [your site must be served over https](https://developers.google.com/web/updates/2015/10/chrome-47-webrtc#public_service_announcements). This restriction does not apply on `localhost`, so you don’t have to jump through many hoops during development.
+> To use the Webcam plugin in Chrome, [your site must be served over https](https://developers.google.com/web/updates/2015/10/chrome-47-webrtc#public\_service\_announcements). This restriction does not apply on `localhost`, so you don’t have to jump through many hoops during development.
 
 ```js
 import Webcam from '@uppy/webcam'
@@ -100,10 +100,10 @@ A hook function to call before a snapshot is taken. The Webcam plugin will wait 
 
 The types of recording modes to allow.
 
-*   `video-audio` - Record a video file, capturing both audio and video.
-*   `video-only` - Record a video file with the webcam, but don’t record audio.
-*   `audio-only` - Record an audio file with the user’s microphone.
-*   `picture` - Take a picture with the webcam.
+* `video-audio` - Record a video file, capturing both audio and video.
+* `video-only` - Record a video file with the webcam, but don’t record audio.
+* `audio-only` - Record an audio file with the user’s microphone.
+* `picture` - Take a picture with the webcam.
 
 By default, all modes are allowed, and the Webcam plugin will show controls for recording video as well as taking pictures.
 
@@ -119,10 +119,10 @@ You can specify acceptable ranges for the resolution of the video stream using t
 
 Devices sometimes have several cameras, front and back, for example. \[`facingMode`]\[facingMode] lets you specify which should be used:
 
-*   `user`: The video source is facing toward the user; this includes, for example, the front-facing camera on a smartphone.
-*   `environment`:  The video source is facing away from the user, thereby viewing their environment. This is the back camera on a smartphone.
-*   `left`: The video source is facing toward the user but to their left, such as a camera aimed toward the user but over their left shoulder.
-*   `right`: The video source is facing toward the user but to their right, such as a camera aimed toward the user but over their right shoulder.
+* `user`: The video source is facing toward the user; this includes, for example, the front-facing camera on a smartphone.
+* `environment`:  The video source is facing away from the user, thereby viewing their environment. This is the back camera on a smartphone.
+* `left`: The video source is facing toward the user but to their left, such as a camera aimed toward the user but over their left shoulder.
+* `right`: The video source is facing toward the user but to their right, such as a camera aimed toward the user but over their right shoulder.
 
 For a full list of available properties, check out MDN documentation for [MediaTrackConstraints][].
 

@@ -312,8 +312,8 @@ Fired when an Assembly is created.
 
 **Parameters**
 
-*   `assembly` - The initial [Assembly Status][assembly-status].
-*   `fileIDs` - The IDs of the files that will be uploaded to this Assembly.
+* `assembly` - The initial [Assembly Status][assembly-status].
+* `fileIDs` - The IDs of the files that will be uploaded to this Assembly.
 
 ```js
 uppy.on('transloadit:assembly-created', (assembly, fileIDs) => {
@@ -331,8 +331,8 @@ Fired when Transloadit has received an upload.
 
 **Parameters**
 
-*   `file` - The Transloadit file object that was uploaded.
-*   `assembly` - The [Assembly Status][assembly-status] of the Assembly to which the file was uploaded.
+* `file` - The Transloadit file object that was uploaded.
+* `assembly` - The [Assembly Status][assembly-status] of the Assembly to which the file was uploaded.
 
 ### `transloadit:assembly-executing`
 
@@ -340,7 +340,7 @@ Fired when Transloadit has received all uploads, and is executing the Assembly.
 
 **Parameters**
 
-*   `assembly` - The [Assembly Status](https://transloadit.com/docs/api/#assembly-status-response) of the Assembly that is executing.
+* `assembly` - The [Assembly Status](https://transloadit.com/docs/api/#assembly-status-response) of the Assembly that is executing.
 
 ### `transloadit:result`
 
@@ -348,11 +348,11 @@ Fired when a result came in from an Assembly.
 
 **Parameters**
 
-*   `stepName` - The name of the Assembly step that generated this result.
-*   `result` - The result object from Transloadit.
-    This result object has one more property, namely `localId`.
-    This is the ID of the file in Uppy’s local state, and can be used with `uppy.getFile(id)`.
-*   `assembly` - The [Assembly Status][assembly-status] of the Assembly that generated this result.
+* `stepName` - The name of the Assembly step that generated this result.
+* `result` - The result object from Transloadit.
+  This result object has one more property, namely `localId`.
+  This is the ID of the file in Uppy’s local state, and can be used with `uppy.getFile(id)`.
+* `assembly` - The [Assembly Status][assembly-status] of the Assembly that generated this result.
 
 ```js
 uppy.on('transloadit:result', (stepName, result) => {
@@ -372,7 +372,7 @@ Fired when an Assembly completed.
 
 **Parameters**
 
-*   `assembly` - The final [Assembly Status][assembly-status] of the completed Assembly.
+* `assembly` - The final [Assembly Status][assembly-status] of the completed Assembly.
 
 ```js
 uppy.on('transloadit:complete', (assembly) => {

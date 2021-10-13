@@ -14,11 +14,11 @@ These cover all the major Uppy versions and how to migrate to them.
 
 With 2.0, following in the footsteps of Microsoft, we are dropping support for IE11. As a result, we are able to remove all built-in polyfills, and the new bundle size is **25% smaller**! If you want your app to still support older browsers (such as IE11), you may need to add the following polyfills to your bundle:
 
-*   [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
-*   [core-js](https://github.com/zloirock/core-js)
-*   [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
-*   [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
-*   [whatwg-fetch](https://github.com/github/fetch)
+* [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
+* [core-js](https://github.com/zloirock/core-js)
+* [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
+* [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
+* [whatwg-fetch](https://github.com/github/fetch)
 
 If you’re using a bundler, you need import these before Uppy:
 

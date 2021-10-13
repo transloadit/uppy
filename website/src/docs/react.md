@@ -75,11 +75,11 @@ const AvatarPicker = ({ currentAvatar }) => {
 
 The following plugins are available as React component wrappers:
 
-*   [\<Dashboard />][<Dashboard />] - renders an inline [`@uppy/dashboard`][]
-*   [\<DashboardModal />][<DashboardModal />] - renders a [`@uppy/dashboard`][] modal
-*   [\<DragDrop />][<DragDrop />] - renders a [`@uppy/drag-drop`][] area
-*   [\<ProgressBar />][<ProgressBar />] - renders a [`@uppy/progress-bar`][]
-*   [\<StatusBar />][<StatusBar />] - renders a [`@uppy/status-bar`][]
+* [\<Dashboard />][<Dashboard />] - renders an inline [`@uppy/dashboard`][]
+* [\<DashboardModal />][<DashboardModal />] - renders a [`@uppy/dashboard`][] modal
+* [\<DragDrop />][<DragDrop />] - renders a [`@uppy/drag-drop`][] area
+* [\<ProgressBar />][<ProgressBar />] - renders a [`@uppy/progress-bar`][]
+* [\<StatusBar />][<StatusBar />] - renders a [`@uppy/status-bar`][]
 
 [React]: https://facebook.github.io/react
 

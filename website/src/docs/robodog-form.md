@@ -77,7 +77,7 @@ The minimum number of files that must be selected before the upload. The upload 
 
 Array of mime type wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`.
 
-If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types) attribute will be added to `<input type="file">` fields, so only acceptable files can be selected in the system file dialog.
+If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting\_accepted\_file\_types) attribute will be added to `<input type="file">` fields, so only acceptable files can be selected in the system file dialog.
 
 ## Progress Reporting
 
@@ -250,8 +250,8 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
 
 As for the options that are unavailable:
 
-*   `exclude` is intended to exclude certain `<input type="file">` inputs from Transloadit processing. It will likely not be added, but we’ll perhaps have a `include` CSS selector option instead.
-*   `debug` will not be added.
+* `exclude` is intended to exclude certain `<input type="file">` inputs from Transloadit processing. It will likely not be added, but we’ll perhaps have a `include` CSS selector option instead.
+* `debug` will not be added.
 
 ### Events
 

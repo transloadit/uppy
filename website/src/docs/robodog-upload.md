@@ -20,9 +20,9 @@ const resultPromise = Robodog.upload(files, {
 
 `resultPromise` is a [Promise][promise] that resolves with an object:
 
-*   `successful` - An array containing data about files that were uploaded successfully
-*   `failed` - An array containing data about files that didn’t upload
-*   `transloadit` - An array of Assembly statuses
+* `successful` - An array containing data about files that were uploaded successfully
+* `failed` - An array containing data about files that didn’t upload
+* `transloadit` - An array of Assembly statuses
 
 ## `files`
 

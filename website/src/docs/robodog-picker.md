@@ -20,10 +20,10 @@ const resultPromise = Robodog.pick({
 
 `resultPromise` is a [Promise][promise] that resolves with an object:
 
-*   `successful` - An array containing data about files that were uploaded successfully
-*   `failed` - An array containing data about files that didn’t upload
-*   `transloadit` - An array of Assembly statuses
-*   `results` - An array of results produced by the assembly, if `waitForEncoding` was used
+* `successful` - An array containing data about files that were uploaded successfully
+* `failed` - An array containing data about files that didn’t upload
+* `transloadit` - An array of Assembly statuses
+* `results` - An array of results produced by the assembly, if `waitForEncoding` was used
 
 ## `options.target`
 
@@ -67,7 +67,7 @@ The minimum number of files that must be selected before the upload.
 
 Array of mime type wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`.
 
-If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types) attribute will be used for the internal file input field, so only acceptable files can be selected in the system file dialog.
+If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting\_accepted\_file\_types) attribute will be used for the internal file input field, so only acceptable files can be selected in the system file dialog.
 
 ## Providers
 
@@ -79,11 +79,11 @@ By default, the Picker will use Transloadit’s [Uppy Companion][companion] serv
 
 Array of providers to use. Each entry is the name of a provider. The available ones are:
 
-*   `'dropbox'` – Import files from Dropbox using [Uppy Companion][companion].
-*   `'google-drive'` – Import files from Google Drive using [Uppy Companion][companion].
-*   `'instagram'` – Import files from Instagram using [Uppy Companion][companion].
-*   `'url'` – Import files from public Web URLs using [Uppy Companion][companion].
-*   `'webcam'` – Take photos and record videos using the user’s device camera.
+* `'dropbox'` – Import files from Dropbox using [Uppy Companion][companion].
+* `'google-drive'` – Import files from Google Drive using [Uppy Companion][companion].
+* `'instagram'` – Import files from Instagram using [Uppy Companion][companion].
+* `'url'` – Import files from public Web URLs using [Uppy Companion][companion].
+* `'webcam'` – Take photos and record videos using the user’s device camera.
 
 ### `companionUrl: Transloadit.COMPANION`
 

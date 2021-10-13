@@ -66,11 +66,11 @@ export default {
 
 The following plugins are available as Vue component wrappers:
 
-*   `<dashboard />` - renders an inline `@uppy/dashboard`
-*   `<dashboard-modal />` - renders a `@uppy/dashboard` modal
-*   `<drag-drop />` - renders a `@uppy/drag-drop` area
-*   `<progress-bar />` - renders a `@uppy/progress-bar`
-*   `<status-bar />` - renders a `@uppy/status-bar`
+* `<dashboard />` - renders an inline `@uppy/dashboard`
+* `<dashboard-modal />` - renders a `@uppy/dashboard` modal
+* `<drag-drop />` - renders a `@uppy/drag-drop` area
+* `<progress-bar />` - renders a `@uppy/progress-bar`
+* `<status-bar />` - renders a `@uppy/status-bar`
 
 Each component takes a `props` prop that will be passed to the UI Plugin. Both `@uppy/dashboard` based plugins also take a `plugins` array as a props, making it easier to add your plugins.
 
