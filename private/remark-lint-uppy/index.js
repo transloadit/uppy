@@ -1,5 +1,11 @@
 'use strict'
 
+exports.settings = {
+  emphasis: '_',
+  strong: '*',
+  listItemIndent: 'one',
+}
+
 exports.plugins = [
   require('remark-frontmatter'),
   // Do a lint.

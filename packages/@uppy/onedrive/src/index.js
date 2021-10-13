@@ -3,6 +3,8 @@ const { Provider } = require('@uppy/companion-client')
 const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
+const locale = require('./locale')
+
 module.exports = class OneDrive extends UIPlugin {
   static VERSION = require('../package.json').version
 
@@ -31,11 +33,8 @@ module.exports = class OneDrive extends UIPlugin {
       pluginId: this.id,
     })
 
-    this.defaultLocale = {
-      strings: {
-        pluginNameOneDrive: 'OneDrive',
-      },
-    }
+    this.defaultLocale = locale
+
     this.i18nInit()
     this.title = this.i18n('pluginNameOneDrive')
 

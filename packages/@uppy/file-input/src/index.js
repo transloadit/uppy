@@ -2,6 +2,8 @@ const { UIPlugin } = require('@uppy/core')
 const toArray = require('@uppy/utils/lib/toArray')
 const { h } = require('preact')
 
+const locale = require('./locale')
+
 module.exports = class FileInput extends UIPlugin {
   static VERSION = require('../package.json').version
 
@@ -11,14 +13,7 @@ module.exports = class FileInput extends UIPlugin {
     this.title = 'File Input'
     this.type = 'acquirer'
 
-    this.defaultLocale = {
-      strings: {
-        // The same key is used for the same purpose by @uppy/robodog's `form()` API, but our
-        // locale pack scripts can't access it in Robodog. If it is updated here, it should
-        // also be updated there!
-        chooseFiles: 'Choose files',
-      },
-    }
+    this.defaultLocale = locale
 
     // Default options
     const defaultOptions = {
