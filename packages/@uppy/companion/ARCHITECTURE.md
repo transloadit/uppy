@@ -9,15 +9,19 @@ Companion uses an oAuth middleware library called `Grant` to simplify oAuth auth
 Inside of `config/grant.js`, you configure the oAuth providers you wish to use, providing things like client key,
 client secret, scopes, and the callback URL you wish to use. For example:
 
-      google: {
-        key: process.env.COMPANION_GOOGLE_KEY,
-        secret: process.env.COMPANION_GOOGLE_SECRET,
-        scope: [
-          'https://www.googleapis.com/auth/drive',
-          'https://www.googleapis.com/auth/drive.file'
-        ],
-        callback: '/google/callback'
-      }
+```js
+const config = {
+  google: {
+    key: process.env.COMPANION_GOOGLE_KEY,
+    secret: process.env.COMPANION_GOOGLE_SECRET,
+    scope: [
+      'https://www.googleapis.com/auth/drive',
+      'https://www.googleapis.com/auth/drive.file',
+    ],
+    callback: '/google/callback',
+  },
+}
+```
 
 Once this `google` config is added to `config/grant.js`, Grant automatically creates a route `/connect/google` that
 redirects to Google’s oAuth page. So on the client side, you need to link the user to `https://your-server/connect/google`.
@@ -31,10 +35,12 @@ This json web token would be sent to companion in later requests and the oAuth t
 
 Here’s the list of generic routes:
 
-    router.get('/:provider/:action', dispatcher)
-    router.get('/:provider/:action/:id', dispatcher)
-    router.post('/:provider/:action', dispatcher)
-    router.post('/:provider/:action/:id', dispatcher)
+```js
+router.get('/:provider/:action', dispatcher)
+router.get('/:provider/:action/:id', dispatcher)
+router.post('/:provider/:action', dispatcher)
+router.post('/:provider/:action/:id', dispatcher)
+```
 
 Each route is handled by the `dispatcher` controller in `server/controllers/dispatcher.js`, which calls the correct controller based on `:action`.
 
