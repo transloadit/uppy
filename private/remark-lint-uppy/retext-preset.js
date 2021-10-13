@@ -23,6 +23,7 @@ export default [
         'equivalent',
         'function',
         'identify',
+        'implement',
         'initial',
         'interface',
         'maintain',
