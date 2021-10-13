@@ -12,10 +12,6 @@
     "*.ts": "eslint --fix"
   },
   "remarkConfig": {
-    "settings": {
-      "emphasis": "_",
-      "strong": "*"
-    },
     "plugins": [
       "remark-lint-uppy"
     ]
