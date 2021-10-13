@@ -4,6 +4,7 @@ export default {
   settings: {
     emphasis: '_',
     strong: '*',
+    listItemIndent: 'one',
   },
   plugins: [
     await importDefault('remark-frontmatter'),
