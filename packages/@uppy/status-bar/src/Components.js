@@ -192,7 +192,8 @@ function LoadingSpinner () {
 }
 
 function ProgressBarProcessing (props) {
-  const { value, mode, message } = props
+  const { progress } = props
+  const { value, mode, message } = progress
   const roundedValue = Math.round(value * 100)
   const dot = `\u00B7`
 
