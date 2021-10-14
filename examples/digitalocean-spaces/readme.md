@@ -5,13 +5,16 @@ This example uses Uppy to upload files to a DigitolOcean Space. DigitalOcean Spa
 ## Running it
 
 To run this example, make sure you've correctly installed the **repository root**:
+
 ```bash
 npm install
 npm run build
 ```
+
 That will also install the dependencies for this example.
 
 Then, again in the **repository root**, configure some environment variables, and run:
+
 ```bash
 COMPANION_AWS_REGION=ams3 \
 COMPANION_AWS_KEY=your_access_key_id \

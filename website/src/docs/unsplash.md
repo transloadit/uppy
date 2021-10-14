@@ -36,7 +36,7 @@ Install from NPM:
 npm install @uppy/unsplash
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
 const { Unsplash } = Uppy
@@ -45,6 +45,7 @@ const { Unsplash } = Uppy
 ## Setting Up
 
 To use the Unsplash provider, you need to configure the Unsplash keys that Companion should use. With the standalone Companion server, specify environment variables:
+
 ```shell
 export COMPANION_UNSPLASH_KEY="Unsplash API key"
 export COMPANION_UNSPLASH_SECRET="Unsplash API secret"
@@ -65,7 +66,7 @@ companion.app({
 
 You can create a Unsplash App on the [Unsplash Developers site](https://unsplash.com/developers).
 
-You'll be redirected to the app page. This page lists the app key and app secret, which you should use to configure Companion as shown above.
+You’ll be redirected to the app page. This page lists the app key and app secret, which you should use to configure Companion as shown above.
 
 ## CSS
 
@@ -110,8 +111,8 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your [Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should do just fine.
+This is useful when you have your [Companion](/docs/companion) running on several hosts. Otherwise, the default value should do fine.
 
 ### `companionCookiesRule: 'same-origin'`
 
-This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether to send cookies to [Companion](/docs/companion).

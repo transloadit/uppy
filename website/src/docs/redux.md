@@ -34,7 +34,7 @@ If you’d like to persist your Uppy state — please look into [@uppy/golden-re
 
 ## Redux Dev Tools
 
-This is a `ReduxDevTools` plugin that simply syncs with the [redux-devtools](https://github.com/gaearon/redux-devtools) browser or JS extensions, and allows for basic time travel:
+This is a `ReduxDevTools` plugin that syncs with the [redux-devtools](https://github.com/gaearon/redux-devtools) browser or JS extensions, and allows for basic time travel:
 
 ```js
 import Uppy from '@uppy/core'
@@ -53,4 +53,4 @@ const uppy = new Uppy({
 
 After you `.use(ReduxDevTools)`, you should be able to see Uppy’s state in Redux Dev Tools.
 
-You will likely not need this if you are actually using Redux yourself, as well as Redux Store in Uppy like in the example above, since it will just work automatically in that case.
+You will likely not need this if you are actually using Redux yourself, as well as Redux Store in Uppy like in the example above, since it will work automatically in that case.
