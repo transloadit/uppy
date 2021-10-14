@@ -78,11 +78,11 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your [Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should be good enough.
+This is useful when you have your [Companion](/docs/companion) running on many hosts. Otherwise, the default value should be good enough.
 
 ### `companionCookiesRule: 'same-origin'`
 
-This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether to send cookies to [Companion](/docs/companion).
 
 ### `locale: {}`
 

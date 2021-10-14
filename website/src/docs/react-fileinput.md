@@ -27,7 +27,7 @@ import { FileInput } from '@uppy/react'
 
 ## CSS
 
-The `FileInput` component includes some simple styles. You can also choose not to use it and provide your own styles instead:
+The `FileInput` component includes some basic styles. You can also choose not to use it and provide your own styles instead:
 
 ```js
 import '@uppy/core/dist/style.css'

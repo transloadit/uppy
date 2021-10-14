@@ -9,11 +9,11 @@
 | Tests | <img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> | <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> | <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests"> |
 | Deploys | <img src="https://github.com/transloadit/uppy/workflows/CDN/badge.svg" alt="CI status for CDN deployment"> | <img src="https://github.com/transloadit/uppy/workflows/Companion%20Deploy/badge.svg" alt="CI status for Companion deployment"> | <img src="https://github.com/transloadit/uppy/workflows/Deploy%20uppy.io/badge.svg" alt="CI status for website deployment"> |
 
-Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly with any application. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
+Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly with any application. It’s fast, has a comprehensible API and lets you worry about more important problems than building a file uploader.
 
-- **Fetch** files from local disk, remote URLs, Google Drive, Dropbox, Box, Instagram or snap and record selfies with a camera
-- **Preview** and edit metadata with a nice interface
-- **Upload** to the final destination, optionally process/encode
+* **Fetch** files from local disk, remote URLs, Google Drive, Dropbox, Box, Instagram or snap and record selfies with a camera
+* **Preview** and edit metadata with a nice interface
+* **Upload** to the final destination, optionally process/encode
 
 <img src="https://github.com/transloadit/uppy/raw/main/assets/uppy-2-0-demo-aug-2021.gif">
 
@@ -50,30 +50,30 @@ const uppy = new Uppy({ autoProceed: false })
 
 ## Features
 
-- Lightweight, modular plugin-based architecture, easy on dependencies :zap:
-- Resumable file uploads via the open [tus](https://tus.io/) standard, so large uploads survive network hiccups
-- Supports picking files from: Webcam, Dropbox, Box, Google Drive, Instagram, bypassing the user’s device where possible, syncing between servers directly via [@uppy/companion](https://uppy.io/docs/companion)
-- Works great with file encoding and processing backends, such as [Transloadit](https://transloadit.com), works great without (just roll your own Apache/Nginx/Node/FFmpeg/etc backend)
-- Sleek user interface :sparkles:
-- Optional file recovery (after a browser crash) with [Golden Retriever](https://uppy.io/docs/golden-retriever/)
-- Speaks multiple languages (i18n) :earth_africa:
-- Built with accessibility in mind
-- Free for the world, forever (as in beer 🍺, pizza 🍕, and liberty 🗽)
-- Cute as a puppy, also accepts cat pictures :dog:
+* Lightweight, modular plugin-based architecture, light on dependencies :zap:
+* Resumable file uploads via the open [tus](https://tus.io/) standard, so large uploads survive network hiccups
+* Supports picking files from: Webcam, Dropbox, Box, Google Drive, Instagram, bypassing the user’s device where possible, syncing between servers directly via [@uppy/companion](https://uppy.io/docs/companion)
+* Works great with file encoding and processing backends, such as [Transloadit](https://transloadit.com), works great without (all you need is to roll your own Apache/Nginx/Node/FFmpeg/etc backend)
+* Sleek user interface :sparkles:
+* Optional file recovery (after a browser crash) with [Golden Retriever](https://uppy.io/docs/golden-retriever/)
+* Speaks several languages (i18n) :earth\_africa:
+* Built with accessibility in mind
+* Free for the world, forever (as in beer 🍺, pizza 🍕, and liberty 🗽)
+* Cute as a puppy, also accepts cat pictures :dog:
 
 ## Installation
 
-``` bash
+```bash
 $ npm install @uppy/core @uppy/dashboard @uppy/tus
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v2.2.0/uppy.min.css), either to your HTML page's `<head>` or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
+Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v2.2.0/uppy.min.css), either to your HTML page’s `<head>` or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
 
-Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
+Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
-> ⚠️ The bundle currently consists of most Uppy plugins, so this method is not recommended for production, as your users will have to download all plugins when you are likely using just a few.
+> ⚠️ The bundle consists of most Uppy plugins, so this method is not recommended for production, as your users will have to download all plugins when you are likely using only a few.
 
 ```html
 <!-- 1. Add CSS to `<head>` -->
@@ -93,11 +93,11 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 
 ## Documentation
 
-- [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods and events
-- [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their options
-- [Companion](https://uppy.io/docs/companion/) — setting up and running a Companion instance, which adds support for Instagram, Dropbox, Box, Google Drive and remote URLs
-- [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps
-- [Architecture & Writing a Plugin](https://uppy.io/docs/writing-plugins/) — how to write a plugin for Uppy
+* [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods and events
+* [Plugins](https://uppy.io/docs/plugins/) — list of Uppy plugins and their options
+* [Companion](https://uppy.io/docs/companion/) — setting up and running a Companion instance, which adds support for Instagram, Dropbox, Box, Google Drive and remote URLs
+* [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps
+* [Architecture & Writing a Plugin](https://uppy.io/docs/writing-plugins/) — how to write a plugin for Uppy
 
 ## Plugins
 
@@ -105,49 +105,49 @@ Alternatively, you can also use a pre-built bundle from Transloadit's CDN: Edgly
 
 ### UI Elements
 
-- [`Dashboard`](https://uppy.io/docs/dashboard/) — universal UI with previews, progress bars, metadata editor and all the cool stuff. Required for most UI plugins like Webcam and Instagram
-- [`Progress Bar`](https://uppy.io/docs/progress-bar/) — minimal progress bar that fills itself when upload progresses
-- [`Status Bar`](https://uppy.io/docs/status-bar/) — more detailed progress, pause/resume/cancel buttons, percentage, speed, uploaded/total sizes (included by default with `Dashboard`)
-- [`Informer`](https://uppy.io/docs/informer/) — send notifications like “smile” before taking a selfie or “upload failed” when all is lost (also included by default with `Dashboard`)
+* [`Dashboard`](https://uppy.io/docs/dashboard/) — universal UI with previews, progress bars, metadata editor and all the cool stuff. Required for most UI plugins like Webcam and Instagram
+* [`Progress Bar`](https://uppy.io/docs/progress-bar/) — minimal progress bar that fills itself when upload progresses
+* [`Status Bar`](https://uppy.io/docs/status-bar/) — more detailed progress, pause/resume/cancel buttons, percentage, speed, uploaded/total sizes (included by default with `Dashboard`)
+* [`Informer`](https://uppy.io/docs/informer/) — send notifications like “smile” before taking a selfie or “upload failed” when all is lost (also included by default with `Dashboard`)
 
 ### Sources
 
-- [`Drag & Drop`](https://uppy.io/docs/drag-drop/) — plain and simple drag and drop area
-- [`File Input`](https://uppy.io/docs/file-input/) — even plainer “select files” button
-- [`Webcam`](https://uppy.io/docs/webcam/) — snap and record those selfies 📷
-- ⓒ [`Google Drive`](https://uppy.io/docs/google-drive/) — import files from Google Drive
-- ⓒ [`Dropbox`](https://uppy.io/docs/dropbox/) — import files from Dropbox
-- ⓒ [`Box`](https://uppy.io/docs/box/) — import files from Box
-- ⓒ [`Instagram`](https://uppy.io/docs/instagram/) — import images and videos from Instagram
-- ⓒ [`Facebook`](https://uppy.io/docs/facebook/) — import images and videos from Facebook
-- ⓒ [`OneDrive`](https://uppy.io/docs/onedrive/) — import files from Microsoft OneDrive
-- ⓒ [`Import From URL`](https://uppy.io/docs/url/) — import direct URLs from anywhere on the web
+* [`Drag & Drop`](https://uppy.io/docs/drag-drop/) — plain drag and drop area
+* [`File Input`](https://uppy.io/docs/file-input/) — even plainer “select files” button
+* [`Webcam`](https://uppy.io/docs/webcam/) — snap and record those selfies 📷
+* ⓒ [`Google Drive`](https://uppy.io/docs/google-drive/) — import files from Google Drive
+* ⓒ [`Dropbox`](https://uppy.io/docs/dropbox/) — import files from Dropbox
+* ⓒ [`Box`](https://uppy.io/docs/box/) — import files from Box
+* ⓒ [`Instagram`](https://uppy.io/docs/instagram/) — import images and videos from Instagram
+* ⓒ [`Facebook`](https://uppy.io/docs/facebook/) — import images and videos from Facebook
+* ⓒ [`OneDrive`](https://uppy.io/docs/onedrive/) — import files from Microsoft OneDrive
+* ⓒ [`Import From URL`](https://uppy.io/docs/url/) — import direct URLs from anywhere on the web
 
 The ⓒ mark means that [`@uppy/companion`](https://uppy.io/docs/companion), a server-side component, is needed for a plugin to work.
 
 ### Destinations
 
-- [`Tus`](https://uppy.io/docs/tus/) — resumable uploads via the open [tus](http://tus.io) standard
-- [`XHR Upload`](https://uppy.io/docs/xhr-upload/) — regular uploads for any backend out there (like Apache, Nginx)
-- [`AWS S3`](https://uppy.io/docs/aws-s3/) — plain upload to AWS S3 or compatible services
-- [`AWS S3 Multipart`](https://uppy.io/docs/aws-s3-multipart/) — S3-style "Multipart" upload to AWS or compatible services
+* [`Tus`](https://uppy.io/docs/tus/) — resumable uploads via the open [tus](http://tus.io) standard
+* [`XHR Upload`](https://uppy.io/docs/xhr-upload/) — regular uploads for any backend out there (like Apache, Nginx)
+* [`AWS S3`](https://uppy.io/docs/aws-s3/) — plain upload to AWS S3 or compatible services
+* [`AWS S3 Multipart`](https://uppy.io/docs/aws-s3-multipart/) — S3-style “Multipart” upload to AWS or compatible services
 
 ### File Processing
 
-- [`Robodog`](https://uppy.io/docs/robodog/) — user friendly abstraction to do file processing with Transloadit
-- [`Transloadit`](https://uppy.io/docs/transloadit/) — support for [Transloadit](http://transloadit.com)’s robust file uploading and encoding backend
+* [`Robodog`](https://uppy.io/docs/robodog/) — user friendly abstraction to do file processing with Transloadit
+* [`Transloadit`](https://uppy.io/docs/transloadit/) — support for [Transloadit](http://transloadit.com)’s robust file uploading and encoding backend
 
 ### Miscellaneous
 
-- [`Golden Retriever`](https://uppy.io/docs/golden-retriever/) — restores files after a browser crash, like it’s nothing
-- [`Thumbnail Generator`](https://uppy.io/docs/thumbnail-generator/) — generates image previews (included by default with `Dashboard`)
-- [`Form`](https://uppy.io/docs/form/) — collects metadata from `<form>` right before an Uppy upload, then optionally appends results back to the form
-- [`Redux`](https://uppy.io/docs/redux/) — for your emerging [time traveling](https://github.com/gaearon/redux-devtools) needs
+* [`Golden Retriever`](https://uppy.io/docs/golden-retriever/) — restores files after a browser crash, like it’s nothing
+* [`Thumbnail Generator`](https://uppy.io/docs/thumbnail-generator/) — generates image previews (included by default with `Dashboard`)
+* [`Form`](https://uppy.io/docs/form/) — collects metadata from `<form>` right before an Uppy upload, then optionally appends results back to the form
+* [`Redux`](https://uppy.io/docs/redux/) — for your emerging [time traveling](https://github.com/gaearon/redux-devtools) needs
 
 ## React
 
-- [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps
-- [React Native](https://uppy.io//docs/react/native/) — basic Uppy component for React Native with Expo
+* [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins with React apps
+* [React Native](https://uppy.io//docs/react/native/) — basic Uppy component for React Native with Expo
 
 ## Browser Support
 
@@ -161,15 +161,15 @@ We still provide a bundle which should work on IE11, but we are not running test
 
 ### Polyfills
 
-Here's a list of polyfills you'll need to include to make Uppy work in older browsers, such as IE11:
+Here’s a list of polyfills you’ll need to include to make Uppy work in older browsers, such as IE11:
 
-- [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
-- [core-js](https://github.com/zloirock/core-js)
-- [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
-- [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
-- [whatwg-fetch](https://github.com/github/fetch)
+* [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill)
+* [core-js](https://github.com/zloirock/core-js)
+* [md-gum-polyfill](https://github.com/mozdevs/mediaDevices-getUserMedia-polyfill)
+* [resize-observer-polyfill](https://github.com/que-etc/resize-observer-polyfill)
+* [whatwg-fetch](https://github.com/github/fetch)
 
-If you're using a bundler, you need import them before Uppy:
+If you’re using a bundler, you need import them before Uppy:
 
 ```js
 import 'core-js'
@@ -186,7 +186,7 @@ export { default } from '@uppy/core'
 export * from '@uppy/core'
 ```
 
-If you're using Uppy from CDN, those polyfills are already included in the legacy
+If you’re using Uppy from CDN, those polyfills are already included in the legacy
 bundle, so no need to include anything additionally:
 
 ```html
@@ -195,27 +195,27 @@ bundle, so no need to include anything additionally:
 
 ## FAQ
 
-### Why not just use `<input type="file">`?
+### Why not use `<input type="file">`?
 
 Having no JavaScript beats having a lot of it, so that’s a fair question! Running an uploading & encoding business for ten years though we found that in cases, the file input leaves some to be desired:
 
-- We received complaints about broken uploads and found that resumable uploads are important, especially for big files and to be inclusive towards people on poorer connections (we also launched [tus.io](https://tus.io) to attack that problem). Uppy uploads can survive network outages and browser crashes or accidental navigate-aways.
-- Uppy supports editing meta information before uploading (and e.g. cropping is planned).
-- There’s the situation where people are using their mobile devices and want to upload on the go, but they have their picture on Instagram, files in Dropbox or just a plain file URL from anywhere on the open web. Uppy allows to pick files from those and push it to the destination without downloading it to your mobile device first.
-- Accurate upload progress reporting is an issue on many platforms.
-- Some file validation — size, type, number of files — can be done on the client with Uppy.
-- Uppy integrates webcam support, in case your users want to upload a picture/video/audio that does not exist yet :)
-- A larger drag and drop surface can be pleasant to work with. Some people also like that you can control the styling, language, etc.
-- Uppy is aware of encoding backends. Often after an upload, the server needs to rotate, detect faces, optimize for iPad, or what have you. Uppy can track progress of this and report back to the user in different ways.
-- Sometimes you might want your uploads to happen while you continue to interact on the same single page.
+* We received complaints about broken uploads and found that resumable uploads are important, especially for big files and to be inclusive towards people on poorer connections (we also launched [tus.io](https://tus.io) to attack that problem). Uppy uploads can survive network outages and browser crashes or accidental navigate-aways.
+* Uppy supports editing meta information before uploading (such as cropping of images).
+* There’s the situation where people are using their mobile devices and want to upload on the go, but they have their picture on Instagram, files in Dropbox or a plain file URL from anywhere on the open web. Uppy allows to pick files from those and push it to the destination without downloading it to your mobile device first.
+* Accurate upload progress reporting is an issue on many platforms.
+* Some file validation — size, type, number of files — can be done on the client with Uppy.
+* Uppy integrates webcam support, in case your users want to upload a picture/video/audio that does not exist yet :)
+* A larger drag and drop surface can be pleasant to work with. Some people also like that you can control the styling, language, etc.
+* Uppy is aware of encoding backends. Often after an upload, the server needs to rotate, detect faces, optimize for iPad, or what have you. Uppy can track progress of this and report back to the user in different ways.
+* Sometimes you might want your uploads to happen while you continue to interact on the same single page.
 
-Not all apps need all of these features. An `<input type="file">` is fine in many situations. But these were a few things that our customers hit / asked about enough to spark us to develop Uppy.
+Not all apps need all these features. An `<input type="file">` is fine in many situations. But these were a few things that our customers hit / asked about enough to spark us to develop Uppy.
 
 ### Why is all this goodness free?
 
 Transloadit’s team is small and we have a shared ambition to make a living from open source. By giving away projects like [tus.io](https://tus.io) and [Uppy](https://uppy.io), we’re hoping to advance the state of the art, make life a tiny little bit better for everyone and in doing so have rewarding jobs and get some eyes on our commercial service: [a content ingestion & processing platform](https://transloadit.com).
 
-Our thinking is that if just a fraction of our open source userbase can see the appeal of hosted versions straight from the source, that could already be enough to sustain our work. So far this is working out! We’re able to dedicate 80% of our time to open source and haven’t gone bankrupt yet. :D
+Our thinking is that if only a fraction of our open source userbase can see the appeal of hosted versions straight from the source, that could already be enough to sustain our work. So far this is working out! We’re able to dedicate 80% of our time to open source and haven’t gone bankrupt yet. :D
 
 ### Does Uppy support React?
 
@@ -223,11 +223,11 @@ Yep, we have Uppy React components, please see [Uppy React docs](https://uppy.io
 
 ### Does Uppy support S3 uploads?
 
-Yes, there is an S3 plugin, please check out the [docs](https://uppy.io/docs/aws-s3/) for more.
+Yes, please check out the [docs](https://uppy.io/docs/aws-s3/) for more information.
 
-### Do I need to install a special service/server for Uppy? Can I use it with Rails/Node/Go/PHP?
+### Can I use Uppy with Rails/Node.js/Go/PHP?
 
-Yes, whatever you want on the backend will work with `@uppy/xhr-upload` plugin, since it just does a `POST` or `PUT` request. Here’s a [PHP backend example](https://uppy.io/docs/xhr-upload/#Uploading-to-a-PHP-Server).
+Yes, whatever you want on the backend will work with `@uppy/xhr-upload` plugin, since it only does a `POST` or `PUT` request. Here’s a [PHP backend example](https://uppy.io/docs/xhr-upload/#Uploading-to-a-PHP-Server).
 
 If you want resumability with the Tus plugin, use [one of the tus server implementations](https://tus.io/implementations.html) 👌🏼
 
@@ -235,8 +235,8 @@ And you’ll need [`@uppy/companion`](https://uppy.io/docs/companion) if you’d
 
 ## Contributions are welcome
 
-- Contributor’s guide in [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md)
-- Changelog to track our release progress (we aim to roll out a release every month): [`CHANGELOG.md`](CHANGELOG.md)
+* Contributor’s guide in [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md)
+* Changelog to track our release progress (we aim to roll out a release every month): [`CHANGELOG.md`](CHANGELOG.md)
 
 ## Used by
 
@@ -247,6 +247,7 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 ## Contributors
 
 <!--contributors-->
+
 [<img alt="arturi" src="https://avatars.githubusercontent.com/u/1199054?v=4&s=117" width="117">](https://github.com/arturi) |[<img alt="goto-bus-stop" src="https://avatars.githubusercontent.com/u/1006268?v=4&s=117" width="117">](https://github.com/goto-bus-stop) |[<img alt="kvz" src="https://avatars.githubusercontent.com/u/26752?v=4&s=117" width="117">](https://github.com/kvz) |[<img alt="ifedapoolarewaju" src="https://avatars.githubusercontent.com/u/8383781?v=4&s=117" width="117">](https://github.com/ifedapoolarewaju) |[<img alt="hedgerh" src="https://avatars.githubusercontent.com/u/2524280?v=4&s=117" width="117">](https://github.com/hedgerh) |[<img alt="AJvanLoon" src="https://avatars.githubusercontent.com/u/15716628?v=4&s=117" width="117">](https://github.com/AJvanLoon) |
 :---: |:---: |:---: |:---: |:---: |:---: |
 [arturi](https://github.com/arturi) |[goto-bus-stop](https://github.com/goto-bus-stop) |[kvz](https://github.com/kvz) |[ifedapoolarewaju](https://github.com/ifedapoolarewaju) |[hedgerh](https://github.com/hedgerh) |[AJvanLoon](https://github.com/AJvanLoon) |
@@ -257,7 +258,7 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 
 [<img alt="samuelayo" src="https://avatars.githubusercontent.com/u/14964486?v=4&s=117" width="117">](https://github.com/samuelayo) |[<img alt="richardwillars" src="https://avatars.githubusercontent.com/u/291004?v=4&s=117" width="117">](https://github.com/richardwillars) |[<img alt="mifi" src="https://avatars.githubusercontent.com/u/402547?v=4&s=117" width="117">](https://github.com/mifi) |[<img alt="ajkachnic" src="https://avatars.githubusercontent.com/u/44317699?v=4&s=117" width="117">](https://github.com/ajkachnic) |[<img alt="dependabot[bot]" src="https://avatars.githubusercontent.com/in/29110?v=4&s=117" width="117">](https://github.com/apps/dependabot) |[<img alt="zcallan" src="https://avatars.githubusercontent.com/u/13760738?v=4&s=117" width="117">](https://github.com/zcallan) |
 :---: |:---: |:---: |:---: |:---: |:---: |
-[samuelayo](https://github.com/samuelayo) |[richardwillars](https://github.com/richardwillars) |[mifi](https://github.com/mifi) |[ajkachnic](https://github.com/ajkachnic) |[dependabot[bot]](https://github.com/apps/dependabot) |[zcallan](https://github.com/zcallan) |
+[samuelayo](https://github.com/samuelayo) |[richardwillars](https://github.com/richardwillars) |[mifi](https://github.com/mifi) |[ajkachnic](https://github.com/ajkachnic) |[dependabot\[bot\]](https://github.com/apps/dependabot) |[zcallan](https://github.com/zcallan) |
 
 [<img alt="tim-kos" src="https://avatars.githubusercontent.com/u/15005?v=4&s=117" width="117">](https://github.com/tim-kos) |[<img alt="janko" src="https://avatars.githubusercontent.com/u/795488?v=4&s=117" width="117">](https://github.com/janko) |[<img alt="wilkoklak" src="https://avatars.githubusercontent.com/u/17553085?v=4&s=117" width="117">](https://github.com/wilkoklak) |[<img alt="oliverpool" src="https://avatars.githubusercontent.com/u/3864879?v=4&s=117" width="117">](https://github.com/oliverpool) |[<img alt="Botz" src="https://avatars.githubusercontent.com/u/2706678?v=4&s=117" width="117">](https://github.com/Botz) |[<img alt="mcallistertyler" src="https://avatars.githubusercontent.com/u/14939210?v=4&s=117" width="117">](https://github.com/mcallistertyler) |
 :---: |:---: |:---: |:---: |:---: |:---: |
@@ -443,15 +444,11 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 :---: |:---: |:---: |:---: |
 [vedran555](https://github.com/vedran555) |[yoann-hellopret](https://github.com/yoann-hellopret) |[olitomas](https://github.com/olitomas) |[JimmyLv](https://github.com/JimmyLv) |
 
-
 <!--/contributors-->
 
 ## Software
 
-We use Browserstack for manual testing
-<a href="https://www.browserstack.com" target="_blank">
-  <img align="left" width="117" alt="BrowserStack logo" src="https://i.ibb.co/HDRDHmx/Browserstack-logo-2x.png">
-</a>
+We use Browserstack for manual testing <a href="https://www.browserstack.com" target="_blank"> <img align="left" width="117" alt="BrowserStack logo" src="https://i.ibb.co/HDRDHmx/Browserstack-logo-2x.png"> </a>
 
 ## License
 

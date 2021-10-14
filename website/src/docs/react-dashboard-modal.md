@@ -40,13 +40,15 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 Styles for Provider plugins, like Google Drive and Instagram, are also bundled with Dashboard styles. Styles for other plugins, such as `@uppy/url` and `@uppy/webcam`, are not included. If you are using those, please see their docs and make sure to include styles for them as well.
 
 <!-- Make sure the old name of this section still works -->
+
 <a id="Options"></a>
+
 ## Props
 
 The `<DashboardModal />` component supports most [`@uppy/dashboard`][] options as props. It adds two more:
 
- - `open` - Boolean true or false, setting this to `true` opens the modal and setting it to `false` closes it.
- - `onRequestClose` - Callback called when the user attempts to close the modal, either by clicking the close button or by clicking outside the modal (if the `closeModalOnClickOutside` prop is set).
+* `open` - Boolean true or false, setting this to `true` opens the modal and setting it to `false` closes it.
+* `onRequestClose` - Callback called when the user attempts to close the modal, either by clicking the close button or by clicking outside the modal (if the `closeModalOnClickOutside` prop is set).
 
 An Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
@@ -119,4 +121,5 @@ class MusicUploadButton extends React.Component {
 ```
 
 [`@uppy/dashboard`]: /docs/dashboard/
+
 [`@uppy/webcam`]: /docs/webcam/
