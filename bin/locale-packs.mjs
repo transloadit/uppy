@@ -3,8 +3,6 @@ import path from 'node:path'
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
 
-import glob from 'glob'
-import chalk from 'chalk'
 import dedent from 'dedent'
 import stringifyObject from 'stringify-object'
 import remark from 'remark'
@@ -14,23 +12,30 @@ import Task from 'data.task'
 
 import { settings as remarkSettings } from '../private/remark-lint-uppy/index.js'
 
+import {
+  readFile,
+  writeFile,
+  getPaths,
+  sortObjectAlphabetically,
+} from './locale-packs.helpers.mjs'
+
 const require = createRequire(import.meta.url)
+
+const localesPath = path.join('packages', '@uppy', 'locales')
+const templatePath = path.join(localesPath, 'template.js')
+const englishLocalePath = path.join(localesPath, 'src', 'en_US.js')
 
 main().fork(
   function onError(error) {
     console.error(error)
     process.exit(1)
   },
-  function onSuccess(data) {
-    console.log(data)
+  function onSuccess() {
+    console.log(`✅ Written '${englishLocalePath}'`)
   }
 )
 
 function main() {
-  const localesPath = path.join('packages', '@uppy', 'locales')
-  const templatePath = path.join(localesPath, 'template.js')
-  const englishLocalePath = path.join(localesPath, 'src', 'en_US.js')
-
   return getPaths('packages/@uppy/**/src/locale.js')
     .map(requireFiles)
     .map(createCombinedLocale)
@@ -38,24 +43,11 @@ function main() {
       combinedLocale: sortObjectAlphabetically(combinedLocale),
       locales,
     }))
-    .chain(({ combinedLocale }) => {
-      return readFile(templatePath).map((string) => {
-        return string.replace(
-          'en_US.strings = {}',
-          `en_US.strings = ${JSON.stringify(combinedLocale, null, 2)}`
-        )
-      })
+    .chain(({ combinedLocale, locales }) => {
+      return Task.of(() => () => {})
+        .ap(writeLocale(combinedLocale))
+        .ap(docs(locales))
     })
-    .chain(file => writeFile(englishLocalePath, file))
-}
-
-function getPaths(globPath) {
-  return new Task((reject, resolve) => {
-    glob(globPath, (error, paths) => {
-      if (error) reject(error)
-      else resolve(paths)
-    })
-  })
 }
 
 function requireFiles(paths) {
@@ -85,27 +77,26 @@ function createCombinedLocale(locales) {
   return { combinedLocale, locales }
 }
 
-function sortObjectAlphabetically(obj) {
-  return Object.fromEntries(
-    Object.entries(obj).sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
-  )
+function writeLocale(combinedLocale) {
+  return readFile(templatePath)
+    .map((string) => {
+      return string.replace(
+        'en_US.strings = {}',
+        `en_US.strings = ${JSON.stringify(combinedLocale, null, 2)}`
+      )
+    })
+    .chain((file) => writeFile(englishLocalePath, file))
 }
 
-function readFile(filePath) {
-  return new Task((reject, resolve) => {
-    fs.readFile(filePath, 'utf-8', (error, data) => {
-      if (error) reject(error)
-      else resolve(data)
-    })
-  })
-}
+function docs(locales) {
+  return new Task((_, resolve) => {
+    const entries = Object.entries(locales)
 
-function writeFile(filePath, data) {
-  return new Task((reject, resolve) => {
-    fs.writeFile(filePath, data, (error) => {
-      if (error) reject(error)
-      else resolve(data)
-    })
+    for (const [pluginName, locale] of entries) {
+      generateLocaleDocs(pluginName, locale)
+    }
+
+    resolve()
   })
 }
 
@@ -139,9 +130,9 @@ function createTypeScriptLocale(plugin, pluginName) {
   fs.writeFileSync(localePath, localeTypes)
 }
 
-function generateLocaleDocs(plugin, pluginName) {
+function generateLocaleDocs(pluginName, locale) {
   const fileName = `${pluginName}.md`
-  const docPath = path.join('..', 'website', 'src', 'docs', fileName)
+  const docPath = path.join('website', 'src', 'docs', fileName)
 
   if (!fs.existsSync(docPath)) {
     console.error(
@@ -161,7 +152,7 @@ function generateLocaleDocs(plugin, pluginName) {
           type: 'code',
           lang: 'json',
           meta: null,
-          value: JSON.stringify(plugin.defaultLocale, null, 2),
+          value: JSON.stringify(locale, null, 2),
         },
         end,
       ])
