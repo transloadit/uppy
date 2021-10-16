@@ -1,7 +1,6 @@
 /* eslint-disable no-console, prefer-arrow-callback */
 import path from 'node:path'
 import fs from 'node:fs'
-import { createRequire } from 'node:module'
 
 import dedent from 'dedent'
 import stringifyObject from 'stringify-object'
@@ -19,52 +18,51 @@ import {
   sortObjectAlphabetically,
 } from './locale-packs.helpers.mjs'
 
-const require = createRequire(import.meta.url)
-
 const localesPath = path.join('packages', '@uppy', 'locales')
 const templatePath = path.join(localesPath, 'template.js')
 const englishLocalePath = path.join(localesPath, 'src', 'en_US.js')
 
 main().fork(
-  function onError(error) {
+  function onError (error) {
     console.error(error)
     process.exit(1)
   },
-  function onSuccess() {
+  function onSuccess () {
     console.log(`✅ Written '${englishLocalePath}'`)
   }
 )
 
-function main() {
+function main () {
   return getPaths('packages/@uppy/**/src/locale.js')
-    .map(requireFiles)
+    .chain(importFiles)
     .map(createCombinedLocale)
     .map(({ combinedLocale, locales }) => ({
       combinedLocale: sortObjectAlphabetically(combinedLocale),
       locales,
     }))
     .chain(({ combinedLocale, locales }) => {
-      return Task.of(() => () => {})
-        .ap(writeLocale(combinedLocale))
-        .ap(docs(locales))
+      return writeLocale(combinedLocale).map(() => docs(locales))
+      // .ap(types(locales))
     })
 }
 
-function requireFiles(paths) {
-  const locales = {}
+function importFiles (paths) {
+  return new Task(async (_, resolve) => {
+    const locales = {}
 
-  for (const filePath of paths) {
-    const pluginName = path.basename(path.join(filePath, '..', '..'))
-    // eslint-disable-next-line import/no-dynamic-require
-    const locale = require(path.join('..', filePath))
+    for (const filePath of paths) {
+      const pluginName = path.basename(path.join(filePath, '..', '..'))
+      // Note: `.default` should be removed when we move to ESM
+      const locale = (await import(path.join('..', filePath))).default
 
-    locales[pluginName] = locale
-  }
+      locales[pluginName] = locale
+    }
 
-  return locales
+    resolve(locales)
+  })
 }
 
-function createCombinedLocale(locales) {
+function createCombinedLocale (locales) {
   const combinedLocale = {}
   const values = Object.values(locales)
 
@@ -77,38 +75,35 @@ function createCombinedLocale(locales) {
   return { combinedLocale, locales }
 }
 
-function writeLocale(combinedLocale) {
+function writeLocale (combinedLocale) {
+  const formattedLocale = stringifyObject(combinedLocale, {
+    indent: '  ',
+    singleQuotes: true,
+    inlineCharacterLimit: 12,
+  })
+
   return readFile(templatePath)
-    .map((string) => {
-      return string.replace(
-        'en_US.strings = {}',
-        `en_US.strings = ${JSON.stringify(combinedLocale, null, 2)}`
-      )
-    })
+    .map((string) => string.replace('en_US.strings = {}', `en_US.strings = ${formattedLocale}`))
     .chain((file) => writeFile(englishLocalePath, file))
 }
 
-function docs(locales) {
-  return new Task((_, resolve) => {
-    const entries = Object.entries(locales)
+function docs (locales) {
+  const entries = Object.entries(locales)
 
-    for (const [pluginName, locale] of entries) {
-      generateLocaleDocs(pluginName, locale)
-    }
+  for (const [pluginName, locale] of entries) {
+    generateLocaleDocs(pluginName, locale)
+  }
 
-    resolve()
-  })
+  return locales
 }
 
-function createTypeScriptLocale(plugin, pluginName) {
+function createTypeScriptLocale (plugin, pluginName) {
   const allowedStringTypes = Object.keys(plugin.defaultLocale.strings)
     .map((key) => `  | '${key}'`)
     .join('\n')
 
   const pluginClassName = pluginName === 'core' ? 'Core' : plugin.id
   const localePath = path.join(
-    __dirname,
-    '..',
     'packages',
     '@uppy',
     pluginName,
@@ -130,7 +125,7 @@ function createTypeScriptLocale(plugin, pluginName) {
   fs.writeFileSync(localePath, localeTypes)
 }
 
-function generateLocaleDocs(pluginName, locale) {
+function generateLocaleDocs (pluginName, locale) {
   const fileName = `${pluginName}.md`
   const docPath = path.join('website', 'src', 'docs', fileName)
 
