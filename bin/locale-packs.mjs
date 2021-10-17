@@ -6,6 +6,7 @@ import dedent from 'dedent'
 import stringifyObject from 'stringify-object'
 import remark from 'remark'
 import { headingRange } from 'mdast-util-heading-range'
+import { ESLint } from 'eslint'
 import remarkFrontmatter from 'remark-frontmatter'
 import Task from 'data.task'
 
@@ -22,13 +23,17 @@ const localesPath = path.join('packages', '@uppy', 'locales')
 const templatePath = path.join(localesPath, 'template.js')
 const englishLocalePath = path.join(localesPath, 'src', 'en_US.js')
 
+const linter = new ESLint({ fix: true })
+
 main().fork(
   function onError (error) {
     console.error(error)
     process.exit(1)
   },
   function onSuccess () {
-    console.log(`✅ Written '${englishLocalePath}'`)
+    console.log(`✅ Generated '${englishLocalePath}'`)
+    console.log('✅ Generated locale docs')
+    console.log('✅ Generated types')
   }
 )
 
@@ -41,8 +46,17 @@ function main () {
       locales,
     }))
     .chain(({ combinedLocale, locales }) => {
-      return writeLocale(combinedLocale).map(() => docs(locales))
-      // .ap(types(locales))
+      return readFile(templatePath)
+        .map((fileString) => populateTemplate(fileString, combinedLocale))
+        .chain(lint)
+        .chain((file) => writeFile(englishLocalePath, file))
+        .map(() => {
+          for (const [pluginName, locale] of Object.entries(locales)) {
+            generateLocaleDocs(pluginName, locale)
+            generateTypes(pluginName, locale)
+          }
+          return locales
+        })
     })
 }
 
@@ -75,34 +89,31 @@ function createCombinedLocale (locales) {
   return { combinedLocale, locales }
 }
 
-function writeLocale (combinedLocale) {
+function populateTemplate (fileString, combinedLocale) {
   const formattedLocale = stringifyObject(combinedLocale, {
     indent: '  ',
     singleQuotes: true,
     inlineCharacterLimit: 12,
   })
-
-  return readFile(templatePath)
-    .map((string) => string.replace('en_US.strings = {}', `en_US.strings = ${formattedLocale}`))
-    .chain((file) => writeFile(englishLocalePath, file))
+  return fileString.replace('en_US.strings = {}', `en_US.strings = ${formattedLocale}`)
 }
 
-function docs (locales) {
-  const entries = Object.entries(locales)
-
-  for (const [pluginName, locale] of entries) {
-    generateLocaleDocs(pluginName, locale)
-  }
-
-  return locales
+function lint (fileString) {
+  return new Task((reject, resolve) => {
+    linter.lintText(fileString)
+      .then(([result]) => resolve(result.output))
+      .catch(reject)
+  })
 }
 
-function createTypeScriptLocale (plugin, pluginName) {
-  const allowedStringTypes = Object.keys(plugin.defaultLocale.strings)
+function generateTypes (pluginName, locale) {
+  const allowedStringTypes = Object.keys(locale.strings)
     .map((key) => `  | '${key}'`)
     .join('\n')
+  const pluginClassName = pluginName.split('-')
+    .map(str => str.replace(/^\w/, (c) => c.toUpperCase()))
+    .join('')
 
-  const pluginClassName = pluginName === 'core' ? 'Core' : plugin.id
   const localePath = path.join(
     'packages',
     '@uppy',
@@ -112,14 +123,14 @@ function createTypeScriptLocale (plugin, pluginName) {
   )
 
   const localeTypes = dedent`
-    /* eslint-disable */
-    import type { Locale } from '@uppy/core'
+  /* eslint-disable */
+  import type { Locale } from '@uppy/core'
 
-    type ${pluginClassName}Locale = Locale<
-      ${allowedStringTypes}
-    >
+  type ${pluginClassName}Locale = Locale<
+    ${allowedStringTypes}
+  >
 
-    export default ${pluginClassName}Locale
+  export default ${pluginClassName}Locale
   `
 
   fs.writeFileSync(localePath, localeTypes)
