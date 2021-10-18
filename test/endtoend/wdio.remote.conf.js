@@ -33,6 +33,7 @@ exports.config = {
     './chaos-monkey/*',
     './url-plugin/*',
     './transloadit/*',
+    './transloadit2/*',
   ],
 
   // If you only want to run your tests until a specific amount of tests have failed use
