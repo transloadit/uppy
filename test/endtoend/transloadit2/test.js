@@ -17,7 +17,7 @@ describe('Transloadit getAssemblyOptions', () => {
   it('should pass `fields` to `assembly:result`', async function test () {
     const transloaditKey = process.env.TRANSLOADIT_KEY
     if (transloaditKey === undefined) {
-      console.log('skipping Transloadit integration test')
+      console.log('skipping Transloadit integration test: process.env.TRANSLOADIT_KEY is not set')
       return this.skip()
     }
 
