@@ -12,6 +12,42 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.2.1
+
+Released: 2021-10-14
+
+| Package | Version | Package | Version |
+|-|-|-|-|
+| @uppy/angular | 0.2.5 | @uppy/provider-views | 2.0.4 |
+| @uppy/aws-s3-multipart | 2.1.1 | @uppy/react-native | 0.2.4 |
+| @uppy/aws-s3 | 2.0.5 | @uppy/react | 2.1.1 |
+| @uppy/box | 1.0.4 | @uppy/redux-dev-tools | 2.0.3 |
+| @uppy/companion-client | 2.0.3 | @uppy/robodog | 2.1.1 |
+| @uppy/companion | 3.1.1 | @uppy/screen-capture | 2.0.4 |
+| @uppy/core | 2.1.1 | @uppy/status-bar | 2.1.1 |
+| @uppy/dashboard | 2.1.1 | @uppy/store-default | 2.0.2 |
+| @uppy/drag-drop | 2.0.4 | @uppy/store-redux | 2.0.2 |
+| @uppy/drop-target | 1.1.1 | @uppy/svelte | 1.0.5 |
+| @uppy/dropbox | 2.0.4 | @uppy/thumbnail-generator | 2.0.5 |
+| @uppy/facebook | 2.0.4 | @uppy/transloadit | 2.0.4 |
+| @uppy/file-input | 2.0.4 | @uppy/tus | 2.1.1 |
+| @uppy/form | 2.0.4 | @uppy/unsplash | 2.0.1 |
+| @uppy/golden-retriever | 2.0.5 | @uppy/url | 2.0.4 |
+| @uppy/google-drive | 2.0.4 | @uppy/utils | 4.0.3 |
+| @uppy/image-editor | 1.0.4 | @uppy/vue | 0.4.3 |
+| @uppy/informer | 2.0.4 | @uppy/webcam | 2.0.4 |
+| @uppy/instagram | 2.0.4 | @uppy/xhr-upload | 2.0.5 |
+| @uppy/locales | 2.0.3 | @uppy/zoom | 1.0.4 |
+| @uppy/onedrive | 2.0.4 | uppy | 2.2.1 |
+| @uppy/progress-bar | 2.0.4 | - | - |
+
+- @uppy/locale: Update ar_SA.js (issa.ahmd@gmail.com  / #3192)
+- @uppy/status-bar: fix `calculateProcessingProgress` is not a function (@aduh95 / #3261)
+- @uppy/status-bar: Progress object is nested (@arturi / #3262)
+- build: Add retext to markdown linter (@aduh95 / #3024)
+- build: Bump tar from 6.1.2 to 6.1.9 (dependabot / #3152)
+- website: Revert "Remove broken link in `plugin_list.ejs` (@aduh95 / #3166)
+
 ## 2.2.0
 
 Released: 2021-10-06

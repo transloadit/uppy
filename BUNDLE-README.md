@@ -1,17 +1,17 @@
 # Uppy
 
 Hi, thanks for trying out the bundled version of the Uppy File Uploader. You can use
-this from a CDN (e.g. `<script src="https://releases.transloadit.com/uppy/v2.2.0/uppy.min.js"></script>`) or bundle it with your webapp. 
+this from a CDN (`<script src="https://releases.transloadit.com/uppy/v2.2.1/uppy.min.js"></script>`) or bundle it with your webapp.
 
-Note that the recommended way to use Uppy is to install it with yarn/npm and use a 
-bundler like Webpack so that you can create a smaller custom build with just the
+Note that the recommended way to use Uppy is to install it with yarn/npm and use a
+bundler like Webpack so that you can create a smaller custom build with only the
 things that you need. More info on <https://uppy.io/docs/#With-a-module-bundler>.
 
 ## How to use this bundle
 
-You can extract the contents of this zip to e.g. `./js/uppy`
+You can extract the contents of this zip to a directory, such as `./js/uppy`.
 
-Now you can create an HTML file, e.g.: `./upload.html` with the following contents:
+Now you can create an HTML file, for example `./upload.html`, with the following contents:
 
 ```html
 <html>
@@ -62,10 +62,10 @@ Now open `upload.html` in your browser, and the Uppy Dashboard will appear.
 
 ## Next steps
 
-In the example you just built, Uppy uploads to a demo server where files will be deleted
-shortly after uploading. You'll want to target your own tusd server, S3 bucket, or Nginx/Apache server. For the latter, use the Xhr plugin: <https://uppy.io/docs/xhr-upload/> which uploads using regular multipart form posts, that you'll existing Ruby or PHP backend will be able to make sense of, just as if a `<input type="file">` had been used.
+In the example you built, Uppy uploads to a demo server where files will be deleted
+shortly after uploading. You’ll want to target your own tusd server, S3 bucket, or Nginx/Apache server. For the latter, use the Xhr plugin: <https://uppy.io/docs/xhr-upload/> which uploads using regular multipart form posts, that you’ll existing Ruby or PHP backend will be able to make sense of, as if a `<input type="file">` had been used.
 
-The Dashboard currently opens when clicking the button, but you can also draw it inline into the page. This, and many more configuration options can be found here: <https://uppy.io/docs/dashboard/>.
+The Dashboard now opens when clicking the button, but you can also draw it inline into the page. This, and many more configuration options can be found here: <https://uppy.io/docs/dashboard/>.
 
 Uppy has many more Plugins besides Xhr and the Dashboard. For example, you can enable Webcam, Instagram, or video encoding support. For a full list of Plugins check here: <https://uppy.io/docs/plugins/>.
 
@@ -73,4 +73,4 @@ Note that for some Plugins, you will need to run a server side component called:
 
 ## Getting help
 
-Stuck with anything? We're welcoming all your questions and feedback over at <https://community.transloadit.com/c/uppy/5>.
+Stuck with anything? We’re welcoming all your questions and feedback over at <https://community.transloadit.com/c/uppy/5>.
