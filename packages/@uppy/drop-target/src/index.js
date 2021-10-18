@@ -50,11 +50,11 @@ module.exports = class DropTarget extends BasePlugin {
     event.stopPropagation()
     clearTimeout(this.removeDragOverClassTimeout)
 
-    // 2. Remove dragover class
+    // Remove dragover class
     event.currentTarget.classList.remove('uppy-is-drag-over')
     this.setPluginState({ isDraggingOver: false })
 
-    // 3. Let any acquirer plugin (Url/Webcam/etc.) handle drops to the root
+    // Let any acquirer plugin (Url/Webcam/etc.) handle drops to the root
     this.uppy.iteratePlugins((plugin) => {
       if (plugin.type === 'acquirer') {
         // Every Plugin with .type acquirer can define handleRootDrop(event)
@@ -62,7 +62,7 @@ module.exports = class DropTarget extends BasePlugin {
       }
     })
 
-    // 4. Add all dropped files, handle errors
+    // Add all dropped files, handle errors
     let executedDropErrorOnce = false
     const logDropError = (error) => {
       this.uppy.log(error, 'error')
@@ -75,13 +75,11 @@ module.exports = class DropTarget extends BasePlugin {
       }
     }
 
-    getDroppedFiles(event.dataTransfer, { logDropError })
-      .then((files) => {
-        if (files.length > 0) {
-          this.uppy.log('[DropTarget] Files were dropped')
-          this.addFiles(files)
-        }
-      })
+    const files = await getDroppedFiles(event.dataTransfer, { logDropError })
+    if (files.length > 0) {
+      this.uppy.log('[DropTarget] Files were dropped')
+      this.addFiles(files)
+    }
 
     this.opts.onDrop?.(event)
   }
@@ -90,7 +88,7 @@ module.exports = class DropTarget extends BasePlugin {
     event.preventDefault()
     event.stopPropagation()
 
-    // 1. Add a small (+) icon on drop
+    // Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the browser,
     // https://github.com/transloadit/uppy/issues/1978)
     event.dataTransfer.dropEffect = 'copy'

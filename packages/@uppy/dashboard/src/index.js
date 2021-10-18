@@ -580,7 +580,7 @@ module.exports = class Dashboard extends UIPlugin {
   }
 
   handlePaste = (event) => {
-    // 1. Let any acquirer plugin (Url/Webcam/etc.) handle pastes to the root
+    // Let any acquirer plugin (Url/Webcam/etc.) handle pastes to the root
     this.uppy.iteratePlugins((plugin) => {
       if (plugin.type === 'acquirer') {
         // Every Plugin with .type acquirer can define handleRootPaste(event)
@@ -588,36 +588,49 @@ module.exports = class Dashboard extends UIPlugin {
       }
     })
 
-    // 2. Add all dropped files
+    // Add all dropped files
     const files = toArray(event.clipboardData.files)
-    this.addFiles(files)
+    if (files.length > 0) {
+      this.uppy.log('[Dashboard] Files pasted')
+      this.addFiles(files)
+    }
   }
 
   handleInputChange = (event) => {
     event.preventDefault()
     const files = toArray(event.target.files)
-    this.addFiles(files)
+    if (files.length > 0) {
+      this.uppy.log('[Dashboard] Files selected through input')
+      this.addFiles(files)
+    }
   }
 
   handleDragOver = (event) => {
     event.preventDefault()
     event.stopPropagation()
 
-    // 1. Check if the "type" of the datatransfer object includes files
-    const { types } = event.dataTransfer
-    const hasFiles = types.some(type => type === 'Files')
-
-    // 2. Check if some plugin can handle the datatransfer without files —
+    // Check if some plugin can handle the datatransfer without files —
     // for instance, the Url plugin can import a url
-    let somePluginCanHandleRootDrop = true
-    this.uppy.iteratePlugins((plugin) => {
-      if (plugin.canHandleRootDrop?.(event)) {
-        somePluginCanHandleRootDrop = true
-      }
-    })
+    const canSomePluginHandleRootDrop = () => {
+      let somePluginCanHandleRootDrop = true
+      this.uppy.iteratePlugins((plugin) => {
+        if (plugin.canHandleRootDrop?.(event)) {
+          somePluginCanHandleRootDrop = true
+        }
+      })
+      return somePluginCanHandleRootDrop
+    }
 
-    // 3. Deny drop, if no plugins can handle datatransfer, there are no files,
+    // Check if the "type" of the datatransfer object includes files
+    const doesEventHaveFiles = () => {
+      const { types } = event.dataTransfer
+      return types.some(type => type === 'Files')
+    }
+
+    // Deny drop, if no plugins can handle datatransfer, there are no files,
     // or when opts.disabled is set, or new uploads are not allowed
+    const somePluginCanHandleRootDrop = canSomePluginHandleRootDrop(event)
+    const hasFiles = doesEventHaveFiles(event)
     if (
       (!somePluginCanHandleRootDrop && !hasFiles)
       || this.opts.disabled
@@ -631,7 +644,7 @@ module.exports = class Dashboard extends UIPlugin {
       return
     }
 
-    // 4. Add a small (+) icon on drop
+    // Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the
     // browser, https://github.com/transloadit/uppy/issues/1978).
     event.dataTransfer.dropEffect = 'copy'
@@ -660,7 +673,7 @@ module.exports = class Dashboard extends UIPlugin {
 
     this.setPluginState({ isDraggingOver: false })
 
-    // 5. Let any acquirer plugin (Url/Webcam/etc.) handle drops to the root
+    // Let any acquirer plugin (Url/Webcam/etc.) handle drops to the root
     this.uppy.iteratePlugins((plugin) => {
       if (plugin.type === 'acquirer') {
         // Every Plugin with .type acquirer can define handleRootDrop(event)
@@ -668,7 +681,7 @@ module.exports = class Dashboard extends UIPlugin {
       }
     })
 
-    // 6. Add all dropped files
+    // Add all dropped files
     let executedDropErrorOnce = false
     const logDropError = (error) => {
       this.uppy.log(error, 'error')
@@ -684,7 +697,7 @@ module.exports = class Dashboard extends UIPlugin {
     getDroppedFiles(event.dataTransfer, { logDropError })
       .then((files) => {
         if (files.length > 0) {
-          this.uppy.log('[Dashboard] Files were dropped')
+          this.uppy.log('[Dashboard] Files dropped')
           this.addFiles(files)
         }
       })
