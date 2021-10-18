@@ -35,3 +35,4 @@ jobs:
           SAUCE_BUILD: ${{github.run_id}}
           SAUCE_USERNAME: ${{secrets.SAUCE_USERNAME}}
           SAUCE_ACCESS_KEY: ${{secrets.SAUCE_ACCESS_KEY}}
+          TRANSLOADIT_KEY: ${{secrets.TRANSLOADIT_KEY}}
