@@ -18,7 +18,8 @@ exports.config = {
   // directory is where your package.json resides, so `wdio` will be called from there.
   //
   specs: [
-    './*/test.js',
+    // './*/test.js',
+    './transloadit/test.js',
   ],
 
   // Patterns to exclude.
@@ -72,7 +73,7 @@ exports.config = {
   baseUrl: 'http://localhost',
 
   // Default timeout for all waitFor* commands.
-  waitforTimeout: 10000,
+  waitforTimeout: 15000,
 
   // Default timeout in milliseconds for request
   // if Selenium Grid doesn't send response
