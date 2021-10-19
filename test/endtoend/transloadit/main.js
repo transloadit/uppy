@@ -16,17 +16,24 @@ function initUppyTransloadit (transloaditKey) {
     })
     .use(Transloadit, {
       service: 'https://api2-ap-southeast-1.transloadit.com',
-      params: {
-        auth: { key: transloaditKey },
-        steps: {
-          crop_thumbed: {
-            use: [':original'],
-            robot: '/image/resize',
-            height: 100,
-            resize_strategy: 'crop',
-            width: 100,
+      getAssemblyOptions () {
+        return {
+          params: {
+            auth: { key: transloaditKey },
+            steps: {
+              crop_thumbed: {
+                use: [':original'],
+                robot: '/image/resize',
+                height: 100,
+                resize_strategy: 'crop',
+                width: 100,
+              },
+            },
           },
-        },
+          fields: {
+            message: 'test',
+          },
+        }
       },
       waitForEncoding: true,
     })
