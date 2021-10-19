@@ -98,8 +98,8 @@ module.exports = function FileInfo (props) {
     >
       {renderFileName(props)}
       <div className="uppy-Dashboard-Item-status">
-        {renderFileSize(props)}
         {renderAuthor(props)}
+        {renderFileSize(props)}
         {ReSelectButton(props)}
         <ErrorButton
           file={props.file}
