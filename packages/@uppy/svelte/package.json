@@ -6,7 +6,7 @@
   "version": "1.0.5",
   "scripts": {
     "build": "rollup -c",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "yarn run build",
     "validate": "svelte-check"
   },
   "dependencies": {
