@@ -21,6 +21,15 @@ function initUppyTransloadit (transloaditKey) {
           params: {
             auth: { key: transloaditKey },
             template_id: 'uppyTransloadit',
+            steps: {
+              crop_thumbed: {
+                use: [':original'],
+                robot: '/image/resize',
+                height: 100,
+                resize_strategy: 'crop',
+                width: 100,
+              },
+            },
           },
           fields: {
             message: 'test',
