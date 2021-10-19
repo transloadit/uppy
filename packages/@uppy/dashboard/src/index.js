@@ -651,6 +651,8 @@ module.exports = class Dashboard extends UIPlugin {
 
     clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
+
+    this.opts.onDragOver?.(event)
   }
 
   handleDragLeave = (event) => {
@@ -663,9 +665,11 @@ module.exports = class Dashboard extends UIPlugin {
     this.removeDragOverClassTimeout = setTimeout(() => {
       this.setPluginState({ isDraggingOver: false })
     }, 50)
+
+    this.opts.onDragLeave?.(event)
   }
 
-  handleDrop = (event) => {
+  handleDrop = async (event) => {
     event.preventDefault()
     event.stopPropagation()
 
@@ -694,13 +698,14 @@ module.exports = class Dashboard extends UIPlugin {
       }
     }
 
-    getDroppedFiles(event.dataTransfer, { logDropError })
-      .then((files) => {
-        if (files.length > 0) {
-          this.uppy.log('[Dashboard] Files dropped')
-          this.addFiles(files)
-        }
-      })
+    // Add all dropped files
+    const files = await getDroppedFiles(event.dataTransfer, { logDropError })
+    if (files.length > 0) {
+      this.uppy.log('[Dashboard] Files dropped')
+      this.addFiles(files)
+    }
+
+    this.opts.onDrop?.(event)
   }
 
   handleRequestThumbnail = (file) => {
