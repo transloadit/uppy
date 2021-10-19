@@ -20,7 +20,6 @@ function initUppyTransloadit (transloaditKey) {
         return {
           params: {
             auth: { key: transloaditKey },
-            template_id: 'uppyTransloadit',
             steps: {
               crop_thumbed: {
                 use: [':original'],
