@@ -90,7 +90,6 @@ module.exports = class DragDrop extends UIPlugin {
   }
 
   handleDragOver (event) {
-    this.opts?.onDragOver(event)
     event.preventDefault()
     event.stopPropagation()
 
@@ -113,10 +112,11 @@ module.exports = class DragDrop extends UIPlugin {
 
     clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
+
+    this.opts?.onDragOver(event)
   }
 
   handleDragLeave (event) {
-    if (this.opts.onDragLeave) this.opts.onDragLeave(event)
     event.preventDefault()
     event.stopPropagation()
 
@@ -126,6 +126,8 @@ module.exports = class DragDrop extends UIPlugin {
     this.removeDragOverClassTimeout = setTimeout(() => {
       this.setPluginState({ isDraggingOver: false })
     }, 50)
+
+    this.opts?.onDragLeave(event)
   }
 
   handleDrop = async (event) => {
