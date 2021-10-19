@@ -95,6 +95,7 @@ exports.config = {
         { mount: '/providers', path: './providers/dist' },
         { mount: '/thumbnails', path: './thumbnails/dist' },
         { mount: '/transloadit', path: './transloadit/dist' },
+        { mount: '/transloadit2', path: './transloadit2/dist' },
         { mount: '/tus-drag-drop', path: './tus-drag-drop/dist' },
         { mount: '/typescript', path: './typescript/dist' },
         { mount: '/url-plugin', path: './url-plugin/dist' },
