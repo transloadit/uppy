@@ -15,7 +15,7 @@ module.exports = class Unsplash extends UIPlugin {
     this.id = this.opts.id || 'Unsplash'
     this.title = this.opts.title || 'Unsplash'
 
-    Provider.initPlugin(this, opts)
+    Provider.initPlugin(this, opts, {})
 
     this.icon = () => (
       <svg viewBox="0 0 32 32" height="32" width="32" aria-hidden="true">
