@@ -40,7 +40,7 @@ main().fork(
 function main () {
   return getPaths('packages/@uppy/**/src/locale.js')
     .chain(importFiles)
-    .map(createCombinedLocale)
+    .chain(createCombinedLocale)
     .map(({ combinedLocale, locales }) => ({
       combinedLocale: sortObjectAlphabetically(combinedLocale),
       locales,
@@ -77,16 +77,21 @@ function importFiles (paths) {
 }
 
 function createCombinedLocale (locales) {
-  const combinedLocale = {}
-  const values = Object.values(locales)
+  return new Task((reject, resolve) => {
+    const combinedLocale = {}
+    const entries = Object.values(locales)
 
-  for (const locale of values) {
-    Object.entries(locale.strings).forEach(([key, value]) => {
-      combinedLocale[key] = value
-    })
-  }
+    for (const [pluginName, locale] of entries) {
+      Object.entries(locale.strings).forEach(([key, value]) => {
+        if (key in combinedLocale) {
+          reject(`'${key}' from ${pluginName} already exists in locale pack.`)
+        }
+        combinedLocale[key] = value
+      })
+    }
 
-  return { combinedLocale, locales }
+    resolve({ combinedLocale, locales })
+  })
 }
 
 function populateTemplate (fileString, combinedLocale) {
@@ -95,12 +100,16 @@ function populateTemplate (fileString, combinedLocale) {
     singleQuotes: true,
     inlineCharacterLimit: 12,
   })
-  return fileString.replace('en_US.strings = {}', `en_US.strings = ${formattedLocale}`)
+  return fileString.replace(
+    'en_US.strings = {}',
+    `en_US.strings = ${formattedLocale}`
+  )
 }
 
 function lint (fileString) {
   return new Task((reject, resolve) => {
-    linter.lintText(fileString)
+    linter
+      .lintText(fileString)
       .then(([result]) => resolve(result.output))
       .catch(reject)
   })
@@ -110,8 +119,9 @@ function generateTypes (pluginName, locale) {
   const allowedStringTypes = Object.keys(locale.strings)
     .map((key) => `  | '${key}'`)
     .join('\n')
-  const pluginClassName = pluginName.split('-')
-    .map(str => str.replace(/^\w/, (c) => c.toUpperCase()))
+  const pluginClassName = pluginName
+    .split('-')
+    .map((str) => str.replace(/^\w/, (c) => c.toUpperCase()))
     .join('')
 
   const localePath = path.join(

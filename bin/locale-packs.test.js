@@ -63,6 +63,17 @@ for (const [followerName, followerLocale] of Object.entries(followerLocales)) {
   })
 }
 
+// function checkForUnused (fileContents, pluginName, localePack) {
+//   const buff = fileContents.join('\n')
+//   for (const key of Object.keys(localePack)) {
+//     const regPat = new RegExp(`(i18n|i18nArray)\\([^\\)]*['\`"]${key}['\`"]`, 'g')
+//     if (!buff.match(regPat)) {
+//       console.error(`⚠ defaultLocale key: ${chalk.magenta(key)} not used in plugin: ${chalk.cyan(pluginName)}`)
+//       throw new Error(`Unused locale key: '${key}'`)
+//     }
+//   }
+// }
+
 if (warnings.length) {
   console.error('--> Locale warnings: ')
   console.error(warnings.join('\n'))
