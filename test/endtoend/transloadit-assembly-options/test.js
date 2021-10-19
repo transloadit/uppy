@@ -3,7 +3,7 @@ const path = require('path')
 const fs = require('fs')
 const { selectFakeFile, supportsChooseFile, ensureInputVisible } = require('../utils')
 
-const testURL = 'http://localhost:4567/transloadit2'
+const testURL = 'http://localhost:4567/transloadit-assembly-options'
 
 function setTransloaditKeyAndInit (transloaditKey) {
   window.initUppyTransloadit(transloaditKey)
@@ -43,9 +43,8 @@ describe('Transloadit getAssemblyOptions', () => {
         'image/jpeg', // type
         fs.readFileSync(img, 'base64') // b64
       )
-      // browser.execute(selectFakeFile, 'uppyTransloadit')
     }
-    await result.waitForExist(25000)
+    await result.waitForExist({ timeout: 25000 })
     const text = await result.getText()
     expect(text).to.be.equal('ok')
   })

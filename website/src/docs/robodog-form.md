@@ -127,7 +127,7 @@ First, change your import URLs and initialization code:
 
 ```html
 <!-- The old jQuery way… -->
-<script src="//assets.transloadit.com/js/jquery.transloadit2-v3-latest.js"></script>
+<script src="//assets.transloadit.com/js/jquery.transloadit-assembly-options-v3-latest.js"></script>
 <script>
 $(selector).transloadit({
   ...options

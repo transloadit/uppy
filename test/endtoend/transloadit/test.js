@@ -43,9 +43,8 @@ describe('Transloadit file processing', () => {
         'image/jpeg', // type
         fs.readFileSync(img, 'base64') // b64
       )
-      // browser.execute(selectFakeFile, 'uppyTransloadit')
     }
-    await result.waitForExist(25000)
+    await result.waitForExist({ timeout: 25000 })
     const text = await result.getText()
     expect(text).to.be.equal('ok')
   })
