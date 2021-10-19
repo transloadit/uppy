@@ -3,7 +3,7 @@ const path = require('path')
 const fs = require('fs')
 const { selectFakeFile, supportsChooseFile, ensureInputVisible } = require('../utils')
 
-const testURL = 'http://localhost:4567/transloadit2'
+const testURL = 'http://localhost:4567/transloadit-assembly-options'
 
 function setTransloaditKeyAndInit (transloaditKey) {
   window.initUppyTransloadit(transloaditKey)
