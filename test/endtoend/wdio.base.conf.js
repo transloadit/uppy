@@ -19,7 +19,7 @@ exports.config = {
   //
   specs: [
     // './*/test.js',
-    './transloadit/test.js',
+    './transloadit2/test.js',
   ],
 
   // Patterns to exclude.
