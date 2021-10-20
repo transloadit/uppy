@@ -5,6 +5,7 @@ npm-debug.log*
 nohup.out
 node_modules
 .cache
+.parcel-cache
 .eslintcache
 
 env.sh
