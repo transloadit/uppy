@@ -9,9 +9,10 @@
     "@uppy/tus": "file:../../packages/@uppy/tus",
     "@uppy/url": "file:../../packages/@uppy/url",
     "@uppy/webcam": "file:../../packages/@uppy/webcam",
-    "parcel-bundler": "^1.11.0"
+    "parcel": "^2.0.0"
   },
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "parcel build index.html",
     "dev": "parcel index.html"
