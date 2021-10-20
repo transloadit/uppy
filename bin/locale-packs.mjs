@@ -10,7 +10,7 @@ import { ESLint } from 'eslint'
 import remarkFrontmatter from 'remark-frontmatter'
 import Task from 'data.task'
 
-import { settings as remarkSettings } from '../private/remark-lint-uppy/index.js'
+import remarkConfig from '../private/remark-lint-uppy/index.js'
 
 import {
   readFile,
@@ -18,6 +18,8 @@ import {
   getPaths,
   sortObjectAlphabetically,
 } from './locale-packs.helpers.mjs'
+
+const { settings: remarkSettings } = remarkConfig
 
 const localesPath = path.join('packages', '@uppy', 'locales')
 const templatePath = path.join(localesPath, 'template.js')
@@ -79,11 +81,11 @@ function importFiles (paths) {
 function createCombinedLocale (locales) {
   return new Task((reject, resolve) => {
     const combinedLocale = {}
-    const entries = Object.values(locales)
+    const entries = Object.entries(locales)
 
     for (const [pluginName, locale] of entries) {
       Object.entries(locale.strings).forEach(([key, value]) => {
-        if (key in combinedLocale) {
+        if (key in combinedLocale && value !== combinedLocale[key]) {
           reject(`'${key}' from ${pluginName} already exists in locale pack.`)
         }
         combinedLocale[key] = value
@@ -152,7 +154,7 @@ function generateLocaleDocs (pluginName, locale) {
 
   if (!fs.existsSync(docPath)) {
     console.error(
-      `⚠  Could not find markdown documentation file for "${pluginName}". Make sure the plugin name matches the markdown file name.`
+      `⚠️  Could not find markdown documentation file for "${pluginName}". Make sure the plugin name matches the markdown file name.`
     )
     return
   }

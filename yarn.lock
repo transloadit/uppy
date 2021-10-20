@@ -16719,6 +16719,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"data.task@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "data.task@npm:3.1.2"
+  checksum: bf38a31f9652087c9ce5621a8a77663bd33a41349434429447dd9738a8634a0db769b5dcc27c7dc8024ce25ba2434afa646140e84c7f659a94f8333c3083f5db
+  languageName: node
+  linkType: hard
+
 "date-format@npm:^2.1.0":
   version: 2.1.0
   resolution: "date-format@npm:2.1.0"
@@ -28468,12 +28475,32 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
+"mdast-util-frontmatter@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "mdast-util-frontmatter@npm:0.2.0"
+  dependencies:
+    micromark-extension-frontmatter: ^0.2.0
+  checksum: 6dbed31233b34b41dd09da4756bbe3bd674fa3033c58f771f419e56675b8c7a601a18838d027fdb9cbef3b958346c661f7926ca401e154e63c071ecb2a3596a2
+  languageName: node
+  linkType: hard
+
 "mdast-util-frontmatter@npm:^1.0.0":
   version: 1.0.0
   resolution: "mdast-util-frontmatter@npm:1.0.0"
   dependencies:
     micromark-extension-frontmatter: ^1.0.0
   checksum: 4fae0bd9f002e3b2a95829ab8d411a64cd7acf41de9c28fac8a70d6d96498efb6409c611e8433ce9e101b8b9d37a25ce3f9144dc7c06f0669ac5451460cc28e7
+  languageName: node
+  linkType: hard
+
+"mdast-util-heading-range@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "mdast-util-heading-range@npm:3.1.0"
+  dependencies:
+    "@types/mdast": ^3.0.0
+    "@types/unist": ^2.0.0
+    mdast-util-to-string: ^3.0.0
+  checksum: c0f9892cdd36ab88b368f636270e7e846edc3c923a395b6ae49913e99c88cdff9eb5b2b131a9f20e8a78d22aff66e0523acda630721f30d8e32159ca6d35ac5d
   languageName: node
   linkType: hard
 
@@ -29152,6 +29179,15 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     parse-entities: ^3.0.0
     uvu: ^0.5.0
   checksum: f8e704dd8c0529263621f7463721f6bc113de817b5db8a4b8ac45fa60a11ccbd9a51ee8680f4fb04f85cb25bbd73e0a2098b948c828db5bdce5e0c26157995e1
+  languageName: node
+  linkType: hard
+
+"micromark-extension-frontmatter@npm:^0.2.0":
+  version: 0.2.2
+  resolution: "micromark-extension-frontmatter@npm:0.2.2"
+  dependencies:
+    fault: ^1.0.0
+  checksum: b591494c2910162a47b4413b43d80b1e3f148c0d92955576737ff36525f34deb6cc784cdbede76c4ce6a9d06c75586c7198ffb84f97efee894cafabcc86716e4
   languageName: node
   linkType: hard
 
@@ -36290,6 +36326,16 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
+"remark-frontmatter@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "remark-frontmatter@npm:3.0.0"
+  dependencies:
+    mdast-util-frontmatter: ^0.2.0
+    micromark-extension-frontmatter: ^0.2.0
+  checksum: 33bbcf36a51ee4c3813106b933766e0dc4b2b50f8eb4da3a4c577ea0278335589b36b182fb2722c9857d0ea9932ac75368a5dff70c8cf2b74f4747c244068976
+  languageName: node
+  linkType: hard
+
 "remark-frontmatter@npm:^4.0.0":
   version: 4.0.0
   resolution: "remark-frontmatter@npm:4.0.0"
@@ -42809,6 +42855,7 @@ typescript@4.3.4:
     concat-stream: ^2.0.0
     core-js: ~3.15.2
     cssnano: ^5.0.6
+    data.task: ^3.1.2
     dedent: ^0.7.0
     deep-freeze: ^0.0.1
     disc: ^1.3.3
@@ -42835,6 +42882,7 @@ typescript@4.3.4:
     last-commit-message: ^1.0.0
     lerna: ^4.0.0
     lint-staged: ^11.0.0
+    mdast-util-heading-range: ^3.1.0
     mime-types: ^2.1.26
     minify-stream: ^2.0.1
     multi-glob: ^1.0.2
@@ -42849,7 +42897,9 @@ typescript@4.3.4:
     postcss-logical: ^4.0.2
     postcss-safe-important: ^1.2.0
     pre-commit: ^1.2.2
+    remark: ^13.0.0
     remark-cli: ^10.0.0
+    remark-frontmatter: ^3.0.0
     remark-lint-uppy: "workspace:*"
     replacestream: ^4.0.3
     resolve: ^1.17.0

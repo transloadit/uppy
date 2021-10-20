@@ -34,3 +34,9 @@ export function sortObjectAlphabetically (obj) {
     Object.entries(obj).sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
   )
 }
+
+export function omit (object, key) {
+  const copy = { ...object }
+  delete copy[key]
+  return copy
+}

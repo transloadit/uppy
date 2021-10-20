@@ -115,16 +115,11 @@ This option is useful when uploading to an S3-like service that doesn’t reply 
 
 ### `locale: {}`
 
-Localize text that is shown to the user.
-
-The default English strings are:
-
-```js
-const locales = {
-  strings: {
-    // Shown in the StatusBar while the upload is being signed.
-    preparingUpload: 'Preparing upload...',
-  },
+```json
+{
+  "strings": {
+    "timedOut": "Upload stalled for %{seconds} seconds, aborting."
+  }
 }
 ```
 
