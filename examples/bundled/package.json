@@ -10,7 +10,7 @@
     "@uppy/tus": "workspace:*",
     "@uppy/url": "workspace:*",
     "@uppy/webcam": "workspace:*",
-    "parcel-bundler": "^2.0.0"
+    "parcel": "^2.0.0"
   },
   "private": true,
   "type": "module",
