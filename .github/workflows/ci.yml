@@ -15,12 +15,12 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{matrix.node-version}}
-      - name: Install npm 7
-        run: npm install --global npm@7
+      - name: Install Corepack if needed
+        run: corepack -v || npm install -g corepack
       - name: Install dependencies
-        run: npm ci
+        run: corepack yarn install --immutable
       - name: Run tests
-        run: npm run test:unit
+        run: corepack yarn run test:unit
 
   lint_js:
     name: Lint JavaScript/TypeScript
@@ -28,16 +28,20 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
+      - name: Cache npm dependencies
+        id: cache-npm-libraries
+        uses: actions/cache@v2
+        with:
+          path: .yarn/cache/*
+          key: ${{ runner.os }}
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
-      - name: Install npm 7
-        run: npm install --global npm@7
+          node-version: 16.x
       - name: Install dependencies
-        run: npm ci
+        run: corepack yarn install --immutable
       - name: Run linter
-        run: npm run lint
+        run: corepack yarn run lint
 
   lint_md:
     name: Lint Markdown
@@ -45,16 +49,20 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
+      - name: Cache npm dependencies
+        id: cache-npm-libraries
+        uses: actions/cache@v2
+        with:
+          path: .yarn/cache/*
+          key: ${{ runner.os }}
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
-      - name: Install npm 7
-        run: npm install --global npm@7
+          node-version: 16.x
       - name: Install dependencies
-        run: npm ci
+        run: corepack yarn install --immutable
       - name: Run linter
-        run: npm run lint:markdown
+        run: corepack yarn run lint:markdown
 
   types:
     name: Type tests
@@ -65,16 +73,14 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
-      - name: Install npm 7
-        run: npm install --global npm@7
+          node-version: 16.x
       - name: Install dependencies
-        run: npm ci
+        run: corepack yarn install --immutable
         # Need to do a bunch of work to generate the locale typings 🙃
       - name: Prepare type declarations
         run: |
-          npm run build:lib
-          npm run build:companion
-          npm run build:locale-pack
+          corepack yarn run build:lib
+          corepack yarn run build:companion
+          corepack yarn run build:locale-pack
       - name: Run type tests
-        run: npm run test:type
+        run: corepack yarn run test:type

@@ -1,4 +1,4 @@
-/* global jest:false, test:false, expect:false, describe:false */
+'use strict'
 
 jest.mock('tus-js-client')
 

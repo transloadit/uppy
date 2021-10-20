@@ -1,5 +1,6 @@
 {
   "name": "angular-example",
+  "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -18,13 +19,13 @@
     "@angular/platform-browser": "~12.1.0",
     "@angular/platform-browser-dynamic": "~12.1.0",
     "@angular/router": "~12.1.0",
-    "@uppy/angular": "file:../../packages/@uppy/angular",
-    "@uppy/core": "file:../../packages/@uppy/core",
-    "@uppy/drag-drop": "file:../../packages/@uppy/drag-drop",
-    "@uppy/google-drive": "file:../../packages/@uppy/google-drive",
-    "@uppy/progress-bar": "file:../../packages/@uppy/progress-bar",
-    "@uppy/tus": "file:../../packages/@uppy/tus",
-    "@uppy/webcam": "file:../../packages/@uppy/webcam",
+    "@uppy/angular": "workspace:*",
+    "@uppy/core": "workspace:*",
+    "@uppy/drag-drop": "workspace:*",
+    "@uppy/google-drive": "workspace:*",
+    "@uppy/progress-bar": "workspace:*",
+    "@uppy/tus": "workspace:*",
+    "@uppy/webcam": "workspace:*",
     "rxjs": "^6.5.3",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.3"

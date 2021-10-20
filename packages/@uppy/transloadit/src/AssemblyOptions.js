@@ -20,7 +20,7 @@ function validateParams (params) {
 
   if (!params.auth || !params.auth.key) {
     throw new Error('Transloadit: The `params.auth.key` option is required. '
-      + 'You can find your Transloadit API key at https://transloadit.com/account/api-settings.')
+      + 'You can find your Transloadit API key at https://transloadit.com/c/template-credentials')
   }
 }
 

@@ -241,7 +241,15 @@ class Uploader {
    * @param {Function} callback
    */
   onSocketReady (callback) {
-    emitter().once(`connection:${this.token}`, () => callback())
+    /** @type {any} */ // WriteStream.pending was added in Node.js 11.2.0
+    const stream = this.writeStream
+    if (stream.pending) {
+      let connected = false
+      emitter().once(`connection:${this.token}`, () => { if (stream.pending) connected = true; else callback() })
+      this.writeStream.once('ready', () => connected && callback())
+    } else {
+      emitter().once(`connection:${this.token}`, () => callback())
+    }
     logger.debug('waiting for connection', 'uploader.socket.wait', this.shortToken)
   }
 

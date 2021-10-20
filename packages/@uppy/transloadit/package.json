@@ -27,10 +27,10 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/companion-client": "file:../companion-client",
-    "@uppy/provider-views": "file:../provider-views",
-    "@uppy/tus": "file:../tus",
-    "@uppy/utils": "file:../utils",
+    "@uppy/companion-client": "workspace:*",
+    "@uppy/provider-views": "workspace:*",
+    "@uppy/tus": "workspace:*",
+    "@uppy/utils": "workspace:*",
     "component-emitter": "^1.2.1",
     "socket.io-client": "^4.1.3"
   },

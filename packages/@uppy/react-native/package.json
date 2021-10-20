@@ -21,8 +21,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/instagram": "file:../instagram",
-    "@uppy/url": "file:../url"
+    "@uppy/instagram": "workspace:*",
+    "@uppy/url": "workspace:*"
   },
   "peerDependencies": {
     "expo": ">=33.0.0",

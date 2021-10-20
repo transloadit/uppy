@@ -13,7 +13,6 @@
     "e2e": "ng e2e",
     "build-storybook": "build-storybook"
   },
-  "private": false,
   "dependencies": {
     "@angular/animations": ">= 11",
     "@angular/common": ">= 11",
@@ -23,10 +22,10 @@
     "@angular/platform-browser": ">= 11",
     "@angular/platform-browser-dynamic": ">= 11",
     "@angular/router": ">= 11",
-    "@uppy/dashboard": "file:../dashboard",
-    "@uppy/drag-drop": "file:../drag-drop",
-    "@uppy/progress-bar": "file:../progress-bar",
-    "@uppy/status-bar": "file:../status-bar",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/drag-drop": "workspace:*",
+    "@uppy/progress-bar": "workspace:*",
+    "@uppy/status-bar": "workspace:*",
     "prop-types": "^15.7.2",
     "rxjs": "^6.5.3",
     "tslib": "^2.0.0",

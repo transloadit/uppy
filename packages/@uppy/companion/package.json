@@ -26,9 +26,7 @@
     "express",
     "realtime"
   ],
-  "bin": {
-    "companion": "./bin/companion"
-  },
+  "bin": "./bin/companion",
   "dependencies": {
     "@purest/providers": "1.0.1",
     "atob": "2.1.2",
@@ -107,13 +105,12 @@
   "scripts": {
     "build": "tsc -p .",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "yarn run build",
     "start": "node ./lib/standalone/start-server.js",
     "test": "bash -c 'source env.test.sh && ../../../node_modules/jest/bin/jest.js'",
-    "test:watch": "npm test -- --watch"
+    "test:watch": "yarn test -- --watch"
   },
   "engines": {
-    "node": ">=10.20.1",
-    "npm": "7.x"
+    "node": ">=10.20.1"
   }
 }

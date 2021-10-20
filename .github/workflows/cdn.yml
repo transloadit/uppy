@@ -11,28 +11,32 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
+      - name: Cache npm dependencies
+        id: cache-npm-libraries
+        uses: actions/cache@v2
+        with:
+          path: .yarn/cache/*
+          key: ${{ runner.os }}
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
-      - name: Install npm 7
-        run: npm install --global npm@7
       - name: Install dependencies
-        run: npm ci
+        run: corepack yarn install
       - name: Build bundles
-        run: npm run build
+        run: corepack yarn run build
       - name: Upload `uppy` to CDN
-        run: npm run uploadcdn uppy
+        run: corepack yarn run uploadcdn uppy
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload `@uppy/robodog` to CDN
-        run: npm run uploadcdn @uppy/robodog
+        run: corepack yarn run uploadcdn @uppy/robodog
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload `@uppy/locales` to CDN
-        run: npm run uploadcdn @uppy/locales
+        run: corepack yarn run uploadcdn @uppy/locales
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}

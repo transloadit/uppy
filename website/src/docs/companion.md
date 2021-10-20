@@ -546,7 +546,9 @@ to:
 1\. To set up Companion for local development, please clone the Uppy repo and install, like so:
 
 ```bash
-git clone https://github.com/transloadit/uppy && cd uppy && npm install
+git clone https://github.com/transloadit/uppy
+cd uppy
+yarn install
 ```
 
 2\. Configure your environment variables by copying the `env.example.sh` file to `env.sh` and edit it to its correct values.
@@ -559,7 +561,7 @@ $EDITOR env.sh
 3\. To start the server, run:
 
 ```bash
-npm run start:companion
+yarn run start:companion
 ```
 
 This would get the Companion instance running on `http://localhost:3020`. It uses [nodemon](https://github.com/remy/nodemon) so it will automatically restart when files are changed.
