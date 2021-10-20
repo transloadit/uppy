@@ -47,6 +47,9 @@ import Dashboard from '..'
         },
       },
     ],
+    onDragOver: (event) => event.clientX,
+    onDrop: (event) => event.clientX,
+    onDragLeave: (event) => event.clientX,
   })
 
   uppy.on('dashboard:file-edit-state', (file) => {

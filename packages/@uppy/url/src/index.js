@@ -2,6 +2,7 @@ const { UIPlugin } = require('@uppy/core')
 const { h } = require('preact')
 const { RequestClient } = require('@uppy/companion-client')
 const UrlUI = require('./UrlUI.js')
+const toArray = require('@uppy/utils/lib/toArray')
 const forEachDroppedOrPastedUrl = require('./utils/forEachDroppedOrPastedUrl')
 
 function UrlIcon () {
@@ -153,6 +154,13 @@ module.exports = class Url extends UIPlugin {
         }, 'error', 4000)
         return err
       })
+  }
+
+  canHandleRootDrop (e) {
+    const items = toArray(e.dataTransfer.items)
+    const urls = items.filter((item) => item.kind === 'string'
+      && item.type === 'text/uri-list')
+    return urls.length > 0
   }
 
   handleRootDrop (e) {
