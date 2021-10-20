@@ -1,7 +1,8 @@
 {
   "name": "@uppy-example/transloadit-textarea",
+  "version": "0.0.0",
   "dependencies": {
-    "@uppy/robodog": "file:../../packages/@uppy/robodog",
+    "@uppy/robodog": "workspace:*",
     "browserify": "^16.5.2",
     "drag-drop": "^4.2.0",
     "ecstatic": "^4.1.4",

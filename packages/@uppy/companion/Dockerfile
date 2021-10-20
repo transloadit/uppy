@@ -1,4 +1,4 @@
-FROM node:14.15.3-alpine as build
+FROM node:14.18.0-alpine as build
 
 COPY package.json /app/package.json
 
@@ -9,15 +9,15 @@ WORKDIR /app
 ADD package.json package-*.json yarn.* /tmp/
 RUN cd /tmp && apk --update add  --virtual native-dep \
   make gcc g++ python libgcc libstdc++ git && \
-  npm install -g npm@7.7.6 && \
-  npm install && \
-  npm ls && \
+  npm install -g corepack && \
+  corepack yarn install && \
+  corepack yarn ls && \
   apk del native-dep
 RUN mkdir -p /app && cd /app && ln -nfs /tmp/node_modules
 RUN apk add bash
 COPY . /app
 ENV PATH "${PATH}:/app/node_modules/.bin"
-RUN npm run build
+RUN corepack yarn run build
 
 FROM node:14.15.3-alpine
 

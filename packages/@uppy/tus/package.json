@@ -22,8 +22,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/companion-client": "file:../companion-client",
-    "@uppy/utils": "file:../utils",
+    "@uppy/companion-client": "workspace:*",
+    "@uppy/utils": "workspace:*",
     "tus-js-client": "^2.1.1"
   },
   "peerDependencies": {

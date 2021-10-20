@@ -21,8 +21,8 @@
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "0.0.7",
-    "@uppy/store-default": "file:../store-default",
-    "@uppy/utils": "file:../utils",
+    "@uppy/store-default": "workspace:*",
+    "@uppy/utils": "workspace:*",
     "lodash.throttle": "^4.1.1",
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.1",

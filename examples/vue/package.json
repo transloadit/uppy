@@ -1,5 +1,6 @@
 {
   "name": "@uppy-example/vue-example",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve",
@@ -7,10 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@uppy/vue": "workspace:*",
     "core-js": "^3.6.5",
     "shallow-equal": "^1.2.1",
-    "vue": "^2.6.11",
-    "@uppy/vue": "file:../../packages/@uppy/vue"
+    "vue": "^2.6.11"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

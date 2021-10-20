@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "0.0.7",
-    "@uppy/utils": "file:../utils",
+    "@uppy/utils": "workspace:*",
     "classnames": "^2.2.6",
     "lodash.throttle": "^4.1.1",
     "preact": "^10.5.13"
