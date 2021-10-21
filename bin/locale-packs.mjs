@@ -6,7 +6,6 @@ import dedent from 'dedent'
 import stringifyObject from 'stringify-object'
 import remark from 'remark'
 import { headingRange } from 'mdast-util-heading-range'
-import { ESLint } from 'eslint'
 import remarkFrontmatter from 'remark-frontmatter'
 import Task from 'data.task'
 
@@ -24,8 +23,6 @@ const { settings: remarkSettings } = remarkConfig
 const localesPath = path.join('packages', '@uppy', 'locales')
 const templatePath = path.join(localesPath, 'template.js')
 const englishLocalePath = path.join(localesPath, 'src', 'en_US.js')
-
-const linter = new ESLint({ fix: true })
 
 main().fork(
   function onError (error) {
@@ -50,7 +47,6 @@ function main () {
     .chain(({ combinedLocale, locales }) => {
       return readFile(templatePath)
         .map((fileString) => populateTemplate(fileString, combinedLocale))
-        .chain(lint)
         .chain((file) => writeFile(englishLocalePath, file))
         .map(() => {
           for (const [pluginName, locale] of Object.entries(locales)) {
@@ -106,15 +102,6 @@ function populateTemplate (fileString, combinedLocale) {
     'en_US.strings = {}',
     `en_US.strings = ${formattedLocale}`
   )
-}
-
-function lint (fileString) {
-  return new Task((reject, resolve) => {
-    linter
-      .lintText(fileString)
-      .then(([result]) => resolve(result.output))
-      .catch(reject)
-  })
 }
 
 function generateTypes (pluginName, locale) {

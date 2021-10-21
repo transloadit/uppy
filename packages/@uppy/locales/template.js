@@ -1,3 +1,4 @@
+/* eslint-disable comma-dangle */
 const en_US = {}
 
 en_US.strings = {}
