@@ -1,6 +1,6 @@
 const { UIPlugin } = require('@uppy/core')
 const { h } = require('preact')
-const { SearchProvider } = require('@uppy/companion-client')
+const { SearchProvider, Provider } = require('@uppy/companion-client')
 const { SearchProviderViews } = require('@uppy/provider-views')
 
 /**
@@ -14,7 +14,9 @@ module.exports = class Unsplash extends UIPlugin {
     super(uppy, opts)
     this.id = this.opts.id || 'Unsplash'
     this.title = this.opts.title || 'Unsplash'
-    this.type = 'acquirer'
+
+    Provider.initPlugin(this, opts, {})
+
     this.icon = () => (
       <svg viewBox="0 0 32 32" height="32" width="32" aria-hidden="true">
         <path d="M46.575 10.883v-9h12v9zm12 5h10v18h-32v-18h10v9h12z" fill="#fff" />
@@ -23,13 +25,11 @@ module.exports = class Unsplash extends UIPlugin {
       </svg>
     )
 
-    const defaultOptions = {}
-    this.opts = { ...defaultOptions, ...opts }
-    this.hostname = this.opts.companionUrl
-
-    if (!this.hostname) {
+    if (!this.opts.companionUrl) {
       throw new Error('Companion hostname is required, please consult https://uppy.io/docs/companion')
     }
+
+    this.hostname = this.opts.companionUrl
 
     this.provider = new SearchProvider(uppy, {
       companionUrl: this.opts.companionUrl,
