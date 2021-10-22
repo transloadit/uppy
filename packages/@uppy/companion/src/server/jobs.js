@@ -7,6 +7,7 @@ const request = require('request')
 const { FILE_NAME_PREFIX } = require('./Uploader')
 const logger = require('./logger')
 
+// TODO rewrite to use require('timers/promises').setTimeout when we support newer node versions
 const sleep = promisify(setTimeout)
 
 /**
