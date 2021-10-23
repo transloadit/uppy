@@ -12,7 +12,7 @@ const { promisify } = require('util')
 
 const pipeline = promisify(pipelineCb)
 
-const { createReadStream, createWriteStream } = fs
+const { createReadStream, createWriteStream, ReadStream } = fs
 const { stat, unlink } = fs.promises
 
 /** @type {any} */
@@ -465,6 +465,11 @@ class Uploader {
   async _uploadTus (stream) {
     const uploader = this
 
+    const isFileStream = stream instanceof ReadStream
+    // chunkSize needs to be a finite value if the stream is not a file stream (fs.createReadStream)
+    // https://github.com/tus/tus-js-client/blob/4479b78032937ac14da9b0542e489ac6fe7e0bc7/lib/node/fileReader.js#L50
+    const chunkSize = this.options.chunkSize || (isFileStream ? Infinity : 50e6)
+
     return new Promise((resolve, reject) => {
       this.tus = new tus.Upload(stream, {
         endpoint: this.options.endpoint,
@@ -472,7 +477,7 @@ class Uploader {
         uploadLengthDeferred: false,
         retryDelays: [0, 1000, 3000, 5000],
         uploadSize: this.size,
-        chunkSize: this.options.chunkSize || 50e6,
+        chunkSize,
         headers: headerSanitize(this.options.headers),
         addRequestId: true,
         metadata: {
