@@ -7,7 +7,7 @@ order: 0
 category: "Docs"
 ---
 
-Uppy is a sleek and modular file uploader. It fetches files from local disk, Google Drive, Instagram, remote urls, cameras etc, and then uploads them to the final destination. It’s fast, easy to use and lets you worry about more important problems than building a file uploader.
+Uppy is a sleek and modular file uploader. It fetches files from local disk, Google Drive, Instagram, remote urls, cameras etc, and then uploads them to the final destination. It’s fast, has a comprehensible API and lets you worry about more important problems than building a file uploader.
 
 Uppy consists of a core module and [various plugins](/docs/plugins/) for selecting, manipulating and uploading files.
 
@@ -19,12 +19,12 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
   <head>
     <meta charset="utf-8">
     <title>Uppy</title>
-    <link href="https://releases.transloadit.com/uppy/v2.0.2/uppy.min.css" rel="stylesheet">
+    <link href="https://releases.transloadit.com/uppy/v2.2.1/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <div id="drag-drop-area"></div>
 
-    <script src="https://releases.transloadit.com/uppy/v2.0.2/uppy.min.js"></script>
+    <script src="https://releases.transloadit.com/uppy/v2.2.1/uppy.min.js"></script>
     <script>
       var uppy = new Uppy.Core()
         .use(Uppy.Dashboard, {
@@ -43,7 +43,7 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
 
 <a class="TryButton" href="/examples/dashboard/">Try it live</a>
 
-Drag and drop, webcam, basic file manipulation (adding metadata), uploading via tus-resumable uploads or XHR/Multipart is all possible using just the Uppy client module.
+Drag and drop, webcam, basic file manipulation (adding metadata), uploading via tus-resumable uploads or XHR/Multipart is all possible using the Uppy client module.
 
 Adding [Companion](/docs/companion/) to the mix enables remote sources such as Instagram, Google Drive, Dropbox, and remote URLs. Uploads from remote sources are handled server-to-server, so a 5 GB video won’t be eating into your mobile data plan. Files are removed from Companion after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
 
@@ -57,7 +57,7 @@ Uppy can be used with a module bundler such as [Webpack](http://webpack.js.org/)
 
 Install the `@uppy/core` package from npm:
 
-``` bash
+```bash
 $ npm install @uppy/core
 ```
 
@@ -89,9 +89,9 @@ uppy.on('complete', (result) => {
 })
 ```
 
-Many plugins include a CSS file for the necessary styles in their `dist/` folder. The plugin documentation pages will tell you which to use and when. When using multiple plugin CSS files, some code is duplicated. A CSS minifier like [clean-css](https://www.npmjs.com/package/clean-css) is recommended to remove the duplicate selectors.
+Many plugins include a CSS file for the necessary styles in their `dist/` folder. The plugin documentation pages will tell you which to use and when. When using several plugin CSS files, some code is duplicated. A CSS minifier like [clean-css](https://www.npmjs.com/package/clean-css) is recommended to remove the duplicate selectors.
 
-You can also use the combined `uppy` package, which includes all plugins that are maintained by the Uppy team. Only use it if you have tree-shaking set up in your module bundler, otherwise you may end up sending a lot of unused code to your users.
+You can also use the joint `uppy` package, which includes all plugins that are maintained by the Uppy team. Only use it if you have tree-shaking set up in your module bundler, otherwise you may end up sending a lot of unused code to your users.
 
 ```bash
 $ npm install uppy
@@ -107,28 +107,29 @@ And add the `uppy/dist/uppy.min.css` file to your page.
 
 #### SCSS
 
-If you are using SCSS in your project, you can include the Uppy SCSS source files, instead of using our prebuilt CSS. Uppy's SCSS files do assume Node.js-style resolution for `@import`s, so you may need to [configure a resolver](https://github.com/transloadit/uppy/issues/2296#issuecomment-640649513).
+If you are using SCSS in your project, you can include the Uppy SCSS source files, instead of using our prebuilt CSS. Uppy’s SCSS files do assume Node.js-style resolution for `@import`s, so you may need to [configure a resolver](https://github.com/transloadit/uppy/issues/2296#issuecomment-640649513).
 
 ### With a script tag
 
-You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will attach itself to the global `window.Uppy` object.
+You can also use a pre-built bundle from Transloadit’s CDN: Edgly. `Uppy` will attach itself to the global `window.Uppy` object.
 
-> ⚠️ The bundle consists of all plugins maintained by the Uppy team. This method is therefore not recommended for production, as your users will have to download all plugins, even if you are only using a few of them.
+> ⚠️ The bundle consists of all plugins maintained by the Uppy team. This method is thus not recommended for production, as your users will have to download all plugins, even if you are only using a few of them.
 
 1\. Add a script at the bottom of the closing `</body>` tag:
 
-``` html
-<script src="https://releases.transloadit.com/uppy/v2.0.2/uppy.min.js"></script>
+```html
+<script src="https://releases.transloadit.com/uppy/v2.2.1/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
-``` html
-<link href="https://releases.transloadit.com/uppy/v2.0.2/uppy.min.css" rel="stylesheet">
+
+```html
+<link href="https://releases.transloadit.com/uppy/v2.2.1/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize at the bottom of the closing `</body>` tag:
 
-``` html
+```html
 <script>
   var uppy = new Uppy.Core()
   uppy.use(Uppy.DragDrop, { target: '#drag-drop-area' })
@@ -138,11 +139,11 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
 
 ## Documentation
 
-- [Uppy](/docs/uppy/) — full list of options, methods and events.
-- [Plugins](/docs/plugins/) — list of Uppy plugins and their options.
-- [Server](/docs/companion/) — setting up and running a Companion instance, which adds support for Instagram, Dropbox, Google Drive, direct links, and other remote sources.
-- [React](/docs/react/) — components to integrate Uppy UI plugins with React apps.
-- [Writing Plugins](/docs/writing-plugins) — how to write a plugin for Uppy (documentation in progress).
+* [Uppy](/docs/uppy/) — full list of options, methods and events.
+* [Plugins](/docs/plugins/) — list of Uppy plugins and their options.
+* [Server](/docs/companion/) — setting up and running a Companion instance, which adds support for Instagram, Dropbox, Google Drive, direct links, and other remote sources.
+* [React](/docs/react/) — components to integrate Uppy UI plugins with React apps.
+* [Writing Plugins](/docs/writing-plugins) — how to write a plugin for Uppy (documentation in progress).
 
 ## Browser Support
 
@@ -150,9 +151,7 @@ You can also use a pre-built bundle from Transloadit's CDN: Edgly. `Uppy` will a
   <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
 </a>
 
-We currently aim to support IE11+ and recent versions of Safari, Edge, Chrome, Firefox and Opera.
-
-We still run end to end tests with IE10, but we are not actively supporting it or fixing visual / minor issues.
+We aim to support recent versions of Safari, Chrome, Firefox, and Opera.
 
 ### Polyfills
 
@@ -181,8 +180,8 @@ export { default } from '@uppy/core'
 export * from '@uppy/core'
 ```
 
-If you're using Uppy from CDN, those polyfills are already included in the bundle, no need to include anything additionally:
+If you’re using Uppy from CDN, those polyfills are already included in the bundle, no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v2.0.2/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.2.1/uppy.min.js"></script>
 ```

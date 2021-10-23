@@ -1,7 +1,7 @@
 {
   "name": "@uppy/file-input",
   "description": "Simple UI of a file input button that works with Uppy right out of the box",
-  "version": "2.0.1",
+  "version": "2.0.4",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -22,7 +22,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "file:../utils",
+    "@uppy/utils": "workspace:*",
     "preact": "^10.5.13"
   },
   "peerDependencies": {

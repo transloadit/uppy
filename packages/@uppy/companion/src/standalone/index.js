@@ -133,14 +133,6 @@ module.exports = function server (inputCompanionOptions = {}) {
 
   app.use(session(sessionOptions))
 
-  app.use((req, res, next) => {
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      'Authorization, Origin, Content-Type, Accept'
-    )
-    next()
-  })
-
   // Routes
   if (process.env.COMPANION_HIDE_WELCOME !== 'true') {
     app.get('/', (req, res) => {

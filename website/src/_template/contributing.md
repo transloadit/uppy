@@ -9,27 +9,28 @@ After you have successfully forked the repo, clone and install the project:
 ```bash
 git clone git@github.com:YOUR_USERNAME/uppy.git
 cd uppy
-npm install
+yarn install
 ```
 
 Our website’s examples section is also our playground, please read the [Local Previews](#Local-previews) section to get up and running.
 
 ### Requiring files
 
-*   If we are `require()`ing a file from the same subpackage, we can freely use relative imports as long as the required file is under the `src` directory (for example to import `@uppy/dashboard/src/utils/hi.js` from `@uppy/dashboard/src/index.js`, use `require('./utils/hi.js')`).
-*   But if we want to `require()` some file from another subpackage - we should use global @uppy requires, and they should always be in the form of `@uppy/:packageName/(lib instead of src)/(same path).js`
+* If we are `require()`ing a file from the same subpackage, we can freely use relative imports as long as the required file is under the `src` directory (for example to import `@uppy/dashboard/src/utils/hi.js` from `@uppy/dashboard/src/index.js`, use `require('./utils/hi.js')`).
+* But if we want to `require()` some file from another subpackage - we should use global @uppy requires, and they should always be in the form of `@uppy/:packageName/(lib instead of src)/(same path).js`
 
 ## Tests
 
 Unit tests are using Jest and can be run with:
 
 ```bash
-npm run test:unit
+yarn run test:unit
 ```
 
 For end-to-end tests, we use [Webdriverio](http://webdriver.io). For it to run locally, you need to install a Selenium standalone server. Follow [the Webdriverio guide](http://webdriver.io/guide.html) to do so. You can also install a Selenium standalone server from NPM:
 
 ```bash
+# or yarn add selenium-standalone -g
 npm install selenium-standalone -g
 selenium-standalone install
 ```
@@ -43,27 +44,27 @@ selenium-standalone start
 After you have installed and launched the selenium standalone server, run:
 
 ```bash
-npm run test:endtoend:local
+yarn run test:endtoend:local
 ```
 
 By default, `test:endtoend:local` uses Firefox. You can use a different browser, like Chrome, by passing the `-b` flag:
 
 ```bash
-npm run test:endtoend:local -- -b chrome
+yarn run test:endtoend:local -- -b chrome
 ```
 
-> Note: The `--` is important, it tells npm that the remaining arguments should be interpreted by the script itself, not by npm.
+> Note: The `--` is important, it tells `yarn` that the remaining arguments should be interpreted by the script itself, not by `yarn`.
 
 You can run in several browsers by passing several `-b` flags:
 
 ```bash
-npm run test:endtoend:local -- -b chrome -b firefox
+yarn run test:endtoend:local -- -b chrome -b firefox
 ```
 
 When trying to get a specific integration test to pass, it’s not that helpful to continuously run _all_ tests. You can use the `--suite` flag to run tests from a single `./test/endtoend` folder. For example, `--suite thumbnails` will only run the tests from `./test/endtoend/thumbnails`. It can also be used in conjunction with one or more `-b` flags.
 
 ```bash
-npm run test:endtoend:local -- -b chrome --suite thumbnails
+yarn run test:endtoend:local -- -b chrome --suite thumbnails
 ```
 
 These tests are also run automatically on Travis builds with [SauceLabs](https://saucelabs.com/) cloud service using different OSes.
@@ -122,7 +123,7 @@ Now you should be able to test the Instagram integration.
 Before doing a release, check that the examples on the website work:
 
 ```bash
-npm start
+yarn start
 open http://localhost:4000/examples/dashboard
 ```
 
@@ -130,21 +131,21 @@ Also check the other examples:
 
 ```bash
 cd examples/EXAMPLENAME
-npm install
-npm start
+yarn install
+yarn start
 ```
 
 Releases are managed by [Lerna](https://github.com/lerna/lerna). We do some cleanup and compile work around releases too. Use the npm release script:
 
 ```bash
-npm run release
+yarn run release
 ```
 
 If you have two-factor authentication enabled on your account, Lerna will ask for a one-time password. You may stumble upon a known issue with the CLI where the OTP prompt may be obscured by a publishing progress bar. If Lerna appears to freeze as it starts publishing, chances are it’s waiting for the password. Try typing in your OTP and hitting enter.
 
 Other things to keep in mind during release:
 
-*   When doing a major release >= 1.0, of the `@uppy/core` package, the `peerDependency` of the plugin packages needs to be updated first. Eg when updating from 1.y.z to 2.0.0, the peerDependency of each should be `"@uppy/core": "^2.0.0"` before doing `npm run release`.
+*   When doing a major release >= 1.0, of the `@uppy/core` package, the `peerDependency` of the plugin packages needs to be updated first. Eg when updating from 1.y.z to 2.0.0, the peerDependency of each should be `"@uppy/core": "^2.0.0"` before doing `yarn release`.
 *   When adding a new package, add the following key to its package.json:
     ```json
     "publishConfig": { "access": "public" }
@@ -153,8 +154,8 @@ Other things to keep in mind during release:
 
 After a release, the demos on transloadit.com should also be updated. After updating, check that some things work locally:
 
-*   the demos in the demo section work (try one that uses an import robot, and one that you need to upload to)
-*   the demos on the homepage work and can import from Google Drive, Instagram, Dropbox, etc.
+* the demos in the demo section work (try one that uses an import robot, and one that you need to upload to)
+* the demos on the homepage work and can import from Google Drive, Instagram, Dropbox, etc.
 
 If you don’t have access to the transloadit.com source code ping @arturi or @goto-bus-stop and we’ll pick it up. :sparkles:
 
@@ -168,9 +169,9 @@ Even though bundled in this repo, the website is regarded as a separate project.
 
 ### Local previews
 
-1.  `npm install`
-2.  `npm start`
-3.  Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
+1. `yarn install`
+2. `yarn start`
+3. Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
 
 Then, to work on, for instance, the XHRUpload example, you would edit the following files:
 
@@ -250,9 +251,9 @@ Style to the mobile breakpoint with your selectors, then use `min-width` media q
 
 ### Selector, rule ordering
 
-*   All selectors are sorted alphabetically and by type.
-*   HTML elements go above classes and IDs in a file.
-*   Rules are sorted alphabetically.
+* All selectors are sorted alphabetically and by type.
+* HTML elements go above classes and IDs in a file.
+* Rules are sorted alphabetically.
 
 ```scss
 /* BAD */
@@ -290,20 +291,20 @@ h1 {
 
 Before opening a pull request for the new integration, open an issue to discuss said integration with the Uppy team. After discussing the integration, you can get started on it. First off, you need to construct the basic components for your integration. The following components are the current standard:
 
-*   `Dashboard`: Inline Dashboard (`inline: true`)
-*   `DashboardModal`: Dashboard as a modal
-*   `DragDrop`
-*   `ProgressBar`
-*   `StatusBar`
+* `Dashboard`: Inline Dashboard (`inline: true`)
+* `DashboardModal`: Dashboard as a modal
+* `DragDrop`
+* `ProgressBar`
+* `StatusBar`
 
 All these components should function as references to the normal component. Depending on how the framework you’re using handles references to the DOM, your approach to creating these may be different. For example, in React, you can assign a property of the component to the reference of a component ([see here](https://github.com/transloadit/uppy/blob/425f9ecfbc8bc48ce6b734e4fc14fa60d25daa97/packages/%40uppy/react/src/Dashboard.js#L47-L54)). This may differ in your framework, but from what we’ve found, the concepts are generally pretty similar.
 
 If you’re familiar with React, Vue or soon Svelte, it might be useful to read through the code of those integrations, as they lay out a pretty good structure. After the basic components have been built, here are a few more important tasks to get done:
 
-*   Add TypeScript support in some capacity (if possible)
-*   Write documentation
-*   Add an example
-*   Configuring the build system
+* Add TypeScript support in some capacity (if possible)
+* Write documentation
+* Add an example
+* Configuring the build system
 
 ### Common issues
 
@@ -343,12 +344,12 @@ This section won’t be too in-depth, because TypeScript depends on your framewo
 
 Generally, documentation for integrations can be broken down into a few pieces that apply to every component, and then documentation for each component. The structure should look something like this:
 
-*   Installation
-*   Initializing Uppy (may vary depending on how the framework handles reactivity)
-*   Usage
-*   _For each component_
-    *   Loading CSS
-    *   Props
+* Installation
+* Initializing Uppy (may vary depending on how the framework handles reactivity)
+* Usage
+* _For each component_
+  * Loading CSS
+  * Props
 
 It may be easier to copy the documentation of earlier integrations and change the parts that need to be changed rather than writing this from scratch. Preferably, keep the documentation to one page. For the front-matter, write something like:
 
@@ -375,7 +376,7 @@ If you’re using some kind of more abstract file format (like Svelte), then you
 ```json
 {
   "scripts": {
-    "build:framework": "cd framework && npm run build"
+    "build:framework": "cd framework && yarn run build"
   }
 }
 ```

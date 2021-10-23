@@ -1,5 +1,6 @@
 {
   "name": "@uppy-example/dev",
+  "version": "0.0.0",
   "aliasify": {
     "aliases": {
       "@uppy": "../../packages/@uppy"

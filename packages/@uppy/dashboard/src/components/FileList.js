@@ -69,27 +69,25 @@ module.exports = (props) => {
   if (props.recoveredState) files.sort(sortByGhostComesFirst)
   const rows = chunks(files, props.itemsPerRow)
 
-  function renderRow (row) {
-    return (
-      // The `role="presentation` attribute ensures that the list items are properly
-      // associated with the `VirtualList` element.
-      // We use the first file ID as the key—this should not change across scroll rerenders
-      <div role="presentation" key={row[0]}>
-        {row.map((fileID) => (
-          <FileItem
-            key={fileID}
-            uppy={props.uppy}
-            {...fileProps}
-            role="listitem"
-            openFileEditor={props.openFileEditor}
-            canEditFile={props.canEditFile}
-            toggleAddFilesPanel={props.toggleAddFilesPanel}
-            file={props.files[fileID]}
-          />
-        ))}
-      </div>
-    )
-  }
+  const renderRow = (row) => (
+    // The `role="presentation` attribute ensures that the list items are properly
+    // associated with the `VirtualList` element.
+    // We use the first file ID as the key—this should not change across scroll rerenders
+    <div role="presentation" key={row[0]}>
+      {row.map((fileID) => (
+        <FileItem
+          key={fileID}
+          uppy={props.uppy}
+          {...fileProps}
+          role="listitem"
+          openFileEditor={props.openFileEditor}
+          canEditFile={props.canEditFile}
+          toggleAddFilesPanel={props.toggleAddFilesPanel}
+          file={props.files[fileID]}
+        />
+      ))}
+    </div>
+  )
 
   return (
     <VirtualList

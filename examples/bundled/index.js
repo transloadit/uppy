@@ -1,15 +1,15 @@
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const Instagram = require('@uppy/instagram')
-const GoogleDrive = require('@uppy/google-drive')
-const Url = require('@uppy/url')
-const Webcam = require('@uppy/webcam')
-const Tus = require('@uppy/tus')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Instagram from '@uppy/instagram'
+import GoogleDrive from '@uppy/google-drive'
+import Url from '@uppy/url'
+import Webcam from '@uppy/webcam'
+import Tus from '@uppy/tus'
 
-require('@uppy/core/dist/style.css')
-require('@uppy/dashboard/dist/style.css')
-require('@uppy/url/dist/style.css')
-require('@uppy/webcam/dist/style.css')
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
+import '@uppy/url/dist/style.css'
+import '@uppy/webcam/dist/style.css'
 
 const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
 

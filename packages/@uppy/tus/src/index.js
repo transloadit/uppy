@@ -1,4 +1,4 @@
-const { BasePlugin } = require('@uppy/core')
+const BasePlugin = require('@uppy/core/lib/BasePlugin')
 const tus = require('tus-js-client')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
@@ -183,6 +183,10 @@ module.exports = class Tus extends BasePlugin {
       const opts = {
         ...this.opts,
         ...(file.tus || {}),
+      }
+
+      if (typeof opts.headers === 'function') {
+        opts.headers = opts.headers(file)
       }
 
       /** @type {RawTusOptions} */

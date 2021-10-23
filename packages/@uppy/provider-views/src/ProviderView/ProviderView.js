@@ -1,13 +1,10 @@
 const { h } = require('preact')
-const generateFileID = require('@uppy/utils/lib/generateFileID')
-const getFileType = require('@uppy/utils/lib/getFileType')
-const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 const AuthView = require('./AuthView')
 const Header = require('./Header')
 const Browser = require('../Browser')
 const LoaderView = require('../Loader')
-const SharedHandler = require('../SharedHandler')
 const CloseWrapper = require('../CloseWrapper')
+const View = require('../View')
 
 function getOrigin () {
   // eslint-disable-next-line no-restricted-globals
@@ -17,22 +14,15 @@ function getOrigin () {
 /**
  * Class to easily generate generic views for Provider plugins
  */
-module.exports = class ProviderView {
+module.exports = class ProviderView extends View {
   static VERSION = require('../../package.json').version
-
-  #isHandlingScroll
-
-  #sharedHandler
 
   /**
    * @param {object} plugin instance of the plugin
    * @param {object} opts
    */
   constructor (plugin, opts) {
-    this.plugin = plugin
-    this.provider = opts.provider
-    this.#sharedHandler = new SharedHandler(plugin)
-
+    super(plugin, opts)
     // set default options
     const defaultOptions = {
       viewType: 'list',
@@ -45,24 +35,17 @@ module.exports = class ProviderView {
     this.opts = { ...defaultOptions, ...opts }
 
     // Logic
-    this.addFile = this.addFile.bind(this)
     this.filterQuery = this.filterQuery.bind(this)
     this.getFolder = this.getFolder.bind(this)
     this.getNextFolder = this.getNextFolder.bind(this)
     this.logout = this.logout.bind(this)
-    this.preFirstRender = this.preFirstRender.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
-    this.handleError = this.handleError.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.listAllFiles = this.listAllFiles.bind(this)
     this.donePicking = this.donePicking.bind(this)
-    this.cancelPicking = this.cancelPicking.bind(this)
-    this.clearSelection = this.clearSelection.bind(this)
 
     // Visual
     this.render = this.render.bind(this)
-
-    this.clearSelection()
 
     // Set default state for the plugin
     this.plugin.setPluginState({
@@ -72,6 +55,7 @@ module.exports = class ProviderView {
       directories: [],
       filterInput: '',
       isSearchVisible: false,
+      currentSelection: [],
     })
   }
 
@@ -93,22 +77,13 @@ module.exports = class ProviderView {
   }
 
   /**
-   * Called only the first time the provider view is rendered.
-   * Kind of like an init function.
-   */
-  preFirstRender () {
-    this.plugin.setPluginState({ didFirstRender: true })
-    this.plugin.onFirstRender()
-  }
-
-  /**
    * Based on folder ID, fetch a new folder and update it to state
    *
    * @param  {string} id Folder id
    * @returns {Promise}   Folders/files in folder
    */
   getFolder (id, name) {
-    return this.#sharedHandler.loaderWrapper(
+    return this.sharedHandler.loaderWrapper(
       this.provider.list(id),
       (res) => {
         const folders = []
@@ -140,44 +115,6 @@ module.exports = class ProviderView {
   getNextFolder (folder) {
     this.getFolder(folder.requestPath, folder.name)
     this.lastCheckbox = undefined
-  }
-
-  addFile (file) {
-    const tagFile = {
-      id: this.providerFileToId(file),
-      source: this.plugin.id,
-      data: file,
-      name: file.name || file.id,
-      type: file.mimeType,
-      isRemote: true,
-      body: {
-        fileId: file.id,
-      },
-      remote: {
-        companionUrl: this.plugin.opts.companionUrl,
-        url: `${this.provider.fileUrl(file.requestPath)}`,
-        body: {
-          fileId: file.id,
-        },
-        providerOptions: this.provider.opts,
-      },
-    }
-
-    const fileType = getFileType(tagFile)
-    // TODO Should we just always use the thumbnail URL if it exists?
-    if (fileType && isPreviewSupported(fileType)) {
-      tagFile.preview = file.thumbnail
-    }
-    this.plugin.uppy.log('Adding remote file')
-    try {
-      this.plugin.uppy.addFile(tagFile)
-      return true
-    } catch (err) {
-      if (!err.isRestriction) {
-        this.plugin.uppy.log(err)
-      }
-      return false
-    }
   }
 
   /**
@@ -281,14 +218,6 @@ module.exports = class ProviderView {
     })
   }
 
-  providerFileToId (file) {
-    return generateFileID({
-      data: file,
-      name: file.name || file.id,
-      type: file.mimeType,
-    })
-  }
-
   handleAuth () {
     const authState = btoa(JSON.stringify({ origin: getOrigin() }))
     const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`
@@ -304,6 +233,14 @@ module.exports = class ProviderView {
       // Check if it's a string before doing the JSON.parse to maintain support
       // for older Companion versions that used object references
       const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
+
+      if (data.error) {
+        this.plugin.uppy.log('auth aborted')
+        const { uppy } = this.plugin
+        const message = uppy.i18n('authAborted')
+        uppy.info({ message }, 'warning', 5000)
+        return
+      }
 
       if (!data.token) {
         this.plugin.uppy.log('did not receive token from auth window')
@@ -333,29 +270,22 @@ module.exports = class ProviderView {
       .some((pattern) => pattern.test(origin) || pattern.test(`${origin}/`)) // allowing for trailing '/'
   }
 
-  handleError (error) {
-    const { uppy } = this.plugin
-    uppy.log(error.toString())
-    if (error.isAuthError) {
-      return
-    }
-    const message = uppy.i18n('companionError')
-    uppy.info({ message, details: error.toString() }, 'error', 5000)
-  }
-
-  handleScroll (e) {
-    const scrollPos = e.target.scrollHeight - (e.target.scrollTop + e.target.offsetHeight)
+  async handleScroll (event) {
     const path = this.nextPagePath || null
 
-    if (scrollPos < 50 && path && !this.#isHandlingScroll) {
-      this.provider.list(path)
-        .then((res) => {
-          const { files, folders } = this.plugin.getPluginState()
-          this.#updateFilesAndFolders(res, files, folders)
-        }).catch(this.handleError)
-        .then(() => { this.#isHandlingScroll = false }) // always called
+    if (this.shouldHandleScroll(event) && path) {
+      this.isHandlingScroll = true
 
-      this.#isHandlingScroll = true
+      try {
+        const response = await this.provider.list(path)
+        const { files, folders } = this.plugin.getPluginState()
+
+        this.#updateFilesAndFolders(response, files, folders)
+      } catch (error) {
+        this.handleError(error)
+      } finally {
+        this.isHandlingScroll = false
+      }
     }
   }
 
@@ -390,31 +320,62 @@ module.exports = class ProviderView {
       return this.addFile(file)
     })
 
-    this.#sharedHandler.loaderWrapper(Promise.all(promises), () => {
+    this.sharedHandler.loaderWrapper(Promise.all(promises), () => {
       this.clearSelection()
     }, () => {})
   }
 
-  cancelPicking () {
-    this.clearSelection()
-
-    const dashboard = this.plugin.uppy.getPlugin('Dashboard')
-    if (dashboard) dashboard.hideAllPanels()
-  }
-
-  clearSelection () {
-    this.plugin.setPluginState({ currentSelection: [] })
-  }
-
   render (state, viewOptions = {}) {
     const { authenticated, didFirstRender } = this.plugin.getPluginState()
+
     if (!didFirstRender) {
       this.preFirstRender()
     }
 
-    // reload pluginState for "loading" attribute because it might
-    // have changed above.
-    if (this.plugin.getPluginState().loading) {
+    const targetViewOptions = { ...this.opts, ...viewOptions }
+    const { files, folders, filterInput, loading, currentSelection } = this.plugin.getPluginState()
+    const { isChecked, toggleCheckbox, filterItems } = this.sharedHandler
+    const hasInput = filterInput !== ''
+    const headerProps = {
+      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
+      getFolder: this.getFolder,
+      directories: this.plugin.getPluginState().directories,
+      pluginIcon: this.plugin.icon,
+      title: this.plugin.title,
+      logout: this.logout,
+      username: this.username,
+      i18n: this.plugin.uppy.i18n,
+    }
+
+    const browserProps = {
+      isChecked,
+      toggleCheckbox,
+      currentSelection,
+      files: hasInput ? filterItems(files) : files,
+      folders: hasInput ? filterItems(folders) : folders,
+      username: this.username,
+      getNextFolder: this.getNextFolder,
+      getFolder: this.getFolder,
+      filterItems: this.sharedHandler.filterItems,
+      filterQuery: this.filterQuery,
+      logout: this.logout,
+      handleScroll: this.handleScroll,
+      listAllFiles: this.listAllFiles,
+      done: this.donePicking,
+      cancel: this.cancelPicking,
+      headerComponent: Header(headerProps),
+      title: this.plugin.title,
+      viewType: targetViewOptions.viewType,
+      showTitles: targetViewOptions.showTitles,
+      showFilter: targetViewOptions.showFilter,
+      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
+      pluginIcon: this.plugin.icon,
+      i18n: this.plugin.uppy.i18n,
+      uppyFiles: this.plugin.uppy.getFiles(),
+      validateRestrictions: (...args) => this.plugin.uppy.validateRestrictions(...args),
+    }
+
+    if (loading) {
       return (
         <CloseWrapper onUnmount={this.clearSelection}>
           <LoaderView i18n={this.plugin.uppy.i18n} />
@@ -434,44 +395,6 @@ module.exports = class ProviderView {
           />
         </CloseWrapper>
       )
-    }
-
-    const targetViewOptions = { ...this.opts, ...viewOptions }
-    const headerProps = {
-      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      getFolder: this.getFolder,
-      directories: this.plugin.getPluginState().directories,
-      pluginIcon: this.plugin.icon,
-      title: this.plugin.title,
-      logout: this.logout,
-      username: this.username,
-      i18n: this.plugin.uppy.i18n,
-    }
-
-    const browserProps = {
-      ...this.plugin.getPluginState(),
-      username: this.username,
-      getNextFolder: this.getNextFolder,
-      getFolder: this.getFolder,
-      filterItems: this.#sharedHandler.filterItems,
-      filterQuery: this.filterQuery,
-      logout: this.logout,
-      isChecked: this.#sharedHandler.isChecked,
-      toggleCheckbox: this.#sharedHandler.toggleCheckbox,
-      handleScroll: this.handleScroll,
-      listAllFiles: this.listAllFiles,
-      done: this.donePicking,
-      cancel: this.cancelPicking,
-      headerComponent: Header(headerProps),
-      title: this.plugin.title,
-      viewType: targetViewOptions.viewType,
-      showTitles: targetViewOptions.showTitles,
-      showFilter: targetViewOptions.showFilter,
-      showBreadcrumbs: targetViewOptions.showBreadcrumbs,
-      pluginIcon: this.plugin.icon,
-      i18n: this.plugin.uppy.i18n,
-      uppyFiles: this.plugin.uppy.getFiles(),
-      validateRestrictions: (...args) => this.plugin.uppy.validateRestrictions(...args),
     }
 
     return (

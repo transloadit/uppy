@@ -16,11 +16,17 @@ const META_FILES = [
   'babel.config.js',
   'package.json',
   'package-lock.json',
+  'yarn.lock',
   'bin/build-lib.js',
 ]
 
 function lastModified (file) {
-  return stat(file).then((s) => s.mtime)
+  return stat(file).then((s) => s.mtime, (err) => {
+    if (err.code === 'ENOENT') {
+      return 0
+    }
+    throw err
+  })
 }
 
 async function buildLib () {

@@ -32,4 +32,24 @@ describe('react <StatusBar />', () => {
     expect(oninstall).toHaveBeenCalled()
     expect(onuninstall).toHaveBeenCalled()
   })
+
+  it('react on HTMLDivElement props update', async () => {
+    const uppy = new Uppy()
+    const dash = mount((
+      <StatusBar
+        uppy={uppy}
+        onInstall={Function.prototype}
+        onUninstall={Function.prototype}
+        hidden
+      />
+    ))
+
+    expect(dash.getDOMNode().hidden).toBeTruthy()
+
+    dash.setProps({ hidden: false })
+
+    expect(dash.getDOMNode().hidden).toBeFalsy()
+
+    dash.unmount()
+  })
 })

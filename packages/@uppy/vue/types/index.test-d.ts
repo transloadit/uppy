@@ -1,1 +1,1 @@
-// import { Dashboard, DashboardModal, DragDrop, StatusBar, ProgressBar } from '.'
+// import { Dashboard, DashboardModal, DragDrop, FileInput, StatusBar, ProgressBar } from '.'

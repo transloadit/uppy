@@ -1,4 +1,4 @@
-const { BasePlugin } = require('@uppy/core')
+const BasePlugin = require('@uppy/core/lib/BasePlugin')
 
 /**
  * Add a `results` key to the upload result data, containing all Transloadit Assembly results.

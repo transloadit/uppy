@@ -58,7 +58,7 @@ async function gitAdd (files) {
 
 // Run the build as a release build (that inlines version numbers etc.)
 async function npmRunBuild () {
-  const npmRun = spawn('npm', ['run', 'build'], {
+  const npmRun = spawn('yarn', ['run', 'build'], {
     stdio: 'inherit',
     env: {
       ...process.env,
@@ -68,7 +68,7 @@ async function npmRunBuild () {
   })
   const [exitCode] = await once(npmRun, 'exit')
   if (exitCode !== 0) {
-    throw new Error(`npm run build failed with ${exitCode}`)
+    throw new Error(`yarn run build failed with ${exitCode}`)
   }
 }
 

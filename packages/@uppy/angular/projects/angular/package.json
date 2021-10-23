@@ -19,8 +19,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "peerDependencies": {
-    "@angular/common": "~12.1.0",
-    "@angular/core": "~12.1.0",
+    "@angular/common": ">= 11",
+    "@angular/core": ">= 11",
     "@uppy/core": ">=1",
     "@uppy/dashboard": "^1.11.0",
     "@uppy/drag-drop": "^1.4.16",

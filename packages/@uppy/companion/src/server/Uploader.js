@@ -23,6 +23,9 @@ function removeMetadataProperties (object) {
   return newFileObject
 }
 
+// Need to limit length or we can get
+// "MetadataTooLarge: Your metadata headers exceed the maximum allowed metadata size" in tus / S3
+const MAX_FILENAME_LENGTH = 500
 const DEFAULT_FIELD_NAME = 'files[]'
 const PROTOCOLS = Object.freeze({
   multipart: 'multipart',
@@ -65,7 +68,9 @@ class Uploader {
     this.path = `${this.options.pathPrefix}/${Uploader.FILE_NAME_PREFIX}-${this.token}`
     this.options.metadata = this.options.metadata || {}
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
-    this.uploadFileName = this.options.metadata.name || path.basename(this.path)
+    this.uploadFileName = this.options.metadata.name
+      ? this.options.metadata.name.substring(0, MAX_FILENAME_LENGTH)
+      : path.basename(this.path)
     this.streamsEnded = false
     this.uploadStopped = false
     this.writeStream = fs.createWriteStream(this.path, { mode: 0o666 }) // no executable files
@@ -208,7 +213,7 @@ class Uploader {
       return false
     }
 
-    const validatorOpts = { require_protocol: true, require_tld: !options.companionOptions.debug }
+    const validatorOpts = { require_protocol: true, require_tld: false }
     return [options.endpoint, options.uploadUrl].every((url) => {
       if (url && !validator.isURL(url, validatorOpts)) {
         this._errRespMessage = 'invalid destination url'
@@ -243,7 +248,15 @@ class Uploader {
    * @param {Function} callback
    */
   onSocketReady (callback) {
-    emitter().once(`connection:${this.token}`, () => callback())
+    /** @type {any} */ // WriteStream.pending was added in Node.js 11.2.0
+    const stream = this.writeStream
+    if (stream.pending) {
+      let connected = false
+      emitter().once(`connection:${this.token}`, () => { if (stream.pending) connected = true; else callback() })
+      this.writeStream.once('ready', () => connected && callback())
+    } else {
+      emitter().once(`connection:${this.token}`, () => callback())
+    }
     logger.debug('waiting for connection', 'uploader.socket.wait', this.shortToken)
   }
 
