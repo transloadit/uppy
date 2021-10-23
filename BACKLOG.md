@@ -30,6 +30,7 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 ## `3.0.0`
 
 - [ ] Switch to ES Modules (ESM)
+- [ ] @uppy/image-editor: Remove silly hack to work around non-ESM.
 
 ## `4.0.0`
 
@@ -50,7 +51,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] Display data like image resolution on file cards. should be done by thumbnail generator maybe #783
 - [ ] Possibility to edit/delete more than one file at once. example: add copyrigh info to 1000 files #118, #97
 - [ ] Possibility to work on already uploaded / in progress files. We'll just provide the `fileId` to the `file-edit-complete` event so that folks can more easily roll out custom code for this themselves #112, #113, #2063
-- [ ] Show upload speed too if `showProgressDetails: true`. Maybe have separate options for which things are displayed, or at least have css-classes that can be hidden with `display: none` #766
 - [ ] Focus jumps weirdly if you remove a file https://github.com/transloadit/uppy/pull/2161#issuecomment-613565486
 - [ ] A mini UI that features drop & progress (may involve a `mini: true` options for dashboard, may involve drop+progress or new plugin) (@arturi)
 - [ ] Add a Load More button so you don't have to TAB endlessly to get to the upload button (https://github.com/transloadit/uppy/issues/1419)

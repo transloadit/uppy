@@ -1,5 +1,5 @@
 const hasProperty = require('@uppy/utils/lib/hasProperty')
-const { BasePlugin } = require('@uppy/core')
+const BasePlugin = require('@uppy/core/lib/BasePlugin')
 const Tus = require('@uppy/tus')
 const Assembly = require('./Assembly')
 const Client = require('./Client')
@@ -12,6 +12,12 @@ function defaultGetAssemblyOptions (file, options) {
     signature: options.signature,
     fields: options.fields,
   }
+}
+
+const sendErrorToConsole = originalErr => err => {
+  const error = new Error('Failed to send error to the client')
+  error.cause = err
+  console.error(error, originalErr)
 }
 
 const COMPANION = 'https://api2.transloadit.com/companion'
@@ -387,7 +393,7 @@ module.exports = class Transloadit extends BasePlugin {
   #onCancelAll =() => {
     const { uploadsAssemblies } = this.getPluginState()
 
-    const assemblyIDs = Object.values(uploadsAssemblies)
+    const assemblyIDs = Object.values(uploadsAssemblies).flat(1)
 
     const cancelPromises = assemblyIDs.map((assemblyID) => {
       const assembly = this.getAssembly(assemblyID)
@@ -405,10 +411,8 @@ module.exports = class Transloadit extends BasePlugin {
    *
    * @param {Function} setData
    */
-  #getPersistentData =(setData) => {
-    const state = this.getPluginState()
-    const { assemblies } = state
-    const { uploadsAssemblies } = state
+  #getPersistentData = (setData) => {
+    const { assemblies, uploadsAssemblies } = this.getPluginState()
 
     setData({
       [this.id]: {
@@ -473,11 +477,9 @@ module.exports = class Transloadit extends BasePlugin {
       // Set up the assembly watchers again for all the ongoing uploads.
       Object.keys(uploadsAssemblies).forEach((uploadID) => {
         const assemblyIDs = uploadsAssemblies[uploadID]
-        const fileIDsInUpload = assemblyIDs.reduce((acc, assemblyID) => {
-          const fileIDsInAssembly = this.getAssemblyFiles(assemblyID).map((file) => file.id)
-          acc.push(...fileIDsInAssembly)
-          return acc
-        }, [])
+        const fileIDsInUpload = assemblyIDs.flatMap((assemblyID) => {
+          return this.getAssemblyFiles(assemblyID).map((file) => file.id)
+        })
         this.#createAssemblyWatcher(assemblyIDs, fileIDsInUpload, uploadID)
       })
 
@@ -704,15 +706,17 @@ module.exports = class Transloadit extends BasePlugin {
       }
     })
     this.client.submitError(err)
+      // if we can't report the error that sucks
+      .catch(sendErrorToConsole(err))
   }
 
   #onTusError =(err) => {
     if (err && /^tus: /.test(err.message)) {
       const xhr = err.originalRequest ? err.originalRequest.getUnderlyingObject() : null
       const url = xhr && xhr.responseURL ? xhr.responseURL : null
-      this.client.submitError(err, { url, type: 'TUS_ERROR' }).then(() => {
+      this.client.submitError(err, { url, type: 'TUS_ERROR' })
         // if we can't report the error that sucks
-      })
+        .catch(sendErrorToConsole(err))
     }
   }
 

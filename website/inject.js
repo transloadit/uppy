@@ -236,7 +236,7 @@ function injectLocaleList () {
 
   const dstpath = path.join(webRoot, 'src', '_template', 'list_of_locale_packs.md')
   const localeListDstPath = path.join(webRoot, 'src', 'examples', 'locale_list.json')
-  fs.writeFileSync(dstpath, resultingMdTable, 'utf-8')
+  fs.writeFileSync(dstpath, `${resultingMdTable}\n`, 'utf-8')
   console.info(chalk.green('✓ injected: '), chalk.grey(dstpath))
   fs.writeFileSync(localeListDstPath, JSON.stringify(localeList), 'utf-8')
   console.info(chalk.green('✓ injected: '), chalk.grey(localeListDstPath))

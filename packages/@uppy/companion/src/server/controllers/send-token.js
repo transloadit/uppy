@@ -38,8 +38,7 @@ module.exports = function sendToken (req, res, next) {
     tokenService.addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider)
   }
 
-  const dynamic = (req.session.grant || {}).dynamic || {}
-  const { state } = dynamic
+  const state = oAuthState.getDynamicStateFromRequest(req)
   if (state) {
     const origin = oAuthState.getFromState(state, 'origin', req.companion.options.secret)
     const allowedClients = req.companion.options.clients

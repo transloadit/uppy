@@ -73,9 +73,11 @@ module.exports = class DragDrop extends UIPlugin {
   }
 
   onInputChange (event) {
-    this.uppy.log('[DragDrop] Files selected through input')
     const files = toArray(event.target.files)
-    this.addFiles(files)
+    if (files.length > 0) {
+      this.uppy.log('[DragDrop] Files selected through input')
+      this.addFiles(files)
+    }
 
     // We clear the input after a file is selected, because otherwise
     // change event is not fired in Chrome and Safari when a file
@@ -87,31 +89,21 @@ module.exports = class DragDrop extends UIPlugin {
     event.target.value = null
   }
 
-  handleDrop (event) {
-    if (this.opts.onDrop) this.opts.onDrop(event)
-
-    event.preventDefault()
-    event.stopPropagation()
-    clearTimeout(this.removeDragOverClassTimeout)
-
-    // 2. Remove dragover class
-    this.setPluginState({ isDraggingOver: false })
-
-    // 3. Add all dropped files
-    this.uppy.log('[DragDrop] Files were dropped')
-    const logDropError = (error) => {
-      this.uppy.log(error, 'error')
-    }
-    getDroppedFiles(event.dataTransfer, { logDropError })
-      .then((files) => this.addFiles(files))
-  }
-
   handleDragOver (event) {
-    if (this.opts.onDragOver) this.opts.onDragOver(event)
     event.preventDefault()
     event.stopPropagation()
 
-    // 1. Add a small (+) icon on drop
+    // Check if the "type" of the datatransfer object includes files. If not, deny drop.
+    const { types } = event.dataTransfer
+    const hasFiles = types.some(type => type === 'Files')
+    const { allowNewUpload } = this.uppy.getState()
+    if (!hasFiles || !allowNewUpload) {
+      event.dataTransfer.dropEffect = 'none'
+      clearTimeout(this.removeDragOverClassTimeout)
+      return
+    }
+
+    // Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the browser
     // https://github.com/transloadit/uppy/issues/1978)
     //
@@ -120,10 +112,11 @@ module.exports = class DragDrop extends UIPlugin {
 
     clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
+
+    this.opts?.onDragOver(event)
   }
 
   handleDragLeave (event) {
-    if (this.opts.onDragLeave) this.opts.onDragLeave(event)
     event.preventDefault()
     event.stopPropagation()
 
@@ -133,6 +126,30 @@ module.exports = class DragDrop extends UIPlugin {
     this.removeDragOverClassTimeout = setTimeout(() => {
       this.setPluginState({ isDraggingOver: false })
     }, 50)
+
+    this.opts?.onDragLeave(event)
+  }
+
+  handleDrop = async (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    clearTimeout(this.removeDragOverClassTimeout)
+
+    // Remove dragover class
+    this.setPluginState({ isDraggingOver: false })
+
+    const logDropError = (error) => {
+      this.uppy.log(error, 'error')
+    }
+
+    // Add all dropped files
+    const files = await getDroppedFiles(event.dataTransfer, { logDropError })
+    if (files.length > 0) {
+      this.uppy.log('[DragDrop] Files dropped')
+      this.addFiles(files)
+    }
+
+    this.opts.onDrop?.(event)
   }
 
   renderHiddenFileInput () {

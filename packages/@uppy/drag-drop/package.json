@@ -1,7 +1,7 @@
 {
   "name": "@uppy/drag-drop",
   "description": "Droppable zone UI for Uppy. Drag and drop files into it to upload.",
-  "version": "2.0.1",
+  "version": "2.0.4",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -25,7 +25,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "file:../utils",
+    "@uppy/utils": "workspace:*",
     "preact": "^10.5.13"
   },
   "peerDependencies": {

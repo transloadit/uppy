@@ -49,3 +49,7 @@ exports.getNextPageQuery = (currentQuery) => {
   delete query.q
   return querystring.stringify(query)
 }
+
+exports.getAuthor = (item) => {
+  return { name: item.user.name, url: item.user.links.html }
+}

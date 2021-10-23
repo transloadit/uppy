@@ -15,7 +15,6 @@ We will need a Redis container that we can get through [helm](https://github.com
     stable/redis
 ```
 
-
 #### `companion-env.yml`
 
 ```yaml

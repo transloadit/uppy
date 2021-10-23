@@ -1,6 +1,6 @@
 ---
 type: docs
-order: 14
+order: 15
 title: "Import From URL"
 menu_prefix: "<span title='Requires Companion'>ⓒ </span>"
 module: "@uppy/url"
@@ -33,7 +33,7 @@ Install from NPM:
 npm install @uppy/url
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
 const { Url } = Uppy
@@ -80,7 +80,7 @@ URL to an Companion instance.
 
 ### `companionCookiesRule: 'same-origin'`
 
-This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether to send cookies to [Companion](/docs/companion).
 
 ### `locale: {}`
 

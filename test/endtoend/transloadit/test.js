@@ -17,7 +17,7 @@ describe('Transloadit file processing', () => {
   it('should upload a file to Transloadit and crop it', async function test () {
     const transloaditKey = process.env.TRANSLOADIT_KEY
     if (transloaditKey === undefined) {
-      console.log('skipping Transloadit integration test')
+      console.log('skipping Transloadit integration test: process.env.TRANSLOADIT_KEY is not set')
       return this.skip()
     }
 
@@ -43,9 +43,8 @@ describe('Transloadit file processing', () => {
         'image/jpeg', // type
         fs.readFileSync(img, 'base64') // b64
       )
-      // browser.execute(selectFakeFile, 'uppyTransloadit')
     }
-    await result.waitForExist(25000)
+    await result.waitForExist({ timeout: 25000 })
     const text = await result.getText()
     expect(text).to.be.equal('ok')
   })

@@ -11,6 +11,7 @@ function GridListItem (props) {
     showTitles,
     toggleCheckbox,
     id,
+    children,
   } = props
 
   return (
@@ -35,8 +36,13 @@ function GridListItem (props) {
         aria-label={title}
         className="uppy-u-reset uppy-ProviderBrowserItem-inner"
       >
-        {itemIconEl}
-        {showTitles && title}
+        <span className="uppy-ProviderBrowserItem-inner-relative">
+          {itemIconEl}
+
+          {showTitles && title}
+
+          {children}
+        </span>
       </label>
     </li>
   )

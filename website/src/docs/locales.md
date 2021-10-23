@@ -7,7 +7,7 @@ category: "Docs"
 body_class: "page-docs-locales"
 ---
 
-Uppy speaks multiple languages, English being the default. You can use a locale pack to translate Uppy into your language of choice.
+Uppy speaks many languages, English being the default. You can use a locale pack to translate Uppy into your language of choice.
 
 [List of our locale packs](#List-of-locale-packs)
 
@@ -34,8 +34,8 @@ const uppy = new Uppy({
 Add a `<script>` tag with Uppy bundle and the locale pack you’d like to use. You can copy/paste the link from the CDN column in the [locales table](#List-of-locale-packs). The locale will attach itself to the `Uppy.locales` object.
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v2.1.0/uppy.min.js"></script>
-<script src="https://releases.transloadit.com/uppy/locales/v2.0.0/de_DE.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.2.1/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/locales/v2.0.3/de_DE.min.js"></script>
 
 <script>
 var uppy = new Uppy.Core({
@@ -80,8 +80,8 @@ uppy.use(DragDrop, {
 If you speak a language we don’t yet support, you can contribute! Here’s how you do it:
 
 1. Go to the [uppy/locales](https://github.com/transloadit/uppy/tree/master/packages/%40uppy/locales/src) directory in the Uppy GitHub repo.
-1. Go to `en_US.js` and copy its contents, as English is the most up-to-date locale.
-1. Press “Create new file”, name it according to the [`language_COUNTRY` format](http://www.i18nguy.com/unicode/language-identifiers.html), make sure to use underscore `_` as a divider. Examples: `en_US`, `en_GB`, `ru_RU`, `ar_AE`. Variants should be trailing, e.g.: `sr_RS_Latin` for Serbian Latin vs Cyrillic.
-1. If your language has different pluralization rules than English, update the `pluralize` implementation. If you are unsure how to do this, please ask us for help in a [GitHub issue](https://github.com/transloadit/uppy/issues/new).
-1. Paste what you’ve copied from `en_US.js` and use it as a starting point to translate strings into your language.
-1. When you are ready, save the file — this should create a PR that we’ll then review 🎉 Thanks!
+2. Go to `en_US.js` and copy its contents, as English is the most up-to-date locale.
+3. Press “Create new file”, name it according to the [`language_COUNTRY` format](http://www.i18nguy.com/unicode/language-identifiers.html), make sure to use underscore `_` as a divider. Examples: `en_US`, `en_GB`, `ru_RU`, `ar_AE`. Variants should be trailing, for example `sr_RS_Latin` for Serbian Latin vs Cyrillic.
+4. If your language has different pluralization rules than English, update the `pluralize` implementation. If you are unsure how to do this, please ask us for help in a [GitHub issue](https://github.com/transloadit/uppy/issues/new).
+5. Paste what you’ve copied from `en_US.js` and use it as a starting point to translate strings into your language.
+6. When you are ready, save the file — this should create a PR that we’ll then review 🎉 Thanks!

@@ -15,19 +15,17 @@ Uppy supports the popular [Redux](https://redux.js.org/) state management librar
 You can tell Uppy to use your app’s Redux store for its files and UI state. Please check out [Custom Stores](/docs/stores/) for more information on that. Here’s an example to give you a sense of how this works:
 
 ```js
-import { createStore } from 'redux'
-import createReduxStore from '@uppy/store-redux'
+import Uppy from '@uppy/core'
+import * as ReduxStore from '@uppy/store-redux'
+import * as Redux from 'redux'
 
-const reducer = combineReducers({
-  ...reducers,
-  uppy: ReduxStore.reducer,
-})
+function createStore (reducers = {}) {
+  const reducer = Redux.combineReducers({ ...reducers, uppy: ReduxStore.reducer })
+  return Redux.createStore(reducer)
+}
 
-const uppy = new Uppy({
-  store: createReduxStore({
-    store: createStore(reducer), // That’s a lot of stores!
-  }),
-})
+const store = new ReduxStore.ReduxStore({ store: createStore() })
+const uppy = new Uppy({ store })
 ```
 
 Keep in mind that Uppy state is not serializable (because we have to keep track of files with data blobs). So, if you persist your Redux state, you should exclude Uppy state from persistence.
@@ -36,7 +34,7 @@ If you’d like to persist your Uppy state — please look into [@uppy/golden-re
 
 ## Redux Dev Tools
 
-This is a `ReduxDevTools` plugin that simply syncs with the [redux-devtools](https://github.com/gaearon/redux-devtools) browser or JS extensions, and allows for basic time travel:
+This is a `ReduxDevTools` plugin that syncs with the [redux-devtools](https://github.com/gaearon/redux-devtools) browser or JS extensions, and allows for basic time travel:
 
 ```js
 import Uppy from '@uppy/core'
@@ -55,4 +53,4 @@ const uppy = new Uppy({
 
 After you `.use(ReduxDevTools)`, you should be able to see Uppy’s state in Redux Dev Tools.
 
-You will likely not need this if you are actually using Redux yourself, as well as Redux Store in Uppy like in the example above, since it will just work automatically in that case.
+You will likely not need this if you are actually using Redux yourself, as well as Redux Store in Uppy like in the example above, since it will work automatically in that case.

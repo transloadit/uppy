@@ -1,51 +1,75 @@
-const { h } = require('preact')
+const { h, Fragment } = require('preact')
 const prettierBytes = require('@transloadit/prettier-bytes')
 const truncateString = require('@uppy/utils/lib/truncateString')
 
 const renderFileName = (props) => {
-  // Take up at most 2 lines on any screen
-  let maxNameLength
-  // For very small mobile screens
-  if (props.containerWidth <= 352) {
-    maxNameLength = 35
-  // For regular mobile screens
-  } else if (props.containerWidth <= 576) {
-    maxNameLength = 60
-  // For desktops
-  } else {
-    maxNameLength = 30
+  const { author, name } = props.file.meta
+
+  function getMaxNameLength () {
+    if (props.containerWidth <= 352) {
+      return 35
+    }
+    if (props.containerWidth <= 576) {
+      return 60
+    }
+    // When `author` is present, we want to make sure
+    // the file name fits on one line so we can place
+    // the author on the second line.
+    return author ? 20 : 30
   }
 
   return (
-    <div className="uppy-Dashboard-Item-name" title={props.file.meta.name}>
-      {truncateString(props.file.meta.name, maxNameLength)}
+    <div className="uppy-Dashboard-Item-name" title={name}>
+      {truncateString(name, getMaxNameLength())}
     </div>
   )
 }
 
-const renderFileSize = (props) => (
-  props.file.size
-    && (
-    <div className="uppy-Dashboard-Item-statusSize">
-      {prettierBytes(props.file.size)}
+const renderAuthor = (props) => {
+  const { author } = props.file.meta
+  const { providerName } = props.file.remote
+  const dot = `\u00B7`
+
+  if (!author) {
+    return null
+  }
+
+  return (
+    <div className="uppy-Dashboard-Item-author">
+      <a
+        href={`${author.url}?utm_source=Companion&utm_medium=referral`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {truncateString(author.name, 13)}
+      </a>
+      {providerName ? (
+        <Fragment>
+          {` ${dot} `}
+          {providerName}
+        </Fragment>
+      ) : null}
     </div>
-    )
+  )
+}
+
+const renderFileSize = (props) => props.file.size && (
+<div className="uppy-Dashboard-Item-statusSize">
+  {prettierBytes(props.file.size)}
+</div>
 )
 
-const ReSelectButton = (props) => (
-  props.file.isGhost
-    && (
-      <span>
-        {' \u2022 '}
-        <button
-          className="uppy-u-reset uppy-c-btn uppy-Dashboard-Item-reSelect"
-          type="button"
-          onClick={props.toggleAddFilesPanel}
-        >
-          {props.i18n('reSelect')}
-        </button>
-      </span>
-    )
+const ReSelectButton = (props) => props.file.isGhost && (
+<span>
+  {' \u2022 '}
+  <button
+    className="uppy-u-reset uppy-c-btn uppy-Dashboard-Item-reSelect"
+    type="button"
+    onClick={props.toggleAddFilesPanel}
+  >
+    {props.i18n('reSelect')}
+  </button>
+</span>
 )
 
 const ErrorButton = ({ file, onClick }) => {
@@ -68,9 +92,13 @@ const ErrorButton = ({ file, onClick }) => {
 
 module.exports = function FileInfo (props) {
   return (
-    <div className="uppy-Dashboard-Item-fileInfo" data-uppy-file-source={props.file.source}>
+    <div
+      className="uppy-Dashboard-Item-fileInfo"
+      data-uppy-file-source={props.file.source}
+    >
       {renderFileName(props)}
       <div className="uppy-Dashboard-Item-status">
+        {renderAuthor(props)}
         {renderFileSize(props)}
         {ReSelectButton(props)}
         <ErrorButton

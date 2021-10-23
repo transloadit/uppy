@@ -3,6 +3,7 @@ const PropTypes = require('prop-types')
 const DashboardPlugin = require('@uppy/dashboard')
 const basePropTypes = require('./propTypes').dashboard
 const getHTMLProps = require('./getHTMLProps')
+const nonHtmlPropsHaveChanged = require('./nonHtmlPropsHaveChanged')
 
 const h = React.createElement
 
@@ -12,11 +13,6 @@ const h = React.createElement
  */
 
 class DashboardModal extends React.Component {
-  constructor (props) {
-    super(props)
-    this.validProps = getHTMLProps(props)
-  }
-
   componentDidMount () {
     this.installPlugin()
   }
@@ -25,6 +21,10 @@ class DashboardModal extends React.Component {
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
+    } else if (nonHtmlPropsHaveChanged(this, prevProps)) {
+      const options = { ...this.props, onRequestCloseModal: this.props.onRequestClose }
+      delete options.uppy
+      this.plugin.setOptions(options)
     }
     if (prevProps.open && !this.props.open) {
       this.plugin.closeModal()
@@ -65,6 +65,8 @@ class DashboardModal extends React.Component {
   }
 
   render () {
+    // TODO: stop exposing `validProps` as a public property and rename it to `htmlProps`
+    this.validProps = getHTMLProps(this.props)
     return h('div', {
       ref: (container) => {
         this.container = container

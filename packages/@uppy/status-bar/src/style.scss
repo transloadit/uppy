@@ -6,17 +6,13 @@
   position: relative;
   z-index: $zIndex-2;
   display: flex;
-  height: 40px;
+  height: 46px;
   color: $white;
   font-weight: 400;
   font-size: 12px;
   line-height: 40px;
   background-color: $white;
   transition: height 0.2s;
-
-  .uppy-size--md & {
-    height: 46px;
-  }
 
   [data-uppy-theme="dark"] & {
     background-color: $gray-900;

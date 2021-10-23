@@ -194,7 +194,7 @@ export interface ErrorResponse {
 }
 
 export interface SuccessResponse {
-  uploadUrl?: string
+  uploadURL?: string
   status?: number
   body?: any,
   bytesUploaded?: number

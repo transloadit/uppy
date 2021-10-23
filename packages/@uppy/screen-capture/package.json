@@ -1,7 +1,7 @@
 {
   "name": "@uppy/screen-capture",
   "description": "Uppy plugin that captures video from display or application.",
-  "version": "2.0.1",
+  "version": "2.0.4",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -24,7 +24,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "file:../utils",
+    "@uppy/utils": "workspace:*",
     "preact": "^10.5.13"
   },
   "peerDependencies": {
