@@ -101,7 +101,14 @@ class Unsplash extends SearchProvider {
       // To attribute the author of the image, we call the `download_location`
       // endpoint to increment the download count on Unsplash.
       // https://help.unsplash.com/en/articles/2511258-guideline-triggering-a-download
-      request({ ...reqOpts, url: body.links.download_location })
+      request({ ...reqOpts, url: body.links.download_location }, (err, resp) => {
+        if (err || resp.statusCode !== 200) {
+          const err2 = this.error(err, resp)
+          logger.error(err2, 'provider.unsplash.download.location.error')
+        } else {
+          // console.log('download_location complete')
+        }
+      })
 
       return stream
     } catch (err) {
