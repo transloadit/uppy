@@ -10,6 +10,7 @@ const { join } = require('path')
 const fs = require('fs')
 const { promisify } = require('util')
 
+// TODO move to `require('streams/promises').pipeline` when dropping support for Node.js 14.x.
 const pipeline = promisify(pipelineCb)
 
 const { createReadStream, createWriteStream, ReadStream } = fs
@@ -461,6 +462,7 @@ class Uploader {
 
   /**
    * start the tus upload
+   * @param {any} stream
    */
   async _uploadTus (stream) {
     const uploader = this
