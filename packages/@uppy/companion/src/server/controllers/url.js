@@ -18,21 +18,6 @@ function matchYoutubeUrl(url) {
 }
 
 /**
- * Fteches the size and content type of a URL
- *
- * @param {object} req expressJS request object
- * @param {object} res expressJS response object
- */
-
-/**
- * Handles the reques of import a file from a remote URL, and then
- * subsequently uploading it to the specified destination.
- *
- * @param {object} req expressJS request object
- * @param {object} res expressJS response object
- */
-
-/**
  * Validates that the download URL is secure
  *
  * @param {string} url the url to validate
@@ -153,7 +138,7 @@ const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
       url = format.url
     }
 
-    const { size } = await getURLMeta(req.body.url, !debug)
+    const { size } = await getURLMeta(url, !debug)
   
         // @ts-ignore
     logger.debug('Instantiating uploader.', null, req.id)

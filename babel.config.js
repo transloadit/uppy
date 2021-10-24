@@ -18,6 +18,7 @@ module.exports = (api) => {
     plugins: [
       ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
       'babel-plugin-inline-package-json',
+      '@babel/plugin-proposal-class-properties'
     ].filter(Boolean),
   }
 }
