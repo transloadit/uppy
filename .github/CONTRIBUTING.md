@@ -153,7 +153,6 @@ If you have two-factor authentication enabled on your account, Lerna will ask fo
 
 Other things to keep in mind during release:
 
-* When doing a major release >= 1.0, of the `@uppy/core` package, the `peerDependency` of the plugin packages needs to be updated first. Eg when updating from 1.y.z to 2.0.0, the peerDependency of each should be `"@uppy/core": "^2.0.0"` before doing `npm run release`.
 * When adding a new package, add the following key to its package.json:
   ```json
   "publishConfig": { "access": "public" }
@@ -334,7 +333,7 @@ Your `package.json` should resemble something like this:
     "prop-types": "^15.6.1"
   },
   "peerDependencies": {
-    "@uppy/core": "^2.0.0"
+    "@uppy/core": "workspace:^"
   },
   "publishConfig": {
     "access": "public"

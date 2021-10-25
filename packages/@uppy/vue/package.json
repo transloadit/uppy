@@ -15,7 +15,7 @@
     "vue": "^2.6.12"
   },
   "peerDependencies": {
-    "@uppy/core": "^2.0.0",
+    "@uppy/core": "workspace:^",
     "vue": ">=2.6.11"
   },
   "publishConfig": {

@@ -93,7 +93,7 @@ echo '{
     "start": "companion"
   },
   "dependencies": {
-    "@uppy/companion": "^1.13.1"
+    "@uppy/companion": "latest"
   }
 }' > package.json
 

@@ -21,6 +21,6 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "peerDependencies": {
-    "@uppy/core": "^2.0.0"
+    "@uppy/core": "workspace:^"
   }
 }

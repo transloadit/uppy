@@ -25,7 +25,7 @@
     "svelte-preprocess": "^4.6.1"
   },
   "peerDependencies": {
-    "@uppy/core": "^2.0.0",
+    "@uppy/core": "workspace:^",
     "svelte": "^3.0.0"
   },
   "publishConfig": {

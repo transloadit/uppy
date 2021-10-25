@@ -30,6 +30,6 @@
     "preact": "^10.5.13"
   },
   "peerDependencies": {
-    "@uppy/core": "^2.0.0"
+    "@uppy/core": "workspace:^"
   }
 }

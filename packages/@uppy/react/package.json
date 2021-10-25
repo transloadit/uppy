@@ -38,7 +38,7 @@
     "react-dom": "^16.8.6"
   },
   "peerDependencies": {
-    "@uppy/core": "^2.0.0",
+    "@uppy/core": "workspace:^",
     "react": "^16.0.0 || ^17.0.0"
   }
 }

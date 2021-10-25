@@ -26,7 +26,7 @@
     "preact": "^10.5.13"
   },
   "peerDependencies": {
-    "@uppy/core": "^1.13.3"
+    "@uppy/core": "workspace:^"
   },
   "publishConfig": {
     "access": "public"
