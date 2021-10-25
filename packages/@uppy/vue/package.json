@@ -4,11 +4,11 @@
   "main": "lib/index.js",
   "types": "types/index.d.ts",
   "dependencies": {
-    "@uppy/dashboard": "workspace:*",
-    "@uppy/drag-drop": "workspace:*",
-    "@uppy/file-input": "workspace:*",
-    "@uppy/progress-bar": "workspace:*",
-    "@uppy/status-bar": "workspace:*",
+    "@uppy/dashboard": "workspace:^",
+    "@uppy/drag-drop": "workspace:^",
+    "@uppy/file-input": "workspace:^",
+    "@uppy/progress-bar": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
     "shallow-equal": "^1.2.1"
   },
   "devDependencies": {

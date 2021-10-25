@@ -28,19 +28,19 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/core": "workspace:*",
-    "@uppy/dashboard": "workspace:*",
-    "@uppy/dropbox": "workspace:*",
-    "@uppy/facebook": "workspace:*",
-    "@uppy/form": "workspace:*",
-    "@uppy/google-drive": "workspace:*",
-    "@uppy/instagram": "workspace:*",
-    "@uppy/onedrive": "workspace:*",
-    "@uppy/status-bar": "workspace:*",
-    "@uppy/transloadit": "workspace:*",
-    "@uppy/url": "workspace:*",
-    "@uppy/utils": "workspace:*",
-    "@uppy/webcam": "workspace:*"
+    "@uppy/core": "workspace:^",
+    "@uppy/dashboard": "workspace:^",
+    "@uppy/dropbox": "workspace:^",
+    "@uppy/facebook": "workspace:^",
+    "@uppy/form": "workspace:^",
+    "@uppy/google-drive": "workspace:^",
+    "@uppy/instagram": "workspace:^",
+    "@uppy/onedrive": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
+    "@uppy/transloadit": "workspace:^",
+    "@uppy/url": "workspace:^",
+    "@uppy/utils": "workspace:^",
+    "@uppy/webcam": "workspace:^"
   },
   "devDependencies": {
     "abortcontroller-polyfill": "^1.7.3",

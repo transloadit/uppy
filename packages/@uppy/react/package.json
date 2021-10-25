@@ -22,12 +22,12 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/dashboard": "workspace:*",
-    "@uppy/drag-drop": "workspace:*",
-    "@uppy/file-input": "workspace:*",
-    "@uppy/progress-bar": "workspace:*",
-    "@uppy/status-bar": "workspace:*",
-    "@uppy/utils": "workspace:*",
+    "@uppy/dashboard": "workspace:^",
+    "@uppy/drag-drop": "workspace:^",
+    "@uppy/file-input": "workspace:^",
+    "@uppy/progress-bar": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
+    "@uppy/utils": "workspace:^",
     "prop-types": "^15.6.1"
   },
   "devDependencies": {

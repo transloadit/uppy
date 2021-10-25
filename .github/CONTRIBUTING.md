@@ -326,11 +326,11 @@ Your `package.json` should resemble something like this:
 {
   "name": "@uppy/framework",
   "dependencies": {
-    "@uppy/dashboard": "workspace:*",
-    "@uppy/drag-drop": "workspace:*",
-    "@uppy/progress-bar": "workspace:*",
-    "@uppy/status-bar": "workspace:*",
-    "@uppy/utils": "workspace:*",
+    "@uppy/dashboard": "workspace:^",
+    "@uppy/drag-drop": "workspace:^",
+    "@uppy/progress-bar": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
+    "@uppy/utils": "workspace:^",
     "prop-types": "^15.6.1"
   },
   "peerDependencies": {
