@@ -105,8 +105,6 @@ class Unsplash extends SearchProvider {
         if (err || resp.statusCode !== 200) {
           const err2 = this.error(err, resp)
           logger.error(err2, 'provider.unsplash.download.location.error')
-        } else {
-          // console.log('download_location complete')
         }
       })
 
