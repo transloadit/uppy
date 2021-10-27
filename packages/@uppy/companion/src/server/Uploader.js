@@ -51,19 +51,19 @@ class Uploader {
    *
    * @typedef {object} UploaderOptions
    * @property {string} endpoint
-   * @property {string} uploadUrl
+   * @property {string} [uploadUrl]
    * @property {string} protocol
-   * @property {number} size
-   * @property {string} fieldname
+   * @property {number} [size]
+   * @property {string} [fieldname]
    * @property {string} pathPrefix
-   * @property {any} s3
+   * @property {any} [s3]
    * @property {any} metadata
    * @property {any} companionOptions
-   * @property {any} storage
-   * @property {any} headers
-   * @property {string} httpMethod
-   * @property {boolean} useFormData
-   * @property {number} chunkSize
+   * @property {any} [storage]
+   * @property {any} [headers]
+   * @property {string} [httpMethod]
+   * @property {boolean} [useFormData]
+   * @property {number} [chunkSize]
    *
    * @param {UploaderOptions} options
    */
@@ -383,8 +383,8 @@ class Uploader {
 
   /**
    *
-   * @param {number} bytesUploaded
-   * @param {number | null} bytesTotalIn
+   * @param {number} [bytesUploaded]
+   * @param {number | null} [bytesTotalIn]
    */
   onProgress (bytesUploaded, bytesTotalIn) {
     const bytesTotal = bytesTotalIn || this.size || 0
@@ -462,6 +462,7 @@ class Uploader {
 
   /**
    * start the tus upload
+   *
    * @param {any} stream
    */
   async _uploadTus (stream) {
@@ -507,11 +508,10 @@ class Uploader {
         },
         /**
          *
-         * @param {number} bytesUploaded
-         * @param {number} bytesTotal
+         * @param {number} [bytesUploaded]
+         * @param {number} [bytesTotal]
          */
-        // @ts-ignore
-        onProgress (bytesUploaded, bytesTotal) { // eslint-disable-line no-unused-vars
+        onProgress (bytesUploaded, bytesTotal) {
           uploader.onProgress(bytesUploaded, bytesTotal)
         },
         onSuccess () {
