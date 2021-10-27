@@ -9557,6 +9557,7 @@ __metadata:
   dependencies:
     "@uppy/companion-client": "workspace:*"
     "@uppy/utils": "workspace:*"
+    nock: ^13.1.4
     tus-js-client: ^2.1.1
   peerDependencies:
     "@uppy/core": ^2.0.0
@@ -30410,7 +30411,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"nock@npm:^13.1.0":
+"nock@npm:^13.1.0, nock@npm:^13.1.4":
   version: 13.1.4
   resolution: "nock@npm:13.1.4"
   dependencies:
