@@ -437,11 +437,6 @@ class Uploader {
    * start the tus upload
    */
   uploadTus () {
-    if (!this.failed) {
-      this.failed = true
-      setTimeout(() => this.emitError(new Error('test')), 1000)
-      return
-    }
     const file = fs.createReadStream(this.path)
     const uploader = this
 

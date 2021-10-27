@@ -366,7 +366,7 @@ module.exports = class Tus extends BasePlugin {
     this.uppy.emit('upload-started', file)
     this.uppy.log(file.remote.url)
 
-    if (file.serverToken && file.response) {
+    if (file.serverToken) {
       return this.connectToServerSocket(file)
     }
 

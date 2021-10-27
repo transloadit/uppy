@@ -28,8 +28,5 @@
   },
   "peerDependencies": {
     "@uppy/core": "^2.0.0"
-  },
-  "devDependencies": {
-    "nock": "^13.1.4"
   }
 }
