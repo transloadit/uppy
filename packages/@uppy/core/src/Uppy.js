@@ -1286,7 +1286,7 @@ class Uppy {
   }
 
   updateOnlineStatus () {
-    const online      = typeof window.navigator.onLine !== 'undefined'
+    const online = typeof window.navigator.onLine !== 'undefined'
       ? window.navigator.onLine
       : true
     if (!online) {
