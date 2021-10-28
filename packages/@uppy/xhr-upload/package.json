@@ -24,14 +24,14 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/companion-client": "workspace:*",
-    "@uppy/utils": "workspace:*",
+    "@uppy/companion-client": "workspace:^",
+    "@uppy/utils": "workspace:^",
     "nanoid": "^3.1.25"
   },
   "devDependencies": {
     "nock": "^13.1.0"
   },
   "peerDependencies": {
-    "@uppy/core": "^2.0.0"
+    "@uppy/core": "workspace:^"
   }
 }

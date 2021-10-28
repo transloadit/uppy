@@ -24,10 +24,10 @@
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "0.0.7",
-    "@uppy/utils": "workspace:*",
+    "@uppy/utils": "workspace:^",
     "lodash.throttle": "^4.1.1"
   },
   "peerDependencies": {
-    "@uppy/core": "^2.0.0"
+    "@uppy/core": "workspace:^"
   }
 }
