@@ -1,9 +1,8 @@
-const Provider = require('../Provider')
-
 const request = require('request')
 const purest = require('purest')({ request })
 const { promisify } = require('util')
 
+const Provider = require('../Provider')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
@@ -31,10 +30,6 @@ class OneDrive extends Provider {
       .get('me')
       .auth(token)
       .request(done)
-  }
-
-  async list (options) {
-    return promisify(this._list.bind(this))(options)
   }
 
   /**
@@ -95,10 +90,6 @@ class OneDrive extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async size (options) {
-    return promisify(this._size.bind(this))(options)
-  }
-
   _size ({ id, query, token }, done) {
     const rootPath = query.driveId ? `/drives/${query.driveId}` : '/me/drive'
     return this.client
@@ -152,5 +143,8 @@ class OneDrive extends Provider {
 }
 
 OneDrive.version = 2
+
+OneDrive.prototype.list = promisify(OneDrive.prototype._list)
+OneDrive.prototype.size = promisify(OneDrive.prototype._size)
 
 module.exports = OneDrive

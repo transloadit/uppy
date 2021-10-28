@@ -1,9 +1,8 @@
-const Provider = require('../Provider')
-
 const request = require('request')
 const purest = require('purest')({ request })
 const { promisify } = require('util')
 
+const Provider = require('../Provider')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
@@ -36,10 +35,6 @@ class Box extends Provider {
       .get('users/me')
       .auth(token)
       .request(done)
-  }
-
-  async list (options) {
-    return promisify(this._list.bind(this))(options)
   }
 
   /**
@@ -86,10 +81,6 @@ class Box extends Provider {
     }
   }
 
-  async thumbnail (options) {
-    return promisify(this._thumbnail.bind(this))(options)
-  }
-
   _thumbnail ({ id, token }, done) {
     return this.client
       .get(`files/${id}/thumbnail.png`)
@@ -125,10 +116,6 @@ class Box extends Provider {
       })
   }
 
-  async size (options) {
-    return promisify(this._size.bind(this))(options)
-  }
-
   _size ({ id, token }, done) {
     return this.client
       .get(`files/${id}`)
@@ -141,10 +128,6 @@ class Box extends Provider {
         }
         done(null, parseInt(body.size, 10))
       })
-  }
-
-  async logout (options) {
-    return promisify(this._logout.bind(this))(options)
   }
 
   _logout ({ companion, token }, done) {
@@ -204,5 +187,10 @@ class Box extends Provider {
 }
 
 Box.version = 2
+
+Box.prototype.list = promisify(Box.prototype._list)
+Box.prototype.thumbnail = promisify(Box.prototype._thumbnail)
+Box.prototype.size = promisify(Box.prototype._size)
+Box.prototype.logout = promisify(Box.prototype._logout)
 
 module.exports = Box

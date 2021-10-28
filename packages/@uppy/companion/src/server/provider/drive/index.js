@@ -274,10 +274,6 @@ class Drive extends Provider {
       })
   }
 
-  async logout (options) {
-    return promisify(this._logout.bind(this))(options)
-  }
-
   _error (err, resp) {
     if (resp) {
       const fallbackMessage = `request to ${this.authProvider} returned ${resp.statusCode}`
@@ -289,5 +285,7 @@ class Drive extends Provider {
 }
 
 Drive.version = 2
+
+Drive.prototype.logout = promisify(Drive.prototype._logout)
 
 module.exports = Drive

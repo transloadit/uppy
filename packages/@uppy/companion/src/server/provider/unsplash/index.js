@@ -41,10 +41,6 @@ function adaptData (body, currentQuery) {
  * Adapter for API https://api.unsplash.com
  */
 class Unsplash extends SearchProvider {
-  async list (options) {
-    return promisify(this._list.bind(this))(options)
-  }
-
   _list ({ token, query = { cursor: null, q: null } }, done) {
     const reqOpts = {
       url: `${BASE_URL}/search/photos`,
@@ -115,10 +111,6 @@ class Unsplash extends SearchProvider {
     }
   }
 
-  async size (options) {
-    return promisify(this._size.bind(this))(options)
-  }
-
   _size ({ id, token }, done) {
     const reqOpts = {
       url: `${BASE_URL}/photos/${id}`,
@@ -160,5 +152,8 @@ class Unsplash extends SearchProvider {
 }
 
 Unsplash.version = 2
+
+Unsplash.prototype.list = promisify(Unsplash.prototype._list)
+Unsplash.prototype.size = promisify(Unsplash.prototype._size)
 
 module.exports = Unsplash

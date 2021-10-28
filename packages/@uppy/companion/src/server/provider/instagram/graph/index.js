@@ -1,9 +1,8 @@
-const Provider = require('../../Provider')
-
 const request = require('request')
 const purest = require('purest')({ request })
 const { promisify } = require('util')
 
+const Provider = require('../../Provider')
 const { getURLMeta } = require('../../../helpers/request')
 const logger = require('../../../logger')
 const adapter = require('./adapter')
@@ -32,10 +31,6 @@ class Instagram extends Provider {
 
   static get authProvider () {
     return 'instagram'
-  }
-
-  async list (options) {
-    return promisify(this._list.bind(this))(options)
   }
 
   _list ({ directory, token, query = { cursor: null } }, done) {
@@ -111,10 +106,6 @@ class Instagram extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async size (options) {
-    return promisify(this._size.bind(this))(options)
-  }
-
   _size ({ id, token }, done) {
     return this.client
       .get(`https://graph.instagram.com/${id}`)
@@ -179,5 +170,8 @@ class Instagram extends Provider {
 }
 
 Instagram.version = 2
+
+Instagram.prototype.list = promisify(Instagram.prototype._list)
+Instagram.prototype.size = promisify(Instagram.prototype._size)
 
 module.exports = Instagram

@@ -1,9 +1,8 @@
-const Provider = require('../Provider')
-
 const request = require('request')
 const purest = require('purest')({ request })
 const { promisify } = require('util')
 
+const Provider = require('../Provider')
 const { getURLMeta } = require('../../helpers/request')
 const logger = require('../../logger')
 const adapter = require('./adapter')
@@ -25,10 +24,6 @@ class Facebook extends Provider {
 
   static get authProvider () {
     return 'facebook'
-  }
-
-  async list (options) {
-    return promisify(this._list.bind(this))(options)
   }
 
   _list ({ directory, token, query = { cursor: null } }, done) {
@@ -120,10 +115,6 @@ class Facebook extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async size (options) {
-    return promisify(this._size.bind(this))(options)
-  }
-
   _size ({ id, token }, done) {
     return this.client
       .get(`https://graph.facebook.com/${id}`)
@@ -143,10 +134,6 @@ class Facebook extends Provider {
             done(err2)
           })
       })
-  }
-
-  async logout (options) {
-    return promisify(this._logout.bind(this))(options)
   }
 
   _logout ({ token }, done) {
@@ -201,5 +188,9 @@ class Facebook extends Provider {
 }
 
 Facebook.version = 2
+
+Facebook.prototype.list = promisify(Facebook.prototype._list)
+Facebook.prototype.size = promisify(Facebook.prototype._size)
+Facebook.prototype.logout = promisify(Facebook.prototype._logout)
 
 module.exports = Facebook

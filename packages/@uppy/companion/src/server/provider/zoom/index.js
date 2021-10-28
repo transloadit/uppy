@@ -1,9 +1,9 @@
-const Provider = require('../Provider')
-
 const { promisify } = require('util')
 const request = require('request')
 const moment = require('moment-timezone')
 const purest = require('purest')({ request })
+
+const Provider = require('../Provider')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
@@ -31,10 +31,6 @@ class Zoom extends Provider {
 
   static get authProvider () {
     return 'zoom'
-  }
-
-  async list (options) {
-    return promisify(this._list.bind(this))(options)
   }
 
   _list (options, done) {
@@ -151,10 +147,6 @@ class Zoom extends Provider {
     }
   }
 
-  async size (options) {
-    return promisify(this._size.bind(this))(options)
-  }
-
   _size ({ id, token, query }, done) {
     const meetingId = id
     const fileId = query.recordingId
@@ -259,10 +251,6 @@ class Zoom extends Provider {
     return data
   }
 
-  async logout (options) {
-    return promisify(this._logout.bind(this))(options)
-  }
-
   _logout ({ companion, token }, done) {
     companion.getProviderCredentials().then(({ key, secret }) => {
       const encodedAuth = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
@@ -283,10 +271,6 @@ class Zoom extends Provider {
           done(null, { revoked: (body || {}).status === 'success' })
         })
     }).catch((err) => done(err))
-  }
-
-  async deauthorizationCallback (options) {
-    return promisify(this._deauthorizationCallback.bind(this))(options)
   }
 
   _deauthorizationCallback ({ companion, body, headers }, done) {
@@ -356,5 +340,10 @@ class Zoom extends Provider {
 }
 
 Zoom.version = 2
+
+Zoom.prototype.list = promisify(Zoom.prototype._list)
+Zoom.prototype.size = promisify(Zoom.prototype._size)
+Zoom.prototype.logout = promisify(Zoom.prototype._logout)
+Zoom.prototype.deauthorizationCallback = promisify(Zoom.prototype._deauthorizationCallback)
 
 module.exports = Zoom

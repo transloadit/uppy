@@ -1,9 +1,8 @@
-const Provider = require('../Provider')
-
 const request = require('request')
 const purest = require('purest')({ request })
 const { promisify } = require('util')
 
+const Provider = require('../Provider')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
@@ -46,10 +45,6 @@ class DropBox extends Provider {
       .options({ version: '2' })
       .auth(token)
       .request(done)
-  }
-
-  async list (options) {
-    return promisify(this._list.bind(this))(options)
   }
 
   /**
@@ -145,10 +140,6 @@ class DropBox extends Provider {
     }
   }
 
-  async thumbnail (options) {
-    return promisify(this._thumbnail.bind(this))(options)
-  }
-
   _thumbnail ({ id, token }, done) {
     return this.client
       .post('https://content.dropboxapi.com/2/files/get_thumbnail')
@@ -173,10 +164,6 @@ class DropBox extends Provider {
       })
   }
 
-  async size (options) {
-    return promisify(this._size.bind(this))(options)
-  }
-
   _size ({ id, token }, done) {
     return this.client
       .post('files/get_metadata')
@@ -191,10 +178,6 @@ class DropBox extends Provider {
         }
         done(null, parseInt(body.size, 10))
       })
-  }
-
-  async logout (options) {
-    return promisify(this._logout.bind(this))(options)
   }
 
   _logout ({ token }, done) {
@@ -246,5 +229,10 @@ class DropBox extends Provider {
 }
 
 DropBox.version = 2
+
+DropBox.prototype.list = promisify(DropBox.prototype._list)
+DropBox.prototype.thumbnail = promisify(DropBox.prototype._thumbnail)
+DropBox.prototype.size = promisify(DropBox.prototype._size)
+DropBox.prototype.logout = promisify(DropBox.prototype._logout)
 
 module.exports = DropBox
