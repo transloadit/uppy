@@ -43,7 +43,6 @@ async function updateVersions (files, packageName) {
   console.log('replacing', replacements, 'in', files.length, 'files')
 
   for (const f of files) {
-    // eslint-disable-next-line no-await-in-loop
     await replaceInFile(f, replacements)
   }
 }

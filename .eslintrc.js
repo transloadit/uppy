@@ -43,7 +43,6 @@ module.exports = {
   rules: {
     // transloadit rules we are actually ok with in the uppy repo
     'import/extensions': 'off',
-    'no-await-in-loop': 'off',
     'object-shorthand': ['error', 'always'],
     'strict': 'off',
     'key-spacing': 'off',
