@@ -31,7 +31,7 @@ function UploadBtn (props) {
     { 'uppy-StatusBar-actionBtn--disabled': isSomeGhost },
   )
 
-  const uploadBtnText    = newFiles && isUploadStarted && !recoveredState
+  const uploadBtnText = newFiles && isUploadStarted && !recoveredState
     ? i18n('uploadXNewFiles', { smart_count: newFiles })
     : i18n('uploadXFiles', { smart_count: newFiles })
 
