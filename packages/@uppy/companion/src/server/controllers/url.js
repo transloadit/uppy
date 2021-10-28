@@ -53,7 +53,6 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
     agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
   }
 
-  // return onDataChunk(new Error('test error'))
 
   return new Promise((resolve, reject) => {
     const req = request(opts)
