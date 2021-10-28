@@ -21446,7 +21446,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"get-own-enumerable-property-symbols@npm:^3.0.0":
+"get-own-enumerable-property-symbols@npm:^3.0.0, get-own-enumerable-property-symbols@npm:^3.0.2":
   version: 3.0.2
   resolution: "get-own-enumerable-property-symbols@npm:3.0.2"
   checksum: 8f0331f14159f939830884799f937343c8c0a2c330506094bc12cbee3665d88337fe97a4ea35c002cc2bdba0f5d9975ad7ec3abb925015cdf2a93e76d4759ede
@@ -21808,7 +21808,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"glob@npm:^7.0.0, glob@npm:^7.0.3, glob@npm:^7.0.6, glob@npm:^7.1.0, glob@npm:^7.1.1, glob@npm:^7.1.2, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6":
+"glob@npm:^7.0.0, glob@npm:^7.0.3, glob@npm:^7.0.6, glob@npm:^7.1.0, glob@npm:^7.1.1, glob@npm:^7.1.2, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6, glob@npm:^7.2.0":
   version: 7.2.0
   resolution: "glob@npm:7.2.0"
   dependencies:
@@ -24609,6 +24609,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
+"is-obj@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "is-obj@npm:3.0.0"
+  checksum: 75e97a99ed0b0884778887f8e913791864151307774914283b068b06b57ca86f695b024aa1ba5ed04411918edef93e2bfd8f84d68c6b6aab417802cc76f5061b
+  languageName: node
+  linkType: hard
+
 "is-object@npm:^1.0.1":
   version: 1.0.2
   resolution: "is-object@npm:1.0.2"
@@ -24768,6 +24775,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 2.1.0
   resolution: "is-regexp@npm:2.1.0"
   checksum: 502f8e09faddc2e360350d3fa88dfb3af47b3c8e0bea1d0fe9903a1265cb199547cc11c99e9ee27cb010f678f6b48e52e92273860b68f6339e463e034f21859c
+  languageName: node
+  linkType: hard
+
+"is-regexp@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "is-regexp@npm:3.0.0"
+  checksum: c0f32f93accb9408ce1fd3d47f43648b8612d28186638b3a46e835fb147842b220b2ede4bb86315e996a4d78c393b30b0b9ab9348f9be7ab27d4c2b102469c7c
   languageName: node
   linkType: hard
 
@@ -27309,6 +27323,21 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
+"locale-pack@workspace:private/locale-pack":
+  version: 0.0.0-use.local
+  resolution: "locale-pack@workspace:private/locale-pack"
+  dependencies:
+    chalk: ^4.1.2
+    data.task: ^3.1.2
+    dedent: ^0.7.0
+    glob: ^7.2.0
+    mdast-util-heading-range: ^3.1.0
+    remark: ^14.0.1
+    remark-frontmatter: ^4.0.1
+    stringify-object: ^4.0.0
+  languageName: unknown
+  linkType: soft
+
 "localtunnel@npm:^2.0.1":
   version: 2.0.2
   resolution: "localtunnel@npm:2.0.2"
@@ -28404,15 +28433,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"mdast-util-frontmatter@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "mdast-util-frontmatter@npm:0.2.0"
-  dependencies:
-    micromark-extension-frontmatter: ^0.2.0
-  checksum: 6dbed31233b34b41dd09da4756bbe3bd674fa3033c58f771f419e56675b8c7a601a18838d027fdb9cbef3b958346c661f7926ca401e154e63c071ecb2a3596a2
-  languageName: node
-  linkType: hard
-
 "mdast-util-frontmatter@npm:^1.0.0":
   version: 1.0.0
   resolution: "mdast-util-frontmatter@npm:1.0.0"
@@ -29108,15 +29128,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     parse-entities: ^3.0.0
     uvu: ^0.5.0
   checksum: f8e704dd8c0529263621f7463721f6bc113de817b5db8a4b8ac45fa60a11ccbd9a51ee8680f4fb04f85cb25bbd73e0a2098b948c828db5bdce5e0c26157995e1
-  languageName: node
-  linkType: hard
-
-"micromark-extension-frontmatter@npm:^0.2.0":
-  version: 0.2.2
-  resolution: "micromark-extension-frontmatter@npm:0.2.2"
-  dependencies:
-    fault: ^1.0.0
-  checksum: b591494c2910162a47b4413b43d80b1e3f148c0d92955576737ff36525f34deb6cc784cdbede76c4ce6a9d06c75586c7198ffb84f97efee894cafabcc86716e4
   languageName: node
   linkType: hard
 
@@ -36255,16 +36266,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"remark-frontmatter@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "remark-frontmatter@npm:3.0.0"
-  dependencies:
-    mdast-util-frontmatter: ^0.2.0
-    micromark-extension-frontmatter: ^0.2.0
-  checksum: 33bbcf36a51ee4c3813106b933766e0dc4b2b50f8eb4da3a4c577ea0278335589b36b182fb2722c9857d0ea9932ac75368a5dff70c8cf2b74f4747c244068976
-  languageName: node
-  linkType: hard
-
 "remark-frontmatter@npm:^4.0.0":
   version: 4.0.0
   resolution: "remark-frontmatter@npm:4.0.0"
@@ -36274,6 +36275,18 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     micromark-extension-frontmatter: ^1.0.0
     unified: ^10.0.0
   checksum: 7f3728716da980abb89c32fc42fcd595196c63a660b70d16fc38edfde8daf15492e6292453ea0df0bbfe0c06a62972d5baafd4f5ec6e05b181eef1676c1bbc06
+  languageName: node
+  linkType: hard
+
+"remark-frontmatter@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "remark-frontmatter@npm:4.0.1"
+  dependencies:
+    "@types/mdast": ^3.0.0
+    mdast-util-frontmatter: ^1.0.0
+    micromark-extension-frontmatter: ^1.0.0
+    unified: ^10.0.0
+  checksum: c1c448923cd0239e9eeafb42d7129c05081c9a1bca4c8164b562cbb748e80d103bfd058597a48d54000ce3c776200ab8ccd64a9679d955423f07e4a4e77f10c3
   languageName: node
   linkType: hard
 
@@ -36713,7 +36726,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"remark@npm:^14.0.0":
+"remark@npm:^14.0.0, remark@npm:^14.0.1":
   version: 14.0.1
   resolution: "remark@npm:14.0.1"
   dependencies:
@@ -39692,6 +39705,17 @@ resolve@^2.0.0-next.3:
     is-obj: ^1.0.1
     is-regexp: ^1.0.0
   checksum: 6827a3f35975cfa8572e8cd3ed4f7b262def260af18655c6fde549334acdac49ddba69f3c861ea5a6e9c5a4990fe4ae870b9c0e6c31019430504c94a83b7a154
+  languageName: node
+  linkType: hard
+
+"stringify-object@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "stringify-object@npm:4.0.0"
+  dependencies:
+    get-own-enumerable-property-symbols: ^3.0.2
+    is-obj: ^3.0.0
+    is-regexp: ^3.0.0
+  checksum: 8fffae04044f0a4f7fa70e05b857750e35a54e6117cdf69cad2d1ef318ff4b0c8fec57a7731646fca0ca7c07ae723cb12edbbbc863377607aec9c83adb9ff5a3
   languageName: node
   linkType: hard
 
@@ -42784,7 +42808,6 @@ typescript@4.3.4:
     concat-stream: ^2.0.0
     core-js: ~3.15.2
     cssnano: ^5.0.6
-    data.task: ^3.1.2
     dedent: ^0.7.0
     deep-freeze: ^0.0.1
     disc: ^1.3.3
@@ -42811,7 +42834,6 @@ typescript@4.3.4:
     last-commit-message: ^1.0.0
     lerna: ^4.0.0
     lint-staged: ^11.0.0
-    mdast-util-heading-range: ^3.1.0
     mime-types: ^2.1.26
     minify-stream: ^2.0.1
     multi-glob: ^1.0.2
@@ -42826,9 +42848,7 @@ typescript@4.3.4:
     postcss-logical: ^4.0.2
     postcss-safe-important: ^1.2.0
     pre-commit: ^1.2.2
-    remark: ^13.0.0
     remark-cli: ^10.0.0
-    remark-frontmatter: ^3.0.0
     remark-lint-uppy: "workspace:*"
     replacestream: ^4.0.3
     resolve: ^1.17.0

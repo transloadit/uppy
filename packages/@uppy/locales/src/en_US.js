@@ -43,15 +43,12 @@ en_US.strings = {
   done: 'Done',
   dropHereOr: 'Drop here or %{browse}',
   dropHint: 'Drop your files here',
-  dropPaste: 'Drop files here, paste or %{browse}',
   dropPasteBoth: 'Drop files here, %{browseFiles} or %{browseFolders}',
   dropPasteFiles: 'Drop files here or %{browseFiles}',
   dropPasteFolders: 'Drop files here or %{browseFolders}',
-  dropPasteImport: 'Drop files here, paste, %{browse} or import from',
   dropPasteImportBoth: 'Drop files here, %{browseFiles}, %{browseFolders} or import from:',
   dropPasteImportFiles: 'Drop files here, %{browseFiles} or import from:',
   dropPasteImportFolders: 'Drop files here, %{browseFolders} or import from:',
-  edit: 'Edit',
   editFile: 'Edit file',
   editFileWithFilename: 'Edit file %{file}',
   editing: 'Editing %{file}',
@@ -63,7 +60,6 @@ en_US.strings = {
   exceedsSize: '%{file} exceeds maximum allowed size of %{size}',
   failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
   failedToUpload: 'Failed to upload %{file}',
-  fileSource: 'File source: %{name}',
   filesUploadedOfTotal: {
     '0': '%{complete} of %{smart_count} file uploaded',
     '1': '%{complete} of %{smart_count} files uploaded'

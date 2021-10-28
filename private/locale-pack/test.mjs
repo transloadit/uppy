@@ -6,8 +6,9 @@ import glob from 'glob'
 import chalk from 'chalk'
 import Task from 'data.task'
 
-import { getPaths, omit } from './locale-packs.helpers.mjs'
+import { getPaths, omit } from './helpers.mjs'
 
+const root = path.join('..', '..')
 const leadingLocaleName = 'en_US'
 const mode = process.argv[2]
 const pluginLocaleDependencies = {
@@ -28,13 +29,13 @@ test().fork(
 function test () {
   switch (mode) {
     case 'unused':
-      return getPaths('packages/@uppy/**/src/locale.js')
+      return getPaths(`${root}/packages/@uppy/**/src/locale.js`)
         .map((paths) => paths.map((filePath) => path.basename(path.join(filePath, '..', '..'))))
         .map(getAllFilesPerPlugin)
         .chain(unused)
 
     case 'warnings':
-      return getPaths('packages/@uppy/locales/src/*.js')
+      return getPaths(`${root}/packages/@uppy/locales/src/*.js`)
         .chain(importFiles)
         .map((locales) => ({
           leadingLocale: locales[leadingLocaleName],
@@ -54,7 +55,7 @@ function importFiles (paths) {
     for (const filePath of paths) {
       const localeName = path.basename(filePath, '.js')
       // Note: `.default` should be removed when we move to ESM
-      const locale = (await import(path.join('..', filePath))).default
+      const locale = (await import(filePath)).default
 
       locales[localeName] = locale.strings
     }
@@ -68,7 +69,7 @@ function getAllFilesPerPlugin (pluginNames) {
 
   function getFiles (name) {
     return glob
-      .sync(`packages/@uppy/${name}/lib/**/*.js`)
+      .sync(`${root}/packages/@uppy/${name}/lib/**/*.js`)
       .filter((filePath) => !filePath.includes('locale.js'))
       .map((filePath) => fs.readFileSync(filePath, 'utf-8'))
   }
@@ -91,7 +92,7 @@ function unused (filesPerPlugin, data) {
     for (const [name, fileStrings] of Object.entries(filesPerPlugin)) {
       const fileString = fileStrings.join('\n')
       const localePath = path.join(
-        '..',
+        root,
         'packages',
         '@uppy',
         name,

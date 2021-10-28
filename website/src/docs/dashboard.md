@@ -356,10 +356,6 @@ module.exports = {
     copyLinkToClipboardFallback: 'Copy the URL below',
     // Used as the hover title and screen reader label for buttons that copy a file link.
     copyLink: 'Copy link',
-    // Used as the hover title and screen reader label for file source icons, e.g., “File source: Dropbox”.
-    fileSource: 'File source: %{name}',
-    // Used as the label for buttons that accept and close panels (remote providers or metadata editor)
-    done: 'Done',
     back: 'Back',
     // Used as the screen reader label for buttons that remove a file.
     removeFile: 'Remove file',
@@ -367,25 +363,13 @@ module.exports = {
     editFile: 'Edit file',
     // Shown in the panel header for the metadata editor. Rendered as “Editing image.png”.
     editing: 'Editing %{file}',
-    // Text for a button shown on the file preview, used to edit file metadata
-    edit: 'Edit',
     // Used as the screen reader label for the button that saves metadata edits and returns to the
     // file list view.
     finishEditingFile: 'Finish editing file',
     saveChanges: 'Save changes',
     // Used as the label for the tab button that opens the system file selection dialog.
     myDevice: 'My Device',
-    // Shown in the main dashboard area when no files have been selected, and one or more
-    // remote provider plugins are in use. %{browse} is replaced with a link that opens the system
-    // file selection dialog.
-    dropPasteImport: 'Drop files here, paste, %{browse} or import from',
-    // Shown in the main dashboard area when no files have been selected, and no provider
-    // plugins are in use. %{browse} is replaced with a link that opens the system
-    // file selection dialog.
-    dropPaste: 'Drop files here, paste or %{browse}',
     dropHint: 'Drop your files here',
-    // This string is clickable and opens the system file selection dialog.
-    browse: 'browse',
     // Used as the hover text and screen reader label for file progress indicators when
     // they have been fully uploaded.
     uploadComplete: 'Upload complete',
@@ -413,9 +397,6 @@ module.exports = {
     },
     // The "powered by Uppy" link at the bottom of the Dashboard.
     poweredBy: 'Powered by %{uppy}',
-    // @uppy/status-bar strings:
-    uploading: 'Uploading',
-    complete: 'Complete',
     addMore: 'Add more',
     editFileWithFilename: 'Edit file %{file}',
     save: 'Save',

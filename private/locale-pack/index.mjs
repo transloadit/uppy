@@ -4,23 +4,24 @@ import fs from 'node:fs'
 
 import dedent from 'dedent'
 import stringifyObject from 'stringify-object'
-import remark from 'remark'
+import { remark } from 'remark'
 import { headingRange } from 'mdast-util-heading-range'
 import remarkFrontmatter from 'remark-frontmatter'
 import Task from 'data.task'
 
-import remarkConfig from '../private/remark-lint-uppy/index.js'
+import remarkConfig from '../remark-lint-uppy/index.js'
 
 import {
   readFile,
   writeFile,
   getPaths,
   sortObjectAlphabetically,
-} from './locale-packs.helpers.mjs'
+} from './helpers.mjs'
 
 const { settings: remarkSettings } = remarkConfig
 
-const localesPath = path.join('packages', '@uppy', 'locales')
+const root = path.join('..', '..')
+const localesPath = path.join(root, 'packages', '@uppy', 'locales')
 const templatePath = path.join(localesPath, 'template.js')
 const englishLocalePath = path.join(localesPath, 'src', 'en_US.js')
 
@@ -37,7 +38,7 @@ main().fork(
 )
 
 function main () {
-  return getPaths('packages/@uppy/**/src/locale.js')
+  return getPaths(`${root}/packages/@uppy/**/src/locale.js`)
     .chain(importFiles)
     .chain(createCombinedLocale)
     .map(({ combinedLocale, locales }) => ({
@@ -65,7 +66,7 @@ function importFiles (paths) {
     for (const filePath of paths) {
       const pluginName = path.basename(path.join(filePath, '..', '..'))
       // Note: `.default` should be removed when we move to ESM
-      const locale = (await import(path.join('..', filePath))).default
+      const locale = (await import(path.join(filePath))).default
 
       locales[pluginName] = locale
     }
@@ -114,6 +115,7 @@ function generateTypes (pluginName, locale) {
     .join('')
 
   const localePath = path.join(
+    root,
     'packages',
     '@uppy',
     pluginName,
@@ -137,8 +139,9 @@ function generateTypes (pluginName, locale) {
 
 function generateLocaleDocs (pluginName) {
   const fileName = `${pluginName}.md`
-  const docPath = path.join('website', 'src', 'docs', fileName)
+  const docPath = path.join(root, 'website', 'src', 'docs', fileName)
   const localePath = path.join(
+    root,
     'packages',
     '@uppy',
     pluginName,
