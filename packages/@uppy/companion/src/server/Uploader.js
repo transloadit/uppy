@@ -1,7 +1,6 @@
 const tus = require('tus-js-client')
 const uuid = require('uuid')
 const isObject = require('isobject')
-// @ts-ignore
 const validator = require('validator')
 const request = require('request')
 // eslint-disable-next-line no-unused-vars
