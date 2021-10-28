@@ -98,7 +98,7 @@ module.exports.getRedirectEvaluator = (rawRequestURL, blockPrivateIPs) => {
     const shouldRedirect = redirectURL.protocol === requestURL.protocol
     if (!shouldRedirect) {
       logger.info(
-        `blocking redirect from ${requestURL} to ${redirectURL}`, 'redirect.protection'
+        `blocking redirect from ${requestURL} to ${redirectURL}`, 'redirect.protection',
       )
     }
 

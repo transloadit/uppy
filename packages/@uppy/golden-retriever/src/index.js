@@ -44,7 +44,7 @@ module.exports = class GoldenRetriever extends BasePlugin {
     this.saveFilesStateToLocalStorage = throttle(
       this.saveFilesStateToLocalStorage.bind(this),
       500,
-      { leading: true, trailing: true }
+      { leading: true, trailing: true },
     )
     this.restoreState = this.restoreState.bind(this)
     this.loadFileBlobsFromServiceWorker = this.loadFileBlobsFromServiceWorker.bind(this)

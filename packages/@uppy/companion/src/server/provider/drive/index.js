@@ -176,7 +176,7 @@ class Drive extends Provider {
       sharedDrives,
       directory,
       query,
-      isRoot && !query.cursor // we can only show it on the first page request, or else we will have duplicates of it
+      isRoot && !query.cursor, // we can only show it on the first page request, or else we will have duplicates of it
     )
   }
 

@@ -418,7 +418,7 @@ class Uppy {
     const inProgressFiles = files.filter(({ progress }) => !progress.uploadComplete && progress.uploadStarted)
     const newFiles =  files.filter((file) => !file.progress.uploadStarted)
     const startedFiles = files.filter(
-      file => file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess
+      file => file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess,
     )
     const uploadStartedFiles = files.filter((file) => file.progress.uploadStarted)
     const pausedFiles = files.filter((file) => file.isPaused)
@@ -1286,10 +1286,9 @@ class Uppy {
   }
 
   updateOnlineStatus () {
-    const online
-      = typeof window.navigator.onLine !== 'undefined'
-        ? window.navigator.onLine
-        : true
+    const online      = typeof window.navigator.onLine !== 'undefined'
+      ? window.navigator.onLine
+      : true
     if (!online) {
       this.emit('is-offline')
       this.info(this.i18n('noInternetConnection'), 'error', 0)

@@ -365,7 +365,7 @@ class Uploader {
     logger.debug(
       `${bytesUploaded} ${illusiveBytesUploaded} ${bytesTotal}`,
       'uploader.illusive.progress',
-      this.shortToken
+      this.shortToken,
     )
     this.emitProgress(illusiveBytesUploaded, bytesTotal)
   }
@@ -385,7 +385,7 @@ class Uploader {
     logger.debug(
       `${bytesUploaded} ${bytesTotal} ${formatPercentage}%`,
       'uploader.upload.progress',
-      this.shortToken
+      this.shortToken,
     )
 
     const dataToEmit = {

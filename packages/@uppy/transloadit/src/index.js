@@ -496,7 +496,7 @@ module.exports = class Transloadit extends BasePlugin {
       return Promise.all(
         Object.keys(assemblies).map((id) => {
           return this.activeAssemblies[id].update()
-        })
+        }),
       )
     }
 

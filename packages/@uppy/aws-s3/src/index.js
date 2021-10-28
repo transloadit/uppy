@@ -141,7 +141,7 @@ module.exports = class AwsS3 extends BasePlugin {
     const metadata = Object.fromEntries(
       this.opts.metaFields
         .filter(key => file.meta[key] != null)
-        .map(key => [`metadata[${key}]`, file.meta[key].toString()])
+        .map(key => [`metadata[${key}]`, file.meta[key].toString()]),
     )
 
     const query = new URLSearchParams({ filename, type, ...metadata })

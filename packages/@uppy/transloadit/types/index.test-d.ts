@@ -41,10 +41,10 @@ const validParams = {
   const uppy = new Uppy()
   // must be bools
   expectError(
-    uppy.use(Transloadit, { waitForEncoding: null, params: validParams })
+    uppy.use(Transloadit, { waitForEncoding: null, params: validParams }),
   )
   expectError(
-    uppy.use(Transloadit, { waitForMetadata: null, params: validParams })
+    uppy.use(Transloadit, { waitForMetadata: null, params: validParams }),
   )
 }
 
@@ -58,7 +58,7 @@ const validParams = {
       params: {
         auth: { key: null },
       },
-    })
+    }),
   )
   expectError(
     uppy.use(Transloadit, {
@@ -66,7 +66,7 @@ const validParams = {
         auth: { key: 'abc' },
         steps: 'test',
       },
-    })
+    }),
   )
   uppy.use(Transloadit, {
     params: {

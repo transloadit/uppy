@@ -294,7 +294,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
           protocol: 's3-multipart',
           size: file.data.size,
           metadata: file.meta,
-        }
+        },
       ).then((res) => {
         this.uppy.setFileState(file.id, { serverToken: res.token })
         file = this.uppy.getFile(file.id)

@@ -78,14 +78,14 @@ describe('Translator', () => {
     it('should prioritize language pack strings from Core over default', () => {
       const translator = new Translator([defaultStrings, launguagePackLoadedInCore])
       expect(
-        translator.translate('youHaveChosen', { fileName: 'img.jpg' })
+        translator.translate('youHaveChosen', { fileName: 'img.jpg' }),
       ).toEqual('You have chosen: img.jpg')
     })
 
     it('should prioritize user-supplied strings over language pack from Core', () => {
       const translator = new Translator([defaultStrings, launguagePackLoadedInCore, userSuppliedStrings])
       expect(
-        translator.translate('youHaveChosen', { fileName: 'img.jpg' })
+        translator.translate('youHaveChosen', { fileName: 'img.jpg' }),
       ).toEqual('Beep boop: img.jpg')
     })
   })
@@ -94,7 +94,7 @@ describe('Translator', () => {
     it('should interpolate a string', () => {
       const translator = new Translator(english)
       expect(
-        translator.translate('youHaveChosen', { fileName: 'img.jpg' })
+        translator.translate('youHaveChosen', { fileName: 'img.jpg' }),
       ).toEqual('You have chosen: img.jpg')
     })
   })
@@ -103,15 +103,15 @@ describe('Translator', () => {
     it('should translate a string', () => {
       const translator = new Translator(russian)
       expect(
-        translator.translate('filesChosen', { smart_count: 18 })
+        translator.translate('filesChosen', { smart_count: 18 }),
       ).toEqual('Выбрано 18 файлов')
 
       expect(
-        translator.translate('filesChosen', { smart_count: 1 })
+        translator.translate('filesChosen', { smart_count: 1 }),
       ).toEqual('Выбран 1 файл')
 
       expect(
-        translator.translate('filesChosen', { smart_count: 0 })
+        translator.translate('filesChosen', { smart_count: 0 }),
       ).toEqual('Выбрано 0 файлов')
     })
 
@@ -124,13 +124,13 @@ describe('Translator', () => {
       })
 
       expect(
-        translator.translate('theAmount', { smart_count: 0 })
+        translator.translate('theAmount', { smart_count: 0 }),
       ).toEqual('het aantal is 0')
       expect(
-        translator.translate('theAmount', { smart_count: 1 })
+        translator.translate('theAmount', { smart_count: 1 }),
       ).toEqual('het aantal is 1')
       expect(
-        translator.translate('theAmount', { smart_count: 1202530 })
+        translator.translate('theAmount', { smart_count: 1202530 }),
       ).toEqual('het aantal is 1202530')
     })
 

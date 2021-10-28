@@ -257,7 +257,7 @@ const getHTMLProps = (props) => {
   // Gets all the React props
   return Object.fromEntries(
     Object.entries(props)
-      .filter(([key]) => validHTMLAttribute.test(key) || reactSupportedHtmlAttr.includes(key))
+      .filter(([key]) => validHTMLAttribute.test(key) || reactSupportedHtmlAttr.includes(key)),
   )
 }
 
