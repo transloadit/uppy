@@ -204,7 +204,7 @@ class TransloaditAssembly extends Emitter {
     // The below checks run in this order, that way even if we jump from
     // UPLOADING straight to FINISHED all the events are emitted as expected.
 
-    const nowExecuting      = isStatus(nextStatus, ASSEMBLY_EXECUTING)
+    const nowExecuting = isStatus(nextStatus, ASSEMBLY_EXECUTING)
       && !isStatus(prevStatus, ASSEMBLY_EXECUTING)
     if (nowExecuting) {
       // Without WebSockets, this is our only way to tell if uploading finished.
