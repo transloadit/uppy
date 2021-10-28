@@ -4,7 +4,6 @@ import fs from 'node:fs'
 
 import glob from 'glob'
 import chalk from 'chalk'
-import Task from 'data.task'
 
 import { getPaths, omit } from './helpers.mjs'
 
@@ -15,53 +14,50 @@ const pluginLocaleDependencies = {
   core: 'provider-views',
 }
 
-test().fork(
-  function onError (error) {
-    console.error(error)
-    process.exit(1)
-  },
-  function onSuccess () {
+test()
+  .then(() => {
     console.log('\n')
     console.log('No blocking issues found')
-  }
-)
+  })
+  .catch((error) => {
+    console.error(error)
+    process.exit(1)
+  })
 
 function test () {
   switch (mode) {
     case 'unused':
       return getPaths(`${root}/packages/@uppy/**/src/locale.js`)
-        .map((paths) => paths.map((filePath) => path.basename(path.join(filePath, '..', '..'))))
-        .map(getAllFilesPerPlugin)
-        .chain(unused)
+        .then((paths) => paths.map((filePath) => path.basename(path.join(filePath, '..', '..'))))
+        .then(getAllFilesPerPlugin)
+        .then(unused)
 
     case 'warnings':
       return getPaths(`${root}/packages/@uppy/locales/src/*.js`)
-        .chain(importFiles)
-        .map((locales) => ({
+        .then(importFiles)
+        .then((locales) => ({
           leadingLocale: locales[leadingLocaleName],
           followerLocales: omit(locales, leadingLocaleName),
         }))
-        .map(warnings)
+        .then(warnings)
 
     default:
-      return new Task().rejected(`Invalid mode "${mode}"`)
+      return Promise.reject(new Error(`Invalid mode "${mode}"`))
   }
 }
 
-function importFiles (paths) {
-  return new Task(async (_, resolve) => {
-    const locales = {}
+async function importFiles (paths) {
+  const locales = {}
 
-    for (const filePath of paths) {
-      const localeName = path.basename(filePath, '.js')
-      // Note: `.default` should be removed when we move to ESM
-      const locale = (await import(filePath)).default
+  for (const filePath of paths) {
+    const localeName = path.basename(filePath, '.js')
+    // Note: `.default` should be removed when we move to ESM
+    const locale = (await import(filePath)).default
 
-      locales[localeName] = locale.strings
-    }
+    locales[localeName] = locale.strings
+  }
 
-    resolve(locales)
-  })
+  return locales
 }
 
 function getAllFilesPerPlugin (pluginNames) {
@@ -87,33 +83,31 @@ function getAllFilesPerPlugin (pluginNames) {
   return filesPerPlugin
 }
 
-function unused (filesPerPlugin, data) {
-  return new Task(async (reject, resolve) => {
-    for (const [name, fileStrings] of Object.entries(filesPerPlugin)) {
-      const fileString = fileStrings.join('\n')
-      const localePath = path.join(
-        root,
-        'packages',
-        '@uppy',
-        name,
-        'src',
-        'locale.js'
-      )
-      const locale = (await import(localePath)).default
+async function unused (filesPerPlugin, data) {
+  for (const [name, fileStrings] of Object.entries(filesPerPlugin)) {
+    const fileString = fileStrings.join('\n')
+    const localePath = path.join(
+      root,
+      'packages',
+      '@uppy',
+      name,
+      'src',
+      'locale.js'
+    )
+    const locale = (await import(localePath)).default
 
-      for (const key of Object.keys(locale.strings)) {
-        const regPat = new RegExp(
-          `(i18n|i18nArray)\\([^\\)]*['\`"]${key}['\`"]`,
-          'g'
-        )
-        if (!fileString.match(regPat)) {
-          reject(`Unused locale key "${key}" in @uppy/${name}`)
-        }
+    for (const key of Object.keys(locale.strings)) {
+      const regPat = new RegExp(
+        `(i18n|i18nArray)\\([^\\)]*['\`"]${key}['\`"]`,
+        'g'
+      )
+      if (!fileString.match(regPat)) {
+        return Promise.reject(new Error(`Unused locale key "${key}" in @uppy/${name}`))
       }
     }
+  }
 
-    resolve(data)
-  })
+  return data
 }
 
 function warnings ({ leadingLocale, followerLocales }) {

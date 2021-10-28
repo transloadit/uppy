@@ -7,7 +7,6 @@ import stringifyObject from 'stringify-object'
 import { remark } from 'remark'
 import { headingRange } from 'mdast-util-heading-range'
 import remarkFrontmatter from 'remark-frontmatter'
-import Task from 'data.task'
 
 import remarkConfig from '../remark-lint-uppy/index.js'
 
@@ -25,31 +24,30 @@ const localesPath = path.join(root, 'packages', '@uppy', 'locales')
 const templatePath = path.join(localesPath, 'template.js')
 const englishLocalePath = path.join(localesPath, 'src', 'en_US.js')
 
-main().fork(
-  function onError (error) {
-    console.error(error)
-    process.exit(1)
-  },
-  function onSuccess () {
+main()
+  .then(() => {
     console.log(`✅ Generated '${englishLocalePath}'`)
     console.log('✅ Generated locale docs')
     console.log('✅ Generated types')
-  }
-)
+  })
+  .catch((error) => {
+    console.error(error)
+    process.exit(1)
+  })
 
 function main () {
   return getPaths(`${root}/packages/@uppy/**/src/locale.js`)
-    .chain(importFiles)
-    .chain(createCombinedLocale)
-    .map(({ combinedLocale, locales }) => ({
+    .then(importFiles)
+    .then(createCombinedLocale)
+    .then(({ combinedLocale, locales }) => ({
       combinedLocale: sortObjectAlphabetically(combinedLocale),
       locales,
     }))
-    .chain(({ combinedLocale, locales }) => {
+    .then(({ combinedLocale, locales }) => {
       return readFile(templatePath)
-        .map((fileString) => populateTemplate(fileString, combinedLocale))
-        .chain((file) => writeFile(englishLocalePath, file))
-        .map(() => {
+        .then((fileString) => populateTemplate(fileString, combinedLocale))
+        .then((file) => writeFile(englishLocalePath, file))
+        .then(() => {
           for (const [pluginName, locale] of Object.entries(locales)) {
             generateLocaleDocs(pluginName)
             generateTypes(pluginName, locale)
@@ -59,31 +57,29 @@ function main () {
     })
 }
 
-function importFiles (paths) {
-  return new Task(async (_, resolve) => {
-    const locales = {}
+async function importFiles (paths) {
+  const locales = {}
 
-    for (const filePath of paths) {
-      const pluginName = path.basename(path.join(filePath, '..', '..'))
-      // Note: `.default` should be removed when we move to ESM
-      const locale = (await import(path.join(filePath))).default
+  for (const filePath of paths) {
+    const pluginName = path.basename(path.join(filePath, '..', '..'))
+    // Note: `.default` should be removed when we move to ESM
+    const locale = (await import(path.join(filePath))).default
 
-      locales[pluginName] = locale
-    }
+    locales[pluginName] = locale
+  }
 
-    resolve(locales)
-  })
+  return locales
 }
 
 function createCombinedLocale (locales) {
-  return new Task((reject, resolve) => {
+  return new Promise((resolve, reject) => {
     const combinedLocale = {}
     const entries = Object.entries(locales)
 
     for (const [pluginName, locale] of entries) {
       Object.entries(locale.strings).forEach(([key, value]) => {
         if (key in combinedLocale && value !== combinedLocale[key]) {
-          reject(`'${key}' from ${pluginName} already exists in locale pack.`)
+          reject(new Error(`'${key}' from ${pluginName} already exists in locale pack.`))
         }
         combinedLocale[key] = value
       })

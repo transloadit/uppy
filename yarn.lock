@@ -16633,13 +16633,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"data.task@npm:^3.1.2":
-  version: 3.1.2
-  resolution: "data.task@npm:3.1.2"
-  checksum: bf38a31f9652087c9ce5621a8a77663bd33a41349434429447dd9738a8634a0db769b5dcc27c7dc8024ce25ba2434afa646140e84c7f659a94f8333c3083f5db
-  languageName: node
-  linkType: hard
-
 "date-format@npm:^2.1.0":
   version: 2.1.0
   resolution: "date-format@npm:2.1.0"
@@ -27328,7 +27321,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   resolution: "locale-pack@workspace:private/locale-pack"
   dependencies:
     chalk: ^4.1.2
-    data.task: ^3.1.2
     dedent: ^0.7.0
     glob: ^7.2.0
     mdast-util-heading-range: ^3.1.0
