@@ -86,10 +86,13 @@ This option correlates to the [RequestCredentials value](https://developer.mozil
 
 ### `locale: {}`
 
-```json
-{
-  "strings": {
-    "pluginNameOneDrive": "OneDrive"
-  }
+<!-- eslint-disable -->
+
+```js
+module.exports = {
+  strings: {
+    pluginNameOneDrive: 'OneDrive',
+  },
 }
+
 ```

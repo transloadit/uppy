@@ -92,10 +92,13 @@ This option correlates to the [RequestCredentials value](https://developer.mozil
 
 ### `locale: {}`
 
-```json
-{
-  "strings": {
-    "pluginNameInstagram": "Instagram"
-  }
+<!-- eslint-disable -->
+
+```js
+module.exports = {
+  strings: {
+    pluginNameInstagram: 'Instagram',
+  },
 }
+
 ```

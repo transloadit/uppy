@@ -127,10 +127,13 @@ This option correlates to the [RequestCredentials value](https://developer.mozil
 
 ### `locale: {}`
 
-```json
-{
-  "strings": {
-    "pluginNameBox": "Box"
-  }
+<!-- eslint-disable -->
+
+```js
+module.exports = {
+  strings: {
+    pluginNameBox: 'Box',
+  },
 }
+
 ```

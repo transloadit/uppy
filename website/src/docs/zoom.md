@@ -90,12 +90,15 @@ This option correlates to the [RequestCredentials value](https://developer.mozil
 
 ### `locale: {}`
 
-```json
-{
-  "strings": {
-    "pluginNameZoom": "Zoom"
-  }
+<!-- eslint-disable -->
+
+```js
+module.exports = {
+  strings: {
+    pluginNameZoom: 'Zoom',
+  },
 }
+
 ```
 
 ## Zoom Marketplace

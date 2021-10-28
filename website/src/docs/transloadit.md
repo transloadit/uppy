@@ -275,14 +275,21 @@ Limit the amount of uploads going on at the same time. Setting this to `0` means
 
 ### `locale: {}`
 
-```json
-{
-  "strings": {
-    "creatingAssembly": "Preparing upload...",
-    "creatingAssemblyFailed": "Transloadit: Could not create Assembly",
-    "encoding": "Encoding..."
-  }
+<!-- eslint-disable -->
+
+```js
+module.exports = {
+  strings: {
+    // Shown while Assemblies are being created for an upload.
+    creatingAssembly: 'Preparing upload...',
+    // Shown if an Assembly could not be created.
+    creatingAssemblyFailed: 'Transloadit: Could not create Assembly',
+    // Shown after uploads have succeeded, but when the Assembly is still executing.
+    // This only shows if `waitForMetadata` or `waitForEncoding` was enabled.
+    encoding: 'Encoding...',
+  },
 }
+
 ```
 
 ## Errors

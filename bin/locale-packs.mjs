@@ -50,7 +50,7 @@ function main () {
         .chain((file) => writeFile(englishLocalePath, file))
         .map(() => {
           for (const [pluginName, locale] of Object.entries(locales)) {
-            generateLocaleDocs(pluginName, locale)
+            generateLocaleDocs(pluginName)
             generateTypes(pluginName, locale)
           }
           return locales
@@ -135,9 +135,16 @@ function generateTypes (pluginName, locale) {
   fs.writeFileSync(localePath, localeTypes)
 }
 
-function generateLocaleDocs (pluginName, locale) {
+function generateLocaleDocs (pluginName) {
   const fileName = `${pluginName}.md`
   const docPath = path.join('website', 'src', 'docs', fileName)
+  const localePath = path.join(
+    'packages',
+    '@uppy',
+    pluginName,
+    'src',
+    'locale.js'
+  )
 
   if (!fs.existsSync(docPath)) {
     console.error(
@@ -154,10 +161,15 @@ function generateLocaleDocs (pluginName, locale) {
       headingRange(tree, 'locale: {}', (start, _, end) => [
         start,
         {
+          type: 'html',
+          // module.exports is not allowed by eslint
+          value: '<!-- eslint-disable -->',
+        },
+        {
           type: 'code',
-          lang: 'json',
+          lang: 'js',
           meta: null,
-          value: JSON.stringify(locale, null, 2),
+          value: fs.readFileSync(localePath, 'utf-8'),
         },
         end,
       ])
