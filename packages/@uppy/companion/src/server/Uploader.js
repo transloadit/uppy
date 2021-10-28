@@ -385,7 +385,7 @@ class Uploader {
    * @param {number} [bytesUploaded]
    * @param {number | null} [bytesTotalIn]
    */
-  onProgress (bytesUploaded, bytesTotalIn) {
+  onProgress (bytesUploaded = 0, bytesTotalIn = 0) {
     const bytesTotal = bytesTotalIn || this.size || 0
 
     // If fully downloading before uploading, combine downloaded and uploaded bytes
