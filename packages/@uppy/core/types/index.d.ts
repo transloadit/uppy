@@ -18,7 +18,7 @@ export type UppyFile<
 
 export type FileProgress = UppyUtils.FileProgress;
 
-export type FileRemoveReason = 'removed-by-user' | 'cancel-all' | null;
+export type FileRemoveReason = 'removed-by-user' | 'cancel-all';
 
 // Replace the `meta` property type with one that allows omitting internal metadata addFile() will add that
 type UppyFileWithoutMeta<TMeta, TBody> = OmitKey<
