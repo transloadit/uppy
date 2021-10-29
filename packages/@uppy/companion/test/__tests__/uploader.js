@@ -180,10 +180,11 @@ describe('uploader with tus protocol', () => {
     const uploadToken = uploader.token
     expect(uploader.hasError()).toBe(false)
 
+    // validate that the test is resolved on socket connection
+    uploader.awaitReady().then(uploader.uploadStream(stream))
+    socketClient.connect(uploadToken)
+
     return new Promise((resolve, reject) => {
-      // validate that the test is resolved on socket connection
-      uploader.awaitReady().then(uploader.uploadStream(stream))
-      socketClient.connect(uploadToken)
       socketClient.onUploadError(uploadToken, (message) => {
         try {
           expect(message).toMatchObject({ payload: { error: { message: 'maxFileSize exceeded' } } })
