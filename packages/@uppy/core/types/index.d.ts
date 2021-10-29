@@ -18,6 +18,8 @@ export type UppyFile<
 
 export type FileProgress = UppyUtils.FileProgress;
 
+export type FileRemoveReason = 'removed-by-user' | 'cancel-all' | null;
+
 // Replace the `meta` property type with one that allows omitting internal metadata addFile() will add that
 type UppyFileWithoutMeta<TMeta, TBody> = OmitKey<
   UppyFile<TMeta, TBody>,
@@ -203,7 +205,7 @@ export interface SuccessResponse {
 export type GenericEventCallback = () => void;
 export type FileAddedCallback<TMeta> = (file: UppyFile<TMeta>) => void;
 export type FilesAddedCallback<TMeta> = (files: UppyFile<TMeta>[]) => void;
-export type FileRemovedCallback<TMeta> = (file: UppyFile<TMeta>, reason: 'removed-by-user' | 'cancel-all') => void;
+export type FileRemovedCallback<TMeta> = (file: UppyFile<TMeta>, reason: FileRemoveReason) => void;
 export type UploadCallback = (data: { id: string, fileIDs: string[] }) => void;
 export type ProgressCallback = (progress: number) => void;
 export type UploadProgressCallback<TMeta> = (file: UppyFile<TMeta>, progress: FileProgress) => void;
@@ -318,7 +320,7 @@ export class Uppy {
     file: AddFileOptions<TMeta>
   ): string
 
-  removeFile(fileID: string): void
+  removeFile(fileID: string, reason: FileRemoveReason): void
 
   pauseResume(fileID: string): boolean
 
