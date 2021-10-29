@@ -320,7 +320,7 @@ export class Uppy {
     file: AddFileOptions<TMeta>
   ): string
 
-  removeFile(fileID: string, reason: FileRemoveReason): void
+  removeFile(fileID: string, reason?: FileRemoveReason): void
 
   pauseResume(fileID: string): boolean
 
