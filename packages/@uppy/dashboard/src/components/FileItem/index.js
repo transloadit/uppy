@@ -13,17 +13,6 @@ module.exports = class FileItem extends Component {
       speakers: 1
     }
   }
-
-  setSpeakers = (event) => {
-    this.setState({
-      speakers: event.target.value
-    });
-    var file = this.props.file;
-
-    this.props.setFileMeta(file.id, {
-      speakerCount: event.target.value
-    });
-  }
   
   componentDidMount () {
     const { file } = this.props
@@ -49,6 +38,18 @@ module.exports = class FileItem extends Component {
     const { file } = this.props
     if (!file.preview) {
       this.props.handleCancelThumbnail(file)
+    }
+  }
+
+  setSpeakers = (event) => {
+    this.setState({
+      speakers: event.target.value
+    });
+    var file = this.props.file;
+    if (file && file.id) {
+      this.props.setFileMeta(file.id, {
+        speakerCount: event.target.value
+      });
     }
   }
 
