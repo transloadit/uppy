@@ -1,13 +1,14 @@
 /* eslint-disable no-console, prefer-arrow-callback */
 import path from 'node:path'
 import fs from 'node:fs'
+import { fileURLToPath } from 'node:url'
 
 import glob from 'glob'
 import chalk from 'chalk'
 
 import { getPaths, omit } from './helpers.mjs'
 
-const root = path.join('..', '..')
+const root = fileURLToPath(new URL('../../', import.meta.url))
 const leadingLocaleName = 'en_US'
 const mode = process.argv[2]
 const pluginLocaleDependencies = {

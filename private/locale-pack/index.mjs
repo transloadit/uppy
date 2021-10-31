@@ -2,6 +2,7 @@
 import path from 'node:path'
 import fs from 'node:fs'
 import { readFile, writeFile } from 'node:fs/promises'
+import { fileURLToPath } from 'node:url'
 
 import dedent from 'dedent'
 import stringifyObject from 'stringify-object'
@@ -15,7 +16,7 @@ import { getPaths, sortObjectAlphabetically } from './helpers.mjs'
 
 const { settings: remarkSettings } = remarkConfig
 
-const root = path.join('..', '..')
+const root = fileURLToPath(new URL('../../', import.meta.url))
 const localesPath = path.join(root, 'packages', '@uppy', 'locales')
 const templatePath = path.join(localesPath, 'template.js')
 const englishLocalePath = path.join(localesPath, 'src', 'en_US.js')
