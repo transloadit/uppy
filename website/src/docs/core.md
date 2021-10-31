@@ -377,7 +377,7 @@ MIME type of the file. This may actually be guessed if a file type was not provi
 
 ### `file.data`
 
-For local files, this is the actual [`File`][`File`] or [`Blob`][`Blob`] object representing the file contents.
+For local files, this is the actual [`File`][] or [`Blob`][] object representing the file contents.
 
 For files that are imported from remote providers, the file data is not available in the browser.
 

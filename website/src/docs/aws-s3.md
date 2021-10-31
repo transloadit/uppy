@@ -9,7 +9,7 @@ tagline: "uploader for AWS S3"
 ---
 
 The `@uppy/aws-s3` plugin can be used to upload files directly to an S3 bucket.
-Uploads can be signed using either \[Companion]\[companion docs] or a custom signing function.
+Uploads can be signed using either [Companion][companion docs] or a custom signing function.
 
 ```js
 import AwsS3 from '@uppy/aws-s3'
@@ -52,7 +52,7 @@ A unique identifier for this plugin. Defaults to `'AwsS3'`.
 
 ### `companionUrl`
 
-When using \[Companion]\[companion docs] to sign S3 uploads, set this option to the root URL of the Companion instance.
+When using [Companion][companion docs] to sign S3 uploads, set this option to the root URL of the Companion instance.
 
 ```js
 uppy.use(AwsS3, {
@@ -62,9 +62,9 @@ uppy.use(AwsS3, {
 
 ### `companionHeaders: {}`
 
-> Note: This only applies when using \[Companion]\[companion docs] to sign S3 uploads.
+> Note: This only applies when using [Companion][companion docs] to sign S3 uploads.
 
-Custom headers that should be sent along to \[Companion]\[companion docs] on every request.
+Custom headers that should be sent along to [Companion][companion docs] on every request.
 
 ### `metaFields: []`
 
@@ -75,7 +75,7 @@ Pass an array of field names to specify the metadata fields that should be store
 
 ### `getUploadParameters(file)`
 
-> Note: When using \[Companion]\[companion docs] to sign S3 uploads, do not define this option.
+> Note: When using [Companion][companion docs] to sign S3 uploads, do not define this option.
 
 A function that returns upload parameters for a file.
 Parameters should be returned as an object, or a Promise for an object, with keys `{ method, url, fields, headers }`.
@@ -125,3 +125,246 @@ module.exports = {
 }
 
 ```
+
+## S3 Bucket configuration
+
+S3 buckets do not allow public uploads by default.
+To allow Uppy to upload directly to a bucket, at least its CORS permissions need to be configured, and you potentially need to change some of the _Public access settings_ that provide an extra layer of public access protection even if the correct CORS permissions are in place.
+
+CORS permissions can be found in the [S3 Management Console](https://console.aws.amazon.com/s3/home).
+Click the bucket that will receive the uploads, then go into the `Permissions` tab and select the `CORS configuration` button.
+A JSON document will be shown that defines the CORS configuration. (AWS used to use XML but now only allow JSON). More information about the [S3 CORS format here](https://docs.amazonaws.cn/en\_us/AmazonS3/latest/userguide/ManageCorsUsing.html).
+
+A good practice is to use two CORS rules: one for viewing the uploaded files, and one for uploading files.
+
+Depending on which settings were enabled during bucket creation, AWS S3 may have defined a CORS rule that allows public reading already.
+This rule looks like:
+
+```json
+{
+  "AllowedOrigins": ["*"],
+  "AllowedMethods": ["GET"],
+  "MaxAgeSeconds": 3000
+}
+```
+
+If uploaded files should be publically viewable, but a rule like this is not present, add it.
+
+A different rule is necessary to allow uploading.
+This rule should come _before_ the existing rule, because S3 only uses the first rule that matches the origin of the request.
+
+At minimum, the domain from which the uploads will happen must be allow-listed, and the definitions from the earlier rule must be added:
+
+```json
+{
+  "AllowedOrigins": ["https://my-app.com"],
+  "AllowedMethods": ["GET"],
+  "MaxAgeSeconds": 3000
+}
+```
+
+When using Companion, which generates a POST policy document, the following permissions must be granted:
+
+```json
+{
+  "AllowedMethods": ["POST"],
+  "AllowedHeaders": [
+    "Authorization",
+    "x-amz-date",
+    "x-amz-content-sha256",
+    "content-type"
+  ]
+}
+```
+
+When using a presigned upload URL, the following permissions must be granted:
+
+```json
+{
+  "AllowedMethods": ["PUT"],
+}
+```
+
+The final configuration should look something like this (note that it defines two rules in an array `[]`):
+
+```json
+[
+  {
+    "AllowedOrigins": ["https://my-app.com"],
+    "AllowedMethods": ["GET", "POST"],
+    "MaxAgeSeconds": 3000,
+    "AllowedHeaders": [
+      "Authorization",
+      "x-amz-date",
+      "x-amz-content-sha256",
+      "content-type"
+    ]
+  },
+  {
+    "AllowedOrigins": ["*"],
+    "AllowedMethods": ["GET"],
+    "MaxAgeSeconds": 3000
+  }
+]
+```
+
+Even with these CORS rules in place, you browser might still receive HTTP status 403 responses with `AccessDenied` in the response body when it tries to `POST` to your bucket. In this case, within the `Permissions` tab of the [S3 Management Console](https://console.aws.amazon.com/s3/home), choose `Public access settings`.
+
+It will list general _Public access settings for this bucket_, which can override the rules imposed by your CORS settings. Click on _edit_ to manage these settings. Under _Manage public access control lists (ACLs) for this bucket_, make sure that _Block new public ACLs and uploading public objects (Recommended)_ is unchecked, and _Save_ these settings.
+
+If you are using an IAM policy to allow access to the S3 bucket, the policy must have at least the `s3:PutObject` and `s3:PutObjectAcl` permissions scoped to the bucket in question.
+
+In-depth documentation about CORS rules is available on the [AWS documentation site](https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html).
+
+## POST uploads
+
+Companion uses POST uploads by default, but you can also use them with your own endpoints. A few things to be aware of when doing so:
+
+* The `@uppy/aws-s3` plugin attempts to read the `<Location>` XML tag from POST upload responses. S3 does not respond with an XML document by default. When generating the form data for POST uploads, you must set the `success_action_status` field to `201`.
+  ```js
+  // `s3` is an instance of the AWS JavaScript SDK's S3 client
+  s3.createPresignedPost({
+    // ...
+    Fields: {
+      // ...
+      success_action_status: '201',
+    },
+  })
+  ```
+
+## S3 alternatives
+
+Many other object storage providers have a same API to S3, so you can use the `@uppy/aws-s3` plugin with them as well. To use them with Companion, you can set the `COMPANION_AWS_ENDPOINT` variable to the endpoint of your preferred service.
+
+### DigitalOcean Spaces
+
+For example, with DigitalOcean Spaces, you could do something like this:
+
+```bash
+export COMPANION_AWS_ENDPOINT="https://{region}.digitaloceanspaces.com"
+export COMPANION_AWS_BUCKET="my-space-name"
+```
+
+The `{region}` string will be replaced by the contents of the `COMPANION_AWS_REGION` environment variable.
+
+For a working example that you can run and play around with, see the [digitalocean-spaces](https://github.com/transloadit/uppy/tree/main/examples/digitalocean-spaces) folder in the Uppy repository.
+
+### Google Cloud Storage
+
+For Google Cloud Storage, you need to take a few more steps. For the `@uppy/aws-s3` plugin to be able to upload to a GCS bucket, it needs the Interoperability setting enabled. You can enable the Interoperability setting and [generate interoperable storage access keys](https://cloud.google.com/storage/docs/migrating#keys) by going to [Google Cloud Storage](https://console.cloud.google.com/storage) » Settings » Interoperability. Then set the environment variables for Companion like this:
+
+```bash
+export COMPANION_AWS_ENDPOINT="https://storage.googleapis.com"
+export COMPANION_AWS_BUCKET="YOUR-GCS-BUCKET-NAME"
+export COMPANION_AWS_KEY="GOOGxxxxxxxxx" # The Access Key
+export COMPANION_AWS_SECRET="YOUR-GCS-SECRET" # The Secret
+```
+
+You do not need to configure the region with GCS.
+
+You also need to configure CORS differently. Unlike Amazon, Google does not offer a UI for CORS configurations. Instead, an HTTP API must be used. If you haven’t done this already, see [Configuring CORS on a Bucket](https://cloud.google.com/storage/docs/configuring-cors#Configuring-CORS-on-a-Bucket) in the GCS documentation, or follow the steps below to do it using Google’s API playground.
+
+GCS has several CORS formats, both XML and JSON. Unfortunately, their formats are different from Amazon’s, so we can’t use the one from the [S3 Bucket configuration](#S3-Bucket-configuration) section. Google appears to favour the JSON format, so we will use that.
+
+#### JSON CORS configuration
+
+The JSON format consists of an array of CORS configuration objects. An example using POST policy document uploads is shown here:
+
+```json
+{
+  "cors": [
+    {
+      "origin": ["https://my-app.com"],
+      "method": ["GET", "POST"],
+      "maxAgeSeconds": 3000
+    },
+    {
+      "origin": ["*"],
+      "method": ["GET"],
+      "maxAgeSeconds": 3000
+    }
+  ]
+}
+```
+
+When using presigned `PUT` uploads, replace the `"POST"` method by `"PUT"` in the first entry.
+
+If you have the [gsutil](https://cloud.google.com/storage/docs/gsutil) command-line tool, you can apply this configuration using the [gsutil cors](https://cloud.google.com/storage/docs/configuring-cors#configure-cors-bucket) command.
+
+```bash
+gsutil cors set THAT-FILE.json gs://BUCKET-NAME
+```
+
+Otherwise, you can manually apply it through the OAuth playground:
+
+1. Get a temporary API token from the [Google OAuth2.0 playground](https://developers.google.com/oauthplayground/)
+2. Select the `Cloud Storage JSON API v1` » `devstorage.full_control` scope
+3. Press `Authorize APIs` and allow access
+4. Click `Step 3 - Configure request to API`
+5. Configure it as follows:
+
+* HTTP Method: PATCH
+* Request URI: `https://www.googleapis.com/storage/v1/b/YOUR_BUCKET_NAME`
+* Content-Type: application/json (should be the default)
+* Press `Enter request body` and input your CORS configuration
+
+1. Then, finally, press `Send the request`.
+
+## Examples
+
+<a id="example-presigned-url"></a>
+
+### Generating a presigned upload URL server-side
+
+The `getUploadParameters` function can return a Promise, so upload parameters can be prepared server-side.
+That way, no private keys to the S3 bucket need to be shared on the client.
+For example, there could be a PHP server endpoint that prepares a presigned URL for a file:
+
+```js
+uppy.use(AwsS3, {
+  getUploadParameters (file) {
+    // Send a request to our PHP signing endpoint.
+    return fetch('/s3-sign.php', {
+      method: 'post',
+      // Send and receive JSON.
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        filename: file.name,
+        contentType: file.type,
+      }),
+    }).then((response) => {
+      // Parse the JSON response.
+      return response.json()
+    }).then((data) => {
+      // Return an object in the correct shape.
+      return {
+        method: data.method,
+        url: data.url,
+        fields: data.fields,
+        // Provide content type header required by S3
+        headers: {
+          'Content-Type': file.type,
+        },
+      }
+    })
+  },
+})
+```
+
+See the [aws-presigned-url example in the uppy repository](https://github.com/transloadit/uppy/tree/main/examples/aws-presigned-url) for a small example that implements both the server-side and the client-side.
+
+### Retrieving presign parameters of the uploaded file
+
+Once the file is uploaded, it’s possible to retrieve the parameters that were
+generated in `getUploadParameters(file)` via the `file.meta` field:
+
+```js
+uppy.on('upload-success', (file, data) => {
+  const s3Key = file.meta['key'] // the S3 object key of the uploaded file
+})
+```
+
+[companion docs]: /docs/companion
