@@ -1,6 +1,7 @@
 /* eslint-disable no-console, prefer-arrow-callback */
 import path from 'node:path'
 import fs from 'node:fs'
+import { readFile, writeFile } from 'node:fs/promises'
 
 import dedent from 'dedent'
 import stringifyObject from 'stringify-object'
@@ -10,12 +11,7 @@ import remarkFrontmatter from 'remark-frontmatter'
 
 import remarkConfig from '../remark-lint-uppy/index.js'
 
-import {
-  readFile,
-  writeFile,
-  getPaths,
-  sortObjectAlphabetically,
-} from './helpers.mjs'
+import { getPaths, sortObjectAlphabetically } from './helpers.mjs'
 
 const { settings: remarkSettings } = remarkConfig
 
@@ -44,7 +40,7 @@ function main () {
       locales,
     }))
     .then(({ combinedLocale, locales }) => {
-      return readFile(templatePath)
+      return readFile(templatePath, 'utf-8')
         .then((fileString) => populateTemplate(fileString, combinedLocale))
         .then((file) => writeFile(englishLocalePath, file))
         .then(() => {
@@ -63,7 +59,7 @@ async function importFiles (paths) {
   for (const filePath of paths) {
     const pluginName = path.basename(path.join(filePath, '..', '..'))
     // Note: `.default` should be removed when we move to ESM
-    const locale = (await import(path.join(filePath))).default
+    const locale = (await import(filePath)).default
 
     locales[pluginName] = locale
   }
@@ -95,10 +91,7 @@ function populateTemplate (fileString, combinedLocale) {
     singleQuotes: true,
     inlineCharacterLimit: 12,
   })
-  return fileString.replace(
-    'en_US.strings = {}',
-    `en_US.strings = ${formattedLocale}`
-  )
+  return fileString.replace('en_US.strings = {}', `en_US.strings = ${formattedLocale}`)
 }
 
 function generateTypes (pluginName, locale) {
@@ -136,14 +129,7 @@ function generateTypes (pluginName, locale) {
 function generateLocaleDocs (pluginName) {
   const fileName = `${pluginName}.md`
   const docPath = path.join(root, 'website', 'src', 'docs', fileName)
-  const localePath = path.join(
-    root,
-    'packages',
-    '@uppy',
-    pluginName,
-    'src',
-    'locale.js'
-  )
+  const localePath = path.join(root, 'packages', '@uppy', pluginName, 'src', 'locale.js')
 
   if (!fs.existsSync(docPath)) {
     console.error(
