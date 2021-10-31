@@ -333,7 +333,7 @@ Dashboard ships with the `ThumbnailGenerator` plugin that adds small resized ima
 
 ### `locale: {}`
 
-<!-- eslint-disable -->
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
 module.exports = {

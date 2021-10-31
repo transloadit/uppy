@@ -84,7 +84,7 @@ The `name` attribute for the `<input type="file">` element.
 
 ### `locale: {}`
 
-<!-- eslint-disable -->
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
 module.exports = {

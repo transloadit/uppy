@@ -1,7 +1,6 @@
 import glob from 'glob'
 
 export function getPaths (globPath) {
-  console.log(globPath);
   return new Promise((resolve, reject) => {
     glob(globPath, (error, paths) => {
       if (error) reject(error)

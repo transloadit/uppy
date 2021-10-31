@@ -115,7 +115,7 @@ This option is useful when uploading to an S3-like service that doesn’t reply 
 
 ### `locale: {}`
 
-<!-- eslint-disable -->
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
 module.exports = {

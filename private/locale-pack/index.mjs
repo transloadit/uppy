@@ -17,6 +17,7 @@ import { getPaths, sortObjectAlphabetically } from './helpers.mjs'
 const { settings: remarkSettings } = remarkConfig
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
+
 const localesPath = path.join(root, 'packages', '@uppy', 'locales')
 const templatePath = path.join(localesPath, 'template.js')
 const englishLocalePath = path.join(localesPath, 'src', 'en_US.js')
@@ -149,8 +150,9 @@ function generateLocaleDocs (pluginName) {
         start,
         {
           type: 'html',
-          // module.exports is not allowed by eslint
-          value: '<!-- eslint-disable -->',
+          // `module.exports` is not allowed by eslint in our docs.
+          // The script outputs an extra newline which also isn't excepted by eslint
+          value: '<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->',
         },
         {
           type: 'code',

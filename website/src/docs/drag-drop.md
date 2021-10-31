@@ -86,7 +86,7 @@ Optionally, specify a string of text that explains something about the upload fo
 
 ### `locale: {}`
 
-<!-- eslint-disable -->
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
 module.exports = {

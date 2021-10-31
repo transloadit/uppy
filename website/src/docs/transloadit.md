@@ -275,7 +275,7 @@ Limit the amount of uploads going on at the same time. Setting this to `0` means
 
 ### `locale: {}`
 
-<!-- eslint-disable -->
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
 module.exports = {

@@ -150,7 +150,7 @@ If no preferred image mime type is given, the Webcam plugin will prefer types li
 
 ### `locale: {}`
 
-<!-- eslint-disable -->
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
 module.exports = {
