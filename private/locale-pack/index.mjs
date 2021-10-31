@@ -130,6 +130,7 @@ function generateLocaleDocs (pluginName) {
   const fileName = `${pluginName}.md`
   const docPath = path.join(root, 'website', 'src', 'docs', fileName)
   const localePath = path.join(root, 'packages', '@uppy', pluginName, 'src', 'locale.js')
+  const rangeOptions = { test: 'locale: {}', ignoreFinalDefinitions: true }
 
   if (!fs.existsSync(docPath)) {
     console.error(
@@ -143,7 +144,7 @@ function generateLocaleDocs (pluginName) {
     .use(remarkFrontmatter)
     .use(() => (tree) => {
       // Replace all nodes after the locale heading until the next heading (or eof)
-      headingRange(tree, 'locale: {}', (start, _, end) => [
+      headingRange(tree, rangeOptions, (start, _, end) => [
         start,
         {
           type: 'html',
