@@ -132,6 +132,7 @@ class DropBox extends Provider {
           },
         })
         .auth(token)
+        .request()
 
       return await requestStream(req, async (res) => this._error(null, res))
     } catch (err) {
