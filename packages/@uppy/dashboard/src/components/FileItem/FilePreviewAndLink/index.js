@@ -1,5 +1,6 @@
 const { h } = require('preact')
 const FilePreview = require('../../FilePreview')
+const MetaErrorMessage = require('../MetaErrorMessage')
 const getFileTypeIcon = require('../../../utils/getFileTypeIcon')
 
 module.exports = function FilePreviewAndLink (props) {
@@ -19,11 +20,16 @@ module.exports = function FilePreviewAndLink (props) {
             target="_blank"
             aria-label={props.file.meta.name}
           >
-            <span hidden>props.file.meta.name</span>
+            <span hidden>{props.file.meta.name}</span>
           </a>
           )
       }
       <FilePreview file={props.file} />
+      <MetaErrorMessage
+        file={props.file}
+        i18n={props.i18n}
+        toggleFileCard={props.toggleFileCard}
+      />
     </div>
   )
 }

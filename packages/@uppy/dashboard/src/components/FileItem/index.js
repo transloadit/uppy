@@ -76,6 +76,8 @@ module.exports = class FileItem extends Component {
           <FilePreviewAndLink
             file={file}
             showLinkToFileUploadResult={this.props.showLinkToFileUploadResult}
+            i18n={this.props.i18n}
+            toggleFileCard={this.props.toggleFileCard}
           />
           <FileProgress
             uppy={this.props.uppy}
@@ -101,6 +103,7 @@ module.exports = class FileItem extends Component {
             containerWidth={this.props.containerWidth}
             i18n={this.props.i18n}
             toggleAddFilesPanel={this.props.toggleAddFilesPanel}
+            toggleFileCard={this.props.toggleFileCard}
           />
           <Buttons
             file={file}

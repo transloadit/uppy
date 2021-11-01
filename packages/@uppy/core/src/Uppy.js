@@ -1287,11 +1287,8 @@ class Uppy {
     })
 
     this.on('dashboard:file-edit-complete', (file) => {
-      this.#checkRequiredMetaFieldsOnFile(file)
-      try {
+      if (file) {
         this.#checkRequiredMetaFieldsOnFile(file)
-      } catch {
-        // Nothing
       }
     })
 
