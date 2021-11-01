@@ -32,12 +32,6 @@ if (typeof AggregateError === 'undefined') {
     }
   }
 }
-class AggregateRestrictionError extends AggregateError {
-  constructor (...args) {
-    super(...args)
-    this.isRestriction = true
-  }
-}
 
 /**
  * Uppy Core module.
@@ -557,27 +551,42 @@ class Uppy {
   }
 
   /**
-   * Check if requiredMetaField restriction is met before uploading.
+   * Check if requiredMetaField restriction is met for a specific file.
    *
    */
-  #checkRequiredMetaFields (files) {
+  #checkRequiredMetaFieldsOnFile (file) {
     const { requiredMetaFields } = this.opts.restrictions
     const { hasOwnProperty } = Object.prototype
 
     const errors = []
-    for (const fileID of Object.keys(files)) {
-      const file = this.getFile(fileID)
-      for (let i = 0; i < requiredMetaFields.length; i++) {
-        if (!hasOwnProperty.call(file.meta, requiredMetaFields[i]) || file.meta[requiredMetaFields[i]] === '') {
-          const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
-          errors.push(err)
-          this.#showOrLogErrorAndThrow(err, { file, showInformer: false, throwErr: false })
-        }
+    const missingFields = []
+    for (let i = 0; i < requiredMetaFields.length; i++) {
+      if (!hasOwnProperty.call(file.meta, requiredMetaFields[i]) || file.meta[requiredMetaFields[i]] === '') {
+        const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
+        errors.push(err)
+        missingFields.push(requiredMetaFields[i])
+        this.#showOrLogErrorAndThrow(err, { file, showInformer: false, throwErr: false })
       }
     }
+    this.setFileState(
+      file.id,
+      { missingRequiredMetaFields: missingFields }
+    )
+    return errors
+  }
+
+  /**
+   * Check if requiredMetaField restriction is met before uploading.
+   *
+   */
+  #checkRequiredMetaFields (files) {
+    const errors = Object.keys(files).map((fileID) => {
+      const file = this.getFile(fileID)
+      return this.#checkRequiredMetaFieldsOnFile(file)
+    })
 
     if (errors.length) {
-      throw new AggregateRestrictionError(`${this.i18n('missingRequiredMetaField')}`, errors)
+      throw new RestrictionError(`${this.i18n('missingRequiredMetaField')}`)
     }
   }
 
@@ -1275,6 +1284,15 @@ class Uppy {
     this.on('restored', () => {
       // Files may have changed--ensure progress is still accurate.
       this.calculateTotalProgress()
+    })
+
+    this.on('dashboard:file-edit-complete', (file) => {
+      this.#checkRequiredMetaFieldsOnFile(file)
+      try {
+        this.#checkRequiredMetaFieldsOnFile(file)
+      } catch {
+        // Nothing
+      }
     })
 
     // show informer if offline
