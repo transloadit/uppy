@@ -1,10 +1,12 @@
-const Provider = require('../Provider')
-
 const request = require('request')
 const purest = require('purest')({ request })
+const { promisify } = require('util')
+
+const Provider = require('../Provider')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
+const { requestStream } = require('../../helpers/utils')
 
 // From https://www.dropbox.com/developers/reference/json-encoding:
 //
@@ -52,7 +54,7 @@ class DropBox extends Provider {
    * @param {object} options
    * @param {Function} done
    */
-  list (options, done) {
+  _list (options, done) {
     let userInfoDone = false
     let statsDone = false
     let userInfo
@@ -119,32 +121,26 @@ class DropBox extends Provider {
       .request(done)
   }
 
-  download ({ id, token }, onData) {
-    return this.client
-      .post('https://content.dropboxapi.com/2/files/download')
-      .options({
-        version: '2',
-        headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` }),
-        },
-      })
-      .auth(token)
-      .request()
-      .on('response', (resp) => {
-        if (resp.statusCode !== 200) {
-          onData(this._error(null, resp))
-        } else {
-          resp.on('data', (chunk) => onData(null, chunk))
-        }
-      })
-      .on('end', () => onData(null, null))
-      .on('error', (err) => {
-        logger.error(err, 'provider.dropbox.download.error')
-        onData(err)
-      })
+  async download ({ id, token }) {
+    try {
+      const req = this.client
+        .post('https://content.dropboxapi.com/2/files/download')
+        .options({
+          version: '2',
+          headers: {
+            'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}` }),
+          },
+        })
+        .auth(token)
+
+      return await requestStream(req, async (res) => this._error(null, res))
+    } catch (err) {
+      logger.error(err, 'provider.dropbox.download.error')
+      throw err
+    }
   }
 
-  thumbnail ({ id, token }, done) {
+  _thumbnail ({ id, token }, done) {
     return this.client
       .post('https://content.dropboxapi.com/2/files/get_thumbnail')
       .options({
@@ -168,7 +164,7 @@ class DropBox extends Provider {
       })
   }
 
-  size ({ id, token }, done) {
+  _size ({ id, token }, done) {
     return this.client
       .post('files/get_metadata')
       .options({ version: '2' })
@@ -180,11 +176,11 @@ class DropBox extends Provider {
           logger.error(err, 'provider.dropbox.size.error')
           return done(err)
         }
-        done(null, parseInt(body.size))
+        done(null, parseInt(body.size, 10))
       })
   }
 
-  logout ({ token }, done) {
+  _logout ({ token }, done) {
     return this.client
       .post('auth/token/revoke')
       .options({ version: '2' })
@@ -231,5 +227,12 @@ class DropBox extends Provider {
     return err
   }
 }
+
+DropBox.version = 2
+
+DropBox.prototype.list = promisify(DropBox.prototype._list)
+DropBox.prototype.thumbnail = promisify(DropBox.prototype._thumbnail)
+DropBox.prototype.size = promisify(DropBox.prototype._size)
+DropBox.prototype.logout = promisify(DropBox.prototype._logout)
 
 module.exports = DropBox

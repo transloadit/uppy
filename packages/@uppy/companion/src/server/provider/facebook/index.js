@@ -1,11 +1,13 @@
-const Provider = require('../Provider')
-
 const request = require('request')
 const purest = require('purest')({ request })
+const { promisify } = require('util')
+
+const Provider = require('../Provider')
 const { getURLMeta } = require('../../helpers/request')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
+const { requestStream } = require('../../helpers/utils')
 
 /**
  * Adapter for API https://developers.facebook.com/docs/graph-api/using-graph-api/
@@ -24,7 +26,7 @@ class Facebook extends Provider {
     return 'facebook'
   }
 
-  list ({ directory, token, query = { cursor: null } }, done) {
+  _list ({ directory, token, query = { cursor: null } }, done) {
     const qs = {
       fields: 'name,cover_photo,created_time,type',
     }
@@ -79,43 +81,41 @@ class Facebook extends Provider {
     return sortedImages[sortedImages.length - 1].source
   }
 
-  download ({ id, token }, onData) {
-    return this.client
-      .get(`https://graph.facebook.com/${id}`)
-      .qs({ fields: 'images' })
-      .auth(token)
-      .request((err, resp, body) => {
-        if (err || resp.statusCode !== 200) {
-          err = this._error(err, resp)
-          logger.error(err, 'provider.facebook.download.error')
-          onData(err)
-          return
-        }
-
-        request(this._getMediaUrl(body))
-          .on('response', (resp) => {
-            if (resp.statusCode !== 200) {
-              onData(this._error(null, resp))
-            } else {
-              resp.on('data', (chunk) => onData(null, chunk))
+  async download ({ id, token }) {
+    try {
+      const body1 = await new Promise((resolve, reject) => (
+        this.client
+          .get(`https://graph.facebook.com/${id}`)
+          .qs({ fields: 'images' })
+          .auth(token)
+          .request((err, resp, body) => {
+            if (err || resp.statusCode !== 200) {
+              err = this._error(err, resp)
+              logger.error(err, 'provider.facebook.download.error')
+              reject(err)
+              return
             }
+            resolve(body)
           })
-          .on('end', () => onData(null, null))
-          .on('error', (err) => {
-            logger.error(err, 'provider.facebook.download.url.error')
-            onData(err)
-          })
-      })
+      ))
+
+      const url = this._getMediaUrl(body1)
+      const req = request(url)
+      return await requestStream(req, async (res) => this._error(null, res))
+    } catch (err) {
+      logger.error(err, 'provider.facebook.download.url.error')
+      throw err
+    }
   }
 
-  thumbnail (_, done) {
+  // eslint-disable-next-line class-methods-use-this
+  async thumbnail () {
     // not implementing this because a public thumbnail from facebook will be used instead
-    const err = new Error('call to thumbnail is not implemented')
-    logger.error(err, 'provider.facebook.thumbnail.error')
-    return done(err)
+    logger.error('call to thumbnail is not implemented', 'provider.facebook.thumbnail.error')
+    throw new Error('call to thumbnail is not implemented')
   }
 
-  size ({ id, token }, done) {
+  _size ({ id, token }, done) {
     return this.client
       .get(`https://graph.facebook.com/${id}`)
       .qs({ fields: 'images' })
@@ -129,14 +129,14 @@ class Facebook extends Provider {
 
         getURLMeta(this._getMediaUrl(body))
           .then(({ size }) => done(null, size))
-          .catch((err) => {
-            logger.error(err, 'provider.facebook.size.error')
-            done()
+          .catch((err2) => {
+            logger.error(err2, 'provider.facebook.size.error')
+            done(err2)
           })
       })
   }
 
-  logout ({ token }, done) {
+  _logout ({ token }, done) {
     return this.client
       .delete('me/permissions')
       .auth(token)
@@ -186,5 +186,11 @@ class Facebook extends Provider {
     return err
   }
 }
+
+Facebook.version = 2
+
+Facebook.prototype.list = promisify(Facebook.prototype._list)
+Facebook.prototype.size = promisify(Facebook.prototype._size)
+Facebook.prototype.logout = promisify(Facebook.prototype._logout)
 
 module.exports = Facebook

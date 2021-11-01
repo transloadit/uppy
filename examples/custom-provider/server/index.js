@@ -4,6 +4,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const uppy = require('../../../packages/@uppy/companion')
+const MyCustomProvider = require('./customprovider')
 
 const app = express()
 
@@ -42,8 +43,8 @@ const uppyOptions = {
         key: 'your unsplash key here',
         secret: 'your unsplash secret here',
       },
-      // you provider module
-      module: require('./customprovider'),
+      // you provider class/module:
+      module: MyCustomProvider,
     },
   },
   server: {

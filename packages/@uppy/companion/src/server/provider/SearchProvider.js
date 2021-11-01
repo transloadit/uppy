@@ -6,9 +6,9 @@ class SearchProvider {
    * list the files available based on the search query
    *
    * @param {object} options
-   * @param {Function} cb
+   * @returns {Promise}
    */
-  list (options, cb) { // eslint-disable-line no-unused-vars
+  async list (options) { // eslint-disable-line no-unused-vars
     throw new Error('method not implemented')
   }
 
@@ -16,9 +16,9 @@ class SearchProvider {
    * download a certain file from the provider files
    *
    * @param {object} options
-   * @param {Function} cb
+   * @returns {Promise}
    */
-  download (options, cb) { // eslint-disable-line no-unused-vars
+  async download (options) { // eslint-disable-line no-unused-vars
     throw new Error('method not implemented')
   }
 
@@ -26,11 +26,13 @@ class SearchProvider {
    * get the size of a certain file in the provider files
    *
    * @param {object} options
-   * @param {Function} cb
+   * @returns {Promise}
    */
-  size (options, cb) { // eslint-disable-line no-unused-vars
+  async size (options) { // eslint-disable-line no-unused-vars
     throw new Error('method not implemented')
   }
 }
+
+SearchProvider.version = 1
 
 module.exports = SearchProvider

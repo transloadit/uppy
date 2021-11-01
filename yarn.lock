@@ -9152,6 +9152,7 @@ __metadata:
     express-session: 1.17.1
     grant: 4.7.0
     helmet: ^4.6.0
+    into-stream: ^6.0.0
     ip-address: 6.2.0
     isobject: 3.0.1
     jsonwebtoken: 8.5.1
@@ -9161,6 +9162,7 @@ __metadata:
     moment-timezone: ^0.5.31
     morgan: 1.10.0
     ms: 2.1.2
+    nock: ^13.1.3
     node-redis-pubsub: 4.0.0
     node-schedule: 1.3.2
     prom-client: 12.0.0
@@ -21051,7 +21053,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"from2@npm:^2.0.3, from2@npm:^2.1.0, from2@npm:^2.1.1":
+"from2@npm:^2.0.3, from2@npm:^2.1.0, from2@npm:^2.1.1, from2@npm:^2.3.0":
   version: 2.3.0
   resolution: "from2@npm:2.3.0"
   dependencies:
@@ -24002,6 +24004,16 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     from2: ^2.1.1
     p-is-promise: ^1.1.0
   checksum: e6e1a202227b20c446c251ef95348b3e8503cdc75aa2a09076f8821fc42c1b7fd43fabaeb8ed3cf9eb875942cfa4510b66949c5317997aa640921cc9bbadcd17
+  languageName: node
+  linkType: hard
+
+"into-stream@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "into-stream@npm:6.0.0"
+  dependencies:
+    from2: ^2.3.0
+    p-is-promise: ^3.0.0
+  checksum: 8df24c9eadd7cdd1cbc160bc20914b961dfd0ca29767785b69e698f799e85466b6f7c637d237dca1472d09d333399f70cc05a2fb8d08cb449dc9a80d92193980
   languageName: node
   linkType: hard
 
@@ -30414,7 +30426,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"nock@npm:^13.1.0":
+"nock@npm:^13.1.0, nock@npm:^13.1.3":
   version: 13.1.4
   resolution: "nock@npm:13.1.4"
   dependencies:
@@ -31700,6 +31712,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 1.1.0
   resolution: "p-is-promise@npm:1.1.0"
   checksum: 64d7c6cda18af2c91c04209e5856c54d1a9818662d2320b34153d446645f431307e04406969a1be00cad680288e86dcf97b9eb39edd5dc4d0b1bd714ee85e13b
+  languageName: node
+  linkType: hard
+
+"p-is-promise@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "p-is-promise@npm:3.0.0"
+  checksum: 74e511225fde5eeda7a120d51c60c284de90d68dec7c73611e7e59e8d1c44cc7e2246686544515849149b74ed0571ad470a456ac0d00314f8d03d2cc1ad43aae
   languageName: node
   linkType: hard
 
