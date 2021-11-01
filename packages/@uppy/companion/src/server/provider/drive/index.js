@@ -1,12 +1,13 @@
 /* eslint-disable no-underscore-dangle */
-const { callbackify } = require('util')
 const request = require('request')
 const purest = require('purest')({ request })
+const { promisify } = require('util')
 
 const Provider = require('../Provider')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
+const { requestStream } = require('../../helpers/utils')
 
 const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
@@ -20,19 +21,15 @@ function sortByName (first, second) {
   return first.name.localeCompare(second.name)
 }
 
-function waitForFailedResponse (resp) {
-  return new Promise((resolve, reject) => {
+async function waitForFailedResponse (resp) {
+  const buf = await new Promise((resolve) => {
     let data = ''
     resp.on('data', (chunk) => {
       data += chunk
-    }).on('end', () => {
-      try {
-        resolve(JSON.parse(data.toString()))
-      } catch (error) {
-        reject(error)
-      }
-    })
+    }).on('end', () => resolve(data))
+    resp.resume()
   })
+  return JSON.parse(buf.toString())
 }
 
 function adaptData (listFilesResp, sharedDrivesResp, directory, query, showSharedWithMe) {
@@ -104,7 +101,7 @@ class Drive extends Provider {
     return 'google'
   }
 
-  async _list (options) {
+  async list (options) {
     const directory = options.directory || 'root'
     const query = options.query || {}
 
@@ -180,12 +177,7 @@ class Drive extends Provider {
     )
   }
 
-  list (options, done) {
-    // @ts-ignore
-    callbackify(this._list.bind(this))(options, done)
-  }
-
-  async stats ({ id, token }) {
+  async _stats ({ id, token }) {
     const getStats = async (statsOfId) => new Promise((resolve, reject) => {
       this.client
         .query()
@@ -217,79 +209,59 @@ class Drive extends Provider {
       .request()
   }
 
-  download ({ id: idIn, token }, onData) {
-    this.stats({ id: idIn, token })
-      .then(({ mimeType, id }) => {
-        let requestStream
-        if (adapter.isGsuiteFile(mimeType)) {
-          requestStream = this._exportGsuiteFile(id, token, adapter.getGsuiteExportType(mimeType))
-        } else {
-          requestStream = this.client
-            .query()
-            .get(`files/${encodeURIComponent(id)}`)
-            .qs({ alt: 'media', supportsAllDrives: true })
-            .auth(token)
-            .request()
-        }
+  async download ({ id: idIn, token }) {
+    try {
+      const { mimeType, id } = await this._stats({ id: idIn, token })
 
-        requestStream
-          .on('response', (resp) => {
-            if (resp.statusCode !== 200) {
-              waitForFailedResponse(resp)
-                .then((jsonResp) => {
-                  onData(this._error(null, { ...resp, body: jsonResp }))
-                })
-                .catch((err2) => onData(this._error(err2, resp)))
-            } else {
-              resp.on('data', (chunk) => onData(null, chunk))
-            }
-          })
-          .on('end', () => onData(null, null))
-          .on('error', (err2) => {
-            logger.error(err2, 'provider.drive.download.error')
-            onData(err2)
-          })
+      const req = adapter.isGsuiteFile(mimeType)
+        ? this._exportGsuiteFile(id, token, adapter.getGsuiteExportType(mimeType))
+        : this.client
+          .query()
+          .get(`files/${encodeURIComponent(id)}`)
+          .qs({ alt: 'media', supportsAllDrives: true })
+          .auth(token)
+          .request()
+
+      return await requestStream(req, async (res) => {
+        try {
+          const jsonResp = await waitForFailedResponse(res)
+          return this._error(null, { ...res, body: jsonResp })
+        } catch (err2) {
+          return this._error(err2, res)
+        }
       })
-      .catch((err) => {
-        logger.error(err, 'provider.drive.download.stats.error')
-        onData(err)
-      })
+    } catch (err) {
+      logger.error(err, 'provider.drive.download.error')
+      throw err
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
-  thumbnail (_, done) {
+  async thumbnail () {
     // not implementing this because a public thumbnail from googledrive will be used instead
-    const err = new Error('call to thumbnail is not implemented')
-    logger.error(err, 'provider.drive.thumbnail.error')
-    return done(err)
+    logger.error('call to thumbnail is not implemented', 'provider.drive.thumbnail.error')
+    throw new Error('call to thumbnail is not implemented')
   }
 
-  async _size ({ id, token }) {
+  async size ({ id, token }) {
     try {
-      const body = await this.stats({ id, token })
+      const { mimeType, size } = await this._stats({ id, token })
 
-      if (adapter.isGsuiteFile(body.mimeType)) {
-        // Not all GSuite file sizes can be predetermined
-        // also for files whose size can be predetermined,
-        // the request to get it can be sometimes expesnive, depending
-        // on the file size. So we default the size to the size export limit
-        const maxExportFileSize = 10 * 1024 * 1024 // 10 MB
-        return maxExportFileSize
+      if (adapter.isGsuiteFile(mimeType)) {
+        // GSuite file sizes cannot be predetermined (but are max 10MB)
+        // e.g. Transfer-Encoding: chunked
+        return undefined
       }
-      return parseInt(body.size, 10)
+
+      return parseInt(size, 10)
     } catch (err) {
       logger.error(err, 'provider.drive.size.error')
       throw err
     }
   }
 
-  size (options, done) {
-    // @ts-ignore
-    callbackify(this._size.bind(this))(options, done)
-  }
-
-  logout ({ token }, done) {
-    return this.client
+  _logout ({ token }, done) {
+    this.client
       .get('https://accounts.google.com/o/oauth2/revoke')
       .qs({ token })
       .request((err, resp) => {
@@ -311,5 +283,9 @@ class Drive extends Provider {
     return err
   }
 }
+
+Drive.version = 2
+
+Drive.prototype.logout = promisify(Drive.prototype._logout)
 
 module.exports = Drive

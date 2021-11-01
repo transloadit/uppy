@@ -355,6 +355,8 @@ module.exports = class XHRUpload extends BasePlugin {
   uploadRemote (file) {
     const opts = this.getOptions(file)
     return new Promise((resolve, reject) => {
+      this.uppy.emit('upload-started', file)
+
       const fields = {}
       const metaFields = Array.isArray(opts.metaFields)
         ? opts.metaFields
@@ -383,13 +385,13 @@ module.exports = class XHRUpload extends BasePlugin {
         this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
         this.onFileRemove(file.id, () => {
-          socket.send('pause', {})
+          socket.send('cancel', {})
           queuedRequest.abort()
           resolve(`upload ${file.id} was removed`)
         })
 
         this.onCancelAll(file.id, () => {
-          socket.send('pause', {})
+          socket.send('cancel', {})
           queuedRequest.abort()
           resolve(`upload ${file.id} was canceled`)
         })

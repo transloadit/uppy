@@ -187,9 +187,12 @@ exports.getURLMeta = (url, blockLocalIPs = false) => {
         reject(new Error(`URL server responded with status: ${response.statusCode}`))
       } else {
         req.abort() // No need to get the rest of the response, as we only want header
+
+        // Can be undefined for unknown length URLs, e.g. transfer-encoding: chunked
+        const contentLength = parseInt(response.headers['content-length'], 10)
         resolve({
           type: response.headers['content-type'],
-          size: parseInt(response.headers['content-length'], 10),
+          size: Number.isNaN(contentLength) ? null : contentLength,
         })
       }
     })
