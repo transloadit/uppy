@@ -2,7 +2,7 @@
  * @module provider
  */
 // @ts-ignore
-const config = require('@purest/providers')
+const purestConfig = require('@purest/providers')
 const dropbox = require('./dropbox')
 const box = require('./box')
 const drive = require('./drive')
@@ -18,9 +18,10 @@ const { getCredentialsResolver } = require('./credentials')
 const Provider = require('./Provider')
 // eslint-disable-next-line
 const SearchProvider = require('./SearchProvider')
+const { wrapLegacyProvider } = require('./ProviderCompat')
 
 // leave here for now until Purest Providers gets updated with Zoom provider
-config.zoom = {
+purestConfig.zoom = {
   'https://zoom.us/': {
     __domain: {
       auth: {
@@ -45,6 +46,25 @@ config.zoom = {
 }
 
 /**
+ *
+ * @param {{server: object}} options
+ */
+const validOptions = (options) => {
+  return options.server.host && options.server.protocol
+}
+
+/**
+ *
+ * @param {string} name of the provider
+ * @param {{server: object, providerOptions: object}} options
+ * @returns {string} the authProvider for this provider
+ */
+const providerNameToAuthName = (name, options) => { // eslint-disable-line no-unused-vars
+  const providers = exports.getDefaultProviders()
+  return (providers[name] || {}).authProvider
+}
+
+/**
  * adds the desired provider module to the request object,
  * based on the providerName parameter specified
  *
@@ -60,8 +80,14 @@ module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => 
    * @param {string} providerName
    */
   const middleware = (req, res, next, providerName) => {
-    if (providers[providerName] && validOptions(req.companion.options)) {
-      req.companion.provider = new providers[providerName]({ providerName, config })
+    let ProviderClass = providers[providerName]
+    if (ProviderClass && validOptions(req.companion.options)) {
+      // TODO remove this legacy provider compatibility when we release a new major
+      // @ts-ignore
+      if (ProviderClass.version !== 2) ProviderClass = wrapLegacyProvider(ProviderClass)
+
+      req.companion.provider = new ProviderClass({ providerName, config: purestConfig })
+
       if (needsProviderCredentials) {
         req.companion.getProviderCredentials = getCredentialsResolver(providerName, req.companion.options, req)
       }
@@ -100,14 +126,17 @@ module.exports.getSearchProviders = () => {
  */
 module.exports.addCustomProviders = (customProviders, providers, grantConfig) => {
   Object.keys(customProviders).forEach((providerName) => {
-    providers[providerName] = customProviders[providerName].module
-    const providerConfig = { ...customProviders[providerName].config }
-    // todo: consider setting these options from a universal point also used
-    // by official providers. It'll prevent these from getting left out if the
-    // requirement changes.
-    providerConfig.callback = `/${providerName}/callback`
-    providerConfig.transport = 'session'
-    grantConfig[providerName] = providerConfig
+    const customProvider = customProviders[providerName]
+
+    providers[providerName] = customProvider.module
+    grantConfig[providerName] = {
+      ...customProvider.config,
+      // todo: consider setting these options from a universal point also used
+      // by official providers. It'll prevent these from getting left out if the
+      // requirement changes.
+      callback: `/${providerName}/callback`,
+      transport: 'session',
+    }
   })
 }
 
@@ -163,23 +192,4 @@ module.exports.addProviderOptions = (companionOptions, grantConfig) => {
       logger.warn(`skipping one found unsupported provider "${providerName}".`, 'provider.options.skip')
     }
   })
-}
-
-/**
- *
- * @param {string} name of the provider
- * @param {{server: object, providerOptions: object}} options
- * @returns {string} the authProvider for this provider
- */
-const providerNameToAuthName = (name, options) => { // eslint-disable-line no-unused-vars
-  const providers = exports.getDefaultProviders()
-  return (providers[name] || {}).authProvider
-}
-
-/**
- *
- * @param {{server: object}} options
- */
-const validOptions = (options) => {
-  return options.server.host && options.server.protocol
 }

@@ -20,13 +20,13 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/companion-client": "workspace:*",
-    "@uppy/provider-views": "workspace:*",
-    "@uppy/utils": "workspace:*",
+    "@uppy/companion-client": "workspace:^",
+    "@uppy/provider-views": "workspace:^",
+    "@uppy/utils": "workspace:^",
     "preact": "^10.5.13"
   },
   "peerDependencies": {
-    "@uppy/core": "^1.13.3"
+    "@uppy/core": "workspace:^"
   },
   "publishConfig": {
     "access": "public"

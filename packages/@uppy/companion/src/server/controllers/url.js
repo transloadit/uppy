@@ -3,7 +3,7 @@ const request = require('request')
 const { URL } = require('url')
 const validator = require('validator')
 
-const Uploader = require('../Uploader')
+const { startDownUpload } = require('../helpers/upload')
 const { getURLMeta, getRedirectEvaluator, getProtectedHttpAgent } = require('../helpers/request')
 const logger = require('../logger')
 
@@ -41,11 +41,11 @@ const validateURL = (url, debug) => {
  * to the callback chunk by chunk.
  *
  * @param {string} url
- * @param {downloadCallback} onDataChunk
  * @param {boolean} blockLocalIPs
  * @param {string} traceId
+ * @returns {Promise}
  */
-const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
+const downloadURL = async (url, blockLocalIPs, traceId) => {
   const opts = {
     uri: url,
     method: 'GET',
@@ -53,20 +53,25 @@ const downloadURL = (url, onDataChunk, blockLocalIPs, traceId) => {
     agentClass: getProtectedHttpAgent((new URL(url)).protocol, blockLocalIPs),
   }
 
-  request(opts)
-    .on('response', (resp) => {
-      if (resp.statusCode >= 300) {
-        const err = new Error(`URL server responded with status: ${resp.statusCode}`)
-        onDataChunk(err, null)
-      } else {
-        resp.on('data', (chunk) => onDataChunk(null, chunk))
-      }
-    })
-    .on('end', () => onDataChunk(null, null))
-    .on('error', (err) => {
-      logger.error(err, 'controller.url.download.error', traceId)
-      onDataChunk(err, null)
-    })
+  return new Promise((resolve, reject) => {
+    const req = request(opts)
+      .on('response', (resp) => {
+        if (resp.statusCode >= 300) {
+          req.abort() // No need to keep request
+          reject(new Error(`URL server responded with status: ${resp.statusCode}`))
+          return
+        }
+
+        // Don't allow any more data to flow yet.
+        // https://github.com/request/request/issues/1990#issuecomment-184712275
+        resp.pause()
+        resolve(resp)
+      })
+      .on('error', (err) => {
+        logger.error(err, 'controller.url.download.error', traceId)
+        reject(err)
+      })
+  })
 }
 
 /**
@@ -101,42 +106,30 @@ const meta = async (req, res) => {
  * @param {object} res expressJS response object
  */
 const get = async (req, res) => {
-  try {
-    logger.debug('URL file import handler running', null, req.id)
-    const { debug } = req.companion.options
-    if (!validateURL(req.body.url, debug)) {
-      logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
-      res.status(400).json({ error: 'Invalid request body' })
-      return
-    }
+  logger.debug('URL file import handler running', null, req.id)
+  const { debug } = req.companion.options
+  if (!validateURL(req.body.url, debug)) {
+    logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
+    res.status(400).json({ error: 'Invalid request body' })
+    return
+  }
 
+  async function getSize () {
     const { size } = await getURLMeta(req.body.url, !debug)
+    return size
+  }
 
-    // @ts-ignore
-    logger.debug('Instantiating uploader.', null, req.id)
-    const uploader = new Uploader(Uploader.reqToOptions(req, size))
+  async function download () {
+    return downloadURL(req.body.url, !debug, req.id)
+  }
 
-    if (uploader.hasError()) {
-      const response = uploader.getResponse()
-      res.status(response.status).json(response.body)
-      return
-    }
-
-    logger.debug('Waiting for socket connection before beginning remote download.', null, req.id)
-    uploader.onSocketReady(() => {
-      logger.debug('Socket connection received. Starting remote download.', null, req.id)
-      downloadURL(req.body.url, uploader.handleChunk.bind(uploader), !debug, req.id)
-    })
-
-    const response = uploader.getResponse()
-
-    // NOTE: Uploader will continue running after the http request is responded
-    res.status(response.status).json(response.body)
-  } catch (err) {
-    logger.error(err, 'controller.url.get.error', req.id)
+  function onUnhandledError (err) {
+    logger.error(err, 'controller.url.error', req.id)
     // @todo send more meaningful error message and status code to client if possible
     res.status(err.status || 500).json({ message: 'failed to fetch URL metadata' })
   }
+
+  startDownUpload({ req, res, getSize, download, onUnhandledError })
 }
 
 module.exports = () => router()

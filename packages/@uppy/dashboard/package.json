@@ -23,11 +23,11 @@
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "0.0.7",
-    "@uppy/informer": "workspace:*",
-    "@uppy/provider-views": "workspace:*",
-    "@uppy/status-bar": "workspace:*",
-    "@uppy/thumbnail-generator": "workspace:*",
-    "@uppy/utils": "workspace:*",
+    "@uppy/informer": "workspace:^",
+    "@uppy/provider-views": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
+    "@uppy/thumbnail-generator": "workspace:^",
+    "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
     "is-shallow-equal": "^1.0.1",
     "lodash.debounce": "^4.0.8",
@@ -36,11 +36,11 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
-    "@uppy/google-drive": "workspace:*",
-    "@uppy/status-bar": "workspace:*",
+    "@uppy/google-drive": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
     "resize-observer-polyfill": "^1.5.0"
   },
   "peerDependencies": {
-    "@uppy/core": "^2.0.0"
+    "@uppy/core": "workspace:^"
   }
 }

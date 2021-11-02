@@ -1,9 +1,12 @@
 const request = require('request')
+const { promisify } = require('util')
+
 const SearchProvider = require('../SearchProvider')
 const { getURLMeta } = require('../../helpers/request')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError } = require('../error')
+const { requestStream } = require('../../helpers/utils')
 
 const BASE_URL = 'https://api.unsplash.com'
 
@@ -38,7 +41,7 @@ function adaptData (body, currentQuery) {
  * Adapter for API https://api.unsplash.com
  */
 class Unsplash extends SearchProvider {
-  list ({ token, query = { cursor: null, q: null } }, done) {
+  _list ({ token, query = { cursor: null, q: null } }, done) {
     const reqOpts = {
       url: `${BASE_URL}/search/photos`,
       method: 'GET',
@@ -66,47 +69,49 @@ class Unsplash extends SearchProvider {
     })
   }
 
-  download ({ id, token }, onData) {
-    const reqOpts = {
-      url: `${BASE_URL}/photos/${id}`,
-      method: 'GET',
-      json: true,
-      headers: {
-        Authorization: `Client-ID ${token}`,
-      },
-    }
-    request(reqOpts, (err, resp, body) => {
-      if (err || resp.statusCode !== 200) {
-        const error = this.error(err, resp)
-        logger.error(error, 'provider.unsplash.download.error')
-        onData(error)
-        return
+  async download ({ id, token }) {
+    try {
+      const reqOpts = {
+        method: 'GET',
+        json: true,
+        headers: {
+          Authorization: `Client-ID ${token}`,
+        },
       }
 
-      const url = body.links.download
-
-      request
-        .get(url)
-        .on('response', (response) => {
-          if (response.statusCode !== 200) {
-            onData(this.error(null, response))
-          } else {
-            response.on('data', (chunk) => onData(null, chunk))
+      const body = await new Promise((resolve, reject) => (
+        request({ ...reqOpts, url: `${BASE_URL}/photos/${id}` }, (err, resp, body2) => {
+          if (err || resp.statusCode !== 200) {
+            const err2 = this.error(err, resp)
+            logger.error(err, 'provider.unsplash.download.error')
+            reject(err2)
+            return
           }
+          resolve(body2)
         })
-        .on('end', () => onData(null, null))
-        // To attribute the author of the image, we call the `download_location`
-        // endpoint to increment the download count on Unsplash.
-        // https://help.unsplash.com/en/articles/2511258-guideline-triggering-a-download
-        .on('complete', () => request({ ...reqOpts, url: body.links.download_location }))
-        .on('error', (error) => {
-          logger.error(error, 'provider.unsplash.download.url.error')
-          onData(error)
-        })
-    })
+      ))
+
+      const req = request.get(body.links.download)
+      const stream = await requestStream(req, async (res) => this.error(null, res))
+
+      // To attribute the author of the image, we call the `download_location`
+      // endpoint to increment the download count on Unsplash.
+      // https://help.unsplash.com/en/articles/2511258-guideline-triggering-a-download
+      request({ ...reqOpts, url: body.links.download_location }, (err, resp) => {
+        if (err || resp.statusCode !== 200) {
+          const err2 = this.error(err, resp)
+          logger.error(err2, 'provider.unsplash.download.location.error')
+        }
+      })
+
+      return stream
+    } catch (err) {
+      logger.error(err, 'provider.unsplash.download.url.error')
+      throw err
+    }
   }
 
-  size ({ id, token }, done) {
+  _size ({ id, token }, done) {
     const reqOpts = {
       url: `${BASE_URL}/photos/${id}`,
       method: 'GET',
@@ -126,9 +131,9 @@ class Unsplash extends SearchProvider {
 
       getURLMeta(body.links.download)
         .then(({ size }) => done(null, size))
-        .catch((error) => {
-          logger.error(error, 'provider.unsplash.size.error')
-          done()
+        .catch((err2) => {
+          logger.error(err2, 'provider.unsplash.size.error')
+          done(err2)
         })
     })
   }
@@ -145,5 +150,10 @@ class Unsplash extends SearchProvider {
     return err
   }
 }
+
+Unsplash.version = 2
+
+Unsplash.prototype.list = promisify(Unsplash.prototype._list)
+Unsplash.prototype.size = promisify(Unsplash.prototype._size)
 
 module.exports = Unsplash

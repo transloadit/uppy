@@ -22,13 +22,13 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:*",
+    "@uppy/utils": "workspace:^",
     "exifr": "^6.0.0"
   },
   "devDependencies": {
     "namespace-emitter": "2.0.1"
   },
   "peerDependencies": {
-    "@uppy/core": "^2.0.0"
+    "@uppy/core": "workspace:^"
   }
 }
