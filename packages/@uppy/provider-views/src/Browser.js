@@ -115,7 +115,7 @@ function Browser (props) {
                   viewType,
                   i18n,
                   type: 'file',
-                  isDisabled: !validated.result && isChecked(file),
+                  isDisabled: !validated.result && !isChecked(file),
                   restrictionReason: validated.reason,
                 })
               })}
