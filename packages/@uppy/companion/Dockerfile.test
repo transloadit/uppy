@@ -9,8 +9,7 @@ WORKDIR /app
 
 RUN apk --update add  --virtual native-dep \
   make gcc g++ python libgcc libstdc++ git && \
-  npm install -g corepack && \
-  corepack yarn install && \
+  npm install
   apk del native-dep
 RUN apk add bash
 
