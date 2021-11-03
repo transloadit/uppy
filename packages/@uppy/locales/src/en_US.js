@@ -1,10 +1,9 @@
-/* eslint-disable comma-dangle */
 const en_US = {}
 
 en_US.strings = {
   addBulkFilesFailed: {
     '0': 'Failed to add %{smart_count} file due to an internal error',
-    '1': 'Failed to add %{smart_count} files due to internal errors'
+    '1': 'Failed to add %{smart_count} files due to internal errors',
   },
   addingMoreFiles: 'Adding more files',
   addMore: 'Add more',
@@ -62,14 +61,14 @@ en_US.strings = {
   failedToUpload: 'Failed to upload %{file}',
   filesUploadedOfTotal: {
     '0': '%{complete} of %{smart_count} file uploaded',
-    '1': '%{complete} of %{smart_count} files uploaded'
+    '1': '%{complete} of %{smart_count} files uploaded',
   },
   filter: 'Filter',
   finishEditingFile: 'Finish editing file',
   flipHorizontal: 'Flip horizontal',
   folderAdded: {
     '0': 'Added %{smart_count} file from %{folder}',
-    '1': 'Added %{smart_count} files from %{folder}'
+    '1': 'Added %{smart_count} files from %{folder}',
   },
   folderAlreadyAdded: 'The folder "%{folder}" was already added',
   generatingThumbnails: 'Generating thumbnails...',
@@ -104,7 +103,7 @@ en_US.strings = {
   poweredBy: 'Powered by %{uppy}',
   processingXFiles: {
     '0': 'Processing %{smart_count} file',
-    '1': 'Processing %{smart_count} files'
+    '1': 'Processing %{smart_count} files',
   },
   recording: 'Recording',
   recordingLength: 'Recording length %{recording_length}',
@@ -112,7 +111,7 @@ en_US.strings = {
   recoveredAllFiles: 'We restored all files. You can now resume the upload.',
   recoveredXFiles: {
     '0': 'We could not fully recover 1 file. Please re-select it and resume the upload.',
-    '1': 'We could not fully recover %{smart_count} files. Please re-select them and resume the upload.'
+    '1': 'We could not fully recover %{smart_count} files. Please re-select them and resume the upload.',
   },
   removeFile: 'Remove file',
   reSelect: 'Re-select',
@@ -128,7 +127,7 @@ en_US.strings = {
   searchImages: 'Search for images',
   selectX: {
     '0': 'Select %{smart_count}',
-    '1': 'Select %{smart_count}'
+    '1': 'Select %{smart_count}',
   },
   sessionRestored: 'Session restored',
   signInWithGoogle: 'Sign in with Google',
@@ -148,37 +147,37 @@ en_US.strings = {
   uploading: 'Uploading',
   uploadingXFiles: {
     '0': 'Uploading %{smart_count} file',
-    '1': 'Uploading %{smart_count} files'
+    '1': 'Uploading %{smart_count} files',
   },
   uploadPaused: 'Upload paused',
   uploadXFiles: {
     '0': 'Upload %{smart_count} file',
-    '1': 'Upload %{smart_count} files'
+    '1': 'Upload %{smart_count} files',
   },
   uploadXNewFiles: {
     '0': 'Upload +%{smart_count} file',
-    '1': 'Upload +%{smart_count} files'
+    '1': 'Upload +%{smart_count} files',
   },
   xFilesSelected: {
     '0': '%{smart_count} file selected',
-    '1': '%{smart_count} files selected'
+    '1': '%{smart_count} files selected',
   },
   xMoreFilesAdded: {
     '0': '%{smart_count} more file added',
-    '1': '%{smart_count} more files added'
+    '1': '%{smart_count} more files added',
   },
   xTimeLeft: '%{time} left',
   youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
   youCanOnlyUploadX: {
     '0': 'You can only upload %{smart_count} file',
-    '1': 'You can only upload %{smart_count} files'
+    '1': 'You can only upload %{smart_count} files',
   },
   youHaveToAtLeastSelectX: {
     '0': 'You have to select at least %{smart_count} file',
-    '1': 'You have to select at least %{smart_count} files'
+    '1': 'You have to select at least %{smart_count} files',
   },
   zoomIn: 'Zoom in',
-  zoomOut: 'Zoom out'
+  zoomOut: 'Zoom out',
 }
 
 en_US.pluralize = function pluralize (count) {
