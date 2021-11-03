@@ -162,7 +162,7 @@ declare module '@uppy/utils/lib/getFileNameAndExtension' {
 declare module '@uppy/utils/lib/getFileType' {
   import UppyUtils = require('@uppy/utils')
 
-  function getFileType (file: UppyUtils.UppyFile): string | null
+  function getFileType (file: UppyUtils.UppyFile): string
   export = getFileType
 }
 
