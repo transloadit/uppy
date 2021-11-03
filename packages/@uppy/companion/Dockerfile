@@ -8,7 +8,7 @@ WORKDIR /app
 # * to optionally copy lock files that _might_ _not_ exist
 ADD package.json package-*.json yarn.* .yarn /tmp/
 RUN cd /tmp && apk --update add  --virtual native-dep \
-  make gcc g++ python libgcc libstdc++ git && \
+  make gcc g++ python3 libgcc libstdc++ git && \
   corepack yarn install && \
   apk del native-dep
 RUN mkdir -p /app && cd /app && ln -nfs /tmp/node_modules
