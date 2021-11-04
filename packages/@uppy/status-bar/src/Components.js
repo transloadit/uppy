@@ -247,7 +247,7 @@ function ProgressDetails (props) {
   )
 }
 
-function UnknownProgressDetails (props) {
+function FileUploadCount (props) {
   const { i18n, complete, numUploads } = props
 
   return (
@@ -328,7 +328,7 @@ function ProgressBarUploading (props) {
         )
       }
       return (
-        <UnknownProgressDetails
+        <FileUploadCount
           i18n={i18n}
           complete={complete}
           numUploads={numUploads}
@@ -389,7 +389,7 @@ function ProgressBarComplete (props) {
 }
 
 function ProgressBarError (props) {
-  const { error, i18n } = props
+  const { error, i18n, complete, numUploads } = props
 
   function displayErrorAlert () {
     const errorMessage = `${i18n('uploadFailed')} \n\n ${error}`
@@ -403,7 +403,7 @@ function ProgressBarError (props) {
       role="alert"
       title={i18n('uploadFailed')}
     >
-      <div className="uppy-StatusBar-status">
+      <div className="uppy-StatusBar-status uppy-StatusBar-status--error">
         <div className="uppy-StatusBar-statusPrimary">
           <svg
             aria-hidden="true"
@@ -415,19 +415,23 @@ function ProgressBarError (props) {
           >
             <path d="M4.278 5.5L0 1.222 1.222 0 5.5 4.278 9.778 0 11 1.222 6.722 5.5 11 9.778 9.778 11 5.5 6.722 1.222 11 0 9.778z" />
           </svg>
+
           {i18n('uploadFailed')}
+
+          <button
+            className="uppy-StatusBar-details"
+            aria-label={i18n('showErrorDetails')}
+            data-microtip-position="top-right"
+            data-microtip-size="medium"
+            onClick={displayErrorAlert}
+            type="button"
+          >
+            ?
+          </button>
         </div>
+
+        <FileUploadCount i18n={i18n} complete={complete} numUploads={numUploads} />
       </div>
-      <button
-        className="uppy-StatusBar-details"
-        aria-label={error}
-        data-microtip-position="top-right"
-        data-microtip-size="medium"
-        onClick={displayErrorAlert}
-        type="button"
-      >
-        ?
-      </button>
     </div>
   )
 }

@@ -124,6 +124,18 @@
   font-weight: normal;
   line-height: 1.4;
   padding-inline-end: 0.3em;
+
+  &.uppy-StatusBar-status--error .uppy-StatusBar-statusPrimary {
+    display: flex;
+    align-items: center;
+
+    button.uppy-StatusBar-details {
+      margin-left: 6px;
+    }
+  }
+  &.uppy-StatusBar-status--error .uppy-StatusBar-statusSecondary {
+    margin-left: 18px;
+  }
 }
 
 .uppy-StatusBar-statusPrimary {
@@ -399,6 +411,7 @@
   vertical-align: middle;
   background-color: $gray-500;
   border-radius: 50%;
+  border: none;
   cursor: help;
   appearance: none;
   inset-inline-start: 2px;

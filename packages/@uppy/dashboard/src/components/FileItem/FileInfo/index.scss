@@ -17,6 +17,15 @@
   }
 }
 
+.uppy-Dashboard-Item-fileName {
+  display: flex;
+  align-items: baseline;
+
+  button {
+    margin-left: 5px;
+  }
+}
+
 .uppy-Dashboard-Item-author {
   color: $gray-600;
   vertical-align: bottom;
