@@ -112,6 +112,7 @@ module.exports = function FileInfo (props) {
         file={props.file}
         i18n={props.i18n}
         toggleFileCard={props.toggleFileCard}
+        metaFields={props.metaFields}
       />
     </div>
   )
