@@ -26,10 +26,17 @@ class RestrictionError extends Error {
 if (typeof AggregateError === 'undefined') {
   // eslint-disable-next-line no-global-assign
   globalThis.AggregateError = class AggregateError extends Error {
-    constructor (message, errors) {
+    constructor (errors, message) {
       super(message)
       this.errors = errors
     }
+  }
+}
+
+class AggregateRestrictionError extends AggregateError {
+  constructor (...args) {
+    super(...args)
+    this.isRestriction = true
   }
 }
 
@@ -568,10 +575,7 @@ class Uppy {
         this.#showOrLogErrorAndThrow(err, { file, showInformer: false, throwErr: false })
       }
     }
-    this.setFileState(
-      file.id,
-      { missingRequiredMetaFields: missingFields }
-    )
+    this.setFileState(file.id, { missingRequiredMetaFields: missingFields })
     return errors
   }
 
@@ -580,13 +584,13 @@ class Uppy {
    *
    */
   #checkRequiredMetaFields (files) {
-    const errors = Object.keys(files).map((fileID) => {
+    const errors = Object.keys(files).flatMap((fileID) => {
       const file = this.getFile(fileID)
       return this.#checkRequiredMetaFieldsOnFile(file)
     })
 
     if (errors.length) {
-      throw new RestrictionError(`${this.i18n('missingRequiredMetaField')}`)
+      throw new AggregateRestrictionError(errors, `${this.i18n('missingRequiredMetaField')}`)
     }
   }
 
