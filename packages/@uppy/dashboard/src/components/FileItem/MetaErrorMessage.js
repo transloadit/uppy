@@ -1,13 +1,19 @@
 const { h } = require('preact')
 
+const metaFieldIdToName = (metaFieldId, metaFields) => {
+  const field = metaFields.filter(f => f.id === metaFieldId)
+  return field[0].name
+}
+
 module.exports = function renderMissingMetaFieldsError (props) {
-  const { file, toggleFileCard, i18n } = props
+  const { file, toggleFileCard, i18n, metaFields } = props
   const { missingRequiredMetaFields } = file
-  if (!missingRequiredMetaFields) {
+  if (!missingRequiredMetaFields?.length) {
     return null
   }
-  const metaFieldsString = missingRequiredMetaFields.map(field => (
-    field.charAt(0).toUpperCase() + field.slice(1)
+
+  const metaFieldsString = missingRequiredMetaFields.map(missingMetaField => (
+    metaFieldIdToName(missingMetaField, metaFields)
   )).join(', ')
 
   return (
