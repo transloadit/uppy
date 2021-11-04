@@ -74,16 +74,18 @@
 // Error message desktop / large screen
 .uppy-Dashboard-Item-preview .uppy-Dashboard-Item-errorMessage {
   display: none;
-  border-top: 1px solid lighten($red, 35%);
-  padding: 6px 8px;
-  line-height: 1.4;
 
   .uppy-size--md & {
     display: block;
+    border-top: 1px solid lighten($red, 35%);
+    padding: 6px 8px;
+    line-height: 1.4;
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
   }
 }
 
