@@ -105,6 +105,10 @@ module.exports = class Dashboard extends UIPlugin {
         sessionRestored: 'Session restored',
         reSelect: 'Re-select',
         poweredBy: 'Powered by %{uppy}',
+        missingRequiredMetaFields: {
+          0: 'Missing required meta field: %{fields}.',
+          1: 'Missing required meta fields: %{fields}.',
+        },
       },
     }
 
