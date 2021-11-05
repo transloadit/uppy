@@ -1,5 +1,6 @@
 {
   "name": "@uppy-example/react-native-expo",
+  "version": "0.0.0",
   "dependencies": {
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
