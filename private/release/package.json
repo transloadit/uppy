@@ -1,0 +1,14 @@
+{
+	"name": "@uppy-build/release",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"devDependencies": {
+		"node-fetch": "^2.6.6",
+		"prompts": "^2.4.2"
+	},
+	"scripts": {
+		"interactive": "node ./interactive.js",
+		"update-changelog": "node ./update-changelog.js"
+	}
+}

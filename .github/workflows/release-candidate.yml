@@ -1,0 +1,52 @@
+name: Release candidate
+on:
+  push:
+    branches: release
+
+jobs:
+  release:
+    name: Publish releases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+        with:
+          branch: release
+      - name: Cache npm dependencies
+        id: cache-npm-libraries
+        uses: actions/cache@v2
+        with:
+          path: .yarn/cache/*
+          key: ${{ runner.os }}
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+      - name: Install dependencies
+        run: corepack yarn install
+      - name: Prepare release
+        run: corepack yarn version apply --all --json | jq -s > releases.json
+      - name: Prepare changelog
+        run: corepack yarn workspace @uppy-build/release update-changelog releases.json
+      - run: corepack yarn contributors:save
+      - name: Stage changes
+        run: |
+          git rm -rf .yarn/versions
+          git rm CHANGELOG.next.md
+          git add CHANGELOG.md
+          git add README.md
+          jq -r 'map(.cwd) | join("\n")' < releases.json | awk '{ print "git add " $0 "/package.json" }' | sh
+      - name: Commit
+        run: |
+          echo "Release candidate: uppy@$(jq -r 'map(select(.ident == "uppy"))[0].newVersion' < releases.json)" > commitMessage
+          echo >> commitMessage
+          echo "This is a release candidate for the following packages:" >> commitMessage
+          jq -r 'map("- "+.ident+": "+.oldVersion+" -> "+.newVersion) | join("\n") ' < releases.json >> commitMessage
+          git commit -n --amend --file commitMessage
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release-candidate
+      - name: Open Pull Request
+        run: gh pr create -f --head release-candidate
