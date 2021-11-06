@@ -57,9 +57,15 @@ export default async function validateGitStatus (spawnOptions) {
       message:
         'Do you want to hard reset your local repository (all uncommitted changes will be lost)?',
     })
-    if (
-      !value
-      || spawnSync(
+    if (!value) {
+      throw new Error(
+        'Please ensure manually that your local repository is clean and up to date.'
+      )
+    }
+
+    if (stderr.indexOf('bad revision') !== -1) {
+      // eslint-disable-next-line no-shadow
+      const { status, stdout, stderr } = spawnSync(
         'git',
         [
           'fetch',
@@ -67,11 +73,18 @@ export default async function validateGitStatus (spawnOptions) {
           TARGET_BRANCH,
         ],
         spawnOptions
-      ).status
-      || spawnSync('git', ['reset', HEAD, '--hard'], spawnOptions).status
-    ) {
+      )
+
+      if (status) {
+        console.log(stdout.toString())
+        console.error(stderr.toString())
+        throw new Error('Failed to fetch, please ensure manually that your local repository is up to date')
+      }
+    }
+
+    if (spawnSync('git', ['reset', HEAD, '--hard'], spawnOptions).status) {
       throw new Error(
-        'Please ensure manually that your local repository is clean and up to date.'
+        'Failed to reset, please ensure manually that your local repository is clean and up to date.'
       )
     }
   }
