@@ -44,7 +44,12 @@ export default async function pickSemverness (
       spawnOptions
     )
     if (stdout.length === 0) {
-      console.log(`No commits since last release for ${name}, skipping.`)
+      if (name === '@uppy/robodog') {
+        console.log('No commits for robodog, releasing a patch release to update CDN bundle.')
+        releaseFile.write(`  ${JSON.stringify(name)}: patch\n`)
+      } else {
+        console.log(`No commits since last release for ${name}, skipping.`)
+      }
       continue
     }
     console.log(
@@ -81,6 +86,6 @@ export default async function pickSemverness (
 
   if (uppySemverness == null) throw new Error('No package to release, aborting.')
 
-  releaseFile.write(`  "uppy": ${uppySemverness}`)
+  releaseFile.write(`  "uppy": ${uppySemverness}\n`)
   releaseFile.close()
 }
