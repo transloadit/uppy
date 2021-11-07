@@ -3,10 +3,11 @@
 import fs from 'node:fs/promises'
 import process from 'node:process'
 
-const releases = JSON.parse(await fs.readFile(process.argv[2], 'utf-8'))
+const ROOT = new URL('../../', import.meta.url)
+
+const releases = JSON.parse(await fs.readFile(new URL(process.argv[2], ROOT), 'utf-8'))
 const uppyRelease = releases.find(({ ident }) => ident === 'uppy')
 
-const ROOT = new URL('../../', import.meta.url)
 const changelog = await fs.open(new URL('./CHANGELOG.md', ROOT), 'r+')
 
 const changelogContent = await changelog.readFile()
@@ -23,14 +24,13 @@ function* makeTable (versions) {
 }
 
 await changelog.write(`
-## ${uppyRelease.version}
+## ${uppyRelease.newVersion}
 
 Released: ${new Date().toISOString().slice(0, 10)}
 
 | Package | Version | Package | Version |
 | - | - | - | - |
-`, lastReleaseHeadingIndex)
-await changelog.write(makeTable(releases))
-await changelog.write(fs.readFile(new URL('./CHANGELOG.next.md', ROOT)))
-await changelog.write(changelogContent.slice(lastReleaseHeadingIndex))
+${Array.from(makeTable(releases)).join('\n')}
+
+${await fs.readFile(new URL('./CHANGELOG.next.md', ROOT))}${changelogContent.slice(lastReleaseHeadingIndex)}`, lastReleaseHeadingIndex)
 await changelog.close()

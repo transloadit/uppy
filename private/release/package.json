@@ -9,6 +9,6 @@
 	},
 	"scripts": {
 		"interactive": "node ./interactive.js",
-		"update-changelog": "node ./update-changelog.js"
+		"update-changelog": "node ./updateChangelog.js"
 	}
 }
