@@ -69,7 +69,7 @@ $ npm install @uppy/core @uppy/dashboard @uppy/tus
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v2.2.1/uppy.min.css), either to your HTML page’s `<head>` or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
+Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v2.2.2/uppy.min.css), either to your HTML page’s `<head>` or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
 
 Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
@@ -77,10 +77,10 @@ Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edg
 
 ```html
 <!-- 1. Add CSS to `<head>` -->
-<link href="https://releases.transloadit.com/uppy/v2.2.1/uppy.min.css" rel="stylesheet">
+<link href="https://releases.transloadit.com/uppy/v2.2.2/uppy.min.css" rel="stylesheet">
 
 <!-- 2. Add JS before the closing `</body>` -->
-<script src="https://releases.transloadit.com/uppy/v2.2.1/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.2.2/uppy.min.js"></script>
 
 <!-- 3. Initialize -->
 <div class="UppyDragDrop"></div>
@@ -190,7 +190,7 @@ If you’re using Uppy from CDN, those polyfills are already included in the leg
 bundle, so no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v2.2.1/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.2.2/uppy.legacy.min.js"></script>
 ```
 
 ## FAQ

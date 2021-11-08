@@ -79,7 +79,7 @@ async function main () {
   }
 
   const message = await lastCommitMessage()
-  if (message.trim() !== 'Release') {
+  if (!message.trim().includes('Release')) {
     console.error(`Last commit is not a release commit, but '${message}'`)
     process.exit(1)
   }
