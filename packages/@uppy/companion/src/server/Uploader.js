@@ -40,6 +40,8 @@ function exceedsMaxFileSize (maxFileSize, size) {
   return maxFileSize && size && size > maxFileSize
 }
 
+let testIdx = 0
+
 class AbortError extends Error {}
 
 class Uploader {
@@ -465,6 +467,12 @@ class Uploader {
    * @param {any} stream
    */
   async _uploadTus (stream) {
+    testIdx++
+    if (testIdx > 1) {
+      this.failed = true
+      setTimeout(() => this.emitError(new Error('test')), 1000)
+      return Promise.reject(new Error('test'))
+    }
     const uploader = this
 
     const isFileStream = stream instanceof ReadStream

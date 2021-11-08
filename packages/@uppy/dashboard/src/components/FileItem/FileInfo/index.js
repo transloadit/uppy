@@ -76,7 +76,7 @@ const ErrorButton = ({ file, onClick }) => {
   if (file.error) {
     return (
       <button
-        className="uppy-Dashboard-Item-errorDetails"
+        className="uppy-u-reset uppy-Dashboard-Item-errorDetails"
         aria-label={file.error}
         data-microtip-position="bottom"
         data-microtip-size="medium"
