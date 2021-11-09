@@ -63,7 +63,7 @@ export default async function validateGitStatus (spawnOptions) {
       )
     }
 
-    if (stderr.indexOf('bad revision') !== -1) {
+    if (stderr.indexOf('bad object') !== -1) {
       // eslint-disable-next-line no-shadow
       const { status, stdout, stderr } = spawnSync(
         'git',
