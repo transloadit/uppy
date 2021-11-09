@@ -35,7 +35,7 @@ module.exports = (companionOptions) => {
       s3ClientOptions.credentials = new AWS.Credentials(
         s3ProviderOptions.key,
         s3ProviderOptions.secret,
-        s3ProviderOptions.sessionToken
+        s3ProviderOptions.sessionToken,
       )
     }
     s3Client = new S3(s3ClientOptions)

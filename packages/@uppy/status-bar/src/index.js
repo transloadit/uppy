@@ -135,7 +135,7 @@ module.exports = class StatusBar extends UIPlugin {
         error,
         isAllComplete,
         recoveredState,
-        state.files || {}
+        state.files || {},
       ),
       allowNewUpload,
       totalProgress,

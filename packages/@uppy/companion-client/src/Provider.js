@@ -29,7 +29,7 @@ module.exports = class Provider extends RequestClient {
 
         if (this.companionKeysParams) {
           authHeaders['uppy-credentials-params'] = btoa(
-            JSON.stringify({ params: this.companionKeysParams })
+            JSON.stringify({ params: this.companionKeysParams }),
           )
         }
         return { ...headers, ...authHeaders }

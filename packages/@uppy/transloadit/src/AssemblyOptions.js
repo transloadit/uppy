@@ -67,7 +67,7 @@ class AssemblyOptions {
     const assemblyOptions = await options.getAssemblyOptions(file, options)
     if (Array.isArray(assemblyOptions.fields)) {
       assemblyOptions.fields = Object.fromEntries(
-        assemblyOptions.fields.map((fieldName) => [fieldName, file.meta[fieldName]])
+        assemblyOptions.fields.map((fieldName) => [fieldName, file.meta[fieldName]]),
       )
     } else if (assemblyOptions.fields == null) {
       assemblyOptions.fields = {}
@@ -92,7 +92,7 @@ class AssemblyOptions {
 
     if (this.files.length > 0) {
       return Promise.all(
-        this.files.map((file) => this.#getAssemblyOptions(file))
+        this.files.map((file) => this.#getAssemblyOptions(file)),
       ).then(dedupe)
     }
 

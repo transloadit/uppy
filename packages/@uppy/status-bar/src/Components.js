@@ -28,13 +28,12 @@ function UploadBtn (props) {
     {
       'uppy-c-btn-primary': uploadState === statusBarStates.STATE_WAITING,
     },
-    { 'uppy-StatusBar-actionBtn--disabled': isSomeGhost }
+    { 'uppy-StatusBar-actionBtn--disabled': isSomeGhost },
   )
 
-  const uploadBtnText
-    = newFiles && isUploadStarted && !recoveredState
-      ? i18n('uploadXNewFiles', { smart_count: newFiles })
-      : i18n('uploadXFiles', { smart_count: newFiles })
+  const uploadBtnText = newFiles && isUploadStarted && !recoveredState
+    ? i18n('uploadXNewFiles', { smart_count: newFiles })
+    : i18n('uploadXFiles', { smart_count: newFiles })
 
   return (
     <button
@@ -263,7 +262,7 @@ function UploadNewlyAddedFiles (props) {
     'uppy-u-reset',
     'uppy-c-btn',
     'uppy-StatusBar-actionBtn',
-    'uppy-StatusBar-actionBtn--uploadNewlyAdded'
+    'uppy-StatusBar-actionBtn--uploadNewlyAdded',
   )
 
   return (

@@ -28,7 +28,7 @@ describe('AwsS3Multipart', () => {
       const opts = {}
 
       expect(() => awsS3Multipart.opts.createMultipartUpload(file)).toThrow(
-        err
+        err,
       )
       expect(() => awsS3Multipart.opts.listParts(file, opts)).toThrow(err)
       expect(() => awsS3Multipart.opts.completeMultipartUpload(file, opts)).toThrow(err)
@@ -68,7 +68,7 @@ describe('AwsS3Multipart', () => {
 
     it('Calls the prepareUploadParts function totalChunks / limit times', async () => {
       const scope = nock(
-        'https://bucket.s3.us-east-2.amazonaws.com'
+        'https://bucket.s3.us-east-2.amazonaws.com',
       ).defaultReplyHeaders({
         'access-control-allow-method': 'PUT',
         'access-control-allow-origin': '*',
@@ -103,7 +103,7 @@ describe('AwsS3Multipart', () => {
       await core.upload()
 
       expect(
-        awsS3Multipart.opts.prepareUploadParts.mock.calls.length
+        awsS3Multipart.opts.prepareUploadParts.mock.calls.length,
       ).toEqual(1)
 
       scope.done()
@@ -111,7 +111,7 @@ describe('AwsS3Multipart', () => {
 
     it('Calls prepareUploadParts with a Math.ceil(limit / 2) minimum, instead of one at a time for the remaining chunks after the first limit batch', async () => {
       const scope = nock(
-        'https://bucket.s3.us-east-2.amazonaws.com'
+        'https://bucket.s3.us-east-2.amazonaws.com',
       ).defaultReplyHeaders({
         'access-control-allow-method': 'PUT',
         'access-control-allow-origin': '*',

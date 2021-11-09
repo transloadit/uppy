@@ -113,7 +113,7 @@ app.use((req, res, next) => {
   return res.status(404).json({ message: 'Not Found' })
 })
 
-companion.socket(app.listen(3020), companionOptions)
+companion.socket(app.listen(3020))
 
 console.log('Welcome to Companion!')
 console.log(`Listening on http://0.0.0.0:3020`)
