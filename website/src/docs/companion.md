@@ -98,10 +98,10 @@ Then, add the Companion WebSocket server for realtime upload progress, using the
 ```js
 const server = app.listen(PORT)
 
-companion.socket(server, options)
+companion.socket(server)
 ```
 
-This takes your `server` instance and [Options](#Options) as parameters.
+This takes your `server` instance as an argument.
 
 ### Running as a standalone server
 
