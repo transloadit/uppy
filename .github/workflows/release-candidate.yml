@@ -27,14 +27,13 @@ jobs:
       - name: Prepare release
         run: corepack yarn version apply --all --json | jq -s > releases.json
       - name: Prepare changelog
-        run: corepack yarn workspace @uppy-build/release update-changelog releases.json
-      - run: corepack yarn contributors:save
+        run: corepack yarn workspace @uppy-build/release update-changelogs releases.json | xargs git add
+      - name: Update contributors table
+        run: corepack yarn contributors:save && git add README.md
       - name: Stage changes
         run: |
           git rm -rf .yarn/versions
           git rm CHANGELOG.next.md
-          git add CHANGELOG.md
-          git add README.md
           jq -r 'map(.cwd) | join("\n")' < releases.json | awk '{ print "git add " $0 "/package.json" }' | sh
       - name: Update CDN URLs
         run: corepack yarn workspace @uppy-build/release update-version-URLs | xargs git add

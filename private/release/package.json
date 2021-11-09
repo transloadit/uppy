@@ -10,7 +10,7 @@
 	},
 	"scripts": {
 		"interactive": "node ./interactive.js",
-		"update-changelog": "node ./updateChangelog.js",
+		"update-changelogs": "node ./updateChangelogs.js",
 		"update-version-URLs": "node ./afterVersionBump.js"
 	}
 }
