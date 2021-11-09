@@ -85,7 +85,6 @@
     "fakefile": "^1.0.0",
     "github-contributors-list": "^1.2.4",
     "glob": "^7.1.6",
-    "globby": "^11.0.4",
     "isomorphic-fetch": "^3.0.0",
     "jest": "^27.0.6",
     "last-commit-message": "^1.0.0",

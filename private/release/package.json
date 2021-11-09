@@ -4,11 +4,13 @@
 	"private": true,
 	"type": "module",
 	"devDependencies": {
+		"globby": "^12.0.2",
 		"node-fetch": "^2.6.6",
 		"prompts": "^2.4.2"
 	},
 	"scripts": {
 		"interactive": "node ./interactive.js",
-		"update-changelog": "node ./updateChangelog.js"
+		"update-changelog": "node ./updateChangelog.js",
+		"update-version-URLs": "node ./afterVersionBump.js"
 	}
 }

@@ -36,6 +36,8 @@ jobs:
           git add CHANGELOG.md
           git add README.md
           jq -r 'map(.cwd) | join("\n")' < releases.json | awk '{ print "git add " $0 "/package.json" }' | sh
+      - name: Update CDN URLs
+        run: corepack yarn workspace @uppy-build/release update-version-URLs | xargs git add
       - name: Commit
         run: |
           echo "Release candidate: uppy@$(jq -r 'map(select(.ident == "uppy"))[0].newVersion' < releases.json)" > commitMessage
