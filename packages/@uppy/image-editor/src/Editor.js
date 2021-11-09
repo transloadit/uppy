@@ -15,7 +15,7 @@ module.exports = class Editor extends Component {
     const { opts, storeCropperInstance } = this.props
     this.cropper = new Cropper(
       this.imgElement,
-      opts.cropperOptions
+      opts.cropperOptions,
     )
     storeCropperInstance(this.cropper)
 
@@ -42,7 +42,7 @@ module.exports = class Editor extends Component {
       .toBlob(
         (blob) => save(blob),
         currentImage.type,
-        opts.quality
+        opts.quality,
       )
   }
 

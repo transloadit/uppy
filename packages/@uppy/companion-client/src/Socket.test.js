@@ -43,7 +43,7 @@ describe('Socket', () => {
     expect(
       new UppySocket({
         target: 'foo',
-      }) instanceof UppySocket
+      }) instanceof UppySocket,
     )
   })
 

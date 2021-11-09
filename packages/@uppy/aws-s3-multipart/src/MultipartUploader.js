@@ -254,7 +254,7 @@ class MultipartUploader {
 
     if (typeof result?.presignedUrls !== 'object') {
       throw new TypeError(
-        'AwsS3/Multipart: Got incorrect result from `prepareUploadParts()`, expected an object `{ presignedUrls }`.'
+        'AwsS3/Multipart: Got incorrect result from `prepareUploadParts()`, expected an object `{ presignedUrls }`.',
       )
     }
 

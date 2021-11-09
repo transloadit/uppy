@@ -75,7 +75,7 @@ describe('Dashboard', () => {
     })
 
     expect(
-      core.getPlugin('Dashboard').opts.width
+      core.getPlugin('Dashboard').opts.width,
     ).toEqual(300)
   })
 
@@ -95,7 +95,7 @@ describe('Dashboard', () => {
     })
 
     expect(
-      core.getPlugin('Dashboard').i18n('myDevice')
+      core.getPlugin('Dashboard').i18n('myDevice'),
     ).toEqual('Май дивайс')
   })
 

@@ -403,7 +403,7 @@ class Uploader {
     logger.debug(
       `${combinedBytes} ${bytesTotal} ${formattedPercentage}%`,
       'uploader.total.progress',
-      this.shortToken
+      this.shortToken,
     )
 
     if (this._paused || this.uploadStopped) {

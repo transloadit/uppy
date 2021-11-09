@@ -103,7 +103,7 @@ module.exports = class ImageEditor extends UIPlugin {
     this.cropper.getCroppedCanvas().toBlob(
       saveBlobCallback,
       currentImage.type,
-      this.opts.quality
+      this.opts.quality,
     )
   }
 
