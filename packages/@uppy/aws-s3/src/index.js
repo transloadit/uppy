@@ -31,6 +31,8 @@ const { RequestClient } = require('@uppy/companion-client')
 const MiniXHRUpload = require('./MiniXHRUpload')
 const isXml = require('./isXml')
 
+const locale = require('./locale')
+
 function resolveUrl (origin, link) {
   return new URL(link, origin || undefined).toString()
 }
@@ -108,11 +110,7 @@ module.exports = class AwsS3 extends BasePlugin {
     this.id = this.opts.id || 'AwsS3'
     this.title = 'AWS S3'
 
-    this.defaultLocale = {
-      strings: {
-        timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
-      },
-    }
+    this.defaultLocale = locale
 
     const defaultOptions = {
       timeout: 30 * 1000,

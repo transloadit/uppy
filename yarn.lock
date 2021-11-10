@@ -21451,7 +21451,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"get-own-enumerable-property-symbols@npm:^3.0.0":
+"get-own-enumerable-property-symbols@npm:^3.0.0, get-own-enumerable-property-symbols@npm:^3.0.2":
   version: 3.0.2
   resolution: "get-own-enumerable-property-symbols@npm:3.0.2"
   checksum: 8f0331f14159f939830884799f937343c8c0a2c330506094bc12cbee3665d88337fe97a4ea35c002cc2bdba0f5d9975ad7ec3abb925015cdf2a93e76d4759ede
@@ -21813,7 +21813,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"glob@npm:^7.0.0, glob@npm:^7.0.3, glob@npm:^7.0.6, glob@npm:^7.1.0, glob@npm:^7.1.1, glob@npm:^7.1.2, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6":
+"glob@npm:^7.0.0, glob@npm:^7.0.3, glob@npm:^7.0.6, glob@npm:^7.1.0, glob@npm:^7.1.1, glob@npm:^7.1.2, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6, glob@npm:^7.2.0":
   version: 7.2.0
   resolution: "glob@npm:7.2.0"
   dependencies:
@@ -24625,6 +24625,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
+"is-obj@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "is-obj@npm:3.0.0"
+  checksum: 75e97a99ed0b0884778887f8e913791864151307774914283b068b06b57ca86f695b024aa1ba5ed04411918edef93e2bfd8f84d68c6b6aab417802cc76f5061b
+  languageName: node
+  linkType: hard
+
 "is-object@npm:^1.0.1":
   version: 1.0.2
   resolution: "is-object@npm:1.0.2"
@@ -24784,6 +24791,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 2.1.0
   resolution: "is-regexp@npm:2.1.0"
   checksum: 502f8e09faddc2e360350d3fa88dfb3af47b3c8e0bea1d0fe9903a1265cb199547cc11c99e9ee27cb010f678f6b48e52e92273860b68f6339e463e034f21859c
+  languageName: node
+  linkType: hard
+
+"is-regexp@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "is-regexp@npm:3.0.0"
+  checksum: c0f32f93accb9408ce1fd3d47f43648b8612d28186638b3a46e835fb147842b220b2ede4bb86315e996a4d78c393b30b0b9ab9348f9be7ab27d4c2b102469c7c
   languageName: node
   linkType: hard
 
@@ -27325,6 +27339,20 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
+"locale-pack@workspace:private/locale-pack":
+  version: 0.0.0-use.local
+  resolution: "locale-pack@workspace:private/locale-pack"
+  dependencies:
+    chalk: ^4.1.2
+    dedent: ^0.7.0
+    glob: ^7.2.0
+    mdast-util-heading-range: ^3.1.0
+    remark: ^14.0.1
+    remark-frontmatter: ^4.0.1
+    stringify-object: ^4.0.0
+  languageName: unknown
+  linkType: soft
+
 "localtunnel@npm:^2.0.1":
   version: 2.0.2
   resolution: "localtunnel@npm:2.0.2"
@@ -28426,6 +28454,17 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   dependencies:
     micromark-extension-frontmatter: ^1.0.0
   checksum: 4fae0bd9f002e3b2a95829ab8d411a64cd7acf41de9c28fac8a70d6d96498efb6409c611e8433ce9e101b8b9d37a25ce3f9144dc7c06f0669ac5451460cc28e7
+  languageName: node
+  linkType: hard
+
+"mdast-util-heading-range@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "mdast-util-heading-range@npm:3.1.0"
+  dependencies:
+    "@types/mdast": ^3.0.0
+    "@types/unist": ^2.0.0
+    mdast-util-to-string: ^3.0.0
+  checksum: c0f9892cdd36ab88b368f636270e7e846edc3c923a395b6ae49913e99c88cdff9eb5b2b131a9f20e8a78d22aff66e0523acda630721f30d8e32159ca6d35ac5d
   languageName: node
   linkType: hard
 
@@ -36261,6 +36300,18 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
+"remark-frontmatter@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "remark-frontmatter@npm:4.0.1"
+  dependencies:
+    "@types/mdast": ^3.0.0
+    mdast-util-frontmatter: ^1.0.0
+    micromark-extension-frontmatter: ^1.0.0
+    unified: ^10.0.0
+  checksum: c1c448923cd0239e9eeafb42d7129c05081c9a1bca4c8164b562cbb748e80d103bfd058597a48d54000ce3c776200ab8ccd64a9679d955423f07e4a4e77f10c3
+  languageName: node
+  linkType: hard
+
 "remark-lint-emphasis-marker@npm:^3.0.0":
   version: 3.1.0
   resolution: "remark-lint-emphasis-marker@npm:3.1.0"
@@ -36697,7 +36748,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"remark@npm:^14.0.0":
+"remark@npm:^14.0.0, remark@npm:^14.0.1":
   version: 14.0.1
   resolution: "remark@npm:14.0.1"
   dependencies:
@@ -39676,6 +39727,17 @@ resolve@^2.0.0-next.3:
     is-obj: ^1.0.1
     is-regexp: ^1.0.0
   checksum: 6827a3f35975cfa8572e8cd3ed4f7b262def260af18655c6fde549334acdac49ddba69f3c861ea5a6e9c5a4990fe4ae870b9c0e6c31019430504c94a83b7a154
+  languageName: node
+  linkType: hard
+
+"stringify-object@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "stringify-object@npm:4.0.0"
+  dependencies:
+    get-own-enumerable-property-symbols: ^3.0.2
+    is-obj: ^3.0.0
+    is-regexp: ^3.0.0
+  checksum: 8fffae04044f0a4f7fa70e05b857750e35a54e6117cdf69cad2d1ef318ff4b0c8fec57a7731646fca0ca7c07ae723cb12edbbbc863377607aec9c83adb9ff5a3
   languageName: node
   linkType: hard
 

@@ -6,6 +6,8 @@ const Client = require('./Client')
 const AssemblyOptions = require('./AssemblyOptions')
 const AssemblyWatcher = require('./AssemblyWatcher')
 
+const locale = require('./locale')
+
 function defaultGetAssemblyOptions (file, options) {
   return {
     params: options.params,
@@ -38,13 +40,7 @@ module.exports = class Transloadit extends BasePlugin {
     this.id = this.opts.id || 'Transloadit'
     this.title = 'Transloadit'
 
-    this.defaultLocale = {
-      strings: {
-        creatingAssembly: 'Preparing upload...',
-        creatingAssemblyFailed: 'Transloadit: Could not create Assembly',
-        encoding: 'Encoding...',
-      },
-    }
+    this.defaultLocale = locale
 
     const defaultOptions = {
       service: 'https://api2.transloadit.com',

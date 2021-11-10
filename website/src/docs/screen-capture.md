@@ -101,3 +101,20 @@ Set the preferred mime type for video recordings, for example `'video/webm'`. If
 If no preferred video mime type is given, the ScreenCapture plugin will prefer types listed in the [`allowedFileTypes` restriction](/docs/uppy/#restrictions), if any.
 
 ### `locale: {}`
+
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
+
+```js
+module.exports = {
+  strings: {
+    startCapturing: 'Begin screen capturing',
+    stopCapturing: 'Stop screen capturing',
+    submitRecordedFile: 'Submit recorded file',
+    streamActive: 'Stream active',
+    streamPassive: 'Stream passive',
+    micDisabled: 'Microphone access denied by user',
+    recording: 'Recording',
+  },
+}
+
+```

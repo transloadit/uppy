@@ -10,6 +10,8 @@ const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
 
+const locale = require('./locale')
+
 function buildResponseError (xhr, err) {
   let error = err
   // No error message
@@ -53,11 +55,7 @@ module.exports = class XHRUpload extends BasePlugin {
     this.id = this.opts.id || 'XHRUpload'
     this.title = 'XHRUpload'
 
-    this.defaultLocale = {
-      strings: {
-        timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
-      },
-    }
+    this.defaultLocale = locale
 
     // Default options
     const defaultOptions = {

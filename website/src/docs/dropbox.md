@@ -127,14 +127,13 @@ This option correlates to the [RequestCredentials value](https://developer.mozil
 
 ### `locale: {}`
 
-Localize text that is shown to the user.
-
-The default English strings are:
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
-const locale = {
+module.exports = {
   strings: {
-    // TODO
+    pluginNameDropbox: 'Dropbox',
   },
 }
+
 ```

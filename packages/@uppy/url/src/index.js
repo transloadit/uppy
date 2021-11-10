@@ -5,6 +5,8 @@ const UrlUI = require('./UrlUI.js')
 const toArray = require('@uppy/utils/lib/toArray')
 const forEachDroppedOrPastedUrl = require('./utils/forEachDroppedOrPastedUrl')
 
+const locale = require('./locale')
+
 function UrlIcon () {
   return (
     <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
@@ -31,14 +33,7 @@ module.exports = class Url extends UIPlugin {
     this.icon = () => <UrlIcon />
 
     // Set default options and locale
-    this.defaultLocale = {
-      strings: {
-        import: 'Import',
-        enterUrlToImport: 'Enter URL to import a file',
-        failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
-        enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
-      },
-    }
+    this.defaultLocale = locale
 
     const defaultOptions = {}
 
