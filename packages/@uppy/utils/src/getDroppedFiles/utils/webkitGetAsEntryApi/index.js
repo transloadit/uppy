@@ -28,14 +28,14 @@ module.exports = function webkitGetAsEntryApi (dataTransfer, logDropError) {
         (error) => {
           logDropError(error)
           resolve()
-        }
+        },
       )
       // This is a recursive call
     } else if (entry.isDirectory) {
       const directoryReader = entry.createReader()
       getFilesAndDirectoriesFromDirectory(directoryReader, [], logDropError, {
         onSuccess: (entries) => resolve(Promise.all(
-          entries.map(createPromiseToAddFileOrParseDirectory)
+          entries.map(createPromiseToAddFileOrParseDirectory),
         )),
       })
     }

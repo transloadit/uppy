@@ -25,7 +25,7 @@ const reducer = combineReducers({
 
 let enhancer = applyMiddleware(
   uppyReduxStore.middleware(),
-  logger
+  logger,
 )
 if (typeof __REDUX_DEVTOOLS_EXTENSION__ !== 'undefined') {
   // eslint-disable-next-line no-undef

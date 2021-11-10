@@ -142,8 +142,7 @@ class Unsplash extends SearchProvider {
   error (err, resp) {
     if (resp) {
       const fallbackMessage = `request to Unsplash returned ${resp.statusCode}`
-      const msg
-        = resp.body && resp.body.errors ? `${resp.body.errors}` : fallbackMessage
+      const msg = resp.body && resp.body.errors ? `${resp.body.errors}` : fallbackMessage
       return new ProviderApiError(msg, resp.statusCode)
     }
 

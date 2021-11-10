@@ -103,7 +103,7 @@ module.exports = class ProviderView extends View {
         this.#updateFilesAndFolders(res, files, folders)
         this.plugin.setPluginState({ directories: updatedDirectories })
       },
-      this.handleError
+      this.handleError,
     )
   }
 

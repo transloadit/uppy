@@ -27,7 +27,6 @@
 
 const BasePlugin = require('@uppy/core/lib/BasePlugin')
 const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const settle = require('@uppy/utils/lib/settle')
 const { RequestClient } = require('@uppy/companion-client')
 const MiniXHRUpload = require('./MiniXHRUpload')
 const isXml = require('./isXml')
@@ -139,7 +138,7 @@ module.exports = class AwsS3 extends BasePlugin {
     const metadata = Object.fromEntries(
       this.opts.metaFields
         .filter(key => file.meta[key] != null)
-        .map(key => [`metadata[${key}]`, file.meta[key].toString()])
+        .map(key => [`metadata[${key}]`, file.meta[key].toString()]),
     )
 
     const query = new URLSearchParams({ filename, type, ...metadata })
@@ -173,7 +172,7 @@ module.exports = class AwsS3 extends BasePlugin {
 
     const numberOfFiles = fileIDs.length
 
-    return settle(fileIDs.map((id, index) => {
+    return Promise.allSettled(fileIDs.map((id, index) => {
       paramsPromises[id] = getUploadParameters(this.uppy.getFile(id))
       return paramsPromises[id].then((params) => {
         delete paramsPromises[id]
@@ -209,6 +208,7 @@ module.exports = class AwsS3 extends BasePlugin {
 
         const file = this.uppy.getFile(id)
         this.uppy.emit('upload-error', file, error)
+        return Promise.reject(error)
       })
     })).finally(() => {
       // cleanup.

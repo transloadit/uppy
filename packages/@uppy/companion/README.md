@@ -57,7 +57,7 @@ To enable companion socket for realtime feed to the client while upload is going
 // ...
 const server = app.listen(PORT)
 
-companion.socket(server, options)
+companion.socket(server)
 ```
 
 ### Run as standalone server

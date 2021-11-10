@@ -119,7 +119,7 @@ module.exports = function server (inputCompanionOptions = {}) {
   if (companionOptions.redisUrl) {
     const RedisStore = require('connect-redis')(session)
     const redisClient = redis.client(
-      merge({ url: companionOptions.redisUrl }, companionOptions.redisOptions)
+      merge({ url: companionOptions.redisUrl }, companionOptions.redisOptions),
     )
     sessionOptions.store = new RedisStore({ client: redisClient })
   }

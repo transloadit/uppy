@@ -418,6 +418,10 @@ module.exports = {
     recoveredAllFiles: 'We restored all files. You can now resume the upload.',
     sessionRestored: 'Session restored',
     reSelect: 'Re-select',
+    missingRequiredMetaFields: {
+      0: 'Missing required meta field: %{fields}.',
+      1: 'Missing required meta fields: %{fields}.',
+    },
   },
 }
 
