@@ -12,6 +12,12 @@ jobs:
         uses: actions/checkout@v2
         with:
           branch: release
+      - name: Rebase
+        run: |
+          git fetch origin HEAD --depth=1
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git rebase FETCH_HEAD
       - name: Cache npm dependencies
         id: cache-npm-libraries
         uses: actions/cache@v2
@@ -42,12 +48,15 @@ jobs:
           echo "Release candidate: uppy@$(jq -r 'map(select(.ident == "uppy"))[0].newVersion' < releases.json)" > commitMessage
           echo >> commitMessage
           echo "This is a release candidate for the following packages:" >> commitMessage
-          jq -r 'map("- "+.ident+": "+.oldVersion+" -> "+.newVersion) | join("\n") ' < releases.json >> commitMessage
+          echo >> commitMessage
+          jq -r 'map("- `"+.ident+"`: "+.oldVersion+" -> "+.newVersion) | join("\n") ' < releases.json >> commitMessage
           git commit -n --amend --file commitMessage
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: release-candidate
       - name: Open Pull Request
-        run: gh pr create -f --head release-candidate
+        run: |
+          git push origin HEAD:release-candidate
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+          gh api /repos/${{ github.repository }}/pulls \
+            -F base="$(gh api /repos/${{ github.repository }} | jq -r .default_branch)" \
+            -F head="release-candidate" \
+            -F title="$(head -1 commitMessage)" \
+            -F body="$(git --no-pager log -1 --format=%b)"
