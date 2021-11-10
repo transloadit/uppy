@@ -25,25 +25,36 @@ jobs:
           node-version: 16.x
       - name: Install dependencies
         run: corepack yarn install
-      - name: Get CHANGELOG
-        run: git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1) == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print substr($0,2) } }' > CHANGELOG.next.md
+      - name: Get CHANGELOG diff
+        run: git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1) == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print substr($0,2) } }' > CHANGELOG.diff.md
+      - name: Build before publishing
+        run: corepack yarn run build
       - name: Publish to NPM
         run: corepack yarn workspaces foreach --no-private npm publish --access public --tolerate-republish
       - name: Merge PR
         id: merge
-        run: gh pr merge --squash --body-file CHANGELOG.next.md --delete-branch | jq -r 'if .merged then "##[set-output name=sha;]"+.sha else error("not merged") end'
+        run: gh pr merge ${{ github.event.pull_request.html_url }} --squash --body-file CHANGELOG.diff.md | jq -r 'if .merged then "##[set-output name=sha;]"+.sha else error("not merged") end'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Abort if PR merging failed
+        if: ${{ steps.merge.outputs.sha }} == ""
+        run: exit 1
       - name: Create tags
         run: |
-          git --no-pager diff --name-only HEAD^ | grep package.json | awk '{ print "jq -r '"'"'\"gh api /repos/{owner}/{repo}/git/refs -f ref=\\\"refs/tags/\"+.name+\"@\"+.version+\"\\\" -f sha={{ steps.merge.outputs.sha }}\"'"'"' < " $0 }' > createTags.sh
+          git --no-pager diff --name-only HEAD^ | awk '$0 ~ /^packages\/.+\/package\.json$/ { print "jq -r '"'"'\"gh api /repos/{owner}/{repo}/git/refs -f ref=\\\"refs/tags/\"+.name+\"@\"+.version+\"\\\" -f sha=${{ steps.merge.outputs.sha }}\"'"'"' < " $0 }' > createTags.sh
           cat createTags.sh
           sh createTags.sh | sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Remove release-candidate branch
+        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/${{ github.ref }}
       - name: Get Uppy version number
         id: uppyVersion
         run: jq -r '"##[set-output name=version;]"+.version' < packages/uppy/package.json
-      - name: Create release
-        run: gh release create uppy@{{ steps.uppyVersion.outputs.version }} -t "Uppy {{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.next.md
-      - name: Build bundles
-        run: corepack yarn run build
+      - name: Create GitHub release
+        run: gh release create uppy@${{ steps.uppyVersion.outputs.version }} -t "Uppy ${{ steps.uppyVersion.outputs.version }}" -F CHANGELOG.diff.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload `uppy` to CDN
         run: corepack yarn run uploadcdn uppy
         env:
