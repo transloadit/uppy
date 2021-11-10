@@ -476,12 +476,12 @@ describe('src/Core', () => {
 
         expect(postprocessor1.mock.calls[0][0].length).toEqual(1)
         expect(postprocessor1.mock.calls[0][0][0].substring(0, 17)).toEqual(
-          fileId.substring(0, 17)
+          fileId.substring(0, 17),
         )
 
         expect(postprocessor2.mock.calls[0][0].length).toEqual(1)
         expect(postprocessor2.mock.calls[0][0][0].substring(0, 17)).toEqual(
-          fileId.substring(0, 17)
+          fileId.substring(0, 17),
         )
       })
     })
@@ -675,7 +675,7 @@ describe('src/Core', () => {
           },
         })
       }).toThrow(
-        "Cannot add the duplicate file 'foo.jpg', it already exists"
+        "Cannot add the duplicate file 'foo.jpg', it already exists",
       )
       expect(core.getFiles().length).toEqual(1)
     })
@@ -717,7 +717,7 @@ describe('src/Core', () => {
           data: new File([sampleImage], { type: 'image/jpeg' }),
         })
       }).toThrow(
-        'Cannot add the file because onBeforeFileAdded returned false.'
+        'Cannot add the file because onBeforeFileAdded returned false.',
       )
       expect(core.getFiles().length).toEqual(0)
     })
@@ -742,7 +742,7 @@ describe('src/Core', () => {
             data: new File([sampleImage], { type: 'image/jpeg' }),
           })
         }).toThrow(
-          /Cannot add more files/
+          /Cannot add more files/,
         )
       })
 
@@ -765,7 +765,7 @@ describe('src/Core', () => {
             data: new File([sampleImage], { type: 'image/jpeg' }),
           })
         }).toThrow(
-          /Cannot add more files/
+          /Cannot add more files/,
         )
       })
 
@@ -956,7 +956,7 @@ describe('src/Core', () => {
 
       await expect(core.upload()).resolves.toBeDefined()
       await expect(core.upload()).rejects.toThrow(
-        /Cannot create a new upload: already uploading\./
+        /Cannot create a new upload: already uploading\./,
       )
     })
 
@@ -1660,7 +1660,7 @@ describe('src/Core', () => {
           data: new File([sampleImage], { type: 'image/jpeg' }),
         })
       }).toThrowError(
-        new Error('foo1.jpg exceeds maximum allowed size of 33 KB')
+        new Error('foo1.jpg exceeds maximum allowed size of 33 KB'),
       )
     })
 
@@ -1696,13 +1696,13 @@ describe('src/Core', () => {
         {
           result: false,
           reason: 'This file is smaller than the allowed size of 293 KB',
-        }
+        },
       )
       expect(validateRestrictions2).toMatchObject(
         {
           result: false,
           reason: 'You can only upload: image/png',
-        }
+        },
       )
     })
 
@@ -1775,7 +1775,7 @@ describe('src/Core', () => {
         {
           value: status,
           writable: true,
-        }
+        },
       )
     }
 

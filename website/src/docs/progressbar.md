@@ -9,7 +9,7 @@ category: "UI Elements"
 tagline: "add a small YouTube-style progress bar at the top of the page"
 ---
 
-`@uppy/progress-bar` is a minimalist plugin that shows the current upload progress in a thin bar element, similar to the ones used by YouTube and GitHub when navigating between pages.
+`@uppy/progress-bar` is a minimalist plugin that shows the current upload progress in a thin bar element, like the ones used by YouTube and GitHub when navigating between pages.
 
 ```js
 import ProgressBar from '@uppy/progress-bar'
@@ -33,7 +33,7 @@ Install from NPM:
 npm install @uppy/progress-bar
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
 const { ProgressBar } = Uppy
@@ -66,7 +66,7 @@ uppy.use(ProgressBar, {
 
 ### `id: 'ProgressBar'`
 
-A unique identifier for this Progress Bar. It defaults to `'ProgressBar'`. Use this if you need to add multiple ProgressBar instances.
+A unique identifier for this Progress Bar. It defaults to `'ProgressBar'`. Use this if you need to add many `ProgressBar` instances.
 
 ### `target: null`
 
@@ -74,7 +74,7 @@ DOM element, CSS selector, or plugin to mount the progress bar into.
 
 ### `fixed: false`
 
-When set to true, show the progress bar at the top of the page with `position: fixed`. When set to false, show the progress bar inline wherever it is mounted.
+When set to true, show the progress bar at the top of the page with `position: fixed`. When set to false, show the progress bar inline wherever it’s mounted.
 
 ```js
 uppy.use(ProgressBar, {

@@ -12,7 +12,7 @@ module.exports = (props) => {
     'uppy-ProviderBrowserItem',
     { 'uppy-ProviderBrowserItem--selected': props.isChecked },
     { 'uppy-ProviderBrowserItem--disabled': props.isDisabled },
-    { 'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video' }
+    { 'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video' },
   )
 
   const itemIconEl = <ItemIcon itemIconString={itemIconString} />

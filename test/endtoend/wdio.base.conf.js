@@ -72,7 +72,7 @@ exports.config = {
   baseUrl: 'http://localhost',
 
   // Default timeout for all waitFor* commands.
-  waitforTimeout: 10000,
+  waitforTimeout: 15000,
 
   // Default timeout in milliseconds for request
   // if Selenium Grid doesn't send response
@@ -95,7 +95,7 @@ exports.config = {
         { mount: '/providers', path: './providers/dist' },
         { mount: '/thumbnails', path: './thumbnails/dist' },
         { mount: '/transloadit', path: './transloadit/dist' },
-        { mount: '/transloadit2', path: './transloadit2/dist' },
+        { mount: '/transloadit-assembly-options', path: './transloadit-assembly-options/dist' },
         { mount: '/tus-drag-drop', path: './tus-drag-drop/dist' },
         { mount: '/typescript', path: './typescript/dist' },
         { mount: '/url-plugin', path: './url-plugin/dist' },

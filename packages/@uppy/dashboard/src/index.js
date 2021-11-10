@@ -105,6 +105,10 @@ module.exports = class Dashboard extends UIPlugin {
         sessionRestored: 'Session restored',
         reSelect: 'Re-select',
         poweredBy: 'Powered by %{uppy}',
+        missingRequiredMetaFields: {
+          0: 'Missing required meta field: %{fields}.',
+          1: 'Missing required meta fields: %{fields}.',
+        },
       },
     }
 
@@ -580,7 +584,7 @@ module.exports = class Dashboard extends UIPlugin {
   }
 
   handlePaste = (event) => {
-    // 1. Let any acquirer plugin (Url/Webcam/etc.) handle pastes to the root
+    // Let any acquirer plugin (Url/Webcam/etc.) handle pastes to the root
     this.uppy.iteratePlugins((plugin) => {
       if (plugin.type === 'acquirer') {
         // Every Plugin with .type acquirer can define handleRootPaste(event)
@@ -588,45 +592,76 @@ module.exports = class Dashboard extends UIPlugin {
       }
     })
 
-    // 2. Add all dropped files
+    // Add all dropped files
     const files = toArray(event.clipboardData.files)
-    this.addFiles(files)
+    if (files.length > 0) {
+      this.uppy.log('[Dashboard] Files pasted')
+      this.addFiles(files)
+    }
   }
 
   handleInputChange = (event) => {
     event.preventDefault()
     const files = toArray(event.target.files)
-    this.addFiles(files)
+    if (files.length > 0) {
+      this.uppy.log('[Dashboard] Files selected through input')
+      this.addFiles(files)
+    }
   }
 
   handleDragOver = (event) => {
     event.preventDefault()
     event.stopPropagation()
 
-    if (this.opts.disabled
-      || this.opts.disableLocalFiles
-      || !this.uppy.getState().allowNewUpload) {
+    // Check if some plugin can handle the datatransfer without files —
+    // for instance, the Url plugin can import a url
+    const canSomePluginHandleRootDrop = () => {
+      let somePluginCanHandleRootDrop = true
+      this.uppy.iteratePlugins((plugin) => {
+        if (plugin.canHandleRootDrop?.(event)) {
+          somePluginCanHandleRootDrop = true
+        }
+      })
+      return somePluginCanHandleRootDrop
+    }
+
+    // Check if the "type" of the datatransfer object includes files
+    const doesEventHaveFiles = () => {
+      const { types } = event.dataTransfer
+      return types.some(type => type === 'Files')
+    }
+
+    // Deny drop, if no plugins can handle datatransfer, there are no files,
+    // or when opts.disabled is set, or new uploads are not allowed
+    const somePluginCanHandleRootDrop = canSomePluginHandleRootDrop(event)
+    const hasFiles = doesEventHaveFiles(event)
+    if (
+      (!somePluginCanHandleRootDrop && !hasFiles)
+      || this.opts.disabled
+      // opts.disableLocalFiles should only be taken into account if no plugins
+      // can handle the datatransfer
+      || (this.opts.disableLocalFiles && (hasFiles || !somePluginCanHandleRootDrop))
+      || !this.uppy.getState().allowNewUpload
+    ) {
+      event.dataTransfer.dropEffect = 'none'
+      clearTimeout(this.removeDragOverClassTimeout)
       return
     }
 
-    // 1. Add a small (+) icon on drop
+    // Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the
     // browser, https://github.com/transloadit/uppy/issues/1978).
     event.dataTransfer.dropEffect = 'copy'
 
     clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
+
+    this.opts.onDragOver?.(event)
   }
 
   handleDragLeave = (event) => {
     event.preventDefault()
     event.stopPropagation()
-
-    if (this.opts.disabled
-      || this.opts.disableLocalFiles
-      || !this.uppy.getState().allowNewUpload) {
-      return
-    }
 
     clearTimeout(this.removeDragOverClassTimeout)
     // Timeout against flickering, this solution is taken from drag-drop library.
@@ -634,24 +669,19 @@ module.exports = class Dashboard extends UIPlugin {
     this.removeDragOverClassTimeout = setTimeout(() => {
       this.setPluginState({ isDraggingOver: false })
     }, 50)
+
+    this.opts.onDragLeave?.(event)
   }
 
-  handleDrop = (event) => {
+  handleDrop = async (event) => {
     event.preventDefault()
     event.stopPropagation()
 
-    if (this.opts.disabled
-        || this.opts.disableLocalFiles
-        || !this.uppy.getState().allowNewUpload) {
-      return
-    }
-
     clearTimeout(this.removeDragOverClassTimeout)
 
-    // 2. Remove dragover class
     this.setPluginState({ isDraggingOver: false })
 
-    // 3. Let any acquirer plugin (Url/Webcam/etc.) handle drops to the root
+    // Let any acquirer plugin (Url/Webcam/etc.) handle drops to the root
     this.uppy.iteratePlugins((plugin) => {
       if (plugin.type === 'acquirer') {
         // Every Plugin with .type acquirer can define handleRootDrop(event)
@@ -659,25 +689,27 @@ module.exports = class Dashboard extends UIPlugin {
       }
     })
 
-    // 4. Add all dropped files
+    // Add all dropped files
     let executedDropErrorOnce = false
     const logDropError = (error) => {
       this.uppy.log(error, 'error')
 
-      // In practice all drop errors are most likely the same, so let's just show one to avoid overwhelming the user
+      // In practice all drop errors are most likely the same,
+      // so let's just show one to avoid overwhelming the user
       if (!executedDropErrorOnce) {
         this.uppy.info(error.message, 'error')
         executedDropErrorOnce = true
       }
     }
 
-    getDroppedFiles(event.dataTransfer, { logDropError })
-      .then((files) => {
-        if (files.length > 0) {
-          this.uppy.log('[Dashboard] Files were dropped')
-          this.addFiles(files)
-        }
-      })
+    // Add all dropped files
+    const files = await getDroppedFiles(event.dataTransfer, { logDropError })
+    if (files.length > 0) {
+      this.uppy.log('[Dashboard] Files dropped')
+      this.addFiles(files)
+    }
+
+    this.opts.onDrop?.(event)
   }
 
   handleRequestThumbnail = (file) => {

@@ -32,11 +32,14 @@ function adaptData (res) {
  * an example of a custom provider module. It implements @uppy/companion's Provider interface
  */
 class MyCustomProvider {
+  static version = 2
+
   constructor () {
     this.authProvider = 'myunsplash'
   }
 
-  list ({ token, directory }, done) {
+  // eslint-disable-next-line class-methods-use-this
+  async list ({ token, directory }) {
     const path = directory ? `/${directory}/photos` : ''
     const options = {
       url: `${BASE_URL}/collections${path}`,
@@ -47,18 +50,20 @@ class MyCustomProvider {
       },
     }
 
-    request(options, (err, resp, body) => {
-      if (err) {
-        console.log(err)
-        done(err)
-        return
-      }
+    return new Promise((resolve, reject) => (
+      request(options, (err, resp, body) => {
+        if (err) {
+          console.log(err)
+          reject(err)
+          return
+        }
 
-      done(null, adaptData(body))
-    })
+        resolve(adaptData(body))
+      })))
   }
 
-  download ({ id, token }, onData) {
+  // eslint-disable-next-line class-methods-use-this
+  async download ({ id, token }) {
     const options = {
       url: `${BASE_URL}/photos/${id}`,
       method: 'GET',
@@ -68,21 +73,30 @@ class MyCustomProvider {
       },
     }
 
-    request(options, (err, resp, body) => {
-      if (err) {
-        console.log(err)
-        return
-      }
+    const resp = await new Promise((resolve, reject) => {
+      const req = request(options)
+        .on('response', (response) => {
+          // Don't allow any more data to flow yet.
+          // https://github.com/request/request/issues/1990#issuecomment-184712275
+          response.pause()
 
-      const url = body.links.download
-      request.get(url)
-        .on('data', (chunk) => onData(null, chunk))
-        .on('end', () => onData(null, null))
-        .on('error', (err) => console.log(err))
+          if (resp.statusCode !== 200) {
+            req.abort() // Or we will leak memory
+            reject(new Error(`HTTP response ${resp.statusCode}`))
+            return
+          }
+
+          resolve(response)
+        })
+        .on('error', reject)
     })
+
+    // The returned stream will be consumed and uploaded from the current position
+    return { stream: resp }
   }
 
-  size ({ id, token }, done) {
+  // eslint-disable-next-line class-methods-use-this
+  async size ({ id, token }) {
     const options = {
       url: `${BASE_URL}/photos/${id}`,
       method: 'GET',
@@ -92,15 +106,16 @@ class MyCustomProvider {
       },
     }
 
-    request(options, (err, resp, body) => {
-      if (err) {
-        console.log(err)
-        done(err)
-        return
-      }
+    return new Promise((resolve, reject) => (
+      request(options, (err, resp, body) => {
+        if (err) {
+          console.log(err)
+          reject(err)
+          return
+        }
 
-      done(null, body.width * body.height)
-    })
+        resolve(body.size)
+      })))
   }
 }
 

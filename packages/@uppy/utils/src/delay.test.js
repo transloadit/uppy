@@ -22,7 +22,7 @@ describe('delay', () => {
   it('should reject when signal is aborted', async () => {
     const controller = new AbortController()
     const start = Date.now()
-    const testDelay = delay(100, { signal: controller.signal })
+    const testDelay = delay(1000, { signal: controller.signal })
     await Promise.all([
       delay(50).then(() => controller.abort()),
       expect(testDelay).rejects.toHaveProperty('name', 'AbortError'),
@@ -31,6 +31,6 @@ describe('delay', () => {
     // should have rejected before the timer is done
     const time = Date.now() - start
     expect(time).toBeGreaterThanOrEqual(30)
-    expect(time).toBeLessThan(70)
+    expect(time).toBeLessThan(900)
   })
 })

@@ -16,11 +16,17 @@ const META_FILES = [
   'babel.config.js',
   'package.json',
   'package-lock.json',
+  'yarn.lock',
   'bin/build-lib.js',
 ]
 
 function lastModified (file) {
-  return stat(file).then((s) => s.mtime)
+  return stat(file).then((s) => s.mtime, (err) => {
+    if (err.code === 'ENOENT') {
+      return 0
+    }
+    throw err
+  })
 }
 
 async function buildLib () {
@@ -28,7 +34,7 @@ async function buildLib () {
   const metaMtime = Math.max(...metaMtimes)
 
   const files = await glob(SOURCE)
-  /* eslint-disable no-await-in-loop, no-continue */
+  /* eslint-disable no-continue */
   for (const file of files) {
     if (IGNORE.test(file)) {
       continue
@@ -54,7 +60,7 @@ async function buildLib () {
     ])
     console.log(chalk.green('Compiled lib:'), chalk.magenta(libFile))
   }
-  /* eslint-enable no-await-in-loop, no-continue */
+  /* eslint-enable no-continue */
 }
 
 console.log('Using Babel version:', require('@babel/core/package.json').version)

@@ -33,7 +33,7 @@ Install from NPM:
 npm install @uppy/google-drive
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
 const { GoogleDrive } = Uppy
@@ -42,12 +42,14 @@ const { GoogleDrive } = Uppy
 ## Setting  Up
 
 To use the Google Drive provider, you need to configure the Google Drive keys that Companion should use. With the standalone Companion server, specify environment variables:
+
 ```shell
 export COMPANION_GOOGLE_KEY="Google Drive OAuth client ID"
 export COMPANION_GOOGLE_SECRET="Google Drive OAuth client secret"
 ```
 
 When using the Companion Node.js API, configure these options:
+
 ```js
 companion.app({
   providerOptions: {
@@ -61,12 +63,11 @@ companion.app({
 
 To sign up for API keys, go to the [Google Developer Console](https://console.developers.google.com/).
 
-Create a project for your app if you don't have one yet.
-- On the project's dashboard, [enable the Google Drive API](https://developers.google.com/drive/api/v3/enable-drive-api).
-- [Set up OAuth authorization](https://developers.google.com/drive/api/v3/about-auth). Use this for an authorized redirect URI:
-   ```
-   https://$YOUR_COMPANION_HOST_NAME/drive/redirect
-   ```
+Create a project for your app if you don’t have one yet.
+
+* On the project’s dashboard, [enable the Google Drive API](https://developers.google.com/drive/api/v3/enable-drive-api).
+* [Set up OAuth authorization](https://developers.google.com/drive/api/v3/about-auth). Use this for an authorized redirect URI:
+  https://$YOUR\_COMPANION\_HOST\_NAME/drive/redirect
 
 Google will give you an OAuth client ID and client secret. Use them to configure Companion as shown above.
 
@@ -113,11 +114,11 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your [Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should be good enough.
+This is useful when you have your [Companion](/docs/companion) running on several hosts. Otherwise, the default value should be good enough.
 
 ### `companionCookiesRule: 'same-origin'`
 
-This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether    to send cookies to [Companion](/docs/companion).
 
 ### `locale: {}`
 

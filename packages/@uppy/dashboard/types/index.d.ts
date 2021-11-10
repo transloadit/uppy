@@ -28,7 +28,6 @@ export interface DashboardOptions extends PluginOptions {
   disablePageScrollWhenModalOpen?: boolean
   disableStatusBar?: boolean
   disableThumbnailGenerator?: boolean
-  doneButtonHandler?: () => void
   height?: string | number
   hideCancelButton?: boolean
   hidePauseResumeButton?: boolean
@@ -39,7 +38,6 @@ export interface DashboardOptions extends PluginOptions {
   locale?: DashboardLocale & StatusBarLocale
   metaFields?: MetaField[] | ((file: UppyFile) => MetaField[])
   note?: string | null
-  onRequestCloseModal?: () => void
   plugins?: string[]
   fileManagerSelectionType?: 'files' | 'folders' | 'both';
   proudlyDisplayPoweredByUppy?: boolean
@@ -54,7 +52,12 @@ export interface DashboardOptions extends PluginOptions {
   width?: string | number
   autoOpenFileEditor?: boolean
   disabled?: boolean
-    disableLocalFiles?: boolean
+  disableLocalFiles?: boolean
+  onRequestCloseModal?: () => void
+  doneButtonHandler?: () => void
+  onDragOver?: (event: DragEvent) => void
+  onDragLeave?: (event: DragEvent) => void
+  onDrop?: (event: DragEvent) => void
 }
 
 declare class Dashboard extends UIPlugin<DashboardOptions> {

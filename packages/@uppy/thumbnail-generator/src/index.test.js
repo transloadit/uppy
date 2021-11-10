@@ -227,7 +227,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         expect(plugin.createThumbnail).toHaveBeenCalledWith(
           file,
           plugin.opts.thumbnailWidth,
-          plugin.opts.thumbnailHeight
+          plugin.opts.thumbnailHeight,
         )
       })
     })

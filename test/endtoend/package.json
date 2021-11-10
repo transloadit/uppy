@@ -1,5 +1,6 @@
 {
-  "name": "@uppy/end2end-tests",
+  "name": "@uppy-tests/end2end",
+  "version": "0.0.0",
   "private": true,
   "devDependencies": {
     "@wdio/cli": "^7.7.7",
@@ -21,10 +22,10 @@
   "scripts": {
     "test:endtoend:build-ci": "cd ../.. && bash ./bin/endtoend-build-ci",
     "test:endtoend:build": "cd ../.. && bash ./bin/endtoend-build",
-    "test:endtoend:local": "npm run test:endtoend:build && wdio wdio.local.conf.js",
-    "test:endtoend:providers": "npm run test:endtoend:build && . ./providers/env.sh && wdio wdio.local.conf.js --spec providers/provider.*.test.js",
+    "test:endtoend:local": "yarn run test:endtoend:build && wdio wdio.local.conf.js",
+    "test:endtoend:providers": "yarn run test:endtoend:build && . ./providers/env.sh && wdio wdio.local.conf.js --spec providers/provider.*.test.js",
     "test:endtoend:prepare-ci": "npm-run-all --parallel --race test:endtoend:registry test:endtoend:build-ci",
     "test:endtoend:registry": "verdaccio --listen 4002 --config verdaccio.yaml",
-    "test:endtoend": "npm run test:endtoend:prepare-ci && wdio wdio.remote.conf.js"
+    "test:endtoend": "yarn run test:endtoend:prepare-ci && wdio wdio.remote.conf.js"
   }
 }

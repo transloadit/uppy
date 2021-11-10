@@ -96,17 +96,17 @@ const methods = [
   buildBundle(
     './packages/uppy/index.js',
     './packages/uppy/dist/uppy.js',
-    { standalone: 'Uppy' }
+    { standalone: 'Uppy' },
   ).then(minifyBundle),
   buildBundle(
     './packages/uppy/bundle.js',
     './packages/uppy/dist/uppy.legacy.js',
-    { standalone: 'Uppy (with polyfills)' }
+    { standalone: 'Uppy (with polyfills)' },
   ).then(transpileDownForIE),
   buildBundle(
     './packages/@uppy/robodog/bundle.js',
     './packages/@uppy/robodog/dist/robodog.js',
-    { standalone: 'Robodog' }
+    { standalone: 'Robodog' },
   ).then(minifyBundle),
 ]
 
@@ -118,8 +118,8 @@ glob.sync(localePackagePath).forEach((localePath) => {
     buildBundle(
       `./packages/@uppy/locales/src/${localeName}.js`,
       `./packages/@uppy/locales/dist/${localeName}.min.js`,
-      { minify: true }
-    )
+      { minify: true },
+    ),
   )
 })
 
@@ -127,8 +127,8 @@ glob.sync(localePackagePath).forEach((localePath) => {
 methods.push(
   fs.promises.copyFile(
     `${__dirname}/../BUNDLE-README.md`,
-    `./packages/uppy/dist/README.md`
-  )
+    `./packages/uppy/dist/README.md`,
+  ),
 )
 
 Promise.all(methods).then(() => {

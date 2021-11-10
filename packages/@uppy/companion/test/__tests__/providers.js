@@ -10,9 +10,12 @@ jest.mock('../../src/server/helpers/request', () => {
 jest.mock('../../src/server/helpers/oauth-state', () => require('../mockoauthstate')())
 
 const request = require('supertest')
+const nock = require('nock')
+
 const fixtures = require('../fixtures')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
+const defaults = require('../fixtures/constants')
 
 const authServer = getServer()
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
@@ -36,6 +39,16 @@ const thisOrThat = (value1, value2) => {
 
   return value2
 }
+
+beforeAll(() => {
+  const url = new URL(defaults.THUMBNAIL_URL)
+  nock(url.origin).get(url.pathname).reply(200, () => '').persist()
+})
+
+afterAll(() => {
+  nock.cleanAll()
+  nock.restore()
+})
 
 describe('set i-am header', () => {
   test.each(providerNames)('set i-am header in response (%s)', (providerName) => {
@@ -83,7 +96,7 @@ describe('list provider files', () => {
   })
 })
 
-describe('download provdier file', () => {
+describe('download provider file', () => {
   test.each(providerNames)('specified file gets downloaded from %s', (providerName) => {
     const providerFixtures = fixtures.providers[providerName].expects
     return request(authServer)

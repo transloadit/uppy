@@ -26,12 +26,13 @@ class RestrictionError extends Error {
 if (typeof AggregateError === 'undefined') {
   // eslint-disable-next-line no-global-assign
   globalThis.AggregateError = class AggregateError extends Error {
-    constructor (message, errors) {
+    constructor (errors, message) {
       super(message)
       this.errors = errors
     }
   }
 }
+
 class AggregateRestrictionError extends AggregateError {
   constructor (...args) {
     super(...args)
@@ -418,7 +419,7 @@ class Uppy {
     const inProgressFiles = files.filter(({ progress }) => !progress.uploadComplete && progress.uploadStarted)
     const newFiles =  files.filter((file) => !file.progress.uploadStarted)
     const startedFiles = files.filter(
-      file => file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess
+      file => file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess,
     )
     const uploadStartedFiles = files.filter((file) => file.progress.uploadStarted)
     const pausedFiles = files.filter((file) => file.isPaused)
@@ -557,27 +558,39 @@ class Uppy {
   }
 
   /**
-   * Check if requiredMetaField restriction is met before uploading.
+   * Check if requiredMetaField restriction is met for a specific file.
    *
    */
-  #checkRequiredMetaFields (files) {
+  #checkRequiredMetaFieldsOnFile (file) {
     const { requiredMetaFields } = this.opts.restrictions
     const { hasOwnProperty } = Object.prototype
 
     const errors = []
-    for (const fileID of Object.keys(files)) {
-      const file = this.getFile(fileID)
-      for (let i = 0; i < requiredMetaFields.length; i++) {
-        if (!hasOwnProperty.call(file.meta, requiredMetaFields[i]) || file.meta[requiredMetaFields[i]] === '') {
-          const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
-          errors.push(err)
-          this.#showOrLogErrorAndThrow(err, { file, showInformer: false, throwErr: false })
-        }
+    const missingFields = []
+    for (let i = 0; i < requiredMetaFields.length; i++) {
+      if (!hasOwnProperty.call(file.meta, requiredMetaFields[i]) || file.meta[requiredMetaFields[i]] === '') {
+        const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
+        errors.push(err)
+        missingFields.push(requiredMetaFields[i])
+        this.#showOrLogErrorAndThrow(err, { file, showInformer: false, throwErr: false })
       }
     }
+    this.setFileState(file.id, { missingRequiredMetaFields: missingFields })
+    return errors
+  }
+
+  /**
+   * Check if requiredMetaField restriction is met before uploading.
+   *
+   */
+  #checkRequiredMetaFields (files) {
+    const errors = Object.keys(files).flatMap((fileID) => {
+      const file = this.getFile(fileID)
+      return this.#checkRequiredMetaFieldsOnFile(file)
+    })
 
     if (errors.length) {
-      throw new AggregateRestrictionError(`${this.i18n('missingRequiredMetaField')}`, errors)
+      throw new AggregateRestrictionError(errors, `${this.i18n('missingRequiredMetaField')}`)
     }
   }
 
@@ -1277,6 +1290,12 @@ class Uppy {
       this.calculateTotalProgress()
     })
 
+    this.on('dashboard:file-edit-complete', (file) => {
+      if (file) {
+        this.#checkRequiredMetaFieldsOnFile(file)
+      }
+    })
+
     // show informer if offline
     if (typeof window !== 'undefined' && window.addEventListener) {
       window.addEventListener('online', this.#updateOnlineStatus)
@@ -1286,10 +1305,9 @@ class Uppy {
   }
 
   updateOnlineStatus () {
-    const online
-      = typeof window.navigator.onLine !== 'undefined'
-        ? window.navigator.onLine
-        : true
+    const online = typeof window.navigator.onLine !== 'undefined'
+      ? window.navigator.onLine
+      : true
     if (!online) {
       this.emit('is-offline')
       this.info(this.i18n('noInternetConnection'), 'error', 0)
@@ -1592,9 +1610,9 @@ class Uppy {
     const restoreStep = currentUpload.step || 0
 
     const steps = [
-      ...this.#preProcessors,
-      ...this.#uploaders,
-      ...this.#postProcessors,
+      ...Array.from(this.#preProcessors),
+      ...Array.from(this.#uploaders),
+      ...Array.from(this.#postProcessors),
     ]
     try {
       for (let step = restoreStep; step < steps.length; step++) {

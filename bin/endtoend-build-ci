@@ -14,7 +14,7 @@ if [ -z "${CI:-}" ]; then
   echo "!! Running CI-style end-to-end tests but CI environment variable is not set"
   echo "It is generally ill-advised to run the full end-to-end suite on your local machine."
   echo "You are probably looking for this instead:"
-  echo "  npm run test:endtoend:local"
+  echo "  yarn run test:endtoend:local"
   echo ""
   echo "Hit Ctrl+C to stop or Enter if you REALLY DO want to run the full thing."
   read
@@ -24,6 +24,7 @@ fi
 
 set -o xtrace
 
+YARN="corepack yarn"
 VERDACCIO_REGISTRY=http://localhost:4002
 CURRENT_COMMIT="$(git rev-parse HEAD)"
 
@@ -39,7 +40,10 @@ cleanup() {
 }
 function on_exit() {
   # revert to public registry
-  npm set registry https://registry.npmjs.org
+  $YARN config unset npmScopes --home
+  $YARN config unset npmRegistryServer --home
+  $YARN config unset npmAuthToken --home
+  $YARN config unset unsafeHttpWhitelist --home
   cleanup
 }
 trap on_exit EXIT
@@ -48,45 +52,36 @@ echo "Preparing for end to end test: copying static HTML and CSS, building JS"
 rm -rf "${__root}/test/endtoend/node_modules"
 
 # list of @uppy/* packages
-PACKAGES="$(for pkg in packages/@uppy/*; do echo "${pkg#packages/}"; done)"
+PACKAGES="$($YARN workspaces list --json | node -e 'require("readline").createInterface({input:process.stdin}).on("line",l=>{const{name}=JSON.parse(l);if(name?.startsWith("@uppy/"))console.log(name)})')"
 
 cleanup
 # Initialise verdaccio storage path.
 mkdir -p "${__root}/test/endtoend/tmp/verdaccio"
 
-npm run build
+$YARN run build
 
 # https://github.com/facebook/create-react-app/pull/4626
-(cd && npm-auth-to-token -u user -p password -e user@example.com -r "$VERDACCIO_REGISTRY")
+TOKEN="$($YARN npm-auth-to-token -u user -p password -e user@example.com -r "$VERDACCIO_REGISTRY")"
 
 git checkout -b endtoend-test-build
 # HACK this thing changes all the time for some reason on CI
 # so I'll just ignore it…
-git checkout -- package-lock.json
+git checkout -- yarn.lock
+
+$YARN config set npmRegistryServer "$VERDACCIO_REGISTRY" --home
+$YARN config set npmAuthToken "$TOKEN" --home
+$YARN config set npmScopes.uppy.npmRegistryServer "$VERDACCIO_REGISTRY" --home
+$YARN config set npmScopes.uppy.npmPublishRegistry "$VERDACCIO_REGISTRY" --home
+$YARN config set npmScopes.uppy.npmAuthToken "$TOKEN" --home
+$YARN config set unsafeHttpWhitelist "localhost" --home
 
 # Simulate a publish of everything, to the local registry,
 # without changing things in git
-ENDTOEND=1 lerna version prerelease --yes \
-  --exact \
-  --force-publish \
-  --no-push
-ENDTOEND=1 lerna publish from-git --yes \
-  --registry="$VERDACCIO_REGISTRY" \
-  --no-verify-access
-
-# install all packages to the endtoend folder
-# (Don't use the npm cache, don't generate a package-lock, don't save dependencies to any package.json)
-pushd "${__root}/test/endtoend"
-  PKG_VERSIONS="$(echo uppy $PACKAGES | sed -e 's/\S\+\b/&@latest/g')"
-  echo '{}' > package.json # temp pkg.json to make sure npm installs deps in this folder
-  npm install \
-    --prefer-online \
-    --registry "$VERDACCIO_REGISTRY" \
-    --no-package-lock \
-    --no-save \
-    $PKG_VERSIONS
-  rm package.json
-popd
+ENDTOEND=1 $YARN workspaces foreach --include '@uppy/*'\
+  version prerelease -d
+$YARN version apply --all --prerelease
+ENDTOEND=1 $YARN workspaces foreach --include '@uppy/*'\
+  npm publish
 
 bash "${__dir}/endtoend-build-tests"
 

@@ -24,6 +24,7 @@ Object {
         "name": "foo.jpg",
         "type": "image/jpeg",
       },
+      "missingRequiredMetaFields": Array [],
       "name": "foo.jpg",
       "preview": undefined,
       "progress": Object {
@@ -47,6 +48,7 @@ Object {
         "name": "bar.jpg",
         "type": "image/jpeg",
       },
+      "missingRequiredMetaFields": Array [],
       "name": "bar.jpg",
       "preview": undefined,
       "progress": Object {

@@ -1,4 +1,4 @@
-module.export = function calculateProcessingProgress (files) {
+module.exports = function calculateProcessingProgress (files) {
   const values = []
   let mode
   let message

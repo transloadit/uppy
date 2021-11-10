@@ -1,11 +1,13 @@
-const Provider = require('../../Provider')
-
 const request = require('request')
 const purest = require('purest')({ request })
+const { promisify } = require('util')
+
+const Provider = require('../../Provider')
 const { getURLMeta } = require('../../../helpers/request')
 const logger = require('../../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../../error')
+const { requestStream } = require('../../../helpers/utils')
 
 /**
  * Adapter for API https://developers.facebook.com/docs/instagram-api/overview
@@ -31,7 +33,7 @@ class Instagram extends Provider {
     return 'instagram'
   }
 
-  list ({ directory, token, query = { cursor: null } }, done) {
+  _list ({ directory, token, query = { cursor: null } }, done) {
     const qs = {
       fields: 'id,media_type,thumbnail_url,media_url,timestamp,children{media_type,media_url,thumbnail_url,timestamp}',
     }
@@ -72,43 +74,39 @@ class Instagram extends Provider {
       })
   }
 
-  download ({ id, token }, onData) {
-    return this.client
-      .get(`https://graph.instagram.com/${id}`)
-      .qs({ fields: 'media_url' })
-      .auth(token)
-      .request((err, resp, body) => {
-        if (err || resp.statusCode !== 200) {
-          err = this._error(err, resp)
-          logger.error(err, 'provider.instagram.download.error')
-          onData(err)
-          return
-        }
-
-        request(body.media_url)
-          .on('response', (resp) => {
-            if (resp.statusCode !== 200) {
-              onData(this._error(null, resp))
-            } else {
-              resp.on('data', (chunk) => onData(null, chunk))
+  async download ({ id, token }) {
+    try {
+      const body1 = await new Promise((resolve, reject) => (
+        this.client
+          .get(`https://graph.instagram.com/${id}`)
+          .qs({ fields: 'media_url' })
+          .auth(token)
+          .request((err, resp, body) => {
+            if (err || resp.statusCode !== 200) {
+              err = this._error(err, resp)
+              logger.error(err, 'provider.instagram.download.error')
+              reject(err)
+              return
             }
+            resolve(body)
           })
-          .on('end', () => onData(null, null))
-          .on('error', (err) => {
-            logger.error(err, 'provider.instagram.download.url.error')
-            onData(err)
-          })
-      })
+      ))
+
+      const req = request(body1.media_url)
+      return await requestStream(req, async (res) => this._error(null, res))
+    } catch (err) {
+      logger.error(err, 'provider.instagram.download.url.error')
+      throw err
+    }
   }
 
-  thumbnail (_, done) {
+  async thumbnail () {
     // not implementing this because a public thumbnail from instagram will be used instead
-    const err = new Error('call to thumbnail is not implemented')
-    logger.error(err, 'provider.instagram.thumbnail.error')
-    return done(err)
+    logger.error('call to thumbnail is not implemented', 'provider.instagram.thumbnail.error')
+    throw new Error('call to thumbnail is not implemented')
   }
 
-  size ({ id, token }, done) {
+  _size ({ id, token }, done) {
     return this.client
       .get(`https://graph.instagram.com/${id}`)
       .qs({ fields: 'media_url' })
@@ -122,16 +120,16 @@ class Instagram extends Provider {
 
         getURLMeta(body.media_url)
           .then(({ size }) => done(null, size))
-          .catch((err) => {
-            logger.error(err, 'provider.instagram.size.error')
-            done()
+          .catch((err2) => {
+            logger.error(err2, 'provider.instagram.size.error')
+            done(err2)
           })
       })
   }
 
-  logout (_, done) {
+  async logout () {
     // access revoke is not supported by Instagram's API
-    done(null, { revoked: false, manual_revoke_url: 'https://www.instagram.com/accounts/manage_access/' })
+    return { revoked: false, manual_revoke_url: 'https://www.instagram.com/accounts/manage_access/' }
   }
 
   adaptData (res, username, directory, currentQuery) {
@@ -170,5 +168,10 @@ class Instagram extends Provider {
     return err
   }
 }
+
+Instagram.version = 2
+
+Instagram.prototype.list = promisify(Instagram.prototype._list)
+Instagram.prototype.size = promisify(Instagram.prototype._size)
 
 module.exports = Instagram

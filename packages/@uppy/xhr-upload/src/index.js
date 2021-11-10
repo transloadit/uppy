@@ -355,6 +355,8 @@ module.exports = class XHRUpload extends BasePlugin {
   uploadRemote (file) {
     const opts = this.getOptions(file)
     return new Promise((resolve, reject) => {
+      this.uppy.emit('upload-started', file)
+
       const fields = {}
       const metaFields = Array.isArray(opts.metaFields)
         ? opts.metaFields
@@ -383,13 +385,13 @@ module.exports = class XHRUpload extends BasePlugin {
         this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
         this.onFileRemove(file.id, () => {
-          socket.send('pause', {})
+          socket.send('cancel', {})
           queuedRequest.abort()
           resolve(`upload ${file.id} was removed`)
         })
 
         this.onCancelAll(file.id, () => {
-          socket.send('pause', {})
+          socket.send('cancel', {})
           queuedRequest.abort()
           resolve(`upload ${file.id} was canceled`)
         })
@@ -608,7 +610,7 @@ module.exports = class XHRUpload extends BasePlugin {
     if (this.opts.limit === 0 && !this.opts[internalRateLimitedQueue]) {
       this.uppy.log(
         '[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0',
-        'warning'
+        'warning',
       )
     }
 

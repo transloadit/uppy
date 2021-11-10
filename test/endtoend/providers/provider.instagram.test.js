@@ -52,7 +52,7 @@ describe('File upload with Instagram Provider', () => {
         await securityCodeInput.waitUntil(
           () => securityCodeInput.getValue(),
           30_000,
-          'expected security code to be manually entered'
+          'expected security code to be manually entered',
         )
       }
 

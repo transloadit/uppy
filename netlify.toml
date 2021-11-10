@@ -5,6 +5,6 @@ ID = "uppy"
 # (no main build settings, we use Github Pages)
 
 [context.deploy-preview]
-command = "npm run build && npm run web:inject-disc && npm run web:build"
-environment = { NODE_VERSION = "15" }
+command = "yarn run build && yarn run web:inject-disc && yarn run web:build"
+environment = { NODE_VERSION = "16" }
 publish = "website/public"
