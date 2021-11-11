@@ -85,7 +85,7 @@ async function getLocalDistFiles (packagePath) {
     files.map(async (f) => [
       f,
       await readFile(path.join(packagePath, 'dist', f)),
-    ])
+    ]),
   )
 
   return new Map(entries)

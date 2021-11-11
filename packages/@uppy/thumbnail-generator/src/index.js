@@ -4,6 +4,8 @@ const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
 const exifr = require('exifr/dist/mini.legacy.umd.js')
 
+const locale = require('./locale')
+
 /**
  * The Thumbnail Generator plugin
  */
@@ -21,11 +23,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
     this.defaultThumbnailDimension = 200
     this.thumbnailType = this.opts.thumbnailType || 'image/jpeg'
 
-    this.defaultLocale = {
-      strings: {
-        generatingThumbnails: 'Generating thumbnails...',
-      },
-    }
+    this.defaultLocale = locale
 
     const defaultOptions = {
       thumbnailWidth: null,

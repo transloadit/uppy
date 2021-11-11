@@ -43,7 +43,6 @@ module.exports = {
   rules: {
     // transloadit rules we are actually ok with in the uppy repo
     'import/extensions': 'off',
-    'no-await-in-loop': 'off',
     'object-shorthand': ['error', 'always'],
     'strict': 'off',
     'key-spacing': 'off',
@@ -79,6 +78,7 @@ module.exports = {
     'global-require': ['warn'],
     'import/no-unresolved': ['warn'],
     'import/order': ['warn'],
+    'max-classes-per-file': ['warn'],
     'no-mixed-operators': ['warn'],
     'no-param-reassign': ['warn'],
     'no-redeclare': ['warn'],

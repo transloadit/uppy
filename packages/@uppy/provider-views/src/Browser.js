@@ -39,14 +39,14 @@ function Browser (props) {
     <div
       className={classNames(
         'uppy-ProviderBrowser',
-        `uppy-ProviderBrowser-viewType--${viewType}`
+        `uppy-ProviderBrowser-viewType--${viewType}`,
       )}
     >
       <div className="uppy-ProviderBrowser-header">
         <div
           className={classNames(
             'uppy-ProviderBrowser-headerBar',
-            !showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple'
+            !showBreadcrumbs && 'uppy-ProviderBrowser-headerBar--simple',
           )}
         >
           {headerComponent}
@@ -100,7 +100,7 @@ function Browser (props) {
               {files.map((file) => {
                 const validated = validateRestrictions(
                   remoteFileObjToLocal(file),
-                  [...uppyFiles, ...currentSelection]
+                  [...uppyFiles, ...currentSelection],
                 )
 
                 return Item({

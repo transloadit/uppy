@@ -14,7 +14,7 @@ describe('Transloadit/AssemblyOptions', () => {
     })
 
     await expect(options.build()).rejects.toThrow(
-      /The `params\.auth\.key` option is required/
+      /The `params\.auth\.key` option is required/,
     )
   })
 

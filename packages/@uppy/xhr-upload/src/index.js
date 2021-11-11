@@ -10,6 +10,8 @@ const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
 
+const locale = require('./locale')
+
 function buildResponseError (xhr, err) {
   let error = err
   // No error message
@@ -53,11 +55,7 @@ module.exports = class XHRUpload extends BasePlugin {
     this.id = this.opts.id || 'XHRUpload'
     this.title = 'XHRUpload'
 
-    this.defaultLocale = {
-      strings: {
-        timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
-      },
-    }
+    this.defaultLocale = locale
 
     // Default options
     const defaultOptions = {
@@ -610,7 +608,7 @@ module.exports = class XHRUpload extends BasePlugin {
     if (this.opts.limit === 0 && !this.opts[internalRateLimitedQueue]) {
       this.uppy.log(
         '[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0',
-        'warning'
+        'warning',
       )
     }
 

@@ -14,6 +14,8 @@ const memoize = require('memoize-one').default || require('memoize-one')
 const FOCUSABLE_ELEMENTS = require('@uppy/utils/lib/FOCUSABLE_ELEMENTS')
 const DashboardUI = require('./components/Dashboard')
 
+const locale = require('./locale')
+
 const TAB_KEY = 9
 const ESC_KEY = 27
 
@@ -47,70 +49,7 @@ module.exports = class Dashboard extends UIPlugin {
     this.type = 'orchestrator'
     this.modalName = `uppy-Dashboard-${nanoid()}`
 
-    this.defaultLocale = {
-      strings: {
-        closeModal: 'Close Modal',
-        importFrom: 'Import from %{name}',
-        addingMoreFiles: 'Adding more files',
-        addMoreFiles: 'Add more files',
-        dashboardWindowTitle: 'File Uploader Window (Press escape to close)',
-        dashboardTitle: 'File Uploader',
-        copyLinkToClipboardSuccess: 'Link copied to clipboard',
-        copyLinkToClipboardFallback: 'Copy the URL below',
-        copyLink: 'Copy link',
-        back: 'Back',
-        addMore: 'Add more',
-        removeFile: 'Remove file %{file}',
-        editFile: 'Edit file',
-        editFileWithFilename: 'Edit file %{file}',
-        editing: 'Editing %{file}',
-        finishEditingFile: 'Finish editing file',
-        save: 'Save',
-        saveChanges: 'Save changes',
-        cancel: 'Cancel',
-        myDevice: 'My Device',
-        dropPasteFiles: 'Drop files here or %{browseFiles}',
-        dropPasteFolders: 'Drop files here or %{browseFolders}',
-        dropPasteBoth: 'Drop files here, %{browseFiles} or %{browseFolders}',
-        dropPasteImportFiles: 'Drop files here, %{browseFiles} or import from:',
-        dropPasteImportFolders: 'Drop files here, %{browseFolders} or import from:',
-        dropPasteImportBoth: 'Drop files here, %{browseFiles}, %{browseFolders} or import from:',
-        importFiles: 'Import files from:',
-        dropHint: 'Drop your files here',
-        browseFiles: 'browse files',
-        browseFolders: 'browse folders',
-        uploadComplete: 'Upload complete',
-        uploadPaused: 'Upload paused',
-        resumeUpload: 'Resume upload',
-        pauseUpload: 'Pause upload',
-        retryUpload: 'Retry upload',
-        cancelUpload: 'Cancel upload',
-        xFilesSelected: {
-          0: '%{smart_count} file selected',
-          1: '%{smart_count} files selected',
-        },
-        uploadingXFiles: {
-          0: 'Uploading %{smart_count} file',
-          1: 'Uploading %{smart_count} files',
-        },
-        processingXFiles: {
-          0: 'Processing %{smart_count} file',
-          1: 'Processing %{smart_count} files',
-        },
-        recoveredXFiles: {
-          0: 'We could not fully recover 1 file. Please re-select it and resume the upload.',
-          1: 'We could not fully recover %{smart_count} files. Please re-select them and resume the upload.',
-        },
-        recoveredAllFiles: 'We restored all files. You can now resume the upload.',
-        sessionRestored: 'Session restored',
-        reSelect: 'Re-select',
-        poweredBy: 'Powered by %{uppy}',
-        missingRequiredMetaFields: {
-          0: 'Missing required meta field: %{fields}.',
-          1: 'Missing required meta fields: %{fields}.',
-        },
-      },
-    }
+    this.defaultLocale = locale
 
     // set default options
     const defaultOptions = {

@@ -2,6 +2,8 @@ const { UIPlugin } = require('@uppy/core')
 const { h } = require('preact')
 const Editor = require('./Editor')
 
+const locale = require('./locale.js')
+
 module.exports = class ImageEditor extends UIPlugin {
   // eslint-disable-next-line global-require
   static VERSION = require('../package.json').version
@@ -12,18 +14,7 @@ module.exports = class ImageEditor extends UIPlugin {
     this.title = 'Image Editor'
     this.type = 'editor'
 
-    this.defaultLocale = {
-      strings: {
-        revert: 'Revert',
-        rotate: 'Rotate',
-        zoomIn: 'Zoom in',
-        zoomOut: 'Zoom out',
-        flipHorizontal: 'Flip horizontal',
-        aspectRatioSquare: 'Crop square',
-        aspectRatioLandscape: 'Crop landscape (16:9)',
-        aspectRatioPortrait: 'Crop portrait (9:16)',
-      },
-    }
+    this.defaultLocale = locale
 
     const defaultCropperOptions = {
       viewMode: 1,
@@ -103,7 +94,7 @@ module.exports = class ImageEditor extends UIPlugin {
     this.cropper.getCroppedCanvas().toBlob(
       saveBlobCallback,
       currentImage.type,
-      this.opts.quality
+      this.opts.quality,
     )
   }
 
