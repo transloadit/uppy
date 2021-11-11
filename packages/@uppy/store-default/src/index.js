@@ -27,7 +27,7 @@ class DefaultStore {
       // Remove the listener.
       this.callbacks.splice(
         this.callbacks.indexOf(listener),
-        1
+        1,
       )
     }
   }

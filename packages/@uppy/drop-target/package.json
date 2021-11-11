@@ -24,10 +24,10 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:*"
+    "@uppy/utils": "workspace:^"
   },
   "peerDependencies": {
-    "@uppy/core": "^2.0.0"
+    "@uppy/core": "workspace:^"
   },
   "publishConfig": {
     "access": "public"

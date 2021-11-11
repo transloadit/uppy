@@ -248,7 +248,7 @@ module.exports = function s3 (config) {
           Body: '',
           Expires: config.expires,
         })
-      })
+      }),
     ).then((urls) => {
       const presignedUrls = Object.create(null)
       for (let index = 0; index < partNumbersArray.length; index++) {

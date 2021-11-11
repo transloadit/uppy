@@ -77,7 +77,7 @@ module.exports = class SearchProviderView extends View {
       (res) => {
         this.#updateFilesAndInputMode(res, [])
       },
-      this.handleError
+      this.handleError,
     )
   }
 

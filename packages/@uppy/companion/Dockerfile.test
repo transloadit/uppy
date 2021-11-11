@@ -1,15 +1,11 @@
-FROM alpine:3.6
-
-RUN apk add --update nodejs \
-	           nodejs-npm
+FROM node:16.13.0-alpine
 
 COPY package.json /app/package.json
 
 WORKDIR /app
 
 RUN apk --update add  --virtual native-dep \
-  make gcc g++ python libgcc libstdc++ git && \
-  npm install -g corepack && \
+  make gcc g++ python3 libgcc libstdc++ git && \
   corepack yarn install && \
   apk del native-dep
 RUN apk add bash

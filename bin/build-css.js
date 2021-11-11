@@ -23,7 +23,6 @@ function handleErr (err) {
 async function compileCSS () {
   const files = await glob('packages/{,@uppy/}*/src/style.scss')
 
-  /* eslint-disable no-await-in-loop */
   for (const file of files) {
     const importedFiles = new Set()
     const scssResult = await renderScss({
@@ -78,7 +77,7 @@ async function compileCSS () {
     await writeFile(outfile, postcssResult.css)
     console.info(
       chalk.green('✓ Built Uppy CSS:'),
-      chalk.magenta(path.relative(cwd, outfile))
+      chalk.magenta(path.relative(cwd, outfile)),
     )
 
     const minifiedResult = await postcss([
@@ -90,10 +89,9 @@ async function compileCSS () {
     await writeFile(outfile.replace(/\.css$/, '.min.css'), minifiedResult.css)
     console.info(
       chalk.green('✓ Minified Bundle CSS:'),
-      chalk.magenta(path.relative(cwd, outfile).replace(/\.css$/, '.min.css'))
+      chalk.magenta(path.relative(cwd, outfile).replace(/\.css$/, '.min.css')),
     )
   }
-  /* eslint-enable no-await-in-loop */
 }
 
 compileCSS().then(() => {

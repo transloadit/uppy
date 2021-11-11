@@ -145,12 +145,12 @@ If you have two-factor authentication enabled on your account, Lerna will ask fo
 
 Other things to keep in mind during release:
 
-*   When doing a major release >= 1.0, of the `@uppy/core` package, the `peerDependency` of the plugin packages needs to be updated first. Eg when updating from 1.y.z to 2.0.0, the peerDependency of each should be `"@uppy/core": "^2.0.0"` before doing `yarn release`.
-*   When adding a new package, add the following key to its package.json:
-    ```json
-    "publishConfig": { "access": "public" }
-    ```
-    Else, npm will try and fail to publish a _private_ package, because the `@uppy` scope on npm does not support that.
+* When doing a major release >= 1.0, of the `@uppy/core` package, the `peerDependency` of the plugin packages needs to be updated first. Eg when updating from 1.y.z to 2.0.0, the peerDependency of each should be `"@uppy/core": "^2.0.0"` before doing `yarn release`.
+* When adding a new package, add the following key to its package.json:
+  ```json
+  "publishConfig": { "access": "public" }
+  ```
+  Else, npm will try and fail to publish a _private_ package, because the `@uppy` scope on npm does not support that.
 
 After a release, the demos on transloadit.com should also be updated. After updating, check that some things work locally:
 

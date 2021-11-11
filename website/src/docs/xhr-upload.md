@@ -231,15 +231,16 @@ Indicates whether cross-site Access-Control requests should be made using creden
 
 ### `locale: {}`
 
-Localize text that is shown to the user.
-
-The default English strings are:
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
-const strings = {
-  // Shown in the Informer if an upload is being canceled because it stalled for too long.
-  timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
+module.exports = {
+  strings: {
+    // Shown in the Informer if an upload is being canceled because it stalled for too long.
+    timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
+  },
 }
+
 ```
 
 ## POST Parameters / Form Fields

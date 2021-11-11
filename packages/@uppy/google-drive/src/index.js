@@ -3,6 +3,8 @@ const { Provider } = require('@uppy/companion-client')
 const { h } = require('preact')
 const DriveProviderViews = require('./DriveProviderViews')
 
+const locale = require('./locale')
+
 module.exports = class GoogleDrive extends UIPlugin {
   static VERSION = require('../package.json').version
 
@@ -45,11 +47,8 @@ module.exports = class GoogleDrive extends UIPlugin {
       pluginId: this.id,
     })
 
-    this.defaultLocale = {
-      strings: {
-        pluginNameGoogleDrive: 'Google Drive',
-      },
-    }
+    this.defaultLocale = locale
+
     this.i18nInit()
     this.title = this.i18n('pluginNameGoogleDrive')
 

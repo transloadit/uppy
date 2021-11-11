@@ -22,9 +22,9 @@ class Provider {
    * list the files and folders in the provider account
    *
    * @param {object} options
-   * @param {Function} cb
+   * @returns {Promise}
    */
-  list (options, cb) { // eslint-disable-line no-unused-vars
+  async list (options) { // eslint-disable-line no-unused-vars
     throw new Error('method not implemented')
   }
 
@@ -32,9 +32,9 @@ class Provider {
    * download a certain file from the provider account
    *
    * @param {object} options
-   * @param {Function} cb
+   * @returns {Promise}
    */
-  download (options, cb) { // eslint-disable-line no-unused-vars
+  async download (options) { // eslint-disable-line no-unused-vars
     throw new Error('method not implemented')
   }
 
@@ -42,9 +42,9 @@ class Provider {
    * return a thumbnail for a provider file
    *
    * @param {object} options
-   * @param {Function} cb
+   * @returns {Promise}
    */
-  thumbnail (options, cb) { // eslint-disable-line no-unused-vars
+  async thumbnail (options) { // eslint-disable-line no-unused-vars
     throw new Error('method not implemented')
   }
 
@@ -52,9 +52,9 @@ class Provider {
    * get the size of a certain file in the provider account
    *
    * @param {object} options
-   * @param {Function} cb
+   * @returns {Promise}
    */
-  size (options, cb) { // eslint-disable-line no-unused-vars
+  async size (options) { // eslint-disable-line no-unused-vars
     throw new Error('method not implemented')
   }
 
@@ -62,9 +62,9 @@ class Provider {
    * handle deauthorization notification from oauth providers
    *
    * @param {object} options
-   * @param {Function} cb
+   * @returns {Promise}
    */
-  deauthorizationCallback (options, cb) { // eslint-disable-line no-unused-vars
+  async deauthorizationCallback (options) { // eslint-disable-line no-unused-vars
     // @todo consider doing something like cb(new NotImplementedError()) instead
     throw new Error('method not implemented')
   }
@@ -76,5 +76,7 @@ class Provider {
     return ''
   }
 }
+
+Provider.version = 1
 
 module.exports = Provider

@@ -40,8 +40,7 @@ const forbiddenRegex = [/^proxy-.*$/, /^sec-.*$/]
  */
 const isForbiddenHeader = (header) => {
   const headerLower = header.toLowerCase()
-  const forbidden
-    = forbiddenNames.indexOf(headerLower) >= 0
+  const forbidden = forbiddenNames.indexOf(headerLower) >= 0
     || forbiddenRegex.findIndex((regex) => regex.test(headerLower)) >= 0
 
   if (forbidden) {

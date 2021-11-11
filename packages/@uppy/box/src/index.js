@@ -3,6 +3,8 @@ const { Provider } = require('@uppy/companion-client')
 const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
+const locale = require('./locale')
+
 module.exports = class Box extends UIPlugin {
   static VERSION = require('../package.json').version
 
@@ -32,11 +34,8 @@ module.exports = class Box extends UIPlugin {
       pluginId: this.id,
     })
 
-    this.defaultLocale = {
-      strings: {
-        pluginNameBox: 'Box',
-      },
-    }
+    this.defaultLocale = locale
+
     this.i18nInit()
     this.title = this.i18n('pluginNameBox')
 

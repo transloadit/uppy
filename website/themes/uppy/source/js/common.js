@@ -83,10 +83,9 @@
       h.id = h.id
         .replace(/\(.*\)$/, '')
         .replace(/\$/, '')
-      link.innerHTML
-        = `<a class="section-link" data-scroll href="#${h.id}">${
-          text
-        }</a>`
+      link.innerHTML = `<a class="section-link" data-scroll href="#${h.id}">${
+        text
+      }</a>`
       return link
     }
 
