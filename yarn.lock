@@ -7781,7 +7781,6 @@ __metadata:
   resolution: "@uppy-build/release@workspace:private/release"
   dependencies:
     globby: ^12.0.2
-    node-fetch: ^2.6.6
     prompts: ^2.4.2
   languageName: unknown
   linkType: soft
@@ -29143,15 +29142,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   dependencies:
     whatwg-url: ^5.0.0
   checksum: 4e83db450718e70762882f00d96f647a7f2f3170035225934ddd5450cb1d91ef339ceb180d3687bcb0a6ed78c3fa5636ce8d3e44ec81ab59e0224ebf8965f65f
-  languageName: node
-  linkType: hard
-
-"node-fetch@npm:^2.6.6":
-  version: 2.6.6
-  resolution: "node-fetch@npm:2.6.6"
-  dependencies:
-    whatwg-url: ^5.0.0
-  checksum: ee8290626bdb73629c59722b75dcf4b9b6a67c1ed7eb9102e368479c4a13b56a48c2bb3ad71571e378e98c8b2c64c820e11f9cd39e4b8557dd138ad571ef9a42
   languageName: node
   linkType: hard
 

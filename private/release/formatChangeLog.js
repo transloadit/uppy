@@ -3,7 +3,6 @@ import { createWriteStream } from 'node:fs'
 import { spawn } from 'node:child_process'
 
 import prompts from 'prompts'
-import fetch from 'node-fetch'
 
 const atUppyPackagePath = /^packages\/(@uppy\/[a-z0-9-]+)\//
 async function inferPackageForCommit (sha, spawnOptions) {
@@ -37,17 +36,17 @@ export default async function formatChangeLog (
   const gitLog = spawn('git', [
     '--no-pager',
     'log',
-    '--format="%H::%s"',
+    '--format="%H::%s::%an"',
     `${LAST_RELEASE_COMMIT}..HEAD`,
   ], spawnOptions)
-  const expectedFormat = /^"([a-f0-9]+)::(?:(@uppy\/[a-z0-9-]+|meta)+:\s?)?(.+?)(\s\(#\d+\))?"$/
+  const expectedFormat = /^"([a-f0-9]+)::(?:(@uppy\/[a-z0-9-]+|meta)+:\s?)?(.+?)(\s\(#\d+\))?::(.+)"$/
   for await (const log of createInterface({ input: gitLog.stdout })) {
-    const [, sha, packageName, title, PR] = expectedFormat.exec(log)
+    const [, sha, packageName, title, PR, authorName] = expectedFormat.exec(log)
 
     const formattedCommitTitle = {
       packageName,
       title,
-      PRinfo: '',
+      authorInfo: PR ? `${authorName} / #${PR.slice(3, -1)}` : authorName,
     }
 
     if (!packageName) {
@@ -81,26 +80,8 @@ export default async function formatChangeLog (
       }
     }
 
-    if (PR) {
-      const PRNumber = PR.slice(3, -1)
-      const response = await fetch(
-        `https://api.github.com/repos/transloadit/uppy/pulls/${PRNumber}`
-      )
-      if (response.ok) {
-        const { user } = await response.json()
-        formattedCommitTitle.PRinfo = ` (@${user.login} / #${PRNumber})`
-      } else {
-        console.error(
-          response.status,
-          response.statusText,
-          'Failed to get info for',
-          PRNumber
-        )
-      }
-    }
-
     changeLogCommits.write(
-      `- ${formattedCommitTitle.packageName}: ${formattedCommitTitle.title}${formattedCommitTitle.PRinfo}\n`
+      `- ${formattedCommitTitle.packageName}: ${formattedCommitTitle.title} (${formattedCommitTitle.authorInfo})\n`
     )
   }
 
