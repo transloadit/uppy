@@ -78,9 +78,10 @@ for await (const line of createInterface({
   input: createReadStream(new URL('./CHANGELOG.next.md', ROOT)),
 })) {
   const index = lines.push(line) - 1
-  const pkg = line.slice(2, line.indexOf(':'))
-  subPackagesChangelogs[pkg] ??= []
-  subPackagesChangelogs[pkg].push(index)
+  for (const pkg of line.slice(2, line.indexOf(':')).split(',')) {
+    subPackagesChangelogs[pkg] ??= []
+    subPackagesChangelogs[pkg].push(index)
+  }
 }
 
 await changelog.write(`

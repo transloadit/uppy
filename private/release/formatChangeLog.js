@@ -17,10 +17,10 @@ async function inferPackageForCommit (sha, spawnOptions) {
   }
   const maxVal = Math.max(...Object.values(candidates))
   return {
-    inferredPackage: Number.isFinite(maxVal)
-      ? Object.entries(candidates).find(
-        ([, nbOfFiles]) => nbOfFiles === maxVal
-      )[0]
+    inferredPackages: Number.isFinite(maxVal)
+      ? Object.entries(candidates).flatMap(
+        ([pkg, nbOfFiles]) => (nbOfFiles === maxVal || nbOfFiles === maxVal - 1 ? [pkg] : [])
+      ).join(',')
       : 'meta',
     candidates,
   }
@@ -39,7 +39,7 @@ export default async function formatChangeLog (
     '--format="%H::%s::%an"',
     `${LAST_RELEASE_COMMIT}..HEAD`,
   ], spawnOptions)
-  const expectedFormat = /^"([a-f0-9]+)::(?:(@uppy\/[a-z0-9-]+|meta)+:\s?)?(.+?)(\s\(#\d+\))?::(.+)"$/
+  const expectedFormat = /^"([a-f0-9]+)::(?:((?:@uppy\/[a-z0-9-]+|meta),)+:\s?)?(.+?)(\s\(#\d+\))?::(.+)"$/
   for await (const log of createInterface({ input: gitLog.stdout })) {
     const [, sha, packageName, title, PR, authorName] = expectedFormat.exec(log)
 
@@ -54,21 +54,22 @@ export default async function formatChangeLog (
         `No package info found in commit title: ${sha} (https://github.com/transloadit/uppy/commit/${sha})`
       )
       console.log(log)
-      const { inferredPackage, candidates } = await inferPackageForCommit(sha, spawnOptions)
+      const { inferredPackages, candidates } = await inferPackageForCommit(sha, spawnOptions)
       const { useInferred } = await prompts({
         type: 'confirm',
         name: 'useInferred',
-        message: `Use ${inferredPackage} (inferred from the files it touches)?`,
+        message: `Use ${inferredPackages} (inferred from the files it touches)?`,
         initial: true,
       })
 
       if (useInferred) {
-        formattedCommitTitle.packageName = inferredPackage
+        formattedCommitTitle.packageName = inferredPackages
       } else {
         const response = await prompts({
-          type: 'autocomplete',
+          type: 'autocompleteMultiselect',
           name: 'value',
-          message: 'Which package does this commit belong to?',
+          message: 'Which package(s) does this commit belong to?',
+          min: 1,
           choices: [
             { title: 'Meta', value: 'meta' },
             ...Object.entries(candidates)
@@ -76,7 +77,8 @@ export default async function formatChangeLog (
               .map(([value]) => ({ title: value, value })),
           ],
         })
-        formattedCommitTitle.packageName = response.value
+        if (!Array.isArray(response.value)) throw new Error('Aborting release')
+        formattedCommitTitle.packageName = response.value.join(',')
       }
     }
 
