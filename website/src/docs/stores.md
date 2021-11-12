@@ -14,22 +14,22 @@ If your app uses a state management library such as [Redux](https://redux.js.org
 
 Uppy comes with two state management solutions (stores):
 
- - `@uppy/store-default`, a simple object-based store.
- - `@uppy/store-redux`, a store that uses a key in a Redux store.
+* `@uppy/store-default`, a basic object-based store.
+* `@uppy/store-redux`, a store that uses a key in a Redux store.
 
-There are also some third-party stores:
+You can also use a third-party store:
 
- - [uppy-store-ngrx](https://github.com/rimlin/uppy-store-ngrx/), keeping Uppy state in a key in an [Ngrx](https://github.com/ngrx/platform) store for use with Angular.
+* [uppy-store-ngrx](https://github.com/rimlin/uppy-store-ngrx/), keeping Uppy state in a key in an [Ngrx](https://github.com/ngrx/platform) store for use with Angular.
 
 ## Using stores
 
 To use a store, pass an instance to the [`store` option](/docs/uppy#store-defaultstore) in the Uppy constructor:
 
 ```js
-const defaultStore = require('@uppy/store-default')
+import defaultStore from '@uppy/store-default'
 
 const uppy = new Uppy({
-  store: defaultStore()
+  store: defaultStore(),
 })
 ```
 
@@ -45,28 +45,20 @@ The `ReduxStore` dispatches `uppy/STATE_UPDATE` actions to update state.
 When the state in Redux changes, it notifies Uppy.
 This way, you get most of the benefits of Redux, including support for the Redux Devtools and time traveling!
 
-To use the `ReduxStore`, add its reducer to the `uppy` key:
+Here is how you can integrate Uppy’s `ReduxStore`:
 
 ```js
-const ReduxStore = require('@uppy/store-redux')
-const reducer = combineReducers({
-  ...reducers,
-  uppy: ReduxStore.reducer
-})
-```
+import Uppy from '@uppy/core'
+import * as ReduxStore from '@uppy/store-redux'
+import * as Redux from 'redux'
 
-Then pass a Redux store instance to the Uppy constructor:
+function createStore (reducers = {}) {
+  const reducer = Redux.combineReducers({ ...reducers, uppy: ReduxStore.reducer })
+  return Redux.createStore(reducer)
+}
 
-```js
-const { createStore } = require('redux')
-const ReduxStore = require('@uppy/store-redux')
-
-const store = createStore(reducer)
-const uppy = new Uppy({
-  store: ReduxStore({
-    store: store // That's a lot of stores!
-  })
-})
+const store = new ReduxStore.ReduxStore({ store: createStore() })
+const uppy = new Uppy({ store })
 ```
 
 #### `opts.store`
@@ -81,40 +73,40 @@ By default, the `ReduxStore` assumes Uppy state is stored on a `state.uppy[id]` 
 
 ```js
 ReduxStore({
-  store: store,
-  id: 'avatarUpload'
+  store,
+  id: 'avatarUpload',
 })
 ```
 
 #### `opts.selector`
 
-If you'd rather not store the Uppy state under the `state.uppy` key at all, use the `selector` option to the `ReduxStore` constructor to tell it where to find state instead:
+If you’d rather not store the Uppy state under the `state.uppy` key at all, use the `selector` option to the `ReduxStore` constructor to tell it where to find state instead:
 
 ```js
 const uppy = new Uppy({
   store: ReduxStore({
-    store: store,
+    store,
     id: 'avatarUpload',
-    selector: state => state.pages.profile.uppy.avatarUpload
-  })
+    selector: state => state.pages.profile.uppy.avatarUpload,
+  }),
 })
 ```
 
-Note that when specifying a custom selector, you **must** also specify a custom store ID. The store `id` tells the reducer in which property it should put Uppy's state. The selector must then take the state from that property. In the example, we set the ID to `avatarUpload` and take the state from the `[reducer mount path].avatarUpload`.
+Note that when specifying a custom selector, you **must** also specify a custom store ID. The store `id` tells the reducer in which property it should put Uppy’s state. The selector must then take the state from that property. In the example, we set the ID to `avatarUpload` and take the state from the `[reducer mount path].avatarUpload`.
 
-If your app uses [`reselect`](https://npmjs.com/package/reselect), its selectors work very well with this!
+If your app uses [`reselect`](https://npmjs.com/package/reselect), its selectors work well with this!
 
 ## Implementing Stores
 
 An Uppy store is an object with three methods.
 
- - `getState()` - Return the current state object.
- - `setState(patch)` - Merge the object `patch` into the current state.
- - `subscribe(listener)` - Call `listener` whenever the state changes.
-   `listener` is a function that should receive three parameters:
-   `(prevState, nextState, patch)`
+* `getState()` - Return the current state object.
+* `setState(patch)` - Merge the object `patch` into the current state.
+* `subscribe(listener)` - Call `listener` whenever the state changes.
+  `listener` is a function that should receive three parameters:
+  `(prevState, nextState, patch)`
 
-   The `subscribe()` method should return a function that 'unsubscribes' (removes) the `listener`.
+  The `subscribe()` method should return a function that “unsubscribes” (removes) the `listener`.
 
 The default store implementation, for example, looks a bit like this:
 
@@ -127,7 +119,7 @@ function defaultStore () {
     getState: () => state,
     setState: (patch) => {
       const prevState = state
-      const nextState = Object.assign({}, prevState, patch)
+      const nextState = { ...prevState, ...patch }
 
       state = nextState
 
@@ -138,7 +130,7 @@ function defaultStore () {
     subscribe: (listener) => {
       listeners.add(listener)
       return () => listeners.remove(listener)
-    }
+    },
   }
 }
 ```

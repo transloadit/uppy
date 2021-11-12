@@ -14,7 +14,7 @@ The `@uppy/dropbox` plugin lets users import files from their Dropbox account.
 A Companion instance is required for the Dropbox plugin to work. Companion handles authentication with Dropbox, downloads the files, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const Dropbox = require('@uppy/dropbox')
+import Dropbox from '@uppy/dropbox'
 
 uppy.use(Dropbox, {
   // Options
@@ -33,44 +33,46 @@ Install from NPM:
 npm install @uppy/dropbox
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
-const Dropbox = Uppy.Dropbox
+const { Dropbox } = Uppy
 ```
 
 ## Setting Up
 
 To use the Dropbox provider, you need to configure the Dropbox keys that Companion should use. With the standalone Companion server, specify environment variables:
+
 ```shell
 export COMPANION_DROPBOX_KEY="Dropbox API key"
 export COMPANION_DROPBOX_SECRET="Dropbox API secret"
 ```
 
 When using the Companion Node.js API, configure these options:
+
 ```js
 companion.app({
   providerOptions: {
     dropbox: {
       key: 'Dropbox API key',
-      secret: 'Dropbox API secret'
-    }
-  }
+      secret: 'Dropbox API secret',
+    },
+  },
 })
 ```
 
 You can create a Dropbox App on the [Dropbox Developers site](https://www.dropbox.com/developers/apps/create).
 
 Things to note:
-- Choose the "Dropbox API", not the business variant.
-- Typically you'll want "Full Dropbox" access, unless you are very certain that you need the other one.
 
-You'll be redirected to the app page. This page lists the app key and app secret, which you should use to configure Companion as shown above.
+* Choose the “Dropbox API”, not the business variant.
+* Typically you’ll want “Full Dropbox” access, unless you are absolutely certain that you need the other one.
 
-The app page has a "Redirect URIs" field. Here, add:
-```
-https://$YOUR_COMPANION_HOST_NAME/dropbox/redirect
-```
+You’ll be redirected to the app page. This page lists the app key and app secret, which you should use to configure Companion as shown above.
+
+The app page has a “Redirect URIs” field. Here, add:
+
+    https://$YOUR_COMPANION_HOST_NAME/dropbox/redirect
 
 You can only use the integration with your own account initially—make sure to apply for production status on the app page before you publish your app, or your users will not be able to sign in!
 
@@ -117,20 +119,21 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your [Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should do just fine.
+This is useful when you have your [Companion](/docs/companion) running on several hosts. Otherwise, the default value should do fine.
 
 ### `companionCookiesRule: 'same-origin'`
 
-This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether to send cookies to [Companion](/docs/companion).
 
 ### `locale: {}`
 
-Localize text that is shown to the user.
-
-The default English strings are:
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
-strings: {
-  // TODO
+module.exports = {
+  strings: {
+    pluginNameDropbox: 'Dropbox',
+  },
 }
+
 ```

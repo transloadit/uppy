@@ -4,10 +4,9 @@
   "private": true,
   "homepage": "/create-react-app/",
   "dependencies": {
-    "es6-shim": "^0.35.3",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-scripts": "3.1.0"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -27,7 +27,7 @@ function PickerPanelContent (props) {
         </button>
       </div>
       <div className="uppy-DashboardContent-panelBody">
-        {props.getPlugin(props.activePickerPanel.id).render(props.state)}
+        {props.uppy.getPlugin(props.activePickerPanel.id).render(props.state)}
       </div>
     </div>
   )

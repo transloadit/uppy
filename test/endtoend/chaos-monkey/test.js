@@ -5,7 +5,7 @@ const { selectFakeFile } = require('../utils')
 
 const testURL = 'http://localhost:4567/chaos-monkey'
 
-describe('Chaos monkey', function () {
+describe('Chaos monkey', function test () {
   this.timeout(5 * 60 * 1000) // 5 minutes
 
   beforeEach(async () => {
@@ -15,18 +15,18 @@ describe('Chaos monkey', function () {
   it('Add and cancel a bunch', async () => {
     await browser.execute(() => {
       window.currentUppy = window.setup({ limit: 3 })
-      window.onerror = function (message) {
+      window.onerror = (message) => {
         window.anyError = message
       }
     })
 
     const types = ['application/octet-stream', 'text/plain']
     const generate = {
-      'application/octet-stream': function () {
+      'application/octet-stream' () {
         const len = Math.round(Math.random() * 5000000)
         return crypto.randomBytes(len)
       },
-      'text/plain': function () {
+      'text/plain' () {
         const len = Math.round(Math.random() * 5000000)
         return Buffer.from(lorem(len))
       },
@@ -47,11 +47,11 @@ describe('Chaos monkey', function () {
       return browser.execute(() => {
         window.addLogMessage('Cancelling a file')
         // prefer deleting a file that is uploading right now
-        var selector = Math.random() <= 0.7
+        const selector = Math.random() <= 0.7
           ? '.is-inprogress .uppy-Dashboard-Item-action--remove'
           : '.uppy-Dashboard-Item-action--remove'
-        var buttons = document.querySelectorAll(selector)
-        var del = buttons[Math.floor(Math.random() * buttons.length)]
+        const buttons = document.querySelectorAll(selector)
+        const del = buttons[Math.floor(Math.random() * buttons.length)]
         if (del) del.click()
       })
     }
@@ -59,7 +59,7 @@ describe('Chaos monkey', function () {
     function startUploadIfAnyWaitingFiles () {
       return browser.execute(() => {
         window.addLogMessage('Starting upload')
-        var start = document.querySelector('.uppy-StatusBar-actionBtn--upload')
+        const start = document.querySelector('.uppy-StatusBar-actionBtn--upload')
         if (start) start.click()
       })
     }
@@ -67,7 +67,7 @@ describe('Chaos monkey', function () {
     function cancelAll () {
       return browser.execute(() => {
         window.addLogMessage('Cancelling everything')
-        var button = document.querySelector('.uppy-DashboardContent-back')
+        const button = document.querySelector('.uppy-DashboardContent-back')
         if (button) button.click()
       })
     }

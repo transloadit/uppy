@@ -18,7 +18,7 @@ class DefaultStore {
     const nextState = { ...this.state, ...patch }
 
     this.state = nextState
-    this._publish(prevState, nextState, patch)
+    this.#publish(prevState, nextState, patch)
   }
 
   subscribe (listener) {
@@ -27,12 +27,12 @@ class DefaultStore {
       // Remove the listener.
       this.callbacks.splice(
         this.callbacks.indexOf(listener),
-        1
+        1,
       )
     }
   }
 
-  _publish (...args) {
+  #publish (...args) {
     this.callbacks.forEach((listener) => {
       listener(...args)
     })

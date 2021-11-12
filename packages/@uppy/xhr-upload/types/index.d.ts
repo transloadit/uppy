@@ -1,15 +1,15 @@
-import Uppy = require('@uppy/core')
-import XHRUploadLocale = require('./generatedLocale')
+import type { PluginOptions, BasePlugin, UppyFile } from '@uppy/core'
+import XHRUploadLocale from './generatedLocale'
 
-declare module XHRUpload {
   type Headers = {
     [name: string]: string | number
   }
-  export interface XHRUploadOptions extends Uppy.PluginOptions {
+
+export interface XHRUploadOptions extends PluginOptions {
     limit?: number
     bundle?: boolean
     formData?: boolean
-    headers?: Headers | ((file: Uppy.UppyFile) => Headers)
+    headers?: Headers | ((file: UppyFile) => Headers)
     metaFields?: string[]
     fieldName?: string
     timeout?: number
@@ -19,9 +19,11 @@ declare module XHRUpload {
     locale?: XHRUploadLocale
     responseType?: string
     withCredentials?: boolean
-  }
+    validateStatus?: (statusCode: number, responseText: string, response: unknown) => boolean
+    getResponseData?: (responseText: string, response: unknown) => any
+    getResponseError?: (responseText: string, xhr: unknown) => Error
 }
 
-declare class XHRUpload extends Uppy.Plugin<XHRUpload.XHRUploadOptions> {}
+declare class XHRUpload extends BasePlugin<XHRUploadOptions> {}
 
-export = XHRUpload
+export default XHRUpload

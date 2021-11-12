@@ -1,11 +1,12 @@
 {
   "name": "@uppy-example/node-xhr",
+  "version": "0.0.0",
   "dependencies": {
     "@babel/core": "^7.4.4",
-    "@uppy/core": "file:../../packages/@uppy/core",
-    "@uppy/webcam": "file:../../packages/@uppy/webcam",
-    "@uppy/dashboard": "file:../../packages/@uppy/dashboard",
-    "@uppy/xhr-upload": "file:../../packages/@uppy/xhr-upload",
+    "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/webcam": "workspace:*",
+    "@uppy/xhr-upload": "workspace:*",
     "babelify": "^10.0.0",
     "budo": "^11.3.2",
     "cookie-parser": "^1.4.3",

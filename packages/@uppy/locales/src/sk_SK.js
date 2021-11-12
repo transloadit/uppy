@@ -52,8 +52,7 @@ sk_SK.strings = {
   enterCorrectUrl: 'Nesprávna adresa URL: Uistite sa, že zadávate priamy odkaz na súbor',
   enterTextToSearch: 'Zadajte text pre vyhľadanie obrázkov',
   enterUrlToImport: 'Ak chcete importovať súbor, zadajte adresu URL',
-  exceedsSize: 'Tento súbor presahuje maximálnu povolenú veľkosť súboru',
-  exceedsSize2: '%{backwardsCompat} %{size}',
+  exceedsSize: 'Tento súbor presahuje maximálnu povolenú veľkosť súboru %{size}',
   failedToFetch: 'Nepodarilo sa načítať túto webovú adresu. Skontrolujte, či je správna',
   failedToUpload: 'Nepodarilo sa nahrať súbor %{file}',
   fileSource: 'Zdroj súboru: %{name}',
@@ -82,13 +81,12 @@ sk_SK.strings = {
   noDuplicates: 'Nemôžete pridať duplikátny súbor \'%{fileName}\', ktorý už existuje',
   noFilesFound: 'Nemáte pridané žiadne súbory ani zložky',
   noInternetConnection: 'Žiadne internetové pripojenie',
-  noNewAlreadyUploading: 'Počas nahrávania nemôžete pridať ďalšie súbory',
+  noMoreFilesAllowed: 'Počas nahrávania nemôžete pridať ďalšie súbory',
   openFolderNamed: 'Otvoriť zložku %{name}',
   pause: 'Pozastaviť',
   pauseUpload: 'Pozastaviť nahrávanie',
   paused: 'Pozastavené',
-  poweredBy: 'Vytvorené pomocou',
-  poweredBy2: '%{backwardsCompat} %{uppy}',
+  poweredBy: 'Vytvorené pomocou %{uppy}',
   processingXFiles: {
     '0': 'Spracovanie %{smart_count} súboru',
     '1': 'Spracovanie %{smart_count} súborov',
@@ -107,7 +105,6 @@ sk_SK.strings = {
   save: 'Uložiť',
   saveChanges: 'Uložiť zmeny',
   searchImages: 'Vyhľadajte obrázky',
-  selectAllFilesFromFolderNamed: 'Vybrať všetky súbory zo zložky %{name}',
   selectFileNamed: 'Vybrať súbor %{name}',
   selectX: {
     '0': 'Vybrať %{smart_count}',
@@ -123,7 +120,6 @@ sk_SK.strings = {
   submitRecordedFile: 'Odoslať nahraté video',
   takePicture: 'Urobiť fotku',
   timedOut: 'Nahrávanie bolo prerušené na %{seconds}, prerušuje sa.',
-  unselectAllFilesFromFolderNamed: 'Zrušiť výber všetkých súborov zo zložky %{name}',
   unselectFileNamed: 'Zrušiť výber súboru %{name}',
   upload: 'Nahrať',
   uploadComplete: 'Nahrávanie dokončené',
@@ -171,7 +167,7 @@ sk_SK.strings = {
   zoomOut: 'Oddialiť',
 }
 
-sk_SK.pluralize = function (count) {
+sk_SK.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

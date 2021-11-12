@@ -41,7 +41,7 @@ sr_RS_Latin.strings = {
   encoding: 'Šifrovanje...',
   enterCorrectUrl: 'Pogrešan URL: unesite tačnu putanju do datoteke',
   enterUrlToImport: 'Unesite URL (putanju) do datoteke',
-  exceedsSize: 'Ova datoteka premašuje najveću dozvoljenu veličinu od',
+  exceedsSize: 'Ova datoteka premašuje najveću dozvoljenu veličinu od %{size}',
   failedToFetch: 'Companion nije uspeo da dopre do date adrese (URL), proverite ispravnost adrese',
   failedToUpload: 'Broj neuspelo otpremljenih datoteka: %{file}',
   fileSource: 'Datoteka: %{name}',
@@ -67,7 +67,7 @@ sr_RS_Latin.strings = {
   pause: 'Zaustavi privremeno',
   pauseUpload: 'Privremeno zaustavi otpremanje',
   paused: 'Privremeno zaustavljeno',
-  poweredBy: 'Otpremanje pokreće',
+  poweredBy: 'Otpremanje pokreće %{uppy}',
   processingXFiles: {
     '0': 'Obrada datoteke',
     '1': 'Broj datoteka koje se obrađuju: %{smart_count}',
@@ -132,14 +132,12 @@ sr_RS_Latin.strings = {
     '1': 'Izaberite datoteke. Najmanje: %{smart_count}',
     '2': 'Izaberite datoteke. Najmanje: %{smart_count}',
   },
-  selectAllFilesFromFolderNamed: 'Izaberite sve datoteke iz foldera %{name}',
-  unselectAllFilesFromFolderNamed: 'Isključite sve datoteke iz foldera %{name}',
   selectFileNamed: 'Izaberite fajl %{name}',
   unselectFileNamed: 'Isključite fajl %{name}',
   openFolderNamed: 'Otvori folder %{name}',
 }
 
-sr_RS_Latin.pluralize = function (n) {
+sr_RS_Latin.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

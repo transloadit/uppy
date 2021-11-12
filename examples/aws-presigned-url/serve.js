@@ -1,4 +1,4 @@
-const spawn = require('child_process').spawn
+const { spawn } = require('child_process')
 const path = require('path')
 const fs = require('fs')
 const createWriteStream = require('fs-write-stream-atomic')
@@ -19,7 +19,7 @@ b.plugin(watchify)
 b.transform(babelify)
 
 function bundle () {
-  return b.bundle((err, data) => {
+  return b.bundle((err) => {
     if (err) console.error(err.stack)
     else console.log('bundle complete')
   }).pipe(createWriteStream(path.join(__dirname, './bundle.js')))

@@ -3,17 +3,17 @@
   "svelte": "src/index.js",
   "module": "dist/index.mjs",
   "main": "dist/index.js",
-  "version": "0.1.12",
+  "version": "1.0.5",
   "scripts": {
     "build": "rollup -c",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "yarn run build",
     "validate": "svelte-check"
   },
   "dependencies": {
-    "@uppy/dashboard": "file:../dashboard",
-    "@uppy/drag-drop": "file:../drag-drop",
-    "@uppy/progress-bar": "file:../progress-bar",
-    "@uppy/status-bar": "file:../status-bar"
+    "@uppy/dashboard": "workspace:^",
+    "@uppy/drag-drop": "workspace:^",
+    "@uppy/progress-bar": "workspace:^",
+    "@uppy/status-bar": "workspace:^"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^11.0.1",
@@ -25,7 +25,7 @@
     "svelte-preprocess": "^4.6.1"
   },
   "peerDependencies": {
-    "@uppy/core": "^1.0.0",
+    "@uppy/core": "workspace:^",
     "svelte": "^3.0.0"
   },
   "publishConfig": {

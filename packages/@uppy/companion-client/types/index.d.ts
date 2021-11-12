@@ -1,3 +1,5 @@
+import type { Uppy } from '@uppy/core'
+
 /**
  * Async storage interface, similar to `localStorage`. This can be used to
  * implement custom storages for authentication tokens.
@@ -10,19 +12,18 @@ export interface TokenStorage {
 
 export interface RequestClientOptions {
   companionUrl: string
-  companionHeaders?: object
+  companionHeaders?: Record<string, unknown>
   companionCookiesRule?: RequestCredentials
-  /**
-   * Deprecated, use `companionHeaders` instead.
-   */
-  serverHeaders?: object
 }
 
 export class RequestClient {
-  constructor (uppy: any, opts: RequestClientOptions)
+  constructor (uppy: Uppy, opts: RequestClientOptions)
+
   get (path: string): Promise<any>
-  post (path: string, data: object): Promise<any>
-  delete (path: string, data: object): Promise<any>
+
+  post (path: string, data: Record<string, unknown>): Promise<any>
+
+  delete (path: string, data: Record<string, unknown>): Promise<any>
 }
 
 /**
@@ -43,13 +44,19 @@ export interface ProviderOptions extends PublicProviderOptions {
 }
 
 export class Provider extends RequestClient {
-  constructor (uppy: any, opts: ProviderOptions)
+  constructor (uppy: Uppy, opts: ProviderOptions)
+
   checkAuth (): Promise<boolean>
+
   authUrl (): string
+
   fileUrl (id: string): string
+
   list (directory: string): Promise<any>
+
   logout (redirect?: string): Promise<any>
-  static initPlugin (plugin: any, opts: object, defaultOpts?: object): void
+
+  static initPlugin (plugin: unknown, opts: Record<string, unknown>, defaultOpts?: Record<string, unknown>): void
 }
 
 export interface SocketOptions {
@@ -58,13 +65,19 @@ export interface SocketOptions {
 }
 
 export class Socket {
-  isOpen: boolean
+  readonly isOpen: boolean
 
   constructor (opts: SocketOptions)
+
   open (): void
+
   close (): void
-  send (action: string, payload: any): void
+
+  send (action: string, payload: unknown): void
+
   on (action: string, handler: (param: any) => void): void
+
   once (action: string, handler: (param: any) => void): void
+
   emit (action: string, payload: (param: any) => void): void
 }

@@ -15,8 +15,7 @@ module.exports = function oauthRedirect (req, res) {
     return res.redirect(req.companion.buildURL(`/connect/${authProvider}/callback?${params}`, true))
   }
 
-  const dynamic = (req.session.grant || {}).dynamic || {}
-  const { state } = dynamic
+  const state = oAuthState.getDynamicStateFromRequest(req)
   if (!state) {
     return res.status(400).send('Cannot find state in session')
   }

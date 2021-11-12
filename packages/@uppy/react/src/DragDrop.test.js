@@ -32,4 +32,22 @@ describe('react <DragDrop />', () => {
     expect(oninstall).toHaveBeenCalled()
     expect(onuninstall).toHaveBeenCalled()
   })
+
+  it('react on HTMLDivElement props update', async () => {
+    const uppy = new Uppy()
+    const dash = mount((
+      <DragDrop
+        uppy={uppy}
+        hidden
+      />
+    ))
+
+    expect(dash.getDOMNode().hidden).toBeTruthy()
+
+    dash.setProps({ hidden: false })
+
+    expect(dash.getDOMNode().hidden).toBeFalsy()
+
+    dash.unmount()
+  })
 })

@@ -1,5 +1,6 @@
 {
   "name": "@uppy-example/dev",
+  "version": "0.0.0",
   "aliasify": {
     "aliases": {
       "@uppy": "../../packages/@uppy"
@@ -9,12 +10,14 @@
     "@babel/core": "^7.4.4",
     "aliasify": "^2.1.0",
     "babelify": "^10.0.0",
-    "es6-promise": "^4.2.8",
-    "watchify": "^3.11.0",
-    "whatwg-fetch": "^3.0.0"
+    "watchify": "^3.11.0"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.27.4"
   },
   "private": true,
   "scripts": {
+    "start": "browser-sync start --no-open --no-ghost-mode false --server . --index Dashboard.html --port 3452 --serveStatic ../../packages/uppy/dist --files \"./output/*.js, ../../packages/uppy/dist/uppy.min.css, ../../packages/uppy/lib/**/*\"",
     "watch:sandbox": "watchify -vd -t [ babelify --cwd ../../ ] -g aliasify index.js -o output/index.js"
   }
 }

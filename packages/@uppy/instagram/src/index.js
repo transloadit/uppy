@@ -1,16 +1,17 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
 const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
-module.exports = class Instagram extends Plugin {
+const locale = require('./locale.js')
+
+module.exports = class Instagram extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'Instagram'
     Provider.initPlugin(this, opts)
-    this.title = this.opts.title || 'Instagram'
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
         <g fill="none" fillRule="evenodd">
@@ -20,9 +21,14 @@ module.exports = class Instagram extends Plugin {
       </svg>
     )
 
+    this.defaultLocale = locale
+
+    this.i18nInit()
+    this.title = this.i18n('pluginNameInstagram')
+
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionHeaders: this.opts.companionHeaders,
       companionKeysParams: this.opts.companionKeysParams,
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'instagram',
@@ -42,7 +48,7 @@ module.exports = class Instagram extends Plugin {
       showBreadcrumbs: false,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

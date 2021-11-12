@@ -14,7 +14,7 @@ The `@uppy/drop-target` plugin lets your users drag-and-drop files on any elemen
 Can be used together with Uppy Dashboard or Drag & Drop plugins, or your custom solution, including plain text “please drop files here”.
 
 ```js
-const DropTarget = require('@uppy/drop-target')
+import DropTarget from '@uppy/drop-target'
 
 uppy.use(DropTarget, {
   target: document.body,
@@ -33,7 +33,7 @@ Install from NPM:
 npm install @uppy/drop-target
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
 const DragDrop = Uppy.DropTarget
@@ -41,7 +41,7 @@ const DragDrop = Uppy.DropTarget
 
 ## CSS
 
-The `@uppy/drop-target` plugin includes some simple styles for `uppy-is-drag-over` CSS class name. You can also choose not to use it and provide your own styles instead.
+The `@uppy/drop-target` plugin includes some basic styles for `uppy-is-drag-over` CSS class name. You can also choose not to use it and provide your own styles instead.
 
 ```js
 import '@uppy/core/dist/style.css'
@@ -57,9 +57,32 @@ The `@uppy/drop-target` plugin has the following configurable options:
 ```js
 uppy.use(DropTarget, {
   target: null,
+  onDragOver: (event) => {},
+  onDrop: (event) => {},
+  onDragLeave: (event) => {},
 })
 ```
 
 ### `target: null`
 
 DOM element or CSS selector to attach the drag and drop listeners to.
+
+### `onDragOver(event)`
+
+Callback for the [`ondragover`][ondragover] event handler.
+
+### `onDrop(event)`
+
+Callback for the [`ondrop`][ondrop] event handler.
+
+### `onDragLeave(event)`
+
+Callback for the [`ondragleave`][ondragleave] event handler.
+
+<!-- definitions -->
+
+[ondragover]: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragover
+
+[ondragleave]: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragleave
+
+[ondrop]: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondrop

@@ -4,6 +4,13 @@ const GoogleDrivePlugin = require('@uppy/google-drive') // eslint-disable-line
 const DashboardPlugin = require('./index')
 
 describe('Dashboard', () => {
+  beforeAll(() => {
+    globalThis.ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
+  })
+  afterAll(() => {
+    delete globalThis.ResizeObserver
+  })
+
   it('can safely be added together with the StatusBar without id conflicts', () => {
     const core = new Core()
     core.use(StatusBarPlugin)
@@ -68,7 +75,7 @@ describe('Dashboard', () => {
     })
 
     expect(
-      core.getPlugin('Dashboard').opts.width
+      core.getPlugin('Dashboard').opts.width,
     ).toEqual(300)
   })
 
@@ -88,7 +95,7 @@ describe('Dashboard', () => {
     })
 
     expect(
-      core.getPlugin('Dashboard').i18n('myDevice')
+      core.getPlugin('Dashboard').i18n('myDevice'),
     ).toEqual('Май дивайс')
   })
 

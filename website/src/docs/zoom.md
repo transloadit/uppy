@@ -14,7 +14,7 @@ The `@uppy/zoom` plugin lets users import files from their Zoom account.
 A Companion instance is required for the `@uppy/zoom` plugin to work. Companion handles authentication with Zoom, downloads the pictures and videos, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const Zoom = require('@uppy/zoom')
+import Zoom from '@uppy/zoom'
 
 uppy.use(Zoom, {
   // Options
@@ -33,10 +33,10 @@ Install from NPM:
 npm install @uppy/zoom
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
-const Zoom = Uppy.Zoom
+const { Zoom } = Uppy
 ```
 
 ## CSS
@@ -82,22 +82,23 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your [Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should be good enough.
+This is useful when you have your [Companion](/docs/companion) running on more than one server. Otherwise, the default value should be good enough.
 
 ### `companionCookiesRule: 'same-origin'`
 
-This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether to send cookies to [Companion](/docs/companion).
 
 ### `locale: {}`
 
-Localize text that is shown to the user.
-
-The default English strings are:
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
-strings: {
-  // TODO
+module.exports = {
+  strings: {
+    pluginNameZoom: 'Zoom',
+  },
 }
+
 ```
 
 ## Zoom Marketplace
@@ -106,7 +107,7 @@ If you are a Zoom account owner and you are looking to enable the Transloadit Ad
 
 ### Install Transloadit Zoom Add-on
 
-To enable the Transloadit Add-on on your Zoom account please visit the Transloadit App on the [Zoom Marketplace](https://marketplace.zoom.us/apps/oBMBQjN6SSakyh7OiLZMdA) and click the "Install" button.
+To enable the Transloadit Add-on on your Zoom account please visit the Transloadit App on the [Zoom Marketplace](https://marketplace.zoom.us/apps/oBMBQjN6SSakyh7OiLZMdA) and click the “Install” button.
 
 ### Uninstall via Marketplace
 

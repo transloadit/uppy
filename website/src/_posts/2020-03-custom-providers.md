@@ -113,7 +113,7 @@ app.use((req, res, next) => {
   return res.status(404).json({ message: 'Not Found' })
 })
 
-companion.socket(app.listen(3020), companionOptions)
+companion.socket(app.listen(3020))
 
 console.log('Welcome to Companion!')
 console.log(`Listening on http://0.0.0.0:3020`)
@@ -420,12 +420,12 @@ Now we need to implement the client part of this. To do this we need to implemen
 First, we'll create a `client/MyCustomProvider.js` file. Following the instructions [here](https://uppy.io/docs/writing-plugins/), our Uppy Plugin (aka `client/MyCustomProvider.js` file) could look something like this:
 
 ```js
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
 const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
-module.exports = class MyCustomProvider extends Plugin {
+module.exports = class MyCustomProvider extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'
@@ -441,7 +441,7 @@ module.exports = class MyCustomProvider extends Plugin {
 
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionHeaders: this.opts.companionHeaders,
       provider: 'myunsplash',
       pluginId: this.id,
     })

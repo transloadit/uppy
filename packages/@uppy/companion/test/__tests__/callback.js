@@ -1,10 +1,15 @@
 /* global jest:false, test:false, expect:false, describe:false */
 
-jest.mock('../../src/server/helpers/oauth-state', () => require('../mockoauthstate')())
+const mockOauthState = require('../mockoauthstate')()
 
 const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
+
+jest.mock('../../src/server/helpers/oauth-state', () => ({
+  ...jest.requireActual('../../src/server/helpers/oauth-state'),
+  ...mockOauthState,
+}))
 
 const authServer = getServer()
 const authData = {
@@ -37,51 +42,7 @@ describe('test authentication callback', () => {
     <head>
         <meta charset="utf-8" />
         <script>
-          window.opener.postMessage(JSON.stringify({token: "${token}"}), "http://localhost:3020")
-          window.close()
-        </script>
-    </head>
-    <body></body>
-    </html>`
-        expect(res.text).toBe(body)
-      })
-  })
-
-  test('the token gets to older clients without stringify', () => {
-    // see mock ../../src/server/helpers/oauth-state above for state values
-    return request(authServer)
-      .get(`/drive/send-token?uppyAuthToken=${token}&state=state-with-older-version`)
-      .expect(200)
-      .expect((res) => {
-        const body = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8" />
-        <script>
-          window.opener.postMessage({token: "${token}"}, "http://localhost:3020")
-          window.close()
-        </script>
-    </head>
-    <body></body>
-    </html>`
-        expect(res.text).toBe(body)
-      })
-  })
-
-  test('the token gets sent to newer clients with old version style', () => {
-    // see mock ../../src/server/helpers/oauth-state above for state values
-    return request(authServer)
-      .get(`/drive/send-token?uppyAuthToken=${token}&state=state-with-newer-version-old-style`)
-      .expect(200)
-      .expect((res) => {
-        const body = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8" />
-        <script>
-          window.opener.postMessage(JSON.stringify({token: "${token}"}), "http://localhost:3020")
+          window.opener.postMessage({"token":"${token}"}, "http:\\u002F\\u002Flocalhost:3020")
           window.close()
         </script>
     </head>

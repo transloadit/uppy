@@ -1,5 +1,9 @@
-const Cropper = require('cropperjs')
+const CropperImport = require('cropperjs')
 const { h, Component } = require('preact')
+
+// @TODO A silly hack that we can get rid of when moving to ESM.
+// eslint-disable-next-line no-underscore-dangle
+const Cropper = CropperImport.__esModule ? CropperImport.default : CropperImport
 
 module.exports = class Editor extends Component {
   constructor (props) {
@@ -11,7 +15,7 @@ module.exports = class Editor extends Component {
     const { opts, storeCropperInstance } = this.props
     this.cropper = new Cropper(
       this.imgElement,
-      opts.cropperOptions
+      opts.cropperOptions,
     )
     storeCropperInstance(this.cropper)
 
@@ -31,43 +35,15 @@ module.exports = class Editor extends Component {
     this.cropper.destroy()
   }
 
-  renderRevert () {
-    return (
-      <button
-        type="button"
-        className="uppy-u-reset uppy-c-btn"
-        aria-label={this.props.i18n('revert')}
-        data-microtip-position="top"
-        role="tooltip"
-        onClick={() => {
-          this.cropper.reset()
-          this.cropper.setAspectRatio(0)
-        }}
-      >
-        <svg aria-hidden="true" className="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
-          <path d="M0 0h24v24H0z" fill="none" />
-          <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
-        </svg>
-      </button>
-    )
-  }
+  save = () => {
+    const { opts, save, currentImage } = this.props
 
-  renderRotate () {
-    return (
-      <button
-        type="button"
-        className="uppy-u-reset uppy-c-btn"
-        onClick={() => this.cropper.rotate(-90)}
-        aria-label={this.props.i18n('rotate')}
-        data-microtip-position="top"
-        role="tooltip"
-      >
-        <svg aria-hidden="true" className="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
-          <path d="M0 0h24v24H0V0zm0 0h24v24H0V0z" fill="none" />
-          <path d="M14 10a2 2 0 012 2v7a2 2 0 01-2 2H6a2 2 0 01-2-2v-7a2 2 0 012-2h8zm0 1.75H6a.25.25 0 00-.243.193L5.75 12v7a.25.25 0 00.193.243L6 19.25h8a.25.25 0 00.243-.193L14.25 19v-7a.25.25 0 00-.193-.243L14 11.75zM12 .76V4c2.3 0 4.61.88 6.36 2.64a8.95 8.95 0 012.634 6.025L21 13a1 1 0 01-1.993.117L19 13h-.003a6.979 6.979 0 00-2.047-4.95 6.97 6.97 0 00-4.652-2.044L12 6v3.24L7.76 5 12 .76z" />
-        </svg>
-      </button>
-    )
+    this.cropper.getCroppedCanvas(opts.cropperOptions.croppedCanvasOptions)
+      .toBlob(
+        (blob) => save(blob),
+        currentImage.type,
+        opts.quality,
+      )
   }
 
   granularRotateOnChange = (ev) => {
@@ -83,11 +59,15 @@ module.exports = class Editor extends Component {
   }
 
   renderGranularRotate () {
+    const { i18n } = this.props
+    const { rotationDelta, rotationAngle } = this.state
+
     return (
+      // eslint-disable-next-line jsx-a11y/label-has-associated-control
       <label
         data-microtip-position="top"
         role="tooltip"
-        aria-label={`${this.state.rotationAngle}º`}
+        aria-label={`${rotationAngle}º`}
         className="uppy-ImageCropper-rangeWrapper uppy-u-reset"
       >
         <input
@@ -95,23 +75,65 @@ module.exports = class Editor extends Component {
           type="range"
           onInput={this.granularRotateOnChange}
           onChange={this.granularRotateOnChange}
-          value={this.state.rotationDelta}
+          value={rotationDelta}
           min="-45"
           max="44"
-          aria-label={this.props.i18n('rotate')}
+          aria-label={i18n('rotate')}
         />
       </label>
     )
   }
 
-  renderFlip () {
+  renderRevert () {
+    const { i18n } = this.props
+
     return (
       <button
         type="button"
         className="uppy-u-reset uppy-c-btn"
-        aria-label={this.props.i18n('flipHorizontal')}
+        aria-label={i18n('revert')}
         data-microtip-position="top"
-        role="tooltip"
+        onClick={() => {
+          this.cropper.reset()
+          this.cropper.setAspectRatio(0)
+        }}
+      >
+        <svg aria-hidden="true" className="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
+          <path d="M0 0h24v24H0z" fill="none" />
+          <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
+        </svg>
+      </button>
+    )
+  }
+
+  renderRotate () {
+    const { i18n } = this.props
+
+    return (
+      <button
+        type="button"
+        className="uppy-u-reset uppy-c-btn"
+        onClick={() => this.cropper.rotate(-90)}
+        aria-label={i18n('rotate')}
+        data-microtip-position="top"
+      >
+        <svg aria-hidden="true" className="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
+          <path d="M0 0h24v24H0V0zm0 0h24v24H0V0z" fill="none" />
+          <path d="M14 10a2 2 0 012 2v7a2 2 0 01-2 2H6a2 2 0 01-2-2v-7a2 2 0 012-2h8zm0 1.75H6a.25.25 0 00-.243.193L5.75 12v7a.25.25 0 00.193.243L6 19.25h8a.25.25 0 00.243-.193L14.25 19v-7a.25.25 0 00-.193-.243L14 11.75zM12 .76V4c2.3 0 4.61.88 6.36 2.64a8.95 8.95 0 012.634 6.025L21 13a1 1 0 01-1.993.117L19 13h-.003a6.979 6.979 0 00-2.047-4.95 6.97 6.97 0 00-4.652-2.044L12 6v3.24L7.76 5 12 .76z" />
+        </svg>
+      </button>
+    )
+  }
+
+  renderFlip () {
+    const { i18n } = this.props
+
+    return (
+      <button
+        type="button"
+        className="uppy-u-reset uppy-c-btn"
+        aria-label={i18n('flipHorizontal')}
+        data-microtip-position="top"
         onClick={() => this.cropper.scaleX(-this.cropper.getData().scaleX || -1)}
       >
         <svg aria-hidden="true" className="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
@@ -123,13 +145,14 @@ module.exports = class Editor extends Component {
   }
 
   renderZoomIn () {
+    const { i18n } = this.props
+
     return (
       <button
         type="button"
         className="uppy-u-reset uppy-c-btn"
-        aria-label={this.props.i18n('zoomIn')}
+        aria-label={i18n('zoomIn')}
         data-microtip-position="top"
-        role="tooltip"
         onClick={() => this.cropper.zoom(0.1)}
       >
         <svg aria-hidden="true" className="uppy-c-icon" height="24" viewBox="0 0 24 24" width="24">
@@ -142,13 +165,14 @@ module.exports = class Editor extends Component {
   }
 
   renderZoomOut () {
+    const { i18n } = this.props
+
     return (
       <button
         type="button"
         className="uppy-u-reset uppy-c-btn"
-        aria-label={this.props.i18n('zoomOut')}
+        aria-label={i18n('zoomOut')}
         data-microtip-position="top"
-        role="tooltip"
         onClick={() => this.cropper.zoom(-0.1)}
       >
         <svg aria-hidden="true" className="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
@@ -160,13 +184,14 @@ module.exports = class Editor extends Component {
   }
 
   renderCropSquare () {
+    const { i18n } = this.props
+
     return (
       <button
         type="button"
         className="uppy-u-reset uppy-c-btn"
-        aria-label={this.props.i18n('aspectRatioSquare')}
+        aria-label={i18n('aspectRatioSquare')}
         data-microtip-position="top"
-        role="tooltip"
         onClick={() => this.cropper.setAspectRatio(1)}
       >
         <svg aria-hidden="true" className="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
@@ -178,13 +203,14 @@ module.exports = class Editor extends Component {
   }
 
   renderCropWidescreen () {
+    const { i18n } = this.props
+
     return (
       <button
         type="button"
         className="uppy-u-reset uppy-c-btn"
-        aria-label={this.props.i18n('aspectRatioLandscape')}
+        aria-label={i18n('aspectRatioLandscape')}
         data-microtip-position="top"
-        role="tooltip"
         onClick={() => this.cropper.setAspectRatio(16 / 9)}
       >
         <svg aria-hidden="true" className="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
@@ -196,13 +222,14 @@ module.exports = class Editor extends Component {
   }
 
   renderCropWidescreenVertical () {
+    const { i18n } = this.props
+
     return (
       <button
         type="button"
         className="uppy-u-reset uppy-c-btn"
-        aria-label={this.props.i18n('aspectRatioPortrait')}
+        aria-label={i18n('aspectRatioPortrait')}
         data-microtip-position="top"
-        role="tooltip"
         onClick={() => this.cropper.setAspectRatio(9 / 16)}
       >
         <svg aria-hidden="true" className="uppy-c-icon" width="24" height="24" viewBox="0 0 24 24">
@@ -214,9 +241,8 @@ module.exports = class Editor extends Component {
   }
 
   render () {
-    const { currentImage, i18n, opts } = this.props
+    const { currentImage, opts } = this.props
     const { actions } = opts
-    // eslint-disable-next-line compat/compat
     const imageURL = URL.createObjectURL(currentImage.data)
 
     return (

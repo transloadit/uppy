@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input, ElementRef, SimpleChange, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { Uppy } from '@uppy/core';
-import * as StatusBar from '@uppy/status-bar';
+import StatusBar from '@uppy/status-bar';
+import type { StatusBarOptions } from '@uppy/status-bar';
 import { UppyAngularWrapper } from '../../utils/wrapper';
 
 @Component({
@@ -10,7 +11,7 @@ import { UppyAngularWrapper } from '../../utils/wrapper';
 })
 export class StatusBarComponent extends UppyAngularWrapper implements OnDestroy, OnChanges  {
   @Input() uppy: Uppy;
-  @Input() props: StatusBar.StatusBarOptions;
+  @Input() props: StatusBarOptions;
 
   constructor(public el: ElementRef) {
     super();

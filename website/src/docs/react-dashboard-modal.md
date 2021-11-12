@@ -18,10 +18,10 @@ npm install @uppy/react
 ```
 
 ```js
-// Either:
-import DashboardModal from '@uppy/react/lib/DashboardModal'
-// Or:
 import { DashboardModal } from '@uppy/react'
+
+// Alternatively, you can also use a default import:
+// import DashboardModal from '@uppy/react/lib/DashboardModal'
 ```
 
 ## CSS
@@ -40,13 +40,15 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 Styles for Provider plugins, like Google Drive and Instagram, are also bundled with Dashboard styles. Styles for other plugins, such as `@uppy/url` and `@uppy/webcam`, are not included. If you are using those, please see their docs and make sure to include styles for them as well.
 
 <!-- Make sure the old name of this section still works -->
+
 <a id="Options"></a>
+
 ## Props
 
 The `<DashboardModal />` component supports most [`@uppy/dashboard`][] options as props. It adds two more:
 
- - `open` - Boolean true or false, setting this to `true` opens the modal and setting it to `false` closes it.
- - `onRequestClose` - Callback called when the user attempts to close the modal, either by clicking the close button or by clicking outside the modal (if the `closeModalOnClickOutside` prop is set).
+* `open` - Boolean true or false, setting this to `true` opens the modal and setting it to `false` closes it.
+* `onRequestClose` - Callback called when the user attempts to close the modal, either by clicking the close button or by clicking outside the modal (if the `closeModalOnClickOutside` prop is set).
 
 An Uppy instance must be provided in the `uppy={}` prop: see [Initializing Uppy](/docs/react/initializing) for details.
 
@@ -66,12 +68,15 @@ Then do `plugins={['Webcam']}`.
 Here is a full example that uses a button to open the modal:
 
 ```js
+import React from 'react'
+import { DashboardModal } from '@uppy/react'
+
 class MusicUploadButton extends React.Component {
   constructor (props) {
     super(props)
 
     this.state = {
-      modalOpen: false
+      modalOpen: false,
     }
 
     this.uppy = new Uppy()
@@ -88,20 +93,20 @@ class MusicUploadButton extends React.Component {
 
   handleOpen () {
     this.setState({
-      modalOpen: true
+      modalOpen: true,
     })
   }
 
   handleClose () {
     this.setState({
-      modalOpen: false
+      modalOpen: false,
     })
   }
 
   render () {
     return (
       <div>
-        <button onClick={this.handleOpen}>Upload some music</button>
+        <button type="button" onClick={this.handleOpen}>Upload some music</button>
         <DashboardModal
           uppy={this.uppy}
           closeModalOnClickOutside
@@ -110,10 +115,11 @@ class MusicUploadButton extends React.Component {
           plugins={['Webcam']}
         />
       </div>
-    );
+    )
   }
 }
 ```
 
 [`@uppy/dashboard`]: /docs/dashboard/
+
 [`@uppy/webcam`]: /docs/webcam/

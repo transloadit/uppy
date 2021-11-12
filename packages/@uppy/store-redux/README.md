@@ -2,8 +2,10 @@
 
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
-<a href="https://www.npmjs.com/package/@uppy/store-redux"><img src="https://img.shields.io/npm/v/@uppy/store-redux.svg?style=flat-square"></a>
-<img src="https://github.com/transloadit/uppy/workflows/Tests/badge.svg" alt="CI status for Uppy tests"> <img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"> <img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests">
+[![npm version](https://img.shields.io/npm/v/@uppy/store-redux.svg?style=flat-square)](https://www.npmjs.com/package/@uppy/store-redux)
+![CI status for Uppy tests](https://github.com/transloadit/uppy/workflows/Tests/badge.svg)
+![CI status for Companion tests](https://github.com/transloadit/uppy/workflows/Companion/badge.svg)
+![CI status for browser tests](https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg)
 
 The `ReduxStore` stores Uppy state on a key in an existing Redux store.
 The `ReduxStore` dispatches `uppy/STATE_UPDATE` actions to update state.
@@ -15,23 +17,17 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```js
-const { combineReducers, createStore } = require('redux')
-const Uppy = require('@uppy/core')
-const ReduxStore = require('@uppy/store-redux')
-const reducers = require('./reducers')
+import Uppy from '@uppy/core'
+import * as ReduxStore from '@uppy/store-redux'
+import * as Redux from 'redux'
 
-const reducer = combineReducers({
-  ...reducers,
-  uppy: ReduxStore.reducer
-})
+function createStore (reducers = {}) {
+  const reducer = Redux.combineReducers({ ...reducers, uppy: ReduxStore.reducer })
+  return Redux.createStore(reducer)
+}
 
-const store = createStore(reducer)
-
-const uppy = new Uppy({
-  store: ReduxStore({
-    store: store
-  })
-})
+const store = new ReduxStore.ReduxStore({ store: createStore() })
+const uppy = new Uppy({ store })
 ```
 
 ## Installation
@@ -42,7 +38,7 @@ $ npm install @uppy/store-redux
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-Alternatively, you can also use this plugin in a pre-built bundle from Transloadit's CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
+Alternatively, you can also use this plugin in a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
 
 ## Documentation
 

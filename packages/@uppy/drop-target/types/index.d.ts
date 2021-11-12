@@ -1,11 +1,12 @@
-import Uppy = require('@uppy/core')
+import type { PluginOptions, BasePlugin } from '@uppy/core'
 
-declare module DropTarget {
-  interface DropTargetOptions extends Uppy.PluginOptions {
-    target: string | Element
-  }
+interface DropTargetOptions extends PluginOptions {
+  target: string | Element;
+  onDragOver?: (event: MouseEvent) => void;
+  onDrop?: (event: MouseEvent) => void;
+  onDragLeave?: (event: MouseEvent) => void;
 }
 
-declare class DropTarget extends Uppy.Plugin<DropTarget.DropTargetOptions> {}
+declare class DropTarget extends BasePlugin<DropTargetOptions> {}
 
-export = DropTarget
+export default DropTarget

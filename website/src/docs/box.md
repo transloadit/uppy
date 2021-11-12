@@ -14,7 +14,7 @@ The `@uppy/box` plugin lets users import files from their Box account.
 A Companion instance is required for the Box plugin to work. Companion handles authentication with Box, downloads the files, and uploads them to the destination. This saves the user bandwidth, especially helpful if they are on a mobile connection.
 
 ```js
-const Box = require('@uppy/box')
+import Box from '@uppy/box'
 
 uppy.use(Box, {
   // Options
@@ -33,43 +33,46 @@ Install from NPM:
 npm install @uppy/box
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
-const Box = Uppy.Box
+const { Box } = Uppy
 ```
 
 ## Setting Up
 
 To use the Box provider, you need to configure the Box keys that Companion should use. With the standalone Companion server, specify environment variables:
+
 ```shell
 export COMPANION_BOX_KEY="Box API key"
 export COMPANION_BOX_SECRET="Box API secret"
 ```
 
 When using the Companion Node.js API, configure these options:
+
 ```js
 companion.app({
   providerOptions: {
     box: {
       key: 'Box API key',
-      secret: 'Box API secret'
-    }
-  }
+      secret: 'Box API secret',
+    },
+  },
 })
 ```
 
 You can create a Box App on the [Box Developers site](https://app.box.com/developers/console).
 
 Things to note:
-- Choose "Custom App" and select the "Standard OAuth 2.0 (User Authentication)" app type.
 
-You'll be redirected to the app page. This page lists the client ID (app key) and client secret (app secret), which you should use to configure Companion as shown above.
+* Choose `Custom App` and select the `Standard OAuth 2.0 (User Authentication)` app type.
+* Oddly you must enable full write access, or you will get [403 when downloading files](https://support.box.com/hc/en-us/community/posts/360049195613-403-error-while-file-download-API-Call)
 
-The app page has a "Redirect URIs" field. Here, add:
-```
-https://$YOUR_COMPANION_HOST_NAME/box/redirect
-```
+You’ll be redirected to the app page. This page lists the client ID (app key) and client secret (app secret), which you should use to configure Companion as shown above.
+
+The app page has a `"Redirect URIs"` field. Here, add:
+
+    https://$YOUR_COMPANION_HOST_NAME/box/redirect
 
 You can only use the integration with your own account initially—make sure to apply for production status on the app page before you publish your app, or your users will not be able to sign in!
 
@@ -116,20 +119,21 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your [Companion](/docs/companion) running on multiple hosts. Otherwise, the default value should do just fine.
+This is useful when you have your [Companion](/docs/companion) running on several hosts. Otherwise, the default value should do fine.
 
 ### `companionCookiesRule: 'same-origin'`
 
-This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether or not to send cookies to [Companion](/docs/companion).
+This option correlates to the [RequestCredentials value](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials), which tells the plugin whether to send cookies to [Companion](/docs/companion).
 
 ### `locale: {}`
 
-Localize text that is shown to the user.
-
-The default English strings are:
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
-strings: {
-  // TODO
+module.exports = {
+  strings: {
+    pluginNameBox: 'Box',
+  },
 }
+
 ```

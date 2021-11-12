@@ -13,7 +13,7 @@ const Provider = require('./Provider')
  *
  * @param {Object.<string, (typeof Provider)>} providers provider classes enabled for this server
  * @param {object} companionOptions companion options object
- * @returns {(req: object, res: object, next: function()) => void}
+ * @returns {(req: object, res: object, next: Function) => void}
  */
 exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
   return (req, res, next) => {
@@ -27,10 +27,10 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
       return next()
     }
 
-    const dynamic = (req.session.grant || {}).dynamic || {}
+    const dynamic = oAuthState.getDynamicStateFromRequest(req)
     // only use state via session object if user isn't making intial "connect" request.
     // override param indicates subsequent requests from the oauth flow
-    const state = override ? dynamic.state : req.query.state
+    const state = override ? dynamic : req.query.state
     if (!state) {
       return next()
     }

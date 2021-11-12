@@ -36,29 +36,28 @@ module.exports = class SharedHandler {
     // Shift-clicking selects a single consecutive list of items
     // starting at the previous click and deselects everything else.
     if (this.lastCheckbox && e.shiftKey) {
-      let currentSelection
       const prevIndex = items.indexOf(this.lastCheckbox)
       const currentIndex = items.indexOf(file)
-      if (prevIndex < currentIndex) {
-        currentSelection = items.slice(prevIndex, currentIndex + 1)
-      } else {
-        currentSelection = items.slice(currentIndex, prevIndex + 1)
-      }
+      const currentSelection = (prevIndex < currentIndex)
+        ? items.slice(prevIndex, currentIndex + 1)
+        : items.slice(currentIndex, prevIndex + 1)
+      const reducedCurrentSelection = []
+
       // Check restrictions on each file in currentSelection,
       // reduce it to only contain files that pass restrictions
-      currentSelection = currentSelection.reduce((reducedCurrentSelection, item) => {
-        const uppy = this.plugin.uppy
+      for (const item of currentSelection) {
+        const { uppy } = this.plugin
         const validatedRestrictions = uppy.validateRestrictions(
           remoteFileObjToLocal(item),
-          [...uppy.getFiles(), ...reducedCurrentSelection]
+          [...uppy.getFiles(), ...reducedCurrentSelection],
         )
-        if (!validatedRestrictions.result) {
+        if (validatedRestrictions.result) {
+          reducedCurrentSelection.push(item)
+        } else {
           uppy.info({ message: validatedRestrictions.reason }, 'error', uppy.opts.infoTimeout)
-          return reducedCurrentSelection
         }
-        return [...reducedCurrentSelection, item]
-      })
-      this.plugin.setPluginState({ currentSelection })
+      }
+      this.plugin.setPluginState({ currentSelection: reducedCurrentSelection })
       return
     }
 

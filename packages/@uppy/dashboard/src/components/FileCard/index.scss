@@ -1,16 +1,18 @@
 .uppy-Dashboard-FileCard {
-  width: 100%;
-  height: 100%;
   position: absolute;
   top: 0;
-  left: 0;
   right: 0;
   bottom: 0;
+  left: 0;
   z-index: $zIndex-5;
-  box-shadow: 0px 0px 10px 4px rgba($black, 0.1);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
   background-color: $white;
   // For Safari, otherwise there is no border-radius in FileCard.
   border-radius: 5px;
+  box-shadow: 0 0 10px 4px rgba($black, 0.1);
 
   .uppy-DashboardContent-bar {
     border-top-left-radius: 5px;
@@ -18,144 +20,139 @@
   }
 
   .uppy-Dashboard-FileCard-actions {
-    border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
   }
-
-  display: flex;
-  flex-direction: column;
 }
 
-  .uppy-Dashboard-FileCard-inner {
-    height: 100%;
-    flex-grow: 1;
-    flex-shrink: 1;
-    // For Firefox in order for flex-shrink: 1 to work properly! (https://github.com/philipwalton/flexbugs/issues/41#issuecomment-111590394)
-    min-height: 0;
+.uppy-Dashboard-FileCard-inner {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 1;
+  height: 100%;
+  // For Firefox in order for flex-shrink: 1 to work properly! (https://github.com/philipwalton/flexbugs/issues/41#issuecomment-111590394)
+  min-height: 0;
+}
 
-    display: flex;
-    flex-direction: column;
+.uppy-Dashboard-FileCard-preview {
+  position: relative;
+
+  // center the nested image/preview
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 1;
+  align-items: center;
+  justify-content: center;
+  height: 60%;
+  // For Firefox in order for flex-shrink: 1 to work properly!
+  min-height: 0;
+  border-bottom: 1px solid $gray-200;
+
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-800;
+    border-bottom: 0;
   }
-    .uppy-Dashboard-FileCard-preview {
-      height: 60%;
-      flex-grow: 0;
-      flex-shrink: 1;
-      // For Firefox in order for flex-shrink: 1 to work properly!
-      min-height: 0;
+}
 
-      border-bottom: 1px solid $gray-200;
+.uppy-Dashboard-FileCard-preview img.uppy-Dashboard-Item-previewImg {
+  // For IE11, otherwise image aspect ration will get screwed.
+  flex: 0 0 auto;
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: cover;
+  border-radius: 3px;
+  box-shadow: 0 3px 20px rgba($black, 0.15);
+}
+// ...uppy-Dashboard-FileCard-preview|
 
-      // center the nested image/preview
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
+.uppy-Dashboard-FileCard-edit {
+  @include blue-border-focus;
 
-      [data-uppy-theme="dark"] & {
-        background-color: $gray-800;
-        border-bottom: 0;
-      }
-    }
+  position: absolute;
+  top: 10px;
+  padding: 7px 15px;
+  color: $white;
+  font-size: 13px;
+  background-color: rgba($black, 0.5);
+  border-radius: 50px;
+  inset-inline-end: 10px;
 
-      .uppy-Dashboard-FileCard-preview img.uppy-Dashboard-Item-previewImg {
-        max-width: 90%;
-        max-height: 90%;
-        object-fit: cover;
-        // For IE11, otherwise image aspect ration will get screwed.
-        flex: 0 0 auto;
+  &:hover {
+    background-color: rgba($black, 0.8);
+  }
+}
 
-        border-radius: 3px;
-        box-shadow: 0px 3px 20px rgba($black, 0.15);
-      }
-    // ...uppy-Dashboard-FileCard-preview|
+.uppy-Dashboard-FileCard-info {
+  flex-grow: 0;
+  flex-shrink: 0;
+  height: 40%;
+  padding: 30px 20px 20px 20px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 
-    .uppy-Dashboard-FileCard-edit {
-      @include blue-border-focus;
-      position: absolute;
-      top: 10px;
-      inset-inline-end: 10px;
-      font-size: 13px;
-      background-color: rgba($black, 0.5);
-      color: $white;
-      padding: 7px 15px;
-      border-radius: 50px;
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+  }
+}
 
-      &:hover {
-        background-color: rgba($black, 0.8);
-      }
-    }
+.uppy-Dashboard-FileCard-fieldset {
+  max-width: 640px;
+  margin: auto;
+  margin-bottom: 12px;
+  padding: 0;
+  font-size: 0;
+  border: 0;
+}
 
-    .uppy-Dashboard-FileCard-info {
-      height: 40%;
-      flex-grow: 0;
-      flex-shrink: 0;
+.uppy-Dashboard-FileCard-label {
+  display: inline-block;
+  width: 22%;
+  color: $gray-700;
+  font-size: 12px;
+  vertical-align: middle;
 
-      padding: 30px 20px 20px 20px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+  .uppy-size--md & {
+    font-size: 14px;
+  }
 
-      [data-uppy-theme="dark"] & {
-        background-color: $gray-900;
-      }
-    }
+  [data-uppy-theme="dark"] & {
+    color: $gray-200;
+  }
+}
 
-      .uppy-Dashboard-FileCard-fieldset {
-        font-size: 0;
-        border: 0;
-        padding: 0;
-        max-width: 640px;
-        margin: auto;
-        margin-bottom: 12px;
-      }
-        .uppy-Dashboard-FileCard-label {
-          display: inline-block;
-          vertical-align: middle;
-          width: 22%;
-          font-size: 12px;
-          color: $gray-700;
+.uppy-Dashboard-FileCard-input {
+  display: inline-block;
+  width: 78%;
+  vertical-align: middle;
+}
+// ...uppy-Dashboard-FileCard-fieldset|
+// ...uppy-Dashboard-FileCard-info|
 
-          .uppy-size--md & {
-            font-size: 14px;
-          }
+.uppy-Dashboard-FileCard-actions {
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  align-items: center;
+  height: 55px;
+  padding: 0 15px;
+  background-color: $gray-50;
+  border-top: 1px solid $gray-200;
 
-          [data-uppy-theme="dark"] & {
-            color: $gray-200;
-          }
-        }
-        .uppy-Dashboard-FileCard-input {
-          display: inline-block;
-          vertical-align: middle;
-          width: 78%;
-        }
-      // ...uppy-Dashboard-FileCard-fieldset|
-    // ...uppy-Dashboard-FileCard-info|
+  .uppy-size--md & {
+    height: 65px;
+  }
 
-    .uppy-Dashboard-FileCard-actions {
-      height: 55px;
-      flex-shrink: 0;
-      flex-grow: 0;
+  [data-uppy-theme="dark"] & {
+    background-color: $gray-900;
+    border-top: 1px solid $gray-800;
+  }
+}
 
-      border-top: 1px solid $gray-200;
-      padding: 0 15px;
-      background-color: $gray-50;
+.uppy-Dashboard-FileCard-actionsBtn {
+  margin-inline-end: 10px;
+}
+// ...uppy-Dashboard-FileCard-actions|
 
-      display: flex;
-      align-items: center;
-
-      .uppy-size--md & {
-        height: 65px;
-      }
-
-      [data-uppy-theme="dark"] & {
-        border-top: 1px solid $gray-800;
-        background-color: $gray-900;
-      }
-    }
-
-      .uppy-Dashboard-FileCard-actionsBtn {
-        margin-inline-end: 10px;
-      }
-    // ...uppy-Dashboard-FileCard-actions|
-
-  // ...uppy-Dashboard-FileCard-inner|
+// ...uppy-Dashboard-FileCard-inner|
 // ...uppy-Dashboard-FileCard|

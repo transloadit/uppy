@@ -7,7 +7,7 @@ category: "Docs"
 body_class: "page-docs-locales"
 ---
 
-Uppy speaks multiple languages, English being the default. You can use a locale pack to translate Uppy into your language of choice.
+Uppy speaks many languages, English being the default. You can use a locale pack to translate Uppy into your language of choice.
 
 [List of our locale packs](#List-of-locale-packs)
 
@@ -20,11 +20,12 @@ npm i @uppy/core @uppy/locales
 ```
 
 ```js
-const Uppy = require('@uppy/core')
-const German = require('@uppy/locales/lib/de_DE') // see below for the full list of locales
+import Uppy from '@uppy/core'
+import German from '@uppy/locales/lib/de_DE'
+// see below for the full list of locales
 const uppy = new Uppy({
   debug: true,
-  locale: German
+  locale: German,
 })
 ```
 
@@ -33,11 +34,11 @@ const uppy = new Uppy({
 Add a `<script>` tag with Uppy bundle and the locale pack you’d like to use. You can copy/paste the link from the CDN column in the [locales table](#List-of-locale-packs). The locale will attach itself to the `Uppy.locales` object.
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v1.30.0/uppy.min.js"></script>
-<script src="https://releases.transloadit.com/uppy/locales/v1.21.0/de_DE.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.2.3/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/locales/v2.0.3/de_DE.min.js"></script>
 
 <script>
-var uppy = Uppy.Core({
+var uppy = new Uppy.Core({
   debug: true,
   locale: Uppy.locales.de_DE
 })
@@ -49,13 +50,14 @@ var uppy = Uppy.Core({
 Many plugins come with their own locale strings, and the packs we provide consist of most of those strings. You can, however, override a locale string for a specific plugin, regardless of whether you are using locale pack or not. See the plugin documentation for the list of locale strings it uses (for example, [here’s how to use it with the Dashboard UI](https://uppy.io/docs/dashboard/#locale)).
 
 ```js
-const Uppy = require('@uppy/core')
-const DragDrop = require('@uppy/drag-drop')
-const Russian = require('@uppy/locales/lib/ru_RU')
+import Uppy from '@uppy/core'
+import DragDrop from '@uppy/drag-drop'
+import Russian from '@uppy/locales/lib/ru_RU'
+
 const uppy = new Uppy({
   debug: true,
   autoProceed: true,
-  locale: Russian
+  locale: Russian,
 })
 uppy.use(DragDrop, {
   target: '.UppyDragDrop',
@@ -63,9 +65,9 @@ uppy.use(DragDrop, {
   // but you can also override specific strings like so:
   locale: {
     strings: {
-      browse: 'выберите ;-)'
-    }
-  }
+      browse: 'выберите ;-)',
+    },
+  },
 })
 ```
 
@@ -78,8 +80,8 @@ uppy.use(DragDrop, {
 If you speak a language we don’t yet support, you can contribute! Here’s how you do it:
 
 1. Go to the [uppy/locales](https://github.com/transloadit/uppy/tree/master/packages/%40uppy/locales/src) directory in the Uppy GitHub repo.
-1. Go to `en_US.js` and copy its contents, as English is the most up-to-date locale.
-1. Press “Create new file”, name it according to the [`language_COUNTRY` format](http://www.i18nguy.com/unicode/language-identifiers.html), make sure to use underscore `_` as a divider. Examples: `en_US`, `en_GB`, `ru_RU`, `ar_AE`. Variants should be trailing, e.g.: `sr_RS_Latin` for Serbian Latin vs Cyrillic.
-1. If your language has different pluralization rules than English, update the `pluralize` implementation. If you are unsure how to do this, please ask us for help in a [GitHub issue](https://github.com/transloadit/uppy/issues/new).
-1. Paste what you’ve copied from `en_US.js` and use it as a starting point to translate strings into your language.
-1. When you are ready, save the file — this should create a PR that we’ll then review 🎉 Thanks!
+2. Go to `en_US.js` and copy its contents, as English is the most up-to-date locale.
+3. Press “Create new file”, name it according to the [`language_COUNTRY` format](http://www.i18nguy.com/unicode/language-identifiers.html), make sure to use underscore `_` as a divider. Examples: `en_US`, `en_GB`, `ru_RU`, `ar_AE`. Variants should be trailing, for example `sr_RS_Latin` for Serbian Latin vs Cyrillic.
+4. If your language has different pluralization rules than English, update the `pluralize` implementation. If you are unsure how to do this, please ask us for help in a [GitHub issue](https://github.com/transloadit/uppy/issues/new).
+5. Paste what you’ve copied from `en_US.js` and use it as a starting point to translate strings into your language.
+6. When you are ready, save the file — this should create a PR that we’ll then review 🎉 Thanks!

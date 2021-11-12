@@ -2,13 +2,11 @@ const chalk = require('chalk')
 const babel = require('@babel/core')
 const { promisify } = require('util')
 const glob = promisify(require('glob'))
-const mkdirp = promisify(require('mkdirp'))
 const fs = require('fs')
 const path = require('path')
 
 const transformFile = promisify(babel.transformFile)
-const writeFile = promisify(fs.writeFile)
-const stat = promisify(fs.stat)
+const { mkdir, stat, writeFile } = fs.promises
 
 const SOURCE = 'packages/{*,@uppy/*}/src/**/*.js'
 // Files not to build (such as tests)
@@ -18,21 +16,25 @@ const META_FILES = [
   'babel.config.js',
   'package.json',
   'package-lock.json',
+  'yarn.lock',
   'bin/build-lib.js',
 ]
 
 function lastModified (file) {
-  return stat(file).then((s) => s.mtime)
+  return stat(file).then((s) => s.mtime, (err) => {
+    if (err.code === 'ENOENT') {
+      return 0
+    }
+    throw err
+  })
 }
 
 async function buildLib () {
-  const metaMtimes = await Promise.all(META_FILES.map((filename) => (
-    lastModified(path.join(__dirname, '..', filename))
-  )))
+  const metaMtimes = await Promise.all(META_FILES.map((filename) => lastModified(path.join(__dirname, '..', filename))))
   const metaMtime = Math.max(...metaMtimes)
 
   const files = await glob(SOURCE)
-  /* eslint-disable no-await-in-loop, no-continue */
+  /* eslint-disable no-continue */
   for (const file of files) {
     if (IGNORE.test(file)) {
       continue
@@ -51,14 +53,14 @@ async function buildLib () {
     }
 
     const { code, map } = await transformFile(file, { sourceMaps: true })
-    await mkdirp(path.dirname(libFile))
+    await mkdir(path.dirname(libFile), { recursive: true })
     await Promise.all([
       writeFile(libFile, code),
       writeFile(`${libFile}.map`, JSON.stringify(map)),
     ])
     console.log(chalk.green('Compiled lib:'), chalk.magenta(libFile))
   }
-  /* eslint-enable no-await-in-loop, no-continue */
+  /* eslint-enable no-continue */
 }
 
 console.log('Using Babel version:', require('@babel/core/package.json').version)

@@ -9,7 +9,7 @@ const plugins = PropTypes.arrayOf(PropTypes.string)
 
 // Language strings for this component.
 const locale = PropTypes.shape({
-  strings: PropTypes.object,
+  strings: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   pluralize: PropTypes.func,
 })
 

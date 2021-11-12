@@ -1,9 +1,10 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const toArray = require('@uppy/utils/lib/toArray')
-const Translator = require('@uppy/utils/lib/Translator')
 const { h } = require('preact')
 
-module.exports = class FileInput extends Plugin {
+const locale = require('./locale')
+
+module.exports = class FileInput extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -12,14 +13,7 @@ module.exports = class FileInput extends Plugin {
     this.title = 'File Input'
     this.type = 'acquirer'
 
-    this.defaultLocale = {
-      strings: {
-        // The same key is used for the same purpose by @uppy/robodog's `form()` API, but our
-        // locale pack scripts can't access it in Robodog. If it is updated here, it should
-        // also be updated there!
-        chooseFiles: 'Choose files',
-      },
-    }
+    this.defaultLocale = locale
 
     // Default options
     const defaultOptions = {
@@ -36,18 +30,6 @@ module.exports = class FileInput extends Plugin {
     this.render = this.render.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
     this.handleClick = this.handleClick.bind(this)
-  }
-
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   addFiles (files) {
@@ -79,11 +61,11 @@ module.exports = class FileInput extends Plugin {
     event.target.value = null
   }
 
-  handleClick (ev) {
+  handleClick () {
     this.input.click()
   }
 
-  render (state) {
+  render () {
     /* http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
     const hiddenInputStyle = {
       width: '0.1px',
@@ -94,7 +76,7 @@ module.exports = class FileInput extends Plugin {
       zIndex: -1,
     }
 
-    const restrictions = this.uppy.opts.restrictions
+    const { restrictions } = this.uppy.opts
     const accept = restrictions.allowedFileTypes ? restrictions.allowedFileTypes.join(',') : null
 
     return (
@@ -124,7 +106,7 @@ module.exports = class FileInput extends Plugin {
   }
 
   install () {
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

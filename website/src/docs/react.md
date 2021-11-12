@@ -39,7 +39,7 @@ import { DragDrop } from '@uppy/react'
 const uppy = new Uppy({
   meta: { type: 'avatar' },
   restrictions: { maxNumberOfFiles: 1 },
-  autoProceed: true
+  autoProceed: true,
 })
 
 uppy.use(Tus, { endpoint: '/upload' })
@@ -48,7 +48,7 @@ uppy.on('complete', (result) => {
   const url = result.successful[0].uploadURL
   store.dispatch({
     type: 'SET_USER_AVATAR_URL',
-    payload: { url: url }
+    payload: { url },
   })
 })
 
@@ -64,8 +64,8 @@ const AvatarPicker = ({ currentAvatar }) => {
             // `%{browse}` is replaced with a link that opens the system file selection dialog.
             dropHereOr: 'Drop here or %{browse}',
             // Used as the label for the link that opens the system file selection dialog.
-            browse: 'browse'
-          }
+            browse: 'browse',
+          },
         }}
       />
     </div>
@@ -75,20 +75,30 @@ const AvatarPicker = ({ currentAvatar }) => {
 
 The following plugins are available as React component wrappers:
 
- - [&lt;Dashboard />][] - renders an inline [`@uppy/dashboard`][]
- - [&lt;DashboardModal />][] - renders a [`@uppy/dashboard`][] modal
- - [&lt;DragDrop />][] - renders a [`@uppy/drag-drop`][] area
- - [&lt;ProgressBar />][] - renders a [`@uppy/progress-bar`][]
- - [&lt;StatusBar />][] - renders a [`@uppy/status-bar`][]
+* [\<Dashboard />][<Dashboard />] - renders an inline [`@uppy/dashboard`][]
+* [\<DashboardModal />][<DashboardModal />] - renders a [`@uppy/dashboard`][] modal
+* [\<DragDrop />][<DragDrop />] - renders a [`@uppy/drag-drop`][] area
+* [\<ProgressBar />][<ProgressBar />] - renders a [`@uppy/progress-bar`][]
+* [\<StatusBar />][<StatusBar />] - renders a [`@uppy/status-bar`][]
 
 [React]: https://facebook.github.io/react
+
 [Preact]: https://preactjs.com/
-[&lt;Dashboard />]: /docs/react/dashboard
-[&lt;DragDrop />]: /docs/react/dragdrop
-[&lt;ProgressBar />]: /docs/react/progress-bar
-[&lt;StatusBar />]: /docs/react/status-bar
-[&lt;DashboardModal />]: /docs/react/dashboard-modal
+
+[<Dashboard />]: /docs/react/dashboard
+
+[<DragDrop />]: /docs/react/dragdrop
+
+[<ProgressBar />]: /docs/react/progress-bar
+
+[<StatusBar />]: /docs/react/status-bar
+
+[<DashboardModal />]: /docs/react/dashboard-modal
+
 [`@uppy/dashboard`]: /docs/dashboard
+
 [`@uppy/drag-drop`]: /docs/drag-drop
+
 [`@uppy/progress-bar`]: /docs/progress-bar
+
 [`@uppy/status-bar`]: /docs/status-bar

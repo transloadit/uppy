@@ -10,9 +10,9 @@ import Instagram from '@uppy/instagram'
 
 function getQueryParamValueFromUrl (name, url) {
   name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]')
-  var regexS = `[\\?&]${name}=([^&#]*)`
-  var regex = new RegExp(regexS)
-  var results = regex.exec(url)
+  const regexS = `[\\?&]${name}=([^&#]*)`
+  const regex = new RegExp(regexS)
+  const results = regex.exec(url)
   return results == null ? null : results[1]
 }
 
@@ -40,7 +40,7 @@ export default class UppyRNInstagram extends React.Component {
   }
 
   componentDidMount () {
-    const uppy = this.props.uppy
+    const { uppy } = this.props
     const options = {
       id: 'uppyRN:Instagram',
       ...this.props,
@@ -56,7 +56,7 @@ export default class UppyRNInstagram extends React.Component {
   }
 
   componentWillUnmount () {
-    const uppy = this.props.uppy
+    const { uppy } = this.props
     uppy.removePlugin(this.plugin)
   }
 
@@ -78,17 +78,14 @@ export default class UppyRNInstagram extends React.Component {
   }
 
   renderInstagram () {
-    console.log(this.state.authUrl)
     return (
       <WebView
         source={{ uri: this.state.authUrl }}
         style={{ marginTop: 20 }}
         onNavigationStateChange={(ev) => {
-          const url = ev.url
+          const { url } = ev
           const token = getQueryParamValueFromUrl('uppyAuthToken', url)
-          console.log(token)
           this.plugin.provider.setAuthToken(token)
-          console.log(this.plugin.provider.list('recent'))
           // return this.renderGrid(this.state.instagram.items)
         }}
       />

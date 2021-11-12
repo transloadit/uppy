@@ -1,4 +1,5 @@
 /* globals clients */
+/* eslint-disable no-restricted-globals */
 
 const fileCache = Object.create(null)
 

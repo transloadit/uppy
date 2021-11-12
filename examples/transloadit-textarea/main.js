@@ -26,7 +26,7 @@ class MarkdownTextarea {
     this.uploadLine.classList.add('mdtxt-upload')
 
     this.uploadLine.appendChild(
-      document.createTextNode('Upload an attachment')
+      document.createTextNode('Upload an attachment'),
     )
   }
 
@@ -94,15 +94,13 @@ class MarkdownTextarea {
       }
     })
 
-    return Object.keys(filesById).reduce((acc, key) => {
-      const file = filesById[key]
-      const thumb = thumbsById[key]
-      acc.push({ file, thumb })
-      return acc
-    }, [])
+    return Object.keys(filesById).map((key) => ({
+      file : filesById[key],
+      thumb : thumbsById[key],
+    }))
   }
 
-  uploadFiles (files) {
+  uploadFiles () {
     robodog.upload({
       waitForEncoding: true,
       params: {
@@ -113,7 +111,7 @@ class MarkdownTextarea {
       // Was cancelled
       if (result == null) return
       this.insertAttachments(
-        this.matchFilesAndThumbs(result.results)
+        this.matchFilesAndThumbs(result.results),
       )
     }).catch((err) => {
       console.error(err)
@@ -132,7 +130,7 @@ class MarkdownTextarea {
       // Was cancelled
       if (result == null) return
       this.insertAttachments(
-        this.matchFilesAndThumbs(result.results)
+        this.matchFilesAndThumbs(result.results),
       )
     }).catch((err) => {
       console.error(err)
@@ -142,7 +140,7 @@ class MarkdownTextarea {
 }
 
 const textarea = new MarkdownTextarea(
-  document.querySelector('#new textarea')
+  document.querySelector('#new textarea'),
 )
 textarea.install()
 

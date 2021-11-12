@@ -9,11 +9,10 @@ const { promisify } = require('util')
 const fs = require('fs')
 const path = require('path')
 const resolve = require('resolve')
-const mkdirp = promisify(require('mkdirp'))
 const glob = promisify(require('glob'))
 
 const renderScss = promisify(sass.render)
-const writeFile = promisify(fs.writeFile)
+const { mkdir, writeFile } = fs.promises
 
 const cwd = process.cwd()
 
@@ -24,7 +23,6 @@ function handleErr (err) {
 async function compileCSS () {
   const files = await glob('packages/{,@uppy/}*/src/style.scss')
 
-  /* eslint-disable no-await-in-loop */
   for (const file of files) {
     const importedFiles = new Set()
     const scssResult = await renderScss({
@@ -75,11 +73,11 @@ async function compileCSS () {
     } else if (outdir.includes(path.normalize('packages/@uppy/robodog/'))) {
       outfile = path.join(outdir, 'robodog.css')
     }
-    await mkdirp(outdir)
+    await mkdir(outdir, { recursive: true })
     await writeFile(outfile, postcssResult.css)
     console.info(
       chalk.green('✓ Built Uppy CSS:'),
-      chalk.magenta(path.relative(cwd, outfile))
+      chalk.magenta(path.relative(cwd, outfile)),
     )
 
     const minifiedResult = await postcss([
@@ -91,10 +89,9 @@ async function compileCSS () {
     await writeFile(outfile.replace(/\.css$/, '.min.css'), minifiedResult.css)
     console.info(
       chalk.green('✓ Minified Bundle CSS:'),
-      chalk.magenta(path.relative(cwd, outfile).replace(/\.css$/, '.min.css'))
+      chalk.magenta(path.relative(cwd, outfile).replace(/\.css$/, '.min.css')),
     )
   }
-  /* eslint-enable no-await-in-loop */
 }
 
 compileCSS().then(() => {

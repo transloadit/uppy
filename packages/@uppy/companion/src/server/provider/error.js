@@ -8,7 +8,7 @@ class ProviderApiError extends Error {
    * @param {number} statusCode the http status code from the provider api
    */
   constructor (message, statusCode) {
-    super(message)
+    super(`HTTP ${statusCode}: ${message}`) // Include statusCode to make it easier to debug
     this.name = 'ProviderApiError'
     this.statusCode = statusCode
     this.isAuthError = false
@@ -48,6 +48,8 @@ function errorToResponse (err) {
       return { code: 424, message: err.message }
     }
   }
+
+  return undefined
 }
 
 module.exports = { ProviderAuthError, ProviderApiError, errorToResponse }

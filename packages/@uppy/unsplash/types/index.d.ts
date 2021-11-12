@@ -1,16 +1,11 @@
-import Uppy = require('@uppy/core')
-import CompanionClient = require('@uppy/companion-client')
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import type { RequestClientOptions } from '@uppy/companion-client'
 
-declare module Unsplash {
-  interface UnsplashOptions
-    extends Uppy.PluginOptions,
-      CompanionClient.RequestClientOptions {
-    replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
+interface UnsplashOptions extends PluginOptions, RequestClientOptions {
+    target?: PluginTarget
     title?: string
-  }
 }
 
-declare class Unsplash extends Uppy.Plugin<Unsplash.UnsplashOptions> {}
+declare class Unsplash extends UIPlugin<UnsplashOptions> {}
 
-export = Unsplash
+export default Unsplash
