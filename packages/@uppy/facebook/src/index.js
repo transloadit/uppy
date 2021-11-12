@@ -1,9 +1,11 @@
-const { Plugin } = require('@uppy/core')
+const { UIPlugin } = require('@uppy/core')
 const { Provider } = require('@uppy/companion-client')
 const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
-module.exports = class Facebook extends Plugin {
+const locale = require('./locale.js')
+
+module.exports = class Facebook extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -22,12 +24,17 @@ module.exports = class Facebook extends Plugin {
 
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionHeaders: this.opts.companionHeaders,
       companionKeysParams: this.opts.companionKeysParams,
       companionCookiesRule: this.opts.companionCookiesRule,
       provider: 'facebook',
       pluginId: this.id,
     })
+
+    this.defaultLocale = locale
+
+    this.i18nInit()
+    this.title = this.i18n('pluginNameFacebook')
 
     this.onFirstRender = this.onFirstRender.bind(this)
     this.render = this.render.bind(this)
@@ -38,7 +45,7 @@ module.exports = class Facebook extends Plugin {
       provider: this.provider,
     })
 
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

@@ -3,19 +3,23 @@
  * @param {object} req
  * @param {object} res
  */
-function thumbnail (req, res, next) {
+async function thumbnail (req, res, next) {
   const { providerName } = req.params
   const { id } = req.params
   const token = req.companion.providerTokens[providerName]
   const { provider } = req.companion
 
-  provider.thumbnail({ id, token }, (err, response) => {
-    if (err) {
-      err.isAuthError ? res.sendStatus(401) : next(err)
-      return
+  try {
+    const response = await provider.thumbnail({ id, token })
+    if (response) {
+      response.pipe(res)
+    } else {
+      res.sendStatus(404)
     }
-    response ? response.pipe(res) : res.sendStatus(404)
-  })
+  } catch (err) {
+    if (err.isAuthError) res.sendStatus(401)
+    else next(err)
+  }
 }
 
 module.exports = thumbnail

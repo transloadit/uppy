@@ -1,9 +1,11 @@
-const { Plugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
+const { UIPlugin } = require('@uppy/core')
 const { h } = require('preact')
 const { RequestClient } = require('@uppy/companion-client')
 const UrlUI = require('./UrlUI.js')
+const toArray = require('@uppy/utils/lib/toArray')
 const forEachDroppedOrPastedUrl = require('./utils/forEachDroppedOrPastedUrl')
+
+const locale = require('./locale')
 
 function UrlIcon () {
   return (
@@ -20,7 +22,7 @@ function UrlIcon () {
  * Url
  *
  */
-module.exports = class Url extends Plugin {
+module.exports = class Url extends UIPlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -31,14 +33,7 @@ module.exports = class Url extends Plugin {
     this.icon = () => <UrlIcon />
 
     // Set default options and locale
-    this.defaultLocale = {
-      strings: {
-        import: 'Import',
-        enterUrlToImport: 'Enter URL to import a file',
-        failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
-        enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
-      },
-    }
+    this.defaultLocale = locale
 
     const defaultOptions = {}
 
@@ -60,21 +55,9 @@ module.exports = class Url extends Plugin {
 
     this.client = new RequestClient(uppy, {
       companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders || this.opts.serverHeaders,
+      companionHeaders: this.opts.companionHeaders,
       companionCookiesRule: this.opts.companionCookiesRule,
     })
-  }
-
-  setOptions (newOpts) {
-    super.setOptions(newOpts)
-    this.i18nInit()
-  }
-
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
   }
 
   getFileNameFromUrl (url) {
@@ -150,11 +133,12 @@ module.exports = class Url extends Plugin {
       .then((tagFile) => {
         this.uppy.log('[Url] Adding remote file')
         try {
-          this.uppy.addFile(tagFile)
+          return this.uppy.addFile(tagFile)
         } catch (err) {
           if (!err.isRestriction) {
             this.uppy.log(err)
           }
+          return err
         }
       })
       .catch((err) => {
@@ -163,7 +147,15 @@ module.exports = class Url extends Plugin {
           message: this.i18n('failedToFetch'),
           details: err,
         }, 'error', 4000)
+        return err
       })
+  }
+
+  canHandleRootDrop (e) {
+    const items = toArray(e.dataTransfer.items)
+    const urls = items.filter((item) => item.kind === 'string'
+      && item.type === 'text/uri-list')
+    return urls.length > 0
   }
 
   handleRootDrop (e) {
@@ -180,12 +172,12 @@ module.exports = class Url extends Plugin {
     })
   }
 
-  render (state) {
+  render () {
     return <UrlUI i18n={this.i18n} addFile={this.addFile} />
   }
 
   install () {
-    const target = this.opts.target
+    const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }

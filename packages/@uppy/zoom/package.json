@@ -1,7 +1,7 @@
 {
   "name": "@uppy/zoom",
   "description": "Import files from zoom, into Uppy.",
-  "version": "0.1.15",
+  "version": "1.0.4",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -20,13 +20,13 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/companion-client": "file:../companion-client",
-    "@uppy/provider-views": "file:../provider-views",
-    "@uppy/utils": "file:../utils",
-    "preact": "8.2.9"
+    "@uppy/companion-client": "workspace:^",
+    "@uppy/provider-views": "workspace:^",
+    "@uppy/utils": "workspace:^",
+    "preact": "^10.5.13"
   },
   "peerDependencies": {
-    "@uppy/core": "^1.0.0"
+    "@uppy/core": "workspace:^"
   },
   "publishConfig": {
     "access": "public"

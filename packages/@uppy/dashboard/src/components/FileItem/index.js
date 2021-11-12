@@ -7,35 +7,35 @@ const FileInfo = require('./FileInfo')
 const Buttons = require('./Buttons')
 
 module.exports = class FileItem extends Component {
-  shouldComponentUpdate (nextProps) {
-    return !shallowEqual(this.props, nextProps)
-  }
-
   componentDidMount () {
-    const file = this.props.file
+    const { file } = this.props
     if (!file.preview) {
       this.props.handleRequestThumbnail(file)
     }
   }
 
+  shouldComponentUpdate (nextProps) {
+    return !shallowEqual(this.props, nextProps)
+  }
+
   // VirtualList mounts FileItems again and they emit `thumbnail:request`
   // Otherwise thumbnails are broken or missing after Golden Retriever restores files
   componentDidUpdate () {
-    const file = this.props.file
+    const { file } = this.props
     if (!file.preview) {
       this.props.handleRequestThumbnail(file)
     }
   }
 
   componentWillUnmount () {
-    const file = this.props.file
+    const { file } = this.props
     if (!file.preview) {
       this.props.handleCancelThumbnail(file)
     }
   }
 
   render () {
-    const file = this.props.file
+    const { file } = this.props
 
     const isProcessing = file.progress.preprocess || file.progress.postprocess
     const isUploaded = file.progress.uploadComplete && !isProcessing && !file.error
@@ -45,7 +45,7 @@ module.exports = class FileItem extends Component {
 
     // File that Golden Retriever was able to partly restore (only meta, not blob),
     // users still need to re-add it, so it’s a ghost
-    const isGhost = file.isGhost
+    const { isGhost } = file
 
     let showRemoveButton = this.props.individualCancellation
       ? !isUploaded
@@ -76,8 +76,12 @@ module.exports = class FileItem extends Component {
           <FilePreviewAndLink
             file={file}
             showLinkToFileUploadResult={this.props.showLinkToFileUploadResult}
+            i18n={this.props.i18n}
+            toggleFileCard={this.props.toggleFileCard}
+            metaFields={this.props.metaFields}
           />
           <FileProgress
+            uppy={this.props.uppy}
             file={file}
             error={error}
             isUploaded={isUploaded}
@@ -88,9 +92,6 @@ module.exports = class FileItem extends Component {
             showRemoveButtonAfterComplete={this.props.showRemoveButtonAfterComplete}
             resumableUploads={this.props.resumableUploads}
             individualCancellation={this.props.individualCancellation}
-            pauseUpload={this.props.pauseUpload}
-            cancelUpload={this.props.cancelUpload}
-            retryUpload={this.props.retryUpload}
             i18n={this.props.i18n}
           />
         </div>
@@ -103,6 +104,8 @@ module.exports = class FileItem extends Component {
             containerWidth={this.props.containerWidth}
             i18n={this.props.i18n}
             toggleAddFilesPanel={this.props.toggleAddFilesPanel}
+            toggleFileCard={this.props.toggleFileCard}
+            metaFields={this.props.metaFields}
           />
           <Buttons
             file={file}
@@ -111,12 +114,10 @@ module.exports = class FileItem extends Component {
             showRemoveButton={showRemoveButton}
             canEditFile={this.props.canEditFile}
             uploadInProgressOrComplete={uploadInProgressOrComplete}
-            removeFile={this.props.removeFile}
             toggleFileCard={this.props.toggleFileCard}
             openFileEditor={this.props.openFileEditor}
+            uppy={this.props.uppy}
             i18n={this.props.i18n}
-            log={this.props.log}
-            info={this.props.info}
           />
         </div>
       </div>

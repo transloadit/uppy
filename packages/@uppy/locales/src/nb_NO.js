@@ -10,6 +10,7 @@ nb_NO.strings = {
   addingMoreFiles: 'Legger til flere filer',
   allowAccessDescription: 'For å kunne ta bilder eller spille inn video må du gi siden tilgang til å bruke ditt kamera.',
   allowAccessTitle: 'Vennligst gi tilgang til ditt kamera',
+  authAborted: 'Autentisering avbrutt',
   aspectRatioLandscape: 'Beskjær landskap (16:9)',
   aspectRatioPortrait: 'Beskjær portrett (9:16)',
   aspectRatioSquare: 'Beskjær kvadrat',
@@ -26,7 +27,7 @@ nb_NO.strings = {
   closeModal: 'Lukk vindu',
   companionError: 'Kobling til Companion feilet',
   companionUnauthorizeHint: 'For å logge ut av din %{provider}-konto, gå til %{url}',
-  complete: 'Ferdig',
+  complete: 'Fullført',
   connectedToInternet: 'Koblet til internett',
   copyLink: 'Kopier lenke',
   copyLinkToClipboardFallback: 'Kopier URL under',
@@ -36,6 +37,7 @@ nb_NO.strings = {
   dashboardTitle: 'Filopplaster',
   dashboardWindowTitle: 'Opplastingsvindu (Trykk Esc-knappen for å lukke)',
   dataUploadedOfTotal: '%{complete} av %{total}',
+  done: 'Ferdig',
   dropHereOr: 'Dra filer hit eller %{browse}',
   dropHint: 'Dra filer hit',
   dropPasteBoth: 'Dra filer hit, %{browseFiles} eller %{browseFolders}',
@@ -51,8 +53,7 @@ nb_NO.strings = {
   enterCorrectUrl: 'Ugyldig URL: Kontroller at adressen du angir er en direkte lenke til ei fil',
   enterTextToSearch: 'Skriv tekst for å søke etter bilder',
   enterUrlToImport: 'Angi URL for å importere fil',
-  exceedsSize: 'Fila er større enn tillatt størrelse på',
-  exceedsSize2: '%{backwardsCompat} %{size}',
+  exceedsSize: 'Fila er større enn tillatt størrelse på %{size}',
   failedToFetch: 'Companion kunne ikke hente denne URLen, kontroller at den er riktig',
   failedToUpload: 'Opplasting feilet for %{file}',
   fileSource: 'Filkilde: %{name}',
@@ -80,13 +81,12 @@ nb_NO.strings = {
   noDuplicates: 'Kan ikke legge til \'%{fileName}\', da den allerede eksisterer',
   noFilesFound: 'Du har ingen filer eller mapper her',
   noInternetConnection: 'Ingen internettilgang',
-  noNewAlreadyUploading: 'Kan ikke legge til nye filer mens opplasting pågår',
+  noMoreFilesAllowed: 'Kan ikke legge til nye filer mens opplasting pågår',
   openFolderNamed: 'Åpne mappe %{name}',
   pause: 'Pause',
   pauseUpload: 'Stopp opplasting midlertidig',
   paused: 'Midlertidig stoppet',
-  poweredBy: 'Drevet av',
-  poweredBy2: '%{backwardsCompat} %{uppy}',
+  poweredBy: 'Drevet av %{uppy}',
   processingXFiles: {
     0: 'Prosesserer %{smart_count} fil',
     1: 'Prosesserer %{smart_count} filer',
@@ -105,7 +105,6 @@ nb_NO.strings = {
   save: 'Lagre',
   saveChanges: 'Lagre endringer',
   searchImages: 'Søk etter bilder',
-  selectAllFilesFromFolderNamed: 'Velg alle filer fra mappen %{name}',
   selectFileNamed: 'Velg fil %{name}',
   selectX: {
     0: 'Velg %{smart_count}',
@@ -121,7 +120,6 @@ nb_NO.strings = {
   submitRecordedFile: 'Send inn opptak',
   takePicture: 'Ta bilde',
   timedOut: 'Opplasting stoppet for %{seconds} sekunder, avbryter.',
-  unselectAllFilesFromFolderNamed: 'Fjern markering for alle filer i mappen %{name}',
   unselectFileNamed: 'Fjern markering for %{name}',
   upload: 'Last opp',
   uploadComplete: 'Opplasting ferdig',
@@ -162,7 +160,7 @@ nb_NO.strings = {
   zoomOut: 'Zoom ut',
 }
 
-nb_NO.pluralize = function (count) {
+nb_NO.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

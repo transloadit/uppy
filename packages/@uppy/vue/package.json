@@ -1,21 +1,21 @@
 {
   "name": "@uppy/vue",
-  "version": "0.2.2",
-  "private": false,
+  "version": "0.4.3",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
   "dependencies": {
-    "@uppy/dashboard": "file:../dashboard",
-    "@uppy/drag-drop": "file:../drag-drop",
-    "@uppy/progress-bar": "file:../progress-bar",
-    "@uppy/status-bar": "file:../status-bar",
+    "@uppy/dashboard": "workspace:^",
+    "@uppy/drag-drop": "workspace:^",
+    "@uppy/file-input": "workspace:^",
+    "@uppy/progress-bar": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
     "shallow-equal": "^1.2.1"
   },
   "devDependencies": {
     "vue": "^2.6.12"
   },
   "peerDependencies": {
-    "@uppy/core": "^1.0.0",
+    "@uppy/core": "workspace:^",
     "vue": ">=2.6.11"
   },
   "publishConfig": {

@@ -58,12 +58,13 @@ class Stopwatch extends Component {
 
   timerTick () {
     this.timer = setTimeout(() => {
-      this.setState({ elapsedTime: this.state.elapsedTime + 1 })
+      this.setState(state => ({ elapsedTime: state.elapsedTime + 1 }))
       this.timerTick()
     }, 1000)
   }
 
   fmtMSS (s) {
+    // eslint-disable-next-line no-return-assign
     return (s - (s %= 60)) / 60 + (s > 9 ? ':' : ':0') + s
   }
 

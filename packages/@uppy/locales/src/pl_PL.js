@@ -46,7 +46,7 @@ pl_PL.strings = {
   encoding: 'Transkodowanie...',
   enterCorrectUrl: 'Niepoprawny URL: Upewnij się, że wprowadzasz bezpośredni adres pliku',
   enterUrlToImport: 'Wprowadź URL, aby zaimportować plik',
-  exceedsSize: 'Plik ma rozmiar większy od dozwolonego',
+  exceedsSize: 'Plik ma rozmiar większy od dozwolonego %{size}',
   failedToFetch: 'Serwis nie mógł przetworzyć podanego linku, zweryfikuj jego poprawność',
   failedToUpload: 'Przesyłanie %{file} nie powiodło się',
   fileSource: 'Źródło pliku: %{name}',
@@ -71,12 +71,12 @@ pl_PL.strings = {
   noDuplicates: 'Nie można dodać i zduplikować pliku \'%{fileName}\', już istnieje',
   noFilesFound: 'W tym miejscu brakuje plików lub katalogów',
   noInternetConnection: 'Brak połączenia z Internetem',
-  noNewAlreadyUploading: 'Nie można dodać nowych plików: trwa wysyłka',
+  noMoreFilesAllowed: 'Nie można dodać nowych plików: trwa wysyłka',
   openFolderNamed: 'Otwórz folder %{name}',
   pause: 'Wstrzymaj',
   pauseUpload: 'Wstrzymaj wysyłkę',
   paused: 'Wstrzymano',
-  poweredBy: 'Dostarczane przez',
+  poweredBy: 'Dostarczane przez %{uppy}',
   processingXFiles: {
     '0': 'Przetwarzanie %{smart_count} pliku',
     '1': 'Przetwarzanie %{smart_count} plików',
@@ -90,7 +90,6 @@ pl_PL.strings = {
   retry: 'Ponów próbę',
   retryUpload: 'Ponów próbę wysyłki',
   saveChanges: 'Zapisz zmiany',
-  selectAllFilesFromFolderNamed: 'Wybierz wszystkie pliki z folderu %{name}',
   selectFileNamed: 'Wybierz plik %{name}',
   selectX: {
     '0': 'Wybierz %{smart_count}',
@@ -102,7 +101,6 @@ pl_PL.strings = {
   stopRecording: 'Zatrzymaj nagrywanie wideo',
   takePicture: 'Zrób zdjęcie',
   timedOut: 'Wysyłka wstrzymana przez %{seconds} sekund, przerywanie.',
-  unselectAllFilesFromFolderNamed: 'Odznacz wszystkie pliki z folderu %{name}',
   unselectFileNamed: 'Odznacz plik %{name}',
   upload: 'Wgrywanie',
   uploadComplete: 'Wgrywanie ukończone',
@@ -148,7 +146,7 @@ pl_PL.strings = {
   },
 }
 
-pl_PL.pluralize = function (n) {
+pl_PL.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

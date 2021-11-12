@@ -41,7 +41,7 @@ es_ES.strings = {
   encoding: 'Codificando...',
   enterCorrectUrl: 'URL incorrecta: Por favor asegúrate que estás ingresando un enlace a un archivo',
   enterUrlToImport: 'Ingresa una URL para importar un archivo',
-  exceedsSize: 'Este archivo excede el tamaño máximo de',
+  exceedsSize: 'Este archivo excede el tamaño máximo de %{size}',
   failedToFetch: 'Companion no ha podido recuperar esta URL, por favor asegúrate que sea correcta',
   failedToUpload: 'Error al subir %{file}',
   fileSource: 'Fuente de archivo: %{name}',
@@ -61,13 +61,15 @@ es_ES.strings = {
   importFrom: 'Importar desde %{name}',
   loading: 'Cargando...',
   logOut: 'Cerrar sesión',
+  missingRequiredMetaField: 'Faltan metacampos obligatorios',
+  missingRequiredMetaFieldOnFile: 'Faltan metacampos obligatorios en %{fileName}',
   myDevice: 'Mi Dispositivo',
   noFilesFound: 'No existen archivos o carpetas aquí',
   noInternetConnection: 'Sin conexión a Internet',
   pause: 'Pausar',
   pauseUpload: 'Pausar subida',
   paused: 'En pausa',
-  poweredBy: 'Soportado por',
+  poweredBy: 'Soportado por %{uppy}',
   processingXFiles: {
     '0': 'Procesando %{smart_count} archivo',
     '1': 'Procesando %{smart_count} archivos',
@@ -133,14 +135,12 @@ es_ES.strings = {
     '1': 'Tienes que seleccionar al menos %{smart_count} archivos',
     '2': 'Tienes que seleccionar al menos %{smart_count} archivos',
   },
-  selectAllFilesFromFolderNamed: 'Seleccionar todos los archivos de la carpeta %{name}',
-  unselectAllFilesFromFolderNamed: 'Deselecciona todos los archivos de la carpeta %{name}',
   selectFileNamed: 'Seleccione archivo %{name}',
   unselectFileNamed: 'Deseleccionar archivo %{name}',
   openFolderNamed: 'Carpeta abierta %{name}',
 }
 
-es_ES.pluralize = function (n) {
+es_ES.pluralize = function pluralize (n) {
   if (n === 1) {
     return 0
   }

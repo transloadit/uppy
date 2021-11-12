@@ -297,13 +297,6 @@ table tr:last-child td {
     margin-bottom: 0.8em;
   }
 
-  .post li,
-  > ul li,
-  > li {
-    // @TODO can this safely be removed artur?
-    // margin-bottom: 0.5em;
-  }
-
   .post p, .post ul, .post ol,
   > p, > ul, > ol {
     line-height: 1.5em;
@@ -373,6 +366,17 @@ table tr:last-child td {
   }
 }
 
+.post-date {
+  margin: 0.5em 0 1em;
+  color: $color-gray;
+  font-size: 0.9em;
+}
+
+.continue-reading {
+  margin-top: 1em;
+  font-weight: bold;
+}
+
 // Locale page table overrides
 
 .page-docs-locales table {
@@ -410,34 +414,63 @@ body.page-docs-locales table code {
   font-size: 75%;
 }
 
-.PostAuthor:first-of-type {
-  position: relative;
-  margin-top: 40px;
+.PostAuthors {
+  margin-top: 50px;
+
+  @media screen and (min-width: 400px) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
 }
 
-.PostAuthor:not(:first-of-type) {
+.PostAuthor {
   position: relative;
-  margin-top: 10px;
+  margin-bottom: 24px;
+
+  @media screen and (min-width: 400px) {
+    width: 100%;
+    max-width: 160px;
+  }
+
+  @media screen and (min-width: 600px) {
+    max-width: 190px;
+  }
+
+  // if there's only one author there's no need to limit the width
+  &:only-child {
+    max-width: none;
+  }
+}
+
+.PostAuthor-link {
+  display: inline-block;
 }
 
 .PostAuthor-img {
   border-radius: 50%;
-  max-width: 50px;
+  max-width: 40px;
+  width: auto;
+  height: auto;
   position: absolute;
 }
 
 .PostAuthor-name {
-  margin: 0;
+  margin: 0 0 0.1em;
   padding: 0;
-  font-size: 1.2em;
-  padding-left: 70px;
-  padding-top: 3px;
+  font-size: 1em;
+  padding-left: 50px;
+  line-height: 1.2;
+
+  .PostAuthor-link:hover & {
+    text-decoration: underline;
+  }
 }
 
 .PostAuthor-tagline {
   margin: 0;
   padding: 0;
-  padding-left: 70px;
+  padding-left: 50px;
   font-size: 0.85em;
   color: darken($color-gray, 10%);
 }

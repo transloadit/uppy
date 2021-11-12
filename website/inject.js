@@ -1,7 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
-const { exec } = require('child_process')
+const { spawn } = require('child_process')
+const readline = require('readline')
 const YAML = require('js-yaml')
 const { promisify } = require('util')
 const gzipSize = require('gzip-size')
@@ -9,6 +10,7 @@ const prettierBytes = require('@transloadit/prettier-bytes')
 const browserify = require('browserify')
 const touch = require('touch')
 const glob = require('glob')
+const { minify } = require('terser')
 
 const webRoot = __dirname
 const uppyRoot = path.join(__dirname, '../packages/uppy')
@@ -16,6 +18,7 @@ const robodogRoot = path.join(__dirname, '../packages/@uppy/robodog')
 const localesRoot = path.join(__dirname, '../packages/@uppy/locales')
 
 const configPath = path.join(webRoot, '/themes/uppy/_config.yml')
+// eslint-disable-next-line import/no-dynamic-require
 const { version } = require(path.join(uppyRoot, '/package.json'))
 
 const regionalDisplayNames = new Intl.DisplayNames('en-US', { type: 'region' })
@@ -80,7 +83,7 @@ async function getMinifiedSize (pkg, name) {
   const b = browserify(pkg)
 
   const packageJSON = fs.readFileSync(path.join(pkg, 'package.json'))
-  const version = JSON.parse(packageJSON).version
+  const { version } = JSON.parse(packageJSON)
 
   if (name !== '@uppy/core' && name !== 'uppy') {
     b.exclude('@uppy/core')
@@ -90,9 +93,8 @@ async function getMinifiedSize (pkg, name) {
   if (excludes[name]) {
     b.exclude(excludes[name])
   }
-  b.plugin('tinyify')
 
-  const bundle = await promisify(b.bundle).call(b)
+  const { code:bundle } = await promisify(b.bundle).call(b).then(buf => minify(buf.toString(), { toplevel: true }))
   const gzipped = await gzipSize(bundle)
 
   return {
@@ -104,7 +106,7 @@ async function getMinifiedSize (pkg, name) {
 
 async function injectSizes (config) {
   console.info(chalk.grey('Generating bundle sizes…'))
-  const padTarget = packages.reduce((max, cur) => Math.max(max, cur.length), 0) + 2
+  const padTarget = Math.max(...packages.map((cur) => cur.length)) + 2
 
   const sizesPromise = Promise.all(
     packages.map(async (pkg) => {
@@ -113,37 +115,45 @@ async function injectSizes (config) {
         // ✓ @uppy/pkgname:     10.0 kB min  / 2.0 kB gz
         `  ✓ ${pkg}: ${' '.repeat(padTarget - pkg.length)}${
           `${prettierBytes(result.minified)} min`.padEnd(10)
-        } / ${prettierBytes(result.gzipped)} gz`
+        } / ${prettierBytes(result.gzipped)} gz`,
       ))
-      return Object.assign(result, {
+      return [pkg, {
+        ...result,
         prettyMinified: prettierBytes(result.minified),
         prettyGzipped: prettierBytes(result.gzipped),
-      })
-    })
-  ).then((list) => {
-    const map = {}
-    list.forEach((size, i) => {
-      map[packages[i]] = size
-    })
-    return map
-  })
+      }]
+    }),
+  ).then(Object.fromEntries)
 
   config.uppy_bundle_kb_sizes = await sizesPromise
 }
 
+const sourceUppy = path.join(webRoot, '/themes/uppy/source/uppy/')
+const sourceUppyLocales = path.join(sourceUppy, 'locales')
 async function injectBundles () {
+  await Promise.all([
+    fs.promises.mkdir(sourceUppy, { recursive:true }),
+    fs.promises.mkdir(sourceUppyLocales, { recursive:true }),
+  ])
   const cmds = [
-    `mkdir -p ${path.join(webRoot, '/themes/uppy/source/uppy')}`,
-    `mkdir -p ${path.join(webRoot, '/themes/uppy/source/uppy/locales')}`,
-    `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`,
-    `cp -vfR ${path.join(robodogRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/')}`,
-    `cp -vfR ${path.join(localesRoot, '/dist/*')} ${path.join(webRoot, '/themes/uppy/source/uppy/locales')}`,
+    `cp -vfR ${path.join(uppyRoot, '/dist/*')} ${sourceUppy}`,
+    `cp -vfR ${path.join(robodogRoot, '/dist/*')} ${sourceUppy}`,
+    `cp -vfR ${path.join(localesRoot, '/dist/*')} ${sourceUppyLocales}`,
   ].join(' && ')
 
-  const { stdout } = await promisify(exec)(cmds)
-  stdout.trim().split('\n').forEach((line) => {
-    console.info(chalk.green('✓ injected: '), chalk.grey(line))
-  })
+  const cp = spawn(cmds, { stdio:['ignore', 'pipe', 'inherit'], shell: true })
+  await Promise.race([
+    new Promise((resolve, reject) => cp.on('error', reject)),
+    (async () => {
+      const stdout = readline.createInterface({
+        input: cp.stdout,
+      })
+
+      for await (const line of stdout) {
+        console.info(chalk.green('✓ injected: '), chalk.grey(line))
+      }
+    })(),
+  ])
 }
 
 // re-enable after rate limiter issue is fixed
@@ -176,7 +186,7 @@ async function injectMarkdown () {
     '.github/CONTRIBUTING.md': 'src/_template/contributing.md',
   }
 
-  for (const src in sources) {
+  for (const src of Object.keys(sources)) {
     const dst = sources[src]
     // strip yaml frontmatter:
     const srcpath = path.join(uppyRoot, `/../../${src}`)
@@ -204,13 +214,11 @@ function injectLocaleList () {
   const localeList = {}
 
   const localePackagePath = path.join(localesRoot, 'src', '*.js')
+  // eslint-disable-next-line import/no-dynamic-require
   const localePackageVersion = require(path.join(localesRoot, 'package.json')).version
 
   glob.sync(localePackagePath).forEach((localePath) => {
     const localeName = path.basename(localePath, '.js')
-    // we renamed the es_GL → gl_ES locale, and kept the old name
-    // for backwards-compat, see https://github.com/transloadit/uppy/pull/1929
-    if (localeName === 'es_GL') return
     const [languageCode, regionCode, variant] = localeName.split(/[-_]/)
 
     const languageName = languageDisplayNames.of(languageCode)
@@ -228,7 +236,7 @@ function injectLocaleList () {
 
   const dstpath = path.join(webRoot, 'src', '_template', 'list_of_locale_packs.md')
   const localeListDstPath = path.join(webRoot, 'src', 'examples', 'locale_list.json')
-  fs.writeFileSync(dstpath, resultingMdTable, 'utf-8')
+  fs.writeFileSync(dstpath, `${resultingMdTable}\n`, 'utf-8')
   console.info(chalk.green('✓ injected: '), chalk.grey(dstpath))
   fs.writeFileSync(localeListDstPath, JSON.stringify(localeList), 'utf-8')
   console.info(chalk.green('✓ injected: '), chalk.grey(localeListDstPath))
@@ -236,7 +244,7 @@ function injectLocaleList () {
 
 async function readConfig () {
   try {
-    const buf = await promisify(fs.readFile)(configPath, 'utf8')
+    const buf = await fs.promises.readFile(configPath, 'utf8')
     return YAML.safeLoad(buf)
   } catch (err) {
     return {}
@@ -257,7 +265,7 @@ async function inject () {
   await injectSizes(config)
 
   const saveConfig = { ...defaultConfig, ...config }
-  await promisify(fs.writeFile)(configPath, YAML.safeDump(saveConfig), 'utf-8')
+  await fs.promises.writeFile(configPath, YAML.safeDump(saveConfig), 'utf-8')
   console.info(chalk.green('✓ rewritten: '), chalk.grey(configPath))
 
   try {
@@ -265,7 +273,7 @@ async function inject () {
   } catch (error) {
     console.error(
       chalk.red('x failed to inject: '),
-      chalk.grey(`uppy bundle into site, because: ${error}`)
+      chalk.grey(`uppy bundle into site, because: ${error}`),
     )
     process.exit(1)
   }

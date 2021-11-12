@@ -1,5 +1,6 @@
 @import '@uppy/core/src/_utils.scss';
 @import '@uppy/core/src/_variables.scss';
+@import './inputrange.scss';
 @import './cropper.scss';
 
 .uppy-ImageCropper {
@@ -13,21 +14,26 @@
   flex-grow: 1;
 }
 
-  .uppy-ImageCropper-image {
-    display: block;
-    max-height: 400px;
-  }
+.uppy-ImageCropper-image {
+  display: block;
+  max-height: 400px;
+}
 
 .uppy-ImageCropper-controls {
   position: absolute;
   bottom: 15px;
   left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba($black, 0.6);
-  color: $white;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  padding-top: 38px;
+  color: $white;
+  background-color: rgba($black, 0.6);
+  transform: translateX(-50%);
+
+  @media screen and (min-width: 768px) {
+    padding-top: 0;
+  }
 }
 
 .uppy-ImageCropper-controls button {
@@ -52,8 +58,29 @@
   }
 
   &:focus {
-    outline: none;
     background-color: rgba($blue, 0.8);
+    outline: none;
+  }
+}
+
+.uppy-ImageCropper-rangeWrapper {
+  position: absolute !important;
+  top: 0;
+  right: 10px;
+  left: 10px;
+  height: 38px;
+
+  @media screen and (min-width: 768px) {
+    position: static !important;
+    height: auto;
+  }
+}
+
+.uppy-ImageCropper-range {
+  @media screen and (min-width: 768px) {
+    width: 180px;
+    margin-right: 15px;
+    margin-left: 5px;
   }
 }
 

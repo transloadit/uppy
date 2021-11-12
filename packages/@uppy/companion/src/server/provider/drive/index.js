@@ -1,14 +1,15 @@
 /* eslint-disable no-underscore-dangle */
-const { callbackify } = require('util')
 const request = require('request')
 const purest = require('purest')({ request })
+const { promisify } = require('util')
 
 const Provider = require('../Provider')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
+const { requestStream } = require('../../helpers/utils')
 
-const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata'
+const DRIVE_FILE_FIELDS = 'kind,id,imageMediaMetadata,name,mimeType,ownedByMe,permissions(role,emailAddress),size,modifiedTime,iconLink,thumbnailLink,teamDriveId,videoMediaMetadata,shortcutDetails(targetId,targetMimeType)'
 const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FILE_FIELDS})`
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
@@ -16,19 +17,19 @@ const SHARED_DRIVE_FIELDS = '*'
 // Hopefully this name will not be used by Google
 const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
-function waitForFailedResponse (resp) {
-  return new Promise((resolve, reject) => {
+function sortByName (first, second) {
+  return first.name.localeCompare(second.name)
+}
+
+async function waitForFailedResponse (resp) {
+  const buf = await new Promise((resolve) => {
     let data = ''
     resp.on('data', (chunk) => {
       data += chunk
-    }).on('end', () => {
-      try {
-        resolve(JSON.parse(data.toString()))
-      } catch (error) {
-        reject(error)
-      }
-    })
+    }).on('end', () => resolve(data))
+    resp.resume()
   })
+  return JSON.parse(buf.toString())
 }
 
 function adaptData (listFilesResp, sharedDrivesResp, directory, query, showSharedWithMe) {
@@ -43,9 +44,6 @@ function adaptData (listFilesResp, sharedDrivesResp, directory, query, showShare
     modifiedDate: adapter.getItemModifiedDate(item),
     size: adapter.getItemSize(item),
     custom: {
-      // @todo isTeamDrive is left for backward compatibility. We should remove it in the next
-      // major release.
-      isTeamDrive: adapter.isSharedDrive(item),
       isSharedDrive: adapter.isSharedDrive(item),
       imageHeight: adapter.getImageHeight(item),
       imageWidth: adapter.getImageWidth(item),
@@ -73,7 +71,7 @@ function adaptData (listFilesResp, sharedDrivesResp, directory, query, showShare
 
   const adaptedItems = [
     ...(virtualItem ? [virtualItem] : []), // shared folder first
-    ...([...sharedDrives, ...items].map(adaptItem)),
+    ...([...sharedDrives, ...items].map(adaptItem).sort(sortByName)),
   ]
 
   return {
@@ -103,7 +101,7 @@ class Drive extends Provider {
     return 'google'
   }
 
-  async _list (options) {
+  async list (options) {
     const directory = options.directory || 'root'
     const query = options.query || {}
 
@@ -175,105 +173,95 @@ class Drive extends Provider {
       sharedDrives,
       directory,
       query,
-      isRoot && !query.cursor // we can only show it on the first page request, or else we will have duplicates of it
+      isRoot && !query.cursor, // we can only show it on the first page request, or else we will have duplicates of it
     )
   }
 
-  list (options, done) {
-    // @ts-ignore
-    callbackify(this._list.bind(this))(options, done)
-  }
+  async _stats ({ id, token }) {
+    const getStats = async (statsOfId) => new Promise((resolve, reject) => {
+      this.client
+        .query()
+        .get(`files/${encodeURIComponent(statsOfId)}`)
+        .qs({ fields: DRIVE_FILE_FIELDS, supportsAllDrives: true })
+        .auth(token)
+        .request((err, resp) => {
+          if (err || resp.statusCode !== 200) return reject(this._error.bind(this)(err, resp))
+          return resolve(resp.body)
+        })
+    })
 
-  stats ({ id, token }, done) {
-    return this.client
-      .query()
-      .get(`files/${id}`)
-      .qs({ fields: DRIVE_FILE_FIELDS, supportsAllDrives: true })
-      .auth(token)
-      .request(done)
+    let stats = await getStats(id)
+
+    // If it is a shortcut, we need to get stats again on the target
+    if (adapter.isShortcut(stats.mimeType)) {
+      stats = await getStats(stats.shortcutDetails.targetId)
+    }
+    return stats
   }
 
   _exportGsuiteFile (id, token, mimeType) {
     logger.info(`calling google file export for ${id} to ${mimeType}`, 'provider.drive.export')
     return this.client
       .query()
-      .get(`files/${id}/export`)
+      .get(`files/${encodeURIComponent(id)}/export`)
       .qs({ supportsAllDrives: true, mimeType })
       .auth(token)
       .request()
   }
 
-  download ({ id, token }, onData) {
-    this.stats({ id, token }, (err, _, body) => {
-      if (err) {
-        logger.error(err, 'provider.drive.download.stats.error')
-        onData(err)
-        return
-      }
+  async download ({ id: idIn, token }) {
+    try {
+      const { mimeType, id } = await this._stats({ id: idIn, token })
 
-      let requestStream
-      if (adapter.isGsuiteFile(body.mimeType)) {
-        requestStream = this._exportGsuiteFile(id, token, adapter.getGsuiteExportType(body.mimeType))
-      } else {
-        requestStream = this.client
+      const req = adapter.isGsuiteFile(mimeType)
+        ? this._exportGsuiteFile(id, token, adapter.getGsuiteExportType(mimeType))
+        : this.client
           .query()
-          .get(`files/${id}`)
+          .get(`files/${encodeURIComponent(id)}`)
           .qs({ alt: 'media', supportsAllDrives: true })
           .auth(token)
           .request()
-      }
 
-      requestStream
-        .on('response', (resp) => {
-          if (resp.statusCode !== 200) {
-            waitForFailedResponse(resp)
-              .then((jsonResp) => {
-                onData(this._error(null, { ...resp, body: jsonResp }))
-              })
-              .catch((err2) => onData(this._error(err2, resp)))
-          } else {
-            resp.on('data', (chunk) => onData(null, chunk))
-          }
-        })
-        .on('end', () => onData(null, null))
-        .on('error', (err2) => {
-          logger.error(err2, 'provider.drive.download.error')
-          onData(err2)
-        })
-    })
+      return await requestStream(req, async (res) => {
+        try {
+          const jsonResp = await waitForFailedResponse(res)
+          return this._error(null, { ...res, body: jsonResp })
+        } catch (err2) {
+          return this._error(err2, res)
+        }
+      })
+    } catch (err) {
+      logger.error(err, 'provider.drive.download.error')
+      throw err
+    }
   }
 
-  thumbnail (_, done) {
+  // eslint-disable-next-line class-methods-use-this
+  async thumbnail () {
     // not implementing this because a public thumbnail from googledrive will be used instead
-    const err = new Error('call to thumbnail is not implemented')
-    logger.error(err, 'provider.drive.thumbnail.error')
-    return done(err)
+    logger.error('call to thumbnail is not implemented', 'provider.drive.thumbnail.error')
+    throw new Error('call to thumbnail is not implemented')
   }
 
-  size ({ id, token }, done) {
-    return this.stats({ id, token }, (err, resp, body) => {
-      if (err || resp.statusCode !== 200) {
-        const err2 = this._error(err, resp)
-        logger.error(err2, 'provider.drive.size.error')
-        done(err2)
-        return
+  async size ({ id, token }) {
+    try {
+      const { mimeType, size } = await this._stats({ id, token })
+
+      if (adapter.isGsuiteFile(mimeType)) {
+        // GSuite file sizes cannot be predetermined (but are max 10MB)
+        // e.g. Transfer-Encoding: chunked
+        return undefined
       }
 
-      if (adapter.isGsuiteFile(body.mimeType)) {
-        // Not all GSuite file sizes can be predetermined
-        // also for files whose size can be predetermined,
-        // the request to get it can be sometimes expesnive, depending
-        // on the file size. So we default the size to the size export limit
-        const maxExportFileSize = 10 * 1024 * 1024 // 10 MB
-        done(null, maxExportFileSize)
-      } else {
-        done(null, parseInt(body.size, 10))
-      }
-    })
+      return parseInt(size, 10)
+    } catch (err) {
+      logger.error(err, 'provider.drive.size.error')
+      throw err
+    }
   }
 
-  logout ({ token }, done) {
-    return this.client
+  _logout ({ token }, done) {
+    this.client
       .get('https://accounts.google.com/o/oauth2/revoke')
       .qs({ token })
       .request((err, resp) => {
@@ -295,5 +283,9 @@ class Drive extends Provider {
     return err
   }
 }
+
+Drive.version = 2
+
+Drive.prototype.logout = promisify(Drive.prototype._logout)
 
 module.exports = Drive

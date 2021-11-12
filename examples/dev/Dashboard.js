@@ -30,6 +30,8 @@ const Audio = require('@uppy/audio/src')
 const UPLOADER = 'tus'
 // const UPLOADER = 's3'
 // const UPLOADER = 's3-multipart'
+// xhr will use protocol 'multipart' in companion, if used with a remote service, e.g. google drive.
+// If local upload will use browser XHR
 // const UPLOADER = 'xhr'
 // const UPLOADER = 'transloadit'
 // const UPLOADER = 'transloadit-s3'
@@ -45,6 +47,7 @@ const XHR_ENDPOINT = 'https://xhr-server.herokuapp.com/upload'
 
 const TRANSLOADIT_KEY = '...'
 const TRANSLOADIT_TEMPLATE = '...'
+const TRANSLOADIT_SERVICE_URL = 'https://api2.transloadit.com'
 
 // DEV CONFIG: enable or disable Golden Retriever
 
@@ -59,6 +62,8 @@ module.exports = () => {
       username: 'John',
       license: 'Creative Commons',
     },
+    allowMultipleUploadBatches: false,
+    // restrictions: { requiredMetaFields: ['caption'] },
   })
     .use(Dashboard, {
       trigger: '#pick-files',
@@ -112,6 +117,7 @@ module.exports = () => {
       break
     case 'transloadit':
       uppyDashboard.use(Transloadit, {
+        service: TRANSLOADIT_SERVICE_URL,
         waitForEncoding: true,
         params: {
           auth: { key: TRANSLOADIT_KEY },
@@ -144,6 +150,7 @@ module.exports = () => {
         bundle: true,
       })
       break
+    default:
   }
 
   if (RESTORE) {

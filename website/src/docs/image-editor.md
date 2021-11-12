@@ -17,15 +17,15 @@ Designed to be used with the Dashboard UI (can in theory work without it).
 ![Screenshor of the Image Editor plugin UI in Dashboard](https://user-images.githubusercontent.com/1199054/87208710-654db400-c307-11ea-9471-6e3c6582d2a5.png)
 
 ```js
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const ImageEditor = require('@uppy/image-editor')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import ImageEditor from '@uppy/image-editor'
 
 const uppy = new Uppy()
 uppy.use(Dashboard)
 uppy.use(ImageEditor, {
   target: Dashboard,
-  quality: 0.8
+  quality: 0.8,
 })
 ```
 
@@ -63,18 +63,20 @@ uppy.use(ImageEditor, {
     viewMode: 1,
     background: false,
     autoCropArea: 1,
-    responsive: true
+    responsive: true,
+    croppedCanvasOptions: {},
   },
   actions: {
     revert: true,
     rotate: true,
+    granularRotate: true,
     flip: true,
     zoomIn: true,
     zoomOut: true,
     cropSquare: true,
     cropWidescreen: true,
-    cropWidescreenVertical: true
-  }
+    cropWidescreenVertical: true,
+  },
 })
 ```
 
@@ -88,7 +90,10 @@ Quality of the resulting blob that will be saved in Uppy after editing/cropping.
 
 ### `cropperOptions`
 
-Image Editor is using the excellent [Cropper.js](https://fengyuanchen.github.io/cropperjs/), and if you’d like to fine tune the Cropper.js instance, you can pass options to it.
+Image Editor is using the excellent [Cropper.js](https://fengyuanchen.github.io/cropperjs/).
+`cropperOptions` will be directly passed to `Cropper` and therefor can expect the same values as documented
+in their [README](https://github.com/fengyuanchen/cropperjs/blob/HEAD/README.md#options),
+with the addition of `croppedCanvasOptions`, which will be passed to [`getCroppedCanvas`](https://github.com/fengyuanchen/cropperjs/blob/HEAD/README.md#getcroppedcanvasoptions).
 
 ### `actions`
 

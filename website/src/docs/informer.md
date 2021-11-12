@@ -13,7 +13,7 @@ The `@uppy/informer` plugin is a pop-up bar for showing notifications. When plug
 Informer gets its data from `uppy.state.info`, which is updated by various plugins via [`uppy.info`](https://uppy.io/docs/uppy/#uppy-info) method.
 
 ```js
-const Informer = require('@uppy/informer')
+import Informer from '@uppy/informer'
 
 uppy.use(Informer, {
   // Options
@@ -36,10 +36,10 @@ Install from NPM:
 npm install @uppy/informer
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
-const Informer = Uppy.Informer
+const { Informer } = Uppy
 ```
 
 ## CSS
@@ -61,12 +61,8 @@ The `@uppy/informer` plugin has the following configurable options:
 
 ### `id: 'Informer'`
 
-A unique identifier for this plugin. It defaults to `'Informer'`. Use this if you need multiple Informer instances.
+A unique identifier for this plugin. It defaults to `'Informer'`. Use this if you need several `Informer` instances.
 
 ### `target: null`
 
 DOM element, CSS selector, or plugin to mount the Informer into.
-
-### `replaceTargetContent: false`
-
-Remove all children of the `target` element before mounting the Informer. By default, Uppy will append any UI to the `target` DOM element. This is the least dangerous option. However, you may have some fallback HTML inside the `target` element in case JavaScript or Uppy is not available. In that case, you can set `replaceTargetContent: true` to clear the `target` before appending.

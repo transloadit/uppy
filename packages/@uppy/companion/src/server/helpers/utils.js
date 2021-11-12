@@ -31,15 +31,6 @@ exports.jsonStringify = (data) => {
   })
 }
 
-/**
- * Does a simple html sanitization on the passed value
- *
- * @param {string} text
- */
-exports.sanitizeHtml = (text) => {
-  return text ? text.replace(/<\/?[^>]+(>|$)/g, '') : text
-}
-
 // all paths are assumed to be '/' prepended
 /**
  * Returns a url builder
@@ -138,4 +129,27 @@ module.exports.decrypt = (encrypted, secret) => {
   let decrypted = decipher.update(urlDecode(encryptionWithoutIv), 'base64', 'utf8')
   decrypted += decipher.final('utf8')
   return decrypted
+}
+
+// This is a helper that will wait for the headers of a request,
+// then it will pause the response, so that the stream is ready to be attached/piped in the uploader.
+// If we don't pause it will lose some data.
+module.exports.requestStream = async (req, convertResponseToError) => {
+  const resp = await new Promise((resolve, reject) => (
+    req
+      .on('response', (response) => {
+        // Don't allow any more data to flow yet.
+        // https://github.com/request/request/issues/1990#issuecomment-184712275
+        response.pause()
+        resolve(response)
+      })
+      .on('error', reject)
+  ))
+
+  if (resp.statusCode !== 200) {
+    req.abort() // Or we will leak memory (the stream is paused)
+    throw await convertResponseToError(resp)
+  }
+
+  return { stream: resp }
 }

@@ -2,25 +2,50 @@
  * Check that Assembly parameters are present and include all required fields.
  */
 function validateParams (params) {
-  if (!params) {
+  if (params == null) {
     throw new Error('Transloadit: The `params` option is required.')
   }
 
   if (typeof params === 'string') {
     try {
+      // eslint-disable-next-line no-param-reassign
       params = JSON.parse(params)
     } catch (err) {
       // Tell the user that this is not an Uppy bug!
-      err.message = `Transloadit: The \`params\` option is a malformed JSON string: ${
-        err.message}`
-      throw err
+      const error = new Error('Transloadit: The `params` option is a malformed JSON string.')
+      err.cause = err
+      throw error
     }
   }
 
   if (!params.auth || !params.auth.key) {
     throw new Error('Transloadit: The `params.auth.key` option is required. '
-      + 'You can find your Transloadit API key at https://transloadit.com/account/api-settings.')
+      + 'You can find your Transloadit API key at https://transloadit.com/c/template-credentials')
   }
+}
+
+/**
+ * Combine Assemblies with the same options into a single Assembly for all the
+ * relevant files.
+ */
+function dedupe (list) {
+  const dedupeMap = Object.create(null)
+  for (const { fileIDs, options } of list) {
+    const id = JSON.stringify(options)
+    if (id in dedupeMap) {
+      dedupeMap[id].fileIDArrays.push(fileIDs)
+    } else {
+      dedupeMap[id] = {
+        options,
+        fileIDArrays: [fileIDs],
+      }
+    }
+  }
+
+  return Object.values(dedupeMap).map(({ options, fileIDArrays }) => ({
+    options,
+    fileIDs: fileIDArrays.flat(1),
+  }))
 }
 
 /**
@@ -34,67 +59,26 @@ class AssemblyOptions {
   }
 
   /**
-   * Normalize Uppy-specific Assembly option features to a Transloadit-
-   * compatible object.
-   */
-  _normalizeAssemblyOptions (file, assemblyOptions) {
-    if (Array.isArray(assemblyOptions.fields)) {
-      const fieldNames = assemblyOptions.fields
-      assemblyOptions.fields = {}
-      fieldNames.forEach((fieldName) => {
-        assemblyOptions.fields[fieldName] = file.meta[fieldName]
-      })
-    }
-
-    if (!assemblyOptions.fields) {
-      assemblyOptions.fields = {}
-    }
-
-    return assemblyOptions
-  }
-
-  /**
    * Get Assembly options for a file.
    */
-  _getAssemblyOptions (file) {
+  async #getAssemblyOptions (file) {
     const options = this.opts
 
-    return Promise.resolve()
-      .then(() => {
-        return options.getAssemblyOptions(file, options)
-      })
-      .then((assemblyOptions) => {
-        return this._normalizeAssemblyOptions(file, assemblyOptions)
-      })
-      .then((assemblyOptions) => {
-        validateParams(assemblyOptions.params)
+    const assemblyOptions = await options.getAssemblyOptions(file, options)
+    if (Array.isArray(assemblyOptions.fields)) {
+      assemblyOptions.fields = Object.fromEntries(
+        assemblyOptions.fields.map((fieldName) => [fieldName, file.meta[fieldName]]),
+      )
+    } else if (assemblyOptions.fields == null) {
+      assemblyOptions.fields = {}
+    }
 
-        return {
-          fileIDs: [file.id],
-          options: assemblyOptions,
-        }
-      })
-  }
+    validateParams(assemblyOptions.params)
 
-  /**
-   * Combine Assemblies with the same options into a single Assembly for all the
-   * relevant files.
-   */
-  _dedupe (list) {
-    const dedupeMap = Object.create(null)
-    list.forEach(({ fileIDs, options }) => {
-      const id = JSON.stringify(options)
-      if (dedupeMap[id]) {
-        dedupeMap[id].fileIDs.push(...fileIDs)
-      } else {
-        dedupeMap[id] = {
-          options,
-          fileIDs: [...fileIDs],
-        }
-      }
-    })
-
-    return Object.keys(dedupeMap).map((id) => dedupeMap[id])
+    return {
+      fileIDs: [file.id],
+      options: assemblyOptions,
+    }
   }
 
   /**
@@ -103,33 +87,29 @@ class AssemblyOptions {
    *  - fileIDs - an array of file IDs to add to this Assembly
    *  - options - Assembly options
    */
-  build () {
+  async build () {
     const options = this.opts
 
     if (this.files.length > 0) {
       return Promise.all(
-        this.files.map((file) => this._getAssemblyOptions(file))
-      ).then((list) => {
-        return this._dedupe(list)
-      })
+        this.files.map((file) => this.#getAssemblyOptions(file)),
+      ).then(dedupe)
     }
 
     if (options.alwaysRunAssembly) {
       // No files, just generate one Assembly
-      return Promise.resolve(
-        options.getAssemblyOptions(null, options)
-      ).then((assemblyOptions) => {
-        validateParams(assemblyOptions.params)
-        return [{
-          fileIDs: this.files.map((file) => file.id),
-          options: assemblyOptions,
-        }]
-      })
+      const assemblyOptions = await options.getAssemblyOptions(null, options)
+
+      validateParams(assemblyOptions.params)
+      return [{
+        fileIDs: this.files.map((file) => file.id),
+        options: assemblyOptions,
+      }]
     }
 
     // If there are no files and we do not `alwaysRunAssembly`,
     // don't do anything.
-    return Promise.resolve([])
+    return []
   }
 }
 

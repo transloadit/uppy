@@ -1,7 +1,7 @@
 {
   "name": "@uppy/react",
   "description": "React component wrappers around Uppy's official UI plugins.",
-  "version": "1.11.8",
+  "version": "2.1.1",
   "license": "MIT",
   "main": "index.js",
   "module": "index.mjs",
@@ -22,20 +22,23 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/dashboard": "file:../dashboard",
-    "@uppy/drag-drop": "file:../drag-drop",
-    "@uppy/file-input": "file:../file-input",
-    "@uppy/progress-bar": "file:../progress-bar",
-    "@uppy/status-bar": "file:../status-bar",
-    "@uppy/utils": "file:../utils",
+    "@uppy/dashboard": "workspace:^",
+    "@uppy/drag-drop": "workspace:^",
+    "@uppy/file-input": "workspace:^",
+    "@uppy/progress-bar": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
+    "@uppy/utils": "workspace:^",
     "prop-types": "^15.6.1"
   },
   "devDependencies": {
+    "@types/react": "^17.0.13",
     "enzyme": "3.11.0",
-    "enzyme-adapter-react-16": "1.15.2"
+    "enzyme-adapter-react-16": "1.15.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   },
   "peerDependencies": {
-    "@uppy/core": "^1.0.0",
+    "@uppy/core": "workspace:^",
     "react": "^16.0.0 || ^17.0.0"
   }
 }

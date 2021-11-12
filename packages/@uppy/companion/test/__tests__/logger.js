@@ -2,24 +2,36 @@
 const chalk = require('chalk')
 const logger = require('../../src/server/logger')
 
-describe('Test Logger secret mask', () => {
-  beforeAll(() => {
-    logger.setMaskables(['ToBeMasked1', 'toBeMasked2', 'toBeMasked(And)?Escaped'])
-  })
+const maskables = ['ToBeMasked1', 'toBeMasked2', 'toBeMasked(And)?Escaped']
 
-  test('masks secret values present in log.info messages', () => {
-    let loggedMessage = null
+function captureConsoleLog (log) {
+  let loggedMessage = null
 
-    // override the default console.log to capture the logged message
-    const defaultConsoleLog = console.log
+  // override the default console.log to capture the logged message
+  const defaultConsoleLog = console.log
+
+  try {
     console.log = (logPrefix, message) => {
       loggedMessage = message
       defaultConsoleLog(logPrefix, message)
     }
-
-    logger.info('this info has ToBeMasked1 and toBeMasked2 and case-insensitive TOBEMasKED2')
+  } finally {
+    log()
     // restore the default console.log before using "expect" to avoid weird log behaviors
     console.log = defaultConsoleLog
+  }
+  return loggedMessage
+}
+
+describe('Test Logger secret mask', () => {
+  beforeAll(() => {
+    logger.setMaskables(maskables)
+  })
+
+  test('masks secret values present in log.info messages', () => {
+    const loggedMessage = captureConsoleLog(() => {
+      logger.info('this info has ToBeMasked1 and toBeMasked2 and case-insensitive TOBEMasKED2')
+    })
 
     const exptectedMsg = 'this info has ****** and ****** and case-insensitive ******'
 
@@ -28,18 +40,9 @@ describe('Test Logger secret mask', () => {
   })
 
   test('masks secret values present in log.warn messages', () => {
-    let loggedMessage = null
-
-    // override the default console.log to capture the logged message
-    const defaultConsoleLog = console.log
-    console.log = (logPrefix, message) => {
-      loggedMessage = message
-      defaultConsoleLog(logPrefix, message)
-    }
-
-    logger.warn('this warning has ToBeMasked1 and toBeMasked2 and case-insensitive TOBEMasKED2')
-    // restore the default console.log before using "expect" to avoid weird log behaviors
-    console.log = defaultConsoleLog
+    const loggedMessage = captureConsoleLog(() => {
+      logger.warn('this warning has ToBeMasked1 and toBeMasked2 and case-insensitive TOBEMasKED2')
+    })
 
     const exptectedMsg = chalk.bold.yellow('this warning has ****** and ****** and case-insensitive ******')
 
@@ -48,18 +51,9 @@ describe('Test Logger secret mask', () => {
   })
 
   test('masks secret values present in log.error messages', () => {
-    let loggedMessage = null
-
-    // override the default console.log to capture the logged message
-    const defaultConsoleLog = console.log
-    console.log = (logPrefix, message) => {
-      loggedMessage = message
-      defaultConsoleLog(logPrefix, message)
-    }
-
-    logger.error(new Error('this error has ToBeMasked1 and toBeMasked2 and case-insensitive TOBEMasKED2'))
-    // restore the default console.log before using "expect" to avoid weird log behaviors
-    console.log = defaultConsoleLog
+    const loggedMessage = captureConsoleLog(() => {
+      logger.error(new Error('this error has ToBeMasked1 and toBeMasked2 and case-insensitive TOBEMasKED2'))
+    })
 
     const exptectedMsg = chalk.bold.red('Error: this error has ****** and ****** and case-insensitive ******')
 
@@ -68,19 +62,10 @@ describe('Test Logger secret mask', () => {
   })
 
   test('masks secret values present in log.error stack trace', () => {
-    let loggedMessage = null
-
-    // override the default console.log to capture the logged message
-    const defaultConsoleLog = console.log
-    console.log = (logPrefix, message) => {
-      loggedMessage = message
-      defaultConsoleLog(logPrefix, message)
-    }
-
-    const err = new Error('this error has ToBeMasked1 and toBeMasked2 and case-insensitive TOBEMasKED2')
-    logger.error(err, '', '', true)
-    // restore the default console.log before using "expect" to avoid weird log behaviors
-    console.log = defaultConsoleLog
+    const loggedMessage = captureConsoleLog(() => {
+      const err = new Error('this error has ToBeMasked1 and toBeMasked2 and case-insensitive TOBEMasKED2')
+      logger.error(err, '', '', true)
+    })
 
     const exptectedMsg = chalk.bold.red('Error: this error has ****** and ****** and case-insensitive ******')
 
@@ -92,22 +77,22 @@ describe('Test Logger secret mask', () => {
   })
 
   test('escape regex characters from secret values before masking them', () => {
-    let loggedMessage = null
-
-    // override the default console.log to capture the logged message
-    const defaultConsoleLog = console.log
-    console.log = (logPrefix, message) => {
-      loggedMessage = message
-      defaultConsoleLog(logPrefix, message)
-    }
-
-    logger.warn('this warning has ToBeMasked(And)?Escaped but not toBeMaskedEscaped ')
-    // restore the default console.log before using "expect" to avoid weird log behaviors
-    console.log = defaultConsoleLog
+    const loggedMessage = captureConsoleLog(() => {
+      logger.warn('this warning has ToBeMasked(And)?Escaped but not toBeMaskedEscaped ')
+    })
 
     const exptectedMsg = chalk.bold.yellow('this warning has ****** but not toBeMaskedEscaped ')
 
     expect(loggedMessage).toBeTruthy()
     expect(loggedMessage).toBe(exptectedMsg)
+  })
+
+  test('masks inside object', () => {
+    const loggedMessage = captureConsoleLog(() => {
+      logger.warn({ a: 1, deep: { secret: 'there is a ToBeMasked1 hiding here' } })
+    })
+
+    expect(loggedMessage).toBeTruthy()
+    expect(!maskables.some((maskable) => loggedMessage.includes(maskable))).toBeTruthy()
   })
 })

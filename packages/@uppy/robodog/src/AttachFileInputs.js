@@ -1,11 +1,11 @@
-const { Plugin } = require('@uppy/core')
+const BasePlugin = require('@uppy/core/lib/BasePlugin')
 const toArray = require('@uppy/utils/lib/toArray')
 const findDOMElement = require('@uppy/utils/lib/findDOMElement')
 
 /**
  * Add files from existing file inputs to Uppy.
  */
-class AttachFileInputs extends Plugin {
+class AttachFileInputs extends BasePlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
 

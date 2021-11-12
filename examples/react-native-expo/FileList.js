@@ -4,7 +4,6 @@ import { StyleSheet, View, FlatList, Text, Image } from 'react-native'
 import getFileTypeIcon from '@uppy/dashboard/lib/utils/getFileTypeIcon.js'
 import truncateString from '@uppy/dashboard/lib/utils/truncateString.js'
 import renderStringFromJSX from 'preact-render-to-string'
-import SvgUri from 'react-native-svg-uri'
 
 // function truncateString (str) {
 //   const maxChars = 20
@@ -31,7 +30,7 @@ function UppyDashboardFileIcon (props) {
   if (!icon) {
     return <FileIcon />
   }
-  const color = getFileTypeIcon(props.type).color
+  const { color } = getFileTypeIcon(props.type)
   return (
     <View
       style={{
@@ -39,14 +38,7 @@ function UppyDashboardFileIcon (props) {
         backgroundColor: color,
       }}
     >
-      <SvgUri
-        width={50}
-        height={50}
-        style={styles.itemIconSVG}
-        fill="#ffffff"
-        fillAll
-        svgXmlData={icon}
-      />
+      <Text style={styles.itemType}>logo</Text>
     </View>
   )
 }
@@ -59,7 +51,7 @@ export default function FileList (props) {
     <View style={styles.container}>
       <FlatList
         data={uppyFilesArray}
-        keyExtractor={(item, index) => item.id}
+        keyExtractor={(item) => item.id}
         numColumns={2}
         renderItem={({ item }) => {
           return (

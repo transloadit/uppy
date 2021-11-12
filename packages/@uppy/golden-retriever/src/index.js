@@ -1,5 +1,5 @@
 const throttle = require('lodash.throttle')
-const { Plugin } = require('@uppy/core')
+const BasePlugin = require('@uppy/core/lib/BasePlugin')
 const ServiceWorkerStore = require('./ServiceWorkerStore')
 const IndexedDBStore = require('./IndexedDBStore')
 const MetaDataStore = require('./MetaDataStore')
@@ -11,7 +11,7 @@ const MetaDataStore = require('./MetaDataStore')
  * Uses localStorage, IndexedDB and ServiceWorker to do its magic, read more:
  * https://uppy.io/blog/2017/07/golden-retriever/
  */
-module.exports = class GoldenRetriever extends Plugin {
+module.exports = class GoldenRetriever extends BasePlugin {
   static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
@@ -44,7 +44,7 @@ module.exports = class GoldenRetriever extends Plugin {
     this.saveFilesStateToLocalStorage = throttle(
       this.saveFilesStateToLocalStorage.bind(this),
       500,
-      { leading: true, trailing: true }
+      { leading: true, trailing: true },
     )
     this.restoreState = this.restoreState.bind(this)
     this.loadFileBlobsFromServiceWorker = this.loadFileBlobsFromServiceWorker.bind(this)

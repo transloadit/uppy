@@ -46,8 +46,7 @@ ro_RO.strings = {
   encoding: 'Encodare...',
   enterCorrectUrl: 'URL incorect: Introduceți un link direct către fișier',
   enterUrlToImport: 'Introduceți URL pentru a importa fișierul',
-  exceedsSize: 'Fișierul depășește dimensiunea maximă permisă de',
-  exceedsSize2: '%{backwardsCompat} %{size}',
+  exceedsSize: 'Fișierul depășește dimensiunea maximă permisă de %{size}',
   failedToFetch: 'Companion-ul nu a putut procesa URL-ul, asigură-te că e corect introdus',
   failedToUpload: '%{file} nu a putut fi încărcat',
   fileSource: 'Sursă fișier: %{name}',
@@ -70,13 +69,12 @@ ro_RO.strings = {
   noDuplicates: 'Nu se poate adăuga fișierul \'%{fileName}\', acesta există deja',
   noFilesFound: 'Nu sunt fișiere sau directoare aici',
   noInternetConnection: 'Fără conexiune la internet',
-  noNewAlreadyUploading: 'Nu se pot adăuga fișiere noi: încărcare în curs',
+  noMoreFilesAllowed: 'Nu se pot adăuga fișiere noi: încărcare în curs',
   openFolderNamed: 'Deschide director %{name}',
   pause: 'Întrerupe',
   pauseUpload: 'Întrerupe încărcarea',
   paused: 'Întrerupt',
-  poweredBy: 'Susținut de',
-  poweredBy2: '%{backwardsCompat} %{uppy}',
+  poweredBy: 'Susținut de %{uppy}',
   processingXFiles: {
     '0': 'Se procesează %{smart_count} fișier',
     '1': 'Se procesează %{smart_count} fișiere',
@@ -90,7 +88,6 @@ ro_RO.strings = {
   retry: 'Reîncercare',
   retryUpload: 'Reîncearcă încărcarea',
   saveChanges: 'Salvează modificări',
-  selectAllFilesFromFolderNamed: 'Selectează toate fișierele din %{name}',
   selectFileNamed: 'Selectează fișier %{name}',
   selectX: {
     '0': 'Selectează %{smart_count}',
@@ -101,7 +98,6 @@ ro_RO.strings = {
   stopRecording: 'Oprește înregistrarea video',
   takePicture: 'Fă o poză',
   timedOut: 'Încărcarea blocată pentru %{seconds} secunde, se anulează.',
-  unselectAllFilesFromFolderNamed: 'Deselectează toate fișierele în directorul %{name}',
   unselectFileNamed: 'Deselectează fișier %{name}',
   upload: 'Încarcă',
   uploadComplete: 'Încărcare finalizată',
@@ -140,7 +136,7 @@ ro_RO.strings = {
   },
 }
 
-ro_RO.pluralize = function (count) {
+ro_RO.pluralize = function pluralize (count) {
   if (count === 1) {
     return 0
   }

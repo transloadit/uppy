@@ -1,17 +1,47 @@
 const request = require('request')
+const { promisify } = require('util')
+
 const SearchProvider = require('../SearchProvider')
 const { getURLMeta } = require('../../helpers/request')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError } = require('../error')
+const { requestStream } = require('../../helpers/utils')
 
 const BASE_URL = 'https://api.unsplash.com'
+
+function adaptData (body, currentQuery) {
+  const pagesCount = body.total_pages
+  const currentPage = Number(currentQuery.cursor || 1)
+  const hasNextPage = currentPage < pagesCount
+  const subList = adapter.getItemSubList(body) || []
+
+  return {
+    searchedFor: currentQuery.q,
+    username: null,
+    items: subList.map((item) => ({
+      isFolder: adapter.isFolder(item),
+      icon: adapter.getItemIcon(item),
+      name: adapter.getItemName(item),
+      mimeType: adapter.getMimeType(item),
+      id: adapter.getItemId(item),
+      thumbnail: adapter.getItemThumbnailUrl(item),
+      requestPath: adapter.getItemRequestPath(item),
+      modifiedDate: adapter.getItemModifiedDate(item),
+      author: adapter.getAuthor(item),
+      size: null,
+    })),
+    nextPageQuery: hasNextPage
+      ? adapter.getNextPageQuery(currentQuery)
+      : null,
+  }
+}
 
 /**
  * Adapter for API https://api.unsplash.com
  */
 class Unsplash extends SearchProvider {
-  list ({ token, query = { cursor: null, q: null } }, done) {
+  _list ({ token, query = { cursor: null, q: null } }, done) {
     const reqOpts = {
       url: `${BASE_URL}/search/photos`,
       method: 'GET',
@@ -31,50 +61,57 @@ class Unsplash extends SearchProvider {
 
     request(reqOpts, (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
-        err = this._error(err, resp)
-        logger.error(err, 'provider.unsplash.list.error')
-        return done(err)
+        const error = this.error(err, resp)
+        logger.error(error, 'provider.unsplash.list.error')
+        return done(error)
       }
-      done(null, this.adaptData(body, query))
+      return done(null, adaptData(body, query))
     })
   }
 
-  download ({ id, token }, onData) {
-    const reqOpts = {
-      url: `${BASE_URL}/photos/${id}`,
-      method: 'GET',
-      json: true,
-      headers: {
-        Authorization: `Client-ID ${token}`,
-      },
-    }
-
-    request(reqOpts, (err, resp, body) => {
-      if (err || resp.statusCode !== 200) {
-        err = this._error(err, resp)
-        logger.error(err, 'provider.unsplash.download.error')
-        onData(err)
-        return
+  async download ({ id, token }) {
+    try {
+      const reqOpts = {
+        method: 'GET',
+        json: true,
+        headers: {
+          Authorization: `Client-ID ${token}`,
+        },
       }
 
-      const url = body.links.download
-      request.get(url)
-        .on('response', (resp) => {
-          if (resp.statusCode !== 200) {
-            onData(this._error(null, resp))
-          } else {
-            resp.on('data', (chunk) => onData(null, chunk))
+      const body = await new Promise((resolve, reject) => (
+        request({ ...reqOpts, url: `${BASE_URL}/photos/${id}` }, (err, resp, body2) => {
+          if (err || resp.statusCode !== 200) {
+            const err2 = this.error(err, resp)
+            logger.error(err, 'provider.unsplash.download.error')
+            reject(err2)
+            return
           }
+          resolve(body2)
         })
-        .on('end', () => onData(null, null))
-        .on('error', (err) => {
-          logger.error(err, 'provider.unsplash.download.url.error')
-          onData(err)
-        })
-    })
+      ))
+
+      const req = request.get(body.links.download)
+      const stream = await requestStream(req, async (res) => this.error(null, res))
+
+      // To attribute the author of the image, we call the `download_location`
+      // endpoint to increment the download count on Unsplash.
+      // https://help.unsplash.com/en/articles/2511258-guideline-triggering-a-download
+      request({ ...reqOpts, url: body.links.download_location }, (err, resp) => {
+        if (err || resp.statusCode !== 200) {
+          const err2 = this.error(err, resp)
+          logger.error(err2, 'provider.unsplash.download.location.error')
+        }
+      })
+
+      return stream
+    } catch (err) {
+      logger.error(err, 'provider.unsplash.download.url.error')
+      throw err
+    }
   }
 
-  size ({ id, token }, done) {
+  _size ({ id, token }, done) {
     const reqOpts = {
       url: `${BASE_URL}/photos/${id}`,
       method: 'GET',
@@ -86,50 +123,23 @@ class Unsplash extends SearchProvider {
 
     request(reqOpts, (err, resp, body) => {
       if (err || resp.statusCode !== 200) {
-        err = this._error(err, resp)
-        logger.error(err, 'provider.unsplash.size.error')
-        done(err)
+        const error = this.error(err, resp)
+        logger.error(error, 'provider.unsplash.size.error')
+        done(error)
         return
       }
 
       getURLMeta(body.links.download)
         .then(({ size }) => done(null, size))
-        .catch((err) => {
-          logger.error(err, 'provider.unsplash.size.error')
-          done()
+        .catch((err2) => {
+          logger.error(err2, 'provider.unsplash.size.error')
+          done(err2)
         })
     })
   }
 
-  adaptData (body, currentQuery) {
-    const data = {
-      searchedFor: currentQuery.q,
-      username: null,
-      items: [],
-    }
-    const items = adapter.getItemSubList(body)
-    items.forEach((item) => {
-      data.items.push({
-        isFolder: adapter.isFolder(item),
-        icon: adapter.getItemIcon(item),
-        name: adapter.getItemName(item),
-        mimeType: adapter.getMimeType(item),
-        id: adapter.getItemId(item),
-        thumbnail: adapter.getItemThumbnailUrl(item),
-        requestPath: adapter.getItemRequestPath(item),
-        modifiedDate: adapter.getItemModifiedDate(item),
-        size: null,
-      })
-    })
-
-    const pagesCount = body.total_pages
-    const currentPage = parseInt(currentQuery.cursor || 1)
-    const hasNextPage = currentPage < pagesCount
-    data.nextPageQuery = hasNextPage ? adapter.getNextPageQuery(currentQuery) : null
-    return data
-  }
-
-  _error (err, resp) {
+  // eslint-disable-next-line class-methods-use-this
+  error (err, resp) {
     if (resp) {
       const fallbackMessage = `request to Unsplash returned ${resp.statusCode}`
       const msg = resp.body && resp.body.errors ? `${resp.body.errors}` : fallbackMessage
@@ -139,5 +149,10 @@ class Unsplash extends SearchProvider {
     return err
   }
 }
+
+Unsplash.version = 2
+
+Unsplash.prototype.list = promisify(Unsplash.prototype._list)
+Unsplash.prototype.size = promisify(Unsplash.prototype._size)
 
 module.exports = Unsplash

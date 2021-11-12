@@ -20,7 +20,7 @@ describe('ThumbnailGenerator', () => {
     await browser.url(testURL)
   })
 
-  it('should generate thumbnails for images', async function () {
+  it('should generate thumbnails for images', async function test () {
     // Does not work on IE right now
     if (capabilities.browserName === 'internet explorer') {
       this.skip()
@@ -50,7 +50,7 @@ describe('ThumbnailGenerator', () => {
           'uppyThumbnails',
           path.basename(img), // name
           `image/${path.extname(img).slice(1)}`, // type
-          fs.readFileSync(img, 'base64') // b64
+          fs.readFileSync(img, 'base64'), // b64
         )
       }
       for (const { type, file } of notImages) {
@@ -59,7 +59,7 @@ describe('ThumbnailGenerator', () => {
           'uppyThumbnails',
           path.basename(file), // name
           type, // type
-          fs.readFileSync(file, 'base64') // b64
+          fs.readFileSync(file, 'base64'), // b64
         )
       }
     }
@@ -86,10 +86,7 @@ describe('ThumbnailGenerator', () => {
     expect(previews).to.have.lengthOf(3) // ex. the invalid image
     for (const p of previews) {
       expect(await p.getAttribute('src')).to.match(/^blob:/)
-      // Doesn't appear to work in Chrome 67 on Android 6.0
-      if (capabilities.platformName !== 'Android') {
-        expect(await getWidth(p)).to.equal(200)
-      }
+      expect(await getWidth(p)).to.equal(200)
     }
   })
 })

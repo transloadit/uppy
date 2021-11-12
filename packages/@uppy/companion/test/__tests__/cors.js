@@ -41,8 +41,8 @@ describe('cors', () => {
       ['Vary', 'Origin'],
       ['Access-Control-Allow-Credentials', 'true'],
       ['Access-Control-Allow-Methods', 'PATCH,OPTIONS,POST,GET,DELETE'],
-      ['Access-Control-Allow-Headers', 'uppy-auth-token,uppy-versions,uppy-credentials-params,test-allow-header'],
-      ['Access-Control-Expose-Headers', 'Access-Control-Allow-Headers,i-am,test'],
+      ['Access-Control-Allow-Headers', 'test-allow-header,uppy-auth-token,uppy-versions,uppy-credentials-params,authorization,origin,content-type,accept'],
+      ['Access-Control-Expose-Headers', 'test,access-control-allow-headers,i-am'],
       ['Content-Length', '0'],
     ])
     // expect(next).toHaveBeenCalled()
@@ -55,8 +55,8 @@ describe('cors', () => {
       ['Vary', 'Origin'],
       ['Access-Control-Allow-Credentials', 'true'],
       ['Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE'],
-      ['Access-Control-Allow-Headers', 'uppy-auth-token,uppy-versions,uppy-credentials-params'],
-      ['Access-Control-Expose-Headers', 'Access-Control-Allow-Headers'],
+      ['Access-Control-Allow-Headers', 'uppy-auth-token,uppy-versions,uppy-credentials-params,authorization,origin,content-type,accept'],
+      ['Access-Control-Expose-Headers', 'access-control-allow-headers'],
       ['Content-Length', '0'],
     ])
   })
@@ -72,8 +72,8 @@ describe('cors', () => {
       ['Vary', 'Origin'],
       ['Access-Control-Allow-Credentials', 'true'],
       ['Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE'],
-      ['Access-Control-Allow-Headers', 'uppy-auth-token,uppy-versions,uppy-credentials-params'],
-      ['Access-Control-Expose-Headers', 'Access-Control-Allow-Headers'],
+      ['Access-Control-Allow-Headers', 'uppy-auth-token,uppy-versions,uppy-credentials-params,authorization,origin,content-type,accept'],
+      ['Access-Control-Expose-Headers', 'access-control-allow-headers'],
       ['Content-Length', '0'],
     ])
   })
@@ -85,8 +85,8 @@ describe('cors', () => {
       ['Vary', 'Origin'],
       ['Access-Control-Allow-Credentials', 'true'],
       ['Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE'],
-      ['Access-Control-Allow-Headers', 'uppy-auth-token,uppy-versions,uppy-credentials-params'],
-      ['Access-Control-Expose-Headers', 'Access-Control-Allow-Headers'],
+      ['Access-Control-Allow-Headers', 'uppy-auth-token,uppy-versions,uppy-credentials-params,authorization,origin,content-type,accept'],
+      ['Access-Control-Expose-Headers', 'access-control-allow-headers'],
       ['Content-Length', '0'],
     ])
   })

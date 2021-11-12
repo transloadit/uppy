@@ -11,7 +11,7 @@ module.exports.getServer = (env) => {
 
   // delete from cache to force the server to reload companionOptions from the new env vars
   jest.resetModules()
-  const { app } = require('../src/standalone')
+  const standalone = require('../src/standalone')
   const authServer = express()
 
   authServer.use(session({ secret: 'grant', resave: true, saveUninitialized: true }))
@@ -26,6 +26,7 @@ module.exports.getServer = (env) => {
     next()
   })
 
+  const { app } = standalone()
   authServer.use(app)
   return authServer
 }

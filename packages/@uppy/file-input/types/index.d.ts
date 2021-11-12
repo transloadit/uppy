@@ -1,16 +1,13 @@
-import Uppy = require('@uppy/core')
-import FileInputLocale = require('./generatedLocale')
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import FileInputLocale from './generatedLocale'
 
-declare module FileInput {
-  export interface FileInputOptions extends Uppy.PluginOptions {
-    replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
+export interface FileInputOptions extends PluginOptions {
+    target?: PluginTarget
     pretty?: boolean
     inputName?: string
     locale?: FileInputLocale
-  }
 }
 
-declare class FileInput extends Uppy.Plugin<FileInput.FileInputOptions> {}
+declare class FileInput extends UIPlugin<FileInputOptions> {}
 
-export = FileInput
+export default FileInput

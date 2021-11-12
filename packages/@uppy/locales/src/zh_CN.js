@@ -43,8 +43,7 @@ zh_CN.strings = {
   encoding: '正在编码…',
   enterCorrectUrl: '错误链接： 请确认您输入的是文件的链接',
   enterUrlToImport: '输入链接或者导入文件',
-  exceedsSize: '文件超过了最大尺寸限制',
-  exceedsSize2: '%{backwardsCompat} %{size}',
+  exceedsSize: '文件超过了最大尺寸限制 %{size}',
   failedToFetch: 'Companion 无法抓取此链接，请确保它是正确的',
   failedToUpload: '上传 %{file} 失败',
   fileSource: '文件源：%{name}',
@@ -64,13 +63,12 @@ zh_CN.strings = {
   noDuplicates: '无法添加重复文件 %{fileName}，该文件已存在',
   noFilesFound: '这里空空如也',
   noInternetConnection: '无法连接到网络',
-  noNewAlreadyUploading: '无法添加新文件：已正在上传文件',
+  noMoreFilesAllowed: '无法添加新文件：已正在上传文件',
   openFolderNamed: '打开文件夹 %{name}',
   pause: '暂停',
   pauseUpload: '暂停上传',
   paused: '已暂停',
-  poweredBy: '强力驱动于',
-  poweredBy2: '%{backwardsCompat} %{uppy}',
+  poweredBy: '强力驱动于 %{uppy}',
   processingXFiles: '正在处理 %{smart_count} 个文件',
   recording: '正在录制',
   recordingLength: '录制长度 %{recording_length}',
@@ -82,7 +80,6 @@ zh_CN.strings = {
   retry: '重试',
   retryUpload: '重试',
   saveChanges: '保存变更',
-  selectAllFilesFromFolderNamed: '从文件夹中选择所有文件 %{name}',
   selectFileNamed: '选择文件 %{name}',
   selectX: '选择 %{smart_count}',
   smile: '笑一笑！',
@@ -95,7 +92,6 @@ zh_CN.strings = {
   submitRecordedFile: '提交已录制视频',
   takePicture: '拍照',
   timedOut: '上传已超时 %{seconds} 秒，中止上传',
-  unselectAllFilesFromFolderNamed: '取消选择文件夹中的所有文件 %{name}',
   unselectFileNamed: '取消选择文件 %{name}',
   upload: '上传',
   uploadComplete: '上传完成',
@@ -114,7 +110,7 @@ zh_CN.strings = {
 }
 
 // There is just one form.
-zh_CN.pluralize = function (n) { return 0 }
+zh_CN.pluralize = function pluralize () { return 0 }
 
 if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locales.zh_CN = zh_CN

@@ -1,6 +1,6 @@
 const querystring = require('querystring')
 
-exports.isFolder = (item) => {
+exports.isFolder = (item) => { // eslint-disable-line no-unused-vars
   return false
 }
 
@@ -19,7 +19,7 @@ exports.getItemName = (item) => {
   }
 }
 
-exports.getMimeType = (item) => {
+exports.getMimeType = (item) => { // eslint-disable-line no-unused-vars
   return 'image/jpeg'
 }
 
@@ -48,4 +48,8 @@ exports.getNextPageQuery = (currentQuery) => {
 
   delete query.q
   return querystring.stringify(query)
+}
+
+exports.getAuthor = (item) => {
+  return { name: item.user.name, url: item.user.links.html }
 }

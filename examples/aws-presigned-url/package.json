@@ -1,10 +1,11 @@
 {
   "name": "@uppy-example/aws-presigned-url",
+  "version": "0.0.0",
   "dependencies": {
     "@babel/core": "^7.4.4",
-    "@uppy/aws-s3": "file:../../packages/@uppy/aws-s3",
-    "@uppy/core": "file:../../packages/@uppy/core",
-    "@uppy/dashboard": "file:../../packages/@uppy/dashboard",
+    "@uppy/aws-s3": "workspace:*",
+    "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
     "fs-write-stream-atomic": "^1.0.10",
