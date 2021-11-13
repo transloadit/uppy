@@ -4,6 +4,8 @@ const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
 const ScreenRecIcon = require('./ScreenRecIcon')
 const CaptureScreen = require('./CaptureScreen')
 
+const locale = require('./locale')
+
 // Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 function getMediaDevices () {
   // check if screen capturing is supported
@@ -26,17 +28,7 @@ module.exports = class ScreenCapture extends UIPlugin {
     this.type = 'acquirer'
     this.icon = ScreenRecIcon
 
-    this.defaultLocale = {
-      strings: {
-        startCapturing: 'Begin screen capturing',
-        stopCapturing: 'Stop screen capturing',
-        submitRecordedFile: 'Submit recorded file',
-        streamActive: 'Stream active',
-        streamPassive: 'Stream passive',
-        micDisabled: 'Microphone access denied by user',
-        recording: 'Recording',
-      },
-    }
+    this.defaultLocale = locale
 
     // set default options
     // https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints

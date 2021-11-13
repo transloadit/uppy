@@ -24,22 +24,22 @@ fi
 if [[ ! "$@" =~ -y ]]; then
   echo "Make sure to read https://uppy.io/docs/contributing#Releases!"
   echo "Press Enter when ready, or Ctrl+C if you still need to do something."
-  echo "Use 'npm run release -- -y' to bypass this message."
+  echo "Use 'yarn run release -- -y' to bypass this message."
   read
 fi
 
-if [ $is_local == "0" ] && [[ ! "$(npm get registry)" =~ https://registry\.npmjs\.(com|org)/? ]]; then
-  echo "Found unexpected npm registry: $(npm get registry)"
+if [ $is_local == "0" ] && [[ ! "$(yarn config get registry)" =~ https://registry\.npmjs\.(com|org)/? ]]; then
+  echo "Found unexpected npm registry: $(yarn config get registry)"
   echo "Run this to fix:"
   echo ""
-  echo "npm set registry https://registry.npmjs.org"
+  echo "yarn config set registry https://registry.npmjs.org"
   exit 1
 fi
 
-if ! npm whoami > /dev/null; then
-  echo "Not authenticated with npm. First do:"
+if ! yarn whoami > /dev/null; then
+  echo "Not authenticated with yarn. First do:"
   echo ""
-  echo "npm login"
+  echo "yarn login"
   exit 1
 fi
 
@@ -47,14 +47,14 @@ set -o xtrace
 
 # Update README before publishing `uppy`
 # So up-to-date contributors are shown on the npm page.
-npm run contributors:save
+yarn run contributors:save
 git add README.md
 
 # Add readme file to the main `uppy` package.
 cp README.md packages/uppy/README.md
 
-npm run build:clean
-FRESH=1 npm run build
+yarn run build:clean
+FRESH=1 yarn run build
 
 echo "!! The next step is the actual release!"
 echo "!! If something goes wrong after here, it becomes hard to reverse. Please make sure that everything is in order."

@@ -10,7 +10,7 @@ tagline: "advanced upload progress status bar"
 ---
 
 The `@uppy/status-bar` plugin shows upload progress and speed, ETAs, pre- and post-processing information, and allows users to control (pause/resume/cancel) the upload.
-It is best used in combination with a simple file source plugin, such as [`@uppy/file-input`][] or [`@uppy/drag-drop`][], or a custom implementation.
+This plugin is best used in combination with a basic file source plugin, such as [`@uppy/file-input`][] or [`@uppy/drag-drop`][], or a custom implementation.
 
 ```js
 import StatusBar from '@uppy/status-bar'
@@ -34,7 +34,7 @@ Install from NPM:
 npm install @uppy/status-bar
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
 const { StatusBar } = Uppy
@@ -74,7 +74,7 @@ uppy.use(StatusBar, {
 
 ### `id: 'StatusBar'`
 
-A unique identifier for this Status Bar. It defaults to `'StatusBar'`. Use this if you need to add multiple StatusBar instances.
+A unique identifier for this Status Bar. It defaults to `'StatusBar'`. Use this if you need to add several StatusBar instances.
 
 ### `target: body`
 
@@ -86,7 +86,7 @@ Hide the Status Bar after the upload is complete.
 
 ### `showProgressDetails: false`
 
-By default, progress in the Status Bar is shown as simple percentage. If you would like to also display remaining upload size and time, set this to `true`.
+By default, progress in the Status Bar is shown as percentage only. If you would like to also display remaining upload size and time, set this to `true`.
 
 `showProgressDetails: false`: Uploading: 45%
 `showProgressDetails: true`: Uploading: 45%・43 MB of 101 MB・8s left
@@ -120,52 +120,60 @@ const doneButtonHandler = () => {
 
 ### `locale: {}`
 
-Localize text that is shown to the user.
-
-The default English strings are:
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
-const strings = {
-  // Shown in the status bar while files are being uploaded.
-  uploading: 'Uploading',
-  // Shown in the status bar once all files have been uploaded.
-  complete: 'Complete',
-  // Shown in the status bar if an upload failed.
-  uploadFailed: 'Upload failed',
-  // Shown in the status bar while the upload is paused.
-  paused: 'Paused',
-  // Used as the label for the button that retries an upload.
-  retry: 'Retry',
-  // Used as the label for the button that cancels an upload.
-  cancel: 'Cancel',
-  // Used as the label for the button that pauses an upload.
-  pause: 'Pause',
-  // Used as the label for the button that resumes an upload.
-  resume: 'Resume',
-  // Used as the label for the button that resets the upload state after an upload
-  done: 'Done',
-  // When `showProgressDetails` is set, shows the number of files that have been fully uploaded so far.
-  filesUploadedOfTotal: {
-    0: '%{complete} of %{smart_count} file uploaded',
-    1: '%{complete} of %{smart_count} files uploaded',
-  },
-  // When `showProgressDetails` is set, shows the amount of bytes that have been uploaded so far.
-  dataUploadedOfTotal: '%{complete} of %{total}',
-  // When `showProgressDetails` is set, shows an estimation of how long the upload will take to complete.
-  xTimeLeft: '%{time} left',
-  // Used as the label for the button that starts an upload.
-  uploadXFiles: {
-    0: 'Upload %{smart_count} file',
-    1: 'Upload %{smart_count} files',
-  },
-  // Used as the label for the button that starts an upload, if another upload has been started in the past
-  // and new files were added later.
-  uploadXNewFiles: {
-    0: 'Upload +%{smart_count} file',
-    1: 'Upload +%{smart_count} files',
+module.exports = {
+  strings: {
+    // Shown in the status bar while files are being uploaded.
+    uploading: 'Uploading',
+    // Shown in the status bar once all files have been uploaded.
+    complete: 'Complete',
+    // Shown in the status bar if an upload failed.
+    uploadFailed: 'Upload failed',
+    // Shown in the status bar while the upload is paused.
+    paused: 'Paused',
+    // Used as the label for the button that retries an upload.
+    retry: 'Retry',
+    // Used as the label for the button that cancels an upload.
+    cancel: 'Cancel',
+    // Used as the label for the button that pauses an upload.
+    pause: 'Pause',
+    // Used as the label for the button that resumes an upload.
+    resume: 'Resume',
+    // Used as the label for the button that resets the upload state after an upload
+    done: 'Done',
+    // When `showProgressDetails` is set, shows the number of files that have been fully uploaded so far.
+    filesUploadedOfTotal: {
+      0: '%{complete} of %{smart_count} file uploaded',
+      1: '%{complete} of %{smart_count} files uploaded',
+    },
+    // When `showProgressDetails` is set, shows the amount of bytes that have been uploaded so far.
+    dataUploadedOfTotal: '%{complete} of %{total}',
+    // When `showProgressDetails` is set, shows an estimation of how long the upload will take to complete.
+    xTimeLeft: '%{time} left',
+    // Used as the label for the button that starts an upload.
+    uploadXFiles: {
+      0: 'Upload %{smart_count} file',
+      1: 'Upload %{smart_count} files',
+    },
+    // Used as the label for the button that starts an upload, if another upload has been started in the past
+    // and new files were added later.
+    uploadXNewFiles: {
+      0: 'Upload +%{smart_count} file',
+      1: 'Upload +%{smart_count} files',
+    },
+    upload: 'Upload',
+    retryUpload: 'Retry upload',
+    xMoreFilesAdded: {
+      0: '%{smart_count} more file added',
+      1: '%{smart_count} more files added',
+    },
   },
 }
+
 ```
 
 [`@uppy/file-input`]: /docs/file-input
+
 [`@uppy/drag-drop`]: /docs/drag-drop

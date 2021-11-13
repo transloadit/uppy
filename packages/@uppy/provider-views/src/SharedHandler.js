@@ -49,7 +49,7 @@ module.exports = class SharedHandler {
         const { uppy } = this.plugin
         const validatedRestrictions = uppy.validateRestrictions(
           remoteFileObjToLocal(item),
-          [...uppy.getFiles(), ...reducedCurrentSelection]
+          [...uppy.getFiles(), ...reducedCurrentSelection],
         )
         if (validatedRestrictions.result) {
           reducedCurrentSelection.push(item)

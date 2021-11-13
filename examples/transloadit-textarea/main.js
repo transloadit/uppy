@@ -26,7 +26,7 @@ class MarkdownTextarea {
     this.uploadLine.classList.add('mdtxt-upload')
 
     this.uploadLine.appendChild(
-      document.createTextNode('Upload an attachment')
+      document.createTextNode('Upload an attachment'),
     )
   }
 
@@ -111,7 +111,7 @@ class MarkdownTextarea {
       // Was cancelled
       if (result == null) return
       this.insertAttachments(
-        this.matchFilesAndThumbs(result.results)
+        this.matchFilesAndThumbs(result.results),
       )
     }).catch((err) => {
       console.error(err)
@@ -130,7 +130,7 @@ class MarkdownTextarea {
       // Was cancelled
       if (result == null) return
       this.insertAttachments(
-        this.matchFilesAndThumbs(result.results)
+        this.matchFilesAndThumbs(result.results),
       )
     }).catch((err) => {
       console.error(err)
@@ -140,7 +140,7 @@ class MarkdownTextarea {
 }
 
 const textarea = new MarkdownTextarea(
-  document.querySelector('#new textarea')
+  document.querySelector('#new textarea'),
 )
 textarea.install()
 

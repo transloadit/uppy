@@ -50,7 +50,7 @@ describe('ThumbnailGenerator', () => {
           'uppyThumbnails',
           path.basename(img), // name
           `image/${path.extname(img).slice(1)}`, // type
-          fs.readFileSync(img, 'base64') // b64
+          fs.readFileSync(img, 'base64'), // b64
         )
       }
       for (const { type, file } of notImages) {
@@ -59,7 +59,7 @@ describe('ThumbnailGenerator', () => {
           'uppyThumbnails',
           path.basename(file), // name
           type, // type
-          fs.readFileSync(file, 'base64') // b64
+          fs.readFileSync(file, 'base64'), // b64
         )
       }
     }

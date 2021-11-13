@@ -2,8 +2,6 @@
 
 'use strict'
 
-const path = require('path')
-
 const svgPresentationAttributes = [
   'alignment-baseline', 'baseline-shift', 'class', 'clip', 'clip-path', 'clip-rule', 'color', 'color-interpolatio', 'color-interpolatio-filters', 'color-profile', 'color-rendering', 'cursor', 'direction', 'display', 'dominant-baseline', 'enable-background', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'glyph-orientation-horizontal', 'glyph-orientation-vertical', 'image-rendering', 'kerning', 'letter-spacing', 'lighting-color', 'marker-end', 'marker-mid', 'marker-start', 'mask', 'opacity', 'overflow', 'pointer-events', 'shape-rendering', 'stop-color', 'stop-opacity', 'stroke', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke-width', 'text-anchor', 'text-decoration', 'text-rendering', 'transform', 'transform-origin', 'unicode-bidi', 'vector-effect', 'visibility', 'word-spacing', 'writing-mod',
 ]
@@ -45,7 +43,6 @@ module.exports = {
   rules: {
     // transloadit rules we are actually ok with in the uppy repo
     'import/extensions': 'off',
-    'no-await-in-loop': 'off',
     'object-shorthand': ['error', 'always'],
     'strict': 'off',
     'key-spacing': 'off',
@@ -81,6 +78,7 @@ module.exports = {
     'global-require': ['warn'],
     'import/no-unresolved': ['warn'],
     'import/order': ['warn'],
+    'max-classes-per-file': ['warn'],
     'no-mixed-operators': ['warn'],
     'no-param-reassign': ['warn'],
     'no-redeclare': ['warn'],
@@ -131,11 +129,6 @@ module.exports = {
   },
 
   settings: {
-    'import/resolver': {
-      'eslint-import-resolver-lerna': {
-        packages: path.resolve(__dirname, 'packages'),
-      },
-    },
     'import/core-modules': ['tsd'],
     react: {
       pragma: 'h',

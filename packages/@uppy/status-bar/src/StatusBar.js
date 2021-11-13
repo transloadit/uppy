@@ -124,21 +124,18 @@ function StatusBar (props) {
 
   const width = progressValue ?? 100
 
-  const showUploadBtn
-    = !error
+  const showUploadBtn = !error
     && newFiles
     && !isUploadInProgress
     && !isAllPaused
     && allowNewUpload
     && !hideUploadButton
 
-  const showCancelBtn
-    = !hideCancelButton
+  const showCancelBtn = !hideCancelButton
     && uploadState !== STATE_WAITING
     && uploadState !== STATE_COMPLETE
 
-  const showPauseResumeBtn
-    = resumableUploads
+  const showPauseResumeBtn = resumableUploads
     && !hidePauseResumeButton
     && uploadState === STATE_UPLOADING
 
@@ -154,7 +151,7 @@ function StatusBar (props) {
     { 'uppy-Root': isTargetDOMEl },
     'uppy-StatusBar',
     `is-${uploadState}`,
-    { 'has-ghosts': isSomeGhost }
+    { 'has-ghosts': isSomeGhost },
   )
 
   return (

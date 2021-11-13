@@ -3,6 +3,8 @@ const { Provider } = require('@uppy/companion-client')
 const { ProviderViews } = require('@uppy/provider-views')
 const { h } = require('preact')
 
+const locale = require('./locale.js')
+
 module.exports = class Instagram extends UIPlugin {
   static VERSION = require('../package.json').version
 
@@ -19,11 +21,8 @@ module.exports = class Instagram extends UIPlugin {
       </svg>
     )
 
-    this.defaultLocale = {
-      strings: {
-        pluginNameInstagram: 'Instagram',
-      },
-    }
+    this.defaultLocale = locale
+
     this.i18nInit()
     this.title = this.i18n('pluginNameInstagram')
 

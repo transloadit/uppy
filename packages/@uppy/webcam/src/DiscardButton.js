@@ -3,7 +3,7 @@ const { h } = require('preact')
 function DiscardButton ({ onDiscard, i18n }) {
   return (
     <button
-      className="uppy-u-reset uppy-c-btn uppy-Webcam-button"
+      className="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--discard"
       type="button"
       title={i18n('discardRecordedFile')}
       aria-label={i18n('discardRecordedFile')}

@@ -5,6 +5,8 @@ export COMPANION_SELF_ENDPOINT="localhost:3020"
 export COMPANION_HIDE_METRICS="false"
 export COMPANION_HIDE_WELCOME="false"
 
+export COMPANION_STREAMING_UPLOAD="true"
+
 export COMPANION_PROTOCOL="http"
 export COMPANION_DATADIR="./test/output"
 export COMPANION_SECRET="secret"

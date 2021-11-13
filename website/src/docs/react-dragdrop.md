@@ -27,7 +27,7 @@ import { DragDrop } from '@uppy/react'
 
 ## CSS
 
-The `DragDrop` component includes some simple styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead:
+The `DragDrop` component includes some basic styles, like shown in the [example](/examples/dragdrop). You can also choose not to include those and use your own styles instead:
 
 ```js
 import '@uppy/core/dist/style.css'

@@ -3,21 +3,21 @@ const path = require('path')
 const fs = require('fs')
 const { selectFakeFile, supportsChooseFile, ensureInputVisible } = require('../utils')
 
-const testURL = 'http://localhost:4567/transloadit'
+const testURL = 'http://localhost:4567/transloadit-assembly-options'
 
 function setTransloaditKeyAndInit (transloaditKey) {
   window.initUppyTransloadit(transloaditKey)
 }
 
-describe('Transloadit file processing', () => {
+describe('Transloadit getAssemblyOptions', () => {
   beforeEach(async () => {
     await browser.url(testURL)
   })
 
-  it('should upload a file to Transloadit and crop it', async function test () {
+  it('should pass `fields` to `assembly:result`', async function test () {
     const transloaditKey = process.env.TRANSLOADIT_KEY
     if (transloaditKey === undefined) {
-      console.log('skipping Transloadit integration test')
+      console.log('skipping Transloadit integration test: process.env.TRANSLOADIT_KEY is not set')
       return this.skip()
     }
 
@@ -41,11 +41,10 @@ describe('Transloadit file processing', () => {
         'uppyTransloadit',
         path.basename(img), // name
         'image/jpeg', // type
-        fs.readFileSync(img, 'base64') // b64
+        fs.readFileSync(img, 'base64'), // b64
       )
-      // browser.execute(selectFakeFile, 'uppyTransloadit')
     }
-    await result.waitForExist(25000)
+    await result.waitForExist({ timeout: 25000 })
     const text = await result.getText()
     expect(text).to.be.equal('ok')
   })

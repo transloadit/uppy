@@ -28,7 +28,7 @@ if (window.location.search === '?socketerr=true') {
   const emitError = (file, data) => {
     // trigger fake socket error
     data.uploader.uploaderSockets[file.id].emit(
-      'error', { error: { message: 'nobody likes me, thats ok' } }
+      'error', { error: { message: 'nobody likes me, thats ok' } },
     )
     window.uppy.off('upload-progress', emitError)
   }

@@ -32,7 +32,6 @@ exports.config = {
   exclude: [
     './chaos-monkey/*',
     './url-plugin/*',
-    './transloadit/*',
   ],
 
   // If you only want to run your tests until a specific amount of tests have failed use

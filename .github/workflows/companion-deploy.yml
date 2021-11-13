@@ -2,7 +2,7 @@ name: Companion Deploy
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   docker:

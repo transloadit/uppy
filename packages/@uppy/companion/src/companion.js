@@ -41,6 +41,7 @@ const defaultOptions = {
   debug: true,
   logClientVersion: true,
   periodicPingUrls: [],
+  streamingUpload: false,
 }
 
 // make the errors available publicly for custom providers
@@ -245,7 +246,7 @@ const validateConfig = (companionOptions) => {
     fs.accessSync(`${companionOptions.filePath}`, fs.R_OK | fs.W_OK) // eslint-disable-line no-bitwise
   } catch (err) {
     throw new Error(
-      `No access to "${companionOptions.filePath}". Please ensure the directory exists and with read/write permissions.`
+      `No access to "${companionOptions.filePath}". Please ensure the directory exists and with read/write permissions.`,
     )
   }
 

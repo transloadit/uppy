@@ -9,7 +9,7 @@ category: "Sources"
 tagline: "plain and simple drag-and-drop area"
 ---
 
-The `@uppy/drag-drop` plugin renders a simple drag and drop area for file selection. it can be useful when you only want the local device as a file source, don’t need file previews and a UI for metadata editing, and the [Dashboard](/docs/dashboard/) feels like overkill.
+The `@uppy/drag-drop` plugin renders a drag and drop area for file selection. it can be useful when you only want the local device as a file source, don’t need file previews and a UI for metadata editing, and the [Dashboard](/docs/dashboard/) feels like overkill.
 
 ```js
 import DragDrop from '@uppy/drag-drop'
@@ -31,7 +31,7 @@ Install from NPM:
 npm install @uppy/drag-drop
 ```
 
-In the [CDN package](/docs/#With-a-script-tag), it is available on the `Uppy` global object:
+In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on the `Uppy` global object:
 
 ```js
 const { DragDrop } = Uppy
@@ -39,7 +39,7 @@ const { DragDrop } = Uppy
 
 ## CSS
 
-The `@uppy/drag-drop` plugin includes some simple styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead.
+The `@uppy/drag-drop` plugin includes some basi c styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead.
 
 ```js
 import '@uppy/core/dist/style.css'
@@ -66,7 +66,7 @@ uppy.use(DragDrop, {
 
 ### `id: 'DragDrop'`
 
-A unique identifier for this plugin. It defaults to `'DragDrop'`. Use this if you need to add multiple DragDrop instances.
+A unique identifier for this plugin. It defaults to `'DragDrop'`. Use this if you need to add several DragDrop instances.
 
 ### `target: null`
 
@@ -86,7 +86,20 @@ Optionally, specify a string of text that explains something about the upload fo
 
 ### `locale: {}`
 
-Localize text that is shown to the user.
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
+
+```js
+module.exports = {
+  strings: {
+    // Text to show on the droppable area.
+    // `%{browse}` is replaced with a link that opens the system file selection dialog.
+    dropHereOr: 'Drop here or %{browse}',
+    // Used as the label for the link that opens the system file selection dialog.
+    browse: 'browse',
+  },
+}
+
+```
 
 ### `onDragOver(event)`
 
@@ -115,5 +128,7 @@ const strings = {
 <!-- definitions -->
 
 [ondragover]: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragover
+
 [ondragleave]: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragleave
+
 [ondrop]: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondrop
