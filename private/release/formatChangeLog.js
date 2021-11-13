@@ -39,7 +39,7 @@ export default async function formatChangeLog (
     '--format="%H::%s::%an"',
     `${LAST_RELEASE_COMMIT}..HEAD`,
   ], spawnOptions)
-  const expectedFormat = /^"([a-f0-9]+)::(?:((?:@uppy\/[a-z0-9-]+|meta),)+:\s?)?(.+?)(\s\(#\d+\))?::(.+)"$/
+  const expectedFormat = /^"([a-f0-9]+)::(?:((?:@uppy\/[a-z0-9-]+(?:,@uppy\/[a-z0-9-]+)*)|meta|website):\s?)?(.+?)(\s\(#\d+\))?::(.+)"$/ // eslint-disable-line max-len
   for await (const log of createInterface({ input: gitLog.stdout })) {
     const [, sha, packageName, title, PR, authorName] = expectedFormat.exec(log)
 
