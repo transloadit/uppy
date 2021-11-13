@@ -133,12 +133,12 @@ describe('validate upload data', () => {
   })
 })
 
-describe('handle master oauth redirect', () => {
-  const serverWithMasterOauth = getServer({
+describe('handle main oauth redirect', () => {
+  const serverWithMainOauth = getServer({
     COMPANION_OAUTH_DOMAIN: 'localhost:3040',
   })
   test('redirect to a valid uppy instance', () => {
-    return request(serverWithMasterOauth)
+    return request(serverWithMainOauth)
       .get(`/dropbox/redirect?state=${OAUTH_STATE}`)
       .set('uppy-auth-token', token)
       .expect(302)
@@ -147,7 +147,7 @@ describe('handle master oauth redirect', () => {
 
   test('do not redirect to invalid uppy instances', () => {
     const state = 'state-with-invalid-instance-url' // see mock ../../src/server/helpers/oauth-state above
-    return request(serverWithMasterOauth)
+    return request(serverWithMainOauth)
       .get(`/dropbox/redirect?state=${state}`)
       .set('uppy-auth-token', token)
       .expect(400)
