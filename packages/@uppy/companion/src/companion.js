@@ -7,6 +7,7 @@ const merge = require('lodash.merge')
 const cookieParser = require('cookie-parser')
 const interceptor = require('express-interceptor')
 const { isURL } = require('validator')
+const uuid = require('uuid')
 
 const grantConfig = require('./config/grant')()
 const providerManager = require('./server/provider')
@@ -22,6 +23,8 @@ const logger = require('./server/logger')
 const middlewares = require('./server/middlewares')
 const { ProviderApiError, ProviderAuthError } = require('./server/provider/error')
 const { getCredentialsOverrideMiddleware } = require('./server/provider/credentials')
+// @ts-ignore
+const { version } = require('../package.json')
 
 const defaultOptions = {
   server: {
@@ -125,11 +128,15 @@ module.exports.app = (options = {}) => {
     jobs.startCleanUpJob(options.filePath)
   }
 
+  const processId = uuid.v4()
+
   jobs.startPeriodicPingJob({
     urls: options.periodicPingUrls,
     interval: options.periodicPingInterval,
     count: options.periodicPingCount,
     staticPayload: options.periodicPingStaticPayload,
+    version,
+    processId,
   })
 
   return app

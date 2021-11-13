@@ -1,6 +1,7 @@
 /* global jest:false, test:false, expect:false, describe:false */
 
 const mockOauthState = require('../mockoauthstate')()
+const { version } = require('../../package.json')
 
 jest.mock('tus-js-client')
 jest.mock('purest')
@@ -156,7 +157,11 @@ describe('handle master oauth redirect', () => {
 })
 
 it('periodically pings', (done) => {
-  nock('http://localhost').post('/ping', (body) => body.some === 'value').reply(200, () => done())
+  nock('http://localhost').post('/ping', (body) => (
+    body.some === 'value'
+    && body.version === version
+    && typeof body.processId === 'string'
+  )).reply(200, () => done())
 
   getServer({
     COMPANION_PERIODIC_PING_URLS: 'http://localhost/ping',
