@@ -33,11 +33,16 @@ jobs:
         run: corepack yarn workspaces foreach --no-private npm publish --access public --tolerate-republish
       - name: Merge PR
         id: merge
-        run: gh pr merge ${{ github.event.pull_request.html_url }} --squash --body-file CHANGELOG.diff.md | jq -r 'if .merged then "##[set-output name=sha;]"+.sha else error("not merged") end'
+        run: |
+          gh api -X PUT repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/merge \
+            -F merge_method="squash" \
+            -F commit_message="$(cat CHANGELOG.diff.md)" \
+            --jq 'if .merged then "##[set-output name=sha;]"+.sha else error("not merged") end'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "${{ steps.merge.outputs.sha }}"
       - name: Abort if PR merging failed
-        if: ${{ steps.merge.outputs.sha }} == ""
+        if: ${{ steps.merge.outputs.sha == '' }}
         run: exit 1
       - name: Create tags
         run: |

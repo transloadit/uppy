@@ -5,7 +5,7 @@ on:
 
 jobs:
   release:
-    name: Publish releases
+    name: Prepare release candidate Pull Request
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -52,12 +52,18 @@ jobs:
           jq -r 'map("- `"+.ident+"`: "+.oldVersion+" -> "+.newVersion) | join("\n") ' < releases.json >> commitMessage
           git commit -n --amend --file commitMessage
       - name: Open Pull Request
+        id: pr_opening
         run: |
           git push origin HEAD:release-candidate
-          gh api /repos/${{ github.repository }}/pulls \
+          gh api repos/${{ github.repository }}/pulls \
             -F base="$(gh api /repos/${{ github.repository }} | jq -r .default_branch)" \
             -F head="release-candidate" \
             -F title="$(head -1 commitMessage)" \
-            -F body="$(git --no-pager log -1 --format=%b)"
+            -F body="$(git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1) == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print substr($0,2) } }')" \
+            --jq '.number | tostring | "##[set-output name=pr_number;]"+.'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Assign to the releaser
+        run: echo '{"assignees":[${{ toJSON(github.actor) }}]}' | gh api repos/${{ github.repository }}/issues/${{ steps.pr_opening.outputs.pr_number }}/assignees --input -
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
