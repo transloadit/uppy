@@ -15,11 +15,14 @@ const temporaryChangeLog = new URL('./CHANGELOG.next.md', ROOT)
 
 console.log('Validating local repo status and get previous release info...')
 const [LAST_RELEASE_COMMIT, LOCAL_HEAD] = await validateGitStatus(spawnOptions)
-console.log('Local git repository is ready, starting release process...')
-await pickSemverness(spawnOptions, LAST_RELEASE_COMMIT, deferredReleaseFile, process.env.PACKAGES.split(' '))
-console.log('Working on the changelog...')
-await formatChangeLog(spawnOptions, LAST_RELEASE_COMMIT, temporaryChangeLog)
-console.log('Final step...')
-await commit(spawnOptions, deferredReleaseFile, temporaryChangeLog)
-console.log('Rewinding git history...')
-await rewindGitHistory(spawnOptions, LOCAL_HEAD)
+try {
+  console.log('Local git repository is ready, starting release process...')
+  await pickSemverness(spawnOptions, LAST_RELEASE_COMMIT, deferredReleaseFile, process.env.PACKAGES.split(' '))
+  console.log('Working on the changelog...')
+  await formatChangeLog(spawnOptions, LAST_RELEASE_COMMIT, temporaryChangeLog)
+  console.log('Final step...')
+  await commit(spawnOptions, deferredReleaseFile, temporaryChangeLog)
+} finally {
+  console.log('Rewinding git history...')
+  await rewindGitHistory(spawnOptions, LOCAL_HEAD)
+}
