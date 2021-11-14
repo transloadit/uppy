@@ -22,7 +22,7 @@ const mostRecentReleaseHeading = changelogContent.indexOf('\n## ')
 
 function* makeTable (versions) {
   const pkgNameMaxLength = Math.max('Package'.length, ...versions.map(pkg => pkg.ident.length))
-  const pkgVersionMaxLength = Math.max('Version'.length, ...versions.map(pkg => pkg.ident.length))
+  const pkgVersionMaxLength = Math.max('Version'.length, ...versions.map(pkg => pkg.newVersion.length))
   const makeRow = (...cells) => `| ${cells.map((cell, i) => cell[i % 2 ? 'padStart' : 'padEnd'](i % 2 ? pkgVersionMaxLength : pkgNameMaxLength)).join(' | ')} |`
 
   yield makeRow('Package', 'Version', 'Package', 'Version')
