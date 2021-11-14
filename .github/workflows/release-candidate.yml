@@ -45,7 +45,7 @@ jobs:
         run: corepack yarn workspace @uppy-build/release update-version-URLs | xargs git add
       - name: Commit
         run: |
-          echo "Release candidate: uppy@$(jq -r 'map(select(.ident == "uppy"))[0].newVersion' < releases.json)" > commitMessage
+          echo "Release: uppy@$(jq -r 'map(select(.ident == "uppy"))[0].newVersion' < releases.json)" > commitMessage
           echo >> commitMessage
           echo "This is a release candidate for the following packages:" >> commitMessage
           echo >> commitMessage
@@ -58,7 +58,7 @@ jobs:
           gh api repos/${{ github.repository }}/pulls \
             -F base="$(gh api /repos/${{ github.repository }} | jq -r .default_branch)" \
             -F head="release-candidate" \
-            -F title="Release: uppy@$(jq -r 'map(select(.ident == "uppy"))[0].newVersion' < releases.json)" \
+            -F title="$(head -1 commitMessage)" \
             -F body="$(git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1) == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print substr($0,2) } }')" \
             --jq '.number | tostring | "##[set-output name=pr_number;]"+.'
         env:

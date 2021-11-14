@@ -10,7 +10,7 @@ const PACKAGES_FOLDER = new URL('./packages/', ROOT)
 const releasedDate = new Date().toISOString().slice(0, 10)
 
 const releases = JSON.parse(
-  await fs.readFile(new URL(process.argv[2], ROOT), 'utf-8')
+  await fs.readFile(new URL(process.argv[2], ROOT), 'utf-8'),
 )
 const uppyRelease = releases.find(({ ident }) => ident === 'uppy')
 
@@ -21,11 +21,18 @@ const changelogContent = await changelog.readFile()
 const mostRecentReleaseHeading = changelogContent.indexOf('\n## ')
 
 function* makeTable (versions) {
+  const pkgNameMaxLength = Math.max('Package'.length, ...versions.map(pkg => pkg.ident.length))
+  const pkgVersionMaxLength = Math.max('Version'.length, ...versions.map(pkg => pkg.ident.length))
+  const makeRow = (...cells) => `| ${cells.map((cell, i) => cell[i % 2 ? 'padStart' : 'padEnd'](i % 2 ? pkgVersionMaxLength : pkgNameMaxLength)).join(' | ')} |`
+
+  yield makeRow('Package', 'Version', 'Package', 'Version')
+  yield makeRow(...Array.from({ length:4 }, (_, i) => '-'.repeat(i % 2 ? pkgVersionMaxLength : pkgNameMaxLength)))
+
   const mid = Math.ceil(versions.length / 2)
   for (let i = 0; i < mid; i++) {
-    const left = versions[i] || { ident: '-', newVersion: '-' }
-    const right = versions[i + mid] || { ident: '-', newVersion: '-' }
-    yield `| ${left.ident} | ${left.newVersion} | ${right.ident} | ${right.newVersion} |`
+    const left = versions[i] || { ident: '', newVersion: '' }
+    const right = versions[i + mid] || { ident: '', newVersion: '' }
+    yield makeRow(left.ident, left.newVersion, right.ident, right.newVersion)
   }
 }
 
@@ -44,8 +51,8 @@ async function updateSubPackageChangelog (pkg, lines, subsetOfLines) {
   const { newVersion } = packageReleaseInfo
   const url = new URL(`./${pkg}/CHANGELOG.md`, PACKAGES_FOLDER)
   const heading = Buffer.from(`# ${pkg}\n`)
-  let fh,
-    oldContent
+  let fh
+  let oldContent
   try {
     fh = await fs.open(url, 'r+') // this will throw if the file doesn't exist
     oldContent = await fh.readFile()
@@ -89,8 +96,6 @@ await changelog.write(`
 
 Released: ${releasedDate}
 
-| Package | Version | Package | Version |
-| - | - | - | - |
 ${Array.from(makeTable(releases)).join('\n')}
 
 ${lines.join('\n')}
@@ -101,5 +106,5 @@ await changelog.close()
 
 await Promise.all(
   Object.entries(subPackagesChangelogs)
-    .map(([pkg, subsetOfLines]) => updateSubPackageChangelog(pkg, lines, subsetOfLines))
+    .map(([pkg, subsetOfLines]) => updateSubPackageChangelog(pkg, lines, subsetOfLines)),
 )
