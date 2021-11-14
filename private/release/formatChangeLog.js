@@ -19,7 +19,7 @@ async function inferPackageForCommit (sha, spawnOptions) {
   return {
     inferredPackages: Number.isFinite(maxVal)
       ? Object.entries(candidates).flatMap(
-        ([pkg, nbOfFiles]) => (nbOfFiles === maxVal || nbOfFiles === maxVal - 1 ? [pkg] : [])
+        ([pkg, nbOfFiles]) => (nbOfFiles === maxVal || nbOfFiles === maxVal - 1 ? [pkg] : []),
       ).join(',')
       : 'meta',
     candidates,
@@ -29,7 +29,7 @@ async function inferPackageForCommit (sha, spawnOptions) {
 export default async function formatChangeLog (
   spawnOptions,
   LAST_RELEASE_COMMIT,
-  changeLogUrl
+  changeLogUrl,
 ) {
   const changeLogCommits = createWriteStream(changeLogUrl)
 
@@ -51,7 +51,7 @@ export default async function formatChangeLog (
 
     if (!packageName) {
       console.log(
-        `No package info found in commit title: ${sha} (https://github.com/transloadit/uppy/commit/${sha})`
+        `No package info found in commit title: ${sha} (https://github.com/transloadit/uppy/commit/${sha})`,
       )
       console.log(log)
       const { inferredPackages, candidates } = await inferPackageForCommit(sha, spawnOptions)
@@ -83,7 +83,7 @@ export default async function formatChangeLog (
     }
 
     changeLogCommits.write(
-      `- ${formattedCommitTitle.packageName}: ${formattedCommitTitle.title} (${formattedCommitTitle.authorInfo})\n`
+      `- ${formattedCommitTitle.packageName}: ${formattedCommitTitle.title} (${formattedCommitTitle.authorInfo})\n`,
     )
   }
 
