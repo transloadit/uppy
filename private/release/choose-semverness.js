@@ -1,9 +1,17 @@
 /* eslint-disable no-continue */
 
-import { createWriteStream, mkdirSync } from 'node:fs'
+import { createWriteStream, mkdirSync, readFileSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 
 import prompts from 'prompts'
+
+const ROOT = new  URL('../../', import.meta.url)
+const PACKAGES_FOLDER = new URL('./packages/', ROOT)
+
+function getRobodogDependencies () {
+  const { dependencies } = JSON.parse(readFileSync(new URL('./@uppy/robodog/package.json', PACKAGES_FOLDER)))
+  return Object.keys(dependencies)
+}
 
 function maxSemverness (a, b) {
   if (a === 'major' || b === 'major') return 'major'
@@ -19,17 +27,20 @@ export default async function pickSemverness (
   spawnOptions,
   LAST_RELEASE_COMMIT,
   releaseFileUrl,
-  packagesList
+  packagesList,
 ) {
   mkdirSync(new URL('.', releaseFileUrl), { recursive: true })
   const releaseFile = createWriteStream(releaseFileUrl)
   releaseFile.write('releases:\n')
 
   let uppySemverness
+  let robodogSemverness
+  const robodogDeps = getRobodogDependencies()
 
   for await (const workspaceInfo of packagesList) {
     const { location, name } = JSON.parse(workspaceInfo)
     if (!name.startsWith('@uppy/')) continue
+    if (name === '@uppy/robodog') continue
 
     const { stdout } = spawnSync(
       'git',
@@ -41,24 +52,19 @@ export default async function pickSemverness (
         '--',
         location,
       ],
-      spawnOptions
+      spawnOptions,
     )
     if (stdout.length === 0) {
-      if (name === '@uppy/robodog') {
-        console.log('No commits for robodog, releasing a patch release to update CDN bundle.')
-        releaseFile.write(`  ${JSON.stringify(name)}: patch\n`)
-      } else {
-        console.log(`No commits since last release for ${name}, skipping.`)
-      }
+      console.log(`No commits since last release for ${name}, skipping.`)
       continue
     }
     console.log(
-      `Here are the commits that landed on ${name} since previous release:\n\n${stdout}\n`
+      `Here are the commits that landed on ${name} since previous release:\n\n${stdout}\n`,
     )
     console.log(
       `Check the web UI at https://github.com/transloadit/uppy/tree/main/${encodeURI(
-        location
-      )}.`
+        location,
+      )}.`,
     )
 
     const response = await prompts({
@@ -82,9 +88,62 @@ export default async function pickSemverness (
 
     releaseFile.write(`  ${JSON.stringify(name)}: ${response.value}\n`)
     uppySemverness = maxSemverness(uppySemverness, response.value)
+    if (robodogDeps.includes(name)) {
+      robodogSemverness = maxSemverness(robodogSemverness, response.value)
+    }
   }
 
   if (uppySemverness == null) throw new Error('No package to release, aborting.')
+
+  {
+    // Robodog
+    const location = 'packages/@uppy/robodog'
+    const { stdout } = spawnSync(
+      'git',
+      [
+        '--no-pager',
+        'log',
+        '--format=- %s',
+        `${LAST_RELEASE_COMMIT}..`,
+        '--',
+        location,
+      ],
+      spawnOptions,
+    )
+    if (stdout.length === 0) {
+      if (robodogSemverness == null) {
+        console.log(`No commits since last release for @uppy/robodog, skipping.`)
+      } else {
+        console.log(`No commits since last release for @uppy/robodog, releasing as ${robodogSemverness}.`)
+        releaseFile.write(`  "@uppy/robodog": ${robodogSemverness}\n`)
+      }
+    } else {
+      console.log(
+        `Here are the commits that landed on @uppy/robodog since previous release:\n\n${stdout}\n`,
+      )
+      console.log(
+        `Check the web UI at https://github.com/transloadit/uppy/tree/main/${encodeURI(
+          location,
+        )}.`,
+      )
+
+      const response = await prompts({
+        type: 'select',
+        name: 'value',
+        message: `What should be the semverness of next @uppy/robodog release?`,
+        choices: [
+          { title: 'Pre-release', value: 'prerelease' },
+          { title: 'Skip this package', value: '', disabled: robodogSemverness != null },
+          { title: 'Patch', value: 'patch', disabled: robodogSemverness === 'minor' || robodogSemverness === 'major' },
+          { title: 'Minor', value: 'minor', disabled: robodogSemverness === 'major' },
+          { title: 'Major', value: 'major' },
+        ],
+        initial: 2,
+      })
+
+      releaseFile.write(`  "@uppy/robodog": ${response.value}\n`)
+    }
+  }
 
   releaseFile.write(`  "uppy": ${uppySemverness}\n`)
   releaseFile.close()
