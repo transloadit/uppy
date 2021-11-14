@@ -32,6 +32,8 @@ jobs:
         run: corepack yarn run build
       - name: Publish to NPM
         run: corepack yarn workspaces foreach --no-private npm publish --access public --tolerate-republish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Merge PR
         id: merge
         run: |
@@ -69,12 +71,17 @@ jobs:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload `@uppy/robodog` to CDN
-        run: corepack yarn run uploadcdn @uppy/robodog
+        run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/robodog/package.json || corepack yarn run uploadcdn @uppy/robodog
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload `@uppy/locales` to CDN
-        run: corepack yarn run uploadcdn @uppy/locales
+        run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/locales/package.json ||corepack yarn run uploadcdn @uppy/locales
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+      - name: In case of failure
+        if: ${{ failure() }}
+        run: gh pr comment ${{ github.event.pull_request.number }} --body "Release job failed, please take action."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
