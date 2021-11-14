@@ -22,6 +22,13 @@ function get (req, res, next) {
       return res.status(400).json({ message: 'unable to determine file size' })
     }
 
+    const { maxFileSize } = req.companion.options
+    if (maxFileSize != null && size > maxFileSize) {
+      logger.error('File is too big', 'controller.get.provider.size', req.id)
+      res.status(400).json({ message: 'File is too big' })
+      return
+    }
+
     logger.debug('Instantiating uploader.', null, req.id)
     const uploader = new Uploader(Uploader.reqToOptions(req, size))
 

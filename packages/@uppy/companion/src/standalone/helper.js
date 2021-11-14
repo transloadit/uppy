@@ -103,6 +103,7 @@ const getConfigFromEnv = () => {
     // it is not documented, because it should be changed soon.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
     multipleInstances: true,
+    maxFileSize: process.env.COMPANION_MAX_FILE_SIZE ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10) : undefined,
   }
 }
 
