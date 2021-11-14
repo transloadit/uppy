@@ -40,10 +40,6 @@ jobs:
             --jq 'if .merged then "##[set-output name=sha;]"+.sha else error("not merged") end'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: echo "${{ steps.merge.outputs.sha }}"
-      - name: Abort if PR merging failed
-        if: ${{ steps.merge.outputs.sha == '' }}
-        run: exit 1
       - name: Create tags
         run: |
           git --no-pager diff --name-only HEAD^ | awk '$0 ~ /^packages\/.+\/package\.json$/ { print "jq -r '"'"'\"gh api /repos/{owner}/{repo}/git/refs -f ref=\\\"refs/tags/\"+.name+\"@\"+.version+\"\\\" -f sha=${{ steps.merge.outputs.sha }}\"'"'"' < " $0 }' > createTags.sh
@@ -52,7 +48,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Remove release-candidate branch
-        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/${{ github.ref }}
+        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-candidate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Remove release branch
+        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get Uppy version number
         id: uppyVersion
         run: jq -r '"##[set-output name=version;]"+.version' < packages/uppy/package.json
