@@ -6,7 +6,7 @@ import { TARGET_BRANCH, REPO_NAME, REPO_OWNER } from './config.js'
 
 async function apiCall (endpoint, errorMessage) {
   const response = await fetch(
-    `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}${endpoint}`
+    `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}${endpoint}`,
   )
   if (response.ok) {
     return response.json()
@@ -19,7 +19,7 @@ export async function getRemoteHEAD () {
   return (
     await apiCall(
       `/git/ref/heads/${TARGET_BRANCH}`,
-      'Cannot get remote HEAD, check your internet connection.'
+      'Cannot get remote HEAD, check your internet connection.',
     )
   ).object.sha
 }
@@ -27,40 +27,54 @@ export async function getRemoteHEAD () {
 async function getLatestReleaseSHA () {
   const { tag_name } = await apiCall(
     `/releases/latest`,
-    'Cannot get latest release from GitHub, check your internet connection.'
+    'Cannot get latest release from GitHub, check your internet connection.',
   )
   return (
     await apiCall(
       `/git/ref/tags/${encodeURIComponent(tag_name)}`,
-      `Failed to fetch information for release ${JSON.stringify(tag_name)}`
+      `Failed to fetch information for release ${JSON.stringify(tag_name)}`,
     )
   ).object.sha
 }
 
-export default async function validateGitStatus (spawnOptions) {
+async function getLocalHEAD () {
+  return spawnSync('git', ['rev-parse', 'HEAD']).stdout.toString().trim()
+}
+
+export function rewindGitHistory (spawnOptions, sha) {
+  return spawnSync('git', ['reset', sha, '--hard'], spawnOptions).status === 0
+}
+
+export async function validateGitStatus (spawnOptions) {
   const latestRelease = getLatestReleaseSHA() // run in parallel to speed things up
-  const HEAD = await getRemoteHEAD()
+  const [REMOTE_HEAD, LOCAL_HEAD] = await Promise.all([getRemoteHEAD(), getLocalHEAD()])
 
   const { status, stderr } = spawnSync(
     'git',
-    ['diff', '--exit-code', '--quiet', HEAD, '--', '.'],
-    spawnOptions
+    ['diff', '--exit-code', '--quiet', REMOTE_HEAD, '--', '.'],
+    spawnOptions,
   )
   if (status !== 0) {
     console.error(stderr.toString())
     console.log(
-      `git repository is not clean and/or not in sync with ${REPO_OWNER}/${REPO_NAME}`
+      `git repository is not clean and/or not in sync with ${REPO_OWNER}/${REPO_NAME}`,
     )
-    const { value } = await prompts({
-      type: 'confirm',
-      name: 'value',
-      message:
-        'Do you want to hard reset your local repository (all uncommitted changes will be lost)?',
-    })
-    if (!value) {
-      throw new Error(
-        'Please ensure manually that your local repository is clean and up to date.'
-      )
+    if (spawnSync(
+      'git',
+      ['diff', '--exit-code', '--quiet', LOCAL_HEAD, '--', '.'],
+      spawnOptions,
+    ).status !== 0) {
+      const { value } = await prompts({
+        type: 'confirm',
+        name: 'value',
+        message:
+          'Do you want to hard reset your local repository (all uncommitted changes will be lost)?',
+      })
+      if (!value) {
+        throw new Error(
+          'Please ensure manually that your local repository is clean and up to date.',
+        )
+      }
     }
 
     if (stderr.indexOf('bad object') !== -1) {
@@ -72,7 +86,7 @@ export default async function validateGitStatus (spawnOptions) {
           `https://github.com/${REPO_OWNER}/${REPO_NAME}.git`,
           TARGET_BRANCH,
         ],
-        spawnOptions
+        spawnOptions,
       )
 
       if (status) {
@@ -82,12 +96,12 @@ export default async function validateGitStatus (spawnOptions) {
       }
     }
 
-    if (spawnSync('git', ['reset', HEAD, '--hard'], spawnOptions).status) {
+    if (!rewindGitHistory(spawnOptions, REMOTE_HEAD)) {
       throw new Error(
-        'Failed to reset, please ensure manually that your local repository is clean and up to date.'
+        'Failed to reset, please ensure manually that your local repository is clean and up to date.',
       )
     }
   }
 
-  return latestRelease
+  return [latestRelease, LOCAL_HEAD]
 }

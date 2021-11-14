@@ -14,7 +14,8 @@ export default async function commit (spawnOptions, ...files) {
   })
 
   spawnSync('git', ['add', ...files.map(url => fileURLToPath(url))], spawnOptions)
-  spawnSync('git', ['commit', '-n', '-m', 'Prepare next release'], spawnOptions)
+  spawnSync('git', ['commit', '-n', '-m', 'Prepare next release'], { ...spawnOptions, stdio: 'inherit' })
+  const sha = spawnSync('git', ['rev-parse', 'HEAD'], spawnOptions).stdout.toString().trim()
 
-  console.log('Please run `git push upstream HEAD:release -f`')
+  console.log(`Please run \`git push upstream ${sha}:release\`.`)
 }
