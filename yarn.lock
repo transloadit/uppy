@@ -25639,15 +25639,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"last-commit-message@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "last-commit-message@npm:1.0.0"
-  dependencies:
-    simple-concat: ^1.0.0
-  checksum: d07c40fd071941a68c76d245f48e478d2d5a616466617699df18e872a6f622e3945ee618f10583bb6bf472f7c39e43887b9b84225a277dfa0cf7885293e1548c
-  languageName: node
-  linkType: hard
-
 "latest-version@npm:^5.1.0":
   version: 5.1.0
   resolution: "latest-version@npm:5.1.0"
@@ -41165,7 +41156,6 @@ typescript@4.3.4:
     glob: ^7.1.6
     isomorphic-fetch: ^3.0.0
     jest: ^27.0.6
-    last-commit-message: ^1.0.0
     lint-staged: ^11.0.0
     mime-types: ^2.1.26
     minify-stream: ^2.0.1

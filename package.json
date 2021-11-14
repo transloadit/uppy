@@ -87,7 +87,6 @@
     "glob": "^7.1.6",
     "isomorphic-fetch": "^3.0.0",
     "jest": "^27.0.6",
-    "last-commit-message": "^1.0.0",
     "lint-staged": "^11.0.0",
     "mime-types": "^2.1.26",
     "minify-stream": "^2.0.1",
