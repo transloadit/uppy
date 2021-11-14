@@ -29,6 +29,7 @@ async function getLatestReleaseSHA () {
     `/releases/latest`,
     'Cannot get latest release from GitHub, check your internet connection.',
   )
+  console.log(`Last release was ${tag_name}.`)
   return (
     await apiCall(
       `/git/ref/tags/${encodeURIComponent(tag_name)}`,
@@ -103,5 +104,5 @@ export async function validateGitStatus (spawnOptions) {
     }
   }
 
-  return [latestRelease, LOCAL_HEAD]
+  return [await latestRelease, LOCAL_HEAD]
 }
