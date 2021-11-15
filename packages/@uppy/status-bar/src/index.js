@@ -101,7 +101,7 @@ module.exports = class StatusBar extends UIPlugin {
     return StatusBarUI({
       error,
       uploadState: getUploadingState(
-        isAllErrored,
+        error,
         isAllComplete,
         recoveredState,
         state.files || {},
@@ -180,8 +180,8 @@ function getTotalETA (files) {
   return Math.round((totalBytesRemaining / totalSpeed) * 10) / 10
 }
 
-function getUploadingState (isAllErrored, isAllComplete, recoveredState, files) {
-  if (isAllErrored) {
+function getUploadingState (error, isAllComplete, recoveredState, files) {
+  if (error && !isAllComplete) {
     return statusBarStates.STATE_ERROR
   }
 

@@ -77,7 +77,7 @@ const ErrorButton = ({ file, onClick }) => {
   if (file.error) {
     return (
       <button
-        className="uppy-Dashboard-Item-errorDetails"
+        className="uppy-u-reset uppy-Dashboard-Item-errorDetails"
         aria-label={file.error}
         data-microtip-position="bottom"
         data-microtip-size="medium"
@@ -92,21 +92,24 @@ const ErrorButton = ({ file, onClick }) => {
 }
 
 module.exports = function FileInfo (props) {
+  const { file } = props
   return (
     <div
       className="uppy-Dashboard-Item-fileInfo"
-      data-uppy-file-source={props.file.source}
+      data-uppy-file-source={file.source}
     >
-      {renderFileName(props)}
-      <div className="uppy-Dashboard-Item-status">
-        {renderAuthor(props)}
-        {renderFileSize(props)}
-        {ReSelectButton(props)}
+      <div className="uppy-Dashboard-Item-fileName">
+        {renderFileName(props)}
         <ErrorButton
           file={props.file}
           // eslint-disable-next-line no-alert
           onClick={() => alert(props.file.error)} // TODO: move to a custom alert implementation
         />
+      </div>
+      <div className="uppy-Dashboard-Item-status">
+        {renderAuthor(props)}
+        {renderFileSize(props)}
+        {ReSelectButton(props)}
       </div>
       <MetaErrorMessage
         file={props.file}
