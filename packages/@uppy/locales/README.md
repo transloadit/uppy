@@ -7,7 +7,7 @@
 ![CI status for Companion tests](https://github.com/transloadit/uppy/workflows/Companion/badge.svg)
 ![CI status for browser tests](https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg)
 
-This package includes all the locale packs that you can use to make Uppy speak your language! If your language is missing, please consider [contributing](https://github.com/transloadit/uppy/tree/master/packages/%40uppy/locales/src), starting with `en_US`, which is always up-to-date automatically.
+This package includes all the locale packs that you can use to make Uppy speak your language! If your language is missing, please consider [contributing](https://github.com/transloadit/uppy/tree/main/packages/%40uppy/locales/src), starting with `en_US`, which is always up-to-date automatically.
 
 ## Installation
 
