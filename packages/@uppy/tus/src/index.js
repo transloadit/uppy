@@ -349,11 +349,9 @@ module.exports = class Tus extends BasePlugin {
 
   /**
    * @param {UppyFile} file for use with upload
-   * @param {number} current file in a queue
-   * @param {number} total number of files in a queue
    * @returns {Promise<void>}
    */
-  uploadRemote (file) {
+  async uploadRemote (file) {
     this.resetUploaderReferences(file.id)
 
     const opts = { ...this.opts }
@@ -366,15 +364,15 @@ module.exports = class Tus extends BasePlugin {
     this.uppy.log(file.remote.url)
 
     if (file.serverToken) {
-      return this.connectToServerSocket(file)
+      await this.connectToServerSocket(file)
+      return
     }
 
-    return new Promise((resolve, reject) => {
-      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-      const client = new Client(this.uppy, file.remote.providerOptions)
+    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+    const client = new Client(this.uppy, file.remote.providerOptions)
 
-      // !! cancellation is NOT supported at this stage yet
-      client.post(file.remote.url, {
+    try {
+      const response = await client.post(file.remote.url, {
         ...file.remote.body,
         endpoint: opts.endpoint,
         uploadUrl: opts.uploadUrl,
@@ -382,17 +380,13 @@ module.exports = class Tus extends BasePlugin {
         size: file.data.size,
         headers: opts.headers,
         metadata: file.meta,
-      }).then((res) => {
-        this.uppy.setFileState(file.id, { serverToken: res.token })
-        file = this.uppy.getFile(file.id)
-        return this.connectToServerSocket(file)
-      }).then(() => {
-        resolve()
-      }).catch((err) => {
-        this.uppy.emit('upload-error', file, err)
-        reject(err)
       })
-    })
+
+      this.uppy.setFileState(file.id, { serverToken: response.token })
+      await this.connectToServerSocket(this.uppy.getFile(file.id))
+    } catch (err) {
+      this.uppy.emit('upload-error', this.uppy.getFile(file.id), err)
+    }
   }
 
   /**
