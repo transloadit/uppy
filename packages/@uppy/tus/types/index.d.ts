@@ -15,7 +15,6 @@ import type { UploadOptions } from 'tus-js-client'
 export interface TusOptions extends PluginOptions, TusUploadOptions {
     metaFields?: string[] | null
     limit?: number
-    useFastRemoteRetry?: boolean
     withCredentials?: boolean
   }
 
