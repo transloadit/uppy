@@ -91,7 +91,7 @@ module.exports = class ImageEditor extends UIPlugin {
 
     const { currentImage } = this.getPluginState()
 
-    this.cropper.getCroppedCanvas().toBlob(
+    this.cropper.getCroppedCanvas(this.opts.cropperOptions.croppedCanvasOptions).toBlob(
       saveBlobCallback,
       currentImage.type,
       this.opts.quality,
