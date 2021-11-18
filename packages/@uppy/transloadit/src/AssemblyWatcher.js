@@ -41,7 +41,7 @@ class TransloaditAssemblyWatcher extends Emitter {
     return this.#assemblyIDs.indexOf(id) !== -1
   }
 
-  #onAssemblyComplete =(assembly) => {
+  #onAssemblyComplete = (assembly) => {
     if (!this.#watching(assembly.assembly_id)) {
       return
     }
@@ -53,7 +53,7 @@ class TransloaditAssemblyWatcher extends Emitter {
     this.#checkAllComplete()
   }
 
-  #onAssemblyCancel =(assembly) => {
+  #onAssemblyCancel = (assembly) => {
     if (!this.#watching(assembly.assembly_id)) {
       return
     }
@@ -61,7 +61,7 @@ class TransloaditAssemblyWatcher extends Emitter {
     this.#checkAllComplete()
   }
 
-  #onAssemblyError =(assembly, error) => {
+  #onAssemblyError = (assembly, error) => {
     if (!this.#watching(assembly.assembly_id)) {
       return
     }
@@ -74,7 +74,7 @@ class TransloaditAssemblyWatcher extends Emitter {
     this.#checkAllComplete()
   }
 
-  #onImportError =(assembly, fileID, error) => {
+  #onImportError = (assembly, fileID, error) => {
     if (!this.#watching(assembly.assembly_id)) {
       return
     }

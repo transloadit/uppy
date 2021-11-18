@@ -6,7 +6,7 @@ const ignoreEvent = require('../../utils/ignoreEvent.js')
 const FilePreview = require('../FilePreview')
 
 class FileCard extends Component {
-  form = document.createElement('form');
+  form = document.createElement('form')
 
   constructor (props) {
     super(props)
