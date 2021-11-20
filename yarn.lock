@@ -7034,23 +7034,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/eslint@npm:*":
+"@types/eslint@npm:*, @types/eslint@npm:^8.2.0":
   version: 8.2.0
   resolution: "@types/eslint@npm:8.2.0"
   dependencies:
     "@types/estree": "*"
     "@types/json-schema": "*"
   checksum: 18f37790afc57412c74c9a0ef9a8cc44c1237a3f3d70e3e4e3daad38ed501f1a70395ff3955d3e4b481a5d04e6819ad2c377cd287c7315b3b633f0f1bda7b4a2
-  languageName: node
-  linkType: hard
-
-"@types/eslint@npm:^7.2.13, @types/eslint@npm:^7.2.14":
-  version: 7.29.0
-  resolution: "@types/eslint@npm:7.29.0"
-  dependencies:
-    "@types/estree": "*"
-    "@types/json-schema": "*"
-  checksum: df13991c554954353ce8f3bb03e19da6cc71916889443d68d178d4f858b561ba4cc4a4f291c6eb9eebb7f864b12b9b9313051b3a8dfea3e513dadf3188a77bdf
   languageName: node
   linkType: hard
 
@@ -8657,7 +8647,7 @@ __metadata:
     "@types/connect-redis": 0.0.7
     "@types/cookie-parser": 1.4.2
     "@types/cors": 2.8.6
-    "@types/eslint": ^7.2.14
+    "@types/eslint": ^8.2.0
     "@types/express-session": 1.17.3
     "@types/jsonwebtoken": 8.3.7
     "@types/lodash.merge": 4.6.6
