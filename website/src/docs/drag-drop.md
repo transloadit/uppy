@@ -39,7 +39,7 @@ const { DragDrop } = Uppy
 
 ## CSS
 
-The `@uppy/drag-drop` plugin includes some basi c styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead.
+The `@uppy/drag-drop` plugin includes some basic styles, like shown in the [example](/examples/dragdrop). You can also choose not to use it and provide your own styles instead.
 
 ```js
 import '@uppy/core/dist/style.css'

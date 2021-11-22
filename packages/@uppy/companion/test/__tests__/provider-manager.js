@@ -125,7 +125,7 @@ describe('Test Provider options', () => {
     expect(grantConfig.zoom.secret).toBeUndefined()
   })
 
-  test('sets a master redirect uri, if oauthDomain is set', () => {
+  test('sets a main redirect uri, if oauthDomain is set', () => {
     companionOptions.server.oauthDomain = 'domain.com'
     providerManager.addProviderOptions(companionOptions, grantConfig)
 

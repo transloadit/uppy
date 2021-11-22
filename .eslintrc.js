@@ -118,7 +118,7 @@ module.exports = {
 
     // jsdoc
     'jsdoc/check-alignment': 'error',
-    'jsdoc/check-examples': 'error',
+    'jsdoc/check-examples': 'off', // cannot yet be supported for ESLint 8, see https://github.com/eslint/eslint/issues/14745
     'jsdoc/check-param-names': ['warn'],
     'jsdoc/check-syntax': ['warn'],
     'jsdoc/check-tag-names': 'error',

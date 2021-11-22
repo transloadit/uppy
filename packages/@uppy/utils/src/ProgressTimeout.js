@@ -5,13 +5,13 @@
  * Call `timer.done()` when the upload has completed.
  */
 class ProgressTimeout {
-  #aliveTimer;
+  #aliveTimer
 
-  #isDone = false;
+  #isDone = false
 
-  #onTimedOut;
+  #onTimedOut
 
-  #timeout;
+  #timeout
 
   constructor (timeout, timeoutHandler) {
     this.#timeout = timeout

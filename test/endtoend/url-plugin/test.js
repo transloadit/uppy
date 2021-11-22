@@ -12,7 +12,7 @@ describe('File upload with URL plugin', () => {
     // import set url value
     const urlInput = await browser.$('input.uppy-Url-input')
     await urlInput.waitForDisplayed(3000)
-    await urlInput.setValue('https://github.com/transloadit/uppy/raw/master/assets/palette.png')
+    await urlInput.setValue('https://github.com/transloadit/uppy/raw/main/assets/palette.png')
     const importButton = await browser.$('button.uppy-Url-importButton')
     await importButton.click()
 

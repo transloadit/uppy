@@ -2,7 +2,7 @@
 
 <img src="http://uppy.io/images/logos/uppy-dog-full.svg" width="120" alt="Uppy logo — a superman puppy in a pink suit" align="right">
 
-[![Build Status](https://travis-ci.org/transloadit/uppy.svg?branch=master)](https://travis-ci.org/transloadit/uppy)
+[![Build Status](https://travis-ci.org/transloadit/uppy.svg?branch=main)](https://travis-ci.org/transloadit/uppy)
 
 Companion is a server integration for [Uppy](https://github.com/transloadit/uppy) file uploader.
 

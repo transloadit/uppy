@@ -273,7 +273,7 @@ module.exports = class Transloadit extends BasePlugin {
    * Used when `importFromUploadURLs` is enabled: adds files to the Assembly
    * once they have been fully uploaded.
    */
-  #onFileUploadURLAvailable =(rawFile) => {
+  #onFileUploadURLAvailable = (rawFile) => {
     const file = this.uppy.getFile(rawFile.id)
     if (!file || !file.transloadit || !file.transloadit.assembly) {
       return
@@ -386,7 +386,7 @@ module.exports = class Transloadit extends BasePlugin {
   /**
    * When all files are removed, cancel in-progress Assemblies.
    */
-  #onCancelAll =() => {
+  #onCancelAll = () => {
     const { uploadsAssemblies } = this.getPluginState()
 
     const assemblyIDs = Object.values(uploadsAssemblies).flat(1)
@@ -418,7 +418,7 @@ module.exports = class Transloadit extends BasePlugin {
     })
   }
 
-  #onRestored =(pluginData) => {
+  #onRestored = (pluginData) => {
     const savedState = pluginData && pluginData[this.id] ? pluginData[this.id] : {}
     const previousAssemblies = savedState.assemblies || {}
     const uploadsAssemblies = savedState.uploadsAssemblies || {}
@@ -626,7 +626,7 @@ module.exports = class Transloadit extends BasePlugin {
       })
   }
 
-  #afterUpload =(fileIDs, uploadID) => {
+  #afterUpload = (fileIDs, uploadID) => {
     const files = fileIDs.map(fileID => this.uppy.getFile(fileID))
     // Only use files without errors
     const filteredFileIDs = files.filter((file) => !file.error).map(file => file.id)
@@ -706,7 +706,7 @@ module.exports = class Transloadit extends BasePlugin {
       .catch(sendErrorToConsole(err))
   }
 
-  #onTusError =(err) => {
+  #onTusError = (err) => {
     if (err && /^tus: /.test(err.message)) {
       const xhr = err.originalRequest ? err.originalRequest.getUnderlyingObject() : null
       const url = xhr && xhr.responseURL ? xhr.responseURL : null
