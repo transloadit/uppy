@@ -4,7 +4,7 @@ on:
     branches: release
 
 jobs:
-  release:
+  prepare-release:
     name: Prepare release candidate Pull Request
     runs-on: ubuntu-latest
     steps:
@@ -30,19 +30,19 @@ jobs:
           node-version: 16.x
       - name: Install dependencies
         run: corepack yarn install
-      - name: Prepare release
+      - name: Bump candidate packages version
         run: corepack yarn version apply --all --json | jq -s > releases.json
       - name: Prepare changelog
         run: corepack yarn workspace @uppy-build/release update-changelogs releases.json | xargs git add
       - name: Update contributors table
         run: corepack yarn contributors:save && git add README.md
-      - name: Stage changes
+      - name: Update CDN URLs
+        run: corepack yarn workspace @uppy-build/release update-version-URLs | xargs git add
+      - name: Stage changes and remove temp files
         run: |
           git rm -rf .yarn/versions
           git rm CHANGELOG.next.md
           jq -r 'map(.cwd) | join("\n")' < releases.json | awk '{ print "git add " $0 "/package.json" }' | sh
-      - name: Update CDN URLs
-        run: corepack yarn workspace @uppy-build/release update-version-URLs | xargs git add
       - name: Commit
         run: |
           echo "Release: uppy@$(jq -r 'map(select(.ident == "uppy"))[0].newVersion' < releases.json)" > commitMessage

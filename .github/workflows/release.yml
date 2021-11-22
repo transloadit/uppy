@@ -6,7 +6,7 @@ on:
 jobs:
   release:
     name: Publish releases
-    if: ${{ github.event.review.state == 'approved' && github.event.sender.login == github.event.pull_request.assignee.login && github.event.pull_request.head.ref == "release-candidate" }}
+    if: ${{ github.event.review.state == 'approved' && github.event.sender.login == github.event.pull_request.assignee.login && github.event.pull_request.head.ref == 'release-candidate' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -49,14 +49,6 @@ jobs:
           sh createTags.sh | sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Remove release-candidate branch
-        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-candidate
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Remove release branch
-        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get Uppy version number
         id: uppyVersion
         run: jq -r '"##[set-output name=version;]"+.version' < packages/uppy/package.json
@@ -69,16 +61,25 @@ jobs:
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
-      - name: Upload `@uppy/robodog` to CDN
+      - name: Upload `@uppy/robodog` to CDN if it was released
         run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/robodog/package.json || corepack yarn run uploadcdn @uppy/robodog
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
-      - name: Upload `@uppy/locales` to CDN
+      - name: Upload `@uppy/locales` to CDN if it was released
+        if: false
         run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/locales/package.json ||corepack yarn run uploadcdn @uppy/locales
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+      - name: Remove release-candidate branch
+        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-candidate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Remove release branch
+        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Disable Release workflow
         run: gh workflow disable Release --repo ${{ github.repository }}
         env:
