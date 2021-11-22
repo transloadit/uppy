@@ -3,7 +3,7 @@ const { h, Component, createRef } = require('preact')
 const TRANSITION_MS = 300
 
 module.exports = class FadeIn extends Component {
-  ref = createRef();
+  ref = createRef()
 
   componentWillEnter (callback) {
     this.ref.current.style.opacity = '1'

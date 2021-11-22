@@ -1,7 +1,7 @@
 const { h, Fragment } = require('preact')
 const prettierBytes = require('@transloadit/prettier-bytes')
-const MetaErrorMessage = require('../MetaErrorMessage')
 const truncateString = require('@uppy/utils/lib/truncateString')
+const MetaErrorMessage = require('../MetaErrorMessage')
 
 const renderFileName = (props) => {
   const { author, name } = props.file.meta

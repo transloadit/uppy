@@ -72,7 +72,7 @@ module.exports = class UppySocket {
     this.#emitter.once(action, handler)
   }
 
-  #handleMessage= (e) => {
+  #handleMessage = (e) => {
     try {
       const message = JSON.parse(e.data)
       this.emit(message.action, message.payload)

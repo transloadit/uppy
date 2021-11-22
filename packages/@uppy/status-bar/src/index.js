@@ -13,7 +13,7 @@ const locale = require('./locale.js')
  */
 module.exports = class StatusBar extends UIPlugin {
   // eslint-disable-next-line global-require
-  static VERSION = require('../package.json').version;
+  static VERSION = require('../package.json').version
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -54,7 +54,7 @@ module.exports = class StatusBar extends UIPlugin {
     return this.uppy.upload().catch(() => {
       // Error logged in Core
     })
-  };
+  }
 
   render (state) {
     const {
