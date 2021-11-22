@@ -34,7 +34,8 @@
     "packages/uppy",
     "private/*",
     "test/endtoend",
-    "website"
+    "website",
+    "cypress"
   ],
   "devDependencies": {
     "@babel/cli": "^7.14.5",
