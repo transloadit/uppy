@@ -1,13 +1,12 @@
 name: Release
 on:
   pull_request_review:
-    branches: [release-candidate]
     types: [submitted]
 
 jobs:
   release:
     name: Publish releases
-    if: ${{ github.event.review.state == 'approved' && github.event.sender.login == github.event.pull_request.assignee.login }}
+    if: ${{ github.event.review.state == 'approved' && github.event.sender.login == github.event.pull_request.assignee.login && github.event.pull_request.head.ref == "release-candidate" }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -80,6 +79,10 @@ jobs:
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+      - name: Disable Release workflow
+        run: gh workflow disable Release --repo ${{ github.repository }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: In case of failure
         if: ${{ failure() }}
         run: gh pr comment ${{ github.event.pull_request.number }} --body "Release job failed, please take action."

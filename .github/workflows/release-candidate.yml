@@ -67,3 +67,7 @@ jobs:
         run: echo '{"assignees":[${{ toJSON(github.actor) }}]}' | gh api repos/${{ github.repository }}/issues/${{ steps.pr_opening.outputs.pr_number }}/assignees --input -
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Enable Release workflow
+        run: gh workflow enable Release --repo ${{ github.repository }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
