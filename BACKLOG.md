@@ -26,7 +26,8 @@ To be released: 2021-11-29
 - [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
 - [ ] compressor: move to Uppy repo, add resizing (@arturi)
 - [ ] providers: Box on hosted Companion
-- [ ] robodog: research simplifing Robodog — yes to easy “few lines of code Dashboard+Providers+(?Transloadit) experience”, but currently it’s hard to choose between modes, decide what you need (@
+- [ ] robodog: research simplifing Robodog — yes to easy “few lines of code Dashboard+Providers+(?Transloadit) experience”, but currently it’s hard to choose between modes, decide what you need (@Murderlon)
+- [ ] build: add release automations (@aduh95)
 
 ## Unplanned
 
