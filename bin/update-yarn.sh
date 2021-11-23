@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+
+# This script is meant to be run on a dev's machine to update the version on
+# Yarn used by the monorepo. Its goal is to make sure that every mention of Yarn
+# version is updated, and it re-installs the plugins to make sure those are
+# up-to-date as well.
+
 set -o pipefail
 set -o errexit
 set -o nounset
