@@ -1559,9 +1559,9 @@ class Uppy {
     const restoreStep = currentUpload.step || 0
 
     const steps = [
-      ...Array.from(this.#preProcessors),
-      ...Array.from(this.#uploaders),
-      ...Array.from(this.#postProcessors),
+      ...this.#preProcessors,
+      ...this.#uploaders,
+      ...this.#postProcessors,
     ]
     try {
       for (let step = restoreStep; step < steps.length; step++) {
