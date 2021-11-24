@@ -64,7 +64,7 @@ async function transpileDownForIE ([bundleFile, standalone]) {
 
     browserslistEnv: 'legacy',
     presets: [['@babel/preset-env',  {
-      loose: true,
+      loose: false,
       targets: { ie:11 },
       useBuiltIns: 'entry',
       corejs: { version: '3.15', proposals: true },
