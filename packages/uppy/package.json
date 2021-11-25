@@ -31,6 +31,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@uppy/audio": "workspace:^",
     "@uppy/aws-s3": "workspace:^",
     "@uppy/aws-s3-multipart": "workspace:^",
     "@uppy/box": "workspace:^",
@@ -62,8 +63,7 @@
     "@uppy/unsplash": "workspace:^",
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
-    "@uppy/xhr-upload": "workspace:^",
-    "@uppy/audio": "workspace:^"
+    "@uppy/xhr-upload": "workspace:^"
   },
   "devDependencies": {
     "abortcontroller-polyfill": "^1.7.3",

@@ -9066,6 +9066,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy/audio@workspace:^, @uppy/audio@workspace:packages/@uppy/audio":
+  version: 0.0.0-use.local
+  resolution: "@uppy/audio@workspace:packages/@uppy/audio"
+  dependencies:
+    "@uppy/utils": "workspace:^"
+    preact: ^10.5.15
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@uppy/aws-s3-multipart@workspace:^, @uppy/aws-s3-multipart@workspace:packages/@uppy/aws-s3-multipart":
   version: 0.0.0-use.local
   resolution: "@uppy/aws-s3-multipart@workspace:packages/@uppy/aws-s3-multipart"
@@ -34464,6 +34475,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
+"preact@npm:^10.5.15":
+  version: 10.6.1
+  resolution: "preact@npm:10.6.1"
+  checksum: 930fbf57d99da42762b342d934e000f5afe339cfd7e7418982799f37063b93ade171a179a626c9667d1ca80d4bcb669c166c9be10ba96eeb4983fe14d4604763
+  languageName: node
+  linkType: hard
+
 "prelude-ls@npm:^1.2.1":
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
@@ -42947,6 +42965,7 @@ typescript@4.3.4:
   version: 0.0.0-use.local
   resolution: "uppy@workspace:packages/uppy"
   dependencies:
+    "@uppy/audio": "workspace:^"
     "@uppy/aws-s3": "workspace:^"
     "@uppy/aws-s3-multipart": "workspace:^"
     "@uppy/box": "workspace:^"
