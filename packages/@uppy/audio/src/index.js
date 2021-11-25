@@ -1,36 +1,11 @@
 const { h } = require('preact')
-const { Plugin } = require('@uppy/core')
-const Translator = require('@uppy/utils/lib/Translator')
+const { UIPlugin } = require('@uppy/core')
 const getFileTypeExtension = require('@uppy/utils/lib/getFileTypeExtension')
-const mimeTypes = require('@uppy/utils/lib/mimeTypes')
 const supportsMediaRecorder = require('./supportsMediaRecorder')
-const CameraIcon = require('./CameraIcon')
-const CameraScreen = require('./CameraScreen')
+const RecordingScreen = require('./RecordingScreen')
 const PermissionsScreen = require('./PermissionsScreen')
+const locale = require('./locale.js')
 const packageJsonVersion = require('../package.json').version
-
-/**
- * Normalize a MIME type or file extension into a MIME type.
- *
- * @param {string} fileType - MIME type or a file extension prefixed with `.`.
- * @returns {string|undefined} The MIME type or `undefined` if the fileType is an extension and is not known.
- */
-function toMimeType (fileType) {
-  if (fileType[0] === '.') {
-    return mimeTypes[fileType.slice(1)]
-  }
-  return fileType
-}
-
-/**
- * Is this MIME type a video?
- *
- * @param {string} mimeType - MIME type.
- * @returns {boolean}
- */
-function isVideoMimeType (mimeType) {
-  return /^video\/[^*]+$/.test(mimeType)
-}
 
 /**
  * Setup getUserMedia, with polyfill for older browsers
@@ -57,9 +32,9 @@ function getMediaDevices () {
   }
 }
 /**
- * Webcam
+ * Audio
  */
-module.exports = class Audio extends Plugin {
+module.exports = class Audio extends UIPlugin {
   static VERSION = packageJsonVersion
 
   constructor (uppy, opts) {
@@ -69,7 +44,6 @@ module.exports = class Audio extends Plugin {
     // eslint-disable-next-line no-restricted-globals
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Audio'
-    this.title = this.opts.title || 'Audio'
     this.type = 'acquirer'
     this.capturedMediaFile = null
     this.icon = () => (
@@ -81,58 +55,32 @@ module.exports = class Audio extends Plugin {
       </svg>
     )
 
-    this.defaultLocale = {
-      strings: {
-        smile: 'Smile!',
-        takePicture: 'Take a picture',
-        startRecording: 'Begin video recording',
-        stopRecording: 'Stop video recording',
-        allowAccessTitle: 'Please allow access to your camera',
-        allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
-        noCameraTitle: 'Camera Not Available',
-        noCameraDescription: 'In order to take pictures or record video, please connect a camera device',
-        recordingStoppedMaxSize: 'Recording stopped because the file size is about to exceed the limit',
-        recordingLength: 'Recording length %{recording_length}',
-        submitRecordedFile: 'Submit recorded file',
-        discardRecordedFile: 'Discard recorded file',
-      },
-    }
+    this.defaultLocale = locale
 
-    // set default options
-    const defaultOptions = {
-      countdown: false,
-      showRecordingLength: false,
-    }
-
-    this.opts = { ...defaultOptions, ...opts }
+    this.opts = { ...opts }
 
     this.i18nInit()
+    this.title = this.i18n('pluginNameAudio')
 
-    this.install = this.install.bind(this)
-    this.setPluginState = this.setPluginState.bind(this)
+    this.audioActive = false
 
-    this.render = this.render.bind(this)
+    this.setPluginState({
+      hasAudio: false,
+      audioReady: false,
+      cameraError: null,
+      recordingLengthSeconds: 0,
+      audioSources: [],
+      currentDeviceId: null,
+    })
 
     // Camera controls
     this.start = this.start.bind(this)
     this.stop = this.stop.bind(this)
     this.startRecording = this.startRecording.bind(this)
     this.stopRecording = this.stopRecording.bind(this)
-    this.discardRecordedVideo = this.discardRecordedVideo.bind(this)
+    this.discardRecordedAudio = this.discardRecordedAudio.bind(this)
     this.submit = this.submit.bind(this)
-    this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
-    this.changeVideoSource = this.changeVideoSource.bind(this)
-
-    this.micActive = false
-
-    this.setPluginState({
-      hasCamera: false,
-      cameraReady: false,
-      cameraError: null,
-      recordingLengthSeconds: 0,
-      videoSources: [],
-      currentDeviceId: null,
-    })
+    this.changeSource = this.changeSource.bind(this)
   }
 
   setOptions (newOpts) {
@@ -143,14 +91,7 @@ module.exports = class Audio extends Plugin {
     this.i18nInit()
   }
 
-  i18nInit () {
-    this.translator = new Translator([this.defaultLocale, this.uppy.locale, this.opts.locale])
-    this.i18n = this.translator.translate.bind(this.translator)
-    this.i18nArray = this.translator.translateArray.bind(this.translator)
-    this.setPluginState() // so that UI re-renders and we see the updated locale
-  }
-
-  hasCameraCheck () {
+  hasAudioCheck () {
     if (!this.mediaDevices) {
       return Promise.resolve(false)
     }
@@ -163,18 +104,18 @@ module.exports = class Audio extends Plugin {
   // eslint-disable-next-line consistent-return
   start (options = null) {
     if (!this.supportsUserMedia) {
-      return Promise.reject(new Error('Webcam access not supported'))
+      return Promise.reject(new Error('Microphone access not supported'))
     }
 
-    this.micActive = true
+    this.audioActive = true
 
-    this.hasCameraCheck().then(hasCamera => {
+    this.hasAudioCheck().then(hasAudio => {
       this.setPluginState({
-        hasCamera,
+        hasAudio,
       })
 
       // ask user for access to their camera
-      return this.mediaDevices.getUserMedia({ audio: true, video: false })
+      return this.mediaDevices.getUserMedia({ audio: true })
         .then((stream) => {
           this.stream = stream
 
@@ -192,16 +133,16 @@ module.exports = class Audio extends Plugin {
           }
 
           // Update the sources now, so we can access the names.
-          this.updateVideoSources()
+          this.updateSources()
 
           this.setPluginState({
             currentDeviceId,
-            cameraReady: true,
+            audioReady: true,
           })
         })
         .catch((err) => {
           this.setPluginState({
-            cameraReady: false,
+            audioReady: false,
             cameraError: err,
           })
           this.uppy.info(err.message, 'error')
@@ -209,41 +150,10 @@ module.exports = class Audio extends Plugin {
     })
   }
 
-  /**
-   * @returns {object}
-   */
-  getMediaRecorderOptions () {
-    const options = {}
-
-    // Try to use the `opts.preferredVideoMimeType` or one of the `allowedFileTypes` for the recording.
-    // If the browser doesn't support it, we'll fall back to the browser default instead.
-    // Safari doesn't have the `isTypeSupported` API.
-    if (MediaRecorder.isTypeSupported) {
-      const { restrictions } = this.uppy.opts
-      let preferredVideoMimeTypes = []
-      if (this.opts.preferredVideoMimeType) {
-        preferredVideoMimeTypes = [this.opts.preferredVideoMimeType]
-      } else if (restrictions.allowedFileTypes) {
-        preferredVideoMimeTypes = restrictions.allowedFileTypes.map(toMimeType).filter(isVideoMimeType)
-      }
-
-      const filterSupportedTypes = (candidateType) => MediaRecorder.isTypeSupported(candidateType)
-        && getFileTypeExtension(candidateType)
-      const acceptableMimeTypes = preferredVideoMimeTypes.filter(filterSupportedTypes)
-
-      if (acceptableMimeTypes.length > 0) {
-        // eslint-disable-next-line prefer-destructuring
-        options.mimeType = acceptableMimeTypes[0]
-      }
-    }
-
-    return options
-  }
-
   startRecording () {
     // only used if supportsMediaRecorder() returned true
     // eslint-disable-next-line compat/compat
-    this.recorder = new MediaRecorder(this.stream, this.getMediaRecorderOptions())
+    this.recorder = new MediaRecorder(this.stream)
     this.recordingChunks = []
     let stoppingBecauseOfMaxSize = false
     this.recorder.addEventListener('dataavailable', (event) => {
@@ -271,13 +181,11 @@ module.exports = class Audio extends Plugin {
     // smaller time slices mean we can more accurately check the max file size restriction
     this.recorder.start(500)
 
-    if (this.opts.showRecordingLength) {
-      // Start the recordingLengthTimer if we are showing the recording length.
-      this.recordingLengthTimer = setInterval(() => {
-        const currentRecordingLength = this.getPluginState().recordingLengthSeconds
-        this.setPluginState({ recordingLengthSeconds: currentRecordingLength + 1 })
-      }, 1000)
-    }
+    // Start the recordingLengthTimer if we are showing the recording length.
+    this.recordingLengthTimer = setInterval(() => {
+      const currentRecordingLength = this.getPluginState().recordingLengthSeconds
+      this.setPluginState({ recordingLengthSeconds: currentRecordingLength + 1 })
+    }, 1000)
 
     this.setPluginState({
       isRecording: true,
@@ -302,14 +210,14 @@ module.exports = class Audio extends Plugin {
       this.setPluginState({
         isRecording: false,
       })
-      return this.getVideo()
+      return this.getAudio()
     }).then((file) => {
       try {
         this.capturedMediaFile = file
         // create object url for capture result preview
         this.setPluginState({
           // eslint-disable-next-line compat/compat
-          recordedVideo: URL.createObjectURL(file.data),
+          recordedAudio: URL.createObjectURL(file.data),
         })
         this.opts.mirror = false
       } catch (err) {
@@ -328,9 +236,8 @@ module.exports = class Audio extends Plugin {
     })
   }
 
-  discardRecordedVideo () {
-    this.setPluginState({ recordedVideo: null })
-    this.opts.mirror = true
+  discardRecordedAudio () {
+    this.setPluginState({ recordedAudio: null })
     this.capturedMediaFile = null
   }
 
@@ -347,48 +254,36 @@ module.exports = class Audio extends Plugin {
     }
   }
 
-  stop () {
+  async stop () {
     if (this.stream) {
-      this.stream.getAudioTracks().forEach((track) => {
-        track.stop()
+      const audioTracks = this.stream.getAudioTracks()
+      audioTracks.forEach((track) => track.stop())
+    }
+
+    if (this.recorder) {
+      await new Promise((resolve) => {
+        this.recorder.addEventListener('stop', resolve, { once: true })
+        this.recorder.stop()
+
+        if (this.opts.showRecordingLength) {
+          clearInterval(this.recordingLengthTimer)
+        }
       })
     }
-    this.micActive = false
+
+    this.recordingChunks = null
+    this.recorder = null
+    this.audioActive = false
     this.stream = null
+
     this.setPluginState({
-      recordedVideo: null,
+      recordedAudio: null,
+      isRecording: false,
+      recordingLengthSeconds: 0,
     })
   }
 
-  getVideoElement () {
-    return this.el.querySelector('.uppy-Audio-video')
-  }
-
-  oneTwoThreeSmile () {
-    return new Promise((resolve, reject) => {
-      let count = this.opts.countdown
-
-      // eslint-disable-next-line consistent-return
-      const countDown = setInterval(() => {
-        if (!this.micActive) {
-          clearInterval(countDown)
-          this.captureInProgress = false
-          return reject(new Error('Webcam is not active'))
-        }
-
-        if (count > 0) {
-          this.uppy.info(`${count}...`, 'warning', 800)
-          count--
-        } else {
-          clearInterval(countDown)
-          this.uppy.info(this.i18n('smile'), 'success', 1500)
-          setTimeout(() => resolve(), 1500)
-        }
-      }, 1000)
-    })
-  }
-
-  getVideo () {
+  getAudio () {
     // Sometimes in iOS Safari, Blobs (especially the first Blob in the recordingChunks Array)
     // have empty 'type' attributes (e.g. '') so we need to find a Blob that has a defined 'type'
     // attribute in order to determine the correct MIME type.
@@ -400,7 +295,7 @@ module.exports = class Audio extends Plugin {
       return Promise.reject(new Error(`Could not retrieve recording: Unsupported media type "${mimeType}"`))
     }
 
-    const name = `webcam-${Date.now()}.${fileExtension}`
+    const name = `audio-${Date.now()}.${fileExtension}`
     const blob = new Blob(this.recordingChunks, { type: mimeType })
     const file = {
       source: this.id,
@@ -412,51 +307,50 @@ module.exports = class Audio extends Plugin {
     return Promise.resolve(file)
   }
 
-  changeVideoSource (deviceId) {
+  changeSource (deviceId) {
     this.stop()
     this.start({ deviceId })
   }
 
-  updateVideoSources () {
+  updateSources () {
     this.mediaDevices.enumerateDevices().then(devices => {
       this.setPluginState({
-        videoSources: devices.filter((device) => device.kind === 'audioinput'),
+        audioSources: devices.filter((device) => device.kind === 'audioinput'),
       })
     })
   }
 
   render () {
-    if (!this.micActive) {
+    if (!this.audioActive) {
       this.start()
     }
 
-    const webcamState = this.getPluginState()
+    const audioState = this.getPluginState()
 
-    if (!webcamState.cameraReady || !webcamState.hasCamera) {
+    if (!audioState.audioReady || !audioState.hasAudio) {
       return (
         <PermissionsScreen
-          icon={CameraIcon}
+          icon={this.icon}
           i18n={this.i18n}
-          hasCamera={webcamState.hasCamera}
+          hasAudio={audioState.hasAudio}
         />
       )
     }
 
     return (
-      <CameraScreen
+      <RecordingScreen
         // eslint-disable-next-line react/jsx-props-no-spreading
-        {...webcamState}
-        onChangeVideoSource={this.changeVideoSource}
+        {...audioState}
+        onChangeSource={this.changeSource}
         onStartRecording={this.startRecording}
         onStopRecording={this.stopRecording}
-        onDiscardRecordedVideo={this.discardRecordedVideo}
+        onDiscardRecordedAudio={this.discardRecordedAudio}
         onSubmit={this.submit}
         onStop={this.stop}
         i18n={this.i18n}
-        showRecordingLength={this.opts.showRecordingLength}
-        showVideoSourceDropdown={this.opts.showVideoSourceDropdown}
+        showAudioSourceDropdown={this.opts.showAudioSourceDropdown}
         supportsRecording={supportsMediaRecorder()}
-        recording={webcamState.isRecording}
+        recording={audioState.isRecording}
         src={this.stream}
       />
     )
@@ -464,7 +358,7 @@ module.exports = class Audio extends Plugin {
 
   install () {
     this.setPluginState({
-      cameraReady: false,
+      audioReady: false,
       recordingLengthSeconds: 0,
     })
 
@@ -474,18 +368,18 @@ module.exports = class Audio extends Plugin {
     }
 
     if (this.mediaDevices) {
-      this.updateVideoSources()
+      this.updateSources()
 
       this.mediaDevices.ondevicechange = () => {
-        this.updateVideoSources()
+        this.updateSources()
 
         if (this.stream) {
           let restartStream = true
 
-          const { videoSources, currentDeviceId } = this.getPluginState()
+          const { audioSources, currentDeviceId } = this.getPluginState()
 
-          videoSources.forEach((videoSource) => {
-            if (currentDeviceId === videoSource.deviceId) {
+          audioSources.forEach((audioSource) => {
+            if (currentDeviceId === audioSource.deviceId) {
               restartStream = false
             }
           })

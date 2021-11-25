@@ -1,11 +1,12 @@
 const { h } = require('preact')
 
 module.exports = (props) => {
+  const { icon, hasAudio, i18n } = props
   return (
     <div className="uppy-Audio-permissons">
-      <div className="uppy-Audio-permissonsIcon">{props.icon()}</div>
-      <h1 className="uppy-Audio-title">{props.hasCamera ? props.i18n('allowAccessTitle') : props.i18n('noCameraTitle')}</h1>
-      <p>{props.hasCamera ? props.i18n('allowAccessDescription') : props.i18n('noCameraDescription')}</p>
+      <div className="uppy-Audio-permissonsIcon">{icon()}</div>
+      <h1 className="uppy-Audio-title">{hasAudio ? i18n('allowAccessTitle') : i18n('noAudioTitle')}</h1>
+      <p>{hasAudio ? i18n('allowAccessDescription') : i18n('noAudioDescription')}</p>
     </div>
   )
 }
