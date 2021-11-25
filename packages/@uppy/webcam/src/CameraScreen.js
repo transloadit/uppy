@@ -49,7 +49,7 @@ class CameraScreen extends Component {
       || isModeAvailable(modes, 'video-audio')
     )
     const shouldShowSnapshotButton = !hasRecordedVideo && isModeAvailable(modes, 'picture')
-    const shouldShowRecordingLength = supportsRecording && showRecordingLength
+    const shouldShowRecordingLength = supportsRecording && showRecordingLength && !hasRecordedVideo
     const shouldShowVideoSourceDropdown = showVideoSourceDropdown && videoSources && videoSources.length > 1
 
     const videoProps = {
@@ -105,11 +105,11 @@ class CameraScreen extends Component {
             {hasRecordedVideo && <DiscardButton onDiscard={onDiscardRecordedVideo} i18n={i18n} />}
           </div>
 
-          {shouldShowRecordingLength && (
-            <div className="uppy-Webcam-recordingLength">
+          <div className="uppy-Webcam-recordingLength">
+            {shouldShowRecordingLength && (
               <RecordingLength recordingLengthSeconds={recordingLengthSeconds} i18n={i18n} />
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     )
