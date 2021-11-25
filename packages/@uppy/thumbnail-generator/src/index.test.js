@@ -52,7 +52,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.install()
 
       expect(core.on).toHaveBeenCalledTimes(3)
-      expect(core.on).toHaveBeenCalledWith('file-added', plugin.onFileAdded)
+      expect(core.on).toHaveBeenCalledWith('uppy:file-added', plugin.onFileAdded)
     })
   })
 
@@ -72,7 +72,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.uninstall()
 
       expect(core.off).toHaveBeenCalledTimes(3)
-      expect(core.off).toHaveBeenCalledWith('file-added', plugin.onFileAdded)
+      expect(core.off).toHaveBeenCalledWith('uppy:file-added', plugin.onFileAdded)
     })
   })
 
@@ -105,11 +105,11 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       const file2 = { id: 'bar2', type: 'image/jpeg', data: new Blob() }
       const file3 = { id: 'bar3', type: 'image/jpeg', data: new Blob() }
       core.mockFile(file1.id, file1)
-      core.emit('file-added', file1)
+      core.emit('uppy:file-added', file1)
       core.mockFile(file2.id, file2)
-      core.emit('file-added', file2)
+      core.emit('uppy:file-added', file2)
       core.mockFile(file3.id, file3)
-      core.emit('file-added', file3)
+      core.emit('uppy:file-added', file3)
 
       expect(plugin.requestThumbnail).toHaveBeenCalledTimes(1)
       expect(plugin.requestThumbnail).toHaveBeenCalledWith(file1)
@@ -151,12 +151,12 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         const file1 = { id: 1, name: 'bar.jpg', type: 'image/jpeg', data: new Blob() }
         const file2 = { id: 2, name: 'bar2.jpg', type: 'image/jpeg', data: new Blob() }
         core.mockFile(file1.id, file1)
-        core.emit('file-added', file1)
+        core.emit('uppy:file-added', file1)
         core.mockFile(file2.id, file2)
-        core.emit('file-added', file2)
+        core.emit('uppy:file-added', file2)
         expect(plugin.queue).toHaveLength(1)
         // should drop it from the queue
-        core.emit('file-removed', file2)
+        core.emit('uppy:file-removed', file2)
         expect(plugin.queue).toHaveLength(0)
 
         expect(plugin.createThumbnail).toHaveBeenCalledTimes(1)
@@ -164,7 +164,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
 
         await delay(110)
 
-        core.emit('file-removed', file1)
+        core.emit('uppy:file-removed', file1)
         expect(URL.revokeObjectURL).toHaveBeenCalledTimes(1)
       } finally {
         delete URL.revokeObjectURL
@@ -181,7 +181,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
 
     function add (file) {
       core.mockFile(file.id, file)
-      core.emit('file-added', file)
+      core.emit('uppy:file-added', file)
     }
 
     it('should emit thumbnail:generated when a thumbnail was generated', () => new Promise((resolve, reject) => {
@@ -504,7 +504,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.addToQueue = jest.fn()
       plugin.install()
 
-      core.emit('restored')
+      core.emit('uppy:restored')
 
       expect(plugin.addToQueue).toHaveBeenCalledTimes(2)
       expect(plugin.addToQueue).toHaveBeenCalledWith(files.a.id)

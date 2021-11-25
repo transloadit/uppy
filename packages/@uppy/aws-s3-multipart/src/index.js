@@ -141,7 +141,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       }
 
       const onProgress = (bytesUploaded, bytesTotal) => {
-        this.uppy.emit('upload-progress', file, {
+        this.uppy.emit('uppy:upload-progress', file, {
           uploader: this,
           bytesUploaded,
           bytesTotal,
@@ -150,7 +150,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
 
       const onError = (err) => {
         this.uppy.log(err)
-        this.uppy.emit('upload-error', file, err)
+        this.uppy.emit('uppy:upload-error', file, err)
 
         queuedRequest.done()
         this.resetUploaderReferences(file.id)
@@ -169,7 +169,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         this.resetUploaderReferences(file.id)
 
         const cFile = this.uppy.getFile(file.id)
-        this.uppy.emit('upload-success', cFile || file, uploadResp)
+        this.uppy.emit('uppy:upload-success', cFile || file, uploadResp)
 
         if (result.location) {
           this.uppy.log(`Download ${upload.file.name} from ${result.location}`)
@@ -267,7 +267,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
 
       // Don't double-emit upload-started for Golden Retriever-restored files that were already started
       if (!file.progress.uploadStarted || !file.isRestored) {
-        this.uppy.emit('upload-started', file)
+        this.uppy.emit('uppy:upload-started', file)
       }
     })
   }
@@ -277,7 +277,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
 
     // Don't double-emit upload-started for Golden Retriever-restored files that were already started
     if (!file.progress.uploadStarted || !file.isRestored) {
-      this.uppy.emit('upload-started', file)
+      this.uppy.emit('uppy:upload-started', file)
     }
 
     if (file.serverToken) {
@@ -304,7 +304,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       }).then(() => {
         resolve()
       }).catch((err) => {
-        this.uppy.emit('upload-error', file, err)
+        this.uppy.emit('uppy:upload-error', file, err)
         reject(err)
       })
     })
@@ -381,21 +381,21 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         }
       })
 
-      socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
+      socket.on('uppy:progress', (progressData) => emitSocketProgress(this, progressData, file))
 
-      socket.on('error', (errData) => {
-        this.uppy.emit('upload-error', file, new Error(errData.error))
+      socket.on('uppy:error', (errData) => {
+        this.uppy.emit('uppy:upload-error', file, new Error(errData.error))
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
         reject(new Error(errData.error))
       })
 
-      socket.on('success', (data) => {
+      socket.on('uppy:success', (data) => {
         const uploadResp = {
           uploadURL: data.url,
         }
 
-        this.uppy.emit('upload-success', file, uploadResp)
+        this.uppy.emit('uppy:upload-success', file, uploadResp)
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
         resolve()
@@ -427,7 +427,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
   }
 
   onFileRemove (fileID, cb) {
-    this.uploaderEvents[fileID].on('file-removed', (file) => {
+    this.uploaderEvents[fileID].on('uppy:file-removed', (file) => {
       if (fileID === file.id) cb(file.id)
     })
   }
@@ -442,7 +442,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
   }
 
   onRetry (fileID, cb) {
-    this.uploaderEvents[fileID].on('upload-retry', (targetFileID) => {
+    this.uploaderEvents[fileID].on('uppy:upload-retry', (targetFileID) => {
       if (fileID === targetFileID) {
         cb()
       }
@@ -450,7 +450,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
   }
 
   onRetryAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('retry-all', () => {
+    this.uploaderEvents[fileID].on('uppy:retry-all', () => {
       if (!this.uppy.getFile(fileID)) return
       cb()
     })
@@ -464,7 +464,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
   }
 
   onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('cancel-all', () => {
+    this.uploaderEvents[fileID].on('uppy:cancel-all', () => {
       if (!this.uppy.getFile(fileID)) return
       cb()
     })

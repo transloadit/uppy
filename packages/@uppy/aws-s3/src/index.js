@@ -159,11 +159,11 @@ module.exports = class AwsS3 extends BasePlugin {
       const { id } = file
       paramsPromises[id]?.abort()
     }
-    this.uppy.on('file-removed', onremove)
+    this.uppy.on('uppy:file-removed', onremove)
 
     fileIDs.forEach((id) => {
       const file = this.uppy.getFile(id)
-      this.uppy.emit('upload-started', file)
+      this.uppy.emit('uppy:upload-started', file)
     })
 
     const getUploadParameters = this.#requests.wrapPromiseFunction((file) => {
@@ -207,12 +207,12 @@ module.exports = class AwsS3 extends BasePlugin {
         delete paramsPromises[id]
 
         const file = this.uppy.getFile(id)
-        this.uppy.emit('upload-error', file, error)
+        this.uppy.emit('uppy:upload-error', file, error)
         return Promise.reject(error)
       })
     })).finally(() => {
       // cleanup.
-      this.uppy.off('file-removed', onremove)
+      this.uppy.off('uppy:file-removed', onremove)
     })
   }
 

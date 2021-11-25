@@ -139,7 +139,7 @@ describe('src/Core', () => {
     it('should update the state', () => {
       const core = new Core()
       const stateUpdateEventMock = jest.fn()
-      core.on('state-update', stateUpdateEventMock)
+      core.on('uppy:state-update', stateUpdateEventMock)
       core.use(AcquirerPlugin1)
       core.use(AcquirerPlugin2)
 
@@ -217,8 +217,8 @@ describe('src/Core', () => {
     // const corePauseEventMock = jest.fn()
     const coreCancelEventMock = jest.fn()
     const coreStateUpdateEventMock = jest.fn()
-    core.on('cancel-all', coreCancelEventMock)
-    core.on('state-update', coreStateUpdateEventMock)
+    core.on('uppy:cancel-all', coreCancelEventMock)
+    core.on('uppy:state-update', coreStateUpdateEventMock)
     core.setState({ foo: 'bar', totalProgress: 30 })
 
     core.reset()
@@ -280,8 +280,8 @@ describe('src/Core', () => {
     const coreStateUpdateEventMock = jest.fn()
     const plugin = core[Symbol.for('uppy test: getPlugins')]('acquirer')[0]
 
-    core.on('cancel-all', coreCancelEventMock)
-    core.on('state-update', coreStateUpdateEventMock)
+    core.on('uppy:cancel-all', coreCancelEventMock)
+    core.on('uppy:state-update', coreStateUpdateEventMock)
 
     core.close()
 
@@ -402,7 +402,7 @@ describe('src/Core', () => {
 
       const fileId = Object.keys(core.getState().files)[0]
       const file = core.getFile(fileId)
-      core.emit('preprocess-progress', file, {
+      core.emit('uppy:preprocess-progress', file, {
         mode: 'determinate',
         message: 'something',
         value: 0,
@@ -429,7 +429,7 @@ describe('src/Core', () => {
 
       const fileID = Object.keys(core.getState().files)[0]
       const file = core.getFile(fileID)
-      core.emit('preprocess-complete', file, {
+      core.emit('uppy:preprocess-complete', file, {
         mode: 'determinate',
         message: 'something',
         value: 0,
@@ -498,7 +498,7 @@ describe('src/Core', () => {
 
       const fileId = Object.keys(core.getState().files)[0]
       const file = core.getFile(fileId)
-      core.emit('postprocess-progress', file, {
+      core.emit('uppy:postprocess-progress', file, {
         mode: 'determinate',
         message: 'something',
         value: 0,
@@ -525,7 +525,7 @@ describe('src/Core', () => {
 
       const fileId = Object.keys(core.getState().files)[0]
       const file = core.getFile(fileId)
-      core.emit('postprocess-complete', file, {
+      core.emit('uppy:postprocess-complete', file, {
         mode: 'determinate',
         message: 'something',
         value: 0,
@@ -551,7 +551,7 @@ describe('src/Core', () => {
 
       const fileId = Object.keys(core.getState().files)[0]
       const file = core.getFile(fileId)
-      core.emit('error', new Error('foooooo'), file)
+      core.emit('uppy:error', new Error('foooooo'), file)
 
       expect(core.getState().error).toEqual('foooooo')
 
@@ -597,7 +597,7 @@ describe('src/Core', () => {
       const fileData = new File([sampleImage], { type: 'image/jpeg' })
       const fileAddedEventMock = jest.fn()
       const core = new Core()
-      core.on('file-added', fileAddedEventMock)
+      core.on('uppy:file-added', fileAddedEventMock)
 
       const fileId = core.addFile({
         source: 'jest',
@@ -867,7 +867,7 @@ describe('src/Core', () => {
         fileIDs.forEach((fileID) => {
           const file = core.getFile(fileID)
           if (/bar/.test(file.name)) {
-            core.emit('upload-error', file, new Error('This is bar and I do not like bar'))
+            core.emit('uppy:upload-error', file, new Error('This is bar and I do not like bar'))
           }
         })
         return Promise.resolve()
@@ -988,7 +988,7 @@ describe('src/Core', () => {
       const fileRemovedEventMock = jest.fn()
 
       const core = new Core()
-      core.on('file-removed', fileRemovedEventMock)
+      core.on('uppy:file-removed', fileRemovedEventMock)
 
       core.addFile({
         source: 'jest',
@@ -1018,8 +1018,8 @@ describe('src/Core', () => {
       const onRetryAll = jest.fn()
 
       const core = new Core()
-      core.on('upload', onUpload)
-      core.on('retry-all', onRetryAll)
+      core.on('uppy:upload', onUpload)
+      core.on('uppy:retry-all', onRetryAll)
 
       const id = core.addFile({
         source: 'jest',
@@ -1040,7 +1040,7 @@ describe('src/Core', () => {
       const onUpload = jest.fn()
 
       const core = new Core()
-      core.on('upload', onUpload)
+      core.on('uppy:upload', onUpload)
 
       core.addFile({
         source: 'jest',
@@ -1273,7 +1273,7 @@ describe('src/Core', () => {
 
       const fileId = Object.keys(core.getState().files)[0]
       const file = core.getFile(fileId)
-      core.emit('upload-progress', file, {
+      core.emit('uppy:upload-progress', file, {
         bytesUploaded: 12345,
         bytesTotal: 17175,
       })
@@ -1285,7 +1285,7 @@ describe('src/Core', () => {
         uploadStarted: null,
       })
 
-      core.emit('upload-progress', file, {
+      core.emit('uppy:upload-progress', file, {
         bytesUploaded: 17175,
         bytesTotal: 17175,
       })
@@ -1308,14 +1308,14 @@ describe('src/Core', () => {
       const promise = new Promise((resolve) => { proceedUpload = resolve })
       const finishPromise = new Promise((resolve) => { finishUpload = resolve })
       core.addUploader(async ([id]) => {
-        core.emit('upload-started', core.getFile(id))
+        core.emit('uppy:upload-started', core.getFile(id))
         await promise
-        core.emit('upload-progress', core.getFile(id), {
+        core.emit('uppy:upload-progress', core.getFile(id), {
           bytesTotal: 3456,
           bytesUploaded: 1234,
         })
         await finishPromise
-        core.emit('upload-success', core.getFile(id), { uploadURL: 'lol' })
+        core.emit('uppy:upload-success', core.getFile(id), { uploadURL: 'lol' })
       })
 
       core.addFile({
@@ -1328,7 +1328,7 @@ describe('src/Core', () => {
       core.calculateTotalProgress()
 
       const uploadPromise = core.upload()
-      await new Promise((resolve) => core.once('upload-started', resolve))
+      await new Promise((resolve) => core.once('uppy:upload-started', resolve))
 
       expect(core.getFiles()[0].size).toBeNull()
       expect(core.getFiles()[0].progress).toMatchObject({
@@ -1370,9 +1370,9 @@ describe('src/Core', () => {
     it('should estimate progress for unsized files', () => {
       const core = new Core()
 
-      core.once('file-added', (file) => {
-        core.emit('upload-started', file)
-        core.emit('upload-progress', file, {
+      core.once('uppy:file-added', (file) => {
+        core.emit('uppy:upload-started', file)
+        core.emit('uppy:upload-progress', file, {
           bytesTotal: 3456,
           bytesUploaded: 1234,
         })
@@ -1384,9 +1384,9 @@ describe('src/Core', () => {
         data: {},
       })
 
-      core.once('file-added', (file) => {
-        core.emit('upload-started', file)
-        core.emit('upload-progress', file, {
+      core.once('uppy:file-added', (file) => {
+        core.emit('uppy:upload-started', file)
+        core.emit('uppy:upload-progress', file, {
           bytesTotal: null,
           bytesUploaded: null,
         })
@@ -1429,12 +1429,12 @@ describe('src/Core', () => {
       core.setFileState(file1.id, { progress: { ...file1.progress, uploadStarted: new Date() } })
       core.setFileState(file2.id, { progress: { ...file2.progress, uploadStarted: new Date() } })
 
-      core.emit('upload-progress', core.getFile(file1.id), {
+      core.emit('uppy:upload-progress', core.getFile(file1.id), {
         bytesUploaded: 12345,
         bytesTotal: 17175,
       })
 
-      core.emit('upload-progress', core.getFile(file2.id), {
+      core.emit('uppy:upload-progress', core.getFile(file2.id), {
         bytesUploaded: 10201,
         bytesTotal: 17175,
       })
@@ -1448,7 +1448,7 @@ describe('src/Core', () => {
     it('should reset the progress', () => {
       const resetProgressEvent = jest.fn()
       const core = new Core()
-      core.on('reset-progress', resetProgressEvent)
+      core.on('uppy:reset-progress', resetProgressEvent)
 
       core.addFile({
         source: 'jest',
@@ -1467,12 +1467,12 @@ describe('src/Core', () => {
       core.setFileState(file1.id, { progress: { ...file1.progress, uploadStarted: new Date() } })
       core.setFileState(file2.id, { progress: { ...file2.progress, uploadStarted: new Date() } })
 
-      core.emit('upload-progress', core.getFile(file1.id), {
+      core.emit('uppy:upload-progress', core.getFile(file1.id), {
         bytesUploaded: 12345,
         bytesTotal: 17175,
       })
 
-      core.emit('upload-progress', core.getFile(file2.id), {
+      core.emit('uppy:upload-progress', core.getFile(file2.id), {
         bytesUploaded: 10201,
         bytesTotal: 17175,
       })
@@ -1720,7 +1720,7 @@ describe('src/Core', () => {
       }
       const errorMessage = core.i18n('exceedsSize', { file: file.name, size: prettierBytes(maxFileSize) })
       try {
-        core.on('restriction-failed', restrictionsViolatedEventMock)
+        core.on('uppy:restriction-failed', restrictionsViolatedEventMock)
         core.addFile(file)
       } catch {
         // Ignore errors
@@ -1735,7 +1735,7 @@ describe('src/Core', () => {
   describe('actions', () => {
     it('should update the state when receiving the error event', () => {
       const core = new Core()
-      core.emit('error', new Error('foooooo'))
+      core.emit('uppy:error', new Error('foooooo'))
       expect(core.getState().error).toEqual('foooooo')
     })
 
@@ -1749,7 +1749,7 @@ describe('src/Core', () => {
           },
         },
       })
-      core.emit('upload-error', core.getFile('fileId'), new Error('this is the error'))
+      core.emit('uppy:upload-error', core.getFile('fileId'), new Error('this is the error'))
       expect(core.getState().info).toEqual([{
         message: 'Failed to upload filename',
         details: 'this is the error',
@@ -1759,9 +1759,79 @@ describe('src/Core', () => {
 
     it('should reset the error state when receiving the upload event', () => {
       const core = new Core()
-      core.emit('error', { foo: 'bar' })
-      core.emit('upload')
+      core.emit('uppy:error', { foo: 'bar' })
+      core.emit('uppy:upload')
       expect(core.getState().error).toEqual(null)
+    })
+
+    it('should also emit external events', () => {
+      const core = new Core()
+      const internalMock = jest.fn()
+      const externalMock = jest.fn()
+
+      core.on('uppy:file-added', internalMock)
+      core.on('uppy:files-added', internalMock)
+      core.on('uppy:file-removed', internalMock)
+      core.on('uppy:upload', internalMock)
+      core.on('uppy:upload-started', internalMock)
+      core.on('uppy:upload-progress', internalMock)
+      core.on('uppy:upload-success', internalMock)
+      core.on('uppy:upload-error', internalMock)
+      core.on('uppy:upload-retry', internalMock)
+      core.on('uppy:progress', internalMock)
+      core.on('uppy:reset-progress', internalMock)
+      core.on('uppy:complete', internalMock)
+      core.on('uppy:error', internalMock)
+      core.on('uppy:info-visible', internalMock)
+      core.on('uppy:info-hidden', internalMock)
+      core.on('uppy:cancel-all', internalMock)
+      core.on('uppy:retry-all', internalMock)
+      core.on('uppy:restriction-failed', internalMock)
+      core.on('uppy:state-update', internalMock)
+
+      core.on('file-added', externalMock)
+      core.on('files-added', externalMock)
+      core.on('file-removed', externalMock)
+      core.on('upload', externalMock)
+      core.on('upload-started', externalMock)
+      core.on('upload-progress', externalMock)
+      core.on('upload-success', externalMock)
+      core.on('upload-error', externalMock)
+      core.on('upload-retry', externalMock)
+      core.on('progress', externalMock)
+      core.on('reset-progress', externalMock)
+      core.on('complete', externalMock)
+      core.on('error', externalMock)
+      core.on('info-visible', externalMock)
+      core.on('info-hidden', externalMock)
+      core.on('cancel-all', externalMock)
+      core.on('retry-all', externalMock)
+      core.on('restriction-failed', externalMock)
+      core.on('state-update', externalMock)
+
+      core.emit('uppy:file-added', { id: '' })
+      core.emit('uppy:files-added', [{ id: '' }])
+      core.emit('uppy:file-removed', { id: '' })
+      core.emit('uppy:upload', { id: '', fileIDs: [''] })
+      core.emit('uppy:upload-started', { id: '' })
+      core.emit('uppy:upload-progress', { id: '' }, {})
+      core.emit('uppy:upload-success', { id: '' })
+      core.emit('uppy:upload-error', { id: '' }, { message: '' }, {})
+      core.emit('uppy:upload-retry')
+      core.emit('uppy:progress')
+      core.emit('uppy:reset-progress')
+      core.emit('uppy:complete')
+      core.emit('uppy:error', { message: '' }, { id: '' }, {})
+      core.emit('uppy:info-visible')
+      core.emit('uppy:info-hidden')
+      core.emit('uppy:cancel-all')
+      core.emit('uppy:retry-all')
+      core.emit('uppy:restriction-failed')
+      core.emit('uppy:state-update')
+
+      // 19 events defined above but 24 calls?
+      expect(internalMock.mock.calls.length).toEqual(24)
+      expect(externalMock.mock.calls.length).toEqual(24)
     })
   })
 
@@ -1816,7 +1886,7 @@ describe('src/Core', () => {
     it('should set a string based message to be displayed infinitely', () => {
       const infoVisibleEvent = jest.fn()
       const core = new Core()
-      core.on('info-visible', infoVisibleEvent)
+      core.on('uppy:info-visible', infoVisibleEvent)
 
       core.info('This is the message', 'info', 0)
       expect(core.getState().info).toEqual([{
@@ -1830,7 +1900,7 @@ describe('src/Core', () => {
     it('should set a object based message to be displayed infinitely', () => {
       const infoVisibleEvent = jest.fn()
       const core = new Core()
-      core.on('info-visible', infoVisibleEvent)
+      core.on('uppy:info-visible', infoVisibleEvent)
 
       core.info({
         message: 'This is the message',
@@ -1852,8 +1922,8 @@ describe('src/Core', () => {
       const infoVisibleEvent = jest.fn()
       const infoHiddenEvent = jest.fn()
       const core = new Core()
-      core.on('info-visible', infoVisibleEvent)
-      core.on('info-hidden', infoHiddenEvent)
+      core.on('uppy:info-visible', infoVisibleEvent)
+      core.on('uppy:info-hidden', infoHiddenEvent)
 
       core.info('This is the message', 'info', 100)
       expect(infoHiddenEvent.mock.calls.length).toEqual(0)
@@ -1868,8 +1938,8 @@ describe('src/Core', () => {
       const infoVisibleEvent = jest.fn()
       const infoHiddenEvent = jest.fn()
       const core = new Core()
-      core.on('info-visible', infoVisibleEvent)
-      core.on('info-hidden', infoHiddenEvent)
+      core.on('uppy:info-visible', infoVisibleEvent)
+      core.on('uppy:info-hidden', infoHiddenEvent)
 
       core.info('This is the message', 'info', 0)
       expect(infoHiddenEvent.mock.calls.length).toEqual(0)
@@ -1883,8 +1953,8 @@ describe('src/Core', () => {
       const infoHiddenEvent = jest.fn()
       const core = new Core()
 
-      core.on('info-visible', infoVisibleEvent)
-      core.on('info-hidden', infoHiddenEvent)
+      core.on('uppy:info-visible', infoVisibleEvent)
+      core.on('uppy:info-hidden', infoHiddenEvent)
 
       core.info('This is the message', 'info', 0)
       core.info('But this is another one', 'info', 0)

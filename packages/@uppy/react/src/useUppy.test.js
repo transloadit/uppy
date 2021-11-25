@@ -18,7 +18,7 @@ describe('useUppy()', () => {
       const uppy = useUppy(() => {
         oninstall()
         return new Uppy()
-          .on('cancel-all', onuninstall)
+          .on('uppy:cancel-all', onuninstall)
       })
 
       return <div x={uppy} />

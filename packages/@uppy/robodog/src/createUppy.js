@@ -3,8 +3,8 @@ const has = require('@uppy/utils/lib/hasProperty')
 
 const eventNames = {
   // File management events
-  onFileAdded: 'file-added',
-  onFileRemoved: 'file-removed',
+  onFileAdded: 'uppy:file-added',
+  onFileRemoved: 'uppy:file-removed',
 
   // Transloadit events
   onImportError: 'transloadit:import-error',
@@ -15,16 +15,16 @@ const eventNames = {
   onResult: 'transloadit:result',
 
   // Upload events
-  onStart: 'upload',
-  onPause: 'pause-all',
-  onFilePause: 'upload-pause',
-  onCancel: 'cancel-all',
-  onError: 'error', // mostly akin to promise rejection
-  onFileCancel: 'upload-cancel',
-  onFileProgress: 'upload-progress',
-  onFileError: 'upload-error',
-  onUploaded: 'transloadit:upload',
-  onComplete: 'complete', // mostly akin to promise resolution
+  onStart: 'uppy:upload',
+  onPause: 'uppy:pause-all',
+  onFilePause: 'uppy:upload-pause',
+  onCancel: 'uppy:internal:cancel-all',
+  onError: 'uppy:error', // mostly akin to promise rejection
+  onFileCancel: 'uppy:upload-cancel',
+  onFileProgress: 'uppy:upload-progress',
+  onFileError: 'uppy:upload-error',
+  onUploaded: 'uppy:transloadit:upload',
+  onComplete: 'uppy:complete', // mostly akin to promise resolution
 }
 
 const uppyOptionNames = [
@@ -54,7 +54,7 @@ function createUppy (opts, overrides = {}) {
 
   // Custom events (these should probably be added to core)
   if (typeof opts.onProgress === 'function') {
-    uppy.on('upload-progress', () => {
+    uppy.on('uppy:upload-progress', () => {
       const { totalProgress } = uppy.getState()
       opts.onProgress.call(uppy, totalProgress)
     })

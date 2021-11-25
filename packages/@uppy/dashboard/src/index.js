@@ -696,7 +696,7 @@ module.exports = class Dashboard extends UIPlugin {
   }
 
   handleCancelRestore = () => {
-    this.uppy.emit('restore-canceled')
+    this.uppy.emit('uppy:restore-canceled')
   }
 
   #openFileEditorWhenFilesAdded = (files) => {
@@ -721,10 +721,10 @@ module.exports = class Dashboard extends UIPlugin {
     document.addEventListener('paste', this.handlePasteOnBody)
 
     this.uppy.on('plugin-remove', this.removeTarget)
-    this.uppy.on('file-added', this.hideAllPanels)
+    this.uppy.on('uppy:file-added', this.hideAllPanels)
     this.uppy.on('dashboard:modal-closed', this.hideAllPanels)
     this.uppy.on('file-editor:complete', this.hideAllPanels)
-    this.uppy.on('complete', this.handleComplete)
+    this.uppy.on('uppy:complete', this.handleComplete)
 
     // ___Why fire on capture?
     //    Because this.ifFocusedOnUppyRecently needs to change before onUpdate() fires.
@@ -736,7 +736,7 @@ module.exports = class Dashboard extends UIPlugin {
     }
 
     if (this.opts.autoOpenFileEditor) {
-      this.uppy.on('files-added', this.#openFileEditorWhenFilesAdded)
+      this.uppy.on('uppy:files-added', this.#openFileEditorWhenFilesAdded)
     }
   }
 
@@ -751,10 +751,10 @@ module.exports = class Dashboard extends UIPlugin {
 
     window.removeEventListener('popstate', this.handlePopState, false)
     this.uppy.off('plugin-remove', this.removeTarget)
-    this.uppy.off('file-added', this.hideAllPanels)
+    this.uppy.off('uppy:file-added', this.hideAllPanels)
     this.uppy.off('dashboard:modal-closed', this.hideAllPanels)
     this.uppy.off('file-editor:complete', this.hideAllPanels)
-    this.uppy.off('complete', this.handleComplete)
+    this.uppy.off('uppy:complete', this.handleComplete)
 
     document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently)
     document.removeEventListener('click', this.recordIfFocusedOnUppyRecently)
@@ -764,7 +764,7 @@ module.exports = class Dashboard extends UIPlugin {
     }
 
     if (this.opts.autoOpenFileEditor) {
-      this.uppy.off('files-added', this.#openFileEditorWhenFilesAdded)
+      this.uppy.off('uppy:files-added', this.#openFileEditorWhenFilesAdded)
     }
   }
 

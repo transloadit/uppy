@@ -60,14 +60,14 @@ module.exports = class ReduxDevTools extends UIPlugin {
     this.withDevTools = typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
     if (this.withDevTools) {
       this.initDevTools()
-      this.uppy.on('state-update', this.handleStateChange)
+      this.uppy.on('uppy:state-update', this.handleStateChange)
     }
   }
 
   uninstall () {
     if (this.withDevTools) {
       this.devToolsUnsubscribe()
-      this.uppy.off('state-update', this.handleStateUpdate)
+      this.uppy.off('uppy:state-update', this.handleStateUpdate)
     }
   }
 }

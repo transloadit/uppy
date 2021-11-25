@@ -115,7 +115,7 @@ module.exports = class MiniXHRUpload {
     this.uppy.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
       // This is done in index.js in the S3 plugin.
-      // this.uppy.emit('upload-started', file)
+      // this.uppy.emit('uppy:upload-started', file)
 
       const data = opts.formData
         ? createFormDataUpload(file, opts)
@@ -129,7 +129,7 @@ module.exports = class MiniXHRUpload {
         // eslint-disable-next-line no-use-before-define
         queuedRequest.done()
         const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
-        this.uppy.emit('upload-error', file, error)
+        this.uppy.emit('uppy:upload-error', file, error)
         reject(error)
       })
 
@@ -146,7 +146,7 @@ module.exports = class MiniXHRUpload {
         timer.progress()
 
         if (ev.lengthComputable) {
-          this.uppy.emit('upload-progress', file, {
+          this.uppy.emit('uppy:upload-progress', file, {
             uploader: this,
             bytesUploaded: ev.loaded,
             bytesTotal: ev.total,
@@ -174,7 +174,7 @@ module.exports = class MiniXHRUpload {
             uploadURL,
           }
 
-          this.uppy.emit('upload-success', file, uploadResp)
+          this.uppy.emit('uppy:upload-success', file, uploadResp)
 
           if (uploadURL) {
             this.uppy.log(`Download ${file.name} from ${uploadURL}`)
@@ -190,7 +190,7 @@ module.exports = class MiniXHRUpload {
           body,
         }
 
-        this.uppy.emit('upload-error', file, error, response)
+        this.uppy.emit('uppy:upload-error', file, error, response)
         return reject(error)
       })
 
@@ -205,7 +205,7 @@ module.exports = class MiniXHRUpload {
         }
 
         const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
-        this.uppy.emit('upload-error', file, error)
+        this.uppy.emit('uppy:upload-error', file, error)
         return reject(error)
       })
 
@@ -231,12 +231,12 @@ module.exports = class MiniXHRUpload {
         }
       }, { priority: 1 })
 
-      this.#addEventHandlerForFile('file-removed', file.id, () => {
+      this.#addEventHandlerForFile('uppy:file-removed', file.id, () => {
         queuedRequest.abort()
         reject(new Error('File removed'))
       })
 
-      this.#addEventHandlerIfFileStillExists('cancel-all', file.id, () => {
+      this.#addEventHandlerIfFileStillExists('uppy:cancel-all', file.id, () => {
         queuedRequest.abort()
         reject(new Error('Upload cancelled'))
       })
@@ -246,7 +246,7 @@ module.exports = class MiniXHRUpload {
   #uploadRemoteFile (file) {
     const opts = this.#getOptions(file)
     // This is done in index.js in the S3 plugin.
-    // this.uppy.emit('upload-started', file)
+    // this.uppy.emit('uppy:upload-started', file)
 
     const metaFields = Array.isArray(opts.metaFields)
       ? opts.metaFields
@@ -279,13 +279,13 @@ module.exports = class MiniXHRUpload {
         return () => socket.close()
       })
 
-      this.#addEventHandlerForFile('file-removed', file.id, () => {
+      this.#addEventHandlerForFile('uppy:file-removed', file.id, () => {
         socket.send('pause', {})
         queuedRequest.abort()
         resolve(`upload ${file.id} was removed`)
       })
 
-      this.#addEventHandlerIfFileStillExists('cancel-all', file.id, () => {
+      this.#addEventHandlerIfFileStillExists('uppy:cancel-all', file.id, () => {
         socket.send('pause', {})
         queuedRequest.abort()
         resolve(`upload ${file.id} was canceled`)
@@ -296,14 +296,14 @@ module.exports = class MiniXHRUpload {
         socket.send('resume', {})
       })
 
-      this.#addEventHandlerIfFileStillExists('retry-all', file.id, () => {
+      this.#addEventHandlerIfFileStillExists('uppy:retry-all', file.id, () => {
         socket.send('pause', {})
         socket.send('resume', {})
       })
 
-      socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
+      socket.on('uppy:progress', (progressData) => emitSocketProgress(this, progressData, file))
 
-      socket.on('success', (data) => {
+      socket.on('uppy:success', (data) => {
         const body = opts.getResponseData(data.response.responseText, data.response)
         const uploadURL = body[opts.responseUrlFieldName]
 
@@ -314,7 +314,7 @@ module.exports = class MiniXHRUpload {
           bytesUploaded: data.bytesUploaded,
         }
 
-        this.uppy.emit('upload-success', file, uploadResp)
+        this.uppy.emit('uppy:upload-success', file, uploadResp)
         queuedRequest.done()
         if (this.uploaderEvents[file.id]) {
           this.uploaderEvents[file.id].remove()
@@ -323,12 +323,12 @@ module.exports = class MiniXHRUpload {
         return resolve()
       })
 
-      socket.on('error', (errData) => {
+      socket.on('uppy:error', (errData) => {
         const resp = errData.response
         const error = resp
           ? opts.getResponseError(resp.responseText, resp)
           : Object.assign(new Error(errData.error.message), { cause: errData.error })
-        this.uppy.emit('upload-error', file, error)
+        this.uppy.emit('uppy:upload-error', file, error)
         queuedRequest.done()
         if (this.uploaderEvents[file.id]) {
           this.uploaderEvents[file.id].remove()
@@ -337,7 +337,7 @@ module.exports = class MiniXHRUpload {
         reject(error)
       })
     }).catch((err) => {
-      this.uppy.emit('upload-error', file, err)
+      this.uppy.emit('uppy:upload-error', file, err)
       return Promise.reject(err)
     }))
   }

@@ -236,7 +236,7 @@ module.exports = class Transloadit extends BasePlugin {
       const files = this.getAssemblyFiles(id)
       files.forEach((file) => {
         this.completedFiles[file.id] = true
-        this.uppy.emit('postprocess-complete', file)
+        this.uppy.emit('uppy:postprocess-complete', file)
       })
     })
 
@@ -245,9 +245,9 @@ module.exports = class Transloadit extends BasePlugin {
       const files = this.getAssemblyFiles(id)
       files.forEach((file) => {
       // TODO Maybe make a postprocess-error event here?
-        this.uppy.emit('upload-error', file, error)
+        this.uppy.emit('uppy:upload-error', file, error)
 
-        this.uppy.emit('postprocess-complete', file)
+        this.uppy.emit('uppy:postprocess-complete', file)
       })
     })
 
@@ -567,7 +567,7 @@ module.exports = class Transloadit extends BasePlugin {
 
     const files = filteredFileIDs.map(fileID => {
       const file = this.uppy.getFile(fileID)
-      this.uppy.emit('preprocess-progress', file, {
+      this.uppy.emit('uppy:preprocess-progress', file, {
         mode: 'indeterminate',
         message: this.i18n('creatingAssembly'),
       })
@@ -583,7 +583,7 @@ module.exports = class Transloadit extends BasePlugin {
         }
         fileIDs.forEach((fileID) => {
           const file = this.uppy.getFile(fileID)
-          this.uppy.emit('preprocess-complete', file)
+          this.uppy.emit('uppy:preprocess-complete', file)
         })
         return assembly
       } catch (err)  {
@@ -591,8 +591,8 @@ module.exports = class Transloadit extends BasePlugin {
           const file = this.uppy.getFile(fileID)
           // Clear preprocessing state when the Assembly could not be created,
           // otherwise the UI gets confused about the lingering progress keys
-          this.uppy.emit('preprocess-complete', file)
-          this.uppy.emit('upload-error', file, err)
+          this.uppy.emit('uppy:preprocess-complete', file)
+          this.uppy.emit('uppy:upload-error', file, err)
         })
         throw err
       }
@@ -619,8 +619,8 @@ module.exports = class Transloadit extends BasePlugin {
       // clear all processing state.
       .catch((err) => {
         files.forEach((file) => {
-          this.uppy.emit('preprocess-complete', file)
-          this.uppy.emit('upload-error', file, err)
+          this.uppy.emit('uppy:preprocess-complete', file)
+          this.uppy.emit('uppy:upload-error', file, err)
         })
         throw err
       })
@@ -668,7 +668,7 @@ module.exports = class Transloadit extends BasePlugin {
 
     const incompleteFiles = files.filter(file => !hasProperty(this.completedFiles, file.id))
     incompleteFiles.forEach((file) => {
-      this.uppy.emit('postprocess-progress', file, {
+      this.uppy.emit('uppy:postprocess-progress', file, {
         mode: 'indeterminate',
         message: this.i18n('encoding'),
       })
@@ -721,17 +721,17 @@ module.exports = class Transloadit extends BasePlugin {
     this.uppy.addPostProcessor(this.#afterUpload)
 
     // We may need to close socket.io connections on error.
-    this.uppy.on('error', this.#onError)
+    this.uppy.on('uppy:error', this.#onError)
 
     // Handle cancellation.
-    this.uppy.on('cancel-all', this.#onCancelAll)
+    this.uppy.on('uppy:cancel-all', this.#onCancelAll)
 
     // For error reporting.
-    this.uppy.on('upload-error', this.#onTusError)
+    this.uppy.on('uppy:upload-error', this.#onTusError)
 
     if (this.opts.importFromUploadURLs) {
       // No uploader needed when importing; instead we take the upload URL from an existing uploader.
-      this.uppy.on('upload-success', this.#onFileUploadURLAvailable)
+      this.uppy.on('uppy:upload-success', this.#onFileUploadURLAvailable)
     } else {
       this.uppy.use(Tus, {
         // Disable tus-js-client fingerprinting, otherwise uploading the same file at different times
@@ -755,7 +755,7 @@ module.exports = class Transloadit extends BasePlugin {
     }
 
     this.uppy.on('restore:get-data', this.#getPersistentData)
-    this.uppy.on('restored', this.#onRestored)
+    this.uppy.on('uppy:restored', this.#onRestored)
 
     this.setPluginState({
       // Contains Assembly status objects, indexed by their ID.
@@ -784,7 +784,7 @@ module.exports = class Transloadit extends BasePlugin {
     this.uppy.off('error', this.#onError)
 
     if (this.opts.importFromUploadURLs) {
-      this.uppy.off('upload-success', this.#onFileUploadURLAvailable)
+      this.uppy.off('uppy:upload-success', this.#onFileUploadURLAvailable)
     }
 
     const { capabilities } = this.uppy.getState()

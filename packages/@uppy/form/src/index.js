@@ -128,13 +128,13 @@ module.exports = class Form extends BasePlugin {
     }
 
     this.form.addEventListener('submit', this.handleFormSubmit)
-    this.uppy.on('upload', this.handleUploadStart)
-    this.uppy.on('complete', this.handleSuccess)
+    this.uppy.on('uppy:upload', this.handleUploadStart)
+    this.uppy.on('uppy:complete', this.handleSuccess)
   }
 
   uninstall () {
     this.form.removeEventListener('submit', this.handleFormSubmit)
-    this.uppy.off('upload', this.handleUploadStart)
-    this.uppy.off('complete', this.handleSuccess)
+    this.uppy.off('uppy:upload', this.handleUploadStart)
+    this.uppy.off('uppy:complete', this.handleSuccess)
   }
 }

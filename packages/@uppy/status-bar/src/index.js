@@ -47,7 +47,7 @@ module.exports = class StatusBar extends UIPlugin {
     const { recoveredState } = this.uppy.getState()
 
     if (recoveredState) {
-      this.uppy.emit('restore-confirmed')
+      this.uppy.emit('uppy:restore-confirmed')
       return undefined
     }
 

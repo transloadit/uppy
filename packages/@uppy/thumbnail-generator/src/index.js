@@ -332,7 +332,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
   waitUntilAllProcessed = (fileIDs) => {
     fileIDs.forEach((fileID) => {
       const file = this.uppy.getFile(fileID)
-      this.uppy.emit('preprocess-progress', file, {
+      this.uppy.emit('uppy:preprocess-progress', file, {
         mode: 'indeterminate',
         message: this.i18n('generatingThumbnails'),
       })
@@ -341,7 +341,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
     const emitPreprocessCompleteForAll = () => {
       fileIDs.forEach((fileID) => {
         const file = this.uppy.getFile(fileID)
-        this.uppy.emit('preprocess-complete', file)
+        this.uppy.emit('uppy:preprocess-complete', file)
       })
     }
 
@@ -359,13 +359,13 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
   }
 
   install () {
-    this.uppy.on('file-removed', this.onFileRemoved)
+    this.uppy.on('uppy:file-removed', this.onFileRemoved)
     if (this.opts.lazy) {
       this.uppy.on('thumbnail:request', this.onFileAdded)
       this.uppy.on('thumbnail:cancel', this.onCancelRequest)
     } else {
-      this.uppy.on('file-added', this.onFileAdded)
-      this.uppy.on('restored', this.onRestored)
+      this.uppy.on('uppy:file-added', this.onFileAdded)
+      this.uppy.on('uppy:restored', this.onRestored)
     }
 
     if (this.opts.waitForThumbnailsBeforeUpload) {
@@ -374,12 +374,12 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
   }
 
   uninstall () {
-    this.uppy.off('file-removed', this.onFileRemoved)
+    this.uppy.off('uppy:file-removed', this.onFileRemoved)
     if (this.opts.lazy) {
       this.uppy.off('thumbnail:request', this.onFileAdded)
       this.uppy.off('thumbnail:cancel', this.onCancelRequest)
     } else {
-      this.uppy.off('file-added', this.onFileAdded)
+      this.uppy.off('uppy:file-added', this.onFileAdded)
       this.uppy.off('restored', this.onRestored)
     }
 

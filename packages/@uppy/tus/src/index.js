@@ -178,7 +178,7 @@ module.exports = class Tus extends BasePlugin {
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {
-      this.uppy.emit('upload-started', file)
+      this.uppy.emit('uppy:upload-started', file)
 
       const opts = {
         ...this.opts,
@@ -221,14 +221,14 @@ module.exports = class Tus extends BasePlugin {
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
 
-        this.uppy.emit('upload-error', file, err)
+        this.uppy.emit('uppy:upload-error', file, err)
 
         reject(err)
       }
 
       uploadOptions.onProgress = (bytesUploaded, bytesTotal) => {
         this.onReceiveUploadUrl(file, upload.url)
-        this.uppy.emit('upload-progress', file, {
+        this.uppy.emit('uppy:upload-progress', file, {
           uploader: this,
           bytesUploaded,
           bytesTotal,
@@ -243,7 +243,7 @@ module.exports = class Tus extends BasePlugin {
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
 
-        this.uppy.emit('upload-success', file, uploadResp)
+        this.uppy.emit('uppy:upload-success', file, uploadResp)
 
         if (upload.url) {
           this.uppy.log(`Download ${upload.file.name} from ${upload.url}`)
@@ -343,7 +343,7 @@ module.exports = class Tus extends BasePlugin {
         })
       })
     }).catch((err) => {
-      this.uppy.emit('upload-error', file, err)
+      this.uppy.emit('uppy:upload-error', file, err)
       throw err
     })
   }
@@ -363,7 +363,7 @@ module.exports = class Tus extends BasePlugin {
       Object.assign(opts, file.tus)
     }
 
-    this.uppy.emit('upload-started', file)
+    this.uppy.emit('uppy:upload-started', file)
     this.uppy.log(file.remote.url)
 
     if (file.serverToken) {
@@ -390,7 +390,7 @@ module.exports = class Tus extends BasePlugin {
       }).then(() => {
         resolve()
       }).catch((err) => {
-        this.uppy.emit('upload-error', file, err)
+        this.uppy.emit('uppy:upload-error', file, err)
         reject(err)
       })
     })
@@ -477,9 +477,9 @@ module.exports = class Tus extends BasePlugin {
         }
       })
 
-      socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
+      socket.on('uppy:progress', (progressData) => emitSocketProgress(this, progressData, file))
 
-      socket.on('error', (errData) => {
+      socket.on('uppy:error', (errData) => {
         const { message } = errData.error
         const error = Object.assign(new Error(message), { cause: errData.error })
 
@@ -495,17 +495,17 @@ module.exports = class Tus extends BasePlugin {
           socket.close()
         }
 
-        this.uppy.emit('upload-error', file, error)
+        this.uppy.emit('uppy:upload-error', file, error)
         queuedRequest.done()
         reject(error)
       })
 
-      socket.on('success', (data) => {
+      socket.on('uppy:success', (data) => {
         const uploadResp = {
           uploadURL: data.url,
         }
 
-        this.uppy.emit('upload-success', file, uploadResp)
+        this.uppy.emit('uppy:upload-success', file, uploadResp)
         this.resetUploaderReferences(file.id)
         queuedRequest.done()
 
@@ -553,7 +553,7 @@ module.exports = class Tus extends BasePlugin {
    * @param {function(string): void} cb
    */
   onFileRemove (fileID, cb) {
-    this.uploaderEvents[fileID].on('file-removed', (file) => {
+    this.uploaderEvents[fileID].on('uppy:file-removed', (file) => {
       if (fileID === file.id) cb(file.id)
     })
   }
@@ -576,7 +576,7 @@ module.exports = class Tus extends BasePlugin {
    * @param {function(): void} cb
    */
   onRetry (fileID, cb) {
-    this.uploaderEvents[fileID].on('upload-retry', (targetFileID) => {
+    this.uploaderEvents[fileID].on('uppy:upload-retry', (targetFileID) => {
       if (fileID === targetFileID) {
         cb()
       }
@@ -588,7 +588,7 @@ module.exports = class Tus extends BasePlugin {
    * @param {function(): void} cb
    */
   onRetryAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('retry-all', () => {
+    this.uploaderEvents[fileID].on('uppy:retry-all', () => {
       if (!this.uppy.getFile(fileID)) return
       cb()
     })
@@ -610,7 +610,7 @@ module.exports = class Tus extends BasePlugin {
    * @param {function(): void} cb
    */
   onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('cancel-all', () => {
+    this.uploaderEvents[fileID].on('uppy:cancel-all', () => {
       if (!this.uppy.getFile(fileID)) return
       cb()
     })
@@ -642,13 +642,13 @@ module.exports = class Tus extends BasePlugin {
         // that have to wait due to the `limit` option.
         // Don't double-emit upload-started for Golden Retriever-restored files that were already started
         if (!file.progress.uploadStarted || !file.isRestored) {
-          this.uppy.emit('upload-started', file)
+          this.uppy.emit('uppy:upload-started', file)
         }
         return this.uploadRemote(file, current, total)
       }
       // Don't double-emit upload-started for Golden Retriever-restored files that were already started
       if (!file.progress.uploadStarted || !file.isRestored) {
-        this.uppy.emit('upload-started', file)
+        this.uppy.emit('uppy:upload-started', file)
       }
       return this.upload(file, current, total)
     })
@@ -685,7 +685,7 @@ module.exports = class Tus extends BasePlugin {
     })
     this.uppy.addUploader(this.handleUpload)
 
-    this.uppy.on('reset-progress', this.handleResetProgress)
+    this.uppy.on('uppy:reset-progress', this.handleResetProgress)
   }
 
   uninstall () {

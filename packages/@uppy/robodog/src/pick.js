@@ -28,13 +28,13 @@ function pick (opts = {}) {
   }
 
   return new Promise((resolve, reject) => {
-    uppy.on('complete', (result) => {
+    uppy.on('uppy:complete', (result) => {
       if (result.failed.length === 0) {
         resolve(result)
       }
     })
-    uppy.on('error', reject)
-    uppy.on('cancel-all', () => reject(CANCEL))
+    uppy.on('uppy:error', reject)
+    uppy.on('uppy:cancel-all', () => reject(CANCEL))
     uppy.getPlugin(pluginId)
       .openModal()
   }).then((result) => {

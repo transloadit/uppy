@@ -1,4 +1,5 @@
 /* global AggregateError */
+/* eslint-disable max-classes-per-file */
 
 'use strict'
 
@@ -17,6 +18,36 @@ const getFileName = require('./getFileName')
 const { justErrorsLogger, debugLogger } = require('./loggers')
 
 const locale = require('./locale')
+
+const TO_EXTERNAL_EVENT = {
+  'uppy:file-added': 'file-added',
+  'uppy:files-added': 'files-added',
+  'uppy:file-removed': 'file-removed',
+  'uppy:upload': 'upload',
+  'uppy:upload-started': 'upload-started',
+  'uppy:upload-progress': 'upload-progress',
+  'uppy:upload-success': 'upload-success',
+  'uppy:upload-error': 'upload-error',
+  'uppy:upload-retry': 'upload-retry',
+  'uppy:preprocess-progress': 'preprocess-progress',
+  'uppy:preprocess-complete': 'preprocess-complete',
+  'uppy:progress': 'progress',
+  'uppy:postprocess-progress': 'postprocess-progress',
+  'uppy:postprocess-complete': 'postprocess-complete',
+  'uppy:reset-progress': 'reset-progress',
+  'uppy:complete': 'complete',
+  'uppy:success': 'success',
+  'uppy:error': 'error',
+  'uppy:info-visible': 'info-visible',
+  'uppy:info-hidden': 'info-hidden',
+  'uppy:cancel-all': 'cancel-all',
+  'uppy:retry-all': 'retry-all',
+  'uppy:restriction-failed': 'restriction-failed',
+  'uppy:state-update': 'state-update',
+  'uppy:restore-confirmed': 'restore-confirmed',
+  'uppy:restored': 'restored',
+  'uppy:restore-canceled': 'restore-canceled',
+}
 
 // Exported from here.
 class RestrictionError extends Error {
@@ -154,7 +185,7 @@ class Uppy {
     })
 
     this.#storeUnsubscribe = this.store.subscribe((prevState, nextState, patch) => {
-      this.emit('state-update', prevState, nextState, patch)
+      this.emit('uppy:state-update', prevState, nextState, patch)
       this.updateAll(nextState)
     })
 
@@ -168,15 +199,21 @@ class Uppy {
 
   emit (event, ...args) {
     this.#emitter.emit(event, ...args)
+
+    if (TO_EXTERNAL_EVENT[event]) {
+      this.#emitter.emit(TO_EXTERNAL_EVENT[event], ...args)
+    }
   }
 
   on (event, callback) {
     this.#emitter.on(event, callback)
+
     return this
   }
 
   once (event, callback) {
     this.#emitter.once(event, callback)
+
     return this
   }
 
@@ -290,7 +327,7 @@ class Uppy {
       totalProgress: 0,
     })
 
-    this.emit('reset-progress')
+    this.emit('uppy:reset-progress')
   }
 
   addPreProcessor (fn) {
@@ -566,7 +603,7 @@ class Uppy {
     }
     if (err.isRestriction) {
       this.log(logMessageWithDetails)
-      this.emit('restriction-failed', file, err)
+      this.emit('uppy:restriction-failed', file, err)
     } else {
       this.log(logMessageWithDetails, 'error')
     }
@@ -718,8 +755,8 @@ class Uppy {
       },
     })
 
-    this.emit('file-added', newFile)
-    this.emit('files-added', [newFile])
+    this.emit('uppy:file-added', newFile)
+    this.emit('uppy:files-added', [newFile])
     this.log(`Added file: ${newFile.name}, ${newFile.id}, mime type: ${newFile.type}`)
 
     this.#startIfAutoProceed()
@@ -766,10 +803,10 @@ class Uppy {
     this.setState({ files })
 
     newFiles.forEach((newFile) => {
-      this.emit('file-added', newFile)
+      this.emit('uppy:file-added', newFile)
     })
 
-    this.emit('files-added', newFiles)
+    this.emit('uppy:files-added', newFiles)
 
     if (newFiles.length > 5) {
       this.log(`Added batch of ${newFiles.length} files`)
@@ -855,7 +892,7 @@ class Uppy {
 
     const removedFileIDs = Object.keys(removedFiles)
     removedFileIDs.forEach((fileID) => {
-      this.emit('file-removed', removedFiles[fileID], reason)
+      this.emit('uppy:file-removed', removedFiles[fileID], reason)
     })
 
     if (removedFileIDs.length > 5) {
@@ -942,7 +979,7 @@ class Uppy {
       error: null,
     })
 
-    this.emit('retry-all', filesToRetry)
+    this.emit('uppy:retry-all', filesToRetry)
 
     if (filesToRetry.length === 0) {
       return Promise.resolve({
@@ -958,13 +995,13 @@ class Uppy {
   }
 
   cancelAll () {
-    this.emit('cancel-all')
+    this.emit('uppy:cancel-all')
 
     const { files } = this.getState()
 
     const fileIDs = Object.keys(files)
     if (fileIDs.length) {
-      this.removeFiles(fileIDs, 'cancel-all')
+      this.removeFiles(fileIDs, 'uppy:cancel-all')
     }
 
     this.setState({
@@ -980,7 +1017,7 @@ class Uppy {
       isPaused: false,
     })
 
-    this.emit('upload-retry', fileID)
+    this.emit('uppy:upload-retry', fileID)
 
     const uploadID = this.#createUpload([fileID], {
       forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
@@ -1034,7 +1071,7 @@ class Uppy {
     })
 
     if (inProgress.length === 0) {
-      this.emit('progress', 0)
+      this.emit('uppy:progress', 0)
       this.setState({ totalProgress: 0 })
       return
     }
@@ -1077,7 +1114,7 @@ class Uppy {
     }
 
     this.setState({ totalProgress })
-    this.emit('progress', totalProgress)
+    this.emit('uppy:progress', totalProgress)
   }
 
   /**
@@ -1106,9 +1143,9 @@ class Uppy {
       }
     }
 
-    this.on('error', errorHandler)
+    this.on('uppy:error', errorHandler)
 
-    this.on('upload-error', (file, error, response) => {
+    this.on('uppy:upload-error', (file, error, response) => {
       errorHandler(error, file, response)
 
       if (typeof error === 'object' && error.message) {
@@ -1128,11 +1165,11 @@ class Uppy {
       }
     })
 
-    this.on('upload', () => {
+    this.on('uppy:upload', () => {
       this.setState({ error: null })
     })
 
-    this.on('upload-started', (file) => {
+    this.on('uppy:upload-started', (file) => {
       if (!this.getFile(file.id)) {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
@@ -1148,9 +1185,9 @@ class Uppy {
       })
     })
 
-    this.on('upload-progress', this.calculateProgress)
+    this.on('uppy:upload-progress', this.calculateProgress)
 
-    this.on('upload-success', (file, uploadResp) => {
+    this.on('uppy:upload-success', (file, uploadResp) => {
       if (!this.getFile(file.id)) {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
@@ -1183,7 +1220,7 @@ class Uppy {
       this.calculateTotalProgress()
     })
 
-    this.on('preprocess-progress', (file, progress) => {
+    this.on('uppy:preprocess-progress', (file, progress) => {
       if (!this.getFile(file.id)) {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
@@ -1193,7 +1230,7 @@ class Uppy {
       })
     })
 
-    this.on('preprocess-complete', (file) => {
+    this.on('uppy:preprocess-complete', (file) => {
       if (!this.getFile(file.id)) {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
@@ -1205,7 +1242,7 @@ class Uppy {
       this.setState({ files })
     })
 
-    this.on('postprocess-progress', (file, progress) => {
+    this.on('uppy:postprocess-progress', (file, progress) => {
       if (!this.getFile(file.id)) {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
@@ -1215,7 +1252,7 @@ class Uppy {
       })
     })
 
-    this.on('postprocess-complete', (file) => {
+    this.on('uppy:postprocess-complete', (file) => {
       if (!this.getFile(file.id)) {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
@@ -1234,7 +1271,7 @@ class Uppy {
       this.setState({ files })
     })
 
-    this.on('restored', () => {
+    this.on('uppy:restored', () => {
       // Files may have changed--ensure progress is still accurate.
       this.calculateTotalProgress()
     })
@@ -1410,7 +1447,7 @@ class Uppy {
 
     this.setState({ info: info.slice(1) })
 
-    this.emit('info-hidden')
+    this.emit('uppy:info-hidden')
   }
 
   /**
@@ -1437,7 +1474,7 @@ class Uppy {
 
     setTimeout(() => this.hideInfo(), duration)
 
-    this.emit('info-visible')
+    this.emit('uppy:info-visible')
   }
 
   /**
@@ -1487,7 +1524,7 @@ class Uppy {
 
     const uploadID = nanoid()
 
-    this.emit('upload', {
+    this.emit('uppy:upload', {
       id: uploadID,
       fileIDs,
     })
@@ -1591,7 +1628,7 @@ class Uppy {
         currentUpload = currentUploads[uploadID]
       }
     } catch (err) {
-      this.emit('error', err)
+      this.emit('uppy:error', err)
       this.#removeUpload(uploadID)
       throw err
     }
@@ -1611,7 +1648,7 @@ class Uppy {
       currentUpload.fileIDs.forEach((fileID) => {
         const file = this.getFile(fileID)
         if (file && file.progress.postprocess) {
-          this.emit('postprocess-complete', file)
+          this.emit('uppy:postprocess-complete', file)
         }
       })
 
@@ -1631,7 +1668,7 @@ class Uppy {
     let result
     if (currentUpload) {
       result = currentUpload.result
-      this.emit('complete', result)
+      this.emit('uppy:complete', result)
 
       this.#removeUpload(uploadID)
     }

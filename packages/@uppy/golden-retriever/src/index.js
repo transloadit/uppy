@@ -356,22 +356,22 @@ module.exports = class GoldenRetriever extends BasePlugin {
     this.restoreState()
     this.restoreBlobs()
 
-    this.uppy.on('file-added', this.addBlobToStores)
+    this.uppy.on('uppy:file-added', this.addBlobToStores)
     this.uppy.on('file-editor:complete', this.replaceBlobInStores)
-    this.uppy.on('file-removed', this.removeBlobFromStores)
-    this.uppy.on('state-update', this.saveFilesStateToLocalStorage)
-    this.uppy.on('restore-confirmed', this.handleRestoreConfirmed)
-    this.uppy.on('restore-canceled', this.abortRestore)
-    this.uppy.on('complete', this.handleComplete)
+    this.uppy.on('uppy:file-removed', this.removeBlobFromStores)
+    this.uppy.on('uppy:state-update', this.saveFilesStateToLocalStorage)
+    this.uppy.on('uppy:restore-confirmed', this.handleRestoreConfirmed)
+    this.uppy.on('uppy:restore-canceled', this.abortRestore)
+    this.uppy.on('uppy:complete', this.handleComplete)
   }
 
   uninstall () {
-    this.uppy.off('file-added', this.addBlobToStores)
+    this.uppy.off('uppy:file-added', this.addBlobToStores)
     this.uppy.off('file-editor:complete', this.replaceBlobInStores)
-    this.uppy.off('file-removed', this.removeBlobFromStores)
-    this.uppy.off('state-update', this.saveFilesStateToLocalStorage)
-    this.uppy.off('restore-confirmed', this.handleRestoreConfirmed)
-    this.uppy.off('restore-canceled', this.abortRestore)
-    this.uppy.off('complete', this.handleComplete)
+    this.uppy.off('uppy:file-removed', this.removeBlobFromStores)
+    this.uppy.off('uppy:state-update', this.saveFilesStateToLocalStorage)
+    this.uppy.off('uppy:restore-confirmed', this.handleRestoreConfirmed)
+    this.uppy.off('uppy:restore-canceled', this.abortRestore)
+    this.uppy.off('uppy:complete', this.handleComplete)
   }
 }

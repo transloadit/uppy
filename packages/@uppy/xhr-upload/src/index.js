@@ -218,7 +218,7 @@ module.exports = class XHRUpload extends BasePlugin {
 
     this.uppy.log(`uploading ${current} of ${total}`)
     return new Promise((resolve, reject) => {
-      this.uppy.emit('upload-started', file)
+      this.uppy.emit('uppy:upload-started', file)
 
       const data = opts.formData
         ? this.createFormDataUpload(file, opts)
@@ -231,7 +231,7 @@ module.exports = class XHRUpload extends BasePlugin {
         xhr.abort()
         queuedRequest.done()
         const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(opts.timeout / 1000) }))
-        this.uppy.emit('upload-error', file, error)
+        this.uppy.emit('uppy:upload-error', file, error)
         reject(error)
       })
 
@@ -248,7 +248,7 @@ module.exports = class XHRUpload extends BasePlugin {
         timer.progress()
 
         if (ev.lengthComputable) {
-          this.uppy.emit('upload-progress', file, {
+          this.uppy.emit('uppy:upload-progress', file, {
             uploader: this,
             bytesUploaded: ev.loaded,
             bytesTotal: ev.total,
@@ -275,7 +275,7 @@ module.exports = class XHRUpload extends BasePlugin {
             uploadURL,
           }
 
-          this.uppy.emit('upload-success', file, uploadResp)
+          this.uppy.emit('uppy:upload-success', file, uploadResp)
 
           if (uploadURL) {
             this.uppy.log(`Download ${file.name} from ${uploadURL}`)
@@ -291,7 +291,7 @@ module.exports = class XHRUpload extends BasePlugin {
           body,
         }
 
-        this.uppy.emit('upload-error', file, error, response)
+        this.uppy.emit('uppy:upload-error', file, error, response)
         return reject(error)
       })
 
@@ -305,7 +305,7 @@ module.exports = class XHRUpload extends BasePlugin {
         }
 
         const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
-        this.uppy.emit('upload-error', file, error)
+        this.uppy.emit('uppy:upload-error', file, error)
         return reject(error)
       })
 
@@ -318,7 +318,7 @@ module.exports = class XHRUpload extends BasePlugin {
       }
 
       const queuedRequest = this.requests.run(() => {
-        this.uppy.emit('upload-started', file)
+        this.uppy.emit('uppy:upload-started', file)
 
         // When using an authentication system like JWT, the bearer token goes as a header. This
         // header needs to be fresh each time the token is refreshed so computing and setting the
@@ -353,7 +353,7 @@ module.exports = class XHRUpload extends BasePlugin {
   uploadRemote (file) {
     const opts = this.getOptions(file)
     return new Promise((resolve, reject) => {
-      this.uppy.emit('upload-started', file)
+      this.uppy.emit('uppy:upload-started', file)
 
       const fields = {}
       const metaFields = Array.isArray(opts.metaFields)
@@ -404,9 +404,9 @@ module.exports = class XHRUpload extends BasePlugin {
           socket.send('resume', {})
         })
 
-        socket.on('progress', (progressData) => emitSocketProgress(this, progressData, file))
+        socket.on('uppy:progress', (progressData) => emitSocketProgress(this, progressData, file))
 
-        socket.on('success', (data) => {
+        socket.on('uppy:success', (data) => {
           const body = opts.getResponseData(data.response.responseText, data.response)
           const uploadURL = body[opts.responseUrlFieldName]
 
@@ -416,7 +416,7 @@ module.exports = class XHRUpload extends BasePlugin {
             uploadURL,
           }
 
-          this.uppy.emit('upload-success', file, uploadResp)
+          this.uppy.emit('uppy:upload-success', file, uploadResp)
           queuedRequest.done()
           if (this.uploaderEvents[file.id]) {
             this.uploaderEvents[file.id].remove()
@@ -425,12 +425,12 @@ module.exports = class XHRUpload extends BasePlugin {
           return resolve()
         })
 
-        socket.on('error', (errData) => {
+        socket.on('uppy:error', (errData) => {
           const resp = errData.response
           const error = resp
             ? opts.getResponseError(resp.responseText, resp)
             : Object.assign(new Error(errData.error.message), { cause: errData.error })
-          this.uppy.emit('upload-error', file, error)
+          this.uppy.emit('uppy:upload-error', file, error)
           queuedRequest.done()
           if (this.uploaderEvents[file.id]) {
             this.uploaderEvents[file.id].remove()
@@ -448,7 +448,7 @@ module.exports = class XHRUpload extends BasePlugin {
           return () => socket.close()
         })
       }).catch((err) => {
-        this.uppy.emit('upload-error', file, err)
+        this.uppy.emit('uppy:upload-error', file, err)
         reject(err)
       })
     })
@@ -476,7 +476,7 @@ module.exports = class XHRUpload extends BasePlugin {
 
       const emitError = (error) => {
         files.forEach((file) => {
-          this.uppy.emit('upload-error', file, error)
+          this.uppy.emit('uppy:upload-error', file, error)
         })
       }
 
@@ -491,7 +491,7 @@ module.exports = class XHRUpload extends BasePlugin {
         if (!ev.lengthComputable) return
 
         files.forEach((file) => {
-          this.uppy.emit('upload-progress', file, {
+          this.uppy.emit('uppy:upload-progress', file, {
             uploader: this,
             bytesUploaded: ev.loaded / ev.total * file.size,
             bytesTotal: file.size,
@@ -509,7 +509,7 @@ module.exports = class XHRUpload extends BasePlugin {
             body,
           }
           files.forEach((file) => {
-            this.uppy.emit('upload-success', file, uploadResp)
+            this.uppy.emit('uppy:upload-success', file, uploadResp)
           })
           return resolve()
         }
@@ -528,7 +528,7 @@ module.exports = class XHRUpload extends BasePlugin {
         return reject(error)
       })
 
-      this.uppy.on('cancel-all', () => {
+      this.uppy.on('uppy:cancel-all', () => {
         timer.done()
         xhr.abort()
       })
@@ -548,7 +548,7 @@ module.exports = class XHRUpload extends BasePlugin {
       xhr.send(formData)
 
       files.forEach((file) => {
-        this.uppy.emit('upload-started', file)
+        this.uppy.emit('uppy:upload-started', file)
       })
     })
   }
@@ -570,13 +570,13 @@ module.exports = class XHRUpload extends BasePlugin {
   }
 
   onFileRemove (fileID, cb) {
-    this.uploaderEvents[fileID].on('file-removed', (file) => {
+    this.uploaderEvents[fileID].on('uppy:file-removed', (file) => {
       if (fileID === file.id) cb(file.id)
     })
   }
 
   onRetry (fileID, cb) {
-    this.uploaderEvents[fileID].on('upload-retry', (targetFileID) => {
+    this.uploaderEvents[fileID].on('uppy:upload-retry', (targetFileID) => {
       if (fileID === targetFileID) {
         cb()
       }
@@ -584,14 +584,14 @@ module.exports = class XHRUpload extends BasePlugin {
   }
 
   onRetryAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('retry-all', () => {
+    this.uploaderEvents[fileID].on('uppy:retry-all', () => {
       if (!this.uppy.getFile(fileID)) return
       cb()
     })
   }
 
   onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('cancel-all', () => {
+    this.uploaderEvents[fileID].on('uppy:cancel-all', () => {
       if (!this.uppy.getFile(fileID)) return
       cb()
     })
