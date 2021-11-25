@@ -10,34 +10,38 @@
   flex-direction: column;
 }
 
-.uppy-Audio-videoContainer {
+.uppy-Audio-audioContainer {
+  display: flex;
   width: 100%;
-  flex: 1;
-  flex-grow: 1;
-  overflow: hidden;
-  background-color: $gray-800;
-  text-align: center;
+  height: 100%;
+  // flex: 1;
+  // flex-grow: 1;
+  // overflow: hidden;
+  background-color: $gray-300;
+  // text-align: center;
   position: relative;
+  justify-content: center;
+  align-items: center;
 }
 
-.uppy-Audio-video {
-  max-width: 100%;
-  max-height: 100%;
+.uppy-Audio-player {
+  width: 85%;
+  border-radius: 12px;
+}
+
+.uppy-Audio-canvas {
+  width: 100%;
+  height: 100%;
   position: absolute;
   top: 0;
+  left: 0;
   right: 0;
   bottom: 0;
-  left: 0;
-  margin: auto;
-}
-
-.uppy-Audio-video--mirrored {
-  transform: scaleX(-1);
 }
 
 .uppy-Audio-footer {
   width: 100%;
-  min-height: 75px;
+  // min-height: 75px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -45,17 +49,17 @@
   padding: 20px 20px;
 }
 
-.uppy-Audio-videoSourceContainer {
+.uppy-Audio-audioSourceContainer {
   width: 100%;
   flex-grow: 0;
 }
 
-.uppy-size--lg .uppy-Audio-videoSourceContainer {
+.uppy-size--lg .uppy-Audio-audioSourceContainer {
   width: 33%;
   margin: 0; // vertical alignment handled by the flexbox wrapper
 }
 
-.uppy-Audio-videoSource-select {
+.uppy-Audio-audioSource-select {
   display: block;
   font-size: 16px;
   line-height: 1.2;
@@ -78,7 +82,7 @@
   }
 }
 
-  .uppy-Audio-videoSource-select::-ms-expand {
+  .uppy-Audio-audioSource-select::-ms-expand {
     display: none;
   }
 
@@ -86,6 +90,7 @@
   width: 50%;
   margin-left: 25%;
   text-align: center;
+  flex: 1;
 }
 
 .uppy-size--lg .uppy-Audio-buttonContainer {
@@ -97,7 +102,7 @@
   width: 25%;
   flex-grow: 0;
   color: $gray-600;
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: $font-family-mono;
   text-align: right;
 }
 
@@ -134,8 +139,8 @@
 }
 
 .uppy-Audio-button svg {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   max-width: 100%;
   max-height: 100%;
   display: inline-block;
@@ -147,10 +152,6 @@
 .uppy-size--md .uppy-Audio-button {
   width: 60px;
   height: 60px;
-}
-
-.uppy-Audio-button--picture {
-  margin-right: 12px;
 }
 
 .uppy-Audio-permissons {
