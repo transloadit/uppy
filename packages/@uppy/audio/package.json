@@ -10,10 +10,9 @@
     "file uploader",
     "uppy",
     "uppy-plugin",
-    "webcam",
-    "picture",
-    "photo",
-    "video",
+    "audio",
+    "microphone",
+    "sound",
     "record",
     "mediarecorder"
   ],
@@ -26,10 +25,13 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "file:../utils",
-    "preact": "8.2.9"
+    "@uppy/utils": "workspace:^",
+    "preact": "^10.5.15"
   },
   "peerDependencies": {
-    "@uppy/core": "^1.0.0"
+    "@uppy/core": "workspace:^"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
