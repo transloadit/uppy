@@ -10,6 +10,7 @@ const Zoom = require('@uppy/zoom')
 const ImageEditor = require('@uppy/image-editor')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
+const Audio = require('@uppy/audio')
 const ScreenCapture = require('@uppy/screen-capture')
 const Tus = require('@uppy/tus')
 const DropTarget = require('@uppy/drop-target')
@@ -164,6 +165,17 @@ function uppySetOptions () {
   }
   if (!opts.Webcam && webcamInstance) {
     window.uppy.removePlugin(webcamInstance)
+  }
+
+  const audioInstance = window.uppy.getPlugin('Audio')
+  if (opts.Audio && !audioInstance) {
+    window.uppy.use(Audio, {
+      target: Dashboard,
+      showAudioSourceDropdown: true,
+    })
+  }
+  if (!opts.Audio && audioInstance) {
+    window.uppy.removePlugin(audioInstance)
   }
 
   const screenCaptureInstance = window.uppy.getPlugin('ScreenCapture')
