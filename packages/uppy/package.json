@@ -62,7 +62,8 @@
     "@uppy/unsplash": "workspace:^",
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
-    "@uppy/xhr-upload": "workspace:^"
+    "@uppy/xhr-upload": "workspace:^",
+    "@uppy/audio": "workspace:^"
   },
   "devDependencies": {
     "abortcontroller-polyfill": "^1.7.3",

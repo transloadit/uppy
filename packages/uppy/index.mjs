@@ -31,6 +31,7 @@ export { default as Unsplash } from '@uppy/unsplash'
 export { default as Url } from '@uppy/url'
 export { default as Webcam } from '@uppy/webcam'
 export { default as ScreenCapture } from '@uppy/screen-capture'
+export { default as Audio } from '@uppy/audio'
 
 // Uploaders
 export { default as AwsS3 } from '@uppy/aws-s3'
