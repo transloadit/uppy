@@ -18,36 +18,7 @@ const getFileName = require('./getFileName')
 const { justErrorsLogger, debugLogger } = require('./loggers')
 
 const locale = require('./locale')
-
-const TO_EXTERNAL_EVENT = {
-  'uppy:file-added': 'file-added',
-  'uppy:files-added': 'files-added',
-  'uppy:file-removed': 'file-removed',
-  'uppy:upload': 'upload',
-  'uppy:upload-started': 'upload-started',
-  'uppy:upload-progress': 'upload-progress',
-  'uppy:upload-success': 'upload-success',
-  'uppy:upload-error': 'upload-error',
-  'uppy:upload-retry': 'upload-retry',
-  'uppy:preprocess-progress': 'preprocess-progress',
-  'uppy:preprocess-complete': 'preprocess-complete',
-  'uppy:progress': 'progress',
-  'uppy:postprocess-progress': 'postprocess-progress',
-  'uppy:postprocess-complete': 'postprocess-complete',
-  'uppy:reset-progress': 'reset-progress',
-  'uppy:complete': 'complete',
-  'uppy:success': 'success',
-  'uppy:error': 'error',
-  'uppy:info-visible': 'info-visible',
-  'uppy:info-hidden': 'info-hidden',
-  'uppy:cancel-all': 'cancel-all',
-  'uppy:retry-all': 'retry-all',
-  'uppy:restriction-failed': 'restriction-failed',
-  'uppy:state-update': 'state-update',
-  'uppy:restore-confirmed': 'restore-confirmed',
-  'uppy:restored': 'restored',
-  'uppy:restore-canceled': 'restore-canceled',
-}
+const TO_EXTERNAL_EVENT = require('./to-external-event')
 
 // Exported from here.
 class RestrictionError extends Error {
