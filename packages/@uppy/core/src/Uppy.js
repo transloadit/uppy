@@ -18,7 +18,7 @@ const getFileName = require('./getFileName')
 const { justErrorsLogger, debugLogger } = require('./loggers')
 
 const locale = require('./locale')
-const TO_EXTERNAL_EVENT = require('./to-external-event')
+const { TO_EXTERNAL_EVENT } = require('./to-external-event')
 
 // Exported from here.
 class RestrictionError extends Error {
