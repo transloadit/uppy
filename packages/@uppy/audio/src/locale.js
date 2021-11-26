@@ -8,9 +8,9 @@ module.exports = {
     // This is not visibly rendered but is picked up by screen readers.
     stopAudioRecording: 'Stop audio recording',
     // Title on the “allow access” screen
-    allowAccessTitleAudio: 'Please allow access to your microphone',
+    allowAudioAccessTitle: 'Please allow access to your microphone',
     // Description on the “allow access” screen
-    allowAccessDescriptionAudio: 'In order to record audio, please allow microphone access for this site.',
+    allowAudioAccessDescription: 'In order to record audio, please allow microphone access for this site.',
     // Title on the “device not available” screen
     noAudioTitle: 'Microphone Not Available',
     // Description on the “device not available” screen
