@@ -3,14 +3,14 @@ module.exports = {
     pluginNameAudio: 'Audio',
     // Used as the label for the button that starts an audio recording.
     // This is not visibly rendered but is picked up by screen readers.
-    startRecording: 'Begin recording',
+    startAudioRecording: 'Begin audio recording',
     // Used as the label for the button that stops an audio recording.
     // This is not visibly rendered but is picked up by screen readers.
-    stopRecording: 'Stop recording',
+    stopAudioRecording: 'Stop audio recording',
     // Title on the “allow access” screen
-    allowAccessTitle: 'Please allow access to your microphone',
+    allowAccessTitleAudio: 'Please allow access to your microphone',
     // Description on the “allow access” screen
-    allowAccessDescription: 'In order to record audio, please allow microphone access for this site.',
+    allowAccessDescriptionAudio: 'In order to record audio, please allow microphone access for this site.',
     // Title on the “device not available” screen
     noAudioTitle: 'Microphone Not Available',
     // Description on the “device not available” screen
