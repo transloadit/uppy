@@ -1,28 +1,12 @@
-import Uppy = require('@uppy/core')
-import WebcamLocale = require('./generatedLocale')
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
+import AudioLocale from './generatedLocale'
 
-declare module Webcam {
-  export type WebcamMode =
-    | 'video-audio'
-    | 'video-only'
-    | 'audio-only'
-    | 'picture'
-
-  export interface WebcamOptions extends Uppy.PluginOptions {
-    replaceTargetContent?: boolean
-    target?: Uppy.PluginTarget
-    onBeforeSnapshot?: () => Promise<void>
-    countdown?: number | boolean
-    mirror?: boolean
-    facingMode?: string
+export interface AudioOptions extends PluginOptions {
+    target?: PluginTarget
     showVideoSourceDropdown?: boolean
-    modes?: WebcamMode[]
-    locale?: WebcamLocale
-    title?: string
-    videoConstraints?: MediaTrackConstraints
-  }
+    locale?: AudioLocale
 }
 
-declare class Webcam extends Uppy.Plugin<Webcam.WebcamOptions> {}
+declare class Audio extends UIPlugin<AudioOptions> {}
 
-export = Webcam
+export default Audio
