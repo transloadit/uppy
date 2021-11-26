@@ -1,8 +1,8 @@
 const { UIPlugin } = require('@uppy/core')
 const { h } = require('preact')
 const { RequestClient } = require('@uppy/companion-client')
-const UrlUI = require('./UrlUI.js')
 const toArray = require('@uppy/utils/lib/toArray')
+const UrlUI = require('./UrlUI.js')
 const forEachDroppedOrPastedUrl = require('./utils/forEachDroppedOrPastedUrl')
 
 const locale = require('./locale')

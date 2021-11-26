@@ -139,7 +139,7 @@ function StatusBar (props) {
     && !hidePauseResumeButton
     && uploadState === STATE_UPLOADING
 
-  const showRetryBtn = error && !hideRetryButton
+  const showRetryBtn = error && !isAllComplete && !hideRetryButton
 
   const showDoneBtn = doneButtonHandler && uploadState === STATE_COMPLETE
 
@@ -171,15 +171,18 @@ function StatusBar (props) {
         switch (uploadState) {
           case STATE_PREPROCESSING:
           case STATE_POSTPROCESSING:
-            return (
-              <ProgressBarProcessing
-                progress={calculateProcessingProgress(files)}
-              />
-            )
+            return <ProgressBarProcessing progress={calculateProcessingProgress(files)} />
           case STATE_COMPLETE:
             return <ProgressBarComplete i18n={i18n} />
           case STATE_ERROR:
-            return <ProgressBarError error={error} i18n={i18n} />
+            return (
+              <ProgressBarError
+                error={error}
+                i18n={i18n}
+                numUploads={numUploads}
+                complete={complete}
+              />
+            )
           case STATE_UPLOADING:
             return (
               <ProgressBarUploading
@@ -205,7 +208,7 @@ function StatusBar (props) {
       })()}
 
       <div className="uppy-StatusBar-actions">
-        {(recoveredState || showUploadBtn) ? (
+        {recoveredState || showUploadBtn ? (
           <UploadBtn
             newFiles={newFiles}
             isUploadStarted={isUploadStarted}

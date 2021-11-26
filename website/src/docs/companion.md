@@ -13,7 +13,7 @@ Drag and drop, webcam, basic file manipulation (adding metadata, for example) an
 
 <!--retext-simplify ignore however-->
 
-However, if you add [Companion](https://github.com/transloadit/uppy/tree/master/packages/@uppy/companion) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your users’ data plans), and then uploaded to the final destination. Files are removed from Companion after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
+However, if you add [Companion](https://github.com/transloadit/uppy/tree/main/packages/@uppy/companion) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your users’ data plans), and then uploaded to the final destination. Files are removed from Companion after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
 
 Companion handles the server-to-server communication between your server and file storage providers such as Google Drive, Dropbox, Instagram, etc. Note that you can **not** upload files **to** Companion, it only handles the third party integrations.
 
@@ -250,7 +250,7 @@ export COMPANION_STREAMING_UPLOAD=true
 export COMPANION_MAX_FILE_SIZE="100000000"
 ```
 
-See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example.sh) for an example configuration script.
+See [env.example.sh](https://github.com/transloadit/uppy/blob/main/env.example.sh) for an example configuration script.
 
 ### Options
 
@@ -419,7 +419,7 @@ app.use(uppy.app({
 
 ### Running in Kubernetes
 
-We have [a detailed guide on running Companion in Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we run our example server at <https://companion.uppy.io>.
+We have [a detailed guide on running Companion in Kubernetes](https://github.com/transloadit/uppy/blob/main/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we run our example server at <https://companion.uppy.io>.
 
 ### Adding custom providers
 
@@ -575,7 +575,7 @@ This would get the Companion instance running on `http://localhost:3020`. It use
 
 ## Live example
 
-An example server is running at <https://companion.uppy.io>, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md)
+An example server is running at <https://companion.uppy.io>, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/main/packages/%40uppy/companion/KUBERNETES.md)
 
 ## How the Authentication and Token mechanism works
 

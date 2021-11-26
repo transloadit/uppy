@@ -11,7 +11,7 @@ describe('workspace-project App', () => {
 
   it('should display welcome message', async () => {
     await page.navigateTo()
-    expect(await page.getTitleText()).toEqual('angular-example app is running!')
+    expect(await page.getTitleText()).toEqual('Uppy Angular Example')
   })
 
   afterEach(async () => {
