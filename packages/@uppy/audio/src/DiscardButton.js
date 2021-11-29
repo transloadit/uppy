@@ -16,7 +16,6 @@ function DiscardButton ({ onDiscard, i18n }) {
         viewBox="0 0 13 13"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
-        focusable="false"
         className="uppy-c-icon"
       >
         <g fill="#FFF" fillRule="evenodd">
