@@ -63,7 +63,7 @@ module.exports = {
     editFileWithFilename: 'Edit file %{file}',
     save: 'Save',
     cancel: 'Cancel',
-    dropPasteFiles: 'Drop files here or %{browseFiles}',
+    dropPasteFiles: 'Drop files here or %{browseFiles} BITCH',
     dropPasteFolders: 'Drop files here or %{browseFolders}',
     dropPasteBoth: 'Drop files here, %{browseFiles} or %{browseFolders}',
     dropPasteImportFiles: 'Drop files here, %{browseFiles} or import from:',

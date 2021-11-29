@@ -9,9 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "cypress": "^9.0.0",
-    "vite": "^2.6.14",
     "@uppy/core": "workspace:^",
-    "@uppy/dashboard": "workspace:^"
+    "@uppy/dashboard": "workspace:^",
+    "cypress": "^9.0.0",
+    "parcel": "^2.0.1",
+    "vite": "^2.6.14"
   }
 }
