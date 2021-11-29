@@ -53,7 +53,7 @@ The `@uppy/audio` plugin has the following configurable options:
 
 ### `id: 'Audio'`
 
-A unique identifier for this plugin. It defaults to `'Webcam'`.
+A unique identifier for this plugin. It defaults to `'Audio'`.
 
 ### `target: null`
 
