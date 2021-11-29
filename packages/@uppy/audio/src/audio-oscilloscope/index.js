@@ -79,8 +79,9 @@ module.exports = class AudioOscilloscope {
     ctx.stroke()
 
     this.onDrawFrame(this)
-    requestAnimationFrame(this.draw.bind(this))
+    requestAnimationFrame(this.#draw)
   }
+  #draw = () => this.draw()
 
   on (type, callback) {
     if (type === 'drawFrame') {
