@@ -49,7 +49,7 @@ Import general Core styles from `@uppy/core/dist/style.css` first, then add the 
 
 ## Options
 
-The `@uppy/webcam` plugin has the following configurable options:
+The `@uppy/audio` plugin has the following configurable options:
 
 ### `id: 'Audio'`
 
