@@ -55,7 +55,7 @@
     "adm-zip": "^0.5.5",
     "aliasify": "^2.1.0",
     "autoprefixer": "^10.2.6",
-    "aws-sdk": "^2.715.0",
+    "aws-sdk": "^2.1038.0",
     "babel-jest": "^27.0.6",
     "babel-plugin-inline-package-json": "^2.0.0",
     "babelify": "^10.0.0",

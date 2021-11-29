@@ -8643,7 +8643,7 @@ __metadata:
     "@types/webpack": ^5.28.0
     "@types/ws": 6.0.4
     atob: 2.1.2
-    aws-sdk: 2.701.0
+    aws-sdk: ^2.1038.0
     body-parser: 1.19.0
     chalk: 2.4.2
     common-tags: 1.8.0
@@ -11585,9 +11585,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:2.701.0":
-  version: 2.701.0
-  resolution: "aws-sdk@npm:2.701.0"
+"aws-sdk@npm:^2.1038.0":
+  version: 2.1038.0
+  resolution: "aws-sdk@npm:2.1038.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -11598,11 +11598,11 @@ __metadata:
     url: 0.10.3
     uuid: 3.3.2
     xml2js: 0.4.19
-  checksum: a2b47f1ea3ac511baff7728f46a9820a32652dd7c81fe06f943d959ad7e4c189d07d5ef6a078c8b629466bc28270ff65ab16d207222d654bbe5f78ef7b3ddebc
+  checksum: 55c61825e8e4ec0b620388cd2a4c2869a22a56ab47fa2a22f2a52cb735679fb252e254fda9e875d80bfbf3f59899b7c39d97bec75f8bffc9808e68796d3522ba
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:^2.224.1, aws-sdk@npm:^2.715.0":
+"aws-sdk@npm:^2.224.1":
   version: 2.1032.0
   resolution: "aws-sdk@npm:2.1032.0"
   dependencies:
@@ -42278,7 +42278,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     adm-zip: ^0.5.5
     aliasify: ^2.1.0
     autoprefixer: ^10.2.6
-    aws-sdk: ^2.715.0
+    aws-sdk: ^2.1038.0
     babel-jest: ^27.0.6
     babel-plugin-inline-package-json: ^2.0.0
     babelify: ^10.0.0
