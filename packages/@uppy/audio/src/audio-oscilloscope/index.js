@@ -27,7 +27,7 @@ module.exports = class AudioOscilloscope {
     this.canvasContext.fillStyle = result(canvasContextOptions.fillStyle) || 'rgb(255, 255, 255)'
     this.canvasContext.strokeStyle = result(canvasContextOptions.strokeStyle) || 'rgb(0, 0, 0)'
     this.canvasContext.lineWidth = result(canvasContextOptions.lineWidth) || 1
-    this.onDrawFrame = (isFunction(options.onDrawFrame) ? options.onDrawFrame : () => {})
+    this.onDrawFrame = isFunction(options.onDrawFrame) ? options.onDrawFrame : () => {}
   }
 
   addSource (streamSource) {
