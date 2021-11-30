@@ -13,7 +13,7 @@ const packageJsonVersion = require('../package.json').version
  */
 function getMediaDevices () {
   // eslint-disable-next-line compat/compat
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  if (navigator.mediaDevices?.getUserMedia) {
     // eslint-disable-next-line compat/compat
     return navigator.mediaDevices
   }
