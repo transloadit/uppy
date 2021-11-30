@@ -41,8 +41,7 @@ module.exports = class Audio extends UIPlugin {
     super(uppy, opts)
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = this.mediaDevices != null
-    // eslint-disable-next-line no-restricted-globals
-    this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
+    this.protocol = globalThis.location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Audio'
     this.type = 'acquirer'
     this.capturedMediaFile = null
