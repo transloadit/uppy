@@ -7,7 +7,10 @@ module.exports = (api) => {
   return {
     presets: [
       ['@babel/preset-env', {
-        include: ['@babel/plugin-proposal-nullish-coalescing-operator'],
+        include: [
+          '@babel/plugin-proposal-nullish-coalescing-operator',
+          '@babel/plugin-proposal-optional-chaining',
+        ],
         loose: true,
         targets,
         useBuiltIns: false, // Don't add polyfills automatically.
