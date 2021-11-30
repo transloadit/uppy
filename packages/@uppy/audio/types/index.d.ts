@@ -1,5 +1,5 @@
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
-import AudioLocale from './generatedLocale'
+import type AudioLocale from './generatedLocale'
 
 export interface AudioOptions extends PluginOptions {
     target?: PluginTarget
