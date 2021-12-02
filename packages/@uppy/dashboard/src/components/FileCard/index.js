@@ -152,7 +152,10 @@ class FileCard extends Component {
               <button
                 type="button"
                 className="uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit"
-                onClick={() => this.props.openFileEditor(file)}
+                onClick={(event) => {
+                  this.handleSave(event)
+                  this.props.openFileEditor(file)
+                }}
                 form={this.form.id}
               >
                 {this.props.i18n('editFile')}
