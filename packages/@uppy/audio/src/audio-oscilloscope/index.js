@@ -1,5 +1,3 @@
-'use strict'
-
 function isFunction (v) {
   return typeof v === 'function'
 }
