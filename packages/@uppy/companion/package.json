@@ -30,7 +30,7 @@
   "dependencies": {
     "@purest/providers": "1.0.1",
     "atob": "2.1.2",
-    "aws-sdk": "2.701.0",
+    "aws-sdk": "^2.1038.0",
     "body-parser": "1.19.0",
     "chalk": "2.4.2",
     "common-tags": "1.8.0",
@@ -112,7 +112,9 @@
     "test": "bash -c 'source env.test.sh && ../../../node_modules/jest/bin/jest.js'",
     "test:watch": "yarn test -- --watch"
   },
+  "packageManager": "yarn@3.1.0",
   "engines": {
-    "node": ">=10.20.1"
+    "node": ">=10.20.1",
+    "yarn": "3.1.0"
   }
 }
