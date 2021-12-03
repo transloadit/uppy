@@ -1,11 +1,8 @@
 const fs = require('fs')
 const chalk = require('chalk')
-const babelify = require('babelify')
-const tinyify = require('tinyify')
-const browserify = require('browserify')
-const exorcist = require('exorcist')
-const glob = require('glob')
+const esbuild = require('esbuild')
 const path = require('path')
+const glob = require('glob')
 const { minify } = require('terser')
 const { transformFileAsync } = require('@babel/core')
 
@@ -15,27 +12,20 @@ function handleErr (err) {
 
 // eslint-disable-next-line no-shadow
 function buildBundle (srcFile, bundleFile, { minify = false, standalone = '' } = {}) {
-  const b = browserify(srcFile, { debug: true, standalone })
-  if (minify) {
-    b.plugin(tinyify)
-  }
-  b.transform(babelify)
-  b.on('error', handleErr)
-
-  return new Promise((resolve) => {
-    b.bundle()
-      .pipe(exorcist(`${bundleFile}.map`))
-      .pipe(fs.createWriteStream(bundleFile), 'utf8')
-      .on('error', handleErr)
-      .on('finish', () => {
-        if (minify) {
-          console.info(chalk.green(`✓ Built Minified Bundle [${standalone}]:`), chalk.magenta(bundleFile))
-        } else {
-          console.info(chalk.green(`✓ Built Bundle [${standalone}]:`), chalk.magenta(bundleFile))
-        }
-        resolve([bundleFile, standalone])
-      })
-  })
+  return esbuild.build({
+    bundle: true,
+    sourcemap: true,
+    entryPoints: [srcFile],
+    outfile: bundleFile,
+    minify,
+  }).then(() => {
+    if (minify) {
+      console.info(chalk.green(`✓ Built Minified Bundle [${standalone}]:`), chalk.magenta(bundleFile))
+    } else {
+      console.info(chalk.green(`✓ Built Bundle [${standalone}]:`), chalk.magenta(bundleFile))
+    }
+    return [bundleFile, standalone]
+  }).catch(handleErr)
 }
 async function minifyBundle ([bundleFile, standalone]) {
   const minifiedFilePath = bundleFile.replace(/\.js$/, '.min.js')
