@@ -66,6 +66,7 @@
     "deep-freeze": "^0.0.1",
     "disc": "^1.3.3",
     "esbuild": "^0.14.1",
+    "esbuild-plugin-babel": "^0.2.3",
     "eslint": "^8.0.0",
     "eslint-config-transloadit": "^2.0.0",
     "eslint-plugin-compat": "^4.0.0",
@@ -112,13 +113,12 @@
     "stylelint-scss": "^3.20.1",
     "tar": "^6.1.0",
     "temp-write": "^5.0.0",
-    "terser": "^5.7.0",
     "tsd": "^0.17.0",
     "typescript": "~4.4",
     "verdaccio": "^5.1.1"
   },
   "scripts": {
-    "build:bundle": "yarn node ./bin/build-bundle.js",
+    "build:bundle": "yarn node ./bin/build-bundle.mjs",
     "build:clean": "rm -rf packages/*/lib packages/@uppy/*/lib packages/*/dist packages/@uppy/*/dist",
     "build:companion": "yarn workspace @uppy/companion build",
     "build:css": "yarn node ./bin/build-css.js",
