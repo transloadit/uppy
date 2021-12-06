@@ -1,0 +1,37 @@
+{
+  "name": "@uppy/audio",
+  "description": "Uppy plugin that records audio using the device’s microphone.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "style": "dist/style.min.css",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "file uploader",
+    "uppy",
+    "uppy-plugin",
+    "audio",
+    "microphone",
+    "sound",
+    "record",
+    "mediarecorder"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "dependencies": {
+    "@uppy/utils": "workspace:^",
+    "preact": "^10.5.13"
+  },
+  "peerDependencies": {
+    "@uppy/core": "workspace:^"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

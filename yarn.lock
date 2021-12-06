@@ -8572,6 +8572,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy/audio@workspace:^, @uppy/audio@workspace:packages/@uppy/audio":
+  version: 0.0.0-use.local
+  resolution: "@uppy/audio@workspace:packages/@uppy/audio"
+  dependencies:
+    "@uppy/utils": "workspace:^"
+    preact: ^10.5.13
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@uppy/aws-s3-multipart@workspace:^, @uppy/aws-s3-multipart@workspace:packages/@uppy/aws-s3-multipart":
   version: 0.0.0-use.local
   resolution: "@uppy/aws-s3-multipart@workspace:packages/@uppy/aws-s3-multipart"
@@ -42405,6 +42416,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 0.0.0-use.local
   resolution: "uppy@workspace:packages/uppy"
   dependencies:
+    "@uppy/audio": "workspace:^"
     "@uppy/aws-s3": "workspace:^"
     "@uppy/aws-s3-multipart": "workspace:^"
     "@uppy/box": "workspace:^"

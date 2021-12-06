@@ -22,6 +22,7 @@ const Transloadit = require('@uppy/transloadit/src')
 const Form = require('@uppy/form/src')
 const ImageEditor = require('@uppy/image-editor/src')
 const DropTarget = require('@uppy/drop-target/src')
+const Audio = require('@uppy/audio/src')
 /* eslint-enable import/no-extraneous-dependencies */
 
 // DEV CONFIG: pick an uploader
@@ -88,6 +89,10 @@ module.exports = () => {
     .use(Webcam, {
       target: Dashboard,
       showVideoSourceDropdown: true,
+      showRecordingLength: true,
+    })
+    .use(Audio, {
+      target: Dashboard,
       showRecordingLength: true,
     })
     .use(ScreenCapture, { target: Dashboard })
