@@ -22,10 +22,14 @@ module.exports = class Audio extends UIPlugin {
 
   #capturedMediaFile = null
 
+  #mediaDevices = null
+
+  #supportsUserMedia = null
+
   constructor (uppy, opts) {
     super(uppy, opts)
-    this.mediaDevices = navigator.mediaDevices
-    this.supportsUserMedia = this.mediaDevices != null
+    this.#mediaDevices = navigator.mediaDevices
+    this.#supportsUserMedia = this.#mediaDevices != null
     this.id = this.opts.id || 'Audio'
     this.type = 'acquirer'
     this.icon = () => (
@@ -55,18 +59,18 @@ module.exports = class Audio extends UIPlugin {
   }
 
   #hasAudioCheck () {
-    if (!this.mediaDevices) {
+    if (!this.#mediaDevices) {
       return Promise.resolve(false)
     }
 
-    return this.mediaDevices.enumerateDevices().then(devices => {
+    return this.#mediaDevices.enumerateDevices().then(devices => {
       return devices.some(device => device.kind === 'audioinput')
     })
   }
 
   // eslint-disable-next-line consistent-return
   #start = (options = null) => {
-    if (!this.supportsUserMedia) {
+    if (!this.#supportsUserMedia) {
       return Promise.reject(new Error('Microphone access not supported'))
     }
 
@@ -78,7 +82,7 @@ module.exports = class Audio extends UIPlugin {
       })
 
       // ask user for access to their camera
-      return this.mediaDevices.getUserMedia({ audio: true })
+      return this.#mediaDevices.getUserMedia({ audio: true })
         .then((stream) => {
           this.#stream = stream
 
@@ -274,7 +278,7 @@ module.exports = class Audio extends UIPlugin {
   }
 
   #updateSources = () => {
-    this.mediaDevices.enumerateDevices().then(devices => {
+    this.#mediaDevices.enumerateDevices().then(devices => {
       this.setPluginState({
         audioSources: devices.filter((device) => device.kind === 'audioinput'),
       })
@@ -329,10 +333,10 @@ module.exports = class Audio extends UIPlugin {
       this.mount(target, this)
     }
 
-    if (this.mediaDevices) {
+    if (this.#mediaDevices) {
       this.#updateSources()
 
-      this.mediaDevices.ondevicechange = () => {
+      this.#mediaDevices.ondevicechange = () => {
         this.#updateSources()
 
         if (this.#stream) {
