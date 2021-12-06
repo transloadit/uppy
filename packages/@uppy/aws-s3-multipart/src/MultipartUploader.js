@@ -239,6 +239,8 @@ class MultipartUploader {
   }
 
   async #prepareUploadParts (candidates) {
+    candidates.forEach(i => this.chunkState[i].busy = true)
+    
     const result = await this.#retryable({
       attempt: () => this.options.prepareUploadParts({
         key: this.key,
