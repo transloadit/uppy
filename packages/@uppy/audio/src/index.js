@@ -26,7 +26,6 @@ module.exports = class Audio extends UIPlugin {
     super(uppy, opts)
     this.mediaDevices = navigator.mediaDevices
     this.supportsUserMedia = this.mediaDevices != null
-    this.protocol = globalThis.location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Audio'
     this.type = 'acquirer'
     this.icon = () => (
@@ -180,7 +179,6 @@ module.exports = class Audio extends UIPlugin {
         this.#capturedMediaFile = file
         // create object url for capture result preview
         this.setPluginState({
-          // eslint-disable-next-line compat/compat
           recordedAudio: URL.createObjectURL(file.data),
         })
       } catch (err) {
@@ -304,6 +302,7 @@ module.exports = class Audio extends UIPlugin {
       <RecordingScreen
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...audioState}
+        audioActive={this.#audioActive}
         onChangeSource={this.#changeSource}
         onStartRecording={this.#startRecording}
         onStopRecording={this.#stopRecording}
@@ -314,7 +313,7 @@ module.exports = class Audio extends UIPlugin {
         showAudioSourceDropdown={this.opts.showAudioSourceDropdown}
         supportsRecording={supportsMediaRecorder()}
         recording={audioState.isRecording}
-        src={this.#stream}
+        stream={this.#stream}
       />
     )
   }

@@ -8577,7 +8577,7 @@ __metadata:
   resolution: "@uppy/audio@workspace:packages/@uppy/audio"
   dependencies:
     "@uppy/utils": "workspace:^"
-    preact: ^10.5.15
+    preact: ^10.5.13
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -34038,13 +34038,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 10.5.15
   resolution: "preact@npm:10.5.15"
   checksum: 1c9f025ed6ff9c6cbe85da4feb88011795914d615244089396d1157376897a09f478eac0d582c66bc5a96c2841ebd9f8dfbe0a28e8c1820bdd7c314083350d40
-  languageName: node
-  linkType: hard
-
-"preact@npm:^10.5.15":
-  version: 10.6.1
-  resolution: "preact@npm:10.6.1"
-  checksum: 930fbf57d99da42762b342d934e000f5afe339cfd7e7418982799f37063b93ade171a179a626c9667d1ca80d4bcb669c166c9be10ba96eeb4983fe14d4604763
   languageName: node
   linkType: hard
 
