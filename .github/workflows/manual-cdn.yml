@@ -1,0 +1,18 @@
+name: Manually triggered CDN upload
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Package to upload'
+        required: true
+        default: 'uppy'
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload `${{ github.event.inputs.name }}` to CDN
+        run: corepack yarn run uploadcdn ${{ github.event.inputs.name }}
+        env:
+          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
+          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
