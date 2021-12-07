@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-# Make a draft changelog. Expects two tags to compate: previous release and current.
-# https://stackoverflow.com/questions/1441010/the-shortest-possible-output-from-git-log-containing-author-and-date
-# `./bin/make-changelog uppy@1.31.1 uppy@2.0.1`
-
-git_log=$(git log $1..$2 --pretty=format:"- %s %aE (%h)")
-echo "$git_log"
-exit;

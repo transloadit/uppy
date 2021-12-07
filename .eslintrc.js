@@ -176,6 +176,7 @@ module.exports = {
         '.eslintrc.js',
         'website/*.js',
         'website/**/*.js',
+        'private/**/*.js',
       ],
       rules: {
         'no-console': 'off',
