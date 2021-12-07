@@ -29,10 +29,10 @@ jobs:
         run: git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1) == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print substr($0,2) } }' > CHANGELOG.diff.md
       - name: Build before publishing
         run: corepack yarn run build
+      - name: Login to NPM
+        run: corepack yarn config set npmAuthToken ${{ toJSON(secrets.NPM_TOKEN) }}
       - name: Publish to NPM
         run: corepack yarn workspaces foreach --no-private npm publish --access public --tolerate-republish
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Merge PR
         id: merge
         run: |
