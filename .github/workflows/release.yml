@@ -27,6 +27,8 @@ jobs:
         run: corepack yarn install
       - name: Get CHANGELOG diff
         run: git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1) == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print substr($0,2) } }' > CHANGELOG.diff.md
+      - name: Copy README for `uppy` package
+        run: cp README.md packages/uppy/.
       - name: Build before publishing
         run: corepack yarn run build
       - name: Login to NPM
@@ -67,13 +69,12 @@ jobs:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload `@uppy/locales` to CDN if it was released
-        if: false
         run: git diff --exit-code --quiet HEAD^ -- packages/@uppy/locales/package.json ||corepack yarn run uploadcdn @uppy/locales
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Remove release-candidate branch
-        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-candidate
+        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-candidate || echo "Already deleted"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Remove release branch
