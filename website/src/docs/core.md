@@ -139,7 +139,7 @@ Optionally, provide rules and conditions to limit the type and/or number of file
 
 `maxNumberOfFiles` also affects the number of files a user is able to select via the system file dialog in UI plugins like `DragDrop`, `FileInput` and `Dashboard`: when set to `1`, they will only be able to select a single file. When `null` or another number is provided, they will be able to select several files.
 
-`allowedFileTypes` gets passed to the system file dialog via [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting\_accepted\_file\_types)’s accept attribute, so only files matching these types will be selectable.
+`allowedFileTypes` gets passed to the system file dialog via [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types)’s accept attribute, so only files matching these types will be selectable.
 
 > If you’d like to force a certain meta field data to be entered before the upload, you can [do so using `onBeforeUpload`](https://github.com/transloadit/uppy/issues/1703#issuecomment-507202561).
 

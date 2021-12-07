@@ -10,7 +10,7 @@ tagline: "upload selfies or audio / video recordings"
 
 The `@uppy/webcam` plugin lets you take photos and record videos with a built-in camera on desktop and mobile devices.
 
-> To use the Webcam plugin in Chrome, [your site must be served over https](https://developers.google.com/web/updates/2015/10/chrome-47-webrtc#public\_service\_announcements). This restriction does not apply on `localhost`, so you don’t have to jump through many hoops during development.
+> To use the Webcam plugin in Chrome, [your site must be served over https](https://developers.google.com/web/updates/2015/10/chrome-47-webrtc#public_service_announcements). This restriction does not apply on `localhost`, so you don’t have to jump through many hoops during development.
 
 ```js
 import Webcam from '@uppy/webcam'
@@ -115,9 +115,9 @@ Configures whether to mirror preview image from the camera. This option is usefu
 
 Configure the kind of video stream you would like to record. Takes an object with properties from the [MediaTrackConstraints][] interface.
 
-You can specify acceptable ranges for the resolution of the video stream using the \[`aspectRatio`]\[aspectRatio], \[`width`]\[width], and \[`height`]\[height] properties. Each property takes an object with `{ min, ideal, max }` properties. For example, use `width: { min: 720, max: 1920, ideal: 1920 }` to allow any width between 720 and 1920 pixels wide, while preferring the highest resolution.
+You can specify acceptable ranges for the resolution of the video stream using the [`aspectRatio`][], [`width`][], and [`height`][] properties. Each property takes an object with `{ min, ideal, max }` properties. For example, use `width: { min: 720, max: 1920, ideal: 1920 }` to allow any width between 720 and 1920 pixels wide, while preferring the highest resolution.
 
-Devices sometimes have several cameras, front and back, for example. \[`facingMode`]\[facingMode] lets you specify which should be used:
+Devices sometimes have several cameras, front and back, for example. [`facingMode`][] lets you specify which should be used:
 
 * `user`: The video source is facing toward the user; this includes, for example, the front-facing camera on a smartphone.
 * `environment`:  The video source is facing away from the user, thereby viewing their environment. This is the back camera on a smartphone.
@@ -127,6 +127,14 @@ Devices sometimes have several cameras, front and back, for example. \[`facingMo
 For a full list of available properties, check out MDN documentation for [MediaTrackConstraints][].
 
 [MediaTrackConstraints]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints#Properties_of_video_tracks
+
+[`aspectRatio`]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/aspectRatio
+
+[`width`]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/width
+
+[`height`]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/height
+
+[`facingMode`]: https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/facingMode
 
 ### `showVideoSourceDropdown: false`
 
