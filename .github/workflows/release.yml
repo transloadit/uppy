@@ -32,7 +32,7 @@ jobs:
       - name: Publish to NPM
         run: corepack yarn workspaces foreach --no-private npm publish --access public --tolerate-republish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Merge PR
         id: merge
         run: |
