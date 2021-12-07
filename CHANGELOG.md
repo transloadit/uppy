@@ -39,7 +39,7 @@ Released: 2021-12-07
 
 - meta: add release automations (Antoine du Hamel / #3304)
 - @uppy/dashboard: Save meta fields when opening the image editor (Merlijn Vos / #3339)
-- @uppy/aws-s3-multipart: Drop `lockedCandidatesForBatch` and mark chunks as 'busy' when preparing (Yegor Yarko / #3342)
+- @uppy/aws-s3-multipart: Drop `lockedCandidatesForBatch` and mark chunks as busy when preparing (Yegor Yarko / #3342)
 - @uppy/webcam: fix broken links in `webcam.md` (Antoine du Hamel / #3346)
 - @uppy/audio: new @uppy/audio plugin for recording with microphone (Artur Paikin / #2976)
 - build: force use of `@babel/plugin-proposal-optional-chaining` (Antoine du Hamel / #3335)
@@ -51,7 +51,7 @@ Released: 2021-12-07
 - meta: Add disableLocalFiles to options summary (Steve Barker / #3323)
 - meta: Create SECURITY.md (Ziding Zhang / #3052)
 - @uppy/image-editor: Pass croppedCanvasOptions to getCroppedCanvas (Mohamed Boudra / #3320)
-- meta: finish master->main job (Mikael Finstad / #3315)
+- meta: finish `master`->`main` job (Mikael Finstad / #3315)
 - website: update documents that were out of date (Antoine du Hamel / #3317)
 - @uppy/status-bar: Status bar error state improvements (Merlijn Vos / #3299)
 - doc: Fix typo in `docs/drag-drop.md` (Ash Allen / #3319)
