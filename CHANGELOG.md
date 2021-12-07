@@ -12,6 +12,55 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.3.0
+
+Released: 2021-12-07
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/angular             |   0.2.6 | @uppy/locales             |   2.0.4 |
+| @uppy/audio               |   0.2.0 | @uppy/onedrive            |   2.0.5 |
+| @uppy/aws-s3              |   2.0.6 | @uppy/provider-views      |   2.0.6 |
+| @uppy/aws-s3-multipart    |   2.2.0 | @uppy/react               |   2.1.2 |
+| @uppy/box                 |   1.0.5 | @uppy/screen-capture      |   2.0.5 |
+| @uppy/companion           |   3.1.2 | @uppy/status-bar          |   2.1.2 |
+| @uppy/companion-client    |   2.0.4 | @uppy/store-default       |   2.0.3 |
+| @uppy/core                |   2.1.3 | @uppy/thumbnail-generator |   2.0.6 |
+| @uppy/dashboard           |   2.1.2 | @uppy/transloadit         |   2.0.5 |
+| @uppy/drag-drop           |   2.0.5 | @uppy/tus                 |   2.1.2 |
+| @uppy/dropbox             |   2.0.5 | @uppy/url                 |   2.0.5 |
+| @uppy/facebook            |   2.0.5 | @uppy/utils               |   4.0.4 |
+| @uppy/file-input          |   2.0.5 | @uppy/webcam              |   2.0.5 |
+| @uppy/golden-retriever    |   2.0.6 | @uppy/xhr-upload          |   2.0.6 |
+| @uppy/google-drive        |   2.0.5 | @uppy/zoom                |   1.0.5 |
+| @uppy/image-editor        |   1.1.0 | @uppy/robodog             |   2.1.4 |
+| @uppy/informer            |   2.0.5 | uppy                      |   2.3.0 |
+| @uppy/instagram           |   2.0.5 |                           |         |
+
+- meta: add release automations (Antoine du Hamel / #3304)
+- @uppy/dashboard: Save meta fields when opening the image editor (Merlijn Vos / #3339)
+- @uppy/aws-s3-multipart: Drop `lockedCandidatesForBatch` and mark chunks as busy when preparing (Yegor Yarko / #3342)
+- @uppy/webcam: fix broken links in `webcam.md` (Antoine du Hamel / #3346)
+- @uppy/audio: new @uppy/audio plugin for recording with microphone (Artur Paikin / #2976)
+- build: force use of `@babel/plugin-proposal-optional-chaining` (Antoine du Hamel / #3335)
+- @uppy/companion: fix deploy Yarn version (Antoine du Hamel / #3327)
+- @uppy/companion: upgrade aws-sdk (Mikael Finstad / #3334)
+- @uppy/core: disable loose transpilation for legacy bundle (Antoine du Hamel / #3329)
+- @uppy/angular: examples: update `angular-example` to Angular v13 (Antoine du Hamel / #3325)
+- meta: Update BACKLOG.md (Artur Paikin, Merlijn Vos)
+- meta: Add disableLocalFiles to options summary (Steve Barker / #3323)
+- meta: Create SECURITY.md (Ziding Zhang / #3052)
+- @uppy/image-editor: Pass croppedCanvasOptions to getCroppedCanvas (Mohamed Boudra / #3320)
+- meta: finish `master`->`main` job (Mikael Finstad / #3315)
+- website: update documents that were out of date (Antoine du Hamel / #3317)
+- @uppy/status-bar: Status bar error state improvements (Merlijn Vos / #3299)
+- doc: Fix typo in `docs/drag-drop.md` (Ash Allen / #3319)
+- website: Update /support and docs about Transloadit-hosted Companion (Artur Paikin / #3243)
+- @uppy/aws-s3,@uppy/box,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/google-drive,@uppy/image-editor,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/screen-capture,@uppy/status-bar,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/url,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: Refactor locale scripts & generate types and docs (Merlijn Vos / #3276)
+- @uppy/companion: Remove references of incorrect `options` argument for `companion.socket` (Mikael Finstad / #3307)
+- @uppy/companion: Upgrade linting to 2.0.0-0 (Kevin van Zonneveld / #3280)
+
+
 ## 2.2.1
 
 Released: 2021-10-14
