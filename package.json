@@ -109,7 +109,6 @@
     "resolve": "^1.17.0",
     "sass": "^1.29.0",
     "size-limit": "4.5.6",
-    "stringify-object": "^3.3.0",
     "stylelint": "^13.13.1",
     "stylelint-config-rational-order": "^0.1.2",
     "stylelint-config-standard": "^22.0.0",

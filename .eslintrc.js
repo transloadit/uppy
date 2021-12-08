@@ -193,7 +193,7 @@ module.exports = {
       ],
       rules: {
         camelcase: ['off'],
-        'quote-props': ['off'],
+        'quote-props': ['error', 'as-needed', { 'numbers': true }],
       },
     },
 

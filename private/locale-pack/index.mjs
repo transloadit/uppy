@@ -5,7 +5,6 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 
 import dedent from 'dedent'
-import stringifyObject from 'stringify-object'
 import { remark } from 'remark'
 import { headingRange } from 'mdast-util-heading-range'
 import remarkFrontmatter from 'remark-frontmatter'
@@ -88,11 +87,7 @@ function createCombinedLocale (locales) {
 }
 
 function populateTemplate (fileString, combinedLocale) {
-  const formattedLocale = stringifyObject(combinedLocale, {
-    indent: '  ',
-    singleQuotes: true,
-    inlineCharacterLimit: 12,
-  })
+  const formattedLocale = JSON.stringify(combinedLocale, null, ' ')
   return fileString.replace('en_US.strings = {}', `en_US.strings = ${formattedLocale}`)
 }
 

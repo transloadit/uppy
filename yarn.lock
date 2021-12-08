@@ -19994,7 +19994,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-own-enumerable-property-symbols@npm:^3.0.0, get-own-enumerable-property-symbols@npm:^3.0.2":
+"get-own-enumerable-property-symbols@npm:^3.0.0":
   version: 3.0.2
   resolution: "get-own-enumerable-property-symbols@npm:3.0.2"
   checksum: 8f0331f14159f939830884799f937343c8c0a2c330506094bc12cbee3665d88337fe97a4ea35c002cc2bdba0f5d9975ad7ec3abb925015cdf2a93e76d4759ede
@@ -23108,13 +23108,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"is-obj@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "is-obj@npm:3.0.0"
-  checksum: 75e97a99ed0b0884778887f8e913791864151307774914283b068b06b57ca86f695b024aa1ba5ed04411918edef93e2bfd8f84d68c6b6aab417802cc76f5061b
-  languageName: node
-  linkType: hard
-
 "is-object@npm:^1.0.1":
   version: 1.0.2
   resolution: "is-object@npm:1.0.2"
@@ -23274,13 +23267,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 2.1.0
   resolution: "is-regexp@npm:2.1.0"
   checksum: 502f8e09faddc2e360350d3fa88dfb3af47b3c8e0bea1d0fe9903a1265cb199547cc11c99e9ee27cb010f678f6b48e52e92273860b68f6339e463e034f21859c
-  languageName: node
-  linkType: hard
-
-"is-regexp@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "is-regexp@npm:3.1.0"
-  checksum: d39dbd9892f0a25d01ee1a8e650c3f2e045bf7b1fa87eafb50b31dd29342869aa9135fd372628202254398956bf7f4b62094bdda39283ec2a9bb749fbb7f427c
   languageName: node
   linkType: hard
 
@@ -25706,7 +25692,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     mdast-util-heading-range: ^3.1.0
     remark: ^14.0.1
     remark-frontmatter: ^4.0.1
-    stringify-object: ^4.0.0
   languageName: unknown
   linkType: soft
 
@@ -37654,7 +37639,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"stringify-object@npm:3.3.0, stringify-object@npm:^3.3.0":
+"stringify-object@npm:3.3.0":
   version: 3.3.0
   resolution: "stringify-object@npm:3.3.0"
   dependencies:
@@ -37662,17 +37647,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     is-obj: ^1.0.1
     is-regexp: ^1.0.0
   checksum: 6827a3f35975cfa8572e8cd3ed4f7b262def260af18655c6fde549334acdac49ddba69f3c861ea5a6e9c5a4990fe4ae870b9c0e6c31019430504c94a83b7a154
-  languageName: node
-  linkType: hard
-
-"stringify-object@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "stringify-object@npm:4.0.0"
-  dependencies:
-    get-own-enumerable-property-symbols: ^3.0.2
-    is-obj: ^3.0.0
-    is-regexp: ^3.0.0
-  checksum: 8fffae04044f0a4f7fa70e05b857750e35a54e6117cdf69cad2d1ef318ff4b0c8fec57a7731646fca0ca7c07ae723cb12edbbbc863377607aec9c83adb9ff5a3
   languageName: node
   linkType: hard
 
@@ -40646,7 +40620,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     resolve: ^1.17.0
     sass: ^1.29.0
     size-limit: 4.5.6
-    stringify-object: ^3.3.0
     stylelint: ^13.13.1
     stylelint-config-rational-order: ^0.1.2
     stylelint-config-standard: ^22.0.0
