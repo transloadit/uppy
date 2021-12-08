@@ -11,7 +11,7 @@
     "@uppy/vue": "workspace:*",
     "core-js": "^3.6.5",
     "shallow-equal": "^1.2.1",
-    "vue": "^2.6.11"
+    "vue": "^2.6.14"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

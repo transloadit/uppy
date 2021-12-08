@@ -9,7 +9,7 @@
     "@uppy/xhr-upload": "workspace:*",
     "babelify": "^10.0.0",
     "budo": "^11.3.2",
-    "cookie-parser": "^1.4.3",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.4",
     "formidable": "^1.2.1",
     "npm-run-all": "^4.1.3",
