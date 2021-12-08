@@ -4,7 +4,7 @@
 
 const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
-const { nanoid } = require('nanoid')
+const { nanoid } = require('nanoid/non-secure')
 const throttle = require('lodash.throttle')
 const prettierBytes = require('@transloadit/prettier-bytes')
 const match = require('mime-match')
