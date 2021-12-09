@@ -9,7 +9,7 @@
     "@uppy/tus": "workspace:*",
     "babelify": "^10.0.0",
     "budo": "^11.6.1",
-    "redux": "^4.0.1",
+    "redux": "^4.1.2",
     "redux-logger": "^3.0.6"
   },
   "private": true,
