@@ -69,7 +69,7 @@ $ npm install @uppy/core @uppy/dashboard @uppy/tus
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v2.3.0/uppy.min.css), either to your HTML page’s `<head>` or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
+Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v2.3.1/uppy.min.css), either to your HTML page’s `<head>` or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
 
 Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
@@ -77,10 +77,10 @@ Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edg
 
 ```html
 <!-- 1. Add CSS to `<head>` -->
-<link href="https://releases.transloadit.com/uppy/v2.3.0/uppy.min.css" rel="stylesheet">
+<link href="https://releases.transloadit.com/uppy/v2.3.1/uppy.min.css" rel="stylesheet">
 
 <!-- 2. Add JS before the closing `</body>` -->
-<script src="https://releases.transloadit.com/uppy/v2.3.0/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.3.1/uppy.min.js"></script>
 
 <!-- 3. Initialize -->
 <div class="UppyDragDrop"></div>
@@ -190,7 +190,7 @@ If you’re using Uppy from CDN, those polyfills are already included in the leg
 bundle, so no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v2.3.0/uppy.legacy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.3.1/uppy.legacy.min.js"></script>
 ```
 
 ## FAQ
@@ -431,21 +431,21 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 :---: |:---: |:---: |:---: |:---: |:---: |
 [bdirito](https://github.com/bdirito) |[c0b41](https://github.com/c0b41) |[canvasbh](https://github.com/canvasbh) |[christianwengert](https://github.com/christianwengert) |[craigcbrunner](https://github.com/craigcbrunner) |[darthf1](https://github.com/darthf1) |
 
-[<img alt="dkisic" src="https://avatars.githubusercontent.com/u/32257921?v=4&s=117" width="117">](https://github.com/dkisic) |[<img alt="fingul" src="https://avatars.githubusercontent.com/u/894739?v=4&s=117" width="117">](https://github.com/fingul) |[<img alt="franckl" src="https://avatars.githubusercontent.com/u/3875803?v=4&s=117" width="117">](https://github.com/franckl) |[<img alt="gaelicwinter" src="https://avatars.githubusercontent.com/u/6510266?v=4&s=117" width="117">](https://github.com/gaelicwinter) |[<img alt="green-mike" src="https://avatars.githubusercontent.com/u/5584225?v=4&s=117" width="117">](https://github.com/green-mike) |[<img alt="hxgf" src="https://avatars.githubusercontent.com/u/56104?v=4&s=117" width="117">](https://github.com/hxgf) |
+[<img alt="dkisic" src="https://avatars.githubusercontent.com/u/32257921?v=4&s=117" width="117">](https://github.com/dkisic) |[<img alt="fingul" src="https://avatars.githubusercontent.com/u/894739?v=4&s=117" width="117">](https://github.com/fingul) |[<img alt="franckl" src="https://avatars.githubusercontent.com/u/3875803?v=4&s=117" width="117">](https://github.com/franckl) |[<img alt="gaelicwinter" src="https://avatars.githubusercontent.com/u/6510266?v=4&s=117" width="117">](https://github.com/gaelicwinter) |[<img alt="github-actions[bot]" src="https://avatars.githubusercontent.com/in/15368?v=4&s=117" width="117">](https://github.com/apps/github-actions) |[<img alt="green-mike" src="https://avatars.githubusercontent.com/u/5584225?v=4&s=117" width="117">](https://github.com/green-mike) |
 :---: |:---: |:---: |:---: |:---: |:---: |
-[dkisic](https://github.com/dkisic) |[fingul](https://github.com/fingul) |[franckl](https://github.com/franckl) |[gaelicwinter](https://github.com/gaelicwinter) |[green-mike](https://github.com/green-mike) |[hxgf](https://github.com/hxgf) |
+[dkisic](https://github.com/dkisic) |[fingul](https://github.com/fingul) |[franckl](https://github.com/franckl) |[gaelicwinter](https://github.com/gaelicwinter) |[github-actions[bot]](https://github.com/apps/github-actions) |[green-mike](https://github.com/green-mike) |
 
-[<img alt="johnmanjiro13" src="https://avatars.githubusercontent.com/u/28798279?v=4&s=117" width="117">](https://github.com/johnmanjiro13) |[<img alt="kode-ninja" src="https://avatars.githubusercontent.com/u/7857611?v=4&s=117" width="117">](https://github.com/kode-ninja) |[<img alt="magumbo" src="https://avatars.githubusercontent.com/u/6683765?v=4&s=117" width="117">](https://github.com/magumbo) |[<img alt="ninesalt" src="https://avatars.githubusercontent.com/u/7952255?v=4&s=117" width="117">](https://github.com/ninesalt) |[<img alt="phil714" src="https://avatars.githubusercontent.com/u/7584581?v=4&s=117" width="117">](https://github.com/phil714) |[<img alt="luntta" src="https://avatars.githubusercontent.com/u/14221637?v=4&s=117" width="117">](https://github.com/luntta) |
+[<img alt="hxgf" src="https://avatars.githubusercontent.com/u/56104?v=4&s=117" width="117">](https://github.com/hxgf) |[<img alt="johnmanjiro13" src="https://avatars.githubusercontent.com/u/28798279?v=4&s=117" width="117">](https://github.com/johnmanjiro13) |[<img alt="kode-ninja" src="https://avatars.githubusercontent.com/u/7857611?v=4&s=117" width="117">](https://github.com/kode-ninja) |[<img alt="magumbo" src="https://avatars.githubusercontent.com/u/6683765?v=4&s=117" width="117">](https://github.com/magumbo) |[<img alt="ninesalt" src="https://avatars.githubusercontent.com/u/7952255?v=4&s=117" width="117">](https://github.com/ninesalt) |[<img alt="phil714" src="https://avatars.githubusercontent.com/u/7584581?v=4&s=117" width="117">](https://github.com/phil714) |
 :---: |:---: |:---: |:---: |:---: |:---: |
-[johnmanjiro13](https://github.com/johnmanjiro13) |[kode-ninja](https://github.com/kode-ninja) |[magumbo](https://github.com/magumbo) |[ninesalt](https://github.com/ninesalt) |[phil714](https://github.com/phil714) |[luntta](https://github.com/luntta) |
+[hxgf](https://github.com/hxgf) |[johnmanjiro13](https://github.com/johnmanjiro13) |[kode-ninja](https://github.com/kode-ninja) |[magumbo](https://github.com/magumbo) |[ninesalt](https://github.com/ninesalt) |[phil714](https://github.com/phil714) |
 
-[<img alt="rhymes" src="https://avatars.githubusercontent.com/u/146201?v=4&s=117" width="117">](https://github.com/rhymes) |[<img alt="rlebosse" src="https://avatars.githubusercontent.com/u/2794137?v=4&s=117" width="117">](https://github.com/rlebosse) |[<img alt="rtaieb" src="https://avatars.githubusercontent.com/u/35224301?v=4&s=117" width="117">](https://github.com/rtaieb) |[<img alt="slawexxx44" src="https://avatars.githubusercontent.com/u/11180644?v=4&s=117" width="117">](https://github.com/slawexxx44) |[<img alt="thanhthot" src="https://avatars.githubusercontent.com/u/50633205?v=4&s=117" width="117">](https://github.com/thanhthot) |[<img alt="tinny77" src="https://avatars.githubusercontent.com/u/1872936?v=4&s=117" width="117">](https://github.com/tinny77) |
+[<img alt="luntta" src="https://avatars.githubusercontent.com/u/14221637?v=4&s=117" width="117">](https://github.com/luntta) |[<img alt="rhymes" src="https://avatars.githubusercontent.com/u/146201?v=4&s=117" width="117">](https://github.com/rhymes) |[<img alt="rlebosse" src="https://avatars.githubusercontent.com/u/2794137?v=4&s=117" width="117">](https://github.com/rlebosse) |[<img alt="rtaieb" src="https://avatars.githubusercontent.com/u/35224301?v=4&s=117" width="117">](https://github.com/rtaieb) |[<img alt="slawexxx44" src="https://avatars.githubusercontent.com/u/11180644?v=4&s=117" width="117">](https://github.com/slawexxx44) |[<img alt="thanhthot" src="https://avatars.githubusercontent.com/u/50633205?v=4&s=117" width="117">](https://github.com/thanhthot) |
 :---: |:---: |:---: |:---: |:---: |:---: |
-[rhymes](https://github.com/rhymes) |[rlebosse](https://github.com/rlebosse) |[rtaieb](https://github.com/rtaieb) |[slawexxx44](https://github.com/slawexxx44) |[thanhthot](https://github.com/thanhthot) |[tinny77](https://github.com/tinny77) |
+[luntta](https://github.com/luntta) |[rhymes](https://github.com/rhymes) |[rlebosse](https://github.com/rlebosse) |[rtaieb](https://github.com/rtaieb) |[slawexxx44](https://github.com/slawexxx44) |[thanhthot](https://github.com/thanhthot) |
 
-[<img alt="tusharjkhunt" src="https://avatars.githubusercontent.com/u/31904234?v=4&s=117" width="117">](https://github.com/tusharjkhunt) |[<img alt="vedran555" src="https://avatars.githubusercontent.com/u/38395951?v=4&s=117" width="117">](https://github.com/vedran555) |[<img alt="yoann-hellopret" src="https://avatars.githubusercontent.com/u/46525558?v=4&s=117" width="117">](https://github.com/yoann-hellopret) |[<img alt="olitomas" src="https://avatars.githubusercontent.com/u/6918659?v=4&s=117" width="117">](https://github.com/olitomas) |[<img alt="JimmyLv" src="https://avatars.githubusercontent.com/u/4997466?v=4&s=117" width="117">](https://github.com/JimmyLv) |
-:---: |:---: |:---: |:---: |:---: |
-[tusharjkhunt](https://github.com/tusharjkhunt) |[vedran555](https://github.com/vedran555) |[yoann-hellopret](https://github.com/yoann-hellopret) |[olitomas](https://github.com/olitomas) |[JimmyLv](https://github.com/JimmyLv) |
+[<img alt="tinny77" src="https://avatars.githubusercontent.com/u/1872936?v=4&s=117" width="117">](https://github.com/tinny77) |[<img alt="tusharjkhunt" src="https://avatars.githubusercontent.com/u/31904234?v=4&s=117" width="117">](https://github.com/tusharjkhunt) |[<img alt="vedran555" src="https://avatars.githubusercontent.com/u/38395951?v=4&s=117" width="117">](https://github.com/vedran555) |[<img alt="yoann-hellopret" src="https://avatars.githubusercontent.com/u/46525558?v=4&s=117" width="117">](https://github.com/yoann-hellopret) |[<img alt="olitomas" src="https://avatars.githubusercontent.com/u/6918659?v=4&s=117" width="117">](https://github.com/olitomas) |[<img alt="JimmyLv" src="https://avatars.githubusercontent.com/u/4997466?v=4&s=117" width="117">](https://github.com/JimmyLv) |
+:---: |:---: |:---: |:---: |:---: |:---: |
+[tinny77](https://github.com/tinny77) |[tusharjkhunt](https://github.com/tusharjkhunt) |[vedran555](https://github.com/vedran555) |[yoann-hellopret](https://github.com/yoann-hellopret) |[olitomas](https://github.com/olitomas) |[JimmyLv](https://github.com/JimmyLv) |
 
 
 <!--/contributors-->
