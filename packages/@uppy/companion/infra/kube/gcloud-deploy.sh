@@ -17,7 +17,7 @@ mv ./kubectl ${HOME}/.local/bin/
 
 
 # Store the new image in docker hub
-docker build -t transloadit/companion:latest -t transloadit/companion:$TRAVIS_COMMIT -f packages/@uppy/companion/Dockerfile packages/@uppy/companion;
+docker build -t transloadit/companion:latest -t transloadit/companion:$TRAVIS_COMMIT .;
 docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
 
 # Push the commit tagged docker image.
