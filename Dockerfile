@@ -8,8 +8,7 @@ COPY packages/@uppy/companion /app/packages/@uppy/companion
 
 RUN apk --update add  --virtual native-dep \
   make gcc g++ python3 libgcc libstdc++ git && \
-  cd /app && corepack yarn plugin import workspace-tools && \
-  corepack yarn workspaces focus @uppy/companion && \
+  cd /app && corepack yarn workspaces focus @uppy/companion && \
   apk del native-dep
 
 RUN cd /app && corepack yarn workspace @uppy/companion build
