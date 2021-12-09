@@ -112,9 +112,7 @@
     "test": "bash -c 'source env.test.sh && ../../../node_modules/jest/bin/jest.js'",
     "test:watch": "yarn test -- --watch"
   },
-  "packageManager": "yarn@3.1.0",
   "engines": {
-    "node": ">=10.20.1",
-    "yarn": "3.1.0"
+    "node": ">=10.20.1"
   }
 }

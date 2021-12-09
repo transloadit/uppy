@@ -28,8 +28,6 @@ echo "$PLUGINS" | xargs -n1 -t corepack yarn plugin remove
 
 cp package.json .yarn/cache/tmp.package.json
 sed "s#\"yarn\": \"$CURRENT_VERSION\"#\"yarn\": \"$LAST_VERSION\"#;s#\"yarn@$CURRENT_VERSION\"#\"yarn@$LAST_VERSION\"#" .yarn/cache/tmp.package.json > package.json
-cp packages/@uppy/companion/package.json .yarn/cache/tmp.package.json
-sed "s#\"yarn\": \"$CURRENT_VERSION\"#\"yarn\": \"$LAST_VERSION\"#;s#\"yarn@$CURRENT_VERSION\"#\"yarn@$LAST_VERSION\"#" .yarn/cache/tmp.package.json > packages/@uppy/companion/package.json
 rm .yarn/cache/tmp.package.json
 
 echo "$PLUGINS" | xargs -n1 -t corepack yarn plugin import
