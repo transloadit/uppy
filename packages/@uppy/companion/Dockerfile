@@ -9,13 +9,13 @@ WORKDIR /app
 ADD package.json package-*.json yarn.* /tmp/
 RUN cd /tmp && apk --update add  --virtual native-dep \
   make gcc g++ python3 libgcc libstdc++ git && \
-  npm install && \
+  corepack yarn install && \
   apk del native-dep
 RUN mkdir -p /app && cd /app && ln -nfs /tmp/node_modules
 RUN apk add bash
 COPY . /app
 ENV PATH "${PATH}:/app/node_modules/.bin"
-RUN npm run build
+RUN corepack yarn run build
 
 FROM node:16.13.0-alpine
 
