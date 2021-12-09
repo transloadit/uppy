@@ -28,7 +28,7 @@ Released: 2021-12-09
 
 - meta: update npm deps (Antoine du Hamel / #3352)
 - @uppy/companion: fix Dockerfile and deploy automation (Mikael Finstad / #3355)
-- @uppy/companion: don't pin Yarn version in `package.json` (Antoine du Hamel / #3347)
+- @uppy/companion: don’t pin Yarn version in `package.json` (Antoine du Hamel / #3347)
 - @uppy/aws-s3,@uppy/core,@uppy/dashboard,@uppy/store-redux,@uppy/xhr-upload: deps: use `nanoid/non-secure` to workaround react-native limitation (Antoine du Hamel / #3350)
 - @uppy/audio: showRecordingLength option was removed, always clearInterval (Artur Paikin / #3351)
 - meta: drop `stringify-object` dependency to generate locales (Antoine du Hamel / #3344)
