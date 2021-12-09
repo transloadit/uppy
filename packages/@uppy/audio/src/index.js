@@ -166,11 +166,8 @@ module.exports = class Audio extends UIPlugin {
       })
       this.#recorder.stop()
 
-      if (this.opts.showRecordingLength) {
-        // Stop the recordingLengthTimer if we are showing the recording length.
-        clearInterval(this.recordingLengthTimer)
-        this.setPluginState({ recordingLengthSeconds: 0 })
-      }
+      clearInterval(this.recordingLengthTimer)
+      this.setPluginState({ recordingLengthSeconds: 0 })
     })
 
     return stopped.then(() => {
@@ -230,9 +227,7 @@ module.exports = class Audio extends UIPlugin {
         this.#recorder.addEventListener('stop', resolve, { once: true })
         this.#recorder.stop()
 
-        if (this.opts.showRecordingLength) {
-          clearInterval(this.recordingLengthTimer)
-        }
+        clearInterval(this.recordingLengthTimer)
       })
     }
 
