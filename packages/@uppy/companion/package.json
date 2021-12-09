@@ -116,5 +116,8 @@
   "engines": {
     "node": ">=10.20.1",
     "yarn": "3.1.0"
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   }
 }
