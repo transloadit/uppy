@@ -190,6 +190,7 @@
     ]
   },
   "resolutions": {
+    "@types/redis": "2",
     "@types/eslint@^7.2.13": "^8.2.0",
     "npm-auth-to-token@1.0.0": "patch:npm-auth-to-token@npm:1.0.0#.yarn/patches/npm-auth-to-token-npm-1.0.0-c288ce201f"
   }

@@ -114,5 +114,8 @@
   },
   "engines": {
     "node": ">=10.20.1"
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   }
 }
