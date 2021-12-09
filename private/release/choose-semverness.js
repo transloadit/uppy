@@ -58,8 +58,11 @@ export default async function pickSemverness (
       console.log(`No commits since last release for ${name}, skipping.`)
       continue
     }
+    console.log('\n')
+    console.log('-'.repeat(20))
+    console.log(name)
     console.log(
-      `Here are the commits that landed on ${name} since previous release:\n\n${stdout}\n`,
+      `\nHere are the commits that landed on ${name} since previous release:\n${stdout}\n`,
     )
     console.log(
       `Check the web UI at https://github.com/transloadit/uppy/tree/main/${encodeURI(

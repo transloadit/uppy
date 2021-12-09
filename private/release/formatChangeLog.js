@@ -58,7 +58,7 @@ export default async function formatChangeLog (
       const { useInferred } = await prompts({
         type: 'confirm',
         name: 'useInferred',
-        message: `Use ${inferredPackages} (inferred from the files it touches)?`,
+        message: `Assign commit to ${inferredPackages} (inferred from the files it touches)?`,
         initial: true,
       })
 
