@@ -12,6 +12,29 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.3.1
+
+Released: 2021-12-09
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/angular     |   0.2.7 | @uppy/store-redux |   2.0.3 |
+| @uppy/audio       |   0.2.1 | @uppy/svelte      |   1.0.6 |
+| @uppy/aws-s3      |   2.0.7 | @uppy/vue         |   0.4.4 |
+| @uppy/companion   |   3.1.3 | @uppy/xhr-upload  |   2.0.7 |
+| @uppy/core        |   2.1.4 | @uppy/robodog     |   2.1.5 |
+| @uppy/dashboard   |   2.1.3 | uppy              |   2.3.1 |
+| @uppy/locales     |   2.0.5 |                   |         |
+
+- meta: update npm deps (Antoine du Hamel / #3352)
+- @uppy/companion: fix Dockerfile and deploy automation (Mikael Finstad / #3355)
+- @uppy/companion: don't pin Yarn version in `package.json` (Antoine du Hamel / #3347)
+- @uppy/aws-s3,@uppy/core,@uppy/dashboard,@uppy/store-redux,@uppy/xhr-upload: deps: use `nanoid/non-secure` to workaround react-native limitation (Antoine du Hamel / #3350)
+- @uppy/audio: showRecordingLength option was removed, always clearInterval (Artur Paikin / #3351)
+- meta: drop `stringify-object` dependency to generate locales (Antoine du Hamel / #3344)
+- meta: add release automations (Antoine du Hamel / #3304)
+
+
 ## 2.3.0
 
 Released: 2021-12-07
