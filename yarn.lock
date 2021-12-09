@@ -6783,7 +6783,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/redis@npm:*":
+"@types/redis@npm:2":
   version: 2.8.32
   resolution: "@types/redis@npm:2.8.32"
   dependencies:
