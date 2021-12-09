@@ -1,6 +1,6 @@
 const { h, Component } = require('preact')
 const classNames = require('classnames')
-const { nanoid } = require('nanoid')
+const { nanoid } = require('nanoid/non-secure')
 const getFileTypeIcon = require('../../utils/getFileTypeIcon')
 const ignoreEvent = require('../../utils/ignoreEvent.js')
 const FilePreview = require('../FilePreview')

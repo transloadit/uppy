@@ -1,5 +1,5 @@
 const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const { nanoid } = require('nanoid')
+const { nanoid } = require('nanoid/non-secure')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
