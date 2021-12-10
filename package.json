@@ -138,7 +138,7 @@
     "dev:browsersync": "yarn workspace @uppy-example/dev start",
     "dev:watch-sandbox": "yarn workspace @uppy-example/dev watch:sandbox",
     "dev:with-companion": "npm-run-all --parallel start:companion dev:watch-sandbox watch:js:lib watch:css dev:browsersync",
-    "dev": "npm-run-all --parallel dev:watch-sandbox watch:js:lib watch:css dev:browsersync",
+    "dev": "yarn workspace @uppy-example/dev dev",
     "example": "yarn node bin/run-example",
     "lint:fix": "yarn run lint -- --fix",
     "lint:markdown": "remark -f -q . -i .remarkignore",
@@ -192,6 +192,7 @@
   "resolutions": {
     "@types/redis": "2",
     "@types/eslint@^7.2.13": "^8.2.0",
-    "npm-auth-to-token@1.0.0": "patch:npm-auth-to-token@npm:1.0.0#.yarn/patches/npm-auth-to-token-npm-1.0.0-c288ce201f"
+    "npm-auth-to-token@1.0.0": "patch:npm-auth-to-token@npm:1.0.0#.yarn/patches/npm-auth-to-token-npm-1.0.0-c288ce201f",
+    "babel-plugin-transform-commonjs@1.1.6": "patch:babel-plugin-transform-commonjs@npm:1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809"
   }
 }
