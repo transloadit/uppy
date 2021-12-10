@@ -106,7 +106,7 @@ function generateTypes (pluginName, locale) {
     '@uppy',
     pluginName,
     'types',
-    'generatedLocale.d.ts'
+    'generatedLocale.d.ts',
   )
 
   const localeTypes = dedent`
@@ -131,7 +131,7 @@ function generateLocaleDocs (pluginName) {
 
   if (!fs.existsSync(docPath)) {
     console.error(
-      `⚠️  Could not find markdown documentation file for "${pluginName}". Make sure the plugin name matches the markdown file name.`
+      `⚠️  Could not find markdown documentation file for "${pluginName}". Make sure the plugin name matches the markdown file name.`,
     )
     return
   }
