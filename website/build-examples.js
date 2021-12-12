@@ -21,30 +21,15 @@
  * the Set when it has been bundled.
  */
 
-const { createWriteStream, mkdirSync } = require('fs')
 const { glob } = require('multi-glob')
 const chalk = require('chalk')
 const path = require('path')
 const notifier = require('node-notifier')
-const babelify = require('babelify')
-const aliasify = require('aliasify')
-const browserify = require('browserify')
-const watchify = require('watchify')
 
-const bresolve = require('browser-resolve')
+const esbuild = require('esbuild')
+const alias = require('esbuild-plugin-alias')
 
-function useSourcePackages (b) {
-  // eslint-disable-next-line no-underscore-dangle
-  b._bresolve = (id, opts, cb) => {
-    bresolve(id, opts, (err, result, pkg) => {
-      if (err) return cb(err)
-      if (/packages\/@uppy\/[^/]+?\/lib\//.test(result)) {
-        result = result.replace(/packages\/@uppy\/([^/]+?)\/lib\//, 'packages/@uppy/$1/src/')
-      }
-      cb(err, result, pkg)
-    })
-  }
-}
+const babelImport = import('esbuild-plugin-babel')
 
 const webRoot = __dirname
 
@@ -52,11 +37,6 @@ let srcPattern = `${webRoot}/src/examples/**/app.es6`
 let dstPattern = `${webRoot}/public/examples/**/app.js`
 
 const watchifyEnabled = process.argv[2] === 'watch'
-
-const browserifyPlugins = [useSourcePackages]
-if (watchifyEnabled) {
-  browserifyPlugins.push(watchify)
-}
 
 // Instead of 'watch', build-examples.js can also take a path as cli argument.
 // In this case we'll only bundle the specified path/pattern
@@ -72,70 +52,33 @@ glob(srcPattern, (err, files) => {
     console.log('--> Watching examples..')
   }
 
-  const muted = new Set()
-
   // Create a new watchify instance for each file.
   files.forEach((file) => {
-    const b = browserify(file, {
-      cache: {},
-      packageCache: {},
-      debug: true,
-      plugin: browserifyPlugins,
-    })
+    const exampleName = path.basename(path.dirname(file))
+    const outfile = dstPattern.replace('**', exampleName)
 
-    // Aliasing for using `require('uppy')`, etc.
-    b
-      .transform(babelify, {
-        root: path.join(__dirname, '..'),
-      })
-      .transform(aliasify, {
-        aliases: {
-          '@uppy': `./${path.relative(process.cwd(), path.join(__dirname, '../packages/@uppy'))}`,
-        },
-      })
-
-    // Listeners for changes, errors, and completion.
-    b
-      .on('update', bundle)
-      .on('error', onError)
-      .on('file', (file) => {
-        // When file completes, unmute it.
-        muted.delete(file)
-      })
-
-    // Call bundle() manually to start watch processes.
-    bundle()
-
-    /**
-     * Creates bundle and writes it to static and public folders.
-     * Changes to
-     *
-     * @param  {string[]} ids
-     */
-    function bundle (ids = []) {
-      ids.forEach((id) => {
-        if (!muted.has(id)) {
-          console.info(chalk.cyan('change:'), path.relative(process.cwd(), id))
-          muted.add(id)
-        }
-      })
-
-      const exampleName = path.basename(path.dirname(file))
-      const output = dstPattern.replace('**', exampleName)
-      const parentDir = path.dirname(output)
-
-      mkdirSync(parentDir, { recursive: true })
-
-      console.info(chalk.grey(`⏳ building: ${path.relative(process.cwd(), file)}`))
-
-      b
-        .bundle()
-        .on('error', onError)
-        .pipe(createWriteStream(output))
-        .on('finish', () => {
-          console.info(chalk.green(`✓ built: ${path.relative(process.cwd(), file)}`))
-        })
-    }
+    babelImport.then(({ default: babel }) => esbuild.build({
+      bundle: true,
+      sourcemap: true,
+      watch: watchifyEnabled,
+      entryPoints: [file],
+      outfile,
+      banner: {
+        js: '"use strict";',
+      },
+      loader: {
+        '.es6': 'js',
+      },
+      plugins: [
+        alias({
+          '@uppy': path.resolve(__dirname, `../packages/@uppy`),
+        }),
+        babel({
+          filter: /\.js$/,
+          config: { root: path.join(__dirname, '..') },
+        }),
+      ],
+    })).catch(onError)
   })
 })
 

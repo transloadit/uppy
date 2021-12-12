@@ -4,13 +4,11 @@ const chalk = require('chalk')
 const { spawn } = require('child_process')
 const readline = require('readline')
 const YAML = require('js-yaml')
-const { promisify } = require('util')
 const gzipSize = require('gzip-size')
 const prettierBytes = require('@transloadit/prettier-bytes')
-const browserify = require('browserify')
+const esbuild = require('esbuild')
 const touch = require('touch')
 const glob = require('glob')
-const { minify } = require('terser')
 
 const webRoot = __dirname
 const uppyRoot = path.join(__dirname, '../packages/uppy')
@@ -80,21 +78,24 @@ inject().catch((err) => {
 })
 
 async function getMinifiedSize (pkg, name) {
-  const b = browserify(pkg)
-
   const packageJSON = fs.readFileSync(path.join(pkg, 'package.json'))
-  const { version } = JSON.parse(packageJSON)
+  // eslint-disable-next-line no-shadow
+  const { main, version } = JSON.parse(packageJSON)
 
-  if (name !== '@uppy/core' && name !== 'uppy') {
-    b.exclude('@uppy/core')
-    // Already unconditionally included through @uppy/core
-    b.exclude('preact')
-  }
-  if (excludes[name]) {
-    b.exclude(excludes[name])
-  }
-
-  const { code:bundle } = await promisify(b.bundle).call(b).then(buf => minify(buf.toString(), { toplevel: true }))
+  const { outputFiles:[{ contents: bundle }] } = await esbuild.build({
+    write: false,
+    bundle: true,
+    entryPoints: [path.resolve(pkg, main)],
+    minify: true,
+    external: [
+      ...(name !== '@uppy/core' && name !== 'uppy' ? [
+        '@uppy/core',
+        // Already unconditionally included through @uppy/core
+        'preact',
+      ] : []),
+      ...(excludes[name] ?? []),
+    ],
+  })
   const gzipped = await gzipSize(bundle)
 
   return {
