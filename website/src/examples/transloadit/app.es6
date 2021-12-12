@@ -5,13 +5,15 @@ const Transloadit = require('@uppy/transloadit')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const Zoom = require('@uppy/zoom')
-const { createHmac } = require('crypto')
 const COMPANION = require('../env')
 
-function sha1 (key, text) {
-  return createHmac('sha1', key)
-    .update(text)
-    .digest('hex')
+const enc = new TextEncoder('utf-8')
+async  function sha1 (secret, body) {
+  const algorithm = { name: 'HMAC', hash: 'SHA-1' }
+
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), algorithm, false, ['sign', 'verify'])
+  const signature = await crypto.subtle.sign(algorithm.name, key, enc.encode(body))
+  return Array.from(new Uint8Array(signature), x => x.toString(16).padStart(2, '0')).join('')
 }
 
 function initUppy (opts = {}) {
@@ -44,7 +46,7 @@ function initUppy (opts = {}) {
       .replace(/\.\d+Z$/, '+00:00')
   }
 
-  function getAssemblyOptions () {
+  async function getAssemblyOptions () {
     const hasSecret = opts.secret != null
     let params = {
       auth: {
@@ -104,7 +106,7 @@ function initUppy (opts = {}) {
     let signature
     if (opts.secret) {
       params = JSON.stringify(params)
-      signature = sha1(opts.secret, params)
+      signature = await sha1(opts.secret, params)
     }
 
     return { params, signature }
