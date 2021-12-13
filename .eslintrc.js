@@ -166,6 +166,7 @@ module.exports = {
     {
       files: [
         'bin/**.js',
+        'bin/**.mjs',
         'examples/**/*.js',
         'packages/@uppy/companion/test/**/*.js',
         'test/**/*.js',
