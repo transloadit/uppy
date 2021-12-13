@@ -30,7 +30,8 @@ class MarkdownTextarea {
     this.uploadLine.classList.add('form-upload')
 
     this.uploadLine.appendChild(
-      document.createTextNode('Tap here to upload an attachment'))
+      document.createTextNode('Tap here to upload an attachment'),
+    )
   }
 
   install () {
@@ -86,24 +87,6 @@ class MarkdownTextarea {
     })
   }
 
-  matchFilesAndThumbs (results) {
-    const filesById = {}
-    const thumbsById = {}
-
-    results.forEach((result) => {
-      if (result.stepName === 'thumbnails') {
-        thumbsById[result.original_id] = result
-      } else {
-        filesById[result.original_id] = result
-      }
-    })
-
-    return Object.keys(filesById).map((key) => ({
-      file : filesById[key],
-      thumb : thumbsById[key],
-    }))
-  }
-
   uploadFiles (files) {
     robodog.upload(files, {
       waitForEncoding: true,
@@ -114,7 +97,7 @@ class MarkdownTextarea {
     }).then((result) => {
       if (result === null) return
       this.insertAttachments(
-        this.matchFilesAndThumbs(result.results)
+        matchFilesAndThumbs(result.results),
       )
     }).catch((err) => {
       console.error(err)
@@ -139,7 +122,7 @@ class MarkdownTextarea {
     }).then((result) => {
       if (result === null) return
       this.insertAttachments(
-        this.matchFilesAndThumbs(result.results)
+        matchFilesAndThumbs(result.results),
       )
     }).catch((err) => {
       console.error(err)
@@ -177,11 +160,29 @@ function loadSnippets () {
   }
 }
 
+function matchFilesAndThumbs (results) {
+  const filesById = {}
+  const thumbsById = {}
+
+  results.forEach((result) => {
+    if (result.stepName === 'thumbnails') {
+      thumbsById[result.original_id] = result
+    } else {
+      filesById[result.original_id] = result
+    }
+  })
+
+  return Object.keys(filesById).map((key) => ({
+    file : filesById[key],
+    thumb : thumbsById[key],
+  }))
+}
+
 document.querySelector('#new').addEventListener('submit', (event) => {
   event.preventDefault()
 
-  const title = event.target.querySelector('input[name="title"]').value ||
-    'Unnamed Snippet'
+  const title = event.target.elements['title'].value
+    || 'Unnamed Snippet'
   const text = textarea.element.value
 
   saveSnippet(title, text)
@@ -191,6 +192,4 @@ document.querySelector('#new').addEventListener('submit', (event) => {
   event.target.querySelector('textarea').value = ''
 })
 
-window.addEventListener('DOMContentLoaded', () => {
-  loadSnippets()
-})
+window.addEventListener('DOMContentLoaded', loadSnippets, { once: true })

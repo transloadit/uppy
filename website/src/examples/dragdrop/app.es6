@@ -4,20 +4,19 @@ const ProgressBar = require('@uppy/progress-bar')
 const Tus = require('@uppy/tus')
 
 // Function for displaying uploaded files
-const onUploadSuccess = (elForUploadedFiles) =>
-  (file, response) => {
-    const url = response.uploadURL
-    const fileName = file.name
+const onUploadSuccess = (elForUploadedFiles) => (file, response) => {
+  const url = response.uploadURL
+  const fileName = file.name
 
-    const li = document.createElement('li')
-    const a = document.createElement('a')
-    a.href = url
-    a.target = '_blank'
-    a.appendChild(document.createTextNode(fileName))
-    li.appendChild(a)
+  const li = document.createElement('li')
+  const a = document.createElement('a')
+  a.href = url
+  a.target = '_blank'
+  a.appendChild(document.createTextNode(fileName))
+  li.appendChild(a)
 
-    document.querySelector(elForUploadedFiles).appendChild(li)
-  }
+  document.querySelector(elForUploadedFiles).appendChild(li)
+}
 
 const uppyOne = new Uppy({ debug: true, autoProceed: true })
 uppyOne
@@ -34,6 +33,6 @@ uppyTwo
   .on('upload-success', onUploadSuccess('.example-two .uploaded-files ol'))
 
 const uploadBtn = document.querySelector('.example-two button.upload-button')
-uploadBtn.addEventListener('click', function () {
+uploadBtn.addEventListener('click', () => {
   uppyTwo.upload()
 })
