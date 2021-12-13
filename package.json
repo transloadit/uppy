@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "uppy-build",
+  "name": "@uppy-dev/build",
   "version": "0.0.0",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
@@ -13,7 +13,7 @@
   },
   "remarkConfig": {
     "plugins": [
-      "remark-lint-uppy"
+      "@uppy-dev/remark-lint-uppy"
     ]
   },
   "size-limit": [
@@ -53,6 +53,7 @@
     "@types/jasminewd2": "file:./private/@types/jasmine",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "@uppy-dev/remark-lint-uppy": "workspace:*",
     "adm-zip": "^0.5.5",
     "aliasify": "^2.1.0",
     "autoprefixer": "^10.2.6",
@@ -104,7 +105,6 @@
     "postcss-safe-important": "^1.2.0",
     "pre-commit": "^1.2.2",
     "remark-cli": "^10.0.0",
-    "remark-lint-uppy": "workspace:*",
     "replacestream": "^4.0.3",
     "resolve": "^1.17.0",
     "sass": "^1.29.0",
@@ -132,13 +132,11 @@
     "build:angular": "yarn workspace @uppy/angular build:release",
     "build:js": "npm-run-all build:lib build:companion build:locale-pack build:svelte build:angular build:bundle",
     "build:lib": "yarn node ./bin/build-lib.js",
-    "build:locale-pack": "yarn workspace locale-pack build && eslint packages/@uppy/locales/src/en_US.js --fix && yarn workspace locale-pack test unused",
+    "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && eslint packages/@uppy/locales/src/en_US.js --fix && yarn workspace @uppy-dev/locale-pack test unused",
     "build": "npm-run-all --parallel build:js build:css --serial size",
     "contributors:save": "yarn node ./bin/update-contributors.mjs",
-    "dev:browsersync": "yarn workspace @uppy-example/dev start",
-    "dev:watch-sandbox": "yarn workspace @uppy-example/dev watch:sandbox",
-    "dev:with-companion": "npm-run-all --parallel start:companion dev:watch-sandbox watch:js:lib watch:css dev:browsersync",
-    "dev": "yarn workspace @uppy-example/dev dev",
+    "dev:with-companion": "npm-run-all --parallel start:companion dev",
+    "dev": "yarn workspace @uppy-dev/dev dev",
     "example": "yarn node bin/run-example",
     "lint:fix": "yarn run lint -- --fix",
     "lint:markdown": "remark -f -q . -i .remarkignore",
@@ -153,8 +151,8 @@
     "test:companion": "yarn workspace @uppy/companion test",
     "test:endtoend:local": "yarn workspace @uppy-tests/end2end test:endtoend:local",
     "test:endtoend": "yarn workspace @uppy-tests/end2end test:endtoend",
-    "test:locale-packs:unused": "yarn workspace locale-pack test unused",
-    "test:locale-packs:warnings": "yarn workspace locale-pack test warnings",
+    "test:locale-packs:unused": "yarn workspace @uppy-dev/locale-pack test unused",
+    "test:locale-packs:warnings": "yarn workspace @uppy-dev/locale-pack test warnings",
     "test:type": "yarn workspaces foreach -piv --include '@uppy/*' --exclude '@uppy/{angular,react-native,locales,companion,provider-views,robodog,svelte}' exec tsd",
     "test:unit": "yarn run build:lib && jest --env jsdom",
     "test:watch": "jest --env jsdom --watch",
