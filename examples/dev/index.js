@@ -1,5 +1,8 @@
-const DragDrop = require('./DragDrop.js')
-const Dashboard = require('./Dashboard.js')
+// eslint-disable-next-line import/no-extraneous-dependencies
+import 'uppy/src/style.scss'
+
+import DragDrop from './DragDrop.js'
+import Dashboard from './Dashboard.js'
 
 switch (window.location.pathname.toLowerCase()) {
   case '/':

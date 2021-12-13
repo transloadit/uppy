@@ -1,12 +1,12 @@
-// The @uppy/ dependencies are resolved using aliasify
+// The @uppy/ dependencies are resolved from source
 /* eslint-disable import/no-extraneous-dependencies */
-const Uppy = require('@uppy/core/src')
-const Tus = require('@uppy/tus/src')
-const DragDrop = require('@uppy/drag-drop/src')
-const ProgressBar = require('@uppy/progress-bar/src')
+import Uppy from '@uppy/core'
+import Tus from '@uppy/tus'
+import DragDrop from '@uppy/drag-drop'
+import ProgressBar from '@uppy/progress-bar'
 /* eslint-enable import/no-extraneous-dependencies */
 
-module.exports = () => {
+export default () => {
   const uppyDragDrop = new Uppy({
     debug: true,
     autoProceed: true,

@@ -6,18 +6,17 @@
       "@uppy": "../../packages/@uppy"
     }
   },
-  "dependencies": {
-    "@babel/core": "^7.4.4",
-    "aliasify": "^2.1.0",
-    "babelify": "^10.0.0",
-    "watchify": "^3.11.0"
-  },
   "devDependencies": {
-    "browser-sync": "^2.27.4"
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-transform-react-jsx": "^7.10.4",
+    "babel-plugin-transform-commonjs": "1.1.6",
+    "vite": "^2.7.1"
   },
   "private": true,
+  "type": "module",
   "scripts": {
-    "start": "browser-sync start --no-open --no-ghost-mode false --server . --index Dashboard.html --port 3452 --serveStatic ../../packages/uppy/dist --files \"./output/*.js, ../../packages/uppy/dist/uppy.min.css, ../../packages/uppy/lib/**/*\"",
-    "watch:sandbox": "watchify -vd -t [ babelify --cwd ../../ ] -g aliasify index.js -o output/index.js"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   }
 }

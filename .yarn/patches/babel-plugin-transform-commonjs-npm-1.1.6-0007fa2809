@@ -1,0 +1,47 @@
+diff --git a/dist/index.js b/dist/index.js
+index 0f9a4b342c75d75309b78a36473fb5c68f7b89b5..57effed56c190a946756d191cb3d390dbc84aee3 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -92,18 +92,32 @@ exports.default = helper_plugin_utils_1.declare((api, options) => {
+                                     const specifiers = [];
+                                     // Convert to named import.
+                                     if (core_1.types.isObjectPattern(path.parentPath.node.id)) {
+-                                        path.parentPath.node.id.properties.forEach(prop => {
+-                                            specifiers.push(core_1.types.importSpecifier(prop.value, prop.key));
+-                                            state.globals.add(prop.value.name);
+-                                        });
+-                                        const decl = core_1.types.importDeclaration(specifiers, core_1.types.stringLiteral(str.value));
+-                                        // @ts-ignore
+-                                        decl.__replaced = true;
+-                                        path.scope.getProgramParent().path.unshiftContainer('body', decl);
+-                                        path.parentPath.remove();
++                                        if(node.arguments[0].value.startsWith('.') || node.arguments[0].value.startsWith('@uppy/')) {
++                                            const id = path.scope.generateUidIdentifier(node.arguments[0].value)
++                                            const destructuring = core_1.types.variableDeclarator(path.parentPath.node.id, id)
++                                            const decl = core_1.types.importDeclaration([core_1.types.importDefaultSpecifier(id)], core_1.types.stringLiteral(str.value));
++                                            // @ts-ignore
++                                            decl.__replaced = true;
++                                            path.scope.getProgramParent().path.unshiftContainer('body', decl);
++                                            path.parentPath.replaceWith(destructuring)
++                                        } else {
++                                            path.parentPath.node.id.properties.forEach(prop => {
++                                                specifiers.push(core_1.types.importSpecifier(prop.value, prop.key));
++                                                state.globals.add(prop.value.name);
++                                            });
++                                            const decl = core_1.types.importDeclaration(specifiers, core_1.types.stringLiteral(str.value));
++                                            // @ts-ignore
++                                            decl.__replaced = true;
++                                            path.scope.getProgramParent().path.unshiftContainer('body', decl);
++                                            path.parentPath.remove()
++                                        }
+                                     }
++                                    else if (node.arguments[0].value === 'tus-js-client' && str) {
++                                        const decl = core_1.types.importDeclaration([core_1.types.importNamespaceSpecifier(path.parentPath.node.id)], core_1.types.stringLiteral(str.value))
++                                        path.scope.getProgramParent().path.unshiftContainer('body', decl);
++                                        path.parentPath.remove()
+                                     // Convert to default import.
+-                                    else if (str) {
++                                    } else if (str) {
+                                         const { parentPath } = path;
+                                         const { left } = parentPath.node;
+                                         // @ts-ignore

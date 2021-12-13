@@ -1,28 +1,28 @@
-// The @uppy/ dependencies are resolved using aliasify
+// The @uppy/ dependencies are resolved from source
 /* eslint-disable import/no-extraneous-dependencies */
-const Uppy = require('@uppy/core/src')
-const Dashboard = require('@uppy/dashboard/src')
-const Instagram = require('@uppy/instagram/src')
-const Facebook = require('@uppy/facebook/src')
-const OneDrive = require('@uppy/onedrive/src')
-const Dropbox = require('@uppy/dropbox/src')
-const Box = require('@uppy/box/src')
-const GoogleDrive = require('@uppy/google-drive/src')
-const Unsplash = require('@uppy/unsplash/src')
-const Zoom = require('@uppy/zoom/src')
-const Url = require('@uppy/url/src')
-const Webcam = require('@uppy/webcam/src')
-const ScreenCapture = require('@uppy/screen-capture/src')
-const GoldenRetriever = require('@uppy/golden-retriever/src')
-const Tus = require('@uppy/tus/src')
-const AwsS3 = require('@uppy/aws-s3/src')
-const AwsS3Multipart = require('@uppy/aws-s3-multipart/src')
-const XHRUpload = require('@uppy/xhr-upload/src')
-const Transloadit = require('@uppy/transloadit/src')
-const Form = require('@uppy/form/src')
-const ImageEditor = require('@uppy/image-editor/src')
-const DropTarget = require('@uppy/drop-target/src')
-const Audio = require('@uppy/audio/src')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Instagram from '@uppy/instagram'
+import Facebook from '@uppy/facebook'
+import OneDrive from '@uppy/onedrive'
+import Dropbox from '@uppy/dropbox'
+import Box from '@uppy/box'
+import GoogleDrive from '@uppy/google-drive'
+import Unsplash from '@uppy/unsplash'
+import Zoom from '@uppy/zoom'
+import Url from '@uppy/url'
+import Webcam from '@uppy/webcam'
+import ScreenCapture from '@uppy/screen-capture'
+import GoldenRetriever from '@uppy/golden-retriever'
+import Tus from '@uppy/tus'
+import AwsS3 from '@uppy/aws-s3'
+import AwsS3Multipart from '@uppy/aws-s3-multipart'
+import XHRUpload from '@uppy/xhr-upload'
+import Transloadit from '@uppy/transloadit'
+import Form from '@uppy/form'
+import ImageEditor from '@uppy/image-editor'
+import DropTarget from '@uppy/drop-target'
+import Audio from '@uppy/audio'
 /* eslint-enable import/no-extraneous-dependencies */
 
 // DEV CONFIG: pick an uploader
@@ -55,7 +55,7 @@ const RESTORE = false
 
 // Rest is implementation! Obviously edit as necessary...
 
-module.exports = () => {
+export default () => {
   const uppyDashboard = new Uppy({
     logger: Uppy.debugLogger,
     meta: {
