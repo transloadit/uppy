@@ -5,13 +5,15 @@ const Transloadit = require('@uppy/transloadit')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const Zoom = require('@uppy/zoom')
-const { createHmac } = require('crypto')
 const COMPANION = require('../env')
 
-function sha1 (key, text) {
-  return createHmac('sha1', key)
-    .update(text)
-    .digest('hex')
+const enc = new TextEncoder('utf-8')
+async  function sha1 (secret, body) {
+  const algorithm = { name: 'HMAC', hash: 'SHA-1' }
+
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), algorithm, false, ['sign', 'verify'])
+  const signature = await crypto.subtle.sign(algorithm.name, key, enc.encode(body))
+  return Array.from(new Uint8Array(signature), x => x.toString(16).padStart(2, '0')).join('')
 }
 
 function initUppy (opts = {}) {
@@ -28,13 +30,13 @@ function initUppy (opts = {}) {
       maxFileSize: 1024 * 1024 * 1024,
       maxNumberOfFiles: 2,
       minNumberOfFiles: 1,
-      allowedFileTypes
+      allowedFileTypes,
     },
     locale: {
       strings: {
-        youCanOnlyUploadFileTypes: 'You can only upload images'
-      }
-    }
+        youCanOnlyUploadFileTypes: 'You can only upload images',
+      },
+    },
   })
 
   function getExpiration (future) {
@@ -44,12 +46,12 @@ function initUppy (opts = {}) {
       .replace(/\.\d+Z$/, '+00:00')
   }
 
-  function getAssemblyOptions () {
+  async function getAssemblyOptions () {
     const hasSecret = opts.secret != null
     let params = {
       auth: {
         key: window.TRANSLOADIT_API_KEY,
-        expires: hasSecret ? getExpiration(5 * 60 * 1000) : undefined
+        expires: hasSecret ? getExpiration(5 * 60 * 1000) : undefined,
       },
       // It's more secure to use a template_id and enable
       // Signature Authentication
@@ -61,18 +63,18 @@ function initUppy (opts = {}) {
           resize_strategy: 'fit',
           text: [
             {
-              text: `© ${(new Date).getFullYear()} Transloadit.com`,
+              text: `© ${(new Date()).getFullYear()} Transloadit.com`,
               size: 12,
               font: 'Ubuntu',
               color: '#eeeeee',
               valign: 'bottom',
               align: 'right',
               x_offset: 16,
-              y_offset: -10
-            }
-          ]
-        }
-      }
+              y_offset: -10,
+            },
+          ],
+        },
+      },
     }
 
     if (zoomMode) {
@@ -83,7 +85,7 @@ function initUppy (opts = {}) {
           result: true,
           ffmpeg_stack: 'v3.3.3',
           preset: 'ipad-high',
-          resize_strategy: 'fillcrop'
+          resize_strategy: 'fillcrop',
         },
         watermarked: {
           use: 'resized',
@@ -96,15 +98,15 @@ function initUppy (opts = {}) {
           watermark_size: '25%',
           watermark_url: 'https://demos.transloadit.com/inputs/transloadit-padded.png',
           watermark_x_offset: -10,
-          watermark_y_offset: 10
-        }
+          watermark_y_offset: 10,
+        },
       }
     }
 
     let signature
     if (opts.secret) {
       params = JSON.stringify(params)
-      signature = sha1(opts.secret, params)
+      signature = await sha1(opts.secret, params)
     }
 
     return { params, signature }
@@ -113,22 +115,22 @@ function initUppy (opts = {}) {
   uppy
     .use(Transloadit, {
       getAssemblyOptions,
-      waitForEncoding: true
+      waitForEncoding: true,
     })
     .use(Dashboard, {
       inline: true,
       maxHeight: 400,
       target: '#uppy-dashboard-container',
-      note: 'Images only, 1–2 files, up to 1 MB'
+      note: 'Images only, 1–2 files, up to 1 MB',
     })
     .use(Instagram, {
       target: Dashboard,
       companionUrl: 'https://api2.transloadit.com/companion',
-      companionAllowedHosts: Transloadit.COMPANION_PATTERN
+      companionAllowedHosts: Transloadit.COMPANION_PATTERN,
     })
     .use(Facebook, {
       target: Dashboard,
-      companionUrl: COMPANION
+      companionUrl: COMPANION,
     })
     .use(Webcam, { target: Dashboard, modes: ['picture'] })
 
@@ -136,14 +138,14 @@ function initUppy (opts = {}) {
     uppy.use(Zoom, {
       target: Dashboard,
       companionUrl: 'https://api2.transloadit.com/companion',
-      companionAllowedHosts: Transloadit.COMPANION_PATTERN
+      companionAllowedHosts: Transloadit.COMPANION_PATTERN,
     })
   }
 
   uppy
     .on('transloadit:result', (stepName, result) => {
       const file = uppy.getFile(result.localId)
-      var resultContainer = document.createElement('div')
+      const resultContainer = document.createElement('div')
       if (!zoomMode) {
         resultContainer.innerHTML = `
           <div>

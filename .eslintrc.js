@@ -154,6 +154,15 @@ module.exports = {
     },
     {
       files: [
+        'website/src/examples/*/*.es6',
+      ],
+      rules: {
+        'import/no-extraneous-dependencies': 'off',
+        'no-console': 'off',
+      },
+    },
+    {
+      files: [
         '*.test.js',
         'test/endtoend/*.js',
         'website/*.js',
@@ -166,6 +175,7 @@ module.exports = {
     {
       files: [
         'bin/**.js',
+        'bin/**.mjs',
         'examples/**/*.js',
         'packages/@uppy/companion/test/**/*.js',
         'test/**/*.js',

@@ -1,7 +1,7 @@
 {
   "name": "@uppy/angular",
-  "version": "0.2.6",
-  "module": "dist/angular/esm2015/public-api.js",
+  "version": "0.2.7",
+  "module": "dist/angular/esm2020/public-api.mjs",
   "types": "dist/angular/uppy-angular.d.ts",
   "scripts": {
     "ng": "ng",
