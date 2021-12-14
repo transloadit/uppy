@@ -53,7 +53,7 @@ module.exports = class Transloadit extends BasePlugin {
       params: null,
       fields: {},
       getAssemblyOptions: defaultGetAssemblyOptions,
-      limit: 0,
+      limit: 5,
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -73,6 +73,7 @@ module.exports = class Transloadit extends BasePlugin {
       service: this.opts.service,
       client: this.#getClientVersion(),
       errorReporting: this.opts.errorReporting,
+      limit: this.opts.limit,
     })
     // Contains Assembly instances for in-progress Assemblies.
     this.activeAssemblies = {}

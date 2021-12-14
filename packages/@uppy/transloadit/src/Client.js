@@ -1,4 +1,5 @@
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
+const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 
 /**
  * A Barebones HTTP API client for Transloadit.
@@ -6,12 +7,25 @@ const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
 module.exports = class Client {
   #headers = {}
 
+  /**
+   * Simultaneous upload limiting is shared across all uploads with this plugin.
+   *
+   * @type {RateLimitedQueue}
+   */
+  #requests
+
   constructor (opts = {}) {
     this.opts = opts
 
     if (this.opts.client != null) {
       this.#headers['Transloadit-Client'] = this.opts.client
     }
+
+    this.#requests = new RateLimitedQueue(this.opts.limit)
+  }
+
+  #fetch (...args) {
+    return this.#requests.wrapPromiseFunction(fetchWithNetworkError)(...args)
   }
 
   /**
@@ -43,7 +57,7 @@ module.exports = class Client {
     data.append('num_expected_upload_files', expectedFiles)
 
     const url = new URL('/assemblies', `${this.opts.service}`).href
-    return fetchWithNetworkError(url, {
+    return this.#fetch(url, {
       method: 'post',
       headers: this.#headers,
       body: data,
@@ -73,7 +87,7 @@ module.exports = class Client {
   reserveFile (assembly, file) {
     const size = encodeURIComponent(file.size)
     const url = `${assembly.assembly_ssl_url}/reserve_file?size=${size}`
-    return fetchWithNetworkError(url, { method: 'post', headers: this.#headers })
+    return this.#fetch(url, { method: 'post', headers: this.#headers })
       .then((response) => response.json())
       .catch((err) => this.#reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
@@ -95,7 +109,7 @@ module.exports = class Client {
 
     const qs = `size=${size}&filename=${filename}&fieldname=${fieldname}&s3Url=${uploadUrl}`
     const url = `${assembly.assembly_ssl_url}/add_file?${qs}`
-    return fetchWithNetworkError(url, { method: 'post', headers: this.#headers })
+    return this.#fetch(url, { method: 'post', headers: this.#headers })
       .then((response) => response.json())
       .catch((err) => this.#reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
@@ -107,7 +121,7 @@ module.exports = class Client {
    */
   cancelAssembly (assembly) {
     const url = assembly.assembly_ssl_url
-    return fetchWithNetworkError(url, { method: 'delete', headers: this.#headers })
+    return this.#fetch(url, { method: 'delete', headers: this.#headers })
       .then((response) => response.json())
       .catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
   }
@@ -118,7 +132,7 @@ module.exports = class Client {
    * @param {string} url The status endpoint of the assembly.
    */
   getAssemblyStatus (url) {
-    return fetchWithNetworkError(url, { headers: this.#headers })
+    return this.#fetch(url, { headers: this.#headers })
       .then((response) => response.json())
       .catch((err) => this.#reportError(err, { url, type: 'STATUS_ERROR' }))
   }
@@ -128,7 +142,7 @@ module.exports = class Client {
       ? `${err.message} (${err.details})`
       : err.message
 
-    return fetchWithNetworkError('https://transloaditstatus.com/client_error', {
+    return this.#fetch('https://transloaditstatus.com/client_error', {
       method: 'post',
       body: JSON.stringify({
         endpoint,
