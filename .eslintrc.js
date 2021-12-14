@@ -146,6 +146,14 @@ module.exports = {
 
   overrides: [
     {
+      files: [
+        'examples/aws-presigned-url/*.js',
+      ],
+      parserOptions: {
+        sourceType: 'module',
+      },
+    },
+    {
       files: ['./packages/@uppy/companion/**/*.js'],
       rules: {
         'no-restricted-syntax': 'warn',
