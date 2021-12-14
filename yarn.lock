@@ -7619,14 +7619,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-example/aws-presigned-url@workspace:examples/aws-presigned-url"
   dependencies:
-    "@babel/core": ^7.4.4
     "@uppy/aws-s3": "workspace:*"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
-    babelify: ^10.0.0
-    browserify: ^17.0.0
-    fs-write-stream-atomic: ^1.0.10
-    watchify: ^4.0.0
+    esbuild: ^0.14.1
+    uppy: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -20369,7 +20366,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-write-stream-atomic@npm:^1.0.10, fs-write-stream-atomic@npm:^1.0.8":
+"fs-write-stream-atomic@npm:^1.0.8":
   version: 1.0.10
   resolution: "fs-write-stream-atomic@npm:1.0.10"
   dependencies:
@@ -41138,7 +41135,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: unknown
   linkType: soft
 
-"uppy@workspace:packages/uppy":
+"uppy@workspace:*, uppy@workspace:packages/uppy":
   version: 0.0.0-use.local
   resolution: "uppy@workspace:packages/uppy"
   dependencies:
