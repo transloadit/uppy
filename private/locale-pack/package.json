@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "locale-pack",
+  "name": "@uppy-dev/locale-pack",
   "author": "Merlijn Vos <merlijn@transloadit.com>",
   "description": "Generate locale pack, types, and documentation",
   "main": "index.mjs",

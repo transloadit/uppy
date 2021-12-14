@@ -1,5 +1,5 @@
 {
-  "name": "remark-lint-uppy",
+  "name": "@uppy-dev/remark-lint-uppy",
   "version": "0.0.0",
   "main": "index.js",
   "dependencies": {

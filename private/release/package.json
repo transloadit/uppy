@@ -1,5 +1,5 @@
 {
-	"name": "@uppy-build/release",
+	"name": "@uppy-dev/release",
 	"version": "0.0.0",
 	"private": true,
 	"type": "module",

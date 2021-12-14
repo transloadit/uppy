@@ -6542,9 +6542,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jasmine@file:./private/@types/jasmine::locator=uppy-build%40workspace%3A.":
+"@types/jasmine@file:./private/@types/jasmine::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/jasmine@file:./private/@types/jasmine#./private/@types/jasmine::hash=917119&locator=uppy-build%40workspace%3A."
+  resolution: "@types/jasmine@file:./private/@types/jasmine#./private/@types/jasmine::hash=917119&locator=%40uppy-dev%2Fbuild%40workspace%3A."
   checksum: cc86c9a338a6943da64fb636e13bdc8f2e41922ae62c3cfd95525b0a0965a28ecd7545173773f2b61a3c30ae70c8eeb9a725eb71fd9006a07a8733ecbac849b9
   languageName: node
   linkType: hard
@@ -6563,9 +6563,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jasminewd2@file:./private/@types/jasmine::locator=uppy-build%40workspace%3A.":
+"@types/jasminewd2@file:./private/@types/jasmine::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 0.0.0
-  resolution: "@types/jasminewd2@file:./private/@types/jasmine#./private/@types/jasmine::hash=fe65e0&locator=uppy-build%40workspace%3A."
+  resolution: "@types/jasminewd2@file:./private/@types/jasmine#./private/@types/jasmine::hash=fe65e0&locator=%40uppy-dev%2Fbuild%40workspace%3A."
   checksum: 028a3a54e144661b64d14b439c585db2ade1a22ba4b21de85cb469afd2f1bf5e78079ab3f3e5c058ed4146e7cef5300e27c8d176d9f168222d88576671608135
   languageName: node
   linkType: hard
@@ -7446,13 +7446,163 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uppy-build/release@workspace:private/release":
+"@uppy-dev/build@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@uppy-build/release@workspace:private/release"
+  resolution: "@uppy-dev/build@workspace:."
+  dependencies:
+    "@babel/cli": ^7.14.5
+    "@babel/core": ^7.14.6
+    "@babel/eslint-parser": ^7.11.3
+    "@babel/eslint-plugin": ^7.11.3
+    "@babel/plugin-proposal-nullish-coalescing-operator": ^7.14.5
+    "@babel/plugin-proposal-optional-chaining": ^7.16.0
+    "@babel/plugin-transform-react-jsx": ^7.10.4
+    "@babel/preset-env": ^7.14.7
+    "@babel/register": ^7.10.5
+    "@goto-bus-stop/envify": ^5.0.0
+    "@jamen/lorem": ^0.2.0
+    "@size-limit/preset-big-lib": 7.0.4
+    "@types/jasmine": "file:./private/@types/jasmine"
+    "@types/jasminewd2": "file:./private/@types/jasmine"
+    "@typescript-eslint/eslint-plugin": ^5.0.0
+    "@typescript-eslint/parser": ^5.0.0
+    "@uppy-dev/remark-lint-uppy": "workspace:*"
+    adm-zip: ^0.5.5
+    aliasify: ^2.1.0
+    autoprefixer: ^10.2.6
+    aws-sdk: ^2.1038.0
+    babel-jest: ^27.0.6
+    babel-plugin-inline-package-json: ^2.0.0
+    babelify: ^10.0.0
+    browserify: ^17.0.0
+    chalk: ^4.1.1
+    concat-stream: ^2.0.0
+    core-js: ~3.19.3
+    cssnano: ^5.0.6
+    dedent: ^0.7.0
+    deep-freeze: ^0.0.1
+    disc: ^1.3.3
+    eslint: ^8.0.0
+    eslint-config-transloadit: ^2.0.0
+    eslint-plugin-compat: ^4.0.0
+    eslint-plugin-import: ^2.25.2
+    eslint-plugin-jest: ^25.0.0
+    eslint-plugin-jsdoc: ^37.0.0
+    eslint-plugin-jsx-a11y: ^6.4.1
+    eslint-plugin-markdown: ^2.2.0
+    eslint-plugin-node: ^11.1.0
+    eslint-plugin-prefer-import: ^0.0.1
+    eslint-plugin-promise: ^5.1.1
+    eslint-plugin-react: ^7.22.0
+    eslint-plugin-react-hooks: ^4.2.0
+    events.once: ^2.0.2
+    exorcist: ^2.0.0
+    fakefile: ^1.0.0
+    github-contributors-list: ^1.2.4
+    glob: ^7.2.0
+    isomorphic-fetch: ^3.0.0
+    jest: ^27.0.6
+    lint-staged: ^12.1.2
+    mime-types: ^2.1.26
+    minify-stream: ^2.0.1
+    multi-glob: ^1.0.2
+    nodemon: ^2.0.8
+    npm-auth-to-token: 1.0.0
+    npm-packlist: ^2.2.2
+    npm-run-all: ^4.1.5
+    onchange: ^7.1.0
+    pacote: ^11.3.4
+    postcss: ^8.2.10
+    postcss-dir-pseudo-class: ^5.0.0
+    postcss-logical: ^4.0.2
+    postcss-safe-important: ^1.2.0
+    pre-commit: ^1.2.2
+    remark-cli: ^10.0.0
+    replacestream: ^4.0.3
+    resolve: ^1.17.0
+    sass: ^1.29.0
+    size-limit: 4.5.6
+    stylelint: ^13.13.1
+    stylelint-config-rational-order: ^0.1.2
+    stylelint-config-standard: ^22.0.0
+    stylelint-scss: ^3.20.1
+    tar: ^6.1.0
+    temp-write: ^5.0.0
+    terser: ^5.7.0
+    tinyify: ^3.0.0
+    tsd: ^0.17.0
+    tsify: ^5.0.1
+    typescript: ~4.4
+    verdaccio: ^5.1.1
+    watchify: ^4.0.0
+  languageName: unknown
+  linkType: soft
+
+"@uppy-dev/dev@workspace:private/dev":
+  version: 0.0.0-use.local
+  resolution: "@uppy-dev/dev@workspace:private/dev"
+  dependencies:
+    "@babel/core": ^7.4.4
+    "@babel/plugin-transform-react-jsx": ^7.10.4
+    babel-plugin-transform-commonjs: 1.1.6
+    vite: ^2.7.1
+  languageName: unknown
+  linkType: soft
+
+"@uppy-dev/locale-pack@workspace:private/locale-pack":
+  version: 0.0.0-use.local
+  resolution: "@uppy-dev/locale-pack@workspace:private/locale-pack"
+  dependencies:
+    chalk: ^4.1.2
+    dedent: ^0.7.0
+    glob: ^7.2.0
+    mdast-util-heading-range: ^3.1.0
+    remark: ^14.0.1
+    remark-frontmatter: ^4.0.1
+  languageName: unknown
+  linkType: soft
+
+"@uppy-dev/release@workspace:private/release":
+  version: 0.0.0-use.local
+  resolution: "@uppy-dev/release@workspace:private/release"
   dependencies:
     globby: ^12.0.2
     node-fetch: ^3.1.0
     prompts: ^2.4.2
+  languageName: unknown
+  linkType: soft
+
+"@uppy-dev/remark-lint-uppy@workspace:*, @uppy-dev/remark-lint-uppy@workspace:private/remark-lint-uppy":
+  version: 0.0.0-use.local
+  resolution: "@uppy-dev/remark-lint-uppy@workspace:private/remark-lint-uppy"
+  dependencies:
+    mdast-comment-marker: ^2.1.0
+    remark-frontmatter: ^4.0.0
+    remark-lint: ^9.0.0
+    remark-lint-emphasis-marker: ^3.0.0
+    remark-lint-final-newline: ^2.0.0
+    remark-lint-hard-break-spaces: ^3.0.0
+    remark-lint-no-auto-link-without-protocol: ^3.1.0
+    remark-lint-no-blockquote-without-marker: ^5.0.0
+    remark-lint-no-duplicate-definitions: ^3.0.0
+    remark-lint-no-heading-content-indent: ^4.0.0
+    remark-lint-no-inline-padding: ^4.0.0
+    remark-lint-no-literal-urls: ^3.0.0
+    remark-lint-no-shortcut-reference-image: ^3.1.0
+    remark-lint-no-shortcut-reference-link: ^3.1.0
+    remark-lint-no-undefined-references: ^4.0.0
+    remark-lint-no-unused-definitions: ^3.1.0
+    remark-lint-ordered-list-marker-style: ^3.1.0
+    remark-lint-strong-marker: ^3.1.0
+    remark-retext: ^5.0.0
+    retext-english: ^4.0.0
+    retext-equality: ^6.2.0
+    retext-profanities: ^7.1.0
+    retext-quotes: ^5.0.0
+    retext-simplify: ^7.0.0
+    retext-syntax-mentions: ^3.1.0
+    unified: ^10.0.0
+    unified-message-control: ^4.0.0
   languageName: unknown
   linkType: soft
 
@@ -7533,17 +7683,6 @@ __metadata:
     npm-run-all: ^4.1.2
     preact: ^10.5.13
     request: 2.88.2
-  languageName: unknown
-  linkType: soft
-
-"@uppy-example/dev@workspace:examples/dev":
-  version: 0.0.0-use.local
-  resolution: "@uppy-example/dev@workspace:examples/dev"
-  dependencies:
-    "@babel/core": ^7.4.4
-    "@babel/plugin-transform-react-jsx": ^7.10.4
-    babel-plugin-transform-commonjs: 1.1.6
-    vite: ^2.7.1
   languageName: unknown
   linkType: soft
 
@@ -11229,9 +11368,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-transform-commonjs@patch:babel-plugin-transform-commonjs@npm:1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809::locator=uppy-build%40workspace%3A.":
+"babel-plugin-transform-commonjs@patch:babel-plugin-transform-commonjs@npm:1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 1.1.6
-  resolution: "babel-plugin-transform-commonjs@patch:babel-plugin-transform-commonjs@npm%3A1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809::version=1.1.6&hash=f83dbd&locator=uppy-build%40workspace%3A."
+  resolution: "babel-plugin-transform-commonjs@patch:babel-plugin-transform-commonjs@npm%3A1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809::version=1.1.6&hash=f83dbd&locator=%40uppy-dev%2Fbuild%40workspace%3A."
   dependencies:
     "@babel/helper-plugin-utils": ^7.0.0
   peerDependencies:
@@ -25949,19 +26088,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"locale-pack@workspace:private/locale-pack":
-  version: 0.0.0-use.local
-  resolution: "locale-pack@workspace:private/locale-pack"
-  dependencies:
-    chalk: ^4.1.2
-    dedent: ^0.7.0
-    glob: ^7.2.0
-    mdast-util-heading-range: ^3.1.0
-    remark: ^14.0.1
-    remark-frontmatter: ^4.0.1
-  languageName: unknown
-  linkType: soft
-
 "localtunnel@npm:^2.0.1":
   version: 2.0.2
   resolution: "localtunnel@npm:2.0.2"
@@ -29337,9 +29463,9 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"npm-auth-to-token@patch:npm-auth-to-token@npm:1.0.0#.yarn/patches/npm-auth-to-token-npm-1.0.0-c288ce201f::locator=uppy-build%40workspace%3A.":
+"npm-auth-to-token@patch:npm-auth-to-token@npm:1.0.0#.yarn/patches/npm-auth-to-token-npm-1.0.0-c288ce201f::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
   version: 1.0.0
-  resolution: "npm-auth-to-token@patch:npm-auth-to-token@npm%3A1.0.0#.yarn/patches/npm-auth-to-token-npm-1.0.0-c288ce201f::version=1.0.0&hash=1a3182&locator=uppy-build%40workspace%3A."
+  resolution: "npm-auth-to-token@patch:npm-auth-to-token@npm%3A1.0.0#.yarn/patches/npm-auth-to-token-npm-1.0.0-c288ce201f::version=1.0.0&hash=1a3182&locator=%40uppy-dev%2Fbuild%40workspace%3A."
   dependencies:
     commander: ^2.9.0
     npm-registry-client: ^8.3.0
@@ -34770,40 +34896,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   checksum: af837e372ead8d8090f5bfe45dcef5034704e2b8b9690c0b0fb10fed9a60809d21b402d00065a96bde9195172b87bb83f65228f4351b872b48e61c6d75d8cea9
   languageName: node
   linkType: hard
-
-"remark-lint-uppy@workspace:*, remark-lint-uppy@workspace:private/remark-lint-uppy":
-  version: 0.0.0-use.local
-  resolution: "remark-lint-uppy@workspace:private/remark-lint-uppy"
-  dependencies:
-    mdast-comment-marker: ^2.1.0
-    remark-frontmatter: ^4.0.0
-    remark-lint: ^9.0.0
-    remark-lint-emphasis-marker: ^3.0.0
-    remark-lint-final-newline: ^2.0.0
-    remark-lint-hard-break-spaces: ^3.0.0
-    remark-lint-no-auto-link-without-protocol: ^3.1.0
-    remark-lint-no-blockquote-without-marker: ^5.0.0
-    remark-lint-no-duplicate-definitions: ^3.0.0
-    remark-lint-no-heading-content-indent: ^4.0.0
-    remark-lint-no-inline-padding: ^4.0.0
-    remark-lint-no-literal-urls: ^3.0.0
-    remark-lint-no-shortcut-reference-image: ^3.1.0
-    remark-lint-no-shortcut-reference-link: ^3.1.0
-    remark-lint-no-undefined-references: ^4.0.0
-    remark-lint-no-unused-definitions: ^3.1.0
-    remark-lint-ordered-list-marker-style: ^3.1.0
-    remark-lint-strong-marker: ^3.1.0
-    remark-retext: ^5.0.0
-    retext-english: ^4.0.0
-    retext-equality: ^6.2.0
-    retext-profanities: ^7.1.0
-    retext-quotes: ^5.0.0
-    retext-simplify: ^7.0.0
-    retext-syntax-mentions: ^3.1.0
-    unified: ^10.0.0
-    unified-message-control: ^4.0.0
-  languageName: unknown
-  linkType: soft
 
 "remark-lint@npm:^9.0.0":
   version: 9.1.1
@@ -40876,98 +40968,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   checksum: 508723a2b03ab90cf1d6b7e0397513980fab821cbe79c87341d0e96cedefadf0d85f9d71eac24ab23f526a041d585a575cfca120a9f920e44eb4f8a7cf89121c
   languageName: node
   linkType: hard
-
-"uppy-build@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "uppy-build@workspace:."
-  dependencies:
-    "@babel/cli": ^7.14.5
-    "@babel/core": ^7.14.6
-    "@babel/eslint-parser": ^7.11.3
-    "@babel/eslint-plugin": ^7.11.3
-    "@babel/plugin-proposal-nullish-coalescing-operator": ^7.14.5
-    "@babel/plugin-proposal-optional-chaining": ^7.16.0
-    "@babel/plugin-transform-react-jsx": ^7.10.4
-    "@babel/preset-env": ^7.14.7
-    "@babel/register": ^7.10.5
-    "@goto-bus-stop/envify": ^5.0.0
-    "@jamen/lorem": ^0.2.0
-    "@size-limit/preset-big-lib": 7.0.4
-    "@types/jasmine": "file:./private/@types/jasmine"
-    "@types/jasminewd2": "file:./private/@types/jasmine"
-    "@typescript-eslint/eslint-plugin": ^5.0.0
-    "@typescript-eslint/parser": ^5.0.0
-    adm-zip: ^0.5.5
-    aliasify: ^2.1.0
-    autoprefixer: ^10.2.6
-    aws-sdk: ^2.1038.0
-    babel-jest: ^27.0.6
-    babel-plugin-inline-package-json: ^2.0.0
-    babelify: ^10.0.0
-    browserify: ^17.0.0
-    chalk: ^4.1.1
-    concat-stream: ^2.0.0
-    core-js: ~3.19.3
-    cssnano: ^5.0.6
-    dedent: ^0.7.0
-    deep-freeze: ^0.0.1
-    disc: ^1.3.3
-    eslint: ^8.0.0
-    eslint-config-transloadit: ^2.0.0
-    eslint-plugin-compat: ^4.0.0
-    eslint-plugin-import: ^2.25.2
-    eslint-plugin-jest: ^25.0.0
-    eslint-plugin-jsdoc: ^37.0.0
-    eslint-plugin-jsx-a11y: ^6.4.1
-    eslint-plugin-markdown: ^2.2.0
-    eslint-plugin-node: ^11.1.0
-    eslint-plugin-prefer-import: ^0.0.1
-    eslint-plugin-promise: ^5.1.1
-    eslint-plugin-react: ^7.22.0
-    eslint-plugin-react-hooks: ^4.2.0
-    events.once: ^2.0.2
-    exorcist: ^2.0.0
-    fakefile: ^1.0.0
-    github-contributors-list: ^1.2.4
-    glob: ^7.2.0
-    isomorphic-fetch: ^3.0.0
-    jest: ^27.0.6
-    lint-staged: ^12.1.2
-    mime-types: ^2.1.26
-    minify-stream: ^2.0.1
-    multi-glob: ^1.0.2
-    nodemon: ^2.0.8
-    npm-auth-to-token: 1.0.0
-    npm-packlist: ^2.2.2
-    npm-run-all: ^4.1.5
-    onchange: ^7.1.0
-    pacote: ^11.3.4
-    postcss: ^8.2.10
-    postcss-dir-pseudo-class: ^5.0.0
-    postcss-logical: ^4.0.2
-    postcss-safe-important: ^1.2.0
-    pre-commit: ^1.2.2
-    remark-cli: ^10.0.0
-    remark-lint-uppy: "workspace:*"
-    replacestream: ^4.0.3
-    resolve: ^1.17.0
-    sass: ^1.29.0
-    size-limit: 4.5.6
-    stylelint: ^13.13.1
-    stylelint-config-rational-order: ^0.1.2
-    stylelint-config-standard: ^22.0.0
-    stylelint-scss: ^3.20.1
-    tar: ^6.1.0
-    temp-write: ^5.0.0
-    terser: ^5.7.0
-    tinyify: ^3.0.0
-    tsd: ^0.17.0
-    tsify: ^5.0.1
-    typescript: ~4.4
-    verdaccio: ^5.1.1
-    watchify: ^4.0.0
-  languageName: unknown
-  linkType: soft
 
 "uppy.io@workspace:website":
   version: 0.0.0-use.local
