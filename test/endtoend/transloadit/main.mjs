@@ -1,6 +1,6 @@
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const Transloadit = require('@uppy/transloadit')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Transloadit from '@uppy/transloadit'
 
 function initUppyTransloadit (transloaditKey) {
   const uppyTransloadit = new Uppy({
@@ -33,15 +33,12 @@ function initUppyTransloadit (transloaditKey) {
 
   uppyTransloadit.on('transloadit:result', (stepName, result) => {
     // use transloadit encoding result here.
-    console.log('Result here ====>', stepName, result)
-    console.log('Cropped image url is here ====>', result.url)
-
     const img = new Image()
     img.onload = function onload () {
-      const result = document.createElement('div')
-      result.setAttribute('id', 'uppy-result')
-      result.textContent = 'ok'
-      document.body.appendChild(result)
+      const resultDiv = document.createElement('div')
+      resultDiv.setAttribute('id', 'uppy-result')
+      resultDiv.textContent = 'ok'
+      document.body.appendChild(resultDiv)
     }
     img.src = result.url
   })

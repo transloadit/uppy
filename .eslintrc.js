@@ -228,11 +228,14 @@ module.exports = {
     },
 
     {
-      files: ['test/endtoend/*/*.js'],
+      files: ['test/endtoend/*/*.mjs', 'test/endtoend/*/*.ts'],
       rules: {
         // we mostly import @uppy stuff in these files.
         'import/no-extraneous-dependencies': ['off'],
       },
+    },
+    {
+      files: ['test/endtoend/*/*.js'],
       env: {
         mocha: true,
       },

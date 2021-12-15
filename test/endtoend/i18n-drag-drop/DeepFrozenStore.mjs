@@ -1,4 +1,4 @@
-const deepFreeze = require('deep-freeze')
+import deepFreeze from 'deep-freeze'
 
 /* eslint-disable no-underscore-dangle */
 
@@ -41,6 +41,6 @@ class DeepFrozenStore {
   }
 }
 
-module.exports = function defaultStore () {
+export default function defaultStore () {
   return new DeepFrozenStore()
 }

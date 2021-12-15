@@ -1,13 +1,12 @@
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const GoogleDrive = require('@uppy/google-drive')
-const Instagram = require('@uppy/instagram')
-const Dropbox = require('@uppy/dropbox')
-const Box = require('@uppy/box')
-const Tus = require('@uppy/tus')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import GoogleDrive from '@uppy/google-drive'
+import Instagram from '@uppy/instagram'
+import Dropbox from '@uppy/dropbox'
+import Box from '@uppy/box'
+import Tus from '@uppy/tus'
 
-const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
-const companionUrl = isOnTravis ? 'http://companion.test:3030' : 'http://localhost:3020'
+const companionUrl = 'http://localhost:3020'
 
 window.uppy = new Uppy({
   id: 'uppyProvider',
