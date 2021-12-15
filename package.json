@@ -47,7 +47,6 @@
     "@babel/preset-env": "^7.14.7",
     "@babel/register": "^7.10.5",
     "@goto-bus-stop/envify": "^5.0.0",
-    "@jamen/lorem": "^0.2.0",
     "@size-limit/preset-big-lib": "7.0.4",
     "@types/jasmine": "file:./private/@types/jasmine",
     "@types/jasminewd2": "file:./private/@types/jasmine",

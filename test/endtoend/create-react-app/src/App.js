@@ -43,7 +43,7 @@ class App extends Component {
   }
 
   render () {
-    const { showInlineDashboard } = this.state
+    const { showInlineDashboard, open } = this.state
     return (
       <div>
         <h1>React Examples</h1>
@@ -77,11 +77,11 @@ class App extends Component {
         <h2>Modal Dashboard</h2>
         <div id="modal-dashboard">
           <button onClick={this.handleModalClick} id="modal-dashboard-toggle" type="button">
-            {this.state.open ? 'Close dashboard' : 'Open dashboard'}
+            {open ? 'Close dashboard' : 'Open dashboard'}
           </button>
           <DashboardModal
             uppy={this.uppy2}
-            open={this.state.open}
+            open={open}
             target="#modal-dashboard"
             onRequestClose={() => this.setState({ open: false })}
           />
