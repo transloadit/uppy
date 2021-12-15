@@ -3,7 +3,7 @@ import DragDrop from '@uppy/drag-drop'
 import XHRUpload from '@uppy/xhr-upload'
 import ProgressBar from '@uppy/progress-bar'
 
-import DeepFrozenStore from './DeepFrozenStore.mjs'
+import DeepFrozenStore from '../../resources/DeepFrozenStore.js'
 
 const uppyi18n = new Uppy({
   id: 'uppyi18n',
