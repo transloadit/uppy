@@ -8,33 +8,29 @@ set -o xtrace
 # Set magic variables for current file & dir
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
-__base="$(basename ${__file} .sh)"
+__base="$(basename "${__file}" .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
+__e2eSuites="${__root}/test/endtoend"
 
 ESBUILD="$(corepack yarn workspace @uppy-tests/end2end bin esbuild)"
 
-# Tests using a simple build setup.
-tests="chaos-monkey i18n-drag-drop providers thumbnails transloadit transloadit-assembly-options tus-drag-drop url-plugin xhr-limit"
+for t in $(cd "$__e2eSuites" && ls -d */ | cut -f1 -d'/'); do
+  if [ "$t" = "create-react-app" ]; then continue; fi
 
-for t in $tests; do
-  mkdir -p "${__root}/test/endtoend/$t/dist"
-  cp "${__root}/packages/uppy/dist/uppy.min.css" "${__root}/test/endtoend/$t/dist"
-  cp "${__root}/test/endtoend/$t/index.html" "${__root}/test/endtoend/$t/dist"
-  "$ESBUILD" "${__root}/test/endtoend/$t/main.mjs" \
+  mkdir -p "${__e2eSuites}/$t/dist"
+  cp "${__root}/packages/uppy/dist/uppy.min.css" "${__e2eSuites}/$t/dist"
+  cp "${__e2eSuites}/$t/index.html" "${__e2eSuites}/$t/dist"
+
+  entryPointName="main.mjs"
+  if [ "$t" = "typescript" ]; then entryPointName="main.ts"; fi
+
+  "$ESBUILD" "${__e2eSuites}/$t/$entryPointName" \
     --bundle --target=es2017 \
-    --outfile="${__root}/test/endtoend/$t/dist/bundle.js"
+    --outfile="${__e2eSuites}/$t/dist/bundle.js"
 done
 
 # Speeecial tests that need custom builds.
-pushd "${__root}/test/endtoend/create-react-app"
+pushd "${__e2eSuites}/create-react-app"
   npm install
   REACT_APP_ON_TRAVIS="${TRAVIS:-}" npm run build
-popd
-pushd "${__root}/test/endtoend/typescript"
-  mkdir -p dist
-  cp "${__root}/packages/uppy/dist/uppy.min.css" dist/
-  cp index.html dist/
-  "$ESBUILD" "${__root}/test/endtoend/typescript/main.ts" \
-    --bundle --target=es2017 \
-    --outfile="${__root}/test/endtoend/typescript/dist/bundle.js"
 popd
