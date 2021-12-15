@@ -15,6 +15,7 @@ __e2eSuites="${__root}/test/endtoend"
 ESBUILD="$(corepack yarn workspace @uppy-tests/end2end bin esbuild)"
 
 for t in $(cd "$__e2eSuites" && ls -d */ | cut -f1 -d'/'); do
+  if [ "$t" = "tmp" ]; then continue; fi
   if [ "$t" = "create-react-app" ]; then continue; fi
 
   mkdir -p "${__e2eSuites}/$t/dist"
