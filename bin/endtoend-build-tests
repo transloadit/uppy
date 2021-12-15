@@ -11,6 +11,8 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)"
 
+ESBUILD="$(corepack yarn workspace @uppy-tests/end2end bin esbuild)"
+
 # Tests using a simple build setup.
 tests="chaos-monkey i18n-drag-drop providers thumbnails transloadit transloadit-assembly-options tus-drag-drop url-plugin xhr-limit"
 
@@ -18,8 +20,8 @@ for t in $tests; do
   mkdir -p "${__root}/test/endtoend/$t/dist"
   cp "${__root}/packages/uppy/dist/uppy.min.css" "${__root}/test/endtoend/$t/dist"
   cp "${__root}/test/endtoend/$t/index.html" "${__root}/test/endtoend/$t/dist"
-  esbuild "${__root}/test/endtoend/$t/main.mjs" \
-    --bundle \
+  "$ESBUILD" "${__root}/test/endtoend/$t/main.mjs" \
+    --bundle --target=es2017 \
     --outfile="${__root}/test/endtoend/$t/dist/bundle.js"
 done
 
@@ -32,7 +34,7 @@ pushd "${__root}/test/endtoend/typescript"
   mkdir -p dist
   cp "${__root}/packages/uppy/dist/uppy.min.css" dist/
   cp index.html dist/
-  esbuild "${__root}/test/endtoend/typescript/main.ts" \
-    --bundle \
+  "$ESBUILD" "${__root}/test/endtoend/typescript/main.ts" \
+    --bundle --target=es2017 \
     --outfile="${__root}/test/endtoend/typescript/dist/bundle.js"
 popd
