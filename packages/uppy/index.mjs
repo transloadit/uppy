@@ -3,8 +3,10 @@ export { default as Core } from '@uppy/core'
 
 // Utilities
 export { default as server } from '@uppy/companion-client'
+/* eslint-disable */
 import ProviderView from '@uppy/provider-views'
-export var views = { ProviderView: ProviderView }
+export var views = { ProviderView }
+/* eslint-enable */
 
 // Stores
 export { default as DefaultStore } from '@uppy/store-default'

@@ -146,6 +146,17 @@ module.exports = {
 
   overrides: [
     {
+      files: [
+        '*.mjs',
+        'private/dev/*.js',
+        'private/release/*.js',
+        'private/remark-lint-uppy/*.js',
+      ],
+      parserOptions: {
+        sourceType: 'module',
+      },
+    },
+    {
       files: ['./packages/@uppy/companion/**/*.js'],
       rules: {
         'no-restricted-syntax': 'warn',
