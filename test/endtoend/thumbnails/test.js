@@ -1,4 +1,4 @@
-/* global browser, capabilities, expect, $, $$ */
+/* global browser, capabilities, $, $$ */
 const path = require('path')
 const fs = require('fs')
 const { selectFakeFile, supportsChooseFile } = require('../utils')

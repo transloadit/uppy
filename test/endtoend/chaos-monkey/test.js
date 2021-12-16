@@ -1,6 +1,5 @@
-/* global browser, expect  */
+/* global browser */
 const crypto = require('crypto')
-const lorem = require('@jamen/lorem')
 const { selectFakeFile } = require('../utils')
 
 const testURL = 'http://localhost:4567/chaos-monkey'
@@ -23,12 +22,12 @@ describe('Chaos monkey', function test () {
     const types = ['application/octet-stream', 'text/plain']
     const generate = {
       'application/octet-stream' () {
-        const len = Math.round(Math.random() * 5000000)
+        const len = Math.round(Math.random() * 5_000_000)
         return crypto.randomBytes(len)
       },
       'text/plain' () {
-        const len = Math.round(Math.random() * 5000000)
-        return Buffer.from(lorem(len))
+        const len = Math.round(Math.random() * 5_000_000 / 'Lorem ipsum'.length)
+        return Buffer.from('Lorem ipsum'.repeat(len))
       },
     }
 

@@ -1,12 +1,11 @@
-/* eslint-disable */
-const Uppy = require('@uppy/core')
-const ThumbnailGenerator = require('@uppy/thumbnail-generator')
-const FileInput = require('@uppy/file-input')
+import Uppy from '@uppy/core'
+import ThumbnailGenerator from '@uppy/thumbnail-generator'
+import FileInput from '@uppy/file-input'
 
 const uppyThumbnails = new Uppy({
   id: 'uppyThumbnails',
   autoProceed: false,
-  debug: true
+  debug: true,
 })
 
 uppyThumbnails.use(ThumbnailGenerator, {})
@@ -27,7 +26,7 @@ uppyThumbnails.on('thumbnail:error', (file, err) => {
   document.body.appendChild(el)
 })
 
-uppyThumbnails.on('thumbnail:generated', (file, preview) => {
+uppyThumbnails.on('thumbnail:generated', (file) => {
   const img = new Image()
   img.src = file.preview
   img.className = 'file-preview'

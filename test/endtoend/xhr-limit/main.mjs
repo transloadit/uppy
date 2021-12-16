@@ -1,6 +1,6 @@
-const Uppy = require('@uppy/core')
-const FileInput = require('@uppy/file-input')
-const XHRUpload = require('@uppy/xhr-upload')
+import Uppy from '@uppy/core'
+import FileInput from '@uppy/file-input'
+import XHRUpload from '@uppy/xhr-upload'
 
 function startXHRLimitTest (endpoint) {
   const uppy = new Uppy({

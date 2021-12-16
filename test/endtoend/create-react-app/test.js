@@ -1,4 +1,4 @@
-/* global capabilities, browser, expect, $, $$ */
+/* global capabilities, browser, $, $$ */
 const testURL = 'http://localhost:4567/create-react-app'
 
 describe('webpack build', () => {

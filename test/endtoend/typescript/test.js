@@ -1,4 +1,4 @@
-/* global browser, expect  */
+/* global browser */
 describe('Project compiled with Uppy\'s TypeScript typings', () => {
   it('Should have correct imports (thus not crash)', async () => {
     await browser.url('http://localhost:4567/typescript')

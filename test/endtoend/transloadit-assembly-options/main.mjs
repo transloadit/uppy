@@ -1,6 +1,6 @@
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const Transloadit = require('@uppy/transloadit')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Transloadit from '@uppy/transloadit'
 
 function initUppyTransloadit (transloaditKey) {
   const uppyTransloadit = new Uppy({

@@ -1,7 +1,7 @@
-const Uppy = require('@uppy/core')
-const DragDrop = require('@uppy/drag-drop')
-const Tus = require('@uppy/tus')
-const ProgressBar = require('@uppy/progress-bar')
+import Uppy from '@uppy/core'
+import DragDrop from '@uppy/drag-drop'
+import Tus from '@uppy/tus'
+import ProgressBar from '@uppy/progress-bar'
 
 // const endpoint = 'http://localhost:1080'
 const endpoint = 'https://tusd.tusdemo.net'

@@ -1,8 +1,9 @@
-const Uppy = require('@uppy/core')
-const DragDrop = require('@uppy/drag-drop')
-const XHRUpload = require('@uppy/xhr-upload')
-const ProgressBar = require('@uppy/progress-bar')
-const DeepFrozenStore = require('../../resources/DeepFrozenStore.js')
+import Uppy from '@uppy/core'
+import DragDrop from '@uppy/drag-drop'
+import XHRUpload from '@uppy/xhr-upload'
+import ProgressBar from '@uppy/progress-bar'
+
+import DeepFrozenStore from '../../resources/DeepFrozenStore.js'
 
 const uppyi18n = new Uppy({
   id: 'uppyi18n',

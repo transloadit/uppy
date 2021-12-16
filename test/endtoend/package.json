@@ -9,6 +9,7 @@
     "@wdio/sauce-service": "^7.7.7",
     "brake": "^1.0.1",
     "chai": "^4.2.0",
+    "esbuild": "^0.14.1",
     "express": "^4.17.1",
     "glob": "^7.2.0",
     "http-proxy": "^1.18.1",

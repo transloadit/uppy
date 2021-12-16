@@ -1,10 +1,9 @@
-const Uppy = require('@uppy/core')
-const Dashboard = require('@uppy/dashboard')
-const Tus = require('@uppy/tus')
-const canvasToBlob = require('@uppy/utils/lib/canvasToBlob')
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Tus from '@uppy/tus'
+import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
 
-const isOnTravis = !!(process.env.TRAVIS && process.env.CI)
-const endpoint = isOnTravis ? 'http://companion.test:1081' : 'http://localhost:1081'
+const endpoint = 'http://localhost:1081'
 
 let id = 0
 window.setup = function setup (options) {
