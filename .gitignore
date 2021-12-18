@@ -8,6 +8,7 @@ node_modules
 .cache
 .parcel-cache
 .eslintcache
+.vscode/settings.json
 .yarn/cache
 .yarn/install-state.gz
 yarn-error.log
