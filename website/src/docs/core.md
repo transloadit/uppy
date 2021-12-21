@@ -367,6 +367,10 @@ Name of the plugin that was responsible for adding this file. Typically a remote
 
 Unique ID for the file.
 
+### `file.name`
+
+The name of the file.
+
 ### `file.meta`
 
 Object containing file metadata. Any file metadata should be JSON-serializable.
