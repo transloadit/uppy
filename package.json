@@ -143,7 +143,7 @@
     "lint:css": "stylelint ./packages/**/*.scss",
     "lint:css:fix": "stylelint ./packages/**/*.scss --fix",
     "lint": "eslint . --cache",
-    "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-build/release interactive",
+    "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-dev/release interactive",
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
     "start:companion": "bash ./bin/companion",
     "start": "npm-run-all --parallel watch start:companion web:start",

@@ -33,11 +33,11 @@ jobs:
       - name: Bump candidate packages version
         run: corepack yarn version apply --all --json | jq -s > releases.json
       - name: Prepare changelog
-        run: corepack yarn workspace @uppy-build/release update-changelogs releases.json | xargs git add
+        run: corepack yarn workspace @uppy-dev/release update-changelogs releases.json | xargs git add
       - name: Update contributors table
         run: corepack yarn contributors:save && git add README.md
       - name: Update CDN URLs
-        run: corepack yarn workspace @uppy-build/release update-version-URLs | xargs git add
+        run: corepack yarn workspace @uppy-dev/release update-version-URLs | xargs git add
       - name: Stage changes and remove temp files
         run: |
           git rm -rf .yarn/versions
