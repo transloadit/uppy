@@ -12,6 +12,32 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.3.2
+
+Released: 2021-12-21
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/angular   |   0.2.8 | @uppy/vue       |   0.4.5 |
+| @uppy/companion |   3.1.4 | uppy            |   2.3.2 |
+| @uppy/svelte    |   1.0.7 |                 |         |
+
+- meta: fix release script (Antoine du Hamel)
+- @uppy/core: document file.name (Merlijn Vos / #3381)
+- @uppy/angular,@uppy/companion,@uppy/svelte,@uppy/vue: add `.npmignore` files to ignore `.gitignore` when packing (Antoine du Hamel / #3380)
+- meta: add VSCode workspace settings to `.gitignore` (Antoine du Hamel)
+- @uppy/companion: Upgrade ws in companion (Merlijn Vos / #3377)
+- meta: use ESBuild to bundle in E2E test suite (Antoine du Hamel / #3375)
+- meta: update linter config to parse ESM files (Antoine du Hamel / #3371)
+- meta: move dev workspace to `private/` (Antoine du Hamel / #3368)
+- meta: use Vite for examples/dev (Antoine du Hamel / #3361)
+- website: remove dependency on `crypto` in @uppy/transloadit example (Antoine du Hamel / #3367)
+- meta: enable linter on website examples (Antoine du Hamel / #3366)
+- meta: enable linter on mjs scripts (Antoine du Hamel / #3364)
+- @uppy/angular: Fix module field in `package.json` (Merlijn Vos / #3365)
+- meta: improve release script wording and formatting (Artur Paikin)
+
+
 ## 2.3.1
 
 Released: 2021-12-09
