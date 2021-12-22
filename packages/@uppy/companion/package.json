@@ -105,7 +105,7 @@
     ]
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p .",
     "postinstall": "npm run build",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "yarn run build",
