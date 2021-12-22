@@ -1,7 +1,7 @@
 name: Companion Deploy
 
 
-on: [push, pull_request]
+on: [push]
 
 # on:
 #   push:
