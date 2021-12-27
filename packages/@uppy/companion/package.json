@@ -1,6 +1,6 @@
 {
   "name": "@uppy/companion",
-  "version": "3.1.1",
+  "version": "3.1.4",
   "description": "OAuth helper and remote fetcher for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
   "main": "lib/companion.js",
   "types": "lib/companion.d.ts",
@@ -30,12 +30,12 @@
   "dependencies": {
     "@purest/providers": "1.0.1",
     "atob": "2.1.2",
-    "aws-sdk": "2.701.0",
+    "aws-sdk": "^2.1038.0",
     "body-parser": "1.19.0",
     "chalk": "2.4.2",
     "common-tags": "1.8.0",
     "connect-redis": "4.0.3",
-    "cookie-parser": "1.4.5",
+    "cookie-parser": "1.4.6",
     "cors": "^2.8.5",
     "escape-string-regexp": "2.0.0",
     "express": "4.17.1",
@@ -66,14 +66,14 @@
     "tus-js-client": "2.1.1",
     "uuid": "8.1.0",
     "validator": "^12.1.0",
-    "ws": "6.2.1"
+    "ws": "6.2.2"
   },
   "devDependencies": {
     "@types/compression": "1.7.0",
-    "@types/connect-redis": "0.0.7",
+    "@types/connect-redis": "0.0.17",
     "@types/cookie-parser": "1.4.2",
     "@types/cors": "2.8.6",
-    "@types/eslint": "^7.2.14",
+    "@types/eslint": "^8.2.0",
     "@types/express-session": "1.17.3",
     "@types/jsonwebtoken": "8.3.7",
     "@types/lodash.merge": "4.6.6",
@@ -88,7 +88,7 @@
     "into-stream": "^6.0.0",
     "nock": "^13.1.3",
     "supertest": "3.4.2",
-    "typescript": "~4.3"
+    "typescript": "~4.4"
   },
   "files": [
     "bin/",
@@ -114,5 +114,8 @@
   },
   "engines": {
     "node": ">=10.20.1"
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   }
 }

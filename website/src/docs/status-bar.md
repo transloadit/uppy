@@ -169,6 +169,7 @@ module.exports = {
       0: '%{smart_count} more file added',
       1: '%{smart_count} more files added',
     },
+    showErrorDetails: 'Show error details',
   },
 }
 

@@ -49,7 +49,7 @@ module.exports = class RequestClient {
     return stripSlash(companion && companion[host] ? companion[host] : host)
   }
 
-  static defaultHeaders ={
+  static defaultHeaders = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
     'Uppy-Versions': `@uppy/companion-client=${RequestClient.VERSION}`,

@@ -1,5 +1,5 @@
 /* eslint-disable compat/compat */
-/* global window, capabilities */
+/* global capabilities */
 const path = require('path')
 const { spawn } = require('child_process')
 const { promisify } = require('util')

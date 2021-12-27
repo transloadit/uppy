@@ -1,4 +1,4 @@
-/* global browser, expect  */
+/* global browser */
 const path = require('path')
 const { selectFakeFile, supportsChooseFile, ensureInputVisible } = require('../utils')
 
@@ -23,6 +23,6 @@ describe('File upload with DragDrop + Tus', function test () {
     await browser.pause(3000)
     const percent = await browser.$('#uppyDragDrop-progress .uppy-ProgressBar-percentage')
     const html = await percent.getHTML(false)
-    expect(parseInt(html)).to.be.equal(100)
+    expect(Number(html)).to.be.equal(100)
   })
 })

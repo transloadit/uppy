@@ -101,6 +101,7 @@ uppy.use(Dashboard, {
   browserBackButtonClose: false,
   theme: 'light',
   autoOpenFileEditor: false,
+  disableLocalFiles: false,
 })
 ```
 

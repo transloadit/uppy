@@ -1,0 +1,22 @@
+{
+  "name": "@uppy-dev/dev",
+  "version": "0.0.0",
+  "aliasify": {
+    "aliases": {
+      "@uppy": "../../packages/@uppy"
+    }
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-transform-react-jsx": "^7.10.4",
+    "babel-plugin-transform-commonjs": "1.1.6",
+    "vite": "^2.7.1"
+  },
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}

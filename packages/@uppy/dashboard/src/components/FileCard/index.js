@@ -1,12 +1,12 @@
 const { h, Component } = require('preact')
 const classNames = require('classnames')
-const { nanoid } = require('nanoid')
+const { nanoid } = require('nanoid/non-secure')
 const getFileTypeIcon = require('../../utils/getFileTypeIcon')
 const ignoreEvent = require('../../utils/ignoreEvent.js')
 const FilePreview = require('../FilePreview')
 
 class FileCard extends Component {
-  form = document.createElement('form');
+  form = document.createElement('form')
 
   constructor (props) {
     super(props)
@@ -152,7 +152,14 @@ class FileCard extends Component {
               <button
                 type="button"
                 className="uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit"
-                onClick={() => this.props.openFileEditor(file)}
+                onClick={(event) => {
+                  // When opening the image editor we want to save any meta fields changes.
+                  // Otherwise it's confusing for the user to click save in the editor,
+                  // but the changes here are discarded. This bypasses validation,
+                  // but we are okay with that.
+                  this.handleSave(event)
+                  this.props.openFileEditor(file)
+                }}
                 form={this.form.id}
               >
                 {this.props.i18n('editFile')}

@@ -7,7 +7,10 @@ module.exports = (api) => {
   return {
     presets: [
       ['@babel/preset-env', {
-        include: ['@babel/plugin-proposal-nullish-coalescing-operator'],
+        include: [
+          '@babel/plugin-proposal-nullish-coalescing-operator',
+          '@babel/plugin-proposal-optional-chaining',
+        ],
         loose: true,
         targets,
         useBuiltIns: false, // Don't add polyfills automatically.
@@ -17,7 +20,7 @@ module.exports = (api) => {
     ],
     plugins: [
       ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
-      'babel-plugin-inline-package-json',
+      process.env.NODE_ENV !== 'dev' && 'babel-plugin-inline-package-json',
     ].filter(Boolean),
   }
 }

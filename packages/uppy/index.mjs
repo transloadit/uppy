@@ -3,8 +3,10 @@ export { default as Core } from '@uppy/core'
 
 // Utilities
 export { default as server } from '@uppy/companion-client'
+/* eslint-disable */
 import ProviderView from '@uppy/provider-views'
-export var views = { ProviderView: ProviderView }
+export var views = { ProviderView }
+/* eslint-enable */
 
 // Stores
 export { default as DefaultStore } from '@uppy/store-default'
@@ -31,6 +33,7 @@ export { default as Unsplash } from '@uppy/unsplash'
 export { default as Url } from '@uppy/url'
 export { default as Webcam } from '@uppy/webcam'
 export { default as ScreenCapture } from '@uppy/screen-capture'
+export { default as Audio } from '@uppy/audio'
 
 // Uploaders
 export { default as AwsS3 } from '@uppy/aws-s3'

@@ -4,7 +4,7 @@
 
 const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
-const { nanoid } = require('nanoid')
+const { nanoid } = require('nanoid/non-secure')
 const throttle = require('lodash.throttle')
 const prettierBytes = require('@transloadit/prettier-bytes')
 const match = require('mime-match')
@@ -1559,9 +1559,9 @@ class Uppy {
     const restoreStep = currentUpload.step || 0
 
     const steps = [
-      ...Array.from(this.#preProcessors),
-      ...Array.from(this.#uploaders),
-      ...Array.from(this.#postProcessors),
+      ...this.#preProcessors,
+      ...this.#uploaders,
+      ...this.#postProcessors,
     ]
     try {
       for (let step = restoreStep; step < steps.length; step++) {

@@ -11,7 +11,7 @@ export function getPaths (globPath) {
 
 export function sortObjectAlphabetically (obj) {
   return Object.fromEntries(
-    Object.entries(obj).sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+    Object.entries(obj).sort(([keyA], [keyB]) => keyA.localeCompare(keyB)),
   )
 }
 

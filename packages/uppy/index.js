@@ -35,6 +35,7 @@ exports.Unsplash = require('@uppy/unsplash')
 exports.Url = require('@uppy/url')
 exports.Webcam = require('@uppy/webcam')
 exports.ScreenCapture = require('@uppy/screen-capture')
+exports.Audio = require('@uppy/audio')
 
 // Uploaders
 exports.AwsS3 = require('@uppy/aws-s3')

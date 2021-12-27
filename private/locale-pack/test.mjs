@@ -76,7 +76,7 @@ function getAllFilesPerPlugin (pluginNames) {
 
     if (name in pluginLocaleDependencies) {
       filesPerPlugin[name] = filesPerPlugin[name].concat(
-        getFiles(pluginLocaleDependencies[name])
+        getFiles(pluginLocaleDependencies[name]),
       )
     }
   }
@@ -93,14 +93,14 @@ async function unused (filesPerPlugin, data) {
       '@uppy',
       name,
       'src',
-      'locale.js'
+      'locale.js',
     )
     const locale = (await import(localePath)).default
 
     for (const key of Object.keys(locale.strings)) {
       const regPat = new RegExp(
         `(i18n|i18nArray)\\([^\\)]*['\`"]${key}['\`"]`,
-        'g'
+        'g',
       )
       if (!fileString.match(regPat)) {
         return Promise.reject(new Error(`Unused locale key "${key}" in @uppy/${name}`))
@@ -136,7 +136,7 @@ function warnings ({ leadingLocale, followerLocales }) {
           `${chalk.cyan(name)} locale has missing string: '${chalk.red(key)}'`,
           `that is present in ${chalk.cyan(leadingLocaleName)}`,
           `with value: ${chalk.yellow(value)}`,
-        ].join(' ')
+        ].join(' '),
       )
     }
 
@@ -150,7 +150,7 @@ function warnings ({ leadingLocale, followerLocales }) {
           `${chalk.cyan(name)} locale has excess string:`,
           `'${chalk.yellow(key)}' that is not present`,
           `in ${chalk.cyan(leadingLocaleName)}.`,
-        ].join(' ')
+        ].join(' '),
       )
     }
   }

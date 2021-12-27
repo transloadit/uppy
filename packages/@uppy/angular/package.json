@@ -1,7 +1,7 @@
 {
   "name": "@uppy/angular",
-  "version": "0.2.5",
-  "module": "dist/angular/esm2015/public-api.js",
+  "version": "0.2.8",
+  "module": "dist/angular/esm2020/public-api.mjs",
   "types": "dist/angular/uppy-angular.d.ts",
   "scripts": {
     "ng": "ng",
@@ -57,20 +57,20 @@
     "babel-loader": "^8.1.0",
     "eslint": "^8.0.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsdoc": "^36.0.0",
-    "eslint-plugin-prefer-arrow": "latest",
+    "eslint-plugin-jsdoc": "^37.0.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
     "jasmine-core": "~3.6.0",
-    "jasmine-spec-reporter": "~5.0.0",
-    "karma": "~6.1.0",
+    "jasmine-spec-reporter": "~7.0.0",
+    "karma": "~6.3.9",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
-    "ng-packagr": "^12.1.0",
+    "ng-packagr": "^13.0.0",
     "protractor": "~7.0.0",
-    "redux": "^4.0.5",
+    "redux": "^4.1.2",
     "ts-node": "~8.3.0",
-    "typescript": "~4.3"
+    "typescript": "~4.4"
   },
   "publishConfig": {
     "access": "public"

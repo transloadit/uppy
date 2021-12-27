@@ -5,6 +5,16 @@
 These are ideas that are planned for specific versions or act as a backlog without a clear date.
 PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
+## `2.3.0`
+
+To be released: 2021-11-29
+
+- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
+- [ ] compressor: move to Uppy repo, add resizing (@arturi)
+- [ ] providers: Box on hosted Companion
+- [ ] robodog: research simplifing Robodog — yes to easy “few lines of code Dashboard+Providers+(?Transloadit) experience”, but currently it’s hard to choose between modes, decide what you need (@Murderlon)
+- [ ] build: add release automations (@aduh95)
+
 ## `3.0.0`
 
 - [ ] Switch to ES Modules (ESM)
@@ -21,7 +31,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ### Core
 
-- [ ] Add an option to force metafield data when uploading a file. Mark files with restriction errors in the UI. Having an icon showing close to the file to inform if it passed any rule would provide an awesome user experience. The user would be able to edit the file name or any meta tags necessary to pass validation via uppy dashboard, and anytime the user updates the file info, the validation runs again and the icon is updated. #1703
 - [ ] Make sure Uppy works well in VR
 - [ ] normalize file names when uploading from iOS? Can we do it with meta data? date? `image-${index}`? #678
 
@@ -40,8 +49,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] WordPress Front-end Gravity Forms Uppy plugin so one form field could be an Uppy-powered file input
 - [ ] A WakeLock based plugin that keeps your phone from going to sleep while an upload is ongoing https://github.com/transloadit/uppy/issues/1725
-- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
-- [ ] compressor: add to Uppy repo, add resizing (@arturi)
 
 ### New providers
 
