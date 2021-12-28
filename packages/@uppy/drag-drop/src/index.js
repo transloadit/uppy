@@ -124,7 +124,7 @@ module.exports = class DragDrop extends UIPlugin {
       this.setPluginState({ isDraggingOver: false })
     }, 50)
 
-    this.opts?.onDragLeave(event)
+    this.opts.onDragLeave?.(event)
   }
 
   handleDrop = async (event) => {
