@@ -34,7 +34,7 @@ fr_FR.strings = {
   dashboardWindowTitle: 'Fenêtre de téléchargeur de fichier (Appuyez sur echap pour fermer)',
   dataUploadedOfTotal: '%{complete} sur %{total}',
   done: 'Terminé',
-  dropHereOr: 'Déposer les fichiers ici ou %{browse}',
+  dropHereOr: 'Déposer ici ou %{browse}',
   dropHint: 'Déposez vos fichiers ici',
   dropPasteBoth: 'Déposer les fichiers ici, coller ou %{browse}',
   dropPasteFiles: 'Déposer les fichiers ici, coller ou %{browse}',
@@ -95,6 +95,7 @@ fr_FR.strings = {
   resumeUpload: 'Reprendre le téléchargement',
   retry: 'Réessayer',
   retryUpload: 'Réessayer le téléchargement',
+  save: 'Sauvegarder',
   saveChanges: 'Sauvegarder les modifications',
   selectFileNamed: 'Sélectionner le fichier %{name}',
   selectX: {
