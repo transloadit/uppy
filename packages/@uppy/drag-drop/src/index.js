@@ -110,7 +110,7 @@ module.exports = class DragDrop extends UIPlugin {
     clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
 
-    this.opts?.onDragOver(event)
+    this.opts.onDragOver?.(event)
   }
 
   handleDragLeave (event) {
