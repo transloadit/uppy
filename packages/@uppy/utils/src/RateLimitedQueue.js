@@ -7,6 +7,10 @@ class RateLimitedQueue {
 
   #queuedHandlers = []
 
+  #paused = false
+
+  #pauseTimer
+
   constructor (limit) {
     if (typeof limit !== 'number' || limit === 0) {
       this.limit = Infinity
@@ -54,7 +58,7 @@ class RateLimitedQueue {
   }
 
   #next () {
-    if (this.#activeRequests >= this.limit) {
+    if (this.#paused || this.#activeRequests >= this.limit) {
       return
     }
     if (this.#queuedHandlers.length === 0) {
@@ -149,6 +153,29 @@ class RateLimitedQueue {
       return outerPromise
     }
   }
+
+  resume () {
+    this.#paused = false
+    clearTimeout(this.#pauseTimer)
+  }
+
+  #resume = () => this.resume()
+
+  /**
+   * Freezes the queue for a while or indefinitely.
+   *
+   * @param {number | null } [duration] Duration for the pause to happen, in milliseconds.
+   *                                    If omitted, the queue won't resume automatically.
+   */
+  pause (duration = null) {
+    this.#paused = true
+    clearTimeout(this.#pauseTimer)
+    if (duration != null) {
+      this.#pauseTimer = setTimeout(this.#resume, duration)
+    }
+  }
+
+  get isPaused () { return this.#paused }
 }
 
 module.exports = {

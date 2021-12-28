@@ -40,7 +40,7 @@ const tusDefaultOptions = {
   addRequestId: false,
 
   chunkSize: Infinity,
-  retryDelays: [0, 1000, 3000, 5000],
+  retryDelays: [100, 1000, 3000, 5000],
   parallelUploads: 1,
   removeFingerprintOnSuccess: false,
   uploadLengthDeferred: false,
@@ -51,7 +51,10 @@ const tusDefaultOptions = {
  * Tus resumable file uploader
  */
 module.exports = class Tus extends BasePlugin {
+  // eslint-disable-next-line global-require
   static VERSION = require('../package.json').version
+
+  #retryDelayIterator
 
   /**
    * @param {Uppy} uppy
@@ -67,7 +70,7 @@ module.exports = class Tus extends BasePlugin {
     const defaultOptions = {
       useFastRemoteRetry: true,
       limit: 5,
-      retryDelays: [0, 1000, 3000, 5000],
+      retryDelays: tusDefaultOptions.retryDelays,
       withCredentials: false,
     }
 
@@ -85,6 +88,7 @@ module.exports = class Tus extends BasePlugin {
      * @type {RateLimitedQueue}
      */
     this.requests = new RateLimitedQueue(this.opts.limit)
+    this.#retryDelayIterator = this.opts.retryDelays?.values()
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
@@ -178,6 +182,9 @@ module.exports = class Tus extends BasePlugin {
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {
+      let queuedRequest
+      let queueRequest
+
       this.uppy.emit('upload-started', file)
 
       const opts = {
@@ -252,6 +259,24 @@ module.exports = class Tus extends BasePlugin {
         resolve(upload)
       }
 
+      uploadOptions.onShouldRetry = (err, retryAttempt, options) => {
+        if (err?.originalResponse?.getStatus() === 429) {
+          if (!this.requests.isPaused) {
+            const { done, value } = this.#retryDelayIterator.next()
+            if (done) {
+              return false
+            }
+            this.requests.pause(value)
+          }
+          queuedRequest = this.requests.run(queueRequest)
+        } else {
+          setTimeout(() => {
+            queuedRequest = this.requests.run(queuedRequest)
+          }, options.retryDelays[retryAttempt])
+        }
+        return false
+      }
+
       const copyProp = (obj, srcProp, destProp) => {
         if (hasProperty(obj, srcProp) && !hasProperty(obj, destProp)) {
           obj[destProp] = obj[srcProp]
@@ -278,15 +303,7 @@ module.exports = class Tus extends BasePlugin {
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      upload.findPreviousUploads().then((previousUploads) => {
-        const previousUpload = previousUploads[0]
-        if (previousUpload) {
-          this.uppy.log(`[Tus] Resuming upload of ${file.id} started at ${previousUpload.creationTime}`)
-          upload.resumeFromPreviousUpload(previousUpload)
-        }
-      })
-
-      let queuedRequest = this.requests.run(() => {
+      queueRequest = () => {
         if (!file.isPaused) {
           upload.start()
         }
@@ -297,7 +314,17 @@ module.exports = class Tus extends BasePlugin {
         // Also, we need to remove the request from the queue _without_ destroying everything
         // related to this upload to handle pauses.
         return () => {}
+      }
+
+      upload.findPreviousUploads().then((previousUploads) => {
+        const previousUpload = previousUploads[0]
+        if (previousUpload) {
+          this.uppy.log(`[Tus] Resuming upload of ${file.id} started at ${previousUpload.creationTime}`)
+          upload.resumeFromPreviousUpload(previousUpload)
+        }
       })
+
+      queuedRequest = this.requests.run(queueRequest)
 
       this.onFileRemove(file.id, (targetFileID) => {
         queuedRequest.abort()
@@ -412,6 +439,8 @@ module.exports = class Tus extends BasePlugin {
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
+      let queuedRequest
+
       this.onFileRemove(file.id, () => {
         queuedRequest.abort()
         socket.send('cancel', {})
@@ -512,7 +541,7 @@ module.exports = class Tus extends BasePlugin {
         resolve()
       })
 
-      let queuedRequest = this.requests.run(() => {
+      queuedRequest = this.requests.run(() => {
         socket.open()
         if (file.isPaused) {
           socket.send('pause', {})
