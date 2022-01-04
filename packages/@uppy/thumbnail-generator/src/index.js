@@ -2,7 +2,7 @@ const { UIPlugin } = require('@uppy/core')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
-const exifr = require('exifr/dist/mini.legacy.umd.js')
+const exifr = require('exifr')
 
 const locale = require('./locale')
 
