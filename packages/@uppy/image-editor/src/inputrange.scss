@@ -54,7 +54,7 @@ $ie-bottom-track-color: darken($track-color, $contrast);
   cursor: default;
 }
 
-[type='range'] {
+.uppy-ImageCropper-range {
   width: $track-width;
   margin: math.div($thumb-height, 2) 0;
   background: transparent;
