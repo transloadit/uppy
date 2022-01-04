@@ -45,7 +45,7 @@
     "express-session": "1.17.1",
     "grant": "4.7.0",
     "helmet": "^4.6.0",
-    "ip-address": "6.2.0",
+    "ipaddr.js": "^2.0.1",
     "isobject": "3.0.1",
     "jsonwebtoken": "8.5.1",
     "lodash.merge": "^4.6.2",
