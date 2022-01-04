@@ -183,7 +183,7 @@ module.exports = class Tus extends BasePlugin {
     // Create a new tus upload
     return new Promise((resolve, reject) => {
       let queuedRequest
-      let queueRequest
+      let qRequest
 
       this.uppy.emit('upload-started', file)
 
@@ -226,7 +226,7 @@ module.exports = class Tus extends BasePlugin {
         }
 
         this.resetUploaderReferences(file.id)
-        queuedRequest.done()
+        queuedRequest.abort()
 
         this.uppy.emit('upload-error', file, err)
 
@@ -260,21 +260,39 @@ module.exports = class Tus extends BasePlugin {
       }
 
       uploadOptions.onShouldRetry = (err, retryAttempt, options) => {
-        if (err?.originalResponse?.getStatus() === 429) {
+        const status = err?.originalResponse?.getStatus()
+        if (status === 429) {
+          // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
           if (!this.requests.isPaused) {
-            const { done, value } = this.#retryDelayIterator.next()
-            if (done) {
+            const next = this.#retryDelayIterator?.next()
+            if (next == null || next.done) {
               return false
             }
-            this.requests.pause(value)
+            queuedRequest.abort()
+            this.requests.pause(next.value)
           }
-          queuedRequest = this.requests.run(queueRequest)
+          queuedRequest = this.requests.run(qRequest)
+        } else if (status > 400 && status < 500 && status !== 409) {
+          // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
+          return false
+        } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+          // The navigator is offline, let's wait for it to come back online.
+          window.addEventListener('online', () => {
+            queuedRequest.abort()
+            queuedRequest = this.requests.run(qRequest)
+          }, { once: true })
         } else {
+          // For a non-4xx error, we can re-queue the request.
           setTimeout(() => {
-            queuedRequest = this.requests.run(queuedRequest)
+            queuedRequest.abort()
+            queuedRequest = this.requests.run(qRequest)
           }, options.retryDelays[retryAttempt])
         }
-        return false
+        // Aborting the timeout set by tus-js-client to not short-circuit the rate limiting.
+        // eslint-disable-next-line no-underscore-dangle
+        queueMicrotask(() => clearTimeout(queuedRequest._retryTimeout))
+        // We need to return true here so tus-js-client increments the retryAttempt and do not emit an error event.
+        return true
       }
 
       const copyProp = (obj, srcProp, destProp) => {
@@ -303,7 +321,7 @@ module.exports = class Tus extends BasePlugin {
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      queueRequest = () => {
+      qRequest = () => {
         if (!file.isPaused) {
           upload.start()
         }
@@ -324,7 +342,7 @@ module.exports = class Tus extends BasePlugin {
         }
       })
 
-      queuedRequest = this.requests.run(queueRequest)
+      queuedRequest = this.requests.run(qRequest)
 
       this.onFileRemove(file.id, (targetFileID) => {
         queuedRequest.abort()
@@ -341,10 +359,7 @@ module.exports = class Tus extends BasePlugin {
           // Resuming an upload should be queued, else you could pause and then
           // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
-          queuedRequest = this.requests.run(() => {
-            upload.start()
-            return () => {}
-          })
+          queuedRequest = this.requests.run(qRequest)
         }
       })
 
@@ -364,10 +379,7 @@ module.exports = class Tus extends BasePlugin {
         if (file.error) {
           upload.abort()
         }
-        queuedRequest = this.requests.run(() => {
-          upload.start()
-          return () => {}
-        })
+        queuedRequest = this.requests.run(qRequest)
       })
     }).catch((err) => {
       this.uppy.emit('upload-error', file, err)
