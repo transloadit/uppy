@@ -4,15 +4,14 @@
   "author": "Merlijn Vos <merlijn@soverin.net>",
   "description": "End-to-end test suite for Uppy",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
-    "preview": "vite preview"
+    "client:start": "parcel clients/index.html",
+    "cypress:open": "cypress open"
   },
   "dependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
+    "@uppy/tus": "workspace:^",
     "cypress": "^9.0.0",
-    "parcel": "^2.0.1",
-    "vite": "^2.6.14"
+    "parcel": "^2.0.1"
   }
 }
