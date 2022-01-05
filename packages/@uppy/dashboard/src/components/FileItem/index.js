@@ -47,7 +47,7 @@ module.exports = class FileItem extends Component {
     });
     var file = this.props.file;
     if (file && file.id) {
-      this.props.setFileMeta(file.id, {
+      this.props.uppy.setFileMeta(file.id, {
         speakerCount: event.target.value
       });
     }

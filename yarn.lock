@@ -8594,7 +8594,7 @@ __metadata:
     uuid: 8.1.0
     validator: ^12.1.0
     ws: 6.2.2
-    ytdl-core: ^4.8.3
+    ytdl-core: ^4.9.2
   bin:
     companion: ./bin/companion
   languageName: unknown
@@ -44159,7 +44159,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"ytdl-core@npm:^4.8.3":
+"ytdl-core@npm:^4.9.2":
   version: 4.9.2
   resolution: "ytdl-core@npm:4.9.2"
   dependencies:

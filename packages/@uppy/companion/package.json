@@ -67,7 +67,7 @@
     "uuid": "8.1.0",
     "validator": "^12.1.0",
     "ws": "6.2.2",
-    "ytdl-core": "^4.8.3"
+    "ytdl-core": "^4.9.2"
   },
   "devDependencies": {
     "@types/compression": "1.7.0",
