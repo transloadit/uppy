@@ -1,4 +1,4 @@
-/* global browser, expect  */
+/* global browser */
 // const path = require('path')
 const { selectFakeFile, ensureInputVisible } = require('../utils')
 
@@ -24,7 +24,7 @@ describe('File upload with DragDrop + XHRUpload, i18n translated string', functi
     await browser.pause(5000)
     const percent = await browser.$('#uppyi18n-progress .uppy-ProgressBar-percentage')
     const html = await percent.getHTML(false)
-    expect(parseInt(html)).to.be.equal(100)
+    expect(Number(html)).to.be.equal(100)
   })
 
   it('should translate text strings into Russian', async () => {

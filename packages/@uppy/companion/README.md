@@ -2,7 +2,7 @@
 
 <img src="http://uppy.io/images/logos/uppy-dog-full.svg" width="120" alt="Uppy logo — a superman puppy in a pink suit" align="right">
 
-[![Build Status](https://travis-ci.org/transloadit/uppy.svg?branch=master)](https://travis-ci.org/transloadit/uppy)
+[![Build Status](https://travis-ci.org/transloadit/uppy.svg?branch=main)](https://travis-ci.org/transloadit/uppy)
 
 Companion is a server integration for [Uppy](https://github.com/transloadit/uppy) file uploader.
 
@@ -57,7 +57,7 @@ To enable companion socket for realtime feed to the client while upload is going
 // ...
 const server = app.listen(PORT)
 
-companion.socket(server, options)
+companion.socket(server)
 ```
 
 ### Run as standalone server
@@ -93,7 +93,7 @@ echo '{
     "start": "companion"
   },
   "dependencies": {
-    "@uppy/companion": "^1.13.1"
+    "@uppy/companion": "latest"
   }
 }' > package.json
 

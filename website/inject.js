@@ -115,14 +115,14 @@ async function injectSizes (config) {
         // ✓ @uppy/pkgname:     10.0 kB min  / 2.0 kB gz
         `  ✓ ${pkg}: ${' '.repeat(padTarget - pkg.length)}${
           `${prettierBytes(result.minified)} min`.padEnd(10)
-        } / ${prettierBytes(result.gzipped)} gz`
+        } / ${prettierBytes(result.gzipped)} gz`,
       ))
       return [pkg, {
         ...result,
         prettyMinified: prettierBytes(result.minified),
         prettyGzipped: prettierBytes(result.gzipped),
       }]
-    })
+    }),
   ).then(Object.fromEntries)
 
   config.uppy_bundle_kb_sizes = await sizesPromise
@@ -225,7 +225,7 @@ function injectLocaleList () {
     const regionName = regionalDisplayNames.of(regionCode)
     const npmPath = `<code class="raw"><a href="https://www.npmjs.com/package/@uppy/locales">@uppy/locales</a>/lib/${localeName}</code>`
     const cdnPath = `[\`${localeName}.min.js\`](https://releases.transloadit.com/uppy/locales/v${localePackageVersion}/${localeName}.min.js)`
-    const githubSource = `[\`${localeName}.js\`](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/locales/src/${localeName}.js)`
+    const githubSource = `[\`${localeName}.js\`](https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/${localeName}.js)`
     const mdTableRow = `| ${languageName}<br/> <small>${regionName}</small>${variant ? `<br /><small>(${variant})</small>` : ''} | ${npmPath} | ${cdnPath} | ✏️ ${githubSource} |`
     mdRows.push(mdTableRow)
 
@@ -273,7 +273,7 @@ async function inject () {
   } catch (error) {
     console.error(
       chalk.red('x failed to inject: '),
-      chalk.grey(`uppy bundle into site, because: ${error}`)
+      chalk.grey(`uppy bundle into site, because: ${error}`),
     )
     process.exit(1)
   }

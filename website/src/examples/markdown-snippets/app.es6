@@ -3,7 +3,7 @@ const marked = require('marked')
 const dragdrop = require('drag-drop')
 // Add Robodog JS. It is advisable to install Robodog from npm/yarn.
 // But for experimenting, you can use also Transloadit’s CDN, Edgly:
-// <script src="https://releases.transloadit.com/uppy/robodog/v2.0.0-alpha.0/robodog.min.js"></script>
+// <script src="https://releases.transloadit.com/uppy/robodog/v2.1.5/robodog.min.js"></script>
 const robodog = require('@uppy/robodog')
 
 const TRANSLOADIT_EXAMPLE_KEY = '35c1aed03f5011e982b6afe82599b6a0'
@@ -30,7 +30,8 @@ class MarkdownTextarea {
     this.uploadLine.classList.add('form-upload')
 
     this.uploadLine.appendChild(
-      document.createTextNode('Tap here to upload an attachment'))
+      document.createTextNode('Tap here to upload an attachment'),
+    )
   }
 
   install () {
@@ -86,24 +87,6 @@ class MarkdownTextarea {
     })
   }
 
-  matchFilesAndThumbs (results) {
-    const filesById = {}
-    const thumbsById = {}
-
-    results.forEach((result) => {
-      if (result.stepName === 'thumbnails') {
-        thumbsById[result.original_id] = result
-      } else {
-        filesById[result.original_id] = result
-      }
-    })
-
-    return Object.keys(filesById).map((key) => ({
-      file : filesById[key],
-      thumb : thumbsById[key],
-    }))
-  }
-
   uploadFiles (files) {
     robodog.upload(files, {
       waitForEncoding: true,
@@ -114,7 +97,7 @@ class MarkdownTextarea {
     }).then((result) => {
       if (result === null) return
       this.insertAttachments(
-        this.matchFilesAndThumbs(result.results)
+        matchFilesAndThumbs(result.results),
       )
     }).catch((err) => {
       console.error(err)
@@ -139,7 +122,7 @@ class MarkdownTextarea {
     }).then((result) => {
       if (result === null) return
       this.insertAttachments(
-        this.matchFilesAndThumbs(result.results)
+        matchFilesAndThumbs(result.results),
       )
     }).catch((err) => {
       console.error(err)
@@ -177,11 +160,29 @@ function loadSnippets () {
   }
 }
 
+function matchFilesAndThumbs (results) {
+  const filesById = {}
+  const thumbsById = {}
+
+  results.forEach((result) => {
+    if (result.stepName === 'thumbnails') {
+      thumbsById[result.original_id] = result
+    } else {
+      filesById[result.original_id] = result
+    }
+  })
+
+  return Object.keys(filesById).map((key) => ({
+    file : filesById[key],
+    thumb : thumbsById[key],
+  }))
+}
+
 document.querySelector('#new').addEventListener('submit', (event) => {
   event.preventDefault()
 
-  const title = event.target.querySelector('input[name="title"]').value ||
-    'Unnamed Snippet'
+  const title = event.target.elements['title'].value
+    || 'Unnamed Snippet'
   const text = textarea.element.value
 
   saveSnippet(title, text)
@@ -191,6 +192,4 @@ document.querySelector('#new').addEventListener('submit', (event) => {
   event.target.querySelector('textarea').value = ''
 })
 
-window.addEventListener('DOMContentLoaded', () => {
-  loadSnippets()
-})
+window.addEventListener('DOMContentLoaded', loadSnippets, { once: true })

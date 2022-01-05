@@ -1,5 +1,6 @@
 const fs = require('fs')
 const qs = require('querystring')
+
 const fixtures = require('../fixtures').providers
 
 function has (object, property) {
@@ -33,6 +34,14 @@ class MockPurest {
     return this
   }
 
+  _getStatusCode () {
+    const { validators } = fixtures[this.opts.providerName]
+    if (validators && validators[this._requestUrl]) {
+      return validators[this._requestUrl](this._requestOptions) ? 200 : 400
+    }
+    return 200
+  }
+
   request (done) {
     if (typeof done === 'function') {
       const { responses } = fixtures[this.opts.providerName]
@@ -40,14 +49,10 @@ class MockPurest {
       const endpointResponses = responses[url] || responses[this._requestUrl]
       if (endpointResponses == null || !has(endpointResponses, this._method)) {
         done(new Error(`No fixture for ${this._method} ${url}`))
-        return
+        return this
       }
 
-      let statusCode = 200
-      const { validators } = fixtures[this.opts.providerName]
-      if (validators && validators[this._requestUrl]) {
-        statusCode = validators[this._requestUrl](this._requestOptions) ? 200 : 400
-      }
+      const statusCode = this._getStatusCode()
 
       const body = statusCode === 200 ? endpointResponses[this._method] : {}
       done(null, { body, statusCode }, body)
@@ -58,7 +63,9 @@ class MockPurest {
 
   on (evt, cb) {
     if (evt === 'response') {
-      cb(fs.createReadStream('./README.md'))
+      const stream = fs.createReadStream('./README.md')
+      stream.statusCode = this._getStatusCode()
+      cb(stream)
     }
     return this
   }

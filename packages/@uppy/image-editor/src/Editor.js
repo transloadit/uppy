@@ -15,7 +15,7 @@ module.exports = class Editor extends Component {
     const { opts, storeCropperInstance } = this.props
     this.cropper = new Cropper(
       this.imgElement,
-      opts.cropperOptions
+      opts.cropperOptions,
     )
     storeCropperInstance(this.cropper)
 
@@ -33,17 +33,6 @@ module.exports = class Editor extends Component {
 
   componentWillUnmount () {
     this.cropper.destroy()
-  }
-
-  save = () => {
-    const { opts, save, currentImage } = this.props
-
-    this.cropper.getCroppedCanvas(opts.cropperOptions.croppedCanvasOptions)
-      .toBlob(
-        (blob) => save(blob),
-        currentImage.type,
-        opts.quality
-      )
   }
 
   granularRotateOnChange = (ev) => {

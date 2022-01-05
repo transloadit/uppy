@@ -1,11 +1,13 @@
 const { UIPlugin } = require('@uppy/core')
 const { h } = require('preact')
 const { RequestClient } = require('@uppy/companion-client')
-const UrlUI = require('./UrlUI.js')
 const toArray = require('@uppy/utils/lib/toArray')
+const UrlUI = require('./UrlUI.js')
 const forEachDroppedOrPastedUrl = require('./utils/forEachDroppedOrPastedUrl')
 const getYouTubeID = require('get-youtube-id');
 const getYoutubeTitle  = require('get-youtube-title');
+
+const locale = require('./locale')
 
 function UrlIcon () {
   return (
@@ -33,14 +35,7 @@ module.exports = class Url extends UIPlugin {
     this.icon = () => <UrlIcon />
 
     // Set default options and locale
-    this.defaultLocale = {
-      strings: {
-        import: 'Import',
-        enterUrlToImport: 'Enter URL to import a file',
-        failedToFetch: 'Companion failed to fetch this URL, please make sure it’s correct',
-        enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
-      },
-    }
+    this.defaultLocale = locale
 
     const defaultOptions = {}
 

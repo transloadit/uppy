@@ -4,6 +4,8 @@ const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
 const { h } = require('preact')
 
+const locale = require('./locale.js')
+
 /**
  * Drag & Drop plugin
  *
@@ -18,12 +20,7 @@ module.exports = class DragDrop extends UIPlugin {
     this.id = this.opts.id || 'DragDrop'
     this.title = 'Drag & Drop'
 
-    this.defaultLocale = {
-      strings: {
-        dropHereOr: 'Drop files here or %{browse}',
-        browse: 'browse',
-      },
-    }
+    this.defaultLocale = locale
 
     // Default options
     const defaultOpts = {
@@ -113,7 +110,7 @@ module.exports = class DragDrop extends UIPlugin {
     clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })
 
-    this.opts?.onDragOver(event)
+    this.opts.onDragOver?.(event)
   }
 
   handleDragLeave (event) {
@@ -127,7 +124,7 @@ module.exports = class DragDrop extends UIPlugin {
       this.setPluginState({ isDraggingOver: false })
     }, 50)
 
-    this.opts?.onDragLeave(event)
+    this.opts.onDragLeave?.(event)
   }
 
   handleDrop = async (event) => {

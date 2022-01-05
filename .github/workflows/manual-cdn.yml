@@ -1,0 +1,34 @@
+name: Manually triggered CDN upload
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "Package to upload"
+        required: true
+        default: "uppy"
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Cache npm dependencies
+        id: cache-npm-libraries
+        uses: actions/cache@v2
+        with:
+          path: .yarn/cache/*
+          key: ${{ runner.os }}
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+      - name: Install dependencies
+        run: corepack yarn install
+      - name: Build before publishing
+        run: corepack yarn run build
+      - name: Upload `${{ github.event.inputs.name }}` to CDN
+        run: corepack yarn run uploadcdn ${{ github.event.inputs.name }}
+        env:
+          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
+          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}

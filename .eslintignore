@@ -3,7 +3,6 @@ lib
 dist
 coverage
 test/lib/**
-website/private_modules/hexo-renderer-uppyexamples/node_modules/**
 website/public/**
 website/src/examples/**/*.html
 website/themes/uppy/source/js/smooth-scroll.min.js
@@ -20,4 +19,4 @@ website/src/_posts/2021-03-*.md
 website/src/_posts/2021-04-*.md
 website/src/_posts/2021-05-*.md
 website/src/_posts/2021-06-*.md
-private/remark-lint-uppy/index.js
+website/src/docs/react-dashboard.md

@@ -1,11 +1,13 @@
-const Provider = require('../Provider')
-
+const { promisify } = require('util')
 const request = require('request')
 const moment = require('moment-timezone')
 const purest = require('purest')({ request })
+
+const Provider = require('../Provider')
 const logger = require('../../logger')
 const adapter = require('./adapter')
 const { ProviderApiError, ProviderAuthError } = require('../error')
+const { requestStream } = require('../../helpers/utils')
 
 const BASE_URL = 'https://zoom.us/v2'
 const GET_LIST_PATH = '/users/me/recordings'
@@ -31,7 +33,7 @@ class Zoom extends Provider {
     return 'zoom'
   }
 
-  list (options, done) {
+  _list (options, done) {
     /*
     - returns list of months by default
     - drill down for specific files in each month
@@ -102,54 +104,50 @@ class Zoom extends Provider {
       .request(done)
   }
 
-  download ({ id, token, query }, done) {
-    // meeting id + file id required
-    // cc files don't have an ID or size
-    const meetingId = id
-    const fileId = query.recordingId
-    const { recordingStart } = query
-    const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
+  async download ({ id, token, query }) {
+    try {
+      // meeting id + file id required
+      // cc files don't have an ID or size
+      const meetingId = id
+      const fileId = query.recordingId
+      const { recordingStart } = query
+      const GET_MEETING_FILES = `/meetings/${encodeURIComponent(meetingId)}/recordings`
 
-    const downloadUrlPromise = new Promise((resolve) => {
-      this.client
-        .get(`${BASE_URL}${GET_MEETING_FILES}`)
-        .auth(token)
-        .request((err, resp) => {
-          if (err || resp.statusCode !== 200) {
-            return this._downloadError(resp, done)
-          }
-          const file = resp
-            .body
-            .recording_files
-            .find(file => fileId === file.id || (file.file_type === fileId && file.recording_start === recordingStart))
-          if (!file || !file.download_url) {
-            return this._downloadError(resp, done)
-          }
-          resolve(file.download_url)
-        })
-    })
-    downloadUrlPromise.then((downloadUrl) => {
-      this.client
+      const downloadUrl = await new Promise((resolve, reject) => {
+        this.client
+          .get(`${BASE_URL}${GET_MEETING_FILES}`)
+          .auth(token)
+          .request((err, resp) => {
+            if (err || resp.statusCode !== 200) {
+              const error = this._error(null, resp)
+              reject(error)
+              return
+            }
+            const file = resp
+              .body
+              .recording_files
+              .find(file => fileId === file.id || (file.file_type === fileId && file.recording_start === recordingStart))
+            if (!file || !file.download_url) {
+              const error = this._error(null, resp)
+              reject(error)
+              return
+            }
+            resolve(file.download_url)
+          })
+      })
+
+      const req = this.client
         .get(`${downloadUrl}?access_token=${token}`)
         .request()
-        .on('response', (resp) => {
-          if (resp.statusCode !== 200) {
-            done(this._error(null, resp))
-          } else {
-            resp.on('data', (chunk) => done(null, chunk))
-          }
-        })
-        .on('end', () => {
-          done(null, null)
-        })
-        .on('error', (err) => {
-          logger.error(err, 'provider.zoom.download.error')
-          done(err)
-        })
-    })
+
+      return await requestStream(req, async (res) => this._error(null, res))
+    } catch (err) {
+      logger.error(err, 'provider.zoom.download.error')
+      throw err
+    }
   }
 
-  size ({ id, token, query }, done) {
+  _size ({ id, token, query }, done) {
     const meetingId = id
     const fileId = query.recordingId
     const { recordingStart } = query
@@ -170,8 +168,7 @@ class Zoom extends Provider {
         if (!file) {
           return this._downloadError(resp, done)
         }
-        const maxExportFileSize = 10 * 1024 * 1024 // 10MB
-        done(null, file.file_size || maxExportFileSize)
+        done(null, file.file_size) // May be undefined.
       })
   }
 
@@ -254,7 +251,7 @@ class Zoom extends Provider {
     return data
   }
 
-  logout ({ companion, token }, done) {
+  _logout ({ companion, token }, done) {
     companion.getProviderCredentials().then(({ key, secret }) => {
       const encodedAuth = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
       return this.client
@@ -276,15 +273,16 @@ class Zoom extends Provider {
     }).catch((err) => done(err))
   }
 
-  deauthorizationCallback ({ companion, body, headers }, done) {
+  _deauthorizationCallback ({ companion, body, headers }, done) {
     if (!body || body.event !== DEAUTH_EVENT_NAME) {
-      return done(null, {}, 400)
+      done(null, { data: {}, status: 400 })
+      return
     }
 
     companion.getProviderCredentials().then(({ verificationToken, key, secret }) => {
       const tokenSupplied = headers.authorization
       if (!tokenSupplied || verificationToken !== tokenSupplied) {
-        return done(null, {}, 400)
+        return done(null, { data: {}, status: 400 })
       }
 
       const encodedAuth = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
@@ -340,5 +338,12 @@ class Zoom extends Provider {
     return done(error)
   }
 }
+
+Zoom.version = 2
+
+Zoom.prototype.list = promisify(Zoom.prototype._list)
+Zoom.prototype.size = promisify(Zoom.prototype._size)
+Zoom.prototype.logout = promisify(Zoom.prototype._logout)
+Zoom.prototype.deauthorizationCallback = promisify(Zoom.prototype._deauthorizationCallback)
 
 module.exports = Zoom

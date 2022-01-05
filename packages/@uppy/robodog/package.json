@@ -1,7 +1,7 @@
 {
   "name": "@uppy/robodog",
   "description": "Transloadit SDK for browsers based on Uppy",
-  "version": "2.1.1",
+  "version": "2.1.5",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -28,23 +28,23 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/core": "workspace:*",
-    "@uppy/dashboard": "workspace:*",
-    "@uppy/dropbox": "workspace:*",
-    "@uppy/facebook": "workspace:*",
-    "@uppy/form": "workspace:*",
-    "@uppy/google-drive": "workspace:*",
-    "@uppy/instagram": "workspace:*",
-    "@uppy/onedrive": "workspace:*",
-    "@uppy/status-bar": "workspace:*",
-    "@uppy/transloadit": "workspace:*",
-    "@uppy/url": "workspace:*",
-    "@uppy/utils": "workspace:*",
-    "@uppy/webcam": "workspace:*"
+    "@uppy/core": "workspace:^",
+    "@uppy/dashboard": "workspace:^",
+    "@uppy/dropbox": "workspace:^",
+    "@uppy/facebook": "workspace:^",
+    "@uppy/form": "workspace:^",
+    "@uppy/google-drive": "workspace:^",
+    "@uppy/instagram": "workspace:^",
+    "@uppy/onedrive": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
+    "@uppy/transloadit": "workspace:^",
+    "@uppy/url": "workspace:^",
+    "@uppy/utils": "workspace:^",
+    "@uppy/webcam": "workspace:^"
   },
   "devDependencies": {
     "abortcontroller-polyfill": "^1.7.3",
-    "core-js": "~3.15.2",
+    "core-js": "~3.19.3",
     "md-gum-polyfill": "^1.0.0",
     "resize-observer-polyfill": "^1.5.1",
     "whatwg-fetch": "^3.6.2"

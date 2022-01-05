@@ -22,7 +22,7 @@ module.exports = (props) => {
   const noFiles = props.totalFileCount === 0
   const dashboardFilesClass = classNames(
     'uppy-Dashboard-files',
-    { 'uppy-Dashboard-files--noFiles': noFiles }
+    { 'uppy-Dashboard-files--noFiles': noFiles },
   )
 
   // It's not great that this is hardcoded!

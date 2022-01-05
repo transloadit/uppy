@@ -13,7 +13,7 @@ Drag and drop, webcam, basic file manipulation (adding metadata, for example) an
 
 <!--retext-simplify ignore however-->
 
-However, if you add [Companion](https://github.com/transloadit/uppy/tree/master/packages/@uppy/companion) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your users’ data plans), and then uploaded to the final destination. Files are removed from Companion after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
+However, if you add [Companion](https://github.com/transloadit/uppy/tree/main/packages/@uppy/companion) to the mix, your users will be able to select files from remote sources, such as Instagram, Google Drive and Dropbox, bypassing the client (so a 5 GB video isn’t eating into your users’ data plans), and then uploaded to the final destination. Files are removed from Companion after an upload is complete, or after a reasonable timeout. Access tokens also don’t stick around for long, for security reasons.
 
 Companion handles the server-to-server communication between your server and file storage providers such as Google Drive, Dropbox, Instagram, etc. Note that you can **not** upload files **to** Companion, it only handles the third party integrations.
 
@@ -38,7 +38,7 @@ Install from NPM:
 npm install @uppy/companion
 ```
 
-If you don’t have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `[sudo] npm install -g @uppy/companion@2.x`.
+If you don’t have a Node.js project with a `package.json` you might want to install/run Companion globally like so: `npm install -g @uppy/companion`.
 
 ### Prerequisite
 
@@ -52,7 +52,7 @@ Unfortunately, Windows is not a supported platform right now. It may work, and w
 
 Companion may either be used as a pluggable express app, which you plug into your already existing server, or it may also be run as a standalone server:
 
-### Plugging into an existing server
+### Plugging into an existing express server
 
 To plug Companion into an existing server, call its `.app` method, passing in an [options](#Options) object as a parameter. This returns a server instance that you can mount on a subpath in your Express or app.
 
@@ -98,10 +98,10 @@ Then, add the Companion WebSocket server for realtime upload progress, using the
 ```js
 const server = app.listen(PORT)
 
-companion.socket(server, options)
+companion.socket(server)
 ```
 
-This takes your `server` instance and [Options](#Options) as parameters.
+This takes your `server` instance as an argument.
 
 ### Running as a standalone server
 
@@ -242,9 +242,15 @@ export COMPANION_SELF_ENDPOINT="THIS SHOULD BE SAME AS YOUR DOMAIN + PATH"
 # comma-separated URLs
 # corresponds to the uploadUrls option (comma-separated)
 export COMPANION_UPLOAD_URLS="http://tusd.tusdemo.net/files/,https://tusd.tusdemo.net/files/"
+
+# corresponds to the streamingUpload option
+export COMPANION_STREAMING_UPLOAD=true
+
+# corresponds to the maxFileSize option
+export COMPANION_MAX_FILE_SIZE="100000000"
 ```
 
-See [env.example.sh](https://github.com/transloadit/uppy/blob/master/env.example.sh) for an example configuration script.
+See [env.example.sh](https://github.com/transloadit/uppy/blob/main/env.example.sh) for an example configuration script.
 
 ### Options
 
@@ -292,6 +298,8 @@ const options = {
   uploadUrls: ['https://myuploadurl.com', /^http:\/\/myuploadurl2.com\//],
   debug: true,
   metrics: false,
+  streamingUpload: true,
+  maxFileSize: 100000000,
 }
 ```
 
@@ -299,7 +307,7 @@ const options = {
 
 2. **secret(recommended)** - A secret string which Companion uses to generate authorization tokens.
 
-3. **uploadUrls(recommended)** - An allowlist (array) of strings (exact URLs) or regular expressions. If specified, Companion will only accept uploads to these URLs. This is needed to make sure a Companion instance is only allowed to upload to your servers. **Omitting this leaves your system open to potential [SSRF](https://en.wikipedia.org/wiki/Server-side\_request\_forgery) attacks, and may throw an error in future `@uppy/companion` releases.**
+3. **uploadUrls(recommended)** - An allowlist (array) of strings (exact URLs) or regular expressions. If specified, Companion will only accept uploads to these URLs. This is needed to make sure a Companion instance is only allowed to upload to your servers. **Omitting this leaves your system open to potential [SSRF](https://en.wikipedia.org/wiki/Server-side_request_forgery) attacks, and may throw an error in future `@uppy/companion` releases.**
 
 4. **redisUrl(optional)** - URL to running Redis server. If this is set, the state of uploads would be stored temporarily. This helps for resumed uploads after a browser crash from the client. The stored upload would be sent back to the client on reconnection.
 
@@ -327,6 +335,10 @@ const options = {
 12. **logClientVersion(optional)** - A boolean flag to tell Companion whether to log its version upon startup.
 
 13. **metrics(optional)** - A boolean flag to tell Companion whether to provide an endpoint `/metrics` with Prometheus metrics.
+
+14. **streamingUpload(optional)** - A boolean flag to tell Companion whether to enable streaming uploads. If enabled, it will lead to _faster uploads_ because companion will start uploading at the same time as downloading using `stream.pipe`. If `false`, files will be fully downloaded first, then uploaded. Defaults to `false`. Do **not** set it to `true` if you have a [custom Companion provider](#adding-custom-providers) that does not use the new async/stream API.
+
+15. **maxFileSize(optional)** - If this value is set, companion will limit the maximum file size to process. If unset, it will process files without any size limit (this is the default).
 
 ### Provider Redirect URIs
 
@@ -407,7 +419,7 @@ app.use(uppy.app({
 
 ### Running in Kubernetes
 
-We have [a detailed guide on running Companion in Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we run our example server at <https://companion.uppy.io>.
+We have [a detailed guide on running Companion in Kubernetes](https://github.com/transloadit/uppy/blob/main/packages/%40uppy/companion/KUBERNETES.md) for you, that’s how we run our example server at <https://companion.uppy.io>.
 
 ### Adding custom providers
 
@@ -437,32 +449,27 @@ uppy.app(options)
 
 The `customProviders` option should be an object containing each custom provider. Each custom provider would, in turn, be an object with two keys, `config` and `module`. The `config` option would contain Oauth API settings, while the `module` would point to the provider module.
 
-To work well with Companion, the **Module** must be a class with the following methods.
+To work well with Companion, the **module** must be a class with the following methods. Note that the methods must be `async`, return a `Promise` or reject with an `Error`):
 
-1. `list (options, done)` - lists JSON data of user files (for example list of all the files in a particular directory).
+1. `async list ({ token, directory, query })` - Returns a object containing a list of user files (such as a list of all the files in a particular directory). See [example returned list data structure](#list-data).
+   `token` - authorization token (retrieved from oauth process) to send along with your request
+   * `directory` - the id/name of the directory from which data is to be retrieved. This may be ignored if it doesn’t apply to your provider
+   * `query` - expressjs query params object received by the server (in case some data you need in there).
+2. `async download ({ token, id, query })` - Downloads a particular file from the provider. Returns an object with a single property `{ stream }` - a [`stream.Readable`](https://nodejs.org/api/stream.html#stream_class_stream_readable), which will be read from and uploaded to the destination. To prevent memory leaks, make sure you release your stream if you reject this method with an error.
+   * `token` - authorization token (retrieved from oauth process) to send along with your request.
+   * `id` - ID of the file being downloaded.
+   * `query` - expressjs query params object received by the server (in case some data you need in there).
+3. `async size ({ token, id, query })` - Returns the byte size of the file that needs to be downloaded as a `Number`. If the size of the object is not known, `null` may be returned.
+   * `token` - authorization token (retrieved from oauth process) to send along with your request.
+   * `id` - ID of the file being downloaded.
+   * `query` - expressjs query params object received by the server (in case some data you need in there).
 
-* `options` - is an object containing the following attributes
-  \*   token - authorization token (retrieved from oauth process) to send along with your request
-  \*   directory - the `id/name` of the directory from which data is to be retrieved. This may be ignored if it doesn’t apply to your provider
-  \*   query - expressjs query params object received by the server (in case there’s some data you need in there).
-* `done (err, data)` - the callback that should be called when the request to your provider is made. As the signature indicates, the following data should be passed along to the callback `err`, and [`data`](#list-data).
+The class must also have:
 
-2. `download (options, onData)` - downloads a particular file from the provider.
+* A unique `authProvider` string property - a lowercased value which typically indicates the name of the provider (e.g “dropbox”).
+* A `static` property `static version = 2`, which is the current version of the Companion Provider API.
 
-* `options` - is an object containing the following attributes:
-  \*   token - authorization token (retrieved from oauth process) to send along with your request.
-  \*   id - ID of the file being downloaded.
-  \*   query - expressjs query params object received by the server (in case there’s some data you need in there).
-* `onData (err, chunk)` - a callback that should be called with each data chunk received as download is happening. The `err` argument is an error that should be passed if an error occurs during download. It should be `null` if there’s no error. Once the download is completed and no more chunks are to be received, `onData` should be called with `null` values like so `onData(null, null)`
-
-3. `size (options, done)` - returns the byte size of the file that needs to be downloaded.
-
-* `options` - is an object containing the following attributes:
-  \*   token - authorization token (retrieved from oauth process) to send along with your request.
-  \*   id - ID of the file being downloaded.
-* `done (err, size)` - the callback that should be called after the request to your provider is completed. As the signature indicates, the following data should be passed along to the callback `err`, and `size` (number).
-
-The class must also have an `authProvider` string (lowercased) field which typically indicates the name of the provider (e.g `"dropbox"`).
+See also [example code with a custom provider](https://github.com/transloadit/uppy/blob/main/examples/custom-provider/server).
 
 #### list data
 
@@ -568,7 +575,7 @@ This would get the Companion instance running on `http://localhost:3020`. It use
 
 ## Live example
 
-An example server is running at <https://companion.uppy.io>, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/master/packages/%40uppy/companion/KUBERNETES.md)
+An example server is running at <https://companion.uppy.io>, which is deployed with [Kubernetes](https://github.com/transloadit/uppy/blob/main/packages/%40uppy/companion/KUBERNETES.md)
 
 ## How the Authentication and Token mechanism works
 

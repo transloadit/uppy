@@ -25,7 +25,7 @@ yarn add @uppy/svelte
 
 Make sure to also include the necessary CSS files for each Uppy Svelte component you are using.
 
-For [the example](https://github.com/transloadit/uppy/tree/master/examples/svelte-example), we used `svelte-preprocess` and `postcss` to allow imports in CSS. Here is a basic guide for getting that configured with Rollup.
+For [the example](https://github.com/transloadit/uppy/tree/main/examples/svelte-example), we used `svelte-preprocess` and `postcss` to allow imports in CSS. Here is a basic guide for getting that configured with Rollup.
 
 ```shell
 npm install -D postcss postcss-import postcss-load-config

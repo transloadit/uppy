@@ -10,8 +10,7 @@ import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
 /* eslint-enable import/no-extraneous-dependencies */
 
-const isOnTravis = process.env.REACT_APP_ON_TRAVIS
-const endpoint = isOnTravis ? 'http://companion.test:1080' : 'http://localhost:1080'
+const endpoint = 'http://localhost:1080'
 
 class App extends Component {
   constructor (props) {
@@ -44,7 +43,7 @@ class App extends Component {
   }
 
   render () {
-    const { showInlineDashboard } = this.state
+    const { showInlineDashboard, open } = this.state
     return (
       <div>
         <h1>React Examples</h1>
@@ -78,11 +77,11 @@ class App extends Component {
         <h2>Modal Dashboard</h2>
         <div id="modal-dashboard">
           <button onClick={this.handleModalClick} id="modal-dashboard-toggle" type="button">
-            {this.state.open ? 'Close dashboard' : 'Open dashboard'}
+            {open ? 'Close dashboard' : 'Open dashboard'}
           </button>
           <DashboardModal
             uppy={this.uppy2}
-            open={this.state.open}
+            open={open}
             target="#modal-dashboard"
             onRequestClose={() => this.setState({ open: false })}
           />

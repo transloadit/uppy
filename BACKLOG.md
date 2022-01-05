@@ -5,32 +5,22 @@
 These are ideas that are planned for specific versions or act as a backlog without a clear date.
 PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
-## `2.0.0`
+## `2.3.0`
 
-- [x] Drop IE10 (officially), drop IE11 polyfills? (@aduh95)
-- [x] *: upgrade to Preact X (@murderlon)
-- [x] chore: hunt down most `@TODO`s and either fix, or remove, or move to github issues/changelog backlog (@murderlon)
-- [x] core: consider removing Preact from `Plugin` (maybe have a `(ui)Plugin extends BasePlugin`?) as pointed out on Reddit https://www.reddit.com/r/javascript/comments/bhkx5k/uppy_10_your_best_friend_in_file_uploading/ (@murderlon)
-- [x] core: force the `new` keyword when instantiating Uppy — now we support both `new Uppy()` and `Uppy()` which is harder to maintain and might lead to confusion (@arturi)
-- [ ] core: maybe we remove `file.name` and only keep `file.meta.name`; we can change the file.name here actually because it's just a plain object. we can't change the file.data.name where data is a File instance from an input or something. For XHRUpload, where we put the File instance in a FormData object and it uses the unchangeable .name property (@arturi)
-- [x] core: pass full file object to `onBeforeFileAdded`. Maybe also check restrictions before calling the callbacks: https://github.com/transloadit/uppy/pull/1594 (@arturi)
-- [x] core/dashboard: replace `poweredBy` and `exceedsSize` locale keys by word order aware versions, see PR #2077 (@goto-bus-stop)
-- [x] dashboard: set default `trigger: null`, see https://github.com/transloadit/uppy/pull/2144#issuecomment-600581690 (@arturi)
-- [x] form: make the `multipleResults` option `true` by default (@arturi)
-- [x] locales: Remove the old es_GL name alias for gl_ES. Keep gl_ES only (@arturi)
-- [x] providers: remove `serverHeaders` https://github.com/transloadit/uppy/pull/1861 (@mifi)
-- [x] transloadit: remove `UPPY_SERVER` constant (@mifi)
-- [x] tus: set the `limit` option to a sensible default, like 5 (10?) (@arturi)
-- [x] xhr: set the `limit` option to a sensible default, like 5 (10?) (@arturi)
-- [x] xhr: change default name depending on whether `bundle` is set `files[]` (`true`) vs `file` (default) (#782) (@aduh95)
-- [x] providers: allow changing provider name title through locale https://github.com/transloadit/uppy/issues/2279 (@goto-bus-stop)
-- [x] tus: remove `autoRetry` option (throw error at runtime if it is explicitly given) (@aduh95)
-- [x] dashboard: showing links to files should be turned off by default (it's great for devs, they can opt-in, but for end-user UI it's weird and can even lead to problems) (@arturi)
+To be released: 2021-11-29
+
+- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
+- [ ] compressor: move to Uppy repo, add resizing (@arturi)
+- [ ] providers: Box on hosted Companion
+- [ ] robodog: research simplifing Robodog — yes to easy “few lines of code Dashboard+Providers+(?Transloadit) experience”, but currently it’s hard to choose between modes, decide what you need (@Murderlon)
+- [ ] build: add release automations (@aduh95)
 
 ## `3.0.0`
 
 - [ ] Switch to ES Modules (ESM)
 - [ ] @uppy/image-editor: Remove silly hack to work around non-ESM.
+- [ ] Consider updating the name of @uppy/aws-s3 and @uppy/aws-s3-multipart to reflect it also supports Google Cloud Storage, Wasabi, and other cloud providers. 
+- [ ] Consider fixing all locale files to follow the bcp-47 standard (nl_NL --> nl-NL)
 
 ## `4.0.0`
 
@@ -41,7 +31,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ### Core
 
-- [ ] Add an option to force metafield data when uploading a file. Mark files with restriction errors in the UI. Having an icon showing close to the file to inform if it passed any rule would provide an awesome user experience. The user would be able to edit the file name or any meta tags necessary to pass validation via uppy dashboard, and anytime the user updates the file info, the validation runs again and the icon is updated. #1703
 - [ ] Make sure Uppy works well in VR
 - [ ] normalize file names when uploading from iOS? Can we do it with meta data? date? `image-${index}`? #678
 
@@ -60,8 +49,6 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] WordPress Front-end Gravity Forms Uppy plugin so one form field could be an Uppy-powered file input
 - [ ] A WakeLock based plugin that keeps your phone from going to sleep while an upload is ongoing https://github.com/transloadit/uppy/issues/1725
-- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
-- [ ] compressor: add to Uppy repo, add resizing (@arturi)
 
 ### New providers
 

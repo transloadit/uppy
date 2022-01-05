@@ -129,6 +129,11 @@
 .uppy-StatusBar-statusPrimary {
   font-weight: 500;
   line-height: 1;
+  display: flex;
+
+  button.uppy-StatusBar-details {
+    margin-left: 5px;
+  }
 
   [data-uppy-theme="dark"] & {
     color: $gray-200;

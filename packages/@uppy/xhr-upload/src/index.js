@@ -1,5 +1,5 @@
 const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const { nanoid } = require('nanoid')
+const { nanoid } = require('nanoid/non-secure')
 const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
@@ -9,6 +9,8 @@ const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
 const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
+
+const locale = require('./locale')
 
 function buildResponseError (xhr, err) {
   let error = err
@@ -53,11 +55,7 @@ module.exports = class XHRUpload extends BasePlugin {
     this.id = this.opts.id || 'XHRUpload'
     this.title = 'XHRUpload'
 
-    this.defaultLocale = {
-      strings: {
-        timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
-      },
-    }
+    this.defaultLocale = locale
 
     // Default options
     const defaultOptions = {
@@ -355,6 +353,8 @@ module.exports = class XHRUpload extends BasePlugin {
   uploadRemote (file) {
     const opts = this.getOptions(file)
     return new Promise((resolve, reject) => {
+      this.uppy.emit('upload-started', file)
+
       const fields = {}
       const metaFields = Array.isArray(opts.metaFields)
         ? opts.metaFields
@@ -383,13 +383,13 @@ module.exports = class XHRUpload extends BasePlugin {
         this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
         this.onFileRemove(file.id, () => {
-          socket.send('pause', {})
+          socket.send('cancel', {})
           queuedRequest.abort()
           resolve(`upload ${file.id} was removed`)
         })
 
         this.onCancelAll(file.id, () => {
-          socket.send('pause', {})
+          socket.send('cancel', {})
           queuedRequest.abort()
           resolve(`upload ${file.id} was canceled`)
         })
@@ -608,7 +608,7 @@ module.exports = class XHRUpload extends BasePlugin {
     if (this.opts.limit === 0 && !this.opts[internalRateLimitedQueue]) {
       this.uppy.log(
         '[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0',
-        'warning'
+        'warning',
       )
     }
 

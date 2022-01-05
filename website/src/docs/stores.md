@@ -137,4 +137,4 @@ function defaultStore () {
 
 A pattern like this, where users can pass options via a function call if necessary, is recommended.
 
-See the [@uppy/store-default](https://github.com/transloadit/uppy/tree/master/packages/%40uppy/store-default) package for more inspiration.
+See the [@uppy/store-default](https://github.com/transloadit/uppy/tree/main/packages/%40uppy/store-default) package for more inspiration.

@@ -1,4 +1,4 @@
-import type { PluginOptions, UIPlugin } from '@uppy/core'
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 
   // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints#Properties_of_shared_screen_tracks
   // TODO: use the global DisplayMediaStreamConstraints once typescript includes it by default
@@ -12,6 +12,7 @@ import type { PluginOptions, UIPlugin } from '@uppy/core'
   }
 
 export interface ScreenCaptureOptions extends PluginOptions {
+    target?: PluginTarget
     displayMediaConstraints?: DisplayMediaStreamConstraints,
     userMediaConstraints?: MediaStreamConstraints,
     preferredVideoMimeType?: string

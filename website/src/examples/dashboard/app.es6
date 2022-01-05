@@ -10,6 +10,7 @@ const Zoom = require('@uppy/zoom')
 const ImageEditor = require('@uppy/image-editor')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
+const Audio = require('@uppy/audio')
 const ScreenCapture = require('@uppy/screen-capture')
 const Tus = require('@uppy/tus')
 const DropTarget = require('@uppy/drop-target')
@@ -166,6 +167,17 @@ function uppySetOptions () {
     window.uppy.removePlugin(webcamInstance)
   }
 
+  const audioInstance = window.uppy.getPlugin('Audio')
+  if (opts.Audio && !audioInstance) {
+    window.uppy.use(Audio, {
+      target: Dashboard,
+      showAudioSourceDropdown: true,
+    })
+  }
+  if (!opts.Audio && audioInstance) {
+    window.uppy.removePlugin(audioInstance)
+  }
+
   const screenCaptureInstance = window.uppy.getPlugin('ScreenCapture')
   if (opts.ScreenCapture && !screenCaptureInstance) {
     window.uppy.use(ScreenCapture, { target: Dashboard })
@@ -213,7 +225,7 @@ function loadLocaleFromCDN (localeName) {
   const head = document.getElementsByTagName('head')[0]
   const js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://releases.transloadit.com/uppy/locales/v2.0.3/${localeName}.min.js`
+  js.src = `https://releases.transloadit.com/uppy/locales/v2.0.5/${localeName}.min.js`
 
   head.appendChild(js)
 }

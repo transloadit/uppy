@@ -1,5 +1,5 @@
 /* eslint-disable compat/compat */
-/* global window, capabilities */
+/* global capabilities */
 const path = require('path')
 const { spawn } = require('child_process')
 const { promisify } = require('util')
@@ -76,6 +76,7 @@ class CompanionService {
         COMPANION_DOMAIN: 'localhost:3030',
         COMPANION_PROTOCOL: 'http',
         COMPANION_PORT: 3030,
+        COMPANION_STREAMING_UPLOAD: true,
         COMPANION_SECRET: process.env.TEST_COMPANION_SECRET,
         COMPANION_DROPBOX_KEY: process.env.TEST_COMPANION_DROPBOX_KEY,
         COMPANION_DROPBOX_SECRET: process.env.TEST_COMPANION_DROPBOX_SECRET,

@@ -50,7 +50,7 @@ function UploadStatus(props) {
     props.isAllErrored,
     props.isAllComplete,
     props.isAllPaused,
-    props.files
+    props.files,
   )
 
   switch (uploadingState) {

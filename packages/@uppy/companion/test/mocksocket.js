@@ -19,3 +19,11 @@ module.exports.onUploadSuccess = (uploadToken, cb) => {
     }
   })
 }
+
+module.exports.onUploadError = (uploadToken, cb) => {
+  emitter().on(uploadToken, (message) => {
+    if (message.action === 'error') {
+      cb(message)
+    }
+  })
+}

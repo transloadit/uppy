@@ -4,8 +4,8 @@ const EventTracker = require('@uppy/utils/lib/EventTracker')
 const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const Uploader = require('./MultipartUploader')
-const firebase = require('firebase/app').default
+const MultipartUploader = require('./MultipartUploader')
+const firebase = require('firebase/compat/app').default
 const auth = firebase.auth()
 
 function assertServerError (res) {
@@ -198,7 +198,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         this.uppy.emit('s3-multipart:part-uploaded', cFile, part)
       }
 
-      const upload = new Uploader(file.data, {
+      const upload = new MultipartUploader(file.data, {
         // .bind to pass the file object to each handler.
         createMultipartUpload: this.opts.createMultipartUpload.bind(this, file),
         listParts: this.opts.listParts.bind(this, file),
@@ -331,7 +331,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
 
       this.onFileRemove(file.id, () => {
         queuedRequest.abort()
-        socket.send('pause', {})
+        socket.send('cancel', {})
         this.resetUploaderReferences(file.id, { abort: true })
         resolve(`upload ${file.id} was removed`)
       })
@@ -359,7 +359,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
 
       this.onCancelAll(file.id, () => {
         queuedRequest.abort()
-        socket.send('pause', {})
+        socket.send('cancel', {})
         this.resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was canceled`)
       })

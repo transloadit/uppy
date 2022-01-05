@@ -48,6 +48,8 @@ function errorToResponse (err) {
       return { code: 424, message: err.message }
     }
   }
+
+  return undefined
 }
 
 module.exports = { ProviderAuthError, ProviderApiError, errorToResponse }

@@ -124,25 +124,22 @@ function StatusBar (props) {
 
   const width = progressValue ?? 100
 
-  const showUploadBtn
-    = !error
+  const showUploadBtn = !error
     && newFiles
     && !isUploadInProgress
     && !isAllPaused
     && allowNewUpload
     && !hideUploadButton
 
-  const showCancelBtn
-    = !hideCancelButton
+  const showCancelBtn = !hideCancelButton
     && uploadState !== STATE_WAITING
     && uploadState !== STATE_COMPLETE
 
-  const showPauseResumeBtn
-    = resumableUploads
+  const showPauseResumeBtn = resumableUploads
     && !hidePauseResumeButton
     && uploadState === STATE_UPLOADING
 
-  const showRetryBtn = error && !hideRetryButton
+  const showRetryBtn = error && !isAllComplete && !hideRetryButton
 
   const showDoneBtn = doneButtonHandler && uploadState === STATE_COMPLETE
 
@@ -154,7 +151,7 @@ function StatusBar (props) {
     { 'uppy-Root': isTargetDOMEl },
     'uppy-StatusBar',
     `is-${uploadState}`,
-    { 'has-ghosts': isSomeGhost }
+    { 'has-ghosts': isSomeGhost },
   )
 
   return (
@@ -174,15 +171,18 @@ function StatusBar (props) {
         switch (uploadState) {
           case STATE_PREPROCESSING:
           case STATE_POSTPROCESSING:
-            return (
-              <ProgressBarProcessing
-                progress={calculateProcessingProgress(files)}
-              />
-            )
+            return <ProgressBarProcessing progress={calculateProcessingProgress(files)} />
           case STATE_COMPLETE:
             return <ProgressBarComplete i18n={i18n} />
           case STATE_ERROR:
-            return <ProgressBarError error={error} i18n={i18n} />
+            return (
+              <ProgressBarError
+                error={error}
+                i18n={i18n}
+                numUploads={numUploads}
+                complete={complete}
+              />
+            )
           case STATE_UPLOADING:
             return (
               <ProgressBarUploading
@@ -208,7 +208,7 @@ function StatusBar (props) {
       })()}
 
       <div className="uppy-StatusBar-actions">
-        {(recoveredState || showUploadBtn) ? (
+        {recoveredState || showUploadBtn ? (
           <UploadBtn
             newFiles={newFiles}
             isUploadStarted={isUploadStarted}

@@ -1,0 +1,8 @@
+version: '3.9'
+
+services:
+  uppy:
+    image: companion
+    build:
+      context: .
+      dockerfile: Dockerfile.test

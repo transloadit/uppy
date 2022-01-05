@@ -43,7 +43,6 @@ module.exports = {
   rules: {
     // transloadit rules we are actually ok with in the uppy repo
     'import/extensions': 'off',
-    'no-await-in-loop': 'off',
     'object-shorthand': ['error', 'always'],
     'strict': 'off',
     'key-spacing': 'off',
@@ -79,6 +78,7 @@ module.exports = {
     'global-require': ['warn'],
     'import/no-unresolved': ['warn'],
     'import/order': ['warn'],
+    'max-classes-per-file': ['warn'],
     'no-mixed-operators': ['warn'],
     'no-param-reassign': ['warn'],
     'no-redeclare': ['warn'],
@@ -118,7 +118,7 @@ module.exports = {
 
     // jsdoc
     'jsdoc/check-alignment': 'error',
-    'jsdoc/check-examples': 'error',
+    'jsdoc/check-examples': 'off', // cannot yet be supported for ESLint 8, see https://github.com/eslint/eslint/issues/14745
     'jsdoc/check-param-names': ['warn'],
     'jsdoc/check-syntax': ['warn'],
     'jsdoc/check-tag-names': 'error',
@@ -146,10 +146,30 @@ module.exports = {
 
   overrides: [
     {
+      files: [
+        '*.mjs',
+        'private/dev/*.js',
+        'private/release/*.js',
+        'private/remark-lint-uppy/*.js',
+      ],
+      parserOptions: {
+        sourceType: 'module',
+      },
+    },
+    {
       files: ['./packages/@uppy/companion/**/*.js'],
       rules: {
         'no-restricted-syntax': 'warn',
         'no-underscore-dangle': 'off',
+      },
+    },
+    {
+      files: [
+        'website/src/examples/*/*.es6',
+      ],
+      rules: {
+        'import/no-extraneous-dependencies': 'off',
+        'no-console': 'off',
       },
     },
     {
@@ -166,6 +186,7 @@ module.exports = {
     {
       files: [
         'bin/**.js',
+        'bin/**.mjs',
         'examples/**/*.js',
         'packages/@uppy/companion/test/**/*.js',
         'test/**/*.js',
@@ -176,6 +197,7 @@ module.exports = {
         '.eslintrc.js',
         'website/*.js',
         'website/**/*.js',
+        'private/**/*.js',
       ],
       rules: {
         'no-console': 'off',
@@ -192,7 +214,7 @@ module.exports = {
       ],
       rules: {
         camelcase: ['off'],
-        'quote-props': ['off'],
+        'quote-props': ['error', 'as-needed', { 'numbers': true }],
       },
     },
 
@@ -206,11 +228,14 @@ module.exports = {
     },
 
     {
-      files: ['test/endtoend/*/*.js'],
+      files: ['test/endtoend/*/*.mjs', 'test/endtoend/*/*.ts'],
       rules: {
         // we mostly import @uppy stuff in these files.
         'import/no-extraneous-dependencies': ['off'],
       },
+    },
+    {
+      files: ['test/endtoend/*/*.js'],
       env: {
         mocha: true,
       },

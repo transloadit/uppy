@@ -115,17 +115,15 @@ This option is useful when uploading to an S3-like service that doesn’t reply 
 
 ### `locale: {}`
 
-Localize text that is shown to the user.
-
-The default English strings are:
+<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
-const locales = {
+module.exports = {
   strings: {
-    // Shown in the StatusBar while the upload is being signed.
-    preparingUpload: 'Preparing upload...',
+    timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   },
 }
+
 ```
 
 ## S3 Bucket configuration
@@ -135,7 +133,7 @@ To allow Uppy to upload directly to a bucket, at least its CORS permissions need
 
 CORS permissions can be found in the [S3 Management Console](https://console.aws.amazon.com/s3/home).
 Click the bucket that will receive the uploads, then go into the `Permissions` tab and select the `CORS configuration` button.
-A JSON document will be shown that defines the CORS configuration. (AWS used to use XML but now only allow JSON). More information about the [S3 CORS format here](https://docs.amazonaws.cn/en\_us/AmazonS3/latest/userguide/ManageCorsUsing.html).
+A JSON document will be shown that defines the CORS configuration. (AWS used to use XML but now only allow JSON). More information about the [S3 CORS format here](https://docs.amazonaws.cn/en_us/AmazonS3/latest/userguide/ManageCorsUsing.html).
 
 A good practice is to use two CORS rules: one for viewing the uploaded files, and one for uploading files.
 

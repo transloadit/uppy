@@ -58,7 +58,6 @@ class MultipartUploader {
     this.partsInProgress = 0
     this.chunks = null
     this.chunkState = null
-    this.lockedCandidatesForBatch = []
 
     this.#initChunks()
 
@@ -181,8 +180,6 @@ class MultipartUploader {
 
     const candidates = []
     for (let i = 0; i < this.chunkState.length; i++) {
-      // eslint-disable-next-line no-continue
-      if (this.lockedCandidatesForBatch.includes(i)) continue
       const state = this.chunkState[i]
       // eslint-disable-next-line no-continue
       if (state.done || state.busy) continue
@@ -242,7 +239,9 @@ class MultipartUploader {
   }
 
   async #prepareUploadParts (candidates) {
-    this.lockedCandidatesForBatch.push(...candidates)
+    candidates.forEach((i) => {
+      this.chunkState[i].busy = true
+    })
 
     const result = await this.#retryable({
       attempt: () => this.options.prepareUploadParts({
@@ -254,7 +253,7 @@ class MultipartUploader {
 
     if (typeof result?.presignedUrls !== 'object') {
       throw new TypeError(
-        'AwsS3/Multipart: Got incorrect result from `prepareUploadParts()`, expected an object `{ presignedUrls }`.'
+        'AwsS3/Multipart: Got incorrect result from `prepareUploadParts()`, expected an object `{ presignedUrls }`.',
       )
     }
 

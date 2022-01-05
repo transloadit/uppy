@@ -1,4 +1,4 @@
-/* global browser, expect, capabilities, $ */
+/* global browser, capabilities, $ */
 const path = require('path')
 const fs = require('fs')
 const { selectFakeFile, supportsChooseFile, ensureInputVisible } = require('../utils')
@@ -41,7 +41,7 @@ describe('Transloadit getAssemblyOptions', () => {
         'uppyTransloadit',
         path.basename(img), // name
         'image/jpeg', // type
-        fs.readFileSync(img, 'base64') // b64
+        fs.readFileSync(img, 'base64'), // b64
       )
     }
     await result.waitForExist({ timeout: 25000 })

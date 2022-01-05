@@ -143,27 +143,17 @@ yarn install
 yarn start
 ```
 
-Releases are managed by [Lerna](https://github.com/lerna/lerna). We do some cleanup and compile work around releases too. Use the npm release script:
+Releases are managed by GitHub Actions, here’s an overview of the process to release a new Uppy version:
 
-```bash
-yarn run release
-```
-
-If you have two-factor authentication enabled on your account, Lerna will ask for a one-time password. You may stumble upon a known issue with the CLI where the OTP prompt may be obscured by a publishing progress bar. If Lerna appears to freeze as it starts publishing, chances are it’s waiting for the password. Try typing in your OTP and hitting enter.
-
-Other things to keep in mind during release:
-
-* When doing a major release >= 1.0, of the `@uppy/core` package, the `peerDependency` of the plugin packages needs to be updated first. Eg when updating from 1.y.z to 2.0.0, the peerDependency of each should be `"@uppy/core": "^2.0.0"` before doing `npm run release`.
-* When adding a new package, add the following key to its package.json:
-  ```json
-  "publishConfig": { "access": "public" }
-  ```
-  Else, the release script will try and fail to publish a _private_ package, because the `@uppy` scope on npm does not support that.
-
-After a release, the demos on transloadit.com should also be updated. After updating, check that some things work locally:
-
-* the demos in the demo section work (try one that uses an import robot, and one that you need to upload to)
-* the demos on the homepage work and can import from Google Drive, Instagram, Dropbox, etc.
+* Run `yarn release` on your local machine.
+* Follow the instructions and select what packages to release.
+* Before committing, check if the generated files look good.
+* Push to the Transloadit repository using the command given by the tool. Do not open a PR yourself, the GitHub Actions will create one and assign you to it.
+* Wait for all the GitHub Actions checks to pass. If one fails, try to figure out why. Do not go ahead without consulting the rest of the team.
+* Review the PR thoroughly, and if everything looks good to you, approve the PR. Do not merge it manually!
+* After the PR is automatically merged, the demos on transloadit.com should also be updated. Check that some things work locally:
+  * the demos in the demo section work (try one that uses an import robot, and one that you need to upload to)
+  * the demos on the homepage work and can import from Google Drive, Instagram, Dropbox, etc.
 
 If you don’t have access to the transloadit.com source code ping @arturi or @goto-bus-stop and we’ll pick it up. :sparkles:
 
@@ -326,15 +316,15 @@ Your `package.json` should resemble something like this:
 {
   "name": "@uppy/framework",
   "dependencies": {
-    "@uppy/dashboard": "workspace:*",
-    "@uppy/drag-drop": "workspace:*",
-    "@uppy/progress-bar": "workspace:*",
-    "@uppy/status-bar": "workspace:*",
-    "@uppy/utils": "workspace:*",
+    "@uppy/dashboard": "workspace:^",
+    "@uppy/drag-drop": "workspace:^",
+    "@uppy/progress-bar": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
+    "@uppy/utils": "workspace:^",
     "prop-types": "^15.6.1"
   },
   "peerDependencies": {
-    "@uppy/core": "^2.0.0"
+    "@uppy/core": "workspace:^"
   },
   "publishConfig": {
     "access": "public"

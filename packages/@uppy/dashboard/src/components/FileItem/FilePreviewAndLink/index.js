@@ -1,5 +1,6 @@
 const { h } = require('preact')
 const FilePreview = require('../../FilePreview')
+const MetaErrorMessage = require('../MetaErrorMessage')
 const getFileTypeIcon = require('../../../utils/getFileTypeIcon')
 const getYouTubeID = require('get-youtube-id');
 
@@ -35,7 +36,7 @@ module.exports = function FilePreviewAndLink(props) {
             target="_blank"
             aria-label={props.file.meta.name}
           >
-            <span hidden>props.file.meta.name</span>
+            <span hidden>{props.file.meta.name}</span>
           </a>
           )
       }
@@ -43,7 +44,12 @@ module.exports = function FilePreviewAndLink(props) {
         !thumbnail &&
         <FilePreview file={props.file} />
       }
-
+      <MetaErrorMessage
+        file={props.file}
+        i18n={props.i18n}
+        toggleFileCard={props.toggleFileCard}
+        metaFields={props.metaFields}
+      />
     </div>
   )
 }

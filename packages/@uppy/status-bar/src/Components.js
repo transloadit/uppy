@@ -28,13 +28,12 @@ function UploadBtn (props) {
     {
       'uppy-c-btn-primary': uploadState === statusBarStates.STATE_WAITING,
     },
-    { 'uppy-StatusBar-actionBtn--disabled': isSomeGhost }
+    { 'uppy-StatusBar-actionBtn--disabled': isSomeGhost },
   )
 
-  const uploadBtnText
-    = newFiles && isUploadStarted && !recoveredState
-      ? i18n('uploadXNewFiles', { smart_count: newFiles })
-      : i18n('uploadXFiles', { smart_count: newFiles })
+  const uploadBtnText = newFiles && isUploadStarted && !recoveredState
+    ? i18n('uploadXNewFiles', { smart_count: newFiles })
+    : i18n('uploadXFiles', { smart_count: newFiles })
 
   return (
     <button
@@ -247,7 +246,7 @@ function ProgressDetails (props) {
   )
 }
 
-function UnknownProgressDetails (props) {
+function FileUploadCount (props) {
   const { i18n, complete, numUploads } = props
 
   return (
@@ -263,7 +262,7 @@ function UploadNewlyAddedFiles (props) {
     'uppy-u-reset',
     'uppy-c-btn',
     'uppy-StatusBar-actionBtn',
-    'uppy-StatusBar-actionBtn--uploadNewlyAdded'
+    'uppy-StatusBar-actionBtn--uploadNewlyAdded',
   )
 
   return (
@@ -328,7 +327,7 @@ function ProgressBarUploading (props) {
         )
       }
       return (
-        <UnknownProgressDetails
+        <FileUploadCount
           i18n={i18n}
           complete={complete}
           numUploads={numUploads}
@@ -389,7 +388,7 @@ function ProgressBarComplete (props) {
 }
 
 function ProgressBarError (props) {
-  const { error, i18n } = props
+  const { error, i18n, complete, numUploads } = props
 
   function displayErrorAlert () {
     const errorMessage = `${i18n('uploadFailed')} \n\n ${error}`
@@ -398,36 +397,35 @@ function ProgressBarError (props) {
   }
 
   return (
-    <div
-      className="uppy-StatusBar-content"
-      role="alert"
-      title={i18n('uploadFailed')}
-    >
+    <div className="uppy-StatusBar-content" title={i18n('uploadFailed')}>
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        className="uppy-StatusBar-statusIndicator uppy-c-icon"
+        width="11"
+        height="11"
+        viewBox="0 0 11 11"
+      >
+        <path d="M4.278 5.5L0 1.222 1.222 0 5.5 4.278 9.778 0 11 1.222 6.722 5.5 11 9.778 9.778 11 5.5 6.722 1.222 11 0 9.778z" />
+      </svg>
       <div className="uppy-StatusBar-status">
         <div className="uppy-StatusBar-statusPrimary">
-          <svg
-            aria-hidden="true"
-            focusable="false"
-            className="uppy-StatusBar-statusIndicator uppy-c-icon"
-            width="11"
-            height="11"
-            viewBox="0 0 11 11"
-          >
-            <path d="M4.278 5.5L0 1.222 1.222 0 5.5 4.278 9.778 0 11 1.222 6.722 5.5 11 9.778 9.778 11 5.5 6.722 1.222 11 0 9.778z" />
-          </svg>
           {i18n('uploadFailed')}
+
+          <button
+            className="uppy-u-reset uppy-StatusBar-details"
+            aria-label={i18n('showErrorDetails')}
+            data-microtip-position="top-right"
+            data-microtip-size="medium"
+            onClick={displayErrorAlert}
+            type="button"
+          >
+            ?
+          </button>
         </div>
+
+        <FileUploadCount i18n={i18n} complete={complete} numUploads={numUploads} />
       </div>
-      <button
-        className="uppy-StatusBar-details"
-        aria-label={error}
-        data-microtip-position="top-right"
-        data-microtip-size="medium"
-        onClick={displayErrorAlert}
-        type="button"
-      >
-        ?
-      </button>
     </div>
   )
 }
