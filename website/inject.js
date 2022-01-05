@@ -82,19 +82,18 @@ async function getMinifiedSize (pkg, name) {
   // eslint-disable-next-line no-shadow
   const { main, version } = JSON.parse(packageJSON)
 
+  const external = excludes[name] ?? []
+  if (name !== '@uppy/core' && name !== 'uppy') {
+    // Preact is already unconditionally included through @uppy/core
+    external.unshift('@uppy/core', 'preact')
+  }
+
   const { outputFiles:[{ contents: bundle }] } = await esbuild.build({
     write: false,
     bundle: true,
     entryPoints: [path.resolve(pkg, main)],
     minify: true,
-    external: [
-      ...(name !== '@uppy/core' && name !== 'uppy' ? [
-        '@uppy/core',
-        // Already unconditionally included through @uppy/core
-        'preact',
-      ] : []),
-      ...(excludes[name] ?? []),
-    ],
+    external,
   })
   const gzipped = await gzipSize(bundle)
 
