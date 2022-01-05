@@ -131,7 +131,7 @@ Now you should be able to test the Instagram integration.
 Before doing a release, check that the examples on the website work:
 
 ```bash
-yarn start
+npm start
 open http://localhost:4000/examples/dashboard
 ```
 
@@ -140,7 +140,7 @@ Also check the other examples:
 ```bash
 cd examples/EXAMPLENAME
 yarn install
-yarn start
+npm start
 ```
 
 Releases are managed by GitHub Actions, here’s an overview of the process to release a new Uppy version:
@@ -148,6 +148,7 @@ Releases are managed by GitHub Actions, here’s an overview of the process to r
 * Run `yarn release` on your local machine.
 * Follow the instructions and select what packages to release.
 * Before committing, check if the generated files look good.
+* When asked to edit the next CHANGELOG, only include changes related to the package(s) you selected for release.
 * Push to the Transloadit repository using the command given by the tool. Do not open a PR yourself, the GitHub Actions will create one and assign you to it.
 * Wait for all the GitHub Actions checks to pass. If one fails, try to figure out why. Do not go ahead without consulting the rest of the team.
 * Review the PR thoroughly, and if everything looks good to you, approve the PR. Do not merge it manually!
@@ -168,7 +169,7 @@ Even though bundled in this repo, the website is regarded as a separate project.
 ### Local previews
 
 1. `yarn install`
-2. `yarn start`
+2. `npm start`
 3. Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
 
 Then, to work on, for instance, the XHRUpload example, you would edit the following files:
