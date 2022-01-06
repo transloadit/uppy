@@ -69,7 +69,7 @@ module.exports = class Tus extends BasePlugin {
     // set default options
     const defaultOptions = {
       useFastRemoteRetry: true,
-      limit: 5,
+      limit: 20,
       retryDelays: tusDefaultOptions.retryDelays,
       withCredentials: false,
     }
@@ -268,19 +268,24 @@ module.exports = class Tus extends BasePlugin {
             if (next == null || next.done) {
               return false
             }
-            queuedRequest.abort()
+            this.requests.limit = Math.ceil(this.requests.limit / 2)
             this.requests.pause(next.value)
           }
+          queuedRequest.abort()
           queuedRequest = this.requests.run(qRequest)
         } else if (status > 400 && status < 500 && status !== 409) {
           // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
           return false
         } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
           // The navigator is offline, let's wait for it to come back online.
-          window.addEventListener('online', () => {
-            queuedRequest.abort()
-            queuedRequest = this.requests.run(qRequest)
-          }, { once: true })
+          if (!this.requests.isPaused) {
+            this.requests.pause()
+            window.addEventListener('online', () => {
+              this.requests.resume()
+            }, { once: true })
+          }
+          queuedRequest.abort()
+          queuedRequest = this.requests.run(qRequest)
         } else {
           // For a non-4xx error, we can re-queue the request.
           setTimeout(() => {

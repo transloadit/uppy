@@ -105,7 +105,7 @@ class RateLimitedQueue {
   }
 
   run (fn, queueOptions) {
-    if (this.#activeRequests < this.limit) {
+    if (!this.#paused && this.#activeRequests < this.limit) {
       return this.#call(fn)
     }
     return this.#queue(fn, queueOptions)
