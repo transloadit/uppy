@@ -13,7 +13,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "ESBUILD=$(yarn bin esbuild) php -S localhost:8080 serve.php",
+    "start": "php -S localhost:8080 serve.php",
     "outputBundle": "esbuild --format=esm --sourcemap=inline --bundle ./main.js"
   }
 }
