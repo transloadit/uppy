@@ -11,6 +11,12 @@ class RateLimitedQueue {
 
   #pauseTimer
 
+  #downLimit = 1
+
+  #upperLimit
+
+  #rateLimitingTimer
+
   constructor (limit) {
     if (typeof limit !== 'number' || limit === 0) {
       this.limit = Infinity
@@ -172,6 +178,30 @@ class RateLimitedQueue {
     clearTimeout(this.#pauseTimer)
     if (duration != null) {
       this.#pauseTimer = setTimeout(this.#resume, duration)
+    }
+  }
+
+  rateLimit (duration) {
+    clearTimeout(this.#rateLimitingTimer)
+    this.pause(duration)
+    if (this.limit > 1 && Number.isFinite(this.limit)) {
+      this.#upperLimit = this.limit - 1
+      this.limit = this.#downLimit
+      this.#rateLimitingTimer = setTimeout(this.#increaseLimit, duration)
+    }
+  }
+
+  #increaseLimit = () => {
+    if (this.#paused) {
+      this.#rateLimitingTimer = setTimeout(this.#increaseLimit, 0)
+      return
+    }
+    this.#downLimit = this.limit
+    this.limit = Math.ceil((this.#upperLimit + this.#downLimit) / 2)
+    if (this.#upperLimit - this.#downLimit > 3) {
+      this.#rateLimitingTimer = setTimeout(this.#increaseLimit, 2000)
+    } else {
+      this.#downLimit = Math.floor(this.#downLimit / 2)
     }
   }
 

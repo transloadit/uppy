@@ -268,8 +268,7 @@ module.exports = class Tus extends BasePlugin {
             if (next == null || next.done) {
               return false
             }
-            this.requests.limit = Math.ceil(this.requests.limit / 2)
-            this.requests.pause(next.value)
+            this.requests.rateLimit(next.value)
           }
           queuedRequest.abort()
           queuedRequest = this.requests.run(qRequest)
