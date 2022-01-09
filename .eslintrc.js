@@ -148,6 +148,7 @@ module.exports = {
     {
       files: [
         '*.mjs',
+        'examples/aws-presigned-url/*.js',
         'private/dev/*.js',
         'private/release/*.js',
         'private/remark-lint-uppy/*.js',

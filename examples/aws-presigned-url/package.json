@@ -2,17 +2,18 @@
   "name": "@uppy-example/aws-presigned-url",
   "version": "0.0.0",
   "dependencies": {
-    "@babel/core": "^7.4.4",
     "@uppy/aws-s3": "workspace:*",
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
-    "babelify": "^10.0.0",
-    "browserify": "^17.0.0",
-    "fs-write-stream-atomic": "^1.0.10",
-    "watchify": "^4.0.0"
+    "uppy": "workspace:*"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.1"
   },
   "private": true,
+  "type": "module",
   "scripts": {
-    "start": "node ./serve.js"
+    "start": "php -S localhost:8080 serve.php",
+    "outputBundle": "esbuild --format=esm --sourcemap=inline --bundle ./main.js"
   }
 }

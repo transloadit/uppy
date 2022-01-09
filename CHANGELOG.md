@@ -12,6 +12,17 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.3.3
+
+Released: 2022-01-04
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |   3.1.5 | uppy            |   2.3.3 |
+
+- @uppy/companion: improve private ip check (Mikael Finstad / #3403)
+
+
 ## 2.3.2
 
 Released: 2021-12-21
