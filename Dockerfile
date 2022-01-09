@@ -30,4 +30,4 @@ ENV PATH "${PATH}:/app/node_modules/.bin"
 
 CMD ["node","/app/bin/companion"]
 # This can be overruled later
-EXPOSE 3020
+EXPOSE $PORT
