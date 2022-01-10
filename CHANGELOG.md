@@ -12,6 +12,31 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.4.0
+
+Released: 2022-01-10
+
+| Package              | Version | Package              | Version |
+| -------------------- | ------- | -------------------- | ------- |
+| @uppy/drag-drop      |   2.0.6 | @uppy/tus            |   2.2.0 |
+| @uppy/image-editor   |   1.1.1 | @uppy/utils          |   4.0.5 |
+| @uppy/screen-capture |   2.0.6 | @uppy/robodog        |   2.2.0 |
+| @uppy/transloadit    |   2.1.0 | uppy                 |   2.4.0 |
+
+- @uppy/transloadit: ignore rate limiting errors when polling (Antoine du Hamel / #3418)
+- @uppy/tus: pause all requests in response to server rate limiting (Antoine du Hamel / #3394)
+- @uppy/transloadit: better defaults for rate limiting (Antoine du Hamel / #3414)
+- @uppy/companion: Fix Companion deploys (kiloreux / #3388)
+- meta: update aws-presigned-url example to use esm (Antoine du Hamel / #3413)
+- @uppy/image-editor: namespace input range css (Merlijn Vos / #3406)
+- @uppy/screen-capture: Add missing option to the screen capture types (Mustafa Navruz / #3400)
+- @uppy/drag-drop: fix `undefined is not a function` TypeError (Antoine du Hamel / #3397)
+- website: update december 2021 blog post (Antoine du Hamel / #3396)
+- website: Polished the latest update blog (AJvanLoon / #3390)
+- website: docs: fix typo in audio.md (heocoi / #3389)
+- website: 2.0-2.3 post draft (Artur Paikin / #3370)
+
+
 ## 2.3.3
 
 Released: 2022-01-04
