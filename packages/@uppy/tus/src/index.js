@@ -40,7 +40,7 @@ const tusDefaultOptions = {
   addRequestId: false,
 
   chunkSize: Infinity,
-  retryDelays: [0, 1000, 3000, 5000],
+  retryDelays: [100, 1000, 3000, 5000],
   parallelUploads: 1,
   removeFingerprintOnSuccess: false,
   uploadLengthDeferred: false,
@@ -51,7 +51,10 @@ const tusDefaultOptions = {
  * Tus resumable file uploader
  */
 module.exports = class Tus extends BasePlugin {
+  // eslint-disable-next-line global-require
   static VERSION = require('../package.json').version
+
+  #retryDelayIterator
 
   /**
    * @param {Uppy} uppy
@@ -66,8 +69,8 @@ module.exports = class Tus extends BasePlugin {
     // set default options
     const defaultOptions = {
       useFastRemoteRetry: true,
-      limit: 5,
-      retryDelays: [0, 1000, 3000, 5000],
+      limit: 20,
+      retryDelays: tusDefaultOptions.retryDelays,
       withCredentials: false,
     }
 
@@ -85,6 +88,7 @@ module.exports = class Tus extends BasePlugin {
      * @type {RateLimitedQueue}
      */
     this.requests = new RateLimitedQueue(this.opts.limit)
+    this.#retryDelayIterator = this.opts.retryDelays?.values()
 
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
@@ -178,6 +182,9 @@ module.exports = class Tus extends BasePlugin {
 
     // Create a new tus upload
     return new Promise((resolve, reject) => {
+      let queuedRequest
+      let qRequest
+
       this.uppy.emit('upload-started', file)
 
       const opts = {
@@ -219,7 +226,7 @@ module.exports = class Tus extends BasePlugin {
         }
 
         this.resetUploaderReferences(file.id)
-        queuedRequest.done()
+        queuedRequest.abort()
 
         this.uppy.emit('upload-error', file, err)
 
@@ -252,6 +259,46 @@ module.exports = class Tus extends BasePlugin {
         resolve(upload)
       }
 
+      uploadOptions.onShouldRetry = (err, retryAttempt, options) => {
+        const status = err?.originalResponse?.getStatus()
+        if (status === 429) {
+          // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
+          if (!this.requests.isPaused) {
+            const next = this.#retryDelayIterator?.next()
+            if (next == null || next.done) {
+              return false
+            }
+            this.requests.rateLimit(next.value)
+          }
+          queuedRequest.abort()
+          queuedRequest = this.requests.run(qRequest)
+        } else if (status > 400 && status < 500 && status !== 409) {
+          // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
+          return false
+        } else if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+          // The navigator is offline, let's wait for it to come back online.
+          if (!this.requests.isPaused) {
+            this.requests.pause()
+            window.addEventListener('online', () => {
+              this.requests.resume()
+            }, { once: true })
+          }
+          queuedRequest.abort()
+          queuedRequest = this.requests.run(qRequest)
+        } else {
+          // For a non-4xx error, we can re-queue the request.
+          setTimeout(() => {
+            queuedRequest.abort()
+            queuedRequest = this.requests.run(qRequest)
+          }, options.retryDelays[retryAttempt])
+        }
+        // Aborting the timeout set by tus-js-client to not short-circuit the rate limiting.
+        // eslint-disable-next-line no-underscore-dangle
+        queueMicrotask(() => clearTimeout(queuedRequest._retryTimeout))
+        // We need to return true here so tus-js-client increments the retryAttempt and do not emit an error event.
+        return true
+      }
+
       const copyProp = (obj, srcProp, destProp) => {
         if (hasProperty(obj, srcProp) && !hasProperty(obj, destProp)) {
           obj[destProp] = obj[srcProp]
@@ -278,15 +325,7 @@ module.exports = class Tus extends BasePlugin {
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      upload.findPreviousUploads().then((previousUploads) => {
-        const previousUpload = previousUploads[0]
-        if (previousUpload) {
-          this.uppy.log(`[Tus] Resuming upload of ${file.id} started at ${previousUpload.creationTime}`)
-          upload.resumeFromPreviousUpload(previousUpload)
-        }
-      })
-
-      let queuedRequest = this.requests.run(() => {
+      qRequest = () => {
         if (!file.isPaused) {
           upload.start()
         }
@@ -297,7 +336,17 @@ module.exports = class Tus extends BasePlugin {
         // Also, we need to remove the request from the queue _without_ destroying everything
         // related to this upload to handle pauses.
         return () => {}
+      }
+
+      upload.findPreviousUploads().then((previousUploads) => {
+        const previousUpload = previousUploads[0]
+        if (previousUpload) {
+          this.uppy.log(`[Tus] Resuming upload of ${file.id} started at ${previousUpload.creationTime}`)
+          upload.resumeFromPreviousUpload(previousUpload)
+        }
       })
+
+      queuedRequest = this.requests.run(qRequest)
 
       this.onFileRemove(file.id, (targetFileID) => {
         queuedRequest.abort()
@@ -314,10 +363,7 @@ module.exports = class Tus extends BasePlugin {
           // Resuming an upload should be queued, else you could pause and then
           // resume a queued upload to make it skip the queue.
           queuedRequest.abort()
-          queuedRequest = this.requests.run(() => {
-            upload.start()
-            return () => {}
-          })
+          queuedRequest = this.requests.run(qRequest)
         }
       })
 
@@ -337,10 +383,7 @@ module.exports = class Tus extends BasePlugin {
         if (file.error) {
           upload.abort()
         }
-        queuedRequest = this.requests.run(() => {
-          upload.start()
-          return () => {}
-        })
+        queuedRequest = this.requests.run(qRequest)
       })
     }).catch((err) => {
       this.uppy.emit('upload-error', file, err)
@@ -411,6 +454,8 @@ module.exports = class Tus extends BasePlugin {
       const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+
+      let queuedRequest
 
       this.onFileRemove(file.id, () => {
         queuedRequest.abort()
@@ -512,7 +557,7 @@ module.exports = class Tus extends BasePlugin {
         resolve()
       })
 
-      let queuedRequest = this.requests.run(() => {
+      queuedRequest = this.requests.run(() => {
         socket.open()
         if (file.isPaused) {
           socket.send('pause', {})
