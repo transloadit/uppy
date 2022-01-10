@@ -163,6 +163,9 @@ class RateLimitedQueue {
   resume () {
     this.#paused = false
     clearTimeout(this.#pauseTimer)
+    for (let i = 0; i < this.limit; i++) {
+      this.#queueNext()
+    }
   }
 
   #resume = () => this.resume()
@@ -181,6 +184,16 @@ class RateLimitedQueue {
     }
   }
 
+  /**
+   * Pauses the queue for a duration, and lower the limit of concurrent requests
+   * when the queue resumes. When the queue resumes, it tries to progressively
+   * increase the limit in `this.#increaseLimit` until another call is made to
+   * `this.rateLimit`.
+   * Call this function when using the RateLimitedQueue for network requests and
+   * the remote server responds with 429 HTTP code.
+   *
+   * @param {number} duration in milliseconds.
+   */
   rateLimit (duration) {
     clearTimeout(this.#rateLimitingTimer)
     this.pause(duration)
@@ -198,6 +211,9 @@ class RateLimitedQueue {
     }
     this.#downLimit = this.limit
     this.limit = Math.ceil((this.#upperLimit + this.#downLimit) / 2)
+    for (let i = this.#downLimit; i <= this.limit; i++) {
+      this.#queueNext()
+    }
     if (this.#upperLimit - this.#downLimit > 3) {
       this.#rateLimitingTimer = setTimeout(this.#increaseLimit, 2000)
     } else {
