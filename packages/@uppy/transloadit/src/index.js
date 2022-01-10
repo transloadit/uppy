@@ -53,7 +53,8 @@ module.exports = class Transloadit extends BasePlugin {
       params: null,
       fields: {},
       getAssemblyOptions: defaultGetAssemblyOptions,
-      limit: 0,
+      limit: 20,
+      retryDelays: [7_000, 10_000, 15_000, 20_000],
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -751,6 +752,7 @@ module.exports = class Transloadit extends BasePlugin {
         metaFields: ['assembly_url', 'filename', 'fieldname'],
         // Pass the limit option to @uppy/tus
         limit: this.opts.limit,
+        retryDelays: this.opts.retryDelays,
       })
     }
 
