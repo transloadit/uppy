@@ -46,7 +46,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Alter dockerfile
         run: |
-          sed -i 's/3020/$PORT/g' Dockerfile
+          sed -i 's/^EXPOSE 3020$/EXPOSE $PORT/g' Dockerfile
       - name: Deploy to heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
