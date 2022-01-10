@@ -461,8 +461,3 @@ We use Browserstack for manual testing <a href="https://www.browserstack.com" ta
 ## License
 
 [The MIT License](LICENSE).
-rstack.com" target="_blank"> <img align="left" width="117" alt="BrowserStack logo" src="https://i.ibb.co/HDRDHmx/Browserstack-logo-2x.png"> </a>
-
-## License
-
-[The MIT License](LICENSE).
