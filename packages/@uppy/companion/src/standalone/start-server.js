@@ -4,7 +4,7 @@ const companion = require('../companion')
 const { version } = require('../../package.json')
 const standalone = require('.')
 
-const port = process.env.COMPANION_PORT || 3020
+const port = process.env.COMPANION_PORT || process.env.PORT || 3020
 
 const { app } = standalone()
 
