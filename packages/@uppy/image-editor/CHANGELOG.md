@@ -1,5 +1,12 @@
 # @uppy/image-editor
 
+## 1.1.1
+
+Released: 2022-01-10
+Included in: Uppy v2.4.0
+
+- @uppy/image-editor: namespace input range css (Merlijn Vos / #3406)
+
 ## 1.1.0
 
 Released: 2021-12-07
