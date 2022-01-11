@@ -18,7 +18,6 @@ const config = {
       defaultIsModuleExports: true,
     },
   },
-  envDir: fileURLToPath(ROOT),
   esbuild: {
     jsxFactory: 'h',
     jsxFragment: 'Fragment',

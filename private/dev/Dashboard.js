@@ -25,7 +25,7 @@ import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
 /* eslint-enable import/no-extraneous-dependencies */
 
-// DEV CONFIG: create a .env.development.local in the root folder to customize those values.
+// DEV CONFIG: create a .env.local file to customize those values.
 const {
   VITE_UPLOADER : UPLOADER,
   VITE_COMPANION_URL : COMPANION_URL,
@@ -36,6 +36,7 @@ const {
   VITE_TRANSLOADIT_SERVICE_URL : TRANSLOADIT_SERVICE_URL,
 } = import.meta.env
 
+import.meta.env.VITE_TRANSLOADIT_KEY = '***' // to avoid leaking secrets in screenshots.
 console.log(import.meta.env)
 
 // DEV CONFIG: enable or disable Golden Retriever
