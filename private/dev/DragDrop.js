@@ -6,6 +6,14 @@ import DragDrop from '@uppy/drag-drop'
 import ProgressBar from '@uppy/progress-bar'
 /* eslint-enable import/no-extraneous-dependencies */
 
+// DEV CONFIG: create a .env.local file to customize those values.
+const {
+  VITE_TUS_ENDPOINT : TUS_ENDPOINT,
+} = import.meta.env
+
+import.meta.env.VITE_TRANSLOADIT_KEY = '***' // to avoid leaking secrets in screenshots.
+console.log(import.meta.env)
+
 export default () => {
   const uppyDragDrop = new Uppy({
     debug: true,
@@ -15,7 +23,7 @@ export default () => {
       target: '#uppyDragDrop',
     })
     .use(ProgressBar, { target: '#uppyDragDrop-progress', hideAfterFinish: false })
-    .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
+    .use(Tus, { endpoint: TUS_ENDPOINT })
 
   window.uppy = uppyDragDrop
 
