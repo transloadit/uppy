@@ -58,6 +58,7 @@ export interface DashboardOptions extends PluginOptions {
   onDragOver?: (event: DragEvent) => void
   onDragLeave?: (event: DragEvent) => void
   onDrop?: (event: DragEvent) => void
+  waitForThumbnailsBeforeUpload: boolean,
 }
 
 declare class Dashboard extends UIPlugin<DashboardOptions> {

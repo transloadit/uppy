@@ -55,6 +55,7 @@ export interface AddFileOptions<
 
 export interface PluginOptions {
   id?: string
+  replaceTargetContent: boolean
 }
 
 export interface DefaultPluginOptions extends PluginOptions {
