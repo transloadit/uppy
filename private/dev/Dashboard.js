@@ -25,29 +25,18 @@ import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
 /* eslint-enable import/no-extraneous-dependencies */
 
-// DEV CONFIG: pick an uploader
+// DEV CONFIG: create a .env.development.local in the root folder to customize those values.
+const {
+  VITE_UPLOADER : UPLOADER,
+  VITE_COMPANION_URL : COMPANION_URL,
+  VITE_TUS_ENDPOINT : TUS_ENDPOINT,
+  VITE_XHR_ENDPOINT : XHR_ENDPOINT,
+  VITE_TRANSLOADIT_KEY : TRANSLOADIT_KEY,
+  VITE_TRANSLOADIT_TEMPLATE : TRANSLOADIT_TEMPLATE,
+  VITE_TRANSLOADIT_SERVICE_URL : TRANSLOADIT_SERVICE_URL,
+} = import.meta.env
 
-const UPLOADER = 'tus'
-// const UPLOADER = 's3'
-// const UPLOADER = 's3-multipart'
-// xhr will use protocol 'multipart' in companion, if used with a remote service, e.g. google drive.
-// If local upload will use browser XHR
-// const UPLOADER = 'xhr'
-// const UPLOADER = 'transloadit'
-// const UPLOADER = 'transloadit-s3'
-// const UPLOADER = 'transloadit-xhr'
-
-// DEV CONFIG: Endpoint URLs
-
-const COMPANION_URL = 'http://localhost:3020'
-const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
-const XHR_ENDPOINT = 'https://xhr-server.herokuapp.com/upload'
-
-// DEV CONFIG: Transloadit keys
-
-const TRANSLOADIT_KEY = '...'
-const TRANSLOADIT_TEMPLATE = '...'
-const TRANSLOADIT_SERVICE_URL = 'https://api2.transloadit.com'
+console.log(import.meta.env)
 
 // DEV CONFIG: enable or disable Golden Retriever
 
