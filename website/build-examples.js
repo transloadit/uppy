@@ -52,7 +52,6 @@ glob(srcPattern, (err, files) => {
     console.log('--> Watching examples..')
   }
 
-  // Create a new watchify instance for each file.
   files.forEach((file) => {
     const exampleName = path.basename(path.dirname(file))
     const outfile = dstPattern.replace('**', exampleName)
@@ -74,7 +73,7 @@ glob(srcPattern, (err, files) => {
           '@uppy': path.resolve(__dirname, `../packages/@uppy`),
         }),
         babel({
-          filter: /\.js$/,
+          filter: /\.(es6|js)$/,
           config: { root: path.join(__dirname, '..') },
         }),
       ],
@@ -94,7 +93,7 @@ function onError (err) {
     title: 'Build failed:',
     message: err.message,
   })
-  this.emit('end')
+  this?.emit?.('end')
 
   // When running without watch, process.exit(1) on error
   if (!watchifyEnabled) {
