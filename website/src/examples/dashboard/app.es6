@@ -6,6 +6,7 @@ const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
 const Zoom = require('@uppy/zoom')
+const Unsplash = require('@uppy/unsplash')
 // const Box = require('@uppy/box')
 const ImageEditor = require('@uppy/image-editor')
 const Url = require('@uppy/url')
@@ -138,6 +139,13 @@ function uppySetOptions () {
   }
   if (!opts.OneDrive && oneDriveInstance) {
     window.uppy.removePlugin(oneDriveInstance)
+  }
+  const unsplashInstance = window.uppy.getPlugin('Unsplash')
+  if (opts.Unsplash && !unsplashInstance) {
+    window.uppy.use(Unsplash, { target: Dashboard, companionUrl: COMPANION })
+  }
+  if (!opts.Unsplash && unsplashInstance) {
+    window.uppy.removePlugin(unsplashInstance)
   }
 
   const zoomInstance = window.uppy.getPlugin('Zoom')
