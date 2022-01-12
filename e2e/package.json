@@ -1,5 +1,5 @@
 {
-  "name": "cypress",
+  "name": "e2e",
   "private": true,
   "author": "Merlijn Vos <merlijn@soverin.net>",
   "description": "End-to-end test suite for Uppy",
@@ -12,6 +12,8 @@
     "@uppy/dashboard": "workspace:^",
     "@uppy/tus": "workspace:^",
     "cypress": "^9.0.0",
-    "parcel": "^2.0.1"
+    "cypress-file-upload": "^5.0.8",
+    "parcel": "^2.0.1",
+    "typescript": "^4.5.4"
   }
 }

@@ -13,8 +13,19 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// Import commands.js using ES2015 syntax:
 import './commands'
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+import type { Uppy, UppyFile } from '@uppy/core'
+
+declare global {
+  interface Window {
+    uppy: Uppy
+  }
+
+  /* eslint-disable-next-line @typescript-eslint/no-namespace */
+  namespace Cypress {
+    interface Chainable {
+      createFakeFile(name?: string, type?: string, b64?: string): UppyFile
+    }
+  }
+}
