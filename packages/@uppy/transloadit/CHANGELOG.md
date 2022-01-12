@@ -1,5 +1,13 @@
 # @uppy/transloadit
 
+## 2.1.1
+
+Released: 2022-01-12
+Included in: Uppy v2.4.1
+
+- @uppy/transloadit: fix handling of Tus errors and rate limiting (Antoine du Hamel / #3429)
+- @uppy/transloadit: simplify `#onTusError` (Antoine du Hamel / #3419)
+
 ## 2.1.0
 
 Released: 2022-01-10
