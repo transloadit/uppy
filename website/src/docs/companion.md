@@ -248,6 +248,9 @@ export COMPANION_STREAMING_UPLOAD=true
 
 # corresponds to the maxFileSize option
 export COMPANION_MAX_FILE_SIZE="100000000"
+
+# corresponds to the chunkSize option
+export COMPANION_CHUNK_SIZE="50000000"
 ```
 
 See [env.example.sh](https://github.com/transloadit/uppy/blob/main/env.example.sh) for an example configuration script.
