@@ -1,4 +1,23 @@
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
+const NetworkError = require('@uppy/utils/lib/NetworkError')
+
+function fetchJSON (...args) {
+  return fetchWithNetworkError(...args).then(response => {
+    if (response.status === 429) {
+      // If the server asks the client to rate limit, reschedule the request 2s later.
+      // TODO: there are several instances of rate limiting accross the code base, having one global one could be useful.
+      return new Promise((resolve, reject) => {
+        setTimeout(() => fetchJSON(...args).then(resolve, reject), 2_000)
+      })
+    }
+
+    if (!response.ok) {
+      return Promise.reject(new NetworkError(response.statusText))
+    }
+
+    return response.json()
+  })
+}
 
 /**
  * A Barebones HTTP API client for Transloadit.
@@ -43,12 +62,12 @@ module.exports = class Client {
     data.append('num_expected_upload_files', expectedFiles)
 
     const url = new URL('/assemblies', `${this.opts.service}`).href
-    return fetchWithNetworkError(url, {
+    return fetchJSON(url, {
       method: 'post',
       headers: this.#headers,
       body: data,
     })
-      .then((response) => response.json()).then((assembly) => {
+      .then((assembly) => {
         if (assembly.error) {
           const error = new Error(assembly.error)
           error.details = assembly.message
@@ -73,8 +92,7 @@ module.exports = class Client {
   reserveFile (assembly, file) {
     const size = encodeURIComponent(file.size)
     const url = `${assembly.assembly_ssl_url}/reserve_file?size=${size}`
-    return fetchWithNetworkError(url, { method: 'post', headers: this.#headers })
-      .then((response) => response.json())
+    return fetchJSON(url, { method: 'post', headers: this.#headers })
       .catch((err) => this.#reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
 
@@ -95,8 +113,7 @@ module.exports = class Client {
 
     const qs = `size=${size}&filename=${filename}&fieldname=${fieldname}&s3Url=${uploadUrl}`
     const url = `${assembly.assembly_ssl_url}/add_file?${qs}`
-    return fetchWithNetworkError(url, { method: 'post', headers: this.#headers })
-      .then((response) => response.json())
+    return fetchJSON(url, { method: 'post', headers: this.#headers })
       .catch((err) => this.#reportError(err, { assembly, file, url, type: 'API_ERROR' }))
   }
 
@@ -107,8 +124,7 @@ module.exports = class Client {
    */
   cancelAssembly (assembly) {
     const url = assembly.assembly_ssl_url
-    return fetchWithNetworkError(url, { method: 'delete', headers: this.#headers })
-      .then((response) => response.json())
+    return fetchJSON(url, { method: 'delete', headers: this.#headers })
       .catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
   }
 
@@ -118,8 +134,7 @@ module.exports = class Client {
    * @param {string} url The status endpoint of the assembly.
    */
   getAssemblyStatus (url) {
-    return fetchWithNetworkError(url, { headers: this.#headers })
-      .then((response) => response.json())
+    return fetchJSON(url, { headers: this.#headers })
       .catch((err) => this.#reportError(err, { url, type: 'STATUS_ERROR' }))
   }
 
@@ -128,7 +143,7 @@ module.exports = class Client {
       ? `${err.message} (${err.details})`
       : err.message
 
-    return fetchWithNetworkError('https://transloaditstatus.com/client_error', {
+    return fetchJSON('https://transloaditstatus.com/client_error', {
       method: 'post',
       body: JSON.stringify({
         endpoint,
@@ -139,7 +154,6 @@ module.exports = class Client {
         error: message,
       }),
     })
-      .then((response) => response.json())
   }
 
   #reportError = (err, params) => {
