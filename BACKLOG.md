@@ -5,15 +5,13 @@
 These are ideas that are planned for specific versions or act as a backlog without a clear date.
 PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
-## `2.3.0`
+## `2.4.0`
 
-To be released: 2021-11-29
+To be released: 2022-01-27
 
-- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
 - [ ] compressor: move to Uppy repo, add resizing (@arturi)
-- [ ] providers: Box on hosted Companion
+- [ ] providers: Box on hosted Companion (@arturi, @mifi)
 - [ ] robodog: research simplifing Robodog — yes to easy “few lines of code Dashboard+Providers+(?Transloadit) experience”, but currently it’s hard to choose between modes, decide what you need (@Murderlon)
-- [ ] build: add release automations (@aduh95)
 
 ## `3.0.0`
 

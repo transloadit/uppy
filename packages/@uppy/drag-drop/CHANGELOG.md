@@ -1,5 +1,12 @@
 # @uppy/drag-drop
 
+## 2.0.6
+
+Released: 2022-01-10
+Included in: Uppy v2.4.0
+
+- @uppy/drag-drop: fix `undefined is not a function` TypeError (Antoine du Hamel / #3397)
+
 ## 2.0.5
 
 Released: 2021-12-07

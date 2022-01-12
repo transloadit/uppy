@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 3.1.5
+
+Released: 2022-01-04
+Included in: Uppy v2.3.3
+
+- @uppy/companion: improve private ip check (Mikael Finstad / #3403)
+
 ## 3.1.4
 
 Released: 2021-12-21
