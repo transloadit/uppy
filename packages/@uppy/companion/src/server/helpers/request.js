@@ -102,21 +102,10 @@ module.exports.getProtectedHttpAgent = (protocol, blockPrivateIPs) => {
  *
  * @param {string} url
  * @param {boolean} blockLocalIPs
- * @param {string} method
  * @returns {Promise<{type: string, size: number}>}
  */
-exports.getURLMeta = (url, blockLocalIPs = false, method = 'auto') => {
-  let tryGETOnFailure = false
-
-  // We prefer to use a HEAD request, as it doesn't download the content. If the URL doesn't
-  // support HEAD, or doesn't follow the spec and provide the correct Content-Length, we
-  // fallback to GET.
-  if (method === 'auto') {
-    method = 'HEAD'
-    tryGETOnFailure = true
-  }
-
-  return new Promise((resolve, reject) => {
+exports.getURLMeta = async (url, blockLocalIPs = false) => {
+  const requestWithMethod = async (method) => new Promise((resolve, reject) => {
     const opts = {
       uri: url,
       method,
@@ -131,27 +120,36 @@ exports.getURLMeta = (url, blockLocalIPs = false, method = 'auto') => {
       // Can be undefined for unknown length URLs, e.g. transfer-encoding: chunked
       const contentLength = parseInt(response.headers['content-length'], 10)
 
-      if (method === 'HEAD' && tryGETOnFailure) {
-        // We look for status codes in the 400 and 500 ranges here, as 3xx errors are
-        // unlikely to have to do with our choice of method
-        if (response.statusCode >= 400 || contentLength === 0 || Number.isNaN(contentLength)) {
-          resolve(exports.getURLMeta(url, blockLocalIPs, 'GET'))
-          return
-        }
-      }
+      // No need to get the rest of the response, as we only want header (not really relevant for HEAD, but why not)
+      req.abort()
 
-      if (response.statusCode >= 300) {
-        // @todo possibly set a status code in the error object to get a more helpful
-        // hint at what the cause of error is.
-        reject(new Error(`URL server responded with status: ${response.statusCode}`))
-      } else {
-        req.abort() // No need to get the rest of the response, as we only want header
-
-        resolve({
-          type: response.headers['content-type'],
-          size: Number.isNaN(contentLength) ? null : contentLength,
-        })
-      }
+      resolve({
+        type: response.headers['content-type'],
+        size: Number.isNaN(contentLength) ? null : contentLength,
+        statusCode: response.statusCode,
+      })
     })
   })
+
+  // We prefer to use a HEAD request, as it doesn't download the content. If the URL doesn't
+  // support HEAD, or doesn't follow the spec and provide the correct Content-Length, we
+  // fallback to GET.
+  let urlMeta = await requestWithMethod('HEAD')
+
+  // If HTTP error response, we retry with GET, which may work on non-compliant servers
+  // (e.g. HEAD doesn't work on signed S3 URLs)
+  // We look for status codes in the 400 and 500 ranges here, as 3xx errors are
+  // unlikely to have to do with our choice of method
+  if (urlMeta.statusCode >= 400 || urlMeta.size === 0 || urlMeta.size == null) {
+    urlMeta = await requestWithMethod('GET')
+  }
+
+  if (urlMeta.statusCode >= 300) {
+    // @todo possibly set a status code in the error object to get a more helpful
+    // hint at what the cause of error is.
+    throw new Error(`URL server responded with status: ${urlMeta.statusCode}`)
+  }
+
+  const { size, type } = urlMeta
+  return { size, type }
 }
