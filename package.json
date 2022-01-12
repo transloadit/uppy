@@ -166,8 +166,8 @@
     "web:generate": "cd website && touch db.json && yarn run hexo generate",
     "web:inject-bundles-misc": "cd website && node inject.js",
     "web:inject-frontpagecodesample": "yarn run web:generate && cp -f website/public/frontpage-code-sample.html website/themes/uppy/layout/partials/frontpage-code-sample.html && touch website/themes/uppy/layout/index.ejs",
-    "web:start-server": "cd website && touch db.json && yarn run hexo server",
-    "web:start": "cd website && touch db.json && yarn run hexo server",
+    "web:start-server": "cd website && touch db.json && node inject.js && node build-examples.js && yarn run hexo server",
+    "web:start": "yarn run web:start-server",
     "web:watch-examples": "yarn run web:bundle-watch-inject && yarn run web:watch",
     "web:watch": "npm-run-all build:lib --parallel watch:css web:watch-examples web:bundle-watch-inject web:start_server"
   },
@@ -185,6 +185,6 @@
     "@types/redis": "2",
     "@types/eslint@^7.2.13": "^8.2.0",
     "npm-auth-to-token@1.0.0": "patch:npm-auth-to-token@npm:1.0.0#.yarn/patches/npm-auth-to-token-npm-1.0.0-c288ce201f",
-    "babel-plugin-transform-commonjs@1.1.6": "patch:babel-plugin-transform-commonjs@npm:1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809"
+    "babel-plugin-transform-commonjs@2.1.6": "patch:babel-plugin-transform-commonjs@npm:1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809"
   }
 }

@@ -6,13 +6,13 @@
     "version": "4.2.1"
   },
   "devDependencies": {
+    "@aduh95/hexo-renderer-postcss": "^3.0.0",
     "@babel/core": "^7.4.4",
-    "@goto-bus-stop/hexo-renderer-postcss": "^2.0.0",
     "@octokit/rest": "16.43.1",
     "@transloadit/prettier-bytes": "0.0.7",
     "autoprefixer": "^10.2.6",
     "chalk": "2.4.2",
-    "cssnano": "^4.1.10",
+    "cssnano": "^5.0.6",
     "drag-drop": "^4.2.0",
     "esbuild": "^0.14.3",
     "esbuild-plugin-alias": "^0.2.1",
@@ -41,7 +41,7 @@
     "mdast-util-inject": "1.1.0",
     "multi-glob": "^1.0.2",
     "node-notifier": "^8.0.1",
-    "postcss-inline-svg": "^4.1.0",
+    "postcss-inline-svg": "^5.0.0",
     "prismjs": "^1.17.1",
     "sass": "^1.29.0",
     "touch": "3.1.0"

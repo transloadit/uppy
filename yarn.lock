@@ -5,6 +5,17 @@ __metadata:
   version: 5
   cacheKey: 8
 
+"@aduh95/hexo-renderer-postcss@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@aduh95/hexo-renderer-postcss@npm:3.0.0"
+  dependencies:
+    postcss-load-config: ^3.1.1
+  peerDependencies:
+    postcss: 7.x || 8.x
+  checksum: 007c8b039550bc6270c3f4bec386a9a754035b8901e707ff0fae4687a3f9a49c444fe38d42d54f449ac5fbba50cdaa681c53490fb5578adf0d4a715e8c776ff6
+  languageName: node
+  linkType: hard
+
 "@ampproject/remapping@npm:1.0.1":
   version: 1.0.1
   resolution: "@ampproject/remapping@npm:1.0.1"
@@ -2937,16 +2948,6 @@ __metadata:
   bin:
     envify: bin/envify
   checksum: 80d8e3205e931873d9bee134457361a4f82d8f0c3114434cd8137234a87532fec3ca122dcc1e225edbf18863bfe2b58201aa48ee2f5a9105ade661670548da88
-  languageName: node
-  linkType: hard
-
-"@goto-bus-stop/hexo-renderer-postcss@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@goto-bus-stop/hexo-renderer-postcss@npm:2.0.0"
-  dependencies:
-    postcss: ^7.0.16
-    postcss-load-config: ^2.0.0
-  checksum: 701a01dafb81531e4c302e83bb23c599e3a9526a2aece379eee88f0f13dfdf96ca701d835b2c457c1bd69d655a5a2a6962e20633ac51ca6fc0b5cab64b85d700
   languageName: node
   linkType: hard
 
@@ -11298,17 +11299,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-transform-commonjs@patch:babel-plugin-transform-commonjs@npm:1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
-  version: 1.1.6
-  resolution: "babel-plugin-transform-commonjs@patch:babel-plugin-transform-commonjs@npm%3A1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809::version=1.1.6&hash=f83dbd&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  dependencies:
-    "@babel/helper-plugin-utils": ^7.0.0
-  peerDependencies:
-    "@babel/core": ">=7"
-  checksum: 5995b2641a8551fcc8d0f9d24222ae15698100917edffc8d98f8033cc65b1e577e6b346ac4dbf2456425e494bd1caf1f6646002163953a88290e901f611d83ad
-  languageName: node
-  linkType: hard
-
 "babel-preset-current-node-syntax@npm:^1.0.0":
   version: 1.0.1
   resolution: "babel-preset-current-node-syntax@npm:1.0.1"
@@ -14617,7 +14607,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-select@npm:^2.0.0, css-select@npm:^2.0.2":
+"css-select@npm:^2.0.0":
   version: 2.1.0
   resolution: "css-select@npm:2.1.0"
   dependencies:
@@ -14626,6 +14616,19 @@ __metadata:
     domutils: ^1.7.0
     nth-check: ^1.0.2
   checksum: 0c4099910f2411e2a9103cf92ea6a4ad738b57da75bcf73d39ef2c14a00ef36e5f16cb863211c901320618b24ace74da6333442d82995cafd5040077307de462
+  languageName: node
+  linkType: hard
+
+"css-select@npm:^3.1.0":
+  version: 3.1.2
+  resolution: "css-select@npm:3.1.2"
+  dependencies:
+    boolbase: ^1.0.0
+    css-what: ^4.0.0
+    domhandler: ^4.0.0
+    domutils: ^2.4.3
+    nth-check: ^2.0.0
+  checksum: a54b73ee896c1c29fa3f01701e0907fcdb4ede8885e4d07bf95c16f4dd62caabe6d67f62b11d285e467491e0d0f5968299bce75cfd1a25d8386e11feb01fc795
   languageName: node
   linkType: hard
 
@@ -14690,6 +14693,13 @@ __metadata:
   version: 3.4.2
   resolution: "css-what@npm:3.4.2"
   checksum: 26bb5ec3ae718393d418016365c849fa14bd0de408c735dea3ddf58146b6cc54f3b336fb4afd31d95c06ca79583acbcdfec7ee93d31ff5c1a697df135b38dfeb
+  languageName: node
+  linkType: hard
+
+"css-what@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "css-what@npm:4.0.0"
+  checksum: 69b557491213de51c444a462d5b94535c2b2c61ea61b7965bf2debe3f79f326dafafe2389d2f02f0bbf9477b6419d7ba3ea9052c6bf8401b57f7739f224e8662
   languageName: node
   linkType: hard
 
@@ -15930,17 +15940,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dom-serializer@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "dom-serializer@npm:0.1.1"
-  dependencies:
-    domelementtype: ^1.3.0
-    entities: ^1.1.1
-  checksum: 4f6a3eff802273741931cfd3c800fab4e683236eed10628d6605f52538a6bc0ce4770f3ca2ad68a27412c103ae9b6cdaed3c0a8e20d2704192bde497bc875215
-  languageName: node
-  linkType: hard
-
-"dom-serializer@npm:^1.0.1, dom-serializer@npm:^1.3.2":
+"dom-serializer@npm:^1.0.1, dom-serializer@npm:^1.1.0, dom-serializer@npm:^1.3.2":
   version: 1.3.2
   resolution: "dom-serializer@npm:1.3.2"
   dependencies:
@@ -15972,7 +15972,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domelementtype@npm:1, domelementtype@npm:^1.3.0, domelementtype@npm:^1.3.1":
+"domelementtype@npm:1, domelementtype@npm:^1.3.1":
   version: 1.3.1
   resolution: "domelementtype@npm:1.3.1"
   checksum: 7893da40218ae2106ec6ffc146b17f203487a52f5228b032ea7aa470e41dfe03e1bd762d0ee0139e792195efda765434b04b43cddcf63207b098f6ae44b36ad6
@@ -16013,7 +16013,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domhandler@npm:^3.0.0":
+"domhandler@npm:^3.0.0, domhandler@npm:^3.3.0":
   version: 3.3.0
   resolution: "domhandler@npm:3.3.0"
   dependencies:
@@ -16048,7 +16048,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domutils@npm:^2.0.0, domutils@npm:^2.5.2, domutils@npm:^2.6.0, domutils@npm:^2.7.0, domutils@npm:^2.8.0":
+"domutils@npm:^2.0.0, domutils@npm:^2.4.2, domutils@npm:^2.4.3, domutils@npm:^2.5.2, domutils@npm:^2.6.0, domutils@npm:^2.7.0, domutils@npm:^2.8.0":
   version: 2.8.0
   resolution: "domutils@npm:2.8.0"
   dependencies:
@@ -21871,7 +21871,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"htmlparser2@npm:^3.10.0, htmlparser2@npm:^3.10.1":
+"htmlparser2@npm:^3.10.0":
   version: 3.10.1
   resolution: "htmlparser2@npm:3.10.1"
   dependencies:
@@ -21894,6 +21894,18 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     domutils: ^2.0.0
     entities: ^2.0.0
   checksum: 615fcf34ae74775eba9d2c7c54034201645ac4146dfe2889cda21939aa77806ad3aee27963ae72c5c2da23ce7b0b99b2533e1d9f327b74821cc11f755cc5153f
+  languageName: node
+  linkType: hard
+
+"htmlparser2@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "htmlparser2@npm:5.0.1"
+  dependencies:
+    domelementtype: ^2.0.1
+    domhandler: ^3.3.0
+    domutils: ^2.4.2
+    entities: ^2.0.0
+  checksum: b67ac02e44629ec76b712fc06702451bea64e522cfcd7cc22fa85023b81b44cde5060662faa81d34f18c0fe5a43ced1cac73528d30a6df5ac5825a4d479c7ea5
   languageName: node
   linkType: hard
 
@@ -22330,15 +22342,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"import-cwd@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "import-cwd@npm:3.0.0"
-  dependencies:
-    import-from: ^3.0.0
-  checksum: f2c4230e8389605154a390124381f9136811306ae4ba1c8017398c3c6926bc5cf75cf89350372b4938f79792ea373776b4efabd27506440ec301ce34c4e867eb
-  languageName: node
-  linkType: hard
-
 "import-fresh@npm:^2.0.0":
   version: 2.0.0
   resolution: "import-fresh@npm:2.0.0"
@@ -22365,15 +22368,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   dependencies:
     resolve-from: ^3.0.0
   checksum: 91f6f89f46a07227920ef819181bb52eb93023ccc0bdf00224fdfb326f8f753e279ad06819f39a02bb88c9d3a4606adc85b0cc995285e5d65feeb59f1421a1d4
-  languageName: node
-  linkType: hard
-
-"import-from@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "import-from@npm:3.0.0"
-  dependencies:
-    resolve-from: ^5.0.0
-  checksum: 5040a7400e77e41e2c3bb6b1b123b52a15a284de1ffc03d605879942c00e3a87428499d8d031d554646108a0f77652549411167f6a7788e4fc7027eefccf3356
   languageName: node
   linkType: hard
 
@@ -25625,7 +25619,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"lilconfig@npm:2.0.4, lilconfig@npm:^2.0.3":
+"lilconfig@npm:2.0.4, lilconfig@npm:^2.0.3, lilconfig@npm:^2.0.4":
   version: 2.0.4
   resolution: "lilconfig@npm:2.0.4"
   checksum: 02ae530aa49218d782eb79e92c600ea5220828987f85aa3403fa512cadc7efe38c0ac7d0cd2edf600ad3fae1f6c1752f5b4bb78c0d9950435b044d53d507c9e1
@@ -31410,16 +31404,17 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"postcss-inline-svg@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "postcss-inline-svg@npm:4.1.0"
+"postcss-inline-svg@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "postcss-inline-svg@npm:5.0.0"
   dependencies:
-    css-select: ^2.0.2
-    dom-serializer: ^0.1.1
-    htmlparser2: ^3.10.1
-    postcss: ^7.0.17
+    css-select: ^3.1.0
+    dom-serializer: ^1.1.0
+    htmlparser2: ^5.0.1
     postcss-value-parser: ^4.0.0
-  checksum: eb45306aff0273180eeb8cf9db21779eb29246405366c4f026d7b8a88267e9805a87849c5b2e8a078b0584514a677aa68b7fc9e05a831752fd4d5dac5c0db6da
+  peerDependencies:
+    postcss: ^8.1.4
+  checksum: 96c5701c2c2571138e6304fa4b365ecc8732835c42681777686f342011155dabd9d39f22732ce7937437c559a048324c79831967cf27147b8313de10f868a7f7
   languageName: node
   linkType: hard
 
@@ -31465,19 +31460,18 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"postcss-load-config@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "postcss-load-config@npm:3.1.0"
+"postcss-load-config@npm:^3.0.0, postcss-load-config@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "postcss-load-config@npm:3.1.1"
   dependencies:
-    import-cwd: ^3.0.0
-    lilconfig: ^2.0.3
+    lilconfig: ^2.0.4
     yaml: ^1.10.2
   peerDependencies:
     ts-node: ">=9.0.0"
   peerDependenciesMeta:
     ts-node:
       optional: true
-  checksum: 7fd62064eab1e0e77ba315d9a782f09f4c62e1025630b53d38a936d5a2730bb632a3f259143115fc639e70d22f14744a75c7a6f471343ebdb03f6a3ef72d2f08
+  checksum: d3bf9f159881dc2bab10362d1c782efc940a00148858df51c39e061a3b269c9a364a1fc953bba084d725f989c69f46fae96d625c27176a173f59a7bdc40d66e6
   languageName: node
   linkType: hard
 
@@ -32513,7 +32507,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"postcss@npm:^7.0.0, postcss@npm:^7.0.1, postcss@npm:^7.0.13, postcss@npm:^7.0.14, postcss@npm:^7.0.16, postcss@npm:^7.0.17, postcss@npm:^7.0.2, postcss@npm:^7.0.21, postcss@npm:^7.0.26, postcss@npm:^7.0.27, postcss@npm:^7.0.32, postcss@npm:^7.0.35, postcss@npm:^7.0.36, postcss@npm:^7.0.5, postcss@npm:^7.0.6, postcss@npm:^7.0.7":
+"postcss@npm:^7.0.0, postcss@npm:^7.0.1, postcss@npm:^7.0.13, postcss@npm:^7.0.14, postcss@npm:^7.0.17, postcss@npm:^7.0.2, postcss@npm:^7.0.21, postcss@npm:^7.0.26, postcss@npm:^7.0.27, postcss@npm:^7.0.32, postcss@npm:^7.0.35, postcss@npm:^7.0.36, postcss@npm:^7.0.5, postcss@npm:^7.0.6, postcss@npm:^7.0.7":
   version: 7.0.39
   resolution: "postcss@npm:7.0.39"
   dependencies:
@@ -32523,7 +32517,18 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.1.10, postcss@npm:^8.2.1, postcss@npm:^8.2.10, postcss@npm:^8.2.15, postcss@npm:^8.2.4, postcss@npm:^8.3.0, postcss@npm:^8.3.11, postcss@npm:^8.3.5, postcss@npm:^8.3.6, postcss@npm:^8.3.7":
+"postcss@npm:^8.1.10, postcss@npm:^8.2.10, postcss@npm:^8.2.15, postcss@npm:^8.2.4, postcss@npm:^8.3.0, postcss@npm:^8.3.11, postcss@npm:^8.3.5, postcss@npm:^8.3.6, postcss@npm:^8.3.7":
+  version: 8.4.5
+  resolution: "postcss@npm:8.4.5"
+  dependencies:
+    nanoid: ^3.1.30
+    picocolors: ^1.0.0
+    source-map-js: ^1.0.1
+  checksum: b78abdd89c10f7b48f4bdcd376104a19d6e9c7495ab521729bdb3df315af6c211360e9f06887ad3bc0ab0f61a04b91d68ea11462997c79cced58b9ccd66fac07
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.2.1":
   version: 8.4.4
   resolution: "postcss@npm:8.4.4"
   dependencies:
@@ -40450,13 +40455,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 0.0.0-use.local
   resolution: "uppy.io@workspace:website"
   dependencies:
+    "@aduh95/hexo-renderer-postcss": ^3.0.0
     "@babel/core": ^7.4.4
-    "@goto-bus-stop/hexo-renderer-postcss": ^2.0.0
     "@octokit/rest": 16.43.1
     "@transloadit/prettier-bytes": 0.0.7
     autoprefixer: ^10.2.6
     chalk: 2.4.2
-    cssnano: ^4.1.10
+    cssnano: ^5.0.6
     drag-drop: ^4.2.0
     esbuild: ^0.14.3
     esbuild-plugin-alias: ^0.2.1
@@ -40485,7 +40490,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     mdast-util-inject: 1.1.0
     multi-glob: ^1.0.2
     node-notifier: ^8.0.1
-    postcss-inline-svg: ^4.1.0
+    postcss-inline-svg: ^5.0.0
     prismjs: ^1.17.1
     sass: ^1.29.0
     touch: 3.1.0
