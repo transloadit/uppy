@@ -4,9 +4,10 @@ const NetworkError = require('@uppy/utils/lib/NetworkError')
 function fetchJSON (...args) {
   return fetchWithNetworkError(...args).then(response => {
     if (response.status === 429) {
-      // If the server asks the client to rate limit, reschedule the request 5s later.
+      // If the server asks the client to rate limit, reschedule the request 2s later.
+      // TODO: there are several instances of rate limiting accross the code base, having one global one could be useful.
       return new Promise((resolve, reject) => {
-        setTimeout(() => fetchJSON(...args).then(resolve, reject), 5_000)
+        setTimeout(() => fetchJSON(...args).then(resolve, reject), 2_000)
       })
     }
 
