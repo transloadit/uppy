@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["es5", "ES2015", "dom"],
+    "lib": ["es5", "dom"],
     "types": ["cypress", "cypress-file-upload"]
   },
-  "include": ["**/*.ts"]
+  "include": ["cypress/**/*.ts"]
 }

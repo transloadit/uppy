@@ -35,7 +35,7 @@
     "private/*",
     "test/endtoend",
     "website",
-    "cypress"
+    "e2e"
   ],
   "devDependencies": {
     "@babel/cli": "^7.14.5",

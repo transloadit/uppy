@@ -13,19 +13,12 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-import './commands'
+import './commands.ts'
 
-import type { Uppy, UppyFile } from '@uppy/core'
+import type { Uppy } from '@uppy/core'
 
 declare global {
   interface Window {
     uppy: Uppy
-  }
-
-  /* eslint-disable-next-line @typescript-eslint/no-namespace */
-  namespace Cypress {
-    interface Chainable {
-      createFakeFile(name?: string, type?: string, b64?: string): UppyFile
-    }
   }
 }
