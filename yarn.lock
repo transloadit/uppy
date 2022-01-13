@@ -18036,10 +18036,13 @@ __metadata:
   dependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
+    "@uppy/transloadit": "workspace:^"
     "@uppy/tus": "workspace:^"
     cypress: ^9.0.0
     cypress-file-upload: ^5.0.8
+    dedent: ^0.7.0
     parcel: ^2.0.1
+    prompts: ^2.4.2
     typescript: ^4.5.4
   languageName: unknown
   linkType: soft

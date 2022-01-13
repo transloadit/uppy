@@ -5,15 +5,21 @@
   "description": "End-to-end test suite for Uppy",
   "scripts": {
     "client:start": "parcel clients/index.html",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "cypress:headless": "cypress run"
   },
   "dependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
+    "@uppy/transloadit": "workspace:^",
     "@uppy/tus": "workspace:^",
+    "dedent": "^0.7.0"
+  },
+  "devDependencies": {
     "cypress": "^9.0.0",
     "cypress-file-upload": "^5.0.8",
     "parcel": "^2.0.1",
+    "prompts": "^2.4.2",
     "typescript": "^4.5.4"
   }
 }

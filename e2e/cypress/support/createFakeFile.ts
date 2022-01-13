@@ -40,8 +40,6 @@ export function createFakeFile (name?: string, type?: string, b64?: string): Fil
 
   const blob = base64toBlob(b64, type)
 
-  /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
-  /* @ts-ignore seems uppy file should have more optional properties */
   return {
     source: 'test',
     name: name || 'test-file',
