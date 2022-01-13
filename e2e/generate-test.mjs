@@ -1,10 +1,3 @@
-// 1. name of the test
-// 2. packages to test
-// 3. generate:
-//    - test file with visit(name)
-//    - index.html
-//    - main.js with package imports
-
 import prompts from 'prompts'
 import fs from 'node:fs/promises'
 import dedent from 'dedent'
@@ -83,4 +76,5 @@ import dedent from 'dedent'
   console.log(`✅ Generated ${prettyPath(testUrl)}`)
   console.log(`✅ Generated ${prettyPath(htmlUrl)}`)
   console.log(`✅ Generated ${prettyPath(appUrl)}`)
+  console.log(`✅ Updated ${prettyPath(homeUrl)}`)
 })()

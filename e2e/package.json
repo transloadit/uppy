@@ -6,18 +6,19 @@
   "scripts": {
     "client:start": "parcel clients/index.html",
     "cypress:open": "cypress open",
-    "cypress:headless": "cypress run"
+    "cypress:headless": "cypress run",
+    "generate-test": "yarn node generate-test.mjs"
   },
   "dependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/transloadit": "workspace:^",
-    "@uppy/tus": "workspace:^",
-    "dedent": "^0.7.0"
+    "@uppy/tus": "workspace:^"
   },
   "devDependencies": {
     "cypress": "^9.0.0",
     "cypress-file-upload": "^5.0.8",
+    "dedent": "^0.7.0",
     "parcel": "^2.0.1",
     "prompts": "^2.4.2",
     "typescript": "^4.5.4"
