@@ -48,6 +48,7 @@ const renderAuthor = (props) => {
         <Fragment>
           {` ${dot} `}
           {providerName}
+          {` ${dot} `}
         </Fragment>
       ) : null}
     </div>
