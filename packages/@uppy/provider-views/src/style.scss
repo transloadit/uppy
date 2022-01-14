@@ -185,6 +185,7 @@
   .uppy-size--md & {
     display: flex;
     align-items: center;
+    flex-direction: column;
   }
 
   [data-uppy-theme="dark"] & {
@@ -202,6 +203,10 @@
   display: inline-block;
   flex: none;
   vertical-align: middle;
+}
+
+.uppy-ProviderBrowser-headerSearchTerm {
+  font-weight: bold;
 }
 
 .uppy-ProviderBrowser-search {

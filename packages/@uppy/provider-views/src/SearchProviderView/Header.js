@@ -1,9 +1,15 @@
-const { h } = require('preact')
+const { h, Fragment } = require('preact')
 
 module.exports = (props) => {
+  const { searchTerm, triggerSearchInput, i18n } = props
   return (
-    <button type="button" onClick={props.triggerSearchInput} className="uppy-u-reset uppy-ProviderBrowser-userLogout">
-      {props.i18n('backToSearch')}
-    </button>
+    <Fragment>
+      <button type="button" onClick={triggerSearchInput} className="uppy-u-reset uppy-ProviderBrowser-userLogout">
+        {i18n('backToSearch')}
+      </button>
+      <div className="uppy-ProviderBrowser-headerSearchTerm">
+        “{searchTerm}”
+      </div>
+    </Fragment>
   )
 }

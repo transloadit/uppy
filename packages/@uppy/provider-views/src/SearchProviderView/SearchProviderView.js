@@ -137,6 +137,7 @@ module.exports = class SearchProviderView extends View {
       headerComponent: Header({
         triggerSearchInput: this.triggerSearchInput,
         i18n: this.plugin.uppy.i18n,
+        searchTerm: this.#searchTerm,
       }),
       title: this.plugin.title,
       viewType: targetViewOptions.viewType,
