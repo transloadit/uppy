@@ -1,8 +1,9 @@
+/* eslint-disable no-console, import/no-extraneous-dependencies */
 import prompts from 'prompts'
 import fs from 'node:fs/promises'
 import dedent from 'dedent'
 
-;(async () => {
+(async () => {
   const packageNames = await fs.readdir(new URL('../packages/@uppy', import.meta.url))
   const unwantedPackages = ['core', 'companion', 'redux-dev-tools', 'utils']
 
@@ -19,14 +20,13 @@ import dedent from 'dedent'
     message: 'What packages do you want to test?',
     hint: '@uppy/core is automatically included',
     choices: packageNames
-      .filter((name) => !unwantedPackages.includes(name))
-      .map((name) => ({ title: name, value: name })),
+      .filter((pkg) => !unwantedPackages.includes(pkg))
+      .map((pkg) => ({ title: pkg, value: pkg })),
   })
 
-  const camelcase = (str) =>
-    str
-      .toLowerCase()
-      .replace(/([-][a-z])/g, (group) => group.toUpperCase().replace('-', ''))
+  const camelcase = (str) => str
+    .toLowerCase()
+    .replace(/([-][a-z])/g, (group) => group.toUpperCase().replace('-', ''))
 
   const testUrl = new URL(`cypress/integration/${name}.spec.ts`, import.meta.url)
   const test = dedent`

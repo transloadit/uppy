@@ -383,5 +383,9 @@ module.exports = {
         react: { pragma: 'React' },
       },
     },
+    {
+      files: ['e2e/**/*.ts'],
+      extends: ['plugin:cypress/recommended'],
+    },
   ],
 }

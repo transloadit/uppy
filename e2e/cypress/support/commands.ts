@@ -25,6 +25,7 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
 
+/* eslint-disable-next-line import/no-extraneous-dependencies */
 import 'cypress-file-upload'
 
 import { createFakeFile } from './createFakeFile'
