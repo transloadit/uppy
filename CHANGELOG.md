@@ -12,6 +12,23 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.4.1
+
+Released: 2022-01-12
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/transloadit |   2.1.1 | uppy              |   2.4.1 |
+| @uppy/robodog     |   2.2.1 |                   |         |
+
+- @uppy/transloadit: fix handling of Tus errors and rate limiting (Antoine du Hamel / #3429)
+- meta: Add Unsplash to website dashboard example (Merlijn Vos / #3431)
+- meta: dev: move configuration to a `.env` file (Antoine du Hamel / #3430)
+- meta: Update ci.yml (Kevin van Zonneveld / #3428)
+- @uppy/transloadit: simplify `#onTusError` (Antoine du Hamel / #3419)
+- meta: Force include babel numeric separator (Merlijn Vos / #3422)
+
+
 ## 2.4.0
 
 Released: 2022-01-10
