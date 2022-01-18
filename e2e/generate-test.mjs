@@ -4,7 +4,7 @@ import dedent from 'dedent'
 
 ;(async () => {
   const packageNames = await fs.readdir(new URL('../packages/@uppy', import.meta.url))
-  const unwantedPackages = ['companion', 'redux-dev-tools', 'utils']
+  const unwantedPackages = ['core', 'companion', 'redux-dev-tools', 'utils']
 
   const { name } = await prompts({
     type: 'text',
@@ -17,6 +17,7 @@ import dedent from 'dedent'
     type: 'multiselect',
     name: 'packages',
     message: 'What packages do you want to test?',
+    hint: '@uppy/core is automatically included',
     choices: packageNames
       .filter((name) => !unwantedPackages.includes(name))
       .map((name) => ({ title: name, value: name })),
@@ -29,7 +30,7 @@ import dedent from 'dedent'
 
   const testUrl = new URL(`cypress/integration/${name}.spec.ts`, import.meta.url)
   const test = dedent`
-    ${packages.map((pgk) => `import ${camelcase(pgk)} from '@uppy/${pgk}'\n`)}
+    ${packages.map((pgk) => `import ${camelcase(pgk)} from '@uppy/${pgk}'`).join('\n')}
     describe('${name}', () => {
       beforeEach(() => {
         cy.visit('/${name}')
@@ -52,13 +53,16 @@ import dedent from 'dedent'
   `
 
   const appUrl = new URL(`clients/${name}/app.js`, import.meta.url)
+  // dedent is acting weird for this one but this formatting fixes it.
   const app = dedent`
-    ${packages.map((pgk) => `import ${camelcase(pgk)} from '@uppy/${pgk}'\n`)}
-    const uppy = new Uppy()
-      ${packages.map((pkg) => `.use(${camelcase(pkg)})`)}
+import Uppy from '@uppy/core'
+${packages.map((pgk) => `import ${camelcase(pgk)} from '@uppy/${pgk}'`).join('\n')}
 
-    // Keep this here to access uppy in tests
-    window.uppy = uppy
+const uppy = new Uppy()
+   ${packages.map((pkg) => `.use(${camelcase(pkg)})`).join('\n\t')}
+
+// Keep this here to access uppy in tests
+window.uppy = uppy
   `
 
   await fs.writeFile(testUrl, test)

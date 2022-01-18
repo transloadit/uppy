@@ -151,6 +151,7 @@
     "e2e": "npm-run-all --parallel watch:js:lib e2e:client e2e:cypress",
     "e2e:client": "yarn workspace e2e client:start",
     "e2e:cypress": "yarn workspace e2e cypress:open",
+    "e2e:generate": "yarn workspace e2e generate-test",
     "test:companion": "yarn workspace @uppy/companion test",
     "test:endtoend:local": "yarn workspace @uppy-tests/end2end test:endtoend:local",
     "test:endtoend": "yarn workspace @uppy-tests/end2end test:endtoend",
