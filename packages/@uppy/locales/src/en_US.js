@@ -20,7 +20,6 @@ en_US.strings = {
   authenticateWith: 'Connect to %{pluginName}',
   authenticateWithTitle: 'Please authenticate with %{pluginName} to select files',
   back: 'Back',
-  backToSearch: 'Back to Search',
   browse: 'browse',
   browseFiles: 'browse files',
   browseFolders: 'browse folders',
