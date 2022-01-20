@@ -12,8 +12,6 @@ const View = require('../View')
 module.exports = class SearchProviderView extends View {
   static VERSION = require('../../package.json').version
 
-  #searchTerm
-
   /**
    * @param {object} plugin instance of the plugin
    * @param {object} opts
@@ -49,8 +47,8 @@ module.exports = class SearchProviderView extends View {
       folders: [],
       directories: [],
       filterInput: '',
-      isSearchVisible: false,
       currentSelection: [],
+      searchTerm: null,
     })
   }
 
@@ -58,17 +56,30 @@ module.exports = class SearchProviderView extends View {
     // Nothing.
   }
 
+  clearSelection () {
+    this.plugin.setPluginState({
+      currentSelection: [],
+      isInputMode: true,
+      files: [],
+      searchTerm: null,
+    })
+  }
+
   #updateFilesAndInputMode (res, files) {
     this.nextPageQuery = res.nextPageQuery
-    this.#searchTerm = res.searchedFor
     res.items.forEach((item) => { files.push(item) })
-    this.plugin.setPluginState({ isInputMode: false, files })
+    this.plugin.setPluginState({
+      isInputMode: false,
+      files,
+      searchTerm: res.searchedFor,
+    })
   }
 
   search (query) {
-    if (query && query === this.#searchTerm) {
+    const { searchTerm } = this.plugin.getPluginState()
+    if (query && query === searchTerm) {
       // no need to search again as this is the same as the previous search
-      this.plugin.setPluginState({ isInputMode: false })
+      // this.plugin.setPluginState({ isInputMode: false })
       return
     }
 
@@ -92,8 +103,8 @@ module.exports = class SearchProviderView extends View {
       this.isHandlingScroll = true
 
       try {
-        const response = await this.provider.search(this.#searchTerm, query)
-        const { files } = this.plugin.getPluginState()
+        const { files, searchTerm } = this.plugin.getPluginState()
+        const response = await this.provider.search(searchTerm, query)
 
         this.#updateFilesAndInputMode(response, files)
       } catch (error) {
@@ -114,7 +125,7 @@ module.exports = class SearchProviderView extends View {
   }
 
   render (state, viewOptions = {}) {
-    const { didFirstRender, isInputMode } = this.plugin.getPluginState()
+    const { didFirstRender, isInputMode, searchTerm } = this.plugin.getPluginState()
 
     if (!didFirstRender) {
       this.preFirstRender()
@@ -135,9 +146,9 @@ module.exports = class SearchProviderView extends View {
       done: this.donePicking,
       cancel: this.cancelPicking,
       headerComponent: Header({
-        triggerSearchInput: this.triggerSearchInput,
+        search: this.search,
         i18n: this.plugin.uppy.i18n,
-        searchTerm: this.#searchTerm,
+        searchTerm,
       }),
       title: this.plugin.title,
       viewType: targetViewOptions.viewType,
