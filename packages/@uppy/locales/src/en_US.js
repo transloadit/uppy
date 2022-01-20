@@ -133,6 +133,7 @@ en_US.strings = {
   rotate: 'Rotate',
   save: 'Save',
   saveChanges: 'Save changes',
+  search: 'Search',
   searchImages: 'Search for images',
   selectX: {
     '0': 'Select %{smart_count}',
