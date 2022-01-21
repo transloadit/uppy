@@ -30,7 +30,6 @@ import dedent from 'dedent'
 
   const testUrl = new URL(`cypress/integration/${name}.spec.ts`, import.meta.url)
   const test = dedent`
-    ${packages.map((pgk) => `import ${camelcase(pgk)} from '@uppy/${pgk}'`).join('\n')}
     describe('${name}', () => {
       beforeEach(() => {
         cy.visit('/${name}')
