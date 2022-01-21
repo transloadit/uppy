@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-. ./env.sh
+if [ -f ./env.sh ]; then
+  . ./env.sh
+else
+  echo 'No local env file found'
+fi
 
 env \
   COMPANION_DATADIR="./output" \

@@ -5,7 +5,6 @@
   "description": "End-to-end test suite for Uppy",
   "scripts": {
     "client:start": "parcel clients/index.html",
-    "server:companion": "bash servers/companion.sh",
     "cypress:open": "cypress open",
     "cypress:headless": "cypress run",
     "generate-test": "yarn node generate-test.mjs"

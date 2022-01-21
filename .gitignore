@@ -13,6 +13,7 @@ node_modules
 .yarn/install-state.gz
 yarn-error.log
 
+**/.env*
 **/env.sh
 *.local
 
