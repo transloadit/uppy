@@ -247,7 +247,6 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 ## Contributors
 
 <!--contributors-->
-
 [<img alt="arturi" src="https://avatars.githubusercontent.com/u/1199054?v=4&s=117" width="117">](https://github.com/arturi) |[<img alt="goto-bus-stop" src="https://avatars.githubusercontent.com/u/1006268?v=4&s=117" width="117">](https://github.com/goto-bus-stop) |[<img alt="kvz" src="https://avatars.githubusercontent.com/u/26752?v=4&s=117" width="117">](https://github.com/kvz) |[<img alt="ifedapoolarewaju" src="https://avatars.githubusercontent.com/u/8383781?v=4&s=117" width="117">](https://github.com/ifedapoolarewaju) |[<img alt="hedgerh" src="https://avatars.githubusercontent.com/u/2524280?v=4&s=117" width="117">](https://github.com/hedgerh) |[<img alt="aduh95" src="https://avatars.githubusercontent.com/u/14309773?v=4&s=117" width="117">](https://github.com/aduh95) |
 :---: |:---: |:---: |:---: |:---: |:---: |
 [arturi](https://github.com/arturi) |[goto-bus-stop](https://github.com/goto-bus-stop) |[kvz](https://github.com/kvz) |[ifedapoolarewaju](https://github.com/ifedapoolarewaju) |[hedgerh](https://github.com/hedgerh) |[aduh95](https://github.com/aduh95) |
@@ -258,7 +257,7 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 
 [<img alt="sadovnychyi" src="https://avatars.githubusercontent.com/u/193864?v=4&s=117" width="117">](https://github.com/sadovnychyi) |[<img alt="samuelayo" src="https://avatars.githubusercontent.com/u/14964486?v=4&s=117" width="117">](https://github.com/samuelayo) |[<img alt="richardwillars" src="https://avatars.githubusercontent.com/u/291004?v=4&s=117" width="117">](https://github.com/richardwillars) |[<img alt="ajkachnic" src="https://avatars.githubusercontent.com/u/44317699?v=4&s=117" width="117">](https://github.com/ajkachnic) |[<img alt="dependabot[bot]" src="https://avatars.githubusercontent.com/in/29110?v=4&s=117" width="117">](https://github.com/apps/dependabot) |[<img alt="zcallan" src="https://avatars.githubusercontent.com/u/13760738?v=4&s=117" width="117">](https://github.com/zcallan) |
 :---: |:---: |:---: |:---: |:---: |:---: |
-[sadovnychyi](https://github.com/sadovnychyi) |[samuelayo](https://github.com/samuelayo) |[richardwillars](https://github.com/richardwillars) |[ajkachnic](https://github.com/ajkachnic) |[dependabot\[bot\]](https://github.com/apps/dependabot) |[zcallan](https://github.com/zcallan) |
+[sadovnychyi](https://github.com/sadovnychyi) |[samuelayo](https://github.com/samuelayo) |[richardwillars](https://github.com/richardwillars) |[ajkachnic](https://github.com/ajkachnic) |[dependabot[bot]](https://github.com/apps/dependabot) |[zcallan](https://github.com/zcallan) |
 
 [<img alt="tim-kos" src="https://avatars.githubusercontent.com/u/15005?v=4&s=117" width="117">](https://github.com/tim-kos) |[<img alt="janko" src="https://avatars.githubusercontent.com/u/795488?v=4&s=117" width="117">](https://github.com/janko) |[<img alt="wilkoklak" src="https://avatars.githubusercontent.com/u/17553085?v=4&s=117" width="117">](https://github.com/wilkoklak) |[<img alt="oliverpool" src="https://avatars.githubusercontent.com/u/3864879?v=4&s=117" width="117">](https://github.com/oliverpool) |[<img alt="Botz" src="https://avatars.githubusercontent.com/u/2706678?v=4&s=117" width="117">](https://github.com/Botz) |[<img alt="mcallistertyler" src="https://avatars.githubusercontent.com/u/14939210?v=4&s=117" width="117">](https://github.com/mcallistertyler) |
 :---: |:---: |:---: |:---: |:---: |:---: |
@@ -266,7 +265,7 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 
 [<img alt="mokutsu-coursera" src="https://avatars.githubusercontent.com/u/65177495?v=4&s=117" width="117">](https://github.com/mokutsu-coursera) |[<img alt="YukeshShr" src="https://avatars.githubusercontent.com/u/71844521?v=4&s=117" width="117">](https://github.com/YukeshShr) |[<img alt="DJWassink" src="https://avatars.githubusercontent.com/u/1822404?v=4&s=117" width="117">](https://github.com/DJWassink) |[<img alt="taoqf" src="https://avatars.githubusercontent.com/u/15901911?v=4&s=117" width="117">](https://github.com/taoqf) |[<img alt="github-actions[bot]" src="https://avatars.githubusercontent.com/in/15368?v=4&s=117" width="117">](https://github.com/apps/github-actions) |[<img alt="tuoxiansp" src="https://avatars.githubusercontent.com/u/3960056?v=4&s=117" width="117">](https://github.com/tuoxiansp) |
 :---: |:---: |:---: |:---: |:---: |:---: |
-[mokutsu-coursera](https://github.com/mokutsu-coursera) |[YukeshShr](https://github.com/YukeshShr) |[DJWassink](https://github.com/DJWassink) |[taoqf](https://github.com/taoqf) |[github-actions\[bot\]](https://github.com/apps/github-actions) |[tuoxiansp](https://github.com/tuoxiansp) |
+[mokutsu-coursera](https://github.com/mokutsu-coursera) |[YukeshShr](https://github.com/YukeshShr) |[DJWassink](https://github.com/DJWassink) |[taoqf](https://github.com/taoqf) |[github-actions[bot]](https://github.com/apps/github-actions) |[tuoxiansp](https://github.com/tuoxiansp) |
 
 [<img alt="dominiceden" src="https://avatars.githubusercontent.com/u/6367692?v=4&s=117" width="117">](https://github.com/dominiceden) |[<img alt="elenalape" src="https://avatars.githubusercontent.com/u/22844059?v=4&s=117" width="117">](https://github.com/elenalape) |[<img alt="mejiaej" src="https://avatars.githubusercontent.com/u/4699893?v=4&s=117" width="117">](https://github.com/mejiaej) |[<img alt="gavboulton" src="https://avatars.githubusercontent.com/u/3900826?v=4&s=117" width="117">](https://github.com/gavboulton) |[<img alt="Hawxy" src="https://avatars.githubusercontent.com/u/975824?v=4&s=117" width="117">](https://github.com/Hawxy) |[<img alt="bertho-zero" src="https://avatars.githubusercontent.com/u/8525267?v=4&s=117" width="117">](https://github.com/bertho-zero) |
 :---: |:---: |:---: |:---: |:---: |:---: |
@@ -451,6 +450,7 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 [<img alt="olitomas" src="https://avatars.githubusercontent.com/u/6918659?v=4&s=117" width="117">](https://github.com/olitomas) |[<img alt="JimmyLv" src="https://avatars.githubusercontent.com/u/4997466?v=4&s=117" width="117">](https://github.com/JimmyLv) |
 :---: |:---: |
 [olitomas](https://github.com/olitomas) |[JimmyLv](https://github.com/JimmyLv) |
+
 
 <!--/contributors-->
 
