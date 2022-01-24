@@ -8458,7 +8458,7 @@ __metadata:
   resolution: "@uppy/thumbnail-generator@workspace:packages/@uppy/thumbnail-generator"
   dependencies:
     "@uppy/utils": "workspace:^"
-    exifr: ^6.0.0
+    exifr: ^7.0.0
     namespace-emitter: 2.0.1
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -18518,10 +18518,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"exifr@npm:^6.0.0":
-  version: 6.3.0
-  resolution: "exifr@npm:6.3.0"
-  checksum: 0fae51ab73ae52f3c59401be86a1983833c0ec4c6d5c5ce79f21b6242da26ed091124be1b866c8954377040ff77621fbc34283061c81632ae75880472173a0e4
+"exifr@npm:7.1.3":
+  version: 7.1.3
+  resolution: "exifr@npm:7.1.3"
+  checksum: c75a21e700378a29d226dd2c102d43679a68539ff1774b05ca19acce366ad47d056985e4f497afe7da6d0d8966d7dc73efb51acc11ff84fa57c9467e630c67ff
+  languageName: node
+  linkType: hard
+
+"exifr@patch:exifr@npm:7.1.3#.yarn/patches/exifr-npm-7.1.3-e3f1c7a57d::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
+  version: 7.1.3
+  resolution: "exifr@patch:exifr@npm%3A7.1.3#.yarn/patches/exifr-npm-7.1.3-e3f1c7a57d::version=7.1.3&hash=a0fd48&locator=%40uppy-dev%2Fbuild%40workspace%3A."
+  checksum: ac8f7ee214a7101f87dbabd5ab9cba7c0711f8046a1d4d023eae4755c2ad33f0fe2976ce0f0fd4dd3b97414d2f2caf54e8a753f0e59af42d3c00f4dffbdc389e
   languageName: node
   linkType: hard
 

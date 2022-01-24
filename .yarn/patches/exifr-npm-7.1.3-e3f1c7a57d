@@ -1,0 +1,1353 @@
+diff --git a/dist/mini.umd.js b/dist/mini.umd.js
+index 0c6655f1c7c8c133a74963019637a3b2c2db57df..e55d6c5522617e33494c6585e17a992493210dab 100644
+--- a/dist/mini.umd.js
++++ b/dist/mini.umd.js
+@@ -1 +1,1328 @@
+-!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define("exifr",["exports"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).exifr={})}(this,(function(e){"use strict";function t(e,t,s){return t in e?Object.defineProperty(e,t,{value:s,enumerable:!0,configurable:!0,writable:!0}):e[t]=s,e}var s="undefined"!=typeof self?self:global;const i="undefined"!=typeof navigator,n=i&&"undefined"==typeof HTMLImageElement,r=!("undefined"==typeof global||"undefined"==typeof process||!process.versions||!process.versions.node),a=s.Buffer,h=!!a,f=e=>void 0!==e;function l(e){return void 0===e||(e instanceof Map?0===e.size:0===Object.values(e).filter(f).length)}function o(e){let t=new Error(e);throw delete t.stack,t}function u(e){let t=function(e){let t=0;return e.ifd0.enabled&&(t+=1024),e.exif.enabled&&(t+=2048),e.makerNote&&(t+=2048),e.userComment&&(t+=1024),e.gps.enabled&&(t+=512),e.interop.enabled&&(t+=100),e.ifd1.enabled&&(t+=1024),t+2048}(e);return e.jfif.enabled&&(t+=50),e.xmp.enabled&&(t+=2e4),e.iptc.enabled&&(t+=14e3),e.icc.enabled&&(t+=6e3),t}const d=e=>String.fromCharCode.apply(null,e),c="undefined"!=typeof TextDecoder?new TextDecoder("utf-8"):void 0;class p{static from(e,t){return e instanceof this&&e.le===t?e:new p(e,void 0,void 0,t)}constructor(e,t=0,s,i){if("boolean"==typeof i&&(this.le=i),Array.isArray(e)&&(e=new Uint8Array(e)),0===e)this.byteOffset=0,this.byteLength=0;else if(e instanceof ArrayBuffer){void 0===s&&(s=e.byteLength-t);let i=new DataView(e,t,s);this._swapDataView(i)}else if(e instanceof Uint8Array||e instanceof DataView||e instanceof p){void 0===s&&(s=e.byteLength-t),(t+=e.byteOffset)+s>e.byteOffset+e.byteLength&&o("Creating view outside of available memory in ArrayBuffer");let i=new DataView(e.buffer,t,s);this._swapDataView(i)}else if("number"==typeof e){let t=new DataView(new ArrayBuffer(e));this._swapDataView(t)}else o("Invalid input argument for BufferView: "+e)}_swapArrayBuffer(e){this._swapDataView(new DataView(e))}_swapBuffer(e){this._swapDataView(new DataView(e.buffer,e.byteOffset,e.byteLength))}_swapDataView(e){this.dataView=e,this.buffer=e.buffer,this.byteOffset=e.byteOffset,this.byteLength=e.byteLength}_lengthToEnd(e){return this.byteLength-e}set(e,t,s=p){return e instanceof DataView||e instanceof p?e=new Uint8Array(e.buffer,e.byteOffset,e.byteLength):e instanceof ArrayBuffer&&(e=new Uint8Array(e)),e instanceof Uint8Array||o("BufferView.set(): Invalid data argument."),this.toUint8().set(e,t),new s(this,t,e.byteLength)}subarray(e,t){return t=t||this._lengthToEnd(e),new p(this,e,t)}toUint8(){return new Uint8Array(this.buffer,this.byteOffset,this.byteLength)}getUint8Array(e,t){return new Uint8Array(this.buffer,this.byteOffset+e,t)}getString(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return i=s,c?c.decode(i):h?Buffer.from(i).toString("utf8"):decodeURIComponent(escape(d(i)));var i}getLatin1String(e=0,t=this.byteLength){let s=this.getUint8Array(e,t);return d(s)}getUnicodeString(e=0,t=this.byteLength){const s=[];for(let i=0;i<t&&e+i<this.byteLength;i+=2)s.push(this.getUint16(e+i));return d(s)}getInt8(e){return this.dataView.getInt8(e)}getUint8(e){return this.dataView.getUint8(e)}getInt16(e,t=this.le){return this.dataView.getInt16(e,t)}getInt32(e,t=this.le){return this.dataView.getInt32(e,t)}getUint16(e,t=this.le){return this.dataView.getUint16(e,t)}getUint32(e,t=this.le){return this.dataView.getUint32(e,t)}getFloat32(e,t=this.le){return this.dataView.getFloat32(e,t)}getFloat64(e,t=this.le){return this.dataView.getFloat64(e,t)}getFloat(e,t=this.le){return this.dataView.getFloat32(e,t)}getDouble(e,t=this.le){return this.dataView.getFloat64(e,t)}getUintBytes(e,t,s){switch(t){case 1:return this.getUint8(e,s);case 2:return this.getUint16(e,s);case 4:return this.getUint32(e,s);case 8:return this.getUint64&&this.getUint64(e,s)}}getUint(e,t,s){switch(t){case 8:return this.getUint8(e,s);case 16:return this.getUint16(e,s);case 32:return this.getUint32(e,s);case 64:return this.getUint64&&this.getUint64(e,s)}}toString(e){return this.dataView.toString(e,this.constructor.name)}ensureChunk(){}}function g(e,t){o(`${e} '${t}' was not loaded, try using full build of exifr.`)}class m extends Map{constructor(e){super(),this.kind=e}get(e,t){return this.has(e)||g(this.kind,e),t&&(e in t||function(e,t){o(`Unknown ${e} '${t}'.`)}(this.kind,e),t[e].enabled||g(this.kind,e)),super.get(e)}keyList(){return Array.from(this.keys())}}var y=new m("file parser"),b=new m("segment parser"),w=new m("file reader");let k=s.fetch;const O="Invalid input argument";function v(e,t){return(s=e).startsWith("data:")||s.length>1e4?A(e,t,"base64"):r&&e.includes("://")?S(e,t,"url",U):r?A(e,t,"fs"):i?S(e,t,"url",U):void o(O);var s}async function S(e,t,s,i){return w.has(s)?A(e,t,s):i?async function(e,t){let s=await t(e);return new p(s)}(e,i):void o(`Parser ${s} is not loaded`)}async function A(e,t,s){let i=new(w.get(s))(e,t);return await i.read(),i}const U=e=>k(e).then((e=>e.arrayBuffer())),x=e=>new Promise(((t,s)=>{let i=new FileReader;i.onloadend=()=>t(i.result||new ArrayBuffer),i.onerror=s,i.readAsArrayBuffer(e)}));class C extends Map{get tagKeys(){return this.allKeys||(this.allKeys=Array.from(this.keys())),this.allKeys}get tagValues(){return this.allValues||(this.allValues=Array.from(this.values())),this.allValues}}function B(e,t,s){let i=new C;for(let[e,t]of s)i.set(e,t);if(Array.isArray(t))for(let s of t)e.set(s,i);else e.set(t,i);return i}function V(e,t,s){let i,n=e.get(t);for(i of s)n.set(i[0],i[1])}const I=new Map,L=new Map,T=new Map,P=37500,z=37510,F=33723,j=34675,E=34665,_=34853,D=40965,M=["chunked","firstChunkSize","firstChunkSizeNode","firstChunkSizeBrowser","chunkSize","chunkLimit"],N=["jfif","xmp","icc","iptc","ihdr"],R=["tiff",...N],$=["ifd0","ifd1","exif","gps","interop"],K=[...R,...$],W=["makerNote","userComment"],X=["translateKeys","translateValues","reviveValues","multiSegment"],H=[...X,"sanitize","mergeOutput","silentErrors"];class Y{get translate(){return this.translateKeys||this.translateValues||this.reviveValues}}class G extends Y{get needed(){return this.enabled||this.deps.size>0}constructor(e,s,i,n){if(super(),t(this,"enabled",!1),t(this,"skip",new Set),t(this,"pick",new Set),t(this,"deps",new Set),t(this,"translateKeys",!1),t(this,"translateValues",!1),t(this,"reviveValues",!1),this.key=e,this.enabled=s,this.parse=this.enabled,this.applyInheritables(n),this.canBeFiltered=$.includes(e),this.canBeFiltered&&(this.dict=I.get(e)),void 0!==i)if(Array.isArray(i))this.parse=this.enabled=!0,this.canBeFiltered&&i.length>0&&this.translateTagSet(i,this.pick);else if("object"==typeof i){if(this.enabled=!0,this.parse=!1!==i.parse,this.canBeFiltered){let{pick:e,skip:t}=i;e&&e.length>0&&this.translateTagSet(e,this.pick),t&&t.length>0&&this.translateTagSet(t,this.skip)}this.applyInheritables(i)}else!0===i||!1===i?this.parse=this.enabled=i:o(`Invalid options argument: ${i}`)}applyInheritables(e){let t,s;for(t of X)s=e[t],void 0!==s&&(this[t]=s)}translateTagSet(e,t){if(this.dict){let s,i,{tagKeys:n,tagValues:r}=this.dict;for(s of e)"string"==typeof s?(i=r.indexOf(s),-1===i&&(i=n.indexOf(Number(s))),-1!==i&&t.add(Number(n[i]))):t.add(s)}else for(let s of e)t.add(s)}finalizeFilters(){!this.enabled&&this.deps.size>0?(this.enabled=!0,te(this.pick,this.deps)):this.enabled&&this.pick.size>0&&te(this.pick,this.deps)}}var J={jfif:!1,tiff:!0,xmp:!1,icc:!1,iptc:!1,ifd0:!0,ifd1:!1,exif:!0,gps:!0,interop:!1,ihdr:void 0,makerNote:!1,userComment:!1,multiSegment:!1,skip:[],pick:[],translateKeys:!0,translateValues:!0,reviveValues:!0,sanitize:!0,mergeOutput:!0,silentErrors:!0,chunked:!0,firstChunkSize:void 0,firstChunkSizeNode:512,firstChunkSizeBrowser:65536,chunkSize:65536,chunkLimit:5},q=new Map;class Q extends Y{static useCached(e){let t=q.get(e);return void 0!==t||(t=new this(e),q.set(e,t)),t}constructor(e){super(),!0===e?this.setupFromTrue():void 0===e?this.setupFromUndefined():Array.isArray(e)?this.setupFromArray(e):"object"==typeof e?this.setupFromObject(e):o(`Invalid options argument ${e}`),void 0===this.firstChunkSize&&(this.firstChunkSize=i?this.firstChunkSizeBrowser:this.firstChunkSizeNode),this.mergeOutput&&(this.ifd1.enabled=!1),this.filterNestedSegmentTags(),this.traverseTiffDependencyTree(),this.checkLoadedPlugins()}setupFromUndefined(){let e;for(e of M)this[e]=J[e];for(e of H)this[e]=J[e];for(e of W)this[e]=J[e];for(e of K)this[e]=new G(e,J[e],void 0,this)}setupFromTrue(){let e;for(e of M)this[e]=J[e];for(e of H)this[e]=J[e];for(e of W)this[e]=!0;for(e of K)this[e]=new G(e,!0,void 0,this)}setupFromArray(e){let t;for(t of M)this[t]=J[t];for(t of H)this[t]=J[t];for(t of W)this[t]=J[t];for(t of K)this[t]=new G(t,!1,void 0,this);this.setupGlobalFilters(e,void 0,$)}setupFromObject(e){let t;for(t of($.ifd0=$.ifd0||$.image,$.ifd1=$.ifd1||$.thumbnail,Object.assign(this,e),M))this[t]=ee(e[t],J[t]);for(t of H)this[t]=ee(e[t],J[t]);for(t of W)this[t]=ee(e[t],J[t]);for(t of R)this[t]=new G(t,J[t],e[t],this);for(t of $)this[t]=new G(t,J[t],e[t],this.tiff);this.setupGlobalFilters(e.pick,e.skip,$,K),!0===e.tiff?this.batchEnableWithBool($,!0):!1===e.tiff?this.batchEnableWithUserValue($,e):Array.isArray(e.tiff)?this.setupGlobalFilters(e.tiff,void 0,$):"object"==typeof e.tiff&&this.setupGlobalFilters(e.tiff.pick,e.tiff.skip,$)}batchEnableWithBool(e,t){for(let s of e)this[s].enabled=t}batchEnableWithUserValue(e,t){for(let s of e){let e=t[s];this[s].enabled=!1!==e&&void 0!==e}}setupGlobalFilters(e,t,s,i=s){if(e&&e.length){for(let e of i)this[e].enabled=!1;let t=Z(e,s);for(let[e,s]of t)te(this[e].pick,s),this[e].enabled=!0}else if(t&&t.length){let e=Z(t,s);for(let[t,s]of e)te(this[t].skip,s)}}filterNestedSegmentTags(){let{ifd0:e,exif:t,xmp:s,iptc:i,icc:n}=this;this.makerNote?t.deps.add(P):t.skip.add(P),this.userComment?t.deps.add(z):t.skip.add(z),s.enabled||e.skip.add(700),i.enabled||e.skip.add(F),n.enabled||e.skip.add(j)}traverseTiffDependencyTree(){let{ifd0:e,exif:t,gps:s,interop:i}=this;i.needed&&(t.deps.add(D),e.deps.add(D)),t.needed&&e.deps.add(E),s.needed&&e.deps.add(_),this.tiff.enabled=$.some((e=>!0===this[e].enabled))||this.makerNote||this.userComment;for(let e of $)this[e].finalizeFilters()}get onlyTiff(){return!N.map((e=>this[e].enabled)).some((e=>!0===e))&&this.tiff.enabled}checkLoadedPlugins(){for(let e of R)this[e].enabled&&!b.has(e)&&g("segment parser",e)}}function Z(e,t){let s,i,n,r,a=[];for(n of t){for(r of(s=I.get(n),i=[],s))(e.includes(r[0])||e.includes(r[1]))&&i.push(r[0]);i.length&&a.push([n,i])}return a}function ee(e,t){return void 0!==e?e:void 0!==t?t:void 0}function te(e,t){for(let s of t)e.add(s)}t(Q,"default",J);class se{constructor(e){t(this,"parsers",{}),t(this,"output",{}),t(this,"errors",[]),t(this,"pushToErrors",(e=>this.errors.push(e))),this.options=Q.useCached(e)}async read(e){this.file=await function(e,t){return"string"==typeof e?v(e,t):i&&!n&&e instanceof HTMLImageElement?v(e.src,t):e instanceof Uint8Array||e instanceof ArrayBuffer||e instanceof DataView?new p(e):i&&e instanceof Blob?S(e,t,"blob",x):void o(O)}(e,this.options)}setup(){if(this.fileParser)return;let{file:e}=this,t=e.getUint16(0);for(let[s,i]of y)if(i.canHandle(e,t))return this.fileParser=new i(this.options,this.file,this.parsers),e[s]=!0;this.file.close&&this.file.close(),o("Unknown file format")}async parse(){let{output:e,errors:t}=this;return this.setup(),this.options.silentErrors?(await this.executeParsers().catch(this.pushToErrors),t.push(...this.fileParser.errors)):await this.executeParsers(),this.file.close&&this.file.close(),this.options.silentErrors&&t.length>0&&(e.errors=t),l(s=e)?void 0:s;var s}async executeParsers(){let{output:e}=this;await this.fileParser.parse();let t=Object.values(this.parsers).map((async t=>{let s=await t.parse();t.assignToOutput(e,s)}));this.options.silentErrors&&(t=t.map((e=>e.catch(this.pushToErrors)))),await Promise.all(t)}async extractThumbnail(){this.setup();let{options:e,file:t}=this,s=b.get("tiff",e);var i;if(t.tiff?i={start:0,type:"tiff"}:t.jpeg&&(i=await this.fileParser.getOrFindSegment("tiff")),void 0===i)return;let n=await this.fileParser.ensureSegmentChunk(i),r=this.parsers.tiff=new s(n,e,t),a=await r.extractThumbnail();return t.close&&t.close(),a}}async function ie(e,t){let s=new se(t);return await s.read(e),s.parse()}var ne=Object.freeze({__proto__:null,parse:ie,Exifr:se,fileParsers:y,segmentParsers:b,fileReaders:w,tagKeys:I,tagValues:L,tagRevivers:T,createDictionary:B,extendDictionary:V,fetchUrlAsArrayBuffer:U,readBlobAsArrayBuffer:x,chunkedProps:M,otherSegments:N,segments:R,tiffBlocks:$,segmentsAndBlocks:K,tiffExtractables:W,inheritables:X,allFormatters:H,Options:Q});class re{static findPosition(e,t){let s=e.getUint16(t+2)+2,i="function"==typeof this.headerLength?this.headerLength(e,t,s):this.headerLength,n=t+i,r=s-i;return{offset:t,length:s,headerLength:i,start:n,size:r,end:n+r}}static parse(e,t={}){return new this(e,new Q({[this.type]:t}),e).parse()}normalizeInput(e){return e instanceof p?e:new p(e)}constructor(e,s={},i){t(this,"errors",[]),t(this,"raw",new Map),t(this,"handleError",(e=>{if(!this.options.silentErrors)throw e;this.errors.push(e.message)})),this.chunk=this.normalizeInput(e),this.file=i,this.type=this.constructor.type,this.globalOptions=this.options=s,this.localOptions=s[this.type],this.canTranslate=this.localOptions&&this.localOptions.translate}translate(){this.canTranslate&&(this.translated=this.translateBlock(this.raw,this.type))}get output(){return this.translated?this.translated:this.raw?Object.fromEntries(this.raw):void 0}translateBlock(e,t){let s=T.get(t),i=L.get(t),n=I.get(t),r=this.options[t],a=r.reviveValues&&!!s,h=r.translateValues&&!!i,f=r.translateKeys&&!!n,l={};for(let[t,r]of e)a&&s.has(t)?r=s.get(t)(r):h&&i.has(t)&&(r=this.translateValue(r,i.get(t))),f&&n.has(t)&&(t=n.get(t)||t),l[t]=r;return l}translateValue(e,t){return t[e]||t.DEFAULT||e}assignToOutput(e,t){this.assignObjectToOutput(e,this.constructor.type,t)}assignObjectToOutput(e,t,s){if(this.globalOptions.mergeOutput)return Object.assign(e,s);e[t]?Object.assign(e[t],s):e[t]=s}}t(re,"headerLength",4),t(re,"type",void 0),t(re,"multiSegment",!1),t(re,"canHandle",(()=>!1));function ae(e){return 192===e||194===e||196===e||219===e||221===e||218===e||254===e}function he(e){return e>=224&&e<=239}function fe(e,t,s){for(let[i,n]of b)if(n.canHandle(e,t,s))return i}class le extends class{constructor(e,s,i){t(this,"errors",[]),t(this,"ensureSegmentChunk",(async e=>{let t=e.start,s=e.size||65536;if(this.file.chunked)if(this.file.available(t,s))e.chunk=this.file.subarray(t,s);else try{e.chunk=await this.file.readChunk(t,s)}catch(t){o(`Couldn't read segment: ${JSON.stringify(e)}. ${t.message}`)}else this.file.byteLength>t+s?e.chunk=this.file.subarray(t,s):void 0===e.size?e.chunk=this.file.subarray(t):o("Segment unreachable: "+JSON.stringify(e));return e.chunk})),this.extendOptions&&this.extendOptions(e),this.options=e,this.file=s,this.parsers=i}injectSegment(e,t){this.options[e].enabled&&this.createParser(e,t)}createParser(e,t){let s=new(b.get(e))(t,this.options,this.file);return this.parsers[e]=s}createParsers(e){for(let t of e){let{type:e,chunk:s}=t,i=this.options[e];if(i&&i.enabled){let t=this.parsers[e];t&&t.append||t||this.createParser(e,s)}}}async readSegments(e){let t=e.map(this.ensureSegmentChunk);await Promise.all(t)}}{constructor(...e){super(...e),t(this,"appSegments",[]),t(this,"jpegSegments",[]),t(this,"unknownSegments",[])}static canHandle(e,t){return 65496===t}async parse(){await this.findAppSegments(),await this.readSegments(this.appSegments),this.mergeMultiSegments(),this.createParsers(this.mergedAppSegments||this.appSegments)}setupSegmentFinderArgs(e){!0===e?(this.findAll=!0,this.wanted=new Set(b.keyList())):(e=void 0===e?b.keyList().filter((e=>this.options[e].enabled)):e.filter((e=>this.options[e].enabled&&b.has(e))),this.findAll=!1,this.remaining=new Set(e),this.wanted=new Set(e)),this.unfinishedMultiSegment=!1}async findAppSegments(e=0,t){this.setupSegmentFinderArgs(t);let{file:s,findAll:i,wanted:n,remaining:r}=this;if(!i&&this.file.chunked&&(i=Array.from(n).some((e=>{let t=b.get(e),s=this.options[e];return t.multiSegment&&s.multiSegment})),i&&await this.file.readWhole()),e=this.findAppSegmentsInRange(e,s.byteLength),!this.options.onlyTiff&&s.chunked){let t=!1;for(;r.size>0&&!t&&(s.canReadNextChunk||this.unfinishedMultiSegment);){let{nextChunkOffset:i}=s,n=this.appSegments.some((e=>!this.file.available(e.offset||e.start,e.length||e.size)));if(t=e>i&&!n?!await s.readNextChunk(e):!await s.readNextChunk(i),void 0===(e=this.findAppSegmentsInRange(e,s.byteLength)))return}}}findAppSegmentsInRange(e,t){t-=2;let s,i,n,r,a,h,{file:f,findAll:l,wanted:o,remaining:u,options:d}=this;for(;e<t;e++)if(255===f.getUint8(e))if(s=f.getUint8(e+1),he(s)){if(i=f.getUint16(e+2),n=fe(f,e,i),n&&o.has(n)&&(r=b.get(n),a=r.findPosition(f,e),h=d[n],a.type=n,this.appSegments.push(a),!l&&(r.multiSegment&&h.multiSegment?(this.unfinishedMultiSegment=a.chunkNumber<a.chunkCount,this.unfinishedMultiSegment||u.delete(n)):u.delete(n),0===u.size)))break;d.recordUnknownSegments&&(a=re.findPosition(f,e),a.marker=s,this.unknownSegments.push(a)),e+=i+1}else if(ae(s)){if(i=f.getUint16(e+2),218===s&&!1!==d.stopAfterSos)return;d.recordJpegSegments&&this.jpegSegments.push({offset:e,length:i,marker:s}),e+=i+1}return e}mergeMultiSegments(){if(!this.appSegments.some((e=>e.multiSegment)))return;let e=function(e,t){let s,i,n,r=new Map;for(let a=0;a<e.length;a++)s=e[a],i=s[t],r.has(i)?n=r.get(i):r.set(i,n=[]),n.push(s);return Array.from(r)}(this.appSegments,"type");this.mergedAppSegments=e.map((([e,t])=>{let s=b.get(e,this.options);if(s.handleMultiSegments){return{type:e,chunk:s.handleMultiSegments(t)}}return t[0]}))}getSegment(e){return this.appSegments.find((t=>t.type===e))}async getOrFindSegment(e){let t=this.getSegment(e);return void 0===t&&(await this.findAppSegments(0,[e]),t=this.getSegment(e)),t}}t(le,"type","jpeg"),y.set("jpeg",le);const oe=[void 0,1,1,2,4,8,1,1,2,4,8,4,8,4];class ue extends re{parseHeader(){var e=this.chunk.getUint16();18761===e?this.le=!0:19789===e&&(this.le=!1),this.chunk.le=this.le,this.headerParsed=!0}parseTags(e,t,s=new Map){let{pick:i,skip:n}=this.options[t];i=new Set(i);let r=i.size>0,a=0===n.size,h=this.chunk.getUint16(e);e+=2;for(let f=0;f<h;f++){let h=this.chunk.getUint16(e);if(r){if(i.has(h)&&(s.set(h,this.parseTag(e,h,t)),i.delete(h),0===i.size))break}else!a&&n.has(h)||s.set(h,this.parseTag(e,h,t));e+=12}return s}parseTag(e,t,s){let{chunk:i}=this,n=i.getUint16(e+2),r=i.getUint32(e+4),a=oe[n];if(a*r<=4?e+=8:e=i.getUint32(e+8),(n<1||n>13)&&o(`Invalid TIFF value type. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e}`),e>i.byteLength&&o(`Invalid TIFF value offset. block: ${s.toUpperCase()}, tag: ${t.toString(16)}, type: ${n}, offset ${e} is outside of chunk size ${i.byteLength}`),1===n)return i.getUint8Array(e,r);if(2===n)return""===(h=function(e){for(;e.endsWith("\0");)e=e.slice(0,-1);return e}(h=i.getString(e,r)).trim())?void 0:h;var h;if(7===n)return i.getUint8Array(e,r);if(1===r)return this.parseTagValue(n,e);{let t=new(function(e){switch(e){case 1:return Uint8Array;case 3:return Uint16Array;case 4:return Uint32Array;case 5:return Array;case 6:return Int8Array;case 8:return Int16Array;case 9:return Int32Array;case 10:return Array;case 11:return Float32Array;case 12:return Float64Array;default:return Array}}(n))(r),s=a;for(let i=0;i<r;i++)t[i]=this.parseTagValue(n,e),e+=s;return t}}parseTagValue(e,t){let{chunk:s}=this;switch(e){case 1:return s.getUint8(t);case 3:return s.getUint16(t);case 4:return s.getUint32(t);case 5:return s.getUint32(t)/s.getUint32(t+4);case 6:return s.getInt8(t);case 8:return s.getInt16(t);case 9:return s.getInt32(t);case 10:return s.getInt32(t)/s.getInt32(t+4);case 11:return s.getFloat(t);case 12:return s.getDouble(t);case 13:return s.getUint32(t);default:o(`Invalid tiff type ${e}`)}}}class de extends ue{static canHandle(e,t){return 225===e.getUint8(t+1)&&1165519206===e.getUint32(t+4)&&0===e.getUint16(t+8)}async parse(){this.parseHeader();let{options:e}=this;return e.ifd0.enabled&&await this.parseIfd0Block(),e.exif.enabled&&await this.safeParse("parseExifBlock"),e.gps.enabled&&await this.safeParse("parseGpsBlock"),e.interop.enabled&&await this.safeParse("parseInteropBlock"),e.ifd1.enabled&&await this.safeParse("parseThumbnailBlock"),this.createOutput()}safeParse(e){let t=this[e]();return void 0!==t.catch&&(t=t.catch(this.handleError)),t}findIfd0Offset(){void 0===this.ifd0Offset&&(this.ifd0Offset=this.chunk.getUint32(4))}findIfd1Offset(){if(void 0===this.ifd1Offset){this.findIfd0Offset();let e=this.chunk.getUint16(this.ifd0Offset),t=this.ifd0Offset+2+12*e;this.ifd1Offset=this.chunk.getUint32(t)}}parseBlock(e,t){let s=new Map;return this[t]=s,this.parseTags(e,t,s),s}async parseIfd0Block(){if(this.ifd0)return;let{file:e}=this;this.findIfd0Offset(),this.ifd0Offset<8&&o("Malformed EXIF data"),!e.chunked&&this.ifd0Offset>e.byteLength&&o(`IFD0 offset points to outside of file.\nthis.ifd0Offset: ${this.ifd0Offset}, file.byteLength: ${e.byteLength}`),e.tiff&&await e.ensureChunk(this.ifd0Offset,u(this.options));let t=this.parseBlock(this.ifd0Offset,"ifd0");return 0!==t.size?(this.exifOffset=t.get(E),this.interopOffset=t.get(D),this.gpsOffset=t.get(_),this.xmp=t.get(700),this.iptc=t.get(F),this.icc=t.get(j),this.options.sanitize&&(t.delete(E),t.delete(D),t.delete(_),t.delete(700),t.delete(F),t.delete(j)),t):void 0}async parseExifBlock(){if(this.exif)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.exifOffset)return;this.file.tiff&&await this.file.ensureChunk(this.exifOffset,u(this.options));let e=this.parseBlock(this.exifOffset,"exif");return this.interopOffset||(this.interopOffset=e.get(D)),this.makerNote=e.get(P),this.userComment=e.get(z),this.options.sanitize&&(e.delete(D),e.delete(P),e.delete(z)),this.unpack(e,41728),this.unpack(e,41729),e}unpack(e,t){let s=e.get(t);s&&1===s.length&&e.set(t,s[0])}async parseGpsBlock(){if(this.gps)return;if(this.ifd0||await this.parseIfd0Block(),void 0===this.gpsOffset)return;let e=this.parseBlock(this.gpsOffset,"gps");return e&&e.has(2)&&e.has(4)&&(e.set("latitude",ce(...e.get(2),e.get(1))),e.set("longitude",ce(...e.get(4),e.get(3)))),e}async parseInteropBlock(){if(!this.interop&&(this.ifd0||await this.parseIfd0Block(),void 0!==this.interopOffset||this.exif||await this.parseExifBlock(),void 0!==this.interopOffset))return this.parseBlock(this.interopOffset,"interop")}async parseThumbnailBlock(e=!1){if(!this.ifd1&&!this.ifd1Parsed&&(!this.options.mergeOutput||e))return this.findIfd1Offset(),this.ifd1Offset>0&&(this.parseBlock(this.ifd1Offset,"ifd1"),this.ifd1Parsed=!0),this.ifd1}async extractThumbnail(){if(this.headerParsed||this.parseHeader(),this.ifd1Parsed||await this.parseThumbnailBlock(!0),void 0===this.ifd1)return;let e=this.ifd1.get(513),t=this.ifd1.get(514);return this.chunk.getUint8Array(e,t)}get image(){return this.ifd0}get thumbnail(){return this.ifd1}createOutput(){let e,t,s,i={};for(t of $)if(e=this[t],!l(e))if(s=this.canTranslate?this.translateBlock(e,t):Object.fromEntries(e),this.options.mergeOutput){if("ifd1"===t)continue;Object.assign(i,s)}else i[t]=s;return this.makerNote&&(i.makerNote=this.makerNote),this.userComment&&(i.userComment=this.userComment),i}assignToOutput(e,t){if(this.globalOptions.mergeOutput)Object.assign(e,t);else for(let[s,i]of Object.entries(t))this.assignObjectToOutput(e,s,i)}}function ce(e,t,s,i){var n=e+t/60+s/3600;return"S"!==i&&"W"!==i||(n*=-1),n}t(de,"type","tiff"),t(de,"headerLength",10),b.set("tiff",de);var pe=Object.freeze({__proto__:null,default:ne,Exifr:se,fileParsers:y,segmentParsers:b,fileReaders:w,tagKeys:I,tagValues:L,tagRevivers:T,createDictionary:B,extendDictionary:V,fetchUrlAsArrayBuffer:U,readBlobAsArrayBuffer:x,chunkedProps:M,otherSegments:N,segments:R,tiffBlocks:$,segmentsAndBlocks:K,tiffExtractables:W,inheritables:X,allFormatters:H,Options:Q,parse:ie});const ge={ifd0:!1,ifd1:!1,exif:!1,gps:!1,interop:!1,sanitize:!1,reviveValues:!0,translateKeys:!1,translateValues:!1,mergeOutput:!1},me=Object.assign({},ge,{firstChunkSize:4e4,gps:[1,2,3,4]});const ye=Object.assign({},ge,{tiff:!1,ifd1:!0,mergeOutput:!1});const be=Object.assign({},ge,{firstChunkSize:4e4,ifd0:[274]});async function we(e){let t=new se(be);await t.read(e);let s=await t.parse();if(s&&s.ifd0)return s.ifd0[274]}const ke=Object.freeze({1:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:0,rad:0},2:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:0,rad:0},3:{dimensionSwapped:!1,scaleX:1,scaleY:1,deg:180,rad:180*Math.PI/180},4:{dimensionSwapped:!1,scaleX:-1,scaleY:1,deg:180,rad:180*Math.PI/180},5:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:90,rad:90*Math.PI/180},6:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:90,rad:90*Math.PI/180},7:{dimensionSwapped:!0,scaleX:1,scaleY:-1,deg:270,rad:270*Math.PI/180},8:{dimensionSwapped:!0,scaleX:1,scaleY:1,deg:270,rad:270*Math.PI/180}});if(e.rotateCanvas=!0,e.rotateCss=!0,"object"==typeof navigator){let t=navigator.userAgent;if(t.includes("iPad")||t.includes("iPhone")){let s=t.match(/OS (\d+)_(\d+)/);if(s){let[,t,i]=s,n=Number(t)+.1*Number(i);e.rotateCanvas=n<13.4,e.rotateCss=!1}}else if(t.includes("OS X 10")){let[,s]=t.match(/OS X 10[_.](\d+)/);e.rotateCanvas=e.rotateCss=Number(s)<15}if(t.includes("Chrome/")){let[,s]=t.match(/Chrome\/(\d+)/);e.rotateCanvas=e.rotateCss=Number(s)<81}else if(t.includes("Firefox/")){let[,s]=t.match(/Firefox\/(\d+)/);e.rotateCanvas=e.rotateCss=Number(s)<77}}class Oe extends p{constructor(...e){super(...e),t(this,"ranges",new ve),0!==this.byteLength&&this.ranges.add(0,this.byteLength)}_tryExtend(e,t,s){if(0===e&&0===this.byteLength&&s){let e=new DataView(s.buffer||s,s.byteOffset,s.byteLength);this._swapDataView(e)}else{let s=e+t;if(s>this.byteLength){let{dataView:e}=this._extend(s);this._swapDataView(e)}}}_extend(e){let t;t=h?a.allocUnsafe(e):new Uint8Array(e);let s=new DataView(t.buffer,t.byteOffset,t.byteLength);return t.set(new Uint8Array(this.buffer,this.byteOffset,this.byteLength),0),{uintView:t,dataView:s}}subarray(e,t,s=!1){return t=t||this._lengthToEnd(e),s&&this._tryExtend(e,t),this.ranges.add(e,t),super.subarray(e,t)}set(e,t,s=!1){s&&this._tryExtend(t,e.byteLength,e);let i=super.set(e,t);return this.ranges.add(t,i.byteLength),i}async ensureChunk(e,t){this.chunked&&(this.ranges.available(e,t)||await this.readChunk(e,t))}available(e,t){return this.ranges.available(e,t)}}class ve{constructor(){t(this,"list",[])}get length(){return this.list.length}add(e,t,s=0){let i=e+t,n=this.list.filter((t=>Se(e,t.offset,i)||Se(e,t.end,i)));if(n.length>0){e=Math.min(e,...n.map((e=>e.offset))),i=Math.max(i,...n.map((e=>e.end))),t=i-e;let s=n.shift();s.offset=e,s.length=t,s.end=i,this.list=this.list.filter((e=>!n.includes(e)))}else this.list.push({offset:e,length:t,end:i})}available(e,t){let s=e+t;return this.list.some((t=>t.offset<=e&&s<=t.end))}}function Se(e,t,s){return e<=t&&t<=s}class Ae extends Oe{constructor(e,s){super(0),t(this,"chunksRead",0),this.input=e,this.options=s}async readWhole(){this.chunked=!1,await this.readChunk(this.nextChunkOffset)}async readChunked(){this.chunked=!0,await this.readChunk(0,this.options.firstChunkSize)}async readNextChunk(e=this.nextChunkOffset){if(this.fullyRead)return this.chunksRead++,!1;let t=this.options.chunkSize,s=await this.readChunk(e,t);return!!s&&s.byteLength===t}async readChunk(e,t){if(this.chunksRead++,0!==(t=this.safeWrapAddress(e,t)))return this._readChunk(e,t)}safeWrapAddress(e,t){return void 0!==this.size&&e+t>this.size?Math.max(0,this.size-e):t}get nextChunkOffset(){if(0!==this.ranges.list.length)return this.ranges.list[0].length}get canReadNextChunk(){return this.chunksRead<this.options.chunkLimit}get fullyRead(){return void 0!==this.size&&this.nextChunkOffset===this.size}read(){return this.options.chunked?this.readChunked():this.readWhole()}close(){}}w.set("blob",class extends Ae{async readWhole(){this.chunked=!1;let e=await x(this.input);this._swapArrayBuffer(e)}readChunked(){return this.chunked=!0,this.size=this.input.size,super.readChunked()}async _readChunk(e,t){let s=t?e+t:void 0,i=this.input.slice(e,s),n=await x(i);return this.set(n,e,!0)}}),e.Exifr=se,e.Options=Q,e.allFormatters=H,e.chunkedProps=M,e.createDictionary=B,e.default=pe,e.extendDictionary=V,e.fetchUrlAsArrayBuffer=U,e.fileParsers=y,e.fileReaders=w,e.gps=async function(e){let t=new se(me);await t.read(e);let s=await t.parse();if(s&&s.gps){let{latitude:e,longitude:t}=s.gps;return{latitude:e,longitude:t}}},e.gpsOnlyOptions=me,e.inheritables=X,e.orientation=we,e.orientationOnlyOptions=be,e.otherSegments=N,e.parse=ie,e.readBlobAsArrayBuffer=x,e.rotation=async function(t){let s=await we(t);return Object.assign({canvas:e.rotateCanvas,css:e.rotateCss},ke[s])},e.rotations=ke,e.segmentParsers=b,e.segments=R,e.segmentsAndBlocks=K,e.tagKeys=I,e.tagRevivers=T,e.tagValues=L,e.thumbnail=async function(e){let t=new se(ye);await t.read(e);let s=await t.extractThumbnail();return s&&h?a.from(s):s},e.thumbnailOnlyOptions=ye,e.thumbnailUrl=async function(e){let t=await this.thumbnail(e);if(void 0!==t){let e=new Blob([t]);return URL.createObjectURL(e)}},e.tiffBlocks=$,e.tiffExtractables=W,Object.defineProperty(e,"__esModule",{value:!0})}));
++"use strict";
++function e(e, t, i) {
++  return (
++    t in e
++      ? Object.defineProperty(e, t, {
++          value: i,
++          enumerable: !0,
++          configurable: !0,
++          writable: !0,
++        })
++      : (e[t] = i),
++    e
++  );
++}
++Object.defineProperty(exports, "__esModule", { value: !0 });
++var t = "undefined" != typeof self ? self : global;
++const i = "undefined" != typeof navigator,
++  s = i && "undefined" == typeof HTMLImageElement,
++  n = !(
++    "undefined" == typeof global ||
++    "undefined" == typeof process ||
++    !process.versions ||
++    !process.versions.node
++  ),
++  r = !!t.Buffer,
++  a = (e) => void 0 !== e;
++function h(e) {
++  return (
++    void 0 === e ||
++    (e instanceof Map ? 0 === e.size : 0 === Object.values(e).filter(a).length)
++  );
++}
++function f(e) {
++  let t = new Error(e);
++  throw (delete t.stack, t);
++}
++function o(e) {
++  let t = (function (e) {
++    let t = 0;
++    return (
++      e.ifd0.enabled && (t += 1024),
++      e.exif.enabled && (t += 2048),
++      e.makerNote && (t += 2048),
++      e.userComment && (t += 1024),
++      e.gps.enabled && (t += 512),
++      e.interop.enabled && (t += 100),
++      e.ifd1.enabled && (t += 1024),
++      t + 2048
++    );
++  })(e);
++  return (
++    e.jfif.enabled && (t += 50),
++    e.xmp.enabled && (t += 2e4),
++    e.iptc.enabled && (t += 14e3),
++    e.icc.enabled && (t += 6e3),
++    t
++  );
++}
++const l = (e) => String.fromCharCode.apply(null, e),
++  d = "undefined" != typeof TextDecoder ? new TextDecoder("utf-8") : void 0;
++class u {
++  static from(e, t) {
++    return e instanceof this && e.le === t ? e : new u(e, void 0, void 0, t);
++  }
++  constructor(e) {
++    let t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : 0,
++      i = arguments.length > 2 ? arguments[2] : void 0,
++      s = arguments.length > 3 ? arguments[3] : void 0;
++    if (
++      ("boolean" == typeof s && (this.le = s),
++      Array.isArray(e) && (e = new Uint8Array(e)),
++      0 === e)
++    )
++      (this.byteOffset = 0), (this.byteLength = 0);
++    else if (e instanceof ArrayBuffer) {
++      void 0 === i && (i = e.byteLength - t);
++      let s = new DataView(e, t, i);
++      this._swapDataView(s);
++    } else if (
++      e instanceof Uint8Array ||
++      e instanceof DataView ||
++      e instanceof u
++    ) {
++      void 0 === i && (i = e.byteLength - t),
++        (t += e.byteOffset),
++        t + i > e.byteOffset + e.byteLength &&
++          f("Creating view outside of available memory in ArrayBuffer");
++      let s = new DataView(e.buffer, t, i);
++      this._swapDataView(s);
++    } else if ("number" == typeof e) {
++      let t = new DataView(new ArrayBuffer(e));
++      this._swapDataView(t);
++    } else f("Invalid input argument for BufferView: " + e);
++  }
++  _swapArrayBuffer(e) {
++    this._swapDataView(new DataView(e));
++  }
++  _swapBuffer(e) {
++    this._swapDataView(new DataView(e.buffer, e.byteOffset, e.byteLength));
++  }
++  _swapDataView(e) {
++    (this.dataView = e),
++      (this.buffer = e.buffer),
++      (this.byteOffset = e.byteOffset),
++      (this.byteLength = e.byteLength);
++  }
++  _lengthToEnd(e) {
++    return this.byteLength - e;
++  }
++  set(e, t) {
++    let i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : u;
++    return (
++      e instanceof DataView || e instanceof u
++        ? (e = new Uint8Array(e.buffer, e.byteOffset, e.byteLength))
++        : e instanceof ArrayBuffer && (e = new Uint8Array(e)),
++      e instanceof Uint8Array || f("BufferView.set(): Invalid data argument."),
++      this.toUint8().set(e, t),
++      new i(this, t, e.byteLength)
++    );
++  }
++  subarray(e, t) {
++    return (t = t || this._lengthToEnd(e)), new u(this, e, t);
++  }
++  toUint8() {
++    return new Uint8Array(this.buffer, this.byteOffset, this.byteLength);
++  }
++  getUint8Array(e, t) {
++    return new Uint8Array(this.buffer, this.byteOffset + e, t);
++  }
++  getString() {
++    let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : 0,
++      t =
++        arguments.length > 1 && void 0 !== arguments[1]
++          ? arguments[1]
++          : this.byteLength,
++      i = this.getUint8Array(e, t);
++    return (
++      (s = i),
++      d
++        ? d.decode(s)
++        : r
++        ? Buffer.from(s).toString("utf8")
++        : decodeURIComponent(escape(l(s)))
++    );
++    var s;
++  }
++  getLatin1String() {
++    let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : 0,
++      t =
++        arguments.length > 1 && void 0 !== arguments[1]
++          ? arguments[1]
++          : this.byteLength,
++      i = this.getUint8Array(e, t);
++    return l(i);
++  }
++  getUnicodeString() {
++    let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : 0,
++      t =
++        arguments.length > 1 && void 0 !== arguments[1]
++          ? arguments[1]
++          : this.byteLength;
++    const i = [];
++    for (let s = 0; s < t && e + s < this.byteLength; s += 2)
++      i.push(this.getUint16(e + s));
++    return l(i);
++  }
++  getInt8(e) {
++    return this.dataView.getInt8(e);
++  }
++  getUint8(e) {
++    return this.dataView.getUint8(e);
++  }
++  getInt16(e) {
++    let t =
++      arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : this.le;
++    return this.dataView.getInt16(e, t);
++  }
++  getInt32(e) {
++    let t =
++      arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : this.le;
++    return this.dataView.getInt32(e, t);
++  }
++  getUint16(e) {
++    let t =
++      arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : this.le;
++    return this.dataView.getUint16(e, t);
++  }
++  getUint32(e) {
++    let t =
++      arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : this.le;
++    return this.dataView.getUint32(e, t);
++  }
++  getFloat32(e) {
++    let t =
++      arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : this.le;
++    return this.dataView.getFloat32(e, t);
++  }
++  getFloat64(e) {
++    let t =
++      arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : this.le;
++    return this.dataView.getFloat64(e, t);
++  }
++  getFloat(e) {
++    let t =
++      arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : this.le;
++    return this.dataView.getFloat32(e, t);
++  }
++  getDouble(e) {
++    let t =
++      arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : this.le;
++    return this.dataView.getFloat64(e, t);
++  }
++  getUintBytes(e, t, i) {
++    switch (t) {
++      case 1:
++        return this.getUint8(e, i);
++      case 2:
++        return this.getUint16(e, i);
++      case 4:
++        return this.getUint32(e, i);
++      case 8:
++        return this.getUint64 && this.getUint64(e, i);
++    }
++  }
++  getUint(e, t, i) {
++    switch (t) {
++      case 8:
++        return this.getUint8(e, i);
++      case 16:
++        return this.getUint16(e, i);
++      case 32:
++        return this.getUint32(e, i);
++      case 64:
++        return this.getUint64 && this.getUint64(e, i);
++    }
++  }
++  toString(e) {
++    return this.dataView.toString(e, this.constructor.name);
++  }
++  ensureChunk() {}
++}
++function p(e, t) {
++  f(`${e} '${t}' was not loaded, try using full build of exifr.`);
++}
++class c extends Map {
++  constructor(e) {
++    super(), (this.kind = e);
++  }
++  get(e, t) {
++    return (
++      this.has(e) || p(this.kind, e),
++      t &&
++        (e in t ||
++          (function (e, t) {
++            f(`Unknown ${e} '${t}'.`);
++          })(this.kind, e),
++        t[e].enabled || p(this.kind, e)),
++      super.get(e)
++    );
++  }
++  keyList() {
++    return Array.from(this.keys());
++  }
++}
++var g = new c("file parser"),
++  m = new c("segment parser"),
++  b = new c("file reader");
++let y = t.fetch;
++function w(e, t) {
++  return (s = e).startsWith("data:") || s.length > 1e4
++    ? v(e, t, "base64")
++    : n && e.includes("://")
++    ? k(e, t, "url", S)
++    : n
++    ? v(e, t, "fs")
++    : i
++    ? k(e, t, "url", S)
++    : void f("Invalid input argument");
++  var s;
++}
++async function k(e, t, i, s) {
++  return b.has(i)
++    ? v(e, t, i)
++    : s
++    ? (async function (e, t) {
++        let i = await t(e);
++        return new u(i);
++      })(e, s)
++    : void f(`Parser ${i} is not loaded`);
++}
++async function v(e, t, i) {
++  let s = new (b.get(i))(e, t);
++  return await s.read(), s;
++}
++const S = (e) => y(e).then((e) => e.arrayBuffer()),
++  O = (e) =>
++    new Promise((t, i) => {
++      let s = new FileReader();
++      (s.onloadend = () => t(s.result || new ArrayBuffer())),
++        (s.onerror = i),
++        s.readAsArrayBuffer(e);
++    });
++const U = new Map(),
++  A = new Map(),
++  I = new Map(),
++  x = [
++    "chunked",
++    "firstChunkSize",
++    "firstChunkSizeNode",
++    "firstChunkSizeBrowser",
++    "chunkSize",
++    "chunkLimit",
++  ],
++  B = ["jfif", "xmp", "icc", "iptc", "ihdr"],
++  T = ["tiff", ...B],
++  V = ["ifd0", "ifd1", "exif", "gps", "interop"],
++  C = [...T, ...V],
++  F = ["makerNote", "userComment"],
++  P = ["translateKeys", "translateValues", "reviveValues", "multiSegment"],
++  L = [...P, "sanitize", "mergeOutput", "silentErrors"];
++class z {
++  get translate() {
++    return this.translateKeys || this.translateValues || this.reviveValues;
++  }
++}
++class j extends z {
++  get needed() {
++    return this.enabled || this.deps.size > 0;
++  }
++  constructor(t, i, s, n) {
++    if (
++      (super(),
++      e(this, "enabled", !1),
++      e(this, "skip", new Set()),
++      e(this, "pick", new Set()),
++      e(this, "deps", new Set()),
++      e(this, "translateKeys", !1),
++      e(this, "translateValues", !1),
++      e(this, "reviveValues", !1),
++      (this.key = t),
++      (this.enabled = i),
++      (this.parse = this.enabled),
++      this.applyInheritables(n),
++      (this.canBeFiltered = V.includes(t)),
++      this.canBeFiltered && (this.dict = U.get(t)),
++      void 0 !== s)
++    )
++      if (Array.isArray(s))
++        (this.parse = this.enabled = !0),
++          this.canBeFiltered &&
++            s.length > 0 &&
++            this.translateTagSet(s, this.pick);
++      else if ("object" == typeof s) {
++        if (
++          ((this.enabled = !0),
++          (this.parse = !1 !== s.parse),
++          this.canBeFiltered)
++        ) {
++          let { pick: e, skip: t } = s;
++          e && e.length > 0 && this.translateTagSet(e, this.pick),
++            t && t.length > 0 && this.translateTagSet(t, this.skip);
++        }
++        this.applyInheritables(s);
++      } else
++        !0 === s || !1 === s
++          ? (this.parse = this.enabled = s)
++          : f(`Invalid options argument: ${s}`);
++  }
++  applyInheritables(e) {
++    let t, i;
++    for (t of P) (i = e[t]), void 0 !== i && (this[t] = i);
++  }
++  translateTagSet(e, t) {
++    if (this.dict) {
++      let i,
++        s,
++        { tagKeys: n, tagValues: r } = this.dict;
++      for (i of e)
++        "string" == typeof i
++          ? ((s = r.indexOf(i)),
++            -1 === s && (s = n.indexOf(Number(i))),
++            -1 !== s && t.add(Number(n[s])))
++          : t.add(i);
++    } else for (let i of e) t.add(i);
++  }
++  finalizeFilters() {
++    !this.enabled && this.deps.size > 0
++      ? ((this.enabled = !0), _(this.pick, this.deps))
++      : this.enabled && this.pick.size > 0 && _(this.pick, this.deps);
++  }
++}
++var M = {
++    jfif: !1,
++    tiff: !0,
++    xmp: !1,
++    icc: !1,
++    iptc: !1,
++    ifd0: !0,
++    ifd1: !1,
++    exif: !0,
++    gps: !0,
++    interop: !1,
++    ihdr: void 0,
++    makerNote: !1,
++    userComment: !1,
++    multiSegment: !1,
++    skip: [],
++    pick: [],
++    translateKeys: !0,
++    translateValues: !0,
++    reviveValues: !0,
++    sanitize: !0,
++    mergeOutput: !0,
++    silentErrors: !0,
++    chunked: !0,
++    firstChunkSize: void 0,
++    firstChunkSizeNode: 512,
++    firstChunkSizeBrowser: 65536,
++    chunkSize: 65536,
++    chunkLimit: 5,
++  },
++  E = new Map();
++class N extends z {
++  static useCached(e) {
++    let t = E.get(e);
++    return void 0 !== t || ((t = new this(e)), E.set(e, t)), t;
++  }
++  constructor(e) {
++    super(),
++      !0 === e
++        ? this.setupFromTrue()
++        : void 0 === e
++        ? this.setupFromUndefined()
++        : Array.isArray(e)
++        ? this.setupFromArray(e)
++        : "object" == typeof e
++        ? this.setupFromObject(e)
++        : f(`Invalid options argument ${e}`),
++      void 0 === this.firstChunkSize &&
++        (this.firstChunkSize = i
++          ? this.firstChunkSizeBrowser
++          : this.firstChunkSizeNode),
++      this.mergeOutput && (this.ifd1.enabled = !1),
++      this.filterNestedSegmentTags(),
++      this.traverseTiffDependencyTree(),
++      this.checkLoadedPlugins();
++  }
++  setupFromUndefined() {
++    let e;
++    for (e of x) this[e] = M[e];
++    for (e of L) this[e] = M[e];
++    for (e of F) this[e] = M[e];
++    for (e of C) this[e] = new j(e, M[e], void 0, this);
++  }
++  setupFromTrue() {
++    let e;
++    for (e of x) this[e] = M[e];
++    for (e of L) this[e] = M[e];
++    for (e of F) this[e] = !0;
++    for (e of C) this[e] = new j(e, !0, void 0, this);
++  }
++  setupFromArray(e) {
++    let t;
++    for (t of x) this[t] = M[t];
++    for (t of L) this[t] = M[t];
++    for (t of F) this[t] = M[t];
++    for (t of C) this[t] = new j(t, !1, void 0, this);
++    this.setupGlobalFilters(e, void 0, V);
++  }
++  setupFromObject(e) {
++    let t;
++    for (t of ((V.ifd0 = V.ifd0 || V.image),
++    (V.ifd1 = V.ifd1 || V.thumbnail),
++    Object.assign(this, e),
++    x))
++      this[t] = $(e[t], M[t]);
++    for (t of L) this[t] = $(e[t], M[t]);
++    for (t of F) this[t] = $(e[t], M[t]);
++    for (t of T) this[t] = new j(t, M[t], e[t], this);
++    for (t of V) this[t] = new j(t, M[t], e[t], this.tiff);
++    this.setupGlobalFilters(e.pick, e.skip, V, C),
++      !0 === e.tiff
++        ? this.batchEnableWithBool(V, !0)
++        : !1 === e.tiff
++        ? this.batchEnableWithUserValue(V, e)
++        : Array.isArray(e.tiff)
++        ? this.setupGlobalFilters(e.tiff, void 0, V)
++        : "object" == typeof e.tiff &&
++          this.setupGlobalFilters(e.tiff.pick, e.tiff.skip, V);
++  }
++  batchEnableWithBool(e, t) {
++    for (let i of e) this[i].enabled = t;
++  }
++  batchEnableWithUserValue(e, t) {
++    for (let i of e) {
++      let e = t[i];
++      this[i].enabled = !1 !== e && void 0 !== e;
++    }
++  }
++  setupGlobalFilters(e, t, i) {
++    let s = arguments.length > 3 && void 0 !== arguments[3] ? arguments[3] : i;
++    if (e && e.length) {
++      for (let e of s) this[e].enabled = !1;
++      let t = D(e, i);
++      for (let [e, i] of t) _(this[e].pick, i), (this[e].enabled = !0);
++    } else if (t && t.length) {
++      let e = D(t, i);
++      for (let [t, i] of e) _(this[t].skip, i);
++    }
++  }
++  filterNestedSegmentTags() {
++    let { ifd0: e, exif: t, xmp: i, iptc: s, icc: n } = this;
++    this.makerNote ? t.deps.add(37500) : t.skip.add(37500),
++      this.userComment ? t.deps.add(37510) : t.skip.add(37510),
++      i.enabled || e.skip.add(700),
++      s.enabled || e.skip.add(33723),
++      n.enabled || e.skip.add(34675);
++  }
++  traverseTiffDependencyTree() {
++    let { ifd0: e, exif: t, gps: i, interop: s } = this;
++    s.needed && (t.deps.add(40965), e.deps.add(40965)),
++      t.needed && e.deps.add(34665),
++      i.needed && e.deps.add(34853),
++      (this.tiff.enabled =
++        V.some((e) => !0 === this[e].enabled) ||
++        this.makerNote ||
++        this.userComment);
++    for (let e of V) this[e].finalizeFilters();
++  }
++  get onlyTiff() {
++    return (
++      !B.map((e) => this[e].enabled).some((e) => !0 === e) && this.tiff.enabled
++    );
++  }
++  checkLoadedPlugins() {
++    for (let e of T) this[e].enabled && !m.has(e) && p("segment parser", e);
++  }
++}
++function D(e, t) {
++  let i,
++    s,
++    n,
++    r,
++    a = [];
++  for (n of t) {
++    for (r of ((i = U.get(n)), (s = []), i))
++      (e.includes(r[0]) || e.includes(r[1])) && s.push(r[0]);
++    s.length && a.push([n, s]);
++  }
++  return a;
++}
++function $(e, t) {
++  return void 0 !== e ? e : void 0 !== t ? t : void 0;
++}
++function _(e, t) {
++  for (let i of t) e.add(i);
++}
++e(N, "default", M);
++class X {
++  constructor(t) {
++    e(this, "parsers", {}),
++      e(this, "output", {}),
++      e(this, "errors", []),
++      e(this, "pushToErrors", (e) => this.errors.push(e)),
++      (this.options = N.useCached(t));
++  }
++  async read(e) {
++    this.file = await (function (e, t) {
++      return "string" == typeof e
++        ? w(e, t)
++        : i && !s && e instanceof HTMLImageElement
++        ? w(e.src, t)
++        : e instanceof Uint8Array ||
++          e instanceof ArrayBuffer ||
++          e instanceof DataView
++        ? new u(e)
++        : i && e instanceof Blob
++        ? k(e, t, "blob", O)
++        : void f("Invalid input argument");
++    })(e, this.options);
++  }
++  setup() {
++    if (this.fileParser) return;
++    let { file: e } = this,
++      t = e.getUint16(0);
++    for (let [i, s] of g)
++      if (s.canHandle(e, t))
++        return (
++          (this.fileParser = new s(this.options, this.file, this.parsers)),
++          (e[i] = !0)
++        );
++    this.file.close && this.file.close(), f("Unknown file format");
++  }
++  async parse() {
++    let { output: e, errors: t } = this;
++    return (
++      this.setup(),
++      this.options.silentErrors
++        ? (await this.executeParsers().catch(this.pushToErrors),
++          t.push(...this.fileParser.errors))
++        : await this.executeParsers(),
++      this.file.close && this.file.close(),
++      this.options.silentErrors && t.length > 0 && (e.errors = t),
++      h((i = e)) ? void 0 : i
++    );
++    var i;
++  }
++  async executeParsers() {
++    let { output: e } = this;
++    await this.fileParser.parse();
++    let t = Object.values(this.parsers).map(async (t) => {
++      let i = await t.parse();
++      t.assignToOutput(e, i);
++    });
++    this.options.silentErrors && (t = t.map((e) => e.catch(this.pushToErrors))),
++      await Promise.all(t);
++  }
++  async extractThumbnail() {
++    this.setup();
++    let { options: e, file: t } = this,
++      i = m.get("tiff", e);
++    var s;
++    if (
++      (t.tiff
++        ? (s = { start: 0, type: "tiff" })
++        : t.jpeg && (s = await this.fileParser.getOrFindSegment("tiff")),
++      void 0 === s)
++    )
++      return;
++    let n = await this.fileParser.ensureSegmentChunk(s),
++      r = (this.parsers.tiff = new i(n, e, t)),
++      a = await r.extractThumbnail();
++    return t.close && t.close(), a;
++  }
++}
++class H {
++  static findPosition(e, t) {
++    let i = e.getUint16(t + 2) + 2,
++      s =
++        "function" == typeof this.headerLength
++          ? this.headerLength(e, t, i)
++          : this.headerLength,
++      n = t + s,
++      r = i - s;
++    return {
++      offset: t,
++      length: i,
++      headerLength: s,
++      start: n,
++      size: r,
++      end: n + r,
++    };
++  }
++  static parse(e) {
++    let t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {};
++    return new this(e, new N({ [this.type]: t }), e).parse();
++  }
++  normalizeInput(e) {
++    return e instanceof u ? e : new u(e);
++  }
++  constructor(t) {
++    let i = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
++      s = arguments.length > 2 ? arguments[2] : void 0;
++    e(this, "errors", []),
++      e(this, "raw", new Map()),
++      e(this, "handleError", (e) => {
++        if (!this.options.silentErrors) throw e;
++        this.errors.push(e.message);
++      }),
++      (this.chunk = this.normalizeInput(t)),
++      (this.file = s),
++      (this.type = this.constructor.type),
++      (this.globalOptions = this.options = i),
++      (this.localOptions = i[this.type]),
++      (this.canTranslate = this.localOptions && this.localOptions.translate);
++  }
++  translate() {
++    this.canTranslate &&
++      (this.translated = this.translateBlock(this.raw, this.type));
++  }
++  get output() {
++    return this.translated
++      ? this.translated
++      : this.raw
++      ? Object.fromEntries(this.raw)
++      : void 0;
++  }
++  translateBlock(e, t) {
++    let i = I.get(t),
++      s = A.get(t),
++      n = U.get(t),
++      r = this.options[t],
++      a = r.reviveValues && !!i,
++      h = r.translateValues && !!s,
++      f = r.translateKeys && !!n,
++      o = {};
++    for (let [t, r] of e)
++      a && i.has(t)
++        ? (r = i.get(t)(r))
++        : h && s.has(t) && (r = this.translateValue(r, s.get(t))),
++        f && n.has(t) && (t = n.get(t) || t),
++        (o[t] = r);
++    return o;
++  }
++  translateValue(e, t) {
++    return t[e] || t.DEFAULT || e;
++  }
++  assignToOutput(e, t) {
++    this.assignObjectToOutput(e, this.constructor.type, t);
++  }
++  assignObjectToOutput(e, t, i) {
++    if (this.globalOptions.mergeOutput) return Object.assign(e, i);
++    e[t] ? Object.assign(e[t], i) : (e[t] = i);
++  }
++}
++e(H, "headerLength", 4),
++  e(H, "type", void 0),
++  e(H, "multiSegment", !1),
++  e(H, "canHandle", () => !1);
++function W(e) {
++  return (
++    192 === e ||
++    194 === e ||
++    196 === e ||
++    219 === e ||
++    221 === e ||
++    218 === e ||
++    254 === e
++  );
++}
++function Y(e) {
++  return e >= 224 && e <= 239;
++}
++function G(e, t, i) {
++  for (let [s, n] of m) if (n.canHandle(e, t, i)) return s;
++}
++class K extends class {
++  constructor(t, i, s) {
++    e(this, "errors", []),
++      e(this, "ensureSegmentChunk", async (e) => {
++        let t = e.start,
++          i = e.size || 65536;
++        if (this.file.chunked)
++          if (this.file.available(t, i)) e.chunk = this.file.subarray(t, i);
++          else
++            try {
++              e.chunk = await this.file.readChunk(t, i);
++            } catch (t) {
++              f(`Couldn't read segment: ${JSON.stringify(e)}. ${t.message}`);
++            }
++        else
++          this.file.byteLength > t + i
++            ? (e.chunk = this.file.subarray(t, i))
++            : void 0 === e.size
++            ? (e.chunk = this.file.subarray(t))
++            : f("Segment unreachable: " + JSON.stringify(e));
++        return e.chunk;
++      }),
++      this.extendOptions && this.extendOptions(t),
++      (this.options = t),
++      (this.file = i),
++      (this.parsers = s);
++  }
++  injectSegment(e, t) {
++    this.options[e].enabled && this.createParser(e, t);
++  }
++  createParser(e, t) {
++    let i = new (m.get(e))(t, this.options, this.file);
++    return (this.parsers[e] = i);
++  }
++  createParsers(e) {
++    for (let t of e) {
++      let { type: e, chunk: i } = t,
++        s = this.options[e];
++      if (s && s.enabled) {
++        let t = this.parsers[e];
++        (t && t.append) || t || this.createParser(e, i);
++      }
++    }
++  }
++  async readSegments(e) {
++    let t = e.map(this.ensureSegmentChunk);
++    await Promise.all(t);
++  }
++} {
++  constructor() {
++    super(...arguments),
++      e(this, "appSegments", []),
++      e(this, "jpegSegments", []),
++      e(this, "unknownSegments", []);
++  }
++  static canHandle(e, t) {
++    return 65496 === t;
++  }
++  async parse() {
++    await this.findAppSegments(),
++      await this.readSegments(this.appSegments),
++      this.mergeMultiSegments(),
++      this.createParsers(this.mergedAppSegments || this.appSegments);
++  }
++  setupSegmentFinderArgs(e) {
++    !0 === e
++      ? ((this.findAll = !0), (this.wanted = new Set(m.keyList())))
++      : ((e =
++          void 0 === e
++            ? m.keyList().filter((e) => this.options[e].enabled)
++            : e.filter((e) => this.options[e].enabled && m.has(e))),
++        (this.findAll = !1),
++        (this.remaining = new Set(e)),
++        (this.wanted = new Set(e))),
++      (this.unfinishedMultiSegment = !1);
++  }
++  async findAppSegments() {
++    let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : 0,
++      t = arguments.length > 1 ? arguments[1] : void 0;
++    this.setupSegmentFinderArgs(t);
++    let { file: i, findAll: s, wanted: n, remaining: r } = this;
++    if (
++      (!s &&
++        this.file.chunked &&
++        ((s = Array.from(n).some((e) => {
++          let t = m.get(e),
++            i = this.options[e];
++          return t.multiSegment && i.multiSegment;
++        })),
++        s && (await this.file.readWhole())),
++      (e = this.findAppSegmentsInRange(e, i.byteLength)),
++      !this.options.onlyTiff && i.chunked)
++    ) {
++      let t = !1;
++      for (
++        ;
++        r.size > 0 && !t && (i.canReadNextChunk || this.unfinishedMultiSegment);
++
++      ) {
++        let { nextChunkOffset: s } = i,
++          n = this.appSegments.some(
++            (e) => !this.file.available(e.offset || e.start, e.length || e.size)
++          );
++        if (
++          ((t =
++            e > s && !n
++              ? !(await i.readNextChunk(e))
++              : !(await i.readNextChunk(s))),
++          (e = this.findAppSegmentsInRange(e, i.byteLength)),
++          void 0 === e)
++        )
++          return;
++      }
++    }
++  }
++  findAppSegmentsInRange(e, t) {
++    t -= 2;
++    let i,
++      s,
++      n,
++      r,
++      a,
++      h,
++      { file: f, findAll: o, wanted: l, remaining: d, options: u } = this;
++    for (; e < t; e++)
++      if (255 === f.getUint8(e))
++        if (((i = f.getUint8(e + 1)), Y(i))) {
++          if (
++            ((s = f.getUint16(e + 2)),
++            (n = G(f, e, s)),
++            n &&
++              l.has(n) &&
++              ((r = m.get(n)),
++              (a = r.findPosition(f, e)),
++              (h = u[n]),
++              (a.type = n),
++              this.appSegments.push(a),
++              !o &&
++                (r.multiSegment && h.multiSegment
++                  ? ((this.unfinishedMultiSegment =
++                      a.chunkNumber < a.chunkCount),
++                    this.unfinishedMultiSegment || d.delete(n))
++                  : d.delete(n),
++                0 === d.size)))
++          )
++            break;
++          u.recordUnknownSegments &&
++            ((a = H.findPosition(f, e)),
++            (a.marker = i),
++            this.unknownSegments.push(a)),
++            (e += s + 1);
++        } else if (W(i)) {
++          if (((s = f.getUint16(e + 2)), 218 === i && !1 !== u.stopAfterSos))
++            return;
++          u.recordJpegSegments &&
++            this.jpegSegments.push({ offset: e, length: s, marker: i }),
++            (e += s + 1);
++        }
++    return e;
++  }
++  mergeMultiSegments() {
++    if (!this.appSegments.some((e) => e.multiSegment)) return;
++    let e = (function (e, t) {
++      let i,
++        s,
++        n,
++        r = new Map();
++      for (let a = 0; a < e.length; a++)
++        (i = e[a]),
++          (s = i[t]),
++          r.has(s) ? (n = r.get(s)) : r.set(s, (n = [])),
++          n.push(i);
++      return Array.from(r);
++    })(this.appSegments, "type");
++    this.mergedAppSegments = e.map((e) => {
++      let [t, i] = e,
++        s = m.get(t, this.options);
++      if (s.handleMultiSegments) {
++        return { type: t, chunk: s.handleMultiSegments(i) };
++      }
++      return i[0];
++    });
++  }
++  getSegment(e) {
++    return this.appSegments.find((t) => t.type === e);
++  }
++  async getOrFindSegment(e) {
++    let t = this.getSegment(e);
++    return (
++      void 0 === t &&
++        (await this.findAppSegments(0, [e]), (t = this.getSegment(e))),
++      t
++    );
++  }
++}
++e(K, "type", "jpeg"), g.set("jpeg", K);
++const R = [void 0, 1, 1, 2, 4, 8, 1, 1, 2, 4, 8, 4, 8, 4];
++class J extends H {
++  parseHeader() {
++    var e = this.chunk.getUint16();
++    18761 === e ? (this.le = !0) : 19789 === e && (this.le = !1),
++      (this.chunk.le = this.le),
++      (this.headerParsed = !0);
++  }
++  parseTags(e, t) {
++    let i =
++        arguments.length > 2 && void 0 !== arguments[2]
++          ? arguments[2]
++          : new Map(),
++      { pick: s, skip: n } = this.options[t];
++    s = new Set(s);
++    let r = s.size > 0,
++      a = 0 === n.size,
++      h = this.chunk.getUint16(e);
++    e += 2;
++    for (let f = 0; f < h; f++) {
++      let h = this.chunk.getUint16(e);
++      if (r) {
++        if (
++          s.has(h) &&
++          (i.set(h, this.parseTag(e, h, t)), s.delete(h), 0 === s.size)
++        )
++          break;
++      } else (!a && n.has(h)) || i.set(h, this.parseTag(e, h, t));
++      e += 12;
++    }
++    return i;
++  }
++  parseTag(e, t, i) {
++    let { chunk: s } = this,
++      n = s.getUint16(e + 2),
++      r = s.getUint32(e + 4),
++      a = R[n];
++    if (
++      (a * r <= 4 ? (e += 8) : (e = s.getUint32(e + 8)),
++      (n < 1 || n > 13) &&
++        f(
++          `Invalid TIFF value type. block: ${i.toUpperCase()}, tag: ${t.toString(
++            16
++          )}, type: ${n}, offset ${e}`
++        ),
++      e > s.byteLength &&
++        f(
++          `Invalid TIFF value offset. block: ${i.toUpperCase()}, tag: ${t.toString(
++            16
++          )}, type: ${n}, offset ${e} is outside of chunk size ${s.byteLength}`
++        ),
++      1 === n)
++    )
++      return s.getUint8Array(e, r);
++    if (2 === n)
++      return "" ===
++        (h = (function (e) {
++          for (; e.endsWith("\0"); ) e = e.slice(0, -1);
++          return e;
++        })((h = s.getString(e, r))).trim())
++        ? void 0
++        : h;
++    var h;
++    if (7 === n) return s.getUint8Array(e, r);
++    if (1 === r) return this.parseTagValue(n, e);
++    {
++      let t = (function (e) {
++          switch (e) {
++            case 1:
++              return Uint8Array;
++            case 3:
++              return Uint16Array;
++            case 4:
++              return Uint32Array;
++            case 5:
++            case 10:
++            default:
++              return Array;
++            case 6:
++              return Int8Array;
++            case 8:
++              return Int16Array;
++            case 9:
++              return Int32Array;
++            case 11:
++              return Float32Array;
++            case 12:
++              return Float64Array;
++          }
++        })(n),
++        i = new t(r),
++        s = a;
++      for (let t = 0; t < r; t++) (i[t] = this.parseTagValue(n, e)), (e += s);
++      return i;
++    }
++  }
++  parseTagValue(e, t) {
++    let { chunk: i } = this;
++    switch (e) {
++      case 1:
++        return i.getUint8(t);
++      case 3:
++        return i.getUint16(t);
++      case 4:
++      case 13:
++        return i.getUint32(t);
++      case 5:
++        return i.getUint32(t) / i.getUint32(t + 4);
++      case 6:
++        return i.getInt8(t);
++      case 8:
++        return i.getInt16(t);
++      case 9:
++        return i.getInt32(t);
++      case 10:
++        return i.getInt32(t) / i.getInt32(t + 4);
++      case 11:
++        return i.getFloat(t);
++      case 12:
++        return i.getDouble(t);
++      default:
++        f(`Invalid tiff type ${e}`);
++    }
++  }
++}
++class q extends J {
++  static canHandle(e, t) {
++    return (
++      225 === e.getUint8(t + 1) &&
++      1165519206 === e.getUint32(t + 4) &&
++      0 === e.getUint16(t + 8)
++    );
++  }
++  async parse() {
++    this.parseHeader();
++    let { options: e } = this;
++    return (
++      e.ifd0.enabled && (await this.parseIfd0Block()),
++      e.exif.enabled && (await this.safeParse("parseExifBlock")),
++      e.gps.enabled && (await this.safeParse("parseGpsBlock")),
++      e.interop.enabled && (await this.safeParse("parseInteropBlock")),
++      e.ifd1.enabled && (await this.safeParse("parseThumbnailBlock")),
++      this.createOutput()
++    );
++  }
++  safeParse(e) {
++    let t = this[e]();
++    return void 0 !== t.catch && (t = t.catch(this.handleError)), t;
++  }
++  findIfd0Offset() {
++    void 0 === this.ifd0Offset && (this.ifd0Offset = this.chunk.getUint32(4));
++  }
++  findIfd1Offset() {
++    if (void 0 === this.ifd1Offset) {
++      this.findIfd0Offset();
++      let e = this.chunk.getUint16(this.ifd0Offset),
++        t = this.ifd0Offset + 2 + 12 * e;
++      this.ifd1Offset = this.chunk.getUint32(t);
++    }
++  }
++  parseBlock(e, t) {
++    let i = new Map();
++    return (this[t] = i), this.parseTags(e, t, i), i;
++  }
++  async parseIfd0Block() {
++    if (this.ifd0) return;
++    let { file: e } = this;
++    this.findIfd0Offset(),
++      this.ifd0Offset < 8 && f("Malformed EXIF data"),
++      !e.chunked &&
++        this.ifd0Offset > e.byteLength &&
++        f(
++          `IFD0 offset points to outside of file.\nthis.ifd0Offset: ${this.ifd0Offset}, file.byteLength: ${e.byteLength}`
++        ),
++      e.tiff && (await e.ensureChunk(this.ifd0Offset, o(this.options)));
++    let t = this.parseBlock(this.ifd0Offset, "ifd0");
++    return 0 !== t.size
++      ? ((this.exifOffset = t.get(34665)),
++        (this.interopOffset = t.get(40965)),
++        (this.gpsOffset = t.get(34853)),
++        (this.xmp = t.get(700)),
++        (this.iptc = t.get(33723)),
++        (this.icc = t.get(34675)),
++        this.options.sanitize &&
++          (t.delete(34665),
++          t.delete(40965),
++          t.delete(34853),
++          t.delete(700),
++          t.delete(33723),
++          t.delete(34675)),
++        t)
++      : void 0;
++  }
++  async parseExifBlock() {
++    if (this.exif) return;
++    if (
++      (this.ifd0 || (await this.parseIfd0Block()), void 0 === this.exifOffset)
++    )
++      return;
++    this.file.tiff &&
++      (await this.file.ensureChunk(this.exifOffset, o(this.options)));
++    let e = this.parseBlock(this.exifOffset, "exif");
++    return (
++      this.interopOffset || (this.interopOffset = e.get(40965)),
++      (this.makerNote = e.get(37500)),
++      (this.userComment = e.get(37510)),
++      this.options.sanitize &&
++        (e.delete(40965), e.delete(37500), e.delete(37510)),
++      this.unpack(e, 41728),
++      this.unpack(e, 41729),
++      e
++    );
++  }
++  unpack(e, t) {
++    let i = e.get(t);
++    i && 1 === i.length && e.set(t, i[0]);
++  }
++  async parseGpsBlock() {
++    if (this.gps) return;
++    if ((this.ifd0 || (await this.parseIfd0Block()), void 0 === this.gpsOffset))
++      return;
++    let e = this.parseBlock(this.gpsOffset, "gps");
++    return (
++      e &&
++        e.has(2) &&
++        e.has(4) &&
++        (e.set("latitude", Q(...e.get(2), e.get(1))),
++        e.set("longitude", Q(...e.get(4), e.get(3)))),
++      e
++    );
++  }
++  async parseInteropBlock() {
++    if (
++      !this.interop &&
++      (this.ifd0 || (await this.parseIfd0Block()),
++      void 0 !== this.interopOffset ||
++        this.exif ||
++        (await this.parseExifBlock()),
++      void 0 !== this.interopOffset)
++    )
++      return this.parseBlock(this.interopOffset, "interop");
++  }
++  async parseThumbnailBlock() {
++    let e = arguments.length > 0 && void 0 !== arguments[0] && arguments[0];
++    if (!this.ifd1 && !this.ifd1Parsed && (!this.options.mergeOutput || e))
++      return (
++        this.findIfd1Offset(),
++        this.ifd1Offset > 0 &&
++          (this.parseBlock(this.ifd1Offset, "ifd1"), (this.ifd1Parsed = !0)),
++        this.ifd1
++      );
++  }
++  async extractThumbnail() {
++    if (
++      (this.headerParsed || this.parseHeader(),
++      this.ifd1Parsed || (await this.parseThumbnailBlock(!0)),
++      void 0 === this.ifd1)
++    )
++      return;
++    let e = this.ifd1.get(513),
++      t = this.ifd1.get(514);
++    return this.chunk.getUint8Array(e, t);
++  }
++  get image() {
++    return this.ifd0;
++  }
++  get thumbnail() {
++    return this.ifd1;
++  }
++  createOutput() {
++    let e,
++      t,
++      i,
++      s = {};
++    for (t of V)
++      if (((e = this[t]), !h(e)))
++        if (
++          ((i = this.canTranslate
++            ? this.translateBlock(e, t)
++            : Object.fromEntries(e)),
++          this.options.mergeOutput)
++        ) {
++          if ("ifd1" === t) continue;
++          Object.assign(s, i);
++        } else s[t] = i;
++    return (
++      this.makerNote && (s.makerNote = this.makerNote),
++      this.userComment && (s.userComment = this.userComment),
++      s
++    );
++  }
++  assignToOutput(e, t) {
++    if (this.globalOptions.mergeOutput) Object.assign(e, t);
++    else
++      for (let [i, s] of Object.entries(t)) this.assignObjectToOutput(e, i, s);
++  }
++}
++function Q(e, t, i, s) {
++  var n = e + t / 60 + i / 3600;
++  return ("S" !== s && "W" !== s) || (n *= -1), n;
++}
++e(q, "type", "tiff"), e(q, "headerLength", 10), m.set("tiff", q);
++const Z = Object.assign(
++  {},
++  {
++    ifd0: !1,
++    ifd1: !1,
++    exif: !1,
++    gps: !1,
++    interop: !1,
++    sanitize: !1,
++    reviveValues: !0,
++    translateKeys: !1,
++    translateValues: !1,
++    mergeOutput: !1,
++  },
++  { firstChunkSize: 4e4, ifd0: [274] }
++);
++const ee = Object.freeze({
++  1: { dimensionSwapped: !1, scaleX: 1, scaleY: 1, deg: 0, rad: 0 },
++  2: { dimensionSwapped: !1, scaleX: -1, scaleY: 1, deg: 0, rad: 0 },
++  3: {
++    dimensionSwapped: !1,
++    scaleX: 1,
++    scaleY: 1,
++    deg: 180,
++    rad: (180 * Math.PI) / 180,
++  },
++  4: {
++    dimensionSwapped: !1,
++    scaleX: -1,
++    scaleY: 1,
++    deg: 180,
++    rad: (180 * Math.PI) / 180,
++  },
++  5: {
++    dimensionSwapped: !0,
++    scaleX: 1,
++    scaleY: -1,
++    deg: 90,
++    rad: (90 * Math.PI) / 180,
++  },
++  6: {
++    dimensionSwapped: !0,
++    scaleX: 1,
++    scaleY: 1,
++    deg: 90,
++    rad: (90 * Math.PI) / 180,
++  },
++  7: {
++    dimensionSwapped: !0,
++    scaleX: 1,
++    scaleY: -1,
++    deg: 270,
++    rad: (270 * Math.PI) / 180,
++  },
++  8: {
++    dimensionSwapped: !0,
++    scaleX: 1,
++    scaleY: 1,
++    deg: 270,
++    rad: (270 * Math.PI) / 180,
++  },
++});
++let te = !0,
++  ie = !0;
++if ("object" == typeof navigator) {
++  let e = navigator.userAgent;
++  if (e.includes("iPad") || e.includes("iPhone")) {
++    let t = e.match(/OS (\d+)_(\d+)/);
++    if (t) {
++      let [, e, i] = t,
++        s = Number(e) + 0.1 * Number(i);
++      (te = s < 13.4), (ie = !1);
++    }
++  } else if (e.includes("OS X 10")) {
++    let [, t] = e.match(/OS X 10[_.](\d+)/);
++    te = ie = Number(t) < 15;
++  }
++  if (e.includes("Chrome/")) {
++    let [, t] = e.match(/Chrome\/(\d+)/);
++    te = ie = Number(t) < 81;
++  } else if (e.includes("Firefox/")) {
++    let [, t] = e.match(/Firefox\/(\d+)/);
++    te = ie = Number(t) < 77;
++  }
++}
++exports.rotation = async function (e) {
++  let t = await (async function (e) {
++    let t = new X(Z);
++    await t.read(e);
++    let i = await t.parse();
++    if (i && i.ifd0) return i.ifd0[274];
++  })(e);
++  return Object.assign({ canvas: te, css: ie }, ee[t]);
++};
+diff --git a/src/bundles/mini.mjs b/src/bundles/mini.mjs
+index 7ce308ebd54354309f4da01196ba3b3f222a8e7e..bfef917357d6785b4cc0898ab71002b58bf11c9e 100644
+--- a/src/bundles/mini.mjs
++++ b/src/bundles/mini.mjs
+@@ -1,12 +1,5 @@
+-export * from './nano.mjs'
+-import * as nano from './nano.mjs'
+-export default nano
+-
+-
+-// Highlevel API: gps(), thumbnail(), thumbnailUrl(), orientation(), rotation()
+-export * from '../highlevel/gps.mjs'
+-export * from '../highlevel/thumb.mjs'
+-export * from '../highlevel/orientation.mjs'
++import '../core.mjs'
++export { rotation } from '../highlevel/orientation.mjs'
+ 
+ // File Readers
+ import '../file-readers/BlobReader.mjs'
