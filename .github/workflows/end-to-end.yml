@@ -1,5 +1,5 @@
 name: End-to-end tests
-on: [push, pull_request]
+on: push
 
 jobs:
   e2e:
@@ -29,7 +29,6 @@ jobs:
       - name: Run end-to-end browser tests
         run: corepack yarn run e2e:ci
         env:
-          COMPANION_URL: ${{secrets.COMPANION_URL}}
           COMPANION_UNSPLASH_KEY: ${{secrets.COMPANION_UNSPLASH_KEY}}
           COMPANION_UNSPLASH_SECRET: ${{secrets.COMPANION_UNSPLASH_SECRET}}
           TRANSLOADIT_KEY: ${{secrets.TRANSLOADIT_KEY}}

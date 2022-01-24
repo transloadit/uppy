@@ -7,7 +7,7 @@ import Url from '@uppy/url'
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
 
-const companionUrl = process.env.COMPANION_URL
+const companionUrl = 'http://localhost:3020'
 const uppy = new Uppy()
   .use(Dashboard, { target: '#app', inline: true })
   .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files' })
