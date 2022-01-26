@@ -2,7 +2,7 @@ const { UIPlugin } = require('@uppy/core')
 const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
 const isObjectURL = require('@uppy/utils/lib/isObjectURL')
 const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
-const exifr = require('exifr/dist/mini.legacy.umd.js')
+const { rotation } = require('exifr/dist/mini.umd.js')
 
 const locale = require('./locale')
 
@@ -64,7 +64,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
       })
     })
 
-    const orientationPromise = exifr.rotation(file.data).catch(() => 1)
+    const orientationPromise = rotation(file.data).catch(() => 1)
 
     return Promise.all([onload, orientationPromise])
       .then(([image, orientation]) => {
