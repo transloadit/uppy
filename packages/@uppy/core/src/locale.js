@@ -47,7 +47,7 @@ module.exports = {
     signInWithGoogle: 'Sign in with Google',
     searchImages: 'Search for images',
     enterTextToSearch: 'Enter text to search for images',
-    backToSearch: 'Back to Search',
+    search: 'Search',
     emptyFolderAdded: 'No files were added from empty folder',
     folderAlreadyAdded: 'The folder "%{folder}" was already added',
     folderAdded: {
