@@ -1,10 +1,12 @@
 const { h } = require('preact')
 
+const SUBMIT_KEY = 13
+
 module.exports = (props) => {
   const { searchTerm, i18n, search } = props
 
   const handleKeyPress = (ev) => {
-    if (ev.keyCode === 13) {
+    if (ev.keyCode === SUBMIT_KEY) {
       ev.stopPropagation()
       ev.preventDefault()
       search(ev.target.value)
@@ -20,8 +22,6 @@ module.exports = (props) => {
         aria-label={i18n('search')}
         value={searchTerm}
         onKeyUp={handleKeyPress}
-        onKeyDown={handleKeyPress}
-        onKeyPress={handleKeyPress}
         data-uppy-super-focusable
       />
       <svg aria-hidden="true" focusable="false" class="uppy-c-icon uppy-ProviderBrowser-searchIcon" width="12" height="12" viewBox="0 0 12 12">
