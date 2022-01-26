@@ -3,7 +3,69 @@
 'use strict'
 
 const svgPresentationAttributes = [
-  'alignment-baseline', 'baseline-shift', 'class', 'clip', 'clip-path', 'clip-rule', 'color', 'color-interpolatio', 'color-interpolatio-filters', 'color-profile', 'color-rendering', 'cursor', 'direction', 'display', 'dominant-baseline', 'enable-background', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'glyph-orientation-horizontal', 'glyph-orientation-vertical', 'image-rendering', 'kerning', 'letter-spacing', 'lighting-color', 'marker-end', 'marker-mid', 'marker-start', 'mask', 'opacity', 'overflow', 'pointer-events', 'shape-rendering', 'stop-color', 'stop-opacity', 'stroke', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke-width', 'text-anchor', 'text-decoration', 'text-rendering', 'transform', 'transform-origin', 'unicode-bidi', 'vector-effect', 'visibility', 'word-spacing', 'writing-mod',
+  'alignment-baseline',
+  'baseline-shift',
+  'class',
+  'clip',
+  'clip-path',
+  'clip-rule',
+  'color',
+  'color-interpolatio',
+  'color-interpolatio-filters',
+  'color-profile',
+  'color-rendering',
+  'cursor',
+  'direction',
+  'display',
+  'dominant-baseline',
+  'enable-background',
+  'fill',
+  'fill-opacity',
+  'fill-rule',
+  'filter',
+  'flood-color',
+  'flood-opacity',
+  'font-family',
+  'font-size',
+  'font-size-adjust',
+  'font-stretch',
+  'font-style',
+  'font-variant',
+  'font-weight',
+  'glyph-orientation-horizontal',
+  'glyph-orientation-vertical',
+  'image-rendering',
+  'kerning',
+  'letter-spacing',
+  'lighting-color',
+  'marker-end',
+  'marker-mid',
+  'marker-start',
+  'mask',
+  'opacity',
+  'overflow',
+  'pointer-events',
+  'shape-rendering',
+  'stop-color',
+  'stop-opacity',
+  'stroke',
+  'stroke-dasharray',
+  'stroke-dashoffset',
+  'stroke-linecap',
+  'stroke-linejoin',
+  'stroke-miterlimit',
+  'stroke-opacity',
+  'stroke-width',
+  'text-anchor',
+  'text-decoration',
+  'text-rendering',
+  'transform',
+  'transform-origin',
+  'unicode-bidi',
+  'vector-effect',
+  'visibility',
+  'word-spacing',
+  'writing-mod',
 ]
 
 module.exports = {
@@ -44,7 +106,7 @@ module.exports = {
     // transloadit rules we are actually ok with in the uppy repo
     'import/extensions': 'off',
     'object-shorthand': ['error', 'always'],
-    'strict': 'off',
+    strict: 'off',
     'key-spacing': 'off',
 
     // rules we want to enforce
@@ -83,8 +145,8 @@ module.exports = {
     'no-param-reassign': ['warn'],
     'no-redeclare': ['warn'],
     'no-shadow': ['warn'],
-    'no-use-before-define': ['warn', { 'functions': false }],
-    'radix': ['warn'],
+    'no-use-before-define': ['warn', { functions: false }],
+    radix: ['warn'],
     'react/button-has-type': 'error',
     'react/destructuring-assignment': ['warn'],
     'react/forbid-prop-types': 'error',
@@ -97,9 +159,12 @@ module.exports = {
     'react/prefer-stateless-function': 'error',
     'react/sort-comp': 'error',
     'react/style-prop-object': 'error',
-    'react/no-unknown-property': ['error', {
-      ignore: svgPresentationAttributes,
-    }],
+    'react/no-unknown-property': [
+      'error',
+      {
+        ignore: svgPresentationAttributes,
+      },
+    ],
 
     // accessibility
     'jsx-a11y/alt-text': 'error',
@@ -136,12 +201,7 @@ module.exports = {
     jsdoc: {
       mode: 'typescript',
     },
-    polyfills: [
-      'Promise',
-      'fetch',
-      'Object.assign',
-      'document.querySelector',
-    ],
+    polyfills: ['Promise', 'fetch', 'Object.assign', 'document.querySelector'],
   },
 
   overrides: [
@@ -165,21 +225,14 @@ module.exports = {
       },
     },
     {
-      files: [
-        'website/src/examples/*/*.es6',
-      ],
+      files: ['website/src/examples/*/*.es6'],
       rules: {
         'import/no-extraneous-dependencies': 'off',
         'no-console': 'off',
       },
     },
     {
-      files: [
-        '*.test.js',
-        'test/endtoend/*.js',
-        'website/*.js',
-        'bin/**.js',
-      ],
+      files: ['*.test.js', 'test/endtoend/*.js', 'website/*.js', 'bin/**.js'],
       rules: {
         'compat/compat': ['off'],
       },
@@ -202,27 +255,25 @@ module.exports = {
       ],
       rules: {
         'no-console': 'off',
-        'import/no-extraneous-dependencies': ['error', {
-          devDependencies: true,
-        }],
+        'import/no-extraneous-dependencies': [
+          'error',
+          {
+            devDependencies: true,
+          },
+        ],
       },
     },
 
     {
-      files: [
-        'packages/@uppy/locales/src/*.js',
-        'packages/@uppy/locales/template.js',
-      ],
+      files: ['packages/@uppy/locales/src/*.js', 'packages/@uppy/locales/template.js'],
       rules: {
         camelcase: ['off'],
-        'quote-props': ['error', 'as-needed', { 'numbers': true }],
+        'quote-props': ['error', 'as-needed', { numbers: true }],
       },
     },
 
     {
-      files: [
-        'website/themes/uppy/source/js/*.js',
-      ],
+      files: ['website/themes/uppy/source/js/*.js'],
       rules: {
         'prefer-const': ['off'],
       },
@@ -245,9 +296,12 @@ module.exports = {
     {
       files: ['packages/@uppy/react/src/**/*.js'],
       rules: {
-        'import/no-extraneous-dependencies': ['error', {
-          peerDependencies: true,
-        }],
+        'import/no-extraneous-dependencies': [
+          'error',
+          {
+            peerDependencies: true,
+          },
+        ],
       },
     },
 
@@ -289,7 +343,10 @@ module.exports = {
     },
     {
       files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript'],
-      excludedFiles: ['examples/angular-example/**/*.ts', 'packages/@uppy/angular/**/*.ts'],
+      excludedFiles: [
+        'examples/angular-example/**/*.ts',
+        'packages/@uppy/angular/**/*.ts',
+      ],
       parser: '@typescript-eslint/parser',
       settings: {
         'import/resolver': {
@@ -329,6 +386,10 @@ module.exports = {
     {
       files: ['e2e/**/*.ts'],
       extends: ['plugin:cypress/recommended'],
+    },
+    {
+      files: ['e2e/**/*.ts', 'e2e/**/*.js'],
+      rules: { 'import/no-extraneous-dependencies': 'off' },
     },
   ],
 }
