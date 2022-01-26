@@ -320,26 +320,6 @@
   opacity: 1;
 }
 
-// .uppy-ProviderBrowser-searchClose {
-//   position: absolute;
-//   top: 4px;
-//   z-index: $zIndex-3;
-//   width: 22px;
-//   height: 22px;
-//   padding: 6px;
-//   color: $gray-500;
-//   cursor: pointer;
-//   inset-inline-end: 12px;
-
-//   &:hover {
-//     color: $gray-600;
-//   }
-// }
-
-// .uppy-ProviderBrowser-searchClose svg {
-//   vertical-align: text-top;
-// }
-
 .uppy-ProviderBrowser-userLogout {
   @include highlight-focus;
   // for focus

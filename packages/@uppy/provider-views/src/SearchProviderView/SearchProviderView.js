@@ -79,7 +79,6 @@ module.exports = class SearchProviderView extends View {
     const { searchTerm } = this.plugin.getPluginState()
     if (query && query === searchTerm) {
       // no need to search again as this is the same as the previous search
-      // this.plugin.setPluginState({ isInputMode: false })
       return
     }
 
