@@ -1,4 +1,4 @@
-const { UIPlugin } = require('../../packages/@uppy/core')
+const UIPlugin = require('../UIPlugin')
 
 module.exports = class InvalidPluginWithoutType extends UIPlugin {
   constructor (uppy, opts) {

@@ -8325,7 +8325,6 @@ __metadata:
     core-js: ~3.19.3
     cssnano: ^5.0.6
     dedent: ^0.7.0
-    deep-freeze: ^0.0.1
     esbuild: ^0.14.1
     esbuild-plugin-babel: ^0.2.3
     eslint: ^8.0.0
@@ -17301,6 +17300,7 @@ __metadata:
     cypress: ^9.0.0
     cypress-file-upload: ^5.0.8
     dedent: ^0.7.0
+    deep-freeze: ^0.0.1
     parcel: ^2.0.1
     prompts: ^2.4.2
     typescript: ^4.5.4

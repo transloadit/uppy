@@ -1,10 +1,10 @@
-const { UIPlugin } = require('../../packages/@uppy/core')
+const UIPlugin = require('../UIPlugin')
 
-module.exports = class TestSelector2 extends UIPlugin {
+module.exports = class TestSelector1 extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'
-    this.id = 'TestSelector2'
+    this.id = 'TestSelector1'
     this.name = this.constructor.name
 
     this.mocks = {

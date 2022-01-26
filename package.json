@@ -64,7 +64,6 @@
     "core-js": "~3.19.3",
     "cssnano": "^5.0.6",
     "dedent": "^0.7.0",
-    "deep-freeze": "^0.0.1",
     "esbuild": "^0.14.1",
     "esbuild-plugin-babel": "^0.2.3",
     "eslint": "^8.0.0",
