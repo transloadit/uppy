@@ -123,7 +123,7 @@ Specific options for the [Webcam](/docs/webcam) provider.
 
 ## Using your own OAuth applications when importing files
 
-When importing files from remote providers, Transloadit's OAuth applications are used by default. Your users will be asked to provide Transloadit access to their files. Since your users are probably not aware of Transloadit, this may be confusing or decrease trust.
+When importing files from remote providers, Transloadit's OAuth applications are used by default. Your users will be asked to provide Transloadit access to their files. Since your users are probably not aware of Transloadit, this may be confusing or decrease trust. You may also hit rate limits, because the OAuth application is shared between everyone using Transloadit.
 
 You can use your own OAuth keys with Transloadit's hosted Companion servers by using Transloadit Template Credentials. [Create a Template Credential][template-credentials] on the Transloadit site. Select "Companion OAuth" for the service, and enter the key and secret for the provider you want to use. Then you can pass the name of the new credentials to the appropriate provider:
 
