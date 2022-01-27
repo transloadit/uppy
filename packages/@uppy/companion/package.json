@@ -37,6 +37,7 @@
     "connect-redis": "4.0.3",
     "cookie-parser": "1.4.6",
     "cors": "^2.8.5",
+    "escape-goat": "3.0.0",
     "escape-string-regexp": "2.0.0",
     "express": "4.17.1",
     "express-interceptor": "1.2.0",

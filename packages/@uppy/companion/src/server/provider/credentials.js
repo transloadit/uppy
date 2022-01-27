@@ -1,12 +1,65 @@
 const request = require('request')
 // @ts-ignore
 const atob = require('atob')
+const { htmlEscape } = require('escape-goat')
 const logger = require('../logger')
 const oAuthState = require('../helpers/oauth-state')
 const tokenService = require('../helpers/jwt')
-const { sanitizeHtml } = require('../helpers/utils')
 // eslint-disable-next-line
 const Provider = require('./Provider')
+
+/**
+ * @param {string} url
+ * @param {string} providerName
+ * @param {object} credentialRequestParams
+ */
+function fetchKeys (url, providerName, credentialRequestParams) {
+  return new Promise((resolve, reject) => {
+    const options = {
+      body: {
+        provider: providerName,
+        parameters: credentialRequestParams,
+      },
+      json: true,
+    }
+    request.post(url, options, (requestErr, resp, body) => {
+      if (requestErr) {
+        logger.error(requestErr, 'credentials.fetch.fail')
+        return reject(requestErr)
+      }
+
+      if (resp.statusCode !== 200 || !body.credentials) {
+        const err = new Error(`received status: ${resp.statusCode} with no credentials`)
+        logger.error(err, 'credentials.fetch.fail')
+        return reject(err)
+      }
+
+      return resolve(body.credentials)
+    })
+  })
+}
+
+/**
+ * Fetches for a providers OAuth credentials. If the config for thtat provider allows fetching
+ * of the credentials via http, and the `credentialRequestParams` argument is provided, the oauth
+ * credentials will be fetched via http. Otherwise, the credentials provided via companion options
+ * will be used instead.
+ *
+ * @param {string} providerName the name of the provider whose oauth keys we want to fetch (e.g onedrive)
+ * @param {object} companionOptions the companion options object
+ * @param {object} credentialRequestParams the params that should be sent if an http request is required.
+ */
+async function fetchProviderKeys (providerName, companionOptions, credentialRequestParams) {
+  let providerConfig = companionOptions.providerOptions[providerName]
+  if (!providerConfig) {
+    providerConfig = (companionOptions.customProviders[providerName] || {}).config
+  }
+
+  if (providerConfig && providerConfig.credentialsURL && credentialRequestParams) {
+    return fetchKeys(providerConfig.credentialsURL, providerName, credentialRequestParams)
+  }
+  return providerConfig
+}
 
 /**
  * Returns a request middleware function that can be used to pre-fetch a provider's
@@ -21,11 +74,13 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
     const { authProvider, override } = req.params
     const [providerName] = Object.keys(providers).filter((name) => providers[name].authProvider === authProvider)
     if (!providerName) {
-      return next()
+      next()
+      return
     }
 
     if (!companionOptions.providerOptions[providerName].credentialsURL) {
-      return next()
+      next()
+      return
     }
 
     const dynamic = oAuthState.getDynamicStateFromRequest(req)
@@ -33,17 +88,20 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
     // override param indicates subsequent requests from the oauth flow
     const state = override ? dynamic : req.query.state
     if (!state) {
-      return next()
+      next()
+      return
     }
 
     const preAuthToken = oAuthState.getFromState(state, 'preAuthToken', companionOptions.secret)
     if (!preAuthToken) {
-      return next()
+      next()
+      return
     }
 
     const { err, payload } = tokenService.verifyEncryptedToken(preAuthToken, companionOptions.preAuthSecret)
     if (err || !payload) {
-      return next()
+      next()
+      return
     }
 
     fetchProviderKeys(providerName, companionOptions, payload).then((credentials) => {
@@ -59,7 +117,7 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
       }
 
       next()
-    }).catch((err) => {
+    }).catch((keyErr) => {
       // TODO we should return an html page here that can communicate the error
       // back to the Uppy client, just like /send-token does
       res.send(`
@@ -73,7 +131,7 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
           <p>
             This is probably an Uppy configuration issue. Check that your Transloadit key is correct, and that the configured <code>credentialsName</code> for this remote provider matches the name you gave it in the Template Credentials setup on the Transloadit side.
           </p>
-          <p>Internal error message: ${sanitizeHtml(err.message)}</p>
+          <p>Internal error message: ${htmlEscape(keyErr.message)}</p>
         </body>
         </html>
       `)
@@ -106,52 +164,4 @@ module.exports.getCredentialsResolver = (providerName, companionOptions, req) =>
   }
 
   return credentialsResolver
-}
-
-/**
- * Fetches for a providers OAuth credentials. If the config for thtat provider allows fetching
- * of the credentials via http, and the `credentialRequestParams` argument is provided, the oauth
- * credentials will be fetched via http. Otherwise, the credentials provided via companion options
- * will be used instead.
- *
- * @param {string} providerName the name of the provider whose oauth keys we want to fetch (e.g onedrive)
- * @param {object} companionOptions the companion options object
- * @param {object} credentialRequestParams the params that should be sent if an http request is required.
- */
-const fetchProviderKeys = (providerName, companionOptions, credentialRequestParams) => {
-  let providerConfig = companionOptions.providerOptions[providerName]
-  if (!providerConfig) {
-    providerConfig = (companionOptions.customProviders[providerName] || {}).config
-  }
-
-  if (providerConfig && providerConfig.credentialsURL && credentialRequestParams) {
-    return fetchKeys(providerConfig.credentialsURL, providerName, credentialRequestParams)
-  }
-  return Promise.resolve(providerConfig)
-}
-
-const fetchKeys = (url, providerName, credentialRequestParams) => {
-  return new Promise((resolve, reject) => {
-    const options = {
-      body: {
-        provider: providerName,
-        parameters: credentialRequestParams,
-      },
-      json: true,
-    }
-    request.post(url, options, (err, resp, body) => {
-      if (err) {
-        logger.error(err, 'credentials.fetch.fail')
-        return reject(err)
-      }
-
-      if (resp.statusCode !== 200 || !body.credentials) {
-        const err = new Error(`received status: ${resp.statusCode} with no credentials`)
-        logger.error(err, 'credentials.fetch.fail')
-        return reject(err)
-      }
-
-      return resolve(body.credentials)
-    })
-  })
 }
