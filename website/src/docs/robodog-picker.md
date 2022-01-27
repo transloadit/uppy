@@ -67,7 +67,7 @@ The minimum number of files that must be selected before the upload.
 
 Array of mime type wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`.
 
-If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting\_accepted\_file\_types) attribute will be used for the internal file input field, so only acceptable files can be selected in the system file dialog.
+If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types) attribute will be used for the internal file input field, so only acceptable files can be selected in the system file dialog.
 
 ## Providers
 
@@ -87,7 +87,7 @@ Array of providers to use. Each entry is the name of a provider. The available o
 
 ### `companionUrl: Transloadit.COMPANION`
 
-The URL to a [Uppy Companion][companion] server to use. By default, Transloadit's hosted servers are used. These servers are restricted to importing files from remote providers into Transloadit Assemblies.
+The URL to a [Uppy Companion][companion] server to use. By default, Transloadit’s hosted servers are used. These servers are restricted to importing files from remote providers into Transloadit Assemblies.
 
 ### `companionAllowedHosts: Transloadit.COMPANION_PATTERN`
 
@@ -95,7 +95,7 @@ The valid and authorised URL(s) from which OAuth responses should be accepted.
 
 This value can be a `String`, a `Regex` pattern, or an `Array` of both.
 
-This is useful when you have your own [Uppy Companion][companion] running on multiple hosts. Otherwise, the default value should do just fine.
+This is useful when you have your own [Uppy Companion][companion] instances running on many hostnames.
 
 ### `companionHeaders: {}`
 
@@ -123,9 +123,9 @@ Specific options for the [Webcam](/docs/webcam) provider.
 
 ## Using your own OAuth applications when importing files
 
-When importing files from remote providers, Transloadit's OAuth applications are used by default. Your users will be asked to provide Transloadit access to their files. Since your users are probably not aware of Transloadit, this may be confusing or decrease trust. You may also hit rate limits, because the OAuth application is shared between everyone using Transloadit.
+When importing files from remote providers, Transloadit’s OAuth applications are used by default. Your users will be asked to provide Transloadit access to their files. Since your users are probably not aware of Transloadit, this may be confusing or decrease trust. You may also hit rate limits, because the OAuth application is shared between everyone using Transloadit.
 
-You can use your own OAuth keys with Transloadit's hosted Companion servers by using Transloadit Template Credentials. [Create a Template Credential][template-credentials] on the Transloadit site. Select "Companion OAuth" for the service, and enter the key and secret for the provider you want to use. Then you can pass the name of the new credentials to the appropriate provider:
+You can use your own OAuth keys with Transloadit’s hosted Companion servers by using Transloadit Template Credentials. [Create a Template Credential][template-credentials] on the Transloadit site. Select “Companion OAuth” for the service, and enter the key and secret for the provider you want to use. Then you can pass the name of the new credentials to that provider:
 
 ```js
 Robodog.pick({
@@ -136,12 +136,14 @@ Robodog.pick({
 })
 ```
 
-Users will now be asked to allow _your_ application access, and they're probably already familiar with that!
+Users will now be asked to allow _your_ application access, and they’re probably already familiar with that!
 
 [companion]: /docs/companion
 
 [transloadit]: /docs/transloadit#options
 
 [assembly-status]: https://transloadit.com/docs/api/#assembly-status-response
+
 [template-credentials]: https://transloadit.com/docs/#how-to-create-template-credentials
+
 [promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
