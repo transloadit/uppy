@@ -150,7 +150,7 @@
     "test:type": "yarn workspaces foreach -piv --include '@uppy/*' --exclude '@uppy/{angular,react-native,locales,companion,provider-views,robodog,svelte}' exec tsd",
     "test:unit": "yarn run build:lib && jest --env jsdom",
     "test:watch": "jest --env jsdom --watch",
-    "test:size": "size-limit --why",
+    "test:size": "yarn build:lib && size-limit --why",
     "test": "npm-run-all lint test:locale-packs test:unit test:type test:companion",
     "uploadcdn": "yarn node ./bin/upload-to-cdn.js",
     "version": "yarn node ./bin/after-version-bump.js",
