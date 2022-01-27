@@ -49,7 +49,7 @@ function addRemoteProvider (uppy, name, opts) {
       const { key } = opts.params.auth
       overrides.companionKeysParams = {
         key,
-        credentialsName: overrides.credentialsName
+        credentialsName: overrides.credentialsName,
       }
       delete overrides.credentialsName
     }
