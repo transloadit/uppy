@@ -18,7 +18,7 @@ module.exports = (props) => {
     <div className="uppy-SearchProvider">
       <input
         className="uppy-u-reset uppy-c-textInput uppy-SearchProvider-input"
-        type="text"
+        type="search"
         aria-label={props.i18n('enterTextToSearch')}
         placeholder={props.i18n('enterTextToSearch')}
         onKeyUp={handleKeyPress}

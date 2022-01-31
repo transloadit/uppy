@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
-    "exifr": "^6.0.0"
+    "exifr": "^7.0.0"
   },
   "devDependencies": {
     "namespace-emitter": "2.0.1"
