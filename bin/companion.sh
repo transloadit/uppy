@@ -6,6 +6,7 @@ if [ -f .env ]; then
   set -a
   source <(cat .env | sed -e '/^#/d;/^\s*$/d' -e "s/'/'\\\''/g" -e "s/=\(.*\)/='\1'/g")
   set +a
+  nodemon --watch packages/@uppy/companion/src --exec node ./packages/@uppy/companion/src/standalone/start-server.js
 else
   env \
   COMPANION_DATADIR="./output" \
@@ -13,7 +14,6 @@ else
   COMPANION_PROTOCOL="http" \
   COMPANION_PORT=3020 \
   COMPANION_CLIENT_ORIGINS="" \
-  COMPANION_SECRET="development"
+  COMPANION_SECRET="development" \
+  nodemon --watch packages/@uppy/companion/src --exec node ./packages/@uppy/companion/src/standalone/start-server.js
 fi
-
-nodemon --watch packages/@uppy/companion/src --exec node ./packages/@uppy/companion/src/standalone/start-server.js
