@@ -40,20 +40,9 @@ yarn run test:unit
 
 ### End-to-End tests
 
-We use [Cypress](cypress.io/) for our e2e test suite. Be sure to checkout “[Writing your first test](https://docs.cypress.io/guides/getting-started/writing-your-first-test#Add-a-test-file)” and the “[Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress#Cypress-Can-Be-Simple-Sometimes)”.
+We use [Cypress](cypress.io/) for our e2e test suite. Be sure to checkout “[Writing your first test](https://docs.cypress.io/guides/getting-started/writing-your-first-test#Add-a-test-file)” and the “[Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress#Cypress-Can-Be-Simple-Sometimes)”. It is also a good idea to be aware of the “[Best Practices](https://docs.cypress.io/guides/references/best-practices)”.
 
-<!-- TODO: check if this changed after writing -->
-
-First, you need to create a `.env.local` in the root of Uppy. Depending on the tests, you will need this.
-
-```env
-TRANSLOADIT_KEY=***
-TRANSLOADIT_TEMPLATE=***
-TRANSLOADIT_SERVICE_URL=https://api2.transloadit.com
-COMPANION_URL=http://localhost:3020
-```
-
-If you don’t want to go through the effort of creating a Transloadit account and template, you can also disable the transloadit tests, or only run the tests you are interested in.
+To get started make sure you have your `.env` set up. If it doesn't exist, copy and rename the `.env.local` file and populate (some) of the values. What values need to be populated depends on what tests you want to run. 
 
 To start the testing suite run:
 
