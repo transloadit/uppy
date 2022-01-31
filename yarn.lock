@@ -8414,8 +8414,6 @@ __metadata:
     "@babel/plugin-transform-react-jsx": ^7.10.4
     "@uppy/companion": "workspace:^"
     babel-plugin-transform-commonjs: 1.1.6
-    dotenv: ^15.0.0
-    nodemon: ^2.0.15
     vite: ^2.7.1
   languageName: unknown
   linkType: soft
@@ -16572,13 +16570,6 @@ __metadata:
   version: 5.1.0
   resolution: "dotenv-expand@npm:5.1.0"
   checksum: 8017675b7f254384915d55f9eb6388e577cf0a1231a28d54b0ca03b782be9501b0ac90ac57338636d395fa59051e6209e9b44b8ddf169ce6076dffb5dea227d3
-  languageName: node
-  linkType: hard
-
-"dotenv@npm:^15.0.0":
-  version: 15.0.0
-  resolution: "dotenv@npm:15.0.0"
-  checksum: be5d852b2ad1708780e7038481c0687ce4bb9edf354d439872511e966a5f28c083f296e1d1c182256d695bfdd67e320382eb3b0f2e9d83efa3615cd1757257ab
   languageName: node
   linkType: hard
 
@@ -29043,7 +29034,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"nodemon@npm:^2.0.15, nodemon@npm:^2.0.8":
+"nodemon@npm:^2.0.8":
   version: 2.0.15
   resolution: "nodemon@npm:2.0.15"
   dependencies:

@@ -143,7 +143,7 @@
     "lint": "eslint . --cache",
     "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-dev/release interactive",
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
-    "start:companion": "yarn node private/dev/companion.js",
+    "start:companion": "bash bin/companion.sh",
     "start": "npm-run-all --parallel watch start:companion web:start",
     "e2e": "npm-run-all --parallel watch:js:lib e2e:client start:companion e2e:cypress",
     "e2e:ci": "start-server-and-test 'npm-run-all --parallel e2e:client start:companion' '1234|3020' e2e:headless",

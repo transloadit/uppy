@@ -13,8 +13,6 @@
     "@babel/core": "^7.4.4",
     "@babel/plugin-transform-react-jsx": "^7.10.4",
     "babel-plugin-transform-commonjs": "1.1.6",
-    "dotenv": "^15.0.0",
-    "nodemon": "^2.0.15",
     "vite": "^2.7.1"
   },
   "private": true,
