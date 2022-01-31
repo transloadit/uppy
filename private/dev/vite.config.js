@@ -13,6 +13,7 @@ let counter = 0
  * @type {import('vite').UserConfig}
  */
 const config = {
+  envDir: ROOT.toString(),
   build: {
     commonjsOptions: {
       defaultIsModuleExports: true,
