@@ -40,9 +40,9 @@ yarn run test:unit
 
 ### End-to-End tests
 
-We use [Cypress](cypress.io/) for our e2e test suite. Be sure to checkout “[Writing your first test](https://docs.cypress.io/guides/getting-started/writing-your-first-test#Add-a-test-file)” and the “[Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress#Cypress-Can-Be-Simple-Sometimes)”. It is also a good idea to be aware of the “[Best Practices](https://docs.cypress.io/guides/references/best-practices)”.
+We use [Cypress](cypress.io/) for our e2e test suite. Be sure to checkout “[Writing your first test](https://docs.cypress.io/guides/getting-started/writing-your-first-test#Add-a-test-file)” and the “[Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress#Cypress-Can-Be-Simple-Sometimes)”. You should also be aware of the “[Best Practices](https://docs.cypress.io/guides/references/best-practices)”.
 
-To get started make sure you have your `.env` set up. If it doesn't exist, copy and rename the `.env.local` file and populate (some) of the values. What values need to be populated depends on what tests you want to run. 
+To get started make sure you have your `.env` set up. If it doesn’t exist, copy and rename the `.env.local` file and populate (some) of the values. What values need to be populated depends on what tests you want to run.
 
 To start the testing suite run:
 
