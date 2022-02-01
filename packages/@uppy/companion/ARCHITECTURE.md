@@ -26,7 +26,7 @@ const config = {
 Once this `google` config is added to `config/grant.js`, Grant automatically creates a route `/connect/google` that
 redirects to Google’s oAuth page. So on the client side, you need to link the user to `https://your-server/connect/google`.
 
-After the user completes the oAuth flow, they should always be redirected to `https://your-server/:provider/callback`.
+After the user completes the oAuth flow, they should always be redirected to `https://your-server/:provider/redirect`. This endpoint will in turn redirect to `https://your-server/:provider/callback`.
 The `/:provider/callback` routes are handled by the `callback` controller at `server/controllers/callback.js`.
 This controller receives the oAuth token, generates a json web token with it, and sends the generated json web token to the client by adding it to the cookies. This way companion doesn’t have to save users’ oAuth tokens (which is good from the security perspective).
 This json web token would be sent to companion in later requests and the oAuth token can be read from it.
