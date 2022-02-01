@@ -772,7 +772,7 @@ module.exports = class Dashboard extends UIPlugin {
     const isFocusInUppy = this.el.contains(document.activeElement)
     // When focus is lost on the page (== focus is on body for most browsers, or focus is null for IE11)
     const isFocusNowhere = document.activeElement === document.body || document.activeElement === null
-    const isInformerHidden = this.uppy.getState().info.isHidden
+    const isInformerHidden = this.uppy.getState().info.length === 0
     const isModal = !this.opts.inline
 
     if (

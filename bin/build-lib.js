@@ -5,7 +5,6 @@ const glob = promisify(require('glob'))
 const fs = require('fs')
 const path = require('path')
 
-const transformFile = promisify(babel.transformFile)
 const { mkdir, stat, writeFile } = fs.promises
 
 const SOURCE = 'packages/{*,@uppy/*}/src/**/*.js'
@@ -52,7 +51,7 @@ async function buildLib () {
       }
     }
 
-    const { code, map } = await transformFile(file, { sourceMaps: true })
+    const { code, map } = await babel.transformFileAsync(file, { sourceMaps: true })
     await mkdir(path.dirname(libFile), { recursive: true })
     await Promise.all([
       writeFile(libFile, code),
@@ -66,6 +65,6 @@ async function buildLib () {
 console.log('Using Babel version:', require('@babel/core/package.json').version)
 
 buildLib().catch((err) => {
-  console.error(err.stack)
+  console.error(err)
   process.exit(1)
 })

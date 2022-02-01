@@ -694,21 +694,22 @@ module.exports = class Transloadit extends BasePlugin {
     })
   }
 
+  #closeAssemblyIfExists = (assemblyID) => {
+    this.activeAssemblies[assemblyID]?.close()
+  }
+
   #onError = (err = null, uploadID) => {
     const state = this.getPluginState()
     const assemblyIDs = state.uploadsAssemblies[uploadID]
+    assemblyIDs?.forEach(this.#closeAssemblyIfExists)
 
-    assemblyIDs?.forEach((assemblyID) => {
-      if (this.activeAssemblies[assemblyID]) {
-        this.activeAssemblies[assemblyID].close()
-      }
-    })
     this.client.submitError(err)
       // if we can't report the error that sucks
       .catch(sendErrorToConsole(err))
   }
 
-  #onTusError = (err) => {
+  #onTusError = (file, err) => {
+    this.#closeAssemblyIfExists(file.transloadit?.assembly)
     if (err?.message?.startsWith('tus: ')) {
       const endpoint = err.originalRequest?.getUnderlyingObject()?.responseURL
       this.client.submitError(err, { endpoint, type: 'TUS_ERROR' })
