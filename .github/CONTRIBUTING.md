@@ -131,7 +131,7 @@ Now you should be able to test the Instagram integration.
 Before doing a release, check that the examples on the website work:
 
 ```bash
-npm start
+yarn start
 open http://localhost:4000/examples/dashboard
 ```
 
@@ -140,7 +140,7 @@ Also check the other examples:
 ```bash
 cd examples/EXAMPLENAME
 yarn install
-npm start
+yarn start
 ```
 
 Releases are managed by GitHub Actions, here’s an overview of the process to release a new Uppy version:
@@ -169,7 +169,7 @@ Even though bundled in this repo, the website is regarded as a separate project.
 ### Local previews
 
 1. `yarn install`
-2. `npm start`
+2. `yarn start`
 3. Go to http://localhost:4000. Your changes in `/website` and `/packages/@uppy` will be watched, your browser will refresh as files change.
 
 Then, to work on, for instance, the XHRUpload example, you would edit the following files:
