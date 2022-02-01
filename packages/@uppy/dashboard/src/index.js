@@ -1060,6 +1060,7 @@ module.exports = class Dashboard extends UIPlugin {
       this.uppy.use(ThumbnailGenerator, {
         id: `${this.id}:ThumbnailGenerator`,
         thumbnailWidth: this.opts.thumbnailWidth,
+        thumbnailHeight: this.opts.thumbnailHeight,
         thumbnailType: this.opts.thumbnailType,
         waitForThumbnailsBeforeUpload: this.opts.waitForThumbnailsBeforeUpload,
         // If we don't block on thumbnails, we can lazily generate them

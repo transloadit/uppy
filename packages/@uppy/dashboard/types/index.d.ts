@@ -1,5 +1,6 @@
 import type { PluginOptions, UIPlugin, PluginTarget, UppyFile, GenericEventCallback } from '@uppy/core'
 import type { StatusBarLocale } from '@uppy/status-bar'
+import type { ThumbnailOptions } from '@uppy/thumbnail-generator'
 import DashboardLocale from './generatedLocale'
 
 type FieldRenderOptions = {
@@ -19,7 +20,9 @@ interface MetaField {
   render?: (field: FieldRenderOptions, h: PreactRender) => any
 }
 
-export interface DashboardOptions extends PluginOptions {
+type Options = PluginOptions & ThumbnailOptions
+
+export interface DashboardOptions extends Options {
   animateOpenClose?: boolean
   browserBackButtonClose?: boolean
   closeAfterFinish?: boolean
@@ -47,7 +50,6 @@ export interface DashboardOptions extends PluginOptions {
   showRemoveButtonAfterComplete?: boolean
   target?: PluginTarget
   theme?: 'auto' | 'dark' | 'light'
-  thumbnailWidth?: number
   trigger?: string
   width?: string | number
   autoOpenFileEditor?: boolean
