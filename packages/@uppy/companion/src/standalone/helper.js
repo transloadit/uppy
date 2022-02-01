@@ -184,7 +184,7 @@ exports.buildHelpfulStartupMessage = (companionOptions) => {
       return
     }
 
-    callbackURLs.push(buildURL(`/connect/${providerName}/callback`, true))
+    callbackURLs.push(buildURL(`/connect/${providerName}/redirect`, true))
   })
 
   return stripIndent`
