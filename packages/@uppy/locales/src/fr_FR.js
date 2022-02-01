@@ -95,6 +95,7 @@ fr_FR.strings = {
   resumeUpload: 'Reprendre le téléchargement',
   retry: 'Réessayer',
   retryUpload: 'Réessayer le téléchargement',
+  save: 'Sauvegarder',
   saveChanges: 'Sauvegarder les modifications',
   selectFileNamed: 'Sélectionner le fichier %{name}',
   selectX: {
