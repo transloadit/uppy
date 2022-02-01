@@ -2,25 +2,31 @@ import type { PluginOptions, UIPlugin, UppyFile } from '@uppy/core'
 
 import ThumbnailGeneratorLocale from './generatedLocale'
 
-interface ThumbnailGeneratorOptions extends PluginOptions {
-    thumbnailWidth?: number,
-    thumbnailHeight?: number,
-    thumbnailType?: string,
-    waitForThumbnailsBeforeUpload?: boolean,
-    lazy?: boolean,
-    locale?: ThumbnailGeneratorLocale,
+export interface ThumbnailOptions {
+  thumbnailWidth?: number
+  thumbnailHeight?: number
+  thumbnailType?: string
+  waitForThumbnailsBeforeUpload?: boolean
+  lazy?: boolean
 }
 
-declare class ThumbnailGenerator extends UIPlugin<ThumbnailGeneratorOptions> { }
+interface Options extends ThumbnailOptions {
+  locale?: ThumbnailGeneratorLocale
+}
+
+declare class ThumbnailGenerator extends UIPlugin<PluginOptions & Options> {}
 
 export default ThumbnailGenerator
 
 // Events
 
-export type ThumbnailGeneratedCallback<TMeta> = (file: UppyFile<TMeta>, preview: string) => void;
+export type ThumbnailGeneratedCallback<TMeta> = (
+  file: UppyFile<TMeta>,
+  preview: string
+) => void
 
 declare module '@uppy/core' {
-    export interface UppyEventMap<TMeta> {
-        'thumbnail:generated' : ThumbnailGeneratedCallback<TMeta>
-    }
+  export interface UppyEventMap<TMeta> {
+    'thumbnail:generated': ThumbnailGeneratedCallback<TMeta>
+  }
 }
