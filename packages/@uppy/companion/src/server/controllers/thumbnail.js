@@ -10,12 +10,8 @@ async function thumbnail (req, res, next) {
   const { provider } = req.companion
 
   try {
-    const response = await provider.thumbnail({ id, token })
-    if (response) {
-      response.pipe(res)
-    } else {
-      res.sendStatus(404)
-    }
+    const { stream } = await provider.thumbnail({ id, token })
+    stream.pipe(res)
   } catch (err) {
     if (err.isAuthError) res.sendStatus(401)
     else next(err)
