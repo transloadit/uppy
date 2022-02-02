@@ -74,7 +74,7 @@ window.uppy = uppy
   const newHome = home.replace('</ul>', `\t<li><a href="${name}/index.html">${name}</a></li>\n\t\t\t</ul>`)
   await fs.writeFile(homeUrl, newHome)
 
-  const prettyPath = url => url.toString().split('uppy')[1]
+  const prettyPath = url => url.toString().split('uppy', 2)[1]
 
   console.log(`✅ Generated ${prettyPath(testUrl)}`)
   console.log(`✅ Generated ${prettyPath(htmlUrl)}`)
