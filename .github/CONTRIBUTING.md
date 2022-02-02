@@ -146,7 +146,7 @@ yarn start
 Releases are managed by GitHub Actions, here’s an overview of the process to release a new Uppy version:
 
 * Run `yarn release` on your local machine.
-* Follow the instructions and select what packages to release. PS: Don't skip a package unless the changes are really not touching anything related to the npm package.
+* Follow the instructions and select what packages to release. **Warning:** skipping packages results in those changes being "lost", meaning they won't be picked up in the changelog automatically next release. Always try to release all.
 * Before committing, check if the generated files look good.
 * When asked to edit the next CHANGELOG, only include changes related to the package(s) you selected for release.
 * Push to the Transloadit repository using the command given by the tool. Do not open a PR yourself, the GitHub Actions will create one and assign you to it.
