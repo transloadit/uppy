@@ -25,8 +25,8 @@ const { packages } = await prompts({
 })
 
 const camelcase = (str) => str
-    .toLowerCase()
-    .replace(/([-][a-z])/g, (group) => group.toUpperCase().replace('-', ''))
+  .toLowerCase()
+  .replace(/([-][a-z])/g, (group) => group.toUpperCase().replace('-', ''))
 
 const testUrl = new URL(`cypress/integration/${name}.spec.ts`, import.meta.url)
 const test = dedent`
