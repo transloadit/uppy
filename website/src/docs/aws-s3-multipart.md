@@ -181,7 +181,7 @@ While the Uppy AWS S3 plugin uses `POST` requests when uploading files to an S3 
       "x-amz-date",
       "x-amz-content-sha256",
       "content-type"
-    ]
+    ],
     "ExposedHeaders": ["ETag"]
   },
   {
