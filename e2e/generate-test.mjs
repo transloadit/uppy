@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /* eslint-disable no-console, import/no-extraneous-dependencies */
 import prompts from 'prompts'
 import fs from 'node:fs/promises'
