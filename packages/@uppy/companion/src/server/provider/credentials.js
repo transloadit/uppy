@@ -11,7 +11,7 @@ const Provider = require('./Provider')
 /**
  * @param {string} url
  * @param {string} providerName
- * @param {object} credentialRequestParams
+ * @param {object|null} credentialRequestParams - null asks for default credentials.
  */
 function fetchKeys (url, providerName, credentialRequestParams) {
   return new Promise((resolve, reject) => {
@@ -55,10 +55,22 @@ async function fetchProviderKeys (providerName, companionOptions, credentialRequ
     providerConfig = (companionOptions.customProviders[providerName] || {}).config
   }
 
-  if (providerConfig && providerConfig.credentialsURL && credentialRequestParams) {
-    return fetchKeys(providerConfig.credentialsURL, providerName, credentialRequestParams)
+  if (!providerConfig) {
+    return null
   }
-  return providerConfig
+
+  if (!providerConfig.credentialsURL) {
+    return providerConfig
+  }
+
+  // If a default key is configured, do not ask the credentials endpoint for it.
+  // In a future version we could make this an XOR thing, providing either an endpoint or global keys,
+  // but not both.
+  if (!credentialRequestParams && providerConfig.key) {
+    return providerConfig
+  }
+
+  return fetchKeys(providerConfig.credentialsURL, providerName, credentialRequestParams || null)
 }
 
 /**
