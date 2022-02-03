@@ -24,8 +24,7 @@ const { packages } = await prompts({
     .map((pkg) => ({ title: pkg, value: pkg })),
 })
 
-const camelcase = (str) =>
-  str
+const camelcase = (str) => str
     .toLowerCase()
     .replace(/([-][a-z])/g, (group) => group.toUpperCase().replace('-', ''))
 
@@ -74,7 +73,7 @@ const homeUrl = new URL('clients/index.html', import.meta.url)
 const home = await fs.readFile(homeUrl, 'utf8')
 const newHome = home.replace(
   '</ul>',
-  `\t<li><a href="${name}/index.html">${name}</a></li>\n\t\t\t</ul>`
+  `\t<li><a href="${name}/index.html">${name}</a></li>\n\t\t\t</ul>`,
 )
 await fs.writeFile(homeUrl, newHome)
 
