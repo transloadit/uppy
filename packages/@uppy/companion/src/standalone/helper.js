@@ -67,6 +67,7 @@ const getConfigFromEnv = () => {
       searchProviders: {
         unsplash: {
           key: process.env.COMPANION_UNSPLASH_KEY,
+          secret: process.env.COMPANION_UNSPLASH_SECRET,
         },
       },
       s3: {
