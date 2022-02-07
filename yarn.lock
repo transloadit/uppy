@@ -8322,6 +8322,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy/compressor@workspace:packages/@uppy/compressor":
+  version: 0.0.0-use.local
+  resolution: "@uppy/compressor@workspace:packages/@uppy/compressor"
+  dependencies:
+    "@uppy/utils": "workspace:^"
+    compressorjs: ^1.1.1
+    preact: ^10.5.13
+    promise-queue: ^2.2.5
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@uppy/core@workspace:*, @uppy/core@workspace:^, @uppy/core@workspace:packages/@uppy/core":
   version: 0.0.0-use.local
   resolution: "@uppy/core@workspace:packages/@uppy/core"
@@ -11961,6 +11974,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"blueimp-canvas-to-blob@npm:^3.29.0":
+  version: 3.29.0
+  resolution: "blueimp-canvas-to-blob@npm:3.29.0"
+  checksum: 6a55b90fbe958b75f7c78ff9e7617c01254d29cc8567ea6c853cd26a52518b3dfce28635f6964130ac738ee8ff9fb9c0ca094db2ceeaa021ff0432c1985416eb
+  languageName: node
+  linkType: hard
+
 "blueimp-md5@npm:^2.10.0":
   version: 2.19.0
   resolution: "blueimp-md5@npm:2.19.0"
@@ -14021,6 +14041,16 @@ __metadata:
     safe-buffer: 5.1.2
     vary: ~1.1.2
   checksum: 35c0f2eb1f28418978615dc1bc02075b34b1568f7f56c62d60f4214d4b7cc00d0f6d282b5f8a954f59872396bd770b6b15ffd8aa94c67d4bce9b8887b906999b
+  languageName: node
+  linkType: hard
+
+"compressorjs@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "compressorjs@npm:1.1.1"
+  dependencies:
+    blueimp-canvas-to-blob: ^3.29.0
+    is-blob: ^2.1.0
+  checksum: b4899567df07ebd0f2d3bdc814a6e63b0013be0020e119c0aa4fd4292298a0a4251302855c6ec6c40dd676c0e02f9a4483868f81474229cc375b928bb9c3f086
   languageName: node
   linkType: hard
 
@@ -23151,6 +23181,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   dependencies:
     binary-extensions: ^2.0.0
   checksum: 84192eb88cff70d320426f35ecd63c3d6d495da9d805b19bc65b518984b7c0760280e57dbf119b7e9be6b161784a5a673ab2c6abe83abb5198a432232ad5b35c
+  languageName: node
+  linkType: hard
+
+"is-blob@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "is-blob@npm:2.1.0"
+  checksum: ce24917bf50a52736e37702a14bc729a0e1eab6bf61ac0b8e6ee86caf33d73eba297131736f8e54615732d08168859493ba7ced4fc840bb5b7c2ae21a5de6861
   languageName: node
   linkType: hard
 
@@ -33103,6 +33140,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 1.0.1
   resolution: "promise-inflight@npm:1.0.1"
   checksum: 22749483091d2c594261517f4f80e05226d4d5ecc1fc917e1886929da56e22b5718b7f2a75f3807e7a7d471bc3be2907fe92e6e8f373ddf5c64bae35b5af3981
+  languageName: node
+  linkType: hard
+
+"promise-queue@npm:^2.2.5":
+  version: 2.2.5
+  resolution: "promise-queue@npm:2.2.5"
+  checksum: 41dc832a0674ea74f5f9bb4812566769d862eb52a19bdf3773045429f07b2bc433af5d939baaf4930191e37202ea31ec57e43a5a2994c101cb729069fe3eac6a
   languageName: node
   linkType: hard
 

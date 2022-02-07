@@ -629,6 +629,10 @@ class Uppy {
     // `null` means the size is unknown.
     const size = Number.isFinite(fileDescriptor.data.size) ? fileDescriptor.data.size : null
 
+    if (!fileDescriptor.data.type) {
+      fileDescriptor.data = fileDescriptor.data.slice(0, fileDescriptor.data.size, fileType)
+    }
+
     let newFile = {
       source: fileDescriptor.source || '',
       id: fileID,
