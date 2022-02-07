@@ -10,11 +10,11 @@ import '@uppy/dashboard/dist/style.css'
 const uppy = new Uppy()
   .use(Dashboard, { target: '#app', inline: true })
   .use(Transloadit, {
-    service: process.env.TRANSLOADIT_SERVICE_URL,
+    service: process.env.VITE_TRANSLOADIT_SERVICE_URL,
     waitForEncoding: true,
     params: {
-      auth: { key: process.env.TRANSLOADIT_KEY },
-      template_id: process.env.TRANSLOADIT_TEMPLATE,
+      auth: { key: process.env.VITE_TRANSLOADIT_KEY },
+      template_id: process.env.VITE_TRANSLOADIT_TEMPLATE,
     },
   })
 
