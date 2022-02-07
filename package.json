@@ -100,7 +100,6 @@
     "postcss": "^8.2.10",
     "postcss-dir-pseudo-class": "^5.0.0",
     "postcss-logical": "^4.0.2",
-    "postcss-safe-important": "^1.2.0",
     "pre-commit": "^1.2.2",
     "remark-cli": "^10.0.0",
     "replacestream": "^4.0.3",
