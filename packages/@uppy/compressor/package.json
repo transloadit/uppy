@@ -22,6 +22,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
+    "@transloadit/prettier-bytes": "^0.0.9",
     "@uppy/utils": "workspace:^",
     "compressorjs": "^1.1.1",
     "preact": "^10.5.13",

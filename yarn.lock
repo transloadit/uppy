@@ -6226,6 +6226,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@transloadit/prettier-bytes@npm:^0.0.9":
+  version: 0.0.9
+  resolution: "@transloadit/prettier-bytes@npm:0.0.9"
+  checksum: efa5a723c41e7bce7ad17d1affe6a43209df857e17dc2b12a7c7bd6d3c921df8298086dbfb62ed740ca3e617d8c7f47485bb311adb637b20f2f75a28b08bac4f
+  languageName: node
+  linkType: hard
+
 "@trysound/sax@npm:0.2.0":
   version: 0.2.0
   resolution: "@trysound/sax@npm:0.2.0"
@@ -8326,6 +8333,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/compressor@workspace:packages/@uppy/compressor"
   dependencies:
+    "@transloadit/prettier-bytes": ^0.0.9
     "@uppy/utils": "workspace:^"
     compressorjs: ^1.1.1
     preact: ^10.5.13

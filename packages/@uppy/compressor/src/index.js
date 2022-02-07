@@ -1,5 +1,6 @@
 const { UIPlugin } = require('@uppy/core')
 const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
+const prettierBytes = require('@transloadit/prettier-bytes')
 const Compressor = require('compressorjs/dist/compressor.common.js')
 const locale = require('./locale')
 
@@ -40,11 +41,13 @@ module.exports = class ImageCompressor extends UIPlugin {
   }
 
   async prepareUpload (fileIDs) {
+    let totalCompressedSize = 0
     const compressAndApplyResult = this.#RateLimitedQueue.wrapPromiseFunction(
       async (file) => {
         try {
           const compressedBlob = await this.compress(file.data)
           this.uppy.log(`[Image Compressor] Image ${file.id} size before/after compression: ${file.data.size} / ${compressedBlob.size}`)
+          totalCompressedSize += compressedBlob.size
           this.uppy.setFileState(file.id, {
             data: compressedBlob,
             size: compressedBlob.size,
@@ -63,6 +66,13 @@ module.exports = class ImageCompressor extends UIPlugin {
         message: this.i18n('compressingImages'),
       })
 
+      // Some browsers (Firefox) add blobs with empty file type, when files are
+      // added from a folder. Uppy auto-detects type from extension, but leaves the original blob intact.
+      // However, Compressor.js failes when file has no type, so we set it here
+      if (!file.data.type) {
+        file.data = file.data.slice(0, file.data.size, file.type)
+      }
+
       if (!file.type.startsWith('image/')) {
         return Promise.resolve()
       }
@@ -75,6 +85,15 @@ module.exports = class ImageCompressor extends UIPlugin {
     // Because it leads to StatusBar showing a weird “upload 6 files” button,
     // while waiting for all the files to complete pre-processing.
     await Promise.all(promises)
+
+    if (totalCompressedSize > 1000) {
+      this.uppy.info(
+        this.i18n('compressedX', {
+          size: prettierBytes(totalCompressedSize),
+        }),
+        'info',
+      )
+    }
 
     for (const fileID of fileIDs) {
       const file = this.uppy.getFile(fileID)
