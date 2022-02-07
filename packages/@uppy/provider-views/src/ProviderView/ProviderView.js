@@ -218,7 +218,9 @@ module.exports = class ProviderView extends View {
     })
   }
 
-  handleAuth () {
+  async handleAuth () {
+    await this.provider.ensurePreAuth()
+
     const authState = btoa(JSON.stringify({ origin: getOrigin() }))
     const clientVersion = `@uppy/provider-views=${ProviderView.VERSION}`
     const link = this.provider.authUrl({ state: authState, uppyVersions: clientVersion })
