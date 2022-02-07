@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   strings: {
     pluginNameAudio: 'Audio',
     // Used as the label for the button that starts an audio recording.

@@ -170,6 +170,43 @@ module.exports = {
       },
     },
     {
+      files: [
+        // Packages that have switched to ESM sources:
+        'packages/@uppy/audio/src/**/*.js',
+      ],
+      parserOptions: {
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: false,
+        },
+      },
+      rules: {
+        'no-restricted-globals': [
+          'error',
+          {
+            name: '__filename',
+            message: 'Use import.meta.url instead',
+          },
+          {
+            name: '__dirname',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'exports',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'module',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'require',
+            message: 'Use import instead',
+          },
+        ],
+      },
+    },
+    {
       files: ['./packages/@uppy/companion/**/*.js'],
       rules: {
         'no-restricted-syntax': 'warn',

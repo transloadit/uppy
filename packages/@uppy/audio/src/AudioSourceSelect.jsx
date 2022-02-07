@@ -1,6 +1,6 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
-module.exports = ({ currentDeviceId, audioSources, onChangeSource }) => {
+export default ({ currentDeviceId, audioSources, onChangeSource }) => {
   return (
     <div className="uppy-Audio-videoSource">
       <select
