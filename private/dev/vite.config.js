@@ -1,5 +1,8 @@
 import { fileURLToPath } from 'node:url'
 import { transformAsync } from '@babel/core'
+import autoprefixer from 'autoprefixer'
+import postcssLogical from 'postcss-logical'
+import postcssDirPseudoClass from 'postcss-dir-pseudo-class'
 
 const ROOT = new URL('../../', import.meta.url)
 const PACKAGES_ROOT = fileURLToPath(new URL('./packages/', ROOT))
@@ -17,6 +20,15 @@ const config = {
   build: {
     commonjsOptions: {
       defaultIsModuleExports: true,
+    },
+  },
+  css: {
+    postcss: {
+      plugins: [
+        autoprefixer,
+        postcssLogical(),
+        postcssDirPseudoClass(),
+      ],
     },
   },
   esbuild: {

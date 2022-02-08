@@ -1,6 +1,7 @@
 /* global jest:false, test:false, expect:false, describe:false */
 
 const mockOauthState = require('../mockoauthstate')()
+const { version } = require('../../package.json')
 
 jest.mock('tus-js-client')
 jest.mock('purest')
@@ -9,6 +10,7 @@ jest.mock('../../src/server/helpers/oauth-state', () => ({
   ...mockOauthState,
 }))
 
+const nock = require('nock')
 const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
@@ -152,4 +154,24 @@ describe('handle main oauth redirect', () => {
       .set('uppy-auth-token', token)
       .expect(400)
   })
+})
+
+it('periodically pings', (done) => {
+  nock('http://localhost').post('/ping', (body) => (
+    body.some === 'value'
+    && body.version === version
+    && typeof body.processId === 'string'
+  )).reply(200, () => done())
+
+  getServer({
+    COMPANION_PERIODIC_PING_URLS: 'http://localhost/ping',
+    COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD: '{"some": "value"}',
+    COMPANION_PERIODIC_PING_INTERVAL: '10',
+    COMPANION_PERIODIC_PING_COUNT: '1',
+  })
+}, 1000)
+
+afterAll(() => {
+  nock.cleanAll()
+  nock.restore()
 })
