@@ -16,6 +16,8 @@
 <script src="https://releases.transloadit.com/uppy/v2.4.1/uppy.legacy.min.js" nomodule></script>
 <script src="https://releases.transloadit.com/uppy/locales/v2.0.5/ru_RU.min.js"></script>
 <script>
+window.addEventListener('DOMContentLoaded', function () {
+  'use strict';
   var uppy = new Uppy.Core({
     debug: true,
     autoProceed: true,
@@ -45,4 +47,6 @@
   });
 
   console.log('--> Uppy pre-built version with Tus, DragDrop & Russian language pack has loaded');
+  window.uppy = uppy;
+});
 </script>

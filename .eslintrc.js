@@ -291,9 +291,14 @@ module.exports = {
       files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript'],
       excludedFiles: ['examples/angular-example/**/*.ts', 'packages/@uppy/angular/**/*.ts'],
       parser: '@typescript-eslint/parser',
-      plugins: [
-        '@typescript-eslint',
-      ],
+      settings: {
+        'import/resolver': {
+          node: {
+            extensions: ['.js', '.jsx', '.ts', '.tsx'],
+          },
+        },
+      },
+      plugins: ['@typescript-eslint'],
       extends: [
         'eslint:recommended',
         'plugin:@typescript-eslint/eslint-recommended',
@@ -302,6 +307,7 @@ module.exports = {
       rules: {
         'import/prefer-default-export': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-namespace': 'off',
       },
     },
     {
@@ -319,6 +325,14 @@ module.exports = {
       settings: {
         react: { pragma: 'React' },
       },
+    },
+    {
+      files: ['e2e/**/*.ts'],
+      extends: ['plugin:cypress/recommended'],
+    },
+    {
+      files: ['e2e/**/*.ts', 'e2e/**/*.js'],
+      rules: { 'import/no-extraneous-dependencies': 'off' },
     },
   ],
 }

@@ -6,6 +6,8 @@ const Grant = require('grant').express()
 const merge = require('lodash.merge')
 const cookieParser = require('cookie-parser')
 const interceptor = require('express-interceptor')
+const { isURL } = require('validator')
+const uuid = require('uuid')
 
 const grantConfig = require('./config/grant')()
 const providerManager = require('./server/provider')
@@ -21,6 +23,8 @@ const logger = require('./server/logger')
 const middlewares = require('./server/middlewares')
 const { ProviderApiError, ProviderAuthError } = require('./server/provider/error')
 const { getCredentialsOverrideMiddleware } = require('./server/provider/credentials')
+// @ts-ignore
+const { version } = require('../package.json')
 
 const defaultOptions = {
   server: {
@@ -39,6 +43,7 @@ const defaultOptions = {
   },
   debug: true,
   logClientVersion: true,
+  periodicPingUrls: [],
   streamingUpload: false,
 }
 
@@ -122,6 +127,17 @@ module.exports.app = (options = {}) => {
   if (app.get('env') !== 'test') {
     jobs.startCleanUpJob(options.filePath)
   }
+
+  const processId = uuid.v4()
+
+  jobs.startPeriodicPingJob({
+    urls: options.periodicPingUrls,
+    interval: options.periodicPingInterval,
+    count: options.periodicPingCount,
+    staticPayload: options.periodicPingStaticPayload,
+    version,
+    processId,
+  })
 
   return app
 }
@@ -241,7 +257,8 @@ const validateConfig = (companionOptions) => {
     )
   }
 
-  const { providerOptions } = companionOptions
+  const { providerOptions, periodicPingUrls } = companionOptions
+
   if (providerOptions) {
     const deprecatedOptions = { microsoft: 'onedrive', google: 'drive' }
     Object.keys(deprecatedOptions).forEach((deprected) => {
@@ -254,4 +271,7 @@ const validateConfig = (companionOptions) => {
   if (companionOptions.uploadUrls == null || companionOptions.uploadUrls.length === 0) {
     logger.warn('Running without uploadUrls specified is a security risk if running in production', 'startup.uploadUrls')
   }
+
+  const periodicPingUrlsValid = Array.isArray(periodicPingUrls) && periodicPingUrls.every((url2) => isURL(url2, { protocols: ['http', 'https'], require_protocol: true, require_tld: false }))
+  if (!periodicPingUrlsValid) throw new TypeError('Invalid periodicPingUrls')
 }

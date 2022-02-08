@@ -81,39 +81,65 @@ class Box extends Provider {
     }
   }
 
-  _thumbnail ({ id, token }, done) {
-    return this.client
-      .get(`files/${id}/thumbnail.png`)
-      .qs({ max_height: BOX_THUMBNAIL_SIZE, max_width: BOX_THUMBNAIL_SIZE })
-      .auth(token)
-      .request()
-      .on('response', (resp) => {
-        // box generates a thumbnail on first request
-        // so they return a placeholder in the header while that's happening
-        if (resp.statusCode === 202 && resp.headers.location) {
-          return this.client.get(resp.headers.location)
-            .request()
-            .on('response', (placeholderResp) => {
-              if (placeholderResp.statusCode !== 200) {
-                const err = this._error(null, placeholderResp)
-                logger.error(err, 'provider.box.thumbnail.error')
-                return done(err)
-              }
+  async thumbnail ({ id, token }) {
+    const maxRetryTime = 10
+    const extension = 'jpg' // set to png to more easily reproduce http 202 retry-after
+    let remainingRetryTime = maxRetryTime
 
-              done(null, placeholderResp)
-            })
-        }
+    const tryGetThumbnail = async () => {
+      const req = this.client
+        .get(`files/${id}/thumbnail.${extension}`)
+        .qs({ max_height: BOX_THUMBNAIL_SIZE, max_width: BOX_THUMBNAIL_SIZE })
+        .auth(token)
+        .request()
 
-        if (resp.statusCode !== 200) {
-          const err = this._error(null, resp)
-          logger.error(err, 'provider.box.thumbnail.error')
-          return done(err)
-        }
-        done(null, resp)
-      })
-      .on('error', (err) => {
-        logger.error(err, 'provider.box.thumbnail.error')
-      })
+      // See also requestStream
+      const resp = await new Promise((resolve, reject) => (
+        req
+          .on('response', (response) => {
+            // Don't allow any more data to flow yet.
+            // https://github.com/request/request/issues/1990#issuecomment-184712275
+            response.pause()
+            resolve(response)
+          })
+          .on('error', reject)
+      ))
+
+      if (resp.statusCode === 200) {
+        return { stream: resp }
+      }
+
+      req.abort() // Or we will leak memory (the stream is paused and we're not using this response stream anymore)
+
+      // From box API docs:
+      // Sometimes generating a thumbnail can take a few seconds.
+      // In these situations the API returns a Location-header pointing to a placeholder graphic
+      // for this file type.
+      // The placeholder graphic can be used in a user interface until the thumbnail generation has completed.
+      // The Retry-After-header indicates when to the thumbnail will be ready.
+      // At that time, retry this endpoint to retrieve the thumbnail.
+      //
+      // This can be reproduced more easily by changing extension to png and trying on a newly uploaded image
+      const retryAfter = parseInt(resp.headers['retry-after'], 10)
+      if (!Number.isNaN(retryAfter)) {
+        const retryInSec = Math.min(remainingRetryTime, retryAfter)
+        if (retryInSec <= 0) throw new ProviderApiError('Timed out waiting for thumbnail', 504)
+        logger.debug(`Need to retry box thumbnail in ${retryInSec} sec`)
+        remainingRetryTime -= retryInSec
+        await new Promise((resolve) => setTimeout(resolve, retryInSec * 1000))
+        return tryGetThumbnail()
+      }
+
+      // we have an error status code, throw
+      throw this._error(null, resp)
+    }
+
+    try {
+      return await tryGetThumbnail()
+    } catch (err) {
+      logger.error(err, 'provider.box.thumbnail.error')
+      throw err
+    }
   }
 
   _size ({ id, token }, done) {
@@ -189,7 +215,6 @@ class Box extends Provider {
 Box.version = 2
 
 Box.prototype.list = promisify(Box.prototype._list)
-Box.prototype.thumbnail = promisify(Box.prototype._thumbnail)
 Box.prototype.size = promisify(Box.prototype._size)
 Box.prototype.logout = promisify(Box.prototype._logout)
 
