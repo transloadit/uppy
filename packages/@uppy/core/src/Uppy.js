@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 /* global AggregateError */
 
 'use strict'

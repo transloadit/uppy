@@ -4,12 +4,12 @@ const path = require('path')
 const prettierBytes = require('@transloadit/prettier-bytes')
 const Core = require('./index')
 const UIPlugin = require('./UIPlugin')
-const AcquirerPlugin1 = require('../../../../test/mocks/acquirerPlugin1')
-const AcquirerPlugin2 = require('../../../../test/mocks/acquirerPlugin2')
-const InvalidPlugin = require('../../../../test/mocks/invalidPlugin')
-const InvalidPluginWithoutId = require('../../../../test/mocks/invalidPluginWithoutId')
-const InvalidPluginWithoutType = require('../../../../test/mocks/invalidPluginWithoutType')
-const DeepFrozenStore = require('../../../../test/resources/DeepFrozenStore.js')
+const AcquirerPlugin1 = require('./mocks/acquirerPlugin1')
+const AcquirerPlugin2 = require('./mocks/acquirerPlugin2')
+const InvalidPlugin = require('./mocks/invalidPlugin')
+const InvalidPluginWithoutId = require('./mocks/invalidPluginWithoutId')
+const InvalidPluginWithoutType = require('./mocks/invalidPluginWithoutType')
+const DeepFrozenStore = require('../../../../e2e/cypress/fixtures/DeepFrozenStore.js')
 
 jest.mock('nanoid/non-secure', () => {
   return { nanoid: () => 'cjd09qwxb000dlql4tp4doz8h' }
@@ -18,7 +18,7 @@ jest.mock('@uppy/utils/lib/findDOMElement', () => {
   return () => null
 })
 
-const sampleImage = fs.readFileSync(path.join(__dirname, '../../../../test/resources/image.jpg'))
+const sampleImage = fs.readFileSync(path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'))
 
 describe('src/Core', () => {
   const RealCreateObjectUrl = global.URL.createObjectURL

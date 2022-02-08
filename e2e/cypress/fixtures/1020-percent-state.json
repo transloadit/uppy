@@ -1,0 +1,983 @@
+{
+  "plugins": {
+    "Dashboard": {
+      "isHidden": false,
+      "fileCardFor": null,
+      "activeOverlayType": null,
+      "showAddFilesPanel": false,
+      "activePickerPanel": false,
+      "metaFields": [
+        {
+          "id": "license",
+          "name": "License",
+          "placeholder": "specify license"
+        },
+        {
+          "id": "caption",
+          "name": "Caption",
+          "placeholder": "add caption"
+        }
+      ],
+      "targets": [
+        {
+          "id": "Dashboard:StatusBar",
+          "name": "StatusBar",
+          "type": "progressindicator"
+        },
+        {
+          "id": "Dashboard:Informer",
+          "name": "Informer",
+          "type": "progressindicator"
+        },
+        {
+          "id": "GoogleDrive",
+          "name": "Google Drive",
+          "type": "acquirer"
+        },
+        {
+          "id": "Instagram",
+          "name": "Instagram",
+          "type": "acquirer"
+        },
+        {
+          "id": "Dropbox",
+          "name": "Dropbox",
+          "type": "acquirer"
+        },
+        {
+          "id": "Url",
+          "name": "Link",
+          "type": "acquirer"
+        },
+        {
+          "id": "Webcam",
+          "name": "Camera",
+          "type": "acquirer"
+        }
+      ],
+      "areInsidesReadyToBeVisible": true,
+      "containerWidth": 750,
+      "containerHeight": 490
+    },
+    "GoogleDrive": {
+      "currentSelection": [],
+      "authenticated": false,
+      "files": [],
+      "folders": [],
+      "directories": [],
+      "activeRow": -1,
+      "filterInput": "",
+      "isSearchVisible": false,
+      "hasTeamDrives": false,
+      "teamDrives": [],
+      "teamDriveId": ""
+    },
+    "Instagram": {
+      "currentSelection": [],
+      "authenticated": true,
+      "files": [
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/420d2bdc2cb30251d7ecf8e516f7fa7d/5D55A291/t51.2885-15/e35/s320x320/50692753_2474466385958388_3994336603663016042_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Feb 11, 2019, 3:34 PM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1976930126949922734_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/ff2400b726bbd3415c4a07b723615578/5D3C08E9/t51.2885-15/e35/s150x150/50692753_2474466385958388_3994336603663016042_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1976930126949922734_104680",
+          "modifiedDate": "1549888457"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/78aa49ad8ccbe12b07fb20f07c1b9a1d/5D520E84/t51.2885-15/e35/s320x320/49858772_2238267119827712_38852393303322952_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jan 18, 2019, 11:39 PM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1959779810654008285_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/b3eda9daaa214951c1fb1a0f7000d8de/5D3F3F89/t51.2885-15/e35/s150x150/49858772_2238267119827712_38852393303322952_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1959779810654008285_104680?carousel_id=0",
+          "modifiedDate": "1547843980"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/ec36a8b8b7db546abeb3cdcf12b52ba5/5D77DC5F/t51.2885-15/e35/s320x320/49858316_1974473399524283_2231924729468134373_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jan 18, 2019, 11:39 PM 1.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1959779810654008285_1046801",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/d8ef3dd687b6aab396cae9284226c7df/5D711727/t51.2885-15/e35/s150x150/49858316_1974473399524283_2231924729468134373_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1959779810654008285_104680?carousel_id=1",
+          "modifiedDate": "1547843980"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/3055f2ae78d775fc031654d20e791ebc/5D51235E/t51.2885-15/e35/s320x320/49933915_184580175831450_4288362971970794931_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jan 18, 2019, 11:39 PM 2.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1959779810654008285_1046802",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/3d1b5aa16b8d64bc7c14ae1e3b13dfbe/5D5DD553/t51.2885-15/e35/c0.0.1079.1079a/s150x150/49933915_184580175831450_4288362971970794931_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1959779810654008285_104680?carousel_id=2",
+          "modifiedDate": "1547843980"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/3da7cd1f79dcecde1e871ea09cf65a87/5D737FDF/t51.2885-15/e35/s320x320/50515172_1138232866338235_1751853475314282763_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jan 18, 2019, 11:39 PM 3.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1959779810654008285_1046803",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/5c51a2dac516e575a66cf10c39615faf/5D6922A7/t51.2885-15/e35/s150x150/50515172_1138232866338235_1751853475314282763_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1959779810654008285_104680?carousel_id=3",
+          "modifiedDate": "1547843980"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/9b869a8590154eb01bdb8c4d834dbc96/5D68F919/t51.2885-15/e35/s320x320/49536508_2715697688455532_3941725382632324585_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jan 18, 2019, 11:39 PM 4.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1959779810654008285_1046804",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/9d5ef7d80443c6e606dd2032bd9bbef3/5D736861/t51.2885-15/e35/s150x150/49536508_2715697688455532_3941725382632324585_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1959779810654008285_104680?carousel_id=4",
+          "modifiedDate": "1547843980"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/e93879efc4dad02ed95f28c845b30c1b/5D6EE4D2/t51.2885-15/e35/s320x320/50024282_2330888297144674_8558997522361102927_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jan 18, 2019, 11:39 PM 5.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1959779810654008285_1046805",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/c173758a1dbcdc033973a4d9b77061fa/5D3FD13A/t51.2885-15/e35/c0.0.1079.1079a/s150x150/50024282_2330888297144674_8558997522361102927_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1959779810654008285_104680?carousel_id=5",
+          "modifiedDate": "1547843980"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/385551f9d659254e79e52e2069962abe/5D3DB99B/t51.2885-15/e35/s320x320/49541690_1326265230849388_780299101204315442_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jan 18, 2019, 11:39 PM 6.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1959779810654008285_1046806",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/39449810cc5a750d7da2ff0311986e5f/5D6F4796/t51.2885-15/e35/c0.0.1079.1079a/s150x150/49541690_1326265230849388_780299101204315442_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1959779810654008285_104680?carousel_id=6",
+          "modifiedDate": "1547843980"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/6dbe8e2193c6f35cc9a4b3681331281d/5D6B8838/t51.2885-15/e35/s320x320/47693310_2066019920179632_9021194778493613415_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jan 18, 2019, 11:39 PM 7.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1959779810654008285_1046807",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/d82f97e1cd037d3b5d8a9d3be1620725/5D54D1D0/t51.2885-15/e35/c0.0.1079.1079a/s150x150/47693310_2066019920179632_9021194778493613415_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1959779810654008285_104680?carousel_id=7",
+          "modifiedDate": "1547843980"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/ab34b879e64b6b74d8cedfc7193dbc7f/5D5846E9/t51.2885-15/e35/s320x320/49306549_310052152966468_747321250340934181_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jan 18, 2019, 11:39 PM 8.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1959779810654008285_1046808",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/4899a15cbcf805e4fbb18197322b4187/5D5118EF/t51.2885-15/e35/c0.0.1079.1079a/s150x150/49306549_310052152966468_747321250340934181_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1959779810654008285_104680?carousel_id=8",
+          "modifiedDate": "1547843980"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/9898c850ebf16fb48c7c67f40fa768aa/5D5D74F8/t51.2885-15/e35/s320x320/49766698_1079661332208739_5393337093402545472_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jan 18, 2019, 11:39 PM 9.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1959779810654008285_1046809",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/24ff0de8fd62247a5b4d46657e078504/5D56FE10/t51.2885-15/e35/c0.0.1079.1079a/s150x150/49766698_1079661332208739_5393337093402545472_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1959779810654008285_104680?carousel_id=9",
+          "modifiedDate": "1547843980"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/945b83923551c2419d02fb394ca93ecf/5D6FFDF2/t51.2885-15/e35/s320x320/39220053_1153571588114505_375944023631724544_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Aug 23, 2018, 2:58 PM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1852250486931812607_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/c0b40cc16747180b59ae966afb3c020d/5D3CFA02/t51.2885-15/e35/s150x150/39220053_1153571588114505_375944023631724544_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1852250486931812607_104680?carousel_id=0",
+          "modifiedDate": "1535025486"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/61b460c2217002b2ca277d8e2844717c/5D5EFFFD/t51.2885-15/e35/s320x320/39346998_282273142585083_1015643341825507328_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Aug 23, 2018, 2:58 PM 1.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1852250486931812607_1046801",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/4b39d19ad2583c95acbb11e762579e35/5D58090D/t51.2885-15/e35/s150x150/39346998_282273142585083_1015643341825507328_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1852250486931812607_104680?carousel_id=1",
+          "modifiedDate": "1535025486"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/e7a7a3f0701ce18a1b036c24cb7cea9b/5D5AFDE4/t51.2885-15/e35/s320x320/38699807_314497562641072_2259807118783676416_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Aug 23, 2018, 2:58 PM 2.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1852250486931812607_1046802",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/853fe9cc8931bd25d910f1cb27e34c91/5D3C8E14/t51.2885-15/e35/s150x150/38699807_314497562641072_2259807118783676416_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1852250486931812607_104680?carousel_id=2",
+          "modifiedDate": "1535025486"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/3fb0681ab45a93f538a6388d77d1e0a6/5D6C7686/t51.2885-15/e35/s320x320/39628514_334313577140078_7876516111540289536_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Aug 23, 2018, 2:58 PM 3.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1852250486931812607_1046803",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/d047037085ec8f9bcf5737275a54741b/5D70D676/t51.2885-15/e35/s150x150/39628514_334313577140078_7876516111540289536_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1852250486931812607_104680?carousel_id=3",
+          "modifiedDate": "1535025486"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/be4a02058c30e658896f3a1cc10938fd/5D59783D/t51.2885-15/e35/s320x320/39507580_504831159978201_5212373753534611456_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Aug 23, 2018, 1:20 PM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1852201222927172582_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/4a05e2f9b3464fa502d8102e98e81c13/5D5A45CD/t51.2885-15/e35/s150x150/39507580_504831159978201_5212373753534611456_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1852201222927172582_104680",
+          "modifiedDate": "1535019613"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/1ed3c5ce49461c85d30e74eb371c5142/5D3D332D/t51.2885-15/e35/s320x320/38235951_280335879462106_4098398707425214464_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Aug 14, 2018, 1:40 AM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1845325816068388330_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/fb2dacd2d08807cacc48a76acbb8cb32/5D7001DD/t51.2885-15/e35/s150x150/38235951_280335879462106_4098398707425214464_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1845325816068388330_104680",
+          "modifiedDate": "1534200001"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/2aaab426ea979d4fec469c53aa748a1a/5D5B581D/t51.2885-15/e35/s320x320/38097421_294352187994556_231473126364413952_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Aug 14, 2018, 1:37 AM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1845324587128869025_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/568448b82d5883bf6c5b2b554dcb3c71/5D5BFCA9/t51.2885-15/e35/c135.0.809.809a/s150x150/38097421_294352187994556_231473126364413952_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1845324587128869025_104680",
+          "modifiedDate": "1534199854"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/73a478dae4d7ed45ba86bb51c6f1279c/5D3BC45B/t51.2885-15/e35/s320x320/38004914_1332543240181648_8551268285629333504_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Aug 2, 2018, 8:27 PM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1837195735932389212_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/55047e7ff9ab12727fc38865852cfea4/5D3A6523/t51.2885-15/e35/s150x150/38004914_1332543240181648_8551268285629333504_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1837195735932389212_104680",
+          "modifiedDate": "1533230820"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/4436a67f44ab681184d648b8cef2bd0d/5D5C35EB/t51.2885-15/e35/s320x320/36979476_227621117961595_1230588248623939584_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jul 12, 2018, 6:58 PM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1821930696162038399_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/b5626d3918d93266ee92b414853b7eaa/5D515F04/t51.2885-15/e35/c123.0.735.735a/s150x150/36979476_227621117961595_1230588248623939584_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1821930696162038399_104680",
+          "modifiedDate": "1531411085"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/f26b47afa38a487002fb9cd823c911a9/5D53FC32/t51.2885-15/e35/s320x320/36037683_1012778022214785_7430470254473510912_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jun 24, 2018, 7:33 PM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1808902468027558819_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/b93e11cda790a99ffd3bcdbfd50199e4/5D4044D4/t51.2885-15/e35/c101.0.606.606a/s150x150/36037683_1012778022214785_7430470254473510912_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1808902468027558819_104680?carousel_id=0",
+          "modifiedDate": "1529857999"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/1be4dae4e20a9b63e887ea5879590a9b/5D526FF1/t51.2885-15/e35/s320x320/35575252_166097084248741_3980291461882052608_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jun 24, 2018, 7:33 PM 1.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1808902468027558819_1046801",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/6c1e545968b58fa4bd9279284f5e4eb2/5D3A341F/t51.2885-15/e35/c135.0.809.809a/s150x150/35575252_166097084248741_3980291461882052608_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1808902468027558819_104680?carousel_id=1",
+          "modifiedDate": "1529857999"
+        },
+        {
+          "isFolder": false,
+          "icon": "video",
+          "name": "Instagram Jun 24, 2018, 7:33 PM 2.mp4",
+          "mimeType": "video/mp4",
+          "id": "1808902468027558819_1046802",
+          "thumbnail": null,
+          "requestPath": "1808902468027558819_104680?carousel_id=2",
+          "modifiedDate": "1529857999"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/862ced4e0f047ba14ff29c6cc0318c44/5D57DF38/t51.2885-15/e35/s320x320/35278170_837444053128139_5243357991205339136_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jun 20, 2018, 2:42 AM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1805494813368147007_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/4829dc1acad2af234ff4628d7d4750c2/5D3D81C8/t51.2885-15/e35/s150x150/35278170_837444053128139_5243357991205339136_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1805494813368147007_104680",
+          "modifiedDate": "1529451775"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/7c4ceb66525b802444dccd5a86924fc2/5D74C314/t51.2885-15/e35/s320x320/28764233_1638269642893040_4480301736187133952_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Mar 18, 2018, 9:32 PM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1737934383083311905_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/5f57985b3b0a727ba6cb8b5107f8a992/5D50EF6C/t51.2885-15/e35/s150x150/28764233_1638269642893040_4480301736187133952_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1737934383083311905_104680",
+          "modifiedDate": "1521397944"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/899393f947e53ac5b36a995d67d111df/5D5BD35A/t51.2885-15/e35/s320x320/26067758_541222112905573_5423593755456307200_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Jan 11, 2018, 5:18 AM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1689609196894186490_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/fd06fd5bb588684209877d1414315f16/5D5973AA/t51.2885-15/e35/s150x150/26067758_541222112905573_5423593755456307200_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1689609196894186490_104680",
+          "modifiedDate": "1515637133"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/4cde437dd22560fab9d5eb3de0b8b2e0/5D7201E3/t51.2885-15/e35/s320x320/25036240_2079885088923563_8690166922391584768_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Dec 22, 2017, 8:05 PM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1675559745477333499_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/db7f2fbf1db02963e8bea721101cc287/5D6E489B/t51.2885-15/e35/s150x150/25036240_2079885088923563_8690166922391584768_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1675559745477333499_104680",
+          "modifiedDate": "1513962308"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/af35659718f36655e8bf703f25bb233c/5D5F644F/t51.2885-15/e35/s320x320/24331847_1536227273080845_4856051751851130880_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Dec 4, 2017, 7:44 AM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1662141091721036563_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/190fd6922e69ad087597ba0697938cf5/5D5B97BC/t51.2885-15/e35/c102.0.875.875/s150x150/24331847_1536227273080845_4856051751851130880_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1662141091721036563_104680",
+          "modifiedDate": "1512362680"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/b83e927ac2d13ad1ac9d2cafdc01f959/5D405387/t51.2885-15/e35/s320x320/23417132_213197029221132_8238897611998756864_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Nov 12, 2017, 7:02 PM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1646537186320644618_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/5b346e973c29acbbcaea0f61f1809f4e/5D560A77/t51.2885-15/e35/s150x150/23417132_213197029221132_8238897611998756864_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1646537186320644618_104680",
+          "modifiedDate": "1510502549"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/e83ae26b09c5187a1a53083f8bdeb364/5D76BF66/t51.2885-15/e35/s320x320/23347341_1932821443410985_573390529291616256_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Nov 7, 2017, 4:55 AM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1642487154005217857_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/992905011fba71ca828cb6f5b83df600/5D6F5B96/t51.2885-15/e35/s150x150/23347341_1932821443410985_573390529291616256_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1642487154005217857_104680?carousel_id=0",
+          "modifiedDate": "1510019748"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/50ae2bf3f9340ff4f1d78653087d7450/5D71B641/t51.2885-15/e35/s320x320/23280046_500879000292815_4369528731417444352_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Nov 7, 2017, 4:55 AM 1.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1642487154005217857_1046801",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/01cf69185d6c33521df01696920039f4/5D56B014/t51.2885-15/e35/c2.0.598.598/s150x150/23280046_500879000292815_4369528731417444352_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1642487154005217857_104680?carousel_id=1",
+          "modifiedDate": "1510019748"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/1b1512e3914c2fda53ad3a840c2681be/5D6D9C4A/t51.2885-15/e35/s320x320/22858331_1958241871109983_4354847188874952704_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Oct 29, 2017, 7:22 PM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1636400252659303992_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/5a5c1885bbd867feda749149e1dd56d6/5D5B9732/t51.2885-15/e35/s150x150/22858331_1958241871109983_4354847188874952704_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1636400252659303992_104680?carousel_id=0",
+          "modifiedDate": "1509294133"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/8615347d7e76a9300f3593abf4e9016c/5D6C344D/t51.2885-15/e35/s320x320/23098451_123562928335776_7617655378888622080_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Oct 29, 2017, 7:22 PM 1.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1636400252659303992_1046801",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/9811c2c8bfd4f7d97045d8bbf3ecd2d1/5D708FBD/t51.2885-15/e35/s150x150/23098451_123562928335776_7617655378888622080_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1636400252659303992_104680?carousel_id=1",
+          "modifiedDate": "1509294133"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/01a9ab9149a22a597a80fc4cbf13738f/5D50E262/t51.2885-15/e35/s320x320/23098990_848783778612174_4475941923474898944_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Oct 29, 2017, 7:22 PM 2.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1636400252659303992_1046802",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/ea649769b559a7f076bd727bee49a2d6/5D3C7892/t51.2885-15/e35/s150x150/23098990_848783778612174_4475941923474898944_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1636400252659303992_104680?carousel_id=2",
+          "modifiedDate": "1509294133"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/fc516c0e146dbf9b0fca960a9411fdf7/5D3ED20B/t51.2885-15/e35/s320x320/22802126_1517752501642900_5606082552176574464_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Oct 29, 2017, 7:22 PM 3.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1636400252659303992_1046803",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/001f32c24f6ccd508cc4905336073053/5D71F973/t51.2885-15/e35/s150x150/22802126_1517752501642900_5606082552176574464_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1636400252659303992_104680?carousel_id=3",
+          "modifiedDate": "1509294133"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/9ccca5c9eadd69ccc13e53cf4f43b314/5D390493/t51.2885-15/e35/s320x320/22802520_139793160103830_5225518814476632064_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Oct 29, 2017, 7:22 PM 4.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1636400252659303992_1046804",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/3d85f3116a34cbd465421dca31972e16/5D752E63/t51.2885-15/e35/s150x150/22802520_139793160103830_5225518814476632064_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1636400252659303992_104680?carousel_id=4",
+          "modifiedDate": "1509294133"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/031438a7a7f73fadff9af4f9f27e897a/5D5AB962/t51.2885-15/e35/s320x320/22639252_183626528874474_2694579090425380864_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Oct 22, 2017, 2:52 PM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1631190853481371017_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/793785790f639b4d1c281f8f85b617b7/5D5CC492/t51.2885-15/e35/s150x150/22639252_183626528874474_2694579090425380864_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1631190853481371017_104680",
+          "modifiedDate": "1508673124"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/1c45c002dca07b795008b734a2dadf1a/5D567634/t51.2885-15/e35/s320x320/22580990_1537478786332265_2919339273100460032_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Oct 17, 2017, 12:11 AM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1627123826827378513_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/9cdda68ef82a7d5415184d24b7938aae/5D5B8E4C/t51.2885-15/e35/s150x150/22580990_1537478786332265_2919339273100460032_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1627123826827378513_104680?carousel_id=0",
+          "modifiedDate": "1508188297"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/83c22b41fcf93fbf4c0c2a2164c74eba/5D6009D3/t51.2885-15/e35/s320x320/22430535_1082180631919539_4957960914784485376_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Oct 17, 2017, 12:11 AM 1.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1627123826827378513_1046801",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/b1ec088d4bad03e47344f9e8742e26af/5D5CF2AB/t51.2885-15/e35/s150x150/22430535_1082180631919539_4957960914784485376_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1627123826827378513_104680?carousel_id=1",
+          "modifiedDate": "1508188297"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/b4fa4fc2530639cc555702153d5142da/5D5C414B/t51.2885-15/e35/s320x320/22430474_501048343603948_3378745776992681984_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Oct 17, 2017, 12:11 AM 2.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1627123826827378513_1046802",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/0d97e18dbf6176009d599a76b76b83db/5D57C4BB/t51.2885-15/e35/s150x150/22430474_501048343603948_3378745776992681984_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1627123826827378513_104680?carousel_id=2",
+          "modifiedDate": "1508188297"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/c7bc86b8e610c7d9dc6642f53697ded2/5D53711A/t51.2885-15/e35/s320x320/22430500_182297355651006_8614244764025356288_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Oct 17, 2017, 12:11 AM 3.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1627123826827378513_1046803",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/d87f16c611a0f28c4b49a5c14136d13c/5D39C3EA/t51.2885-15/e35/s150x150/22430500_182297355651006_8614244764025356288_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1627123826827378513_104680?carousel_id=3",
+          "modifiedDate": "1508188297"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/89a31fd438a9953a17ac5687da438581/5D54979A/t51.2885-15/e35/s320x320/22637761_173098443269988_8262666012554428416_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Oct 17, 2017, 12:11 AM 4.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1627123826827378513_1046804",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/2b6932601eec3e25c447510f777b227d/5D40AF6A/t51.2885-15/e35/s150x150/22637761_173098443269988_8262666012554428416_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1627123826827378513_104680?carousel_id=4",
+          "modifiedDate": "1508188297"
+        },
+        {
+          "isFolder": false,
+          "icon": "https://scontent.cdninstagram.com/vp/d6d074a714c2e6758cd1fc3732211dc0/5D5C94AD/t51.2885-15/e35/s320x320/22344026_1843951665618388_1364607905617149952_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "name": "Instagram Oct 10, 2017, 7:53 PM.jpeg",
+          "mimeType": "image/jpeg",
+          "id": "1622645126576609002_104680",
+          "thumbnail": "https://scontent.cdninstagram.com/vp/1b8dd33db144490ca9087796b16792ca/5D3DCDD5/t51.2885-15/e35/s150x150/22344026_1843951665618388_1364607905617149952_n.jpg?_nc_ht=scontent.cdninstagram.com",
+          "requestPath": "1622645126576609002_104680",
+          "modifiedDate": "1507654394"
+        }
+      ],
+      "folders": [],
+      "directories": [
+        {
+          "id": "recent"
+        }
+      ],
+      "activeRow": -1,
+      "filterInput": "",
+      "isSearchVisible": false,
+      "didFirstRender": true,
+      "loading": false
+    },
+    "Dropbox": {
+      "currentSelection": [],
+      "authenticated": false,
+      "files": [],
+      "folders": [],
+      "directories": [],
+      "activeRow": -1,
+      "filterInput": "",
+      "isSearchVisible": false
+    },
+    "Webcam": {
+      "cameraReady": false
+    }
+  },
+  "files": {
+    "uppy-instagramjan1820191139pm6jpeg-image/jpeg": {
+      "source": "Instagram",
+      "id": "uppy-instagramjan1820191139pm6jpeg-image/jpeg",
+      "name": "Instagram Jan 18, 2019, 11:39 PM 6.jpeg",
+      "extension": "jpeg",
+      "meta": {
+        "username": "John",
+        "license": "Creative Commons",
+        "name": "Instagram Jan 18, 2019, 11:39 PM 6.jpeg",
+        "type": "image/jpeg"
+      },
+      "type": "image/jpeg",
+      "data": {
+        "isFolder": false,
+        "icon": "https://scontent.cdninstagram.com/vp/385551f9d659254e79e52e2069962abe/5D3DB99B/t51.2885-15/e35/s320x320/49541690_1326265230849388_780299101204315442_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "name": "Instagram Jan 18, 2019, 11:39 PM 6.jpeg",
+        "mimeType": "image/jpeg",
+        "id": "1959779810654008285_1046806",
+        "thumbnail": "https://scontent.cdninstagram.com/vp/39449810cc5a750d7da2ff0311986e5f/5D6F4796/t51.2885-15/e35/c0.0.1079.1079a/s150x150/49541690_1326265230849388_780299101204315442_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "requestPath": "1959779810654008285_104680?carousel_id=6",
+        "modifiedDate": "1547843980"
+      },
+      "progress": {
+        "uploadStarted": 1556219160869,
+        "uploadComplete": true,
+        "percentage": 100,
+        "bytesUploaded": 69427,
+        "bytesTotal": 69427
+      },
+      "size": null,
+      "isRemote": true,
+      "remote": {
+        "companionUrl": "http://localhost:3020",
+        "url": "http://localhost:3020/instagram/get/1959779810654008285_104680?carousel_id=6",
+        "body": {
+          "fileId": "1959779810654008285_1046806"
+        },
+        "providerOptions": {
+          "companionUrl": "http://localhost:3020",
+          "provider": "instagram",
+          "authProvider": "instagram",
+          "pluginId": "Instagram"
+        }
+      },
+      "preview": "https://scontent.cdninstagram.com/vp/39449810cc5a750d7da2ff0311986e5f/5D6F4796/t51.2885-15/e35/c0.0.1079.1079a/s150x150/49541690_1326265230849388_780299101204315442_n.jpg?_nc_ht=scontent.cdninstagram.com",
+      "serverToken": "4a8616b1-58c9-464c-a5f0-450f4fac7959",
+      "response": {
+        "uploadURL": "https://master.tus.io/files/0db2bbb15785b5fbe1e04450a2ad7e27+NMjcmLga7xPuGJT6Ri65E4qN34Hck4CpgPG4r8uQdR2iyOTNDS2_hSHzROTuV.ApP.F9tLbZR04303y.X0apIHXPstqQAgOPyO1tbUKfqJ3SQ6XkX_gRfmc8hadlJK_H"
+      },
+      "uploadURL": "https://master.tus.io/files/0db2bbb15785b5fbe1e04450a2ad7e27+NMjcmLga7xPuGJT6Ri65E4qN34Hck4CpgPG4r8uQdR2iyOTNDS2_hSHzROTuV.ApP.F9tLbZR04303y.X0apIHXPstqQAgOPyO1tbUKfqJ3SQ6XkX_gRfmc8hadlJK_H",
+      "isPaused": false
+    },
+    "uppy-instagramjan1820191139pm5jpeg-image/jpeg": {
+      "source": "Instagram",
+      "id": "uppy-instagramjan1820191139pm5jpeg-image/jpeg",
+      "name": "Instagram Jan 18, 2019, 11:39 PM 5.jpeg",
+      "extension": "jpeg",
+      "meta": {
+        "username": "John",
+        "license": "Creative Commons",
+        "name": "Instagram Jan 18, 2019, 11:39 PM 5.jpeg",
+        "type": "image/jpeg"
+      },
+      "type": "image/jpeg",
+      "data": {
+        "isFolder": false,
+        "icon": "https://scontent.cdninstagram.com/vp/e93879efc4dad02ed95f28c845b30c1b/5D6EE4D2/t51.2885-15/e35/s320x320/50024282_2330888297144674_8558997522361102927_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "name": "Instagram Jan 18, 2019, 11:39 PM 5.jpeg",
+        "mimeType": "image/jpeg",
+        "id": "1959779810654008285_1046805",
+        "thumbnail": "https://scontent.cdninstagram.com/vp/c173758a1dbcdc033973a4d9b77061fa/5D3FD13A/t51.2885-15/e35/c0.0.1079.1079a/s150x150/50024282_2330888297144674_8558997522361102927_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "requestPath": "1959779810654008285_104680?carousel_id=5",
+        "modifiedDate": "1547843980"
+      },
+      "progress": {
+        "uploadStarted": 1556219160871,
+        "uploadComplete": true,
+        "percentage": 100,
+        "bytesUploaded": null,
+        "bytesTotal": null
+      },
+      "size": null,
+      "isRemote": true,
+      "remote": {
+        "companionUrl": "http://localhost:3020",
+        "url": "http://localhost:3020/instagram/get/1959779810654008285_104680?carousel_id=5",
+        "body": {
+          "fileId": "1959779810654008285_1046805"
+        },
+        "providerOptions": {
+          "companionUrl": "http://localhost:3020",
+          "provider": "instagram",
+          "authProvider": "instagram",
+          "pluginId": "Instagram"
+        }
+      },
+      "preview": "https://scontent.cdninstagram.com/vp/c173758a1dbcdc033973a4d9b77061fa/5D3FD13A/t51.2885-15/e35/c0.0.1079.1079a/s150x150/50024282_2330888297144674_8558997522361102927_n.jpg?_nc_ht=scontent.cdninstagram.com",
+      "serverToken": "78105341-af5e-4576-9fc7-d0a11becdc51",
+      "response": {
+        "uploadURL": "https://master.tus.io/files/691bd69026e91a7568a240cb909139e5+gDSpFJXfEGIaPQyzAZk0OZ_y5g2fsNI2FPdNuoCQl0ka7Ch.uAXWtsUhjyB3ieH84JkHl03_h5jAXJn4X6TZRsF8yfZqVVBaYRdZbOqpZcYoBwdQ.SNFmASrukqcmYVa"
+      },
+      "uploadURL": "https://master.tus.io/files/691bd69026e91a7568a240cb909139e5+gDSpFJXfEGIaPQyzAZk0OZ_y5g2fsNI2FPdNuoCQl0ka7Ch.uAXWtsUhjyB3ieH84JkHl03_h5jAXJn4X6TZRsF8yfZqVVBaYRdZbOqpZcYoBwdQ.SNFmASrukqcmYVa",
+      "isPaused": false
+    },
+    "uppy-instagramjan1820191139pm4jpeg-image/jpeg": {
+      "source": "Instagram",
+      "id": "uppy-instagramjan1820191139pm4jpeg-image/jpeg",
+      "name": "Instagram Jan 18, 2019, 11:39 PM 4.jpeg",
+      "extension": "jpeg",
+      "meta": {
+        "username": "John",
+        "license": "Creative Commons",
+        "name": "Instagram Jan 18, 2019, 11:39 PM 4.jpeg",
+        "type": "image/jpeg"
+      },
+      "type": "image/jpeg",
+      "data": {
+        "isFolder": false,
+        "icon": "https://scontent.cdninstagram.com/vp/9b869a8590154eb01bdb8c4d834dbc96/5D68F919/t51.2885-15/e35/s320x320/49536508_2715697688455532_3941725382632324585_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "name": "Instagram Jan 18, 2019, 11:39 PM 4.jpeg",
+        "mimeType": "image/jpeg",
+        "id": "1959779810654008285_1046804",
+        "thumbnail": "https://scontent.cdninstagram.com/vp/9d5ef7d80443c6e606dd2032bd9bbef3/5D736861/t51.2885-15/e35/s150x150/49536508_2715697688455532_3941725382632324585_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "requestPath": "1959779810654008285_104680?carousel_id=4",
+        "modifiedDate": "1547843980"
+      },
+      "progress": {
+        "uploadStarted": 1556219160872,
+        "uploadComplete": true,
+        "percentage": 100,
+        "bytesUploaded": 79296,
+        "bytesTotal": 79296
+      },
+      "size": null,
+      "isRemote": true,
+      "remote": {
+        "companionUrl": "http://localhost:3020",
+        "url": "http://localhost:3020/instagram/get/1959779810654008285_104680?carousel_id=4",
+        "body": {
+          "fileId": "1959779810654008285_1046804"
+        },
+        "providerOptions": {
+          "companionUrl": "http://localhost:3020",
+          "provider": "instagram",
+          "authProvider": "instagram",
+          "pluginId": "Instagram"
+        }
+      },
+      "preview": "https://scontent.cdninstagram.com/vp/9d5ef7d80443c6e606dd2032bd9bbef3/5D736861/t51.2885-15/e35/s150x150/49536508_2715697688455532_3941725382632324585_n.jpg?_nc_ht=scontent.cdninstagram.com",
+      "serverToken": "11061e76-6fa9-4c0d-b877-c0759f077d94",
+      "response": {
+        "uploadURL": "https://master.tus.io/files/f49cc001f5447ea90c898b69b1789d96+GD3uaee_lz.07izRtBlC1E99eum2CAWHHGOgdiTDyP8DpGM31fiBIQrCzCnbjGZ2xVqad3W1S1SL5R96dRlNdNKie4uDpRrhKcW17RQBkWyKyiE5fDKe8FhEo.9JstBx"
+      },
+      "uploadURL": "https://master.tus.io/files/f49cc001f5447ea90c898b69b1789d96+GD3uaee_lz.07izRtBlC1E99eum2CAWHHGOgdiTDyP8DpGM31fiBIQrCzCnbjGZ2xVqad3W1S1SL5R96dRlNdNKie4uDpRrhKcW17RQBkWyKyiE5fDKe8FhEo.9JstBx",
+      "isPaused": false
+    },
+    "uppy-instagramjan1820191139pm3jpeg-image/jpeg": {
+      "source": "Instagram",
+      "id": "uppy-instagramjan1820191139pm3jpeg-image/jpeg",
+      "name": "Instagram Jan 18, 2019, 11:39 PM 3.jpeg",
+      "extension": "jpeg",
+      "meta": {
+        "username": "John",
+        "license": "Creative Commons",
+        "name": "Instagram Jan 18, 2019, 11:39 PM 3.jpeg",
+        "type": "image/jpeg"
+      },
+      "type": "image/jpeg",
+      "data": {
+        "isFolder": false,
+        "icon": "https://scontent.cdninstagram.com/vp/3da7cd1f79dcecde1e871ea09cf65a87/5D737FDF/t51.2885-15/e35/s320x320/50515172_1138232866338235_1751853475314282763_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "name": "Instagram Jan 18, 2019, 11:39 PM 3.jpeg",
+        "mimeType": "image/jpeg",
+        "id": "1959779810654008285_1046803",
+        "thumbnail": "https://scontent.cdninstagram.com/vp/5c51a2dac516e575a66cf10c39615faf/5D6922A7/t51.2885-15/e35/s150x150/50515172_1138232866338235_1751853475314282763_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "requestPath": "1959779810654008285_104680?carousel_id=3",
+        "modifiedDate": "1547843980"
+      },
+      "progress": {
+        "uploadStarted": 1556219160872,
+        "uploadComplete": true,
+        "percentage": 100,
+        "bytesUploaded": 129055,
+        "bytesTotal": 129055
+      },
+      "size": null,
+      "isRemote": true,
+      "remote": {
+        "companionUrl": "http://localhost:3020",
+        "url": "http://localhost:3020/instagram/get/1959779810654008285_104680?carousel_id=3",
+        "body": {
+          "fileId": "1959779810654008285_1046803"
+        },
+        "providerOptions": {
+          "companionUrl": "http://localhost:3020",
+          "provider": "instagram",
+          "authProvider": "instagram",
+          "pluginId": "Instagram"
+        }
+      },
+      "preview": "https://scontent.cdninstagram.com/vp/5c51a2dac516e575a66cf10c39615faf/5D6922A7/t51.2885-15/e35/s150x150/50515172_1138232866338235_1751853475314282763_n.jpg?_nc_ht=scontent.cdninstagram.com",
+      "serverToken": "b12c3999-1be2-4a15-86ea-530e73e6da76",
+      "response": {
+        "uploadURL": "https://master.tus.io/files/9a89b79d6ed7b6ced857a036aad43fb6+WmV6kpylmuFV1HHA3JKIgmU5wJRwyRmweOpEUjQT86Zc5YLVa_nwsmV.P4Pl4oF15rmhb5PvkukMVTKN98WQff_QGD0TjBSHDYqVNOVGuJ8_w4.A.IWOl3yRSk58rkHf"
+      },
+      "uploadURL": "https://master.tus.io/files/9a89b79d6ed7b6ced857a036aad43fb6+WmV6kpylmuFV1HHA3JKIgmU5wJRwyRmweOpEUjQT86Zc5YLVa_nwsmV.P4Pl4oF15rmhb5PvkukMVTKN98WQff_QGD0TjBSHDYqVNOVGuJ8_w4.A.IWOl3yRSk58rkHf",
+      "isPaused": false
+    },
+    "uppy-instagramfeb112019334pmjpeg-image/jpeg": {
+      "source": "Instagram",
+      "id": "uppy-instagramfeb112019334pmjpeg-image/jpeg",
+      "name": "Instagram Feb 11, 2019, 3:34 PM.jpeg",
+      "extension": "jpeg",
+      "meta": {
+        "username": "John",
+        "license": "Creative Commons",
+        "name": "Instagram Feb 11, 2019, 3:34 PM.jpeg",
+        "type": "image/jpeg"
+      },
+      "type": "image/jpeg",
+      "data": {
+        "isFolder": false,
+        "icon": "https://scontent.cdninstagram.com/vp/420d2bdc2cb30251d7ecf8e516f7fa7d/5D55A291/t51.2885-15/e35/s320x320/50692753_2474466385958388_3994336603663016042_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "name": "Instagram Feb 11, 2019, 3:34 PM.jpeg",
+        "mimeType": "image/jpeg",
+        "id": "1976930126949922734_104680",
+        "thumbnail": "https://scontent.cdninstagram.com/vp/ff2400b726bbd3415c4a07b723615578/5D3C08E9/t51.2885-15/e35/s150x150/50692753_2474466385958388_3994336603663016042_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "requestPath": "1976930126949922734_104680",
+        "modifiedDate": "1549888457"
+      },
+      "progress": {
+        "uploadStarted": 1556219160874,
+        "uploadComplete": true,
+        "percentage": 100,
+        "bytesUploaded": 86926,
+        "bytesTotal": 86926
+      },
+      "size": null,
+      "isRemote": true,
+      "remote": {
+        "companionUrl": "http://localhost:3020",
+        "url": "http://localhost:3020/instagram/get/1976930126949922734_104680",
+        "body": {
+          "fileId": "1976930126949922734_104680"
+        },
+        "providerOptions": {
+          "companionUrl": "http://localhost:3020",
+          "provider": "instagram",
+          "authProvider": "instagram",
+          "pluginId": "Instagram"
+        }
+      },
+      "preview": "https://scontent.cdninstagram.com/vp/ff2400b726bbd3415c4a07b723615578/5D3C08E9/t51.2885-15/e35/s150x150/50692753_2474466385958388_3994336603663016042_n.jpg?_nc_ht=scontent.cdninstagram.com",
+      "serverToken": "dde6723d-29f7-4983-8b42-0a9e18683872",
+      "response": {
+        "uploadURL": "https://master.tus.io/files/533f69131228bc58faef2b247af1f1bd+hHkHXy5FmiPzutH2jEfQMMHiUtae68lrmZKRenqvSSU94FcsKxurqzg10jHSvV3lFps9zdzXfbmb8VBEX6znqffM603qapJuDhfeNZkgrBxOkgKglyvQLV_9ydgaJNLE"
+      },
+      "uploadURL": "https://master.tus.io/files/533f69131228bc58faef2b247af1f1bd+hHkHXy5FmiPzutH2jEfQMMHiUtae68lrmZKRenqvSSU94FcsKxurqzg10jHSvV3lFps9zdzXfbmb8VBEX6znqffM603qapJuDhfeNZkgrBxOkgKglyvQLV_9ydgaJNLE",
+      "isPaused": false
+    },
+    "uppy-instagramjan1820191139pmjpeg-image/jpeg": {
+      "source": "Instagram",
+      "id": "uppy-instagramjan1820191139pmjpeg-image/jpeg",
+      "name": "Instagram Jan 18, 2019, 11:39 PM.jpeg",
+      "extension": "jpeg",
+      "meta": {
+        "username": "John",
+        "license": "Creative Commons",
+        "name": "Instagram Jan 18, 2019, 11:39 PM.jpeg",
+        "type": "image/jpeg"
+      },
+      "type": "image/jpeg",
+      "data": {
+        "isFolder": false,
+        "icon": "https://scontent.cdninstagram.com/vp/78aa49ad8ccbe12b07fb20f07c1b9a1d/5D520E84/t51.2885-15/e35/s320x320/49858772_2238267119827712_38852393303322952_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "name": "Instagram Jan 18, 2019, 11:39 PM.jpeg",
+        "mimeType": "image/jpeg",
+        "id": "1959779810654008285_104680",
+        "thumbnail": "https://scontent.cdninstagram.com/vp/b3eda9daaa214951c1fb1a0f7000d8de/5D3F3F89/t51.2885-15/e35/s150x150/49858772_2238267119827712_38852393303322952_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "requestPath": "1959779810654008285_104680?carousel_id=0",
+        "modifiedDate": "1547843980"
+      },
+      "progress": {
+        "uploadStarted": 1556219160874,
+        "uploadComplete": true,
+        "percentage": 100,
+        "bytesUploaded": 80471,
+        "bytesTotal": 80471
+      },
+      "size": null,
+      "isRemote": true,
+      "remote": {
+        "companionUrl": "http://localhost:3020",
+        "url": "http://localhost:3020/instagram/get/1959779810654008285_104680?carousel_id=0",
+        "body": {
+          "fileId": "1959779810654008285_104680"
+        },
+        "providerOptions": {
+          "companionUrl": "http://localhost:3020",
+          "provider": "instagram",
+          "authProvider": "instagram",
+          "pluginId": "Instagram"
+        }
+      },
+      "preview": "https://scontent.cdninstagram.com/vp/b3eda9daaa214951c1fb1a0f7000d8de/5D3F3F89/t51.2885-15/e35/s150x150/49858772_2238267119827712_38852393303322952_n.jpg?_nc_ht=scontent.cdninstagram.com",
+      "serverToken": "60675af3-fec5-45d8-87d6-30363a0534fa",
+      "response": {
+        "uploadURL": "https://master.tus.io/files/1f4f0dabad36e2995d4fde177ce64d0c+C.z6wtvRCGwt5hr4hUpbLE3NrduyiOiDn55wE8e81j88CRvceybDQ04iOQhlfl817wlPa0f2JU5aPjhZlp.pA4sBKPqLOlDMAkakwsVIGR4IW5nLYRoRGuauiJjYDMW."
+      },
+      "uploadURL": "https://master.tus.io/files/1f4f0dabad36e2995d4fde177ce64d0c+C.z6wtvRCGwt5hr4hUpbLE3NrduyiOiDn55wE8e81j88CRvceybDQ04iOQhlfl817wlPa0f2JU5aPjhZlp.pA4sBKPqLOlDMAkakwsVIGR4IW5nLYRoRGuauiJjYDMW.",
+      "isPaused": false
+    },
+    "uppy-instagramjan1820191139pm1jpeg-image/jpeg": {
+      "source": "Instagram",
+      "id": "uppy-instagramjan1820191139pm1jpeg-image/jpeg",
+      "name": "Instagram Jan 18, 2019, 11:39 PM 1.jpeg",
+      "extension": "jpeg",
+      "meta": {
+        "username": "John",
+        "license": "Creative Commons",
+        "name": "Instagram Jan 18, 2019, 11:39 PM 1.jpeg",
+        "type": "image/jpeg"
+      },
+      "type": "image/jpeg",
+      "data": {
+        "isFolder": false,
+        "icon": "https://scontent.cdninstagram.com/vp/ec36a8b8b7db546abeb3cdcf12b52ba5/5D77DC5F/t51.2885-15/e35/s320x320/49858316_1974473399524283_2231924729468134373_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "name": "Instagram Jan 18, 2019, 11:39 PM 1.jpeg",
+        "mimeType": "image/jpeg",
+        "id": "1959779810654008285_1046801",
+        "thumbnail": "https://scontent.cdninstagram.com/vp/d8ef3dd687b6aab396cae9284226c7df/5D711727/t51.2885-15/e35/s150x150/49858316_1974473399524283_2231924729468134373_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "requestPath": "1959779810654008285_104680?carousel_id=1",
+        "modifiedDate": "1547843980"
+      },
+      "progress": {
+        "uploadStarted": 1556219160876,
+        "uploadComplete": false,
+        "percentage": 15,
+        "bytesUploaded": 12561.5,
+        "bytesTotal": 80471
+      },
+      "size": null,
+      "isRemote": true,
+      "remote": {
+        "companionUrl": "http://localhost:3020",
+        "url": "http://localhost:3020/instagram/get/1959779810654008285_104680?carousel_id=1",
+        "body": {
+          "fileId": "1959779810654008285_1046801"
+        },
+        "providerOptions": {
+          "companionUrl": "http://localhost:3020",
+          "provider": "instagram",
+          "authProvider": "instagram",
+          "pluginId": "Instagram"
+        }
+      },
+      "preview": "https://scontent.cdninstagram.com/vp/d8ef3dd687b6aab396cae9284226c7df/5D711727/t51.2885-15/e35/s150x150/49858316_1974473399524283_2231924729468134373_n.jpg?_nc_ht=scontent.cdninstagram.com",
+      "serverToken": "d6f75847-6685-456e-9db6-c345f32749af",
+      "isPaused": true
+    },
+    "uppy-instagramjan1820191139pm2jpeg-image/jpeg": {
+      "source": "Instagram",
+      "id": "uppy-instagramjan1820191139pm2jpeg-image/jpeg",
+      "name": "Instagram Jan 18, 2019, 11:39 PM 2.jpeg",
+      "extension": "jpeg",
+      "meta": {
+        "username": "John",
+        "license": "Creative Commons",
+        "name": "Instagram Jan 18, 2019, 11:39 PM 2.jpeg",
+        "type": "image/jpeg"
+      },
+      "type": "image/jpeg",
+      "data": {
+        "isFolder": false,
+        "icon": "https://scontent.cdninstagram.com/vp/3055f2ae78d775fc031654d20e791ebc/5D51235E/t51.2885-15/e35/s320x320/49933915_184580175831450_4288362971970794931_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "name": "Instagram Jan 18, 2019, 11:39 PM 2.jpeg",
+        "mimeType": "image/jpeg",
+        "id": "1959779810654008285_1046802",
+        "thumbnail": "https://scontent.cdninstagram.com/vp/3d1b5aa16b8d64bc7c14ae1e3b13dfbe/5D5DD553/t51.2885-15/e35/c0.0.1079.1079a/s150x150/49933915_184580175831450_4288362971970794931_n.jpg?_nc_ht=scontent.cdninstagram.com",
+        "requestPath": "1959779810654008285_104680?carousel_id=2",
+        "modifiedDate": "1547843980"
+      },
+      "progress": {
+        "uploadStarted": 1556219160878,
+        "uploadComplete": true,
+        "percentage": 100,
+        "bytesUploaded": 111226,
+        "bytesTotal": 111226
+      },
+      "size": null,
+      "isRemote": true,
+      "remote": {
+        "companionUrl": "http://localhost:3020",
+        "url": "http://localhost:3020/instagram/get/1959779810654008285_104680?carousel_id=2",
+        "body": {
+          "fileId": "1959779810654008285_1046802"
+        },
+        "providerOptions": {
+          "companionUrl": "http://localhost:3020",
+          "provider": "instagram",
+          "authProvider": "instagram",
+          "pluginId": "Instagram"
+        }
+      },
+      "preview": "https://scontent.cdninstagram.com/vp/3d1b5aa16b8d64bc7c14ae1e3b13dfbe/5D5DD553/t51.2885-15/e35/c0.0.1079.1079a/s150x150/49933915_184580175831450_4288362971970794931_n.jpg?_nc_ht=scontent.cdninstagram.com",
+      "serverToken": "92ae2486-90f0-4e2f-82f9-285ad87e2c5a",
+      "response": {
+        "uploadURL": "https://master.tus.io/files/c83164658faa4fdd7a12dc9e6044510f+YJKdoXIXl7PjA_UXhQ.PDqPhnk4A_O_LWm.3qau9X8kzHXg7dgI.igu5n_yPVBG0PezDPi2b8fSjBfc2KZjX3qUZxST9pb0iQP20_wKPax9Y4slQRQr7qpiUugFTljbA"
+      },
+      "uploadURL": "https://master.tus.io/files/c83164658faa4fdd7a12dc9e6044510f+YJKdoXIXl7PjA_UXhQ.PDqPhnk4A_O_LWm.3qau9X8kzHXg7dgI.igu5n_yPVBG0PezDPi2b8fSjBfc2KZjX3qUZxST9pb0iQP20_wKPax9Y4slQRQr7qpiUugFTljbA",
+      "isPaused": false
+    }
+  },
+  "currentUploads": {
+    "cjux0phjn00012a5vzjw0buly": {
+      "fileIDs": [
+        "uppy-instagramjan1820191139pm6jpeg-image/jpeg",
+        "uppy-instagramjan1820191139pm5jpeg-image/jpeg",
+        "uppy-instagramjan1820191139pm4jpeg-image/jpeg",
+        "uppy-instagramjan1820191139pm3jpeg-image/jpeg",
+        "uppy-instagramfeb112019334pmjpeg-image/jpeg",
+        "uppy-instagramjan1820191139pmjpeg-image/jpeg",
+        "uppy-instagramjan1820191139pm1jpeg-image/jpeg",
+        "uppy-instagramjan1820191139pm2jpeg-image/jpeg"
+      ],
+      "step": 0,
+      "result": {}
+    }
+  },
+  "allowNewUpload": true,
+  "capabilities": {
+    "uploadProgress": true,
+    "individualCancellation": true,
+    "resumableUploads": true
+  },
+  "totalProgress": 1328,
+  "meta": {
+    "username": "John",
+    "license": "Creative Commons"
+  },
+  "info": {
+    "isHidden": true,
+    "type": "info",
+    "message": ""
+  },
+  "error": null
+}

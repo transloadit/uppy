@@ -16,6 +16,7 @@ let counter = 0
  * @type {import('vite').UserConfig}
  */
 const config = {
+  envDir: fileURLToPath(ROOT),
   build: {
     commonjsOptions: {
       defaultIsModuleExports: true,

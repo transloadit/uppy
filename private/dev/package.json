@@ -6,6 +6,9 @@
       "@uppy": "../../packages/@uppy"
     }
   },
+  "dependencies": {
+    "@uppy/companion": "workspace:^"
+  },
   "devDependencies": {
     "@babel/core": "^7.4.4",
     "@babel/plugin-transform-react-jsx": "^7.10.4",
