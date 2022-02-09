@@ -61,7 +61,7 @@ describe('uploader with tus protocol', () => {
     return new Promise((resolve, reject) => {
       // validate that the test is resolved on socket connection
       uploader.awaitReady().then(() => {
-        uploader.uploadStream(stream).then(() => resolve())
+        uploader.tryUploadStream(stream).then(() => resolve())
       })
 
       let progressReceived = 0
@@ -105,7 +105,7 @@ describe('uploader with tus protocol', () => {
     return new Promise((resolve, reject) => {
       // validate that the test is resolved on socket connection
       uploader.awaitReady().then(() => {
-        uploader.uploadStream(stream).then(() => {
+        uploader.tryUploadStream(stream).then(() => {
           try {
             expect(fs.existsSync(uploader.path)).toBe(false)
             resolve()
@@ -181,7 +181,7 @@ describe('uploader with tus protocol', () => {
     const uploadToken = uploader.token
 
     // validate that the test is resolved on socket connection
-    uploader.awaitReady().then(uploader.uploadStream(stream))
+    uploader.awaitReady().then(uploader.tryUploadStream(stream))
     socketClient.connect(uploadToken)
 
     return new Promise((resolve, reject) => {

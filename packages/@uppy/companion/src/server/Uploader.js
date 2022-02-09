@@ -187,13 +187,30 @@ class Uploader {
         // The stream will then typically come from a "Transfer-Encoding: chunked" response
         await this._downloadStreamAsFile(this.readStream)
       }
-      if (this.uploadStopped) return
+      if (this.uploadStopped) return undefined
 
       const { url, extraData } = await Promise.race([
         this._uploadByProtocol(),
         // If we don't handle stream errors, we get unhandled error in node.
         new Promise((resolve, reject) => this.readStream.on('error', reject)),
       ])
+      return { url, extraData }
+    } finally {
+      logger.debug('cleanup', this.shortToken)
+      if (this.readStream && !this.readStream.destroyed) this.readStream.destroy()
+      if (this.tmpPath) unlink(this.tmpPath).catch(() => {})
+    }
+  }
+
+  /**
+   *
+   * @param {import('stream').Readable} stream
+   */
+  async tryUploadStream (stream) {
+    try {
+      const ret = await this.uploadStream(stream)
+      if (!ret) return
+      const { url, extraData } = ret
       this.emitSuccess(url, extraData)
     } catch (err) {
       if (err instanceof AbortError) {
@@ -204,7 +221,9 @@ class Uploader {
       logger.error(err, 'uploader.error', this.shortToken)
       this.emitError(err)
     } finally {
-      this.cleanUp()
+      emitter().removeAllListeners(`pause:${this.token}`)
+      emitter().removeAllListeners(`resume:${this.token}`)
+      emitter().removeAllListeners(`cancel:${this.token}`)
     }
   }
 
@@ -330,17 +349,6 @@ class Uploader {
     logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
     await new Promise((resolve) => emitter().once(`connection:${this.token}`, resolve))
     logger.debug('socket connection received', 'uploader.socket.wait', this.shortToken)
-  }
-
-  cleanUp () {
-    logger.debug('cleanup', this.shortToken)
-    if (this.readStream && !this.readStream.destroyed) this.readStream.destroy()
-
-    if (this.tmpPath) unlink(this.tmpPath).catch(() => {})
-
-    emitter().removeAllListeners(`pause:${this.token}`)
-    emitter().removeAllListeners(`resume:${this.token}`)
-    emitter().removeAllListeners(`cancel:${this.token}`)
   }
 
   /**
