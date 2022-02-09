@@ -36,6 +36,7 @@
     "@uppy/aws-s3-multipart": "workspace:^",
     "@uppy/box": "workspace:^",
     "@uppy/companion-client": "workspace:^",
+    "@uppy/compressor": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/drag-drop": "workspace:^",

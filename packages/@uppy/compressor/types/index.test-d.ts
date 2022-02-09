@@ -1,10 +1,7 @@
 import Uppy from '@uppy/core'
-import Audio from '..'
+import Compressor from '..'
 
 {
   const uppy = new Uppy()
-
-  uppy.use(Audio, {
-    target: 'body',
-  })
+  uppy.use(Compressor)
 }

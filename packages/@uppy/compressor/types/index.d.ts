@@ -1,12 +1,12 @@
-import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
-import type AudioLocale from './generatedLocale'
+import type { PluginOptions, BasePlugin } from '@uppy/core'
+import type CompressorLocale from './generatedLocale'
 
-export interface AudioOptions extends PluginOptions {
-  target?: PluginTarget
-  showVideoSourceDropdown?: boolean
-  locale?: AudioLocale
+export interface CompressorOptions extends PluginOptions {
+  quality?: number
+  limit?: number
+  locale?: CompressorLocale
 }
 
-declare class Audio extends UIPlugin<AudioOptions> {}
+declare class Compressor extends BasePlugin<CompressorOptions> {}
 
-export default Audio
+export default Compressor

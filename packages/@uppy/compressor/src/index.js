@@ -1,15 +1,15 @@
-const { UIPlugin } = require('@uppy/core')
+const { BasePlugin } = require('@uppy/core')
 const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const prettierBytes = require('@transloadit/prettier-bytes')
-const Compressor = require('compressorjs/dist/compressor.common.js')
+const CompressorJS = require('compressorjs/dist/compressor.common.js')
 const locale = require('./locale')
 
-module.exports = class ImageCompressor extends UIPlugin {
+module.exports = class Compressor extends BasePlugin {
   #RateLimitedQueue
 
   constructor (uppy, opts) {
     super(uppy, opts)
-    this.id = this.opts.id || 'ImageCompressor'
+    this.id = this.opts.id || 'Compressor'
     this.type = 'modifier'
 
     this.defaultLocale = locale
@@ -32,7 +32,7 @@ module.exports = class ImageCompressor extends UIPlugin {
   compress (blob) {
     return new Promise((resolve, reject) => {
       /* eslint-disable no-new */
-      new Compressor(blob, {
+      new CompressorJS(blob, {
         ...this.opts,
         success: resolve,
         error: reject,
@@ -86,7 +86,10 @@ module.exports = class ImageCompressor extends UIPlugin {
     // while waiting for all the files to complete pre-processing.
     await Promise.all(promises)
 
-    if (totalCompressedSize > 1000) {
+    this.uppy.emit('compressor:complete')
+
+    // Only show informer if Compressor mananged to save at least a kilobyte
+    if (totalCompressedSize > 1024) {
       this.uppy.info(
         this.i18n('compressedX', {
           size: prettierBytes(totalCompressedSize),
