@@ -2,12 +2,14 @@
 
 const providerManager = require('../../src/server/provider')
 const { getCompanionOptions } = require('../../src/standalone/helper')
+const { setDefaultEnv } = require('../mockserver')
 
 let grantConfig
 let companionOptions
 
 describe('Test Provider options', () => {
   beforeEach(() => {
+    setDefaultEnv()
     grantConfig = require('../../src/config/grant')()
     companionOptions = getCompanionOptions()
   })

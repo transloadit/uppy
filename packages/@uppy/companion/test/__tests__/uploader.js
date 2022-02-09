@@ -9,6 +9,8 @@ const Uploader = require('../../src/server/Uploader')
 const socketClient = require('../mocksocket')
 const standalone = require('../../src/standalone')
 
+process.env.COMPANION_DATADIR = './test/output'
+process.env.COMPANION_DOMAIN = 'localhost:3020'
 const { companionOptions } = standalone()
 
 describe('uploader with tus protocol', () => {
