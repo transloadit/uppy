@@ -80,11 +80,9 @@ Add this full ngrok URL to `Valid OAuth Redirect URIs` under `Instagram Basic Di
 
 Edit `.env.local` and change to your ngrok URI:
 
-```bash
-COMPANION_DOMAIN="e0c7de09808d.ngrok.io"
-COMPANION_PROTOCOL="https"
-VITE_COMPANION_URL = 'https://e0c7de09808d.ngrok.io'
-```
+    COMPANION_DOMAIN="e0c7de09808d.ngrok.io"
+    COMPANION_PROTOCOL="https"
+    VITE_COMPANION_URL = 'https://e0c7de09808d.ngrok.io'
 
 Go to: Roles -> Roles -> Add Instagram testers -> Add your instagram account
 
