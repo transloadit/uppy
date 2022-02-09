@@ -180,6 +180,9 @@
     ],
     "testMatch": [
       "**/packages/**/*.test.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/packages/@uppy/companion/"
     ]
   },
   "resolutions": {
