@@ -44,7 +44,7 @@ yarn run test:unit
 
 We use [Cypress](cypress.io/) for our e2e test suite. Be sure to checkout “[Writing your first test](https://docs.cypress.io/guides/getting-started/writing-your-first-test#Add-a-test-file)” and the “[Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress#Cypress-Can-Be-Simple-Sometimes)”. You should also be aware of the “[Best Practices](https://docs.cypress.io/guides/references/best-practices)”.
 
-To get started make sure you have your `.env` set up. If it doesn’t exist, copy and rename the `.env.local` file and populate (some) of the values. What values need to be populated depends on what tests you want to run.
+To get started make sure you have your `.env.local` set up. If it doesn’t exist, it will use the default value in the `.env` file which won’t work for most cases. Consider copy `.env` in a file named `.env.local` and the values relevant for the test(s) you are trying to run.
 
 To start the testing suite run:
 
@@ -62,12 +62,10 @@ Even though facebook [allows using](https://developers.facebook.com/blog/post/20
 
 Make sure that you are using a development facebook app at <https://developers.facebook.com/apps>
 
-Go to “Instagram Basic Display” and find `Instagram App ID` and `Instagram App Secret`. Put them in a file called `env.sh` in the repo root:
+Go to “Instagram Basic Display” and find `Instagram App ID` and `Instagram App Secret`. Put them in a file called `.env.local` in the repo root:
 
-```bash
-export COMPANION_INSTAGRAM_KEY="Instagram App ID"
-export COMPANION_INSTAGRAM_SECRET="Instagram App Secret"
-```
+    COMPANION_INSTAGRAM_KEY="Instagram App ID"
+    COMPANION_INSTAGRAM_SECRET="Instagram App Secret"
 
 Run
 
@@ -82,17 +80,12 @@ append `/instagram/redirect` to it, such as:
 
 Add this full ngrok URL to `Valid OAuth Redirect URIs` under `Instagram Basic Display`.
 
-Edit `bin/companion` and change to your ngrok URI:
+Edit `.env.local` and change to your ngrok URI:
 
 ```bash
 COMPANION_DOMAIN="e0c7de09808d.ngrok.io"
 COMPANION_PROTOCOL="https"
-```
-
-Edit `examples/dev/Dashboard.js`:
-
-```js
-const COMPANION_URL = 'https://e0c7de09808d.ngrok.io'
+VITE_COMPANION_URL = 'https://e0c7de09808d.ngrok.io'
 ```
 
 Go to: Roles -> Roles -> Add Instagram testers -> Add your instagram account
@@ -115,16 +108,15 @@ open http://localhost:4000/examples/dashboard
 Also check the other examples:
 
 ```bash
-cd examples/EXAMPLENAME
-yarn install
-yarn start
+yarn workspace <example-name> start
 ```
 
 Releases are managed by GitHub Actions, here’s an overview of the process to release a new Uppy version:
 
 * Run `yarn release` on your local machine.
-* Follow the instructions and select what packages to release.
+* Follow the instructions and select what packages to release. **Warning:** skipping packages results in those changes being “lost”, meaning they won’t be picked up in the changelog automatically next release. Always try to release all.
 * Before committing, check if the generated files look good.
+* When asked to edit the next CHANGELOG, only include changes related to the package(s) you selected for release.
 * Push to the Transloadit repository using the command given by the tool. Do not open a PR yourself, the GitHub Actions will create one and assign you to it.
 * Wait for all the GitHub Actions checks to pass. If one fails, try to figure out why. Do not go ahead without consulting the rest of the team.
 * Review the PR thoroughly, and if everything looks good to you, approve the PR. Do not merge it manually!
