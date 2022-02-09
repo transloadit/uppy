@@ -1,10 +1,10 @@
+// eslint-disable-next-line max-classes-per-file
 const tus = require('tus-js-client')
 const uuid = require('uuid')
 const isObject = require('isobject')
 const validator = require('validator')
 const request = require('request')
-// eslint-disable-next-line no-unused-vars
-const { Readable, pipeline: pipelineCb } = require('stream')
+const { pipeline: pipelineCb } = require('stream')
 const { join } = require('path')
 const fs = require('fs')
 const { promisify } = require('util')
@@ -42,6 +42,8 @@ function exceedsMaxFileSize (maxFileSize, size) {
 
 class AbortError extends Error {}
 
+class ValidationError extends Error {}
+
 class Uploader {
   /**
    * Uploads file to destination based on the supplied protocol (tus, s3-multipart, multipart)
@@ -67,10 +69,7 @@ class Uploader {
    * @param {UploaderOptions} options
    */
   constructor (options) {
-    if (!this.validateOptions(options)) {
-      logger.debug(this._errRespMessage, 'uploader.validator.fail')
-      return
-    }
+    this.validateOptions(options)
 
     this.options = options
     this.token = uuid.v4()
@@ -173,7 +172,7 @@ class Uploader {
 
   /**
    *
-   * @param {Readable} stream
+   * @param {import('stream').Readable} stream
    */
   async uploadStream (stream) {
     try {
@@ -250,51 +249,43 @@ class Uploader {
    * Validate the options passed down to the uplaoder
    *
    * @param {UploaderOptions} options
-   * @returns {boolean}
    */
   validateOptions (options) {
     // validate HTTP Method
     if (options.httpMethod) {
       if (typeof options.httpMethod !== 'string') {
-        this._errRespMessage = 'unsupported HTTP METHOD specified'
-        return false
+        throw new ValidationError('unsupported HTTP METHOD specified')
       }
 
       const method = options.httpMethod.toLowerCase()
       if (method !== 'put' && method !== 'post') {
-        this._errRespMessage = 'unsupported HTTP METHOD specified'
-        return false
+        throw new ValidationError('unsupported HTTP METHOD specified')
       }
     }
 
     if (exceedsMaxFileSize(options.companionOptions.maxFileSize, options.size)) {
-      this._errRespMessage = 'maxFileSize exceeded'
-      return false
+      throw new ValidationError('maxFileSize exceeded')
     }
 
     // validate fieldname
     if (options.fieldname && typeof options.fieldname !== 'string') {
-      this._errRespMessage = 'fieldname must be a string'
-      return false
+      throw new ValidationError('fieldname must be a string')
     }
 
     // validate metadata
     if (options.metadata && !isObject(options.metadata)) {
-      this._errRespMessage = 'metadata must be an object'
-      return false
+      throw new ValidationError('metadata must be an object')
     }
 
     // validate headers
     if (options.headers && !isObject(options.headers)) {
-      this._errRespMessage = 'headers must be an object'
-      return false
+      throw new ValidationError('headers must be an object')
     }
 
     // validate protocol
     // @todo this validation should not be conditional once the protocol field is mandatory
     if (options.protocol && !Object.keys(PROTOCOLS).some((key) => PROTOCOLS[key] === options.protocol)) {
-      this._errRespMessage = 'unsupported protocol specified'
-      return false
+      throw new ValidationError('unsupported protocol specified')
     }
 
     // s3 uploads don't require upload destination
@@ -302,39 +293,27 @@ class Uploader {
     // by the server's s3 config
     if (options.protocol !== PROTOCOLS.s3Multipart) {
       if (!options.endpoint && !options.uploadUrl) {
-        this._errRespMessage = 'no destination specified'
-        return false
+        throw new ValidationError('no destination specified')
       }
 
       const validateUrl = (url) => {
         const validatorOpts = { require_protocol: true, require_tld: false }
         if (url && !validator.isURL(url, validatorOpts)) {
-          this._errRespMessage = 'invalid destination url'
-          return false
+          throw new ValidationError('invalid destination url')
         }
 
         const allowedUrls = options.companionOptions.uploadUrls
         if (allowedUrls && url && !hasMatch(url, allowedUrls)) {
-          this._errRespMessage = 'upload destination does not match any allowed destinations'
-          return false
+          throw new ValidationError('upload destination does not match any allowed destinations')
         }
-
-        return true
       }
 
-      if (![options.endpoint, options.uploadUrl].every(validateUrl)) return false
+      [options.endpoint, options.uploadUrl].forEach(validateUrl)
     }
 
     if (options.chunkSize != null && typeof options.chunkSize !== 'number') {
-      this._errRespMessage = 'incorrect chunkSize'
-      return false
+      throw new ValidationError('incorrect chunkSize')
     }
-
-    return true
-  }
-
-  hasError () {
-    return this._errRespMessage != null
   }
 
   /**
@@ -362,13 +341,6 @@ class Uploader {
     emitter().removeAllListeners(`pause:${this.token}`)
     emitter().removeAllListeners(`resume:${this.token}`)
     emitter().removeAllListeners(`cancel:${this.token}`)
-  }
-
-  getResponse () {
-    if (this._errRespMessage) {
-      return { body: { message: this._errRespMessage }, status: 400 }
-    }
-    return { body: { token: this.token }, status: 200 }
   }
 
   /**
@@ -649,3 +621,4 @@ Uploader.FILE_NAME_PREFIX = 'uppy-file'
 Uploader.STORAGE_PREFIX = 'companion'
 
 module.exports = Uploader
+module.exports.ValidationError = ValidationError

@@ -20,7 +20,7 @@ describe('uploader with tus protocol', () => {
       companionOptions: { ...companionOptions, uploadUrls: [/^http:\/\/url.myendpoint.com\//] },
     }
 
-    expect(new Uploader(opts).hasError()).toBe(true)
+    expect(() => new Uploader(opts)).toThrow(new Uploader.ValidationError('upload destination does not match any allowed destinations'))
   })
 
   test('uploader respects uploadUrls, valid', async () => {
@@ -29,7 +29,8 @@ describe('uploader with tus protocol', () => {
       companionOptions: { ...companionOptions, uploadUrls: [/^http:\/\/url.myendpoint.com\//] },
     }
 
-    expect(new Uploader(opts).hasError()).toBe(false)
+    // eslint-disable-next-line no-new
+    new Uploader(opts) // no validation error
   })
 
   test('uploader respects uploadUrls, localhost', async () => {
@@ -38,7 +39,8 @@ describe('uploader with tus protocol', () => {
       companionOptions: { ...companionOptions, uploadUrls: [/^http:\/\/localhost:1337\//] },
     }
 
-    expect(new Uploader(opts).hasError()).toBe(false)
+    // eslint-disable-next-line no-new
+    new Uploader(opts) // no validation error
   })
 
   test('upload functions with tus protocol', async () => {
@@ -54,7 +56,6 @@ describe('uploader with tus protocol', () => {
 
     const uploader = new Uploader(opts)
     const uploadToken = uploader.token
-    expect(uploader.hasError()).toBe(false)
     expect(uploadToken).toBeTruthy()
 
     return new Promise((resolve, reject) => {
@@ -99,7 +100,6 @@ describe('uploader with tus protocol', () => {
 
     const uploader = new Uploader(opts)
     const uploadToken = uploader.token
-    expect(uploader.hasError()).toBe(false)
     expect(uploadToken).toBeTruthy()
 
     return new Promise((resolve, reject) => {
@@ -152,8 +152,7 @@ describe('uploader with tus protocol', () => {
       size: 101,
     }
 
-    const uploader = new Uploader(opts)
-    expect(uploader.hasError()).toBe(true)
+    expect(() => new Uploader(opts)).toThrow(new Uploader.ValidationError('maxFileSize exceeded'))
   })
 
   test('uploader respects maxFileSize correctly', async () => {
@@ -163,8 +162,8 @@ describe('uploader with tus protocol', () => {
       size: 99,
     }
 
-    const uploader = new Uploader(opts)
-    expect(uploader.hasError()).toBe(false)
+    // eslint-disable-next-line no-new
+    new Uploader(opts) // no validation error
   })
 
   test('uploader respects maxFileSize with unknown size', async () => {
@@ -180,7 +179,6 @@ describe('uploader with tus protocol', () => {
 
     const uploader = new Uploader(opts)
     const uploadToken = uploader.token
-    expect(uploader.hasError()).toBe(false)
 
     // validate that the test is resolved on socket connection
     uploader.awaitReady().then(uploader.uploadStream(stream))
