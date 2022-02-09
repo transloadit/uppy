@@ -4,10 +4,16 @@ jest.mock('tus-js-client')
 
 const intoStream = require('into-stream')
 const fs = require('fs')
+const nock = require('nock')
 
 const Uploader = require('../../src/server/Uploader')
 const socketClient = require('../mocksocket')
 const standalone = require('../../src/standalone')
+
+afterAll(() => {
+  nock.cleanAll()
+  nock.restore()
+})
 
 process.env.COMPANION_DATADIR = './test/output'
 process.env.COMPANION_DOMAIN = 'localhost:3020'
@@ -143,6 +149,24 @@ describe('uploader with tus protocol', () => {
         }
       })
     })
+  })
+
+  test('upload functions with xhr protocol', async () => {
+    const fileContent = Buffer.from('Some file content')
+    const stream = intoStream(fileContent)
+    const opts = {
+      companionOptions,
+      endpoint: 'http://localhost',
+      protocol: 'multipart',
+      size: fileContent.length,
+      pathPrefix: companionOptions.filePath,
+    }
+
+    nock('http://localhost').post('/').reply(200)
+
+    const uploader = new Uploader(opts)
+    const ret = await uploader.uploadStream(stream)
+    expect(ret).toMatchObject({ url: null, extraData: { response: expect.anything(), bytesUploaded: 17 } })
   })
 
   test('uploader respects maxFileSize', async () => {
