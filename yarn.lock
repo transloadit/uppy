@@ -8997,7 +8997,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/compressor@workspace:packages/@uppy/compressor":
+"@uppy/compressor@workspace:^, @uppy/compressor@workspace:packages/@uppy/compressor":
   version: 0.0.0-use.local
   resolution: "@uppy/compressor@workspace:packages/@uppy/compressor"
   dependencies:
@@ -40749,6 +40749,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     "@uppy/aws-s3-multipart": "workspace:^"
     "@uppy/box": "workspace:^"
     "@uppy/companion-client": "workspace:^"
+    "@uppy/compressor": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/drag-drop": "workspace:^"
