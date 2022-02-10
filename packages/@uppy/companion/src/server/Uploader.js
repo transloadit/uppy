@@ -292,8 +292,9 @@ class Uploader {
     }
 
     // validate metadata
-    if (options.metadata && !isObject(options.metadata)) {
-      throw new ValidationError('metadata must be an object')
+    if (options.metadata) {
+      if (!isObject(options.metadata)) throw new ValidationError('metadata must be an object')
+      if (!Object.values(options.metadata).every((value) => typeof value === 'string')) throw new ValidationError('metadata values must be strings')
     }
 
     // validate headers

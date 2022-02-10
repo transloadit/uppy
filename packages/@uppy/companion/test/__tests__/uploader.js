@@ -29,6 +29,21 @@ describe('uploader with tus protocol', () => {
     expect(() => new Uploader(opts)).toThrow(new Uploader.ValidationError('upload destination does not match any allowed destinations'))
   })
 
+  // https://github.com/transloadit/uppy/issues/3477
+  test('uploader checks metadata', () => {
+    const opts = {
+      companionOptions,
+      endpoint: 'http://localhost',
+    }
+
+    // eslint-disable-next-line no-new
+    new Uploader({ ...opts, metadata: { key: 'string value' } })
+    expect(() => new Uploader({ ...opts, metadata: { key: null } })).toThrow(new Uploader.ValidationError('metadata values must be strings'))
+    expect(() => new Uploader({ ...opts, metadata: { key: true } })).toThrow(new Uploader.ValidationError('metadata values must be strings'))
+    expect(() => new Uploader({ ...opts, metadata: { key: 1234 } })).toThrow(new Uploader.ValidationError('metadata values must be strings'))
+    expect(() => new Uploader({ ...opts, metadata: { key: {} } })).toThrow(new Uploader.ValidationError('metadata values must be strings'))
+  })
+
   test('uploader respects uploadUrls, valid', async () => {
     const opts = {
       endpoint: 'http://url.myendpoint.com/files',
