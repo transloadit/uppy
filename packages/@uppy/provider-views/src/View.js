@@ -101,7 +101,8 @@ module.exports = class View {
     }
 
     if (file.author) {
-      tagFile.meta.author = file.author
+      if (file.author.name) tagFile.meta.authorName = file.author.name
+      if (file.author.url) tagFile.meta.authorUrl = file.author.url
     }
 
     this.plugin.uppy.log('Adding remote file')
