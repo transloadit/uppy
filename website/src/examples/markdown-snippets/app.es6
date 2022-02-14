@@ -118,6 +118,10 @@ class MarkdownTextarea {
         'instagram',
         'google-drive',
         'dropbox',
+        'box',
+        'unsplash',
+        'audio',
+        'screen-capture',
       ],
     }).then((result) => {
       if (result === null) return

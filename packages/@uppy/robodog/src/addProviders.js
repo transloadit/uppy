@@ -8,11 +8,15 @@ const remoteProviders = {
   instagram: require('@uppy/instagram'),
   facebook: require('@uppy/facebook'),
   onedrive: require('@uppy/onedrive'),
+  box: require('@uppy/box'),
+  unsplash: require('@uppy/unsplash'),
   url: require('@uppy/url'),
 }
 
 const localProviders = {
   webcam: require('@uppy/webcam'),
+  audio: require('@uppy/audio'),
+  'screen-capture': require('@uppy/screen-capture'),
 }
 
 const remoteProviderOptionNames = [

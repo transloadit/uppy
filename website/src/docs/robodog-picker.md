@@ -84,6 +84,10 @@ Array of providers to use. Each entry is the name of a provider. The available o
 * `'instagram'` – Import files from Instagram using [Uppy Companion][companion].
 * `'url'` – Import files from public Web URLs using [Uppy Companion][companion].
 * `'webcam'` – Take photos and record videos using the user’s device camera.
+* `'box'` — Import files from Box using [Uppy Companion][companion].
+* `'unsplash'` — Search and import images from Unsplash using [Uppy Companion][companion].
+* `'audio'` — Record audio using the user’s device microphone.
+* `'screen-capture'` — Record user’s device screen for demos and presentations.
 
 ### `companionUrl: Transloadit.COMPANION`
 
