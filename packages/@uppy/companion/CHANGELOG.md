@@ -1,5 +1,18 @@
 # @uppy/companion
 
+## 3.2.0
+
+Released: 2022-02-14
+Included in: Uppy v2.5.0
+
+- @uppy/companion: add support for COMPANION_UNSPLASH_SECRET (Mikael Finstad / #3463)
+- @uppy/companion-client,@uppy/companion,@uppy/provider-views,@uppy/robodog: Finishing touches on Companion dynamic Oauth (Renée Kooi / #2802)
+- @uppy/companion: fix broken thumbnails for box and dropbox (Mikael Finstad / #3460)
+- @uppy/companion: Implement periodic ping functionality (Mikael Finstad / #3246)
+- @uppy/companion: fix callback urls (Mikael Finstad / #3458)
+- @uppy/companion: Fix TypeError when invalid initialization vector (Julian Gruber / #3416)
+- @uppy/companion: Default to HEAD requests when the Companion looks to get meta information about a URL (Zack Bloom / #3417)
+
 ## 3.1.5
 
 Released: 2022-01-04

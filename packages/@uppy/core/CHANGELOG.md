@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 2.1.5
+
+Released: 2022-02-14
+Included in: Uppy v2.5.0
+
+- @uppy/core,@uppy/dashboard,@uppy/thumbnail-generator: Add dashboard and UIPlugin types (Merlijn Vos / #3426)
+
 ## 2.1.4
 
 Released: 2021-12-09
