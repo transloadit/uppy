@@ -47,7 +47,6 @@
   "devDependencies": {
     "cypress": "^9.0.0",
     "cypress-file-upload": "^5.0.8",
-    "dedent": "^0.7.0",
     "deep-freeze": "^0.0.1",
     "parcel": "^2.0.1",
     "prompts": "^2.4.2",

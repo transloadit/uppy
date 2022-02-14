@@ -2,7 +2,20 @@
 /* eslint-disable no-console, import/no-extraneous-dependencies */
 import prompts from 'prompts'
 import fs from 'node:fs/promises'
-import dedent from 'dedent'
+
+/**
+ * Utility function that strips indentation from multi-line strings.
+ * Inspired from https://github.com/dmnd/dedent.
+ */
+function dedent (strings, ...parts) {
+  const indent = /\S/m.exec(strings[0]).index - 1
+  const dedentEachLine = str => str.split('\n').map((line, i) => line.slice(i && indent)).join('\n')
+  let returnLines = dedentEachLine(strings[0].slice(indent + 1), indent)
+  for (let i = 1; i < strings.length; i++) {
+    returnLines += String(parts[i - 1]) + dedentEachLine(strings[i], indent)
+  }
+  return returnLines
+}
 
 const packageNames = await fs.readdir(new URL('../packages/@uppy', import.meta.url))
 const unwantedPackages = ['core', 'companion', 'redux-dev-tools', 'utils']
