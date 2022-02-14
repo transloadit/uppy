@@ -8,9 +8,12 @@ import fs from 'node:fs/promises'
  * Inspired from https://github.com/dmnd/dedent.
  */
 function dedent (strings, ...parts) {
-  const indent = /\S/m.exec(strings[0]).index - 1
+  const nonSpacingChar = /\S/m.exec(strings[0])
+  if (nonSpacingChar == null) return ''
+
+  const indent = nonSpacingChar.index - strings[0].lastIndexOf('\n', nonSpacingChar.index) - 1
   const dedentEachLine = str => str.split('\n').map((line, i) => line.slice(i && indent)).join('\n')
-  let returnLines = dedentEachLine(strings[0].slice(indent + 1), indent)
+  let returnLines = dedentEachLine(strings[0].slice(nonSpacingChar.index), indent)
   for (let i = 1; i < strings.length; i++) {
     returnLines += String(parts[i - 1]) + dedentEachLine(strings[i], indent)
   }
@@ -67,14 +70,14 @@ const html = dedent`
 const appUrl = new URL(`clients/${name}/app.js`, import.meta.url)
 // dedent is acting weird for this one but this formatting fixes it.
 const app = dedent`
-import Uppy from '@uppy/core'
-${packages.map((pgk) => `import ${camelcase(pgk)} from '@uppy/${pgk}'`).join('\n')}
+    import Uppy from '@uppy/core'
+    ${packages.map((pgk) => `import ${camelcase(pgk)} from '@uppy/${pgk}'`).join('\n')}
 
-const uppy = new Uppy()
-   ${packages.map((pkg) => `.use(${camelcase(pkg)})`).join('\n\t')}
+    const uppy = new Uppy()
+      ${packages.map((pkg) => `.use(${camelcase(pkg)})`).join('\n\t')}
 
-// Keep this here to access uppy in tests
-window.uppy = uppy
+    // Keep this here to access uppy in tests
+    window.uppy = uppy
   `
 
 await fs.writeFile(testUrl, test)
