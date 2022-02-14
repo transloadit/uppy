@@ -52,11 +52,7 @@ describe('Dashboard with Tus', () => {
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 
-  it('should upload remote image with Unsplash plugin', function test () {
-    if (!globalThis.process.env.COMPANION_UNSPLASH_KEY) {
-      cy.log('No Unsplash secret found in the env, skipping.')
-      this.skip()
-    }
+  it('should upload remote image with Unsplash plugin', () => {
     cy.get('[data-cy="Unsplash"]').click()
     cy.get('.uppy-SearchProvider-input').type('book')
     cy.get('.uppy-SearchProvider-searchButton').click()
@@ -70,7 +66,7 @@ describe('Dashboard with Tus', () => {
         // but we don't have hover in e2e, so we focus after the click
         // to get the same effect. Also tests keyboard users this way.
         cy.get('input[type="checkbox"]').focus()
-        cy.get('a').should('be.visible')
+        cy.get('a').should('have.css', 'display', 'block')
       })
     cy.get('.uppy-c-btn-primary').click()
     cy.get('.uppy-StatusBar-actionBtn--upload').click()

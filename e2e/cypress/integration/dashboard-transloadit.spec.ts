@@ -1,9 +1,6 @@
 describe('Dashboard with Transloadit', () => {
   before(function before () {
-    if (!globalThis.process?.env.VITE_TRANSLOADIT_KEY) {
-      cy.log('No Transloadit key found in the env, skipping.')
-      this.skip()
-    }
+    if (!process.env.VITE_TRANSLOADIT_KEY) this.skip()
   })
   beforeEach(() => {
     cy.visit('/dashboard-transloadit')
