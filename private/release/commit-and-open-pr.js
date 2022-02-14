@@ -22,4 +22,5 @@ export default async function commit (spawnOptions, ...files) {
                  || `git@github.com:${REPO_OWNER}/${REPO_NAME}.git`
 
   console.log(`Please run \`git push ${remote} ${sha}:refs/heads/release\`.`)
+  console.log('Soon, a Release PR should open on GitHub. Do not merge it manually! Review the PR thoroughly, and if everything looks good to you, approve the PR.')
 }
