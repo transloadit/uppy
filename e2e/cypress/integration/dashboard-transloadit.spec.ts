@@ -1,7 +1,4 @@
 describe('Dashboard with Transloadit', () => {
-  before(function before () {
-    if (!process.env.VITE_TRANSLOADIT_KEY) this.skip()
-  })
   beforeEach(() => {
     cy.visit('/dashboard-transloadit')
     cy.get('.uppy-Dashboard-input').as('file-input')
