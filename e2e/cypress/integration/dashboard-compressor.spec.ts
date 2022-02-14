@@ -14,7 +14,7 @@ function humanSizeToBytes (text) {
     return Number(text.slice(0, -2))
   }
 
-  throw new Error('Not a human size string')
+  throw new Error('Not what the computer thinks a human-readable size string look like: ' + text)
 }
 
 describe('dashboard-compressor', () => {
