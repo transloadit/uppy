@@ -1,7 +1,7 @@
-const KB = 2 ** 10
-const MB = KB * KB
-
 function humanSizeToBytes (text) {
+  const KB = 2 ** 10
+  const MB = KB * KB
+
   if (text.endsWith(' KB')) {
     return Number(text.slice(0, -3)) * KB
   }
@@ -14,7 +14,7 @@ function humanSizeToBytes (text) {
     return Number(text.slice(0, -2))
   }
 
-  throw new Error('Not what the computer thinks a human-readable size string look like: ' + text)
+  throw new Error(`Not what the computer thinks a human-readable size string look like:  ${text}`)
 }
 
 describe('dashboard-compressor', () => {
