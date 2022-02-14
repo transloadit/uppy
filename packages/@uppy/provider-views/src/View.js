@@ -101,7 +101,7 @@ module.exports = class View {
     }
 
     if (file.author) {
-      if (file.author.name) tagFile.meta.authorName = file.author.name
+      if (file.author.name != null) tagFile.meta.authorName = String(file.author.name)
       if (file.author.url) tagFile.meta.authorUrl = file.author.url
     }
 
