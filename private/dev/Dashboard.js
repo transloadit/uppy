@@ -135,7 +135,7 @@ export default () => {
       })
       uppyDashboard.use(XHRUpload, {
         method: 'POST',
-        endpoint: 'https://api2.transloadit.com/assemblies',
+        endpoint: `${TRANSLOADIT_SERVICE_URL}/assemblies`,
         metaFields: ['params'],
         bundle: true,
       })
