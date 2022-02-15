@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   strings: {
     // Shown in the Status Bar
     compressingImages: 'Compressing images...',

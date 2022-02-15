@@ -1,10 +1,12 @@
-const { BasePlugin } = require('@uppy/core')
-const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const prettierBytes = require('@transloadit/prettier-bytes')
-const CompressorJS = require('compressorjs/dist/compressor.common.js')
-const locale = require('./locale')
+import { BasePlugin } from '@uppy/core'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import prettierBytes from '@transloadit/prettier-bytes'
+import CompressorJS from 'compressorjs/dist/compressor.common.js'
+import locale from './locale.js'
 
-module.exports = class Compressor extends BasePlugin {
+console.log(CompressorJS)
+
+export default class Compressor extends BasePlugin {
   #RateLimitedQueue
 
   constructor (uppy, opts) {
