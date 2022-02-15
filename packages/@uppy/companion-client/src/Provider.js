@@ -53,29 +53,44 @@ module.exports = class Provider extends RequestClient {
     return this.uppy.getPlugin(this.pluginId).storage.getItem(this.tokenKey)
   }
 
+  /**
+   * Ensure we have a preauth token if necessary. Attempts to fetch one if we don't,
+   * or rejects if loading one fails.
+   */
+  async ensurePreAuth () {
+    if (this.companionKeysParams && !this.preAuthToken) {
+      await this.fetchPreAuthToken()
+
+      if (!this.preAuthToken) {
+        throw new Error('Could not load authentication data required for third-party login. Please try again later.')
+      }
+    }
+  }
+
   authUrl (queries = {}) {
+    const params = new URLSearchParams(queries)
     if (this.preAuthToken) {
-      queries.uppyPreAuthToken = this.preAuthToken
+      params.set('uppyPreAuthToken', this.preAuthToken)
     }
 
-    return `${this.hostname}/${this.id}/connect?${new URLSearchParams(queries)}`
+    return `${this.hostname}/${this.id}/connect?${params}`
   }
 
   fileUrl (id) {
     return `${this.hostname}/${this.id}/get/${id}`
   }
 
-  fetchPreAuthToken () {
+  async fetchPreAuthToken () {
     if (!this.companionKeysParams) {
-      return Promise.resolve()
+      return
     }
 
-    return this.post(`${this.id}/preauth/`, { params: this.companionKeysParams })
-      .then((res) => {
-        this.preAuthToken = res.token
-      }).catch((err) => {
-        this.uppy.log(`[CompanionClient] unable to fetch preAuthToken ${err}`, 'warning')
-      })
+    try {
+      const res = await this.post(`${this.id}/preauth/`, { params: this.companionKeysParams })
+      this.preAuthToken = res.token
+    } catch (err) {
+      this.uppy.log(`[CompanionClient] unable to fetch preAuthToken ${err}`, 'warning')
+    }
   }
 
   list (directory) {

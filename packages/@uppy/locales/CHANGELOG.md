@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 2.0.6
+
+Released: 2022-02-14
+Included in: Uppy v2.5.0
+
+- @uppy/locales: Add "save" to fr_FR.js (Charly Billaud / #3395)
+
 ## 2.0.4
 
 Released: 2021-12-07
