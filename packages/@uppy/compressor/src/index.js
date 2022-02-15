@@ -4,8 +4,6 @@ import prettierBytes from '@transloadit/prettier-bytes'
 import CompressorJS from 'compressorjs/dist/compressor.common.js'
 import locale from './locale.js'
 
-console.log(CompressorJS)
-
 export default class Compressor extends BasePlugin {
   #RateLimitedQueue
 

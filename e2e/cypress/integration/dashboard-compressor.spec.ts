@@ -25,7 +25,6 @@ describe('dashboard-compressor', () => {
 
   it('should compress images', () => {
     const sizeBeforeCompression = []
-    const sizeAfterCompression = []
 
     cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
 
@@ -33,8 +32,6 @@ describe('dashboard-compressor', () => {
       const text = element.text()
       sizeBeforeCompression.push(humanSizeToBytes(text))
     })
-
-    console.log(sizeBeforeCompression)
 
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
@@ -51,13 +48,5 @@ describe('dashboard-compressor', () => {
         )
       }
     })
-
-    console.log(sizeAfterCompression)
-
-    // cy.wait('.uppy-Informer p[role="alert"]').
-
-    // cy.get('.uppy-Dashboard-Item-previewImg')
-    //   .should('have.length', 2)
-    //   .each((element) => expect(element).attr('src').to.include('blob:'))
   })
 })
