@@ -5,6 +5,7 @@
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
   "lint-staged": {
     "*.js": "eslint",
+    "*.jsx": "eslint --fix",
     "*.md": [
       "remark --silently-ignore -i .remarkignore -foq",
       "eslint --fix"
@@ -44,9 +45,11 @@
     "@babel/eslint-plugin": "^7.11.3",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.14.5",
     "@babel/plugin-proposal-optional-chaining": "^7.16.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.16.8",
     "@babel/plugin-transform-react-jsx": "^7.10.4",
     "@babel/preset-env": "^7.14.7",
     "@babel/register": "^7.10.5",
+    "@babel/types": "^7.17.0",
     "@goto-bus-stop/envify": "^5.0.0",
     "@parcel/transformer-vue": "^2.2.1",
     "@size-limit/preset-big-lib": "7.0.5",
@@ -152,10 +155,11 @@
     "test:companion": "yarn workspace @uppy/companion test",
     "test:endtoend:local": "yarn workspace @uppy-tests/end2end test:endtoend:local",
     "test:endtoend": "yarn workspace @uppy-tests/end2end test:endtoend",
+    "test:locale-packs": "yarn locale-packs:unused && yarn locale-packs:warnings",
     "test:locale-packs:unused": "yarn workspace @uppy-dev/locale-pack test unused",
     "test:locale-packs:warnings": "yarn workspace @uppy-dev/locale-pack test warnings",
     "test:type": "yarn workspaces foreach -piv --include '@uppy/*' --exclude '@uppy/{angular,react-native,locales,companion,provider-views,robodog,svelte}' exec tsd",
-    "test:unit": "yarn run build:lib && jest --env jsdom",
+    "test:unit": "yarn run build:lib && NODE_OPTIONS=--experimental-vm-modules jest --env jsdom",
     "test:watch": "jest --env jsdom --watch",
     "test:size": "yarn build:lib && size-limit --why",
     "test": "npm-run-all lint test:locale-packs test:unit test:type test:companion",

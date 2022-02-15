@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
 import { transformAsync } from '@babel/core'
 import autoprefixer from 'autoprefixer'
 import postcssLogical from 'postcss-logical'
@@ -11,6 +12,20 @@ const PACKAGES_ROOT = fileURLToPath(new URL('./packages/', ROOT))
 // algorithm, but we need to stop afterwards otherwise it messes up somewhere
 // else. This hack can be removed when we get rid of JSX inside of .js files.
 let counter = 0
+
+const moduleTypeCache = new Map()
+function isTypeModule (file) {
+  const packageFolder = file.slice(0, file.indexOf('/src/') + 1)
+
+  const cachedValue = moduleTypeCache.get(packageFolder)
+  if (cachedValue != null) return cachedValue
+
+  // eslint-disable-next-line import/no-dynamic-require, global-require
+  const { type } = createRequire(packageFolder)('./package.json')
+  const typeModule = type === 'module'
+  moduleTypeCache.set(packageFolder, typeModule)
+  return typeModule
+}
 
 /**
  * @type {import('vite').UserConfig}
@@ -63,7 +78,7 @@ const config = {
       enforce: 'pre',
       // eslint-disable-next-line consistent-return
       resolveId (id) {
-        if (id.startsWith(PACKAGES_ROOT) && id.endsWith('.js')) {
+        if (id.startsWith(PACKAGES_ROOT) && id.endsWith('.js') && !isTypeModule(id)) {
           return id
         }
         // TODO: remove this hack when we get rid of JSX inside .js files.
@@ -72,7 +87,7 @@ const config = {
         }
       },
       transform (code, id) {
-        if (id.startsWith(PACKAGES_ROOT) && id.endsWith('.js')) {
+        if (id.startsWith(PACKAGES_ROOT) && id.endsWith('.js') && !isTypeModule(id)) {
           return transformAsync(code, {
             plugins: [
               ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],

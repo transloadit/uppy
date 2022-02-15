@@ -158,6 +158,18 @@ module.exports = {
       },
     },
     {
+      files: [
+        'packages/@uppy/*/src/**/*.jsx',
+        'packages/uppy/src/**/*.jsx',
+      ],
+      parserOptions: {
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    {
       files: ['./packages/@uppy/companion/**/*.js'],
       rules: {
         'no-restricted-syntax': 'warn',
