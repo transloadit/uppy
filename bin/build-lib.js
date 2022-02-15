@@ -8,6 +8,7 @@ const path = require('path')
 
 const { mkdir, stat, writeFile } = fs.promises
 
+const PACKAGE_JSON_IMPORT = /^\..*\/package.json$/
 const SOURCE = 'packages/{*,@uppy/*}/src/**/*.js?(x)'
 // Files not to build (such as tests)
 const IGNORE = /\.test\.js$|__mocks__|svelte|angular|companion\//
@@ -89,10 +90,10 @@ async function buildLib () {
           if (value.endsWith('.jsx') && value.startsWith('./')) {
             // Rewrite .jsx imports to .js:
             path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign
-          } else if (value === '../package.json'
+          } else if (PACKAGE_JSON_IMPORT.test(value)
                      && path.node.specifiers.length === 1
                      && path.node.specifiers[0].type === 'ImportDefaultSpecifier') {
-            // Vendor-in version number:
+            // Vendor-in version number from package.json files:
             const version = versionCache.get(file.slice(0, file.indexOf('/src/')))
             if (version != null) {
               const [{ local }] = path.node.specifiers
@@ -103,6 +104,22 @@ async function buildLib () {
                   ]))]),
               )
             }
+          } else if (!value.startsWith('.')
+                     && path.node.specifiers.length === 1
+                     && path.node.specifiers[0].type === 'ImportDefaultSpecifier'
+          ) {
+            // Replace default imports with straight require calls (CommonJS interop):
+            const [{ local }] = path.node.specifiers
+            path.replaceWith(
+              t.variableDeclaration('const', [
+                t.variableDeclarator(
+                  local,
+                  t.callExpression(t.identifier('require'), [
+                    t.stringLiteral(value),
+                  ]),
+                ),
+              ]),
+            )
           }
         },
       },
