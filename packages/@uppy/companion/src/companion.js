@@ -272,8 +272,10 @@ const validateConfig = (companionOptions) => {
     logger.warn('Running without uploadUrls specified is a security risk if running in production', 'startup.uploadUrls')
   }
 
-  if (periodicPingUrls != null && (!Array.isArray(periodicPingUrls) ||
-      periodicPingUrls.some((url2) => !isURL(url2, { protocols: ['http', 'https'], require_protocol: true, require_tld: false }))))
+  if (periodicPingUrls != null && (
+    !Array.isArray(periodicPingUrls)
+    || periodicPingUrls.some((url2) => !isURL(url2, { protocols: ['http', 'https'], require_protocol: true, require_tld: false }))
+  )) {
     throw new TypeError('Invalid periodicPingUrls')
   }
 }
