@@ -251,6 +251,13 @@ export COMPANION_MAX_FILE_SIZE="100000000"
 
 # corresponds to the chunkSize option
 export COMPANION_CHUNK_SIZE="50000000"
+
+# corresponds to the periodicPingUrls option (CSV string converted to array)
+export COMPANION_PERIODIC_PING_URLS="https://example.com/ping1,https://example.com/ping2"
+# corresponds to the periodicPingInterval option
+export COMPANION_PERIODIC_PING_INTERVAL=60000
+# corresponds to the periodicPingStaticPayload option (JSON string)
+export COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD="{\"static\":\"data\"}"
 ```
 
 See [env.example.sh](https://github.com/transloadit/uppy/blob/main/env.example.sh) for an example configuration script.
@@ -303,6 +310,9 @@ const options = {
   metrics: false,
   streamingUpload: true,
   maxFileSize: 100000000,
+  periodicPingUrls: [],
+  periodicPingInterval: 60000,
+  periodicPingStaticPayload: { static: 'payload' },
 }
 ```
 
@@ -342,6 +352,13 @@ const options = {
 14. **streamingUpload(optional)** - A boolean flag to tell Companion whether to enable streaming uploads. If enabled, it will lead to _faster uploads_ because companion will start uploading at the same time as downloading using `stream.pipe`. If `false`, files will be fully downloaded first, then uploaded. Defaults to `false`. Do **not** set it to `true` if you have a [custom Companion provider](#adding-custom-providers) that does not use the new async/stream API.
 
 15. **maxFileSize(optional)** - If this value is set, companion will limit the maximum file size to process. If unset, it will process files without any size limit (this is the default).
+
+16. **periodicPingUrls(optional)** - If this value is set, companion will periodically send POST requests to the specified URLs. Useful for keeping track of companion instances as a keep-alive.
+
+17. **periodicPingInterval(optional)** - Interval for periodic ping requests (in ms).
+
+18. **periodicPingStaticPayload(optional)** - A `JSON.stringify`-able JavaScript Object that will be sent as part of the JSON body in the period ping requests.
+
 
 ### Provider Redirect URIs
 
