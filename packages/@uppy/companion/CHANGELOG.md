@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 3.2.1
+
+Released: 2022-02-16
+Included in: Uppy v2.5.1
+
+- @uppy/companion: fix periodicPingUrls oops (Mikael Finstad / #3490)
+
 ## 3.2.0
 
 Released: 2022-02-14

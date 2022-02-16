@@ -12,6 +12,23 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.5.1
+
+Released: 2022-02-16
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/companion           |   3.2.1 | @uppy/thumbnail-generator |   2.1.1 |
+| @uppy/compressor          |   0.2.2 | @uppy/robodog             |   2.3.1 |
+| @uppy/onedrive            |   2.0.6 | uppy                      |   2.5.1 |
+
+- meta: Missing comma and wrong attribute name on cors example config (Edgar Santiago / #3465)
+- @uppy/onedrive: Update README.md (Márton László Attila / #3489)
+- @uppy/compressor: Add image compressor plugin (Artur Paikin / #3471)
+- @uppy/companion: fix periodicPingUrls oops (Mikael Finstad / #3490)
+- meta: add support for ESM sources in build script (Antoine du Hamel / #3468)
+
+
 ## 2.5.0
 
 Released: 2022-02-14
