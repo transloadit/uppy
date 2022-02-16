@@ -1,4 +1,0 @@
-export UPPY_INSTAGRAM_USERNAME="***"
-export UPPY_INSTAGRAM_PASSWORD="***"
-export UPPY_GOOGLE_EMAIL="***"
-export UPPY_GOOGLE_PASSWORD="****"

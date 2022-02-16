@@ -1,7 +1,7 @@
 {
   "name": "uppy",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
-  "version": "2.4.1",
+  "version": "2.5.1",
   "license": "MIT",
   "main": "index.js",
   "module": "index.mjs",
@@ -36,6 +36,7 @@
     "@uppy/aws-s3-multipart": "workspace:^",
     "@uppy/box": "workspace:^",
     "@uppy/companion-client": "workspace:^",
+    "@uppy/compressor": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/drag-drop": "workspace:^",

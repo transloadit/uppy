@@ -1,17 +1,22 @@
 const Transloadit = require('@uppy/transloadit')
 const has = require('@uppy/utils/lib/hasProperty')
 
+// We add providers to Robodog when they hit version 1.0.
 const remoteProviders = {
   dropbox: require('@uppy/dropbox'),
   'google-drive': require('@uppy/google-drive'),
   instagram: require('@uppy/instagram'),
   facebook: require('@uppy/facebook'),
   onedrive: require('@uppy/onedrive'),
+  box: require('@uppy/box'),
+  unsplash: require('@uppy/unsplash'),
   url: require('@uppy/url'),
 }
 
 const localProviders = {
   webcam: require('@uppy/webcam'),
+  audio: require('@uppy/audio'),
+  'screen-capture': require('@uppy/screen-capture'),
 }
 
 const remoteProviderOptionNames = [
@@ -37,9 +42,23 @@ function addRemoteProvider (uppy, name, opts) {
   remoteProviderOptionNames.forEach((name) => {
     if (has(opts, name)) providerOptions[name] = opts[name]
   })
+
   // Apply overrides for a specific provider plugin.
   if (typeof opts[name] === 'object') {
-    Object.assign(providerOptions, opts[name])
+    const overrides = { ...opts[name] }
+
+    // Use the app's own oauth credentials instead of the shared
+    // Transloadit ones.
+    if (overrides.credentialsName) {
+      const { key } = opts.params.auth
+      overrides.companionKeysParams = {
+        key,
+        credentialsName: overrides.credentialsName,
+      }
+      delete overrides.credentialsName
+    }
+
+    Object.assign(providerOptions, overrides)
   }
 
   uppy.use(Provider, providerOptions)

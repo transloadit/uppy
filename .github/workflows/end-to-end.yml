@@ -1,11 +1,10 @@
 name: End-to-end tests
-on: push
-
-env:
-  GIT_AUTHOR_NAME: Uppy Bot
-  GIT_COMMITTER_NAME: Uppy Bot
-  GIT_AUTHOR_EMAIL: uppybot@uppy.io
-  GIT_COMMITTER_EMAIL: uppybot@uppy.io
+on:
+  push:
+    branches: [ main ]
+  pull_request_target:
+    # We want all branches so we configure types to be the GH default again
+    types: [ opened, synchronize, reopened ]
 
 jobs:
   e2e:
@@ -30,17 +29,13 @@ jobs:
           node-version: 16.x
       - name: Install dependencies
         run: corepack yarn install --immutable
-      - name: Start Sauce Connect
-        uses: saucelabs/sauce-connect-action@v1.1.1
-        with:
-          username: ${{secrets.SAUCE_USERNAME}}
-          accessKey: ${{secrets.SAUCE_ACCESS_KEY}}
-          tunnelIdentifier: ${{github.run_id}}.${{github.run_number}}
+      - name: Build Uppy packages
+        run: corepack yarn build
       - name: Run end-to-end browser tests
-        run: corepack yarn run test:endtoend
+        run: corepack yarn run e2e:ci
         env:
-          SAUCE_TUNNEL_IDENTIFIER: ${{github.run_id}}.${{github.run_number}}
-          SAUCE_BUILD: ${{github.run_id}}
-          SAUCE_USERNAME: ${{secrets.SAUCE_USERNAME}}
-          SAUCE_ACCESS_KEY: ${{secrets.SAUCE_ACCESS_KEY}}
-          TRANSLOADIT_KEY: ${{secrets.TRANSLOADIT_KEY}}
+          COMPANION_UNSPLASH_KEY: ${{secrets.COMPANION_UNSPLASH_KEY}}
+          COMPANION_UNSPLASH_SECRET: ${{secrets.COMPANION_UNSPLASH_SECRET}}
+          VITE_TRANSLOADIT_KEY: ${{secrets.TRANSLOADIT_KEY}}
+          VITE_TRANSLOADIT_TEMPLATE: ${{secrets.TRANSLOADIT_TEMPLATE}}
+          VITE_TRANSLOADIT_SERVICE_URL: ${{secrets.TRANSLOADIT_SERVICE_URL}}

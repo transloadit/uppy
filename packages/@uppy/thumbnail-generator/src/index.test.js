@@ -51,7 +51,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.addToQueue = jest.fn()
       plugin.install()
 
-      expect(core.on).toHaveBeenCalledTimes(3)
+      expect(core.on).toHaveBeenCalledTimes(4)
       expect(core.on).toHaveBeenCalledWith('file-added', plugin.onFileAdded)
     })
   })
@@ -67,11 +67,11 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.addToQueue = jest.fn()
       plugin.install()
 
-      expect(core.on).toHaveBeenCalledTimes(3)
+      expect(core.on).toHaveBeenCalledTimes(4)
 
       plugin.uninstall()
 
-      expect(core.off).toHaveBeenCalledTimes(3)
+      expect(core.off).toHaveBeenCalledTimes(4)
       expect(core.off).toHaveBeenCalledWith('file-added', plugin.onFileAdded)
     })
   })

@@ -77,7 +77,7 @@ The minimum number of files that must be selected before the upload. The upload 
 
 Array of mime type wildcards `image/*`, exact mime types `image/jpeg`, or file extensions `.jpg`: `['image/*', '.jpg', '.jpeg', '.png', '.gif']`.
 
-If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting\_accepted\_file\_types) attribute will be added to `<input type="file">` fields, so only acceptable files can be selected in the system file dialog.
+If provided, the [`<input accept>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#Limiting_accepted_file_types) attribute will be added to `<input type="file">` fields, so only acceptable files can be selected in the system file dialog.
 
 ## Progress Reporting
 
@@ -150,7 +150,7 @@ Make sure to also include the Uppy css file in your `<head>` tag in case you wan
 
 ```html
 <head>
-  <link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v2.2.1/robodog.min.css">
+  <link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v2.3.1/robodog.min.css">
 </head>
 ```
 
@@ -162,7 +162,7 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
 <html>
   <head>
     <title>Testing Robodog</title>
-    <link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v2.2.1/robodog.min.css">
+    <link rel="stylesheet" href="https://releases.transloadit.com/uppy/robodog/v2.3.1/robodog.min.css">
   </head>
   <body>
     <form id="upload-form" action="/uploads" enctype="multipart/form-data" method="POST">
@@ -172,7 +172,7 @@ Notice how the form is submitted to the inexistant `/uploads` route once all tra
       <button type="submit">Upload</button>
     </form>
 
-    <script src="https://releases.transloadit.com/uppy/robodog/v2.2.1/robodog.min.js"></script>
+    <script src="https://releases.transloadit.com/uppy/robodog/v2.3.1/robodog.min.js"></script>
     <script type="text/javascript">
     window.Robodog.form('#upload-form', {
       waitForEncoding: true,

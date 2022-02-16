@@ -1,4 +1,4 @@
-# @uppy/facebook
+# @uppy/onedrive
 
 <img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
 
@@ -17,10 +17,10 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 
 ```js
 import Uppy from '@uppy/core'
-import Facebook from '@uppy/facebook'
+import Facebook from '@uppy/onedrive'
 
 const uppy = new Uppy()
-uppy.use(Facebook, {
+uppy.use(OneDrive, {
   // Options
 })
 ```
@@ -28,7 +28,7 @@ uppy.use(Facebook, {
 ## Installation
 
 ```bash
-$ npm install @uppy/facebook
+$ npm install @uppy/onedrive
 ```
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).

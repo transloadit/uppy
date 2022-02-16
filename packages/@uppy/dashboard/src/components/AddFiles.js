@@ -125,6 +125,7 @@ class AddFiles extends Component {
           className="uppy-u-reset uppy-c-btn uppy-DashboardTab-btn"
           role="tab"
           tabIndex={0}
+          data-cy={acquirer.id}
           aria-controls={`uppy-DashboardContent-panel--${acquirer.id}`}
           aria-selected={this.props.activePickerPanel.id === acquirer.id}
           data-uppy-super-focusable

@@ -12,6 +12,63 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.5.1
+
+Released: 2022-02-16
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/companion           |   3.2.1 | @uppy/thumbnail-generator |   2.1.1 |
+| @uppy/compressor          |   0.2.2 | @uppy/robodog             |   2.3.1 |
+| @uppy/onedrive            |   2.0.6 | uppy                      |   2.5.1 |
+
+- meta: Missing comma and wrong attribute name on cors example config (Edgar Santiago / #3465)
+- @uppy/onedrive: Update README.md (Márton László Attila / #3489)
+- @uppy/compressor: Add image compressor plugin (Artur Paikin / #3471)
+- @uppy/companion: fix periodicPingUrls oops (Mikael Finstad / #3490)
+- meta: add support for ESM sources in build script (Antoine du Hamel / #3468)
+
+
+## 2.5.0
+
+Released: 2022-02-14
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/companion           |   3.2.0 | @uppy/provider-views      |   2.0.7 |
+| @uppy/companion-client    |   2.0.5 | @uppy/thumbnail-generator |   2.1.0 |
+| @uppy/core                |   2.1.5 | @uppy/robodog             |   2.3.0 |
+| @uppy/dashboard           |   2.1.4 | uppy                      |   2.5.0 |
+| @uppy/locales             |   2.0.6 |                           |         |
+
+- @uppy/companion: add support for COMPANION_UNSPLASH_SECRET (Mikael Finstad / #3463)
+- @uppy/unsplash: fix nested meta (Artur Paikin / #3485)
+- meta: fix(docs): typo in property `thumbnailType` (Dan Schalow / #3472)
+- @uppy/robodog: add audio, box, unsplash, screen-capture to Robodog (Artur Paikin / #3483)
+- meta: consolidate ENV files and fix contributing guidelines (Antoine du Hamel / #3475)
+- @uppy/companion-client,@uppy/companion,@uppy/provider-views,@uppy/robodog: Finishing touches on Companion dynamic Oauth (Renée Kooi / #2802)
+- meta: Improve companion docs (Mikael Finstad / #3479)
+- meta: Make E2E Great Again (Merlijn Vos / #3444)
+- meta: Add PostCSS handling to Vite (Artur Paikin / #3467)
+- meta: Update CONTRIBUTING.md (Mikael Finstad / #3411)
+- @uppy/companion: fix broken thumbnails for box and dropbox (Mikael Finstad / #3460)
+- website: fix `Uppy is not defined` error (Antoine du Hamel / #3461)
+- @uppy/companion: Implement periodic ping functionality (Mikael Finstad / #3246)
+- @uppy/companion: fix callback urls (Mikael Finstad / #3458)
+- @uppy/core,@uppy/dashboard,@uppy/thumbnail-generator: Add dashboard and UIPlugin types (Merlijn Vos / #3426)
+- @uppy/locales: Add "save" to fr_FR.js (Charly Billaud / #3395)
+- @uppy/companion: Fix TypeError when invalid initialization vector (Julian Gruber / #3416)
+- meta: Upgrade size-limit to 7.0.5 (Artur Paikin / #3445)
+- @uppy/provider-views: Unsplash: UI improvements (Artur Paikin / #3438)
+- @uppy/thumbnail-generator: exifr: remove legacy IE support (Artur Paikin / #3382)
+- @uppy/companion: Default to HEAD requests when the Companion looks to get meta information about a URL (Zack Bloom / #3417)
+- @uppy/dashboard: check if info array is empty (Artur Paikin / #3442)
+- meta: dev: fix Vite custom plugin (Antoine du Hamel / #3437)
+- website: add legacy bundle to CDN example (Antoine du Hamel / #3433)
+- meta: remove unused lerna and npm files (Antoine du Hamel / #3436)
+- meta: replace browserify with esbuild (Antoine du Hamel / #3363)
+
+
 ## 2.4.1
 
 Released: 2022-01-12
