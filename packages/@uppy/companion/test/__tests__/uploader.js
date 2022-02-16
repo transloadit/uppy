@@ -29,21 +29,6 @@ describe('uploader with tus protocol', () => {
     expect(() => new Uploader(opts)).toThrow(new Uploader.ValidationError('upload destination does not match any allowed destinations'))
   })
 
-  // https://github.com/transloadit/uppy/issues/3477
-  test('uploader checks metadata', () => {
-    const opts = {
-      companionOptions,
-      endpoint: 'http://localhost',
-    }
-
-    // eslint-disable-next-line no-new
-    new Uploader({ ...opts, metadata: { key: 'string value' } })
-    expect(() => new Uploader({ ...opts, metadata: { key: null } })).toThrow(new Uploader.ValidationError('metadata values must be strings'))
-    expect(() => new Uploader({ ...opts, metadata: { key: true } })).toThrow(new Uploader.ValidationError('metadata values must be strings'))
-    expect(() => new Uploader({ ...opts, metadata: { key: 1234 } })).toThrow(new Uploader.ValidationError('metadata values must be strings'))
-    expect(() => new Uploader({ ...opts, metadata: { key: {} } })).toThrow(new Uploader.ValidationError('metadata values must be strings'))
-  })
-
   test('uploader respects uploadUrls, valid', async () => {
     const opts = {
       endpoint: 'http://url.myendpoint.com/files',
@@ -166,22 +151,74 @@ describe('uploader with tus protocol', () => {
     })
   })
 
-  test('upload functions with xhr protocol', async () => {
+  async function runMultipartTest ({ metadata, useFormData, includeSize = true  } = {}) {
     const fileContent = Buffer.from('Some file content')
     const stream = intoStream(fileContent)
+
     const opts = {
       companionOptions,
       endpoint: 'http://localhost',
       protocol: 'multipart',
-      size: fileContent.length,
+      size: includeSize ? fileContent.length : undefined,
+      metadata,
       pathPrefix: companionOptions.filePath,
+      useFormData,
     }
 
+    const uploader = new Uploader(opts)
+    return uploader.uploadStream(stream)
+  }
+
+  test('upload functions with xhr protocol', async () => {
     nock('http://localhost').post('/').reply(200)
 
-    const uploader = new Uploader(opts)
-    const ret = await uploader.uploadStream(stream)
+    const ret = await runMultipartTest()
     expect(ret).toMatchObject({ url: null, extraData: { response: expect.anything(), bytesUploaded: 17 } })
+  })
+
+  // eslint-disable-next-line max-len
+  const formDataNoMetaMatch = /^----------------------------\d+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n----------------------------\d+--\r\n$/
+
+  test('upload functions with xhr formdata', async () => {
+    nock('http://localhost').post('/', formDataNoMetaMatch)
+      .reply(200)
+
+    const ret = await runMultipartTest({ useFormData: true })
+    expect(ret).toMatchObject({ url: null, extraData: { response: expect.anything(), bytesUploaded: 17 } })
+  })
+
+  test('upload functions with unknown file size', async () => {
+    // eslint-disable-next-line max-len
+    nock('http://localhost').post('/', formDataNoMetaMatch)
+      .reply(200)
+
+    const ret = await runMultipartTest({ useFormData: true, includeSize: false })
+    expect(ret).toMatchObject({ url: null, extraData: { response: expect.anything(), bytesUploaded: 17 } })
+  })
+
+  // https://github.com/transloadit/uppy/issues/3477
+  test('upload functions with xhr formdata and metadata', async () => {
+    // eslint-disable-next-line max-len
+    nock('http://localhost').post('/', /^----------------------------\d+\r\nContent-Disposition: form-data; name="key1"\r\n\r\nnull\r\n----------------------------\d+\r\nContent-Disposition: form-data; name="key2"\r\n\r\ntrue\r\n----------------------------\d+\r\nContent-Disposition: form-data; name="key3"\r\n\r\n\d+\r\n----------------------------\d+\r\nContent-Disposition: form-data; name="key4"\r\n\r\n\[object Object\]\r\n----------------------------\d+\r\nContent-Disposition: form-data; name="key5"\r\n\r\n\(\) => {}\r\n----------------------------\d+\r\nContent-Disposition: form-data; name="key6"\r\n\r\nSymbol\(\)\r\n----------------------------\d+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n----------------------------\d+--\r\n$/)
+      .reply(200)
+
+    const metadata = {
+      key1: null, key2: true, key3: 1234, key4: {}, key5: () => {}, key6: Symbol(''),
+    }
+    const ret = await runMultipartTest({ useFormData: true, metadata })
+    expect(ret).toMatchObject({ url: null, extraData: { response: expect.anything(), bytesUploaded: 17 } })
+  })
+
+  test('uploader checks metadata', () => {
+    const opts = {
+      companionOptions,
+      endpoint: 'http://localhost',
+    }
+
+    // eslint-disable-next-line no-new
+    new Uploader({ ...opts, metadata: { key: 'string value' } })
+
+    expect(() => new Uploader({ ...opts, metadata: '' })).toThrow(new Uploader.ValidationError('metadata must be an object'))
   })
 
   test('uploader respects maxFileSize', async () => {

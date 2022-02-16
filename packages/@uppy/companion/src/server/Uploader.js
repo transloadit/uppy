@@ -40,6 +40,17 @@ function exceedsMaxFileSize (maxFileSize, size) {
   return maxFileSize && size && size > maxFileSize
 }
 
+// TODO remove once we migrate away from form-data
+function sanitizeMetadata (inputMetadata) {
+  if (inputMetadata == null) return {}
+
+  const outputMetadata = {}
+  Object.keys(inputMetadata).forEach((key) => {
+    outputMetadata[key] = String(inputMetadata[key])
+  })
+  return outputMetadata
+}
+
 class AbortError extends Error {}
 
 class ValidationError extends Error {}
@@ -74,7 +85,7 @@ class Uploader {
     this.options = options
     this.token = uuid.v4()
     this.fileName = `${Uploader.FILE_NAME_PREFIX}-${this.token}`
-    this.options.metadata = this.options.metadata || {}
+    this.options.metadata = sanitizeMetadata(this.options.metadata)
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
     this.size = options.size
     this.uploadFileName = this.options.metadata.name
@@ -292,9 +303,8 @@ class Uploader {
     }
 
     // validate metadata
-    if (options.metadata) {
+    if (options.metadata != null) {
       if (!isObject(options.metadata)) throw new ValidationError('metadata must be an object')
-      if (!Object.values(options.metadata).every((value) => typeof value === 'string')) throw new ValidationError('metadata values must be strings')
     }
 
     // validate headers
