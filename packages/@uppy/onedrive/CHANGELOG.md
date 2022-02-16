@@ -1,5 +1,12 @@
 # @uppy/onedrive
 
+## 2.0.6
+
+Released: 2022-02-16
+Included in: Uppy v2.5.1
+
+- @uppy/onedrive: Update README.md (Márton László Attila / #3489)
+
 ## 2.0.5
 
 Released: 2021-12-07
