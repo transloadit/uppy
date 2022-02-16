@@ -10,7 +10,7 @@ website/themes/uppy/source/js/uppy.js
 website/themes/uppy/source/uppy/**
 test/endtoend/*/build
 examples/dev/output
-bundle.js
+bundle-legacy.js
 website/src/_posts/201*.md
 website/src/_posts/2020-*.md
 website/src/_posts/2021-01-*.md
