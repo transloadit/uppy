@@ -1,4 +1,4 @@
-function humanSizeToBytes (text) {
+function uglierBytes (text) {
   const KB = 2 ** 10
   const MB = KB * KB
 
@@ -30,7 +30,7 @@ describe('dashboard-compressor', () => {
 
     cy.get('.uppy-Dashboard-Item-statusSize').each((element) => {
       const text = element.text()
-      sizeBeforeCompression.push(humanSizeToBytes(text))
+      sizeBeforeCompression.push(uglierBytes(text))
     })
 
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
@@ -44,7 +44,7 @@ describe('dashboard-compressor', () => {
 
       for (let i = 0; i < elements.length; i++) {
         expect(sizeBeforeCompression[i]).to.be.greaterThan(
-          humanSizeToBytes(elements[i].textContent),
+          uglierBytes(elements[i].textContent),
         )
       }
     })
