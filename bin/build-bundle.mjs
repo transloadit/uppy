@@ -37,12 +37,12 @@ await fs.mkdir(new URL('./@uppy/locales/dist', PACKAGES_ROOT), { recursive: true
 
 const methods = [
   buildBundle(
-    './packages/uppy/index.js',
+    './packages/uppy/bundle.js',
     './packages/uppy/dist/uppy.min.js',
     { standalone: 'Uppy' },
   ),
   buildBundle(
-    './packages/uppy/bundle.js',
+    './packages/uppy/bundle-legacy.js',
     './packages/uppy/dist/uppy.legacy.min.js',
     {
       standalone: 'Uppy (with polyfills)',
