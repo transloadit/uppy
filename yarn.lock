@@ -8538,6 +8538,7 @@ __metadata:
     core-js: ~3.19.3
     cssnano: ^5.0.6
     dedent: ^0.7.0
+    dotenv: ^16.0.0
     esbuild: ^0.14.1
     esbuild-plugin-babel: ^0.2.3
     eslint: ^8.0.0
@@ -16866,6 +16867,13 @@ __metadata:
   version: 5.1.0
   resolution: "dotenv-expand@npm:5.1.0"
   checksum: 8017675b7f254384915d55f9eb6388e577cf0a1231a28d54b0ca03b782be9501b0ac90ac57338636d395fa59051e6209e9b44b8ddf169ce6076dffb5dea227d3
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.0.0":
+  version: 16.0.0
+  resolution: "dotenv@npm:16.0.0"
+  checksum: 664cebb51f0a9a1d1b930f51f0271e72e26d62feaecc9dc03df39453dd494b4e724809ca480fb3ec3213382b1ed3f791aaeb83569a137f9329ce58efd4853dbf
   languageName: node
   linkType: hard
 
