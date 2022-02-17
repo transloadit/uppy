@@ -110,8 +110,7 @@
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "yarn run build",
     "start": "node ./lib/standalone/start-server.js",
-    "test": "bash -c 'source env.test.sh && ../../../node_modules/jest/bin/jest.js'",
-    "test:watch": "yarn test -- --watch"
+    "test": "jest"
   },
   "engines": {
     "node": ">=10.20.1"

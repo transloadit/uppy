@@ -359,7 +359,6 @@ const options = {
 
 18. **periodicPingStaticPayload(optional)** - A `JSON.stringify`-able JavaScript Object that will be sent as part of the JSON body in the period ping requests.
 
-
 ### Provider Redirect URIs
 
 When generating your provider API keys on their corresponding developer platforms (e.g [Google Developer Console](https://console.developers.google.com/)), you’d need to provide a `redirect URI` for the OAuth authorization process. In general the redirect URI for each provider takes the format:

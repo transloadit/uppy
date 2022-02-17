@@ -2,18 +2,14 @@ const Uploader = require('../Uploader')
 const logger = require('../logger')
 const { errorToResponse } = require('../provider/error')
 
+const { ValidationError } = Uploader
+
 async function startDownUpload ({ req, res, getSize, download, onUnhandledError }) {
   try {
     const size = await getSize()
 
     logger.debug('Instantiating uploader.', null, req.id)
     const uploader = new Uploader(Uploader.reqToOptions(req, size))
-
-    if (uploader.hasError()) {
-      const response = uploader.getResponse()
-      res.status(response.status).json(response.body)
-      return
-    }
 
     const stream = await download()
 
@@ -25,14 +21,19 @@ async function startDownUpload ({ req, res, getSize, download, onUnhandledError 
       await uploader.awaitReady()
       logger.debug('Socket connection received. Starting remote download/upload.', null, req.id)
 
-      await uploader.uploadStream(stream)
+      await uploader.tryUploadStream(stream)
     })().catch((err) => logger.error(err))
 
     // Respond the request
-    // NOTE: Uploader will continue running after the http request is responded
-    const response = uploader.getResponse()
-    res.status(response.status).json(response.body)
+    // NOTE: the Uploader will continue running after the http request is responded
+    res.status(200).json({ token: uploader.token })
   } catch (err) {
+    if (err instanceof ValidationError) {
+      logger.debug(err.message, 'uploader.validator.fail')
+      res.status(400).json({ message: err.message })
+      return
+    }
+
     const errResp = errorToResponse(err)
     if (errResp) {
       res.status(errResp.code).json({ message: errResp.message })
