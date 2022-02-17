@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 3.3.0
+
+Released: 2022-02-17
+Included in: Uppy v2.6.0
+
+- @uppy/companion: fix unpslash author meta, sanitize metadata to strings and improve companion tests (Mikael Finstad / #3478)
+
 ## 3.2.1
 
 Released: 2022-02-16
