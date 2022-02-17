@@ -21,7 +21,6 @@ Released: 2022-02-17
 | @uppy/companion |   3.3.0 | uppy            |   2.6.0 |
 | @uppy/robodog   |   2.3.2 |                 |         |
 
-- meta: fixup! meta: ensure README is correctly formatted when doing releases (Antoine du Hamel / #3499)
 - meta: warn about not merging PR manually (Artur Paikin / #3492)
 - @uppy/companion: fix unpslash author meta, sanitize metadata to strings and improve companion tests (Mikael Finstad / #3478)
 - meta: ensure README is correctly formatted when doing releases (Antoine du Hamel / #3499)
