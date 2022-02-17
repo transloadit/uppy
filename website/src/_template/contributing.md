@@ -44,7 +44,7 @@ yarn run test:unit
 
 We use [Cypress](cypress.io/) for our e2e test suite. Be sure to checkout “[Writing your first test](https://docs.cypress.io/guides/getting-started/writing-your-first-test#Add-a-test-file)” and the “[Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress#Cypress-Can-Be-Simple-Sometimes)”. You should also be aware of the “[Best Practices](https://docs.cypress.io/guides/references/best-practices)”.
 
-To get started make sure you have your `.env.local` set up. If it doesn’t exist, it will use the default value in the `.env` file which won’t work for most cases. Copy `.env` to a file named `.env.local` and add the values relevant for the test(s) you are trying to run.
+To get started make sure you have your `.env` set up. Copy the contents of `.env.example` to a file named `.env` and add the values relevant for the test(s) you are trying to run.
 
 To start the testing suite run:
 
@@ -62,7 +62,7 @@ Even though facebook [allows using](https://developers.facebook.com/blog/post/20
 
 Make sure that you are using a development facebook app at <https://developers.facebook.com/apps>
 
-Go to “Instagram Basic Display” and find `Instagram App ID` and `Instagram App Secret`. Put them in a file called `.env.local` in the repo root:
+Go to “Instagram Basic Display” and find `Instagram App ID` and `Instagram App Secret`. Put them in a file called `.env` in the repo root:
 
     COMPANION_INSTAGRAM_KEY="Instagram App ID"
     COMPANION_INSTAGRAM_SECRET="Instagram App Secret"
@@ -80,7 +80,7 @@ append `/instagram/redirect` to it, such as:
 
 Add this full ngrok URL to `Valid OAuth Redirect URIs` under `Instagram Basic Display`.
 
-Edit `.env.local` and change to your ngrok URI:
+Edit `.env` and change to your ngrok URI:
 
     COMPANION_DOMAIN="e0c7de09808d.ngrok.io"
     COMPANION_PROTOCOL="https"

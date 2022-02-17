@@ -25,7 +25,7 @@ import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
 /* eslint-enable import/no-extraneous-dependencies */
 
-// DEV CONFIG: create a .env.local file to customize those values.
+// DEV CONFIG: create a .env file in the project root directory to customize those values.
 const {
   VITE_UPLOADER : UPLOADER,
   VITE_COMPANION_URL : COMPANION_URL,

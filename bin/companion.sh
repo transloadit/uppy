@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Load local env vars. In CI, these are injected.
-if [ -f .env.local ]; then
-  nodemon --watch packages/@uppy/companion/src ./bin/companion.js
+if [ -f .env ]; then
+  nodemon --watch packages/@uppy/companion/src --exec node -r dotenv/config ./packages/@uppy/companion/src/standalone/start-server.js
 else
   env \
     COMPANION_DATADIR="./output" \

@@ -6,7 +6,7 @@ import DragDrop from '@uppy/drag-drop'
 import ProgressBar from '@uppy/progress-bar'
 /* eslint-enable import/no-extraneous-dependencies */
 
-// DEV CONFIG: create a .env.local file to customize those values.
+// DEV CONFIG: create a .env file in the project root directory to customize those values.
 const {
   VITE_TUS_ENDPOINT : TUS_ENDPOINT,
 } = import.meta.env
