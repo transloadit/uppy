@@ -35766,8 +35766,8 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   linkType: hard
 
 "retext-equality@npm:^6.2.0":
-  version: 6.5.0
-  resolution: "retext-equality@npm:6.5.0"
+  version: 6.6.0
+  resolution: "retext-equality@npm:6.6.0"
   dependencies:
     "@types/nlcst": ^1.0.0
     "@types/unist": ^2.0.6
@@ -35779,13 +35779,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     unist-util-is: ^5.0.0
     unist-util-visit: ^4.0.0
     vfile: ^5.0.0
-  checksum: de9dbfbd861d48f34dadea972d332e60527afb271811d5ece8f9fb32813c398a4c75f9eaf010bd211bcd5e1641169195c9c01c3f9b1340068ae584769b7dd187
+  checksum: 183d59ecfd5198709d3394801d15577ad292c46694201dbab8003b21663aebff9e53dbac1e4f6bc15780a1300fa9155cee60aec4e5724b27f95892fe9d335caf
   languageName: node
   linkType: hard
 
 "retext-profanities@npm:^7.1.0":
-  version: 7.1.0
-  resolution: "retext-profanities@npm:7.1.0"
+  version: 7.2.0
+  resolution: "retext-profanities@npm:7.2.0"
   dependencies:
     "@types/nlcst": ^1.0.0
     cuss: ^2.0.0
@@ -35795,13 +35795,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     quotation: ^2.0.0
     unified: ^10.0.0
     unist-util-position: ^4.0.0
-  checksum: 0408c73b6d8ade9e54a033e7f7a5ade4a7303ff1813003eed4cb84c153a4465ad0f381bd69aff005597e5af85c67588e1f00c52cf61e0085ebb9ecc76b0ee855
+  checksum: a98030a2b95f2f177efa596afc212f13e261d91a5525d1dc2e0aa196da4d1e4641faa2c24f0d56819e6e6fed832187c4aeb88697fc4cba38aa77eb189345b651
   languageName: node
   linkType: hard
 
 "retext-quotes@npm:^5.0.0":
-  version: 5.1.0
-  resolution: "retext-quotes@npm:5.1.0"
+  version: 5.2.0
+  resolution: "retext-quotes@npm:5.2.0"
   dependencies:
     "@types/nlcst": ^1.0.0
     "@types/unist": ^2.0.6
@@ -35809,13 +35809,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     unified: ^10.0.0
     unist-util-is: ^5.0.0
     unist-util-visit: ^4.0.0
-  checksum: d212dd0aab902e9de4187d43a9c206b2063ade61a8ba842e75c53de3c3adecc8590bddab200dcbd7caa1aff0d64423242b6302bde33d6cc7f206d0fbcc631679
+  checksum: 56792f3f99dbd0c9501cffb65e64a9801b13cc75e638744aca350160529bb8ad4e0c871d5bdc848db8abd92242c8694f082525f360757c20b12038a72bddfe7c
   languageName: node
   linkType: hard
 
 "retext-simplify@npm:^7.0.0":
-  version: 7.1.0
-  resolution: "retext-simplify@npm:7.1.0"
+  version: 7.2.0
+  resolution: "retext-simplify@npm:7.2.0"
   dependencies:
     "@types/nlcst": ^1.0.0
     nlcst-search: ^3.0.0
@@ -35824,7 +35824,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     quotation: ^2.0.0
     unified: ^10.0.0
     unist-util-position: ^4.0.0
-  checksum: 67983ed433ea2f086adcb39afb33852c6b19144fbe63fc7f41a04abf715aecd72633443d9e5d672445f8a6bd81d070e9f9bb0759eae1202012909126af88898d
+  checksum: 5190b151d97b296dfab54fd032b47dc0efefb91734977cabf4dd4858ec71ed6034ab0fe6acd16ff1fecc4ad351631e206bfba74839736300cc0678e9ed3c1df6
   languageName: node
   linkType: hard
 
