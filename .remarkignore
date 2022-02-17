@@ -5,3 +5,4 @@ examples/
 CHANGELOG.md
 CHANGELOG.next.md
 BACKLOG.md
+node_modules/
