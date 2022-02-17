@@ -12,6 +12,23 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.6.0
+
+Released: 2022-02-17
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |   3.3.0 | uppy            |   2.6.0 |
+| @uppy/robodog   |   2.3.2 |                 |         |
+
+- meta: warn about not merging PR manually (Artur Paikin / #3492)
+- @uppy/companion: fix unpslash author meta, sanitize metadata to strings and improve companion tests (Mikael Finstad / #3478)
+- meta: ensure README is correctly formatted when doing releases (Antoine du Hamel / #3499)
+- meta: fix CDN bundle (Antoine du Hamel / #3494)
+- meta: fix missing EOL and end of e2e test templates (Antoine du Hamel / #3484)
+- meta: use a single `.env` file for config (Antoine du Hamel / #3498)
+
+
 ## 2.5.1
 
 Released: 2022-02-16

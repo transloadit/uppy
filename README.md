@@ -69,7 +69,7 @@ $ npm install @uppy/core @uppy/dashboard @uppy/tus
 
 We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
 
-Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v2.5.1/uppy.min.css), either to your HTML page’s `<head>` or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
+Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v2.6.0/uppy.min.css), either to your HTML page’s `<head>` or include in JS, if your bundler of choice supports it — transforms and plugins are available for Browserify and Webpack.
 
 Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
@@ -77,10 +77,10 @@ Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edg
 
 ```html
 <!-- 1. Add CSS to `<head>` -->
-<link href="https://releases.transloadit.com/uppy/v2.5.1/uppy.min.css" rel="stylesheet">
+<link href="https://releases.transloadit.com/uppy/v2.6.0/uppy.min.css" rel="stylesheet">
 
 <!-- 2. Add JS before the closing `</body>` -->
-<script src="https://releases.transloadit.com/uppy/v2.5.1/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.6.0/uppy.min.js"></script>
 
 <!-- 3. Initialize -->
 <div class="UppyDragDrop"></div>
@@ -190,7 +190,7 @@ If you’re using Uppy from CDN, those polyfills are already included in the leg
 bundle, so no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v2.5.1/uppy.legacy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.6.0/uppy.legacy.min.js"></script>
 ```
 
 ## FAQ
@@ -247,6 +247,7 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 ## Contributors
 
 <!--contributors-->
+
 [<img alt="arturi" src="https://avatars.githubusercontent.com/u/1199054?v=4&s=117" width="117">](https://github.com/arturi) |[<img alt="goto-bus-stop" src="https://avatars.githubusercontent.com/u/1006268?v=4&s=117" width="117">](https://github.com/goto-bus-stop) |[<img alt="kvz" src="https://avatars.githubusercontent.com/u/26752?v=4&s=117" width="117">](https://github.com/kvz) |[<img alt="ifedapoolarewaju" src="https://avatars.githubusercontent.com/u/8383781?v=4&s=117" width="117">](https://github.com/ifedapoolarewaju) |[<img alt="hedgerh" src="https://avatars.githubusercontent.com/u/2524280?v=4&s=117" width="117">](https://github.com/hedgerh) |[<img alt="aduh95" src="https://avatars.githubusercontent.com/u/14309773?v=4&s=117" width="117">](https://github.com/aduh95) |
 :---: |:---: |:---: |:---: |:---: |:---: |
 [arturi](https://github.com/arturi) |[goto-bus-stop](https://github.com/goto-bus-stop) |[kvz](https://github.com/kvz) |[ifedapoolarewaju](https://github.com/ifedapoolarewaju) |[hedgerh](https://github.com/hedgerh) |[aduh95](https://github.com/aduh95) |
@@ -257,15 +258,15 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 
 [<img alt="sadovnychyi" src="https://avatars.githubusercontent.com/u/193864?v=4&s=117" width="117">](https://github.com/sadovnychyi) |[<img alt="samuelayo" src="https://avatars.githubusercontent.com/u/14964486?v=4&s=117" width="117">](https://github.com/samuelayo) |[<img alt="richardwillars" src="https://avatars.githubusercontent.com/u/291004?v=4&s=117" width="117">](https://github.com/richardwillars) |[<img alt="ajkachnic" src="https://avatars.githubusercontent.com/u/44317699?v=4&s=117" width="117">](https://github.com/ajkachnic) |[<img alt="dependabot[bot]" src="https://avatars.githubusercontent.com/in/29110?v=4&s=117" width="117">](https://github.com/apps/dependabot) |[<img alt="zcallan" src="https://avatars.githubusercontent.com/u/13760738?v=4&s=117" width="117">](https://github.com/zcallan) |
 :---: |:---: |:---: |:---: |:---: |:---: |
-[sadovnychyi](https://github.com/sadovnychyi) |[samuelayo](https://github.com/samuelayo) |[richardwillars](https://github.com/richardwillars) |[ajkachnic](https://github.com/ajkachnic) |[dependabot[bot]](https://github.com/apps/dependabot) |[zcallan](https://github.com/zcallan) |
+[sadovnychyi](https://github.com/sadovnychyi) |[samuelayo](https://github.com/samuelayo) |[richardwillars](https://github.com/richardwillars) |[ajkachnic](https://github.com/ajkachnic) |[dependabot\[bot\]](https://github.com/apps/dependabot) |[zcallan](https://github.com/zcallan) |
 
 [<img alt="tim-kos" src="https://avatars.githubusercontent.com/u/15005?v=4&s=117" width="117">](https://github.com/tim-kos) |[<img alt="janko" src="https://avatars.githubusercontent.com/u/795488?v=4&s=117" width="117">](https://github.com/janko) |[<img alt="wilkoklak" src="https://avatars.githubusercontent.com/u/17553085?v=4&s=117" width="117">](https://github.com/wilkoklak) |[<img alt="oliverpool" src="https://avatars.githubusercontent.com/u/3864879?v=4&s=117" width="117">](https://github.com/oliverpool) |[<img alt="Botz" src="https://avatars.githubusercontent.com/u/2706678?v=4&s=117" width="117">](https://github.com/Botz) |[<img alt="mcallistertyler" src="https://avatars.githubusercontent.com/u/14939210?v=4&s=117" width="117">](https://github.com/mcallistertyler) |
 :---: |:---: |:---: |:---: |:---: |:---: |
 [tim-kos](https://github.com/tim-kos) |[janko](https://github.com/janko) |[wilkoklak](https://github.com/wilkoklak) |[oliverpool](https://github.com/oliverpool) |[Botz](https://github.com/Botz) |[mcallistertyler](https://github.com/mcallistertyler) |
 
-[<img alt="mokutsu-coursera" src="https://avatars.githubusercontent.com/u/65177495?v=4&s=117" width="117">](https://github.com/mokutsu-coursera) |[<img alt="YukeshShr" src="https://avatars.githubusercontent.com/u/71844521?v=4&s=117" width="117">](https://github.com/YukeshShr) |[<img alt="DJWassink" src="https://avatars.githubusercontent.com/u/1822404?v=4&s=117" width="117">](https://github.com/DJWassink) |[<img alt="github-actions[bot]" src="https://avatars.githubusercontent.com/in/15368?v=4&s=117" width="117">](https://github.com/apps/github-actions) |[<img alt="taoqf" src="https://avatars.githubusercontent.com/u/15901911?v=4&s=117" width="117">](https://github.com/taoqf) |[<img alt="tuoxiansp" src="https://avatars.githubusercontent.com/u/3960056?v=4&s=117" width="117">](https://github.com/tuoxiansp) |
+[<img alt="mokutsu-coursera" src="https://avatars.githubusercontent.com/u/65177495?v=4&s=117" width="117">](https://github.com/mokutsu-coursera) |[<img alt="YukeshShr" src="https://avatars.githubusercontent.com/u/71844521?v=4&s=117" width="117">](https://github.com/YukeshShr) |[<img alt="github-actions[bot]" src="https://avatars.githubusercontent.com/in/15368?v=4&s=117" width="117">](https://github.com/apps/github-actions) |[<img alt="DJWassink" src="https://avatars.githubusercontent.com/u/1822404?v=4&s=117" width="117">](https://github.com/DJWassink) |[<img alt="taoqf" src="https://avatars.githubusercontent.com/u/15901911?v=4&s=117" width="117">](https://github.com/taoqf) |[<img alt="tuoxiansp" src="https://avatars.githubusercontent.com/u/3960056?v=4&s=117" width="117">](https://github.com/tuoxiansp) |
 :---: |:---: |:---: |:---: |:---: |:---: |
-[mokutsu-coursera](https://github.com/mokutsu-coursera) |[YukeshShr](https://github.com/YukeshShr) |[DJWassink](https://github.com/DJWassink) |[github-actions[bot]](https://github.com/apps/github-actions) |[taoqf](https://github.com/taoqf) |[tuoxiansp](https://github.com/tuoxiansp) |
+[mokutsu-coursera](https://github.com/mokutsu-coursera) |[YukeshShr](https://github.com/YukeshShr) |[github-actions\[bot\]](https://github.com/apps/github-actions) |[DJWassink](https://github.com/DJWassink) |[taoqf](https://github.com/taoqf) |[tuoxiansp](https://github.com/tuoxiansp) |
 
 [<img alt="dominiceden" src="https://avatars.githubusercontent.com/u/6367692?v=4&s=117" width="117">](https://github.com/dominiceden) |[<img alt="elenalape" src="https://avatars.githubusercontent.com/u/22844059?v=4&s=117" width="117">](https://github.com/elenalape) |[<img alt="mejiaej" src="https://avatars.githubusercontent.com/u/4699893?v=4&s=117" width="117">](https://github.com/mejiaej) |[<img alt="gavboulton" src="https://avatars.githubusercontent.com/u/3900826?v=4&s=117" width="117">](https://github.com/gavboulton) |[<img alt="Hawxy" src="https://avatars.githubusercontent.com/u/975824?v=4&s=117" width="117">](https://github.com/Hawxy) |[<img alt="juliangruber" src="https://avatars.githubusercontent.com/u/10247?v=4&s=117" width="117">](https://github.com/juliangruber) |
 :---: |:---: |:---: |:---: |:---: |:---: |
@@ -450,7 +451,6 @@ Use Uppy in your project? [Let us know](https://github.com/transloadit/uppy/issu
 [<img alt="tusharjkhunt" src="https://avatars.githubusercontent.com/u/31904234?v=4&s=117" width="117">](https://github.com/tusharjkhunt) |[<img alt="vedran555" src="https://avatars.githubusercontent.com/u/38395951?v=4&s=117" width="117">](https://github.com/vedran555) |[<img alt="yoann-hellopret" src="https://avatars.githubusercontent.com/u/46525558?v=4&s=117" width="117">](https://github.com/yoann-hellopret) |[<img alt="olitomas" src="https://avatars.githubusercontent.com/u/6918659?v=4&s=117" width="117">](https://github.com/olitomas) |[<img alt="JimmyLv" src="https://avatars.githubusercontent.com/u/4997466?v=4&s=117" width="117">](https://github.com/JimmyLv) |
 :---: |:---: |:---: |:---: |:---: |
 [tusharjkhunt](https://github.com/tusharjkhunt) |[vedran555](https://github.com/vedran555) |[yoann-hellopret](https://github.com/yoann-hellopret) |[olitomas](https://github.com/olitomas) |[JimmyLv](https://github.com/JimmyLv) |
-
 
 <!--/contributors-->
 
