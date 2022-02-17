@@ -7,7 +7,7 @@
     "*.js": "eslint",
     "*.jsx": "eslint",
     "*.md": [
-      "remark --silently-ignore -i .remarkignore -foq",
+      "remark --silently-ignore -i .remarkignore -fq",
       "eslint"
     ],
     "*.ts": "eslint"
