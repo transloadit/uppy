@@ -32,6 +32,7 @@
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",
+    "packages/@uppy/angular/projects/dist/*",
     "packages/uppy",
     "private/*",
     "test/endtoend",
@@ -129,7 +130,7 @@
     "build:companion": "yarn workspace @uppy/companion build",
     "build:css": "yarn node ./bin/build-css.js",
     "build:svelte": "yarn workspace @uppy/svelte build",
-    "build:angular": "yarn workspace @uppy/angular build:release",
+    "build:angular": "yarn workspace angular build:release",
     "build:js": "npm-run-all build:lib build:companion build:locale-pack build:svelte build:angular build:bundle",
     "build:lib": "yarn node ./bin/build-lib.js",
     "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && eslint packages/@uppy/locales/src/en_US.js --fix && yarn workspace @uppy-dev/locale-pack test unused",

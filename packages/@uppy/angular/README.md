@@ -1,33 +1,27 @@
-# @uppy/angular
+# Angular
 
-<img src="https://uppy.io/images/logos/uppy-dog-head-arrow.svg" width="120" alt="Uppy logo: a superman puppy in a pink suit" align="right">
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.0.4.
 
-<a href="https://www.npmjs.com/package/@uppy/angular"><img src="https://img.shields.io/npm/v/@uppy/angular.svg?style=flat-square"></a> <a href="https://travis-ci.org/transloadit/uppy"><img src="https://img.shields.io/travis/transloadit/uppy/main.svg?style=flat-square" alt="Build Status"></a>
+## Development server
 
-Angular component wrappers around Uppy’s officially maintained UI plugins.
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-Uppy is being developed by the folks at [Transloadit](https://transloadit.com), a versatile file encoding service.
+## Code scaffolding
 
-## Example
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-```ts
-// TODO
-```
+## Build
 
-## Installation
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-```bash
-$ npm install @uppy/angular --save
-```
+## Running unit tests
 
-We recommend installing from npm and then using a module bundler such as [Webpack](https://webpack.js.org/), [Browserify](http://browserify.org/) or [Rollup.js](http://rollupjs.org/).
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-Alternatively, you can also use this plugin in a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
+## Running end-to-end tests
 
-## Documentation
+Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
 
-Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/).
+## Further help
 
-## License
-
-[The MIT License](./LICENSE).
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
