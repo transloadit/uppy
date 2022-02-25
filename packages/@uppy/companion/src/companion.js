@@ -83,6 +83,17 @@ module.exports.app = (options = {}) => {
 
   if (options.metrics) {
     app.use(middlewares.metrics({ path: options.server.path }))
+
+    // backward compatibility
+    // TODO remove in next major semver
+    const buildUrl = getURLBuilder(options)
+    if (options.server.path) {
+      app.get('/metrics', (req, res) => {
+        process.emitWarning('/metrics is deprecated when specifying a path to companion')
+        const metricsUrl = buildUrl('/metrics', true)
+        res.redirect(metricsUrl)
+      })
+    }
   }
 
   app.use(cookieParser()) // server tokens are added to cookies
