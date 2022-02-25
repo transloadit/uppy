@@ -151,15 +151,8 @@ module.exports = function server (inputCompanionOptions = {}) {
     })
   }
 
-  let companionApp
-  try {
-    // initialize companion
-    companionApp = companion.app(companionOptions)
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('\x1b[31m', error.message, '\x1b[0m')
-    process.exit(1)
-  }
+  // initialize companion
+  const companionApp = companion.app(companionOptions)
 
   // add companion to server middleware
   router.use(companionApp)
