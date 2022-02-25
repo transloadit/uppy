@@ -10,7 +10,7 @@ import { UppyAngularWrapper } from '../../utils/wrapper';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DragDropComponent extends UppyAngularWrapper implements OnDestroy, OnChanges {
-  @Input() uppy: Uppy = new Uppy
+  @Input() uppy: Uppy = new Uppy;
   @Input() props: DragDropOptions = {};
 
   constructor(public el: ElementRef) {
