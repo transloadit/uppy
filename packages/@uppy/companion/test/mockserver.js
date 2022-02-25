@@ -11,6 +11,7 @@ const defaultEnv = {
   COMPANION_HIDE_WELCOME: 'false',
 
   COMPANION_STREAMING_UPLOAD: 'true',
+  COMPANION_ALLOW_LOCAL_URLS : 'false',
 
   COMPANION_PROTOCOL: 'http',
   COMPANION_DATADIR: './test/output',

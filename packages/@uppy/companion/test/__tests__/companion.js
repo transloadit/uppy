@@ -171,6 +171,34 @@ it('periodically pings', (done) => {
   })
 }, 1000)
 
+it('respects allowLocalUrls', async () => {
+  const server = getServer()
+  const url = 'http://localhost/'
+
+  let res
+
+  res = await request(server)
+    .post('/url/meta')
+    .send({ url })
+    .expect(400)
+
+  expect(res.body).toEqual({ error: 'Invalid request body' })
+
+  res = await request(server)
+    .post('/url/get')
+    .send({
+      fileId: url,
+      metadata: {},
+      endpoint: 'http://url.myendpoint.com/files',
+      protocol: 'tus',
+      size: null,
+      url,
+    })
+    .expect(400)
+
+  expect(res.body).toEqual({ error: 'Invalid request body' })
+}, 1000)
+
 afterAll(() => {
   nock.cleanAll()
   nock.restore()

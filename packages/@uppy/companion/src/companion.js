@@ -41,7 +41,7 @@ const defaultOptions = {
       expires: ms('5 minutes') / 1000,
     },
   },
-  debug: true,
+  allowLocalUrls: false,
   logClientVersion: true,
   periodicPingUrls: [],
   streamingUpload: false,

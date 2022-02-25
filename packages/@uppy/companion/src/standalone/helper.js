@@ -106,7 +106,7 @@ const getConfigFromEnv = () => {
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
     secret: getSecret('COMPANION_SECRET') || generateSecret(),
     preAuthSecret: getSecret('COMPANION_PREAUTH_SECRET') || generateSecret(),
-    debug: process.env.NODE_ENV && process.env.NODE_ENV !== 'production',
+    allowLocalUrls: process.env.COMPANION_ALLOW_LOCAL_URLS === 'true',
     // cookieDomain is kind of a hack to support distributed systems. This should be improved but we never got so far.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
     multipleInstances: true,
