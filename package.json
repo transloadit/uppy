@@ -32,7 +32,7 @@
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",
-    "packages/@uppy/angular/projects/dist/*",
+    "packages/@uppy/angular/projects/uppy/*",
     "packages/uppy",
     "private/*",
     "test/endtoend",

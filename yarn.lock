@@ -7478,11 +7478,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/angular@workspace:*, @uppy/angular@workspace:packages/@uppy/angular/projects/dist/angular":
+"@uppy/angular@workspace:*, @uppy/angular@workspace:packages/@uppy/angular/projects/uppy/angular":
   version: 0.0.0-use.local
-  resolution: "@uppy/angular@workspace:packages/@uppy/angular/projects/dist/angular"
-  dependencies:
-    tslib: ^2.0.0
+  resolution: "@uppy/angular@workspace:packages/@uppy/angular/projects/uppy/angular"
   peerDependencies:
     "@angular/common": ">= 11"
     "@angular/core": ">= 11"
@@ -7492,6 +7490,7 @@ __metadata:
     "@uppy/progress-bar": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/utils": ">=3"
+    tslib: ^2.0.0
   languageName: unknown
   linkType: soft
 

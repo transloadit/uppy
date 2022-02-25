@@ -31,6 +31,8 @@ jobs:
         run: cp README.md packages/uppy/.
       - name: Build before publishing
         run: corepack yarn run build
+      - name: Hack to allow the publish of the Angular package
+        run: corepack yarn workspace @uppy/angular prepublishOnly
       - name: Login to NPM
         run: corepack yarn config set npmAuthToken ${{ toJSON(secrets.NPM_TOKEN) }}
       - name: Publish to NPM
