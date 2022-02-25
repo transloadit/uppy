@@ -608,7 +608,7 @@ class Uploader {
       Metadata: this.options.metadata,
       Body: stream,
     }, {
-      partSize: this.options.chunkSize
+      partSize: this.options.chunkSize,
     })
 
     upload.on('httpUploadProgress', ({ loaded, total }) => {
