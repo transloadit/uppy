@@ -1,5 +1,5 @@
 {
-  "extends": "../false",
+  "extends": "../projects/uppy/angular/tsconfig.lib.json",
   "compilerOptions": {
     "types": [
       "node"
