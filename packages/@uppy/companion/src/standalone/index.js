@@ -111,8 +111,8 @@ module.exports = function server (inputCompanionOptions = {}) {
 
     // backward compatibility
     // TODO remove in next major semver
-    const buildUrl = getURLBuilder(companionOptions)
     if (companionOptions.server.path) {
+      const buildUrl = getURLBuilder(companionOptions)
       app.get('/metrics', (req, res) => {
         process.emitWarning('/metrics is deprecated when specifying a path to companion')
         const metricsUrl = buildUrl('/metrics', true)
