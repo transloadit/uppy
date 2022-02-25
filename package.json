@@ -202,6 +202,7 @@
   "resolutions": {
     "@types/redis": "2",
     "@types/eslint@^7.2.13": "^8.2.0",
+    "@types/react": "^17",
     "@types/webpack-dev-server": "^4",
     "npm-auth-to-token@1.0.0": "patch:npm-auth-to-token@npm:1.0.0#.yarn/patches/npm-auth-to-token-npm-1.0.0-c288ce201f",
     "babel-plugin-transform-commonjs@1.1.6": "patch:babel-plugin-transform-commonjs@npm:1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809",
