@@ -10,7 +10,7 @@ import { UppyAngularWrapper } from '../../utils/wrapper';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardModalComponent extends UppyAngularWrapper<Dashboard> implements OnDestroy, OnChanges {
-  @Input() uppy: Uppy = window['Uppy' as any] as any as Uppy;
+  @Input() uppy: Uppy = new Uppy;
   @Input() props: DashboardOptions = {};
   @Input() open: boolean = false;
 
