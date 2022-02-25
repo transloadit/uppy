@@ -599,8 +599,8 @@ class Uploader {
 
     const filename = this.uploadFileName
     const { client, options } = this.options.s3
-    
-    function getPartSize(chunkSize) {
+
+    function getPartSize (chunkSize) {
       // backwards compatibility https://github.com/transloadit/uppy/pull/3511#issuecomment-1050797935
       // requires min 5MB and max 5GB partSize
       // todo remove this logic in the next major semver
