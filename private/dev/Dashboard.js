@@ -33,16 +33,52 @@ const {
   VITE_TUS_ENDPOINT : TUS_ENDPOINT,
   VITE_XHR_ENDPOINT : XHR_ENDPOINT,
   VITE_TRANSLOADIT_KEY : TRANSLOADIT_KEY,
+  VITE_TRANSLOADIT_SECRET : TRANSLOADIT_SECRET,
   VITE_TRANSLOADIT_TEMPLATE : TRANSLOADIT_TEMPLATE,
   VITE_TRANSLOADIT_SERVICE_URL : TRANSLOADIT_SERVICE_URL,
 } = import.meta.env
 
 import.meta.env.VITE_TRANSLOADIT_KEY = '***' // to avoid leaking secrets in screenshots.
+import.meta.env.VITE_TRANSLOADIT_SECRET = '***' // to avoid leaking secrets in screenshots.
 console.log(import.meta.env)
 
 // DEV CONFIG: enable or disable Golden Retriever
 
 const RESTORE = false
+
+const enc = new TextEncoder('utf-8')
+async function sign (secret, body) {
+  const algorithm = { name: 'HMAC', hash: 'SHA-384' }
+
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), algorithm, false, ['sign', 'verify'])
+  const signature = await crypto.subtle.sign(algorithm.name, key, enc.encode(body))
+  return `sha384:${Array.from(new Uint8Array(signature), x => x.toString(16).padStart(2, '0')).join('')}`
+}
+function getExpiration (future) {
+  return new Date(Date.now() + future)
+    .toISOString()
+    .replace('T', ' ')
+    .replace(/\.\d+Z$/, '+00:00')
+}
+async function getAssemblyOptions () {
+  const hasSecret = TRANSLOADIT_SECRET != null
+  let params = {
+    auth: {
+      key: TRANSLOADIT_KEY,
+      expires: hasSecret ? getExpiration(5 * 60 * 1000) : undefined,
+    },
+    // It's more secure to use a template_id and enable
+    // Signature Authentication
+    template_id: TRANSLOADIT_TEMPLATE,
+  }
+  let signature
+  if (TRANSLOADIT_SECRET) {
+    params = JSON.stringify(params)
+    signature = await sign(TRANSLOADIT_SECRET, params)
+  }
+
+  return { params, signature }
+}
 
 // Rest is implementation! Obviously edit as necessary...
 
@@ -111,10 +147,7 @@ export default () => {
       uppyDashboard.use(Transloadit, {
         service: TRANSLOADIT_SERVICE_URL,
         waitForEncoding: true,
-        params: {
-          auth: { key: TRANSLOADIT_KEY },
-          template_id: TRANSLOADIT_TEMPLATE,
-        },
+        getAssemblyOptions,
       })
       break
     case 'transloadit-s3':
@@ -122,10 +155,7 @@ export default () => {
       uppyDashboard.use(Transloadit, {
         waitForEncoding: true,
         importFromUploadURLs: true,
-        params: {
-          auth: { key: TRANSLOADIT_KEY },
-          template_id: TRANSLOADIT_TEMPLATE,
-        },
+        getAssemblyOptions,
       })
       break
     case 'transloadit-xhr':
