@@ -170,14 +170,14 @@ function getTotalSpeed (files) {
 function getTotalETA (files) {
   const totalSpeed = getTotalSpeed(files)
   if (totalSpeed === 0) {
-    return 0
+    return { totalSpeed, totalETA: 0 }
   }
 
   const totalBytesRemaining = files.reduce((total, file) => {
     return total + getBytesRemaining(file.progress)
   }, 0)
 
-  return Math.round((totalBytesRemaining / totalSpeed) * 10) / 10
+  return { totalSpeed, totalETA: Math.round((totalBytesRemaining / totalSpeed) * 10) / 10 }
 }
 
 function getUploadingState (error, isAllComplete, recoveredState, files) {

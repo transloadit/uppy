@@ -2,6 +2,7 @@ const classNames = require('classnames')
 const throttle = require('lodash.throttle')
 const prettierBytes = require('@transloadit/prettier-bytes')
 const prettyETA = require('@uppy/utils/lib/prettyETA')
+const prettyTransferSpeed = require('@uppy/utils/lib/prettyTransferSpeed')
 const { h } = require('preact')
 
 const statusBarStates = require('./StatusBarStates')
@@ -236,11 +237,15 @@ function ProgressDetails (props) {
           total: prettierBytes(totalSize),
         })}
 
-        {renderDot()}
+        {totalETA.totalETA === 0 ? null : renderDot()}
 
-        {i18n('xTimeLeft', {
-          time: prettyETA(totalETA),
+        {totalETA.totalETA === 0 ? null : i18n('xTimeLeft', {
+          time: prettyETA(totalETA.totalETA),
         })}
+
+        {totalETA.totalSpeed === 0 ? null : renderDot()}
+
+        {totalETA.totalSpeed === 0 ? null : prettyTransferSpeed(totalETA.totalSpeed)}
       </span>
     </div>
   )
