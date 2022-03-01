@@ -225,13 +225,20 @@ hr {
   font-size: 27px;
   font-family: $fontFamily-logo;
   font-weight: 700;
+  position: relative;
 
   @media #{$screen-medium} {
-    margin-right: 15px;
+    margin-right: 25px;
   }
 
   &-link {
     color: $color-primary;
+  }
+
+  &-announcement {
+    position: absolute;
+    top: -10px;
+    right: -22px;
   }
 
   // Was used for 1.0, we can re-use for 2.0 or major announcements
@@ -265,9 +272,9 @@ hr {
 .TransloaditBar {
   display: block;
   padding: 5px 10px 8px;
-  background: $color-darkblue;
+  background: #0165d6;
   color: #fff;
-  font-size: 13px;
+  font-size: 15px;
   position: relative;
   z-index: 11;
   
@@ -284,7 +291,8 @@ hr {
   }
 
   &-link {
-    color: #fff;
+    // color: #fff;
+    color: #FFD700;
     font-weight: 700;
 
     &:hover {
