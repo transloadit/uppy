@@ -1,5 +1,15 @@
 # @uppy/companion
 
+## 3.3.1
+
+Released: 2022-03-02
+Included in: Uppy v2.7.0
+
+- @uppy/companion: fix unstable test (Mikael Finstad)
+- @uppy/companion: replace debug (Mikael Finstad)
+- @uppy/companion: Fix COMPANION_PATH (Mikael Finstad / #3515)
+- @uppy/companion: Upload protocol "s3-multipart" does not use the chunkSize option (Gabi Ganam / #3511)
+
 ## 3.3.0
 
 Released: 2022-02-17
