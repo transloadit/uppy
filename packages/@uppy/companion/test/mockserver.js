@@ -34,6 +34,8 @@ const defaultEnv = {
   COMPANION_ZOOM_VERIFICATION_TOKEN: 'zoom_verfication_token',
 
   COMPANION_PATH: '',
+
+  COMPANION_PERIODIC_PING_URLS: '',
 }
 
 function updateEnv (env) {
