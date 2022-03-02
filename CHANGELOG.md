@@ -12,6 +12,25 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.7.0
+
+Released: 2022-03-02
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/angular          |   0.3.0 | @uppy/locales          |   2.0.7 |
+| @uppy/aws-s3-multipart |   2.2.1 | uppy                   |   2.7.0 |
+| @uppy/companion        |   3.3.1 |                        |         |
+
+- @uppy/companion: Fix COMPANION_PATH (Mikael Finstad / #3515)
+- @uppy/angular: update ng version (Antoine du Hamel / #3503)
+- @uppy/companion: Upload protocol "s3-multipart" does not use the chunkSize option (Gabi Ganam / #3511)
+- @uppy/aws-s3-multipart: Add chunks back to prepareUploadParts, indexed by partNumber (Kevin West / #3520)
+- website: Add “Stop the war” banner (Artur Paikin / #3518)
+- @uppy/locales: Update zh_CN.js (linxunzyf / #3513)
+- meta: update remark dependencies (Antoine du Hamel / #3502)
+
+
 ## 2.6.0
 
 Released: 2022-02-17
