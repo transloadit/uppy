@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
+      - name: Install Corepack if needed
+        run: corepack -v || npm install -g corepack
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
@@ -32,8 +34,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{matrix.node-version}}
-      - name: Install Corepack if needed
-        run: corepack -v || npm install -g corepack
       - name: Install dependencies
         run: corepack yarn install --immutable
       - name: Run tests
