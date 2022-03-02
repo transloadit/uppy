@@ -22,6 +22,7 @@ import type { AwsS3Part } from '..'
       expectType<string>(partData.uploadId)
       expectType<string>(partData.key)
       expectType<Array<number>>(partData.partNumbers)
+      expectType<{ [k: number]: Blob }>(partData.chunks)
       return { presignedUrls: {} }
     },
     abortMultipartUpload (file, opts) {
