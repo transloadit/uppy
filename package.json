@@ -32,6 +32,7 @@
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",
+    "packages/@uppy/angular/projects/uppy/*",
     "packages/uppy",
     "private/*",
     "test/endtoend",
@@ -129,7 +130,7 @@
     "build:companion": "yarn workspace @uppy/companion build",
     "build:css": "yarn node ./bin/build-css.js",
     "build:svelte": "yarn workspace @uppy/svelte build",
-    "build:angular": "yarn workspace @uppy/angular build:release",
+    "build:angular": "yarn workspace angular build:release",
     "build:js": "npm-run-all build:lib build:companion build:locale-pack build:svelte build:angular build:bundle",
     "build:lib": "yarn node ./bin/build-lib.js",
     "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && eslint packages/@uppy/locales/src/en_US.js --fix && yarn workspace @uppy-dev/locale-pack test unused",
@@ -201,6 +202,8 @@
   "resolutions": {
     "@types/redis": "2",
     "@types/eslint@^7.2.13": "^8.2.0",
+    "@types/react": "^17",
+    "@types/webpack-dev-server": "^4",
     "npm-auth-to-token@1.0.0": "patch:npm-auth-to-token@npm:1.0.0#.yarn/patches/npm-auth-to-token-npm-1.0.0-c288ce201f",
     "babel-plugin-transform-commonjs@1.1.6": "patch:babel-plugin-transform-commonjs@npm:1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809",
     "exifr": "patch:exifr@npm:7.1.3#.yarn/patches/exifr-npm-7.1.3-e3f1c7a57d"

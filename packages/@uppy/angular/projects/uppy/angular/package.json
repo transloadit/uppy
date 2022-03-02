@@ -1,7 +1,7 @@
 {
   "name": "@uppy/angular",
   "description": "Angular component wrappers around Uppy's official UI plugins.",
-  "version": "0.0.1",
+  "version": "0.2.8",
   "license": "MIT",
   "homepage": "https://uppy.io",
   "keywords": [
@@ -17,6 +17,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "scripts": {
+    "prepublishOnly": "rm -fr * && cp -r ../../dist/angular .."
   },
   "peerDependencies": {
     "@angular/common": ">= 11",

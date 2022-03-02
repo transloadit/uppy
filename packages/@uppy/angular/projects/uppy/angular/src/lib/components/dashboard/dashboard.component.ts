@@ -10,8 +10,8 @@ import { UppyAngularWrapper } from '../../utils/wrapper';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent extends UppyAngularWrapper implements OnDestroy, OnChanges {
-  @Input() uppy: Uppy;
-  @Input() props: DashboardOptions;
+  @Input() uppy: Uppy = new Uppy;
+  @Input() props: DashboardOptions = {};
 
   constructor(public el: ElementRef) {
     super();
