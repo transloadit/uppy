@@ -12,6 +12,7 @@ const redis = require('../server/redis')
 const companion = require('../companion')
 const helper = require('./helper')
 const middlewares = require('../server/middlewares')
+const { getURLBuilder } = require('../server/helpers/utils')
 
 /**
  * Configures an Express app for running Companion standalone
@@ -19,7 +20,27 @@ const middlewares = require('../server/middlewares')
  * @returns {object}
  */
 module.exports = function server (inputCompanionOptions = {}) {
+  let corsOrigins
+  if (process.env.COMPANION_CLIENT_ORIGINS) {
+    corsOrigins = process.env.COMPANION_CLIENT_ORIGINS
+      .split(',')
+      .map((url) => (helper.hasProtocol(url) ? url : `${process.env.COMPANION_PROTOCOL || 'http'}://${url}`))
+  } else if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
+    corsOrigins = new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
+  }
+
+  const moreCompanionOptions = { ...inputCompanionOptions, corsOrigins }
+  const companionOptions = helper.getCompanionOptions(moreCompanionOptions)
+
   const app = express()
+
+  const router = express.Router()
+
+  if (companionOptions.server.path) {
+    app.use(companionOptions.server.path, router)
+  } else {
+    app.use(router)
+  }
 
   // Query string keys whose values should not end up in logging output.
   const sensitiveKeys = new Set(['access_token', 'uppyAuthToken'])
@@ -57,9 +78,9 @@ module.exports = function server (inputCompanionOptions = {}) {
     return { query, censored }
   }
 
-  app.use(addRequestId)
+  router.use(addRequestId)
   // log server requests.
-  app.use(morgan('combined'))
+  router.use(morgan('combined'))
   morgan.token('url', (req) => {
     const { query, censored } = censorQuery(req.query)
     return censored ? `${req.path}?${qs.stringify(query)}` : req.originalUrl || req.url
@@ -86,30 +107,31 @@ module.exports = function server (inputCompanionOptions = {}) {
   // eslint-disable-next-line max-len
   // See discussion: https://github.com/transloadit/uppy/pull/2854/files/64be97205e4012818abfcc8b0b8b7fe09de91729#diff-68f5e3eb307c1c9d1fd02224fd7888e2f74718744e1b6e35d929fcab1cc50ed1
   if (process.env.COMPANION_HIDE_METRICS !== 'true') {
-    app.use(middlewares.metrics())
+    router.use(middlewares.metrics({ path: companionOptions.server.path }))
+
+    // backward compatibility
+    // TODO remove in next major semver
+    if (companionOptions.server.path) {
+      const buildUrl = getURLBuilder(companionOptions)
+      app.get('/metrics', (req, res) => {
+        process.emitWarning('/metrics is deprecated when specifying a path to companion')
+        const metricsUrl = buildUrl('/metrics', true)
+        res.redirect(metricsUrl)
+      })
+    }
   }
 
-  app.use(bodyParser.json())
-  app.use(bodyParser.urlencoded({ extended: false }))
+  router.use(bodyParser.json())
+  router.use(bodyParser.urlencoded({ extended: false }))
 
   // Use helmet to secure Express headers
-  app.use(helmet.frameguard())
-  app.use(helmet.xssFilter())
-  app.use(helmet.noSniff())
-  app.use(helmet.ieNoOpen())
+  router.use(helmet.frameguard())
+  router.use(helmet.xssFilter())
+  router.use(helmet.noSniff())
+  router.use(helmet.ieNoOpen())
+
   app.disable('x-powered-by')
 
-  let corsOrigins
-  if (process.env.COMPANION_CLIENT_ORIGINS) {
-    corsOrigins = process.env.COMPANION_CLIENT_ORIGINS
-      .split(',')
-      .map((url) => (helper.hasProtocol(url) ? url : `${process.env.COMPANION_PROTOCOL || 'http'}://${url}`))
-  } else if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
-    corsOrigins = new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
-  }
-
-  const moreCompanionOptions = { ...inputCompanionOptions, corsOrigins }
-  const companionOptions = helper.getCompanionOptions(moreCompanionOptions)
   const sessionOptions = {
     secret: companionOptions.secret,
     resave: true,
@@ -131,32 +153,21 @@ module.exports = function server (inputCompanionOptions = {}) {
     }
   }
 
-  app.use(session(sessionOptions))
+  router.use(session(sessionOptions))
 
   // Routes
   if (process.env.COMPANION_HIDE_WELCOME !== 'true') {
-    app.get('/', (req, res) => {
+    router.get('/', (req, res) => {
       res.setHeader('Content-Type', 'text/plain')
       res.send(helper.buildHelpfulStartupMessage(companionOptions))
     })
   }
 
-  let companionApp
-  try {
-    // initialize companion
-    companionApp = companion.app(companionOptions)
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('\x1b[31m', error.message, '\x1b[0m')
-    process.exit(1)
-  }
+  // initialize companion
+  const companionApp = companion.app(companionOptions)
 
   // add companion to server middleware
-  if (process.env.COMPANION_PATH) {
-    app.use(process.env.COMPANION_PATH, companionApp)
-  } else {
-    app.use(companionApp)
-  }
+  router.use(companionApp)
 
   // WARNING: This route is added in order to validate your app with OneDrive.
   // Only set COMPANION_ONEDRIVE_DOMAIN_VALIDATION if you are sure that you are setting the
@@ -164,7 +175,7 @@ module.exports = function server (inputCompanionOptions = {}) {
   // that you might have mixed the values for COMPANION_ONEDRIVE_KEY and COMPANION_ONEDRIVE_SECRET,
   // please DO NOT set any value for COMPANION_ONEDRIVE_DOMAIN_VALIDATION
   if (process.env.COMPANION_ONEDRIVE_DOMAIN_VALIDATION === 'true' && process.env.COMPANION_ONEDRIVE_KEY) {
-    app.get('/.well-known/microsoft-identity-association.json', (req, res) => {
+    router.get('/.well-known/microsoft-identity-association.json', (req, res) => {
       const content = JSON.stringify({
         associatedApplications: [
           { applicationId: process.env.COMPANION_ONEDRIVE_KEY },
