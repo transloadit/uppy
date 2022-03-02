@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: 16.x
       - name: Install dependencies
-        run: corepack yarn install
+        run: corepack yarn install --immutable
       - name: Build before publishing
         run: corepack yarn run build
       - name: Upload `${{ github.event.inputs.name }}` to CDN

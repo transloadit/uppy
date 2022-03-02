@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: 16.x
       - name: Install dependencies
-        run: corepack yarn install
+        run: corepack yarn install --immutable
       - name: Get CHANGELOG diff
         run: git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1) == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print substr($0,2) } }' > CHANGELOG.diff.md
       - name: Copy README for `uppy` package

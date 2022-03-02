@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: 16.x
       - name: Install dependencies
-        run: corepack yarn install
+        run: corepack yarn install --immutable
       - name: Bump candidate packages version
         run: corepack yarn version apply --all --json | jq -s > releases.json
       - name: Prepare changelog
