@@ -1,0 +1,6 @@
+releases:
+  "@uppy/angular": minor
+  "@uppy/aws-s3-multipart": patch
+  "@uppy/companion": patch
+  "@uppy/locales": patch
+  "uppy": minor

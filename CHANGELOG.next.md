@@ -1,0 +1,7 @@
+- @uppy/companion: Fix COMPANION_PATH (Mikael Finstad / #3515)
+- @uppy/angular: update ng version (Antoine du Hamel / #3503)
+- @uppy/companion: Upload protocol "s3-multipart" does not use the chunkSize option (Gabi Ganam / #3511)
+- @uppy/aws-s3-multipart: Add chunks back to prepareUploadParts, indexed by partNumber (Kevin West / #3520)
+- website: Add “Stop the war” banner (Artur Paikin / #3518)
+- @uppy/locales: Update zh_CN.js (linxunzyf / #3513)
+- meta: update remark dependencies (Antoine du Hamel / #3502)
