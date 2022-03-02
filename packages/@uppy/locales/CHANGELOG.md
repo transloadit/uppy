@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 2.0.7
+
+Released: 2022-03-02
+Included in: Uppy v2.7.0
+
+- @uppy/locales: Update zh_CN.js (linxunzyf / #3513)
+
 ## 2.0.6
 
 Released: 2022-02-14
