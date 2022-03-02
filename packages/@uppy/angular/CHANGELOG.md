@@ -1,5 +1,12 @@
 # @uppy/angular
 
+## 0.3.0
+
+Released: 2022-03-02
+Included in: Uppy v2.7.0
+
+- @uppy/angular: update ng version (Antoine du Hamel / #3503)
+
 ## 0.2.8
 
 Released: 2021-12-21
