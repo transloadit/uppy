@@ -17,16 +17,11 @@ jobs:
           # Necessary for yarn version plugin
           # https://yarnpkg.com/features/release-workflow#commit-history
           fetch-depth: 0
-      - name: Cache npm dependencies
-        id: cache-npm-libraries
-        uses: actions/cache@v2
-        with:
-          path: .yarn/cache/*
-          key: ${{ runner.os }}
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
+          cache: 'yarn'
       - name: Install dependencies
         run: corepack yarn install --immutable
       - name: Build Uppy packages

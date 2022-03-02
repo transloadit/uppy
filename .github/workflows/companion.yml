@@ -16,16 +16,11 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
-      - name: Cache npm dependencies
-        id: cache-npm-libraries
-        uses: actions/cache@v2
-        with:
-          path: .yarn/cache/*
-          key: ${{ runner.os }}
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
           node-version: ${{matrix.node-version}}
+          cache: 'yarn'
       - name: Install Corepack if needed
         run: corepack -v || npm install -g corepack
       - name: Install dependencies

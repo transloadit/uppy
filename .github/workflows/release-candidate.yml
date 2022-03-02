@@ -18,16 +18,11 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
           git rebase FETCH_HEAD
-      - name: Cache npm dependencies
-        id: cache-npm-libraries
-        uses: actions/cache@v2
-        with:
-          path: .yarn/cache/*
-          key: ${{ runner.os }}
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
+          cache: 'yarn'
       - name: Install dependencies
         run: corepack yarn install
       - name: Bump candidate packages version
