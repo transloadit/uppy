@@ -24,6 +24,8 @@ fr_FR.strings = {
   companionError: 'Connexion à Companion a échoué',
   companionUnauthorizeHint: 'Pour vous déconnecter de votre compte %{provider}, veuillez aller à %{url}',
   complete: 'Terminé',
+  compressedX: '%{size} économisé(s) par la compression',
+  compressingImages: 'Compression des images...',
   connectedToInternet: 'Connecté à Internet',
   copyLink: 'Copier lien',
   copyLinkToClipboardFallback: 'Copier le lien ci-dessous',
