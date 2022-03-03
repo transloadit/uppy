@@ -18,18 +18,23 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
           git rebase FETCH_HEAD
-      - name: Cache npm dependencies
-        id: cache-npm-libraries
-        uses: actions/cache@v2
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
+
+      - uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
-          path: .yarn/cache/*
-          key: ${{ runner.os }}
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
       - name: Install dependencies
-        run: corepack yarn install
+        run: corepack yarn install --immutable
       - name: Bump candidate packages version
         run: corepack yarn version apply --all --json | jq -s > releases.json
       - name: Prepare changelog
