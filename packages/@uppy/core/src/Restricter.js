@@ -14,10 +14,7 @@ const defaultOptions = {
 }
 
 class RestrictionError extends Error {
-  constructor (...args) {
-    super(...args)
-    this.isRestriction = true
-  }
+  isRestriction = true
 }
 
 if (typeof AggregateError === 'undefined') {
@@ -31,10 +28,7 @@ if (typeof AggregateError === 'undefined') {
 }
 
 class AggregateRestrictionError extends AggregateError {
-  constructor (...args) {
-    super(...args)
-    this.isRestriction = true
-  }
+  isRestriction = true
 }
 
 class Restricter {
