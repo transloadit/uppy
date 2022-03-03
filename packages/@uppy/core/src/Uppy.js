@@ -7,8 +7,6 @@ const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
 const { nanoid } = require('nanoid/non-secure')
 const throttle = require('lodash.throttle')
-const prettierBytes = require('@transloadit/prettier-bytes')
-const match = require('mime-match')
 const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
@@ -16,32 +14,15 @@ const generateFileID = require('@uppy/utils/lib/generateFileID')
 const supportsUploadProgress = require('./supportsUploadProgress')
 const getFileName = require('./getFileName')
 const { justErrorsLogger, debugLogger } = require('./loggers')
+const {
+  Restricter,
+  defaultOptions: defaultRestrictionOptions,
+  RestrictionError,
+} = require('./Restricter')
 
 const locale = require('./locale')
 
 // Exported from here.
-class RestrictionError extends Error {
-  constructor (...args) {
-    super(...args)
-    this.isRestriction = true
-  }
-}
-if (typeof AggregateError === 'undefined') {
-  // eslint-disable-next-line no-global-assign
-  globalThis.AggregateError = class AggregateError extends Error {
-    constructor (errors, message) {
-      super(message)
-      this.errors = errors
-    }
-  }
-}
-
-class AggregateRestrictionError extends AggregateError {
-  constructor (...args) {
-    super(...args)
-    this.isRestriction = true
-  }
-}
 
 /**
  * Uppy Core module.
@@ -54,6 +35,8 @@ class Uppy {
 
   /** @type {Record<string, BasePlugin[]>} */
   #plugins = Object.create(null)
+
+  #restricter = new Restricter()
 
   #storeUnsubscribe
 
@@ -82,15 +65,7 @@ class Uppy {
       allowMultipleUploads: true,
       allowMultipleUploadBatches: true,
       debug: false,
-      restrictions: {
-        maxFileSize: null,
-        minFileSize: null,
-        maxTotalFileSize: null,
-        maxNumberOfFiles: null,
-        minNumberOfFiles: null,
-        allowedFileTypes: null,
-        requiredMetaFields: [],
-      },
+      restrictions: defaultRestrictionOptions,
       meta: {},
       onBeforeFileAdded: (currentFile) => currentFile,
       onBeforeUpload: (files) => files,
@@ -118,13 +93,14 @@ class Uppy {
       this.opts.logger = debugLogger
     }
 
-    this.log(`Using Core v${this.constructor.VERSION}`)
-
+    // TODO: move this to Restricter
     if (this.opts.restrictions.allowedFileTypes
         && this.opts.restrictions.allowedFileTypes !== null
         && !Array.isArray(this.opts.restrictions.allowedFileTypes)) {
       throw new TypeError('`restrictions.allowedFileTypes` must be an array')
     }
+
+    this.log(`Using Core v${this.constructor.VERSION}`)
 
     this.i18nInit()
 
@@ -401,150 +377,6 @@ class Uppy {
   }
 
   /**
-   * A public wrapper for _checkRestrictions — checks if a file passes a set of restrictions.
-   * For use in UI pluigins (like Providers), to disallow selecting files that won’t pass restrictions.
-   *
-   * @param {object} file object to check
-   * @param {Array} [files] array to check maxNumberOfFiles and maxTotalFileSize
-   * @returns {object} { result: true/false, reason: why file didn’t pass restrictions }
-   */
-  validateRestrictions (file, files) {
-    try {
-      this.#checkRestrictions(file, files)
-      return {
-        result: true,
-      }
-    } catch (err) {
-      return {
-        result: false,
-        reason: err.message,
-      }
-    }
-  }
-
-  /**
-   * Check if file passes a set of restrictions set in options: maxFileSize, minFileSize,
-   * maxNumberOfFiles and allowedFileTypes.
-   *
-   * @param {object} file object to check
-   * @param {Array} [files] array to check maxNumberOfFiles and maxTotalFileSize
-   * @private
-   */
-  #checkRestrictions (file, files = this.getFiles()) {
-    const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
-
-    if (maxNumberOfFiles) {
-      if (files.length + 1 > maxNumberOfFiles) {
-        throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
-      }
-    }
-
-    if (allowedFileTypes) {
-      const isCorrectFileType = allowedFileTypes.some((type) => {
-        // check if this is a mime-type
-        if (type.indexOf('/') > -1) {
-          if (!file.type) return false
-          return match(file.type.replace(/;.*?$/, ''), type)
-        }
-
-        // otherwise this is likely an extension
-        if (type[0] === '.' && file.extension) {
-          return file.extension.toLowerCase() === type.substr(1).toLowerCase()
-        }
-        return false
-      })
-
-      if (!isCorrectFileType) {
-        const allowedFileTypesString = allowedFileTypes.join(', ')
-        throw new RestrictionError(this.i18n('youCanOnlyUploadFileTypes', { types: allowedFileTypesString }))
-      }
-    }
-
-    // We can't check maxTotalFileSize if the size is unknown.
-    if (maxTotalFileSize && file.size != null) {
-      let totalFilesSize = 0
-      totalFilesSize += file.size
-      files.forEach((f) => {
-        totalFilesSize += f.size
-      })
-      if (totalFilesSize > maxTotalFileSize) {
-        throw new RestrictionError(this.i18n('exceedsSize', {
-          size: prettierBytes(maxTotalFileSize),
-          file: file.name,
-        }))
-      }
-    }
-
-    // We can't check maxFileSize if the size is unknown.
-    if (maxFileSize && file.size != null) {
-      if (file.size > maxFileSize) {
-        throw new RestrictionError(this.i18n('exceedsSize', {
-          size: prettierBytes(maxFileSize),
-          file: file.name,
-        }))
-      }
-    }
-
-    // We can't check minFileSize if the size is unknown.
-    if (minFileSize && file.size != null) {
-      if (file.size < minFileSize) {
-        throw new RestrictionError(this.i18n('inferiorSize', {
-          size: prettierBytes(minFileSize),
-        }))
-      }
-    }
-  }
-
-  /**
-   * Check if minNumberOfFiles restriction is reached before uploading.
-   *
-   * @private
-   */
-  #checkMinNumberOfFiles (files) {
-    const { minNumberOfFiles } = this.opts.restrictions
-    if (Object.keys(files).length < minNumberOfFiles) {
-      throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
-    }
-  }
-
-  /**
-   * Check if requiredMetaField restriction is met for a specific file.
-   *
-   */
-  #checkRequiredMetaFieldsOnFile (file) {
-    const { requiredMetaFields } = this.opts.restrictions
-    const { hasOwnProperty } = Object.prototype
-
-    const errors = []
-    const missingFields = []
-    for (let i = 0; i < requiredMetaFields.length; i++) {
-      if (!hasOwnProperty.call(file.meta, requiredMetaFields[i]) || file.meta[requiredMetaFields[i]] === '') {
-        const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
-        errors.push(err)
-        missingFields.push(requiredMetaFields[i])
-        this.#showOrLogErrorAndThrow(err, { file, showInformer: false, throwErr: false })
-      }
-    }
-    this.setFileState(file.id, { missingRequiredMetaFields: missingFields })
-    return errors
-  }
-
-  /**
-   * Check if requiredMetaField restriction is met before uploading.
-   *
-   */
-  #checkRequiredMetaFields (files) {
-    const errors = Object.keys(files).flatMap((fileID) => {
-      const file = this.getFile(fileID)
-      return this.#checkRequiredMetaFieldsOnFile(file)
-    })
-
-    if (errors.length) {
-      throw new AggregateRestrictionError(errors, `${this.i18n('missingRequiredMetaField')}`)
-    }
-  }
-
-  /**
    * Logs an error, sets Informer message, then throws the error.
    * Emits a 'restriction-failed' event if it’s a restriction error
    *
@@ -580,6 +412,15 @@ class Uppy {
 
     if (throwErr) {
       throw (typeof err === 'object' ? err : new Error(err))
+    }
+  }
+
+  validateRestrictions (file, files = this.getFiles()) {
+    try {
+      this.#restricter.validate(file, files, { opts: this.opts, i18n: this.i18n })
+      return { result: true }
+    } catch (err) {
+      return { result: false, reason: err.message }
     }
   }
 
@@ -665,7 +506,11 @@ class Uppy {
 
     try {
       const filesArray = Object.keys(files).map(i => files[i])
-      this.#checkRestrictions(newFile, filesArray)
+      this.#restricter.validate(newFile, filesArray, {
+        opts: this.opts,
+        i18n: this.i18n,
+        getFiles: this.getFiles.bind(this),
+      })
     } catch (err) {
       this.#showOrLogErrorAndThrow(err, { file: newFile })
     }
@@ -1242,7 +1087,13 @@ class Uppy {
 
     this.on('dashboard:file-edit-complete', (file) => {
       if (file) {
-        this.#checkRequiredMetaFieldsOnFile(file)
+        const ctx = {
+          setFileState: this.setFileState.bind(this),
+          i18n: this.i18n,
+          opts: this.opts,
+          showOrLogErrorAndThrow: this.#showOrLogErrorAndThrow.bind(this),
+        }
+        this.#restricter.checkRequiredMetaFieldsOnFile(file, ctx)
       }
     })
 
@@ -1671,8 +1522,14 @@ class Uppy {
 
     return Promise.resolve()
       .then(() => {
-        this.#checkMinNumberOfFiles(files)
-        this.#checkRequiredMetaFields(files)
+        this.#restricter.checkMinNumberOfFiles(files, { opts: this.opts, i18n: this.i18n })
+        this.#restricter.checkRequiredMetaFields(files, {
+          setFileState: this.setFileState.bind(this),
+          i18n: this.i18n,
+          opts: this.opts,
+          getFile: this.getFile.bind(this),
+          showOrLogErrorAndThrow: this.#showOrLogErrorAndThrow.bind(this),
+        })
       })
       .catch((err) => {
         this.#showOrLogErrorAndThrow(err)
