@@ -255,7 +255,7 @@ class Uploader {
     const useFormData = useFormDataIsSet ? req.body.useFormData : true
 
     return {
-      // Client provided info.
+      // Client provided info (must be validated and not blindly trusted):
       headers: req.body.headers,
       httpMethod: req.body.httpMethod,
       protocol: req.body.protocol,
@@ -264,7 +264,8 @@ class Uploader {
       metadata: req.body.metadata,
       fieldname: req.body.fieldname,
       useFormData,
-      // Server provided info.
+
+      // Info coming from companion server configuration:
       size,
       companionOptions: req.companion.options,
       pathPrefix: `${req.companion.options.filePath}`,
