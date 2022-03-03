@@ -81,6 +81,7 @@ ru_RU.strings = {
   resumeUpload: 'Продолжить загрузку',
   retry: 'Повторить попытку',
   retryUpload: 'Повторить попытку загрузки',
+  save: 'Сохранить',
   saveChanges: 'Сохранить',
   selectX: {
     '0': 'Выбрать %{smart_count}',
