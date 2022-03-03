@@ -255,22 +255,25 @@ class Uploader {
     const useFormData = useFormDataIsSet ? req.body.useFormData : true
 
     return {
-      companionOptions: req.companion.options,
+      // Client provided info (must be validated and not blindly trusted):
+      headers: req.body.headers,
+      httpMethod: req.body.httpMethod,
+      protocol: req.body.protocol,
       endpoint: req.body.endpoint,
       uploadUrl: req.body.uploadUrl,
-      protocol: req.body.protocol,
       metadata: req.body.metadata,
-      httpMethod: req.body.httpMethod,
-      useFormData,
-      size,
       fieldname: req.body.fieldname,
+      useFormData,
+
+      // Info coming from companion server configuration:
+      size,
+      companionOptions: req.companion.options,
       pathPrefix: `${req.companion.options.filePath}`,
       storage: redis.client(),
       s3: req.companion.s3Client ? {
         client: req.companion.s3Client,
         options: req.companion.options.providerOptions.s3,
       } : null,
-      headers: req.body.headers,
       chunkSize: req.companion.options.chunkSize,
     }
   }
