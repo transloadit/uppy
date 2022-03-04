@@ -506,7 +506,6 @@ class Uppy {
       this.#restricter.validate(newFile, filesArray, {
         opts: this.opts,
         i18n: this.i18n,
-        getFiles: this.getFiles.bind(this),
       })
     } catch (err) {
       this.#showOrLogErrorAndThrow(err, { file: newFile })
