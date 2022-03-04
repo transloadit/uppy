@@ -503,10 +503,7 @@ class Uppy {
 
     try {
       const filesArray = Object.keys(files).map(i => files[i])
-      this.#restricter.validate(newFile, filesArray, {
-        opts: this.opts,
-        i18n: this.i18n,
-      })
+      this.#restricter.validate(newFile, filesArray)
     } catch (err) {
       this.#showOrLogErrorAndThrow(err, { file: newFile })
     }
