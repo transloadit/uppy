@@ -36,7 +36,7 @@ class Uppy {
   /** @type {Record<string, BasePlugin[]>} */
   #plugins = Object.create(null)
 
-  #restricter = new Restricter()
+  #restricter
 
   #storeUnsubscribe
 
@@ -93,13 +93,6 @@ class Uppy {
       this.opts.logger = debugLogger
     }
 
-    // TODO: move this to Restricter
-    if (this.opts.restrictions.allowedFileTypes
-        && this.opts.restrictions.allowedFileTypes !== null
-        && !Array.isArray(this.opts.restrictions.allowedFileTypes)) {
-      throw new TypeError('`restrictions.allowedFileTypes` must be an array')
-    }
-
     this.log(`Using Core v${this.constructor.VERSION}`)
 
     this.i18nInit()
@@ -129,6 +122,8 @@ class Uppy {
       info: [],
       recoveredState: null,
     })
+
+    this.#restricter = new Restricter(this.opts, this.i18n)
 
     this.#storeUnsubscribe = this.store.subscribe((prevState, nextState, patch) => {
       this.emit('state-update', prevState, nextState, patch)
@@ -236,6 +231,8 @@ class Uppy {
     }
 
     this.i18nInit()
+
+    this.#restricter.opts = this.opts
 
     if (newOpts.locale) {
       this.iteratePlugins((plugin) => {
@@ -417,7 +414,7 @@ class Uppy {
 
   validateRestrictions (file, files = this.getFiles()) {
     try {
-      this.#restricter.validate(file, files, { opts: this.opts, i18n: this.i18n })
+      this.#restricter.validate(file, files)
       return { result: true }
     } catch (err) {
       return { result: false, reason: err.message }
@@ -1088,10 +1085,8 @@ class Uppy {
     this.on('dashboard:file-edit-complete', (file) => {
       if (file) {
         const ctx = {
-          setFileState: this.setFileState.bind(this),
-          i18n: this.i18n,
-          opts: this.opts,
-          showOrLogErrorAndThrow: this.#showOrLogErrorAndThrow.bind(this),
+          setFileState: (...args) => this.setFileState(...args),
+          showOrLogErrorAndThrow: (...args) => this.#showOrLogErrorAndThrow(...args),
         }
         this.#restricter.checkRequiredMetaFieldsOnFile(file, ctx)
       }
@@ -1522,13 +1517,11 @@ class Uppy {
 
     return Promise.resolve()
       .then(() => {
-        this.#restricter.checkMinNumberOfFiles(files, { opts: this.opts, i18n: this.i18n })
+        this.#restricter.checkMinNumberOfFiles(files)
         this.#restricter.checkRequiredMetaFields(files, {
-          setFileState: this.setFileState.bind(this),
-          i18n: this.i18n,
-          opts: this.opts,
-          getFile: this.getFile.bind(this),
-          showOrLogErrorAndThrow: this.#showOrLogErrorAndThrow.bind(this),
+          setFileState: (...args) => this.setFileState(...args),
+          getFile: (...args) => this.getFile(...args),
+          showOrLogErrorAndThrow: (...args) => this.#showOrLogErrorAndThrow(...args),
         })
       })
       .catch((err) => {

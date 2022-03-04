@@ -38,12 +38,23 @@ class AggregateRestrictionError extends AggregateError {
 }
 
 class Restricter {
-  validate (file, files, ctx) {
-    const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = ctx.opts.restrictions
+  constructor (opts, i18n) {
+    this.opts = opts
+    this.i18n = i18n
+
+    if (this.opts.restrictions.allowedFileTypes
+        && this.opts.restrictions.allowedFileTypes !== null
+        && !Array.isArray(this.opts.restrictions.allowedFileTypes)) {
+      throw new TypeError('`restrictions.allowedFileTypes` must be an array')
+    }
+  }
+
+  validate (file, files) {
+    const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
 
     if (maxNumberOfFiles) {
       if (files.length + 1 > maxNumberOfFiles) {
-        throw new RestrictionError(`${ctx.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
+        throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
       }
     }
 
@@ -64,19 +75,16 @@ class Restricter {
 
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
-        throw new RestrictionError(ctx.i18n('youCanOnlyUploadFileTypes', { types: allowedFileTypesString }))
+        throw new RestrictionError(this.i18n('youCanOnlyUploadFileTypes', { types: allowedFileTypesString }))
       }
     }
 
     // We can't check maxTotalFileSize if the size is unknown.
     if (maxTotalFileSize && file.size != null) {
-      let totalFilesSize = 0
-      totalFilesSize += file.size
-      files.forEach((f) => {
-        totalFilesSize += f.size
-      })
+      const totalFilesSize = files.reduce((total, f) => (total + f.size), file.size)
+
       if (totalFilesSize > maxTotalFileSize) {
-        throw new RestrictionError(ctx.i18n('exceedsSize', {
+        throw new RestrictionError(this.i18n('exceedsSize', {
           size: prettierBytes(maxTotalFileSize),
           file: file.name,
         }))
@@ -86,7 +94,7 @@ class Restricter {
     // We can't check maxFileSize if the size is unknown.
     if (maxFileSize && file.size != null) {
       if (file.size > maxFileSize) {
-        throw new RestrictionError(ctx.i18n('exceedsSize', {
+        throw new RestrictionError(this.i18n('exceedsSize', {
           size: prettierBytes(maxFileSize),
           file: file.name,
         }))
@@ -96,29 +104,29 @@ class Restricter {
     // We can't check minFileSize if the size is unknown.
     if (minFileSize && file.size != null) {
       if (file.size < minFileSize) {
-        throw new RestrictionError(ctx.i18n('inferiorSize', {
+        throw new RestrictionError(this.i18n('inferiorSize', {
           size: prettierBytes(minFileSize),
         }))
       }
     }
   }
 
-  checkMinNumberOfFiles (files, ctx) {
-    const { minNumberOfFiles } = ctx.opts.restrictions
+  checkMinNumberOfFiles (files) {
+    const { minNumberOfFiles } = this.opts.restrictions
     if (Object.keys(files).length < minNumberOfFiles) {
-      throw new RestrictionError(`${ctx.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
+      throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
     }
   }
 
   checkRequiredMetaFieldsOnFile (file, ctx) {
-    const { requiredMetaFields } = ctx.opts.restrictions
+    const { requiredMetaFields } = this.opts.restrictions
     const own = Object.prototype.hasOwnProperty
-
     const errors = []
     const missingFields = []
+
     for (let i = 0; i < requiredMetaFields.length; i++) {
       if (!own.call(file.meta, requiredMetaFields[i]) || file.meta[requiredMetaFields[i]] === '') {
-        const err = new RestrictionError(`${ctx.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
+        const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
         errors.push(err)
         missingFields.push(requiredMetaFields[i])
         ctx.showOrLogErrorAndThrow(err, { file, showInformer: false, throwErr: false })
@@ -135,7 +143,7 @@ class Restricter {
     })
 
     if (errors.length) {
-      throw new AggregateRestrictionError(errors, `${ctx.i18n('missingRequiredMetaField')}`)
+      throw new AggregateRestrictionError(errors, `${this.i18n('missingRequiredMetaField')}`)
     }
   }
 }
