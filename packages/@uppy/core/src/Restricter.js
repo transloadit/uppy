@@ -27,10 +27,6 @@ if (typeof AggregateError === 'undefined') {
   }
 }
 
-class AggregateRestrictionError extends AggregateError {
-  isRestriction = true
-}
-
 class Restricter {
   constructor (opts, i18n) {
     this.opts = opts
@@ -105,40 +101,25 @@ class Restricter {
     }
   }
 
-  checkMinNumberOfFiles (files) {
+  validateMinNumberOfFiles (files) {
     const { minNumberOfFiles } = this.opts.restrictions
     if (Object.keys(files).length < minNumberOfFiles) {
       throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
     }
   }
 
-  checkRequiredMetaFieldsOnFile (file, ctx) {
+  validateFile (file) {
     const { requiredMetaFields } = this.opts.restrictions
     const own = Object.prototype.hasOwnProperty
-    const errors = []
-    const missingFields = []
+    const errorMap = new Map()
 
-    for (let i = 0; i < requiredMetaFields.length; i++) {
-      if (!own.call(file.meta, requiredMetaFields[i]) || file.meta[requiredMetaFields[i]] === '') {
-        const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
-        errors.push(err)
-        missingFields.push(requiredMetaFields[i])
-        ctx.showOrLogErrorAndThrow(err, { file, showInformer: false, throwErr: false })
+    for (const field of requiredMetaFields) {
+      if (!own.call(file.meta, field) || file.meta[field] === '') {
+        const error = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
+        errorMap.set(field, error)
       }
     }
-    ctx.setFileState(file.id, { missingRequiredMetaFields: missingFields })
-    return errors
-  }
-
-  checkRequiredMetaFields (files, ctx) {
-    const errors = Object.keys(files).flatMap((fileID) => {
-      const file = ctx.getFile(fileID)
-      return this.checkRequiredMetaFieldsOnFile(file, ctx)
-    })
-
-    if (errors.length) {
-      throw new AggregateRestrictionError(errors, `${this.i18n('missingRequiredMetaField')}`)
-    }
+    return errorMap
   }
 }
 

@@ -421,6 +421,22 @@ class Uppy {
     }
   }
 
+  checkRequiredMetaFieldsOnFile (file) {
+    const errorMap = this.#restricter.validateFile(file)
+
+    errorMap.forEach((_, error) => {
+      this.showOrLogErrorAndThrow(error, { file, showInformer: false, throwErr: false })
+    })
+
+    if (errorMap.size > 0) {
+      this.setFileState(file.id, { missingRequiredMetaFields: Array.from(errorMap.keys()) })
+    }
+  }
+
+  checkRequiredMetaFields (files) {
+    Object.values(files).forEach((file) => this.checkRequiredMetaFieldsOnFile(file))
+  }
+
   #assertNewUploadAllowed (file) {
     const { allowNewUpload } = this.getState()
 
@@ -1080,11 +1096,7 @@ class Uppy {
 
     this.on('dashboard:file-edit-complete', (file) => {
       if (file) {
-        const ctx = {
-          setFileState: (...args) => this.setFileState(...args),
-          showOrLogErrorAndThrow: (...args) => this.#showOrLogErrorAndThrow(...args),
-        }
-        this.#restricter.checkRequiredMetaFieldsOnFile(file, ctx)
+        this.checkRequiredMetaFieldsOnFile(file)
       }
     })
 
@@ -1513,12 +1525,8 @@ class Uppy {
 
     return Promise.resolve()
       .then(() => {
-        this.#restricter.checkMinNumberOfFiles(files)
-        this.#restricter.checkRequiredMetaFields(files, {
-          setFileState: (...args) => this.setFileState(...args),
-          getFile: (...args) => this.getFile(...args),
-          showOrLogErrorAndThrow: (...args) => this.#showOrLogErrorAndThrow(...args),
-        })
+        this.#restricter.validateMinNumberOfFiles(files)
+        this.checkRequiredMetaFields(files)
       })
       .catch((err) => {
         this.#showOrLogErrorAndThrow(err)
