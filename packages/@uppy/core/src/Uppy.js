@@ -372,46 +372,21 @@ class Uppy {
     }
   }
 
-  /**
-   * Logs an error, sets Informer message, then throws the error.
-   * Emits a 'restriction-failed' event if it’s a restriction error
-   *
-   * @param {object | string} err — Error object or plain string message
-   * @param {object} [options]
-   * @param {boolean} [options.showInformer=true] — Sometimes developer might want to show Informer manually
-   * @param {object} [options.file=null] — File object used to emit the restriction error
-   * @param {boolean} [options.throwErr=true] — Errors shouldn’t be thrown, for example, in `upload-error` event
-   * @private
-   */
-  #showOrLogErrorAndThrow (err, { showInformer = true, file = null, throwErr = true } = {}) {
-    const message = typeof err === 'object' ? err.message : err
-    const details = (typeof err === 'object' && err.details) ? err.details : ''
+  #informAndEmit (error, file) {
+    const { message, details = '' } = error
 
-    // Restriction errors should be logged, but not as errors,
-    // as they are expected and shown in the UI.
-    let logMessageWithDetails = message
-    if (details) {
-      logMessageWithDetails += ` ${details}`
-    }
-    if (err.isRestriction) {
-      this.log(logMessageWithDetails)
-      this.emit('restriction-failed', file, err)
+    if (error.isRestriction) {
+      this.emit('restriction-failed', file, error)
     } else {
-      this.log(logMessageWithDetails, 'error')
+      this.emit('error', error)
     }
-
-    // Sometimes informer has to be shown manually by the developer,
-    // for example, in `onBeforeFileAdded`.
-    if (showInformer) {
-      this.info({ message, details }, 'error', this.opts.infoTimeout)
-    }
-
-    if (throwErr) {
-      throw (typeof err === 'object' ? err : new Error(err))
-    }
+    this.info({ message, details }, 'error', this.opts.infoTimeout)
+    this.log(`${error.message} ${error.details}`.trim(), 'error')
   }
 
   validateRestrictions (file, files = this.getFiles()) {
+    // TODO: directly return the Restriction error in next major version.
+    // we create RestrictionError's just to discard immediately, which doesn't make sense.
     try {
       this.#restricter.validate(file, files)
       return { result: true }
@@ -421,26 +396,28 @@ class Uppy {
   }
 
   #checkRequiredMetaFieldsOnFile (file) {
-    const errorMap = this.#restricter.validateFile(file)
+    const { missingFields, error } = this.#restricter.getMissingRequiredMetaFields(file)
 
-    errorMap.forEach((_, error) => {
-      this.showOrLogErrorAndThrow(error, { file, showInformer: false, throwErr: false })
-    })
-
-    if (errorMap.size > 0) {
-      this.setFileState(file.id, { missingRequiredMetaFields: Array.from(errorMap.keys()) })
+    if (missingFields.length > 0) {
+      this.setFileState(file.id, { missingRequiredMetaFields: missingFields })
+      this.log(error.message)
+      this.emit('restriction-failed', file, error)
+      return false
     }
+    return true
   }
 
   #checkRequiredMetaFields (files) {
-    Object.values(files).forEach((file) => this.#checkRequiredMetaFieldsOnFile(file))
+    return Object.values(files).every((file) => this.#checkRequiredMetaFieldsOnFile(file))
   }
 
   #assertNewUploadAllowed (file) {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      this.#showOrLogErrorAndThrow(new RestrictionError(this.i18n('noMoreFilesAllowed')), { file })
+      const error = new RestrictionError(this.i18n('noMoreFilesAllowed'))
+      this.#informAndEmit(error, file)
+      throw error
     }
   }
 
@@ -473,7 +450,8 @@ class Uppy {
 
     if (this.checkIfFileAlreadyExists(fileID)) {
       const error = new RestrictionError(this.i18n('noDuplicates', { fileName }))
-      this.#showOrLogErrorAndThrow(error, { file: fileDescriptor })
+      this.#informAndEmit(error, fileDescriptor)
+      throw error
     }
 
     const meta = fileDescriptor.meta || {}
@@ -511,7 +489,9 @@ class Uppy {
 
     if (onBeforeFileAddedResult === false) {
       // Don’t show UI info for this error, as it should be done by the developer
-      this.#showOrLogErrorAndThrow(new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.'), { showInformer: false, fileDescriptor })
+      const error = new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.')
+      this.emit('restriction-failed', fileDescriptor, error)
+      throw error
     } else if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult !== null) {
       newFile = onBeforeFileAddedResult
     }
@@ -520,7 +500,8 @@ class Uppy {
       const filesArray = Object.keys(files).map(i => files[i])
       this.#restricter.validate(newFile, filesArray)
     } catch (err) {
-      this.#showOrLogErrorAndThrow(err, { file: newFile })
+      this.#informAndEmit(err, newFile)
+      throw err
     }
 
     return newFile
@@ -972,13 +953,9 @@ class Uppy {
           newError.details += ` ${error.details}`
         }
         newError.message = this.i18n('failedToUpload', { file: file.name })
-        this.#showOrLogErrorAndThrow(newError, {
-          throwErr: false,
-        })
+        this.#informAndEmit(newError)
       } else {
-        this.#showOrLogErrorAndThrow(error, {
-          throwErr: false,
-        })
+        this.#informAndEmit(error)
       }
     })
 
@@ -1525,10 +1502,13 @@ class Uppy {
     return Promise.resolve()
       .then(() => {
         this.#restricter.validateMinNumberOfFiles(files)
-        this.#checkRequiredMetaFields(files)
+        if (!this.#checkRequiredMetaFields(files)) {
+          throw new RestrictionError(this.i18n('missingRequiredMetaFields'))
+        }
       })
       .catch((err) => {
-        this.#showOrLogErrorAndThrow(err)
+        this.#informAndEmit(err, files)
+        throw err
       })
       .then(() => {
         const { currentUploads } = this.getState()
@@ -1548,9 +1528,9 @@ class Uppy {
         return this.#runUpload(uploadID)
       })
       .catch((err) => {
-        this.#showOrLogErrorAndThrow(err, {
-          showInformer: false,
-        })
+        // TODO: error handling is happening in too many places for upload above
+        // It is also handled (emit and such) in runUpload and such.
+        throw err
       })
   }
 }

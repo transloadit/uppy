@@ -106,23 +106,24 @@ class Restricter {
   validateMinNumberOfFiles (files) {
     const { minNumberOfFiles } = this.getOpts().restrictions
     if (Object.keys(files).length < minNumberOfFiles) {
-      throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
+      throw new RestrictionError(this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles }))
     }
   }
 
-  validateFile (file) {
+  getMissingRequiredMetaFields (file) {
+    const error = new RestrictionError(this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name }))
     const { requiredMetaFields } = this.getOpts().restrictions
     // TODO: migrate to Object.hasOwn in the next major.
     const own = Object.prototype.hasOwnProperty
-    const errorMap = new Map()
+    const missingFields = []
 
     for (const field of requiredMetaFields) {
       if (!own.call(file.meta, field) || file.meta[field] === '') {
-        const error = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
-        errorMap.set(field, error)
+        missingFields.push(field)
       }
     }
-    return errorMap
+
+    return { missingFields, error }
   }
 }
 
