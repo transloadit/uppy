@@ -420,7 +420,7 @@ class Uppy {
     }
   }
 
-  checkRequiredMetaFieldsOnFile (file) {
+  #checkRequiredMetaFieldsOnFile (file) {
     const errorMap = this.#restricter.validateFile(file)
 
     errorMap.forEach((_, error) => {
@@ -432,8 +432,8 @@ class Uppy {
     }
   }
 
-  checkRequiredMetaFields (files) {
-    Object.values(files).forEach((file) => this.checkRequiredMetaFieldsOnFile(file))
+  #checkRequiredMetaFields (files) {
+    Object.values(files).forEach((file) => this.#checkRequiredMetaFieldsOnFile(file))
   }
 
   #assertNewUploadAllowed (file) {
@@ -1095,7 +1095,7 @@ class Uppy {
 
     this.on('dashboard:file-edit-complete', (file) => {
       if (file) {
-        this.checkRequiredMetaFieldsOnFile(file)
+        this.#checkRequiredMetaFieldsOnFile(file)
       }
     })
 
@@ -1525,7 +1525,7 @@ class Uppy {
     return Promise.resolve()
       .then(() => {
         this.#restricter.validateMinNumberOfFiles(files)
-        this.checkRequiredMetaFields(files)
+        this.#checkRequiredMetaFields(files)
       })
       .catch((err) => {
         this.#showOrLogErrorAndThrow(err)
