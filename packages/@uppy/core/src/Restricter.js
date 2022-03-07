@@ -19,6 +19,7 @@ class RestrictionError extends Error {
 
 if (typeof AggregateError === 'undefined') {
   // eslint-disable-next-line no-global-assign
+  // TODO: remove this "polyfill" in the next major.
   globalThis.AggregateError = class AggregateError extends Error {
     constructor (errors, message) {
       super(message)
@@ -52,7 +53,7 @@ class Restricter {
     if (allowedFileTypes) {
       const isCorrectFileType = allowedFileTypes.some((type) => {
         // check if this is a mime-type
-        if (type.indexOf('/') > -1) {
+        if (type.includes('/')) {
           if (!file.type) return false
           return match(file.type.replace(/;.*?$/, ''), type)
         }
@@ -111,6 +112,7 @@ class Restricter {
 
   validateFile (file) {
     const { requiredMetaFields } = this.getOpts().restrictions
+    // TODO: migrate to Object.hasOwn in the next major.
     const own = Object.prototype.hasOwnProperty
     const errorMap = new Map()
 
