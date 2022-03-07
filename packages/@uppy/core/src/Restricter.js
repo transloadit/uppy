@@ -30,14 +30,16 @@ if (typeof AggregateError === 'undefined') {
 
 class Restricter {
   constructor (getOpts, i18n) {
-    this.getOpts = getOpts
     this.i18n = i18n
+    this.getOpts = () => {
+      const opts = getOpts()
 
-    const opts = getOpts()
-    if (opts.restrictions.allowedFileTypes
-        && opts.restrictions.allowedFileTypes !== null
-        && !Array.isArray(opts.restrictions.allowedFileTypes)) {
-      throw new TypeError('`restrictions.allowedFileTypes` must be an array')
+      if (opts.restrictions.allowedFileTypes
+          && opts.restrictions.allowedFileTypes !== null
+          && !Array.isArray(opts.restrictions.allowedFileTypes)) {
+        throw new TypeError('`restrictions.allowedFileTypes` must be an array')
+      }
+      return opts
     }
   }
 

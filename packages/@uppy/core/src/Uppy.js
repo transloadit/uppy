@@ -123,8 +123,7 @@ class Uppy {
       recoveredState: null,
     })
 
-    const getOpts = () => this.opts
-    this.#restricter = new Restricter(getOpts.bind(this), this.i18n)
+    this.#restricter = new Restricter(() => this.opts, this.i18n)
 
     this.#storeUnsubscribe = this.store.subscribe((prevState, nextState, patch) => {
       this.emit('state-update', prevState, nextState, patch)
