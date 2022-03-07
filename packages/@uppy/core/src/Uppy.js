@@ -123,7 +123,8 @@ class Uppy {
       recoveredState: null,
     })
 
-    this.#restricter = new Restricter(this.opts, this.i18n)
+    const getOpts = () => this.opts
+    this.#restricter = new Restricter(getOpts.bind(this), this.i18n)
 
     this.#storeUnsubscribe = this.store.subscribe((prevState, nextState, patch) => {
       this.emit('state-update', prevState, nextState, patch)
@@ -231,8 +232,6 @@ class Uppy {
     }
 
     this.i18nInit()
-
-    this.#restricter.opts = this.opts
 
     if (newOpts.locale) {
       this.iteratePlugins((plugin) => {

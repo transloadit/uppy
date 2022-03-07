@@ -28,19 +28,20 @@ if (typeof AggregateError === 'undefined') {
 }
 
 class Restricter {
-  constructor (opts, i18n) {
-    this.opts = opts
+  constructor (getOpts, i18n) {
+    this.getOpts = getOpts
     this.i18n = i18n
 
-    if (this.opts.restrictions.allowedFileTypes
-        && this.opts.restrictions.allowedFileTypes !== null
-        && !Array.isArray(this.opts.restrictions.allowedFileTypes)) {
+    const opts = getOpts()
+    if (opts.restrictions.allowedFileTypes
+        && opts.restrictions.allowedFileTypes !== null
+        && !Array.isArray(opts.restrictions.allowedFileTypes)) {
       throw new TypeError('`restrictions.allowedFileTypes` must be an array')
     }
   }
 
   validate (file, files) {
-    const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
+    const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.getOpts().restrictions
 
     if (maxNumberOfFiles) {
       if (files.length + 1 > maxNumberOfFiles) {
@@ -102,14 +103,14 @@ class Restricter {
   }
 
   validateMinNumberOfFiles (files) {
-    const { minNumberOfFiles } = this.opts.restrictions
+    const { minNumberOfFiles } = this.getOpts().restrictions
     if (Object.keys(files).length < minNumberOfFiles) {
       throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
     }
   }
 
   validateFile (file) {
-    const { requiredMetaFields } = this.opts.restrictions
+    const { requiredMetaFields } = this.getOpts().restrictions
     const own = Object.prototype.hasOwnProperty
     const errorMap = new Map()
 
