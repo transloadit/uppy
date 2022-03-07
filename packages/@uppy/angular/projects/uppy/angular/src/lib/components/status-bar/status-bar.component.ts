@@ -10,8 +10,8 @@ import { UppyAngularWrapper } from '../../utils/wrapper';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatusBarComponent extends UppyAngularWrapper implements OnDestroy, OnChanges  {
-  @Input() uppy: Uppy;
-  @Input() props: StatusBarOptions;
+  @Input() uppy: Uppy = new Uppy;
+  @Input() props: StatusBarOptions = {};
 
   constructor(public el: ElementRef) {
     super();

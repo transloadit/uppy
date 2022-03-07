@@ -143,10 +143,18 @@ describe('AwsS3Multipart', () => {
 
       await core.upload()
 
+      function validatePartData ({ partNumbers, chunks }, expected) {
+        expect(partNumbers).toEqual(expected)
+        partNumbers.forEach(partNumber => {
+          expect(chunks[partNumber]).toBeDefined()
+        })
+      }
+
       expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(3)
-      expect(awsS3Multipart.opts.prepareUploadParts.mock.calls[0][1].partNumbers).toEqual([1, 2, 3, 4, 5])
-      expect(awsS3Multipart.opts.prepareUploadParts.mock.calls[1][1].partNumbers).toEqual([6, 7, 8])
-      expect(awsS3Multipart.opts.prepareUploadParts.mock.calls[2][1].partNumbers).toEqual([9, 10])
+
+      validatePartData(awsS3Multipart.opts.prepareUploadParts.mock.calls[0][1], [1, 2, 3, 4, 5])
+      validatePartData(awsS3Multipart.opts.prepareUploadParts.mock.calls[1][1], [6, 7, 8])
+      validatePartData(awsS3Multipart.opts.prepareUploadParts.mock.calls[2][1], [9, 10])
 
       const completeCall = awsS3Multipart.opts.completeMultipartUpload.mock.calls[0][1]
 

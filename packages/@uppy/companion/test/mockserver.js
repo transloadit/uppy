@@ -11,6 +11,7 @@ const defaultEnv = {
   COMPANION_HIDE_WELCOME: 'false',
 
   COMPANION_STREAMING_UPLOAD: 'true',
+  COMPANION_ALLOW_LOCAL_URLS : 'false',
 
   COMPANION_PROTOCOL: 'http',
   COMPANION_DATADIR: './test/output',
@@ -31,6 +32,10 @@ const defaultEnv = {
   COMPANION_ZOOM_KEY: 'zoom_key',
   COMPANION_ZOOM_SECRET: 'zoom_secret',
   COMPANION_ZOOM_VERIFICATION_TOKEN: 'zoom_verfication_token',
+
+  COMPANION_PATH: '',
+
+  COMPANION_PERIODIC_PING_URLS: '',
 }
 
 function updateEnv (env) {

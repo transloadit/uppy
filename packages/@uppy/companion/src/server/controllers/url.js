@@ -11,9 +11,9 @@ const logger = require('../logger')
  * Validates that the download URL is secure
  *
  * @param {string} url the url to validate
- * @param {boolean} debug whether the server is running in debug mode
+ * @param {boolean} ignoreTld whether to allow local addresses
  */
-const validateURL = (url, debug) => {
+const validateURL = (url, ignoreTld) => {
   if (!url) {
     return false
   }
@@ -21,7 +21,7 @@ const validateURL = (url, debug) => {
   const validURLOpts = {
     protocols: ['http', 'https'],
     require_protocol: true,
-    require_tld: !debug,
+    require_tld: !ignoreTld,
   }
   if (!validator.isURL(url, validURLOpts)) {
     return false
@@ -83,13 +83,13 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
 const meta = async (req, res) => {
   try {
     logger.debug('URL file import handler running', null, req.id)
-    const { debug } = req.companion.options
-    if (!validateURL(req.body.url, debug)) {
+    const { allowLocalUrls } = req.companion.options
+    if (!validateURL(req.body.url, allowLocalUrls)) {
       logger.debug('Invalid request body detected. Exiting url meta handler.', null, req.id)
       return res.status(400).json({ error: 'Invalid request body' })
     }
 
-    const urlMeta = await getURLMeta(req.body.url, !debug)
+    const urlMeta = await getURLMeta(req.body.url, !allowLocalUrls)
     return res.json(urlMeta)
   } catch (err) {
     logger.error(err, 'controller.url.meta.error', req.id)
@@ -107,20 +107,20 @@ const meta = async (req, res) => {
  */
 const get = async (req, res) => {
   logger.debug('URL file import handler running', null, req.id)
-  const { debug } = req.companion.options
-  if (!validateURL(req.body.url, debug)) {
+  const { allowLocalUrls } = req.companion.options
+  if (!validateURL(req.body.url, allowLocalUrls)) {
     logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
     res.status(400).json({ error: 'Invalid request body' })
     return
   }
 
   async function getSize () {
-    const { size } = await getURLMeta(req.body.url, !debug)
+    const { size } = await getURLMeta(req.body.url, !allowLocalUrls)
     return size
   }
 
   async function download () {
-    return downloadURL(req.body.url, !debug, req.id)
+    return downloadURL(req.body.url, !allowLocalUrls, req.id)
   }
 
   function onUnhandledError (err) {

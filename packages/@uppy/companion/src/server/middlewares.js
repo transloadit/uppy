@@ -130,8 +130,8 @@ exports.cors = (options = {}) => (req, res, next) => {
   })(req, res, next)
 }
 
-exports.metrics = () => {
-  const metricsMiddleware = promBundle({ includeMethod: true })
+exports.metrics = ({ path = undefined } = {}) => {
+  const metricsMiddleware = promBundle({ includeMethod: true, metricsPath: path ? `${path}/metrics` : undefined })
   // @ts-ignore Not in the typings, but it does exist
   const { promClient } = metricsMiddleware
   const { collectDefaultMetrics } = promClient

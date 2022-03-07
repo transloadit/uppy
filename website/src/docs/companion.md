@@ -246,6 +246,9 @@ export COMPANION_UPLOAD_URLS="http://tusd.tusdemo.net/files/,https://tusd.tusdem
 # corresponds to the streamingUpload option
 export COMPANION_STREAMING_UPLOAD=true
 
+# corresponds to the allowLocalUrls option
+export COMPANION_ALLOW_LOCAL_URLS=false
+
 # corresponds to the maxFileSize option
 export COMPANION_MAX_FILE_SIZE="100000000"
 
@@ -309,6 +312,7 @@ const options = {
   debug: true,
   metrics: false,
   streamingUpload: true,
+  allowLocalUrls: false,
   maxFileSize: 100000000,
   periodicPingUrls: [],
   periodicPingInterval: 60000,
@@ -358,6 +362,8 @@ const options = {
 17. **periodicPingInterval(optional)** - Interval for periodic ping requests (in ms).
 
 18. **periodicPingStaticPayload(optional)** - A `JSON.stringify`-able JavaScript Object that will be sent as part of the JSON body in the period ping requests.
+
+19. **allowLocalUrls(optional)** - A boolean flag to tell Companion whether to allow requesting local URLs. Note: Only enable this in development. **Enabling it in production is a security risk.**
 
 ### Provider Redirect URIs
 

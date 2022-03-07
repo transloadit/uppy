@@ -248,6 +248,11 @@ class MultipartUploader {
         key: this.key,
         uploadId: this.uploadId,
         partNumbers: candidates.map((index) => index + 1),
+        chunks: candidates.reduce((chunks, candidate) => ({
+          ...chunks,
+          // Use the part number as the index
+          [candidate + 1]: this.chunks[candidate],
+        }), {}),
       }),
     })
 

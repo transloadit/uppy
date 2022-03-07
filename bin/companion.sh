@@ -11,6 +11,7 @@ else
     COMPANION_PORT=3020 \
     COMPANION_CLIENT_ORIGINS="" \
     COMPANION_SECRET="development" \
+    COMPANION_ALLOW_LOCAL_URLS="true" \
     nodemon --watch packages/@uppy/companion/src --exec node ./packages/@uppy/companion/src/standalone/start-server.js
 fi
 

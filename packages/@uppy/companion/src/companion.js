@@ -41,7 +41,7 @@ const defaultOptions = {
       expires: ms('5 minutes') / 1000,
     },
   },
-  debug: true,
+  allowLocalUrls: false,
   logClientVersion: true,
   periodicPingUrls: [],
   streamingUpload: false,
@@ -82,7 +82,18 @@ module.exports.app = (options = {}) => {
   const app = express()
 
   if (options.metrics) {
-    app.use(middlewares.metrics())
+    app.use(middlewares.metrics({ path: options.server.path }))
+
+    // backward compatibility
+    // TODO remove in next major semver
+    if (options.server.path) {
+      const buildUrl = getURLBuilder(options)
+      app.get('/metrics', (req, res) => {
+        process.emitWarning('/metrics is deprecated when specifying a path to companion')
+        const metricsUrl = buildUrl('/metrics', true)
+        res.redirect(metricsUrl)
+      })
+    }
   }
 
   app.use(cookieParser()) // server tokens are added to cookies

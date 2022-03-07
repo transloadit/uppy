@@ -10,9 +10,9 @@ import { UppyAngularWrapper } from '../../utils/wrapper';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardModalComponent extends UppyAngularWrapper<Dashboard> implements OnDestroy, OnChanges {
-  @Input() uppy: Uppy;
-  @Input() props: DashboardOptions;
-  @Input() open: boolean;
+  @Input() uppy: Uppy = new Uppy;
+  @Input() props: DashboardOptions = {};
+  @Input() open: boolean = false;
 
   constructor(public el: ElementRef) {
     super();
@@ -29,12 +29,12 @@ export class DashboardModalComponent extends UppyAngularWrapper<Dashboard> imple
   ngOnChanges(changes: SimpleChanges): void {
     this.handleChanges(changes, Dashboard);
     // Handle dashboard-modal specific changes
-    if (changes.open && this.open !== changes.open.previousValue) {
-      if(this.open && !changes.open.previousValue) {
-        this.plugin.openModal()
+    if (changes['open'] && this.open !== changes['open'].previousValue) {
+      if(this.open && !changes['open'].previousValue) {
+        this.plugin!.openModal()
       }
-      if (!this.open && changes.open.previousValue) {
-        this.plugin.closeModal()
+      if (!this.open && changes['open'].previousValue) {
+        this.plugin!.closeModal()
       }
     }
   }

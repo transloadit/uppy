@@ -255,22 +255,25 @@ class Uploader {
     const useFormData = useFormDataIsSet ? req.body.useFormData : true
 
     return {
-      companionOptions: req.companion.options,
+      // Client provided info (must be validated and not blindly trusted):
+      headers: req.body.headers,
+      httpMethod: req.body.httpMethod,
+      protocol: req.body.protocol,
       endpoint: req.body.endpoint,
       uploadUrl: req.body.uploadUrl,
-      protocol: req.body.protocol,
       metadata: req.body.metadata,
-      httpMethod: req.body.httpMethod,
-      useFormData,
-      size,
       fieldname: req.body.fieldname,
+      useFormData,
+
+      // Info coming from companion server configuration:
+      size,
+      companionOptions: req.companion.options,
       pathPrefix: `${req.companion.options.filePath}`,
       storage: redis.client(),
       s3: req.companion.s3Client ? {
         client: req.companion.s3Client,
         options: req.companion.options.providerOptions.s3,
       } : null,
-      headers: req.body.headers,
       chunkSize: req.companion.options.chunkSize,
     }
   }
@@ -600,6 +603,14 @@ class Uploader {
     const filename = this.uploadFileName
     const { client, options } = this.options.s3
 
+    function getPartSize (chunkSize) {
+      // backwards compatibility https://github.com/transloadit/uppy/pull/3511#issuecomment-1050797935
+      // requires min 5MiB and max 5GiB partSize
+      // todo remove this logic in the next major semver
+      if (chunkSize == null || chunkSize >= 5368709120 || chunkSize <= 5242880) return undefined
+      return chunkSize
+    }
+
     const upload = client.upload({
       Bucket: options.bucket,
       Key: options.getKey(null, filename, this.options.metadata),
@@ -607,6 +618,8 @@ class Uploader {
       ContentType: this.options.metadata.type,
       Metadata: this.options.metadata,
       Body: stream,
+    }, {
+      partSize: getPartSize(this.options.chunkSize),
     })
 
     upload.on('httpUploadProgress', ({ loaded, total }) => {

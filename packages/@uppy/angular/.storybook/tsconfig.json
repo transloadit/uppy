@@ -1,9 +1,10 @@
 {
-  "extends": "../projects/angular/tsconfig.lib.json",
+  "extends": "../projects/uppy/angular/tsconfig.lib.json",
   "compilerOptions": {
     "types": [
       "node"
-    ]
+    ],
+    "allowSyntheticDefaultImports": true
   },
   "exclude": [
     "../src/test.ts",
@@ -11,6 +12,7 @@
     "../projects/**/*.spec.ts"
   ],
   "include": [
+    "../src/**/*",
     "../projects/**/*"
   ],
   "files": [
