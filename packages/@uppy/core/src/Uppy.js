@@ -1502,7 +1502,7 @@ class Uppy {
       .then(() => {
         this.#restricter.validateMinNumberOfFiles(files)
         if (!this.#checkRequiredMetaFields(files)) {
-          throw new RestrictionError(this.i18n('missingRequiredMetaFields'))
+          throw new RestrictionError(this.i18n('missingRequiredMetaField'))
         }
       })
       .catch((err) => {
