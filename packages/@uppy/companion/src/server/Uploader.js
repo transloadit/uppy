@@ -427,10 +427,10 @@ class Uploader {
    * @param {string} url
    * @param {object} extraData
    */
-  emitSuccess (url, extraData = {}) {
+  emitSuccess (url, extraData) {
     const emitData = {
       action: 'success',
-      payload: Object.assign(extraData, { complete: true, url }),
+      payload: { ...extraData, complete: true, url },
     }
     this.saveState(emitData)
     emitter().emit(this.token, emitData)
@@ -441,13 +441,13 @@ class Uploader {
    * @param {Error} err
    */
   emitError (err) {
-    const serializedErr = serializeError(err)
     // delete stack to avoid sending server info to client
-    delete serializedErr.stack
+    // todo remove also extraData from serializedErr in next major
+    const { stack, ...serializedErr } = serializeError(err)
     const dataToEmit = {
       action: 'error',
       // @ts-ignore
-      payload: Object.assign(err.extraData || {}, { error: serializedErr }),
+      payload: { ...err.extraData, error: serializedErr },
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)
