@@ -11,6 +11,7 @@ async function startDownUpload ({ req, res, getSize, download, onUnhandledError 
     logger.debug('Instantiating uploader.', null, req.id)
     const uploader = new Uploader(Uploader.reqToOptions(req, size))
 
+    logger.debug('Starting download stream.', null, req.id)
     const stream = await download()
 
     // "Forking" off the upload operation to background, so we can return the http request:
