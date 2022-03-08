@@ -121,7 +121,7 @@ const config = {
                         ? specifiers.splice(1)
                         // If there's no default import, we create one from a random identifier.
                         : specifiers.splice(0, specifiers.length, t.importDefaultSpecifier(t.identifier(`_import_${counter++}`)))
-                      if (oldSpecifiers[0]?.type === 'ImportNamespaceSpecifier') {
+                      if (oldSpecifiers[0].type === 'ImportNamespaceSpecifier') {
                         // import defaultVal, * as namespaceImport from '@uppy/package'
                         // is transformed into:
                         // import defaultVal from '@uppy/package'; const namespaceImport = defaultVal
@@ -131,7 +131,7 @@ const config = {
                             specifiers[0].local,
                           )]),
                         )
-                      } else if (oldSpecifiers.length !== 0) {
+                      } else {
                         // import defaultVal, { exportedVal as importedName, other } from '@uppy/package'
                         // is transformed into:
                         // import defaultVal from '@uppy/package'; const { exportedVal: importedName, other } = defaultVal
