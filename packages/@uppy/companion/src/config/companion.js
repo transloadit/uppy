@@ -22,6 +22,7 @@ const defaultOptions = {
   logClientVersion: true,
   periodicPingUrls: [],
   streamingUpload: false,
+  clientSocketConnectTimeout: 60000,
 }
 
 /**

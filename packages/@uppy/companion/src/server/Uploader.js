@@ -360,7 +360,7 @@ class Uploader {
     return Uploader.shortenToken(this.token)
   }
 
-  async awaitReady (timeout = 60000) {
+  async awaitReady (timeout) {
     logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
 
     await new Promise((resolve, reject) => {
@@ -373,11 +373,13 @@ class Uploader {
         clearTimeout(timer)
       }
 
-      // Need to timeout after a while, or we could leak emitters
-      timer = setTimeout(() => {
-        cleanup()
-        reject(new Error('Timed out waiting for socket connection'))
-      }, timeout)
+      if (timeout) {
+        // Need to timeout after a while, or we could leak emitters
+        timer = setTimeout(() => {
+          cleanup()
+          reject(new Error('Timed out waiting for socket connection'))
+        }, timeout)
+      }
 
       onEvent = () => {
         cleanup()

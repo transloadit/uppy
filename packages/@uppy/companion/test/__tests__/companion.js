@@ -15,7 +15,8 @@ const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
 
-const authServer = getServer()
+// todo don't share server between tests. rewrite to not use env variables
+const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 const authData = {
   dropbox: 'token value',
   box: 'token value',

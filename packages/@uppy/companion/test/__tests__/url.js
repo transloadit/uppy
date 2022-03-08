@@ -14,7 +14,7 @@ jest.mock('../../src/server/helpers/request', () => {
 })
 const { getServer } = require('../mockserver')
 
-const mockServer = getServer()
+const mockServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 
 beforeAll(() => {
   nock('http://url.myendpoint.com').get('/files').reply(200, () => '')
