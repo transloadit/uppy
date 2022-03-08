@@ -9,6 +9,7 @@ const nock = require('nock')
 const Uploader = require('../../src/server/Uploader')
 const socketClient = require('../mocksocket')
 const standalone = require('../../src/standalone')
+const Emitter = require('../../src/server/emitter')
 
 afterAll(() => {
   nock.cleanAll()
@@ -68,6 +69,12 @@ describe('uploader with tus protocol', () => {
 
     const onProgress = jest.fn()
     const onUploadSuccess = jest.fn()
+    const onBeginUploadEvent = jest.fn()
+    const onUploadEvent = jest.fn()
+
+    const emitter = Emitter()
+    emitter.on('upload-start', onBeginUploadEvent)
+    emitter.on(uploadToken, onUploadEvent)
 
     const promise = uploader.awaitReady()
     // emulate socket connection
@@ -87,12 +94,16 @@ describe('uploader with tus protocol', () => {
         bytesTotal: fileContent.length,
       }),
     }))
+    const expectedPayload = expect.objectContaining({
+      // see __mocks__/tus-js-client.js
+      url: 'https://tus.endpoint/files/foo-bar',
+    })
     expect(onUploadSuccess).toHaveBeenCalledWith(expect.objectContaining({
-      payload: expect.objectContaining({
-        // see __mocks__/tus-js-client.js
-        url: 'https://tus.endpoint/files/foo-bar',
-      }),
+      payload: expectedPayload,
     }))
+
+    expect(onBeginUploadEvent).toHaveBeenCalledWith({ token: uploadToken })
+    expect(onUploadEvent).toHaveBeenLastCalledWith({ action: 'success', payload: expectedPayload })
   })
 
   test('upload functions with tus protocol without size', async () => {

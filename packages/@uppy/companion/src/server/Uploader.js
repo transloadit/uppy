@@ -219,6 +219,8 @@ class Uploader {
    */
   async tryUploadStream (stream) {
     try {
+      emitter().emit('upload-start', { token: this.token })
+
       const ret = await this.uploadStream(stream)
       if (!ret) return
       const { url, extraData } = ret
