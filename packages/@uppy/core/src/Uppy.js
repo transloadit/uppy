@@ -395,7 +395,7 @@ class Uppy {
       this.emit('error', error)
     }
     this.info({ message, details }, 'error', this.opts.infoTimeout)
-    this.log(`${error.message} ${error.details}`.trim(), 'error')
+    this.log(`${message} ${details}`.trim(), 'error')
   }
 
   validateRestrictions (file, files = this.getFiles()) {
@@ -1442,7 +1442,6 @@ class Uppy {
         currentUpload = currentUploads[uploadID]
       }
     } catch (err) {
-      this.emit('error', err)
       this.#removeUpload(uploadID)
       throw err
     }
@@ -1548,8 +1547,8 @@ class Uppy {
         return this.#runUpload(uploadID)
       })
       .catch((err) => {
-        // TODO: error handling is happening in too many places for upload above
-        // It is also handled (emit and such) in runUpload and such.
+        this.emit('error', err)
+        this.log(err, 'error')
         throw err
       })
   }
