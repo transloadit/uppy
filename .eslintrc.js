@@ -173,6 +173,7 @@ module.exports = {
       files: [
         // Packages that have switched to ESM sources:
         'packages/@uppy/audio/src/**/*.js',
+        'packages/@uppy/compressor/src/**/*.js',
       ],
       parserOptions: {
         sourceType: 'module',
