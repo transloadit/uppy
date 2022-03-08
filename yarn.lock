@@ -10524,7 +10524,7 @@ __metadata:
     morgan: 1.10.0
     ms: 2.1.2
     nock: ^13.1.3
-    node-redis-pubsub: 4.0.0
+    node-redis-pubsub: ^5.0.0
     node-schedule: 1.3.2
     prom-client: 12.0.0
     purest: 3.1.0
@@ -18496,13 +18496,6 @@ __metadata:
   version: 8.6.0
   resolution: "dotenv@npm:8.6.0"
   checksum: 38e902c80b0666ab59e9310a3d24ed237029a7ce34d976796349765ac96b8d769f6df19090f1f471b77a25ca391971efde8a1ea63bb83111bd8bec8e5cc9b2cd
-  languageName: node
-  linkType: hard
-
-"double-ended-queue@npm:^2.1.0-0":
-  version: 2.1.0-0
-  resolution: "double-ended-queue@npm:2.1.0-0"
-  checksum: 3030cf9dcf6f8e7d8cb6ae5b7304890445d7c32233a614e400ba7b378086ad76f5822d0e501afd5ffe0af1de4bcb842fa23d4c79174d54f6566399435fafc271
   languageName: node
   linkType: hard
 
@@ -31291,12 +31284,12 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"node-redis-pubsub@npm:4.0.0":
-  version: 4.0.0
-  resolution: "node-redis-pubsub@npm:4.0.0"
+"node-redis-pubsub@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "node-redis-pubsub@npm:5.0.0"
   dependencies:
-    redis: ^2.7.1
-  checksum: aabc15fc64ef62e5b79c861db9332b0eeeb2b3b541c24c2c63c2624960566a400e0b00850c1127d6eb224db5fdc4b7b912edadeb1ec3411faed5255037b84c29
+    redis: ^3.0.0
+  checksum: c151ee55e0e394ef23d1f79bb1c45c3e848741270677f6136c72e1f2dd452d97cffa2b30b1fd36cf7ee478f5208e64e1d553421c16af714cdd2a297bd0ec1639
   languageName: node
   linkType: hard
 
@@ -36542,7 +36535,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"redis-commands@npm:^1.2.0, redis-commands@npm:^1.7.0":
+"redis-commands@npm:^1.7.0":
   version: 1.7.0
   resolution: "redis-commands@npm:1.7.0"
   checksum: d1ff7fbcb5e54768c77f731f1d49679d2a62c3899522c28addb4e2e5813aea8bcac3f22519d71d330224c3f2937f935dfc3d8dc65e90db0f5fe22dc2c1515aa7
@@ -36553,13 +36546,6 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 1.2.0
   resolution: "redis-errors@npm:1.2.0"
   checksum: f28ac2692113f6f9c222670735aa58aeae413464fd58ccf3fce3f700cae7262606300840c802c64f2b53f19f65993da24dc918afc277e9e33ac1ff09edb394f4
-  languageName: node
-  linkType: hard
-
-"redis-parser@npm:^2.6.0":
-  version: 2.6.0
-  resolution: "redis-parser@npm:2.6.0"
-  checksum: 8d4936875e39d56a951e0bbb6653b4da1f7fdd727552c89561c3c78e7ffeb9c3e8820a78454e939b74d1ba20996d62ac179b4fc39d07340d10f8d52740399422
   languageName: node
   linkType: hard
 
@@ -36584,14 +36570,15 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   languageName: node
   linkType: hard
 
-"redis@npm:^2.7.1":
-  version: 2.8.0
-  resolution: "redis@npm:2.8.0"
+"redis@npm:^3.0.0":
+  version: 3.1.2
+  resolution: "redis@npm:3.1.2"
   dependencies:
-    double-ended-queue: ^2.1.0-0
-    redis-commands: ^1.2.0
-    redis-parser: ^2.6.0
-  checksum: e44dc50a9a92ede2c95b3166482a4b04373853fdbb72ab138e834b868a3cd446798742fc0f85de2d5e442f9c86f58e1250637ea71af3ad5527478d05ef430079
+    denque: ^1.5.0
+    redis-commands: ^1.7.0
+    redis-errors: ^1.2.0
+    redis-parser: ^3.0.0
+  checksum: baec42198626b22d2dfc063b6a6f30394daee994c21f380e58ecf91c3edee333c4e32907c30f082fe66d2177695f7b2567902eef399ecb22da3e199ea6363a30
   languageName: node
   linkType: hard
 
