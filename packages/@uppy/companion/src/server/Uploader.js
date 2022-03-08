@@ -366,9 +366,10 @@ class Uploader {
     await new Promise((resolve, reject) => {
       const eventName = `connection:${this.token}`
       let timer
+      let onEvent
 
       function cleanup () {
-        emitter().removeListener(eventName, resolve)
+        emitter().removeListener(eventName, onEvent)
         clearTimeout(timer)
       }
 
@@ -378,10 +379,12 @@ class Uploader {
         reject(new Error('Timed out waiting for socket connection'))
       }, timeout)
 
-      emitter().once(eventName, () => {
+      onEvent = () => {
         cleanup()
         resolve()
-      })
+      }
+
+      emitter().once(eventName, onEvent)
     })
 
     logger.debug('socket connection received', 'uploader.socket.wait', this.shortToken)
