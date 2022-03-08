@@ -66,38 +66,33 @@ describe('uploader with tus protocol', () => {
 
     let progressReceived = 0
 
-    await Promise.all([
-      (async () => {
-        const promise = uploader.awaitReady()
-        // emulate socket connection
-        socketClient.connect(uploadToken)
-        await promise
-        await uploader.tryUploadStream(stream)
-      })(),
-      new Promise((resolve, reject) => {
-        socketClient.onProgress(uploadToken, (message) => {
-          progressReceived = message.payload.bytesUploaded
-          try {
-            expect(message.payload.bytesTotal).toBe(fileContent.length)
-            resolve()
-          } catch (err) {
-            reject(err)
-          }
-        })
+    const onProgress = jest.fn()
+    const onUploadSuccess = jest.fn()
+
+    const promise = uploader.awaitReady()
+    // emulate socket connection
+    socketClient.connect(uploadToken)
+    socketClient.onProgress(uploadToken, (message) => {
+      progressReceived = message.payload.bytesUploaded
+      onProgress(message)
+    })
+    socketClient.onUploadSuccess(uploadToken, onUploadSuccess)
+    await promise
+    await uploader.tryUploadStream(stream)
+
+    expect(progressReceived).toBe(fileContent.length)
+
+    expect(onProgress).toHaveBeenLastCalledWith(expect.objectContaining({
+      payload: expect.objectContaining({
+        bytesTotal: fileContent.length,
       }),
-      new Promise((resolve, reject) => {
-        socketClient.onUploadSuccess(uploadToken, (message) => {
-          try {
-            expect(progressReceived).toBe(fileContent.length)
-            // see __mocks__/tus-js-client.js
-            expect(message.payload.url).toBe('https://tus.endpoint/files/foo-bar')
-            resolve()
-          } catch (err) {
-            reject(err)
-          }
-        })
+    }))
+    expect(onUploadSuccess).toHaveBeenCalledWith(expect.objectContaining({
+      payload: expect.objectContaining({
+        // see __mocks__/tus-js-client.js
+        url: 'https://tus.endpoint/files/foo-bar',
       }),
-    ])
+    }))
   })
 
   test('upload functions with tus protocol without size', async () => {
