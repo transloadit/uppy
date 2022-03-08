@@ -64,33 +64,40 @@ describe('uploader with tus protocol', () => {
     const uploadToken = uploader.token
     expect(uploadToken).toBeTruthy()
 
-    return new Promise((resolve, reject) => {
-      // validate that the test is resolved on socket connection
-      uploader.awaitReady().then(() => {
-        uploader.tryUploadStream(stream).then(() => resolve())
-      })
+    let progressReceived = 0
 
-      let progressReceived = 0
-      // emulate socket connection
-      socketClient.connect(uploadToken)
-      socketClient.onProgress(uploadToken, (message) => {
-        progressReceived = message.payload.bytesUploaded
-        try {
-          expect(message.payload.bytesTotal).toBe(fileContent.length)
-        } catch (err) {
-          reject(err)
-        }
-      })
-      socketClient.onUploadSuccess(uploadToken, (message) => {
-        try {
-          expect(progressReceived).toBe(fileContent.length)
-          // see __mocks__/tus-js-client.js
-          expect(message.payload.url).toBe('https://tus.endpoint/files/foo-bar')
-        } catch (err) {
-          reject(err)
-        }
-      })
-    })
+    await Promise.all([
+      (async () => {
+        const promise = uploader.awaitReady()
+        // emulate socket connection
+        socketClient.connect(uploadToken)
+        await promise
+        await uploader.tryUploadStream(stream)
+      })(),
+      new Promise((resolve, reject) => {
+        socketClient.onProgress(uploadToken, (message) => {
+          progressReceived = message.payload.bytesUploaded
+          try {
+            expect(message.payload.bytesTotal).toBe(fileContent.length)
+            resolve()
+          } catch (err) {
+            reject(err)
+          }
+        })
+      }),
+      new Promise((resolve, reject) => {
+        socketClient.onUploadSuccess(uploadToken, (message) => {
+          try {
+            expect(progressReceived).toBe(fileContent.length)
+            // see __mocks__/tus-js-client.js
+            expect(message.payload.url).toBe('https://tus.endpoint/files/foo-bar')
+            resolve()
+          } catch (err) {
+            reject(err)
+          }
+        })
+      }),
+    ])
   })
 
   test('upload functions with tus protocol without size', async () => {
