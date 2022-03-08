@@ -358,10 +358,30 @@ class Uploader {
     return Uploader.shortenToken(this.token)
   }
 
-  async awaitReady () {
-    // TODO timeout after a while? Else we could leak emitters
+  async awaitReady (timeout = 60000) {
     logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
-    await new Promise((resolve) => emitter().once(`connection:${this.token}`, resolve))
+
+    await new Promise((resolve, reject) => {
+      const eventName = `connection:${this.token}`
+      let timer
+
+      function cleanup () {
+        emitter().removeListener(eventName, resolve)
+        clearTimeout(timer)
+      }
+
+      // Need to timeout after a while, or we could leak emitters
+      timer = setTimeout(() => {
+        cleanup()
+        reject(new Error('Timed out waiting for socket connection'))
+      }, timeout)
+
+      emitter().once(eventName, () => {
+        cleanup()
+        resolve()
+      })
+    })
+
     logger.debug('socket connection received', 'uploader.socket.wait', this.shortToken)
   }
 
