@@ -371,11 +371,26 @@ class Uppy {
     }
   }
 
-  #informAndEmit (error, file) {
+  /*
+  * @constructs
+  * @param { Error } error
+  * @param { undefined } fileOrFiles
+  */
+  /*
+  * @constructs
+  * @param { RestrictionError } error
+  * @param { UppyFile } fileOrFiles
+  */
+  /*
+  * @constructs
+  * @param { RestrictionError } error
+  * @param { Array<UppyFile> } fileOrFiles
+  */
+  #informAndEmit (error, fileOrFiles) {
     const { message, details = '' } = error
 
     if (error.isRestriction) {
-      this.emit('restriction-failed', file, error)
+      this.emit('restriction-failed', fileOrFiles, error)
     } else {
       this.emit('error', error)
     }
@@ -407,7 +422,13 @@ class Uppy {
   }
 
   #checkRequiredMetaFields (files) {
-    return Object.values(files).every((file) => this.#checkRequiredMetaFieldsOnFile(file))
+    let success = true
+    for (const file of Object.values(files)) {
+      if (!this.#checkRequiredMetaFieldsOnFile(file)) {
+        success = false
+      }
+    }
+    return success
   }
 
   #assertNewUploadAllowed (file) {
