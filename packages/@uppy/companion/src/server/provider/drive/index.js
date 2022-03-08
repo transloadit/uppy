@@ -143,6 +143,7 @@ class Drive extends Provider {
         pageToken: query.cursor,
         q,
         // pageSize: 10, // can be used for testing pagination if you don't have many files
+        orderBy: 'folder,name',
         includeItemsFromAllDrives: true,
         supportsAllDrives: true,
       }
