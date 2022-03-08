@@ -111,21 +111,30 @@ class Drive extends Provider {
     const isRoot = directory === 'root'
     const isVirtualSharedDirRoot = directory === VIRTUAL_SHARED_DIR
 
-    async function fetchSharedDrives () {
+    async function fetchSharedDrives (pageToken = null) {
       try {
         const shouldListSharedDrives = isRoot && !query.cursor
         if (!shouldListSharedDrives) return undefined
 
         const resp = await new Promise((resolve, reject) => client
           .get('drives')
-          .qs({ fields: SHARED_DRIVE_FIELDS })
+          .qs({ fields: SHARED_DRIVE_FIELDS, pageToken, pageSize: 100 })
           .auth(options.token)
           .request((err, resp2) => {
             if (err || resp2.statusCode !== 200) return reject(handleErrorResponse(err, resp2))
             return resolve(resp2)
           }))
 
-        return resp && resp.body
+        const body = resp && resp.body
+        const nextPageToken = body && body.nextPageToken
+        if (nextPageToken) {
+          return fetchSharedDrives(nextPageToken).then((moreShared) => {
+            const drives = body.drives || []
+            const moreDrives = (moreShared && moreShared.drives) || []
+            return { ...body, ...moreShared, drives: [...drives, ...moreDrives] }
+          })
+        }
+        return body
       } catch (err) {
         logger.error(err, 'provider.drive.sharedDrive.error')
         throw err
