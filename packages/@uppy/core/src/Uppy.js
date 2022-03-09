@@ -374,23 +374,18 @@ class Uppy {
   /*
   * @constructs
   * @param { Error } error
-  * @param { undefined } fileOrFiles
+  * @param { undefined } file
   */
   /*
   * @constructs
   * @param { RestrictionError } error
-  * @param { UppyFile } fileOrFiles
+  * @param { UppyFile | undefined } file
   */
-  /*
-  * @constructs
-  * @param { RestrictionError } error
-  * @param { Array<UppyFile> } fileOrFiles
-  */
-  #informAndEmit (error, fileOrFiles) {
+  #informAndEmit (error, file) {
     const { message, details = '' } = error
 
     if (error.isRestriction) {
-      this.emit('restriction-failed', fileOrFiles, error)
+      this.emit('restriction-failed', file, error)
     } else {
       this.emit('error', error)
     }
@@ -1519,14 +1514,20 @@ class Uppy {
     }
 
     return Promise.resolve()
+      .then(() => this.#restricter.validateMinNumberOfFiles(files))
+      .catch((err) => {
+        this.#informAndEmit(err)
+        throw err
+      })
       .then(() => {
-        this.#restricter.validateMinNumberOfFiles(files)
         if (!this.#checkRequiredMetaFields(files)) {
           throw new RestrictionError(this.i18n('missingRequiredMetaField'))
         }
       })
       .catch((err) => {
-        this.#informAndEmit(err, files)
+        // Doing this in a separate catch because we already emited and logged
+        // all the errors in `checkRequiredMetaFields` so we only throw a generic
+        // missing fields error here.
         throw err
       })
       .then(() => {
