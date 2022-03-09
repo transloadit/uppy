@@ -46,8 +46,7 @@ class Restricter {
     const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.getOpts().restrictions
 
     if (maxNumberOfFiles && files.length + 1 > maxNumberOfFiles) {
-        throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
-      }
+      throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
     }
 
     if (allowedFileTypes) {
@@ -85,19 +84,17 @@ class Restricter {
 
     // We can't check maxFileSize if the size is unknown.
     if (maxFileSize && file.size != null && file.size > maxFileSize) {
-        throw new RestrictionError(this.i18n('exceedsSize', {
-          size: prettierBytes(maxFileSize),
-          file: file.name,
-        }))
-      }
+      throw new RestrictionError(this.i18n('exceedsSize', {
+        size: prettierBytes(maxFileSize),
+        file: file.name,
+      }))
     }
 
     // We can't check minFileSize if the size is unknown.
     if (minFileSize && file.size != null && file.size < minFileSize) {
-        throw new RestrictionError(this.i18n('inferiorSize', {
-          size: prettierBytes(minFileSize),
-        }))
-      }
+      throw new RestrictionError(this.i18n('inferiorSize', {
+        size: prettierBytes(minFileSize),
+      }))
     }
   }
 
