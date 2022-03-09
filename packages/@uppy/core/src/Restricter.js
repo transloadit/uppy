@@ -34,8 +34,7 @@ class Restricter {
     this.getOpts = () => {
       const opts = getOpts()
 
-      if (opts.restrictions.allowedFileTypes
-          && opts.restrictions.allowedFileTypes !== null
+      if (opts.restrictions.allowedFileTypes != null
           && !Array.isArray(opts.restrictions.allowedFileTypes)) {
         throw new TypeError('`restrictions.allowedFileTypes` must be an array')
       }
@@ -46,8 +45,7 @@ class Restricter {
   validate (file, files) {
     const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.getOpts().restrictions
 
-    if (maxNumberOfFiles) {
-      if (files.length + 1 > maxNumberOfFiles) {
+    if (maxNumberOfFiles && files.length + 1 > maxNumberOfFiles) {
         throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
       }
     }
@@ -86,8 +84,7 @@ class Restricter {
     }
 
     // We can't check maxFileSize if the size is unknown.
-    if (maxFileSize && file.size != null) {
-      if (file.size > maxFileSize) {
+    if (maxFileSize && file.size != null && file.size > maxFileSize) {
         throw new RestrictionError(this.i18n('exceedsSize', {
           size: prettierBytes(maxFileSize),
           file: file.name,
@@ -96,8 +93,7 @@ class Restricter {
     }
 
     // We can't check minFileSize if the size is unknown.
-    if (minFileSize && file.size != null) {
-      if (file.size < minFileSize) {
+    if (minFileSize && file.size != null && file.size < minFileSize) {
         throw new RestrictionError(this.i18n('inferiorSize', {
           size: prettierBytes(minFileSize),
         }))
