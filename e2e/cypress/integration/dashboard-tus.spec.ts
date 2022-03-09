@@ -45,8 +45,9 @@ describe('Dashboard with Tus', () => {
 
   it('should upload remote image with URL plugin', () => {
     cy.get('[data-cy="Url"]').click()
-    cy.get('.uppy-Url-input').type('https://via.placeholder.com/600x400')
+    cy.get('.uppy-Url-input').type('https://raw.githubusercontent.com/transloadit/uppy/main/assets/developed-by-transloadit.png')
     cy.get('.uppy-Url-importButton').click()
+    cy.wait('@url')
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
     cy.wait('@url')
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')

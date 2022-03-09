@@ -12,6 +12,7 @@ describe('Dashboard with Transloadit', () => {
 
     cy.wait('@assemblies')
     cy.wait('@resumable')
+    cy.wait('@assemblies')
 
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
