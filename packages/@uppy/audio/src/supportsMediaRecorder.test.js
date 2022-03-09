@@ -1,4 +1,5 @@
-const supportsMediaRecorder = require('./supportsMediaRecorder')
+/* eslint-disable max-classes-per-file */
+import supportsMediaRecorder from './supportsMediaRecorder.js'
 
 describe('supportsMediaRecorder', () => {
   it('should return true if MediaRecorder is supported', () => {

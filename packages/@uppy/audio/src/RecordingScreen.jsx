@@ -1,14 +1,14 @@
 /* eslint-disable jsx-a11y/media-has-caption */
-const { h } = require('preact')
-const { useEffect, useRef } = require('preact/hooks')
-const RecordButton = require('./RecordButton')
-const RecordingLength = require('./RecordingLength')
-const AudioSourceSelect = require('./AudioSourceSelect')
-const AudioOscilloscope = require('./audio-oscilloscope')
-const SubmitButton = require('./SubmitButton')
-const DiscardButton = require('./DiscardButton')
+import { h } from 'preact'
+import { useEffect, useRef } from 'preact/hooks'
+import RecordButton from './RecordButton.jsx'
+import RecordingLength from './RecordingLength.jsx'
+import AudioSourceSelect from './AudioSourceSelect.jsx'
+import AudioOscilloscope from './audio-oscilloscope/index.js'
+import SubmitButton from './SubmitButton.jsx'
+import DiscardButton from './DiscardButton.jsx'
 
-module.exports = function RecordingScreen (props) {
+export default function RecordingScreen (props) {
   const {
     stream,
     recordedAudio,

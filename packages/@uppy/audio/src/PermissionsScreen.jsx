@@ -1,6 +1,6 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
-module.exports = (props) => {
+export default (props) => {
   const { icon, hasAudio, i18n } = props
   return (
     <div className="uppy-Audio-permissons">
