@@ -1303,19 +1303,35 @@ describe('src/Core', () => {
 
     it('should work with unsized files', async () => {
       const core = new Core()
-      let proceedUpload
-      let finishUpload
-      const promise = new Promise((resolve) => { proceedUpload = resolve })
-      const finishPromise = new Promise((resolve) => { finishUpload = resolve })
+
       core.addUploader(async ([id]) => {
         core.emit('upload-started', core.getFile(id))
-        await promise
+        expect(core.getFiles()[0].size).toBeNull()
+        expect(core.getFiles()[0].progress).toMatchObject({
+          bytesUploaded: 0,
+          // null indicates unsized
+          bytesTotal: null,
+          percentage: 0,
+        })
+
         core.emit('upload-progress', core.getFile(id), {
           bytesTotal: 3456,
           bytesUploaded: 1234,
         })
-        await finishPromise
+        expect(core.getFiles()[0].size).toBeNull()
+        expect(core.getFiles()[0].progress).toMatchObject({
+          bytesTotal: 3456,
+          bytesUploaded: 1234,
+          percentage: 36,
+        })
+
         core.emit('upload-success', core.getFile(id), { uploadURL: 'lol' })
+        expect(core.getFiles()[0].size).toBe(3456)
+        expect(core.getFiles()[0].progress).toMatchObject({
+          bytesUploaded: 3456,
+          bytesTotal: 3456,
+          percentage: 100,
+        })
       })
 
       core.addFile({
@@ -1327,42 +1343,7 @@ describe('src/Core', () => {
 
       core.calculateTotalProgress()
 
-      const uploadPromise = core.upload()
-      await new Promise((resolve) => core.once('upload-started', resolve))
-
-      expect(core.getFiles()[0].size).toBeNull()
-      expect(core.getFiles()[0].progress).toMatchObject({
-        bytesUploaded: 0,
-        // null indicates unsized
-        bytesTotal: null,
-        percentage: 0,
-      })
-
-      proceedUpload()
-      // wait for progress event
-      await promise
-
-      expect(core.getFiles()[0].size).toBeNull()
-      expect(core.getFiles()[0].progress).toMatchObject({
-        bytesUploaded: 1234,
-        bytesTotal: 3456,
-        percentage: 36,
-      })
-
-      expect(core.getState().totalProgress).toBe(36)
-
-      finishUpload()
-      // wait for success event
-      await finishPromise
-
-      expect(core.getFiles()[0].size).toBe(3456)
-      expect(core.getFiles()[0].progress).toMatchObject({
-        bytesUploaded: 3456,
-        bytesTotal: 3456,
-        percentage: 100,
-      })
-
-      await uploadPromise
+      await core.upload()
 
       core.close()
     })

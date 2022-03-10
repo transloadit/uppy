@@ -5,7 +5,6 @@
 
 const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
-const { nanoid } = require('nanoid/non-secure')
 const throttle = require('lodash.throttle')
 const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
@@ -14,6 +13,7 @@ const generateFileID = require('@uppy/utils/lib/generateFileID')
 const supportsUploadProgress = require('./supportsUploadProgress')
 const getFileName = require('./getFileName')
 const { justErrorsLogger, debugLogger } = require('./loggers')
+const { Uploader } = require('./Uploader')
 const {
   Restricter,
   defaultOptions: defaultRestrictionOptions,
@@ -36,17 +36,20 @@ class Uppy {
   /** @type {Record<string, BasePlugin[]>} */
   #plugins = Object.create(null)
 
+  #uploader = new Uploader(
+    this.getState.bind(this),
+    this.setState.bind(this),
+    this.emit.bind(this),
+    this.log.bind(this),
+    this.getFile.bind(this),
+    () => this.opts,
+  )
+
   #restricter
 
   #storeUnsubscribe
 
   #emitter = ee()
-
-  #preProcessors = new Set()
-
-  #uploaders = new Set()
-
-  #postProcessors = new Set()
 
   /**
    * Instantiate Uppy
@@ -266,27 +269,27 @@ class Uppy {
   }
 
   addPreProcessor (fn) {
-    this.#preProcessors.add(fn)
+    this.#uploader.preProcessors.add(fn)
   }
 
   removePreProcessor (fn) {
-    return this.#preProcessors.delete(fn)
+    return this.#uploader.preProcessors.delete(fn)
   }
 
   addPostProcessor (fn) {
-    this.#postProcessors.add(fn)
+    this.#uploader.postProcessors.add(fn)
   }
 
   removePostProcessor (fn) {
-    return this.#postProcessors.delete(fn)
+    return this.#uploader.postProcessors.delete(fn)
   }
 
   addUploader (fn) {
-    this.#uploaders.add(fn)
+    this.#uploader.uploaders.add(fn)
   }
 
   removeUploader (fn) {
-    return this.#uploaders.delete(fn)
+    return this.#uploader.uploaders.delete(fn)
   }
 
   setMeta (data) {
@@ -801,10 +804,10 @@ class Uppy {
       })
     }
 
-    const uploadID = this.#createUpload(filesToRetry, {
-      forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
+    const uploadID = this.#uploader.create(filesToRetry, {
+      forceAllowNewUpload: true,
     })
-    return this.#runUpload(uploadID)
+    return this.#uploader.run(uploadID)
   }
 
   cancelAll () {
@@ -832,10 +835,10 @@ class Uppy {
 
     this.emit('upload-retry', fileID)
 
-    const uploadID = this.#createUpload([fileID], {
-      forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
+    const uploadID = this.#uploader.create([fileID], {
+      forceAllowNewUpload: true,
     })
-    return this.#runUpload(uploadID)
+    return this.#uploader.run(uploadID)
   }
 
   reset () {
@@ -1006,7 +1009,7 @@ class Uppy {
       this.setFileState(file.id, {
         progress: {
           ...currentProgress,
-          postprocess: this.#postProcessors.size > 0 ? {
+          postprocess: this.#uploader.postProcessors.size > 0 ? {
             mode: 'indeterminate',
           } : null,
           uploadComplete: true,
@@ -1309,58 +1312,14 @@ class Uppy {
     this.log(`Core: attempting to restore upload "${uploadID}"`)
 
     if (!this.getState().currentUploads[uploadID]) {
-      this.#removeUpload(uploadID)
+      this.#uploader.remove(uploadID)
       return Promise.reject(new Error('Nonexistent upload'))
     }
 
-    return this.#runUpload(uploadID)
+    return this.#uploader.run(uploadID)
   }
 
-  /**
-   * Create an upload for a bunch of files.
-   *
-   * @param {Array<string>} fileIDs File IDs to include in this upload.
-   * @returns {string} ID of this upload.
-   */
-  #createUpload (fileIDs, opts = {}) {
-    // uppy.retryAll sets this to true — when retrying we want to ignore `allowNewUpload: false`
-    const { forceAllowNewUpload = false } = opts
-
-    const { allowNewUpload, currentUploads } = this.getState()
-    if (!allowNewUpload && !forceAllowNewUpload) {
-      throw new Error('Cannot create a new upload: already uploading.')
-    }
-
-    const uploadID = nanoid()
-
-    this.emit('upload', {
-      id: uploadID,
-      fileIDs,
-    })
-
-    this.setState({
-      allowNewUpload: this.opts.allowMultipleUploadBatches !== false && this.opts.allowMultipleUploads !== false,
-
-      currentUploads: {
-        ...currentUploads,
-        [uploadID]: {
-          fileIDs,
-          step: 0,
-          result: {},
-        },
-      },
-    })
-
-    return uploadID
-  }
-
-  [Symbol.for('uppy test: createUpload')] (...args) { return this.#createUpload(...args) }
-
-  #getUpload (uploadID) {
-    const { currentUploads } = this.getState()
-
-    return currentUploads[uploadID]
-  }
+  [Symbol.for('uppy test: createUpload')] (...args) { return this.#uploader.create(...args) }
 
   /**
    * Add data to an upload's result object.
@@ -1368,8 +1327,8 @@ class Uppy {
    * @param {string} uploadID The ID of the upload.
    * @param {object} data Data properties to add to the result object.
    */
-  addResultData (uploadID, data) {
-    if (!this.#getUpload(uploadID)) {
+  addResultData (uploadID, data) { // TODO: remove this method in the next major
+    if (!this.#uploader.get(uploadID)) {
       this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
       return
     }
@@ -1380,178 +1339,58 @@ class Uppy {
     })
   }
 
-  /**
-   * Remove an upload, eg. if it has been canceled or completed.
-   *
-   * @param {string} uploadID The ID of the upload.
-   */
-  #removeUpload (uploadID) {
-    const currentUploads = { ...this.getState().currentUploads }
-    delete currentUploads[uploadID]
-
-    this.setState({
-      currentUploads,
-    })
-  }
-
-  /**
-   * Run an upload. This picks up where it left off in case the upload is being restored.
-   *
-   * @private
-   */
-  async #runUpload (uploadID) {
-    let { currentUploads } = this.getState()
-    let currentUpload = currentUploads[uploadID]
-    const restoreStep = currentUpload.step || 0
-
-    const steps = [
-      ...this.#preProcessors,
-      ...this.#uploaders,
-      ...this.#postProcessors,
-    ]
-    try {
-      for (let step = restoreStep; step < steps.length; step++) {
-        if (!currentUpload) {
-          break
-        }
-        const fn = steps[step]
-
-        const updatedUpload = {
-          ...currentUpload,
-          step,
-        }
-
-        this.setState({
-          currentUploads: {
-            ...currentUploads,
-            [uploadID]: updatedUpload,
-          },
-        })
-
-        // TODO give this the `updatedUpload` object as its only parameter maybe?
-        // Otherwise when more metadata may be added to the upload this would keep getting more parameters
-        await fn(updatedUpload.fileIDs, uploadID)
-
-        // Update currentUpload value in case it was modified asynchronously.
-        currentUploads = this.getState().currentUploads
-        currentUpload = currentUploads[uploadID]
-      }
-    } catch (err) {
-      this.#removeUpload(uploadID)
-      throw err
-    }
-
-    // Set result data.
-    if (currentUpload) {
-      // Mark postprocessing step as complete if necessary; this addresses a case where we might get
-      // stuck in the postprocessing UI while the upload is fully complete.
-      // If the postprocessing steps do not do any work, they may not emit postprocessing events at
-      // all, and never mark the postprocessing as complete. This is fine on its own but we
-      // introduced code in the @uppy/core upload-success handler to prepare postprocessing progress
-      // state if any postprocessors are registered. That is to avoid a "flash of completed state"
-      // before the postprocessing plugins can emit events.
-      //
-      // So, just in case an upload with postprocessing plugins *has* completed *without* emitting
-      // postprocessing completion, we do it instead.
-      currentUpload.fileIDs.forEach((fileID) => {
-        const file = this.getFile(fileID)
-        if (file && file.progress.postprocess) {
-          this.emit('postprocess-complete', file)
-        }
-      })
-
-      const files = currentUpload.fileIDs.map((fileID) => this.getFile(fileID))
-      const successful = files.filter((file) => !file.error)
-      const failed = files.filter((file) => file.error)
-      await this.addResultData(uploadID, { successful, failed, uploadID })
-
-      // Update currentUpload value in case it was modified asynchronously.
-      currentUploads = this.getState().currentUploads
-      currentUpload = currentUploads[uploadID]
-    }
-    // Emit completion events.
-    // This is in a separate function so that the `currentUploads` variable
-    // always refers to the latest state. In the handler right above it refers
-    // to an outdated object without the `.result` property.
-    let result
-    if (currentUpload) {
-      result = currentUpload.result
-      this.emit('complete', result)
-
-      this.#removeUpload(uploadID)
-    }
-    if (result == null) {
-      this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
-    }
-    return result
-  }
-
-  /**
-   * Start an upload for all the files that are not currently being uploaded.
-   *
-   * @returns {Promise}
-   */
-  upload () {
+  async upload () {
     if (!this.#plugins.uploader?.length) {
+      // TODO: shouldn't this be an error?
       this.log('No uploader type plugins are used', 'warning')
     }
 
-    let { files } = this.getState()
+    const { files } = this.getState()
+    const preUpdatedFiles = this.opts.onBeforeUpload(files)
 
-    const onBeforeUploadResult = this.opts.onBeforeUpload(files)
-
-    if (onBeforeUploadResult === false) {
+    if (preUpdatedFiles === false) {
       return Promise.reject(new Error('Not starting the upload because onBeforeUpload returned false'))
     }
 
-    if (onBeforeUploadResult && typeof onBeforeUploadResult === 'object') {
-      files = onBeforeUploadResult
+    if (preUpdatedFiles && typeof preUpdatedFiles === 'object') {
       // Updating files in state, because uploader plugins receive file IDs,
       // and then fetch the actual file object from state
-      this.setState({
-        files,
-      })
+      this.setState({ files: preUpdatedFiles })
     }
 
-    return Promise.resolve()
-      .then(() => this.#restricter.validateMinNumberOfFiles(files))
-      .catch((err) => {
-        this.#informAndEmit(err)
-        throw err
-      })
-      .then(() => {
-        if (!this.#checkRequiredMetaFields(files)) {
-          throw new RestrictionError(this.i18n('missingRequiredMetaField'))
+    try {
+      this.#restricter.validateMinNumberOfFiles(preUpdatedFiles)
+    } catch (err) {
+      this.#informAndEmit(err)
+      return Promise.reject(err)
+    }
+
+    // We don't need to informAndEmit because checkRequiredMetaFields
+    // already emits `restriction-failed` events for every file.
+    // Instead we throw a generic required meta field error.
+    if (!this.#checkRequiredMetaFields(preUpdatedFiles)) {
+      return Promise.reject(new RestrictionError(this.i18n('missingRequiredMetaField')))
+    }
+
+    try {
+      const { currentUploads } = this.getState()
+      const currentlyUploadingFiles = Object.values(currentUploads).flatMap(curr => curr.fileIDs)
+      const waitingFileIDs = []
+
+      for (const fileID of Object.keys(preUpdatedFiles)) {
+        const file = this.getFile(fileID)
+        // if the file hasn't started uploading and hasn't already been assigned to an upload..
+        if ((!file.progress.uploadStarted) && (currentlyUploadingFiles.indexOf(fileID) === -1)) {
+          waitingFileIDs.push(file.id)
         }
-      })
-      .catch((err) => {
-        // Doing this in a separate catch because we already emited and logged
-        // all the errors in `checkRequiredMetaFields` so we only throw a generic
-        // missing fields error here.
-        throw err
-      })
-      .then(() => {
-        const { currentUploads } = this.getState()
-        // get a list of files that are currently assigned to uploads
-        const currentlyUploadingFiles = Object.values(currentUploads).flatMap(curr => curr.fileIDs)
+      }
 
-        const waitingFileIDs = []
-        Object.keys(files).forEach((fileID) => {
-          const file = this.getFile(fileID)
-          // if the file hasn't started uploading and hasn't already been assigned to an upload..
-          if ((!file.progress.uploadStarted) && (currentlyUploadingFiles.indexOf(fileID) === -1)) {
-            waitingFileIDs.push(file.id)
-          }
-        })
-
-        const uploadID = this.#createUpload(waitingFileIDs)
-        return this.#runUpload(uploadID)
-      })
-      .catch((err) => {
-        this.emit('error', err)
-        this.log(err, 'error')
-        throw err
-      })
+      return await this.#uploader.run(this.#uploader.create(waitingFileIDs))
+    } catch (err) {
+      this.emit('error', err)
+      this.log(err, 'error')
+      return Promise.reject(err)
+    }
   }
 }
 
