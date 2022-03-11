@@ -1,0 +1,46 @@
+# Add 'safe to test' label on PRs that have been approved who which are not
+# coming from a fork to trigger the E2E test suite.
+name: Add 'safe to test' labels on PRs
+
+on:
+  schedule:
+    # Runs every five minutes (fastest the scheduler can run). Five minutes is
+    # optimistic, it can take longer to run.
+    # Using `schedule` instead of other events is necessary for PRs open from
+    # forks, see https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+    - cron: '*/5 * * * *'
+  pull_request_target: [ opened, synchronize, reopened ]
+
+concurrency: ${{ github.workflow }}
+
+env:
+  NODE_VERSION: lts/*
+
+jobs:
+  get-approved-prs:
+    # Add 'safe to test' label to all PRs that have been approved (cron task).
+    if: ${{ !github.event.pull_request && github.repository == 'transloadit/uppy' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Pull Requests
+        id: get_prs_for_ci
+        run: >
+          gh pr list \
+                  --repo ${{ github.repository }} \
+                  --search 'is:pr is:open review:approved draft:false -label:"safe to test"' \
+                  --json 'number' \
+                  -t '{{ range . }}gh pr edit {{ .number }} --repo ${{ github.repository }} --add-label "safe to test";{{ end }}' \
+                  --limit 100 | sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  label-prs:
+    # Add 'safe to test' label on PRs if the head branch is not on a fork (trusted by default).
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'safe to test') &&
+            github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add label
+        env:
+          NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr edit "$NUMBER" --repo ${{ github.repository }} --add-label 'safe to test'

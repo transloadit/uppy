@@ -3,20 +3,20 @@ on:
   push:
     branches: [ main ]
   pull_request_target:
-    # We want all branches so we configure types to be the GH default again
-    types: [ opened, synchronize, reopened ]
+    types: [ labeled ]
+
+concurrency: ${{ github.workflow }}--${{ github.ref }}
 
 jobs:
   e2e:
+    if: ${{ !github.event.pull_request || (contains(github.event.pull_request.labels.*.name, 'safe to test') && github.event.pull_request.state == 'open') }}
     name: Browser tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
         with:
-          # Necessary for yarn version plugin
-          # https://yarnpkg.com/features/release-workflow#commit-history
-          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
@@ -44,3 +44,10 @@ jobs:
           VITE_TRANSLOADIT_KEY: ${{secrets.TRANSLOADIT_KEY}}
           VITE_TRANSLOADIT_TEMPLATE: ${{secrets.TRANSLOADIT_TEMPLATE}}
           VITE_TRANSLOADIT_SERVICE_URL: ${{secrets.TRANSLOADIT_SERVICE_URL}}
+      - name: Remove 'safe to test' label
+        # Remove the 'safe to test' label to ensure next commit needs approval before re-running this.
+        if: always() && github.event.pull_request
+        run: gh pr edit "$NUMBER" --remove-label 'safe to test'
+        env:
+          NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
