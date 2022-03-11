@@ -125,14 +125,14 @@ class Drive extends Provider {
             return resolve(resp2)
           }))
 
-        const body = resp && resp.body
+        if (!resp) return resp
+
+        const { body } = resp
         const nextPageToken = body && body.nextPageToken
         if (nextPageToken) {
-          return fetchSharedDrives(nextPageToken).then((moreShared) => {
-            const drives = body.drives || []
-            const moreDrives = (moreShared && moreShared.drives) || []
-            return { ...body, ...moreShared, drives: [...drives, ...moreDrives] }
-          })
+          const nextBody = await fetchSharedDrives(nextPageToken)
+          if (!nextBody) return body
+          return { ...nextBody, drives: [...body.drives, ...nextBody.drives] }
         }
         return body
       } catch (err) {
