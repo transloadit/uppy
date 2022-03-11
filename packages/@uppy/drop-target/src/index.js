@@ -45,7 +45,17 @@ module.exports = class DropTarget extends BasePlugin {
     }
   }
 
+  isFileTransfer = (event) => {
+    return [].some.call(event.dataTransfer.types, (t) => {
+      return t === 'Files'
+    })
+  }
+
   handleDrop = async (event) => {
+    if (!this.isFileTransfer(event)) {
+      return
+    }
+
     event.preventDefault()
     event.stopPropagation()
     clearTimeout(this.removeDragOverClassTimeout)
@@ -85,6 +95,10 @@ module.exports = class DropTarget extends BasePlugin {
   }
 
   handleDragOver = (event) => {
+    if (!this.isFileTransfer(event)) {
+      return
+    }
+
     event.preventDefault()
     event.stopPropagation()
 
@@ -100,6 +114,10 @@ module.exports = class DropTarget extends BasePlugin {
   }
 
   handleDragLeave = (event) => {
+    if (!this.isFileTransfer(event)) {
+      return
+    }
+
     event.preventDefault()
     event.stopPropagation()
 
