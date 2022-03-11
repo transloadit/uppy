@@ -56,6 +56,23 @@ async function isTypeModule (file) {
   return typeModule
 }
 
+// eslint-disable-next-line no-shadow
+function transformExportDeclarations (path) {
+  const { value } = path.node.source
+  if (value.endsWith('.jsx') && value.startsWith('./')) {
+    // Rewrite .jsx imports to .js:
+    path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign
+  }
+
+  path.replaceWith(
+    t.assignmentExpression(
+      '=',
+      t.memberExpression(t.identifier('module'), t.identifier('exports')),
+      t.callExpression(t.identifier('require'), [path.node.source]),
+    ),
+  )
+}
+
 async function buildLib () {
   const metaMtimes = await Promise.all(META_FILES.map((filename) => lastModified(path.join(__dirname, '..', filename))))
   const metaMtime = Math.max(...metaMtimes)
@@ -119,6 +136,33 @@ async function buildLib () {
                   ]),
                 ),
               ]),
+            )
+          }
+        },
+        ExportAllDeclaration: transformExportDeclarations,
+        // eslint-disable-next-line no-shadow,consistent-return
+        ExportNamedDeclaration (path) {
+          if (path.node.source != null) return transformExportDeclarations(path)
+        },
+        // eslint-disable-next-line no-shadow
+        ExportDefaultDeclaration (path) {
+          const moduleExports =  t.memberExpression(t.identifier('module'), t.identifier('exports'))
+          if (!t.isDeclaration(path.node.declaration)) {
+            path.replaceWith(
+              t.assignmentExpression('=', moduleExports, path.node.declaration),
+            )
+          } else if (path.node.declaration.id != null) {
+            const { id } = path.node.declaration
+            path.insertBefore(path.node.declaration)
+            path.replaceWith(
+              t.assignmentExpression('=', moduleExports, id),
+            )
+          } else {
+            const id = t.identifier('_default')
+            path.node.declaration.id = id // eslint-disable-line no-param-reassign
+            path.insertBefore(path.node.declaration)
+            path.replaceWith(
+              t.assignmentExpression('=', moduleExports, id),
             )
           }
         },
