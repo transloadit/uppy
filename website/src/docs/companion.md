@@ -263,7 +263,7 @@ export COMPANION_PERIODIC_PING_INTERVAL=60000
 export COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD="{\"static\":\"data\"}"
 ```
 
-See [env.example.sh](https://github.com/transloadit/uppy/blob/main/env.example.sh) for an example configuration script.
+See [`.env.example`](https://github.com/transloadit/uppy/blob/main/.env.example) for an example environment configuration file.
 
 ### Options
 

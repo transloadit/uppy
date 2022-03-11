@@ -17,10 +17,6 @@ const SHARED_DRIVE_FIELDS = '*'
 // Hopefully this name will not be used by Google
 const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
-function sortByName (first, second) {
-  return first.name.localeCompare(second.name)
-}
-
 async function waitForFailedResponse (resp) {
   const buf = await new Promise((resolve) => {
     let data = ''
@@ -71,7 +67,7 @@ function adaptData (listFilesResp, sharedDrivesResp, directory, query, showShare
 
   const adaptedItems = [
     ...(virtualItem ? [virtualItem] : []), // shared folder first
-    ...([...sharedDrives, ...items].map(adaptItem).sort(sortByName)),
+    ...([...sharedDrives, ...items].map(adaptItem)),
   ]
 
   return {
@@ -143,6 +139,7 @@ class Drive extends Provider {
         pageToken: query.cursor,
         q,
         // pageSize: 10, // can be used for testing pagination if you don't have many files
+        orderBy: 'folder,name',
         includeItemsFromAllDrives: true,
         supportsAllDrives: true,
       }
