@@ -11,7 +11,7 @@ export default [
   remarkRetext,
   unified()
     .use(retextEnglish)
-    .use(retextEquality, { ignore: ['disabled', 'host', 'hosts', 'invalid', 'whitespace', 'just', 'simply'] })
+    .use(retextEquality, { ignore: ['disabled', 'host', 'hosts', 'invalid', 'whitespace'] })
     .use(retextProfanities, { sureness: 1 })
     .use(retextQuotes)
     .use(retextSimplify, {
