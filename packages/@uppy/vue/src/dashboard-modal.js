@@ -2,7 +2,7 @@ import DashboardPlugin from '@uppy/dashboard'
 import { shallowEqualObjects } from 'shallow-equal'
 
 import * as Vue from 'vue'
-import { isVue2 } from './utils'
+import { isVue2 } from './utils.js'
 
 export default {
   data () {

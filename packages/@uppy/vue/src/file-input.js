@@ -3,7 +3,7 @@ import { shallowEqualObjects } from 'shallow-equal'
 
 // Cross compatibility dependencies
 import * as Vue from 'vue'
-import { isVue2 } from './utils'
+import { isVue2 } from './utils.js'
 
 export default {
   data () {
