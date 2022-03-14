@@ -11,7 +11,6 @@ Please add your entries in this format:
 - `- [ ] (<plugin name>|website|core|meta|build|test): <Present tense verb> <subject> \(<list of associated owners/gh-issues>\)`.
 
 In the current stage we aim to release a new version at least every month.
-
 ## 2.7.0
 
 Released: 2022-03-02
@@ -28,11 +27,8 @@ Released: 2022-03-02
 - @uppy/angular: update ng version (Antoine du Hamel / #3503)
 - @uppy/companion: Upload protocol "s3-multipart" does not use the chunkSize option (Gabi Ganam / #3511)
 - @uppy/aws-s3-multipart: Add chunks back to prepareUploadParts, indexed by partNumber (Kevin West / #3520)
-- website: Add “Stop the war” banner (Artur Paikin / #3518)
 - @uppy/locales: Update zh_CN.js (linxunzyf / #3513)
 - meta: update remark dependencies (Antoine du Hamel / #3502)
-
-
 ## 2.6.0
 
 Released: 2022-02-17
@@ -48,8 +44,6 @@ Released: 2022-02-17
 - meta: fix CDN bundle (Antoine du Hamel / #3494)
 - meta: fix missing EOL and end of e2e test templates (Antoine du Hamel / #3484)
 - meta: use a single `.env` file for config (Antoine du Hamel / #3498)
-
-
 ## 2.5.1
 
 Released: 2022-02-16
@@ -65,8 +59,6 @@ Released: 2022-02-16
 - @uppy/compressor: Add image compressor plugin (Artur Paikin / #3471)
 - @uppy/companion: fix periodicPingUrls oops (Mikael Finstad / #3490)
 - meta: add support for ESM sources in build script (Antoine du Hamel / #3468)
-
-
 ## 2.5.0
 
 Released: 2022-02-14
@@ -105,8 +97,6 @@ Released: 2022-02-14
 - website: add legacy bundle to CDN example (Antoine du Hamel / #3433)
 - meta: remove unused lerna and npm files (Antoine du Hamel / #3436)
 - meta: replace browserify with esbuild (Antoine du Hamel / #3363)
-
-
 ## 2.4.1
 
 Released: 2022-01-12
@@ -122,8 +112,6 @@ Released: 2022-01-12
 - meta: Update ci.yml (Kevin van Zonneveld / #3428)
 - @uppy/transloadit: simplify `#onTusError` (Antoine du Hamel / #3419)
 - meta: Force include babel numeric separator (Merlijn Vos / #3422)
-
-
 ## 2.4.0
 
 Released: 2022-01-10
@@ -147,7 +135,6 @@ Released: 2022-01-10
 - website: Polished the latest update blog (AJvanLoon / #3390)
 - website: docs: fix typo in audio.md (heocoi / #3389)
 - website: 2.0-2.3 post draft (Artur Paikin / #3370)
-
 
 ## 2.3.3
 
