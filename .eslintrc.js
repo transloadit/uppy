@@ -78,7 +78,7 @@ module.exports = {
     'global-require': ['warn'],
     'import/no-unresolved': ['warn'],
     'import/order': ['warn'],
-    'max-classes-per-file': ['warn'],
+    'max-classes-per-file': ['warn', 2],
     'no-mixed-operators': ['warn'],
     'no-param-reassign': ['warn'],
     'no-redeclare': ['warn'],
