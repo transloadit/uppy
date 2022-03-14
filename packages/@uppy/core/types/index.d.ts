@@ -249,9 +249,9 @@ export class Uppy {
 
   once<K extends keyof UppyEventMap, TMeta extends IndexedObject<any>>(event: K, callback: UppyEventMap<TMeta>[K]): this
 
-  off<K extends keyof UppyEventMap>(event: K, callback: UppyEventMap[K]): this
+  off<K extends keyof UppyEventMap>(event: K, callback?: UppyEventMap[K]): this
 
-  off<K extends keyof UppyEventMap, TMeta extends IndexedObject<any>>(event: K, callback: UppyEventMap<TMeta>[K]): this
+  off<K extends keyof UppyEventMap, TMeta extends IndexedObject<any>>(event: K, callback?: UppyEventMap<TMeta>[K]): this
 
   /**
    * For use by plugins only.
