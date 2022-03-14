@@ -46,9 +46,8 @@ module.exports = class DropTarget extends BasePlugin {
   }
 
   isFileTransfer = (event) => {
-    return [].some.call(event.dataTransfer.types, (t) => {
-      return t === 'Files'
-    })
+   const transferTypes = event.dataTransfer.types ?? []
+   return transferTypes.some((type) => type === 'Files')
   }
 
   handleDrop = async (event) => {
