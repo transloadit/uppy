@@ -62,10 +62,6 @@ class Uppy {
     const defaultOptions = {
       id: 'uppy',
       autoProceed: false,
-      /**
-       * @deprecated The method should not be used
-       */
-      allowMultipleUploads: true,
       allowMultipleUploadBatches: true,
       debug: false,
       restrictions: defaultRestrictionOptions,
@@ -77,11 +73,21 @@ class Uppy {
       infoTimeout: 5000,
     }
 
+    // backwards-compatability for `allowMultipleUploads`
+    // TODO: remove `allowMultipleUploads` in the next major
+    const getAllowMultipleUploadBatches = () => {
+      if (!opts) return true
+      if ('allowMultipleUploadBatches' in opts) return opts.allowMultipleUploadBatches
+      if ('allowMultipleUploads' in opts) return opts.allowMultipleUploads
+      return true
+    }
+
     // Merge default options with the ones set by user,
     // making sure to merge restrictions too
     this.opts = {
       ...defaultOptions,
       ...opts,
+      allowMultipleUploadBatches: getAllowMultipleUploadBatches(),
       restrictions: {
         ...defaultOptions.restrictions,
         ...(opts && opts.restrictions),

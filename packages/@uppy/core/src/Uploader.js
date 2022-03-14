@@ -8,7 +8,6 @@ class Uploader {
   postProcessors = new Set()
 
   constructor (getState, setState, emit, log, getFile, getOpts) {
-    // TODO: reduce the args needed
     this.getState = getState
     this.setState = setState
     this.emit = emit
@@ -21,9 +20,7 @@ class Uploader {
     // uppy.retryAll sets this to true — when retrying we want to ignore `allowNewUpload: false`
     const { forceAllowNewUpload = false } = opts
     const { allowNewUpload, currentUploads } = this.getState()
-    // TODO: merge these, one is deprecated but it becomes unwieldy to change this everywhere
-    // all the time
-    const { allowMultipleUploadBatches, allowMultipleUploads } = this.getOpts()
+    const { allowMultipleUploadBatches } = this.getOpts()
     const uploadID = nanoid()
 
     if (!allowNewUpload && !forceAllowNewUpload) {
@@ -32,7 +29,7 @@ class Uploader {
 
     this.emit('upload', { id: uploadID, fileIDs })
     this.setState({
-      allowNewUpload: allowMultipleUploadBatches && allowMultipleUploads,
+      allowNewUpload: allowMultipleUploadBatches,
       currentUploads: {
         ...currentUploads,
         [uploadID]: { fileIDs, step: 0, result: {} },
