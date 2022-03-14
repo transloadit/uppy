@@ -191,6 +191,7 @@ class Uppy {
 
   /**
    * Back compat for when uppy.state is used instead of uppy.getState().
+   * TODO: remove this in next major version
    *
    * @deprecated
    */
