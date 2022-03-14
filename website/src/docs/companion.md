@@ -163,9 +163,9 @@ export COMPANION_HIDE_METRICS="true"
 # instead (e.g Nginx).
 export COMPANION_IMPLICIT_PATH="/SERVER/PATH/TO/WHERE/UPPY/SERVER/LIVES"
 
-# comma-separated client hosts to whitlelist by the server
+# corresponds to the corsOrigins option, but can contain a comma-separated list of String values.
 # if neither this or COMPANION_CLIENT_ORIGINS_REGEX specified, the server would allow any host
-export COMPANION_CLIENT_ORIGINS="localhost:3452,uppy.io"
+export COMPANION_CLIENT_ORIGINS="http://localhost:3452,https://uppy.io"
 
 # Like COMPANION_CLIENT_ORIGINS, but allows a single regex instead
 # (COMPANION_CLIENT_ORIGINS will be ignored if this is used and vice versa)
@@ -263,7 +263,7 @@ export COMPANION_PERIODIC_PING_INTERVAL=60000
 export COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD="{\"static\":\"data\"}"
 ```
 
-See [env.example.sh](https://github.com/transloadit/uppy/blob/main/env.example.sh) for an example configuration script.
+See [`.env.example`](https://github.com/transloadit/uppy/blob/main/.env.example) for an example environment configuration file.
 
 ### Options
 
@@ -317,6 +317,7 @@ const options = {
   periodicPingUrls: [],
   periodicPingInterval: 60000,
   periodicPingStaticPayload: { static: 'payload' },
+  corsOrigins: true,
 }
 ```
 
@@ -364,6 +365,8 @@ const options = {
 18. **periodicPingStaticPayload(optional)** - A `JSON.stringify`-able JavaScript Object that will be sent as part of the JSON body in the period ping requests.
 
 19. **allowLocalUrls(optional)** - A boolean flag to tell Companion whether to allow requesting local URLs. Note: Only enable this in development. **Enabling it in production is a security risk.**
+
+20. **corsOrigins(optional)** - Allowed CORS Origins (default `true`. Passed as the `origin` option in [cors](https://github.com/expressjs/cors#configuration-options))
 
 ### Provider Redirect URIs
 

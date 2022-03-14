@@ -10,6 +10,7 @@
     <li><label for="opts-darkMode"><input type="checkbox" id="opts-darkMode" /> Dark Mode</label></li>
     <li><label for="opts-disabled"><input type="checkbox" id="opts-disabled" checked/> Disabled</label></li>
     <li><label for="opts-GoldenRetriever"><input type="checkbox" id="opts-GoldenRetriever" checked/> Recover incomplete uploads</label></li>
+    <li><label for="opts-Compressor"><input type="checkbox" id="opts-Compressor" checked/> Compress images</label></li>
   </ul>
   <ul>
     <li><label for="opts-Webcam"><input type="checkbox" id="opts-Webcam" checked/> Webcam</label></li>
@@ -18,7 +19,7 @@
     <li><label for="opts-GoogleDrive"><input type="checkbox" id="opts-GoogleDrive" checked/> Google Drive</label></li>
     <li><label for="opts-Dropbox"><input type="checkbox" id="opts-Dropbox" checked/> Dropbox</label></li>
     <li><label for="opts-Unsplash"><input type="checkbox" id="opts-Unsplash" checked/> Unsplash</label></li>
-    <!-- <li><label for="opts-Box"><input type="checkbox" id="opts-Box" checked/> Box</label></li> -->
+    <li><label for="opts-Box"><input type="checkbox" id="opts-Box" checked/> Box</label></li>
     <li><label for="opts-Instagram"><input type="checkbox" id="opts-Instagram" checked/> Instagram</label></li>
     <li><label for="opts-Facebook"><input type="checkbox" id="opts-Facebook" checked/> Facebook</label></li>
     <li><label for="opts-OneDrive"><input type="checkbox" id="opts-OneDrive" checked/> OneDrive</label></li>
@@ -51,7 +52,7 @@
     GoogleDrive: document.querySelector('#opts-GoogleDrive'),
     Dropbox: document.querySelector('#opts-Dropbox'),
     Unsplash: document.querySelector('#opts-Unsplash'),
-    // Box: document.querySelector('#opts-Box'),
+    Box: document.querySelector('#opts-Box'),
     Instagram: document.querySelector('#opts-Instagram'),
     Facebook: document.querySelector('#opts-Facebook'),
     OneDrive: document.querySelector('#opts-OneDrive'),
@@ -63,7 +64,8 @@
     imageEditor: document.querySelector('#opts-imageEditor'),
     disabled: document.querySelector('#opts-disabled'),
     DropTarget: document.querySelector('#opts-DropTarget'),
-    GoldenRetriever: document.querySelector('#opts-GoldenRetriever')
+    GoldenRetriever: document.querySelector('#opts-GoldenRetriever'),
+    Compressor: document.querySelector('#opts-Compressor'),
   }
 
   var defaultOpts = {
@@ -74,7 +76,7 @@
     Instagram: true,
     Dropbox: true,
     Unsplash: true,
-    // Box: true,
+    Box: true,
     OneDrive: true,
     Facebook: false,
     Url: true,
@@ -85,6 +87,7 @@
     disabled: false,
     DropTarget: true,
     GoldenRetriever: false,
+    Compressor: true,
   }
 
   // try to get options from localStorage, if its empty, set to defaultOpts

@@ -17,10 +17,6 @@ const SHARED_DRIVE_FIELDS = '*'
 // Hopefully this name will not be used by Google
 const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
-function sortByName (first, second) {
-  return first.name.localeCompare(second.name)
-}
-
 async function waitForFailedResponse (resp) {
   const buf = await new Promise((resolve) => {
     let data = ''
@@ -71,7 +67,7 @@ function adaptData (listFilesResp, sharedDrivesResp, directory, query, showShare
 
   const adaptedItems = [
     ...(virtualItem ? [virtualItem] : []), // shared folder first
-    ...([...sharedDrives, ...items].map(adaptItem).sort(sortByName)),
+    ...([...sharedDrives, ...items].map(adaptItem)),
   ]
 
   return {
@@ -111,21 +107,30 @@ class Drive extends Provider {
     const isRoot = directory === 'root'
     const isVirtualSharedDirRoot = directory === VIRTUAL_SHARED_DIR
 
-    async function fetchSharedDrives () {
+    async function fetchSharedDrives (pageToken = null) {
       try {
         const shouldListSharedDrives = isRoot && !query.cursor
         if (!shouldListSharedDrives) return undefined
 
         const resp = await new Promise((resolve, reject) => client
           .get('drives')
-          .qs({ fields: SHARED_DRIVE_FIELDS })
+          .qs({ fields: SHARED_DRIVE_FIELDS, pageToken, pageSize: 100 })
           .auth(options.token)
           .request((err, resp2) => {
             if (err || resp2.statusCode !== 200) return reject(handleErrorResponse(err, resp2))
             return resolve(resp2)
           }))
 
-        return resp && resp.body
+        if (!resp) return resp
+
+        const { body } = resp
+        const nextPageToken = body && body.nextPageToken
+        if (nextPageToken) {
+          const nextBody = await fetchSharedDrives(nextPageToken)
+          if (!nextBody) return body
+          return { ...nextBody, drives: [...body.drives, ...nextBody.drives] }
+        }
+        return body
       } catch (err) {
         logger.error(err, 'provider.drive.sharedDrive.error')
         throw err
@@ -143,6 +148,7 @@ class Drive extends Provider {
         pageToken: query.cursor,
         q,
         // pageSize: 10, // can be used for testing pagination if you don't have many files
+        orderBy: 'folder,name',
         includeItemsFromAllDrives: true,
         supportsAllDrives: true,
       }

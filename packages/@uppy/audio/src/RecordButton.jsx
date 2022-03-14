@@ -1,6 +1,6 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
-module.exports = function RecordButton ({ recording, onStartRecording, onStopRecording, i18n }) {
+export default function RecordButton ({ recording, onStartRecording, onStopRecording, i18n }) {
   if (recording) {
     return (
       <button

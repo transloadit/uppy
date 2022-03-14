@@ -18,6 +18,8 @@ nl_NL.strings = {
   closeModal: 'Sluit Venster',
   companionError: 'Verbinding met Companion mislukt',
   complete: 'Voltooid',
+  compressedX: '%{size} bespaard door het comprimeren van afbeeldingen',
+  compressingImages: 'Afbeeldingen aan het comprimeren...',
   connectedToInternet: 'Verbonden met het internet',
   copyLink: 'Kopieer link',
   copyLinkToClipboardFallback: 'Kopieer de onderstaande URL',
