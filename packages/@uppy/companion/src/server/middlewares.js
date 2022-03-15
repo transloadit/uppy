@@ -6,6 +6,8 @@ const promBundle = require('express-prom-bundle')
 const { version } = require('../../package.json')
 const tokenService = require('./helpers/jwt')
 const logger = require('./logger')
+const getS3Client = require('./s3-client')
+const { getURLBuilder } = require('./helpers/utils')
 
 exports.hasSessionAndProvider = (req, res, next) => {
   if (!req.session || !req.body) {
@@ -143,4 +145,33 @@ exports.metrics = ({ path = undefined } = {}) => {
   const numberVersion = Number(version.replace(/\D/g, ''))
   versionGauge.set(numberVersion)
   return metricsMiddleware
+}
+
+/**
+ *
+ * @param {object} options
+ */
+exports.getCompanionMiddleware = (options) => {
+  /**
+   * @param {object} req
+   * @param {object} res
+   * @param {Function} next
+   */
+  const middleware = (req, res, next) => {
+    const versionFromQuery = req.query.uppyVersions ? decodeURIComponent(req.query.uppyVersions) : null
+    req.companion = {
+      options,
+      s3Client: getS3Client(options),
+      authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
+      clientVersion: req.header('uppy-versions') || versionFromQuery || '1.0.0',
+      buildURL: getURLBuilder(options),
+    }
+
+    if (options.logClientVersion) {
+      logger.info(`uppy client version ${req.companion.clientVersion}`, 'companion.client.version')
+    }
+    next()
+  }
+
+  return middleware
 }
