@@ -326,6 +326,8 @@ category: "Other Integrations"
 
 This data is used to generate Uppy’s website. Refer to [the section about running the website locally](#website-previews) if you’d like to see how the docs look on the website.
 
+Any change of the documentation that involves a security best practice must substantiated with an external reference. See [#3565](https://github.com/transloadit/uppy/issues/3565).
+
 ### Adding an example
 
 You can likely use whatever code generation tool for your framework (ex. `create-react-app`) to create this example. Make sure you add the same version of `@uppy/core` to this as your peer dependency required, or you may run into strange issues. Try to include all the components are some of their functionality. [The React example](https://github.com/transloadit/uppy/blob/main/examples/react-example/App.js) is a great... well example of how to do this well.

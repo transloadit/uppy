@@ -128,8 +128,7 @@ module.exports = {
 
 ## S3 Bucket configuration
 
-S3 buckets do not allow public uploads by default.
-To allow Uppy to upload directly to a bucket, at least its CORS permissions need to be configured, and you potentially need to change some of the _Public access settings_ that provide an extra layer of public access protection even if the correct CORS permissions are in place.
+S3 buckets do not allow public uploads for security reasons. To allow Uppy and the browser to upload directly to a bucket, its CORS permissions need to be configured.
 
 CORS permissions can be found in the [S3 Management Console](https://console.aws.amazon.com/s3/home).
 Click the bucket that will receive the uploads, then go into the `Permissions` tab and select the `CORS configuration` button.
@@ -207,10 +206,6 @@ The final configuration should look something like this (note that it defines tw
   }
 ]
 ```
-
-Even with these CORS rules in place, you browser might still receive HTTP status 403 responses with `AccessDenied` in the response body when it tries to `POST` to your bucket. In this case, within the `Permissions` tab of the [S3 Management Console](https://console.aws.amazon.com/s3/home), choose `Public access settings`.
-
-It will list general _Public access settings for this bucket_, which can override the rules imposed by your CORS settings. Click on _edit_ to manage these settings. Under _Manage public access control lists (ACLs) for this bucket_, make sure that _Block new public ACLs and uploading public objects (Recommended)_ is unchecked, and _Save_ these settings.
 
 If you are using an IAM policy to allow access to the S3 bucket, the policy must have at least the `s3:PutObject` and `s3:PutObjectAcl` permissions scoped to the bucket in question.
 
