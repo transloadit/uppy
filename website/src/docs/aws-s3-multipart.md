@@ -167,9 +167,9 @@ The default implementation calls out to Companion’s S3 signing endpoints.
 
 ## S3 Bucket Configuration
 
-S3 buckets do not allow public uploads by default. To allow Uppy to upload to a bucket directly, its CORS permissions need to be configured. This process is described in the [AwsS3 documentation](/docs/aws-s3/#S3-Bucket-configuration).
+This process is the same as the one described in the [AWS S3 plugin’s documentation](/docs/aws-s3/#S3-Bucket-configuration), except for a few differences.
 
-While the Uppy AWS S3 plugin uses `POST` requests when uploading files to an S3 bucket, the AWS S3 Multipart plugin uses `PUT` requests when uploading file parts. Additionally, the `ETag` header must also be exposed (in the response):
+While the AWS S3 plugin uses `POST` requests when uploading files to an S3 bucket, the AWS S3 Multipart plugin uses `PUT` requests when uploading file parts. Additionally, the `ETag` header must also be exposed (in the response). So the CORS policy needs to look like this:
 
 ```json
 [
