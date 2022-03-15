@@ -197,18 +197,17 @@ module.exports = function server (inputCompanionOptions = {}) {
 
   // @ts-ignore
   app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-    const logStackTrace = true
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message
       // to avoid uneccessary error alerts
       if (err.status === 400 && err instanceof URIError) {
         logger.error(err.message, 'root.error', req.id)
       } else {
-        logger.error(err, 'root.error', req.id, logStackTrace)
+        logger.error(err, 'root.error', req.id)
       }
       res.status(err.status || 500).json({ message: 'Something went wrong', requestId: req.id })
     } else {
-      logger.error(err, 'root.error', req.id, logStackTrace)
+      logger.error(err, 'root.error', req.id)
       res.status(err.status || 500).json({ message: err.message, error: err, requestId: req.id })
     }
   })
