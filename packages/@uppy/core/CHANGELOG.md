@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 2.1.6
+
+Released: 2022-03-16
+Included in: Uppy v2.8.0
+
+- @uppy/core: Abstract restriction logic in a new Restricter class (Merlijn Vos / #3532)
+
 ## 2.1.5
 
 Released: 2022-02-14

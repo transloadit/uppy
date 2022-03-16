@@ -1,5 +1,17 @@
 # @uppy/companion
 
+## 3.4.0
+
+Released: 2022-03-16
+Included in: Uppy v2.8.0
+
+- @uppy/companion: always log errors with stack trace (Mikael Finstad / #3573)
+- @uppy/companion: Companion refactor (Mikael Finstad / #3542)
+- @uppy/companion: Fetch all Google Drive shared drives (Robert DiMartino / #3553)
+- @uppy/companion: Order Google Drive results by folder to show all folders first (Robert DiMartino / #3546)
+- @uppy/companion: upgrade node-redis-pubsub (Mikael Finstad / #3541)
+- @uppy/companion: reorder reqToOptions (Antoine du Hamel / #3530)
+
 ## 3.3.1
 
 Released: 2022-03-02
