@@ -57,14 +57,13 @@ describe('Test Logger secret mask', () => {
 
     const exptectedMsg = chalk.bold.red('Error: this error has ****** and ****** and case-insensitive ******')
 
-    expect(loggedMessage).toBeTruthy()
-    expect(loggedMessage).toBe(exptectedMsg)
+    expect(loggedMessage.startsWith(exptectedMsg)).toBeTruthy()
   })
 
   test('masks secret values present in log.error stack trace', () => {
     const loggedMessage = captureConsoleLog(() => {
       const err = new Error('this error has ToBeMasked1 and toBeMasked2 and case-insensitive TOBEMasKED2')
-      logger.error(err, '', '', true)
+      logger.error(err, '', '')
     })
 
     const exptectedMsg = chalk.bold.red('Error: this error has ****** and ****** and case-insensitive ******')
