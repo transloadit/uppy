@@ -746,29 +746,6 @@ describe('src/Core', () => {
         )
       })
 
-      it('allows no new files after upload with legacy allowMultipleUploads option', async () => {
-        const core = new Core({ allowMultipleUploads: false })
-        core.addFile({
-          source: 'jest',
-          name: 'foo.jpg',
-          type: 'image/jpeg',
-          data: new File([sampleImage], { type: 'image/jpeg' }),
-        })
-
-        await core.upload()
-
-        expect(() => {
-          core.addFile({
-            source: 'jest',
-            name: '123.foo',
-            type: 'image/jpeg',
-            data: new File([sampleImage], { type: 'image/jpeg' }),
-          })
-        }).toThrow(
-          /Cannot add more files/,
-        )
-      })
-
       it('does not allow new files after the removeFile() if some file is still present', async () => {
         const core = new Core({ allowMultipleUploadBatches: false })
 
@@ -1324,6 +1301,7 @@ describe('src/Core', () => {
           bytesUploaded: 1234,
           percentage: 36,
         })
+        expect(core.getState().totalProgress).toBe(36)
 
         core.emit('upload-success', core.getFile(id), { uploadURL: 'lol' })
         expect(core.getFiles()[0].size).toBe(3456)

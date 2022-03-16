@@ -73,21 +73,11 @@ class Uppy {
       infoTimeout: 5000,
     }
 
-    // backwards-compatability for `allowMultipleUploads`
-    // TODO: remove `allowMultipleUploads` in the next major
-    const getAllowMultipleUploadBatches = () => {
-      if (!opts) return true
-      if ('allowMultipleUploadBatches' in opts) return opts.allowMultipleUploadBatches
-      if ('allowMultipleUploads' in opts) return opts.allowMultipleUploads
-      return true
-    }
-
     // Merge default options with the ones set by user,
     // making sure to merge restrictions too
     this.opts = {
       ...defaultOptions,
       ...opts,
-      allowMultipleUploadBatches: getAllowMultipleUploadBatches(),
       restrictions: {
         ...defaultOptions.restrictions,
         ...(opts && opts.restrictions),
@@ -1355,7 +1345,7 @@ class Uppy {
     const preUpdatedFiles = this.opts.onBeforeUpload(files)
 
     if (preUpdatedFiles === false) {
-      return Promise.reject(new Error('Not starting the upload because onBeforeUpload returned false'))
+      throw new Error('Not starting the upload because onBeforeUpload returned false')
     }
 
     if (preUpdatedFiles && typeof preUpdatedFiles === 'object') {
@@ -1368,14 +1358,14 @@ class Uppy {
       this.#restricter.validateMinNumberOfFiles(preUpdatedFiles)
     } catch (err) {
       this.#informAndEmit(err)
-      return Promise.reject(err)
+      throw err
     }
 
     // We don't need to informAndEmit because checkRequiredMetaFields
     // already emits `restriction-failed` events for every file.
     // Instead we throw a generic required meta field error.
     if (!this.#checkRequiredMetaFields(preUpdatedFiles)) {
-      return Promise.reject(new RestrictionError(this.i18n('missingRequiredMetaField')))
+      throw new RestrictionError(this.i18n('missingRequiredMetaField'))
     }
 
     try {
@@ -1395,7 +1385,7 @@ class Uppy {
     } catch (err) {
       this.emit('error', err)
       this.log(err, 'error')
-      return Promise.reject(err)
+      throw err
     }
   }
 }
