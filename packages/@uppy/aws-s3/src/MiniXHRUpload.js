@@ -280,13 +280,13 @@ module.exports = class MiniXHRUpload {
       })
 
       this.#addEventHandlerForFile('file-removed', file.id, () => {
-        socket.send('pause', {})
+        socket.send('cancel', {})
         queuedRequest.abort()
         resolve(`upload ${file.id} was removed`)
       })
 
       this.#addEventHandlerIfFileStillExists('cancel-all', file.id, () => {
-        socket.send('pause', {})
+        socket.send('cancel', {})
         queuedRequest.abort()
         resolve(`upload ${file.id} was canceled`)
       })
