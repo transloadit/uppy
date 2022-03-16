@@ -807,7 +807,7 @@ class Uppy {
     return this.#runUpload(uploadID)
   }
 
-  cancelAll () {
+  cancelAllExceptAssemblies () {
     this.emit('cancel-all')
 
     const { files } = this.getState()
@@ -824,6 +824,16 @@ class Uppy {
     })
   }
 
+  // https://github.com/transloadit/uppy/issues/3547
+  cancelAllAssemblies () {
+    this.emit('cancel-all-assemblies')
+  }
+
+  cancelAll () {
+    this.cancelAllExceptAssemblies()
+    this.cancelAllAssemblies()
+  }
+
   retryUpload (fileID) {
     this.setFileState(fileID, {
       error: null,
@@ -838,6 +848,7 @@ class Uppy {
     return this.#runUpload(uploadID)
   }
 
+  // todo what is the point of the reset method when we have cancelAll or vice versa?
   reset () {
     this.cancelAll()
   }
@@ -1234,10 +1245,11 @@ class Uppy {
   /**
    * Uninstall all plugins and close down this Uppy instance.
    */
-  close () {
+  close ({ cancelAssemblies = true } = {}) {
     this.log(`Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`)
 
-    this.reset()
+    this.cancelAllExceptAssemblies()
+    if (cancelAssemblies) this.cancelAllAssemblies()
 
     this.#storeUnsubscribe()
 
