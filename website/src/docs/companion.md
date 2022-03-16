@@ -107,10 +107,14 @@ This takes your `server` instance as an argument.
 
 The object returned by `companion.app()` also has a property `companionEmitter` which is an `EventEmitter` that emits the following events:
 
-* `success` - When a file has been uploaded successfully
-* `error` - When a file upload has failed
+* `upload-start` - When an upload starts, this event is emitted with an object containing the property `token`, which is a unique ID for the upload.
+* **token** - The event name is the token from `upload-start`. The event has an object with the following properties:
+  * `action` - One of the following strings:
+    * `success` - When the upload succeeds.
+    * `error` - When the upload fails with an error.
+  * `payload` - the error or success payload.
 
-Example code for using the `EventEmitter` to handle file upload finished:
+Example code for using the `EventEmitter` to handle a finished file upload:
 
 ```js
 const companionApp = companion.app(options)
@@ -119,13 +123,13 @@ const { companionEmitter: emitter } = companionApp
 emitter.on('upload-start', ({ token }) => {
   console.log('Upload started', token)
 
-  function onUploadEvent (message) {
-    if (message.action === 'success') {
-      emitter.off(token, onUploadEvent)
-      console.log('Upload finished', token, message.payload.url)
-    } else if (message.action === 'error') {
-      emitter.off(token, onUploadEvent)
-      console.error('Upload failed', message.payload)
+  function onUploadEvent ({ action, payload }) {
+    if (action === 'success') {
+      emitter.off(token, onUploadEvent) // avoid listener leak
+      console.log('Upload finished', token, payload.url)
+    } else if (action === 'error') {
+      emitter.off(token, onUploadEvent) // avoid listener leak
+      console.error('Upload failed', payload)
     }
   }
   emitter.on(token, onUploadEvent)
