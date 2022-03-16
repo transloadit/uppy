@@ -388,19 +388,18 @@ module.exports = class Transloadit extends BasePlugin {
   /**
    * When all files are removed, cancel in-progress Assemblies.
    */
-  #onCancelAll = () => {
-    const { uploadsAssemblies } = this.getPluginState()
+  #onCancelAll = async () => {
+    try {
+      if (!this.opts.waitForEncoding) return
 
-    const assemblyIDs = Object.values(uploadsAssemblies).flat(1)
+      const { uploadsAssemblies } = this.getPluginState()
+      const assemblyIDs = Object.values(uploadsAssemblies).flat(1)
+      const assemblies = assemblyIDs.map((assemblyID) => this.getAssembly(assemblyID))
 
-    const cancelPromises = assemblyIDs.map((assemblyID) => {
-      const assembly = this.getAssembly(assemblyID)
-      return this.#cancelAssembly(assembly)
-    })
-
-    Promise.all(cancelPromises).catch((err) => {
+      await Promise.all(assemblies.map((assembly) => this.#cancelAssembly(assembly)))
+    } catch (err) {
       this.uppy.log(err)
-    })
+    }
   }
 
   /**
@@ -726,7 +725,7 @@ module.exports = class Transloadit extends BasePlugin {
     this.uppy.on('error', this.#onError)
 
     // Handle cancellation.
-    this.uppy.on('cancel-all', this.#onCancelAll)
+    this.uppy.on('cancel-all-assemblies', this.#onCancelAll)
 
     // For error reporting.
     this.uppy.on('upload-error', this.#onTusError)
