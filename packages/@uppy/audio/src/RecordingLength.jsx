@@ -1,7 +1,7 @@
-const { h } = require('preact')
-const formatSeconds = require('./formatSeconds')
+import { h } from 'preact'
+import formatSeconds from './formatSeconds.js'
 
-module.exports = function RecordingLength ({ recordingLengthSeconds, i18n }) {
+export default function RecordingLength ({ recordingLengthSeconds, i18n }) {
   const formattedRecordingLengthSeconds = formatSeconds(recordingLengthSeconds)
 
   return (

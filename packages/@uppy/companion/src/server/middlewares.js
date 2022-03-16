@@ -42,7 +42,7 @@ exports.verifyToken = (req, res, next) => {
   const { err, payload } = tokenService.verifyEncryptedToken(token, req.companion.options.secret)
   if (err || !payload[providerName]) {
     if (err) {
-      logger.error(err, 'token.verify.error', req.id)
+      logger.error(err.message, 'token.verify.error', req.id)
     }
     return res.sendStatus(401)
   }

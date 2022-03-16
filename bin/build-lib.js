@@ -56,6 +56,23 @@ async function isTypeModule (file) {
   return typeModule
 }
 
+// eslint-disable-next-line no-shadow
+function transformExportDeclarations (path) {
+  const { value } = path.node.source
+  if (value.endsWith('.jsx') && value.startsWith('./')) {
+    // Rewrite .jsx imports to .js:
+    path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign
+  }
+
+  path.replaceWith(
+    t.assignmentExpression(
+      '=',
+      t.memberExpression(t.identifier('module'), t.identifier('exports')),
+      t.callExpression(t.identifier('require'), [path.node.source]),
+    ),
+  )
+}
+
 async function buildLib () {
   const metaMtimes = await Promise.all(META_FILES.map((filename) => lastModified(path.join(__dirname, '..', filename))))
   const metaMtime = Math.max(...metaMtimes)
@@ -86,13 +103,14 @@ async function buildLib () {
       visitor: {
         // eslint-disable-next-line no-shadow
         ImportDeclaration (path) {
-          const { value } = path.node.source
+          let { value } = path.node.source
           if (value.endsWith('.jsx') && value.startsWith('./')) {
             // Rewrite .jsx imports to .js:
-            path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign
-          } else if (PACKAGE_JSON_IMPORT.test(value)
-                     && path.node.specifiers.length === 1
-                     && path.node.specifiers[0].type === 'ImportDefaultSpecifier') {
+            value = path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign,no-multi-assign
+          }
+          if (PACKAGE_JSON_IMPORT.test(value)
+              && path.node.specifiers.length === 1
+              && path.node.specifiers[0].type === 'ImportDefaultSpecifier') {
             // Vendor-in version number from package.json files:
             const version = versionCache.get(file.slice(0, file.indexOf('/src/')))
             if (version != null) {
@@ -104,12 +122,34 @@ async function buildLib () {
                   ]))]),
               )
             }
-          } else if (!value.startsWith('.')
-                     && path.node.specifiers.length === 1
-                     && path.node.specifiers[0].type === 'ImportDefaultSpecifier'
-          ) {
-            // Replace default imports with straight require calls (CommonJS interop):
-            const [{ local }] = path.node.specifiers
+          } else if (path.node.specifiers[0].type === 'ImportDefaultSpecifier') {
+            const [{ local }, ...otherSpecifiers] = path.node.specifiers
+            if (otherSpecifiers.length === 1 && otherSpecifiers[0].type === 'ImportNamespaceSpecifier') {
+              // import defaultVal, * as namespaceImport from '@uppy/package'
+              // is transformed into:
+              // const defaultVal = require('@uppy/package'); const namespaceImport = defaultVal
+              path.insertAfter(
+                t.variableDeclaration('const', [
+                  t.variableDeclarator(
+                    otherSpecifiers[0].local,
+                    local,
+                  ),
+                ]),
+              )
+            } else if (otherSpecifiers.length !== 0) {
+              // import defaultVal, { exportedVal as importedName, other } from '@uppy/package'
+              // is transformed into:
+              // const defaultVal = require('@uppy/package'); const { exportedVal: importedName, other } = defaultVal
+              path.insertAfter(t.variableDeclaration('const', [t.variableDeclarator(
+                t.objectPattern(
+                  otherSpecifiers.map(specifier => t.objectProperty(
+                    t.identifier(specifier.imported.name),
+                    specifier.local,
+                  )),
+                ),
+                local,
+              )]))
+            }
             path.replaceWith(
               t.variableDeclaration('const', [
                 t.variableDeclarator(
@@ -119,6 +159,33 @@ async function buildLib () {
                   ]),
                 ),
               ]),
+            )
+          }
+        },
+        ExportAllDeclaration: transformExportDeclarations,
+        // eslint-disable-next-line no-shadow,consistent-return
+        ExportNamedDeclaration (path) {
+          if (path.node.source != null) return transformExportDeclarations(path)
+        },
+        // eslint-disable-next-line no-shadow
+        ExportDefaultDeclaration (path) {
+          const moduleExports =  t.memberExpression(t.identifier('module'), t.identifier('exports'))
+          if (!t.isDeclaration(path.node.declaration)) {
+            path.replaceWith(
+              t.assignmentExpression('=', moduleExports, path.node.declaration),
+            )
+          } else if (path.node.declaration.id != null) {
+            const { id } = path.node.declaration
+            path.insertBefore(path.node.declaration)
+            path.replaceWith(
+              t.assignmentExpression('=', moduleExports, id),
+            )
+          } else {
+            const id = t.identifier('_default')
+            path.node.declaration.id = id // eslint-disable-line no-param-reassign
+            path.insertBefore(path.node.declaration)
+            path.replaceWith(
+              t.assignmentExpression('=', moduleExports, id),
             )
           }
         },

@@ -9,7 +9,7 @@ function result (v) {
 /* Audio Oscilloscope
   https://github.com/miguelmota/audio-oscilloscope
 */
-module.exports = class AudioOscilloscope {
+export default class AudioOscilloscope {
   constructor (canvas, options = {}) {
     const canvasOptions = options.canvas || {}
     const canvasContextOptions = options.canvasContext || {}

@@ -7,8 +7,6 @@ const Translator = require('@uppy/utils/lib/Translator')
 const ee = require('namespace-emitter')
 const { nanoid } = require('nanoid/non-secure')
 const throttle = require('lodash.throttle')
-const prettierBytes = require('@transloadit/prettier-bytes')
-const match = require('mime-match')
 const DefaultStore = require('@uppy/store-default')
 const getFileType = require('@uppy/utils/lib/getFileType')
 const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
@@ -16,32 +14,15 @@ const generateFileID = require('@uppy/utils/lib/generateFileID')
 const supportsUploadProgress = require('./supportsUploadProgress')
 const getFileName = require('./getFileName')
 const { justErrorsLogger, debugLogger } = require('./loggers')
+const {
+  Restricter,
+  defaultOptions: defaultRestrictionOptions,
+  RestrictionError,
+} = require('./Restricter')
 
 const locale = require('./locale')
 
 // Exported from here.
-class RestrictionError extends Error {
-  constructor (...args) {
-    super(...args)
-    this.isRestriction = true
-  }
-}
-if (typeof AggregateError === 'undefined') {
-  // eslint-disable-next-line no-global-assign
-  globalThis.AggregateError = class AggregateError extends Error {
-    constructor (errors, message) {
-      super(message)
-      this.errors = errors
-    }
-  }
-}
-
-class AggregateRestrictionError extends AggregateError {
-  constructor (...args) {
-    super(...args)
-    this.isRestriction = true
-  }
-}
 
 /**
  * Uppy Core module.
@@ -54,6 +35,8 @@ class Uppy {
 
   /** @type {Record<string, BasePlugin[]>} */
   #plugins = Object.create(null)
+
+  #restricter
 
   #storeUnsubscribe
 
@@ -82,15 +65,7 @@ class Uppy {
       allowMultipleUploads: true,
       allowMultipleUploadBatches: true,
       debug: false,
-      restrictions: {
-        maxFileSize: null,
-        minFileSize: null,
-        maxTotalFileSize: null,
-        maxNumberOfFiles: null,
-        minNumberOfFiles: null,
-        allowedFileTypes: null,
-        requiredMetaFields: [],
-      },
+      restrictions: defaultRestrictionOptions,
       meta: {},
       onBeforeFileAdded: (currentFile) => currentFile,
       onBeforeUpload: (files) => files,
@@ -120,12 +95,6 @@ class Uppy {
 
     this.log(`Using Core v${this.constructor.VERSION}`)
 
-    if (this.opts.restrictions.allowedFileTypes
-        && this.opts.restrictions.allowedFileTypes !== null
-        && !Array.isArray(this.opts.restrictions.allowedFileTypes)) {
-      throw new TypeError('`restrictions.allowedFileTypes` must be an array')
-    }
-
     this.i18nInit()
 
     // ___Why throttle at 500ms?
@@ -153,6 +122,8 @@ class Uppy {
       info: [],
       recoveredState: null,
     })
+
+    this.#restricter = new Restricter(() => this.opts, this.i18n)
 
     this.#storeUnsubscribe = this.store.subscribe((prevState, nextState, patch) => {
       this.emit('state-update', prevState, nextState, patch)
@@ -400,194 +371,68 @@ class Uppy {
     }
   }
 
-  /**
-   * A public wrapper for _checkRestrictions — checks if a file passes a set of restrictions.
-   * For use in UI pluigins (like Providers), to disallow selecting files that won’t pass restrictions.
-   *
-   * @param {object} file object to check
-   * @param {Array} [files] array to check maxNumberOfFiles and maxTotalFileSize
-   * @returns {object} { result: true/false, reason: why file didn’t pass restrictions }
-   */
-  validateRestrictions (file, files) {
-    try {
-      this.#checkRestrictions(file, files)
-      return {
-        result: true,
-      }
-    } catch (err) {
-      return {
-        result: false,
-        reason: err.message,
-      }
-    }
-  }
+  /*
+  * @constructs
+  * @param { Error } error
+  * @param { undefined } file
+  */
+  /*
+  * @constructs
+  * @param { RestrictionError } error
+  * @param { UppyFile | undefined } file
+  */
+  #informAndEmit (error, file) {
+    const { message, details = '' } = error
 
-  /**
-   * Check if file passes a set of restrictions set in options: maxFileSize, minFileSize,
-   * maxNumberOfFiles and allowedFileTypes.
-   *
-   * @param {object} file object to check
-   * @param {Array} [files] array to check maxNumberOfFiles and maxTotalFileSize
-   * @private
-   */
-  #checkRestrictions (file, files = this.getFiles()) {
-    const { maxFileSize, minFileSize, maxTotalFileSize, maxNumberOfFiles, allowedFileTypes } = this.opts.restrictions
-
-    if (maxNumberOfFiles) {
-      if (files.length + 1 > maxNumberOfFiles) {
-        throw new RestrictionError(`${this.i18n('youCanOnlyUploadX', { smart_count: maxNumberOfFiles })}`)
-      }
-    }
-
-    if (allowedFileTypes) {
-      const isCorrectFileType = allowedFileTypes.some((type) => {
-        // check if this is a mime-type
-        if (type.indexOf('/') > -1) {
-          if (!file.type) return false
-          return match(file.type.replace(/;.*?$/, ''), type)
-        }
-
-        // otherwise this is likely an extension
-        if (type[0] === '.' && file.extension) {
-          return file.extension.toLowerCase() === type.substr(1).toLowerCase()
-        }
-        return false
-      })
-
-      if (!isCorrectFileType) {
-        const allowedFileTypesString = allowedFileTypes.join(', ')
-        throw new RestrictionError(this.i18n('youCanOnlyUploadFileTypes', { types: allowedFileTypesString }))
-      }
-    }
-
-    // We can't check maxTotalFileSize if the size is unknown.
-    if (maxTotalFileSize && file.size != null) {
-      let totalFilesSize = 0
-      totalFilesSize += file.size
-      files.forEach((f) => {
-        totalFilesSize += f.size
-      })
-      if (totalFilesSize > maxTotalFileSize) {
-        throw new RestrictionError(this.i18n('exceedsSize', {
-          size: prettierBytes(maxTotalFileSize),
-          file: file.name,
-        }))
-      }
-    }
-
-    // We can't check maxFileSize if the size is unknown.
-    if (maxFileSize && file.size != null) {
-      if (file.size > maxFileSize) {
-        throw new RestrictionError(this.i18n('exceedsSize', {
-          size: prettierBytes(maxFileSize),
-          file: file.name,
-        }))
-      }
-    }
-
-    // We can't check minFileSize if the size is unknown.
-    if (minFileSize && file.size != null) {
-      if (file.size < minFileSize) {
-        throw new RestrictionError(this.i18n('inferiorSize', {
-          size: prettierBytes(minFileSize),
-        }))
-      }
-    }
-  }
-
-  /**
-   * Check if minNumberOfFiles restriction is reached before uploading.
-   *
-   * @private
-   */
-  #checkMinNumberOfFiles (files) {
-    const { minNumberOfFiles } = this.opts.restrictions
-    if (Object.keys(files).length < minNumberOfFiles) {
-      throw new RestrictionError(`${this.i18n('youHaveToAtLeastSelectX', { smart_count: minNumberOfFiles })}`)
-    }
-  }
-
-  /**
-   * Check if requiredMetaField restriction is met for a specific file.
-   *
-   */
-  #checkRequiredMetaFieldsOnFile (file) {
-    const { requiredMetaFields } = this.opts.restrictions
-    const { hasOwnProperty } = Object.prototype
-
-    const errors = []
-    const missingFields = []
-    for (let i = 0; i < requiredMetaFields.length; i++) {
-      if (!hasOwnProperty.call(file.meta, requiredMetaFields[i]) || file.meta[requiredMetaFields[i]] === '') {
-        const err = new RestrictionError(`${this.i18n('missingRequiredMetaFieldOnFile', { fileName: file.name })}`)
-        errors.push(err)
-        missingFields.push(requiredMetaFields[i])
-        this.#showOrLogErrorAndThrow(err, { file, showInformer: false, throwErr: false })
-      }
-    }
-    this.setFileState(file.id, { missingRequiredMetaFields: missingFields })
-    return errors
-  }
-
-  /**
-   * Check if requiredMetaField restriction is met before uploading.
-   *
-   */
-  #checkRequiredMetaFields (files) {
-    const errors = Object.keys(files).flatMap((fileID) => {
-      const file = this.getFile(fileID)
-      return this.#checkRequiredMetaFieldsOnFile(file)
-    })
-
-    if (errors.length) {
-      throw new AggregateRestrictionError(errors, `${this.i18n('missingRequiredMetaField')}`)
-    }
-  }
-
-  /**
-   * Logs an error, sets Informer message, then throws the error.
-   * Emits a 'restriction-failed' event if it’s a restriction error
-   *
-   * @param {object | string} err — Error object or plain string message
-   * @param {object} [options]
-   * @param {boolean} [options.showInformer=true] — Sometimes developer might want to show Informer manually
-   * @param {object} [options.file=null] — File object used to emit the restriction error
-   * @param {boolean} [options.throwErr=true] — Errors shouldn’t be thrown, for example, in `upload-error` event
-   * @private
-   */
-  #showOrLogErrorAndThrow (err, { showInformer = true, file = null, throwErr = true } = {}) {
-    const message = typeof err === 'object' ? err.message : err
-    const details = (typeof err === 'object' && err.details) ? err.details : ''
-
-    // Restriction errors should be logged, but not as errors,
-    // as they are expected and shown in the UI.
-    let logMessageWithDetails = message
-    if (details) {
-      logMessageWithDetails += ` ${details}`
-    }
-    if (err.isRestriction) {
-      this.log(logMessageWithDetails)
-      this.emit('restriction-failed', file, err)
+    if (error.isRestriction) {
+      this.emit('restriction-failed', file, error)
     } else {
-      this.log(logMessageWithDetails, 'error')
+      this.emit('error', error)
     }
+    this.info({ message, details }, 'error', this.opts.infoTimeout)
+    this.log(`${message} ${details}`.trim(), 'error')
+  }
 
-    // Sometimes informer has to be shown manually by the developer,
-    // for example, in `onBeforeFileAdded`.
-    if (showInformer) {
-      this.info({ message, details }, 'error', this.opts.infoTimeout)
+  validateRestrictions (file, files = this.getFiles()) {
+    // TODO: directly return the Restriction error in next major version.
+    // we create RestrictionError's just to discard immediately, which doesn't make sense.
+    try {
+      this.#restricter.validate(file, files)
+      return { result: true }
+    } catch (err) {
+      return { result: false, reason: err.message }
     }
+  }
 
-    if (throwErr) {
-      throw (typeof err === 'object' ? err : new Error(err))
+  #checkRequiredMetaFieldsOnFile (file) {
+    const { missingFields, error } = this.#restricter.getMissingRequiredMetaFields(file)
+
+    if (missingFields.length > 0) {
+      this.setFileState(file.id, { missingRequiredMetaFields: missingFields })
+      this.log(error.message)
+      this.emit('restriction-failed', file, error)
+      return false
     }
+    return true
+  }
+
+  #checkRequiredMetaFields (files) {
+    let success = true
+    for (const file of Object.values(files)) {
+      if (!this.#checkRequiredMetaFieldsOnFile(file)) {
+        success = false
+      }
+    }
+    return success
   }
 
   #assertNewUploadAllowed (file) {
     const { allowNewUpload } = this.getState()
 
     if (allowNewUpload === false) {
-      this.#showOrLogErrorAndThrow(new RestrictionError(this.i18n('noMoreFilesAllowed')), { file })
+      const error = new RestrictionError(this.i18n('noMoreFilesAllowed'))
+      this.#informAndEmit(error, file)
+      throw error
     }
   }
 
@@ -620,7 +465,8 @@ class Uppy {
 
     if (this.checkIfFileAlreadyExists(fileID)) {
       const error = new RestrictionError(this.i18n('noDuplicates', { fileName }))
-      this.#showOrLogErrorAndThrow(error, { file: fileDescriptor })
+      this.#informAndEmit(error, fileDescriptor)
+      throw error
     }
 
     const meta = fileDescriptor.meta || {}
@@ -658,16 +504,19 @@ class Uppy {
 
     if (onBeforeFileAddedResult === false) {
       // Don’t show UI info for this error, as it should be done by the developer
-      this.#showOrLogErrorAndThrow(new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.'), { showInformer: false, fileDescriptor })
+      const error = new RestrictionError('Cannot add the file because onBeforeFileAdded returned false.')
+      this.emit('restriction-failed', fileDescriptor, error)
+      throw error
     } else if (typeof onBeforeFileAddedResult === 'object' && onBeforeFileAddedResult !== null) {
       newFile = onBeforeFileAddedResult
     }
 
     try {
       const filesArray = Object.keys(files).map(i => files[i])
-      this.#checkRestrictions(newFile, filesArray)
+      this.#restricter.validate(newFile, filesArray)
     } catch (err) {
-      this.#showOrLogErrorAndThrow(err, { file: newFile })
+      this.#informAndEmit(err, newFile)
+      throw err
     }
 
     return newFile
@@ -1119,13 +968,9 @@ class Uppy {
           newError.details += ` ${error.details}`
         }
         newError.message = this.i18n('failedToUpload', { file: file.name })
-        this.#showOrLogErrorAndThrow(newError, {
-          throwErr: false,
-        })
+        this.#informAndEmit(newError)
       } else {
-        this.#showOrLogErrorAndThrow(error, {
-          throwErr: false,
-        })
+        this.#informAndEmit(error)
       }
     })
 
@@ -1592,7 +1437,6 @@ class Uppy {
         currentUpload = currentUploads[uploadID]
       }
     } catch (err) {
-      this.emit('error', err)
       this.#removeUpload(uploadID)
       throw err
     }
@@ -1670,12 +1514,21 @@ class Uppy {
     }
 
     return Promise.resolve()
+      .then(() => this.#restricter.validateMinNumberOfFiles(files))
+      .catch((err) => {
+        this.#informAndEmit(err)
+        throw err
+      })
       .then(() => {
-        this.#checkMinNumberOfFiles(files)
-        this.#checkRequiredMetaFields(files)
+        if (!this.#checkRequiredMetaFields(files)) {
+          throw new RestrictionError(this.i18n('missingRequiredMetaField'))
+        }
       })
       .catch((err) => {
-        this.#showOrLogErrorAndThrow(err)
+        // Doing this in a separate catch because we already emited and logged
+        // all the errors in `checkRequiredMetaFields` so we only throw a generic
+        // missing fields error here.
+        throw err
       })
       .then(() => {
         const { currentUploads } = this.getState()
@@ -1695,9 +1548,9 @@ class Uppy {
         return this.#runUpload(uploadID)
       })
       .catch((err) => {
-        this.#showOrLogErrorAndThrow(err, {
-          showInformer: false,
-        })
+        this.emit('error', err)
+        this.log(err, 'error')
+        throw err
       })
   }
 }

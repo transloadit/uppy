@@ -151,11 +151,7 @@ The ⓒ mark means that [`@uppy/companion`](https://uppy.io/docs/companion), a s
 
 ## Browser Support
 
-<a href="https://saucelabs.com/u/transloadit-uppy">
-  <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
-</a>
-
-We aim to support recent versions of Safari, Edge, Chrome, Firefox and Opera.
+We aim to support recent versions of Chrome, Firefox, Safari and Edge.
 
 We still provide a bundle which should work on IE11, but we are not running tests on it.
 

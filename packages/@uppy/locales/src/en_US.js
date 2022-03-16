@@ -30,6 +30,8 @@ en_US.strings = {
   companionError: 'Connection with Companion failed',
   companionUnauthorizeHint: 'To unauthorize to your %{provider} account, please go to %{url}',
   complete: 'Complete',
+  compressedX: 'Saved %{size} by compressing images',
+  compressingImages: 'Compressing images...',
   connectedToInternet: 'Connected to the Internet',
   copyLink: 'Copy link',
   copyLinkToClipboardFallback: 'Copy the URL below',

@@ -55,6 +55,77 @@ class AbortError extends Error {}
 
 class ValidationError extends Error {}
 
+/**
+ * Validate the options passed down to the uplaoder
+ *
+ * @param {UploaderOptions} options
+ */
+function validateOptions (options) {
+  // validate HTTP Method
+  if (options.httpMethod) {
+    if (typeof options.httpMethod !== 'string') {
+      throw new ValidationError('unsupported HTTP METHOD specified')
+    }
+
+    const method = options.httpMethod.toLowerCase()
+    if (method !== 'put' && method !== 'post') {
+      throw new ValidationError('unsupported HTTP METHOD specified')
+    }
+  }
+
+  if (exceedsMaxFileSize(options.companionOptions.maxFileSize, options.size)) {
+    throw new ValidationError('maxFileSize exceeded')
+  }
+
+  // validate fieldname
+  if (options.fieldname && typeof options.fieldname !== 'string') {
+    throw new ValidationError('fieldname must be a string')
+  }
+
+  // validate metadata
+  if (options.metadata != null) {
+    if (!isObject(options.metadata)) throw new ValidationError('metadata must be an object')
+  }
+
+  // validate headers
+  if (options.headers && !isObject(options.headers)) {
+    throw new ValidationError('headers must be an object')
+  }
+
+  // validate protocol
+  // @todo this validation should not be conditional once the protocol field is mandatory
+  if (options.protocol && !Object.keys(PROTOCOLS).some((key) => PROTOCOLS[key] === options.protocol)) {
+    throw new ValidationError('unsupported protocol specified')
+  }
+
+  // s3 uploads don't require upload destination
+  // validation, because the destination is determined
+  // by the server's s3 config
+  if (options.protocol !== PROTOCOLS.s3Multipart) {
+    if (!options.endpoint && !options.uploadUrl) {
+      throw new ValidationError('no destination specified')
+    }
+
+    const validateUrl = (url) => {
+      const validatorOpts = { require_protocol: true, require_tld: false }
+      if (url && !validator.isURL(url, validatorOpts)) {
+        throw new ValidationError('invalid destination url')
+      }
+
+      const allowedUrls = options.companionOptions.uploadUrls
+      if (allowedUrls && url && !hasMatch(url, allowedUrls)) {
+        throw new ValidationError('upload destination does not match any allowed destinations')
+      }
+    }
+
+    [options.endpoint, options.uploadUrl].forEach(validateUrl)
+  }
+
+  if (options.chunkSize != null && typeof options.chunkSize !== 'number') {
+    throw new ValidationError('incorrect chunkSize')
+  }
+}
+
 class Uploader {
   /**
    * Uploads file to destination based on the supplied protocol (tus, s3-multipart, multipart)
@@ -80,7 +151,7 @@ class Uploader {
    * @param {UploaderOptions} options
    */
   constructor (options) {
-    this.validateOptions(options)
+    validateOptions(options)
 
     this.options = options
     this.token = uuid.v4()
@@ -277,77 +348,6 @@ class Uploader {
         options: req.companion.options.providerOptions.s3,
       } : null,
       chunkSize: req.companion.options.chunkSize,
-    }
-  }
-
-  /**
-   * Validate the options passed down to the uplaoder
-   *
-   * @param {UploaderOptions} options
-   */
-  validateOptions (options) {
-    // validate HTTP Method
-    if (options.httpMethod) {
-      if (typeof options.httpMethod !== 'string') {
-        throw new ValidationError('unsupported HTTP METHOD specified')
-      }
-
-      const method = options.httpMethod.toLowerCase()
-      if (method !== 'put' && method !== 'post') {
-        throw new ValidationError('unsupported HTTP METHOD specified')
-      }
-    }
-
-    if (exceedsMaxFileSize(options.companionOptions.maxFileSize, options.size)) {
-      throw new ValidationError('maxFileSize exceeded')
-    }
-
-    // validate fieldname
-    if (options.fieldname && typeof options.fieldname !== 'string') {
-      throw new ValidationError('fieldname must be a string')
-    }
-
-    // validate metadata
-    if (options.metadata != null) {
-      if (!isObject(options.metadata)) throw new ValidationError('metadata must be an object')
-    }
-
-    // validate headers
-    if (options.headers && !isObject(options.headers)) {
-      throw new ValidationError('headers must be an object')
-    }
-
-    // validate protocol
-    // @todo this validation should not be conditional once the protocol field is mandatory
-    if (options.protocol && !Object.keys(PROTOCOLS).some((key) => PROTOCOLS[key] === options.protocol)) {
-      throw new ValidationError('unsupported protocol specified')
-    }
-
-    // s3 uploads don't require upload destination
-    // validation, because the destination is determined
-    // by the server's s3 config
-    if (options.protocol !== PROTOCOLS.s3Multipart) {
-      if (!options.endpoint && !options.uploadUrl) {
-        throw new ValidationError('no destination specified')
-      }
-
-      const validateUrl = (url) => {
-        const validatorOpts = { require_protocol: true, require_tld: false }
-        if (url && !validator.isURL(url, validatorOpts)) {
-          throw new ValidationError('invalid destination url')
-        }
-
-        const allowedUrls = options.companionOptions.uploadUrls
-        if (allowedUrls && url && !hasMatch(url, allowedUrls)) {
-          throw new ValidationError('upload destination does not match any allowed destinations')
-        }
-      }
-
-      [options.endpoint, options.uploadUrl].forEach(validateUrl)
-    }
-
-    if (options.chunkSize != null && typeof options.chunkSize !== 'number') {
-      throw new ValidationError('incorrect chunkSize')
     }
   }
 
