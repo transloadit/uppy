@@ -807,8 +807,8 @@ class Uppy {
     return this.#runUpload(uploadID)
   }
 
-  cancelAllExceptAssemblies () {
-    this.emit('cancel-all')
+  cancelAll ({ reason = 'user' }) {
+    this.emit('cancel-all', { reason })
 
     const { files } = this.getState()
 
@@ -822,16 +822,6 @@ class Uppy {
       error: null,
       recoveredState: null,
     })
-  }
-
-  // https://github.com/transloadit/uppy/issues/3547
-  cancelAllAssemblies () {
-    this.emit('cancel-all-assemblies')
-  }
-
-  cancelAll () {
-    this.cancelAllExceptAssemblies()
-    this.cancelAllAssemblies()
   }
 
   retryUpload (fileID) {
@@ -1245,11 +1235,10 @@ class Uppy {
   /**
    * Uninstall all plugins and close down this Uppy instance.
    */
-  close ({ cancelAssemblies = true } = {}) {
+  close ({ reason } = {}) {
     this.log(`Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`)
 
-    this.cancelAllExceptAssemblies()
-    if (cancelAssemblies) this.cancelAllAssemblies()
+    this.cancelAll({ reason })
 
     this.#storeUnsubscribe()
 

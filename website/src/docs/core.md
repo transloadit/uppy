@@ -673,11 +673,11 @@ uppy.getPlugin('Dashboard').setOptions({
 
 Stop all uploads in progress and clear file selection, set progress to 0. More or less, it returns things to the way they were before any user input.
 
-### `uppy.close({ cancelAssemblies })`
+### `uppy.close({ reason = 'user' })`
 
 Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()` before uninstalling.
 
-* `cancelAllAssemblies`: Option whether to also cancel all running Transloadit assemblies (default `true`)
+* `reason`: If set to the string `user`, it will also cancel any running Transloadit assemblies. Set to `null` to disable this behavior.
 
 ### `uppy.logout()`
 
