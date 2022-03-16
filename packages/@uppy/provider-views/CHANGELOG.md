@@ -1,5 +1,12 @@
 # @uppy/provider-views
 
+## 2.0.8
+
+Released: 2022-03-16
+Included in: Uppy v2.8.0
+
+- @uppy/provider-views: provider-view: fix breadcrumbs (Artur Paikin / #3535)
+
 ## 2.0.7
 
 Released: 2022-02-14
