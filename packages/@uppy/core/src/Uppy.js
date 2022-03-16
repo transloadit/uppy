@@ -807,7 +807,7 @@ class Uppy {
     return this.#runUpload(uploadID)
   }
 
-  cancelAll ({ reason = 'user' }) {
+  cancelAll ({ reason = 'user' } = {}) {
     this.emit('cancel-all', { reason })
 
     const { files } = this.getState()
