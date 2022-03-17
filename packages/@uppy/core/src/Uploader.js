@@ -7,28 +7,46 @@ class Uploader {
 
   postProcessors = new Set()
 
-  constructor (getState, setState, emit, log, getFile, getOpts) {
-    this.getState = getState
-    this.setState = setState
-    this.emit = emit
-    this.log = log
-    this.getFile = getFile
-    this.getOpts = getOpts
+  #getOpts
+
+  constructor (getOpts) {
+    this.#getOpts = getOpts
   }
 
-  create (fileIDs, opts = {}) {
-    // uppy.retryAll sets this to true — when retrying we want to ignore `allowNewUpload: false`
-    const { forceAllowNewUpload = false } = opts
-    const { allowNewUpload, currentUploads } = this.getState()
-    const { allowMultipleUploadBatches } = this.getOpts()
+  addPreProcessor (fn) {
+    this.preProcessors.add(fn)
+  }
+
+  removePreProcessor (fn) {
+    return this.preProcessors.delete(fn)
+  }
+
+  addPostProcessor (fn) {
+    this.postProcessors.add(fn)
+  }
+
+  removePostProcessor (fn) {
+    return this.postProcessors.delete(fn)
+  }
+
+  addUploader (fn) {
+    this.uploaders.add(fn)
+  }
+
+  removeUploader (fn) {
+    return this.uploaders.delete(fn)
+  }
+
+  create (fileIDs, forced) {
+    const { store, allowMultipleUploadBatches } = this.#getOpts()
+    const { allowNewUpload, currentUploads } = store.getState()
     const uploadID = nanoid()
 
-    if (!allowNewUpload && !forceAllowNewUpload) {
+    if (!allowNewUpload && !forced) {
       throw new Error('Cannot create a new upload: already uploading.')
     }
 
-    this.emit('upload', { id: uploadID, fileIDs })
-    this.setState({
+    store.setState({
       allowNewUpload: allowMultipleUploadBatches,
       currentUploads: {
         ...currentUploads,
@@ -40,12 +58,13 @@ class Uploader {
   }
 
   async run (uploadID) {
-    let { currentUploads } = this.getState()
+    const { store } = this.#getOpts()
+    let { currentUploads } = store.getState()
     let currentUpload = currentUploads[uploadID]
     const restoreStep = currentUpload.step || 0
 
     if (!currentUpload) {
-      return undefined
+      return
     }
 
     const steps = [
@@ -58,86 +77,32 @@ class Uploader {
         const fn = steps[step]
         const updatedUpload = { ...currentUpload, step }
 
-        this.setState({ currentUploads: { ...currentUploads, [uploadID]: updatedUpload } })
+        store.setState({ currentUploads: { ...currentUploads, [uploadID]: updatedUpload } })
 
         await fn(updatedUpload.fileIDs, uploadID)
 
         // Update currentUpload value in case it was modified asynchronously.
-        currentUploads = this.getState().currentUploads
+        currentUploads = store.getState().currentUploads
         currentUpload = currentUploads[uploadID]
       }
     } catch (err) {
       this.remove(uploadID)
       throw err
     }
-
-    // Mark postprocessing step as complete if necessary; this addresses a case where we might get
-    // stuck in the postprocessing UI while the upload is fully complete.
-    // If the postprocessing steps do not do any work, they may not emit postprocessing events at
-    // all, and never mark the postprocessing as complete. This is fine on its own but we
-    // introduced code in the @uppy/core upload-success handler to prepare postprocessing progress
-    // state if any postprocessors are registered. That is to avoid a "flash of completed state"
-    // before the postprocessing plugins can emit events.
-    //
-    // So, just in case an upload with postprocessing plugins *has* completed *without* emitting
-    // postprocessing completion, we do it instead.
-    this.#completePostProcessing(uploadID)
-
-    const result = this.#setCurrentUploadResult(uploadID)
-
-    if (result) {
-      this.emit('complete', result)
-      this.remove(uploadID)
-    }
-
-    return result
   }
 
   get (uploadID) {
-    const { currentUploads } = this.getState()
-
-    return currentUploads[uploadID]
+    const { store } = this.#getOpts()
+    return store.getState().currentUploads[uploadID]
   }
 
   remove (uploadID) {
-    const currentUploads = { ...this.getState().currentUploads }
+    const { store } = this.#getOpts()
+    const currentUploads = { ...store.getState().currentUploads }
 
     delete currentUploads[uploadID]
 
-    this.setState({ currentUploads })
-  }
-
-  #completePostProcessing (uploadID) {
-    this.get(uploadID).fileIDs.forEach((fileID) => {
-      const file = this.getFile(fileID)
-      if (file && file.progress.postprocess) {
-        this.emit('postprocess-complete', file)
-      }
-    })
-  }
-
-  #setCurrentUploadResult (uploadID) {
-    const { currentUploads } = this.getState()
-    const currentUpload = currentUploads[uploadID]
-
-    if (!currentUpload) {
-      this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
-      return null
-    }
-
-    const files = currentUpload.fileIDs.map((fileID) => this.getFile(fileID))
-    const successful = files.filter((file) => !file.error)
-    const failed = files.filter((file) => file.error)
-    const result = { ...currentUploads[uploadID].result, successful, failed, uploadID }
-
-    this.setState({
-      currentUploads: {
-        ...currentUploads,
-        [uploadID]: { ...currentUploads[uploadID], result },
-      },
-    })
-
-    return result
+    store.setState({ currentUploads })
   }
 }
 
