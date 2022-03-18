@@ -1197,7 +1197,18 @@ class Uppy {
     })
   }
 
-  #runUpload (uploadID) {
+  async #runUpload (uploadID) {
+    await this.#uploader.run(uploadID)
+
+    const { currentUploads } = this.getState()
+    const currentUpload = currentUploads[uploadID]
+
+    // Checking this again as the upload might have been cancelled asynchronously
+    if (!currentUpload) {
+      this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
+      return null
+    }
+
     // Mark postprocessing step as complete if necessary; this addresses a case where we might get
     // stuck in the postprocessing UI while the upload is fully complete.
     // If the postprocessing steps do not do any work, they may not emit postprocessing events at
@@ -1208,47 +1219,18 @@ class Uppy {
     //
     // So, just in case an upload with postprocessing plugins *has* completed *without* emitting
     // postprocessing completion, we do it instead.
-    const completePostProcessing = () => {
-      this.#uploader.get(uploadID).fileIDs.forEach((fileID) => {
-        const file = this.getFile(fileID)
-        if (file && file.progress.postprocess) {
-          this.emit('postprocess-complete', file)
-        }
-      })
-    }
-
-    const setCurrentUploadResult = () => {
-      const { currentUploads } = this.getState()
-      const currentUpload = currentUploads[uploadID]
-
-      if (!currentUpload) {
-        this.log(`Not setting result for an upload that has been removed: ${uploadID}`)
-        return null
+    currentUploads[uploadID].fileIDs.forEach((fileID) => {
+      const file = this.getFile(fileID)
+      if (file && file.progress.postprocess) {
+        this.emit('postprocess-complete', file)
       }
+    })
 
-      const files = currentUpload.fileIDs.map((fileID) => this.getFile(fileID))
-      const successful = files.filter((file) => !file.error)
-      const failed = files.filter((file) => file.error)
-      const result = { ...currentUploads[uploadID].result, successful, failed, uploadID }
-
-      this.setState({
-        currentUploads: {
-          ...currentUploads,
-          [uploadID]: { ...currentUploads[uploadID], result },
-        },
-      })
-
-      return result
-    }
-
-    return this.#uploader.run(uploadID)
-      .then(completePostProcessing)
-      .then(setCurrentUploadResult)
+    return this.#uploader.setCurrentUploadResult(uploadID)
   }
 
   #createUpload (fileIDs, forced) {
     const uploadID = this.#uploader.create(fileIDs, forced)
-    // emit after create as create can throw an error
     this.emit('upload', { id: uploadID, fileIDs })
     return uploadID
   }
@@ -1308,114 +1290,52 @@ class Uppy {
   }
 
   pauseResume (fileID) {
-    if (!this.getState().capabilities.resumableUploads
-         || this.getFile(fileID).uploadComplete) {
-      return undefined
-    }
+    const isPaused = this.#uploader.getIsFileUploadPaused(fileID)
 
-    const wasPaused = this.getFile(fileID).isPaused || false
-    const isPaused = !wasPaused
-
-    this.setFileState(fileID, {
-      isPaused,
-    })
-
+    this.setFileState(fileID, { isPaused })
     this.emit('upload-pause', fileID, isPaused)
 
     return isPaused
   }
 
   pauseAll () {
-    const updatedFiles = { ...this.getState().files }
-    const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
-      return !updatedFiles[file].progress.uploadComplete
-             && updatedFiles[file].progress.uploadStarted
-    })
-
-    inProgressUpdatedFiles.forEach((file) => {
-      const updatedFile = { ...updatedFiles[file], isPaused: true }
-      updatedFiles[file] = updatedFile
-    })
-
-    this.setState({ files: updatedFiles })
+    this.#uploader.toggleAll(true)
     this.emit('pause-all')
   }
 
   resumeAll () {
-    const updatedFiles = { ...this.getState().files }
-    const inProgressUpdatedFiles = Object.keys(updatedFiles).filter((file) => {
-      return !updatedFiles[file].progress.uploadComplete
-             && updatedFiles[file].progress.uploadStarted
-    })
-
-    inProgressUpdatedFiles.forEach((file) => {
-      const updatedFile = {
-        ...updatedFiles[file],
-        isPaused: false,
-        error: null,
-      }
-      updatedFiles[file] = updatedFile
-    })
-    this.setState({ files: updatedFiles })
-
+    this.#uploader.toggleAll(false)
     this.emit('resume-all')
   }
 
   retryAll () {
-    const updatedFiles = { ...this.getState().files }
-    const filesToRetry = Object.keys(updatedFiles).filter(file => {
-      return updatedFiles[file].error
-    })
+    const fileIDsToRetry = this.#uploader.retryAll()
 
-    filesToRetry.forEach((file) => {
-      const updatedFile = {
-        ...updatedFiles[file],
-        isPaused: false,
-        error: null,
-      }
-      updatedFiles[file] = updatedFile
-    })
-    this.setState({
-      files: updatedFiles,
-      error: null,
-    })
+    this.emit('retry-all', fileIDsToRetry)
 
-    this.emit('retry-all', filesToRetry)
-
-    if (filesToRetry.length === 0) {
-      return Promise.resolve({
-        successful: [],
-        failed: [],
-      })
+    if (fileIDsToRetry.length === 0) {
+      return Promise.resolve({ successful: [], failed: [] })
     }
 
-    const uploadID = this.#createUpload(filesToRetry, true)
+    const uploadID = this.#createUpload(fileIDsToRetry, true)
     return this.#runUpload(uploadID)
   }
 
   cancelAll () {
+    const { files } = this.getState()
+    const fileIDs = Object.keys(files)
+
     this.emit('cancel-all')
 
-    const { files } = this.getState()
-
-    const fileIDs = Object.keys(files)
-    if (fileIDs.length) {
+    if (fileIDs.length > 0) {
       this.removeFiles(fileIDs, 'cancel-all')
     }
 
-    this.setState({
-      totalProgress: 0,
-      error: null,
-      recoveredState: null,
-    })
+    this.setState({ totalProgress: 0, error: null, recoveredState: null })
   }
 
   retryUpload (fileID) {
-    this.setFileState(fileID, {
-      error: null,
-      isPaused: false,
-    })
-
+    this.setFileState(fileID, { error: null, isPaused: false })
     this.emit('upload-retry', fileID)
 
     const uploadID = this.#createUpload([fileID], true)

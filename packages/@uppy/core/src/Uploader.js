@@ -57,6 +57,20 @@ class Uploader {
     return uploadID
   }
 
+  get (uploadID) {
+    const { store } = this.#getOpts()
+    return store.getState().currentUploads[uploadID]
+  }
+
+  remove (uploadID) {
+    const { store } = this.#getOpts()
+    const currentUploads = { ...store.getState().currentUploads }
+
+    delete currentUploads[uploadID]
+
+    store.setState({ currentUploads })
+  }
+
   async run (uploadID) {
     const { store } = this.#getOpts()
     let { currentUploads } = store.getState()
@@ -74,6 +88,10 @@ class Uploader {
     ]
     try {
       for (let step = restoreStep; step < steps.length; step++) {
+        // Checking this again as the upload might have been cancelled asynchronously
+        if (!currentUpload) {
+          break
+        }
         const fn = steps[step]
         const updatedUpload = { ...currentUpload, step }
 
@@ -81,7 +99,6 @@ class Uploader {
 
         await fn(updatedUpload.fileIDs, uploadID)
 
-        // Update currentUpload value in case it was modified asynchronously.
         currentUploads = store.getState().currentUploads
         currentUpload = currentUploads[uploadID]
       }
@@ -91,18 +108,69 @@ class Uploader {
     }
   }
 
-  get (uploadID) {
+  getIsFileUploadPaused (fileID) {
     const { store } = this.#getOpts()
-    return store.getState().currentUploads[uploadID]
+    const { files, capabilities } = store.getState()
+    const file = files[fileID]
+
+    if (!capabilities.resumableUploads || file.uploadComplete) {
+      return undefined
+    }
+
+    const wasPaused = file.isPaused || false
+    const isPaused = !wasPaused
+
+    return isPaused
   }
 
-  remove (uploadID) {
+  setCurrentUploadResult (uploadID) {
     const { store } = this.#getOpts()
-    const currentUploads = { ...store.getState().currentUploads }
+    const { currentUploads, files } = store.getState()
+    const filesFromUpload = currentUploads[uploadID].fileIDs.map((fileID) => files[fileID])
+    const successful = filesFromUpload.filter((file) => !file.error)
+    const failed = filesFromUpload.filter((file) => file.error)
+    const result = { ...currentUploads[uploadID].result, successful, failed, uploadID }
 
-    delete currentUploads[uploadID]
+    store.setState({
+      currentUploads: {
+        ...currentUploads,
+        [uploadID]: { ...currentUploads[uploadID], result },
+      },
+    })
 
-    store.setState({ currentUploads })
+    return result
+  }
+
+  toggleAll (isPaused) {
+    const { store } = this.#getOpts()
+    const { files } = store.getState()
+
+    const pausedFiles = Object.fromEntries(Object.entries(files).map(([id, file]) => {
+      if (!file.progress.uploadComplete && file.progress.uploadStarted) {
+        return [id, { ...file, isPaused }]
+      }
+      return [id, file]
+    }))
+
+    store.setState({ files: pausedFiles })
+  }
+
+  retryAll () {
+    const { store } = this.#getOpts()
+    const { files } = store.getState()
+    const filesIDsToRetry = []
+
+    const updatedFiles = Object.fromEntries(Object.entries(files).map(([id, file]) => {
+      if (file.error) {
+        filesIDsToRetry.push(id)
+        return [id, { ...file, isPaused: false, error: null }]
+      }
+      return [id, file]
+    }))
+
+    store.setState({ files: updatedFiles, error: null })
+
+    return filesIDsToRetry
   }
 }
 
