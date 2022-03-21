@@ -77,6 +77,7 @@ class Uploader {
     const currentUpload = currentUploads[uploadID]
     const steps = [...this.preProcessors, ...this.uploaders, ...this.postProcessors]
 
+    // Upload can be cancelled while going through the steps
     if (!currentUpload || step >= steps.length) {
       return
     }
@@ -133,24 +134,24 @@ class Uploader {
     const { store } = this.#getOpts()
     const { files } = store.getState()
 
-    const pausedFiles = Object.fromEntries(Object.entries(files).map(([id, file]) => {
+    const updatedFiles = Object.fromEntries(Object.entries(files).map(([id, file]) => {
       if (!file.progress.uploadComplete && file.progress.uploadStarted) {
         return [id, { ...file, isPaused }]
       }
       return [id, file]
     }))
 
-    store.setState({ files: pausedFiles })
+    store.setState({ files: updatedFiles })
   }
 
   retryAll () {
     const { store } = this.#getOpts()
     const { files } = store.getState()
-    const filesIDsToRetry = []
+    const fileIDsToRetry = []
 
     const updatedFiles = Object.fromEntries(Object.entries(files).map(([id, file]) => {
       if (file.error) {
-        filesIDsToRetry.push(id)
+        fileIDsToRetry.push(id)
         return [id, { ...file, isPaused: false, error: null }]
       }
       return [id, file]
@@ -158,7 +159,7 @@ class Uploader {
 
     store.setState({ files: updatedFiles, error: null })
 
-    return filesIDsToRetry
+    return fileIDsToRetry
   }
 }
 
