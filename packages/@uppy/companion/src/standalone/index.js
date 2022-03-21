@@ -153,6 +153,10 @@ module.exports = function server (inputCompanionOptions = {}) {
     }
   }
 
+  // Session is used for grant redirects, so that we don't need to expose secret tokens in URLs
+  // See https://github.com/transloadit/uppy/pull/1668
+  // https://github.com/transloadit/uppy/issues/3538#issuecomment-1069232909
+  // https://github.com/simov/grant#callback-session
   router.use(session(sessionOptions))
 
   // Routes
