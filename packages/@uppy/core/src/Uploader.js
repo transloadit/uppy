@@ -71,37 +71,25 @@ class Uploader {
     store.setState({ currentUploads })
   }
 
-  async run (uploadID) {
+  async run (uploadID, step = 0) {
     const { store } = this.#getOpts()
-    let { currentUploads } = store.getState()
-    let currentUpload = currentUploads[uploadID]
-    const restoreStep = currentUpload.step || 0
+    const { currentUploads } = store.getState()
+    const currentUpload = currentUploads[uploadID]
+    const steps = [...this.preProcessors, ...this.uploaders, ...this.postProcessors]
 
-    if (!currentUpload) {
+    if (!currentUpload || step >= steps.length) {
       return
     }
 
-    const steps = [
-      ...this.preProcessors,
-      ...this.uploaders,
-      ...this.postProcessors,
-    ]
     try {
-      for (let step = restoreStep; step < steps.length; step++) {
-        // Checking this again as the upload might have been cancelled asynchronously
-        if (!currentUpload) {
-          break
-        }
-        const fn = steps[step]
-        const updatedUpload = { ...currentUpload, step }
+      const runner = steps[step]
+      const updatedUpload = { ...currentUpload, step }
 
-        store.setState({ currentUploads: { ...currentUploads, [uploadID]: updatedUpload } })
+      store.setState({ currentUploads: { ...currentUploads, [uploadID]: updatedUpload } })
 
-        await fn(updatedUpload.fileIDs, uploadID)
+      await runner(updatedUpload.fileIDs, uploadID)
 
-        currentUploads = store.getState().currentUploads
-        currentUpload = currentUploads[uploadID]
-      }
+      this.run(uploadID, step + 1)
     } catch (err) {
       this.remove(uploadID)
       throw err
