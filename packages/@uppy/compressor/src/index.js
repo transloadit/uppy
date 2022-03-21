@@ -46,8 +46,9 @@ export default class Compressor extends BasePlugin {
       async (file) => {
         try {
           const compressedBlob = await this.compress(file.data)
-          this.uppy.log(`[Image Compressor] Image ${file.id} size before/after compression: ${file.data.size} / ${compressedBlob.size}`)
-          totalCompressedSize += compressedBlob.size
+          const compressedSavingsSize = file.data.size - compressedBlob.size
+          this.uppy.log(`[Image Compressor] Image ${file.id} compressed by ${prettierBytes(compressedSavingsSize)}`)
+          totalCompressedSize += compressedSavingsSize
           this.uppy.setFileState(file.id, {
             data: compressedBlob,
             size: compressedBlob.size,
@@ -65,6 +66,10 @@ export default class Compressor extends BasePlugin {
         mode: 'indeterminate',
         message: this.i18n('compressingImages'),
       })
+
+      if (file.isRemote) {
+        return Promise.resolve()
+      }
 
       // Some browsers (Firefox) add blobs with empty file type, when files are
       // added from a folder. Uppy auto-detects type from extension, but leaves the original blob intact.

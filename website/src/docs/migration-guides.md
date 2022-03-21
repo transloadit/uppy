@@ -41,11 +41,11 @@ If you’re using Uppy from a CDN, we now provide two bundles: one for up-to-dat
 
 ```html
 <!-- Modern browsers (recommended) -->
-<script src="https://releases.transloadit.com/uppy/v2.7.0/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.8.0/uppy.min.js"></script>
 
 <!-- Legacy browsers (IE11+) -->
-<script nomodule src="https://releases.transloadit.com/uppy/v2.7.0/uppy.legacy.min.js"></script>
-<script type="module">import "https://releases.transloadit.com/uppy/v2.7.0/uppy.min.js";</script>
+<script nomodule src="https://releases.transloadit.com/uppy/v2.8.0/uppy.legacy.min.js"></script>
+<script type="module">import "https://releases.transloadit.com/uppy/v2.8.0/uppy.min.js";</script>
 ```
 
 Please note that while you may be able to get 2.0 to work in IE11 this way, we do not officially support it anymore.
@@ -227,7 +227,7 @@ uppy.on('dashboard:file-edit-state', (file) => {
 
 ### Changes to pre-signing URLs for [`@uppy/aws-s3-multipart`][aws-s3-multipart]
 
-See the Uppy 2.0.0 announcement post about the batch [pre-signing URLs change](blog/2021/08/2.0/#Batch-pre-signing-URLs-for-AWS-S3-Multipart).
+See the Uppy 2.0.0 announcement post about the batch [pre-signing URLs change](https://uppy.io/blog/2021/08/2.0/#Batch-pre-signing-URLs-for-AWS-S3-Multipart).
 
 `prepareUploadPart` has been renamed to [`prepareUploadParts`](https://uppy.io/docs/aws-s3-multipart/#prepareUploadParts-file-partData) (plural). See the documentation link on how to use this function.
 

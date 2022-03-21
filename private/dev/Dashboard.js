@@ -23,6 +23,7 @@ import Form from '@uppy/form'
 import ImageEditor from '@uppy/image-editor'
 import DropTarget from '@uppy/drop-target'
 import Audio from '@uppy/audio'
+import Compressor from '@uppy/compressor'
 /* eslint-enable import/no-extraneous-dependencies */
 
 // DEV CONFIG: create a .env file in the project root directory to customize those values.
@@ -91,6 +92,7 @@ export default () => {
     .use(DropTarget, {
       target: document.body,
     })
+    .use(Compressor)
 
   switch (UPLOADER) {
     case 'tus':
