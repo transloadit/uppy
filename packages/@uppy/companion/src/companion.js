@@ -79,7 +79,7 @@ module.exports.app = (optionsArg = {}) => {
   if (options.redisUrl) {
     redis.client(merge({ url: options.redisUrl }, options.redisOptions || {}))
   }
-  emitter(options.multipleInstances && options.redisUrl, options.redisPubSubScope)
+  emitter(options.redisUrl, options.redisPubSubScope)
 
   const app = express()
 
