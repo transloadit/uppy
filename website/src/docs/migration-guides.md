@@ -247,6 +247,41 @@ Uppy 1.0 will continue to receive bug fixes for three more months (until <time d
 
 We hope you’ll waste no time in taking Uppy 2.0 out for a walk. When you do, please let us know what you thought of it on [Reddit](https://www.reddit.com/r/javascript/comments/penbr7/uppy_file_uploader_20_smaller_and_faster_modular/), [HN](https://news.ycombinator.com/item?id=28359287), ProductHunt, or [Twitter](https://twitter.com/uppy_io/status/1432399270846603264). We’re howling at the moon to hear from you!
 
+## Migrating Companion v1 to v2
+
+### Prerequisite
+
+Since v2, you now need to be running `node.js >= v10.20.1` to use Companion.
+
+### ProviderOptions
+
+In v2 the `google` and `microsoft` [providerOptions](https://uppy.io/docs/companion/#Options) have been changed to `drive` and `onedrive` respectively.
+
+### OAuth Redirect URIs
+
+On your Providers’ respective developer platforms, the OAuth redirect URIs that you should supply has now changed from:
+
+`http(s)://$COMPANION_HOST_NAME/connect/$AUTH_PROVIDER/callback` in v1
+
+to:
+
+`http(s)://$COMPANION_HOST_NAME/$PROVIDER_NAME/redirect` in v2
+
+#### New Redirect URIs
+
+<div class="table-responsive">
+
+| Provider | New Redirect URI
+|-|-|
+| Dropbox | `https://$COMPANION_HOST_NAME/dropbox/redirect` |
+| Google Drive | `https://$COMPANION_HOST_NAME/drive/redirect` |
+| OneDrive | `https://$COMPANION_HOST_NAME/onedrive/redirect` |
+| Box | `https://$YOUR_COMPANION_HOST_NAME/box/redirect` |
+| Facebook | `https://$COMPANION_HOST_NAME/facebook/redirect` |
+| Instagram | `https://$COMPANION_HOST_NAME/instagram/redirect` |
+
+</div>
+
 <!-- definitions -->
 
 [core]: /docs/uppy/
