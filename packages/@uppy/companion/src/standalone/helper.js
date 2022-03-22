@@ -79,7 +79,7 @@ const getConfigFromEnv = () => {
         useAccelerateEndpoint:
           process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
         expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '300', 10),
-        acl: process.env.COMPANION_AWS_ACL || 'public-read',
+        acl: process.env.COMPANION_AWS_DISABLE_ACL === 'true' ? null : (process.env.COMPANION_AWS_ACL || 'public-read'), // todo default to no ACL in next major and remove COMPANION_AWS_DISABLE_ACL
       },
     },
     server: {

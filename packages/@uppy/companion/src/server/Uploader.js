@@ -611,14 +611,18 @@ class Uploader {
       return chunkSize
     }
 
-    const upload = client.upload({
+    const params = {
       Bucket: options.bucket,
       Key: options.getKey(null, filename, this.options.metadata),
       ACL: options.acl,
       ContentType: this.options.metadata.type,
       Metadata: this.options.metadata,
       Body: stream,
-    }, {
+    }
+
+    if (options.acl != null) params.ACL = options.acl
+
+    const upload = client.upload(params, {
       partSize: getPartSize(this.options.chunkSize),
     })
 
