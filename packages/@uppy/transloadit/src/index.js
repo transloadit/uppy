@@ -217,6 +217,19 @@ module.exports = class Transloadit extends BasePlugin {
           ...updatedFiles,
         },
       })
+      const fileRemovedHandler = (fileRemoved, reason) => {
+        if (reason === 'cancel-all') {
+          assembly.close()
+          this.uppy.off(fileRemovedHandler)
+        } else if (fileRemoved.id in updatedFiles) {
+          delete updatedFiles[fileRemoved.id]
+          if (Object.keys(updatedFiles).length === 0) {
+            assembly.close()
+            this.uppy.off(fileRemovedHandler)
+          }
+        }
+      }
+      this.uppy.on('file-removed', fileRemovedHandler)
 
       this.uppy.emit('transloadit:assembly-created', status, fileIDs)
 
