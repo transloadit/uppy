@@ -32,7 +32,7 @@ describe('useUppy()', () => {
     el.unmount()
 
     expect(oninstall).toHaveBeenCalled()
-    expect(onuninstall).toHaveBeenCalled()
+    expect(onuninstall).toHaveBeenNthCalledWith(1, { reason: 'unmount' }, undefined, undefined, undefined, undefined, undefined)
   })
 
   it('checks types', () => {
