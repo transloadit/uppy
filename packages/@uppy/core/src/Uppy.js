@@ -838,7 +838,7 @@ class Uppy {
     return this.#runUpload(uploadID)
   }
 
-  // todo what is the point of the reset method when we have cancelAll or vice versa?
+  // todo remove in next major. what is the point of the reset method when we have cancelAll or vice versa?
   reset () {
     this.cancelAll()
   }

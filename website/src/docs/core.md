@@ -677,7 +677,7 @@ Stop all uploads in progress and clear file selection, set progress to 0. More o
 
 Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()` before uninstalling.
 
-* `reason`: If set to the string `user`, it will also cancel any running Transloadit assemblies. Set to `null` to disable this behavior.
+* `reason`: If set to the string `user`, it will also cancel any running Transloadit assemblies. Set to `unmount` to disable this behavior.
 
 ### `uppy.logout()`
 
