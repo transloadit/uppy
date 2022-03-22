@@ -839,8 +839,8 @@ class Uppy {
   }
 
   // todo remove in next major. what is the point of the reset method when we have cancelAll or vice versa?
-  reset () {
-    this.cancelAll()
+  reset (...args) {
+    this.cancelAll(...args)
   }
 
   logout () {
