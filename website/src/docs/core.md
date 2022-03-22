@@ -677,7 +677,9 @@ Stop all uploads in progress and clear file selection, set progress to 0. More o
 
 Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()` before uninstalling.
 
-* `reason`: If set to the string `user`, it will also cancel any running Transloadit assemblies. Set to `unmount` to disable this behavior.
+* `reason` - The reason for closing. Plugins can use this to provide different cleanup behavior. Possible values are:
+  * `user` - User has explicitly closed the Uppy and any ongoing Uploads
+  * `unmount` - Uppy has been unmounted (removed from the user interface)
 
 ### `uppy.logout()`
 

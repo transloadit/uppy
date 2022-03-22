@@ -412,3 +412,7 @@ uppy.on('transloadit:complete', (assembly) => {
 [assembly-status]: https://transloadit.com/docs/api/#assembly-status-response
 
 [template-credentials]: https://transloadit.com/docs/#how-to-create-template-credentials
+
+## Close behaviour
+
+When Uppy“s `close` method is called with `reason: 'user'`, the Transloadit plugin will cancel any Assemblies that were started as a result of uploads.
