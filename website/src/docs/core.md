@@ -669,17 +669,19 @@ uppy.getPlugin('Dashboard').setOptions({
 })
 ```
 
-### `uppy.reset()` (alias `uppy.cancelAll()`)
+### `uppy.reset({ reason = 'user' })` (alias `uppy.cancelAll()`)
 
 Stop all uploads in progress and clear file selection, set progress to 0. More or less, it returns things to the way they were before any user input.
+
+* `reason` - The reason for resetting. Plugins can use this to provide different cleanup behavior. Possible values are:
+  * `user` - The user has closed the Uppy instance
+  * `unmount` - The uppy instance has been closed programatically
 
 ### `uppy.close({ reason = 'user' })`
 
 Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()` before uninstalling.
 
-* `reason` - The reason for closing. Plugins can use this to provide different cleanup behavior. Possible values are:
-  * `user` - User has explicitly closed the Uppy and any ongoing Uploads
-  * `unmount` - Uppy has been unmounted (removed from the user interface)
+* `reason` - Same as the `reason` option for `cancelAll`
 
 ### `uppy.logout()`
 
