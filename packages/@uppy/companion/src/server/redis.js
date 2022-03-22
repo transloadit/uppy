@@ -11,7 +11,8 @@ let redisClient
  */
 function createClient (opts) {
   if (!redisClient) {
-    redisClient = redis.createClient(opts)
+    // TODO: rewrite to non-legacy mode once connect-redis supports it
+    redisClient = redis.createClient({ ...opts, legacyMode: true })
   }
 
   return redisClient
