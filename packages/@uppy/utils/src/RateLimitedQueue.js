@@ -17,10 +17,6 @@ class RateLimitedQueue {
 
   #rateLimitingTimer
 
-  #rateLimitingPromise = Promise.resolve()
-
-  #rateLimitingPromiseResolve
-
   constructor (limit) {
     if (typeof limit !== 'number' || limit === 0) {
       this.limit = Infinity
@@ -167,12 +163,6 @@ class RateLimitedQueue {
   resume () {
     this.#paused = false
     clearTimeout(this.#pauseTimer)
-
-    this.#rateLimitingPromiseResolve?.()
-    // Override the value to allow the promise to be GCed
-    this.#rateLimitingPromise = Promise.resolve()
-    this.#rateLimitingPromiseResolve = null
-
     for (let i = 0; i < this.limit; i++) {
       this.#queueNext()
     }
@@ -183,17 +173,12 @@ class RateLimitedQueue {
   /**
    * Freezes the queue for a while or indefinitely.
    *
-   * @param { number | null } [duration] Duration for the pause to happen, in milliseconds.
+   * @param {number | null } [duration] Duration for the pause to happen, in milliseconds.
    *                                    If omitted, the queue won't resume automatically.
    */
   pause (duration = null) {
     this.#paused = true
     clearTimeout(this.#pauseTimer)
-
-    // Override the value to allow the promise to be GCed
-    this.#rateLimitingPromise = null
-    this.#rateLimitingPromiseResolve = null
-
     if (duration != null) {
       this.#pauseTimer = setTimeout(this.#resume, duration)
     }
@@ -237,16 +222,6 @@ class RateLimitedQueue {
   }
 
   get isPaused () { return this.#paused }
-
-  /**
-   * @returns {Promise<void>} Promise that resolves when the queue is no longer paused.
-   */
-  get endOfRateLimiting () {
-    this.#rateLimitingPromise ??= new Promise(resolve => {
-      this.#rateLimitingPromiseResolve = resolve
-    })
-    return this.#rateLimitingPromise
-  }
 }
 
 module.exports = {

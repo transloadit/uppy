@@ -216,7 +216,20 @@ module.exports = class Tus extends BasePlugin {
           opts.onBeforeRequest(req)
         }
 
-        return this.requests.endOfRateLimiting
+        if (queuedRequest == null) {
+          let done
+          queuedRequest = this.requests.run(() => {
+            if (file.isPaused) {
+              queuedRequest.abort()
+            }
+            done()
+            return () => {}
+          })
+          return new Promise(resolve => { // eslint-disable-line no-shadow
+            done = resolve
+          })
+        }
+        return undefined
       }
 
       uploadOptions.onError = (err) => {
@@ -284,6 +297,8 @@ module.exports = class Tus extends BasePlugin {
             }, { once: true })
           }
         }
+        queuedRequest.abort()
+        queuedRequest = null
         return true
       }
 
