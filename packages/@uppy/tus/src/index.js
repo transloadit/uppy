@@ -218,16 +218,17 @@ module.exports = class Tus extends BasePlugin {
 
         if (queuedRequest == null) {
           let done
+          const p = new Promise((res) => { // eslint-disable-line promise/param-names
+            done = res
+          })
           queuedRequest = this.requests.run(() => {
-            if (file.isPaused) {
+            if (file.isPaused && queuedRequest != null) {
               queuedRequest.abort()
             }
             done()
             return () => {}
           })
-          return new Promise(resolve => { // eslint-disable-line no-shadow
-            done = resolve
-          })
+          return p
         }
         return undefined
       }
@@ -241,7 +242,7 @@ module.exports = class Tus extends BasePlugin {
         }
 
         this.resetUploaderReferences(file.id)
-        queuedRequest.abort()
+        queuedRequest?.abort()
 
         this.uppy.emit('upload-error', file, err)
 
@@ -297,7 +298,7 @@ module.exports = class Tus extends BasePlugin {
             }, { once: true })
           }
         }
-        queuedRequest.abort()
+        queuedRequest?.abort()
         queuedRequest = null
         return true
       }
@@ -353,37 +354,36 @@ module.exports = class Tus extends BasePlugin {
       queuedRequest = this.requests.run(qRequest)
 
       this.onFileRemove(file.id, (targetFileID) => {
-        queuedRequest.abort()
+        queuedRequest?.abort()
         this.resetUploaderReferences(file.id, { abort: !!upload.url })
         resolve(`upload ${targetFileID} was removed`)
       })
 
       this.onPause(file.id, (isPaused) => {
+        queuedRequest?.abort()
         if (isPaused) {
           // Remove this file from the queue so another file can start in its place.
-          queuedRequest.abort()
           upload.abort()
         } else {
           // Resuming an upload should be queued, else you could pause and then
           // resume a queued upload to make it skip the queue.
-          queuedRequest.abort()
           queuedRequest = this.requests.run(qRequest)
         }
       })
 
       this.onPauseAll(file.id, () => {
-        queuedRequest.abort()
+        queuedRequest?.abort()
         upload.abort()
       })
 
       this.onCancelAll(file.id, () => {
-        queuedRequest.abort()
+        queuedRequest?.abort()
         this.resetUploaderReferences(file.id, { abort: !!upload.url })
         resolve(`upload ${file.id} was canceled`)
       })
 
       this.onResumeAll(file.id, () => {
-        queuedRequest.abort()
+        queuedRequest?.abort()
         if (file.error) {
           upload.abort()
         }
