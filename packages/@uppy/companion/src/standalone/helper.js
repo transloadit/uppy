@@ -2,7 +2,7 @@ const fs = require('fs')
 const merge = require('lodash.merge')
 const stripIndent = require('common-tags/lib/stripIndent')
 const crypto = require('crypto')
-const uuid = require('uuid')
+const uuid = require('uuid') // TODO: migrate to `crypto.getRandomUUID` when removing support for Node.js <14.
 
 const utils = require('../server/helpers/utils')
 const logger = require('../server/logger')
