@@ -9760,6 +9760,7 @@ __metadata:
     into-stream: ^6.0.0
     ipaddr.js: ^2.0.1
     isobject: 3.0.1
+    jest: ^27.0.6
     jsonwebtoken: 8.5.1
     lodash.merge: ^4.6.2
     mime-types: 2.1.25
