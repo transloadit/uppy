@@ -215,6 +215,8 @@ module.exports = class Tus extends BasePlugin {
         if (typeof opts.onBeforeRequest === 'function') {
           opts.onBeforeRequest(req)
         }
+
+        return this.requests.endOfRateLimiting
       }
 
       uploadOptions.onError = (err) => {
@@ -259,7 +261,7 @@ module.exports = class Tus extends BasePlugin {
         resolve(upload)
       }
 
-      uploadOptions.onShouldRetry = (err, retryAttempt, options) => {
+      uploadOptions.onShouldRetry = (err) => {
         const status = err?.originalResponse?.getStatus()
         if (status === 429) {
           // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
@@ -270,8 +272,6 @@ module.exports = class Tus extends BasePlugin {
             }
             this.requests.rateLimit(next.value)
           }
-          queuedRequest.abort()
-          queuedRequest = this.requests.run(qRequest)
         } else if (status > 400 && status < 500 && status !== 409) {
           // HTTP 4xx, the server won't send anything, it's doesn't make sense to retry
           return false
@@ -283,19 +283,7 @@ module.exports = class Tus extends BasePlugin {
               this.requests.resume()
             }, { once: true })
           }
-          queuedRequest.abort()
-          queuedRequest = this.requests.run(qRequest)
-        } else {
-          // For a non-4xx error, we can re-queue the request.
-          setTimeout(() => {
-            queuedRequest.abort()
-            queuedRequest = this.requests.run(qRequest)
-          }, options.retryDelays[retryAttempt])
         }
-        // Aborting the timeout set by tus-js-client to not short-circuit the rate limiting.
-        // eslint-disable-next-line no-underscore-dangle
-        queueMicrotask(() => clearTimeout(queuedRequest._retryTimeout))
-        // We need to return true here so tus-js-client increments the retryAttempt and do not emit an error event.
         return true
       }
 
@@ -325,6 +313,7 @@ module.exports = class Tus extends BasePlugin {
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
+      // eslint-disable-next-line prefer-const
       qRequest = () => {
         if (!file.isPaused) {
           upload.start()
