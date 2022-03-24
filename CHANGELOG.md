@@ -11,6 +11,7 @@ Please add your entries in this format:
 - `- [ ] (<plugin name>|website|core|meta|build|test): <Present tense verb> <subject> \(<list of associated owners/gh-issues>\)`.
 
 In the current stage we aim to release a new version at least every month.
+
 ## 2.9.0
 
 Released: 2022-03-24
@@ -33,7 +34,6 @@ Released: 2022-03-24
 - @uppy/companion: Small companion code and doc changes (Mikael Finstad / #3586)
 - @uppy/robodog: fix CDN bundle (Antoine du Hamel / #3587)
 - website: Fix broken link (YukeshShr / #3581)
-
 
 ## 2.8.0
 
