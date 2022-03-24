@@ -11,6 +11,30 @@ Please add your entries in this format:
 - `- [ ] (<plugin name>|website|core|meta|build|test): <Present tense verb> <subject> \(<list of associated owners/gh-issues>\)`.
 
 In the current stage we aim to release a new version at least every month.
+## 2.9.0
+
+Released: 2022-03-24
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/companion   |   3.5.0 | @uppy/webcam      |   2.1.0 |
+| @uppy/status-bar  |   2.1.3 | @uppy/robodog     |   2.5.0 |
+| @uppy/transloadit |   2.1.2 | uppy              |   2.9.0 |
+| @uppy/tus         |   2.2.1 |                   |         |
+
+- @uppy/transloadit: close assembly if upload is cancelled (Antoine du Hamel / #3591)
+- @uppy/companion: Companion server upload events (Mikael Finstad / #3544)
+- @uppy/tus: fix double requests sent when rate limiting (Antoine du Hamel / #3595)
+- website: fix linter error on blog post (Antoine du Hamel / #3596)
+- @uppy/companion: fix `yarn test` command (Antoine du Hamel / #3590)
+- @uppy/webcam: Mime types in webcam options type (Sobakin Sviatoslav / #3593)
+- website: Some polish and a better (?) intro for the recent update post (AJvanLoon / #3588)
+- @uppy/companion: Allow setting no ACL (Mikael Finstad / #3577)
+- @uppy/companion: Small companion code and doc changes (Mikael Finstad / #3586)
+- @uppy/robodog: fix CDN bundle (Antoine du Hamel / #3587)
+- website: Fix broken link (YukeshShr / #3581)
+
+
 ## 2.8.0
 
 Released: 2022-03-16
