@@ -265,6 +265,7 @@ class TransloaditAssembly extends Emitter {
       this.socket = null
     }
     clearInterval(this.pollInterval)
+    this.pollInterval = null
   }
 }
 
