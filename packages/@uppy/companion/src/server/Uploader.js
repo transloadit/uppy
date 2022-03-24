@@ -290,6 +290,8 @@ class Uploader {
    */
   async tryUploadStream (stream) {
     try {
+      emitter().emit('upload-start', { token: this.token })
+
       const ret = await this.uploadStream(stream)
       if (!ret) return
       const { url, extraData } = ret
@@ -358,10 +360,37 @@ class Uploader {
     return Uploader.shortenToken(this.token)
   }
 
-  async awaitReady () {
-    // TODO timeout after a while? Else we could leak emitters
+  async awaitReady (timeout) {
     logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
-    await new Promise((resolve) => emitter().once(`connection:${this.token}`, resolve))
+
+    // TODO: replace the Promise constructor call when dropping support for Node.js <16 with
+    // await once(emitter, eventName, timeout && { signal: AbortSignal.timeout(timeout) })
+    await new Promise((resolve, reject) => {
+      const eventName = `connection:${this.token}`
+      let timer
+      let onEvent
+
+      function cleanup () {
+        emitter().removeListener(eventName, onEvent)
+        clearTimeout(timer)
+      }
+
+      if (timeout) {
+        // Need to timeout after a while, or we could leak emitters
+        timer = setTimeout(() => {
+          cleanup()
+          reject(new Error('Timed out waiting for socket connection'))
+        }, timeout)
+      }
+
+      onEvent = () => {
+        cleanup()
+        resolve()
+      }
+
+      emitter().once(eventName, onEvent)
+    })
+
     logger.debug('socket connection received', 'uploader.socket.wait', this.shortToken)
   }
 

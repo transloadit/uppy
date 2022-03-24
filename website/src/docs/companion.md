@@ -103,6 +103,39 @@ companion.socket(server)
 
 This takes your `server` instance as an argument.
 
+#### Events
+
+The object returned by `companion.app()` also has a property `companionEmitter` which is an `EventEmitter` that emits the following events:
+
+* `upload-start` - When an upload starts, this event is emitted with an object containing the property `token`, which is a unique ID for the upload.
+* **token** - The event name is the token from `upload-start`. The event has an object with the following properties:
+  * `action` - One of the following strings:
+    * `success` - When the upload succeeds.
+    * `error` - When the upload fails with an error.
+  * `payload` - the error or success payload.
+
+Example code for using the `EventEmitter` to handle a finished file upload:
+
+```js
+const companionApp = companion.app(options)
+const { companionEmitter: emitter } = companionApp
+
+emitter.on('upload-start', ({ token }) => {
+  console.log('Upload started', token)
+
+  function onUploadEvent ({ action, payload }) {
+    if (action === 'success') {
+      emitter.off(token, onUploadEvent) // avoid listener leak
+      console.log('Upload finished', token, payload.url)
+    } else if (action === 'error') {
+      emitter.off(token, onUploadEvent) // avoid listener leak
+      console.error('Upload failed', payload)
+    }
+  }
+  emitter.on(token, onUploadEvent)
+})
+```
+
 ### Running as a standalone server
 
 > Please make sure that the required environment variables are set before running/using Companion as a standalone server. See [Configure Standalone](#Configuring-a-standalone-server) for the variables required.

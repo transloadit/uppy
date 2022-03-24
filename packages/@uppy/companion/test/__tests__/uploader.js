@@ -9,6 +9,7 @@ const nock = require('nock')
 const Uploader = require('../../src/server/Uploader')
 const socketClient = require('../mocksocket')
 const standalone = require('../../src/standalone')
+const Emitter = require('../../src/server/emitter')
 
 afterAll(() => {
   nock.cleanAll()
@@ -64,33 +65,45 @@ describe('uploader with tus protocol', () => {
     const uploadToken = uploader.token
     expect(uploadToken).toBeTruthy()
 
-    return new Promise((resolve, reject) => {
-      // validate that the test is resolved on socket connection
-      uploader.awaitReady().then(() => {
-        uploader.tryUploadStream(stream).then(() => resolve())
-      })
+    let progressReceived = 0
 
-      let progressReceived = 0
-      // emulate socket connection
-      socketClient.connect(uploadToken)
-      socketClient.onProgress(uploadToken, (message) => {
-        progressReceived = message.payload.bytesUploaded
-        try {
-          expect(message.payload.bytesTotal).toBe(fileContent.length)
-        } catch (err) {
-          reject(err)
-        }
-      })
-      socketClient.onUploadSuccess(uploadToken, (message) => {
-        try {
-          expect(progressReceived).toBe(fileContent.length)
-          // see __mocks__/tus-js-client.js
-          expect(message.payload.url).toBe('https://tus.endpoint/files/foo-bar')
-        } catch (err) {
-          reject(err)
-        }
-      })
+    const onProgress = jest.fn()
+    const onUploadSuccess = jest.fn()
+    const onBeginUploadEvent = jest.fn()
+    const onUploadEvent = jest.fn()
+
+    const emitter = Emitter()
+    emitter.on('upload-start', onBeginUploadEvent)
+    emitter.on(uploadToken, onUploadEvent)
+
+    const promise = uploader.awaitReady(60000)
+    // emulate socket connection
+    socketClient.connect(uploadToken)
+    socketClient.onProgress(uploadToken, (message) => {
+      progressReceived = message.payload.bytesUploaded
+      onProgress(message)
     })
+    socketClient.onUploadSuccess(uploadToken, onUploadSuccess)
+    await promise
+    await uploader.tryUploadStream(stream)
+
+    expect(progressReceived).toBe(fileContent.length)
+
+    expect(onProgress).toHaveBeenLastCalledWith(expect.objectContaining({
+      payload: expect.objectContaining({
+        bytesTotal: fileContent.length,
+      }),
+    }))
+    const expectedPayload = expect.objectContaining({
+      // see __mocks__/tus-js-client.js
+      url: 'https://tus.endpoint/files/foo-bar',
+    })
+    expect(onUploadSuccess).toHaveBeenCalledWith(expect.objectContaining({
+      payload: expectedPayload,
+    }))
+
+    expect(onBeginUploadEvent).toHaveBeenCalledWith({ token: uploadToken })
+    expect(onUploadEvent).toHaveBeenLastCalledWith({ action: 'success', payload: expectedPayload })
   })
 
   test('upload functions with tus protocol without size', async () => {
@@ -110,7 +123,7 @@ describe('uploader with tus protocol', () => {
 
     return new Promise((resolve, reject) => {
       // validate that the test is resolved on socket connection
-      uploader.awaitReady().then(() => {
+      uploader.awaitReady(60000).then(() => {
         uploader.tryUploadStream(stream).then(() => {
           try {
             expect(fs.existsSync(uploader.path)).toBe(false)
@@ -257,7 +270,7 @@ describe('uploader with tus protocol', () => {
     const uploadToken = uploader.token
 
     // validate that the test is resolved on socket connection
-    uploader.awaitReady().then(uploader.tryUploadStream(stream))
+    uploader.awaitReady(60000).then(() => uploader.tryUploadStream(stream))
     socketClient.connect(uploadToken)
 
     return new Promise((resolve, reject) => {

@@ -1,4 +1,3 @@
-/* global jest:false */
 const express = require('express')
 const session = require('express-session')
 
@@ -36,6 +35,8 @@ const defaultEnv = {
   COMPANION_PATH: '',
 
   COMPANION_PERIODIC_PING_URLS: '',
+
+  COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '',
 }
 
 function updateEnv (env) {
@@ -54,7 +55,9 @@ module.exports.getServer = (extraEnv) => {
 
   updateEnv(env)
 
-  // delete from cache to force the server to reload companionOptions from the new env vars
+  // companion stores certain global state like emitter, metrics, logger (frozen object), so we need to reset modules
+  // todo rewrite companion to not use global state
+  // https://github.com/transloadit/uppy/issues/3284
   jest.resetModules()
   const standalone = require('../src/standalone')
   const authServer = express()

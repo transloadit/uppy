@@ -11,7 +11,7 @@ const providerManager = require('./server/provider')
 const controllers = require('./server/controllers')
 const s3 = require('./server/controllers/s3')
 const url = require('./server/controllers/url')
-const emitter = require('./server/emitter')
+const createEmitter = require('./server/emitter')
 const redis = require('./server/redis')
 const { getURLBuilder } = require('./server/helpers/utils')
 const jobs = require('./server/jobs')
@@ -79,7 +79,7 @@ module.exports.app = (optionsArg = {}) => {
   if (options.redisUrl) {
     redis.client(merge({ url: options.redisUrl }, options.redisOptions || {}))
   }
-  emitter(options.redisUrl, options.redisPubSubScope)
+  const emitter = createEmitter(options.redisUrl, options.redisPubSubScope)
 
   const app = express()
 
@@ -152,5 +152,8 @@ module.exports.app = (optionsArg = {}) => {
     processId,
   })
 
+  // todo split emitter from app in next major
+  // @ts-ignore
+  app.companionEmitter = emitter
   return app
 }

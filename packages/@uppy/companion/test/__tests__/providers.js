@@ -17,7 +17,8 @@ const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
 const defaults = require('../fixtures/constants')
 
-const authServer = getServer()
+// todo don't share server between tests. rewrite to not use env variables
+const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 const providers = require('../../src/server/provider').getDefaultProviders()
 

@@ -13,6 +13,7 @@ const companion = require('../companion')
 const helper = require('./helper')
 const middlewares = require('../server/middlewares')
 const { getURLBuilder } = require('../server/helpers/utils')
+const connectRedis = require('connect-redis')
 
 /**
  * Configures an Express app for running Companion standalone
@@ -139,7 +140,7 @@ module.exports = function server (inputCompanionOptions = {}) {
   }
 
   if (companionOptions.redisUrl) {
-    const RedisStore = require('connect-redis')(session)
+    const RedisStore = connectRedis(session)
     const redisClient = redis.client(
       merge({ url: companionOptions.redisUrl }, companionOptions.redisOptions),
     )
