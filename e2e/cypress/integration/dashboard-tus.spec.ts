@@ -22,10 +22,7 @@ describe('Dashboard with Tus', () => {
     cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 
-  // TODO: figure out why we send a PATCH request while another PATCH is still pending,
-  // resulting in a 423 upload is locked
-  // logs: https://gist.github.com/Acconut/d17315d2718d2944aabe2941f268530d
-  xit('should start exponential backoff when receiving HTTP 429', () => {
+  it('should start exponential backoff when receiving HTTP 429', () => {
     cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
@@ -39,7 +36,7 @@ describe('Dashboard with Tus', () => {
     cy.window().then(({ uppy }) => {
       expect(uppy.getPlugin<Tus>('Tus').requests.isPaused).to.equal(true)
       cy.wait('@tus')
-      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+      cy.get('.uppy-StatusBar-statusPrimary', { timeout: 60_000 }).should('contain', 'Complete')
     })
   })
 

@@ -9760,6 +9760,7 @@ __metadata:
     into-stream: ^6.0.0
     ipaddr.js: ^2.0.1
     isobject: 3.0.1
+    jest: ^27.0.6
     jsonwebtoken: 8.5.1
     lodash.merge: ^4.6.2
     mime-types: 2.1.25
@@ -16652,8 +16653,8 @@ __metadata:
   linkType: hard
 
 "cypress@npm:^9.0.0":
-  version: 9.5.1
-  resolution: "cypress@npm:9.5.1"
+  version: 9.5.2
+  resolution: "cypress@npm:9.5.2"
   dependencies:
     "@cypress/request": ^2.88.10
     "@cypress/xvfb": ^1.2.4
@@ -16699,7 +16700,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: 96efebb8bfca52f214f793856a7eb40a6eb4a7bc06e5d7c17c7378cec8e3e3975d5777147066d04d95d88b99d4052bbf8749d96b4a25d3f79cc65e88e93f703d
+  checksum: d19a183df25adcb87ba4914fb177a2b8bf2f004c8364fa21abb6bf66f2462d6f586bf09b58480e804f6b499281d931712a3e262f09880859e3170d513c5c9227
   languageName: node
   linkType: hard
 

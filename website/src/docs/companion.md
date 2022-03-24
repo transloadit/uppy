@@ -370,7 +370,7 @@ const options = {
 
 * `protocol` - `http | https` - even though companion itself always runs as http, you may want to set this to `https` if you are running a reverse https proxy in front of companion.
 * `host` (required) - your server’s publically facing hostname (for example `example.com`).
-* `oauthDomain` - if you have several instances of Companion with different (and perhaps dynamic) subdomains, you can set a single fixed domain (e.g `sub1.example.com`) to handle your OAuth authentication for you. This would then redirect back to the correct instance with the required credentials on completion. This way you only need to configure a single callback URL for OAuth providers.
+* `oauthDomain` - if you have several instances of Companion with different (and perhaps dynamic) subdomains, you can set a single fixed subdomain and server (e.g `sub1.example.com`) to handle your OAuth authentication for you. This would then redirect back to the correct instance with the required credentials on completion. This way you only need to configure a single callback URL for OAuth providers.
 * `path` - the server path to where the Uppy app is sitting (e.g if Companion is at `example.com/companion`, then the path would be `/companion`).
 * `implicitPath` - if the URL’s path in your reverse proxy is different from your Companion path in your express app, then you need to set this path as `implicitPath`. So if your Companion URL is `example.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`.
 * `validHosts` - if you are setting an `oauthDomain`, you need to set a list of valid hosts, so the oauth handler can validate the host of the Uppy instance requesting the authentication. This is essentially a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.example.com', 'sub3.example.com', '(\\w+).example.com']`
@@ -573,41 +573,6 @@ See also [example code with a custom provider](https://github.com/transloadit/up
   "nextPagePath": "directory-name?cursor=cursor-to-next-page"
 }
 ```
-
-## Migrating v1 to v2
-
-### Prerequisite
-
-Since v2, you now need to be running `node.js >= v10.20.1` to use Companion.
-
-### ProviderOptions
-
-In v2 the `google` and `microsoft` [providerOptions](https://uppy.io/docs/companion/#Options) have been changed to `drive` and `onedrive` respectively.
-
-### OAuth Redirect URIs
-
-On your Providers’ respective developer platforms, the OAuth redirect URIs that you should supply has now changed from:
-
-`http(s)://$COMPANION_HOST_NAME/connect/$AUTH_PROVIDER/callback` in v1
-
-to:
-
-`http(s)://$COMPANION_HOST_NAME/$PROVIDER_NAME/redirect` in v2
-
-#### New Redirect URIs
-
-<div class="table-responsive">
-
-| Provider | New Redirect URI
-|-|-|
-| Dropbox | `https://$COMPANION_HOST_NAME/dropbox/redirect` |
-| Google Drive | `https://$COMPANION_HOST_NAME/drive/redirect` |
-| OneDrive | `https://$COMPANION_HOST_NAME/onedrive/redirect` |
-| Box | `https://$YOUR_COMPANION_HOST_NAME/box/redirect` |
-| Facebook | `https://$COMPANION_HOST_NAME/facebook/redirect` |
-| Instagram | `https://$COMPANION_HOST_NAME/instagram/redirect` |
-
-</div>
 
 ## Development
 

@@ -1,5 +1,13 @@
 # @uppy/locales
 
+## 2.0.8
+
+Released: 2022-03-16
+Included in: Uppy v2.8.0
+
+- @uppy/locales: compressor cleanup (Antoine du Hamel / #3531)
+- @uppy/locales: Update ru_RU.js (Sobakin Sviatoslav / #3529)
+
 ## 2.0.7
 
 Released: 2022-03-02

@@ -1,5 +1,12 @@
 # @uppy/aws-s3
 
+## 2.0.8
+
+Released: 2022-03-16
+Included in: Uppy v2.8.0
+
+- @uppy/aws-s3: fix wrong events being sent to companion (Mikael Finstad / #3576)
+
 ## 2.0.7
 
 Released: 2021-12-09
