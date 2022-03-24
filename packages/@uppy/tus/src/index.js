@@ -216,13 +216,14 @@ module.exports = class Tus extends BasePlugin {
           opts.onBeforeRequest(req)
         }
 
-        if (queuedRequest == null) {
+        if (Object.hasOwn(queuedRequest, 'shouldBeRequeued')) {
+          if (!queuedRequest.shouldBeRequeued) return Promise.reject()
           let done
           const p = new Promise((res) => { // eslint-disable-line promise/param-names
             done = res
           })
           queuedRequest = this.requests.run(() => {
-            if (file.isPaused && queuedRequest != null) {
+            if (file.isPaused) {
               queuedRequest.abort()
             }
             done()
@@ -242,7 +243,7 @@ module.exports = class Tus extends BasePlugin {
         }
 
         this.resetUploaderReferences(file.id)
-        queuedRequest?.abort()
+        queuedRequest.abort()
 
         this.uppy.emit('upload-error', file, err)
 
@@ -298,8 +299,19 @@ module.exports = class Tus extends BasePlugin {
             }, { once: true })
           }
         }
-        queuedRequest?.abort()
-        queuedRequest = null
+        queuedRequest.abort()
+        queuedRequest = {
+          shouldBeRequeued: true,
+          abort () {
+            this.shouldBeRequeued = false
+          },
+          done () {
+            throw new Error('Cannot mark a queued request as done: this indicates a bug')
+          },
+          fn () {
+            throw new Error('Cannot run a queued request: this indicates a bug')
+          },
+        }
         return true
       }
 
@@ -354,13 +366,13 @@ module.exports = class Tus extends BasePlugin {
       queuedRequest = this.requests.run(qRequest)
 
       this.onFileRemove(file.id, (targetFileID) => {
-        queuedRequest?.abort()
+        queuedRequest.abort()
         this.resetUploaderReferences(file.id, { abort: !!upload.url })
         resolve(`upload ${targetFileID} was removed`)
       })
 
       this.onPause(file.id, (isPaused) => {
-        queuedRequest?.abort()
+        queuedRequest.abort()
         if (isPaused) {
           // Remove this file from the queue so another file can start in its place.
           upload.abort()
@@ -372,18 +384,18 @@ module.exports = class Tus extends BasePlugin {
       })
 
       this.onPauseAll(file.id, () => {
-        queuedRequest?.abort()
+        queuedRequest.abort()
         upload.abort()
       })
 
       this.onCancelAll(file.id, () => {
-        queuedRequest?.abort()
+        queuedRequest.abort()
         this.resetUploaderReferences(file.id, { abort: !!upload.url })
         resolve(`upload ${file.id} was canceled`)
       })
 
       this.onResumeAll(file.id, () => {
-        queuedRequest?.abort()
+        queuedRequest.abort()
         if (file.error) {
           upload.abort()
         }
