@@ -36,7 +36,7 @@ describe('Dashboard with Transloadit', () => {
     cy.window().then(({ uppy }) => {
       expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).every((a: any) => a.pollInterval)).to.equal(true)
     })
-    cy.get('.uppy-u-reset.uppy-StatusBar-actionCircleBtn[title="Cancel"]').click()
+    cy.get('button[data-cy=cancel]').click()
 
     cy.window().then(({ uppy }) => {
       expect(Object.values(uppy.getPlugin('Transloadit').activeAssemblies).some((a: any) => a.pollInterval)).to.equal(false)
