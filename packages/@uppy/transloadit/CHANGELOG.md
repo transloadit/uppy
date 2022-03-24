@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 2.1.2
+
+Released: 2022-03-24
+Included in: Uppy v2.9.0
+
+- @uppy/transloadit: close assembly if upload is cancelled (Antoine du Hamel / #3591)
+
 ## 2.1.1
 
 Released: 2022-01-12
