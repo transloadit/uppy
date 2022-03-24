@@ -363,6 +363,8 @@ class Uploader {
   async awaitReady (timeout) {
     logger.debug('waiting for socket connection', 'uploader.socket.wait', this.shortToken)
 
+    // TODO: replace the Promise constructor call when dropping support for Node.js <16 with
+    // await once(emitter, eventName, timeout && { signal: AbortSignal.timeout(timeout) })
     await new Promise((resolve, reject) => {
       const eventName = `connection:${this.token}`
       let timer
