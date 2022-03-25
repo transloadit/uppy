@@ -59,7 +59,7 @@ class Restricter {
 
         // otherwise this is likely an extension
         if (type[0] === '.' && file.extension) {
-          return file.extension.toLowerCase() === type.substr(1).toLowerCase()
+          return file.extension.toLowerCase() === type.slice(1).toLowerCase()
         }
         return false
       })
