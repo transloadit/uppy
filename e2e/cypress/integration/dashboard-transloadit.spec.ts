@@ -367,7 +367,7 @@ describe('Dashboard with Transloadit', () => {
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     // returning false here prevents Cypress from failing the test.
-    // Using `new Function` here otherwise Webpack cries like the little bitch it is.
+    // Using `new Function` here because Webpack doesn't support optional chaining.
     // TODO: handle the exception in the code.
     // Cypress.on(
     //   'uncaught:exception',
