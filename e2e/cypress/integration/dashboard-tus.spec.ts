@@ -19,7 +19,7 @@ describe('Dashboard with Tus', () => {
 
     cy.wait('@tus')
 
-    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+    cy.get('.uppy-StatusBar-statusPrimary', { timeout: 60_000 }).should('contain', 'Complete')
   })
 
   it('should start exponential backoff when receiving HTTP 429', () => {
@@ -46,7 +46,7 @@ describe('Dashboard with Tus', () => {
     cy.get('.uppy-Url-importButton').click()
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
     cy.wait('@url')
-    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+    cy.get('.uppy-StatusBar-statusPrimary', { timeout: 60_000 }).should('contain', 'Complete')
   })
 
   it('should upload remote image with Unsplash plugin', () => {
@@ -68,8 +68,6 @@ describe('Dashboard with Tus', () => {
     cy.get('.uppy-c-btn-primary').click()
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
     cy.wait('@unsplash')
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000) // bad practice, but the request is successful before the status bar updates here
-    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+    cy.get('.uppy-StatusBar-statusPrimary', { timeout: 60_000 }).should('contain', 'Complete')
   })
 })
