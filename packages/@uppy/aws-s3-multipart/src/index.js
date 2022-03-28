@@ -227,9 +227,11 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         resolve(`upload ${removed.id} was removed`)
       })
 
-      this.onCancelAll(file.id, () => {
-        queuedRequest.abort()
-        this.resetUploaderReferences(file.id, { abort: true })
+      this.onCancelAll(file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
+          queuedRequest.abort()
+          this.resetUploaderReferences(file.id, { abort: true })
+        }
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -346,10 +348,12 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         socket.send('pause', {})
       })
 
-      this.onCancelAll(file.id, () => {
-        queuedRequest.abort()
-        socket.send('cancel', {})
-        this.resetUploaderReferences(file.id)
+      this.onCancelAll(file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
+          queuedRequest.abort()
+          socket.send('cancel', {})
+          this.resetUploaderReferences(file.id)
+        }
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -463,10 +467,10 @@ module.exports = class AwsS3Multipart extends BasePlugin {
     })
   }
 
-  onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('cancel-all', () => {
+  onCancelAll (fileID, eventHandler) {
+    this.uploaderEvents[fileID].on('cancel-all', (...args) => {
       if (!this.uppy.getFile(fileID)) return
-      cb()
+      eventHandler(...args)
     })
   }
 

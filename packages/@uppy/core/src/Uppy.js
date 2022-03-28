@@ -810,18 +810,21 @@ class Uppy {
   cancelAll ({ reason = 'user' } = {}) {
     this.emit('cancel-all', { reason })
 
-    const { files } = this.getState()
+    // Only remove existing uploads if user is canceling
+    if (reason === 'user') {
+      const { files } = this.getState()
 
-    const fileIDs = Object.keys(files)
-    if (fileIDs.length) {
-      this.removeFiles(fileIDs, 'cancel-all')
+      const fileIDs = Object.keys(files)
+      if (fileIDs.length) {
+        this.removeFiles(fileIDs, 'cancel-all')
+      }
+
+      this.setState({
+        totalProgress: 0,
+        error: null,
+        recoveredState: null,
+      })
     }
-
-    this.setState({
-      totalProgress: 0,
-      error: null,
-      recoveredState: null,
-    })
   }
 
   retryUpload (fileID) {
