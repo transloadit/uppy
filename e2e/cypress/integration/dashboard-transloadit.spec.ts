@@ -13,7 +13,7 @@ describe('Dashboard with Transloadit', () => {
     cy.wait('@assemblies')
     cy.wait('@resumable')
 
-    cy.get('.uppy-StatusBar-statusPrimary', { timeout: 60_000 }).should('contain', 'Complete')
+    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 
   it('should close assembly polling when cancelled', () => {

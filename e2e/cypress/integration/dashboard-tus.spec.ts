@@ -19,7 +19,7 @@ describe('Dashboard with Tus', () => {
 
     cy.wait('@tus')
 
-    cy.get('.uppy-StatusBar-statusPrimary', { timeout: 60_000 }).should('contain', 'Complete')
+    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 
   it('should start exponential backoff when receiving HTTP 429', () => {
@@ -36,7 +36,7 @@ describe('Dashboard with Tus', () => {
     cy.window().then(({ uppy }) => {
       expect(uppy.getPlugin<Tus>('Tus').requests.isPaused).to.equal(true)
       cy.wait('@tus')
-      cy.get('.uppy-StatusBar-statusPrimary', { timeout: 60_000 }).should('contain', 'Complete')
+      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
     })
   })
 
@@ -46,7 +46,7 @@ describe('Dashboard with Tus', () => {
     cy.get('.uppy-Url-importButton').click()
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
     cy.wait('@url')
-    cy.get('.uppy-StatusBar-statusPrimary', { timeout: 60_000 }).should('contain', 'Complete')
+    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 
   it('should upload remote image with Unsplash plugin', () => {
@@ -68,6 +68,6 @@ describe('Dashboard with Tus', () => {
     cy.get('.uppy-c-btn-primary').click()
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
     cy.wait('@unsplash')
-    cy.get('.uppy-StatusBar-statusPrimary', { timeout: 60_000 }).should('contain', 'Complete')
+    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
   })
 })
