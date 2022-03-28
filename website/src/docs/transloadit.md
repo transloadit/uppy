@@ -413,6 +413,6 @@ uppy.on('transloadit:complete', (assembly) => {
 
 [template-credentials]: https://transloadit.com/docs/#how-to-create-template-credentials
 
-## Close behaviour
+## Assembly behavior when Uppy is closed
 
-When Uppy“s `close` method is called with `reason: 'user'`, the Transloadit plugin will cancel any Assemblies that were started as a result of uploads.
+When integrating `@uppy/transloadit` with `@uppy/dashboard`, closing the dashboard will result in continuing assemblies on the server. When the user manually cancels the upload any running assemblies will be cancelled.
