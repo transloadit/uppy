@@ -216,7 +216,7 @@ module.exports = class Tus extends BasePlugin {
           opts.onBeforeRequest(req)
         }
 
-        if (queuedRequest.hasOwnProperty('shouldBeRequeued')) {
+        if (queuedRequest?.hasOwnProperty('shouldBeRequeued')) {
           if (!queuedRequest.shouldBeRequeued) return Promise.reject()
           let done
           const p = new Promise((res) => { // eslint-disable-line promise/param-names
