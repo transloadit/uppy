@@ -61,6 +61,7 @@ class UIPlugin extends BasePlugin {
         // hence the check
         if (!this.uppy.getPlugin(this.id)) return
         render(this.render(state), uppyRootElement)
+        targetElement.appendChild(uppyRootElement)
         this.afterUpdate()
       })
 
