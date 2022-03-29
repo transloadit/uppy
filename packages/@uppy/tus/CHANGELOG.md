@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 2.2.2
+
+Released: 2022-03-29
+Included in: Uppy v2.9.1
+
+- @uppy/tus: fix hasOwn (Mikael Finstad / #3604)
+
 ## 2.2.1
 
 Released: 2022-03-24

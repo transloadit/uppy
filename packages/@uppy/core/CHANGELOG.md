@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 2.1.7
+
+Released: 2022-03-29
+Included in: Uppy v2.9.1
+
+- @uppy/core: refactor: replace deprecated String.prototype.substr() (CommanderRoot / #3600)
+
 ## 2.1.6
 
 Released: 2022-03-16
