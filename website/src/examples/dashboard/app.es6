@@ -6,7 +6,8 @@ const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
 const OneDrive = require('@uppy/onedrive')
 const Zoom = require('@uppy/zoom')
-// const Box = require('@uppy/box')
+const Unsplash = require('@uppy/unsplash')
+const Box = require('@uppy/box')
 const ImageEditor = require('@uppy/image-editor')
 const Url = require('@uppy/url')
 const Webcam = require('@uppy/webcam')
@@ -15,6 +16,7 @@ const ScreenCapture = require('@uppy/screen-capture')
 const Tus = require('@uppy/tus')
 const DropTarget = require('@uppy/drop-target')
 const GoldenRetriever = require('@uppy/golden-retriever')
+const Compressor = require('@uppy/compressor')
 const localeList = require('../locale_list.json')
 
 const COMPANION = require('../env')
@@ -139,6 +141,13 @@ function uppySetOptions () {
   if (!opts.OneDrive && oneDriveInstance) {
     window.uppy.removePlugin(oneDriveInstance)
   }
+  const unsplashInstance = window.uppy.getPlugin('Unsplash')
+  if (opts.Unsplash && !unsplashInstance) {
+    window.uppy.use(Unsplash, { target: Dashboard, companionUrl: COMPANION })
+  }
+  if (!opts.Unsplash && unsplashInstance) {
+    window.uppy.removePlugin(unsplashInstance)
+  }
 
   const zoomInstance = window.uppy.getPlugin('Zoom')
   if (opts.Zoom && !zoomInstance) {
@@ -148,13 +157,13 @@ function uppySetOptions () {
     window.uppy.removePlugin(zoomInstance)
   }
 
-  //   const boxInstance = window.uppy.getPlugin('Box')
-  //   if (opts.Box && !boxInstance) {
-  //     window.uppy.use(Box, { target: Dashboard, companionUrl: COMPANION })
-  //   }
-  //   if (!opts.Box && boxInstance) {
-  //     window.uppy.removePlugin(boxInstance)
-  //   }
+  const boxInstance = window.uppy.getPlugin('Box')
+  if (opts.Box && !boxInstance) {
+    window.uppy.use(Box, { target: Dashboard, companionUrl: COMPANION })
+  }
+  if (!opts.Box && boxInstance) {
+    window.uppy.removePlugin(boxInstance)
+  }
 
   const webcamInstance = window.uppy.getPlugin('Webcam')
   if (opts.Webcam && !webcamInstance) {
@@ -209,6 +218,14 @@ function uppySetOptions () {
   if (!opts.GoldenRetriever && goldenRetrieverInstance) {
     window.uppy.removePlugin(goldenRetrieverInstance)
   }
+
+  const compressorInstance = window.uppy.getPlugin('Compressor')
+  if (opts.Compressor && !compressorInstance) {
+    window.uppy.use(Compressor)
+  }
+  if (!opts.Compressor && compressorInstance) {
+    window.uppy.removePlugin(compressorInstance)
+  }
 }
 
 function whenLocaleAvailable (localeName, callback) {
@@ -225,7 +242,7 @@ function loadLocaleFromCDN (localeName) {
   const head = document.getElementsByTagName('head')[0]
   const js = document.createElement('script')
   js.type = 'text/javascript'
-  js.src = `https://releases.transloadit.com/uppy/locales/v2.0.5/${localeName}.min.js`
+  js.src = `https://releases.transloadit.com/uppy/locales/v2.0.8/${localeName}.min.js`
 
   head.appendChild(js)
 }

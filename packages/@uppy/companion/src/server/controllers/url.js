@@ -21,9 +21,9 @@ function matchYoutubeUrl(url) {
  * Validates that the download URL is secure
  *
  * @param {string} url the url to validate
- * @param {boolean} debug whether the server is running in debug mode
+ * @param {boolean} ignoreTld whether to allow local addresses
  */
-const validateURL = (url, debug) => {
+const validateURL = (url, ignoreTld) => {
   if (!url) {
     return false
   }
@@ -31,7 +31,7 @@ const validateURL = (url, debug) => {
   const validURLOpts = {
     protocols: ['http', 'https'],
     require_protocol: true,
-    require_tld: !debug,
+    require_tld: !ignoreTld,
   }
   if (!validator.isURL(url, validURLOpts)) {
     return false
@@ -93,13 +93,13 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
  const meta = async (req, res) => {
   try {
     logger.debug('URL file import handler running', null, req.id)
-    const { debug } = req.companion.options
     let url = req.body.url
-
-    if (!validateURL(url, debug)) {
+    const { allowLocalUrls } = req.companion.options
+    if (!validateURL(url, allowLocalUrls)) {
       logger.debug('Invalid request body detected. Exiting url meta handler.', null, req.id)
       return res.status(400).json({ error: 'Invalid request body' })
     }
+
     let thumbnail = false;
     if (matchYoutubeUrl(url)) {
       const videoID = ytdl.getURLVideoID(url)
@@ -109,7 +109,8 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
       let format = ytdl.chooseFormat(info.formats, { filter: 'audioandvideo' });
       url = format.url
     }
-    const urlMeta = await getURLMeta(url, !debug)
+
+    const urlMeta = await ge  tURLMeta(url, !allowLocalUrls)
     return res.json(urlMeta)
   }
   catch(err) {
@@ -128,11 +129,10 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
  */
 const get = async (req, res) => {
   logger.debug('URL file import handler running', null, req.id)
-  const { debug } = req.companion.options
-
+  const { allowLocalUrls } = req.companion.options
   let url = req.body.url
-  if (!validateURL(url, debug)) {
-    logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id);
+  if (!validateURL(url, allowLocalUrls)) {
+    logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
     res.status(400).json({ error: 'Invalid request body' })
     return
   }
@@ -144,12 +144,12 @@ const get = async (req, res) => {
   }
 
   async function getSize () {
-    const { size } = await getURLMeta(url, !debug)
+    const { size } = await getURLMeta(url, !allowLocalUrls)
     return size
   }
 
   async function download () {
-    return downloadURL(url, !debug, req.id)
+    return downloadURL(url, !allowLocalUrls, req.id)
   }
 
   function onUnhandledError (err) {

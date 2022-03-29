@@ -78,7 +78,7 @@ If both width and height are given, only width is taken into account.
 >
 > See issue [#979](https://github.com/transloadit/uppy/issues/979) and [#1096](https://github.com/transloadit/uppy/pull/1096) for details on this feature.
 
-### `thumbnailtype: 'image/jpeg'`
+### `thumbnailType: 'image/jpeg'`
 
 MIME type of the resulting thumbnail. Default thumbnail MIME type is `image/jpeg`. This is useful if you want to support transparency in your thumbnails by switching to `image/png`.
 

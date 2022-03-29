@@ -118,7 +118,7 @@ class Instagram extends Provider {
           return done(err)
         }
 
-        getURLMeta(body.media_url)
+        getURLMeta(body.media_url, true)
           .then(({ size }) => done(null, size))
           .catch((err2) => {
             logger.error(err2, 'provider.instagram.size.error')

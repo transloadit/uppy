@@ -110,6 +110,7 @@ A function that generates a batch of signed URLs for the specified part numbers.
 * `uploadId` - The UploadID of this Multipart upload.
 * `key` - The object key in the S3 bucket.
 * `partNumbers` - An array of indecies of this part in the file (`PartNumber` in S3 terminology). Note that part numbers are _not_ zero-based.
+* `chunks` - A Javascript object with the part numbers as keys and the Blob data for each part as the value.
 
 `prepareUploadParts` should return a `Promise` with an `Object` with keys:
 
@@ -166,9 +167,9 @@ The default implementation calls out to Companion’s S3 signing endpoints.
 
 ## S3 Bucket Configuration
 
-S3 buckets do not allow public uploads by default. To allow Uppy to upload to a bucket directly, its CORS permissions need to be configured. This process is described in the [AwsS3 documentation](/docs/aws-s3/#S3-Bucket-configuration).
+This process is the same as the one described in the [AWS S3 plugin’s documentation](/docs/aws-s3/#S3-Bucket-configuration), except for a few differences.
 
-While the Uppy AWS S3 plugin uses `POST` requests when uploading files to an S3 bucket, the AWS S3 Multipart plugin uses `PUT` requests when uploading file parts. Additionally, the `ETag` header must also be exposed (in the response):
+While the AWS S3 plugin uses `POST` requests when uploading files to an S3 bucket, the AWS S3 Multipart plugin uses `PUT` requests when uploading file parts. Additionally, the `ETag` header must also be exposed (in the response). So the CORS policy needs to look like this:
 
 ```json
 [
@@ -181,8 +182,8 @@ While the Uppy AWS S3 plugin uses `POST` requests when uploading files to an S3 
       "x-amz-date",
       "x-amz-content-sha256",
       "content-type"
-    ]
-    "ExposedHeaders": ["ETag"]
+    ],
+    "ExposeHeaders": ["ETag"]
   },
   {
     "AllowedOrigins": ["*"],

@@ -50,6 +50,33 @@ In the [CDN package](/docs/#With-a-script-tag), the plugin class is available on
 const { Transloadit } = Uppy
 ```
 
+## Hosted Companion Service
+
+You can use this plugin together with Transloadit’s hosted Companion service to let your users import files from third party sources across the web.
+To do so each provider plugin must be configured with Transloadit’s Companion URLs:
+
+```js
+uppy.use(Dropbox, {
+  companionUrl: Transloadit.COMPANION,
+  companionAllowedHosts: Transloadit.COMPANION_PATTERN,
+})
+```
+
+This will already work. Transloadit’s OAuth applications are used to authenticate your users by default. Your users will be asked to provide Transloadit access to their files. Since your users are probably not aware of Transloadit, this may be confusing or decrease trust. You may also hit rate limits, because the OAuth application is shared between everyone using Transloadit.
+
+To solve that, you can use your own OAuth keys with Transloadit’s hosted Companion servers by using Transloadit Template Credentials. [Create a Template Credential][template-credentials] on the Transloadit site. Select “Companion OAuth” for the service, and enter the key and secret for the provider you want to use. Then you can pass the name of the new credentials to that provider:
+
+```js
+uppy.use(Dropbox, {
+  companionUrl: Transloadit.COMPANION,
+  companionAllowedHosts: Transloadit.COMPANION_PATTERN,
+  companionKeysParams: {
+    key: 'YOUR_TRANSLOADIT_API_KEY',
+    credentialsName: 'my_companion_dropbox_creds',
+  },
+})
+```
+
 ## Properties
 
 ### `Transloadit.COMPANION`
@@ -383,3 +410,5 @@ uppy.on('transloadit:complete', (assembly) => {
 ```
 
 [assembly-status]: https://transloadit.com/docs/api/#assembly-status-response
+
+[template-credentials]: https://transloadit.com/docs/#how-to-create-template-credentials

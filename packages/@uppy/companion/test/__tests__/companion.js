@@ -1,6 +1,7 @@
 /* global jest:false, test:false, expect:false, describe:false */
 
 const mockOauthState = require('../mockoauthstate')()
+const { version } = require('../../package.json')
 
 jest.mock('tus-js-client')
 jest.mock('purest')
@@ -9,11 +10,13 @@ jest.mock('../../src/server/helpers/oauth-state', () => ({
   ...mockOauthState,
 }))
 
+const nock = require('nock')
 const request = require('supertest')
 const tokenService = require('../../src/server/helpers/jwt')
 const { getServer } = require('../mockserver')
 
-const authServer = getServer()
+// todo don't share server between tests. rewrite to not use env variables
+const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 const authData = {
   dropbox: 'token value',
   box: 'token value',
@@ -152,4 +155,52 @@ describe('handle main oauth redirect', () => {
       .set('uppy-auth-token', token)
       .expect(400)
   })
+})
+
+it('periodically pings', (done) => {
+  nock('http://localhost').post('/ping', (body) => (
+    body.some === 'value'
+    && body.version === version
+    && typeof body.processId === 'string'
+  )).reply(200, () => done())
+
+  getServer({
+    COMPANION_PERIODIC_PING_URLS: 'http://localhost/ping',
+    COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD: '{"some": "value"}',
+    COMPANION_PERIODIC_PING_INTERVAL: '10',
+    COMPANION_PERIODIC_PING_COUNT: '1',
+  })
+}, 1000)
+
+it('respects allowLocalUrls', async () => {
+  const server = getServer()
+  const url = 'http://localhost/'
+
+  let res
+
+  res = await request(server)
+    .post('/url/meta')
+    .send({ url })
+    .expect(400)
+
+  expect(res.body).toEqual({ error: 'Invalid request body' })
+
+  res = await request(server)
+    .post('/url/get')
+    .send({
+      fileId: url,
+      metadata: {},
+      endpoint: 'http://url.myendpoint.com/files',
+      protocol: 'tus',
+      size: null,
+      url,
+    })
+    .expect(400)
+
+  expect(res.body).toEqual({ error: 'Invalid request body' })
+}, 1000)
+
+afterAll(() => {
+  nock.cleanAll()
+  nock.restore()
 })

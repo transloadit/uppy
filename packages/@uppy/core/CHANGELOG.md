@@ -1,5 +1,26 @@
 # @uppy/core
 
+## 2.1.7
+
+Released: 2022-03-29
+Included in: Uppy v2.9.1
+
+- @uppy/core: refactor: replace deprecated String.prototype.substr() (CommanderRoot / #3600)
+
+## 2.1.6
+
+Released: 2022-03-16
+Included in: Uppy v2.8.0
+
+- @uppy/core: Abstract restriction logic in a new Restricter class (Merlijn Vos / #3532)
+
+## 2.1.5
+
+Released: 2022-02-14
+Included in: Uppy v2.5.0
+
+- @uppy/core,@uppy/dashboard,@uppy/thumbnail-generator: Add dashboard and UIPlugin types (Merlijn Vos / #3426)
+
 ## 2.1.4
 
 Released: 2021-12-09

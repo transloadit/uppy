@@ -19,12 +19,12 @@ Here’s the simplest example html page with Uppy (it uses a CDN bundle, while w
   <head>
     <meta charset="utf-8">
     <title>Uppy</title>
-    <link href="https://releases.transloadit.com/uppy/v2.3.3/uppy.min.css" rel="stylesheet">
+    <link href="https://releases.transloadit.com/uppy/v2.9.1/uppy.min.css" rel="stylesheet">
   </head>
   <body>
     <div id="drag-drop-area"></div>
 
-    <script src="https://releases.transloadit.com/uppy/v2.3.3/uppy.min.js"></script>
+    <script src="https://releases.transloadit.com/uppy/v2.9.1/uppy.min.js"></script>
     <script>
       var uppy = new Uppy.Core()
         .use(Uppy.Dashboard, {
@@ -118,13 +118,13 @@ You can also use a pre-built bundle from Transloadit’s CDN: Edgly. `Uppy` will
 1\. Add a script at the bottom of the closing `</body>` tag:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v2.3.3/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.9.1/uppy.min.js"></script>
 ```
 
 2\. Add CSS to `<head>`:
 
 ```html
-<link href="https://releases.transloadit.com/uppy/v2.3.3/uppy.min.css" rel="stylesheet">
+<link href="https://releases.transloadit.com/uppy/v2.9.1/uppy.min.css" rel="stylesheet">
 ```
 
 3\. Initialize at the bottom of the closing `</body>` tag:
@@ -147,11 +147,9 @@ You can also use a pre-built bundle from Transloadit’s CDN: Edgly. `Uppy` will
 
 ## Browser Support
 
-<a href="https://saucelabs.com/u/transloadit-uppy">
-  <img src="https://saucelabs.com/browser-matrix/transloadit-uppy.svg" alt="Sauce Test Status"/>
-</a>
+We aim to support recent versions of Chrome, Firefox, Safari and Edge.
 
-We aim to support recent versions of Safari, Chrome, Firefox, and Opera.
+We still provide a bundle which should work on IE11, but we are not running tests on it.
 
 ### Polyfills
 
@@ -183,5 +181,5 @@ export * from '@uppy/core'
 If you’re using Uppy from CDN, those polyfills are already included in the bundle, no need to include anything additionally:
 
 ```html
-<script src="https://releases.transloadit.com/uppy/v2.3.3/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/v2.9.1/uppy.min.js"></script>
 ```

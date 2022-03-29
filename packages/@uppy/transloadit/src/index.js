@@ -19,6 +19,7 @@ function defaultGetAssemblyOptions (file, options) {
 const sendErrorToConsole = originalErr => err => {
   const error = new Error('Failed to send error to the client')
   error.cause = err
+  // eslint-ignore-next-line no-console
   console.error(error, originalErr)
 }
 
@@ -53,7 +54,8 @@ module.exports = class Transloadit extends BasePlugin {
       params: null,
       fields: {},
       getAssemblyOptions: defaultGetAssemblyOptions,
-      limit: 0,
+      limit: 20,
+      retryDelays: [7_000, 10_000, 15_000, 20_000],
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -215,6 +217,19 @@ module.exports = class Transloadit extends BasePlugin {
           ...updatedFiles,
         },
       })
+      const fileRemovedHandler = (fileRemoved, reason) => {
+        if (reason === 'cancel-all') {
+          assembly.close()
+          this.uppy.off(fileRemovedHandler)
+        } else if (fileRemoved.id in updatedFiles) {
+          delete updatedFiles[fileRemoved.id]
+          if (Object.keys(updatedFiles).length === 0) {
+            assembly.close()
+            this.uppy.off(fileRemovedHandler)
+          }
+        }
+      }
+      this.uppy.on('file-removed', fileRemovedHandler)
 
       this.uppy.emit('transloadit:assembly-created', status, fileIDs)
 
@@ -241,7 +256,7 @@ module.exports = class Transloadit extends BasePlugin {
     })
 
     watcher.on('assembly-error', (id, error) => {
-    // Clear postprocessing state for all our files.
+      // Clear postprocessing state for all our files.
       const files = this.getAssemblyFiles(id)
       files.forEach((file) => {
       // TODO Maybe make a postprocess-error event here?
@@ -692,25 +707,25 @@ module.exports = class Transloadit extends BasePlugin {
     })
   }
 
+  #closeAssemblyIfExists = (assemblyID) => {
+    this.activeAssemblies[assemblyID]?.close()
+  }
+
   #onError = (err = null, uploadID) => {
     const state = this.getPluginState()
     const assemblyIDs = state.uploadsAssemblies[uploadID]
+    assemblyIDs?.forEach(this.#closeAssemblyIfExists)
 
-    assemblyIDs?.forEach((assemblyID) => {
-      if (this.activeAssemblies[assemblyID]) {
-        this.activeAssemblies[assemblyID].close()
-      }
-    })
     this.client.submitError(err)
       // if we can't report the error that sucks
       .catch(sendErrorToConsole(err))
   }
 
-  #onTusError = (err) => {
-    if (err && /^tus: /.test(err.message)) {
-      const xhr = err.originalRequest ? err.originalRequest.getUnderlyingObject() : null
-      const url = xhr && xhr.responseURL ? xhr.responseURL : null
-      this.client.submitError(err, { url, type: 'TUS_ERROR' })
+  #onTusError = (file, err) => {
+    this.#closeAssemblyIfExists(file.transloadit?.assembly)
+    if (err?.message?.startsWith('tus: ')) {
+      const endpoint = err.originalRequest?.getUnderlyingObject()?.responseURL
+      this.client.submitError(err, { endpoint, type: 'TUS_ERROR' })
         // if we can't report the error that sucks
         .catch(sendErrorToConsole(err))
     }
@@ -751,6 +766,7 @@ module.exports = class Transloadit extends BasePlugin {
         metaFields: ['assembly_url', 'filename', 'fieldname'],
         // Pass the limit option to @uppy/tus
         limit: this.opts.limit,
+        retryDelays: this.opts.retryDelays,
       })
     }
 

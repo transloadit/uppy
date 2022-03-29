@@ -141,28 +141,23 @@ class DropBox extends Provider {
     }
   }
 
-  _thumbnail ({ id, token }, done) {
-    return this.client
-      .post('https://content.dropboxapi.com/2/files/get_thumbnail')
-      .options({
-        version: '2',
-        headers: {
-          'Dropbox-API-Arg': httpHeaderSafeJson({ path: `${id}`, size: 'w256h256' }),
-        },
-      })
-      .auth(token)
-      .request()
-      .on('response', (resp) => {
-        if (resp.statusCode !== 200) {
-          const err = this._error(null, resp)
-          logger.error(err, 'provider.dropbox.thumbnail.error')
-          return done(err)
-        }
-        done(null, resp)
-      })
-      .on('error', (err) => {
-        logger.error(err, 'provider.dropbox.thumbnail.error')
-      })
+  async thumbnail ({ id, token }) {
+    try {
+      const req = this.client
+        .post('https://content.dropboxapi.com/2/files/get_thumbnail_v2')
+        .options({
+          headers: {
+            'Dropbox-API-Arg': httpHeaderSafeJson({ resource: { '.tag': 'path', path: `${id}` }, size: 'w256h256' }),
+          },
+        })
+        .auth(token)
+        .request()
+
+      return await requestStream(req, (resp) => this._error(null, resp))
+    } catch (err) {
+      logger.error(err, 'provider.dropbox.thumbnail.error')
+      throw err
+    }
   }
 
   _size ({ id, token }, done) {
@@ -232,7 +227,6 @@ class DropBox extends Provider {
 DropBox.version = 2
 
 DropBox.prototype.list = promisify(DropBox.prototype._list)
-DropBox.prototype.thumbnail = promisify(DropBox.prototype._thumbnail)
 DropBox.prototype.size = promisify(DropBox.prototype._size)
 DropBox.prototype.logout = promisify(DropBox.prototype._logout)
 

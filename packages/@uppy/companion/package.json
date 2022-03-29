@@ -1,6 +1,6 @@
 {
   "name": "@uppy/companion",
-  "version": "3.1.5",
+  "version": "3.5.0",
   "description": "OAuth helper and remote fetcher for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
   "main": "lib/companion.js",
   "types": "lib/companion.d.ts",
@@ -37,6 +37,7 @@
     "connect-redis": "4.0.3",
     "cookie-parser": "1.4.6",
     "cors": "^2.8.5",
+    "escape-goat": "3.0.0",
     "escape-string-regexp": "2.0.0",
     "express": "4.17.1",
     "express-interceptor": "1.2.0",
@@ -54,7 +55,7 @@
     "moment-timezone": "^0.5.31",
     "morgan": "1.10.0",
     "ms": "2.1.2",
-    "node-redis-pubsub": "4.0.0",
+    "node-redis-pubsub": "^5.0.0",
     "node-schedule": "1.3.2",
     "prom-client": "12.0.0",
     "purest": "3.1.0",
@@ -87,6 +88,7 @@
     "@types/webpack": "^5.28.0",
     "@types/ws": "6.0.4",
     "into-stream": "^6.0.0",
+    "jest": "^27.0.6",
     "nock": "^13.1.3",
     "supertest": "3.4.2",
     "typescript": "~4.4"
@@ -110,8 +112,7 @@
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "prepublishOnly": "yarn run build",
     "start": "node ./lib/standalone/start-server.js",
-    "test": "bash -c 'source env.test.sh && ../../../node_modules/jest/bin/jest.js'",
-    "test:watch": "yarn test -- --watch"
+    "test": "jest"
   },
   "engines": {
     "node": ">=10.20.1"

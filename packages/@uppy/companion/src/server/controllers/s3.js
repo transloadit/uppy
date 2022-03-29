@@ -2,12 +2,12 @@ const router = require('express').Router
 function removeMetadataProperties (object) {
   if (!object) return false
   // add more here?
-  const { idToken, uploadCode, ...newFileObject } = object
+  const { idToken, uploadCode, name, ...newFileObject } = object
   return newFileObject
 }
 module.exports = function s3 (config) {
-  if (typeof config.acl !== 'string') {
-    throw new TypeError('s3: The `acl` option must be a string')
+  if (typeof config.acl !== 'string' && config.acl != null) {
+    throw new TypeError('s3: The `acl` option must be a string or null')
   }
   if (typeof config.getKey !== 'function') {
     throw new TypeError('s3: The `getKey` option must be a function')
@@ -43,11 +43,12 @@ module.exports = function s3 (config) {
     }
 
     const fields = {
-      acl: config.acl,
       key,
       success_action_status: '201',
       'content-type': req.query.type,
     }
+
+    if (config.acl != null) fields.acl = config.acl
 
     Object.keys(metadata).forEach((key) => {
       fields[`x-amz-meta-${key}`] = metadata[key]
@@ -97,13 +98,16 @@ module.exports = function s3 (config) {
       return res.status(400).json({ error: 's3: content type must be a string' })
     }
 
-    client.createMultipartUpload({
+    const params = {
       Bucket: config.bucket,
       Key: key,
-      ACL: config.acl,
       ContentType: type,
       Metadata: removeMetadataProperties(metadata)
-    }, (err, data) => {
+    }
+
+    if (config.acl != null) params.ACL = config.acl
+
+    client.createMultipartUpload(params, (err, data) => {
       if (err) {
         next(err)
         return

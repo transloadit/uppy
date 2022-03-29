@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import * as UppyUtils from '@uppy/utils'
 
 // Utility types
@@ -55,6 +56,7 @@ export interface AddFileOptions<
 
 export interface PluginOptions {
   id?: string
+  replaceTargetContent?: boolean
 }
 
 export interface DefaultPluginOptions extends PluginOptions {
@@ -214,7 +216,8 @@ export type UploadCompleteCallback<TMeta> = (result: UploadResult<TMeta>) => voi
 export type ErrorCallback = (error: Error) => void;
 export type UploadErrorCallback<TMeta> = (file: UppyFile<TMeta>, error: Error, response?: ErrorResponse) => void;
 export type UploadRetryCallback = (fileID: string) => void;
-export type RestrictionFailedCallback<TMeta> = (file: UppyFile<TMeta>, error: Error) => void;
+// TODO: reverse the order in the next major version
+export type RestrictionFailedCallback<TMeta> = (file: UppyFile<TMeta> | undefined, error: Error) => void;
 
 export interface UppyEventMap<TMeta = Record<string, unknown>> {
   'file-added': FileAddedCallback<TMeta>

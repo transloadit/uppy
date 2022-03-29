@@ -1,5 +1,13 @@
 # @uppy/thumbnail-generator
 
+## 2.1.0
+
+Released: 2022-02-14
+Included in: Uppy v2.5.0
+
+- @uppy/core,@uppy/dashboard,@uppy/thumbnail-generator: Add dashboard and UIPlugin types (Merlijn Vos / #3426)
+- @uppy/thumbnail-generator: exifr: remove legacy IE support (Artur Paikin / #3382)
+
 ## 2.0.6
 
 Released: 2021-12-07

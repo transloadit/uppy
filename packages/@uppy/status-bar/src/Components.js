@@ -85,6 +85,7 @@ function CancelBtn (props) {
       title={i18n('cancel')}
       aria-label={i18n('cancel')}
       onClick={() => uppy.cancelAll()}
+      data-cy="cancel"
       data-uppy-super-focusable
     >
       <svg

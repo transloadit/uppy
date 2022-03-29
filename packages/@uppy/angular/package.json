@@ -1,18 +1,18 @@
 {
-  "name": "@uppy/angular",
-  "version": "0.2.8",
-  "module": "dist/angular/esm2020/public-api.mjs",
-  "types": "dist/angular/uppy-angular.d.ts",
+  "name": "angular",
+  "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "start-storybook -p 6006",
-    "build": "ng build",
-    "build:release": "ng build --prod",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e",
-    "build-storybook": "build-storybook"
+    "start": "ng serve",
+    "build": "ng build @uppy/angular --configuration development",
+    "build:release": "ng build",
+    "build-storybook": "npm run docs:json && build-storybook",
+    "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
+    "storybook": "npm run docs:json && start-storybook -p 6006",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
   },
+  "private": true,
   "dependencies": {
     "@angular/animations": ">= 11",
     "@angular/common": ">= 11",
@@ -27,55 +27,38 @@
     "@uppy/progress-bar": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "prop-types": "^15.7.2",
-    "rxjs": "^6.5.3",
-    "tslib": "^2.0.0",
-    "zone.js": "~0.11.3"
+    "rxjs": "~7.4.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.11.4"
   },
   "peerDependencies": {
     "@uppy/core": ">=1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": ">= 11",
-    "@angular-eslint/builder": ">= 11",
-    "@angular-eslint/eslint-plugin": ">= 11",
-    "@angular-eslint/eslint-plugin-template": ">= 11",
-    "@angular-eslint/schematics": ">= 11",
-    "@angular-eslint/template-parser": ">= 11",
     "@angular/cli": ">= 11",
     "@angular/compiler-cli": ">= 11",
-    "@babel/core": "^7.10.5",
-    "@storybook/addon-actions": "^6.2.7",
-    "@storybook/addon-links": "^6.2.7",
-    "@storybook/addon-notes": "^5.3.19",
-    "@storybook/addons": "^5.3.21",
-    "@storybook/angular": "^6.2.7",
-    "@types/jasmine": "~3.6.0",
-    "@types/jasminewd2": "~2.0.3",
+    "@babel/core": "^7.17.5",
+    "@compodoc/compodoc": "^1.1.19",
+    "@storybook/addon-actions": "^6.5.0-alpha.42",
+    "@storybook/addon-essentials": "^6.5.0-alpha.42",
+    "@storybook/addon-interactions": "^6.5.0-alpha.42",
+    "@storybook/addon-links": "^6.5.0-alpha.42",
+    "@storybook/angular": "^6.5.0-alpha.42",
+    "@storybook/builder-webpack5": "^6.5.0-alpha.42",
+    "@storybook/manager-webpack5": "^6.5.0-alpha.42",
+    "@storybook/testing-library": "^0.0.9",
+    "@types/jasmine": "~3.10.0",
     "@types/node": "^12.11.1",
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "@typescript-eslint/parser": "^5.0.0",
-    "babel-loader": "^8.1.0",
-    "eslint": "^8.0.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsdoc": "^37.0.0",
-    "eslint-plugin-prefer-arrow": "^1.2.3",
-    "jasmine-core": "~3.6.0",
-    "jasmine-spec-reporter": "~7.0.0",
-    "karma": "~6.3.9",
+    "babel-loader": "^8.2.3",
+    "jasmine-core": "~3.10.0",
+    "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
-    "karma-coverage-istanbul-reporter": "~3.0.2",
+    "karma-coverage": "~2.0.3",
+    "karma-coverage-istanbul-reporter": "^3.0.3",
     "karma-jasmine": "~4.0.0",
-    "karma-jasmine-html-reporter": "^1.5.0",
+    "karma-jasmine-html-reporter": "~1.7.0",
     "ng-packagr": "^13.0.0",
-    "protractor": "~7.0.0",
-    "redux": "^4.1.2",
-    "ts-node": "~8.3.0",
-    "typescript": "~4.4"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "files": [
-    "/dist"
-  ]
+    "typescript": "~4.4.3"
+  }
 }

@@ -103,6 +103,39 @@ companion.socket(server)
 
 This takes your `server` instance as an argument.
 
+#### Events
+
+The object returned by `companion.app()` also has a property `companionEmitter` which is an `EventEmitter` that emits the following events:
+
+* `upload-start` - When an upload starts, this event is emitted with an object containing the property `token`, which is a unique ID for the upload.
+* **token** - The event name is the token from `upload-start`. The event has an object with the following properties:
+  * `action` - One of the following strings:
+    * `success` - When the upload succeeds.
+    * `error` - When the upload fails with an error.
+  * `payload` - the error or success payload.
+
+Example code for using the `EventEmitter` to handle a finished file upload:
+
+```js
+const companionApp = companion.app(options)
+const { companionEmitter: emitter } = companionApp
+
+emitter.on('upload-start', ({ token }) => {
+  console.log('Upload started', token)
+
+  function onUploadEvent ({ action, payload }) {
+    if (action === 'success') {
+      emitter.off(token, onUploadEvent) // avoid listener leak
+      console.log('Upload finished', token, payload.url)
+    } else if (action === 'error') {
+      emitter.off(token, onUploadEvent) // avoid listener leak
+      console.error('Upload failed', payload)
+    }
+  }
+  emitter.on(token, onUploadEvent)
+})
+```
+
 ### Running as a standalone server
 
 > Please make sure that the required environment variables are set before running/using Companion as a standalone server. See [Configure Standalone](#Configuring-a-standalone-server) for the variables required.
@@ -163,9 +196,9 @@ export COMPANION_HIDE_METRICS="true"
 # instead (e.g Nginx).
 export COMPANION_IMPLICIT_PATH="/SERVER/PATH/TO/WHERE/UPPY/SERVER/LIVES"
 
-# comma-separated client hosts to whitlelist by the server
+# corresponds to the corsOrigins option, but can contain a comma-separated list of String values.
 # if neither this or COMPANION_CLIENT_ORIGINS_REGEX specified, the server would allow any host
-export COMPANION_CLIENT_ORIGINS="localhost:3452,uppy.io"
+export COMPANION_CLIENT_ORIGINS="http://localhost:3452,https://uppy.io"
 
 # Like COMPANION_CLIENT_ORIGINS, but allows a single regex instead
 # (COMPANION_CLIENT_ORIGINS will be ignored if this is used and vice versa)
@@ -246,11 +279,24 @@ export COMPANION_UPLOAD_URLS="http://tusd.tusdemo.net/files/,https://tusd.tusdem
 # corresponds to the streamingUpload option
 export COMPANION_STREAMING_UPLOAD=true
 
+# corresponds to the allowLocalUrls option
+export COMPANION_ALLOW_LOCAL_URLS=false
+
 # corresponds to the maxFileSize option
 export COMPANION_MAX_FILE_SIZE="100000000"
+
+# corresponds to the chunkSize option
+export COMPANION_CHUNK_SIZE="50000000"
+
+# corresponds to the periodicPingUrls option (CSV string converted to array)
+export COMPANION_PERIODIC_PING_URLS="https://example.com/ping1,https://example.com/ping2"
+# corresponds to the periodicPingInterval option
+export COMPANION_PERIODIC_PING_INTERVAL=60000
+# corresponds to the periodicPingStaticPayload option (JSON string)
+export COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD="{\"static\":\"data\"}"
 ```
 
-See [env.example.sh](https://github.com/transloadit/uppy/blob/main/env.example.sh) for an example configuration script.
+See [`.env.example`](https://github.com/transloadit/uppy/blob/main/.env.example) for an example environment configuration file.
 
 ### Options
 
@@ -299,13 +345,18 @@ const options = {
   debug: true,
   metrics: false,
   streamingUpload: true,
+  allowLocalUrls: false,
   maxFileSize: 100000000,
+  periodicPingUrls: [],
+  periodicPingInterval: 60000,
+  periodicPingStaticPayload: { static: 'payload' },
+  corsOrigins: true,
 }
 ```
 
-1. **filePath(required)** - Full path to the directory to which provider files would be downloaded temporarily.
+1. **filePath(required)** - Full path to the directory to which provider files will be downloaded temporarily.
 
-2. **secret(recommended)** - A secret string which Companion uses to generate authorization tokens.
+2. **secret(recommended)** - A secret string which Companion uses to generate authorization tokens. You should generate a long random string for this.
 
 3. **uploadUrls(recommended)** - An allowlist (array) of strings (exact URLs) or regular expressions. If specified, Companion will only accept uploads to these URLs. This is needed to make sure a Companion instance is only allowed to upload to your servers. **Omitting this leaves your system open to potential [SSRF](https://en.wikipedia.org/wiki/Server-side_request_forgery) attacks, and may throw an error in future `@uppy/companion` releases.**
 
@@ -317,12 +368,12 @@ const options = {
 
 7. **server(optional)** - An object with details, mainly used to carry out oauth authentication from any of the enabled providers above. Though it’s optional, it’s required if you would be enabling any of the supported providers. The following are the server options you may set:
 
-* `protocol` - `http | https`
-* `host` (required) - your server host (e.g localhost:3020, mydomain.com)
-* `path` - the server path to where the Uppy app is sitting (e.g if Companion is at `mydomain.com/companion`, then the path would be `/companion`).
-* `oauthDomain` - if you have several instances of Companion with different (and perhaps dynamic) subdomains, you can set a single fixed domain (e.g `sub1.mydomain.com`) to handle your oauth authentication for you. This would then redirect back to the correct instance with the required credentials on completion. This way you only need to configure a single callback URL for OAuth providers.
-* `validHosts` - if you are setting an `oauthDomain`, you need to set a list of valid hosts, so the oauth handler can validate the host of the Uppy instance requesting the authentication. This is essentially a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.mydomain.com', 'sub3.mydomain.com', '(\\w+).mydomain.com']`
-* `implicitPath` - if the URL path to your Companion server is set in your NGINX server (or any other Http server) instead of your express app, then you need to set this path as `implicitPath`. So if your Companion URL is `mydomain.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`.
+* `protocol` - `http | https` - even though companion itself always runs as http, you may want to set this to `https` if you are running a reverse https proxy in front of companion.
+* `host` (required) - your server’s publically facing hostname (for example `example.com`).
+* `oauthDomain` - if you have several instances of Companion with different (and perhaps dynamic) subdomains, you can set a single fixed subdomain and server (e.g `sub1.example.com`) to handle your OAuth authentication for you. This would then redirect back to the correct instance with the required credentials on completion. This way you only need to configure a single callback URL for OAuth providers.
+* `path` - the server path to where the Uppy app is sitting (e.g if Companion is at `example.com/companion`, then the path would be `/companion`).
+* `implicitPath` - if the URL’s path in your reverse proxy is different from your Companion path in your express app, then you need to set this path as `implicitPath`. So if your Companion URL is `example.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`.
+* `validHosts` - if you are setting an `oauthDomain`, you need to set a list of valid hosts, so the oauth handler can validate the host of the Uppy instance requesting the authentication. This is essentially a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.example.com', 'sub3.example.com', '(\\w+).example.com']`
 
 8. **sendSelfEndpoint(optional)** - This is essentially the same as the `server.host + server.path` attributes. The major reason for this attribute is that, when set, it adds the value as the `i-am` header of every request response.
 
@@ -339,6 +390,16 @@ const options = {
 14. **streamingUpload(optional)** - A boolean flag to tell Companion whether to enable streaming uploads. If enabled, it will lead to _faster uploads_ because companion will start uploading at the same time as downloading using `stream.pipe`. If `false`, files will be fully downloaded first, then uploaded. Defaults to `false`. Do **not** set it to `true` if you have a [custom Companion provider](#adding-custom-providers) that does not use the new async/stream API.
 
 15. **maxFileSize(optional)** - If this value is set, companion will limit the maximum file size to process. If unset, it will process files without any size limit (this is the default).
+
+16. **periodicPingUrls(optional)** - If this value is set, companion will periodically send POST requests to the specified URLs. Useful for keeping track of companion instances as a keep-alive.
+
+17. **periodicPingInterval(optional)** - Interval for periodic ping requests (in ms).
+
+18. **periodicPingStaticPayload(optional)** - A `JSON.stringify`-able JavaScript Object that will be sent as part of the JSON body in the period ping requests.
+
+19. **allowLocalUrls(optional)** - A boolean flag to tell Companion whether to allow requesting local URLs. Note: Only enable this in development. **Enabling it in production is a security risk.**
+
+20. **corsOrigins(optional)** - Allowed CORS Origins (default `true`. Passed as the `origin` option in [cors](https://github.com/expressjs/cors#configuration-options))
 
 ### Provider Redirect URIs
 
@@ -512,41 +573,6 @@ See also [example code with a custom provider](https://github.com/transloadit/up
   "nextPagePath": "directory-name?cursor=cursor-to-next-page"
 }
 ```
-
-## Migrating v1 to v2
-
-### Prerequisite
-
-Since v2, you now need to be running `node.js >= v10.20.1` to use Companion.
-
-### ProviderOptions
-
-In v2 the `google` and `microsoft` [providerOptions](https://uppy.io/docs/companion/#Options) have been changed to `drive` and `onedrive` respectively.
-
-### OAuth Redirect URIs
-
-On your Providers’ respective developer platforms, the OAuth redirect URIs that you should supply has now changed from:
-
-`http(s)://$COMPANION_HOST_NAME/connect/$AUTH_PROVIDER/callback` in v1
-
-to:
-
-`http(s)://$COMPANION_HOST_NAME/$PROVIDER_NAME/redirect` in v2
-
-#### New Redirect URIs
-
-<div class="table-responsive">
-
-| Provider | New Redirect URI
-|-|-|
-| Dropbox | `https://$COMPANION_HOST_NAME/dropbox/redirect` |
-| Google Drive | `https://$COMPANION_HOST_NAME/drive/redirect` |
-| OneDrive | `https://$COMPANION_HOST_NAME/onedrive/redirect` |
-| Box | `https://$YOUR_COMPANION_HOST_NAME/box/redirect` |
-| Facebook | `https://$COMPANION_HOST_NAME/facebook/redirect` |
-| Instagram | `https://$COMPANION_HOST_NAME/instagram/redirect` |
-
-</div>
 
 ## Development
 

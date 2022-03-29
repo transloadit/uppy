@@ -127,7 +127,7 @@ class Facebook extends Provider {
           return done(err)
         }
 
-        getURLMeta(this._getMediaUrl(body))
+        getURLMeta(this._getMediaUrl(body), true)
           .then(({ size }) => done(null, size))
           .catch((err2) => {
             logger.error(err2, 'provider.facebook.size.error')

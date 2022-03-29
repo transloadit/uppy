@@ -125,7 +125,18 @@ module.exports.decrypt = (encrypted, secret) => {
 
   const iv = Buffer.from(encrypted.slice(0, 32), 'hex')
   const encryptionWithoutIv = encrypted.slice(32)
-  const decipher = crypto.createDecipheriv('aes256', createSecret(secret), iv)
+
+  let decipher
+  try {
+    decipher = crypto.createDecipheriv('aes256', createSecret(secret), iv)
+  } catch (err) {
+    if (err.code === 'ERR_CRYPTO_INVALID_IV') {
+      throw new Error('Invalid initialization vector')
+    } else {
+      throw err
+    }
+  }
+
   let decrypted = decipher.update(urlDecode(encryptionWithoutIv), 'base64', 'utf8')
   decrypted += decipher.final('utf8')
   return decrypted

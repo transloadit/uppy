@@ -7,6 +7,16 @@ class RateLimitedQueue {
 
   #queuedHandlers = []
 
+  #paused = false
+
+  #pauseTimer
+
+  #downLimit = 1
+
+  #upperLimit
+
+  #rateLimitingTimer
+
   constructor (limit) {
     if (typeof limit !== 'number' || limit === 0) {
       this.limit = Infinity
@@ -54,7 +64,7 @@ class RateLimitedQueue {
   }
 
   #next () {
-    if (this.#activeRequests >= this.limit) {
+    if (this.#paused || this.#activeRequests >= this.limit) {
       return
     }
     if (this.#queuedHandlers.length === 0) {
@@ -101,7 +111,7 @@ class RateLimitedQueue {
   }
 
   run (fn, queueOptions) {
-    if (this.#activeRequests < this.limit) {
+    if (!this.#paused && this.#activeRequests < this.limit) {
       return this.#call(fn)
     }
     return this.#queue(fn, queueOptions)
@@ -149,6 +159,69 @@ class RateLimitedQueue {
       return outerPromise
     }
   }
+
+  resume () {
+    this.#paused = false
+    clearTimeout(this.#pauseTimer)
+    for (let i = 0; i < this.limit; i++) {
+      this.#queueNext()
+    }
+  }
+
+  #resume = () => this.resume()
+
+  /**
+   * Freezes the queue for a while or indefinitely.
+   *
+   * @param {number | null } [duration] Duration for the pause to happen, in milliseconds.
+   *                                    If omitted, the queue won't resume automatically.
+   */
+  pause (duration = null) {
+    this.#paused = true
+    clearTimeout(this.#pauseTimer)
+    if (duration != null) {
+      this.#pauseTimer = setTimeout(this.#resume, duration)
+    }
+  }
+
+  /**
+   * Pauses the queue for a duration, and lower the limit of concurrent requests
+   * when the queue resumes. When the queue resumes, it tries to progressively
+   * increase the limit in `this.#increaseLimit` until another call is made to
+   * `this.rateLimit`.
+   * Call this function when using the RateLimitedQueue for network requests and
+   * the remote server responds with 429 HTTP code.
+   *
+   * @param {number} duration in milliseconds.
+   */
+  rateLimit (duration) {
+    clearTimeout(this.#rateLimitingTimer)
+    this.pause(duration)
+    if (this.limit > 1 && Number.isFinite(this.limit)) {
+      this.#upperLimit = this.limit - 1
+      this.limit = this.#downLimit
+      this.#rateLimitingTimer = setTimeout(this.#increaseLimit, duration)
+    }
+  }
+
+  #increaseLimit = () => {
+    if (this.#paused) {
+      this.#rateLimitingTimer = setTimeout(this.#increaseLimit, 0)
+      return
+    }
+    this.#downLimit = this.limit
+    this.limit = Math.ceil((this.#upperLimit + this.#downLimit) / 2)
+    for (let i = this.#downLimit; i <= this.limit; i++) {
+      this.#queueNext()
+    }
+    if (this.#upperLimit - this.#downLimit > 3) {
+      this.#rateLimitingTimer = setTimeout(this.#increaseLimit, 2000)
+    } else {
+      this.#downLimit = Math.floor(this.#downLimit / 2)
+    }
+  }
+
+  get isPaused () { return this.#paused }
 }
 
 module.exports = {

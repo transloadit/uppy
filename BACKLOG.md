@@ -5,16 +5,6 @@
 These are ideas that are planned for specific versions or act as a backlog without a clear date.
 PRs are welcome! Please do open an issue to discuss first if it's a big feature, priorities may have changed after something was added here.
 
-## `2.3.0`
-
-To be released: 2021-11-29
-
-- [ ] plugin: audio/memo recording similar to Webcam #143 #198 (@arturi)
-- [ ] compressor: move to Uppy repo, add resizing (@arturi)
-- [ ] providers: Box on hosted Companion
-- [ ] robodog: research simplifing Robodog — yes to easy “few lines of code Dashboard+Providers+(?Transloadit) experience”, but currently it’s hard to choose between modes, decide what you need (@Murderlon)
-- [ ] build: add release automations (@aduh95)
-
 ## `3.0.0`
 
 - [ ] Switch to ES Modules (ESM)
@@ -33,9 +23,14 @@ To be released: 2021-11-29
 
 - [ ] Make sure Uppy works well in VR
 - [ ] normalize file names when uploading from iOS? Can we do it with meta data? date? `image-${index}`? #678
+- [ ] robodog: Simplify Robodog — yes to easy few lines of code Transloadit experience, but currently it’s hard to choose between modes, decide what you need.
+- [ ] Can Uppy upload a lot of files at once? Seems to fail now: https://github.com/transloadit/uppy/issues/3313 (@aduh95, @Murderlon)
+- [ ] Consider how we can make Uppy smaller. Replace some packages with smaller alternatives. Talk about Socket.io again (@aduh95)
+- [ ] Better events — more data, consistency, naming (@Murderlon)
 
 ### Dashboard
 
+- [ ] Dashboard UI should support 20 providers (@arturi)
 - [ ] Allow minimizing the Dashboard during upload (Uppy then becomes just a tiny progress indicator) (@arturi)
 - [ ] Display data like image resolution on file cards. should be done by thumbnail generator maybe #783
 - [ ] Possibility to edit/delete more than one file at once. example: add copyrigh info to 1000 files #118, #97
@@ -49,6 +44,7 @@ To be released: 2021-11-29
 - [ ] WordPress Back-end plugin. Should be another Transloadit Integration based on Robodog Dashboard(?) we should add a provider, and possibly offer already-uploaded content
 - [ ] WordPress Front-end Gravity Forms Uppy plugin so one form field could be an Uppy-powered file input
 - [ ] A WakeLock based plugin that keeps your phone from going to sleep while an upload is ongoing https://github.com/transloadit/uppy/issues/1725
+- [ ] Improve image editor: filters for images, no crashes (@aduh95)
 
 ### New providers
 
@@ -57,7 +53,6 @@ To be released: 2021-11-29
 - [ ] Giphy image search (on top of Unsplash plugin) ()
 - [ ] Image search (via Google or Bing or DuckDuckGo): use duckduckgo-images-api or Google Search API (@arturi)
 - [ ] Vimeo #2872
-- [ ] unsplash: Unsplash re-design (#2635 / @arturi, @nqst)
 - [ ] box: add to https://uppy.io/examples/dashboard/ (@mifi)
 
 ### Miscellaneous
@@ -74,7 +69,7 @@ To be released: 2021-11-29
 - [ ] xhr: allow sending custom headers per file (as proposed in #785)
 - [ ] website: It would be nice in the long run to have a dynamic package builder here right on the website where you can select the plugins you need/want and it builds and downloads a minified version of them? Sort of like jQuery UI: https://jqueryui.com/download/
 - [ ] webcam: Specify the resolution of the webcam images/video. We should add a way to specify any custom 'constraints' (aspect ratio, resolution, mimetype (`/video/mp4;codec=h264`), bits per second, etc) to the Webcam plugin #876
-- [ ] robodog: finishing touches on Companion dynamic Oauth #2802 (@goto-bus-stop)
+- [ ] Constructor to build Uppy with what you need, “Dashboard example meets Transloadit Wizard”. Select language, modes, providers — get code ready to use. Maybe integrate Transloadit Wizard in there as well (@arturi, @Murderlon)
 
 ### Needs research
 

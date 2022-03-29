@@ -30,52 +30,27 @@ Our website’s examples section is also our playground, please read the [Local 
 
 ## Tests
 
+### Unit tests
+
 Unit tests are using Jest and can be run with:
 
 ```bash
 yarn run test:unit
 ```
 
-For end-to-end tests, we use [Webdriverio](http://webdriver.io). For it to run locally, you need to install a Selenium standalone server. Follow [the Webdriverio guide](https://webdriver.io/docs/selenium-standalone-service) to do so. You can also install a Selenium standalone server from NPM:
+### End-to-End tests
 
-```bash
-npm install selenium-standalone -g
-selenium-standalone install
-```
+We use [Cypress](cypress.io/) for our e2e test suite. Be sure to checkout “[Writing your first test](https://docs.cypress.io/guides/getting-started/writing-your-first-test#Add-a-test-file)” and the “[Introduction to Cypress](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress#Cypress-Can-Be-Simple-Sometimes)”. You should also be aware of the “[Best Practices](https://docs.cypress.io/guides/references/best-practices)”.
 
-And then launch it:
+To get started make sure you have your `.env` set up. Copy the contents of `.env.example` to a file named `.env` and add the values relevant for the test(s) you are trying to run.
 
-```bash
-selenium-standalone start
-```
+To start the testing suite run:
 
-After you have installed and launched the selenium standalone server, run:
+    yarn e2e
 
-```bash
-yarn run test:endtoend:local
-```
+To generate the boilerplate for a new test run:
 
-By default, `test:endtoend:local` uses Firefox. You can use a different browser, like Chrome, by passing the `-b` flag:
-
-```bash
-yarn run test:endtoend:local -- -b chrome
-```
-
-> Note: The `--` is important, it tells yarn that the remaining arguments should be interpreted by the script itself, not by yarn.
-
-You can run in several browsers by passing several `-b` flags:
-
-```bash
-yarn run test:endtoend:local -- -b chrome -b firefox
-```
-
-When trying to get a specific integration test to pass, it’s not that helpful to continuously run _all_ tests. You can use the `--suite` flag to run tests from a single `./test/endtoend` folder. For example, `--suite thumbnails` will only run the tests from `./test/endtoend/thumbnails`. It can also be used in conjunction with one or more `-b` flags.
-
-```bash
-yarn run test:endtoend:local -- -b chrome --suite thumbnails
-```
-
-These tests are also run automatically on Travis builds with [SauceLabs](https://saucelabs.com/) cloud service using different OSes.
+    yarn e2e:generate
 
 ## Development
 
@@ -85,12 +60,10 @@ Even though facebook [allows using](https://developers.facebook.com/blog/post/20
 
 Make sure that you are using a development facebook app at <https://developers.facebook.com/apps>
 
-Go to “Instagram Basic Display” and find `Instagram App ID` and `Instagram App Secret`. Put them in a file called `env.sh` in the repo root:
+Go to “Instagram Basic Display” and find `Instagram App ID` and `Instagram App Secret`. Put them in a file called `.env` in the repo root:
 
-```bash
-export COMPANION_INSTAGRAM_KEY="Instagram App ID"
-export COMPANION_INSTAGRAM_SECRET="Instagram App Secret"
-```
+    COMPANION_INSTAGRAM_KEY="Instagram App ID"
+    COMPANION_INSTAGRAM_SECRET="Instagram App Secret"
 
 Run
 
@@ -105,18 +78,11 @@ append `/instagram/redirect` to it, such as:
 
 Add this full ngrok URL to `Valid OAuth Redirect URIs` under `Instagram Basic Display`.
 
-Edit `bin/companion` and change to your ngrok URI:
+Edit `.env` and change to your ngrok URI:
 
-```bash
-COMPANION_DOMAIN="e0c7de09808d.ngrok.io"
-COMPANION_PROTOCOL="https"
-```
-
-Edit `examples/dev/Dashboard.js`:
-
-```js
-const COMPANION_URL = 'https://e0c7de09808d.ngrok.io'
-```
+    COMPANION_DOMAIN="e0c7de09808d.ngrok.io"
+    COMPANION_PROTOCOL="https"
+    VITE_COMPANION_URL = 'https://e0c7de09808d.ngrok.io'
 
 Go to: Roles -> Roles -> Add Instagram testers -> Add your instagram account
 
@@ -138,16 +104,15 @@ open http://localhost:4000/examples/dashboard
 Also check the other examples:
 
 ```bash
-cd examples/EXAMPLENAME
-yarn install
-yarn start
+yarn workspace <example-name> start
 ```
 
 Releases are managed by GitHub Actions, here’s an overview of the process to release a new Uppy version:
 
 * Run `yarn release` on your local machine.
-* Follow the instructions and select what packages to release.
+* Follow the instructions and select what packages to release. **Warning:** skipping packages results in those changes being “lost”, meaning they won’t be picked up in the changelog automatically next release. Always try to release all.
 * Before committing, check if the generated files look good.
+* When asked to edit the next CHANGELOG, only include changes related to the package(s) you selected for release.
 * Push to the Transloadit repository using the command given by the tool. Do not open a PR yourself, the GitHub Actions will create one and assign you to it.
 * Wait for all the GitHub Actions checks to pass. If one fails, try to figure out why. Do not go ahead without consulting the rest of the team.
 * Review the PR thoroughly, and if everything looks good to you, approve the PR. Do not merge it manually!
@@ -360,6 +325,8 @@ category: "Other Integrations"
 ```
 
 This data is used to generate Uppy’s website. Refer to [the section about running the website locally](#website-previews) if you’d like to see how the docs look on the website.
+
+Any change of the documentation that involves a security best practice must substantiated with an external reference. See [#3565](https://github.com/transloadit/uppy/issues/3565).
 
 ### Adding an example
 

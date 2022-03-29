@@ -22,4 +22,8 @@ export default async function commit (spawnOptions, ...files) {
                  || `git@github.com:${REPO_OWNER}/${REPO_NAME}.git`
 
   console.log(`Please run \`git push ${remote} ${sha}:refs/heads/release\`.`)
+  console.log(`An automation will kick off and open a release candidate PR 
+    on the GitHub repository. Do not merge it manually! Review the PR (you may need to close and
+    re-open so the CI and test will run on it). If everything looks good, approve the PR — 
+    this will publish updated packages to npm, then the PR will be merged.`)
 }

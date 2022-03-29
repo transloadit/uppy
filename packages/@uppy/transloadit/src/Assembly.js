@@ -79,11 +79,6 @@ class TransloaditAssembly extends Emitter {
       this.emit('connect')
     })
 
-    socket.on('connect_failed', () => {
-      this.#onError(new NetworkError('Transloadit Socket.io connection error'))
-      this.socket = null
-    })
-
     socket.on('connect_error', () => {
       socket.disconnect()
       this.socket = null
@@ -126,6 +121,7 @@ class TransloaditAssembly extends Emitter {
 
   #onError (err) {
     this.emit('error', Object.assign(new Error(err.message), err))
+    this.close()
   }
 
   /**
@@ -148,21 +144,35 @@ class TransloaditAssembly extends Emitter {
    * Pass `diff: false` to avoid emitting diff events, instead only emitting
    * 'status'.
    */
-  #fetchStatus ({ diff = true } = {}) {
-    return fetchWithNetworkError(this.status.assembly_ssl_url)
-      .then((response) => response.json())
-      .then((status) => {
-        // Avoid updating if we closed during this request's lifetime.
-        if (this.closed) return
-        this.emit('status', status)
+  async #fetchStatus ({ diff = true } = {}) {
+    if (this.closed) return
 
-        if (diff) {
-          this.updateStatus(status)
-        } else {
-          this.status = status
-        }
-      })
-      .catch((err) => this.#onError(err))
+    try {
+      const response = await fetchWithNetworkError(this.status.assembly_ssl_url)
+
+      if (this.closed) return
+
+      // In case of rate-limiting, ignore the error.
+      if (response.status === 429) return
+
+      if (!response.ok) {
+        this.#onError(new NetworkError(response.statusText))
+        return
+      }
+
+      const status = await response.json()
+      // Avoid updating if we closed during this request's lifetime.
+      if (this.closed) return
+      this.emit('status', status)
+
+      if (diff) {
+        this.updateStatus(status)
+      } else {
+        this.status = status
+      }
+    } catch (err) {
+      this.#onError(err)
+    }
   }
 
   update () {
@@ -255,6 +265,7 @@ class TransloaditAssembly extends Emitter {
       this.socket = null
     }
     clearInterval(this.pollInterval)
+    this.pollInterval = null
   }
 }
 

@@ -67,6 +67,7 @@ const getConfigFromEnv = () => {
       searchProviders: {
         unsplash: {
           key: process.env.COMPANION_UNSPLASH_KEY,
+          secret: process.env.COMPANION_UNSPLASH_SECRET,
         },
       },
       s3: {
@@ -78,7 +79,7 @@ const getConfigFromEnv = () => {
         useAccelerateEndpoint:
           process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
         expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '300', 10),
-        acl: process.env.COMPANION_AWS_ACL || 'public-read',
+        acl: process.env.COMPANION_AWS_DISABLE_ACL === 'true' ? null : (process.env.COMPANION_AWS_ACL || 'public-read'), // todo default to no ACL in next major and remove COMPANION_AWS_DISABLE_ACL
       },
     },
     server: {
@@ -89,6 +90,13 @@ const getConfigFromEnv = () => {
       oauthDomain: process.env.COMPANION_OAUTH_DOMAIN,
       validHosts,
     },
+    periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS ? process.env.COMPANION_PERIODIC_PING_URLS.split(',') : [],
+    periodicPingInterval: process.env.COMPANION_PERIODIC_PING_INTERVAL
+      ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10) : undefined,
+    periodicPingStaticPayload: process.env.COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD
+      ? JSON.parse(process.env.COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD) : undefined,
+    periodicPingCount: process.env.COMPANION_PERIODIC_PING_COUNT
+      ? parseInt(process.env.COMPANION_PERIODIC_PING_COUNT, 10) : undefined,
     filePath: process.env.COMPANION_DATADIR,
     redisUrl: process.env.COMPANION_REDIS_URL,
     // adding redisOptions to keep all companion options easily visible
@@ -98,12 +106,14 @@ const getConfigFromEnv = () => {
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
     secret: getSecret('COMPANION_SECRET') || generateSecret(),
     preAuthSecret: getSecret('COMPANION_PREAUTH_SECRET') || generateSecret(),
-    debug: process.env.NODE_ENV && process.env.NODE_ENV !== 'production',
+    allowLocalUrls: process.env.COMPANION_ALLOW_LOCAL_URLS === 'true',
     // cookieDomain is kind of a hack to support distributed systems. This should be improved but we never got so far.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
-    multipleInstances: true,
     streamingUpload: process.env.COMPANION_STREAMING_UPLOAD === 'true',
     maxFileSize: process.env.COMPANION_MAX_FILE_SIZE ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10) : undefined,
+    chunkSize: process.env.COMPANION_CHUNK_SIZE ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10) : undefined,
+    clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
+      ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10) : undefined,
   }
 }
 
@@ -183,7 +193,7 @@ exports.buildHelpfulStartupMessage = (companionOptions) => {
       return
     }
 
-    callbackURLs.push(buildURL(`/connect/${providerName}/callback`, true))
+    callbackURLs.push(buildURL(`/connect/${providerName}/redirect`, true))
   })
 
   return stripIndent`

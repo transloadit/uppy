@@ -129,7 +129,7 @@ class Unsplash extends SearchProvider {
         return
       }
 
-      getURLMeta(body.links.download)
+      getURLMeta(body.links.download, true)
         .then(({ size }) => done(null, size))
         .catch((err2) => {
           logger.error(err2, 'provider.unsplash.size.error')

@@ -54,6 +54,7 @@ zh_CN.strings = {
   generatingThumbnails: '正在生成缩略图…',
   import: '导入',
   importFrom: '从 %{name} 导入',
+  inferiorSize: '文件大小必须超过 %{size}',
   loading: '正在载入…',
   logOut: '登出',
   micDisabled: '麦克风的权限访问被用户拒绝',

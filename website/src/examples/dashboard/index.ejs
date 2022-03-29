@@ -26,6 +26,7 @@ const Uppy = require('@uppy/core')
 const Dashboard = require('@uppy/dashboard')
 const GoogleDrive = require('@uppy/google-drive')
 const Dropbox = require('@uppy/dropbox')
+const Unsplash = require('@uppy/unsplash')
 const Box = require('@uppy/box')
 const Instagram = require('@uppy/instagram')
 const Facebook = require('@uppy/facebook')
@@ -37,6 +38,7 @@ const Tus = require('@uppy/tus')
 const Url = require('@uppy/url')
 const DropTarget = require('@uppy/drop-target')
 const GoldenRetriever = require('@uppy/golden-retriever')
+const Compressor = require('@uppy/compressor')
 
 const uppy = new Uppy({
   debug: true,
@@ -68,6 +70,7 @@ const uppy = new Uppy({
 .use(Instagram, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
 .use(Facebook, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
 .use(OneDrive, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
+.use(Unsplash, { target: Dashboard, companionUrl: 'https://companion.uppy.io' })
 .use(Webcam, { target: Dashboard })
 .use(Audio, { target: Dashboard })
 .use(ScreenCapture, { target: Dashboard })
@@ -75,6 +78,7 @@ const uppy = new Uppy({
 .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 .use(DropTarget, {target: document.body })
 .use(GoldenRetriever)
+.use(Compressor)
 
 uppy.on('complete', result => {
   console.log('successful files:', result.successful)

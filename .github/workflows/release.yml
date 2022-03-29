@@ -10,27 +10,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
-      - name: Cache npm dependencies
-        id: cache-npm-libraries
-        uses: actions/cache@v2
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
+
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
-          path: .yarn/cache/*
-          key: ${{ runner.os }}
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: lts/*
       - name: Install dependencies
-        run: corepack yarn install
+        run: corepack yarn install --immutable
       - name: Get CHANGELOG diff
         run: git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1) == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print substr($0,2) } }' > CHANGELOG.diff.md
       - name: Copy README for `uppy` package
         run: cp README.md packages/uppy/.
       - name: Build before publishing
         run: corepack yarn run build
+      - name: Hack to allow the publish of the Angular package
+        run: corepack yarn workspace @uppy/angular prepublishOnly
       - name: Login to NPM
         run: corepack yarn config set npmAuthToken ${{ toJSON(secrets.NPM_TOKEN) }}
       - name: Publish to NPM

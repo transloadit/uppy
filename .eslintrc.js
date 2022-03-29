@@ -78,7 +78,7 @@ module.exports = {
     'global-require': ['warn'],
     'import/no-unresolved': ['warn'],
     'import/order': ['warn'],
-    'max-classes-per-file': ['warn'],
+    'max-classes-per-file': ['warn', 2],
     'no-mixed-operators': ['warn'],
     'no-param-reassign': ['warn'],
     'no-redeclare': ['warn'],
@@ -148,12 +148,65 @@ module.exports = {
     {
       files: [
         '*.mjs',
+        'examples/aws-presigned-url/*.js',
         'private/dev/*.js',
         'private/release/*.js',
         'private/remark-lint-uppy/*.js',
       ],
       parserOptions: {
         sourceType: 'module',
+      },
+    },
+    {
+      files: [
+        'packages/@uppy/*/src/**/*.jsx',
+        'packages/uppy/src/**/*.jsx',
+      ],
+      parserOptions: {
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    {
+      files: [
+        // Packages that have switched to ESM sources:
+        'packages/@uppy/audio/src/**/*.js',
+        'packages/@uppy/compressor/src/**/*.js',
+        'packages/@uppy/vue/src/**/*.js',
+      ],
+      parserOptions: {
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: false,
+        },
+      },
+      rules: {
+        'no-restricted-globals': [
+          'error',
+          {
+            name: '__filename',
+            message: 'Use import.meta.url instead',
+          },
+          {
+            name: '__dirname',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'exports',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'module',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'require',
+            message: 'Use import instead',
+          },
+        ],
+        'import/extensions': ['error', 'ignorePackages'],
       },
     },
     {
@@ -290,9 +343,14 @@ module.exports = {
       files: ['**/*.ts', '**/*.md/*.ts', '**/*.md/*.typescript'],
       excludedFiles: ['examples/angular-example/**/*.ts', 'packages/@uppy/angular/**/*.ts'],
       parser: '@typescript-eslint/parser',
-      plugins: [
-        '@typescript-eslint',
-      ],
+      settings: {
+        'import/resolver': {
+          node: {
+            extensions: ['.js', '.jsx', '.ts', '.tsx'],
+          },
+        },
+      },
+      plugins: ['@typescript-eslint'],
       extends: [
         'eslint:recommended',
         'plugin:@typescript-eslint/eslint-recommended',
@@ -301,6 +359,7 @@ module.exports = {
       rules: {
         'import/prefer-default-export': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-namespace': 'off',
       },
     },
     {
@@ -318,6 +377,14 @@ module.exports = {
       settings: {
         react: { pragma: 'React' },
       },
+    },
+    {
+      files: ['e2e/**/*.ts'],
+      extends: ['plugin:cypress/recommended'],
+    },
+    {
+      files: ['e2e/**/*.ts', 'e2e/**/*.js'],
+      rules: { 'import/no-extraneous-dependencies': 'off' },
     },
   ],
 }
