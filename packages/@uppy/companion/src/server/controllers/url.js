@@ -110,7 +110,7 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
       url = format.url
     }
 
-    const urlMeta = await ge  tURLMeta(url, !allowLocalUrls)
+    const urlMeta = await getURLMeta(url, !allowLocalUrls)
     return res.json(urlMeta)
   }
   catch(err) {
