@@ -62,6 +62,7 @@ class UIPlugin extends BasePlugin {
         if (!this.uppy.getPlugin(this.id)) return
         render(this.render(state), uppyRootElement)
         targetElement.appendChild(uppyRootElement)
+        this.el = targetElement
         this.afterUpdate()
       })
 
