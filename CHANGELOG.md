@@ -12,6 +12,21 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.9.1
+
+Released: 2022-03-29
+
+| Package       | Version | Package       | Version |
+| ------------- | ------- | ------------- | ------- |
+| @uppy/core    |   2.1.7 | @uppy/robodog |   2.5.1 |
+| @uppy/tus     |   2.2.2 | uppy          |   2.9.1 |
+
+- @uppy/tus: fix hasOwn (Mikael Finstad / #3604)
+- meta: Increase test timeout for flaky e2e tests (Merlijn Vos / #3603)
+- meta: upgrade GHA actions (Antoine du Hamel / #3602)
+- @uppy/core: refactor: replace deprecated String.prototype.substr() (CommanderRoot / #3600)
+
+
 ## 2.9.0
 
 Released: 2022-03-24
