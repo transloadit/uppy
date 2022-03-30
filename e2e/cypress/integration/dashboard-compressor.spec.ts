@@ -39,6 +39,13 @@ describe('dashboard-compressor', () => {
       timeout: 10000,
     }).should('be.visible')
 
+    cy.window().then(({ uppy }) => {
+      for (const file of uppy.getFiles()) {
+        expect(file.name.split('.')[1]).to.equal('webp')
+        expect(file.type).to.equal('image/webp')
+      }
+    })
+
     cy.get('.uppy-Dashboard-Item-statusSize').should((elements) => {
       expect(elements).to.have.length(sizeBeforeCompression.length)
 
