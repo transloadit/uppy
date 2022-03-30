@@ -23,6 +23,7 @@ module.exports = {
   mks: 'video/x-matroska',
   mkv: 'video/x-matroska',
   mov: 'video/quicktime',
+  dicom: 'application/dicom',
   doc: 'application/msword',
   docm: 'application/vnd.ms-word.document.macroenabled.12',
   docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
