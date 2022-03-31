@@ -41,7 +41,7 @@ describe('dashboard-compressor', () => {
 
     cy.window().then(({ uppy }) => {
       for (const file of uppy.getFiles()) {
-        expect(file.name.split('.')[1]).to.equal('webp')
+        expect(file.extension).to.equal('webp')
         expect(file.type).to.equal('image/webp')
       }
     })
