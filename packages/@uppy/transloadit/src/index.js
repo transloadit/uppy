@@ -1,6 +1,6 @@
 const hasProperty = require('@uppy/utils/lib/hasProperty')
+const ErrorWithCause = require('@uppy/utils/lib/ErrorWithCause')
 const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const ErrorWithCause = require('@uppy/core/lib/ErrorWithCause')
 const Tus = require('@uppy/tus')
 const Assembly = require('./Assembly')
 const Client = require('./Client')
