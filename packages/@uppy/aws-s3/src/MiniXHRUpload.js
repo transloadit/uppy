@@ -4,6 +4,7 @@ const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
 const getSocketHost = require('@uppy/utils/lib/getSocketHost')
 const EventTracker = require('@uppy/utils/lib/EventTracker')
 const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
+const ErrorWithCause = require('@uppy/utils/lib/ErrorWithCause')
 const NetworkError = require('@uppy/utils/lib/NetworkError')
 const isNetworkError = require('@uppy/utils/lib/isNetworkError')
 const { internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
@@ -12,10 +13,7 @@ const { internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 function buildResponseError (xhr, error) {
   if (isNetworkError(xhr)) return new NetworkError(error, xhr)
 
-  // TODO: when we drop support for browsers that do not support this syntax, use:
-  // return new Error('Upload error', { cause: error, request: xhr })
-  const err = new Error('Upload error')
-  err.cause = error
+  const err = new ErrorWithCause('Upload error', { cause: error })
   err.request = xhr
   return err
 }
@@ -327,7 +325,7 @@ module.exports = class MiniXHRUpload {
         const resp = errData.response
         const error = resp
           ? opts.getResponseError(resp.responseText, resp)
-          : Object.assign(new Error(errData.error.message), { cause: errData.error })
+          : new ErrorWithCause(errData.error.message, { cause: errData.error })
         this.uppy.emit('upload-error', file, error)
         queuedRequest.done()
         if (this.uploaderEvents[file.id]) {

@@ -1,6 +1,7 @@
 'use strict'
 
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
+const ErrorWithCause = require('@uppy/utils/lib/ErrorWithCause')
 const AuthError = require('./AuthError')
 
 // Remove the trailing slash so we can always safely append /xyz.
@@ -87,9 +88,8 @@ module.exports = class RequestClient {
   #errorHandler (method, path) {
     return (err) => {
       if (!err?.isAuthError) {
-        const error = new Error(`Could not ${method} ${this.#getUrl(path)}`)
-        error.cause = err
-        err = error // eslint-disable-line no-param-reassign
+        // eslint-disable-next-line no-param-reassign
+        err = new ErrorWithCause(`Could not ${method} ${this.#getUrl(path)}`, { cause: err })
       }
       return Promise.reject(err)
     }

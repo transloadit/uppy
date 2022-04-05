@@ -1,4 +1,5 @@
 const hasProperty = require('@uppy/utils/lib/hasProperty')
+const ErrorWithCause = require('@uppy/utils/lib/ErrorWithCause')
 const BasePlugin = require('@uppy/core/lib/BasePlugin')
 const Tus = require('@uppy/tus')
 const Assembly = require('./Assembly')
@@ -17,8 +18,7 @@ function defaultGetAssemblyOptions (file, options) {
 }
 
 const sendErrorToConsole = originalErr => err => {
-  const error = new Error('Failed to send error to the client')
-  error.cause = err
+  const error = new ErrorWithCause('Failed to send error to the client', { cause: err })
   // eslint-ignore-next-line no-console
   console.error(error, originalErr)
 }
@@ -236,10 +236,7 @@ module.exports = class Transloadit extends BasePlugin {
       this.uppy.log(`[Transloadit] Created Assembly ${assemblyID}`)
       return assembly
     }).catch((err) => {
-      const error = new Error(`${this.i18n('creatingAssemblyFailed')}: ${err.message}`)
-      error.cause = err
-      // Reject the promise.
-      throw error
+      throw new ErrorWithCause(`${this.i18n('creatingAssemblyFailed')}: ${err.message}`, { cause: err })
     })
   }
 
