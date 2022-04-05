@@ -1,3 +1,5 @@
+const ErrorWithCause = require('@uppy/utils/lib/ErrorWithCause')
+
 /**
  * Check that Assembly parameters are present and include all required fields.
  */
@@ -12,9 +14,7 @@ function validateParams (params) {
       params = JSON.parse(params)
     } catch (err) {
       // Tell the user that this is not an Uppy bug!
-      const error = new Error('Transloadit: The `params` option is a malformed JSON string.')
-      err.cause = err
-      throw error
+      throw new ErrorWithCause('Transloadit: The `params` option is a malformed JSON string.', { cause: err })
     }
   }
 
