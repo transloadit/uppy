@@ -10,7 +10,9 @@ const uppy = new Uppy()
     target: document.body,
     inline: true,
   })
-  .use(Compressor)
+  .use(Compressor, {
+    mimeType: 'image/webp',
+  })
 
 // Keep this here to access uppy in tests
 window.uppy = uppy
