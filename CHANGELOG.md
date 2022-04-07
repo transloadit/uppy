@@ -12,6 +12,21 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.9.2
+
+Released: 2022-04-07
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   2.0.9 | @uppy/utils            |   4.0.6 |
+| @uppy/companion-client |   2.0.6 | @uppy/robodog          |   2.5.2 |
+| @uppy/compressor       |   0.2.4 | uppy                   |   2.9.2 |
+| @uppy/transloadit      |   2.1.4 |                        |         |
+
+- @uppy/aws-s3,@uppy/companion-client,@uppy/transloadit,@uppy/utils: Propagate `isNetworkError` through error wrappers (Renée Kooi / #3620)
+- @uppy/compressor: Merge new name and type into compressed file (Camilo Forero / #3606)
+
+
 ## 2.9.1
 
 Released: 2022-03-29
