@@ -979,7 +979,7 @@ class Uppy {
     })
 
     this.on('upload-started', (file) => {
-      if (!this.getFile(file.id)) {
+      if (file == null || !this.getFile(file.id)) {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
@@ -997,7 +997,7 @@ class Uppy {
     this.on('upload-progress', this.calculateProgress)
 
     this.on('upload-success', (file, uploadResp) => {
-      if (!this.getFile(file.id)) {
+      if (file == null || !this.getFile(file.id)) {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
@@ -1030,7 +1030,7 @@ class Uppy {
     })
 
     this.on('preprocess-progress', (file, progress) => {
-      if (!this.getFile(file.id)) {
+      if (file == null || !this.getFile(file.id)) {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
@@ -1040,7 +1040,7 @@ class Uppy {
     })
 
     this.on('preprocess-complete', (file) => {
-      if (!this.getFile(file.id)) {
+      if (file == null || !this.getFile(file.id)) {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
@@ -1052,7 +1052,7 @@ class Uppy {
     })
 
     this.on('postprocess-progress', (file, progress) => {
-      if (!this.getFile(file.id)) {
+      if (file == null || !this.getFile(file.id)) {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
@@ -1062,7 +1062,7 @@ class Uppy {
     })
 
     this.on('postprocess-complete', (file) => {
-      if (!this.getFile(file.id)) {
+      if (file == null || !this.getFile(file.id)) {
         this.log(`Not setting progress for a file that has been removed: ${file.id}`)
         return
       }
