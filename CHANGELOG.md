@@ -12,6 +12,18 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.9.3
+
+Released: 2022-04-07
+
+| Package       | Version | Package       | Version |
+| ------------- | ------- | ------------- | ------- |
+| @uppy/core    |   2.1.8 | uppy          |   2.9.3 |
+| @uppy/robodog |   2.5.3 |               |         |
+
+- @uppy/core: fix TypeError in event handler when file was removed (Antoine du Hamel / #3629)
+
+
 ## 2.9.2
 
 Released: 2022-04-07

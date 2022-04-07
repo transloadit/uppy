@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 2.1.8
+
+Released: 2022-04-07
+Included in: Uppy v2.9.3
+
+- @uppy/core: fix TypeError in event handler when file was removed (Antoine du Hamel / #3629)
+
 ## 2.1.7
 
 Released: 2022-03-29
