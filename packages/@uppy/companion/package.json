@@ -51,7 +51,7 @@
     "jsonwebtoken": "8.5.1",
     "lodash.merge": "^4.6.2",
     "mime-types": "2.1.25",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "moment-timezone": "^0.5.31",
     "morgan": "1.10.0",
     "ms": "2.1.2",
