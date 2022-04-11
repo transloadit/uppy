@@ -1,5 +1,7 @@
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
 
+const ASSEMBLIES_ENDPOINT = '/assemblies'
+
 function fetchJSON (...args) {
   return fetchWithNetworkError(...args).then(response => {
     if (response.status === 429) {
@@ -12,6 +14,11 @@ function fetchJSON (...args) {
 
     if (!response.ok) {
       const serverError = new Error(response.statusText)
+      serverError.statusCode = response.status
+
+      if (!`${args[0]}`.endsWith(ASSEMBLIES_ENDPOINT)) return Promise.reject(serverError)
+
+      // Failed assembly requests should return a more detailed error in JSON.
       return response.json().then(assembly => {
         if (!assembly.error) throw serverError
 
@@ -75,7 +82,7 @@ module.exports = class Client {
     })
     data.append('num_expected_upload_files', expectedFiles)
 
-    const url = new URL('/assemblies', `${this.opts.service}`).href
+    const url = new URL(ASSEMBLIES_ENDPOINT, `${this.opts.service}`).href
     return fetchJSON(url, {
       method: 'post',
       headers: this.#headers,
