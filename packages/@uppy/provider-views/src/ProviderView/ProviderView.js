@@ -226,9 +226,14 @@ module.exports = class ProviderView extends View {
     const link = this.provider.authUrl({ state: authState, uppyVersions: clientVersion })
 
     const authWindow = window.open(link, '_blank')
+
     const handleToken = (e) => {
-      if (!this.#isOriginAllowed(e.origin, this.plugin.opts.companionAllowedHosts) || e.source !== authWindow) {
-        this.plugin.uppy.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.companionAllowedHosts}`)
+      if (e.source !== authWindow) {
+        this.plugin.uppy.log('rejecting event from unknown source')
+        return
+      }
+      if (!this.#isOriginAllowed(e.origin, this.plugin.opts.companionAllowedHosts)) {
+        this.plugin.uppy.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.companionAllowedHosts}`, 'error')
         return
       }
 
@@ -237,7 +242,7 @@ module.exports = class ProviderView extends View {
       const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
 
       if (data.error) {
-        this.plugin.uppy.log('auth aborted')
+        this.plugin.uppy.log('auth aborted', 'warning')
         const { uppy } = this.plugin
         const message = uppy.i18n('authAborted')
         uppy.info({ message }, 'warning', 5000)
@@ -245,7 +250,7 @@ module.exports = class ProviderView extends View {
       }
 
       if (!data.token) {
-        this.plugin.uppy.log('did not receive token from auth window')
+        this.plugin.uppy.log('did not receive token from auth window', 'error')
         return
       }
 
