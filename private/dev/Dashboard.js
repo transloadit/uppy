@@ -47,6 +47,10 @@ const RESTORE = false
 // Rest is implementation! Obviously edit as necessary...
 
 export default () => {
+  const companionAllowedHosts = undefined
+  // If you want to test dynamic OAuth, instead use:
+  // const companionAllowedHosts = Transloadit.COMPANION_PATTERN
+
   const uppyDashboard = new Uppy({
     logger: Uppy.debugLogger,
     meta: {
@@ -68,15 +72,15 @@ export default () => {
       proudlyDisplayPoweredByUppy: true,
       note: '2 files, images and video only',
     })
-    .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Box, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Facebook, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Url, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL })
+    .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    .use(Box, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    .use(Facebook, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    .use(Url, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
+    .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     .use(Webcam, {
       target: Dashboard,
       showVideoSourceDropdown: true,
