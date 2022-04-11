@@ -1,5 +1,4 @@
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
-const NetworkError = require('@uppy/utils/lib/NetworkError')
 
 function fetchJSON (...args) {
   return fetchWithNetworkError(...args).then(response => {
@@ -12,7 +11,22 @@ function fetchJSON (...args) {
     }
 
     if (!response.ok) {
-      return Promise.reject(new NetworkError(response.statusText))
+      const serverError = new Error(response.statusText)
+      return response.json().then(assembly => {
+        if (!assembly.error) throw serverError
+
+        const error = new Error(assembly.error)
+        error.details = assembly.message
+        error.assembly = assembly
+        if (assembly.assembly_id) {
+          error.details += ` Assembly ID: ${assembly.assembly_id}`
+        }
+        throw error
+      }, err => {
+        // eslint-disable-next-line no-param-reassign
+        err.cause = serverError
+        throw err
+      })
     }
 
     return response.json()
@@ -67,19 +81,6 @@ module.exports = class Client {
       headers: this.#headers,
       body: data,
     })
-      .then((assembly) => {
-        if (assembly.error) {
-          const error = new Error(assembly.error)
-          error.details = assembly.message
-          error.assembly = assembly
-          if (assembly.assembly_id) {
-            error.details += ` Assembly ID: ${assembly.assembly_id}`
-          }
-          throw error
-        }
-
-        return assembly
-      })
       .catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
   }
 
