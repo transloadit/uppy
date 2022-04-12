@@ -11,6 +11,7 @@ export interface AwsS3Part {
 interface AwsS3MultipartOptions extends PluginOptions {
     companionHeaders?: { [type: string]: string }
     companionUrl?: string
+    companionCookiesRule?: string
     getChunkSize?: (file: UppyFile) => number
     createMultipartUpload?: (
       file: UppyFile
