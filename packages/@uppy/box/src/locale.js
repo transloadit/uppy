@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   strings: {
     pluginNameBox: 'Box',
   },
