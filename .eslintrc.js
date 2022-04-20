@@ -203,6 +203,7 @@ module.exports = {
         'packages/@uppy/drag-drop/src/**/*.js',
         'packages/@uppy/drop-target/src/**/*.js',
         'packages/@uppy/compressor/src/**/*.js',
+        'packages/@uppy/form/src/**/*.js',
         'packages/@uppy/vue/src/**/*.js',
       ],
       parserOptions: {

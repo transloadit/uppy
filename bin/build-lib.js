@@ -21,6 +21,12 @@ const META_FILES = [
   'bin/build-lib.js',
 ]
 
+// Rollup uses get-form-data's ES modules build, and rollup-plugin-commonjs automatically resolves `.default`.
+// So, if we are being built using rollup, this require() won't have a `.default` property.
+const esPackagesThatNeedSpecialTreatmentForRollupInterop = [
+  'get-form-data',
+]
+
 function lastModified (file, createParentDir = false) {
   return stat(file).then((s) => s.mtime, async (err) => {
     if (err.code === 'ENOENT') {
@@ -150,13 +156,18 @@ async function buildLib () {
                 local,
               )]))
             }
+
+            let requireCall = t.callExpression(t.identifier('require'), [
+              t.stringLiteral(value),
+            ])
+            if (esPackagesThatNeedSpecialTreatmentForRollupInterop.includes(value)) {
+              requireCall = t.logicalExpression('||', t.memberExpression(requireCall, t.identifier('default')), requireCall)
+            }
             path.replaceWith(
               t.variableDeclaration('const', [
                 t.variableDeclarator(
                   local,
-                  t.callExpression(t.identifier('require'), [
-                    t.stringLiteral(value),
-                  ]),
+                  requireCall,
                 ),
               ]),
             )
