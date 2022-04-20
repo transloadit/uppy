@@ -851,7 +851,7 @@ class Uppy {
   }
 
   calculateProgress (file, data) {
-    if (!this.getFile(file.id)) {
+    if (file == null || !this.getFile(file.id)) {
       this.log(`Not setting progress for a file that has been removed: ${file.id}`)
       return
     }
