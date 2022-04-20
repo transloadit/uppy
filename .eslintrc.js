@@ -204,6 +204,7 @@ module.exports = {
         'packages/@uppy/drop-target/src/**/*.js',
         'packages/@uppy/dropbox/src/**/*.js',
         'packages/@uppy/compressor/src/**/*.js',
+        'packages/@uppy/file-input/src/**/*.js',
         'packages/@uppy/form/src/**/*.js',
         'packages/@uppy/vue/src/**/*.js',
       ],
