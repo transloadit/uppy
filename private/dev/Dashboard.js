@@ -26,6 +26,8 @@ import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
 /* eslint-enable import/no-extraneous-dependencies */
 
+import generateSignatureIfSecret from './generateSignatureIfSecret.js'
+
 // DEV CONFIG: create a .env file in the project root directory to customize those values.
 const {
   VITE_UPLOADER : UPLOADER,
@@ -38,46 +40,23 @@ const {
   VITE_TRANSLOADIT_SERVICE_URL : TRANSLOADIT_SERVICE_URL,
 } = import.meta.env
 
-import.meta.env.VITE_TRANSLOADIT_KEY = '***' // to avoid leaking secrets in screenshots.
-import.meta.env.VITE_TRANSLOADIT_SECRET = '***' // to avoid leaking secrets in screenshots.
+import.meta.env.VITE_TRANSLOADIT_KEY &&= '***' // to avoid leaking secrets in screenshots.
+import.meta.env.VITE_TRANSLOADIT_SECRET &&= '***' // to avoid leaking secrets in screenshots.
 console.log(import.meta.env)
 
 // DEV CONFIG: enable or disable Golden Retriever
 
 const RESTORE = false
 
-const enc = new TextEncoder('utf-8')
-async function sign (secret, body) {
-  const algorithm = { name: 'HMAC', hash: 'SHA-384' }
-
-  const key = await crypto.subtle.importKey('raw', enc.encode(secret), algorithm, false, ['sign', 'verify'])
-  const signature = await crypto.subtle.sign(algorithm.name, key, enc.encode(body))
-  return `sha384:${Array.from(new Uint8Array(signature), x => x.toString(16).padStart(2, '0')).join('')}`
-}
-function getExpiration (future) {
-  return new Date(Date.now() + future)
-    .toISOString()
-    .replace('T', ' ')
-    .replace(/\.\d+Z$/, '+00:00')
-}
 async function getAssemblyOptions () {
-  const hasSecret = TRANSLOADIT_SECRET != null
-  let params = {
+  return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
     auth: {
       key: TRANSLOADIT_KEY,
-      expires: hasSecret ? getExpiration(5 * 60 * 1000) : undefined,
     },
     // It's more secure to use a template_id and enable
     // Signature Authentication
     template_id: TRANSLOADIT_TEMPLATE,
-  }
-  let signature
-  if (TRANSLOADIT_SECRET) {
-    params = JSON.stringify(params)
-    signature = await sign(TRANSLOADIT_SECRET, params)
-  }
-
-  return { params, signature }
+  })
 }
 
 // Rest is implementation! Obviously edit as necessary...
