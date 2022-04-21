@@ -1,15 +1,16 @@
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const findDOMElement = require('@uppy/utils/lib/findDOMElement')
-const toArray = require('@uppy/utils/lib/toArray')
-// Rollup uses get-form-data's ES modules build, and rollup-plugin-commonjs automatically resolves `.default`.
-// So, if we are being built using rollup, this require() won't have a `.default` property.
-const getFormData = require('get-form-data').default || require('get-form-data')
+import BasePlugin from '@uppy/core/lib/BasePlugin'
+import findDOMElement from '@uppy/utils/lib/findDOMElement'
+import toArray from '@uppy/utils/lib/toArray'
+
+import getFormData from 'get-form-data'
+
+import packageJson from '../package.json'
 
 /**
  * Form
  */
-module.exports = class Form extends BasePlugin {
-  static VERSION = require('../package.json').version
+export default class Form extends BasePlugin {
+  static VERSION = packageJson.version
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -61,17 +62,17 @@ module.exports = class Form extends BasePlugin {
       elements.forEach((el) => {
         const isButton = el.tagName === 'BUTTON' || (el.tagName === 'INPUT' && el.type === 'submit')
         if (isButton && !el.disabled) {
-          el.disabled = true
+          el.disabled = true // eslint-disable-line no-param-reassign
           disabledByUppy.push(el)
         }
       })
       this.uppy.upload().then(() => {
         disabledByUppy.forEach((button) => {
-          button.disabled = false
+          button.disabled = false // eslint-disable-line no-param-reassign
         })
       }, (err) => {
         disabledByUppy.forEach((button) => {
-          button.disabled = false
+          button.disabled = false // eslint-disable-line no-param-reassign
         })
         return Promise.reject(err)
       }).catch((err) => {
