@@ -11,7 +11,8 @@ const {
   VITE_TUS_ENDPOINT : TUS_ENDPOINT,
 } = import.meta.env
 
-import.meta.env.VITE_TRANSLOADIT_KEY = '***' // to avoid leaking secrets in screenshots.
+import.meta.env.VITE_TRANSLOADIT_KEY &&= '***' // to avoid leaking secrets in screenshots.
+import.meta.env.VITE_TRANSLOADIT_SECRET &&= '***' // to avoid leaking secrets in screenshots.
 console.log(import.meta.env)
 
 export default () => {

@@ -26,6 +26,8 @@ import Audio from '@uppy/audio'
 import Compressor from '@uppy/compressor'
 /* eslint-enable import/no-extraneous-dependencies */
 
+import generateSignatureIfSecret from './generateSignatureIfSecret.js'
+
 // DEV CONFIG: create a .env file in the project root directory to customize those values.
 const {
   VITE_UPLOADER : UPLOADER,
@@ -33,16 +35,29 @@ const {
   VITE_TUS_ENDPOINT : TUS_ENDPOINT,
   VITE_XHR_ENDPOINT : XHR_ENDPOINT,
   VITE_TRANSLOADIT_KEY : TRANSLOADIT_KEY,
+  VITE_TRANSLOADIT_SECRET : TRANSLOADIT_SECRET,
   VITE_TRANSLOADIT_TEMPLATE : TRANSLOADIT_TEMPLATE,
   VITE_TRANSLOADIT_SERVICE_URL : TRANSLOADIT_SERVICE_URL,
 } = import.meta.env
 
-import.meta.env.VITE_TRANSLOADIT_KEY = '***' // to avoid leaking secrets in screenshots.
+import.meta.env.VITE_TRANSLOADIT_KEY &&= '***' // to avoid leaking secrets in screenshots.
+import.meta.env.VITE_TRANSLOADIT_SECRET &&= '***' // to avoid leaking secrets in screenshots.
 console.log(import.meta.env)
 
 // DEV CONFIG: enable or disable Golden Retriever
 
 const RESTORE = false
+
+async function getAssemblyOptions () {
+  return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
+    auth: {
+      key: TRANSLOADIT_KEY,
+    },
+    // It's more secure to use a template_id and enable
+    // Signature Authentication
+    template_id: TRANSLOADIT_TEMPLATE,
+  })
+}
 
 // Rest is implementation! Obviously edit as necessary...
 
@@ -111,10 +126,7 @@ export default () => {
       uppyDashboard.use(Transloadit, {
         service: TRANSLOADIT_SERVICE_URL,
         waitForEncoding: true,
-        params: {
-          auth: { key: TRANSLOADIT_KEY },
-          template_id: TRANSLOADIT_TEMPLATE,
-        },
+        getAssemblyOptions,
       })
       break
     case 'transloadit-s3':
@@ -122,10 +134,7 @@ export default () => {
       uppyDashboard.use(Transloadit, {
         waitForEncoding: true,
         importFromUploadURLs: true,
-        params: {
-          auth: { key: TRANSLOADIT_KEY },
-          template_id: TRANSLOADIT_TEMPLATE,
-        },
+        getAssemblyOptions,
       })
       break
     case 'transloadit-xhr':
