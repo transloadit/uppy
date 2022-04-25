@@ -1,3 +1,6 @@
+import { pathToFileURL } from 'node:url'
+import path from 'node:path'
+
 import glob from 'glob'
 
 export function getPaths (globPath) {
@@ -19,4 +22,15 @@ export function omit (object, key) {
   const copy = { ...object }
   delete copy[key]
   return copy
+}
+
+export async function getLocales (pathPattern) {
+  const paths = await getPaths(pathPattern)
+
+  return Object.fromEntries(await Promise.all(paths.map(async filePath => {
+    const pluginName = path.basename(path.join(filePath, '..', '..'))
+    const { default: locale } = await import(pathToFileURL(filePath))
+
+    return [pluginName, locale]
+  })))
 }
