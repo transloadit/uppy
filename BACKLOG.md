@@ -11,6 +11,9 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 - [ ] @uppy/image-editor: Remove silly hack to work around non-ESM.
 - [ ] Consider updating the name of @uppy/aws-s3 and @uppy/aws-s3-multipart to reflect it also supports Google Cloud Storage, Wasabi, and other cloud providers. 
 - [ ] Consider fixing all locale files to follow the bcp-47 standard (nl_NL --> nl-NL)
+- [ ] Some not too breaking breaking changes. Go through TODOs
+- [ ] Companion breaking changes, like S3 keys
+- [ ] New presets, deprecate Robodog
 
 ## `4.0.0`
 
