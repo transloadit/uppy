@@ -200,10 +200,11 @@ module.exports = {
         // Packages that have switched to ESM sources:
         'packages/@uppy/audio/src/**/*.js',
         'packages/@uppy/box/src/**/*.js',
+        'packages/@uppy/compressor/src/**/*.js',
         'packages/@uppy/drag-drop/src/**/*.js',
         'packages/@uppy/drop-target/src/**/*.js',
         'packages/@uppy/dropbox/src/**/*.js',
-        'packages/@uppy/compressor/src/**/*.js',
+        'packages/@uppy/facebook/src/**/*.js',
         'packages/@uppy/file-input/src/**/*.js',
         'packages/@uppy/form/src/**/*.js',
         'packages/@uppy/vue/src/**/*.js',
