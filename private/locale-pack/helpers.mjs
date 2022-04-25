@@ -24,7 +24,7 @@ export function omit (object, key) {
   return copy
 }
 
-export async function getLocales(pathPattern) {
+export async function getLocales (pathPattern) {
   const paths = await getPaths(pathPattern)
 
   return Object.fromEntries(await Promise.all(paths.map(async filePath => {

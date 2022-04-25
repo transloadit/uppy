@@ -11,7 +11,7 @@ import remarkFrontmatter from 'remark-frontmatter'
 
 import remarkConfig from '../remark-lint-uppy/index.js'
 
-import { getLocales, getPaths, sortObjectAlphabetically } from './helpers.mjs'
+import { getLocales, sortObjectAlphabetically } from './helpers.mjs'
 
 const { settings: remarkSettings } = remarkConfig
 
