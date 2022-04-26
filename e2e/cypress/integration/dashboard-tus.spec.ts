@@ -4,6 +4,9 @@ type Tus = BaseTus & {
   requests: { isPaused: boolean }
 }
 
+// NOTE: we have to use different files to upload per test
+// because we are uploading to https://tusd.tusdemo.net,
+// constantly uploading the same images gives a different cached result (or something).
 describe('Dashboard with Tus', () => {
   beforeEach(() => {
     cy.visit('/dashboard-tus')
@@ -13,35 +16,8 @@ describe('Dashboard with Tus', () => {
     cy.intercept('http://localhost:3020/search/unsplash/*').as('unsplash')
   })
 
-  it('should upload cat image successfully', () => {
-    cy.get('@file-input').attachFile('images/cat.jpg')
-    cy.get('.uppy-StatusBar-actionBtn--upload').click()
-
-    cy.wait('@tus')
-
-    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
-  })
-
-  it('should start exponential backoff when receiving HTTP 429', () => {
-    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
-    cy.get('.uppy-StatusBar-actionBtn--upload').click()
-
-    cy.intercept(
-      { method: 'PATCH', pathname: '/files/*', times: 1 },
-      { statusCode: 429, body: {} },
-    ).as('patch')
-
-    cy.wait('@patch')
-
-    cy.window().then(({ uppy }) => {
-      expect(uppy.getPlugin<Tus>('Tus').requests.isPaused).to.equal(true)
-      cy.wait('@tus')
-      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
-    })
-  })
-
   it('should emit `error` and `upload-error` events on failed POST request', () => {
-    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
+    cy.get('@file-input').attachFile(['images/traffic.jpg'])
 
     const error = cy.spy()
     const uploadError = cy.spy()
@@ -55,11 +31,38 @@ describe('Dashboard with Tus', () => {
     cy.intercept(
       { method: 'POST', pathname: '/files', times: 1 },
       { statusCode: 401, body: { code: 401, message: 'Expired JWT Token' } },
-    ).as('patch')
+    ).as('post')
 
-    cy.wait('@patch').then(() =>  {
+    cy.wait('@post').then(() =>  {
       expect(error).to.be.called
       expect(uploadError).to.be.called
+    })
+  })
+
+  it('should upload cat image successfully', () => {
+    cy.get('@file-input').attachFile('images/cat.jpg')
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    cy.wait('@tus')
+
+    cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
+  })
+
+  it('should start exponential backoff when receiving HTTP 429', () => {
+    cy.get('@file-input').attachFile(['images/baboon.png'])
+    cy.get('.uppy-StatusBar-actionBtn--upload').click()
+
+    cy.intercept(
+      { method: 'PATCH', pathname: '/files/*', times: 1 },
+      { statusCode: 429, body: {} },
+    ).as('patch')
+
+    cy.wait('@patch')
+
+    cy.window().then(({ uppy }) => {
+      expect(uppy.getPlugin<Tus>('Tus').requests.isPaused).to.equal(true)
+      cy.wait('@tus')
+      cy.get('.uppy-StatusBar-statusPrimary').should('contain', 'Complete')
     })
   })
 
