@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import glob from 'glob'
 import chalk from 'chalk'
 
-import { getPaths, omit } from './helpers.mjs'
+import { getLocales, getPaths, omit } from './helpers.mjs'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
 const leadingLocaleName = 'en_US'
@@ -15,7 +15,7 @@ const pluginLocaleDependencies = {
   core: 'provider-views',
 }
 
-test()
+await test()
   .then(() => {
     console.log('\n')
     console.log('No blocking issues found')
@@ -29,36 +29,18 @@ function test () {
   switch (mode) {
     case 'unused':
       return getPaths(`${root}/packages/@uppy/**/src/locale.js`)
-        .then((paths) => paths.map((filePath) => path.basename(path.join(filePath, '..', '..'))))
-        .then(getAllFilesPerPlugin)
-        .then(unused)
+        .then((paths) => unused(getAllFilesPerPlugin(paths.map((filePath) => path.basename(path.join(filePath, '..', '..'))))))
 
     case 'warnings':
-      return getPaths(`${root}/packages/@uppy/locales/src/*.js`)
-        .then(importFiles)
-        .then((locales) => ({
+      return getLocales(`${root}/packages/@uppy/locales/src/*.js`)
+        .then((locales) => warnings({
           leadingLocale: locales[leadingLocaleName],
           followerLocales: omit(locales, leadingLocaleName),
         }))
-        .then(warnings)
 
     default:
       return Promise.reject(new Error(`Invalid mode "${mode}"`))
   }
-}
-
-async function importFiles (paths) {
-  const locales = {}
-
-  for (const filePath of paths) {
-    const localeName = path.basename(filePath, '.js')
-    // Note: `.default` should be removed when we move to ESM
-    const locale = (await import(filePath)).default
-
-    locales[localeName] = locale.strings
-  }
-
-  return locales
 }
 
 function getAllFilesPerPlugin (pluginNames) {
@@ -75,7 +57,7 @@ function getAllFilesPerPlugin (pluginNames) {
     filesPerPlugin[name] = getFiles(name)
 
     if (name in pluginLocaleDependencies) {
-      filesPerPlugin[name] = filesPerPlugin[name].concat(
+      filesPerPlugin[name].push(
         getFiles(pluginLocaleDependencies[name]),
       )
     }
