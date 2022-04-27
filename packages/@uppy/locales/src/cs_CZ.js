@@ -92,7 +92,7 @@ cs_CZ.strings = {
   startRecording: 'Spustit nahrávání videa',
   stopRecording: 'Zastavit nahrávání videa',
   takePicture: 'Pořídit fotografii',
-  timedOut:  'Stav nahrávání se nezměnil %{seconds} sekund, nahrávání se ukončuje.',
+  timedOut: 'Stav nahrávání se nezměnil %{seconds} sekund, nahrávání se ukončuje.',
   unselectFileNamed: 'Zrušit výběr souboru %{name}',
   upload: 'Nahrát',
   uploadComplete: 'Nahrání dokončeno',
