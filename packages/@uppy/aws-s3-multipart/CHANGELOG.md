@@ -1,5 +1,12 @@
 # @uppy/aws-s3-multipart
 
+## 2.2.2
+
+Released: 2022-04-27
+Included in: Uppy v2.9.4
+
+- @uppy/aws-s3-multipart: Add `companionCookiesRule` type to @uppy/aws-s3-multipart (Mauricio Ribeiro / #3623)
+
 ## 2.2.1
 
 Released: 2022-03-02

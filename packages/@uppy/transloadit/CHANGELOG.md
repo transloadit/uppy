@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 2.1.5
+
+Released: 2022-04-27
+Included in: Uppy v2.9.4
+
+- @uppy/transloadit: improve fetch error handling (Antoine du Hamel / #3637)
+
 ## 2.1.4
 
 Released: 2022-04-07
