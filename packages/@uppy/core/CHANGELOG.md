@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 2.1.10
+
+Released: 2022-04-27
+Included in: Uppy v2.9.5
+
+- @uppy/core: fix `TypeError` when file was removed (Antoine du Hamel / #3670)
+
 ## 2.1.9
 
 Released: 2022-04-27

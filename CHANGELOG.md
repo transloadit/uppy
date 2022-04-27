@@ -12,6 +12,19 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.9.5
+
+Released: 2022-04-27
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |   3.5.2 | @uppy/robodog   |   2.5.5 |
+| @uppy/core      |  2.1.10 | uppy            |   2.9.5 |
+
+- @uppy/companion: Bump moment from 2.29.1 to 2.29.2 (dependabot[bot] / #3635)
+- @uppy/core: fix `TypeError` when file was removed (Antoine du Hamel / #3670)
+
+
 ## 2.9.4
 
 Released: 2022-04-27
