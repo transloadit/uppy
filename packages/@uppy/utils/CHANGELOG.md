@@ -1,5 +1,12 @@
 # @uppy/utils
 
+## 4.0.7
+
+Released: 2022-04-27
+Included in: Uppy v2.9.4
+
+- @uppy/utils: Fix getFileType for dicom images (Merlijn Vos / #3610)
+
 ## 4.0.6
 
 Released: 2022-04-07

@@ -12,6 +12,45 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.9.4
+
+Released: 2022-04-27
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |   2.2.2 | @uppy/file-input       |   2.0.6 |
+| @uppy/box              |   1.0.6 | @uppy/form             |   2.0.5 |
+| @uppy/companion        |   3.5.1 | @uppy/locales          |   2.0.9 |
+| @uppy/compressor       |   0.2.5 | @uppy/transloadit      |   2.1.5 |
+| @uppy/core             |   2.1.9 | @uppy/utils            |   4.0.7 |
+| @uppy/drag-drop        |   2.0.7 | @uppy/vue              |   0.4.7 |
+| @uppy/drop-target      |   1.1.3 | @uppy/robodog          |   2.5.4 |
+| @uppy/dropbox          |   2.0.6 | uppy                   |   2.9.4 |
+| @uppy/facebook         |   2.0.6 |                        |         |
+
+- @uppy/locales: Plural translation in cs_CZ local (JakubHaladej / #3666)
+- @uppy/vue: Add license field to package.json in @uppy/vue (Tobias Trumm / #3664)
+- meta: Add todo comments (Murderlon)
+- @uppy/facebook: refactor to ESM (Antoine du Hamel / #3653)
+- meta: locale-pack: refactor to use more parallel processing (Antoine du Hamel / #3630)
+- @uppy/file-input: refactor to ESM (Antoine du Hamel / #3652)
+- meta: sign requests sent to Transloadit in e2e suite (Antoine du Hamel / #3656)
+- meta: add `VITE_TRANSLOADIT_SECRET` for e2e (Antoine du Hamel)
+- meta: Update BACKLOG.md (Artur Paikin)
+- @uppy/form: refactor to ESM (Antoine du Hamel / #3654)
+- @uppy/dropbox: refactor to ESM (Antoine du Hamel / #3651)
+- meta: sign requests sent to Transloadit in dev env (Antoine du Hamel / #3517)
+- @uppy/drop-target: refactor to ESM (Antoine du Hamel / #3648)
+- @uppy/core: fix `TypeError` when file was removed (Antoine du Hamel / #3650)
+- @uppy/drag-drop: refactor to ESM (Antoine du Hamel / #3647)
+- meta: update outdated files (Antoine du Hamel / #3646)
+- @uppy/compressor: Set meta on file compression (Camilo Forero / #3644)
+- @uppy/transloadit: improve fetch error handling (Antoine du Hamel / #3637)
+- @uppy/box: refactor to ESM (Antoine du Hamel / #3643)
+- @uppy/utils: Fix getFileType for dicom images (Merlijn Vos / #3610)
+- @uppy/aws-s3-multipart: Add `companionCookiesRule` type to @uppy/aws-s3-multipart (Mauricio Ribeiro / #3623)
+
+
 ## 2.9.3
 
 Released: 2022-04-07
