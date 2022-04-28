@@ -25,13 +25,14 @@
  * the XHRUpload code, but at least it's not horrifically broken :)
  */
 
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const { RequestClient } = require('@uppy/companion-client')
-const MiniXHRUpload = require('./MiniXHRUpload')
-const isXml = require('./isXml')
+import BasePlugin from '@uppy/core/lib/BasePlugin'
+import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import { RequestClient } from '@uppy/companion-client'
 
-const locale = require('./locale')
+import packageJson from '../package.json'
+import MiniXHRUpload from './MiniXHRUpload.js'
+import isXml from './isXml.js'
+import locale from './locale.js'
 
 function resolveUrl (origin, link) {
   return new URL(link, origin || undefined).toString()
@@ -94,9 +95,8 @@ function defaultGetResponseError (content, xhr) {
 // warning deduplication flag: see `getResponseData()` XHRUpload option definition
 let warnedSuccessActionStatus = false
 
-module.exports = class AwsS3 extends BasePlugin {
-  // eslint-disable-next-line global-require
-  static VERSION = require('../package.json').version
+export default class AwsS3 extends BasePlugin {
+  static VERSION = packageJson.version
 
   #client
 

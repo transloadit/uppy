@@ -1,13 +1,13 @@
-const { nanoid } = require('nanoid/non-secure')
-const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
-const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
-const getSocketHost = require('@uppy/utils/lib/getSocketHost')
-const EventTracker = require('@uppy/utils/lib/EventTracker')
-const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
-const ErrorWithCause = require('@uppy/utils/lib/ErrorWithCause')
-const NetworkError = require('@uppy/utils/lib/NetworkError')
-const isNetworkError = require('@uppy/utils/lib/isNetworkError')
-const { internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
+import { nanoid } from 'nanoid/non-secure'
+import { Provider, RequestClient, Socket } from '@uppy/companion-client'
+import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
+import getSocketHost from '@uppy/utils/lib/getSocketHost'
+import EventTracker from '@uppy/utils/lib/EventTracker'
+import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
+import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
+import NetworkError from '@uppy/utils/lib/NetworkError'
+import isNetworkError from '@uppy/utils/lib/isNetworkError'
+import { internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 
 // See XHRUpload
 function buildResponseError (xhr, error) {
@@ -52,7 +52,7 @@ function createFormDataUpload (file, opts) {
 
 const createBareUpload = file => file.data
 
-module.exports = class MiniXHRUpload {
+export default class MiniXHRUpload {
   constructor (uppy, opts) {
     this.uppy = uppy
     this.opts = {

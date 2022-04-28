@@ -199,6 +199,7 @@ module.exports = {
       files: [
         // Packages that have switched to ESM sources:
         'packages/@uppy/audio/src/**/*.js',
+        'packages/@uppy/aws-s3/src/**/*.js',
         'packages/@uppy/box/src/**/*.js',
         'packages/@uppy/compressor/src/**/*.js',
         'packages/@uppy/drag-drop/src/**/*.js',
