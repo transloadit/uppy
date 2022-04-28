@@ -1,3 +1,5 @@
+import { describe, expect, it, jest } from '@jest/globals'
+
 import 'whatwg-fetch'
 import nock from 'nock'
 import Core from '@uppy/core'
