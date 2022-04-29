@@ -10059,6 +10059,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy/remote-sources@workspace:packages/@uppy/remote-sources":
+  version: 0.0.0-use.local
+  resolution: "@uppy/remote-sources@workspace:packages/@uppy/remote-sources"
+  dependencies:
+    "@uppy/box": "workspace:^"
+    "@uppy/dropbox": "workspace:^"
+    "@uppy/facebook": "workspace:^"
+    "@uppy/google-drive": "workspace:^"
+    "@uppy/instagram": "workspace:^"
+    "@uppy/onedrive": "workspace:^"
+    "@uppy/unsplash": "workspace:^"
+    "@uppy/url": "workspace:^"
+    "@uppy/zoom": "workspace:^"
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@uppy/robodog@workspace:*, @uppy/robodog@workspace:packages/@uppy/robodog":
   version: 0.0.0-use.local
   resolution: "@uppy/robodog@workspace:packages/@uppy/robodog"
