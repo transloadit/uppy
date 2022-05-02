@@ -36,7 +36,7 @@ module.exports = {
   parser: '@babel/eslint-parser',
   parserOptions: {
     sourceType: 'script',
-    ecmaVersion: 2021,
+    ecmaVersion: 2022,
     ecmaFeatures: {
       jsx: true,
     },
@@ -148,16 +148,37 @@ module.exports = {
   overrides: [
     {
       files: [
-        'packages/@uppy/*/src/**/*.jsx',
-        'packages/uppy/src/**/*.jsx',
+        '*.mjs',
+        'e2e/clients/**/*.js',
+        'examples/aws-presigned-url/*.js',
+        'examples/bundled/*.js',
+        'private/dev/*.js',
+        'private/release/*.js',
+        'private/remark-lint-uppy/*.js',
+
+        // Packages that have switched to ESM sources:
+        'packages/@uppy/audio/src/**/*.js',
+        'packages/@uppy/box/src/**/*.js',
+        'packages/@uppy/compressor/src/**/*.js',
+        'packages/@uppy/drag-drop/src/**/*.js',
+        'packages/@uppy/drop-target/src/**/*.js',
+        'packages/@uppy/dropbox/src/**/*.js',
+        'packages/@uppy/facebook/src/**/*.js',
+        'packages/@uppy/file-input/src/**/*.js',
+        'packages/@uppy/form/src/**/*.js',
+        'packages/@uppy/svelte/src/**/*.js',
+        'packages/@uppy/svelte/rollup.config.js',
+        'packages/@uppy/vue/src/**/*.js',
       ],
+      parser: 'espree',
       parserOptions: {
         sourceType: 'module',
         ecmaFeatures: {
-          jsx: true,
+          jsx: false,
         },
       },
       rules: {
+        'import/named': 'off', // Disabled because that rule tries and fails to parse JSX dependencies.
         'no-restricted-globals': [
           'error',
           {
@@ -186,33 +207,16 @@ module.exports = {
     },
     {
       files: [
-        '*.mjs',
-        'e2e/clients/**/*.js',
-        'examples/aws-presigned-url/*.js',
-        'examples/bundled/*.js',
-        'private/dev/*.js',
-        'private/release/*.js',
-        'private/remark-lint-uppy/*.js',
-
-        // Packages that have switched to ESM sources:
-        'packages/@uppy/audio/src/**/*.js',
-        'packages/@uppy/box/src/**/*.js',
-        'packages/@uppy/compressor/src/**/*.js',
-        'packages/@uppy/drag-drop/src/**/*.js',
-        'packages/@uppy/drop-target/src/**/*.js',
-        'packages/@uppy/dropbox/src/**/*.js',
-        'packages/@uppy/facebook/src/**/*.js',
-        'packages/@uppy/file-input/src/**/*.js',
-        'packages/@uppy/form/src/**/*.js',
+        'packages/@uppy/*/src/**/*.jsx',
+        'packages/uppy/src/**/*.jsx',
         'packages/@uppy/react-native/**/*.js',
-        'packages/@uppy/svelte/src/**/*.js',
-        'packages/@uppy/svelte/rollup.config.js',
-        'packages/@uppy/vue/src/**/*.js',
+        'e2e/clients/dashboard-react/**/*.js',
       ],
+      parser: 'espree',
       parserOptions: {
         sourceType: 'module',
         ecmaFeatures: {
-          jsx: false,
+          jsx: true,
         },
       },
       rules: {
