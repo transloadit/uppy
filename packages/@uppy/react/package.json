@@ -34,11 +34,11 @@
     "@types/react": "^17.0.13",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.2",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
-    "react": "^16.0.0 || ^17.0.0"
+    "react": "*"
   }
 }
