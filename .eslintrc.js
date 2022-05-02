@@ -148,6 +148,45 @@ module.exports = {
   overrides: [
     {
       files: [
+        '*.jsx',
+        'packages/@uppy/react-native/**/*.js',
+      ],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      rules: {
+        'no-restricted-globals': [
+          'error',
+          {
+            name: '__filename',
+            message: 'Use import.meta.url instead',
+          },
+          {
+            name: '__dirname',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'exports',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'module',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'require',
+            message: 'Use import instead',
+          },
+        ],
+        'import/extensions': ['error', 'ignorePackages'],
+      },
+    },
+    {
+      files: [
         '*.mjs',
         'e2e/clients/**/*.js',
         'examples/aws-presigned-url/*.js',
@@ -179,47 +218,6 @@ module.exports = {
       },
       rules: {
         'import/named': 'off', // Disabled because that rule tries and fails to parse JSX dependencies.
-        'no-restricted-globals': [
-          'error',
-          {
-            name: '__filename',
-            message: 'Use import.meta.url instead',
-          },
-          {
-            name: '__dirname',
-            message: 'Not available in ESM',
-          },
-          {
-            name: 'exports',
-            message: 'Not available in ESM',
-          },
-          {
-            name: 'module',
-            message: 'Not available in ESM',
-          },
-          {
-            name: 'require',
-            message: 'Use import instead',
-          },
-        ],
-        'import/extensions': ['error', 'ignorePackages'],
-      },
-    },
-    {
-      files: [
-        'packages/@uppy/*/src/**/*.jsx',
-        'packages/uppy/src/**/*.jsx',
-        'packages/@uppy/react-native/**/*.js',
-        'e2e/clients/dashboard-react/**/*.js',
-      ],
-      parser: 'espree',
-      parserOptions: {
-        sourceType: 'module',
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-      rules: {
         'no-restricted-globals': [
           'error',
           {
@@ -433,7 +431,7 @@ module.exports = {
       extends: ['plugin:cypress/recommended'],
     },
     {
-      files: ['e2e/**/*.ts', 'e2e/**/*.js'],
+      files: ['e2e/**/*.ts', 'e2e/**/*.js', 'e2e/**/*.jsx'],
       rules: { 'import/no-extraneous-dependencies': 'off' },
     },
   ],
