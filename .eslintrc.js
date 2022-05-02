@@ -36,7 +36,7 @@ module.exports = {
   parser: '@babel/eslint-parser',
   parserOptions: {
     sourceType: 'script',
-    ecmaVersion: 2021,
+    ecmaVersion: 2022,
     ecmaFeatures: {
       jsx: true,
     },
@@ -148,9 +148,10 @@ module.exports = {
   overrides: [
     {
       files: [
-        'packages/@uppy/*/src/**/*.jsx',
-        'packages/uppy/src/**/*.jsx',
+        '*.jsx',
+        'packages/@uppy/react-native/**/*.js',
       ],
+      parser: 'espree',
       parserOptions: {
         sourceType: 'module',
         ecmaFeatures: {
@@ -204,11 +205,11 @@ module.exports = {
         'packages/@uppy/facebook/src/**/*.js',
         'packages/@uppy/file-input/src/**/*.js',
         'packages/@uppy/form/src/**/*.js',
-        'packages/@uppy/react-native/**/*.js',
         'packages/@uppy/svelte/src/**/*.js',
         'packages/@uppy/svelte/rollup.config.js',
         'packages/@uppy/vue/src/**/*.js',
       ],
+      parser: 'espree',
       parserOptions: {
         sourceType: 'module',
         ecmaFeatures: {
@@ -216,6 +217,7 @@ module.exports = {
         },
       },
       rules: {
+        'import/named': 'off', // Disabled because that rule tries and fails to parse JSX dependencies.
         'no-restricted-globals': [
           'error',
           {
@@ -429,7 +431,7 @@ module.exports = {
       extends: ['plugin:cypress/recommended'],
     },
     {
-      files: ['e2e/**/*.ts', 'e2e/**/*.js'],
+      files: ['e2e/**/*.ts', 'e2e/**/*.js', 'e2e/**/*.jsx'],
       rules: { 'import/no-extraneous-dependencies': 'off' },
     },
   ],
