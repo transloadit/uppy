@@ -29,7 +29,7 @@ function EditorPanel (props) {
           type="button"
           onClick={props.saveFileEditor}
         >
-          {props.i18n('save')}
+          {props.i18n('saveChanges')}
         </button>
       </div>
       <div className="uppy-DashboardContent-panelBody">
