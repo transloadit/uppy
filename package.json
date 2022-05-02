@@ -155,8 +155,6 @@
     "e2e:generate": "yarn workspace e2e generate-test",
     "test:companion": "yarn workspace @uppy/companion test",
     "test:companion:watch": "yarn workspace @uppy/companion test --watch",
-    "test:endtoend:local": "yarn workspace @uppy-tests/end2end test:endtoend:local",
-    "test:endtoend": "yarn workspace @uppy-tests/end2end test:endtoend",
     "test:locale-packs": "yarn locale-packs:unused && yarn locale-packs:warnings",
     "test:locale-packs:unused": "yarn workspace @uppy-dev/locale-pack test unused",
     "test:locale-packs:warnings": "yarn workspace @uppy-dev/locale-pack test warnings",
