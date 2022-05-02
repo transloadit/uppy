@@ -1,5 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
 import ReactDOM from 'react-dom'
-import App from './App'
+import App from './App.js'
 
 ReactDOM.render(<App />, document.getElementById('app'))
