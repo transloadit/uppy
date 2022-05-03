@@ -35,10 +35,6 @@ describe('dashboard-compressor', () => {
 
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
-    cy.get('.uppy-Informer p[role="alert"]', {
-      timeout: 12000,
-    }).should('be.visible')
-
     cy.window().then(({ uppy }) => {
       for (const file of uppy.getFiles()) {
         expect(file.extension).to.equal('webp')
