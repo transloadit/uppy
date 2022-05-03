@@ -205,6 +205,7 @@ module.exports = {
         'packages/@uppy/facebook/src/**/*.js',
         'packages/@uppy/file-input/src/**/*.js',
         'packages/@uppy/form/src/**/*.js',
+        'packages/@uppy/google-drive/src/**/*.js',
         'packages/@uppy/svelte/src/**/*.js',
         'packages/@uppy/svelte/rollup.config.js',
         'packages/@uppy/vue/src/**/*.js',
