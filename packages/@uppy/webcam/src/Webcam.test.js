@@ -1,5 +1,5 @@
 import Uppy from '@uppy/core'
-import Webcam from './index.js'
+import Webcam from '../lib/index.js'
 
 describe('Webcam', () => {
   describe('_getMediaRecorderOptions', () => {
