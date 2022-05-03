@@ -6,10 +6,10 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native'
-import takePicture from './takePicture'
-import selectImage from './selectImage'
-import selectDocument from './selectDocument'
-import Provider from './provider'
+import takePicture from './takePicture.js'
+import selectImage from './selectImage.js'
+import selectDocument from './selectDocument.js'
+import Provider from './provider.js'
 
 export default class UppyReactNativeFilePicker extends React.Component {
   constructor () {
