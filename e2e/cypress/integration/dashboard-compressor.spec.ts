@@ -35,6 +35,10 @@ describe('dashboard-compressor', () => {
 
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
+    // random wait unfortunately for compressing the images
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000)
+
     cy.window().then(({ uppy }) => {
       for (const file of uppy.getFiles()) {
         expect(file.extension).to.equal('webp')
