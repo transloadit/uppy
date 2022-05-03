@@ -31,7 +31,7 @@
     "prop-types": "^15.6.1"
   },
   "devDependencies": {
-    "@types/react": "^17.0.13",
+    "@types/react": "^18.0.8",
     "react": "^18.1.0",
     "react-dom": "^18.1.0"
   },

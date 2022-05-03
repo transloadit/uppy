@@ -10032,7 +10032,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/react@workspace:packages/@uppy/react"
   dependencies:
-    "@types/react": ^17.0.13
+    "@types/react": ^18.0.8
     "@uppy/dashboard": "workspace:^"
     "@uppy/drag-drop": "workspace:^"
     "@uppy/file-input": "workspace:^"
