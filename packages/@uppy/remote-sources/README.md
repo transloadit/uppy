@@ -8,7 +8,7 @@
 
 ```js
 import Uppy from '@uppy/core'
-import Compressor from '@uppy/remote-sources'
+import RemoteSources from '@uppy/remote-sources'
 
 const uppy = new Uppy()
 uppy.use(RemoteSources)
