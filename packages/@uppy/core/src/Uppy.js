@@ -852,7 +852,7 @@ class Uppy {
 
   calculateProgress (file, data) {
     if (file == null || !this.getFile(file.id)) {
-      this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+      this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
       return
     }
 
@@ -980,7 +980,7 @@ class Uppy {
 
     this.on('upload-started', (file) => {
       if (file == null || !this.getFile(file.id)) {
-        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+        this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
         return
       }
       this.setFileState(file.id, {
@@ -998,7 +998,7 @@ class Uppy {
 
     this.on('upload-success', (file, uploadResp) => {
       if (file == null || !this.getFile(file.id)) {
-        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+        this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
         return
       }
 
@@ -1031,7 +1031,7 @@ class Uppy {
 
     this.on('preprocess-progress', (file, progress) => {
       if (file == null || !this.getFile(file.id)) {
-        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+        this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
         return
       }
       this.setFileState(file.id, {
@@ -1041,7 +1041,7 @@ class Uppy {
 
     this.on('preprocess-complete', (file) => {
       if (file == null || !this.getFile(file.id)) {
-        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+        this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
         return
       }
       const files = { ...this.getState().files }
@@ -1053,7 +1053,7 @@ class Uppy {
 
     this.on('postprocess-progress', (file, progress) => {
       if (file == null || !this.getFile(file.id)) {
-        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+        this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
         return
       }
       this.setFileState(file.id, {
@@ -1063,7 +1063,7 @@ class Uppy {
 
     this.on('postprocess-complete', (file) => {
       if (file == null || !this.getFile(file.id)) {
-        this.log(`Not setting progress for a file that has been removed: ${file.id}`)
+        this.log(`Not setting progress for a file that has been removed: ${file?.id}`)
         return
       }
       const files = {

@@ -1,5 +1,12 @@
 # @uppy/vue
 
+## 0.4.7
+
+Released: 2022-04-27
+Included in: Uppy v2.9.4
+
+- @uppy/vue: Add license field to package.json in @uppy/vue (Tobias Trumm / #3664)
+
 ## 0.4.6
 
 Released: 2022-03-16

@@ -1,6 +1,7 @@
 {
   "name": "@uppy/vue",
-  "version": "0.4.6",
+  "version": "0.4.7",
+  "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
   "dependencies": {

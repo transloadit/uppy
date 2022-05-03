@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 3.5.2
+
+Released: 2022-04-27
+Included in: Uppy v2.9.5
+
+- @uppy/companion: Bump moment from 2.29.1 to 2.29.2 (dependabot[bot] / #3635)
+
 ## 3.5.0
 
 Released: 2022-03-24

@@ -82,6 +82,7 @@ es_ES.strings = {
   resumeUpload: 'Reanudar subida',
   retry: 'Intentar nuevamente',
   retryUpload: 'Intentar subida nuevamente',
+  save: 'Guardar',
   saveChanges: 'Guardar cambios',
   selectX: {
     '0': 'Seleccionar %{smart_count}',
