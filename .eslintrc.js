@@ -209,6 +209,7 @@ module.exports = {
         'packages/@uppy/svelte/src/**/*.js',
         'packages/@uppy/svelte/rollup.config.js',
         'packages/@uppy/vue/src/**/*.js',
+        'packages/@uppy/webcam/src/**/*.js',
       ],
       parser: 'espree',
       parserOptions: {

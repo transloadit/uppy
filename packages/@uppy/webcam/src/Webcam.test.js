@@ -1,5 +1,5 @@
-const Uppy = require('@uppy/core')
-const Webcam = require('./index')
+import Uppy from '@uppy/core'
+import Webcam from './index.js'
 
 describe('Webcam', () => {
   describe('_getMediaRecorderOptions', () => {
