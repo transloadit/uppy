@@ -12,6 +12,7 @@ jobs:
     if: ${{ !github.event.pull_request || (contains(github.event.pull_request.labels.*.name, 'safe to test') && github.event.pull_request.state == 'open') || (github.event.pull_request.head.repo.full_name == github.repository && github.event.event_name != 'labeled') }}
     name: Browser tests
     runs-on: ubuntu-latest
+    container: cypress/browsers:node16.14.0-chrome99-ff97
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -37,7 +38,7 @@ jobs:
       - name: Build Uppy packages
         run: corepack yarn build
       - name: Run end-to-end browser tests
-        run: corepack yarn run e2e:ci
+        run: corepack yarn run e2e:ci --browser chrome --record --key ${{secrets.CYPRESS_RECORD_KEY}}
         env:
           COMPANION_UNSPLASH_KEY: ${{secrets.COMPANION_UNSPLASH_KEY}}
           COMPANION_UNSPLASH_SECRET: ${{secrets.COMPANION_UNSPLASH_SECRET}}
