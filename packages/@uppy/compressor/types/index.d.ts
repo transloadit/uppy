@@ -7,6 +7,12 @@ export interface CompressorOptions extends PluginOptions {
   locale?: CompressorLocale
 }
 
+export type GenericEventCallback = () => void;
+
+export interface UppyEventMap {
+  'compressor:complete': GenericEventCallback
+}
+
 declare class Compressor extends BasePlugin<CompressorOptions> {}
 
 export default Compressor
