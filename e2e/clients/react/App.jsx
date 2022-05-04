@@ -9,9 +9,7 @@ import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
 import '@uppy/drag-drop/dist/style.css'
 
-export default App
-
-function App () {
+export default function App () {
   const uppyDashboard = new Uppy({ id: 'dashboard' })
   const uppyModal = new Uppy({ id: 'modal' })
   const uppyDragDrop = new Uppy({ id: 'drag-drop' }).use(ThumbnailGenerator)
