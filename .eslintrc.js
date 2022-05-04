@@ -206,9 +206,11 @@ module.exports = {
         'packages/@uppy/file-input/src/**/*.js',
         'packages/@uppy/form/src/**/*.js',
         'packages/@uppy/google-drive/src/**/*.js',
+        'packages/@uppy/image-editor/src/**/*.js',
         'packages/@uppy/svelte/src/**/*.js',
         'packages/@uppy/svelte/rollup.config.js',
         'packages/@uppy/vue/src/**/*.js',
+        'packages/@uppy/webcam/src/**/*.js',
       ],
       parser: 'espree',
       parserOptions: {
@@ -433,7 +435,7 @@ module.exports = {
     },
     {
       files: ['e2e/**/*.ts', 'e2e/**/*.js', 'e2e/**/*.jsx'],
-      rules: { 'import/no-extraneous-dependencies': 'off' },
+      rules: { 'import/no-extraneous-dependencies': 'off', 'no-unused-expressions': 'off' },
     },
   ],
 }

@@ -1,11 +1,11 @@
-const CropperImport = require('cropperjs')
-const { h, Component } = require('preact')
+import CropperImport from 'cropperjs'
+import { h, Component } from 'preact'
 
-// @TODO A silly hack that we can get rid of when moving to ESM.
+// @TODO A silly hack that we can get rid of when we start publishing ESM to the npm package.
 // eslint-disable-next-line no-underscore-dangle
 const Cropper = CropperImport.__esModule ? CropperImport.default : CropperImport
 
-module.exports = class Editor extends Component {
+export default class Editor extends Component {
   constructor (props) {
     super(props)
     this.state = { rotationAngle: 0, rotationDelta: 0 }

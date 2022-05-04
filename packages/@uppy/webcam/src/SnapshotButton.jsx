@@ -1,7 +1,7 @@
-const { h } = require('preact')
-const CameraIcon = require('./CameraIcon')
+import { h } from 'preact'
+import CameraIcon from './CameraIcon.jsx'
 
-module.exports = ({ onSnapshot, i18n }) => {
+export default ({ onSnapshot, i18n }) => {
   return (
     <button
       className="uppy-u-reset uppy-c-btn uppy-Webcam-button uppy-Webcam-button--picture"
