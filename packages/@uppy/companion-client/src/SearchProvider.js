@@ -1,12 +1,12 @@
 'use strict'
 
-const RequestClient = require('./RequestClient')
+import RequestClient from './RequestClient.js'
 
 const getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
-module.exports = class SearchProvider extends RequestClient {
+export default class SearchProvider extends RequestClient {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.provider = opts.provider
@@ -20,7 +20,6 @@ module.exports = class SearchProvider extends RequestClient {
   }
 
   search (text, queries) {
-    queries = queries ? `&${queries}` : ''
-    return this.get(`search/${this.id}/list?q=${encodeURIComponent(text)}${queries}`)
+    return this.get(`search/${this.id}/list?q=${encodeURIComponent(text)}${queries ? `&${queries}` : ''}`)
   }
 }
