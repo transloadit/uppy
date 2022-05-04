@@ -45,7 +45,6 @@ function StatusBar (props) {
     supportsUploadProgress,
     hideAfterFinish,
     isSomeGhost,
-    isTargetDOMEl,
     doneButtonHandler,
     isUploadStarted,
     i18n,
@@ -148,7 +147,6 @@ function StatusBar (props) {
   })
 
   const statusBarClassNames = classNames(
-    { 'uppy-Root': isTargetDOMEl },
     'uppy-StatusBar',
     `is-${uploadState}`,
     { 'has-ghosts': isSomeGhost },
