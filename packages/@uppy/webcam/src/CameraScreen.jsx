@@ -1,11 +1,11 @@
 /* eslint-disable jsx-a11y/media-has-caption */
-const { h, Component } = require('preact')
-const SnapshotButton = require('./SnapshotButton')
-const RecordButton = require('./RecordButton')
-const RecordingLength = require('./RecordingLength')
-const VideoSourceSelect = require('./VideoSourceSelect')
-const SubmitButton = require('./SubmitButton')
-const DiscardButton = require('./DiscardButton')
+import { h, Component } from 'preact'
+import SnapshotButton from './SnapshotButton.jsx'
+import RecordButton from './RecordButton.jsx'
+import RecordingLength from './RecordingLength.jsx'
+import VideoSourceSelect from './VideoSourceSelect.jsx'
+import SubmitButton from './SubmitButton.jsx'
+import DiscardButton from './DiscardButton.jsx'
 
 function isModeAvailable (modes, mode) {
   return modes.indexOf(mode) !== -1
@@ -116,4 +116,4 @@ class CameraScreen extends Component {
   }
 }
 
-module.exports = CameraScreen
+export default CameraScreen

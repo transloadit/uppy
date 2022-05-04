@@ -1,4 +1,4 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 function DiscardButton ({ onDiscard, i18n }) {
   return (
@@ -28,4 +28,4 @@ function DiscardButton ({ onDiscard, i18n }) {
   )
 }
 
-module.exports = DiscardButton
+export default DiscardButton
