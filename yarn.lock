@@ -10250,6 +10250,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/xhr-upload@workspace:packages/@uppy/xhr-upload"
   dependencies:
+    "@jest/globals": ^27.4.2
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
     nanoid: ^3.1.25
