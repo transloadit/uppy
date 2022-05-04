@@ -1,5 +1,6 @@
-const { h, Component } = require('preact')
+import { h, Component } from 'preact'
 
+// TODO: rename this class to StopWatch in the next major.
 class Stopwatch extends Component {
   constructor (props) {
     super(props)
@@ -63,16 +64,18 @@ class Stopwatch extends Component {
     }, 1000)
   }
 
+  // eslint-disable-next-line class-methods-use-this
   fmtMSS (s) {
-    // eslint-disable-next-line no-return-assign
+    // eslint-disable-next-line no-return-assign, no-param-reassign
     return (s - (s %= 60)) / 60 + (s > 9 ? ':' : ':0') + s
   }
 
   render () {
     const { recording, i18n } = { ...this.props }
+    const { elapsedTime } = this.state
 
     // second to minutes and seconds
-    const minAndSec = this.fmtMSS(this.state.elapsedTime)
+    const minAndSec = this.fmtMSS(elapsedTime)
 
     if (recording && !this.timerRunning) {
       this.startTimer()
@@ -102,4 +105,4 @@ class Stopwatch extends Component {
   }
 }
 
-module.exports = Stopwatch
+export default Stopwatch
