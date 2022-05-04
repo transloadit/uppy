@@ -1,5 +1,12 @@
 # @uppy/facebook
 
+## 2.0.6
+
+Released: 2022-04-27
+Included in: Uppy v2.9.4
+
+- @uppy/facebook: refactor to ESM (Antoine du Hamel / #3653)
+
 ## 2.0.5
 
 Released: 2021-12-07

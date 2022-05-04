@@ -1,5 +1,12 @@
 # @uppy/compressor
 
+## 0.2.5
+
+Released: 2022-04-27
+Included in: Uppy v2.9.4
+
+- @uppy/compressor: Set meta on file compression (Camilo Forero / #3644)
+
 ## 0.2.4
 
 Released: 2022-04-07

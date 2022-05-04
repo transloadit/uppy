@@ -64,12 +64,14 @@ const getConfigFromEnv = () => {
         verificationToken: getSecret('COMPANION_ZOOM_VERIFICATION_TOKEN'),
         credentialsURL: process.env.COMPANION_ZOOM_KEYS_ENDPOINT,
       },
+      // TODO: remove the redundant searchProviders warpper in next major version
       searchProviders: {
         unsplash: {
           key: process.env.COMPANION_UNSPLASH_KEY,
           secret: process.env.COMPANION_UNSPLASH_SECRET,
         },
       },
+      // TODO: move s3 out of providerOptions, it's a destination, not a source
       s3: {
         key: process.env.COMPANION_AWS_KEY,
         secret: getSecret('COMPANION_AWS_SECRET'),

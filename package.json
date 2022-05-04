@@ -69,7 +69,6 @@
     "concat-stream": "^2.0.0",
     "core-js": "~3.19.3",
     "cssnano": "^5.0.6",
-    "dedent": "^0.7.0",
     "dotenv": "^16.0.0",
     "esbuild": "^0.14.1",
     "esbuild-plugin-babel": "^0.2.3",
