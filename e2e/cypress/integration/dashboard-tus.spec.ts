@@ -16,7 +16,7 @@ describe('Dashboard with Tus', () => {
     cy.intercept('http://localhost:3020/search/unsplash/*').as('unsplash')
   })
 
-  it('should emit `error` and `upload-error` events on failed POST request', () => {
+  it.only('should emit `error` and `upload-error` events on failed POST request', () => {
     cy.get('@file-input').attachFile(['images/traffic.jpg'])
 
     const error = cy.spy()
@@ -29,7 +29,7 @@ describe('Dashboard with Tus', () => {
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.intercept(
-      { method: 'POST', pathname: '/files', times: 1 },
+      { method: 'POST', url: 'https://tusd.tusdemo.net/*', times: 1 },
       { statusCode: 401, body: { code: 401, message: 'Expired JWT Token' } },
     ).as('post')
 
