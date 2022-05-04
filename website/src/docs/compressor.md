@@ -43,6 +43,8 @@ uppy.use(Compressor, {
 })
 ```
 
+> Note that _all_ these options are passed to Compressor.js.
+
 ### `id`
 
 * Type: `string`
