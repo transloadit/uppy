@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   strings: {
     pluginNameOneDrive: 'OneDrive',
   },
