@@ -807,21 +807,24 @@ class Uppy {
     return this.#runUpload(uploadID)
   }
 
-  cancelAll () {
-    this.emit('cancel-all')
+  cancelAll ({ reason = 'user' } = {}) {
+    this.emit('cancel-all', { reason })
 
-    const { files } = this.getState()
+    // Only remove existing uploads if user is canceling
+    if (reason === 'user') {
+      const { files } = this.getState()
 
-    const fileIDs = Object.keys(files)
-    if (fileIDs.length) {
-      this.removeFiles(fileIDs, 'cancel-all')
+      const fileIDs = Object.keys(files)
+      if (fileIDs.length) {
+        this.removeFiles(fileIDs, 'cancel-all')
+      }
+
+      this.setState({
+        totalProgress: 0,
+        error: null,
+        recoveredState: null,
+      })
     }
-
-    this.setState({
-      totalProgress: 0,
-      error: null,
-      recoveredState: null,
-    })
   }
 
   retryUpload (fileID) {
@@ -838,8 +841,9 @@ class Uppy {
     return this.#runUpload(uploadID)
   }
 
-  reset () {
-    this.cancelAll()
+  // todo remove in next major. what is the point of the reset method when we have cancelAll or vice versa?
+  reset (...args) {
+    this.cancelAll(...args)
   }
 
   logout () {
@@ -1234,10 +1238,10 @@ class Uppy {
   /**
    * Uninstall all plugins and close down this Uppy instance.
    */
-  close () {
+  close ({ reason } = {}) {
     this.log(`Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`)
 
-    this.reset()
+    this.cancelAll({ reason })
 
     this.#storeUnsubscribe()
 
