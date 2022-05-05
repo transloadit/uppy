@@ -1,7 +1,7 @@
-const { h } = require('preact')
-const getFileTypeIcon = require('../utils/getFileTypeIcon')
+import { h } from 'preact'
+import getFileTypeIcon from '../utils/getFileTypeIcon.jsx'
 
-module.exports = function FilePreview (props) {
+export default function FilePreview (props) {
   const { file } = props
 
   if (file.preview) {

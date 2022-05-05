@@ -1,4 +1,4 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 const uploadStates = {
   STATE_ERROR: 'error',
@@ -45,51 +45,58 @@ function getUploadingState (isAllErrored, isAllComplete, isAllPaused, files = {}
   return state
 }
 
-function UploadStatus (props) {
+function UploadStatus ({
+  files, i18n, isAllComplete, isAllErrored, isAllPaused,
+  inProgressNotPausedFiles, newFiles, processingFiles,
+}) {
   const uploadingState = getUploadingState(
-    props.isAllErrored,
-    props.isAllComplete,
-    props.isAllPaused,
-    props.files,
+    isAllErrored,
+    isAllComplete,
+    isAllPaused,
+    files,
   )
 
   switch (uploadingState) {
     case 'uploading':
-      return props.i18n('uploadingXFiles', { smart_count: props.inProgressNotPausedFiles.length })
+      return i18n('uploadingXFiles', { smart_count: inProgressNotPausedFiles.length })
     case 'preprocessing':
     case 'postprocessing':
-      return props.i18n('processingXFiles', { smart_count: props.processingFiles.length })
+      return i18n('processingXFiles', { smart_count: processingFiles.length })
     case 'paused':
-      return props.i18n('uploadPaused')
+      return i18n('uploadPaused')
     case 'waiting':
-      return props.i18n('xFilesSelected', { smart_count: props.newFiles.length })
+      return i18n('xFilesSelected', { smart_count: newFiles.length })
     case 'complete':
-      return props.i18n('uploadComplete')
+      return i18n('uploadComplete')
+    default:
   }
 }
 
 function PanelTopBar (props) {
+  const { i18n, isAllComplete, hideCancelButton, maxNumberOfFiles, toggleAddFilesPanel, uppy } = props
   let { allowNewUpload } = props
-  // TODO maybe this should be done in ../index.js, then just pass that down as `allowNewUpload`
-  if (allowNewUpload && props.maxNumberOfFiles) {
+  // TODO maybe this should be done in ../Dashboard.jsx, then just pass that down as `allowNewUpload`
+  if (allowNewUpload && maxNumberOfFiles) {
+    // eslint-disable-next-line react/destructuring-assignment
     allowNewUpload = props.totalFileCount < props.maxNumberOfFiles
   }
 
   return (
     <div className="uppy-DashboardContent-bar">
-      {!props.isAllComplete && !props.hideCancelButton ? (
+      {!isAllComplete && !hideCancelButton ? (
         <button
           className="uppy-DashboardContent-back"
           type="button"
-          onClick={() => props.uppy.cancelAll()}
+          onClick={() => uppy.cancelAll()}
         >
-          {props.i18n('cancel')}
+          {i18n('cancel')}
         </button>
       ) : (
         <div />
       )}
 
       <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <UploadStatus {...props} />
       </div>
 
@@ -97,14 +104,14 @@ function PanelTopBar (props) {
         <button
           className="uppy-DashboardContent-addMore"
           type="button"
-          aria-label={props.i18n('addMoreFiles')}
-          title={props.i18n('addMoreFiles')}
-          onClick={() => props.toggleAddFilesPanel(true)}
+          aria-label={i18n('addMoreFiles')}
+          title={i18n('addMoreFiles')}
+          onClick={() => toggleAddFilesPanel(true)}
         >
           <svg aria-hidden="true" focusable="false" className="uppy-c-icon" width="15" height="15" viewBox="0 0 15 15">
             <path d="M8 6.5h6a.5.5 0 0 1 .5.5v.5a.5.5 0 0 1-.5.5H8v6a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V8h-6a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5h6v-6A.5.5 0 0 1 7 0h.5a.5.5 0 0 1 .5.5v6z" />
           </svg>
-          <span className="uppy-DashboardContent-addMoreCaption">{props.i18n('addMore')}</span>
+          <span className="uppy-DashboardContent-addMoreCaption">{i18n('addMore')}</span>
         </button>
       ) : (
         <div />
@@ -113,4 +120,4 @@ function PanelTopBar (props) {
   )
 }
 
-module.exports = PanelTopBar
+export default PanelTopBar

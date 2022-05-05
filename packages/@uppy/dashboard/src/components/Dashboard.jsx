@@ -1,14 +1,14 @@
-const { h } = require('preact')
-const classNames = require('classnames')
-const isDragDropSupported = require('@uppy/utils/lib/isDragDropSupported')
-const FileList = require('./FileList')
-const AddFiles = require('./AddFiles')
-const AddFilesPanel = require('./AddFilesPanel')
-const PickerPanelContent = require('./PickerPanelContent')
-const EditorPanel = require('./EditorPanel')
-const PanelTopBar = require('./PickerPanelTopBar')
-const FileCard = require('./FileCard')
-const Slide = require('./Slide')
+import { h } from 'preact'
+import classNames from 'classnames'
+import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
+import FileList from './FileList.jsx'
+import AddFiles from './AddFiles.jsx'
+import AddFilesPanel from './AddFilesPanel.jsx'
+import PickerPanelContent from './PickerPanelContent.jsx'
+import EditorPanel from './EditorPanel.jsx'
+import PanelTopBar from './PickerPanelTopBar.jsx'
+import FileCard from './FileCard/index.jsx'
+import Slide from './Slide.jsx'
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
@@ -18,7 +18,7 @@ const WIDTH_LG = 700
 const WIDTH_MD = 576
 const HEIGHT_MD = 400
 
-module.exports = function Dashboard (props) {
+export default function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
   const isSizeMD = props.containerWidth > WIDTH_MD
 

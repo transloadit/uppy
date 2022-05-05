@@ -1,4 +1,4 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 function onPauseResumeCancelRetry (props) {
   if (props.isUploaded) return
@@ -96,7 +96,7 @@ function ProgressCircle ({ progress }) {
   )
 }
 
-module.exports = function FileProgress (props) {
+export default function FileProgress (props) {
   // Nothing if upload has not started
   if (!props.file.progress.uploadStarted) {
     return null

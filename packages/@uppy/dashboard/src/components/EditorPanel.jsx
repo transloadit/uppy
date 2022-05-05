@@ -1,5 +1,5 @@
-const { h } = require('preact')
-const classNames = require('classnames')
+import { h } from 'preact'
+import classNames from 'classnames'
 
 function EditorPanel (props) {
   const file = props.files[props.fileCardFor]
@@ -41,4 +41,4 @@ function EditorPanel (props) {
   )
 }
 
-module.exports = EditorPanel
+export default EditorPanel

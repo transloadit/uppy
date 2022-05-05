@@ -1,4 +1,4 @@
-const { h, Component } = require('preact')
+import {  h, Component  } from 'preact'
 
 class AddFiles extends Component {
   triggerFileInputClick = () => {
@@ -198,4 +198,4 @@ class AddFiles extends Component {
   }
 }
 
-module.exports = AddFiles
+export default AddFiles

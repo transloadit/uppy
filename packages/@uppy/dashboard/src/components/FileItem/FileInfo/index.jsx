@@ -1,7 +1,7 @@
-const { h, Fragment } = require('preact')
-const prettierBytes = require('@transloadit/prettier-bytes')
-const truncateString = require('@uppy/utils/lib/truncateString')
-const MetaErrorMessage = require('../MetaErrorMessage')
+import {  h, Fragment  } from 'preact'
+import prettierBytes from '@transloadit/prettier-bytes'
+import truncateString from '@uppy/utils/lib/truncateString'
+import MetaErrorMessage from '../MetaErrorMessage.jsx'
 
 const renderFileName = (props) => {
   const { author, name } = props.file.meta
@@ -92,7 +92,7 @@ const ErrorButton = ({ file, onClick }) => {
   return null
 }
 
-module.exports = function FileInfo (props) {
+export default function FileInfo (props) {
   const { file } = props
   return (
     <div

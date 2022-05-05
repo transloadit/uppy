@@ -1,5 +1,5 @@
-const { cloneElement, Component, toChildArray } = require('preact')
-const classNames = require('classnames')
+import {  cloneElement, Component, toChildArray  } from 'preact'
+import classNames from 'classnames'
 
 const transitionName = 'uppy-transition-slideDownUp'
 const duration = 250
@@ -96,4 +96,4 @@ class Slide extends Component {
   }
 }
 
-module.exports = Slide
+export default Slide

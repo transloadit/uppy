@@ -1,6 +1,6 @@
-const toArray = require('@uppy/utils/lib/toArray')
-const FOCUSABLE_ELEMENTS = require('@uppy/utils/lib/FOCUSABLE_ELEMENTS')
-const getActiveOverlayEl = require('./getActiveOverlayEl')
+import toArray from '@uppy/utils/lib/toArray'
+import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS'
+import getActiveOverlayEl from './getActiveOverlayEl.js'
 
 function focusOnFirstNode (event, nodes) {
   const node = nodes[0]
@@ -49,23 +49,19 @@ function trapFocus (event, activeOverlayType, dashboardEl) {
   }
 }
 
-module.exports = {
-  // Traps focus inside of the currently open overlay (e.g. Dashboard, or e.g. Instagram),
-  // never lets focus disappear from the modal.
-  forModal: (event, activeOverlayType, dashboardEl) => {
-    trapFocus(event, activeOverlayType, dashboardEl)
-  },
+// Traps focus inside of the currently open overlay (e.g. Dashboard, or e.g. Instagram),
+// never lets focus disappear from the modal.
+export  { trapFocus as forModal }
 
-  // Traps focus inside of the currently open overlay, unless overlay is null - then let the user tab away.
-  forInline: (event, activeOverlayType, dashboardEl) => {
-    // ___When we're in the bare 'Drop files here, paste, browse or import from' screen
-    if (activeOverlayType === null) {
-      // Do nothing and let the browser handle it, user can tab away from Uppy to other elements on the page
+// Traps focus inside of the currently open overlay, unless overlay is null - then let the user tab away.
+export function forInline (event, activeOverlayType, dashboardEl) {
+  // ___When we're in the bare 'Drop files here, paste, browse or import from' screen
+  if (activeOverlayType === null) {
+    // Do nothing and let the browser handle it, user can tab away from Uppy to other elements on the page
     // ___When there is some overlay with 'Done' button
-    } else {
-      // Trap the focus inside this overlay!
-      // User can close the overlay (click 'Done') if they want to travel away from Uppy.
-      trapFocus(event, activeOverlayType, dashboardEl)
-    }
-  },
+  } else {
+    // Trap the focus inside this overlay!
+    // User can close the overlay (click 'Done') if they want to travel away from Uppy.
+    trapFocus(event, activeOverlayType, dashboardEl)
+  }
 }

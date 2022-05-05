@@ -1,5 +1,5 @@
-const { h } = require('preact')
-const copyToClipboard = require('../../../utils/copyToClipboard')
+import { h } from 'preact'
+import copyToClipboard from '../../../utils/copyToClipboard.js'
 
 function EditButton ({
   file,
@@ -80,7 +80,7 @@ function CopyLinkButton (props) {
   )
 }
 
-module.exports = function Buttons (props) {
+export default function Buttons (props) {
   const {
     uppy,
     file,

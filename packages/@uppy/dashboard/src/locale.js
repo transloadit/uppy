@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   strings: {
     // When `inline: false`, used as the screen reader label for the button that closes the modal.
     closeModal: 'Close Modal',

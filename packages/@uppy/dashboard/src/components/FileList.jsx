@@ -1,7 +1,7 @@
-const classNames = require('classnames')
-const { h } = require('preact')
-const FileItem = require('./FileItem/index.js')
-const VirtualList = require('./VirtualList')
+import classNames from 'classnames'
+import { h } from 'preact'
+import FileItem from './FileItem/index.jsx'
+import VirtualList from './VirtualList.jsx'
 
 function chunks (list, size) {
   const chunked = []
@@ -18,7 +18,7 @@ function chunks (list, size) {
   return chunked
 }
 
-module.exports = (props) => {
+export default (props) => {
   const noFiles = props.totalFileCount === 0
   const dashboardFilesClass = classNames(
     'uppy-Dashboard-files',
