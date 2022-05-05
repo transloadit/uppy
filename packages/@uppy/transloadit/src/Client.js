@@ -1,5 +1,6 @@
 const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
-const NetworkError = require('@uppy/utils/lib/NetworkError')
+
+const ASSEMBLIES_ENDPOINT = '/assemblies'
 
 function fetchJSON (...args) {
   return fetchWithNetworkError(...args).then(response => {
@@ -12,7 +13,27 @@ function fetchJSON (...args) {
     }
 
     if (!response.ok) {
-      return Promise.reject(new NetworkError(response.statusText))
+      const serverError = new Error(response.statusText)
+      serverError.statusCode = response.status
+
+      if (!`${args[0]}`.endsWith(ASSEMBLIES_ENDPOINT)) return Promise.reject(serverError)
+
+      // Failed assembly requests should return a more detailed error in JSON.
+      return response.json().then(assembly => {
+        if (!assembly.error) throw serverError
+
+        const error = new Error(assembly.error)
+        error.details = assembly.message
+        error.assembly = assembly
+        if (assembly.assembly_id) {
+          error.details += ` Assembly ID: ${assembly.assembly_id}`
+        }
+        throw error
+      }, err => {
+        // eslint-disable-next-line no-param-reassign
+        err.cause = serverError
+        throw err
+      })
     }
 
     return response.json()
@@ -61,25 +82,12 @@ module.exports = class Client {
     })
     data.append('num_expected_upload_files', expectedFiles)
 
-    const url = new URL('/assemblies', `${this.opts.service}`).href
+    const url = new URL(ASSEMBLIES_ENDPOINT, `${this.opts.service}`).href
     return fetchJSON(url, {
       method: 'post',
       headers: this.#headers,
       body: data,
     })
-      .then((assembly) => {
-        if (assembly.error) {
-          const error = new Error(assembly.error)
-          error.details = assembly.message
-          error.assembly = assembly
-          if (assembly.assembly_id) {
-            error.details += ` Assembly ID: ${assembly.assembly_id}`
-          }
-          throw error
-        }
-
-        return assembly
-      })
       .catch((err) => this.#reportError(err, { url, type: 'API_ERROR' }))
   }
 

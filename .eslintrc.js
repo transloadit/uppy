@@ -35,7 +35,8 @@ module.exports = {
   ],
   parser: '@babel/eslint-parser',
   parserOptions: {
-    ecmaVersion: 2020,
+    sourceType: 'script',
+    ecmaVersion: 2022,
     ecmaFeatures: {
       jsx: true,
     },
@@ -147,39 +148,14 @@ module.exports = {
   overrides: [
     {
       files: [
-        '*.mjs',
-        'examples/aws-presigned-url/*.js',
-        'private/dev/*.js',
-        'private/release/*.js',
-        'private/remark-lint-uppy/*.js',
+        '*.jsx',
+        'packages/@uppy/react-native/**/*.js',
       ],
-      parserOptions: {
-        sourceType: 'module',
-      },
-    },
-    {
-      files: [
-        'packages/@uppy/*/src/**/*.jsx',
-        'packages/uppy/src/**/*.jsx',
-      ],
+      parser: 'espree',
       parserOptions: {
         sourceType: 'module',
         ecmaFeatures: {
           jsx: true,
-        },
-      },
-    },
-    {
-      files: [
-        // Packages that have switched to ESM sources:
-        'packages/@uppy/audio/src/**/*.js',
-        'packages/@uppy/compressor/src/**/*.js',
-        'packages/@uppy/vue/src/**/*.js',
-      ],
-      parserOptions: {
-        sourceType: 'module',
-        ecmaFeatures: {
-          jsx: false,
         },
       },
       rules: {
@@ -207,6 +183,81 @@ module.exports = {
           },
         ],
         'import/extensions': ['error', 'ignorePackages'],
+      },
+    },
+    {
+      files: [
+        '*.mjs',
+        'e2e/clients/**/*.js',
+        'examples/aws-presigned-url/*.js',
+        'examples/bundled/*.js',
+        'private/dev/*.js',
+        'private/release/*.js',
+        'private/remark-lint-uppy/*.js',
+
+        // Packages that have switched to ESM sources:
+        'packages/@uppy/audio/src/**/*.js',
+        'packages/@uppy/box/src/**/*.js',
+        'packages/@uppy/compressor/src/**/*.js',
+        'packages/@uppy/drag-drop/src/**/*.js',
+        'packages/@uppy/drop-target/src/**/*.js',
+        'packages/@uppy/dropbox/src/**/*.js',
+        'packages/@uppy/facebook/src/**/*.js',
+        'packages/@uppy/file-input/src/**/*.js',
+        'packages/@uppy/form/src/**/*.js',
+        'packages/@uppy/google-drive/src/**/*.js',
+        'packages/@uppy/image-editor/src/**/*.js',
+        'packages/@uppy/svelte/src/**/*.js',
+        'packages/@uppy/svelte/rollup.config.js',
+        'packages/@uppy/vue/src/**/*.js',
+        'packages/@uppy/webcam/src/**/*.js',
+      ],
+      parser: 'espree',
+      parserOptions: {
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: false,
+        },
+      },
+      rules: {
+        'import/named': 'off', // Disabled because that rule tries and fails to parse JSX dependencies.
+        'no-restricted-globals': [
+          'error',
+          {
+            name: '__filename',
+            message: 'Use import.meta.url instead',
+          },
+          {
+            name: '__dirname',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'exports',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'module',
+            message: 'Not available in ESM',
+          },
+          {
+            name: 'require',
+            message: 'Use import instead',
+          },
+        ],
+        'import/extensions': ['error', 'ignorePackages'],
+      },
+    },
+    {
+      files: [
+        // Those need looser rules, and cannot be made part of the stricter rules above.
+        // TODO: update those to more modern code when switch to ESM is complete
+        'examples/react-native-expo/*.js',
+        'examples/svelte-example/**/*.js',
+        'examples/vue/**/*.js',
+        'examples/vue3/**/*.js',
+      ],
+      parserOptions: {
+        sourceType: 'module',
       },
     },
     {
@@ -383,8 +434,8 @@ module.exports = {
       extends: ['plugin:cypress/recommended'],
     },
     {
-      files: ['e2e/**/*.ts', 'e2e/**/*.js'],
-      rules: { 'import/no-extraneous-dependencies': 'off' },
+      files: ['e2e/**/*.ts', 'e2e/**/*.js', 'e2e/**/*.jsx'],
+      rules: { 'import/no-extraneous-dependencies': 'off', 'no-unused-expressions': 'off' },
     },
   ],
 }

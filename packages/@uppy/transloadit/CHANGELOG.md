@@ -1,5 +1,26 @@
 # @uppy/transloadit
 
+## 2.1.5
+
+Released: 2022-04-27
+Included in: Uppy v2.9.4
+
+- @uppy/transloadit: improve fetch error handling (Antoine du Hamel / #3637)
+
+## 2.1.4
+
+Released: 2022-04-07
+Included in: Uppy v2.9.2
+
+- @uppy/aws-s3,@uppy/companion-client,@uppy/transloadit,@uppy/utils: Propagate `isNetworkError` through error wrappers (Renée Kooi / #3620)
+
+## 2.1.2
+
+Released: 2022-03-24
+Included in: Uppy v2.9.0
+
+- @uppy/transloadit: close assembly if upload is cancelled (Antoine du Hamel / #3591)
+
 ## 2.1.1
 
 Released: 2022-01-12

@@ -1,4 +1,4 @@
 {
   "baseUrl": "http://localhost:1234",
-  "screenshotOnRunFailure": false
+  "defaultCommandTimeout": 16000
 }

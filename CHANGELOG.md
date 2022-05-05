@@ -11,6 +11,124 @@ Please add your entries in this format:
 - `- [ ] (<plugin name>|website|core|meta|build|test): <Present tense verb> <subject> \(<list of associated owners/gh-issues>\)`.
 
 In the current stage we aim to release a new version at least every month.
+
+## 2.9.5
+
+Released: 2022-04-27
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |   3.5.2 | @uppy/robodog   |   2.5.5 |
+| @uppy/core      |  2.1.10 | uppy            |   2.9.5 |
+
+- @uppy/companion: Bump moment from 2.29.1 to 2.29.2 (dependabot[bot] / #3635)
+- @uppy/core: fix `TypeError` when file was removed (Antoine du Hamel / #3670)
+
+
+## 2.9.4
+
+Released: 2022-04-27
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |   2.2.2 | @uppy/file-input       |   2.0.6 |
+| @uppy/box              |   1.0.6 | @uppy/form             |   2.0.5 |
+| @uppy/companion        |   3.5.1 | @uppy/locales          |   2.0.9 |
+| @uppy/compressor       |   0.2.5 | @uppy/transloadit      |   2.1.5 |
+| @uppy/core             |   2.1.9 | @uppy/utils            |   4.0.7 |
+| @uppy/drag-drop        |   2.0.7 | @uppy/vue              |   0.4.7 |
+| @uppy/drop-target      |   1.1.3 | @uppy/robodog          |   2.5.4 |
+| @uppy/dropbox          |   2.0.6 | uppy                   |   2.9.4 |
+| @uppy/facebook         |   2.0.6 |                        |         |
+
+- @uppy/locales: Plural translation in cs_CZ local (JakubHaladej / #3666)
+- @uppy/vue: Add license field to package.json in @uppy/vue (Tobias Trumm / #3664)
+- meta: Add todo comments (Murderlon)
+- @uppy/facebook: refactor to ESM (Antoine du Hamel / #3653)
+- meta: locale-pack: refactor to use more parallel processing (Antoine du Hamel / #3630)
+- @uppy/file-input: refactor to ESM (Antoine du Hamel / #3652)
+- meta: sign requests sent to Transloadit in e2e suite (Antoine du Hamel / #3656)
+- meta: add `VITE_TRANSLOADIT_SECRET` for e2e (Antoine du Hamel)
+- meta: Update BACKLOG.md (Artur Paikin)
+- @uppy/form: refactor to ESM (Antoine du Hamel / #3654)
+- @uppy/dropbox: refactor to ESM (Antoine du Hamel / #3651)
+- meta: sign requests sent to Transloadit in dev env (Antoine du Hamel / #3517)
+- @uppy/drop-target: refactor to ESM (Antoine du Hamel / #3648)
+- @uppy/core: fix `TypeError` when file was removed (Antoine du Hamel / #3650)
+- @uppy/drag-drop: refactor to ESM (Antoine du Hamel / #3647)
+- meta: update outdated files (Antoine du Hamel / #3646)
+- @uppy/compressor: Set meta on file compression (Camilo Forero / #3644)
+- @uppy/transloadit: improve fetch error handling (Antoine du Hamel / #3637)
+- @uppy/box: refactor to ESM (Antoine du Hamel / #3643)
+- @uppy/utils: Fix getFileType for dicom images (Merlijn Vos / #3610)
+- @uppy/aws-s3-multipart: Add `companionCookiesRule` type to @uppy/aws-s3-multipart (Mauricio Ribeiro / #3623)
+
+
+## 2.9.3
+
+Released: 2022-04-07
+
+| Package       | Version | Package       | Version |
+| ------------- | ------- | ------------- | ------- |
+| @uppy/core    |   2.1.8 | uppy          |   2.9.3 |
+| @uppy/robodog |   2.5.3 |               |         |
+
+- @uppy/core: fix TypeError in event handler when file was removed (Antoine du Hamel / #3629)
+
+
+## 2.9.2
+
+Released: 2022-04-07
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   2.0.9 | @uppy/utils            |   4.0.6 |
+| @uppy/companion-client |   2.0.6 | @uppy/robodog          |   2.5.2 |
+| @uppy/compressor       |   0.2.4 | uppy                   |   2.9.2 |
+| @uppy/transloadit      |   2.1.4 |                        |         |
+
+- @uppy/aws-s3,@uppy/companion-client,@uppy/transloadit,@uppy/utils: Propagate `isNetworkError` through error wrappers (Renée Kooi / #3620)
+- @uppy/compressor: Merge new name and type into compressed file (Camilo Forero / #3606)
+
+
+## 2.9.1
+
+Released: 2022-03-29
+
+| Package       | Version | Package       | Version |
+| ------------- | ------- | ------------- | ------- |
+| @uppy/core    |   2.1.7 | @uppy/robodog |   2.5.1 |
+| @uppy/tus     |   2.2.2 | uppy          |   2.9.1 |
+
+- @uppy/tus: fix hasOwn (Mikael Finstad / #3604)
+- meta: Increase test timeout for flaky e2e tests (Merlijn Vos / #3603)
+- meta: upgrade GHA actions (Antoine du Hamel / #3602)
+- @uppy/core: refactor: replace deprecated String.prototype.substr() (CommanderRoot / #3600)
+
+
+## 2.9.0
+
+Released: 2022-03-24
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/companion   |   3.5.0 | @uppy/webcam      |   2.1.0 |
+| @uppy/status-bar  |   2.1.3 | @uppy/robodog     |   2.5.0 |
+| @uppy/transloadit |   2.1.2 | uppy              |   2.9.0 |
+| @uppy/tus         |   2.2.1 |                   |         |
+
+- @uppy/transloadit: close assembly if upload is cancelled (Antoine du Hamel / #3591)
+- @uppy/companion: Companion server upload events (Mikael Finstad / #3544)
+- @uppy/tus: fix double requests sent when rate limiting (Antoine du Hamel / #3595)
+- website: fix linter error on blog post (Antoine du Hamel / #3596)
+- @uppy/companion: fix `yarn test` command (Antoine du Hamel / #3590)
+- @uppy/webcam: Mime types in webcam options type (Sobakin Sviatoslav / #3593)
+- website: Some polish and a better (?) intro for the recent update post (AJvanLoon / #3588)
+- @uppy/companion: Allow setting no ACL (Mikael Finstad / #3577)
+- @uppy/companion: Small companion code and doc changes (Mikael Finstad / #3586)
+- @uppy/robodog: fix CDN bundle (Antoine du Hamel / #3587)
+- website: Fix broken link (YukeshShr / #3581)
+
 ## 2.8.0
 
 Released: 2022-03-16

@@ -1,6 +1,6 @@
-const { ProviderViews } = require('@uppy/provider-views')
+import { ProviderViews } from '@uppy/provider-views'
 
-module.exports = class DriveProviderViews extends ProviderViews {
+export default class DriveProviderViews extends ProviderViews {
   toggleCheckbox (e, file) {
     e.stopPropagation()
     e.preventDefault()

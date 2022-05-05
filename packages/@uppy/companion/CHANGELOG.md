@@ -1,5 +1,22 @@
 # @uppy/companion
 
+## 3.5.2
+
+Released: 2022-04-27
+Included in: Uppy v2.9.5
+
+- @uppy/companion: Bump moment from 2.29.1 to 2.29.2 (dependabot[bot] / #3635)
+
+## 3.5.0
+
+Released: 2022-03-24
+Included in: Uppy v2.9.0
+
+- @uppy/companion: Companion server upload events (Mikael Finstad / #3544)
+- @uppy/companion: fix `yarn test` command (Antoine du Hamel / #3590)
+- @uppy/companion: Allow setting no ACL (Mikael Finstad / #3577)
+- @uppy/companion: Small companion code and doc changes (Mikael Finstad / #3586)
+
 ## 3.4.0
 
 Released: 2022-03-16

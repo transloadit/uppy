@@ -10,7 +10,7 @@ const defaultOptions = {
   },
   providerOptions: {
     s3: {
-      acl: 'public-read',
+      acl: 'public-read', // todo default to no ACL in next major
       endpoint: 'https://{service}.{region}.amazonaws.com',
       conditions: [],
       useAccelerateEndpoint: false,
@@ -22,6 +22,7 @@ const defaultOptions = {
   logClientVersion: true,
   periodicPingUrls: [],
   streamingUpload: false,
+  clientSocketConnectTimeout: 60000,
 }
 
 /**

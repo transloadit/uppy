@@ -13,6 +13,7 @@ const companion = require('../companion')
 const helper = require('./helper')
 const middlewares = require('../server/middlewares')
 const { getURLBuilder } = require('../server/helpers/utils')
+const connectRedis = require('connect-redis')
 
 /**
  * Configures an Express app for running Companion standalone
@@ -139,7 +140,7 @@ module.exports = function server (inputCompanionOptions = {}) {
   }
 
   if (companionOptions.redisUrl) {
-    const RedisStore = require('connect-redis')(session)
+    const RedisStore = connectRedis(session)
     const redisClient = redis.client(
       merge({ url: companionOptions.redisUrl }, companionOptions.redisOptions),
     )
@@ -153,6 +154,10 @@ module.exports = function server (inputCompanionOptions = {}) {
     }
   }
 
+  // Session is used for grant redirects, so that we don't need to expose secret tokens in URLs
+  // See https://github.com/transloadit/uppy/pull/1668
+  // https://github.com/transloadit/uppy/issues/3538#issuecomment-1069232909
+  // https://github.com/simov/grant#callback-session
   router.use(session(sessionOptions))
 
   // Routes

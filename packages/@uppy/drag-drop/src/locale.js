@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   strings: {
     // Text to show on the droppable area.
     // `%{browse}` is replaced with a link that opens the system file selection dialog.

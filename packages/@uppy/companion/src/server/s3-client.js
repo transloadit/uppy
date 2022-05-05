@@ -1,3 +1,6 @@
+const S3 = require('aws-sdk/clients/s3')
+const AWS = require('aws-sdk')
+
 /**
  * instantiates the aws-sdk s3 client that will be used for s3 uploads.
  *
@@ -6,8 +9,6 @@
 module.exports = (companionOptions) => {
   let s3Client = null
   if (companionOptions.providerOptions.s3) {
-    const S3 = require('aws-sdk/clients/s3')
-    const AWS = require('aws-sdk')
     const s3ProviderOptions = companionOptions.providerOptions.s3
 
     if (s3ProviderOptions.accessKeyId || s3ProviderOptions.secretAccessKey) {

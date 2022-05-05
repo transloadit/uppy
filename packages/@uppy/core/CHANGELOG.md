@@ -1,5 +1,33 @@
 # @uppy/core
 
+## 2.1.10
+
+Released: 2022-04-27
+Included in: Uppy v2.9.5
+
+- @uppy/core: fix `TypeError` when file was removed (Antoine du Hamel / #3670)
+
+## 2.1.9
+
+Released: 2022-04-27
+Included in: Uppy v2.9.4
+
+- @uppy/core: fix `TypeError` when file was removed (Antoine du Hamel / #3650)
+
+## 2.1.8
+
+Released: 2022-04-07
+Included in: Uppy v2.9.3
+
+- @uppy/core: fix TypeError in event handler when file was removed (Antoine du Hamel / #3629)
+
+## 2.1.7
+
+Released: 2022-03-29
+Included in: Uppy v2.9.1
+
+- @uppy/core: refactor: replace deprecated String.prototype.substr() (CommanderRoot / #3600)
+
 ## 2.1.6
 
 Released: 2022-03-16

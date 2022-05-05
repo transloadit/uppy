@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   strings: {
     pluginNameCamera: 'Camera',
     noCameraTitle: 'Camera Not Available',

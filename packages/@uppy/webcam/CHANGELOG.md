@@ -1,5 +1,12 @@
 # @uppy/webcam
 
+## 2.1.0
+
+Released: 2022-03-24
+Included in: Uppy v2.9.0
+
+- @uppy/webcam: Mime types in webcam options type (Sobakin Sviatoslav / #3593)
+
 ## 2.0.5
 
 Released: 2021-12-07

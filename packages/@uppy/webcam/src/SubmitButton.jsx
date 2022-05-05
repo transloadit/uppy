@@ -1,4 +1,4 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 function SubmitButton ({ onSubmit, i18n }) {
   return (
@@ -25,4 +25,4 @@ function SubmitButton ({ onSubmit, i18n }) {
   )
 }
 
-module.exports = SubmitButton
+export default SubmitButton

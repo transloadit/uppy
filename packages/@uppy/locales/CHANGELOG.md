@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 2.0.9
+
+Released: 2022-04-27
+Included in: Uppy v2.9.4
+
+- @uppy/locales: Plural translation in cs_CZ local (JakubHaladej / #3666)
+
 ## 2.0.8
 
 Released: 2022-03-16

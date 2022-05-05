@@ -1,5 +1,6 @@
 import { BasePlugin } from '@uppy/core'
 import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import prettierBytes from '@transloadit/prettier-bytes'
 import CompressorJS from 'compressorjs/dist/compressor.common.js'
 import locale from './locale.js'
@@ -49,10 +50,16 @@ export default class Compressor extends BasePlugin {
           const compressedSavingsSize = file.data.size - compressedBlob.size
           this.uppy.log(`[Image Compressor] Image ${file.id} compressed by ${prettierBytes(compressedSavingsSize)}`)
           totalCompressedSize += compressedSavingsSize
+          const { name, type, size } = compressedBlob
+          const { extension } = getFileNameAndExtension(name)
           this.uppy.setFileState(file.id, {
+            name,
+            extension,
+            type,
+            size,
             data: compressedBlob,
-            size: compressedBlob.size,
           })
+          this.uppy.setFileMeta(file.id, { name, type })
         } catch (err) {
           this.uppy.log(`[Image Compressor] Failed to compress ${file.id}:`, 'warning')
           this.uppy.log(err, 'warning')
