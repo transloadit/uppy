@@ -1,4 +1,11 @@
-const tr_TR = {}
+const tr_TR = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 tr_TR.strings = {
   addMore: 'Daha ekle',
@@ -137,15 +144,8 @@ tr_TR.strings = {
   openFolderNamed: 'Açık dosya %{name}',
 }
 
-tr_TR.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.tr_TR = tr_TR
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.tr_TR = tr_TR
-}
-
-module.exports = tr_TR
+export default tr_TR

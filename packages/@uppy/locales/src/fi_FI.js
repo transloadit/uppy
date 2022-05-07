@@ -1,4 +1,11 @@
-const fi_FI = {}
+const fi_FI = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 fi_FI.strings = {
   addMore: 'Lisää',
@@ -144,15 +151,8 @@ fi_FI.strings = {
   recording: 'Tallennetaan',
 }
 
-fi_FI.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.fi_FI = fi_FI
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.fi_FI = fi_FI
-}
-
-module.exports = fi_FI
+export default fi_FI

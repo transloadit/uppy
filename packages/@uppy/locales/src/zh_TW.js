@@ -1,4 +1,11 @@
-const zh_TW = {}
+const zh_TW = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 zh_TW.strings = {
   addBulkFilesFailed: {
@@ -146,15 +153,8 @@ zh_TW.strings = {
   },
 }
 
-zh_TW.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.zh_TW = zh_TW
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.zh_TW = zh_TW
-}
-
-module.exports = zh_TW
+export default zh_TW

@@ -1,4 +1,11 @@
-const he_IL = {}
+const he_IL = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 he_IL.strings = {
   addMore: 'הוסף עוד',
@@ -139,15 +146,8 @@ he_IL.strings = {
   },
 }
 
-he_IL.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.he_IL = he_IL
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.he_IL = he_IL
-}
-
-module.exports = he_IL
+export default he_IL
