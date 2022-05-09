@@ -1,4 +1,11 @@
-const hr_HR = {}
+const hr_HR = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 hr_HR.strings = {
   addMore: 'Dodaj još',
@@ -137,15 +144,8 @@ hr_HR.strings = {
   openFolderNamed: 'Otvori mapu %{name}',
 }
 
-hr_HR.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.hr_HR = hr_HR
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.hr_HR = hr_HR
-}
-
-module.exports = hr_HR
+export default hr_HR
