@@ -210,6 +210,7 @@ module.exports = {
         'packages/@uppy/image-editor/src/**/*.js',
         'packages/@uppy/locales/src/**/*.js',
         'packages/@uppy/locales/template.js',
+        'packages/@uppy/progress-bar/src/**/*.js',
         'packages/@uppy/svelte/src/**/*.js',
         'packages/@uppy/svelte/rollup.config.js',
         'packages/@uppy/vue/src/**/*.js',
