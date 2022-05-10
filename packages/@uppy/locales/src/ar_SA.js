@@ -1,4 +1,11 @@
-const ar_SA = {}
+const ar_SA = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 ar_SA.strings = {
   addMore: 'أضف المزيد',
@@ -137,15 +144,8 @@ ar_SA.strings = {
   openFolderNamed: '%{name} افتح المجلد',
 }
 
-ar_SA.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.ar_SA = ar_SA
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.ar_SA = ar_SA
-}
-
-module.exports = ar_SA
+export default ar_SA

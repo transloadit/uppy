@@ -1,4 +1,11 @@
-const it_IT = {}
+const it_IT = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 it_IT.strings = {
   addMoreFiles: 'Aggiungi più file',
@@ -137,15 +144,8 @@ it_IT.strings = {
   openFolderNamed: 'Cartella aperta %{name}',
 }
 
-it_IT.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.it_IT = it_IT
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.it_IT = it_IT
-}
-
-module.exports = it_IT
+export default it_IT

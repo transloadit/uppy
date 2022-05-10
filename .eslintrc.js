@@ -198,6 +198,7 @@ module.exports = {
         // Packages that have switched to ESM sources:
         'packages/@uppy/audio/src/**/*.js',
         'packages/@uppy/box/src/**/*.js',
+        'packages/@uppy/companion-client/src/**/*.js',
         'packages/@uppy/compressor/src/**/*.js',
         'packages/@uppy/drag-drop/src/**/*.js',
         'packages/@uppy/drop-target/src/**/*.js',
@@ -207,6 +208,9 @@ module.exports = {
         'packages/@uppy/form/src/**/*.js',
         'packages/@uppy/google-drive/src/**/*.js',
         'packages/@uppy/image-editor/src/**/*.js',
+        'packages/@uppy/locales/src/**/*.js',
+        'packages/@uppy/locales/template.js',
+        'packages/@uppy/progress-bar/src/**/*.js',
         'packages/@uppy/screen-capture/src/**/*.js',
         'packages/@uppy/svelte/src/**/*.js',
         'packages/@uppy/svelte/rollup.config.js',

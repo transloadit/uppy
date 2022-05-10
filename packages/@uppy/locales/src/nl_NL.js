@@ -1,4 +1,11 @@
-const nl_NL = {}
+const nl_NL = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 nl_NL.strings = {
   addMoreFiles: 'Extra bestanden toevoegen',
@@ -133,15 +140,8 @@ nl_NL.strings = {
   openFolderNamed: 'Open map %{name}',
 }
 
-nl_NL.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.nl_NL = nl_NL
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.nl_NL = nl_NL
-}
-
-module.exports = nl_NL
+export default nl_NL
