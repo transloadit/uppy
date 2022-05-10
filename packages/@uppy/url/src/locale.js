@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   strings: {
     // Label for the "Import" button.
     import: 'Import',
