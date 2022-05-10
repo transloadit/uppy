@@ -80,7 +80,7 @@ class UIPlugin extends BasePlugin {
       targetElement.appendChild(uppyRootElement)
 
       // Set the text direction if the page has not defined one.
-      uppyRootElement.dir = this.opts.direction ?? getTextDirection(uppyRootElement) ?? 'ltr'
+      uppyRootElement.dir = this.opts.direction || getTextDirection(uppyRootElement) || 'ltr'
 
       this.onMount()
 
