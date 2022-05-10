@@ -1,4 +1,11 @@
-const sk_SK = {}
+const sk_SK = {
+  pluralize (count) {
+    if (count === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 sk_SK.strings = {
   addBulkFilesFailed: {
@@ -167,15 +174,8 @@ sk_SK.strings = {
   zoomOut: 'Oddialiť',
 }
 
-sk_SK.pluralize = function pluralize (count) {
-  if (count === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.sk_SK = sk_SK
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.sk_SK = sk_SK
-}
-
-module.exports = sk_SK
+export default sk_SK

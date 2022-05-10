@@ -3,6 +3,7 @@
   "description": "Uppy language packs",
   "version": "2.0.9",
   "license": "MIT",
+  "type": "module",
   "keywords": [
     "uppy",
     "uppy-plugin",

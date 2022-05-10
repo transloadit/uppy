@@ -88,7 +88,7 @@ class MusicUploadButton extends React.Component {
   }
 
   componentWillUnmount () {
-    this.uppy.close()
+    this.uppy.close({ reason: 'unmount' })
   }
 
   handleOpen () {
