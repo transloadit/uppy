@@ -216,6 +216,7 @@ module.exports = {
         'packages/@uppy/url/src/**/*.js',
         'packages/@uppy/vue/src/**/*.js',
         'packages/@uppy/webcam/src/**/*.js',
+        'packages/@uppy/zoom/src/**/*.js',
       ],
       parser: 'espree',
       parserOptions: {
