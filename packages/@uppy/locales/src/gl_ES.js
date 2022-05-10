@@ -1,4 +1,11 @@
-const gl_ES = {}
+const gl_ES = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 gl_ES.strings = {
   addMore: 'Engadir máis',
@@ -137,15 +144,8 @@ gl_ES.strings = {
   openFolderNamed: 'Cartafol aberto %{name}',
 }
 
-gl_ES.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.gl_ES = gl_ES
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.gl_ES = gl_ES
-}
-
-module.exports = gl_ES
+export default gl_ES

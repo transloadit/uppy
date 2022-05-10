@@ -1,4 +1,11 @@
-const pt_PT = {}
+const pt_PT = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 pt_PT.strings = {
   addMore: 'Adicionar mais',
@@ -131,15 +138,8 @@ pt_PT.strings = {
   openFolderNamed: 'Pasta aberta %{name}',
 }
 
-pt_PT.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.pt_PT = pt_PT
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.pt_PT = pt_PT
-}
-
-module.exports = pt_PT
+export default pt_PT
