@@ -212,8 +212,9 @@ module.exports = class Tus extends BasePlugin {
         const xhr = req.getUnderlyingObject()
         xhr.withCredentials = !!opts.withCredentials
 
+        let userProvidedPromise
         if (typeof opts.onBeforeRequest === 'function') {
-          opts.onBeforeRequest(req)
+          userProvidedPromise = opts.onBeforeRequest(req)
         }
 
         if (hasProperty(queuedRequest, 'shouldBeRequeued')) {
@@ -229,9 +230,9 @@ module.exports = class Tus extends BasePlugin {
             done()
             return () => {}
           })
-          return p
+          return Promise.all([p, userProvidedPromise])
         }
-        return undefined
+        return userProvidedPromise
       }
 
       uploadOptions.onError = (err) => {
