@@ -211,6 +211,7 @@ module.exports = {
         'packages/@uppy/instagram/src/**/*.js',
         'packages/@uppy/locales/src/**/*.js',
         'packages/@uppy/locales/template.js',
+        'packages/@uppy/onedrive/src/**/*.js',
         'packages/@uppy/progress-bar/src/**/*.js',
         'packages/@uppy/screen-capture/src/**/*.js',
         'packages/@uppy/status-bar/src/**/*.js',

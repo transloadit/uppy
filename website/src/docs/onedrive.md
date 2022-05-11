@@ -89,7 +89,7 @@ This option correlates to the [RequestCredentials value](https://developer.mozil
 <!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
-module.exports = {
+export default {
   strings: {
     pluginNameOneDrive: 'OneDrive',
   },
