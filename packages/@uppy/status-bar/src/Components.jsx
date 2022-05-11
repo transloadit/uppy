@@ -1,10 +1,10 @@
-const classNames = require('classnames')
-const throttle = require('lodash.throttle')
-const prettierBytes = require('@transloadit/prettier-bytes')
-const prettyETA = require('@uppy/utils/lib/prettyETA')
-const { h } = require('preact')
+import { h } from 'preact'
+import classNames from 'classnames'
+import throttle from 'lodash.throttle'
+import prettierBytes from '@transloadit/prettier-bytes'
+import prettyETA from '@uppy/utils/lib/prettyETA'
 
-const statusBarStates = require('./StatusBarStates')
+import statusBarStates from './StatusBarStates.js'
 
 const DOT = `\u00B7`
 const renderDot = () => ` ${DOT} `
@@ -430,8 +430,7 @@ function ProgressBarError (props) {
     </div>
   )
 }
-
-module.exports = {
+export {
   UploadBtn,
   RetryBtn,
   CancelBtn,

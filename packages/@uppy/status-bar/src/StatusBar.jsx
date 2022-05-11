@@ -1,9 +1,10 @@
-const { h } = require('preact')
-const classNames = require('classnames')
-const statusBarStates = require('./StatusBarStates')
-const calculateProcessingProgress = require('./calculateProcessingProgress')
+// TODO: rename this file to StatusBarUI>jsx on the next major.
+import { h } from 'preact'
+import classNames from 'classnames'
+import statusBarStates from './StatusBarStates.js'
+import calculateProcessingProgress from './calculateProcessingProgress.js'
 
-const {
+import {
   UploadBtn,
   RetryBtn,
   CancelBtn,
@@ -13,7 +14,7 @@ const {
   ProgressBarError,
   ProgressBarUploading,
   ProgressBarComplete,
-} = require('./Components')
+} from './Components.jsx'
 
 const {
   STATE_ERROR,
@@ -24,9 +25,8 @@ const {
   STATE_COMPLETE,
 } = statusBarStates
 
-module.exports = StatusBar
-
-function StatusBar (props) {
+// TODO: rename the function to StatusBarUI on the next major.
+export default function StatusBar (props) {
   const {
     newFiles,
     allowNewUpload,
