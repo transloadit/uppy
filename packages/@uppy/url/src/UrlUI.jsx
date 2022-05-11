@@ -1,4 +1,4 @@
-const { h, Component } = require('preact')
+import { h, Component } from 'preact'
 
 class UrlUI extends Component {
   constructor (props) {
@@ -12,23 +12,26 @@ class UrlUI extends Component {
   }
 
   handleKeyPress (ev) {
+    const { addFile } = this.props
     if (ev.keyCode === 13) {
-      this.props.addFile(this.input.value)
+      addFile(this.input.value)
     }
   }
 
   handleClick () {
-    this.props.addFile(this.input.value)
+    const { addFile } = this.props
+    addFile(this.input.value)
   }
 
   render () {
+    const { i18n } = this.props
     return (
       <div className="uppy-Url">
         <input
           className="uppy-u-reset uppy-c-textInput uppy-Url-input"
           type="text"
-          aria-label={this.props.i18n('enterUrlToImport')}
-          placeholder={this.props.i18n('enterUrlToImport')}
+          aria-label={i18n('enterUrlToImport')}
+          placeholder={i18n('enterUrlToImport')}
           onKeyUp={this.handleKeyPress}
           ref={(input) => { this.input = input }}
           data-uppy-super-focusable
@@ -38,11 +41,11 @@ class UrlUI extends Component {
           type="button"
           onClick={this.handleClick}
         >
-          {this.props.i18n('import')}
+          {i18n('import')}
         </button>
       </div>
     )
   }
 }
 
-module.exports = UrlUI
+export default UrlUI

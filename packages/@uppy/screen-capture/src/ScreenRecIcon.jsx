@@ -1,6 +1,6 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
-module.exports = () => {
+export default () => {
   return (
     <svg aria-hidden="true" focusable="false" width="32" height="32" viewBox="0 0 32 32">
       <g fill="none" fillRule="evenodd">

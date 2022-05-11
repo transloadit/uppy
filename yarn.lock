@@ -9713,6 +9713,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/companion-client@workspace:packages/@uppy/companion-client"
   dependencies:
+    "@jest/globals": ^27.4.2
     "@uppy/utils": "workspace:^"
     namespace-emitter: ^2.0.1
   languageName: unknown

@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
+  "type": "module",
   "keywords": [
     "file uploader",
     "uppy",
@@ -23,5 +24,8 @@
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "namespace-emitter": "^2.0.1"
+  },
+  "devDependencies": {
+    "@jest/globals": "^27.4.2"
   }
 }

@@ -1,4 +1,11 @@
-const el_GR = {}
+const el_GR = {
+  pluralize (n) {
+    if (n === 1) {
+      return 1
+    }
+    return 0
+  },
+}
 
 el_GR.strings = {
   addMore: 'Προσθέστε περισσότερα',
@@ -137,15 +144,8 @@ el_GR.strings = {
   },
 }
 
-el_GR.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 1
-  }
-  return 0
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.el_GR = el_GR
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.el_GR = el_GR
-}
-
-module.exports = el_GR
+export default el_GR

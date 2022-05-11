@@ -559,10 +559,6 @@ Retry an upload (after an error, for example).
 
 Retry all uploads (after an error, for example).
 
-### `uppy.cancelAll()`
-
-Cancel all uploads, reset progress and remove all files.
-
 ### `uppy.setState(patch)`
 
 Update Uppy’s internal state. Usually, this method is called internally, but in some cases it might be useful to alter something directly, especially when implementing your own plugins.
@@ -673,13 +669,19 @@ uppy.getPlugin('Dashboard').setOptions({
 })
 ```
 
-### `uppy.reset()`
+### `uppy.reset({ reason = 'user' })` (alias `uppy.cancelAll()`)
 
 Stop all uploads in progress and clear file selection, set progress to 0. More or less, it returns things to the way they were before any user input.
 
-### `uppy.close()`
+* `reason` - The reason for resetting. Plugins can use this to provide different cleanup behavior. Possible values are:
+  * `user` - The user has closed the Uppy instance
+  * `unmount` - The uppy instance has been closed programatically
+
+### `uppy.close({ reason = 'user' })`
 
 Uninstall all plugins and close down this Uppy instance. Also runs `uppy.reset()` before uninstalling.
+
+* `reason` - Same as the `reason` option for `cancelAll`
 
 ### `uppy.logout()`
 

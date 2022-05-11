@@ -338,8 +338,10 @@ export default class XHRUpload extends BasePlugin {
         reject(new Error('File removed'))
       })
 
-      this.onCancelAll(file.id, () => {
-        queuedRequest.abort()
+      this.onCancelAll(file.id, ({ reason }) => {
+        if (reason === 'user') {
+          queuedRequest.abort()
+        }
         reject(new Error('Upload cancelled'))
       })
     })
@@ -384,9 +386,11 @@ export default class XHRUpload extends BasePlugin {
           resolve(`upload ${file.id} was removed`)
         })
 
-        this.onCancelAll(file.id, () => {
-          socket.send('cancel', {})
-          queuedRequest.abort()
+        this.onCancelAll(file.id, ({ reason } = {}) => {
+          if (reason === 'user') {
+            socket.send('cancel', {})
+            queuedRequest.abort()
+          }
           resolve(`upload ${file.id} was canceled`)
         })
 
@@ -524,7 +528,8 @@ export default class XHRUpload extends BasePlugin {
         return reject(error)
       })
 
-      this.uppy.on('cancel-all', () => {
+      this.uppy.on('cancel-all', ({ reason } = {}) => {
+        if (reason !== 'user') return
         timer.done()
         xhr.abort()
       })
@@ -586,10 +591,10 @@ export default class XHRUpload extends BasePlugin {
     })
   }
 
-  onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('cancel-all', () => {
+  onCancelAll (fileID, eventHandler) {
+    this.uploaderEvents[fileID].on('cancel-all', (...args) => {
       if (!this.uppy.getFile(fileID)) return
-      cb()
+      eventHandler(...args)
     })
   }
 

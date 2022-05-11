@@ -1,4 +1,11 @@
-const th_TH = {}
+const th_TH = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 th_TH.strings = {
   addBulkFilesFailed: {
@@ -156,15 +163,8 @@ th_TH.strings = {
   zoomOut: 'ซูมออก',
 }
 
-th_TH.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.th_TH = th_TH
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.th_TH = th_TH
-}
-
-module.exports = th_TH
+export default th_TH

@@ -1,4 +1,11 @@
-const fa_IR = {}
+const fa_IR = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 fa_IR.strings = {
   addBulkFilesFailed: {
@@ -171,14 +178,7 @@ fa_IR.strings = {
 
 }
 
-fa_IR.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.fa_IR = fa_IR
 }
-
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.fa_IR = fa_IR
-}
-module.exports = fa_IR
+export default fa_IR

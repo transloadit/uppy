@@ -16,7 +16,7 @@ describe('Dashboard with Tus', () => {
     cy.intercept('http://localhost:3020/search/unsplash/*').as('unsplash')
   })
 
-  it.only('should emit `error` and `upload-error` events on failed POST request', () => {
+  it('should emit `error` and `upload-error` events on failed POST request', () => {
     cy.get('@file-input').attachFile(['images/traffic.jpg'])
 
     const error = cy.spy()

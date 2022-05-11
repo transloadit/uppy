@@ -1,6 +1,6 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
-module.exports = ({ streamActive, i18n }) => {
+export default ({ streamActive, i18n }) => {
   if (streamActive) {
     return (
       <div title={i18n('streamActive')} aria-label={i18n('streamActive')} className="uppy-ScreenCapture-icon--stream uppy-ScreenCapture-icon--streamActive">
