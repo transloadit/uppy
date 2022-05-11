@@ -1,4 +1,4 @@
-const { h, Fragment } = require('preact')
+import { h, Fragment } from 'preact'
 
 const Breadcrumb = (props) => {
   const { getFolder, title, isLast } = props
@@ -17,7 +17,7 @@ const Breadcrumb = (props) => {
   )
 }
 
-module.exports = (props) => {
+export default (props) => {
   const { getFolder, title, breadcrumbsIcon, directories } = props
 
   return (

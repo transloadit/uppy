@@ -1,8 +1,8 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 const SUBMIT_KEY = 13
 
-module.exports = (props) => {
+export default (props) => {
   const { searchTerm, i18n, search } = props
 
   const handleKeyPress = (ev) => {

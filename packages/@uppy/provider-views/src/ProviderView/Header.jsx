@@ -1,7 +1,7 @@
-const User = require('./User')
-const Breadcrumbs = require('../Breadcrumbs')
+import User from './User.jsx'
+import Breadcrumbs from '../Breadcrumbs.jsx'
 
-module.exports = (props) => {
+export default (props) => {
   const components = []
   if (props.showBreadcrumbs) {
     components.push(Breadcrumbs({
