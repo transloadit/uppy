@@ -1,12 +1,15 @@
-const { h, Component } = require('preact')
-const RecordButton = require('./RecordButton')
-const SubmitButton = require('./SubmitButton')
-const StopWatch = require('./StopWatch')
-const StreamStatus = require('./StreamStatus')
+// TODO: rename this file to RecorderScreen.jsx in the next major.
+/* eslint-disable react/jsx-props-no-spreading */
+import { h, Component } from 'preact'
+import RecordButton from './RecordButton.jsx'
+import SubmitButton from './SubmitButton.jsx'
+import StopWatch from './StopWatch.jsx'
+import StreamStatus from './StreamStatus.jsx'
 
 class RecorderScreen extends Component {
   componentWillUnmount () {
-    this.props.onStop()
+    const { onStop } = this.props
+    onStop()
   }
 
   render () {
@@ -53,4 +56,4 @@ class RecorderScreen extends Component {
   }
 }
 
-module.exports = RecorderScreen
+export default RecorderScreen

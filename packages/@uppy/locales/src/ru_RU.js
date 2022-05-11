@@ -1,4 +1,16 @@
-const ru_RU = {}
+const ru_RU = {
+  pluralize (n) {
+    if (n % 10 === 1 && n % 100 !== 11) {
+      return 0
+    }
+
+    if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) {
+      return 1
+    }
+
+    return 2
+  },
+}
 
 ru_RU.strings = {
   addMoreFiles: 'Добавить еще файлы',
@@ -140,20 +152,8 @@ ru_RU.strings = {
   openFolderNamed: 'Открыть папку %{name}',
 }
 
-ru_RU.pluralize = function pluralize (n) {
-  if (n % 10 === 1 && n % 100 !== 11) {
-    return 0
-  }
-
-  if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) {
-    return 1
-  }
-
-  return 2
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.ru_RU = ru_RU
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.ru_RU = ru_RU
-}
-
-module.exports = ru_RU
+export default ru_RU

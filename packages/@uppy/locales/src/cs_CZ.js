@@ -1,4 +1,14 @@
-const cs_CZ = {}
+const cs_CZ = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    if (n > 1 && n < 5) {
+      return 1
+    }
+    return 2
+  },
+}
 
 cs_CZ.strings = {
   addMore: 'Přidat další',
@@ -138,18 +148,8 @@ cs_CZ.strings = {
   },
 }
 
-cs_CZ.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  if (n > 1 && n < 5) {
-    return 1
-  }
-  return 2
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.cs_CZ = cs_CZ
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.cs_CZ = cs_CZ
-}
-
-module.exports = cs_CZ
+export default cs_CZ

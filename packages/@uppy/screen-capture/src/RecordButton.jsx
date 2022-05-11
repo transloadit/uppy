@@ -1,9 +1,9 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 /**
  * Control screen capture recording. Will show record or stop button.
  */
-module.exports = function RecordButton ({ recording, onStartRecording, onStopRecording, i18n }) {
+export default function RecordButton ({ recording, onStartRecording, onStopRecording, i18n }) {
   if (recording) {
     return (
       <button

@@ -412,3 +412,7 @@ uppy.on('transloadit:complete', (assembly) => {
 [assembly-status]: https://transloadit.com/docs/api/#assembly-status-response
 
 [template-credentials]: https://transloadit.com/docs/#how-to-create-template-credentials
+
+## Assembly behavior when Uppy is closed
+
+When integrating `@uppy/transloadit` with `@uppy/dashboard`, closing the dashboard will result in continuing assemblies on the server. When the user manually cancels the upload any running assemblies will be cancelled.

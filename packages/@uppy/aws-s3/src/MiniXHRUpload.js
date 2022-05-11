@@ -102,8 +102,8 @@ module.exports = class MiniXHRUpload {
   }
 
   #addEventHandlerIfFileStillExists (eventName, fileID, eventHandler) {
-    this.uploaderEvents[fileID].on(eventName, () => {
-      if (this.uppy.getFile(fileID)) eventHandler()
+    this.uploaderEvents[fileID].on(eventName, (...args) => {
+      if (this.uppy.getFile(fileID)) eventHandler(...args)
     })
   }
 
@@ -234,8 +234,10 @@ module.exports = class MiniXHRUpload {
         reject(new Error('File removed'))
       })
 
-      this.#addEventHandlerIfFileStillExists('cancel-all', file.id, () => {
-        queuedRequest.abort()
+      this.#addEventHandlerIfFileStillExists('cancel-all', file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
+          queuedRequest.abort()
+        }
         reject(new Error('Upload cancelled'))
       })
     })
@@ -283,9 +285,11 @@ module.exports = class MiniXHRUpload {
         resolve(`upload ${file.id} was removed`)
       })
 
-      this.#addEventHandlerIfFileStillExists('cancel-all', file.id, () => {
-        socket.send('cancel', {})
-        queuedRequest.abort()
+      this.#addEventHandlerIfFileStillExists('cancel-all', file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
+          socket.send('cancel', {})
+          queuedRequest.abort()
+        }
         resolve(`upload ${file.id} was canceled`)
       })
 

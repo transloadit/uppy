@@ -1,4 +1,11 @@
-const bg_BG = {}
+const bg_BG = {
+  pluralize (count) {
+    if (count === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 bg_BG.strings = {
   addBulkFilesFailed: {
@@ -143,15 +150,8 @@ bg_BG.strings = {
   },
 }
 
-bg_BG.pluralize = function pluralize (count) {
-  if (count === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.bg_BG = bg_BG
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.bg_BG = bg_BG
-}
-
-module.exports = bg_BG
+export default bg_BG

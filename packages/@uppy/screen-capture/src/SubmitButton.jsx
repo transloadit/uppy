@@ -1,9 +1,9 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 /**
  * Submit recorded video to uppy. Enabled when file is available
  */
-module.exports = function SubmitButton ({ recording, recordedVideo, onSubmit, i18n }) {
+export default function SubmitButton ({ recording, recordedVideo, onSubmit, i18n }) {
   if (recordedVideo && !recording) {
     return (
       <button
