@@ -1,5 +1,4 @@
-import { jest, describe, it, expect } from '@jest/globals'
-import UppySocket from './Socket.js'
+const UppySocket = require('./Socket')
 
 describe('Socket', () => {
   let webSocketConstructorSpy

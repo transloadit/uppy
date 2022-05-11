@@ -1,13 +1,13 @@
 'use strict'
 
-import RequestClient from './RequestClient.js'
-import tokenStorage from './tokenStorage.js'
+const RequestClient = require('./RequestClient')
+const tokenStorage = require('./tokenStorage')
 
 const getName = (id) => {
   return id.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
 }
 
-export default class Provider extends RequestClient {
+module.exports = class Provider extends RequestClient {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.provider = opts.provider
@@ -37,7 +37,7 @@ export default class Provider extends RequestClient {
   }
 
   onReceiveResponse (response) {
-    response = super.onReceiveResponse(response) // eslint-disable-line no-param-reassign
+    response = super.onReceiveResponse(response)
     const plugin = this.uppy.getPlugin(this.pluginId)
     const oldAuthenticated = plugin.getPluginState().authenticated
     const authenticated = oldAuthenticated ? response.status !== 401 : response.status < 400
@@ -106,7 +106,6 @@ export default class Provider extends RequestClient {
   }
 
   static initPlugin (plugin, opts, defaultOpts) {
-    /* eslint-disable no-param-reassign */
     plugin.type = 'acquirer'
     plugin.files = []
     if (defaultOpts) {
@@ -132,6 +131,5 @@ export default class Provider extends RequestClient {
     }
 
     plugin.storage = plugin.opts.storage || tokenStorage
-    /* eslint-enable no-param-reassign */
   }
 }

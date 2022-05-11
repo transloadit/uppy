@@ -4,12 +4,12 @@
  * Manages communications with Companion
  */
 
-import RequestClient from './RequestClient.js'
-import Provider from './Provider.js'
-import SearchProvider from './SearchProvider.js'
-import Socket from './Socket.js'
+const RequestClient = require('./RequestClient')
+const Provider = require('./Provider')
+const SearchProvider = require('./SearchProvider')
+const Socket = require('./Socket')
 
-export {
+module.exports = {
   RequestClient,
   Provider,
   SearchProvider,
