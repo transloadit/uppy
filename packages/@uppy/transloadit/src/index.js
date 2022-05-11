@@ -1,5 +1,6 @@
 const hasProperty = require('@uppy/utils/lib/hasProperty')
 const ErrorWithCause = require('@uppy/utils/lib/ErrorWithCause')
+const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
 const BasePlugin = require('@uppy/core/lib/BasePlugin')
 const Tus = require('@uppy/tus')
 const Assembly = require('./Assembly')
@@ -35,6 +36,8 @@ const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
 module.exports = class Transloadit extends BasePlugin {
   static VERSION = require('../package.json').version // eslint-disable-line global-require
 
+  #rateLimitedQueue
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
@@ -59,6 +62,7 @@ module.exports = class Transloadit extends BasePlugin {
     }
 
     this.opts = { ...defaultOptions, ...opts }
+    this.#rateLimitedQueue = new RateLimitedQueue(this.opts.limit)
 
     this.i18nInit()
 
@@ -75,6 +79,7 @@ module.exports = class Transloadit extends BasePlugin {
       service: this.opts.service,
       client: this.#getClientVersion(),
       errorReporting: this.opts.errorReporting,
+      rateLimitedQueue: this.#rateLimitedQueue,
     })
     // Contains Assembly instances for in-progress Assemblies.
     this.activeAssemblies = {}
@@ -185,7 +190,7 @@ module.exports = class Transloadit extends BasePlugin {
       expectedFiles: fileIDs.length,
       signature: options.signature,
     }).then((newAssembly) => {
-      const assembly = new Assembly(newAssembly)
+      const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
       const { status } = assembly
       const assemblyID = status.assembly_id
 
@@ -492,7 +497,7 @@ module.exports = class Transloadit extends BasePlugin {
 
       const allAssemblyIDs = Object.keys(assemblies)
       allAssemblyIDs.forEach((id) => {
-        const assembly = new Assembly(assemblies[id])
+        const assembly = new Assembly(assemblies[id], this.#rateLimitedQueue)
         this.#connectAssembly(assembly)
       })
     }
@@ -762,6 +767,7 @@ module.exports = class Transloadit extends BasePlugin {
         metaFields: ['assembly_url', 'filename', 'fieldname'],
         // Pass the limit option to @uppy/tus
         limit: this.opts.limit,
+        rateLimitedQueue: this.#rateLimitedQueue,
         retryDelays: this.opts.retryDelays,
       })
     }
