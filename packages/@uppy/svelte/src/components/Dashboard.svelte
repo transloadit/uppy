@@ -40,4 +40,4 @@
     uppy.setOptions(options)
   }
 </script>
-<div bind:this={container} />
+<div class="uppy-Container" bind:this={container} />
