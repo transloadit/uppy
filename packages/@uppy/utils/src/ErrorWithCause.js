@@ -1,4 +1,4 @@
-const hasProperty = require('./hasProperty')
+import hasProperty from './hasProperty.js'
 
 class ErrorWithCause extends Error {
   constructor (message, options = {}) {
@@ -10,4 +10,4 @@ class ErrorWithCause extends Error {
   }
 }
 
-module.exports = ErrorWithCause
+export default ErrorWithCause

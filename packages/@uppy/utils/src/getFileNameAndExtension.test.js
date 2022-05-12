@@ -1,4 +1,5 @@
-const getFileNameAndExtension = require('./getFileNameAndExtension')
+import { describe, expect, it } from '@jest/globals'
+import getFileNameAndExtension from './getFileNameAndExtension.js'
 
 describe('getFileNameAndExtension', () => {
   it('should return the filename and extension as an array', () => {

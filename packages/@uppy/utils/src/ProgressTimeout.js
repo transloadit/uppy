@@ -39,4 +39,4 @@ class ProgressTimeout {
   }
 }
 
-module.exports = ProgressTimeout
+export default ProgressTimeout

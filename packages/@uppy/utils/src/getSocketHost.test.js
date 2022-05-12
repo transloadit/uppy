@@ -1,4 +1,5 @@
-const getSocketHost = require('./getSocketHost')
+import { describe, expect, it } from '@jest/globals'
+import getSocketHost from './getSocketHost.js'
 
 describe('getSocketHost', () => {
   it('should get the host from the specified url', () => {

@@ -232,6 +232,7 @@ module.exports = {
         'packages/@uppy/unsplash/src/**/*.js',
         'packages/@uppy/transloadit/src/**/*.js',
         'packages/@uppy/url/src/**/*.js',
+        'packages/@uppy/utils/src/**/*.js',
         'packages/@uppy/vue/src/**/*.js',
         'packages/@uppy/webcam/src/**/*.js',
         'packages/@uppy/xhr-upload/src/**/*.js',

@@ -1,7 +1,7 @@
-const toArray = require('../../toArray')
+import toArray from '../../toArray.js'
 
 // .files fallback, should be implemented in any browser
-module.exports = function fallbackApi (dataTransfer) {
+export default function fallbackApi (dataTransfer) {
   const files = toArray(dataTransfer.files)
   return Promise.resolve(files)
 }

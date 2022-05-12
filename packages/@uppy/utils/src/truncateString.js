@@ -7,7 +7,7 @@
  * @returns {string}
  */
 const separator = '...'
-module.exports = function truncateString (string, maxLength) {
+export default function truncateString (string, maxLength) {
   // Return the empty string if maxLength is zero
   if (maxLength === 0) return ''
   // Return original string if it's already shorter than maxLength

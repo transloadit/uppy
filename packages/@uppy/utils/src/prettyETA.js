@@ -1,6 +1,6 @@
-const secondsToTime = require('./secondsToTime')
+import secondsToTime from './secondsToTime.js'
 
-module.exports = function prettyETA (seconds) {
+export default function prettyETA (seconds) {
   const time = secondsToTime(seconds)
 
   // Only display hours and minutes if they are greater than 0 but always

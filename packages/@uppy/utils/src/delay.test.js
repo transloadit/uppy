@@ -1,5 +1,6 @@
-const delay = require('./delay')
-const { AbortController } = require('./AbortController')
+import { describe, expect, it } from '@jest/globals'
+import { AbortController } from './AbortController.js'
+import delay from './delay.js'
 
 describe('delay', () => {
   it('should wait for the specified time', async () => {

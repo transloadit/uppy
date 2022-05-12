@@ -5,4 +5,4 @@ function isNetworkError (xhr) {
   return (xhr.readyState !== 0 && xhr.readyState !== 4) || xhr.status === 0
 }
 
-module.exports = isNetworkError
+export default isNetworkError

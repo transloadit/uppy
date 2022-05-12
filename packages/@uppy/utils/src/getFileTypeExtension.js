@@ -17,7 +17,7 @@ const mimeToExtensions = {
   'video/x-msvideo': 'avi',
 }
 
-module.exports = function getFileTypeExtension (mimeType) {
+export default function getFileTypeExtension (mimeType) {
   // Remove the ; bit in 'video/x-matroska;codecs=avc1'
   // eslint-disable-next-line no-param-reassign
   [mimeType] = mimeType.split(';', 1)
