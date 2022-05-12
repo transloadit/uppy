@@ -45,7 +45,7 @@ class UppyWrapper extends React.Component {
   }
 
   render () {
-    return h('div', { ref: this.refContainer })
+    return h('div', { className: 'uppy-Container', ref: this.refContainer })
   }
 }
 
