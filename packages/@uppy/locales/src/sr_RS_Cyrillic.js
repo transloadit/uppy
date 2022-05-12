@@ -148,4 +148,4 @@ if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locales.sr_RS_Cyrillic = sr_RS_Cyrillic
 }
 
-module.exports = sr_RS_Cyrillic
+export default sr_RS_Cyrillic

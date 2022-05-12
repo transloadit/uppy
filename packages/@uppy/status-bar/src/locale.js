@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   strings: {
     // Shown in the status bar while files are being uploaded.
     uploading: 'Uploading',

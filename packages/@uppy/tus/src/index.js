@@ -388,9 +388,11 @@ module.exports = class Tus extends BasePlugin {
         upload.abort()
       })
 
-      this.onCancelAll(file.id, () => {
-        queuedRequest.abort()
-        this.resetUploaderReferences(file.id, { abort: !!upload.url })
+      this.onCancelAll(file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
+          queuedRequest.abort()
+          this.resetUploaderReferences(file.id, { abort: !!upload.url })
+        }
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -501,10 +503,12 @@ module.exports = class Tus extends BasePlugin {
         socket.send('pause', {})
       })
 
-      this.onCancelAll(file.id, () => {
-        queuedRequest.abort()
-        socket.send('cancel', {})
-        this.resetUploaderReferences(file.id)
+      this.onCancelAll(file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
+          queuedRequest.abort()
+          socket.send('cancel', {})
+          this.resetUploaderReferences(file.id)
+        }
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -668,12 +672,12 @@ module.exports = class Tus extends BasePlugin {
 
   /**
    * @param {string} fileID
-   * @param {function(): void} cb
+   * @param {function(): void} eventHandler
    */
-  onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('cancel-all', () => {
+  onCancelAll (fileID, eventHandler) {
+    this.uploaderEvents[fileID].on('cancel-all', (...args) => {
       if (!this.uppy.getFile(fileID)) return
-      cb()
+      eventHandler(...args)
     })
   }
 

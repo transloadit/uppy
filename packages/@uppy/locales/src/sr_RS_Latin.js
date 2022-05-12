@@ -148,4 +148,4 @@ if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
   window.Uppy.locales.sr_RS_Latin = sr_RS_Latin
 }
 
-module.exports = sr_RS_Latin
+export default sr_RS_Latin

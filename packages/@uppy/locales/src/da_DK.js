@@ -1,4 +1,11 @@
-const da_DK = {}
+const da_DK = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 da_DK.strings = {
   addMore: 'Tilføj flere',
@@ -137,15 +144,8 @@ da_DK.strings = {
   },
 }
 
-da_DK.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.da_DK = da_DK
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.da_DK = da_DK
-}
-
-module.exports = da_DK
+export default da_DK
