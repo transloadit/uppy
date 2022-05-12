@@ -3,18 +3,18 @@
 /**
  * This module serves as an Async wrapper for LocalStorage
  */
-export function setItem (key, value) {
+module.exports.setItem = (key, value) => {
   return new Promise((resolve) => {
     localStorage.setItem(key, value)
     resolve()
   })
 }
 
-export function getItem (key) {
+module.exports.getItem = (key) => {
   return Promise.resolve(localStorage.getItem(key))
 }
 
-export function removeItem (key) {
+module.exports.removeItem = (key) => {
   return new Promise((resolve) => {
     localStorage.removeItem(key)
     resolve()

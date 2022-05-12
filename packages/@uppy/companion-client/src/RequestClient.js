@@ -1,10 +1,8 @@
 'use strict'
 
-import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
-import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
-import AuthError from './AuthError.js'
-
-import packageJson from '../package.json'
+const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
+const ErrorWithCause = require('@uppy/utils/lib/ErrorWithCause')
+const AuthError = require('./AuthError')
 
 // Remove the trailing slash so we can always safely append /xyz.
 function stripSlash (url) {
@@ -32,8 +30,9 @@ async function handleJSONResponse (res) {
   return jsonPromise
 }
 
-export default class RequestClient {
-  static VERSION = packageJson.version
+module.exports = class RequestClient {
+  // eslint-disable-next-line global-require
+  static VERSION = require('../package.json').version
 
   #getPostResponseFunc = skip => response => (skip ? response : this.onReceiveResponse(response))
 
