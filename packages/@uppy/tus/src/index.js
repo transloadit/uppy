@@ -71,6 +71,7 @@ module.exports = class Tus extends BasePlugin {
       useFastRemoteRetry: true,
       limit: 20,
       retryDelays: tusDefaultOptions.retryDelays,
+      retryStatusCodes: [429],
       withCredentials: false,
     }
 
@@ -278,7 +279,8 @@ module.exports = class Tus extends BasePlugin {
 
       uploadOptions.onShouldRetry = (err) => {
         const status = err?.originalResponse?.getStatus()
-        if (status === 429) {
+
+        if (this.opts.retryStatusCodes.includes(status)) {
           // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
           if (!this.requests.isPaused) {
             const next = this.#retryDelayIterator?.next()

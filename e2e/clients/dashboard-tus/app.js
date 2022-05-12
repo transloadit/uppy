@@ -10,7 +10,7 @@ import '@uppy/dashboard/dist/style.css'
 const companionUrl = 'http://localhost:3020'
 const uppy = new Uppy()
   .use(Dashboard, { target: '#app', inline: true })
-  .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files' })
+  .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files', retryStatusCodes: [429, 401] })
   .use(Url, { target: Dashboard, companionUrl })
   .use(Unsplash, { target: Dashboard, companionUrl })
 
