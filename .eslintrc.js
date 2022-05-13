@@ -225,6 +225,7 @@ module.exports = {
         'packages/@uppy/thumbnail-generator/src/**/*.js',
         'packages/@uppy/tus/src/**/*.js',
         'packages/@uppy/unsplash/src/**/*.js',
+        'packages/@uppy/transloadit/src/**/*.js',
         'packages/@uppy/url/src/**/*.js',
         'packages/@uppy/vue/src/**/*.js',
         'packages/@uppy/webcam/src/**/*.js',

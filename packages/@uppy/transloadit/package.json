@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
+  "type": "module",
   "keywords": [
     "file uploader",
     "transloadit",
@@ -38,6 +39,7 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
+    "@jest/globals": "^27.4.2",
     "whatwg-fetch": "^3.6.2"
   }
 }

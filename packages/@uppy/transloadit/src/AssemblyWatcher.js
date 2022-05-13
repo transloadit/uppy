@@ -1,4 +1,4 @@
-const Emitter = require('component-emitter')
+import Emitter from 'component-emitter'
 
 /**
  * Track completion of multiple assemblies.
@@ -111,4 +111,4 @@ class TransloaditAssemblyWatcher extends Emitter {
   }
 }
 
-module.exports = TransloaditAssemblyWatcher
+export default TransloaditAssemblyWatcher
