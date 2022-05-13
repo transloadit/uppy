@@ -87,7 +87,7 @@ module.exports = class Tus extends BasePlugin {
      *
      * @type {RateLimitedQueue}
      */
-    this.requests = new RateLimitedQueue(this.opts.limit)
+    this.requests = this.opts.rateLimitedQueue ?? new RateLimitedQueue(this.opts.limit)
     this.#retryDelayIterator = this.opts.retryDelays?.values()
 
     this.uploaders = Object.create(null)

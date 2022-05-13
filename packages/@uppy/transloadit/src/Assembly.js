@@ -41,7 +41,13 @@ function isStatus (status, test) {
 }
 
 class TransloaditAssembly extends Emitter {
-  constructor (assembly) {
+  #rateLimitedQueue
+
+  #fetchWithNetworkError
+
+  #previousFetchStatusStillPending = false
+
+  constructor (assembly, rateLimitedQueue) {
     super()
 
     // The current assembly status.
@@ -52,6 +58,9 @@ class TransloaditAssembly extends Emitter {
     this.pollInterval = null
     // Whether this assembly has been closed (finished or errored)
     this.closed = false
+
+    this.#rateLimitedQueue = rateLimitedQueue
+    this.#fetchWithNetworkError = rateLimitedQueue.wrapPromiseFunction(fetchWithNetworkError)
   }
 
   connect () {
@@ -145,15 +154,19 @@ class TransloaditAssembly extends Emitter {
    * 'status'.
    */
   async #fetchStatus ({ diff = true } = {}) {
-    if (this.closed) return
+    if (this.closed || this.#rateLimitedQueue.isPaused || this.#previousFetchStatusStillPending) return
 
     try {
-      const response = await fetchWithNetworkError(this.status.assembly_ssl_url)
+      this.#previousFetchStatusStillPending = true
+      const response = await this.#fetchWithNetworkError(this.status.assembly_ssl_url)
+      this.#previousFetchStatusStillPending = false
 
       if (this.closed) return
 
-      // In case of rate-limiting, ignore the error.
-      if (response.status === 429) return
+      if (response.status === 429) {
+        this.#rateLimitedQueue.rateLimit(2_000)
+        return
+      }
 
       if (!response.ok) {
         this.#onError(new NetworkError(response.statusText))
