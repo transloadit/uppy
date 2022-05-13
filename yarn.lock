@@ -10181,6 +10181,7 @@ __metadata:
     "@uppy/utils": "workspace:^"
     tus-js-client: ^2.1.1
   peerDependencies:
+    "@jest/globals": ^27.4.2
     "@uppy/core": "workspace:^"
   languageName: unknown
   linkType: soft
