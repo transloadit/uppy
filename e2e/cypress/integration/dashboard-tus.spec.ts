@@ -68,7 +68,7 @@ describe('Dashboard with Tus', () => {
 
   it('should upload remote image with URL plugin', () => {
     cy.get('[data-cy="Url"]').click()
-    cy.get('.uppy-Url-input').type('https://via.placeholder.com/600x400')
+    cy.get('.uppy-Url-input').type('https://raw.githubusercontent.com/transloadit/uppy/main/e2e/cypress/fixtures/images/cat.jpg')
     cy.get('.uppy-Url-importButton').click()
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
     cy.wait('@url')
