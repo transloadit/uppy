@@ -1,5 +1,12 @@
 # @uppy/image-editor
 
+## 1.2.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/image-editor: refactor to ESM (Antoine du Hamel / #3685)
+
 ## 1.1.1
 
 Released: 2022-01-10

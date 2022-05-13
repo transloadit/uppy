@@ -1,5 +1,12 @@
 # @uppy/google-drive
 
+## 2.1.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/google-drive: refactor to ESM (Antoine du Hamel / #3683)
+
 ## 2.0.5
 
 Released: 2021-12-07

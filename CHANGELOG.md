@@ -12,6 +12,59 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.10.0
+
+Released: 2022-05-14
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/audio            |   0.3.1 | @uppy/provider-views   |   2.1.0 |
+| @uppy/aws-s3           |   2.1.0 | @uppy/react            |   2.2.0 |
+| @uppy/aws-s3-multipart |   2.3.0 | @uppy/react-native     |   0.3.0 |
+| @uppy/companion-client |   2.1.0 | @uppy/screen-capture   |   2.1.0 |
+| @uppy/core             |   2.2.0 | @uppy/status-bar       |   2.2.0 |
+| @uppy/dashboard        |   2.2.0 | @uppy/svelte           |   1.0.8 |
+| @uppy/drag-drop        |   2.1.0 | @uppy/transloadit      |   2.2.0 |
+| @uppy/file-input       |   2.1.0 | @uppy/tus              |   2.3.0 |
+| @uppy/google-drive     |   2.1.0 | @uppy/url              |   2.1.0 |
+| @uppy/image-editor     |   1.2.0 | @uppy/webcam           |   2.2.0 |
+| @uppy/instagram        |   2.1.0 | @uppy/xhr-upload       |   2.1.0 |
+| @uppy/locales          |   2.1.0 | @uppy/zoom             |   1.1.0 |
+| @uppy/onedrive         |   2.1.0 | @uppy/robodog          |   2.6.0 |
+| @uppy/progress-bar     |   2.1.0 | uppy                   |  2.10.0 |
+
+- @uppy/audio: fix types (Merlijn Vos / #3689)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/core,@uppy/react,@uppy/transloadit,@uppy/tus,@uppy/xhr-upload: proposal: Cancel assemblies optional (Mikael Finstad / #3575)
+- @uppy/aws-s3-multipart: export interface AwsS3MultipartOptions (Matteo Padovano / #3709)
+- @uppy/companion-client: refactor to ESM (Antoine du Hamel / #3693)
+- @uppy/companion: Only deploy on companion changes (kiloreux / #3677)
+- @uppy/core: add definition for addFiles method (Matteo Padovano / #3556)
+- @uppy/core: wrap plugins in div.uppy-Root and set dir attrubute in UIPlugin (Artur Paikin / #3692)
+- @uppy/google-drive: refactor to ESM (Antoine du Hamel / #3683)
+- @uppy/image-editor: refactor to ESM (Antoine du Hamel / #3685)
+- @uppy/instagram: refactor to ESM (Antoine du Hamel / #3696)
+- @uppy/locales: Add `save` translation to Spanish locale (Juan Carlos Alonso / #3678)
+- @uppy/locales: refactor to ESM (Antoine du Hamel / #3707)
+- @uppy/onedrive: refactor to ESM (Antoine du Hamel / #3694)
+- @uppy/progress-bar: refactor to ESM (Antoine du Hamel / #3706)
+- @uppy/provider-views: refactor to ESM (Antoine du Hamel / #3715)
+- @uppy/react: Support React 18 in @uppy/react (Merlijn Vos / #3680)
+- @uppy/screen-capture: refactor to ESM (Antoine du Hamel / #3698)
+- @uppy/status-bar: refactor to ESM (Antoine du Hamel / #3697)
+- @uppy/transloadit: add rate limiting for assembly creation and status polling (Antoine du Hamel / #3718)
+- @uppy/tus: refactor to ESM (Antoine du Hamel / #3724)
+- @uppy/url: refactor to ESM (Antoine du Hamel / #3713)
+- @uppy/webcam: refactor to ESM (Antoine du Hamel / #3686)
+- @uppy/xhr-upload: refactor to ESM (Antoine du Hamel / #3695)
+- @uppy/zoom: refactor to ESM (Antoine du Hamel / #3699)
+- meta: e2e: fix failing test (Antoine du Hamel / #3722)
+- test: harden linter rule for JSX/ESM validation (Antoine du Hamel / #3681)
+- test: harden linter rules for ESM/CJS validation (Antoine du Hamel / #3674)
+- test: Increase retries to trigger longer retryDelay in tus (Artur Paikin / #3726)
+- test: Remove `it.only` from e2e test (Merlijn Vos / #3690)
+- tests: Make Cypress more stable & add e2e test for error events when upload fails (Merlijn Vos / #3662)
+
+
 ## 2.9.5
 
 Released: 2022-04-27

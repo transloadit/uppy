@@ -1,5 +1,13 @@
 # @uppy/locales
 
+## 2.1.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/locales: Add `save` translation to Spanish locale (Juan Carlos Alonso / #3678)
+- @uppy/locales: refactor to ESM (Antoine du Hamel / #3707)
+
 ## 2.0.9
 
 Released: 2022-04-27

@@ -1,5 +1,12 @@
 # @uppy/onedrive
 
+## 2.1.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/onedrive: refactor to ESM (Antoine du Hamel / #3694)
+
 ## 2.0.6
 
 Released: 2022-02-16
