@@ -478,6 +478,10 @@ If `uppy.opts.autoProceed === true`, Uppy will begin uploading automatically whe
 >
 > Sometimes you might need to mark some files as “already uploaded”, so that the user sees them, but they won’t actually be uploaded by Uppy. This can be achieved by [looping through files and setting `uploadComplete: true, uploadStarted: true` on them](https://github.com/transloadit/uppy/issues/1112#issuecomment-432339569)
 
+### `uppy.addFiles(fileObjectArray)`
+
+Add many new files to Uppy’s internal state at once. Like `uppy.addFile`, but mostly intended for UI plugins, to speed up the UIs. See `uppy.addFile` for the example of the file object shape.
+
 ### `uppy.removeFile(fileID)`
 
 Remove a file from Uppy.
