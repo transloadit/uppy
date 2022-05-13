@@ -325,6 +325,10 @@ export class Uppy {
     file: AddFileOptions<TMeta>
   ): string
 
+  addFiles<TMeta extends IndexedObject<any> = Record<string, unknown>>(
+    files: AddFileOptions<TMeta>[]
+  ): void
+
   removeFile(fileID: string, reason?: FileRemoveReason): void
 
   pauseResume(fileID: string): boolean
