@@ -48,6 +48,7 @@ class FileInput extends React.Component {
 
   render () {
     return h('div', {
+      className: 'uppy-Container',
       ref: (container) => {
         this.container = container
       },
