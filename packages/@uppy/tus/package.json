@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
+  "type": "module",
   "keywords": [
     "file uploader",
     "uppy",
@@ -27,6 +28,7 @@
     "tus-js-client": "^2.1.1"
   },
   "peerDependencies": {
+    "@jest/globals": "^27.4.2",
     "@uppy/core": "workspace:^"
   }
 }
