@@ -53,7 +53,7 @@ describe('Dashboard with Tus', () => {
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.intercept(
-      { method: 'PATCH', pathname: '/files/*', times: 1 },
+      { method: 'PATCH', pathname: '/files/*', times: 2 },
       { statusCode: 429, body: {} },
     ).as('patch')
 
