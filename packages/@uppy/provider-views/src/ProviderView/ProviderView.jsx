@@ -1,21 +1,38 @@
-const { h } = require('preact')
-const AuthView = require('./AuthView')
-const Header = require('./Header')
-const Browser = require('../Browser')
-const LoaderView = require('../Loader')
-const CloseWrapper = require('../CloseWrapper')
-const View = require('../View')
+import { h } from 'preact'
+
+import AuthView from './AuthView.jsx'
+import Header from './Header.jsx'
+import Browser from '../Browser.jsx'
+import LoaderView from '../Loader.jsx'
+import CloseWrapper from '../CloseWrapper.js'
+import View from '../View.js'
+
+import packageJson from '../../package.json'
 
 function getOrigin () {
   // eslint-disable-next-line no-restricted-globals
   return location.origin
 }
 
+function getRegex (value) {
+  if (typeof value === 'string') {
+    return new RegExp(`^${value}$`)
+  } if (value instanceof RegExp) {
+    return value
+  }
+  return undefined
+}
+function isOriginAllowed (origin, allowedOrigin) {
+  const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
+  return patterns
+    .some((pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`)) // allowing for trailing '/'
+}
+
 /**
  * Class to easily generate generic views for Provider plugins
  */
-module.exports = class ProviderView extends View {
-  static VERSION = require('../../package.json').version
+export default class ProviderView extends View {
+  static VERSION = packageJson.version
 
   /**
    * @param {object} plugin instance of the plugin
@@ -59,6 +76,7 @@ module.exports = class ProviderView extends View {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   tearDown () {
     // Nothing.
   }
@@ -156,8 +174,7 @@ module.exports = class ProviderView extends View {
    */
   addFolder (folder) {
     const folderId = this.providerFileToId(folder)
-    const state = this.plugin.getPluginState()
-    const folders = { ...state.selectedFolders }
+    const folders = { ...this.plugin.getPluginState().selectedFolders }
 
     if (folderId in folders && folders[folderId].loading) {
       return
@@ -210,8 +227,7 @@ module.exports = class ProviderView extends View {
 
       this.plugin.uppy.info(message)
     }).catch((e) => {
-      const state = this.plugin.getPluginState()
-      const selectedFolders = { ...state.selectedFolders }
+      const selectedFolders = { ...this.plugin.getPluginState().selectedFolders }
       delete selectedFolders[folderId]
       this.plugin.setPluginState({ selectedFolders })
       this.handleError(e)
@@ -227,7 +243,7 @@ module.exports = class ProviderView extends View {
 
     const authWindow = window.open(link, '_blank')
     const handleToken = (e) => {
-      if (!this.#isOriginAllowed(e.origin, this.plugin.opts.companionAllowedHosts) || e.source !== authWindow) {
+      if (!isOriginAllowed(e.origin, this.plugin.opts.companionAllowedHosts) || e.source !== authWindow) {
         this.plugin.uppy.log(`rejecting event from ${e.origin} vs allowed pattern ${this.plugin.opts.companionAllowedHosts}`)
         return
       }
@@ -257,21 +273,6 @@ module.exports = class ProviderView extends View {
     window.addEventListener('message', handleToken)
   }
 
-  #isOriginAllowed (origin, allowedOrigin) {
-    const getRegex = (value) => {
-      if (typeof value === 'string') {
-        return new RegExp(`^${value}$`)
-      } if (value instanceof RegExp) {
-        return value
-      }
-    }
-
-    const patterns = Array.isArray(allowedOrigin) ? allowedOrigin.map(getRegex) : [getRegex(allowedOrigin)]
-    return patterns
-      .filter((pattern) => pattern != null) // loose comparison to catch undefined
-      .some((pattern) => pattern.test(origin) || pattern.test(`${origin}/`)) // allowing for trailing '/'
-  }
-
   async handleScroll (event) {
     const path = this.nextPagePath || null
 
@@ -291,26 +292,21 @@ module.exports = class ProviderView extends View {
     }
   }
 
-  listAllFiles (path, files = null) {
-    files = files || []
-    return new Promise((resolve, reject) => {
-      this.provider.list(path).then((res) => {
-        res.items.forEach((item) => {
-          if (!item.isFolder) {
-            files.push(item)
-          } else {
-            this.addFolder(item)
-          }
-        })
-        const moreFiles = res.nextPagePath || null
-        if (moreFiles) {
-          return this.listAllFiles(moreFiles, files)
-            .then((files) => resolve(files))
-            .catch(e => reject(e))
-        }
-        return resolve(files)
-      }).catch(e => reject(e))
+  async listAllFiles (path, files = null) {
+    files = files || [] // eslint-disable-line no-param-reassign
+    const res = await this.provider.list(path)
+    res.items.forEach((item) => {
+      if (!item.isFolder) {
+        files.push(item)
+      } else {
+        this.addFolder(item)
+      }
     })
+    const moreFiles = res.nextPagePath
+    if (moreFiles) {
+      return this.listAllFiles(moreFiles, files)
+    }
+    return files
   }
 
   donePicking () {
@@ -401,6 +397,7 @@ module.exports = class ProviderView extends View {
 
     return (
       <CloseWrapper onUnmount={this.clearSelection}>
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <Browser {...browserProps} />
       </CloseWrapper>
     )

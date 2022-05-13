@@ -1,4 +1,4 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 function FileIcon () {
   return (
@@ -25,17 +25,20 @@ function VideoIcon () {
   )
 }
 
-module.exports = (props) => {
-  if (props.itemIconString === null) return
+export default (props) => {
+  const { itemIconString } = props
+  if (itemIconString === null) return undefined
 
-  switch (props.itemIconString) {
+  switch (itemIconString) {
     case 'file':
       return <FileIcon />
     case 'folder':
       return <FolderIcon />
     case 'video':
       return <VideoIcon />
-    default:
-      return <img src={props.itemIconString} alt={props.alt} />
+    default: {
+      const { alt } = props
+      return <img src={itemIconString} alt={alt} />
+    }
   }
 }

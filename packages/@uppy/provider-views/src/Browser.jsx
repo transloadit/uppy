@@ -1,11 +1,12 @@
-const { h } = require('preact')
-const classNames = require('classnames')
+import { h } from 'preact'
 
-const remoteFileObjToLocal = require('@uppy/utils/lib/remoteFileObjToLocal')
+import classNames from 'classnames'
 
-const Filter = require('./Filter')
-const FooterActions = require('./FooterActions')
-const Item = require('./Item/index')
+import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
+
+import Filter from './Filter.jsx'
+import FooterActions from './FooterActions.jsx'
+import Item from './Item/index.jsx'
 
 const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
@@ -65,7 +66,7 @@ function Browser (props) {
         if (!folders.length && !files.length) {
           return (
             <div className="uppy-Provider-empty">
-              {props.i18n('noFilesFound')}
+              {i18n('noFilesFound')}
             </div>
           )
         }
@@ -136,4 +137,4 @@ function Browser (props) {
   )
 }
 
-module.exports = Browser
+export default Browser

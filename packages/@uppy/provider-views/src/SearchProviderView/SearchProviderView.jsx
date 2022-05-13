@@ -1,16 +1,19 @@
-const { h } = require('preact')
-const SearchInput = require('./InputView')
-const Browser = require('../Browser')
-const LoaderView = require('../Loader')
-const Header = require('./Header')
-const CloseWrapper = require('../CloseWrapper')
-const View = require('../View')
+import { h } from 'preact'
+
+import SearchInput from './InputView.jsx'
+import Browser from '../Browser.jsx'
+import LoaderView from '../Loader.jsx'
+import Header from './Header.jsx'
+import CloseWrapper from '../CloseWrapper.js'
+import View from '../View.js'
+
+import packageJson from '../../package.json'
 
 /**
  * Class to easily generate generic views for Provider plugins
  */
-module.exports = class SearchProviderView extends View {
-  static VERSION = require('../../package.json').version
+export default class SearchProviderView extends View {
+  static VERSION = packageJson.version
 
   /**
    * @param {object} plugin instance of the plugin
@@ -52,6 +55,7 @@ module.exports = class SearchProviderView extends View {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   tearDown () {
     // Nothing.
   }
@@ -79,7 +83,7 @@ module.exports = class SearchProviderView extends View {
     const { searchTerm } = this.plugin.getPluginState()
     if (query && query === searchTerm) {
       // no need to search again as this is the same as the previous search
-      return
+      return undefined
     }
 
     return this.sharedHandler.loaderWrapper(
@@ -181,6 +185,7 @@ module.exports = class SearchProviderView extends View {
 
     return (
       <CloseWrapper onUnmount={this.clearSelection}>
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <Browser {...browserProps} />
       </CloseWrapper>
     )

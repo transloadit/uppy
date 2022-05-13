@@ -1,4 +1,4 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 function GridListItem (props) {
   const {
@@ -48,4 +48,4 @@ function GridListItem (props) {
   )
 }
 
-module.exports = GridListItem
+export default GridListItem

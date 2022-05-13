@@ -63,9 +63,9 @@ async function isTypeModule (file) {
 }
 
 // eslint-disable-next-line no-shadow
-function transformExportDeclarations (path) {
+function ExportAllDeclaration (path) {
   const { value } = path.node.source
-  if (value.endsWith('.jsx') && value.startsWith('./')) {
+  if (value.endsWith('.jsx') && (value.startsWith('./') || value.startsWith('../'))) {
     // Rewrite .jsx imports to .js:
     path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign
   }
@@ -110,7 +110,7 @@ async function buildLib () {
         // eslint-disable-next-line no-shadow
         ImportDeclaration (path) {
           let { value } = path.node.source
-          if (value.endsWith('.jsx') && value.startsWith('./')) {
+          if (value.endsWith('.jsx') && (value.startsWith('./') || value.startsWith('../'))) {
             // Rewrite .jsx imports to .js:
             value = path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign,no-multi-assign
           }
@@ -173,10 +173,40 @@ async function buildLib () {
             )
           }
         },
-        ExportAllDeclaration: transformExportDeclarations,
+        ExportAllDeclaration,
         // eslint-disable-next-line no-shadow,consistent-return
         ExportNamedDeclaration (path) {
-          if (path.node.source != null) return transformExportDeclarations(path)
+          if (path.node.source != null) {
+            if (path.node.specifiers.length !== 1 || path.node.specifiers[0].local.name !== 'default') throw new Error('unsupported export named declaration')
+
+            if (path.node.specifiers[0].exported.name === 'default') return ExportAllDeclaration(path)
+
+            let { value } = path.node.source
+            if (value.endsWith('.jsx') && (value.startsWith('./') || value.startsWith('../'))) {
+              // Rewrite .jsx imports to .js:
+              value = path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign,no-multi-assign
+            }
+
+            let requireCall = t.callExpression(t.identifier('require'), [
+              t.stringLiteral(value),
+            ])
+            if (esPackagesThatNeedSpecialTreatmentForRollupInterop.includes(value)) {
+              requireCall = t.logicalExpression('||', t.memberExpression(requireCall, t.identifier('default')), requireCall)
+            }
+
+            const { exported } = path.node.specifiers[0]
+            path.insertBefore(
+              t.variableDeclaration('const', [
+                t.variableDeclarator(
+                  exported,
+                  requireCall,
+                ),
+              ]),
+            )
+            path.replaceWith(
+              t.exportNamedDeclaration(null, [t.exportSpecifier(exported, exported)]),
+            )
+          }
         },
         // eslint-disable-next-line no-shadow
         ExportDefaultDeclaration (path) {

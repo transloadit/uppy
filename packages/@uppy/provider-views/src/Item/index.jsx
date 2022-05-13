@@ -1,26 +1,28 @@
-const { h } = require('preact')
-const classNames = require('classnames')
-const ItemIcon = require('./components/ItemIcon')
-const GridListItem = require('./components/GridLi')
-const ListItem = require('./components/ListLi')
+import { h } from 'preact'
 
-module.exports = (props) => {
-  const { author } = props
-  const itemIconString = props.getItemIcon()
+import classNames from 'classnames'
+import ItemIcon from './components/ItemIcon.jsx'
+import GridListItem from './components/GridLi.jsx'
+import ListItem from './components/ListLi.jsx'
+
+export default (props) => {
+  const { author, getItemIcon, isChecked, isDisabled, viewType } = props
+  const itemIconString = getItemIcon()
 
   const className = classNames(
     'uppy-ProviderBrowserItem',
-    { 'uppy-ProviderBrowserItem--selected': props.isChecked },
-    { 'uppy-ProviderBrowserItem--disabled': props.isDisabled },
+    { 'uppy-ProviderBrowserItem--selected': isChecked },
+    { 'uppy-ProviderBrowserItem--disabled': isDisabled },
     { 'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video' },
   )
 
   const itemIconEl = <ItemIcon itemIconString={itemIconString} />
 
-  switch (props.viewType) {
+  switch (viewType) {
     case 'grid':
       return (
         <GridListItem
+          // eslint-disable-next-line react/jsx-props-no-spreading
           {...props}
           className={className}
           itemIconEl={itemIconEl}
@@ -28,10 +30,12 @@ module.exports = (props) => {
       )
     case 'list':
       return (
+        // eslint-disable-next-line react/jsx-props-no-spreading
         <ListItem {...props} className={className} itemIconEl={itemIconEl} />
       )
     case 'unsplash':
       return (
+        // eslint-disable-next-line react/jsx-props-no-spreading
         <GridListItem {...props} className={className} itemIconEl={itemIconEl}>
           <a
             href={`${author.url}?utm_source=Companion&utm_medium=referral`}
@@ -44,6 +48,6 @@ module.exports = (props) => {
         </GridListItem>
       )
     default:
-      throw new Error(`There is no such type ${props.viewType}`)
+      throw new Error(`There is no such type ${viewType}`)
   }
 }
