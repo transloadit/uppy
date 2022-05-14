@@ -27,8 +27,8 @@ function isTypeModule (file) {
   moduleTypeCache.set(packageFolder, typeModule)
   return typeModule
 }
-const packageLibImport = /^@uppy\/([^/])\/lib\/(.+)$/
-const packageEntryImport = /^@uppy\/([^/])$/
+const packageLibImport = /^@uppy\/([^/]+)\/lib\/(.+)$/
+const packageEntryImport = /^@uppy\/([^/]+)$/
 function isSpecifierTypeModule (specifier) {
   const packageLib = packageLibImport.exec(specifier)
   if (packageLib != null) {
