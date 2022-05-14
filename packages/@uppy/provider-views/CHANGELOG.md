@@ -1,5 +1,12 @@
 # @uppy/provider-views
 
+## 2.1.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/provider-views: refactor to ESM (Antoine du Hamel / #3715)
+
 ## 2.0.8
 
 Released: 2022-03-16
