@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
+  "type": "module",
   "keywords": [
     "file uploader",
     "uppy",
@@ -26,6 +27,7 @@
     "exifr": "^7.0.0"
   },
   "devDependencies": {
+    "@jest/globals": "^27.4.2",
     "namespace-emitter": "2.0.1"
   },
   "peerDependencies": {

@@ -10149,6 +10149,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/thumbnail-generator@workspace:packages/@uppy/thumbnail-generator"
   dependencies:
+    "@jest/globals": ^27.4.2
     "@uppy/utils": "workspace:^"
     exifr: ^7.0.0
     namespace-emitter: 2.0.1
