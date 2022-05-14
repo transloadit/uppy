@@ -1,5 +1,5 @@
 import BasePlugin from '@uppy/core/lib/BasePlugin'
-import tus from 'tus-js-client'
+import * as tus from 'tus-js-client'
 import { Provider, RequestClient, Socket } from '@uppy/companion-client'
 import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
 import getSocketHost from '@uppy/utils/lib/getSocketHost'
