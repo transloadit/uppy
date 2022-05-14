@@ -220,6 +220,7 @@ module.exports = {
         'packages/@uppy/redux-dev-tools/src/**/*.js',
         'packages/@uppy/screen-capture/src/**/*.js',
         'packages/@uppy/status-bar/src/**/*.js',
+        'packages/@uppy/store-default/src/**/*.js',
         'packages/@uppy/svelte/src/**/*.js',
         'packages/@uppy/svelte/rollup.config.js',
         'packages/@uppy/thumbnail-generator/src/**/*.js',
