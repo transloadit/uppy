@@ -1,5 +1,3 @@
-/*eslint-disable */
-
 const isSupported = typeof navigator !== 'undefined' && 'serviceWorker' in navigator
 
 function waitForServiceWorker () {
@@ -30,8 +28,6 @@ class ServiceWorkerStore {
       defer.reject = reject
     })
 
-    console.log('Loading stored blobs from Service Worker')
-
     const onMessage = (event) => {
       if (event.data.store !== this.name) {
         return
@@ -51,7 +47,7 @@ class ServiceWorkerStore {
 
       navigator.serviceWorker.controller.postMessage({
         type: 'uppy/GET_FILES',
-        store: this.name
+        store: this.name,
       })
     })
 
@@ -63,7 +59,7 @@ class ServiceWorkerStore {
       navigator.serviceWorker.controller.postMessage({
         type: 'uppy/ADD_FILE',
         store: this.name,
-        file: file
+        file,
       })
     })
   }
@@ -73,7 +69,7 @@ class ServiceWorkerStore {
       navigator.serviceWorker.controller.postMessage({
         type: 'uppy/REMOVE_FILE',
         store: this.name,
-        fileID: fileID
+        fileID,
       })
     })
   }
@@ -81,4 +77,4 @@ class ServiceWorkerStore {
 
 ServiceWorkerStore.isSupported = isSupported
 
-module.exports = ServiceWorkerStore
+export default ServiceWorkerStore

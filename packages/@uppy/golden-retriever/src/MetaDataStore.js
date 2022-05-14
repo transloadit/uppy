@@ -24,7 +24,7 @@ function maybeParse (str) {
 }
 
 let cleanedUp = false
-module.exports = class MetaDataStore {
+export default class MetaDataStore {
   constructor (opts) {
     this.opts = {
       expires: 24 * 60 * 60 * 1000, // 24 hours
@@ -79,9 +79,9 @@ module.exports = class MetaDataStore {
     const now = Date.now()
     instanceIDs.forEach((id) => {
       const data = localStorage.getItem(`uppyState:${id}`)
-      if (!data) return null
+      if (!data) return
       const obj = maybeParse(data)
-      if (!obj) return null
+      if (!obj) return
 
       if (obj.expires && obj.expires < now) {
         localStorage.removeItem(`uppyState:${id}`)
