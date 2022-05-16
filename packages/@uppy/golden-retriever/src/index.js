@@ -1,8 +1,10 @@
-const throttle = require('lodash.throttle')
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const ServiceWorkerStore = require('./ServiceWorkerStore')
-const IndexedDBStore = require('./IndexedDBStore')
-const MetaDataStore = require('./MetaDataStore')
+import throttle from 'lodash.throttle'
+import BasePlugin from '@uppy/core/lib/BasePlugin'
+import ServiceWorkerStore from './ServiceWorkerStore.js'
+import IndexedDBStore from './IndexedDBStore.js'
+import MetaDataStore from './MetaDataStore.js'
+
+import packageJson from '../package.json'
 
 /**
  * The GoldenRetriever plugin — restores selected files and resumes uploads
@@ -11,8 +13,8 @@ const MetaDataStore = require('./MetaDataStore')
  * Uses localStorage, IndexedDB and ServiceWorker to do its magic, read more:
  * https://uppy.io/blog/2017/07/golden-retriever/
  */
-module.exports = class GoldenRetriever extends BasePlugin {
-  static VERSION = require('../package.json').version
+export default class GoldenRetriever extends BasePlugin {
+  static VERSION = packageJson.version
 
   constructor (uppy, opts) {
     super(uppy, opts)

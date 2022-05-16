@@ -207,6 +207,7 @@ module.exports = {
         'packages/@uppy/facebook/src/**/*.js',
         'packages/@uppy/file-input/src/**/*.js',
         'packages/@uppy/form/src/**/*.js',
+        'packages/@uppy/golden-retriever/src/**/*.js',
         'packages/@uppy/google-drive/src/**/*.js',
         'packages/@uppy/image-editor/src/**/*.js',
         'packages/@uppy/informer/src/**/*.js',

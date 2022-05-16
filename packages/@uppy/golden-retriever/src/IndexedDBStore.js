@@ -224,4 +224,4 @@ class IndexedDBStore {
 
 IndexedDBStore.isSupported = isSupported
 
-module.exports = IndexedDBStore
+export default IndexedDBStore
