@@ -99,7 +99,7 @@ import Tus from '@uppy/tus'
 
 const uppy = new Uppy().use(Tus, { endpoint: '', onShouldRetry })
 
-async function onShouldRetry (err) {
+async function onShouldRetry (err, next) {
   if (err?.originalResponse?.getStatus() === 401) {
     return true
   }
