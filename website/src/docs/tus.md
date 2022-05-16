@@ -87,6 +87,30 @@ When uploading a chunk fails, automatically try again after the millisecond inte
 
 Set to `null` to disable automatic retries, and fail instantly if any chunk fails to upload.
 
+### `onShouldRetry: (err, next) => next(err)`
+
+When an upload fails `onShouldRetry` is called with the error and the default retry logic as the second argument. The default retry logic is an [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) algorithm triggered on HTTP 429 (Too Many Requests) errors. Meaning if your server (or proxy) returns HTTP 429 because it’s being overloaded, @uppy/tus will find the ideal sweet spot to keep uploading without overloading.
+
+If you want to extend this functionality, for instance to retry on unauthorized requests (to retrieve a new authentication token):
+
+```js
+import Uppy from '@uppy/core'
+import Tus from '@uppy/tus'
+
+const uppy = new Uppy().use(Tus, { endpoint: '', onShouldRetry })
+
+async function onShouldRetry (err) {
+  if (err?.originalResponse?.getStatus() === 401) {
+    return true
+  }
+  return next(err)
+}
+```
+
+### `onBeforeRequest: (req) => void`
+
+See [`onBeforeRequest`](https://github.com/tus/tus-js-client/blob/master/docs/api.md#onbeforerequest) from `tus-js-client`.
+
 ### `metaFields: null`
 
 Pass an array of field names to limit the metadata fields that will be added to uploads as [Tus Metadata](https://tus.io/protocols/resumable-upload.html#upload-metadata).

@@ -277,8 +277,15 @@ export default class Tus extends BasePlugin {
         resolve(upload)
       }
 
-      uploadOptions.onShouldRetry = (err) => {
+      if (this.opts.onShouldRetry !== null) {
+        uploadOptions.onShouldRetry = (err) => opts.onShouldRetry(err, defaultOnShouldRetry)
+      } else {
+        uploadOptions.onShouldRetry = defaultOnShouldRetry
+      }
+
+      function defaultOnShouldRetry (err) {
         const status = err?.originalResponse?.getStatus()
+
         if (status === 429) {
           // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
           if (!this.requests.isPaused) {
