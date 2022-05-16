@@ -286,4 +286,4 @@ TransitionGroup.defaultProps = {
   childFactory: identity,
 }
 
-module.exports = TransitionGroup
+export default TransitionGroup

@@ -1,8 +1,8 @@
-const { h, Component, createRef } = require('preact')
+import { h, Component, createRef } from 'preact'
 
 const TRANSITION_MS = 300
 
-module.exports = class FadeIn extends Component {
+export default class FadeIn extends Component {
   ref = createRef()
 
   componentWillEnter (callback) {
