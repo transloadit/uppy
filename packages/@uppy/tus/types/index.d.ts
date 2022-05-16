@@ -17,7 +17,6 @@ export interface TusOptions extends PluginOptions, TusUploadOptions {
     limit?: number
     useFastRemoteRetry?: boolean
     withCredentials?: boolean
-    retryStatusCodes: Array<number>
   }
 
 declare class Tus extends BasePlugin<TusOptions> {}

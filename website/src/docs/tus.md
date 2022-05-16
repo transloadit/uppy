@@ -87,10 +87,6 @@ When uploading a chunk fails, automatically try again after the millisecond inte
 
 Set to `null` to disable automatic retries, and fail instantly if any chunk fails to upload.
 
-### `retryStatusCodes: [429]`
-
-Tus can retry with [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) when receiving 429 (Too Many Requests), or other configured status codes. This can be useful to retry when you hit an API rate limit or when your authentication token is expired.
-
 ### `metaFields: null`
 
 Pass an array of field names to limit the metadata fields that will be added to uploads as [Tus Metadata](https://tus.io/protocols/resumable-upload.html#upload-metadata).
