@@ -9,8 +9,10 @@ import parseUrl from './parseUrl.js'
 // (The console.error call comes from `buffer`. I
 // think we actually don't use that part of socket.io
 // at all…)
+// TODO: remove this hack in the next release.
 let socketIo
 function requireSocketIo () {
+  // eslint-disable-next-line no-return-assign, no-restricted-globals, global-require
   return socketIo ??= require('socket.io-client')
 }
 
