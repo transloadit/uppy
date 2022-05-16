@@ -1,5 +1,12 @@
 # @uppy/status-bar
 
+## 2.2.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/status-bar: refactor to ESM (Antoine du Hamel / #3697)
+
 ## 2.1.2
 
 Released: 2021-12-07

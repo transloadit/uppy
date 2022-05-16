@@ -1,4 +1,4 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 function GoogleIcon () {
   return (
@@ -80,4 +80,4 @@ function AuthView (props) {
   )
 }
 
-module.exports = AuthView
+export default AuthView

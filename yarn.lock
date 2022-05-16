@@ -10181,6 +10181,7 @@ __metadata:
     "@uppy/utils": "workspace:^"
     tus-js-client: ^2.1.1
   peerDependencies:
+    "@jest/globals": ^27.4.2
     "@uppy/core": "workspace:^"
   languageName: unknown
   linkType: soft
@@ -16598,8 +16599,8 @@ __metadata:
   linkType: hard
 
 "cypress@npm:^9.0.0":
-  version: 9.6.0
-  resolution: "cypress@npm:9.6.0"
+  version: 9.6.1
+  resolution: "cypress@npm:9.6.1"
   dependencies:
     "@cypress/request": ^2.88.10
     "@cypress/xvfb": ^1.2.4
@@ -16645,7 +16646,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: 1e5142885a3fb54db6ef7477e3b11b363f1f610ff008982af014e6df3261ac3899f4cad407c598fb690f93029634adb4ad4605929d10776f92175a3eebb471c4
+  checksum: 3d464346f30b164c10947e332e5c8095c1f53b946d378c18a09e7591b0aadb331062d880505a228ff1d996d37c9e7b4e8a9f2308871a00442d9171a1718f7fa4
   languageName: node
   linkType: hard
 

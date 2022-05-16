@@ -1,6 +1,6 @@
-const remoteFileObjToLocal = require('@uppy/utils/lib/remoteFileObjToLocal')
+import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 
-module.exports = class SharedHandler {
+export default class SharedHandler {
   constructor (plugin) {
     this.plugin = plugin
     this.filterItems = this.filterItems.bind(this)

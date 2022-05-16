@@ -1,5 +1,12 @@
 # @uppy/screen-capture
 
+## 2.1.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/screen-capture: refactor to ESM (Antoine du Hamel / #3698)
+
 ## 2.0.6
 
 Released: 2022-01-10

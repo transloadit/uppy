@@ -1,1 +1,1 @@
-module.exports = require('./SearchProviderView')
+export { default } from './SearchProviderView.jsx'

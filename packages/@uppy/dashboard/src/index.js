@@ -6,7 +6,6 @@ const ThumbnailGenerator = require('@uppy/thumbnail-generator')
 const findAllDOMElements = require('@uppy/utils/lib/findAllDOMElements')
 const toArray = require('@uppy/utils/lib/toArray')
 const getDroppedFiles = require('@uppy/utils/lib/getDroppedFiles')
-const getTextDirection = require('@uppy/utils/lib/getTextDirection')
 const { nanoid } = require('nanoid/non-secure')
 const trapFocus = require('./utils/trapFocus')
 const createSuperFocus = require('./utils/createSuperFocus')
@@ -982,15 +981,6 @@ module.exports = class Dashboard extends UIPlugin {
         this.addTarget(plugin)
       }
     })
-  }
-
-  onMount () {
-    // Set the text direction if the page has not defined one.
-    const element = this.el
-    const direction = getTextDirection(element)
-    if (!direction) {
-      element.dir = 'ltr'
-    }
   }
 
   install = () => {

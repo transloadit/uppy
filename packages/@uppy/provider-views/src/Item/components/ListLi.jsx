@@ -1,4 +1,4 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 // if folder:
 //   + checkbox (selects all files from folder)
@@ -73,4 +73,4 @@ function ListItem (props) {
   )
 }
 
-module.exports = ListItem
+export default ListItem

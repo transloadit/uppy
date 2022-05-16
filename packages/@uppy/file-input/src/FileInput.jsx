@@ -81,7 +81,7 @@ export default  class FileInput extends UIPlugin {
     const accept = restrictions.allowedFileTypes ? restrictions.allowedFileTypes.join(',') : null
 
     return (
-      <div className="uppy-Root uppy-FileInput-container">
+      <div className="uppy-FileInput-container">
         <input
           className="uppy-FileInput-input"
           style={this.opts.pretty && hiddenInputStyle}

@@ -30,7 +30,7 @@ describe('Dashboard with Tus', () => {
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.intercept(
-      { method: 'PATCH', pathname: '/files/*', times: 1 },
+      { method: 'PATCH', pathname: '/files/*', times: 2 },
       { statusCode: 429, body: {} },
     ).as('patch')
 
@@ -45,7 +45,7 @@ describe('Dashboard with Tus', () => {
 
   it('should upload remote image with URL plugin', () => {
     cy.get('[data-cy="Url"]').click()
-    cy.get('.uppy-Url-input').type('https://github.com/transloadit/uppy/raw/main/e2e/cypress/fixtures/images/cat.jpg')
+    cy.get('.uppy-Url-input').type('https://raw.githubusercontent.com/transloadit/uppy/main/e2e/cypress/fixtures/images/cat.jpg')
     cy.get('.uppy-Url-importButton').click()
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
     cy.wait('@url')
