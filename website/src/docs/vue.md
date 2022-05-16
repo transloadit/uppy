@@ -58,7 +58,7 @@ export default {
     uppy: () => new Uppy().use(Webcam)
   },
   beforeDestroy () {
-    this.uppy.close()
+    this.uppy.close({ reason: 'unmount' })
   }
 }
 </script>
@@ -92,7 +92,7 @@ export default {
     }),
   },
   beforeDestroy () {
-    this.uppy.close()
+    this.uppy.close({ reason: 'unmount' })
   },
 }
 ```

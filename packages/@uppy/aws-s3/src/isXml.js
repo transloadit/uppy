@@ -32,4 +32,4 @@ function isXml (content, xhr) {
   return false
 }
 
-module.exports = isXml
+export default isXml

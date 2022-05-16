@@ -22,10 +22,6 @@ module.exports = function Dashboard (props) {
   const noFiles = props.totalFileCount === 0
   const isSizeMD = props.containerWidth > WIDTH_MD
 
-  const wrapperClassName = classNames({
-    'uppy-Root': props.isTargetDOMEl,
-  })
-
   const dashboardClassName = classNames({
     'uppy-Dashboard': true,
     'uppy-Dashboard--isDisabled': props.disabled,
@@ -169,10 +165,5 @@ module.exports = function Dashboard (props) {
     </div>
   )
 
-  return (
-    // Wrap it for RTL language support
-    <div className={wrapperClassName} dir={props.direction}>
-      {dashboard}
-    </div>
-  )
+  return dashboard
 }

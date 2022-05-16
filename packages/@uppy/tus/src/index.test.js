@@ -1,5 +1,6 @@
-const Core = require('@uppy/core')
-const Tus = require('.')
+import { describe, expect, it } from '@jest/globals'
+import Core from '@uppy/core'
+import Tus from './index.js'
 
 describe('Tus', () => {
   it('Throws errors if autoRetry option is true', () => {

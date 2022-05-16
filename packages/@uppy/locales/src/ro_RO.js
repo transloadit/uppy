@@ -1,4 +1,11 @@
-const ro_RO = {}
+const ro_RO = {
+  pluralize (count) {
+    if (count === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 ro_RO.strings = {
   addBulkFilesFailed: {
@@ -136,15 +143,8 @@ ro_RO.strings = {
   },
 }
 
-ro_RO.pluralize = function pluralize (count) {
-  if (count === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.ro_RO = ro_RO
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.ro_RO = ro_RO
-}
-
-module.exports = ro_RO
+export default ro_RO

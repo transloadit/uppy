@@ -1,4 +1,4 @@
-const zh_CN = {}
+const zh_CN = { pluralize () { return 0 } }
 
 zh_CN.strings = {
   addBulkFilesFailed: '内部错误导致添加 %{smart_count} 个文件失败',
@@ -111,10 +111,8 @@ zh_CN.strings = {
 }
 
 // There is just one form.
-zh_CN.pluralize = function pluralize () { return 0 }
-
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.zh_CN = zh_CN
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.zh_CN = zh_CN
 }
 
-module.exports = zh_CN
+export default zh_CN

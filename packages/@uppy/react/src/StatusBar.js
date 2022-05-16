@@ -56,6 +56,7 @@ class StatusBar extends React.Component {
     // TODO: stop exposing `validProps` as a public property and rename it to `htmlProps`
     this.validProps = getHTMLProps(this.props)
     return h('div', {
+      className: 'uppy-Container',
       ref: (container) => {
         this.container = container
       },

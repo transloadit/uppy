@@ -1,4 +1,11 @@
-const fr_FR = {}
+const fr_FR = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 fr_FR.strings = {
   addBulkFilesFailed: {
@@ -158,15 +165,8 @@ fr_FR.strings = {
   },
 }
 
-fr_FR.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.fr_FR = fr_FR
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.fr_FR = fr_FR
-}
-
-module.exports = fr_FR
+export default fr_FR

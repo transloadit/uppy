@@ -105,7 +105,7 @@ If no preferred video mime type is given, the ScreenCapture plugin will prefer t
 <!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
-module.exports = {
+export default {
   strings: {
     startCapturing: 'Begin screen capturing',
     stopCapturing: 'Stop screen capturing',

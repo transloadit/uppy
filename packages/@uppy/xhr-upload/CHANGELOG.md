@@ -1,5 +1,13 @@
 # @uppy/xhr-upload
 
+## 2.1.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/core,@uppy/react,@uppy/transloadit,@uppy/tus,@uppy/xhr-upload: proposal: Cancel assemblies optional (Mikael Finstad / #3575)
+- @uppy/xhr-upload: refactor to ESM (Antoine du Hamel / #3695)
+
 ## 2.0.7
 
 Released: 2021-12-09

@@ -1,4 +1,11 @@
-const sv_SE = {}
+const sv_SE = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 sv_SE.strings = {
   addMore: 'Lägg till',
@@ -137,15 +144,8 @@ sv_SE.strings = {
   },
 }
 
-sv_SE.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.sv_SE = sv_SE
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.sv_SE = sv_SE
-}
-
-module.exports = sv_SE
+export default sv_SE

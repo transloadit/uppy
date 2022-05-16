@@ -210,6 +210,7 @@ export type FilesAddedCallback<TMeta> = (files: UppyFile<TMeta>[]) => void;
 export type FileRemovedCallback<TMeta> = (file: UppyFile<TMeta>, reason: FileRemoveReason) => void;
 export type UploadCallback = (data: { id: string, fileIDs: string[] }) => void;
 export type ProgressCallback = (progress: number) => void;
+export type PreProcessCompleteCallback<TMeta> = (file: UppyFile<TMeta>) => void;
 export type UploadProgressCallback<TMeta> = (file: UppyFile<TMeta>, progress: FileProgress) => void;
 export type UploadSuccessCallback<TMeta> = (file: UppyFile<TMeta>, response: SuccessResponse) => void
 export type UploadCompleteCallback<TMeta> = (result: UploadResult<TMeta>) => void
@@ -225,6 +226,7 @@ export interface UppyEventMap<TMeta = Record<string, unknown>> {
   'file-removed': FileRemovedCallback<TMeta>
   'upload': UploadCallback
   'progress': ProgressCallback
+  'preprocess-complete': PreProcessCompleteCallback<TMeta>
   'upload-progress': UploadProgressCallback<TMeta>
   'upload-success': UploadSuccessCallback<TMeta>
   'complete': UploadCompleteCallback<TMeta>
@@ -322,6 +324,10 @@ export class Uppy {
   addFile<TMeta extends IndexedObject<any> = Record<string, unknown>>(
     file: AddFileOptions<TMeta>
   ): string
+
+  addFiles<TMeta extends IndexedObject<any> = Record<string, unknown>>(
+    files: AddFileOptions<TMeta>[]
+  ): void
 
   removeFile(fileID: string, reason?: FileRemoveReason): void
 

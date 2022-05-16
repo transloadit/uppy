@@ -1,5 +1,12 @@
 # @uppy/audio
 
+## 0.3.1
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/audio: fix types (Merlijn Vos / #3689)
+
 ## 0.3.0
 
 Released: 2022-03-16

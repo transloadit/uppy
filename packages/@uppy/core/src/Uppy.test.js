@@ -223,7 +223,7 @@ describe('src/Core', () => {
 
     core.reset()
 
-    expect(coreCancelEventMock.mock.calls.length).toEqual(1)
+    expect(coreCancelEventMock).toHaveBeenCalledWith({ reason: 'user' }, undefined, undefined, undefined, undefined, undefined)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(2)
     expect(coreStateUpdateEventMock.mock.calls[1][1]).toEqual({
       capabilities: { individualCancellation: true, uploadProgress: true, resumableUploads: false },
@@ -285,7 +285,7 @@ describe('src/Core', () => {
 
     core.close()
 
-    expect(coreCancelEventMock.mock.calls.length).toEqual(1)
+    expect(coreCancelEventMock).toHaveBeenCalledWith({ reason: 'user' }, undefined, undefined, undefined, undefined, undefined)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls[0][1]).toEqual({
       capabilities: { individualCancellation: true, uploadProgress: true, resumableUploads: false },

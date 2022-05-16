@@ -1,5 +1,12 @@
 # @uppy/webcam
 
+## 2.2.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/webcam: refactor to ESM (Antoine du Hamel / #3686)
+
 ## 2.1.0
 
 Released: 2022-03-24

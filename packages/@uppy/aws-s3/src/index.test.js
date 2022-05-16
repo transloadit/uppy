@@ -1,6 +1,6 @@
-require('whatwg-fetch')
-const Core = require('@uppy/core')
-const AwsS3 = require('.')
+import 'whatwg-fetch'
+import Core from '@uppy/core'
+import AwsS3 from './index.js'
 
 describe('AwsS3', () => {
   it('Registers AwsS3 upload plugin', () => {

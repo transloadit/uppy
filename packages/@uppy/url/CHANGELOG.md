@@ -1,5 +1,12 @@
 # @uppy/url
 
+## 2.1.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/url: refactor to ESM (Antoine du Hamel / #3713)
+
 ## 2.0.5
 
 Released: 2021-12-07
