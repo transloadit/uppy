@@ -219,6 +219,7 @@ module.exports = {
         'packages/@uppy/status-bar/src/**/*.js',
         'packages/@uppy/svelte/src/**/*.js',
         'packages/@uppy/svelte/rollup.config.js',
+        'packages/@uppy/thumbnail-generator/src/**/*.js',
         'packages/@uppy/tus/src/**/*.js',
         'packages/@uppy/unsplash/src/**/*.js',
         'packages/@uppy/url/src/**/*.js',
