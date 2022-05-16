@@ -53,6 +53,7 @@ jobs:
           COMPANION_AWS_SECRET: ${{secrets.COMPANION_AWS_SECRET}}
           COMPANION_AWS_BUCKET: ${{secrets.COMPANION_AWS_BUCKET}}
           COMPANION_AWS_REGION: ${{secrets.COMPANION_AWS_REGION}}
+          COMPANION_AWS_DISABLE_ACL: true
       - name: Remove 'pending end-to-end tests' label
         # Remove the 'pending end-to-end tests' label if tests ran successfully
         if: github.event.pull_request && contains(github.event.pull_request.labels.*.name, 'pending end-to-end tests')
