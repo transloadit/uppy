@@ -277,8 +277,8 @@ export default class Tus extends BasePlugin {
         resolve(upload)
       }
 
-      if (this.opts.onShouldRetry !== null) {
-        uploadOptions.onShouldRetry = (err) => opts.onShouldRetry(err, defaultOnShouldRetry)
+      if (opts.onShouldRetry !== null) {
+        uploadOptions.onShouldRetry = async (err) => opts.onShouldRetry(err, defaultOnShouldRetry)
       } else {
         uploadOptions.onShouldRetry = defaultOnShouldRetry
       }
