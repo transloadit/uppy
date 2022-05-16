@@ -1,4 +1,4 @@
-import tus from 'tus-js-client'
+import * as tus from 'tus-js-client'
 
 function isCordova () {
   return typeof window !== 'undefined' && (
