@@ -2,9 +2,8 @@
 /**
  * @source https://github.com/developit/preact-transition-group
  */
-'use strict'
 
-const { Component, cloneElement, h, toChildArray } = require('preact')
+import { Component, cloneElement, h, toChildArray } from 'preact'
 
 function assign (obj, props) {
   return Object.assign(obj, props)
