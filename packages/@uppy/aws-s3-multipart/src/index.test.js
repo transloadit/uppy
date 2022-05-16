@@ -1,7 +1,9 @@
-require('whatwg-fetch')
-const nock = require('nock')
-const Core = require('@uppy/core')
-const AwsS3Multipart = require('.')
+import { describe, expect, it, jest } from '@jest/globals'
+
+import 'whatwg-fetch'
+import nock from 'nock'
+import Core from '@uppy/core'
+import AwsS3Multipart from './index.js'
 
 const KB = 1024
 const MB = KB * KB

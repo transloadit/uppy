@@ -9673,6 +9673,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/aws-s3-multipart@workspace:packages/@uppy/aws-s3-multipart"
   dependencies:
+    "@jest/globals": ^27.4.2
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
     nock: ^13.1.0

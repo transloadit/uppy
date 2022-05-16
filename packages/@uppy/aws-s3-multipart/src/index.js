@@ -1,10 +1,12 @@
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const { Socket, Provider, RequestClient } = require('@uppy/companion-client')
-const EventTracker = require('@uppy/utils/lib/EventTracker')
-const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
-const getSocketHost = require('@uppy/utils/lib/getSocketHost')
-const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const MultipartUploader = require('./MultipartUploader')
+import BasePlugin from '@uppy/core/lib/BasePlugin'
+import { Socket, Provider, RequestClient } from '@uppy/companion-client'
+import EventTracker from '@uppy/utils/lib/EventTracker'
+import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
+import getSocketHost from '@uppy/utils/lib/getSocketHost'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+
+import packageJson from '../package.json'
+import MultipartUploader from './MultipartUploader.js'
 
 function assertServerError (res) {
   if (res && res.error) {
@@ -15,8 +17,8 @@ function assertServerError (res) {
   return res
 }
 
-module.exports = class AwsS3Multipart extends BasePlugin {
-  static VERSION = require('../package.json').version
+export default class AwsS3Multipart extends BasePlugin {
+  static VERSION = packageJson.version
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -129,6 +131,8 @@ module.exports = class AwsS3Multipart extends BasePlugin {
 
   uploadFile (file) {
     return new Promise((resolve, reject) => {
+      let queuedRequest
+
       const onStart = (data) => {
         const cFile = this.uppy.getFile(file.id)
         this.uppy.setFileState(file.id, {
@@ -158,6 +162,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       }
 
       const onSuccess = (result) => {
+        const uploadObject = upload // eslint-disable-line no-use-before-define
         const uploadResp = {
           body: {
             ...result,
@@ -172,10 +177,10 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         this.uppy.emit('upload-success', cFile || file, uploadResp)
 
         if (result.location) {
-          this.uppy.log(`Download ${upload.file.name} from ${result.location}`)
+          this.uppy.log(`Download ${uploadObject.file.name} from ${result.location}`)
         }
 
-        resolve(upload)
+        resolve(uploadObject)
       }
 
       const onPartComplete = (part) => {
@@ -210,7 +215,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      let queuedRequest = this.requests.run(() => {
+      queuedRequest = this.requests.run(() => {
         if (!file.isPaused) {
           upload.start()
         }
@@ -299,9 +304,8 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         },
       ).then((res) => {
         this.uppy.setFileState(file.id, { serverToken: res.token })
+        // eslint-disable-next-line no-param-reassign
         file = this.uppy.getFile(file.id)
-        return file
-      }).then((file) => {
         return this.connectToServerSocket(file)
       }).then(() => {
         resolve()
@@ -314,6 +318,8 @@ module.exports = class AwsS3Multipart extends BasePlugin {
 
   connectToServerSocket (file) {
     return new Promise((resolve, reject) => {
+      let queuedRequest
+
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
       const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
@@ -405,7 +411,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         resolve()
       })
 
-      let queuedRequest = this.requests.run(() => {
+      queuedRequest = this.requests.run(() => {
         socket.open()
         if (file.isPaused) {
           socket.send('pause', {})
