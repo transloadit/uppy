@@ -14,7 +14,7 @@ const uppy = new Uppy()
   .use(Url, { target: Dashboard, companionUrl })
   .use(Unsplash, { target: Dashboard, companionUrl })
 
-function onShouldRetry (err, next) {
+function onShouldRetry (err, retryAttempt, options, next) {
   if (err?.originalResponse?.getStatus() === 418) {
     return true
   }
