@@ -9250,11 +9250,9 @@ __metadata:
   resolution: "@uppy-dev/dev@workspace:private/dev"
   dependencies:
     "@babel/core": ^7.4.4
-    "@babel/plugin-transform-react-jsx": ^7.10.4
     "@babel/types": ^7.17.0
     "@uppy/companion": "workspace:^"
     autoprefixer: ^10.2.6
-    babel-plugin-transform-commonjs: 1.1.6
     postcss-dir-pseudo-class: ^5.0.0
     postcss-logical: ^4.0.2
     vite: ^2.7.1
@@ -12996,28 +12994,6 @@ __metadata:
   version: 7.0.0-beta.0
   resolution: "babel-plugin-syntax-trailing-function-commas@npm:7.0.0-beta.0"
   checksum: e37509156ca945dd9e4b82c66dd74f2d842ad917bd280cb5aa67960942300cd065eeac476d2514bdcdedec071277a358f6d517c31d9f9244d9bbc3619a8ecf8a
-  languageName: node
-  linkType: hard
-
-"babel-plugin-transform-commonjs@npm:1.1.6":
-  version: 1.1.6
-  resolution: "babel-plugin-transform-commonjs@npm:1.1.6"
-  dependencies:
-    "@babel/helper-plugin-utils": ^7.0.0
-  peerDependencies:
-    "@babel/core": ">=7"
-  checksum: fc3f938b5d593457726c53e92305a3f1a3119524f057dedbe5adf16bc85b5b2bb376f8d50deb96bbf1aa168c46ba1c4a6a1cab35837d27049d2ab9fc402aeb9e
-  languageName: node
-  linkType: hard
-
-"babel-plugin-transform-commonjs@patch:babel-plugin-transform-commonjs@npm:1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809::locator=%40uppy-dev%2Fbuild%40workspace%3A.":
-  version: 1.1.6
-  resolution: "babel-plugin-transform-commonjs@patch:babel-plugin-transform-commonjs@npm%3A1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809::version=1.1.6&hash=f83dbd&locator=%40uppy-dev%2Fbuild%40workspace%3A."
-  dependencies:
-    "@babel/helper-plugin-utils": ^7.0.0
-  peerDependencies:
-    "@babel/core": ">=7"
-  checksum: 5995b2641a8551fcc8d0f9d24222ae15698100917edffc8d98f8033cc65b1e577e6b346ac4dbf2456425e494bd1caf1f6646002163953a88290e901f611d83ad
   languageName: node
   linkType: hard
 
