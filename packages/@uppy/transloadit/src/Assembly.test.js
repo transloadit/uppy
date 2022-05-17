@@ -1,5 +1,6 @@
-const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const Assembly = require('./Assembly')
+import { describe, expect, it, jest } from '@jest/globals'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import Assembly from './Assembly.js'
 
 describe('Transloadit/Assembly', () => {
   describe('status diffing', () => {

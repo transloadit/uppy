@@ -1,19 +1,19 @@
-const Emitter = require('component-emitter')
-const has = require('@uppy/utils/lib/hasProperty')
-const NetworkError = require('@uppy/utils/lib/NetworkError')
-const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
-const parseUrl = require('./parseUrl')
+import Emitter from 'component-emitter'
+import has from '@uppy/utils/lib/hasProperty'
+import NetworkError from '@uppy/utils/lib/NetworkError'
+import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
+import parseUrl from './parseUrl.js'
 
-// Lazy load socket.io to avoid a console error
+// We used to lazy load socket.io to avoid a console error
 // in IE 10 when the Transloadit plugin is not used.
 // (The console.error call comes from `buffer`. I
 // think we actually don't use that part of socket.io
 // at all…)
+// TODO: remove this hack in the next release.
 let socketIo
 function requireSocketIo () {
-  // eslint-disable-next-line global-require
-  socketIo ??= require('socket.io-client')
-  return socketIo
+  // eslint-disable-next-line no-return-assign, no-restricted-globals, global-require
+  return socketIo ??= require('socket.io-client')
 }
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
@@ -282,4 +282,4 @@ class TransloaditAssembly extends Emitter {
   }
 }
 
-module.exports = TransloaditAssembly
+export default TransloaditAssembly

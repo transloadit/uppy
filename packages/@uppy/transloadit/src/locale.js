@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   strings: {
     // Shown while Assemblies are being created for an upload.
     creatingAssembly: 'Preparing upload...',
