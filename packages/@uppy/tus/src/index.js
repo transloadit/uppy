@@ -237,7 +237,7 @@ export default class Tus extends BasePlugin {
           // enough time has elapsed to expect not to be rate-limited again.
           // This means we can hold the Tus retry here with a `Promise.all`,
           // together with the returned value of the user provided
-          // `onBeforeRequest` option callback (in case it returns a promise). 
+          // `onBeforeRequest` option callback (in case it returns a promise).
           return Promise.all([p, userProvidedPromise])
         }
         return userProvidedPromise
