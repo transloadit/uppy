@@ -35,6 +35,7 @@ describe('Dashboard with Tus', () => {
     ).as('patch')
 
     cy.wait('@patch')
+    cy.wait('@patch')
 
     cy.window().then(({ uppy }) => {
       expect(uppy.getPlugin<Tus>('Tus').requests.isPaused).to.equal(true)
