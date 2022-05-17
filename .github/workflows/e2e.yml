@@ -6,7 +6,7 @@ on:
     types: [ opened, synchronize, reopened, labeled ]
   pull_request:
     types: [ opened, synchronize, reopened ]
-    path:
+    paths:
       - .github/workflows/e2e.yml
 
 concurrency: ${{ github.workflow }}--${{ github.ref }}
