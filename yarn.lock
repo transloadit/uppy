@@ -10120,6 +10120,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/store-redux@workspace:packages/@uppy/store-redux"
   dependencies:
+    "@jest/globals": ^27.4.2
     nanoid: ^3.1.25
     redux: 4.0.5
   languageName: unknown
