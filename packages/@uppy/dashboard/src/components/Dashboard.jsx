@@ -110,6 +110,7 @@ export default function Dashboard (props) {
             {props.i18n('dropHint')}
           </div>
 
+          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           {showFileList && <PanelTopBar {...props} />}
 
           {numberOfFilesForRecovery && (
@@ -132,26 +133,32 @@ export default function Dashboard (props) {
 
           {showFileList ? (
             <FileList
+              // eslint-disable-next-line react/jsx-props-no-spreading
               {...props}
               itemsPerRow={itemsPerRow}
             />
           ) : (
+            // eslint-disable-next-line react/jsx-props-no-spreading
             <AddFiles {...props} isSizeMD={isSizeMD} />
           )}
 
           <Slide>
+            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             {props.showAddFilesPanel ? <AddFilesPanel key="AddFiles" {...props} isSizeMD={isSizeMD} /> : null}
           </Slide>
 
           <Slide>
+            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             {props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null}
           </Slide>
 
           <Slide>
+            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             {props.activePickerPanel ? <PickerPanelContent key="Picker" {...props} /> : null}
           </Slide>
 
           <Slide>
+            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             {props.showFileEditor ? <EditorPanel key="Editor" {...props} /> : null}
           </Slide>
 

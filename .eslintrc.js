@@ -272,6 +272,14 @@ module.exports = {
     },
     {
       files: [
+        'packages/@uppy/dashboard/src/components/**/*.jsx',
+      ],
+      rules: {
+        'react/destructuring-assignment': 'off',
+      },
+    },
+    {
+      files: [
         // Those need looser rules, and cannot be made part of the stricter rules above.
         // TODO: update those to more modern code when switch to ESM is complete
         'examples/react-native-expo/*.js',

@@ -21,6 +21,7 @@ const AddFilesPanel = (props) => {
           {props.i18n('back')}
         </button>
       </div>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <AddFiles {...props} />
     </div>
   )

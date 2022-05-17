@@ -129,7 +129,7 @@ export default class Dashboard extends UIPlugin {
         && callerPluginType !== 'editor') {
       const msg = 'Dashboard: can only be targeted by plugins of types: acquirer, progressindicator, editor'
       this.uppy.log(msg, 'error')
-      return
+      return undefined
     }
 
     const target = {
@@ -266,7 +266,7 @@ export default class Dashboard extends UIPlugin {
     const { isHidden, isClosing } = this.getPluginState()
     if (isHidden || isClosing) {
       // short-circuit if animation is ongoing
-      return
+      return undefined
     }
 
     const { promise, resolve } = createPromise()
@@ -462,7 +462,7 @@ export default class Dashboard extends UIPlugin {
         // save previous tabindex in a data-attribute, to restore when enabling
         const currentTabIndex = node.getAttribute('tabindex')
         if (currentTabIndex) {
-          node.dataset.inertTabindex = currentTabIndex
+          node.dataset.inertTabindex = currentTabIndex // eslint-disable-line no-param-reassign
         }
         node.setAttribute('tabindex', '-1')
       })
@@ -584,7 +584,7 @@ export default class Dashboard extends UIPlugin {
       || (this.opts.disableLocalFiles && (hasFiles || !somePluginCanHandleRootDrop))
       || !this.uppy.getState().allowNewUpload
     ) {
-      event.dataTransfer.dropEffect = 'none'
+      event.dataTransfer.dropEffect = 'none' // eslint-disable-line no-param-reassign
       clearTimeout(this.removeDragOverClassTimeout)
       return
     }
@@ -592,7 +592,7 @@ export default class Dashboard extends UIPlugin {
     // Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the
     // browser, https://github.com/transloadit/uppy/issues/1978).
-    event.dataTransfer.dropEffect = 'copy'
+    event.dataTransfer.dropEffect = 'copy' // eslint-disable-line no-param-reassign
 
     clearTimeout(this.removeDragOverClassTimeout)
     this.setPluginState({ isDraggingOver: true })

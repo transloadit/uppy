@@ -77,7 +77,7 @@ export default (props) => {
         <FileItem
           key={fileID}
           uppy={props.uppy}
-          {...fileProps}
+          {...fileProps} // eslint-disable-line react/jsx-props-no-spreading
           role="listitem"
           openFileEditor={props.openFileEditor}
           canEditFile={props.canEditFile}
