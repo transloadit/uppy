@@ -277,7 +277,7 @@ export default class Tus extends BasePlugin {
         resolve(upload)
       }
 
-      function defaultOnShouldRetry (err) {
+      const defaultOnShouldRetry = (err) => {
         const status = err?.originalResponse?.getStatus()
 
         if (status === 429) {
@@ -317,8 +317,8 @@ export default class Tus extends BasePlugin {
         return true
       }
 
-      if (opts.onShouldRetry !== null) {
-        uploadOptions.onShouldRetry = (...args) => opts.onShouldRetry(...args, defaultOnShouldRetry.bind(this))
+      if (opts.onShouldRetry != null) {
+        uploadOptions.onShouldRetry = (...args) => opts.onShouldRetry(...args, defaultOnShouldRetry)
       } else {
         uploadOptions.onShouldRetry = defaultOnShouldRetry
       }
