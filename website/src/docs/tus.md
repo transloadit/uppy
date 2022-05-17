@@ -37,6 +37,10 @@ const { Tus } = Uppy
 
 ## Options
 
+**Note**: all options are passed to `tus-js-client` and we document the ones here that we added or changed. This means you can also pass functions like [`onBeforeRequest`](https://github.com/tus/tus-js-client/blob/master/docs/api.md#onbeforerequest) and [`onAfterResponse`](https://github.com/tus/tus-js-client/blob/master/docs/api.md#onafterresponse).
+
+We recommended taking a look at the [API reference](https://github.com/tus/tus-js-client/blob/master/docs/api.md) from `tus-js-client` to know what is supported.
+
 ### `id: 'Tus'`
 
 A unique identifier for this plugin. It defaults to `'Tus'`.
@@ -87,7 +91,7 @@ When uploading a chunk fails, automatically try again after the millisecond inte
 
 Set to `null` to disable automatic retries, and fail instantly if any chunk fails to upload.
 
-### `onShouldRetry: (err, next) => next(err)`
+### `onShouldRetry: (err, retryAttempt, options, next) => next(err)`
 
 When an upload fails `onShouldRetry` is called with the error and the default retry logic as the second argument. The default retry logic is an [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff) algorithm triggered on HTTP 429 (Too Many Requests) errors. Meaning if your server (or proxy) returns HTTP 429 because it’s being overloaded, @uppy/tus will find the ideal sweet spot to keep uploading without overloading.
 
@@ -97,19 +101,27 @@ If you want to extend this functionality, for instance to retry on unauthorized 
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 
-const uppy = new Uppy().use(Tus, { endpoint: '', onShouldRetry })
+new Uppy().use(Tus, { endpoint: '', onBeforeRequest, onShouldRetry, onAfterResponse })
 
-async function onShouldRetry (err, next) {
+async function onBeforeRequest (req) {
+  const xhr = req.getUnderlyingObject()
+  const token = await getAuthToken()
+  xhr.headers = { ...xhr.headers, authorization:  `Bearer ${token}` }
+}
+
+function onShouldRetry (err, retryAttempt, options, next) {
   if (err?.originalResponse?.getStatus() === 401) {
     return true
   }
   return next(err)
 }
+
+async function onAfterResponse (req, res) {
+  if (res.getStatus() === 401) {
+    await refreshAuthToken()
+  }
+}
 ```
-
-### `onBeforeRequest: (req) => void`
-
-See [`onBeforeRequest`](https://github.com/tus/tus-js-client/blob/master/docs/api.md#onbeforerequest) from `tus-js-client`.
 
 ### `metaFields: null`
 
