@@ -277,12 +277,6 @@ export default class Tus extends BasePlugin {
         resolve(upload)
       }
 
-      if (opts.onShouldRetry !== null) {
-        uploadOptions.onShouldRetry = (...args) => opts.onShouldRetry(...args, defaultOnShouldRetry.bind(this))
-      } else {
-        uploadOptions.onShouldRetry = defaultOnShouldRetry
-      }
-
       function defaultOnShouldRetry (err) {
         const status = err?.originalResponse?.getStatus()
 
@@ -321,6 +315,12 @@ export default class Tus extends BasePlugin {
           },
         }
         return true
+      }
+
+      if (opts.onShouldRetry !== null) {
+        uploadOptions.onShouldRetry = (...args) => opts.onShouldRetry(...args, defaultOnShouldRetry.bind(this))
+      } else {
+        uploadOptions.onShouldRetry = defaultOnShouldRetry
       }
 
       const copyProp = (obj, srcProp, destProp) => {
