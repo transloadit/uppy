@@ -41728,6 +41728,7 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
     "@uppy/url": "workspace:^"
     "@uppy/webcam": "workspace:^"
     "@uppy/xhr-upload": "workspace:^"
+    "@uppy/zoom": "workspace:^"
     abortcontroller-polyfill: ^1.7.3
     core-js: ~3.19.3
     md-gum-polyfill: ^1.0.0
