@@ -104,9 +104,8 @@ import Tus from '@uppy/tus'
 new Uppy().use(Tus, { endpoint: '', onBeforeRequest, onShouldRetry, onAfterResponse })
 
 async function onBeforeRequest (req) {
-  const xhr = req.getUnderlyingObject()
   const token = await getAuthToken()
-  xhr.headers = { ...xhr.headers, authorization:  `Bearer ${token}` }
+  req.setHeader('Authorization', `Bearer ${token}`)
 }
 
 function onShouldRetry (err, retryAttempt, options, next) {
