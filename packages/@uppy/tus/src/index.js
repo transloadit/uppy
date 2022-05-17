@@ -278,7 +278,7 @@ export default class Tus extends BasePlugin {
       }
 
       if (opts.onShouldRetry !== null) {
-        uploadOptions.onShouldRetry = async (err) => opts.onShouldRetry(err, defaultOnShouldRetry.bind(this))
+        uploadOptions.onShouldRetry = (...args) => opts.onShouldRetry(...args, defaultOnShouldRetry.bind(this))
       } else {
         uploadOptions.onShouldRetry = defaultOnShouldRetry
       }
