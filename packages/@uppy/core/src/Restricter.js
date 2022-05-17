@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
 /* global AggregateError */
-const prettierBytes = require('@transloadit/prettier-bytes')
-const match = require('mime-match')
+import prettierBytes from '@transloadit/prettier-bytes'
+import match from 'mime-match'
 
 const defaultOptions = {
   maxFileSize: null,
@@ -122,4 +122,4 @@ class Restricter {
   }
 }
 
-module.exports = { Restricter, defaultOptions, RestrictionError }
+export { Restricter, defaultOptions, RestrictionError }

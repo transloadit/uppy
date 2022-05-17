@@ -1,8 +1,8 @@
-const { render } = require('preact')
-const findDOMElement = require('@uppy/utils/lib/findDOMElement')
-const getTextDirection = require('@uppy/utils/lib/getTextDirection')
+import { render } from 'preact'
+import findDOMElement from '@uppy/utils/lib/findDOMElement'
+import getTextDirection from '@uppy/utils/lib/getTextDirection'
 
-const BasePlugin = require('./BasePlugin')
+import BasePlugin from './BasePlugin.js'
 
 /**
  * Defer a frequent call to the microtask queue.
@@ -98,7 +98,6 @@ class UIPlugin extends BasePlugin {
       this.uppy.iteratePlugins(p => {
         if (p instanceof Target) {
           targetPlugin = p
-          return false
         }
       })
     }
@@ -149,4 +148,4 @@ class UIPlugin extends BasePlugin {
   onUnmount () {}
 }
 
-module.exports = UIPlugin
+export default UIPlugin

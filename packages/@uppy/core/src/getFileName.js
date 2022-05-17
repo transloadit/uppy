@@ -1,4 +1,4 @@
-module.exports = function getFileName (fileType, fileDescriptor) {
+export default function getFileName (fileType, fileDescriptor) {
   if (fileDescriptor.name) {
     return fileDescriptor.name
   }

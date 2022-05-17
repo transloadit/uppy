@@ -6,6 +6,7 @@
   "main": "lib/index.js",
   "style": "dist/style.min.css",
   "types": "types/index.d.ts",
+  "type": "module",
   "keywords": [
     "file uploader",
     "uppy",
@@ -28,5 +29,8 @@
     "namespace-emitter": "^2.0.1",
     "nanoid": "^3.1.25",
     "preact": "^10.5.13"
+  },
+  "devDependencies": {
+    "@jest/globals": "^27.4.2"
   }
 }

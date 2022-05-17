@@ -1,24 +1,18 @@
 /* eslint no-console: "off", no-restricted-syntax: "off" */
-const fs = require('fs')
-const path = require('path')
-const prettierBytes = require('@transloadit/prettier-bytes')
-const Core = require('./index')
-const UIPlugin = require('./UIPlugin')
-const AcquirerPlugin1 = require('./mocks/acquirerPlugin1')
-const AcquirerPlugin2 = require('./mocks/acquirerPlugin2')
-const InvalidPlugin = require('./mocks/invalidPlugin')
-const InvalidPluginWithoutId = require('./mocks/invalidPluginWithoutId')
-const InvalidPluginWithoutType = require('./mocks/invalidPluginWithoutType')
-const DeepFrozenStore = require('../../../../e2e/cypress/fixtures/DeepFrozenStore.js')
+import { describe, expect, it, jest } from '@jest/globals'
 
-jest.mock('nanoid/non-secure', () => {
-  return { nanoid: () => 'cjd09qwxb000dlql4tp4doz8h' }
-})
-jest.mock('@uppy/utils/lib/findDOMElement', () => {
-  return () => null
-})
+import fs from 'node:fs'
+import prettierBytes from '@transloadit/prettier-bytes'
+import Core from '../lib/index.js'
+import UIPlugin from '../lib/UIPlugin.js'
+import AcquirerPlugin1 from './mocks/acquirerPlugin1.js'
+import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
+import InvalidPlugin from './mocks/invalidPlugin.js'
+import InvalidPluginWithoutId from './mocks/invalidPluginWithoutId.js'
+import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.js'
+import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mjs'
 
-const sampleImage = fs.readFileSync(path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'))
+const sampleImage = fs.readFileSync(new URL('../../../../e2e/cypress/fixtures/images/image.jpg', import.meta.url))
 
 describe('src/Core', () => {
   const RealCreateObjectUrl = global.URL.createObjectURL

@@ -1,6 +1,6 @@
-const UIPlugin = require('../UIPlugin')
+import UIPlugin from '../UIPlugin.js'
 
-module.exports = class InvalidPluginWithoutName extends UIPlugin {
+export default class InvalidPluginWithoutName extends UIPlugin {
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'acquirer'
