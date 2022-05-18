@@ -1,12 +1,12 @@
-const { h, Component } = require('preact')
-const classNames = require('classnames')
-const shallowEqual = require('is-shallow-equal')
-const FilePreviewAndLink = require('./FilePreviewAndLink')
-const FileProgress = require('./FileProgress')
-const FileInfo = require('./FileInfo')
-const Buttons = require('./Buttons')
+import {  h, Component  } from 'preact'
+import classNames from 'classnames'
+import shallowEqual from 'is-shallow-equal'
+import FilePreviewAndLink from './FilePreviewAndLink/index.jsx'
+import FileProgress from './FileProgress/index.jsx'
+import FileInfo from './FileInfo/index.jsx'
+import Buttons from './Buttons/index.jsx'
 
-module.exports = class FileItem extends Component {
+export default class FileItem extends Component {
   componentDidMount () {
     const { file } = this.props
     if (!file.preview) {

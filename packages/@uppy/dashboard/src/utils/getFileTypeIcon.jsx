@@ -1,4 +1,4 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 function iconImage () {
   return (
@@ -63,7 +63,7 @@ function iconText () {
   )
 }
 
-module.exports = function getIconByMime (fileType) {
+export default function getIconByMime (fileType) {
   const defaultChoice = {
     color: '#838999',
     icon: iconFile(),

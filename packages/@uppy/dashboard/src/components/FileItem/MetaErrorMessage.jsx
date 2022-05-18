@@ -1,11 +1,11 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 const metaFieldIdToName = (metaFieldId, metaFields) => {
   const field = metaFields.filter(f => f.id === metaFieldId)
   return field[0].name
 }
 
-module.exports = function renderMissingMetaFieldsError (props) {
+export default function renderMissingMetaFieldsError (props) {
   const { file, toggleFileCard, i18n, metaFields } = props
   const { missingRequiredMetaFields } = file
   if (!missingRequiredMetaFields?.length) {

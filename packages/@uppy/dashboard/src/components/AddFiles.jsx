@@ -1,4 +1,4 @@
-const { h, Component } = require('preact')
+import {  h, Component  } from 'preact'
 
 class AddFiles extends Component {
   triggerFileInputClick = () => {
@@ -18,7 +18,7 @@ class AddFiles extends Component {
     // ___Why not use value="" on <input/> instead?
     //    Because if we use that method of clearing the input,
     //    Chrome will not trigger change if we drop the same file twice (Issue #768).
-    event.target.value = null
+    event.target.value = null // eslint-disable-line no-param-reassign
   }
 
   renderHiddenInput = (isFolder, refCallback) => {
@@ -198,4 +198,4 @@ class AddFiles extends Component {
   }
 }
 
-module.exports = AddFiles
+export default AddFiles

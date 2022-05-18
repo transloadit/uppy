@@ -1,6 +1,6 @@
-const debounce = require('lodash.debounce')
-const FOCUSABLE_ELEMENTS = require('@uppy/utils/lib/FOCUSABLE_ELEMENTS')
-const getActiveOverlayEl = require('./getActiveOverlayEl')
+import debounce from 'lodash.debounce'
+import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS'
+import getActiveOverlayEl from './getActiveOverlayEl.js'
 
 /*
   Focuses on some element in the currently topmost overlay.
@@ -12,7 +12,7 @@ const getActiveOverlayEl = require('./getActiveOverlayEl')
   2. If there are no [data-uppy-super-focusable] elements yet (or ever) - focuses
      on the first focusable element, but switches focus if superfocusable elements appear on next render.
 */
-module.exports = function createSuperFocus () {
+export default function createSuperFocus () {
   let lastFocusWasOnSuperFocusableEl = false
 
   const superFocus = (dashboardEl, activeOverlayType) => {

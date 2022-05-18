@@ -1,9 +1,9 @@
-const { h } = require('preact')
-const FilePreview = require('../../FilePreview')
-const MetaErrorMessage = require('../MetaErrorMessage')
-const getFileTypeIcon = require('../../../utils/getFileTypeIcon')
+import { h } from 'preact'
+import FilePreview from '../../FilePreview.jsx'
+import MetaErrorMessage from '../MetaErrorMessage.jsx'
+import getFileTypeIcon from '../../../utils/getFileTypeIcon.jsx'
 
-module.exports = function FilePreviewAndLink (props) {
+export default function FilePreviewAndLink (props) {
   return (
     <div
       className="uppy-Dashboard-Item-previewInnerWrap"

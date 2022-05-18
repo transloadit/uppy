@@ -9822,6 +9822,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/dashboard@workspace:packages/@uppy/dashboard"
   dependencies:
+    "@jest/globals": ^27.4.2
     "@transloadit/prettier-bytes": 0.0.7
     "@uppy/google-drive": "workspace:^"
     "@uppy/informer": "workspace:^"
