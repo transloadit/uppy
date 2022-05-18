@@ -273,6 +273,16 @@ module.exports = {
     },
     {
       files: [
+        'packages/@uppy/*/types/*.d.ts',
+      ],
+      rules : {
+        'import/no-unresolved': 'off',
+        'max-classes-per-file': 'off',
+        'no-use-before-define': 'off',
+      },
+    },
+    {
+      files: [
         'packages/@uppy/dashboard/src/components/**/*.jsx',
       ],
       rules: {

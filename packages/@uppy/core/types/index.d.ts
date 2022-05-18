@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import * as UppyUtils from '@uppy/utils'
 
 // Utility types
