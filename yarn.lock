@@ -10028,6 +10028,7 @@ __metadata:
     expo-permissions: ">=6.0.0"
     react: ^16.0.0 || ^17.0.0 || ^18.0.0
     react-native: "*"
+    react-native-super-grid: "*"
   languageName: unknown
   linkType: soft
 

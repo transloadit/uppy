@@ -47,6 +47,10 @@ module.exports = {
     'object-shorthand': ['error', 'always'],
     'strict': 'off',
     'key-spacing': 'off',
+    'max-classes-per-file': ['error', 2],
+    'react/no-unknown-property': ['error', {
+      ignore: svgPresentationAttributes,
+    }],
 
     // rules we want to enforce
     'array-callback-return': 'error',
@@ -79,7 +83,6 @@ module.exports = {
     'global-require': ['warn'],
     'import/no-unresolved': ['warn'],
     'import/order': ['warn'],
-    'max-classes-per-file': ['warn', 2],
     'no-mixed-operators': ['warn'],
     'no-param-reassign': ['warn'],
     'no-redeclare': ['warn'],
@@ -98,9 +101,6 @@ module.exports = {
     'react/prefer-stateless-function': 'error',
     'react/sort-comp': 'error',
     'react/style-prop-object': 'error',
-    'react/no-unknown-property': ['error', {
-      ignore: svgPresentationAttributes,
-    }],
 
     // accessibility
     'jsx-a11y/alt-text': 'error',
