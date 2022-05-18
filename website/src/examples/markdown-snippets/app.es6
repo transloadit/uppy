@@ -97,6 +97,7 @@ class MarkdownTextarea {
     }).then((result) => {
       if (result === null) return
       this.insertAttachments(
+        // eslint-disable-next-line no-use-before-define
         matchFilesAndThumbs(result.results),
       )
     }).catch((err) => {
@@ -126,6 +127,7 @@ class MarkdownTextarea {
     }).then((result) => {
       if (result === null) return
       this.insertAttachments(
+        // eslint-disable-next-line no-use-before-define
         matchFilesAndThumbs(result.results),
       )
     }).catch((err) => {
@@ -192,7 +194,9 @@ document.querySelector('#new').addEventListener('submit', (event) => {
   saveSnippet(title, text)
   renderSnippet(title, text)
 
+  // eslint-disable-next-line no-param-reassign
   event.target.querySelector('input').value = ''
+  // eslint-disable-next-line no-param-reassign
   event.target.querySelector('textarea').value = ''
 })
 

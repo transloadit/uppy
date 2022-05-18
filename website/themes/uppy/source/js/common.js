@@ -8,9 +8,11 @@
 
   // On index page
   if (isIndex) {
+    // eslint-disable-next-line no-use-before-define
     IndexPage()
   // On inner pages
   } else {
+    // eslint-disable-next-line no-use-before-define
     InnerPage()
   }
 
@@ -72,6 +74,7 @@
         }
       }
       if (last) {
+        // eslint-disable-next-line no-use-before-define
         setActive(last.id)
       }
     }
@@ -80,6 +83,7 @@
       let link = document.createElement('li')
       let text = h.textContent.replace(/\(.*\)$/, '')
       // make sure the ids are link-able...
+      // eslint-disable-next-line no-param-reassign
       h.id = h.id
         .replace(/\(.*\)$/, '')
         .replace(/\$/, '')
@@ -272,6 +276,7 @@
       taglineCounter--
       if (taglineCounter >= 0) {
         let taglineText = taglineList.children[taglineCounter].textContent
+        // eslint-disable-next-line no-use-before-define
         showTagline(taglineText)
         return
       }
