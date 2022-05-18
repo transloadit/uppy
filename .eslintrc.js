@@ -297,6 +297,38 @@ module.exports = {
       rules: {
         'no-restricted-syntax': 'warn',
         'no-underscore-dangle': 'off',
+
+        // transloadit rules we would like to enforce in the future
+        // but will require separate PRs to gradually get there
+        // and so the meantime: just warn
+        'class-methods-use-this': 'warn',
+        'consistent-return': 'warn',
+        'default-case': 'warn',
+        'global-require': 'warn',
+        'import/no-unresolved': 'warn',
+        'import/order': 'warn',
+        'max-classes-per-file': ['warn', 2],
+        'no-mixed-operators': 'warn',
+        'no-param-reassign': 'warn',
+        'no-redeclare': 'warn',
+        'no-shadow': 'warn',
+        'no-use-before-define': 'warn',
+        'radix': 'warn',
+        'react/button-has-type': 'error',
+        'react/destructuring-assignment': 'warn',
+        'react/forbid-prop-types': 'error',
+        'react/jsx-props-no-spreading': 'warn',
+        'react/no-access-state-in-setstate': 'error',
+        'react/no-array-index-key': 'error',
+        'react/no-deprecated': 'error',
+        'react/no-this-in-sfc': 'error',
+        'react/no-will-update-set-state': 'error',
+        'react/prefer-stateless-function': 'error',
+        'react/sort-comp': 'error',
+        'react/style-prop-object': 'error',
+        'react/no-unknown-property': ['error', {
+          ignore: svgPresentationAttributes,
+        }],
       },
     },
     {
