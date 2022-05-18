@@ -10,19 +10,16 @@ module.exports = {
   root: true,
   extends: ['transloadit'],
   env: {
-    es6: true,
-    jest: true,
-    node: true,
+    jest: false,
+    node: false,
     // extra:
     browser: true,
   },
   globals: {
     globalThis: true,
-    hexo: true,
     window: true,
   },
   plugins: [
-    '@babel/eslint-plugin',
     'jest',
     'markdown',
     'node',
@@ -34,7 +31,6 @@ module.exports = {
     'jsdoc',
     'unicorn',
   ],
-  parser: '@babel/eslint-parser',
   parserOptions: {
     sourceType: 'script',
     ecmaVersion: 2022,
@@ -49,6 +45,7 @@ module.exports = {
     'strict': 'off',
     'key-spacing': 'off',
     'max-classes-per-file': ['error', 2],
+    'react/jsx-filename-extension': 'error',
     'react/no-unknown-property': ['error', {
       ignore: svgPresentationAttributes,
     }],
@@ -76,34 +73,6 @@ module.exports = {
     'prefer-spread': 'error',
     'unicorn/prefer-node-protocol': 'error',
 
-    // transloadit rules we would like to enforce in the future
-    // but will require separate PRs to gradually get there
-    // and so the meantime: just warn
-    'class-methods-use-this': ['warn'],
-    'consistent-return': ['warn'],
-    'default-case': ['warn'],
-    'global-require': ['warn'],
-    'import/no-unresolved': ['warn'],
-    'import/order': ['warn'],
-    'no-mixed-operators': ['warn'],
-    'no-param-reassign': ['warn'],
-    'no-redeclare': ['warn'],
-    'no-shadow': ['warn'],
-    'no-use-before-define': ['warn', { 'functions': false }],
-    'radix': ['warn'],
-    'react/button-has-type': 'error',
-    'react/destructuring-assignment': ['warn'],
-    'react/forbid-prop-types': 'error',
-    'react/jsx-props-no-spreading': ['warn'],
-    'react/no-access-state-in-setstate': 'error',
-    'react/no-array-index-key': 'error',
-    'react/no-deprecated': 'error',
-    'react/no-this-in-sfc': 'error',
-    'react/no-will-update-set-state': 'error',
-    'react/prefer-stateless-function': 'error',
-    'react/sort-comp': 'error',
-    'react/style-prop-object': 'error',
-
     // accessibility
     'jsx-a11y/alt-text': 'error',
     'jsx-a11y/anchor-has-content': 'error',
@@ -122,8 +91,8 @@ module.exports = {
     // jsdoc
     'jsdoc/check-alignment': 'error',
     'jsdoc/check-examples': 'off', // cannot yet be supported for ESLint 8, see https://github.com/eslint/eslint/issues/14745
-    'jsdoc/check-param-names': ['warn'],
-    'jsdoc/check-syntax': ['warn'],
+    'jsdoc/check-param-names': 'error',
+    'jsdoc/check-syntax': 'error',
     'jsdoc/check-tag-names': ['error', { jsxTags: true }],
     'jsdoc/check-types': 'error',
     'jsdoc/newline-after-description': 'error',
@@ -139,21 +108,30 @@ module.exports = {
     jsdoc: {
       mode: 'typescript',
     },
-    polyfills: [
-      'Promise',
-      'fetch',
-      'Object.assign',
-      'document.querySelector',
-    ],
   },
 
   overrides: [
     {
       files: [
+        '.eslintrc.js',
+        '.config.js',
+        'babel.config.js',
+        'bin/*.js',
+        '*.cjs',
+        'examples/angular-example/karma.conf.js',
+        'examples/svelte-example/*.config.js',
+        'examples/transloadit/server.js',
+        'examples/uppy-with-companion/server/*.js',
+      ],
+      env: {
+        node: true,
+      },
+    },
+    {
+      files: [
         '*.jsx',
         'packages/@uppy/react-native/**/*.js',
       ],
-      parser: 'espree',
       parserOptions: {
         sourceType: 'module',
         ecmaFeatures: {
@@ -161,6 +139,7 @@ module.exports = {
         },
       },
       rules: {
+        'react/jsx-filename-extension': 'off',
         'no-restricted-globals': [
           'error',
           {
@@ -254,12 +233,8 @@ module.exports = {
         'packages/@uppy/zoom/src/**/*.js',
         'website/src/examples/*/*.es6',
       ],
-      parser: 'espree',
       parserOptions: {
         sourceType: 'module',
-        ecmaFeatures: {
-          jsx: false,
-        },
       },
       rules: {
         'import/named': 'off', // Disabled because that rule tries and fails to parse JSX dependencies.
@@ -304,6 +279,7 @@ module.exports = {
     {
       files: [
         'packages/@uppy/*/types/*.d.ts',
+        'packages/@uppy/react/src/*.d.ts',
       ],
       rules : {
         'import/no-unresolved': 'off',
@@ -334,6 +310,7 @@ module.exports = {
     },
     {
       files: ['./packages/@uppy/companion/**/*.js'],
+      env: { node: true },
       rules: {
         'no-underscore-dangle': 'off',
 
@@ -351,9 +328,16 @@ module.exports = {
       },
     },
     {
+      files: ['./packages/@uppy/companion/test/**/*.js'],
+      env: { jest: true },
+    },
+    {
       files: [
         'website/src/examples/*/*.es6',
       ],
+      env: {
+        node: true,
+      },
       rules: {
         'import/no-extraneous-dependencies': 'off',
         'no-console': 'off',
@@ -446,9 +430,13 @@ module.exports = {
       files: ['**/*.md/*.js', '**/*.md/*.javascript'],
       parserOptions: {
         sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
       rules: {
         'react/destructuring-assignment': 'off',
+        'react/jsx-filename-extension': 'off',
         'no-restricted-globals': [
           'error',
           {
@@ -516,10 +504,27 @@ module.exports = {
     {
       files: ['e2e/**/*.ts'],
       extends: ['plugin:cypress/recommended'],
+      rules: {
+        'node/prefer-global/buffer': ['error', 'never'],
+        'node/prefer-global/console': ['error', 'always'],
+        'node/prefer-global/process': ['error', 'always'],
+        'node/prefer-global/url-search-params': ['error', 'always'],
+        'node/prefer-global/url': ['error', 'always'],
+      },
     },
     {
       files: ['e2e/**/*.ts', 'e2e/**/*.js', 'e2e/**/*.jsx'],
       rules: { 'import/no-extraneous-dependencies': 'off', 'no-unused-expressions': 'off' },
+      globals: {
+        process: 'readable',
+      },
+    },
+    {
+      files: ['website/**/*.js'],
+      env: { node: true },
+      globals: {
+        hexo: 'readable',
+      },
     },
   ],
 }
