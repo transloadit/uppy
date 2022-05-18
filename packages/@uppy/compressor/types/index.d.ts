@@ -1,4 +1,5 @@
 import type { PluginOptions, BasePlugin } from '@uppy/core'
+import { UppyFile } from '@uppy/utils'
 import type CompressorLocale from './generatedLocale'
 
 export interface CompressorOptions extends PluginOptions {
@@ -7,10 +8,12 @@ export interface CompressorOptions extends PluginOptions {
   locale?: CompressorLocale
 }
 
-export type GenericEventCallback = () => void;
+export type CompressorCompleteCallback<TMeta> = (files: UppyFile<TMeta>[]) => void;
 
-export interface UppyEventMap {
-  'compressor:complete': GenericEventCallback
+declare module '@uppy/core' {
+  export interface UppyEventMap<TMeta> {
+    'compressor:complete': CompressorCompleteCallback<TMeta>
+  }
 }
 
 declare class Compressor extends BasePlugin<CompressorOptions> {}
