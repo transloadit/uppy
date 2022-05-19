@@ -9,12 +9,26 @@ import {
 import Instagram from '@uppy/instagram'
 
 function getQueryParamValueFromUrl (name, url) {
+  // eslint-disable-next-line no-param-reassign
   name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]')
   const regexS = `[\\?&]${name}=([^&#]*)`
   const regex = new RegExp(regexS)
   const results = regex.exec(url)
   return results == null ? null : results[1]
 }
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    flex: 1,
+    paddingTop: 30,
+  },
+  item: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 100,
+  },
+})
 
 // how instagram provider can be render, not ready
 export default class UppyRNInstagram extends React.Component {
@@ -60,6 +74,7 @@ export default class UppyRNInstagram extends React.Component {
     uppy.removePlugin(this.plugin)
   }
 
+  // eslint-disable-next-line class-methods-use-this
   renderGrid (items) {
     return (
       <View style={styles.container}>
@@ -96,16 +111,3 @@ export default class UppyRNInstagram extends React.Component {
     return this.renderInstagram()
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    flex: 1,
-    paddingTop: 30,
-  },
-  item: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 100,
-  },
-})

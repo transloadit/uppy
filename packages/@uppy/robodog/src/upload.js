@@ -4,6 +4,7 @@ const addTransloaditPlugin = require('./addTransloaditPlugin')
 
 function upload (files, opts = {}) {
   if (!Array.isArray(files) && typeof files.length === 'number') {
+    // eslint-disable-next-line no-param-reassign
     files = toArray(files)
   }
 

@@ -9,6 +9,43 @@ import {
 } from 'react-native'
 import Url from '@uppy/url'
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  input: {
+    width: '90%',
+    height: 40,
+    borderColor: '#7f8a93',
+    borderWidth: 1,
+    padding: 5,
+    borderRadius: 4,
+    marginBottom: 15,
+  },
+  buttonImport: {
+    alignItems: 'center',
+    backgroundColor: '#2275d7',
+    paddingHorizontal: 25,
+    paddingVertical: 8,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  buttonCancel: {
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 5,
+  },
+  buttonImportText: {
+    color: '#fff',
+  },
+  buttonCancelText: {
+    color: '#0077cc',
+  },
+})
+
 export default class UppyRNUrl extends React.Component {
   constructor () {
     super()
@@ -74,40 +111,3 @@ export default class UppyRNUrl extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  input: {
-    width: '90%',
-    height: 40,
-    borderColor: '#7f8a93',
-    borderWidth: 1,
-    padding: 5,
-    borderRadius: 4,
-    marginBottom: 15,
-  },
-  buttonImport: {
-    alignItems: 'center',
-    backgroundColor: '#2275d7',
-    paddingHorizontal: 25,
-    paddingVertical: 8,
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  buttonCancel: {
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 5,
-  },
-  buttonImportText: {
-    color: '#fff',
-  },
-  buttonCancelText: {
-    color: '#0077cc',
-  },
-})

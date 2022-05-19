@@ -1,4 +1,4 @@
-import * as DocumentPicker from 'expo-document-picker'
+import * as DocumentPicker from 'expo-document-picker' // eslint-disable-line import/no-unresolved
 
 function selectDocumentWithExpo () {
   return DocumentPicker.getDocumentAsync({
@@ -7,6 +7,7 @@ function selectDocumentWithExpo () {
     if (!result.cancelled && result.type !== 'cancel') {
       return result
     }
+    return undefined
   })
 }
 

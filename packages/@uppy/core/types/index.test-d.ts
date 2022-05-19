@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { expectError, expectType } from 'tsd'
 import DefaultStore from '@uppy/store-default'
 import Uppy, { UIPlugin } from '..'
