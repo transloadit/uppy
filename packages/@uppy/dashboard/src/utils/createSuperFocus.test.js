@@ -1,4 +1,5 @@
-const createSuperFocus = require('./createSuperFocus')
+import { describe, it, expect } from '@jest/globals'
+import createSuperFocus from './createSuperFocus.js'
 
 describe('createSuperFocus', () => {
   // superFocus.cancel() is used in dashboard

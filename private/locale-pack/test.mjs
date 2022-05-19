@@ -15,34 +15,6 @@ const pluginLocaleDependencies = {
   core: 'provider-views',
 }
 
-await test()
-  .then(() => {
-    console.log('\n')
-    console.log('No blocking issues found')
-  })
-  .catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
-
-function test () {
-  switch (mode) {
-    case 'unused':
-      return getPaths(`${root}/packages/@uppy/**/src/locale.js`)
-        .then((paths) => unused(getAllFilesPerPlugin(paths.map((filePath) => path.basename(path.join(filePath, '..', '..'))))))
-
-    case 'warnings':
-      return getLocales(`${root}/packages/@uppy/locales/src/*.js`)
-        .then((locales) => warnings({
-          leadingLocale: locales[leadingLocaleName],
-          followerLocales: omit(locales, leadingLocaleName),
-        }))
-
-    default:
-      return Promise.reject(new Error(`Invalid mode "${mode}"`))
-  }
-}
-
 function getAllFilesPerPlugin (pluginNames) {
   const filesPerPlugin = {}
 
@@ -139,3 +111,25 @@ function warnings ({ leadingLocale, followerLocales }) {
 
   console.log(logs.join('\n'))
 }
+
+function test () {
+  switch (mode) {
+    case 'unused':
+      return getPaths(`${root}/packages/@uppy/**/src/locale.js`)
+        .then((paths) => unused(getAllFilesPerPlugin(paths.map((filePath) => path.basename(path.join(filePath, '..', '..'))))))
+
+    case 'warnings':
+      return getLocales(`${root}/packages/@uppy/locales/src/*.js`)
+        .then((locales) => warnings({
+          leadingLocale: locales[leadingLocaleName],
+          followerLocales: omit(locales, leadingLocaleName),
+        }))
+
+    default:
+      return Promise.reject(new Error(`Invalid mode "${mode}"`))
+  }
+}
+
+await test()
+console.log('\n')
+console.log('No blocking issues found')

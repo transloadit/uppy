@@ -9714,6 +9714,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/companion-client@workspace:packages/@uppy/companion-client"
   dependencies:
+    "@jest/globals": ^27.4.2
     "@uppy/utils": "workspace:^"
     namespace-emitter: ^2.0.1
   languageName: unknown
@@ -9823,6 +9824,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/dashboard@workspace:packages/@uppy/dashboard"
   dependencies:
+    "@jest/globals": ^27.4.2
     "@transloadit/prettier-bytes": 0.0.7
     "@uppy/google-drive": "workspace:^"
     "@uppy/informer": "workspace:^"
@@ -10121,6 +10123,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/store-redux@workspace:packages/@uppy/store-redux"
   dependencies:
+    "@jest/globals": ^27.4.2
     nanoid: ^3.1.25
     redux: 4.0.5
   languageName: unknown
@@ -10164,6 +10167,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/transloadit@workspace:packages/@uppy/transloadit"
   dependencies:
+    "@jest/globals": ^27.4.2
     "@uppy/companion-client": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/tus": "workspace:^"

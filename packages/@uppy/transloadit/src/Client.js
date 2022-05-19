@@ -1,11 +1,11 @@
-const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
+import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 
 const ASSEMBLIES_ENDPOINT = '/assemblies'
 
 /**
  * A Barebones HTTP API client for Transloadit.
  */
-module.exports = class Client {
+export default class Client {
   #headers = {}
 
   #fetchWithNetworkError

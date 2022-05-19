@@ -1,11 +1,14 @@
-const Core = require('@uppy/core')
-const StatusBarPlugin = require('@uppy/status-bar')
-const GoogleDrivePlugin = require('@uppy/google-drive') // eslint-disable-line
-const DashboardPlugin = require('./index')
+import { describe, it, expect } from '@jest/globals'
+
+import Core from '@uppy/core'
+import StatusBarPlugin from '@uppy/status-bar'
+import GoogleDrivePlugin from '@uppy/google-drive'
+import resizeObserverPolyfill from 'resize-observer-polyfill'
+import DashboardPlugin from '../lib/index.js'
 
 describe('Dashboard', () => {
   beforeAll(() => {
-    globalThis.ResizeObserver = require('resize-observer-polyfill').default || require('resize-observer-polyfill')
+    globalThis.ResizeObserver = resizeObserverPolyfill.default || resizeObserverPolyfill
   })
   afterAll(() => {
     delete globalThis.ResizeObserver

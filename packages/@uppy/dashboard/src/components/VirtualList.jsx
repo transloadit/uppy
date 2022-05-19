@@ -26,7 +26,7 @@
  * - Tweaked styles for Uppy's Dashboard use case
  */
 
-const { h, Component } = require('preact')
+import {  h, Component  } from 'preact'
 
 const STYLE_INNER = {
   position: 'relative',
@@ -143,6 +143,7 @@ class VirtualList extends Component {
     // The `role="presentation"` attributes ensure that these wrapper elements are not treated as list
     // items by accessibility and outline tools.
     return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
       <div onScroll={this.handleScroll} {...props}>
         <div role="presentation" style={styleInner}>
           <div role="presentation" style={styleContent}>
@@ -154,4 +155,4 @@ class VirtualList extends Component {
   }
 }
 
-module.exports = VirtualList
+export default VirtualList

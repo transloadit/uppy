@@ -6,6 +6,7 @@
   "main": "lib/index.js",
   "style": "dist/style.min.css",
   "types": "types/index.d.ts",
+  "type": "module",
   "keywords": [
     "file uploader",
     "uppy",
@@ -36,6 +37,7 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
+    "@jest/globals": "^27.4.2",
     "@uppy/google-drive": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "resize-observer-polyfill": "^1.5.0"

@@ -1,14 +1,15 @@
-const hasProperty = require('@uppy/utils/lib/hasProperty')
-const ErrorWithCause = require('@uppy/utils/lib/ErrorWithCause')
-const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const Tus = require('@uppy/tus')
-const Assembly = require('./Assembly')
-const Client = require('./Client')
-const AssemblyOptions = require('./AssemblyOptions')
-const AssemblyWatcher = require('./AssemblyWatcher')
+import hasProperty from '@uppy/utils/lib/hasProperty'
+import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import BasePlugin from '@uppy/core/lib/BasePlugin'
+import Tus from '@uppy/tus'
+import Assembly from './Assembly.js'
+import Client from './Client.js'
+import AssemblyOptions, { validateParams } from './AssemblyOptions.js'
+import AssemblyWatcher from './AssemblyWatcher.js'
 
-const locale = require('./locale')
+import locale from './locale.js'
+import packageJson from '../package.json'
 
 function defaultGetAssemblyOptions (file, options) {
   return {
@@ -20,7 +21,7 @@ function defaultGetAssemblyOptions (file, options) {
 
 const sendErrorToConsole = originalErr => err => {
   const error = new ErrorWithCause('Failed to send error to the client', { cause: err })
-  // eslint-ignore-next-line no-console
+  // eslint-disable-next-line no-console
   console.error(error, originalErr)
 }
 
@@ -33,8 +34,8 @@ const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
 /**
  * Upload files to Transloadit using Tus.
  */
-module.exports = class Transloadit extends BasePlugin {
-  static VERSION = require('../package.json').version // eslint-disable-line global-require
+export default class Transloadit extends BasePlugin {
+  static VERSION = packageJson.version
 
   #rateLimitedQueue
 
@@ -68,11 +69,11 @@ module.exports = class Transloadit extends BasePlugin {
 
     const hasCustomAssemblyOptions = this.opts.getAssemblyOptions !== defaultOptions.getAssemblyOptions
     if (this.opts.params) {
-      AssemblyOptions.validateParams(this.opts.params)
+      validateParams(this.opts.params)
     } else if (!hasCustomAssemblyOptions) {
       // Throw the same error that we'd throw if the `params` returned from a
       // `getAssemblyOptions()` function is null.
-      AssemblyOptions.validateParams(null)
+      validateParams(null)
     }
 
     this.client = new Client({
@@ -826,5 +827,13 @@ module.exports = class Transloadit extends BasePlugin {
   }
 }
 
-module.exports.COMPANION = COMPANION
-module.exports.COMPANION_PATTERN = ALLOWED_COMPANION_PATTERN
+export {
+  COMPANION,
+  ALLOWED_COMPANION_PATTERN,
+}
+
+// Backward compatibility: we want `COMPANION` and `ALLOWED_COMPANION_PATTERN`
+// to keep being accessible as static properties of `Transloadit` to avoid a
+// breaking change.
+Transloadit.COMPANION = COMPANION // TODO: remove this line on the next major
+Transloadit.ALLOWED_COMPANION_PATTERN = ALLOWED_COMPANION_PATTERN // TODO: remove this line on the next major

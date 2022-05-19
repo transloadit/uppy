@@ -1,6 +1,6 @@
-const { h } = require('preact')
-const classNames = require('classnames')
-const AddFiles = require('./AddFiles')
+import { h } from 'preact'
+import classNames from 'classnames'
+import AddFiles from './AddFiles.jsx'
 
 const AddFilesPanel = (props) => {
   return (
@@ -21,9 +21,10 @@ const AddFilesPanel = (props) => {
           {props.i18n('back')}
         </button>
       </div>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <AddFiles {...props} />
     </div>
   )
 }
 
-module.exports = AddFilesPanel
+export default AddFilesPanel

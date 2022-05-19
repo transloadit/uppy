@@ -1,9 +1,9 @@
-const { h, Component } = require('preact')
-const classNames = require('classnames')
-const { nanoid } = require('nanoid/non-secure')
-const getFileTypeIcon = require('../../utils/getFileTypeIcon')
-const ignoreEvent = require('../../utils/ignoreEvent.js')
-const FilePreview = require('../FilePreview')
+import {  h, Component  } from 'preact'
+import classNames from 'classnames'
+import {  nanoid  } from 'nanoid/non-secure'
+import getFileTypeIcon from '../../utils/getFileTypeIcon.jsx'
+import ignoreEvent from '../../utils/ignoreEvent.js'
+import FilePreview from '../FilePreview.jsx'
 
 class FileCard extends Component {
   form = document.createElement('form')
@@ -197,4 +197,4 @@ class FileCard extends Component {
   }
 }
 
-module.exports = FileCard
+export default FileCard

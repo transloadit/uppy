@@ -212,8 +212,9 @@ export default class Tus extends BasePlugin {
         const xhr = req.getUnderlyingObject()
         xhr.withCredentials = !!opts.withCredentials
 
+        let userProvidedPromise
         if (typeof opts.onBeforeRequest === 'function') {
-          opts.onBeforeRequest(req)
+          userProvidedPromise = opts.onBeforeRequest(req)
         }
 
         if (hasProperty(queuedRequest, 'shouldBeRequeued')) {
@@ -229,9 +230,17 @@ export default class Tus extends BasePlugin {
             done()
             return () => {}
           })
-          return p
+          // If the request has been requeued because it was rate limited by the
+          // remote server, we want to wait for `RateLimitedQueue` to dispatch
+          // the re-try request.
+          // Therefore we create a promise that the queue will resolve when
+          // enough time has elapsed to expect not to be rate-limited again.
+          // This means we can hold the Tus retry here with a `Promise.all`,
+          // together with the returned value of the user provided
+          // `onBeforeRequest` option callback (in case it returns a promise).
+          return Promise.all([p, userProvidedPromise])
         }
-        return undefined
+        return userProvidedPromise
       }
 
       uploadOptions.onError = (err) => {
@@ -277,8 +286,9 @@ export default class Tus extends BasePlugin {
         resolve(upload)
       }
 
-      uploadOptions.onShouldRetry = (err) => {
+      const defaultOnShouldRetry = (err) => {
         const status = err?.originalResponse?.getStatus()
+
         if (status === 429) {
           // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
           if (!this.requests.isPaused) {
@@ -314,6 +324,12 @@ export default class Tus extends BasePlugin {
           },
         }
         return true
+      }
+
+      if (opts.onShouldRetry != null) {
+        uploadOptions.onShouldRetry = (...args) => opts.onShouldRetry(...args, defaultOnShouldRetry)
+      } else {
+        uploadOptions.onShouldRetry = defaultOnShouldRetry
       }
 
       const copyProp = (obj, srcProp, destProp) => {

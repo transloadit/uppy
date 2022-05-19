@@ -1,4 +1,4 @@
-const { h } = require('preact')
+import { h } from 'preact'
 
 function onPauseResumeCancelRetry (props) {
   if (props.isUploaded) return
@@ -96,7 +96,7 @@ function ProgressCircle ({ progress }) {
   )
 }
 
-module.exports = function FileProgress (props) {
+export default function FileProgress (props) {
   // Nothing if upload has not started
   if (!props.file.progress.uploadStarted) {
     return null
@@ -117,12 +117,13 @@ module.exports = function FileProgress (props) {
   }
 
   if (props.recoveredState) {
-    return
+    return undefined
   }
 
   // Retry button for error
   if (props.error && !props.hideRetryButton) {
     return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
       <ProgressIndicatorButton {...props}>
         <svg aria-hidden="true" focusable="false" className="uppy-c-icon uppy-Dashboard-Item-progressIcon--retry" width="28" height="31" viewBox="0 0 16 19">
           <path d="M16 11a8 8 0 1 1-8-8v2a6 6 0 1 0 6 6h2z" />
@@ -137,6 +138,7 @@ module.exports = function FileProgress (props) {
   // Pause/resume button for resumable uploads
   if (props.resumableUploads && !props.hidePauseResumeButton) {
     return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
       <ProgressIndicatorButton {...props}>
         <ProgressCircleContainer>
           <ProgressCircle progress={props.file.progress.percentage} />
@@ -158,6 +160,7 @@ module.exports = function FileProgress (props) {
   // Cancel button for non-resumable uploads if individualCancellation is supported (not bundled)
   if (!props.resumableUploads && props.individualCancellation && !props.hideCancelButton) {
     return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
       <ProgressIndicatorButton {...props}>
         <ProgressCircleContainer>
           <ProgressCircle progress={props.file.progress.percentage} />

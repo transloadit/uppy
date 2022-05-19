@@ -200,8 +200,10 @@ module.exports = {
         'packages/@uppy/aws-s3/src/**/*.js',
         'packages/@uppy/aws-s3-multipart/src/**/*.js',
         'packages/@uppy/box/src/**/*.js',
+        'packages/@uppy/companion-client/src/**/*.js',
         'packages/@uppy/compressor/src/**/*.js',
         'packages/@uppy/core/src/**/*.js',
+        'packages/@uppy/dashboard/src/**/*.js',
         'packages/@uppy/drag-drop/src/**/*.js',
         'packages/@uppy/drop-target/src/**/*.js',
         'packages/@uppy/dropbox/src/**/*.js',
@@ -221,11 +223,14 @@ module.exports = {
         'packages/@uppy/redux-dev-tools/src/**/*.js',
         'packages/@uppy/screen-capture/src/**/*.js',
         'packages/@uppy/status-bar/src/**/*.js',
+        'packages/@uppy/store-default/src/**/*.js',
+        'packages/@uppy/store-redux/src/**/*.js',
         'packages/@uppy/svelte/src/**/*.js',
         'packages/@uppy/svelte/rollup.config.js',
         'packages/@uppy/thumbnail-generator/src/**/*.js',
         'packages/@uppy/tus/src/**/*.js',
         'packages/@uppy/unsplash/src/**/*.js',
+        'packages/@uppy/transloadit/src/**/*.js',
         'packages/@uppy/url/src/**/*.js',
         'packages/@uppy/vue/src/**/*.js',
         'packages/@uppy/webcam/src/**/*.js',
@@ -265,6 +270,24 @@ module.exports = {
           },
         ],
         'import/extensions': ['error', 'ignorePackages'],
+      },
+    },
+    {
+      files: [
+        'packages/@uppy/*/types/*.d.ts',
+      ],
+      rules : {
+        'import/no-unresolved': 'off',
+        'max-classes-per-file': 'off',
+        'no-use-before-define': 'off',
+      },
+    },
+    {
+      files: [
+        'packages/@uppy/dashboard/src/components/**/*.jsx',
+      ],
+      rules: {
+        'react/destructuring-assignment': 'off',
       },
     },
     {
