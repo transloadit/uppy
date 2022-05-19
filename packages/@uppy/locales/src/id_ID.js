@@ -1,4 +1,11 @@
-const id_ID = {}
+const id_ID = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 id_ID.strings = {
   addMore: 'Tambahkan lebih banyak',
@@ -137,15 +144,8 @@ id_ID.strings = {
   },
 }
 
-id_ID.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.id_ID = id_ID
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.id_ID = id_ID
-}
-
-module.exports = id_ID
+export default id_ID

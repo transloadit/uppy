@@ -1,4 +1,4 @@
-const toArray = require('@uppy/utils/lib/toArray')
+import toArray from '@uppy/utils/lib/toArray'
 
 /*
   SITUATION
@@ -58,7 +58,7 @@ const toArray = require('@uppy/utils/lib/toArray')
  * @param {string} isDropOrPaste - either 'drop' or 'paste'
  * @param {Function} callback - (urlString) => {}
  */
-module.exports = function forEachDroppedOrPastedUrl (dataTransfer, isDropOrPaste, callback) {
+export default function forEachDroppedOrPastedUrl (dataTransfer, isDropOrPaste, callback) {
   const items = toArray(dataTransfer.items)
 
   let urlItems

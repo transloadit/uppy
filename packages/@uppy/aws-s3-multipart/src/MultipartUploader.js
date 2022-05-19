@@ -1,5 +1,5 @@
-const { AbortController, createAbortError } = require('@uppy/utils/lib/AbortController')
-const delay = require('@uppy/utils/lib/delay')
+import { AbortController, createAbortError } from '@uppy/utils/lib/AbortController'
+import delay from '@uppy/utils/lib/delay'
 
 const MB = 1024 * 1024
 
@@ -456,4 +456,4 @@ class MultipartUploader {
   }
 }
 
-module.exports = MultipartUploader
+export default MultipartUploader

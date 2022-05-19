@@ -59,8 +59,8 @@ function Uploader () {
       .use(Webcam, { id: 'MyWebcam' }) // `id` is… "MyWebcam"
   }, [])
   React.useEffect(() => {
-    return () => uppy.close()
-  }, [])
+    return () => uppy.close({ reason: 'unmount' })
+  }, [uppy])
 
   return (
     <Dashboard

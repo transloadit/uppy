@@ -1,5 +1,13 @@
 # @uppy/tus
 
+## 2.3.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/core,@uppy/react,@uppy/transloadit,@uppy/tus,@uppy/xhr-upload: proposal: Cancel assemblies optional (Mikael Finstad / #3575)
+- @uppy/tus: refactor to ESM (Antoine du Hamel / #3724)
+
 ## 2.2.2
 
 Released: 2022-03-29

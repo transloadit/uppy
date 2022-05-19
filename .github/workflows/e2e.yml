@@ -4,6 +4,10 @@ on:
     branches: [ main ]
   pull_request_target:
     types: [ opened, synchronize, reopened, labeled ]
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    paths:
+      - .github/workflows/e2e.yml
 
 concurrency: ${{ github.workflow }}--${{ github.ref }}
 

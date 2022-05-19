@@ -1,4 +1,11 @@
-const ja_JP = {}
+const ja_JP = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 ja_JP.strings = {
   addMore: 'さらに追加',
@@ -137,15 +144,8 @@ ja_JP.strings = {
   openFolderNamed: '開いたフォルダ %{name}',
 }
 
-ja_JP.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.ja_JP = ja_JP
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.ja_JP = ja_JP
-}
-
-module.exports = ja_JP
+export default ja_JP

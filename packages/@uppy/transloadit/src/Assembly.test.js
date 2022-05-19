@@ -1,9 +1,11 @@
-const Assembly = require('./Assembly')
+import { describe, expect, it, jest } from '@jest/globals'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import Assembly from './Assembly.js'
 
 describe('Transloadit/Assembly', () => {
   describe('status diffing', () => {
     function attemptDiff (prev, next) {
-      const assembly = new Assembly(prev)
+      const assembly = new Assembly(prev, new RateLimitedQueue())
       const events = []
       assembly.emit = jest.fn((name, ...args) => {
         events.push([name, ...args])

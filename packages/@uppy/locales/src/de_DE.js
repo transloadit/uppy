@@ -1,4 +1,11 @@
-const de_DE = {}
+const de_DE = {
+  pluralize (count) {
+    if (count === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 de_DE.strings = {
   addBulkFilesFailed: {
@@ -178,15 +185,8 @@ de_DE.strings = {
   zoomOut: 'Verkleinern',
 }
 
-de_DE.pluralize = function pluralize (count) {
-  if (count === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.de_DE = de_DE
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.de_DE = de_DE
-}
-
-module.exports = de_DE
+export default de_DE

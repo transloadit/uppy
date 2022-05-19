@@ -1,6 +1,7 @@
-const Core = require('@uppy/core')
-const Transloadit = require('.')
-require('whatwg-fetch')
+import { describe, expect, it } from '@jest/globals'
+import Core from '@uppy/core'
+import Transloadit from './index.js'
+import 'whatwg-fetch'
 
 describe('Transloadit', () => {
   it('Throws errors if options are missing', () => {

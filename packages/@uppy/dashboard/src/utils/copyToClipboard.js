@@ -8,8 +8,9 @@
  * @param {string} fallbackString
  * @returns {Promise}
  */
-module.exports = function copyToClipboard (textToCopy, fallbackString) {
-  fallbackString = fallbackString || 'Copy the URL below'
+export default function copyToClipboard (textToCopy, fallbackString) {
+  // TODO: make `fallbackString` an optional parameter instead.
+  fallbackString ||= 'Copy the URL below' // eslint-disable-line no-param-reassign
 
   return new Promise((resolve) => {
     const textArea = document.createElement('textarea')

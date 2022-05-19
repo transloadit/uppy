@@ -1,4 +1,4 @@
-const isXml = require('./isXml')
+import isXml from './isXml.js'
 
 describe('AwsS3', () => {
   describe('isXml', () => {

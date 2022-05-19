@@ -1,5 +1,12 @@
 # @uppy/companion-client
 
+## 2.1.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/companion-client: refactor to ESM (Antoine du Hamel / #3693)
+
 ## 2.0.6
 
 Released: 2022-04-07

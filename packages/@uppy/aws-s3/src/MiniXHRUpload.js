@@ -1,13 +1,13 @@
-const { nanoid } = require('nanoid/non-secure')
-const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
-const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
-const getSocketHost = require('@uppy/utils/lib/getSocketHost')
-const EventTracker = require('@uppy/utils/lib/EventTracker')
-const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
-const ErrorWithCause = require('@uppy/utils/lib/ErrorWithCause')
-const NetworkError = require('@uppy/utils/lib/NetworkError')
-const isNetworkError = require('@uppy/utils/lib/isNetworkError')
-const { internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
+import { nanoid } from 'nanoid/non-secure'
+import { Provider, RequestClient, Socket } from '@uppy/companion-client'
+import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
+import getSocketHost from '@uppy/utils/lib/getSocketHost'
+import EventTracker from '@uppy/utils/lib/EventTracker'
+import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
+import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
+import NetworkError from '@uppy/utils/lib/NetworkError'
+import isNetworkError from '@uppy/utils/lib/isNetworkError'
+import { internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 
 // See XHRUpload
 function buildResponseError (xhr, error) {
@@ -52,7 +52,7 @@ function createFormDataUpload (file, opts) {
 
 const createBareUpload = file => file.data
 
-module.exports = class MiniXHRUpload {
+export default class MiniXHRUpload {
   constructor (uppy, opts) {
     this.uppy = uppy
     this.opts = {
@@ -102,8 +102,8 @@ module.exports = class MiniXHRUpload {
   }
 
   #addEventHandlerIfFileStillExists (eventName, fileID, eventHandler) {
-    this.uploaderEvents[fileID].on(eventName, () => {
-      if (this.uppy.getFile(fileID)) eventHandler()
+    this.uploaderEvents[fileID].on(eventName, (...args) => {
+      if (this.uppy.getFile(fileID)) eventHandler(...args)
     })
   }
 
@@ -234,8 +234,10 @@ module.exports = class MiniXHRUpload {
         reject(new Error('File removed'))
       })
 
-      this.#addEventHandlerIfFileStillExists('cancel-all', file.id, () => {
-        queuedRequest.abort()
+      this.#addEventHandlerIfFileStillExists('cancel-all', file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
+          queuedRequest.abort()
+        }
         reject(new Error('Upload cancelled'))
       })
     })
@@ -283,9 +285,11 @@ module.exports = class MiniXHRUpload {
         resolve(`upload ${file.id} was removed`)
       })
 
-      this.#addEventHandlerIfFileStillExists('cancel-all', file.id, () => {
-        socket.send('cancel', {})
-        queuedRequest.abort()
+      this.#addEventHandlerIfFileStillExists('cancel-all', file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
+          socket.send('cancel', {})
+          queuedRequest.abort()
+        }
         resolve(`upload ${file.id} was canceled`)
       })
 

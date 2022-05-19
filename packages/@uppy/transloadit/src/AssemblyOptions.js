@@ -1,4 +1,4 @@
-const ErrorWithCause = require('@uppy/utils/lib/ErrorWithCause')
+import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
 
 /**
  * Check that Assembly parameters are present and include all required fields.
@@ -113,5 +113,9 @@ class AssemblyOptions {
   }
 }
 
-module.exports = AssemblyOptions
-module.exports.validateParams = validateParams
+export default AssemblyOptions
+export { validateParams }
+
+// Backward compatibility: we want `validateParams` to keep being a static
+// method of `AssemblyOptions` to avoid a breaking change.
+AssemblyOptions.validateParams = validateParams // TODO: remove this line on the next major

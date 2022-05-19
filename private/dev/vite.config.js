@@ -27,8 +27,8 @@ function isTypeModule (file) {
   moduleTypeCache.set(packageFolder, typeModule)
   return typeModule
 }
-const packageLibImport = /^@uppy\/([^/])\/lib\/(.+)$/
-const packageEntryImport = /^@uppy\/([^/])$/
+const packageLibImport = /^@uppy\/([^/]+)\/lib\/(.+)$/
+const packageEntryImport = /^@uppy\/([^/]+)$/
 function isSpecifierTypeModule (specifier) {
   const packageLib = packageLibImport.exec(specifier)
   if (packageLib != null) {
@@ -147,6 +147,30 @@ const config = {
                       }
                     }
                   },
+
+                  // Very specific hack to avoid a breaking change when the file was refactored to ESM.
+                  // TODO: remove this hack in the next release.
+                  ...(id.endsWith('transloadit/src/Assembly.js') ? {
+                    FunctionDeclaration (path) {
+                      if (path.node.id.name === 'requireSocketIo') {
+                        const prevSibling = path.getPrevSibling()
+                        if (!t.isVariableDeclaration(prevSibling) || prevSibling.node.declarations[0].id.name !== 'socketIo') {
+                          // The require call has already been rewritten to an import statement.
+                          return
+                        }
+
+                        const { id:socketIoIdentifier } = prevSibling.node.declarations[0]
+
+                        prevSibling.replaceWith(t.importDeclaration(
+                          [t.importDefaultSpecifier(socketIoIdentifier)],
+                          t.stringLiteral('socket.io-client'),
+                        ))
+                        path.replaceWith(t.functionDeclaration(path.node.id, path.node.params, t.blockStatement([
+                          t.returnStatement(socketIoIdentifier),
+                        ])))
+                      }
+                    },
+                  } : null),
                 },
               },
             ],

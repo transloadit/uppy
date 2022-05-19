@@ -1,5 +1,12 @@
 # @uppy/zoom
 
+## 1.1.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/zoom: refactor to ESM (Antoine du Hamel / #3699)
+
 ## 1.0.5
 
 Released: 2021-12-07

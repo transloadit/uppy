@@ -1,15 +1,17 @@
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const tus = require('tus-js-client')
-const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
-const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
-const getSocketHost = require('@uppy/utils/lib/getSocketHost')
-const settle = require('@uppy/utils/lib/settle')
-const EventTracker = require('@uppy/utils/lib/EventTracker')
-const NetworkError = require('@uppy/utils/lib/NetworkError')
-const isNetworkError = require('@uppy/utils/lib/isNetworkError')
-const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const hasProperty = require('@uppy/utils/lib/hasProperty')
-const getFingerprint = require('./getFingerprint')
+import BasePlugin from '@uppy/core/lib/BasePlugin'
+import * as tus from 'tus-js-client'
+import { Provider, RequestClient, Socket } from '@uppy/companion-client'
+import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
+import getSocketHost from '@uppy/utils/lib/getSocketHost'
+import settle from '@uppy/utils/lib/settle'
+import EventTracker from '@uppy/utils/lib/EventTracker'
+import NetworkError from '@uppy/utils/lib/NetworkError'
+import isNetworkError from '@uppy/utils/lib/isNetworkError'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import hasProperty from '@uppy/utils/lib/hasProperty'
+import getFingerprint from './getFingerprint.js'
+
+import packageJson from '../package.json'
 
 /** @typedef {import('..').TusOptions} TusOptions */
 /** @typedef {import('tus-js-client').UploadOptions} RawTusOptions */
@@ -50,9 +52,8 @@ const tusDefaultOptions = {
 /**
  * Tus resumable file uploader
  */
-module.exports = class Tus extends BasePlugin {
-  // eslint-disable-next-line global-require
-  static VERSION = require('../package.json').version
+export default class Tus extends BasePlugin {
+  static VERSION = packageJson.version
 
   #retryDelayIterator
 
@@ -87,7 +88,7 @@ module.exports = class Tus extends BasePlugin {
      *
      * @type {RateLimitedQueue}
      */
-    this.requests = new RateLimitedQueue(this.opts.limit)
+    this.requests = this.opts.rateLimitedQueue ?? new RateLimitedQueue(this.opts.limit)
     this.#retryDelayIterator = this.opts.retryDelays?.values()
 
     this.uploaders = Object.create(null)
@@ -173,8 +174,6 @@ module.exports = class Tus extends BasePlugin {
    *    up a spot in the queue.
    *
    * @param {UppyFile} file for use with upload
-   * @param {number} current file in a queue
-   * @param {number} total number of files in a queue
    * @returns {Promise<void>}
    */
   upload (file) {
@@ -184,6 +183,7 @@ module.exports = class Tus extends BasePlugin {
     return new Promise((resolve, reject) => {
       let queuedRequest
       let qRequest
+      let upload
 
       this.uppy.emit('upload-started', file)
 
@@ -212,8 +212,9 @@ module.exports = class Tus extends BasePlugin {
         const xhr = req.getUnderlyingObject()
         xhr.withCredentials = !!opts.withCredentials
 
+        let userProvidedPromise
         if (typeof opts.onBeforeRequest === 'function') {
-          opts.onBeforeRequest(req)
+          userProvidedPromise = opts.onBeforeRequest(req)
         }
 
         if (hasProperty(queuedRequest, 'shouldBeRequeued')) {
@@ -229,9 +230,17 @@ module.exports = class Tus extends BasePlugin {
             done()
             return () => {}
           })
-          return p
+          // If the request has been requeued because it was rate limited by the
+          // remote server, we want to wait for `RateLimitedQueue` to dispatch
+          // the re-try request.
+          // Therefore we create a promise that the queue will resolve when
+          // enough time has elapsed to expect not to be rate-limited again.
+          // This means we can hold the Tus retry here with a `Promise.all`,
+          // together with the returned value of the user provided
+          // `onBeforeRequest` option callback (in case it returns a promise).
+          return Promise.all([p, userProvidedPromise])
         }
-        return undefined
+        return userProvidedPromise
       }
 
       uploadOptions.onError = (err) => {
@@ -239,6 +248,7 @@ module.exports = class Tus extends BasePlugin {
 
         const xhr = err.originalRequest ? err.originalRequest.getUnderlyingObject() : null
         if (isNetworkError(xhr)) {
+          // eslint-disable-next-line no-param-reassign
           err = new NetworkError(err, xhr)
         }
 
@@ -276,8 +286,9 @@ module.exports = class Tus extends BasePlugin {
         resolve(upload)
       }
 
-      uploadOptions.onShouldRetry = (err) => {
+      const defaultOnShouldRetry = (err) => {
         const status = err?.originalResponse?.getStatus()
+
         if (status === 429) {
           // HTTP 429 Too Many Requests => to avoid the whole download to fail, pause all requests.
           if (!this.requests.isPaused) {
@@ -315,8 +326,15 @@ module.exports = class Tus extends BasePlugin {
         return true
       }
 
+      if (opts.onShouldRetry != null) {
+        uploadOptions.onShouldRetry = (...args) => opts.onShouldRetry(...args, defaultOnShouldRetry)
+      } else {
+        uploadOptions.onShouldRetry = defaultOnShouldRetry
+      }
+
       const copyProp = (obj, srcProp, destProp) => {
         if (hasProperty(obj, srcProp) && !hasProperty(obj, destProp)) {
+          // eslint-disable-next-line no-param-reassign
           obj[destProp] = obj[srcProp]
         }
       }
@@ -337,7 +355,7 @@ module.exports = class Tus extends BasePlugin {
 
       uploadOptions.metadata = meta
 
-      const upload = new tus.Upload(file.data, uploadOptions)
+      upload = new tus.Upload(file.data, uploadOptions)
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
@@ -388,9 +406,11 @@ module.exports = class Tus extends BasePlugin {
         upload.abort()
       })
 
-      this.onCancelAll(file.id, () => {
-        queuedRequest.abort()
-        this.resetUploaderReferences(file.id, { abort: !!upload.url })
+      this.onCancelAll(file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
+          queuedRequest.abort()
+          this.resetUploaderReferences(file.id, { abort: !!upload.url })
+        }
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -409,11 +429,9 @@ module.exports = class Tus extends BasePlugin {
 
   /**
    * @param {UppyFile} file for use with upload
-   * @param {number} current file in a queue
-   * @param {number} total number of files in a queue
    * @returns {Promise<void>}
    */
-  uploadRemote (file) {
+  async uploadRemote (file) {
     this.resetUploaderReferences(file.id)
 
     const opts = { ...this.opts }
@@ -426,15 +444,16 @@ module.exports = class Tus extends BasePlugin {
     this.uppy.log(file.remote.url)
 
     if (file.serverToken) {
-      return this.connectToServerSocket(file)
+      await this.connectToServerSocket(file)
+      return
     }
 
-    return new Promise((resolve, reject) => {
-      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-      const client = new Client(this.uppy, file.remote.providerOptions)
+    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+    const client = new Client(this.uppy, file.remote.providerOptions)
 
+    try {
       // !! cancellation is NOT supported at this stage yet
-      client.post(file.remote.url, {
+      const res = await client.post(file.remote.url, {
         ...file.remote.body,
         endpoint: opts.endpoint,
         uploadUrl: opts.uploadUrl,
@@ -442,17 +461,13 @@ module.exports = class Tus extends BasePlugin {
         size: file.data.size,
         headers: opts.headers,
         metadata: file.meta,
-      }).then((res) => {
-        this.uppy.setFileState(file.id, { serverToken: res.token })
-        file = this.uppy.getFile(file.id)
-        return this.connectToServerSocket(file)
-      }).then(() => {
-        resolve()
-      }).catch((err) => {
-        this.uppy.emit('upload-error', file, err)
-        reject(err)
       })
-    })
+      this.uppy.setFileState(file.id, { serverToken: res.token })
+      await this.connectToServerSocket(this.uppy.getFile(file.id))
+    } catch (err) {
+      this.uppy.emit('upload-error', file, err)
+      throw err
+    }
   }
 
   /**
@@ -501,10 +516,12 @@ module.exports = class Tus extends BasePlugin {
         socket.send('pause', {})
       })
 
-      this.onCancelAll(file.id, () => {
-        queuedRequest.abort()
-        socket.send('cancel', {})
-        this.resetUploaderReferences(file.id)
+      this.onCancelAll(file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
+          queuedRequest.abort()
+          socket.send('cancel', {})
+          this.resetUploaderReferences(file.id)
+        }
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -668,12 +685,12 @@ module.exports = class Tus extends BasePlugin {
 
   /**
    * @param {string} fileID
-   * @param {function(): void} cb
+   * @param {function(): void} eventHandler
    */
-  onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('cancel-all', () => {
+  onCancelAll (fileID, eventHandler) {
+    this.uploaderEvents[fileID].on('cancel-all', (...args) => {
       if (!this.uppy.getFile(fileID)) return
-      cb()
+      eventHandler(...args)
     })
   }
 

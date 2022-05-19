@@ -1,6 +1,7 @@
-const nock = require('nock')
-const Core = require('@uppy/core')
-const XHRUpload = require('./index')
+import { jest, describe, it, expect } from '@jest/globals'
+import nock from 'nock'
+import Core from '@uppy/core'
+import XHRUpload from './index.js'
 
 describe('XHRUpload', () => {
   describe('getResponseData', () => {
