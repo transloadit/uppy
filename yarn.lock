@@ -9662,6 +9662,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/audio@workspace:packages/@uppy/audio"
   dependencies:
+    "@jest/globals": ^27.4.2
     "@uppy/utils": "workspace:^"
     preact: ^10.5.13
   peerDependencies:
@@ -9687,6 +9688,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/aws-s3@workspace:packages/@uppy/aws-s3"
   dependencies:
+    "@jest/globals": ^27.4.2
     "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
     "@uppy/xhr-upload": "workspace:^"
@@ -10116,6 +10118,8 @@ __metadata:
 "@uppy/store-default@workspace:^, @uppy/store-default@workspace:packages/@uppy/store-default":
   version: 0.0.0-use.local
   resolution: "@uppy/store-default@workspace:packages/@uppy/store-default"
+  dependencies:
+    "@jest/globals": ^27.4.2
   languageName: unknown
   linkType: soft
 
@@ -10222,6 +10226,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/utils@workspace:packages/@uppy/utils"
   dependencies:
+    "@jest/globals": ^27.4.2
     lodash.throttle: ^4.1.1
   languageName: unknown
   linkType: soft
@@ -10247,6 +10252,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/webcam@workspace:packages/@uppy/webcam"
   dependencies:
+    "@jest/globals": ^27.4.2
     "@uppy/utils": "workspace:^"
     preact: ^10.5.13
   peerDependencies:
