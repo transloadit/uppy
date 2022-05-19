@@ -16,3 +16,5 @@ Uppy.Uppy = Uppy
 Uppy.UIPlugin = UIPlugin
 Uppy.BasePlugin = BasePlugin
 Uppy.debugLogger = debugLogger
+
+export { Uppy }
