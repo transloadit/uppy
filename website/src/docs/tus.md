@@ -101,25 +101,24 @@ If you want to extend this functionality, for instance to retry on unauthorized 
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 
-new Uppy().use(Tus, { endpoint: '', onBeforeRequest, onShouldRetry, onAfterResponse })
-
-async function onBeforeRequest (req) {
-  const token = await getAuthToken()
-  req.setHeader('Authorization', `Bearer ${token}`)
-}
-
-function onShouldRetry (err, retryAttempt, options, next) {
-  if (err?.originalResponse?.getStatus() === 401) {
-    return true
-  }
-  return next(err)
-}
-
-async function onAfterResponse (req, res) {
-  if (res.getStatus() === 401) {
-    await refreshAuthToken()
-  }
-}
+new Uppy().use(Tus, {
+  endpoint: '',
+  async onBeforeRequest (req) {
+    const token = await getAuthToken()
+    req.setHeader('Authorization', `Bearer ${token}`)
+  },
+  onShouldRetry (err, retryAttempt, options, next) {
+    if (err?.originalResponse?.getStatus() === 401) {
+      return true
+    }
+    return next(err)
+  },
+  async onAfterResponse (req, res) {
+    if (res.getStatus() === 401) {
+      await refreshAuthToken()
+    }
+  },
+})
 ```
 
 ### `metaFields: null`
