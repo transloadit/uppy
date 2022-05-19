@@ -10226,7 +10226,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/utils@workspace:packages/@uppy/utils"
   dependencies:
-    "@jest/globals": ^27.4.2
     lodash.throttle: ^4.1.1
   languageName: unknown
   linkType: soft
