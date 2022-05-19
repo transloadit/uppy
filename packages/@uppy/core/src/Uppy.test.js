@@ -1,5 +1,5 @@
 /* eslint no-console: "off", no-restricted-syntax: "off" */
-import { describe, expect, it, jest } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, it, jest, xit } from '@jest/globals'
 
 import fs from 'node:fs'
 import prettierBytes from '@transloadit/prettier-bytes'
@@ -15,13 +15,13 @@ import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mj
 const sampleImage = fs.readFileSync(new URL('../../../../e2e/cypress/fixtures/images/image.jpg', import.meta.url))
 
 describe('src/Core', () => {
-  const RealCreateObjectUrl = global.URL.createObjectURL
+  const RealCreateObjectUrl = globalThis.URL.createObjectURL
   beforeEach(() => {
-    global.URL.createObjectURL = jest.fn().mockReturnValue('newUrl')
+    globalThis.URL.createObjectURL = jest.fn().mockReturnValue('newUrl')
   })
 
   afterEach(() => {
-    global.URL.createObjectURL = RealCreateObjectUrl
+    globalThis.URL.createObjectURL = RealCreateObjectUrl
   })
 
   it('should expose a class', () => {
@@ -1092,7 +1092,7 @@ describe('src/Core', () => {
         source: 'jest',
         name: 'empty.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(1000)], { type: 'application/octet-stream' }),
+        data: new File([new Uint8Array(1000)], { type: 'application/octet-stream' }),
       })
 
       expect(core.getFiles()).toHaveLength(2)
@@ -1710,7 +1710,7 @@ describe('src/Core', () => {
       const restrictionsViolatedEventMock = jest.fn()
       const file = {
         name: 'test.jpg',
-        data: new Blob([Buffer.alloc(2 * maxFileSize)]),
+        data: new Blob([new Uint8Array(2 * maxFileSize)]),
       }
       const errorMessage = core.i18n('exceedsSize', { file: file.name, size: prettierBytes(maxFileSize) })
       try {
@@ -1760,11 +1760,11 @@ describe('src/Core', () => {
   })
 
   describe('updateOnlineStatus', () => {
-    const RealNavigatorOnline = global.window.navigator.onLine
+    const RealNavigatorOnline = globalThis.window.navigator.onLine
 
     function mockNavigatorOnline (status) {
       Object.defineProperty(
-        global.window.navigator,
+        globalThis.window.navigator,
         'onLine',
         {
           value: status,
@@ -1774,7 +1774,7 @@ describe('src/Core', () => {
     }
 
     afterEach(() => {
-      global.window.navigator.onLine = RealNavigatorOnline
+      globalThis.window.navigator.onLine = RealNavigatorOnline
     })
 
     it('should emit the correct event based on whether there is a network connection', () => {
