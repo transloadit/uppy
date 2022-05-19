@@ -1,4 +1,3 @@
-/* global hexo */
 const Prism = require('prismjs')
 const entities = require('he')
 const { readFile } = require('fs/promises')
@@ -13,6 +12,7 @@ require('prismjs/components/')()
 
 const unhighlightedCodeRx = /<pre><code class="([^"]*)?">([\s\S]*?)<\/code><\/pre>/igm
 
+// eslint-disable-next-line no-shadow
 function highlight (lang, code) {
   const startTag = `<figure class="highlight ${lang}"><table><tr><td class="code"><pre>`
   const endTag = '</pre></td></tr></table></figure>'
@@ -27,9 +27,13 @@ function highlight (lang, code) {
 }
 
 function prismify (data) {
+  // eslint-disable-next-line no-param-reassign
   data.content = data.content.replace(unhighlightedCodeRx,
+    // eslint-disable-next-line no-shadow
     (_, lang, code) => highlight(lang, entities.decode(code)))
+  // eslint-disable-next-line no-param-reassign
   data.excerpt = data.excerpt.replace(unhighlightedCodeRx,
+    // eslint-disable-next-line no-shadow
     (_, lang, code) => highlight(lang, entities.decode(code)))
 
   return data
