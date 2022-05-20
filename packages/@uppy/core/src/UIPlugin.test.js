@@ -1,5 +1,6 @@
-const UIPlugin = require('./UIPlugin')
-const Core = require('./index')
+import { describe, expect, it } from '@jest/globals'
+import UIPlugin from './UIPlugin.js'
+import Core from './index.js'
 
 describe('UIPlugin', () => {
   describe('getPluginState', () => {

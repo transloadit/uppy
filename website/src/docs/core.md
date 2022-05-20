@@ -280,7 +280,7 @@ const uppy = new Uppy({
 <!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
-module.exports = {
+export default {
   strings: {
     addBulkFilesFailed: {
       0: 'Failed to add %{smart_count} file due to an internal error',

@@ -1,4 +1,5 @@
-const supportsUploadProgress = require('./supportsUploadProgress')
+import { describe, expect, it } from '@jest/globals'
+import supportsUploadProgress from './supportsUploadProgress.js'
 
 describe('supportsUploadProgress', () => {
   it('returns true in working browsers', () => {

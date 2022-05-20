@@ -9808,6 +9808,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/core@workspace:packages/@uppy/core"
   dependencies:
+    "@jest/globals": ^27.4.2
     "@transloadit/prettier-bytes": 0.0.7
     "@uppy/store-default": "workspace:^"
     "@uppy/utils": "workspace:^"

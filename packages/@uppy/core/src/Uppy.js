@@ -1,28 +1,25 @@
 /* eslint-disable max-classes-per-file */
 /* global AggregateError */
 
-'use strict'
-
-const Translator = require('@uppy/utils/lib/Translator')
-const ee = require('namespace-emitter')
-const { nanoid } = require('nanoid/non-secure')
-const throttle = require('lodash.throttle')
-const DefaultStore = require('@uppy/store-default')
-const getFileType = require('@uppy/utils/lib/getFileType')
-const getFileNameAndExtension = require('@uppy/utils/lib/getFileNameAndExtension')
-const generateFileID = require('@uppy/utils/lib/generateFileID')
-const supportsUploadProgress = require('./supportsUploadProgress')
-const getFileName = require('./getFileName')
-const { justErrorsLogger, debugLogger } = require('./loggers')
-const {
+import Translator from '@uppy/utils/lib/Translator'
+import ee from 'namespace-emitter'
+import { nanoid } from 'nanoid/non-secure'
+import throttle from 'lodash.throttle'
+import DefaultStore from '@uppy/store-default'
+import getFileType from '@uppy/utils/lib/getFileType'
+import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
+import generateFileID from '@uppy/utils/lib/generateFileID'
+import supportsUploadProgress from './supportsUploadProgress.js'
+import getFileName from './getFileName.js'
+import { justErrorsLogger, debugLogger } from './loggers.js'
+import {
   Restricter,
-  defaultOptions: defaultRestrictionOptions,
+  defaultOptions as defaultRestrictionOptions,
   RestrictionError,
-} = require('./Restricter')
+} from './Restricter.js'
 
-const locale = require('./locale')
-
-// Exported from here.
+import packageJson from '../package.json'
+import locale from './locale.js'
 
 /**
  * Uppy Core module.
@@ -30,8 +27,7 @@ const locale = require('./locale')
  * adds/removes files and metadata.
  */
 class Uppy {
-  // eslint-disable-next-line global-require
-  static VERSION = require('../package.json').version
+  static VERSION = packageJson.version
 
   /** @type {Record<string, BasePlugin[]>} */
   #plugins = Object.create(null)
@@ -1559,4 +1555,4 @@ class Uppy {
   }
 }
 
-module.exports = Uppy
+export default Uppy
