@@ -10,6 +10,7 @@ function GridListItem (props) {
     itemIconEl,
     showTitles,
     toggleCheckbox,
+    recordShiftKeyPress,
     id,
     children,
   } = props
@@ -25,6 +26,7 @@ function GridListItem (props) {
           isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''
         } uppy-ProviderBrowserItem-checkbox--grid`}
         onChange={toggleCheckbox}
+        onKeyDown={recordShiftKeyPress}
         name="listitem"
         id={id}
         checked={isChecked}
