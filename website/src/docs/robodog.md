@@ -21,7 +21,7 @@ Robodog can be downloaded from npm:
 npm install @uppy/robodog
 ```
 
-Then, with a bundler such as [webpack][webpack] or [Browserify][browserify], do:
+Then, with a bundler such as [Vite](https://vitejs.dev/), [Parcel](https://parceljs.org/), or [Rollup](https://rollupjs.org), do:
 
 ```js
 import robodog from '@uppy/robodog'
@@ -113,7 +113,3 @@ resultPromise.then((bundle) => {
 <a class="MoreButton" href="/docs/robodog/upload">View Documentation</a>
 
 [transloadit]: https://transloadit.com/
-
-[browserify]: https://browserify.org
-
-[webpack]: https://webpack.js.org
