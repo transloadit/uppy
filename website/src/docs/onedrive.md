@@ -86,13 +86,10 @@ This option correlates to the [RequestCredentials value](https://developer.mozil
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
     pluginNameOneDrive: 'OneDrive',
   },
 }
-
 ```

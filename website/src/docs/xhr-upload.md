@@ -231,8 +231,6 @@ Indicates whether cross-site Access-Control requests should be made using creden
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
@@ -240,7 +238,6 @@ export default {
     timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   },
 }
-
 ```
 
 ## POST Parameters / Form Fields

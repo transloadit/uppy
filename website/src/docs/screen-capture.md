@@ -102,8 +102,6 @@ If no preferred video mime type is given, the ScreenCapture plugin will prefer t
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
@@ -116,5 +114,4 @@ export default {
     recording: 'Recording',
   },
 }
-
 ```

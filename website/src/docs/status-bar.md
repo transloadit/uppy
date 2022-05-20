@@ -120,8 +120,6 @@ const doneButtonHandler = () => {
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
@@ -172,7 +170,6 @@ export default {
     showErrorDetails: 'Show error details',
   },
 }
-
 ```
 
 [`@uppy/file-input`]: /docs/file-input
