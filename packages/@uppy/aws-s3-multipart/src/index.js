@@ -36,11 +36,13 @@ export default class AwsS3Multipart extends BasePlugin {
       prepareUploadParts: this.prepareUploadParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
+      companionHeaders: {},
     }
 
     this.opts = { ...defaultOptions, ...opts }
 
     this.upload = this.upload.bind(this)
+    this.setCompanionHeaders = this.setCompanionHeaders.bind(this)
 
     this.requests = new RateLimitedQueue(this.opts.limit)
 
@@ -436,6 +438,11 @@ export default class AwsS3Multipart extends BasePlugin {
     return Promise.all(promises)
   }
 
+  setCompanionHeaders () {
+    this.client.setCompanionHeaders(this.opts.companionHeaders)
+    return Promise.resolve()
+  }
+
   onFileRemove (fileID, cb) {
     this.uploaderEvents[fileID].on('file-removed', (file) => {
       if (fileID === file.id) cb(file.id)
@@ -495,6 +502,7 @@ export default class AwsS3Multipart extends BasePlugin {
         resumableUploads: true,
       },
     })
+    this.uppy.addPreProcessor(this.setCompanionHeaders)
     this.uppy.addUploader(this.upload)
   }
 
@@ -506,6 +514,7 @@ export default class AwsS3Multipart extends BasePlugin {
         resumableUploads: false,
       },
     })
+    this.uppy.removePreProcessor(this.setCompanionHeaders)
     this.uppy.removeUploader(this.upload)
   }
 }

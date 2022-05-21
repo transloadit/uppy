@@ -227,4 +227,33 @@ describe('AwsS3Multipart', () => {
       expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(2)
     })
   })
+
+  describe('dynamic companionHeader', () => {
+    let core
+    let awsS3Multipart
+    const oldToken = 'old token'
+    const newToken = 'new token'
+
+    beforeEach(() => {
+      core = new Core()
+      core.use(AwsS3Multipart, {
+        companionHeaders: {
+          authorization: oldToken,
+        },
+      })
+      awsS3Multipart = core.getPlugin('AwsS3Multipart')
+    })
+
+    it('companionHeader is updated before uploading file', async () => {
+      awsS3Multipart.setOptions({
+        companionHeaders: {
+          authorization: newToken,
+        },
+      })
+
+      await core.upload()
+
+      expect(awsS3Multipart.client.companionHeaders.authorization).toEqual(newToken)
+    })
+  })
 })

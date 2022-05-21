@@ -43,6 +43,11 @@ export default class RequestClient {
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
     this.allowedHeaders = ['accept', 'content-type', 'uppy-auth-token']
     this.preflightDone = false
+    this.companionHeaders = opts !== undefined && opts.companionHeaders !== undefined ? opts.companionHeaders : {}
+  }
+
+  setCompanionHeaders (headers) {
+    this.companionHeaders = headers
   }
 
   get hostname () {
@@ -58,7 +63,7 @@ export default class RequestClient {
   }
 
   headers () {
-    const userHeaders = this.opts.companionHeaders || {}
+    const userHeaders = this.companionHeaders || {}
     return Promise.resolve({
       ...RequestClient.defaultHeaders,
       ...userHeaders,
