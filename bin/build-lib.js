@@ -249,6 +249,22 @@ async function buildLib () {
             )
           }
         },
+
+        /**
+         * Removes all `[Symbol.for('uppy test: …')]` methods when building.
+         *
+         * @param {{ node: t.ClassMethod }} path
+         */
+        // eslint-disable-next-line no-shadow
+        ClassMethod (path) {
+          const { key, computed } = path.node
+          if (computed && key.type === 'CallExpression' && key.callee.type === 'MemberExpression' && key.callee.object.name === 'Symbol' && key.callee.property.name === 'for' && key.arguments.length === 1) {
+            const { arguments: [{ type, value }] } = path.node.key
+            if (type === 'Literal' && value.startsWith('uppy test: ')) {
+              path.remove()
+            }
+          }
+        },
       },
     }] : undefined
     const { code, map } = await babel.transformFileAsync(file, { sourceMaps: true, plugins })
