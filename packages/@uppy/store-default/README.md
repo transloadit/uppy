@@ -28,8 +28,6 @@ const uppy = new Uppy({
 $ npm install @uppy/store-default
 ```
 
-We recommend installing from npm and then using a module bundler such as [Vite](https://vitejs.dev/), [Parcel](https://parceljs.org/), or [Rollup](https://rollupjs.org).
-
 Alternatively, you can also use this package in a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object. See the [main Uppy documentation](https://uppy.io/docs/#Installation) for instructions.
 
 ## Documentation

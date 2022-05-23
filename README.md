@@ -67,8 +67,6 @@ const uppy = new Uppy({ autoProceed: false })
 $ npm install @uppy/core @uppy/dashboard @uppy/tus
 ```
 
-We recommend installing from npm and then using a module bundler such as [Vite](https://vitejs.dev/), [Parcel](https://parceljs.org/), or [Rollup](https://rollupjs.org).
-
 Add CSS [uppy.min.css](https://releases.transloadit.com/uppy/v2.10.0/uppy.min.css), either to your HTML page’s `<head>` or include in JS, if your bundler of choice supports it.
 
 Alternatively, you can also use a pre-built bundle from Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global `window.Uppy` object.
