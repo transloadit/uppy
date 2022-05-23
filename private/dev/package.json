@@ -10,8 +10,6 @@
     "@uppy/companion": "workspace:^"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.4",
-    "@babel/types": "^7.17.0",
     "autoprefixer": "^10.2.6",
     "postcss-dir-pseudo-class": "^5.0.0",
     "postcss-logical": "^4.0.2",
