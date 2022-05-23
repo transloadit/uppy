@@ -1,5 +1,6 @@
 /* eslint-disable no-console, prefer-arrow-callback */
 import path from 'node:path'
+import process from 'node:process'
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
