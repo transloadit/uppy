@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals'
+import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 
 import 'whatwg-fetch'
 import nock from 'nock'
@@ -97,7 +97,7 @@ describe('AwsS3Multipart', () => {
         source: 'jest',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], {
           type: 'application/octet-stream',
         }),
       })
@@ -138,7 +138,7 @@ describe('AwsS3Multipart', () => {
         source: 'jest',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], {
           type: 'application/octet-stream',
         }),
       })
@@ -217,7 +217,7 @@ describe('AwsS3Multipart', () => {
         source: 'jest',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], {
           type: 'application/octet-stream',
         }),
       })

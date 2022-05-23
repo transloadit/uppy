@@ -1,4 +1,4 @@
-import { describe, it, expect } from '@jest/globals'
+import { afterAll, beforeAll, describe, it, expect } from '@jest/globals'
 
 import Core from '@uppy/core'
 import StatusBarPlugin from '@uppy/status-bar'
