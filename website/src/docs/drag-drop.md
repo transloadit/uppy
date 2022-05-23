@@ -86,8 +86,6 @@ Optionally, specify a string of text that explains something about the upload fo
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
@@ -98,7 +96,6 @@ export default {
     browse: 'browse',
   },
 }
-
 ```
 
 ### `onDragOver(event)`

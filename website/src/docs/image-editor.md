@@ -123,8 +123,6 @@ uppy.on('file-editor:complete', (updatedFile) => {
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
@@ -138,5 +136,4 @@ export default {
     aspectRatioPortrait: 'Crop portrait (9:16)',
   },
 }
-
 ```

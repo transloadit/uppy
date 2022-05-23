@@ -84,8 +84,6 @@ This option correlates to the [RequestCredentials value](https://developer.mozil
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
@@ -99,7 +97,6 @@ export default {
     enterCorrectUrl: 'Incorrect URL: Please make sure you are entering a direct link to a file',
   },
 }
-
 ```
 
 ## Methods

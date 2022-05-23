@@ -115,15 +115,12 @@ This option is useful when uploading to an S3-like service that doesn’t reply 
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default  {
   strings: {
     timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   },
 }
-
 ```
 
 ## S3 Bucket configuration
