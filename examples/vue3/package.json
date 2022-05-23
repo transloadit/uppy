@@ -4,17 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "preview": "vite preview --port 5050"
   },
   "dependencies": {
     "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/drag-drop": "workspace:*",
+    "@uppy/progress-bar": "workspace:*",
+    "@uppy/transloadit": "workspace:*",
     "@uppy/vue": "workspace:*",
-    "core-js": "^3.6.5",
-    "shallow-equal": "^1.2.1",
-    "vue": "^3.0.4"
+    "vue": "^3.2.33"
   },
   "devDependencies": {
-    "@vue/compiler-sfc": "^3.0.4",
-    "vite": "^1.0.0-rc.13"
+    "@vitejs/plugin-vue": "^2.3.1",
+    "vite": "^2.7.1"
   }
 }

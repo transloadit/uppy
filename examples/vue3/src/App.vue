@@ -1,3 +1,7 @@
+<script setup>
+import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/vue'
+</script>
+
 <template>
   <div id="app">
     <!-- <HelloWorld msg="Welcome to Uppy Vue Demo"/> -->
@@ -13,7 +17,7 @@
       />
       Show Dashboard
     </label>
-    <dashboard
+    <Dashboard
       v-if="showInlineDashboard"
       :uppy="uppy"
       :props="{
@@ -23,7 +27,7 @@
     <h2>Modal Dashboard</h2>
     <div>
       <button @click="open = true">Show Dashboard</button>
-    <dashboard-modal
+    <DashboardModal
       :uppy="uppy2" 
       :open="open" 
       :props="{
@@ -33,7 +37,7 @@
     </div>
 
     <h2>Drag Drop Area</h2>
-    <drag-drop 
+    <DragDrop 
       :uppy="uppy"
       :props="{
         locale: {
@@ -46,7 +50,7 @@
     />
 
     <h2>Progress Bar</h2>
-    <progress-bar 
+    <ProgressBar 
       :uppy="uppy"
       :props="{
         hideAfterFinish: false
@@ -57,22 +61,45 @@
 
 <script>
 import Uppy from '@uppy/core'
-// import Tus from '@uppy/tus'
-import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/vue'
+import Transloadit from '@uppy/transloadit'
+import { defineComponent } from 'vue'
 
-export default {
-  name: 'App',
-  components: {
-    Dashboard,
-    DashboardModal,
-    DragDrop,
-    ProgressBar
-  },
+import generateSignatureIfSecret from './generateSignatureIfSecret.js'
+
+const {
+  VITE_TRANSLOADIT_KEY : TRANSLOADIT_KEY,
+  // Your Transloadit secret SHALL NOT be accessible in your Vue file, this is
+  // there for illustration purposes only.
+  VITE_TRANSLOADIT_SECRET : TRANSLOADIT_SECRET,
+  VITE_TRANSLOADIT_TEMPLATE : TRANSLOADIT_TEMPLATE,
+  VITE_TRANSLOADIT_SERVICE_URL : TRANSLOADIT_SERVICE_URL,
+} = import.meta.env
+
+async function getAssemblyOptions () {
+  return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
+    auth: {
+      key: TRANSLOADIT_KEY,
+    },
+    // It's more secure to use a template_id and enable
+    // Signature Authentication
+    template_id: TRANSLOADIT_TEMPLATE,
+  })
+}
+
+export default defineComponent({
   computed: {
-    uppy: () => new Uppy({ id: 'uppy1', autoProceed: true, debug: true }),
-      // .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' }),
+    uppy: () => new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
+      .use(Transloadit, {
+        service: TRANSLOADIT_SERVICE_URL,
+        waitForEncoding: true,
+        getAssemblyOptions,
+      }),
     uppy2: () => new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
-      // .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' }),
+      .use(Transloadit, {
+        service: TRANSLOADIT_SERVICE_URL,
+        waitForEncoding: true,
+        getAssemblyOptions,
+      }),
   },
   data () {
     return {
@@ -83,14 +110,13 @@ export default {
   methods: {
     handleClose() { this.open = false }
   },
-  
-}
+})
 </script>
+
 <style src='@uppy/core/dist/style.css'></style> 
 <style src='@uppy/dashboard/dist/style.css'></style> 
 <style src='@uppy/drag-drop/dist/style.css'></style> 
 <style src='@uppy/progress-bar/dist/style.css'></style> 
-
 
 <style>
 #app {
