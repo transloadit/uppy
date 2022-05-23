@@ -9249,8 +9249,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-dev/dev@workspace:private/dev"
   dependencies:
-    "@babel/core": ^7.4.4
-    "@babel/types": ^7.17.0
     "@uppy/companion": "workspace:^"
     autoprefixer: ^10.2.6
     postcss-dir-pseudo-class: ^5.0.0
