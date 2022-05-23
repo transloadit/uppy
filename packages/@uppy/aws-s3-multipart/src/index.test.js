@@ -253,7 +253,7 @@ describe('AwsS3Multipart', () => {
 
       await core.upload()
 
-      expect(awsS3Multipart.client.companionHeaders.authorization).toEqual(newToken)
+      expect(awsS3Multipart.client[Symbol.for('uppy test: getCompanionHeaders')]().authorization).toEqual(newToken)
     })
   })
 })

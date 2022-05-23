@@ -42,7 +42,6 @@ export default class AwsS3Multipart extends BasePlugin {
     this.opts = { ...defaultOptions, ...opts }
 
     this.upload = this.upload.bind(this)
-    this.setCompanionHeaders = this.setCompanionHeaders.bind(this)
 
     this.requests = new RateLimitedQueue(this.opts.limit)
 
@@ -438,7 +437,7 @@ export default class AwsS3Multipart extends BasePlugin {
     return Promise.all(promises)
   }
 
-  setCompanionHeaders () {
+  #setCompanionHeaders = () => {
     this.client.setCompanionHeaders(this.opts.companionHeaders)
     return Promise.resolve()
   }
@@ -502,7 +501,7 @@ export default class AwsS3Multipart extends BasePlugin {
         resumableUploads: true,
       },
     })
-    this.uppy.addPreProcessor(this.setCompanionHeaders)
+    this.uppy.addPreProcessor(this.#setCompanionHeaders)
     this.uppy.addUploader(this.upload)
   }
 
@@ -514,7 +513,7 @@ export default class AwsS3Multipart extends BasePlugin {
         resumableUploads: false,
       },
     })
-    this.uppy.removePreProcessor(this.setCompanionHeaders)
+    this.uppy.removePreProcessor(this.#setCompanionHeaders)
     this.uppy.removeUploader(this.upload)
   }
 }

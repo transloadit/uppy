@@ -35,6 +35,8 @@ async function handleJSONResponse (res) {
 export default class RequestClient {
   static VERSION = packageJson.version
 
+  #companionHeaders = {}
+
   #getPostResponseFunc = skip => response => (skip ? response : this.onReceiveResponse(response))
 
   constructor (uppy, opts) {
@@ -43,12 +45,14 @@ export default class RequestClient {
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
     this.allowedHeaders = ['accept', 'content-type', 'uppy-auth-token']
     this.preflightDone = false
-    this.companionHeaders = opts !== undefined && opts.companionHeaders !== undefined ? opts.companionHeaders : {}
+    this.#companionHeaders = opts !== undefined && opts.companionHeaders !== undefined ? opts.companionHeaders : {}
   }
 
   setCompanionHeaders (headers) {
-    this.companionHeaders = headers
+    this.#companionHeaders = headers
   }
+
+  [Symbol.for('uppy test: getCompanionHeaders')] () { return this.#companionHeaders }
 
   get hostname () {
     const { companion } = this.uppy.getState()
@@ -63,7 +67,7 @@ export default class RequestClient {
   }
 
   headers () {
-    const userHeaders = this.companionHeaders || {}
+    const userHeaders = this.#companionHeaders || {}
     return Promise.resolve({
       ...RequestClient.defaultHeaders,
       ...userHeaders,
