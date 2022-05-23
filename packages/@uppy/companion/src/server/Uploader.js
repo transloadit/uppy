@@ -400,7 +400,10 @@ class Uploader {
    */
   saveState (state) {
     if (!this.storage) return
-    this.storage.set(`${Uploader.STORAGE_PREFIX}:${this.token}`, jsonStringify(state))
+    // make sure the keys get cleaned up.
+    // https://github.com/transloadit/uppy/issues/3748
+    const keyExpirySec = 60 * 60 * 24
+    this.storage.sendCommand('SET', [`${Uploader.STORAGE_PREFIX}:${this.token}`, jsonStringify(state), 'EX', keyExpirySec])
   }
 
   /**
