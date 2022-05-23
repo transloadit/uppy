@@ -117,6 +117,7 @@ export default class AwsS3 extends BasePlugin {
       limit: 0,
       metaFields: [], // have to opt in
       getUploadParameters: this.getUploadParameters.bind(this),
+      companionHeaders: {},
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -127,6 +128,8 @@ export default class AwsS3 extends BasePlugin {
     this.#client = new RequestClient(uppy, opts)
     this.#requests = new RateLimitedQueue(this.opts.limit)
   }
+
+  [Symbol.for('uppy test: getClient')] () { return this.#client }
 
   getUploadParameters (file) {
     if (!this.opts.companionUrl) {
@@ -216,8 +219,14 @@ export default class AwsS3 extends BasePlugin {
     })
   }
 
+  #setCompanionHeaders = () => {
+    this.#client.setCompanionHeaders(this.opts.companionHeaders)
+    return Promise.resolve()
+  }
+
   install () {
     const { uppy } = this
+    uppy.addPreProcessor(this.#setCompanionHeaders)
     uppy.addUploader(this.#handleUpload)
 
     // Get the response data from a successful XMLHttpRequest instance.
@@ -279,6 +288,7 @@ export default class AwsS3 extends BasePlugin {
   }
 
   uninstall () {
+    this.uppy.removePreProcessor(this.#setCompanionHeaders)
     this.uppy.removeUploader(this.#handleUpload)
   }
 }
