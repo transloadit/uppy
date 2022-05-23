@@ -25,6 +25,7 @@ const META_FILES = [
 // So, if we are being built using rollup, this require() won't have a `.default` property.
 const esPackagesThatNeedSpecialTreatmentForRollupInterop = [
   'get-form-data',
+  'cropperjs',
 ]
 
 function lastModified (file, createParentDir = false) {
