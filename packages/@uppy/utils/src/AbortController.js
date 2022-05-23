@@ -1,6 +1,6 @@
 /**
  * Little AbortController proxy module so we can swap out the implementation easily later.
  */
-exports.AbortController = globalThis.AbortController
-exports.AbortSignal = globalThis.AbortSignal
-exports.createAbortError = (message = 'Aborted') => new DOMException(message, 'AbortError')
+export const { AbortController } = globalThis
+export const { AbortSignal } = globalThis
+export const createAbortError = (message = 'Aborted') => new DOMException(message, 'AbortError')

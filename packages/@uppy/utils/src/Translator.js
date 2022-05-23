@@ -1,4 +1,4 @@
-const has = require('./hasProperty')
+import has from './hasProperty.js'
 
 function insertReplacement (source, rx, replacement) {
   const newParts = []
@@ -73,7 +73,7 @@ function interpolate (phrase, options) {
  *
  * Usage example: `translator.translate('files_chosen', {smart_count: 3})`
  */
-module.exports = class Translator {
+export default class Translator {
   /**
    * @param {object|Array<object>} locales - locale or list of locales.
    */

@@ -1,6 +1,6 @@
 const DATA_URL_PATTERN = /^data:([^/]+\/[^,;]+(?:[^,]*?))(;base64)?,([\s\S]*)$/
 
-module.exports = function dataURItoBlob (dataURI, opts, toFile) {
+export default function dataURItoBlob (dataURI, opts, toFile) {
   // get the base64 data
   const dataURIData = DATA_URL_PATTERN.exec(dataURI)
 

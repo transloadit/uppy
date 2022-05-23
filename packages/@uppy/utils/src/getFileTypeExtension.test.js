@@ -1,4 +1,5 @@
-const getFileTypeExtension = require('./getFileTypeExtension')
+import { describe, expect, it } from '@jest/globals'
+import getFileTypeExtension from './getFileTypeExtension.js'
 
 describe('getFileTypeExtension', () => {
   it('should return the filetype based on the specified mime type', () => {

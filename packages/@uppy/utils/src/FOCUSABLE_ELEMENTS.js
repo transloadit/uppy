@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   'a[href]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
   'area[href]:not([tabindex^="-"]):not([inert]):not([aria-hidden])',
   'input:not([disabled]):not([inert]):not([aria-hidden])',

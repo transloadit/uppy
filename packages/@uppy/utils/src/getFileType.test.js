@@ -1,4 +1,5 @@
-const getFileType = require('./getFileType')
+import { describe, expect, it } from '@jest/globals'
+import getFileType from './getFileType.js'
 
 describe('getFileType', () => {
   it('should trust the filetype if the file comes from a remote source', () => {

@@ -4,7 +4,7 @@
  * @param {string} fullFileName
  * @returns {object} {name, extension}
  */
-module.exports = function getFileNameAndExtension (fullFileName) {
+export default function getFileNameAndExtension (fullFileName) {
   const lastDot = fullFileName.lastIndexOf('.')
   // these count as no extension: "no-dot", "trailing-dot."
   if (lastDot === -1 || lastDot === fullFileName.length - 1) {
