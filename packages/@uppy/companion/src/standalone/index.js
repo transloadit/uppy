@@ -4,16 +4,16 @@ const helmet = require('helmet')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const { URL } = require('url')
-const merge = require('lodash.merge')
 const session = require('express-session')
 const addRequestId = require('express-request-id')()
+const connectRedis = require('connect-redis')
+
 const logger = require('../server/logger')
 const redis = require('../server/redis')
 const companion = require('../companion')
 const helper = require('./helper')
 const middlewares = require('../server/middlewares')
 const { getURLBuilder } = require('../server/helpers/utils')
-const connectRedis = require('connect-redis')
 
 /**
  * Configures an Express app for running Companion standalone
@@ -141,9 +141,7 @@ module.exports = function server (inputCompanionOptions = {}) {
 
   if (companionOptions.redisUrl) {
     const RedisStore = connectRedis(session)
-    const redisClient = redis.client(
-      merge({ url: companionOptions.redisUrl }, companionOptions.redisOptions),
-    )
+    const redisClient = redis.client(companionOptions)
     sessionOptions.store = new RedisStore({ client: redisClient })
   }
 
