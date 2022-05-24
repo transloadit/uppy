@@ -14,6 +14,7 @@ class FileInput extends Component {
   }
 
   componentDidUpdate (prevProps) {
+    // eslint-disable-next-line react/destructuring-assignment
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
@@ -25,10 +26,12 @@ class FileInput extends Component {
   }
 
   installPlugin () {
-    const { uppy } = this.props
+    const { uppy, locale, pretty, inputName } = this.props
     const options = {
       id: 'react:FileInput',
-      ...this.props,
+      locale,
+      pretty,
+      inputName,
       target: this.container,
     }
     delete options.uppy
@@ -55,12 +58,16 @@ class FileInput extends Component {
 }
 
 FileInput.propTypes = {
-  uppy: propTypes.uppy,
+  uppy: propTypes.uppy.isRequired,
   locale: propTypes.locale,
   pretty: PropTypes.bool,
   inputName: PropTypes.string,
 }
+// Must be kept in sync with @uppy/file-input/src/FileInput.jsx
 FileInput.defaultProps = {
+  locale: undefined,
+  pretty: true,
+  inputName: 'files[]',
 }
 
 export default FileInput

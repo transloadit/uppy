@@ -16,6 +16,7 @@ class StatusBar extends Component {
   }
 
   componentDidUpdate (prevProps) {
+    // eslint-disable-next-line react/destructuring-assignment
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
@@ -31,10 +32,25 @@ class StatusBar extends Component {
   }
 
   installPlugin () {
-    const { uppy } = this.props
+    const {
+      uppy,
+      hideUploadButton,
+      hideRetryButton,
+      hidePauseResumeButton,
+      hideCancelButton,
+      showProgressDetails,
+      hideAfterFinish,
+      doneButtonHandler,
+    } = this.props
     const options = {
       id: 'react:StatusBar',
-      ...this.props,
+      hideUploadButton,
+      hideRetryButton,
+      hidePauseResumeButton,
+      hideCancelButton,
+      showProgressDetails,
+      hideAfterFinish,
+      doneButtonHandler,
       target: this.container,
     }
     delete options.uppy
@@ -64,11 +80,24 @@ class StatusBar extends Component {
 }
 
 StatusBar.propTypes = {
-  uppy: uppyPropType,
-  hideAfterFinish: PropTypes.bool,
+  uppy: uppyPropType.isRequired,
+  hideUploadButton: PropTypes.bool,
+  hideRetryButton: PropTypes.bool,
+  hidePauseResumeButton: PropTypes.bool,
+  hideCancelButton: PropTypes.bool,
   showProgressDetails: PropTypes.bool,
+  hideAfterFinish: PropTypes.bool,
+  doneButtonHandler: PropTypes.func,
 }
+// Must be kept in sync with @uppy/status-bar/src/_StatusBar.jsx.
 StatusBar.defaultProps = {
+  hideUploadButton: false,
+  hideRetryButton: false,
+  hidePauseResumeButton: false,
+  hideCancelButton: false,
+  showProgressDetails: false,
+  hideAfterFinish: true,
+  doneButtonHandler: null,
 }
 
 export default StatusBar

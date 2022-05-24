@@ -53,7 +53,7 @@ export default class Dashboard extends UIPlugin {
 
     this.defaultLocale = locale
 
-    // set default options
+    // set default options, must be kept in sync with
     const defaultOptions = {
       target: 'body',
       metaFields: [],

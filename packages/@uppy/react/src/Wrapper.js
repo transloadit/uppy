@@ -50,7 +50,7 @@ class UppyWrapper extends Component {
 }
 
 UppyWrapper.propTypes = {
-  uppy: uppyPropType,
+  uppy: uppyPropType.isRequired,
   plugin: PropTypes.string.isRequired,
 }
 

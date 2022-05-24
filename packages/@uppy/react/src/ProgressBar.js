@@ -15,6 +15,7 @@ class ProgressBar extends Component {
   }
 
   componentDidUpdate (prevProps) {
+    // eslint-disable-next-line react/destructuring-assignment
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
@@ -30,10 +31,11 @@ class ProgressBar extends Component {
   }
 
   installPlugin () {
-    const { uppy } = this.props
+    const { uppy, fixed, hideAfterFinish } = this.props
     const options = {
       id: 'react:ProgressBar',
-      ...this.props,
+      fixed,
+      hideAfterFinish,
       target: this.container,
     }
     delete options.uppy
@@ -63,11 +65,14 @@ class ProgressBar extends Component {
 }
 
 ProgressBar.propTypes = {
-  uppy: uppyPropType,
+  uppy: uppyPropType.isRequired,
   fixed: PropTypes.bool,
   hideAfterFinish: PropTypes.bool,
 }
+// Must be kept in sync with @uppy/progress-bar/src/ProgressBar.jsx
 ProgressBar.defaultProps = {
+  fixed: false,
+  hideAfterFinish: true,
 }
 
 export default ProgressBar

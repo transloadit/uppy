@@ -85,7 +85,7 @@ export default class StatusBar extends UIPlugin {
 
     this.defaultLocale = locale
 
-    // set default options
+    // set default options, must be kept in sync with @uppy/react/src/StatusBar.js
     const defaultOptions = {
       target: 'body',
       hideUploadButton: false,
