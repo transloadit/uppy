@@ -260,12 +260,12 @@ export default class XHRUpload extends BasePlugin {
           this.uploaderEvents[file.id] = null
         }
 
-        if (opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
+        if (opts.validateStatus(xhr.status, xhr.responseText, xhr)) {
           const body = opts.getResponseData(xhr.responseText, xhr)
           const uploadURL = body[opts.responseUrlFieldName]
 
           const uploadResp = {
-            status: ev.target.status,
+            status: xhr.status,
             body,
             uploadURL,
           }
