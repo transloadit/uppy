@@ -64,25 +64,21 @@ const getConfigFromEnv = () => {
         verificationToken: getSecret('COMPANION_ZOOM_VERIFICATION_TOKEN'),
         credentialsURL: process.env.COMPANION_ZOOM_KEYS_ENDPOINT,
       },
-      // TODO: remove the redundant searchProviders warpper in next major version
-      searchProviders: {
-        unsplash: {
-          key: process.env.COMPANION_UNSPLASH_KEY,
-          secret: process.env.COMPANION_UNSPLASH_SECRET,
-        },
+      unsplash: {
+        key: process.env.COMPANION_UNSPLASH_KEY,
+        secret: process.env.COMPANION_UNSPLASH_SECRET,
       },
-      // TODO: move s3 out of providerOptions, it's a destination, not a source
-      s3: {
-        key: process.env.COMPANION_AWS_KEY,
-        secret: getSecret('COMPANION_AWS_SECRET'),
-        bucket: process.env.COMPANION_AWS_BUCKET,
-        endpoint: process.env.COMPANION_AWS_ENDPOINT,
-        region: process.env.COMPANION_AWS_REGION,
-        useAccelerateEndpoint:
-          process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
-        expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '300', 10),
-        acl: process.env.COMPANION_AWS_DISABLE_ACL === 'true' ? null : (process.env.COMPANION_AWS_ACL || 'public-read'), // todo default to no ACL in next major and remove COMPANION_AWS_DISABLE_ACL
-      },
+    },
+    s3: {
+      key: process.env.COMPANION_AWS_KEY,
+      secret: getSecret('COMPANION_AWS_SECRET'),
+      bucket: process.env.COMPANION_AWS_BUCKET,
+      endpoint: process.env.COMPANION_AWS_ENDPOINT,
+      region: process.env.COMPANION_AWS_REGION,
+      useAccelerateEndpoint:
+      process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
+      expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '300', 10),
+      acl: process.env.COMPANION_AWS_DISABLE_ACL === 'true' ? null : (process.env.COMPANION_AWS_ACL || 'public-read'), // todo default to no ACL in next major and remove COMPANION_AWS_DISABLE_ACL
     },
     server: {
       host: process.env.COMPANION_DOMAIN,
@@ -190,11 +186,6 @@ exports.buildHelpfulStartupMessage = (companionOptions) => {
   const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
   Object.keys(companionOptions.providerOptions).forEach((providerName) => {
-    // s3 does not need redirect_uris
-    if (providerName === 's3') {
-      return
-    }
-
     callbackURLs.push(buildURL(`/connect/${providerName}/redirect`, true))
   })
 
