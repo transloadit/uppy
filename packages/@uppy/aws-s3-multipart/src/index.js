@@ -54,6 +54,11 @@ export default class AwsS3Multipart extends BasePlugin {
 
   [Symbol.for('uppy test: getClient')] () { return this.#client }
 
+  // TODO: remove getter and setter for #client on the next major release
+  get client () { return this.#client }
+
+  set client (client) { this.#client = client }
+
   /**
    * Clean up all references for a file's upload: the MultipartUploader instance,
    * any events related to the file, and the Companion WebSocket connection.
