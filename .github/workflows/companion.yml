@@ -7,17 +7,53 @@ on:
     types: [ opened, synchronize, reopened ]
 
 jobs:
+  test-legacy:
+    name: Unit tests (legacy)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.20.1, 12.x, 17.x]
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
+
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{matrix.node-version}}
+      - name: Install Corepack if needed
+        run: corepack -v || npm install -g corepack
+      - name: Install dependencies
+        run: corepack yarn@3.1.1 install --no-immutable
+        env:
+          # Necessary for Node.js v10.x
+          NODE_OPTIONS: --experimental-worker
+          YARN_IGNORE_NODE: 1
+      - name: Run tests
+        run: corepack yarn run test:companion
+        env:
+          # Necessary for Node.js v10.x
+          NODE_OPTIONS: --experimental-worker
+          YARN_IGNORE_NODE: 1
   test:
     name: Unit tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.20.1, 12.x, 14.x, 16.x, 17.x]
+        node-version: [14.x, 16.x, 18.x]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
-      - name: Install Corepack if needed
-        run: corepack -v || npm install -g corepack
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
@@ -35,13 +71,6 @@ jobs:
           node-version: ${{matrix.node-version}}
       - name: Install dependencies
         run: corepack yarn install --immutable
-        env:
-          # Necessary for Node.js v10.x
-          NODE_OPTIONS: --experimental-worker
-          YARN_IGNORE_NODE: 1
       - name: Run tests
         run: corepack yarn run test:companion
-        env:
-          # Necessary for Node.js v10.x
-          NODE_OPTIONS: --experimental-worker
-          YARN_IGNORE_NODE: 1
+
