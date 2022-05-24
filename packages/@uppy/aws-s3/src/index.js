@@ -131,6 +131,11 @@ export default class AwsS3 extends BasePlugin {
 
   [Symbol.for('uppy test: getClient')] () { return this.#client }
 
+  // TODO: remove getter and setter for #client on the next major release
+  get client () { return this.#client }
+
+  set client (client) { this.#client = client }
+
   getUploadParameters (file) {
     if (!this.opts.companionUrl) {
       throw new Error('Expected a `companionUrl` option containing a Companion address.')
