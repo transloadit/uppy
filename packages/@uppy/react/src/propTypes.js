@@ -1,5 +1,5 @@
-const PropTypes = require('prop-types')
-const UppyCore = require('@uppy/core').Uppy
+import PropTypes from 'prop-types'
+import { Uppy as UppyCore } from '@uppy/core'
 
 // The `uppy` prop receives the Uppy core instance.
 const uppy = PropTypes.instanceOf(UppyCore).isRequired
@@ -51,7 +51,7 @@ const dashboard = {
   locale,
 }
 
-module.exports = {
+export {
   uppy,
   locale,
   dashboard,

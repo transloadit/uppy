@@ -1,17 +1,15 @@
-const React = require('react')
-const PropTypes = require('prop-types')
-const ProgressBarPlugin = require('@uppy/progress-bar')
-const uppyPropType = require('./propTypes').uppy
-const getHTMLProps = require('./getHTMLProps')
-const nonHtmlPropsHaveChanged = require('./nonHtmlPropsHaveChanged')
-
-const h = React.createElement
+import { createElement as h, Component } from 'react'
+import PropTypes from 'prop-types'
+import ProgressBarPlugin from '@uppy/progress-bar'
+import { uppy as uppyPropType } from './propTypes.js'
+import getHTMLProps from './getHTMLProps.js'
+import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 
 /**
  * React component that renders a progress bar at the top of the page.
  */
 
-class ProgressBar extends React.Component {
+class ProgressBar extends Component {
   componentDidMount () {
     this.installPlugin()
   }
@@ -72,4 +70,4 @@ ProgressBar.propTypes = {
 ProgressBar.defaultProps = {
 }
 
-module.exports = ProgressBar
+export default ProgressBar

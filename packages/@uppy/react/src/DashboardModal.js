@@ -1,18 +1,16 @@
-const React = require('react')
-const PropTypes = require('prop-types')
-const DashboardPlugin = require('@uppy/dashboard')
-const basePropTypes = require('./propTypes').dashboard
-const getHTMLProps = require('./getHTMLProps')
-const nonHtmlPropsHaveChanged = require('./nonHtmlPropsHaveChanged')
-
-const h = React.createElement
+import { createElement as h, Component } from 'react'
+import PropTypes from 'prop-types'
+import DashboardPlugin from '@uppy/dashboard'
+import { dashboard as basePropTypes } from './propTypes.js'
+import getHTMLProps from './getHTMLProps.js'
+import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 
 /**
  * React Component that renders a Dashboard for an Uppy instance in a Modal
  * dialog. Visibility of the Modal is toggled using the `open` prop.
  */
 
-class DashboardModal extends React.Component {
+class DashboardModal extends Component {
   componentDidMount () {
     this.installPlugin()
   }
@@ -86,4 +84,4 @@ DashboardModal.propTypes = {
   ...basePropTypes,
 }
 
-module.exports = DashboardModal
+export default DashboardModal

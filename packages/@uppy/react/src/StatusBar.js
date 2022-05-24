@@ -1,18 +1,16 @@
-const React = require('react')
-const PropTypes = require('prop-types')
-const StatusBarPlugin = require('@uppy/status-bar')
-const uppyPropType = require('./propTypes').uppy
-const getHTMLProps = require('./getHTMLProps')
-const nonHtmlPropsHaveChanged = require('./nonHtmlPropsHaveChanged')
-
-const h = React.createElement
+import { createElement as h, Component } from 'react'
+import PropTypes from 'prop-types'
+import StatusBarPlugin from '@uppy/status-bar'
+import { uppy as uppyPropType } from './propTypes.js'
+import getHTMLProps from './getHTMLProps.js'
+import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 
 /**
  * React component that renders a status bar containing upload progress and speed,
  * processing progress and pause/resume/cancel controls.
  */
 
-class StatusBar extends React.Component {
+class StatusBar extends Component {
   componentDidMount () {
     this.installPlugin()
   }
@@ -73,4 +71,4 @@ StatusBar.propTypes = {
 StatusBar.defaultProps = {
 }
 
-module.exports = StatusBar
+export default StatusBar

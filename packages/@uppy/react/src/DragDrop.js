@@ -1,17 +1,15 @@
-const React = require('react')
-const DragDropPlugin = require('@uppy/drag-drop')
-const propTypes = require('./propTypes')
-const getHTMLProps = require('./getHTMLProps')
-const nonHtmlPropsHaveChanged = require('./nonHtmlPropsHaveChanged')
-
-const h = React.createElement
+import { createElement as h, Component } from 'react'
+import DragDropPlugin from '@uppy/drag-drop'
+import * as propTypes from './propTypes.js'
+import getHTMLProps from './getHTMLProps.js'
+import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 
 /**
  * React component that renders an area in which files can be dropped to be
  * uploaded.
  */
 
-class DragDrop extends React.Component {
+class DragDrop extends Component {
   componentDidMount () {
     this.installPlugin()
   }
@@ -71,4 +69,4 @@ DragDrop.propTypes = {
 DragDrop.defaultProps = {
 }
 
-module.exports = DragDrop
+export default DragDrop

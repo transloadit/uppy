@@ -1,16 +1,14 @@
-const PropTypes = require('prop-types')
-const React = require('react')
-const FileInputPlugin = require('@uppy/file-input')
-const propTypes = require('./propTypes')
-
-const h = React.createElement
+import { createElement as h, Component } from 'react'
+import PropTypes from 'prop-types'
+import FileInputPlugin from '@uppy/file-input'
+import * as propTypes from './propTypes.js'
 
 /**
  * React component that renders an area in which files can be dropped to be
  * uploaded.
  */
 
-class FileInput extends React.Component {
+class FileInput extends Component {
   componentDidMount () {
     this.installPlugin()
   }
@@ -65,4 +63,4 @@ FileInput.propTypes = {
 FileInput.defaultProps = {
 }
 
-module.exports = FileInput
+export default FileInput

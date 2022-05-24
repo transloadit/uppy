@@ -1,7 +1,7 @@
-const { useEffect, useRef } = require('react')
-const UppyCore = require('@uppy/core').Uppy
+import { useEffect, useRef } from 'react'
+import { Uppy as UppyCore } from '@uppy/core'
 
-module.exports = function useUppy (factory) {
+export default function useUppy (factory) {
   if (typeof factory !== 'function') {
     throw new TypeError('useUppy: expected a function that returns a new Uppy instance')
   }

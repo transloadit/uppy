@@ -3,9 +3,9 @@
   "description": "React component wrappers around Uppy's official UI plugins.",
   "version": "2.2.0",
   "license": "MIT",
-  "main": "index.js",
-  "module": "index.mjs",
+  "main": "lib/index.js",
   "types": "types/index.d.ts",
+  "type": "module",
   "keywords": [
     "file uploader",
     "uppy",
