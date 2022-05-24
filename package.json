@@ -26,9 +26,9 @@
   "license": "MIT",
   "engines": {
     "node": "^v14.17.0 || >=v16.0.0",
-    "yarn": "3.1.0"
+    "yarn": "3.2.1"
   },
-  "packageManager": "yarn@3.1.0",
+  "packageManager": "yarn@3.2.1",
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",
