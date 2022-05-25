@@ -45,7 +45,7 @@ function getMaskableSecrets (companionOptions) {
     })
   }
 
-  if (s3?.secret) {
+  if (s3 && s3.secret) {
     secrets.push(s3.secret)
   }
 
