@@ -220,6 +220,7 @@ module.exports = {
         'packages/@uppy/onedrive/src/**/*.js',
         'packages/@uppy/progress-bar/src/**/*.js',
         'packages/@uppy/provider-views/src/**/*.js',
+        'packages/@uppy/react/src/**/*.js',
         'packages/@uppy/redux-dev-tools/src/**/*.js',
         'packages/@uppy/screen-capture/src/**/*.js',
         'packages/@uppy/status-bar/src/**/*.js',

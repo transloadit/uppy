@@ -1,22 +1,21 @@
-const React = require('react')
-const PropTypes = require('prop-types')
-const ProgressBarPlugin = require('@uppy/progress-bar')
-const uppyPropType = require('./propTypes').uppy
-const getHTMLProps = require('./getHTMLProps')
-const nonHtmlPropsHaveChanged = require('./nonHtmlPropsHaveChanged')
-
-const h = React.createElement
+import { createElement as h, Component } from 'react'
+import PropTypes from 'prop-types'
+import ProgressBarPlugin from '@uppy/progress-bar'
+import { uppy as uppyPropType } from './propTypes.js'
+import getHTMLProps from './getHTMLProps.js'
+import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 
 /**
  * React component that renders a progress bar at the top of the page.
  */
 
-class ProgressBar extends React.Component {
+class ProgressBar extends Component {
   componentDidMount () {
     this.installPlugin()
   }
 
   componentDidUpdate (prevProps) {
+    // eslint-disable-next-line react/destructuring-assignment
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
@@ -32,10 +31,11 @@ class ProgressBar extends React.Component {
   }
 
   installPlugin () {
-    const { uppy } = this.props
+    const { uppy, fixed, hideAfterFinish } = this.props
     const options = {
       id: 'react:ProgressBar',
-      ...this.props,
+      fixed,
+      hideAfterFinish,
       target: this.container,
     }
     delete options.uppy
@@ -65,11 +65,14 @@ class ProgressBar extends React.Component {
 }
 
 ProgressBar.propTypes = {
-  uppy: uppyPropType,
+  uppy: uppyPropType.isRequired,
   fixed: PropTypes.bool,
   hideAfterFinish: PropTypes.bool,
 }
+// Must be kept in sync with @uppy/progress-bar/src/ProgressBar.jsx
 ProgressBar.defaultProps = {
+  fixed: false,
+  hideAfterFinish: true,
 }
 
-module.exports = ProgressBar
+export default ProgressBar
