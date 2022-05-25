@@ -114,7 +114,7 @@
     "test": "jest"
   },
   "engines": {
-    "node": ">=10.20.1"
+    "node": "^14.19.0 || ^16.15.0 || >=18.0.0"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
