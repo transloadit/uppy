@@ -380,7 +380,7 @@ export default class Dashboard extends UIPlugin {
       meta: {
         // path of the file relative to the ancestor directory the user selected.
         // e.g. 'docs/Old Prague/airbnb.pdf'
-        relativePath: file.relativePath || null,
+        relativePath: file.relativePath || file.webkitRelativePath || null,
       },
     }))
 
