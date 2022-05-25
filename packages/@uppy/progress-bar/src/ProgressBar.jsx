@@ -16,7 +16,7 @@ export default class ProgressBar extends UIPlugin {
     this.title = 'Progress Bar'
     this.type = 'progressindicator'
 
-    // set default options
+    // set default options, must kept in sync with @uppy/react/src/ProgressBar.js
     const defaultOptions = {
       target: 'body',
       fixed: false,

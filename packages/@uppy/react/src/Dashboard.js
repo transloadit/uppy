@@ -1,22 +1,21 @@
-const React = require('react')
-const DashboardPlugin = require('@uppy/dashboard')
-const basePropTypes = require('./propTypes').dashboard
-const getHTMLProps = require('./getHTMLProps')
-const nonHtmlPropsHaveChanged = require('./nonHtmlPropsHaveChanged')
-
-const h = React.createElement
+import { createElement as h, Component } from 'react'
+import DashboardPlugin from '@uppy/dashboard'
+import { dashboard as basePropTypes } from './propTypes.js'
+import getHTMLProps from './getHTMLProps.js'
+import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 
 /**
  * React Component that renders a Dashboard for an Uppy instance. This component
  * renders the Dashboard inline, so you can put it anywhere you want.
  */
 
-class Dashboard extends React.Component {
+class Dashboard extends Component {
   componentDidMount () {
     this.installPlugin()
   }
 
   componentDidUpdate (prevProps) {
+    // eslint-disable-next-line react/destructuring-assignment
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
@@ -69,4 +68,4 @@ Dashboard.defaultProps = {
   inline: true,
 }
 
-module.exports = Dashboard
+export default Dashboard
