@@ -151,7 +151,7 @@ export default class AwsS3 extends BasePlugin {
      * keep track of `getUploadParameters()` responses
      * so we can cancel the calls individually using just a file ID
      *
-     * @type {object.<string, Promise>}
+     * @type {Record<string, import('@uppy/utils/lib/RateLimitedQueue').AbortablePromise<unknown>>}
      */
     const paramsPromises = Object.create(null)
 

@@ -53,7 +53,9 @@ declare module '@uppy/utils/lib/ProgressTimeout' {
 declare module '@uppy/utils/lib/RateLimitedQueue' {
   namespace RateLimitedQueue {
     export type AbortFunction = () => void
-    export type PromiseFunction = (...args: any[]) => Promise<any>
+    export interface AbortablePromise<T> extends Promise<T> {
+      abort(): void
+    }
     export type QueueEntry = {
       abort: () => void,
       done: () => void,
@@ -72,9 +74,9 @@ declare module '@uppy/utils/lib/RateLimitedQueue' {
     ): RateLimitedQueue.QueueEntry
 
     wrapPromiseFunction(
-      fn: () => RateLimitedQueue.PromiseFunction,
+      fn: () => (...args: any[]) => Promise<any>,
       queueOptions?: RateLimitedQueue.QueueOptions
-    ): RateLimitedQueue.PromiseFunction
+    ): (...args: any[]) => RateLimitedQueue.AbortablePromise<any>
   }
 
   export const internalRateLimitedQueue: symbol
