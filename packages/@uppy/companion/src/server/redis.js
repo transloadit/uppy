@@ -7,7 +7,7 @@ let redisClient
  * A Singleton module that provides a single redis client through out
  * the lifetime of the server
  *
- * @param {object=} opts node-redis client options
+ * @param {Record<string, unknown>} [opts] node-redis client options
  */
 function createClient (opts) {
   if (!redisClient) {
