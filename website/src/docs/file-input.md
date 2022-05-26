@@ -84,8 +84,6 @@ The `name` attribute for the `<input type="file">` element.
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
@@ -95,7 +93,6 @@ export default {
     chooseFiles: 'Choose files',
   },
 }
-
 ```
 
 ## Custom file input

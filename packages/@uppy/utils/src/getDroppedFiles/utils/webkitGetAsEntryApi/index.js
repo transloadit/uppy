@@ -1,8 +1,8 @@
-const toArray = require('../../../toArray')
-const getRelativePath = require('./getRelativePath')
-const getFilesAndDirectoriesFromDirectory = require('./getFilesAndDirectoriesFromDirectory')
+import getRelativePath from './getRelativePath.js'
+import getFilesAndDirectoriesFromDirectory from './getFilesAndDirectoriesFromDirectory.js'
+import toArray from '../../../toArray.js'
 
-module.exports = function webkitGetAsEntryApi (dataTransfer, logDropError) {
+export default function webkitGetAsEntryApi (dataTransfer, logDropError) {
   const files = []
 
   const rootPromises = []

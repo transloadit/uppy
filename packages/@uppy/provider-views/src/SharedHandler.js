@@ -5,6 +5,7 @@ export default class SharedHandler {
     this.plugin = plugin
     this.filterItems = this.filterItems.bind(this)
     this.toggleCheckbox = this.toggleCheckbox.bind(this)
+    this.recordShiftKeyPress = this.recordShiftKeyPress.bind(this)
     this.isChecked = this.isChecked.bind(this)
     this.loaderWrapper = this.loaderWrapper.bind(this)
   }
@@ -17,6 +18,10 @@ export default class SharedHandler {
     return items.filter((folder) => {
       return folder.name.toLowerCase().indexOf(state.filterInput.toLowerCase()) !== -1
     })
+  }
+
+  recordShiftKeyPress (e) {
+    this.isShiftKeyPressed = e.shiftKey
   }
 
   /**
@@ -32,10 +37,9 @@ export default class SharedHandler {
     e.currentTarget.focus()
     const { folders, files } = this.plugin.getPluginState()
     const items = this.filterItems(folders.concat(files))
-
     // Shift-clicking selects a single consecutive list of items
     // starting at the previous click and deselects everything else.
-    if (this.lastCheckbox && e.shiftKey) {
+    if (this.lastCheckbox && this.isShiftKeyPressed) {
       const prevIndex = items.indexOf(this.lastCheckbox)
       const currentIndex = items.indexOf(file)
       const currentSelection = (prevIndex < currentIndex)

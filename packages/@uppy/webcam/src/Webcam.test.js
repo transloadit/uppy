@@ -1,10 +1,11 @@
+import { describe, expect, it } from '@jest/globals'
 import Uppy from '@uppy/core'
 import Webcam from '../lib/index.js'
 
 describe('Webcam', () => {
   describe('_getMediaRecorderOptions', () => {
     it('should not have a mimeType set if no preferences given', () => {
-      global.MediaRecorder = {
+      globalThis.MediaRecorder = {
         isTypeSupported: () => true,
       }
 
@@ -15,7 +16,7 @@ describe('Webcam', () => {
     })
 
     it('should use preferredVideoMimeType', () => {
-      global.MediaRecorder = {
+      globalThis.MediaRecorder = {
         isTypeSupported: (ty) => ty === 'video/webm',
       }
 
@@ -26,7 +27,7 @@ describe('Webcam', () => {
     })
 
     it('should not use preferredVideoMimeType if it is not supported', () => {
-      global.MediaRecorder = {
+      globalThis.MediaRecorder = {
         isTypeSupported: (ty) => ty === 'video/webm',
       }
 
@@ -37,7 +38,7 @@ describe('Webcam', () => {
     })
 
     it('should pick type based on `allowedFileTypes`', () => {
-      global.MediaRecorder = {
+      globalThis.MediaRecorder = {
         isTypeSupported: () => true,
       }
 
@@ -50,7 +51,7 @@ describe('Webcam', () => {
     })
 
     it('should use first supported type from allowedFileTypes', () => {
-      global.MediaRecorder = {
+      globalThis.MediaRecorder = {
         isTypeSupported: (ty) => ty === 'video/webm',
       }
 
@@ -63,7 +64,7 @@ describe('Webcam', () => {
     })
 
     it('should prefer preferredVideoMimeType over allowedFileTypes', () => {
-      global.MediaRecorder = {
+      globalThis.MediaRecorder = {
         isTypeSupported: () => true,
       }
 
@@ -77,7 +78,7 @@ describe('Webcam', () => {
     })
 
     it('should not use allowedFileTypes if they are unsupported', () => {
-      global.MediaRecorder = {
+      globalThis.MediaRecorder = {
         isTypeSupported: () => false,
       }
 

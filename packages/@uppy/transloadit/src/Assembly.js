@@ -12,7 +12,7 @@ import parseUrl from './parseUrl.js'
 // TODO: remove this hack in the next release.
 let socketIo
 function requireSocketIo () {
-  // eslint-disable-next-line no-return-assign, no-restricted-globals, global-require
+  // eslint-disable-next-line no-return-assign, no-restricted-globals, global-require, no-undef
   return socketIo ??= require('socket.io-client')
 }
 

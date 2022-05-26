@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals'
 import DefaultStore from './index.js'
 
 describe('DefaultStore', () => {

@@ -1,4 +1,4 @@
-const throttle = require('lodash.throttle')
+import throttle from 'lodash.throttle'
 
 function emitSocketProgress (uploader, progressData, file) {
   const { progress, bytesUploaded, bytesTotal } = progressData
@@ -12,7 +12,7 @@ function emitSocketProgress (uploader, progressData, file) {
   }
 }
 
-module.exports = throttle(emitSocketProgress, 300, {
+export default throttle(emitSocketProgress, 300, {
   leading: true,
   trailing: true,
 })

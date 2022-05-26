@@ -302,8 +302,6 @@ Limit the amount of uploads going on at the same time. Setting this to `0` means
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
@@ -316,7 +314,6 @@ export default {
     encoding: 'Encoding...',
   },
 }
-
 ```
 
 ## Errors

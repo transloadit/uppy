@@ -3,7 +3,7 @@
 // ___Where to take new extensions from?
 //    https://github.com/jshttp/mime-db/blob/master/db.json
 
-module.exports = {
+export default {
   md: 'text/markdown',
   markdown: 'text/markdown',
   mp4: 'video/mp4',

@@ -65,8 +65,6 @@ Configures whether to show a dropdown which enables to choose the audio device t
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
@@ -98,5 +96,4 @@ export default {
     discardRecordedFile: 'Discard recorded file',
   },
 }
-
 ```

@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals'
 import isXml from './isXml.js'
 
 describe('AwsS3', () => {

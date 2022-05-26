@@ -277,8 +277,6 @@ const uppy = new Uppy({
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
@@ -338,7 +336,6 @@ export default {
     },
   },
 }
-
 ```
 
 ### `store: defaultStore()`

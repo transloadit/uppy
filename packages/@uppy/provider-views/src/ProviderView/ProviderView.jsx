@@ -332,7 +332,7 @@ export default class ProviderView extends View {
 
     const targetViewOptions = { ...this.opts, ...viewOptions }
     const { files, folders, filterInput, loading, currentSelection } = this.plugin.getPluginState()
-    const { isChecked, toggleCheckbox, filterItems } = this.sharedHandler
+    const { isChecked, toggleCheckbox, recordShiftKeyPress, filterItems } = this.sharedHandler
     const hasInput = filterInput !== ''
     const headerProps = {
       showBreadcrumbs: targetViewOptions.showBreadcrumbs,
@@ -348,6 +348,7 @@ export default class ProviderView extends View {
     const browserProps = {
       isChecked,
       toggleCheckbox,
+      recordShiftKeyPress,
       currentSelection,
       files: hasInput ? filterItems(files) : files,
       folders: hasInput ? filterItems(folders) : folders,

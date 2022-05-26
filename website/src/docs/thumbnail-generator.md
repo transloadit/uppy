@@ -60,15 +60,12 @@ A unique identifier for this plugin. It defaults to `'ThumbnailGenerator'`.
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
     generatingThumbnails: 'Generating thumbnails...',
   },
 }
-
 ```
 
 ### `thumbnailWidth: 200`

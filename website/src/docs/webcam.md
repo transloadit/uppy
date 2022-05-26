@@ -158,8 +158,6 @@ If no preferred image mime type is given, the Webcam plugin will prefer types li
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
@@ -189,5 +187,4 @@ export default {
     allowAccessDescription: 'In order to take pictures or record video with your camera, please allow camera access for this site.',
   },
 }
-
 ```

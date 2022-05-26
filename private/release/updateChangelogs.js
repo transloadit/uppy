@@ -2,6 +2,7 @@
 
 import { createReadStream, promises as fs } from 'node:fs'
 import { createInterface } from 'node:readline'
+import { Buffer } from 'node:buffer'
 import process from 'node:process'
 
 const ROOT = new URL('../../', import.meta.url)

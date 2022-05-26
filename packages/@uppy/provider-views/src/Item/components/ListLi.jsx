@@ -15,6 +15,7 @@ function ListItem (props) {
     isCheckboxDisabled,
     isChecked,
     toggleCheckbox,
+    recordShiftKeyPress,
     type,
     id,
     itemIconEl,
@@ -34,6 +35,7 @@ function ListItem (props) {
           type="checkbox"
           className={`uppy-u-reset uppy-ProviderBrowserItem-checkbox ${isChecked ? 'uppy-ProviderBrowserItem-checkbox--is-checked' : ''}`}
           onChange={toggleCheckbox}
+          onKeyDown={recordShiftKeyPress}
           // for the <label/>
           name="listitem"
           id={id}

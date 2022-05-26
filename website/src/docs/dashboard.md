@@ -334,8 +334,6 @@ Dashboard ships with the `ThumbnailGenerator` plugin that adds small resized ima
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
 export default {
   strings: {
@@ -425,7 +423,6 @@ export default {
     },
   },
 }
-
 ```
 
 ### `theme: 'light'`

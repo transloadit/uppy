@@ -1,4 +1,5 @@
-const isNetworkError = require('./isNetworkError')
+import { describe, expect, it } from '@jest/globals'
+import isNetworkError from './isNetworkError.js'
 
 describe('isNetworkError', () => {
   it('should return true if the specified xhr object contains a network error', () => {

@@ -37,6 +37,9 @@ class OneDrive extends Provider {
    * it then waits till both requests are done before proceeding with the callback
    *
    * @param {object} options
+   * @param {string} options.directory
+   * @param {any} options.query
+   * @param {string} options.token
    * @param {Function} done
    */
   _list ({ directory, query, token }, done) {

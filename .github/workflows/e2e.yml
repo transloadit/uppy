@@ -49,6 +49,7 @@ jobs:
           VITE_TRANSLOADIT_SECRET: ${{secrets.TRANSLOADIT_SECRET}}
           VITE_TRANSLOADIT_TEMPLATE: ${{secrets.TRANSLOADIT_TEMPLATE}}
           VITE_TRANSLOADIT_SERVICE_URL: ${{secrets.TRANSLOADIT_SERVICE_URL}}
+          CYPRESS_RECORD_KEY: ${{secrets.CYPRESS_RECORD_KEY}}
       - name: Remove 'pending end-to-end tests' label
         # Remove the 'pending end-to-end tests' label if tests ran successfully
         if: github.event.pull_request && contains(github.event.pull_request.labels.*.name, 'pending end-to-end tests')

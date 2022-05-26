@@ -94,17 +94,10 @@ async function generateLocaleDocs (pluginName) {
       headingRange(tree, rangeOptions, (start, _, end) => [
         start,
         {
-          type: 'html',
-          // `module.exports` is not allowed by eslint in our docs.
-          // The script outputs an extra newline which also isn't excepted by eslint
-          // TODO: remove the no-restricted-globals when switch to ESM is completed.
-          value: '<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->',
-        },
-        {
           type: 'code',
           lang: 'js',
           meta: null,
-          value: fs.readFileSync(localePath, 'utf-8'),
+          value: fs.readFileSync(localePath, 'utf-8').trimEnd(),
         },
         end,
       ])

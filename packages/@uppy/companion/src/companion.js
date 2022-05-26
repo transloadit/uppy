@@ -77,7 +77,7 @@ module.exports.app = (optionsArg = {}) => {
 
   // create singleton redis client
   if (options.redisUrl) {
-    redis.client(merge({ url: options.redisUrl }, options.redisOptions || {}))
+    redis.client(options)
   }
   const emitter = createEmitter(options.redisUrl, options.redisPubSubScope)
 

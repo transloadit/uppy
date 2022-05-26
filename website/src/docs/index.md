@@ -49,7 +49,7 @@ Adding [Companion](/docs/companion/) to the mix enables remote sources such as I
 
 ## Installation
 
-Uppy can be used with a module bundler such as [Webpack](http://webpack.js.org/) or [Browserify](http://browserify.org/), or by including it in a script tag.
+Uppy can be used with a module bundler such as [Vite](https://vitejs.dev/), [Parcel](https://parceljs.org/), or [Rollup](https://rollupjs.org), or by including it in a script tag.
 
 > You may need polyfills if your application supports Internet Explorer or other older browsers. See [Browser Support](#Browser-Support).
 
