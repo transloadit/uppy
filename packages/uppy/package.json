@@ -54,6 +54,7 @@
     "@uppy/progress-bar": "workspace:^",
     "@uppy/provider-views": "workspace:^",
     "@uppy/redux-dev-tools": "workspace:^",
+    "@uppy/remote-sources": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "@uppy/store-default": "workspace:^",
@@ -73,5 +74,8 @@
     "regenerator-runtime": "0.13.9",
     "resize-observer-polyfill": "^1.5.1",
     "whatwg-fetch": "^3.6.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
