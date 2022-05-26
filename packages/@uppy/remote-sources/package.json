@@ -27,8 +27,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/dashboard": "workspace:^",
     "@uppy/box": "workspace:^",
+    "@uppy/dashboard": "workspace:^",
     "@uppy/dropbox": "workspace:^",
     "@uppy/facebook": "workspace:^",
     "@uppy/google-drive": "workspace:^",

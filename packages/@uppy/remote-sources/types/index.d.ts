@@ -1,5 +1,12 @@
-import type { BasePlugin } from '@uppy/core'
+import type { PluginOptions, BasePlugin, PluginTarget } from '@uppy/core'
+import type { RequestClientOptions } from '@uppy/companion-client'
 
-declare class RemoteSources extends BasePlugin {}
+interface RemoteTargetOptions extends PluginOptions, RequestClientOptions {
+  target?: PluginTarget
+  sources?: Array<string>
+  title?: string
+}
 
-export default RemoteSources
+declare class RemoteTarget extends BasePlugin<RemoteTargetOptions> {}
+
+export default RemoteTarget

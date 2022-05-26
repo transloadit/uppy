@@ -11,7 +11,9 @@ import Uppy from '@uppy/core'
 import RemoteSources from '@uppy/remote-sources'
 
 const uppy = new Uppy()
-uppy.use(RemoteSources)
+uppy.use(RemoteSources, {
+  companionUrl: 'https://your-companion-url',
+})
 ```
 
 ## Installation

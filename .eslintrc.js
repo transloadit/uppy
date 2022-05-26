@@ -236,6 +236,7 @@ module.exports = {
         'packages/@uppy/webcam/src/**/*.js',
         'packages/@uppy/xhr-upload/src/**/*.js',
         'packages/@uppy/zoom/src/**/*.js',
+        'packages/@uppy/remote-sources/src/**/*.js',
       ],
       parser: 'espree',
       parserOptions: {

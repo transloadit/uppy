@@ -10,6 +10,8 @@ import Unsplash from '@uppy/unsplash'
 import Url from '@uppy/url'
 import Zoom from '@uppy/zoom'
 
+import packageJson from '../package.json'
+
 const availablePlugins = [
   Box,
   Dropbox,
@@ -23,6 +25,8 @@ const availablePlugins = [
 ]
 
 export default class RemoteSources extends BasePlugin {
+  static VERSION = packageJson.version
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.id = this.opts.id || 'RemoteSources'
