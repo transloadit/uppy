@@ -1,5 +1,12 @@
 # @uppy/drag-drop
 
+## 2.0.7
+
+Released: 2022-04-27
+Included in: Uppy v2.9.4
+
+- @uppy/drag-drop: refactor to ESM (Antoine du Hamel / #3647)
+
 ## 2.0.6
 
 Released: 2022-01-10

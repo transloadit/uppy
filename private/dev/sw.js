@@ -58,5 +58,6 @@ self.addEventListener('message', (event) => {
     case 'uppy/GET_FILES':
       getFiles(event.data.store)
       break
+    default:
   }
 })

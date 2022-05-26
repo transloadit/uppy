@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   strings: {
     startCapturing: 'Begin screen capturing',
     stopCapturing: 'Stop screen capturing',

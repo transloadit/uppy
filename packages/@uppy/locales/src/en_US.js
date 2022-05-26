@@ -1,4 +1,11 @@
-const en_US = {}
+const en_US = {
+  pluralize (count) {
+    if (count === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 en_US.strings = {
   addBulkFilesFailed: {
@@ -194,15 +201,8 @@ en_US.strings = {
   zoomOut: 'Zoom out',
 }
 
-en_US.pluralize = function pluralize (count) {
-  if (count === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.en_US = en_US
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.en_US = en_US
-}
-
-module.exports = en_US
+export default en_US

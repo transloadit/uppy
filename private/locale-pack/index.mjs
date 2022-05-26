@@ -1,7 +1,7 @@
 /* eslint-disable no-console, prefer-arrow-callback */
 import path from 'node:path'
 import fs from 'node:fs'
-import { readFile, writeFile } from 'node:fs/promises'
+import { open, readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 
 import dedent from 'dedent'
@@ -11,7 +11,7 @@ import remarkFrontmatter from 'remark-frontmatter'
 
 import remarkConfig from '../remark-lint-uppy/index.js'
 
-import { getPaths, sortObjectAlphabetically } from './helpers.mjs'
+import { getLocales, sortObjectAlphabetically } from './helpers.mjs'
 
 const { settings: remarkSettings } = remarkConfig
 
@@ -21,74 +21,20 @@ const localesPath = path.join(root, 'packages', '@uppy', 'locales')
 const templatePath = path.join(localesPath, 'template.js')
 const englishLocalePath = path.join(localesPath, 'src', 'en_US.js')
 
-main()
-  .then(() => {
-    console.log(`✅ Generated '${englishLocalePath}'`)
-    console.log('✅ Generated locale docs')
-    console.log('✅ Generated types')
-  })
-  .catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
+async function getLocalesAndCombinedLocale () {
+  const locales = await getLocales(`${root}/packages/@uppy/**/src/locale.js`)
 
-function main () {
-  return getPaths(`${root}/packages/@uppy/**/src/locale.js`)
-    .then(importFiles)
-    .then(createCombinedLocale)
-    .then(({ combinedLocale, locales }) => ({
-      combinedLocale: sortObjectAlphabetically(combinedLocale),
-      locales,
-    }))
-    .then(({ combinedLocale, locales }) => {
-      return readFile(templatePath, 'utf-8')
-        .then((fileString) => populateTemplate(fileString, combinedLocale))
-        .then((file) => writeFile(englishLocalePath, file))
-        .then(() => {
-          for (const [pluginName, locale] of Object.entries(locales)) {
-            generateLocaleDocs(pluginName)
-            generateTypes(pluginName, locale)
-          }
-          return locales
-        })
-    })
-}
-
-async function importFiles (paths) {
-  const locales = {}
-
-  for (const filePath of paths) {
-    const pluginName = path.basename(path.join(filePath, '..', '..'))
-    // Note: `.default` should be removed when we move to ESM
-    const locale = (await import(filePath)).default
-
-    locales[pluginName] = locale
+  const combinedLocale = {}
+  for (const [pluginName, locale] of Object.entries(locales)) {
+    for (const [key, value] of Object.entries(locale.strings)) {
+      if (key in combinedLocale && value !== combinedLocale[key]) {
+        throw new Error(`'${key}' from ${pluginName} already exists in locale pack.`)
+      }
+      combinedLocale[key] = value
+    }
   }
 
-  return locales
-}
-
-function createCombinedLocale (locales) {
-  return new Promise((resolve, reject) => {
-    const combinedLocale = {}
-    const entries = Object.entries(locales)
-
-    for (const [pluginName, locale] of entries) {
-      Object.entries(locale.strings).forEach(([key, value]) => {
-        if (key in combinedLocale && value !== combinedLocale[key]) {
-          reject(new Error(`'${key}' from ${pluginName} already exists in locale pack.`))
-        }
-        combinedLocale[key] = value
-      })
-    }
-
-    resolve({ combinedLocale, locales })
-  })
-}
-
-function populateTemplate (fileString, combinedLocale) {
-  const formattedLocale = JSON.stringify(combinedLocale, null, ' ')
-  return fileString.replace('en_US.strings = {}', `en_US.strings = ${formattedLocale}`)
+  return [locales, sortObjectAlphabetically(combinedLocale)]
 }
 
 function generateTypes (pluginName, locale) {
@@ -120,23 +66,27 @@ function generateTypes (pluginName, locale) {
   export default ${pluginClassName}Locale
   `
 
-  fs.writeFileSync(localePath, localeTypes)
+  return writeFile(localePath, localeTypes)
 }
 
-function generateLocaleDocs (pluginName) {
+async function generateLocaleDocs (pluginName) {
   const fileName = `${pluginName}.md`
   const docPath = path.join(root, 'website', 'src', 'docs', fileName)
   const localePath = path.join(root, 'packages', '@uppy', pluginName, 'src', 'locale.js')
   const rangeOptions = { test: 'locale: {}', ignoreFinalDefinitions: true }
 
-  if (!fs.existsSync(docPath)) {
+  let docFile
+
+  try {
+    docFile = await open(docPath, 'r+')
+  } catch (err) {
     console.error(
       `⚠️  Could not find markdown documentation file for "${pluginName}". Make sure the plugin name matches the markdown file name.`,
     )
-    return
+    throw err
   }
 
-  remark()
+  const file = await remark()
     .data('settings', remarkSettings)
     .use(remarkFrontmatter)
     .use(() => (tree) => {
@@ -147,6 +97,7 @@ function generateLocaleDocs (pluginName) {
           type: 'html',
           // `module.exports` is not allowed by eslint in our docs.
           // The script outputs an extra newline which also isn't excepted by eslint
+          // TODO: remove the no-restricted-globals when switch to ESM is completed.
           value: '<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->',
         },
         {
@@ -158,6 +109,29 @@ function generateLocaleDocs (pluginName) {
         end,
       ])
     })
-    .process(fs.readFileSync(docPath))
-    .then((file) => fs.writeFileSync(docPath, String(file)))
+    .process(await docFile.readFile())
+
+  const { bytesWritten } = await docFile.write(String(file), 0, 'utf-8')
+  await docFile.truncate(bytesWritten)
+
+  await docFile.close()
 }
+
+const [[locales, combinedLocale], fileString] = await Promise.all([
+  getLocalesAndCombinedLocale(),
+  readFile(templatePath, 'utf-8'),
+])
+const formattedLocale = JSON.stringify(combinedLocale, null, ' ')
+
+await Promise.all([
+  // Populate template
+  writeFile(englishLocalePath, fileString.replace('en_US.strings = {}', `en_US.strings = ${formattedLocale}`))
+    .then(() => console.log(`✅ Generated '${englishLocalePath}'`)),
+  // Create locale files
+  ...Object.entries(locales).flatMap(([pluginName, locale]) => [
+    generateLocaleDocs(pluginName)
+      .then(() => console.log(`✅ Generated locale docs for ${pluginName}`)),
+    generateTypes(pluginName, locale)
+      .then(() => console.log(`✅ Generated types for ${pluginName}`)),
+  ]),
+])

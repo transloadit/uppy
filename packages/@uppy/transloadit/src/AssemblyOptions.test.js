@@ -1,4 +1,5 @@
-const AssemblyOptions = require('./AssemblyOptions')
+import { describe, expect, it } from '@jest/globals'
+import AssemblyOptions from './AssemblyOptions.js'
 
 describe('Transloadit/AssemblyOptions', () => {
   it('Validates response from getAssemblyOptions()', async () => {

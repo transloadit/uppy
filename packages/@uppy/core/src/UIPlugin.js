@@ -1,7 +1,8 @@
-const { render } = require('preact')
-const findDOMElement = require('@uppy/utils/lib/findDOMElement')
+import { render } from 'preact'
+import findDOMElement from '@uppy/utils/lib/findDOMElement'
+import getTextDirection from '@uppy/utils/lib/getTextDirection'
 
-const BasePlugin = require('./BasePlugin')
+import BasePlugin from './BasePlugin.js'
 
 /**
  * Defer a frequent call to the microtask queue.
@@ -52,7 +53,8 @@ class UIPlugin extends BasePlugin {
       // When target is <body> with a single <div> element,
       // Preact thinks it’s the Uppy root element in there when doing a diff,
       // and destroys it. So we are creating a fragment (could be empty div)
-      const uppyRootElement = document.createDocumentFragment()
+      const uppyRootElement = document.createElement('div')
+      uppyRootElement.classList.add('uppy-Root')
 
       // API for plugins that require a synchronous rerender.
       this.#updateUI = debounce((state) => {
@@ -74,8 +76,11 @@ class UIPlugin extends BasePlugin {
       }
 
       render(this.render(this.uppy.getState()), uppyRootElement)
-      this.el = uppyRootElement.firstElementChild
+      this.el = uppyRootElement
       targetElement.appendChild(uppyRootElement)
+
+      // Set the text direction if the page has not defined one.
+      uppyRootElement.dir = this.opts.direction || getTextDirection(uppyRootElement) || 'ltr'
 
       this.onMount()
 
@@ -93,7 +98,6 @@ class UIPlugin extends BasePlugin {
       this.uppy.iteratePlugins(p => {
         if (p instanceof Target) {
           targetPlugin = p
-          return false
         }
       })
     }
@@ -144,4 +148,4 @@ class UIPlugin extends BasePlugin {
   onUnmount () {}
 }
 
-module.exports = UIPlugin
+export default UIPlugin

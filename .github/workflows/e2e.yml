@@ -4,6 +4,10 @@ on:
     branches: [ main ]
   pull_request_target:
     types: [ opened, synchronize, reopened, labeled ]
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    paths:
+      - .github/workflows/e2e.yml
 
 concurrency: ${{ github.workflow }}--${{ github.ref }}
 
@@ -42,6 +46,7 @@ jobs:
           COMPANION_UNSPLASH_KEY: ${{secrets.COMPANION_UNSPLASH_KEY}}
           COMPANION_UNSPLASH_SECRET: ${{secrets.COMPANION_UNSPLASH_SECRET}}
           VITE_TRANSLOADIT_KEY: ${{secrets.TRANSLOADIT_KEY}}
+          VITE_TRANSLOADIT_SECRET: ${{secrets.TRANSLOADIT_SECRET}}
           VITE_TRANSLOADIT_TEMPLATE: ${{secrets.TRANSLOADIT_TEMPLATE}}
           VITE_TRANSLOADIT_SERVICE_URL: ${{secrets.TRANSLOADIT_SERVICE_URL}}
       - name: Remove 'pending end-to-end tests' label

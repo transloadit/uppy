@@ -63,9 +63,9 @@ async function isTypeModule (file) {
 }
 
 // eslint-disable-next-line no-shadow
-function transformExportDeclarations (path) {
+function ExportAllDeclaration (path) {
   const { value } = path.node.source
-  if (value.endsWith('.jsx') && value.startsWith('./')) {
+  if (value.endsWith('.jsx') && (value.startsWith('./') || value.startsWith('../'))) {
     // Rewrite .jsx imports to .js:
     path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign
   }
@@ -103,6 +103,7 @@ async function buildLib () {
       }
     }
 
+    let idCounter = 0 // counter to ensure uniqueness of identifiers created by the build script.
     const plugins = await isTypeModule(file) ? [['@babel/plugin-transform-modules-commonjs', {
       importInterop: 'none',
     }], {
@@ -110,7 +111,7 @@ async function buildLib () {
         // eslint-disable-next-line no-shadow
         ImportDeclaration (path) {
           let { value } = path.node.source
-          if (value.endsWith('.jsx') && value.startsWith('./')) {
+          if (value.endsWith('.jsx') && (value.startsWith('./') || value.startsWith('../'))) {
             // Rewrite .jsx imports to .js:
             value = path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign,no-multi-assign
           }
@@ -173,10 +174,58 @@ async function buildLib () {
             )
           }
         },
-        ExportAllDeclaration: transformExportDeclarations,
+        ExportAllDeclaration,
         // eslint-disable-next-line no-shadow,consistent-return
         ExportNamedDeclaration (path) {
-          if (path.node.source != null) return transformExportDeclarations(path)
+          if (path.node.source != null) {
+            if (path.node.specifiers.length === 1
+                && path.node.specifiers[0].local.name === 'default'
+                && path.node.specifiers[0].exported.name === 'default') return ExportAllDeclaration(path)
+
+            if (path.node.specifiers.some(spec => spec.exported.name === 'default')) {
+              throw new Error('unsupported mix of named and default re-exports')
+            }
+
+            let { value } = path.node.source
+            if (value.endsWith('.jsx') && (value.startsWith('./') || value.startsWith('../'))) {
+              // Rewrite .jsx imports to .js:
+              value = path.node.source.value = value.slice(0, -1) // eslint-disable-line no-param-reassign,no-multi-assign
+            }
+
+            // If there are no default export/import involved, Babel can handle it with no problem.
+            if (path.node.specifiers.every(spec => spec.local.name !== 'default' && spec.exported.name !== 'default')) return undefined
+
+            let requireCall = t.callExpression(t.identifier('require'), [
+              t.stringLiteral(value),
+            ])
+            if (esPackagesThatNeedSpecialTreatmentForRollupInterop.includes(value)) {
+              requireCall = t.logicalExpression('||', t.memberExpression(requireCall, t.identifier('default')), requireCall)
+            }
+
+            const requireCallIdentifier = t.identifier(`_${idCounter++}`)
+            const namedExportIdentifiers = path.node.specifiers
+              .filter(spec => spec.local.name !== 'default')
+              .map(spec => [
+                t.identifier(requireCallIdentifier.name + spec.local.name),
+                t.memberExpression(requireCallIdentifier, spec.local),
+                spec,
+              ])
+            path.insertBefore(
+              t.variableDeclaration('const', [
+                t.variableDeclarator(
+                  requireCallIdentifier,
+                  requireCall,
+                ),
+                ...namedExportIdentifiers.map(([id, propertyAccessor]) => t.variableDeclarator(id, propertyAccessor)),
+              ]),
+            )
+            path.replaceWith(
+              t.exportNamedDeclaration(null, path.node.specifiers.map(spec => t.exportSpecifier(
+                spec.local.name === 'default' ? requireCallIdentifier : namedExportIdentifiers.find(([,, s]) => s === spec)[0],
+                spec.exported,
+              ))),
+            )
+          }
         },
         // eslint-disable-next-line no-shadow
         ExportDefaultDeclaration (path) {

@@ -1,10 +1,11 @@
 {
   "name": "@uppy/file-input",
   "description": "Simple UI of a file input button that works with Uppy right out of the box",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
+  "type": "module",
   "types": "types/index.d.ts",
   "keywords": [
     "file uploader",

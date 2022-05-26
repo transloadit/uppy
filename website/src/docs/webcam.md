@@ -161,7 +161,7 @@ If no preferred image mime type is given, the Webcam plugin will prefer types li
 <!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
 
 ```js
-module.exports = {
+export default {
   strings: {
     pluginNameCamera: 'Camera',
     noCameraTitle: 'Camera Not Available',

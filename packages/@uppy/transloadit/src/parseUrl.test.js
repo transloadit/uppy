@@ -1,4 +1,5 @@
-const parseUrl = require('./parseUrl')
+import { describe, expect, it } from '@jest/globals'
+import parseUrl from './parseUrl.js'
 
 describe('Transloadit/parseUrl', () => {
   it('splits a url into origin and pathname', () => {

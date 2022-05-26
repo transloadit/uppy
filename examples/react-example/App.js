@@ -25,8 +25,8 @@ module.exports = class App extends React.Component {
   }
 
   componentWillUnmount () {
-    this.uppy.close()
-    this.uppy2.close()
+    this.uppy.close({ reason: 'unmount' })
+    this.uppy2.close({ reason: 'unmount' })
   }
 
   handleModalClick () {

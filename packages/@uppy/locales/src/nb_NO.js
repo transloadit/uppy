@@ -1,4 +1,11 @@
-const nb_NO = {}
+const nb_NO = {
+  pluralize (count) {
+    if (count === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 nb_NO.strings = {
   addBulkFilesFailed: {
@@ -160,15 +167,8 @@ nb_NO.strings = {
   zoomOut: 'Zoom ut',
 }
 
-nb_NO.pluralize = function pluralize (count) {
-  if (count === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.nb_NO = nb_NO
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.nb_NO = nb_NO
-}
-
-module.exports = nb_NO
+export default nb_NO

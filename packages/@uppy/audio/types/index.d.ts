@@ -3,7 +3,7 @@ import type AudioLocale from './generatedLocale'
 
 export interface AudioOptions extends PluginOptions {
   target?: PluginTarget
-  showVideoSourceDropdown?: boolean
+  showAudioSourceDropdown?: boolean
   locale?: AudioLocale
 }
 

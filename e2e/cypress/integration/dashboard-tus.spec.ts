@@ -4,6 +4,9 @@ type Tus = BaseTus & {
   requests: { isPaused: boolean }
 }
 
+// NOTE: we have to use different files to upload per test
+// because we are uploading to https://tusd.tusdemo.net,
+// constantly uploading the same images gives a different cached result (or something).
 describe('Dashboard with Tus', () => {
   beforeEach(() => {
     cy.visit('/dashboard-tus')
@@ -23,14 +26,15 @@ describe('Dashboard with Tus', () => {
   })
 
   it('should start exponential backoff when receiving HTTP 429', () => {
-    cy.get('@file-input').attachFile(['images/cat.jpg', 'images/traffic.jpg'])
+    cy.get('@file-input').attachFile(['images/baboon.png'])
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
 
     cy.intercept(
-      { method: 'PATCH', pathname: '/files/*', times: 1 },
+      { method: 'PATCH', pathname: '/files/*', times: 2 },
       { statusCode: 429, body: {} },
     ).as('patch')
 
+    cy.wait('@patch')
     cy.wait('@patch')
 
     cy.window().then(({ uppy }) => {
@@ -42,7 +46,7 @@ describe('Dashboard with Tus', () => {
 
   it('should upload remote image with URL plugin', () => {
     cy.get('[data-cy="Url"]').click()
-    cy.get('.uppy-Url-input').type('https://via.placeholder.com/600x400')
+    cy.get('.uppy-Url-input').type('https://raw.githubusercontent.com/transloadit/uppy/main/e2e/cypress/fixtures/images/cat.jpg')
     cy.get('.uppy-Url-importButton').click()
     cy.get('.uppy-StatusBar-actionBtn--upload').click()
     cy.wait('@url')

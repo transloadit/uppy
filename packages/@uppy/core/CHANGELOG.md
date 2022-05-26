@@ -1,5 +1,28 @@
 # @uppy/core
 
+## 2.2.0
+
+Released: 2022-05-14
+Included in: Uppy v2.10.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/core,@uppy/react,@uppy/transloadit,@uppy/tus,@uppy/xhr-upload: proposal: Cancel assemblies optional (Mikael Finstad / #3575)
+- @uppy/core: add definition for addFiles method (Matteo Padovano / #3556)
+- @uppy/core: wrap plugins in div.uppy-Root and set dir attrubute in UIPlugin (Artur Paikin / #3692)
+
+## 2.1.10
+
+Released: 2022-04-27
+Included in: Uppy v2.9.5
+
+- @uppy/core: fix `TypeError` when file was removed (Antoine du Hamel / #3670)
+
+## 2.1.9
+
+Released: 2022-04-27
+Included in: Uppy v2.9.4
+
+- @uppy/core: fix `TypeError` when file was removed (Antoine du Hamel / #3650)
+
 ## 2.1.8
 
 Released: 2022-04-07

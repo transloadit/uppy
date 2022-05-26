@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   STATE_ERROR: 'error',
   STATE_WAITING: 'waiting',
   STATE_PREPROCESSING: 'preprocessing',

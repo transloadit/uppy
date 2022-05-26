@@ -12,6 +12,111 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.10.0
+
+Released: 2022-05-14
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/audio            |   0.3.1 | @uppy/provider-views   |   2.1.0 |
+| @uppy/aws-s3           |   2.1.0 | @uppy/react            |   2.2.0 |
+| @uppy/aws-s3-multipart |   2.3.0 | @uppy/react-native     |   0.3.0 |
+| @uppy/companion-client |   2.1.0 | @uppy/screen-capture   |   2.1.0 |
+| @uppy/core             |   2.2.0 | @uppy/status-bar       |   2.2.0 |
+| @uppy/dashboard        |   2.2.0 | @uppy/svelte           |   1.0.8 |
+| @uppy/drag-drop        |   2.1.0 | @uppy/transloadit      |   2.2.0 |
+| @uppy/file-input       |   2.1.0 | @uppy/tus              |   2.3.0 |
+| @uppy/google-drive     |   2.1.0 | @uppy/url              |   2.1.0 |
+| @uppy/image-editor     |   1.2.0 | @uppy/webcam           |   2.2.0 |
+| @uppy/instagram        |   2.1.0 | @uppy/xhr-upload       |   2.1.0 |
+| @uppy/locales          |   2.1.0 | @uppy/zoom             |   1.1.0 |
+| @uppy/onedrive         |   2.1.0 | @uppy/robodog          |   2.6.0 |
+| @uppy/progress-bar     |   2.1.0 | uppy                   |  2.10.0 |
+
+- @uppy/audio: fix types (Merlijn Vos / #3689)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/core,@uppy/react,@uppy/transloadit,@uppy/tus,@uppy/xhr-upload: proposal: Cancel assemblies optional (Mikael Finstad / #3575)
+- @uppy/aws-s3-multipart: export interface AwsS3MultipartOptions (Matteo Padovano / #3709)
+- @uppy/companion-client: refactor to ESM (Antoine du Hamel / #3693)
+- @uppy/companion: Only deploy on companion changes (kiloreux / #3677)
+- @uppy/core: add definition for addFiles method (Matteo Padovano / #3556)
+- @uppy/core: wrap plugins in div.uppy-Root and set dir attrubute in UIPlugin (Artur Paikin / #3692)
+- @uppy/google-drive: refactor to ESM (Antoine du Hamel / #3683)
+- @uppy/image-editor: refactor to ESM (Antoine du Hamel / #3685)
+- @uppy/instagram: refactor to ESM (Antoine du Hamel / #3696)
+- @uppy/locales: Add `save` translation to Spanish locale (Juan Carlos Alonso / #3678)
+- @uppy/locales: refactor to ESM (Antoine du Hamel / #3707)
+- @uppy/onedrive: refactor to ESM (Antoine du Hamel / #3694)
+- @uppy/progress-bar: refactor to ESM (Antoine du Hamel / #3706)
+- @uppy/provider-views: refactor to ESM (Antoine du Hamel / #3715)
+- @uppy/react: Support React 18 in @uppy/react (Merlijn Vos / #3680)
+- @uppy/screen-capture: refactor to ESM (Antoine du Hamel / #3698)
+- @uppy/status-bar: refactor to ESM (Antoine du Hamel / #3697)
+- @uppy/transloadit: add rate limiting for assembly creation and status polling (Antoine du Hamel / #3718)
+- @uppy/tus: refactor to ESM (Antoine du Hamel / #3724)
+- @uppy/url: refactor to ESM (Antoine du Hamel / #3713)
+- @uppy/webcam: refactor to ESM (Antoine du Hamel / #3686)
+- @uppy/xhr-upload: refactor to ESM (Antoine du Hamel / #3695)
+- @uppy/zoom: refactor to ESM (Antoine du Hamel / #3699)
+- meta: e2e: fix failing test (Antoine du Hamel / #3722)
+- test: harden linter rule for JSX/ESM validation (Antoine du Hamel / #3681)
+- test: harden linter rules for ESM/CJS validation (Antoine du Hamel / #3674)
+- test: Increase retries to trigger longer retryDelay in tus (Artur Paikin / #3726)
+- test: Remove `it.only` from e2e test (Merlijn Vos / #3690)
+- tests: Make Cypress more stable & add e2e test for error events when upload fails (Merlijn Vos / #3662)
+
+
+## 2.9.5
+
+Released: 2022-04-27
+
+| Package         | Version | Package         | Version |
+| --------------- | ------- | --------------- | ------- |
+| @uppy/companion |   3.5.2 | @uppy/robodog   |   2.5.5 |
+| @uppy/core      |  2.1.10 | uppy            |   2.9.5 |
+
+- @uppy/companion: Bump moment from 2.29.1 to 2.29.2 (dependabot[bot] / #3635)
+- @uppy/core: fix `TypeError` when file was removed (Antoine du Hamel / #3670)
+
+
+## 2.9.4
+
+Released: 2022-04-27
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3-multipart |   2.2.2 | @uppy/file-input       |   2.0.6 |
+| @uppy/box              |   1.0.6 | @uppy/form             |   2.0.5 |
+| @uppy/companion        |   3.5.1 | @uppy/locales          |   2.0.9 |
+| @uppy/compressor       |   0.2.5 | @uppy/transloadit      |   2.1.5 |
+| @uppy/core             |   2.1.9 | @uppy/utils            |   4.0.7 |
+| @uppy/drag-drop        |   2.0.7 | @uppy/vue              |   0.4.7 |
+| @uppy/drop-target      |   1.1.3 | @uppy/robodog          |   2.5.4 |
+| @uppy/dropbox          |   2.0.6 | uppy                   |   2.9.4 |
+| @uppy/facebook         |   2.0.6 |                        |         |
+
+- @uppy/locales: Plural translation in cs_CZ local (JakubHaladej / #3666)
+- @uppy/vue: Add license field to package.json in @uppy/vue (Tobias Trumm / #3664)
+- meta: Add todo comments (Murderlon)
+- @uppy/facebook: refactor to ESM (Antoine du Hamel / #3653)
+- meta: locale-pack: refactor to use more parallel processing (Antoine du Hamel / #3630)
+- @uppy/file-input: refactor to ESM (Antoine du Hamel / #3652)
+- meta: sign requests sent to Transloadit in e2e suite (Antoine du Hamel / #3656)
+- meta: add `VITE_TRANSLOADIT_SECRET` for e2e (Antoine du Hamel)
+- meta: Update BACKLOG.md (Artur Paikin)
+- @uppy/form: refactor to ESM (Antoine du Hamel / #3654)
+- @uppy/dropbox: refactor to ESM (Antoine du Hamel / #3651)
+- meta: sign requests sent to Transloadit in dev env (Antoine du Hamel / #3517)
+- @uppy/drop-target: refactor to ESM (Antoine du Hamel / #3648)
+- @uppy/core: fix `TypeError` when file was removed (Antoine du Hamel / #3650)
+- @uppy/drag-drop: refactor to ESM (Antoine du Hamel / #3647)
+- meta: update outdated files (Antoine du Hamel / #3646)
+- @uppy/compressor: Set meta on file compression (Camilo Forero / #3644)
+- @uppy/transloadit: improve fetch error handling (Antoine du Hamel / #3637)
+- @uppy/box: refactor to ESM (Antoine du Hamel / #3643)
+- @uppy/utils: Fix getFileType for dicom images (Merlijn Vos / #3610)
+- @uppy/aws-s3-multipart: Add `companionCookiesRule` type to @uppy/aws-s3-multipart (Mauricio Ribeiro / #3623)
+
+
 ## 2.9.3
 
 Released: 2022-04-07

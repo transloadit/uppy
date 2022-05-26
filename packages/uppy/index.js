@@ -7,6 +7,7 @@ exports.debugLogger = exports.Core.debugLogger
 exports.server = require('@uppy/companion-client')
 
 exports.views = {
+  // eslint-disable-next-line global-require
   ProviderView: require('@uppy/provider-views'),
 }
 

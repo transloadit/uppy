@@ -1,4 +1,11 @@
-const is_IS = {}
+const is_IS = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 is_IS.strings = {
   addMore: 'Bæta við',
@@ -144,15 +151,8 @@ is_IS.strings = {
   },
 }
 
-is_IS.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.is_IS = is_IS
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.is_IS = is_IS
-}
-
-module.exports = is_IS
+export default is_IS
