@@ -282,7 +282,7 @@ export default class XHRUpload extends BasePlugin {
         const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
 
         const response = {
-          status: ev.target.status,
+          status: xhr.status,
           body,
         }
 
