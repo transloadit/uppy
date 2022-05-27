@@ -54,7 +54,7 @@ Companion may either be used as a pluggable express app, which you plug into you
 
 ### Plugging into an existing express server
 
-To plug Companion into an existing server, call its `.app` method, passing in an [options](#Options) object as a parameter. This returns a server instance that you can mount on a subpath in your Express or app.
+To plug Companion into an existing server, call its `.app()` method, passing in an [options](#Options) object as a parameter. This returns an object with an `app` property which is a server instance that you can mount on a subpath in your Express or app.
 
 ```js
 import express from 'express'
@@ -88,7 +88,9 @@ const options = {
   filePath: '/path/to/folder/',
 }
 
-app.use('/companion', companion.app(options))
+const { app: companionApp } = companion.app(options)
+
+app.use('/companion', companionApp)
 ```
 
 See [Options](#Options) for valid configuration options.
@@ -105,7 +107,7 @@ This takes your `server` instance as an argument.
 
 #### Events
 
-The object returned by `companion.app()` also has a property `companionEmitter` which is an `EventEmitter` that emits the following events:
+The object returned by `companion.app()` also has a property `emitter` which is an `EventEmitter` that emits the following events:
 
 * `upload-start` - When an upload starts, this event is emitted with an object containing the property `token`, which is a unique ID for the upload.
 * **token** - The event name is the token from `upload-start`. The event has an object with the following properties:
@@ -117,8 +119,7 @@ The object returned by `companion.app()` also has a property `companionEmitter` 
 Example code for using the `EventEmitter` to handle a finished file upload:
 
 ```js
-const companionApp = companion.app(options)
-const { companionEmitter: emitter } = companionApp
+const { app, emitter } = companion.app(options)
 
 emitter.on('upload-start', ({ token }) => {
   console.log('Upload started', token)
