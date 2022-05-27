@@ -2,15 +2,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
-import Instagram from '@uppy/instagram'
-import Facebook from '@uppy/facebook'
-import OneDrive from '@uppy/onedrive'
-import Dropbox from '@uppy/dropbox'
-import Box from '@uppy/box'
-import GoogleDrive from '@uppy/google-drive'
-import Unsplash from '@uppy/unsplash'
-import Zoom from '@uppy/zoom'
-import Url from '@uppy/url'
+import RemoteSources from '@uppy/remote-sources'
 import Webcam from '@uppy/webcam'
 import ScreenCapture from '@uppy/screen-capture'
 import GoldenRetriever from '@uppy/golden-retriever'
@@ -83,15 +75,19 @@ export default () => {
       proudlyDisplayPoweredByUppy: true,
       note: '2 files, images and video only',
     })
-    .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Box, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Facebook, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Url, { target: Dashboard, companionUrl: COMPANION_URL })
-    .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL })
+    // .use(GoogleDrive, { target: Dashboard, companionUrl: COMPANION_URL })
+    // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL })
+    // .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL })
+    // .use(Box, { target: Dashboard, companionUrl: COMPANION_URL })
+    // .use(Facebook, { target: Dashboard, companionUrl: COMPANION_URL })
+    // .use(OneDrive, { target: Dashboard, companionUrl: COMPANION_URL })
+    // .use(Zoom, { target: Dashboard, companionUrl: COMPANION_URL })
+    // .use(Url, { target: Dashboard, companionUrl: COMPANION_URL })
+    // .use(Unsplash, { target: Dashboard, companionUrl: COMPANION_URL })
+    .use(RemoteSources, {
+      companionUrl: COMPANION_URL,
+      sources: ['Box', 'Dropbox', 'Facebook', 'GoogleDrive', 'Instagram', 'OneDrive', 'Unsplash', 'Url'],
+    })
     .use(Webcam, {
       target: Dashboard,
       showVideoSourceDropdown: true,

@@ -32,7 +32,7 @@ export default class RemoteSources extends BasePlugin {
     this.id = this.opts.id || 'RemoteSources'
     this.type = 'acquirer'
 
-    this.defaultOptions = {
+    const defaultOptions = {
       sources: [
         'Box',
         'Dropbox',
@@ -45,7 +45,7 @@ export default class RemoteSources extends BasePlugin {
       ],
       target: Dashboard,
     }
-    this.opts = { ...this.defaultOptions, ...opts }
+    this.opts = { ...defaultOptions, ...opts }
   }
 
   setOptions (newOpts) {
