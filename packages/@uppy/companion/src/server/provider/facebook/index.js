@@ -187,8 +187,6 @@ class Facebook extends Provider {
   }
 }
 
-Facebook.version = 2
-
 Facebook.prototype.list = promisify(Facebook.prototype._list)
 Facebook.prototype.size = promisify(Facebook.prototype._size)
 Facebook.prototype.logout = promisify(Facebook.prototype._logout)
