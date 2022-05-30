@@ -1,7 +1,7 @@
 {
   "name": "@uppy/progress-bar",
   "description": "A progress bar UI for Uppy",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
