@@ -56,8 +56,7 @@ export default class RemoteSources extends BasePlugin {
 
   install () {
     this.opts.sources.forEach((pluginName) => {
-      const optsForRemoteSourcePlugin = { ...this.opts }
-      delete optsForRemoteSourcePlugin.sources
+      const optsForRemoteSourcePlugin = { ...this.opts, sources: undefined }
       const plugin = availablePlugins.find(p => p.name === pluginName)
       this.uppy.use(plugin, optsForRemoteSourcePlugin)
     })
