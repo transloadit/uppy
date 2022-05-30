@@ -25,7 +25,7 @@
   "pre-commit": "lint:staged",
   "license": "MIT",
   "engines": {
-    "node": "^v14.17.0 || >=v16.0.0",
+    "node": "^16.15.0 || >=18.0.0",
     "yarn": "3.2.1"
   },
   "packageManager": "yarn@3.2.1",
