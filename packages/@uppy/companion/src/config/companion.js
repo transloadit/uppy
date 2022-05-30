@@ -8,15 +8,14 @@ const defaultOptions = {
     protocol: 'http',
     path: '',
   },
-  providerOptions: {
-    s3: {
-      acl: 'public-read', // todo default to no ACL in next major
-      endpoint: 'https://{service}.{region}.amazonaws.com',
-      conditions: [],
-      useAccelerateEndpoint: false,
-      getKey: (req, filename) => filename,
-      expires: ms('5 minutes') / 1000,
-    },
+  providerOptions: {},
+  s3: {
+    acl: 'public-read', // todo default to no ACL in next major
+    endpoint: 'https://{service}.{region}.amazonaws.com',
+    conditions: [],
+    useAccelerateEndpoint: false,
+    getKey: (req, filename) => filename,
+    expires: ms('5 minutes') / 1000,
   },
   allowLocalUrls: false,
   logClientVersion: true,
@@ -30,7 +29,8 @@ const defaultOptions = {
  */
 function getMaskableSecrets (companionOptions) {
   const secrets = []
-  const { providerOptions, customProviders } = companionOptions
+  const { providerOptions, customProviders, s3 } = companionOptions
+
   Object.keys(providerOptions).forEach((provider) => {
     if (providerOptions[provider].secret) {
       secrets.push(providerOptions[provider].secret)
@@ -43,6 +43,10 @@ function getMaskableSecrets (companionOptions) {
         secrets.push(customProviders[provider].config.secret)
       }
     })
+  }
+
+  if (s3?.secret) {
+    secrets.push(s3.secret)
   }
 
   return secrets
