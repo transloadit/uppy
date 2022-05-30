@@ -243,10 +243,10 @@ export default class Transloadit extends BasePlugin {
       return assembly
     }).catch((err) => {
       const wrapped = new ErrorWithCause(`${this.i18n('creatingAssemblyFailed')}: ${err.message}`, { cause: err })
-      if (err.details) {
+      if ('details' in err) {
         wrapped.details = err.details
       }
-      if (err.assembly) {
+      if ('assembly' in err) {
         wrapped.assembly = err.assembly
       }
       throw wrapped
