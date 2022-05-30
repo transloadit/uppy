@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 3.6.0
+
+Released: 2022-05-30
+Included in: Uppy v2.11.0
+
+- @uppy/companion: expire redis keys after 1 day (Mikael Finstad / #3771)
+- @uppy/companion: fix some linter warnings (Antoine du Hamel / #3752)
+
 ## 3.5.2
 
 Released: 2022-04-27
