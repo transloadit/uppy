@@ -1,7 +1,7 @@
 {
   "name": "@uppy/robodog",
   "description": "Transloadit SDK for browsers based on Uppy",
-  "version": "2.7.0",
+  "version": "3.0.0-beta",
   "license": "MIT",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
@@ -52,5 +52,6 @@
     "md-gum-polyfill": "^1.0.0",
     "resize-observer-polyfill": "^1.5.1",
     "whatwg-fetch": "^3.6.2"
-  }
+  },
+  "stableVersion": "2.7.0"
 }

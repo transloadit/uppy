@@ -1,7 +1,7 @@
 {
   "name": "@uppy/provider-views",
   "description": "View library for Uppy remote provider plugins.",
-  "version": "2.1.1",
+  "version": "3.0.0-beta",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -26,5 +26,6 @@
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
-  }
+  },
+  "stableVersion": "2.1.1"
 }
