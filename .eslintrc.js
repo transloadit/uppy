@@ -307,8 +307,19 @@ module.exports = {
     {
       files: ['./packages/@uppy/companion/**/*.js'],
       rules: {
-        'no-restricted-syntax': 'warn',
         'no-underscore-dangle': 'off',
+
+        // transloadit rules we would like to enforce in the future
+        // but will require separate PRs to gradually get there
+        // and so the meantime: just warn
+        'class-methods-use-this': 'warn',
+        'consistent-return': 'warn',
+        'global-require': 'warn',
+        'import/order': 'warn',
+        'no-param-reassign': 'warn',
+        'no-redeclare': 'warn',
+        'no-shadow': 'warn',
+        'no-use-before-define': 'warn',
       },
     },
     {

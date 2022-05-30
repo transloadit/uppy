@@ -39,8 +39,8 @@ function maskMessage (msg) {
  * @param {string | Error} arg the message or error to log
  * @param {string} tag a unique tag to easily search for this message
  * @param {string} level error | info | debug
- * @param {string=} id a unique id to easily trace logs tied to a request
- * @param {Function=} color function to display the log in appropriate color
+ * @param {string} [id] a unique id to easily trace logs tied to a request
+ * @param {Function} [color] function to display the log in appropriate color
  */
 const log = (arg, tag = '', level, id = '', color = (message) => message) => {
   const time = new Date().toISOString()
@@ -66,8 +66,8 @@ const log = (arg, tag = '', level, id = '', color = (message) => message) => {
  * INFO level log
  *
  * @param {string} msg the message to log
- * @param {string=} tag a unique tag to easily search for this message
- * @param {string=} traceId a unique id to easily trace logs tied to a request
+ * @param {string} [tag] a unique tag to easily search for this message
+ * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
 exports.info = (msg, tag, traceId) => {
   log(msg, tag, 'info', traceId)
@@ -77,8 +77,8 @@ exports.info = (msg, tag, traceId) => {
  * WARN level log
  *
  * @param {string} msg the message to log
- * @param {string=} tag a unique tag to easily search for this message
- * @param {string=} traceId a unique id to easily trace logs tied to a request
+ * @param {string} [tag] a unique tag to easily search for this message
+ * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
 exports.warn = (msg, tag, traceId) => {
   // @ts-ignore
@@ -89,8 +89,8 @@ exports.warn = (msg, tag, traceId) => {
  * ERROR level log
  *
  * @param {string | Error} msg the message to log
- * @param {string=} tag a unique tag to easily search for this message
- * @param {string=} traceId a unique id to easily trace logs tied to a request
+ * @param {string} [tag] a unique tag to easily search for this message
+ * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
 exports.error = (msg, tag, traceId) => {
   // @ts-ignore
@@ -101,8 +101,8 @@ exports.error = (msg, tag, traceId) => {
  * DEBUG level log
  *
  * @param {string} msg the message to log
- * @param {string=} tag a unique tag to easily search for this message
- * @param {string=} traceId a unique id to easily trace logs tied to a request
+ * @param {string} [tag] a unique tag to easily search for this message
+ * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
 exports.debug = (msg, tag, traceId) => {
   if (process.env.NODE_ENV !== 'production') {
