@@ -345,7 +345,7 @@ class Uploader {
       storage: redis.client(),
       s3: req.companion.s3Client ? {
         client: req.companion.s3Client,
-        options: req.companion.options.providerOptions.s3,
+        options: req.companion.options.s3,
       } : null,
       chunkSize: req.companion.options.chunkSize,
     }
