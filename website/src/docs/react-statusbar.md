@@ -44,12 +44,18 @@ The `<StatusBar />` component supports all [`@uppy/status-bar`][] options as pro
 import React from 'react'
 import { StatusBar } from '@uppy/react'
 
-  <StatusBar
-    uppy={uppy}
-    hideUploadButton
-    hideAfterFinish={false}
-    showProgressDetails
-  />
+export default function MyComponent (props) {
+  const { uppy } = props
+  return (
+    <StatusBar
+      // assuming `props.uppy` contains an Uppy instance:
+      uppy={uppy}
+      hideUploadButton
+      hideAfterFinish={false}
+      showProgressDetails
+    />
+  )
+}
 ```
 
 [`@uppy/status-bar`]: /docs/status-bar/
