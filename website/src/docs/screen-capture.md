@@ -10,6 +10,8 @@ tagline: "upload selfies or audio / video recordings"
 
 The `@uppy/screen-capture` plugin can record your screen or an application and save it as a video.
 
+This plugin now only works on desktop browsers which support [`getDisplayMedia API`](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia). If no support for the API is detected, Screen Capture won’t be installed, so you don’t have to do anything.
+
 > To use the screen capture plugin in a Chromium-based browser, [your site must be served over https](https://developers.google.com/web/updates/2015/10/chrome-47-webrtc#public_service_announcements). This restriction does not apply on `localhost`, so you don’t have to jump through many hoops during development.
 
 ```js
