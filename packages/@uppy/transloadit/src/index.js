@@ -242,7 +242,14 @@ export default class Transloadit extends BasePlugin {
       this.uppy.log(`[Transloadit] Created Assembly ${assemblyID}`)
       return assembly
     }).catch((err) => {
-      throw new ErrorWithCause(`${this.i18n('creatingAssemblyFailed')}: ${err.message}`, { cause: err })
+      const wrapped = new ErrorWithCause(`${this.i18n('creatingAssemblyFailed')}: ${err.message}`, { cause: err })
+      if (err.details) {
+        wrapped.details = err.details
+      }
+      if (err.assembly) {
+        wrapped.assembly = err.assembly
+      }
+      throw wrapped
     })
   }
 
