@@ -57,6 +57,8 @@ export default class Tus extends BasePlugin {
 
   #retryDelayIterator
 
+  #queueRequestSocketToken
+
   /**
    * @param {Uppy} uppy
    * @param {TusOptions} opts
@@ -97,6 +99,7 @@ export default class Tus extends BasePlugin {
 
     this.handleResetProgress = this.handleResetProgress.bind(this)
     this.handleUpload = this.handleUpload.bind(this)
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
   }
 
   handleResetProgress () {
@@ -427,29 +430,15 @@ export default class Tus extends BasePlugin {
     })
   }
 
-  /**
-   * @param {UppyFile} file for use with upload
-   * @returns {Promise<void>}
-   */
-  async uploadRemote (file) {
-    this.resetUploaderReferences(file.id)
-
+  #requestSocketToken = async (file) => {
+    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+    const client = new Client(this.uppy, file.remote.providerOptions)
     const opts = { ...this.opts }
+
     if (file.tus) {
       // Install file-specific upload overrides.
       Object.assign(opts, file.tus)
     }
-
-    this.uppy.emit('upload-started', file)
-    this.uppy.log(file.remote.url)
-
-    if (file.serverToken) {
-      await this.connectToServerSocket(file)
-      return
-    }
-
-    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-    const client = new Client(this.uppy, file.remote.providerOptions)
 
     try {
       // !! cancellation is NOT supported at this stage yet
@@ -462,12 +451,26 @@ export default class Tus extends BasePlugin {
         headers: opts.headers,
         metadata: file.meta,
       })
-      this.uppy.setFileState(file.id, { serverToken: res.token })
-      await this.connectToServerSocket(this.uppy.getFile(file.id))
+      return res.token
     } catch (err) {
       this.uppy.emit('upload-error', file, err)
       throw err
     }
+  }
+
+  /**
+   * @param {UppyFile} file for use with upload
+   * @returns {Promise<void>}
+   */
+  async uploadRemote (file) {
+    this.resetUploaderReferences(file.id)
+
+    this.uppy.emit('upload-started', file)
+    this.uppy.log(file.remote.url)
+
+    const serverToken = await this.#queueRequestSocketToken(file)
+    this.uppy.setFileState(file.id, { serverToken })
+    await this.connectToServerSocket(this.uppy.getFile(file.id))
   }
 
   /**
@@ -482,7 +485,7 @@ export default class Tus extends BasePlugin {
     return new Promise((resolve, reject) => {
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
+      const socket = new Socket({ target: `${host}/api/${token}` })
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
@@ -591,7 +594,6 @@ export default class Tus extends BasePlugin {
       })
 
       queuedRequest = this.requests.run(() => {
-        socket.open()
         if (file.isPaused) {
           socket.send('pause', {})
         }
