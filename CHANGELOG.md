@@ -12,6 +12,44 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.0.0-beta
+
+Released: 2022-05-30
+
+| Package                   |    Version | Package                   |    Version |
+| ------------------------- | ---------- | ------------------------- | ---------- |
+| @uppy/audio               | 3.0.0-beta | @uppy/progress-bar        | 3.0.0-beta |
+| @uppy/aws-s3              | 3.0.0-beta | @uppy/provider-views      | 3.0.0-beta |
+| @uppy/aws-s3-multipart    | 3.0.0-beta | @uppy/react               | 3.0.0-beta |
+| @uppy/box                 | 3.0.0-beta | @uppy/redux-dev-tools     | 3.0.0-beta |
+| @uppy/companion           | 4.0.0-beta | @uppy/robodog             | 3.0.0-beta |
+| @uppy/companion-client    | 3.0.0-beta | @uppy/screen-capture      | 3.0.0-beta |
+| @uppy/compressor          | 3.0.0-beta | @uppy/status-bar          | 3.0.0-beta |
+| @uppy/core                | 3.0.0-beta | @uppy/store-default       | 3.0.0-beta |
+| @uppy/dashboard           | 3.0.0-beta | @uppy/store-redux         | 3.0.0-beta |
+| @uppy/drag-drop           | 3.0.0-beta | @uppy/svelte              | 3.0.0-beta |
+| @uppy/drop-target         | 3.0.0-beta | @uppy/thumbnail-generator | 3.0.0-beta |
+| @uppy/dropbox             | 3.0.0-beta | @uppy/transloadit         | 3.0.0-beta |
+| @uppy/facebook            | 3.0.0-beta | @uppy/tus                 | 3.0.0-beta |
+| @uppy/file-input          | 3.0.0-beta | @uppy/unsplash            | 3.0.0-beta |
+| @uppy/form                | 3.0.0-beta | @uppy/url                 | 3.0.0-beta |
+| @uppy/golden-retriever    | 3.0.0-beta | @uppy/utils               | 5.0.0-beta |
+| @uppy/google-drive        | 3.0.0-beta | @uppy/vue                 | 3.0.0-beta |
+| @uppy/image-editor        | 3.0.0-beta | @uppy/webcam              | 3.0.0-beta |
+| @uppy/informer            | 3.0.0-beta | @uppy/xhr-upload          | 3.0.0-beta |
+| @uppy/instagram           | 3.0.0-beta | @uppy/zoom                | 3.0.0-beta |
+| @uppy/locales             | 3.0.0-beta | uppy                      | 3.0.0-beta |
+| @uppy/onedrive            | 3.0.0-beta |                           |            |
+
+- meta: temporary adjust release script for the beta (Antoine du Hamel)
+- meta: disable ESM to CJS transform in dist files (Antoine du Hamel / #3773)
+- @uppy/companion: remove `searchProviders` wrapper & move `s3` options (Merlijn Vos / #3781)
+- meta: do not test on EOL versions of Node.js (Antoine du Hamel / #3786)
+- @uppy/companion: remove support for EOL versions of Node.js (Antoine du Hamel / #3784)
+- @uppy/react: refactor to ESM (Antoine du Hamel / #3780)
+- @uppy/transloadit: remove IE 10 hack (Antoine du Hamel / #3777)
+
+
 ## 2.11.0
 
 Released: 2022-05-30

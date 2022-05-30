@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 3.0.0-beta
+
+Released: 2022-05-30
+Included in: Uppy v3.0.0-beta
+
+- @uppy/react: refactor to ESM (Antoine du Hamel / #3780)
+
 ## 2.2.1
 
 Released: 2022-05-30
