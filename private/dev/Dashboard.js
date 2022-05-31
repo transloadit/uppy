@@ -111,13 +111,13 @@ export default () => {
 
   switch (UPLOADER) {
     case 'tus':
-      uppyDashboard.use(Tus, { endpoint: TUS_ENDPOINT, limit: 6 })
+      uppyDashboard.use(Tus, { endpoint: TUS_ENDPOINT, limit: 1 })
       break
     case 's3':
-      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, limit: 6 })
+      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL, limit: 1 })
       break
     case 's3-multipart':
-      uppyDashboard.use(AwsS3Multipart, { companionUrl: COMPANION_URL, limit: 6 })
+      uppyDashboard.use(AwsS3Multipart, { companionUrl: COMPANION_URL, limit: 1 })
       break
     case 'xhr':
       uppyDashboard.use(XHRUpload, { endpoint: XHR_ENDPOINT, limit: 6, bundle: true })

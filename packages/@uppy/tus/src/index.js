@@ -465,17 +465,18 @@ export default class Tus extends BasePlugin {
   async uploadRemote (file) {
     this.resetUploaderReferences(file.id)
 
-    this.uppy.emit('upload-started', file)
-    this.uppy.log(file.remote.url)
+    // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+    if (!file.progress.uploadStarted || !file.isRestored) {
+      this.uppy.emit('upload-started', file)
+    }
 
     if (file.serverToken) {
-      await this.connectToServerSocket(this.uppy.getFile(file.id))
-      return
+      return this.connectToServerSocket(file)
     }
 
     const serverToken = await this.#queueRequestSocketToken(file)
     this.uppy.setFileState(file.id, { serverToken })
-    await this.connectToServerSocket(this.uppy.getFile(file.id))
+    return this.connectToServerSocket(this.uppy.getFile(file.id))
   }
 
   /**
