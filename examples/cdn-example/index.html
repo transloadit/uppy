@@ -2,22 +2,46 @@
 <html lang="en">
   <head>
     <title></title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://releases.transloadit.com/uppy/v3.0.0-beta.1/uppy.min.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://releases.transloadit.com/uppy/v3.0.0-beta.1/uppy.min.css" rel="stylesheet" />
   </head>
   <body>
+    <noscript>You need JavaScript enabled for this example to work.</noscript>
     <button id="uppyModalOpener">Open Modal</button>
-    <script src="https://releases.transloadit.com/uppy/v3.0.0-beta.1/uppy.min.js"></script>
-    <script>
-      const uppy = new Uppy.Core({debug: true, autoProceed: false})
-        .use(Uppy.Dashboard, { trigger: '#uppyModalOpener' })
-        .use(Uppy.Webcam, {target: Uppy.Dashboard})
-        .use(Uppy.Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 
-      uppy.on('success', (fileCount) => {
-        console.log(`${fileCount} files uploaded`)
-      })
+    <script type="module">
+      import {
+        Core,
+        Dashboard,
+        Webcam,
+        Tus,
+      } from "https://releases.transloadit.com/uppy/v3.0.0-beta.1/uppy.min.mjs";
+
+      const uppy = new Core.Uppy({ debug: true, autoProceed: false })
+        .use(Dashboard, { trigger: "#uppyModalOpener" })
+        .use(Webcam, { target: Dashboard })
+        .use(Tus, { endpoint: "https://tusd.tusdemo.net/files/" });
+
+      uppy.on("success", (fileCount) => {
+        console.log(`${fileCount} files uploaded`);
+      });
+    </script>
+
+    <!-- To support older browsers, you can use the legacy bundle which adds a global `Uppy` object.  -->
+    <script nomodule src="https://releases.transloadit.com/uppy/v3.0.0-beta.1/uppy.legacy.min.js"></script>
+    <script nomodule>
+      {
+        const { Core, Dashboard, Webcam, Tus } = Uppy;
+        const uppy = new Uppy.Core({ debug: true, autoProceed: false })
+          .use(Uppy.Dashboard, { trigger: "#uppyModalOpener" })
+          .use(Uppy.Webcam, { target: Uppy.Dashboard })
+          .use(Uppy.Tus, { endpoint: "https://tusd.tusdemo.net/files/" });
+
+        uppy.on("success", function (fileCount) {
+          console.log(`${fileCount} files uploaded`);
+        });
+      }
     </script>
   </body>
 </html>

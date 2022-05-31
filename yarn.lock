@@ -9749,9 +9749,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/cdn-example@workspace:examples/cdn-example":
+"@uppy-example/cdn@workspace:examples/cdn-example":
   version: 0.0.0-use.local
-  resolution: "@uppy-example/cdn-example@workspace:examples/cdn-example"
+  resolution: "@uppy-example/cdn@workspace:examples/cdn-example"
   languageName: unknown
   linkType: soft
 
