@@ -48,9 +48,8 @@ function checkIfCorrectURL (url) {
 }
 
 function getFileNameFromUrl (url) {
-  const queryParamsIndexOf = url.indexOf('?')
-  const queryParamsStart = queryParamsIndexOf === -1 ? undefined : queryParamsIndexOf
-  return url.substring(url.lastIndexOf('/', queryParamsStart) + 1, queryParamsStart)
+  const { pathname } = new URL(url)
+  return pathname.substring(pathname.lastIndexOf('/') + 1)
 }
 /**
  * Url
