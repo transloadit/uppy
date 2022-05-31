@@ -251,7 +251,7 @@ export default class XHRUpload extends BasePlugin {
         }
       })
 
-      xhr.addEventListener('load', (ev) => {
+      xhr.addEventListener('load', () => {
         this.uppy.log(`[XHRUpload] ${id} finished`)
         timer.done()
         queuedRequest.done()
