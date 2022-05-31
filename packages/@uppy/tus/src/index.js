@@ -440,22 +440,16 @@ export default class Tus extends BasePlugin {
       Object.assign(opts, file.tus)
     }
 
-    try {
-      // !! cancellation is NOT supported at this stage yet
-      const res = await client.post(file.remote.url, {
-        ...file.remote.body,
-        endpoint: opts.endpoint,
-        uploadUrl: opts.uploadUrl,
-        protocol: 'tus',
-        size: file.data.size,
-        headers: opts.headers,
-        metadata: file.meta,
-      })
-      return res.token
-    } catch (err) {
-      this.uppy.emit('upload-error', file, err)
-      throw err
-    }
+    const res = await client.post(file.remote.url, {
+      ...file.remote.body,
+      endpoint: opts.endpoint,
+      uploadUrl: opts.uploadUrl,
+      protocol: 'tus',
+      size: file.data.size,
+      headers: opts.headers,
+      metadata: file.meta,
+    })
+    return res.token
   }
 
   /**
@@ -470,13 +464,18 @@ export default class Tus extends BasePlugin {
       this.uppy.emit('upload-started', file)
     }
 
-    if (file.serverToken) {
-      return this.connectToServerSocket(file)
-    }
+    try {
+      if (file.serverToken) {
+        return this.connectToServerSocket(file)
+      }
+      const serverToken = await this.#queueRequestSocketToken(file)
 
-    const serverToken = await this.#queueRequestSocketToken(file)
-    this.uppy.setFileState(file.id, { serverToken })
-    return this.connectToServerSocket(this.uppy.getFile(file.id))
+      this.uppy.setFileState(file.id, { serverToken })
+      return this.connectToServerSocket(this.uppy.getFile(file.id))
+    } catch (err) {
+      this.uppy.emit('upload-error', file, err)
+      throw err
+    }
   }
 
   /**

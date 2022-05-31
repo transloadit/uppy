@@ -293,19 +293,13 @@ export default class AwsS3Multipart extends BasePlugin {
       Object.assign(opts, file.tus)
     }
 
-    try {
-      // !! cancellation is NOT supported at this stage yet
-      const res = await client.post(file.remote.url, {
-        ...file.remote.body,
-        protocol: 's3-multipart',
-        size: file.data.size,
-        metadata: file.meta,
-      })
-      return res.token
-    } catch (err) {
-      this.uppy.emit('upload-error', file, err)
-      throw err
-    }
+    const res = await client.post(file.remote.url, {
+      ...file.remote.body,
+      protocol: 's3-multipart',
+      size: file.data.size,
+      metadata: file.meta,
+    })
+    return res.token
   }
 
   async uploadRemote (file) {
@@ -316,13 +310,18 @@ export default class AwsS3Multipart extends BasePlugin {
       this.uppy.emit('upload-started', file)
     }
 
-    if (file.serverToken) {
-      return this.connectToServerSocket(file)
-    }
+    try {
+      if (file.serverToken) {
+        return this.connectToServerSocket(file)
+      }
+      const serverToken = await this.#queueRequestSocketToken(file)
 
-    const serverToken = await this.#queueRequestSocketToken(file)
-    this.uppy.setFileState(file.id, { serverToken })
-    return this.connectToServerSocket(this.uppy.getFile(file.id))
+      this.uppy.setFileState(file.id, { serverToken })
+      return this.connectToServerSocket(this.uppy.getFile(file.id))
+    } catch (err) {
+      this.uppy.emit('upload-error', file, err)
+      throw err
+    }
   }
 
   connectToServerSocket (file) {

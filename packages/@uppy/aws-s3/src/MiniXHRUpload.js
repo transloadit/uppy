@@ -261,33 +261,32 @@ export default class MiniXHRUpload {
       Object.assign(opts, file.tus)
     }
 
+    const res = await client.post(file.remote.url, {
+      ...file.remote.body,
+      endpoint: opts.endpoint,
+      size: file.data.size,
+      fieldname: opts.fieldName,
+      metadata: Object.fromEntries(metaFields.map(name => [name, file.meta[name]])),
+      httpMethod: opts.method,
+      useFormData: opts.formData,
+      headers: opts.headers,
+    })
+    return res.token
+  }
+
+  async #uploadRemoteFile (file) {
     try {
-      // !! cancellation is NOT supported at this stage yet
-      const res = await client.post(file.remote.url, {
-        ...file.remote.body,
-        endpoint: opts.endpoint,
-        size: file.data.size,
-        fieldname: opts.fieldName,
-        metadata: Object.fromEntries(metaFields.map(name => [name, file.meta[name]])),
-        httpMethod: opts.method,
-        useFormData: opts.formData,
-        headers: opts.headers,
-      })
-      return res.token
+      if (file.serverToken) {
+        return this.connectToServerSocket(file)
+      }
+      const serverToken = await this.#queueRequestSocketToken(file)
+
+      this.uppy.setFileState(file.id, { serverToken })
+      return this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {
       this.uppy.emit('upload-error', file, err)
       throw err
     }
-  }
-
-  async #uploadRemoteFile (file) {
-    if (file.serverToken) {
-      return this.connectToServerSocket(file)
-    }
-
-    const serverToken = await this.#queueRequestSocketToken(file)
-    this.uppy.setFileState(file.id, { serverToken })
-    return this.connectToServerSocket(this.uppy.getFile(file.id))
   }
 
   connectToServerSocket (file) {
