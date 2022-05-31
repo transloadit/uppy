@@ -468,6 +468,11 @@ export default class Tus extends BasePlugin {
     this.uppy.emit('upload-started', file)
     this.uppy.log(file.remote.url)
 
+    if (file.serverToken) {
+      await this.connectToServerSocket(this.uppy.getFile(file.id))
+      return
+    }
+
     const serverToken = await this.#queueRequestSocketToken(file)
     this.uppy.setFileState(file.id, { serverToken })
     await this.connectToServerSocket(this.uppy.getFile(file.id))
