@@ -17,11 +17,7 @@ function onShouldRetry (err, retryAttempt, options, next) {
 const companionUrl = 'http://localhost:3020'
 const uppy = new Uppy()
   .use(Dashboard, { target: '#app', inline: true })
-  .use(Tus, {
-    endpoint: 'https://tusd.tusdemo.net/files',
-    onShouldRetry,
-    retryDelays: [2000, 3000, 4000],
-  })
+  .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files', onShouldRetry })
   .use(Url, { target: Dashboard, companionUrl })
   .use(Unsplash, { target: Dashboard, companionUrl })
 
