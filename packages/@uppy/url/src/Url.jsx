@@ -48,7 +48,8 @@ function checkIfCorrectURL (url) {
 }
 
 function getFileNameFromUrl (url) {
-  return url.substring(url.lastIndexOf('/') + 1)
+  const { pathname } = new URL(url)
+  return pathname.substring(pathname.lastIndexOf('/') + 1)
 }
 /**
  * Url
