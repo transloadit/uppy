@@ -9,7 +9,7 @@ export interface UrlOptions extends PluginOptions, RequestClientOptions {
 }
 
 declare class Url extends UIPlugin<UrlOptions> {
-  public addFile(url: string): undefined | string | never
+  public addFile(url: string, optionalMeta: any = undefined): undefined | string | never
 }
 
 export default Url
