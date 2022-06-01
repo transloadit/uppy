@@ -472,7 +472,9 @@ class Uppy {
     const meta = fileDescriptor.meta || {}
     meta.name = fileName
     meta.type = fileType
-
+    if (fileDescriptor.videoId) {
+      meta.videoId = fileDescriptor.videoId
+    }
     // `null` means the size is unknown.
     const size = Number.isFinite(fileDescriptor.data.size) ? fileDescriptor.data.size : null
 

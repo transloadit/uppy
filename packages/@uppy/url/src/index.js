@@ -141,6 +141,11 @@ module.exports = class Url extends UIPlugin {
             providerOptions: this.client.opts,
           },
         }
+        if (meta.videoId) {
+          tagFile.meta = {
+            videoId: meta.videoId
+          }
+        }
         return tagFile
       })
       .then((tagFile) => {

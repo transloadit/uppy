@@ -77,6 +77,10 @@ module.exports = class Provider extends RequestClient {
   }
 
   fileUrl (id) {
+    let hostname = this.hostname
+    if (hostname === '/') {
+      hostname = ''
+    }
     return `${this.hostname}/${this.id}/get/${id}`
   }
 

@@ -347,9 +347,9 @@ module.exports = {
     // Used as the header for import panels, e.g., “Import from Google Drive”.
     importFrom: 'Import from %{name}',
     // When `inline: false`, used as the screen reader label for the dashboard modal.
-    dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
+    dashboardWindowTitle: 'File Uploader Window Window (Press escape to close)',
     // When `inline: true`, used as the screen reader label for the dashboard area.
-    dashboardTitle: 'Uppy Dashboard',
+    dashboardTitle: 'File Uploader',
     // Shown in the Informer when a link to a file was copied to the clipboard.
     copyLinkToClipboardSuccess: 'Link copied to clipboard.',
     // Used when a link cannot be copied automatically — the user has to select the text from the
