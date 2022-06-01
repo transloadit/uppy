@@ -49,7 +49,7 @@ function checkIfCorrectURL (url) {
 
 function getFileNameFromUrl (url) {
   const { pathname } = new URL(url)
-  return pathname.substring(pathname.lastIndexOf('/') + 1)  
+  return pathname.substring(pathname.lastIndexOf('/') + 1)
 }
 /**
  * Url
