@@ -18,7 +18,6 @@
     "box",
     "url"
   ],
-  "type": "module",
   "homepage": "https://uppy.io",
   "bugs": {
     "url": "https://github.com/transloadit/uppy/issues"
