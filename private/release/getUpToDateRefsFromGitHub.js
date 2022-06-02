@@ -25,10 +25,10 @@ export async function getRemoteHEAD () {
 }
 
 async function getLatestReleaseSHA () {
-  const { tag_name } = await apiCall(
-    `/releases/latest`,
-    'Cannot get latest release from GitHub, check your internet connection.',
-  )
+  const response = await fetch(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${TARGET_BRANCH}/packages/uppy/package.json`)
+  if (!response.ok) throw new Error(`Network call failed: ${response.status} ${response.statusText}`)
+  const { version } = await response.json()
+  const tag_name = `uppy@${version}`
   console.log(`Last release was ${tag_name}.`)
   return (
     await apiCall(

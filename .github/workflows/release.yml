@@ -84,8 +84,8 @@ jobs:
         run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-candidate || echo "Already deleted"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Remove release branch
-        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release
+      - name: Remove release-beta branch
+        run: gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/release-beta
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Disable Release workflow
