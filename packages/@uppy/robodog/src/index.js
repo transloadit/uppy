@@ -2,11 +2,12 @@ const form = require('./form')
 const dashboard = require('./dashboard')
 const pick = require('./pick')
 const upload = require('./upload')
+const { version } = require('../package.json')
 
 module.exports = {
   dashboard,
   form,
   pick,
   upload,
-  VERSION: require('../package.json').version,
+  VERSION: version,
 }
