@@ -1,6 +1,7 @@
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 import type { RequestClientOptions } from '@uppy/companion-client'
 import UrlLocale from './generatedLocale'
+import type { IndexedObject } from '@uppy/core'
 
 export interface UrlOptions extends PluginOptions, RequestClientOptions {
     target?: PluginTarget
@@ -9,7 +10,7 @@ export interface UrlOptions extends PluginOptions, RequestClientOptions {
 }
 
 declare class Url extends UIPlugin<UrlOptions> {
-  public addFile(url: string, optionalMeta: any = undefined): undefined | string | never
+  public addFile(url: string, meta?: IndexedObject<any>): undefined | string | never
 }
 
 export default Url
