@@ -105,7 +105,7 @@ export default class Url extends UIPlugin {
       })
   }
 
-  async addFile (protocollessUrl) {
+  async addFile (protocollessUrl, optionalMeta = undefined) {
     const url = this.addProtocolToURL(protocollessUrl)
     if (!this.checkIfCorrectURL(url)) {
       this.uppy.log(`[URL] Incorrect URL entered: ${url}`)
@@ -117,6 +117,7 @@ export default class Url extends UIPlugin {
       const meta = await this.getMeta(url)
 
       const tagFile = {
+        meta: optionalMeta,
         source: this.id,
         name: this.getFileNameFromUrl(url),
         type: meta.type,
