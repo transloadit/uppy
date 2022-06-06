@@ -84,8 +84,8 @@ export default Dashboard
 
 // Events
 
-export type DashboardFileEditStartCallback<TMeta> = (file?: UppyFile<TMeta>) => void;
-export type DashboardFileEditCompleteCallback<TMeta> = (file?: UppyFile<TMeta>) => void;
+export type DashboardFileEditStartCallback<TMeta> = (file: UppyFile<TMeta>) => void;
+export type DashboardFileEditCompleteCallback<TMeta> = (file: UppyFile<TMeta>) => void;
 declare module '@uppy/core' {
   export interface UppyEventMap<TMeta> {
     'dashboard:modal-open': GenericEventCallback
