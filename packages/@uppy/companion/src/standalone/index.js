@@ -12,9 +12,6 @@ const logger = require('../server/logger')
 const redis = require('../server/redis')
 const companion = require('../companion')
 const helper = require('./helper')
-const connectRedis = require('connect-redis')
-const middlewares = require('../server/middlewares')
-const { getURLBuilder } = require('../server/helpers/utils')
 
 /**
  * Configures an Express app for running Companion standalone
