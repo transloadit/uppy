@@ -18,8 +18,8 @@ $ npm install @uppy/robodog
 Alternatively, you can also use this package in a pre-built bundle from Transloadit’s CDN: Edgly.
 
 ```html
-<link rel="stylesheet" href="https://releases.transloadit.com/uppy/v2.10.0/robodog.min.css">
-<script src="https://releases.transloadit.com/uppy/v2.10.0/robodog.min.js"></script>
+<link rel="stylesheet" href="https://releases.transloadit.com/uppy/v3.0.0-beta/robodog.min.css">
+<script src="https://releases.transloadit.com/uppy/v3.0.0-beta/robodog.min.js"></script>
 ```
 
 Then, a global `Robodog` variable will be available. For usage instructions, please see the [main Robodog documentation](https://uppy.io/docs/robodog).

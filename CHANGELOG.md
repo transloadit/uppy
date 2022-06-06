@@ -12,6 +12,120 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.0.0-beta
+
+Released: 2022-05-30
+
+| Package                   |    Version | Package                   |    Version |
+| ------------------------- | ---------- | ------------------------- | ---------- |
+| @uppy/audio               | 3.0.0-beta | @uppy/progress-bar        | 3.0.0-beta |
+| @uppy/aws-s3              | 3.0.0-beta | @uppy/provider-views      | 3.0.0-beta |
+| @uppy/aws-s3-multipart    | 3.0.0-beta | @uppy/react               | 3.0.0-beta |
+| @uppy/box                 | 3.0.0-beta | @uppy/redux-dev-tools     | 3.0.0-beta |
+| @uppy/companion           | 4.0.0-beta | @uppy/robodog             | 3.0.0-beta |
+| @uppy/companion-client    | 3.0.0-beta | @uppy/screen-capture      | 3.0.0-beta |
+| @uppy/compressor          | 3.0.0-beta | @uppy/status-bar          | 3.0.0-beta |
+| @uppy/core                | 3.0.0-beta | @uppy/store-default       | 3.0.0-beta |
+| @uppy/dashboard           | 3.0.0-beta | @uppy/store-redux         | 3.0.0-beta |
+| @uppy/drag-drop           | 3.0.0-beta | @uppy/svelte              | 3.0.0-beta |
+| @uppy/drop-target         | 3.0.0-beta | @uppy/thumbnail-generator | 3.0.0-beta |
+| @uppy/dropbox             | 3.0.0-beta | @uppy/transloadit         | 3.0.0-beta |
+| @uppy/facebook            | 3.0.0-beta | @uppy/tus                 | 3.0.0-beta |
+| @uppy/file-input          | 3.0.0-beta | @uppy/unsplash            | 3.0.0-beta |
+| @uppy/form                | 3.0.0-beta | @uppy/url                 | 3.0.0-beta |
+| @uppy/golden-retriever    | 3.0.0-beta | @uppy/utils               | 5.0.0-beta |
+| @uppy/google-drive        | 3.0.0-beta | @uppy/vue                 | 3.0.0-beta |
+| @uppy/image-editor        | 3.0.0-beta | @uppy/webcam              | 3.0.0-beta |
+| @uppy/informer            | 3.0.0-beta | @uppy/xhr-upload          | 3.0.0-beta |
+| @uppy/instagram           | 3.0.0-beta | @uppy/zoom                | 3.0.0-beta |
+| @uppy/locales             | 3.0.0-beta | uppy                      | 3.0.0-beta |
+| @uppy/onedrive            | 3.0.0-beta |                           |            |
+
+- meta: temporary adjust release script for the beta (Antoine du Hamel)
+- meta: disable ESM to CJS transform in dist files (Antoine du Hamel / #3773)
+- @uppy/companion: remove `searchProviders` wrapper & move `s3` options (Merlijn Vos / #3781)
+- meta: do not test on EOL versions of Node.js (Antoine du Hamel / #3786)
+- @uppy/companion: remove support for EOL versions of Node.js (Antoine du Hamel / #3784)
+- @uppy/react: refactor to ESM (Antoine du Hamel / #3780)
+- @uppy/transloadit: remove IE 10 hack (Antoine du Hamel / #3777)
+
+
+## 2.11.0
+
+Released: 2022-05-30
+
+| Package                   | Version | Package                   | Version |
+| ------------------------- | ------- | ------------------------- | ------- |
+| @uppy/angular             |   0.3.1 | @uppy/progress-bar        |   2.1.1 |
+| @uppy/audio               |   0.3.2 | @uppy/provider-views      |   2.1.1 |
+| @uppy/aws-s3              |   2.2.0 | @uppy/react               |   2.2.1 |
+| @uppy/aws-s3-multipart    |   2.4.0 | @uppy/react-native        |   0.3.1 |
+| @uppy/box                 |   1.0.7 | @uppy/redux-dev-tools     |   2.1.0 |
+| @uppy/companion           |   3.6.0 | @uppy/screen-capture      |   2.1.1 |
+| @uppy/companion-client    |   2.2.0 | @uppy/status-bar          |   2.2.1 |
+| @uppy/compressor          |   0.3.0 | @uppy/store-default       |   2.1.0 |
+| @uppy/core                |   2.3.0 | @uppy/store-redux         |   2.1.0 |
+| @uppy/dashboard           |   2.3.0 | @uppy/thumbnail-generator |   2.2.0 |
+| @uppy/drag-drop           |   2.1.1 | @uppy/transloadit         |   2.3.0 |
+| @uppy/dropbox             |   2.0.7 | @uppy/tus                 |   2.4.0 |
+| @uppy/facebook            |   2.0.7 | @uppy/unsplash            |   2.1.0 |
+| @uppy/file-input          |   2.1.1 | @uppy/url                 |   2.1.1 |
+| @uppy/form                |   2.0.6 | @uppy/utils               |   4.1.0 |
+| @uppy/golden-retriever    |   2.1.0 | @uppy/vue                 |   0.4.8 |
+| @uppy/google-drive        |   2.1.1 | @uppy/webcam              |   2.2.1 |
+| @uppy/image-editor        |   1.3.0 | @uppy/xhr-upload          |   2.1.1 |
+| @uppy/informer            |   2.1.0 | @uppy/zoom                |   1.1.1 |
+| @uppy/instagram           |   2.1.1 | @uppy/robodog             |   2.7.0 |
+| @uppy/onedrive            |   2.1.1 | uppy                      |  2.11.0 |
+
+- doc: update bundler recommendation (Antoine du Hamel / #3763)
+- @uppy/aws-s3-multipart: refactor to ESM (Antoine du Hamel / #3672)
+- @uppy/aws-s3: fix JSDoc type error (Antoine du Hamel / #3785)
+- @uppy/aws-s3: refactor to ESM (Antoine du Hamel / #3673)
+- @uppy/companion-client: Revert "Revert "@uppy/companion-client: refactor to ESM"" (Antoine du Hamel / #3730)
+- @uppy/companion: expire redis keys after 1 day (Mikael Finstad / #3771)
+- @uppy/companion: fix some linter warnings (Antoine du Hamel / #3752)
+- @uppy/compressor: Fix Compressor docs, pass files array to compressor:complete event (Artur Paikin / #3682)
+- @uppy/core: refactor to ESM (Antoine du Hamel / #3744)
+- @uppy/dashboard: refactor to ESM (Antoine du Hamel / #3701)
+- @uppy/dashboard: use webkitRelativePath when querying a file's relative path (Eduard Müller / taktik / #3766)
+- @uppy/golden-retriever: refactor to ESM (Antoine du Hamel / #3731)
+- @uppy/image-editor: remove CJS-interop hack in the source code (Antoine du Hamel / #3778)
+- @uppy/informer: @uppy/Informer: refactor to ESM (Antoine du Hamel / #3732)
+- @uppy/informer: remove remaining `require` call (Antoine du Hamel / #3737)
+- @uppy/provider-views: Add onKeyPress event handler to capture e.shiftKey, unavailable in onChange (Artur Paikin / #3768)
+- @uppy/redux-dev-tools: refactor to ESM (Antoine du Hamel / #3733)
+- @uppy/screen-capture: don't install when unsupported (Artur Paikin / #3795)
+- @uppy/store-default: refactor to ESM (Antoine du Hamel / #3746)
+- @uppy/store-redux: refactor to ESM (Antoine du Hamel / #3745)
+- @uppy/thumbnail-generator: refactor to ESM (Antoine du Hamel / #3734)
+- @uppy/transloadit: refactor to ESM (Antoine du Hamel / #3725)
+- @uppy/transloadit: transloadit: propagate error details when creating Assembly fails (Renée Kooi / #3794)
+- @uppy/tus: Add `onShouldRetry` as option to @uppy/tus (Merlijn Vos / #3720)
+- @uppy/tus: fix broken import (Antoine du Hamel / #3729)
+- @uppy/tus: fixup! @uppy/tus: wait for user promise on beforeRequest (Antoine du Hamel / #3712)
+- @uppy/tus: wait for user promise on beforeRequest (Antoine du Hamel / #3712)
+- @uppy/unsplash: refactor to ESM (Antoine du Hamel / #3728)
+- @uppy/utils: refactor to ESM (Antoine du Hamel / #3721)
+- dev: fix dev env Vite's config (Antoine du Hamel)
+- dev: fix return type of generateSignatureIfSecret (Renée Kooi / #3793)
+- dev: remove `vite-plugin-jsx-commonjs` plugin on dev env (Antoine du Hamel / #3749)
+- dev: remove CJS-related hack in `build:locale-pack` script (Antoine du Hamel / #3764)
+- meta: e2e: run CI on PRs that modify the workflow file (Antoine du Hamel / #3740)
+- meta: fix linter warnings (Antoine du Hamel / #3753)
+- meta: fix more linter warnings (Antoine du Hamel / #3757)
+- meta: resolve warnings in `.d.ts` files (Antoine du Hamel / #3754)
+- meta: uppy: add Zoom plugin to the bundle and fix ESM exports (Antoine du Hamel / #3747)
+- test: Apply bin/update-yarn.sh (Merlijn Vos / #3775)
+- test: fix e2e dependency conflict (Merlijn Vos / #3779)
+- test: fixup! e2e: run CI on PRs that modify the workflow file (Antoine du Hamel / #3740)
+- test: prepare internal script files for lint rune hardening (Antoine du Hamel / #3760)
+- test: prepare test files for lint rule hardening (Antoine du Hamel / #3761)
+- test: Setup Cypress Dashboard (Merlijn Vos / #3691)
+- test: split Companion CI between Node.js legacy and supported versions (Antoine du Hamel / #3776)
+- website: disable linter warnings (Antoine du Hamel / #3759)
+
+
 ## 2.10.0
 
 Released: 2022-05-14

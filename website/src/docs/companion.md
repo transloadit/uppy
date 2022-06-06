@@ -324,16 +324,16 @@ const options = {
       key: '***',
       secret: '***',
     },
-    s3: {
-      getKey: (req, filename, metadata) => filename,
-      key: '***',
-      secret: '***',
-      bucket: 'bucket-name',
-      region: 'us-east-1',
-      useAccelerateEndpoint: false, // default: false,
-      expires: 3600, // default: 300 (5 minutes)
-      acl: 'private', // default: none
-    },
+  },
+  s3: {
+    getKey: (req, filename, metadata) => filename,
+    key: '***',
+    secret: '***',
+    bucket: 'bucket-name',
+    region: 'us-east-1',
+    useAccelerateEndpoint: false, // default: false,
+    expires: 3600, // default: 300 (5 minutes)
+    acl: 'private', // default: none
   },
   server: {
     host: 'localhost:3020', // or yourdomain.com
@@ -418,34 +418,34 @@ Please see [Supported Providers](https://uppy.io/docs/companion/#Supported-provi
 
 Companion comes with signature endpoints for AWS S3. These can be used by the Uppy client to sign requests to upload files directly to S3, without exposing secret S3 keys in the browser. Companion also supports uploading files from providers like Dropbox and Instagram directly into S3.
 
-The S3 features can be configured using the `providerOptions.s3` property.
+The S3 features can be configured using the `s3` property.
 
-#### `providerOptions.s3.key`
+#### `s3.key`
 
 The S3 access key ID. The standalone Companion server populates this with the value of the `COMPANION_AWS_KEY` environment variable by default.
 
-#### `providerOptions.s3.secret`
+#### `s3.secret`
 
 The S3 secret access key. The standalone Companion server populates this with the value of the `COMPANION_AWS_SECRET` environment variable by default.
 
-#### `providerOptions.s3.bucket`
+#### `s3.bucket`
 
 The name of the bucket to store uploaded files in. The standalone Companion server populates this with the value of the `COMPANION_AWS_BUCKET` environment variable by default.
 
-#### `providerOptions.s3.region`
+#### `s3.region`
 
 The datacenter region where the target bucket is located. The standalone Companion server populates this with the value of the `COMPANION_AWS_REGION` environment variable by default.
 
-#### `providerOptions.s3.awsClientOptions`
+#### `s3.awsClientOptions`
 
-You can supply any [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property) in the `providerOptions.s3.awsClientOptions` object, _except for_ the below:
+You can supply any [S3 option supported by the AWS SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property) in the `s3.awsClientOptions` object, _except for_ the below:
 
-* `accessKeyId`. Instead, use the `providerOptions.s3.key` property. This is to make configuration names consistent between different Companion features.
-* `secretAccessKey`. Instead, use the `providerOptions.s3.secret` property. This is to make configuration names consistent between different Companion features.
+* `accessKeyId`. Instead, use the `s3.key` property. This is to make configuration names consistent between different Companion features.
+* `secretAccessKey`. Instead, use the `s3.secret` property. This is to make configuration names consistent between different Companion features.
 
 Be aware that some options may cause wrong behaviour if they conflict with Companion’s assumptions. If you find that a particular option does not work as expected, please [open an issue on the Uppy repository](https://github.com/transloadit/uppy/issues/new) so we can document it here.
 
-#### `providerOptions.s3.getKey(req, filename, metadata)`
+#### `s3.getKey(req, filename, metadata)`
 
 Get the key name for a file. The key is the file path to which the file will be uploaded in your bucket. This option should be a function receiving three arguments:
 
@@ -457,12 +457,10 @@ This function should return a string `key`. The `req` parameter can be used to u
 
 ```js
 app.use(authenticationMiddleware)
-app.use(uppy.app({
-  providerOptions: {
-    s3: {
-      getKey: (req, filename, metadata) => `${req.user.id}/${filename}`,
-      /* auth options */
-    },
+app.use(companion.app({
+  s3: {
+    getKey: (req, filename, metadata) => `${req.user.id}/${filename}`,
+    /* auth options */
   },
 }))
 ```
@@ -470,11 +468,9 @@ app.use(uppy.app({
 The default implementation returns the `filename`, so all files will be uploaded to the root of the bucket as their original file name.
 
 ```js
-app.use(uppy.app({
-  providerOptions: {
-    s3: {
-      getKey: (req, filename, metadata) => filename,
-    },
+app.use(companion.app({
+  s3: {
+    getKey: (req, filename, metadata) => filename,
   },
 }))
 ```

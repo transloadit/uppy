@@ -41,6 +41,10 @@ class Box extends Provider {
    * Lists files and folders from Box API
    *
    * @param {object} options
+   * @param {string} options.directory
+   * @param {any} options.query
+   * @param {string} options.token
+   * @param {unknown} options.companion
    * @param {Function} done
    */
   _list ({ directory, token, query, companion }, done) {

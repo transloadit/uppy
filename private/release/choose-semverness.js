@@ -81,7 +81,7 @@ export default async function pickSemverness (
         { title: 'Minor', value: 'minor' },
         { title: 'Major', value: 'major' },
       ],
-      initial: 2,
+      initial: 0,
     })
 
     if (!response.value) {
@@ -141,7 +141,7 @@ export default async function pickSemverness (
           { title: 'Minor', value: 'minor', disabled: robodogSemverness === 'major' },
           { title: 'Major', value: 'major' },
         ],
-        initial: 2,
+        initial: 0,
       })
 
       releaseFile.write(`  "@uppy/robodog": ${response.value}\n`)

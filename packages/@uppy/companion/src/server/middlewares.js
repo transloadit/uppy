@@ -69,14 +69,14 @@ exports.cookieAuthToken = (req, res, next) => {
 }
 
 exports.loadSearchProviderToken = (req, res, next) => {
-  const { searchProviders } = req.companion.options.providerOptions
+  const { providerOptions } = req.companion.options
   const providerName = req.params.searchProviderName
-  if (!searchProviders || !searchProviders[providerName] || !searchProviders[providerName].key) {
+  if (!providerOptions[providerName] || !providerOptions[providerName].key) {
     logger.info(`unconfigured credentials for ${providerName}`, 'searchtoken.load.unset', req.id)
     return res.sendStatus(501)
   }
 
-  req.companion.providerToken = searchProviders[providerName].key
+  req.companion.providerToken = providerOptions[providerName].key
   next()
 }
 

@@ -1,7 +1,7 @@
 {
   "name": "@uppy/url",
   "description": "The Url plugin lets users import files from the Internet. Paste any URL and it’ll be added!",
-  "version": "2.1.0",
+  "version": "3.0.0-beta",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -29,5 +29,6 @@
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
-  }
+  },
+  "stableVersion": "2.1.1"
 }

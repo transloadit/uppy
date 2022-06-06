@@ -896,7 +896,12 @@ describe('src/Core', () => {
       core.addFile({ source: 'jest', name: 'bar.jpg', type: 'image/jpeg', data: new Uint8Array() })
       core.addFile({ source: 'file3', name: 'file3.jpg', type: 'image/jpeg', data: new Uint8Array() })
 
-      return expect(core.upload()).resolves.toMatchSnapshot()
+      // uploadID is random, we don't want randomness in the snapshot
+      const validateNanoID = r => (
+        typeof r.uploadID === 'string' && r.uploadID.length === 21 ? ({ ...r, uploadID: 'cjd09qwxb000dlql4tp4doz8h' }) : r
+      )
+
+      return expect(core.upload().then(validateNanoID)).resolves.toMatchSnapshot()
     })
 
     it('should not upload if onBeforeUpload returned false', () => {
