@@ -209,12 +209,12 @@ export type FilesAddedCallback<TMeta> = (files: UppyFile<TMeta>[]) => void;
 export type FileRemovedCallback<TMeta> = (file: UppyFile<TMeta>, reason: FileRemoveReason) => void;
 export type UploadCallback = (data: { id: string, fileIDs: string[] }) => void;
 export type ProgressCallback = (progress: number) => void;
-export type PreProcessCompleteCallback<TMeta> = (file: UppyFile<TMeta>) => void;
-export type UploadProgressCallback<TMeta> = (file: UppyFile<TMeta>, progress: FileProgress) => void;
-export type UploadSuccessCallback<TMeta> = (file: UppyFile<TMeta>, response: SuccessResponse) => void
+export type PreProcessCompleteCallback<TMeta> = (file: UppyFile<TMeta> | undefined) => void;
+export type UploadProgressCallback<TMeta> = (file: UppyFile<TMeta> | undefined, progress: FileProgress) => void;
+export type UploadSuccessCallback<TMeta> = (file: UppyFile<TMeta> | undefined, response: SuccessResponse) => void
 export type UploadCompleteCallback<TMeta> = (result: UploadResult<TMeta>) => void
 export type ErrorCallback = (error: Error) => void;
-export type UploadErrorCallback<TMeta> = (file: UppyFile<TMeta>, error: Error, response?: ErrorResponse) => void;
+export type UploadErrorCallback<TMeta> = (file: UppyFile<TMeta> | undefined, error: Error, response?: ErrorResponse) => void;
 export type UploadRetryCallback = (fileID: string) => void;
 // TODO: reverse the order in the next major version
 export type RestrictionFailedCallback<TMeta> = (file: UppyFile<TMeta> | undefined, error: Error) => void;
