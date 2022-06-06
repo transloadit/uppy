@@ -26,9 +26,9 @@ class TransloaditResultsPlugin extends BasePlugin {
     assemblies.forEach((assembly) => {
       Object.keys(assembly.results).forEach((stepName) => {
         const results = assembly.results[stepName]
-        results.forEach((result) => {
+        results.forEach((resultObject) => {
           assemblyResults.push({
-            ...result,
+            ...resultObject,
             assemblyId: assembly.assembly_id,
             stepName,
           })
