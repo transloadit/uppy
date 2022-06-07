@@ -21,13 +21,15 @@ export default class AwsS3Multipart extends BasePlugin {
   static VERSION = packageJson.version
 
   #queueRequestSocketToken
+  
+  #client
 
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3Multipart'
     this.title = 'AWS S3 Multipart'
-    this.client = new RequestClient(uppy, opts)
+    this.#client = new RequestClient(uppy, opts)
 
     const defaultOptions = {
       timeout: 30 * 1000,
@@ -38,6 +40,7 @@ export default class AwsS3Multipart extends BasePlugin {
       prepareUploadParts: this.prepareUploadParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
+      companionHeaders: {},
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -52,6 +55,13 @@ export default class AwsS3Multipart extends BasePlugin {
 
     this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
   }
+
+  [Symbol.for('uppy test: getClient')] () { return this.#client }
+
+  // TODO: remove getter and setter for #client on the next major release
+  get client () { return this.#client }
+
+  set client (client) { this.#client = client }
 
   /**
    * Clean up all references for a file's upload: the MultipartUploader instance,
@@ -92,7 +102,7 @@ export default class AwsS3Multipart extends BasePlugin {
       }
     })
 
-    return this.client.post('s3/multipart', {
+    return this.#client.post('s3/multipart', {
       filename: file.name,
       type: file.type,
       metadata,
@@ -103,7 +113,7 @@ export default class AwsS3Multipart extends BasePlugin {
     this.assertHost('listParts')
 
     const filename = encodeURIComponent(key)
-    return this.client.get(`s3/multipart/${uploadId}?key=${filename}`)
+    return this.#client.get(`s3/multipart/${uploadId}?key=${filename}`)
       .then(assertServerError)
   }
 
@@ -111,7 +121,7 @@ export default class AwsS3Multipart extends BasePlugin {
     this.assertHost('prepareUploadParts')
 
     const filename = encodeURIComponent(key)
-    return this.client.get(`s3/multipart/${uploadId}/batch?key=${filename}&partNumbers=${partNumbers.join(',')}`)
+    return this.#client.get(`s3/multipart/${uploadId}/batch?key=${filename}&partNumbers=${partNumbers.join(',')}`)
       .then(assertServerError)
   }
 
@@ -120,7 +130,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
+    return this.#client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
       .then(assertServerError)
   }
 
@@ -129,7 +139,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`)
+    return this.#client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`)
       .then(assertServerError)
   }
 
@@ -443,6 +453,11 @@ export default class AwsS3Multipart extends BasePlugin {
     return Promise.all(promises)
   }
 
+  #setCompanionHeaders = () => {
+    this.#client.setCompanionHeaders(this.opts.companionHeaders)
+    return Promise.resolve()
+  }
+
   onFileRemove (fileID, cb) {
     this.uploaderEvents[fileID].on('file-removed', (file) => {
       if (fileID === file.id) cb(file.id)
@@ -502,6 +517,7 @@ export default class AwsS3Multipart extends BasePlugin {
         resumableUploads: true,
       },
     })
+    this.uppy.addPreProcessor(this.#setCompanionHeaders)
     this.uppy.addUploader(this.upload)
   }
 
@@ -513,6 +529,7 @@ export default class AwsS3Multipart extends BasePlugin {
         resumableUploads: false,
       },
     })
+    this.uppy.removePreProcessor(this.#setCompanionHeaders)
     this.uppy.removeUploader(this.upload)
   }
 }

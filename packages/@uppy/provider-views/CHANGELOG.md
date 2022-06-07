@@ -1,5 +1,12 @@
 # @uppy/provider-views
 
+## 2.1.1
+
+Released: 2022-05-30
+Included in: Uppy v2.11.0
+
+- @uppy/provider-views: Add onKeyPress event handler to capture e.shiftKey, unavailable in onChange (Artur Paikin / #3768)
+
 ## 2.1.0
 
 Released: 2022-05-14

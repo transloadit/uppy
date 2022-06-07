@@ -1,0 +1,79 @@
+name: Release beta candidate
+on:
+  push:
+    branches: release-beta
+
+env:
+  BETA_BRANCH: 3.x
+
+jobs:
+  prepare-release:
+    name: Prepare release candidate Pull Request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          branch: release-beta
+      - name: Rebase
+        run: |
+          git fetch origin ${{ env.BETA_BRANCH }} --depth=1
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git rebase FETCH_HEAD
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
+
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+      - name: Bump candidate packages version
+        run: corepack yarn version apply --all --json | jq -s > releases.json
+      - name: Prepare changelog
+        run: corepack yarn workspace @uppy-dev/release update-changelogs releases.json | xargs git add
+      - name: Update CDN URLs
+        run: corepack yarn workspace @uppy-dev/release update-version-URLs | xargs git add
+      - name: Stage changes and remove temp files
+        run: |
+          git rm -rf .yarn/versions
+          git rm CHANGELOG.next.md
+          jq -r 'map(.cwd) | join("\n")' < releases.json | awk '{ print "git add " $0 "/package.json" }' | sh
+      - name: Commit
+        run: |
+          echo "Release: uppy@$(jq -r 'map(select(.ident == "uppy"))[0].newVersion' < releases.json)" > commitMessage
+          echo >> commitMessage
+          echo "This is a release candidate for the following packages:" >> commitMessage
+          echo >> commitMessage
+          jq -r 'map("- `"+.ident+"`: "+.oldVersion+" -> "+.newVersion) | join("\n") ' < releases.json >> commitMessage
+          git commit -n --amend --file commitMessage
+      - name: Open Pull Request
+        id: pr_opening
+        run: |
+          git push origin HEAD:release-candidate
+          gh api repos/${{ github.repository }}/pulls \
+            -F base="${{ env.BETA_BRANCH }}" \
+            -F head="release-candidate" \
+            -F title="$(head -1 commitMessage)" \
+            -F body="$(git --no-pager diff HEAD^ -- CHANGELOG.md | awk '{ if( substr($0,0,1) == "+" && $1 != "+##" && $1 != "+Released:" && $1 != "+++" ) { print substr($0,2) } }')" \
+            --jq '.number | tostring | "##[set-output name=pr_number;]"+.'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Assign to the releaser
+        run: echo '{"assignees":[${{ toJSON(github.actor) }}]}' | gh api repos/${{ github.repository }}/issues/${{ steps.pr_opening.outputs.pr_number }}/assignees --input -
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Enable Release workflow
+        run: gh workflow enable Release --repo ${{ github.repository }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

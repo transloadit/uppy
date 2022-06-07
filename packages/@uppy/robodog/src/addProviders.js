@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 const Transloadit = require('@uppy/transloadit')
 const has = require('@uppy/utils/lib/hasProperty')
 
@@ -39,6 +40,7 @@ function addRemoteProvider (uppy, name, opts) {
     companionAllowedHosts: Transloadit.COMPANION_PATTERN,
   }
 
+  // eslint-disable-next-line no-shadow
   remoteProviderOptionNames.forEach((name) => {
     if (has(opts, name)) providerOptions[name] = opts[name]
   })
@@ -68,6 +70,7 @@ function addLocalProvider (uppy, name, opts) {
   const Provider = localProviders[name]
   const providerOptions = {}
 
+  // eslint-disable-next-line no-shadow
   localProviderOptionNames.forEach((name) => {
     if (has(opts, name)) providerOptions[name] = opts[name]
   })

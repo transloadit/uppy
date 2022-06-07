@@ -1,5 +1,12 @@
 # @uppy/compressor
 
+## 0.3.0
+
+Released: 2022-05-30
+Included in: Uppy v2.11.0
+
+- @uppy/compressor: Fix Compressor docs, pass files array to compressor:complete event (Artur Paikin / #3682)
+
 ## 0.2.5
 
 Released: 2022-04-27

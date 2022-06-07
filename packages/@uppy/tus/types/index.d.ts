@@ -20,7 +20,7 @@ export interface TusOptions extends PluginOptions, TusUploadOptions {
     limit?: number
     useFastRemoteRetry?: boolean
     withCredentials?: boolean
-    onShouldRetry: (err: Error | undefined, retryAttempt: number, options: TusOptions, next: Next) => boolean
+    onShouldRetry?: (err: Error | undefined, retryAttempt: number, options: TusOptions, next: Next) => boolean
   }
 
 declare class Tus extends BasePlugin<TusOptions> {}
