@@ -43,5 +43,9 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@jest/globals": "^28.1.0",
+    "resize-observer-polyfill": "^1.5.1"
   }
 }

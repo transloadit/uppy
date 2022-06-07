@@ -5,6 +5,7 @@ interface RemoteTargetOptions extends PluginOptions, RequestClientOptions {
   target?: PluginTarget
   sources?: Array<string>
   title?: string
+  companionUrl: string
 }
 
 declare class RemoteTarget extends BasePlugin<RemoteTargetOptions> {}

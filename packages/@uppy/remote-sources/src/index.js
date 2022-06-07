@@ -48,6 +48,10 @@ export default class RemoteSources extends BasePlugin {
       target: Dashboard,
     }
     this.opts = { ...defaultOptions, ...opts }
+
+    if (this.opts.companionUrl == null) {
+      throw new Error('Please specify companionUrl for RemoteSources to work, see https://uppy.io/docs/remote-sources#companionUrl')
+    }
   }
 
   setOptions (newOpts) {
@@ -60,16 +64,20 @@ export default class RemoteSources extends BasePlugin {
     this.opts.sources.forEach((pluginId) => {
       const optsForRemoteSourcePlugin = { ...this.opts, sources: undefined }
       const plugin = availablePlugins.find(p => p.name === pluginId)
+      if (plugin == null) {
+        const availablePluginsIds = availablePlugins.map(p => p.name)
+        const formatter = new Intl.ListFormat('en', { style: 'long', type: 'disjunction' })
+        throw new Error(`Invalid plugin: "${pluginId}" is not one of: ${formatter.format(availablePluginsIds)}.`)
+      }
       this.uppy.use(plugin, optsForRemoteSourcePlugin)
-      this.#installedPlugins.add(pluginId)
+      this.#installedPlugins.add(plugin)
     })
   }
 
   uninstall () {
-    for (const pluginId of this.#installedPlugins) {
-      const plugin = this.uppy.getPlugin(pluginId)
+    for (const plugin of this.#installedPlugins) {
       this.uppy.removePlugin(plugin)
-      this.#installedPlugins.delete(pluginId)
     }
+    this.#installedPlugins.clear()
   }
 }
