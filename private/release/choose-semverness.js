@@ -4,6 +4,7 @@ import { createWriteStream, mkdirSync, readFileSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 
 import prompts from 'prompts'
+import { TARGET_BRANCH } from './config.js'
 
 const ROOT = new  URL('../../', import.meta.url)
 const PACKAGES_FOLDER = new URL('./packages/', ROOT)
@@ -26,6 +27,7 @@ function maxSemverness (a, b) {
 export default async function pickSemverness (
   spawnOptions,
   LAST_RELEASE_COMMIT,
+  STABLE_BRANCH_MERGE_BASE_RANGE,
   releaseFileUrl,
   packagesList,
 ) {
@@ -55,7 +57,28 @@ export default async function pickSemverness (
       spawnOptions,
     )
     if (stdout.length === 0) {
-      console.log(`No commits since last release for ${name}, skipping.`)
+      const { stdout } = spawnSync(
+        'git',
+        [
+          '--no-pager',
+          'log',
+          '--format=- %s',
+          STABLE_BRANCH_MERGE_BASE_RANGE,
+          '--',
+          location,
+        ],
+        spawnOptions,
+      )
+      if (stdout.length === 0) {
+        console.log(`No commits since last release for ${name}, skipping.`)
+      } else {
+        console.log(`Some commits have landed on the stable branch since last release for ${name}.`)
+        releaseFile.write(`  ${JSON.stringify(name)}: prerelease\n`)
+        uppySemverness = maxSemverness(uppySemverness, 'prerelease')
+        if (robodogDeps.includes(name)) {
+          robodogSemverness = maxSemverness(robodogSemverness, 'prerelease')
+        }
+      }
       continue
     }
     console.log('\n')
@@ -65,7 +88,7 @@ export default async function pickSemverness (
       `\nHere are the commits that landed on ${name} since previous release:\n${stdout}\n`,
     )
     console.log(
-      `Check the web UI at https://github.com/transloadit/uppy/tree/main/${encodeURI(
+      `Check the web UI at https://github.com/transloadit/uppy/tree/${TARGET_BRANCH}/${encodeURI(
         location,
       )}.`,
     )

@@ -1,9 +1,9 @@
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import prompts from 'prompts'
-import { STABLE_BRANCH, REPO_NAME, REPO_OWNER } from './config.js'
+import { REPO_NAME, REPO_OWNER } from './config.js'
 
-export default async function commit (spawnOptions, ...files) {
+export default async function commit (spawnOptions, STABLE_HEAD, ...files) {
   console.log(`Now is the time to do manual edits to ${files.join(',')}.`)
   await prompts({
     type: 'toggle',
@@ -19,40 +19,28 @@ export default async function commit (spawnOptions, ...files) {
   spawnSync('git', ['commit', '-n', '-m', 'Prepare next release'], { ...spawnOptions, stdio: 'inherit' })
   const releaseSha = spawnSync('git', ['rev-parse', 'HEAD'], spawnOptions).stdout.toString().trim()
 
-  console.log('Attempting to merge changes from default branch...')
-  {
-    // eslint-disable-next-line no-shadow
-    const { status, stdout, stderr } = spawnSync(
-      'git',
-      [
-        'fetch',
-        `https://github.com/${REPO_OWNER}/${REPO_NAME}.git`,
-        STABLE_BRANCH,
-      ],
-      spawnOptions,
-    )
-
-    if (status) {
-      console.log(stdout.toString())
-      console.error(stderr.toString())
-      throw new Error('Failed to fetch, please ensure manually that your local repository is up to date')
-    }
-  }
-
+  console.log('Attempting to merge changes from stable branch...')
   {
     // eslint-disable-next-line no-shadow
     const { status, stdout, stderr } = spawnSync(
       'git',
       [
         'merge',
-        'FETCH_HEAD',
+        STABLE_HEAD,
       ],
       spawnOptions,
     )
     if (status) {
       console.log(stdout.toString())
       console.error(stderr.toString())
-      throw new Error('Failed to fetch, please ensure manually that your local repository is up to date')
+      await prompts({
+        type: 'toggle',
+        name: 'value',
+        message: 'Fix the conflict before continuing. Ready?',
+        initial: true,
+        active: 'yes',
+        inactive: 'yes',
+      })
     }
   }
   const mergeSha = spawnSync('git', ['rev-parse', 'HEAD'], spawnOptions).stdout.toString().trim()
