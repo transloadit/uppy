@@ -2,7 +2,7 @@ import { describe, expect, it } from '@jest/globals'
 import resizeObserverPolyfill from 'resize-observer-polyfill'
 import Core from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
-import RemoteSources from '.'
+import RemoteSources from './index.js'
 
 describe('RemoteSources', () => {
   beforeAll(() => {
@@ -37,6 +37,6 @@ describe('RemoteSources', () => {
         companionUrl: 'https://example.com',
         sources: ['Webcam'],
       })
-    }).toThrow()
+    }).toThrow('Invalid plugin: "Webcam" is not one of: Box, Dropbox, Facebook, GoogleDrive, Instagram, OneDrive, Unsplash, Url, or Zoom.')
   })
 })
