@@ -275,6 +275,16 @@ module.exports = {
       },
     },
     {
+      files: ['packages/uppy/*.mjs'],
+      rules: {
+        'import/first': 'off',
+        'import/newline-after-import': 'off',
+        'import/no-extraneous-dependencies': ['error', {
+          devDependencies: true,
+        }],
+      },
+    },
+    {
       files: [
         'packages/@uppy/*/types/*.d.ts',
       ],
