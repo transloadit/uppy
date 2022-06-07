@@ -57,6 +57,8 @@ export default class Tus extends BasePlugin {
 
   #retryDelayIterator
 
+  #queueRequestSocketToken
+
   /**
    * @param {Uppy} uppy
    * @param {TusOptions} opts
@@ -97,6 +99,7 @@ export default class Tus extends BasePlugin {
 
     this.handleResetProgress = this.handleResetProgress.bind(this)
     this.handleUpload = this.handleUpload.bind(this)
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
   }
 
   handleResetProgress () {
@@ -427,6 +430,28 @@ export default class Tus extends BasePlugin {
     })
   }
 
+  #requestSocketToken = async (file) => {
+    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+    const client = new Client(this.uppy, file.remote.providerOptions)
+    const opts = { ...this.opts }
+
+    if (file.tus) {
+      // Install file-specific upload overrides.
+      Object.assign(opts, file.tus)
+    }
+
+    const res = await client.post(file.remote.url, {
+      ...file.remote.body,
+      endpoint: opts.endpoint,
+      uploadUrl: opts.uploadUrl,
+      protocol: 'tus',
+      size: file.data.size,
+      headers: opts.headers,
+      metadata: file.meta,
+    })
+    return res.token
+  }
+
   /**
    * @param {UppyFile} file for use with upload
    * @returns {Promise<void>}
@@ -434,36 +459,19 @@ export default class Tus extends BasePlugin {
   async uploadRemote (file) {
     this.resetUploaderReferences(file.id)
 
-    const opts = { ...this.opts }
-    if (file.tus) {
-      // Install file-specific upload overrides.
-      Object.assign(opts, file.tus)
+    // Don't double-emit upload-started for Golden Retriever-restored files that were already started
+    if (!file.progress.uploadStarted || !file.isRestored) {
+      this.uppy.emit('upload-started', file)
     }
-
-    this.uppy.emit('upload-started', file)
-    this.uppy.log(file.remote.url)
-
-    if (file.serverToken) {
-      await this.connectToServerSocket(file)
-      return
-    }
-
-    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-    const client = new Client(this.uppy, file.remote.providerOptions)
 
     try {
-      // !! cancellation is NOT supported at this stage yet
-      const res = await client.post(file.remote.url, {
-        ...file.remote.body,
-        endpoint: opts.endpoint,
-        uploadUrl: opts.uploadUrl,
-        protocol: 'tus',
-        size: file.data.size,
-        headers: opts.headers,
-        metadata: file.meta,
-      })
-      this.uppy.setFileState(file.id, { serverToken: res.token })
-      await this.connectToServerSocket(this.uppy.getFile(file.id))
+      if (file.serverToken) {
+        return this.connectToServerSocket(file)
+      }
+      const serverToken = await this.#queueRequestSocketToken(file)
+
+      this.uppy.setFileState(file.id, { serverToken })
+      return this.connectToServerSocket(this.uppy.getFile(file.id))
     } catch (err) {
       this.uppy.emit('upload-error', file, err)
       throw err
@@ -482,7 +490,7 @@ export default class Tus extends BasePlugin {
     return new Promise((resolve, reject) => {
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
+      const socket = new Socket({ target: `${host}/api/${token}` })
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
@@ -591,7 +599,6 @@ export default class Tus extends BasePlugin {
       })
 
       queuedRequest = this.requests.run(() => {
-        socket.open()
         if (file.isPaused) {
           socket.send('pause', {})
         }
