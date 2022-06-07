@@ -1,5 +1,13 @@
 # @uppy/aws-s3-multipart
 
+## 2.4.1
+
+Released: 2022-06-07
+Included in: Uppy v2.12.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus: queue socket token requests for remote files (Merlijn Vos / #3797)
+- @uppy/aws-s3-multipart: allow `companionHeaders` to be modified with `setOptions` (Paulo Lemos Neto / #3770)
+
 ## 2.4.0
 
 Released: 2022-05-30

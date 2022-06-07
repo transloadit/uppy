@@ -1,5 +1,12 @@
 # @uppy/xhr-upload
 
+## 2.1.2
+
+Released: 2022-06-07
+Included in: Uppy v2.12.0
+
+- @uppy/xhr-upload: replace `ev.target.status` with `xhr.status` (Wes Sankey / #3782)
+
 ## 2.1.1
 
 Released: 2022-05-30
