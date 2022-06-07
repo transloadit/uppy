@@ -26,6 +26,9 @@ export default async function commit (spawnOptions, STABLE_HEAD, ...files) {
       'git',
       [
         'merge',
+        '--no-edit',
+        '-m',
+        'Merge stable branch',
         STABLE_HEAD,
       ],
       spawnOptions,
@@ -33,6 +36,7 @@ export default async function commit (spawnOptions, STABLE_HEAD, ...files) {
     if (status) {
       console.log(stdout.toString())
       console.error(stderr.toString())
+
       await prompts({
         type: 'toggle',
         name: 'value',
@@ -41,6 +45,20 @@ export default async function commit (spawnOptions, STABLE_HEAD, ...files) {
         active: 'yes',
         inactive: 'yes',
       })
+
+      // eslint-disable-next-line no-shadow
+      const { status } = spawnSync(
+        'git',
+        [
+          'merge',
+          '--continue',
+        ],
+        { ...spawnOptions, stdio: 'inherit' },
+      )
+
+      if (status) {
+        throw new Error('Merge has failed')
+      }
     }
   }
   const mergeSha = spawnSync('git', ['rev-parse', 'HEAD'], spawnOptions).stdout.toString().trim()
