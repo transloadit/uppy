@@ -1,5 +1,12 @@
 # @uppy/robodog
 
+## 2.8.0
+
+Released: 2022-06-07
+Included in: Uppy v2.12.0
+
+- @uppy/robodog: fix linter warnings (Antoine du Hamel / #3808)
+
 ## 2.7.0
 
 Released: 2022-05-30

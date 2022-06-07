@@ -12,6 +12,34 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.12.0
+
+Released: 2022-06-07
+
+| Package                | Version | Package                | Version |
+| ---------------------- | ------- | ---------------------- | ------- |
+| @uppy/aws-s3           |   2.2.1 | @uppy/tus              |   2.4.1 |
+| @uppy/aws-s3-multipart |   2.4.1 | @uppy/url              |   2.2.0 |
+| @uppy/companion-client |   2.2.1 | @uppy/xhr-upload       |   2.1.2 |
+| @uppy/core             |   2.3.1 | @uppy/robodog          |   2.8.0 |
+| @uppy/react            |   2.2.2 | uppy                   |  2.12.0 |
+| @uppy/remote-sources   |   0.1.0 |                        |         |
+
+- @uppy/remote-sources: Add @uppy/remote-sources preset/plugin (Artur Paikin / #3676)
+- @uppy/react: Reset uppy instance when React component is unmounted (Tomasz Pęksa / #3814)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus: queue socket token requests for remote files (Merlijn Vos / #3797)
+- @uppy/xhr-upload: replace `ev.target.status` with `xhr.status` (Wes Sankey / #3782)
+- @uppy/core: fix `TypeError` when file was deleted (Antoine du Hamel / #3811)
+- @uppy/robodog: fix linter warnings (Antoine du Hamel / #3808)
+- meta: fix GHA workflow for prereleases (Antoine du Hamel)
+- @uppy/aws-s3-multipart: allow `companionHeaders` to be modified with `setOptions` (Paulo Lemos Neto / #3770)
+- @uppy/url: enable passing optional meta data to `addFile` (Brad Edelman / #3788)
+- @uppy/url: fix `getFileNameFromUrl` (Brad Edelman / #3804)
+- @uppy/tus: make onShouldRetry type optional (Merlijn Vos / #3800)
+- doc: fix React examples (Antoine du Hamel / #3799)
+- meta: add GHA workflow for prereleases (Antoine du Hamel)
+
+
 ## 2.11.0
 
 Released: 2022-05-30

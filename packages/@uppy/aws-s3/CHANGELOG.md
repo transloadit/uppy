@@ -1,5 +1,12 @@
 # @uppy/aws-s3
 
+## 2.2.1
+
+Released: 2022-06-07
+Included in: Uppy v2.12.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus: queue socket token requests for remote files (Merlijn Vos / #3797)
+
 ## 2.2.0
 
 Released: 2022-05-30

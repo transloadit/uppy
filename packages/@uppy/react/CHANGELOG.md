@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 2.2.2
+
+Released: 2022-06-07
+Included in: Uppy v2.12.0
+
+- @uppy/react: Reset uppy instance when React component is unmounted (Tomasz Pęksa / #3814)
+
 ## 2.2.1
 
 Released: 2022-05-30
