@@ -65,9 +65,9 @@ export default class RemoteSources extends BasePlugin {
       const optsForRemoteSourcePlugin = { ...this.opts, sources: undefined }
       const plugin = availablePlugins.find(p => p.name === pluginId)
       if (plugin == null) {
-        const availablePluginsIds = availablePlugins.map(p => p.name)
+        const pluginNames = availablePlugins.map(p => p.name)
         const formatter = new Intl.ListFormat('en', { style: 'long', type: 'disjunction' })
-        throw new Error(`Invalid plugin: "${pluginId}" is not one of: ${formatter.format(availablePluginsIds)}.`)
+        throw new Error(`Invalid plugin: "${pluginId}" is not one of: ${formatter.format(pluginNames)}.`)
       }
       this.uppy.use(plugin, optsForRemoteSourcePlugin)
       this.#installedPlugins.add(plugin)
