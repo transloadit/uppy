@@ -21,7 +21,7 @@ export default class AwsS3Multipart extends BasePlugin {
   static VERSION = packageJson.version
 
   #queueRequestSocketToken
-  
+
   #client
 
   constructor (uppy, opts) {
