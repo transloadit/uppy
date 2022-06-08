@@ -100,6 +100,7 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
       return res.status(400).json({ error: 'Invalid request body' })
     }
 
+    let videoID;
     let thumbnail = false;
     if (matchYoutubeUrl(url)) {
       const videoID = ytdl.getURLVideoID(url)
@@ -111,6 +112,9 @@ const downloadURL = async (url, blockLocalIPs, traceId) => {
     }
 
     const urlMeta = await getURLMeta(url, !allowLocalUrls)
+    if (videoID) {
+      urlMeta.videoId = videoID;
+    }
     return res.json(urlMeta)
   }
   catch(err) {
