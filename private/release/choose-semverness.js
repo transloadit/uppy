@@ -66,7 +66,7 @@ export default async function pickSemverness (
       `\nHere are the commits that landed on ${name} since previous release:\n${stdout}\n`,
     )
     console.log(
-      `Check the web UI at https://github.com/transloadit/uppy/tree/main/${encodeURI(
+      `Check the web UI at https://github.com/transloadit/uppy/tree/${TARGET_BRANCH}/${encodeURI(
         location,
       )}.`,
     )
