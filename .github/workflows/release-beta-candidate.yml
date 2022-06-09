@@ -15,6 +15,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           branch: release-beta
+          fetch-depth: 3 # the prepare commit, the merge commit, and the base ones.
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
