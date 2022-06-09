@@ -12,6 +12,40 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 3.0.0-beta.1
+
+Released: 2022-06-09
+
+| Package                   |      Version | Package                   |      Version |
+| ------------------------- | ------------ | ------------------------- | ------------ |
+| uppy                      | 3.0.0-beta.1 | @uppy/google-drive        | 3.0.0-beta.1 |
+| @uppy/audio               | 1.0.0-beta.1 | @uppy/informer            | 3.0.0-beta.1 |
+| @uppy/box                 | 2.0.0-beta.1 | @uppy/instagram           | 3.0.0-beta.1 |
+| @uppy/compressor          | 1.0.0-beta.1 | @uppy/locales             | 3.0.0-beta.1 |
+| @uppy/drop-target         | 2.0.0-beta.1 | @uppy/onedrive            | 3.0.0-beta.1 |
+| @uppy/image-editor        | 2.0.0-beta.1 | @uppy/progress-bar        | 3.0.0-beta.1 |
+| @uppy/remote-sources      | 1.0.0-beta.1 | @uppy/provider-views      | 3.0.0-beta.1 |
+| @uppy/svelte              | 2.0.0-beta.1 | @uppy/react               | 3.0.0-beta.1 |
+| @uppy/vue                 | 1.0.0-beta.1 | @uppy/redux-dev-tools     | 3.0.0-beta.1 |
+| @uppy/zoom                | 2.0.0-beta.1 | @uppy/robodog             | 3.0.0-beta.1 |
+| @uppy/aws-s3              | 3.0.0-beta.1 | @uppy/screen-capture      | 3.0.0-beta.1 |
+| @uppy/aws-s3-multipart    | 3.0.0-beta.1 | @uppy/status-bar          | 3.0.0-beta.1 |
+| @uppy/companion-client    | 3.0.0-beta.1 | @uppy/store-default       | 3.0.0-beta.1 |
+| @uppy/core                | 3.0.0-beta.1 | @uppy/store-redux         | 3.0.0-beta.1 |
+| @uppy/dashboard           | 3.0.0-beta.1 | @uppy/thumbnail-generator | 3.0.0-beta.1 |
+| @uppy/drag-drop           | 3.0.0-beta.1 | @uppy/transloadit         | 3.0.0-beta.1 |
+| @uppy/dropbox             | 3.0.0-beta.1 | @uppy/tus                 | 3.0.0-beta.1 |
+| @uppy/facebook            | 3.0.0-beta.1 | @uppy/unsplash            | 3.0.0-beta.1 |
+| @uppy/file-input          | 3.0.0-beta.1 | @uppy/url                 | 3.0.0-beta.1 |
+| @uppy/form                | 3.0.0-beta.1 | @uppy/webcam              | 3.0.0-beta.1 |
+| @uppy/golden-retriever    | 3.0.0-beta.1 | @uppy/xhr-upload          | 3.0.0-beta.1 |
+
+- meta: improve release process for beta branch (Antoine du Hamel / #3809)
+- uppy: refactor to ESM (Antoine du Hamel / #3807)
+- @uppy/core,@uppy/dashboard: fix types for some events (Antoine du Hamel / #3812)
+- example: update Vue2 example (Antoine du Hamel / #3802)
+
+
 ## 3.0.0-beta
 
 Released: 2022-05-30
