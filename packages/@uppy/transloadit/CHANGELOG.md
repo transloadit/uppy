@@ -1,5 +1,12 @@
 # @uppy/transloadit
 
+## 2.3.1
+
+Released: 2022-06-09
+Included in: Uppy v2.12.1
+
+- @uppy/transloadit: fix `COMPANION_PATTERN` export (Antoine du Hamel / #3820)
+
 ## 2.3.0
 
 Released: 2022-05-30
