@@ -12,6 +12,19 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.12.1
+
+Released: 2022-06-09
+
+| Package           | Version | Package           | Version |
+| ----------------- | ------- | ----------------- | ------- |
+| @uppy/transloadit |   2.3.1 | uppy              |  2.12.1 |
+| @uppy/robodog     |   2.8.1 |                   |         |
+
+- @uppy/transloadit: fix `COMPANION_PATTERN` export (Antoine du Hamel / #3820)
+- meta: fix URL generation in the release script (Antoine du Hamel)
+
+
 ## 2.12.0
 
 Released: 2022-06-07
