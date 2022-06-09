@@ -2,7 +2,7 @@ import fetch from 'node-fetch'
 
 import { spawnSync } from 'node:child_process'
 import prompts from 'prompts'
-import { TARGET_BRANCH, REPO_NAME, REPO_OWNER } from './config.js'
+import { TARGET_BRANCH, REPO_NAME, REPO_OWNER, STABLE_BRANCH } from './config.js'
 
 async function apiCall (endpoint, errorMessage) {
   const response = await fetch(
@@ -25,10 +25,10 @@ export async function getRemoteHEAD () {
 }
 
 async function getLatestReleaseSHA () {
-  const { tag_name } = await apiCall(
-    `/releases/latest`,
-    'Cannot get latest release from GitHub, check your internet connection.',
-  )
+  const response = await fetch(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${TARGET_BRANCH}/packages/uppy/package.json`)
+  if (!response.ok) throw new Error(`Network call failed: ${response.status} ${response.statusText}`)
+  const { version } = await response.json()
+  const tag_name = `uppy@${version}`
   console.log(`Last release was ${tag_name}.`)
   return (
     await apiCall(
@@ -36,6 +36,15 @@ async function getLatestReleaseSHA () {
       `Failed to fetch information for release ${JSON.stringify(tag_name)}`,
     )
   ).object.sha
+}
+
+function getStableBranchMergeBase (REMOTE_HEAD) {
+  spawnSync('git', ['fetch', `https://github.com/${REPO_OWNER}/${REPO_NAME}.git`, STABLE_BRANCH])
+  const STABLE_HEAD = spawnSync('git', ['rev-parse', 'FETCH_HEAD']).stdout.toString().trim()
+  return [[
+    spawnSync('git', ['merge-base', REMOTE_HEAD, 'FETCH_HEAD']).stdout.toString().trim(),
+    STABLE_HEAD,
+  ].join('..'), STABLE_HEAD]
 }
 
 async function getLocalHEAD () {
@@ -104,5 +113,5 @@ export async function validateGitStatus (spawnOptions) {
     }
   }
 
-  return [await latestRelease, LOCAL_HEAD]
+  return [await latestRelease, LOCAL_HEAD, ...getStableBranchMergeBase(REMOTE_HEAD)]
 }

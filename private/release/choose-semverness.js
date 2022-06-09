@@ -26,6 +26,7 @@ function maxSemverness (a, b) {
 export default async function pickSemverness (
   spawnOptions,
   LAST_RELEASE_COMMIT,
+  STABLE_BRANCH_MERGE_BASE_RANGE,
   releaseFileUrl,
   packagesList,
 ) {
@@ -55,7 +56,28 @@ export default async function pickSemverness (
       spawnOptions,
     )
     if (stdout.length === 0) {
-      console.log(`No commits since last release for ${name}, skipping.`)
+      const { stdout } = spawnSync(
+        'git',
+        [
+          '--no-pager',
+          'log',
+          '--format=- %s',
+          STABLE_BRANCH_MERGE_BASE_RANGE,
+          '--',
+          location,
+        ],
+        spawnOptions,
+      )
+      if (stdout.length === 0) {
+        console.log(`No commits since last release for ${name}, skipping.`)
+      } else {
+        console.log(`Some commits have landed on the stable branch since last release for ${name}.`)
+        releaseFile.write(`  ${JSON.stringify(name)}: prerelease\n`)
+        uppySemverness = maxSemverness(uppySemverness, 'prerelease')
+        if (robodogDeps.includes(name)) {
+          robodogSemverness = maxSemverness(robodogSemverness, 'prerelease')
+        }
+      }
       continue
     }
     console.log('\n')

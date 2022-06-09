@@ -1,9 +1,9 @@
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import prompts from 'prompts'
-import { REPO_OWNER, REPO_NAME } from './config.js'
+import { REPO_NAME, REPO_OWNER } from './config.js'
 
-export default async function commit (spawnOptions, ...files) {
+export default async function commit (spawnOptions, STABLE_HEAD, ...files) {
   console.log(`Now is the time to do manual edits to ${files.join(',')}.`)
   await prompts({
     type: 'toggle',
@@ -15,8 +15,59 @@ export default async function commit (spawnOptions, ...files) {
   })
 
   spawnSync('git', ['add', ...files.map(url => fileURLToPath(url))], spawnOptions)
+  const remoteHeadSha = spawnSync('git', ['rev-parse', 'HEAD'], spawnOptions).stdout.toString().trim()
   spawnSync('git', ['commit', '-n', '-m', 'Prepare next release'], { ...spawnOptions, stdio: 'inherit' })
+  const releaseSha = spawnSync('git', ['rev-parse', 'HEAD'], spawnOptions).stdout.toString().trim()
+
+  console.log('Attempting to merge changes from stable branch...')
+  {
+    // eslint-disable-next-line no-shadow
+    const { status, stdout, stderr } = spawnSync(
+      'git',
+      [
+        'merge',
+        '--no-edit',
+        '-m',
+        'Merge stable branch',
+        STABLE_HEAD,
+      ],
+      spawnOptions,
+    )
+    if (status) {
+      console.log(stdout.toString())
+      console.error(stderr.toString())
+
+      await prompts({
+        type: 'toggle',
+        name: 'value',
+        message: 'Fix the conflict before continuing. Ready?',
+        initial: true,
+        active: 'yes',
+        inactive: 'yes',
+      })
+
+      // eslint-disable-next-line no-shadow
+      const { status } = spawnSync(
+        'git',
+        [
+          'merge',
+          '--continue',
+        ],
+        { ...spawnOptions, stdio: 'inherit' },
+      )
+
+      if (status) {
+        throw new Error('Merge has failed')
+      }
+    }
+  }
+  const mergeSha = spawnSync('git', ['rev-parse', 'HEAD'], spawnOptions).stdout.toString().trim()
+
+  spawnSync('git', ['reset', remoteHeadSha, '--hard'], spawnOptions)
+  spawnSync('git', ['cherry-pick', mergeSha, '--hard'], spawnOptions)
+  spawnSync('git', ['cherry-pick', releaseSha, '--hard'], spawnOptions)
   const sha = spawnSync('git', ['rev-parse', 'HEAD'], spawnOptions).stdout.toString().trim()
+
   const getRemoteCommamnd = `git remote -v | grep '${REPO_OWNER}/${REPO_NAME}' | awk '($3 == "(push)") { print $1; exit }'`
   const remote = spawnSync('/bin/sh', ['-c', getRemoteCommamnd]).stdout.toString().trim()
                  || `git@github.com:${REPO_OWNER}/${REPO_NAME}.git`
