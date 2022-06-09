@@ -53,6 +53,8 @@ function createFormDataUpload (file, opts) {
 const createBareUpload = file => file.data
 
 export default class MiniXHRUpload {
+  #queueRequestSocketToken
+
   constructor (uppy, opts) {
     this.uppy = uppy
     this.opts = {
@@ -65,6 +67,8 @@ export default class MiniXHRUpload {
     this.requests = opts[internalRateLimitedQueue]
     this.uploaderEvents = Object.create(null)
     this.i18n = opts.i18n
+
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
   }
 
   #getOptions (file) {
@@ -243,19 +247,21 @@ export default class MiniXHRUpload {
     })
   }
 
-  #uploadRemoteFile (file) {
+  #requestSocketToken = async (file) => {
     const opts = this.#getOptions(file)
-    // This is done in index.js in the S3 plugin.
-    // this.uppy.emit('upload-started', file)
-
-    const metaFields = Array.isArray(opts.metaFields)
-      ? opts.metaFields
-    // Send along all fields by default.
-      : Object.keys(file.meta)
-
     const Client = file.remote.providerOptions.provider ? Provider : RequestClient
     const client = new Client(this.uppy, file.remote.providerOptions)
-    return client.post(file.remote.url, {
+    const metaFields = Array.isArray(opts.metaFields)
+      ? opts.metaFields
+      // Send along all fields by default.
+      : Object.keys(file.meta)
+
+    if (file.tus) {
+      // Install file-specific upload overrides.
+      Object.assign(opts, file.tus)
+    }
+
+    const res = await client.post(file.remote.url, {
       ...file.remote.body,
       endpoint: opts.endpoint,
       size: file.data.size,
@@ -264,14 +270,34 @@ export default class MiniXHRUpload {
       httpMethod: opts.method,
       useFormData: opts.formData,
       headers: opts.headers,
-    }).then(res => new Promise((resolve, reject) => {
-      const { token } = res
+    })
+    return res.token
+  }
+
+  async #uploadRemoteFile (file) {
+    try {
+      if (file.serverToken) {
+        return this.connectToServerSocket(file)
+      }
+      const serverToken = await this.#queueRequestSocketToken(file)
+
+      this.uppy.setFileState(file.id, { serverToken })
+      return this.connectToServerSocket(this.uppy.getFile(file.id))
+    } catch (err) {
+      this.uppy.emit('upload-error', file, err)
+      throw err
+    }
+  }
+
+  connectToServerSocket (file) {
+    return new Promise((resolve, reject) => {
+      const opts = this.#getOptions(file)
+      const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
+      const socket = new Socket({ target: `${host}/api/${token}` })
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
       const queuedRequest = this.requests.run(() => {
-        socket.open()
         if (file.isPaused) {
           socket.send('pause', {})
         }
@@ -341,6 +367,6 @@ export default class MiniXHRUpload {
     }).catch((err) => {
       this.uppy.emit('upload-error', file, err)
       return Promise.reject(err)
-    }))
+    })
   }
 }

@@ -20,12 +20,16 @@ function assertServerError (res) {
 export default class AwsS3Multipart extends BasePlugin {
   static VERSION = packageJson.version
 
+  #queueRequestSocketToken
+
+  #client
+
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3Multipart'
     this.title = 'AWS S3 Multipart'
-    this.client = new RequestClient(uppy, opts)
+    this.#client = new RequestClient(uppy, opts)
 
     const defaultOptions = {
       timeout: 30 * 1000,
@@ -36,6 +40,7 @@ export default class AwsS3Multipart extends BasePlugin {
       prepareUploadParts: this.prepareUploadParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
+      companionHeaders: {},
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -47,7 +52,16 @@ export default class AwsS3Multipart extends BasePlugin {
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
     this.uploaderSockets = Object.create(null)
+
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
   }
+
+  [Symbol.for('uppy test: getClient')] () { return this.#client }
+
+  // TODO: remove getter and setter for #client on the next major release
+  get client () { return this.#client }
+
+  set client (client) { this.#client = client }
 
   /**
    * Clean up all references for a file's upload: the MultipartUploader instance,
@@ -88,7 +102,7 @@ export default class AwsS3Multipart extends BasePlugin {
       }
     })
 
-    return this.client.post('s3/multipart', {
+    return this.#client.post('s3/multipart', {
       filename: file.name,
       type: file.type,
       metadata,
@@ -99,7 +113,7 @@ export default class AwsS3Multipart extends BasePlugin {
     this.assertHost('listParts')
 
     const filename = encodeURIComponent(key)
-    return this.client.get(`s3/multipart/${uploadId}?key=${filename}`)
+    return this.#client.get(`s3/multipart/${uploadId}?key=${filename}`)
       .then(assertServerError)
   }
 
@@ -107,7 +121,7 @@ export default class AwsS3Multipart extends BasePlugin {
     this.assertHost('prepareUploadParts')
 
     const filename = encodeURIComponent(key)
-    return this.client.get(`s3/multipart/${uploadId}/batch?key=${filename}&partNumbers=${partNumbers.join(',')}`)
+    return this.#client.get(`s3/multipart/${uploadId}/batch?key=${filename}&partNumbers=${partNumbers.join(',')}`)
       .then(assertServerError)
   }
 
@@ -116,7 +130,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
+    return this.#client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
       .then(assertServerError)
   }
 
@@ -125,7 +139,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`)
+    return this.#client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`)
       .then(assertServerError)
   }
 
@@ -279,7 +293,26 @@ export default class AwsS3Multipart extends BasePlugin {
     })
   }
 
-  uploadRemote (file) {
+  #requestSocketToken = async (file) => {
+    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+    const client = new Client(this.uppy, file.remote.providerOptions)
+    const opts = { ...this.opts }
+
+    if (file.tus) {
+      // Install file-specific upload overrides.
+      Object.assign(opts, file.tus)
+    }
+
+    const res = await client.post(file.remote.url, {
+      ...file.remote.body,
+      protocol: 's3-multipart',
+      size: file.data.size,
+      metadata: file.meta,
+    })
+    return res.token
+  }
+
+  async uploadRemote (file) {
     this.resetUploaderReferences(file.id)
 
     // Don't double-emit upload-started for Golden Retriever-restored files that were already started
@@ -287,33 +320,18 @@ export default class AwsS3Multipart extends BasePlugin {
       this.uppy.emit('upload-started', file)
     }
 
-    if (file.serverToken) {
-      return this.connectToServerSocket(file)
-    }
-
-    return new Promise((resolve, reject) => {
-      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-      const client = new Client(this.uppy, file.remote.providerOptions)
-      client.post(
-        file.remote.url,
-        {
-          ...file.remote.body,
-          protocol: 's3-multipart',
-          size: file.data.size,
-          metadata: file.meta,
-        },
-      ).then((res) => {
-        this.uppy.setFileState(file.id, { serverToken: res.token })
-        // eslint-disable-next-line no-param-reassign
-        file = this.uppy.getFile(file.id)
+    try {
+      if (file.serverToken) {
         return this.connectToServerSocket(file)
-      }).then(() => {
-        resolve()
-      }).catch((err) => {
-        this.uppy.emit('upload-error', file, err)
-        reject(err)
-      })
-    })
+      }
+      const serverToken = await this.#queueRequestSocketToken(file)
+
+      this.uppy.setFileState(file.id, { serverToken })
+      return this.connectToServerSocket(this.uppy.getFile(file.id))
+    } catch (err) {
+      this.uppy.emit('upload-error', file, err)
+      throw err
+    }
   }
 
   connectToServerSocket (file) {
@@ -322,7 +340,7 @@ export default class AwsS3Multipart extends BasePlugin {
 
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
+      const socket = new Socket({ target: `${host}/api/${token}` })
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
@@ -412,7 +430,6 @@ export default class AwsS3Multipart extends BasePlugin {
       })
 
       queuedRequest = this.requests.run(() => {
-        socket.open()
         if (file.isPaused) {
           socket.send('pause', {})
         }
@@ -434,6 +451,11 @@ export default class AwsS3Multipart extends BasePlugin {
     })
 
     return Promise.all(promises)
+  }
+
+  #setCompanionHeaders = () => {
+    this.#client.setCompanionHeaders(this.opts.companionHeaders)
+    return Promise.resolve()
   }
 
   onFileRemove (fileID, cb) {
@@ -495,6 +517,7 @@ export default class AwsS3Multipart extends BasePlugin {
         resumableUploads: true,
       },
     })
+    this.uppy.addPreProcessor(this.#setCompanionHeaders)
     this.uppy.addUploader(this.upload)
   }
 
@@ -506,6 +529,7 @@ export default class AwsS3Multipart extends BasePlugin {
         resumableUploads: false,
       },
     })
+    this.uppy.removePreProcessor(this.#setCompanionHeaders)
     this.uppy.removeUploader(this.upload)
   }
 }

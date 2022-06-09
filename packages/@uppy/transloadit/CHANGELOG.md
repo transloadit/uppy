@@ -7,6 +7,13 @@ Included in: Uppy v3.0.0-beta
 
 - @uppy/transloadit: remove IE 10 hack (Antoine du Hamel / #3777)
 
+## 2.3.1
+
+Released: 2022-06-09
+Included in: Uppy v2.12.1
+
+- @uppy/transloadit: fix `COMPANION_PATTERN` export (Antoine du Hamel / #3820)
+
 ## 2.3.0
 
 Released: 2022-05-30

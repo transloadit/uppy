@@ -14,13 +14,8 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v3
         with:
-          branch: release
-      - name: Rebase
-        run: |
-          git fetch origin ${{ env.BETA_BRANCH }} --depth=1
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-          git rebase FETCH_HEAD
+          branch: release-beta
+          fetch-depth: 3 # the prepare commit, the merge commit, and the base ones.
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(corepack yarn config get cacheFolder)"
@@ -56,6 +51,8 @@ jobs:
           echo "This is a release candidate for the following packages:" >> commitMessage
           echo >> commitMessage
           jq -r 'map("- `"+.ident+"`: "+.oldVersion+" -> "+.newVersion) | join("\n") ' < releases.json >> commitMessage
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
           git commit -n --amend --file commitMessage
       - name: Open Pull Request
         id: pr_opening

@@ -24,6 +24,7 @@ function mergeDefaultLocale (defaults, userProvided = {}) {
 function form (target, opts) {
   if (!opts) throw new TypeError('robodog.form: must provide an options object')
 
+  // eslint-disable-next-line no-param-reassign
   opts = {
     ...opts,
     locale: mergeDefaultLocale(defaultLocaleStrings, opts.locale),

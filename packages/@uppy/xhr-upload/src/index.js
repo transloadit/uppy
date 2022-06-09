@@ -251,7 +251,7 @@ export default class XHRUpload extends BasePlugin {
         }
       })
 
-      xhr.addEventListener('load', (ev) => {
+      xhr.addEventListener('load', () => {
         this.uppy.log(`[XHRUpload] ${id} finished`)
         timer.done()
         queuedRequest.done()
@@ -260,12 +260,12 @@ export default class XHRUpload extends BasePlugin {
           this.uploaderEvents[file.id] = null
         }
 
-        if (opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
+        if (opts.validateStatus(xhr.status, xhr.responseText, xhr)) {
           const body = opts.getResponseData(xhr.responseText, xhr)
           const uploadURL = body[opts.responseUrlFieldName]
 
           const uploadResp = {
-            status: ev.target.status,
+            status: xhr.status,
             body,
             uploadURL,
           }
@@ -282,7 +282,7 @@ export default class XHRUpload extends BasePlugin {
         const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
 
         const response = {
-          status: ev.target.status,
+          status: xhr.status,
           body,
         }
 

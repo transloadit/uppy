@@ -967,7 +967,7 @@ class Uppy {
         if (error.details) {
           newError.details += ` ${error.details}`
         }
-        newError.message = this.i18n('failedToUpload', { file: file.name })
+        newError.message = this.i18n('failedToUpload', { file: file?.name })
         this.#informAndEmit(newError)
       } else {
         this.#informAndEmit(error)

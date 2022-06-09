@@ -4,6 +4,7 @@ import { createWriteStream, mkdirSync, readFileSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 
 import prompts from 'prompts'
+import { TARGET_BRANCH } from './config.js'
 
 const ROOT = new  URL('../../', import.meta.url)
 const PACKAGES_FOLDER = new URL('./packages/', ROOT)
@@ -87,7 +88,7 @@ export default async function pickSemverness (
       `\nHere are the commits that landed on ${name} since previous release:\n${stdout}\n`,
     )
     console.log(
-      `Check the web UI at https://github.com/transloadit/uppy/tree/main/${encodeURI(
+      `Check the web UI at https://github.com/transloadit/uppy/tree/${TARGET_BRANCH}/${encodeURI(
         location,
       )}.`,
     )
@@ -147,7 +148,7 @@ export default async function pickSemverness (
         `Here are the commits that landed on @uppy/robodog since previous release:\n\n${stdout}\n`,
       )
       console.log(
-        `Check the web UI at https://github.com/transloadit/uppy/tree/main/${encodeURI(
+        `Check the web UI at https://github.com/transloadit/uppy/tree/${TARGET_BRANCH}/${encodeURI(
           location,
         )}.`,
       )
