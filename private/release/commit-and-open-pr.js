@@ -3,6 +3,22 @@ import { fileURLToPath } from 'node:url'
 import prompts from 'prompts'
 import { REPO_NAME, REPO_OWNER } from './config.js'
 
+function runProcessOrThrow (...args) {
+  const cp = spawnSync(...args)
+
+  if (cp.status) {
+    console.log(cp.stdout.toString())
+    console.error(cp.stderr.toString())
+    throw new Error(`Non-zero status: ${cp.status}. ${args}`)
+  }
+
+  return cp
+}
+
+function getContentFromProcessSync (...args) {
+  return runProcessOrThrow(...args).stdout.toString().trim()
+}
+
 export default async function commit (spawnOptions, STABLE_HEAD, ...files) {
   console.log(`Now is the time to do manual edits to ${files.join(',')}.`)
   await prompts({
@@ -15,9 +31,12 @@ export default async function commit (spawnOptions, STABLE_HEAD, ...files) {
   })
 
   spawnSync('git', ['add', ...files.map(url => fileURLToPath(url))], spawnOptions)
-  const remoteHeadSha = spawnSync('git', ['rev-parse', 'HEAD'], spawnOptions).stdout.toString().trim()
   spawnSync('git', ['commit', '-n', '-m', 'Prepare next release'], { ...spawnOptions, stdio: 'inherit' })
-  const releaseSha = spawnSync('git', ['rev-parse', 'HEAD'], spawnOptions).stdout.toString().trim()
+
+  // Reverting to the remote head before starting the merge. We keep the git sha
+  // in a variable to cherry-pick it later.
+  const releaseSha = getContentFromProcessSync('git', ['rev-parse', 'HEAD'], spawnOptions)
+  runProcessOrThrow('git', ['reset', 'HEAD^', '--hard'])
 
   console.log('Attempting to merge changes from stable branch...')
   {
@@ -61,12 +80,9 @@ export default async function commit (spawnOptions, STABLE_HEAD, ...files) {
       }
     }
   }
-  const mergeSha = spawnSync('git', ['rev-parse', 'HEAD'], spawnOptions).stdout.toString().trim()
 
-  spawnSync('git', ['reset', remoteHeadSha, '--hard'], spawnOptions)
-  spawnSync('git', ['cherry-pick', mergeSha, '--hard'], spawnOptions)
-  spawnSync('git', ['cherry-pick', releaseSha, '--hard'], spawnOptions)
-  const sha = spawnSync('git', ['rev-parse', 'HEAD'], spawnOptions).stdout.toString().trim()
+  runProcessOrThrow('git', ['cherry-pick', releaseSha], spawnOptions)
+  const sha = getContentFromProcessSync('git', ['rev-parse', 'HEAD'], spawnOptions)
 
   const getRemoteCommamnd = `git remote -v | grep '${REPO_OWNER}/${REPO_NAME}' | awk '($3 == "(push)") { print $1; exit }'`
   const remote = spawnSync('/bin/sh', ['-c', getRemoteCommamnd]).stdout.toString().trim()
