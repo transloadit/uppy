@@ -836,11 +836,11 @@ export default class Transloadit extends BasePlugin {
 
 export {
   COMPANION,
-  ALLOWED_COMPANION_PATTERN,
+  ALLOWED_COMPANION_PATTERN as COMPANION_PATTERN,
 }
 
-// Backward compatibility: we want `COMPANION` and `ALLOWED_COMPANION_PATTERN`
+// Backward compatibility: we want `COMPANION` and `COMPANION_PATTERN`
 // to keep being accessible as static properties of `Transloadit` to avoid a
 // breaking change.
 Transloadit.COMPANION = COMPANION // TODO: remove this line on the next major
-Transloadit.ALLOWED_COMPANION_PATTERN = ALLOWED_COMPANION_PATTERN // TODO: remove this line on the next major
+Transloadit.COMPANION_PATTERN = ALLOWED_COMPANION_PATTERN // TODO: remove this line on the next major
