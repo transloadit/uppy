@@ -26,7 +26,7 @@ function PickerPanelContent (props) {
           {props.i18n('cancel')}
         </button>
       </div>
-      <div className="uppy-DashboardContent-panelBody">
+      <div className={`uppy-DashboardContent-panelBody ${props.activePickerPanel.id}`}>
         {props.uppy.getPlugin(props.activePickerPanel.id).render(props.state)}
       </div>
     </div>
