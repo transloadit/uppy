@@ -216,8 +216,6 @@ class Box extends Provider {
   }
 }
 
-Box.version = 2
-
 Box.prototype.list = promisify(Box.prototype._list)
 Box.prototype.size = promisify(Box.prototype._size)
 Box.prototype.logout = promisify(Box.prototype._logout)

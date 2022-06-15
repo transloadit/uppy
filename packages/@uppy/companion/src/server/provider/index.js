@@ -18,7 +18,6 @@ const { getCredentialsResolver } = require('./credentials')
 const Provider = require('./Provider')
 // eslint-disable-next-line
 const SearchProvider = require('./SearchProvider')
-const { wrapLegacyProvider } = require('./ProviderCompat')
 
 // leave here for now until Purest Providers gets updated with Zoom provider
 purestConfig.zoom = {
@@ -80,12 +79,8 @@ module.exports.getProviderMiddleware = (providers, needsProviderCredentials) => 
    * @param {string} providerName
    */
   const middleware = (req, res, next, providerName) => {
-    let ProviderClass = providers[providerName]
+    const ProviderClass = providers[providerName]
     if (ProviderClass && validOptions(req.companion.options)) {
-      // TODO remove this legacy provider compatibility when we release a new major
-      // @ts-ignore
-      if (ProviderClass.version !== 2) ProviderClass = wrapLegacyProvider(ProviderClass)
-
       req.companion.provider = new ProviderClass({ providerName, config: purestConfig })
 
       if (needsProviderCredentials) {

@@ -524,7 +524,6 @@ To work well with Companion, the **module** must be a class with the following m
 The class must also have:
 
 * A unique `authProvider` string property - a lowercased value which typically indicates the name of the provider (e.g “dropbox”).
-* A `static` property `static version = 2`, which is the current version of the Companion Provider API.
 
 See also [example code with a custom provider](https://github.com/transloadit/uppy/blob/main/examples/custom-provider/server).
 
