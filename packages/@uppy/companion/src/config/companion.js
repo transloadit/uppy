@@ -22,6 +22,7 @@ const defaultOptions = {
   periodicPingUrls: [],
   streamingUpload: false,
   clientSocketConnectTimeout: 60000,
+  metrics: true,
 }
 
 /**
