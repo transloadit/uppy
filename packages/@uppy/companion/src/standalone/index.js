@@ -167,7 +167,7 @@ module.exports = function server (inputCompanionOptions = {}) {
   }
 
   // initialize companion
-  const companionApp = companion.app(companionOptions)
+  const { app: companionApp } = companion.app(companionOptions)
 
   // add companion to server middleware
   router.use(companionApp)

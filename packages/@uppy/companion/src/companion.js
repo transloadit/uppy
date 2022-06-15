@@ -57,7 +57,7 @@ module.exports.socket = require('./server/socket')
  * Entry point into initializing the Companion app.
  *
  * @param {object} optionsArg
- * @returns {import('express').Express}
+ * @returns {{ app: import('express').Express, emitter: any }}}
  */
 module.exports.app = (optionsArg = {}) => {
   validateConfig(optionsArg)
@@ -152,8 +152,5 @@ module.exports.app = (optionsArg = {}) => {
     processId,
   })
 
-  // todo split emitter from app in next major
-  // @ts-ignore
-  app.companionEmitter = emitter
-  return app
+  return { app, emitter }
 }
