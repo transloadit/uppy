@@ -295,7 +295,7 @@ class Uploader {
       const ret = await this.uploadStream(stream)
       if (!ret) return
       const { url, extraData } = ret
-      this.emitSuccess(url, extraData)
+      this.#emitSuccess(url, extraData)
     } catch (err) {
       if (err instanceof AbortError) {
         logger.error('Aborted upload', 'uploader.aborted', this.shortToken)
@@ -303,7 +303,7 @@ class Uploader {
       }
       // console.log(err)
       logger.error(err, 'uploader.error', this.shortToken)
-      this.emitError(err)
+      this.#emitError(err)
     } finally {
       emitter().removeAllListeners(`pause:${this.token}`)
       emitter().removeAllListeners(`resume:${this.token}`)
@@ -460,7 +460,7 @@ class Uploader {
    * @param {string} url
    * @param {object} extraData
    */
-  emitSuccess (url, extraData) {
+  #emitSuccess (url, extraData) {
     const emitData = {
       action: 'success',
       payload: { ...extraData, complete: true, url },
@@ -473,14 +473,12 @@ class Uploader {
    *
    * @param {Error} err
    */
-  emitError (err) {
+  #emitError (err) {
     // delete stack to avoid sending server info to client
-    // todo remove also extraData from serializedErr in next major
-    const { stack, ...serializedErr } = serializeError(err)
+    const { stack, ...payload } = serializeError(err)
     const dataToEmit = {
       action: 'error',
-      // @ts-ignore
-      payload: { ...err.extraData, error: serializedErr },
+      payload,
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)

@@ -276,7 +276,7 @@ describe('uploader with tus protocol', () => {
     return new Promise((resolve, reject) => {
       socketClient.onUploadError(uploadToken, (message) => {
         try {
-          expect(message).toMatchObject({ payload: { error: { message: 'maxFileSize exceeded' } } })
+          expect(message).toMatchObject({ payload: { message: 'maxFileSize exceeded' } })
           resolve()
         } catch (err) {
           reject(err)
