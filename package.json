@@ -26,9 +26,9 @@
   "license": "MIT",
   "engines": {
     "node": "^v14.17.0 || >=v16.0.0",
-    "yarn": "3.1.0"
+    "yarn": "3.2.1"
   },
-  "packageManager": "yarn@3.1.0",
+  "packageManager": "yarn@3.2.1",
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",
@@ -69,7 +69,6 @@
     "concat-stream": "^2.0.0",
     "core-js": "~3.19.3",
     "cssnano": "^5.0.6",
-    "dedent": "^0.7.0",
     "dotenv": "^16.0.0",
     "esbuild": "^0.14.1",
     "esbuild-plugin-babel": "^0.2.3",
@@ -148,7 +147,8 @@
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
     "start:companion": "bash bin/companion.sh",
     "start": "npm-run-all --parallel watch start:companion web:start",
-    "e2e": "yarn build && npm-run-all --parallel watch:js:lib e2e:client start:companion e2e:cypress",
+    "e2e": "yarn build && yarn e2e:skip-build",
+    "e2e:skip-build": "npm-run-all --parallel watch:js:lib e2e:client start:companion e2e:cypress",
     "e2e:ci": "start-server-and-test 'npm-run-all --parallel e2e:client start:companion' '1234|3020' e2e:headless",
     "e2e:client": "yarn workspace e2e client:start",
     "e2e:cypress": "yarn workspace e2e cypress:open",
@@ -156,8 +156,6 @@
     "e2e:generate": "yarn workspace e2e generate-test",
     "test:companion": "yarn workspace @uppy/companion test",
     "test:companion:watch": "yarn workspace @uppy/companion test --watch",
-    "test:endtoend:local": "yarn workspace @uppy-tests/end2end test:endtoend:local",
-    "test:endtoend": "yarn workspace @uppy-tests/end2end test:endtoend",
     "test:locale-packs": "yarn locale-packs:unused && yarn locale-packs:warnings",
     "test:locale-packs:unused": "yarn workspace @uppy-dev/locale-pack test unused",
     "test:locale-packs:warnings": "yarn workspace @uppy-dev/locale-pack test warnings",
@@ -205,7 +203,6 @@
     "@types/react": "^17",
     "@types/webpack-dev-server": "^4",
     "npm-auth-to-token@1.0.0": "patch:npm-auth-to-token@npm:1.0.0#.yarn/patches/npm-auth-to-token-npm-1.0.0-c288ce201f",
-    "babel-plugin-transform-commonjs@1.1.6": "patch:babel-plugin-transform-commonjs@npm:1.1.6#.yarn/patches/babel-plugin-transform-commonjs-npm-1.1.6-0007fa2809",
     "exifr": "patch:exifr@npm:7.1.3#.yarn/patches/exifr-npm-7.1.3-e3f1c7a57d"
   }
 }

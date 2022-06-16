@@ -1,4 +1,11 @@
-const es_ES = {}
+const es_ES = {
+  pluralize (n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
 
 es_ES.strings = {
   addMoreFiles: 'Agregar más archivos',
@@ -82,6 +89,7 @@ es_ES.strings = {
   resumeUpload: 'Reanudar subida',
   retry: 'Intentar nuevamente',
   retryUpload: 'Intentar subida nuevamente',
+  save: 'Guardar',
   saveChanges: 'Guardar cambios',
   selectX: {
     '0': 'Seleccionar %{smart_count}',
@@ -140,15 +148,8 @@ es_ES.strings = {
   openFolderNamed: 'Carpeta abierta %{name}',
 }
 
-es_ES.pluralize = function pluralize (n) {
-  if (n === 1) {
-    return 0
-  }
-  return 1
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.es_ES = es_ES
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.es_ES = es_ES
-}
-
-module.exports = es_ES
+export default es_ES

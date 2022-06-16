@@ -1,7 +1,7 @@
 {
   "name": "@uppy/react-native",
   "description": "React Native Uppy UI components",
-  "version": "0.2.4",
+  "version": "0.3.1",
   "main": "file-picker/index.js",
   "license": "MIT",
   "keywords": [
@@ -29,7 +29,8 @@
     "expo-document-picker": ">=6.0.0",
     "expo-image-picker": ">=6.0.0",
     "expo-permissions": ">=6.0.0",
-    "react": "^16.0.0 || ^17.0.0",
-    "react-native": "*"
+    "react": "^16.0.0 || ^17.0.0 || ^18.0.0",
+    "react-native": "*",
+    "react-native-super-grid": "*"
   }
 }

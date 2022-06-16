@@ -231,16 +231,13 @@ Indicates whether cross-site Access-Control requests should be made using creden
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
-module.exports = {
+export default {
   strings: {
     // Shown in the Informer if an upload is being canceled because it stalled for too long.
     timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   },
 }
-
 ```
 
 ## POST Parameters / Form Fields

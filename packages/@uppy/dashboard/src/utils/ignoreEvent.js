@@ -14,4 +14,4 @@ function ignoreEvent (ev) {
   ev.stopPropagation()
 }
 
-module.exports = ignoreEvent
+export default ignoreEvent

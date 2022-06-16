@@ -1,6 +1,7 @@
-const nock = require('nock')
-const Core = require('@uppy/core')
-const XHRUpload = require('./index')
+import { jest, describe, it, expect } from '@jest/globals'
+import nock from 'nock'
+import Core from '@uppy/core'
+import XHRUpload from './index.js'
 
 describe('XHRUpload', () => {
   describe('getResponseData', () => {
@@ -26,7 +27,7 @@ describe('XHRUpload', () => {
       })
       core.addFile({
         name: 'test.jpg',
-        data: new Blob([Buffer.alloc(8192)]),
+        data: new Blob([new Uint8Array(8192)]),
       })
 
       return core.upload().then(() => {
@@ -64,7 +65,7 @@ describe('XHRUpload', () => {
       })
       core.addFile({
         name: 'test.jpg',
-        data: new Blob([Buffer.alloc(8192)]),
+        data: new Blob([new Uint8Array(8192)]),
       })
 
       return core.upload().then(result => {
@@ -101,7 +102,7 @@ describe('XHRUpload', () => {
       })
       core.addFile({
         name: 'test.jpg',
-        data: new Blob([Buffer.alloc(8192)]),
+        data: new Blob([new Uint8Array(8192)]),
       })
 
       await core.upload()

@@ -1,4 +1,5 @@
-const UppySocket = require('./Socket')
+import { afterEach, beforeEach, jest, describe, it, expect } from '@jest/globals'
+import UppySocket from './Socket.js'
 
 describe('Socket', () => {
   let webSocketConstructorSpy
@@ -10,7 +11,7 @@ describe('Socket', () => {
     webSocketCloseSpy = jest.fn()
     webSocketSendSpy = jest.fn()
 
-    global.WebSocket = class WebSocket {
+    globalThis.WebSocket = class WebSocket {
       constructor (target) {
         webSocketConstructorSpy(target)
       }
@@ -35,7 +36,7 @@ describe('Socket', () => {
     }
   })
   afterEach(() => {
-    global.WebSocket = undefined
+    globalThis.WebSocket = undefined
   })
 
   it('should expose a class', () => {

@@ -334,10 +334,8 @@ Dashboard ships with the `ThumbnailGenerator` plugin that adds small resized ima
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
-module.exports = {
+export default {
   strings: {
     // When `inline: false`, used as the screen reader label for the button that closes the modal.
     closeModal: 'Close Modal',
@@ -425,7 +423,6 @@ module.exports = {
     },
   },
 }
-
 ```
 
 ### `theme: 'light'`

@@ -17,9 +17,10 @@ module.exports = function useUppy (factory) {
 
   useEffect(() => {
     return () => {
-      uppy.current.close()
+      uppy.current.close({ reason: 'unmount' })
+      uppy.current = undefined
     }
-  }, [])
+  }, [uppy])
 
   return uppy.current
 }

@@ -1,4 +1,5 @@
-const getFileType = require('./getFileType')
+import { describe, expect, it } from '@jest/globals'
+import getFileType from './getFileType.js'
 
 describe('getFileType', () => {
   it('should trust the filetype if the file comes from a remote source', () => {
@@ -32,6 +33,10 @@ describe('getFileType', () => {
       name: 'bar.mkv',
       data: 'sdfsfhfh329fhwihs',
     }
+    const fileDicom = {
+      name: 'bar.dicom',
+      data: 'sdfsfhfh329fhwihs',
+    }
     const toUpper = (file) => ({ ...file, name: file.name.toUpperCase() })
     expect(getFileType(fileMP3)).toEqual('audio/mp3')
     expect(getFileType(toUpper(fileMP3))).toEqual('audio/mp3')
@@ -39,6 +44,8 @@ describe('getFileType', () => {
     expect(getFileType(toUpper(fileYAML))).toEqual('text/yaml')
     expect(getFileType(fileMKV)).toEqual('video/x-matroska')
     expect(getFileType(toUpper(fileMKV))).toEqual('video/x-matroska')
+    expect(getFileType(fileDicom)).toEqual('application/dicom')
+    expect(getFileType(toUpper(fileDicom))).toEqual('application/dicom')
   })
 
   it('should fail gracefully if unable to detect', () => {

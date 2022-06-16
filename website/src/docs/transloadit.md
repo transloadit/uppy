@@ -302,10 +302,8 @@ Limit the amount of uploads going on at the same time. Setting this to `0` means
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
-module.exports = {
+export default {
   strings: {
     // Shown while Assemblies are being created for an upload.
     creatingAssembly: 'Preparing upload...',
@@ -316,7 +314,6 @@ module.exports = {
     encoding: 'Encoding...',
   },
 }
-
 ```
 
 ## Errors
@@ -412,3 +409,7 @@ uppy.on('transloadit:complete', (assembly) => {
 [assembly-status]: https://transloadit.com/docs/api/#assembly-status-response
 
 [template-credentials]: https://transloadit.com/docs/#how-to-create-template-credentials
+
+## Assembly behavior when Uppy is closed
+
+When integrating `@uppy/transloadit` with `@uppy/dashboard`, closing the dashboard will result in continuing assemblies on the server. When the user manually cancels the upload any running assemblies will be cancelled.

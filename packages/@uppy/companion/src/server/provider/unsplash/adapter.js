@@ -40,7 +40,7 @@ exports.getItemThumbnailUrl = (item) => {
 }
 
 exports.getNextPageQuery = (currentQuery) => {
-  const newCursor = parseInt(currentQuery.cursor || 1) + 1
+  const newCursor = Number.parseInt(currentQuery.cursor || 1, 10) + 1
   const query = {
     ...currentQuery,
     cursor: newCursor,

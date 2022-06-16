@@ -1,12 +1,13 @@
+import packageJson from '../package.json'
 /**
  * Default store that keeps state in a simple object.
  */
 class DefaultStore {
-  static VERSION = require('../package.json').version
+  static VERSION = packageJson.version
 
   constructor () {
     this.state = {}
-    this.callbacks = []
+    this.callbacks = [] // TODO: use a Set instead, make it a private prop
   }
 
   getState () {
@@ -39,6 +40,7 @@ class DefaultStore {
   }
 }
 
-module.exports = function defaultStore () {
+// TODO: export the class instead in the next major.
+export default function defaultStore () {
   return new DefaultStore()
 }

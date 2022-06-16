@@ -43,7 +43,7 @@ module.exports.getURLBuilder = (options) => {
    *
    * @param {string} path the tail path of the url
    * @param {boolean} isExternal if the url is for the external world
-   * @param {boolean=} excludeHost if the server domain and protocol should be included
+   * @param {boolean} [excludeHost] if the server domain and protocol should be included
    */
   const buildURL = (path, isExternal, excludeHost) => {
     let url = path

@@ -1,6 +1,6 @@
 import { Transloadit } from 'uppy' // eslint-disable-line import/no-extraneous-dependencies
 import { expectError } from 'tsd'
-import Robodog from '.'
+import Robodog from '.' // eslint-disable-line import/no-unresolved
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 

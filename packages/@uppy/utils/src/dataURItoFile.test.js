@@ -1,5 +1,6 @@
-const dataURItoFile = require('./dataURItoFile')
-const sampleImageDataURI = require('./sampleImageDataURI')
+import { describe, expect, it } from '@jest/globals'
+import dataURItoFile from './dataURItoFile.js'
+import sampleImageDataURI from './sampleImageDataURI.js'
 
 describe('dataURItoFile', () => {
   it('should convert a data uri to a file', () => {

@@ -1,5 +1,5 @@
-const dataURItoBlob = require('./dataURItoBlob')
+import dataURItoBlob from './dataURItoBlob.js'
 
-module.exports = function dataURItoFile (dataURI, opts) {
+export default function dataURItoFile (dataURI, opts) {
   return dataURItoBlob(dataURI, opts, true)
 }

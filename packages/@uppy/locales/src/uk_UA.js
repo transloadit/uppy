@@ -1,4 +1,16 @@
-const uk_UA = {}
+const uk_UA = {
+  pluralize (n) {
+    if (n % 10 === 1 && n % 100 !== 11) {
+      return 0
+    }
+
+    if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) {
+      return 1
+    }
+
+    return 2
+  },
+}
 
 uk_UA.strings = {
   addMoreFiles: 'Додати ще файли',
@@ -137,20 +149,8 @@ uk_UA.strings = {
   openFolderNamed: 'Відкрити теку %{name}',
 }
 
-uk_UA.pluralize = function pluralize (n) {
-  if (n % 10 === 1 && n % 100 !== 11) {
-    return 0
-  }
-
-  if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) {
-    return 1
-  }
-
-  return 2
+if (typeof Uppy !== 'undefined') {
+  globalThis.Uppy.locales.uk_UA = uk_UA
 }
 
-if (typeof window !== 'undefined' && typeof window.Uppy !== 'undefined') {
-  window.Uppy.locales.uk_UA = uk_UA
-}
-
-module.exports = uk_UA
+export default uk_UA

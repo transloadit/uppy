@@ -1,4 +1,5 @@
-const DefaultStore = require('./index')
+import { describe, expect, it } from '@jest/globals'
+import DefaultStore from './index.js'
 
 describe('DefaultStore', () => {
   it('can be created with or without new', () => {

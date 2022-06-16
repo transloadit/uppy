@@ -1,33 +1,27 @@
 /* eslint no-console: "off", no-restricted-syntax: "off" */
-const fs = require('fs')
-const path = require('path')
-const prettierBytes = require('@transloadit/prettier-bytes')
-const Core = require('./index')
-const UIPlugin = require('./UIPlugin')
-const AcquirerPlugin1 = require('./mocks/acquirerPlugin1')
-const AcquirerPlugin2 = require('./mocks/acquirerPlugin2')
-const InvalidPlugin = require('./mocks/invalidPlugin')
-const InvalidPluginWithoutId = require('./mocks/invalidPluginWithoutId')
-const InvalidPluginWithoutType = require('./mocks/invalidPluginWithoutType')
-const DeepFrozenStore = require('../../../../e2e/cypress/fixtures/DeepFrozenStore.js')
+import { afterEach, beforeEach, describe, expect, it, jest, xit } from '@jest/globals'
 
-jest.mock('nanoid/non-secure', () => {
-  return { nanoid: () => 'cjd09qwxb000dlql4tp4doz8h' }
-})
-jest.mock('@uppy/utils/lib/findDOMElement', () => {
-  return () => null
-})
+import fs from 'node:fs'
+import prettierBytes from '@transloadit/prettier-bytes'
+import Core from '../lib/index.js'
+import UIPlugin from '../lib/UIPlugin.js'
+import AcquirerPlugin1 from './mocks/acquirerPlugin1.js'
+import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
+import InvalidPlugin from './mocks/invalidPlugin.js'
+import InvalidPluginWithoutId from './mocks/invalidPluginWithoutId.js'
+import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.js'
+import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mjs'
 
-const sampleImage = fs.readFileSync(path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'))
+const sampleImage = fs.readFileSync(new URL('../../../../e2e/cypress/fixtures/images/image.jpg', import.meta.url))
 
 describe('src/Core', () => {
-  const RealCreateObjectUrl = global.URL.createObjectURL
+  const RealCreateObjectUrl = globalThis.URL.createObjectURL
   beforeEach(() => {
-    global.URL.createObjectURL = jest.fn().mockReturnValue('newUrl')
+    globalThis.URL.createObjectURL = jest.fn().mockReturnValue('newUrl')
   })
 
   afterEach(() => {
-    global.URL.createObjectURL = RealCreateObjectUrl
+    globalThis.URL.createObjectURL = RealCreateObjectUrl
   })
 
   it('should expose a class', () => {
@@ -223,7 +217,7 @@ describe('src/Core', () => {
 
     core.reset()
 
-    expect(coreCancelEventMock.mock.calls.length).toEqual(1)
+    expect(coreCancelEventMock).toHaveBeenCalledWith({ reason: 'user' }, undefined, undefined, undefined, undefined, undefined)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(2)
     expect(coreStateUpdateEventMock.mock.calls[1][1]).toEqual({
       capabilities: { individualCancellation: true, uploadProgress: true, resumableUploads: false },
@@ -285,7 +279,7 @@ describe('src/Core', () => {
 
     core.close()
 
-    expect(coreCancelEventMock.mock.calls.length).toEqual(1)
+    expect(coreCancelEventMock).toHaveBeenCalledWith({ reason: 'user' }, undefined, undefined, undefined, undefined, undefined)
     expect(coreStateUpdateEventMock.mock.calls.length).toEqual(1)
     expect(coreStateUpdateEventMock.mock.calls[0][1]).toEqual({
       capabilities: { individualCancellation: true, uploadProgress: true, resumableUploads: false },
@@ -1098,7 +1092,7 @@ describe('src/Core', () => {
         source: 'jest',
         name: 'empty.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(1000)], { type: 'application/octet-stream' }),
+        data: new File([new Uint8Array(1000)], { type: 'application/octet-stream' }),
       })
 
       expect(core.getFiles()).toHaveLength(2)
@@ -1716,7 +1710,7 @@ describe('src/Core', () => {
       const restrictionsViolatedEventMock = jest.fn()
       const file = {
         name: 'test.jpg',
-        data: new Blob([Buffer.alloc(2 * maxFileSize)]),
+        data: new Blob([new Uint8Array(2 * maxFileSize)]),
       }
       const errorMessage = core.i18n('exceedsSize', { file: file.name, size: prettierBytes(maxFileSize) })
       try {
@@ -1766,11 +1760,11 @@ describe('src/Core', () => {
   })
 
   describe('updateOnlineStatus', () => {
-    const RealNavigatorOnline = global.window.navigator.onLine
+    const RealNavigatorOnline = globalThis.window.navigator.onLine
 
     function mockNavigatorOnline (status) {
       Object.defineProperty(
-        global.window.navigator,
+        globalThis.window.navigator,
         'onLine',
         {
           value: status,
@@ -1780,7 +1774,7 @@ describe('src/Core', () => {
     }
 
     afterEach(() => {
-      global.window.navigator.onLine = RealNavigatorOnline
+      globalThis.window.navigator.onLine = RealNavigatorOnline
     })
 
     it('should emit the correct event based on whether there is a network connection', () => {

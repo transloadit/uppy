@@ -1,4 +1,5 @@
-const isPreviewSupported = require('./isPreviewSupported')
+import { describe, expect, it } from '@jest/globals'
+import isPreviewSupported from './isPreviewSupported.js'
 
 describe('isPreviewSupported', () => {
   it('should return true for any filetypes that browsers can preview', () => {

@@ -1,5 +1,6 @@
-const dataURItoBlob = require('./dataURItoBlob')
-const sampleImageDataURI = require('./sampleImageDataURI')
+import { describe, expect, it } from '@jest/globals'
+import dataURItoBlob from './dataURItoBlob.js'
+import sampleImageDataURI from './sampleImageDataURI.js'
 
 describe('dataURItoBlob', () => {
   it('should convert a data uri to a blob', () => {

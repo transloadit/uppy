@@ -1,6 +1,7 @@
-const { UIPlugin } = require('@uppy/core')
-const emitter = require('namespace-emitter')
-const ThumbnailGeneratorPlugin = require('./index')
+import { afterEach, beforeEach, describe, it, expect, jest, xit } from '@jest/globals'
+import { UIPlugin } from '@uppy/core'
+import emitter from 'namespace-emitter'
+import ThumbnailGeneratorPlugin from './index.js'
 
 const delay = duration => new Promise(resolve => setTimeout(resolve, duration))
 
@@ -139,6 +140,9 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       URL.revokeObjectURL = jest.fn(() => null)
 
       try {
+        const file1 = { id: 1, name: 'bar.jpg', type: 'image/jpeg', data: new Blob() }
+        const file2 = { id: 2, name: 'bar2.jpg', type: 'image/jpeg', data: new Blob() }
+
         plugin.createThumbnail = jest.fn(async () => {
           await delay(50)
           return 'blob:http://uppy.io/fake-thumbnail'
@@ -148,8 +152,6 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
           if (id === 2) file2.preview = preview
         })
 
-        const file1 = { id: 1, name: 'bar.jpg', type: 'image/jpeg', data: new Blob() }
-        const file2 = { id: 2, name: 'bar2.jpg', type: 'image/jpeg', data: new Blob() }
         core.mockFile(file1.id, file1)
         core.emit('file-added', file1)
         core.mockFile(file2.id, file2)
@@ -191,7 +193,8 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
           expect(file.id).toBe(expected.shift())
           expect(preview).toBe(`blob:${file.id}.png`)
         } catch (err) {
-          return reject(err)
+          reject(err)
+          return
         }
         if (expected.length === 0) resolve()
       })

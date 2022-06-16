@@ -65,10 +65,8 @@ Configures whether to show a dropdown which enables to choose the audio device t
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
-module.exports = {
+export default {
   strings: {
     pluginNameAudio: 'Audio',
     // Used as the label for the button that starts an audio recording.
@@ -98,5 +96,4 @@ module.exports = {
     discardRecordedFile: 'Discard recorded file',
   },
 }
-
 ```

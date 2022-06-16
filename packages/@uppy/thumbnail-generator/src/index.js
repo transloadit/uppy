@@ -1,17 +1,110 @@
-const { UIPlugin } = require('@uppy/core')
-const dataURItoBlob = require('@uppy/utils/lib/dataURItoBlob')
-const isObjectURL = require('@uppy/utils/lib/isObjectURL')
-const isPreviewSupported = require('@uppy/utils/lib/isPreviewSupported')
-const { rotation } = require('exifr/dist/mini.umd.js')
+import { UIPlugin } from '@uppy/core'
+import dataURItoBlob from '@uppy/utils/lib/dataURItoBlob'
+import isObjectURL from '@uppy/utils/lib/isObjectURL'
+import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
+import { rotation } from 'exifr/dist/mini.umd.js'
 
-const locale = require('./locale')
+import locale from './locale.js'
+import packageJson from '../package.json'
+
+/**
+ * Save a <canvas> element's content to a Blob object.
+ *
+ * @param {HTMLCanvasElement} canvas
+ * @returns {Promise}
+ */
+function canvasToBlob (canvas, type, quality) {
+  try {
+    canvas.getContext('2d').getImageData(0, 0, 1, 1)
+  } catch (err) {
+    if (err.code === 18) {
+      return Promise.reject(new Error('cannot read image, probably an svg with external resources'))
+    }
+  }
+
+  if (canvas.toBlob) {
+    return new Promise(resolve => {
+      canvas.toBlob(resolve, type, quality)
+    }).then((blob) => {
+      if (blob === null) {
+        throw new Error('cannot read image, probably an svg with external resources')
+      }
+      return blob
+    })
+  }
+  return Promise.resolve().then(() => {
+    return dataURItoBlob(canvas.toDataURL(type, quality), {})
+  }).then((blob) => {
+    if (blob === null) {
+      throw new Error('could not extract blob, probably an old browser')
+    }
+    return blob
+  })
+}
+
+function rotateImage (image, translate) {
+  let w = image.width
+  let h = image.height
+
+  if (translate.deg === 90 || translate.deg === 270) {
+    w = image.height
+    h = image.width
+  }
+
+  const canvas = document.createElement('canvas')
+  canvas.width = w
+  canvas.height = h
+
+  const context = canvas.getContext('2d')
+  context.translate(w / 2, h / 2)
+  if (translate.canvas) {
+    context.rotate(translate.rad)
+    context.scale(translate.scaleX, translate.scaleY)
+  }
+  context.drawImage(image, -image.width / 2, -image.height / 2, image.width, image.height)
+
+  return canvas
+}
+
+/**
+ * Make sure the image doesn’t exceed browser/device canvas limits.
+ * For ios with 256 RAM and ie
+ */
+function protect (image) {
+  // https://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element
+
+  const ratio = image.width / image.height
+
+  const maxSquare = 5000000 // ios max canvas square
+  const maxSize = 4096 // ie max canvas dimensions
+
+  let maxW = Math.floor(Math.sqrt(maxSquare * ratio))
+  let maxH = Math.floor(maxSquare / Math.sqrt(maxSquare * ratio))
+  if (maxW > maxSize) {
+    maxW = maxSize
+    maxH = Math.round(maxW / ratio)
+  }
+  if (maxH > maxSize) {
+    maxH = maxSize
+    maxW = Math.round(ratio * maxH)
+  }
+  if (image.width > maxW) {
+    const canvas = document.createElement('canvas')
+    canvas.width = maxW
+    canvas.height = maxH
+    canvas.getContext('2d').drawImage(image, 0, 0, maxW, maxH)
+    return canvas
+  }
+
+  return image
+}
 
 /**
  * The Thumbnail Generator plugin
  */
 
-module.exports = class ThumbnailGenerator extends UIPlugin {
-  static VERSION = require('../package.json').version
+export default class ThumbnailGenerator extends UIPlugin {
+  static VERSION = packageJson.version
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -84,7 +177,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
    * account. If neither width nor height are given, the default dimension
    * is used.
    */
-  getProportionalDimensions (img, width, height, rotation) {
+  getProportionalDimensions (img, width, height, rotation) { // eslint-disable-line no-shadow
     let aspect = img.width / img.height
     if (rotation === 90 || rotation === 270) {
       aspect = img.height / img.width
@@ -111,39 +204,6 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
   }
 
   /**
-   * Make sure the image doesn’t exceed browser/device canvas limits.
-   * For ios with 256 RAM and ie
-   */
-  protect (image) {
-    // https://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element
-
-    const ratio = image.width / image.height
-
-    const maxSquare = 5000000 // ios max canvas square
-    const maxSize = 4096 // ie max canvas dimensions
-
-    let maxW = Math.floor(Math.sqrt(maxSquare * ratio))
-    let maxH = Math.floor(maxSquare / Math.sqrt(maxSquare * ratio))
-    if (maxW > maxSize) {
-      maxW = maxSize
-      maxH = Math.round(maxW / ratio)
-    }
-    if (maxH > maxSize) {
-      maxH = maxSize
-      maxW = Math.round(ratio * maxH)
-    }
-    if (image.width > maxW) {
-      const canvas = document.createElement('canvas')
-      canvas.width = maxW
-      canvas.height = maxH
-      canvas.getContext('2d').drawImage(image, 0, 0, maxW, maxH)
-      image = canvas
-    }
-
-    return image
-  }
-
-  /**
    * Resize an image to the target `width` and `height`.
    *
    * Returns a Canvas with the resized image on it.
@@ -152,9 +212,9 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
     // Resizing in steps refactored to use a solution from
     // https://blog.uploadcare.com/image-resize-in-browsers-is-broken-e38eed08df01
 
-    image = this.protect(image)
+    let img = this.protect(image)
 
-    let steps = Math.ceil(Math.log2(image.width / targetWidth))
+    let steps = Math.ceil(Math.log2(img.width / targetWidth))
     if (steps < 1) {
       steps = 1
     }
@@ -166,73 +226,14 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
       const canvas = document.createElement('canvas')
       canvas.width = sW
       canvas.height = sH
-      canvas.getContext('2d').drawImage(image, 0, 0, sW, sH)
-      image = canvas
+      canvas.getContext('2d').drawImage(img, 0, 0, sW, sH)
+      img = canvas
 
       sW = Math.round(sW / x)
       sH = Math.round(sH / x)
     }
 
-    return image
-  }
-
-  rotateImage (image, translate) {
-    let w = image.width
-    let h = image.height
-
-    if (translate.deg === 90 || translate.deg === 270) {
-      w = image.height
-      h = image.width
-    }
-
-    const canvas = document.createElement('canvas')
-    canvas.width = w
-    canvas.height = h
-
-    const context = canvas.getContext('2d')
-    context.translate(w / 2, h / 2)
-    if (translate.canvas) {
-      context.rotate(translate.rad)
-      context.scale(translate.scaleX, translate.scaleY)
-    }
-    context.drawImage(image, -image.width / 2, -image.height / 2, image.width, image.height)
-
-    return canvas
-  }
-
-  /**
-   * Save a <canvas> element's content to a Blob object.
-   *
-   * @param {HTMLCanvasElement} canvas
-   * @returns {Promise}
-   */
-  canvasToBlob (canvas, type, quality) {
-    try {
-      canvas.getContext('2d').getImageData(0, 0, 1, 1)
-    } catch (err) {
-      if (err.code === 18) {
-        return Promise.reject(new Error('cannot read image, probably an svg with external resources'))
-      }
-    }
-
-    if (canvas.toBlob) {
-      return new Promise(resolve => {
-        canvas.toBlob(resolve, type, quality)
-      }).then((blob) => {
-        if (blob === null) {
-          throw new Error('cannot read image, probably an svg with external resources')
-        }
-        return blob
-      })
-    }
-    return Promise.resolve().then(() => {
-      return dataURItoBlob(canvas.toDataURL(type, quality), {})
-    }).then((blob) => {
-      if (blob === null) {
-        throw new Error('could not extract blob, probably an old browser')
-      }
-      return blob
-    })
+    return img
   }
 
   /**
@@ -255,7 +256,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
       const current = this.uppy.getFile(this.queue.shift())
       if (!current) {
         this.uppy.log('[ThumbnailGenerator] file was removed before a thumbnail could be generated, but not removed from the queue. This is probably a bug', 'error')
-        return
+        return Promise.resolve()
       }
       return this.requestThumbnail(current)
         .catch(() => {}) // eslint-disable-line node/handle-callback-err
@@ -264,6 +265,7 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
     this.queueProcessing = false
     this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue')
     this.uppy.emit('thumbnail:all-generated')
+    return Promise.resolve()
   }
 
   requestThumbnail (file) {
@@ -396,3 +398,8 @@ module.exports = class ThumbnailGenerator extends UIPlugin {
     }
   }
 }
+
+// TODO: remove these methods from the prototype in the next major.
+ThumbnailGenerator.prototype.canvasToBlob = canvasToBlob
+ThumbnailGenerator.prototype.protect = protect
+ThumbnailGenerator.prototype.rotateImage = rotateImage

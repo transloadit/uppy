@@ -1,6 +1,7 @@
-require('whatwg-fetch')
-const Core = require('@uppy/core')
-const AwsS3 = require('.')
+import { describe, expect, it } from '@jest/globals'
+import 'whatwg-fetch'
+import Core from '@uppy/core'
+import AwsS3 from './index.js'
 
 describe('AwsS3', () => {
   it('Registers AwsS3 upload plugin', () => {
@@ -32,6 +33,37 @@ describe('AwsS3', () => {
       }
 
       expect(() => awsS3.opts.getUploadParameters(file)).not.toThrow()
+    })
+  })
+
+  describe('dynamic companionHeader', () => {
+    let core
+    let awsS3
+    const oldToken = 'old token'
+    const newToken = 'new token'
+
+    beforeEach(() => {
+      core = new Core()
+      core.use(AwsS3, {
+        companionHeaders: {
+          authorization: oldToken,
+        },
+      })
+      awsS3 = core.getPlugin('AwsS3')
+    })
+
+    it('companionHeader is updated before uploading file', async () => {
+      awsS3.setOptions({
+        companionHeaders: {
+          authorization: newToken,
+        },
+      })
+
+      await core.upload()
+
+      const client = awsS3[Symbol.for('uppy test: getClient')]()
+
+      expect(client[Symbol.for('uppy test: getCompanionHeaders')]().authorization).toEqual(newToken)
     })
   })
 })

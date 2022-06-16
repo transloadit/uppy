@@ -1,8 +1,10 @@
 'use strict'
 
-const fetchWithNetworkError = require('@uppy/utils/lib/fetchWithNetworkError')
-const ErrorWithCause = require('@uppy/utils/lib/ErrorWithCause')
-const AuthError = require('./AuthError')
+import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
+import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
+import AuthError from './AuthError.js'
+
+import packageJson from '../package.json'
 
 // Remove the trailing slash so we can always safely append /xyz.
 function stripSlash (url) {
@@ -30,9 +32,10 @@ async function handleJSONResponse (res) {
   return jsonPromise
 }
 
-module.exports = class RequestClient {
-  // eslint-disable-next-line global-require
-  static VERSION = require('../package.json').version
+export default class RequestClient {
+  static VERSION = packageJson.version
+
+  #companionHeaders
 
   #getPostResponseFunc = skip => response => (skip ? response : this.onReceiveResponse(response))
 
@@ -42,7 +45,14 @@ module.exports = class RequestClient {
     this.onReceiveResponse = this.onReceiveResponse.bind(this)
     this.allowedHeaders = ['accept', 'content-type', 'uppy-auth-token']
     this.preflightDone = false
+    this.#companionHeaders = opts?.companionHeaders
   }
+
+  setCompanionHeaders (headers) {
+    this.#companionHeaders = headers
+  }
+
+  [Symbol.for('uppy test: getCompanionHeaders')] () { return this.#companionHeaders }
 
   get hostname () {
     const { companion } = this.uppy.getState()
@@ -57,10 +67,9 @@ module.exports = class RequestClient {
   }
 
   headers () {
-    const userHeaders = this.opts.companionHeaders || {}
     return Promise.resolve({
       ...RequestClient.defaultHeaders,
-      ...userHeaders,
+      ...this.#companionHeaders,
     })
   }
 

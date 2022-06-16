@@ -1,13 +1,15 @@
-const hasProperty = require('@uppy/utils/lib/hasProperty')
-const ErrorWithCause = require('@uppy/utils/lib/ErrorWithCause')
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const Tus = require('@uppy/tus')
-const Assembly = require('./Assembly')
-const Client = require('./Client')
-const AssemblyOptions = require('./AssemblyOptions')
-const AssemblyWatcher = require('./AssemblyWatcher')
+import hasProperty from '@uppy/utils/lib/hasProperty'
+import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import BasePlugin from '@uppy/core/lib/BasePlugin'
+import Tus from '@uppy/tus'
+import Assembly from './Assembly.js'
+import Client from './Client.js'
+import AssemblyOptions, { validateParams } from './AssemblyOptions.js'
+import AssemblyWatcher from './AssemblyWatcher.js'
 
-const locale = require('./locale')
+import locale from './locale.js'
+import packageJson from '../package.json'
 
 function defaultGetAssemblyOptions (file, options) {
   return {
@@ -19,7 +21,7 @@ function defaultGetAssemblyOptions (file, options) {
 
 const sendErrorToConsole = originalErr => err => {
   const error = new ErrorWithCause('Failed to send error to the client', { cause: err })
-  // eslint-ignore-next-line no-console
+  // eslint-disable-next-line no-console
   console.error(error, originalErr)
 }
 
@@ -32,8 +34,10 @@ const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
 /**
  * Upload files to Transloadit using Tus.
  */
-module.exports = class Transloadit extends BasePlugin {
-  static VERSION = require('../package.json').version // eslint-disable-line global-require
+export default class Transloadit extends BasePlugin {
+  static VERSION = packageJson.version
+
+  #rateLimitedQueue
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -59,22 +63,24 @@ module.exports = class Transloadit extends BasePlugin {
     }
 
     this.opts = { ...defaultOptions, ...opts }
+    this.#rateLimitedQueue = new RateLimitedQueue(this.opts.limit)
 
     this.i18nInit()
 
     const hasCustomAssemblyOptions = this.opts.getAssemblyOptions !== defaultOptions.getAssemblyOptions
     if (this.opts.params) {
-      AssemblyOptions.validateParams(this.opts.params)
+      validateParams(this.opts.params)
     } else if (!hasCustomAssemblyOptions) {
       // Throw the same error that we'd throw if the `params` returned from a
       // `getAssemblyOptions()` function is null.
-      AssemblyOptions.validateParams(null)
+      validateParams(null)
     }
 
     this.client = new Client({
       service: this.opts.service,
       client: this.#getClientVersion(),
       errorReporting: this.opts.errorReporting,
+      rateLimitedQueue: this.#rateLimitedQueue,
     })
     // Contains Assembly instances for in-progress Assemblies.
     this.activeAssemblies = {}
@@ -185,7 +191,7 @@ module.exports = class Transloadit extends BasePlugin {
       expectedFiles: fileIDs.length,
       signature: options.signature,
     }).then((newAssembly) => {
-      const assembly = new Assembly(newAssembly)
+      const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
       const { status } = assembly
       const assemblyID = status.assembly_id
 
@@ -236,7 +242,14 @@ module.exports = class Transloadit extends BasePlugin {
       this.uppy.log(`[Transloadit] Created Assembly ${assemblyID}`)
       return assembly
     }).catch((err) => {
-      throw new ErrorWithCause(`${this.i18n('creatingAssemblyFailed')}: ${err.message}`, { cause: err })
+      const wrapped = new ErrorWithCause(`${this.i18n('creatingAssemblyFailed')}: ${err.message}`, { cause: err })
+      if ('details' in err) {
+        wrapped.details = err.details
+      }
+      if ('assembly' in err) {
+        wrapped.assembly = err.assembly
+      }
+      throw wrapped
     })
   }
 
@@ -398,19 +411,18 @@ module.exports = class Transloadit extends BasePlugin {
   /**
    * When all files are removed, cancel in-progress Assemblies.
    */
-  #onCancelAll = () => {
-    const { uploadsAssemblies } = this.getPluginState()
+  #onCancelAll = async ({ reason } = {}) => {
+    try {
+      if (reason !== 'user') return
 
-    const assemblyIDs = Object.values(uploadsAssemblies).flat(1)
+      const { uploadsAssemblies } = this.getPluginState()
+      const assemblyIDs = Object.values(uploadsAssemblies).flat(1)
+      const assemblies = assemblyIDs.map((assemblyID) => this.getAssembly(assemblyID))
 
-    const cancelPromises = assemblyIDs.map((assemblyID) => {
-      const assembly = this.getAssembly(assemblyID)
-      return this.#cancelAssembly(assembly)
-    })
-
-    Promise.all(cancelPromises).catch((err) => {
+      await Promise.all(assemblies.map((assembly) => this.#cancelAssembly(assembly)))
+    } catch (err) {
       this.uppy.log(err)
-    })
+    }
   }
 
   /**
@@ -493,7 +505,7 @@ module.exports = class Transloadit extends BasePlugin {
 
       const allAssemblyIDs = Object.keys(assemblies)
       allAssemblyIDs.forEach((id) => {
-        const assembly = new Assembly(assemblies[id])
+        const assembly = new Assembly(assemblies[id], this.#rateLimitedQueue)
         this.#connectAssembly(assembly)
       })
     }
@@ -763,6 +775,7 @@ module.exports = class Transloadit extends BasePlugin {
         metaFields: ['assembly_url', 'filename', 'fieldname'],
         // Pass the limit option to @uppy/tus
         limit: this.opts.limit,
+        rateLimitedQueue: this.#rateLimitedQueue,
         retryDelays: this.opts.retryDelays,
       })
     }
@@ -821,5 +834,15 @@ module.exports = class Transloadit extends BasePlugin {
   }
 }
 
-module.exports.COMPANION = COMPANION
-module.exports.COMPANION_PATTERN = ALLOWED_COMPANION_PATTERN
+export {
+  ALLOWED_COMPANION_PATTERN,
+  COMPANION,
+  ALLOWED_COMPANION_PATTERN as COMPANION_PATTERN,
+}
+
+// Backward compatibility: we want `COMPANION` and `COMPANION_PATTERN`
+// to keep being accessible as static properties of `Transloadit` to avoid a
+// breaking change.
+Transloadit.ALLOWED_COMPANION_PATTERN = ALLOWED_COMPANION_PATTERN // TODO: remove this line on the next major
+Transloadit.COMPANION = COMPANION // TODO: remove this line on the next major
+Transloadit.COMPANION_PATTERN = ALLOWED_COMPANION_PATTERN // TODO: remove this line on the next major

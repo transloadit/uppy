@@ -84,10 +84,8 @@ The `name` attribute for the `<input type="file">` element.
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
-module.exports = {
+export default {
   strings: {
     // The same key is used for the same purpose by @uppy/robodog's `form()` API, but our
     // locale pack scripts can't access it in Robodog. If it is updated here, it should
@@ -95,7 +93,6 @@ module.exports = {
     chooseFiles: 'Choose files',
   },
 }
-
 ```
 
 ## Custom file input

@@ -58,6 +58,16 @@ uppy.use(ThumbnailGenerator, {
 
 A unique identifier for this plugin. It defaults to `'ThumbnailGenerator'`.
 
+### `locale: {}`
+
+```js
+export default {
+  strings: {
+    generatingThumbnails: 'Generating thumbnails...',
+  },
+}
+```
+
 ### `thumbnailWidth: 200`
 
 Width of the resulting thumbnail. Default thumbnail dimension is 200px. Thumbnails are always proportional and not cropped. If width is provided, height is calculated automatically to match ratio.

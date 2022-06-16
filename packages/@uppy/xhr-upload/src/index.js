@@ -1,16 +1,17 @@
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const { nanoid } = require('nanoid/non-secure')
-const { Provider, RequestClient, Socket } = require('@uppy/companion-client')
-const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
-const getSocketHost = require('@uppy/utils/lib/getSocketHost')
-const settle = require('@uppy/utils/lib/settle')
-const EventTracker = require('@uppy/utils/lib/EventTracker')
-const ProgressTimeout = require('@uppy/utils/lib/ProgressTimeout')
-const { RateLimitedQueue, internalRateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const NetworkError = require('@uppy/utils/lib/NetworkError')
-const isNetworkError = require('@uppy/utils/lib/isNetworkError')
+import BasePlugin from '@uppy/core/lib/BasePlugin'
+import { nanoid } from 'nanoid/non-secure'
+import { Provider, RequestClient, Socket } from '@uppy/companion-client'
+import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
+import getSocketHost from '@uppy/utils/lib/getSocketHost'
+import settle from '@uppy/utils/lib/settle'
+import EventTracker from '@uppy/utils/lib/EventTracker'
+import ProgressTimeout from '@uppy/utils/lib/ProgressTimeout'
+import { RateLimitedQueue, internalRateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import NetworkError from '@uppy/utils/lib/NetworkError'
+import isNetworkError from '@uppy/utils/lib/isNetworkError'
 
-const locale = require('./locale')
+import packageJson from '../package.json'
+import locale from './locale.js'
 
 function buildResponseError (xhr, err) {
   let error = err
@@ -45,9 +46,9 @@ function setTypeInBlob (file) {
   return dataWithUpdatedType
 }
 
-module.exports = class XHRUpload extends BasePlugin {
+export default class XHRUpload extends BasePlugin {
   // eslint-disable-next-line global-require
-  static VERSION = require('../package.json').version
+  static VERSION = packageJson.version
 
   constructor (uppy, opts) {
     super(uppy, opts)
@@ -71,14 +72,7 @@ module.exports = class XHRUpload extends BasePlugin {
       withCredentials: false,
       responseType: '',
       /**
-       * @typedef respObj
-       * @property {string} responseText
-       * @property {number} status
-       * @property {string} statusText
-       * @property {object.<string, string>} headers
-       *
        * @param {string} responseText the response body string
-       * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
        */
       getResponseData (responseText) {
         let parsedResponse = {}
@@ -92,7 +86,7 @@ module.exports = class XHRUpload extends BasePlugin {
       },
       /**
        *
-       * @param {string} responseText the response body string
+       * @param {string} _ the response body string
        * @param {XMLHttpRequest | respObj} response the response object (XHR or similar)
        */
       getResponseError (_, response) {
@@ -226,6 +220,7 @@ module.exports = class XHRUpload extends BasePlugin {
 
       const xhr = new XMLHttpRequest()
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+      let queuedRequest
 
       const timer = new ProgressTimeout(opts.timeout, () => {
         xhr.abort()
@@ -256,7 +251,7 @@ module.exports = class XHRUpload extends BasePlugin {
         }
       })
 
-      xhr.addEventListener('load', (ev) => {
+      xhr.addEventListener('load', () => {
         this.uppy.log(`[XHRUpload] ${id} finished`)
         timer.done()
         queuedRequest.done()
@@ -265,12 +260,12 @@ module.exports = class XHRUpload extends BasePlugin {
           this.uploaderEvents[file.id] = null
         }
 
-        if (opts.validateStatus(ev.target.status, xhr.responseText, xhr)) {
+        if (opts.validateStatus(xhr.status, xhr.responseText, xhr)) {
           const body = opts.getResponseData(xhr.responseText, xhr)
           const uploadURL = body[opts.responseUrlFieldName]
 
           const uploadResp = {
-            status: ev.target.status,
+            status: xhr.status,
             body,
             uploadURL,
           }
@@ -287,7 +282,7 @@ module.exports = class XHRUpload extends BasePlugin {
         const error = buildResponseError(xhr, opts.getResponseError(xhr.responseText, xhr))
 
         const response = {
-          status: ev.target.status,
+          status: xhr.status,
           body,
         }
 
@@ -317,7 +312,7 @@ module.exports = class XHRUpload extends BasePlugin {
         xhr.responseType = opts.responseType
       }
 
-      const queuedRequest = this.requests.run(() => {
+      queuedRequest = this.requests.run(() => {
         this.uppy.emit('upload-started', file)
 
         // When using an authentication system like JWT, the bearer token goes as a header. This
@@ -343,8 +338,10 @@ module.exports = class XHRUpload extends BasePlugin {
         reject(new Error('File removed'))
       })
 
-      this.onCancelAll(file.id, () => {
-        queuedRequest.abort()
+      this.onCancelAll(file.id, ({ reason }) => {
+        if (reason === 'user') {
+          queuedRequest.abort()
+        }
         reject(new Error('Upload cancelled'))
       })
     })
@@ -381,6 +378,7 @@ module.exports = class XHRUpload extends BasePlugin {
         const host = getSocketHost(file.remote.companionUrl)
         const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
         this.uploaderEvents[file.id] = new EventTracker(this.uppy)
+        let queuedRequest
 
         this.onFileRemove(file.id, () => {
           socket.send('cancel', {})
@@ -388,9 +386,11 @@ module.exports = class XHRUpload extends BasePlugin {
           resolve(`upload ${file.id} was removed`)
         })
 
-        this.onCancelAll(file.id, () => {
-          socket.send('cancel', {})
-          queuedRequest.abort()
+        this.onCancelAll(file.id, ({ reason } = {}) => {
+          if (reason === 'user') {
+            socket.send('cancel', {})
+            queuedRequest.abort()
+          }
           resolve(`upload ${file.id} was canceled`)
         })
 
@@ -439,7 +439,7 @@ module.exports = class XHRUpload extends BasePlugin {
           reject(error)
         })
 
-        const queuedRequest = this.requests.run(() => {
+        queuedRequest = this.requests.run(() => {
           socket.open()
           if (file.isPaused) {
             socket.send('pause', {})
@@ -467,18 +467,18 @@ module.exports = class XHRUpload extends BasePlugin {
 
       const xhr = new XMLHttpRequest()
 
+      const emitError = (error) => {
+        files.forEach((file) => {
+          this.uppy.emit('upload-error', file, error)
+        })
+      }
+
       const timer = new ProgressTimeout(this.opts.timeout, () => {
         xhr.abort()
         const error = new Error(this.i18n('timedOut', { seconds: Math.ceil(this.opts.timeout / 1000) }))
         emitError(error)
         reject(error)
       })
-
-      const emitError = (error) => {
-        files.forEach((file) => {
-          this.uppy.emit('upload-error', file, error)
-        })
-      }
 
       xhr.upload.addEventListener('loadstart', () => {
         this.uppy.log('[XHRUpload] started uploading bundle')
@@ -493,7 +493,7 @@ module.exports = class XHRUpload extends BasePlugin {
         files.forEach((file) => {
           this.uppy.emit('upload-progress', file, {
             uploader: this,
-            bytesUploaded: ev.loaded / ev.total * file.size,
+            bytesUploaded: (ev.loaded / ev.total) * file.size,
             bytesTotal: file.size,
           })
         })
@@ -528,7 +528,8 @@ module.exports = class XHRUpload extends BasePlugin {
         return reject(error)
       })
 
-      this.uppy.on('cancel-all', () => {
+      this.uppy.on('cancel-all', ({ reason } = {}) => {
+        if (reason !== 'user') return
         timer.done()
         xhr.abort()
       })
@@ -590,10 +591,10 @@ module.exports = class XHRUpload extends BasePlugin {
     })
   }
 
-  onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('cancel-all', () => {
+  onCancelAll (fileID, eventHandler) {
+    this.uploaderEvents[fileID].on('cancel-all', (...args) => {
       if (!this.uppy.getFile(fileID)) return
-      cb()
+      eventHandler(...args)
     })
   }
 

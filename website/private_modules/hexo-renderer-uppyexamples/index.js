@@ -12,7 +12,8 @@ const browserifyScript = `${webRoot}/build-examples.js`
 
 function parseExamplesBrowserify (data, options, callback) {
   if (!data || !data.path) {
-    return callback(null)
+    callback(null)
+    return
   }
 
   if (!data.path.match(/\/examples\//)) {
@@ -26,20 +27,24 @@ function parseExamplesBrowserify (data, options, callback) {
   // hexo.log.i('hexo-renderer-uppyexamples: change detected in examples. running: ' + cmd);
   exec(cmd, (err, stdout) => {
     if (err) {
-      return callback(err)
+      callback(err)
+      return
     }
 
     hexo.log.i(`hexo-renderer-uppyexamples: ${stdout.trim()}`)
 
+    // eslint-disable-next-line no-shadow
     fs.readFile(tmpFile, 'utf-8', (err, bundledJS) => {
       if (err) {
-        return callback(err)
+        callback(err)
+        return
       }
       // hexo.log.i('hexo-renderer-uppyexamples: read: ' + tmpFile);
 
       // @TODO remove this hack
       // once this is resolved: https://github.com/hexojs/hexo/issues/1663
       // bundledJS = bundledJS.replace(/</g, ' < ');
+      // eslint-disable-next-line no-param-reassign
       bundledJS = bundledJS.replace(/<(?!=)/g, ' < ')
 
       callback(null, bundledJS)

@@ -77,7 +77,7 @@ glob(srcPattern, (err, files) => {
           config: { root: path.join(__dirname, '..') },
         }),
       ],
-    })).catch(onError)
+    })).catch(onError) // eslint-disable-line no-use-before-define
   })
 })
 

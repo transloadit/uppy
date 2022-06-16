@@ -8,9 +8,10 @@ export interface AwsS3Part {
   ETag?: string
 }
 
-interface AwsS3MultipartOptions extends PluginOptions {
+export interface AwsS3MultipartOptions extends PluginOptions {
     companionHeaders?: { [type: string]: string }
     companionUrl?: string
+    companionCookiesRule?: string
     getChunkSize?: (file: UppyFile) => number
     createMultipartUpload?: (
       file: UppyFile

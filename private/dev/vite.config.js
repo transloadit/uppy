@@ -1,5 +1,4 @@
 import { fileURLToPath } from 'node:url'
-import { createRequire } from 'node:module'
 import { transformAsync } from '@babel/core'
 import t from '@babel/types'
 import autoprefixer from 'autoprefixer'
@@ -9,50 +8,11 @@ import postcssDirPseudoClass from 'postcss-dir-pseudo-class'
 const ROOT = new URL('../../', import.meta.url)
 const PACKAGES_ROOT = fileURLToPath(new URL('./packages/', ROOT))
 
-// To enable the plugin, it looks like we need to interact with the resolution
-// algorithm, but we need to stop afterwards otherwise it messes up somewhere
-// else. This hack can be removed when we get rid of JSX inside of .js files.
-let counter = 0
-
-const moduleTypeCache = new Map()
-function isTypeModule (file) {
-  const packageFolder = file.slice(0, file.indexOf('/src/') + 1)
-
-  const cachedValue = moduleTypeCache.get(packageFolder)
-  if (cachedValue != null) return cachedValue
-
-  // eslint-disable-next-line import/no-dynamic-require, global-require
-  const { type } = createRequire(packageFolder)('./package.json')
-  const typeModule = type === 'module'
-  moduleTypeCache.set(packageFolder, typeModule)
-  return typeModule
-}
-const packageLibImport = /^@uppy\/([^/])\/lib\/(.+)$/
-const packageEntryImport = /^@uppy\/([^/])$/
-function isSpecifierTypeModule (specifier) {
-  const packageLib = packageLibImport.exec(specifier)
-  if (packageLib != null) {
-    return isTypeModule(`${PACKAGES_ROOT}@uppy/${packageLib[1]}/src/${packageLib[2]}`)
-  }
-  const packageEntry = packageEntryImport.exec(specifier)
-  if (packageEntry != null) {
-    return isTypeModule(`${PACKAGES_ROOT}@uppy/${packageEntry[1]}/src/index.js`)
-  }
-  return false
-}
-
-const JS_FILE_EXTENSION = /\.jsx?$/
-
 /**
  * @type {import('vite').UserConfig}
  */
 const config = {
   envDir: fileURLToPath(ROOT),
-  build: {
-    commonjsOptions: {
-      defaultIsModuleExports: true,
-    },
-  },
   css: {
     postcss: {
       plugins: [
@@ -87,73 +47,48 @@ const config = {
     ],
   },
   plugins: [
-    // TODO: remove plugin when we switch to ESM and get rid of JSX inside .js files.
+    // TODO: remove plugin when we remove the socket.io require call in @uppy/transloadit/src/Assembly.
     {
-      name: 'vite-plugin-jsx-commonjs',
-      // TODO: remove this hack when we get rid of JSX inside .js files.
-      enforce: 'pre',
+      name: 'vite-plugin-rewrite-dynamic-socketIo-require',
       // eslint-disable-next-line consistent-return
       resolveId (id) {
-        if (id.startsWith(PACKAGES_ROOT) && JS_FILE_EXTENSION.test(id)) {
-          return id
-        }
-        // TODO: remove this hack when we get rid of JSX inside .js files.
-        if (counter++ < 2) {
+        if (id.startsWith(PACKAGES_ROOT) && id.endsWith('transloadit/src/Assembly.js')) {
           return id
         }
       },
       transform (code, id) {
-        if (id.startsWith(PACKAGES_ROOT) && JS_FILE_EXTENSION.test(id)) {
-          return transformAsync(code, isTypeModule(id) ? {
+        if (id.startsWith(PACKAGES_ROOT) && id.endsWith('transloadit/src/Assembly.js')) {
+          return transformAsync(code, {
             plugins: [
-              id.endsWith('.jsx') ? ['@babel/plugin-transform-react-jsx', { pragma: 'h' }] : {},
               {
-                // On type: "module" packages, we still want to rewrite import
-                // statements that tries to access a named export from a CJS
-                // module to using only the default import.
                 visitor: {
-                  ImportDeclaration (path) {
-                    const { specifiers, source: { value } } = path.node
-                    if (value.startsWith('@uppy/') && !isSpecifierTypeModule(value)
-                      && specifiers.some(node => node.type !== 'ImportDefaultSpecifier')) {
-                      const oldSpecifiers = specifiers[0].type === 'ImportDefaultSpecifier'
-                        // If there's a default import, it must come first.
-                        ? specifiers.splice(1)
-                        // If there's no default import, we create one from a random identifier.
-                        : specifiers.splice(0, specifiers.length, t.importDefaultSpecifier(t.identifier(`_import_${counter++}`)))
-                      if (oldSpecifiers[0].type === 'ImportNamespaceSpecifier') {
-                        // import defaultVal, * as namespaceImport from '@uppy/package'
-                        // is transformed into:
-                        // import defaultVal from '@uppy/package'; const namespaceImport = defaultVal
-                        path.insertAfter(
-                          t.variableDeclaration('const', [t.variableDeclarator(
-                            oldSpecifiers[0].local,
-                            specifiers[0].local,
-                          )]),
-                        )
-                      } else {
-                        // import defaultVal, { exportedVal as importedName, other } from '@uppy/package'
-                        // is transformed into:
-                        // import defaultVal from '@uppy/package'; const { exportedVal: importedName, other } = defaultVal
-                        path.insertAfter(t.variableDeclaration('const', [t.variableDeclarator(
-                          t.objectPattern(
-                            oldSpecifiers.map(specifier => t.objectProperty(
-                              t.identifier(specifier.imported.name),
-                              specifier.local,
-                            )),
-                          ),
-                          specifiers[0].local,
-                        )]))
+                  FunctionDeclaration (path) {
+                    if (path.node.id.name === 'requireSocketIo') {
+                      const prevSibling = path.getPrevSibling()
+                      if (t.isImportDeclaration(prevSibling) && prevSibling.node.specifiers?.length === 1
+                         && t.isImportDefaultSpecifier(prevSibling.node.specifiers[0])
+                         && prevSibling.node.specifiers[0].local.name === 'socketIo') {
+                        // The require call has already been rewritten to an import statement.
+                        return
                       }
+                      if (!t.isVariableDeclaration(prevSibling)) {
+                        const { type, loc } = prevSibling.node
+                        throw new Error(`Unexpected ${type} at line ${loc.start.line}, cannot apply requireSocketIo hack`)
+                      }
+
+                      const { id:socketIoIdentifier } = prevSibling.node.declarations[0]
+
+                      prevSibling.replaceWith(t.importDeclaration(
+                        [t.importDefaultSpecifier(socketIoIdentifier)],
+                        t.stringLiteral('socket.io-client'),
+                      ))
+                      path.replaceWith(t.functionDeclaration(path.node.id, path.node.params, t.blockStatement([
+                        t.returnStatement(socketIoIdentifier),
+                      ])))
                     }
                   },
                 },
               },
-            ],
-          } : {
-            plugins: [
-              ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
-              'transform-commonjs',
             ],
           })
         }

@@ -1,4 +1,5 @@
-const Translator = require('./Translator')
+import { describe, expect, it } from '@jest/globals'
+import Translator from './Translator.js'
 
 const english = {
   strings: {

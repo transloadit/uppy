@@ -120,10 +120,8 @@ const doneButtonHandler = () => {
 
 ### `locale: {}`
 
-<!-- eslint-disable no-restricted-globals, no-multiple-empty-lines -->
-
 ```js
-module.exports = {
+export default {
   strings: {
     // Shown in the status bar while files are being uploaded.
     uploading: 'Uploading',
@@ -172,7 +170,6 @@ module.exports = {
     showErrorDetails: 'Show error details',
   },
 }
-
 ```
 
 [`@uppy/file-input`]: /docs/file-input

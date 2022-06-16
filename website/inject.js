@@ -72,6 +72,7 @@ const excludes = {
   '@uppy/react': ['react'],
 }
 
+// eslint-disable-next-line no-use-before-define
 inject().catch((err) => {
   console.error(err)
   process.exit(1)
@@ -125,6 +126,7 @@ async function injectSizes (config) {
     }),
   ).then(Object.fromEntries)
 
+  // eslint-disable-next-line no-param-reassign
   config.uppy_bundle_kb_sizes = await sizesPromise
 }
 
@@ -164,6 +166,7 @@ async function injectGhStars () {
     opts.auth = process.env.GITHUB_TOKEN
   }
 
+  // eslint-disable-next-line global-require
   const { Octokit } = require('@octokit/rest')
   const octokit = new Octokit(opts)
 
@@ -214,7 +217,7 @@ function injectLocaleList () {
   const localeList = {}
 
   const localePackagePath = path.join(localesRoot, 'src', '*.js')
-  // eslint-disable-next-line import/no-dynamic-require
+  // eslint-disable-next-line import/no-dynamic-require, global-require
   const localePackageVersion = require(path.join(localesRoot, 'package.json')).version
 
   glob.sync(localePackagePath).forEach((localePath) => {

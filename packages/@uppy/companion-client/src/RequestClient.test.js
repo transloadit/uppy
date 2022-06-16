@@ -1,4 +1,5 @@
-const RequestClient = require('./RequestClient')
+import { describe, it, expect } from '@jest/globals'
+import RequestClient from './RequestClient.js'
 
 describe('RequestClient', () => {
   it('has a hostname without trailing slash', () => {

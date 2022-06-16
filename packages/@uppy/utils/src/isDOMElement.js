@@ -3,6 +3,6 @@
  *
  * @param {*} obj
  */
-module.exports = function isDOMElement (obj) {
+export default function isDOMElement (obj) {
   return obj?.nodeType === Node.ELEMENT_NODE
 }

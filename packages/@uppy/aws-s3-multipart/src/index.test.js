@@ -1,7 +1,9 @@
-require('whatwg-fetch')
-const nock = require('nock')
-const Core = require('@uppy/core')
-const AwsS3Multipart = require('.')
+import { beforeEach, describe, expect, it, jest } from '@jest/globals'
+
+import 'whatwg-fetch'
+import nock from 'nock'
+import Core from '@uppy/core'
+import AwsS3Multipart from './index.js'
 
 const KB = 1024
 const MB = KB * KB
@@ -95,7 +97,7 @@ describe('AwsS3Multipart', () => {
         source: 'jest',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], {
           type: 'application/octet-stream',
         }),
       })
@@ -136,7 +138,7 @@ describe('AwsS3Multipart', () => {
         source: 'jest',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], {
           type: 'application/octet-stream',
         }),
       })
@@ -215,7 +217,7 @@ describe('AwsS3Multipart', () => {
         source: 'jest',
         name: 'multitest.dat',
         type: 'application/octet-stream',
-        data: new File([Buffer.alloc(fileSize)], {
+        data: new File([new Uint8Array(fileSize)], {
           type: 'application/octet-stream',
         }),
       })
@@ -223,6 +225,37 @@ describe('AwsS3Multipart', () => {
       await core.upload()
 
       expect(awsS3Multipart.opts.prepareUploadParts.mock.calls.length).toEqual(2)
+    })
+  })
+
+  describe('dynamic companionHeader', () => {
+    let core
+    let awsS3Multipart
+    const oldToken = 'old token'
+    const newToken = 'new token'
+
+    beforeEach(() => {
+      core = new Core()
+      core.use(AwsS3Multipart, {
+        companionHeaders: {
+          authorization: oldToken,
+        },
+      })
+      awsS3Multipart = core.getPlugin('AwsS3Multipart')
+    })
+
+    it('companionHeader is updated before uploading file', async () => {
+      awsS3Multipart.setOptions({
+        companionHeaders: {
+          authorization: newToken,
+        },
+      })
+
+      await core.upload()
+
+      const client = awsS3Multipart[Symbol.for('uppy test: getClient')]()
+
+      expect(client[Symbol.for('uppy test: getCompanionHeaders')]().authorization).toEqual(newToken)
     })
   })
 })

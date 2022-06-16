@@ -7,15 +7,19 @@ PRs are welcome! Please do open an issue to discuss first if it's a big feature,
 
 ## `3.0.0`
 
-- [ ] Switch to ES Modules (ESM)
-- [ ] @uppy/image-editor: Remove silly hack to work around non-ESM.
-- [ ] Consider updating the name of @uppy/aws-s3 and @uppy/aws-s3-multipart to reflect it also supports Google Cloud Storage, Wasabi, and other cloud providers. 
-- [ ] Consider fixing all locale files to follow the bcp-47 standard (nl_NL --> nl-NL)
+- [x] Switch to ES Modules (ESM)
+- [x] @uppy/image-editor: Remove silly hack to work around non-ESM.
+- [ ] Some not too breaking breaking changes. Go through TODOs
+- [ ] Companion breaking changes, like S3 keys
+- [x] New remote-sources preset
+- [ ] Deprecate Robodog
 
 ## `4.0.0`
 
 - [ ] core: change the preprocessing --> uploading flow to allow for files to start uploading right away after their preprocessing step has finished. See #1738 (@goto-but-stop)
 - [ ] companion: add more reliable tests to catch edge cases in companion. For example testing that oauth works for multiple companion instances that use a master Oauth domain.
+- [ ] Consider updating the name of @uppy/aws-s3 and @uppy/aws-s3-multipart to reflect it also supports Google Cloud Storage, Wasabi, and other cloud providers.
+- [ ] Consider fixing all locale files to follow the bcp-47 standard (nl_NL --> nl-NL)
 
 ## Unplanned
 

@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 import { spawn } from 'node:child_process'
+import { Buffer } from 'node:buffer'
 import fs from 'node:fs/promises'
+import process from 'node:process'
 
 const README_FILE_NAME = new URL('../README.md', import.meta.url)
 

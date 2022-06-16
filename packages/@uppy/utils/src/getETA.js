@@ -1,7 +1,7 @@
-const getSpeed = require('./getSpeed')
-const getBytesRemaining = require('./getBytesRemaining')
+import getSpeed from './getSpeed.js'
+import getBytesRemaining from './getBytesRemaining.js'
 
-module.exports = function getETA (fileProgress) {
+export default function getETA (fileProgress) {
   if (!fileProgress.bytesUploaded) return 0
 
   const uploadSpeed = getSpeed(fileProgress)

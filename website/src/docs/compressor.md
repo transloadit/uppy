@@ -43,6 +43,8 @@ uppy.use(Compressor, {
 })
 ```
 
+You can also pass any of the [Compressor.js options](https://github.com/fengyuanchen/compressorjs#options) here.
+
 ### `id`
 
 * Type: `string`
@@ -53,13 +55,13 @@ A unique identifier for this plugin. It defaults to `'Compressor'`.
 ### `quality`
 
 * Type: `number`
-* Default: `0.8`
+* Default: `0.6`
 
 This option is passed to [Compressor.js](https://github.com/fengyuanchen/compressorjs).
 
-The quality of the output image. It must be a number between `0` and `1`. If this argument is anything else, the default values `0.92` and `0.80` are used for `image/jpeg` and `image/webp` respectively. Other arguments are ignored. Be careful to use `1` as it may make the size of the output image become larger.
+The quality of the output image. It must be a number between `0` and `1`. Be careful to use `1` as it may make the size of the output image become larger.
 
-**Note:** This option only available for `image/jpeg` and `image/webp` images.
+> **Note:** This option is only available for `image/jpeg` and `image/webp` images.
 
 ### `limit`
 

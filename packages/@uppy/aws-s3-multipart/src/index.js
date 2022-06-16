@@ -1,10 +1,12 @@
-const BasePlugin = require('@uppy/core/lib/BasePlugin')
-const { Socket, Provider, RequestClient } = require('@uppy/companion-client')
-const EventTracker = require('@uppy/utils/lib/EventTracker')
-const emitSocketProgress = require('@uppy/utils/lib/emitSocketProgress')
-const getSocketHost = require('@uppy/utils/lib/getSocketHost')
-const { RateLimitedQueue } = require('@uppy/utils/lib/RateLimitedQueue')
-const MultipartUploader = require('./MultipartUploader')
+import BasePlugin from '@uppy/core/lib/BasePlugin'
+import { Socket, Provider, RequestClient } from '@uppy/companion-client'
+import EventTracker from '@uppy/utils/lib/EventTracker'
+import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
+import getSocketHost from '@uppy/utils/lib/getSocketHost'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+
+import packageJson from '../package.json'
+import MultipartUploader from './MultipartUploader.js'
 
 function assertServerError (res) {
   if (res && res.error) {
@@ -15,15 +17,19 @@ function assertServerError (res) {
   return res
 }
 
-module.exports = class AwsS3Multipart extends BasePlugin {
-  static VERSION = require('../package.json').version
+export default class AwsS3Multipart extends BasePlugin {
+  static VERSION = packageJson.version
+
+  #queueRequestSocketToken
+
+  #client
 
   constructor (uppy, opts) {
     super(uppy, opts)
     this.type = 'uploader'
     this.id = this.opts.id || 'AwsS3Multipart'
     this.title = 'AWS S3 Multipart'
-    this.client = new RequestClient(uppy, opts)
+    this.#client = new RequestClient(uppy, opts)
 
     const defaultOptions = {
       timeout: 30 * 1000,
@@ -34,6 +40,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       prepareUploadParts: this.prepareUploadParts.bind(this),
       abortMultipartUpload: this.abortMultipartUpload.bind(this),
       completeMultipartUpload: this.completeMultipartUpload.bind(this),
+      companionHeaders: {},
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -45,7 +52,16 @@ module.exports = class AwsS3Multipart extends BasePlugin {
     this.uploaders = Object.create(null)
     this.uploaderEvents = Object.create(null)
     this.uploaderSockets = Object.create(null)
+
+    this.#queueRequestSocketToken = this.requests.wrapPromiseFunction(this.#requestSocketToken)
   }
+
+  [Symbol.for('uppy test: getClient')] () { return this.#client }
+
+  // TODO: remove getter and setter for #client on the next major release
+  get client () { return this.#client }
+
+  set client (client) { this.#client = client }
 
   /**
    * Clean up all references for a file's upload: the MultipartUploader instance,
@@ -86,7 +102,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       }
     })
 
-    return this.client.post('s3/multipart', {
+    return this.#client.post('s3/multipart', {
       filename: file.name,
       type: file.type,
       metadata,
@@ -97,7 +113,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
     this.assertHost('listParts')
 
     const filename = encodeURIComponent(key)
-    return this.client.get(`s3/multipart/${uploadId}?key=${filename}`)
+    return this.#client.get(`s3/multipart/${uploadId}?key=${filename}`)
       .then(assertServerError)
   }
 
@@ -105,7 +121,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
     this.assertHost('prepareUploadParts')
 
     const filename = encodeURIComponent(key)
-    return this.client.get(`s3/multipart/${uploadId}/batch?key=${filename}&partNumbers=${partNumbers.join(',')}`)
+    return this.#client.get(`s3/multipart/${uploadId}/batch?key=${filename}&partNumbers=${partNumbers.join(',')}`)
       .then(assertServerError)
   }
 
@@ -114,7 +130,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
+    return this.#client.post(`s3/multipart/${uploadIdEnc}/complete?key=${filename}`, { parts })
       .then(assertServerError)
   }
 
@@ -123,12 +139,14 @@ module.exports = class AwsS3Multipart extends BasePlugin {
 
     const filename = encodeURIComponent(key)
     const uploadIdEnc = encodeURIComponent(uploadId)
-    return this.client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`)
+    return this.#client.delete(`s3/multipart/${uploadIdEnc}?key=${filename}`)
       .then(assertServerError)
   }
 
   uploadFile (file) {
     return new Promise((resolve, reject) => {
+      let queuedRequest
+
       const onStart = (data) => {
         const cFile = this.uppy.getFile(file.id)
         this.uppy.setFileState(file.id, {
@@ -158,6 +176,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       }
 
       const onSuccess = (result) => {
+        const uploadObject = upload // eslint-disable-line no-use-before-define
         const uploadResp = {
           body: {
             ...result,
@@ -172,10 +191,10 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         this.uppy.emit('upload-success', cFile || file, uploadResp)
 
         if (result.location) {
-          this.uppy.log(`Download ${upload.file.name} from ${result.location}`)
+          this.uppy.log(`Download ${uploadObject.file.name} from ${result.location}`)
         }
 
-        resolve(upload)
+        resolve(uploadObject)
       }
 
       const onPartComplete = (part) => {
@@ -210,7 +229,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       this.uploaders[file.id] = upload
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
-      let queuedRequest = this.requests.run(() => {
+      queuedRequest = this.requests.run(() => {
         if (!file.isPaused) {
           upload.start()
         }
@@ -227,9 +246,11 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         resolve(`upload ${removed.id} was removed`)
       })
 
-      this.onCancelAll(file.id, () => {
-        queuedRequest.abort()
-        this.resetUploaderReferences(file.id, { abort: true })
+      this.onCancelAll(file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
+          queuedRequest.abort()
+          this.resetUploaderReferences(file.id, { abort: true })
+        }
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -272,7 +293,26 @@ module.exports = class AwsS3Multipart extends BasePlugin {
     })
   }
 
-  uploadRemote (file) {
+  #requestSocketToken = async (file) => {
+    const Client = file.remote.providerOptions.provider ? Provider : RequestClient
+    const client = new Client(this.uppy, file.remote.providerOptions)
+    const opts = { ...this.opts }
+
+    if (file.tus) {
+      // Install file-specific upload overrides.
+      Object.assign(opts, file.tus)
+    }
+
+    const res = await client.post(file.remote.url, {
+      ...file.remote.body,
+      protocol: 's3-multipart',
+      size: file.data.size,
+      metadata: file.meta,
+    })
+    return res.token
+  }
+
+  async uploadRemote (file) {
     this.resetUploaderReferences(file.id)
 
     // Don't double-emit upload-started for Golden Retriever-restored files that were already started
@@ -280,41 +320,27 @@ module.exports = class AwsS3Multipart extends BasePlugin {
       this.uppy.emit('upload-started', file)
     }
 
-    if (file.serverToken) {
-      return this.connectToServerSocket(file)
-    }
-
-    return new Promise((resolve, reject) => {
-      const Client = file.remote.providerOptions.provider ? Provider : RequestClient
-      const client = new Client(this.uppy, file.remote.providerOptions)
-      client.post(
-        file.remote.url,
-        {
-          ...file.remote.body,
-          protocol: 's3-multipart',
-          size: file.data.size,
-          metadata: file.meta,
-        },
-      ).then((res) => {
-        this.uppy.setFileState(file.id, { serverToken: res.token })
-        file = this.uppy.getFile(file.id)
-        return file
-      }).then((file) => {
+    try {
+      if (file.serverToken) {
         return this.connectToServerSocket(file)
-      }).then(() => {
-        resolve()
-      }).catch((err) => {
-        this.uppy.emit('upload-error', file, err)
-        reject(err)
-      })
-    })
+      }
+      const serverToken = await this.#queueRequestSocketToken(file)
+
+      this.uppy.setFileState(file.id, { serverToken })
+      return this.connectToServerSocket(this.uppy.getFile(file.id))
+    } catch (err) {
+      this.uppy.emit('upload-error', file, err)
+      throw err
+    }
   }
 
   connectToServerSocket (file) {
     return new Promise((resolve, reject) => {
+      let queuedRequest
+
       const token = file.serverToken
       const host = getSocketHost(file.remote.companionUrl)
-      const socket = new Socket({ target: `${host}/api/${token}`, autoOpen: false })
+      const socket = new Socket({ target: `${host}/api/${token}` })
       this.uploaderSockets[file.id] = socket
       this.uploaderEvents[file.id] = new EventTracker(this.uppy)
 
@@ -346,10 +372,12 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         socket.send('pause', {})
       })
 
-      this.onCancelAll(file.id, () => {
-        queuedRequest.abort()
-        socket.send('cancel', {})
-        this.resetUploaderReferences(file.id)
+      this.onCancelAll(file.id, ({ reason } = {}) => {
+        if (reason === 'user') {
+          queuedRequest.abort()
+          socket.send('cancel', {})
+          this.resetUploaderReferences(file.id)
+        }
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -401,8 +429,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         resolve()
       })
 
-      let queuedRequest = this.requests.run(() => {
-        socket.open()
+      queuedRequest = this.requests.run(() => {
         if (file.isPaused) {
           socket.send('pause', {})
         }
@@ -424,6 +451,11 @@ module.exports = class AwsS3Multipart extends BasePlugin {
     })
 
     return Promise.all(promises)
+  }
+
+  #setCompanionHeaders = () => {
+    this.#client.setCompanionHeaders(this.opts.companionHeaders)
+    return Promise.resolve()
   }
 
   onFileRemove (fileID, cb) {
@@ -463,10 +495,10 @@ module.exports = class AwsS3Multipart extends BasePlugin {
     })
   }
 
-  onCancelAll (fileID, cb) {
-    this.uploaderEvents[fileID].on('cancel-all', () => {
+  onCancelAll (fileID, eventHandler) {
+    this.uploaderEvents[fileID].on('cancel-all', (...args) => {
       if (!this.uppy.getFile(fileID)) return
-      cb()
+      eventHandler(...args)
     })
   }
 
@@ -485,6 +517,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         resumableUploads: true,
       },
     })
+    this.uppy.addPreProcessor(this.#setCompanionHeaders)
     this.uppy.addUploader(this.upload)
   }
 
@@ -496,6 +529,7 @@ module.exports = class AwsS3Multipart extends BasePlugin {
         resumableUploads: false,
       },
     })
+    this.uppy.removePreProcessor(this.#setCompanionHeaders)
     this.uppy.removeUploader(this.upload)
   }
 }

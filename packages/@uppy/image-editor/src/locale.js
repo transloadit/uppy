@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   strings: {
     revert: 'Revert',
     rotate: 'Rotate',

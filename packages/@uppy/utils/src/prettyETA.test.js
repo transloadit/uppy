@@ -1,4 +1,5 @@
-const prettyETA = require('./prettyETA')
+import { describe, expect, it } from '@jest/globals'
+import prettyETA from './prettyETA.js'
 
 describe('prettyETA', () => {
   it('should convert the specified number of seconds to a pretty ETA', () => {

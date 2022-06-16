@@ -3,7 +3,7 @@
 // ___Where to take new extensions from?
 //    https://github.com/jshttp/mime-db/blob/master/db.json
 
-module.exports = {
+export default {
   md: 'text/markdown',
   markdown: 'text/markdown',
   mp4: 'video/mp4',
@@ -23,6 +23,7 @@ module.exports = {
   mks: 'video/x-matroska',
   mkv: 'video/x-matroska',
   mov: 'video/quicktime',
+  dicom: 'application/dicom',
   doc: 'application/msword',
   docm: 'application/vnd.ms-word.document.macroenabled.12',
   docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
