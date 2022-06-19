@@ -109,7 +109,7 @@ A function that generates a batch of signed URLs for the specified part numbers.
 
 * `uploadId` - The UploadID of this Multipart upload.
 * `key` - The object key in the S3 bucket.
-* `partNumbers` - An array of indecies of this part in the file (`PartNumber` in S3 terminology). Note that part numbers are _not_ zero-based.
+* `partNumbers` - An array of indices of this part in the file (`PartNumber` in S3 terminology). Note that part numbers are _not_ zero-based.
 * `chunks` - A Javascript object with the part numbers as keys and the Blob data for each part as the value.
 
 `prepareUploadParts` should return a `Promise` with an `Object` with keys:
