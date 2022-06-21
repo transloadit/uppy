@@ -1,5 +1,8 @@
 FROM node:16.13.0-alpine as build
 
+# Create link to node on amd64 so that corepack can find it
+RUN if [ "$(uname -m)" == "aarch64" ]; then mkdir -p /usr/local/sbin/ && ln -s /usr/local/bin/node /usr/local/sbin/node; fi
+
 WORKDIR /app
 
 COPY package.json .yarnrc.yml /app/
