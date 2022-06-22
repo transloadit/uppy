@@ -94,6 +94,7 @@ export default class Dashboard extends UIPlugin {
       autoOpenFileEditor: false,
       disabled: false,
       disableLocalFiles: false,
+      mobileNativeCamera: false,
     }
 
     // merge default options with the ones set by user
@@ -967,6 +968,7 @@ export default class Dashboard extends UIPlugin {
       maxNumberOfFiles: this.uppy.opts.restrictions.maxNumberOfFiles,
       requiredMetaFields: this.uppy.opts.restrictions.requiredMetaFields,
       showSelectedFiles: this.opts.showSelectedFiles,
+      mobileNativeCamera: this.opts.mobileNativeCamera,
       handleCancelRestore: this.handleCancelRestore,
       handleRequestThumbnail: this.handleRequestThumbnail,
       handleCancelThumbnail: this.handleCancelThumbnail,

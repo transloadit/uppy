@@ -3,6 +3,7 @@ import { h } from 'preact'
 import { UIPlugin } from '@uppy/core'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
+import isMobile from 'is-mobile'
 import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
 import supportsMediaRecorder from './supportsMediaRecorder.js'
 import CameraIcon from './CameraIcon.jsx'
@@ -96,6 +97,7 @@ export default class Webcam extends UIPlugin {
       preferredImageMimeType: null,
       preferredVideoMimeType: null,
       showRecordingLength: false,
+      mobileNativeCamera: false,
     }
 
     this.opts = { ...defaultOptions, ...opts }
@@ -588,6 +590,13 @@ export default class Webcam extends UIPlugin {
   }
 
   install () {
+    if (this.opts.mobileNativeCamera && isMobile()) {
+      this.uppy.getPlugin('Dashboard').setOptions({
+        mobileNativeCamera: true,
+      })
+      return
+    }
+
     this.setPluginState({
       cameraReady: false,
       recordingLengthSeconds: 0,

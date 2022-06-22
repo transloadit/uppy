@@ -10564,6 +10564,7 @@ __metadata:
   dependencies:
     "@jest/globals": ^27.4.2
     "@uppy/utils": "workspace:^"
+    is-mobile: ^3.1.1
     preact: ^10.5.13
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -24622,6 +24623,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 2.0.2
   resolution: "is-map@npm:2.0.2"
   checksum: ace3d0ecd667bbdefdb1852de601268f67f2db725624b1958f279316e13fecb8fa7df91fd60f690d7417b4ec180712f5a7ee967008e27c65cfd475cc84337728
+  languageName: node
+  linkType: hard
+
+"is-mobile@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "is-mobile@npm:3.1.1"
+  checksum: b7c549020ac4674520378623afc4976694ff686eb3761cfad12da936ba9c2d675687bdc3c82eadf5a25147ce51c682800679bf835e31de272f05c026cd2b2f14
   languageName: node
   linkType: hard
 

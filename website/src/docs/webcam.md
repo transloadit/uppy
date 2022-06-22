@@ -72,6 +72,7 @@ uppy.use(Webcam, {
   showRecordingLength: false,
   preferredVideoMimeType: null,
   preferredImageMimeType: null,
+  mobileNativeCamera: false,
   locale: {},
 })
 ```
@@ -155,6 +156,10 @@ If no preferred video mime type is given, the Webcam plugin will prefer types li
 Set the preferred mime type for images, for example `'image/png'`. If the browser supports rendering the given mime type, the image will be stored in this format. Else `image/jpeg` is used by default.
 
 If no preferred image mime type is given, the Webcam plugin will prefer types listed in the [`allowedFileTypes` restriction](/docs/uppy/#restrictions), if any.
+
+### `mobileNativeCamera`
+
+Replaces Uppy’s custom camera UI on mobile with the native device UI, accessed via two buttons: “Take Picture” and “Record Video”. Defaults to `false`.
 
 ### `locale: {}`
 
