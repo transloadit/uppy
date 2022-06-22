@@ -21,6 +21,7 @@ export interface WebcamOptions extends PluginOptions {
     showRecordingLength?: boolean
     preferredImageMimeType?: string
     preferredVideoMimeType?: string
+    mobileNativeCamera?: string
 }
 
 declare class Webcam extends UIPlugin<WebcamOptions> {}
