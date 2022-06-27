@@ -27,7 +27,7 @@ const app = router()
 app.use(require('cors')())
 app.use(require('body-parser').json())
 
-app.use('/companion', companion.app({
+const { app: companionApp } = companion.app({
   providerOptions: {
     s3: {
       // This is the crucial part; set an endpoint template for the service you want to use.
@@ -41,7 +41,9 @@ app.use('/companion', companion.app({
     },
   },
   server: { serverUrl: `localhost:${PORT}` },
-}))
+})
+
+app.use('/companion', companionApp)
 
 // Serve the built CSS file.
 app.get('/uppy.min.css', (req, res) => {

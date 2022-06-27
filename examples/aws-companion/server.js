@@ -46,7 +46,9 @@ process.on('exit', () => {
   fs.rmSync(DATA_DIR, { recursive: true, force: true })
 })
 
-app.use(companion.app(options))
+const { app: companionApp } = companion.app(options)
+
+app.use(companionApp)
 
 const server = app.listen(3020, () => {
   console.log('listening on port 3020')
