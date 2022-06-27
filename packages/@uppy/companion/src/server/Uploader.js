@@ -635,14 +635,6 @@ class Uploader {
     const filename = this.uploadFileName
     const { client, options } = this.options.s3
 
-    function getPartSize (chunkSize) {
-      // backwards compatibility https://github.com/transloadit/uppy/pull/3511#issuecomment-1050797935
-      // requires min 5MiB and max 5GiB partSize
-      // todo remove this logic in the next major semver
-      if (chunkSize == null || chunkSize >= 5368709120 || chunkSize <= 5242880) return undefined
-      return chunkSize
-    }
-
     const params = {
       Bucket: options.bucket,
       Key: options.getKey(null, filename, this.options.metadata),
@@ -655,7 +647,8 @@ class Uploader {
     if (options.acl != null) params.ACL = options.acl
 
     const upload = client.upload(params, {
-      partSize: getPartSize(this.options.chunkSize),
+      // using chunkSize as partSize too, see https://github.com/transloadit/uppy/pull/3511
+      partSize: this.options.chunkSize,
     })
 
     upload.on('httpUploadProgress', ({ loaded, total }) => {
