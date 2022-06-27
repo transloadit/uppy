@@ -475,6 +475,8 @@ class Uploader {
    */
   #emitError (err) {
     // delete stack to avoid sending server info to client
+    // todo remove also extraData from serializedErr in next major,
+    // see PR discussion https://github.com/transloadit/uppy/pull/3832
     const { stack, ...serializedErr } = serializeError(err)
     const dataToEmit = {
       action: 'error',
