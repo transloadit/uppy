@@ -224,8 +224,6 @@ class DropBox extends Provider {
   }
 }
 
-DropBox.version = 2
-
 DropBox.prototype.list = promisify(DropBox.prototype._list)
 DropBox.prototype.size = promisify(DropBox.prototype._size)
 DropBox.prototype.logout = promisify(DropBox.prototype._logout)

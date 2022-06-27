@@ -169,8 +169,6 @@ class Instagram extends Provider {
   }
 }
 
-Instagram.version = 2
-
 Instagram.prototype.list = promisify(Instagram.prototype._list)
 Instagram.prototype.size = promisify(Instagram.prototype._size)
 

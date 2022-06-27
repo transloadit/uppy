@@ -290,8 +290,6 @@ class Drive extends Provider {
   }
 }
 
-Drive.version = 2
-
 Drive.prototype.logout = promisify(Drive.prototype._logout)
 
 module.exports = Drive

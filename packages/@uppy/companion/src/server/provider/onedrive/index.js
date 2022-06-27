@@ -145,8 +145,6 @@ class OneDrive extends Provider {
   }
 }
 
-OneDrive.version = 2
-
 OneDrive.prototype.list = promisify(OneDrive.prototype._list)
 OneDrive.prototype.size = promisify(OneDrive.prototype._size)
 

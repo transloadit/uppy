@@ -339,8 +339,6 @@ class Zoom extends Provider {
   }
 }
 
-Zoom.version = 2
-
 Zoom.prototype.list = promisify(Zoom.prototype._list)
 Zoom.prototype.size = promisify(Zoom.prototype._size)
 Zoom.prototype.logout = promisify(Zoom.prototype._logout)

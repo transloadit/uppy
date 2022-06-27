@@ -150,8 +150,6 @@ class Unsplash extends SearchProvider {
   }
 }
 
-Unsplash.version = 2
-
 Unsplash.prototype.list = promisify(Unsplash.prototype._list)
 Unsplash.prototype.size = promisify(Unsplash.prototype._size)
 
