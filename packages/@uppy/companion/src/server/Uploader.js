@@ -638,7 +638,6 @@ class Uploader {
     const params = {
       Bucket: options.bucket,
       Key: options.getKey(null, filename, this.options.metadata),
-      ACL: options.acl,
       ContentType: this.options.metadata.type,
       Metadata: this.options.metadata,
       Body: stream,

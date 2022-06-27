@@ -10,7 +10,6 @@ const defaultOptions = {
   },
   providerOptions: {},
   s3: {
-    acl: 'public-read', // todo default to no ACL in next major
     endpoint: 'https://{service}.{region}.amazonaws.com',
     conditions: [],
     useAccelerateEndpoint: false,
