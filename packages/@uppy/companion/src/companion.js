@@ -13,7 +13,6 @@ const s3 = require('./server/controllers/s3')
 const url = require('./server/controllers/url')
 const createEmitter = require('./server/emitter')
 const redis = require('./server/redis')
-const { getURLBuilder } = require('./server/helpers/utils')
 const jobs = require('./server/jobs')
 const logger = require('./server/logger')
 const middlewares = require('./server/middlewares')
@@ -85,17 +84,6 @@ module.exports.app = (optionsArg = {}) => {
 
   if (options.metrics) {
     app.use(middlewares.metrics({ path: options.server.path }))
-
-    // backward compatibility
-    // TODO remove in next major semver
-    if (options.server.path) {
-      const buildUrl = getURLBuilder(options)
-      app.get('/metrics', (req, res) => {
-        process.emitWarning('/metrics is deprecated when specifying a path to companion')
-        const metricsUrl = buildUrl('/metrics', true)
-        res.redirect(metricsUrl)
-      })
-    }
   }
 
   app.use(cookieParser()) // server tokens are added to cookies

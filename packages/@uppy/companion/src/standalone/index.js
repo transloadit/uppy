@@ -12,8 +12,6 @@ const logger = require('../server/logger')
 const redis = require('../server/redis')
 const companion = require('../companion')
 const helper = require('./helper')
-const middlewares = require('../server/middlewares')
-const { getURLBuilder } = require('../server/helpers/utils')
 
 /**
  * Configures an Express app for running Companion standalone
@@ -101,26 +99,6 @@ module.exports = function server (inputCompanionOptions = {}) {
       return censored ? `${parsed.href.split('?')[0]}?${qs.stringify(query)}` : parsed.href
     }
   })
-
-  // for server metrics tracking.
-  // make app metrics available at '/metrics'.
-  // TODO for the next major version: use instead companion option "metrics": true and remove this code
-  // eslint-disable-next-line max-len
-  // See discussion: https://github.com/transloadit/uppy/pull/2854/files/64be97205e4012818abfcc8b0b8b7fe09de91729#diff-68f5e3eb307c1c9d1fd02224fd7888e2f74718744e1b6e35d929fcab1cc50ed1
-  if (process.env.COMPANION_HIDE_METRICS !== 'true') {
-    router.use(middlewares.metrics({ path: companionOptions.server.path }))
-
-    // backward compatibility
-    // TODO remove in next major semver
-    if (companionOptions.server.path) {
-      const buildUrl = getURLBuilder(companionOptions)
-      app.get('/metrics', (req, res) => {
-        process.emitWarning('/metrics is deprecated when specifying a path to companion')
-        const metricsUrl = buildUrl('/metrics', true)
-        res.redirect(metricsUrl)
-      })
-    }
-  }
 
   router.use(bodyParser.json())
   router.use(bodyParser.urlencoded({ extended: false }))
