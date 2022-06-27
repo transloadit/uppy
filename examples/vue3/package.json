@@ -12,7 +12,7 @@
     "@uppy/dashboard": "workspace:*",
     "@uppy/drag-drop": "workspace:*",
     "@uppy/progress-bar": "workspace:*",
-    "@uppy/transloadit": "workspace:*",
+    "@uppy/tus": "workspace:*",
     "@uppy/vue": "workspace:*",
     "vue": "^3.2.33"
   },

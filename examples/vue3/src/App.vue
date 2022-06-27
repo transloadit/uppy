@@ -61,45 +61,19 @@ import { Dashboard, DashboardModal, DragDrop, ProgressBar } from '@uppy/vue'
 
 <script>
 import Uppy from '@uppy/core'
-import Transloadit from '@uppy/transloadit'
+import Tus from '@uppy/tus'
 import { defineComponent } from 'vue'
 
-import generateSignatureIfSecret from './generateSignatureIfSecret.js'
-
 const {
-  VITE_TRANSLOADIT_KEY : TRANSLOADIT_KEY,
-  // Your Transloadit secret SHALL NOT be accessible in your Vue file, this is
-  // there for illustration purposes only.
-  VITE_TRANSLOADIT_SECRET : TRANSLOADIT_SECRET,
-  VITE_TRANSLOADIT_TEMPLATE : TRANSLOADIT_TEMPLATE,
-  VITE_TRANSLOADIT_SERVICE_URL : TRANSLOADIT_SERVICE_URL,
+  VITE_TUS_ENDPOINT: TUS_ENDPOINT,
 } = import.meta.env
-
-async function getAssemblyOptions () {
-  return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
-    auth: {
-      key: TRANSLOADIT_KEY,
-    },
-    // It's more secure to use a template_id and enable
-    // Signature Authentication
-    template_id: TRANSLOADIT_TEMPLATE,
-  })
-}
 
 export default defineComponent({
   computed: {
     uppy: () => new Uppy({ id: 'uppy1', autoProceed: true, debug: true })
-      .use(Transloadit, {
-        service: TRANSLOADIT_SERVICE_URL,
-        waitForEncoding: true,
-        getAssemblyOptions,
-      }),
+      .use(Tus, { endpoint: TUS_ENDPOINT }),
     uppy2: () => new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
-      .use(Transloadit, {
-        service: TRANSLOADIT_SERVICE_URL,
-        waitForEncoding: true,
-        getAssemblyOptions,
-      }),
+      .use(Tus, { endpoint: TUS_ENDPOINT }),
   },
   data () {
     return {
