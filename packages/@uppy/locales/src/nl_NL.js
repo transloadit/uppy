@@ -192,7 +192,7 @@ nl_NL.strings = {
     '1': 'Je moet minstens %{smart_count} bestanden selecteren',
   },
   zoomIn: 'Zoom in',
-  zoomOut: 'Zoom uit'
+  zoomOut: 'Zoom uit',
 }
 
 if (typeof Uppy !== 'undefined') {
