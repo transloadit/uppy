@@ -1,30 +1,33 @@
 {
   "name": "@uppy-example/aws-companion",
   "version": "0.0.0",
+  "type": "module",
   "dependencies": {
-    "@babel/core": "^7.2.2",
     "@uppy/aws-s3": "workspace:*",
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
     "@uppy/google-drive": "workspace:*",
-    "@uppy/webcam": "workspace:*",
-    "babelify": "^10.0.0",
-    "body-parser": "^1.18.3",
-    "budo": "^11.6.1",
+    "@uppy/webcam": "workspace:*"
+  },
+  "devDependencies": {
+    "@uppy/companion": "workspace:*",
+    "body-parser": "^1.20.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "express": "^4.16.4",
-    "express-session": "^1.15.6",
-    "npm-run-all": "^4.1.5"
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "npm-run-all": "^4.1.5",
+    "vite": "^2.7.1"
   },
   "private": true,
   "engines": {
-    "node": ">=14.14.0"
+    "node": ">=16.11.0"
   },
   "scripts": {
-    "copy": "cp ../../packages/uppy/dist/uppy.min.css .",
-    "start": "npm-run-all --serial copy --parallel start:*",
-    "start:client": "budo main.js:bundle.js -- -t babelify",
-    "start:server": "node server.js"
+    "dev": "vite",
+    "start": "npm-run-all --parallel start:client start:server",
+    "start:client": "vite",
+    "start:server": "node server.cjs"
   }
 }

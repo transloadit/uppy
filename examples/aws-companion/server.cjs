@@ -1,18 +1,24 @@
 const fs = require('node:fs')
 const path = require('node:path')
-const companion = require('../../packages/@uppy/companion')
+const companion = require('@uppy/companion')
+
+require('dotenv').config()
+
 const app = require('express')()
 
 const DATA_DIR = path.join(__dirname, 'tmp')
 
 app.use(require('cors')({
-  origin: true,
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true,
 }))
 app.use(require('cookie-parser')())
 app.use(require('body-parser').json())
 app.use(require('express-session')({
   secret: 'hello planet',
+  saveUninitialized: false,
+  resave: false,
 }))
 
 const options = {

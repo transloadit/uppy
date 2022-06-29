@@ -191,6 +191,7 @@ module.exports = {
       files: [
         '*.mjs',
         'e2e/clients/**/*.js',
+        'examples/aws-companion/*.js',
         'examples/aws-presigned-url/*.js',
         'examples/bundled/*.js',
         'examples/custom-provider/client/*.js',
