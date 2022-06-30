@@ -36,7 +36,7 @@ app.use(session({ secret: 'some secrety secret' }))
 // be sure to place this anywhere after app.use(bodyParser.json()) and app.use(session({...})
 const options = {
   providerOptions: {
-    google: {
+    drive: {
       key: 'GOOGLE_KEY',
       secret: 'GOOGLE_SECRET',
     },
