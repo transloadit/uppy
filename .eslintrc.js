@@ -122,7 +122,7 @@ module.exports = {
     'jsdoc/check-examples': 'off', // cannot yet be supported for ESLint 8, see https://github.com/eslint/eslint/issues/14745
     'jsdoc/check-param-names': ['warn'],
     'jsdoc/check-syntax': ['warn'],
-    'jsdoc/check-tag-names': 'error',
+    'jsdoc/check-tag-names': ['error', { jsxTags: true }],
     'jsdoc/check-types': 'error',
     'jsdoc/newline-after-description': 'error',
     'jsdoc/valid-types': 'error',
@@ -191,6 +191,7 @@ module.exports = {
         'e2e/clients/**/*.js',
         'examples/aws-presigned-url/*.js',
         'examples/bundled/*.js',
+        'examples/custom-provider/client/*.js',
         'private/dev/*.js',
         'private/release/*.js',
         'private/remark-lint-uppy/*.js',
@@ -249,6 +250,8 @@ module.exports = {
       },
       rules: {
         'import/named': 'off', // Disabled because that rule tries and fails to parse JSX dependencies.
+        'import/no-named-as-default': 'off', // Disabled because that rule tries and fails to parse JSX dependencies.
+        'import/no-named-as-default-member': 'off', // Disabled because that rule tries and fails to parse JSX dependencies.
         'no-restricted-globals': [
           'error',
           {
@@ -358,7 +361,7 @@ module.exports = {
       files: [
         'bin/**.js',
         'bin/**.mjs',
-        'examples/**/*.js',
+        'examples/**/*.cjs',
         'packages/@uppy/companion/test/**/*.js',
         'test/**/*.js',
         'test/**/*.ts',

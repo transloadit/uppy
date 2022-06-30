@@ -9669,21 +9669,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-example/custom-provider@workspace:examples/custom-provider"
   dependencies:
-    "@babel/core": ^7.2.2
+    "@uppy/companion": "workspace:*"
     "@uppy/companion-client": "workspace:*"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/google-drive": "workspace:*"
     "@uppy/provider-views": "workspace:*"
     "@uppy/tus": "workspace:*"
-    babelify: ^10.0.0
     body-parser: ^1.18.2
-    budo: ^11.3.2
+    dotenv: ^16.0.1
     express: ^4.16.2
     express-session: ^1.15.6
     npm-run-all: ^4.1.2
     preact: ^10.5.13
-    request: 2.88.2
+    vite: ^2.7.1
   languageName: unknown
   linkType: soft
 
@@ -10019,7 +10018,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/companion@workspace:^, @uppy/companion@workspace:packages/@uppy/companion":
+"@uppy/companion@workspace:*, @uppy/companion@workspace:^, @uppy/companion@workspace:packages/@uppy/companion":
   version: 0.0.0-use.local
   resolution: "@uppy/companion@workspace:packages/@uppy/companion"
   dependencies:
@@ -17309,6 +17308,13 @@ __metadata:
   version: 16.0.0
   resolution: "dotenv@npm:16.0.0"
   checksum: 664cebb51f0a9a1d1b930f51f0271e72e26d62feaecc9dc03df39453dd494b4e724809ca480fb3ec3213382b1ed3f791aaeb83569a137f9329ce58efd4853dbf
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.0.1":
+  version: 16.0.1
+  resolution: "dotenv@npm:16.0.1"
+  checksum: f459ffce07b977b7f15d8cc4ee69cdff77d4dd8c5dc8c85d2d485ee84655352c2415f9dd09d42b5b5985ced3be186130871b34e2f3e2569ebc72fbc2e8096792
   languageName: node
   linkType: hard
 
