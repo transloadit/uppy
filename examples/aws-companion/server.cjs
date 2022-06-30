@@ -2,8 +2,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const companion = require('@uppy/companion')
 
-require('dotenv').config()
-
+require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') })
 const app = require('express')()
 
 const DATA_DIR = path.join(__dirname, 'tmp')
@@ -27,14 +26,14 @@ const options = {
       key: process.env.COMPANION_GOOGLE_KEY,
       secret: process.env.COMPANION_GOOGLE_SECRET,
     },
-    s3: {
-      getKey: (req, filename) => `whatever/${Math.random().toString(32).slice(2)}/${filename}`,
-      key: process.env.COMPANION_AWS_KEY,
-      secret: process.env.COMPANION_AWS_SECRET,
-      bucket: process.env.COMPANION_AWS_BUCKET,
-      region: process.env.COMPANION_AWS_REGION,
-      endpoint: process.env.COMPANION_AWS_ENDPOINT,
-    },
+  },
+  s3: {
+    getKey: (req, filename) => `whatever/${Math.random().toString(32).slice(2)}/${filename}`,
+    key: process.env.COMPANION_AWS_KEY,
+    secret: process.env.COMPANION_AWS_SECRET,
+    bucket: process.env.COMPANION_AWS_BUCKET,
+    region: process.env.COMPANION_AWS_REGION,
+    endpoint: process.env.COMPANION_AWS_ENDPOINT,
   },
   server: { host: 'localhost:3020' },
   filePath: DATA_DIR,

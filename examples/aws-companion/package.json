@@ -22,7 +22,7 @@
   },
   "private": true,
   "engines": {
-    "node": ">=16.11.0"
+    "node": ">=16.15.0"
   },
   "scripts": {
     "dev": "vite",
