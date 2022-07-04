@@ -161,13 +161,6 @@ declare module '@uppy/utils/lib/getFileNameAndExtension' {
   export = getFileNameAndExtension
 }
 
-declare module '@uppy/utils/lib/getFileType' {
-  import UppyUtils = require('@uppy/utils')
-
-  function getFileType (file: UppyUtils.UppyFile): string
-  export = getFileType
-}
-
 declare module '@uppy/utils/lib/getFileTypeExtension' {
   function getFileTypeExtension (mime: string): string
   export = getFileTypeExtension
@@ -209,11 +202,6 @@ declare module '@uppy/utils/lib/isDragDropSupported' {
 declare module '@uppy/utils/lib/isPreviewSupported' {
   function isPreviewSupported (mime: string): boolean
   export = isPreviewSupported
-}
-
-declare module '@uppy/utils/lib/isTouchDevice' {
-  function isTouchDevice (): boolean
-  export = isTouchDevice
 }
 
 declare module '@uppy/utils/lib/prettyETA' {

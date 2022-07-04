@@ -1,4 +1,4 @@
-import getFileType from '@uppy/utils/lib/getFileType'
+import { lookup as mimeLookup } from 'mrmime'
 import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
 import generateFileID from '@uppy/utils/lib/generateFileID'
 
@@ -93,7 +93,7 @@ export default class View {
       },
     }
 
-    const fileType = getFileType(tagFile)
+    const fileType = mimeLookup(tagFile.name)
 
     // TODO Should we just always use the thumbnail URL if it exists?
     if (fileType && isPreviewSupported(fileType)) {

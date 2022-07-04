@@ -4,9 +4,9 @@
 import Translator from '@uppy/utils/lib/Translator'
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
+import { lookup as mimeLookup } from 'mrmime'
 import throttle from 'lodash.throttle'
 import DefaultStore from '@uppy/store-default'
-import getFileType from '@uppy/utils/lib/getFileType'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import generateFileID from '@uppy/utils/lib/generateFileID'
 import supportsUploadProgress from './supportsUploadProgress.js'
@@ -450,7 +450,7 @@ class Uppy {
    * The `files` value is passed in because it may be updated by the caller without updating the store.
    */
   #checkAndCreateFileStateObject (files, fileDescriptor) {
-    const fileType = getFileType(fileDescriptor)
+    const fileType = fileDescriptor.type || mimeLookup(fileDescriptor.name) || 'application/octet-stream'
     const fileName = getFileName(fileType, fileDescriptor)
     const fileExtension = getFileNameAndExtension(fileName).extension
     const isRemote = Boolean(fileDescriptor.isRemote)

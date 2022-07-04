@@ -10104,6 +10104,7 @@ __metadata:
     "@uppy/utils": "workspace:^"
     lodash.throttle: ^4.1.1
     mime-match: ^1.0.2
+    mrmime: ^1.0.1
     namespace-emitter: ^2.0.1
     nanoid: ^3.1.25
     preact: ^10.5.13
@@ -10300,6 +10301,7 @@ __metadata:
   dependencies:
     "@uppy/utils": "workspace:^"
     classnames: ^2.2.6
+    mrmime: ^1.0.1
     preact: ^10.5.13
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -29773,6 +29775,13 @@ hexo-filter-github-emojis@arturi/hexo-filter-github-emojis:
   version: 1.0.0
   resolution: "mrmime@npm:1.0.0"
   checksum: 2c72a40942af7c53bc97d1e9e9c5cb0e6541d18f736811c3a1b46fa2a2b2362480d687daa8ae8372523acaacd82426a4f7ce34b0bf1825ea83b3983e8cb91afd
+  languageName: node
+  linkType: hard
+
+"mrmime@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "mrmime@npm:1.0.1"
+  checksum: cc979da44bbbffebaa8eaf7a45117e851f2d4cb46a3ada6ceb78130466a04c15a0de9a9ce1c8b8ba6f6e1b8618866b1352992bf1757d241c0ddca558b9f28a77
   languageName: node
   linkType: hard
 

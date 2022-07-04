@@ -26,6 +26,7 @@
     "@uppy/utils": "workspace:^",
     "lodash.throttle": "^4.1.1",
     "mime-match": "^1.0.2",
+    "mrmime": "^1.0.1",
     "namespace-emitter": "^2.0.1",
     "nanoid": "^3.1.25",
     "preact": "^10.5.13"
