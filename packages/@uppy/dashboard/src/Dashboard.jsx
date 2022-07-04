@@ -941,7 +941,6 @@ export default class Dashboard extends UIPlugin {
       metaFields: pluginState.metaFields,
       resumableUploads: capabilities.resumableUploads || false,
       individualCancellation: capabilities.individualCancellation,
-      isMobileDevice: capabilities.isMobileDevice,
       fileCardFor: pluginState.fileCardFor,
       toggleFileCard: this.toggleFileCard,
       toggleAddFilesPanel: this.toggleAddFilesPanel,
