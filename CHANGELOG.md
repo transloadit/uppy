@@ -12,6 +12,29 @@ Please add your entries in this format:
 
 In the current stage we aim to release a new version at least every month.
 
+## 2.11.1-0
+
+Released: 2022-07-06
+
+| Package              |  Version | Package              |  Version |
+| -------------------- | -------- | -------------------- | -------- |
+| @uppy/companion      |  3.6.1-0 | @uppy/transloadit    |  2.3.1-0 |
+| @uppy/locales        |  2.1.1-0 | @uppy/robodog        |  2.7.1-0 |
+| @uppy/provider-views |  2.1.2-0 | uppy                 | 2.11.1-0 |
+
+- example: fix `custom-provider` example (Antoine du Hamel / #3854)
+- example: fix Vue3 example (Antoine du Hamel / #3774)
+- @uppy/companion: remove deprecated duplicated metrics (Mikael Finstad / #3833)
+- example: update CDN example (Antoine du Hamel / #3803)
+- @uppy/companion: Companion 3 default to no s3 acl (Mikael Finstad / #3826)
+- @uppy/companion: rewrite companion.app() to return an object (Mikael Finstad / #3827)
+- @uppy/companion: remove companion provider compat api (Mikael Finstad / #3828)
+- @uppy/companion: rewrite code for node >=14 (Mikael Finstad / #3829)
+- @uppy/companion: remove chunkSize backwards compatibility (Mikael Finstad / #3830)
+- @uppy/companion: Companion: make `emitSuccess` and `emitError` private (Mikael Finstad / #3832)
+- @uppy/companion: do not use a default upload protocol (Mikael Finstad / #3834)
+
+
 ## 3.0.0-beta.1
 
 Released: 2022-06-09
