@@ -63,6 +63,10 @@ module.exports.app = (optionsArg = {}) => {
   validateConfig(optionsArg)
 
   const options = merge({}, defaultOptions, optionsArg)
+
+  // todo remove in next major and default to the safer getKey instead
+  if (options.providerOptions.s3.getKey === defaultOptions.providerOptions.s3.getKey) process.emitWarning('The current default getKey implementation is not safe because it will cause files with the same name to be overwritten and should be avoided. Please use the environment variable COMPANION_S3_GETKEY_SAFE_BEHAVIOR=true (standalone) or provide your own getKey implementation instead')
+
   const providers = providerManager.getDefaultProviders()
   const searchProviders = providerManager.getSearchProviders()
   providerManager.addProviderOptions(options, grantConfig)

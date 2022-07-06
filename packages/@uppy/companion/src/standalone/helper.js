@@ -2,6 +2,8 @@ const fs = require('fs')
 const merge = require('lodash.merge')
 const stripIndent = require('common-tags/lib/stripIndent')
 const crypto = require('crypto')
+const uuid = require('uuid') // TODO: migrate to `crypto.getRandomUUID` when removing support for Node.js <14.
+
 const utils = require('../server/helpers/utils')
 const logger = require('../server/logger')
 // @ts-ignore
@@ -27,7 +29,7 @@ const getConfigFromEnv = () => {
   const domains = process.env.COMPANION_DOMAINS || process.env.COMPANION_DOMAIN || null
   const validHosts = domains ? domains.split(',') : []
 
-  return {
+  const envConfig = {
     providerOptions: {
       drive: {
         key: process.env.COMPANION_GOOGLE_KEY,
@@ -117,6 +119,13 @@ const getConfigFromEnv = () => {
     clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
       ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10) : undefined,
   }
+
+  // todo remove COMPANION_S3_GETKEY_SAFE_BEHAVIOR in next major and use this getKey implementation instead by default
+  if (process.env.COMPANION_S3_GETKEY_SAFE_BEHAVIOR === 'true') {
+    envConfig.providerOptions.s3.getKey = (req, filename) => `${uuid.v4()}-${filename}`
+  }
+
+  return envConfig
 }
 
 /**
